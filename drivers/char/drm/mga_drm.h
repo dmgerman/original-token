@@ -64,27 +64,31 @@ DECL|macro|MGA_DEPTH
 mdefine_line|#define MGA_DEPTH   0x4
 multiline_comment|/* 3d state excluding texture units:&n; */
 DECL|macro|MGA_CTXREG_DSTORG
-mdefine_line|#define MGA_CTXREG_DSTORG   0&t;/* validated */
+mdefine_line|#define MGA_CTXREG_DSTORG     0&t;/* validated */
 DECL|macro|MGA_CTXREG_MACCESS
-mdefine_line|#define MGA_CTXREG_MACCESS  1&t;
+mdefine_line|#define MGA_CTXREG_MACCESS    1&t;
 DECL|macro|MGA_CTXREG_PLNWT
-mdefine_line|#define MGA_CTXREG_PLNWT    2&t;
+mdefine_line|#define MGA_CTXREG_PLNWT      2 &t;
 DECL|macro|MGA_CTXREG_DWGCTL
-mdefine_line|#define MGA_CTXREG_DWGCTL    3&t;
+mdefine_line|#define MGA_CTXREG_DWGCTL     3&t;
 DECL|macro|MGA_CTXREG_ALPHACTRL
-mdefine_line|#define MGA_CTXREG_ALPHACTRL 4
+mdefine_line|#define MGA_CTXREG_ALPHACTRL  4
 DECL|macro|MGA_CTXREG_FOGCOLOR
-mdefine_line|#define MGA_CTXREG_FOGCOLOR  5
+mdefine_line|#define MGA_CTXREG_FOGCOLOR   5
 DECL|macro|MGA_CTXREG_WFLAG
-mdefine_line|#define MGA_CTXREG_WFLAG     6
+mdefine_line|#define MGA_CTXREG_WFLAG      6
 DECL|macro|MGA_CTXREG_TDUAL0
-mdefine_line|#define MGA_CTXREG_TDUAL0    7
+mdefine_line|#define MGA_CTXREG_TDUAL0     7
 DECL|macro|MGA_CTXREG_TDUAL1
-mdefine_line|#define MGA_CTXREG_TDUAL1    8
+mdefine_line|#define MGA_CTXREG_TDUAL1     8
 DECL|macro|MGA_CTXREG_FCOL
-mdefine_line|#define MGA_CTXREG_FCOL      9
+mdefine_line|#define MGA_CTXREG_FCOL       9
+DECL|macro|MGA_CTXREG_STENCIL
+mdefine_line|#define MGA_CTXREG_STENCIL    10
+DECL|macro|MGA_CTXREG_STENCILCTL
+mdefine_line|#define MGA_CTXREG_STENCILCTL 11
 DECL|macro|MGA_CTX_SETUP_SIZE
-mdefine_line|#define MGA_CTX_SETUP_SIZE   10
+mdefine_line|#define MGA_CTX_SETUP_SIZE    12
 multiline_comment|/* 2d state&n; */
 DECL|macro|MGA_2DREG_PITCH
 mdefine_line|#define MGA_2DREG_PITCH &t;0
@@ -491,6 +495,10 @@ DECL|member|ctxOwner
 r_int
 id|ctxOwner
 suffix:semicolon
+DECL|member|vertexsize
+r_int
+id|vertexsize
+suffix:semicolon
 DECL|typedef|drm_mga_sarea_t
 )brace
 id|drm_mga_sarea_t
@@ -515,6 +523,16 @@ DECL|member|flags
 r_int
 r_int
 id|flags
+suffix:semicolon
+DECL|member|clear_depth_mask
+r_int
+r_int
+id|clear_depth_mask
+suffix:semicolon
+DECL|member|clear_color_mask
+r_int
+r_int
+id|clear_color_mask
 suffix:semicolon
 DECL|typedef|drm_mga_clear_t
 )brace

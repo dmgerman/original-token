@@ -1,19 +1,18 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amdyadic - ACPI AML (p-code) execution for dyadic operators&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amdyadic - ACPI AML (p-code) execution for dyadic operators&n; *              $Revision: 63 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amdyadic&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_dyadic1&n; *&n; * PARAMETERS:  Opcode              - The opcode to be executed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Execute Type 1 dyadic operator with numeric operands:&n; *              Notify_op&n; *&n; * ALLOCATION:  Deletes both operands&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_dyadic1
@@ -27,21 +26,21 @@ op_star
 id|walk_state
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|val_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -56,6 +55,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get the operands */
@@ -89,19 +90,6 @@ id|status
 )paren
 (brace
 multiline_comment|/* Invalid parameters on object stack  */
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|2
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -117,11 +105,11 @@ multiline_comment|/* Def_notify  :=  Notify_op   Notify_object   Notify_value */
 r_case
 id|AML_NOTIFY_OP
 suffix:colon
-multiline_comment|/* The Obj_desc is actually an NTE */
-id|entry
+multiline_comment|/* The Obj_desc is actually an Node */
+id|node
 op_assign
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_desc
@@ -134,7 +122,7 @@ multiline_comment|/* Object must be a device or thermal zone */
 r_if
 c_cond
 (paren
-id|entry
+id|node
 op_logical_and
 id|val_desc
 )paren
@@ -142,7 +130,7 @@ id|val_desc
 r_switch
 c_cond
 (paren
-id|entry-&gt;type
+id|node-&gt;type
 )paren
 (brace
 r_case
@@ -155,7 +143,7 @@ multiline_comment|/*&n;&t;&t;&t;&t; * Requires that Device and Thermal_zone be c
 multiline_comment|/* Dispatch the notify to the appropriate handler */
 id|acpi_ev_notify_dispatch
 (paren
-id|entry
+id|node
 comma
 id|val_desc-&gt;number.value
 )paren
@@ -174,6 +162,11 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic1: Unknown dyadic opcode&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_BAD_OPCODE
@@ -210,43 +203,43 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc2
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|res_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|res_desc2
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc2
 op_assign
@@ -260,12 +253,12 @@ suffix:semicolon
 id|u32
 id|remainder
 suffix:semicolon
-id|s32
+id|u32
 id|num_operands
 op_assign
 l_int|3
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|new_buf
 suffix:semicolon
@@ -277,6 +270,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get all operands */
@@ -336,32 +331,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-op_amp
-(paren
-id|walk_state-&gt;operands
-(braket
-id|walk_state-&gt;num_operands
-op_minus
-l_int|1
-)braket
-)paren
-comma
-id|num_operands
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -720,10 +695,6 @@ id|STRCPY
 (paren
 id|new_buf
 comma
-(paren
-r_char
-op_star
-)paren
 id|obj_desc-&gt;string.pointer
 )paren
 suffix:semicolon
@@ -733,10 +704,6 @@ id|new_buf
 op_plus
 id|obj_desc-&gt;string.length
 comma
-(paren
-r_char
-op_star
-)paren
 id|obj_desc2-&gt;string.pointer
 )paren
 suffix:semicolon
@@ -793,29 +760,11 @@ op_logical_neg
 id|new_buf
 )paren
 (brace
-multiline_comment|/* Only bail out if the buffer is small */
-multiline_comment|/* TBD: [Investigate] what is the point of this code? */
-r_if
-c_cond
-(paren
-id|obj_desc-&gt;buffer.length
-op_plus
-id|obj_desc2-&gt;buffer.length
-OL
-l_int|1024
-)paren
-(brace
 id|REPORT_ERROR
 (paren
 l_string|&quot;Aml_exec_dyadic2_r/Concat_op: Buffer allocation failure&quot;
 )paren
 suffix:semicolon
-r_return
-(paren
-id|AE_NO_MEMORY
-)paren
-suffix:semicolon
-)brace
 id|status
 op_assign
 id|AE_NO_MEMORY
@@ -864,6 +813,11 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic2_r: Unknown dyadic opcode&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_BAD_OPCODE
@@ -873,10 +827,6 @@ id|cleanup
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Store the result of the operation (which is now in Obj_desc) into&n;&t; * the result descriptor, or the location pointed to by the result&n;&t; * descriptor (Res_desc).&n;&t; */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_exec_store
@@ -884,10 +834,17 @@ id|acpi_aml_exec_store
 id|ret_desc
 comma
 id|res_desc
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -909,6 +866,8 @@ id|acpi_aml_exec_store
 id|ret_desc2
 comma
 id|res_desc2
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Since the remainder is not returned, remove a reference to&n;&t;&t; * the object we created earlier&n;&t;&t; */
@@ -994,21 +953,21 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|time_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc
 op_assign
@@ -1025,6 +984,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get all operands */
@@ -1051,25 +1012,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Invalid parameters on object stack  */
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|2
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -1141,6 +1090,11 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic2_s: Unknown dyadic synchronization opcode&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_BAD_OPCODE
@@ -1235,21 +1189,21 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc2
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc
 op_assign
@@ -1269,6 +1223,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get all operands */
@@ -1295,25 +1251,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Invalid parameters on object stack  */
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|2
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -1439,6 +1383,11 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic2: Unknown dyadic opcode&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_BAD_OPCODE

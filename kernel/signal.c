@@ -78,7 +78,7 @@ id|sigqueue_cachep
 id|panic
 c_func
 (paren
-l_string|&quot;signals_init(): cannot create sigueue SLAB cache&quot;
+l_string|&quot;signals_init(): cannot create sigqueue SLAB cache&quot;
 )paren
 suffix:semicolon
 )brace

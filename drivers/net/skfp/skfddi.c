@@ -5688,9 +5688,10 @@ op_assign
 id|u_int
 )paren
 (paren
-(paren
-l_int|0
+l_int|16
 op_minus
+(paren
+(paren
 (paren
 r_int
 r_int
@@ -5700,6 +5701,13 @@ id|virt
 op_amp
 l_int|15UL
 )paren
+)paren
+suffix:semicolon
+id|size
+op_assign
+id|size
+op_mod
+l_int|16
 suffix:semicolon
 id|PRINTK
 c_func

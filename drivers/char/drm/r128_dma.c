@@ -52,65 +52,8 @@ id|R128_CLOCK_CNTL_DATA
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __i386__
-DECL|function|r128_flush_write_combine
-r_static
-r_void
-id|r128_flush_write_combine
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|xchangeDummy
-suffix:semicolon
-id|__asm__
-r_volatile
-(paren
-l_string|&quot;push %%eax ;&quot;
-l_string|&quot;xchg %%eax, %0 ;&quot;
-l_string|&quot;pop %%eax&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|xchangeDummy
-)paren
-)paren
-suffix:semicolon
-id|__asm__
-r_volatile
-(paren
-l_string|&quot;push %%eax ;&quot;
-l_string|&quot;push %%ebx ;&quot;
-l_string|&quot;push %%ecx ;&quot;
-l_string|&quot;push %%edx ;&quot;
-l_string|&quot;movl $0,%%eax ;&quot;
-l_string|&quot;cpuid ;&quot;
-l_string|&quot;pop %%edx ;&quot;
-l_string|&quot;pop %%ecx ;&quot;
-l_string|&quot;pop %%ebx ;&quot;
-l_string|&quot;pop %%eax&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-multiline_comment|/* no inputs */
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|function|r128_flush_write_combine
-r_static
-r_void
-id|r128_flush_write_combine
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
-macro_line|#endif
+DECL|macro|r128_flush_write_combine
+mdefine_line|#define r128_flush_write_combine()&t;mb()
 DECL|function|r128_status
 r_static
 r_void

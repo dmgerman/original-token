@@ -126,43 +126,37 @@ c_func
 (paren
 id|setup_delay
 comma
-id|HZ
-op_div
-l_int|20
+l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* ticks */
+multiline_comment|/* centiseconds */
 id|INT_MODULE_PARM
 c_func
 (paren
 id|resume_delay
 comma
-id|HZ
-op_div
-l_int|5
+l_int|20
 )paren
 suffix:semicolon
-multiline_comment|/* ticks */
+multiline_comment|/* centiseconds */
 id|INT_MODULE_PARM
 c_func
 (paren
 id|shutdown_delay
 comma
-id|HZ
-op_div
-l_int|40
+l_int|3
 )paren
 suffix:semicolon
-multiline_comment|/* ticks */
+multiline_comment|/* centiseconds */
 id|INT_MODULE_PARM
 c_func
 (paren
 id|vcc_settle
 comma
-l_int|400
+l_int|40
 )paren
 suffix:semicolon
-multiline_comment|/* msecs */
+multiline_comment|/* centiseconds */
 id|INT_MODULE_PARM
 c_func
 (paren
@@ -177,19 +171,19 @@ c_func
 (paren
 id|unreset_delay
 comma
-l_int|100
+l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* msecs */
+multiline_comment|/* centiseconds */
 id|INT_MODULE_PARM
 c_func
 (paren
 id|unreset_check
 comma
-l_int|100
+l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* msecs */
+multiline_comment|/* centiseconds */
 id|INT_MODULE_PARM
 c_func
 (paren
@@ -1746,15 +1740,16 @@ r_int
 id|priority
 )paren
 suffix:semicolon
-DECL|function|msleep
+multiline_comment|/*&n; * Sleep for n_cs centiseconds (1 cs = 1/100th of a second)&n; */
+DECL|function|cs_sleep
 r_static
 r_void
-id|msleep
+id|cs_sleep
 c_func
 (paren
 r_int
 r_int
-id|msec
+id|n_cs
 )paren
 (brace
 id|current-&gt;state
@@ -1765,14 +1760,14 @@ id|schedule_timeout
 c_func
 (paren
 (paren
-id|msec
+id|n_cs
 op_star
 id|HZ
 op_plus
-l_int|999
+l_int|99
 )paren
 op_div
-l_int|1000
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -2021,10 +2016,10 @@ op_decrement
 id|setup_timeout
 )paren
 (brace
-id|msleep
+id|cs_sleep
 c_func
 (paren
-l_int|100
+l_int|10
 )paren
 suffix:semicolon
 r_continue
@@ -2071,8 +2066,8 @@ op_or_assign
 id|SOCKET_PRESENT
 suffix:semicolon
 id|s-&gt;socket.flags
-op_assign
-l_int|0
+op_and_assign
+id|SS_DEBOUNCED
 suffix:semicolon
 r_if
 c_cond
@@ -2152,7 +2147,7 @@ op_amp
 id|s-&gt;socket
 )paren
 suffix:semicolon
-id|msleep
+id|cs_sleep
 c_func
 (paren
 id|vcc_settle
@@ -2253,10 +2248,12 @@ op_amp
 id|s-&gt;socket
 )paren
 suffix:semicolon
-id|msleep
+id|cs_sleep
 c_func
 (paren
 id|unreset_delay
+op_div
+l_int|10
 )paren
 suffix:semicolon
 id|unreset_socket
@@ -2331,7 +2328,7 @@ op_decrement
 id|setup_timeout
 )paren
 (brace
-id|msleep
+id|cs_sleep
 c_func
 (paren
 id|unreset_check
@@ -2345,7 +2342,7 @@ c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;cs: socket %p timed out during&quot;
-l_string|&quot; reset&bslash;n&quot;
+l_string|&quot; reset.  Try increasing setup_delay.&bslash;n&quot;
 comma
 id|s
 )paren
@@ -2690,7 +2687,7 @@ op_complement
 id|EVENT_MASK
 suffix:semicolon
 )brace
-id|msleep
+id|cs_sleep
 c_func
 (paren
 id|shutdown_delay
@@ -2817,18 +2814,22 @@ id|s-&gt;state
 op_amp
 id|SOCKET_SUSPEND
 )paren
-id|msleep
+id|cs_sleep
 c_func
 (paren
 id|resume_delay
 )paren
 suffix:semicolon
 r_else
-id|msleep
+id|cs_sleep
 c_func
 (paren
 id|setup_delay
 )paren
+suffix:semicolon
+id|s-&gt;socket.flags
+op_or_assign
+id|SS_DEBOUNCED
 suffix:semicolon
 r_if
 c_cond
@@ -2845,6 +2846,11 @@ id|s-&gt;state
 op_and_assign
 op_complement
 id|SOCKET_SETUP_PENDING
+suffix:semicolon
+id|s-&gt;socket.flags
+op_and_assign
+op_complement
+id|SS_DEBOUNCED
 suffix:semicolon
 )brace
 )brace

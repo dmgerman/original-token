@@ -1,83 +1,17 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: nsaccess - Top-level functions for accessing ACPI namespace&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nsaccess - Top-level functions for accessing ACPI namespace&n; *              $Revision: 108 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          NAMESPACE
 id|MODULE_NAME
 (paren
 l_string|&quot;nsaccess&quot;
 )paren
-suffix:semicolon
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_root_create_scope&n; *&n; * PARAMETERS:  Entry               - NTE for which a scope will be created&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a scope table for the given name table entry&n; *&n; * MUTEX:       Expects namespace to be locked&n; *&n; ***************************************************************************/
-id|ACPI_STATUS
-DECL|function|acpi_ns_root_create_scope
-id|acpi_ns_root_create_scope
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-id|entry
-)paren
-(brace
-multiline_comment|/* Allocate a scope table */
-r_if
-c_cond
-(paren
-id|entry-&gt;child_table
-)paren
-(brace
-r_return
-(paren
-id|AE_EXIST
-)paren
-suffix:semicolon
-)brace
-id|entry-&gt;child_table
-op_assign
-id|acpi_ns_allocate_name_table
-(paren
-id|NS_TABLE_SIZE
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|entry-&gt;child_table
-)paren
-(brace
-multiline_comment|/*  root name table allocation failure  */
-id|REPORT_ERROR
-(paren
-l_string|&quot;Root name table allocation failure&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-id|AE_NO_MEMORY
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Init the scope first entry -- since it is the exemplar of&n;&t; * the scope (Some fields are duplicated to new entries!)&n;&t; */
-id|acpi_ns_initialize_table
-(paren
-id|entry-&gt;child_table
-comma
-l_int|NULL
-comma
-id|entry
-)paren
-suffix:semicolon
-r_return
-(paren
-id|AE_OK
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_root_initialize&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Allocate and initialize the root name table&n; *&n; * MUTEX:       Locks namespace for entire execution&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_root_initialize&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Allocate and initialize the default root named objects&n; *&n; * MUTEX:       Locks namespace for entire execution&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ns_root_initialize
 id|acpi_ns_root_initialize
@@ -96,11 +30,11 @@ id|init_val
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|new_entry
+id|new_node
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -109,11 +43,11 @@ id|acpi_cm_acquire_mutex
 id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Root is initially NULL, so a non-NULL value indicates&n;&t; * that Acpi_ns_root_initialize() has already been called; just return.&n;&t; */
+multiline_comment|/*&n;&t; * The global root ptr is initially NULL, so a non-NULL value indicates&n;&t; * that Acpi_ns_root_initialize() has already been called; just return.&n;&t; */
 r_if
 c_cond
 (paren
-id|acpi_gbl_root_object-&gt;child_table
+id|acpi_gbl_root_node
 )paren
 (brace
 id|status
@@ -124,27 +58,12 @@ r_goto
 id|unlock_and_exit
 suffix:semicolon
 )brace
-multiline_comment|/* Create the root scope */
-id|status
+multiline_comment|/*&n;&t; * Tell the rest of the subsystem that the root is initialized&n;&t; * (This is OK because the namespace is locked)&n;&t; */
+id|acpi_gbl_root_node
 op_assign
-id|acpi_ns_root_create_scope
-(paren
-id|acpi_gbl_root_object
-)paren
+op_amp
+id|acpi_gbl_root_node_struct
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_goto
-id|unlock_and_exit
-suffix:semicolon
-)brace
 multiline_comment|/* Enter the pre-defined names in the name table */
 r_for
 c_loop
@@ -179,21 +98,26 @@ comma
 l_int|NULL
 comma
 op_amp
-id|new_entry
+id|new_node
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * if name entered successfully&n;&t;&t; * &amp;&amp; its entry in Pre_defined_names[] specifies an&n;&t;&t; * initial value&n;&t;&t; */
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
 (paren
 id|status
-op_eq
-id|AE_OK
 )paren
-op_logical_and
-id|new_entry
-op_logical_and
+op_logical_or
+(paren
+op_logical_neg
+id|new_node
+)paren
+)paren
+multiline_comment|/*&n;&t;&t; * Name entered successfully.&n;&t;&t; * If entry in Pre_defined_names[] specifies an&n;&t;&t; * initial value, create the initial value.&n;&t;&t; */
+r_if
+c_cond
+(paren
 id|init_val-&gt;val
 )paren
 (brace
@@ -268,9 +192,6 @@ op_assign
 id|acpi_cm_allocate
 (paren
 (paren
-id|ACPI_SIZE
-)paren
-(paren
 id|obj_desc-&gt;string.length
 op_plus
 l_int|1
@@ -305,10 +226,6 @@ suffix:semicolon
 )brace
 id|STRCPY
 (paren
-(paren
-r_char
-op_star
-)paren
 id|obj_desc-&gt;string.pointer
 comma
 id|init_val-&gt;val
@@ -407,15 +324,6 @@ id|unlock_and_exit
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* TBD: [Restructure] These fields may be obsolete */
-id|obj_desc-&gt;mutex.lock_count
-op_assign
-l_int|0
-suffix:semicolon
-id|obj_desc-&gt;mutex.thread_id
-op_assign
-l_int|0
-suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -437,10 +345,10 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Store pointer to value descriptor in nte */
+multiline_comment|/* Store pointer to value descriptor in the Node */
 id|acpi_ns_attach_object
 (paren
-id|new_entry
+id|new_node
 comma
 id|obj_desc
 comma
@@ -462,7 +370,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_lookup&n; *&n; * PARAMETERS:  Prefix_scope    - Search scope if name is not fully qualified&n; *              Pathname        - Search pathname, in internal format&n; *                                (as represented in the AML stream)&n; *              Type            - Type associated with name&n; *              Interpreter_mode - IMODE_LOAD_PASS2 =&gt; add name if not found&n; *              Ret_entry       - Where the new entry (NTE) is placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Find or enter the passed name in the name space.&n; *              Log an error if name not found in Exec mode.&n; *&n; * MUTEX:       Assumes namespace is locked.&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_lookup&n; *&n; * PARAMETERS:  Prefix_node - Search scope if name is not fully qualified&n; *              Pathname        - Search pathname, in internal format&n; *                                (as represented in the AML stream)&n; *              Type            - Type associated with name&n; *              Interpreter_mode - IMODE_LOAD_PASS2 =&gt; add name if not found&n; *              Flags           - Flags describing the search restrictions&n; *              Walk_state      - Current state of the walk&n; *              Return_node - Where the Node is placed (if found&n; *                                or created successfully)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Find or enter the passed name in the name space.&n; *              Log an error if name not found in Exec mode.&n; *&n; * MUTEX:       Assumes namespace is locked.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ns_lookup
 id|acpi_ns_lookup
@@ -471,7 +379,7 @@ id|ACPI_GENERIC_STATE
 op_star
 id|scope_info
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|pathname
 comma
@@ -488,34 +396,34 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 op_star
-id|ret_entry
+id|return_node
 )paren
 (brace
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_NAME_TABLE
+id|ACPI_NAMESPACE_NODE
 op_star
-id|prefix_scope
+id|prefix_node
 suffix:semicolon
-id|ACPI_NAME_TABLE
+id|ACPI_NAMESPACE_NODE
 op_star
-id|table_to_search
+id|current_node
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_NAME_TABLE
+id|ACPI_NAMESPACE_NODE
 op_star
 id|scope_to_push
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|this_entry
+id|this_node
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -540,7 +448,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|ret_entry
+id|return_node
 )paren
 (brace
 r_return
@@ -553,7 +461,7 @@ id|acpi_gbl_ns_lookup_count
 op_increment
 suffix:semicolon
 op_star
-id|ret_entry
+id|return_node
 op_assign
 id|ENTRY_NOT_FOUND
 suffix:semicolon
@@ -561,47 +469,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|acpi_gbl_root_object-&gt;child_table
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * If the name space has not been initialized:&n;&t;&t; * -  In Pass1 of Load mode, we need to initialize it&n;&t;&t; *    before trying to define a name.&n;&t;&t; * -  In Exec mode, there are no names to be found.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|IMODE_LOAD_PASS1
-op_eq
-id|interpreter_mode
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
-id|acpi_ns_root_initialize
-(paren
-)paren
-)paren
-op_ne
-id|AE_OK
+id|acpi_gbl_root_node
 )paren
 (brace
 r_return
 (paren
-id|status
+id|AE_NO_NAMESPACE
 )paren
 suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-r_return
-(paren
-id|AE_NOT_FOUND
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; * Get the prefix scope.&n;&t; * A null scope means use the root scope&n;&t; */
 r_if
@@ -614,20 +489,20 @@ id|scope_info
 op_logical_or
 (paren
 op_logical_neg
-id|scope_info-&gt;scope.name_table
+id|scope_info-&gt;scope.node
 )paren
 )paren
 (brace
-id|prefix_scope
+id|prefix_node
 op_assign
-id|acpi_gbl_root_object-&gt;child_table
+id|acpi_gbl_root_node
 suffix:semicolon
 )brace
 r_else
 (brace
-id|prefix_scope
+id|prefix_node
 op_assign
-id|scope_info-&gt;scope.name_table
+id|scope_info-&gt;scope.node
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * This check is explicitly split provide relax the Type_to_check_for&n;&t; * conditions for Bank_field_defn. Originally, both Bank_field_defn and&n;&t; * Def_field_defn caused Type_to_check_for to be set to ACPI_TYPE_REGION,&n;&t; * but the Bank_field_defn may also check for a Field definition as well&n;&t; * as an Operation_region.&n;&t; */
@@ -667,6 +542,7 @@ op_assign
 id|type
 suffix:semicolon
 )brace
+multiline_comment|/* TBD: [Restructure] - Move the pathname stuff into a new procedure */
 multiline_comment|/* Examine the name pointer */
 r_if
 c_cond
@@ -684,9 +560,9 @@ id|num_segments
 op_assign
 l_int|0
 suffix:semicolon
-id|this_entry
+id|this_node
 op_assign
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 suffix:semicolon
 )brace
 r_else
@@ -702,9 +578,9 @@ id|AML_ROOT_PREFIX
 )paren
 (brace
 multiline_comment|/* Pathname is fully qualified, look in root name table */
-id|table_to_search
+id|current_node
 op_assign
-id|acpi_gbl_root_object-&gt;child_table
+id|acpi_gbl_root_node
 suffix:semicolon
 multiline_comment|/* point to segment part */
 id|pathname
@@ -721,9 +597,9 @@ id|pathname
 )paren
 )paren
 (brace
-id|this_entry
+id|this_node
 op_assign
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 suffix:semicolon
 r_goto
 id|check_for_new_scope_and_exit
@@ -733,9 +609,9 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Pathname is relative to current scope, start there */
-id|table_to_search
+id|current_node
 op_assign
-id|prefix_scope
+id|prefix_node
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Handle up-prefix (carat).  More than one prefix&n;&t;&t;&t; * is supported&n;&t;&t;&t; */
 r_while
@@ -752,22 +628,24 @@ id|pathname
 op_increment
 suffix:semicolon
 multiline_comment|/*  Backup to the parent&squot;s scope  */
-id|table_to_search
+id|this_node
 op_assign
-id|table_to_search-&gt;parent_table
+id|acpi_ns_get_parent_object
+(paren
+id|current_node
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|table_to_search
+id|this_node
 )paren
 (brace
 multiline_comment|/* Current scope has no parent scope */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_lookup: Too many parent&quot;
-l_string|&quot;prefixes or scope has no parent&quot;
+l_string|&quot;Too many parent prefixes (^) - reached root&quot;
 )paren
 suffix:semicolon
 r_return
@@ -776,6 +654,10 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
+id|current_node
+op_assign
+id|this_node
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t;&t; * Examine the name prefix opcode, if any,&n;&t;&t; * to determine the number of segments&n;&t;&t; */
@@ -810,7 +692,7 @@ id|AML_MULTI_NAME_PREFIX_OP
 id|num_segments
 op_assign
 (paren
-id|s32
+id|u32
 )paren
 op_star
 (paren
@@ -841,10 +723,10 @@ c_loop
 id|num_segments
 op_decrement
 op_logical_and
-id|table_to_search
+id|current_node
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Search for the current segment in the table where&n;&t;&t; * it should be.&n;&t;&t; * Type is significant only at the last (topmost) level.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Search for the current name segment under the current&n;&t;&t; * named object.  The Type is significant only at the last (topmost)&n;&t;&t; * level.  (We don&squot;t care about the types along the path, only&n;&t;&t; * the type of the final target object.)&n;&t;&t; */
 id|this_search_type
 op_assign
 id|ACPI_TYPE_ANY
@@ -861,6 +743,7 @@ op_assign
 id|type
 suffix:semicolon
 )brace
+multiline_comment|/* Pluck and ACPI name from the front of the pathname */
 id|MOVE_UNALIGNED32_TO_32
 (paren
 op_amp
@@ -869,6 +752,7 @@ comma
 id|pathname
 )paren
 suffix:semicolon
+multiline_comment|/* Try to find the ACPI name */
 id|status
 op_assign
 id|acpi_ns_search_and_enter
@@ -877,7 +761,7 @@ id|simple_name
 comma
 id|walk_state
 comma
-id|table_to_search
+id|current_node
 comma
 id|interpreter_mode
 comma
@@ -886,15 +770,16 @@ comma
 id|flags
 comma
 op_amp
-id|this_entry
+id|this_node
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_if
@@ -905,25 +790,7 @@ op_eq
 id|AE_NOT_FOUND
 )paren
 (brace
-multiline_comment|/* Name not in ACPI namespace  */
-r_if
-c_cond
-(paren
-id|IMODE_LOAD_PASS1
-op_eq
-id|interpreter_mode
-op_logical_or
-id|IMODE_LOAD_PASS2
-op_eq
-id|interpreter_mode
-)paren
-(brace
-id|REPORT_ERROR
-(paren
-l_string|&quot;Name table overflow&quot;
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* Name not found in ACPI namespace  */
 )brace
 r_return
 (paren
@@ -931,7 +798,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * If 1) last segment (Num_segments == 0)&n;&t;&t; *    2) and looking for a specific type&n;&t;&t; *       (Not checking for TYPE_ANY)&n;&t;&t; *    3) which is not a local type (TYPE_DEF_ANY)&n;&t;&t; *    4) which is not a local type (TYPE_SCOPE)&n;&t;&t; *    5) which is not a local type (TYPE_INDEX_FIELD_DEFN)&n;&t;&t; *    6) and type of entry is known (not TYPE_ANY)&n;&t;&t; *    7) and entry does not match request&n;&t;&t; *&n;&t;&t; * Then we have a type mismatch.  Just warn and ignore it.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If 1) This is the last segment (Num_segments == 0)&n;&t;&t; *    2) and looking for a specific type&n;&t;&t; *       (Not checking for TYPE_ANY)&n;&t;&t; *    3) which is not a local type (TYPE_DEF_ANY)&n;&t;&t; *    4) which is not a local type (TYPE_SCOPE)&n;&t;&t; *    5) which is not a local type (TYPE_INDEX_FIELD_DEFN)&n;&t;&t; *    6) and type of object is known (not TYPE_ANY)&n;&t;&t; *    7) and object does not match request&n;&t;&t; *&n;&t;&t; * Then we have a type mismatch.  Just warn and ignore it.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -966,26 +833,26 @@ id|INTERNAL_TYPE_INDEX_FIELD_DEFN
 )paren
 op_logical_and
 (paren
-id|this_entry-&gt;type
+id|this_node-&gt;type
 op_ne
 id|ACPI_TYPE_ANY
 )paren
 op_logical_and
 (paren
-id|this_entry-&gt;type
+id|this_node-&gt;type
 op_ne
 id|type_to_check_for
 )paren
 )paren
 (brace
-multiline_comment|/* Complain about type mismatch */
+multiline_comment|/* Complain about a type mismatch */
 id|REPORT_WARNING
 (paren
 l_string|&quot;Type mismatch&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * If last segment and not looking for a specific type, but type of&n;&t;&t; * found entry is known, use that type to see if it opens a scope.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If this is the last name segment and we are not looking for a&n;&t;&t; * specific type, but the type of found object is known, use that type&n;&t;&t; * to see if it opens a scope.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1004,7 +871,7 @@ id|type
 (brace
 id|type
 op_assign
-id|this_entry-&gt;type
+id|this_node-&gt;type
 suffix:semicolon
 )brace
 r_if
@@ -1020,117 +887,17 @@ id|type
 )paren
 op_logical_and
 (paren
-id|this_entry-&gt;child_table
+id|this_node-&gt;child
 op_eq
 l_int|NULL
 )paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * More segments or the type implies enclosed scope,&n;&t;&t;&t; * and the next scope has not been allocated.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|IMODE_LOAD_PASS1
-op_eq
-id|interpreter_mode
-)paren
-op_logical_or
-(paren
-id|IMODE_LOAD_PASS2
-op_eq
-id|interpreter_mode
-)paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t;&t; * First or second pass load mode&n;&t;&t;&t;&t; * ==&gt; locate the next scope&n;&t;&t;&t;&t; */
-id|this_entry-&gt;child_table
+)brace
+id|current_node
 op_assign
-id|acpi_ns_allocate_name_table
-(paren
-id|NS_TABLE_SIZE
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|this_entry-&gt;child_table
-)paren
-(brace
-r_return
-(paren
-id|AE_NO_MEMORY
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* Now complain if there is no next scope */
-r_if
-c_cond
-(paren
-id|this_entry-&gt;child_table
-op_eq
-l_int|NULL
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|IMODE_LOAD_PASS1
-op_eq
-id|interpreter_mode
-op_logical_or
-id|IMODE_LOAD_PASS2
-op_eq
-id|interpreter_mode
-)paren
-(brace
-id|REPORT_ERROR
-(paren
-l_string|&quot;Name Table allocation failure&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-id|AE_NOT_FOUND
-)paren
-suffix:semicolon
-)brace
-r_return
-(paren
-id|AE_NOT_FOUND
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Scope table initialization */
-r_if
-c_cond
-(paren
-id|IMODE_LOAD_PASS1
-op_eq
-id|interpreter_mode
-op_logical_or
-id|IMODE_LOAD_PASS2
-op_eq
-id|interpreter_mode
-)paren
-(brace
-multiline_comment|/* Initialize the new table */
-id|acpi_ns_initialize_table
-(paren
-id|this_entry-&gt;child_table
-comma
-id|table_to_search
-comma
-id|this_entry
-)paren
-suffix:semicolon
-)brace
-)brace
-id|table_to_search
-op_assign
-id|this_entry-&gt;child_table
+id|this_node
 suffix:semicolon
 multiline_comment|/* point to next name segment */
 id|pathname
@@ -1183,7 +950,7 @@ r_else
 (brace
 id|scope_to_push
 op_assign
-id|this_entry-&gt;child_table
+id|this_node
 suffix:semicolon
 )brace
 id|status
@@ -1215,9 +982,9 @@ suffix:semicolon
 )brace
 )brace
 op_star
-id|ret_entry
+id|return_node
 op_assign
-id|this_entry
+id|this_node
 suffix:semicolon
 r_return
 (paren

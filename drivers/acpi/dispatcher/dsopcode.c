@@ -1,43 +1,42 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dsopcode - Dispatcher Op Region support&n; *                          and handling of &quot;control&quot; opcodes&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dsopcode - Dispatcher Op Region support and handling of&n; *                         &quot;control&quot; opcodes&n; *              $Revision: 17 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          DISPATCHER
 id|MODULE_NAME
 (paren
 l_string|&quot;dsopcode&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_get_region_arguments&n; *&n; * PARAMETERS:  Rgn_desc        - A valid region object&n; *&n; * RETURN:      Status.&n; *&n; * DESCRIPTION: Get region address and length.  This implements the late&n; *              evaluation of these region attributes.&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_get_region_arguments
 id|acpi_ds_get_region_arguments
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|rgn_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|method_desc
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|region_op
 suffix:semicolon
@@ -51,9 +50,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rgn_desc-&gt;region.region_flags
+id|rgn_desc-&gt;region.flags
 op_amp
-id|REGION_AGRUMENT_DATA_VALID
+id|AOPOBJ_DATA_VALID
 )paren
 (brace
 r_return
@@ -66,16 +65,16 @@ id|method_desc
 op_assign
 id|rgn_desc-&gt;region.method
 suffix:semicolon
-id|entry
+id|node
 op_assign
-id|rgn_desc-&gt;region.nte
+id|rgn_desc-&gt;region.node
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate a new parser op to be the root of the parsed&n;&t; * Op_region tree&n;&t; */
 id|op
 op_assign
 id|acpi_ps_alloc_op
 (paren
-id|AML_REGION_OP
+id|AML_SCOPE_OP
 )paren
 suffix:semicolon
 r_if
@@ -86,15 +85,17 @@ id|op
 )paren
 (brace
 r_return
+(paren
 id|AE_NO_MEMORY
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Save the NTE for use in Acpi_ps_parse_aml */
-id|op-&gt;acpi_named_object
+multiline_comment|/* Save the Node for use in Acpi_ps_parse_aml */
+id|op-&gt;node
 op_assign
-id|acpi_ns_get_parent_entry
+id|acpi_ns_get_parent_object
 (paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 multiline_comment|/* Get a handle to the parent ACPI table */
@@ -102,7 +103,7 @@ id|status
 op_assign
 id|acpi_tb_handle_to_object
 (paren
-id|entry-&gt;owner_id
+id|node-&gt;owner_id
 comma
 op_amp
 id|table_desc
@@ -135,49 +136,108 @@ comma
 id|method_desc-&gt;method.pcode_length
 comma
 l_int|0
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+id|acpi_ds_load1_begin_op
+comma
+id|acpi_ds_load1_end_op
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ACPI_SUCCESS
+id|ACPI_FAILURE
 (paren
 id|status
 )paren
 )paren
 (brace
+id|acpi_ps_delete_parse_tree
+(paren
+id|op
+)paren
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Get and init the actual Region_op created above */
+multiline_comment|/*    Region_op = Op-&gt;Value.Arg;&n;&t;Op-&gt;Node = Node;*/
 id|region_op
 op_assign
 id|op-&gt;value.arg
 suffix:semicolon
-id|region_op-&gt;acpi_named_object
+id|region_op-&gt;node
 op_assign
-id|entry
+id|node
+suffix:semicolon
+id|acpi_ps_delete_parse_tree
+(paren
+id|op
+)paren
 suffix:semicolon
 multiline_comment|/* Acpi_evaluate the address and length arguments for the Op_region */
-id|acpi_ps_walk_parsed_aml
+id|op
+op_assign
+id|acpi_ps_alloc_op
 (paren
-id|region_op
+id|AML_SCOPE_OP
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+r_return
+(paren
+id|AE_NO_MEMORY
+)paren
+suffix:semicolon
+)brace
+id|op-&gt;node
+op_assign
+id|acpi_ns_get_parent_object
+(paren
+id|node
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|acpi_ps_parse_aml
+(paren
+id|op
 comma
-id|region_op
+id|method_desc-&gt;method.pcode
+comma
+id|method_desc-&gt;method.pcode_length
+comma
+id|ACPI_PARSE_EXECUTE
+op_or
+id|ACPI_PARSE_DELETE_TREE
+comma
+l_int|NULL
+multiline_comment|/*Method_desc*/
 comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-id|table_desc-&gt;table_id
 comma
 id|acpi_ds_exec_begin_op
 comma
 id|acpi_ds_exec_end_op
 )paren
 suffix:semicolon
-)brace
+multiline_comment|/*&n;&t;Acpi_ps_walk_parsed_aml (Region_op, Region_op, NULL, NULL, NULL,&n;&t;&t;&t; NULL, Table_desc-&gt;Table_id,&n;&t;&t;&t; Acpi_ds_exec_begin_op, Acpi_ds_exec_end_op);&n;*/
 multiline_comment|/* All done with the parse tree, delete it */
 id|acpi_ps_delete_parse_tree
 (paren
@@ -199,7 +259,7 @@ id|ACPI_HANDLE
 id|obj_handle
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -224,7 +284,9 @@ id|FALSE
 )paren
 suffix:semicolon
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_eval_region_operands&n; *&n; * PARAMETERS:  Op              - A valid region Op object&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Get region address and length&n; *              Called from Acpi_ds_exec_end_op during Op_region parse tree walk&n; *&n; ****************************************************************************/
@@ -236,7 +298,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -244,26 +306,26 @@ id|op
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_desc
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|next_op
 suffix:semicolon
 multiline_comment|/*&n;&t; * This is where we evaluate the address and length fields of the Op_region declaration&n;&t; */
-id|entry
+id|node
 op_assign
-id|op-&gt;acpi_named_object
+id|op-&gt;node
 suffix:semicolon
 multiline_comment|/* Next_op points to the op that holds the Space_iD */
 id|next_op
@@ -304,7 +366,7 @@ id|region_desc
 op_assign
 id|acpi_ns_get_attached_object
 (paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 r_if
@@ -361,9 +423,9 @@ id|obj_desc
 )paren
 suffix:semicolon
 multiline_comment|/* Now the address and length are valid for this opregion */
-id|region_desc-&gt;region.region_flags
+id|region_desc-&gt;region.flags
 op_or_assign
-id|REGION_AGRUMENT_DATA_VALID
+id|AOPOBJ_DATA_VALID
 suffix:semicolon
 r_return
 (paren
@@ -380,7 +442,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -435,6 +497,14 @@ comma
 id|control_state
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Save a pointer to the predicate for multiple executions&n;&t;&t; * of a loop&n;&t;&t; */
+id|walk_state-&gt;control_state-&gt;control.aml_predicate_start
+op_assign
+id|walk_state-&gt;parser_state-&gt;aml
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/*Acpi_ps_pkg_length_encoding_size (GET8 (Walk_state-&gt;Parser_state-&gt;Aml));*/
 r_break
 suffix:semicolon
 r_case
@@ -466,7 +536,9 @@ r_break
 suffix:semicolon
 )brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_exec_end_control_op&n; *&n; * PARAMETERS:  Walk_list       - The list that owns the walk stack&n; *              Op              - The control Op&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Handles all control ops encountered during control method&n; *              execution.&n; *&n; *&n; ******************************************************************************/
@@ -478,7 +550,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -542,11 +614,10 @@ id|walk_state-&gt;control_state-&gt;common.value
 multiline_comment|/* Predicate was true, go back and evaluate it again! */
 id|status
 op_assign
-id|AE_CTRL_TRUE
+id|AE_CTRL_PENDING
 suffix:semicolon
 )brace
-r_else
-(brace
+multiline_comment|/*        else {*/
 multiline_comment|/* Pop this control state and free it */
 id|control_state
 op_assign
@@ -556,24 +627,29 @@ op_amp
 id|walk_state-&gt;control_state
 )paren
 suffix:semicolon
+id|walk_state-&gt;aml_last_while
+op_assign
+id|control_state-&gt;control.aml_predicate_start
+suffix:semicolon
 id|acpi_cm_delete_generic_state
 (paren
 id|control_state
 )paren
 suffix:semicolon
-)brace
+multiline_comment|/*        }*/
 r_break
 suffix:semicolon
 r_case
 id|AML_RETURN_OP
 suffix:colon
-multiline_comment|/* One optional operand -- the return value */
+multiline_comment|/*&n;&t;&t; * One optional operand -- the return value&n;&t;&t; * It can be either an immediate operand or a result that&n;&t;&t; * has been bubbled up the tree&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|op-&gt;value.arg
 )paren
 (brace
+multiline_comment|/* Return statement has an immediate operand */
 id|status
 op_assign
 id|acpi_ds_create_operands
@@ -593,10 +669,11 @@ id|status
 )paren
 (brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * TBD: [Restructure] Just check for NULL arg&n;&t;&t;&t; * to signify no return value???&n;&t;&t;&t; */
 multiline_comment|/*&n;&t;&t;&t; * If value being returned is a Reference (such as&n;&t;&t;&t; * an arg or local), resolve it now because it may&n;&t;&t;&t; * cease to exist at the end of the method.&n;&t;&t;&t; */
 id|status
 op_assign
@@ -607,6 +684,8 @@ id|walk_state-&gt;operands
 (braket
 l_int|0
 )braket
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -619,10 +698,12 @@ id|status
 )paren
 (brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Get the return value and save as the last result&n;&t;&t;&t; * value&n;&t;&t;&t; * This is the only place where Walk_state-&gt;Return_desc&n;&t;&t;&t; * is set to anything other than zero!&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Get the return value and save as the last result&n;&t;&t;&t; * value.  This is the only place where Walk_state-&gt;Return_desc&n;&t;&t;&t; * is set to anything other than zero!&n;&t;&t;&t; */
 id|walk_state-&gt;return_desc
 op_assign
 id|walk_state-&gt;operands
@@ -632,8 +713,60 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|walk_state-&gt;num_results
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * The return value has come from a previous calculation.&n;&t;&t;&t; *&n;&t;&t;&t; * If value being returned is a Reference (such as&n;&t;&t;&t; * an arg or local), resolve it now because it may&n;&t;&t;&t; * cease to exist at the end of the method.&n;&t;&t;&t; */
+id|status
+op_assign
+id|acpi_aml_resolve_to_value
+(paren
+op_amp
+id|walk_state-&gt;results
+(braket
+l_int|0
+)braket
+comma
+id|walk_state
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+id|walk_state-&gt;return_desc
+op_assign
+id|walk_state-&gt;results
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+r_else
 (brace
 multiline_comment|/* No return operand */
+r_if
+c_cond
+(paren
+id|walk_state-&gt;num_operands
+)paren
+(brace
 id|acpi_cm_remove_reference
 (paren
 id|walk_state-&gt;operands
@@ -642,6 +775,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+)brace
 id|walk_state-&gt;operands
 (braket
 l_int|0
@@ -666,7 +800,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|AML_NOOP_CODE
+id|AML_NOOP_OP
 suffix:colon
 multiline_comment|/* Just do nothing! */
 r_break
@@ -703,7 +837,9 @@ r_break
 suffix:semicolon
 )brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 eof

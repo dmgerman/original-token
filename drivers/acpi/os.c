@@ -9,6 +9,12 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;driver.h&quot;
+DECL|macro|_COMPONENT
+mdefine_line|#define _COMPONENT&t;OS_DEPENDENT
+id|MODULE_NAME
+(paren
+l_string|&quot;os&quot;
+)paren
 DECL|variable|acpi_irq_irq
 r_static
 r_int
@@ -118,7 +124,7 @@ id|acpi_os_printf
 c_func
 (paren
 r_const
-r_char
+id|NATIVE_CHAR
 op_star
 id|fmt
 comma
@@ -167,7 +173,7 @@ id|acpi_os_vprintf
 c_func
 (paren
 r_const
-r_char
+id|NATIVE_CHAR
 op_star
 id|fmt
 comma
@@ -198,8 +204,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;ACPI: %s&quot;
+l_string|&quot;%s&quot;
 comma
 id|buffer
 )paren
@@ -457,8 +462,6 @@ id|irq
 comma
 id|acpi_irq
 comma
-id|SA_INTERRUPT
-op_or
 id|SA_SHIRQ
 comma
 l_string|&quot;acpi&quot;
@@ -1262,7 +1265,7 @@ DECL|function|acpi_os_breakpoint
 id|acpi_os_breakpoint
 c_func
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|msg
 )paren
@@ -1314,7 +1317,7 @@ comma
 id|u32
 id|line
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|msg
 )paren
@@ -1333,7 +1336,7 @@ DECL|function|acpi_os_get_line
 id|acpi_os_get_line
 c_func
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|buffer
 )paren

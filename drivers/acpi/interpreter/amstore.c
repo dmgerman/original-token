@@ -1,31 +1,34 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstore - AML Interpreter object store support&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstore - AML Interpreter object store support&n; *              $Revision: 116 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amstore&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_store&n; *&n; * PARAMETERS:  *Val_desc           - Value to be stored&n; *              *Dest_desc          - Where to store it 0 Must be (ACPI_HANDLE)&n; *                                    or an ACPI_OBJECT_INTERNAL of type&n; *                                    Reference; if the latter the descriptor&n; *                                    will be either reused or deleted.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store the value described by Val_desc into the location&n; *              described by Dest_desc. Called by various interpreter&n; *              functions to store the result of an operation into&n; *              the destination operand.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_store&n; *&n; * PARAMETERS:  *Val_desc           - Value to be stored&n; *              *Dest_desc          - Where to store it 0 Must be (ACPI_HANDLE)&n; *                                    or an ACPI_OPERAND_OBJECT  of type&n; *                                    Reference; if the latter the descriptor&n; *                                    will be either reused or deleted.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store the value described by Val_desc into the location&n; *              described by Dest_desc. Called by various interpreter&n; *              functions to store the result of an operation into&n; *              the destination operand.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_store
 id|acpi_aml_exec_store
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|val_desc
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|dest_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
 id|ACPI_STATUS
@@ -33,19 +36,19 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|delete_dest_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|tmp_desc
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -90,10 +93,10 @@ id|ACPI_DESC_TYPE_NAMED
 )paren
 (brace
 multiline_comment|/* Dest is an ACPI_HANDLE, create a new object */
-id|entry
+id|node
 op_assign
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|dest_desc
@@ -126,7 +129,7 @@ id|AML_NAME_OP
 suffix:semicolon
 id|dest_desc-&gt;reference.object
 op_assign
-id|entry
+id|node
 suffix:semicolon
 )brace
 multiline_comment|/* Destination object must be of type Reference */
@@ -162,11 +165,13 @@ id|dest_desc
 suffix:semicolon
 id|status
 op_assign
-id|acpi_aml_store_object_to_nte
+id|acpi_aml_store_object_to_node
 (paren
 id|val_desc
 comma
 id|dest_desc-&gt;reference.object
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_break
@@ -275,6 +280,8 @@ id|acpi_aml_build_copy_internal_package_object
 id|val_desc
 comma
 id|tmp_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -326,11 +333,12 @@ multiline_comment|/*&n;&t;&t;&t;&t; * The destination element is not a package, 
 id|status
 op_assign
 id|acpi_aml_store_object_to_object
-c_func
 (paren
 id|val_desc
 comma
 id|tmp_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -545,9 +553,10 @@ multiline_comment|/*&n;&t;&t; * If we had an error, break out of this case state
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_break
@@ -569,7 +578,7 @@ suffix:colon
 r_case
 id|AML_ONES_OP
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Storing to a constant is a no-op -- see spec sec 15.2.3.3.1.&n;&t;&t; * Delete the result descriptor.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Storing to a constant is a no-op -- see ACPI Specification&n;&t;&t; * Delete the result descriptor.&n;&t;&t; */
 id|delete_dest_desc
 op_assign
 id|dest_desc
@@ -590,6 +599,8 @@ id|dest_desc-&gt;reference.offset
 )paren
 comma
 id|val_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 id|delete_dest_desc
@@ -612,6 +623,8 @@ id|dest_desc-&gt;reference.offset
 )paren
 comma
 id|val_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 id|delete_dest_desc
@@ -623,7 +636,7 @@ suffix:semicolon
 r_case
 id|AML_DEBUG_OP
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Storing to the Debug object causes the value stored to be&n;&t;&t; * displayed and otherwise has no effect -- see sec. 15.2.3.3.3.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Storing to the Debug object causes the value stored to be&n;&t;&t; * displayed and otherwise has no effect -- see ACPI Specification&n;&t;&t; */
 id|delete_dest_desc
 op_assign
 id|dest_desc

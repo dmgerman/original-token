@@ -1,18 +1,17 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxface - External interfaces for ACPI events&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxface - External interfaces for ACPI events&n; *              $Revision: 88 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          EVENT_HANDLING
 id|MODULE_NAME
 (paren
 l_string|&quot;evxface&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_install_fixed_event_handler&n; *&n; * PARAMETERS:  Event           - Event type to enable.&n; *              Handler         - Pointer to the handler function for the&n; *                                event&n; *              Context         - Value passed to the handler on each GPE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Saves the pointer to the handler function and then enables the&n; *              event.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_install_fixed_event_handler
@@ -270,17 +269,17 @@ op_star
 id|context
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|notify_obj
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|obj_entry
+id|device_node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -315,7 +314,7 @@ id|acpi_cm_acquire_mutex
 id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
-id|obj_entry
+id|device_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -326,7 +325,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|obj_entry
+id|device_node
 )paren
 (brace
 id|status
@@ -387,9 +386,9 @@ op_eq
 id|ACPI_SYSTEM_NOTIFY
 )paren
 (brace
-id|acpi_gbl_sys_notify.nte
+id|acpi_gbl_sys_notify.node
 op_assign
-id|obj_entry
+id|device_node
 suffix:semicolon
 id|acpi_gbl_sys_notify.handler
 op_assign
@@ -402,9 +401,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|acpi_gbl_drv_notify.nte
+id|acpi_gbl_drv_notify.node
 op_assign
-id|obj_entry
+id|device_node
 suffix:semicolon
 id|acpi_gbl_drv_notify.handler
 op_assign
@@ -425,25 +424,25 @@ r_if
 c_cond
 (paren
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_DEVICE
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_PROCESSOR
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_POWER
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_THERMAL
 )paren
@@ -465,7 +464,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|obj_entry
+id|device_node
 )paren
 suffix:semicolon
 r_if
@@ -515,7 +514,7 @@ id|obj_desc
 op_assign
 id|acpi_cm_create_internal_object
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 )paren
 suffix:semicolon
 r_if
@@ -533,7 +532,7 @@ r_goto
 id|unlock_and_exit
 suffix:semicolon
 )brace
-multiline_comment|/* Attach new object to the NTE */
+multiline_comment|/* Attach new object to the Node */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -545,7 +544,7 @@ comma
 (paren
 id|u8
 )paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 )paren
 suffix:semicolon
 r_if
@@ -585,9 +584,9 @@ r_goto
 id|unlock_and_exit
 suffix:semicolon
 )brace
-id|notify_obj-&gt;notify_handler.nte
+id|notify_obj-&gt;notify_handler.node
 op_assign
-id|obj_entry
+id|device_node
 suffix:semicolon
 id|notify_obj-&gt;notify_handler.handler
 op_assign
@@ -645,17 +644,17 @@ id|NOTIFY_HANDLER
 id|handler
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|notify_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|obj_entry
+id|device_node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -690,7 +689,7 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 multiline_comment|/* Convert and validate the device handle */
-id|obj_entry
+id|device_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -701,7 +700,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|obj_entry
+id|device_node
 )paren
 (brace
 id|status
@@ -717,25 +716,25 @@ r_if
 c_cond
 (paren
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_DEVICE
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_PROCESSOR
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_POWER
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|device_node-&gt;type
 op_ne
 id|ACPI_TYPE_THERMAL
 )paren
@@ -757,7 +756,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|obj_entry
+id|device_node
 )paren
 suffix:semicolon
 r_if
@@ -1162,7 +1161,9 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_release_global_lock&n; *&n; * PARAMETERS:  Handle      - Returned from Acpi_acquire_global_lock&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Release the ACPI Global Lock&n; *&n; ******************************************************************************/
@@ -1180,7 +1181,9 @@ id|acpi_ev_release_global_lock
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 eof

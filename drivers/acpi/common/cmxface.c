@@ -1,19 +1,18 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmxface - External interfaces for &quot;global&quot; ACPI functions&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmxface - External interfaces for &quot;global&quot; ACPI functions&n; *              $Revision: 43 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;debugger.h&quot;
+macro_line|#include &quot;acdebug.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cmxface&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_initialize&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Initializes all global variables.  This is the first function&n; *              called, so any early initialization belongs here.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_initialize
@@ -88,6 +87,13 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* If configured, initialize the AML debugger */
+id|DEBUGGER_EXEC
+(paren
+id|acpi_db_initialize
+(paren
+)paren
+)paren
+suffix:semicolon
 r_return
 (paren
 id|status
@@ -107,11 +113,8 @@ id|acpi_gbl_db_terminate_threads
 op_assign
 id|TRUE
 suffix:semicolon
-id|acpi_cm_release_mutex
-(paren
-id|ACPI_MTX_DEBUG_CMD_READY
-)paren
-suffix:semicolon
+multiline_comment|/* TBD: [Investigate] This is no longer needed?*/
+multiline_comment|/*    Acpi_cm_release_mutex (ACPI_MTX_DEBUG_CMD_READY); */
 multiline_comment|/* Shutdown and free all resources */
 id|acpi_cm_subsystem_shutdown
 (paren
@@ -305,7 +308,7 @@ id|out_buffer
 id|u32
 id|length
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|formatted_exception
 suffix:semicolon
@@ -330,22 +333,7 @@ id|AE_BAD_PARAMETER
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Exception must be within range */
-r_if
-c_cond
-(paren
-id|exception
-OG
-id|ACPI_MAX_STATUS
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Convert the exception code */
+multiline_comment|/* Convert the exception code (Handles bad exception codes) */
 id|formatted_exception
 op_assign
 id|acpi_cm_format_exception

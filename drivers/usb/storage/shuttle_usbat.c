@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for SCM Microsystems USB-ATAPI cable&n; *&n; * $Id: shuttle_usbat.c,v 1.4 2000/08/25 00:13:51 mdharm Exp $&n; *&n; * SCM driver v0.2:&n; *&n; * Removed any reference to maxlen for bulk transfers.&n; * Changed scm_bulk_transport to allow for transfers without commands.&n; * Changed hp8200e transport to use the request_bufflen field in the&n; *   SCSI command for the length of the transfer, rather than calculating&n; *   it ourselves based on the command.&n; *&n; * SCM driver v0.1:&n; *&n; * First release - hp8200e.&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * Many originally ATAPI devices were slightly modified to meet the USB&n; * market by using some kind of translation from ATAPI to USB on the host,&n; * and the peripheral would translate from USB back to ATAPI.&n; *&n; * SCM Microsystems (www.scmmicro.com) makes a device, sold to OEM&squot;s only, &n; * which does the USB-to-ATAPI conversion.  By obtaining the data sheet on&n; * their device under nondisclosure agreement, I have been able to write&n; * this driver for Linux.&n; *&n; * The chip used in the device can also be used for EPP and ISA translation&n; * as well. This driver is only guaranteed to work with the ATAPI&n; * translation.&n; *&n; * The only peripherals that I know of (as of 14 Jul 2000) that uses this&n; * device is the Hewlett-Packard 8200e CD-Writer Plus.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for SCM Microsystems USB-ATAPI cable&n; *&n; * $Id: shuttle_usbat.c,v 1.7 2000/09/04 02:08:42 groovyjava Exp $&n; *&n; * SCM driver v0.2:&n; *&n; * Removed any reference to maxlen for bulk transfers.&n; * Changed scm_bulk_transport to allow for transfers without commands.&n; * Changed hp8200e transport to use the request_bufflen field in the&n; *   SCSI command for the length of the transfer, rather than calculating&n; *   it ourselves based on the command.&n; *&n; * SCM driver v0.1:&n; *&n; * First release - hp8200e.&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * Many originally ATAPI devices were slightly modified to meet the USB&n; * market by using some kind of translation from ATAPI to USB on the host,&n; * and the peripheral would translate from USB back to ATAPI.&n; *&n; * SCM Microsystems (www.scmmicro.com) makes a device, sold to OEM&squot;s only, &n; * which does the USB-to-ATAPI conversion.  By obtaining the data sheet on&n; * their device under nondisclosure agreement, I have been able to write&n; * this driver for Linux.&n; *&n; * The chip used in the device can also be used for EPP and ISA translation&n; * as well. This driver is only guaranteed to work with the ATAPI&n; * translation.&n; *&n; * The only peripherals that I know of (as of 14 Jul 2000) that uses this&n; * device is the Hewlett-Packard 8200e CD-Writer Plus.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
@@ -74,6 +74,12 @@ DECL|macro|LSB_of
 mdefine_line|#define LSB_of(s) ((s)&amp;0xFF)
 DECL|macro|MSB_of
 mdefine_line|#define MSB_of(s) ((s)&gt;&gt;8)
+DECL|variable|transferred
+r_int
+id|transferred
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Send a control message and wait for the response.&n; *&n; * us - the pointer to the us_data structure for the device to use&n; *&n; * request - the URB Setup Packet&squot;s first 6 bytes. The first byte always&n; *  corresponds to the request type, and the second byte always corresponds&n; *  to the request.  The other 4 bytes do not correspond to value and index,&n; *  since they are used in a custom way by the SCM protocol.&n; *&n; * xfer_data - a buffer from which to get, or to which to store, any data&n; *  that gets send or received, respectively, with the URB. Even though&n; *  it looks like we allocate a buffer in this code for the data, xfer_data&n; *  must contain enough allocated space.&n; *&n; * xfer_len - the number of bytes to send or receive with the URB.&n; *&n; */
 DECL|function|usbat_send_control
 r_static
@@ -391,7 +397,7 @@ l_string|&quot; output pipe stalled&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|USB_STOR_TRANSPORT_FAILED
+id|US_BULK_TRANSFER_SHORT
 suffix:semicolon
 )brace
 multiline_comment|/* the catch-all case */
@@ -486,31 +492,9 @@ id|transferred
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_char
-id|execute
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-l_int|0x40
-comma
-l_int|0x80
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
-suffix:semicolon
+singleline_comment|// unsigned char execute[8] = {
+singleline_comment|//&t;0x40, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+singleline_comment|// };
 r_int
 id|i
 suffix:semicolon
@@ -519,15 +503,8 @@ id|scatterlist
 op_star
 id|sg
 suffix:semicolon
-r_char
-id|string
-(braket
-l_int|64
-)braket
-suffix:semicolon
-r_int
-id|pipe
-suffix:semicolon
+singleline_comment|// char string[64];
+singleline_comment|// int pipe;
 multiline_comment|/*&n;&t;if (command_len != 0) {&n;&n;&t;&t;// Fix up the command&squot;s data length&n;&n;&t;&t;command[6] = len&amp;0xFF;&n;&t;&t;command[7] = (len&gt;&gt;8)&amp;0xFF;&n;&n;&t;&t;&n;&n;&t;&t;result = usbat_send_control(us, &n;&t;&t;&t;&t;&t;  execute,&n;&t;&t;&t;&t;&t;  command,&n;&t;&t;&t;&t;&t;  command_len);&n;&n;&t;&t;if (result != USB_STOR_TRANSPORT_GOOD)&n;&t;&t;&t;return result;&n;&t;}&n;*/
 r_if
 c_cond
@@ -563,116 +540,7 @@ id|SCSI_DATA_READ
 suffix:colon
 id|SCSI_DATA_WRITE
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|direction
-op_eq
-id|SCSI_DATA_WRITE
-)paren
-(brace
-multiline_comment|/* Debug-print the first 48 bytes of the write transfer */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|use_sg
-)paren
-(brace
-id|string
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|len
-op_logical_and
-id|i
-OL
-l_int|48
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|sprintf
-c_func
-(paren
-id|string
-op_plus
-id|strlen
-c_func
-(paren
-id|string
-)paren
-comma
-l_string|&quot;%02X &quot;
-comma
-id|data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|i
-op_mod
-l_int|16
-)paren
-op_eq
-l_int|15
-)paren
-(brace
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;%s&bslash;n&quot;
-comma
-id|string
-)paren
-suffix:semicolon
-id|string
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|string
-(braket
-l_int|0
-)braket
-op_ne
-l_int|0
-)paren
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;%s&bslash;n&quot;
-comma
-id|string
-)paren
-suffix:semicolon
-)brace
-)brace
+multiline_comment|/*&n;&t;if (direction == SCSI_DATA_WRITE) {&n;&n;&t;&t;// Debug-print the first 48 bytes of the write transfer&n;&n;&t;&t;if (!use_sg) {&n;&t;&t;&t;string[0] = 0;&n;&t;&t;&t;for (i=0; i&lt;len &amp;&amp; i&lt;48; i++) {&n;&t;&t;&t;&t;sprintf(string+strlen(string), &quot;%02X &quot;,&n;&t;&t;&t;&t;  data[i]);&n;&t;&t;&t;&t;if ((i%16)==15) {&n;&t;&t;&t;&t;&t;US_DEBUGP(&quot;%s&bslash;n&quot;, string);&n;&t;&t;&t;&t;&t;string[0] = 0;&n;&t;&t;&t;&t;}&n;&t;&t;&t;}&n;&t;&t;&t;if (string[0]!=0)&n;&t;&t;&t;&t;US_DEBUGP(&quot;%s&bslash;n&quot;, string);&n;&t;&t;}&n;&t;}&n;*/
 id|US_DEBUGP
 c_func
 (paren
@@ -835,31 +703,9 @@ id|content
 r_int
 id|result
 suffix:semicolon
-r_int
-r_char
-id|command
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-l_int|0xC0
-comma
-id|access
-comma
-id|reg
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
-suffix:semicolon
+singleline_comment|// unsigned char command[8] = {
+singleline_comment|// &t;0xC0, access, reg, 0x00, 0x00, 0x00, 0x00, 0x00
+singleline_comment|// };
 id|result
 op_assign
 id|usbat_send_control
@@ -922,33 +768,9 @@ id|content
 r_int
 id|result
 suffix:semicolon
-r_int
-r_char
-id|command
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-l_int|0x40
-comma
-id|access
-op_or
-l_int|0x01
-comma
-id|reg
-comma
-id|content
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
-suffix:semicolon
+singleline_comment|// unsigned char command[8] = {
+singleline_comment|//&t;0x40, access|0x01, reg, content, 0x00, 0x00, 0x00, 0x00
+singleline_comment|// };
 id|result
 op_assign
 id|usbat_send_control
@@ -1241,7 +1063,7 @@ r_int
 r_char
 id|status
 suffix:semicolon
-multiline_comment|/* Synchronizing cache on a CDR could take a heck of a long time,&n;&t;   but probably not more than 15 minutes or so */
+multiline_comment|/* Synchronizing cache on a CDR could take a heck of a long time,&n;&t;   but probably not more than 10 minutes or so */
 r_for
 c_loop
 (paren
@@ -1251,7 +1073,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|500
+l_int|1800
 suffix:semicolon
 id|i
 op_increment
@@ -1272,14 +1094,7 @@ op_amp
 id|status
 )paren
 suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;SCM: Write ATA data status is %02X&bslash;n&quot;
-comma
-id|status
-)paren
-suffix:semicolon
+singleline_comment|// US_DEBUGP(&quot;SCM: Write ATA data status is %02X&bslash;n&quot;, status);
 r_if
 c_cond
 (paren
@@ -1331,7 +1146,37 @@ c_cond
 (paren
 id|i
 OL
-l_int|5
+l_int|500
+)paren
+id|wait_ms
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+singleline_comment|// 5 seconds
+r_else
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|700
+)paren
+id|wait_ms
+c_func
+(paren
+l_int|50
+)paren
+suffix:semicolon
+singleline_comment|// 10 seconds
+r_else
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|1200
 )paren
 id|wait_ms
 c_func
@@ -1339,27 +1184,14 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
+singleline_comment|// 50 seconds
 r_else
 r_if
 c_cond
 (paren
 id|i
 OL
-l_int|20
-)paren
-id|wait_ms
-c_func
-(paren
-l_int|500
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|49
+l_int|1800
 )paren
 id|wait_ms
 c_func
@@ -1367,30 +1199,25 @@ c_func
 l_int|1000
 )paren
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|499
-)paren
-id|wait_ms
-c_func
-(paren
-l_int|2000
-)paren
-suffix:semicolon
+singleline_comment|// 10 minutes
 )brace
 r_if
 c_cond
 (paren
 id|i
 op_eq
-l_int|500
+l_int|1800
 )paren
 r_return
 id|USB_STOR_TRANSPORT_FAILED
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Waited not busy for %d steps&bslash;n&quot;
+comma
+id|i
+)paren
 suffix:semicolon
 r_return
 id|USB_STOR_TRANSPORT_GOOD
@@ -1543,9 +1370,9 @@ id|us
 )paren
 suffix:semicolon
 )brace
-DECL|function|usbat_write_block_test
+DECL|function|usbat_rw_block_test
 r_int
-id|usbat_write_block_test
+id|usbat_rw_block_test
 c_func
 (paren
 r_struct
@@ -1581,11 +1408,14 @@ id|status_reg
 comma
 r_int
 r_char
-id|qualifier
+id|timeout
 comma
 r_int
 r_char
-id|timeout
+id|qualifier
+comma
+r_int
+id|direction
 comma
 r_int
 r_char
@@ -1604,7 +1434,7 @@ r_int
 id|result
 suffix:semicolon
 singleline_comment|// Not really sure the 0x07, 0x17, 0xfc, 0xe7 is necessary here,
-singleline_comment|// but that&squot;s what came out of the trace.
+singleline_comment|// but that&squot;s what came out of the trace every single time.
 r_int
 r_char
 id|command
@@ -1643,19 +1473,37 @@ op_star
 l_int|2
 )paren
 comma
+(paren
+id|direction
+op_eq
+id|SCSI_DATA_WRITE
+ques
+c_cond
 l_int|0x40
+suffix:colon
+l_int|0xC0
+)paren
 comma
 id|access
 op_or
+(paren
+id|direction
+op_eq
+id|SCSI_DATA_WRITE
+ques
+c_cond
 l_int|0x05
+suffix:colon
+l_int|0x04
+)paren
 comma
 id|data_reg
 comma
 id|status_reg
 comma
-id|qualifier
-comma
 id|timeout
+comma
+id|qualifier
 comma
 id|LSB_of
 c_func
@@ -1683,18 +1531,8 @@ l_int|2
 )braket
 suffix:semicolon
 r_int
-id|transferred
-suffix:semicolon
-r_struct
-id|scatterlist
-op_star
-id|sg
-suffix:semicolon
 r_char
-id|string
-(braket
-l_int|64
-)braket
+id|status
 suffix:semicolon
 r_for
 c_loop
@@ -1740,6 +1578,22 @@ id|i
 )braket
 suffix:semicolon
 )brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|20
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * The first time we send the full command, which consists&n;&t;&t; * of downloading the SCSI command followed by downloading&n;&t;&t; * the data via a write-and-test.  Any other time we only&n;&t;&t; * send the command to download the data -- the SCSI command&n;&t;&t; * is still &squot;active&squot; in some sense in the device.&n;&t;&t; * &n;&t;&t; * We&squot;re only going to try sending the data 10 times. After&n;&t;&t; * that, we just return a failure.&n;&t;&t; */
 id|result
 op_assign
 id|usbat_send_control
@@ -1763,9 +1617,29 @@ l_int|0
 comma
 l_int|0
 comma
+(paren
+id|i
+op_eq
+l_int|0
+ques
+c_cond
 id|command
+suffix:colon
+id|command
+op_plus
+l_int|8
+)paren
 comma
+(paren
+id|i
+op_eq
+l_int|0
+ques
+c_cond
 l_int|16
+suffix:colon
+l_int|8
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1778,6 +1652,14 @@ id|USB_STOR_TRANSPORT_GOOD
 r_return
 id|result
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+)paren
+(brace
 id|result
 op_assign
 id|usbat_bulk_transport
@@ -1800,8 +1682,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-singleline_comment|// result =  usbat_bulk_transport(us,
-singleline_comment|//&t;command, 16, 0, data, num_registers*2, 0);
 r_if
 c_cond
 (paren
@@ -1812,11 +1692,20 @@ id|USB_STOR_TRANSPORT_GOOD
 r_return
 id|result
 suffix:semicolon
-singleline_comment|// transferred = 0;
+)brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Transfer out %d bytes, sg buffers %d&bslash;n&quot;
+l_string|&quot;Transfer %s %d bytes, sg buffers %d&bslash;n&quot;
+comma
+id|direction
+op_eq
+id|SCSI_DATA_WRITE
+ques
+c_cond
+l_string|&quot;out&quot;
+suffix:colon
+l_string|&quot;in&quot;
 comma
 id|len
 comma
@@ -1834,7 +1723,7 @@ l_int|NULL
 comma
 l_int|0
 comma
-id|SCSI_DATA_WRITE
+id|direction
 comma
 id|content
 comma
@@ -1843,7 +1732,64 @@ comma
 id|use_sg
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;if (!use_sg) {&n;&n;&t;&t;// Debug-print the first 48 bytes of the transfer&n;&n;&t;&t;string[0] = 0;&n;&t;&t;for (i=0; i&lt;len &amp;&amp; i&lt;48; i++) {&n;&t;&t;&t;sprintf(string+strlen(string), &quot;%02X &quot;,&n;&t;&t;&t;&t;content[i]);&n;&t;&t;&t;if ((i%16)==15) {&n;&t;&t;&t;&t;US_DEBUGP(&quot;%s&bslash;n&quot;, string);&n;&t;&t;&t;&t;string[0] = 0;&n;&t;&t;&t;}&n;&t;&t;}&n;&t;&t;if (string[0]!=0)&n;&t;&t;&t;US_DEBUGP(&quot;%s&bslash;n&quot;, string);&n;&n;&t;&t;result = usbat_raw_bulk(us, SCSI_DATA_WRITE, content, len);&n;&n;&t;} else {&n;&n;&t;&t;sg = (struct scatterlist *)content;&n;&t;&t;for (i=0; i&lt;use_sg &amp;&amp; transferred&lt;len; i++) {&n;&t;&t;&t;result = usbat_raw_bulk(us, SCSI_DATA_WRITE,&n;&t;&t;&t;&t;sg[i].address, &n;&t;&t;&t;&t;len-transferred &gt; sg[i].length ?&n;&t;&t;&t;&t;&t;sg[i].length : len-transferred);&n;&t;&t;&t;if (result!=US_BULK_TRANSFER_GOOD)&n;&t;&t;&t;&t;break;&n;&t;&t;&t;transferred += sg[i].length;&n;&t;&t;}&n;&t;}&n;*/
+multiline_comment|/*&n;&t;&t; * If we get a stall on the bulk download, we&squot;ll retry&n;&t;&t; * the bulk download -- but not the SCSI command because&n;&t;&t; * in some sense the SCSI command is still &squot;active&squot; and&n;&t;&t; * waiting for the data. Don&squot;t ask me why this should be;&n;&t;&t; * I&squot;m only following what the Windoze driver did.&n;&t;&t; *&n;&t;&t; * Note that a stall for the test-and-read/write command means&n;&t;&t; * that the test failed. In this case we&squot;re testing to make&n;&t;&t; * sure that the device is error-free&n;&t;&t; * (i.e. bit 0 -- CHK -- of status is 0). The most likely&n;&t;&t; * hypothesis is that the USBAT chip somehow knows what&n;&t;&t; * the device will accept, but doesn&squot;t give the device any&n;&t;&t; * data until all data is received. Thus, the device would&n;&t;&t; * still be waiting for the first byte of data if a stall&n;&t;&t; * occurs, even if the stall implies that some data was&n;&t;&t; * transferred.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|result
+op_eq
+id|US_BULK_TRANSFER_SHORT
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * If we&squot;re reading and we stalled, then clear&n;&t;&t;&t; * the bulk output pipe only the first time.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|SCSI_DATA_READ
+op_logical_and
+id|i
+op_eq
+l_int|0
+)paren
+id|usb_clear_halt
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|usb_sndbulkpipe
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|us-&gt;ep_out
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Read status: is the device angry, or just busy?&n;&t;&t;&t; */
+id|result
+op_assign
+id|usbat_read
+c_func
+(paren
+id|us
+comma
+id|USBAT_ATA
+comma
+id|direction
+op_eq
+id|SCSI_DATA_WRITE
+ques
+c_cond
+l_int|0x17
+suffix:colon
+l_int|0x0E
+comma
+op_amp
+id|status
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1854,12 +1800,81 @@ id|USB_STOR_TRANSPORT_GOOD
 r_return
 id|result
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x01
+)paren
+singleline_comment|// check condition
+r_return
+id|USB_STOR_TRANSPORT_FAILED
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x20
+)paren
+singleline_comment|// device fault
+r_return
+id|USB_STOR_TRANSPORT_FAILED
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Redoing %s&bslash;n&quot;
+comma
+id|direction
+op_eq
+id|SCSI_DATA_WRITE
+ques
+c_cond
+l_string|&quot;write&quot;
+suffix:colon
+l_string|&quot;read&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|result
+op_ne
+id|US_BULK_TRANSFER_GOOD
+)paren
+r_return
+id|result
+suffix:semicolon
+r_else
 r_return
 id|usbat_wait_not_busy
 c_func
 (paren
 id|us
 )paren
+suffix:semicolon
+)brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Bummer! %s bulk data 10 times failed.&bslash;n&quot;
+comma
+id|direction
+op_eq
+id|SCSI_DATA_WRITE
+ques
+c_cond
+l_string|&quot;Writing&quot;
+suffix:colon
+l_string|&quot;Reading&quot;
+)paren
+suffix:semicolon
+r_return
+id|USB_STOR_TRANSPORT_FAILED
 suffix:semicolon
 )brace
 DECL|function|usbat_multiple_write
@@ -2085,31 +2100,9 @@ op_star
 id|data_flags
 )paren
 (brace
-r_int
-r_char
-id|command
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-l_int|0xC0
-comma
-l_int|0x82
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
-suffix:semicolon
+singleline_comment|// unsigned char command[8] = {
+singleline_comment|//&t;0xC0, 0x82, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+singleline_comment|// };
 r_int
 id|result
 suffix:semicolon
@@ -2165,31 +2158,9 @@ r_char
 id|data_flags
 )paren
 (brace
-r_int
-r_char
-id|command
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-l_int|0x40
-comma
-l_int|0x82
-comma
-id|enable_flags
-comma
-id|data_flags
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
-suffix:semicolon
+singleline_comment|// unsigned char command[8] = {
+singleline_comment|//&t;0x40, 0x82, enable_flags, data_flags, 0x00, 0x00, 0x00, 0x00
+singleline_comment|// };
 r_int
 id|result
 suffix:semicolon
@@ -3036,37 +3007,16 @@ l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* This table tells us:&n;&t;   X = command not supported&n;&t;   L = return length in cmnd[4] (8 bits).&n;&t;   H = return length in cmnd[7] and cmnd[8] (16 bits).&n;&t;   D = return length in cmnd[6] to cmnd[9] (32 bits).&n;&t;   B = return length/blocksize in cmnd[6] to cmnd[8].&n;&t;   T = return length in cmnd[6] to cmnd[8] (24 bits).&n;&t;   0-9 = fixed return length&n;&t;   W = 24 bytes&n;&t;   h = return length/2048 in cmnd[7-8].&n;&t;*/
-r_static
-r_char
-op_star
-id|lengths
-op_assign
+singleline_comment|// static char *lengths =
 multiline_comment|/* 0123456789ABCDEF   0123456789ABCDEF */
-l_string|&quot;0XXL0XXXXXXXXXXX&quot;
-l_string|&quot;XXLXXXXXXXX0XX0X&quot;
-multiline_comment|/* 00-1F */
-l_string|&quot;XXXXX8XXhXH0XXX0&quot;
-l_string|&quot;XXXXX0XXXXXXXXXX&quot;
-multiline_comment|/* 20-3F */
-l_string|&quot;XXHHL0X0XXH0XX0X&quot;
-l_string|&quot;XHH00HXX0TH0H0XX&quot;
-multiline_comment|/* 40-5F */
-l_string|&quot;XXXXXXXXXXXXXXXX&quot;
-l_string|&quot;XXXXXXXXXXXXXXXX&quot;
-multiline_comment|/* 60-7F */
-l_string|&quot;XXXXXXXXXXXXXXXX&quot;
-l_string|&quot;XXXXXXXXXXXXXXXX&quot;
-multiline_comment|/* 80-9F */
-l_string|&quot;X0XXX0XXDXDXXXXX&quot;
-l_string|&quot;XXXXXXXXX000XHBX&quot;
-multiline_comment|/* A0-BF */
-l_string|&quot;XXXXXXXXXXXXXXXX&quot;
-l_string|&quot;XXXXXXXXXXXXXXXX&quot;
-multiline_comment|/* C0-DF */
-l_string|&quot;XDXXXXXXXXXXXXXX&quot;
-l_string|&quot;XXW00HXXXXXXXXXX&quot;
-suffix:semicolon
-multiline_comment|/* E0-FF */
+singleline_comment|//   &quot;0XXL0XXXXXXXXXXX&quot; &quot;XXLXXXXXXXX0XX0X&quot;  /* 00-1F */
+singleline_comment|//   &quot;XXXXX8XXhXH0XXX0&quot; &quot;XXXXX0XXXXXXXXXX&quot;  /* 20-3F */
+singleline_comment|//   &quot;XXHHL0X0XXH0XX0X&quot; &quot;XHH00HXX0TH0H0XX&quot;  /* 40-5F */
+singleline_comment|//   &quot;XXXXXXXXXXXXXXXX&quot; &quot;XXXXXXXXXXXXXXXX&quot;  /* 60-7F */
+singleline_comment|//   &quot;XXXXXXXXXXXXXXXX&quot; &quot;XXXXXXXXXXXXXXXX&quot;  /* 80-9F */
+singleline_comment|//   &quot;X0XXX0XXDXDXXXXX&quot; &quot;XXXXXXXXX000XHBX&quot;  /* A0-BF */
+singleline_comment|//   &quot;XXXXXXXXXXXXXXXX&quot; &quot;XXXXXXXXXXXXXXXX&quot;  /* C0-DF */
+singleline_comment|//   &quot;XDXXXXXXXXXXXXXX&quot; &quot;XXW00HXXXXXXXXXX&quot;; /* E0-FF */
 multiline_comment|/*&t;if (us-&gt;flags &amp; US_FL_NEED_INIT) {&n;&t;&t;US_DEBUGP(&quot;8200e: initializing&bslash;n&quot;);&n;&t;&t;init_8200e(us);&n;&t;&t;us-&gt;flags &amp;= ~US_FL_NEED_INIT;&n;&t;} */
 id|len
 op_assign
@@ -3206,14 +3156,6 @@ op_assign
 l_int|0xA0
 suffix:semicolon
 singleline_comment|// (command) = ATA PACKET COMMAND
-r_if
-c_cond
-(paren
-id|srb-&gt;sc_data_direction
-op_eq
-id|SCSI_DATA_WRITE
-)paren
-(brace
 r_for
 c_loop
 (paren
@@ -3260,9 +3202,31 @@ l_int|7
 )braket
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|TEST_UNIT_READY
+)paren
+id|transferred
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|srb-&gt;sc_data_direction
+op_eq
+id|SCSI_DATA_WRITE
+)paren
+(brace
 id|result
 op_assign
-id|usbat_write_block_test
+id|usbat_rw_block_test
 c_func
 (paren
 id|us
@@ -3282,6 +3246,77 @@ comma
 l_int|0xFD
 comma
 l_int|0x30
+comma
+id|SCSI_DATA_WRITE
+comma
+id|srb-&gt;request_buffer
+comma
+id|len
+comma
+id|srb-&gt;use_sg
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+op_eq
+id|USB_STOR_TRANSPORT_GOOD
+)paren
+(brace
+id|transferred
+op_add_assign
+id|len
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Wrote %08X bytes&bslash;n&quot;
+comma
+id|transferred
+)paren
+suffix:semicolon
+)brace
+r_return
+id|result
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|READ_10
+)paren
+(brace
+id|result
+op_assign
+id|usbat_rw_block_test
+c_func
+(paren
+id|us
+comma
+id|USBAT_ATA
+comma
+id|registers
+comma
+id|data
+comma
+l_int|19
+comma
+l_int|0x10
+comma
+l_int|0x17
+comma
+l_int|0xFD
+comma
+l_int|0x30
+comma
+id|SCSI_DATA_READ
 comma
 id|srb-&gt;request_buffer
 comma

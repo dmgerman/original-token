@@ -1,34 +1,41 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswexec - Dispatcher method execution callbacks;&n; *                          Dispatch to interpreter.&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswexec - Dispatcher method execution callbacks;&n; *                        dispatch to interpreter.&n; *              $Revision: 42 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;debugger.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acdebug.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          DISPATCHER
 id|MODULE_NAME
 (paren
 l_string|&quot;dswexec&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_exec_begin_op&n; *&n; * PARAMETERS:  Walk_state      - Current state of the parse tree walk&n; *              Op              - Op that has been just been reached in the&n; *                                walk;  Arguments have not been evaluated yet.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Descending callback used during the execution of control&n; *              methods.  This is where most operators and operands are&n; *              dispatched to the interpreter.&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_exec_begin_op
 id|acpi_ds_exec_begin_op
 (paren
+id|u16
+id|opcode
+comma
+id|ACPI_PARSE_OBJECT
+op_star
+id|op
+comma
 id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
-id|op
+op_star
+id|out_op
 )paren
 (brace
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op_info
 suffix:semicolon
@@ -40,11 +47,64 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|op
+)paren
+(brace
+id|status
+op_assign
+id|acpi_ds_load2_begin_op
+(paren
+id|opcode
+comma
+l_int|NULL
+comma
+id|walk_state
+comma
+id|out_op
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+id|op
+op_assign
+op_star
+id|out_op
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|op
 op_eq
 id|walk_state-&gt;origin
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|out_op
+)paren
+(brace
+op_star
+id|out_op
+op_assign
+id|op
+suffix:semicolon
+)brace
 r_return
 (paren
 id|AE_OK
@@ -101,9 +161,10 @@ multiline_comment|/*&n;&t; * Handle the opcode based upon the opcode type&n;&t; 
 r_switch
 c_cond
 (paren
-id|op_info-&gt;flags
-op_amp
-id|OP_INFO_TYPE
+id|ACPI_GET_OP_CLASS
+(paren
+id|op_info
+)paren
 )paren
 (brace
 r_case
@@ -126,9 +187,9 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|walk_state-&gt;origin-&gt;opcode
+id|walk_state-&gt;walk_type
 op_eq
-id|AML_METHOD_OP
+id|WALK_METHOD
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * Found a named object declaration during method&n;&t;&t;&t; * execution;  we must enter this object into the&n;&t;&t;&t; * namespace.  The created object is temporary and&n;&t;&t;&t; * will be deleted upon completion of the execution&n;&t;&t;&t; * of this method.&n;&t;&t;&t; */
@@ -136,9 +197,13 @@ id|status
 op_assign
 id|acpi_ds_load2_begin_op
 (paren
-id|walk_state
+id|op-&gt;opcode
 comma
 id|op
+comma
+id|walk_state
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -165,7 +230,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -181,29 +246,29 @@ suffix:semicolon
 id|u8
 id|optype
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|next_op
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|first_arg
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|result_obj
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op_info
 suffix:semicolon
@@ -227,8 +292,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|ACPI_GET_OP_TYPE
+(paren
 id|op_info
+)paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
 )paren
 (brace
 r_return
@@ -242,10 +311,9 @@ op_assign
 (paren
 id|u8
 )paren
+id|ACPI_GET_OP_CLASS
 (paren
-id|op_info-&gt;flags
-op_amp
-id|OP_INFO_TYPE
+id|op_info
 )paren
 suffix:semicolon
 id|first_arg
@@ -262,6 +330,38 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Call debugger for single step support (DEBUG build only) */
+id|DEBUGGER_EXEC
+(paren
+id|status
+op_assign
+id|acpi_db_single_step
+(paren
+id|walk_state
+comma
+id|op
+comma
+id|optype
+)paren
+)paren
+suffix:semicolon
+id|DEBUGGER_EXEC
+(paren
+r_if
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)paren
+suffix:semicolon
 multiline_comment|/* Decode the opcode */
 r_switch
 c_cond
@@ -731,15 +831,15 @@ suffix:semicolon
 r_case
 id|OPTYPE_METHOD_CALL
 suffix:colon
-multiline_comment|/*&n;&t;&t; * (AML_METHODCALL) Op-&gt;Value-&gt;Arg-&gt;Acpi_named_object contains&n;&t;&t; * the method NTE pointer&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * (AML_METHODCALL) Op-&gt;Value-&gt;Arg-&gt;Node contains&n;&t;&t; * the method Node pointer&n;&t;&t; */
 multiline_comment|/* Next_op points to the op that holds the method name */
 id|next_op
 op_assign
 id|first_arg
 suffix:semicolon
-id|entry
+id|node
 op_assign
-id|next_op-&gt;acpi_named_object
+id|next_op-&gt;node
 suffix:semicolon
 multiline_comment|/* Next_op points to first argument op */
 id|next_op
@@ -789,11 +889,11 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Open new scope on the scope stack */
-multiline_comment|/*&n;&t;&t;Status = Acpi_ns_scope_stack_push_entry (Entry);&n;&t;&t;if (ACPI_FAILURE (Status)) {&n;&t;&t;&t;break;&n;&t;&t;}&n;*/
+multiline_comment|/*&n;&t;&t;Status = Acpi_ns_scope_stack_push_entry (Node);&n;&t;&t;if (ACPI_FAILURE (Status)) {&n;&t;&t;&t;break;&n;&t;&t;}&n;*/
 multiline_comment|/* Tell the walk loop to preempt this running method and&n;&t;&t;execute the new method */
 id|status
 op_assign
-id|AE_CTRL_PENDING
+id|AE_CTRL_TRANSFER
 suffix:semicolon
 multiline_comment|/* Return now; we don&squot;t want to disturb anything,&n;&t;&t;especially the operand count! */
 r_return
@@ -806,22 +906,6 @@ suffix:semicolon
 r_case
 id|OPTYPE_NAMED_OBJECT
 suffix:colon
-r_if
-c_cond
-(paren
-(paren
-id|walk_state-&gt;origin-&gt;opcode
-op_eq
-id|AML_METHOD_OP
-)paren
-op_logical_and
-(paren
-id|walk_state-&gt;origin
-op_ne
-id|op
-)paren
-)paren
-(brace
 id|status
 op_assign
 id|acpi_ds_load2_end_op
@@ -843,7 +927,7 @@ id|status
 r_break
 suffix:semicolon
 )brace
-)brace
+multiline_comment|/*&n;&t;&t;if ((Walk_state-&gt;Origin-&gt;Opcode == AML_METHOD_OP) &amp;&amp;&n;&t;&t;&t;(Walk_state-&gt;Origin != Op))&n;&t;&t;{&n;&t;&t;&t;Status = Acpi_ds_load2_end_op (Walk_state, Op);&n;&t;&t;&t;if (ACPI_FAILURE (Status)) {&n;&t;&t;&t;&t;break;&n;&t;&t;&t;}&n;&t;&t;}&n;*/
 r_switch
 c_cond
 (paren
@@ -985,6 +1069,8 @@ id|walk_state-&gt;operands
 (braket
 l_int|0
 )braket
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -1064,6 +1150,16 @@ id|AE_CTRL_FALSE
 suffix:semicolon
 )brace
 multiline_comment|/* Break to debugger to display result */
+id|DEBUGGER_EXEC
+(paren
+id|acpi_db_display_result_object
+(paren
+id|obj_desc
+comma
+id|walk_state
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Delete the predicate result object (we know that&n;&t;&t;we don&squot;t need it anymore) and cleanup the stack */
 id|acpi_cm_remove_reference
 (paren
@@ -1088,6 +1184,16 @@ id|result_obj
 )paren
 (brace
 multiline_comment|/* Break to debugger to display result */
+id|DEBUGGER_EXEC
+(paren
+id|acpi_db_display_result_object
+(paren
+id|result_obj
+comma
+id|walk_state
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Delete the result op if and only if:&n;&t;&t; * Parent will not use the result -- such as any&n;&t;&t; * non-nested type2 op in a method (parent will be method)&n;&t;&t; */
 id|acpi_ds_delete_result_if_not_used
 (paren

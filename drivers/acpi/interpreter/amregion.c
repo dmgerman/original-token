@@ -1,19 +1,18 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amregion - ACPI default Op_region (address space) handlers&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amregion - ACPI default Op_region (address space) handlers&n; *              $Revision: 35 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amregion&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_system_memory_space_handler&n; *&n; * PARAMETERS:  Function            - Read or Write operation&n; *              Address             - Where in the space to read or write&n; *              Bit_width           - Field width in bits (8, 16, or 32)&n; *              Value               - Pointer to in or out value&n; *              Context             - Context pointer&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Handler for the System Memory address space (Op Region)&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_system_memory_space_handler&n; *&n; * PARAMETERS:  Function            - Read or Write operation&n; *              Address             - Where in the space to read or write&n; *              Bit_width           - Field width in bits (8, 16, or 32)&n; *              Value               - Pointer to in or out value&n; *              Handler_context     - Pointer to Handler&squot;s context&n; *              Region_context      - Pointer to context specific to the&n; *                                      accessed region&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Handler for the System Memory address space (Op Region)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_system_memory_space_handler
 id|acpi_aml_system_memory_space_handler
@@ -34,7 +33,11 @@ id|value
 comma
 r_void
 op_star
-id|context
+id|handler_context
+comma
+r_void
+op_star
+id|region_context
 )paren
 (brace
 id|ACPI_STATUS
@@ -52,7 +55,7 @@ id|MEM_HANDLER_CONTEXT
 op_star
 id|mem_info
 op_assign
-id|context
+id|region_context
 suffix:semicolon
 id|u32
 id|length
@@ -107,7 +110,7 @@ c_cond
 (paren
 (paren
 (paren
-r_char
+id|u8
 op_star
 )paren
 id|address
@@ -118,7 +121,7 @@ op_logical_or
 (paren
 (paren
 (paren
-r_char
+id|u8
 op_star
 )paren
 id|address
@@ -195,7 +198,7 @@ suffix:semicolon
 id|mem_info-&gt;mapped_physical_address
 op_assign
 (paren
-r_char
+id|u8
 op_star
 )paren
 id|address
@@ -212,7 +215,7 @@ id|mem_info-&gt;mapped_logical_address
 op_plus
 (paren
 (paren
-r_char
+id|u8
 op_star
 )paren
 id|address
@@ -350,7 +353,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_system_io_space_handler&n; *&n; * PARAMETERS:  Function            - Read or Write operation&n; *              Address             - Where in the space to read or write&n; *              Bit_width           - Field width in bits (8, 16, or 32)&n; *              Value               - Pointer to in or out value&n; *              Context             - Context pointer&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Handler for the System IO address space (Op Region)&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_system_io_space_handler&n; *&n; * PARAMETERS:  Function            - Read or Write operation&n; *              Address             - Where in the space to read or write&n; *              Bit_width           - Field width in bits (8, 16, or 32)&n; *              Value               - Pointer to in or out value&n; *              Handler_context     - Pointer to Handler&squot;s context&n; *              Region_context      - Pointer to context specific to the&n; *                                      accessed region&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Handler for the System IO address space (Op Region)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_system_io_space_handler
 id|acpi_aml_system_io_space_handler
@@ -370,7 +373,11 @@ id|value
 comma
 r_void
 op_star
-id|context
+id|handler_context
+comma
+r_void
+op_star
+id|region_context
 )paren
 (brace
 id|ACPI_STATUS
@@ -546,7 +553,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_pci_config_space_handler&n; *&n; * PARAMETERS:  Function            - Read or Write operation&n; *              Address             - Where in the space to read or write&n; *              Bit_width           - Field width in bits (8, 16, or 32)&n; *              Value               - Pointer to in or out value&n; *              Context             - Context pointer&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Handler for the PCI Config address space (Op Region)&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_pci_config_space_handler&n; *&n; * PARAMETERS:  Function            - Read or Write operation&n; *              Address             - Where in the space to read or write&n; *              Bit_width           - Field width in bits (8, 16, or 32)&n; *              Value               - Pointer to in or out value&n; *              Handler_context     - Pointer to Handler&squot;s context&n; *              Region_context      - Pointer to context specific to the&n; *                                      accessed region&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Handler for the PCI Config address space (Op Region)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_pci_config_space_handler
 id|acpi_aml_pci_config_space_handler
@@ -566,7 +573,11 @@ id|value
 comma
 r_void
 op_star
-id|context
+id|handler_context
+comma
+r_void
+op_star
+id|region_context
 )paren
 (brace
 id|ACPI_STATUS
@@ -594,7 +605,7 @@ op_assign
 id|PCI_HANDLER_CONTEXT
 op_star
 )paren
-id|context
+id|region_context
 suffix:semicolon
 id|pci_bus
 op_assign

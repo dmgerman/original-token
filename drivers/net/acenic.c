@@ -1762,6 +1762,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032a)
 DECL|function|init_module
 r_int
@@ -1807,6 +1808,7 @@ c_func
 id|ace_module_cleanup
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|function|ace_free_descriptors
 r_static

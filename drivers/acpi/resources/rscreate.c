@@ -1,20 +1,19 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rscreate - Acpi_rs_create_resource_list&n; *                         Acpi_rs_create_pci_routing_table&n; *                         Acpi_rs_create_byte_stream&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: rscreate - Acpi_rs_create_resource_list&n; *                         Acpi_rs_create_pci_routing_table&n; *                         Acpi_rs_create_byte_stream&n; *              $Revision: 16 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;resource.h&quot;
+macro_line|#include &quot;acresrc.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          RESOURCE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;rscreate&quot;
 )paren
-suffix:semicolon
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_create_resource_list&n; *&n; * PARAMETERS:&n; *              Byte_stream_buffer      - Pointer to the resource byte stream&n; *              Output_buffer           - Pointer to the user&squot;s buffer&n; *              Output_buffer_length    - Pointer to the size of Output_buffer&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *                      If Output_buffer is not large enough, Output_buffer_length&n; *                        indicates how large Output_buffer should be, else it&n; *                        indicates how may u8 elements of Output_buffer are&n; *                        valid.&n; *&n; * DESCRIPTION: Takes the byte stream returned from a _CRS, _PRS control method&n; *                  execution and parses the stream to create a linked list&n; *                  of device resources.&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_create_resource_list&n; *&n; * PARAMETERS:&n; *              Byte_stream_buffer      - Pointer to the resource byte stream&n; *              Output_buffer           - Pointer to the user&squot;s buffer&n; *              Output_buffer_length    - Pointer to the size of Output_buffer&n; *&n; * RETURN:      Status  - AE_OK if okay, else a valid ACPI_STATUS code&n; *              If Output_buffer is not large enough, Output_buffer_length&n; *              indicates how large Output_buffer should be, else it&n; *              indicates how may u8 elements of Output_buffer are valid.&n; *&n; * DESCRIPTION: Takes the byte stream returned from a _CRS, _PRS control method&n; *              execution and parses the stream to create a linked list&n; *              of device resources.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_create_resource_list
 id|acpi_rs_create_resource_list
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|byte_stream_buffer
 comma
@@ -29,8 +28,6 @@ id|output_buffer_length
 (brace
 id|ACPI_STATUS
 id|status
-op_assign
-id|AE_UNKNOWN_STATUS
 suffix:semicolon
 id|u8
 op_star
@@ -48,30 +45,7 @@ id|byte_stream_buffer_length
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Validate parameters:&n;&t; *&n;&t; *  1. If Byte_stream_buffer is NULL after we know that&n;&t; *      Byte_steam_length is not zero, or&n;&t; *  2. If Output_buffer is NULL and Output_buffer_length&n;&t; *      is not zero&n;&t; *&n;&t; *  Return an error&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|byte_stream_buffer
-op_logical_or
-(paren
-op_logical_neg
-id|output_buffer
-op_logical_and
-l_int|0
-op_ne
-op_star
-id|output_buffer_length
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/*&n;&t; * Params already validated, so we don&squot;t re-validate here&n;&t; */
 id|byte_stream_buffer_length
 op_assign
 id|byte_stream_buffer-&gt;buffer.length
@@ -80,7 +54,7 @@ id|byte_stream_start
 op_assign
 id|byte_stream_buffer-&gt;buffer.pointer
 suffix:semicolon
-multiline_comment|/*&n;&t; * Pass the Byte_stream_buffer into a module that can calculate&n;&t; *  the buffer size needed for the linked list&n;&t; */
+multiline_comment|/*&n;&t; * Pass the Byte_stream_buffer into a module that can calculate&n;&t; * the buffer size needed for the linked list&n;&t; */
 id|status
 op_assign
 id|acpi_rs_calculate_list_length
@@ -97,9 +71,10 @@ multiline_comment|/*&n;&t; * Exit with the error passed back&n;&t; */
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -108,7 +83,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the linked list will fit into the available buffer&n;&t; *  call to fill in the list&n;&t; */
+multiline_comment|/*&n;&t; * If the linked list will fit into the available buffer&n;&t; * call to fill in the list&n;&t; */
 r_if
 c_cond
 (paren
@@ -145,9 +120,10 @@ multiline_comment|/*&n;&t;&t; * Exit with the error passed back&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -181,12 +157,12 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_create_pci_routing_table&n; *&n; * PARAMETERS:&n; *              Package_object          - Pointer to an ACPI_OBJECT_INTERNAL&n; *                                          package&n; *              Output_buffer           - Pointer to the user&squot;s buffer&n; *              Output_buffer_length    - Size of Output_buffer&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code.&n; *              If the Output_buffer is too small, the error will be&n; *                AE_BUFFER_OVERFLOW and Output_buffer_length will point&n; *                to the size buffer needed.&n; *&n; * DESCRIPTION: Takes the ACPI_OBJECT_INTERNAL package and creates a&n; *                  linked list of PCI interrupt descriptions&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_create_pci_routing_table&n; *&n; * PARAMETERS:&n; *              Package_object          - Pointer to an ACPI_OPERAND_OBJECT&n; *                                          package&n; *              Output_buffer           - Pointer to the user&squot;s buffer&n; *              Output_buffer_length    - Size of Output_buffer&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code.&n; *              If the Output_buffer is too small, the error will be&n; *              AE_BUFFER_OVERFLOW and Output_buffer_length will point&n; *              to the size buffer needed.&n; *&n; * DESCRIPTION: Takes the ACPI_OPERAND_OBJECT  package and creates a&n; *              linked list of PCI interrupt descriptions&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_create_pci_routing_table
 id|acpi_rs_create_pci_routing_table
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|package_object
 comma
@@ -205,21 +181,21 @@ id|buffer
 op_assign
 id|output_buffer
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|top_object_list
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|sub_object_list
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|package_element
 op_assign
@@ -239,16 +215,6 @@ id|u32
 id|index
 op_assign
 l_int|0
-suffix:semicolon
-id|u8
-id|table_index
-op_assign
-l_int|0
-suffix:semicolon
-id|u8
-id|name_found
-op_assign
-id|FALSE
 suffix:semicolon
 id|PCI_ROUTING_TABLE
 op_star
@@ -256,172 +222,22 @@ id|user_prt
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;&t; * Validate parameters:&n;&t; *&n;&t; *  1. If Method_return_object is NULL, or&n;&t; *  2. If Output_buffer is NULL and Output_buffer_length is not zero&n;&t; *&n;&t; *  Return an error&n;&t; */
-r_if
-c_cond
+id|ACPI_STATUS
+id|status
+suffix:semicolon
+multiline_comment|/*&n;&t; * Params already validated, so we don&squot;t re-validate here&n;&t; */
+id|status
+op_assign
+id|acpi_rs_calculate_pci_routing_table_length
+c_func
 (paren
-op_logical_neg
 id|package_object
-op_logical_or
-(paren
-op_logical_neg
-id|output_buffer
-op_logical_and
-l_int|0
-op_ne
-op_star
-id|output_buffer_length
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Calculate the buffer size needed for the routing table.&n;&t; */
-id|number_of_elements
-op_assign
-id|package_object-&gt;package.count
-suffix:semicolon
-multiline_comment|/*&n;&t; * Properly calculate the size of the return buffer.&n;&t; *  The base size is the number of elements * the sizes of the&n;&t; *  structures.  Additional space for the strings is added below.&n;&t; *  The minus one is to subtract the size of the u8 Source[1]&n;&t; *  member because it is added below.&n;&t; * NOTE: The Number_of_elements is incremented by one to add an end&n;&t; *  table structure that is essentially a structure of zeros.&n;&t; */
+comma
+op_amp
 id|buffer_size_needed
-op_assign
-(paren
-id|number_of_elements
-op_plus
-l_int|1
-)paren
-op_star
-(paren
-r_sizeof
-(paren
-id|PCI_ROUTING_TABLE
-)paren
-op_minus
-l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * But each PRT_ENTRY structure has a pointer to a string and&n;&t; *  the size of that string must be found.&n;&t; */
-id|top_object_list
-op_assign
-id|package_object-&gt;package.elements
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|index
-op_assign
-l_int|0
-suffix:semicolon
-id|index
-OL
-id|number_of_elements
-suffix:semicolon
-id|index
-op_increment
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Dereference the sub-package&n;&t;&t; */
-id|package_element
-op_assign
-op_star
-id|top_object_list
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The Sub_object_list will now point to an array of the&n;&t;&t; *  four IRQ elements: Address, Pin, Source and Source_index&n;&t;&t; */
-id|sub_object_list
-op_assign
-id|package_element-&gt;package.elements
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Scan the Irq_table_elements for the Source Name String&n;&t;&t; */
-id|name_found
-op_assign
-id|FALSE
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|table_index
-op_assign
-l_int|0
-suffix:semicolon
-id|table_index
-OL
-l_int|4
-op_logical_and
-op_logical_neg
-id|name_found
-suffix:semicolon
-id|table_index
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ACPI_TYPE_STRING
-op_eq
-(paren
-op_star
-id|sub_object_list
-)paren
-op_member_access_from_pointer
-id|common.type
-)paren
-(brace
-id|name_found
-op_assign
-id|TRUE
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Look at the next element&n;&t;&t;&t;&t; */
-id|sub_object_list
-op_increment
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;&t;&t; * Was a String type found?&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|TRUE
-op_eq
-id|name_found
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * The length String.Length field includes the&n;&t;&t;&t; *  terminating NULL&n;&t;&t;&t; */
-id|buffer_size_needed
-op_add_assign
-(paren
-(paren
-op_star
-id|sub_object_list
-)paren
-op_member_access_from_pointer
-id|string.length
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t;&t; * If no name was found, then this is a NULL, which is&n;&t;&t;&t; *  translated as a u32 zero.&n;&t;&t;&t; */
-id|buffer_size_needed
-op_add_assign
-r_sizeof
-(paren
-id|u32
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * Point to the next ACPI_OBJECT_INTERNAL&n;&t;&t; */
-id|top_object_list
-op_increment
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * If the data will fit into the available buffer&n;&t; *  call to fill in the list&n;&t; */
+multiline_comment|/*&n;&t; * If the data will fit into the available buffer&n;&t; * call to fill in the list&n;&t; */
 r_if
 c_cond
 (paren
@@ -442,7 +258,7 @@ op_star
 id|output_buffer_length
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Loop through the ACPI_INTERNAL_OBJECTS - Each object should&n;&t;&t; *  contain a u32 Address, a u8 Pin, a Name and a u8&n;&t;&t; *  Source_index.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Loop through the ACPI_INTERNAL_OBJECTS - Each object should&n;&t;&t; * contain a u32 Address, a u8 Pin, a Name and a u8&n;&t;&t; * Source_index.&n;&t;&t; */
 id|top_object_list
 op_assign
 id|package_object-&gt;package.elements
@@ -474,7 +290,7 @@ id|index
 op_increment
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Point User_prt past this current structure&n;&t;&t;&t; *&n;&t;&t;&t; * NOTE: On the first iteration, User_prt-&gt;Length will&n;&t;&t;&t; *  be zero because we zero&squot;ed out the return buffer&n;&t;&t;&t; *  earlier&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Point User_prt past this current structure&n;&t;&t;&t; *&n;&t;&t;&t; * NOTE: On the first iteration, User_prt-&gt;Length will&n;&t;&t;&t; * be zero because we cleared the return buffer earlier&n;&t;&t;&t; */
 id|buffer
 op_add_assign
 id|user_prt-&gt;length
@@ -487,7 +303,7 @@ op_star
 )paren
 id|buffer
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Fill in the Length field with the information we&n;&t;&t;&t; *  have at this point.&n;&t;&t;&t; *  The minus one is to subtract the size of the&n;&t;&t;&t; *  u8 Source[1] member because it is added below.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Fill in the Length field with the information we&n;&t;&t;&t; * have at this point.&n;&t;&t;&t; * The minus one is to subtract the size of the&n;&t;&t;&t; * u8 Source[1] member because it is added below.&n;&t;&t;&t; */
 id|user_prt-&gt;length
 op_assign
 (paren
@@ -505,7 +321,7 @@ op_assign
 op_star
 id|top_object_list
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * The Sub_object_list will now point to an array of&n;&t;&t;&t; *  the four IRQ elements: Address, Pin, Source and&n;&t;&t;&t; *  Source_index&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * The Sub_object_list will now point to an array of&n;&t;&t;&t; * the four IRQ elements: Address, Pin, Source and&n;&t;&t;&t; * Source_index&n;&t;&t;&t; */
 id|sub_object_list
 op_assign
 id|package_element-&gt;package.elements
@@ -595,7 +411,6 @@ id|common.type
 )paren
 (brace
 id|STRCPY
-c_func
 (paren
 id|user_prt-&gt;data.source
 comma
@@ -617,10 +432,17 @@ id|sub_object_list
 op_member_access_from_pointer
 id|string.length
 suffix:semicolon
+id|user_prt-&gt;length
+op_assign
+id|ROUND_UP_TO_32_bITS
+(paren
+id|user_prt-&gt;length
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * If this is a number, then the Source Name&n;&t;&t;&t;&t; *  is NULL, since the entire buffer was zeroed&n;&t;&t;&t;&t; *  out, we can leave this alone.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * If this is a number, then the Source Name&n;&t;&t;&t;&t; * is NULL, since the entire buffer was zeroed&n;&t;&t;&t;&t; * out, we can leave this alone.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -634,7 +456,7 @@ op_member_access_from_pointer
 id|common.type
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Add to the Length field the length of&n;&t;&t;&t;&t;&t; *  the u32 NULL&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Add to the Length field the length of&n;&t;&t;&t;&t;&t; * the u32 NULL&n;&t;&t;&t;&t;&t; */
 id|user_prt-&gt;length
 op_add_assign
 r_sizeof
@@ -687,7 +509,7 @@ id|AE_BAD_DATA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Point to the next ACPI_OBJECT_INTERNAL&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Point to the next ACPI_OPERAND_OBJECT&n;&t;&t;&t; */
 id|top_object_list
 op_increment
 suffix:semicolon
@@ -718,7 +540,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_create_byte_stream&n; *&n; * PARAMETERS:&n; *              Linked_list_buffer      - Pointer to the resource linked list&n; *              Output_buffer           - Pointer to the user&squot;s buffer&n; *              Output_buffer_length    - Size of Output_buffer&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code.&n; *              If the Output_buffer is too small, the error will be&n; *              AE_BUFFER_OVERFLOW and Output_buffer_length will point&n; *              to the size buffer needed.&n; *&n; * DESCRIPTION: Takes the linked list of device resources and&n; *              creates a bytestream to be used as input for the&n; *              _SRS control method.&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_create_byte_stream&n; *&n; * PARAMETERS:&n; *              Linked_list_buffer      - Pointer to the resource linked list&n; *              Output_buffer           - Pointer to the user&squot;s buffer&n; *              Output_buffer_length    - Size of Output_buffer&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code.&n; *              If the Output_buffer is too small, the error will be&n; *              AE_BUFFER_OVERFLOW and Output_buffer_length will point&n; *              to the size buffer needed.&n; *&n; * DESCRIPTION: Takes the linked list of device resources and&n; *              creates a bytestream to be used as input for the&n; *              _SRS control method.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_create_byte_stream
 id|acpi_rs_create_byte_stream
@@ -738,39 +560,13 @@ id|output_buffer_length
 (brace
 id|ACPI_STATUS
 id|status
-op_assign
-id|AE_UNKNOWN_STATUS
 suffix:semicolon
 id|u32
 id|byte_stream_size_needed
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Validate parameters:&n;&t; *&n;&t; *  1. If Linked_list_buffer is NULL, or&n;&t; *  2. If Output_buffer is NULL and Output_buffer_length is not zero&n;&t; *&n;&t; *  Return an error&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|linked_list_buffer
-op_logical_or
-(paren
-op_logical_neg
-id|output_buffer
-op_logical_and
-l_int|0
-op_ne
-op_star
-id|output_buffer_length
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Pass the Linked_list_buffer into a module that can calculate&n;&t; *  the buffer size needed for the byte stream.&n;&t; */
+multiline_comment|/*&n;&t; * Params already validated, so we don&squot;t re-validate here&n;&t; *&n;&t; * Pass the Linked_list_buffer into a module that can calculate&n;&t; * the buffer size needed for the byte stream.&n;&t; */
 id|status
 op_assign
 id|acpi_rs_calculate_byte_stream_length
@@ -785,9 +581,10 @@ multiline_comment|/*&n;&t; * Exit with the error passed back&n;&t; */
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -796,7 +593,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the linked list will fit into the available buffer&n;&t; *  call to fill in the list&n;&t; */
+multiline_comment|/*&n;&t; * If the linked list will fit into the available buffer&n;&t; * call to fill in the list&n;&t; */
 r_if
 c_cond
 (paren
@@ -833,9 +630,10 @@ multiline_comment|/*&n;&t;&t; * Exit with the error passed back&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return

@@ -1,23 +1,22 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmdelete - object deletion and reference count utilities&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmdelete - object deletion and reference count utilities&n; *              $Revision: 53 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cmdelete&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_internal_obj&n; *&n; * PARAMETERS:  *Object        - Pointer to the list to be deleted&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Low level object deletion, after reference counts have been&n; *              updated (All reference counts, including sub-objects!)&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_delete_internal_obj
 id|acpi_cm_delete_internal_obj
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 )paren
@@ -103,24 +102,7 @@ suffix:semicolon
 r_case
 id|ACPI_TYPE_METHOD
 suffix:colon
-multiline_comment|/* Delete parse tree if it exists */
-r_if
-c_cond
-(paren
-id|object-&gt;method.parser_op
-)paren
-(brace
-id|acpi_ps_delete_parse_tree
-(paren
-id|object-&gt;method.parser_op
-)paren
-suffix:semicolon
-id|object-&gt;method.parser_op
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-multiline_comment|/* Delete semaphore if it exists */
+multiline_comment|/* Delete the method semaphore if it exists */
 r_if
 c_cond
 (paren
@@ -176,7 +158,7 @@ op_logical_neg
 (paren
 id|object-&gt;common.flags
 op_amp
-id|AO_STATIC_ALLOCATION
+id|AOPOBJ_STATIC_ALLOCATION
 )paren
 )paren
 (brace
@@ -194,13 +176,13 @@ id|ACPI_STATUS
 DECL|function|acpi_cm_delete_internal_object_list
 id|acpi_cm_delete_internal_object_list
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|obj_list
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|internal_obj
@@ -262,11 +244,11 @@ r_void
 DECL|function|acpi_cm_update_ref_count
 id|acpi_cm_update_ref_count
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 comma
-id|s32
+id|u32
 id|action
 )paren
 (brace
@@ -382,12 +364,12 @@ multiline_comment|/*&n;&t; * Sanity check the reference count, for debug purpose
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_update_object_reference&n; *&n; * PARAMETERS:  *Object             - Increment ref count for this object&n; *                                    and all sub-objects&n; *              Action              - Either REF_INCREMENT or REF_DECREMENT or&n; *                                    REF_FORCE_DELETE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Increment the object reference count&n; *&n; * Object references are incremented when:&n; * 1) An object is added as a value in an Name Table Entry (NTE)&n; * 2) An object is copied (all subobjects must be incremented)&n; *&n; * Object references are decremented when:&n; * 1) An object is removed from an NTE&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_update_object_reference&n; *&n; * PARAMETERS:  *Object             - Increment ref count for this object&n; *                                    and all sub-objects&n; *              Action              - Either REF_INCREMENT or REF_DECREMENT or&n; *                                    REF_FORCE_DELETE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Increment the object reference count&n; *&n; * Object references are incremented when:&n; * 1) An object is attached to a Node (namespace object)&n; * 2) An object is copied (all subobjects must be incremented)&n; *&n; * Object references are decremented when:&n; * 1) An object is detached from an Node&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_update_object_reference
 id|acpi_cm_update_object_reference
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 comma
@@ -401,11 +383,11 @@ suffix:semicolon
 id|u32
 id|i
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|next
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 r_new
 suffix:semicolon
@@ -553,7 +535,7 @@ suffix:colon
 multiline_comment|/* Must walk list of address handlers */
 id|next
 op_assign
-id|object-&gt;addr_handler.link
+id|object-&gt;addr_handler.next
 suffix:semicolon
 r_while
 c_loop
@@ -563,7 +545,7 @@ id|next
 (brace
 r_new
 op_assign
-id|next-&gt;addr_handler.link
+id|next-&gt;addr_handler.next
 suffix:semicolon
 id|acpi_cm_update_ref_count
 (paren
@@ -804,7 +786,7 @@ r_void
 DECL|function|acpi_cm_add_reference
 id|acpi_cm_add_reference
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 )paren
@@ -839,7 +821,7 @@ r_void
 DECL|function|acpi_cm_remove_reference
 id|acpi_cm_remove_reference
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 )paren

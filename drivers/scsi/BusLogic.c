@@ -30,8 +30,6 @@ r_static
 r_int
 DECL|variable|BusLogic_DriverOptionsCount
 id|BusLogic_DriverOptionsCount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;  BusLogic_DriverOptions is an array of Driver Options structures representing&n;  BusLogic Driver Options specifications provided via the Linux Kernel Command&n;  Line or via the Loadable Kernel Module Installation Facility.&n;*/
 r_static
@@ -49,8 +47,6 @@ r_static
 r_char
 op_star
 id|BusLogic
-op_assign
-l_int|NULL
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -66,20 +62,12 @@ r_static
 id|BusLogic_ProbeOptions_T
 DECL|variable|BusLogic_ProbeOptions
 id|BusLogic_ProbeOptions
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/*&n;  BusLogic_GlobalOptions is a set of Global Options to be applied across&n;  all BusLogic Host Adapters.&n;*/
 r_static
 id|BusLogic_GlobalOptions_T
 DECL|variable|BusLogic_GlobalOptions
 id|BusLogic_GlobalOptions
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/*&n;  BusLogic_FirstRegisteredHostAdapter and BusLogic_LastRegisteredHostAdapter&n;  are pointers to the first and last registered BusLogic Host Adapters.&n;*/
 r_static
@@ -87,22 +75,16 @@ id|BusLogic_HostAdapter_T
 DECL|variable|BusLogic_FirstRegisteredHostAdapter
 op_star
 id|BusLogic_FirstRegisteredHostAdapter
-op_assign
-l_int|NULL
 comma
 DECL|variable|BusLogic_LastRegisteredHostAdapter
 op_star
 id|BusLogic_LastRegisteredHostAdapter
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;  BusLogic_ProbeInfoCount is the number of entries in BusLogic_ProbeInfoList.&n;*/
 r_static
 r_int
 DECL|variable|BusLogic_ProbeInfoCount
 id|BusLogic_ProbeInfoCount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;  BusLogic_ProbeInfoList is the list of I/O Addresses and Bus Probe Information&n;  to be checked for potential BusLogic Host Adapters.  It is initialized by&n;  interrogating the PCI Configuration Space on PCI machines as well as from the&n;  list of standard BusLogic I/O Addresses.&n;*/
 r_static
@@ -110,8 +92,6 @@ id|BusLogic_ProbeInfo_T
 DECL|variable|BusLogic_ProbeInfoList
 op_star
 id|BusLogic_ProbeInfoList
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;  BusLogic_CommandFailureReason holds a string identifying the reason why a&n;  call to BusLogic_Command failed.  It is only non-NULL when BusLogic_Command&n;  returns a failure code.&n;*/
 r_static

@@ -1,17 +1,16 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: ammisc - ACPI AML (p-code) execution - specific opcodes&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: ammisc - ACPI AML (p-code) execution - specific opcodes&n; *              $Revision: 67 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;ammisc&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_fatal&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      Status.  If the OS returns from the OSD call, we just keep&n; *              on going.&n; *&n; * DESCRIPTION: Execute Fatal operator&n; *&n; * ACPI SPECIFICATION REFERENCES:&n; *  Def_fatal   :=  Fatal_op Fatal_type Fatal_code  Fatal_arg&n; *  Fatal_type  :=  Byte_data&n; *  Fatal_code  :=  DWord_data&n; *  Fatal_arg   :=  Term_arg=&gt;Integer&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_fatal
@@ -22,15 +21,15 @@ op_star
 id|walk_state
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|type_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|code_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|arg_desc
 suffix:semicolon
@@ -45,6 +44,8 @@ id|acpi_aml_resolve_operands
 id|AML_FATAL_OP
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get operands */
@@ -81,28 +82,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
-multiline_comment|/* invalid parameters on object stack  */
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-(paren
-id|u16
-)paren
-id|AML_FATAL_OP
-comma
-id|WALK_OPERANDS
-comma
-l_int|3
-)paren
-suffix:semicolon
+multiline_comment|/* Invalid parameters on object stack  */
 r_goto
 id|cleanup
 suffix:semicolon
@@ -143,31 +129,31 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|idx_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|res_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|tmp_desc
 suffix:semicolon
@@ -183,6 +169,8 @@ id|acpi_aml_resolve_operands
 id|AML_INDEX_OP
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get all operands */
@@ -219,28 +207,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Invalid parameters on object stack  */
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-(paren
-id|u16
-)paren
-id|AML_INDEX_OP
-comma
-id|WALK_OPERANDS
-comma
-l_int|3
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -346,6 +319,8 @@ id|acpi_aml_exec_store
 id|ret_desc
 comma
 id|res_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 id|ret_desc-&gt;reference.object
@@ -413,6 +388,8 @@ id|acpi_aml_exec_store
 id|ret_desc
 comma
 id|res_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 )brace
@@ -482,37 +459,37 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|pkg_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|op1_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|V1_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|op2_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|V2_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|start_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc
 op_assign
@@ -541,6 +518,8 @@ id|acpi_aml_resolve_operands
 id|AML_MATCH_OP
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get all operands */
@@ -607,28 +586,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Invalid parameters on object stack  */
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-(paren
-id|u16
-)paren
-id|AML_MATCH_OP
-comma
-id|WALK_OPERANDS
-comma
-l_int|6
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon

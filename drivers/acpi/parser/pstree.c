@@ -1,7 +1,7 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: pstree - Parser op tree manipulation/traversal/search&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: pstree - Parser op tree manipulation/traversal/search&n; *              $Revision: 23 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          PARSER
@@ -9,14 +9,13 @@ id|MODULE_NAME
 (paren
 l_string|&quot;pstree&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_arg&n; *&n; * PARAMETERS:  Op              - Get an argument for this op&n; *              Argn            - Nth argument to get&n; *&n; * RETURN:      The argument (as an Op object).  NULL if argument does not exist&n; *&n; * DESCRIPTION: Get the specified op&squot;s argument.&n; *&n; ******************************************************************************/
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 DECL|function|acpi_ps_get_arg
 id|acpi_ps_get_arg
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
@@ -24,13 +23,13 @@ id|u32
 id|argn
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op_info
 suffix:semicolon
@@ -45,13 +44,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|ACPI_GET_OP_TYPE
+(paren
 id|op_info
 )paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
+)paren
 (brace
-multiline_comment|/* Invalid opcode */
+multiline_comment|/* Invalid opcode or ASCII character */
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Check if this opcode requires argument sub-objects */
@@ -60,15 +65,18 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|op_info-&gt;flags
-op_amp
-id|OP_INFO_HAS_ARGS
+id|ACPI_GET_OP_ARGS
+(paren
+id|op_info
+)paren
 )paren
 )paren
 (brace
 multiline_comment|/* Has no linked argument objects */
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Get the requested argument object */
@@ -93,7 +101,9 @@ id|arg-&gt;next
 suffix:semicolon
 )brace
 r_return
+(paren
 id|arg
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_append_arg&n; *&n; * PARAMETERS:  Op              - Append an argument to this Op.&n; *              Arg             - Argument Op to append&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Append an argument to an op&squot;s argument list (a NULL arg is OK)&n; *&n; ******************************************************************************/
@@ -101,20 +111,20 @@ r_void
 DECL|function|acpi_ps_append_arg
 id|acpi_ps_append_arg
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|prev_arg
 suffix:semicolon
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op_info
 suffix:semicolon
@@ -139,8 +149,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|ACPI_GET_OP_TYPE
+(paren
 id|op_info
+)paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
 )paren
 (brace
 multiline_comment|/* Invalid opcode */
@@ -153,9 +167,10 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|op_info-&gt;flags
-op_amp
-id|OP_INFO_HAS_ARGS
+id|ACPI_GET_OP_ARGS
+(paren
+id|op_info
+)paren
 )paren
 )paren
 (brace
@@ -217,17 +232,17 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_child&n; *&n; * PARAMETERS:  Op              - Get the child of this Op&n; *&n; * RETURN:      Child Op, Null if none is found.&n; *&n; * DESCRIPTION: Get op&squot;s children or NULL if none&n; *&n; ******************************************************************************/
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 DECL|function|acpi_ps_get_child
 id|acpi_ps_get_child
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|child
 op_assign
@@ -330,35 +345,37 @@ r_break
 suffix:semicolon
 )brace
 r_return
+(paren
 id|child
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_depth_next&n; *&n; * PARAMETERS:  Origin          - Root of subtree to search&n; *              Op              - Last (previous) Op that was found&n; *&n; * RETURN:      Next Op found in the search.&n; *&n; * DESCRIPTION: Get next op in tree (walking the tree in depth-first order)&n; *              Return NULL when reaching &quot;origin&quot; or when walking up from root&n; *&n; ******************************************************************************/
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 DECL|function|acpi_ps_get_depth_next
 id|acpi_ps_get_depth_next
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|origin
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|parent
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 suffix:semicolon
@@ -370,7 +387,9 @@ id|op
 )paren
 (brace
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* look for an argument or child */
@@ -390,7 +409,9 @@ id|next
 )paren
 (brace
 r_return
+(paren
 id|next
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* look for a sibling */
@@ -405,7 +426,9 @@ id|next
 )paren
 (brace
 r_return
+(paren
 id|next
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* look for a sibling of parent */
@@ -461,7 +484,9 @@ id|origin
 (brace
 multiline_comment|/* reached parent of origin, end search */
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -472,7 +497,9 @@ id|parent-&gt;next
 (brace
 multiline_comment|/* found sibling of parent */
 r_return
+(paren
 id|parent-&gt;next
+)paren
 suffix:semicolon
 )brace
 id|op
@@ -485,20 +512,22 @@ id|parent-&gt;parent
 suffix:semicolon
 )brace
 r_return
+(paren
 id|next
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_fetch_prefix&n; *&n; * PARAMETERS:  Scope           - Op to fetch prefix for&n; *              Path            - A namestring containing the prefix&n; *              io              - Direction flag&n; *&n; * RETURN:      Op referenced by the prefix&n; *&n; * DESCRIPTION: Fetch and handle path prefix (&squot;&bslash;&bslash;&squot; or &squot;^&squot;)&n; *&n; ******************************************************************************/
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 DECL|function|acpi_ps_fetch_prefix
 id|acpi_ps_fetch_prefix
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|scope
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 op_star
 id|path
@@ -589,15 +618,17 @@ id|scope
 suffix:semicolon
 )brace
 r_return
+(paren
 id|scope
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_fetch_name&n; *&n; * PARAMETERS:  Path            - A string containing the name segment&n; *              io              - Direction flag&n; *&n; * RETURN:      The 4-char ASCII ACPI Name as a u32&n; *&n; * DESCRIPTION: Fetch ACPI name segment (dot-delimited)&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_fetch_name&n; *&n; * PARAMETERS:  Path            - A string containing the name segment&n; *              io              - Direction flag&n; *&n; * RETURN:      The 4-s8 ASCII ACPI Name as a u32&n; *&n; * DESCRIPTION: Fetch ACPI name segment (dot-delimited)&n; *&n; ******************************************************************************/
 id|u32
 DECL|function|acpi_ps_fetch_name
 id|acpi_ps_fetch_name
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 op_star
 id|path
@@ -611,14 +642,14 @@ id|name
 op_assign
 l_int|0
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|nm
 suffix:semicolon
 id|u32
 id|i
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 id|ch
 suffix:semicolon
 r_if
@@ -664,7 +695,7 @@ suffix:semicolon
 id|nm
 op_assign
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 op_amp
@@ -726,7 +757,9 @@ suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 id|name
+)paren
 suffix:semicolon
 )brace
 eof

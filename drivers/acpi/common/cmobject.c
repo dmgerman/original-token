@@ -1,9 +1,9 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmobject - ACPI object create/delete/size/cache routines&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmobject - ACPI object create/delete/size/cache routines&n; *              $Revision: 27 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
@@ -11,28 +11,27 @@ id|MODULE_NAME
 (paren
 l_string|&quot;cmobject&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    _Cm_create_internal_object&n; *&n; * PARAMETERS:  Address             - Address of the memory to deallocate&n; *              Component           - Component type of caller&n; *              Module              - Source file name of caller&n; *              Line                - Line number of caller&n; *              Type                - ACPI Type of the new object&n; *&n; * RETURN:      Object              - The new object.  Null on failure&n; *&n; * DESCRIPTION: Create and initialize a new internal object.&n; *&n; * NOTE:&n; *      We always allocate the worst-case object descriptor because these&n; *      objects are cached, and we want them to be one-size-satisifies-any-request.&n; *      This in itself may not be the most memory efficient, but the efficiency&n; *      of the object cache should more than make up for this!&n; *&n; ******************************************************************************/
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 DECL|function|_cm_create_internal_object
 id|_cm_create_internal_object
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
 id|OBJECT_TYPE_INTERNAL
 id|type
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 suffix:semicolon
@@ -67,38 +66,19 @@ id|object-&gt;common.type
 op_assign
 id|type
 suffix:semicolon
-id|object-&gt;common.size
-op_assign
-(paren
-id|u8
-)paren
-r_sizeof
-(paren
-id|ACPI_OBJECT_INTERNAL
-)paren
-suffix:semicolon
 multiline_comment|/* Init the reference count */
 id|object-&gt;common.reference_count
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Any per-type initialization should go here */
-multiline_comment|/* Memory allocation metrics - compiled out in non debug mode. */
-id|INCREMENT_OBJECT_METRICS
-(paren
-r_sizeof
-(paren
-id|ACPI_OBJECT_INTERNAL
-)paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|object
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_valid_internal_object&n; *&n; * PARAMETERS:  Operand             - Object to be validated&n; *&n; * RETURN:      Validate a pointer to be an ACPI_OBJECT_INTERNAL&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_valid_internal_object&n; *&n; * PARAMETERS:  Operand             - Object to be validated&n; *&n; * RETURN:      Validate a pointer to be an ACPI_OPERAND_OBJECT&n; *&n; *****************************************************************************/
 id|u8
 DECL|function|acpi_cm_valid_internal_object
 id|acpi_cm_valid_internal_object
@@ -117,7 +97,9 @@ id|object
 )paren
 (brace
 r_return
+(paren
 id|FALSE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Check for a pointer within one of the ACPI tables */
@@ -131,7 +113,9 @@ id|object
 )paren
 (brace
 r_return
+(paren
 id|FALSE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Check the descriptor type field */
@@ -149,12 +133,16 @@ id|ACPI_DESC_TYPE_INTERNAL
 (brace
 multiline_comment|/* Not an ACPI internal object, do some further checking */
 r_return
+(paren
 id|FALSE
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* The object appears to be a valid ACPI_OBJECT_INTERNAL */
+multiline_comment|/* The object appears to be a valid ACPI_OPERAND_OBJECT  */
 r_return
+(paren
 id|TRUE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    _Cm_allocate_object_desc&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      Pointer to newly allocated object descriptor.  Null on error&n; *&n; * DESCRIPTION: Allocate a new object descriptor.  Gracefully handle&n; *              error conditions.&n; *&n; ****************************************************************************/
@@ -163,18 +151,18 @@ op_star
 DECL|function|_cm_allocate_object_desc
 id|_cm_allocate_object_desc
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 suffix:semicolon
@@ -200,9 +188,9 @@ id|acpi_gbl_object_cache
 suffix:semicolon
 id|acpi_gbl_object_cache
 op_assign
-id|object-&gt;common.next
+id|object-&gt;cache.next
 suffix:semicolon
-id|object-&gt;common.next
+id|object-&gt;cache.next
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -233,7 +221,7 @@ id|_cm_callocate
 (paren
 r_sizeof
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 )paren
 comma
 id|component_id
@@ -268,6 +256,15 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Memory allocation metrics - compiled out in non debug mode. */
+id|INCREMENT_OBJECT_METRICS
+(paren
+r_sizeof
+(paren
+id|ACPI_OPERAND_OBJECT
+)paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Mark the descriptor type */
 id|object-&gt;common.data_type
@@ -285,28 +282,34 @@ r_void
 DECL|function|acpi_cm_delete_object_desc
 id|acpi_cm_delete_object_desc
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 )paren
 (brace
-multiline_comment|/* Object must be an ACPI_OBJECT_INTERNAL */
+multiline_comment|/* Make sure that the object isn&squot;t already in the cache */
+r_if
+c_cond
+(paren
+id|object-&gt;common.data_type
+op_eq
+(paren
+id|ACPI_DESC_TYPE_INTERNAL
+op_or
+id|ACPI_CACHED_OBJECT
+)paren
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Object must be an ACPI_OPERAND_OBJECT  */
 r_if
 c_cond
 (paren
 id|object-&gt;common.data_type
 op_ne
 id|ACPI_DESC_TYPE_INTERNAL
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Make sure that the object isn&squot;t already in the cache */
-r_if
-c_cond
-(paren
-id|object-&gt;common.next
 )paren
 (brace
 r_return
@@ -324,7 +327,10 @@ id|MAX_OBJECT_CACHE_DEPTH
 multiline_comment|/*&n;&t;&t; * Memory allocation metrics.  Call the macro here since we only&n;&t;&t; * care about dynamically allocated objects.&n;&t;&t; */
 id|DECREMENT_OBJECT_METRICS
 (paren
-id|acpi_gbl_object_cache-&gt;common.size
+r_sizeof
+(paren
+id|ACPI_OPERAND_OBJECT
+)paren
 )paren
 suffix:semicolon
 id|acpi_cm_free
@@ -349,16 +355,18 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 )paren
 )paren
 suffix:semicolon
 id|object-&gt;common.data_type
 op_assign
 id|ACPI_DESC_TYPE_INTERNAL
+op_or
+id|ACPI_CACHED_OBJECT
 suffix:semicolon
 multiline_comment|/* Put the object at the head of the global cache list */
-id|object-&gt;common.next
+id|object-&gt;cache.next
 op_assign
 id|acpi_gbl_object_cache
 suffix:semicolon
@@ -374,6 +382,8 @@ id|acpi_cm_release_mutex
 id|ACPI_MTX_CACHES
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_object_cache&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Purge the global state object cache.  Used during subsystem&n; *              termination.&n; *&n; ******************************************************************************/
 r_void
@@ -383,7 +393,7 @@ id|acpi_cm_delete_object_cache
 r_void
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|next
 suffix:semicolon
@@ -397,16 +407,19 @@ id|acpi_gbl_object_cache
 multiline_comment|/* Delete one cached state object */
 id|next
 op_assign
-id|acpi_gbl_object_cache-&gt;common.next
+id|acpi_gbl_object_cache-&gt;cache.next
 suffix:semicolon
-id|acpi_gbl_object_cache-&gt;common.next
+id|acpi_gbl_object_cache-&gt;cache.next
 op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Memory allocation metrics.  Call the macro here since we only&n;&t;&t; * care about dynamically allocated objects.&n;&t;&t; */
 id|DECREMENT_OBJECT_METRICS
 (paren
-id|acpi_gbl_object_cache-&gt;common.size
+r_sizeof
+(paren
+id|ACPI_OPERAND_OBJECT
+)paren
 )paren
 suffix:semicolon
 id|acpi_cm_free
@@ -418,6 +431,9 @@ id|acpi_gbl_object_cache
 op_assign
 id|next
 suffix:semicolon
+id|acpi_gbl_object_cache_depth
+op_decrement
+suffix:semicolon
 )brace
 r_return
 suffix:semicolon
@@ -427,7 +443,7 @@ r_void
 DECL|function|acpi_cm_init_static_object
 id|acpi_cm_init_static_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 )paren
@@ -455,25 +471,18 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Initialize the header fields&n;&t; * 1) This is an ACPI_OBJECT_INTERNAL descriptor&n;&t; * 2) The size is the full object (worst case)&n;&t; * 3) The flags field indicates static allocation&n;&t; * 4) Reference count starts at one (not really necessary since the&n;&t; *    object can&squot;t be deleted, but keeps everything sane)&n;&t; */
+multiline_comment|/*&n;&t; * Initialize the header fields&n;&t; * 1) This is an ACPI_OPERAND_OBJECT  descriptor&n;&t; * 2) The size is the full object (worst case)&n;&t; * 3) The flags field indicates static allocation&n;&t; * 4) Reference count starts at one (not really necessary since the&n;&t; *    object can&squot;t be deleted, but keeps everything sane)&n;&t; */
 id|obj_desc-&gt;common.data_type
 op_assign
 id|ACPI_DESC_TYPE_INTERNAL
 suffix:semicolon
-id|obj_desc-&gt;common.size
-op_assign
-r_sizeof
-(paren
-id|ACPI_OBJECT_INTERNAL
-)paren
-suffix:semicolon
 id|obj_desc-&gt;common.flags
 op_assign
-id|AO_STATIC_ALLOCATION
+id|AOPOBJ_STATIC_ALLOCATION
 suffix:semicolon
 id|obj_desc-&gt;common.reference_count
 op_assign
@@ -487,7 +496,7 @@ id|ACPI_STATUS
 DECL|function|acpi_cm_get_simple_object_size
 id|acpi_cm_get_simple_object_size
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 comma
@@ -542,7 +551,7 @@ id|ACPI_DESC_TYPE_NAMED
 )paren
 )paren
 (brace
-multiline_comment|/* Object is an NTE (reference), just return the length */
+multiline_comment|/* Object is a named object (reference), just return the length */
 op_star
 id|obj_length
 op_assign
@@ -648,7 +657,7 @@ id|ACPI_STATUS
 DECL|function|acpi_cm_get_package_object_size
 id|acpi_cm_get_package_object_size
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 comma
@@ -657,11 +666,11 @@ op_star
 id|obj_length
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|this_internal_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|parent_obj
 (braket
@@ -680,7 +689,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|this_parent
 suffix:semicolon
@@ -794,9 +803,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_return
@@ -921,11 +931,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_return
-(paren
-id|AE_OK
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_get_object_size&n; *&n; * PARAMETERS:  *Internal_obj   - Pointer to the object we are examining&n; *              *Ret_length     - Where the length will be returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to determine the space required to&n; *              contain an object for return to an API user.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
@@ -933,7 +938,7 @@ DECL|function|acpi_cm_get_object_size
 id|acpi_cm_get_object_size
 c_func
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 comma
@@ -990,7 +995,9 @@ id|obj_length
 suffix:semicolon
 )brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 eof

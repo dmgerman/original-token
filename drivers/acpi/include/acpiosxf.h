@@ -368,7 +368,7 @@ multiline_comment|/*&n; * Miscellaneous&n; */
 id|ACPI_STATUS
 id|acpi_os_breakpoint
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|message
 )paren
@@ -400,7 +400,7 @@ id|s32
 id|acpi_os_printf
 (paren
 r_const
-r_char
+id|NATIVE_CHAR
 op_star
 id|format
 comma
@@ -413,7 +413,7 @@ id|s32
 id|acpi_os_vprintf
 (paren
 r_const
-r_char
+id|NATIVE_CHAR
 op_star
 id|format
 comma
@@ -425,7 +425,7 @@ multiline_comment|/*&n; * Debug input&n; */
 id|u32
 id|acpi_os_get_line
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|buffer
 )paren
@@ -446,7 +446,7 @@ comma
 id|u32
 id|line_number
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|message
 )paren

@@ -1,22 +1,21 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmcopy - Internal to external object translation utilities&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmcopy - Internal to external object translation utilities&n; *              $Revision: 56 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cmcopy&quot;
 )paren
-suffix:semicolon
 DECL|struct|search_st
 r_typedef
 r_struct
 id|search_st
 (brace
 DECL|member|internal_obj
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 suffix:semicolon
@@ -46,7 +45,7 @@ id|ACPI_STATUS
 DECL|function|acpi_cm_build_external_simple_object
 id|acpi_cm_build_external_simple_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 comma
@@ -68,7 +67,7 @@ id|length
 op_assign
 l_int|0
 suffix:semicolon
-r_char
+id|u8
 op_star
 id|source_ptr
 op_assign
@@ -132,13 +131,17 @@ suffix:semicolon
 id|external_obj-&gt;string.pointer
 op_assign
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 id|data_space
 suffix:semicolon
 id|source_ptr
 op_assign
+(paren
+id|u8
+op_star
+)paren
 id|internal_obj-&gt;string.pointer
 suffix:semicolon
 r_break
@@ -161,7 +164,7 @@ suffix:semicolon
 id|source_ptr
 op_assign
 (paren
-r_char
+id|u8
 op_star
 )paren
 id|internal_obj-&gt;buffer.pointer
@@ -187,7 +190,7 @@ id|ACPI_TYPE_ANY
 suffix:semicolon
 id|external_obj-&gt;reference.handle
 op_assign
-id|internal_obj-&gt;reference.nte
+id|internal_obj-&gt;reference.node
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -200,11 +203,11 @@ id|internal_obj-&gt;processor.proc_id
 suffix:semicolon
 id|external_obj-&gt;processor.pblk_address
 op_assign
-id|internal_obj-&gt;processor.pblk_address
+id|internal_obj-&gt;processor.address
 suffix:semicolon
 id|external_obj-&gt;processor.pblk_length
 op_assign
-id|internal_obj-&gt;processor.pblk_length
+id|internal_obj-&gt;processor.length
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -279,7 +282,7 @@ id|ACPI_STATUS
 DECL|function|acpi_cm_build_external_package_object
 id|acpi_cm_build_external_package_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 comma
@@ -319,7 +322,7 @@ suffix:semicolon
 id|u32
 id|object_space
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|this_internal_obj
 suffix:semicolon
@@ -451,7 +454,7 @@ suffix:semicolon
 id|this_internal_obj
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 id|level_ptr-&gt;internal_obj-&gt;package.elements
@@ -471,7 +474,7 @@ id|level_ptr-&gt;external_obj-&gt;package.elements
 id|this_index
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Check for 1) Null object -- OK, this can happen if package&n;&t;&t; *              element is never initialized&n;&t;&t; *           2) Not an internal object - can be an NTE instead&n;&t;&t; *           3) Any internal object other than a package.&n;&t;&t; *&n;&t;&t; * The more complex package case is handled later&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Check for&n;&t;&t; * 1) Null object -- OK, this can happen if package&n;&t;&t; *              element is never initialized&n;&t;&t; * 2) Not an internal object - can be Node instead&n;&t;&t; * 3) Any internal object other than a package.&n;&t;&t; *&n;&t;&t; * The more complex package case is handled later&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -674,18 +677,13 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-r_return
-(paren
-id|AE_OK
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_build_external_object&n; *&n; * PARAMETERS:  *Internal_obj   - The internal object to be converted&n; *              *Buffer_ptr     - Where the object is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to build an API object to be returned to&n; *              the caller.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_build_external_object
 id|acpi_cm_build_external_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 comma
@@ -781,7 +779,7 @@ id|ACPI_OBJECT
 op_star
 id|external_obj
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 )paren
@@ -856,7 +854,7 @@ id|ACPI_STATUS
 DECL|function|acpi_cm_build_internal_package_object
 id|acpi_cm_build_internal_package_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 comma
@@ -882,11 +880,6 @@ id|current_depth
 op_assign
 l_int|0
 suffix:semicolon
-id|ACPI_STATUS
-id|status
-op_assign
-id|AE_OK
-suffix:semicolon
 id|u32
 id|length
 op_assign
@@ -900,7 +893,7 @@ id|object_space
 op_assign
 l_int|0
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|this_internal_obj
 suffix:semicolon
@@ -1017,7 +1010,7 @@ suffix:semicolon
 id|this_internal_obj
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 op_amp
@@ -1129,22 +1122,6 @@ suffix:semicolon
 multiline_comment|/* if object is a package */
 r_else
 (brace
-multiline_comment|/*            Status = Acpi_cm_build_simple_object(This_internal_obj,&n;&t;&t;&t;&t; This_external_obj, Free_space,&n;&t;&t;&t;&t; &amp;Object_space);&n;*/
-r_if
-c_cond
-(paren
-id|status
-op_ne
-id|AE_OK
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Failure get out&n;&t;&t;&t;&t; */
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
 id|free_space
 op_add_assign
 id|object_space
@@ -1205,12 +1182,6 @@ suffix:semicolon
 multiline_comment|/* else object is NOT a package */
 )brace
 multiline_comment|/* while (1)  */
-multiline_comment|/*&n;&t; * We&squot;ll never get here, but the compiler whines about&n;&t; * return value&n;&t; */
-r_return
-(paren
-id|AE_OK
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_build_internal_object&n; *&n; * PARAMETERS:  *Internal_obj   - The external object to be converted&n; *              *Buffer_ptr     - Where the internal object is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: Converts an external object to an internal object.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
@@ -1221,7 +1192,7 @@ id|ACPI_OBJECT
 op_star
 id|external_obj
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|internal_obj
 )paren

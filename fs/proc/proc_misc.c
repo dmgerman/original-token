@@ -715,17 +715,21 @@ id|page
 op_plus
 id|len
 comma
-l_string|&quot;MemTotal:  %8lu kB&bslash;n&quot;
-l_string|&quot;MemFree:   %8lu kB&bslash;n&quot;
-l_string|&quot;MemShared: %8lu kB&bslash;n&quot;
-l_string|&quot;Buffers:   %8lu kB&bslash;n&quot;
-l_string|&quot;Cached:    %8u kB&bslash;n&quot;
-l_string|&quot;HighTotal: %8lu kB&bslash;n&quot;
-l_string|&quot;HighFree:  %8lu kB&bslash;n&quot;
-l_string|&quot;LowTotal:  %8lu kB&bslash;n&quot;
-l_string|&quot;LowFree:   %8lu kB&bslash;n&quot;
-l_string|&quot;SwapTotal: %8lu kB&bslash;n&quot;
-l_string|&quot;SwapFree:  %8lu kB&bslash;n&quot;
+l_string|&quot;MemTotal:     %8lu kB&bslash;n&quot;
+l_string|&quot;MemFree:      %8lu kB&bslash;n&quot;
+l_string|&quot;MemShared:    %8lu kB&bslash;n&quot;
+l_string|&quot;Buffers:      %8lu kB&bslash;n&quot;
+l_string|&quot;Cached:       %8u kB&bslash;n&quot;
+l_string|&quot;Active:       %8u kB&bslash;n&quot;
+l_string|&quot;Inact_dirty:  %8u kB&bslash;n&quot;
+l_string|&quot;Inact_clean:  %8u kB&bslash;n&quot;
+l_string|&quot;Inact_target: %8lu kB&bslash;n&quot;
+l_string|&quot;HighTotal:    %8lu kB&bslash;n&quot;
+l_string|&quot;HighFree:     %8lu kB&bslash;n&quot;
+l_string|&quot;LowTotal:     %8lu kB&bslash;n&quot;
+l_string|&quot;LowFree:      %8lu kB&bslash;n&quot;
+l_string|&quot;SwapTotal:    %8lu kB&bslash;n&quot;
+l_string|&quot;SwapFree:     %8lu kB&bslash;n&quot;
 comma
 id|K
 c_func
@@ -760,6 +764,33 @@ c_func
 op_amp
 id|page_cache_size
 )paren
+)paren
+comma
+id|K
+c_func
+(paren
+id|nr_active_pages
+)paren
+comma
+id|K
+c_func
+(paren
+id|nr_inactive_dirty_pages
+)paren
+comma
+id|K
+c_func
+(paren
+id|nr_inactive_clean_pages
+c_func
+(paren
+)paren
+)paren
+comma
+id|K
+c_func
+(paren
+id|inactive_target
 )paren
 comma
 id|K

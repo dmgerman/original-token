@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsdump - Functions do dump out the resource structures.&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsdump - Functions do dump out the resource structures.&n; *              $Revision: 10 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 DECL|macro|_COMPONENT
@@ -7,7 +7,6 @@ id|MODULE_NAME
 (paren
 l_string|&quot;rsdump&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_irq&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_irq
@@ -209,7 +208,7 @@ suffix:semicolon
 )brace
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t%s_bus Master&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t%sBus Master&bslash;n&quot;
 comma
 id|BUS_MASTER
 op_eq
@@ -1596,7 +1595,7 @@ op_star
 id|resource
 )paren
 (brace
-id|s8
+id|u8
 id|count
 op_assign
 l_int|0
@@ -1846,7 +1845,7 @@ id|buffer
 op_assign
 id|route_table
 suffix:semicolon
-id|s8
+id|u8
 id|count
 op_assign
 l_int|0

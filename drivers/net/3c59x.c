@@ -1,5 +1,5 @@
 multiline_comment|/* EtherLinkXL.c: A 3Com EtherLink PCI III/XL ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1996-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com &quot;Vortex&quot; and &quot;Boomerang&quot; series ethercards.&n;&t;Members of the series include Fast EtherLink 3c590/3c592/3c595/3c597&n;&t;and the EtherLink XL 3c900 and 3c905 cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Linux Kernel Additions:&n;&t;&n; &t;0.99H+lk0.9 - David S. Miller - softnet, PCI DMA updates&n; &t;0.99H+lk1.0 - Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Remove compatibility defines for kernel versions &lt; 2.2.x.&n;&t;&t;Update for new 2.3.x module interface&n;&t;LK1.1.2 (March 19, 2000)&n;&t;* New PCI interface (jgarzik)&n;&n;    LK1.1.3 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;&n;    - Merged with 3c575_cb.c&n;    - Don&squot;t set RxComplete in boomerang interrupt enable reg&n;    - spinlock in vortex_timer to protect mdio functions&n;    - disable local interrupts around call to vortex_interrupt in&n;      vortex_tx_timeout() (So vortex_interrupt can use spin_lock())&n;    - Select window 3 in vortex_timer()&squot;s write to Wn3_MAC_Ctrl&n;    - In vortex_start_xmit(), move the lock to _after_ we&squot;ve altered&n;      vp-&gt;cur_tx and vp-&gt;tx_full.  This defeats the race between&n;      vortex_start_xmit() and vortex_interrupt which was identified&n;      by Bogdan Costescu.&n;    - Merged back support for six new cards from various sources&n;    - Set vortex_have_pci if pci_module_init returns zero (fixes cardbus&n;      insertion oops)&n;    - Tell it that 3c905C has NWAY for 100bT autoneg&n;    - Fix handling of SetStatusEnd in &squot;Too much work..&squot; code, as&n;      per 2.3.99&squot;s 3c575_cb (Dave Hinds).&n;    - Split ISR into two for vortex &amp; boomerang&n;    - Fix MOD_INC/DEC races&n;    - Handle resource allocation failures.&n;    - Fix 3CCFE575CT LED polarity&n;    - Make tx_interrupt_mitigation the default&n;&n;    LK1.1.4 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;    &n;    - Add extra TxReset to vortex_up() to fix 575_cb hotplug initialisation probs.&n;    - Put vortex_info_tbl into __devinitdata&n;    - In the vortex_error StatsFull HACK, disable stats in vp-&gt;intr_enable as well&n;      as in the hardware.&n;    - Increased the loop counter in wait_for_completion from 2,000 to 4,000.&n;&n;    LK1.1.5 28 April 2000, andrewm&n;    - Added powerpc defines (John Daniel &lt;jdaniel@etresoft.com&gt; said these work...)&n;    - Some extra diagnostics&n;    - In vortex_error(), reset the Tx on maxCollisions.  Otherwise most&n;      chips usually get a Tx timeout.&n;    - Added extra_reset module parm&n;    - Replaced some inline timer manip with mod_timer&n;      (Franois romieu &lt;Francois.Romieu@nic.fr&gt;)&n;    - In vortex_up(), don&squot;t make Wn3_config initialisation dependent upon has_nway&n;      (this came across from 3c575_cb).&n;&n;    LK1.1.6 06 Jun 2000, andrewm&n;    - Backed out the PPC defines.&n;    - Use del_timer_sync(), mod_timer().&n;    - Fix wrapped ulong comparison in boomerang_rx()&n;    - Add IS_TORNADO, use it to suppress 3c905C checksum error msg&n;      (Donald Becker, I Lee Hetherington &lt;ilh@sls.lcs.mit.edu&gt;)&n;    - Replace union wn3_config with BFINS/BFEXT manipulation for&n;      sparc64 (Pete Zaitcev, Peter Jones)&n;    - In vortex_error, do_tx_reset and vortex_tx_timeout(Vortex):&n;      do a netif_wake_queue() to better recover from errors. (Anders Pedersen,&n;      Donald Becker)&n;    - Print a warning on out-of-memory (rate limited to 1 per 10 secs)&n;    - Added two more Cardbus 575 NICs: 5b57 and 6564 (Paul Wagland)&n;&n;    LK1.1.7 2 Jul 2000 andrewm&n;    - Better handling of shared IRQs&n;    - Reset the transmitter on a Tx reclaim error&n;    - Fixed crash under OOM during vortex_open() (Mark Hemment)&n;    - Fix Rx cessation problem during OOM (help from Mark Hemment)&n;    - The spinlocks around the mdio access were blocking interrupts for 300uS.&n;      Fix all this to use spin_lock_bh() within mdio_read/write&n;    - Only write to TxFreeThreshold if it&squot;s a boomerang - other NICs don&squot;t&n;      have one.&n;    - Added 802.3x MAC-layer flow control support&n;&n;   LK1.1.8 13 Aug 2000 andrewm&n;    - Ignore request_region() return value - already reserved if Cardbus.&n;    - Merged some additional Cardbus flags from Don&squot;s 0.99Qk&n;    - Some fixes for 3c556 (Fred Maciel)&n;    - Fix for EISA initialisation (Jan Rkorajski)&n;    - Renamed MII_XCVR_PWR and EEPROM_230 to align with 3c575_cb and D. Becker&squot;s drivers&n;    - Fixed MII_XCVR_PWR for 3CCFE575CT&n;    - Added INVERT_LED_PWR, used it.&n;    - Backed out the extra_reset stuff&n;&n;    - See http://www.uow.edu.au/~andrewm/linux/#3c59x-2.3 for more details.&n;    - Also see Documentation/networking/vortex.txt&n;*/
+multiline_comment|/*&n;&t;Written 1996-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com &quot;Vortex&quot; and &quot;Boomerang&quot; series ethercards.&n;&t;Members of the series include Fast EtherLink 3c590/3c592/3c595/3c597&n;&t;and the EtherLink XL 3c900 and 3c905 cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Linux Kernel Additions:&n;&t;&n; &t;0.99H+lk0.9 - David S. Miller - softnet, PCI DMA updates&n; &t;0.99H+lk1.0 - Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Remove compatibility defines for kernel versions &lt; 2.2.x.&n;&t;&t;Update for new 2.3.x module interface&n;&t;LK1.1.2 (March 19, 2000)&n;&t;* New PCI interface (jgarzik)&n;&n;    LK1.1.3 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;&n;    - Merged with 3c575_cb.c&n;    - Don&squot;t set RxComplete in boomerang interrupt enable reg&n;    - spinlock in vortex_timer to protect mdio functions&n;    - disable local interrupts around call to vortex_interrupt in&n;      vortex_tx_timeout() (So vortex_interrupt can use spin_lock())&n;    - Select window 3 in vortex_timer()&squot;s write to Wn3_MAC_Ctrl&n;    - In vortex_start_xmit(), move the lock to _after_ we&squot;ve altered&n;      vp-&gt;cur_tx and vp-&gt;tx_full.  This defeats the race between&n;      vortex_start_xmit() and vortex_interrupt which was identified&n;      by Bogdan Costescu.&n;    - Merged back support for six new cards from various sources&n;    - Set vortex_have_pci if pci_module_init returns zero (fixes cardbus&n;      insertion oops)&n;    - Tell it that 3c905C has NWAY for 100bT autoneg&n;    - Fix handling of SetStatusEnd in &squot;Too much work..&squot; code, as&n;      per 2.3.99&squot;s 3c575_cb (Dave Hinds).&n;    - Split ISR into two for vortex &amp; boomerang&n;    - Fix MOD_INC/DEC races&n;    - Handle resource allocation failures.&n;    - Fix 3CCFE575CT LED polarity&n;    - Make tx_interrupt_mitigation the default&n;&n;    LK1.1.4 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;    &n;    - Add extra TxReset to vortex_up() to fix 575_cb hotplug initialisation probs.&n;    - Put vortex_info_tbl into __devinitdata&n;    - In the vortex_error StatsFull HACK, disable stats in vp-&gt;intr_enable as well&n;      as in the hardware.&n;    - Increased the loop counter in wait_for_completion from 2,000 to 4,000.&n;&n;    LK1.1.5 28 April 2000, andrewm&n;    - Added powerpc defines (John Daniel &lt;jdaniel@etresoft.com&gt; said these work...)&n;    - Some extra diagnostics&n;    - In vortex_error(), reset the Tx on maxCollisions.  Otherwise most&n;      chips usually get a Tx timeout.&n;    - Added extra_reset module parm&n;    - Replaced some inline timer manip with mod_timer&n;      (Franois romieu &lt;Francois.Romieu@nic.fr&gt;)&n;    - In vortex_up(), don&squot;t make Wn3_config initialisation dependent upon has_nway&n;      (this came across from 3c575_cb).&n;&n;    LK1.1.6 06 Jun 2000, andrewm&n;    - Backed out the PPC defines.&n;    - Use del_timer_sync(), mod_timer().&n;    - Fix wrapped ulong comparison in boomerang_rx()&n;    - Add IS_TORNADO, use it to suppress 3c905C checksum error msg&n;      (Donald Becker, I Lee Hetherington &lt;ilh@sls.lcs.mit.edu&gt;)&n;    - Replace union wn3_config with BFINS/BFEXT manipulation for&n;      sparc64 (Pete Zaitcev, Peter Jones)&n;    - In vortex_error, do_tx_reset and vortex_tx_timeout(Vortex):&n;      do a netif_wake_queue() to better recover from errors. (Anders Pedersen,&n;      Donald Becker)&n;    - Print a warning on out-of-memory (rate limited to 1 per 10 secs)&n;    - Added two more Cardbus 575 NICs: 5b57 and 6564 (Paul Wagland)&n;&n;    LK1.1.7 2 Jul 2000 andrewm&n;    - Better handling of shared IRQs&n;    - Reset the transmitter on a Tx reclaim error&n;    - Fixed crash under OOM during vortex_open() (Mark Hemment)&n;    - Fix Rx cessation problem during OOM (help from Mark Hemment)&n;    - The spinlocks around the mdio access were blocking interrupts for 300uS.&n;      Fix all this to use spin_lock_bh() within mdio_read/write&n;    - Only write to TxFreeThreshold if it&squot;s a boomerang - other NICs don&squot;t&n;      have one.&n;    - Added 802.3x MAC-layer flow control support&n;&n;   LK1.1.8 13 Aug 2000 andrewm&n;    - Ignore request_region() return value - already reserved if Cardbus.&n;    - Merged some additional Cardbus flags from Don&squot;s 0.99Qk&n;    - Some fixes for 3c556 (Fred Maciel)&n;    - Fix for EISA initialisation (Jan Rkorajski)&n;    - Renamed MII_XCVR_PWR and EEPROM_230 to align with 3c575_cb and D. Becker&squot;s drivers&n;    - Fixed MII_XCVR_PWR for 3CCFE575CT&n;    - Added INVERT_LED_PWR, used it.&n;    - Backed out the extra_reset stuff&n;&n;   LK1.1.9 2 Sep 2000 andrewm&n;    - Backed out the tx_reset_resume flags.  It was a no-op.&n;    - In vortex_error, don&squot;t reset the Tx on txReclaim errors&n;    - In vortex_error, don&squot;t reset the Tx on maxCollisions errors.&n;      Hence backed out all the DownListPtr logic here.&n;    - In vortex_error, give Tornado cards a partial TxReset on&n;      maxCollisions (David Hinds).  Defined MAX_COLLISION_RESET for this.&n;    - Redid some driver flags and device names based on pcmcia_cs-3.1.20.&n;    - Fixed a bug where, if vp-&gt;tx_full is set when the interface&n;      is downed, it remains set when the interface is upped.  Bad&n;      things happen.&n;&n;    - See http://www.uow.edu.au/~andrewm/linux/#3c59x-2.3 for more details.&n;    - Also see Documentation/networking/vortex.txt&n;*/
 multiline_comment|/*&n; * FIXME: This driver _could_ support MTU changing, but doesn&squot;t.  See Don&squot;s hamaci.c implementation&n; * as well as other drivers&n; *&n; * NOTE: If you make &squot;vortex_debug&squot; a constant (#define vortex_debug 0) the driver shrinks by 2k&n; * due to dead code elimination.  There will be some performance benefits from this due to&n; * elimination of all the tests and reduced cache footprint.&n; */
 multiline_comment|/* A few values that may be tweaked. */
 multiline_comment|/* Keep the ring sizes a power of two for efficiency. */
@@ -123,8 +123,8 @@ id|version
 )braket
 id|__devinitdata
 op_assign
-l_string|&quot;3c59x.c:LK1.1.8  13 Aug 2000  Donald Becker and others. http://www.scyld.com/network/vortex.html &quot;
-l_string|&quot;$Revision: 1.102.2.25 $&bslash;n&quot;
+l_string|&quot;3c59x.c:LK1.1.9  2 Sep 2000  Donald Becker and others. http://www.scyld.com/network/vortex.html &quot;
+l_string|&quot;$Revision: 1.102.2.38 $&bslash;n&quot;
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func
@@ -353,6 +353,7 @@ l_int|0x100
 comma
 DECL|enumerator|INVERT_MII_PWR
 DECL|enumerator|INVERT_LED_PWR
+DECL|enumerator|MAX_COLLISION_RESET
 id|INVERT_MII_PWR
 op_assign
 l_int|0x200
@@ -360,6 +361,10 @@ comma
 id|INVERT_LED_PWR
 op_assign
 l_int|0x400
+comma
+id|MAX_COLLISION_RESET
+op_assign
+l_int|0x800
 )brace
 suffix:semicolon
 DECL|enum|vortex_chips
@@ -874,13 +879,13 @@ comma
 )brace
 comma
 (brace
-l_string|&quot;3CCFE575CT Cyclone CardBus&quot;
+l_string|&quot;3CCFE575CT Tornado CardBus&quot;
 comma
 id|PCI_USES_IO
 op_or
 id|PCI_USES_MASTER
 comma
-id|IS_CYCLONE
+id|IS_TORNADO
 op_or
 id|HAS_NWAY
 op_or
@@ -889,6 +894,8 @@ op_or
 id|EEPROM_8BIT
 op_or
 id|INVERT_MII_PWR
+op_or
+id|MAX_COLLISION_RESET
 comma
 l_int|128
 comma
@@ -941,14 +948,14 @@ comma
 )brace
 comma
 (brace
-l_string|&quot;3CCFE656C Tornado+Winmodem CardBus&quot;
+l_string|&quot;3CXFEM656C Tornado+Winmodem CardBus&quot;
 comma
 multiline_comment|/* From pcmcia-cs-3.1.5 */
 id|PCI_USES_IO
 op_or
 id|PCI_USES_MASTER
 comma
-id|IS_CYCLONE
+id|IS_TORNADO
 op_or
 id|HAS_NWAY
 op_or
@@ -957,6 +964,8 @@ op_or
 id|EEPROM_8BIT
 op_or
 id|INVERT_MII_PWR
+op_or
+id|MAX_COLLISION_RESET
 comma
 l_int|128
 comma
@@ -2549,11 +2558,6 @@ DECL|member|drv_flags
 r_int
 id|drv_flags
 suffix:semicolon
-DECL|member|tx_reset_resume
-r_int
-id|tx_reset_resume
-suffix:semicolon
-multiline_comment|/* Flag to retart timer after vortex_error handling */
 DECL|member|status_enable
 id|u16
 id|status_enable
@@ -6911,6 +6915,10 @@ id|vp-&gt;open
 op_assign
 l_int|1
 suffix:semicolon
+id|vp-&gt;tx_full
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8055,6 +8063,10 @@ r_int
 id|do_tx_reset
 op_assign
 l_int|0
+comma
+id|reset_mask
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_char
@@ -8173,15 +8185,45 @@ c_cond
 (paren
 id|tx_status
 op_amp
-l_int|0x3a
+l_int|0x30
 )paren
-multiline_comment|/* TxReset after 16 collisions, despite what the manual says */
+(brace
+multiline_comment|/* txJabber or txUnderrun */
 id|do_tx_reset
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Also reset on reclaim errors */
+)brace
 r_else
+r_if
+c_cond
+(paren
+(paren
+id|tx_status
+op_amp
+l_int|0x08
+)paren
+op_logical_and
+(paren
+id|vp-&gt;drv_flags
+op_amp
+id|MAX_COLLISION_RESET
+)paren
+)paren
+(brace
+multiline_comment|/* maxCollisions */
+id|do_tx_reset
+op_assign
+l_int|1
+suffix:semicolon
+id|reset_mask
+op_assign
+l_int|0x0108
+suffix:semicolon
+multiline_comment|/* Reset interface logic, but not download logic */
+)brace
+r_else
+(brace
 multiline_comment|/* Merely re-enable the transmitter. */
 id|outw
 c_func
@@ -8193,6 +8235,7 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -8496,150 +8539,44 @@ id|EL3_CMD
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Black magic.  If we&squot;re resetting the transmitter,  remember the current downlist&n;&t; * pointer and restore it afterwards.  We can&squot;t usr cur_tx because that could&n;&t; * lag the actual hardware index.&n;&t; */
 r_if
 c_cond
 (paren
 id|do_tx_reset
 )paren
 (brace
+id|wait_for_completion
+c_func
+(paren
+id|dev
+comma
+id|TxReset
+op_or
+id|reset_mask
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|TxEnable
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|vp-&gt;full_bus_master_tx
 )paren
-(brace
-r_int
-r_int
-id|old_down_list_ptr
-suffix:semicolon
-id|wait_for_completion
-c_func
-(paren
-id|dev
-comma
-id|DownStall
-)paren
-suffix:semicolon
-id|old_down_list_ptr
-op_assign
-id|inl
-c_func
-(paren
-id|ioaddr
-op_plus
-id|DownListPtr
-)paren
-suffix:semicolon
-id|wait_for_completion
-c_func
-(paren
-id|dev
-comma
-id|TxReset
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|TxEnable
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Restart DMA if necessary */
-id|outl
-c_func
-(paren
-id|old_down_list_ptr
-comma
-id|ioaddr
-op_plus
-id|DownListPtr
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|vortex_debug
-OG
-l_int|2
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;reset DMA to 0x%08x&bslash;n&quot;
-comma
-id|inl
-c_func
-(paren
-id|ioaddr
-op_plus
-id|DownListPtr
-)paren
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|DownUnstall
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Here we make a single attempt to prevent a timeout by&n;&t;&t;&t; * restarting the timer if we think that the ISR has a good&n;&t;&t;&t; * chance of unjamming things.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|vp-&gt;tx_reset_resume
-op_eq
-l_int|0
-op_logical_and
-id|vp-&gt;tx_full
-)paren
-(brace
-id|vp-&gt;tx_reset_resume
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|wait_for_completion
-c_func
-(paren
-id|dev
-comma
-id|TxReset
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|TxEnable
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
 id|netif_wake_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 r_static
@@ -9270,10 +9207,6 @@ id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
-suffix:semicolon
-id|vp-&gt;tx_reset_resume
-op_assign
-l_int|0
 suffix:semicolon
 id|spin_unlock_irqrestore
 c_func

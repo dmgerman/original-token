@@ -1,14 +1,13 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rslist - Acpi_rs_byte_stream_to_list&n; *                       Acpi_list_to_byte_stream&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: rslist - Acpi_rs_byte_stream_to_list&n; *                       Acpi_list_to_byte_stream&n; *              $Revision: 6 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;resource.h&quot;
+macro_line|#include &quot;acresrc.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          RESOURCE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;rslist&quot;
 )paren
-suffix:semicolon
 multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_byte_stream_to_list&n; *&n; * PARAMETERS:&n; *              Byte_stream_buffer      - Pointer to the resource byte stream&n; *              Byte_stream_buffer_length - Length of Byte_stream_buffer&n; *              Output_buffer           - Pointer to the buffer that will&n; *                                          contain the output structures&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource byte stream and parses it, creating a&n; *              linked list of resources in the caller&squot;s output buffer&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_byte_stream_to_list
@@ -29,8 +28,6 @@ id|output_buffer
 (brace
 id|ACPI_STATUS
 id|status
-op_assign
-id|AE_UNKNOWN_STATUS
 suffix:semicolon
 id|u32
 id|bytes_parsed
@@ -259,7 +256,7 @@ suffix:colon
 multiline_comment|/*&n;&t;&t;&t;&t; * If we get here, everything is out of sync,&n;&t;&t;&t;&t; *  so exit with an error&n;&t;&t;&t;&t; */
 r_return
 (paren
-id|AE_ERROR
+id|AE_AML_ERROR
 )paren
 suffix:semicolon
 r_break
@@ -464,7 +461,7 @@ suffix:colon
 multiline_comment|/*&n;&t;&t;&t;&t; * If we get here, everything is out of sync,&n;&t;&t;&t;&t; *  so exit with an error&n;&t;&t;&t;&t; */
 r_return
 (paren
-id|AE_ERROR
+id|AE_AML_ERROR
 )paren
 suffix:semicolon
 r_break
@@ -472,7 +469,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* switch */
 )brace
-multiline_comment|/* if(Resource_type &amp; 0x80) */
+multiline_comment|/* end else */
 multiline_comment|/*&n;&t;&t; * Update the return value and counter&n;&t;&t; */
 id|bytes_parsed
 op_add_assign
@@ -490,23 +487,28 @@ op_add_assign
 id|structure_size
 suffix:semicolon
 )brace
-multiline_comment|/*  while (Bytes_parsed &lt; Byte_stream_buffer_length &amp;&amp;&n;&t;&t;  FALSE == End_tag_processed) */
+multiline_comment|/*  end while */
 multiline_comment|/*&n;&t; * Check the reason for exiting the while loop&n;&t; */
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|byte_stream_buffer_length
-op_ne
+op_eq
 id|bytes_parsed
+)paren
 op_logical_or
+(paren
 id|TRUE
 op_ne
 id|end_tag_processed
 )paren
+)paren
 (brace
 r_return
 (paren
-id|AE_ERROR
+id|AE_AML_ERROR
 )paren
 suffix:semicolon
 )brace
@@ -537,8 +539,6 @@ id|output_buffer
 (brace
 id|ACPI_STATUS
 id|status
-op_assign
-id|AE_UNKNOWN_STATUS
 suffix:semicolon
 id|u8
 op_star

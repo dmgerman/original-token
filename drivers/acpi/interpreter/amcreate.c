@@ -1,20 +1,19 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amcreate - Named object creation&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amcreate - Named object creation&n; *              $Revision: 44 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amcreate&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_field&n; *&n; * PARAMETERS:  Opcode              - The opcode to be executed&n; *              Operands            - List of operands for the opcode&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Execute Create_field operators: Create_bit_field_op,&n; *              Create_byte_field_op, Create_word_field_op, Create_dWord_field_op,&n; *              Create_field_op (which define fields in buffers)&n; *&n; * ALLOCATION:  Deletes Create_field_op&squot;s count operand descriptor&n; *&n; *&n; *  ACPI SPECIFICATION REFERENCES:&n; *  Def_create_bit_field := Create_bit_field_op Src_buf Bit_idx   Name_string&n; *  Def_create_byte_field := Create_byte_field_op Src_buf Byte_idx Name_string&n; *  Def_create_dWord_field := Create_dWord_field_op Src_buf Byte_idx Name_string&n; *  Def_create_field    :=  Create_field_op     Src_buf Bit_idx   Num_bits    Name_string&n; *  Def_create_word_field := Create_word_field_op Src_buf Byte_idx Name_string&n; *  Bit_index           :=  Term_arg=&gt;Integer&n; *  Byte_index          :=  Term_arg=&gt;Integer&n; *  Num_bits            :=  Term_arg=&gt;Integer&n; *  Source_buff         :=  Term_arg=&gt;Buffer&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_field&n; *&n; * PARAMETERS:  Opcode              - The opcode to be executed&n; *              Operands            - List of operands for the opcode&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Execute Create_field operators: Create_bit_field_op,&n; *              Create_byte_field_op, Create_word_field_op, Create_dWord_field_op,&n; *              Create_field_op (which define fields in buffers)&n; *&n; * ALLOCATION:  Deletes Create_field_op&squot;s count operand descriptor&n; *&n; *&n; *  ACPI SPECIFICATION REFERENCES:&n; *  Def_create_bit_field := Create_bit_field_op Src_buf Bit_idx   Name_string&n; *  Def_create_byte_field := Create_byte_field_op Src_buf Byte_idx Name_string&n; *  Def_create_dWord_field := Create_dWord_field_op Src_buf Byte_idx Name_string&n; *  Def_create_field    :=  Create_field_op     Src_buf Bit_idx   Num_bits    Name_string&n; *  Def_create_word_field := Create_word_field_op Src_buf Byte_idx Name_string&n; *  Bit_index           :=  Term_arg=&gt;Integer&n; *  Byte_index          :=  Term_arg=&gt;Integer&n; *  Num_bits            :=  Term_arg=&gt;Integer&n; *  Source_buff         :=  Term_arg=&gt;Buffer&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_create_field
 id|acpi_aml_exec_create_field
@@ -27,35 +26,35 @@ op_star
 id|walk_state
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|res_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|cnt_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|off_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|src_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|field_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -90,6 +89,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get the operands */
@@ -149,25 +150,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Invalid parameters on object stack  */
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|3
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -515,7 +504,7 @@ c_cond
 id|obj_desc
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * There is an existing object here;  delete it and zero out the&n;&t;&t;&t; * NTE&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * There is an existing object here;  delete it and zero out the&n;&t;&t;&t; * object field within the Node&n;&t;&t;&t; */
 id|acpi_cm_remove_reference
 (paren
 id|obj_desc
@@ -523,6 +512,10 @@ id|obj_desc
 suffix:semicolon
 id|acpi_ns_attach_object
 (paren
+(paren
+id|ACPI_NAMESPACE_NODE
+op_star
+)paren
 id|res_desc
 comma
 l_int|NULL
@@ -534,7 +527,7 @@ suffix:semicolon
 multiline_comment|/* Set the type to ANY (or the store below will fail) */
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|res_desc
@@ -559,6 +552,8 @@ id|acpi_aml_exec_store
 id|field_desc
 comma
 id|res_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If the field descriptor was not physically stored (or if a failure&n;&t; * above), we must delete it&n;&t; */
@@ -636,13 +631,13 @@ op_star
 id|walk_state
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|src_entry
+id|source_node
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|alias_entry
+id|alias_node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -653,12 +648,12 @@ op_assign
 id|acpi_ds_obj_stack_pop_object
 (paren
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 )paren
 op_amp
-id|src_entry
+id|source_node
 comma
 id|walk_state
 )paren
@@ -678,8 +673,8 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Don&squot;t pop it, it gets popped later */
-id|alias_entry
+multiline_comment|/*&n;&t; * Don&squot;t pop it, it gets removed in the calling routine&n;&t; */
+id|alias_node
 op_assign
 id|acpi_ds_obj_stack_get_value
 (paren
@@ -691,22 +686,22 @@ suffix:semicolon
 multiline_comment|/* Add an additional reference to the object */
 id|acpi_cm_add_reference
 (paren
-id|src_entry-&gt;object
+id|source_node-&gt;object
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Attach the original source NTE to the new Alias NTE.&n;&t; */
+multiline_comment|/*&n;&t; * Attach the original source Node to the new Alias Node.&n;&t; */
 id|status
 op_assign
 id|acpi_ns_attach_object
 (paren
-id|alias_entry
+id|alias_node
 comma
-id|src_entry-&gt;object
+id|source_node-&gt;object
 comma
-id|src_entry-&gt;type
+id|source_node-&gt;type
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * The new alias assumes the type of the source, but it points&n;&t; * to the same object.  The reference count of the object has two&n;&t; * additional references to prevent deletion out from under either the&n;&t; * source or the alias NTE&n;&t; */
+multiline_comment|/*&n;&t; * The new alias assumes the type of the source, but it points&n;&t; * to the same object.  The reference count of the object has two&n;&t; * additional references to prevent deletion out from under either the&n;&t; * source or the alias Node&n;&t; */
 multiline_comment|/* Since both operands are NTEs, we don&squot;t need to delete them */
 r_return
 (paren
@@ -727,7 +722,7 @@ id|walk_state
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -787,7 +782,7 @@ r_goto
 id|cleanup
 suffix:semicolon
 )brace
-multiline_comment|/* Attach object to the NTE */
+multiline_comment|/* Attach object to the Node */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -853,11 +848,11 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|sync_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -1028,13 +1023,13 @@ id|walk_state
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc_region
 suffix:semicolon
-id|ACPI_HANDLE
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
 r_if
 c_cond
@@ -1044,16 +1039,20 @@ op_ge
 id|NUM_REGION_TYPES
 )paren
 (brace
-multiline_comment|/* TBD: [Errors] should this return an error, or should we just keep&n;&t;&t; * going? */
+multiline_comment|/* TBD: [Future] In ACPI 2.0, valid region space&n;&t;&t; *  includes types 0-6 (Adding CMOS and PCIBARTarget).&n;&t;&t; *  Also, types 0x80-0xff are defined as &quot;OEM Region&n;&t;&t; *  Space handler&quot;&n;&t;&t; *&n;&t;&t; * Should this return an error, or should we just keep&n;&t;&t; * going?  How do we handle the OEM region handlers?&n;&t;&t; */
 id|REPORT_WARNING
 (paren
 l_string|&quot;Unable to decode the Region_space&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Get the NTE from the object stack  */
-id|entry
+multiline_comment|/* Get the Node from the object stack  */
+id|node
 op_assign
+(paren
+id|ACPI_NAMESPACE_NODE
+op_star
+)paren
 id|acpi_ds_obj_stack_get_value
 (paren
 l_int|0
@@ -1111,7 +1110,7 @@ multiline_comment|/* Init the region from the operands */
 id|obj_desc_region-&gt;region.space_id
 op_assign
 (paren
-id|u16
+id|u8
 )paren
 id|region_space
 suffix:semicolon
@@ -1120,10 +1119,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|obj_desc_region-&gt;region.length
-op_assign
-l_int|0
-suffix:semicolon
-id|obj_desc_region-&gt;region.region_flags
 op_assign
 l_int|0
 suffix:semicolon
@@ -1136,20 +1131,16 @@ id|obj_desc_region-&gt;region.method-&gt;method.pcode_length
 op_assign
 id|aml_length
 suffix:semicolon
-multiline_comment|/* Install the new region object in the parent NTE */
-id|obj_desc_region-&gt;region.nte
+multiline_comment|/* Install the new region object in the parent Node */
+id|obj_desc_region-&gt;region.node
 op_assign
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-)paren
-id|entry
+id|node
 suffix:semicolon
 id|status
 op_assign
 id|acpi_ns_attach_object
 (paren
-id|entry
+id|node
 comma
 id|obj_desc_region
 comma
@@ -1172,14 +1163,49 @@ r_goto
 id|cleanup
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If we have a valid region, initialize it&n;&t; * Namespace is NOT locked at this point.&n;&t; */
+id|status
+op_assign
+id|acpi_ev_initialize_region
+(paren
+id|obj_desc_region
+comma
+id|FALSE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *  If AE_NOT_EXIST is returned, it is not fatal&n;&t;&t; *  because many regions get created before a handler&n;&t;&t; *  is installed for said region.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|AE_NOT_EXIST
+op_eq
+id|status
+)paren
+(brace
+id|status
+op_assign
+id|AE_OK
+suffix:semicolon
+)brace
+)brace
 id|cleanup
 suffix:colon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Delete region object and method subobject */
@@ -1201,39 +1227,18 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * If we have a valid region, initialize it&n;&t; */
-r_if
-c_cond
-(paren
-id|obj_desc_region
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; *  TBD: [Errors] Is there anything we can or could do when this&n;&t;&t; *          fails?&n;&t;&t; *  We need to do something useful with a failure.&n;&t;&t; */
-multiline_comment|/* Namespace IS locked */
-(paren
-r_void
-op_star
-)paren
-id|acpi_ev_initialize_region
-(paren
-id|obj_desc_region
-comma
-id|TRUE
-)paren
-suffix:semicolon
-)brace
 r_return
 (paren
 id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_processor&n; *&n; * PARAMETERS:  Op              - Op containing the Processor definition and&n; *                                args&n; *              Processor_nTE   - NTE for the containing NTE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a new processor object and populate the fields&n; *&n; ****************************************************************************/
+multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_processor&n; *&n; * PARAMETERS:  Op              - Op containing the Processor definition and&n; *                                args&n; *              Processor_nTE   - Node for the containing Node&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a new processor object and populate the fields&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_create_processor
 id|acpi_aml_exec_create_processor
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
@@ -1244,11 +1249,11 @@ id|processor_nTE
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -1276,7 +1281,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Install the new processor object in the parent NTE */
+multiline_comment|/* Install the new processor object in the parent Node */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -1357,7 +1362,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* Second arg is the PBlock Address */
-id|obj_desc-&gt;processor.pblk_address
+id|obj_desc-&gt;processor.address
 op_assign
 (paren
 id|ACPI_IO_ADDRESS
@@ -1387,7 +1392,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* Third arg is the PBlock Length */
-id|obj_desc-&gt;processor.pblk_length
+id|obj_desc-&gt;processor.length
 op_assign
 (paren
 id|u8
@@ -1400,12 +1405,12 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_power_resource&n; *&n; * PARAMETERS:  Op              - Op containing the Power_resource definition&n; *                                and args&n; *              Power_res_nTE   - NTE for the containing NTE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a new Power_resource object and populate the fields&n; *&n; ****************************************************************************/
+multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_power_resource&n; *&n; * PARAMETERS:  Op              - Op containing the Power_resource definition&n; *                                and args&n; *              Power_res_nTE   - Node for the containing Node&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a new Power_resource object and populate the fields&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_create_power_resource
 id|acpi_aml_exec_create_power_resource
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
@@ -1416,11 +1421,11 @@ id|power_res_nTE
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -1448,7 +1453,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Install the new power resource object in the parent NTE */
+multiline_comment|/* Install the new power resource object in the parent Node */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -1542,7 +1547,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_method&n; *&n; * PARAMETERS:  Interpreter_mode    - Current running mode (load1/Load2/Exec)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a new mutex object&n; *&n; ****************************************************************************/
+multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_create_method&n; *&n; * PARAMETERS:  Aml_ptr         - First byte of the method&squot;s AML&n; *              Aml_length      - AML byte count for this method&n; *              Method_flags    - AML method flag byte&n; *              Method          - Method Node&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a new method object&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_create_method
 id|acpi_aml_exec_create_method
@@ -1561,7 +1566,7 @@ id|ACPI_HANDLE
 id|method
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -1617,7 +1622,7 @@ op_amp
 id|METHOD_FLAGS_ARG_COUNT
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get the concurrency count&n;&t; * If required, a semaphore will be created for this method when it is&n;&t; * parsed.&n;&t; *&n;&t; * TBD: [Future]  for APCI 2.0, there will be a Sync_level value, not&n;&t; * just a flag&n;&t; * Concurrency = Sync_level + 1;.&n;&t; */
+multiline_comment|/*&n;&t; * Get the concurrency count.  If required, a semaphore will be&n;&t; * created for this method when it is parsed.&n;&t; *&n;&t; * TBD: [Future]  for APCI 2.0, there will be a Sync_level value, not&n;&t; * just a flag&n;&t; * Concurrency = Sync_level + 1;.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1638,23 +1643,7 @@ op_assign
 id|INFINITE_CONCURRENCY
 suffix:semicolon
 )brace
-multiline_comment|/* Mark the Method as not parsed yet */
-id|obj_desc-&gt;method.parser_op
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/*&n;&t; * Another  +1 gets added when Acpi_psx_execute is called,&n;&t; * no need for: Obj_desc-&gt;Method.Pcode++;&n;&t; */
-id|obj_desc-&gt;method.acpi_table
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* TBD: [Restructure] was (u8 *) Pcode_addr; */
-id|obj_desc-&gt;method.table_length
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* TBD: [Restructure] needed? (u32) (Walk_state-&gt;aml_end - Pcode_addr); */
-multiline_comment|/* Attach the new object to the method NTE */
+multiline_comment|/* Attach the new object to the method Node */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -1678,7 +1667,7 @@ id|status
 )paren
 )paren
 (brace
-id|acpi_cm_free
+id|acpi_cm_delete_object_desc
 (paren
 id|obj_desc
 )paren

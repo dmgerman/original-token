@@ -1,9 +1,9 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evregion - ACPI Address_space / Op_region handler dispatch&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evregion - ACPI Address_space / Op_region handler dispatch&n; *              $Revision: 76 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          EVENT_HANDLING
@@ -11,7 +11,6 @@ id|MODULE_NAME
 (paren
 l_string|&quot;evregion&quot;
 )paren
-suffix:semicolon
 DECL|macro|PCI_ROOT_HID_STRING
 mdefine_line|#define PCI_ROOT_HID_STRING        &quot;PNP0A03&quot;
 DECL|macro|PCI_ROOT_HID_VALUE
@@ -37,21 +36,21 @@ op_star
 id|return_value
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|entry
+id|node
 op_assign
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_handle
@@ -60,7 +59,7 @@ id|obj_desc
 op_assign
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_handle
@@ -75,11 +74,11 @@ c_cond
 id|STRNCMP
 (paren
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 op_amp
-id|entry-&gt;name
+id|node-&gt;name
 comma
 id|METHOD_NAME__HID
 comma
@@ -93,7 +92,9 @@ id|obj_desc
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Found an _HID object.&n;&t; * Now we need a HID with the value EISAID(&quot;PNP0A03&quot;)&n;&t; * HID can be either a number or a string.&n;&t; */
@@ -115,7 +116,9 @@ id|PCI_ROOT_HID_VALUE
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 r_break
@@ -140,7 +143,9 @@ id|PCI_ROOT_HID_STRING
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 r_break
@@ -148,7 +153,9 @@ suffix:semicolon
 r_default
 suffix:colon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We found a valid PCI_ROOT_HID.&n;&t; * The parent of the HID entry is the PCI device;  Install the default PCI&n;&t; * handler for this PCI device.&n;&t; */
@@ -156,9 +163,9 @@ id|status
 op_assign
 id|acpi_install_address_space_handler
 (paren
-id|acpi_ns_get_parent_entry
+id|acpi_ns_get_parent_object
 (paren
-id|entry
+id|node
 )paren
 comma
 id|ADDRESS_SPACE_PCI_CONFIG
@@ -171,7 +178,9 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_find_pci_root_buses&n; *&n; * PARAMETERS:&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION:&n; *&n; *****************************************************************************/
@@ -200,7 +209,178 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_init_one_device&n; *&n; * PARAMETERS:  The usual &quot;I&squot;m a namespace callback&quot; stuff&n; *&n; * RETURN:      ACPI_STATUS&n; *&n; * DESCRIPTION: This is called once per device soon after ACPI is enabled&n; *              to initialize each device. It determines if the device is&n; *              present, and if so, calls _INI.&n; *&n; *****************************************************************************/
+id|ACPI_STATUS
+DECL|function|acpi_ev_init_one_device
+id|acpi_ev_init_one_device
+(paren
+id|ACPI_HANDLE
+id|obj_handle
+comma
+id|u32
+id|nesting_level
+comma
+r_void
+op_star
+id|context
+comma
+r_void
+op_star
+op_star
+id|return_value
+)paren
+(brace
+id|ACPI_STATUS
+id|status
+suffix:semicolon
+id|ACPI_OPERAND_OBJECT
+op_star
+id|ret_obj
+suffix:semicolon
+multiline_comment|/*&n;&t; * Run _STA to determine if we can run _INI on the device.&n;&t; */
+id|status
+op_assign
+id|acpi_ns_evaluate_relative
+c_func
+(paren
+id|obj_handle
+comma
+l_string|&quot;_STA&quot;
+comma
+l_int|NULL
+comma
+op_amp
+id|ret_obj
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|AE_NOT_FOUND
+op_eq
+id|status
+)paren
+(brace
+multiline_comment|/* No _STA means device is present */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|ret_obj
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ACPI_TYPE_NUMBER
+op_ne
+id|ret_obj-&gt;common.type
+)paren
+(brace
+id|status
+op_assign
+id|AE_AML_OPERAND_TYPE
+suffix:semicolon
+r_goto
+id|cleanup
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * if _STA &quot;present&quot; bit not set, we&squot;re done.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ret_obj-&gt;number.value
+op_amp
+l_int|1
+)paren
+)paren
+(brace
+r_goto
+id|cleanup
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * The device is present. Run _INI.&n;&t; */
+id|status
+op_assign
+id|acpi_ns_evaluate_relative
+c_func
+(paren
+id|obj_handle
+comma
+l_string|&quot;_INI&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|cleanup
+suffix:colon
+id|acpi_cm_remove_reference
+(paren
+id|ret_obj
+)paren
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_init_devices&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      ACPI_STATUS&n; *&n; * DESCRIPTION: This initializes all ACPI devices.&n; *&n; *****************************************************************************/
+id|ACPI_STATUS
+DECL|function|acpi_ev_init_devices
+id|acpi_ev_init_devices
+(paren
+r_void
+)paren
+(brace
+id|acpi_ns_walk_namespace
+(paren
+id|ACPI_TYPE_ANY
+comma
+id|ACPI_ROOT_OBJECT
+comma
+id|ACPI_UINT32_MAX
+comma
+id|FALSE
+comma
+id|acpi_ev_init_one_device
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_return
+(paren
+id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/**************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_install_default_address_space_handlers&n; *&n; * PARAMETERS:&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Installs the core subsystem address space handlers.&n; *&n; *************************************************************************/
@@ -219,7 +399,7 @@ id|status
 op_assign
 id|acpi_install_address_space_handler
 (paren
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 comma
 id|ADDRESS_SPACE_SYSTEM_MEMORY
 comma
@@ -249,7 +429,7 @@ id|status
 op_assign
 id|acpi_install_address_space_handler
 (paren
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 comma
 id|ADDRESS_SPACE_SYSTEM_IO
 comma
@@ -275,11 +455,6 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Install PCI config space handler for all PCI root bridges.  A PCI root&n;&t; *  bridge is found by searching for devices containing a HID with the value&n;&t; *  EISAID(&quot;PNP0A03&quot;)&n;&t; */
-id|acpi_ev_find_pci_root_buses
-(paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|AE_OK
@@ -292,7 +467,7 @@ id|ACPI_STATUS
 DECL|function|acpi_ev_execute_reg_method
 id|acpi_ev_execute_reg_method
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
 comma
@@ -300,17 +475,17 @@ id|u32
 id|function
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|params
 (braket
 l_int|3
 )braket
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 id|space_iD_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 id|function_obj
 suffix:semicolon
 id|ACPI_STATUS
@@ -407,7 +582,7 @@ id|ACPI_STATUS
 DECL|function|acpi_ev_address_space_dispatch
 id|acpi_ev_address_space_dispatch
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
 comma
@@ -434,13 +609,15 @@ suffix:semicolon
 id|ADDRESS_SPACE_SETUP
 id|region_setup
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_desc
 suffix:semicolon
 r_void
 op_star
 id|region_context
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Check for an installed handler&n;&t; */
 id|handler_desc
@@ -464,9 +641,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|region_obj-&gt;region.region_flags
+id|region_obj-&gt;region.flags
 op_amp
-id|REGION_INITIALIZED
+id|AOPOBJ_INITIALIZED
 )paren
 )paren
 (brace
@@ -527,8 +704,8 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *  Save the returned context for use in all accesses to the region&n;&t;&t; */
-id|handler_desc-&gt;addr_handler.context
+multiline_comment|/*&n;&t;&t; *  Save the returned context for use in all accesses to&n;&t;&t; *  this particular region.&n;&t;&t; */
+id|region_obj-&gt;region.region_context
 op_assign
 id|region_context
 suffix:semicolon
@@ -570,6 +747,8 @@ comma
 id|value
 comma
 id|handler_desc-&gt;addr_handler.context
+comma
+id|region_obj-&gt;region.region_context
 )paren
 suffix:semicolon
 r_if
@@ -601,20 +780,20 @@ DECL|function|acpi_ev_disassociate_region_from_handler
 id|acpi_ev_disassociate_region_from_handler
 c_func
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|last_obj_ptr
@@ -625,6 +804,8 @@ suffix:semicolon
 r_void
 op_star
 id|region_context
+op_assign
+id|region_obj-&gt;region.region_context
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -674,8 +855,13 @@ multiline_comment|/*&n;&t;&t;&t; *  This is it, remove it from the handler&squot
 op_star
 id|last_obj_ptr
 op_assign
-id|obj_desc-&gt;region.link
+id|obj_desc-&gt;region.next
 suffix:semicolon
+id|obj_desc-&gt;region.next
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Must clear field */
 multiline_comment|/*&n;&t;&t;&t; *  Now stop region accesses by executing the _REG method&n;&t;&t;&t; */
 id|acpi_ev_execute_reg_method
 (paren
@@ -703,11 +889,6 @@ op_amp
 id|region_context
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *  Save the returned context (It is the original context&n;&t;&t;&t; *  passed into Install)&n;&t;&t;&t; */
-id|handler_obj-&gt;addr_handler.context
-op_assign
-id|region_context
-suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Init routine may fail, Just ignore errors&n;&t;&t;&t; */
 multiline_comment|/*&n;&t;&t;&t; *  Remove handler reference in the region&n;&t;&t;&t; *&n;&t;&t;&t; *  NOTE: this doesn&squot;t mean that the region goes away&n;&t;&t;&t; *  The region is just inaccessible as indicated to&n;&t;&t;&t; *  the _REG method&n;&t;&t;&t; *&n;&t;&t;&t; *  If the region is on the handler&squot;s list&n;&t;&t;&t; *  this better be the region&squot;s handler&n;&t;&t;&t; */
 id|ACPI_ASSERT
@@ -729,11 +910,11 @@ multiline_comment|/*&n;&t;&t; *  Move through the linked list of handlers&n;&t;&
 id|last_obj_ptr
 op_assign
 op_amp
-id|obj_desc-&gt;region.link
+id|obj_desc-&gt;region.next
 suffix:semicolon
 id|obj_desc
 op_assign
-id|obj_desc-&gt;region.link
+id|obj_desc-&gt;region.next
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  If we get here, the region was not in the handler&squot;s region list&n;&t; */
@@ -744,15 +925,17 @@ multiline_comment|/*************************************************************
 id|ACPI_STATUS
 DECL|function|acpi_ev_associate_region_and_handler
 id|acpi_ev_associate_region_and_handler
-c_func
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_obj
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
+comma
+id|u8
+id|acpi_ns_is_locked
 )paren
 (brace
 id|ACPI_STATUS
@@ -773,7 +956,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Link this region to the front of the handler&squot;s list&n;&t; */
-id|region_obj-&gt;region.link
+id|region_obj-&gt;region.next
 op_assign
 id|handler_obj-&gt;addr_handler.region_list
 suffix:semicolon
@@ -788,11 +971,18 @@ op_assign
 id|handler_obj
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Last thing, tell all users that this region is usable&n;&t; */
+r_if
+c_cond
+(paren
+id|acpi_ns_is_locked
+)paren
+(brace
 id|acpi_cm_release_mutex
 (paren
 id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
+)brace
 id|status
 op_assign
 id|acpi_ev_execute_reg_method
@@ -802,18 +992,25 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|acpi_ns_is_locked
+)paren
+(brace
 id|acpi_cm_acquire_mutex
 (paren
 id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
+)brace
 r_return
 (paren
 id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_addr_handler_helper&n; *&n; * PARAMETERS:  Handle              - Entry to be dumped&n; *              Level               - Nesting level of the handle&n; *              Context             - Passed into Acpi_ns_walk_namespace&n; *&n; * DESCRIPTION: This routine checks to see if the object is a Region if it&n; *              is then the address handler is installed in it.&n; *&n; *              If the Object is a Device, and the device has a handler of&n; *              the same type then the search is terminated in that branch.&n; *&n; *              This is because the existing handler is closer in proximity&n; *              to any more regions than the one we are trying to install.&n; *&n; ***************************************************************************/
+multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_addr_handler_helper&n; *&n; * PARAMETERS:  Handle              - Node to be dumped&n; *              Level               - Nesting level of the handle&n; *              Context             - Passed into Acpi_ns_walk_namespace&n; *&n; * DESCRIPTION: This routine checks to see if the object is a Region if it&n; *              is then the address handler is installed in it.&n; *&n; *              If the Object is a Device, and the device has a handler of&n; *              the same type then the search is terminated in that branch.&n; *&n; *              This is because the existing handler is closer in proximity&n; *              to any more regions than the one we are trying to install.&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ev_addr_handler_helper
 id|acpi_ev_addr_handler_helper
@@ -834,21 +1031,21 @@ op_star
 id|return_value
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|tmp_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|obj_entry
+id|node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -856,7 +1053,7 @@ suffix:semicolon
 id|handler_obj
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 id|context
@@ -876,7 +1073,7 @@ id|AE_OK
 suffix:semicolon
 )brace
 multiline_comment|/* Convert and validate the device handle */
-id|obj_entry
+id|node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -887,7 +1084,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|obj_entry
+id|node
 )paren
 (brace
 r_return
@@ -901,21 +1098,21 @@ r_if
 c_cond
 (paren
 (paren
-id|obj_entry-&gt;type
+id|node-&gt;type
 op_ne
 id|ACPI_TYPE_DEVICE
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|node-&gt;type
 op_ne
 id|ACPI_TYPE_REGION
 )paren
 op_logical_and
 (paren
-id|obj_entry
+id|node
 op_ne
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 )paren
 )paren
 (brace
@@ -933,7 +1130,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|obj_entry
+id|node
 )paren
 suffix:semicolon
 r_if
@@ -993,7 +1190,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Move through the linked list of handlers&n;&t;&t;&t; */
 id|tmp_obj
 op_assign
-id|tmp_obj-&gt;addr_handler.link
+id|tmp_obj-&gt;addr_handler.next
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *  As long as the device didn&squot;t have a handler for this&n;&t;&t; *  space we don&squot;t care about it.  We just ignore it and&n;&t;&t; *  proceed.&n;&t;&t; */
@@ -1040,6 +1237,8 @@ id|acpi_ev_associate_region_and_handler
 id|handler_obj
 comma
 id|obj_desc
+comma
+id|FALSE
 )paren
 suffix:semicolon
 r_return

@@ -1,17 +1,16 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evmisc - ACPI device notification handler dispatch&n; *                       and ACPI Global Lock support&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evmisc - ACPI device notification handler dispatch&n; *                       and ACPI Global Lock support&n; *              $Revision: 13 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;achware.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          EVENT_HANDLING
 id|MODULE_NAME
 (paren
 l_string|&quot;evmisc&quot;
 )paren
-suffix:semicolon
 multiline_comment|/**************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_notify_dispatch&n; *&n; * PARAMETERS:&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Dispatch a device notification event to a previously&n; *              installed handler.&n; *&n; *************************************************************************/
 r_void
 DECL|function|acpi_ev_notify_dispatch
@@ -24,11 +23,11 @@ id|u32
 id|notify_value
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_obj
 suffix:semicolon
@@ -114,7 +113,7 @@ id|acpi_gbl_drv_notify.context
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Get the notify object which must be attached to the device NTE&n;&t; */
+multiline_comment|/*&n;&t; * Get the notify object which must be attached to the device Node&n;&t; */
 id|obj_desc
 op_assign
 id|acpi_ns_get_attached_object
@@ -266,7 +265,9 @@ id|context
 suffix:semicolon
 )brace
 r_return
+(paren
 id|INTERRUPT_HANDLED
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/***************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_init_global_lock_handler&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Install a handler for the global lock release event&n; *&n; **************************************************************************/
@@ -475,9 +476,6 @@ id|ACPI_WRITE
 comma
 id|ACPI_MTX_LOCK
 comma
-(paren
-id|s32
-)paren
 id|PM1_CONTROL
 op_or
 id|GBL_RLS

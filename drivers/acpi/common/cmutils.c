@@ -1,20 +1,19 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmutils - common utility procedures&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: cmutils - common utility procedures&n; *              $Revision: 18 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;debugger.h&quot;
+macro_line|#include &quot;acdebug.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cmutils&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_valid_acpi_name&n; *&n; * PARAMETERS:  Character           - The character to be examined&n; *&n; * RETURN:      1 if Character may appear in a name, else 0&n; *&n; * DESCRIPTION: Check for a valid ACPI name.  Each character must be one of:&n; *              1) Upper case alpha&n; *              2) numeric&n; *              3) underscore&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_valid_acpi_name&n; *&n; * PARAMETERS:  Character           - The character to be examined&n; *&n; * RETURN:      1 if Character may appear in a name, else 0&n; *&n; * DESCRIPTION: Check for a valid ACPI name.  Each character must be one of:&n; *              1) Upper case alpha&n; *              2) numeric&n; *              3) underscore&n; *&n; ******************************************************************************/
 id|u8
 DECL|function|acpi_cm_valid_acpi_name
 id|acpi_cm_valid_acpi_name
@@ -23,12 +22,12 @@ id|u32
 id|name
 )paren
 (brace
-r_char
+id|NATIVE_CHAR
 op_star
 id|name_ptr
 op_assign
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 op_amp
@@ -101,20 +100,24 @@ l_char|&squot;9&squot;
 )paren
 (brace
 r_return
+(paren
 id|FALSE
+)paren
 suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 id|TRUE
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_valid_acpi_character&n; *&n; * PARAMETERS:  Character           - The character to be examined&n; *&n; * RETURN:      1 if Character may appear in a name, else 0&n; *&n; * DESCRIPTION: Check for a printable character&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_valid_acpi_character&n; *&n; * PARAMETERS:  Character           - The character to be examined&n; *&n; * RETURN:      1 if Character may appear in a name, else 0&n; *&n; * DESCRIPTION: Check for a printable character&n; *&n; ******************************************************************************/
 id|u8
 DECL|function|acpi_cm_valid_acpi_character
 id|acpi_cm_valid_acpi_character
 (paren
-r_char
+id|NATIVE_CHAR
 id|character
 )paren
 (brace
@@ -153,7 +156,7 @@ l_char|&squot;9&squot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_mutex_initialize&n; *&n; * PARAMETERS:  None.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create the system mutex objects.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_mutex_initialize&n; *&n; * PARAMETERS:  None.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create the system mutex objects.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_mutex_initialize
 id|acpi_cm_mutex_initialize
@@ -212,7 +215,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_mutex_terminate&n; *&n; * PARAMETERS:  None.&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Delete all of the system mutex objects.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_mutex_terminate&n; *&n; * PARAMETERS:  None.&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Delete all of the system mutex objects.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_mutex_terminate
 id|acpi_cm_mutex_terminate
@@ -248,7 +251,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be created&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a mutex object.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be created&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a mutex object.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_create_mutex
 id|acpi_cm_create_mutex
@@ -330,7 +333,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be deleted&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Delete a mutex object.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be deleted&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Delete a mutex object.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_delete_mutex
 id|acpi_cm_delete_mutex
@@ -392,7 +395,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_acquire_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be acquired&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Acquire a mutex object.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_acquire_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be acquired&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Acquire a mutex object.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_acquire_mutex
 id|acpi_cm_acquire_mutex
@@ -467,7 +470,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_release_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be released&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Release a mutex object.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_release_mutex&n; *&n; * PARAMETERS:  Mutex_iD        - ID of the mutex to be released&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Release a mutex object.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_release_mutex
 id|acpi_cm_release_mutex
@@ -523,12 +526,12 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_update_state_and_push&n; *&n; * PARAMETERS:  *Object         - Object to be added to the new state&n; *              Action          - Increment/Decrement&n; *              State_list      - List the state will be added to&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Create a new state and push it&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_update_state_and_push&n; *&n; * PARAMETERS:  *Object         - Object to be added to the new state&n; *              Action          - Increment/Decrement&n; *              State_list      - List the state will be added to&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Create a new state and push it&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_create_update_state_and_push
 id|acpi_cm_create_update_state_and_push
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 comma
@@ -554,7 +557,9 @@ id|object
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 id|state
@@ -574,7 +579,9 @@ id|state
 )paren
 (brace
 r_return
+(paren
 id|AE_NO_MEMORY
+)paren
 suffix:semicolon
 )brace
 id|acpi_cm_push_generic_state
@@ -585,10 +592,12 @@ id|state
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_push_generic_state&n; *&n; * PARAMETERS:  List_head           - Head of the state stack&n; *              State               - State object to push&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Push a state object onto a state stack&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_push_generic_state&n; *&n; * PARAMETERS:  List_head           - Head of the state stack&n; *              State               - State object to push&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Push a state object onto a state stack&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_push_generic_state
 id|acpi_cm_push_generic_state
@@ -617,7 +626,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_pop_generic_state&n; *&n; * PARAMETERS:  List_head           - Head of the state stack&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Pop a state object from a state stack&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_pop_generic_state&n; *&n; * PARAMETERS:  List_head           - Head of the state stack&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Pop a state object from a state stack&n; *&n; ******************************************************************************/
 id|ACPI_GENERIC_STATE
 op_star
 DECL|function|acpi_cm_pop_generic_state
@@ -658,7 +667,7 @@ id|state
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_generic_state&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a generic state object.  Attempt to obtain one from&n; *              the global state cache;  If none available, create a new one.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_generic_state&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a generic state object.  Attempt to obtain one from&n; *              the global state cache;  If none available, create a new one.&n; *&n; ******************************************************************************/
 id|ACPI_GENERIC_STATE
 op_star
 DECL|function|acpi_cm_create_generic_state
@@ -737,22 +746,37 @@ c_cond
 id|state
 )paren
 (brace
+multiline_comment|/* Always zero out the object before init */
+id|MEMSET
+(paren
+id|state
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|ACPI_GENERIC_STATE
+)paren
+)paren
+suffix:semicolon
 id|state-&gt;common.data_type
 op_assign
 id|ACPI_DESC_TYPE_STATE
 suffix:semicolon
 )brace
 r_return
+(paren
 id|state
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_update_state&n; *&n; * PARAMETERS:  Object              - Initial Object to be installed in the state&n; *              Action              - Update action to be performed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create an &quot;Update State&quot; - a flavor of the generic state used&n; *              to update reference counts and delete complex objects such&n; *              as packages.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_update_state&n; *&n; * PARAMETERS:  Object              - Initial Object to be installed in the&n; *                                    state&n; *              Action              - Update action to be performed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create an &quot;Update State&quot; - a flavor of the generic state used&n; *              to update reference counts and delete complex objects such&n; *              as packages.&n; *&n; ******************************************************************************/
 id|ACPI_GENERIC_STATE
 op_star
 DECL|function|acpi_cm_create_update_state
 id|acpi_cm_create_update_state
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object
 comma
@@ -779,7 +803,9 @@ id|state
 )paren
 (brace
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Init fields specific to the update struct */
@@ -797,7 +823,7 @@ id|state
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_control_state&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a &quot;Control State&quot; - a flavor of the generic state used&n; *              to support nested IF/WHILE constructs in the AML.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_create_control_state&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Create a &quot;Control State&quot; - a flavor of the generic state used&n; *              to support nested IF/WHILE constructs in the AML.&n; *&n; ******************************************************************************/
 id|ACPI_GENERIC_STATE
 op_star
 DECL|function|acpi_cm_create_control_state
@@ -825,7 +851,9 @@ id|state
 )paren
 (brace
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Init fields specific to the control struct */
@@ -839,7 +867,7 @@ id|state
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_generic_state&n; *&n; * PARAMETERS:  State               - The state object to be deleted&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Put a state object back into the global state cache.  The object&n; *              is not actually freed at this time.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_generic_state&n; *&n; * PARAMETERS:  State               - The state object to be deleted&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Put a state object back into the global state cache.  The object&n; *              is not actually freed at this time.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_delete_generic_state
 id|acpi_cm_delete_generic_state
@@ -910,7 +938,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_generic_state_cache&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Purge the global state object cache.  Used during subsystem&n; *              termination.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_generic_state_cache&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Purge the global state object cache.  Used during subsystem&n; *              termination.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_delete_generic_state_cache
 id|acpi_cm_delete_generic_state_cache
@@ -943,26 +971,29 @@ id|acpi_gbl_generic_state_cache
 op_assign
 id|next
 suffix:semicolon
+id|acpi_gbl_generic_state_cache_depth
+op_decrement
+suffix:semicolon
 )brace
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    _Report_error&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Print error message from KD table&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    _Report_error&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Print error message from KD table&n; *&n; ******************************************************************************/
 r_void
 DECL|function|_report_error
 id|_report_error
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|message
 )paren
@@ -983,22 +1014,22 @@ id|message
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    _Report_warning&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Print warning message from KD table&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    _Report_warning&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Print warning message from KD table&n; *&n; ******************************************************************************/
 r_void
 DECL|function|_report_warning
 id|_report_warning
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|message
 )paren
@@ -1019,58 +1050,22 @@ id|message
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    _Report_success&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Print warning message from KD table&n; *&n; ****************************************************************************/
-r_void
-DECL|function|_report_success
-id|_report_success
-(paren
-r_char
-op_star
-id|module_name
-comma
-id|s32
-id|line_number
-comma
-id|s32
-id|component_id
-comma
-r_char
-op_star
-id|message
-)paren
-(brace
-id|debug_print
-(paren
-id|module_name
-comma
-id|line_number
-comma
-id|component_id
-comma
-id|ACPI_OK
-comma
-l_string|&quot;*** Success: %s&bslash;n&quot;
-comma
-id|message
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    _Report_info&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Print information message from KD table&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    _Report_info&n; *&n; * PARAMETERS:  Module_name         - Caller&squot;s module name (for error output)&n; *              Line_number         - Caller&squot;s line number (for error output)&n; *              Component_id        - Caller&squot;s component ID (for error output)&n; *              Message             - Error message to use on failure&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Print information message from KD table&n; *&n; ******************************************************************************/
 r_void
 DECL|function|_report_info
 id|_report_info
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|message
 )paren

@@ -1,10 +1,8 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: resource.h - Resource Manager function prototypes&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acresrc.h - Resource Manager function prototypes&n; *       $Revision: 20 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef __RESOURCE_H__
-DECL|macro|__RESOURCE_H__
-mdefine_line|#define __RESOURCE_H__
-macro_line|#include &quot;actypes.h&quot;
-macro_line|#include &quot;acobject.h&quot;
+macro_line|#ifndef __ACRESRC_H__
+DECL|macro|__ACRESRC_H__
+mdefine_line|#define __ACRESRC_H__
 multiline_comment|/*&n; *  Function prototypes called from Acpi* APIs&n; */
 id|ACPI_STATUS
 id|acpi_rs_get_prt_method_data
@@ -53,7 +51,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_rs_create_resource_list
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|byte_stream_buffer
 comma
@@ -85,7 +83,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_rs_create_pci_routing_table
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|method_return_object
 comma
@@ -157,6 +155,18 @@ comma
 id|u32
 op_star
 id|size_needed
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_rs_calculate_pci_routing_table_length
+(paren
+id|ACPI_OPERAND_OBJECT
+op_star
+id|package_object
+comma
+id|u32
+op_star
+id|buffer_size_needed
 )paren
 suffix:semicolon
 id|ACPI_STATUS
@@ -723,5 +733,5 @@ op_star
 id|bytes_consumed
 )paren
 suffix:semicolon
-macro_line|#endif  /*__RESOURCE_H__ */
+macro_line|#endif  /* __ACRESRC_H__ */
 eof

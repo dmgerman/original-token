@@ -11,6 +11,16 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+DECL|macro|IN_CARD_SERVICES
+mdefine_line|#define IN_CARD_SERVICES
+macro_line|#include &lt;pcmcia/version.h&gt;
+macro_line|#include &lt;pcmcia/cs_types.h&gt;
+macro_line|#include &lt;pcmcia/ss.h&gt;
+macro_line|#include &lt;pcmcia/cs.h&gt;
+macro_line|#include &lt;pcmcia/bulkmem.h&gt;
+macro_line|#include &lt;pcmcia/cistpl.h&gt;
+macro_line|#include &quot;cs_internal.h&quot;
+macro_line|#include &quot;rsrc_mgr.h&quot;
 macro_line|#ifndef PCMCIA_DEBUG
 DECL|macro|PCMCIA_DEBUG
 mdefine_line|#define PCMCIA_DEBUG 1
@@ -22,16 +32,6 @@ id|pc_debug
 op_assign
 id|PCMCIA_DEBUG
 suffix:semicolon
-DECL|macro|IN_CARD_SERVICES
-mdefine_line|#define IN_CARD_SERVICES
-macro_line|#include &lt;pcmcia/version.h&gt;
-macro_line|#include &lt;pcmcia/cs_types.h&gt;
-macro_line|#include &lt;pcmcia/ss.h&gt;
-macro_line|#include &lt;pcmcia/cs.h&gt;
-macro_line|#include &lt;pcmcia/bulkmem.h&gt;
-macro_line|#include &lt;pcmcia/cistpl.h&gt;
-macro_line|#include &quot;cs_internal.h&quot;
-macro_line|#include &quot;rsrc_mgr.h&quot;
 multiline_comment|/*====================================================================*/
 DECL|macro|FIND_FIRST_BIT
 mdefine_line|#define FIND_FIRST_BIT(n)&t;((n) - ((n) &amp; ((n)-1)))

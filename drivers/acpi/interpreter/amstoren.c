@@ -1,31 +1,34 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstoren - AML Interpreter object store support, store to NTE&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstoren - AML Interpreter object store support,&n; *                         Store to Node (namespace object)&n; *              $Revision: 21 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amstoren&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_store_object_to_nte&n; *&n; * PARAMETERS:  *Val_desc           - Value to be stored&n; *              *Entry              - Named object to recieve the value&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store the object to the named object.&n; *&n; *              The Assignment of an object to a named object is handled here&n; *              The val passed in will replace the current value (if any)&n; *              with the input value.&n; *&n; *              When storing into an object the data is converted to the&n; *              target object type then stored in the object.  This means&n; *              that the target object type (for an initialized target) will&n; *              not be changed by a store operation.&n; *&n; *              NOTE: the global lock is acquired early.  This will result&n; *              in the global lock being held a bit longer.  Also, if the&n; *              function fails during set up we may get the lock when we&n; *              don&squot;t really need it.  I don&squot;t think we care.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_store_object_to_node&n; *&n; * PARAMETERS:  *Val_desc           - Value to be stored&n; *              *Node           - Named object to recieve the value&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store the object to the named object.&n; *&n; *              The Assignment of an object to a named object is handled here&n; *              The val passed in will replace the current value (if any)&n; *              with the input value.&n; *&n; *              When storing into an object the data is converted to the&n; *              target object type then stored in the object.  This means&n; *              that the target object type (for an initialized target) will&n; *              not be changed by a store operation.&n; *&n; *              NOTE: the global lock is acquired early.  This will result&n; *              in the global lock being held a bit longer.  Also, if the&n; *              function fails during set up we may get the lock when we&n; *              don&squot;t really need it.  I don&squot;t think we care.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
-DECL|function|acpi_aml_store_object_to_nte
-id|acpi_aml_store_object_to_nte
+DECL|function|acpi_aml_store_object_to_node
+id|acpi_aml_store_object_to_node
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|val_desc
 comma
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
 id|ACPI_STATUS
@@ -61,7 +64,7 @@ id|location
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|dest_desc
 suffix:semicolon
@@ -75,7 +78,7 @@ id|ACPI_ASSERT
 c_func
 (paren
 (paren
-id|entry
+id|node
 )paren
 op_logical_and
 (paren
@@ -87,7 +90,7 @@ id|destination_type
 op_assign
 id|acpi_ns_get_type
 (paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  First ensure we have a value that can be stored in the target&n;&t; */
@@ -136,15 +139,16 @@ id|acpi_aml_resolve_to_value
 (paren
 op_amp
 id|val_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_SUCCESS
 (paren
 id|status
-op_eq
-id|AE_OK
 )paren
 op_logical_and
 (paren
@@ -202,15 +206,16 @@ id|acpi_aml_resolve_to_value
 (paren
 op_amp
 id|val_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_SUCCESS
 (paren
 id|status
-op_eq
-id|AE_OK
 )paren
 op_logical_and
 (paren
@@ -258,7 +263,7 @@ id|status
 op_assign
 id|acpi_ns_attach_object
 (paren
-id|entry
+id|node
 comma
 id|val_desc
 comma
@@ -275,21 +280,22 @@ multiline_comment|/* Exit now if failure above */
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_goto
 id|clean_up_and_bail_out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Get descriptor for object attached to NTE&n;&t; */
+multiline_comment|/*&n;&t; *  Get descriptor for object attached to Node&n;&t; */
 id|dest_desc
 op_assign
 id|acpi_ns_get_attached_object
 (paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 r_if
@@ -299,7 +305,7 @@ op_logical_neg
 id|dest_desc
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *  There is no existing object attached to this NTE&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  There is no existing object attached to this Node&n;&t;&t; */
 id|status
 op_assign
 id|AE_AML_INTERNAL
@@ -308,7 +314,7 @@ r_goto
 id|clean_up_and_bail_out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Make sure the destination Object is the same as the NTE&n;&t; */
+multiline_comment|/*&n;&t; *  Make sure the destination Object is the same as the Node&n;&t; */
 r_if
 c_cond
 (paren
@@ -350,8 +356,10 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Set Bank value to select proper Bank&n;&t;&t; *  Perform the update (Set Bank Select)&n;&t;&t; */
 id|status
 op_assign
-id|acpi_aml_set_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_WRITE
+comma
 id|dest_desc-&gt;bank_field.bank_select
 comma
 op_amp
@@ -366,16 +374,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_SUCCESS
+(paren
 id|status
-op_eq
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Set bank select successful, set data value  */
 id|status
 op_assign
-id|acpi_aml_set_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_WRITE
+comma
 id|dest_desc-&gt;bank_field.bank_select
 comma
 op_amp
@@ -466,9 +477,11 @@ suffix:semicolon
 )brace
 id|status
 op_assign
-id|acpi_aml_set_named_field_value
+id|acpi_aml_access_named_field
 (paren
-id|entry
+id|ACPI_WRITE
+comma
+id|node
 comma
 id|buffer
 comma
@@ -766,8 +779,10 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Set Index value to select proper Data register&n;&t;&t; *  perform the update (Set index)&n;&t;&t; */
 id|status
 op_assign
-id|acpi_aml_set_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_WRITE
+comma
 id|dest_desc-&gt;index_field.index
 comma
 op_amp
@@ -782,16 +797,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_eq
+id|ACPI_SUCCESS
+(paren
 id|status
+)paren
 )paren
 (brace
 multiline_comment|/* set index successful, next set Data value */
 id|status
 op_assign
-id|acpi_aml_set_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_WRITE
+comma
 id|dest_desc-&gt;index_field.data
 comma
 op_amp

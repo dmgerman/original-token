@@ -1,16 +1,15 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbtable - ACPI tables: FACP, FACS, and RSDP utilities&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbtable - ACPI tables: FACP, FACS, and RSDP utilities&n; *              $Revision: 24 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          TABLE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;tbtable&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_get_table_rsdt&n; *&n; * PARAMETERS:  Number_of_tables    - Where the table count is placed&n; *              Table_ptr           - Input buffer pointer, optional&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Load and validate the RSDP (ptr) and RSDT (table)&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_get_table_rsdt&n; *&n; * PARAMETERS:  Number_of_tables    - Where the table count is placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Load and validate the RSDP (ptr) and RSDT (table)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_tb_get_table_rsdt
 id|acpi_tb_get_table_rsdt
@@ -132,6 +131,16 @@ l_string|&quot;Invalid signature where RSDP indicates RSDT should be located&quo
 )paren
 suffix:semicolon
 )brace
+id|REPORT_ERROR
+(paren
+l_string|&quot;Unable to locate RSDT&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Always delete the RSDP mapping */
 id|acpi_tb_delete_acpi_table
@@ -139,21 +148,6 @@ id|acpi_tb_delete_acpi_table
 id|ACPI_TABLE_RSDP
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Save the table pointers and allocation info */
 id|status
 op_assign
@@ -200,20 +194,24 @@ op_star
 id|acpi_gbl_RSDT
 )paren
 suffix:semicolon
-multiline_comment|/* Determine the number of tables pointed to by the RSDT */
+multiline_comment|/*&n;&t; * Determine the number of tables pointed to by the RSDT.&n;&t; * This is defined by the ACPI Specification to be the number of&n;&t; * pointers contained within the RSDT.  The size of the pointers&n;&t; * is architecture-dependent.&n;&t; */
 op_star
 id|number_of_tables
 op_assign
 (paren
-id|s32
-)paren
-id|DIV_4
 (paren
 id|acpi_gbl_RSDT-&gt;header.length
 op_minus
 r_sizeof
 (paren
 id|ACPI_TABLE_HEADER
+)paren
+)paren
+op_div
+r_sizeof
+(paren
+r_void
+op_star
 )paren
 )paren
 suffix:semicolon
@@ -224,12 +222,12 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_scan_memory_for_rsdp&n; *&n; * PARAMETERS:  Start_address       - Starting pointer for search&n; *              Length              - Maximum length to search&n; *&n; * RETURN:      Pointer to the RSDP if found, otherwise NULL.&n; *&n; * DESCRIPTION: Search a block of memory for the RSDP signature&n; *&n; ******************************************************************************/
-r_char
+id|u8
 op_star
 DECL|function|acpi_tb_scan_memory_for_rsdp
 id|acpi_tb_scan_memory_for_rsdp
 (paren
-r_char
+id|u8
 op_star
 id|start_address
 comma
@@ -240,7 +238,7 @@ id|length
 id|u32
 id|offset
 suffix:semicolon
-r_char
+id|u8
 op_star
 id|mem_rover
 suffix:semicolon
@@ -275,6 +273,10 @@ c_cond
 (paren
 id|STRNCMP
 (paren
+(paren
+id|NATIVE_CHAR
+op_star
+)paren
 id|mem_rover
 comma
 id|RSDP_SIG
@@ -304,13 +306,17 @@ l_int|0
 (brace
 multiline_comment|/* If so, we have found the RSDP */
 r_return
+(paren
 id|mem_rover
+)paren
 suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Searched entire block, no RSDP was found */
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_find_rsdp&n; *&n; * PARAMETERS:  *Buffer_ptr             - If == NULL, read data from buffer&n; *                                        rather than searching memory&n; *              *Table_info             - Where the table info is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Search lower 1_mbyte of memory for the root system descriptor&n; *              pointer structure.  If it is found, set *RSDP to point to it.&n; *&n; *              NOTE: The RSDP must be either in the first 1_k of the Extended&n; *              BIOS Data Area or between E0000 and FFFFF (ACPI 1.0 section&n; *              5.2.2; assertion #421).&n; *&n; ******************************************************************************/
@@ -323,11 +329,11 @@ op_star
 id|table_info
 )paren
 (brace
-r_char
+id|u8
 op_star
 id|table_ptr
 suffix:semicolon
-r_char
+id|u8
 op_star
 id|mem_rover
 suffix:semicolon
@@ -398,6 +404,10 @@ c_cond
 (paren
 id|STRNCMP
 (paren
+(paren
+id|NATIVE_CHAR
+op_star
+)paren
 id|table_ptr
 comma
 id|RSDP_SIG
@@ -414,6 +424,16 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Nope, BAD Signature */
+id|acpi_os_unmap_memory
+(paren
+id|table_ptr
+comma
+r_sizeof
+(paren
+id|ROOT_SYSTEM_DESCRIPTOR_POINTER
+)paren
+)paren
+suffix:semicolon
 r_return
 (paren
 id|AE_BAD_SIGNATURE
@@ -438,6 +458,16 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Nope, BAD Checksum */
+id|acpi_os_unmap_memory
+(paren
+id|table_ptr
+comma
+r_sizeof
+(paren
+id|ROOT_SYSTEM_DESCRIPTOR_POINTER
+)paren
+)paren
+suffix:semicolon
 r_return
 (paren
 id|AE_BAD_CHECKSUM
@@ -653,12 +683,12 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_get_table_facs&n; *&n; * PARAMETERS:  *Buffer_ptr             - If == NULL, read data from buffer&n; *                                        rather than searching memory&n; *              *Table_info             - Where the table info is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Returns a pointer to the FACS as defined in FACP.  This&n; *              function assumes the global variable FACP has been&n; *              correctly initialized.  The value of FACP-&gt;Firmware_ctrl&n; *              into a far pointer which is returned.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_get_table_facs&n; *&n; * PARAMETERS:  *Buffer_ptr             - If Buffer_ptr is valid, read data from&n; *                                          buffer rather than searching memory&n; *              *Table_info             - Where the table info is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Returns a pointer to the FACS as defined in FACP.  This&n; *              function assumes the global variable FACP has been&n; *              correctly initialized.  The value of FACP-&gt;Firmware_ctrl&n; *              into a far pointer which is returned.&n; *&n; *****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_tb_get_table_facs
 id|acpi_tb_get_table_facs
 (paren
-r_char
+id|ACPI_TABLE_HEADER
 op_star
 id|buffer_ptr
 comma

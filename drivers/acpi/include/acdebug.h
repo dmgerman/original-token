@@ -1,8 +1,8 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: debugger.h - ACPI/AML debugger&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acdebug.h - ACPI/AML debugger&n; *       $Revision: 35 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef __DEBUGGER_H__
-DECL|macro|__DEBUGGER_H__
-mdefine_line|#define __DEBUGGER_H__
+macro_line|#ifndef __ACDEBUG_H__
+DECL|macro|__ACDEBUG_H__
+mdefine_line|#define __ACDEBUG_H__
 DECL|macro|DB_MAX_ARGS
 mdefine_line|#define DB_MAX_ARGS             8  /* Must be max method args + 1 */
 DECL|macro|DB_COMMAND_PROMPT
@@ -14,7 +14,7 @@ r_int
 id|optind
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|optarg
 suffix:semicolon
@@ -48,7 +48,7 @@ id|u8
 id|opt_verbose
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|args
 (braket
@@ -56,21 +56,21 @@ id|DB_MAX_ARGS
 )braket
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 id|line_buf
 (braket
 l_int|80
 )braket
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 id|scope_buf
 (braket
 l_int|40
 )braket
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 id|debug_filename
 (braket
 l_int|40
@@ -81,23 +81,19 @@ id|u8
 id|output_to_file
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|buffer
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|filename
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|INDENT_STRING
-suffix:semicolon
-r_extern
-id|u32
-id|acpi_gbl_method_breakpoint
 suffix:semicolon
 r_extern
 id|u8
@@ -145,7 +141,7 @@ id|num_thermal_zones
 suffix:semicolon
 r_extern
 id|u32
-id|num_named_objects
+id|num_nodes
 suffix:semicolon
 r_extern
 id|u32
@@ -205,13 +201,13 @@ r_struct
 id|command_info
 (brace
 DECL|member|name
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 suffix:semicolon
 multiline_comment|/* Command Name */
 DECL|member|min_args
-r_char
+id|u8
 id|min_args
 suffix:semicolon
 multiline_comment|/* Minimum arguments required */
@@ -225,7 +221,7 @@ r_struct
 id|argument_info
 (brace
 DECL|member|name
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 suffix:semicolon
@@ -259,7 +255,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
@@ -271,7 +267,7 @@ multiline_comment|/*&n; * dbcmds - debug commands and output routines&n; */
 r_void
 id|acpi_db_display_table_info
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|table_arg
 )paren
@@ -279,11 +275,11 @@ suffix:semicolon
 r_void
 id|acpi_db_unload_acpi_table
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|table_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|instance_arg
 )paren
@@ -291,7 +287,7 @@ suffix:semicolon
 r_void
 id|acpi_db_set_method_breakpoint
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|location
 comma
@@ -299,7 +295,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -307,7 +303,7 @@ suffix:semicolon
 r_void
 id|acpi_db_set_method_call_breakpoint
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -315,11 +311,11 @@ suffix:semicolon
 r_void
 id|acpi_db_disassemble_aml
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|statements
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -327,11 +323,11 @@ suffix:semicolon
 r_void
 id|acpi_db_dump_namespace
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|start_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|depth_arg
 )paren
@@ -339,11 +335,11 @@ suffix:semicolon
 r_void
 id|acpi_db_dump_namespace_by_owner
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|owner_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|depth_arg
 )paren
@@ -351,7 +347,7 @@ suffix:semicolon
 r_void
 id|acpi_db_send_notify
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 comma
@@ -362,15 +358,15 @@ suffix:semicolon
 r_void
 id|acpi_db_set_method_data
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|type_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|index_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|value_arg
 )paren
@@ -378,11 +374,11 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_db_display_objects
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|obj_type_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|display_count_arg
 )paren
@@ -390,7 +386,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_db_find_name_in_namespace
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name_arg
 )paren
@@ -398,7 +394,7 @@ suffix:semicolon
 r_void
 id|acpi_db_set_scope
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 )paren
@@ -406,7 +402,7 @@ suffix:semicolon
 r_void
 id|acpi_db_find_references
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|object_arg
 )paren
@@ -415,7 +411,7 @@ multiline_comment|/*&n; * dbdisasm - AML disassembler&n; */
 r_void
 id|acpi_db_display_op
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|origin
 comma
@@ -426,7 +422,7 @@ suffix:semicolon
 r_void
 id|acpi_db_display_namestring
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 )paren
@@ -434,7 +430,7 @@ suffix:semicolon
 r_void
 id|acpi_db_display_path
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -442,7 +438,7 @@ suffix:semicolon
 r_void
 id|acpi_db_display_opcode
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -451,7 +447,7 @@ multiline_comment|/*&n; * dbdisply - debug display commands&n; */
 r_void
 id|acpi_db_display_method_info
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -459,11 +455,11 @@ suffix:semicolon
 r_void
 id|acpi_db_decode_and_display_object
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|target
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|output_type
 )paren
@@ -471,15 +467,19 @@ suffix:semicolon
 r_void
 id|acpi_db_display_result_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
-id|ret_desc
+id|obj_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 suffix:semicolon
 id|ACPI_STATUS
 id|acpi_db_display_all_methods
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|display_count_arg
 )paren
@@ -487,9 +487,13 @@ suffix:semicolon
 r_void
 id|acpi_db_display_internal_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 suffix:semicolon
 r_void
@@ -519,20 +523,24 @@ suffix:semicolon
 r_void
 id|acpi_db_display_argument_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * dbexec - debugger control method execution&n; */
 r_void
 id|acpi_db_execute
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 op_star
 id|args
@@ -544,15 +552,15 @@ suffix:semicolon
 r_void
 id|acpi_db_create_execution_threads
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|num_threads_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|num_loops_arg
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|method_name_arg
 )paren
@@ -561,7 +569,7 @@ multiline_comment|/*&n; * dbfileio - Debugger file I/O commands&n; */
 id|OBJECT_TYPE_INTERNAL
 id|acpi_db_match_argument
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|user_argument
 comma
@@ -579,7 +587,7 @@ suffix:semicolon
 r_void
 id|acpi_db_open_debug_file
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 )paren
@@ -587,7 +595,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_db_load_acpi_table
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|filename
 )paren
@@ -596,7 +604,7 @@ multiline_comment|/*&n; * dbhistry - debugger HISTORY command&n; */
 r_void
 id|acpi_db_add_to_history
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|command_line
 )paren
@@ -607,11 +615,11 @@ id|acpi_db_display_history
 r_void
 )paren
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_db_get_from_history
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|command_num_arg
 )paren
@@ -620,7 +628,7 @@ multiline_comment|/*&n; * dbinput - user front-end to the AML debugger&n; */
 id|ACPI_STATUS
 id|acpi_db_command_dispatch
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|input_buffer
 comma
@@ -628,7 +636,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -644,10 +652,10 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_db_user_commands
 (paren
-r_char
+id|NATIVE_CHAR
 id|prompt
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -656,7 +664,7 @@ multiline_comment|/*&n; * dbstats - Generation and display of ACPI table statist
 r_void
 id|acpi_db_generate_statistics
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|root
 comma
@@ -667,7 +675,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_db_display_statistics
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|type_arg
 )paren
@@ -676,7 +684,7 @@ multiline_comment|/*&n; * dbutils - AML debugger utilities&n; */
 r_void
 id|acpi_db_set_output_destination
 (paren
-id|s32
+id|u32
 id|where
 )paren
 suffix:semicolon
@@ -701,7 +709,7 @@ suffix:semicolon
 r_void
 id|acpi_db_prep_namestring
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 )paren
@@ -709,19 +717,19 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_db_second_pass_parse
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|root
 )paren
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 id|acpi_db_local_ns_lookup
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|name
 )paren
 suffix:semicolon
-macro_line|#endif  /* __DEBUGGER_H__ */
+macro_line|#endif  /* __ACDEBUG_H__ */
 eof

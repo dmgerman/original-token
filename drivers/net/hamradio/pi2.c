@@ -5451,10 +5451,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|pi_init
+DECL|function|pi2_init
 r_int
 id|__init
-id|pi_init
+id|pi2_init
 c_func
 (paren
 r_void
@@ -7535,7 +7535,7 @@ r_void
 )paren
 (brace
 r_return
-id|pi_init
+id|pi2_init
 c_func
 (paren
 )paren

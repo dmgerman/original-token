@@ -1,18 +1,17 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmglobal - Global variables for the ACPI subsystem&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmglobal - Global variables for the ACPI subsystem&n; *              $Revision: 99 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 DECL|macro|DEFINE_ACPI_GLOBALS
 mdefine_line|#define DEFINE_ACPI_GLOBALS
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cmglobal&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * Static global variable initialization.&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; * We want the debug switches statically initialized so they&n; * are already set when the debugger is entered.&n; */
 multiline_comment|/* Debug switch - level and trace mask */
@@ -207,78 +206,60 @@ comma
 multiline_comment|/* 15 Ddb_handle       */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 16 reserved         */
+multiline_comment|/* 16 Debug Object     */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 17 reserved         */
+multiline_comment|/* 17 Def_field        */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 18 reserved         */
+multiline_comment|/* 18 Bank_field       */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 19 reserved         */
+multiline_comment|/* 19 Index_field      */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 20 reserved         */
+multiline_comment|/* 20 Reference        */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 21 reserved         */
+multiline_comment|/* 21 Alias            */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 22 reserved         */
+multiline_comment|/* 22 Notify           */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 23 reserved         */
+multiline_comment|/* 23 Address Handler  */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 24 reserved         */
+multiline_comment|/* 24 Def_field_defn   */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 25 Def_field        */
+multiline_comment|/* 25 Bank_field_defn  */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 26 Bank_field       */
+multiline_comment|/* 26 Index_field_defn */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 27 Index_field      */
+multiline_comment|/* 27 If               */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 28 Def_field_defn   */
+multiline_comment|/* 28 Else             */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 29 Bank_field_defn  */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 30 Index_field_defn */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 31 If               */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 32 Else             */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 33 While            */
+multiline_comment|/* 29 While            */
 id|NSP_NEWSCOPE
 comma
-multiline_comment|/* 34 Scope            */
+multiline_comment|/* 30 Scope            */
 id|NSP_LOCAL
 comma
-multiline_comment|/* 35 Def_any          */
+multiline_comment|/* 31 Def_any          */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 36 Reference        */
+multiline_comment|/* 32 Method Arg       */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 37 Alias            */
+multiline_comment|/* 33 Method Local     */
 id|NSP_NORMAL
-comma
-multiline_comment|/* 38 Notify           */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 39 Address Handler  */
-id|NSP_NORMAL
-multiline_comment|/* 40 Invalid          */
+multiline_comment|/* 34 Invalid          */
 )brace
 suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * Table globals&n; *&n; ******************************************************************************/
@@ -567,16 +548,20 @@ id|INTERNAL_TYPE_MAX
 )paren
 (brace
 r_return
+(paren
 id|FALSE
+)paren
 suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 id|TRUE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_format_exception&n; *&n; * PARAMETERS:  Status              - Acpi status to be formatted&n; *&n; * RETURN:      Formatted status string&n; *&n; * DESCRIPTION: Convert an ACPI exception to a string&n; *&n; ****************************************************************************/
-r_char
+id|NATIVE_CHAR
 op_star
 DECL|function|acpi_cm_format_exception
 id|acpi_cm_format_exception
@@ -585,24 +570,153 @@ id|ACPI_STATUS
 id|status
 )paren
 (brace
-r_if
+id|NATIVE_CHAR
+op_star
+id|exception
+op_assign
+l_string|&quot;UNKNOWN_STATUS&quot;
+suffix:semicolon
+id|ACPI_STATUS
+id|sub_status
+suffix:semicolon
+id|sub_status
+op_assign
+(paren
+id|status
+op_amp
+op_complement
+id|AE_CODE_MASK
+)paren
+suffix:semicolon
+r_switch
 c_cond
 (paren
 id|status
-OG
-id|ACPI_MAX_STATUS
+op_amp
+id|AE_CODE_MASK
 )paren
 (brace
-r_return
-l_string|&quot;UNKNOWN_STATUS&quot;
+r_case
+id|AE_CODE_ENVIRONMENTAL
+suffix:colon
+r_if
+c_cond
+(paren
+id|sub_status
+op_le
+id|AE_CODE_ENV_MAX
+)paren
+(brace
+id|exception
+op_assign
+id|acpi_gbl_exception_names_env
+(braket
+id|sub_status
+)braket
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|AE_CODE_PROGRAMMER
+suffix:colon
+r_if
+c_cond
+(paren
+id|sub_status
+op_le
+id|AE_CODE_PGM_MAX
+)paren
+(brace
+id|exception
+op_assign
+id|acpi_gbl_exception_names_pgm
+(braket
+id|sub_status
+op_minus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|AE_CODE_ACPI_TABLES
+suffix:colon
+r_if
+c_cond
+(paren
+id|sub_status
+op_le
+id|AE_CODE_TBL_MAX
+)paren
+(brace
+id|exception
+op_assign
+id|acpi_gbl_exception_names_tbl
+(braket
+id|sub_status
+op_minus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|AE_CODE_AML
+suffix:colon
+r_if
+c_cond
+(paren
+id|sub_status
+op_le
+id|AE_CODE_AML_MAX
+)paren
+(brace
+id|exception
+op_assign
+id|acpi_gbl_exception_names_aml
+(braket
+id|sub_status
+op_minus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|AE_CODE_CONTROL
+suffix:colon
+r_if
+c_cond
+(paren
+id|sub_status
+op_le
+id|AE_CODE_CTRL_MAX
+)paren
+(brace
+id|exception
+op_assign
+id|acpi_gbl_exception_names_ctrl
+(braket
+id|sub_status
+op_minus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_break
 suffix:semicolon
 )brace
 r_return
 (paren
-id|acpi_gbl_exception_names
-(braket
-id|status
-)braket
+id|exception
 )paren
 suffix:semicolon
 )brace
@@ -1037,6 +1151,22 @@ id|acpi_gbl_parse_cache_hits
 op_assign
 l_int|0
 suffix:semicolon
+id|acpi_gbl_ext_parse_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache_depth
+op_assign
+l_int|0
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache_requests
+op_assign
+l_int|0
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache_hits
+op_assign
+l_int|0
+suffix:semicolon
 id|acpi_gbl_object_cache
 op_assign
 l_int|NULL
@@ -1074,7 +1204,7 @@ id|acpi_gbl_buf_seq
 op_assign
 l_int|0
 suffix:semicolon
-id|acpi_gbl_named_object_err
+id|acpi_gbl_node_err
 op_assign
 id|FALSE
 suffix:semicolon
@@ -1106,45 +1236,37 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Namespace */
-id|acpi_gbl_root_name_table.next_table
+id|acpi_gbl_root_node
 op_assign
 l_int|NULL
 suffix:semicolon
-id|acpi_gbl_root_name_table.parent_entry
-op_assign
-l_int|NULL
-suffix:semicolon
-id|acpi_gbl_root_name_table.parent_table
-op_assign
-l_int|NULL
-suffix:semicolon
-id|acpi_gbl_root_object
-op_assign
-id|acpi_gbl_root_name_table.entries
-suffix:semicolon
-id|acpi_gbl_root_object-&gt;name
+id|acpi_gbl_root_node_struct.name
 op_assign
 id|ACPI_ROOT_NAME
 suffix:semicolon
-id|acpi_gbl_root_object-&gt;data_type
+id|acpi_gbl_root_node_struct.data_type
 op_assign
 id|ACPI_DESC_TYPE_NAMED
 suffix:semicolon
-id|acpi_gbl_root_object-&gt;type
+id|acpi_gbl_root_node_struct.type
 op_assign
 id|ACPI_TYPE_ANY
 suffix:semicolon
-id|acpi_gbl_root_object-&gt;this_index
-op_assign
-l_int|0
-suffix:semicolon
-id|acpi_gbl_root_object-&gt;child_table
+id|acpi_gbl_root_node_struct.child
 op_assign
 l_int|NULL
 suffix:semicolon
-id|acpi_gbl_root_object-&gt;object
+id|acpi_gbl_root_node_struct.peer
 op_assign
 l_int|NULL
+suffix:semicolon
+id|acpi_gbl_root_node_struct.object
+op_assign
+l_int|NULL
+suffix:semicolon
+id|acpi_gbl_root_node_struct.flags
+op_assign
+id|ANOBJ_END_OF_PEER_LIST
 suffix:semicolon
 multiline_comment|/* Memory allocation metrics - compiled out in non-debug mode. */
 id|INITIALIZE_ALLOCATION_METRICS

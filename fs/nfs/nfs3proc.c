@@ -1625,6 +1625,10 @@ id|arg-&gt;len
 op_assign
 id|name-&gt;len
 suffix:semicolon
+id|res-&gt;valid
+op_assign
+l_int|0
+suffix:semicolon
 id|msg-&gt;rpc_proc
 op_assign
 id|NFS3PROC_REMOVE
@@ -1662,6 +1666,14 @@ r_struct
 id|nfs_fattr
 op_star
 id|dir_attr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|msg-&gt;rpc_argp
+)paren
+(brace
+id|dir_attr
 op_assign
 (paren
 r_struct
@@ -1684,6 +1696,7 @@ c_func
 id|msg-&gt;rpc_argp
 )paren
 suffix:semicolon
+)brace
 )brace
 r_static
 r_int

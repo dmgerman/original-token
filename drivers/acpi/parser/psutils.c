@@ -1,7 +1,7 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: psutils - Parser miscellaneous utilities (Parser only)&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: psutils - Parser miscellaneous utilities (Parser only)&n; *              $Revision: 29 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          PARSER
@@ -9,21 +9,22 @@ id|MODULE_NAME
 (paren
 l_string|&quot;psutils&quot;
 )paren
-suffix:semicolon
 DECL|macro|PARSEOP_GENERIC
-mdefine_line|#define PARSEOP_GENERIC     1
+mdefine_line|#define PARSEOP_GENERIC     0x01
 DECL|macro|PARSEOP_NAMED
-mdefine_line|#define PARSEOP_NAMED       2
+mdefine_line|#define PARSEOP_NAMED       0x02
 DECL|macro|PARSEOP_DEFERRED
-mdefine_line|#define PARSEOP_DEFERRED    3
+mdefine_line|#define PARSEOP_DEFERRED    0x03
 DECL|macro|PARSEOP_BYTELIST
-mdefine_line|#define PARSEOP_BYTELIST    4
+mdefine_line|#define PARSEOP_BYTELIST    0x04
+DECL|macro|PARSEOP_IN_CACHE
+mdefine_line|#define PARSEOP_IN_CACHE    0x80
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_init_op&n; *&n; * PARAMETERS:  Op              - A newly allocated Op object&n; *              Opcode          - Opcode to store in the Op&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Allocate an acpi_op, choose op type (and thus size) based on&n; *              opcode&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_ps_init_op
 id|acpi_ps_init_op
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
@@ -31,7 +32,7 @@ id|u16
 id|opcode
 )paren
 (brace
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|aml_op
 suffix:semicolon
@@ -50,12 +51,6 @@ id|acpi_ps_get_opcode_info
 id|opcode
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|aml_op
-)paren
-(brace
 id|DEBUG_ONLY_MEMBERS
 (paren
 id|STRNCPY
@@ -72,9 +67,8 @@ id|op-&gt;op_name
 )paren
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_alloc_op&n; *&n; * PARAMETERS:  Opcode          - Opcode that will be stored in the new Op&n; *&n; * RETURN:      Pointer to the new Op.&n; *&n; * DESCRIPTION: Allocate an acpi_op, choose op type (and thus size) based on&n; *              opcode.  A cache of opcodes is available for the pure&n; *              GENERIC_OP, since this is by far the most commonly used.&n; *&n; ******************************************************************************/
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 DECL|function|acpi_ps_alloc_op
 id|acpi_ps_alloc_op
@@ -83,7 +77,7 @@ id|u16
 id|opcode
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 op_assign
@@ -109,7 +103,7 @@ id|size
 op_assign
 r_sizeof
 (paren
-id|ACPI_DEFERRED_OP
+id|ACPI_PARSE2_OBJECT
 )paren
 suffix:semicolon
 id|flags
@@ -131,7 +125,7 @@ id|size
 op_assign
 r_sizeof
 (paren
-id|ACPI_NAMED_OP
+id|ACPI_PARSE2_OBJECT
 )paren
 suffix:semicolon
 id|flags
@@ -153,7 +147,7 @@ id|size
 op_assign
 r_sizeof
 (paren
-id|ACPI_BYTELIST_OP
+id|ACPI_PARSE2_OBJECT
 )paren
 suffix:semicolon
 id|flags
@@ -167,13 +161,25 @@ id|size
 op_assign
 r_sizeof
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 )paren
 suffix:semicolon
 id|flags
 op_assign
 id|PARSEOP_GENERIC
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|size
+op_eq
+r_sizeof
+(paren
+id|ACPI_PARSE_OBJECT
+)paren
+)paren
+(brace
 multiline_comment|/*&n;&t;&t; * The generic op is by far the most common (16 to 1), and therefore&n;&t;&t; * the op cache is implemented with this type.&n;&t;&t; *&n;&t;&t; * Check if there is an Op already available in the cache&n;&t;&t; */
 id|acpi_cm_acquire_mutex
 (paren
@@ -213,7 +219,67 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
+)paren
+)paren
+suffix:semicolon
+)brace
+id|acpi_cm_release_mutex
+(paren
+id|ACPI_MTX_CACHES
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t; * The generic op is by far the most common (16 to 1), and therefore&n;&t;&t; * the op cache is implemented with this type.&n;&t;&t; *&n;&t;&t; * Check if there is an Op already available in the cache&n;&t;&t; */
+id|acpi_cm_acquire_mutex
+(paren
+id|ACPI_MTX_CACHES
+)paren
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache_requests
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|acpi_gbl_ext_parse_cache
+)paren
+(brace
+multiline_comment|/* Extract an op from the front of the cache list */
+id|acpi_gbl_ext_parse_cache_depth
+op_decrement
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache_hits
+op_increment
+suffix:semicolon
+id|op
+op_assign
+(paren
+id|ACPI_PARSE_OBJECT
+op_star
+)paren
+id|acpi_gbl_ext_parse_cache
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache
+op_assign
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
+id|op-&gt;next
+suffix:semicolon
+multiline_comment|/* Clear the previously used Op */
+id|MEMSET
+(paren
+id|op
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|ACPI_PARSE2_OBJECT
 )paren
 )paren
 suffix:semicolon
@@ -260,7 +326,9 @@ id|flags
 suffix:semicolon
 )brace
 r_return
+(paren
 id|op
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_free_op&n; *&n; * PARAMETERS:  Op              - Op to be freed&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Free an Op object.  Either put it on the GENERIC_OP cache list&n; *              or actually free it.&n; *&n; ******************************************************************************/
@@ -268,7 +336,7 @@ r_void
 DECL|function|acpi_ps_free_op
 id|acpi_ps_free_op
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -291,6 +359,23 @@ id|MAX_PARSE_CACHE_DEPTH
 )paren
 (brace
 multiline_comment|/* Put a GENERIC_OP back into the cache */
+multiline_comment|/* Clear the previously used Op */
+id|MEMSET
+(paren
+id|op
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|ACPI_PARSE_OBJECT
+)paren
+)paren
+suffix:semicolon
+id|op-&gt;flags
+op_assign
+id|PARSEOP_IN_CACHE
+suffix:semicolon
 id|acpi_cm_acquire_mutex
 (paren
 id|ACPI_MTX_CACHES
@@ -305,6 +390,68 @@ id|acpi_gbl_parse_cache
 suffix:semicolon
 id|acpi_gbl_parse_cache
 op_assign
+id|op
+suffix:semicolon
+id|acpi_cm_release_mutex
+(paren
+id|ACPI_MTX_CACHES
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* Is the cache full? */
+r_if
+c_cond
+(paren
+id|acpi_gbl_ext_parse_cache_depth
+OL
+id|MAX_EXTPARSE_CACHE_DEPTH
+)paren
+(brace
+multiline_comment|/* Put a GENERIC_OP back into the cache */
+multiline_comment|/* Clear the previously used Op */
+id|MEMSET
+(paren
+id|op
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|ACPI_PARSE2_OBJECT
+)paren
+)paren
+suffix:semicolon
+id|op-&gt;flags
+op_assign
+id|PARSEOP_IN_CACHE
+suffix:semicolon
+id|acpi_cm_acquire_mutex
+(paren
+id|ACPI_MTX_CACHES
+)paren
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache_depth
+op_increment
+suffix:semicolon
+id|op-&gt;next
+op_assign
+(paren
+id|ACPI_PARSE_OBJECT
+op_star
+)paren
+id|acpi_gbl_ext_parse_cache
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache
+op_assign
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
 id|op
 suffix:semicolon
 id|acpi_cm_release_mutex
@@ -331,7 +478,7 @@ id|acpi_ps_delete_parse_cache
 r_void
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|next
 suffix:semicolon
@@ -356,6 +503,38 @@ id|acpi_gbl_parse_cache
 op_assign
 id|next
 suffix:semicolon
+id|acpi_gbl_parse_cache_depth
+op_decrement
+suffix:semicolon
+)brace
+multiline_comment|/* Traverse the global cache list */
+r_while
+c_loop
+(paren
+id|acpi_gbl_ext_parse_cache
+)paren
+(brace
+multiline_comment|/* Delete one cached state object */
+id|next
+op_assign
+id|acpi_gbl_ext_parse_cache-&gt;next
+suffix:semicolon
+id|acpi_cm_free
+(paren
+id|acpi_gbl_ext_parse_cache
+)paren
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache
+op_assign
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
+id|next
+suffix:semicolon
+id|acpi_gbl_ext_parse_cache_depth
+op_decrement
+suffix:semicolon
 )brace
 r_return
 suffix:semicolon
@@ -366,7 +545,7 @@ id|u8
 DECL|function|acpi_ps_is_leading_char
 id|acpi_ps_is_leading_char
 (paren
-id|s32
+id|u32
 id|c
 )paren
 (brace
@@ -398,7 +577,7 @@ id|u8
 DECL|function|acpi_ps_is_prefix_char
 id|acpi_ps_is_prefix_char
 (paren
-id|s32
+id|u32
 id|c
 )paren
 (brace
@@ -603,8 +782,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Is opcode for a named object Op?&n; * (Includes all named object opcodes)&n; *&n; * TBD: [Restructure] Need a better way than this brute force approach!&n; */
 id|u8
-DECL|function|acpi_ps_is_named_object_op
-id|acpi_ps_is_named_object_op
+DECL|function|acpi_ps_is_node_op
+id|acpi_ps_is_node_op
 (paren
 id|u16
 id|opcode
@@ -880,90 +1059,41 @@ id|AML_DWORD_FIELD_OP
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Cast an acpi_op to an acpi_deferred_op if possible&n; */
-id|ACPI_DEFERRED_OP
+multiline_comment|/*&n; * Cast an acpi_op to an acpi_extended_op if possible&n; */
+multiline_comment|/* TBD: This is very inefficient, fix */
+id|ACPI_PARSE2_OBJECT
 op_star
-DECL|function|acpi_ps_to_deferred_op
-id|acpi_ps_to_deferred_op
+DECL|function|acpi_ps_to_extended_op
+id|acpi_ps_to_extended_op
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
 (brace
 r_return
+(paren
 (paren
 id|acpi_ps_is_deferred_op
 (paren
 id|op-&gt;opcode
 )paren
-ques
-c_cond
-(paren
-(paren
-id|ACPI_DEFERRED_OP
-op_star
-)paren
-id|op
-)paren
-suffix:colon
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Cast an acpi_op to an acpi_named_op if possible&n; */
-id|ACPI_NAMED_OP
-op_star
-DECL|function|acpi_ps_to_named_op
-id|acpi_ps_to_named_op
-(paren
-id|ACPI_GENERIC_OP
-op_star
-id|op
-)paren
-(brace
-r_return
-(paren
+op_logical_or
 id|acpi_ps_is_named_op
 (paren
 id|op-&gt;opcode
 )paren
-ques
-c_cond
-(paren
-(paren
-id|ACPI_NAMED_OP
-op_star
-)paren
-id|op
-)paren
-suffix:colon
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Cast an acpi_op to an acpi_bytelist_op if possible&n; */
-id|ACPI_BYTELIST_OP
-op_star
-DECL|function|acpi_ps_to_bytelist_op
-id|acpi_ps_to_bytelist_op
-(paren
-id|ACPI_GENERIC_OP
-op_star
-id|op
-)paren
-(brace
-r_return
-(paren
+op_logical_or
 id|acpi_ps_is_bytelist_op
 (paren
 id|op-&gt;opcode
 )paren
+)paren
 ques
 c_cond
 (paren
 (paren
-id|ACPI_BYTELIST_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|op
@@ -978,16 +1108,16 @@ id|u32
 DECL|function|acpi_ps_get_name
 id|acpi_ps_get_name
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
 (brace
-id|ACPI_NAMED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 id|named
 op_assign
-id|acpi_ps_to_named_op
+id|acpi_ps_to_extended_op
 (paren
 id|op
 )paren
@@ -1008,7 +1138,7 @@ r_void
 DECL|function|acpi_ps_set_name
 id|acpi_ps_set_name
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
@@ -1016,11 +1146,11 @@ id|u32
 id|name
 )paren
 (brace
-id|ACPI_NAMED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 id|named
 op_assign
-id|acpi_ps_to_named_op
+id|acpi_ps_to_extended_op
 (paren
 id|op
 )paren

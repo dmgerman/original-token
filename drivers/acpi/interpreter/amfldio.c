@@ -1,24 +1,23 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfldio - Aml Field I/O&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfldio - Aml Field I/O&n; *              $Revision: 26 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amfldio&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_read_field_data&n; *&n; * PARAMETERS:  *Obj_desc           - Field to be read&n; *              *Value              - Where to store value&n; *              Field_bit_width     - Field Width in bits (8, 16, or 32)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Retrieve the value of the given field&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_read_field_data
 id|acpi_aml_read_field_data
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
@@ -36,7 +35,7 @@ id|value
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|rgn_desc
 op_assign
@@ -50,7 +49,7 @@ id|local_value
 op_assign
 l_int|0
 suffix:semicolon
-id|s32
+id|u32
 id|field_byte_width
 suffix:semicolon
 multiline_comment|/* Obj_desc is validated by callers */
@@ -86,9 +85,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -112,23 +112,15 @@ id|local_value
 suffix:semicolon
 multiline_comment|/*  support reads without saving value  */
 )brace
-multiline_comment|/*&n;&t; * Round offset down to next multiple of&n;&t; * field width, add region base address and offset within the field&n;&t; */
+multiline_comment|/*&n;&t; * Set offset to next multiple of field width,&n;&t; *  add region base address and offset within the field&n;&t; */
 id|address
 op_assign
 id|rgn_desc-&gt;region.address
 op_plus
 (paren
 id|obj_desc-&gt;field.offset
-op_amp
-op_complement
-(paren
-(paren
-id|u32
-)paren
+op_star
 id|field_byte_width
-op_minus
-l_int|1
-)paren
 )paren
 op_plus
 id|field_byte_offset
@@ -160,7 +152,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_read_field
 id|acpi_aml_read_field
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
@@ -525,6 +517,32 @@ op_assign
 id|previous_raw_datum
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; * Prepare the merged datum for storing into the caller&squot;s&n;&t;&t;&t; *  buffer.  It is possible to have a 32-bit buffer&n;&t;&t;&t; *  (Byte_granularity == 4), but a Obj_desc-&gt;Field.Length&n;&t;&t;&t; *  of 8 or 16, meaning that the upper bytes of merged data&n;&t;&t;&t; *  are undesired.  This section fixes that.&n;&t;&t;&t; */
+r_switch
+c_cond
+(paren
+id|obj_desc-&gt;field.length
+)paren
+(brace
+r_case
+l_int|8
+suffix:colon
+id|merged_datum
+op_and_assign
+l_int|0x000000FF
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|16
+suffix:colon
+id|merged_datum
+op_and_assign
+l_int|0x0000FFFF
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; * Now store the datum in the caller&squot;s buffer, according to&n;&t;&t;&t; * the data type&n;&t;&t;&t; */
 r_switch
 c_cond
@@ -632,7 +650,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_write_field_data
 id|acpi_aml_write_field_data
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
@@ -651,7 +669,7 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|rgn_desc
 op_assign
@@ -660,7 +678,7 @@ suffix:semicolon
 id|u32
 id|address
 suffix:semicolon
-id|s32
+id|u32
 id|field_byte_width
 suffix:semicolon
 multiline_comment|/* Obj_desc is validated by callers */
@@ -696,9 +714,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -707,23 +726,15 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Round offset down to next multiple of&n;&t; * field width, add region base address and offset within the field&n;&t; */
+multiline_comment|/*&n;&t; * Set offset to next multiple of field width,&n;&t; *  add region base address and offset within the field&n;&t; */
 id|address
 op_assign
 id|rgn_desc-&gt;region.address
 op_plus
 (paren
 id|obj_desc-&gt;field.offset
-op_amp
-op_complement
-(paren
-(paren
-id|u32
-)paren
+op_star
 id|field_byte_width
-op_minus
-l_int|1
-)paren
 )paren
 op_plus
 id|field_byte_offset
@@ -756,7 +767,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_write_field_data_with_update_rule
 id|acpi_aml_write_field_data_with_update_rule
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
@@ -879,7 +890,9 @@ id|merged_value
 suffix:semicolon
 )brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_write_field&n; *&n; * PARAMETERS:  *Obj_desc           - Field to be set&n; *              Value               - Value to store&n; *              Field_bit_width     - Field Width in bits (8, 16, or 32)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store the value into the given field&n; *&n; ****************************************************************************/
@@ -887,7 +900,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_write_field
 id|acpi_aml_write_field
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
@@ -1485,7 +1498,7 @@ id|field_value
 comma
 id|this_field_byte_offset
 op_plus
-l_int|1
+id|byte_granularity
 comma
 id|bit_granularity
 )paren

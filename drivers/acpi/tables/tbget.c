@@ -1,15 +1,14 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbget - ACPI Table get* routines&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbget - ACPI Table get* routines&n; *              $Revision: 22 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          TABLE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;tbget&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_get_table_ptr&n; *&n; * PARAMETERS:  Table_type      - one of the defined table types&n; *              Instance        - Which table of this type&n; *              Table_ptr_loc   - pointer to location to place the pointer for&n; *                                return&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: This function is called to get the pointer to an ACPI table.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_tb_get_table_ptr
@@ -107,7 +106,7 @@ id|AE_NOT_EXIST
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Walk the list to get the table */
+multiline_comment|/* Walk the list to get the desired table&n;&t; *  Since the if (Instance == 1) check above checked for the&n;&t; *  first table, setting Table_desc equal to the .Next member&n;&t; *  is actually pointing to the second table.  Therefore, we&n;&t; *  need to walk from the 2nd table until we reach the Instance&n;&t; *  that the user is looking for and return its table pointer.&n;&t; */
 id|table_desc
 op_assign
 id|acpi_gbl_acpi_tables
@@ -122,16 +121,11 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1
+l_int|2
 suffix:semicolon
 id|i
 OL
-id|acpi_gbl_acpi_tables
-(braket
-id|table_type
-)braket
-dot
-id|count
+id|instance
 suffix:semicolon
 id|i
 op_increment
@@ -154,7 +148,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_get_table&n; *&n; * PARAMETERS:  Physical_address        - Physical address of table to retrieve&n; *              *Buffer_ptr             - If == NULL, read data from buffer&n; *                                        rather than searching memory&n; *              *Table_info             - Where the table info is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Maps the physical address of table into a logical address&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_get_table&n; *&n; * PARAMETERS:  Physical_address        - Physical address of table to retrieve&n; *              *Buffer_ptr             - If Buffer_ptr is valid, read data from&n; *                                         buffer rather than searching memory&n; *              *Table_info             - Where the table info is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Maps the physical address of table into a logical address&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_tb_get_table
 id|acpi_tb_get_table
@@ -163,7 +157,7 @@ r_void
 op_star
 id|physical_address
 comma
-r_char
+id|ACPI_TABLE_HEADER
 op_star
 id|buffer_ptr
 comma
@@ -217,10 +211,6 @@ id|buffer_ptr
 multiline_comment|/*&n;&t;&t; * Getting data from a buffer, not BIOS tables&n;&t;&t; */
 id|table_header
 op_assign
-(paren
-id|ACPI_TABLE_HEADER
-op_star
-)paren
 id|buffer_ptr
 suffix:semicolon
 id|status
@@ -270,9 +260,6 @@ suffix:semicolon
 multiline_comment|/* Copy the entire table (including header) to the local buffer */
 id|size
 op_assign
-(paren
-id|ACPI_SIZE
-)paren
 id|table_header-&gt;length
 suffix:semicolon
 id|MEMCPY
@@ -367,7 +354,7 @@ id|acpi_tb_get_all_tables
 id|u32
 id|number_of_tables
 comma
-r_char
+id|ACPI_TABLE_HEADER
 op_star
 id|table_ptr
 )paren

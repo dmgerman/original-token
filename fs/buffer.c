@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -2964,19 +2965,17 @@ id|size
 )paren
 )paren
 (brace
-id|wakeup_bdflush
+singleline_comment|//wakeup_bdflush(1);
+id|balance_dirty
+c_func
+(paren
+id|NODEV
+)paren
+suffix:semicolon
+id|wakeup_kswapd
 c_func
 (paren
 l_int|1
-)paren
-suffix:semicolon
-id|current-&gt;policy
-op_or_assign
-id|SCHED_YIELD
-suffix:semicolon
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -3478,7 +3477,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* -1 -&gt; no need to flush&n;    0 -&gt; async flush&n;    1 -&gt; sync flush (wait for I/O completation) */
 DECL|function|balance_dirty_state
-r_static
 r_int
 id|balance_dirty_state
 c_func
@@ -3513,15 +3511,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|tot
-op_sub_assign
-id|size_buffers_type
-(braket
-id|BUF_PROTECTED
-)braket
-op_rshift
-id|PAGE_SHIFT
-suffix:semicolon
+singleline_comment|//&t;tot -= size_buffers_type[BUF_PROTECTED] &gt;&gt; PAGE_SHIFT;
 id|dirty
 op_mul_assign
 l_int|200
@@ -3538,12 +3528,18 @@ id|soft_dirty_limit
 op_star
 l_int|2
 suffix:semicolon
+multiline_comment|/* First, check for the &quot;real&quot; dirty limit. */
 r_if
 c_cond
 (paren
 id|dirty
 OG
 id|soft_dirty_limit
+op_logical_or
+id|inactive_shortage
+c_func
+(paren
+)paren
 )paren
 (brace
 r_if
@@ -3552,6 +3548,40 @@ c_cond
 id|dirty
 OG
 id|hard_dirty_limit
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Then, make sure the number of inactive pages won&squot;t overwhelm&n;&t; * page replacement ... this should avoid stalls.&n;&t; */
+r_if
+c_cond
+(paren
+id|nr_inactive_dirty_pages
+OG
+id|nr_free_pages
+c_func
+(paren
+)paren
+op_plus
+id|nr_inactive_clean_pages
+c_func
+(paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|free_shortage
+c_func
+(paren
+)paren
+OG
+id|freepages.min
 )paren
 r_return
 l_int|1
@@ -5464,6 +5494,7 @@ id|old_bh
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * NOTE! All mapped/uptodate combinations are valid:&n; *&n; *&t;Mapped&t;Uptodate&t;Meaning&n; *&n; *&t;No&t;No&t;&t;&quot;unknown&quot; - must do get_block()&n; *&t;No&t;Yes&t;&t;&quot;hole&quot; - zero-filled&n; *&t;Yes&t;No&t;&t;&quot;allocated&quot; - allocated on disk, not read in&n; *&t;Yes&t;Yes&t;&t;&quot;valid&quot; - allocated and up-to-date in memory.&n; *&n; * &quot;Dirty&quot; is valid only with the last case (mapped+uptodate).&n; */
 multiline_comment|/*&n; * block_write_full_page() is SMP-safe - currently it&squot;s still&n; * being called with the kernel lock held, but the code is ready.&n; */
 DECL|function|__block_write_full_page
 r_static
@@ -7414,17 +7445,6 @@ op_add_assign
 id|blocksize
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|buffer_uptodate
-c_func
-(paren
-id|bh
-)paren
-)paren
-(brace
 id|err
 op_assign
 l_int|0
@@ -7440,6 +7460,19 @@ id|bh
 )paren
 )paren
 (brace
+multiline_comment|/* Hole? Nothing to do */
+r_if
+c_cond
+(paren
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
+)paren
+r_goto
+id|unlock
+suffix:semicolon
 id|get_block
 c_func
 (paren
@@ -7452,6 +7485,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* Still unmapped? Nothing to do */
 r_if
 c_cond
 (paren
@@ -7466,6 +7500,18 @@ r_goto
 id|unlock
 suffix:semicolon
 )brace
+multiline_comment|/* Ok, it&squot;s mapped. Make sure it&squot;s up-to-date */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
+)paren
+(brace
 id|err
 op_assign
 op_minus
@@ -7492,6 +7538,7 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+multiline_comment|/* Uhhuh. Read error. Complain and punt. */
 r_if
 c_cond
 (paren
@@ -9186,6 +9233,12 @@ id|page
 r_goto
 id|out
 suffix:semicolon
+id|LockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|bh
 op_assign
 id|create_buffers
@@ -9336,6 +9389,12 @@ id|PG_referenced
 )paren
 suffix:semicolon
 id|lru_cache_add
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|UnlockPage
 c_func
 (paren
 id|page
@@ -10921,6 +10980,31 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_inactive_dirty_pages
+OG
+id|nr_free_pages
+c_func
+(paren
+)paren
+op_plus
+id|nr_inactive_clean_pages
+c_func
+(paren
+)paren
+)paren
+id|flushed
+op_add_assign
+id|page_launder
+c_func
+(paren
+id|GFP_KSWAPD
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/* If wakeup_bdflush will wakeup us&n;&t;&t;   after our bdflush_done wakeup, then&n;&t;&t;   we must make sure to not sleep&n;&t;&t;   in schedule_timeout otherwise&n;&t;&t;   wakeup_bdflush may wait for our&n;&t;&t;   bdflush_done wakeup that would never arrive&n;&t;&t;   (as we would be sleeping) and so it would&n;&t;&t;   deadlock in SMP. */
 id|__set_current_state
 c_func
@@ -10928,7 +11012,7 @@ c_func
 id|TASK_INTERRUPTIBLE
 )paren
 suffix:semicolon
-id|wake_up
+id|wake_up_all
 c_func
 (paren
 op_amp
@@ -10950,11 +11034,20 @@ id|NODEV
 OL
 l_int|0
 )paren
+(brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Remember to mark us as running otherwise&n;&t;&t;   the next schedule will block. */
 id|__set_current_state
 c_func

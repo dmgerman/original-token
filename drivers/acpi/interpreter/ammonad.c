@@ -1,31 +1,34 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: ammonad - ACPI AML (p-code) execution for monadic operators&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: ammonad - ACPI AML (p-code) execution for monadic operators&n; *              $Revision: 79 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;ammonad&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_get_object_reference&n; *&n; * PARAMETERS:  Obj_desc        - Create a reference to this object&n; *              Ret_desc        - Where to store the reference&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Obtain and return a &quot;reference&quot; to the target object&n; *              Common code for the Ref_of_op and the Cond_ref_of_op.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_get_object_reference
 id|acpi_aml_get_object_reference
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|ret_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
 id|ACPI_STATUS
@@ -89,6 +92,8 @@ comma
 (paren
 id|obj_desc-&gt;reference.offset
 )paren
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_break
@@ -110,6 +115,8 @@ comma
 (paren
 id|obj_desc-&gt;reference.offset
 )paren
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_break
@@ -142,7 +149,7 @@ id|ACPI_DESC_TYPE_NAMED
 )paren
 )paren
 (brace
-multiline_comment|/* Must be a named object;  Just return the NTE */
+multiline_comment|/* Must be a named object;  Just return the Node */
 op_star
 id|ret_desc
 op_assign
@@ -182,7 +189,7 @@ op_star
 id|walk_state
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -197,6 +204,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get all operands */
@@ -213,24 +222,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|1
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -306,6 +303,11 @@ suffix:semicolon
 multiline_comment|/*  Unknown opcode  */
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_monadic1: Unknown monadic opcode&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_BAD_OPCODE
@@ -340,27 +342,27 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|res_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc2
 op_assign
@@ -372,16 +374,16 @@ suffix:semicolon
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|s32
+id|u32
 id|d0
 suffix:semicolon
-id|s32
+id|u32
 id|d1
 suffix:semicolon
-id|s32
+id|u32
 id|d2
 suffix:semicolon
-id|s32
+id|u32
 id|d3
 suffix:semicolon
 multiline_comment|/* Resolve all operands */
@@ -392,6 +394,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get all operands */
@@ -418,24 +422,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|2
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -457,10 +449,10 @@ r_case
 id|AML_FIND_SET_RIGHT_BIT_OP
 suffix:colon
 r_case
-id|AML_FROM_BCDOP
+id|AML_FROM_BCD_OP
 suffix:colon
 r_case
-id|AML_TO_BCDOP
+id|AML_TO_BCD_OP
 suffix:colon
 r_case
 id|AML_COND_REF_OF_OP
@@ -515,6 +507,7 @@ id|ret_desc-&gt;number.value
 op_assign
 id|obj_desc-&gt;number.value
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Acpi x1.94 spec, Chapter 16 describes Integer as a 32-bit&n;&t;&t; *  little endian unsigned value, so this boundry condition&n;&t;&t; *  is valid.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -526,7 +519,7 @@ id|ret_desc-&gt;number.value
 op_logical_and
 id|res_val
 OL
-l_int|33
+l_int|32
 suffix:semicolon
 op_increment
 id|res_val
@@ -551,6 +544,7 @@ id|ret_desc-&gt;number.value
 op_assign
 id|obj_desc-&gt;number.value
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Acpi x1.94 spec, Chapter 16 describes Integer as a 32-bit&n;&t;&t; *  little endian unsigned value, so this boundry condition&n;&t;&t; *  is valid.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -562,7 +556,7 @@ id|ret_desc-&gt;number.value
 op_logical_and
 id|res_val
 OL
-l_int|33
+l_int|32
 suffix:semicolon
 op_increment
 id|res_val
@@ -573,6 +567,7 @@ op_lshift_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Since returns must be 1-based, subtract from 33 */
 id|ret_desc-&gt;number.value
 op_assign
 id|res_val
@@ -590,12 +585,12 @@ r_break
 suffix:semicolon
 multiline_comment|/*  Def_from_bDC := From_bCDOp  BCDValue    Result  */
 r_case
-id|AML_FROM_BCDOP
+id|AML_FROM_BCD_OP
 suffix:colon
 id|d0
 op_assign
 (paren
-id|s32
+id|u32
 )paren
 (paren
 id|obj_desc-&gt;number.value
@@ -606,7 +601,7 @@ suffix:semicolon
 id|d1
 op_assign
 (paren
-id|s32
+id|u32
 )paren
 (paren
 id|obj_desc-&gt;number.value
@@ -619,7 +614,7 @@ suffix:semicolon
 id|d2
 op_assign
 (paren
-id|s32
+id|u32
 )paren
 (paren
 id|obj_desc-&gt;number.value
@@ -632,7 +627,7 @@ suffix:semicolon
 id|d3
 op_assign
 (paren
-id|s32
+id|u32
 )paren
 (paren
 id|obj_desc-&gt;number.value
@@ -690,7 +685,7 @@ r_break
 suffix:semicolon
 multiline_comment|/*  Def_to_bDC  :=  To_bCDOp Operand Result */
 r_case
-id|AML_TO_BCDOP
+id|AML_TO_BCD_OP
 suffix:colon
 r_if
 c_cond
@@ -755,12 +750,12 @@ r_if
 c_cond
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_desc
 op_eq
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * This means that the object does not exist in the namespace,&n;&t;&t;&t; * return FALSE&n;&t;&t;&t; */
@@ -787,6 +782,8 @@ id|obj_desc
 comma
 op_amp
 id|ret_desc2
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -809,6 +806,8 @@ id|acpi_aml_exec_store
 id|ret_desc2
 comma
 id|res_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* The object exists in the namespace, return TRUE */
@@ -837,6 +836,8 @@ id|acpi_aml_exec_store
 id|obj_desc
 comma
 id|res_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -906,6 +907,11 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_monadic2_r: Unknown monadic opcode&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_BAD_OPCODE
@@ -921,6 +927,8 @@ id|acpi_aml_exec_store
 id|ret_desc
 comma
 id|res_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 id|cleanup
@@ -988,25 +996,28 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_desc
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|tmp_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_desc
 op_assign
 l_int|NULL
+suffix:semicolon
+id|ACPI_STATUS
+id|resolve_status
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -1017,19 +1028,21 @@ suffix:semicolon
 id|u32
 id|value
 suffix:semicolon
-multiline_comment|/* Resolve all operands */
-id|status
+multiline_comment|/* Attempt to resolve the operands */
+id|resolve_status
 op_assign
 id|acpi_aml_resolve_operands
 (paren
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
-multiline_comment|/* Get all operands */
+multiline_comment|/* Always get all operands */
 id|status
-op_or_assign
+op_assign
 id|acpi_ds_obj_stack_pop_object
 (paren
 op_amp
@@ -1038,27 +1051,29 @@ comma
 id|walk_state
 )paren
 suffix:semicolon
+multiline_comment|/* Now we can check the status codes */
 r_if
 c_cond
 (paren
-id|status
-op_ne
-id|AE_OK
+id|ACPI_FAILURE
+(paren
+id|resolve_status
+)paren
 )paren
 (brace
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|1
-)paren
+r_goto
+id|cleanup
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
 r_goto
 id|cleanup
 suffix:semicolon
@@ -1111,7 +1126,7 @@ suffix:colon
 r_case
 id|AML_INCREMENT_OP
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Since we are expecting an Reference on the top of the stack, it&n;&t;&t; * can be either an NTE or an internal object.&n;&t;&t; *&n;&t;&t; * TBD: [Future] This may be the prototype code for all cases where&n;&t;&t; * an Reference is expected!! 10/99&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Since we are expecting an Reference on the top of the stack, it&n;&t;&t; * can be either an Node or an internal object.&n;&t;&t; *&n;&t;&t; * TBD: [Future] This may be the prototype code for all cases where&n;&t;&t; * an Reference is expected!! 10/99&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1175,29 +1190,19 @@ id|AML_LNOT_OP
 comma
 op_amp
 id|ret_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
-id|acpi_aml_append_operand_diag
-(paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|1
-)paren
-suffix:semicolon
 r_goto
 id|cleanup
 suffix:semicolon
@@ -1229,6 +1234,8 @@ id|acpi_aml_exec_store
 id|ret_desc
 comma
 id|obj_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Objdesc was just deleted (because it is an Reference) */
@@ -1326,6 +1333,8 @@ comma
 (paren
 id|obj_desc-&gt;reference.offset
 )paren
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_break
@@ -1342,12 +1351,19 @@ comma
 (paren
 id|obj_desc-&gt;reference.offset
 )paren
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_monadic2/Type_op:internal error: Unknown Reference subtype&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_INTERNAL
@@ -1359,7 +1375,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Since we passed Acpi_aml_resolve_operands(&quot;l&quot;) and it&squot;s not a&n;&t;&t;&t; * Reference, it must be a direct name pointer.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * It&squot;s not a Reference, so it must be a direct name pointer.&n;&t;&t;&t; */
 id|type
 op_assign
 id|acpi_ns_get_type
@@ -1531,6 +1547,8 @@ id|obj_desc
 comma
 op_amp
 id|ret_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -1584,6 +1602,8 @@ comma
 id|obj_desc-&gt;reference.offset
 )paren
 comma
+id|walk_state
+comma
 op_amp
 id|tmp_desc
 )paren
@@ -1610,6 +1630,8 @@ comma
 (paren
 id|obj_desc-&gt;reference.offset
 )paren
+comma
+id|walk_state
 comma
 op_amp
 id|tmp_desc
@@ -1646,12 +1668,12 @@ id|ACPI_DESC_TYPE_NAMED
 )paren
 )paren
 (brace
-multiline_comment|/* Get the actual object from the NTE (This is the dereference) */
+multiline_comment|/* Get the actual object from the Node (This is the dereference) */
 id|ret_desc
 op_assign
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_desc
@@ -1819,6 +1841,11 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|REPORT_ERROR
+(paren
+l_string|&quot;Acpi_aml_exec_monadic2: Internal error, unknown monadic opcode&quot;
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|AE_AML_BAD_OPCODE

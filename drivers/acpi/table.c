@@ -6,6 +6,12 @@ macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/acpi.h&gt;
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;driver.h&quot;
+DECL|macro|_COMPONENT
+mdefine_line|#define _COMPONENT&t;OS_DEPENDENT
+id|MODULE_NAME
+(paren
+l_string|&quot;tables&quot;
+)paren
 DECL|variable|acpi_facp
 r_struct
 id|acpi_facp

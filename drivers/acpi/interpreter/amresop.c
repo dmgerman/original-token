@@ -1,20 +1,19 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresop - AML Interpreter operand/object resolution&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresop - AML Interpreter operand/object resolution&n; *              $Revision: 15 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amresop&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_resolve_operands&n; *&n; * PARAMETERS:  Opcode              Opcode being interpreted&n; *              Stack_ptr           Top of operand stack&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Convert stack entries to required types&n; *&n; *      Each nibble in Arg_types represents one required operand&n; *      and indicates the required Type:&n; *&n; *      The corresponding stack entry will be converted to the&n; *      required type if possible, else return an exception&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_resolve_operands
@@ -23,13 +22,17 @@ id|acpi_aml_resolve_operands
 id|u16
 id|opcode
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|stack_ptr
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -47,7 +50,7 @@ suffix:semicolon
 id|u32
 id|arg_types
 suffix:semicolon
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op_info
 suffix:semicolon
@@ -64,8 +67,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|ACPI_GET_OP_TYPE
+(paren
 id|op_info
+)paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
 )paren
 (brace
 r_return
@@ -141,12 +148,12 @@ id|ACPI_DESC_TYPE_NAMED
 )paren
 )paren
 (brace
-multiline_comment|/* NTE */
+multiline_comment|/* Node */
 id|object_type
 op_assign
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_desc
@@ -213,8 +220,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|ACPI_GET_OP_TYPE
+(paren
 id|op_info
+)paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
 )paren
 (brace
 r_return
@@ -371,19 +382,22 @@ id|ARGI_NUMBER
 suffix:colon
 multiline_comment|/* Number */
 multiline_comment|/* Need an operand of type ACPI_TYPE_NUMBER */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -417,19 +431,22 @@ r_case
 id|ARGI_STRING
 suffix:colon
 multiline_comment|/* Need an operand of type ACPI_TYPE_STRING or ACPI_TYPE_BUFFER */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -476,20 +493,22 @@ r_case
 id|ARGI_BUFFER
 suffix:colon
 multiline_comment|/* Need an operand of type ACPI_TYPE_BUFFER */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
-c_func
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -523,20 +542,22 @@ r_case
 id|ARGI_MUTEX
 suffix:colon
 multiline_comment|/* Need an operand of type ACPI_TYPE_MUTEX */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
-c_func
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -570,20 +591,22 @@ r_case
 id|ARGI_EVENT
 suffix:colon
 multiline_comment|/* Need an operand of type ACPI_TYPE_EVENT */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
-c_func
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -617,20 +640,22 @@ r_case
 id|ARGI_REGION
 suffix:colon
 multiline_comment|/* Need an operand of type ACPI_TYPE_REGION */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
-c_func
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -693,19 +718,22 @@ id|ARGI_PACKAGE
 suffix:colon
 multiline_comment|/* Package */
 multiline_comment|/* Need an operand of type ACPI_TYPE_PACKAGE */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -775,19 +803,22 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* All others must be resolved */
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
@@ -800,27 +831,30 @@ suffix:semicolon
 r_case
 id|ARGI_DATAOBJECT
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * ARGI_DATAOBJECT is only used by the Size_of operator.&n;&t;&t;&t; *&n;&t;&t;&t; * The ACPI specification allows Size_of to return the size of&n;&t;&t;&t; *  a Buffer, String or Package.  However, the MS ACPI.SYS AML&n;&t;&t;&t; *  Interpreter also allows an NTE reference to return without&n;&t;&t;&t; *  error with a size of 4.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-(paren
+multiline_comment|/*&n;&t;&t;&t; * ARGI_DATAOBJECT is only used by the Size_of operator.&n;&t;&t;&t; *&n;&t;&t;&t; * The ACPI specification allows Size_of to return the size of&n;&t;&t;&t; *  a Buffer, String or Package.  However, the MS ACPI.SYS AML&n;&t;&t;&t; *  Interpreter also allows an Node reference to return without&n;&t;&t;&t; *  error with a size of 4.&n;&t;&t;&t; */
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto
 id|cleanup
 suffix:semicolon
 )brace
-multiline_comment|/* Need a buffer, string, package or NTE reference */
+multiline_comment|/* Need a buffer, string, package or Node reference */
 r_if
 c_cond
 (paren
@@ -877,7 +911,7 @@ r_goto
 id|cleanup
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * If this is a reference, only allow a reference to an NTE.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * If this is a reference, only allow a reference to an Node.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -900,7 +934,7 @@ op_star
 id|stack_ptr
 )paren
 op_member_access_from_pointer
-id|reference.nte
+id|reference.node
 )paren
 (brace
 id|status
@@ -917,19 +951,22 @@ suffix:semicolon
 r_case
 id|ARGI_COMPLEXOBJ
 suffix:colon
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 r_goto

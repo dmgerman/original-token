@@ -1,4 +1,4 @@
-multiline_comment|/* mga_dma.c -- DMA support for mga g200/g400 -*- linux-c -*-&n; * Created: Mon Dec 13 01:50:01 1999 by jhartmann@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors: Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *&t;    Jeff Hartmann &lt;jhartmann@valinux.com&gt;&n; *&t;    Keith Whitwell &lt;keithw@valinux.com&gt;&n; *&n; */
+multiline_comment|/* mga_dma.c -- DMA support for mga g200/g400 -*- linux-c -*-&n; * Created: Mon Dec 13 01:50:01 1999 by jhartmann@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors: Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *&t;    Jeff Hartmann &lt;jhartmann@valinux.com&gt;&n; *&t;    Keith Whitwell &lt;keithw@valinux.com&gt;&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -200,62 +200,6 @@ r_void
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef __i386__
-DECL|function|mga_flush_write_combine
-r_void
-id|mga_flush_write_combine
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|xchangeDummy
-suffix:semicolon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%s&bslash;n&quot;
-comma
-id|__FUNCTION__
-)paren
-suffix:semicolon
-id|__asm__
-r_volatile
-(paren
-l_string|&quot; push %%eax ; xchg %%eax, %0 ; pop %%eax&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|xchangeDummy
-)paren
-)paren
-suffix:semicolon
-id|__asm__
-r_volatile
-(paren
-l_string|&quot; push %%eax ; push %%ebx ; push %%ecx ; push %%edx ;&quot;
-l_string|&quot; movl $0,%%eax ; cpuid ; pop %%edx ; pop %%ecx ; pop %%ebx ;&quot;
-l_string|&quot; pop %%eax&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-multiline_comment|/* no inputs */
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|function|mga_flush_write_combine
-r_void
-id|mga_flush_write_combine
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
-macro_line|#endif
 multiline_comment|/* These are two age tags that will never be sent to&n; * the hardware */
 DECL|macro|MGA_BUF_USED
 mdefine_line|#define MGA_BUF_USED &t;0xffffffff
@@ -887,7 +831,7 @@ id|MGA_BUF_FREE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Least recently used :&n; * These operations are not atomic b/c they are protected by the &n; * hardware lock */
+multiline_comment|/* Least recently used :&n; * These operations are not atomic b/c they are protected by the&n; * hardware lock */
 DECL|function|mga_freelist_get
 id|drm_buf_t
 op_star
@@ -1674,7 +1618,7 @@ op_le
 l_int|0
 )paren
 (brace
-id|DRM_DEBUG
+id|DRM_ERROR
 c_func
 (paren
 l_string|&quot;num_dwords == 0 when dispatched&bslash;n&quot;
@@ -3621,6 +3565,10 @@ id|dev_priv-&gt;WarpPipe
 op_assign
 l_int|0xff000000
 suffix:semicolon
+id|dev_priv-&gt;vertexsize
+op_assign
+l_int|0
+suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
@@ -4712,7 +4660,7 @@ id|buf_priv
 op_assign
 id|buf-&gt;dev_private
 suffix:semicolon
-multiline_comment|/* Only buffers that need to get reclaimed ever &n;&t;&t; * get set to free &n;&t;&t; */
+multiline_comment|/* Only buffers that need to get reclaimed ever&n;&t;&t; * get set to free&n;&t;&t; */
 r_if
 c_cond
 (paren

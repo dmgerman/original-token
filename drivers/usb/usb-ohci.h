@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * URB OHCI HCD (Host Controller Driver) for USB.&n; * &n; *(C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; * &n; * usb-ohci.h&n; * &n; */
+multiline_comment|/*&n; * URB OHCI HCD (Host Controller Driver) for USB.&n; * &n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; * (C) Copyright 2000 David Brownell &lt;david-b@pacbell.net&gt;&n; * &n; * usb-ohci.h&n; */
 DECL|variable|cc_to_error
 r_static
 r_int
@@ -75,7 +75,7 @@ mdefine_line|#define ED_OPER&t;&t;0x02
 DECL|macro|ED_DEL
 mdefine_line|#define ED_DEL&t;&t;0x04
 DECL|macro|ED_URB_DEL
-mdefine_line|#define ED_URB_DEL  0x08
+mdefine_line|#define ED_URB_DEL  &t;0x08
 multiline_comment|/* usb_ohci_ed */
 DECL|struct|ed
 r_typedef
@@ -783,17 +783,8 @@ op_star
 id|next
 suffix:semicolon
 singleline_comment|// chain of uhci device contexts
-DECL|member|urb_list
-r_struct
-id|list_head
-id|urb_list
-suffix:semicolon
-singleline_comment|// list of all pending urbs
-DECL|member|urb_list_lock
-id|spinlock_t
-id|urb_list_lock
-suffix:semicolon
-singleline_comment|// lock to keep consistency 
+singleline_comment|// struct list_head urb_list; &t;// list of all pending urbs
+singleline_comment|// spinlock_t urb_list_lock; &t;// lock to keep consistency 
 DECL|member|ohci_int_load
 r_int
 id|ohci_int_load
@@ -1035,7 +1026,7 @@ op_star
 id|urb
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#ifdef OHCI_VERBOSE_DEBUG
 DECL|macro|OHCI_FREE
 mdefine_line|#define OHCI_FREE(x) kfree(x); printk(&quot;OHCI FREE: %d: %4x&bslash;n&quot;, -- __ohci_free_cnt, (unsigned int) x)
 DECL|macro|OHCI_ALLOC

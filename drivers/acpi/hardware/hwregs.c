@@ -1,18 +1,18 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: hwregs - Read/write access functions for the various ACPI&n; *                       control and status registers.&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: hwregs - Read/write access functions for the various ACPI&n; *                       control and status registers.&n; *              $Revision: 67 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          HARDWARE
 id|MODULE_NAME
 (paren
 l_string|&quot;hwregs&quot;
 )paren
-suffix:semicolon
 multiline_comment|/* This matches the #defines in actypes.h. */
 DECL|variable|sleep_state_table
-id|ACPI_STRING
+id|NATIVE_CHAR
+op_star
 id|sleep_state_table
 (braket
 )braket
@@ -33,8 +33,8 @@ comma
 l_string|&quot;&bslash;&bslash;_S5_&quot;
 )brace
 suffix:semicolon
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_get_bit_shift&n; *&n; * PARAMETERS:  Mask            - Input mask to determine bit shift from.&n; *                                Must have at least 1 bit set.&n; *&n; * RETURN:      Bit location of the lsb of the mask&n; *&n; * DESCRIPTION: Returns the bit number for the low order bit that&squot;s set.&n; *&n; ******************************************************************************/
-id|s32
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_get_bit_shift&n; *&n; * PARAMETERS:  Mask            - Input mask to determine bit shift from.&n; *                                Must have at least 1 bit set.&n; *&n; * RETURN:      Bit location of the lsb of the mask&n; *&n; * DESCRIPTION: Returns the bit number for the low order bit that&squot;s set.&n; *&n; ******************************************************************************/
+id|u32
 DECL|function|acpi_hw_get_bit_shift
 id|acpi_hw_get_bit_shift
 (paren
@@ -42,7 +42,7 @@ id|u32
 id|mask
 )paren
 (brace
-id|s32
+id|u32
 id|shift
 suffix:semicolon
 r_for
@@ -76,7 +76,7 @@ id|shift
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_clear_acpi_status&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      none&n; *&n; * DESCRIPTION: Clears all fixed and general purpose status bits&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_clear_acpi_status&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      none&n; *&n; * DESCRIPTION: Clears all fixed and general purpose status bits&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_hw_clear_acpi_status
 id|acpi_hw_clear_acpi_status
@@ -228,7 +228,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_obtain_sleep_type_register_data&n; *&n; * PARAMETERS:  Sleep_state       - Numeric state requested&n; *              *Slp_Typ_a         - Pointer to byte to receive SLP_TYPa value&n; *              *Slp_Typ_b         - Pointer to byte to receive SLP_TYPb value&n; *&n; * RETURN:      Status - ACPI status&n; *&n; * DESCRIPTION: Acpi_hw_obtain_sleep_type_register_data() obtains the SLP_TYP and&n; *              SLP_TYPb values for the sleep state requested.&n; *&n;&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_obtain_sleep_type_register_data&n; *&n; * PARAMETERS:  Sleep_state       - Numeric state requested&n; *              *Slp_Typ_a         - Pointer to byte to receive SLP_TYPa value&n; *              *Slp_Typ_b         - Pointer to byte to receive SLP_TYPb value&n; *&n; * RETURN:      Status - ACPI status&n; *&n; * DESCRIPTION: Acpi_hw_obtain_sleep_type_register_data() obtains the SLP_TYP and&n; *              SLP_TYPb values for the sleep state requested.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_hw_obtain_sleep_type_register_data
 id|acpi_hw_obtain_sleep_type_register_data
@@ -250,7 +250,7 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -296,27 +296,80 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_eq
+id|ACPI_FAILURE
+(paren
 id|status
 )paren
+)paren
 (brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
+op_logical_neg
 id|obj_desc
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *  We got something, now ensure it is correct.  The object must&n;&t;&t;&t; *  be a package and must have at least 2 numeric values as the&n;&t;&t;&t; *  two elements&n;&t;&t;&t; */
+id|REPORT_ERROR
+(paren
+l_string|&quot;Missing Sleep State object&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+id|AE_NOT_EXIST
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *  We got something, now ensure it is correct.  The object must&n;&t; *  be a package and must have at least 2 numeric values as the&n;&t; *  two elements&n;&t; */
 r_if
 c_cond
-(paren
 (paren
 id|obj_desc-&gt;common.type
 op_ne
 id|ACPI_TYPE_PACKAGE
 )paren
-op_logical_or
+(brace
+multiline_comment|/* Must be a package */
+id|REPORT_ERROR
+(paren
+l_string|&quot;Sleep State object is not of type Package&quot;
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|AE_ERROR
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|obj_desc-&gt;package.count
+OL
+l_int|2
+)paren
+(brace
+multiline_comment|/* Must have at least two elements */
+id|REPORT_ERROR
+(paren
+l_string|&quot;Sleep State package does not have at least two elements&quot;
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|AE_ERROR
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 (paren
 (paren
 id|obj_desc-&gt;package.elements
@@ -344,10 +397,10 @@ id|ACPI_TYPE_NUMBER
 )paren
 )paren
 (brace
-multiline_comment|/* Invalid _Sx_ package type or value  */
+multiline_comment|/* Must have two  */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Object type returned from interpreter differs from expected value&quot;
+l_string|&quot;Sleep State package elements are not both of type Number&quot;
 )paren
 suffix:semicolon
 id|status
@@ -357,7 +410,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; *  Valid _Sx_ package size, type, and value&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  Valid _Sx_ package size, type, and value&n;&t;&t; */
 op_star
 id|slp_typ_a
 op_assign
@@ -394,15 +447,13 @@ id|acpi_cm_remove_reference
 id|obj_desc
 )paren
 suffix:semicolon
-)brace
-)brace
 r_return
 (paren
 id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_register_access&n; *&n; * PARAMETERS:  Read_write      - Either ACPI_READ or ACPI_WRITE.&n; *              Use_lock        - Lock the hardware&n; *              Register_id     - index of ACPI register to access&n; *              Value           - (only used on write) value to write to the&n; *                                 register.  Shifted all the way right.&n; *&n; * RETURN:      Value written to or read from specified register.  This value&n; *              is shifted all the way right.&n; *&n; * DESCRIPTION: Generic ACPI register read/write function.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_register_access&n; *&n; * PARAMETERS:  Read_write      - Either ACPI_READ or ACPI_WRITE.&n; *              Use_lock        - Lock the hardware&n; *              Register_id     - index of ACPI register to access&n; *              Value           - (only used on write) value to write to the&n; *                                 register.  Shifted all the way right.&n; *&n; * RETURN:      Value written to or read from specified register.  This value&n; *              is shifted all the way right.&n; *&n; * DESCRIPTION: Generic ACPI register read/write function.&n; *&n; ******************************************************************************/
 id|u32
 DECL|function|acpi_hw_register_access
 id|acpi_hw_register_access
@@ -466,7 +517,7 @@ id|va_arg
 (paren
 id|marker
 comma
-id|s32
+id|u32
 )paren
 suffix:semicolon
 id|va_end
@@ -940,7 +991,7 @@ op_logical_and
 id|register_id
 op_ne
 (paren
-id|s32
+id|u32
 )paren
 id|SLP_TYPE_A
 )paren
@@ -1105,7 +1156,7 @@ op_logical_and
 id|register_id
 op_ne
 (paren
-id|s32
+id|u32
 )paren
 id|SLP_TYPE_A
 )paren
@@ -1360,12 +1411,8 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* The base address of the GPE 0 Register Block */
-multiline_comment|/* Plus 1/2 the length of the GPE 0 Register Block */
-multiline_comment|/* The enable register is the register following the Status Register */
-multiline_comment|/* and each register is defined as 1/2 of the total Register Block */
-multiline_comment|/* This sets the bit within Enable_bit that needs to be written to */
-multiline_comment|/* the register indicated in Mask to a 1, all others are 0 */
+multiline_comment|/*&n;&t;&t; * The base address of the GPE 0 Register Block&n;&t;&t; * Plus 1/2 the length of the GPE 0 Register Block&n;&t;&t; * The enable register is the register following the Status Register&n;&t;&t; * and each register is defined as 1/2 of the total Register Block&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * This sets the bit within Enable_bit that needs to be written to&n;&t;&t; * the register indicated in Mask to a 1, all others are 0&n;&t;&t; */
 r_if
 c_cond
 (paren

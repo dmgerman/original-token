@@ -1,19 +1,18 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: nsxfname - Public interfaces to the ACPI subsystem&n; *                         ACPI Namespace oriented interfaces&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: nsxfname - Public interfaces to the ACPI subsystem&n; *                         ACPI Namespace oriented interfaces&n; *              $Revision: 64 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          NAMESPACE
 id|MODULE_NAME
 (paren
 l_string|&quot;nsxfname&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_load_namespace&n; *&n; * PARAMETERS:  Display_aml_during_load&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Load the name space from what ever is pointed to by DSDT.&n; *              (DSDT points to either the BIOS or a buffer.)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_load_namespace
@@ -37,31 +36,6 @@ l_int|NULL
 r_return
 (paren
 id|AE_NO_ACPI_TABLES
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Init the hardware */
-multiline_comment|/*&n;&t; * TBD: [Restructure] Should this should be moved elsewhere,&n;&t; * like Acpi_enable! ??&n;&t; */
-multiline_comment|/* we need to be able to call this interface repeatedly! */
-multiline_comment|/* Does H/W require init before loading the namespace? */
-id|status
-op_assign
-id|acpi_cm_hardware_initialize
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-(paren
-id|status
 )paren
 suffix:semicolon
 )brace
@@ -129,13 +103,13 @@ id|ret_handle
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|this_entry
+id|node
 suffix:semicolon
-id|ACPI_NAME_TABLE
+id|ACPI_NAMESPACE_NODE
 op_star
-id|scope
+id|prefix_node
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -150,7 +124,9 @@ id|pathname
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -164,7 +140,7 @@ id|acpi_cm_acquire_mutex
 id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
-id|this_entry
+id|node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -175,7 +151,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|this_entry
+id|node
 )paren
 (brace
 id|acpi_cm_release_mutex
@@ -184,12 +160,14 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
-id|scope
+id|prefix_node
 op_assign
-id|this_entry-&gt;child_table
+id|node-&gt;child
 suffix:semicolon
 id|acpi_cm_release_mutex
 (paren
@@ -217,38 +195,56 @@ id|ret_handle
 op_assign
 id|acpi_ns_convert_entry_to_handle
 (paren
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Find the Nte and convert to the user format&n;&t; */
-id|this_entry
+multiline_comment|/*&n;&t; *  Find the Node and convert to the user format&n;&t; */
+id|node
 op_assign
 l_int|NULL
 suffix:semicolon
 id|status
 op_assign
-id|acpi_ns_get_named_object
+id|acpi_ns_get_node
 (paren
 id|pathname
 comma
-id|scope
+id|prefix_node
 comma
 op_amp
-id|this_entry
+id|node
 )paren
 suffix:semicolon
 op_star
 id|ret_handle
 op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_SUCCESS
+c_func
+(paren
+id|status
+)paren
+)paren
+(brace
+op_star
+id|ret_handle
+op_assign
 id|acpi_ns_convert_entry_to_handle
 (paren
-id|this_entry
+id|node
 )paren
 suffix:semicolon
+)brace
 r_return
 (paren
 id|status
@@ -274,9 +270,9 @@ id|ret_path_ptr
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|obj_entry
+id|node
 suffix:semicolon
 multiline_comment|/* Buffer pointer must be valid always */
 r_if
@@ -293,7 +289,9 @@ id|ACPI_NAME_TYPE_MAX
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Allow length to be zero and ignore the pointer */
@@ -311,7 +309,9 @@ id|ret_path_ptr-&gt;pointer
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -336,16 +336,18 @@ id|ret_path_ptr-&gt;pointer
 )paren
 suffix:semicolon
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Wants the single segment ACPI name.&n;&t; * Validate handle and convert to an NTE&n;&t; */
+multiline_comment|/*&n;&t; * Wants the single segment ACPI name.&n;&t; * Validate handle and convert to an Node&n;&t; */
 id|acpi_cm_acquire_mutex
 (paren
 id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
-id|obj_entry
+id|node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -356,7 +358,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|obj_entry
+id|node
 )paren
 (brace
 id|status
@@ -388,24 +390,24 @@ r_goto
 id|unlock_and_exit
 suffix:semicolon
 )brace
-multiline_comment|/* Just copy the ACPI name from the NTE and zero terminate it */
+multiline_comment|/* Just copy the ACPI name from the Node and zero terminate it */
 id|STRNCPY
 (paren
 id|ret_path_ptr-&gt;pointer
 comma
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 op_amp
-id|obj_entry-&gt;name
+id|node-&gt;name
 comma
 id|ACPI_NAME_SIZE
 )paren
 suffix:semicolon
 (paren
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 id|ret_path_ptr-&gt;pointer
@@ -428,7 +430,9 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_get_object_info&n; *&n; * PARAMETERS:  Handle          - Object Handle&n; *              Info            - Where the info is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Returns information about an object as gleaned from running&n; *              several standard control methods.&n; *&n; ******************************************************************************/
@@ -463,9 +467,9 @@ id|address
 op_assign
 l_int|0
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|device_entry
+id|device_node
 suffix:semicolon
 multiline_comment|/* Parameter validation */
 r_if
@@ -479,7 +483,9 @@ id|info
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 id|acpi_cm_acquire_mutex
@@ -487,7 +493,7 @@ id|acpi_cm_acquire_mutex
 id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
-id|device_entry
+id|device_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -498,7 +504,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|device_entry
+id|device_node
 )paren
 (brace
 id|acpi_cm_release_mutex
@@ -507,24 +513,26 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 id|info-&gt;type
 op_assign
-id|device_entry-&gt;type
+id|device_node-&gt;type
 suffix:semicolon
 id|info-&gt;name
 op_assign
-id|device_entry-&gt;name
+id|device_node-&gt;name
 suffix:semicolon
 id|info-&gt;parent
 op_assign
 id|acpi_ns_convert_entry_to_handle
 (paren
-id|acpi_ns_get_parent_entry
+id|acpi_ns_get_parent_object
 (paren
-id|device_entry
+id|device_node
 )paren
 )paren
 suffix:semicolon
@@ -543,7 +551,9 @@ id|ACPI_TYPE_DEVICE
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Get extra info for ACPI devices */
@@ -556,7 +566,7 @@ id|status
 op_assign
 id|acpi_cm_execute_HID
 (paren
-id|device_entry
+id|device_node
 comma
 op_amp
 id|hid
@@ -607,7 +617,7 @@ id|status
 op_assign
 id|acpi_cm_execute_UID
 (paren
-id|device_entry
+id|device_node
 comma
 op_amp
 id|uid
@@ -658,7 +668,7 @@ id|status
 op_assign
 id|acpi_cm_execute_STA
 (paren
-id|device_entry
+id|device_node
 comma
 op_amp
 id|device_status
@@ -689,7 +699,7 @@ id|acpi_cm_evaluate_numeric_object
 (paren
 id|METHOD_NAME__ADR
 comma
-id|device_entry
+id|device_node
 comma
 op_amp
 id|address
@@ -714,7 +724,9 @@ id|ACPI_VALID_ADR
 suffix:semicolon
 )brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 eof

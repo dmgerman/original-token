@@ -1,8 +1,8 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: config.h - Global configuration constants&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acconfig.h - Global configuration constants&n; *       $Revision: 42 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef _CONFIG_H
-DECL|macro|_CONFIG_H
-mdefine_line|#define _CONFIG_H
+macro_line|#ifndef _ACCONFIG_H
+DECL|macro|_ACCONFIG_H
+mdefine_line|#define _ACCONFIG_H
 multiline_comment|/******************************************************************************&n; *&n; * Compile-time options&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; * ACPI_DEBUG           - This switch enables all the debug facilities of the ACPI&n; *                          subsystem.  This includes the DEBUG_PRINT output statements&n; *                          When disabled, all DEBUG_PRINT statements are compiled out.&n; *&n; * ACPI_APPLICATION     - Use this switch if the subsystem is going to be run&n; *                          at the application level.&n; *&n; */
 multiline_comment|/******************************************************************************&n; *&n; * Subsystem Constants&n; *&n; *****************************************************************************/
@@ -29,16 +29,18 @@ DECL|macro|METHOD_PARSE_CONFIGURATION
 mdefine_line|#define METHOD_PARSE_CONFIGURATION  (METHOD_PARSE_JUST_IN_TIME | METHOD_DELETE_AT_COMPLETION)
 multiline_comment|/* Maximum objects in the various object caches */
 DECL|macro|MAX_STATE_CACHE_DEPTH
-mdefine_line|#define MAX_STATE_CACHE_DEPTH       24          /* State objects for stacks */
+mdefine_line|#define MAX_STATE_CACHE_DEPTH       64         /* State objects for stacks */
 DECL|macro|MAX_PARSE_CACHE_DEPTH
-mdefine_line|#define MAX_PARSE_CACHE_DEPTH       512         /* Parse tree objects */
+mdefine_line|#define MAX_PARSE_CACHE_DEPTH       96          /* Parse tree objects */
+DECL|macro|MAX_EXTPARSE_CACHE_DEPTH
+mdefine_line|#define MAX_EXTPARSE_CACHE_DEPTH    64          /* Parse tree objects */
 DECL|macro|MAX_OBJECT_CACHE_DEPTH
-mdefine_line|#define MAX_OBJECT_CACHE_DEPTH      32          /* Interpreter operand objects */
+mdefine_line|#define MAX_OBJECT_CACHE_DEPTH      64          /* Interpreter operand objects */
 DECL|macro|MAX_WALK_CACHE_DEPTH
 mdefine_line|#define MAX_WALK_CACHE_DEPTH        2           /* Objects for parse tree walks (method execution) */
 multiline_comment|/*&n; * Name_space Table size&n; *&n; * All tables are the same size to simplify the implementation.&n; * Tables may be extended by allocating additional tables that&n; * are in turn linked together to form a chain of tables.&n; */
 DECL|macro|NS_TABLE_SIZE
-mdefine_line|#define NS_TABLE_SIZE               16
+mdefine_line|#define NS_TABLE_SIZE               4
 multiline_comment|/* String size constants */
 DECL|macro|MAX_STRING_LENGTH
 mdefine_line|#define MAX_STRING_LENGTH           512
@@ -84,7 +86,7 @@ multiline_comment|/* Names within the namespace are 4 bytes long */
 DECL|macro|ACPI_NAME_SIZE
 mdefine_line|#define ACPI_NAME_SIZE              4
 DECL|macro|PATH_SEGMENT_LENGTH
-mdefine_line|#define PATH_SEGMENT_LENGTH         5       /* 4 chars for name + 1 char for separator */
+mdefine_line|#define PATH_SEGMENT_LENGTH         5       /* 4 chars for name + 1 s8 for separator */
 DECL|macro|PATH_SEPARATOR
 mdefine_line|#define PATH_SEPARATOR              &squot;.&squot;
 multiline_comment|/* Constants used in searching for the RSDP in low memory */
@@ -101,5 +103,5 @@ mdefine_line|#define RSDP_SCAN_STEP              16
 multiline_comment|/* Maximum nesting of package objects */
 DECL|macro|MAX_PACKAGE_DEPTH
 mdefine_line|#define MAX_PACKAGE_DEPTH           16
-macro_line|#endif /* _CONFIG_H */
+macro_line|#endif /* _ACCONFIG_H */
 eof

@@ -1,31 +1,34 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstorob - AML Interpreter object store support, store to object&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstorob - AML Interpreter object store support, store to object&n; *              $Revision: 16 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amstorob&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_store_object_to_object&n; *&n; * PARAMETERS:  *Val_desc           - Value to be stored&n; *              *Dest_desc          - Object to receive the value&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store an object to another object.&n; *&n; *              The Assignment of an object to another (not named) object&n; *              is handled here.&n; *              The val passed in will replace the current value (if any)&n; *              with the input value.&n; *&n; *              When storing into an object the data is converted to the&n; *              target object type then stored in the object.  This means&n; *              that the target object type (for an initialized target) will&n; *              not be changed by a store operation.&n; *&n; *              This module allows destination types of Number, String,&n; *              and Buffer.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_store_object_to_object
 id|acpi_aml_store_object_to_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|val_desc
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|dest_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
 id|ACPI_STATUS
@@ -89,15 +92,16 @@ id|acpi_aml_resolve_to_value
 (paren
 op_amp
 id|val_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_SUCCESS
 (paren
 id|status
-op_eq
-id|AE_OK
 )paren
 op_logical_and
 (paren
@@ -152,15 +156,16 @@ id|acpi_aml_resolve_to_value
 (paren
 op_amp
 id|val_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_SUCCESS
 (paren
 id|status
-op_eq
-id|AE_OK
 )paren
 op_logical_and
 (paren
@@ -205,9 +210,10 @@ multiline_comment|/* Exit now if failure above */
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_goto

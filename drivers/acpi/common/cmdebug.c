@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmdebug - Debug print routines&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmdebug - Debug print routines&n; *              $Revision: 60 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 DECL|macro|_COMPONENT
@@ -7,9 +7,8 @@ id|MODULE_NAME
 (paren
 l_string|&quot;cmdebug&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Get/Set debug level&n; *&n; * DESCRIPTION: Get or set value of the debug flag&n; *&n; *              These are used to allow user&squot;s to get/set the debug level&n; *&n; ****************************************************************************/
-id|s32
+id|u32
 DECL|function|get_debug_level
 id|get_debug_level
 (paren
@@ -17,14 +16,16 @@ r_void
 )paren
 (brace
 r_return
+(paren
 id|acpi_dbg_level
+)paren
 suffix:semicolon
 )brace
 r_void
 DECL|function|set_debug_level
 id|set_debug_level
 (paren
-id|s32
+id|u32
 id|new_debug_level
 )paren
 (brace
@@ -38,17 +39,17 @@ r_void
 DECL|function|function_trace
 id|function_trace
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 )paren
@@ -79,17 +80,17 @@ r_void
 DECL|function|function_trace_ptr
 id|function_trace_ptr
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 comma
@@ -126,21 +127,21 @@ r_void
 DECL|function|function_trace_str
 id|function_trace_str
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|string
 )paren
@@ -173,17 +174,17 @@ r_void
 DECL|function|function_trace_u32
 id|function_trace_u32
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 comma
@@ -204,7 +205,7 @@ id|component_id
 comma
 id|TRACE_FUNCTIONS
 comma
-l_string|&quot; %2.2ld Entered Function: %s, 0x%l_x&bslash;n&quot;
+l_string|&quot; %2.2ld Entered Function: %s, 0x%lX&bslash;n&quot;
 comma
 id|acpi_gbl_nesting_level
 comma
@@ -219,17 +220,17 @@ r_void
 DECL|function|function_exit
 id|function_exit
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 )paren
@@ -260,53 +261,23 @@ r_void
 DECL|function|function_status_exit
 id|function_status_exit
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 comma
 id|ACPI_STATUS
 id|status
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|status
-OG
-id|ACPI_MAX_STATUS
-)paren
-(brace
-id|debug_print
-(paren
-id|module_name
-comma
-id|line_number
-comma
-id|component_id
-comma
-id|TRACE_FUNCTIONS
-comma
-l_string|&quot; %2.2ld Exiting Function: %s, [Unknown Status] 0x%X&bslash;n&quot;
-comma
-id|acpi_gbl_nesting_level
-comma
-id|function_name
-comma
-id|status
-)paren
-suffix:semicolon
-)brace
-r_else
 (brace
 id|debug_print
 (paren
@@ -330,7 +301,6 @@ id|status
 )paren
 )paren
 suffix:semicolon
-)brace
 id|acpi_gbl_nesting_level
 op_decrement
 suffix:semicolon
@@ -340,17 +310,17 @@ r_void
 DECL|function|function_value_exit
 id|function_value_exit
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 comma
@@ -386,21 +356,21 @@ r_void
 DECL|function|function_ptr_exit
 id|function_ptr_exit
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|function_name
 comma
-r_char
+id|u8
 op_star
 id|ptr
 )paren
@@ -433,20 +403,20 @@ r_void
 DECL|function|debug_print
 id|debug_print
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 comma
-id|s32
+id|u32
 id|component_id
 comma
-id|s32
+id|u32
 id|print_level
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|format
 comma
@@ -505,11 +475,11 @@ r_void
 DECL|function|debug_print_prefix
 id|debug_print_prefix
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|module_name
 comma
-id|s32
+id|u32
 id|line_number
 )paren
 (brace
@@ -528,7 +498,7 @@ r_void
 DECL|function|debug_print_raw
 id|debug_print_raw
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|format
 comma
@@ -565,7 +535,7 @@ r_void
 DECL|function|acpi_cm_dump_buffer
 id|acpi_cm_dump_buffer
 (paren
-r_char
+id|u8
 op_star
 id|buffer
 comma
@@ -575,7 +545,7 @@ comma
 id|u32
 id|display
 comma
-id|s32
+id|u32
 id|component_id
 )paren
 (brace
@@ -628,7 +598,7 @@ id|count
 multiline_comment|/* Print current offset */
 id|acpi_os_printf
 (paren
-l_string|&quot;%05_x  &quot;
+l_string|&quot;%05X  &quot;
 comma
 id|i
 )paren
@@ -665,7 +635,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Make sure that the char doesn&squot;t get sign-extended! */
+multiline_comment|/* Make sure that the s8 doesn&squot;t get sign-extended! */
 r_switch
 c_cond
 (paren
@@ -677,7 +647,7 @@ r_default
 suffix:colon
 id|acpi_os_printf
 (paren
-l_string|&quot;%02_x &quot;
+l_string|&quot;%02X &quot;
 comma
 op_star
 (paren
@@ -720,7 +690,7 @@ id|j
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;%04_x &quot;
+l_string|&quot;%04X &quot;
 comma
 id|temp32
 )paren
@@ -750,7 +720,7 @@ id|j
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;%08_x &quot;
+l_string|&quot;%08X &quot;
 comma
 id|temp32
 )paren
@@ -780,7 +750,7 @@ id|j
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;%08_x&quot;
+l_string|&quot;%08X&quot;
 comma
 id|temp32
 )paren
@@ -803,7 +773,7 @@ l_int|4
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;%08_x &quot;
+l_string|&quot;%08X &quot;
 comma
 id|temp32
 )paren

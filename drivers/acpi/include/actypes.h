@@ -1,34 +1,33 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actypes.h - Common data types for the entire ACPI subsystem&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actypes.h - Common data types for the entire ACPI subsystem&n; *       $Revision: 131 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef _ACTYPES_H
-DECL|macro|_ACTYPES_H
-mdefine_line|#define _ACTYPES_H
+macro_line|#ifndef __ACTYPES_H__
+DECL|macro|__ACTYPES_H__
+mdefine_line|#define __ACTYPES_H__
 multiline_comment|/*! [Begin] no source code translation (keep the typedefs) */
-multiline_comment|/*&n; * Data types - Fixed across all compilation models&n; *&n; * BOOLEAN      Logical Boolean. 1 byte value containing a 0 for FALSE or a 1 for TRUE.  Other values are undefined.&n; * INT8         8-bit  (1 byte) signed value&n; * UINT8        8-bit  (1 byte) unsigned value&n; * INT16        16-bit (2 byte) signed value&n; * UINT16       16-bit (2 byte) unsigned value&n; * INT32        32-bit (4 byte) signed value&n; * UINT32       32-bit (4 byte) unsigned value&n; * INT64        64-bit (8 byte) signed value&n; * UINT64       64-bit (8 byte) unsigned value&n; * NATIVE_INT   32-bit on IA-32, 64-bit on IA-64 signed value&n; * NATIVE_UINT  32-bit on IA-32, 64-bit on IA-64 unsigned value&n; * UCHAR        Character. 1 byte unsigned value.&n; */
+multiline_comment|/*&n; * Data types - Fixed across all compilation models&n; *&n; * BOOLEAN      Logical Boolean.&n; *              1 byte value containing a 0 for FALSE or a 1 for TRUE.&n; *              Other values are undefined.&n; *&n; * INT8         8-bit  (1 byte) signed value&n; * UINT8        8-bit  (1 byte) unsigned value&n; * INT16        16-bit (2 byte) signed value&n; * UINT16       16-bit (2 byte) unsigned value&n; * INT32        32-bit (4 byte) signed value&n; * UINT32       32-bit (4 byte) unsigned value&n; * INT64        64-bit (8 byte) signed value&n; * UINT64       64-bit (8 byte) unsigned value&n; * NATIVE_INT   32-bit on IA-32, 64-bit on IA-64 signed value&n; * NATIVE_UINT  32-bit on IA-32, 64-bit on IA-64 unsigned value&n; * UCHAR        Character. 1 byte unsigned value.&n; */
+macro_line|#ifdef __ia64__
+DECL|macro|_IA64
+mdefine_line|#define _IA64
+macro_line|#endif
 macro_line|#ifdef _IA64
 multiline_comment|/*&n; * 64-bit type definitions&n; */
-DECL|typedef|INT8
-r_typedef
-r_int
-r_char
-id|INT8
-suffix:semicolon
 DECL|typedef|UINT8
 r_typedef
 r_int
 r_char
 id|UINT8
 suffix:semicolon
+DECL|typedef|BOOLEAN
+r_typedef
+r_int
+r_char
+id|BOOLEAN
+suffix:semicolon
 DECL|typedef|UCHAR
 r_typedef
 r_int
 r_char
 id|UCHAR
-suffix:semicolon
-DECL|typedef|INT16
-r_typedef
-r_int
-id|INT16
 suffix:semicolon
 DECL|typedef|UINT16
 r_typedef
@@ -83,28 +82,23 @@ mdefine_line|#define ALIGNED_ADDRESS_BOUNDARY        0x00000008
 multiline_comment|/* (No hardware alignment support in IA64) */
 macro_line|#elif _IA16
 multiline_comment|/*&n; * 16-bit type definitions&n; */
-DECL|typedef|INT8
-r_typedef
-r_int
-r_char
-id|INT8
-suffix:semicolon
 DECL|typedef|UINT8
 r_typedef
 r_int
 r_char
 id|UINT8
 suffix:semicolon
+DECL|typedef|BOOLEAN
+r_typedef
+r_int
+r_char
+id|BOOLEAN
+suffix:semicolon
 DECL|typedef|UCHAR
 r_typedef
 r_int
 r_char
 id|UCHAR
-suffix:semicolon
-DECL|typedef|INT16
-r_typedef
-r_int
-id|INT16
 suffix:semicolon
 DECL|typedef|UINT16
 r_typedef
@@ -149,28 +143,23 @@ DECL|macro|_HW_ALIGNMENT_SUPPORT
 mdefine_line|#define _HW_ALIGNMENT_SUPPORT
 macro_line|#else
 multiline_comment|/*&n; * 32-bit type definitions (default)&n; */
-DECL|typedef|INT8
-r_typedef
-r_int
-r_char
-id|INT8
-suffix:semicolon
 DECL|typedef|UINT8
 r_typedef
 r_int
 r_char
 id|UINT8
 suffix:semicolon
+DECL|typedef|BOOLEAN
+r_typedef
+r_int
+r_char
+id|BOOLEAN
+suffix:semicolon
 DECL|typedef|UCHAR
 r_typedef
 r_int
 r_char
 id|UCHAR
-suffix:semicolon
-DECL|typedef|INT16
-r_typedef
-r_int
-id|INT16
 suffix:semicolon
 DECL|typedef|UINT16
 r_typedef
@@ -215,11 +204,6 @@ DECL|macro|_HW_ALIGNMENT_SUPPORT
 mdefine_line|#define _HW_ALIGNMENT_SUPPORT
 macro_line|#endif
 multiline_comment|/*&n; * Miscellaneous common types&n; */
-DECL|typedef|BOOLEAN
-r_typedef
-id|UINT8
-id|BOOLEAN
-suffix:semicolon
 DECL|typedef|UINT32_BIT
 r_typedef
 id|UINT32
@@ -227,33 +211,21 @@ id|UINT32_BIT
 suffix:semicolon
 DECL|typedef|ACPI_PTRDIFF
 r_typedef
-id|NATIVE_INT
+id|NATIVE_UINT
 id|ACPI_PTRDIFF
 suffix:semicolon
-DECL|typedef|ACPI_SIZE
+DECL|typedef|NATIVE_CHAR
 r_typedef
-id|NATIVE_UINT
-id|ACPI_SIZE
+r_char
+id|NATIVE_CHAR
 suffix:semicolon
 multiline_comment|/*&n; * Data type ranges&n; */
 DECL|macro|ACPI_UCHAR_MAX
 mdefine_line|#define ACPI_UCHAR_MAX                  (UCHAR)  0xFF
-DECL|macro|ACPI_INT32_MAX
-mdefine_line|#define ACPI_INT32_MAX                  (INT32)  0x7FFFFFFF
 DECL|macro|ACPI_UINT32_MAX
 mdefine_line|#define ACPI_UINT32_MAX                 (UINT32) 0xFFFFFFFF
 macro_line|#ifdef DEFINE_ALTERNATE_TYPES
 multiline_comment|/*&n; * Types used only in translated source&n; */
-DECL|typedef|s8
-r_typedef
-id|INT8
-id|s8
-suffix:semicolon
-DECL|typedef|s16
-r_typedef
-id|INT16
-id|s16
-suffix:semicolon
 DECL|typedef|s32
 r_typedef
 id|INT32
@@ -305,7 +277,7 @@ r_typedef
 id|u32
 id|ACPI_NAME
 suffix:semicolon
-multiline_comment|/* 4-char ACPI name */
+multiline_comment|/* 4-s8 ACPI name */
 DECL|typedef|ACPI_STRING
 r_typedef
 r_char
@@ -319,7 +291,7 @@ r_void
 op_star
 id|ACPI_HANDLE
 suffix:semicolon
-multiline_comment|/* Actually a ptr to an NTE */
+multiline_comment|/* Actually a ptr to an Node */
 multiline_comment|/*&n; * Constants with special meanings&n; */
 DECL|macro|ACPI_ROOT_OBJECT
 mdefine_line|#define ACPI_ROOT_OBJECT                (ACPI_HANDLE)(-1)
@@ -370,7 +342,7 @@ DECL|macro|ACPI_TABLE_MAX
 mdefine_line|#define ACPI_TABLE_MAX                  9
 DECL|macro|NUM_ACPI_TABLES
 mdefine_line|#define NUM_ACPI_TABLES                 10
-multiline_comment|/*&n; * Types associated with names.  The first group of&n; * values correspond to the definition of the ACPI Object_type operator (See the ACPI Spec).&n; * Therefore, only add to the first group if the spec changes!&n; *&n; * Types must be kept in sync with the Acpi_ns_properties and Acpi_ns_type_names arrays&n; */
+multiline_comment|/*&n; * Types associated with names.  The first group of&n; * values correspond to the definition of the ACPI&n; * Object_type operator (See the ACPI Spec). Therefore,&n; * only add to the first group if the spec changes!&n; *&n; * Types must be kept in sync with the Acpi_ns_properties&n; * and Acpi_ns_type_names arrays&n; */
 DECL|typedef|ACPI_OBJECT_TYPE
 r_typedef
 id|u32
@@ -394,7 +366,7 @@ mdefine_line|#define ACPI_TYPE_PACKAGE               4  /* 0x04  Byte_const, mul
 DECL|macro|ACPI_TYPE_FIELD_UNIT
 mdefine_line|#define ACPI_TYPE_FIELD_UNIT            5  /* 0x05  */
 DECL|macro|ACPI_TYPE_DEVICE
-mdefine_line|#define ACPI_TYPE_DEVICE                6  /* 0x06  Name, multiple Named_object */
+mdefine_line|#define ACPI_TYPE_DEVICE                6  /* 0x06  Name, multiple Node */
 DECL|macro|ACPI_TYPE_EVENT
 mdefine_line|#define ACPI_TYPE_EVENT                 7  /* 0x07  */
 DECL|macro|ACPI_TYPE_METHOD
@@ -404,11 +376,11 @@ mdefine_line|#define ACPI_TYPE_MUTEX                 9  /* 0x09  */
 DECL|macro|ACPI_TYPE_REGION
 mdefine_line|#define ACPI_TYPE_REGION                10 /* 0x0A  */
 DECL|macro|ACPI_TYPE_POWER
-mdefine_line|#define ACPI_TYPE_POWER                 11 /* 0x0B  Name,Byte_const,Word_const,multi Named_object */
+mdefine_line|#define ACPI_TYPE_POWER                 11 /* 0x0B  Name,Byte_const,Word_const,multi Node */
 DECL|macro|ACPI_TYPE_PROCESSOR
 mdefine_line|#define ACPI_TYPE_PROCESSOR             12 /* 0x0C  Name,Byte_const,DWord_const,Byte_const,multi Nm_o */
 DECL|macro|ACPI_TYPE_THERMAL
-mdefine_line|#define ACPI_TYPE_THERMAL               13 /* 0x0D  Name, multiple Named_object */
+mdefine_line|#define ACPI_TYPE_THERMAL               13 /* 0x0D  Name, multiple Node */
 DECL|macro|ACPI_TYPE_BUFFER_FIELD
 mdefine_line|#define ACPI_TYPE_BUFFER_FIELD          14 /* 0x0E  */
 DECL|macro|ACPI_TYPE_DDB_HANDLE
@@ -417,47 +389,50 @@ DECL|macro|ACPI_TYPE_DEBUG_OBJECT
 mdefine_line|#define ACPI_TYPE_DEBUG_OBJECT          16 /* 0x10  */
 DECL|macro|ACPI_TYPE_MAX
 mdefine_line|#define ACPI_TYPE_MAX                   16
-multiline_comment|/*&n; * This section contains object types that do not relate to the ACPI Object_type operator.&n; * They are used for various internal purposes only.  A numerical gap is provided in&n; * case additional &quot;official&quot; Object_types are added in the future. Also, values exceeding&n; * the largest official ACPI Object_type must not overlap with defined AML opcodes.&n; */
+multiline_comment|/*&n; * This section contains object types that do not relate to the ACPI Object_type operator.&n; * They are used for various internal purposes only.  If new predefined ACPI_TYPEs are&n; * added (via the ACPI specification), these internal types must move upwards.&n; * Also, values exceeding the largest official ACPI Object_type must not overlap with&n; * defined AML opcodes.&n; */
 DECL|macro|INTERNAL_TYPE_BEGIN
-mdefine_line|#define INTERNAL_TYPE_BEGIN             25
+mdefine_line|#define INTERNAL_TYPE_BEGIN             17
 DECL|macro|INTERNAL_TYPE_DEF_FIELD
-mdefine_line|#define INTERNAL_TYPE_DEF_FIELD         25 /* 0x19  */
+mdefine_line|#define INTERNAL_TYPE_DEF_FIELD         17 /* 0x11  */
 DECL|macro|INTERNAL_TYPE_BANK_FIELD
-mdefine_line|#define INTERNAL_TYPE_BANK_FIELD        26 /* 0x1A  */
+mdefine_line|#define INTERNAL_TYPE_BANK_FIELD        18 /* 0x12  */
 DECL|macro|INTERNAL_TYPE_INDEX_FIELD
-mdefine_line|#define INTERNAL_TYPE_INDEX_FIELD       27 /* 0x1B  */
-DECL|macro|INTERNAL_TYPE_DEF_FIELD_DEFN
-mdefine_line|#define INTERNAL_TYPE_DEF_FIELD_DEFN    28 /* 0x1C  Name, Byte_const, multiple Field_element */
-DECL|macro|INTERNAL_TYPE_BANK_FIELD_DEFN
-mdefine_line|#define INTERNAL_TYPE_BANK_FIELD_DEFN   29 /* 0x1D  2 Name,DWord_const,Byte_const,multi Field_element */
-DECL|macro|INTERNAL_TYPE_INDEX_FIELD_DEFN
-mdefine_line|#define INTERNAL_TYPE_INDEX_FIELD_DEFN  30 /* 0x1E  2 Name, Byte_const, multiple Field_element */
-DECL|macro|INTERNAL_TYPE_IF
-mdefine_line|#define INTERNAL_TYPE_IF                31 /* 0x1F  Op_code, multiple Code */
-DECL|macro|INTERNAL_TYPE_ELSE
-mdefine_line|#define INTERNAL_TYPE_ELSE              32 /* 0x20  multiple Code */
-DECL|macro|INTERNAL_TYPE_WHILE
-mdefine_line|#define INTERNAL_TYPE_WHILE             33 /* 0x21  Op_code, multiple Code */
-DECL|macro|INTERNAL_TYPE_SCOPE
-mdefine_line|#define INTERNAL_TYPE_SCOPE             34 /* 0x22  Name, multiple Named_object */
-DECL|macro|INTERNAL_TYPE_DEF_ANY
-mdefine_line|#define INTERNAL_TYPE_DEF_ANY           35 /* 0x23  type is Any, suppress search of enclosing scopes */
+mdefine_line|#define INTERNAL_TYPE_INDEX_FIELD       19 /* 0x13  */
 DECL|macro|INTERNAL_TYPE_REFERENCE
-mdefine_line|#define INTERNAL_TYPE_REFERENCE         36 /* 0x24  Arg#, Local#, Name, Debug; used only in descriptors */
+mdefine_line|#define INTERNAL_TYPE_REFERENCE         20 /* 0x14  Arg#, Local#, Name, Debug; used only in descriptors */
 DECL|macro|INTERNAL_TYPE_ALIAS
-mdefine_line|#define INTERNAL_TYPE_ALIAS             37 /* 0x25  */
+mdefine_line|#define INTERNAL_TYPE_ALIAS             21 /* 0x15  */
 DECL|macro|INTERNAL_TYPE_NOTIFY
-mdefine_line|#define INTERNAL_TYPE_NOTIFY            38 /* 0x26  */
+mdefine_line|#define INTERNAL_TYPE_NOTIFY            22 /* 0x16  */
 DECL|macro|INTERNAL_TYPE_ADDRESS_HANDLER
-mdefine_line|#define INTERNAL_TYPE_ADDRESS_HANDLER   39 /* 0x27  */
+mdefine_line|#define INTERNAL_TYPE_ADDRESS_HANDLER   23 /* 0x17  */
+DECL|macro|INTERNAL_TYPE_NODE_MAX
+mdefine_line|#define INTERNAL_TYPE_NODE_MAX          23
+multiline_comment|/* These are pseudo-types because there are never any namespace nodes with these types */
+DECL|macro|INTERNAL_TYPE_DEF_FIELD_DEFN
+mdefine_line|#define INTERNAL_TYPE_DEF_FIELD_DEFN    24 /* 0x18  Name, Byte_const, multiple Field_element */
+DECL|macro|INTERNAL_TYPE_BANK_FIELD_DEFN
+mdefine_line|#define INTERNAL_TYPE_BANK_FIELD_DEFN   25 /* 0x19  2 Name,DWord_const,Byte_const,multi Field_element */
+DECL|macro|INTERNAL_TYPE_INDEX_FIELD_DEFN
+mdefine_line|#define INTERNAL_TYPE_INDEX_FIELD_DEFN  26 /* 0x1A  2 Name, Byte_const, multiple Field_element */
+DECL|macro|INTERNAL_TYPE_IF
+mdefine_line|#define INTERNAL_TYPE_IF                27 /* 0x1B  Op_code, multiple Code */
+DECL|macro|INTERNAL_TYPE_ELSE
+mdefine_line|#define INTERNAL_TYPE_ELSE              28 /* 0x1C  multiple Code */
+DECL|macro|INTERNAL_TYPE_WHILE
+mdefine_line|#define INTERNAL_TYPE_WHILE             29 /* 0x1D  Op_code, multiple Code */
+DECL|macro|INTERNAL_TYPE_SCOPE
+mdefine_line|#define INTERNAL_TYPE_SCOPE             30 /* 0x1E  Name, multiple Node */
+DECL|macro|INTERNAL_TYPE_DEF_ANY
+mdefine_line|#define INTERNAL_TYPE_DEF_ANY           31 /* 0x1F  type is Any, suppress search of enclosing scopes */
 DECL|macro|INTERNAL_TYPE_METHOD_ARGUMENT
-mdefine_line|#define INTERNAL_TYPE_METHOD_ARGUMENT   40 /* 0x28  */
+mdefine_line|#define INTERNAL_TYPE_METHOD_ARGUMENT   32 /* 0x20  */
 DECL|macro|INTERNAL_TYPE_METHOD_LOCAL_VAR
-mdefine_line|#define INTERNAL_TYPE_METHOD_LOCAL_VAR  41 /* 0x29  */
+mdefine_line|#define INTERNAL_TYPE_METHOD_LOCAL_VAR  33 /* 0x21  */
 DECL|macro|INTERNAL_TYPE_MAX
-mdefine_line|#define INTERNAL_TYPE_MAX               41
+mdefine_line|#define INTERNAL_TYPE_MAX               33
 DECL|macro|INTERNAL_TYPE_INVALID
-mdefine_line|#define INTERNAL_TYPE_INVALID           42
+mdefine_line|#define INTERNAL_TYPE_INVALID           34
 DECL|macro|ACPI_TYPE_NOT_FOUND
 mdefine_line|#define ACPI_TYPE_NOT_FOUND             0xFF
 multiline_comment|/*&n; * Acpi_event Types:&n; * ------------&n; * Fixed &amp; general purpose...&n; */
@@ -573,7 +548,7 @@ id|length
 suffix:semicolon
 multiline_comment|/* # of bytes in string, excluding trailing null */
 DECL|member|pointer
-r_char
+id|NATIVE_CHAR
 op_star
 id|pointer
 suffix:semicolon
@@ -948,7 +923,11 @@ id|value
 comma
 r_void
 op_star
-id|context
+id|handler_context
+comma
+r_void
+op_star
+id|region_context
 )paren
 suffix:semicolon
 DECL|macro|ACPI_DEFAULT_HANDLER
@@ -974,7 +953,7 @@ comma
 r_void
 op_star
 op_star
-id|return_context
+id|region_context
 )paren
 suffix:semicolon
 DECL|macro|ACPI_REGION_ACTIVATE
@@ -1020,7 +999,7 @@ mdefine_line|#define ACPI_VALID_ADR                  0x4
 DECL|macro|ACPI_VALID_STA
 mdefine_line|#define ACPI_VALID_STA                  0x8
 DECL|macro|ACPI_COMMON_OBJ_INFO
-mdefine_line|#define ACPI_COMMON_OBJ_INFO &bslash;&n;&t;ACPI_OBJECT_TYPE            type;           /* ACPI object type */&bslash;&n;&t;ACPI_NAME                   name;           /* ACPI object Name */&bslash;&n;&t;/*&bslash;&n;&t; *  TBD: [Restructure] Do we want or need these next two??&bslash;&n;&t; */&bslash;&n;&t;ACPI_HANDLE                 parent;         /* Parent object */&bslash;&n;&t;ACPI_HANDLE                 children;       /* Linked list of children */&bslash;&n;&t;u32                         valid           /* ?????    */
+mdefine_line|#define ACPI_COMMON_OBJ_INFO &bslash;&n;&t;ACPI_OBJECT_TYPE            type;           /* ACPI object type */ &bslash;&n;&t;ACPI_NAME                   name;           /* ACPI object Name */ &bslash;&n;&t;/*  TBD: [Restructure] Do we want or need these next two??*/ &bslash;&n;&t;ACPI_HANDLE                 parent;         /* Parent object */ &bslash;&n;&t;ACPI_HANDLE                 children;       /* Linked list of children */ &bslash;&n;&t;u32                         valid           /* ?????    */
 r_typedef
 r_struct
 (brace
@@ -1039,7 +1018,7 @@ id|ACPI_COMMON_OBJ_INFO
 suffix:semicolon
 multiline_comment|/*&n;&t; *  TBD: [Restructure]: a HID or a _UID can return either a number or a string&n;&t; */
 DECL|member|hardware_id
-r_char
+id|NATIVE_CHAR
 id|hardware_id
 (braket
 l_int|9
@@ -1047,7 +1026,7 @@ l_int|9
 suffix:semicolon
 multiline_comment|/*  _HID value if any */
 DECL|member|unique_id
-r_char
+id|NATIVE_CHAR
 id|unique_id
 (braket
 l_int|9
@@ -1072,11 +1051,6 @@ multiline_comment|/* Context structs for address space handlers */
 r_typedef
 r_struct
 (brace
-DECL|member|handler_context
-r_void
-op_star
-id|handler_context
-suffix:semicolon
 DECL|member|seg
 id|u32
 id|seg
@@ -1096,18 +1070,13 @@ suffix:semicolon
 r_typedef
 r_struct
 (brace
-DECL|member|handler_context
-r_void
-op_star
-id|handler_context
-suffix:semicolon
 DECL|member|mapped_physical_address
-r_char
+id|u8
 op_star
 id|mapped_physical_address
 suffix:semicolon
 DECL|member|mapped_logical_address
-r_char
+id|u8
 op_star
 id|mapped_logical_address
 suffix:semicolon
@@ -1548,7 +1517,7 @@ id|u32
 id|resource_source_string_length
 suffix:semicolon
 DECL|member|resource_source
-id|u8
+id|NATIVE_CHAR
 id|resource_source
 (braket
 l_int|1
@@ -1614,7 +1583,7 @@ id|u32
 id|resource_source_string_length
 suffix:semicolon
 DECL|member|resource_source
-id|u8
+id|NATIVE_CHAR
 id|resource_source
 (braket
 l_int|1
@@ -1663,7 +1632,7 @@ id|u32
 id|resource_source_string_length
 suffix:semicolon
 DECL|member|resource_source
-id|u8
+id|NATIVE_CHAR
 id|resource_source
 (braket
 l_int|1
@@ -1819,7 +1788,7 @@ id|u32
 id|source_index
 suffix:semicolon
 DECL|member|source
-id|u8
+id|NATIVE_CHAR
 id|source
 (braket
 l_int|1
@@ -1847,5 +1816,5 @@ DECL|typedef|PCI_ROUTING_TABLE
 id|PCI_ROUTING_TABLE
 suffix:semicolon
 multiline_comment|/*&n; * END: Definitions for PCI Routing tables&n; */
-macro_line|#endif /* ACTYPES_H */
+macro_line|#endif /* __ACTYPES_H__ */
 eof

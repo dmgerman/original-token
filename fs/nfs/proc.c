@@ -1366,6 +1366,12 @@ op_star
 id|msg
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|msg-&gt;rpc_argp
+)paren
+(brace
 id|NFS_CACHEINV
 c_func
 (paren
@@ -1378,6 +1384,7 @@ c_func
 id|msg-&gt;rpc_argp
 )paren
 suffix:semicolon
+)brace
 )brace
 r_static
 r_int

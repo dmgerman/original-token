@@ -1,18 +1,17 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evsci - System Control Interrupt configuration and&n; *                      legacy to ACPI mode state transition functions&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: evsci - System Control Interrupt configuration and&n; *                      legacy to ACPI mode state transition functions&n; *              $Revision: 59 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          EVENT_HANDLING
 id|MODULE_NAME
 (paren
 l_string|&quot;evsci&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*&n; * Elements correspond to counts for&n; * TMR, NOT_USED, GBL, PWR_BTN, SLP_BTN, RTC,&n; * and GENERAL respectively.  These counts&n; * are modified by the ACPI interrupt handler...&n; * Note that GENERAL should probably be split out&n; * into one element for each bit in the GPE&n; * registers&n; */
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_sci_handler&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      Status code indicates whether interrupt was handled.&n; *&n; * DESCRIPTION: Interrupt handler that will figure out what function or&n; *              control method to call to deal with a SCI.  Installed&n; *              using BU interrupt support.&n; *&n; ******************************************************************************/
+multiline_comment|/*&n; * Elements correspond to counts for TMR, NOT_USED, GBL, PWR_BTN, SLP_BTN, RTC,&n; * and GENERAL respectively.  These counts are modified by the ACPI interrupt&n; * handler.&n; *&n; * TBD: [Investigate] Note that GENERAL should probably be split out into&n; * one element for each bit in the GPE registers&n; */
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_sci_handler&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      Status code indicates whether interrupt was handled.&n; *&n; * DESCRIPTION: Interrupt handler that will figure out what function or&n; *              control method to call to deal with a SCI.  Installed&n; *              using BU interrupt support.&n; *&n; ******************************************************************************/
 id|u32
 DECL|function|acpi_ev_sci_handler
 id|acpi_ev_sci_handler
@@ -27,7 +26,7 @@ id|interrupt_handled
 op_assign
 id|INTERRUPT_NOT_HANDLED
 suffix:semicolon
-multiline_comment|/*&n;&t; * ACPI Enabled?&n;&t; * -------------&n;&t; * Make sure that ACPI is enabled by checking SCI_EN.  Note that we are&n;&t; * required to treat the SCI interrupt as sharable, level, active low.&n;&t; */
+multiline_comment|/*&n;&t; * Make sure that ACPI is enabled by checking SCI_EN.  Note that we are&n;&t; * required to treat the SCI interrupt as sharable, level, active low.&n;&t; */
 r_if
 c_cond
 (paren
@@ -38,18 +37,11 @@ id|ACPI_READ
 comma
 id|ACPI_MTX_DO_NOT_LOCK
 comma
-(paren
-id|s32
-)paren
 id|SCI_EN
 )paren
 )paren
 (brace
-id|REPORT_ERROR
-(paren
-l_string|&quot;Received and SCI but ACPI is not enabled.&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* ACPI is not enabled;  this interrupt cannot be for us */
 r_return
 (paren
 id|INTERRUPT_NOT_HANDLED
@@ -235,8 +227,8 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_sci_count&n; *&n; * PARAMETERS:  char * Event_name       name (fully qualified name from namespace&n; *                                      or one of the fixed event names defined above)&n; *                                      of the event to check if it&squot;s generated an SCI.&n; *&n; * RETURN:      Number of SCI&squot;s for requested event since last time i_sci_occured()&n; *              was called for this event.&n; *&n; * DESCRIPTION: Checks to see if SCI has been generated from requested source&n; *              since the last time this function was called.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_restore_acpi_state&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      none&n; *&n; * DESCRIPTION: Restore the original ACPI state of the machine&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_sci_count&n; *&n; * PARAMETERS:  Event       Event that generated an SCI.&n; *&n; * RETURN:      Number of SCI&squot;s for requested event since last time&n; *              Sci_occured() was called for this event.&n; *&n; * DESCRIPTION: Checks to see if SCI has been generated from requested source&n; *              since the last time this function was called.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_restore_acpi_state&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      none&n; *&n; * DESCRIPTION: Restore the original ACPI state of the machine&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_ev_restore_acpi_state
 id|acpi_ev_restore_acpi_state
@@ -244,7 +236,7 @@ id|acpi_ev_restore_acpi_state
 r_void
 )paren
 (brace
-id|s32
+id|u32
 id|index
 suffix:semicolon
 multiline_comment|/* Restore the state of the chipset enable bits. */

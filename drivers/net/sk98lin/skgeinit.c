@@ -1,6 +1,6 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skgeinit.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.54 $&n; * Date:&t;$Date: 1999/10/26 07:32:54 $&n; * Purpose:&t;Contains functions to initialize the GE HW&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998,1999 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;See the file &quot;skge.c&quot; for further information.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skgeinit.c,v $&n; *&t;Revision 1.54  1999/10/26 07:32:54  malthoff&n; *&t;Initialize PHWLinkUp with SK_FALSE. Required for Diagnostics.&n; *&t;&n; *&t;Revision 1.53  1999/08/12 19:13:50  malthoff&n; *&t;Fix for 1000BT. Do not owerwrite XM_MMU_CMD when&n; *&t;disabling receiver and transmitter. Other bits&n; *&t;may be lost.&n; *&t;&n; *&t;Revision 1.52  1999/07/01 09:29:54  gklug&n; *&t;fix: DoInitRamQueue needs pAC&n; *&t;&n; *&t;Revision 1.51  1999/07/01 08:42:21  gklug&n; *&t;chg: use Store &amp; forward for RAM buffer when Jumbos are used&n; *&t;&n; *&t;Revision 1.50  1999/05/27 13:19:38  cgoos&n; *&t;Added Tx PCI watermark initialization.&n; *&t;Removed Tx RAM queue Store &amp; Forward setting.&n; *&t;&n; *&t;Revision 1.49  1999/05/20 14:32:45  malthoff&n; *&t;SkGeLinkLED() is completly removed now.&n; *&t;&n; *&t;Revision 1.48  1999/05/19 07:28:24  cgoos&n; *&t;SkGeLinkLED no more available for drivers.&n; *&t;Changes for 1000Base-T.&n; *&t;&n; *&t;Revision 1.47  1999/04/08 13:57:45  gklug&n; *&t;add: Init of new port struct fiels PLinkResCt&n; *&t;chg: StopPort Timer check&n; *&t;&n; *&t;Revision 1.46  1999/03/25 07:42:15  malthoff&n; *&t;SkGeStopPort(): Add workaround for cache incoherency.&n; *&t;&t;&t;Create error log entry, disable port, and&n; *&t;&t;&t;exit loop if it does not terminate.&n; *&t;Add XM_RX_LENERR_OK to the default value for the&n; *&t;XMAC receive command register.&n; *&t;&n; *&t;Revision 1.45  1999/03/12 16:24:47  malthoff&n; *&t;Remove PPollRxD and PPollTxD.&n; *&t;Add check for GIPollTimerVal.&n; *&n; *&t;Revision 1.44  1999/03/12 13:40:23  malthoff&n; *&t;Fix: SkGeXmitLED(), SK_LED_TST mode does not work.&n; *&t;Add: Jumbo frame support.&n; *&t;Chg: Resolution of parameter IntTime in SkGeCfgSync().&n; *&n; *&t;Revision 1.43  1999/02/09 10:29:46  malthoff&n; *&t;Bugfix: The previous modification again also for the second location.&n; *&n; *&t;Revision 1.42  1999/02/09 09:35:16  malthoff&n; *&t;Bugfix: The bits &squot;66 MHz Capable&squot; and &squot;NEWCAP are reset while&n; *&t;&t;clearing the error bits in the PCI status register.&n; *&n; *&t;Revision 1.41  1999/01/18 13:07:02  malthoff&n; *&t;Bugfix: Do not use CFG cycles after during Init- or Runtime, because&n; *&t;&t;they may not be available after Boottime.&n; *&n; *&t;Revision 1.40  1999/01/11 12:40:49  malthoff&n; *&t;Bug fix: PCI_STATUS: clearing error bits sets the UDF bit.&n; *&n; *&t;Revision 1.39  1998/12/11 15:17:33  gklug&n; *&t;chg: Init LipaAutoNeg with Unknown&n; *&n; *&t;Revision 1.38  1998/12/10 11:02:57  malthoff&n; *&t;Disable Error Log Message when calling SkGeInit(level 2)&n; *&t;more than once.&n; *&n; *&t;Revision 1.37  1998/12/07 12:18:25  gklug&n; *&t;add: refinement of autosense mode: take into account the autoneg cap of LiPa&n; *&n; *&t;Revision 1.36  1998/12/07 07:10:39  gklug&n; *&t;fix: init values of LinkBroken/ Capabilities for management&n; *&n; *&t;Revision 1.35  1998/12/02 10:56:20  gklug&n; *&t;fix: do NOT init LoinkSync Counter.&n; *&n; *&t;Revision 1.34  1998/12/01 10:53:21  gklug&n; *&t;add: init of additional Counters for workaround&n; *&n; *&t;Revision 1.33  1998/12/01 10:00:49  gklug&n; *&t;add: init PIsave var in Port struct&n; *&n; *&t;Revision 1.32  1998/11/26 14:50:40  gklug&n; *&t;chg: Default is autosensing with AUTOFULL mode&n; *&n; *&t;Revision 1.31  1998/11/25 15:36:16  gklug&n; *&t;fix: do NOT stop LED Timer when port should be stoped&n; *&n; *&t;Revision 1.30  1998/11/24 13:15:28  gklug&n; *&t;add: Init PCkeckPar struct member&n; *&n; *&t;Revision 1.29  1998/11/18 13:19:27  malthoff&n; *&t;Disable packet arbiter timeouts on receive side.&n; *&t;Use maximum timeout value for packet arbiter&n; *&t;transmit timeouts.&n; *&t;Add TestStopBit() function to handle stop RX/TX&n; *&t;problem with active descriptor poll timers.&n; *&t;Bug Fix: Descriptor Poll Timer not started, beacuse&n; *&t;GIPollTimerVal was initilaized with 0.&n; *&n; *&t;Revision 1.28  1998/11/13 14:24:26  malthoff&n; *&t;Bug Fix: SkGeStopPort() may hang if a Packet Arbiter Timout&n; *&t;is pending or occurs while waiting for TX_STOP and RX_STOP.&n; *&t;The PA timeout is cleared now while waiting for TX- or RX_STOP.&n; *&n; *&t;Revision 1.27  1998/11/02 11:04:36  malthoff&n; *&t;fix the last fix&n; *&n; *&t;Revision 1.26  1998/11/02 10:37:03  malthoff&n; *&t;Fix: SkGePollTxD() enables always the synchronounous poll timer.&n; *&n; *&t;Revision 1.25  1998/10/28 07:12:43  cgoos&n; *&t;Fixed &quot;LED_STOP&quot; in SkGeLnkSyncCnt, &quot;== SK_INIT_IO&quot; in SkGeInit.&n; *&t;Removed: Reset of RAM Interface in SkGeStopPort.&n; *&n; *&t;Revision 1.24  1998/10/27 08:13:12  malthoff&n; *&t;Remove temporary code.&n; *&n; *&t;Revision 1.23  1998/10/26 07:45:03  malthoff&n; *&t;Add Address Calculation Workaround: If the EPROM byte&n; *&t;Id is 3, the address offset is 512 kB.&n; *&t;Initialize default values for PLinkMode and PFlowCtrlMode.&n; *&n; *&t;Revision 1.22  1998/10/22 09:46:47  gklug&n; *&t;fix SysKonnectFileId typo&n; *&n; *&t;Revision 1.21  1998/10/20 12:11:56  malthoff&n; *&t;Don&squot;t dendy the Queue config if the size of the unused&n; *&t;rx qeueu is zero.&n; *&n; *&t;Revision 1.20  1998/10/19 07:27:58  malthoff&n; *&t;SkGeInitRamIface() is public to be called by diagnostics.&n; *&n; *&t;Revision 1.19  1998/10/16 13:33:45  malthoff&n; *&t;Fix: enabling descriptor polling is not allowed until&n; *&t;the descriptor addresses are set. Descriptor polling&n; *&t;must be handled by the driver.&n; *&n; *&t;Revision 1.18  1998/10/16 10:58:27  malthoff&n; *&t;Remove temp. code for Diag prototype.&n; *&t;Remove lint warning for dummy reads.&n; *&t;Call SkGeLoadLnkSyncCnt() during SkGeInitPort().&n; *&n; *&t;Revision 1.17  1998/10/14 09:16:06  malthoff&n; *&t;Change parameter LimCount and programming of&n; *&t;the limit counter in SkGeCfgSync().&n; *&n; *&t;Revision 1.16  1998/10/13 09:21:16  malthoff&n; *&t;Don&squot;t set XM_RX_SELF_RX in RxCmd Reg, because it&squot;s&n; *&t;like a Loopback Mode in half duplex.&n; *&n; *&t;Revision 1.15  1998/10/09 06:47:40  malthoff&n; *&t;SkGeInitMacArb(): set recovery counters init value&n; *&t;to zero although this counters are not uesd.&n; *&t;Bug fix in Rx Upper/Lower Pause Threshold calculation.&n; *&t;Add XM_RX_SELF_RX to RxCmd.&n; *&n; *&t;Revision 1.14  1998/10/06 15:15:53  malthoff&n; *&t;Make sure no pending IRQ is cleared in SkGeLoadLnkSyncCnt().&n; *&n; *&t;Revision 1.13  1998/10/06 14:09:36  malthoff&n; *&t;Add SkGeLoadLnkSyncCnt(). Modify&n; *&t;the &squot;port stopped&squot; condition according&n; *&t;to the current problem report.&n; *&n; *&t;Revision 1.12  1998/10/05 08:17:21  malthoff&n; *&t;Add functions: SkGePollRxD(), SkGePollTxD(),&n; *&t;DoCalcAddr(), SkGeCheckQSize(),&n; *&t;DoInitRamQueue(), and SkGeCfgSync().&n; *&t;Add coding for SkGeInitMacArb(), SkGeInitPktArb(),&n; *&t;SkGeInitMacFifo(), SkGeInitRamBufs(),&n; *&t;SkGeInitRamIface(), and  SkGeInitBmu().&n; *&n; *&t;Revision 1.11  1998/09/29 08:26:29  malthoff&n; *&t;bug fix: SkGeInit0() &squot;i&squot; should be increment.&n; *&n; *&t;Revision 1.10  1998/09/28 13:19:01  malthoff&n; *&t;Coding time: Save the done work.&n; *&t;Modify SkGeLinkLED(), add SkGeXmitLED(),&n; *&t;define SkGeCheckQSize(), SkGeInitMacArb(),&n; *&t;SkGeInitPktArb(), SkGeInitMacFifo(),&n; *&t;SkGeInitRamBufs(), SkGeInitRamIface(),&n; *&t;and SkGeInitBmu(). Do coding for SkGeStopPort(),&n; *&t;SkGeInit1(), SkGeInit2(), and SkGeInit3().&n; *&t;Do coding for SkGeDinit() and SkGeInitPort().&n; *&n; *&t;Revision 1.9  1998/09/16 14:29:05  malthoff&n; *&t;Some minor changes.&n; *&n; *&t;Revision 1.8  1998/09/11 05:29:14  gklug&n; *&t;add: init state of a port&n; *&n; *&t;Revision 1.7  1998/09/04 09:26:25  malthoff&n; *&t;Short temporary modification.&n; *&n; *&t;Revision 1.6  1998/09/04 08:27:59  malthoff&n; *&t;Remark the do-while in StopPort() because it never ends&n; *&t;without a GE adapter.&n; *&n; *&t;Revision 1.5  1998/09/03 14:05:45  malthoff&n; *&t;Change comment for SkGeInitPort(). Do not&n; *&t;repair the queue sizes if invalid.&n; *&n; *&t;Revision 1.4  1998/09/03 10:03:19  malthoff&n; *&t;Implement the new interface according to the&n; *&t;reviewed interface specification.&n; *&n; *&t;Revision 1.3  1998/08/19 09:11:25  gklug&n; *&t;fix: struct are removed from c-source (see CCC)&n; *&n; *&t;Revision 1.2  1998/07/28 12:33:58  malthoff&n; *&t;Add &squot;IoC&squot; parameter in function declaration and SK IO macros.&n; *&n; *&t;Revision 1.1  1998/07/23 09:48:57  malthoff&n; *&t;Creation. First dummy &squot;C&squot; file.&n; *&t;SkGeInit(Level 0) is card_start for ML.&n; *&t;SkGeDeInit() is card_stop for ML.&n; *&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skgeinit.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.57 $&n; * Date:&t;$Date: 2000/08/03 14:55:28 $&n; * Purpose:&t;Contains functions to initialize the GE HW&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998-2000 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skgeinit.c,v $&n; *&t;Revision 1.57  2000/08/03 14:55:28  rassmann&n; *&t;Waiting for I2C to be ready before de-initializing adapter&n; *&t;(prevents sensors from hanging up).&n; *&t;&n; *&t;Revision 1.56  2000/07/27 12:16:48  gklug&n; *&t;fix: Stop Port check of the STOP bit does now take 2/18 sec as wanted&n; *&t;&n; *&t;Revision 1.55  1999/11/22 13:32:26  cgoos&n; *&t;Changed license header to GPL.&n; *&t;&n; *&t;Revision 1.54  1999/10/26 07:32:54  malthoff&n; *&t;Initialize PHWLinkUp with SK_FALSE. Required for Diagnostics.&n; *&t;&n; *&t;Revision 1.53  1999/08/12 19:13:50  malthoff&n; *&t;Fix for 1000BT. Do not owerwrite XM_MMU_CMD when&n; *&t;disabling receiver and transmitter. Other bits&n; *&t;may be lost.&n; *&t;&n; *&t;Revision 1.52  1999/07/01 09:29:54  gklug&n; *&t;fix: DoInitRamQueue needs pAC&n; *&t;&n; *&t;Revision 1.51  1999/07/01 08:42:21  gklug&n; *&t;chg: use Store &amp; forward for RAM buffer when Jumbos are used&n; *&t;&n; *&t;Revision 1.50  1999/05/27 13:19:38  cgoos&n; *&t;Added Tx PCI watermark initialization.&n; *&t;Removed Tx RAM queue Store &amp; Forward setting.&n; *&t;&n; *&t;Revision 1.49  1999/05/20 14:32:45  malthoff&n; *&t;SkGeLinkLED() is completly removed now.&n; *&t;&n; *&t;Revision 1.48  1999/05/19 07:28:24  cgoos&n; *&t;SkGeLinkLED no more available for drivers.&n; *&t;Changes for 1000Base-T.&n; *&t;&n; *&t;Revision 1.47  1999/04/08 13:57:45  gklug&n; *&t;add: Init of new port struct fiels PLinkResCt&n; *&t;chg: StopPort Timer check&n; *&t;&n; *&t;Revision 1.46  1999/03/25 07:42:15  malthoff&n; *&t;SkGeStopPort(): Add workaround for cache incoherency.&n; *&t;&t;&t;Create error log entry, disable port, and&n; *&t;&t;&t;exit loop if it does not terminate.&n; *&t;Add XM_RX_LENERR_OK to the default value for the&n; *&t;XMAC receive command register.&n; *&t;&n; *&t;Revision 1.45  1999/03/12 16:24:47  malthoff&n; *&t;Remove PPollRxD and PPollTxD.&n; *&t;Add check for GIPollTimerVal.&n; *&n; *&t;Revision 1.44  1999/03/12 13:40:23  malthoff&n; *&t;Fix: SkGeXmitLED(), SK_LED_TST mode does not work.&n; *&t;Add: Jumbo frame support.&n; *&t;Chg: Resolution of parameter IntTime in SkGeCfgSync().&n; *&n; *&t;Revision 1.43  1999/02/09 10:29:46  malthoff&n; *&t;Bugfix: The previous modification again also for the second location.&n; *&n; *&t;Revision 1.42  1999/02/09 09:35:16  malthoff&n; *&t;Bugfix: The bits &squot;66 MHz Capable&squot; and &squot;NEWCAP are reset while&n; *&t;&t;clearing the error bits in the PCI status register.&n; *&n; *&t;Revision 1.41  1999/01/18 13:07:02  malthoff&n; *&t;Bugfix: Do not use CFG cycles after during Init- or Runtime, because&n; *&t;&t;they may not be available after Boottime.&n; *&n; *&t;Revision 1.40  1999/01/11 12:40:49  malthoff&n; *&t;Bug fix: PCI_STATUS: clearing error bits sets the UDF bit.&n; *&n; *&t;Revision 1.39  1998/12/11 15:17:33  gklug&n; *&t;chg: Init LipaAutoNeg with Unknown&n; *&n; *&t;Revision 1.38  1998/12/10 11:02:57  malthoff&n; *&t;Disable Error Log Message when calling SkGeInit(level 2)&n; *&t;more than once.&n; *&n; *&t;Revision 1.37  1998/12/07 12:18:25  gklug&n; *&t;add: refinement of autosense mode: take into account the autoneg cap of LiPa&n; *&n; *&t;Revision 1.36  1998/12/07 07:10:39  gklug&n; *&t;fix: init values of LinkBroken/ Capabilities for management&n; *&n; *&t;Revision 1.35  1998/12/02 10:56:20  gklug&n; *&t;fix: do NOT init LoinkSync Counter.&n; *&n; *&t;Revision 1.34  1998/12/01 10:53:21  gklug&n; *&t;add: init of additional Counters for workaround&n; *&n; *&t;Revision 1.33  1998/12/01 10:00:49  gklug&n; *&t;add: init PIsave var in Port struct&n; *&n; *&t;Revision 1.32  1998/11/26 14:50:40  gklug&n; *&t;chg: Default is autosensing with AUTOFULL mode&n; *&n; *&t;Revision 1.31  1998/11/25 15:36:16  gklug&n; *&t;fix: do NOT stop LED Timer when port should be stoped&n; *&n; *&t;Revision 1.30  1998/11/24 13:15:28  gklug&n; *&t;add: Init PCkeckPar struct member&n; *&n; *&t;Revision 1.29  1998/11/18 13:19:27  malthoff&n; *&t;Disable packet arbiter timeouts on receive side.&n; *&t;Use maximum timeout value for packet arbiter&n; *&t;transmit timeouts.&n; *&t;Add TestStopBit() function to handle stop RX/TX&n; *&t;problem with active descriptor poll timers.&n; *&t;Bug Fix: Descriptor Poll Timer not started, beacuse&n; *&t;GIPollTimerVal was initilaized with 0.&n; *&n; *&t;Revision 1.28  1998/11/13 14:24:26  malthoff&n; *&t;Bug Fix: SkGeStopPort() may hang if a Packet Arbiter Timout&n; *&t;is pending or occurs while waiting for TX_STOP and RX_STOP.&n; *&t;The PA timeout is cleared now while waiting for TX- or RX_STOP.&n; *&n; *&t;Revision 1.27  1998/11/02 11:04:36  malthoff&n; *&t;fix the last fix&n; *&n; *&t;Revision 1.26  1998/11/02 10:37:03  malthoff&n; *&t;Fix: SkGePollTxD() enables always the synchronounous poll timer.&n; *&n; *&t;Revision 1.25  1998/10/28 07:12:43  cgoos&n; *&t;Fixed &quot;LED_STOP&quot; in SkGeLnkSyncCnt, &quot;== SK_INIT_IO&quot; in SkGeInit.&n; *&t;Removed: Reset of RAM Interface in SkGeStopPort.&n; *&n; *&t;Revision 1.24  1998/10/27 08:13:12  malthoff&n; *&t;Remove temporary code.&n; *&n; *&t;Revision 1.23  1998/10/26 07:45:03  malthoff&n; *&t;Add Address Calculation Workaround: If the EPROM byte&n; *&t;Id is 3, the address offset is 512 kB.&n; *&t;Initialize default values for PLinkMode and PFlowCtrlMode.&n; *&n; *&t;Revision 1.22  1998/10/22 09:46:47  gklug&n; *&t;fix SysKonnectFileId typo&n; *&n; *&t;Revision 1.21  1998/10/20 12:11:56  malthoff&n; *&t;Don&squot;t dendy the Queue config if the size of the unused&n; *&t;rx qeueu is zero.&n; *&n; *&t;Revision 1.20  1998/10/19 07:27:58  malthoff&n; *&t;SkGeInitRamIface() is public to be called by diagnostics.&n; *&n; *&t;Revision 1.19  1998/10/16 13:33:45  malthoff&n; *&t;Fix: enabling descriptor polling is not allowed until&n; *&t;the descriptor addresses are set. Descriptor polling&n; *&t;must be handled by the driver.&n; *&n; *&t;Revision 1.18  1998/10/16 10:58:27  malthoff&n; *&t;Remove temp. code for Diag prototype.&n; *&t;Remove lint warning for dummy reads.&n; *&t;Call SkGeLoadLnkSyncCnt() during SkGeInitPort().&n; *&n; *&t;Revision 1.17  1998/10/14 09:16:06  malthoff&n; *&t;Change parameter LimCount and programming of&n; *&t;the limit counter in SkGeCfgSync().&n; *&n; *&t;Revision 1.16  1998/10/13 09:21:16  malthoff&n; *&t;Don&squot;t set XM_RX_SELF_RX in RxCmd Reg, because it&squot;s&n; *&t;like a Loopback Mode in half duplex.&n; *&n; *&t;Revision 1.15  1998/10/09 06:47:40  malthoff&n; *&t;SkGeInitMacArb(): set recovery counters init value&n; *&t;to zero although this counters are not uesd.&n; *&t;Bug fix in Rx Upper/Lower Pause Threshold calculation.&n; *&t;Add XM_RX_SELF_RX to RxCmd.&n; *&n; *&t;Revision 1.14  1998/10/06 15:15:53  malthoff&n; *&t;Make sure no pending IRQ is cleared in SkGeLoadLnkSyncCnt().&n; *&n; *&t;Revision 1.13  1998/10/06 14:09:36  malthoff&n; *&t;Add SkGeLoadLnkSyncCnt(). Modify&n; *&t;the &squot;port stopped&squot; condition according&n; *&t;to the current problem report.&n; *&n; *&t;Revision 1.12  1998/10/05 08:17:21  malthoff&n; *&t;Add functions: SkGePollRxD(), SkGePollTxD(),&n; *&t;DoCalcAddr(), SkGeCheckQSize(),&n; *&t;DoInitRamQueue(), and SkGeCfgSync().&n; *&t;Add coding for SkGeInitMacArb(), SkGeInitPktArb(),&n; *&t;SkGeInitMacFifo(), SkGeInitRamBufs(),&n; *&t;SkGeInitRamIface(), and SkGeInitBmu().&n; *&n; *&t;Revision 1.11  1998/09/29 08:26:29  malthoff&n; *&t;bug fix: SkGeInit0() &squot;i&squot; should be increment.&n; *&n; *&t;Revision 1.10  1998/09/28 13:19:01  malthoff&n; *&t;Coding time: Save the done work.&n; *&t;Modify SkGeLinkLED(), add SkGeXmitLED(),&n; *&t;define SkGeCheckQSize(), SkGeInitMacArb(),&n; *&t;SkGeInitPktArb(), SkGeInitMacFifo(),&n; *&t;SkGeInitRamBufs(), SkGeInitRamIface(),&n; *&t;and SkGeInitBmu(). Do coding for SkGeStopPort(),&n; *&t;SkGeInit1(), SkGeInit2(), and SkGeInit3().&n; *&t;Do coding for SkGeDinit() and SkGeInitPort().&n; *&n; *&t;Revision 1.9  1998/09/16 14:29:05  malthoff&n; *&t;Some minor changes.&n; *&n; *&t;Revision 1.8  1998/09/11 05:29:14  gklug&n; *&t;add: init state of a port&n; *&n; *&t;Revision 1.7  1998/09/04 09:26:25  malthoff&n; *&t;Short temporary modification.&n; *&n; *&t;Revision 1.6  1998/09/04 08:27:59  malthoff&n; *&t;Remark the do-while in StopPort() because it never ends&n; *&t;without a GE adapter.&n; *&n; *&t;Revision 1.5  1998/09/03 14:05:45  malthoff&n; *&t;Change comment for SkGeInitPort(). Do not&n; *&t;repair the queue sizes if invalid.&n; *&n; *&t;Revision 1.4  1998/09/03 10:03:19  malthoff&n; *&t;Implement the new interface according to the&n; *&t;reviewed interface specification.&n; *&n; *&t;Revision 1.3  1998/08/19 09:11:25  gklug&n; *&t;fix: struct are removed from c-source (see CCC)&n; *&n; *&t;Revision 1.2  1998/07/28 12:33:58  malthoff&n; *&t;Add &squot;IoC&squot; parameter in function declaration and SK IO macros.&n; *&n; *&t;Revision 1.1  1998/07/23 09:48:57  malthoff&n; *&t;Creation. First dummy &squot;C&squot; file.&n; *&t;SkGeInit(Level 0) is card_start for ML.&n; *&t;SkGeDeInit() is card_stop for ML.&n; *&n; *&n; ******************************************************************************/
 macro_line|#include &quot;h/skdrv1st.h&quot;
 macro_line|#include &quot;h/xmac_ii.h&quot;
 macro_line|#include &quot;h/skdrv2nd.h&quot;
@@ -35,7 +35,7 @@ id|SysKonnectFileId
 (braket
 )braket
 op_assign
-l_string|&quot;@(#)$Id: skgeinit.c,v 1.54 1999/10/26 07:32:54 malthoff Exp $ (C) SK &quot;
+l_string|&quot;@(#)$Id: skgeinit.c,v 1.57 2000/08/03 14:55:28 rassmann Exp $ (C) SK &quot;
 suffix:semicolon
 DECL|struct|s_QOffTab
 r_struct
@@ -163,6 +163,7 @@ id|CSR_DIS_POL
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* SkGePollRxD */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGePollTxD() - Enable/Disable Descriptor Polling of TxD Rings&n; *&n; * Description:&n; *&t;Enable or disable the descriptor polling the transmit descriptor&n; *&t;ring(s) (RxD) of port &squot;port&squot;.&n; *&t;The new configuration is *not* saved over any SkGeStopPort() and&n; *&t;SkGeInitPort() calls.&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGePollTxD
 r_void
@@ -271,6 +272,7 @@ id|DWord
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* SkGePollTxD */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeYellowLED() - Switch the yellow LED on or off.&n; *&n; * Description:&n; *&t;Switch the yellow LED on or off.&n; *&n; * Note:&n; *&t;This function may be called any time after SkGeInit(Level 1).&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeYellowLED
 r_void
@@ -326,7 +328,8 @@ id|LED_STAT_ON
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeXmitLED() - Modify the Operational Mode of a transmission LED.&n; *&n; * Description:&n; *&t;The Rx or Tx LED which is specified by &squot;Led&squot; will be&n; *&t;enabled, disabled or switched on in test mode.&n; *&n; * Note:&n; *&t;&squot;Led&squot; must contain the address offset of the LEDs INI register.&n; *&n; * Usage:&n; *&t;SkGeXmitLED(pAC, IoC, MR_ADDR(Port,TX_LED_INI), SK_LED_ENA);&n; *&n; * Returns:&n; *&t;nothing&n; */
+multiline_comment|/* SkGeYellowLED */
+multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeXmitLED() - Modify the Operational Mode of a transmission LED.&n; *&n; * Description:&n; *&t;The Rx or Tx LED which is specified by &squot;Led&squot; will be&n; *&t;enabled, disabled or switched on in test mode.&n; *&n; * Note:&n; *&t;&squot;Led&squot; must contain the address offset of the LEDs INI register.&n; *&n; * Usage:&n; *&t;SkGeXmitLED(pAC, IoC, MR_ADDR(Port, TX_LED_INI), SK_LED_ENA);&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeXmitLED
 r_void
 id|SkGeXmitLED
@@ -475,6 +478,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * 1000BT: The Transmit LED is driven by the PHY.&n;&t; * But the default LED configuration is used for&n;&t; * Level One and Broadcom PHYs.&n;&t; * (Broadcom: It may be that PHY_B_PEC_EN_LTR has to be set.)&n;&t; * (In this case it has to be added here. But we will see. XXX)&n;&t; */
 )brace
+multiline_comment|/* SkGeXmitLED */
 multiline_comment|/******************************************************************************&n; *&n; *&t;DoCalcAddr() - Calculates the start and the end address of a queue.&n; *&n; * Description:&n; *&t;This function calculates the start- end the end address&n; *&t;of a queue. Afterwards the &squot;StartVal&squot; is incremented to the&n; *&t;next start position.&n; *&t;If the port is already initialized the calculated values&n; *&t;will be checked against the configured values and an&n; *&t;error will be returned, if they are not equal.&n; *&t;If the port is not initialized the values will be written to&n; *&t;*StartAdr and *EndAddr.&n; *&n; * Returns:&n; *&t;0:&t;success&n; *&t;1:&t;configuration error&n; */
 DECL|function|DoCalcAddr
 r_static
@@ -622,6 +626,7 @@ id|Rtv
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* DoCalcAddr */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeCheckQSize() - Checks the Adapters Queue Size Configuration&n; *&n; * Description:&n; *&t;This function verifies the Queue Size Configuration specified&n; *&t;in the variabels PRxQSize, PXSQSize, and PXAQSize of all&n; *&t;used ports.&n; *&t;This requirements must be fullfilled to have a valid configuration:&n; *&t;&t;- The size of all queues must not exceed GIRamSize.&n; *&t;&t;- The queue sizes must be specified in units of 8 kB.&n; *&t;&t;- The size of rx queues of available ports must not be&n; *&t;&t;  smaller than 16kB.&n; *&t;&t;- The RAM start and end addresses must not be changed&n; *&t;&t;  for ports which are already initialized.&n; *&t;Furthermore SkGeCheckQSize() defines the Start and End&n; *&t;Addresses of all ports and stores them into the HWAC port&n; *&t;structure.&n; *&n; * Returns:&n; *&t;0:&t;Queue Size Configuration valid&n; *&t;1:&t;Queue Size Configuration invalid&n; */
 DECL|function|SkGeCheckQSize
 r_static
@@ -936,6 +941,7 @@ id|Rtv
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeCheckQSize */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInitMacArb() - Initialize the MAC Arbiter&n; *&n; * Description:&n; *&t;This function initializes the MAC Arbiter.&n; *&t;It must not be called if there is still an&n; *&t;initilaized or active port.&n; *&n; * Returns:&n; *&t;nothing:&n; */
 DECL|function|SkGeInitMacArb
 r_static
@@ -1049,6 +1055,7 @@ multiline_comment|/* recovery values are needed for XMAC II Rev. B2 only */
 multiline_comment|/* Fast Output Enable Mode was intended to use with Rev. B2, but now? */
 multiline_comment|/*&n;&t; * There is not start or enable buttom to push, therefore&n;&t; * the MAC arbiter is configured and enabled now.&n;&t; */
 )brace
+multiline_comment|/* SkGeInitMacArb */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInitPktArb() - Initialize the Packet Arbiter&n; *&n; * Description:&n; *&t;This function initializes the Packet Arbiter.&n; *&t;It must not be called if there is still an&n; *&t;initilaized or active port.&n; *&n; * Returns:&n; *&t;nothing:&n; */
 DECL|function|SkGeInitPktArb
 r_static
@@ -1165,6 +1172,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* SkGeInitPktArb */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInitMacFifo() - Initialize the MAC FIFOs&n; *&n; * Description:&n; *&t;Initialize all MAC FIFOs of the specified port&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeInitMacFifo
 r_static
@@ -1312,6 +1320,7 @@ id|MFF_ENA_FLUSH
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* SkGeInitMacFifo */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeLoadLnkSyncCnt() - Load the Link Sync Counter and starts counting&n; *&n; * Description:&n; *&t;This function starts the Link Sync Counter of the specified&n; *&t;port and enables the generation of an Link Sync IRQ.&n; *&t;The Link Sync Counter may be used to detect an active link,&n; *&t;if autonegotiation is not used.&n; *&n; * Note:&n; *&t;o To ensure receiving the Link Sync Event the LinkSyncCounter&n; *&t;  should be initialized BEFORE clearing the XMACs reset!&n; *&t;o Enable IS_LNK_SYNC_M1 and IS_LNK_SYNC_M2 after calling this&n; *&t;  function.&n; *&n; * Retruns:&n; *&t;nothing&n; */
 DECL|function|SkGeLoadLnkSyncCnt
 r_void
@@ -1532,6 +1541,7 @@ id|OrgIMsk
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* SkGeLoadLnkSyncCnt*/
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeCfgSync() - Configure synchronous bandwidth for this port.&n; *&n; * Description:&n; *&t;This function may be used to configure synchronous bandwidth&n; *&t;to the specified port. This may be done any time after&n; *&t;initializing the port. The configuration values are NOT saved&n; *&t;in the HWAC port structure and will be overwritten any&n; *&t;time when stopping and starting the port.&n; *&t;Any values for the synchronous configuration will be ignored&n; *&t;if the size of the synchronous queue is zero!&n; *&n; *&t;The default configuration for the synchronous service is&n; *&t;TXA_ENA_FSYNC. This means if the size of&n; *&t;the synchronous queue is unequal zero but no specific&n; *&t;synchronous bandwidth is configured, the synchronous queue&n; *&t;will always have the &squot;unlimitted&squot; transmit priority!&n; *&n; *&t;This mode will be restored if the synchronous bandwidth is&n; *&t;deallocated (&squot;IntTime&squot; = 0 and &squot;LimCount&squot; = 0).&n; *&n; * Returns:&n; *&t;0:&t;success&n; *&t;1:&t;paramter configuration error&n; *&t;2:&t;try to configure quality of service although no&n; *&t;&t;synchronous queue is configured&n; */
 DECL|function|SkGeCfgSync
 r_int
@@ -1820,6 +1830,7 @@ id|Rtv
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeCfgSync */
 multiline_comment|/******************************************************************************&n; *&n; *&t;DoInitRamQueue() - Initilaize the RAM Buffer Address of a single Queue&n; *&n; * Desccription:&n; *&t;If the queue is used, enable and initilaize it.&n; *&t;Make sure the queue is still reset, if it is not used.&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|DoInitRamQueue
 r_static
@@ -2123,6 +2134,7 @@ id|RB_RST_SET
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* DoInitRamQueue*/
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInitRamBufs() - Initialize the RAM Buffer Queues&n; *&n; * Description:&n; *&t;Initialize all RAM Buffer Queues of the specified port&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeInitRamBufs
 r_static
@@ -2230,6 +2242,7 @@ id|SK_TX_RAM_Q
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeInitRamBufs */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInitRamIface() - Initialize the RAM Interface&n; *&n; * Description:&n; *&t;This function initializes the Adapbers RAM Interface.&n; *&n; * Note:&n; *&t;This function is used in the diagnostics.&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeInitRamIface
 r_void
@@ -2379,6 +2392,7 @@ id|SK_RI_TO_53
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeInitRamIface */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInitBmu() - Initialize the BMU state machines&n; *&n; * Description:&n; *&t;Initialize all BMU state machines of the specified port&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeInitBmu
 r_static
@@ -2530,6 +2544,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Do NOT enable the descriptor poll timers here, because&n;&t; * the descriptor addresses are not specified yet.&n;&t; */
 )brace
+multiline_comment|/* SkGeInitBmu */
 multiline_comment|/******************************************************************************&n; *&n; *&t;TestStopBit() -&t;Test the stop bit of the queue&n; *&n; * Description:&n; *&t;Stopping a queue is not as simple as it seems to be.&n; *&t;If descriptor polling is enabled, it may happen&n; *&t;that RX/TX stop is done and SV idle is NOT set.&n; *&t;In this case we have to issue another stop command.&n; *&n; * Retruns:&n; *&t;The queues control status register&n; */
 DECL|function|TestStopBit
 r_static
@@ -2628,6 +2643,7 @@ id|QuCsr
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* TestStopBit*/
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeStopPort() - Stop the Rx/Tx activity of the port &squot;Port&squot;.&n; *&n; * Description:&n; *&t;After calling this function the descriptor rings and rx and tx&n; *&t;queues of this port may be reconfigured.&n; *&n; *&t;It is possible to stop the receive and transmit path seperate or&n; *&t;both together.&n; *&n; *&t;Dir =&t;SK_STOP_TX &t;Stops the transmit path only and resets&n; *&t;&t;&t;&t;the XMAC. The receive queue is still and&n; *&t;&t;&t;&t;the pending rx frames may still transfered&n; *&t;&t;&t;&t;into the RxD.&n; *&t;&t;SK_STOP_RX&t;Stop the receive path. The tansmit path&n; *&t;&t;&t;&t;has to be stoped once before.&n; *&t;&t;SK_STOP_ALL&t;SK_STOP_TX + SK_STOP_RX&n; *&n; *&t;RstMode=SK_SOFT_RST&t;Resets the XMAC. The PHY is still alive.&n; *&t;&t;SK_HARD_RST&t;Resets the XMAC and the PHY.&n; *&n; * Example:&n; *&t;1) A Link Down event was signaled for a port. Therefore the activity&n; *&t;of this port should be stoped and a hardware reset should be issued&n; *&t;to enable the workaround of XMAC errata #2. But the received frames&n; *&t;should not be discarded.&n; *&t;&t;...&n; *&t;&t;SkGeStopPort(pAC, IoC, Port, SK_STOP_TX, SK_HARD_RST);&n; *&t;&t;(transfer all pending rx frames)&n; *&t;&t;SkGeStopPort(pAC, IoC, Port, SK_STOP_RX, SK_HARD_RST);&n; *&t;&t;...&n; *&n; *&t;2) An event was issued which request the driver to switch&n; *&t;the &squot;virtual active&squot; link to an other already active port&n; *&t;as soon as possible. The frames in the receive queue of this&n; *&t;port may be lost. But the PHY must not be reset during this&n; *&t;event.&n; *&t;&t;...&n; *&t;&t;SkGeStopPort(pAC, IoC, Port, SK_STOP_ALL, SK_SOFT_RST);&n; *&t;&t;...&n; *&n; * Extended Description:&n; *&t;If SK_STOP_TX is set,&n; *&t;&t;o disable the XMACs receive and transmiter to prevent&n; *&t;&t;  from sending incomplete frames&n; *&t;&t;o stop the port&squot;s transmit queues before terminating the&n; *&t;&t;  BMUs to prevent from performing incomplete PCI cycles&n; *&t;&t;  on the PCI bus&n; *&t;&t;- The network rx and tx activity and PCI tx transfer is&n; *&t;&t;  disabled now.&n; *&t;&t;o reset the XMAC depending on the RstMode&n; *&t;&t;o Stop Interval Timer and Limit Counter of Tx Arbiter,&n; *&t;&t;  also disable Force Sync bit and Enable Alloc bit.&n; *&t;&t;o perform a local reset of the port&squot;s tx path&n; *&t;&t;&t;- reset the PCI FIFO of the async tx queue&n; *&t;&t;&t;- reset the PCI FIFO of the sync tx queue&n; *&t;&t;&t;- reset the RAM Buffer async tx queue&n; *&t;&t;&t;- reset the RAM Butter sync tx queue&n; *&t;&t;&t;- reset the MAC Tx FIFO&n; *&t;&t;o switch Link and Tx LED off, stop the LED counters&n; *&n; *&t;If SK_STOP_RX is set,&n; *&t;&t;o stop the port&squot;s receive queue&n; *&t;&t;- The path data transfer activity is fully stopped now.&n; *&t;&t;o perform a local reset of the port&squot;s rx path&n; *&t;&t;&t;- reset the PCI FIFO of the rx queue&n; *&t;&t;&t;- reset the RAM Buffer receive queue&n; *&t;&t;&t;- reset the MAC Rx FIFO&n; *&t;&t;o switch Rx LED off, stop the LED counter&n; *&n; *&t;If all ports are stopped,&n; *&t;&t;o reset the RAM Interface.&n; *&n; * Notes:&n; *&t;o This function may be called during the driver states RESET_PORT and&n; *&t;  SWITCH_PORT.&n; */
 DECL|function|SkGeStopPort
 r_void
@@ -2642,7 +2658,7 @@ multiline_comment|/* adapter context */
 id|SK_IOC
 id|IoC
 comma
-multiline_comment|/* IO context */
+multiline_comment|/* I/O context */
 r_int
 id|Port
 comma
@@ -2895,7 +2911,7 @@ id|SK_TICKS_PER_SEC
 op_div
 l_int|18
 )paren
-OL
+op_ge
 id|SkOsGetTime
 c_func
 (paren
@@ -2903,7 +2919,7 @@ id|pAC
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Timeout of 1/18 second reached.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Timeout of 1/18 second reached.&n;&t;&t;&t;&t; * This needs to be checked at 1/18 sec only.&n;&t;&t;&t;&t; */
 id|ToutCnt
 op_increment
 suffix:semicolon
@@ -2982,6 +2998,7 @@ l_int|2
 suffix:colon
 r_default
 suffix:colon
+multiline_comment|/* Might be a problem when the driver event handler&n;&t;&t;&t;&t;&t; * calls StopPort again.&n;&t;&t;&t;&t;&t; * XXX.&n;&t;&t;&t;&t;&t; */
 multiline_comment|/* Fatal Error, Loop aborted */
 multiline_comment|/* Create an Error Log Entry */
 id|SK_ERR_LOG
@@ -3018,7 +3035,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * because of the ASIC problem report entry from 21.08.98&n;&t;&t; * it is required to wait until CSR_STOP is reset and&n;&t;&t; * CSR_SV_IDLE is set.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Because of the ASIC problem report entry from 21.08.1998 it is&n;&t;&t; * required to wait until CSR_STOP is reset and CSR_SV_IDLE is set.&n;&t;&t; */
 )brace
 r_while
 c_loop
@@ -3489,6 +3506,7 @@ id|SK_FALSE
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* SkGeStopPort */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInit0() - Level 0 Initialization&n; *&n; * Description:&n; *&t;- Initialize the BMU address offsets&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeInit0
 r_static
@@ -3682,6 +3700,296 @@ op_assign
 id|SK_FALSE
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeInit0*/
+macro_line|#ifdef SK_PCI_RESET
+multiline_comment|/******************************************************************************&n; *&n; *&t;SkGePciReset() - Reset PCI interface&n; *&n; * Description:&n; *&t;o Read PCI configuration.&n; *&t;o Change power state to 3.&n; *&t;o Change power state to 0.&n; *&t;o Restore PCI configuration.&n; *&n; * Returns:&n; *&t;0:&t;Success.&n; *&t;1:&t;Power state could not be changed to 3.&n; */
+DECL|function|SkGePciReset
+r_static
+r_int
+id|SkGePciReset
+c_func
+(paren
+id|SK_AC
+op_star
+id|pAC
+comma
+multiline_comment|/* adapter context */
+id|SK_IOC
+id|IoC
+)paren
+multiline_comment|/* IO context */
+(brace
+r_int
+id|i
+suffix:semicolon
+id|SK_U16
+id|PmCtlSts
+suffix:semicolon
+id|SK_U32
+id|Bp1
+suffix:semicolon
+id|SK_U32
+id|Bp2
+suffix:semicolon
+id|SK_U16
+id|PciCmd
+suffix:semicolon
+id|SK_U8
+id|Cls
+suffix:semicolon
+id|SK_U8
+id|Lat
+suffix:semicolon
+id|SK_U8
+id|ConfigSpace
+(braket
+id|PCI_CFG_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t; * Note: Switching to D3 state is like a software reset.&n;&t; *&t;&t; Switching from D3 to D0 is a hardware reset.&n;&t; *&t;&t; We have to save and restore the configuration space.&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|PCI_CFG_SIZE
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|SkPciReadCfgDWord
+c_func
+(paren
+id|pAC
+comma
+id|i
+op_star
+l_int|4
+comma
+op_amp
+id|ConfigSpace
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* We know the RAM Interface Arbiter is enabled. */
+id|SkPciWriteCfgWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_PM_CTL_STS
+comma
+id|PCI_PM_STATE_D3
+)paren
+suffix:semicolon
+id|SkPciReadCfgWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_PM_CTL_STS
+comma
+op_amp
+id|PmCtlSts
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|PmCtlSts
+op_amp
+id|PCI_PM_STATE
+)paren
+op_ne
+id|PCI_PM_STATE_D3
+)paren
+(brace
+r_return
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Return to D0 state.&n;&t; */
+id|SkPciWriteCfgWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_PM_CTL_STS
+comma
+id|PCI_PM_STATE_D0
+)paren
+suffix:semicolon
+multiline_comment|/* Check for D0 state. */
+id|SkPciReadCfgWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_PM_CTL_STS
+comma
+op_amp
+id|PmCtlSts
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|PmCtlSts
+op_amp
+id|PCI_PM_STATE
+)paren
+op_ne
+id|PCI_PM_STATE_D0
+)paren
+(brace
+r_return
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Check PCI Config Registers.&n;&t; */
+id|SkPciReadCfgWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|PciCmd
+)paren
+suffix:semicolon
+id|SkPciReadCfgByte
+c_func
+(paren
+id|pAC
+comma
+id|PCI_CACHE_LSZ
+comma
+op_amp
+id|Cls
+)paren
+suffix:semicolon
+id|SkPciReadCfgDWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_BASE_1ST
+comma
+op_amp
+id|Bp1
+)paren
+suffix:semicolon
+id|SkPciReadCfgDWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_BASE_2ND
+comma
+op_amp
+id|Bp2
+)paren
+suffix:semicolon
+id|SkPciReadCfgByte
+c_func
+(paren
+id|pAC
+comma
+id|PCI_LAT_TIM
+comma
+op_amp
+id|lat
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PciCmd
+op_ne
+l_int|0
+op_logical_or
+id|Cls
+op_ne
+l_int|0
+op_logical_or
+(paren
+id|Bp1
+op_amp
+l_int|0xfffffff0L
+)paren
+op_ne
+l_int|0
+op_logical_or
+id|Bp2
+op_ne
+l_int|1
+op_logical_or
+id|Lat
+op_ne
+l_int|0
+)paren
+(brace
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Restore Config Space.&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|PCI_CFG_SIZE
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|SkPciWriteCfgDWord
+c_func
+(paren
+id|pAC
+comma
+id|i
+op_star
+l_int|4
+comma
+id|ConfigSpace
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* SkGePciReset */
+macro_line|#endif&t;/* SK_PCI_RESET */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInit1() - Level 1 Initialization&n; *&n; * Description:&n; *&t;o Do a software reset.&n; *&t;o Clear all reset bits.&n; *&t;o Verify that the detected hardware is present.&n; *&t;  Return an error if not.&n; *&t;o Get the hardware configuration&n; *&t;&t;+ Read the number of MACs/Ports.&n; *&t;&t;+ Read the RAM size.&n; *&t;&t;+ Read the PCI Revision ID.&n; *&t;&t;+ Find out the adapters host clock speed&n; *&t;&t;+ Read and check the PHY type&n; *&n; * Returns:&n; *&t;0:&t;success&n; *&t;5:&t;Unexpected PHY type detected&n; */
 DECL|function|SkGeInit1
 r_static
@@ -3715,6 +4023,19 @@ id|RetVal
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef SK_PCI_RESET
+(paren
+r_void
+)paren
+id|SkGePciReset
+c_func
+(paren
+id|pAC
+comma
+id|IoC
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* SK_PCI_RESET */
 multiline_comment|/* Do the reset */
 id|SK_OUT8
 c_func
@@ -3738,7 +4059,7 @@ id|CS_RST_CLR
 )paren
 suffix:semicolon
 multiline_comment|/* Reset all error bits in the PCI STATUS register */
-multiline_comment|/*&n;&t; * Note: Cfg cycles cannot be used, because they are not&n;&t; *&t; available on some platforms after &squot;boot time&squot;.&n;&t; */
+multiline_comment|/*&n;&t; * Note: Cfg cycles cannot be used, because they are not&n;&t; *&t;&t; available on some platforms after &squot;boot time&squot;.&n;&t; */
 id|SK_OUT8
 c_func
 (paren
@@ -4078,6 +4399,7 @@ id|RetVal
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeInit1*/
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInit2() - Level 2 Initialization&n; *&n; * Description:&n; *&t;- start the Blink Source Counter&n; *&t;- start the Descriptor Poll Timer&n; *&t;- configure the MAC-Arbiter&n; *&t;- configure the Packet-Arbiter&n; *&t;- enable the Tx Arbiters&n; *&t;- enable the RAM Interface Arbiter&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeInit2
 r_static
@@ -4299,6 +4621,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* SkGeInit2 */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInit() - Initialize the GE Adapter with the specified level.&n; *&n; * Description:&n; *&t;Level&t;0:&t;Initialize the Module structures.&n; *&t;Level&t;1:&t;Generic Hardware Initialization. The&n; *&t;&t;&t;IOP/MemBase pointer has to be set before&n; *&t;&t;&t;calling this level.&n; *&n; *&t;&t;&t;o Do a software reset.&n; *&t;&t;&t;o Clear all reset bits.&n; *&t;&t;&t;o Verify that the detected hardware is present.&n; *&t;&t;&t;  Return an error if not.&n; *&t;&t;&t;o Get the hardware configuration&n; *&t;&t;&t;&t;+ Set GIMacsFound with the number of MACs.&n; *&t;&t;&t;&t;+ Store the RAM size in GIRamSize.&n; *&t;&t;&t;&t;+ Save the PCI Revision ID in GIPciHwRev.&n; *&t;&t;&t;o return an error&n; *&t;&t;&t;&t;if Number of MACs &gt; SK_MAX_MACS&n; *&n; *&t;&t;&t;After returning from Level 0 the adapter&n; *&t;&t;&t;may be accessed with IO operations.&n; *&n; *&t;Level&t;2:&t;start the Blink Source Counter&n; *&n; * Returns:&n; *&t;0:&t;success&n; *&t;1:&t;Number of MACs exceeds SK_MAX_MACS&t;( after level 1)&n; *&t;2:&t;Adapter not present or not accessable&n; *&t;3:&t;Illegal initialization level&n; *&t;4:&t;Initialization Level 1 Call missing&n; *&t;5:&t;Unexpected PHY type detected&n; */
 DECL|function|SkGeInit
 r_int
@@ -4530,6 +4853,7 @@ id|RetVal
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeInit*/
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeDeInit() - Deinitialize the adapter.&n; *&n; * Description:&n; *&t;All ports of the adapter will be stopped if not already done.&n; *&t;Do a software reset and switch off all LEDs.&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkGeDeInit
 r_void
@@ -4551,6 +4875,15 @@ id|i
 suffix:semicolon
 id|SK_U16
 id|Word
+suffix:semicolon
+multiline_comment|/* Ensure I2C is ready. */
+id|SkI2cWaitIrq
+c_func
+(paren
+id|pAC
+comma
+id|IoC
+)paren
 suffix:semicolon
 multiline_comment|/* Stop all current transfer activity */
 r_for
@@ -4671,6 +5004,7 @@ id|CS_RST_SET
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeDeInit*/
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkGeInitPort()&t;Initialize the specified prot.&n; *&n; * Description:&n; *&t;PRxQSize, PXSQSize, and PXAQSize has to be&n; *&t;configured for the specified port before calling this&n; *&t;function. The descriptor rings has to be initialized, too.&n; *&n; *&t;o (Re)configure queues of the specified port.&n; *&t;o configure the XMAC of the specified port.&n; *&t;o put ASIC and XMAC(s) in operational mode.&n; *&t;o initialize Rx/Tx and Sync LED&n; *&t;o initialize RAM Buffers and MAC FIFOs&n; *&n; *&t;The port is ready to connect when returning.&n; *&n; * Note:&n; *&t;The XMACs Rx and Tx state machine is still disabled when&n; *&t;returning.&n; *&n; * Returns:&n; *&t;0:&t;success&n; *&t;1:&t;Queue size initialization error. The configured values&n; *&t;&t;for PRxQSize, PXSQSize, or PXAQSize are invalid for one&n; *&t;&t;or more queues. The specified port was NOT initialized.&n; *&t;&t;An error log entry was generated.&n; *&t;2:&t;The port has to be stopped before it can be initilaized again.&n; */
 DECL|function|SkGeInitPort
 r_int
@@ -4887,4 +5221,5 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkGeInitPort */
 eof

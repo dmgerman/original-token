@@ -1,16 +1,15 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsutils - Utilities for the resource manager&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsutils - Utilities for the resource manager&n; *              $Revision: 10 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;resource.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acresrc.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          RESOURCE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;rsutils&quot;
 )paren
-suffix:semicolon
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_get_prt_method_data&n; *&n; * PARAMETERS:  Device_handle   - a handle to the containing object&n; *              Ret_buffer      - a pointer to a buffer structure for the&n; *                                  results&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the _PRT value of an object&n; *              contained in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_get_prt_method_data&n; *&n; * PARAMETERS:  Handle          - a handle to the containing object&n; *              Ret_buffer      - a pointer to a buffer structure for the&n; *                                  results&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the _PRT value of an object&n; *              contained in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_get_prt_method_data
 id|acpi_rs_get_prt_method_data
@@ -23,7 +22,7 @@ op_star
 id|ret_buffer
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_obj
 suffix:semicolon
@@ -32,41 +31,12 @@ id|status
 suffix:semicolon
 id|u32
 id|buffer_space_needed
+suffix:semicolon
+multiline_comment|/* already validated params, so we won&squot;t repeat here */
+id|buffer_space_needed
 op_assign
 id|ret_buffer-&gt;length
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Must have a valid handle and buffer, So we have to have a handle&n;&t; *  a return buffer structure and if there is a non-zero buffer length&n;&t; *  we also need a valid pointer in the buffer&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-op_logical_neg
-id|handle
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|ret_buffer
-)paren
-op_logical_or
-(paren
-(paren
-op_logical_neg
-id|ret_buffer-&gt;pointer
-)paren
-op_logical_and
-(paren
-id|ret_buffer-&gt;length
-)paren
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *  Execute the method, no parameters&n;&t; */
 id|status
 op_assign
@@ -85,9 +55,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_return
@@ -159,7 +130,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_get_crs_method_data&n; *&n; * PARAMETERS:  Device_handle   - a handle to the containing object&n; *              Ret_buffer      - a pointer to a buffer structure for the&n; *                                  results&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the _CRS value of an object&n; *              contained in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_get_crs_method_data&n; *&n; * PARAMETERS:  Handle          - a handle to the containing object&n; *              Ret_buffer      - a pointer to a buffer structure for the&n; *                                  results&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the _CRS value of an object&n; *              contained in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_get_crs_method_data
 id|acpi_rs_get_crs_method_data
@@ -172,7 +143,7 @@ op_star
 id|ret_buffer
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_obj
 suffix:semicolon
@@ -184,38 +155,7 @@ id|buffer_space_needed
 op_assign
 id|ret_buffer-&gt;length
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Must have a valid handle and buffer, So we have to have a handle&n;&t; *  a return buffer structure and if there is a non-zero buffer length&n;&t; *  we also need a valid pointer in the buffer&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-op_logical_neg
-id|handle
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|ret_buffer
-)paren
-op_logical_or
-(paren
-(paren
-op_logical_neg
-id|ret_buffer-&gt;pointer
-)paren
-op_logical_and
-(paren
-id|ret_buffer-&gt;length
-)paren
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* already validated params, so we won&squot;t repeat here */
 multiline_comment|/*&n;&t; *  Execute the method, no parameters&n;&t; */
 id|status
 op_assign
@@ -234,9 +174,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_return
@@ -289,25 +230,6 @@ op_amp
 id|buffer_space_needed
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|AE_OK
-op_eq
-id|status
-)paren
-(brace
-id|acpi_rs_dump_resource_list
-c_func
-(paren
-(paren
-id|RESOURCE
-op_star
-)paren
-id|ret_buffer-&gt;pointer
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Tell the user how much of the buffer we have used or is needed&n;&t; *  and return the final status.&n;&t; */
 id|ret_buffer-&gt;length
 op_assign
@@ -327,7 +249,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_get_prs_method_data&n; *&n; * PARAMETERS:  Device_handle   - a handle to the containing object&n; *              Ret_buffer      - a pointer to a buffer structure for the&n; *                                  results&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the _PRS value of an object&n; *              contained in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_get_prs_method_data&n; *&n; * PARAMETERS:  Handle          - a handle to the containing object&n; *              Ret_buffer      - a pointer to a buffer structure for the&n; *                                  results&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the _PRS value of an object&n; *              contained in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_get_prs_method_data
 id|acpi_rs_get_prs_method_data
@@ -340,7 +262,7 @@ op_star
 id|ret_buffer
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|ret_obj
 suffix:semicolon
@@ -352,38 +274,7 @@ id|buffer_space_needed
 op_assign
 id|ret_buffer-&gt;length
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Must have a valid handle and buffer, So we have to have a handle&n;&t; *  a return buffer structure and if there is a non-zero buffer length&n;&t; *  we also need a valid pointer in the buffer&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-op_logical_neg
-id|handle
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|ret_buffer
-)paren
-op_logical_or
-(paren
-(paren
-op_logical_neg
-id|ret_buffer-&gt;pointer
-)paren
-op_logical_and
-(paren
-id|ret_buffer-&gt;length
-)paren
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* already validated params, so we won&squot;t repeat here */
 multiline_comment|/*&n;&t; *  Execute the method, no parameters&n;&t; */
 id|status
 op_assign
@@ -402,9 +293,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_return
@@ -476,7 +368,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_set_srs_method_data&n; *&n; * PARAMETERS:  Device_handle   - a handle to the containing object&n; *              *Method_name    - Name of method to execute, If NULL, the&n; *                                handle is the object to execute&n; *              In_buffer       - a pointer to a buffer structure of the&n; *                                  parameter&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to set the _SRS of an object contained&n; *              in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_set_srs_method_data&n; *&n; * PARAMETERS:  Handle          - a handle to the containing object&n; *              In_buffer       - a pointer to a buffer structure of the&n; *                                  parameter&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to set the _SRS of an object contained&n; *              in an object specified by the handle passed in&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the contents of the callers buffer is undefined.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_set_srs_method_data
 id|acpi_rs_set_srs_method_data
@@ -489,14 +381,14 @@ op_star
 id|in_buffer
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|params
 (braket
 l_int|2
 )braket
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 id|param_obj
 suffix:semicolon
 id|ACPI_STATUS
@@ -513,37 +405,7 @@ id|buffer_size_needed
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Must have a valid handle and buffer&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-op_logical_neg
-id|handle
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|in_buffer
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|in_buffer-&gt;pointer
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|in_buffer-&gt;length
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* already validated params, so we won&squot;t repeat here */
 multiline_comment|/*&n;&t; * The In_buffer parameter will point to a linked list of&n;&t; *  resource parameters.  It needs to be formatted into a&n;&t; *  byte stream to be sent in as an input parameter.&n;&t; */
 id|buffer_size_needed
 op_assign
@@ -616,21 +478,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *  Failed the call&n;&t;&t; */
-id|acpi_cm_free
-(paren
-id|byte_stream
-)paren
-suffix:semicolon
-r_return
-(paren
-id|status
-)paren
+r_goto
+id|cleanup
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  Init the param object&n;&t; */
@@ -684,6 +539,8 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Clean up and return the status from Acpi_ns_evaluate_relative&n;&t; */
+id|cleanup
+suffix:colon
 id|acpi_cm_free
 (paren
 id|byte_stream

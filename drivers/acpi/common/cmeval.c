@@ -1,34 +1,33 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmeval - Object evaluation&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmeval - Object evaluation&n; *              $Revision: 14 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cmeval&quot;
 )paren
-suffix:semicolon
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_evaluate_numeric_object&n; *&n; * PARAMETERS:  Acpi_device         - NTE for the device&n; *              *Address            - Where the value is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: evaluates a numeric namespace object for a selected device&n; *              and stores results in *Address.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
+multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_evaluate_numeric_object&n; *&n; * PARAMETERS:  Device_node         - Node for the device&n; *              *Address            - Where the value is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: evaluates a numeric namespace object for a selected device&n; *              and stores results in *Address.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_evaluate_numeric_object
 id|acpi_cm_evaluate_numeric_object
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|object_name
 comma
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|acpi_device
+id|device_node
 comma
 id|u32
 op_star
 id|address
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -40,7 +39,7 @@ id|status
 op_assign
 id|acpi_ns_evaluate_relative
 (paren
-id|acpi_device
+id|device_node
 comma
 id|object_name
 comma
@@ -114,21 +113,21 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_execute_HID&n; *&n; * PARAMETERS:  Acpi_device         - NTE for the device&n; *              *Hid                - Where the HID is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Executes the _HID control method that returns the hardware&n; *              ID of the device.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
+multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_execute_HID&n; *&n; * PARAMETERS:  Device_node         - Node for the device&n; *              *Hid                - Where the HID is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Executes the _HID control method that returns the hardware&n; *              ID of the device.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_execute_HID
 id|acpi_cm_execute_HID
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|acpi_device
+id|device_node
 comma
 id|DEVICE_ID
 op_star
 id|hid
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -140,7 +139,7 @@ id|status
 op_assign
 id|acpi_ns_evaluate_relative
 (paren
-id|acpi_device
+id|device_node
 comma
 id|METHOD_NAME__HID
 comma
@@ -249,21 +248,21 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_execute_UID&n; *&n; * PARAMETERS:  Acpi_device         - NTE for the device&n; *              *Uid                - Where the UID is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Executes the _UID control method that returns the hardware&n; *              ID of the device.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
+multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_execute_UID&n; *&n; * PARAMETERS:  Device_node         - Node for the device&n; *              *Uid                - Where the UID is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Executes the _UID control method that returns the hardware&n; *              ID of the device.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_execute_UID
 id|acpi_cm_execute_UID
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|acpi_device
+id|device_node
 comma
 id|DEVICE_ID
 op_star
 id|uid
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -275,7 +274,7 @@ id|status
 op_assign
 id|acpi_ns_evaluate_relative
 (paren
-id|acpi_device
+id|device_node
 comma
 id|METHOD_NAME__UID
 comma
@@ -377,21 +376,21 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_execute_STA&n; *&n; * PARAMETERS:  Acpi_device         - NTE for the device&n; *              *Flags              - Where the status flags are returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Executes _STA for selected device and stores results in&n; *              *Flags.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
+multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_execute_STA&n; *&n; * PARAMETERS:  Device_node         - Node for the device&n; *              *Flags              - Where the status flags are returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Executes _STA for selected device and stores results in&n; *              *Flags.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_execute_STA
 id|acpi_cm_execute_STA
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|acpi_device
+id|device_node
 comma
 id|u32
 op_star
 id|flags
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -403,7 +402,7 @@ id|status
 op_assign
 id|acpi_ns_evaluate_relative
 (paren
-id|acpi_device
+id|device_node
 comma
 id|METHOD_NAME__STA
 comma

@@ -1,15 +1,14 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: hwxface.c - Hardware access external interfaces&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: hwxface.c - Hardware access external interfaces&n; *              $Revision: 31 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          HARDWARE
 id|MODULE_NAME
 (paren
 l_string|&quot;hwxface&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * Hardware globals&n; *&n; ******************************************************************************/
 DECL|variable|acpi_hw_cx_handlers
 id|ACPI_C_STATE_HANDLER
@@ -63,16 +62,15 @@ id|NATIVE_UINT
 id|i
 suffix:semicolon
 id|u8
-id|duty_offset
-suffix:semicolon
-id|u8
 id|duty_width
+op_assign
+l_int|0
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|cpu_entry
+id|cpu_node
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|cpu_obj
 suffix:semicolon
@@ -93,7 +91,7 @@ id|AE_BAD_PARAMETER
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  Convert and validate the device handle&n;&t; */
-id|cpu_entry
+id|cpu_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -104,7 +102,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_entry
+id|cpu_node
 )paren
 (brace
 r_return
@@ -121,7 +119,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|cpu_entry
+id|cpu_node
 )paren
 suffix:semicolon
 r_if
@@ -137,20 +135,19 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
-id|duty_offset
-op_assign
-id|acpi_gbl_FACP-&gt;duty_offset
-suffix:semicolon
+macro_line|#ifndef _IA64
+multiline_comment|/*&n;&t; * No Duty fields in IA64 tables&n;&t; */
 id|duty_width
 op_assign
 id|acpi_gbl_FACP-&gt;duty_width
 suffix:semicolon
-multiline_comment|/*&n;&t; *  P0 must always have a P_BLK all others may be null&n;&t; *  in either case, we can&squot;t thottle a processor that has no P_BLK&n;&t; *&n;&t; *  Also if no Duty width, one state and it is 100%&n;&t; *&n;&t; */
+macro_line|#endif
+multiline_comment|/*&n;&t; *  P0 must always have a P_BLK all others may be null&n;&t; *  in either case, we can&squot;t throttle a processor that has no P_BLK&n;&t; *&n;&t; *  Also if no Duty width, one state and it is 100%&n;&t; *&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_obj-&gt;processor.pblk_length
+id|cpu_obj-&gt;processor.length
 op_logical_or
 op_logical_neg
 id|duty_width
@@ -158,7 +155,7 @@ op_logical_or
 (paren
 l_int|0xFFFF
 OL
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 )paren
 )paren
 (brace
@@ -295,11 +292,11 @@ op_star
 id|throttle_state
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|cpu_entry
+id|cpu_node
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|cpu_obj
 suffix:semicolon
@@ -311,12 +308,16 @@ id|duty_cycle
 suffix:semicolon
 id|u8
 id|duty_offset
+op_assign
+l_int|0
 suffix:semicolon
 id|u8
 id|duty_width
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Convert and validate the device handle */
-id|cpu_entry
+id|cpu_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -327,7 +328,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_entry
+id|cpu_node
 op_logical_or
 op_logical_neg
 id|throttle_state
@@ -347,7 +348,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|cpu_entry
+id|cpu_node
 )paren
 suffix:semicolon
 r_if
@@ -363,6 +364,8 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef _IA64
+multiline_comment|/*&n;&t; * No Duty fields in IA64 tables&n;&t; */
 id|duty_offset
 op_assign
 id|acpi_gbl_FACP-&gt;duty_offset
@@ -371,12 +374,13 @@ id|duty_width
 op_assign
 id|acpi_gbl_FACP-&gt;duty_width
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *  Must have a valid P_BLK P0 must have a P_BLK all others may be null&n;&t; *  in either case, we can&squot;t thottle a processor that has no P_BLK&n;&t; *  that means we are in the only supported state (0 - 100%)&n;&t; *&n;&t; *  also, if Duty_width is zero there are no additional states&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_obj-&gt;processor.pblk_length
+id|cpu_obj-&gt;processor.length
 op_logical_or
 op_logical_neg
 id|duty_width
@@ -384,7 +388,7 @@ op_logical_or
 (paren
 l_int|0xFFFF
 OL
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 )paren
 )paren
 (brace
@@ -416,7 +420,7 @@ id|acpi_hw_get_duty_cycle
 (paren
 id|duty_offset
 comma
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 comma
 id|num_throttle_states
 )paren
@@ -462,11 +466,11 @@ id|u32
 id|throttle_state
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|cpu_entry
+id|cpu_node
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|cpu_obj
 suffix:semicolon
@@ -491,7 +495,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Convert and validate the device handle */
-id|cpu_entry
+id|cpu_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -502,7 +506,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_entry
+id|cpu_node
 )paren
 (brace
 r_return
@@ -519,7 +523,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|cpu_entry
+id|cpu_node
 )paren
 suffix:semicolon
 r_if
@@ -535,6 +539,8 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef _IA64
+multiline_comment|/*&n;&t; * No Duty fields in IA64 tables&n;&t; */
 id|duty_offset
 op_assign
 id|acpi_gbl_FACP-&gt;duty_offset
@@ -543,12 +549,13 @@ id|duty_width
 op_assign
 id|acpi_gbl_FACP-&gt;duty_width
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *  Must have a valid P_BLK P0 must have a P_BLK all others may be null&n;&t; *  in either case, we can&squot;t thottle a processor that has no P_BLK&n;&t; *  that means we are in the only supported state (0 - 100%)&n;&t; *&n;&t; *  also, if Duty_width is zero there are no additional states&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_obj-&gt;processor.pblk_length
+id|cpu_obj-&gt;processor.length
 op_logical_or
 op_logical_neg
 id|duty_width
@@ -556,7 +563,7 @@ op_logical_or
 (paren
 l_int|0xFFFF
 OL
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 )paren
 )paren
 (brace
@@ -613,7 +620,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *  Turn off throttling (don&squot;t muck with the h/w while throttling).&n;&t; */
 id|acpi_hw_disable_throttling
 (paren
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Program the throttling state.&n;&t; */
@@ -623,7 +630,7 @@ id|duty_offset
 comma
 id|duty_cycle
 comma
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 comma
 id|num_throttle_states
 )paren
@@ -637,7 +644,7 @@ id|throttle_state
 (brace
 id|acpi_hw_enable_throttling
 (paren
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 )paren
 suffix:semicolon
 )brace
@@ -859,26 +866,26 @@ op_star
 id|pm_timer_ticks
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|cpu_entry
+id|cpu_node
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|cpu_obj
 op_assign
 l_int|NULL
 suffix:semicolon
 id|ACPI_IO_ADDRESS
-id|pblk_address
+id|address
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Convert Processor_handle to Pblk_addres...&n;&t; */
 multiline_comment|/* Convert and validate the device handle */
-id|cpu_entry
+id|cpu_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -889,11 +896,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_entry
+id|cpu_node
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Check for an existing internal object */
@@ -904,7 +913,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|cpu_entry
+id|cpu_node
 )paren
 suffix:semicolon
 r_if
@@ -915,34 +924,38 @@ id|cpu_obj
 )paren
 (brace
 r_return
+(paren
 id|AE_NOT_FOUND
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Get the processor register block (P_BLK) address */
-id|pblk_address
+id|address
 op_assign
-id|cpu_obj-&gt;processor.pblk_address
+id|cpu_obj-&gt;processor.address
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_obj-&gt;processor.pblk_length
+id|cpu_obj-&gt;processor.length
 )paren
 (brace
 multiline_comment|/* Ensure a NULL addresss (note that P_BLK isn&squot;t required for C1) */
-id|pblk_address
+id|address
 op_assign
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Enter the currently active Cx sleep state.&n;&t; */
 r_return
+(paren
 id|acpi_hw_enter_cx
 (paren
-id|pblk_address
+id|address
 comma
 id|pm_timer_ticks
+)paren
 )paren
 suffix:semicolon
 )brace

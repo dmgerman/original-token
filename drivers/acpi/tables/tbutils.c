@@ -1,16 +1,15 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbutils - Table manipulation utilities&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbutils - Table manipulation utilities&n; *              $Revision: 26 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;tables.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;actables.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          TABLE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;tbutils&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_system_table_pointer&n; *&n; * PARAMETERS:  *Where              - Pointer to be examined&n; *&n; * RETURN:      TRUE if Where is within the AML stream (in one of the ACPI&n; *              system tables such as the DSDT or an SSDT.)&n; *              FALSE otherwise&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_handle_to_object&n; *&n; * PARAMETERS:  Table_id            - Id for which the function is searching&n; *              Table_desc          - Pointer to return the matching table&n; *                                      descriptor.&n; *&n; * RETURN:      Search the tables to find one with a matching Table_id and&n; *              return a pointer to that table descriptor.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_tb_handle_to_object
 id|acpi_tb_handle_to_object
@@ -70,7 +69,9 @@ op_assign
 id|list_head
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 id|list_head
@@ -92,7 +93,9 @@ id|i
 suffix:semicolon
 )brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_system_table_pointer&n; *&n; * PARAMETERS:  *Where              - Pointer to be examined&n; *&n; * RETURN:      TRUE if Where is within the AML stream (in one of the ACPI&n; *              system tables such as the DSDT or an SSDT.)&n; *              FALSE otherwise&n; *&n; ******************************************************************************/
@@ -296,7 +299,9 @@ id|ACPI_TABLE_HEADER
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_ADDRESS
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Ensure that the signature is 4 ASCII characters */
@@ -325,7 +330,9 @@ l_string|&quot;Invalid table signature found&quot;
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_BAD_SIGNATURE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Validate the table length */
@@ -346,11 +353,15 @@ l_string|&quot;Invalid table header length found&quot;
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_BAD_HEADER
+)paren
 suffix:semicolon
 )brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_map_acpi_table&n; *&n; * PARAMETERS:  Physical_address        - Physical address of table to map&n; *              *Size                   - Size of the table.  If zero, the size&n; *                                        from the table header is used.&n; *                                        Actual size is returned here.&n; *              **Logical_address       - Logical address of mapped table&n; *&n; * RETURN:      Logical address of the mapped table.&n; *&n; * DESCRIPTION: Maps the physical address of table into a logical address&n; *&n; ******************************************************************************/
@@ -430,7 +441,9 @@ id|status
 )paren
 (brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Extract the full table length before we delete the mapping */
@@ -468,7 +481,9 @@ id|status
 )paren
 (brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -500,7 +515,9 @@ id|status
 )paren
 (brace
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 op_star
@@ -514,7 +531,9 @@ op_assign
 id|table
 suffix:semicolon
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_verify_table_checksum&n; *&n; * PARAMETERS:  *Table_header           - ACPI table to verify&n; *&n; * RETURN:      8 bit checksum of table&n; *&n; * DESCRIPTION: Does an 8 bit checksum of table and returns status.  A correct&n; *              table should have a checksum of 0.&n; *&n; ******************************************************************************/
@@ -643,7 +662,9 @@ suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 id|sum
+)paren
 suffix:semicolon
 )brace
 eof

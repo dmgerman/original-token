@@ -1,6 +1,6 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skaddr.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.33 $&n; * Date:&t;$Date: 1999/05/28 10:56:06 $&n; * Purpose:&t;Manage Addresses (Multicast and Unicast) and Promiscuous Mode&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998,1999 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;See the file &quot;skge.c&quot; for further information.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skaddr.c,v $&n; *&t;Revision 1.33  1999/05/28 10:56:06  rassmann&n; *&t;Editorial changes.&n; *&t;&n; *&t;Revision 1.32  1999/03/31 10:59:20  rassmann&n; *&t;Returning Success instead of DupAddr if address shall be overridden&n; *&t;with same value.&n; *&t;&n; *&t;Revision 1.31  1999/01/14 16:18:17  rassmann&n; *&t;Corrected multicast initialization.&n; *&t;&n; *&t;Revision 1.30  1999/01/04 10:30:35  rassmann&n; *&t;SkAddrOverride only possible after SK_INIT_IO phase.&n; *&t;&n; *&t;Revision 1.29  1998/12/29 13:13:10  rassmann&n; *&t;An address override is now preserved in the SK_INIT_IO phase.&n; *&t;All functions return an int now.&n; *&t;Extended parameter checking.&n; *&t;&n; *&t;Revision 1.28  1998/12/01 11:45:53  rassmann&n; *&t;Code cleanup.&n; *&t;&n; *&t;Revision 1.27  1998/12/01 09:22:49  rassmann&n; *&t;SkAddrMcAdd and SkAddrMcUpdate returned SK_MC_FILTERING_INEXACT&n; *&t;too often.&n; *&t;&n; *&t;Revision 1.26  1998/11/24 12:39:44  rassmann&n; *&t;Reserved multicast entry for BPDU address.&n; *&t;13 multicast entries left for protocol.&n; *&t;&n; *&t;Revision 1.25  1998/11/17 16:54:23  rassmann&n; *&t;Using exact match for up to 14 multicast addresses.&n; *&t;Still receiving all multicasts if more addresses are added.&n; *&t;&n; *&t;Revision 1.24  1998/11/13 17:24:31  rassmann&n; *&t;Changed return value of SkAddrOverride to int.&n; *&t;&n; *&t;Revision 1.23  1998/11/13 16:56:18  rassmann&n; *&t;Added macro SK_ADDR_COMPARE.&n; *&t;Changed return type of SkAddrOverride to SK_BOOL.&n; *&t;&n; *&t;Revision 1.22  1998/11/04 17:06:17  rassmann&n; *&t;Corrected McUpdate and PromiscuousChange functions.&n; *&t;&n; *&t;Revision 1.21  1998/10/29 14:34:04  rassmann&n; *&t;Clearing SK_ADDR struct at startup.&n; *&t;&n; *&t;Revision 1.20  1998/10/28 18:16:34  rassmann&n; *&t;Avoiding I/Os before SK_INIT_RUN level.&n; *&t;Aligning InexactFilter.&n; *&t;&n; *&t;Revision 1.19  1998/10/28 11:29:28  rassmann&n; *&t;Programming physical address in SkAddrMcUpdate.&n; *&t;Corrected programming of exact match entries.&n; *&t;&n; *&t;Revision 1.18  1998/10/28 10:34:48  rassmann&n; *&t;Corrected reading of physical addresses.&n; *&t;&n; *&t;Revision 1.17  1998/10/28 10:26:13  rassmann&n; *&t;Getting ports&squot; current MAC addresses from EPROM now.&n; *&t;Added debug output.&n; *&t;&n; *&t;Revision 1.16  1998/10/27 16:20:12  rassmann&n; *&t;Reading MAC address byte by byte.&n; *&t;&n; *&t;Revision 1.15  1998/10/22 11:39:09  rassmann&n; *&t;Corrected signed/unsigned mismatches.&n; *&t;&n; *&t;Revision 1.14  1998/10/19 17:12:35  rassmann&n; *&t;Syntax corrections.&n; *&t;&n; *&t;Revision 1.13  1998/10/19 17:02:19  rassmann&n; *&t;Now reading permanent MAC addresses from CRF.&n; *&t;&n; *&t;Revision 1.12  1998/10/15 15:15:48  rassmann&n; *&t;Changed Flags Parameters from SK_U8 to int.&n; *&t;Checked with lint.&n; *&t;&n; *&t;Revision 1.11  1998/09/24 19:15:12  rassmann&n; *&t;Code cleanup.&n; *&t;&n; *&t;Revision 1.10  1998/09/18 20:18:54  rassmann&n; *&t;Added HW access.&n; *&t;Implemented swapping.&n; *&t;&n; *&t;Revision 1.9  1998/09/16 11:32:00  rassmann&n; *&t;Including skdrv1st.h again. :(&n; *&t;&n; *&t;Revision 1.8  1998/09/16 11:09:34  rassmann&n; *&t;Syntax corrections.&n; *&t;&n; *&t;Revision 1.7  1998/09/14 17:06:34  rassmann&n; *&t;Minor changes.&n; *&t;&n; *&t;Revision 1.6  1998/09/07 08:45:41  rassmann&n; *&t;Syntax corrections.&n; *&t;&n; *&t;Revision 1.5  1998/09/04 19:40:19  rassmann&n; *&t;Interface enhancements.&n; *&t;&n; *&t;Revision 1.4  1998/09/04 12:14:12  rassmann&n; *&t;Interface cleanup.&n; *&t;&n; *&t;Revision 1.3  1998/09/02 16:56:40  rassmann&n; *&t;Updated interface.&n; *&t;&n; *&t;Revision 1.2  1998/08/27 14:26:09  rassmann&n; *&t;Updated interface.&n; *&t;&n; *&t;Revision 1.1  1998/08/21 08:30:22  rassmann&n; *&t;First public version.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skaddr.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.36 $&n; * Date:&t;$Date: 2000/08/07 11:10:39 $&n; * Purpose:&t;Manage Addresses (Multicast and Unicast) and Promiscuous Mode.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998-2000 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skaddr.c,v $&n; *&t;Revision 1.36  2000/08/07 11:10:39  rassmann&n; *&t;Editorial changes.&n; *&t;&n; *&t;Revision 1.35  2000/05/04 09:38:41  rassmann&n; *&t;Editorial changes.&n; *&t;Corrected multicast address hashing.&n; *&t;&n; *&t;Revision 1.34  1999/11/22 13:23:44  cgoos&n; *&t;Changed license header to GPL.&n; *&t;&n; *&t;Revision 1.33  1999/05/28 10:56:06  rassmann&n; *&t;Editorial changes.&n; *&t;&n; *&t;Revision 1.32  1999/03/31 10:59:20  rassmann&n; *&t;Returning Success instead of DupAddr if address shall be overridden&n; *&t;with same value.&n; *&t;&n; *&t;Revision 1.31  1999/01/14 16:18:17  rassmann&n; *&t;Corrected multicast initialization.&n; *&t;&n; *&t;Revision 1.30  1999/01/04 10:30:35  rassmann&n; *&t;SkAddrOverride only possible after SK_INIT_IO phase.&n; *&t;&n; *&t;Revision 1.29  1998/12/29 13:13:10  rassmann&n; *&t;An address override is now preserved in the SK_INIT_IO phase.&n; *&t;All functions return an int now.&n; *&t;Extended parameter checking.&n; *&t;&n; *&t;Revision 1.28  1998/12/01 11:45:53  rassmann&n; *&t;Code cleanup.&n; *&t;&n; *&t;Revision 1.27  1998/12/01 09:22:49  rassmann&n; *&t;SkAddrMcAdd and SkAddrMcUpdate returned SK_MC_FILTERING_INEXACT&n; *&t;too often.&n; *&t;&n; *&t;Revision 1.26  1998/11/24 12:39:44  rassmann&n; *&t;Reserved multicast entry for BPDU address.&n; *&t;13 multicast entries left for protocol.&n; *&t;&n; *&t;Revision 1.25  1998/11/17 16:54:23  rassmann&n; *&t;Using exact match for up to 14 multicast addresses.&n; *&t;Still receiving all multicasts if more addresses are added.&n; *&t;&n; *&t;Revision 1.24  1998/11/13 17:24:31  rassmann&n; *&t;Changed return value of SkAddrOverride to int.&n; *&t;&n; *&t;Revision 1.23  1998/11/13 16:56:18  rassmann&n; *&t;Added macro SK_ADDR_COMPARE.&n; *&t;Changed return type of SkAddrOverride to SK_BOOL.&n; *&t;&n; *&t;Revision 1.22  1998/11/04 17:06:17  rassmann&n; *&t;Corrected McUpdate and PromiscuousChange functions.&n; *&t;&n; *&t;Revision 1.21  1998/10/29 14:34:04  rassmann&n; *&t;Clearing SK_ADDR struct at startup.&n; *&t;&n; *&t;Revision 1.20  1998/10/28 18:16:34  rassmann&n; *&t;Avoiding I/Os before SK_INIT_RUN level.&n; *&t;Aligning InexactFilter.&n; *&t;&n; *&t;Revision 1.19  1998/10/28 11:29:28  rassmann&n; *&t;Programming physical address in SkAddrMcUpdate.&n; *&t;Corrected programming of exact match entries.&n; *&t;&n; *&t;Revision 1.18  1998/10/28 10:34:48  rassmann&n; *&t;Corrected reading of physical addresses.&n; *&t;&n; *&t;Revision 1.17  1998/10/28 10:26:13  rassmann&n; *&t;Getting ports&squot; current MAC addresses from EPROM now.&n; *&t;Added debug output.&n; *&t;&n; *&t;Revision 1.16  1998/10/27 16:20:12  rassmann&n; *&t;Reading MAC address byte by byte.&n; *&t;&n; *&t;Revision 1.15  1998/10/22 11:39:09  rassmann&n; *&t;Corrected signed/unsigned mismatches.&n; *&t;&n; *&t;Revision 1.14  1998/10/19 17:12:35  rassmann&n; *&t;Syntax corrections.&n; *&t;&n; *&t;Revision 1.13  1998/10/19 17:02:19  rassmann&n; *&t;Now reading permanent MAC addresses from CRF.&n; *&t;&n; *&t;Revision 1.12  1998/10/15 15:15:48  rassmann&n; *&t;Changed Flags Parameters from SK_U8 to int.&n; *&t;Checked with lint.&n; *&t;&n; *&t;Revision 1.11  1998/09/24 19:15:12  rassmann&n; *&t;Code cleanup.&n; *&t;&n; *&t;Revision 1.10  1998/09/18 20:18:54  rassmann&n; *&t;Added HW access.&n; *&t;Implemented swapping.&n; *&t;&n; *&t;Revision 1.9  1998/09/16 11:32:00  rassmann&n; *&t;Including skdrv1st.h again. :(&n; *&t;&n; *&t;Revision 1.8  1998/09/16 11:09:34  rassmann&n; *&t;Syntax corrections.&n; *&t;&n; *&t;Revision 1.7  1998/09/14 17:06:34  rassmann&n; *&t;Minor changes.&n; *&t;&n; *&t;Revision 1.6  1998/09/07 08:45:41  rassmann&n; *&t;Syntax corrections.&n; *&t;&n; *&t;Revision 1.5  1998/09/04 19:40:19  rassmann&n; *&t;Interface enhancements.&n; *&t;&n; *&t;Revision 1.4  1998/09/04 12:14:12  rassmann&n; *&t;Interface cleanup.&n; *&t;&n; *&t;Revision 1.3  1998/09/02 16:56:40  rassmann&n; *&t;Updated interface.&n; *&t;&n; *&t;Revision 1.2  1998/08/27 14:26:09  rassmann&n; *&t;Updated interface.&n; *&t;&n; *&t;Revision 1.1  1998/08/21 08:30:22  rassmann&n; *&t;First public version.&n; *&n; ******************************************************************************/
 multiline_comment|/******************************************************************************&n; *&n; * Description:&n; *&n; * This module is intended to manage multicast addresses, address override,&n; * and promiscuous mode on GEnesis adapters.&n; *&n; * Address Layout:&n; *&t;port address:&t;&t;physical MAC address&n; *&t;1st exact match:&t;logical MAC address&n; *&t;2nd exact match:&t;RLMT multicast&n; *&t;exact match 3-13:&t;OS-specific multicasts&n; *&n; * Include File Hierarchy:&n; *&n; *&t;&quot;skdrv1st.h&quot;&n; *&t;&quot;skdrv2nd.h&quot;&n; *&n; ******************************************************************************/
 macro_line|#ifndef&t;lint
 DECL|variable|SysKonnectFileId
@@ -11,14 +11,13 @@ id|SysKonnectFileId
 (braket
 )braket
 op_assign
-l_string|&quot;@(#) $Id: skaddr.c,v 1.33 1999/05/28 10:56:06 rassmann Exp $ (C) SysKonnect.&quot;
+l_string|&quot;@(#) $Id: skaddr.c,v 1.36 2000/08/07 11:10:39 rassmann Exp $ (C) SysKonnect.&quot;
 suffix:semicolon
 macro_line|#endif&t;/* !defined(lint) */
 DECL|macro|__SKADDR_C
 mdefine_line|#define __SKADDR_C
 macro_line|#ifdef __cplusplus
-id|xxxx
-multiline_comment|/* not supported yet - force error */
+macro_line|#error C++ is not yet supported.
 r_extern
 l_string|&quot;C&quot;
 (brace
@@ -26,16 +25,10 @@ macro_line|#endif&t;/* cplusplus */
 macro_line|#include &quot;h/skdrv1st.h&quot;
 macro_line|#include &quot;h/skdrv2nd.h&quot;
 multiline_comment|/* defines ********************************************************************/
-DECL|macro|SK_ADDR_CHEAT
-mdefine_line|#define SK_ADDR_CHEAT&t;&t;YES&t;/* Cheat. */
-multiline_comment|/*&n; * G32:&n; * POLY&t;equ&t;&t;04C11DB6h&t;; CRC polynominal term&n; * bit-reversed:&t;6DB88320&n; */
 DECL|macro|CRC32_POLY
 mdefine_line|#define CRC32_POLY&t;0xEDB88320UL&t;/* CRC32-Poly - XMAC: Little Endian */
-macro_line|#if 0
-mdefine_line|#define CRC32_POLY&t;0x6DB88320UL&t;/* CRC32-Poly - XMAC: Little Endian */
-macro_line|#endif&t;/* 0 */
 DECL|macro|HASH_BITS
-mdefine_line|#define HASH_BITS&t;6&t;&t;/* #bits in hash */
+mdefine_line|#define HASH_BITS&t;6&t;&t;&t;&t;/* #bits in hash */
 DECL|macro|SK_MC_BIT
 mdefine_line|#define&t;SK_MC_BIT&t;0x01
 multiline_comment|/* Error numbers and messages. */
@@ -86,28 +79,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif&t;/* DEBUG */
 multiline_comment|/* functions ******************************************************************/
-macro_line|#if 0
-r_void
-id|SkAddrDummy
-c_func
-(paren
-r_void
-)paren
-(brace
-id|SkAddrInit
-c_func
-(paren
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* SkAddrDummy */
-macro_line|#endif&t;/* 0 */
-multiline_comment|/******************************************************************************&n; *&n; *&t;SkAddrInit - initialize data, set state to init&n; *&n; * Description:&n; *&n; *&t;SK_INIT_DATA&n; *&t;============&n; *&n; *&t;This routine clears the multicast tables and resets promiscuous mode.&n; *&t;Some entries are reserved for the &quot;logical board address&quot;, the&n; *&t;SK-RLMT multicast address, and the BPDU multicast address.&n; *&n; *&n; *&t;SK_INIT_IO&n; *&t;==========&n; *&n; *&t;All permanent MAC addresses are read from EPROM.&n; *&t;If the current MAC addresses are not already set in software,&n; *&t;they are set to the values of the permanent addresses.&n; *&t;The current addresses are written to the corresponding XMAC.&n; *&n; *&n; *&t;SK_INIT_RUN&n; *&t;===========&n; *&n; *&t;Nothing.&n; *&n; * Context:&n; *&t;init, pageable&n; *&n; * Returns:&n; *&t;SK_ADDR_SUCCESS&n; */
+multiline_comment|/******************************************************************************&n; *&n; *&t;SkAddrInit - initialize data, set state to init&n; *&n; * Description:&n; *&n; *&t;SK_INIT_DATA&n; *&t;============&n; *&n; *&t;This routine clears the multicast tables and resets promiscuous mode.&n; *&t;Some entries are reserved for the &quot;logical MAC address&quot;, the&n; *&t;SK-RLMT multicast address, and the BPDU multicast address.&n; *&n; *&n; *&t;SK_INIT_IO&n; *&t;==========&n; *&n; *&t;All permanent MAC addresses are read from EPROM.&n; *&t;If the current MAC addresses are not already set in software,&n; *&t;they are set to the values of the permanent addresses.&n; *&t;The current addresses are written to the corresponding XMAC.&n; *&n; *&n; *&t;SK_INIT_RUN&n; *&t;===========&n; *&n; *&t;Nothing.&n; *&n; * Context:&n; *&t;init, pageable&n; *&n; * Returns:&n; *&t;SK_ADDR_SUCCESS&n; */
 DECL|function|SkAddrInit
 r_int
 id|SkAddrInit
@@ -216,7 +188,7 @@ op_assign
 id|SK_ADDR_FIRST_MATCH_DRV
 suffix:semicolon
 macro_line|#if 0
-multiline_comment|/* Not here ... */
+multiline_comment|/* Don&squot;t do this here ... */
 multiline_comment|/* Reset Promiscuous mode. */
 (paren
 r_void
@@ -323,7 +295,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif&t;/* DEBUG */
-multiline_comment|/* Read permanent virtual address from Control Register File. */
+multiline_comment|/* Read permanent logical MAC address from Control Register File. */
 r_for
 c_loop
 (paren
@@ -371,7 +343,7 @@ op_logical_neg
 id|pAC-&gt;Addr.CurrentMacAddressSet
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Set the current virtual MAC address&n;&t;&t;&t; * to the permanent one.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Set the current logical MAC address&n;&t;&t;&t; * to the permanent one.&n;&t;&t;&t; */
 id|pAC-&gt;Addr.CurrentMacAddress
 op_assign
 id|pAC-&gt;Addr.PermanentMacAddress
@@ -381,7 +353,7 @@ op_assign
 id|SK_TRUE
 suffix:semicolon
 )brace
-multiline_comment|/* Set the current virtual MAC address. */
+multiline_comment|/* Set the current logical MAC address. */
 id|pAC-&gt;Addr.Port
 (braket
 id|pAC-&gt;Addr.ActivePort
@@ -448,7 +420,7 @@ comma
 id|SK_DBGCAT_INIT
 comma
 (paren
-l_string|&quot;Virtual MAC Address: %02X %02X %02X %02X %02X %02X&bslash;n&quot;
+l_string|&quot;Logical MAC Address: %02X %02X %02X %02X %02X %02X&bslash;n&quot;
 comma
 id|pAC-&gt;Addr.CurrentMacAddress.a
 (braket
@@ -483,7 +455,7 @@ l_int|5
 )paren
 macro_line|#endif&t;/* DEBUG */
 macro_line|#if 0
-multiline_comment|/* Not here ... */
+multiline_comment|/* Don&squot;t do this here ... */
 (paren
 r_void
 )paren
@@ -904,7 +876,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* SkAddrMcClear */
 macro_line|#ifndef SK_ADDR_CHEAT
-singleline_comment|// RA;:;:
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkCrc32McHash - hash multicast address&n; *&n; * Description:&n; *&t;This routine computes the hash value for a multicast address.&n; *&n; * Notes:&n; *&t;The code was adapted from the XaQti data sheet.&n; *&n; * Context:&n; *&t;runtime, pageable&n; *&n; * Returns:&n; *&t;Hash value of multicast address.&n; */
 DECL|function|SkCrc32McHash
 r_int
@@ -1289,14 +1260,10 @@ suffix:semicolon
 )brace
 macro_line|#ifndef SK_ADDR_CHEAT
 multiline_comment|/* Compute hash value of address. */
-id|RA
-suffix:semicolon
-suffix:colon
-suffix:semicolon
-suffix:colon
-id|untested
 id|HashBit
 op_assign
+l_int|63
+op_minus
 id|SkCrc32McHash
 c_func
 (paren
@@ -1532,7 +1499,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Also program the virtual address. */
+multiline_comment|/* Also program the logical MAC address. */
 id|i
 OL
 id|pAPort-&gt;NextExactMatchRlmt
@@ -1678,7 +1645,7 @@ c_loop
 (paren
 id|Inexact
 op_assign
-l_int|0xFF
+l_int|0
 comma
 id|i
 op_assign
@@ -1693,7 +1660,7 @@ op_increment
 )paren
 (brace
 id|Inexact
-op_and_assign
+op_or_assign
 id|pAPort-&gt;InexactFilter.Bytes
 (braket
 id|i
@@ -1759,42 +1726,8 @@ c_cond
 (paren
 id|Inexact
 op_ne
-l_int|0xFF
+l_int|0
 )paren
-(brace
-multiline_comment|/* Clear bit 15 in mode register. */
-id|XM_IN16
-c_func
-(paren
-id|IoC
-comma
-id|PortIdx
-comma
-id|XM_MODE
-comma
-op_amp
-id|LoMode
-)paren
-suffix:semicolon
-id|LoMode
-op_and_assign
-op_complement
-id|XM_MD_ENA_HSH
-suffix:semicolon
-id|XM_OUT16
-c_func
-(paren
-id|IoC
-comma
-id|PortIdx
-comma
-id|XM_MODE
-comma
-id|LoMode
-)paren
-suffix:semicolon
-)brace
-r_else
 (brace
 multiline_comment|/* Set 64-bit hash register to InexactFilter. */
 id|XM_OUTHASH
@@ -1829,6 +1762,40 @@ id|LoMode
 suffix:semicolon
 id|LoMode
 op_or_assign
+id|XM_MD_ENA_HSH
+suffix:semicolon
+id|XM_OUT16
+c_func
+(paren
+id|IoC
+comma
+id|PortIdx
+comma
+id|XM_MODE
+comma
+id|LoMode
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Clear bit 15 in mode register. */
+id|XM_IN16
+c_func
+(paren
+id|IoC
+comma
+id|PortIdx
+comma
+id|XM_MODE
+comma
+op_amp
+id|LoMode
+)paren
+suffix:semicolon
+id|LoMode
+op_and_assign
+op_complement
 id|XM_MD_ENA_HSH
 suffix:semicolon
 id|XM_OUT16
@@ -1901,7 +1868,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Also program the virtual address. */
+multiline_comment|/* Also program the logical MAC address. */
 id|i
 OL
 id|pAPort-&gt;NextExactMatchRlmt
@@ -2059,33 +2026,6 @@ l_int|5
 )brace
 macro_line|#endif&t;/* DEBUG */&t;&t;
 multiline_comment|/* Determine return value. */
-r_for
-c_loop
-(paren
-id|Inexact
-op_assign
-l_int|0
-comma
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|8
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|Inexact
-op_or_assign
-id|pAPort-&gt;InexactFilter.Bytes
-(braket
-id|i
-)braket
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2141,7 +2081,7 @@ multiline_comment|/* new MAC address */
 r_int
 id|Flags
 )paren
-multiline_comment|/* logical/physical address */
+multiline_comment|/* logical/physical MAC address */
 (brace
 id|SK_U32
 id|i
@@ -2305,7 +2245,7 @@ op_amp
 id|SK_ADDR_PHYSICAL_ADDRESS
 )paren
 (brace
-multiline_comment|/* Physical address. */
+multiline_comment|/* Physical MAC address. */
 r_if
 c_cond
 (paren
@@ -2469,7 +2409,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Logical Address. */
+multiline_comment|/* Logical MAC address. */
 r_if
 c_cond
 (paren
@@ -2620,7 +2560,7 @@ comma
 id|SK_DBGCAT_CTRL
 comma
 (paren
-l_string|&quot;New Virtual MAC Address: %02X %02X %02X %02X %02X %02X&bslash;n&quot;
+l_string|&quot;New logical MAC Address: %02X %02X %02X %02X %02X %02X&bslash;n&quot;
 comma
 id|pAC-&gt;Addr.CurrentMacAddress.a
 (braket

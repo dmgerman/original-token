@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; * SCSI layer glue code&n; *&n; * $Id: scsiglue.c,v 1.9 2000/08/25 00:13:51 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *   (c) 2000 Stephen J. Gowdy (SGowdy@lbl.gov)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; * SCSI layer glue code&n; *&n; * $Id: scsiglue.c,v 1.10 2000/08/30 01:22:42 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *   (c) 2000 Stephen J. Gowdy (SGowdy@lbl.gov)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;scsiglue.h&quot;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;debug.h&quot;
@@ -457,27 +457,6 @@ r_return
 id|SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* This is a sanity check that we should never hit */
-r_if
-c_cond
-(paren
-id|in_interrupt
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;usb-storage: command_abort() called from an interrupt!!! BAD!!! BAD!! BAD!!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|FAILED
-suffix:semicolon
-)brace
 multiline_comment|/* if we have an urb pending, let&squot;s wake the control thread up */
 r_if
 c_cond
@@ -534,7 +513,50 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME: this doesn&squot;t do anything right now */
+multiline_comment|/* This invokes the transport reset mechanism to reset the state of the&n; * device */
+DECL|function|device_reset
+r_static
+r_int
+id|device_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|srb
+)paren
+(brace
+r_struct
+id|us_data
+op_star
+id|us
+op_assign
+(paren
+r_struct
+id|us_data
+op_star
+)paren
+id|srb-&gt;host-&gt;hostdata
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;device_reset() called&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|us
+op_member_access_from_pointer
+id|transport_reset
+c_func
+(paren
+id|us
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* This resets the device port, and simulates the device&n; * disconnect/reconnect for all drivers which have claimed other&n; * interfaces. */
 DECL|function|bus_reset
 r_static
 r_int
@@ -546,26 +568,180 @@ op_star
 id|srb
 )paren
 (brace
-singleline_comment|// struct us_data *us = (struct us_data *)srb-&gt;host-&gt;hostdata[0];
-id|printk
+r_struct
+id|us_data
+op_star
+id|us
+op_assign
+(paren
+r_struct
+id|us_data
+op_star
+)paren
+id|srb-&gt;host-&gt;hostdata
+(braket
+l_int|0
+)braket
+suffix:semicolon
+r_int
+id|result
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* we use the usb_reset_device() function to handle this for us */
+id|US_DEBUGP
 c_func
 (paren
-id|KERN_CRIT
-l_string|&quot;usb-storage: bus_reset() requested but not implemented&bslash;n&quot;
+l_string|&quot;bus_reset() called&bslash;n&quot;
 )paren
+suffix:semicolon
+id|result
+op_assign
+id|usb_reset_device
+c_func
+(paren
+id|us-&gt;pusb_dev
+)paren
+ques
+c_cond
+id|FAILED
+suffix:colon
+id|SUCCESS
+suffix:semicolon
+multiline_comment|/* did the reset work? */
+r_if
+c_cond
+(paren
+id|result
+OL
+l_int|0
+)paren
+r_return
+id|FAILED
+suffix:semicolon
+multiline_comment|/* FIXME: This needs to lock out driver probing while it&squot;s working&n;&t; * or we can have race conditions */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|us-&gt;pusb_dev-&gt;actconfig-&gt;bNumInterfaces
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_struct
+id|usb_interface
+op_star
+id|intf
+op_assign
+op_amp
+id|us-&gt;pusb_dev-&gt;actconfig-&gt;interface
+(braket
+id|i
+)braket
 suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Bus reset requested&bslash;n&quot;
+l_string|&quot;Examinging driver %s...&quot;
+comma
+id|intf-&gt;driver-&gt;name
 )paren
 suffix:semicolon
-singleline_comment|//  us-&gt;transport_reset(us);
-r_return
-id|FAILED
+multiline_comment|/* skip interfaces which we&squot;ve claimed */
+r_if
+c_cond
+(paren
+id|intf-&gt;driver
+op_logical_and
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|intf-&gt;driver-&gt;name
+comma
+l_string|&quot;usb-storage&quot;
+comma
+l_int|12
+)paren
+)paren
+(brace
+id|US_DEBUGPX
+c_func
+(paren
+l_string|&quot;skipping.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME: This doesn&squot;t actually reset anything */
+multiline_comment|/* simulate a disconnect and reconnect for all interfaces */
+r_if
+c_cond
+(paren
+id|intf-&gt;driver
+)paren
+(brace
+id|US_DEBUGPX
+c_func
+(paren
+l_string|&quot;simulating disconnect/reconnect.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|intf-&gt;driver-&gt;serialize
+)paren
+suffix:semicolon
+id|intf-&gt;driver
+op_member_access_from_pointer
+id|disconnect
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|intf-&gt;private_data
+)paren
+suffix:semicolon
+id|intf-&gt;driver
+op_member_access_from_pointer
+id|probe
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|i
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|intf-&gt;driver-&gt;serialize
+)paren
+suffix:semicolon
+)brace
+)brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;bus_reset() complete&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|SUCCESS
+suffix:semicolon
+)brace
+multiline_comment|/* FIXME: This doesn&squot;t do anything right now */
 DECL|function|host_reset
 r_static
 r_int
@@ -862,7 +1038,7 @@ id|command_abort
 comma
 id|eh_device_reset_handler
 suffix:colon
-id|bus_reset
+id|device_reset
 comma
 id|eh_bus_reset_handler
 suffix:colon

@@ -7111,7 +7111,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Goes through counter = (shm_rss / (prio + 1)) present shm pages.&n; */
+multiline_comment|/*&n; * Goes through counter = (shm_rss &gt;&gt; prio) present shm pages.&n; */
 DECL|variable|swap_id
 r_static
 r_int
@@ -7175,12 +7175,8 @@ suffix:semicolon
 id|counter
 op_assign
 id|shm_rss
-op_div
-(paren
+op_rshift
 id|prio
-op_plus
-l_int|1
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8744,12 +8740,8 @@ suffix:semicolon
 id|counter
 op_assign
 id|zshm_rss
-op_div
-(paren
+op_rshift
 id|prio
-op_plus
-l_int|1
-)paren
 suffix:semicolon
 r_if
 c_cond

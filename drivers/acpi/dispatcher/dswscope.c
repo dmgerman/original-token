@@ -1,15 +1,14 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswscope - Scope stack manipulation&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswscope - Scope stack manipulation&n; *              $Revision: 38 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          NAMESPACE
 id|MODULE_NAME
 (paren
 l_string|&quot;dswscope&quot;
 )paren
-suffix:semicolon
 DECL|macro|STACK_POP
 mdefine_line|#define STACK_POP(head) head
 multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_scope_stack_clear&n; *&n; * PARAMETERS:  None&n; *&n; * DESCRIPTION: Pop (and free) everything on the scope stack except the&n; *              root scope object (which remains at the stack top.)&n; *&n; ***************************************************************************/
@@ -48,14 +47,14 @@ id|scope_info
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_scope_stack_push&n; *&n; * PARAMETERS:  *New_scope,             - Name to be made current&n; *              Type,                   - Type of frame being pushed&n; *&n; * DESCRIPTION: Push the current scope on the scope stack, and make the&n; *              passed nte current.&n; *&n; ***************************************************************************/
+multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_scope_stack_push&n; *&n; * PARAMETERS:  *Node,              - Name to be made current&n; *              Type,               - Type of frame being pushed&n; *&n; * DESCRIPTION: Push the current scope on the scope stack, and make the&n; *              passed Node current.&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_scope_stack_push
 id|acpi_ds_scope_stack_push
 (paren
-id|ACPI_NAME_TABLE
+id|ACPI_NAMESPACE_NODE
 op_star
-id|new_scope
+id|node
 comma
 id|OBJECT_TYPE_INTERNAL
 id|type
@@ -73,7 +72,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|new_scope
+id|node
 )paren
 (brace
 multiline_comment|/*  invalid scope   */
@@ -126,9 +125,9 @@ id|AE_NO_MEMORY
 suffix:semicolon
 )brace
 multiline_comment|/* Init new scope object */
-id|scope_info-&gt;scope.name_table
+id|scope_info-&gt;scope.node
 op_assign
-id|new_scope
+id|node
 suffix:semicolon
 id|scope_info-&gt;common.value
 op_assign

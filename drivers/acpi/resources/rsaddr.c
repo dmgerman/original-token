@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsaddr - Acpi_rs_address16_resource&n; *                       Acpi_rs_address16_stream&n; *                       Acpi_rs_address32_resource&n; *                       Acpi_rs_address32_stream&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsaddr - Acpi_rs_address16_resource&n; *                       Acpi_rs_address16_stream&n; *                       Acpi_rs_address32_resource&n; *                       Acpi_rs_address32_stream&n; *              $Revision: 9 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 DECL|macro|_COMPONENT
@@ -7,7 +7,6 @@ id|MODULE_NAME
 (paren
 l_string|&quot;rsaddr&quot;
 )paren
-suffix:semicolon
 multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_address16_resource&n; *&n; * PARAMETERS:&n; *              Byte_stream_buffer      - Pointer to the resource input byte&n; *                                              stream&n; *              Bytes_consumed          - u32 pointer that is filled with&n; *                                          the number of bytes consumed from&n; *                                          the Byte_stream_buffer&n; *              Output_buffer           - Pointer to the user&squot;s return buffer&n; *              Structure_size          - u32 pointer that is filled with&n; *                                          the number of bytes in the filled&n; *                                          in structure&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Take the resource byte stream and fill out the appropriate&n; *                  structure pointed to by the Output_buffer. Return the&n; *                  number of bytes consumed from the byte stream.&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_address16_resource
@@ -50,13 +49,9 @@ id|output_buffer
 suffix:semicolon
 id|u16
 id|temp16
-op_assign
-l_int|0
 suffix:semicolon
 id|u8
 id|temp8
-op_assign
-l_int|0
 suffix:semicolon
 id|u32
 id|index
@@ -76,14 +71,13 @@ id|buffer
 op_add_assign
 l_int|1
 suffix:semicolon
-id|temp16
-op_assign
-op_star
+id|MOVE_UNALIGNED16_TO_16
 (paren
-id|u16
-op_star
-)paren
+op_amp
+id|temp16
+comma
 id|buffer
+)paren
 suffix:semicolon
 op_star
 id|bytes_consumed
@@ -121,7 +115,7 @@ l_int|2
 (brace
 r_return
 (paren
-id|AE_ERROR
+id|AE_AML_ERROR
 )paren
 suffix:semicolon
 )brace
@@ -416,6 +410,10 @@ id|ROUND_UP_TO_32_bITS
 id|temp8
 )paren
 suffix:semicolon
+id|output_struct-&gt;length
+op_assign
+id|struct_size
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -435,11 +433,6 @@ op_assign
 l_int|0x00
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Set the Length parameter&n;&t; */
-id|output_struct-&gt;length
-op_assign
-id|struct_size
-suffix:semicolon
 multiline_comment|/*&n;&t; * Return the final size of the structure&n;&t; */
 op_star
 id|structure_size
@@ -484,10 +477,8 @@ id|length_field
 suffix:semicolon
 id|u8
 id|temp8
-op_assign
-l_int|0
 suffix:semicolon
-id|u8
+id|NATIVE_CHAR
 op_star
 id|temp_pointer
 op_assign
@@ -744,6 +735,10 @@ l_int|1
 suffix:semicolon
 id|temp_pointer
 op_assign
+(paren
+id|NATIVE_CHAR
+op_star
+)paren
 id|buffer
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Copy the string&n;&t;&t; */
@@ -836,11 +831,27 @@ id|structure_size
 id|u8
 op_star
 id|buffer
-op_assign
-id|byte_stream_buffer
 suffix:semicolon
 id|RESOURCE
 op_star
+id|output_struct
+suffix:semicolon
+id|u16
+id|temp16
+suffix:semicolon
+id|u8
+id|temp8
+suffix:semicolon
+id|u32
+id|struct_size
+suffix:semicolon
+id|u32
+id|index
+suffix:semicolon
+id|buffer
+op_assign
+id|byte_stream_buffer
+suffix:semicolon
 id|output_struct
 op_assign
 (paren
@@ -850,17 +861,6 @@ op_star
 op_star
 id|output_buffer
 suffix:semicolon
-id|u16
-id|temp16
-op_assign
-l_int|0
-suffix:semicolon
-id|u8
-id|temp8
-op_assign
-l_int|0
-suffix:semicolon
-id|u32
 id|struct_size
 op_assign
 r_sizeof
@@ -869,9 +869,6 @@ id|ADDRESS32_RESOURCE
 )paren
 op_plus
 id|RESOURCE_LENGTH_NO_DATA
-suffix:semicolon
-id|u32
-id|index
 suffix:semicolon
 multiline_comment|/*&n;&t; * Point past the Descriptor to get the number of bytes consumed&n;&t; */
 id|buffer
@@ -918,7 +915,7 @@ l_int|2
 (brace
 r_return
 (paren
-id|AE_ERROR
+id|AE_AML_ERROR
 )paren
 suffix:semicolon
 )brace
@@ -1271,9 +1268,6 @@ id|bytes_consumed
 id|u8
 op_star
 id|buffer
-op_assign
-op_star
-id|output_buffer
 suffix:semicolon
 id|u16
 op_star
@@ -1281,14 +1275,15 @@ id|length_field
 suffix:semicolon
 id|u8
 id|temp8
-op_assign
-l_int|0
 suffix:semicolon
-id|u8
+id|NATIVE_CHAR
 op_star
 id|temp_pointer
+suffix:semicolon
+id|buffer
 op_assign
-l_int|NULL
+op_star
+id|output_buffer
 suffix:semicolon
 multiline_comment|/*&n;&t; * The descriptor field is static&n;&t; */
 op_star
@@ -1542,6 +1537,10 @@ l_int|1
 suffix:semicolon
 id|temp_pointer
 op_assign
+(paren
+id|NATIVE_CHAR
+op_star
+)paren
 id|buffer
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Copy the string&n;&t;&t; */

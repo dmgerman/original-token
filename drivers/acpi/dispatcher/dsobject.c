@@ -1,19 +1,18 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dsobject - Dispatcher object management routines&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dsobject - Dispatcher object management routines&n; *              $Revision: 43 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          DISPATCHER
 id|MODULE_NAME
 (paren
 l_string|&quot;dsobject&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_init_one_object&n; *&n; * PARAMETERS:  Obj_handle      - NTE of the object&n; *              Level           - Current nesting level&n; *              Context         - Points to a init info struct&n; *              Return_value    - Not used&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Callback from Acpi_walk_namespace. Invoked for every object&n; *              within the  namespace.&n; *&n; *              Currently, the only objects that require initialization are:&n; *              1) Methods&n; *              2) Op Regions&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_init_one_object&n; *&n; * PARAMETERS:  Obj_handle      - Node&n; *              Level           - Current nesting level&n; *              Context         - Points to a init info struct&n; *              Return_value    - Not used&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Callback from Acpi_walk_namespace. Invoked for every object&n; *              within the  namespace.&n; *&n; *              Currently, the only objects that require initialization are:&n; *              1) Methods&n; *              2) Op Regions&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_init_one_object
 id|acpi_ds_init_one_object
@@ -40,10 +39,6 @@ suffix:semicolon
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
-op_star
-id|obj_desc
-suffix:semicolon
 id|INIT_WALK_INFO
 op_star
 id|info
@@ -60,7 +55,7 @@ c_cond
 (paren
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_handle
@@ -72,7 +67,9 @@ id|info-&gt;table_desc-&gt;table_id
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* And even then, we are only interested in a few object types */
@@ -143,27 +140,6 @@ id|acpi_ns_delete_namespace_subtree
 id|obj_handle
 )paren
 suffix:semicolon
-id|obj_desc
-op_assign
-(paren
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-)paren
-id|obj_handle
-)paren
-op_member_access_from_pointer
-id|object
-suffix:semicolon
-id|acpi_ps_delete_parse_tree
-(paren
-id|obj_desc-&gt;method.parser_op
-)paren
-suffix:semicolon
-id|obj_desc-&gt;method.parser_op
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -179,7 +155,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_initialize_objects&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Walk the entire namespace and perform any necessary initialization&n; *              on the objects found therein&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_initialize_objects&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Walk the entire namespace and perform any necessary&n; *              initialization on the objects found therein&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_initialize_objects
 id|acpi_ds_initialize_objects
@@ -188,9 +164,9 @@ id|ACPI_TABLE_DESC
 op_star
 id|table_desc
 comma
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|start_entry
+id|start_node
 )paren
 (brace
 id|ACPI_STATUS
@@ -218,9 +194,9 @@ id|acpi_walk_namespace
 (paren
 id|ACPI_TYPE_ANY
 comma
-id|start_entry
+id|start_node
 comma
-id|ACPI_INT32_MAX
+id|ACPI_UINT32_MAX
 comma
 id|acpi_ds_init_one_object
 comma
@@ -245,14 +221,15 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
 id|u16
 id|opcode
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
+op_star
 op_star
 id|obj_desc
 )paren
@@ -260,19 +237,19 @@ id|obj_desc
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 suffix:semicolon
-id|ACPI_BYTELIST_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 id|byte_list
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|arg_desc
 suffix:semicolon
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op_info
 suffix:semicolon
@@ -286,20 +263,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|ACPI_GET_OP_TYPE
+(paren
 id|op_info
+)paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
 )paren
 (brace
 multiline_comment|/* Unknown opcode */
 r_return
+(paren
 id|AE_TYPE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Get and prepare the first argument */
 r_switch
 c_cond
 (paren
-id|obj_desc-&gt;common.type
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|common.type
 )paren
 (brace
 r_case
@@ -336,6 +324,8 @@ id|acpi_aml_resolve_to_value
 (paren
 op_amp
 id|arg_desc
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -353,7 +343,9 @@ id|arg_desc
 )paren
 suffix:semicolon
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* We are expecting a number */
@@ -371,11 +363,18 @@ id|arg_desc
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_TYPE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Get the value, delete the internal object */
-id|obj_desc-&gt;buffer.length
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.length
 op_assign
 id|arg_desc-&gt;number.value
 suffix:semicolon
@@ -385,22 +384,39 @@ id|arg_desc
 )paren
 suffix:semicolon
 multiline_comment|/* Allocate the buffer */
-id|obj_desc-&gt;buffer.pointer
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.pointer
 op_assign
 id|acpi_cm_callocate
 (paren
-id|obj_desc-&gt;buffer.length
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.length
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|obj_desc-&gt;buffer.pointer
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.pointer
 )paren
 (brace
 r_return
+(paren
 id|AE_NO_MEMORY
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Second arg is the buffer data (optional)&n;&t;&t; * Byte_list can be either individual bytes or a&n;&t;&t; * string initializer!&n;&t;&t; */
@@ -412,7 +428,7 @@ suffix:semicolon
 id|byte_list
 op_assign
 (paren
-id|ACPI_BYTELIST_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|arg-&gt;next
@@ -432,25 +448,66 @@ id|AML_BYTELIST_OP
 )paren
 (brace
 r_return
+(paren
 id|AE_TYPE
+)paren
 suffix:semicolon
 )brace
 id|MEMCPY
 (paren
-id|obj_desc-&gt;buffer.pointer
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.pointer
 comma
 id|byte_list-&gt;data
 comma
-id|obj_desc-&gt;buffer.length
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.length
 )paren
 suffix:semicolon
 )brace
 r_break
 suffix:semicolon
 r_case
+id|ACPI_TYPE_PACKAGE
+suffix:colon
+multiline_comment|/*&n;&t;&t; * When called, an internal package object has already&n;&t;&t; *  been built and is pointed to by *Obj_desc.&n;&t;&t; *  Acpi_ds_build_internal_object build another internal&n;&t;&t; *  package object, so remove reference to the original&n;&t;&t; *  so that it is deleted.  Error checking is done&n;&t;&t; *  within the remove reference function.&n;&t;&t; */
+id|acpi_cm_remove_reference
+c_func
+(paren
+op_star
+id|obj_desc
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|acpi_ds_build_internal_object
+(paren
+id|walk_state
+comma
+id|op
+comma
+id|obj_desc
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|ACPI_TYPE_NUMBER
 suffix:colon
-id|obj_desc-&gt;number.value
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|number.value
 op_assign
 id|op-&gt;value.integer
 suffix:semicolon
@@ -459,11 +516,21 @@ suffix:semicolon
 r_case
 id|ACPI_TYPE_STRING
 suffix:colon
-id|obj_desc-&gt;string.pointer
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|string.pointer
 op_assign
 id|op-&gt;value.string
 suffix:semicolon
-id|obj_desc-&gt;string.length
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|string.length
 op_assign
 id|STRLEN
 (paren
@@ -483,20 +550,31 @@ suffix:colon
 r_switch
 c_cond
 (paren
-id|op_info-&gt;flags
-op_amp
-id|OP_INFO_TYPE
+id|ACPI_GET_OP_CLASS
+(paren
+id|op_info
+)paren
 )paren
 (brace
 r_case
 id|OPTYPE_LOCAL_VARIABLE
 suffix:colon
 multiline_comment|/* Split the opcode into a base opcode + offset */
-id|obj_desc-&gt;reference.op_code
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|reference.op_code
 op_assign
 id|AML_LOCAL_OP
 suffix:semicolon
-id|obj_desc-&gt;reference.offset
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|reference.offset
 op_assign
 id|opcode
 op_minus
@@ -508,11 +586,21 @@ r_case
 id|OPTYPE_METHOD_ARGUMENT
 suffix:colon
 multiline_comment|/* Split the opcode into a base opcode + offset */
-id|obj_desc-&gt;reference.op_code
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|reference.op_code
 op_assign
 id|AML_ARG_OP
 suffix:semicolon
-id|obj_desc-&gt;reference.offset
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|reference.offset
 op_assign
 id|opcode
 op_minus
@@ -533,13 +621,23 @@ op_eq
 id|AML_NAMEPATH_OP
 )paren
 (brace
-multiline_comment|/* Nte was saved in Op */
-id|obj_desc-&gt;reference.nte
+multiline_comment|/* Node was saved in Op */
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|reference.node
 op_assign
-id|op-&gt;acpi_named_object
+id|op-&gt;node
 suffix:semicolon
 )brace
-id|obj_desc-&gt;reference.op_code
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|reference.op_code
 op_assign
 id|opcode
 suffix:semicolon
@@ -554,7 +652,9 @@ r_break
 suffix:semicolon
 )brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_build_internal_simple_obj&n; *&n; * PARAMETERS:  Op              - Parser object to be translated&n; *              Obj_desc_ptr    - Where the ACPI internal object is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Translate a parser Op object to the equivalent namespace object&n; *              Simple objects are any objects other than a package object!&n; *&n; ****************************************************************************/
@@ -566,17 +666,17 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|obj_desc_ptr
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -599,7 +699,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|op-&gt;acpi_named_object
+id|op-&gt;node
 )paren
 (brace
 id|status
@@ -621,13 +721,13 @@ comma
 l_int|NULL
 comma
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 op_star
 )paren
 op_amp
 (paren
-id|op-&gt;acpi_named_object
+id|op-&gt;node
 )paren
 )paren
 suffix:semicolon
@@ -696,6 +796,7 @@ id|op
 comma
 id|op-&gt;opcode
 comma
+op_amp
 id|obj_desc
 )paren
 suffix:semicolon
@@ -739,21 +840,21 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|obj_desc_ptr
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -822,7 +923,7 @@ id|REPORT_ERROR
 l_string|&quot;Ds_build_internal_package_obj: Package vector allocation failure&quot;
 )paren
 suffix:semicolon
-id|acpi_cm_free
+id|acpi_cm_delete_object_desc
 (paren
 id|obj_desc
 )paren
@@ -910,11 +1011,11 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|obj_desc_ptr
@@ -963,20 +1064,20 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_create_named_object&n; *&n; * PARAMETERS:  Op              - Parser object to be translated&n; *              Obj_desc_ptr    - Where the ACPI internal object is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION:&n; *&n; ****************************************************************************/
+multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_create_node&n; *&n; * PARAMETERS:  Op              - Parser object to be translated&n; *              Obj_desc_ptr    - Where the ACPI internal object is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION:&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
-DECL|function|acpi_ds_create_named_object
-id|acpi_ds_create_named_object
+DECL|function|acpi_ds_create_node
+id|acpi_ds_create_node
 (paren
 id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -984,7 +1085,7 @@ id|op
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -1029,7 +1130,7 @@ id|cleanup
 suffix:semicolon
 )brace
 multiline_comment|/* Re-type the object according to it&squot;s argument */
-id|entry-&gt;type
+id|node-&gt;type
 op_assign
 id|obj_desc-&gt;common.type
 suffix:semicolon
@@ -1041,14 +1142,14 @@ id|acpi_ns_attach_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|entry
+id|node
 comma
 id|obj_desc
 comma
 (paren
 id|u8
 )paren
-id|entry-&gt;type
+id|node-&gt;type
 )paren
 suffix:semicolon
 r_if

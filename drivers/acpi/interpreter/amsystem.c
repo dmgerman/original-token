@@ -1,17 +1,16 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amsystem - Interface to OS services&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amsystem - Interface to OS services&n; *              $Revision: 51 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amsystem&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_system_thread_id&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Current Thread ID (for this implementation a 1 is returned)&n; *&n; * DESCRIPTION: An invocation is identified by its Thread ID.  In a single&n; *              threaded OS the Thread ID is undefined so a 1 will be&n; *              returned.&n; *&n; ******************************************************************************/
 id|u16
 DECL|function|acpi_aml_system_thread_id
@@ -198,11 +197,11 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_system_acquire_mutex
 id|acpi_aml_system_acquire_mutex
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|time_desc
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 )paren
@@ -266,7 +265,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_system_release_mutex
 id|acpi_aml_system_release_mutex
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 )paren
@@ -328,7 +327,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_system_signal_event
 id|acpi_aml_system_signal_event
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 )paren
@@ -365,11 +364,11 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_system_wait_event
 id|acpi_aml_system_wait_event
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|time_desc
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 )paren
@@ -406,7 +405,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_system_reset_event
 id|acpi_aml_system_reset_event
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 )paren

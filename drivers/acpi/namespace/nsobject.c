@@ -1,47 +1,38 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: nsobject - Utilities for objects attached to namespace&n; *                          table entries&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nsobject - Utilities for objects attached to namespace&n; *                         table entries&n; *              $Revision: 44 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          NAMESPACE
 id|MODULE_NAME
 (paren
 l_string|&quot;nsobject&quot;
 )paren
-suffix:semicolon
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_attach_object&n; *&n; * PARAMETERS:  Handle              - Handle of nte&n; *              Object              - Object to be attached&n; *              Type                - Type of object, or ACPI_TYPE_ANY if not&n; *                                      known&n; *&n; * DESCRIPTION: Record the given object as the value associated with the&n; *              name whose ACPI_HANDLE is passed.  If Object is NULL&n; *              and Type is ACPI_TYPE_ANY, set the name as having no value.&n; *&n; * MUTEX:       Assumes namespace is locked&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_attach_object&n; *&n; * PARAMETERS:  Node            - Parent Node&n; *              Object              - Object to be attached&n; *              Type                - Type of object, or ACPI_TYPE_ANY if not&n; *                                      known&n; *&n; * DESCRIPTION: Record the given object as the value associated with the&n; *              name whose ACPI_HANDLE is passed.  If Object is NULL&n; *              and Type is ACPI_TYPE_ANY, set the name as having no value.&n; *&n; * MUTEX:       Assumes namespace is locked&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ns_attach_object
 id|acpi_ns_attach_object
 (paren
-id|ACPI_HANDLE
-id|handle
+id|ACPI_NAMESPACE_NODE
+op_star
+id|node
 comma
-id|ACPI_HANDLE
+id|ACPI_OPERAND_OBJECT
+op_star
 id|object
 comma
 id|OBJECT_TYPE_INTERNAL
 id|type
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
-op_star
-id|this_entry
-op_assign
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-)paren
-id|handle
-suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|previous_obj_desc
 suffix:semicolon
@@ -61,7 +52,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|acpi_gbl_root_object-&gt;child_table
+id|acpi_gbl_root_node
 )paren
 (brace
 multiline_comment|/* Name space not initialized  */
@@ -80,13 +71,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|handle
+id|node
 )paren
 (brace
 multiline_comment|/* Invalid handle */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_attach_object: Null name handle&quot;
+l_string|&quot;Ns_attach_object: Null Named_obj handle&quot;
 )paren
 suffix:semicolon
 r_return
@@ -127,7 +118,7 @@ c_cond
 op_logical_neg
 id|VALID_DESCRIPTOR_TYPE
 (paren
-id|handle
+id|node
 comma
 id|ACPI_DESC_TYPE_NAMED
 )paren
@@ -149,7 +140,7 @@ multiline_comment|/* Check if this object is already attached */
 r_if
 c_cond
 (paren
-id|this_entry-&gt;object
+id|node-&gt;object
 op_eq
 id|object
 )paren
@@ -160,15 +151,15 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Get the current flags field of the NTE */
+multiline_comment|/* Get the current flags field of the Node */
 id|flags
 op_assign
-id|this_entry-&gt;flags
+id|node-&gt;flags
 suffix:semicolon
 id|flags
 op_and_assign
 op_complement
-id|NTE_AML_ATTACHMENT
+id|ANOBJ_AML_ATTACHMENT
 suffix:semicolon
 multiline_comment|/* If null object, we will just install it */
 r_if
@@ -187,7 +178,7 @@ op_assign
 id|ACPI_TYPE_ANY
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the object is an NTE with an attached object,&n;&t; * we will use that (attached) object&n;&t; */
+multiline_comment|/*&n;&t; * If the object is an Node with an attached object,&n;&t; * we will use that (attached) object&n;&t; */
 r_else
 r_if
 c_cond
@@ -201,7 +192,7 @@ id|ACPI_DESC_TYPE_NAMED
 op_logical_and
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|object
@@ -215,7 +206,7 @@ id|obj_desc
 op_assign
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|object
@@ -227,7 +218,7 @@ id|obj_type
 op_assign
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|object
@@ -241,7 +232,7 @@ c_cond
 (paren
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|object
@@ -249,12 +240,12 @@ id|object
 op_member_access_from_pointer
 id|flags
 op_amp
-id|NTE_AML_ATTACHMENT
+id|ANOBJ_AML_ATTACHMENT
 )paren
 (brace
 id|flags
 op_or_assign
-id|NTE_AML_ATTACHMENT
+id|ANOBJ_AML_ATTACHMENT
 suffix:semicolon
 )brace
 )brace
@@ -264,7 +255,7 @@ r_else
 id|obj_desc
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 id|object
@@ -295,10 +286,10 @@ id|object
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Object points into the AML stream.&n;&t;&t;&t; * Set a flag bit in the NTE to indicate this&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Object points into the AML stream.&n;&t;&t;&t; * Set a flag bit in the Node to indicate this&n;&t;&t;&t; */
 id|flags
 op_or_assign
-id|NTE_AML_ATTACHMENT
+id|ANOBJ_AML_ATTACHMENT
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * The next byte (perhaps the next two bytes)&n;&t;&t;&t; * will be the AML opcode&n;&t;&t;&t; */
 id|MOVE_UNALIGNED16_TO_16
@@ -424,22 +415,22 @@ suffix:semicolon
 multiline_comment|/* Save the existing object (if any) for deletion later */
 id|previous_obj_desc
 op_assign
-id|this_entry-&gt;object
+id|node-&gt;object
 suffix:semicolon
 multiline_comment|/* Install the object and set the type, flags */
-id|this_entry-&gt;object
+id|node-&gt;object
 op_assign
 id|obj_desc
 suffix:semicolon
-id|this_entry-&gt;type
+id|node-&gt;type
 op_assign
 (paren
 id|u8
 )paren
 id|obj_type
 suffix:semicolon
-id|this_entry-&gt;flags
-op_assign
+id|node-&gt;flags
+op_or_assign
 id|flags
 suffix:semicolon
 multiline_comment|/*&n;&t; * Delete an existing attached object.&n;&t; */
@@ -449,7 +440,7 @@ c_cond
 id|previous_obj_desc
 )paren
 (brace
-multiline_comment|/* One for the attach to the NTE */
+multiline_comment|/* One for the attach to the Node */
 id|acpi_cm_remove_reference
 (paren
 id|previous_obj_desc
@@ -468,170 +459,23 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_attach_method&n; *&n; * PARAMETERS:  Handle              - Handle of nte to be set&n; *              Offset              - Value to be set&n; *              Length              - Length associated with value&n; *&n; * DESCRIPTION: Record the given offset and p-code length of the method&n; *              whose handle is passed&n; *&n; * MUTEX:       Assumes namespace is locked&n; *&n; ***************************************************************************/
-id|ACPI_STATUS
-DECL|function|acpi_ns_attach_method
-id|acpi_ns_attach_method
-(paren
-id|ACPI_HANDLE
-id|handle
-comma
-id|u8
-op_star
-id|pcode_addr
-comma
-id|u32
-id|pcode_length
-)paren
-(brace
-id|ACPI_OBJECT_INTERNAL
-op_star
-id|obj_desc
-suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
-op_star
-id|previous_obj_desc
-suffix:semicolon
-id|ACPI_NAMED_OBJECT
-op_star
-id|this_entry
-op_assign
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-)paren
-id|handle
-suffix:semicolon
-multiline_comment|/* Parameter validation */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|acpi_gbl_root_object-&gt;child_table
-)paren
-(brace
-multiline_comment|/* Name space uninitialized */
-id|REPORT_ERROR
-(paren
-l_string|&quot;Ns_attach_method: name space uninitialized&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-id|AE_NO_NAMESPACE
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|handle
-)paren
-(brace
-multiline_comment|/* Null name handle */
-id|REPORT_ERROR
-(paren
-l_string|&quot;Ns_attach_method: null name handle&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-id|AE_BAD_PARAMETER
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Allocate a method descriptor */
-id|obj_desc
-op_assign
-id|acpi_cm_create_internal_object
-(paren
-id|ACPI_TYPE_METHOD
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|obj_desc
-)paren
-(brace
-multiline_comment|/* Method allocation failure  */
-id|REPORT_ERROR
-(paren
-l_string|&quot;Ns_attach_method: allocation failure&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-id|AE_NO_MEMORY
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Init the method info */
-id|obj_desc-&gt;method.pcode
-op_assign
-id|pcode_addr
-suffix:semicolon
-id|obj_desc-&gt;method.pcode_length
-op_assign
-id|pcode_length
-suffix:semicolon
-multiline_comment|/* Update reference count and install */
-id|acpi_cm_add_reference
-(paren
-id|obj_desc
-)paren
-suffix:semicolon
-id|previous_obj_desc
-op_assign
-id|this_entry-&gt;object
-suffix:semicolon
-id|this_entry-&gt;object
-op_assign
-id|obj_desc
-suffix:semicolon
-multiline_comment|/*&n;&t; * Delete an existing object.  Don&squot;t try to re-use in case it is shared&n;&t; */
-r_if
-c_cond
-(paren
-id|previous_obj_desc
-)paren
-(brace
-id|acpi_cm_remove_reference
-(paren
-id|previous_obj_desc
-)paren
-suffix:semicolon
-)brace
-r_return
-(paren
-id|AE_OK
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_detach_object&n; *&n; * PARAMETERS:  Object           - An object whose Value will be deleted&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Delete the Value associated with a namespace object.  If the&n; *              Value is an allocated object, it is freed.  Otherwise, the&n; *              field is simply cleared.&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_detach_object&n; *&n; * PARAMETERS:  Node           - An object whose Value will be deleted&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Delete the Value associated with a namespace object.  If the&n; *              Value is an allocated object, it is freed.  Otherwise, the&n; *              field is simply cleared.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_ns_detach_object
 id|acpi_ns_detach_object
 (paren
-id|ACPI_HANDLE
-id|object
+id|ACPI_NAMESPACE_NODE
+op_star
+id|node
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
-op_star
-id|entry
-op_assign
-id|object
-suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
 id|obj_desc
 op_assign
-id|entry-&gt;object
+id|node-&gt;object
 suffix:semicolon
 r_if
 c_cond
@@ -644,7 +488,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Clear the entry in all cases */
-id|entry-&gt;object
+id|node-&gt;object
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -670,7 +514,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_get_attached_object&n; *&n; * PARAMETERS:  Handle              - Handle of nte to be examined&n; *&n; * RETURN:      Current value of the object field from nte whose handle is&n; *              passed&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_get_attached_object&n; *&n; * PARAMETERS:  Handle              - Parent Node to be examined&n; *&n; * RETURN:      Current value of the object field from the Node whose&n; *              handle is passed&n; *&n; ******************************************************************************/
 r_void
 op_star
 DECL|function|acpi_ns_get_attached_object
@@ -703,199 +547,13 @@ r_return
 (paren
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|handle
 )paren
 op_member_access_from_pointer
 id|object
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_compare_object&n; *&n; * PARAMETERS:  Obj_handle          - A namespace entry&n; *              Level               - Current nesting level&n; *              Obj_desc            - The value to be compared&n; *&n; * DESCRIPTION: A User_function called by Acpi_ns_walk_namespace(). It performs&n; *              a comparison for Acpi_ns_find_attached_object(). The comparison is against&n; *              the value in the value field of the Obj_handle (an NTE).&n; *              If a match is found, the handle is returned, which aborts&n; *              Acpi_ns_walk_namespace.&n; *&n; ***************************************************************************/
-id|ACPI_STATUS
-DECL|function|acpi_ns_compare_object
-id|acpi_ns_compare_object
-(paren
-id|ACPI_HANDLE
-id|obj_handle
-comma
-id|u32
-id|level
-comma
-r_void
-op_star
-id|obj_desc
-comma
-r_void
-op_star
-op_star
-id|return_value
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-)paren
-id|obj_handle
-)paren
-op_member_access_from_pointer
-id|object
-op_eq
-id|obj_desc
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|return_value
-)paren
-(brace
-op_star
-id|return_value
-op_assign
-id|obj_handle
-suffix:semicolon
-)brace
-multiline_comment|/* Stop the walk */
-r_return
-id|AE_CTRL_TERMINATE
-suffix:semicolon
-)brace
-multiline_comment|/* Not found, continue the walk */
-r_return
-id|AE_OK
-suffix:semicolon
-)brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_find_attached_object&n; *&n; * PARAMETERS:  *Obj_desc           - Value to be found in ptr_val field.&n; *              Start_handle        - Root of subtree to be searched, or&n; *                                    NS_ALL to search the entire namespace&n; *              Max_depth           - Maximum depth of search.  Use INT_MAX&n; *                                    for an effectively unlimited depth.&n; *&n; * DESCRIPTION: Traverse the name space until finding a name whose Value field&n; *              matches the Obj_desc parameter, and return a handle to that&n; *              name, or (ACPI_HANDLE)0 if none exists.&n; *              if Start_handle is NS_ALL (null) search from the root,&n; *              else it is a handle whose children are to be searched.&n; *&n; ***************************************************************************/
-id|ACPI_HANDLE
-DECL|function|acpi_ns_find_attached_object
-id|acpi_ns_find_attached_object
-(paren
-id|ACPI_OBJECT_INTERNAL
-op_star
-id|obj_desc
-comma
-id|ACPI_HANDLE
-id|start_handle
-comma
-id|s32
-id|max_depth
-)paren
-(brace
-id|ACPI_HANDLE
-id|ret_object
-suffix:semicolon
-id|ACPI_STATUS
-id|status
-suffix:semicolon
-multiline_comment|/* Parameter validation */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|obj_desc
-)paren
-(brace
-r_return
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-l_int|0
-op_eq
-id|max_depth
-)paren
-(brace
-r_return
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|acpi_gbl_root_object-&gt;child_table
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * If the name space has not been initialized,&n;&t;&t; * there surely are no matching values.&n;&t;&t; */
-r_return
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|NS_ALL
-op_eq
-id|start_handle
-)paren
-(brace
-id|start_handle
-op_assign
-id|acpi_gbl_root_object
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t; * If base is not the root and has no children,&n;&t;&t; * there is nothing to search.&n;&t;&t; */
-r_return
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Walk namespace until a match is found.&n;&t; * Either the matching object is returned, or NULL in case&n;&t; * of no match.&n;&t; */
-id|status
-op_assign
-id|acpi_ns_walk_namespace
-(paren
-id|ACPI_TYPE_ANY
-comma
-id|start_handle
-comma
-id|max_depth
-comma
-id|NS_WALK_NO_UNLOCK
-comma
-id|acpi_ns_compare_object
-comma
-id|obj_desc
-comma
-op_amp
-id|ret_object
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-id|ret_object
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-r_return
-(paren
-id|ret_object
 )paren
 suffix:semicolon
 )brace

@@ -1,18 +1,17 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxfregn - External Interfaces, ACPI Operation Regions and&n; *                         Address Spaces.&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxfregn - External Interfaces, ACPI Operation Regions and&n; *                         Address Spaces.&n; *              $Revision: 20 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          EVENT_HANDLING
 id|MODULE_NAME
 (paren
 l_string|&quot;evxfregn&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_install_address_space_handler&n; *&n; * PARAMETERS:  Device          - Handle for the device&n; *              Space_id        - The address space ID&n; *              Handler         - Address of the handler&n; *              Context         - Value passed to the handler on each access&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Install a handler for accesses on an address space controlled&n; *              a specific device.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_install_address_space_handler
@@ -35,17 +34,17 @@ op_star
 id|context
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_obj
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|obj_entry
+id|node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -101,7 +100,7 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 multiline_comment|/* Convert and validate the device handle */
-id|obj_entry
+id|node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -112,7 +111,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|obj_entry
+id|node
 )paren
 (brace
 id|status
@@ -128,27 +127,27 @@ r_if
 c_cond
 (paren
 (paren
-id|obj_entry-&gt;type
+id|node-&gt;type
 op_ne
 id|ACPI_TYPE_DEVICE
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|node-&gt;type
 op_ne
 id|ACPI_TYPE_PROCESSOR
 )paren
 op_logical_and
 (paren
-id|obj_entry-&gt;type
+id|node-&gt;type
 op_ne
 id|ACPI_TYPE_THERMAL
 )paren
 op_logical_and
 (paren
-id|obj_entry
+id|node
 op_ne
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 )paren
 )paren
 (brace
@@ -251,7 +250,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|obj_entry
+id|node
 )paren
 suffix:semicolon
 r_if
@@ -292,7 +291,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Move through the linked list of handlers&n;&t;&t;&t; */
 id|handler_obj
 op_assign
-id|handler_obj-&gt;addr_handler.link
+id|handler_obj-&gt;addr_handler.next
 suffix:semicolon
 )brace
 )brace
@@ -302,7 +301,7 @@ multiline_comment|/* Obj_desc does not exist, create one */
 r_if
 c_cond
 (paren
-id|obj_entry-&gt;type
+id|node-&gt;type
 op_eq
 id|ACPI_TYPE_ANY
 )paren
@@ -316,7 +315,7 @@ r_else
 (brace
 id|type
 op_assign
-id|obj_entry-&gt;type
+id|node-&gt;type
 suffix:semicolon
 )brace
 id|obj_desc
@@ -349,7 +348,7 @@ id|u8
 )paren
 id|type
 suffix:semicolon
-multiline_comment|/* Attach the new object to the NTE */
+multiline_comment|/* Attach the new object to the Node */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -382,20 +381,6 @@ r_goto
 id|unlock_and_exit
 suffix:semicolon
 )brace
-multiline_comment|/* TBD: [Investigate] Will this always be of type DEVICE? */
-r_if
-c_cond
-(paren
-id|type
-op_eq
-id|ACPI_TYPE_DEVICE
-)paren
-(brace
-id|obj_desc-&gt;device.handle
-op_assign
-id|device
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; *  Now we can install the handler&n;&t; *&n;&t; *  At this point we know that there is no existing handler.&n;&t; *  So, we just allocate the object for the handler and link it&n;&t; *  into the list.&n;&t; */
 id|handler_obj
@@ -423,7 +408,7 @@ suffix:semicolon
 id|handler_obj-&gt;addr_handler.space_id
 op_assign
 (paren
-id|u16
+id|u8
 )paren
 id|space_id
 suffix:semicolon
@@ -431,7 +416,7 @@ id|handler_obj-&gt;addr_handler.hflags
 op_assign
 id|flags
 suffix:semicolon
-id|handler_obj-&gt;addr_handler.link
+id|handler_obj-&gt;addr_handler.next
 op_assign
 id|obj_desc-&gt;device.addr_handler
 suffix:semicolon
@@ -439,9 +424,9 @@ id|handler_obj-&gt;addr_handler.region_list
 op_assign
 l_int|NULL
 suffix:semicolon
-id|handler_obj-&gt;addr_handler.nte
+id|handler_obj-&gt;addr_handler.node
 op_assign
-id|obj_entry
+id|node
 suffix:semicolon
 id|handler_obj-&gt;addr_handler.handler
 op_assign
@@ -464,9 +449,9 @@ id|ACPI_TYPE_ANY
 comma
 id|device
 comma
-id|ACPI_INT32_MAX
+id|ACPI_UINT32_MAX
 comma
-id|NS_WALK_NO_UNLOCK
+id|NS_WALK_UNLOCK
 comma
 id|acpi_ev_addr_handler_helper
 comma
@@ -521,26 +506,26 @@ id|ADDRESS_SPACE_HANDLER
 id|handler
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|last_obj_ptr
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|obj_entry
+id|node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -588,7 +573,7 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 multiline_comment|/* Convert and validate the device handle */
-id|obj_entry
+id|node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -599,7 +584,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|obj_entry
+id|node
 )paren
 (brace
 id|status
@@ -618,7 +603,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|obj_entry
+id|node
 )paren
 suffix:semicolon
 r_if
@@ -691,7 +676,7 @@ multiline_comment|/*&n;&t;&t;&t; *  Remove this Handler object from the list&n;&
 op_star
 id|last_obj_ptr
 op_assign
-id|handler_obj-&gt;addr_handler.link
+id|handler_obj-&gt;addr_handler.next
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Now we can delete the handler object&n;&t;&t;&t; */
 id|acpi_cm_remove_reference
@@ -712,11 +697,11 @@ multiline_comment|/*&n;&t;&t; *  Move through the linked list of handlers&n;&t;&
 id|last_obj_ptr
 op_assign
 op_amp
-id|handler_obj-&gt;addr_handler.link
+id|handler_obj-&gt;addr_handler.next
 suffix:semicolon
 id|handler_obj
 op_assign
-id|handler_obj-&gt;addr_handler.link
+id|handler_obj-&gt;addr_handler.next
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  The handler does not exist&n;&t; */

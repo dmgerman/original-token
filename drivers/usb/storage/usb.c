@@ -1,10 +1,10 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.33 2000/08/25 00:13:51 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.39 2000/09/08 21:20:06 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;scsiglue.h&quot;
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;debug.h&quot;
+macro_line|#include &quot;initializers.h&quot;
 macro_line|#ifdef CONFIG_USB_STORAGE_HP8200e
 macro_line|#include &quot;shuttle_usbat.h&quot;
 macro_line|#endif
@@ -17,6 +17,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_USB_STORAGE_FREECOM
 macro_line|#include &quot;freecom.h&quot;
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -641,6 +642,8 @@ suffix:semicolon
 id|us-&gt;srb-&gt;result
 op_assign
 id|DID_ERROR
+op_lshift
+l_int|16
 suffix:semicolon
 id|set_current_state
 c_func
@@ -782,6 +785,8 @@ id|US_FL_START_STOP
 id|us-&gt;srb-&gt;result
 op_assign
 id|GOOD
+op_lshift
+l_int|1
 suffix:semicolon
 id|set_current_state
 c_func
@@ -856,6 +861,8 @@ suffix:semicolon
 id|us-&gt;srb-&gt;result
 op_assign
 id|GOOD
+op_lshift
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -876,6 +883,8 @@ suffix:semicolon
 id|us-&gt;srb-&gt;result
 op_assign
 id|CHECK_CONDITION
+op_lshift
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -1031,84 +1040,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* This is the list of devices we recognize, along with their flag data */
 multiline_comment|/* The vendor name should be kept at eight characters or less, and&n; * the product name should be kept at 16 characters or less. If a device&n; * has the US_FL_DUMMY_INQUIRY flag, then the vendor and product names&n; * normally generated by a device thorugh the INQUIRY response will be&n; * taken from this list, and this is the reason for the above size&n; * restriction. However, if the flag is not present, then you&n; * are free to use as many characters as you like.&n; */
-DECL|function|euscsi_init
-r_int
-id|euscsi_init
-c_func
-(paren
-r_struct
-id|us_data
-op_star
-id|us
-)paren
-(brace
-r_int
-r_char
-id|bar
-op_assign
-l_int|0x1
-suffix:semicolon
-r_int
-id|result
-suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Attempting to init eUSCSI bridge...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|usb_control_msg
-c_func
-(paren
-id|us-&gt;pusb_dev
-comma
-id|usb_sndctrlpipe
-c_func
-(paren
-id|us-&gt;pusb_dev
-comma
-l_int|0
-)paren
-comma
-l_int|0x0C
-comma
-id|USB_RECIP_INTERFACE
-op_or
-id|USB_TYPE_VENDOR
-comma
-l_int|0x01
-comma
-l_int|0x0
-comma
-op_amp
-id|bar
-comma
-l_int|0x1
-comma
-l_int|5
-op_star
-id|HZ
-)paren
-suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;-- result is %d&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;-- bar afterwards is %d&bslash;n&quot;
-comma
-id|bar
-)paren
-suffix:semicolon
-)brace
 DECL|variable|us_unusual_dev_list
 r_static
 r_struct
@@ -1203,7 +1134,7 @@ id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|euscsi_init
+id|usb_stor_euscsi_init
 comma
 id|US_FL_SCM_MULT_TARG
 )brace
@@ -1283,6 +1214,28 @@ comma
 (brace
 l_int|0x04e6
 comma
+l_int|0x0007
+comma
+l_int|0x0100
+comma
+l_int|0x0200
+comma
+l_string|&quot;Sony&quot;
+comma
+l_string|&quot;Hifd&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_CB
+comma
+l_int|NULL
+comma
+id|US_FL_SINGLE_LUN
+)brace
+comma
+(brace
+l_int|0x04e6
+comma
 l_int|0x0009
 comma
 l_int|0x0200
@@ -1291,7 +1244,7 @@ l_int|0x0200
 comma
 l_string|&quot;Shuttle&quot;
 comma
-l_string|&quot;ATA/ATAPI Bridge&quot;
+l_string|&quot;eUSB ATA/ATAPI Adapter&quot;
 comma
 id|US_SC_8020
 comma
@@ -1305,7 +1258,7 @@ comma
 (brace
 l_int|0x04e6
 comma
-l_int|0x000A
+l_int|0x000a
 comma
 l_int|0x0200
 comma
@@ -1313,7 +1266,7 @@ l_int|0x0200
 comma
 l_string|&quot;Shuttle&quot;
 comma
-l_string|&quot;Compact Flash Reader&quot;
+l_string|&quot;eUSB CompactFlash Adapter&quot;
 comma
 id|US_SC_8020
 comma
@@ -1341,7 +1294,7 @@ id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|euscsi_init
+id|usb_stor_euscsi_init
 comma
 id|US_FL_SCM_MULT_TARG
 )brace
@@ -1363,7 +1316,7 @@ id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|euscsi_init
+id|usb_stor_euscsi_init
 comma
 id|US_FL_SCM_MULT_TARG
 )brace
@@ -1401,7 +1354,7 @@ l_int|0x0210
 comma
 l_string|&quot;Sony&quot;
 comma
-l_string|&quot;DSC-S30/S70&quot;
+l_string|&quot;DSC-S30/S70/505V&quot;
 comma
 id|US_SC_SCSI
 comma
@@ -1519,7 +1472,7 @@ l_int|0x0100
 comma
 l_string|&quot;In-System&quot;
 comma
-l_string|&quot;USB/IDE Bridge&quot;
+l_string|&quot;USB/IDE Bridge (ATAPI ONLY!)&quot;
 comma
 id|US_SC_8070
 comma
@@ -1530,6 +1483,54 @@ comma
 l_int|0
 )brace
 comma
+(brace
+l_int|0x0644
+comma
+l_int|0x0000
+comma
+l_int|0x0100
+comma
+l_int|0x0100
+comma
+l_string|&quot;TEAC&quot;
+comma
+l_string|&quot;Floppy Drive&quot;
+comma
+id|US_SC_UFI
+comma
+id|US_PR_CB
+comma
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+macro_line|#ifdef CONFIG_USB_STORAGE_SDDR09
+(brace
+l_int|0x066b
+comma
+l_int|0x0105
+comma
+l_int|0x0100
+comma
+l_int|0x0100
+comma
+l_string|&quot;Olympus&quot;
+comma
+l_string|&quot;Camedia MAUSB-2&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_EUSB_SDDR09
+comma
+l_int|NULL
+comma
+id|US_FL_SINGLE_LUN
+op_or
+id|US_FL_START_STOP
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0x0693
 comma
@@ -1663,7 +1664,7 @@ id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|euscsi_init
+id|usb_stor_euscsi_init
 comma
 id|US_FL_SCM_MULT_TARG
 )brace
@@ -1686,7 +1687,7 @@ id|US_SC_8070
 comma
 id|US_PR_FREECOM
 comma
-l_int|NULL
+id|freecom_init
 comma
 id|US_FL_SINGLE_LUN
 )brace
@@ -1709,7 +1710,7 @@ id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|euscsi_init
+id|usb_stor_euscsi_init
 comma
 id|US_FL_SCM_MULT_TARG
 )brace
@@ -2118,9 +2119,11 @@ id|ss
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_USB_STORAGE_SDDR09
 r_int
 id|result
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* these are temporary copies -- we test on these, then put them&n;&t; * in the us-data structure &n;&t; */
 r_struct
 id|usb_endpoint_descriptor

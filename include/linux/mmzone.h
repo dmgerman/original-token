@@ -52,13 +52,15 @@ r_int
 r_int
 id|free_pages
 suffix:semicolon
-DECL|member|low_on_memory
-r_char
-id|low_on_memory
+DECL|member|inactive_clean_pages
+r_int
+r_int
+id|inactive_clean_pages
 suffix:semicolon
-DECL|member|zone_wake_kswapd
-r_char
-id|zone_wake_kswapd
+DECL|member|inactive_dirty_pages
+r_int
+r_int
+id|inactive_dirty_pages
 suffix:semicolon
 DECL|member|pages_min
 DECL|member|pages_low
@@ -72,6 +74,11 @@ comma
 id|pages_high
 suffix:semicolon
 multiline_comment|/*&n;&t; * free areas of different sizes&n;&t; */
+DECL|member|inactive_clean_list
+r_struct
+id|list_head
+id|inactive_clean_list
+suffix:semicolon
 DECL|member|free_area
 id|free_area_t
 id|free_area

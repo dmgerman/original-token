@@ -1,8 +1,8 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: macros.h - C macros for the entire subsystem.&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acmacros.h - C macros for the entire subsystem.&n; *       $Revision: 48 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef __MACROS_H__
-DECL|macro|__MACROS_H__
-mdefine_line|#define __MACROS_H__
+macro_line|#ifndef __ACMACROS_H__
+DECL|macro|__ACMACROS_H__
+mdefine_line|#define __ACMACROS_H__
 multiline_comment|/*&n; * Data manipulation macros&n; */
 macro_line|#ifndef LOWORD
 DECL|macro|LOWORD
@@ -61,19 +61,19 @@ mdefine_line|#define MOVE_UNALIGNED16_TO_32(d,s)     *(u32*)(d) = *(u16*)(s)
 macro_line|#else
 multiline_comment|/*&n; * The hardware does not support unaligned transfers.  We must move the&n; * data one byte at a time.  These macros work whether the source or&n; * the destination (or both) is/are unaligned.&n; */
 DECL|macro|MOVE_UNALIGNED16_TO_16
-mdefine_line|#define MOVE_UNALIGNED16_TO_16(d,s)     {((char *)(d))[0] = ((char *)(s))[0];&bslash;&n;&t; ((char *)(d))[1] = ((char *)(s))[1];}
+mdefine_line|#define MOVE_UNALIGNED16_TO_16(d,s)     {((u8 *)(d))[0] = ((u8 *)(s))[0];&bslash;&n;&t; ((u8 *)(d))[1] = ((u8 *)(s))[1];}
 DECL|macro|MOVE_UNALIGNED32_TO_32
-mdefine_line|#define MOVE_UNALIGNED32_TO_32(d,s)     {((char *)(d))[0] = ((char *)(s))[0];&bslash;&n;&t;&t;&t;  ((char *)(d))[1] = ((char *)(s))[1];&bslash;&n;&t;&t;&t;  ((char *)(d))[2] = ((char *)(s))[2];&bslash;&n;&t;&t;&t;  ((char *)(d))[3] = ((char *)(s))[3];}
+mdefine_line|#define MOVE_UNALIGNED32_TO_32(d,s)     {((u8 *)(d))[0] = ((u8 *)(s))[0];&bslash;&n;&t;&t;&t;  ((u8 *)(d))[1] = ((u8 *)(s))[1];&bslash;&n;&t;&t;&t;  ((u8 *)(d))[2] = ((u8 *)(s))[2];&bslash;&n;&t;&t;&t;  ((u8 *)(d))[3] = ((u8 *)(s))[3];}
 DECL|macro|MOVE_UNALIGNED16_TO_32
 mdefine_line|#define MOVE_UNALIGNED16_TO_32(d,s)     {(*(u32*)(d)) = 0; MOVE_UNALIGNED16_TO_16(d,s);}
 macro_line|#endif
 multiline_comment|/*&n; * Fast power-of-two math macros for non-optimized compilers&n; */
 DECL|macro|_DIV
-mdefine_line|#define _DIV(value,power_of2)           ((value) &gt;&gt; (power_of2))
+mdefine_line|#define _DIV(value,power_of2)           ((u32) ((value) &gt;&gt; (power_of2)))
 DECL|macro|_MUL
-mdefine_line|#define _MUL(value,power_of2)           ((value) &lt;&lt; (power_of2))
+mdefine_line|#define _MUL(value,power_of2)           ((u32) ((value) &lt;&lt; (power_of2)))
 DECL|macro|_MOD
-mdefine_line|#define _MOD(value,divisor)             ((value) &amp; ((divisor) -1))
+mdefine_line|#define _MOD(value,divisor)             ((u32) ((value) &amp; ((divisor) -1)))
 DECL|macro|DIV_2
 mdefine_line|#define DIV_2(a)                        _DIV(a,1)
 DECL|macro|MUL_2
@@ -115,12 +115,15 @@ macro_line|#ifdef DEBUG_ASSERT
 DECL|macro|DEBUG_ASSERT
 macro_line|#undef DEBUG_ASSERT
 macro_line|#endif
-multiline_comment|/*&n; * An ACPI_HANDLE (which is actually an ACPI_NAMED_OBJECT*) can appear in some contexts,&n; * such as on ap_obj_stack, where a pointer to an ACPI_OBJECT_INTERNAL can also&n; * appear.  This macro is used to distinguish them.&n; *&n; * The Data_type field is the first field in both structures.&n; */
+multiline_comment|/*&n; * An ACPI_HANDLE (which is actually an ACPI_NAMESPACE_NODE *) can appear in some contexts,&n; * such as on ap_obj_stack, where a pointer to an ACPI_OPERAND_OBJECT can also&n; * appear.  This macro is used to distinguish them.&n; *&n; * The Data_type field is the first field in both structures.&n; */
 DECL|macro|VALID_DESCRIPTOR_TYPE
-mdefine_line|#define VALID_DESCRIPTOR_TYPE(d,t)      (((ACPI_NAMED_OBJECT*)d)-&gt;data_type == t)
+mdefine_line|#define VALID_DESCRIPTOR_TYPE(d,t)      (((ACPI_NAMESPACE_NODE *)d)-&gt;data_type == t)
 multiline_comment|/* Macro to test the object type */
 DECL|macro|IS_THIS_OBJECT_TYPE
-mdefine_line|#define IS_THIS_OBJECT_TYPE(d,t)        (((ACPI_OBJECT_INTERNAL *)d)-&gt;common.type == (u8)t)
+mdefine_line|#define IS_THIS_OBJECT_TYPE(d,t)        (((ACPI_OPERAND_OBJECT  *)d)-&gt;common.type == (u8)t)
+multiline_comment|/* Macro to check the table flags for SINGLE or MULTIPLE tables are allowed */
+DECL|macro|IS_SINGLE_TABLE
+mdefine_line|#define IS_SINGLE_TABLE(x)              (((x) &amp; 0x01) == ACPI_TABLE_SINGLE ? 1 : 0)
 multiline_comment|/*&n; * Macro to check if a pointer is within an ACPI table.&n; * Parameter (a) is the pointer to check.  Parameter (b) must be defined&n; * as a pointer to an ACPI_TABLE_HEADER.  (b+1) then points past the header,&n; * and ((u8 *)b+b-&gt;Length) points one byte past the end of the table.&n; */
 macro_line|#ifndef _IA16
 DECL|macro|IS_IN_ACPI_TABLE
@@ -132,10 +135,10 @@ macro_line|#endif
 multiline_comment|/*&n; * Macros for the master AML opcode table&n; */
 macro_line|#ifdef ACPI_DEBUG
 DECL|macro|OP_INFO_ENTRY
-mdefine_line|#define OP_INFO_ENTRY(opcode,flags,name,Pargs,Iargs)     {opcode,flags,Pargs,Iargs,name}
+mdefine_line|#define OP_INFO_ENTRY(flags,name,Pargs,Iargs)     {flags,Pargs,Iargs,name}
 macro_line|#else
 DECL|macro|OP_INFO_ENTRY
-mdefine_line|#define OP_INFO_ENTRY(opcode,flags,name,Pargs,Iargs)     {opcode,flags,Pargs,Iargs}
+mdefine_line|#define OP_INFO_ENTRY(flags,name,Pargs,Iargs)     {flags,Pargs,Iargs}
 macro_line|#endif
 DECL|macro|ARG_TYPE_WIDTH
 mdefine_line|#define ARG_TYPE_WIDTH                  5
@@ -188,8 +191,6 @@ DECL|macro|REPORT_ERROR
 mdefine_line|#define REPORT_ERROR(a)                 _report_error(_THIS_MODULE,__LINE__,_COMPONENT,a)
 DECL|macro|REPORT_WARNING
 mdefine_line|#define REPORT_WARNING(a)               _report_warning(_THIS_MODULE,__LINE__,_COMPONENT,a)
-DECL|macro|REPORT_SUCCESS
-mdefine_line|#define REPORT_SUCCESS(a)               _report_success(_THIS_MODULE,__LINE__,_COMPONENT,a)
 macro_line|#else
 DECL|macro|REPORT_INFO
 mdefine_line|#define REPORT_INFO(a)                  _report_info(&quot;&quot;,__LINE__,_COMPONENT,a)
@@ -197,8 +198,6 @@ DECL|macro|REPORT_ERROR
 mdefine_line|#define REPORT_ERROR(a)                 _report_error(&quot;&quot;,__LINE__,_COMPONENT,a)
 DECL|macro|REPORT_WARNING
 mdefine_line|#define REPORT_WARNING(a)               _report_warning(&quot;&quot;,__LINE__,_COMPONENT,a)
-DECL|macro|REPORT_SUCCESS
-mdefine_line|#define REPORT_SUCCESS(a)               _report_success(&quot;&quot;,__LINE__,_COMPONENT,a)
 macro_line|#endif
 multiline_comment|/* Error reporting.  These versions pass thru the module and line# */
 DECL|macro|_REPORT_INFO
@@ -209,11 +208,11 @@ DECL|macro|_REPORT_WARNING
 mdefine_line|#define _REPORT_WARNING(a,b,c,d)        _report_warning(a,b,c,d)
 multiline_comment|/* Buffer dump macros */
 DECL|macro|DUMP_BUFFER
-mdefine_line|#define DUMP_BUFFER(a,b)                acpi_cm_dump_buffer((char *)a,b,DB_BYTE_DISPLAY,_COMPONENT)
+mdefine_line|#define DUMP_BUFFER(a,b)                acpi_cm_dump_buffer((u8 *)a,b,DB_BYTE_DISPLAY,_COMPONENT)
 multiline_comment|/*&n; * Debug macros that are conditionally compiled&n; */
 macro_line|#ifdef ACPI_DEBUG
 DECL|macro|MODULE_NAME
-mdefine_line|#define MODULE_NAME(name)               static char *_THIS_MODULE = name
+mdefine_line|#define MODULE_NAME(name)               static char *_THIS_MODULE = name;
 multiline_comment|/*&n; * Function entry tracing.&n; * The first parameter should be the procedure name as a quoted string.  This is declared&n; * as a local string (&quot;_Proc_name) so that it can be also used by the function exit macros below.&n; */
 DECL|macro|FUNCTION_TRACE
 mdefine_line|#define FUNCTION_TRACE(a)               char * _proc_name = a;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; function_trace(_THIS_MODULE,__LINE__,_COMPONENT,a)
@@ -222,7 +221,7 @@ mdefine_line|#define FUNCTION_TRACE_PTR(a,b)         char * _proc_name = a;&bsla
 DECL|macro|FUNCTION_TRACE_U32
 mdefine_line|#define FUNCTION_TRACE_U32(a,b)         char * _proc_name = a;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;function_trace_u32(_THIS_MODULE,__LINE__,_COMPONENT,a,(u32)b)
 DECL|macro|FUNCTION_TRACE_STR
-mdefine_line|#define FUNCTION_TRACE_STR(a,b)         char * _proc_name = a;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;function_trace_str(_THIS_MODULE,__LINE__,_COMPONENT,a,(char *)b)
+mdefine_line|#define FUNCTION_TRACE_STR(a,b)         char * _proc_name = a;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;function_trace_str(_THIS_MODULE,__LINE__,_COMPONENT,a,(NATIVE_CHAR *)b)
 multiline_comment|/*&n; * Function exit tracing.&n; * WARNING: These macros include a return statement.  This is usually considered&n; * bad form, but having a separate exit macro is very ugly and difficult to maintain.&n; * One of the FUNCTION_TRACE macros above must be used in conjunction with these macros&n; * so that &quot;_Proc_name&quot; is defined.&n; */
 DECL|macro|return_VOID
 mdefine_line|#define return_VOID                     {function_exit(_THIS_MODULE,__LINE__,_COMPONENT,_proc_name);return;}
@@ -231,7 +230,7 @@ mdefine_line|#define return_ACPI_STATUS(s)           {function_status_exit(_THIS
 DECL|macro|return_VALUE
 mdefine_line|#define return_VALUE(s)                 {function_value_exit(_THIS_MODULE,__LINE__,_COMPONENT,_proc_name,(NATIVE_UINT)s);return(s);}
 DECL|macro|return_PTR
-mdefine_line|#define return_PTR(s)                   {function_ptr_exit(_THIS_MODULE,__LINE__,_COMPONENT,_proc_name,(char *)s);return(s);}
+mdefine_line|#define return_PTR(s)                   {function_ptr_exit(_THIS_MODULE,__LINE__,_COMPONENT,_proc_name,(u8 *)s);return(s);}
 multiline_comment|/* Conditional execution */
 DECL|macro|DEBUG_EXEC
 mdefine_line|#define DEBUG_EXEC(a)                   a;
@@ -252,6 +251,8 @@ DECL|macro|DUMP_TABLES
 mdefine_line|#define DUMP_TABLES(a,b)                acpi_ns_dump_tables(a,b)
 DECL|macro|DUMP_PATHNAME
 mdefine_line|#define DUMP_PATHNAME(a,b,c,d)          acpi_ns_dump_pathname(a,b,c,d)
+DECL|macro|DUMP_RESOURCE_LIST
+mdefine_line|#define DUMP_RESOURCE_LIST(a)           acpi_rs_dump_resource_list(a)
 DECL|macro|BREAK_MSG
 mdefine_line|#define BREAK_MSG(a)                    acpi_os_breakpoint (a)
 multiline_comment|/*&n; * Generate INT3 on ACPI_ERROR (Debug only!)&n; */
@@ -316,6 +317,8 @@ DECL|macro|DUMP_TABLES
 mdefine_line|#define DUMP_TABLES(a,b)
 DECL|macro|DUMP_PATHNAME
 mdefine_line|#define DUMP_PATHNAME(a,b,c,d)
+DECL|macro|DUMP_RESOURCE_LIST
+mdefine_line|#define DUMP_RESOURCE_LIST(a)
 DECL|macro|DEBUG_PRINT
 mdefine_line|#define DEBUG_PRINT(l,f)
 DECL|macro|DEBUG_PRINT_RAW
@@ -335,6 +338,14 @@ mdefine_line|#define ACPI_ASSERT(exp)
 DECL|macro|DEBUG_ASSERT
 mdefine_line|#define DEBUG_ASSERT(msg, exp)
 macro_line|#endif
+multiline_comment|/*&n; * Some code only gets executed when the debugger is built in.&n; * Note that this is entirely independent of whether the&n; * DEBUG_PRINT stuff (set by ACPI_DEBUG) is on, or not.&n; */
+macro_line|#ifdef ENABLE_DEBUGGER
+DECL|macro|DEBUGGER_EXEC
+mdefine_line|#define DEBUGGER_EXEC(a)                a;
+macro_line|#else
+DECL|macro|DEBUGGER_EXEC
+mdefine_line|#define DEBUGGER_EXEC(a)
+macro_line|#endif
 multiline_comment|/*&n; * For 16-bit code, we want to shrink some things even though&n; * we are using ACPI_DEBUG to get the debug output&n; */
 macro_line|#ifdef _IA16
 DECL|macro|DEBUG_ONLY_MEMBERS
@@ -346,13 +357,13 @@ macro_line|#undef OP_INFO_ENTRY
 DECL|macro|OP_INFO_ENTRY
 mdefine_line|#define OP_INFO_ENTRY(opcode,flags,name,Pargs,Iargs)     {opcode,flags,Pargs,Iargs}
 macro_line|#endif
-macro_line|#ifndef ACPI_DEBUG
-DECL|macro|ADD_OBJECT_NAME
-mdefine_line|#define ADD_OBJECT_NAME(a,b)
-macro_line|#else
+macro_line|#ifdef ACPI_DEBUG
 multiline_comment|/*&n; * 1) Set name to blanks&n; * 2) Copy the object name&n; */
 DECL|macro|ADD_OBJECT_NAME
 mdefine_line|#define ADD_OBJECT_NAME(a,b)            MEMSET (a-&gt;common.name, &squot; &squot;, sizeof (a-&gt;common.name));&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;STRNCPY (a-&gt;common.name, acpi_gbl_ns_type_names[b], sizeof (a-&gt;common.name))
+macro_line|#else
+DECL|macro|ADD_OBJECT_NAME
+mdefine_line|#define ADD_OBJECT_NAME(a,b)
 macro_line|#endif
-macro_line|#endif /* MACROS_H */
+macro_line|#endif /* ACMACROS_H */
 eof

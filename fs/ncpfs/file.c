@@ -1137,7 +1137,7 @@ id|pos
 comma
 id|to_write
 comma
-id|buf
+id|bouncebuffer
 comma
 op_amp
 id|written_this_time

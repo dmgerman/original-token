@@ -1,29 +1,148 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dsutils - Dispatcher utilities&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: dsutils - Dispatcher utilities&n; *              $Revision: 44 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;debugger.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acdebug.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          PARSER
 id|MODULE_NAME
 (paren
 l_string|&quot;dsutils&quot;
 )paren
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_is_result_used&n; *&n; * PARAMETERS:  Op&n; *              Result_obj&n; *              Walk_state&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Check if a result object will be used by the parent&n; *&n; ******************************************************************************/
+id|u8
+DECL|function|acpi_ds_is_result_used
+id|acpi_ds_is_result_used
+(paren
+id|ACPI_PARSE_OBJECT
+op_star
+id|op
+)paren
+(brace
+id|ACPI_OPCODE_INFO
+op_star
+id|parent_info
 suffix:semicolon
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_delete_result_if_not_used&n; *&n; * PARAMETERS:  Op&n; *              Result_obj&n; *              Walk_state&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Used after interpretation of an opcode.  If there is an internal&n; *              result descriptor, check if the parent opcode will actually use&n; *              this result.  If not, delete the result now so that it will&n; *              not become orphaned.&n; *&n; ****************************************************************************/
+multiline_comment|/* Must have both an Op and a Result Object */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+r_return
+(paren
+id|TRUE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * If there is no parent, the result can&squot;t possibly be used!&n;&t; * (An executing method typically has no parent, since each&n;&t; * method is parsed separately)  However, a method that is&n;&t; * invoked from another method has a parent.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op-&gt;parent
+)paren
+(brace
+r_return
+(paren
+id|FALSE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Get info on the parent.  The root Op is AML_SCOPE&n;&t; */
+id|parent_info
+op_assign
+id|acpi_ps_get_opcode_info
+(paren
+id|op-&gt;parent-&gt;opcode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_GET_OP_TYPE
+(paren
+id|parent_info
+)paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
+)paren
+(brace
+r_return
+(paren
+id|FALSE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Never delete the return value associated with a return opcode */
+r_if
+c_cond
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_RETURN_OP
+)paren
+(brace
+r_return
+(paren
+id|TRUE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Decide what to do with the result based on the parent.  If&n;&t; * the parent opcode will not use the result, delete the object.&n;&t; * Otherwise leave it as is, it will be deleted when it is used&n;&t; * as an operand later.&n;&t; */
+r_switch
+c_cond
+(paren
+id|ACPI_GET_OP_CLASS
+(paren
+id|parent_info
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t; * In these cases, the parent will never use the return object&n;&t; */
+r_case
+id|OPTYPE_CONTROL
+suffix:colon
+multiline_comment|/* IF, ELSE, WHILE only */
+r_case
+id|OPTYPE_NAMED_OBJECT
+suffix:colon
+multiline_comment|/* Scope, method, etc. */
+r_return
+(paren
+id|FALSE
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/*&n;&t; * In all other cases. the parent will actually use the return&n;&t; * object, so keep it.&n;&t; */
+r_default
+suffix:colon
+r_break
+suffix:semicolon
+)brace
+r_return
+(paren
+id|TRUE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_delete_result_if_not_used&n; *&n; * PARAMETERS:  Op&n; *              Result_obj&n; *              Walk_state&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Used after interpretation of an opcode.  If there is an internal&n; *              result descriptor, check if the parent opcode will actually use&n; *              this result.  If not, delete the result now so that it will&n; *              not become orphaned.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_ds_delete_result_if_not_used
 id|acpi_ds_delete_result_if_not_used
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|result_obj
 comma
@@ -32,11 +151,7 @@ op_star
 id|walk_state
 )paren
 (brace
-id|ACPI_OP_INFO
-op_star
-id|parent_info
-suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -67,10 +182,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|op-&gt;parent
+id|acpi_ds_is_result_used
+(paren
+id|op
+)paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * If there is no parent, the result can&squot;t possibly be used!&n;&t;&t; * (An executing method typically has no parent, since each&n;&t;&t; * method is parsed separately&n;&t;&t; */
 multiline_comment|/*&n;&t;&t; * Must pop the result stack (Obj_desc should be equal&n;&t;&t; *  to Result_obj)&n;&t;&t; */
 id|status
 op_assign
@@ -85,111 +202,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ACPI_FAILURE
+id|ACPI_SUCCESS
 (paren
 id|status
 )paren
 )paren
 (brace
-r_return
-suffix:semicolon
-)brace
 id|acpi_cm_remove_reference
 (paren
 id|result_obj
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Get info on the parent.  The root Op is AML_SCOPE&n;&t; */
-id|parent_info
-op_assign
-id|acpi_ps_get_opcode_info
-(paren
-id|op-&gt;parent-&gt;opcode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|parent_info
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Never delete the return value associated with a return opcode */
-r_if
-c_cond
-(paren
-id|op-&gt;parent-&gt;opcode
-op_eq
-id|AML_RETURN_OP
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Decide what to do with the result based on the parent.  If&n;&t; * the parent opcode will not use the result, delete the object.&n;&t; * Otherwise leave it as is, it will be deleted when it is used&n;&t; * as an operand later.&n;&t; */
-r_switch
-c_cond
-(paren
-id|parent_info-&gt;flags
-op_amp
-id|OP_INFO_TYPE
-)paren
-(brace
-multiline_comment|/*&n;&t; * In these cases, the parent will never use the return object,&n;&t; * so delete it here and now.&n;&t; */
-r_case
-id|OPTYPE_CONTROL
-suffix:colon
-multiline_comment|/* IF, ELSE, WHILE only */
-r_case
-id|OPTYPE_NAMED_OBJECT
-suffix:colon
-multiline_comment|/* Scope, method, etc. */
-multiline_comment|/*&n;&t;&t; * Must pop the result stack (Obj_desc should be equal&n;&t;&t; * to Result_obj)&n;&t;&t; */
-id|status
-op_assign
-id|acpi_ds_result_stack_pop
-(paren
-op_amp
-id|obj_desc
-comma
-id|walk_state
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-id|acpi_cm_remove_reference
-(paren
-id|result_obj
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/*&n;&t; * In all other cases. the parent will actually use the return&n;&t; * object, so keep it.&n;&t; */
-r_default
-suffix:colon
-r_break
-suffix:semicolon
 )brace
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_create_operand&n; *&n; * PARAMETERS:  Walk_state&n; *              Arg&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Translate a parse tree object that is an argument to an AML&n; *              opcode to the equivalent interpreter object.  This may include&n; *              looking up a name or entering a new name into the internal&n; *              namespace.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_create_operand&n; *&n; * PARAMETERS:  Walk_state&n; *              Arg&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Translate a parse tree object that is an argument to an AML&n; *              opcode to the equivalent interpreter object.  This may include&n; *              looking up a name or entering a new name into the internal&n; *              namespace.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_create_operand
 id|acpi_ds_create_operand
@@ -198,7 +227,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 )paren
@@ -208,7 +237,7 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|name_string
 suffix:semicolon
@@ -218,11 +247,11 @@ suffix:semicolon
 id|OBJECT_TYPE_INTERNAL
 id|data_type
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|parent_op
 suffix:semicolon
@@ -291,7 +320,7 @@ r_if
 c_cond
 (paren
 (paren
-id|acpi_ps_is_named_object_op
+id|acpi_ps_is_node_op
 (paren
 id|parent_op-&gt;opcode
 )paren
@@ -343,7 +372,7 @@ comma
 id|walk_state
 comma
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 op_star
 )paren
@@ -378,10 +407,10 @@ multiline_comment|/*&n;&t;&t;&t;&t; * For the Conditional Reference op, it&squot
 id|obj_desc
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 suffix:semicolon
 id|status
 op_assign
@@ -438,6 +467,16 @@ id|status
 )paren
 suffix:semicolon
 )brace
+id|DEBUGGER_EXEC
+(paren
+id|acpi_db_display_argument_object
+(paren
+id|obj_desc
+comma
+id|walk_state
+)paren
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -498,6 +537,21 @@ op_amp
 id|OP_HAS_RETURN_VALUE
 )paren
 (brace
+id|DEBUGGER_EXEC
+(paren
+id|acpi_db_display_argument_object
+(paren
+id|walk_state-&gt;operands
+(braket
+id|walk_state-&gt;num_operands
+op_minus
+l_int|1
+)braket
+comma
+id|walk_state
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Use value that was already previously returned&n;&t;&t;&t; * by the evaluation of this argument&n;&t;&t;&t; */
 id|status
 op_assign
@@ -560,6 +614,7 @@ id|arg
 comma
 id|opcode
 comma
+op_amp
 id|obj_desc
 )paren
 suffix:semicolon
@@ -572,7 +627,7 @@ id|status
 )paren
 )paren
 (brace
-id|acpi_cm_free
+id|acpi_cm_delete_object_desc
 (paren
 id|obj_desc
 )paren
@@ -609,6 +664,16 @@ id|status
 )paren
 suffix:semicolon
 )brace
+id|DEBUGGER_EXEC
+(paren
+id|acpi_db_display_argument_object
+(paren
+id|obj_desc
+comma
+id|walk_state
+)paren
+)paren
+suffix:semicolon
 )brace
 r_return
 (paren
@@ -616,7 +681,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_create_operands&n; *&n; * PARAMETERS:  First_arg           - First argument of a parser argument tree&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Convert an operator&squot;s arguments from a parse tree format to&n; *              namespace objects and place those argument object on the object&n; *              stack in preparation for evaluation by the interpreter.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_create_operands&n; *&n; * PARAMETERS:  First_arg           - First argument of a parser argument tree&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Convert an operator&squot;s arguments from a parse tree format to&n; *              namespace objects and place those argument object on the object&n; *              stack in preparation for evaluation by the interpreter.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_create_operands
 id|acpi_ds_create_operands
@@ -625,7 +690,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|first_arg
 )paren
@@ -635,7 +700,7 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 suffix:semicolon
@@ -707,7 +772,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_resolve_operands&n; *&n; * PARAMETERS:  Walk_state          - Current walk state with operands on stack&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Resolve all operands to their values.  Used to prepare&n; *              arguments to a control method invocation (a call from one&n; *              method to another.)&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_resolve_operands&n; *&n; * PARAMETERS:  Walk_state          - Current walk state with operands on stack&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Resolve all operands to their values.  Used to prepare&n; *              arguments to a control method invocation (a call from one&n; *              method to another.)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_resolve_operands
 id|acpi_ds_resolve_operands
@@ -751,6 +816,8 @@ id|walk_state-&gt;operands
 (braket
 id|i
 )braket
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -772,7 +839,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_map_opcode_to_data_type&n; *&n; * PARAMETERS:  Opcode          - AML opcode to map&n; *              Out_flags       - Additional info about the opcode&n; *&n; * RETURN:      The ACPI type associated with the opcode&n; *&n; * DESCRIPTION: Convert a raw AML opcode to the associated ACPI data type,&n; *              if any.  If the opcode returns a value as part of the&n; *              intepreter execution, a flag is returned in Out_flags.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_map_opcode_to_data_type&n; *&n; * PARAMETERS:  Opcode          - AML opcode to map&n; *              Out_flags       - Additional info about the opcode&n; *&n; * RETURN:      The ACPI type associated with the opcode&n; *&n; * DESCRIPTION: Convert a raw AML opcode to the associated ACPI data type,&n; *              if any.  If the opcode returns a value as part of the&n; *              intepreter execution, a flag is returned in Out_flags.&n; *&n; ******************************************************************************/
 id|OBJECT_TYPE_INTERNAL
 DECL|function|acpi_ds_map_opcode_to_data_type
 id|acpi_ds_map_opcode_to_data_type
@@ -790,7 +857,7 @@ id|data_type
 op_assign
 id|INTERNAL_TYPE_INVALID
 suffix:semicolon
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op_info
 suffix:semicolon
@@ -809,21 +876,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|ACPI_GET_OP_TYPE
+(paren
 id|op_info
+)paren
+op_ne
+id|ACPI_OP_TYPE_OPCODE
 )paren
 (brace
 multiline_comment|/* Unknown opcode */
 r_return
+(paren
 id|data_type
+)paren
 suffix:semicolon
 )brace
 r_switch
 c_cond
 (paren
-id|op_info-&gt;flags
-op_amp
-id|OP_INFO_TYPE
+id|ACPI_GET_OP_CLASS
+(paren
+id|op_info
+)paren
 )paren
 (brace
 r_case
@@ -937,6 +1011,9 @@ suffix:colon
 r_case
 id|OPTYPE_MATCH
 suffix:colon
+r_case
+id|OPTYPE_RETURN
+suffix:colon
 id|flags
 op_assign
 id|OP_HAS_RETURN_VALUE
@@ -1000,10 +1077,12 @@ id|flags
 suffix:semicolon
 )brace
 r_return
+(paren
 id|data_type
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_map_named_opcode_to_data_type&n; *&n; * PARAMETERS:  Opcode              - The Named AML opcode to map&n; *&n; * RETURN:      The ACPI type associated with the named opcode&n; *&n; * DESCRIPTION: Convert a raw Named AML opcode to the associated data type.&n; *              Named opcodes are a subsystem of the AML opcodes.&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_map_named_opcode_to_data_type&n; *&n; * PARAMETERS:  Opcode              - The Named AML opcode to map&n; *&n; * RETURN:      The ACPI type associated with the named opcode&n; *&n; * DESCRIPTION: Convert a raw Named AML opcode to the associated data type.&n; *              Named opcodes are a subsystem of the AML opcodes.&n; *&n; ******************************************************************************/
 id|OBJECT_TYPE_INTERNAL
 DECL|function|acpi_ds_map_named_opcode_to_data_type
 id|acpi_ds_map_named_opcode_to_data_type
@@ -1175,7 +1254,9 @@ r_break
 suffix:semicolon
 )brace
 r_return
+(paren
 id|data_type
+)paren
 suffix:semicolon
 )brace
 eof

@@ -1,7 +1,7 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name:&t;ski2c.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.41 $&n; * Date:&t;$Date: 1999/09/14 14:11:30 $&n; * Purpose:&t;Funktions to access Voltage and Temperature Sensor&n; *&t;&t;(taken from Monalisa (taken from Concentrator))&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998,1999 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;See the file &quot;skge.c&quot; for further information.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: ski2c.c,v $&n; *&t;Revision 1.41  1999/09/14 14:11:30  malthoff&n; *&t;The 1000BT Dual Link adapter has got only one Fan.&n; *&t;The second Fan has been removed.&n; *&t;&n; *&t;Revision 1.40  1999/05/27 13:37:27  malthoff&n; *&t;Set divisor of 1 for fan count calculation.&n; *&t;&n; *&t;Revision 1.39  1999/05/20 14:54:43  malthoff&n; *&t;I2c.DummyReads is not used in Diagnostics.&n; *&t;&n; *&t;Revision 1.38  1999/05/20 09:20:56  cgoos&n; *&t;Changes for 1000Base-T (up to 9 sensors and fans).&n; *&t;&n; *&t;Revision 1.37  1999/03/25 15:11:36  gklug&n; *&t;fix: reset error flag if sensor reads correct value&n; *&t;&n; *&t;Revision 1.36  1999/01/07 14:11:16  gklug&n; *&t;fix: break added&n; *&t;&n; *&t;Revision 1.35  1999/01/05 15:31:49  gklug&n; *&t;fix: CLEAR STAT command is now added correctly&n; *&t;&n; *&t;Revision 1.34  1998/12/01 13:45:16  gklug&n; *&t;fix: introduced Init level, because we don&squot;t need reinits&n; *&t;&n; *&t;Revision 1.33  1998/11/09 14:54:25  malthoff&n; *&t;Modify I2C Transfer Timeout handling for Diagnostics.&n; *&t;&n; *&t;Revision 1.32  1998/11/03 06:54:35  gklug&n; *&t;fix: Need dummy reads at the beginning to init sensors&n; *&n; *&t;Revision 1.31  1998/11/03 06:42:42  gklug&n; *&t;fix: select correctVIO range only if between warning levels&n; *&t;&n; *&t;Revision 1.30  1998/11/02 07:36:53  gklug&n; *&t;fix: Error should not include WARNING message&n; *&t;&n; *&t;Revision 1.29  1998/10/30 15:07:43  malthoff&n; *&t;Disable &squot;I2C does not compelete&squot; error log for diagnostics.&n; *&t;&n; *&t;Revision 1.28  1998/10/22 09:48:11  gklug&n; *&t;fix: SysKonnectFileId typo&n; *&t;&n; *&t;Revision 1.27  1998/10/20 09:59:46  gklug&n; *&t;add: parameter to SkOsGetTime&n; *&t;&n; *&t;Revision 1.26  1998/10/09 06:10:59  malthoff&n; *&t;Remove ID_sccs by SysKonnectFileId.&n; *&t;&n; *&t;Revision 1.25  1998/09/08 12:40:26  gklug&n; *&t;fix: syntax error in if clause&n; *&t;&n; *&t;Revision 1.24  1998/09/08 12:19:42  gklug&n; *&t;chg: INIT Level checking&n; *&t;&n; *&t;Revision 1.23  1998/09/08 07:37:20  gklug&n; *&t;fix: log error if PCI_IO voltage sensor could not be initialized&n; *&t;&n; *&t;Revision 1.22  1998/09/04 08:30:03  malthoff&n; *&t;Bugfixes during SK_DIAG testing:&n; *&t;- correct NS2BCLK() macro&n; *&t;- correct SkI2cSndDev()&n; *&t;- correct SkI2cWait() loop waiting for an event&n; *&t;&n; *&t;Revision 1.21  1998/08/27 14:46:01  gklug&n; *&t;chg: if-then-else replaced by switch&n; *&n; *&t;Revision 1.20  1998/08/27 14:40:07  gklug&n; *&t;test: integral types&n; *&t;&n; *&t;Revision 1.19  1998/08/25 07:51:54  gklug&n; *&t;fix: typos for compiling&n; *&t;&n; *&t;Revision 1.18  1998/08/25 06:12:24  gklug&n; *&t;add: count errors and warnings&n; *&t;fix: check not the sensor state but the ErrFlag!&n; *&t;&n; *&t;Revision 1.17  1998/08/25 05:56:48  gklug&n; *&t;add: CheckSensor function&n; *&t;&n; *&t;Revision 1.16  1998/08/20 11:41:10  gklug&n; *&t;chg: omit STRCPY macro by using char * as Sensor Description&n; *&t;&n; *&t;Revision 1.15  1998/08/20 11:37:35  gklug&n; *&t;chg: change Ioc to IoC&n; *&t;&n; *&t;Revision 1.14  1998/08/20 11:32:52  gklug&n; *&t;fix: Para compile error&n; *&t;&n; *&t;Revision 1.13  1998/08/20 11:27:41  gklug&n; *&t;fix: Compile bugs with new awrning constants&n; *&t;&n; *&t;Revision 1.12  1998/08/20 08:53:05  gklug&n; *&t;fix: compiler errors&n; *&t;add: Threshold values&n; *&t;&n; *&t;Revision 1.11  1998/08/19 12:39:22  malthoff&n; *&t;Compiler Fix: Some names have changed.&n; *&t;&n; *&t;Revision 1.10  1998/08/19 12:20:56  gklug&n; *&t;fix: remove struct from C files (see CCC)&n; *&t;&n; *&t;Revision 1.9  1998/08/19 06:28:46  malthoff&n; *&t;SkOsGetTime returns SK_U64 now.&n; *&t;&n; *&t;Revision 1.8  1998/08/17 13:53:33  gklug&n; *&t;fix: Parameter of event function and its result&n; *&t;&n; *&t;Revision 1.7  1998/08/17 07:02:15  malthoff&n; *&t;Modify the functions for accessing the I2C SW Registers.&n; *&t;Modify SkI2cWait().&n; *&t;Put Lm80RcvReg into sklm80.c&n; *&t;Remove Compiler Errors.&n; *&t;&n; *&t;Revision 1.6  1998/08/14 07:13:20  malthoff&n; *&t;remove pAc with pAC&n; *&t;remove smc with pAC&n; *&t;change names to new convention&n; *&n; *&t;Revision 1.5  1998/08/14 06:24:49  gklug&n; *&t;add: init level 1 and 2&n; *&n; *&t;Revision 1.4  1998/08/12 14:31:12  gklug&n; *&t;add: error log for unknown event&n; *&n; *&t;Revision 1.3  1998/08/12 13:37:04  gklug&n; *&t;add: Init 0 function&n; *&n; *&t;Revision 1.2  1998/08/11 07:27:15  gklug&n; *&t;add: functions of the interface&n; *&t;adapt rest of source to C coding Conventions&n; *&t;rmv: unneccessary code taken from Mona Lisa&n; *&n; *&t;Revision 1.1  1998/06/19 14:28:43  malthoff&n; *&t;Created. Sources taken from ML Projekt.&n; *&t;Sources have to be reworked for GE.&n; *&n; *&n; ******************************************************************************/
-multiline_comment|/*&n;&t;i2C Protocol&n;*/
+multiline_comment|/******************************************************************************&n; *&n; * Name:&t;ski2c.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.44 $&n; * Date:&t;$Date: 2000/08/07 15:49:03 $&n; * Purpose:&t;Funktions to access Voltage and Temperature Sensor&n; *&t;&t;(taken from Monalisa (taken from Concentrator))&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998-2000 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: ski2c.c,v $&n; *&t;Revision 1.44  2000/08/07 15:49:03  gklug&n; *&t;fix: SK_INFAST only in NetWare driver&n; *&t;&n; *&t;Revision 1.43  2000/08/03 14:28:17  rassmann&n; *&t;- Added function to wait for I2C being ready before resetting the board.&n; *&t;- Replaced one duplicate &quot;out of range&quot; message with correct one.&n; *&t;&n; *&t;Revision 1.42  1999/11/22 13:35:12  cgoos&n; *&t;Changed license header to GPL.&n; *&t;&n; *&t;Revision 1.41  1999/09/14 14:11:30  malthoff&n; *&t;The 1000BT Dual Link adapter has got only one Fan.&n; *&t;The second Fan has been removed.&n; *&t;&n; *&t;Revision 1.40  1999/05/27 13:37:27  malthoff&n; *&t;Set divisor of 1 for fan count calculation.&n; *&t;&n; *&t;Revision 1.39  1999/05/20 14:54:43  malthoff&n; *&t;I2c.DummyReads is not used in Diagnostics.&n; *&t;&n; *&t;Revision 1.38  1999/05/20 09:20:56  cgoos&n; *&t;Changes for 1000Base-T (up to 9 sensors and fans).&n; *&t;&n; *&t;Revision 1.37  1999/03/25 15:11:36  gklug&n; *&t;fix: reset error flag if sensor reads correct value&n; *&t;&n; *&t;Revision 1.36  1999/01/07 14:11:16  gklug&n; *&t;fix: break added&n; *&t;&n; *&t;Revision 1.35  1999/01/05 15:31:49  gklug&n; *&t;fix: CLEAR STAT command is now added correctly&n; *&t;&n; *&t;Revision 1.34  1998/12/01 13:45:16  gklug&n; *&t;fix: introduced Init level, because we don&squot;t need reinits&n; *&t;&n; *&t;Revision 1.33  1998/11/09 14:54:25  malthoff&n; *&t;Modify I2C Transfer Timeout handling for Diagnostics.&n; *&t;&n; *&t;Revision 1.32  1998/11/03 06:54:35  gklug&n; *&t;fix: Need dummy reads at the beginning to init sensors&n; *&n; *&t;Revision 1.31  1998/11/03 06:42:42  gklug&n; *&t;fix: select correctVIO range only if between warning levels&n; *&t;&n; *&t;Revision 1.30  1998/11/02 07:36:53  gklug&n; *&t;fix: Error should not include WARNING message&n; *&t;&n; *&t;Revision 1.29  1998/10/30 15:07:43  malthoff&n; *&t;Disable &squot;I2C does not compelete&squot; error log for diagnostics.&n; *&t;&n; *&t;Revision 1.28  1998/10/22 09:48:11  gklug&n; *&t;fix: SysKonnectFileId typo&n; *&t;&n; *&t;Revision 1.27  1998/10/20 09:59:46  gklug&n; *&t;add: parameter to SkOsGetTime&n; *&t;&n; *&t;Revision 1.26  1998/10/09 06:10:59  malthoff&n; *&t;Remove ID_sccs by SysKonnectFileId.&n; *&t;&n; *&t;Revision 1.25  1998/09/08 12:40:26  gklug&n; *&t;fix: syntax error in if clause&n; *&t;&n; *&t;Revision 1.24  1998/09/08 12:19:42  gklug&n; *&t;chg: INIT Level checking&n; *&t;&n; *&t;Revision 1.23  1998/09/08 07:37:20  gklug&n; *&t;fix: log error if PCI_IO voltage sensor could not be initialized&n; *&t;&n; *&t;Revision 1.22  1998/09/04 08:30:03  malthoff&n; *&t;Bugfixes during SK_DIAG testing:&n; *&t;- correct NS2BCLK() macro&n; *&t;- correct SkI2cSndDev()&n; *&t;- correct SkI2cWait() loop waiting for an event&n; *&t;&n; *&t;Revision 1.21  1998/08/27 14:46:01  gklug&n; *&t;chg: if-then-else replaced by switch&n; *&n; *&t;Revision 1.20  1998/08/27 14:40:07  gklug&n; *&t;test: integral types&n; *&t;&n; *&t;Revision 1.19  1998/08/25 07:51:54  gklug&n; *&t;fix: typos for compiling&n; *&t;&n; *&t;Revision 1.18  1998/08/25 06:12:24  gklug&n; *&t;add: count errors and warnings&n; *&t;fix: check not the sensor state but the ErrFlag!&n; *&t;&n; *&t;Revision 1.17  1998/08/25 05:56:48  gklug&n; *&t;add: CheckSensor function&n; *&t;&n; *&t;Revision 1.16  1998/08/20 11:41:10  gklug&n; *&t;chg: omit STRCPY macro by using char * as Sensor Description&n; *&t;&n; *&t;Revision 1.15  1998/08/20 11:37:35  gklug&n; *&t;chg: change Ioc to IoC&n; *&t;&n; *&t;Revision 1.14  1998/08/20 11:32:52  gklug&n; *&t;fix: Para compile error&n; *&t;&n; *&t;Revision 1.13  1998/08/20 11:27:41  gklug&n; *&t;fix: Compile bugs with new awrning constants&n; *&t;&n; *&t;Revision 1.12  1998/08/20 08:53:05  gklug&n; *&t;fix: compiler errors&n; *&t;add: Threshold values&n; *&t;&n; *&t;Revision 1.11  1998/08/19 12:39:22  malthoff&n; *&t;Compiler Fix: Some names have changed.&n; *&t;&n; *&t;Revision 1.10  1998/08/19 12:20:56  gklug&n; *&t;fix: remove struct from C files (see CCC)&n; *&t;&n; *&t;Revision 1.9  1998/08/19 06:28:46  malthoff&n; *&t;SkOsGetTime returns SK_U64 now.&n; *&t;&n; *&t;Revision 1.8  1998/08/17 13:53:33  gklug&n; *&t;fix: Parameter of event function and its result&n; *&t;&n; *&t;Revision 1.7  1998/08/17 07:02:15  malthoff&n; *&t;Modify the functions for accessing the I2C SW Registers.&n; *&t;Modify SkI2cWait().&n; *&t;Put Lm80RcvReg into sklm80.c&n; *&t;Remove Compiler Errors.&n; *&t;&n; *&t;Revision 1.6  1998/08/14 07:13:20  malthoff&n; *&t;remove pAc with pAC&n; *&t;remove smc with pAC&n; *&t;change names to new convention&n; *&n; *&t;Revision 1.5  1998/08/14 06:24:49  gklug&n; *&t;add: init level 1 and 2&n; *&n; *&t;Revision 1.4  1998/08/12 14:31:12  gklug&n; *&t;add: error log for unknown event&n; *&n; *&t;Revision 1.3  1998/08/12 13:37:04  gklug&n; *&t;add: Init 0 function&n; *&n; *&t;Revision 1.2  1998/08/11 07:27:15  gklug&n; *&t;add: functions of the interface&n; *&t;adapt rest of source to C coding Conventions&n; *&t;rmv: unneccessary code taken from Mona Lisa&n; *&n; *&t;Revision 1.1  1998/06/19 14:28:43  malthoff&n; *&t;Created. Sources taken from ML Projekt.&n; *&t;Sources have to be reworked for GE.&n; *&n; *&n; ******************************************************************************/
+multiline_comment|/*&n;&t;I2C Protocol&n;*/
 DECL|variable|SysKonnectFileId
 r_static
 r_const
@@ -10,13 +10,13 @@ id|SysKonnectFileId
 (braket
 )braket
 op_assign
-l_string|&quot;$Id: ski2c.c,v 1.41 1999/09/14 14:11:30 malthoff Exp $&quot;
+l_string|&quot;$Id: ski2c.c,v 1.44 2000/08/07 15:49:03 gklug Exp $&quot;
 suffix:semicolon
 macro_line|#include &quot;h/skdrv1st.h&quot;&t;&t;/* Driver Specific Definitions */
 macro_line|#include &quot;h/lm80.h&quot;
 macro_line|#include &quot;h/skdrv2nd.h&quot;&t;&t;/* Adapter Control- and Driver specific Def. */
 macro_line|#ifdef __C2MAN__
-multiline_comment|/*&n;&t;I2C protocol implemetation.&n;&n;&t;General Description:&n;&n;&t;The I2C protocol is used for the temperature sensors and for&n;&t;the serial EEPROM which hold the configuration.&n;&n;&t;This file covers functions that allow to read write and do&n;&t;some bulk requests a specified I2C address.&n;&n;&t;The Genesis has 2 I2C busses. One for the EEPROM which holds&n;&t;the VPD Data and one for temperature and voltage sensor.&n;&t;The following picture shows the I2C busses, I2C devices and&n;&t;there control registers.&n;&n;&t;Note: The VPD functions are in skvpd.c&n;.&n;.&t;PCI Config I2C Bus for VPD Data:&n;.&n;.&t;&t;      +------------+&n;.&t;&t;      | VPD EEPROM |&n;.&t;&t;      +------------+&n;.&t;&t;&t;     |&n;.&t;&t;&t;     | &lt;-- I2C&n;.&t;&t;&t;     |&n;.&t;&t; +-----------+-----------+&n;.&t;&t; |&t;&t;&t; |&n;.&t;+-----------------+&t;+-----------------+&n;.&t;| PCI_VPD_ADR_REG |&t;| PCI_VPD_DAT_REG |&n;.&t;+-----------------+&t;+-----------------+&n;.&n;.&n;.&t;I2C Bus for LM80 sensor:&n;.&n;.&t;&t;&t;+-----------------+&n;.&t;&t;&t;| Temperature and |&n;.&t;&t;&t;| Voltage Sensor  |&n;.&t;&t;&t;| &t;LM80&t;  |&n;.&t;&t;&t;+-----------------+&n;.&t;&t;&t;&t;|&n;.&t;&t;&t;&t;|&n;.&t;&t;&t;I2C --&gt; |&n;.&t;&t;&t;&t;|&n;.&t;&t;&t;     +----+&n;.&t;     +--------------&gt;| OR |&lt;--+&n;.&t;     |&t;&t;     +----+   |&n;.     +------+------+&t;&t;      |&n;.     |&t;&t;    |&t;&t;      |&n;. +--------+&t;+--------+&t;+----------+&n;. | B2_I2C |&t;| B2_I2C |&t;|  B2_I2C  |&n;. | _CTRL  |&t;| _DATA  |&t;|   _SW    |&n;. +--------+&t;+--------+&t;+----------+&n;.&n;&t;The I2C bus may be driven by the B2_I2C_SW or by the B2_I2C_CTRL&n;&t;and B2_I2C_DATA registers.&n;&t;For driver software it is recommended to use the I2C control and&n;&t;data register, because I2C bus timing is done by the ASIC and&n;&t;an interrupt may be received when the I2C request is completed.&n;&n;&t;Clock Rate Timing:&t;&t;&t;MIN&t;MAX&t;generated by&n;&t;&t;VPD EEPROM:&t;&t;&t;50 kHz&t;100 kHz&t;&t;HW&n;&t;&t;LM80 over I2C Ctrl/Data reg.&t;50 kHz&t;100 kHz&t;&t;HW&n;&t;&t;LM80 over B2_I2C_SW register&t;0&t;400 kHz&t;&t;SW&n;&n;&t;Note:&t;The clock generated by the hardware is dependend on the&n;&t;&t;PCI clock. If the PCI bus clock is 33 MHz, the I2C/VPD&n;&t;&t;clock is 50 kHz.&n; */
+multiline_comment|/*&n;&t;I2C protocol implemetation.&n;&n;&t;General Description:&n;&n;&t;The I2C protocol is used for the temperature sensors and for&n;&t;the serial EEPROM which hold the configuration.&n;&n;&t;This file covers functions that allow to read write and do&n;&t;some bulk requests a specified I2C address.&n;&n;&t;The Genesis has 2 I2C buses. One for the EEPROM which holds&n;&t;the VPD Data and one for temperature and voltage sensor.&n;&t;The following picture shows the I2C buses, I2C devices and&n;&t;there control registers.&n;&n;&t;Note: The VPD functions are in skvpd.c&n;.&n;.&t;PCI Config I2C Bus for VPD Data:&n;.&n;.&t;&t;      +------------+&n;.&t;&t;      | VPD EEPROM |&n;.&t;&t;      +------------+&n;.&t;&t;&t;     |&n;.&t;&t;&t;     | &lt;-- I2C&n;.&t;&t;&t;     |&n;.&t;&t; +-----------+-----------+&n;.&t;&t; |&t;&t;&t; |&n;.&t;+-----------------+&t;+-----------------+&n;.&t;| PCI_VPD_ADR_REG |&t;| PCI_VPD_DAT_REG |&n;.&t;+-----------------+&t;+-----------------+&n;.&n;.&n;.&t;I2C Bus for LM80 sensor:&n;.&n;.&t;&t;&t;+-----------------+&n;.&t;&t;&t;| Temperature and |&n;.&t;&t;&t;| Voltage Sensor  |&n;.&t;&t;&t;| &t;LM80&t;  |&n;.&t;&t;&t;+-----------------+&n;.&t;&t;&t;&t;|&n;.&t;&t;&t;&t;|&n;.&t;&t;&t;I2C --&gt; |&n;.&t;&t;&t;&t;|&n;.&t;&t;&t;     +----+&n;.&t;     +--------------&gt;| OR |&lt;--+&n;.&t;     |&t;&t;     +----+   |&n;.     +------+------+&t;&t;      |&n;.     |&t;&t;    |&t;&t;      |&n;. +--------+&t;+--------+&t;+----------+&n;. | B2_I2C |&t;| B2_I2C |&t;|  B2_I2C  |&n;. | _CTRL  |&t;| _DATA  |&t;|   _SW    |&n;. +--------+&t;+--------+&t;+----------+&n;.&n;&t;The I2C bus may be driven by the B2_I2C_SW or by the B2_I2C_CTRL&n;&t;and B2_I2C_DATA registers.&n;&t;For driver software it is recommended to use the I2C control and&n;&t;data register, because I2C bus timing is done by the ASIC and&n;&t;an interrupt may be received when the I2C request is completed.&n;&n;&t;Clock Rate Timing:&t;&t;&t;MIN&t;MAX&t;generated by&n;&t;&t;VPD EEPROM:&t;&t;&t;50 kHz&t;100 kHz&t;&t;HW&n;&t;&t;LM80 over I2C Ctrl/Data reg.&t;50 kHz&t;100 kHz&t;&t;HW&n;&t;&t;LM80 over B2_I2C_SW register&t;0&t;400 kHz&t;&t;SW&n;&n;&t;Note:&t;The clock generated by the hardware is dependend on the&n;&t;&t;PCI clock. If the PCI bus clock is 33 MHz, the I2C/VPD&n;&t;&t;clock is 50 kHz.&n; */
 DECL|function|intro
 id|intro
 c_func
@@ -65,19 +65,19 @@ DECL|macro|NS2BCLK
 mdefine_line|#define NS2BCLK(x)&t;(((x)*125)/10000)
 multiline_comment|/*&n; * I2C Wire Operations&n; *&n; * About I2C_CLK_LOW():&n; *&n; * The Data Direction bit (I2C_DATA_DIR) has to be set to input when setting&n; * clock to low, to prevent the ASIC and the I2C data client from driving the&n; * serial data line simultaneously (ASIC: last bit of a byte = &squot;1&squot;, I2C client&n; * send an &squot;ACK&squot;). See also Concentrator Bugreport No. 10192.&n; */
 DECL|macro|I2C_DATA_HIGH
-mdefine_line|#define I2C_DATA_HIGH(IoC)&t;SK_I2C_SET_BIT(IoC,I2C_DATA)
+mdefine_line|#define I2C_DATA_HIGH(IoC)&t;SK_I2C_SET_BIT(IoC, I2C_DATA)
 DECL|macro|I2C_DATA_LOW
-mdefine_line|#define&t;I2C_DATA_LOW(IoC)&t;SK_I2C_CLR_BIT(IoC,I2C_DATA)
+mdefine_line|#define&t;I2C_DATA_LOW(IoC)&t;SK_I2C_CLR_BIT(IoC, I2C_DATA)
 DECL|macro|I2C_DATA_OUT
-mdefine_line|#define&t;I2C_DATA_OUT(IoC)&t;SK_I2C_SET_BIT(IoC,I2C_DATA_DIR)
+mdefine_line|#define&t;I2C_DATA_OUT(IoC)&t;SK_I2C_SET_BIT(IoC, I2C_DATA_DIR)
 DECL|macro|I2C_DATA_IN
-mdefine_line|#define&t;I2C_DATA_IN(IoC)&t;SK_I2C_CLR_BIT(IoC,I2C_DATA_DIR|I2C_DATA)
+mdefine_line|#define&t;I2C_DATA_IN(IoC)&t;SK_I2C_CLR_BIT(IoC, I2C_DATA_DIR|I2C_DATA)
 DECL|macro|I2C_CLK_HIGH
-mdefine_line|#define&t;I2C_CLK_HIGH(IoC)&t;SK_I2C_SET_BIT(IoC,I2C_CLK)
+mdefine_line|#define&t;I2C_CLK_HIGH(IoC)&t;SK_I2C_SET_BIT(IoC, I2C_CLK)
 DECL|macro|I2C_CLK_LOW
-mdefine_line|#define&t;I2C_CLK_LOW(IoC)&t;SK_I2C_CLR_BIT(IoC,I2C_CLK|I2C_DATA_DIR)
+mdefine_line|#define&t;I2C_CLK_LOW(IoC)&t;SK_I2C_CLR_BIT(IoC, I2C_CLK|I2C_DATA_DIR)
 DECL|macro|I2C_START_COND
-mdefine_line|#define&t;I2C_START_COND(IoC)&t;SK_I2C_CLR_BIT(IoC,I2C_CLK)
+mdefine_line|#define&t;I2C_START_COND(IoC)&t;SK_I2C_CLR_BIT(IoC, I2C_CLK)
 DECL|macro|NS2CLKT
 mdefine_line|#define NS2CLKT(x)&t;((x*125L)/10000)
 multiline_comment|/*--------------- I2C Interface Register Functions --------------- */
@@ -90,7 +90,7 @@ c_func
 id|SK_IOC
 id|IoC
 comma
-multiline_comment|/* IoContext */
+multiline_comment|/* I/O Context */
 id|SK_U8
 id|Bit
 )paren
@@ -161,7 +161,8 @@ id|IoC
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Signal a start to the i2C Bus.&n; *&n; * A start is signaled when data goes to low in a high clock cycle.&n; *&n; * Ends with Clock Low.&n; *&n; * Status: not tested&n; */
+multiline_comment|/* SkI2cSndBit*/
+multiline_comment|/*&n; * Signal a start to the I2C Bus.&n; *&n; * A start is signaled when data goes to low in a high clock cycle.&n; *&n; * Ends with Clock Low.&n; *&n; * Status: not tested&n; */
 DECL|function|SkI2cStart
 r_void
 id|SkI2cStart
@@ -244,6 +245,7 @@ id|T_CLK_LOW
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cStart */
 DECL|function|SkI2cStop
 r_void
 id|SkI2cStop
@@ -320,7 +322,8 @@ id|T_BUS_IDLE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Receive just one bit via the i2C bus.&n; *&n; * Note:&t;Clock must be set to LOW before calling this function.&n; *&n; * Returns The received bit.&n; */
+multiline_comment|/* SkI2cStop */
+multiline_comment|/*&n; * Receive just one bit via the I2C bus.&n; *&n; * Note:&t;Clock must be set to LOW before calling this function.&n; *&n; * Returns The received bit.&n; */
 DECL|function|SkI2cRcvBit
 r_int
 id|SkI2cRcvBit
@@ -427,6 +430,7 @@ r_return
 id|Bit
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cRcvBit */
 multiline_comment|/*&n; * Receive an ACK.&n; *&n; * returns&t;0 If acknoledged&n; *&t;&t;1 in case of an error&n; */
 DECL|function|SkI2cRcvAck
 r_int
@@ -451,6 +455,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cRcvAck */
 multiline_comment|/*&n; * Send an NACK.&n; */
 DECL|function|SkI2cSndNAck
 r_void
@@ -472,6 +477,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cSndNAck */
 multiline_comment|/*&n; * Send an ACK.&n; */
 DECL|function|SkI2cSndAck
 r_void
@@ -493,7 +499,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Send one byte to the i2C device and wait for ACK.&n; *&n; * Return acknoleged status.&n; */
+multiline_comment|/* SkI2cSndAck */
+multiline_comment|/*&n; * Send one byte to the I2C device and wait for ACK.&n; *&n; * Return acknoleged status.&n; */
 DECL|function|SkI2cSndByte
 r_int
 id|SkI2cSndByte
@@ -564,15 +571,14 @@ suffix:semicolon
 )brace
 )brace
 r_return
-(paren
 id|SkI2cRcvAck
 c_func
 (paren
 id|IoC
 )paren
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cSndByte */
 multiline_comment|/*&n; * Receive one byte and ack it.&n; *&n; * Return byte.&n; */
 DECL|function|SkI2cRcvByte
 r_int
@@ -647,11 +653,10 @@ id|IoC
 suffix:semicolon
 )brace
 r_return
-(paren
 id|Byte
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cRcvByte */
 multiline_comment|/*&n; * Start dialog and send device address&n; *&n; * Return 0 if acknoleged, 1 in case of an error&n; */
 DECL|function|SkI2cSndDev
 r_int
@@ -687,7 +692,6 @@ op_and_assign
 id|I2C_WRITE
 suffix:semicolon
 r_return
-(paren
 id|SkI2cSndByte
 c_func
 (paren
@@ -701,12 +705,12 @@ l_int|1
 op_or
 id|Rw
 )paren
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cSndDev */
 macro_line|#endif&t;/* SK_DIAG */
 multiline_comment|/*----------------- I2C CTRL Register Functions ----------*/
-multiline_comment|/*&n; * waits for a completetion of a I2C transfer&n; *&n; * returns&t;0:&t;success, transfer completes&n; *&t;&t;1:&t;error,&t; transfer does not complete, I2C transfer&n; *&t;&t;&t;&t; killed, wait loop terminated.&n; */
+multiline_comment|/*&n; * waits for a completion of an I2C transfer&n; *&n; * returns&t;0:&t;success, transfer completes&n; *&t;&t;&t;1:&t;error,&t; transfer does not complete, I2C transfer&n; *&t;&t;&t;&t;&t;&t; killed, wait loop terminated.&n; */
 DECL|function|SkI2cWait
 r_int
 id|SkI2cWait
@@ -720,7 +724,7 @@ multiline_comment|/* Adapter Context */
 id|SK_IOC
 id|IoC
 comma
-multiline_comment|/* IoContext */
+multiline_comment|/* I/O Context */
 r_int
 id|Event
 )paren
@@ -755,7 +759,7 @@ id|StartTime
 OG
 id|SK_TICKS_PER_SEC
 op_div
-l_int|16
+l_int|8
 )paren
 (brace
 id|SK_I2C_STOP
@@ -779,9 +783,7 @@ id|SKERR_I2C_E002MSG
 suffix:semicolon
 macro_line|#endif&t;/* !SK_DIAG */
 r_return
-(paren
 l_int|1
-)paren
 suffix:semicolon
 )brace
 id|SK_I2C_GET_CTL
@@ -810,17 +812,136 @@ id|Event
 op_lshift
 l_int|31
 )paren
-(brace
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
-r_return
+multiline_comment|/* SkI2cWait */
+multiline_comment|/*&n; * waits for a completion of an I2C transfer&n; *&n; * Returns&n; *&t;Nothing&n; */
+DECL|function|SkI2cWaitIrq
+r_void
+id|SkI2cWaitIrq
+c_func
 (paren
-l_int|0
+id|SK_AC
+op_star
+id|pAC
+comma
+multiline_comment|/* Adapter Context */
+id|SK_IOC
+id|IoC
+)paren
+multiline_comment|/* I/O Context */
+(brace
+id|SK_SENSOR
+op_star
+id|pSen
+suffix:semicolon
+id|SK_U64
+id|StartTime
+suffix:semicolon
+id|SK_U32
+id|IrqSrc
+suffix:semicolon
+id|pSen
+op_assign
+op_amp
+id|pAC-&gt;I2c.SenTable
+(braket
+id|pAC-&gt;I2c.CurrSens
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pSen-&gt;SenState
+op_eq
+id|SK_SEN_IDLE
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|StartTime
+op_assign
+id|SkOsGetTime
+c_func
+(paren
+id|pAC
+)paren
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|SkOsGetTime
+c_func
+(paren
+id|pAC
+)paren
+op_minus
+id|StartTime
+OG
+id|SK_TICKS_PER_SEC
+op_div
+l_int|8
+)paren
+(brace
+id|SK_I2C_STOP
+c_func
+(paren
+id|IoC
+)paren
+suffix:semicolon
+macro_line|#ifndef SK_DIAG
+id|SK_ERR_LOG
+c_func
+(paren
+id|pAC
+comma
+id|SK_ERRCL_SW
+comma
+id|SKERR_I2C_E002
+comma
+id|SKERR_I2C_E002MSG
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* !SK_DIAG */
+r_return
+suffix:semicolon
+)brace
+id|SK_IN32
+c_func
+(paren
+id|pAC
+comma
+id|B0_ISRC
+comma
+op_amp
+id|IrqSrc
 )paren
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+(paren
+id|IrqSrc
+op_amp
+id|IS_I2C_READY
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* SkI2cWaitIrq */
 macro_line|#ifdef&t;SK_DIAG
-multiline_comment|/*&n; * writes a single byte or 4 bytes into the I2C device&n; *&n; * returns&t;0:&t;success&n; *&t;&t;1:&t;error&n; */
+multiline_comment|/*&n; * writes a single byte or 4 bytes into the I2C device&n; *&n; * returns&t;0:&t;success&n; *&t;&t;&t;1:&t;error&n; */
 DECL|function|SkI2cWrite
 r_int
 id|SkI2cWrite
@@ -831,6 +952,10 @@ op_star
 id|pAC
 comma
 multiline_comment|/* Adapter Context */
+id|SK_IOC
+id|IoC
+comma
+multiline_comment|/* I/O Context */
 id|SK_U32
 id|I2cData
 comma
@@ -851,7 +976,7 @@ multiline_comment|/* I2C Burst Flag ( 0 || I2C_BURST ) */
 id|SK_OUT32
 c_func
 (paren
-id|pAC
+id|IoC
 comma
 id|B2_I2C_DATA
 comma
@@ -861,7 +986,7 @@ suffix:semicolon
 id|SK_I2C_CTL
 c_func
 (paren
-id|pAC
+id|IoC
 comma
 id|I2C_WRITE
 comma
@@ -873,19 +998,18 @@ id|I2cBurst
 )paren
 suffix:semicolon
 r_return
-(paren
 id|SkI2cWait
 c_func
 (paren
 id|pAC
 comma
-id|pAC
+id|IoC
 comma
 id|I2C_WRITE
 )paren
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cWrite*/
 multiline_comment|/*&n; * reads a single byte or 4 bytes from the I2C device&n; *&n; * returns&t;the word read&n; */
 DECL|function|SkI2cRead
 id|SK_U32
@@ -897,6 +1021,10 @@ op_star
 id|pAC
 comma
 multiline_comment|/* Adapter Context */
+id|SK_IOC
+id|IoC
+comma
+multiline_comment|/* I/O Context */
 r_int
 id|I2cDev
 comma
@@ -916,7 +1044,7 @@ suffix:semicolon
 id|SK_OUT32
 c_func
 (paren
-id|pAC
+id|IoC
 comma
 id|B2_I2C_DATA
 comma
@@ -926,7 +1054,7 @@ suffix:semicolon
 id|SK_I2C_CTL
 c_func
 (paren
-id|pAC
+id|IoC
 comma
 id|I2C_READ
 comma
@@ -945,7 +1073,7 @@ c_func
 (paren
 id|pAC
 comma
-id|pAC
+id|IoC
 comma
 id|I2C_READ
 )paren
@@ -954,14 +1082,14 @@ id|I2C_READ
 id|w_print
 c_func
 (paren
-l_string|&quot;I2c Transfer Timeout!&bslash;n&quot;
+l_string|&quot;I2C Transfer Timeout!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 id|SK_IN32
 c_func
 (paren
-id|pAC
+id|IoC
 comma
 id|B2_I2C_DATA
 comma
@@ -970,13 +1098,12 @@ id|Data
 )paren
 suffix:semicolon
 r_return
-(paren
 id|Data
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cRead */
 macro_line|#endif&t;/* SK_DIAG */
-multiline_comment|/*&n; * read a sensors value&n; *&n; * This function read a sensors value from the I2c sensor chip. The sensor&n; * is defined by its index into the sensors database in the struct pAC points&n; * to.&n; * Returns&t;1 if the read is completed&n; *&t;&t;0 if the read must be continued (I2c Bus still allocated)&n; */
+multiline_comment|/*&n; * read a sensor&squot;s value&n; *&n; * This function read a sensors value from the I2C sensor chip. The sensor&n; * is defined by its index into the sensors database in the struct pAC points&n; * to.&n; * Returns&t;1 if the read is completed&n; *&t;&t;0 if the read must be continued (I2C Bus still allocated)&n; */
 DECL|function|SkI2cReadSensor
 r_int
 id|SkI2cReadSensor
@@ -990,7 +1117,7 @@ multiline_comment|/* Adapter Context */
 id|SK_IOC
 id|IoC
 comma
-multiline_comment|/* IoContext */
+multiline_comment|/* I/O Context */
 id|SK_SENSOR
 op_star
 id|pSen
@@ -998,7 +1125,6 @@ id|pSen
 multiline_comment|/* Sensor to be read */
 (brace
 r_return
-(paren
 (paren
 op_star
 id|pSen-&gt;SenRead
@@ -1010,9 +1136,9 @@ id|IoC
 comma
 id|pSen
 )paren
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cReadSensor*/
 multiline_comment|/*&n; * Do the Init state 0 initialization&n; */
 DECL|function|SkI2cInit0
 r_static
@@ -1766,7 +1892,7 @@ op_assign
 id|LM80_ADDR
 suffix:semicolon
 )brace
-multiline_comment|/* Now we are INIT dataed */
+multiline_comment|/* Now we are &quot;INIT data&quot;ed */
 id|pAC-&gt;I2c.InitLevel
 op_assign
 id|SK_INIT_DATA
@@ -1775,6 +1901,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cInit0*/
 multiline_comment|/*&n; * Do the init state 1 initialization&n; *&n; * initialize the following register of the LM80:&n; * Configuration register:&n; * - START, noINT, activeLOW, noINT#Clear, noRESET, noCI, noGPO#, noINIT&n; *&n; * Interrupt Mask Register 1:&n; * - all interrupts are Disabled (0xff)&n; *&n; * Interrupt Mask Register 2:&n; * - all interrupts are Disabled (0xff) Interrupt modi doesn&squot;t matter.&n; *&n; * Fan Divisor/RST_OUT register:&n; * - Divisors set to 1 (bits 00), all others 0s.&n; *&n; * OS# Configuration/Temperature resolution Register:&n; * - all 0s&n; *&n; */
 DECL|function|SkI2cInit1
 r_static
@@ -1790,7 +1917,7 @@ multiline_comment|/* Adapter Context */
 id|SK_IOC
 id|IoC
 )paren
-multiline_comment|/* IoContext needed in level 1 */
+multiline_comment|/* I/O Context */
 (brace
 r_if
 c_cond
@@ -2107,6 +2234,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cInit1 */
 multiline_comment|/*&n; * Init level 2: Start first sensors read&n; */
 DECL|function|SkI2cInit2
 r_static
@@ -2122,7 +2250,7 @@ multiline_comment|/* Adapter Context */
 id|SK_IOC
 id|IoC
 )paren
-multiline_comment|/* IoContext needed in level 1 */
+multiline_comment|/* I/O Context */
 (brace
 r_int
 id|ReadComplete
@@ -2193,6 +2321,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cInit2*/
 multiline_comment|/*&n; * Initialize I2C devices&n; *&n; * Get the first voltage value and discard it.&n; * Go into temperature read mode. A default pointer is not set.&n; *&n; * The things to be done depend on the init level in the parameter list:&n; * Level 0:&n; *&t;Initialize only the data structures. Do NOT access hardware.&n; * Level 1:&n; *&t;Initialize hardware through SK_IN?OUT commands. Do NOT use interrupts.&n; * Level 2:&n; *&t;Everything is possible. Interrupts may be used from now on.&n; *&n; * return:&t;0 = success&n; *&t;&t;other = error.&n; */
 DECL|function|SkI2cInit
 r_int
@@ -2207,7 +2336,7 @@ multiline_comment|/* Adapter Context */
 id|SK_IOC
 id|IoC
 comma
-multiline_comment|/* IoContext needed in level 1 */
+multiline_comment|/* I/O Context needed in levels 1 and 2 */
 r_int
 id|Level
 )paren
@@ -2223,19 +2352,16 @@ r_case
 id|SK_INIT_DATA
 suffix:colon
 r_return
-(paren
 id|SkI2cInit0
 c_func
 (paren
 id|pAC
-)paren
 )paren
 suffix:semicolon
 r_case
 id|SK_INIT_IO
 suffix:colon
 r_return
-(paren
 id|SkI2cInit1
 c_func
 (paren
@@ -2243,20 +2369,17 @@ id|pAC
 comma
 id|IoC
 )paren
-)paren
 suffix:semicolon
 r_case
 id|SK_INIT_RUN
 suffix:colon
 r_return
-(paren
 id|SkI2cInit2
 c_func
 (paren
 id|pAC
 comma
 id|IoC
-)paren
 )paren
 suffix:semicolon
 r_default
@@ -2265,13 +2388,12 @@ r_break
 suffix:semicolon
 )brace
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cInit */
 macro_line|#ifndef SK_DIAG
-multiline_comment|/*&n; * Interrupt service function for the I2c Interface&n; *&n; * Clears the Interrupt source&n; *&n; * Reads the register and check it for sending a trap.&n; *&n; * Starts the timer if necessary.&n; */
+multiline_comment|/*&n; * Interrupt service function for the I2C Interface&n; *&n; * Clears the Interrupt source&n; *&n; * Reads the register and check it for sending a trap.&n; *&n; * Starts the timer if necessary.&n; */
 DECL|function|SkI2cIsr
 r_void
 id|SkI2cIsr
@@ -2281,11 +2403,11 @@ id|SK_AC
 op_star
 id|pAC
 comma
-multiline_comment|/* Adapters context */
+multiline_comment|/* Adapter Context */
 id|SK_IOC
 id|IoC
 )paren
-multiline_comment|/* Io Context */
+multiline_comment|/* I/O Context */
 (brace
 id|SK_EVPARA
 id|Para
@@ -2318,6 +2440,7 @@ id|Para
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkI2cIsr */
 multiline_comment|/*&n; * Check this sensors Value against the threshold and send events.&n; */
 DECL|function|SkI2cCheckSensor
 r_static
@@ -2329,7 +2452,7 @@ id|SK_AC
 op_star
 id|pAC
 comma
-multiline_comment|/* Adapters context */
+multiline_comment|/* Adapter Context */
 id|SK_SENSOR
 op_star
 id|pSen
@@ -2424,7 +2547,7 @@ op_logical_or
 id|TooLow
 )paren
 (brace
-multiline_comment|/* Error condition is satiesfied */
+multiline_comment|/* Error condition is satisfied */
 id|DoTrapSend
 op_assign
 id|SK_TRUE
@@ -2632,7 +2755,7 @@ id|TooLow
 )paren
 )paren
 (brace
-multiline_comment|/* Error condition is satiesfied */
+multiline_comment|/* Error condition is satisfied */
 id|DoTrapSend
 op_assign
 id|SK_TRUE
@@ -2781,9 +2904,9 @@ id|pAC
 comma
 id|SK_ERRCL_HW
 comma
-id|SKERR_I2C_E009
+id|SKERR_I2C_E010
 comma
-id|SKERR_I2C_E009MSG
+id|SKERR_I2C_E010MSG
 )paren
 suffix:semicolon
 )brace
@@ -2911,6 +3034,7 @@ id|SKERR_I2C_E013MSG
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* SkI2cCheckSensor*/
 multiline_comment|/*&n; * The only Event to be served is the timeout event&n; *&n; */
 DECL|function|SkI2cEvent
 r_int
@@ -2921,11 +3045,11 @@ id|SK_AC
 op_star
 id|pAC
 comma
-multiline_comment|/* Adapters context */
+multiline_comment|/* Adapter Context */
 id|SK_IOC
 id|IoC
 comma
-multiline_comment|/* Io Context */
+multiline_comment|/* I/O Context */
 id|SK_U32
 id|Event
 comma
@@ -3185,6 +3309,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* !SK_DIAG */
-multiline_comment|/* End of File */
+multiline_comment|/* SkI2cEvent*/
+macro_line|#endif&t;/* !SK_DIAG */ 
 eof

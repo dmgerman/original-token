@@ -4,7 +4,7 @@ macro_line|#ifndef __ACXFACE_H__
 DECL|macro|__ACXFACE_H__
 mdefine_line|#define __ACXFACE_H__
 macro_line|#include &quot;actypes.h&quot;
-macro_line|#include &quot;actables.h&quot;
+macro_line|#include &quot;actbl.h&quot;
 multiline_comment|/*&n; * Global interfaces&n; */
 id|ACPI_STATUS
 id|acpi_initialize

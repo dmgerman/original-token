@@ -61,6 +61,12 @@ multiline_comment|/* Don&squot;t allow too many pending pages in flight.. */
 r_if
 c_cond
 (paren
+(paren
+id|rw
+op_eq
+id|WRITE
+)paren
+op_logical_and
 id|atomic_read
 c_func
 (paren
@@ -69,6 +75,12 @@ id|nr_async_pages
 )paren
 OG
 id|pager_daemon.swap_cluster
+op_star
+(paren
+l_int|1
+op_lshift
+id|page_cluster
+)paren
 )paren
 id|wait
 op_assign

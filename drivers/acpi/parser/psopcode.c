@@ -1,7 +1,7 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: psopcode - Parser opcode information table&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: psopcode - Parser opcode information table&n; *              $Revision: 20 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          PARSER
@@ -9,9 +9,39 @@ id|MODULE_NAME
 (paren
 l_string|&quot;psopcode&quot;
 )paren
+DECL|variable|acpi_gbl_aml_short_op_info_index
+id|u8
+id|acpi_gbl_aml_short_op_info_index
+(braket
+)braket
 suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_opcode_info&n; *&n; * PARAMETERS:  Opcode              - The AML opcode&n; *&n; * RETURN:      A pointer to the info about the opcode.  NULL if the opcode was&n; *              not found in the table.&n; *&n; * DESCRIPTION: Find AML opcode description based on the opcode&n; *&n; ******************************************************************************/
-id|ACPI_OP_INFO
+DECL|variable|acpi_gbl_aml_long_op_info_index
+id|u8
+id|acpi_gbl_aml_long_op_info_index
+(braket
+)braket
+suffix:semicolon
+DECL|macro|_UNK
+mdefine_line|#define _UNK                        0x6B
+multiline_comment|/*&n; * Reserved ASCII characters.  Do not use any of these for&n; * internal opcodes, since they are used to differentiate&n; * name strings from AML opcodes&n; */
+DECL|macro|_ASC
+mdefine_line|#define _ASC                        0x6C
+DECL|macro|_NAM
+mdefine_line|#define _NAM                        0x6C
+DECL|macro|_PFX
+mdefine_line|#define _PFX                        0x6D
+DECL|macro|_UNKNOWN_OPCODE
+mdefine_line|#define _UNKNOWN_OPCODE             0x02    /* An example unknown opcode */
+DECL|macro|MAX_EXTENDED_OPCODE
+mdefine_line|#define MAX_EXTENDED_OPCODE         0x87
+DECL|macro|NUM_EXTENDED_OPCODE
+mdefine_line|#define NUM_EXTENDED_OPCODE         MAX_EXTENDED_OPCODE + 1
+DECL|macro|MAX_INTERNAL_OPCODE
+mdefine_line|#define MAX_INTERNAL_OPCODE
+DECL|macro|NUM_INTERNAL_OPCODE
+mdefine_line|#define NUM_INTERNAL_OPCODE         MAX_INTERNAL_OPCODE + 1
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_opcode_info&n; *&n; * PARAMETERS:  Opcode              - The AML opcode&n; *&n; * RETURN:      A pointer to the info about the opcode.  NULL if the opcode was&n; *              not found in the table.&n; *&n; * DESCRIPTION: Find AML opcode description based on the opcode.&n; *              NOTE: This procedure must ALWAYS return a valid pointer!&n; *&n; ******************************************************************************/
+id|ACPI_OPCODE_INFO
 op_star
 DECL|function|acpi_ps_get_opcode_info
 id|acpi_ps_get_opcode_info
@@ -20,29 +50,65 @@ id|u16
 id|opcode
 )paren
 (brace
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
-id|op
+id|op_info
 suffix:semicolon
-id|s32
-id|hash
+id|u8
+id|upper_opcode
 suffix:semicolon
-multiline_comment|/* compute hash/index into the Acpi_aml_op_index table */
-r_switch
-c_cond
+id|u8
+id|lower_opcode
+suffix:semicolon
+multiline_comment|/* Split the 16-bit opcode into separate bytes */
+id|upper_opcode
+op_assign
+(paren
+id|u8
+)paren
 (paren
 id|opcode
 op_rshift
 l_int|8
 )paren
+suffix:semicolon
+id|lower_opcode
+op_assign
+(paren
+id|u8
+)paren
+id|opcode
+suffix:semicolon
+multiline_comment|/* Default is &quot;unknown opcode&quot; */
+id|op_info
+op_assign
+op_amp
+id|acpi_gbl_aml_op_info
+(braket
+id|_UNK
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t; * Detect normal 8-bit opcode or extended 16-bit opcode&n;&t; */
+r_switch
+c_cond
+(paren
+id|upper_opcode
+)paren
 (brace
 r_case
 l_int|0
 suffix:colon
-multiline_comment|/* Simple (8-bit) opcode */
-id|hash
+multiline_comment|/* Simple (8-bit) opcode: 0-255, can&squot;t index beyond table  */
+id|op_info
 op_assign
-id|opcode
+op_amp
+id|acpi_gbl_aml_op_info
+(braket
+id|acpi_gbl_aml_short_op_info_index
+(braket
+id|lower_opcode
+)braket
+)braket
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -50,75 +116,49 @@ r_case
 id|AML_EXTOP
 suffix:colon
 multiline_comment|/* Extended (16-bit, prefix+opcode) opcode */
-id|hash
-op_assign
+r_if
+c_cond
 (paren
-id|opcode
-op_plus
-id|AML_EXTOP_HASH_OFFSET
+id|lower_opcode
+op_le
+id|MAX_EXTENDED_OPCODE
 )paren
+(brace
+id|op_info
+op_assign
 op_amp
-l_int|0xff
+id|acpi_gbl_aml_op_info
+(braket
+id|acpi_gbl_aml_long_op_info_index
+(braket
+id|lower_opcode
+)braket
+)braket
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
 id|AML_LNOT_OP
 suffix:colon
 multiline_comment|/* This case is for the bogus opcodes LNOTEQUAL, LLESSEQUAL, LGREATEREQUAL */
-id|hash
-op_assign
-(paren
-id|opcode
-op_plus
-id|AML_LNOT_HASH_OFFSET
-)paren
-op_amp
-l_int|0xff
-suffix:semicolon
+multiline_comment|/* TBD: [Investigate] remove this case? */
 r_break
 suffix:semicolon
 r_default
 suffix:colon
-r_return
-l_int|NULL
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Get the Op info pointer for this opcode */
-id|op
-op_assign
-op_amp
-id|acpi_gbl_aml_op_info
-(braket
-(paren
-id|s32
-)paren
-id|acpi_gbl_aml_op_info_index
-(braket
-id|hash
-)braket
-)braket
-suffix:semicolon
-multiline_comment|/* If the returned opcode matches, we have a valid opcode */
-r_if
-c_cond
-(paren
-id|op-&gt;opcode
-op_eq
-id|opcode
-)paren
-(brace
 r_return
-id|op
-suffix:semicolon
-)brace
-multiline_comment|/* Otherwise, the opcode is an ASCII char or other non-opcode value */
-r_return
-l_int|NULL
+(paren
+id|op_info
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_opcode_name&n; *&n; * PARAMETERS:  Opcode              - The AML opcode&n; *&n; * RETURN:      A pointer to the name of the opcode (ASCII String)&n; *              Note: Never returns NULL.&n; *&n; * DESCRIPTION: Translate an opcode into a human-readable string&n; *&n; ******************************************************************************/
-r_char
+id|NATIVE_CHAR
 op_star
 DECL|function|acpi_ps_get_opcode_name
 id|acpi_ps_get_opcode_name
@@ -127,7 +167,7 @@ id|u16
 id|opcode
 )paren
 (brace
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 op_star
 id|op
 suffix:semicolon
@@ -138,17 +178,7 @@ id|acpi_ps_get_opcode_info
 id|opcode
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|op
-)paren
-(brace
-r_return
-l_string|&quot;*ERROR*&quot;
-suffix:semicolon
-)brace
+multiline_comment|/* Always guaranteed to return a valid pointer */
 id|DEBUG_ONLY_MEMBERS
 (paren
 r_return
@@ -156,7 +186,9 @@ id|op-&gt;name
 )paren
 suffix:semicolon
 r_return
+(paren
 l_string|&quot;AE_NOT_CONFIGURED&quot;
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * NAME:        Acpi_gbl_Aml_op_info&n; *&n; * DESCRIPTION: Opcode table. Each entry contains &lt;opcode, type, name, operands&gt;&n; *              The name is a simple ascii string, the operand specifier is an&n; *              ascii string with one letter per operand.  The letter specifies&n; *              the operand type.&n; *&n; ******************************************************************************/
@@ -164,7 +196,7 @@ multiline_comment|/*&n; * Flags byte: 0-4 (5 bits) = Opcode Type&n; *           
 DECL|macro|AML_NO_ARGS
 mdefine_line|#define AML_NO_ARGS         0
 DECL|macro|AML_HAS_ARGS
-mdefine_line|#define AML_HAS_ARGS        OP_INFO_HAS_ARGS
+mdefine_line|#define AML_HAS_ARGS        ACPI_OP_ARGS_MASK
 multiline_comment|/*&n; * All AML opcodes and the parse-time arguments for each.  Used by the AML parser  Each list is compressed&n; * into a 32-bit number and stored in the master opcode table at the end of this file.&n; */
 DECL|macro|ARGP_ZERO_OP
 mdefine_line|#define ARGP_ZERO_OP                    ARG_NONE
@@ -296,8 +328,8 @@ DECL|macro|ARGP_ELSE_OP
 mdefine_line|#define ARGP_ELSE_OP                    ARGP_LIST2 (ARGP_PKGLENGTH,  ARGP_TERMLIST)
 DECL|macro|ARGP_WHILE_OP
 mdefine_line|#define ARGP_WHILE_OP                   ARGP_LIST3 (ARGP_PKGLENGTH,  ARGP_TERMARG, ARGP_TERMLIST)
-DECL|macro|ARGP_NOOP_CODE
-mdefine_line|#define ARGP_NOOP_CODE                  ARG_NONE
+DECL|macro|ARGP_NOOP_OP
+mdefine_line|#define ARGP_NOOP_OP                    ARG_NONE
 DECL|macro|ARGP_RETURN_OP
 mdefine_line|#define ARGP_RETURN_OP                  ARGP_LIST1 (ARGP_TERMARG)
 DECL|macro|ARGP_BREAK_OP
@@ -330,12 +362,12 @@ DECL|macro|ARGP_RESET_OP
 mdefine_line|#define ARGP_RESET_OP                   ARGP_LIST1 (ARGP_SUPERNAME)
 DECL|macro|ARGP_RELEASE_OP
 mdefine_line|#define ARGP_RELEASE_OP                 ARGP_LIST1 (ARGP_SUPERNAME)
-DECL|macro|ARGP_FROM_BCDOP
-mdefine_line|#define ARGP_FROM_BCDOP                 ARGP_LIST2 (ARGP_TERMARG,    ARGP_TARGET)
-DECL|macro|ARGP_TO_BCDOP
-mdefine_line|#define ARGP_TO_BCDOP                   ARGP_LIST2 (ARGP_TERMARG,    ARGP_TARGET)
-DECL|macro|ARGP_UN_LOAD_OP
-mdefine_line|#define ARGP_UN_LOAD_OP                 ARGP_LIST1 (ARGP_SUPERNAME)
+DECL|macro|ARGP_FROM_BCD_OP
+mdefine_line|#define ARGP_FROM_BCD_OP                ARGP_LIST2 (ARGP_TERMARG,    ARGP_TARGET)
+DECL|macro|ARGP_TO_BCD_OP
+mdefine_line|#define ARGP_TO_BCD_OP                  ARGP_LIST2 (ARGP_TERMARG,    ARGP_TARGET)
+DECL|macro|ARGP_UNLOAD_OP
+mdefine_line|#define ARGP_UNLOAD_OP                  ARGP_LIST1 (ARGP_SUPERNAME)
 DECL|macro|ARGP_REVISION_OP
 mdefine_line|#define ARGP_REVISION_OP                ARG_NONE
 DECL|macro|ARGP_DEBUG_OP
@@ -509,8 +541,8 @@ DECL|macro|ARGI_ELSE_OP
 mdefine_line|#define ARGI_ELSE_OP                    ARGI_INVALID_OPCODE
 DECL|macro|ARGI_WHILE_OP
 mdefine_line|#define ARGI_WHILE_OP                   ARGI_INVALID_OPCODE
-DECL|macro|ARGI_NOOP_CODE
-mdefine_line|#define ARGI_NOOP_CODE                  ARG_NONE
+DECL|macro|ARGI_NOOP_OP
+mdefine_line|#define ARGI_NOOP_OP                    ARG_NONE
 DECL|macro|ARGI_RETURN_OP
 mdefine_line|#define ARGI_RETURN_OP                  ARGI_INVALID_OPCODE
 DECL|macro|ARGI_BREAK_OP
@@ -543,12 +575,12 @@ DECL|macro|ARGI_RESET_OP
 mdefine_line|#define ARGI_RESET_OP                   ARGI_LIST1 (ARGI_EVENT)
 DECL|macro|ARGI_RELEASE_OP
 mdefine_line|#define ARGI_RELEASE_OP                 ARGI_LIST1 (ARGI_MUTEX)
-DECL|macro|ARGI_FROM_BCDOP
-mdefine_line|#define ARGI_FROM_BCDOP                 ARGI_LIST2 (ARGI_NUMBER,     ARGI_TARGETREF)
-DECL|macro|ARGI_TO_BCDOP
-mdefine_line|#define ARGI_TO_BCDOP                   ARGI_LIST2 (ARGI_NUMBER,     ARGI_TARGETREF)
-DECL|macro|ARGI_UN_LOAD_OP
-mdefine_line|#define ARGI_UN_LOAD_OP                 ARGI_LIST1 (ARGI_DDBHANDLE)
+DECL|macro|ARGI_FROM_BCD_OP
+mdefine_line|#define ARGI_FROM_BCD_OP                ARGI_LIST2 (ARGI_NUMBER,     ARGI_TARGETREF)
+DECL|macro|ARGI_TO_BCD_OP
+mdefine_line|#define ARGI_TO_BCD_OP                  ARGI_LIST2 (ARGI_NUMBER,     ARGI_TARGETREF)
+DECL|macro|ARGI_UNLOAD_OP
+mdefine_line|#define ARGI_UNLOAD_OP                  ARGI_LIST1 (ARGI_DDBHANDLE)
 DECL|macro|ARGI_REVISION_OP
 mdefine_line|#define ARGI_REVISION_OP                ARG_NONE
 DECL|macro|ARGI_DEBUG_OP
@@ -593,23 +625,22 @@ DECL|macro|ARGI_STATICSTRING_OP
 mdefine_line|#define ARGI_STATICSTRING_OP            ARGI_INVALID_OPCODE
 multiline_comment|/*&n; * Master Opcode information table.  A summary of everything we know about each opcode, all in one place.&n; */
 DECL|variable|acpi_gbl_aml_op_info
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 id|acpi_gbl_aml_op_info
 (braket
 )braket
 op_assign
 (brace
-multiline_comment|/*                          Opcode                 Opcode Type           Has Arguments? Child  Name                 Parser Args             Interpreter Args */
+multiline_comment|/* Index          Opcode                                   Type                   Class                 Has Arguments?   Name                 Parser Args             Interpreter Args */
 multiline_comment|/*  00 */
+multiline_comment|/* AML_ZERO_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ZERO_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONSTANT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Zero_op&quot;
 comma
@@ -619,15 +650,14 @@ id|ARGI_ZERO_OP
 )paren
 comma
 multiline_comment|/*  01 */
+multiline_comment|/* AML_ONE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ONE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONSTANT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;One_op&quot;
 comma
@@ -637,15 +667,14 @@ id|ARGI_ONE_OP
 )paren
 comma
 multiline_comment|/*  02 */
+multiline_comment|/* AML_ALIAS_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ALIAS_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Alias&quot;
 comma
@@ -655,15 +684,14 @@ id|ARGI_ALIAS_OP
 )paren
 comma
 multiline_comment|/*  03 */
+multiline_comment|/* AML_NAME_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_NAME_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Name&quot;
 comma
@@ -673,15 +701,14 @@ id|ARGI_NAME_OP
 )paren
 comma
 multiline_comment|/*  04 */
+multiline_comment|/* AML_BYTE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BYTE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LITERAL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Byte_const&quot;
 comma
@@ -691,15 +718,14 @@ id|ARGI_BYTE_OP
 )paren
 comma
 multiline_comment|/*  05 */
+multiline_comment|/* AML_WORD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_WORD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LITERAL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Word_const&quot;
 comma
@@ -709,15 +735,14 @@ id|ARGI_WORD_OP
 )paren
 comma
 multiline_comment|/*  06 */
+multiline_comment|/* AML_DWORD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DWORD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LITERAL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Dword_const&quot;
 comma
@@ -727,15 +752,14 @@ id|ARGI_DWORD_OP
 )paren
 comma
 multiline_comment|/*  07 */
+multiline_comment|/* AML_STRING_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_STRING_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LITERAL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;String&quot;
 comma
@@ -745,15 +769,14 @@ id|ARGI_STRING_OP
 )paren
 comma
 multiline_comment|/*  08 */
+multiline_comment|/* AML_SCOPE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_SCOPE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Scope&quot;
 comma
@@ -763,15 +786,14 @@ id|ARGI_SCOPE_OP
 )paren
 comma
 multiline_comment|/*  09 */
+multiline_comment|/* AML_BUFFER_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BUFFER_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DATA_TERM
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Buffer&quot;
 comma
@@ -781,15 +803,14 @@ id|ARGI_BUFFER_OP
 )paren
 comma
 multiline_comment|/*  0A */
+multiline_comment|/* AML_PACKAGE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_PACKAGE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DATA_TERM
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Package&quot;
 comma
@@ -799,15 +820,14 @@ id|ARGI_PACKAGE_OP
 )paren
 comma
 multiline_comment|/*  0B */
+multiline_comment|/* AML_METHOD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_METHOD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Method&quot;
 comma
@@ -817,15 +837,14 @@ id|ARGI_METHOD_OP
 )paren
 comma
 multiline_comment|/*  0C */
+multiline_comment|/* AML_LOCAL0 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL0
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local0&quot;
 comma
@@ -835,15 +854,14 @@ id|ARGI_LOCAL0
 )paren
 comma
 multiline_comment|/*  0D */
+multiline_comment|/* AML_LOCAL1 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL1
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local1&quot;
 comma
@@ -853,15 +871,14 @@ id|ARGI_LOCAL1
 )paren
 comma
 multiline_comment|/*  0E */
+multiline_comment|/* AML_LOCAL2 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL2
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local2&quot;
 comma
@@ -871,15 +888,14 @@ id|ARGI_LOCAL2
 )paren
 comma
 multiline_comment|/*  0F */
+multiline_comment|/* AML_LOCAL3 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL3
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local3&quot;
 comma
@@ -889,15 +905,14 @@ id|ARGI_LOCAL3
 )paren
 comma
 multiline_comment|/*  10 */
+multiline_comment|/* AML_LOCAL4 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL4
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local4&quot;
 comma
@@ -907,15 +922,14 @@ id|ARGI_LOCAL4
 )paren
 comma
 multiline_comment|/*  11 */
+multiline_comment|/* AML_LOCAL5 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL5
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local5&quot;
 comma
@@ -925,15 +939,14 @@ id|ARGI_LOCAL5
 )paren
 comma
 multiline_comment|/*  12 */
+multiline_comment|/* AML_LOCAL6 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL6
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local6&quot;
 comma
@@ -943,15 +956,14 @@ id|ARGI_LOCAL6
 )paren
 comma
 multiline_comment|/*  13 */
+multiline_comment|/* AML_LOCAL7 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOCAL7
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LOCAL_VARIABLE
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Local7&quot;
 comma
@@ -961,15 +973,14 @@ id|ARGI_LOCAL7
 )paren
 comma
 multiline_comment|/*  14 */
+multiline_comment|/* AML_ARG0 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ARG0
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_ARGUMENT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Arg0&quot;
 comma
@@ -979,15 +990,14 @@ id|ARGI_ARG0
 )paren
 comma
 multiline_comment|/*  15 */
+multiline_comment|/* AML_ARG1 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ARG1
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_ARGUMENT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Arg1&quot;
 comma
@@ -997,15 +1007,14 @@ id|ARGI_ARG1
 )paren
 comma
 multiline_comment|/*  16 */
+multiline_comment|/* AML_ARG2 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ARG2
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_ARGUMENT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Arg2&quot;
 comma
@@ -1015,15 +1024,14 @@ id|ARGI_ARG2
 )paren
 comma
 multiline_comment|/*  17 */
+multiline_comment|/* AML_ARG3 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ARG3
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_ARGUMENT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Arg3&quot;
 comma
@@ -1033,15 +1041,14 @@ id|ARGI_ARG3
 )paren
 comma
 multiline_comment|/*  18 */
+multiline_comment|/* AML_ARG4 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ARG4
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_ARGUMENT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Arg4&quot;
 comma
@@ -1051,15 +1058,14 @@ id|ARGI_ARG4
 )paren
 comma
 multiline_comment|/*  19 */
+multiline_comment|/* AML_ARG5 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ARG5
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_ARGUMENT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Arg5&quot;
 comma
@@ -1069,15 +1075,14 @@ id|ARGI_ARG5
 )paren
 comma
 multiline_comment|/*  1_a */
+multiline_comment|/* AML_ARG6 */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ARG6
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_ARGUMENT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Arg6&quot;
 comma
@@ -1087,15 +1092,14 @@ id|ARGI_ARG6
 )paren
 comma
 multiline_comment|/*  1_b */
+multiline_comment|/* AML_STORE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_STORE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Store&quot;
 comma
@@ -1105,15 +1109,14 @@ id|ARGI_STORE_OP
 )paren
 comma
 multiline_comment|/*  1_c */
+multiline_comment|/* AML_REF_OF_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_REF_OF_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Ref_of&quot;
 comma
@@ -1123,15 +1126,14 @@ id|ARGI_REF_OF_OP
 )paren
 comma
 multiline_comment|/*  1_d */
+multiline_comment|/* AML_ADD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ADD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Add&quot;
 comma
@@ -1141,15 +1143,14 @@ id|ARGI_ADD_OP
 )paren
 comma
 multiline_comment|/*  1_e */
+multiline_comment|/* AML_CONCAT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_CONCAT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Concat&quot;
 comma
@@ -1159,15 +1160,14 @@ id|ARGI_CONCAT_OP
 )paren
 comma
 multiline_comment|/*  1_f */
+multiline_comment|/* AML_SUBTRACT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_SUBTRACT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Subtract&quot;
 comma
@@ -1177,15 +1177,14 @@ id|ARGI_SUBTRACT_OP
 )paren
 comma
 multiline_comment|/*  20 */
+multiline_comment|/* AML_INCREMENT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_INCREMENT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Increment&quot;
 comma
@@ -1195,15 +1194,14 @@ id|ARGI_INCREMENT_OP
 )paren
 comma
 multiline_comment|/*  21 */
+multiline_comment|/* AML_DECREMENT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DECREMENT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Decrement&quot;
 comma
@@ -1213,15 +1211,14 @@ id|ARGI_DECREMENT_OP
 )paren
 comma
 multiline_comment|/*  22 */
+multiline_comment|/* AML_MULTIPLY_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_MULTIPLY_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Multiply&quot;
 comma
@@ -1231,15 +1228,14 @@ id|ARGI_MULTIPLY_OP
 )paren
 comma
 multiline_comment|/*  23 */
+multiline_comment|/* AML_DIVIDE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DIVIDE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Divide&quot;
 comma
@@ -1249,15 +1245,14 @@ id|ARGI_DIVIDE_OP
 )paren
 comma
 multiline_comment|/*  24 */
+multiline_comment|/* AML_SHIFT_LEFT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_SHIFT_LEFT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Shift_left&quot;
 comma
@@ -1267,15 +1262,14 @@ id|ARGI_SHIFT_LEFT_OP
 )paren
 comma
 multiline_comment|/*  25 */
+multiline_comment|/* AML_SHIFT_RIGHT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_SHIFT_RIGHT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Shift_right&quot;
 comma
@@ -1285,15 +1279,14 @@ id|ARGI_SHIFT_RIGHT_OP
 )paren
 comma
 multiline_comment|/*  26 */
+multiline_comment|/* AML_BIT_AND_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BIT_AND_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;And&quot;
 comma
@@ -1303,15 +1296,14 @@ id|ARGI_BIT_AND_OP
 )paren
 comma
 multiline_comment|/*  27 */
+multiline_comment|/* AML_BIT_NAND_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BIT_NAND_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;NAnd&quot;
 comma
@@ -1321,15 +1313,14 @@ id|ARGI_BIT_NAND_OP
 )paren
 comma
 multiline_comment|/*  28 */
+multiline_comment|/* AML_BIT_OR_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BIT_OR_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Or&quot;
 comma
@@ -1339,15 +1330,14 @@ id|ARGI_BIT_OR_OP
 )paren
 comma
 multiline_comment|/*  29 */
+multiline_comment|/* AML_BIT_NOR_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BIT_NOR_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;NOr&quot;
 comma
@@ -1357,15 +1347,14 @@ id|ARGI_BIT_NOR_OP
 )paren
 comma
 multiline_comment|/*  2_a */
+multiline_comment|/* AML_BIT_XOR_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BIT_XOR_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;XOr&quot;
 comma
@@ -1375,15 +1364,14 @@ id|ARGI_BIT_XOR_OP
 )paren
 comma
 multiline_comment|/*  2_b */
+multiline_comment|/* AML_BIT_NOT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BIT_NOT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Not&quot;
 comma
@@ -1393,15 +1381,14 @@ id|ARGI_BIT_NOT_OP
 )paren
 comma
 multiline_comment|/*  2_c */
+multiline_comment|/* AML_FIND_SET_LEFT_BIT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_FIND_SET_LEFT_BIT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Find_set_left_bit&quot;
 comma
@@ -1411,15 +1398,14 @@ id|ARGI_FIND_SET_LEFT_BIT_OP
 )paren
 comma
 multiline_comment|/*  2_d */
+multiline_comment|/* AML_FIND_SET_RIGHT_BIT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_FIND_SET_RIGHT_BIT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Find_set_right_bit&quot;
 comma
@@ -1429,15 +1415,14 @@ id|ARGI_FIND_SET_RIGHT_BIT_OP
 )paren
 comma
 multiline_comment|/*  2_e */
+multiline_comment|/* AML_DEREF_OF_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DEREF_OF_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Deref_of&quot;
 comma
@@ -1447,15 +1432,14 @@ id|ARGI_DEREF_OF_OP
 )paren
 comma
 multiline_comment|/*  2_f */
+multiline_comment|/* AML_NOTIFY_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_NOTIFY_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC1
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Notify&quot;
 comma
@@ -1465,15 +1449,14 @@ id|ARGI_NOTIFY_OP
 )paren
 comma
 multiline_comment|/*  30 */
+multiline_comment|/* AML_SIZE_OF_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_SIZE_OF_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Size_of&quot;
 comma
@@ -1483,15 +1466,14 @@ id|ARGI_SIZE_OF_OP
 )paren
 comma
 multiline_comment|/*  31 */
+multiline_comment|/* AML_INDEX_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_INDEX_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_INDEX
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Index&quot;
 comma
@@ -1501,15 +1483,14 @@ id|ARGI_INDEX_OP
 )paren
 comma
 multiline_comment|/*  32 */
+multiline_comment|/* AML_MATCH_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_MATCH_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MATCH
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Match&quot;
 comma
@@ -1519,15 +1500,14 @@ id|ARGI_MATCH_OP
 )paren
 comma
 multiline_comment|/*  33 */
+multiline_comment|/* AML_DWORD_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DWORD_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CREATE_FIELD
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Create_dWord_field&quot;
 comma
@@ -1537,15 +1517,14 @@ id|ARGI_DWORD_FIELD_OP
 )paren
 comma
 multiline_comment|/*  34 */
+multiline_comment|/* AML_WORD_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_WORD_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CREATE_FIELD
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Create_word_field&quot;
 comma
@@ -1555,15 +1534,14 @@ id|ARGI_WORD_FIELD_OP
 )paren
 comma
 multiline_comment|/*  35 */
+multiline_comment|/* AML_BYTE_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BYTE_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CREATE_FIELD
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Create_byte_field&quot;
 comma
@@ -1573,15 +1551,14 @@ id|ARGI_BYTE_FIELD_OP
 )paren
 comma
 multiline_comment|/*  36 */
+multiline_comment|/* AML_BIT_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BIT_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CREATE_FIELD
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Create_bit_field&quot;
 comma
@@ -1591,15 +1568,14 @@ id|ARGI_BIT_FIELD_OP
 )paren
 comma
 multiline_comment|/*  37 */
+multiline_comment|/* AML_TYPE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_TYPE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Object_type&quot;
 comma
@@ -1609,15 +1585,14 @@ id|ARGI_TYPE_OP
 )paren
 comma
 multiline_comment|/*  38 */
+multiline_comment|/* AML_LAND_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LAND_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LAnd&quot;
 comma
@@ -1627,15 +1602,14 @@ id|ARGI_LAND_OP
 )paren
 comma
 multiline_comment|/*  39 */
+multiline_comment|/* AML_LOR_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOR_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LOr&quot;
 comma
@@ -1645,15 +1619,14 @@ id|ARGI_LOR_OP
 )paren
 comma
 multiline_comment|/*  3_a */
+multiline_comment|/* AML_LNOT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LNOT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LNot&quot;
 comma
@@ -1663,15 +1636,14 @@ id|ARGI_LNOT_OP
 )paren
 comma
 multiline_comment|/*  3_b */
+multiline_comment|/* AML_LEQUAL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LEQUAL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LEqual&quot;
 comma
@@ -1681,15 +1653,14 @@ id|ARGI_LEQUAL_OP
 )paren
 comma
 multiline_comment|/*  3_c */
+multiline_comment|/* AML_LGREATER_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LGREATER_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LGreater&quot;
 comma
@@ -1699,15 +1670,14 @@ id|ARGI_LGREATER_OP
 )paren
 comma
 multiline_comment|/*  3_d */
+multiline_comment|/* AML_LLESS_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LLESS_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LLess&quot;
 comma
@@ -1717,15 +1687,14 @@ id|ARGI_LLESS_OP
 )paren
 comma
 multiline_comment|/*  3_e */
+multiline_comment|/* AML_IF_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_IF_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONTROL
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;If&quot;
 comma
@@ -1735,15 +1704,14 @@ id|ARGI_IF_OP
 )paren
 comma
 multiline_comment|/*  3_f */
+multiline_comment|/* AML_ELSE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ELSE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONTROL
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Else&quot;
 comma
@@ -1753,15 +1721,14 @@ id|ARGI_ELSE_OP
 )paren
 comma
 multiline_comment|/*  40 */
+multiline_comment|/* AML_WHILE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_WHILE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONTROL
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;While&quot;
 comma
@@ -1771,33 +1738,31 @@ id|ARGI_WHILE_OP
 )paren
 comma
 multiline_comment|/*  41 */
+multiline_comment|/* AML_NOOP_OP   */
 id|OP_INFO_ENTRY
 (paren
-id|AML_NOOP_CODE
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONTROL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Noop&quot;
 comma
-id|ARGP_NOOP_CODE
+id|ARGP_NOOP_OP
 comma
-id|ARGI_NOOP_CODE
+id|ARGI_NOOP_OP
 )paren
 comma
 multiline_comment|/*  42 */
+multiline_comment|/* AML_RETURN_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_RETURN_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONTROL
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Return&quot;
 comma
@@ -1807,15 +1772,14 @@ id|ARGI_RETURN_OP
 )paren
 comma
 multiline_comment|/*  43 */
+multiline_comment|/* AML_BREAK_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BREAK_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONTROL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Break&quot;
 comma
@@ -1825,15 +1789,14 @@ id|ARGI_BREAK_OP
 )paren
 comma
 multiline_comment|/*  44 */
+multiline_comment|/* AML_BREAK_POINT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BREAK_POINT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONTROL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Break_point&quot;
 comma
@@ -1843,15 +1806,14 @@ id|ARGI_BREAK_POINT_OP
 )paren
 comma
 multiline_comment|/*  45 */
+multiline_comment|/* AML_ONES_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ONES_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONSTANT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Ones_op&quot;
 comma
@@ -1862,15 +1824,14 @@ id|ARGI_ONES_OP
 comma
 multiline_comment|/* Prefixed opcodes (Two-byte opcodes with a prefix op) */
 multiline_comment|/*  46 */
+multiline_comment|/* AML_MUTEX_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_MUTEX_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Mutex&quot;
 comma
@@ -1880,15 +1841,14 @@ id|ARGI_MUTEX_OP
 )paren
 comma
 multiline_comment|/*  47 */
+multiline_comment|/* AML_EVENT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_EVENT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Event&quot;
 comma
@@ -1898,15 +1858,14 @@ id|ARGI_EVENT_OP
 )paren
 comma
 multiline_comment|/*  48 */
+multiline_comment|/* AML_COND_REF_OF_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_COND_REF_OF_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Cond_ref_of&quot;
 comma
@@ -1916,15 +1875,14 @@ id|ARGI_COND_REF_OF_OP
 )paren
 comma
 multiline_comment|/*  49 */
+multiline_comment|/* AML_CREATE_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_CREATE_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CREATE_FIELD
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Create_field&quot;
 comma
@@ -1934,15 +1892,14 @@ id|ARGI_CREATE_FIELD_OP
 )paren
 comma
 multiline_comment|/*  4_a */
+multiline_comment|/* AML_LOAD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LOAD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_RECONFIGURATION
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Load&quot;
 comma
@@ -1952,15 +1909,14 @@ id|ARGI_LOAD_OP
 )paren
 comma
 multiline_comment|/*  4_b */
+multiline_comment|/* AML_STALL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_STALL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC1
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Stall&quot;
 comma
@@ -1970,15 +1926,14 @@ id|ARGI_STALL_OP
 )paren
 comma
 multiline_comment|/*  4_c */
+multiline_comment|/* AML_SLEEP_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_SLEEP_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC1
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Sleep&quot;
 comma
@@ -1988,15 +1943,14 @@ id|ARGI_SLEEP_OP
 )paren
 comma
 multiline_comment|/*  4_d */
+multiline_comment|/* AML_ACQUIRE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ACQUIRE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_s
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Acquire&quot;
 comma
@@ -2006,15 +1960,14 @@ id|ARGI_ACQUIRE_OP
 )paren
 comma
 multiline_comment|/*  4_e */
+multiline_comment|/* AML_SIGNAL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_SIGNAL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC1
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Signal&quot;
 comma
@@ -2024,15 +1977,14 @@ id|ARGI_SIGNAL_OP
 )paren
 comma
 multiline_comment|/*  4_f */
+multiline_comment|/* AML_WAIT_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_WAIT_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_DYADIC2_s
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Wait&quot;
 comma
@@ -2042,15 +1994,14 @@ id|ARGI_WAIT_OP
 )paren
 comma
 multiline_comment|/*  50 */
+multiline_comment|/* AML_RESET_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_RESET_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC1
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Reset&quot;
 comma
@@ -2060,15 +2011,14 @@ id|ARGI_RESET_OP
 )paren
 comma
 multiline_comment|/*  51 */
+multiline_comment|/* AML_RELEASE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_RELEASE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC1
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Release&quot;
 comma
@@ -2078,69 +2028,65 @@ id|ARGI_RELEASE_OP
 )paren
 comma
 multiline_comment|/*  52 */
+multiline_comment|/* AML_FROM_BCD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_FROM_BCDOP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;From_bCD&quot;
 comma
-id|ARGP_FROM_BCDOP
+id|ARGP_FROM_BCD_OP
 comma
-id|ARGI_FROM_BCDOP
+id|ARGI_FROM_BCD_OP
 )paren
 comma
 multiline_comment|/*  53 */
+multiline_comment|/* AML_TO_BCD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_TO_BCDOP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_MONADIC2_r
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;To_bCD&quot;
 comma
-id|ARGP_TO_BCDOP
+id|ARGP_TO_BCD_OP
 comma
-id|ARGI_TO_BCDOP
+id|ARGI_TO_BCD_OP
 )paren
 comma
 multiline_comment|/*  54 */
+multiline_comment|/* AML_UNLOAD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_UN_LOAD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_RECONFIGURATION
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Unload&quot;
 comma
-id|ARGP_UN_LOAD_OP
+id|ARGP_UNLOAD_OP
 comma
-id|ARGI_UN_LOAD_OP
+id|ARGI_UNLOAD_OP
 )paren
 comma
 multiline_comment|/*  55 */
+multiline_comment|/* AML_REVISION_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_REVISION_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONSTANT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Revision&quot;
 comma
@@ -2150,15 +2096,14 @@ id|ARGI_REVISION_OP
 )paren
 comma
 multiline_comment|/*  56 */
+multiline_comment|/* AML_DEBUG_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DEBUG_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_CONSTANT
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Debug&quot;
 comma
@@ -2168,15 +2113,14 @@ id|ARGI_DEBUG_OP
 )paren
 comma
 multiline_comment|/*  57 */
+multiline_comment|/* AML_FATAL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_FATAL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_FATAL
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Fatal&quot;
 comma
@@ -2186,15 +2130,14 @@ id|ARGI_FATAL_OP
 )paren
 comma
 multiline_comment|/*  58 */
+multiline_comment|/* AML_REGION_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_REGION_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Op_region&quot;
 comma
@@ -2204,15 +2147,14 @@ id|ARGI_REGION_OP
 )paren
 comma
 multiline_comment|/*  59 */
+multiline_comment|/* AML_DEF_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DEF_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Field&quot;
 comma
@@ -2222,15 +2164,14 @@ id|ARGI_DEF_FIELD_OP
 )paren
 comma
 multiline_comment|/*  5_a */
+multiline_comment|/* AML_DEVICE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_DEVICE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Device&quot;
 comma
@@ -2240,15 +2181,14 @@ id|ARGI_DEVICE_OP
 )paren
 comma
 multiline_comment|/*  5_b */
+multiline_comment|/* AML_PROCESSOR_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_PROCESSOR_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Processor&quot;
 comma
@@ -2258,15 +2198,14 @@ id|ARGI_PROCESSOR_OP
 )paren
 comma
 multiline_comment|/*  5_c */
+multiline_comment|/* AML_POWER_RES_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_POWER_RES_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Power_res&quot;
 comma
@@ -2276,15 +2215,14 @@ id|ARGI_POWER_RES_OP
 )paren
 comma
 multiline_comment|/*  5_d */
+multiline_comment|/* AML_THERMAL_ZONE_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_THERMAL_ZONE_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Thermal_zone&quot;
 comma
@@ -2294,15 +2232,14 @@ id|ARGI_THERMAL_ZONE_OP
 )paren
 comma
 multiline_comment|/*  5_e */
+multiline_comment|/* AML_INDEX_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_INDEX_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Index_field&quot;
 comma
@@ -2312,15 +2249,14 @@ id|ARGI_INDEX_FIELD_OP
 )paren
 comma
 multiline_comment|/*  5_f */
+multiline_comment|/* AML_BANK_FIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BANK_FIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_NAMED_OBJECT
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Bank_field&quot;
 comma
@@ -2331,15 +2267,14 @@ id|ARGI_BANK_FIELD_OP
 comma
 multiline_comment|/* Internal opcodes that map to invalid AML opcodes */
 multiline_comment|/*  60 */
+multiline_comment|/* AML_LNOTEQUAL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LNOTEQUAL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LNot_equal&quot;
 comma
@@ -2349,15 +2284,14 @@ id|ARGI_LNOTEQUAL_OP
 )paren
 comma
 multiline_comment|/*  61 */
+multiline_comment|/* AML_LLESSEQUAL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LLESSEQUAL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LLess_equal&quot;
 comma
@@ -2367,15 +2301,14 @@ id|ARGI_LLESSEQUAL_OP
 )paren
 comma
 multiline_comment|/*  62 */
+multiline_comment|/* AML_LGREATEREQUAL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_LGREATEREQUAL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;LGreater_equal&quot;
 comma
@@ -2385,15 +2318,14 @@ id|ARGI_LGREATEREQUAL_OP
 )paren
 comma
 multiline_comment|/*  63 */
+multiline_comment|/* AML_NAMEPATH_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_NAMEPATH_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LITERAL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Name_path&quot;
 comma
@@ -2403,15 +2335,14 @@ id|ARGI_NAMEPATH_OP
 )paren
 comma
 multiline_comment|/*  64 */
+multiline_comment|/* AML_METHODCALL_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_METHODCALL_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_METHOD_CALL
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Method_call&quot;
 comma
@@ -2421,15 +2352,14 @@ id|ARGI_METHODCALL_OP
 )paren
 comma
 multiline_comment|/*  65 */
+multiline_comment|/* AML_BYTELIST_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_BYTELIST_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_LITERAL
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Byte_list&quot;
 comma
@@ -2439,15 +2369,14 @@ id|ARGI_BYTELIST_OP
 )paren
 comma
 multiline_comment|/*  66 */
+multiline_comment|/* AML_RESERVEDFIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_RESERVEDFIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Reserved_field&quot;
 comma
@@ -2457,15 +2386,14 @@ id|ARGI_RESERVEDFIELD_OP
 )paren
 comma
 multiline_comment|/*  67 */
+multiline_comment|/* AML_NAMEDFIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_NAMEDFIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Named_field&quot;
 comma
@@ -2475,15 +2403,14 @@ id|ARGI_NAMEDFIELD_OP
 )paren
 comma
 multiline_comment|/*  68 */
+multiline_comment|/* AML_ACCESSFIELD_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_ACCESSFIELD_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Access_field&quot;
 comma
@@ -2493,15 +2420,14 @@ id|ARGI_ACCESSFIELD_OP
 )paren
 comma
 multiline_comment|/*  69 */
+multiline_comment|/* AML_STATICSTRING_OP */
 id|OP_INFO_ENTRY
 (paren
-id|AML_STATICSTRING_OP
-comma
+id|ACPI_OP_TYPE_OPCODE
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_NO_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;Static_string&quot;
 comma
@@ -2511,15 +2437,31 @@ id|ARGI_STATICSTRING_OP
 )paren
 comma
 multiline_comment|/*  6_a */
+multiline_comment|/* AML_RETURN_VALUE_OP */
 id|OP_INFO_ENTRY
 (paren
-l_int|0
+id|ACPI_OP_TYPE_OPCODE
+op_or
+id|OPTYPE_RETURN
+op_or
+id|AML_HAS_ARGS
 comma
+l_string|&quot;[Return Value]&quot;
+comma
+id|ARG_NONE
+comma
+id|ARG_NONE
+)paren
+comma
+multiline_comment|/*  6_b */
+multiline_comment|/* UNKNOWN OPCODES */
+id|OP_INFO_ENTRY
+(paren
+id|ACPI_OP_TYPE_UNKNOWN
+op_or
 id|OPTYPE_BOGUS
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
 l_string|&quot;UNKNOWN_OP!&quot;
 comma
@@ -2528,32 +2470,46 @@ comma
 id|ARG_NONE
 )paren
 comma
+multiline_comment|/*  6_c */
+multiline_comment|/* ASCII CHARACTERS */
 id|OP_INFO_ENTRY
 (paren
-l_int|0
-comma
-l_int|0
+id|ACPI_OP_TYPE_ASCII
+op_or
+id|OPTYPE_BOGUS
 op_or
 id|AML_HAS_ARGS
-op_or
-l_int|0
 comma
-l_int|NULL
+l_string|&quot;ASCII_ONLY!&quot;
 comma
 id|ARG_NONE
 comma
 id|ARG_NONE
 )paren
+comma
+multiline_comment|/*  6_d */
+multiline_comment|/* PREFIX CHARACTERS */
+id|OP_INFO_ENTRY
+(paren
+id|ACPI_OP_TYPE_PREFIX
+op_or
+id|OPTYPE_BOGUS
+op_or
+id|AML_HAS_ARGS
+comma
+l_string|&quot;PREFIX_ONLY!&quot;
+comma
+id|ARG_NONE
+comma
+id|ARG_NONE
+)paren
+comma
 )brace
 suffix:semicolon
-DECL|macro|_UNK
-mdefine_line|#define _UNK                0x6A
-DECL|macro|_UNKNOWN_OPCODE
-mdefine_line|#define _UNKNOWN_OPCODE     0x02    /* An example unknown opcode */
 multiline_comment|/*&n; * This table is directly indexed by the opcodes, and returns an&n; * index into the table above&n; */
-DECL|variable|acpi_gbl_aml_op_info_index
+DECL|variable|acpi_gbl_aml_short_op_info_index
 id|u8
-id|acpi_gbl_aml_op_info_index
+id|acpi_gbl_aml_short_op_info_index
 (braket
 l_int|256
 )braket
@@ -2609,10 +2565,10 @@ id|_UNK
 comma
 id|_UNK
 comma
-l_int|0x46
+id|_UNK
 comma
 multiline_comment|/* 0x18 */
-l_int|0x47
+id|_UNK
 comma
 id|_UNK
 comma
@@ -2646,9 +2602,9 @@ comma
 id|_UNK
 comma
 multiline_comment|/* 0x28 */
-l_int|0x48
+id|_UNK
 comma
-l_int|0x49
+id|_UNK
 comma
 id|_UNK
 comma
@@ -2658,9 +2614,9 @@ id|_UNK
 comma
 l_int|0x63
 comma
-id|_UNK
+id|_PFX
 comma
-id|_UNK
+id|_PFX
 comma
 multiline_comment|/* 0x30 */
 l_int|0x67
@@ -2675,94 +2631,94 @@ l_int|0x69
 comma
 l_int|0x64
 comma
-l_int|0x4a
+l_int|0x6A
 comma
-l_int|0x4b
+id|_UNK
 comma
 multiline_comment|/* 0x38 */
-l_int|0x4c
+id|_UNK
 comma
-l_int|0x4d
+id|_UNK
 comma
-l_int|0x4e
+id|_UNK
 comma
-l_int|0x4f
+id|_UNK
 comma
-l_int|0x50
+id|_UNK
 comma
-l_int|0x51
+id|_UNK
 comma
-l_int|0x52
+id|_UNK
 comma
-l_int|0x53
+id|_UNK
 comma
 multiline_comment|/* 0x40 */
-l_int|0x54
-comma
 id|_UNK
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-l_int|0x55
+id|_ASC
 comma
-l_int|0x56
+id|_ASC
+comma
+id|_ASC
 comma
 multiline_comment|/* 0x48 */
-l_int|0x57
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
 multiline_comment|/* 0x50 */
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
-id|_UNK
+id|_ASC
 comma
 multiline_comment|/* 0x58 */
-id|_UNK
+id|_ASC
+comma
+id|_ASC
+comma
+id|_ASC
 comma
 id|_UNK
 comma
-id|_UNK
+id|_PFX
 comma
 id|_UNK
 comma
-id|_UNK
+id|_PFX
 comma
-id|_UNK
-comma
-id|_UNK
-comma
-id|_UNK
+id|_ASC
 comma
 multiline_comment|/* 0x60 */
 l_int|0x0c
@@ -2879,22 +2835,22 @@ l_int|0x3c
 comma
 l_int|0x3d
 comma
-l_int|0x58
+id|_UNK
 comma
-l_int|0x59
+id|_UNK
 comma
 multiline_comment|/* 0x98 */
-l_int|0x5a
+id|_UNK
 comma
-l_int|0x5b
+id|_UNK
 comma
-l_int|0x5c
+id|_UNK
 comma
-l_int|0x5d
+id|_UNK
 comma
-l_int|0x5e
+id|_UNK
 comma
-l_int|0x5f
+id|_UNK
 comma
 id|_UNK
 comma
@@ -3106,4 +3062,306 @@ l_int|0x45
 comma
 )brace
 suffix:semicolon
+DECL|variable|acpi_gbl_aml_long_op_info_index
+id|u8
+id|acpi_gbl_aml_long_op_info_index
+(braket
+id|NUM_EXTENDED_OPCODE
+)braket
+op_assign
+(brace
+multiline_comment|/*              0     1     2     3     4     5     6     7  */
+multiline_comment|/* 0x00 */
+id|_UNK
+comma
+l_int|0x46
+comma
+l_int|0x47
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x08 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x10 */
+id|_UNK
+comma
+id|_UNK
+comma
+l_int|0x48
+comma
+l_int|0x49
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x18 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x20 */
+l_int|0x4a
+comma
+l_int|0x4b
+comma
+l_int|0x4c
+comma
+l_int|0x4d
+comma
+l_int|0x4e
+comma
+l_int|0x4f
+comma
+l_int|0x50
+comma
+l_int|0x51
+comma
+multiline_comment|/* 0x28 */
+l_int|0x52
+comma
+l_int|0x53
+comma
+l_int|0x54
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x30 */
+l_int|0x55
+comma
+l_int|0x56
+comma
+l_int|0x57
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x38 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x40 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x48 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x50 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x58 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x60 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x68 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x70 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x78 */
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+id|_UNK
+comma
+multiline_comment|/* 0x80 */
+l_int|0x58
+comma
+l_int|0x59
+comma
+l_int|0x5a
+comma
+l_int|0x5b
+comma
+l_int|0x5c
+comma
+l_int|0x5d
+comma
+l_int|0x5e
+comma
+l_int|0x5f
+comma
+)brace
+suffix:semicolon
+multiline_comment|/*              0     1     2     3     4     5     6     7  */
+multiline_comment|/* 0x00 */
 eof

@@ -1143,13 +1143,6 @@ id|pmac_xpram_write
 suffix:semicolon
 macro_line|#endif /* CONFIG_NVRAM */
 macro_line|#ifdef CONFIG_PPC_RTC
-DECL|variable|mktime
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|mktime
-)paren
-suffix:semicolon
 DECL|variable|to_tm
 id|EXPORT_SYMBOL
 c_func

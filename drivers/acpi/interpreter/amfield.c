@@ -1,33 +1,32 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfield - ACPI AML (p-code) execution - field manipulation&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfield - ACPI AML (p-code) execution - field manipulation&n; *              $Revision: 70 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amfield&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_setup_field&n; *&n; * PARAMETERS:  *Obj_desc           - Field to be read or written&n; *              *Rgn_desc           - Region containing field&n; *              Field_bit_width     - Field Width in bits (8, 16, or 32)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Common processing for Acpi_aml_read_field and Acpi_aml_write_field&n; *&n; *  ACPI SPECIFICATION REFERENCES:&n; *  Each of the Type1_opcodes is defined as specified in in-line&n; *  comments below. For each one, use the following definitions.&n; *&n; *  Def_bit_field   :=  Bit_field_op    Src_buf Bit_idx Destination&n; *  Def_byte_field  :=  Byte_field_op   Src_buf Byte_idx Destination&n; *  Def_create_field := Create_field_op Src_buf Bit_idx Num_bits Name_string&n; *  Def_dWord_field :=  DWord_field_op  Src_buf Byte_idx Destination&n; *  Def_word_field  :=  Word_field_op   Src_buf Byte_idx Destination&n; *  Bit_index       :=  Term_arg=&gt;Integer&n; *  Byte_index      :=  Term_arg=&gt;Integer&n; *  Destination     :=  Name_string&n; *  Num_bits        :=  Term_arg=&gt;Integer&n; *  Source_buf      :=  Term_arg=&gt;Buffer&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_setup_field
 id|acpi_aml_setup_field
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|rgn_desc
 comma
-id|s32
+id|u32
 id|field_bit_width
 )paren
 (brace
@@ -36,7 +35,7 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|s32
+id|u32
 id|field_byte_width
 suffix:semicolon
 multiline_comment|/* Parameter validation */
@@ -70,7 +69,7 @@ id|AE_AML_OPERAND_TYPE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Init and validate Field width&n;&t; * Possible values are 1, 2, 4&n;&t; */
+multiline_comment|/*&n;&t; * TBD: [Future] Acpi 2.0 supports Qword fields&n;&t; *&n;&t; * Init and validate Field width&n;&t; * Possible values are 1, 2, 4&n;&t; */
 id|field_byte_width
 op_assign
 id|DIV_8
@@ -112,9 +111,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|rgn_desc-&gt;region.region_flags
+id|rgn_desc-&gt;region.flags
 op_amp
-id|REGION_AGRUMENT_DATA_VALID
+id|AOPOBJ_DATA_VALID
 )paren
 )paren
 (brace
@@ -141,7 +140,6 @@ id|status
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * If (offset rounded up to next multiple of field width)&n;&t; * exceeds region length, indicate an error.&n;&t; */
 r_if
 c_cond
 (paren
@@ -182,7 +180,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_access_named_field
 id|acpi_aml_access_named_field
 (paren
-id|s32
+id|u32
 id|mode
 comma
 id|ACPI_HANDLE
@@ -196,7 +194,7 @@ id|u32
 id|buffer_length
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 op_assign
@@ -229,6 +227,31 @@ suffix:semicolon
 id|u32
 id|byte_field_length
 suffix:semicolon
+multiline_comment|/* Basic data checking */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|named_field
+)paren
+op_logical_or
+(paren
+id|ACPI_READ
+op_eq
+id|mode
+op_logical_and
+op_logical_neg
+id|buffer
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_AML_INTERNAL
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Get the attached field object */
 id|obj_desc
 op_assign
@@ -418,115 +441,6 @@ multiline_comment|/* Release global lock if we acquired it earlier */
 id|acpi_aml_release_global_lock
 (paren
 id|locked
-)paren
-suffix:semicolon
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_set_named_field_value&n; *&n; * PARAMETERS:  Named_field         - Handle for field to be set&n; *              Buffer              - Bytes to be stored&n; *              Buffer_length       - Number of bytes to be stored&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store the given value into the field&n; *&n; ******************************************************************************/
-id|ACPI_STATUS
-DECL|function|acpi_aml_set_named_field_value
-id|acpi_aml_set_named_field_value
-(paren
-id|ACPI_HANDLE
-id|named_field
-comma
-r_void
-op_star
-id|buffer
-comma
-id|u32
-id|buffer_length
-)paren
-(brace
-id|ACPI_STATUS
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|named_field
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_INTERNAL
-)paren
-suffix:semicolon
-)brace
-id|status
-op_assign
-id|acpi_aml_access_named_field
-(paren
-id|ACPI_WRITE
-comma
-id|named_field
-comma
-id|buffer
-comma
-id|buffer_length
-)paren
-suffix:semicolon
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_get_named_field_value&n; *&n; * PARAMETERS:  Named_field         - Handle for field to be read&n; *              *Buffer             - Where to store value read from field&n; *              Buffer_length       - Max length to read&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Retrieve the value of the given field&n; *&n; ******************************************************************************/
-id|ACPI_STATUS
-DECL|function|acpi_aml_get_named_field_value
-id|acpi_aml_get_named_field_value
-(paren
-id|ACPI_HANDLE
-id|named_field
-comma
-r_void
-op_star
-id|buffer
-comma
-id|u32
-id|buffer_length
-)paren
-(brace
-id|ACPI_STATUS
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-op_logical_neg
-id|named_field
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|buffer
-)paren
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_INTERNAL
-)paren
-suffix:semicolon
-)brace
-id|status
-op_assign
-id|acpi_aml_access_named_field
-(paren
-id|ACPI_READ
-comma
-id|named_field
-comma
-id|buffer
-comma
-id|buffer_length
 )paren
 suffix:semicolon
 r_return

@@ -1,20 +1,19 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: nsload - namespace loading/expanding/contracting procedures&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: nsload - namespace loading/expanding/contracting procedures&n; *              $Revision: 28 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;debugger.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acdebug.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          NAMESPACE
 id|MODULE_NAME
 (paren
 l_string|&quot;nsload&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_parse_table&n; *&n; * PARAMETERS:  Table_desc      - An ACPI table descriptor for table to parse&n; *              Scope           - Where to enter the table into the namespace&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Parse AML within an ACPI table and return a tree of ops&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_parse_table&n; *&n; * PARAMETERS:  Table_desc      - An ACPI table descriptor for table to parse&n; *              Start_node      - Where to enter the table into the namespace&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Parse AML within an ACPI table and return a tree of ops&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ns_parse_table
 id|acpi_ns_parse_table
@@ -23,15 +22,16 @@ id|ACPI_TABLE_DESC
 op_star
 id|table_desc
 comma
-id|ACPI_NAME_TABLE
+id|ACPI_NAMESPACE_NODE
 op_star
-id|scope
+id|start_node
 )paren
 (brace
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-multiline_comment|/* Create the root object */
+multiline_comment|/*&n;&t; * AML Parse, pass 1&n;&t; *&n;&t; * In this pass, we load most of the namespace.  Control methods&n;&t; * are not parsed until later.  A parse tree is not created.  Instead,&n;&t; * each Parser Op subtree is deleted when it is finished.  This saves&n;&t; * a great deal of memory, and allows a small cache of parse objects&n;&t; * to service the entire parse.  The second pass of the parse then&n;&t; * performs another complete parse of the AML..&n;&t; */
+multiline_comment|/* Create and init a Root Node */
 id|acpi_gbl_parsed_namespace_root
 op_assign
 id|acpi_ps_alloc_op
@@ -52,10 +52,9 @@ id|AE_NO_MEMORY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Initialize the root object */
 (paren
 (paren
-id|ACPI_NAMED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|acpi_gbl_parsed_namespace_root
@@ -76,7 +75,19 @@ id|table_desc-&gt;aml_pointer
 comma
 id|table_desc-&gt;aml_length
 comma
-l_int|0
+id|ACPI_PARSE_LOAD_PASS1
+op_or
+id|ACPI_PARSE_DELETE_TREE
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+id|acpi_ds_load1_begin_op
+comma
+id|acpi_ds_load1_end_op
 )paren
 suffix:semicolon
 r_if
@@ -94,34 +105,86 @@ id|status
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef PARSER_ONLY
-id|status
-op_assign
-id|acpi_ps_walk_parsed_aml
-(paren
-id|acpi_ps_get_child
+id|acpi_ps_delete_parse_tree
 (paren
 id|acpi_gbl_parsed_namespace_root
 )paren
-comma
+suffix:semicolon
+multiline_comment|/*&n;&t; * AML Parse, pass 2&n;&t; *&n;&t; * In this pass, we resolve forward references and other things&n;&t; * that could not be completed during the first pass.&n;&t; * Another complete parse of the AML is performed, but the&n;&t; * overhead of this is compensated for by the fact that the&n;&t; * parse objects are all cached.&n;&t; */
+multiline_comment|/* Create and init a Root Node */
+id|acpi_gbl_parsed_namespace_root
+op_assign
+id|acpi_ps_alloc_op
+(paren
+id|AML_SCOPE_OP
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|acpi_gbl_parsed_namespace_root
+)paren
+(brace
+r_return
+(paren
+id|AE_NO_MEMORY
+)paren
+suffix:semicolon
+)brace
+(paren
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
+id|acpi_gbl_parsed_namespace_root
+)paren
+op_member_access_from_pointer
+id|name
+op_assign
+id|ACPI_ROOT_NAME
+suffix:semicolon
+multiline_comment|/* Pass 2: Resolve forward references */
+id|status
+op_assign
+id|acpi_ps_parse_aml
+(paren
 id|acpi_gbl_parsed_namespace_root
 comma
+id|table_desc-&gt;aml_pointer
+comma
+id|table_desc-&gt;aml_length
+comma
+id|ACPI_PARSE_LOAD_PASS1
+op_or
+id|ACPI_PARSE_DELETE_TREE
+comma
 l_int|NULL
 comma
-id|scope
-comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-id|table_desc-&gt;table_id
 comma
 id|acpi_ds_load2_begin_op
 comma
 id|acpi_ds_load2_end_op
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Now that the internal namespace has been constructed, we can delete the&n;&t; * parsed namespace, since it is no longer needed&n;&t; */
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
 id|acpi_ps_delete_parse_tree
 (paren
 id|acpi_gbl_parsed_namespace_root
@@ -131,7 +194,6 @@ id|acpi_gbl_parsed_namespace_root
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 id|status
@@ -147,9 +209,9 @@ id|ACPI_TABLE_DESC
 op_star
 id|table_desc
 comma
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 )paren
 (brace
 id|ACPI_STATUS
@@ -193,7 +255,7 @@ id|acpi_ns_parse_table
 (paren
 id|table_desc
 comma
-id|entry-&gt;child_table
+id|node-&gt;child
 )paren
 suffix:semicolon
 id|acpi_cm_release_mutex
@@ -223,7 +285,7 @@ id|acpi_ds_initialize_objects
 (paren
 id|table_desc
 comma
-id|entry
+id|node
 )paren
 suffix:semicolon
 r_return
@@ -322,7 +384,7 @@ id|acpi_ns_load_table
 (paren
 id|table_desc
 comma
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 )paren
 suffix:semicolon
 r_if
@@ -391,7 +453,7 @@ id|acpi_ns_load_table
 (paren
 id|table_desc
 comma
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 )paren
 suffix:semicolon
 r_if
@@ -468,7 +530,7 @@ id|acpi_ns_load_table
 (paren
 id|table_desc
 comma
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 )paren
 suffix:semicolon
 r_if
@@ -513,67 +575,6 @@ r_return
 (paren
 id|status
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_free_table_entry&n; *&n; * PARAMETERS:  Entry           - The entry to be deleted&n; *&n; * RETURNS      None&n; *&n; * DESCRIPTION: Free an entry in a namespace table.  Delete any objects contained&n; *              in the entry, unlink the entry, then mark it unused.&n; *&n; ******************************************************************************/
-r_void
-DECL|function|acpi_ns_free_table_entry
-id|acpi_ns_free_table_entry
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-id|entry
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|entry
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Need to delete&n;&t; * 1) The scope, if any&n;&t; * 2) An attached object, if any&n;&t; */
-r_if
-c_cond
-(paren
-id|entry-&gt;child_table
-)paren
-(brace
-id|acpi_cm_free
-(paren
-id|entry-&gt;child_table
-)paren
-suffix:semicolon
-id|entry-&gt;child_table
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|entry-&gt;object
-)paren
-(brace
-id|acpi_ns_detach_object
-(paren
-id|entry-&gt;object
-)paren
-suffix:semicolon
-id|entry-&gt;object
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-multiline_comment|/* Mark the entry unallocated */
-id|entry-&gt;name
-op_assign
-l_int|0
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_delete_subtree&n; *&n; * PARAMETERS:  Start_handle        - Handle in namespace where search begins&n; *&n; * RETURNS      Status&n; *&n; * DESCRIPTION: Walks the namespace starting at the given handle and deletes&n; *              all objects, entries, and scopes in the entire subtree.&n; *&n; *              TBD: [Investigate] What if any part of this subtree is in use?&n; *              (i.e. on one of the object stacks?)&n; *&n; ******************************************************************************/
@@ -639,12 +640,6 @@ op_amp
 id|next_child_handle
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Regardless of the success or failure of the&n;&t;&t; * previous operation, we are done with the previous&n;&t;&t; * object (if there was one), and any children it&n;&t;&t; * may have had.  So we can now safely delete it (and&n;&t;&t; * its scope, if any)&n;&t;&t; */
-id|acpi_ns_free_table_entry
-(paren
-id|child_handle
-)paren
-suffix:semicolon
 id|child_handle
 op_assign
 id|next_child_handle
@@ -699,6 +694,12 @@ multiline_comment|/*&n;&t;&t;&t; * No more children in this object, go back up t
 id|level
 op_decrement
 suffix:semicolon
+multiline_comment|/* Delete all children now */
+id|acpi_ns_delete_children
+(paren
+id|child_handle
+)paren
+suffix:semicolon
 id|child_handle
 op_assign
 id|parent_handle
@@ -714,12 +715,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Now delete the starting object, and we are done */
-id|acpi_ns_free_table_entry
+id|acpi_ns_delete_node
 (paren
-(paren
-id|ACPI_NAMED_OBJECT
-op_star
-)paren
 id|child_handle
 )paren
 suffix:semicolon
@@ -746,7 +743,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|acpi_gbl_root_object-&gt;child_table
+id|acpi_gbl_root_node
 )paren
 (brace
 r_return

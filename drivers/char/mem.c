@@ -946,6 +946,14 @@ op_sub_assign
 id|read
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|count
+OG
+l_int|0
+)paren
+(brace
 id|kbuf
 op_assign
 (paren
@@ -1066,6 +1074,7 @@ r_int
 id|kbuf
 )paren
 suffix:semicolon
+)brace
 op_star
 id|ppos
 op_assign

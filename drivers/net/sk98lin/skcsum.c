@@ -1,6 +1,6 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skcsum.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.3 $&n; * Date:&t;$Date: 1999/05/10 08:39:33 $&n; * Purpose:&t;Store/verify Internet checksum in send/receive packets.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998,1999 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;See the file &quot;skge.c&quot; for further information.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skcsum.c,v $&n; *&t;Revision 1.3  1999/05/10 08:39:33  mkarl&n; *&t;prevent overflows in SKCS_HTON16&n; *&t;fixed a bug in pseudo header checksum calculation&n; *&t;added some comments&n; *&t;&n; *&t;Revision 1.2  1998/10/22 11:53:28  swolf&n; *&t;Now using SK_DBG_MSG.&n; *&t;&n; *&t;Revision 1.1  1998/09/01 15:35:41  swolf&n; *&t;initial revision&n; *&n; *&t;13-May-1998 sw&t;Created.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skcsum.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.7 $&n; * Date:&t;$Date: 2000/06/29 13:17:05 $&n; * Purpose:&t;Store/verify Internet checksum in send/receive packets.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998-2000 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skcsum.c,v $&n; *&t;Revision 1.7  2000/06/29 13:17:05  rassmann&n; *&t;Corrected reception of a packet with UDP checksum == 0 (which means there&n; *&t;is no UDP checksum).&n; *&t;&n; *&t;Revision 1.6  2000/02/21 12:35:10  cgoos&n; *&t;Fixed license header comment.&n; *&t;&n; *&t;Revision 1.5  2000/02/21 11:05:19  cgoos&n; *&t;Merged changes back to common source.&n; *&t;Fixed rx path for BIG ENDIAN architecture.&n; *&t;&n; *&t;Revision 1.1  1999/07/26 15:28:12  mkarl&n; *&t;added return SKCS_STATUS_IP_CSUM_ERROR_UDP and&n; *&t;SKCS_STATUS_IP_CSUM_ERROR_TCP to pass the NidsTester&n; *&t;changed from common source to windows specific source&n; *&t;therefore restarting with v1.0&n; *&t;&n; *&t;Revision 1.3  1999/05/10 08:39:33  mkarl&n; *&t;prevent overflows in SKCS_HTON16&n; *&t;fixed a bug in pseudo header checksum calculation&n; *&t;added some comments&n; *&t;&n; *&t;Revision 1.2  1998/10/22 11:53:28  swolf&n; *&t;Now using SK_DBG_MSG.&n; *&t;&n; *&t;Revision 1.1  1998/09/01 15:35:41  swolf&n; *&t;initial revision&n; *&n; *&t;13-May-1998 sw&t;Created.&n; *&n; ******************************************************************************/
 macro_line|#ifdef SK_USE_CSUM&t;/* Check if CSUM is to be used. */
 macro_line|#ifndef lint
 DECL|variable|SysKonnectFileId
@@ -12,7 +12,7 @@ id|SysKonnectFileId
 )braket
 op_assign
 l_string|&quot;@(#)&quot;
-l_string|&quot;$Id: skcsum.c,v 1.3 1999/05/10 08:39:33 mkarl Exp $&quot;
+l_string|&quot;$Id: skcsum.c,v 1.7 2000/06/29 13:17:05 rassmann Exp $&quot;
 l_string|&quot; (C) SysKonnect.&quot;
 suffix:semicolon
 macro_line|#endif&t;/* !lint */
@@ -23,37 +23,41 @@ macro_line|#include &quot;h/skdrv2nd.h&quot;
 multiline_comment|/* defines ********************************************************************/
 multiline_comment|/* The size of an Ethernet MAC header. */
 DECL|macro|SKCS_ETHERNET_MAC_HEADER_SIZE
-mdefine_line|#define SKCS_ETHERNET_MAC_HEADER_SIZE&t;(6+6+2)
+mdefine_line|#define SKCS_ETHERNET_MAC_HEADER_SIZE&t;&t;&t;(6+6+2)
 multiline_comment|/* The size of the used topology&squot;s MAC header. */
 DECL|macro|SKCS_MAC_HEADER_SIZE
 mdefine_line|#define&t;SKCS_MAC_HEADER_SIZE&t;SKCS_ETHERNET_MAC_HEADER_SIZE
 multiline_comment|/* The size of the IP header without any option fields. */
 DECL|macro|SKCS_IP_HEADER_SIZE
-mdefine_line|#define SKCS_IP_HEADER_SIZE&t;20
+mdefine_line|#define SKCS_IP_HEADER_SIZE&t;&t;&t;&t;&t;&t;20
 multiline_comment|/*&n; * Field offsets within the IP header.&n; */
 multiline_comment|/* &quot;Internet Header Version&quot; and &quot;Length&quot;. */
 DECL|macro|SKCS_OFS_IP_HEADER_VERSION_AND_LENGTH
 mdefine_line|#define SKCS_OFS_IP_HEADER_VERSION_AND_LENGTH&t;0
 multiline_comment|/* &quot;Total Length&quot;. */
 DECL|macro|SKCS_OFS_IP_TOTAL_LENGTH
-mdefine_line|#define SKCS_OFS_IP_TOTAL_LENGTH&t;&t;2
+mdefine_line|#define SKCS_OFS_IP_TOTAL_LENGTH&t;&t;&t;&t;2
 multiline_comment|/* &quot;Flags&quot; &quot;Fragment Offset&quot;. */
 DECL|macro|SKCS_OFS_IP_FLAGS_AND_FRAGMENT_OFFSET
 mdefine_line|#define SKCS_OFS_IP_FLAGS_AND_FRAGMENT_OFFSET&t;6
 multiline_comment|/* &quot;Next Level Protocol&quot; identifier. */
 DECL|macro|SKCS_OFS_IP_NEXT_LEVEL_PROTOCOL
-mdefine_line|#define SKCS_OFS_IP_NEXT_LEVEL_PROTOCOL&t;&t;9
+mdefine_line|#define SKCS_OFS_IP_NEXT_LEVEL_PROTOCOL&t;&t;&t;9
 multiline_comment|/* Source IP address. */
 DECL|macro|SKCS_OFS_IP_SOURCE_ADDRESS
-mdefine_line|#define SKCS_OFS_IP_SOURCE_ADDRESS&t;&t;12
+mdefine_line|#define SKCS_OFS_IP_SOURCE_ADDRESS&t;&t;&t;&t;12
 multiline_comment|/* Destination IP address. */
 DECL|macro|SKCS_OFS_IP_DESTINATION_ADDRESS
-mdefine_line|#define SKCS_OFS_IP_DESTINATION_ADDRESS&t;&t;16
+mdefine_line|#define SKCS_OFS_IP_DESTINATION_ADDRESS&t;&t;&t;16
+multiline_comment|/*&n; * Field offsets within the UDP header.&n; */
+multiline_comment|/* UDP checksum. */
+DECL|macro|SKCS_OFS_UDP_CHECKSUM
+mdefine_line|#define SKCS_OFS_UDP_CHECKSUM&t;&t;&t;&t;&t;6
 multiline_comment|/* IP &quot;Next Level Protocol&quot; identifiers (see RFC 790). */
 DECL|macro|SKCS_PROTO_ID_TCP
-mdefine_line|#define SKCS_PROTO_ID_TCP&t;6&t;/* Transport Control Protocol */
+mdefine_line|#define SKCS_PROTO_ID_TCP&t;&t;6&t;/* Transport Control Protocol */
 DECL|macro|SKCS_PROTO_ID_UDP
-mdefine_line|#define SKCS_PROTO_ID_UDP&t;17&t;/* User Datagram Protocol */
+mdefine_line|#define SKCS_PROTO_ID_UDP&t;&t;17&t;/* User Datagram Protocol */
 multiline_comment|/* IP &quot;Don&squot;t Fragment&quot; bit. */
 DECL|macro|SKCS_IP_DONT_FRAGMENT
 mdefine_line|#define SKCS_IP_DONT_FRAGMENT&t;SKCS_HTON16(0x4000)
@@ -577,7 +581,8 @@ op_increment
 suffix:semicolon
 multiline_comment|/* Success. */
 )brace
-multiline_comment|/******************************************************************************&n; *&n; *&t;SkCsGetReceiveInfo - verify checksum information for a received packet&n; *&n; * Description:&n; *&t;Verify a received frame&squot;s checksum. The function returns a status code&n; *&t;reflecting the result of the verification.&n; *&n; * Note:&n; *&t;Before calling this function you have to verify that the frame is&n; *&t;not padded and Checksum1 and Checksum2 are bigger than 1.&n; *&n; * Arguments:&n; *&t;pAc - Pointer to adapter context struct.&n; *&n; *&t;pIpHeader - Pointer to IP header. Must be at least the length in bytes&n; *&t;of the received IP header including any option fields.&n; *&n; *&t;Note: The actual length of the IP header is stored in the lower four&n; *&t;bits of the first octet of the IP header as the number of 4-byte words,&n; *&t;so it must be multiplied by four to get the length in bytes. Thus, the&n; *&t;maximum IP header length is 15 * 4 = 60 bytes.&n; *&n; *&t;Checksum1 - The first 16-bit Internet Checksum calculated by the&n; *&t;hardware starting at the offset returned by SkCsSetReceiveFlags().&n; *&n; *&t;Checksum2 - The second 16-bit Internet Checksum calculated by the&n; *&t;hardware starting at the offset returned by SkCsSetReceiveFlags().&n; *&n; * Returns:&n; *&t;SKCS_STATUS_UNKNOWN_IP_VERSION - Not an IP v4 frame.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR - IP checksum error.&n; *&t;SKCS_STATUS_IP_FRAGMENT - IP fragment (IP checksum ok).&n; *&t;SKCS_STATUS_IP_CSUM_OK - IP checksum ok (not a TCP or UDP frame).&n; *&t;SKCS_STATUS_TCP_CSUM_ERROR - TCP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_UDP_CSUM_ERROR - UDP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_TCP_CSUM_OK - IP and TCP checksum ok.&n; *&t;SKCS_STATUS_UDP_CSUM_OK - IP and UDP checksum ok.&n; *&n; *&t;Note: The SKCS_STATUS_XXX values returned here are *not* defined by&n; *&t;the CSUM module but must be defined in some header file by the module&n; *&t;using CSUM. In this way, the calling module can assign return values&n; *&t;for its own needs, e.g. by assigning bit flags to the individual&n; *&t;protocols.&n; */
+multiline_comment|/* SkCsGetSendInfo */
+multiline_comment|/******************************************************************************&n; *&n; *&t;SkCsGetReceiveInfo - verify checksum information for a received packet&n; *&n; * Description:&n; *&t;Verify a received frame&squot;s checksum. The function returns a status code&n; *&t;reflecting the result of the verification.&n; *&n; * Note:&n; *&t;Before calling this function you have to verify that the frame is&n; *&t;not padded and Checksum1 and Checksum2 are bigger than 1.&n; *&n; * Arguments:&n; *&t;pAc - Pointer to adapter context struct.&n; *&n; *&t;pIpHeader - Pointer to IP header. Must be at least the length in bytes&n; *&t;of the received IP header including any option fields. For UDP packets,&n; *&t;8 additional bytes are needed to access the UDP checksum.&n; *&n; *&t;Note: The actual length of the IP header is stored in the lower four&n; *&t;bits of the first octet of the IP header as the number of 4-byte words,&n; *&t;so it must be multiplied by four to get the length in bytes. Thus, the&n; *&t;maximum IP header length is 15 * 4 = 60 bytes.&n; *&n; *&t;Checksum1 - The first 16-bit Internet Checksum calculated by the&n; *&t;hardware starting at the offset returned by SkCsSetReceiveFlags().&n; *&n; *&t;Checksum2 - The second 16-bit Internet Checksum calculated by the&n; *&t;hardware starting at the offset returned by SkCsSetReceiveFlags().&n; *&n; * Returns:&n; *&t;SKCS_STATUS_UNKNOWN_IP_VERSION - Not an IP v4 frame.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR - IP checksum error.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR_TCP - IP checksum error in TCP frame.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR_UDP - IP checksum error in UDP frame&n; *&t;SKCS_STATUS_IP_FRAGMENT - IP fragment (IP checksum ok).&n; *&t;SKCS_STATUS_IP_CSUM_OK - IP checksum ok (not a TCP or UDP frame).&n; *&t;SKCS_STATUS_TCP_CSUM_ERROR - TCP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_UDP_CSUM_ERROR - UDP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_TCP_CSUM_OK - IP and TCP checksum ok.&n; *&t;SKCS_STATUS_UDP_CSUM_OK - IP and UDP checksum ok.&n; *&t;SKCS_STATUS_IP_CSUM_OK_NO_UDP - IP checksum OK and no UDP checksum.&n; *&n; *&t;Note: If SKCS_OVERWRITE_STATUS is defined, the SKCS_STATUS_XXX values&n; *&t;returned here can be defined in some header file by the module using CSUM.&n; *&t;In this way, the calling module can assign return values for its own needs,&n; *&t;e.g. by assigning bit flags to the individual protocols.&n; */
 DECL|function|SkCsGetReceiveInfo
 id|SKCS_STATUS
 id|SkCsGetReceiveInfo
@@ -833,30 +838,7 @@ id|IpOptionsChecksum
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check if the IP header checksum is ok. */
-multiline_comment|/*&n;&t; * NOTE: We must check the IP header checksum even if the caller does&n;&t; * not want us to do so because we cannot do any further processing of&n;&t; * the packet without a valid IP checksum.&n;&t; */
-r_if
-c_cond
-(paren
-id|IpHeaderChecksum
-op_ne
-l_int|0xFFFF
-)paren
-(brace
-id|pAc-&gt;Csum.ProtoStats
-(braket
-id|SKCS_PROTO_STATS_IP
-)braket
-dot
-id|RxErrCts
-op_increment
-suffix:semicolon
-r_return
-(paren
-id|SKCS_STATUS_IP_CSUM_ERROR
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/*&n;&t; * Check if the IP header checksum is ok.&n;&t; *&n;&t; * NOTE: We must check the IP header checksum even if the caller just wants&n;&t; * us to check upper-layer checksums, because we cannot do any further&n;&t; * processing of the packet without a valid IP checksum.&n;&t; */
 multiline_comment|/* Get the next level protocol identifier. */
 id|NextLevelProtocol
 op_assign
@@ -873,6 +855,54 @@ comma
 id|SKCS_OFS_IP_NEXT_LEVEL_PROTOCOL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IpHeaderChecksum
+op_ne
+l_int|0xFFFF
+)paren
+(brace
+id|pAc-&gt;Csum.ProtoStats
+(braket
+id|SKCS_PROTO_STATS_IP
+)braket
+dot
+id|RxErrCts
+op_increment
+suffix:semicolon
+multiline_comment|/* the NDIS tester wants to know the upper level protocol too */
+r_if
+c_cond
+(paren
+id|NextLevelProtocol
+op_eq
+id|SKCS_PROTO_ID_TCP
+)paren
+(brace
+r_return
+id|SKCS_STATUS_IP_CSUM_ERROR_TCP
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|NextLevelProtocol
+op_eq
+id|SKCS_PROTO_ID_UDP
+)paren
+(brace
+r_return
+id|SKCS_STATUS_IP_CSUM_ERROR_UDP
+suffix:semicolon
+)brace
+r_return
+(paren
+id|SKCS_STATUS_IP_CSUM_ERROR
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Check if this is a TCP or UDP frame and if we should calculate the&n;&t; * TCP/UDP pseudo header checksum.&n;&t; *&n;&t; * Also clear all protocol bit flags of protocols not present in the&n;&t; * frame.&n;&t; */
 r_if
 c_cond
@@ -969,6 +999,41 @@ suffix:semicolon
 r_return
 (paren
 id|SKCS_STATUS_IP_FRAGMENT
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * 08-May-2000 ra&n;&t; *&n;&t; * From RFC 768 (UDP)&n;&t; * If the computed checksum is zero, it is transmitted as all ones (the&n;&t; * equivalent in one&squot;s complement arithmetic).  An all zero transmitted&n;&t; * checksum value means that the transmitter generated no checksum (for&n;&t; * debugging or for higher level protocols that don&squot;t care).&n;&t; */
+r_if
+c_cond
+(paren
+id|NextLevelProtocol
+op_eq
+id|SKCS_PROTO_ID_UDP
+op_logical_and
+op_star
+(paren
+id|SK_U16
+op_star
+)paren
+id|SKCS_IDX
+c_func
+(paren
+id|pIpHeader
+comma
+id|IpHeaderLength
+op_plus
+l_int|6
+)paren
+op_eq
+l_int|0x0000
+)paren
+(brace
+id|NextLevelProtoStats-&gt;RxOkCts
+op_increment
+suffix:semicolon
+r_return
+(paren
+id|SKCS_STATUS_IP_CSUM_OK_NO_UDP
 )paren
 suffix:semicolon
 )brace
@@ -1083,10 +1148,10 @@ op_plus
 r_int
 r_int
 )paren
+id|SKCS_HTON16
+c_func
 (paren
 id|NextLevelProtocol
-op_lshift
-l_int|8
 )paren
 op_plus
 (paren
@@ -1174,6 +1239,7 @@ id|SKCS_STATUS_UDP_CSUM_ERROR
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkCsGetReceiveInfo */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkCsSetReceiveFlags - set checksum receive flags&n; *&n; * Description:&n; *&t;Use this function to set the various receive flags. According to the&n; *&t;protocol flags set by the caller, the start offsets within received&n; *&t;packets of the two hardware checksums are returned. These offsets must&n; *&t;be stored in all receive descriptors.&n; *&n; * Arguments:&n; *&t;pAc - Pointer to adapter context struct.&n; *&n; *&t;ReceiveFlags - Any combination of SK_PROTO_XXX flags of the protocols&n; *&t;for which the caller wants checksum information on received frames.&n; *&n; *&t;pChecksum1Offset - The start offset of the first receive descriptor&n; *&t;hardware checksum to be calculated for received frames is returned&n; *&t;here.&n; *&n; *&t;pChecksum2Offset - The start offset of the second receive descriptor&n; *&t;hardware checksum to be calculated for received frames is returned&n; *&t;here.&n; *&n; * Returns: N/A&n; *&t;Returns the two hardware checksum start offsets.&n; */
 DECL|function|SkCsSetReceiveFlags
 r_void
@@ -1220,6 +1286,7 @@ op_plus
 id|SKCS_IP_HEADER_SIZE
 suffix:semicolon
 )brace
+multiline_comment|/* SkCsSetReceiveFlags */
 macro_line|#ifndef SkCsCalculateChecksum
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkCsCalculateChecksum - calculate checksum for specified data&n; *&n; * Description:&n; *&t;Calculate and return the 16-bit Internet Checksum for the specified&n; *&t;data.&n; *&n; * Arguments:&n; *&t;pData - Pointer to data for which the checksum shall be calculated.&n; *&t;Note: The pointer should be aligned on a 16-bit boundary.&n; *&n; *&t;Length - Length in bytes of data to checksum.&n; *&n; * Returns:&n; *&t;The 16-bit Internet Checksum for the specified data.&n; *&n; *&t;Note: The checksum is calculated in the machine&squot;s natural byte order,&n; *&t;i.e. little vs. big endian. Thus, the resulting checksum is different&n; *&t;for the same input data on little and big endian machines.&n; *&n; *&t;However, when written back to the network packet, the byte order is&n; *&t;always in correct network order.&n; */
 DECL|function|SkCsCalculateChecksum
@@ -1351,6 +1418,7 @@ id|Checksum
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SkCsCalculateChecksum */
 macro_line|#endif /* SkCsCalculateChecksum */
 multiline_comment|/******************************************************************************&n; *&n; *&t;SkCsEvent - the CSUM event dispatcher&n; *&n; * Description:&n; *&t;This is the event handler for the CSUM module.&n; *&n; * Arguments:&n; *&t;pAc - Pointer to adapter context.&n; *&n; *&t;Ioc - I/O context.&n; *&n; *&t;Event -&t; Event id.&n; *&n; *&t;Param - Event dependent parameter.&n; *&n; * Returns:&n; *&t;The 16-bit Internet Checksum for the specified data.&n; *&n; *&t;Note: The checksum is calculated in the machine&squot;s natural byte order,&n; *&t;i.e. little vs. big endian. Thus, the resulting checksum is different&n; *&t;for the same input data on little and big endian machines.&n; *&n; *&t;However, when written back to the network packet, the byte order is&n; *&t;always in correct network order.&n; */
 DECL|function|SkCsEvent
@@ -1464,5 +1532,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Success. */
 )brace
+multiline_comment|/* SkCsEvent */
 macro_line|#endif&t;/* SK_USE_CSUM */
 eof

@@ -1,17 +1,16 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmalloc - local memory allocation routines&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmalloc - local memory allocation routines&n; *              $Revision: 73 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;globals.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acglobal.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cmalloc&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    _Cm_allocate&n; *&n; * PARAMETERS:  Size                - Size of the allocation&n; *              Component           - Component type of caller&n; *              Module              - Source file name of caller&n; *              Line                - Line number of caller&n; *&n; * RETURN:      Address of the allocated memory on success, NULL on failure.&n; *&n; * DESCRIPTION: The subsystem&squot;s equivalent of malloc.&n; *&n; ****************************************************************************/
 r_void
 op_star
@@ -24,10 +23,11 @@ comma
 id|u32
 id|component
 comma
-id|ACPI_STRING
+id|NATIVE_CHAR
+op_star
 id|module
 comma
-id|s32
+id|u32
 id|line
 )paren
 (brace
@@ -105,10 +105,11 @@ comma
 id|u32
 id|component
 comma
-id|ACPI_STRING
+id|NATIVE_CHAR
+op_star
 id|module
 comma
-id|s32
+id|u32
 id|line
 )paren
 (brace
@@ -187,10 +188,11 @@ comma
 id|u32
 id|component
 comma
-id|ACPI_STRING
+id|NATIVE_CHAR
+op_star
 id|module
 comma
-id|s32
+id|u32
 id|line
 )paren
 (brace

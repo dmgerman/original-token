@@ -1,16 +1,15 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: nsxfobj - Public interfaces to the ACPI subsystem&n; *                         ACPI Object oriented interfaces&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nsxfobj - Public interfaces to the ACPI subsystem&n; *                         ACPI Object oriented interfaces&n; *              $Revision: 65 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          NAMESPACE
 id|MODULE_NAME
 (paren
 l_string|&quot;nsxfobj&quot;
 )paren
-suffix:semicolon
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_evaluate_object&n; *&n; * PARAMETERS:  Handle              - Object handle (optional)&n; *              *Pathname           - Object pathname (optional)&n; *              **Params            - List of parameters to pass to&n; *                                    method, terminated by NULL.&n; *                                    Params itself may be NULL&n; *                                    if no parameters are being&n; *                                    passed.&n; *              *Return_object      - Where to put method&squot;s return value (if&n; *                                    any).  If NULL, no value is returned.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Find and evaluate the given object, passing the given&n; *              parameters if necessary.  One of &quot;Handle&quot; or &quot;Pathname&quot; must&n; *              be valid (non-null)&n; *&n; ****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_evaluate_object&n; *&n; * PARAMETERS:  Handle              - Object handle (optional)&n; *              *Pathname           - Object pathname (optional)&n; *              **Params            - List of parameters to pass to&n; *                                    method, terminated by NULL.&n; *                                    Params itself may be NULL&n; *                                    if no parameters are being&n; *                                    passed.&n; *              *Return_object      - Where to put method&squot;s return value (if&n; *                                    any).  If NULL, no value is returned.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Find and evaluate the given object, passing the given&n; *              parameters if necessary.  One of &quot;Handle&quot; or &quot;Pathname&quot; must&n; *              be valid (non-null)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_evaluate_object
 id|acpi_evaluate_object
@@ -33,20 +32,20 @@ id|return_buffer
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|param_ptr
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|return_obj
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|object_ptr
 op_assign
@@ -79,7 +78,7 @@ op_logical_and
 id|param_objects-&gt;count
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Allocate a new parameter block for the internal objects&n;&t;&t; * Add 1 to count to allow for null terminated internal list&n;&t;&t; * TBD: [Restructure] merge into single allocation!&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Allocate a new parameter block for the internal objects&n;&t;&t; * Add 1 to count to allow for null terminated internal list&n;&t;&t; */
 id|count
 op_assign
 id|param_objects-&gt;count
@@ -104,7 +103,7 @@ id|count
 op_star
 r_sizeof
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 )paren
 suffix:semicolon
 id|param_ptr
@@ -134,7 +133,7 @@ suffix:semicolon
 id|object_ptr
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 (paren
@@ -367,7 +366,7 @@ id|ACPI_DESC_TYPE_NAMED
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * If we got an NTE as a return object,&n;&t;&t;&t;&t; * this means the object we are evaluating&n;&t;&t;&t;&t; * has nothing interesting to return (such&n;&t;&t;&t;&t; * as a mutex, etc.)  We return an error&n;&t;&t;&t;&t; * because these types are essentially&n;&t;&t;&t;&t; * unsupported by this interface.  We&n;&t;&t;&t;&t; * don&squot;t check up front because this makes&n;&t;&t;&t;&t; * it easier to add support for various&n;&t;&t;&t;&t; * types at a later date if necessary.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * If we got an Node as a return object,&n;&t;&t;&t;&t; * this means the object we are evaluating&n;&t;&t;&t;&t; * has nothing interesting to return (such&n;&t;&t;&t;&t; * as a mutex, etc.)  We return an error&n;&t;&t;&t;&t; * because these types are essentially&n;&t;&t;&t;&t; * unsupported by this interface.  We&n;&t;&t;&t;&t; * don&squot;t check up front because this makes&n;&t;&t;&t;&t; * it easier to add support for various&n;&t;&t;&t;&t; * types at a later date if necessary.&n;&t;&t;&t;&t; */
 id|status
 op_assign
 id|AE_TYPE
@@ -376,7 +375,7 @@ id|return_obj
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* No need to delete an NTE */
+multiline_comment|/* No need to delete an Node */
 )brace
 r_if
 c_cond
@@ -481,7 +480,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_get_next_object&n; *&n; * PARAMETERS:  Type            - Type of object to be searched for&n; *              Parent          - Parent object whose children we are getting&n; *              Last_child      - Previous child that was found.&n; *                                The NEXT child will be returned&n; *              Ret_handle      - Where handle to the next object is placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Return the next peer object within the namespace.  If Handle is&n; *              valid, Scope is ignored.  Otherwise, the first object within&n; *              Scope is returned.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_next_object&n; *&n; * PARAMETERS:  Type            - Type of object to be searched for&n; *              Parent          - Parent object whose children we are getting&n; *              Last_child      - Previous child that was found.&n; *                                The NEXT child will be returned&n; *              Ret_handle      - Where handle to the next object is placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Return the next peer object within the namespace.  If Handle is&n; *              valid, Scope is ignored.  Otherwise, the first object within&n; *              Scope is returned.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_get_next_object
 id|acpi_get_next_object
@@ -505,19 +504,19 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|parent_entry
+id|parent_node
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|child_entry
+id|child_node
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -531,7 +530,9 @@ id|ACPI_TYPE_MAX
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 id|acpi_cm_acquire_mutex
@@ -548,7 +549,7 @@ id|child
 )paren
 (brace
 multiline_comment|/* Start search at the beginning of the specified scope */
-id|parent_entry
+id|parent_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -559,7 +560,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|parent_entry
+id|parent_node
 )paren
 (brace
 id|status
@@ -575,7 +576,7 @@ multiline_comment|/* Non-null handle, ignore the parent */
 r_else
 (brace
 multiline_comment|/* Convert and validate the handle */
-id|child_entry
+id|child_node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -586,7 +587,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|child_entry
+id|child_node
 )paren
 (brace
 id|status
@@ -599,7 +600,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Internal function does the real work */
-id|entry
+id|node
 op_assign
 id|acpi_ns_get_next_object
 (paren
@@ -608,16 +609,16 @@ id|OBJECT_TYPE_INTERNAL
 )paren
 id|type
 comma
-id|parent_entry
+id|parent_node
 comma
-id|child_entry
+id|child_node
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|entry
+id|node
 )paren
 (brace
 id|status
@@ -639,7 +640,7 @@ id|ret_handle
 op_assign
 id|acpi_ns_convert_entry_to_handle
 (paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 )brace
@@ -651,10 +652,12 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 r_return
+(paren
 id|status
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_get_type&n; *&n; * PARAMETERS:  Handle          - Handle of object whose type is desired&n; *              *Ret_type       - Where the type will be placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: This routine returns the type associatd with a particular handle&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_type&n; *&n; * PARAMETERS:  Handle          - Handle of object whose type is desired&n; *              *Ret_type       - Where the type will be placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: This routine returns the type associatd with a particular handle&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_get_type
 id|acpi_get_type
@@ -667,9 +670,9 @@ op_star
 id|ret_type
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|object
+id|node
 suffix:semicolon
 multiline_comment|/* Parameter Validation */
 r_if
@@ -680,10 +683,12 @@ id|ret_type
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Special case for the predefined Root Object&n;&t; * (return type ANY)&n;&t; */
+multiline_comment|/*&n;&t; * Special case for the predefined Root Node&n;&t; * (return type ANY)&n;&t; */
 r_if
 c_cond
 (paren
@@ -698,7 +703,9 @@ op_assign
 id|ACPI_TYPE_ANY
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 id|acpi_cm_acquire_mutex
@@ -707,7 +714,7 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 multiline_comment|/* Convert and validate the handle */
-id|object
+id|node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -718,7 +725,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|object
+id|node
 )paren
 (brace
 id|acpi_cm_release_mutex
@@ -727,13 +734,15 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 op_star
 id|ret_type
 op_assign
-id|object-&gt;type
+id|node-&gt;type
 suffix:semicolon
 id|acpi_cm_release_mutex
 (paren
@@ -741,10 +750,12 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_get_parent&n; *&n; * PARAMETERS:  Handle          - Handle of object whose parent is desired&n; *              Ret_handle      - Where the parent handle will be placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Returns a handle to the parent of the object represented by&n; *              Handle.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_parent&n; *&n; * PARAMETERS:  Handle          - Handle of object whose parent is desired&n; *              Ret_handle      - Where the parent handle will be placed&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Returns a handle to the parent of the object represented by&n; *              Handle.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_get_parent
 id|acpi_get_parent
@@ -757,9 +768,9 @@ op_star
 id|ret_handle
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|object
+id|node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -775,10 +786,12 @@ id|ret_handle
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Special case for the predefined Root Object (no parent) */
+multiline_comment|/* Special case for the predefined Root Node (no parent) */
 r_if
 c_cond
 (paren
@@ -788,7 +801,9 @@ id|ACPI_ROOT_OBJECT
 )paren
 (brace
 r_return
+(paren
 id|AE_NULL_ENTRY
+)paren
 suffix:semicolon
 )brace
 id|acpi_cm_acquire_mutex
@@ -797,7 +812,7 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 multiline_comment|/* Convert and validate the handle */
-id|object
+id|node
 op_assign
 id|acpi_ns_convert_handle_to_entry
 (paren
@@ -808,7 +823,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|object
+id|node
 )paren
 (brace
 id|status
@@ -825,9 +840,9 @@ id|ret_handle
 op_assign
 id|acpi_ns_convert_entry_to_handle
 (paren
-id|acpi_ns_get_parent_entry
+id|acpi_ns_get_parent_object
 (paren
-id|object
+id|node
 )paren
 )paren
 suffix:semicolon
@@ -836,9 +851,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|acpi_ns_get_parent_entry
+id|acpi_ns_get_parent_object
 (paren
-id|object
+id|node
 )paren
 )paren
 (brace
@@ -855,10 +870,12 @@ id|ACPI_MTX_NAMESPACE
 )paren
 suffix:semicolon
 r_return
-id|AE_OK
+(paren
+id|status
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_walk_namespace&n; *&n; * PARAMETERS:  Type                - ACPI_OBJECT_TYPE to search for&n; *              Start_object        - Handle in namespace where search begins&n; *              Max_depth           - Depth to which search is to reach&n; *              User_function       - Called when an object of &quot;Type&quot; is found&n; *              Context             - Passed to user function&n; *&n; * RETURNS      Return value from the User_function if terminated early.&n; *              Otherwise, returns NULL.&n; *&n; * DESCRIPTION: Performs a modified depth-first walk of the namespace tree,&n; *              starting (and ending) at the object specified by Start_handle.&n; *              The User_function is called whenever an object that matches&n; *              the type parameter is found.  If the user function returns&n; *              a non-zero value, the search is terminated immediately and this&n; *              value is returned to the caller.&n; *&n; *              The point of this procedure is to provide a generic namespace&n; *              walk routine that can be called from multiple places to&n; *              provide multiple services;  the User Function can be tailored&n; *              to each task, whether it is a print function, a compare&n; *              function, etc.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_walk_namespace&n; *&n; * PARAMETERS:  Type                - ACPI_OBJECT_TYPE to search for&n; *              Start_object        - Handle in namespace where search begins&n; *              Max_depth           - Depth to which search is to reach&n; *              User_function       - Called when an object of &quot;Type&quot; is found&n; *              Context             - Passed to user function&n; *&n; * RETURNS      Return value from the User_function if terminated early.&n; *              Otherwise, returns NULL.&n; *&n; * DESCRIPTION: Performs a modified depth-first walk of the namespace tree,&n; *              starting (and ending) at the object specified by Start_handle.&n; *              The User_function is called whenever an object that matches&n; *              the type parameter is found.  If the user function returns&n; *              a non-zero value, the search is terminated immediately and this&n; *              value is returned to the caller.&n; *&n; *              The point of this procedure is to provide a generic namespace&n; *              walk routine that can be called from multiple places to&n; *              provide multiple services;  the User Function can be tailored&n; *              to each task, whether it is a print function, a compare&n; *              function, etc.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_walk_namespace
 id|acpi_walk_namespace

@@ -87,13 +87,6 @@ suffix:semicolon
 DECL|variable|inodes_stat
 )brace
 id|inodes_stat
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|inode_cachep
 r_static

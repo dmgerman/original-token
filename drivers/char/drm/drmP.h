@@ -3,6 +3,10 @@ macro_line|#ifndef _DRM_P_H_
 DECL|macro|_DRM_P_H_
 mdefine_line|#define _DRM_P_H_
 macro_line|#ifdef __KERNEL__
+macro_line|#ifdef __alpha__
+multiline_comment|/* add include of current.h so that &quot;current&quot; is defined&n; * before static inline funcs in wait.h. Doing this so we&n; * can build the DRM (part of PI DRI). 4/21/2000 S + B */
+macro_line|#include &lt;asm/current.h&gt;
+macro_line|#endif /* __alpha__ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,6 +21,9 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;&t;/* For (un)lock_kernel */
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#ifdef __alpha__
+macro_line|#include &lt;asm/pgtable.h&gt; /* For pte_wrprotect */
+macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -151,6 +158,238 @@ macro_line|#endif
 multiline_comment|/* Generic cmpxchg added in 2.3.x */
 macro_line|#ifndef __HAVE_ARCH_CMPXCHG
 multiline_comment|/* Include this here so that driver can be&n;                                   used with older kernels. */
+macro_line|#if defined(__alpha__)
+r_static
+id|__inline__
+r_int
+r_int
+DECL|function|__cmpxchg_u32
+id|__cmpxchg_u32
+c_func
+(paren
+r_volatile
+r_int
+op_star
+id|m
+comma
+r_int
+id|old
+comma
+r_int
+r_new
+)paren
+(brace
+r_int
+r_int
+id|prev
+comma
+id|cmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
+l_string|&quot;&t;cmpeq %0,%3,%1&bslash;n&quot;
+l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;&t;mov %4,%1&bslash;n&quot;
+l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
+l_string|&quot;&t;beq %1,3f&bslash;n&quot;
+l_string|&quot;2:&t;mb&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|prev
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|cmp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+(paren
+r_int
+)paren
+id|old
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+r_new
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+r_return
+id|prev
+suffix:semicolon
+)brace
+r_static
+id|__inline__
+r_int
+r_int
+DECL|function|__cmpxchg_u64
+id|__cmpxchg_u64
+c_func
+(paren
+r_volatile
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|old
+comma
+r_int
+r_int
+r_new
+)paren
+(brace
+r_int
+r_int
+id|prev
+comma
+id|cmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
+l_string|&quot;&t;cmpeq %0,%3,%1&bslash;n&quot;
+l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;&t;mov %4,%1&bslash;n&quot;
+l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
+l_string|&quot;&t;beq %1,3f&bslash;n&quot;
+l_string|&quot;2:&t;mb&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|prev
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|cmp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+(paren
+r_int
+)paren
+id|old
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+r_new
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+r_return
+id|prev
+suffix:semicolon
+)brace
+r_static
+id|__inline__
+r_int
+r_int
+DECL|function|__cmpxchg
+id|__cmpxchg
+c_func
+(paren
+r_volatile
+r_void
+op_star
+id|ptr
+comma
+r_int
+r_int
+id|old
+comma
+r_int
+r_int
+r_new
+comma
+r_int
+id|size
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_case
+l_int|4
+suffix:colon
+r_return
+id|__cmpxchg_u32
+c_func
+(paren
+id|ptr
+comma
+id|old
+comma
+r_new
+)paren
+suffix:semicolon
+r_case
+l_int|8
+suffix:colon
+r_return
+id|__cmpxchg_u64
+c_func
+(paren
+id|ptr
+comma
+id|old
+comma
+r_new
+)paren
+suffix:semicolon
+)brace
+r_return
+id|old
+suffix:semicolon
+)brace
+DECL|macro|cmpxchg
+mdefine_line|#define cmpxchg(ptr,o,n)&t;&t;&t;&t;&t;&t; &bslash;&n;  ({&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;     __typeof__(*(ptr)) _o_ = (o);&t;&t;&t;&t;&t; &bslash;&n;     __typeof__(*(ptr)) _n_ = (n);&t;&t;&t;&t;&t; &bslash;&n;     (__typeof__(*(ptr))) __cmpxchg((ptr), (unsigned long)_o_,&t;&t; &bslash;&n;&t;&t;&t;&t;    (unsigned long)_n_, sizeof(*(ptr))); &bslash;&n;  })
+macro_line|#elif __i386__
 DECL|function|__cmpxchg
 r_static
 r_inline
@@ -316,6 +555,7 @@ suffix:semicolon
 )brace
 DECL|macro|cmpxchg
 mdefine_line|#define cmpxchg(ptr,o,n)&t;&t;&t;&t;&t;&t;&bslash;&n;  ((__typeof__(*(ptr)))__cmpxchg((ptr),(unsigned long)(o),&t;&t;&bslash;&n;&t;&t;&t;&t; (unsigned long)(n),sizeof(*(ptr))))
+macro_line|#endif /* i386 &amp; alpha */
 macro_line|#endif
 multiline_comment|/* Macros to make printk easier */
 DECL|macro|DRM_ERROR

@@ -1,24 +1,23 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cminit - Common ACPI subsystem initialization&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cminit - Common ACPI subsystem initialization&n; *              $Revision: 79 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
 (paren
 l_string|&quot;cminit&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_facp_register_error&n; *&n; * PARAMETERS:  *Register_name          - Pointer to string identifying register&n; *              Value                   - Actual register contents value&n; *              Acpi_test_spec_section  - TDS section containing assertion&n; *              Acpi_assertion          - Assertion number being tested&n; *&n; * RETURN:      none&n; *&n; * DESCRIPTION: Display failure message and link failure to TDS assertion&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_facp_register_error
 id|acpi_cm_facp_register_error
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 id|register_name
 comma
@@ -45,7 +44,7 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|s32
+id|u32
 id|index
 suffix:semicolon
 multiline_comment|/* Are we running on the actual hardware */
@@ -610,6 +609,7 @@ id|acpi_ps_delete_parse_cache
 )paren
 suffix:semicolon
 multiline_comment|/* Debug only - display leftover memory allocation, if any */
+macro_line|#ifdef ENABLE_DEBUGGER
 id|acpi_cm_dump_current_allocations
 (paren
 id|ACPI_UINT32_MAX
@@ -617,6 +617,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#endif
 id|BREAKPOINT3
 suffix:semicolon
 r_return

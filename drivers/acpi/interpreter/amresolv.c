@@ -1,30 +1,29 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresolv - AML Interpreter object resolution&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresolv - AML Interpreter object resolution&n; *              $Revision: 74 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amresolv&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_get_field_unit_value&n; *&n; * PARAMETERS:  *Field_desc         - Pointer to a Field_unit&n; *              *Result_desc        - Pointer to an empty descriptor&n; *                                    which will become a Number&n; *                                    containing the field&squot;s value.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Retrieve the value from a Field_unit&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_get_field_unit_value
 id|acpi_aml_get_field_unit_value
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|field_desc
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|result_desc
 )paren
@@ -216,15 +215,19 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_resolve_to_value&n; *&n; * PARAMETERS:  **Stack_ptr         - Points to entry on Obj_stack, which can&n; *                                    be either an (ACPI_OBJECT_INTERNAL *)&n; *                                    or an ACPI_HANDLE.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Convert Reference entries on Obj_stack to Rvalues&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_resolve_to_value&n; *&n; * PARAMETERS:  **Stack_ptr         - Points to entry on Obj_stack, which can&n; *                                    be either an (ACPI_OPERAND_OBJECT  *)&n; *                                    or an ACPI_HANDLE.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Convert Reference entries on Obj_stack to Rvalues&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_resolve_to_value
 id|acpi_aml_resolve_to_value
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|stack_ptr
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
 id|ACPI_STATUS
@@ -249,7 +252,7 @@ id|AE_AML_NO_OPERAND
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * The entity pointed to by the Stack_ptr can be either&n;&t; * 1) A valid ACPI_OBJECT_INTERNAL, or&n;&t; * 2) A ACPI_NAMED_OBJECT(nte)&n;&t; */
+multiline_comment|/*&n;&t; * The entity pointed to by the Stack_ptr can be either&n;&t; * 1) A valid ACPI_OPERAND_OBJECT, or&n;&t; * 2) A ACPI_NAMESPACE_NODE (Named_obj)&n;&t; */
 r_if
 c_cond
 (paren
@@ -267,6 +270,8 @@ op_assign
 id|acpi_aml_resolve_object_to_value
 (paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
@@ -300,10 +305,10 @@ id|ACPI_DESC_TYPE_NAMED
 (brace
 id|status
 op_assign
-id|acpi_aml_resolve_entry_to_value
+id|acpi_aml_resolve_node_to_value
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 op_star
 )paren
@@ -322,13 +327,17 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_resolve_object_to_value
 id|acpi_aml_resolve_object_to_value
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|stack_ptr
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|stack_desc
 suffix:semicolon
@@ -342,7 +351,7 @@ id|temp_handle
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 op_assign
@@ -361,7 +370,7 @@ op_assign
 op_star
 id|stack_ptr
 suffix:semicolon
-multiline_comment|/* This is an ACPI_OBJECT_INTERNAL */
+multiline_comment|/* This is an ACPI_OPERAND_OBJECT  */
 r_switch
 c_cond
 (paren
@@ -384,7 +393,7 @@ id|opcode
 r_case
 id|AML_NAME_OP
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * Convert indirect name ptr to a direct name ptr.&n;&t;&t;&t; * Then, Acpi_aml_resolve_entry_to_value can be used to get the value&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Convert indirect name ptr to a direct name ptr.&n;&t;&t;&t; * Then, Acpi_aml_resolve_node_to_value can be used to get the value&n;&t;&t;&t; */
 id|temp_handle
 op_assign
 id|stack_desc-&gt;reference.object
@@ -416,13 +425,7 @@ id|index
 op_assign
 id|stack_desc-&gt;reference.offset
 suffix:semicolon
-multiline_comment|/* Delete the Reference Object */
-id|acpi_cm_remove_reference
-(paren
-id|stack_desc
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Get the local from the method&squot;s state info&n;&t;&t;&t; * Note: this increments the object reference count&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Get the local from the method&squot;s state info&n;&t;&t;&t; * Note: this increments the local&squot;s object reference count&n;&t;&t;&t; */
 id|status
 op_assign
 id|acpi_ds_method_data_get_value
@@ -431,7 +434,10 @@ id|MTH_TYPE_LOCAL
 comma
 id|index
 comma
-id|stack_ptr
+id|walk_state
+comma
+op_amp
+id|obj_desc
 )paren
 suffix:semicolon
 r_if
@@ -449,17 +455,23 @@ id|status
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; * Now we can delete the original Reference Object and&n;&t;&t;&t; * replace it with the resolve value&n;&t;&t;&t; */
+id|acpi_cm_remove_reference
+(paren
 id|stack_desc
-op_assign
+)paren
+suffix:semicolon
 op_star
 id|stack_ptr
+op_assign
+id|obj_desc
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|ACPI_TYPE_NUMBER
 op_eq
-id|stack_desc-&gt;common.type
+id|obj_desc-&gt;common.type
 )paren
 (brace
 multiline_comment|/* Value is a Number */
@@ -473,12 +485,6 @@ id|index
 op_assign
 id|stack_desc-&gt;reference.offset
 suffix:semicolon
-multiline_comment|/* Delete the Reference Object*/
-id|acpi_cm_remove_reference
-(paren
-id|stack_desc
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Get the argument from the method&squot;s state info&n;&t;&t;&t; * Note: this increments the object reference count&n;&t;&t;&t; */
 id|status
 op_assign
@@ -488,7 +494,10 @@ id|MTH_TYPE_ARG
 comma
 id|index
 comma
-id|stack_ptr
+id|walk_state
+comma
+op_amp
+id|obj_desc
 )paren
 suffix:semicolon
 r_if
@@ -506,17 +515,23 @@ id|status
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; * Now we can delete the original Reference Object and&n;&t;&t;&t; * replace it with the resolve value&n;&t;&t;&t; */
+id|acpi_cm_remove_reference
+(paren
 id|stack_desc
-op_assign
+)paren
+suffix:semicolon
 op_star
 id|stack_ptr
+op_assign
+id|obj_desc
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|ACPI_TYPE_NUMBER
 op_eq
-id|stack_desc-&gt;common.type
+id|obj_desc-&gt;common.type
 )paren
 (brace
 multiline_comment|/* Value is a Number */
@@ -657,9 +672,10 @@ multiline_comment|/* switch (Opcode) */
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return

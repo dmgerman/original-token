@@ -95,8 +95,6 @@ DECL|variable|mem_map
 id|mem_map_t
 op_star
 id|mem_map
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Note: this doesn&squot;t free the actual pages themselves. That&n; * has been handled earlier when unmapping all the memory regions.&n; */
 DECL|function|free_one_pmd
@@ -4476,6 +4474,12 @@ id|nr_async_pages
 )paren
 op_ge
 id|pager_daemon.swap_cluster
+op_star
+(paren
+l_int|1
+op_lshift
+id|page_cluster
+)paren
 )paren
 (brace
 r_while

@@ -1,8 +1,8 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: events.h - Acpi_event subcomponent prototypes and defines&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acevents.h - Event subcomponent prototypes and defines&n; *       $Revision: 56 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef __EVENTS_H__
-DECL|macro|__EVENTS_H__
-mdefine_line|#define __EVENTS_H__
+macro_line|#ifndef __ACEVENTS_H__
+DECL|macro|__ACEVENTS_H__
+mdefine_line|#define __ACEVENTS_H__
 multiline_comment|/*&n; * Acpi_evfixed - Fixed event handling&n; */
 id|ACPI_STATUS
 id|acpi_ev_fixed_event_initialize
@@ -91,7 +91,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_ev_address_space_dispatch
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
 comma
@@ -132,22 +132,24 @@ r_void
 id|acpi_ev_disassociate_region_from_handler
 c_func
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
 )paren
 suffix:semicolon
 id|ACPI_STATUS
 id|acpi_ev_associate_region_and_handler
-c_func
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|handler_obj
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
+comma
+id|u8
+id|acpi_ns_is_locked
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Acpi_evregini - Region initialization and setup&n; */
@@ -167,7 +169,7 @@ comma
 r_void
 op_star
 op_star
-id|return_context
+id|region_context
 )paren
 suffix:semicolon
 id|ACPI_STATUS
@@ -186,7 +188,7 @@ comma
 r_void
 op_star
 op_star
-id|return_context
+id|region_context
 )paren
 suffix:semicolon
 id|ACPI_STATUS
@@ -205,7 +207,7 @@ comma
 r_void
 op_star
 op_star
-id|return_context
+id|region_context
 )paren
 suffix:semicolon
 id|ACPI_STATUS
@@ -224,13 +226,13 @@ comma
 r_void
 op_star
 op_star
-id|return_context
+id|region_context
 )paren
 suffix:semicolon
 id|ACPI_STATUS
 id|acpi_ev_initialize_region
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
 comma
@@ -238,7 +240,7 @@ id|u8
 id|acpi_ns_locked
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_evsci - SCI (System Control Interrupt) handling/dispatch&n; */
+multiline_comment|/*&n; * Evsci - SCI (System Control Interrupt) handling/dispatch&n; */
 id|u32
 id|acpi_ev_install_sci_handler
 (paren
@@ -251,10 +253,10 @@ id|acpi_ev_remove_sci_handler
 r_void
 )paren
 suffix:semicolon
-id|s32
+id|u32
 id|acpi_ev_initialize_sCI
 (paren
-id|s32
+id|u32
 id|program_sCI
 )paren
 suffix:semicolon
@@ -272,7 +274,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* Debug support */
 macro_line|#ifdef ACPI_DEBUG
-id|s32
+id|u32
 id|acpi_ev_sci_count
 (paren
 id|u32
@@ -285,5 +287,5 @@ macro_line|#else
 DECL|macro|DEBUG_INCREMENT_EVENT_COUNT
 mdefine_line|#define DEBUG_INCREMENT_EVENT_COUNT(a)
 macro_line|#endif
-macro_line|#endif  /*  __EVENTS_H__   */
+macro_line|#endif  /* __ACEVENTS_H__  */
 eof

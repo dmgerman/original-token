@@ -1,15 +1,14 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: hwcpu32.c - CPU support for IA32 (Throttling, Cx_states)&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: hwcpu32.c - CPU support for IA32 (Throttling, Cx_states)&n; *              $Revision: 33 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;hardware.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;achware.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          HARDWARE
 id|MODULE_NAME
 (paren
 l_string|&quot;Hwcpu32&quot;
 )paren
-suffix:semicolon
 DECL|macro|BIT_4
 mdefine_line|#define BIT_4               0x10  /* TBD: [investigate] is this correct?  */
 multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_enter_c1&n; *&n; * PARAMETERS:  Pblk_address    - Address of the processor control block&n; *              Pm_timer_ticks  - Number of PM timer ticks elapsed while asleep&n; *&n; * RETURN:      Function status.&n; *&n; * DESCRIPTION: Set C1 state on IA32 processor (halt)&n; *&n; ****************************************************************************/
@@ -88,7 +87,9 @@ id|timer
 suffix:semicolon
 )brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_enter_c2&n; *&n; * PARAMETERS:  Pblk_address    - Address of the processor control block&n; *              Pm_timer_ticks  - Number of PM timer ticks elapsed while asleep&n; *&n; * RETURN:      &lt;none&gt;&n; *&n; * DESCRIPTION: Set C2 state on IA32 processor&n; *&n; ****************************************************************************/
@@ -121,7 +122,9 @@ id|pm_timer_ticks
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Disable interrupts before all C2/C3 transitions.&n;&t; */
@@ -177,7 +180,9 @@ id|enable
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_enter_c3&n; *&n; * PARAMETERS:  Pblk_address    - Address of the processor control block&n; *              Pm_timer_ticks  - Number of PM timer ticks elapsed while asleep&n; *&n; * RETURN:      Status of function&n; *&n; * DESCRIPTION: Set C3 state on IA32 processor (UP only, cache coherency via&n; *              disabling bus mastering)&n; *&n; ****************************************************************************/
@@ -220,7 +225,9 @@ id|pm_timer_ticks
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Check the BM_STS bit, if it is set, do not enter C3&n;&t; *  but clear the bit (with a write) and exit, telling&n;&t; *  the calling module that we spent zero time in C3.&n;&t; *  If bus mastering continues, this action should&n;&t; *  eventually cause a demotion to C2&n;&t; */
@@ -238,9 +245,6 @@ id|ACPI_READ
 comma
 id|ACPI_MTX_LOCK
 comma
-(paren
-id|s32
-)paren
 id|BM_STS
 )paren
 )paren
@@ -253,9 +257,6 @@ id|ACPI_WRITE
 comma
 id|ACPI_MTX_LOCK
 comma
-(paren
-id|s32
-)paren
 id|BM_STS
 comma
 l_int|1
@@ -267,7 +268,9 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Disable interrupts before all C2/C3 transitions.&n;&t; */
@@ -378,7 +381,9 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_enter_cx&n; *&n; * PARAMETERS:  Processor_handle    - handle of the processor&n; *&n; * RETURN:      Status of function&n; *&n; * DESCRIPTION: Invoke the currently active processor Cx handler to put this&n; *              processor to sleep.&n; *&n; ****************************************************************************/
@@ -405,7 +410,9 @@ id|acpi_hw_active_cx_state
 )paren
 (brace
 r_return
+(paren
 id|AE_SUPPORT
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -449,7 +456,9 @@ l_int|3
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -463,7 +472,9 @@ id|cx_state
 )paren
 (brace
 r_return
+(paren
 id|AE_SUPPORT
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * New Cx State?&n;&t; * -------------&n;&t; * We only care when moving from one state to another...&n;&t; */
@@ -476,7 +487,9 @@ id|cx_state
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Prepare to Use New State:&n;&t; * -------------------------&n;&t; * If the new Cx_state is C3, the BM_RLD bit must be set to allow&n;&t; *  the generation of a bus master requets to cause the processor&n;&t; *  in the C3 state to transition to the C0 state.&n;&t; */
@@ -495,9 +508,6 @@ id|ACPI_WRITE
 comma
 id|ACPI_MTX_LOCK
 comma
-(paren
-id|s32
-)paren
 id|BM_RLD
 comma
 l_int|1
@@ -522,9 +532,6 @@ id|ACPI_WRITE
 comma
 id|ACPI_MTX_LOCK
 comma
-(paren
-id|s32
-)paren
 id|BM_RLD
 comma
 l_int|0
@@ -539,7 +546,9 @@ op_assign
 id|cx_state
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_hw_get_cx_info&n; *&n; * PARAMETERS:  Cx_states       - Information (latencies) on all Cx states&n; *&n; * RETURN:      Status of function&n; *&n; * DESCRIPTION: This function is called both to initialize Cx handling&n; *              and retrieve the current Cx information (latency values).&n; *&n; ****************************************************************************/
@@ -833,7 +842,9 @@ id|x
 suffix:semicolon
 )brace
 r_return
+(paren
 id|result
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/**************************************************************************&n; *&n; *  FUNCTION:    Acpi_hw_enable_throttling&n; *&n; *  PARAMETERS:  Pblk_address       - Address of Pcnt (Processor Control)&n; *                                      register&n; *&n; *  RETURN:      none&n; *&n; *  DESCRIPTION: Enable throttling by setting the THT_EN bit.&n; *&n; *************************************************************************/

@@ -3367,7 +3367,6 @@ id|dentry-&gt;d_count
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Note that a silly-renamed file can be deleted once it&squot;s&n;&t; * no longer in use -- it&squot;s just an ordinary file now.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3380,17 +3379,10 @@ id|dentry-&gt;d_count
 op_eq
 l_int|1
 )paren
-(brace
-id|dentry-&gt;d_flags
-op_and_assign
-op_complement
-id|DCACHE_NFSFS_RENAMED
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* No need to silly rename. */
-)brace
 macro_line|#ifdef NFS_PARANOIA
 r_if
 c_cond
@@ -3723,6 +3715,23 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+multiline_comment|/* If the dentry was sillyrenamed, we simply call d_delete() */
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_flags
+op_amp
+id|DCACHE_NFSFS_RENAMED
+)paren
+(brace
+id|error
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|out_delete
+suffix:semicolon
+)brace
 id|nfs_zap_caches
 c_func
 (paren
@@ -3767,6 +3776,8 @@ l_int|0
 r_goto
 id|out
 suffix:semicolon
+id|out_delete
+suffix:colon
 multiline_comment|/*&n;&t; * Free the inode&n;&t; */
 id|d_delete
 c_func

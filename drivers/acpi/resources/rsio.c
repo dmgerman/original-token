@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsio - Acpi_rs_io_resource&n; *                     Acpi_rs_fixed_io_resource&n; *                     Acpi_rs_io_stream&n; *                     Acpi_rs_fixed_io_stream&n; *                     Acpi_rs_dma_resource&n; *                     Acpi_rs_dma_stream&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsio - Acpi_rs_io_resource&n; *                     Acpi_rs_fixed_io_resource&n; *                     Acpi_rs_io_stream&n; *                     Acpi_rs_fixed_io_stream&n; *                     Acpi_rs_dma_resource&n; *                     Acpi_rs_dma_stream&n; *              $Revision: 7 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 DECL|macro|_COMPONENT
@@ -7,7 +7,6 @@ id|MODULE_NAME
 (paren
 l_string|&quot;rsio&quot;
 )paren
-suffix:semicolon
 multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_io_resource&n; *&n; * PARAMETERS:&n; *              Byte_stream_buffer      - Pointer to the resource input byte&n; *                                          stream&n; *              Bytes_consumed          - u32 pointer that is filled with&n; *                                          the number of bytes consumed from&n; *                                          the Byte_stream_buffer&n; *              Output_buffer           - Pointer to the user&squot;s return buffer&n; *              Structure_size          - u32 pointer that is filled with&n; *                                          the number of bytes in the filled&n; *                                          in structure&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Take the resource byte stream and fill out the appropriate&n; *                  structure pointed to by the Output_buffer. Return the&n; *                  number of bytes consumed from the byte stream.&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_io_resource
@@ -99,14 +98,13 @@ id|buffer
 op_add_assign
 l_int|1
 suffix:semicolon
-id|temp16
-op_assign
-op_star
+id|MOVE_UNALIGNED16_TO_16
 (paren
-id|u16
-op_star
-)paren
+op_amp
+id|temp16
+comma
 id|buffer
+)paren
 suffix:semicolon
 id|output_struct-&gt;data.io.min_base_address
 op_assign
@@ -117,14 +115,13 @@ id|buffer
 op_add_assign
 l_int|2
 suffix:semicolon
-id|temp16
-op_assign
-op_star
+id|MOVE_UNALIGNED16_TO_16
 (paren
-id|u16
-op_star
-)paren
+op_amp
+id|temp16
+comma
 id|buffer
+)paren
 suffix:semicolon
 id|output_struct-&gt;data.io.max_base_address
 op_assign
@@ -368,14 +365,13 @@ id|u16
 )paren
 id|linked_list-&gt;data.io.min_base_address
 suffix:semicolon
-op_star
+id|MOVE_UNALIGNED16_TO_16
 (paren
-id|u16
-op_star
-)paren
-id|buffer
-op_assign
+op_amp
 id|temp16
+comma
+id|buffer
+)paren
 suffix:semicolon
 id|buffer
 op_add_assign
@@ -389,14 +385,13 @@ id|u16
 )paren
 id|linked_list-&gt;data.io.max_base_address
 suffix:semicolon
-op_star
+id|MOVE_UNALIGNED16_TO_16
 (paren
-id|u16
-op_star
-)paren
-id|buffer
-op_assign
+op_amp
 id|temp16
+comma
+id|buffer
+)paren
 suffix:semicolon
 id|buffer
 op_add_assign
@@ -516,14 +511,13 @@ id|u16
 )paren
 id|linked_list-&gt;data.fixed_io.base_address
 suffix:semicolon
-op_star
+id|MOVE_UNALIGNED16_TO_16
 (paren
-id|u16
-op_star
-)paren
-id|buffer
-op_assign
+op_amp
 id|temp16
+comma
+id|buffer
+)paren
 suffix:semicolon
 id|buffer
 op_add_assign

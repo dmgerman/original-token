@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actbl64.h - ACPI tables specific to IA64&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actbl64.h - ACPI tables specific to IA64&n; *       $Revision: 12 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACTBL64_H__
 DECL|macro|__ACTBL64_H__
@@ -42,7 +42,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|signature
-r_char
+id|NATIVE_CHAR
 id|signature
 (braket
 l_int|4
@@ -119,9 +119,9 @@ id|ACPI_TBLPTR
 id|firmware_ctrl
 suffix:semicolon
 multiline_comment|/* Physical address of FACS */
-DECL|member|acpi_dsdt
+DECL|member|dsdt
 id|ACPI_TBLPTR
-id|acpi_dsdt
+id|dsdt
 suffix:semicolon
 multiline_comment|/* Physical address of DSDT */
 DECL|member|model
@@ -244,14 +244,14 @@ id|u8
 id|reserved3
 suffix:semicolon
 multiline_comment|/* reserved */
-DECL|member|Plvl2_lat
+DECL|member|plvl2_lat
 id|u16
-id|Plvl2_lat
+id|plvl2_lat
 suffix:semicolon
 multiline_comment|/* worst case HW latency to enter/exit C2 state */
-DECL|member|Plvl3_lat
+DECL|member|plvl3_lat
 id|u16
-id|Plvl3_lat
+id|plvl3_lat
 suffix:semicolon
 multiline_comment|/* worst case HW latency to enter/exit C3 state */
 DECL|member|day_alrm
@@ -295,9 +295,9 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* all processors support C1 state */
-DECL|member|Plvl2_up
+DECL|member|plvl2_up
 id|u32
-id|Plvl2_up
+id|plvl2_up
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -323,9 +323,9 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* RTC wakeup stat not in fixed register space */
-DECL|member|RTCS4
+DECL|member|rtcs4
 id|u32
-id|RTCS4
+id|rtcs4
 suffix:colon
 l_int|1
 suffix:semicolon

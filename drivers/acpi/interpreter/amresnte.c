@@ -1,26 +1,25 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresnte - AML Interpreter object resolution&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresnte - AML Interpreter object resolution&n; *              $Revision: 21 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;tables.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;actables.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amresnte&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_resolve_entry_to_value&n; *&n; * PARAMETERS:  Stack_ptr       - Pointer to a location on a stack that contains&n; *                                a ptr to an NTE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Resolve a ACPI_NAMED_OBJECT(nte, A.K.A. a &quot;direct name pointer&quot;)&n; *&n; * Note: for some of the data types, the pointer attached to the NTE can be&n; * either a pointer to an actual internal object or a pointer into the AML&n; * stream itself.  These types are currently:&n; *&n; *      ACPI_TYPE_NUMBER&n; *      ACPI_TYPE_STRING&n; *      ACPI_TYPE_BUFFER&n; *      ACPI_TYPE_MUTEX&n; *      ACPI_TYPE_PACKAGE&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_resolve_node_to_value&n; *&n; * PARAMETERS:  Stack_ptr       - Pointer to a location on a stack that contains&n; *                                a pointer to an Node&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Resolve a ACPI_NAMESPACE_NODE (Node,&n; *              A.K.A. a &quot;direct name pointer&quot;)&n; *&n; * Note: for some of the data types, the pointer attached to the Node&n; * can be either a pointer to an actual internal object or a pointer into the&n; * AML stream itself.  These types are currently:&n; *&n; *      ACPI_TYPE_NUMBER&n; *      ACPI_TYPE_STRING&n; *      ACPI_TYPE_BUFFER&n; *      ACPI_TYPE_MUTEX&n; *      ACPI_TYPE_PACKAGE&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
-DECL|function|acpi_aml_resolve_entry_to_value
-id|acpi_aml_resolve_entry_to_value
+DECL|function|acpi_aml_resolve_node_to_value
+id|acpi_aml_resolve_node_to_value
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 op_star
 id|stack_ptr
@@ -31,21 +30,21 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|val_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|stack_entry
+id|node
 suffix:semicolon
 id|u8
 op_star
@@ -75,12 +74,12 @@ suffix:semicolon
 id|OBJECT_TYPE_INTERNAL
 id|object_type
 suffix:semicolon
-id|stack_entry
+id|node
 op_assign
 op_star
 id|stack_ptr
 suffix:semicolon
-multiline_comment|/*&n;&t; * The stack pointer is a &quot;Direct name ptr&quot;, and points to a&n;&t; * a ACPI_NAMED_OBJECT(nte).  Get the pointer that is attached to&n;&t; * the nte.&n;&t; */
+multiline_comment|/*&n;&t; * The stack pointer is a &quot;Direct name ptr&quot;, and points to a&n;&t; * a ACPI_NAMESPACE_NODE (Node).  Get the pointer that is attached to&n;&t; * the Node.&n;&t; */
 id|val_desc
 op_assign
 id|acpi_ns_get_attached_object
@@ -88,7 +87,7 @@ id|acpi_ns_get_attached_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|stack_entry
+id|node
 )paren
 suffix:semicolon
 id|entry_type
@@ -98,10 +97,10 @@ id|acpi_ns_get_type
 (paren
 id|ACPI_HANDLE
 )paren
-id|stack_entry
+id|node
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * The Val_desc attached to the NTE can be either:&n;&t; * 1) An internal ACPI object&n;&t; * 2) A pointer into the AML stream (into one of the ACPI system tables)&n;&t; */
+multiline_comment|/*&n;&t; * The Val_desc attached to the Node can be either:&n;&t; * 1) An internal ACPI object&n;&t; * 2) A pointer into the AML stream (into one of the ACPI system tables)&n;&t; */
 r_if
 c_cond
 (paren
@@ -139,17 +138,30 @@ op_plus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Action is based on the type of the NTE, which indicates the type&n;&t; * of the attached object or pointer&n;&t; */
-r_switch
+multiline_comment|/*&n;&t; * Several Entry_types do not require further processing, so&n;&t; *  we will return immediately&n;&t; */
+multiline_comment|/* Devices rarely have an attached object, return the Node&n;&t; *  and Method locals and arguments have a pseudo-Node&n;&t; */
+r_if
 c_cond
 (paren
 id|entry_type
+op_eq
+id|ACPI_TYPE_DEVICE
+op_logical_or
+id|entry_type
+op_eq
+id|INTERNAL_TYPE_METHOD_ARGUMENT
+op_logical_or
+id|entry_type
+op_eq
+id|INTERNAL_TYPE_METHOD_LOCAL_VAR
 )paren
 (brace
-r_case
-id|ACPI_TYPE_PACKAGE
-suffix:colon
-multiline_comment|/*&n;&t;&t; * Val_desc should point to either an ACPI_OBJECT_INTERNAL of&n;&t;&t; * type Package, or an initialization in the AML stream.&n;&t;&t; */
+r_return
+(paren
+id|AE_OK
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -163,6 +175,16 @@ id|AE_AML_NO_OPERAND
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Action is based on the type of the Node, which indicates the type&n;&t; * of the attached object or pointer&n;&t; */
+r_switch
+c_cond
+(paren
+id|entry_type
+)paren
+(brace
+r_case
+id|ACPI_TYPE_PACKAGE
+suffix:colon
 r_if
 c_cond
 (paren
@@ -180,14 +202,9 @@ multiline_comment|/* Val_desc is an internal object in all cases by the time we 
 r_if
 c_cond
 (paren
-op_logical_neg
-id|val_desc
-op_logical_or
-(paren
 id|ACPI_TYPE_PACKAGE
 op_ne
 id|val_desc-&gt;common.type
-)paren
 )paren
 (brace
 r_return
@@ -214,19 +231,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|val_desc
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_NO_OPERAND
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|attached_aml_pointer
 )paren
 (brace
@@ -241,14 +245,9 @@ multiline_comment|/* Val_desc is an internal object in all cases by the time we 
 r_if
 c_cond
 (paren
-op_logical_neg
-id|val_desc
-op_logical_or
-(paren
 id|ACPI_TYPE_BUFFER
 op_ne
 id|val_desc-&gt;common.type
-)paren
 )paren
 (brace
 r_return
@@ -303,7 +302,7 @@ multiline_comment|/* Init the internal object */
 id|obj_desc-&gt;string.pointer
 op_assign
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 id|aml_pointer
@@ -312,7 +311,7 @@ id|obj_desc-&gt;string.length
 op_assign
 id|STRLEN
 (paren
-id|aml_pointer
+id|obj_desc-&gt;string.pointer
 )paren
 suffix:semicolon
 )brace
@@ -348,19 +347,6 @@ suffix:semicolon
 r_case
 id|ACPI_TYPE_NUMBER
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|val_desc
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_NO_OPERAND
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; * An ACPI_TYPE_NUMBER can be either an object or an AML pointer&n;&t;&t; */
 r_if
 c_cond
@@ -506,7 +492,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t; * The NTE has an attached internal object, make sure that it&squot;s a&n;&t;&t;&t; * number&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * The Node has an attached internal object, make sure that it&squot;s a&n;&t;&t;&t; * number&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -621,12 +607,14 @@ id|val_desc-&gt;field.length
 suffix:semicolon
 id|status
 op_assign
-id|acpi_aml_get_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_READ
+comma
 (paren
 id|ACPI_HANDLE
 )paren
-id|stack_entry
+id|node
 comma
 id|obj_desc-&gt;buffer.pointer
 comma
@@ -636,9 +624,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -652,12 +641,14 @@ r_else
 (brace
 id|status
 op_assign
-id|acpi_aml_get_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_READ
+comma
 (paren
 id|ACPI_HANDLE
 )paren
-id|stack_entry
+id|node
 comma
 op_amp
 id|temp_val
@@ -671,9 +662,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -692,19 +684,6 @@ suffix:semicolon
 r_case
 id|INTERNAL_TYPE_BANK_FIELD
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|val_desc
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_NO_OPERAND
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -735,7 +714,7 @@ multiline_comment|/* Get the global lock if needed */
 id|obj_desc
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 op_star
@@ -748,13 +727,14 @@ id|acpi_aml_acquire_global_lock
 id|obj_desc-&gt;field_unit.lock_rule
 )paren
 suffix:semicolon
-(brace
 multiline_comment|/* Set Index value to select proper Data register */
 multiline_comment|/* perform the update */
 id|status
 op_assign
-id|acpi_aml_set_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_WRITE
+comma
 id|val_desc-&gt;bank_field.bank_select
 comma
 op_amp
@@ -766,7 +746,6 @@ id|val_desc-&gt;bank_field.value
 )paren
 )paren
 suffix:semicolon
-)brace
 id|acpi_aml_release_global_lock
 (paren
 id|locked
@@ -775,9 +754,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -789,8 +769,10 @@ suffix:semicolon
 multiline_comment|/* Read Data value */
 id|status
 op_assign
-id|acpi_aml_get_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_READ
+comma
 (paren
 id|ACPI_HANDLE
 )paren
@@ -808,9 +790,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -851,19 +834,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|val_desc
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_NO_OPERAND
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|attached_aml_pointer
 )paren
 (brace
@@ -892,7 +862,7 @@ multiline_comment|/* Get the global lock if needed */
 id|obj_desc
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 op_star
@@ -905,12 +875,13 @@ id|acpi_aml_acquire_global_lock
 id|obj_desc-&gt;field_unit.lock_rule
 )paren
 suffix:semicolon
-(brace
 multiline_comment|/* Perform the update */
 id|status
 op_assign
-id|acpi_aml_set_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_WRITE
+comma
 id|val_desc-&gt;index_field.index
 comma
 op_amp
@@ -922,7 +893,6 @@ id|val_desc-&gt;index_field.value
 )paren
 )paren
 suffix:semicolon
-)brace
 id|acpi_aml_release_global_lock
 (paren
 id|locked
@@ -931,9 +901,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -945,8 +916,10 @@ suffix:semicolon
 multiline_comment|/* Read Data value */
 id|status
 op_assign
-id|acpi_aml_get_named_field_value
+id|acpi_aml_access_named_field
 (paren
+id|ACPI_READ
+comma
 id|val_desc-&gt;index_field.data
 comma
 op_amp
@@ -961,9 +934,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|AE_OK
-op_ne
+id|ACPI_FAILURE
+(paren
 id|status
+)paren
 )paren
 (brace
 r_return
@@ -1001,19 +975,6 @@ suffix:semicolon
 r_case
 id|ACPI_TYPE_FIELD_UNIT
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|val_desc
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_NO_OPERAND
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1065,10 +1026,6 @@ id|AE_NO_MEMORY
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|acpi_aml_get_field_unit_value
@@ -1077,9 +1034,14 @@ id|val_desc
 comma
 id|obj_desc
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
 )paren
-op_ne
-id|AE_OK
 )paren
 (brace
 id|acpi_cm_remove_reference
@@ -1095,7 +1057,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t; * For these objects, just return the object attached to the NTE&n;&t; */
+multiline_comment|/*&n;&t; * For these objects, just return the object attached to the Node&n;&t; */
 r_case
 id|ACPI_TYPE_MUTEX
 suffix:colon
@@ -1117,20 +1079,6 @@ suffix:colon
 r_case
 id|ACPI_TYPE_REGION
 suffix:colon
-multiline_comment|/* There must be an object attached to this NTE */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|val_desc
-)paren
-(brace
-r_return
-(paren
-id|AE_AML_INTERNAL
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Return an additional reference to the object */
 id|obj_desc
 op_assign
@@ -1139,24 +1087,6 @@ suffix:semicolon
 id|acpi_cm_add_reference
 (paren
 id|obj_desc
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* Devices rarely have an attached object, return the NTE */
-r_case
-id|ACPI_TYPE_DEVICE
-suffix:colon
-multiline_comment|/* Method locals and arguments have a pseudo-NTE, just return it */
-r_case
-id|INTERNAL_TYPE_METHOD_ARGUMENT
-suffix:colon
-r_case
-id|INTERNAL_TYPE_METHOD_LOCAL_VAR
-suffix:colon
-r_return
-(paren
-id|AE_OK
 )paren
 suffix:semicolon
 r_break

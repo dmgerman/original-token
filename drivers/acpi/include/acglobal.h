@@ -1,9 +1,9 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: globals.h - Declarations for global variables&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acglobal.h - Declarations for global variables&n; *       $Revision: 84 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef __GLOBALS_H__
-DECL|macro|__GLOBALS_H__
-mdefine_line|#define __GLOBALS_H__
-multiline_comment|/*&n; * Ensure that the globals are actually defined only once&n; */
+macro_line|#ifndef __ACGLOBAL_H__
+DECL|macro|__ACGLOBAL_H__
+mdefine_line|#define __ACGLOBAL_H__
+multiline_comment|/*&n; * Ensure that the globals are actually defined only once.&n; *&n; * The use of these defines allows a single list of globals (here) in order&n; * to simplify maintenance of the code.&n; */
 macro_line|#ifdef DEFINE_ACPI_GLOBALS
 DECL|macro|ACPI_EXTERN
 mdefine_line|#define ACPI_EXTERN
@@ -12,7 +12,7 @@ DECL|macro|ACPI_EXTERN
 mdefine_line|#define ACPI_EXTERN extern
 macro_line|#endif
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|msg_acpi_error_break
 suffix:semicolon
@@ -131,13 +131,19 @@ id|acpi_gbl_generic_state_cache
 suffix:semicolon
 DECL|variable|acpi_gbl_parse_cache
 id|ACPI_EXTERN
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|acpi_gbl_parse_cache
 suffix:semicolon
+DECL|variable|acpi_gbl_ext_parse_cache
+id|ACPI_EXTERN
+id|ACPI_PARSE2_OBJECT
+op_star
+id|acpi_gbl_ext_parse_cache
+suffix:semicolon
 DECL|variable|acpi_gbl_object_cache
 id|ACPI_EXTERN
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|acpi_gbl_object_cache
 suffix:semicolon
@@ -202,6 +208,16 @@ id|ACPI_EXTERN
 id|u32
 id|acpi_gbl_parse_cache_hits
 suffix:semicolon
+DECL|variable|acpi_gbl_ext_parse_cache_requests
+id|ACPI_EXTERN
+id|u32
+id|acpi_gbl_ext_parse_cache_requests
+suffix:semicolon
+DECL|variable|acpi_gbl_ext_parse_cache_hits
+id|ACPI_EXTERN
+id|u32
+id|acpi_gbl_ext_parse_cache_hits
+suffix:semicolon
 DECL|variable|acpi_gbl_object_cache_requests
 id|ACPI_EXTERN
 id|u32
@@ -241,6 +257,11 @@ DECL|variable|acpi_gbl_parse_cache_depth
 id|ACPI_EXTERN
 id|u16
 id|acpi_gbl_parse_cache_depth
+suffix:semicolon
+DECL|variable|acpi_gbl_ext_parse_cache_depth
+id|ACPI_EXTERN
+id|u16
+id|acpi_gbl_ext_parse_cache_depth
 suffix:semicolon
 DECL|variable|acpi_gbl_object_cache_depth
 id|ACPI_EXTERN
@@ -320,16 +341,16 @@ DECL|macro|NUM_NS_TYPES
 mdefine_line|#define NUM_NS_TYPES                    INTERNAL_TYPE_INVALID+1
 DECL|macro|NUM_PREDEFINED_NAMES
 mdefine_line|#define NUM_PREDEFINED_NAMES            9
-DECL|variable|acpi_gbl_root_name_table
+DECL|variable|acpi_gbl_root_node_struct
 id|ACPI_EXTERN
-id|ACPI_NAME_TABLE
-id|acpi_gbl_root_name_table
+id|ACPI_NAMESPACE_NODE
+id|acpi_gbl_root_node_struct
 suffix:semicolon
-DECL|variable|acpi_gbl_root_object
+DECL|variable|acpi_gbl_root_node
 id|ACPI_EXTERN
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|acpi_gbl_root_object
+id|acpi_gbl_root_node
 suffix:semicolon
 r_extern
 id|u8
@@ -402,10 +423,10 @@ id|u32
 id|acpi_gbl_buf_seq
 suffix:semicolon
 multiline_comment|/* Counts allocated Buffer descriptors */
-DECL|variable|acpi_gbl_named_object_err
+DECL|variable|acpi_gbl_node_err
 id|ACPI_EXTERN
-id|s32
-id|acpi_gbl_named_object_err
+id|u32
+id|acpi_gbl_node_err
 suffix:semicolon
 multiline_comment|/* Indicate if inc_error should be called */
 multiline_comment|/*&n; * Handle to the last method found - used during pass1 of load&n; */
@@ -432,12 +453,12 @@ suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * Parser globals&n; *&n; ****************************************************************************/
 DECL|variable|acpi_gbl_parsed_namespace_root
 id|ACPI_EXTERN
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|acpi_gbl_parsed_namespace_root
 suffix:semicolon
 r_extern
-id|ACPI_OP_INFO
+id|ACPI_OPCODE_INFO
 id|acpi_gbl_aml_op_info
 (braket
 )braket
@@ -448,11 +469,6 @@ id|acpi_gbl_aml_op_info_index
 (braket
 l_int|256
 )braket
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|acpi_gbl_parser_id
 suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * Hardware globals&n; *&n; ****************************************************************************/
 r_extern
@@ -590,6 +606,21 @@ id|ACPI_EXTERN
 id|u32
 id|acpi_gbl_running_object_size
 suffix:semicolon
+DECL|variable|acpi_gbl_current_node_count
+id|ACPI_EXTERN
+id|u32
+id|acpi_gbl_current_node_count
+suffix:semicolon
+DECL|variable|acpi_gbl_current_node_size
+id|ACPI_EXTERN
+id|u32
+id|acpi_gbl_current_node_size
+suffix:semicolon
+DECL|variable|acpi_gbl_max_concurrent_node_count
+id|ACPI_EXTERN
+id|u32
+id|acpi_gbl_max_concurrent_node_count
+suffix:semicolon
 macro_line|#endif
-macro_line|#endif /* __GLOBALS_H__ */
+macro_line|#endif /* __ACGLOBAL_H__ */
 eof

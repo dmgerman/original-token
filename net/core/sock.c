@@ -1793,6 +1793,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|sk_cachep
+)paren
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;sk_init: Cannot create sock SLAB cache!&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|num_physpages
 op_le
 l_int|4096

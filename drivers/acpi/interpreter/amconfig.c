@@ -1,26 +1,25 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amconfig - Namespace reconfiguration (Load/Unload opcodes)&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amconfig - Namespace reconfiguration (Load/Unload opcodes)&n; *              $Revision: 23 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;tables.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;actables.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amconfig&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_load_table&n; *&n; * PARAMETERS:  Rgn_desc        - Op region where the table will be obtained&n; *              Ddb_handle      - Where a handle to the table will be returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Load an ACPI table&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_load_table
 id|acpi_aml_exec_load_table
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|rgn_desc
 comma
@@ -32,17 +31,17 @@ id|ddb_handle
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|table_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-r_char
+id|u8
 op_star
 id|table_ptr
 suffix:semicolon
-r_char
+id|u8
 op_star
 id|table_data_ptr
 suffix:semicolon
@@ -97,7 +96,7 @@ op_star
 )paren
 (paren
 (paren
-r_char
+id|u8
 op_star
 )paren
 op_amp
@@ -417,12 +416,12 @@ id|status
 op_assign
 id|AE_NOT_IMPLEMENTED
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|table_desc
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 id|ddb_handle
@@ -432,7 +431,7 @@ op_star
 id|table_info
 suffix:semicolon
 multiline_comment|/* Validate the handle */
-multiline_comment|/* TBD: [Errors] Wasn&squot;t this done earlier? */
+multiline_comment|/* Although the handle is partially validated in Acpi_aml_exec_reconfiguration(),&n;&t; *  when it calls Acpi_aml_resolve_operands(), the handle is more completely&n;&t; *  validated here.&n;&t; */
 r_if
 c_cond
 (paren
@@ -454,7 +453,7 @@ op_logical_or
 (paren
 (paren
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 id|ddb_handle
@@ -481,7 +480,7 @@ op_star
 )paren
 id|table_desc-&gt;reference.object
 suffix:semicolon
-multiline_comment|/*&n;&t; * Delete the entire namespace under this table NTE&n;&t; * (Offset contains the Table_id)&n;&t; */
+multiline_comment|/*&n;&t; * Delete the entire namespace under this table Node&n;&t; * (Offset contains the Table_id)&n;&t; */
 id|status
 op_assign
 id|acpi_ns_delete_namespace_by_owner
@@ -538,7 +537,7 @@ id|walk_state
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|region_desc
 op_assign
@@ -556,6 +555,8 @@ id|acpi_aml_resolve_operands
 id|opcode
 comma
 id|WALK_OPERANDS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 multiline_comment|/* Get the table handle, common for both opcodes */
@@ -564,7 +565,7 @@ op_or_assign
 id|acpi_ds_obj_stack_pop_object
 (paren
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 )paren
@@ -597,26 +598,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
-id|acpi_aml_append_operand_diag
+id|acpi_cm_remove_reference
 (paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|2
+id|region_desc
 )paren
 suffix:semicolon
-r_goto
-id|cleanup2
+r_return
+(paren
+id|status
+)paren
 suffix:semicolon
 )brace
 id|status
@@ -631,31 +627,21 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|AML_UN_LOAD_OP
+id|AML_UNLOAD_OP
 suffix:colon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
-id|acpi_aml_append_operand_diag
+r_return
 (paren
-id|_THIS_MODULE
-comma
-id|__LINE__
-comma
-id|opcode
-comma
-id|WALK_OPERANDS
-comma
-l_int|1
+id|status
 )paren
-suffix:semicolon
-r_goto
-id|cleanup1
 suffix:semicolon
 )brace
 id|status
@@ -676,15 +662,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|cleanup2
-suffix:colon
-id|acpi_cm_remove_reference
-(paren
-id|region_desc
-)paren
-suffix:semicolon
-id|cleanup1
-suffix:colon
 r_return
 (paren
 id|status

@@ -7,7 +7,7 @@ mdefine_line|#define R128_NAME&t; &quot;r128&quot;
 DECL|macro|R128_DESC
 mdefine_line|#define R128_DESC&t; &quot;ATI Rage 128&quot;
 DECL|macro|R128_DATE
-mdefine_line|#define R128_DATE&t; &quot;20000719&quot;
+mdefine_line|#define R128_DATE&t; &quot;20000910&quot;
 DECL|macro|R128_MAJOR
 mdefine_line|#define R128_MAJOR&t; 1
 DECL|macro|R128_MINOR

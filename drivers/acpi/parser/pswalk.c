@@ -1,18 +1,17 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: pswalk - Parser routines to walk parsed op tree(s)&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: pswalk - Parser routines to walk parsed op tree(s)&n; *              $Revision: 45 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          PARSER
 id|MODULE_NAME
 (paren
 l_string|&quot;pswalk&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_next_walk_op&n; *&n; * PARAMETERS:  Walk_state          - Current state of the walk&n; *              Op                  - Current Op to be walked&n; *              Ascending_callback  - Procedure called when Op is complete&n; *              Prev_op             - Where the previous Op is stored&n; *              Next_op             - Where the next Op in the walk is stored&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Get the next Op in a walk of the parse tree.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ps_get_next_walk_op
@@ -22,23 +21,23 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 comma
-id|INTERPRETER_CALLBACK
+id|ACPI_PARSE_UPWARDS
 id|ascending_callback
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|next
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|parent
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|grand_parent
 suffix:semicolon
@@ -187,6 +186,30 @@ r_default
 suffix:colon
 (brace
 )brace
+multiline_comment|/*&n;&t;&t;&t; * If we are back to the starting point, the walk is complete.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|op
+op_eq
+id|walk_state-&gt;origin
+)paren
+(brace
+multiline_comment|/* Reached the point of origin, the walk is complete */
+id|walk_state-&gt;prev_op
+op_assign
+id|op
+suffix:semicolon
+id|walk_state-&gt;next_op
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; * Check for a sibling to the current op.  A sibling means&n;&t;&t;&t; * we are still going &quot;downward&quot; in the tree.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -218,9 +241,10 @@ multiline_comment|/*&n;&t;&t;&t; * No sibling, but check status.&n;&t;&t;&t; * A
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* Next op will be the parent */
@@ -420,9 +444,10 @@ multiline_comment|/*&n;&t;&t; * No sibling, check for an error from closing the 
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 id|walk_state-&gt;prev_op
@@ -478,14 +503,14 @@ id|ACPI_WALK_LIST
 op_star
 id|walk_list
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|start_op
 comma
-id|INTERPRETER_CALLBACK
+id|ACPI_PARSE_DOWNWARDS
 id|descending_callback
 comma
-id|INTERPRETER_CALLBACK
+id|ACPI_PARSE_UPWARDS
 id|ascending_callback
 )paren
 (brace
@@ -498,7 +523,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 op_assign
@@ -530,9 +555,13 @@ id|status
 op_assign
 id|descending_callback
 (paren
-id|walk_state
+id|op-&gt;opcode
 comma
 id|op
+comma
+id|walk_state
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -625,28 +654,28 @@ id|ACPI_STATUS
 DECL|function|acpi_ps_walk_parsed_aml
 id|acpi_ps_walk_parsed_aml
 (paren
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|start_op
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|end_op
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|mth_desc
 comma
-id|ACPI_NAME_TABLE
+id|ACPI_NAMESPACE_NODE
 op_star
-id|start_scope
+id|start_node
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|params
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|caller_return_desc
@@ -654,14 +683,14 @@ comma
 id|ACPI_OWNER_ID
 id|owner_id
 comma
-id|INTERPRETER_CALLBACK
+id|ACPI_PARSE_DOWNWARDS
 id|descending_callback
 comma
-id|INTERPRETER_CALLBACK
+id|ACPI_PARSE_UPWARDS
 id|ascending_callback
 )paren
 (brace
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 suffix:semicolon
@@ -669,7 +698,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|return_desc
 suffix:semicolon
@@ -695,7 +724,9 @@ id|end_op
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize a new walk list */
@@ -743,7 +774,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|start_scope
+id|start_node
 )paren
 (brace
 multiline_comment|/* Push start scope on scope stack and make it current  */
@@ -751,7 +782,7 @@ id|status
 op_assign
 id|acpi_ds_scope_stack_push
 (paren
-id|start_scope
+id|start_node
 comma
 id|ACPI_TYPE_METHOD
 comma
@@ -787,6 +818,8 @@ id|acpi_ds_method_data_init_args
 id|params
 comma
 id|MTH_NUM_ARGS
+comma
+id|walk_state
 )paren
 suffix:semicolon
 )brace
@@ -808,9 +841,10 @@ id|walk_state
 r_if
 c_cond
 (paren
+id|ACPI_SUCCESS
+(paren
 id|status
-op_eq
-id|AE_OK
+)paren
 )paren
 (brace
 id|status
@@ -855,8 +889,6 @@ r_if
 c_cond
 (paren
 id|walk_state-&gt;method_desc
-op_logical_and
-id|walk_state-&gt;method_desc-&gt;method.parser_op
 )paren
 (brace
 id|acpi_ds_terminate_control_method
@@ -885,9 +917,10 @@ c_cond
 (paren
 id|walk_state
 op_logical_and
+id|ACPI_SUCCESS
+(paren
 id|status
-op_eq
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/* There is another walk state, restart it */

@@ -3894,7 +3894,9 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|init_sr
+r_static
 r_int
+id|__init
 id|init_sr
 c_func
 (paren
@@ -3917,7 +3919,9 @@ id|sr_template
 suffix:semicolon
 )brace
 DECL|function|exit_sr
+r_static
 r_void
+id|__exit
 id|exit_sr
 c_func
 (paren

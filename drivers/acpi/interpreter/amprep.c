@@ -1,17 +1,16 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amprep - ACPI AML (p-code) execution - field prep utilities&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amprep - ACPI AML (p-code) execution - field prep utilities&n; *              $Revision: 67 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amprep&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_decode_field_access_type&n; *&n; * PARAMETERS:  Access          - Encoded field access bits&n; *&n; * RETURN:      Field granularity (8, 16, or 32)&n; *&n; * DESCRIPTION: Decode the Access_type bits of a field definition.&n; *&n; ******************************************************************************/
 id|u32
 DECL|function|acpi_aml_decode_field_access_type
@@ -31,7 +30,9 @@ r_case
 id|ACCESS_ANY_ACC
 suffix:colon
 r_return
+(paren
 l_int|8
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -39,7 +40,9 @@ r_case
 id|ACCESS_BYTE_ACC
 suffix:colon
 r_return
+(paren
 l_int|8
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -47,7 +50,9 @@ r_case
 id|ACCESS_WORD_ACC
 suffix:colon
 r_return
+(paren
 l_int|16
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -55,7 +60,9 @@ r_case
 id|ACCESS_DWORD_ACC
 suffix:colon
 r_return
+(paren
 l_int|32
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -63,7 +70,9 @@ r_default
 suffix:colon
 multiline_comment|/* Invalid field access type */
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -72,7 +81,7 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_prep_common_field_object
 id|acpi_aml_prep_common_field_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 comma
@@ -206,14 +215,14 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_prep_def_field_value&n; *&n; * PARAMETERS:  This_entry          - Owning NTE&n; *              Region              - Region in which field is being defined&n; *              Field_flags         - Access, Lock_rule, or Update_rule.&n; *                                    The format of a Field_flag is described&n; *                                    in the ACPI specification&n; *              Field_position      - Field position&n; *              Field_length        - Field length&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Construct an ACPI_OBJECT_INTERNAL of type Def_field and&n; *              connect it to the parent NTE.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_prep_def_field_value&n; *&n; * PARAMETERS:  Node            - Owning Node&n; *              Region              - Region in which field is being defined&n; *              Field_flags         - Access, Lock_rule, or Update_rule.&n; *                                    The format of a Field_flag is described&n; *                                    in the ACPI specification&n; *              Field_position      - Field position&n; *              Field_length        - Field length&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Construct an ACPI_OPERAND_OBJECT  of type Def_field and&n; *              connect it to the parent Node.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_prep_def_field_value
 id|acpi_aml_prep_def_field_value
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|this_entry
+id|node
 comma
 id|ACPI_HANDLE
 id|region
@@ -231,11 +240,11 @@ id|u32
 id|field_length
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|s32
+id|u32
 id|type
 suffix:semicolon
 id|ACPI_STATUS
@@ -344,7 +353,7 @@ id|obj_desc-&gt;field.container
 )paren
 suffix:semicolon
 multiline_comment|/* Debug info */
-multiline_comment|/*&n;&t; * Store the constructed descriptor (Obj_desc) into the nte whose&n;&t; * handle is on TOS, preserving the current type of that nte.&n;&t; */
+multiline_comment|/*&n;&t; * Store the constructed descriptor (Obj_desc) into the Named_obj whose&n;&t; * handle is on TOS, preserving the current type of that Named_obj.&n;&t; */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -352,7 +361,7 @@ id|acpi_ns_attach_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|this_entry
+id|node
 comma
 id|obj_desc
 comma
@@ -364,7 +373,7 @@ id|acpi_ns_get_type
 (paren
 id|ACPI_HANDLE
 )paren
-id|this_entry
+id|node
 )paren
 )paren
 suffix:semicolon
@@ -374,14 +383,14 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_prep_bank_field_value&n; *&n; * PARAMETERS:  This_entry          - Owning NTE&n; *              Region              - Region in which field is being defined&n; *              Bank_reg            - Bank selection register&n; *              Bank_val            - Value to store in selection register&n; *              Field_flags         - Access, Lock_rule, or Update_rule&n; *              Field_position      - Field position&n; *              Field_length        - Field length&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Construct an ACPI_OBJECT_INTERNAL of type Bank_field and&n; *              connect it to the parent NTE.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_prep_bank_field_value&n; *&n; * PARAMETERS:  Node            - Owning Node&n; *              Region              - Region in which field is being defined&n; *              Bank_reg            - Bank selection register&n; *              Bank_val            - Value to store in selection register&n; *              Field_flags         - Access, Lock_rule, or Update_rule&n; *              Field_position      - Field position&n; *              Field_length        - Field length&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Construct an ACPI_OPERAND_OBJECT  of type Bank_field and&n; *              connect it to the parent Node.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_prep_bank_field_value
 id|acpi_aml_prep_bank_field_value
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|this_entry
+id|node
 comma
 id|ACPI_HANDLE
 id|region
@@ -405,11 +414,11 @@ id|u32
 id|field_length
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
-id|s32
+id|u32
 id|type
 suffix:semicolon
 id|ACPI_STATUS
@@ -535,7 +544,7 @@ id|obj_desc-&gt;bank_field.bank_select
 )paren
 suffix:semicolon
 multiline_comment|/* Debug info */
-multiline_comment|/*&n;&t; * Store the constructed descriptor (Obj_desc) into the nte whose&n;&t; * handle is on TOS, preserving the current type of that nte.&n;&t; */
+multiline_comment|/*&n;&t; * Store the constructed descriptor (Obj_desc) into the Named_obj whose&n;&t; * handle is on TOS, preserving the current type of that Named_obj.&n;&t; */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -543,7 +552,7 @@ id|acpi_ns_attach_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|this_entry
+id|node
 comma
 id|obj_desc
 comma
@@ -555,7 +564,7 @@ id|acpi_ns_get_type
 (paren
 id|ACPI_HANDLE
 )paren
-id|this_entry
+id|node
 )paren
 )paren
 suffix:semicolon
@@ -565,14 +574,14 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_prep_index_field_value&n; *&n; * PARAMETERS:  This_entry          - Owning NTE&n; *              Index_reg           - Index register&n; *              Data_reg            - Data register&n; *              Field_flags         - Access, Lock_rule, or Update_rule&n; *              Field_position      - Field position&n; *              Field_length        - Field length&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Construct an ACPI_OBJECT_INTERNAL of type Index_field and&n; *              connect it to the parent NTE.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_prep_index_field_value&n; *&n; * PARAMETERS:  Node            - Owning Node&n; *              Index_reg           - Index register&n; *              Data_reg            - Data register&n; *              Field_flags         - Access, Lock_rule, or Update_rule&n; *              Field_position      - Field position&n; *              Field_length        - Field length&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Construct an ACPI_OPERAND_OBJECT  of type Index_field and&n; *              connect it to the parent Node.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_prep_index_field_value
 id|acpi_aml_prep_index_field_value
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|this_entry
+id|node
 comma
 id|ACPI_HANDLE
 id|index_reg
@@ -593,7 +602,7 @@ id|u32
 id|field_length
 )paren
 (brace
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
@@ -690,7 +699,7 @@ op_assign
 id|data_reg
 suffix:semicolon
 multiline_comment|/* Debug info */
-multiline_comment|/*&n;&t; * Store the constructed descriptor (Obj_desc) into the nte whose&n;&t; * handle is on TOS, preserving the current type of that nte.&n;&t; */
+multiline_comment|/*&n;&t; * Store the constructed descriptor (Obj_desc) into the Named_obj whose&n;&t; * handle is on TOS, preserving the current type of that Named_obj.&n;&t; */
 id|status
 op_assign
 id|acpi_ns_attach_object
@@ -698,7 +707,7 @@ id|acpi_ns_attach_object
 (paren
 id|ACPI_HANDLE
 )paren
-id|this_entry
+id|node
 comma
 id|obj_desc
 comma
@@ -710,7 +719,7 @@ id|acpi_ns_get_type
 (paren
 id|ACPI_HANDLE
 )paren
-id|this_entry
+id|node
 )paren
 )paren
 suffix:semicolon

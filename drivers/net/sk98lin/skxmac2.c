@@ -1,6 +1,6 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skxmac2.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.49 $&n; * Date:&t;$Date: 1999/11/22 08:12:13 $&n; * Purpose:&t;Contains functions to initialize the XMAC II&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998,1999 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;See the file &quot;skge.c&quot; for further information.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skxmac2.c,v $&n; *&t;Revision 1.49  1999/11/22 08:12:13  malthoff&n; *&t;Add workaround for power consumption feature of Bcom C0 chip.&n; *&t;&n; *&t;Revision 1.48  1999/11/16 08:39:01  malthoff&n; *&t;Fix: MDIO preamble suppression is port dependend.&n; *&t;&n; *&t;Revision 1.47  1999/08/27 08:55:35  malthoff&n; *&t;1000BT: Optimizing MDIO transfer by oppressing MDIO preamble.&n; *&t;&n; *&t;Revision 1.46  1999/08/13 11:01:12  malthoff&n; *&t;Fix for 1000BT: pFlowCtrlMode was not set correctly.&n; *&t;&n; *&t;Revision 1.45  1999/08/12 19:18:28  malthoff&n; *&t;1000BT Fixes: Do not owerwrite XM_MMU_CMD.&n; *&t;Do not execute BCOM A1 workaround for B1 chips.&n; *&t;Fix pause frame setting.&n; *&t;Always set PHY_B_AC_TX_TST in PHY_BCOM_AUX_CTRL.&n; *&t;&n; *&t;Revision 1.44  1999/08/03 15:23:48  cgoos&n; *&t;Fixed setting of PHY interrupt mask in half duplex mode.&n; *&t;&n; *&t;Revision 1.43  1999/08/03 15:22:17  cgoos&n; *&t;Added some debug output.&n; *&t;Disabled XMac GP0 interrupt for external PHYs.&n; *&t;&n; *&t;Revision 1.42  1999/08/02 08:39:23  malthoff&n; *&t;BCOM PHY: TX LED: To get the mono flop behaviour it is required&n; *&t;to set the LED Traffic Mode bit in PHY_BCOM_P_EXT_CTRL.&n; *&t;&n; *&t;Revision 1.41  1999/07/30 06:54:31  malthoff&n; *&t;Add temp. workarounds for the BCOM Phy revision A1.&n; *&t;&n; *&t;Revision 1.40  1999/06/01 07:43:26  cgoos&n; *&t;Changed Link Mode Status in SkXmAutoNegDone... from FULL/HALF to&n; *&t;AUTOFULL/AUTOHALF.&n; *&t;&n; *&t;Revision 1.39  1999/05/19 07:29:51  cgoos&n; *&t;Changes for 1000Base-T.&n; *&t;&n; *&t;Revision 1.38  1999/04/08 14:35:10  malthoff&n; *&t;Add code for enabling signal detect. Enabling signal&n; *&t;detect is disabled.&n; *&t;&n; *&t;Revision 1.37  1999/03/12 13:42:54  malthoff&n; *&t;Add: Jumbo Frame Support.&n; *&t;Add: Receive modes SK_LENERR_OK_ON/OFF and&n; *&t;SK_BIG_PK_OK_ON/OFF in SkXmSetRxCmd().&n; *&t;&n; *&t;Revision 1.36  1999/03/08 10:10:55  gklug&n; *&t;fix: AutoSensing did switch to next mode even if LiPa indicated offline&n; *&n; *&t;Revision 1.35  1999/02/22 15:16:41  malthoff&n; *&t;Remove some compiler warnings.&n; *&n; *&t;Revision 1.34  1999/01/22 09:19:59  gklug&n; *&t;fix: Init DupMode and InitPauseMd are now called in RxTxEnable&n; *&n; *&t;Revision 1.33  1998/12/11 15:19:11  gklug&n; *&t;chg: lipa autoneg stati&n; *&t;chg: debug messages&n; *&t;chg: do NOT use spurious XmIrq&n; *&n; *&t;Revision 1.32  1998/12/10 11:08:44  malthoff&n; *&t;bug fix: pAC has been used for IOs in SkXmHardRst().&n; *&t;SkXmInitPhy() is also called for the Diag in SkXmInitMac().&n; *&n; *&t;Revision 1.31  1998/12/10 10:39:11  gklug&n; *&t;fix: do 4 RESETS of the XMAC at the beginning&n; *&t;fix: dummy read interrupt source register BEFORE initializing the Phy&n; *&t;add: debug messages&n; *&t;fix: Linkpartners autoneg capability cannot be shown by TX_PAGE interrupt&n; *&n; *&t;Revision 1.30  1998/12/07 12:18:32  gklug&n; *&t;add: refinement of autosense mode: take into account the autoneg cap of LiPa&n; *&n; *&t;Revision 1.29  1998/12/07 07:12:29  gklug&n; *&t;fix: if page is received the link is  down.&n; *&n; *&t;Revision 1.28  1998/12/01 10:12:47  gklug&n; *&t;chg: if spurious IRQ from XMAC encountered, save it&n; *&n; *&t;Revision 1.27  1998/11/26 07:33:38  gklug&n; *&t;add: InitPhy call is now in XmInit function&n; *&n; *&t;Revision 1.26  1998/11/18 13:38:24  malthoff&n; *&t;&squot;Imsk&squot; is also unused in SkXmAutoNegDone.&n; *&n; *&t;Revision 1.25  1998/11/18 13:28:01  malthoff&n; *&t;Remove unused variable &squot;Reg&squot; in SkXmAutoNegDone().&n; *&n; *&t;Revision 1.24  1998/11/18 13:18:45  gklug&n; *&t;add: workaround for xmac errata #1&n; *&t;add: detect Link Down also when Link partner requested config&n; *&t;chg: XMIrq is only used when link is up&n; *&n; *&t;Revision 1.23  1998/11/04 07:07:04  cgoos&n; *&t;Added function SkXmRxTxEnable.&n; *&n; *&t;Revision 1.22  1998/10/30 07:35:54  gklug&n; *&t;fix: serve LinkDown interrupt when link is already down&n; *&n; *&t;Revision 1.21  1998/10/29 15:32:03  gklug&n; *&t;fix: Link Down signaling&n; *&n; *&t;Revision 1.20  1998/10/29 11:17:27  gklug&n; *&t;fix: AutoNegDone bug&n; *&n; *&t;Revision 1.19  1998/10/29 10:14:43  malthoff&n; *&t;Add endainesss comment for reading/writing MAC addresses.&n; *&n; *&t;Revision 1.18  1998/10/28 07:48:55  cgoos&n; *&t;Fix: ASS somtimes signaled although link is up.&n; *&n; *&t;Revision 1.17  1998/10/26 07:55:39  malthoff&n; *&t;Fix in SkXmInitPauseMd(): Pause Mode&n; *&t;was disabled and not enabled.&n; *&t;Fix in SkXmAutoNegDone(): Checking Mode bits&n; *&t;always failed, becaues of some missing braces.&n; *&n; *&t;Revision 1.16  1998/10/22 09:46:52  gklug&n; *&t;fix SysKonnectFileId typo&n; *&n; *&t;Revision 1.15  1998/10/21 05:51:37  gklug&n; *&t;add: para DoLoop to InitPhy function for loopback set-up&n; *&n; *&t;Revision 1.14  1998/10/16 10:59:23  malthoff&n; *&t;Remove Lint warning for dummy reads.&n; *&n; *&t;Revision 1.13  1998/10/15 14:01:20  malthoff&n; *&t;Fix: SkXmAutoNegDone() is (int) but does not return a value.&n; *&n; *&t;Revision 1.12  1998/10/14 14:45:04  malthoff&n; *&t;Remove SKERR_SIRQ_E0xx and SKERR_SIRQ_E0xxMSG by&n; *&t;SKERR_HWI_Exx and SKERR_HWI_E0xxMSG to be independant&n; *&t;from the Sirq module.&n; *&n; *&t;Revision 1.11  1998/10/14 13:59:01  gklug&n; *&t;add: InitPhy function&n; *&n; *&t;Revision 1.10  1998/10/14 11:20:57  malthoff&n; *&t;Make SkXmAutoNegDone() public, because it&squot;s&n; *&t;used in diagnostics, too.&n; *&t;The Link Up event to the RLMT is issued in&n; *&t;SkXmIrq(). SkXmIrq() is not available in&n; *&t;diagnostics. Use PHY_READ when reading&n; *&t;PHY registers.&n; *&n; *&t;Revision 1.9  1998/10/14 05:50:10  cgoos&n; *&t;Added definition for Para.&n; *&n; *&t;Revision 1.8  1998/10/14 05:41:28  gklug&n; *&t;add: Xmac IRQ&n; *&t;add: auto negotiation done function&n; *&n; *&t;Revision 1.7  1998/10/09 06:55:20  malthoff&n; *&t;The configuration of the XMACs Tx Request Threshold&n; *&t;depends from the drivers port usage now. The port&n; *&t;usage is configured in GIPortUsage.&n; *&n; *&t;Revision 1.6  1998/10/05 07:48:00  malthoff&n; *&t;minor changes&n; *&n; *&t;Revision 1.5  1998/10/01 07:03:54  gklug&n; *&t;add: dummy function for XMAC ISR&n; *&n; *&t;Revision 1.4  1998/09/30 12:37:44  malthoff&n; *&t;Add SkXmSetRxCmd() and related code.&n; *&n; *&t;Revision 1.3  1998/09/28 13:26:40  malthoff&n; *&t;Add SkXmInitMac(), SkXmInitDupMd(), and SkXmInitPauseMd()&n; *&n; *&t;Revision 1.2  1998/09/16 14:34:21  malthoff&n; *&t;Add SkXmClrExactAddr(), SkXmClrSrcCheck(),&n; *&t;SkXmClrHashAddr(), SkXmFlushTxFifo(),&n; *&t;SkXmFlushRxFifo(), and SkXmHardRst().&n; *&t;Finish Coding of SkXmSoftRst().&n; *&t;The sources may be compiled now.&n; *&n; *&t;Revision 1.1  1998/09/04 10:05:56  malthoff&n; *&t;Created.&n; *&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skxmac2.c&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.53 $&n; * Date:&t;$Date: 2000/07/27 12:22:11 $&n; * Purpose:&t;Contains functions to initialize the XMAC II&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998,1999 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skxmac2.c,v $&n; *&t;Revision 1.53  2000/07/27 12:22:11  gklug&n; *&t;fix: possible endless loop in XmHardRst.&n; *&t;&n; *&t;Revision 1.52  2000/05/22 08:48:31  malthoff&n; *&t;Fix: #10523 errata valid for all BCOM PHYs.&n; *&t;&n; *&t;Revision 1.51  2000/05/17 12:52:18  malthoff&n; *&t;Fixes BCom link errata (#10523).&n; *&t;&n; *&t;Revision 1.50  1999/11/22 13:40:14  cgoos&n; *&t;Changed license header to GPL.&n; *&t;&n; *&t;Revision 1.49  1999/11/22 08:12:13  malthoff&n; *&t;Add workaround for power consumption feature of Bcom C0 chip.&n; *&t;&n; *&t;Revision 1.48  1999/11/16 08:39:01  malthoff&n; *&t;Fix: MDIO preamble suppression is port dependend.&n; *&t;&n; *&t;Revision 1.47  1999/08/27 08:55:35  malthoff&n; *&t;1000BT: Optimizing MDIO transfer by oppressing MDIO preamble.&n; *&t;&n; *&t;Revision 1.46  1999/08/13 11:01:12  malthoff&n; *&t;Fix for 1000BT: pFlowCtrlMode was not set correctly.&n; *&t;&n; *&t;Revision 1.45  1999/08/12 19:18:28  malthoff&n; *&t;1000BT Fixes: Do not owerwrite XM_MMU_CMD.&n; *&t;Do not execute BCOM A1 workaround for B1 chips.&n; *&t;Fix pause frame setting.&n; *&t;Always set PHY_B_AC_TX_TST in PHY_BCOM_AUX_CTRL.&n; *&t;&n; *&t;Revision 1.44  1999/08/03 15:23:48  cgoos&n; *&t;Fixed setting of PHY interrupt mask in half duplex mode.&n; *&t;&n; *&t;Revision 1.43  1999/08/03 15:22:17  cgoos&n; *&t;Added some debug output.&n; *&t;Disabled XMac GP0 interrupt for external PHYs.&n; *&t;&n; *&t;Revision 1.42  1999/08/02 08:39:23  malthoff&n; *&t;BCOM PHY: TX LED: To get the mono flop behaviour it is required&n; *&t;to set the LED Traffic Mode bit in PHY_BCOM_P_EXT_CTRL.&n; *&t;&n; *&t;Revision 1.41  1999/07/30 06:54:31  malthoff&n; *&t;Add temp. workarounds for the BCOM Phy revision A1.&n; *&t;&n; *&t;Revision 1.40  1999/06/01 07:43:26  cgoos&n; *&t;Changed Link Mode Status in SkXmAutoNegDone... from FULL/HALF to&n; *&t;AUTOFULL/AUTOHALF.&n; *&t;&n; *&t;Revision 1.39  1999/05/19 07:29:51  cgoos&n; *&t;Changes for 1000Base-T.&n; *&t;&n; *&t;Revision 1.38  1999/04/08 14:35:10  malthoff&n; *&t;Add code for enabling signal detect. Enabling signal&n; *&t;detect is disabled.&n; *&t;&n; *&t;Revision 1.37  1999/03/12 13:42:54  malthoff&n; *&t;Add: Jumbo Frame Support.&n; *&t;Add: Receive modes SK_LENERR_OK_ON/OFF and&n; *&t;SK_BIG_PK_OK_ON/OFF in SkXmSetRxCmd().&n; *&t;&n; *&t;Revision 1.36  1999/03/08 10:10:55  gklug&n; *&t;fix: AutoSensing did switch to next mode even if LiPa indicated offline&n; *&n; *&t;Revision 1.35  1999/02/22 15:16:41  malthoff&n; *&t;Remove some compiler warnings.&n; *&n; *&t;Revision 1.34  1999/01/22 09:19:59  gklug&n; *&t;fix: Init DupMode and InitPauseMd are now called in RxTxEnable&n; *&n; *&t;Revision 1.33  1998/12/11 15:19:11  gklug&n; *&t;chg: lipa autoneg stati&n; *&t;chg: debug messages&n; *&t;chg: do NOT use spurious XmIrq&n; *&n; *&t;Revision 1.32  1998/12/10 11:08:44  malthoff&n; *&t;bug fix: pAC has been used for IOs in SkXmHardRst().&n; *&t;SkXmInitPhy() is also called for the Diag in SkXmInitMac().&n; *&n; *&t;Revision 1.31  1998/12/10 10:39:11  gklug&n; *&t;fix: do 4 RESETS of the XMAC at the beginning&n; *&t;fix: dummy read interrupt source register BEFORE initializing the Phy&n; *&t;add: debug messages&n; *&t;fix: Linkpartners autoneg capability cannot be shown by TX_PAGE interrupt&n; *&n; *&t;Revision 1.30  1998/12/07 12:18:32  gklug&n; *&t;add: refinement of autosense mode: take into account the autoneg cap of LiPa&n; *&n; *&t;Revision 1.29  1998/12/07 07:12:29  gklug&n; *&t;fix: if page is received the link is  down.&n; *&n; *&t;Revision 1.28  1998/12/01 10:12:47  gklug&n; *&t;chg: if spurious IRQ from XMAC encountered, save it&n; *&n; *&t;Revision 1.27  1998/11/26 07:33:38  gklug&n; *&t;add: InitPhy call is now in XmInit function&n; *&n; *&t;Revision 1.26  1998/11/18 13:38:24  malthoff&n; *&t;&squot;Imsk&squot; is also unused in SkXmAutoNegDone.&n; *&n; *&t;Revision 1.25  1998/11/18 13:28:01  malthoff&n; *&t;Remove unused variable &squot;Reg&squot; in SkXmAutoNegDone().&n; *&n; *&t;Revision 1.24  1998/11/18 13:18:45  gklug&n; *&t;add: workaround for xmac errata #1&n; *&t;add: detect Link Down also when Link partner requested config&n; *&t;chg: XMIrq is only used when link is up&n; *&n; *&t;Revision 1.23  1998/11/04 07:07:04  cgoos&n; *&t;Added function SkXmRxTxEnable.&n; *&n; *&t;Revision 1.22  1998/10/30 07:35:54  gklug&n; *&t;fix: serve LinkDown interrupt when link is already down&n; *&n; *&t;Revision 1.21  1998/10/29 15:32:03  gklug&n; *&t;fix: Link Down signaling&n; *&n; *&t;Revision 1.20  1998/10/29 11:17:27  gklug&n; *&t;fix: AutoNegDone bug&n; *&n; *&t;Revision 1.19  1998/10/29 10:14:43  malthoff&n; *&t;Add endainesss comment for reading/writing MAC addresses.&n; *&n; *&t;Revision 1.18  1998/10/28 07:48:55  cgoos&n; *&t;Fix: ASS somtimes signaled although link is up.&n; *&n; *&t;Revision 1.17  1998/10/26 07:55:39  malthoff&n; *&t;Fix in SkXmInitPauseMd(): Pause Mode&n; *&t;was disabled and not enabled.&n; *&t;Fix in SkXmAutoNegDone(): Checking Mode bits&n; *&t;always failed, becaues of some missing braces.&n; *&n; *&t;Revision 1.16  1998/10/22 09:46:52  gklug&n; *&t;fix SysKonnectFileId typo&n; *&n; *&t;Revision 1.15  1998/10/21 05:51:37  gklug&n; *&t;add: para DoLoop to InitPhy function for loopback set-up&n; *&n; *&t;Revision 1.14  1998/10/16 10:59:23  malthoff&n; *&t;Remove Lint warning for dummy reads.&n; *&n; *&t;Revision 1.13  1998/10/15 14:01:20  malthoff&n; *&t;Fix: SkXmAutoNegDone() is (int) but does not return a value.&n; *&n; *&t;Revision 1.12  1998/10/14 14:45:04  malthoff&n; *&t;Remove SKERR_SIRQ_E0xx and SKERR_SIRQ_E0xxMSG by&n; *&t;SKERR_HWI_Exx and SKERR_HWI_E0xxMSG to be independant&n; *&t;from the Sirq module.&n; *&n; *&t;Revision 1.11  1998/10/14 13:59:01  gklug&n; *&t;add: InitPhy function&n; *&n; *&t;Revision 1.10  1998/10/14 11:20:57  malthoff&n; *&t;Make SkXmAutoNegDone() public, because it&squot;s&n; *&t;used in diagnostics, too.&n; *&t;The Link Up event to the RLMT is issued in&n; *&t;SkXmIrq(). SkXmIrq() is not available in&n; *&t;diagnostics. Use PHY_READ when reading&n; *&t;PHY registers.&n; *&n; *&t;Revision 1.9  1998/10/14 05:50:10  cgoos&n; *&t;Added definition for Para.&n; *&n; *&t;Revision 1.8  1998/10/14 05:41:28  gklug&n; *&t;add: Xmac IRQ&n; *&t;add: auto negotiation done function&n; *&n; *&t;Revision 1.7  1998/10/09 06:55:20  malthoff&n; *&t;The configuration of the XMACs Tx Request Threshold&n; *&t;depends from the drivers port usage now. The port&n; *&t;usage is configured in GIPortUsage.&n; *&n; *&t;Revision 1.6  1998/10/05 07:48:00  malthoff&n; *&t;minor changes&n; *&n; *&t;Revision 1.5  1998/10/01 07:03:54  gklug&n; *&t;add: dummy function for XMAC ISR&n; *&n; *&t;Revision 1.4  1998/09/30 12:37:44  malthoff&n; *&t;Add SkXmSetRxCmd() and related code.&n; *&n; *&t;Revision 1.3  1998/09/28 13:26:40  malthoff&n; *&t;Add SkXmInitMac(), SkXmInitDupMd(), and SkXmInitPauseMd()&n; *&n; *&t;Revision 1.2  1998/09/16 14:34:21  malthoff&n; *&t;Add SkXmClrExactAddr(), SkXmClrSrcCheck(),&n; *&t;SkXmClrHashAddr(), SkXmFlushTxFifo(),&n; *&t;SkXmFlushRxFifo(), and SkXmHardRst().&n; *&t;Finish Coding of SkXmSoftRst().&n; *&t;The sources may be compiled now.&n; *&n; *&t;Revision 1.1  1998/09/04 10:05:56  malthoff&n; *&t;Created.&n; *&n; *&n; ******************************************************************************/
 macro_line|#include &quot;h/skdrv1st.h&quot;
 macro_line|#include &quot;h/xmac_ii.h&quot;
 macro_line|#include &quot;h/skdrv2nd.h&quot;
@@ -16,7 +16,7 @@ id|SysKonnectFileId
 (braket
 )braket
 op_assign
-l_string|&quot;@(#)$Id: skxmac2.c,v 1.49 1999/11/22 08:12:13 malthoff Exp $ (C) SK &quot;
+l_string|&quot;@(#)$Id: skxmac2.c,v 1.53 2000/07/27 12:22:11 gklug Exp $ (C) SK &quot;
 suffix:semicolon
 multiline_comment|/* BCOM PHY magic pattern list */
 DECL|struct|s_PhyHack
@@ -1062,7 +1062,7 @@ op_assign
 id|SK_PRT_STOP
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; *&t;SkXmHardRst() - Do a XMAC hardware reset&n; *&n; * Description:&n; *&t;The XMAC of the specified &squot;Port&squot; and all connected devices&n; *&t;(PHY and SERDES) will receive a reset signal on its *Reset&n; *&t;pins.&n; *&t;External PHYs must be reset be clearing a bit in the GPIO&n; *&t;register (Timing requirements: Broadcom: 400ns, Level One:&n; *&t;none, National: 80ns).&n; *&n; * Returns:&n; *&t;nothing&n; */
+multiline_comment|/******************************************************************************&n; *&n; *&t;SkXmHardRst() - Do a XMAC hardware reset&n; *&n; * Description:&n; *&t;The XMAC of the specified &squot;Port&squot; and all connected devices&n; *&t;(PHY and SERDES) will receive a reset signal on its *Reset&n; *&t;pins.&n; *&t;External PHYs must be reset be clearing a bit in the GPIO&n; *&t;register (Timing requirements: Broadcom: 400ns, Level One:&n; *&t;none, National: 80ns).&n; *&n; * ATTENTION:&n; * &t;It is absolutely neccessary to reset the SW_RST Bit first&n; *&t;before calling this function.&n; *&n; * Returns:&n; *&t;nothing&n; */
 DECL|function|SkXmHardRst
 r_void
 id|SkXmHardRst
@@ -1087,6 +1087,9 @@ id|Word
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_int
+id|TOut
 suffix:semicolon
 id|SK_U32
 id|Reg
@@ -1127,6 +1130,27 @@ id|SK_U16
 id|MFF_CLR_MAC_RST
 )paren
 suffix:semicolon
+id|TOut
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+id|TOut
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|TOut
+OG
+l_int|10000
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * Adapter seems to be in RESET state.&n;&t;&t;&t;&t; * Registers cannot be written.&n;&t;&t;&t;&t; */
+r_return
+suffix:semicolon
+)brace
 id|SK_OUT16
 c_func
 (paren
@@ -1146,8 +1170,6 @@ id|SK_U16
 id|MFF_SET_MAC_RST
 )paren
 suffix:semicolon
-r_do
-(brace
 id|SK_IN16
 c_func
 (paren
@@ -1179,6 +1201,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* For external PHYs there must be special handling */
 r_if
 c_cond
 (paren
@@ -1629,6 +1652,39 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Workaround BCOM Errata (#10523) for all BCom PHYs*/
+multiline_comment|/* Disable Power Management after reset */
+id|PHY_READ
+c_func
+(paren
+id|IoC
+comma
+id|pPrt
+comma
+id|Port
+comma
+id|PHY_BCOM_AUX_CTRL
+comma
+op_amp
+id|SWord
+)paren
+suffix:semicolon
+id|PHY_WRITE
+c_func
+(paren
+id|IoC
+comma
+id|pPrt
+comma
+id|Port
+comma
+id|PHY_BCOM_AUX_CTRL
+comma
+id|SWord
+op_or
+id|PHY_B_AC_DIS_PM
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * PHY LED initialization is performed in&n;&t;&t;&t; * SkGeXmitLED() (but not here).&n;&t;&t;&t; */
 )brace
 multiline_comment|/* Dummy read the Interrupt source register */
@@ -5039,6 +5095,9 @@ id|SK_U16
 id|IntMask
 suffix:semicolon
 multiline_comment|/* XMac interrupt mask */
+id|SK_U16
+id|SWord
+suffix:semicolon
 id|pPrt
 op_assign
 op_amp
@@ -5189,6 +5248,40 @@ id|pPrt-&gt;PhyType
 r_case
 id|SK_PHY_BCOM
 suffix:colon
+multiline_comment|/* Workaround BCOM Errata (#10523) for all BCom Phys */
+multiline_comment|/* Enable Power Management after link up */
+id|PHY_READ
+c_func
+(paren
+id|IoC
+comma
+id|pPrt
+comma
+id|Port
+comma
+id|PHY_BCOM_AUX_CTRL
+comma
+op_amp
+id|SWord
+)paren
+suffix:semicolon
+id|PHY_WRITE
+c_func
+(paren
+id|IoC
+comma
+id|pPrt
+comma
+id|Port
+comma
+id|PHY_BCOM_AUX_CTRL
+comma
+id|SWord
+op_amp
+op_complement
+id|PHY_B_AC_DIS_PM
+)paren
+suffix:semicolon
 id|PHY_WRITE
 c_func
 (paren

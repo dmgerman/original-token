@@ -2119,10 +2119,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* chipset_init() */
-DECL|function|pt_init
+DECL|function|ptwin_init
 r_int
 id|__init
-id|pt_init
+id|ptwin_init
 c_func
 (paren
 r_void
@@ -2392,7 +2392,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* pt_init() */
+multiline_comment|/* ptwin_init() */
 multiline_comment|/*&n; * Probe for PT card.  Also initialises the timers&n; */
 DECL|function|hw_probe
 r_static
@@ -7551,7 +7551,7 @@ r_void
 )paren
 (brace
 r_return
-id|pt_init
+id|ptwin_init
 c_func
 (paren
 )paren

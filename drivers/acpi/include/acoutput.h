@@ -1,8 +1,8 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: output.h -- debug output&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acoutput.h -- debug output&n; *       $Revision: 63 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef _OUTPUT_H
-DECL|macro|_OUTPUT_H
-mdefine_line|#define _OUTPUT_H
+macro_line|#ifndef __ACOUTPUT_H__
+DECL|macro|__ACOUTPUT_H__
+mdefine_line|#define __ACOUTPUT_H__
 multiline_comment|/*&n; * Debug levels and component IDs.  These are used to control the&n; * granularity of the output of the DEBUG_PRINT macro -- on a per-&n; * component basis and a per-exception-type basis.&n; */
 multiline_comment|/* Component IDs -- used in the global &quot;Debug_layer&quot; */
 DECL|macro|GLOBAL
@@ -130,5 +130,5 @@ DECL|macro|FULL_ADDRESS
 mdefine_line|#define FULL_ADDRESS                0x04
 DECL|macro|CHARS_PER_LINE
 mdefine_line|#define CHARS_PER_LINE              16          /* used in Dump_buf function */
-macro_line|#endif /* _OUTPUT_H */
+macro_line|#endif /* __ACOUTPUT_H__ */
 eof

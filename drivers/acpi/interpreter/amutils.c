@@ -1,25 +1,24 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amutils - interpreter/scanner utilities&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amutils - interpreter/scanner utilities&n; *              $Revision: 53 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amutils&quot;
 )paren
-suffix:semicolon
 DECL|struct|internal_search_st
 r_typedef
 r_struct
 id|internal_search_st
 (brace
 DECL|member|dest_obj
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|dest_obj
 suffix:semicolon
@@ -28,7 +27,7 @@ id|u32
 id|index
 suffix:semicolon
 DECL|member|source_obj
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|source_obj
 suffix:semicolon
@@ -46,7 +45,7 @@ id|MAX_PACKAGE_DEPTH
 suffix:semicolon
 DECL|variable|hex
 r_static
-r_char
+id|NATIVE_CHAR
 id|hex
 (braket
 )braket
@@ -147,38 +146,16 @@ id|INTERNAL_TYPE_MAX
 )paren
 (brace
 r_return
+(paren
 id|FALSE
+)paren
 suffix:semicolon
 )brace
 r_return
-id|TRUE
-suffix:semicolon
-)brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_append_operand_diag&n; *&n; * PARAMETERS:  *File_name      - Name of source file&n; *              Line_num        - Line Number in file&n; *              Op_code         - Op_code being executed&n; *              Num_operands    - Number of operands Prep_stack tried to check&n; *&n; * DESCRIPTION: Print diagnostic information about operands.&n; *              This function is intended to be called after Prep_stack&n; *              has returned S_ERROR.&n; *&n; ******************************************************************************/
-r_void
-DECL|function|acpi_aml_append_operand_diag
-id|acpi_aml_append_operand_diag
 (paren
-r_char
-op_star
-id|file_name
-comma
-id|s32
-id|line_num
-comma
-id|u16
-id|op_code
-comma
-id|ACPI_OBJECT_INTERNAL
-op_star
-op_star
-id|operands
-comma
-id|s32
-id|num_operands
+id|TRUE
 )paren
-(brace
-multiline_comment|/*&n;&t; * This function outputs debug information only&n;&t; */
+suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_buf_seq&n; *&n; * RETURN:      The next buffer descriptor sequence number&n; *&n; * DESCRIPTION: Provide a unique sequence number for each Buffer descriptor&n; *              allocated during the interpreter&squot;s existence.  These numbers&n; *              are used to relate Field_unit descriptors to the Buffers&n; *              within which the fields are defined.&n; *&n; *              Just increment the global counter and return it.&n; *&n; ******************************************************************************/
 id|u32
@@ -189,8 +166,10 @@ r_void
 )paren
 (brace
 r_return
+(paren
 op_increment
 id|acpi_gbl_buf_seq
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_acquire_global_lock&n; *&n; * PARAMETERS:  Rule            - Lock rule: Always_lock, Never_lock&n; *&n; * RETURN:      TRUE/FALSE indicating whether the lock was actually acquired&n; *&n; * DESCRIPTION: Obtain the global lock and keep track of this fact via two&n; *              methods.  A global variable keeps the state of the lock, and&n; *              the state is returned to the caller.&n; *&n; ******************************************************************************/
@@ -295,18 +274,18 @@ id|AE_OK
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_digits_needed&n; *&n; * PARAMETERS:  val             - Value to be represented&n; *              base            - Base of representation&n; *&n; * RETURN:      the number of digits needed to represent val in base&n; *&n; ******************************************************************************/
-id|s32
+id|u32
 DECL|function|acpi_aml_digits_needed
 id|acpi_aml_digits_needed
 (paren
-id|s32
+id|u32
 id|val
 comma
-id|s32
+id|u32
 id|base
 )paren
 (brace
-id|s32
+id|u32
 id|num_digits
 op_assign
 l_int|0
@@ -372,7 +351,7 @@ r_union
 id|u32
 id|value
 suffix:semicolon
-r_char
+id|u8
 id|bytes
 (braket
 l_int|4
@@ -386,7 +365,7 @@ r_union
 id|u32
 id|value
 suffix:semicolon
-r_char
+id|u8
 id|bytes
 (braket
 l_int|4
@@ -440,7 +419,9 @@ l_int|0
 )braket
 suffix:semicolon
 r_return
+(paren
 id|out.value
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_eisa_id_to_string&n; *&n; * PARAMETERS:  Numeric_id      - EISA ID to be converted&n; *              Out_string      - Where to put the converted string (8 bytes)&n; *&n; * RETURN:      Convert a numeric EISA ID to string representation&n; *&n; ******************************************************************************/
@@ -451,7 +432,7 @@ id|acpi_aml_eisa_id_to_string
 id|u32
 id|numeric_id
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|out_string
 )paren
@@ -601,7 +582,9 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_build_copy_internal_package_object&n; *&n; * PARAMETERS:  *Source_obj     - Pointer to the source package object&n; *              *Dest_obj       - Where the internal object is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to copy an internal package object&n; *              into another internal package object.&n; *&n; ******************************************************************************/
@@ -609,13 +592,17 @@ id|ACPI_STATUS
 DECL|function|acpi_aml_build_copy_internal_package_object
 id|acpi_aml_build_copy_internal_package_object
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|source_obj
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|dest_obj
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
 id|u32
@@ -641,11 +628,11 @@ id|object_space
 op_assign
 l_int|0
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|this_dest_obj
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|this_source_obj
 suffix:semicolon
@@ -762,7 +749,7 @@ suffix:semicolon
 id|this_dest_obj
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 id|level_ptr-&gt;dest_obj-&gt;package.elements
@@ -773,7 +760,7 @@ suffix:semicolon
 id|this_source_obj
 op_assign
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 )paren
 id|level_ptr-&gt;source_obj-&gt;package.elements
@@ -840,7 +827,7 @@ id|this_dest_obj-&gt;package.count
 op_star
 r_sizeof
 (paren
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 )paren
 suffix:semicolon
 id|length
@@ -896,14 +883,17 @@ c_func
 id|this_source_obj
 comma
 id|this_dest_obj
+comma
+id|walk_state
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t; * Failure get out&n;&t;&t;&t;&t; */
@@ -964,11 +954,5 @@ suffix:semicolon
 multiline_comment|/* else object is NOT a package */
 )brace
 multiline_comment|/* while (1)  */
-multiline_comment|/*&n;&t; * We&squot;ll never get here, but the compiler whines about return value&n;&t; */
-r_return
-(paren
-id|AE_OK
-)paren
-suffix:semicolon
 )brace
 eof

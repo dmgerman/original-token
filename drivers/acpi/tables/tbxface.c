@@ -1,16 +1,15 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbxface - Public interfaces to the ACPI subsystem&n; *                         ACPI table oriented interfaces&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbxface - Public interfaces to the ACPI subsystem&n; *                         ACPI table oriented interfaces&n; *              $Revision: 24 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          TABLE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;tbxface&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_load_firmware_tables&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: This function is called to load the ACPI tables from BIOS&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_load_firmware_tables
@@ -41,9 +40,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_goto
@@ -63,9 +63,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_goto
@@ -109,7 +110,9 @@ id|table_ptr
 )paren
 (brace
 r_return
+(paren
 id|AE_BAD_PARAMETER
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Copy the table to a local buffer */
@@ -119,13 +122,7 @@ id|acpi_tb_get_table
 (paren
 l_int|NULL
 comma
-(paren
-(paren
-r_char
-op_star
-)paren
 id|table_ptr
-)paren
 comma
 op_amp
 id|table_info
@@ -213,7 +210,7 @@ id|table_type
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* Delete the entire namespace under this table NTE */
+multiline_comment|/*&n;&t;&t; * Delete all namespace entries owned by this table.  Note that these&n;&t;&t; * entries can appear anywhere in the namespace by virtue of the AML&n;&t;&t; * &quot;Scope&quot; operator.  Thus, we need to track ownership by an ID, not&n;&t;&t; * simply a position within the hierarchy&n;&t;&t; */
 id|acpi_ns_delete_namespace_by_owner
 (paren
 id|list_head-&gt;table_id
@@ -267,10 +264,6 @@ suffix:semicolon
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|status
-op_assign
-id|AE_OK
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -309,14 +302,15 @@ id|ACPI_TABLE_MAX
 )paren
 op_logical_or
 (paren
+id|IS_SINGLE_TABLE
+(paren
 id|acpi_gbl_acpi_table_data
 (braket
 id|table_type
 )braket
 dot
 id|flags
-op_eq
-id|ACPI_TABLE_SINGLE
+)paren
 op_logical_and
 id|instance
 OG
@@ -346,9 +340,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_return
@@ -425,10 +420,6 @@ suffix:semicolon
 id|u32
 id|ret_buf_len
 suffix:semicolon
-id|status
-op_assign
-id|AE_OK
-suffix:semicolon
 multiline_comment|/*&n;&t; *  Must have a buffer&n;&t; */
 r_if
 c_cond
@@ -472,14 +463,15 @@ id|ACPI_TABLE_MAX
 )paren
 op_logical_or
 (paren
+id|IS_SINGLE_TABLE
+(paren
 id|acpi_gbl_acpi_table_data
 (braket
 id|table_type
 )braket
 dot
 id|flags
-op_eq
-id|ACPI_TABLE_SINGLE
+)paren
 op_logical_and
 id|instance
 OG
@@ -509,9 +501,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_FAILURE
+(paren
 id|status
-op_ne
-id|AE_OK
+)paren
 )paren
 (brace
 r_return
@@ -520,7 +513,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * The function will return a NULL pointer if the table is not loaded&n;&t; */
+multiline_comment|/*&n;&t; * Acpi_tb_get_table_ptr will return a NULL pointer if the&n;&t; *  table is not loaded.&n;&t; */
 r_if
 c_cond
 (paren

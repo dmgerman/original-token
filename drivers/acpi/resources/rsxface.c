@@ -1,17 +1,16 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsxface - Public interfaces to the ACPI subsystem&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsxface - Public interfaces to the ACPI subsystem&n; *              $Revision: 7 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;resource.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acresrc.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          RESOURCE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;rsxface&quot;
 )paren
-suffix:semicolon
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_irq_routing_table&n; *&n; * PARAMETERS:  Device_handle   - a handle to the Bus device we are querying&n; *              Out_buffer      - a pointer to a buffer to receive the&n; *                                current resources for the device&n; *              Buffer_length   - the number of bytes available in the buffer&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the IRQ routing table for a&n; *              specific bus.  The caller must first acquire a handle for the&n; *              desired bus.  The routine table is placed in the buffer pointed&n; *              to by the Out_buffer variable parameter.&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the value of Out_buffer is undefined.&n; *&n; *              This function attempts to execute the _PRT method contained in&n; *              the object indicated by the passed Device_handle.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_irq_routing_table&n; *&n; * PARAMETERS:  Device_handle   - a handle to the Bus device we are querying&n; *              Ret_buffer      - a pointer to a buffer to receive the&n; *                                current resources for the device&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the IRQ routing table for a&n; *              specific bus.  The caller must first acquire a handle for the&n; *              desired bus.  The routine table is placed in the buffer pointed&n; *              to by the Ret_buffer variable parameter.&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the value of Ret_buffer is undefined.&n; *&n; *              This function attempts to execute the _PRT method contained in&n; *              the object indicated by the passed Device_handle.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_get_irq_routing_table
 id|acpi_get_irq_routing_table
@@ -27,6 +26,38 @@ id|ret_buffer
 id|ACPI_STATUS
 id|status
 suffix:semicolon
+multiline_comment|/*&n;&t; *  Must have a valid handle and buffer, So we have to have a handle&n;&t; *  and a return buffer structure, and if there is a non-zero buffer length&n;&t; *  we also need a valid pointer in the buffer. If it&squot;s a zero buffer length,&n;&t; *  we&squot;ll be returning the needed buffer size, so keep going.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|device_handle
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|ret_buffer
+)paren
+op_logical_or
+(paren
+(paren
+op_logical_neg
+id|ret_buffer-&gt;pointer
+)paren
+op_logical_and
+(paren
+id|ret_buffer-&gt;length
+)paren
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_BAD_PARAMETER
+)paren
+suffix:semicolon
+)brace
 id|status
 op_assign
 id|acpi_rs_get_prt_method_data
@@ -42,7 +73,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_current_resources&n; *&n; * PARAMETERS:  Device_handle   - a handle to the device object for the&n; *                                device we are querying&n; *              Out_buffer      - a pointer to a buffer to receive the&n; *                                current resources for the device&n; *              Buffer_length   - the number of bytes available in the buffer&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the current resources for a&n; *              specific device.  The caller must first acquire a handle for&n; *              the desired device.  The resource data is placed in the buffer&n; *              pointed to by the Out_buffer variable parameter.&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the value of Out_buffer is undefined.&n; *&n; *              This function attempts to execute the _CRS method contained in&n; *              the object indicated by the passed Device_handle.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_current_resources&n; *&n; * PARAMETERS:  Device_handle   - a handle to the device object for the&n; *                                device we are querying&n; *              Ret_buffer      - a pointer to a buffer to receive the&n; *                                current resources for the device&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get the current resources for a&n; *              specific device.  The caller must first acquire a handle for&n; *              the desired device.  The resource data is placed in the buffer&n; *              pointed to by the Ret_buffer variable parameter.&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the value of Ret_buffer is undefined.&n; *&n; *              This function attempts to execute the _CRS method contained in&n; *              the object indicated by the passed Device_handle.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_get_current_resources
 id|acpi_get_current_resources
@@ -58,6 +89,38 @@ id|ret_buffer
 id|ACPI_STATUS
 id|status
 suffix:semicolon
+multiline_comment|/*&n;&t; *  Must have a valid handle and buffer, So we have to have a handle&n;&t; *  and a return buffer structure, and if there is a non-zero buffer length&n;&t; *  we also need a valid pointer in the buffer. If it&squot;s a zero buffer length,&n;&t; *  we&squot;ll be returning the needed buffer size, so keep going.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|device_handle
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|ret_buffer
+)paren
+op_logical_or
+(paren
+(paren
+id|ret_buffer-&gt;length
+)paren
+op_logical_and
+(paren
+op_logical_neg
+id|ret_buffer-&gt;pointer
+)paren
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_BAD_PARAMETER
+)paren
+suffix:semicolon
+)brace
 id|status
 op_assign
 id|acpi_rs_get_crs_method_data
@@ -73,7 +136,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_possible_resources&n; *&n; * PARAMETERS:  Device_handle   - a handle to the device object for the&n; *                                device we are querying&n; *              Out_buffer      - a pointer to a buffer to receive the&n; *                                resources for the device&n; *              Buffer_length   - the number of bytes available in the buffer&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get a list of the possible resources&n; *              for a specific device.  The caller must first acquire a handle&n; *              for the desired device.  The resource data is placed in the&n; *              buffer pointed to by the Out_buffer variable.&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the value of Out_buffer is undefined.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_possible_resources&n; *&n; * PARAMETERS:  Device_handle   - a handle to the device object for the&n; *                                device we are querying&n; *              Ret_buffer      - a pointer to a buffer to receive the&n; *                                resources for the device&n;  *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to get a list of the possible resources&n; *              for a specific device.  The caller must first acquire a handle&n; *              for the desired device.  The resource data is placed in the&n; *              buffer pointed to by the Ret_buffer variable.&n; *&n; *              If the function fails an appropriate status will be returned&n; *              and the value of Ret_buffer is undefined.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_get_possible_resources
 id|acpi_get_possible_resources
@@ -89,6 +152,38 @@ id|ret_buffer
 id|ACPI_STATUS
 id|status
 suffix:semicolon
+multiline_comment|/*&n;&t; *  Must have a valid handle and buffer, So we have to have a handle&n;&t; *  and a return buffer structure, and if there is a non-zero buffer length&n;&t; *  we also need a valid pointer in the buffer. If it&squot;s a zero buffer length,&n;&t; *  we&squot;ll be returning the needed buffer size, so keep going.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|device_handle
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|ret_buffer
+)paren
+op_logical_or
+(paren
+(paren
+id|ret_buffer-&gt;length
+)paren
+op_logical_and
+(paren
+op_logical_neg
+id|ret_buffer-&gt;pointer
+)paren
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_BAD_PARAMETER
+)paren
+suffix:semicolon
+)brace
 id|status
 op_assign
 id|acpi_rs_get_prs_method_data
@@ -104,7 +199,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_set_current_resources&n; *&n; * PARAMETERS:  Device_handle   - a handle to the device object for the&n; *                                device we are changing the resources of&n; *              Out_buffer      - a pointer to a buffer containing the&n; *                                resources to be set for the device&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to set the current resources for a&n; *              specific device.  The caller must first acquire a handle for&n; *              the desired device.  The resource data is passed to the routine&n; *              the buffer pointed to by the In_buffer variable.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_set_current_resources&n; *&n; * PARAMETERS:  Device_handle   - a handle to the device object for the&n; *                                device we are changing the resources of&n; *              In_buffer       - a pointer to a buffer containing the&n; *                                resources to be set for the device&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to set the current resources for a&n; *              specific device.  The caller must first acquire a handle for&n; *              the desired device.  The resource data is passed to the routine&n; *              the buffer pointed to by the In_buffer variable.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_set_current_resources
 id|acpi_set_current_resources
@@ -120,6 +215,37 @@ id|in_buffer
 id|ACPI_STATUS
 id|status
 suffix:semicolon
+multiline_comment|/*&n;&t; *  Must have a valid handle and buffer&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|device_handle
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|in_buffer
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|in_buffer-&gt;pointer
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|in_buffer-&gt;length
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_BAD_PARAMETER
+)paren
+suffix:semicolon
+)brace
 id|status
 op_assign
 id|acpi_rs_set_srs_method_data

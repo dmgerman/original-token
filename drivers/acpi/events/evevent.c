@@ -1,17 +1,16 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evevent - Fixed and General Purpose Acpi_event&n; *                          handling and dispatch&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evevent - Fixed and General Purpose Acpi_event&n; *                          handling and dispatch&n; *              $Revision: 13 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;events.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;common.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;acevents.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;accommon.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          EVENT_HANDLING
 id|MODULE_NAME
 (paren
 l_string|&quot;evevent&quot;
 )paren
-suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_fixed_event_initialize&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Initialize the Fixed Acpi_event data structures&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ev_fixed_event_initialize
@@ -127,7 +126,9 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_fixed_event_detect&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      INTERRUPT_HANDLED or INTERRUPT_NOT_HANDLED&n; *&n; * DESCRIPTION: Checks the PM status register for fixed events&n; *&n; ******************************************************************************/
@@ -320,7 +321,9 @@ id|ACPI_EVENT_SLEEP_BUTTON
 suffix:semicolon
 )brace
 r_return
+(paren
 id|int_status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_fixed_event_dispatch&n; *&n; * PARAMETERS:  Event               - Event type&n; *&n; * RETURN:      INTERRUPT_HANDLED or INTERRUPT_NOT_HANDLED&n; *&n; * DESCRIPTION: Clears the status bit for the requested event, calls the&n; *              handler that previously registered for the event.&n; *&n; ******************************************************************************/
@@ -339,9 +342,6 @@ id|ACPI_WRITE
 comma
 id|ACPI_MTX_DO_NOT_LOCK
 comma
-(paren
-id|s32
-)paren
 id|TMR_STS
 op_plus
 id|event
@@ -383,11 +383,14 @@ l_string|&quot;No installed handler for fixed event.&quot;
 )paren
 suffix:semicolon
 r_return
+(paren
 id|INTERRUPT_NOT_HANDLED
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Invoke the handler */
 r_return
+(paren
 (paren
 id|acpi_gbl_fixed_event_handlers
 (braket
@@ -403,6 +406,7 @@ id|event
 )braket
 dot
 id|context
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -459,6 +463,24 @@ id|gpe0register_count
 op_plus
 id|gpe1_register_count
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|acpi_gbl_gpe_register_count
+)paren
+(brace
+id|REPORT_WARNING
+(paren
+l_string|&quot;No GPEs defined in the FACP&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+id|AE_OK
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Allocate the Gpe information block&n;&t; */
 id|acpi_gbl_gpe_registers
 op_assign
@@ -833,7 +855,7 @@ id|return_value
 id|u32
 id|gpe_number
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 id|name
 (braket
 id|ACPI_NAME_SIZE
@@ -852,7 +874,7 @@ comma
 op_amp
 (paren
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
 id|obj_handle
@@ -868,7 +890,7 @@ id|ACPI_NAME_SIZE
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Edge/Level determination is based on the 2nd char of the method name&n;&t; */
+multiline_comment|/*&n;&t; * Edge/Level determination is based on the 2nd s8 of the method name&n;&t; */
 r_if
 c_cond
 (paren
@@ -906,7 +928,9 @@ r_else
 (brace
 multiline_comment|/* Unknown method type, just ignore it! */
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Convert the last two characters of the name to the Gpe Number */
@@ -935,7 +959,9 @@ id|ACPI_UINT32_MAX
 (brace
 multiline_comment|/* Conversion failed; invalid method, just ignore it */
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Ensure that we have a valid GPE number */
@@ -952,7 +978,9 @@ id|ACPI_GPE_INVALID
 (brace
 multiline_comment|/* Not valid, all we can do here is ignore it */
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Now we can add this information to the Gpe_info block&n;&t; * for use during dispatch of this GPE.&n;&t; */
@@ -981,7 +1009,9 @@ id|gpe_number
 )paren
 suffix:semicolon
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_init_gpe_control_methods&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Obtain the control methods associated with the GPEs.&n; *&n; *              NOTE: Must be called AFTER namespace initialization!&n; *&n; ******************************************************************************/
@@ -1032,7 +1062,7 @@ id|ACPI_TYPE_METHOD
 comma
 id|acpi_gbl_gpe_obj_handle
 comma
-id|ACPI_INT32_MAX
+id|ACPI_UINT32_MAX
 comma
 id|acpi_ev_save_method_info
 comma
@@ -1228,7 +1258,9 @@ suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 id|int_status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_asynch_execute_gpe_method&n; *&n; * PARAMETERS:  Gpe_number      - The 0-based Gpe number&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Perform the actual execution of a GPE control method.  This&n; *              function is called from an invocation of Acpi_os_queue_for_execution&n; *              (and therefore does NOT execute at interrupt level) so that&n; *              the control method itself is not executed in the context of&n; *              the SCI interrupt handler.&n; *&n; ******************************************************************************/

@@ -1288,7 +1288,7 @@ r_sizeof
 id|freepages_t
 )paren
 comma
-l_int|0644
+l_int|0444
 comma
 l_int|NULL
 comma

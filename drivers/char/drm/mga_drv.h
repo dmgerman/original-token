@@ -1,4 +1,4 @@
-multiline_comment|/* mga_drv.h -- Private header for the Matrox g200/g400 driver -*- linux-c -*-&n; * Created: Mon Dec 13 01:50:01 1999 by jhartmann@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors: Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; * &t;    Jeff Hartmann &lt;jhartmann@valinux.com&gt;&n; *&n; */
+multiline_comment|/* mga_drv.h -- Private header for the Matrox g200/g400 driver -*- linux-c -*-&n; * Created: Mon Dec 13 01:50:01 1999 by jhartmann@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors: Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; * &t;    Jeff Hartmann &lt;jhartmann@valinux.com&gt;&n; *&n; */
 macro_line|#ifndef _MGA_DRV_H_
 DECL|macro|_MGA_DRV_H_
 mdefine_line|#define _MGA_DRV_H_
@@ -193,6 +193,11 @@ DECL|member|WarpPipe
 r_int
 r_int
 id|WarpPipe
+suffix:semicolon
+DECL|member|vertexsize
+r_int
+r_int
+id|vertexsize
 suffix:semicolon
 DECL|member|pending_bufs
 id|atomic_t
@@ -543,14 +548,6 @@ comma
 r_int
 r_int
 id|arg
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|mga_flush_write_combine
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_extern
@@ -1076,6 +1073,8 @@ r_int
 r_new
 )paren
 suffix:semicolon
+DECL|macro|mga_flush_write_combine
+mdefine_line|#define mga_flush_write_combine()&t;mb()
 r_typedef
 r_enum
 (brace
@@ -1129,7 +1128,7 @@ mdefine_line|#define ADRINDEX0(r)&t;(u8)((r - DWGREG0) &gt;&gt; 2)
 DECL|macro|ADRINDEX1
 mdefine_line|#define ADRINDEX1(r)&t;(u8)(((r - DWGREG1) &gt;&gt; 2) | 0x80)
 DECL|macro|ADRINDEX
-mdefine_line|#define ADRINDEX(r)&t;(ISREG0(r) ? ADRINDEX0(r) : ADRINDEX1(r)) 
+mdefine_line|#define ADRINDEX(r)&t;(ISREG0(r) ? ADRINDEX0(r) : ADRINDEX1(r))
 DECL|macro|MGA_VERBOSE
 mdefine_line|#define MGA_VERBOSE 0
 DECL|macro|MGA_NUM_PRIM_BUFS
@@ -1137,7 +1136,7 @@ mdefine_line|#define MGA_NUM_PRIM_BUFS &t;8
 DECL|macro|PRIMLOCALS
 mdefine_line|#define PRIMLOCALS&t;u8 tempIndex[4]; u32 *dma_ptr; u32 phys_head; &bslash;&n;&t;&t;&t;int outcount, num_dwords
 DECL|macro|PRIM_OVERFLOW
-mdefine_line|#define PRIM_OVERFLOW(dev, dev_priv, length) do {&t;&t;&t;   &bslash;&n;&t;drm_mga_prim_buf_t *tmp_buf =&t;&t;&t;&t;&t;   &bslash;&n; &t;&t;dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx];&t;   &bslash;&n;&t;if( test_bit(MGA_BUF_NEEDS_OVERFLOW,&t;&t;&t;&t;   &bslash;&n;&t;&t;  &amp;tmp_buf-&gt;buffer_status)) {&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;   &bslash;&n;&t;&t;tmp_buf = dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx]; &bslash;&n; &t;} else if( tmp_buf-&gt;max_dwords - tmp_buf-&gt;num_dwords &lt; length ||   &bslash;&n; &t;    tmp_buf-&gt;sec_used &gt; MGA_DMA_BUF_NR/2) {&t;&t;&t;   &bslash;&n;&t;&t;set_bit(MGA_BUF_FORCE_FIRE, &amp;tmp_buf-&gt;buffer_status);&t;   &bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;   &bslash;&n;&t;&t;tmp_buf = dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx]; &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;if(MGA_VERBOSE)&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;&t;DRM_DEBUG(&quot;PRIMGETPTR in %s&bslash;n&quot;, __FUNCTION__);&t;&t;   &bslash;&n;&t;dma_ptr = tmp_buf-&gt;current_dma_ptr;&t;&t;&t;&t;   &bslash;&n;&t;num_dwords = tmp_buf-&gt;num_dwords;&t;&t;&t;&t;   &bslash;&n;&t;phys_head = tmp_buf-&gt;phys_head;&t;&t;&t;&t;&t;   &bslash;&n;&t;outcount = 0;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;} while(0)
+mdefine_line|#define PRIM_OVERFLOW(dev, dev_priv, length) do {&t;&t;&t;   &bslash;&n;&t;drm_mga_prim_buf_t *tmp_buf =&t;&t;&t;&t;&t;   &bslash;&n; &t;&t;dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx];&t;   &bslash;&n;&t;if( test_bit(MGA_BUF_NEEDS_OVERFLOW, &amp;tmp_buf-&gt;buffer_status)) {   &bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;   &bslash;&n;&t;&t;tmp_buf = dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx]; &bslash;&n; &t;} else if( tmp_buf-&gt;max_dwords - tmp_buf-&gt;num_dwords &lt; length ||   &bslash;&n; &t;           tmp_buf-&gt;sec_used &gt; MGA_DMA_BUF_NR/2) {&t;&t;   &bslash;&n;&t;&t;set_bit(MGA_BUF_FORCE_FIRE, &amp;tmp_buf-&gt;buffer_status);&t;   &bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;   &bslash;&n;&t;&t;tmp_buf = dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx]; &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;if(MGA_VERBOSE)&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;&t;DRM_DEBUG(&quot;PRIMGETPTR in %s&bslash;n&quot;, __FUNCTION__);&t;&t;   &bslash;&n;&t;dma_ptr = tmp_buf-&gt;current_dma_ptr;&t;&t;&t;&t;   &bslash;&n;&t;num_dwords = tmp_buf-&gt;num_dwords;&t;&t;&t;&t;   &bslash;&n;&t;phys_head = tmp_buf-&gt;phys_head;&t;&t;&t;&t;&t;   &bslash;&n;&t;outcount = 0;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;} while(0)
 DECL|macro|PRIMGETPTR
 mdefine_line|#define PRIMGETPTR(dev_priv) do {&t;&t;&t;&t;&t;&bslash;&n;&t;drm_mga_prim_buf_t *tmp_buf =&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx];&t;&bslash;&n;&t;if(MGA_VERBOSE)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;DRM_DEBUG(&quot;PRIMGETPTR in %s&bslash;n&quot;, __FUNCTION__);&t;&t;&bslash;&n;&t;dma_ptr = tmp_buf-&gt;current_dma_ptr;&t;&t;&t;&t;&bslash;&n;&t;num_dwords = tmp_buf-&gt;num_dwords;&t;&t;&t;&t;&bslash;&n;&t;phys_head = tmp_buf-&gt;phys_head;&t;&t;&t;&t;&t;&bslash;&n;&t;outcount = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|macro|PRIMPTR
@@ -1151,7 +1150,7 @@ mdefine_line|#define PRIMUPDATE(dev_priv)&t;do {&t;&t;&t;&t;&t;&bslash;&n;&t;drm
 DECL|macro|AGEBUF
 mdefine_line|#define AGEBUF(dev_priv, buf_priv)&t;do {&t;&t;&t;&t;&bslash;&n;&t;drm_mga_prim_buf_t *tmp_buf =&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx];&t;&bslash;&n;&t;buf_priv-&gt;my_freelist-&gt;age = tmp_buf-&gt;prim_age;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|PRIMOUTREG
-mdefine_line|#define PRIMOUTREG(reg, val) do {&t;&t;&t;&t;&t;&bslash;&n;&t;tempIndex[outcount]=ADRINDEX(reg);&t;&t;&t;&t;&bslash;&n;&t;dma_ptr[1+outcount] = val;&t;&t;&t;&t;&t;&bslash;&n;&t;if (MGA_VERBOSE)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;DRM_DEBUG(&quot;   PRIMOUT %d: 0x%x -- 0x%x&bslash;n&quot;,&t;&t;&bslash;&n;&t;&t;       num_dwords + 1 + outcount, ADRINDEX(reg), val);&t;&bslash;&n;&t;if( ++outcount == 4) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;outcount = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dma_ptr[0] = *(u32 *)tempIndex;&t;&t;&t;&t;&bslash;&n;&t;&t;dma_ptr+=5;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;num_dwords += 5;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}while (0)
+mdefine_line|#define PRIMOUTREG(reg, val) do {&t;&t;&t;&t;&t;&bslash;&n;&t;tempIndex[outcount]=ADRINDEX(reg);&t;&t;&t;&t;&bslash;&n;&t;dma_ptr[1+outcount] = val;&t;&t;&t;&t;&t;&bslash;&n;&t;if (MGA_VERBOSE)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;DRM_DEBUG(&quot;   PRIMOUT %d: 0x%x -- 0x%x&bslash;n&quot;,&t;&t;&bslash;&n;&t;&t;       num_dwords + 1 + outcount, ADRINDEX(reg), val);&t;&bslash;&n;&t;if( ++outcount == 4) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;outcount = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dma_ptr[0] = *(unsigned long *)tempIndex;&t;&t;&bslash;&n;&t;&t;dma_ptr+=5;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;num_dwords += 5;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}while (0)
 multiline_comment|/* A reduced set of the mga registers.&n; */
 DECL|macro|MGAREG_MGA_EXEC
 mdefine_line|#define MGAREG_MGA_EXEC &t;&t;&t;0x0100
@@ -1332,9 +1331,9 @@ mdefine_line|#define DC_atype_blk &t;&t;&t;&t;0x40
 DECL|macro|DC_atype_i
 mdefine_line|#define DC_atype_i &t;&t;&t;&t;0x70
 DECL|macro|DC_linear_xy
-mdefine_line|#define DC_linear_xy &t;&t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_linear_xy &t;&t;&t;&t;0x0
 DECL|macro|DC_linear_linear
-mdefine_line|#define DC_linear_linear &t;&t;&t;0x80 &t;&t;
+mdefine_line|#define DC_linear_linear &t;&t;&t;0x80
 DECL|macro|DC_zmode_nozcmp
 mdefine_line|#define DC_zmode_nozcmp &t;&t;&t;0x0
 DECL|macro|DC_zmode_ze
@@ -1350,25 +1349,25 @@ mdefine_line|#define DC_zmode_zgt &t;&t;&t;&t;0x600
 DECL|macro|DC_zmode_zgte
 mdefine_line|#define DC_zmode_zgte &t;&t;&t;&t;0x700
 DECL|macro|DC_solid_disable
-mdefine_line|#define DC_solid_disable &t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_solid_disable &t;&t;&t;0x0
 DECL|macro|DC_solid_enable
-mdefine_line|#define DC_solid_enable &t;&t;&t;0x800 &t;&t;
+mdefine_line|#define DC_solid_enable &t;&t;&t;0x800
 DECL|macro|DC_arzero_disable
-mdefine_line|#define DC_arzero_disable &t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_arzero_disable &t;&t;&t;0x0
 DECL|macro|DC_arzero_enable
-mdefine_line|#define DC_arzero_enable &t;&t;&t;0x1000 &t;&t;
+mdefine_line|#define DC_arzero_enable &t;&t;&t;0x1000
 DECL|macro|DC_sgnzero_disable
-mdefine_line|#define DC_sgnzero_disable &t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_sgnzero_disable &t;&t;&t;0x0
 DECL|macro|DC_sgnzero_enable
-mdefine_line|#define DC_sgnzero_enable &t;&t;&t;0x2000 &t;&t;
+mdefine_line|#define DC_sgnzero_enable &t;&t;&t;0x2000
 DECL|macro|DC_shftzero_disable
-mdefine_line|#define DC_shftzero_disable &t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_shftzero_disable &t;&t;&t;0x0
 DECL|macro|DC_shftzero_enable
-mdefine_line|#define DC_shftzero_enable &t;&t;&t;0x4000 &t;&t;
+mdefine_line|#define DC_shftzero_enable &t;&t;&t;0x4000
 DECL|macro|DC_bop_SHIFT
-mdefine_line|#define DC_bop_SHIFT &t;&t;&t;&t;16 &t;&t;
+mdefine_line|#define DC_bop_SHIFT &t;&t;&t;&t;16
 DECL|macro|DC_trans_SHIFT
-mdefine_line|#define DC_trans_SHIFT &t;&t;&t;&t;20 &t;&t;
+mdefine_line|#define DC_trans_SHIFT &t;&t;&t;&t;20
 DECL|macro|DC_bltmod_bmonolef
 mdefine_line|#define DC_bltmod_bmonolef &t;&t;&t;0x0
 DECL|macro|DC_bltmod_bmonowf
@@ -1386,19 +1385,19 @@ mdefine_line|#define DC_bltmod_bu24bgr &t;&t;&t;0x16000000
 DECL|macro|DC_bltmod_bu24rgb
 mdefine_line|#define DC_bltmod_bu24rgb &t;&t;&t;0x1e000000
 DECL|macro|DC_pattern_disable
-mdefine_line|#define DC_pattern_disable &t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_pattern_disable &t;&t;&t;0x0
 DECL|macro|DC_pattern_enable
-mdefine_line|#define DC_pattern_enable &t;&t;&t;0x20000000 &t;
+mdefine_line|#define DC_pattern_enable &t;&t;&t;0x20000000
 DECL|macro|DC_transc_disable
-mdefine_line|#define DC_transc_disable &t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_transc_disable &t;&t;&t;0x0
 DECL|macro|DC_transc_enable
-mdefine_line|#define DC_transc_enable &t;&t;&t;0x40000000 &t;
+mdefine_line|#define DC_transc_enable &t;&t;&t;0x40000000
 DECL|macro|DC_clipdis_disable
-mdefine_line|#define DC_clipdis_disable &t;&t;&t;0x0 &t;&t;
+mdefine_line|#define DC_clipdis_disable &t;&t;&t;0x0
 DECL|macro|DC_clipdis_enable
-mdefine_line|#define DC_clipdis_enable &t;&t;&t;0x80000000 &t;
+mdefine_line|#define DC_clipdis_enable &t;&t;&t;0x80000000
 DECL|macro|SETADD_mode_vertlist
-mdefine_line|#define SETADD_mode_vertlist                   &t;0x0 &t;
+mdefine_line|#define SETADD_mode_vertlist                   &t;0x0
 DECL|macro|MGA_CLEAR_CMD
 mdefine_line|#define MGA_CLEAR_CMD (DC_opcod_trap | DC_arzero_enable | &t;&t;&bslash;&n;&t;&t;       DC_sgnzero_enable | DC_shftzero_enable | &t;&bslash;&n;&t;&t;       (0xC &lt;&lt; DC_bop_SHIFT) | DC_clipdis_enable | &t;&bslash;&n;&t;&t;       DC_solid_enable | DC_transc_enable)
 DECL|macro|MGA_COPY_CMD

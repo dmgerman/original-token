@@ -1,6 +1,6 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skcsum.h&n; * Project:&t;GEnesis, PCI Gigabit Ethernet Adapter&n; * Version:&t;$Revision: 1.2 $&n; * Date:&t;$Date: 1998/09/04 12:16:34 $&n; * Purpose:&t;Store/verify Internet checksum in send/receive packets.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name:&t;skcsum.h&n; * Project:&t;GEnesis - SysKonnect SK-NET Gigabit Ethernet (SK-98xx)&n; * Version:&t;$Revision: 1.7 $&n; * Date:&t;$Date: 2000/06/29 13:17:05 $&n; * Purpose:&t;Store/verify Internet checksum in send/receive packets.&n; *&n; ******************************************************************************/
 multiline_comment|/******************************************************************************&n; *&n; *&t;(C)Copyright 1998,1999 SysKonnect,&n; *&t;a business unit of Schneider &amp; Koch &amp; Co. Datensysteme GmbH.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;The information in this file is provided &quot;AS IS&quot; without warranty.&n; *&n; ******************************************************************************/
-multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skcsum.h,v $&n; *&t;Revision 1.2  1998/09/04 12:16:34  mhaveman&n; *&t;Checked in for Stephan to allow compilation.&n; *&t;-Added definition SK_CSUM_EVENT_CLEAR_PROTO_STATS to clear statistic&n; *&t;-Added prototype for SkCsEvent()&n; *&t;&n; *&t;Revision 1.1  1998/09/01 15:36:53  swolf&n; *&t;initial revision&n; *&n; *&t;01-Sep-1998 sw&t;Created.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * History:&n; *&n; *&t;$Log: skcsum.h,v $&n; *&t;Revision 1.7  2000/06/29 13:17:05  rassmann&n; *&t;Corrected reception of a packet with UDP checksum == 0 (which means there&n; *&t;is no UDP checksum).&n; *&t;&n; *&t;Revision 1.6  2000/02/28 12:33:44  cgoos&n; *&t;Changed C++ style comments to C style.&n; *&t;&n; *&t;Revision 1.5  2000/02/21 12:10:05  cgoos&n; *&t;Fixed license comment.&n; *&t;&n; *&t;Revision 1.4  2000/02/21 11:08:37  cgoos&n; *&t;Merged changes back into common source.&n; *&t;&n; *&t;Revision 1.1  1999/07/26 14:47:49  mkarl&n; *&t;changed from common source to windows specific source&n; *&t;added return SKCS_STATUS_IP_CSUM_ERROR_UDP and&n; *&t;SKCS_STATUS_IP_CSUM_ERROR_TCP to pass the NidsTester&n; *&t;changes for Tx csum offload&n; *&t;&n; *&t;Revision 1.2  1998/09/04 12:16:34  mhaveman&n; *&t;Checked in for Stephan to allow compilation.&n; *&t;-Added definition SK_CSUM_EVENT_CLEAR_PROTO_STATS to clear statistic&n; *&t;-Added prototype for SkCsEvent()&n; *&t;&n; *&t;Revision 1.1  1998/09/01 15:36:53  swolf&n; *&t;initial revision&n; *&n; *&t;01-Sep-1998 sw&t;Created.&n; *&n; ******************************************************************************/
 multiline_comment|/******************************************************************************&n; *&n; * Description:&n; *&n; * Public header file for the &quot;GEnesis&quot; common module &quot;CSUM&quot;.&n; *&n; * &quot;GEnesis&quot; is an abbreviation of &quot;Gigabit Ethernet Network System in Silicon&quot;&n; * and is the code name of this SysKonnect project.&n; *&n; * Compilation Options:&n; *&n; *&t;SK_USE_CSUM - Define if CSUM is to be used. Otherwise, CSUM will be an&n; *&t;empty module.&n; *&n; *&t;SKCS_OVERWRITE_PROTO - Define to overwrite the default protocol id&n; *&t;definitions. In this case, all SKCS_PROTO_xxx definitions must be made&n; *&t;external.&n; *&n; *&t;SKCS_OVERWRITE_STATUS - Define to overwrite the default return status&n; *&t;definitions. In this case, all SKCS_STATUS_xxx definitions must be made&n; *&t;external.&n; *&n; * Include File Hierarchy:&n; *&n; *&t;&quot;h/skcsum.h&quot;&n; *&t; &quot;h/sktypes.h&quot;&n; *&t; &quot;h/skqueue.h&quot;&n; *&n; ******************************************************************************/
 macro_line|#ifndef __INC_SKCSUM_H
 DECL|macro|__INC_SKCSUM_H
@@ -26,26 +26,34 @@ mdefine_line|#define SKCS_PROTO_STATS_TCP&t;2
 DECL|macro|SKCS_NUM_PROTOCOLS
 mdefine_line|#define SKCS_NUM_PROTOCOLS&t;3&t;/* Number of supported protocols. */
 macro_line|#endif&t;/* !SKCS_OVERWRITE_PROTO */
-multiline_comment|/*&n; * Define the default SKCS_STATUS type and values if no user overwrite.&n; *&n; *&t;SKCS_STATUS_UNKNOWN_IP_VERSION - Not an IP v4 frame.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR - IP checksum error.&n; *&t;SKCS_STATUS_IP_FRAGMENT - IP fragment (IP checksum ok).&n; *&t;SKCS_STATUS_IP_CSUM_OK - IP checksum ok (not a TCP or UDP frame).&n; *&t;SKCS_STATUS_TCP_CSUM_ERROR - TCP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_UDP_CSUM_ERROR - UDP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_TCP_CSUM_OK - IP and TCP checksum ok.&n; *&t;SKCS_STATUS_UDP_CSUM_OK - IP and UDP checksum ok.&n; */
+multiline_comment|/*&n; * Define the default SKCS_STATUS type and values if no user overwrite.&n; *&n; *&t;SKCS_STATUS_UNKNOWN_IP_VERSION - Not an IP v4 frame.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR - IP checksum error.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR_TCP - IP checksum error in TCP frame.&n; *&t;SKCS_STATUS_IP_CSUM_ERROR_UDP - IP checksum error in UDP frame&n; *&t;SKCS_STATUS_IP_FRAGMENT - IP fragment (IP checksum ok).&n; *&t;SKCS_STATUS_IP_CSUM_OK - IP checksum ok (not a TCP or UDP frame).&n; *&t;SKCS_STATUS_TCP_CSUM_ERROR - TCP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_UDP_CSUM_ERROR - UDP checksum error (IP checksum ok).&n; *&t;SKCS_STATUS_TCP_CSUM_OK - IP and TCP checksum ok.&n; *&t;SKCS_STATUS_UDP_CSUM_OK - IP and UDP checksum ok.&n; *&t;SKCS_STATUS_IP_CSUM_OK_NO_UDP - IP checksum OK and no UDP checksum. &n; */
 macro_line|#ifndef SKCS_OVERWRITE_STATUS&t;/* User overwrite? */
 DECL|macro|SKCS_STATUS
 mdefine_line|#define SKCS_STATUS&t;int&t;/* Define status type. */
 DECL|macro|SKCS_STATUS_UNKNOWN_IP_VERSION
 mdefine_line|#define SKCS_STATUS_UNKNOWN_IP_VERSION&t;1
 DECL|macro|SKCS_STATUS_IP_CSUM_ERROR
-mdefine_line|#define SKCS_STATUS_IP_CSUM_ERROR&t;2
+mdefine_line|#define SKCS_STATUS_IP_CSUM_ERROR&t;&t;2
 DECL|macro|SKCS_STATUS_IP_FRAGMENT
-mdefine_line|#define SKCS_STATUS_IP_FRAGMENT&t;&t;3
+mdefine_line|#define SKCS_STATUS_IP_FRAGMENT&t;&t;&t;3
 DECL|macro|SKCS_STATUS_IP_CSUM_OK
-mdefine_line|#define SKCS_STATUS_IP_CSUM_OK&t;&t;4
+mdefine_line|#define SKCS_STATUS_IP_CSUM_OK&t;&t;&t;4
 DECL|macro|SKCS_STATUS_TCP_CSUM_ERROR
-mdefine_line|#define SKCS_STATUS_TCP_CSUM_ERROR&t;5
+mdefine_line|#define SKCS_STATUS_TCP_CSUM_ERROR&t;&t;5
 DECL|macro|SKCS_STATUS_UDP_CSUM_ERROR
-mdefine_line|#define SKCS_STATUS_UDP_CSUM_ERROR&t;6
+mdefine_line|#define SKCS_STATUS_UDP_CSUM_ERROR&t;&t;6
 DECL|macro|SKCS_STATUS_TCP_CSUM_OK
-mdefine_line|#define SKCS_STATUS_TCP_CSUM_OK&t;&t;7
+mdefine_line|#define SKCS_STATUS_TCP_CSUM_OK&t;&t;&t;7
 DECL|macro|SKCS_STATUS_UDP_CSUM_OK
-mdefine_line|#define SKCS_STATUS_UDP_CSUM_OK&t;&t;8
+mdefine_line|#define SKCS_STATUS_UDP_CSUM_OK&t;&t;&t;8
+multiline_comment|/* needed for Microsoft */
+DECL|macro|SKCS_STATUS_IP_CSUM_ERROR_UDP
+mdefine_line|#define SKCS_STATUS_IP_CSUM_ERROR_UDP&t;9
+DECL|macro|SKCS_STATUS_IP_CSUM_ERROR_TCP
+mdefine_line|#define SKCS_STATUS_IP_CSUM_ERROR_TCP&t;10
+multiline_comment|/* UDP checksum may be omitted */
+DECL|macro|SKCS_STATUS_IP_CSUM_OK_NO_UDP
+mdefine_line|#define SKCS_STATUS_IP_CSUM_OK_NO_UDP&t;11
 macro_line|#endif&t;/* !SKCS_OVERWRITE_STATUS */
 multiline_comment|/* Clear protocol statistics event. */
 DECL|macro|SK_CSUM_EVENT_CLEAR_PROTO_STATS
@@ -87,7 +95,7 @@ DECL|member|TxUnableCts
 id|SK_U64
 id|TxUnableCts
 suffix:semicolon
-multiline_comment|/* Unable to verify transmit checksum. */
+multiline_comment|/* Unable to calculate checksum in hw. */
 DECL|typedef|SKCS_PROTO_STATS
 )brace
 id|SKCS_PROTO_STATS
@@ -103,6 +111,12 @@ DECL|member|ReceiveFlags
 r_int
 id|ReceiveFlags
 suffix:semicolon
+macro_line|#ifdef TX_CSUM
+DECL|member|TransmitFlags
+r_int
+id|TransmitFlags
+suffix:semicolon
+macro_line|#endif /* TX_CSUM */
 multiline_comment|/* The protocol statistics structure; one per supported protocol. */
 DECL|member|ProtoStats
 id|SKCS_PROTO_STATS

@@ -1311,6 +1311,27 @@ id|state
 id|u16
 id|bridge
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|state-&gt;flags
+op_amp
+id|SS_DEBOUNCED
+)paren
+(brace
+multiline_comment|/* The insertion debounce period has ended.  Clear any pending insertion events */
+id|socket-&gt;events
+op_and_assign
+op_complement
+id|SS_DETECT
+suffix:semicolon
+id|state-&gt;flags
+op_and_assign
+op_complement
+id|SS_DEBOUNCED
+suffix:semicolon
+multiline_comment|/* SS_DEBOUNCED is oneshot */
+)brace
 id|yenta_set_power
 c_func
 (paren

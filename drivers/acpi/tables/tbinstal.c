@@ -1,21 +1,20 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbinstal - ACPI table installation and removal&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbinstal - ACPI table installation and removal&n; *              $Revision: 29 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;hardware.h&quot;
-macro_line|#include &quot;tables.h&quot;
+macro_line|#include &quot;achware.h&quot;
+macro_line|#include &quot;actables.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          TABLE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;tbinstal&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_install_table&n; *&n; * PARAMETERS:  Table_ptr           - Input buffer pointer, optional&n; *              Table_info          - Return value from Acpi_tb_get_table&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Load and validate all tables other than the RSDT.  The RSDT must&n; *              already be loaded and validated.&n; *              Install the table into the global data structs.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_tb_install_table
 id|acpi_tb_install_table
 (paren
-r_char
+id|ACPI_TABLE_HEADER
 op_star
 id|table_ptr
 comma
@@ -24,13 +23,6 @@ op_star
 id|table_info
 )paren
 (brace
-id|ACPI_TABLE_TYPE
-id|table_type
-suffix:semicolon
-id|ACPI_TABLE_HEADER
-op_star
-id|table_header
-suffix:semicolon
 id|ACPI_STATUS
 id|status
 suffix:semicolon
@@ -59,15 +51,6 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Table type is returned by Recognize_table */
-id|table_type
-op_assign
-id|table_info-&gt;type
-suffix:semicolon
-id|table_header
-op_assign
-id|table_info-&gt;pointer
-suffix:semicolon
 multiline_comment|/* Lock tables while installing */
 id|acpi_cm_acquire_mutex
 (paren
@@ -84,21 +67,6 @@ comma
 id|table_info
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
 id|acpi_cm_release_mutex
 (paren
 id|ACPI_MTX_TABLES
@@ -106,7 +74,7 @@ id|ACPI_MTX_TABLES
 suffix:semicolon
 r_return
 (paren
-id|AE_OK
+id|status
 )paren
 suffix:semicolon
 )brace
@@ -115,7 +83,7 @@ id|ACPI_STATUS
 DECL|function|acpi_tb_recognize_table
 id|acpi_tb_recognize_table
 (paren
-r_char
+id|ACPI_TABLE_HEADER
 op_star
 id|table_ptr
 comma
@@ -297,17 +265,18 @@ multiline_comment|/*&n;&t; * Two major types of tables:  1) Only one instance is
 r_if
 c_cond
 (paren
+id|IS_SINGLE_TABLE
+(paren
 id|acpi_gbl_acpi_table_data
 (braket
 id|table_type
 )braket
 dot
 id|flags
-op_eq
-id|ACPI_TABLE_SINGLE
+)paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Only one table allowed, just update the list head&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Only one table allowed, and a table has alread been installed&n;&t;&t; *  at this location, so return an error.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -372,10 +341,6 @@ id|list_head-&gt;prev
 suffix:semicolon
 id|table_desc-&gt;next
 op_assign
-(paren
-id|ACPI_TABLE_DESC
-op_star
-)paren
 id|list_head
 suffix:semicolon
 multiline_comment|/* Update list head */
@@ -497,28 +462,28 @@ id|acpi_tb_delete_acpi_tables
 r_void
 )paren
 (brace
-id|u32
-id|i
+id|ACPI_TABLE_TYPE
+id|type
 suffix:semicolon
 multiline_comment|/*&n;&t; * Free memory allocated for ACPI tables&n;&t; * Memory can either be mapped or allocated&n;&t; */
 r_for
 c_loop
 (paren
-id|i
+id|type
 op_assign
 l_int|0
 suffix:semicolon
-id|i
+id|type
 OL
 id|ACPI_TABLE_MAX
 suffix:semicolon
-id|i
+id|type
 op_increment
 )paren
 (brace
 id|acpi_tb_delete_acpi_table
 (paren
-id|i
+id|type
 )paren
 suffix:semicolon
 )brace
@@ -646,6 +611,62 @@ id|acpi_cm_release_mutex
 id|ACPI_MTX_TABLES
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_free_acpi_tables_of_type&n; *&n; * PARAMETERS:  Table_info          - A table info struct&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Free the memory associated with an internal ACPI table&n; *              Table mutex should be locked.&n; *&n; ******************************************************************************/
+r_void
+DECL|function|acpi_tb_free_acpi_tables_of_type
+id|acpi_tb_free_acpi_tables_of_type
+(paren
+id|ACPI_TABLE_DESC
+op_star
+id|list_head
+)paren
+(brace
+id|ACPI_TABLE_DESC
+op_star
+id|table_desc
+suffix:semicolon
+id|u32
+id|count
+suffix:semicolon
+id|u32
+id|i
+suffix:semicolon
+multiline_comment|/* Get the head of the list */
+id|table_desc
+op_assign
+id|list_head
+suffix:semicolon
+id|count
+op_assign
+id|list_head-&gt;count
+suffix:semicolon
+multiline_comment|/*&n;&t; * Walk the entire list, deleting both the allocated tables&n;&t; * and the table descriptors&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|count
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|table_desc
+op_assign
+id|acpi_tb_delete_single_table
+(paren
+id|table_desc
+)paren
+suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
@@ -791,62 +812,6 @@ r_return
 (paren
 id|next_desc
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_free_acpi_tables_of_type&n; *&n; * PARAMETERS:  Table_info          - A table info struct&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Free the memory associated with an internal ACPI table&n; *              Table mutex should be locked.&n; *&n; ******************************************************************************/
-r_void
-DECL|function|acpi_tb_free_acpi_tables_of_type
-id|acpi_tb_free_acpi_tables_of_type
-(paren
-id|ACPI_TABLE_DESC
-op_star
-id|list_head
-)paren
-(brace
-id|ACPI_TABLE_DESC
-op_star
-id|table_desc
-suffix:semicolon
-id|u32
-id|count
-suffix:semicolon
-id|u32
-id|i
-suffix:semicolon
-multiline_comment|/* Get the head of the list */
-id|table_desc
-op_assign
-id|list_head
-suffix:semicolon
-id|count
-op_assign
-id|list_head-&gt;count
-suffix:semicolon
-multiline_comment|/*&n;&t; * Walk the entire list, deleting both the allocated tables&n;&t; * and the table descriptors&n;&t; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|count
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|table_desc
-op_assign
-id|acpi_tb_delete_single_table
-(paren
-id|table_desc
-)paren
-suffix:semicolon
-)brace
-r_return
 suffix:semicolon
 )brace
 eof

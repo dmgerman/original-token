@@ -27,10 +27,16 @@ r_extern
 r_int
 id|page_cluster
 suffix:semicolon
+multiline_comment|/* The inactive_clean lists are per zone. */
 r_extern
 r_struct
 id|list_head
-id|lru_cache
+id|active_list
+suffix:semicolon
+r_extern
+r_struct
+id|list_head
+id|inactive_dirty_list
 suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -406,6 +412,11 @@ r_struct
 id|list_head
 id|lru
 suffix:semicolon
+DECL|member|age
+r_int
+r_int
+id|age
+suffix:semicolon
 DECL|member|wait
 id|wait_queue_head_t
 id|wait
@@ -462,18 +473,18 @@ DECL|macro|PG_dirty
 mdefine_line|#define PG_dirty&t;&t; 4
 DECL|macro|PG_decr_after
 mdefine_line|#define PG_decr_after&t;&t; 5
-DECL|macro|PG_unused_01
-mdefine_line|#define PG_unused_01&t;&t; 6
-DECL|macro|PG__unused_02
-mdefine_line|#define PG__unused_02&t;&t; 7
+DECL|macro|PG_active
+mdefine_line|#define PG_active&t;&t; 6
+DECL|macro|PG_inactive_dirty
+mdefine_line|#define PG_inactive_dirty&t; 7
 DECL|macro|PG_slab
 mdefine_line|#define PG_slab&t;&t;&t; 8
 DECL|macro|PG_swap_cache
 mdefine_line|#define PG_swap_cache&t;&t; 9
 DECL|macro|PG_skip
 mdefine_line|#define PG_skip&t;&t;&t;10
-DECL|macro|PG_unused_03
-mdefine_line|#define PG_unused_03&t;&t;11
+DECL|macro|PG_inactive_clean
+mdefine_line|#define PG_inactive_clean&t;11
 DECL|macro|PG_highmem
 mdefine_line|#define PG_highmem&t;&t;12
 multiline_comment|/* bits 21-30 unused */
@@ -510,6 +521,8 @@ DECL|macro|PageReferenced
 mdefine_line|#define PageReferenced(page)&t;test_bit(PG_referenced, &amp;(page)-&gt;flags)
 DECL|macro|SetPageReferenced
 mdefine_line|#define SetPageReferenced(page)&t;set_bit(PG_referenced, &amp;(page)-&gt;flags)
+DECL|macro|ClearPageReferenced
+mdefine_line|#define ClearPageReferenced(page)&t;clear_bit(PG_referenced, &amp;(page)-&gt;flags)
 DECL|macro|PageTestandClearReferenced
 mdefine_line|#define PageTestandClearReferenced(page)&t;test_and_clear_bit(PG_referenced, &amp;(page)-&gt;flags)
 DECL|macro|PageDecrAfter
@@ -536,6 +549,24 @@ DECL|macro|PageClearSwapCache
 mdefine_line|#define PageClearSwapCache(page)&t;clear_bit(PG_swap_cache, &amp;(page)-&gt;flags)
 DECL|macro|PageTestandClearSwapCache
 mdefine_line|#define PageTestandClearSwapCache(page)&t;test_and_clear_bit(PG_swap_cache, &amp;(page)-&gt;flags)
+DECL|macro|PageActive
+mdefine_line|#define PageActive(page)&t;test_bit(PG_active, &amp;(page)-&gt;flags)
+DECL|macro|SetPageActive
+mdefine_line|#define SetPageActive(page)&t;set_bit(PG_active, &amp;(page)-&gt;flags)
+DECL|macro|ClearPageActive
+mdefine_line|#define ClearPageActive(page)&t;clear_bit(PG_active, &amp;(page)-&gt;flags)
+DECL|macro|PageInactiveDirty
+mdefine_line|#define PageInactiveDirty(page)&t;test_bit(PG_inactive_dirty, &amp;(page)-&gt;flags)
+DECL|macro|SetPageInactiveDirty
+mdefine_line|#define SetPageInactiveDirty(page)&t;set_bit(PG_inactive_dirty, &amp;(page)-&gt;flags)
+DECL|macro|ClearPageInactiveDirty
+mdefine_line|#define ClearPageInactiveDirty(page)&t;clear_bit(PG_inactive_dirty, &amp;(page)-&gt;flags)
+DECL|macro|PageInactiveClean
+mdefine_line|#define PageInactiveClean(page)&t;test_bit(PG_inactive_clean, &amp;(page)-&gt;flags)
+DECL|macro|SetPageInactiveClean
+mdefine_line|#define SetPageInactiveClean(page)&t;set_bit(PG_inactive_clean, &amp;(page)-&gt;flags)
+DECL|macro|ClearPageInactiveClean
+mdefine_line|#define ClearPageInactiveClean(page)&t;clear_bit(PG_inactive_clean, &amp;(page)-&gt;flags)
 macro_line|#ifdef CONFIG_HIGHMEM
 DECL|macro|PageHighMem
 mdefine_line|#define PageHighMem(page)&t;&t;test_bit(PG_highmem, &amp;(page)-&gt;flags)

@@ -5955,6 +5955,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|init_sd
+r_static
 r_int
 id|init_sd
 c_func
@@ -5978,6 +5979,7 @@ id|sd_template
 suffix:semicolon
 )brace
 DECL|function|exit_sd
+r_static
 r_void
 id|exit_sd
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* mga_state.c -- State support for mga g200/g400 -*- linux-c -*-&n; * Created: Thu Jan 27 02:53:43 2000 by jhartmann@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors: Jeff Hartmann &lt;jhartmann@valinux.com&gt;&n; * &t;    Keith Whitwell &lt;keithw@valinux.com&gt;&n; *&n; */
+multiline_comment|/* mga_state.c -- State support for mga g200/g400 -*- linux-c -*-&n; * Created: Thu Jan 27 02:53:43 2000 by jhartmann@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors: Jeff Hartmann &lt;jhartmann@valinux.com&gt;&n; * &t;    Keith Whitwell &lt;keithw@valinux.com&gt;&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -6,19 +6,19 @@ macro_line|#include &quot;mga_drv.h&quot;
 macro_line|#include &quot;drm.h&quot;
 multiline_comment|/* If you change the functions to set state, PLEASE&n; * change these values&n; */
 DECL|macro|MGAEMITCLIP_SIZE
-mdefine_line|#define MGAEMITCLIP_SIZE 10
+mdefine_line|#define MGAEMITCLIP_SIZE&t;10
 DECL|macro|MGAEMITCTX_SIZE
-mdefine_line|#define MGAEMITCTX_SIZE 15
+mdefine_line|#define MGAEMITCTX_SIZE&t;&t;20
 DECL|macro|MGAG200EMITTEX_SIZE
-mdefine_line|#define MGAG200EMITTEX_SIZE 20
+mdefine_line|#define MGAG200EMITTEX_SIZE &t;20
 DECL|macro|MGAG400EMITTEX0_SIZE
-mdefine_line|#define MGAG400EMITTEX0_SIZE 30
+mdefine_line|#define MGAG400EMITTEX0_SIZE&t;30
 DECL|macro|MGAG400EMITTEX1_SIZE
-mdefine_line|#define MGAG400EMITTEX1_SIZE 25
+mdefine_line|#define MGAG400EMITTEX1_SIZE&t;25
 DECL|macro|MGAG400EMITPIPE_SIZE
-mdefine_line|#define MGAG400EMITPIPE_SIZE 50
+mdefine_line|#define MGAG400EMITPIPE_SIZE&t;55
 DECL|macro|MGAG200EMITPIPE_SIZE
-mdefine_line|#define MGAG200EMITPIPE_SIZE 15
+mdefine_line|#define MGAG200EMITPIPE_SIZE&t;15
 DECL|macro|MAX_STATE_SIZE
 mdefine_line|#define MAX_STATE_SIZE ((MGAEMITCLIP_SIZE * MGA_NR_SAREA_CLIPRECTS) + &bslash;&n;&t;&t;&t;MGAEMITCTX_SIZE + MGAG400EMITTEX0_SIZE + &bslash;&n;&t;&t;&t;MGAG400EMITTEX1_SIZE + MGAG400EMITPIPE_SIZE)
 DECL|function|mgaEmitClipRect
@@ -238,7 +238,7 @@ comma
 id|__FUNCTION__
 )paren
 suffix:semicolon
-multiline_comment|/* This takes a max of 15 dwords */
+multiline_comment|/* This takes a max of 20 dwords */
 id|PRIMGETPTR
 c_func
 (paren
@@ -381,6 +381,44 @@ id|regs
 (braket
 id|MGA_CTXREG_FCOL
 )braket
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_STENCIL
+comma
+id|regs
+(braket
+id|MGA_CTXREG_STENCIL
+)braket
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_STENCILCTL
+comma
+id|regs
+(braket
+id|MGA_CTXREG_STENCILCTL
+)braket
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_DMAPAD
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_DMAPAD
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -655,6 +693,8 @@ id|dev_priv
 )paren
 suffix:semicolon
 )brace
+DECL|macro|TMC_dualtex_enable
+mdefine_line|#define TMC_dualtex_enable &t;&t;0x80
 DECL|function|mgaG400EmitTex0
 r_static
 r_void
@@ -685,9 +725,12 @@ suffix:semicolon
 r_int
 id|multitex
 op_assign
-id|sarea_priv-&gt;WarpPipe
+id|regs
+(braket
+id|MGA_TEXREG_CTL2
+)braket
 op_amp
-id|MGA_T2
+id|TMC_dualtex_enable
 suffix:semicolon
 id|PRIMLOCALS
 suffix:semicolon
@@ -890,6 +933,8 @@ c_cond
 (paren
 op_logical_neg
 id|multitex
+op_logical_or
+l_int|1
 )paren
 (brace
 id|PRIMOUTREG
@@ -1001,6 +1046,9 @@ c_func
 id|drm_mga_private_t
 op_star
 id|dev_priv
+comma
+r_int
+id|source
 )paren
 (brace
 id|drm_mga_sarea_t
@@ -1016,7 +1064,7 @@ id|regs
 op_assign
 id|sarea_priv-&gt;TexState
 (braket
-l_int|1
+id|source
 )braket
 suffix:semicolon
 id|PRIMLOCALS
@@ -1307,6 +1355,21 @@ id|fParam
 op_assign
 l_float|12800.0f
 suffix:semicolon
+r_int
+id|multitex
+op_assign
+(paren
+id|sarea_priv-&gt;TexState
+(braket
+l_int|0
+)braket
+(braket
+id|MGA_TEXREG_CTL2
+)braket
+op_amp
+id|TMC_dualtex_enable
+)paren
+suffix:semicolon
 id|PRIMLOCALS
 suffix:semicolon
 id|DRM_DEBUG
@@ -1324,7 +1387,7 @@ id|dev_priv
 )paren
 suffix:semicolon
 multiline_comment|/* This takes 50 dwords */
-multiline_comment|/* Establish vertex size.  &n;&t; */
+multiline_comment|/* Establish vertex size.&n;&t; */
 id|PRIMOUTREG
 c_func
 (paren
@@ -1360,11 +1423,167 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pipe
-op_amp
-id|MGA_T2
+id|sarea_priv-&gt;vertexsize
+op_eq
+l_int|10
 )paren
 (brace
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_YDST
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_FXLEFT
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_FXRIGHT
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_DWGCTL
+comma
+id|MGA_FLUSH_CMD
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_LEN
+op_plus
+id|MGAREG_MGA_EXEC
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_DMAPAD
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_DWGSYNC
+comma
+l_int|0x7000
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_DMAPAD
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|multitex
+)paren
+(brace
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_TEXCTL2
+comma
+l_int|0
+op_or
+l_int|0x00008000
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_LEN
+op_plus
+id|MGAREG_MGA_EXEC
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_TEXCTL2
+comma
+l_int|0x80
+op_or
+l_int|0x00008000
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_LEN
+op_plus
+id|MGAREG_MGA_EXEC
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_TEXCTL2
+comma
+l_int|0
+op_or
+l_int|0x00008000
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_LEN
+op_plus
+id|MGAREG_MGA_EXEC
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_TEXCTL2
+comma
+l_int|0
+op_or
+l_int|0x00008000
+)paren
+suffix:semicolon
+id|PRIMOUTREG
+c_func
+(paren
+id|MGAREG_LEN
+op_plus
+id|MGAREG_MGA_EXEC
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 id|PRIMOUTREG
 c_func
 (paren
@@ -1431,14 +1650,6 @@ l_int|0x1e000000
 suffix:semicolon
 )brace
 r_else
-(brace
-r_if
-c_cond
-(paren
-id|dev_priv-&gt;WarpPipe
-op_amp
-id|MGA_T2
-)paren
 (brace
 multiline_comment|/* Flush the WARP pipe */
 id|PRIMOUTREG
@@ -1532,7 +1743,7 @@ c_func
 (paren
 id|MGAREG_TEXCTL2
 comma
-l_int|0x80
+l_int|0
 op_or
 l_int|0x00008000
 )paren
@@ -1547,7 +1758,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
 id|PRIMOUTREG
 c_func
 (paren
@@ -1763,6 +1973,16 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* Tex stage 1 : h */
+r_if
+c_cond
+(paren
+id|dev_priv-&gt;WarpPipe
+op_ne
+id|pipe
+op_logical_or
+l_int|1
+)paren
+(brace
 multiline_comment|/* Dma pading required due to hw bug */
 id|PRIMOUTREG
 c_func
@@ -1810,6 +2030,7 @@ id|WIA_wagp_agp
 )paren
 )paren
 suffix:semicolon
+)brace
 id|PRIMADVANCE
 c_func
 (paren
@@ -2039,16 +2260,31 @@ id|MGA_CARD_TYPE_G400
 r_int
 id|multitex
 op_assign
-id|sarea_priv-&gt;WarpPipe
+(paren
+id|sarea_priv-&gt;TexState
+(braket
+l_int|0
+)braket
+(braket
+id|MGA_TEXREG_CTL2
+)braket
 op_amp
-id|MGA_T2
+id|TMC_dualtex_enable
+)paren
+suffix:semicolon
+id|dirty
+op_assign
+op_complement
+l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sarea_priv-&gt;WarpPipe
-op_ne
-id|dev_priv-&gt;WarpPipe
+id|dirty
+op_amp
+id|MGA_UPLOAD_PIPE
+multiline_comment|/*  &t;&t;    &amp;&amp; (sarea_priv-&gt;WarpPipe != dev_priv-&gt;WarpPipe || */
+multiline_comment|/*  &t;&t;        sarea_priv-&gt;vertexsize != dev_priv-&gt;vertexsize) */
 )paren
 (brace
 id|mgaG400EmitPipe
@@ -2060,6 +2296,15 @@ suffix:semicolon
 id|dev_priv-&gt;WarpPipe
 op_assign
 id|sarea_priv-&gt;WarpPipe
+suffix:semicolon
+id|dev_priv-&gt;vertexsize
+op_assign
+id|sarea_priv-&gt;vertexsize
+suffix:semicolon
+id|sarea_priv-&gt;dirty
+op_and_assign
+op_complement
+id|MGA_UPLOAD_PIPE
 suffix:semicolon
 )brace
 r_if
@@ -2105,19 +2350,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|dirty
 op_amp
 id|MGA_UPLOAD_TEX1
 )paren
-op_logical_and
+(brace
+r_if
+c_cond
+(paren
 id|multitex
 )paren
-(brace
 id|mgaG400EmitTex1
 c_func
 (paren
 id|dev_priv
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_else
+id|mgaG400EmitTex1
+c_func
+(paren
+id|dev_priv
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|sarea_priv-&gt;dirty
@@ -2886,7 +3143,7 @@ c_cond
 id|buf-&gt;used
 )paren
 (brace
-multiline_comment|/* WARNING: if you change any of the state functions verify&n;&t;&t; * these numbers (Overestimating this doesn&squot;t hurt).  &n;&t;&t; */
+multiline_comment|/* WARNING: if you change any of the state functions verify&n;&t;&t; * these numbers (Overestimating this doesn&squot;t hurt).&n;&t;&t; */
 id|buf_priv-&gt;dispatched
 op_assign
 l_int|1
@@ -2915,6 +3172,7 @@ c_func
 id|dev_priv
 )paren
 suffix:semicolon
+multiline_comment|/*  &t;&t;length = dev_priv-&gt;vertexsize * 3 * 4; */
 r_do
 (brace
 r_if
@@ -3187,7 +3445,7 @@ op_ne
 id|end
 )paren
 (brace
-multiline_comment|/* WARNING: if you change any of the state functions verify&n;&t;&t; * these numbers (Overestimating this doesn&squot;t hurt).  &n;&t;&t; */
+multiline_comment|/* WARNING: if you change any of the state functions verify&n;&t;&t; * these numbers (Overestimating this doesn&squot;t hurt).&n;&t;&t; */
 id|buf_priv-&gt;dispatched
 op_assign
 l_int|1
@@ -3334,6 +3592,7 @@ id|use_agp
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*  &t;&t;&t;&t;   ((address + start + 12) | use_agp)); */
 id|PRIMADVANCE
 c_func
 (paren
@@ -3406,6 +3665,14 @@ comma
 r_int
 r_int
 id|clear_zval
+comma
+r_int
+r_int
+id|clear_colormask
+comma
+r_int
+r_int
+id|clear_depthmask
 )paren
 (brace
 id|drm_mga_private_t
@@ -3579,9 +3846,9 @@ suffix:semicolon
 id|PRIMOUTREG
 c_func
 (paren
-id|MGAREG_DMAPAD
+id|MGAREG_PLNWT
 comma
-l_int|0
+id|clear_colormask
 )paren
 suffix:semicolon
 id|PRIMOUTREG
@@ -3687,9 +3954,9 @@ suffix:semicolon
 id|PRIMOUTREG
 c_func
 (paren
-id|MGAREG_DMAPAD
+id|MGAREG_PLNWT
 comma
-l_int|0
+id|clear_colormask
 )paren
 suffix:semicolon
 id|PRIMOUTREG
@@ -3795,9 +4062,9 @@ suffix:semicolon
 id|PRIMOUTREG
 c_func
 (paren
-id|MGAREG_DMAPAD
+id|MGAREG_PLNWT
 comma
-l_int|0
+id|clear_depthmask
 )paren
 suffix:semicolon
 id|PRIMOUTREG
@@ -4436,6 +4703,10 @@ comma
 id|clear.clear_color
 comma
 id|clear.clear_depth
+comma
+id|clear.clear_color_mask
+comma
+id|clear.clear_depth_mask
 )paren
 suffix:semicolon
 id|PRIMUPDATE
@@ -5379,7 +5650,14 @@ r_sizeof
 id|buf-&gt;idx
 )paren
 )paren
-op_logical_or
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren

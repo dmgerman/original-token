@@ -1,40 +1,231 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswload - Dispatcher namespace load callbacks&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswload - Dispatcher namespace load callbacks&n; *              $Revision: 19 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
+macro_line|#include &quot;acparser.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
-macro_line|#include &quot;namesp.h&quot;
-macro_line|#include &quot;events.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
+macro_line|#include &quot;acevents.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          DISPATCHER
 id|MODULE_NAME
 (paren
 l_string|&quot;dswload&quot;
 )paren
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_load1_begin_op&n; *&n; * PARAMETERS:  Walk_state      - Current state of the parse tree walk&n; *              Op              - Op that has been just been reached in the&n; *                                walk;  Arguments have not been evaluated yet.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Descending callback used during the loading of ACPI tables.&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ds_load1_begin_op
 id|acpi_ds_load1_begin_op
 (paren
+id|u16
+id|opcode
+comma
+id|ACPI_PARSE_OBJECT
+op_star
+id|op
+comma
 id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
-id|op
+op_star
+id|out_op
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|new_entry
+id|node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
 suffix:semicolon
+id|OBJECT_TYPE_INTERNAL
+id|data_type
+suffix:semicolon
+id|NATIVE_CHAR
+op_star
+id|path
+suffix:semicolon
+multiline_comment|/* We are only interested in opcodes that have an associated name */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|acpi_ps_is_named_op
+(paren
+id|opcode
+)paren
+)paren
+(brace
+op_star
+id|out_op
+op_assign
+id|op
+suffix:semicolon
+r_return
+(paren
+id|AE_OK
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Check if this object has already been installed in the namespace */
+r_if
+c_cond
+(paren
+id|op
+op_logical_and
+id|op-&gt;node
+)paren
+(brace
+op_star
+id|out_op
+op_assign
+id|op
+suffix:semicolon
+r_return
+(paren
+id|AE_OK
+)paren
+suffix:semicolon
+)brace
+id|path
+op_assign
+id|acpi_ps_get_next_namestring
+(paren
+id|walk_state-&gt;parser_state
+)paren
+suffix:semicolon
+multiline_comment|/* Map the raw opcode into an internal object type */
+id|data_type
+op_assign
+id|acpi_ds_map_named_opcode_to_data_type
+(paren
+id|opcode
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Enter the named type into the internal namespace.  We enter the name&n;&t; * as we go downward in the parse tree.  Any necessary subobjects that involve&n;&t; * arguments to the opcode must be created as we go back up the parse tree later.&n;&t; */
+id|status
+op_assign
+id|acpi_ns_lookup
+(paren
+id|walk_state-&gt;scope_info
+comma
+id|path
+comma
+id|data_type
+comma
+id|IMODE_LOAD_PASS1
+comma
+id|NS_NO_UPSEARCH
+comma
+id|walk_state
+comma
+op_amp
+(paren
+id|node
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+multiline_comment|/* Create a new op */
+id|op
+op_assign
+id|acpi_ps_alloc_op
+(paren
+id|opcode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+r_return
+(paren
+id|AE_NO_MEMORY
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Initialize */
+(paren
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
+id|op
+)paren
+op_member_access_from_pointer
+id|name
+op_assign
+id|node-&gt;name
+suffix:semicolon
+multiline_comment|/*&n;&t; * Put the Node in the &quot;op&quot; object that the parser uses, so we&n;&t; * can get it again quickly when this scope is closed&n;&t; */
+id|op-&gt;node
+op_assign
+id|node
+suffix:semicolon
+id|acpi_ps_append_arg
+(paren
+id|acpi_ps_get_parent_scope
+(paren
+id|walk_state-&gt;parser_state
+)paren
+comma
+id|op
+)paren
+suffix:semicolon
+op_star
+id|out_op
+op_assign
+id|op
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_load1_end_op&n; *&n; * PARAMETERS:  Walk_state      - Current state of the parse tree walk&n; *              Op              - Op that has been just been completed in the&n; *                                walk;  Arguments have now been evaluated.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Ascending callback used during the loading of the namespace,&n; *              both control methods and everything else.&n; *&n; ****************************************************************************/
+id|ACPI_STATUS
+DECL|function|acpi_ds_load1_end_op
+id|acpi_ds_load1_end_op
+(paren
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
+comma
+id|ACPI_PARSE_OBJECT
+op_star
+id|op
+)paren
+(brace
 id|OBJECT_TYPE_INTERNAL
 id|data_type
 suffix:semicolon
@@ -50,21 +241,12 @@ id|op-&gt;opcode
 )paren
 (brace
 r_return
-id|AE_OK
-suffix:semicolon
-)brace
-multiline_comment|/* Check if this object has already been installed in the namespace */
-r_if
-c_cond
 (paren
-id|op-&gt;acpi_named_object
-)paren
-(brace
-r_return
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Map the raw opcode into an internal object type */
+multiline_comment|/* Get the type to determine if we should pop the scope */
 id|data_type
 op_assign
 id|acpi_ds_map_named_opcode_to_data_type
@@ -72,8 +254,6 @@ id|acpi_ds_map_named_opcode_to_data_type
 id|op-&gt;opcode
 )paren
 suffix:semicolon
-multiline_comment|/* Attempt to type a NAME opcode by examining the argument */
-multiline_comment|/* TBD: [Investigate] is this the right place to do this? */
 r_if
 c_cond
 (paren
@@ -82,6 +262,7 @@ op_eq
 id|AML_NAME_OP
 )paren
 (brace
+multiline_comment|/* For Name opcode, check the argument */
 r_if
 c_cond
 (paren
@@ -101,135 +282,23 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;&t; * Enter the named type into the internal namespace.  We enter the name&n;&t; * as we go downward in the parse tree.  Any necessary subobjects that involve&n;&t; * arguments to the opcode must be created as we go back up the parse tree later.&n;&t; */
-id|status
-op_assign
-id|acpi_ns_lookup
 (paren
-id|walk_state-&gt;scope_info
-comma
 (paren
-r_char
+id|ACPI_NAMESPACE_NODE
 op_star
 )paren
-op_amp
-(paren
-(paren
-id|ACPI_NAMED_OP
-op_star
-)paren
-id|op
+id|op-&gt;node
 )paren
 op_member_access_from_pointer
-id|name
-comma
-id|data_type
-comma
-id|IMODE_LOAD_PASS1
-comma
-id|NS_NO_UPSEARCH
-comma
-id|walk_state
-comma
-op_amp
-(paren
-id|new_entry
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_SUCCESS
-(paren
-id|status
-)paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Put the NTE in the &quot;op&quot; object that the parser uses, so we&n;&t;&t; * can get it again quickly when this scope is closed&n;&t;&t; */
-id|op-&gt;acpi_named_object
+id|type
 op_assign
-id|new_entry
-suffix:semicolon
-)brace
-r_return
 (paren
-id|status
+id|u8
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_load1_end_op&n; *&n; * PARAMETERS:  Walk_state      - Current state of the parse tree walk&n; *              Op              - Op that has been just been completed in the&n; *                                walk;  Arguments have now been evaluated.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Ascending callback used during the loading of the namespace,&n; *              both control methods and everything else.&n; *&n; ****************************************************************************/
-id|ACPI_STATUS
-DECL|function|acpi_ds_load1_end_op
-id|acpi_ds_load1_end_op
-(paren
-id|ACPI_WALK_STATE
-op_star
-id|walk_state
-comma
-id|ACPI_GENERIC_OP
-op_star
-id|op
-)paren
-(brace
-id|OBJECT_TYPE_INTERNAL
 id|data_type
 suffix:semicolon
-multiline_comment|/* We are only interested in opcodes that have an associated name */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|acpi_ps_is_named_op
-(paren
-id|op-&gt;opcode
-)paren
-)paren
-(brace
-r_return
-id|AE_OK
-suffix:semicolon
-)brace
-multiline_comment|/* TBD: [Investigate] can this be removed? */
-r_if
-c_cond
-(paren
-id|op-&gt;opcode
-op_eq
-id|AML_SCOPE_OP
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|ACPI_NAMED_OP
-op_star
-)paren
-id|op
-)paren
-op_member_access_from_pointer
-id|name
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
-r_return
-id|AE_OK
-suffix:semicolon
 )brace
 )brace
-id|data_type
-op_assign
-id|acpi_ds_map_named_opcode_to_data_type
-(paren
-id|op-&gt;opcode
-)paren
-suffix:semicolon
 multiline_comment|/* Pop the scope stack */
 r_if
 c_cond
@@ -247,7 +316,9 @@ id|walk_state
 suffix:semicolon
 )brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_load2_begin_op&n; *&n; * PARAMETERS:  Walk_state      - Current state of the parse tree walk&n; *              Op              - Op that has been just been reached in the&n; *                                walk;  Arguments have not been evaluated yet.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Descending callback used during the loading of ACPI tables.&n; *&n; ****************************************************************************/
@@ -255,18 +326,26 @@ id|ACPI_STATUS
 DECL|function|acpi_ds_load2_begin_op
 id|acpi_ds_load2_begin_op
 (paren
+id|u16
+id|opcode
+comma
+id|ACPI_PARSE_OBJECT
+op_star
+id|op
+comma
 id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
-id|op
+op_star
+id|out_op
 )paren
 (brace
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|new_entry
+id|node
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -274,7 +353,7 @@ suffix:semicolon
 id|OBJECT_TYPE_INTERNAL
 id|data_type
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|buffer_ptr
 suffix:semicolon
@@ -291,28 +370,53 @@ c_cond
 op_logical_neg
 id|acpi_ps_is_namespace_op
 (paren
-id|op-&gt;opcode
+id|opcode
 )paren
 op_logical_and
-id|op-&gt;opcode
+id|opcode
 op_ne
 id|AML_NAMEPATH_OP
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Get the name we are going to enter or lookup in the namespace&n;&t; */
+multiline_comment|/* Temp! same code as in psparse */
 r_if
 c_cond
 (paren
-id|op-&gt;opcode
+op_logical_neg
+id|acpi_ps_is_named_op
+(paren
+id|opcode
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_OK
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|op
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Get the name we are going to enter or lookup in the namespace&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|opcode
 op_eq
 id|AML_NAMEPATH_OP
 )paren
 (brace
-multiline_comment|/* For Namepath op , get the path string */
+multiline_comment|/* For Namepath op, get the path string */
 id|buffer_ptr
 op_assign
 id|op-&gt;value.string
@@ -326,7 +430,9 @@ id|buffer_ptr
 (brace
 multiline_comment|/* No name, just exit */
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -336,13 +442,13 @@ multiline_comment|/* Get name from the op */
 id|buffer_ptr
 op_assign
 (paren
-r_char
+id|NATIVE_CHAR
 op_star
 )paren
 op_amp
 (paren
 (paren
-id|ACPI_NAMED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|op
@@ -351,31 +457,42 @@ op_member_access_from_pointer
 id|name
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+id|buffer_ptr
+op_assign
+id|acpi_ps_get_next_namestring
+(paren
+id|walk_state-&gt;parser_state
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Map the raw opcode into an internal object type */
 id|data_type
 op_assign
 id|acpi_ds_map_named_opcode_to_data_type
 (paren
-id|op-&gt;opcode
+id|opcode
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|op-&gt;opcode
+id|opcode
 op_eq
 id|AML_DEF_FIELD_OP
 op_logical_or
-id|op-&gt;opcode
+id|opcode
 op_eq
 id|AML_BANK_FIELD_OP
 op_logical_or
-id|op-&gt;opcode
+id|opcode
 op_eq
 id|AML_INDEX_FIELD_OP
 )paren
 (brace
-id|new_entry
+id|node
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -388,7 +505,7 @@ r_else
 r_if
 c_cond
 (paren
-id|op-&gt;opcode
+id|opcode
 op_eq
 id|AML_NAMEPATH_OP
 )paren
@@ -412,7 +529,7 @@ id|walk_state
 comma
 op_amp
 (paren
-id|new_entry
+id|node
 )paren
 )paren
 suffix:semicolon
@@ -422,16 +539,18 @@ r_else
 r_if
 c_cond
 (paren
-id|op-&gt;acpi_named_object
+id|op
+op_logical_and
+id|op-&gt;node
 )paren
 (brace
 id|original
 op_assign
-id|op-&gt;acpi_named_object
+id|op-&gt;node
 suffix:semicolon
-id|new_entry
+id|node
 op_assign
-id|op-&gt;acpi_named_object
+id|op-&gt;node
 suffix:semicolon
 r_if
 c_cond
@@ -446,7 +565,7 @@ id|status
 op_assign
 id|acpi_ds_scope_stack_push
 (paren
-id|new_entry-&gt;child_table
+id|node
 comma
 id|data_type
 comma
@@ -470,7 +589,9 @@ suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Enter the named type into the internal namespace.  We enter the name&n;&t;&t; * as we go downward in the parse tree.  Any necessary subobjects that involve&n;&t;&t; * arguments to the opcode must be created as we go back up the parse tree later.&n;&t;&t; */
@@ -492,7 +613,7 @@ id|walk_state
 comma
 op_amp
 (paren
-id|new_entry
+id|node
 )paren
 )paren
 suffix:semicolon
@@ -506,10 +627,57 @@ id|status
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Put the NTE in the &quot;op&quot; object that the parser uses, so we&n;&t;&t; * can get it again quickly when this scope is closed&n;&t;&t; */
-id|op-&gt;acpi_named_object
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+multiline_comment|/* Create a new op */
+id|op
 op_assign
-id|new_entry
+id|acpi_ps_alloc_op
+(paren
+id|opcode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+r_return
+(paren
+id|AE_NO_MEMORY
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Initialize */
+(paren
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
+id|op
+)paren
+op_member_access_from_pointer
+id|name
+op_assign
+id|node-&gt;name
+suffix:semicolon
+op_star
+id|out_op
+op_assign
+id|op
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * Put the Node in the &quot;op&quot; object that the parser uses, so we&n;&t;&t; * can get it again quickly when this scope is closed&n;&t;&t; */
+id|op-&gt;node
+op_assign
+id|node
 suffix:semicolon
 )brace
 r_return
@@ -527,7 +695,7 @@ id|ACPI_WALK_STATE
 op_star
 id|walk_state
 comma
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|op
 )paren
@@ -540,17 +708,17 @@ suffix:semicolon
 id|OBJECT_TYPE_INTERNAL
 id|data_type
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|entry
+id|node
 suffix:semicolon
-id|ACPI_GENERIC_OP
+id|ACPI_PARSE_OBJECT
 op_star
 id|arg
 suffix:semicolon
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|new_entry
+id|new_node
 suffix:semicolon
 r_if
 c_cond
@@ -563,7 +731,9 @@ id|op-&gt;opcode
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -579,7 +749,7 @@ c_cond
 (paren
 (paren
 (paren
-id|ACPI_NAMED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|op
@@ -592,7 +762,9 @@ l_int|1
 )paren
 (brace
 r_return
+(paren
 id|AE_OK
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -603,12 +775,12 @@ id|acpi_ds_map_named_opcode_to_data_type
 id|op-&gt;opcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get the NTE/name from the earlier lookup&n;&t; * (It was saved in the *op structure)&n;&t; */
-id|entry
+multiline_comment|/*&n;&t; * Get the Node/name from the earlier lookup&n;&t; * (It was saved in the *op structure)&n;&t; */
+id|node
 op_assign
-id|op-&gt;acpi_named_object
+id|op-&gt;node
 suffix:semicolon
-multiline_comment|/*&n;&t; * Put the NTE on the object stack (Contains the ACPI Name of&n;&t; * this object)&n;&t; */
+multiline_comment|/*&n;&t; * Put the Node on the object stack (Contains the ACPI Name of&n;&t; * this object)&n;&t; */
 id|walk_state-&gt;operands
 (braket
 l_int|0
@@ -618,7 +790,7 @@ op_assign
 r_void
 op_star
 )paren
-id|entry
+id|node
 suffix:semicolon
 id|walk_state-&gt;num_operands
 op_assign
@@ -720,7 +892,7 @@ id|walk_state
 comma
 op_amp
 (paren
-id|new_entry
+id|new_node
 )paren
 )paren
 suffix:semicolon
@@ -733,18 +905,20 @@ id|status
 )paren
 )paren
 (brace
-multiline_comment|/* We could put the returned object (NTE) on the object stack for later, but&n;&t;&t;&t; * for now, we will put it in the &quot;op&quot; object that the parser uses, so we&n;&t;&t;&t; * can get it again at the end of this scope&n;&t;&t;&t; */
-id|op-&gt;acpi_named_object
+multiline_comment|/* We could put the returned object (Node) on the object stack for later, but&n;&t;&t;&t; * for now, we will put it in the &quot;op&quot; object that the parser uses, so we&n;&t;&t;&t; * can get it again at the end of this scope&n;&t;&t;&t; */
+id|op-&gt;node
 op_assign
-id|new_entry
+id|new_node
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * If this is NOT a control method, we need to evaluate this opcode now.&n;&t;&t;&t; */
+multiline_comment|/* THIS WON&quot;T WORK. Must execute all operands like Add().  =&gt; Must do an execute pass&n;&t;&t;&t;if (!Walk_state-&gt;Method_desc) {&n;&t;&t;&t;&t;Status = Acpi_ds_exec_end_op (Walk_state, Op);&n;&t;&t;&t;}&n;&t;&t;&t;*/
 )brace
 r_break
 suffix:semicolon
 r_case
 id|AML_METHODCALL_OP
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Lookup the method name and save the NTE&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Lookup the method name and save the Node&n;&t;&t; */
 id|status
 op_assign
 id|acpi_ns_lookup
@@ -765,7 +939,7 @@ id|walk_state
 comma
 op_amp
 (paren
-id|new_entry
+id|new_node
 )paren
 )paren
 suffix:semicolon
@@ -781,10 +955,10 @@ id|status
 multiline_comment|/* has name already been resolved by here ??*/
 multiline_comment|/* TBD: [Restructure] Make sure that what we found is indeed a method! */
 multiline_comment|/* We didn&squot;t search for a method on purpose, to see if the name would resolve! */
-multiline_comment|/* We could put the returned object (NTE) on the object stack for later, but&n;&t;&t;&t; * for now, we will put it in the &quot;op&quot; object that the parser uses, so we&n;&t;&t;&t; * can get it again at the end of this scope&n;&t;&t;&t; */
-id|op-&gt;acpi_named_object
+multiline_comment|/* We could put the returned object (Node) on the object stack for later, but&n;&t;&t;&t; * for now, we will put it in the &quot;op&quot; object that the parser uses, so we&n;&t;&t;&t; * can get it again at the end of this scope&n;&t;&t;&t; */
+id|op-&gt;node
 op_assign
-id|new_entry
+id|new_node
 suffix:semicolon
 )brace
 r_break
@@ -802,7 +976,7 @@ comma
 (paren
 id|ACPI_HANDLE
 )paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 r_if
@@ -833,7 +1007,7 @@ comma
 (paren
 id|ACPI_HANDLE
 )paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 r_if
@@ -870,10 +1044,7 @@ id|acpi_ds_create_field
 (paren
 id|op
 comma
-(paren
-id|ACPI_HANDLE
-)paren
-id|arg-&gt;acpi_named_object
+id|arg-&gt;node
 comma
 id|walk_state
 )paren
@@ -896,7 +1067,7 @@ comma
 (paren
 id|ACPI_HANDLE
 )paren
-id|arg-&gt;acpi_named_object
+id|arg-&gt;node
 comma
 id|walk_state
 )paren
@@ -916,10 +1087,7 @@ id|acpi_ds_create_bank_field
 (paren
 id|op
 comma
-(paren
-id|ACPI_HANDLE
-)paren
-id|arg-&gt;acpi_named_object
+id|arg-&gt;node
 comma
 id|walk_state
 )paren
@@ -934,7 +1102,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|entry-&gt;object
+id|node-&gt;object
 )paren
 (brace
 id|status
@@ -943,30 +1111,30 @@ id|acpi_aml_exec_create_method
 (paren
 (paren
 (paren
-id|ACPI_DEFERRED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|op
 )paren
 op_member_access_from_pointer
-id|body
+id|data
 comma
 (paren
 (paren
-id|ACPI_DEFERRED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|op
 )paren
 op_member_access_from_pointer
-id|body_length
+id|length
 comma
 id|arg-&gt;value.integer
 comma
 (paren
 id|ACPI_HANDLE
 )paren
-id|entry
+id|node
 )paren
 suffix:semicolon
 )brace
@@ -1043,6 +1211,15 @@ suffix:semicolon
 r_case
 id|AML_REGION_OP
 suffix:colon
+r_if
+c_cond
+(paren
+id|node-&gt;object
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * The Op_region is not fully parsed at this time. Only valid argument is the Space_id.&n;&t;&t; * (We must save the address of the AML of the address and length operands)&n;&t;&t; */
 id|status
 op_assign
@@ -1050,23 +1227,23 @@ id|acpi_aml_exec_create_region
 (paren
 (paren
 (paren
-id|ACPI_DEFERRED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|op
 )paren
 op_member_access_from_pointer
-id|body
+id|data
 comma
 (paren
 (paren
-id|ACPI_DEFERRED_OP
+id|ACPI_PARSE2_OBJECT
 op_star
 )paren
 id|op
 )paren
 op_member_access_from_pointer
-id|body_length
+id|length
 comma
 id|arg-&gt;value.integer
 comma
@@ -1115,11 +1292,11 @@ id|AML_NAME_OP
 suffix:colon
 id|status
 op_assign
-id|acpi_ds_create_named_object
+id|acpi_ds_create_node
 (paren
 id|walk_state
 comma
-id|entry
+id|node
 comma
 id|op
 )paren
@@ -1138,7 +1315,7 @@ suffix:semicolon
 )brace
 id|cleanup
 suffix:colon
-multiline_comment|/* Remove the NTE pushed at the very beginning */
+multiline_comment|/* Remove the Node pushed at the very beginning */
 id|acpi_ds_obj_stack_pop
 (paren
 l_int|1

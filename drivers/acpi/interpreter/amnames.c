@@ -1,16 +1,15 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amnames - interpreter/scanner name load/execute&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amnames - interpreter/scanner name load/execute&n; *              $Revision: 70 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          INTERPRETER
 id|MODULE_NAME
 (paren
 l_string|&quot;amnames&quot;
 )paren
-suffix:semicolon
 multiline_comment|/* AML Package Length encodings */
 DECL|macro|ACPI_AML_PACKAGE_TYPE1
 mdefine_line|#define ACPI_AML_PACKAGE_TYPE1   0x40
@@ -21,7 +20,7 @@ mdefine_line|#define ACPI_AML_PACKAGE_TYPE3   0x400000
 DECL|macro|ACPI_AML_PACKAGE_TYPE4
 mdefine_line|#define ACPI_AML_PACKAGE_TYPE4   0x40000000
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_allocate_name_string&n; *&n; * PARAMETERS:  Prefix_count        - Count of parent levels. Special cases:&n; *                                    (-1) = root,  0 = none&n; *              Num_name_segs       - count of 4-character name segments&n; *&n; * RETURN:      A pointer to the allocated string segment.  This segment must&n; *              be deleted by the caller.&n; *&n; * DESCRIPTION: Allocate a buffer for a name string. Ensure allocated name&n; *              string is long enough, and set up prefix if any.&n; *&n; ******************************************************************************/
-r_char
+id|NATIVE_CHAR
 op_star
 DECL|function|acpi_aml_allocate_name_string
 id|acpi_aml_allocate_name_string
@@ -33,11 +32,11 @@ id|u32
 id|num_name_segs
 )paren
 (brace
-r_char
+id|NATIVE_CHAR
 op_star
 id|temp_ptr
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|name_string
 suffix:semicolon
@@ -95,9 +94,6 @@ id|name_string
 op_assign
 id|acpi_cm_allocate
 (paren
-(paren
-id|ACPI_SIZE
-)paren
 id|size_needed
 )paren
 suffix:semicolon
@@ -215,81 +211,6 @@ id|name_string
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_decode_package_length&n; *&n; * PARAMETERS:  Last_pkg_len        - latest value decoded by Do_pkg_length() for&n; *                                    most recently examined package or field&n; *&n; * RETURN:      Number of bytes contained in package length encoding&n; *&n; * DESCRIPTION: Decodes the Package Length. Upper 2 bits are are used to&n; *              tell if type 1, 2, 3, or 4.&n; *                  0x3F        = Max 1 byte encoding,&n; *                  0xFFF       = Max 2 byte encoding,&n; *                  0xFFFFF     = Max 3 Byte encoding,&n; *                  0xFFFFFFFFF = Max 4 Byte encoding.&n; *&n; ******************************************************************************/
-id|u32
-DECL|function|acpi_aml_decode_package_length
-id|acpi_aml_decode_package_length
-(paren
-id|u32
-id|last_pkg_len
-)paren
-(brace
-id|u32
-id|num_bytes
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|last_pkg_len
-OL
-id|ACPI_AML_PACKAGE_TYPE1
-)paren
-(brace
-id|num_bytes
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|last_pkg_len
-OL
-id|ACPI_AML_PACKAGE_TYPE2
-)paren
-(brace
-id|num_bytes
-op_assign
-l_int|2
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|last_pkg_len
-OL
-id|ACPI_AML_PACKAGE_TYPE3
-)paren
-(brace
-id|num_bytes
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|last_pkg_len
-OL
-id|ACPI_AML_PACKAGE_TYPE4
-)paren
-(brace
-id|num_bytes
-op_assign
-l_int|4
-suffix:semicolon
-)brace
-r_return
-(paren
-id|num_bytes
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_name_segment&n; *&n; * PARAMETERS:  Interpreter_mode    - Current running mode (load1/Load2/Exec)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Execute a name segment (4 bytes)&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_name_segment
@@ -300,7 +221,7 @@ op_star
 op_star
 id|in_aml_address
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 id|name_string
 )paren
@@ -317,10 +238,10 @@ id|status
 op_assign
 id|AE_OK
 suffix:semicolon
-id|s32
+id|u32
 id|index
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 id|char_buf
 (braket
 l_int|5
@@ -474,7 +395,7 @@ id|u8
 op_star
 id|in_aml_address
 comma
-r_char
+id|NATIVE_CHAR
 op_star
 op_star
 id|out_name_string
@@ -495,16 +416,16 @@ id|aml_address
 op_assign
 id|in_aml_address
 suffix:semicolon
-r_char
+id|NATIVE_CHAR
 op_star
 id|name_string
 op_assign
 l_int|NULL
 suffix:semicolon
-id|s32
+id|u32
 id|num_segments
 suffix:semicolon
-id|s32
+id|u32
 id|prefix_count
 op_assign
 l_int|0
@@ -513,6 +434,11 @@ id|u8
 id|prefix
 op_assign
 l_int|0
+suffix:semicolon
+id|u8
+id|has_prefix
+op_assign
+id|FALSE
 suffix:semicolon
 r_if
 c_cond
@@ -588,8 +514,15 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Remember that we have a Root_prefix --&n;&t;&t;&t; * see comment in Acpi_aml_allocate_name_string()&n;&t;&t;&t; */
 id|prefix_count
 op_assign
+(paren
+id|u32
+)paren
 op_minus
 l_int|1
+suffix:semicolon
+id|has_prefix
+op_assign
+id|TRUE
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -617,6 +550,10 @@ id|aml_address
 op_eq
 id|AML_PARENT_PREFIX
 )paren
+suffix:semicolon
+id|has_prefix
+op_assign
+id|TRUE
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -665,10 +602,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Ensure Prefix_count != 0 to remember processing a prefix */
-id|prefix_count
-op_add_assign
-l_int|2
+multiline_comment|/* Indicate that we processed a prefix */
+id|has_prefix
+op_assign
+id|TRUE
 suffix:semicolon
 id|status
 op_assign
@@ -741,10 +678,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Ensure Prefix_count != 0 to remember processing a prefix */
-id|prefix_count
-op_add_assign
-l_int|2
+multiline_comment|/* Indicate that we processed a prefix */
+id|has_prefix
+op_assign
+id|TRUE
 suffix:semicolon
 r_while
 c_loop
@@ -853,9 +790,7 @@ id|AE_CTRL_PENDING
 op_eq
 id|status
 op_logical_and
-id|prefix_count
-op_ne
-l_int|0
+id|has_prefix
 )paren
 (brace
 multiline_comment|/* Ran out of segments after processing a prefix */

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: amlcode.h - Definitions for AML, as included in &quot;definition blocks&quot;&n; *                   Declarations and definitions contained herein are derived&n; *                   directly from the ACPI specification.&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: amlcode.h - Definitions for AML, as included in &quot;definition blocks&quot;&n; *                   Declarations and definitions contained herein are derived&n; *                   directly from the ACPI specification.&n; *       $Revision: 39 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __AMLCODE_H__
 DECL|macro|__AMLCODE_H__
@@ -156,8 +156,8 @@ DECL|macro|AML_ELSE_OP
 mdefine_line|#define AML_ELSE_OP                 (u16) 0xa1
 DECL|macro|AML_WHILE_OP
 mdefine_line|#define AML_WHILE_OP                (u16) 0xa2
-DECL|macro|AML_NOOP_CODE
-mdefine_line|#define AML_NOOP_CODE               (u16) 0xa3
+DECL|macro|AML_NOOP_OP
+mdefine_line|#define AML_NOOP_OP                 (u16) 0xa3
 DECL|macro|AML_RETURN_OP
 mdefine_line|#define AML_RETURN_OP               (u16) 0xa4
 DECL|macro|AML_BREAK_OP
@@ -197,12 +197,12 @@ DECL|macro|AML_RESET_OP
 mdefine_line|#define AML_RESET_OP                (u16) 0x5b26
 DECL|macro|AML_RELEASE_OP
 mdefine_line|#define AML_RELEASE_OP              (u16) 0x5b27
-DECL|macro|AML_FROM_BCDOP
-mdefine_line|#define AML_FROM_BCDOP              (u16) 0x5b28
-DECL|macro|AML_TO_BCDOP
-mdefine_line|#define AML_TO_BCDOP                (u16) 0x5b29
-DECL|macro|AML_UN_LOAD_OP
-mdefine_line|#define AML_UN_LOAD_OP              (u16) 0x5b2a
+DECL|macro|AML_FROM_BCD_OP
+mdefine_line|#define AML_FROM_BCD_OP             (u16) 0x5b28
+DECL|macro|AML_TO_BCD_OP
+mdefine_line|#define AML_TO_BCD_OP               (u16) 0x5b29
+DECL|macro|AML_UNLOAD_OP
+mdefine_line|#define AML_UNLOAD_OP               (u16) 0x5b2a
 DECL|macro|AML_REVISION_OP
 mdefine_line|#define AML_REVISION_OP             (u16) 0x5b30
 DECL|macro|AML_DEBUG_OP
@@ -232,7 +232,7 @@ DECL|macro|AML_LLESSEQUAL_OP
 mdefine_line|#define AML_LLESSEQUAL_OP           (u16) 0x9294
 DECL|macro|AML_LNOTEQUAL_OP
 mdefine_line|#define AML_LNOTEQUAL_OP            (u16) 0x9293
-multiline_comment|/* Internal opcodes */
+multiline_comment|/*&n; * Internal opcodes&n; * Use only &quot;Unknown&quot; AML opcodes, don&squot;t attempt to use&n; * any valid ACPI ASCII values (A-Z, 0-9, &squot;-&squot;)&n; */
 DECL|macro|AML_NAMEPATH_OP
 mdefine_line|#define AML_NAMEPATH_OP             (u16) 0x002d
 DECL|macro|AML_NAMEDFIELD_OP
@@ -247,8 +247,8 @@ DECL|macro|AML_STATICSTRING_OP
 mdefine_line|#define AML_STATICSTRING_OP         (u16) 0x0034
 DECL|macro|AML_METHODCALL_OP
 mdefine_line|#define AML_METHODCALL_OP           (u16) 0x0035
-multiline_comment|/*&n; * argument types&n; */
-multiline_comment|/*&n;#define AML_ASCIICHARLIST_ARG       &squot;A&squot;&n;#define AML_BYTEDATA_ARG            &squot;b&squot;&n;#define AML_BYTELIST_ARG            &squot;B&squot;&n;#define AML_DWORDDATA_ARG           &squot;d&squot;&n;#define AML_DATAOBJECT_ARG          &squot;o&squot;&n;#define AML_DATAOBJECTLIST_ARG      &squot;O&squot;&n;#define AML_FIELDLIST_ARG           &squot;F&squot;&n;#define AML_NAMESTRING_ARG          &squot;n&squot;&n;#define AML_OBJECTLIST_ARG          &squot;P&squot;&n;#define AML_PKGLENGTH_ARG           &squot;p&squot;&n;#define AML_SUPERNAME_ARG           &squot;s&squot;&n;#define AML_TARGET_ARG              &squot;l&squot;&n;#define AML_TERMARG_ARG             &squot;t&squot;&n;#define AML_TERMLIST_ARG            &squot;T&squot;&n;#define AML_WORDDATA_ARG            &squot;w&squot;&n;*/
+DECL|macro|AML_RETURN_VALUE_OP
+mdefine_line|#define AML_RETURN_VALUE_OP         (u16) 0x0036
 DECL|macro|ARG_NONE
 mdefine_line|#define ARG_NONE                    0x0
 multiline_comment|/*&n; * Argument types for the AML Parser&n; * Each field in the Arg_types u32 is 5 bits, allowing for a maximum of 6 arguments.&n; * There can be up to 31 unique argument types&n; */
@@ -302,7 +302,7 @@ mdefine_line|#define ARGI_BUFFER                 0x07
 DECL|macro|ARGI_PACKAGE
 mdefine_line|#define ARGI_PACKAGE                0x08
 DECL|macro|ARGI_DATAOBJECT
-mdefine_line|#define ARGI_DATAOBJECT             0x09     /* Buffer, string, package or NTE reference - Used only by Size_of operator*/
+mdefine_line|#define ARGI_DATAOBJECT             0x09     /* Buffer, string, package or reference to a Node - Used only by Size_of operator*/
 DECL|macro|ARGI_COMPLEXOBJ
 mdefine_line|#define ARGI_COMPLEXOBJ             0x0A     /* Buffer or package */
 DECL|macro|ARGI_MUTEX
@@ -373,8 +373,10 @@ DECL|macro|OPTYPE_RECONFIGURATION
 mdefine_line|#define OPTYPE_RECONFIGURATION      19
 DECL|macro|OPTYPE_NAMED_OBJECT
 mdefine_line|#define OPTYPE_NAMED_OBJECT         20
+DECL|macro|OPTYPE_RETURN
+mdefine_line|#define OPTYPE_RETURN               21
 DECL|macro|OPTYPE_BOGUS
-mdefine_line|#define OPTYPE_BOGUS                21
+mdefine_line|#define OPTYPE_BOGUS                22
 multiline_comment|/* Comparison operation codes for Match_op operator */
 r_typedef
 r_enum
@@ -541,23 +543,7 @@ id|NUM_OPCODES
 )braket
 suffix:semicolon
 r_extern
-r_char
-op_star
-id|acpi_gbl_short_ops
-(braket
-id|NUM_OPCODES
-)braket
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|acpi_gbl_long_ops
-(braket
-id|NUM_OPCODES
-)braket
-suffix:semicolon
-r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_region_types
 (braket
@@ -565,7 +551,7 @@ id|NUM_REGION_TYPES
 )braket
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_match_ops
 (braket
@@ -573,7 +559,7 @@ id|NUM_MATCH_OPS
 )braket
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_access_types
 (braket
@@ -581,7 +567,7 @@ id|NUM_ACCESS_TYPES
 )braket
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_update_rules
 (braket
@@ -589,7 +575,7 @@ id|NUM_UPDATE_RULES
 )braket
 suffix:semicolon
 r_extern
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_FEnames
 (braket
@@ -600,7 +586,7 @@ multiline_comment|/*&n; * AML tables&n; */
 macro_line|#ifdef DEFINE_AML_GLOBALS
 multiline_comment|/* Data used in keeping track of fields */
 DECL|variable|acpi_gbl_FEnames
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_FEnames
 (braket
@@ -616,7 +602,7 @@ suffix:semicolon
 multiline_comment|/* FE = Field Element */
 multiline_comment|/* Region type decoding */
 DECL|variable|acpi_gbl_region_types
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_region_types
 (braket
@@ -636,7 +622,7 @@ l_string|&quot;SMBus&quot;
 )brace
 suffix:semicolon
 DECL|variable|acpi_gbl_match_ops
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_match_ops
 (braket
@@ -661,7 +647,7 @@ l_string|&quot;MGT&quot;
 suffix:semicolon
 multiline_comment|/* Access type decoding */
 DECL|variable|acpi_gbl_access_types
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_access_types
 (braket
@@ -686,7 +672,7 @@ l_string|&quot;SMBQuick_acc&quot;
 suffix:semicolon
 multiline_comment|/* Update rule decoding */
 DECL|variable|acpi_gbl_update_rules
-r_char
+id|NATIVE_CHAR
 op_star
 id|acpi_gbl_update_rules
 (braket

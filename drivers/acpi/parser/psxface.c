@@ -1,40 +1,32 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: psxface - Parser external interfaces&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: psxface - Parser external interfaces&n; *              $Revision: 36 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
-macro_line|#include &quot;parser.h&quot;
-macro_line|#include &quot;dispatch.h&quot;
-macro_line|#include &quot;interp.h&quot;
+macro_line|#include &quot;acparser.h&quot;
+macro_line|#include &quot;acdispat.h&quot;
+macro_line|#include &quot;acinterp.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
-macro_line|#include &quot;namesp.h&quot;
+macro_line|#include &quot;acnamesp.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          PARSER
 id|MODULE_NAME
 (paren
 l_string|&quot;psxface&quot;
 )paren
-suffix:semicolon
-DECL|variable|acpi_gbl_parser_id
-r_char
-op_star
-id|acpi_gbl_parser_id
-op_assign
-l_string|&quot;Non-recursive AML Parser&quot;
-suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_psx_execute&n; *&n; * PARAMETERS:  Obj_desc            - A method object containing both the AML&n; *                                    address and length.&n; *              **Params            - List of parameters to pass to method,&n; *                                    terminated by NULL. Params itself may be&n; *                                    NULL if no parameters are being passed.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Execute a control method&n; *&n; ****************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_psx_execute
 id|acpi_psx_execute
 (paren
-id|ACPI_NAMED_OBJECT
+id|ACPI_NAMESPACE_NODE
 op_star
-id|method_entry
+id|method_node
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|params
 comma
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 op_star
 id|return_obj_desc
@@ -43,19 +35,23 @@ id|return_obj_desc
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|ACPI_OBJECT_INTERNAL
+id|ACPI_OPERAND_OBJECT
 op_star
 id|obj_desc
 suffix:semicolon
 id|u32
 id|i
 suffix:semicolon
-multiline_comment|/* Validate the NTE and get the attached object */
+id|ACPI_PARSE_OBJECT
+op_star
+id|op
+suffix:semicolon
+multiline_comment|/* Validate the Node and get the attached object */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|method_entry
+id|method_node
 )paren
 (brace
 r_return
@@ -68,7 +64,7 @@ id|obj_desc
 op_assign
 id|acpi_ns_get_attached_object
 (paren
-id|method_entry
+id|method_node
 )paren
 suffix:semicolon
 r_if
@@ -84,12 +80,12 @@ id|AE_NULL_OBJECT
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Parse method if necessary, wait on concurrency semaphore */
+multiline_comment|/* Init for new method, wait on concurrency semaphore */
 id|status
 op_assign
 id|acpi_ds_begin_method_execution
 (paren
-id|method_entry
+id|method_node
 comma
 id|obj_desc
 )paren
@@ -142,28 +138,108 @@ id|i
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Method is parsed and ready to execute&n;&t; * The walk of the parse tree is where we actually execute the method&n;&t; */
+multiline_comment|/*&n;&t; * Perform the first pass parse of the method to enter any&n;&t; * named objects that it creates into the namespace&n;&t; */
+multiline_comment|/* Create and init a Root Node */
+id|op
+op_assign
+id|acpi_ps_alloc_op
+(paren
+id|AML_SCOPE_OP
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+r_return
+(paren
+id|AE_NO_MEMORY
+)paren
+suffix:semicolon
+)brace
 id|status
 op_assign
-id|acpi_ps_walk_parsed_aml
+id|acpi_ps_parse_aml
 (paren
-id|obj_desc-&gt;method.parser_op
+id|op
 comma
-id|obj_desc-&gt;method.parser_op
+id|obj_desc-&gt;method.pcode
 comma
-id|obj_desc
+id|obj_desc-&gt;method.pcode_length
 comma
-id|method_entry-&gt;child_table
+id|ACPI_PARSE_LOAD_PASS1
+op_or
+id|ACPI_PARSE_DELETE_TREE
+comma
+id|method_node
 comma
 id|params
 comma
 id|return_obj_desc
 comma
-id|obj_desc-&gt;method.owning_id
+id|acpi_ds_load1_begin_op
+comma
+id|acpi_ds_load1_end_op
+)paren
+suffix:semicolon
+id|acpi_ps_delete_parse_tree
+(paren
+id|op
+)paren
+suffix:semicolon
+multiline_comment|/* Create and init a Root Node */
+id|op
+op_assign
+id|acpi_ps_alloc_op
+(paren
+id|AML_SCOPE_OP
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|op
+)paren
+(brace
+r_return
+(paren
+id|AE_NO_MEMORY
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * The walk of the parse tree is where we actually execute the method&n;&t; */
+id|status
+op_assign
+id|acpi_ps_parse_aml
+(paren
+id|op
+comma
+id|obj_desc-&gt;method.pcode
+comma
+id|obj_desc-&gt;method.pcode_length
+comma
+id|ACPI_PARSE_EXECUTE
+op_or
+id|ACPI_PARSE_DELETE_TREE
+comma
+id|method_node
+comma
+id|params
+comma
+id|return_obj_desc
 comma
 id|acpi_ds_exec_begin_op
 comma
 id|acpi_ds_exec_end_op
+)paren
+suffix:semicolon
+id|acpi_ps_delete_parse_tree
+(paren
+id|op
 )paren
 suffix:semicolon
 r_if

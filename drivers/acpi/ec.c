@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ec.c - Embedded controller support&n; *&n; *  Copyright (C) 2000 Andrew Henroid&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
+multiline_comment|/*&n; *&t;ec.c - Embedded controller support&n; *&n; *&t;Copyright (C) 2000 Andrew Henroid&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -8,15 +8,14 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;driver.h&quot;
-r_enum
-(brace
-DECL|enumerator|ACPI_EC_HID
-id|ACPI_EC_HID
-op_assign
-l_int|0x090cd041
-comma
-)brace
-suffix:semicolon
+DECL|macro|_COMPONENT
+mdefine_line|#define _COMPONENT&t;OS_DEPENDENT
+id|MODULE_NAME
+(paren
+l_string|&quot;ec&quot;
+)paren
+DECL|macro|ACPI_EC_HID
+mdefine_line|#define ACPI_EC_HID&t;&quot;PNP0A09&quot;
 r_enum
 (brace
 DECL|enumerator|ACPI_EC_SMI
@@ -322,7 +321,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get processor information&n; */
+multiline_comment|/*&n; * Get Embedded Controller information&n; */
 r_static
 id|ACPI_STATUS
 DECL|function|acpi_find_ec
@@ -345,11 +344,14 @@ op_star
 id|value
 )paren
 (brace
-id|ACPI_BUFFER
-id|buf
+id|ACPI_DEVICE_INFO
+id|dev_info
 suffix:semicolon
 id|ACPI_OBJECT
 id|obj
+suffix:semicolon
+id|ACPI_BUFFER
+id|buf
 suffix:semicolon
 id|RESOURCE
 op_star
@@ -358,18 +360,6 @@ suffix:semicolon
 r_int
 id|gpe
 suffix:semicolon
-id|buf.length
-op_assign
-r_sizeof
-(paren
-id|obj
-)paren
-suffix:semicolon
-id|buf.pointer
-op_assign
-op_amp
-id|obj
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -377,27 +367,32 @@ op_logical_neg
 id|ACPI_SUCCESS
 c_func
 (paren
-id|acpi_evaluate_object
+id|acpi_get_object_info
 c_func
 (paren
 id|handle
 comma
-l_string|&quot;_HID&quot;
-comma
-l_int|NULL
-comma
 op_amp
-id|buf
+id|dev_info
 )paren
 )paren
 op_logical_or
-id|obj.type
-op_ne
-id|ACPI_TYPE_NUMBER
+op_logical_neg
+(paren
+id|dev_info.valid
+op_amp
+id|ACPI_VALID_HID
+)paren
 op_logical_or
-id|obj.number.value
+l_int|0
 op_ne
+id|STRCMP
+c_func
+(paren
+id|dev_info.hardware_id
+comma
 id|ACPI_EC_HID
+)paren
 )paren
 r_return
 id|AE_OK
@@ -602,9 +597,21 @@ l_int|NULL
 )paren
 )paren
 )paren
+(brace
+id|DEBUG_PRINT
+c_func
+(paren
+id|ACPI_ERROR
+comma
+(paren
+l_string|&quot;Could not install GPE handler for EC.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 id|AE_OK
 suffix:semicolon
+)brace
 r_return
 id|AE_OK
 suffix:semicolon
@@ -624,7 +631,7 @@ id|ACPI_TYPE_DEVICE
 comma
 id|ACPI_ROOT_OBJECT
 comma
-id|ACPI_INT32_MAX
+id|ACPI_UINT32_MAX
 comma
 id|acpi_find_ec
 comma

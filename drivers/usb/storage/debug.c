@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; * Debugging Functions Source Code File&n; *&n; * $Id: debug.c,v 1.3 2000/08/25 00:13:51 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; * Debugging Functions Source Code File&n; *&n; * $Id: debug.c,v 1.4 2000/09/04 02:12:47 groovyjava Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;debug.h&quot;
 DECL|function|usb_stor_show_command
 r_void
@@ -1312,5 +1312,1076 @@ l_int|15
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|function|usb_stor_show_sense
+r_void
+id|usb_stor_show_sense
+c_func
+(paren
+r_int
+r_char
+id|key
+comma
+r_int
+r_char
+id|asc
+comma
+r_int
+r_char
+id|ascq
+)paren
+(brace
+r_char
+op_star
+id|keys
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;No Sense&quot;
+comma
+l_string|&quot;Recovered Error&quot;
+comma
+l_string|&quot;Not Ready&quot;
+comma
+l_string|&quot;Medium Error&quot;
+comma
+l_string|&quot;Hardware Error&quot;
+comma
+l_string|&quot;Illegal Request&quot;
+comma
+l_string|&quot;Unit Attention&quot;
+comma
+l_string|&quot;Data Protect&quot;
+comma
+l_string|&quot;Blank Check&quot;
+comma
+l_string|&quot;Vendor Specific&quot;
+comma
+l_string|&quot;Copy Aborted&quot;
+comma
+l_string|&quot;Aborted Command&quot;
+comma
+l_string|&quot;(Obsolete)&quot;
+comma
+l_string|&quot;Volume Overflow&quot;
+comma
+l_string|&quot;Miscompare&quot;
+)brace
+suffix:semicolon
+r_int
+r_int
+id|qual
+op_assign
+id|asc
+suffix:semicolon
+r_char
+op_star
+id|what
+op_assign
+l_int|0
+suffix:semicolon
+r_char
+op_star
+id|keystr
+op_assign
+l_int|0
+suffix:semicolon
+id|qual
+op_lshift_assign
+l_int|8
+suffix:semicolon
+id|qual
+op_or_assign
+id|ascq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|key
+OG
+l_int|0x0E
+)paren
+id|keystr
+op_assign
+l_string|&quot;(Unknown Key)&quot;
+suffix:semicolon
+r_else
+id|keystr
+op_assign
+id|keys
+(braket
+id|key
+)braket
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|qual
+)paren
+(brace
+r_case
+l_int|0x0000
+suffix:colon
+id|what
+op_assign
+l_string|&quot;no additional sense information&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0001
+suffix:colon
+id|what
+op_assign
+l_string|&quot;filemark detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0002
+suffix:colon
+id|what
+op_assign
+l_string|&quot;end of partition/medium detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0003
+suffix:colon
+id|what
+op_assign
+l_string|&quot;setmark detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0004
+suffix:colon
+id|what
+op_assign
+l_string|&quot;beginning of partition/medium detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0005
+suffix:colon
+id|what
+op_assign
+l_string|&quot;end of data detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0006
+suffix:colon
+id|what
+op_assign
+l_string|&quot;I/O process terminated&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0011
+suffix:colon
+id|what
+op_assign
+l_string|&quot;audio play operation in progress&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0012
+suffix:colon
+id|what
+op_assign
+l_string|&quot;audio play operation paused&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0013
+suffix:colon
+id|what
+op_assign
+l_string|&quot;audio play operation stopped due to error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0014
+suffix:colon
+id|what
+op_assign
+l_string|&quot;audio play operation successfully completed&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0015
+suffix:colon
+id|what
+op_assign
+l_string|&quot;no current audio status to return&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0016
+suffix:colon
+id|what
+op_assign
+l_string|&quot;operation in progress&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0017
+suffix:colon
+id|what
+op_assign
+l_string|&quot;cleaning requested&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0100
+suffix:colon
+id|what
+op_assign
+l_string|&quot;no index/sector signal&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0200
+suffix:colon
+id|what
+op_assign
+l_string|&quot;no seek complete&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0300
+suffix:colon
+id|what
+op_assign
+l_string|&quot;peripheral device write fault&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0301
+suffix:colon
+id|what
+op_assign
+l_string|&quot;no write current&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0302
+suffix:colon
+id|what
+op_assign
+l_string|&quot;excessive write errors&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0400
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, cause not reportable&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0401
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN in process of becoming ready&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0402
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, initializing cmd. required&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0403
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, manual intervention required&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0404
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, format in progress&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0405
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, rebuild in progress&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0406
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, recalculation in progress&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0407
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, operation in progress&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0408
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN not ready, long write in progress&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0500
+suffix:colon
+id|what
+op_assign
+l_string|&quot;LUN doesn&squot;t respond to selection&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0A00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;error log overflow&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0C04
+suffix:colon
+id|what
+op_assign
+l_string|&quot;compression check miscompare error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0C05
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data expansion occurred during compression&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0C06
+suffix:colon
+id|what
+op_assign
+l_string|&quot;block not compressible&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1102
+suffix:colon
+id|what
+op_assign
+l_string|&quot;error too long to correct&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1106
+suffix:colon
+id|what
+op_assign
+l_string|&quot;CIRC unrecovered error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1107
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data resynchronization error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x110D
+suffix:colon
+id|what
+op_assign
+l_string|&quot;decompression CRC error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x110E
+suffix:colon
+id|what
+op_assign
+l_string|&quot;can&squot;t decompress using declared algorithm&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x110F
+suffix:colon
+id|what
+op_assign
+l_string|&quot;error reading UPC/EAN number&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1110
+suffix:colon
+id|what
+op_assign
+l_string|&quot;error reading ISRC number&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1200
+suffix:colon
+id|what
+op_assign
+l_string|&quot;address mark not found for ID field&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1300
+suffix:colon
+id|what
+op_assign
+l_string|&quot;address mark not found for data field&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1403
+suffix:colon
+id|what
+op_assign
+l_string|&quot;end of data not found&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1404
+suffix:colon
+id|what
+op_assign
+l_string|&quot;block sequence error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1600
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data sync mark error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1601
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data sync error: data rewritten&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1602
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data sync error: recommend rewrite&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1603
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data sync error: data auto-reallocated&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1604
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data sync error: recommend reassignment&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1900
+suffix:colon
+id|what
+op_assign
+l_string|&quot;defect list error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1901
+suffix:colon
+id|what
+op_assign
+l_string|&quot;defect list not available&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1902
+suffix:colon
+id|what
+op_assign
+l_string|&quot;defect list error in primary list&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1903
+suffix:colon
+id|what
+op_assign
+l_string|&quot;defect list error in grown list&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x1C00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;defect list not found&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2400
+suffix:colon
+id|what
+op_assign
+l_string|&quot;invalid field in CDB&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2703
+suffix:colon
+id|what
+op_assign
+l_string|&quot;associated write protect&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2903
+suffix:colon
+id|what
+op_assign
+l_string|&quot;bus device reset function occurred&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2904
+suffix:colon
+id|what
+op_assign
+l_string|&quot;device internal reset&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2B00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;copy can&squot;t execute since host can&squot;t disconnect&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2C00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;command sequence error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2C03
+suffix:colon
+id|what
+op_assign
+l_string|&quot;current program area is not empty&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2C04
+suffix:colon
+id|what
+op_assign
+l_string|&quot;current program area is empty&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2F00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;commands cleared by another initiator&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3001
+suffix:colon
+id|what
+op_assign
+l_string|&quot;can&squot;t read medium: unknown format&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3002
+suffix:colon
+id|what
+op_assign
+l_string|&quot;can&squot;t read medium: incompatible format&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3003
+suffix:colon
+id|what
+op_assign
+l_string|&quot;cleaning cartridge installed&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3004
+suffix:colon
+id|what
+op_assign
+l_string|&quot;can&squot;t write medium: unknown format&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3005
+suffix:colon
+id|what
+op_assign
+l_string|&quot;can&squot;t write medium: incompatible format&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3006
+suffix:colon
+id|what
+op_assign
+l_string|&quot;can&squot;t format medium: incompatible medium&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3007
+suffix:colon
+id|what
+op_assign
+l_string|&quot;cleaning failure&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3008
+suffix:colon
+id|what
+op_assign
+l_string|&quot;can&squot;t write: application code mismatch&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3009
+suffix:colon
+id|what
+op_assign
+l_string|&quot;current session not fixated for append&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3201
+suffix:colon
+id|what
+op_assign
+l_string|&quot;defect list update failure&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3400
+suffix:colon
+id|what
+op_assign
+l_string|&quot;enclosure failure&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3500
+suffix:colon
+id|what
+op_assign
+l_string|&quot;enclosure services failure&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3502
+suffix:colon
+id|what
+op_assign
+l_string|&quot;enclosure services unavailable&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3503
+suffix:colon
+id|what
+op_assign
+l_string|&quot;enclosure services transfer failure&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3504
+suffix:colon
+id|what
+op_assign
+l_string|&quot;enclosure services transfer refused&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3B0F
+suffix:colon
+id|what
+op_assign
+l_string|&quot;end of medium reached&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x3F02
+suffix:colon
+id|what
+op_assign
+l_string|&quot;changed operating definition&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x4100
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data path failure (should use 40 NN)&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x4A00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;command phase error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x4B00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data phase error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x5100
+suffix:colon
+id|what
+op_assign
+l_string|&quot;erase failure&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x5200
+suffix:colon
+id|what
+op_assign
+l_string|&quot;cartridge fault&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6300
+suffix:colon
+id|what
+op_assign
+l_string|&quot;end of user area encountered on this track&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6600
+suffix:colon
+id|what
+op_assign
+l_string|&quot;automatic document feeder cover up&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6601
+suffix:colon
+id|what
+op_assign
+l_string|&quot;automatic document feeder lift up&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6602
+suffix:colon
+id|what
+op_assign
+l_string|&quot;document jam in auto doc feeder&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6603
+suffix:colon
+id|what
+op_assign
+l_string|&quot;document miss feed auto in doc feeder&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6700
+suffix:colon
+id|what
+op_assign
+l_string|&quot;configuration failure&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6701
+suffix:colon
+id|what
+op_assign
+l_string|&quot;configuration of incapable LUN&squot;s failed&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6702
+suffix:colon
+id|what
+op_assign
+l_string|&quot;add logical unit failed&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6706
+suffix:colon
+id|what
+op_assign
+l_string|&quot;attachment of logical unit failed&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6707
+suffix:colon
+id|what
+op_assign
+l_string|&quot;creation of logical unit failed&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6900
+suffix:colon
+id|what
+op_assign
+l_string|&quot;data loss on logical unit&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x6E00
+suffix:colon
+id|what
+op_assign
+l_string|&quot;command to logical unit failed&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x7100
+suffix:colon
+id|what
+op_assign
+l_string|&quot;decompression exception long algorithm ID&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x7204
+suffix:colon
+id|what
+op_assign
+l_string|&quot;empty or partially written reserved track&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x7300
+suffix:colon
+id|what
+op_assign
+l_string|&quot;CD control error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+id|asc
+op_eq
+l_int|0x40
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;%s: diagnostic failure on component&quot;
+l_string|&quot; %02X&bslash;n&quot;
+comma
+id|keystr
+comma
+id|ascq
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|asc
+op_eq
+l_int|0x70
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;%s: decompression exception short&quot;
+l_string|&quot; algorithm ID of %02X&bslash;n&quot;
+comma
+id|keystr
+comma
+id|ascq
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|what
+op_assign
+l_string|&quot;(unknown ASC/ASCQ)&quot;
+suffix:semicolon
+)brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;%s: %s&bslash;n&quot;
+comma
+id|keystr
+comma
+id|what
+)paren
+suffix:semicolon
 )brace
 eof

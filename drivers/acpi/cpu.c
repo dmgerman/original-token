@@ -5,6 +5,12 @@ macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/acpi.h&gt;
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;driver.h&quot;
+DECL|macro|_COMPONENT
+mdefine_line|#define _COMPONENT&t;OS_DEPENDENT
+id|MODULE_NAME
+(paren
+l_string|&quot;cpu&quot;
+)paren
 DECL|variable|acpi_c2_exit_latency
 r_int
 r_int
@@ -54,6 +60,13 @@ r_int
 id|acpi_c3_tested
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|acpi_max_c_state
+r_static
+r_int
+id|acpi_max_c_state
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n; * Clear busmaster activity flag&n; */
 r_static
@@ -255,6 +268,10 @@ c_cond
 id|sleep_level
 op_eq
 l_int|1
+op_logical_or
+id|acpi_max_c_state
+OL
+l_int|2
 )paren
 r_goto
 id|sleep1
@@ -265,6 +282,10 @@ c_cond
 id|sleep_level
 op_eq
 l_int|2
+op_logical_or
+id|acpi_max_c_state
+OL
+l_int|3
 )paren
 r_goto
 id|sleep2
@@ -667,6 +688,10 @@ c_cond
 id|time
 OG
 id|acpi_c3_enter_latency
+op_logical_and
+id|acpi_max_c_state
+op_ge
+l_int|3
 )paren
 r_goto
 id|sleep3
@@ -743,6 +768,10 @@ c_cond
 id|time
 OG
 id|acpi_c2_enter_latency
+op_logical_and
+id|acpi_max_c_state
+op_ge
+l_int|2
 )paren
 r_goto
 id|sleep2
@@ -948,7 +977,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ACPI: C2 supported&bslash;n&quot;
+l_string|&quot;ACPI: C2&quot;
 )paren
 suffix:semicolon
 id|acpi_c2_exit_latency
@@ -960,7 +989,10 @@ l_int|2
 dot
 id|latency
 suffix:semicolon
-)brace
+id|acpi_max_c_state
+op_assign
+l_int|2
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -977,8 +1009,7 @@ id|MAX_CX_STATE_LATENCY
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;ACPI: C3 supported&bslash;n&quot;
+l_string|&quot;, C3 supported&bslash;n&quot;
 )paren
 suffix:semicolon
 id|acpi_c3_exit_latency
@@ -990,6 +1021,20 @@ l_int|3
 dot
 id|latency
 suffix:semicolon
+id|acpi_max_c_state
+op_assign
+l_int|3
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; supported&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 id|memset
 c_func
@@ -1106,7 +1151,7 @@ id|ACPI_TYPE_PROCESSOR
 comma
 id|ACPI_ROOT_OBJECT
 comma
-id|ACPI_INT32_MAX
+id|ACPI_UINT32_MAX
 comma
 id|acpi_find_cpu
 comma
