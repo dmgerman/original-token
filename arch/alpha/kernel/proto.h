@@ -1413,7 +1413,8 @@ r_void
 id|__smp_callin
 c_func
 (paren
-r_void
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* entry.S */

@@ -774,6 +774,7 @@ r_int
 )paren
 suffix:semicolon
 r_static
+r_inline
 r_struct
 id|thread_struct
 op_star

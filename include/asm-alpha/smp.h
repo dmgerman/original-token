@@ -14,6 +14,11 @@ r_int
 r_int
 id|loops_per_sec
 suffix:semicolon
+DECL|member|last_asn
+r_int
+r_int
+id|last_asn
+suffix:semicolon
 DECL|member|pgd_cache
 r_int
 r_int

@@ -54,11 +54,6 @@ r_int
 r_int
 id|max_dma_address
 suffix:semicolon
-DECL|member|mmu_context_mask
-r_int
-r_int
-id|mmu_context_mask
-suffix:semicolon
 DECL|member|irq_probe_mask
 r_int
 r_int

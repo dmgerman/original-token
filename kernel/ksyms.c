@@ -1830,13 +1830,6 @@ id|si_meminfo
 )paren
 suffix:semicolon
 multiline_comment|/* Added to make file system as module */
-DECL|variable|set_writetime
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|set_writetime
-)paren
-suffix:semicolon
 DECL|variable|sys_tz
 id|EXPORT_SYMBOL
 c_func

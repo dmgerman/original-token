@@ -2543,7 +2543,7 @@ id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
 op_assign
-l_int|0x0180
+id|CIA_jd
 suffix:semicolon
 id|mb
 c_func
@@ -3081,6 +3081,27 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* magic */
+id|draina
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cia_pci_clr_err
+c_func
+(paren
+)paren
+suffix:semicolon
 id|wrmces
 c_func
 (paren

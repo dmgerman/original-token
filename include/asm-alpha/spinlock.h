@@ -4,41 +4,41 @@ mdefine_line|#define _ALPHA_SPINLOCK_H
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * These are the generic versions of the spinlocks&n; * and read-write locks.. We should actually do a&n; * &lt;linux/spinlock.h&gt; with all of this. Oh, well.&n; */
 DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;do { local_irq_save(flags);       spin_lock(lock); } while (0)
+mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;  do { local_irq_save(flags); spin_lock(lock); } while (0)
 DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(lock)&t;&t;&t;do { local_irq_disable();         spin_lock(lock); } while (0)
+mdefine_line|#define spin_lock_irq(lock) &bslash;&n;  do { local_irq_disable(); spin_lock(lock); } while (0)
 DECL|macro|spin_lock_bh
-mdefine_line|#define spin_lock_bh(lock)&t;&t;&t;do { local_bh_disable();          spin_lock(lock); } while (0)
+mdefine_line|#define spin_lock_bh(lock) &bslash;&n;  do { local_bh_disable(); spin_lock(lock); } while (0)
 DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;do { local_irq_save(flags);       read_lock(lock); } while (0)
+mdefine_line|#define read_lock_irqsave(lock, flags) &bslash;&n;  do { local_irq_save(flags); read_lock(lock); } while (0)
 DECL|macro|read_lock_irq
-mdefine_line|#define read_lock_irq(lock)&t;&t;&t;do { local_irq_disable();         read_lock(lock); } while (0)
+mdefine_line|#define read_lock_irq(lock) &bslash;&n;  do { local_irq_disable(); read_lock(lock); } while (0)
 DECL|macro|read_lock_bh
-mdefine_line|#define read_lock_bh(lock)&t;&t;&t;do { local_bh_disable();          read_lock(lock); } while (0)
+mdefine_line|#define read_lock_bh(lock) &bslash;&n;  do { local_bh_disable(); read_lock(lock); } while (0)
 DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;do { local_irq_save(flags);      write_lock(lock); } while (0)
+mdefine_line|#define write_lock_irqsave(lock, flags) &bslash;&n;  do { local_irq_save(flags); write_lock(lock); } while (0)
 DECL|macro|write_lock_irq
-mdefine_line|#define write_lock_irq(lock)&t;&t;&t;do { local_irq_disable();        write_lock(lock); } while (0)
+mdefine_line|#define write_lock_irq(lock) &bslash;&n;  do { local_irq_disable(); write_lock(lock); } while (0)
 DECL|macro|write_lock_bh
-mdefine_line|#define write_lock_bh(lock)&t;&t;&t;do { local_bh_disable();         write_lock(lock); } while (0)
+mdefine_line|#define write_lock_bh(lock) &bslash;&n;  do { local_bh_disable(); write_lock(lock); } while (0)
 DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;do { spin_unlock(lock);  local_irq_restore(flags); } while (0)
+mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;  do { spin_unlock(lock); local_irq_restore(flags); } while (0)
 DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(lock)&t;&t;&t;do { spin_unlock(lock);  local_irq_enable();       } while (0)
+mdefine_line|#define spin_unlock_irq(lock) &bslash;&n;  do { spin_unlock(lock); local_irq_enable(); } while (0)
 DECL|macro|spin_unlock_bh
-mdefine_line|#define spin_unlock_bh(lock)&t;&t;&t;do { spin_unlock(lock);  local_bh_enable();        } while (0)
+mdefine_line|#define spin_unlock_bh(lock) &bslash;&n;  do { spin_unlock(lock); local_bh_enable(); } while (0)
 DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags)&t;do { read_unlock(lock);  local_irq_restore(flags); } while (0)
+mdefine_line|#define read_unlock_irqrestore(lock, flags) &bslash;&n;  do { read_unlock(lock); local_irq_restore(flags); } while (0)
 DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;&t;&t;do { read_unlock(lock);  local_irq_enable();       } while (0)
+mdefine_line|#define read_unlock_irq(lock) &bslash;&n;  do { read_unlock(lock); local_irq_enable(); } while (0)
 DECL|macro|read_unlock_bh
-mdefine_line|#define read_unlock_bh(lock)&t;&t;&t;do { read_unlock(lock);  local_bh_enable();        } while (0)
+mdefine_line|#define read_unlock_bh(lock) &bslash;&n;  do { read_unlock(lock); local_bh_enable(); } while (0)
 DECL|macro|write_unlock_irqrestore
-mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;do { write_unlock(lock); local_irq_restore(flags); } while (0)
+mdefine_line|#define write_unlock_irqrestore(lock, flags) &bslash;&n;  do { write_unlock(lock); local_irq_restore(flags); } while (0)
 DECL|macro|write_unlock_irq
-mdefine_line|#define write_unlock_irq(lock)&t;&t;&t;do { write_unlock(lock); local_irq_enable();       } while (0)
+mdefine_line|#define write_unlock_irq(lock) &bslash;&n;  do { write_unlock(lock); local_irq_enable(); } while (0)
 DECL|macro|write_unlock_bh
-mdefine_line|#define write_unlock_bh(lock)&t;&t;&t;do { write_unlock(lock); local_bh_enable();        } while (0)
+mdefine_line|#define write_unlock_bh(lock) &bslash;&n;  do { write_unlock(lock); local_bh_enable(); } while (0)
 macro_line|#ifndef __SMP__
 multiline_comment|/*&n; * Your basic spinlocks, allowing only a single CPU anywhere&n; *&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
 macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
@@ -71,7 +71,7 @@ mdefine_line|#define spin_lock_init(lock)&t;&t;&t;((void) 0)
 DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lock)&t;&t;&t;&t;((void) 0)
 DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock)&t;&t;&t;((void) 0)
+mdefine_line|#define spin_trylock(lock)&t;&t;&t;(1)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lock)&t;&t;&t;((void) 0)
 DECL|macro|spin_unlock
@@ -126,20 +126,16 @@ r_volatile
 r_int
 r_int
 id|lock
+multiline_comment|/*__attribute__((aligned(32))) */
 suffix:semicolon
 macro_line|#if DEBUG_SPINLOCK
-DECL|member|debug_state
-DECL|member|target_ipl
-DECL|member|saved_ipl
 DECL|member|on_cpu
-r_char
-id|debug_state
-comma
-id|target_ipl
-comma
-id|saved_ipl
-comma
+r_int
 id|on_cpu
+suffix:semicolon
+DECL|member|line_no
+r_int
+id|line_no
 suffix:semicolon
 DECL|member|previous
 r_void
@@ -152,6 +148,12 @@ id|task_struct
 op_star
 id|task
 suffix:semicolon
+DECL|member|base_file
+r_const
+r_char
+op_star
+id|base_file
+suffix:semicolon
 macro_line|#endif
 DECL|typedef|spinlock_t
 )brace
@@ -159,9 +161,9 @@ id|spinlock_t
 suffix:semicolon
 macro_line|#if DEBUG_SPINLOCK
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) {0, 1, 0, 0, 0, 0}
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) {0, -1, 0, 0, 0, 0}
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;((x)-&gt;lock = 0, (x)-&gt;target_ipl = 0, (x)-&gt;debug_state = 1,&t;&bslash;&n;&t; (x)-&gt;previous = 0, (x)-&gt;task = 0)
+mdefine_line|#define spin_lock_init(x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;((x)-&gt;lock = 0, (x)-&gt;on_cpu = -1, (x)-&gt;previous = 0, (x)-&gt;task = 0)
 macro_line|#else
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED&t;(spinlock_t) { 0 }
@@ -200,24 +202,40 @@ id|lock
 suffix:semicolon
 r_extern
 r_void
-id|spin_lock
+id|debug_spin_lock
 c_func
 (paren
 id|spinlock_t
 op_star
 id|lock
+comma
+r_const
+r_char
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
 r_int
-id|spin_trylock
+id|debug_spin_trylock
 c_func
 (paren
 id|spinlock_t
 op_star
 id|lock
+comma
+r_const
+r_char
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
+DECL|macro|spin_lock
+mdefine_line|#define spin_lock(LOCK) debug_spin_lock(LOCK, __BASE_FILE__, __LINE__)
+DECL|macro|spin_trylock
+mdefine_line|#define spin_trylock(LOCK) debug_spin_trylock(LOCK, __BASE_FILE__, __LINE__)
 DECL|macro|spin_lock_own
 mdefine_line|#define spin_lock_own(LOCK, LOCATION)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!((LOCK)-&gt;lock &amp;&amp; (LOCK)-&gt;on_cpu == smp_processor_id()))&t;&bslash;&n;&t;&t;printk(&quot;%s: called on %d from %p but lock %s on %d&bslash;n&quot;,&t;&bslash;&n;&t;&t;       LOCATION, smp_processor_id(),&t;&t;&t;&bslash;&n;&t;&t;       __builtin_return_address(0),&t;&t;&t;&bslash;&n;&t;&t;       (LOCK)-&gt;lock ? &quot;taken&quot; : &quot;freed&quot;, (LOCK)-&gt;on_cpu); &bslash;&n;} while (0)
 macro_line|#else
@@ -306,12 +324,11 @@ DECL|macro|spin_lock_own
 mdefine_line|#define spin_lock_own(LOCK, LOCATION)&t;((void)0)
 macro_line|#endif /* DEBUG_SPINLOCK */
 multiline_comment|/***********************************************************/
-DECL|member|write_lock
-DECL|member|read_counter
-DECL|typedef|rwlock_t
 r_typedef
 r_struct
 (brace
+DECL|member|write_lock
+DECL|member|read_counter
 r_volatile
 r_int
 id|write_lock
@@ -322,7 +339,9 @@ id|read_counter
 suffix:colon
 l_int|31
 suffix:semicolon
+DECL|typedef|rwlock_t
 )brace
+multiline_comment|/*__attribute__((aligned(32)))*/
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED

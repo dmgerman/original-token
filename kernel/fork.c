@@ -2478,7 +2478,7 @@ l_int|0
 suffix:semicolon
 id|p-&gt;processor
 op_assign
-id|NO_PROC_ID
+id|current-&gt;processor
 suffix:semicolon
 multiline_comment|/* ?? should we just memset this ?? */
 r_for

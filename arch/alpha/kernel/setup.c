@@ -207,6 +207,13 @@ c_func
 id|cabriolet_mv
 )paren
 suffix:semicolon
+DECL|variable|clipper_mv
+id|WEAK
+c_func
+(paren
+id|clipper_mv
+)paren
+suffix:semicolon
 DECL|variable|dp264_mv
 id|WEAK
 c_func
@@ -1108,6 +1115,18 @@ op_star
 l_int|2
 )paren
 suffix:semicolon
+multiline_comment|/* Enforce maximum of 2GB even if there is more.  Blah.  */
+r_if
+c_cond
+(paren
+id|high
+OG
+l_int|0x80000000UL
+)paren
+id|high
+op_assign
+l_int|0x80000000UL
+suffix:semicolon
 r_return
 id|PAGE_OFFSET
 op_plus
@@ -1788,7 +1807,7 @@ comma
 op_amp
 id|dp264_mv
 comma
-multiline_comment|/* dp164 */
+multiline_comment|/* dp264 */
 op_amp
 id|dp264_mv
 comma
@@ -1802,7 +1821,7 @@ id|monet_mv
 comma
 multiline_comment|/* monet */
 op_amp
-id|dp264_mv
+id|clipper_mv
 comma
 multiline_comment|/* clipper */
 op_amp
@@ -2187,6 +2206,9 @@ id|avanti_mv
 comma
 op_amp
 id|cabriolet_mv
+comma
+op_amp
+id|clipper_mv
 comma
 op_amp
 id|dp264_mv

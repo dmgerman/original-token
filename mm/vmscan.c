@@ -384,19 +384,13 @@ id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* One for the process, one for the swap cache */
+multiline_comment|/* This will also lock the page */
 id|add_to_swap_cache
 c_func
 (paren
 id|page
 comma
 id|entry
-)paren
-suffix:semicolon
-multiline_comment|/* We checked we were unlocked way up above, and we&n;&t;   have been careful not to stall until here */
-id|LockPage
-c_func
-(paren
-id|page
 )paren
 suffix:semicolon
 multiline_comment|/* OK, do a physical asynchronous write to swap.  */

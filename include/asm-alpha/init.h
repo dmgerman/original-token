@@ -1,6 +1,7 @@
 macro_line|#ifndef _ALPHA_INIT_H
 DECL|macro|_ALPHA_INIT_H
 mdefine_line|#define _ALPHA_INIT_H
+macro_line|#ifndef MODULE
 DECL|macro|__init
 mdefine_line|#define __init __attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__initdata
@@ -14,6 +15,7 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT&t;&t;.previous
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA&t;.section&t;.data.init,&quot;a&quot;
+macro_line|#endif
 DECL|macro|__cacheline_aligned
 mdefine_line|#define __cacheline_aligned __attribute__((__aligned__(32)))
 macro_line|#endif

@@ -1095,7 +1095,9 @@ id|p-&gt;tss.flags
 op_assign
 id|current-&gt;tss.flags
 suffix:semicolon
-id|p-&gt;mm-&gt;context
+id|p-&gt;tss.mm_context
+op_assign
+id|p-&gt;tss.asn
 op_assign
 l_int|0
 suffix:semicolon

@@ -1353,19 +1353,6 @@ id|SWAP_MAP_BAD
 )paren
 r_break
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-id|offset
-comma
-id|swapdev-&gt;swap_lockmap
-)paren
-)paren
-r_break
-suffix:semicolon
 multiline_comment|/* Ok, do the async read-ahead now */
 id|new_page
 op_assign

@@ -286,7 +286,7 @@ id|retry
 suffix:semicolon
 )brace
 DECL|macro|DATA_BUFFER_USED
-mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;((bh-&gt;b_count &gt; 1) || buffer_locked(bh))
+mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;(bh-&gt;b_count || buffer_locked(bh))
 DECL|function|trunc_direct
 r_static
 r_int
@@ -395,9 +395,6 @@ c_cond
 id|bh
 )paren
 (brace
-id|bh-&gt;b_count
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -408,12 +405,6 @@ id|bh
 )paren
 )paren
 (brace
-id|brelse
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
 id|retry
 op_assign
 l_int|1
@@ -421,6 +412,9 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|bh-&gt;b_count
+op_increment
+suffix:semicolon
 )brace
 op_star
 id|p
@@ -775,9 +769,6 @@ c_cond
 id|bh
 )paren
 (brace
-id|bh-&gt;b_count
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -788,12 +779,6 @@ id|bh
 )paren
 )paren
 (brace
-id|brelse
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
 id|retry
 op_assign
 l_int|1
@@ -801,6 +786,9 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|bh-&gt;b_count
+op_increment
+suffix:semicolon
 )brace
 op_star
 id|ind

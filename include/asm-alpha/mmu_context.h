@@ -27,31 +27,24 @@ DECL|macro|MAX_ASN
 macro_line|#  define MAX_ASN&t;EV6_MAX_ASN
 macro_line|# endif
 macro_line|#endif
+multiline_comment|/*&n; * cpu_last_asn(processor):&n; * 63                                            0&n; * +-------------+----------------+--------------+&n; * | asn version | this processor | hardware asn |&n; * +-------------+----------------+--------------+&n; */
 macro_line|#ifdef __SMP__
-DECL|macro|WIDTH_THIS_PROCESSOR
-mdefine_line|#define WIDTH_THIS_PROCESSOR&t;5
-multiline_comment|/*&n; * last_asn[processor]:&n; * 63                                            0&n; * +-------------+----------------+--------------+&n; * | asn version | this processor | hardware asn |&n; * +-------------+----------------+--------------+&n; */
+macro_line|#include &lt;asm/smp.h&gt;
+DECL|macro|cpu_last_asn
+mdefine_line|#define cpu_last_asn(cpuid)&t;(cpu_data[cpuid].last_asn)
+macro_line|#else
 r_extern
 r_int
 r_int
 id|last_asn
-(braket
-)braket
 suffix:semicolon
-DECL|macro|asn_cache
-mdefine_line|#define asn_cache last_asn[p-&gt;processor]
-macro_line|#else
-DECL|macro|WIDTH_THIS_PROCESSOR
-mdefine_line|#define WIDTH_THIS_PROCESSOR&t;0
-multiline_comment|/*&n; * asn_cache:&n; * 63                                            0&n; * +------------------------------+--------------+&n; * |         asn version          | hardware asn |&n; * +------------------------------+--------------+&n; */
-r_extern
-r_int
-r_int
-id|asn_cache
-suffix:semicolon
+DECL|macro|cpu_last_asn
+mdefine_line|#define cpu_last_asn(cpuid)&t;last_asn
 macro_line|#endif /* __SMP__ */
 DECL|macro|WIDTH_HARDWARE_ASN
 mdefine_line|#define WIDTH_HARDWARE_ASN&t;8
+DECL|macro|WIDTH_THIS_PROCESSOR
+mdefine_line|#define WIDTH_THIS_PROCESSOR&t;5
 DECL|macro|ASN_FIRST_VERSION
 mdefine_line|#define ASN_FIRST_VERSION (1UL &lt;&lt; (WIDTH_THIS_PROCESSOR + WIDTH_HARDWARE_ASN))
 DECL|macro|HARDWARE_ASN_MASK
@@ -79,9 +72,99 @@ op_star
 id|mm
 )paren
 suffix:semicolon
-DECL|function|ev4_get_mmu_context
+r_static
+r_inline
+r_int
+r_int
+DECL|function|__get_new_mmu_context
+id|__get_new_mmu_context
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+comma
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+r_int
+r_int
+id|asn
+op_assign
+id|cpu_last_asn
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+r_int
+r_int
+id|next
+op_assign
+id|asn
+op_plus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|next
+op_xor
+id|asn
+)paren
+op_amp
+op_complement
+id|MAX_ASN
+)paren
+(brace
+id|tbiap
+c_func
+(paren
+)paren
+suffix:semicolon
+id|next
+op_assign
+(paren
+id|asn
+op_amp
+op_complement
+id|HARDWARE_ASN_MASK
+)paren
+op_plus
+id|ASN_FIRST_VERSION
+suffix:semicolon
+)brace
+id|cpu_last_asn
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+op_assign
+id|next
+suffix:semicolon
+id|mm-&gt;context
+op_assign
+id|next
+suffix:semicolon
+multiline_comment|/* full version + asn */
+r_return
+id|next
+suffix:semicolon
+)brace
 id|__EXTERN_INLINE
 r_void
+DECL|function|ev4_get_mmu_context
 id|ev4_get_mmu_context
 c_func
 (paren
@@ -91,11 +174,23 @@ op_star
 id|p
 )paren
 (brace
-multiline_comment|/* As described, ASN&squot;s are broken.  */
+multiline_comment|/* As described, ASN&squot;s are broken.  But we can optimize for&n;&t;   switching between threads -- if the mm is unchanged from&n;&t;   current we needn&squot;t flush.  */
+r_if
+c_cond
+(paren
+id|current-&gt;mm
+op_ne
+id|p-&gt;mm
+)paren
+id|tbiap
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-DECL|function|ev5_get_mmu_context
 id|__EXTERN_INLINE
 r_void
+DECL|function|ev5_get_mmu_context
 id|ev5_get_mmu_context
 c_func
 (paren
@@ -105,6 +200,19 @@ op_star
 id|p
 )paren
 (brace
+multiline_comment|/* Check if our ASN is of an older version, or on a different CPU,&n;&t;   and thus invalid.  */
+r_int
+id|asn
+op_assign
+id|cpu_last_asn
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
 r_struct
 id|mm_struct
 op_star
@@ -112,24 +220,16 @@ id|mm
 op_assign
 id|p-&gt;mm
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|mm
-)paren
-(brace
 r_int
-r_int
-id|asn
+id|mmc
 op_assign
-id|asn_cache
+id|mm-&gt;context
 suffix:semicolon
-multiline_comment|/* Check if our ASN is of an older version and thus invalid */
 r_if
 c_cond
 (paren
 (paren
-id|mm-&gt;context
+id|p-&gt;tss.mm_context
 op_xor
 id|asn
 )paren
@@ -137,13 +237,38 @@ op_amp
 op_complement
 id|HARDWARE_ASN_MASK
 )paren
-id|get_new_mmu_context
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|mmc
+op_xor
+id|asn
+)paren
+op_amp
+op_complement
+id|HARDWARE_ASN_MASK
+)paren
+id|mmc
+op_assign
+id|__get_new_mmu_context
 c_func
 (paren
 id|p
 comma
 id|mm
 )paren
+suffix:semicolon
+id|p-&gt;tss.mm_context
+op_assign
+id|mmc
+suffix:semicolon
+id|p-&gt;tss.asn
+op_assign
+id|mmc
+op_amp
+id|HARDWARE_ASN_MASK
 suffix:semicolon
 )brace
 )brace
@@ -159,10 +284,10 @@ DECL|macro|get_mmu_context
 macro_line|#  define get_mmu_context&t;&t;ev5_get_mmu_context
 macro_line|# endif
 macro_line|#endif
-DECL|function|init_new_context
 r_extern
 r_inline
 r_void
+DECL|function|init_new_context
 id|init_new_context
 c_func
 (paren
@@ -177,10 +302,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|destroy_context
 r_extern
 r_inline
 r_void
+DECL|function|destroy_context
 id|destroy_context
 c_func
 (paren
@@ -192,21 +317,21 @@ id|mm
 (brace
 multiline_comment|/* Nothing to do.  */
 )brace
-multiline_comment|/*&n; * Force a context reload. This is needed when we change the page&n; * table pointer or when we update the ASN of the current process.&n; */
-macro_line|#if defined(CONFIG_ALPHA_GENERIC)
-DECL|macro|MASK_CONTEXT
-mdefine_line|#define MASK_CONTEXT(tss) &bslash;&n; ((struct thread_struct *)((unsigned long)(tss) &amp; alpha_mv.mmu_context_mask))
-macro_line|#elif defined(CONFIG_ALPHA_DP264)
-DECL|macro|MASK_CONTEXT
-mdefine_line|#define MASK_CONTEXT(tss) &bslash;&n; ((struct thread_struct *)((unsigned long)(tss) &amp; 0xfffffffffful))
-macro_line|#else
-DECL|macro|MASK_CONTEXT
-mdefine_line|#define MASK_CONTEXT(tss)  (tss)
+macro_line|#ifdef __MMU_EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+DECL|macro|__MMU_EXTERN_INLINE
+macro_line|#undef __MMU_EXTERN_INLINE
 macro_line|#endif
-id|__EXTERN_INLINE
-r_struct
-id|thread_struct
-op_star
+multiline_comment|/*&n; * Force a context reload. This is needed when we change the page&n; * table pointer or when we update the ASN of the current process.&n; */
+multiline_comment|/* Don&squot;t get into trouble with dueling __EXTERN_INLINEs.  */
+macro_line|#ifndef __EXTERN_INLINE
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#endif
+r_extern
+r_inline
+r_int
+r_int
 DECL|function|__reload_tss
 id|__reload_tss
 c_func
@@ -218,9 +343,8 @@ id|tss
 )paren
 (brace
 r_register
-r_struct
-id|thread_struct
-op_star
+r_int
+r_int
 id|a0
 id|__asm__
 c_func
@@ -229,9 +353,8 @@ l_string|&quot;$16&quot;
 )paren
 suffix:semicolon
 r_register
-r_struct
-id|thread_struct
-op_star
+r_int
+r_int
 id|v0
 id|__asm__
 c_func
@@ -241,7 +364,7 @@ l_string|&quot;$0&quot;
 suffix:semicolon
 id|a0
 op_assign
-id|MASK_CONTEXT
+id|virt_to_phys
 c_func
 (paren
 id|tss
@@ -290,7 +413,8 @@ r_return
 id|v0
 suffix:semicolon
 )brace
-id|__EXTERN_INLINE
+r_extern
+r_inline
 r_void
 DECL|function|reload_context
 id|reload_context
@@ -310,8 +434,9 @@ id|task-&gt;tss
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates the&n; * context for the new mm so we see the new mappings.&n; */
-id|__EXTERN_INLINE
+multiline_comment|/*&n; * After setting current-&gt;mm to a new value, activate the context for the&n; * new mm so we see the new mappings.&n; */
+r_extern
+r_inline
 r_void
 DECL|function|activate_context
 id|activate_context
@@ -323,10 +448,12 @@ op_star
 id|task
 )paren
 (brace
-id|get_mmu_context
+id|get_new_mmu_context
 c_func
 (paren
 id|task
+comma
+id|task-&gt;mm
 )paren
 suffix:semicolon
 id|reload_context
@@ -336,11 +463,5 @@ id|task
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __MMU_EXTERN_INLINE
-DECL|macro|__EXTERN_INLINE
-macro_line|#undef __EXTERN_INLINE
-DECL|macro|__MMU_EXTERN_INLINE
-macro_line|#undef __MMU_EXTERN_INLINE
-macro_line|#endif
 macro_line|#endif /* __ALPHA_MMU_CONTEXT_H */
 eof

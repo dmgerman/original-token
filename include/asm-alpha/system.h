@@ -209,79 +209,6 @@ multiline_comment|/* Contents of EV5 LD_LOCK register*/
 suffix:semicolon
 r_extern
 r_void
-id|wrent
-c_func
-(paren
-r_void
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|wrkgp
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|wrusp
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|rdusp
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|rdmces
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|wrmces
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|whami
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|wripir
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|halt
 c_func
 (paren
@@ -398,122 +325,146 @@ comma
 suffix:semicolon
 DECL|macro|amask
 mdefine_line|#define amask(mask)&t;&t;&t;&t;&t;&t;&bslash;&n;({ unsigned long __amask, __input = (mask);&t;&t;&t;&bslash;&n;   __asm__ (&quot;amask %1,%0&quot; : &quot;=r&quot;(__amask) : &quot;rI&quot;(__input));&t;&bslash;&n;   __amask; })
-r_static
-r_inline
+DECL|macro|__CALL_PAL_R0
+mdefine_line|#define __CALL_PAL_R0(NAME, TYPE)&t;&t;&t;&t;&bslash;&n;static inline TYPE NAME(void)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register TYPE __r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %1 # &quot; #NAME&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r0)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;i&quot; (PAL_ ## NAME)&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&bslash;&n;&t;return __r0;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+DECL|macro|__CALL_PAL_W1
+mdefine_line|#define __CALL_PAL_W1(NAME, TYPE0)&t;&t;&t;&t;&bslash;&n;static inline void NAME(TYPE0 arg0)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register TYPE0 __r16 __asm__(&quot;$16&quot;) = arg0;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %1 # &quot;#NAME&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__r16)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;i&quot;(PAL_ ## NAME), &quot;0&quot;(__r16)&t;&t;&t;&bslash;&n;&t;&t;: &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&t;&bslash;&n;}
+DECL|macro|__CALL_PAL_W2
+mdefine_line|#define __CALL_PAL_W2(NAME, TYPE0, TYPE1)&t;&t;&t;&bslash;&n;static inline void NAME(TYPE0 arg0, TYPE1 arg1)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register TYPE0 __r16 __asm__(&quot;$16&quot;) = arg0;&t;&t;&bslash;&n;&t;register TYPE1 __r17 __asm__(&quot;$17&quot;) = arg1;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %2 # &quot;#NAME&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__r16), &quot;=r&quot;(__r17)&t;&t;&t;&bslash;&n;&t;&t;: &quot;i&quot;(PAL_ ## NAME), &quot;0&quot;(__r16), &quot;1&quot;(__r17)&t;&bslash;&n;&t;&t;: &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&t;&bslash;&n;}
+DECL|macro|__CALL_PAL_RW1
+mdefine_line|#define __CALL_PAL_RW1(NAME, RTYPE, TYPE0)&t;&t;&t;&bslash;&n;static inline RTYPE NAME(TYPE0 arg0)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register RTYPE __r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;register TYPE0 __r16 __asm__(&quot;$16&quot;) = arg0;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %2 # &quot;#NAME&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__r16), &quot;=r&quot;(__r0)&t;&t;&t;&bslash;&n;&t;&t;: &quot;i&quot;(PAL_ ## NAME), &quot;0&quot;(__r16)&t;&t;&t;&bslash;&n;&t;&t;: &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&t;&bslash;&n;&t;return __r0;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+DECL|macro|__CALL_PAL_RW2
+mdefine_line|#define __CALL_PAL_RW2(NAME, RTYPE, TYPE0, TYPE1)&t;&t;&bslash;&n;static inline RTYPE NAME(TYPE0 arg0, TYPE1 arg1)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register RTYPE __r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;register TYPE0 __r16 __asm__(&quot;$16&quot;) = arg0;&t;&t;&bslash;&n;&t;register TYPE1 __r17 __asm__(&quot;$17&quot;) = arg1;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 # &quot;#NAME&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__r16), &quot;=r&quot;(__r17), &quot;=r&quot;(__r0)&t;&t;&bslash;&n;&t;&t;: &quot;i&quot;(PAL_ ## NAME), &quot;0&quot;(__r16), &quot;1&quot;(__r17)&t;&bslash;&n;&t;&t;: &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&t;&bslash;&n;&t;return __r0;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+id|__CALL_PAL_R0
+c_func
+(paren
+id|rdmces
+comma
 r_int
 r_int
-DECL|function|wrperfmon
+)paren
+suffix:semicolon
+id|__CALL_PAL_R0
+c_func
+(paren
+id|rdps
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_R0
+c_func
+(paren
+id|rdusp
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_RW1
+c_func
+(paren
+id|swpipl
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_R0
+c_func
+(paren
+id|whami
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_W2
+c_func
+(paren
+id|wrent
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_W1
+c_func
+(paren
+id|wripir
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_W1
+c_func
+(paren
+id|wrkgp
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_W1
+c_func
+(paren
+id|wrmces
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_RW2
+c_func
+(paren
 id|wrperfmon
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__CALL_PAL_W1
 c_func
 (paren
-r_int
-r_int
-id|perf_fun
+id|wrusp
 comma
 r_int
 r_int
-id|arg
 )paren
-(brace
-r_register
-r_int
-r_int
-id|__r0
-id|__asm__
+suffix:semicolon
+id|__CALL_PAL_W1
 c_func
 (paren
-l_string|&quot;$0&quot;
-)paren
-suffix:semicolon
-r_register
+id|wrvptptr
+comma
 r_int
 r_int
-id|__r16
-id|__asm__
-c_func
-(paren
-l_string|&quot;$16&quot;
 )paren
 suffix:semicolon
-r_register
-r_int
-r_int
-id|__r17
-id|__asm__
-c_func
-(paren
-l_string|&quot;$17&quot;
-)paren
-suffix:semicolon
-id|__r16
-op_assign
-id|perf_fun
-suffix:semicolon
-id|__r17
-op_assign
-id|arg
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;call_pal %1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|__r0
-)paren
-suffix:colon
-l_string|&quot;i&quot;
-(paren
-id|PAL_wrperfmon
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|__r16
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|__r17
-)paren
-suffix:colon
-l_string|&quot;$1&quot;
-comma
-l_string|&quot;$22&quot;
-comma
-l_string|&quot;$23&quot;
-comma
-l_string|&quot;$24&quot;
-comma
-l_string|&quot;$25&quot;
-comma
-l_string|&quot;$26&quot;
-)paren
-suffix:semicolon
-r_return
-id|__r0
-suffix:semicolon
-)brace
-DECL|macro|call_pal1
-mdefine_line|#define call_pal1(palno,arg)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;); __r16 = arg;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 #call_pal1&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16)&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (palno)&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&t;&bslash;&n;&t;__r0;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
-DECL|macro|getipl
-mdefine_line|#define getipl()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %1 #getipl&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (r0)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;i&quot; (PAL_rdps)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&bslash;&n;&t;r0;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
-DECL|macro|setipl
-mdefine_line|#define setipl(ipl)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;); __r16 = (ipl);&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %2 #setipl&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r16)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_swpipl)&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&bslash;&n;})
-DECL|macro|swpipl
-mdefine_line|#define swpipl(ipl)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;);&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (ipl);&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 #swpipl&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16)&t;&t;&t;&bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (PAL_swpipl)&t;&t;&t;&bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&bslash;&n;&t;__r0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__cli
-mdefine_line|#define __cli()&t;&t;&t;setipl(7)
+mdefine_line|#define __cli()&t;&t;&t;((void) swpipl(7))
 DECL|macro|__sti
-mdefine_line|#define __sti()&t;&t;&t;setipl(0)
+mdefine_line|#define __sti()&t;&t;&t;((void) swpipl(0))
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(flags)&t;((flags) = getipl())
+mdefine_line|#define __save_flags(flags)&t;((flags) = rdps())
 DECL|macro|__save_and_cli
 mdefine_line|#define __save_and_cli(flags)&t;((flags) = swpipl(7))
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
+mdefine_line|#define __restore_flags(flags)&t;((void) swpipl(flags))
 DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
 DECL|macro|local_irq_restore
@@ -664,6 +615,7 @@ l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
 l_string|&quot;&t;bis $31,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;&t;mb&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -730,6 +682,7 @@ l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
 l_string|&quot;&t;bis $31,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;&t;mb&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;

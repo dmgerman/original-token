@@ -127,12 +127,6 @@ r_int
 op_star
 id|swap_map
 suffix:semicolon
-DECL|member|swap_lockmap
-r_int
-r_char
-op_star
-id|swap_lockmap
-suffix:semicolon
 DECL|member|lowest_bit
 r_int
 r_int
@@ -325,7 +319,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|add_to_swap_cache
 c_func
 (paren

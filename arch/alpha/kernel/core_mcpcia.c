@@ -10,7 +10,6 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
-macro_line|#include &lt;asm/mmu_context.h&gt;
 DECL|macro|__EXTERN_INLINE
 mdefine_line|#define __EXTERN_INLINE inline
 macro_line|#include &lt;asm/io.h&gt;
