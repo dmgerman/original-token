@@ -261,6 +261,14 @@ id|resend
 op_assign
 l_int|0
 suffix:semicolon
+r_extern
+r_void
+id|compute_shiftstate
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|typedef|k_hand
 r_typedef
 r_void
@@ -396,6 +404,7 @@ id|void_fn
 r_void
 )paren
 suffix:semicolon
+DECL|variable|do_null
 DECL|variable|enter
 DECL|variable|show_ptregs
 DECL|variable|send_intr
@@ -403,6 +412,8 @@ DECL|variable|lastcons
 DECL|variable|caps_toggle
 r_static
 id|void_fn
+id|do_null
+comma
 id|enter
 comma
 id|show_ptregs
@@ -451,7 +462,7 @@ id|spec_fn_table
 )braket
 op_assign
 (brace
-l_int|NULL
+id|do_null
 comma
 id|enter
 comma
@@ -2064,7 +2075,7 @@ r_else
 (brace
 multiline_comment|/* maybe beep? */
 multiline_comment|/* we have at least to update shift_state */
-macro_line|#if 0&t;&t;&t;/* how? two almost equivalent choices follow */
+macro_line|#if 1&t;&t;&t;/* how? two almost equivalent choices follow */
 id|compute_shiftstate
 c_func
 (paren
@@ -2836,6 +2847,20 @@ id|up_flag
 )paren
 (brace
 )brace
+DECL|function|do_null
+r_static
+r_void
+id|do_null
+c_func
+(paren
+)paren
+(brace
+id|compute_shiftstate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|do_spec
 r_static
 r_void
@@ -2867,17 +2892,6 @@ c_func
 (paren
 id|spec_fn_table
 )paren
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|spec_fn_table
-(braket
-id|value
-)braket
 )paren
 r_return
 suffix:semicolon

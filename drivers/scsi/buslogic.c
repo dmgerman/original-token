@@ -4079,6 +4079,10 @@ l_string|&quot;buslogic_detect:&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|tpnt-&gt;can_queue
+op_assign
+id|BUSLOGIC_MAILBOXES
+suffix:semicolon
 r_for
 c_loop
 (paren

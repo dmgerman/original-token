@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Sony CDU-31A CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  I had DMA in for a while&n; * but PC DMA is just too slow.  Better to just insb() it.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; * DRIVER SPECIAL FEATURES&n; * -----------------------&n; *&n; * This section describes features beyond the normal audio and CD-ROM&n; * functions of the drive.&n; *&n; * 2048 byte buffer mode&n; *&n; * If a disk is mounted with -o block=2048, data is copied straight&n; * from the drive data port to the buffer.  Otherwise, the readahead&n; * buffer must be involved to hold the other 1K of data when a 1K&n; * block operation is done.  Note that with 2048 byte blocks you&n; * cannot execute files from the CD.&n; *&n; * XA compatability&n; *&n; * The driver should support XA disks for both the CDU31A and CDU33A.&n; * It does this transparently, the using program doesn&squot;t need to set it.&n; *&n; * Multi-Session&n; *&n; * A multi-session disk is treated like a partitioned disk, each session&n; * has it&squot;s own minor device number, starting with 0.  The support is&n; * pretty transparent, music, TOC operations, and read operations should&n; * all work transparently on any session.  Note that since the driver&n; * writer doesn&squot;t have a multi-session disk, this is all theoritical.&n; * Also, music operation will obviously only work on one session at a&n; * time.&n; * &n; * Raw sector I/O&n; *&n; * Using the CDROMREADAUDIO it is possible to read raw audio and data&n; * tracks.  Both operations return 2352 bytes per sector.  On the data&n; * tracks, the first 12 bytes is not returned by the drive and the value&n; * of that data is indeterminate.&n; *&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/*&n; * Sony CDU-31A CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * WARNING - &t;All autoprobes have been removed from the driver.&n; *&t;&t;You MUST configure the CDU31A via a LILO config&n; *&t;&t;at boot time or in lilo.conf.  I have the&n; *&t;&t;following in my lilo.conf:&n; *&n; *                append=&quot;cdu31a=0x1f88,0,PAS&quot;&n; *&n; *&t;&t;The first number is the I/O base address of the&n; *&t;&t;card.  The second is the interrupt (0 means none).&n; *&t;&t;The third should be &quot;PAS&quot; if on a Pro-Audio&n; *&t;&t;spectrum, or nothing if on something else.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  I had DMA in for a while&n; * but PC DMA is just too slow.  Better to just insb() it.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; * DRIVER SPECIAL FEATURES&n; * -----------------------&n; *&n; * This section describes features beyond the normal audio and CD-ROM&n; * functions of the drive.&n; *&n; * 2048 byte buffer mode&n; *&n; * If a disk is mounted with -o block=2048, data is copied straight&n; * from the drive data port to the buffer.  Otherwise, the readahead&n; * buffer must be involved to hold the other 1K of data when a 1K&n; * block operation is done.  Note that with 2048 byte blocks you&n; * cannot execute files from the CD.&n; *&n; * XA compatability&n; *&n; * The driver should support XA disks for both the CDU31A and CDU33A.&n; * It does this transparently, the using program doesn&squot;t need to set it.&n; *&n; * Multi-Session&n; *&n; * A multi-session disk is treated like a partitioned disk, each session&n; * has it&squot;s own minor device number, starting with 0.  The support is&n; * pretty transparent, music, TOC operations, and read operations should&n; * all work transparently on any session.  Note that since the driver&n; * writer doesn&squot;t have a multi-session disk, this is all theoritical.&n; * Also, music operation will obviously only work on one session at a&n; * time.&n; *&n; * NOTE: At the current time, multi-session still doesn&squot;t work.  Maybe&n; * I&squot;ll get a multi-session disk soon so I can play with it.&n; * &n; * Raw sector I/O&n; *&n; * Using the CDROMREADAUDIO it is possible to read raw audio and data&n; * tracks.  Both operations return 2352 bytes per sector.  On the data&n; * tracks, the first 12 bytes is not returned by the drive and the value&n; * of that data is indeterminate.&n; *&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 multiline_comment|/*&n; *&n; * Setting up the Sony CDU31A/CDU33A drive interface card.  If&n; * You have another card, you are on your own.&n; * &n; *      +----------+-----------------+----------------------+&n; *      |  JP1     |  34 Pin Conn    |                      |&n; *      |  JP2     +-----------------+                      |&n; *      |  JP3                                              |&n; *      |  JP4                                              |&n; *      |                                                   +--+&n; *      |                                                   |  +-+&n; *      |                                                   |  | |  External&n; *      |                                                   |  | |  Connector&n; *      |                                                   |  | |&n; *      |                                                   |  +-+&n; *      |                                                   +--+&n; *      |                                                   |&n; *      |                                          +--------+&n; *      |                                          |&n; *      +------------------------------------------+&n; * &n; *    JP1 sets the Base Address, using the following settings:&n; * &n; *      Address         Pin 1           Pin 2&n; *      -------         -----           -----&n; *      0x320           Short           Short&n; *      0x330           Short           Open&n; *      0x340           Open            Short&n; *      0x360           Open            Open&n; * &n; *    JP2 and JP3 configure the DMA channel; they must be set the same.&n; * &n; *      DMA             Pin 1           Pin 2           Pin 3&n; *      ---             -----           -----           -----&n; *      1               On              Off             On&n; *      2               Off             On              Off&n; *      3               Off             Off             On&n; * &n; *    JP4 Configures the IRQ:&n; * &n; *      IRQ     Pin 1           Pin 2           Pin 3           Pin 4&n; *      ---     -----           -----           -----           -----&n; *      3       Off             Off             On              Off&n; *      4       Off             Off*            Off             On&n; *      5       On              Off             Off             Off&n; *      6       Off             On              Off             Off&n; * &n; *              * The documentation states to set this for interrupt&n; *                4, but I think that is a mistake.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -51,6 +51,7 @@ id|cdu31a_addresses
 )braket
 op_assign
 (brace
+macro_line|#if 0&t;/* No autoconfig any more. See Note at beginning&n;&t;   of this file. */
 (brace
 l_int|0x340
 comma
@@ -107,6 +108,7 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Sound FX SC400 */
+macro_line|#endif
 (brace
 l_int|0
 )brace
@@ -313,6 +315,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* How many processes have the&n;                                              drive open. */
+DECL|variable|sony_pas_init
+r_static
+r_int
+id|sony_pas_init
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Initialize the Pro-Audio&n;&t;&t;&t;&t;&t;      Spectrum card? */
 DECL|variable|ses_tocs
 r_static
 r_struct
@@ -10084,6 +10094,49 @@ l_int|2
 )braket
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_star
+id|strings
+op_ne
+l_char|&squot;&bslash;0&squot;
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|strings
+comma
+l_string|&quot;PAS&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|sony_pas_init
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CDU31A: Unknown interface type: %s&bslash;n&quot;
+comma
+id|strings
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 DECL|variable|cdu31a_block_size
 r_static
@@ -10124,6 +10177,12 @@ r_int
 id|tmp_irq
 suffix:semicolon
 multiline_comment|/*&n;    * According to Alex Freed (freed@europa.orion.adobe.com), this is&n;    * required for the Fusion CD-16 package.  If the sound driver is&n;    * loaded, it should work fine, but just in case...&n;    *&n;    * The following turn on the CD-ROM interface for a Fusion CD-16.&n;    */
+r_if
+c_cond
+(paren
+id|sony_pas_init
+)paren
+(brace
 id|outb
 c_func
 (paren
@@ -10140,6 +10199,7 @@ comma
 l_int|0x9a01
 )paren
 suffix:semicolon
+)brace
 id|drive_found
 op_assign
 l_int|0

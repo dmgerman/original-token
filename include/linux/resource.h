@@ -115,8 +115,8 @@ DECL|macro|RLIMIT_MEMLOCK
 mdefine_line|#define RLIMIT_MEMLOCK&t;6&t;&t;/* max locked-in-memory address space*/
 DECL|macro|RLIMIT_NPROC
 mdefine_line|#define RLIMIT_NPROC&t;7&t;&t;/* max number of processes */
-DECL|macro|RLIMIT_OFILE
-mdefine_line|#define RLIMIT_OFILE&t;8&t;&t;/* max number of open files */
+DECL|macro|RLIMIT_NOFILE
+mdefine_line|#define RLIMIT_NOFILE&t;8&t;&t;/* max number of open files */
 macro_line|#endif
 DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS&t;6

@@ -616,26 +616,6 @@ r_return
 id|fd
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Reverses the action of get_fd() by releasing the file. it closes&n; * the descriptor, but makes sure it does nothing more. Called when&n; * an incomplete socket must be closed, along with sock_release().&n; */
-DECL|function|toss_fd
-r_static
-r_inline
-r_void
-id|toss_fd
-c_func
-(paren
-r_int
-id|fd
-)paren
-(brace
-id|sys_close
-c_func
-(paren
-id|fd
-)paren
-suffix:semicolon
-multiline_comment|/* the count protects us from iput */
-)brace
 multiline_comment|/*&n; *&t;Go from an inode to its socket slot.&n; */
 DECL|function|socki_lookup
 r_struct
@@ -2637,6 +2617,18 @@ c_cond
 id|er
 )paren
 (brace
+id|sys_close
+c_func
+(paren
+id|fd1
+)paren
+suffix:semicolon
+id|sys_close
+c_func
+(paren
+id|fd2
+)paren
+suffix:semicolon
 r_return
 id|er
 suffix:semicolon

@@ -1265,13 +1265,11 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Bad logical zone size %d&bslash;n&quot;
+l_string|&quot;Bad logical zone size %ld&bslash;n&quot;
 comma
 id|s
 op_member_access_from_pointer
 id|u.isofs_sb.s_log_zone_size
-op_assign
-l_int|10
 )paren
 suffix:semicolon
 r_goto
@@ -1316,6 +1314,8 @@ l_string|&quot;Max size:%ld   Log zone size:%ld&bslash;n&quot;
 comma
 id|s-&gt;u.isofs_sb.s_max_size
 comma
+l_int|1UL
+op_lshift
 id|s-&gt;u.isofs_sb.s_log_zone_size
 )paren
 suffix:semicolon

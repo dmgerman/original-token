@@ -57,6 +57,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
 macro_line|#include &quot;wd7000.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA
+macro_line|#include &quot;eata.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
@@ -140,6 +143,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
 id|WD7000
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA
+id|EATA
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
