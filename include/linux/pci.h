@@ -1361,6 +1361,7 @@ op_star
 id|pci_find_parent_resource
 c_func
 (paren
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -1396,6 +1397,7 @@ r_int
 r_int
 id|device
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -1423,6 +1425,7 @@ r_int
 r_int
 id|ss_device
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -1438,6 +1441,7 @@ r_int
 r_int
 r_class
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -1851,6 +1855,7 @@ op_star
 id|pci_dev_driver
 c_func
 (paren
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -1869,6 +1874,7 @@ id|pci_device_id
 op_star
 id|ids
 comma
+r_const
 r_struct
 id|pci_dev
 op_star

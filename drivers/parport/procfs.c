@@ -994,7 +994,7 @@ l_int|NULL
 comma
 l_int|0
 comma
-l_int|444
+l_int|0444
 comma
 l_int|NULL
 comma

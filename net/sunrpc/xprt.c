@@ -3180,6 +3180,8 @@ id|xprt
 suffix:semicolon
 r_int
 id|result
+op_assign
+l_int|0
 suffix:semicolon
 id|dprintk
 c_func

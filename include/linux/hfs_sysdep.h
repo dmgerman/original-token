@@ -343,6 +343,7 @@ suffix:semicolon
 DECL|function|hfs_mdb_name
 r_extern
 r_inline
+r_const
 r_char
 op_star
 id|hfs_mdb_name

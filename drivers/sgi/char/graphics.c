@@ -933,32 +933,11 @@ id|vm_operations_struct
 id|graphics_mmap
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no special mmap-open */
-l_int|NULL
-comma
-multiline_comment|/* no special mmap-close */
-l_int|NULL
-comma
-multiline_comment|/* no special mmap-unmap */
-l_int|NULL
-comma
-multiline_comment|/* no special mmap-protect */
-l_int|NULL
-comma
-multiline_comment|/* no special mmap-sync */
-l_int|NULL
-comma
-multiline_comment|/* no special mmap-advise */
+id|nopage
+suffix:colon
 id|sgi_graphics_nopage
 comma
 multiline_comment|/* our magic no-page fault handler */
-l_int|NULL
-comma
-multiline_comment|/* no special mmap-wppage */
-l_int|NULL
-multiline_comment|/* no special mmap-swapout */
 )brace
 suffix:semicolon
 r_int

@@ -337,37 +337,16 @@ id|page
 suffix:semicolon
 )brace
 DECL|variable|ncp_file_mmap
+r_static
 r_struct
 id|vm_operations_struct
 id|ncp_file_mmap
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* close */
-l_int|NULL
-comma
-multiline_comment|/* unmap */
-l_int|NULL
-comma
-multiline_comment|/* protect */
-l_int|NULL
-comma
-multiline_comment|/* sync */
-l_int|NULL
-comma
-multiline_comment|/* advise */
+id|nopage
+suffix:colon
 id|ncp_file_mmap_nopage
 comma
-multiline_comment|/* nopage */
-l_int|NULL
-comma
-multiline_comment|/* wppage */
-l_int|NULL
-multiline_comment|/* swapout */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used for a general mmap of a ncp file */

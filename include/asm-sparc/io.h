@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: io.h,v 1.24 1999/12/20 04:58:40 davem Exp $&n; */
+multiline_comment|/*&n; * $Id: io.h,v 1.25 2000/01/22 07:35:46 zaitcev Exp $&n; */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
@@ -9,6 +9,8 @@ macro_line|#include &lt;asm/page.h&gt;      /* IO address mapping routines need 
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus virt_to_phys
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt phys_to_virt
 DECL|function|flip_dword
 r_extern
 id|__inline__
@@ -297,6 +299,117 @@ DECL|macro|outl
 mdefine_line|#define outl(b, addr)&t;&t;writel(b, addr)
 DECL|macro|outb_p
 mdefine_line|#define outb_p(b, addr)&t;&t;writeb(b, addr)
+r_extern
+r_void
+id|outsb
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_const
+r_void
+op_star
+id|src
+comma
+r_int
+r_int
+id|cnt
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outsw
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_const
+r_void
+op_star
+id|src
+comma
+r_int
+r_int
+id|cnt
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outsl
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_const
+r_void
+op_star
+id|src
+comma
+r_int
+r_int
+id|cnt
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insb
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_void
+op_star
+id|dst
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insw
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_void
+op_star
+id|dst
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insl
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_void
+op_star
+id|dst
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
 DECL|macro|IO_SPACE_LIMIT
 mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
 multiline_comment|/*&n; * SBus accessors.&n; *&n; * SBus has only one, memory mapped, I/O space.&n; * We do not need to flip bytes for SBus of course.&n; */

@@ -756,7 +756,7 @@ l_int|0
 suffix:semicolon
 id|cursor_timer.next
 op_assign
-id|cursor_timer.next
+id|cursor_timer.prev
 op_assign
 l_int|NULL
 suffix:semicolon

@@ -1178,6 +1178,12 @@ l_string|&quot;ATAPI&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|ide_delay_50ms
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* needed for some systems (e.g. crw9624 as drive0 with disk as slave) */
 id|SELECT_DRIVE
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.27 1999/08/14 03:52:02 anton Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.28 2000/01/22 06:06:58 zaitcev Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -119,6 +119,8 @@ comma
 r_int
 r_int
 )paren
+DECL|macro|disable_irq_nosync
+mdefine_line|#define disable_irq_nosync disable_irq
 DECL|macro|disable_irq
 mdefine_line|#define disable_irq(irq) BTFIXUP_CALL(disable_irq)(irq)
 DECL|macro|enable_irq

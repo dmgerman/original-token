@@ -1,7 +1,7 @@
-multiline_comment|/* Driver for USB SCSI - include file&n; *&n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; * This driver is schizoid  - it makes a USB scanner appear as both a SCSI device&n; * and a character device. The latter is only available if the device has an&n; * interrupt endpoint, and is used specifically to receive interrupt events.&n; *&n; * In order to support various &squot;strange&squot; scanners, this module supports plug-in&n; * device-specific filter modules, which can do their own thing when required.&n; *&n; */
+multiline_comment|/* Driver for USB SCSI - include file&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-DECL|macro|USB_SCSI
-mdefine_line|#define USB_SCSI &quot;usbscsi: &quot;
+DECL|macro|USB_STORAGE
+mdefine_line|#define USB_STORAGE &quot;usb-storage: &quot;
 r_extern
 r_int
 id|usb_stor_debug
@@ -17,7 +17,7 @@ id|srb
 )paren
 suffix:semicolon
 DECL|macro|US_DEBUGP
-mdefine_line|#define US_DEBUGP(x...) { if(usb_stor_debug) printk( KERN_DEBUG USB_SCSI ## x ); }
+mdefine_line|#define US_DEBUGP(x...) { if(usb_stor_debug) printk( KERN_DEBUG USB_STORAGE ## x ); }
 DECL|macro|US_DEBUGPX
 mdefine_line|#define US_DEBUGPX(x...) { if(usb_stor_debug) printk( ## x ); }
 DECL|macro|US_DEBUG
@@ -68,6 +68,7 @@ mdefine_line|#define US_PR_CBI&t;0&t;&t;/* Control/Bulk/Interrupt */
 DECL|macro|US_PR_BULK
 mdefine_line|#define US_PR_BULK&t;0x50&t;&t;/* bulk only */
 multiline_comment|/*&n; * Bulk only data structures (Zip 100, for example)&n; */
+multiline_comment|/* command block wrapper */
 DECL|struct|bulk_cb_wrap
 r_struct
 id|bulk_cb_wrap
@@ -120,6 +121,7 @@ DECL|macro|US_BULK_FLAG_IN
 mdefine_line|#define US_BULK_FLAG_IN&t;&t;1
 DECL|macro|US_BULK_FLAG_OUT
 mdefine_line|#define US_BULK_FLAG_OUT&t;0
+multiline_comment|/* command status wrapper */
 DECL|struct|bulk_cs_wrap
 r_struct
 id|bulk_cs_wrap
@@ -169,85 +171,17 @@ DECL|macro|US_BULK_RESET_SOFT
 mdefine_line|#define US_BULK_RESET_SOFT&t;1
 DECL|macro|US_BULK_RESET_HARD
 mdefine_line|#define US_BULK_RESET_HARD&t;0
+multiline_comment|/*&n; * Transport return codes&n; */
+DECL|macro|USB_STOR_TRANSPORT_GOOD
+mdefine_line|#define USB_STOR_TRANSPORT_GOOD    0    /* Transport good, command good    */
+DECL|macro|USB_STOR_TRANSPORT_FAILED
+mdefine_line|#define USB_STOR_TRANSPORT_FAILED  1    /* Transport good, command failed  */
+DECL|macro|USB_STOR_TRANSPORT_ERROR
+mdefine_line|#define USB_STOR_TRANSPORT_ERROR   2    /* Transport bad (i.e. device dead */
 multiline_comment|/*&n; * CBI style&n; */
 DECL|macro|US_CBI_ADSC
 mdefine_line|#define US_CBI_ADSC&t;&t;0
-multiline_comment|/*&n; * Filter device definitions&n; */
-DECL|struct|usb_scsi_filter
-r_struct
-id|usb_scsi_filter
-(brace
-DECL|member|next
-r_struct
-id|usb_scsi_filter
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* usb_scsi driver only */
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-multiline_comment|/* not really required */
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* Filter flags */
-DECL|member|probe
-r_void
-op_star
-(paren
-op_star
-id|probe
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_char
-op_star
-comma
-r_char
-op_star
-comma
-r_char
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* probe device */
-DECL|member|release
-r_void
-(paren
-op_star
-id|release
-)paren
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* device gone */
-DECL|member|command
-r_int
-(paren
-op_star
-id|command
-)paren
-(paren
-r_void
-op_star
-comma
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* all commands */
-)brace
-suffix:semicolon
+multiline_comment|/* &n; * GUID definitions&n; */
 DECL|macro|GUID
 mdefine_line|#define GUID(x) __u32 x[3]
 DECL|macro|GUID_EQUAL
@@ -392,35 +326,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* Flag definitions */
 DECL|macro|US_FL_IP_STATUS
-mdefine_line|#define US_FL_IP_STATUS&t;&t;0x00000001&t;&t;/* status uses interrupt */
+mdefine_line|#define US_FL_IP_STATUS&t;      0x00000001         /* status uses interrupt */
 DECL|macro|US_FL_FIXED_COMMAND
-mdefine_line|#define US_FL_FIXED_COMMAND&t;0x00000002&t;&t;/* expand commands to fixed size */
-multiline_comment|/*&n; * Called by filters to register/unregister the mini driver&n; *&n; * WARNING - the supplied probe function may be called before exiting this fn&n; */
-r_int
-id|usb_scsi_register
-c_func
-(paren
-r_struct
-id|usb_scsi_filter
-op_star
-)paren
-suffix:semicolon
-r_void
-id|usb_scsi_deregister
-c_func
-(paren
-r_struct
-id|usb_scsi_filter
-op_star
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_USB_HP4100
-r_int
-id|hp4100_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
+mdefine_line|#define US_FL_FIXED_COMMAND   0x00000002 /* expand commands to fixed size */
+DECL|macro|US_FL_MODE_XLATE
+mdefine_line|#define US_FL_MODE_XLATE      0x00000004 /* translate _6 to _10 comands for&n;&t;&t;&t;&t;&t;    Win/MacOS compatibility */
 eof

@@ -1404,7 +1404,9 @@ op_star
 id|page
 )paren
 (brace
-r_return
+r_int
+id|result
+op_assign
 id|nfs_writepage_sync
 c_func
 (paren
@@ -1418,6 +1420,19 @@ l_int|0
 comma
 id|PAGE_SIZE
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+op_eq
+id|PAGE_SIZE
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+id|result
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Update and possibly write a cached page of an NFS file.&n; *&n; * XXX: Keep an eye on generic_file_read to make sure it doesn&squot;t do bad&n; * things with a page scheduled for an RPC call (e.g. invalidate it).&n; */

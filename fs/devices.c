@@ -643,6 +643,7 @@ multiline_comment|/* default file operations */
 suffix:semicolon
 multiline_comment|/*&n; * Print device name (in decimal, hexadecimal or symbolic)&n; * Note: returns pointer to static data!&n; */
 DECL|function|kdevname
+r_const
 r_char
 op_star
 id|kdevname
@@ -684,6 +685,7 @@ id|buffer
 suffix:semicolon
 )brace
 DECL|function|cdevname
+r_const
 r_char
 op_star
 id|cdevname

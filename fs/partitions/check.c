@@ -1109,14 +1109,6 @@ r_int
 id|size
 )paren
 (brace
-r_int
-id|first
-op_assign
-(paren
-r_int
-)paren
-id|dev
-suffix:semicolon
 r_if
 c_cond
 (paren

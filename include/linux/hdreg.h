@@ -71,6 +71,8 @@ DECL|macro|WIN_DIAGNOSE
 mdefine_line|#define WIN_DIAGNOSE&t;&t;0x90
 DECL|macro|WIN_SPECIFY
 mdefine_line|#define WIN_SPECIFY&t;&t;0x91&t;/* set drive geometry translation */
+DECL|macro|WIN_IDLEIMMEDIATE
+mdefine_line|#define WIN_IDLEIMMEDIATE&t;0xE1&t;/* force drive to become &quot;ready&quot; */
 DECL|macro|WIN_SETIDLE1
 mdefine_line|#define WIN_SETIDLE1&t;&t;0xE3
 DECL|macro|WIN_SETIDLE2

@@ -281,7 +281,7 @@ c_cond
 (paren
 id|dev
 op_eq
-id|NULl
+l_int|NULL
 )paren
 (brace
 r_return

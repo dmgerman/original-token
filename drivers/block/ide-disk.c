@@ -2524,6 +2524,9 @@ c_cond
 (paren
 op_logical_neg
 id|drive-&gt;keep_settings
+op_logical_and
+op_logical_neg
+id|drive-&gt;using_dma
 )paren
 id|drive-&gt;mult_req
 op_assign

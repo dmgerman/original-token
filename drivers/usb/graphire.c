@@ -11,7 +11,7 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Thanks for the following information to: Andreas Bach Aaen &lt;abach@mail1.stofanet.dk&gt;&n; *&n; * The input report:&n; * &n; * byte 0: report ID (2)&n; * byte 1: bit7 &t;mouse/pen/rubber near&n; *         bit5-6&t;0 - pen, 1 - rubber, 2 - mouse&n; * &t;   bit4&t;&t;1 ?&n; *         bit3&t;&t;0 ?&n; *         bit2&t;&t;mouse middle button / pen button2&n; *         bit1&t;&t;mouse right button / pen button1&n; *         bit0&t;&t;mouse left button / pen tip / rubber&n; * byte 2: X low bits&n; * byte 3: X high bits&n; * byte 4: Y low bits&n; * byte 5: Y high bits&n; * byte 6: pen pressure low bits / mouse wheel&n; * byte 7: pen presure high bits / mouse distance&n; * &n; * There are also two single-byte feature reports (2 and 3).&n; */
+multiline_comment|/*&n; * Thanks for the following information to: Andreas Bach Aaen &lt;abach@mail1.stofanet.dk&gt;&n; *&n; * The input report:&n; * &n; * byte 0: report ID (2)&n; * byte 1: bit7 &t;mouse/pen/rubber near&n; *         bit5-6&t;0 - pen, 1 - rubber, 2 - mouse&n; * &t;   bit4&t;&t;1 ?&n; *         bit3&t;&t;0 ?&n; *         bit2&t;&t;mouse middle button / pen button2&n; *         bit1&t;&t;mouse right button / pen button1&n; *         bit0&t;&t;mouse left button / pen tip / rubber&n; * byte 2: X low bits&n; * byte 3: X high bits&n; * byte 4: Y low bits&n; * byte 5: Y high bits&n; * byte 6: pen pressure low bits / mouse wheel&n; * byte 7: pen presure high bits / mouse distance&n; * &n; * There are also two single-byte feature reports (2 and 3).&n; *&n; * Resolution:&n; * X: 0 - 10206&n; * Y: 0 - 7422&n; * &n; * (0,0) is upper left corner&n; */
 DECL|macro|USB_VENDOR_ID_WACOM
 mdefine_line|#define USB_VENDOR_ID_WACOM&t;&t;0x056a
 DECL|macro|USB_DEVICE_ID_WACOM_GRAPHIRE
@@ -102,6 +102,17 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|data
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0x80
+)paren
+(brace
 id|input_report_abs
 c_func
 (paren
@@ -134,6 +145,9 @@ id|dev
 comma
 id|ABS_Y
 comma
+l_int|7422
+op_minus
+(paren
 id|data
 (braket
 l_int|4
@@ -151,7 +165,9 @@ op_lshift
 l_int|8
 )paren
 )paren
+)paren
 suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -397,7 +413,7 @@ id|data
 l_int|7
 )braket
 OG
-l_int|27
+l_int|24
 )paren
 suffix:semicolon
 id|input_report_key
@@ -739,21 +755,21 @@ id|graphire-&gt;dev.absmax
 id|ABS_X
 )braket
 op_assign
-l_int|10000
+l_int|10206
 suffix:semicolon
 id|graphire-&gt;dev.absmax
 (braket
 id|ABS_Y
 )braket
 op_assign
-l_int|7500
+l_int|7422
 suffix:semicolon
 id|graphire-&gt;dev.absmax
 (braket
 id|ABS_PRESSURE
 )braket
 op_assign
-l_int|500
+l_int|511
 suffix:semicolon
 id|graphire-&gt;dev.absmax
 (braket

@@ -115,6 +115,7 @@ op_star
 id|ppos
 )paren
 (brace
+r_const
 r_struct
 id|inode
 op_star
@@ -122,6 +123,7 @@ id|ino
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
+r_const
 r_struct
 id|proc_dir_entry
 op_star
@@ -518,6 +520,7 @@ op_star
 id|ppos
 )paren
 (brace
+r_const
 r_struct
 id|inode
 op_star
@@ -525,6 +528,7 @@ id|ino
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
+r_const
 r_struct
 id|proc_dir_entry
 op_star
@@ -866,35 +870,18 @@ id|file_operations
 id|proc_bus_pci_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|proc_bus_pci_lseek
 comma
+id|read
+suffix:colon
 id|proc_bus_pci_read
 comma
+id|write
+suffix:colon
 id|proc_bus_pci_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|proc_bus_pci_inode_operations
@@ -939,6 +926,7 @@ r_int
 id|count
 )paren
 (brace
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -966,6 +954,7 @@ c_func
 id|dev
 )paren
 (brace
+r_const
 r_struct
 id|pci_driver
 op_star

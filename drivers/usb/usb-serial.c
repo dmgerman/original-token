@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;(C) Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * This driver was originally based on the ACM driver by Armin Fuerst (which was &n; * based on a driver by Brad Keryan)&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (01/21/2000) gkh&n; *&t;Fixed bug in visor_startup with patch from Miles Lott (milos@insync.net)&n; *&t;Fixed get_serial_by_minor which was all messed up for multi port &n; *&t;devices. Fixed multi port problem for generic devices. Now the number&n; *&t;of ports is determined by the number of bulk out endpoints for the&n; *&t;generic device.&n; *&n; * (01/19/2000) gkh&n; *&t;Removed lots of cruft that was around from the old (pre urb) driver &n; *&t;interface.&n; *&t;Made the serial_table dynamic. This should save lots of memory when&n; *&t;the number of minor nodes goes up to 256.&n; *&t;Added initial support for devices that have more than one port. &n; *&t;Added more debugging comments for the Visor, and added a needed &n; *&t;set_configuration call.&n; *&n; * (01/17/2000) gkh&n; *&t;Fixed the WhiteHEAT firmware (my processing tool had a bug)&n; *&t;and added new debug loader firmware for it.&n; *&t;Removed the put_char function as it isn&squot;t really needed.&n; *&t;Added visor startup commands as found by the Win98 dump.&n; * &n; * (01/13/2000) gkh&n; *&t;Fixed the vendor id for the generic driver to the one I meant it to be.&n; *&n; * (01/12/2000) gkh&n; *&t;Forget the version numbering...that&squot;s pretty useless...&n; *&t;Made the driver able to be compiled so that the user can select which&n; *&t;converter they want to use. This allows people who only want the Visor&n; *&t;support to not pay the memory size price of the WhiteHEAT.&n; *&t;Fixed bug where the generic driver (idVendor=0000 and idProduct=0000)&n; *&t;grabbed the root hub. Not good.&n; * &n; * version 0.4.0 (01/10/2000) gkh&n; *&t;Added whiteheat.h containing the firmware for the ConnectTech WhiteHEAT&n; *&t;device. Added startup function to allow firmware to be downloaded to&n; *&t;a device if it needs to be.&n; *&t;Added firmware download logic to the WhiteHEAT device.&n; *&t;Started to add #defines to split up the different drivers for potential&n; *&t;configuration option.&n; *&t;&n; * version 0.3.1 (12/30/99) gkh&n; *      Fixed problems with urb for bulk out.&n; *      Added initial support for multiple sets of endpoints. This enables&n; *      the Handspring Visor to be attached successfully. Only the first&n; *      bulk in / bulk out endpoint pair is being used right now.&n; *&n; * version 0.3.0 (12/27/99) gkh&n; *&t;Added initial support for the Handspring Visor based on a patch from&n; *&t;Miles Lott (milos@sneety.insync.net)&n; *&t;Cleaned up the code a bunch and converted over to using urbs only.&n; *&n; * version 0.2.3 (12/21/99) gkh&n; *&t;Added initial support for the Connect Tech WhiteHEAT converter.&n; *&t;Incremented the number of ports in expectation of getting the&n; *&t;WhiteHEAT to work properly (4 ports per connection).&n; *&t;Added notification on insertion and removal of what port the&n; *&t;device is/was connected to (and what kind of device it was).&n; *&n; * version 0.2.2 (12/16/99) gkh&n; *&t;Changed major number to the new allocated number. We&squot;re legal now!&n; *&n; * version 0.2.1 (12/14/99) gkh&n; *&t;Fixed bug that happens when device node is opened when there isn&squot;t a&n; *&t;device attached to it. Thanks to marek@webdesign.no for noticing this.&n; *&n; * version 0.2.0 (11/10/99) gkh&n; *&t;Split up internals to make it easier to add different types of serial &n; *&t;converters to the code.&n; *&t;Added a &quot;generic&quot; driver that gets it&squot;s vendor and product id&n; *&t;from when the module is loaded. Thanks to David E. Nelson (dnelson@jump.net)&n; *&t;for the idea and sample code (from the usb scanner driver.)&n; *&t;Cleared up any licensing questions by releasing it under the GNU GPL.&n; *&n; * version 0.1.2 (10/25/99) gkh&n; * &t;Fixed bug in detecting device.&n; *&n; * version 0.1.1 (10/05/99) gkh&n; * &t;Changed the major number to not conflict with anything else.&n; *&n; * version 0.1 (09/28/99) gkh&n; * &t;Can recognize the two different devices and start up a read from&n; *&t;device when asked to. Writes also work. No control signals yet, this&n; *&t;all is vendor specific data (i.e. no spec), also no control for&n; *&t;different baud rates or other bit settings.&n; *&t;Currently we are using the same devid as the acm driver. This needs&n; *&t;to change.&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;(C) Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * This driver was originally based on the ACM driver by Armin Fuerst (which was &n; * based on a driver by Brad Keryan)&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (01/23/2000) gkh&n; *&t;Fixed problem of crash when trying to open a port that didn&squot;t have a&n; *&t;device assigned to it. Made the minor node finding a little smarter,&n; *&t;now it looks to find a continous space for the new device.&n; *&n; * (01/21/2000) gkh&n; *&t;Fixed bug in visor_startup with patch from Miles Lott (milos@insync.net)&n; *&t;Fixed get_serial_by_minor which was all messed up for multi port &n; *&t;devices. Fixed multi port problem for generic devices. Now the number&n; *&t;of ports is determined by the number of bulk out endpoints for the&n; *&t;generic device.&n; *&n; * (01/19/2000) gkh&n; *&t;Removed lots of cruft that was around from the old (pre urb) driver &n; *&t;interface.&n; *&t;Made the serial_table dynamic. This should save lots of memory when&n; *&t;the number of minor nodes goes up to 256.&n; *&t;Added initial support for devices that have more than one port. &n; *&t;Added more debugging comments for the Visor, and added a needed &n; *&t;set_configuration call.&n; *&n; * (01/17/2000) gkh&n; *&t;Fixed the WhiteHEAT firmware (my processing tool had a bug)&n; *&t;and added new debug loader firmware for it.&n; *&t;Removed the put_char function as it isn&squot;t really needed.&n; *&t;Added visor startup commands as found by the Win98 dump.&n; * &n; * (01/13/2000) gkh&n; *&t;Fixed the vendor id for the generic driver to the one I meant it to be.&n; *&n; * (01/12/2000) gkh&n; *&t;Forget the version numbering...that&squot;s pretty useless...&n; *&t;Made the driver able to be compiled so that the user can select which&n; *&t;converter they want to use. This allows people who only want the Visor&n; *&t;support to not pay the memory size price of the WhiteHEAT.&n; *&t;Fixed bug where the generic driver (idVendor=0000 and idProduct=0000)&n; *&t;grabbed the root hub. Not good.&n; * &n; * version 0.4.0 (01/10/2000) gkh&n; *&t;Added whiteheat.h containing the firmware for the ConnectTech WhiteHEAT&n; *&t;device. Added startup function to allow firmware to be downloaded to&n; *&t;a device if it needs to be.&n; *&t;Added firmware download logic to the WhiteHEAT device.&n; *&t;Started to add #defines to split up the different drivers for potential&n; *&t;configuration option.&n; *&t;&n; * version 0.3.1 (12/30/99) gkh&n; *      Fixed problems with urb for bulk out.&n; *      Added initial support for multiple sets of endpoints. This enables&n; *      the Handspring Visor to be attached successfully. Only the first&n; *      bulk in / bulk out endpoint pair is being used right now.&n; *&n; * version 0.3.0 (12/27/99) gkh&n; *&t;Added initial support for the Handspring Visor based on a patch from&n; *&t;Miles Lott (milos@sneety.insync.net)&n; *&t;Cleaned up the code a bunch and converted over to using urbs only.&n; *&n; * version 0.2.3 (12/21/99) gkh&n; *&t;Added initial support for the Connect Tech WhiteHEAT converter.&n; *&t;Incremented the number of ports in expectation of getting the&n; *&t;WhiteHEAT to work properly (4 ports per connection).&n; *&t;Added notification on insertion and removal of what port the&n; *&t;device is/was connected to (and what kind of device it was).&n; *&n; * version 0.2.2 (12/16/99) gkh&n; *&t;Changed major number to the new allocated number. We&squot;re legal now!&n; *&n; * version 0.2.1 (12/14/99) gkh&n; *&t;Fixed bug that happens when device node is opened when there isn&squot;t a&n; *&t;device attached to it. Thanks to marek@webdesign.no for noticing this.&n; *&n; * version 0.2.0 (11/10/99) gkh&n; *&t;Split up internals to make it easier to add different types of serial &n; *&t;converters to the code.&n; *&t;Added a &quot;generic&quot; driver that gets it&squot;s vendor and product id&n; *&t;from when the module is loaded. Thanks to David E. Nelson (dnelson@jump.net)&n; *&t;for the idea and sample code (from the usb scanner driver.)&n; *&t;Cleared up any licensing questions by releasing it under the GNU GPL.&n; *&n; * version 0.1.2 (10/25/99) gkh&n; * &t;Fixed bug in detecting device.&n; *&n; * version 0.1.1 (10/05/99) gkh&n; * &t;Changed the major number to not conflict with anything else.&n; *&n; * version 0.1 (09/28/99) gkh&n; * &t;Can recognize the two different devices and start up a read from&n; *&t;device when asked to. Writes also work. No control signals yet, this&n; *&t;all is vendor specific data (i.e. no spec), also no control for&n; *&t;different baud rates or other bit settings.&n; *&t;Currently we are using the same devid as the acm driver. This needs&n; *&t;to change.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1548,6 +1548,11 @@ l_int|NULL
 suffix:semicolon
 r_int
 id|i
+comma
+id|j
+suffix:semicolon
+r_int
+id|good_spot
 suffix:semicolon
 id|dbg
 c_func
@@ -1584,6 +1589,49 @@ id|serial_table
 (braket
 id|i
 )braket
+)paren
+r_continue
+suffix:semicolon
+id|good_spot
+op_assign
+l_int|1
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|num_ports
+op_minus
+l_int|1
+suffix:semicolon
+op_increment
+id|j
+)paren
+r_if
+c_cond
+(paren
+id|serial_table
+(braket
+id|i
+op_plus
+id|j
+)braket
+)paren
+id|good_spot
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|good_spot
+op_eq
+l_int|0
 )paren
 r_continue
 suffix:semicolon
@@ -1666,7 +1714,12 @@ suffix:semicolon
 (paren
 id|i
 OL
+(paren
+op_star
+id|minor
+op_plus
 id|num_ports
+)paren
 )paren
 op_logical_and
 (paren
@@ -2074,6 +2127,30 @@ id|tty-&gt;driver_data
 suffix:semicolon
 r_int
 id|port
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;serial_close&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;serial == NULL!&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|port
 op_assign
 id|MINOR
 c_func
@@ -2092,22 +2169,6 @@ id|port
 )paren
 suffix:semicolon
 multiline_comment|/* do some sanity checking that we really have a device present */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|serial
-)paren
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;serial == NULL!&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5813,6 +5874,15 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|serial_table
+(braket
+id|serial-&gt;minor
+op_plus
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 multiline_comment|/* free up any memory that we allocated */
 r_for
@@ -5933,13 +6003,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|serial_table
-(braket
-id|serial-&gt;minor
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree
 (paren
 id|serial

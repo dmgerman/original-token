@@ -247,6 +247,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_IPHASE5526
 macro_line|#include &quot;../net/fc/iph5526_scsi.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_3W_XXXX_RAID
+macro_line|#include &quot;3w-xxxx.h&quot;
+macro_line|#endif
 multiline_comment|/*&n; * Moved ppa driver to the end of the probe list&n; * since it is a removable host adapter.&n; * This means the parallel ZIP drive will not bump&n; * the order of the /dev/sd devices - campbell@torque.net&n; */
 macro_line|#ifdef CONFIG_SCSI_PPA
 macro_line|#include &quot;ppa.h&quot;
@@ -570,6 +573,10 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPHASE5526
 id|IPH5526_SCSI_FC
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_3W_XXXX_RAID
+id|TWXXXX
 comma
 macro_line|#endif
 multiline_comment|/* &quot;Removable host adapters&quot; below this line (Parallel Port/USB/other) */

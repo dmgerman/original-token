@@ -5558,32 +5558,14 @@ id|vm_operations_struct
 id|packet_mmap_ops
 op_assign
 (brace
+id|open
+suffix:colon
 id|packet_mm_open
 comma
-multiline_comment|/* open */
+id|close
+suffix:colon
 id|packet_mm_close
 comma
-multiline_comment|/* close */
-l_int|NULL
-comma
-multiline_comment|/* unmap */
-l_int|NULL
-comma
-multiline_comment|/* no special protect */
-l_int|NULL
-comma
-multiline_comment|/* sync */
-l_int|NULL
-comma
-multiline_comment|/* advise */
-l_int|NULL
-comma
-multiline_comment|/* nopage */
-l_int|NULL
-comma
-multiline_comment|/* wppage */
-l_int|NULL
-multiline_comment|/* swapout */
 )brace
 suffix:semicolon
 DECL|function|free_pg_vec

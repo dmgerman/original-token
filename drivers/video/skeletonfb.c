@@ -749,9 +749,11 @@ id|xxx_getcolreg
 comma
 id|xxx_setcolreg
 comma
+id|xxx_pan_display
+comma
 id|xxx_blank
 comma
-id|xxx_dispsw
+id|xxx_set_disp
 )brace
 suffix:semicolon
 multiline_comment|/* ------------ Hardware Independent Functions ------------ */

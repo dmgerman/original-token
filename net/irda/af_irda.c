@@ -5322,7 +5322,7 @@ op_amp
 id|sk-&gt;wmem_alloc
 )paren
 op_ge
-id|MIN_WRITE_SPACE
+id|SOCK_MIN_WRITE_SPACE
 )paren
 id|mask
 op_or_assign

@@ -100,6 +100,7 @@ r_int
 r_int
 id|ss_device
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -208,6 +209,7 @@ r_int
 r_int
 id|device
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -241,6 +243,7 @@ r_int
 r_int
 r_class
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -436,6 +439,7 @@ DECL|function|pci_find_parent_resource
 id|pci_find_parent_resource
 c_func
 (paren
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -447,6 +451,7 @@ op_star
 id|res
 )paren
 (brace
+r_const
 r_struct
 id|pci_bus
 op_star
@@ -963,6 +968,7 @@ id|pci_device_id
 op_star
 id|ids
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -1478,6 +1484,7 @@ DECL|function|pci_dev_driver
 id|pci_dev_driver
 c_func
 (paren
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -4333,6 +4340,7 @@ id|__init
 id|pci_bus_exists
 c_func
 (paren
+r_const
 r_struct
 id|list_head
 op_star
@@ -4342,6 +4350,7 @@ r_int
 id|nr
 )paren
 (brace
+r_const
 r_struct
 id|list_head
 op_star
@@ -4363,6 +4372,7 @@ op_assign
 id|l-&gt;next
 )paren
 (brace
+r_const
 r_struct
 id|pci_bus
 op_star

@@ -6035,32 +6035,23 @@ id|vm_operations_struct
 id|file_shared_mmap
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no special open */
-l_int|NULL
-comma
-multiline_comment|/* no special close */
+id|unmap
+suffix:colon
 id|filemap_unmap
 comma
 multiline_comment|/* unmap - we need to sync the pages */
-l_int|NULL
-comma
-multiline_comment|/* no special protect */
+id|sync
+suffix:colon
 id|filemap_sync
 comma
-multiline_comment|/* sync */
-l_int|NULL
-comma
-multiline_comment|/* advise */
+id|nopage
+suffix:colon
 id|filemap_nopage
 comma
-multiline_comment|/* nopage */
-l_int|NULL
-comma
-multiline_comment|/* wppage */
+id|swapout
+suffix:colon
 id|filemap_swapout
-multiline_comment|/* swapout */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Private mappings just need to be able to load in the map.&n; *&n; * (This is actually used for shared mappings as well, if we&n; * know they can&squot;t ever get write permissions..)&n; */
@@ -6071,32 +6062,10 @@ id|vm_operations_struct
 id|file_private_mmap
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* close */
-l_int|NULL
-comma
-multiline_comment|/* unmap */
-l_int|NULL
-comma
-multiline_comment|/* protect */
-l_int|NULL
-comma
-multiline_comment|/* sync */
-l_int|NULL
-comma
-multiline_comment|/* advise */
+id|nopage
+suffix:colon
 id|filemap_nopage
 comma
-multiline_comment|/* nopage */
-l_int|NULL
-comma
-multiline_comment|/* wppage */
-l_int|NULL
-multiline_comment|/* swapout */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used for a general mmap of a disk file */

@@ -2500,6 +2500,16 @@ id|id
 op_assign
 id|drive-&gt;id
 suffix:semicolon
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|m5229_revision
+OL
+l_int|0x20
+)paren
+(brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2508,6 +2518,7 @@ op_le
 l_int|0x20
 )paren
 (brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

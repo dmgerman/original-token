@@ -3125,6 +3125,7 @@ id|file_operations
 id|def_chr_fops
 suffix:semicolon
 r_extern
+r_const
 r_char
 op_star
 id|bdevname
@@ -3134,6 +3135,7 @@ id|kdev_t
 )paren
 suffix:semicolon
 r_extern
+r_const
 r_char
 op_star
 id|cdevname
@@ -3143,6 +3145,7 @@ id|kdev_t
 )paren
 suffix:semicolon
 r_extern
+r_const
 r_char
 op_star
 id|kdevname

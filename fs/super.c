@@ -5633,7 +5633,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;error %d&bslash;n&quot;
+l_string|&quot;error %ld&bslash;n&quot;
 comma
 id|PTR_ERR
 c_func

@@ -744,7 +744,7 @@ op_assign
 id|PAGE_KERNEL
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_HIGHMEM */
 DECL|function|show_mem
 r_void
 id|show_mem

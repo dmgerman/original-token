@@ -55,7 +55,7 @@ id|nr_queued_signals
 comma
 id|max_queued_signals
 suffix:semicolon
-multiline_comment|/* this is needed for the proc_dointvec_minmax for overflow UID and GID */
+multiline_comment|/* this is needed for the proc_dointvec_minmax for [fs_]overflow UID and GID */
 DECL|variable|maxolduid
 r_static
 r_int

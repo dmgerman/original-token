@@ -44,6 +44,7 @@ op_star
 id|devfn
 )paren
 (brace
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -126,6 +127,7 @@ op_star
 id|devfn
 )paren
 (brace
+r_const
 r_struct
 id|pci_dev
 op_star

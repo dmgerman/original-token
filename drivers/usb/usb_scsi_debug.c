@@ -625,7 +625,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-id|USB_SCSI
+id|USB_STORAGE
 l_string|&quot;Command %s (%d bytes)&bslash;n&quot;
 comma
 id|what
@@ -637,7 +637,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-id|USB_SCSI
+id|USB_STORAGE
 l_string|&quot;  %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x&bslash;n&quot;
 comma
 id|srb-&gt;cmnd

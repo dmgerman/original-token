@@ -11,6 +11,7 @@ id|FILE
 op_star
 id|f
 comma
+r_const
 r_char
 op_star
 id|c

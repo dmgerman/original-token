@@ -338,7 +338,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_OHCI_HCD
+macro_line|#ifdef CONFIG_USB_OHCI
 id|ohci_hcd_init
 c_func
 (paren

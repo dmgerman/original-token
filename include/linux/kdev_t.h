@@ -27,6 +27,7 @@ mdefine_line|#define MKDEV(ma,mi)&t;(((ma) &lt;&lt; MINORBITS) | (mi))
 DECL|macro|B_FREE
 mdefine_line|#define B_FREE&t;&t;0xffff&t;&t;/* yuk */
 r_extern
+r_const
 r_char
 op_star
 id|kdevname

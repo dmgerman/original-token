@@ -3416,6 +3416,7 @@ multiline_comment|/* default file operations */
 )brace
 suffix:semicolon
 DECL|function|bdevname
+r_const
 r_char
 op_star
 id|bdevname

@@ -1,8 +1,4 @@
 multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.169 2000/01/20 19:50:11 acher Exp $&n; */
-macro_line|#ifndef EXPORT_SYMTAB
-DECL|macro|EXPORT_SYMTAB
-mdefine_line|#define EXPORT_SYMTAB
-macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -20,28 +16,16 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/* This enables debug printks */
+singleline_comment|//#define DEBUG
+multiline_comment|/* This enables all symbols to be exported, to ease debugging oopses */
+DECL|macro|DEBUG_SYMBOLS
+mdefine_line|#define DEBUG_SYMBOLS
+multiline_comment|/* This enables an extra UHCI slab for memory debugging */
+singleline_comment|//#define DEBUG_SLAB
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usb-uhci.h&quot;
-singleline_comment|//#define DEBUG
 macro_line|#include &quot;uhci-debug.h&quot;
-macro_line|#ifdef dbg
-DECL|macro|dbg
-macro_line|#undef dbg
-macro_line|#endif
-DECL|macro|DEBUG
-macro_line|#undef DEBUG
-macro_line|#ifdef DEBUG
-DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...) printk(format, ## arg)
-macro_line|#else
-DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...)
-macro_line|#endif
-singleline_comment|// Please leave the following intact, it makes debugging
-singleline_comment|// (esp. after an hard oops crash) a lot easier!
-DECL|macro|_static
-mdefine_line|#define _static 
-singleline_comment|//static
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 r_static
@@ -53,9 +37,18 @@ id|event
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* We added an UHCI_SLAB slab support just for debugging purposes. In real &n;   life this compile option is NOT recommended, because slab caches are not &n;   suitable for modules.&n;*/
-singleline_comment|// #define _UHCI_SLAB 
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SYMBOLS
+DECL|macro|_static
+mdefine_line|#define _static
+macro_line|#ifndef EXPORT_SYMTAB
+DECL|macro|EXPORT_SYMTAB
+mdefine_line|#define EXPORT_SYMTAB
+macro_line|#endif
+macro_line|#else
+DECL|macro|_static
+mdefine_line|#define _static static
+macro_line|#endif
+macro_line|#ifdef DEBUG_SLAB
 DECL|variable|uhci_desc_kmem
 r_static
 id|kmem_cache_t
@@ -69,7 +62,7 @@ op_star
 id|urb_priv_kmem
 suffix:semicolon
 macro_line|#endif
-r_static
+id|_static
 r_int
 id|rh_submit_urb
 (paren
@@ -77,7 +70,7 @@ id|purb_t
 id|purb
 )paren
 suffix:semicolon
-r_static
+id|_static
 r_int
 id|rh_unlink_urb
 (paren
@@ -230,7 +223,7 @@ r_int
 id|flags
 )paren
 (brace
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 op_star
 r_new
 op_assign
@@ -720,7 +713,7 @@ id|puhci_desc_t
 id|element
 )paren
 (brace
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 id|kmem_cache_free
 c_func
 (paren
@@ -752,7 +745,7 @@ op_star
 r_new
 )paren
 (brace
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 op_star
 r_new
 op_assign
@@ -876,10 +869,9 @@ id|vertical
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Allocated qh @ %p&bslash;n&quot;
+l_string|&quot;Allocated qh @ %p&quot;
 comma
 op_star
 r_new
@@ -1203,6 +1195,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
 DECL|function|clean_td_chain
+id|_static
 r_void
 id|clean_td_chain
 (paren
@@ -1280,11 +1273,10 @@ suffix:semicolon
 id|puhci_desc_t
 id|td
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Cleanup_skel&bslash;n&quot;
+l_string|&quot;cleanup_skel&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1463,11 +1455,10 @@ id|s-&gt;chain_end
 )paren
 suffix:semicolon
 )brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Cleanup_skel finished&bslash;n&quot;
+l_string|&quot;cleanup_skel finished&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1494,10 +1485,9 @@ comma
 id|td
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;init_skel&bslash;n&quot;
+l_string|&quot;init_skel&quot;
 )paren
 suffix:semicolon
 id|s-&gt;framelist
@@ -1531,10 +1521,9 @@ l_int|4096
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;allocating iso desc pointer list&bslash;n&quot;
+l_string|&quot;allocating iso desc pointer list&quot;
 )paren
 suffix:semicolon
 id|s-&gt;iso_td
@@ -1577,10 +1566,9 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;allocating iso descs&bslash;n&quot;
+l_string|&quot;allocating iso descs&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1641,10 +1629,9 @@ id|td
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;allocating qh: chain_end&bslash;n&quot;
+l_string|&quot;allocating qh: chain_end&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -1668,10 +1655,9 @@ op_assign
 id|qh
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;allocating qh: bulk_chain&bslash;n&quot;
+l_string|&quot;allocating qh: bulk_chain&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -1706,10 +1692,9 @@ op_assign
 id|qh
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;allocating qh: control_chain&bslash;n&quot;
+l_string|&quot;allocating qh: control_chain&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -1765,10 +1750,9 @@ op_assign
 l_int|0
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Allocating skeleton INT-TDs&bslash;n&quot;
+l_string|&quot;allocating skeleton INT-TDs&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1856,10 +1840,9 @@ suffix:semicolon
 )brace
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Linking skeleton INT-TDs&bslash;n&quot;
+l_string|&quot;Linking skeleton INT-TDs&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1886,7 +1869,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;framelist[%i]=%x&bslash;n&quot;
+l_string|&quot;framelist[%i]=%x&quot;
 comma
 id|n
 comma
@@ -2009,10 +1992,9 @@ c_func
 suffix:semicolon
 singleline_comment|//uhci_show_queue(s-&gt;control_chain);   
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;init_skel exit&bslash;n&quot;
+l_string|&quot;init_skel exit&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2126,10 +2108,9 @@ op_star
 id|data
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_submit_control start&bslash;n&quot;
+l_string|&quot;uhci_submit_control start&quot;
 )paren
 suffix:semicolon
 id|alloc_qh
@@ -2277,9 +2258,10 @@ l_int|0
 suffix:semicolon
 singleline_comment|// queue &squot;setup stage&squot;-td in qh
 macro_line|#if 0
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;SETUP to pipe %x: %x %x %x %x %x %x %x %x&bslash;n&quot;
+l_string|&quot;SETUP to pipe %x: %x %x %x %x %x %x %x %x&quot;
 comma
 id|purb-&gt;pipe
 comma
@@ -2599,10 +2581,9 @@ suffix:semicolon
 singleline_comment|// insert before bulk chain
 singleline_comment|//uhci_show_queue(qh);
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_submit_control end&bslash;n&quot;
+l_string|&quot;uhci_submit_control end&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2794,10 +2775,9 @@ op_assign
 id|purb-&gt;transfer_buffer
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_submit_bulk_urb: pipe %x, len %d&bslash;n&quot;
+l_string|&quot;uhci_submit_bulk_urb: pipe %x, len %d&quot;
 comma
 id|pipe
 comma
@@ -2922,7 +2902,7 @@ op_or_assign
 id|TD_CTRL_IOC
 suffix:semicolon
 singleline_comment|// last one generates INT
-singleline_comment|//dbg(&quot;insert td %p, len %i&bslash;n&quot;,td,pktsze);
+singleline_comment|//dbg(&quot;insert td %p, len %i&quot;,td,pktsze);
 id|insert_td
 (paren
 id|s
@@ -2988,10 +2968,9 @@ suffix:semicolon
 singleline_comment|// insert before end marker
 singleline_comment|//uhci_show_queue(s-&gt;bulk_chain);
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_submit_bulk_urb: exit&bslash;n&quot;
+l_string|&quot;uhci_submit_bulk_urb: exit&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3089,7 +3068,7 @@ id|flags
 suffix:semicolon
 singleline_comment|// do not allow interrupts
 )brace
-singleline_comment|//dbg(&quot;unlink_urb called %p&bslash;n&quot;,purb);
+singleline_comment|//dbg(&quot;unlink_urb called %p&quot;,purb);
 r_if
 c_cond
 (paren
@@ -3300,7 +3279,7 @@ id|qh
 suffix:semicolon
 singleline_comment|// remove it physically
 )brace
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 id|kmem_cache_free
 c_func
 (paren
@@ -3323,10 +3302,9 @@ id|purb-&gt;complete
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;unlink_urb: calling completion&bslash;n&quot;
+l_string|&quot;unlink_urb: calling completion&quot;
 )paren
 suffix:semicolon
 id|purb-&gt;complete
@@ -3678,18 +3656,16 @@ r_int
 id|purb-&gt;number_of_packets
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;iso_find_start: warning, ASAP gap, should not happen&bslash;n&quot;
+l_string|&quot;iso_find_start: warning, ASAP gap, should not happen&quot;
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;iso_find_start: now %u start_frame %u number_of_packets %u pipe 0x%08x&bslash;n&quot;
+l_string|&quot;iso_find_start: now %u start_frame %u number_of_packets %u pipe 0x%08x&quot;
 comma
 id|now
 comma
@@ -3780,11 +3756,10 @@ id|u-&gt;dev
 )paren
 r_continue
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;urb: pipe 0x%08x status %d start_frame %u number_of_packets %u&bslash;n&quot;
+l_string|&quot;urb: pipe 0x%08x status %d start_frame %u number_of_packets %u&quot;
 comma
 id|u-&gt;pipe
 comma
@@ -3882,11 +3857,10 @@ r_int
 id|purb-&gt;number_of_packets
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;iso_find_start: now between start_frame and end&bslash;n&quot;
+l_string|&quot;iso_find_start: now between start_frame and end&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3936,11 +3910,10 @@ OL
 id|queued_size
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;iso_find_start: start_frame %u number_of_packets %u start_limit %u stop_limit %u&bslash;n&quot;
+l_string|&quot;iso_find_start: start_frame %u number_of_packets %u start_limit %u stop_limit %u&quot;
 comma
 id|purb-&gt;start_frame
 comma
@@ -4013,7 +3986,7 @@ id|pipe
 op_assign
 id|purb-&gt;pipe
 suffix:semicolon
-singleline_comment|//printk(&quot;SUBMIT INT&bslash;n&quot;);
+singleline_comment|//dbg(&quot;SUBMIT INT&quot;);
 r_if
 c_cond
 (paren
@@ -4091,8 +4064,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;Rounded interval to %i, chain  %i&bslash;n&quot;
+l_string|&quot;Rounded interval to %i, chain  %i&quot;
 comma
 id|purb-&gt;interval
 comma
@@ -4522,10 +4494,9 @@ op_increment
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;n:%d purb-&gt;iso_frame_desc[n].length:%d&bslash;n&quot;
+l_string|&quot;n:%d purb-&gt;iso_frame_desc[n].length:%d&quot;
 comma
 id|n
 comma
@@ -4573,11 +4544,9 @@ OG
 id|maxsze
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-id|MODSTR
 l_string|&quot;submit_iso: purb-&gt;iso_frame_desc[%d].length(%d)&gt;%d&quot;
 comma
 id|n
@@ -4841,8 +4810,9 @@ id|tdm
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;ISO-INT# %i, start %i, now %i&bslash;n&quot;
+l_string|&quot;ISO-INT# %i, start %i, now %i&quot;
 comma
 id|purb-&gt;number_of_packets
 comma
@@ -4923,10 +4893,9 @@ l_int|0
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;search_dev_ep:&bslash;n&quot;
+l_string|&quot;search_dev_ep:&quot;
 )paren
 suffix:semicolon
 id|spin_lock_irqsave
@@ -4963,10 +4932,9 @@ id|urb_list
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;urb: %p&bslash;n&quot;
+l_string|&quot;urb: %p&quot;
 comma
 id|tmp
 )paren
@@ -5074,7 +5042,7 @@ id|puhci_t
 )paren
 id|purb-&gt;dev-&gt;bus-&gt;hcpriv
 suffix:semicolon
-singleline_comment|//printk( MODSTR&quot;submit_urb: %p type %d&bslash;n&quot;,purb,usb_pipetype(purb-&gt;pipe));
+singleline_comment|//dbg(&quot;submit_urb: %p type %d&quot;,purb,usb_pipetype(purb-&gt;pipe));
 r_if
 c_cond
 (paren
@@ -5119,7 +5087,7 @@ id|ENXIO
 suffix:semicolon
 singleline_comment|// urb already queued
 )brace
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 id|purb_priv
 op_assign
 id|kmem_cache_alloc
@@ -5190,10 +5158,9 @@ op_assign
 l_int|0
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;submit_urb: scheduling %p&bslash;n&quot;
+l_string|&quot;submit_urb: scheduling %p&quot;
 comma
 id|purb
 )paren
@@ -5265,10 +5232,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;submit_urb: scheduled with ret: %d&bslash;n&quot;
+l_string|&quot;submit_urb: scheduled with ret: %d&quot;
 comma
 id|ret
 )paren
@@ -5286,7 +5252,7 @@ id|usb_dec_dev_use
 id|purb-&gt;dev
 )paren
 suffix:semicolon
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 id|kmem_cache_free
 c_func
 (paren
@@ -5306,7 +5272,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;purb-&gt;status = USB_ST_URB_PENDING;&n;&t;queue_urb (s, &amp;purb-&gt;urb_list,1);&n;&t;dbg (KERN_DEBUG MODSTR &quot;submit_urb: exit&bslash;n&quot;);&n;*/
+multiline_comment|/*&n;&t;purb-&gt;status = USB_ST_URB_PENDING;&n;&t;queue_urb (s, &amp;purb-&gt;urb_list,1);&n;&t;dbg(&quot;submit_urb: exit&quot;);&n;*/
 r_return
 l_int|0
 suffix:semicolon
@@ -5625,10 +5591,9 @@ l_int|0
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Root-Hub INT complete: port1: %x port2: %x data: %x&bslash;n&quot;
+l_string|&quot;Root-Hub INT complete: port1: %x port2: %x data: %x&quot;
 comma
 id|inw
 (paren
@@ -5913,10 +5878,9 @@ id|PIPE_INTERRUPT
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Root-Hub submit IRQ: every %d ms&bslash;n&quot;
+l_string|&quot;Root-Hub submit IRQ: every %d ms&quot;
 comma
 id|purb-&gt;interval
 )paren
@@ -5995,9 +5959,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Root-Hub: adr: %2x cmd(%1x): %04x %04x %04x %04x&bslash;n&quot;
+l_string|&quot;Root-Hub: adr: %2x cmd(%1x): %04x %04x %04x %04x&quot;
 comma
 id|uhci-&gt;rh.devnum
 comma
@@ -6759,11 +6721,10 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Root-Hub stat port1: %x port2: %x &bslash;n&quot;
+l_string|&quot;Root-Hub stat port1: %x port2: %x&quot;
 comma
 id|inw
 (paren
@@ -6818,10 +6779,9 @@ op_assign
 id|purb-&gt;dev-&gt;bus-&gt;hcpriv
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Root-Hub unlink IRQ&bslash;n&quot;
+l_string|&quot;Root-Hub unlink IRQ&quot;
 )paren
 suffix:semicolon
 id|uhci-&gt;rh.send
@@ -6839,8 +6799,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
-DECL|macro|UHCI_DEBUG
-mdefine_line|#define UHCI_DEBUG
 multiline_comment|/*&n; * Map status to standard result codes&n; *&n; * &lt;status&gt; is (td-&gt;status &amp; 0xFE0000) [a.k.a. uhci_status_bits(td-&gt;status)&n; * &lt;dir_out&gt; is True for output TDs and False for input TDs.&n; */
 DECL|function|uhci_map_status
 id|_static
@@ -7138,10 +7096,9 @@ op_assign
 id|USB_ST_NOERROR
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;process_transfer: urb contains bulk/control request&bslash;n&quot;
+l_string|&quot;process_transfer: urb contains bulk/control request&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* if the status phase has been retriggered and the&n;&t;   queue is empty or the last status-TD is inactive, the retriggered&n;&t;   status stage is completed&n;&t; */
@@ -7357,11 +7314,10 @@ op_assign
 id|USB_ST_SHORT_PACKET
 suffix:semicolon
 singleline_comment|// treat as real error
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;process_transfer: SPD!!&bslash;n&quot;
+l_string|&quot;process_transfer: SPD!!&quot;
 )paren
 suffix:semicolon
 r_break
@@ -7402,12 +7358,10 @@ id|last_desc
 )paren
 suffix:semicolon
 singleline_comment|// re-trigger status stage
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci: short packet during control transfer, retrigger status stage @ %p&bslash;n&quot;
+l_string|&quot;short packet during control transfer, retrigger status stage @ %p&quot;
 comma
 id|last_desc
 )paren
@@ -7449,7 +7403,7 @@ id|uhci_toggle
 id|desc-&gt;hw.td.info
 )paren
 suffix:semicolon
-singleline_comment|//printk(KERN_DEBUG MODSTR&quot;process_transfer: len:%d status:%x mapped:%x toggle:%d&bslash;n&quot;, actual_length, desc-&gt;hw.td.status,status, data_toggle);      
+singleline_comment|//dbg(&quot;process_transfer: len:%d status:%x mapped:%x toggle:%d&quot;, actual_length, desc-&gt;hw.td.status,status, data_toggle);      
 )brace
 id|usb_settoggle
 (paren
@@ -7490,10 +7444,10 @@ op_amp
 id|TD_CTRL_NAK
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;APS WORKAROUND&bslash;n&quot;
+l_string|&quot;APS WORKAROUND&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -7526,9 +7480,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;process_transfer: urb %p, wanted len %d, len %d status %x err %d&bslash;n&quot;
+l_string|&quot;process_transfer: urb %p, wanted len %d, len %d status %x err %d&quot;
 comma
 id|purb
 comma
@@ -7541,7 +7493,7 @@ comma
 id|purb-&gt;error_count
 )paren
 suffix:semicolon
-singleline_comment|//dbg(KERN_DEBUG MODSTR&quot;process_transfer: exit&bslash;n&quot;);
+singleline_comment|//dbg(&quot;process_transfer: exit&quot;);
 macro_line|#if 0
 r_if
 c_cond
@@ -7560,9 +7512,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;%x %x %x %x %x %x %x %x&bslash;n&quot;
+l_string|&quot;%x %x %x %x %x %x %x %x&quot;
 comma
 op_star
 id|uu
@@ -7674,7 +7624,7 @@ id|status
 op_assign
 id|USB_ST_NOERROR
 suffix:semicolon
-singleline_comment|//printk(KERN_DEBUG MODSTR&quot;urb contains interrupt request&bslash;n&quot;);
+singleline_comment|//dbg(&quot;urb contains interrupt request&quot;);
 r_for
 c_loop
 (paren
@@ -7716,7 +7666,7 @@ id|TD_CTRL_ACTIVE
 )paren
 (brace
 singleline_comment|// do not process active TDs
-singleline_comment|//printk(&quot;TD ACT Status @%p %08x&bslash;n&quot;,desc,desc-&gt;hw.td.status);
+singleline_comment|//dbg(&quot;TD ACT Status @%p %08x&quot;,desc,desc-&gt;hw.td.status);
 r_break
 suffix:semicolon
 )brace
@@ -7821,7 +7771,7 @@ c_cond
 id|purb-&gt;complete
 )paren
 (brace
-singleline_comment|//printk (KERN_DEBUG MODSTR &quot;process_interrupt: calling completion, status %i&bslash;n&quot;,status);
+singleline_comment|//dbg(&quot;process_interrupt: calling completion, status %i&quot;,status);
 id|purb-&gt;status
 op_assign
 id|status
@@ -8021,10 +7971,9 @@ id|desc_list
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-multiline_comment|/*KERN_DEBUG */
-id|MODSTR
-l_string|&quot;urb contains iso request&bslash;n&quot;
+l_string|&quot;urb contains iso request&quot;
 )paren
 suffix:semicolon
 r_if
@@ -8096,11 +8045,10 @@ op_and_assign
 op_complement
 id|TD_CTRL_ACTIVE
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;TD still active (%x)- grrr. paranoia!&bslash;n&quot;
+l_string|&quot;TD still active (%x)- grrr. paranoia!&quot;
 comma
 id|desc-&gt;hw.td.status
 )paren
@@ -8146,10 +8094,9 @@ id|i
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;purb-&gt;number_of_packets (%d)&lt;=(%d)&bslash;n&quot;
+l_string|&quot;purb-&gt;number_of_packets (%d)&lt;=(%d)&quot;
 comma
 id|purb-&gt;number_of_packets
 comma
@@ -8184,10 +8131,9 @@ id|desc-&gt;hw.td.buffer
 (brace
 singleline_comment|// Hm, something really weird is going on
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Pointer Paranoia: %p!=%p&bslash;n&quot;
+l_string|&quot;Pointer Paranoia: %p!=%p&quot;
 comma
 id|purb-&gt;iso_frame_desc
 (braket
@@ -8294,10 +8240,9 @@ id|status
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;process_iso: len:%d status:%x&bslash;n&quot;
+l_string|&quot;process_iso: len:%d status:%x&quot;
 comma
 id|purb-&gt;iso_frame_desc
 (braket
@@ -8326,10 +8271,9 @@ id|p
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-multiline_comment|/*KERN_DEBUG */
-id|MODSTR
-l_string|&quot;process_iso: exit %i (%d)&bslash;n&quot;
+l_string|&quot;process_iso: exit %i (%d)&quot;
 comma
 id|i
 comma
@@ -8381,10 +8325,9 @@ id|urb_list
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-multiline_comment|/*KERN_DEBUG */
-id|MODSTR
-l_string|&quot;found queued urb: %p&bslash;n&quot;
+l_string|&quot;found queued urb: %p&quot;
 comma
 id|purb
 )paren
@@ -8465,10 +8408,9 @@ op_assign
 l_int|0
 suffix:semicolon
 id|dbg
+c_func
 (paren
-multiline_comment|/*KERN_DEBUG */
-id|MODSTR
-l_string|&quot;dequeued urb: %p&bslash;n&quot;
+l_string|&quot;dequeued urb: %p&quot;
 comma
 id|purb
 )paren
@@ -8482,7 +8424,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 id|kmem_cache_free
 c_func
 (paren
@@ -8593,10 +8535,9 @@ id|USB_URB_EARLY_COMPLETE
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;process_transfer: calling early completion&bslash;n&quot;
+l_string|&quot;process_transfer: calling early completion&quot;
 )paren
 suffix:semicolon
 id|purb-&gt;complete
@@ -8701,10 +8642,9 @@ id|USB_URB_EARLY_COMPLETE
 )paren
 (brace
 id|dbg
+c_func
 (paren
-multiline_comment|/*KERN_DEBUG */
-id|MODSTR
-l_string|&quot;process_transfer: calling completion&bslash;n&quot;
+l_string|&quot;process_transfer: calling completion&quot;
 )paren
 suffix:semicolon
 id|purb-&gt;complete
@@ -8791,8 +8731,9 @@ multiline_comment|/* shared interrupt, not mine */
 r_return
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;interrupt&bslash;n&quot;
+l_string|&quot;interrupt&quot;
 )paren
 suffix:semicolon
 r_if
@@ -8803,11 +8744,10 @@ op_ne
 l_int|1
 )paren
 (brace
-id|printk
+id|warn
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;interrupt, status %x&bslash;n&quot;
+l_string|&quot;interrupt, status %x&quot;
 comma
 id|status
 )paren
@@ -8923,8 +8863,9 @@ suffix:semicolon
 singleline_comment|// ?
 macro_line|#endif
 id|dbg
+c_func
 (paren
-l_string|&quot;done&bslash;n&bslash;n&bslash;n&quot;
+l_string|&quot;done&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -9028,11 +8969,10 @@ op_decrement
 id|timeout
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;USBCMD_HCRESET timed out!&bslash;n&quot;
+l_string|&quot;USBCMD_HCRESET timed out!&quot;
 )paren
 suffix:semicolon
 r_break
@@ -9429,9 +9369,10 @@ l_int|2
 )paren
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;port %i, adr %x status %x&bslash;n&quot;
+l_string|&quot;port %i, adr %x status %x&quot;
 comma
 id|s-&gt;maxports
 comma
@@ -9462,10 +9403,9 @@ r_break
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Detected %d ports&bslash;n&quot;
+l_string|&quot;Detected %d ports&quot;
 comma
 id|s-&gt;maxports
 )paren
@@ -9481,9 +9421,9 @@ l_int|8
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;Port count misdetected, forcing to 2 ports&bslash;n&quot;
+l_string|&quot;Port count misdetected, forcing to 2 ports&quot;
 )paren
 suffix:semicolon
 id|s-&gt;maxports
@@ -9561,12 +9501,10 @@ id|s
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|MODSTR
-id|KERN_ERR
-l_string|&quot;request_irq %d failed!&bslash;n&quot;
+l_string|&quot;request_irq %d failed!&quot;
 comma
 id|irq
 )paren
@@ -9815,9 +9753,10 @@ id|s
 op_assign
 id|devs
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;handle_apm_event(%d)&bslash;n&quot;
+l_string|&quot;handle_apm_event(%d)&quot;
 comma
 id|event
 )paren
@@ -9841,10 +9780,9 @@ id|down
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;received extra suspend event&bslash;n&quot;
+l_string|&quot;received extra suspend event&quot;
 )paren
 suffix:semicolon
 r_break
@@ -9886,10 +9824,9 @@ id|down
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;received bogus resume event&bslash;n&quot;
+l_string|&quot;received bogus resume event&quot;
 )paren
 suffix:semicolon
 r_break
@@ -9952,7 +9889,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 r_char
 op_star
 id|slabname
@@ -10013,12 +9950,10 @@ op_logical_neg
 id|uhci_desc_kmem
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;kmem_cache_create for uhci_desc failed (out of memory)&bslash;n&quot;
+l_string|&quot;kmem_cache_create for uhci_desc failed (out of memory)&quot;
 )paren
 suffix:semicolon
 r_return
@@ -10084,12 +10019,10 @@ op_logical_neg
 id|urb_priv_kmem
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;kmem_cache_create for urb_priv_t failed (out of memory)&bslash;n&quot;
+l_string|&quot;kmem_cache_create for urb_priv_t failed (out of memory)&quot;
 )paren
 suffix:semicolon
 r_return
@@ -10098,12 +10031,10 @@ id|ENOMEM
 suffix:semicolon
 )brace
 macro_line|#endif&t;
-id|printk
+id|info
+c_func
 (paren
-id|KERN_INFO
-id|MODSTR
 id|VERSTR
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -10166,12 +10097,10 @@ op_logical_neg
 id|dev-&gt;irq
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;Found UHCI device with no IRQ assigned. Check BIOS settings!&bslash;n&quot;
+l_string|&quot;Found UHCI device with no IRQ assigned. Check BIOS settings!&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -10246,7 +10175,7 @@ id|s
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef _UHCI_SLAB
+macro_line|#ifdef DEBUG_SLAB
 id|kmem_cache_shrink
 c_func
 (paren

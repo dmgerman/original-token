@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.28 1999/12/27 06:08:28 anton Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; */
+multiline_comment|/* $Id: ioport.c,v 1.29 2000/01/22 07:35:25 zaitcev Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -862,6 +862,20 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|tack
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|resource
+)paren
+)paren
+suffix:semicolon
 id|res
 op_assign
 (paren
@@ -1176,7 +1190,7 @@ l_string|&quot;sbus_set_sbus64: unsupported&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Allocate a chunk of memory suitable for DMA.&n; * Typically devices use them for control blocks.&n; * CPU may access them without any explicit flushing.&n; */
+multiline_comment|/*&n; * Allocate a chunk of memory suitable for DMA.&n; * Typically devices use them for control blocks.&n; * CPU may access them without any explicit flushing.&n; *&n; * XXX Some clever people know that sdev is not used and supply NULL. Watch.&n; */
 DECL|function|sbus_alloc_consistant
 r_void
 op_star
@@ -1356,6 +1370,24 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|res
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|resource
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1388,7 +1420,7 @@ c_func
 (paren
 l_string|&quot;sbus_alloc_consistant: cannot occupy 0x%lx&quot;
 comma
-id|len
+id|len_total
 )paren
 suffix:semicolon
 id|free_pages
@@ -1421,7 +1453,7 @@ id|va
 comma
 id|res-&gt;start
 comma
-id|len
+id|len_total
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * &quot;Official&quot; or &quot;natural&quot; address of pages we got is va.&n;&t; * We want to return uncached range. We could make va[len]&n;&t; * uncached but it&squot;s difficult to make cached back [P3: hmm]&n;&t; * We use the artefact of sun4c, replicated everywhere else,&n;&t; * that CPU can use bus addresses to access the same memory.&n;&t; */
@@ -1772,6 +1804,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|res
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|resource
+)paren
+)paren
+suffix:semicolon
 id|res-&gt;name
 op_assign
 id|va

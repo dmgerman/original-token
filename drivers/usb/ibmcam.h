@@ -47,6 +47,9 @@ DECL|macro|LIMIT_RGB
 mdefine_line|#define LIMIT_RGB(x) (((x) &lt; 0) ? 0 : (((x) &gt; 255) ? 255 : (x)))
 DECL|macro|YUV_TO_RGB_BY_THE_BOOK
 mdefine_line|#define YUV_TO_RGB_BY_THE_BOOK(my,mu,mv,mr,mg,mb) { &bslash;&n;    int mm_y, mm_yc, mm_u, mm_v, mm_r, mm_g, mm_b; &bslash;&n;    mm_y = (my) - 16;  &bslash;&n;    mm_u = (mu) - 128; &bslash;&n;    mm_v = (mv) - 128; &bslash;&n;    mm_yc= mm_y * 76284; &bslash;&n;    mm_b = (mm_yc&t;&t;+ 132252*mm_v&t;) &gt;&gt; 16; &bslash;&n;    mm_g = (mm_yc -  53281*mm_u -  25625*mm_v&t;) &gt;&gt; 16; &bslash;&n;    mm_r = (mm_yc + 104595*mm_u&t;&t;&t;) &gt;&gt; 16; &bslash;&n;    mb = LIMIT_RGB(mm_b); &bslash;&n;    mg = LIMIT_RGB(mm_g); &bslash;&n;    mr = LIMIT_RGB(mm_r); &bslash;&n;}
+multiline_comment|/* Debugging aid */
+DECL|macro|IBMCAM_SAY_AND_WAIT
+mdefine_line|#define IBMCAM_SAY_AND_WAIT(what) { &bslash;&n;&t;wait_queue_head_t wq; &bslash;&n;&t;init_waitqueue_head(&amp;wq); &bslash;&n;&t;printk(KERN_INFO &quot;Say: %s&bslash;n&quot;, what); &bslash;&n;&t;interruptible_sleep_on_timeout (&amp;wq, HZ*3); &bslash;&n;}
 r_enum
 (brace
 DECL|enumerator|STATE_SCANNING
@@ -207,6 +210,11 @@ r_int
 id|user
 suffix:semicolon
 multiline_comment|/* user count for exclusive use */
+DECL|member|initialized
+r_int
+id|initialized
+suffix:semicolon
+multiline_comment|/* Had we already sent init sequence? */
 DECL|member|streaming
 r_int
 id|streaming
@@ -228,6 +236,11 @@ op_star
 id|fbuf
 suffix:semicolon
 multiline_comment|/* Videodev buffer area */
+DECL|member|fbuf_size
+r_int
+id|fbuf_size
+suffix:semicolon
+multiline_comment|/* Videodev buffer size */
 DECL|member|curframe
 r_int
 id|curframe

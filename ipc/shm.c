@@ -2584,32 +2584,24 @@ id|vm_operations_struct
 id|shm_vm_ops
 op_assign
 (brace
+id|open
+suffix:colon
 id|shm_open
 comma
 multiline_comment|/* open - callback for a new vm-area open */
+id|close
+suffix:colon
 id|shm_close
 comma
 multiline_comment|/* close - callback for when the vm-area is released */
-l_int|NULL
-comma
-multiline_comment|/* no need to sync pages at unmap */
-l_int|NULL
-comma
-multiline_comment|/* protect */
-l_int|NULL
-comma
-multiline_comment|/* sync */
-l_int|NULL
-comma
-multiline_comment|/* advise */
+id|nopage
+suffix:colon
 id|shm_nopage
 comma
-multiline_comment|/* nopage */
-l_int|NULL
-comma
-multiline_comment|/* wppage */
+id|swapout
+suffix:colon
 id|shm_swapout
-multiline_comment|/* swapout */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* Insert shmd into the list shp-&gt;attaches */

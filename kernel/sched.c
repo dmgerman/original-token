@@ -1295,6 +1295,9 @@ r_switch
 c_cond
 (paren
 id|prev-&gt;state
+op_amp
+op_complement
+id|TASK_EXCLUSIVE
 )paren
 (brace
 r_case
