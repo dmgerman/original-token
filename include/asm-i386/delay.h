@@ -33,6 +33,6 @@ id|loops
 )paren
 suffix:semicolon
 DECL|macro|udelay
-mdefine_line|#define udelay(n) (__builtin_constant_p(n) ? &bslash;&n;&t;__const_udelay((n) * 0x10c6) : &bslash;&n;&t;__udelay(n))
+mdefine_line|#define udelay(n) (__builtin_constant_p(n) ? &bslash;&n;&t;__const_udelay((n) * 0x10c6ul) : &bslash;&n;&t;__udelay(n))
 macro_line|#endif /* defined(_I386_DELAY_H) */
 eof

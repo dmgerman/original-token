@@ -27,11 +27,9 @@ mdefine_line|#define NFSDDBG_FACILITY&t;NFSDDBG_SVC
 DECL|macro|NFSD_BUFSIZE
 mdefine_line|#define NFSD_BUFSIZE&t;&t;(1024 + NFSSVC_MAXBLKSIZE)
 DECL|macro|BLOCKABLE_SIGS
-mdefine_line|#define BLOCKABLE_SIGS&t;&t;(~(_S(SIGKILL) | _S(SIGSTOP)))
+mdefine_line|#define BLOCKABLE_SIGS&t;(~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
 DECL|macro|SHUTDOWN_SIGS
-mdefine_line|#define SHUTDOWN_SIGS&t;&t;(_S(SIGKILL)|_S(SIGINT)|_S(SIGTERM))
-DECL|macro|_S
-mdefine_line|#define _S(sig)&t;&t;&t;(1 &lt;&lt; ((sig) - 1))
+mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL)|sigmask(SIGINT)|sigmask(SIGTERM))
 r_extern
 r_struct
 id|svc_program
@@ -291,9 +289,6 @@ id|serv
 op_assign
 id|rqstp-&gt;rq_server
 suffix:semicolon
-id|sigset_t
-id|oldsigmask
-suffix:semicolon
 r_int
 id|oldumask
 comma
@@ -334,10 +329,14 @@ op_assign
 id|current-&gt;fs-&gt;umask
 suffix:semicolon
 multiline_comment|/* Set umask to 0.  */
+id|siginitsetinv
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_or_assign
-op_complement
+comma
 id|SHUTDOWN_SIGS
+)paren
 suffix:semicolon
 id|current-&gt;fs-&gt;umask
 op_assign
@@ -447,13 +446,35 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Process request with all signals blocked.  */
-id|oldsigmask
-op_assign
-id|current-&gt;blocked
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
+id|siginitsetinv
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
+comma
+op_complement
 id|BLOCKABLE_SIGS
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
 id|svc_process
 c_func
@@ -463,9 +484,34 @@ comma
 id|rqstp
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|siginitsetinv
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|oldsigmask
+comma
+id|SHUTDOWN_SIGS
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Unlock export hash tables */
@@ -506,11 +552,11 @@ c_loop
 (paren
 id|signo
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|signo
-OL
-l_int|32
+op_le
+id|_NSIG
 suffix:semicolon
 id|signo
 op_increment
@@ -518,13 +564,22 @@ op_increment
 r_if
 c_cond
 (paren
-id|current-&gt;signal
-op_amp
-id|current-&gt;blocked
-op_amp
+id|sigismember
+c_func
 (paren
-l_int|1
-op_lshift
+op_amp
+id|current-&gt;signal
+comma
+id|signo
+)paren
+op_logical_and
+op_logical_neg
+id|sigismember
+c_func
+(paren
+op_amp
+id|current-&gt;signal
+comma
 id|signo
 )paren
 )paren

@@ -46,7 +46,7 @@ mdefine_line|#define ASIC_RST      0x40
 DECL|macro|i586_RST
 mdefine_line|#define i586_RST      0x80
 DECL|macro|eeprom_delay
-mdefine_line|#define eeprom_delay() { int _i = 40; while (--_i&gt;0) { __SLOW_DOWN_IO; }}
+mdefine_line|#define eeprom_delay() { udelay(40); }
 multiline_comment|/*&n; * i82586 Memory Configuration&n; */
 multiline_comment|/* (System Configuration Pointer) System start up block, read after 586_RST */
 DECL|macro|SCP_START

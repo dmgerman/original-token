@@ -474,11 +474,11 @@ c_func
 id|__copy_user
 )paren
 suffix:semicolon
-DECL|variable|__clear_user
+DECL|variable|__do_clear_user
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
-id|__clear_user
+id|__do_clear_user
 )paren
 suffix:semicolon
 DECL|variable|__strncpy_from_user

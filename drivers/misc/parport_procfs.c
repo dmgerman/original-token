@@ -611,7 +611,7 @@ id|page
 op_plus
 id|len
 comma
-l_string|&quot;base:&bslash;t0x%x&bslash;n&quot;
+l_string|&quot;base:&bslash;t0x%lx&bslash;n&quot;
 comma
 id|pp-&gt;base
 )paren

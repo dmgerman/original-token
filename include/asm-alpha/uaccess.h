@@ -195,14 +195,16 @@ DECL|macro|copy_from_user_ret
 mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 r_extern
 r_void
-id|__clear_user
+id|__do_clear_user
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
+DECL|macro|__clear_user
+mdefine_line|#define __clear_user(to,n)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register void * __cl_to __asm__(&quot;$6&quot;) = (to);&t;&t;&t;&bslash;&n;&t;register long __cl_len __asm__(&quot;$0&quot;) = (n);&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;jsr $28,(%2),__do_clear_user&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__cl_len), &quot;=r&quot;(__cl_to)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;r&quot;(__do_clear_user), &quot;0&quot;(__cl_len), &quot;1&quot;(__cl_to)&t;&bslash;&n;&t;&t;: &quot;$1&quot;,&quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$28&quot;,&quot;memory&quot;);&t;&t;&bslash;&n;&t;__cl_len;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|clear_user
-mdefine_line|#define clear_user(to,n)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register void * __cl_to __asm__(&quot;$6&quot;) = (to);&t;&t;&t;&bslash;&n;&t;register long __cl_len __asm__(&quot;$0&quot;) = (n);&t;&t;&t;&bslash;&n;&t;if (__access_ok(((long)__cl_to),__cl_len,__access_mask)) {&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&quot;jsr $28,(%2),__clear_user&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=r&quot;(__cl_len), &quot;=r&quot;(__cl_to)&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;r&quot;(__clear_user), &quot;0&quot;(__cl_len), &quot;1&quot;(__cl_to)&bslash;&n;&t;&t;&t;: &quot;$1&quot;,&quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$28&quot;,&quot;memory&quot;);&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__cl_len;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define clear_user(to,n)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register void * __cl_to __asm__(&quot;$6&quot;) = (to);&t;&t;&t;&bslash;&n;&t;register long __cl_len __asm__(&quot;$0&quot;) = (n);&t;&t;&t;&bslash;&n;&t;if (__access_ok(((long)__cl_to),__cl_len,__access_mask)) {&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&quot;jsr $28,(%2),__do_clear_user&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=r&quot;(__cl_len), &quot;=r&quot;(__cl_to)&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;r&quot;(__do_clear_user), &quot;0&quot;(__cl_len), &quot;1&quot;(__cl_to)&bslash;&n;&t;&t;&t;: &quot;$1&quot;,&quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$28&quot;,&quot;memory&quot;);&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__cl_len;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/* Returns: -EFAULT if exception before terminator, N if the entire&n;   buffer filled, else strlen.  */
 r_extern
 r_int

@@ -468,8 +468,13 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
 suffix:semicolon
+multiline_comment|/* we want to delay one I/O cycle - which is 2MHz */
 id|status
 op_assign
 id|inb

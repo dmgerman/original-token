@@ -483,7 +483,7 @@ DECL|macro|RXINT
 mdefine_line|#define RXINT&t;&t;0x04
 DECL|macro|SPINT
 mdefine_line|#define SPINT&t;&t;0x06
-macro_line|#ifdef SCC_DELAY
+macro_line|#ifdef CONFIG_SCC_DELAY
 DECL|macro|Inb
 mdefine_line|#define Inb(port)&t;inb_p(port)
 DECL|macro|Outb

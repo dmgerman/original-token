@@ -4681,7 +4681,23 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|baycom_init
+id|baycom_ser_fdx_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|baycom_ser_hdx_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|baycom_par_init
 c_func
 (paren
 r_void
@@ -4858,8 +4874,22 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_BAYCOM)
-id|baycom_init
+macro_line|#if defined(CONFIG_BAYCOM_PAR)
+id|baycom_par_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_BAYCOM_SER_FDX)
+id|baycom_ser_fdx_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_BAYCOM_SER_HDX)
+id|baycom_ser_hdx_init
 c_func
 (paren
 )paren

@@ -27,6 +27,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -2418,9 +2419,11 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* We are supposed to wait for 2 us after a SEL_RESET */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
 suffix:semicolon
 id|lp-&gt;tx_start
 op_assign
@@ -2580,9 +2583,11 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* We are supposed to wait for 2 us after a SEL_RESET */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
 suffix:semicolon
 multiline_comment|/* Do I also need to flush the transmit buffers here? YES? */
 id|lp-&gt;tx_start
@@ -3054,11 +3059,12 @@ id|dev
 suffix:semicolon
 multiline_comment|/* Update the statistics here. What statistics? */
 multiline_comment|/* We are supposed to wait for 200 us after a RESET */
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|200
+)paren
 suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-multiline_comment|/* May not be enough? */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -3674,9 +3680,11 @@ multiline_comment|/* Acknowledge that the MC setup is done */
 r_do
 (brace
 multiline_comment|/* We should be doing this in the eepro_interrupt()! */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3800,7 +3808,7 @@ multiline_comment|/* The horrible routine to read a word from the serial EEPROM.
 multiline_comment|/* IMPORTANT - the 82595 will be set to Bank 0 after the eeprom is read */
 multiline_comment|/* The delay between EEPROM clock transitions. */
 DECL|macro|eeprom_delay
-mdefine_line|#define eeprom_delay()&t;{ int _i = 40; while (--_i &gt; 0) { __SLOW_DOWN_IO; }}
+mdefine_line|#define eeprom_delay()&t;{ udelay(40); }
 DECL|macro|EE_READ_CMD
 mdefine_line|#define EE_READ_CMD (6 &lt;&lt; 6)
 r_int

@@ -7415,6 +7415,14 @@ id|dev
 (brace
 multiline_comment|/* This routine is called when driver is being unloaded */
 macro_line|#ifdef RUNTIME_DMA_ALLOC
+r_if
+c_cond
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+)paren
 id|sound_free_dmap
 (paren
 id|dev
@@ -7437,6 +7445,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_logical_and
 id|audio_devs
 (braket
 id|dev

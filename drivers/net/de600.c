@@ -9,9 +9,9 @@ l_string|&quot;de600.c: $Revision: 1.40 $,  Bjorn Ekwall (bj0rn@blox.se)&bslash;
 suffix:semicolon
 multiline_comment|/*&n; *&t;de600.c&n; *&n; *&t;Linux driver for the D-Link DE-600 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall&n; *&t;The Author may be reached as bj0rn@blox.se&n; *&n; *&t;Based on adapter information gathered from DE600.ASM by D-Link Inc.,&n; *&t;as included on disk C in the v.2.11 of PC/TCP from FTP Software.&n; *&t;For DE600.asm:&n; *&t;&t;Portions (C) Copyright 1990 D-Link, Inc.&n; *&t;&t;Copyright, 1988-1992, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n; *&n; *&t;compile-command:&n; *&t;&quot;gcc -D__KERNEL__  -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer &bslash;&n; *&t; -m486 -c de600.c&n; *&n; **************************************************************/
 multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; **************************************************************/
-multiline_comment|/* Add another &quot;; SLOW_DOWN_IO&quot; here if your adapter won&squot;t work OK: */
+multiline_comment|/* Add more time here if your adapter won&squot;t work OK: */
 DECL|macro|DE600_SLOW_DOWN
-mdefine_line|#define DE600_SLOW_DOWN SLOW_DOWN_IO; SLOW_DOWN_IO; SLOW_DOWN_IO
+mdefine_line|#define DE600_SLOW_DOWN udelay(delay_time)
 multiline_comment|/*&n; * If you still have trouble reading/writing to the adapter,&n; * modify the following &quot;#define&quot;: (see &lt;asm/io.h&gt; for more info)&n;#define REALLY_SLOW_IO&n; */
 DECL|macro|SLOW_IO_BY_JUMPING
 mdefine_line|#define SLOW_IO_BY_JUMPING /* Looks &quot;better&quot; than dummy write to port 0x80 :-) */
@@ -49,6 +49,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -65,6 +66,22 @@ id|MODULE_PARM
 c_func
 (paren
 id|de600_debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+DECL|variable|delay_time
+r_static
+r_int
+r_int
+id|delay_time
+op_assign
+l_int|10
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|delay_time
 comma
 l_string|&quot;i&quot;
 )paren

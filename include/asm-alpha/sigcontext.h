@@ -5,7 +5,7 @@ DECL|struct|sigcontext
 r_struct
 id|sigcontext
 (brace
-multiline_comment|/*&n;&t; * what should we have here? I&squot;d probably better use the same&n;&t; * stack layout as OSF/1, just in case we ever want to try&n;&t; * running their binaries.. &n;&t; *&n;&t; * This is the basic layout, but I don&squot;t know if we&squot;ll ever&n;&t; * actually fill in all the values..&n;&t; */
+multiline_comment|/*&n;&t; * What should we have here? I&squot;d probably better use the same&n;&t; * stack layout as OSF/1, just in case we ever want to try&n;&t; * running their binaries.. &n;&t; *&n;&t; * This is the basic layout, but I don&squot;t know if we&squot;ll ever&n;&t; * actually fill in all the values..&n;&t; */
 DECL|member|sc_onstack
 r_int
 id|sc_onstack
@@ -98,14 +98,41 @@ r_int
 r_int
 id|sc_fp_trigger_inst
 suffix:semicolon
-DECL|member|sc_retcode
-r_int
-r_int
-id|sc_retcode
-(braket
-l_int|2
-)braket
+)brace
 suffix:semicolon
+DECL|struct|ucontext
+r_struct
+id|ucontext
+(brace
+DECL|member|uc_flags
+r_int
+r_int
+id|uc_flags
+suffix:semicolon
+DECL|member|uc_link
+r_struct
+id|ucontext
+op_star
+id|uc_link
+suffix:semicolon
+DECL|member|uc_osf_sigmask
+id|old_sigset_t
+id|uc_osf_sigmask
+suffix:semicolon
+DECL|member|uc_stack
+id|stack_t
+id|uc_stack
+suffix:semicolon
+DECL|member|uc_mcontext
+r_struct
+id|sigcontext
+id|uc_mcontext
+suffix:semicolon
+DECL|member|uc_sigmask
+id|sigset_t
+id|uc_sigmask
+suffix:semicolon
+multiline_comment|/* mask last for extensibility */
 )brace
 suffix:semicolon
 macro_line|#endif

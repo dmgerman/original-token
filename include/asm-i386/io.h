@@ -12,11 +12,11 @@ DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO &quot;&bslash;noutb %%al,$0x80&quot;
 macro_line|#endif
 macro_line|#ifdef REALLY_SLOW_IO
-DECL|macro|SLOW_DOWN_IO
-mdefine_line|#define SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO
+DECL|macro|__FULL_SLOW_DOWN_IO
+mdefine_line|#define __FULL_SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO
 macro_line|#else
-DECL|macro|SLOW_DOWN_IO
-mdefine_line|#define SLOW_DOWN_IO __SLOW_DOWN_IO
+DECL|macro|__FULL_SLOW_DOWN_IO
+mdefine_line|#define __FULL_SLOW_DOWN_IO __SLOW_DOWN_IO
 macro_line|#endif
 multiline_comment|/*&n; * Talk about misusing macros..&n; */
 DECL|macro|__OUT1
@@ -24,13 +24,13 @@ mdefine_line|#define __OUT1(s,x) &bslash;&n;extern inline void out##s(unsigned x
 DECL|macro|__OUT2
 mdefine_line|#define __OUT2(s,s1,s2) &bslash;&n;__asm__ __volatile__ (&quot;out&quot; #s &quot; %&quot; s1 &quot;0,%&quot; s2 &quot;1&quot;
 DECL|macro|__OUT
-mdefine_line|#define __OUT(s,s1,x) &bslash;&n;__OUT1(s,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;Nd&quot; (port)); } &bslash;&n;__OUT1(s##_p,x) __OUT2(s,s1,&quot;w&quot;) SLOW_DOWN_IO : : &quot;a&quot; (value), &quot;Nd&quot; (port));} &bslash;&n;
+mdefine_line|#define __OUT(s,s1,x) &bslash;&n;__OUT1(s,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;Nd&quot; (port)); } &bslash;&n;__OUT1(s##_p,x) __OUT2(s,s1,&quot;w&quot;) __FULL_SLOW_DOWN_IO : : &quot;a&quot; (value), &quot;Nd&quot; (port));} &bslash;&n;
 DECL|macro|__IN1
 mdefine_line|#define __IN1(s) &bslash;&n;extern inline RETURN_TYPE in##s(unsigned short port) { RETURN_TYPE _v;
 DECL|macro|__IN2
 mdefine_line|#define __IN2(s,s1,s2) &bslash;&n;__asm__ __volatile__ (&quot;in&quot; #s &quot; %&quot; s2 &quot;1,%&quot; s1 &quot;0&quot;
 DECL|macro|__IN
-mdefine_line|#define __IN(s,s1,i...) &bslash;&n;__IN1(s) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;Nd&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##_p) __IN2(s,s1,&quot;w&quot;) SLOW_DOWN_IO : &quot;=a&quot; (_v) : &quot;Nd&quot; (port) ,##i ); return _v; } &bslash;&n;
+mdefine_line|#define __IN(s,s1,i...) &bslash;&n;__IN1(s) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;Nd&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##_p) __IN2(s,s1,&quot;w&quot;) __FULL_SLOW_DOWN_IO : &quot;=a&quot; (_v) : &quot;Nd&quot; (port) ,##i ); return _v; } &bslash;&n;
 DECL|macro|__INS
 mdefine_line|#define __INS(s) &bslash;&n;extern inline void ins##s(unsigned short port, void * addr, unsigned long count) &bslash;&n;{ __asm__ __volatile__ (&quot;cld ; rep ; ins&quot; #s &bslash;&n;: &quot;=D&quot; (addr), &quot;=c&quot; (count) : &quot;d&quot; (port),&quot;0&quot; (addr),&quot;1&quot; (count)); }
 DECL|macro|__OUTS

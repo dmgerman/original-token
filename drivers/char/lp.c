@@ -132,6 +132,13 @@ DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
 DECL|macro|LP_READ_DEBUG
 macro_line|#undef LP_READ_DEBUG
+multiline_comment|/* Magic numbers */
+DECL|macro|AUTO
+mdefine_line|#define AUTO -3
+DECL|macro|OFF
+mdefine_line|#define OFF -2
+DECL|macro|UNSPEC
+mdefine_line|#define UNSPEC -1
 DECL|function|lp_parport_release
 r_static
 r_inline
@@ -395,7 +402,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|resched_needed
+c_func
+(paren
+)paren
 )paren
 id|lp_schedule
 (paren
@@ -643,25 +653,6 @@ id|regs
 )paren
 (brace
 r_struct
-id|parport
-op_star
-id|pb
-op_assign
-(paren
-r_struct
-id|parport
-op_star
-)paren
-id|dev_id
-suffix:semicolon
-r_struct
-id|pardevice
-op_star
-id|pd
-op_assign
-id|pb-&gt;cad
-suffix:semicolon
-r_struct
 id|lp_struct
 op_star
 id|lp_dev
@@ -671,9 +662,7 @@ r_struct
 id|lp_struct
 op_star
 )paren
-id|pd
-op_member_access_from_pointer
-r_private
+id|dev_id
 suffix:semicolon
 r_if
 c_cond
@@ -1335,13 +1324,6 @@ op_star
 id|ppos
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
 r_int
 r_int
 id|minor
@@ -1349,10 +1331,10 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
-r_int
+id|ssize_t
 id|retv
 suffix:semicolon
 r_if
@@ -1545,13 +1527,6 @@ op_star
 id|ppos
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
 r_int
 r_char
 id|z
@@ -1568,7 +1543,7 @@ r_char
 op_star
 id|temp
 suffix:semicolon
-r_int
+id|ssize_t
 id|retval
 suffix:semicolon
 r_int
@@ -1588,7 +1563,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 multiline_comment|/* Claim Parport or sleep until it becomes available&n; &t; * (see lp_wakeup() for details)&n; &t; */
@@ -1746,7 +1721,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|resched_needed
+c_func
+(paren
+)paren
 )paren
 id|schedule
 (paren
@@ -1880,7 +1858,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|resched_needed
+c_func
+(paren
+)paren
 )paren
 id|schedule
 (paren
@@ -2910,8 +2891,7 @@ id|LP_NO
 )braket
 op_assign
 (brace
-op_minus
-l_int|1
+id|UNSPEC
 comma
 )brace
 suffix:semicolon
@@ -3030,8 +3010,7 @@ id|parport
 l_int|0
 )braket
 op_assign
-op_minus
-l_int|3
+id|AUTO
 suffix:semicolon
 )brace
 r_else
@@ -3060,8 +3039,7 @@ id|parport
 l_int|0
 )braket
 op_assign
-op_minus
-l_int|2
+id|OFF
 suffix:semicolon
 )brace
 r_else
@@ -3173,8 +3151,7 @@ id|list
 id|i
 )braket
 op_ne
-op_minus
-l_int|1
+id|UNSPEC
 suffix:semicolon
 id|i
 op_increment
@@ -3224,8 +3201,7 @@ id|parport
 l_int|0
 )braket
 op_eq
-op_minus
-l_int|2
+id|OFF
 )paren
 r_return
 l_int|0
@@ -3260,8 +3236,7 @@ id|parport
 l_int|0
 )braket
 op_eq
-op_minus
-l_int|1
+id|UNSPEC
 op_logical_or
 id|lp_searchfor
 c_func
@@ -3277,8 +3252,7 @@ id|parport
 l_int|0
 )braket
 op_eq
-op_minus
-l_int|3
+id|AUTO
 op_logical_and
 id|pb-&gt;probe_info
 dot
@@ -3329,6 +3303,32 @@ dot
 id|flags
 op_or_assign
 id|LP_EXIST
+suffix:semicolon
+id|init_waitqueue
+(paren
+op_amp
+id|lp_table
+(braket
+id|count
+)braket
+dot
+id|lp_wait_q
+)paren
+suffix:semicolon
+id|lp_parport_claim
+(paren
+id|count
+)paren
+suffix:semicolon
+id|lp_reset
+(paren
+id|count
+)paren
+suffix:semicolon
+id|lp_parport_release
+(paren
+id|count
+)paren
 suffix:semicolon
 id|printk
 c_func

@@ -1673,10 +1673,12 @@ comma
 l_string|&quot;kswapd&quot;
 )paren
 suffix:semicolon
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-op_complement
-l_int|0UL
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;As a kernel thread we want to tamper with system buffers&n;&t; *&t;and other internals and thus be subject to the SMP locking&n;&t; *&t;rules. (On a uniprocessor box this does nothing).&n;&t; */
 id|lock_kernel
@@ -1712,9 +1714,11 @@ id|kswapd_awake
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;signal
-op_assign
-l_int|0
+id|flush_signals
+c_func
+(paren
+id|current
+)paren
 suffix:semicolon
 id|run_task_queue
 c_func

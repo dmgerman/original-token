@@ -1,14 +1,15 @@
 multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#ifdef CONFIG_RTC 
@@ -40,22 +41,22 @@ multiline_comment|/* lump static variables together for more efficient access: *
 r_static
 r_struct
 (brace
+multiline_comment|/* cycle counter last time it got invoked */
 DECL|member|last_time
 id|__u32
 id|last_time
 suffix:semicolon
-multiline_comment|/* cycle counter last time it got invoked */
+multiline_comment|/* ticks/cycle * 2^48 */
 DECL|member|scaled_ticks_per_cycle
 r_int
 r_int
 id|scaled_ticks_per_cycle
 suffix:semicolon
-multiline_comment|/* ticks/cycle * 2^48 */
+multiline_comment|/* last time the cmos clock got updated */
 DECL|member|last_rtc_update
-r_int
+id|time_t
 id|last_rtc_update
 suffix:semicolon
-multiline_comment|/* last time the cmos clock got updated */
 DECL|variable|state
 )brace
 id|state
@@ -107,16 +108,47 @@ op_star
 id|regs
 )paren
 (brace
-id|__u32
+r_const
+r_int
+r_int
+id|half
+op_assign
+l_int|1UL
+op_lshift
+(paren
+id|FIX_SHIFT
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+r_const
+r_int
+r_int
+id|mask
+op_assign
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|FIX_SHIFT
+op_plus
+l_int|1
+)paren
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+r_int
+r_int
 id|delta
-comma
+suffix:semicolon
+id|__u32
 id|now
 suffix:semicolon
 r_int
-id|i
-comma
 id|nticks
 suffix:semicolon
+multiline_comment|/*&n;&t; * Estimate how many ticks have passed since the last update.&n;&t; * Round the result, .5 to even.  When we loose ticks due to&n;&t; * say using IDE, the clock has been seen to run up to 15% slow&n;&t; * if we truncate.&n;&t; */
 id|now
 op_assign
 id|rpcc
@@ -134,57 +166,34 @@ id|state.last_time
 op_assign
 id|now
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|hwrpb-&gt;cycle_freq
-)paren
-(brace
-id|nticks
+id|delta
 op_assign
-(paren
 id|delta
 op_star
 id|state.scaled_ticks_per_cycle
-)paren
-op_rshift
+suffix:semicolon
+r_if
+c_cond
 (paren
+(paren
+id|delta
+op_amp
+id|mask
+)paren
+op_ne
+id|half
+)paren
+id|delta
+op_add_assign
+id|half
+suffix:semicolon
+id|nticks
+op_assign
+id|delta
+op_rshift
 id|FIX_SHIFT
-op_minus
-l_int|1
-)paren
 suffix:semicolon
-id|nticks
-op_assign
-(paren
-id|nticks
-op_plus
-l_int|1
-)paren
-op_rshift
-l_int|1
-suffix:semicolon
-)brace
-r_else
-id|nticks
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* No way to estimate lost ticks if we don&squot;t know&n;&t;&t;&t;&t;&t;  the cycle frequency. */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|nticks
-suffix:semicolon
-op_increment
-id|i
-)paren
+r_do
 (brace
 id|do_timer
 c_func
@@ -193,6 +202,15 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+op_decrement
+id|nticks
+OG
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * If we have an externally synchronized Linux clock, then update&n;&t; * CMOS clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;&t; * called as close as possible to 500 ms before the new second starts.&n;&t; */
 r_if
 c_cond
@@ -208,7 +226,7 @@ op_plus
 l_int|660
 op_logical_and
 id|xtime.tv_usec
-OG
+op_ge
 l_int|500000
 op_minus
 (paren
@@ -218,7 +236,7 @@ l_int|1
 )paren
 op_logical_and
 id|xtime.tv_usec
-OL
+op_le
 l_int|500000
 op_plus
 (paren
@@ -227,31 +245,32 @@ op_rshift
 l_int|1
 )paren
 )paren
-r_if
-c_cond
-(paren
+(brace
+r_int
+id|tmp
+op_assign
 id|set_rtc_mmss
 c_func
 (paren
 id|xtime.tv_sec
 )paren
-op_eq
-l_int|0
-)paren
-id|state.last_rtc_update
-op_assign
-id|xtime.tv_sec
 suffix:semicolon
-r_else
 id|state.last_rtc_update
 op_assign
 id|xtime.tv_sec
 op_minus
+(paren
+id|tmp
+ques
+c_cond
 l_int|600
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
-multiline_comment|/* do it again in 60 s */
 )brace
-multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
+)brace
+multiline_comment|/*&n; * Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
 r_static
 r_inline
@@ -409,10 +428,12 @@ comma
 id|min
 comma
 id|sec
+comma
+id|cc1
+comma
+id|cc2
 suffix:semicolon
-multiline_comment|/* The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
-multiline_comment|/* read RTC exactly on falling edge of update flag */
-multiline_comment|/* Wait for rise.... (may take up to 1 second) */
+multiline_comment|/*&n;&t; * The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 r_do
 (brace
 )brace
@@ -430,10 +451,45 @@ op_amp
 id|RTC_UIP
 )paren
 )paren
-(brace
 suffix:semicolon
+r_do
+(brace
 )brace
-multiline_comment|/* Jay Estabook &lt;jestabro@amt.tay1.dec.com&gt;:&n; * Wait for the Update Done Interrupt bit (0x10) in reg C (12) to be set,&n; * which (hopefully) indicates that the update is really done.&n; */
+r_while
+c_loop
+(paren
+id|CMOS_READ
+c_func
+(paren
+id|RTC_FREQ_SELECT
+)paren
+op_amp
+id|RTC_UIP
+)paren
+suffix:semicolon
+multiline_comment|/* Read cycle counter exactly on falling edge of update flag */
+id|cc1
+op_assign
+id|rpcc
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* If our cycle frequency isn&squot;t valid, go another round and give&n;&t;   a guess at what it should be.  */
+r_if
+c_cond
+(paren
+id|hwrpb-&gt;cycle_freq
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;HWPRB cycle frequency bogus.  Estimating... &quot;
+)paren
+suffix:semicolon
 r_do
 (brace
 )brace
@@ -441,17 +497,65 @@ r_while
 c_loop
 (paren
 op_logical_neg
+(paren
 id|CMOS_READ
 c_func
 (paren
-id|RTC_REG_C
+id|RTC_FREQ_SELECT
 )paren
 op_amp
 id|RTC_UIP
 )paren
+)paren
+suffix:semicolon
+r_do
 (brace
+)brace
+r_while
+c_loop
+(paren
+id|CMOS_READ
+c_func
+(paren
+id|RTC_FREQ_SELECT
+)paren
+op_amp
+id|RTC_UIP
+)paren
+suffix:semicolon
+id|cc2
+op_assign
+id|rpcc
+c_func
+(paren
+)paren
+suffix:semicolon
+id|hwrpb-&gt;cycle_freq
+op_assign
+id|cc2
+op_minus
+id|cc1
+suffix:semicolon
+id|cc1
+op_assign
+id|cc2
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%lu Hz&bslash;n&quot;
+comma
+id|hwrpb-&gt;cycle_freq
+)paren
 suffix:semicolon
 )brace
+multiline_comment|/* From John Bowman &lt;bowman@math.ualberta.ca&gt;: allow the values&n;&t;   to settle, as the Update-In-Progress bit going low isn&squot;t good&n;&t;   enough on some hardware.  2ms is our guess; we havn&squot;t found &n;&t;   bogomips yet, but this is close on a 500Mhz box.  */
+id|__delay
+c_func
+(paren
+l_int|1000000
+)paren
+suffix:semicolon
 id|sec
 op_assign
 id|CMOS_READ
@@ -625,17 +729,8 @@ suffix:semicolon
 )brace
 id|state.last_time
 op_assign
-id|rpcc
-c_func
-(paren
-)paren
+id|cc1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|hwrpb-&gt;cycle_freq
-)paren
-(brace
 id|state.scaled_ticks_per_cycle
 op_assign
 (paren
@@ -650,7 +745,6 @@ id|FIX_SHIFT
 op_div
 id|hwrpb-&gt;cycle_freq
 suffix:semicolon
-)brace
 id|state.last_rtc_update
 op_assign
 l_int|0
@@ -724,7 +818,7 @@ l_string|&quot;Could not allocate timer IRQ!&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We could get better timer accuracy by using the alpha&n; * time counters or something.  Now this is limited to&n; * the HZ clock frequency.&n; */
+multiline_comment|/*&n; * Use the cycle counter to estimate an displacement from the last time&n; * tick.  Unfortunately the Alpha designers made only the low 32-bits of&n; * the cycle counter active, so we overflow on 8.2 seconds on a 500MHz&n; * part.  So we can&squot;t do the &quot;find absolute time in terms of cycles&quot; thing&n; * that the other ports do.&n; */
 DECL|function|do_gettimeofday
 r_void
 id|do_gettimeofday
@@ -739,28 +833,115 @@ id|tv
 r_int
 r_int
 id|flags
+comma
+id|now
+comma
+id|delta_cycles
+comma
+id|delta_usec
 suffix:semicolon
-id|save_flags
+r_int
+r_int
+id|sec
+comma
+id|usec
+suffix:semicolon
+id|now
+op_assign
+id|rpcc
+c_func
+(paren
+)paren
+suffix:semicolon
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-op_star
-id|tv
+id|sec
 op_assign
-id|xtime
+id|xtime.tv_sec
+suffix:semicolon
+id|usec
+op_assign
+id|xtime.tv_usec
+suffix:semicolon
+id|delta_cycles
+op_assign
+id|now
+op_minus
+id|state.last_time
 suffix:semicolon
 id|restore_flags
 c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * usec = cycles * ticks_per_cycle * 2**48 * 1e6 / (2**48 * ticks)&n;&t; *&t;= cycles * (s_t_p_c) * 1e6 / (2**48 * ticks)&n;&t; *&t;= cycles * (s_t_p_c) * 15625 / (2**42 * ticks)&n;&t; *&n;&t; * which, given a 600MHz cycle and a 1024Hz tick, has a&n;&t; * dynamic range of about 1.7e17, which is less than the&n;&t; * 1.8e19 in an unsigned long, so we are safe from overflow.&n;&t; *&n;&t; * Round, but with .5 up always, since .5 to even is harder&n;&t; * with no clear gain.&n;&t; */
+id|delta_usec
+op_assign
+id|delta_cycles
+op_star
+id|state.scaled_ticks_per_cycle
+op_star
+l_int|15625
+suffix:semicolon
+id|delta_usec
+op_assign
+(paren
+(paren
+id|delta_usec
+op_div
+(paren
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|FIX_SHIFT
+op_minus
+l_int|6
+)paren
+)paren
+op_star
+id|HZ
+)paren
+)paren
+op_plus
+l_int|1
+)paren
+op_div
+l_int|2
+suffix:semicolon
+id|usec
+op_add_assign
+id|delta_usec
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|usec
+op_ge
+l_int|1000000
+)paren
+(brace
+id|sec
+op_add_assign
+l_int|1
+suffix:semicolon
+id|usec
+op_sub_assign
+l_int|1000000
+suffix:semicolon
+)brace
+id|tv-&gt;tv_sec
+op_assign
+id|sec
+suffix:semicolon
+id|tv-&gt;tv_usec
+op_assign
+id|usec
 suffix:semicolon
 )brace
 DECL|function|do_settimeofday
@@ -832,6 +1013,7 @@ id|save_control
 comma
 id|save_freq_select
 suffix:semicolon
+multiline_comment|/* Tell the clock it&squot;s being set */
 id|save_control
 op_assign
 id|CMOS_READ
@@ -840,7 +1022,6 @@ c_func
 id|RTC_CONTROL
 )paren
 suffix:semicolon
-multiline_comment|/* tell the clock it&squot;s being set */
 id|CMOS_WRITE
 c_func
 (paren
@@ -853,6 +1034,7 @@ comma
 id|RTC_CONTROL
 )paren
 suffix:semicolon
+multiline_comment|/* Stop and reset prescaler */
 id|save_freq_select
 op_assign
 id|CMOS_READ
@@ -861,7 +1043,6 @@ c_func
 id|RTC_FREQ_SELECT
 )paren
 suffix:semicolon
-multiline_comment|/* stop and reset prescaler */
 id|CMOS_WRITE
 c_func
 (paren
@@ -934,11 +1115,13 @@ l_int|30
 op_amp
 l_int|1
 )paren
+(brace
+multiline_comment|/* correct for half hour time zone */
 id|real_minutes
 op_add_assign
 l_int|30
 suffix:semicolon
-multiline_comment|/* correct for half hour time zone */
+)brace
 id|real_minutes
 op_mod_assign
 l_int|60

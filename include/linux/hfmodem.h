@@ -177,6 +177,7 @@ DECL|macro|HFMODEM_IOCTL_SAMPLEFINISHED
 mdefine_line|#define HFMODEM_IOCTL_SAMPLEFINISHED  _IO(&squot;H&squot;,  8)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/parport.h&gt;
 DECL|macro|DMA_MODE_AUTOINIT
 mdefine_line|#define DMA_MODE_AUTOINIT      0x10
 DECL|macro|NR_DEVICE
@@ -273,6 +274,12 @@ DECL|member|flags
 r_int
 r_int
 id|flags
+suffix:semicolon
+DECL|member|pardev
+r_struct
+id|pardevice
+op_star
+id|pardev
 suffix:semicolon
 DECL|member|ptt_out
 )brace

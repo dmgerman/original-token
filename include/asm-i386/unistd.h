@@ -348,6 +348,20 @@ DECL|macro|__NR_getresgid
 mdefine_line|#define __NR_getresgid&t;&t;171
 DECL|macro|__NR_prctl
 mdefine_line|#define __NR_prctl              172
+DECL|macro|__NR_rt_sigreturn
+mdefine_line|#define __NR_rt_sigreturn&t;173
+DECL|macro|__NR_rt_sigaction
+mdefine_line|#define __NR_rt_sigaction&t;174
+DECL|macro|__NR_rt_sigprocmask
+mdefine_line|#define __NR_rt_sigprocmask&t;175
+DECL|macro|__NR_rt_sigpending
+mdefine_line|#define __NR_rt_sigpending&t;176
+DECL|macro|__NR_rt_sigtimedwait
+mdefine_line|#define __NR_rt_sigtimedwait&t;177
+DECL|macro|__NR_rt_sigqueueinfo
+mdefine_line|#define __NR_rt_sigqueueinfo&t;178
+DECL|macro|__NR_rt_sigsuspend
+mdefine_line|#define __NR_rt_sigsuspend&t;179
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

@@ -1,14 +1,9 @@
-multiline_comment|/* IEEE-1284 implementation for parport.&n; *&n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Carsten Gross &lt;carsten@sol.wohnheim.uni-ulm.de&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; */
+multiline_comment|/* $Id: parport_ieee1284.c,v 1.4 1997/10/19 21:37:21 philip Exp $&n; * IEEE-1284 implementation for parport.&n; *&n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Carsten Gross &lt;carsten@sol.wohnheim.uni-ulm.de&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-multiline_comment|/* The following read functions are an implementation of a status readback&n; * and device id request confirming to IEEE1284-1994.&n; *&n; * These probably ought to go in some seperate file, so people like the SPARC&n; * don&squot;t have to pull them in.&n; */
-multiline_comment|/* Wait for Status line(s) to change in 35 ms - see IEEE1284-1994 page 24 to&n; * 25 for this. After this time we can create a timeout because the&n; * peripheral doesn&squot;t conform to IEEE1284. We want to save CPU time: we are&n; * waiting a maximum time of 500 us busy (this is for speed). If there is&n; * not the right answer in this time, we call schedule and other processes&n; * are able &quot;to eat&quot; the time up to 30ms.  So the maximum load avarage can&squot;t&n; * get above 5% for a read even if the peripheral is really slow. (but your&n; * read gets very slow then - only about 10 characters per second. This&n; * should be tuneable). Thanks to Andreas who pointed me to this and ordered&n; * the documentation.&n; */
+multiline_comment|/* Wait for Status line(s) to change in 35 ms - see IEEE1284-1994 page 24 to&n; * 25 for this. After this time we can create a timeout because the&n; * peripheral doesn&squot;t conform to IEEE1284.  We want to save CPU time: we are&n; * waiting a maximum time of 500 us busy (this is for speed).  If there is&n; * not the right answer in this time, we call schedule and other processes&n; * are able to eat the time up to 40ms.&n; */
 DECL|function|parport_wait_peripheral
 r_int
 id|parport_wait_peripheral
@@ -30,14 +25,25 @@ id|result
 (brace
 r_int
 id|counter
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 r_char
 id|status
 suffix:semicolon
-r_do
+r_for
+c_loop
+(paren
+id|counter
+op_assign
+l_int|0
+suffix:semicolon
+id|counter
+OL
+l_int|20
+suffix:semicolon
+id|counter
+op_increment
+)paren
 (brace
 id|status
 op_assign
@@ -47,19 +53,33 @@ c_func
 id|port
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_amp
+id|mask
+)paren
+op_eq
+id|result
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|udelay
 c_func
 (paren
 l_int|25
 )paren
 suffix:semicolon
-id|counter
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|resched_needed
+c_func
+(paren
+)paren
 )paren
 id|schedule
 c_func
@@ -67,46 +87,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-(paren
-(paren
-id|status
-op_amp
-id|mask
-)paren
-op_ne
-id|result
-)paren
-op_logical_and
-(paren
-id|counter
-OL
-l_int|20
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|counter
-op_eq
-l_int|20
-)paren
-op_logical_and
-(paren
-(paren
-id|status
-op_amp
-id|mask
-)paren
-op_ne
-id|result
-)paren
-)paren
-(brace
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
@@ -122,7 +102,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* wait for 4 scheduler runs (40ms) */
+multiline_comment|/* wait for 40ms */
 id|status
 op_assign
 id|parport_read_status
@@ -131,28 +111,24 @@ c_func
 id|port
 )paren
 suffix:semicolon
-r_if
-c_cond
+r_return
 (paren
 (paren
 id|status
 op_amp
 id|mask
 )paren
-op_ne
+op_eq
 id|result
 )paren
-r_return
+ques
+c_cond
+l_int|0
+suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* timeout */
 )brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* okay right response from device */
-)brace
-multiline_comment|/* Test if nibble mode for status readback is okay. Returns the value false&n; * if the printer doesn&squot;t support readback at all. If it supports readbacks&n; * and printer data is available the function returns 1, otherwise 2. The&n; * only valid values for &quot;mode&quot; are 0 and 4. 0 requests normal nibble mode,&n; * 4 is for &quot;request device id using nibble mode&quot;. The request for the&n; * device id is best done in an ioctl (or at bootup time).  There is no&n; * check for an invalid value, the only function using this call at the&n; * moment is lp_read and the ioctl LPGETDEVICEID both fixed calls from&n; * trusted kernel.&n; */
+multiline_comment|/* Test if the peripheral is IEEE 1284 compliant.&n; * return values are:&n; *   0 - handshake failed; peripheral is not compliant (or none present)&n; *   1 - handshake OK; IEEE1284 peripheral present but no data available&n; *   2 - handshake OK; IEEE1284 peripheral and data available&n; */
 DECL|function|parport_ieee1284_nibble_mode_ok
 r_int
 id|parport_ieee1284_nibble_mode_ok
@@ -179,14 +155,16 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|5
+l_int|500
 )paren
 suffix:semicolon
+multiline_comment|/* nSelectIn high, nAutoFd low */
 id|parport_write_control
 c_func
 (paren
 id|port
 comma
+(paren
 id|parport_read_control
 c_func
 (paren
@@ -196,23 +174,10 @@ op_amp
 op_complement
 l_int|8
 )paren
-suffix:semicolon
-multiline_comment|/* SelectIN  low */
-id|parport_write_control
-c_func
-(paren
-id|port
-comma
-id|parport_read_control
-c_func
-(paren
-id|port
-)paren
 op_or
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* AutoFeed  high */
 r_if
 c_cond
 (paren
@@ -227,7 +192,6 @@ l_int|0x38
 )paren
 )paren
 (brace
-multiline_comment|/* timeout? */
 id|parport_write_control
 c_func
 (paren
@@ -250,8 +214,8 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* first stage of negotiation failed, &n;                           * no IEEE1284 compliant device on this port &n;                           */
 )brace
+multiline_comment|/* nStrobe low */
 id|parport_write_control
 c_func
 (paren
@@ -266,7 +230,6 @@ op_or
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Strobe  high */
 id|udelay
 c_func
 (paren
@@ -274,6 +237,7 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Strobe wait */
+multiline_comment|/* nStrobe high */
 id|parport_write_control
 c_func
 (paren
@@ -289,13 +253,13 @@ op_complement
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Strobe  low */
 id|udelay
 c_func
 (paren
 l_int|5
 )paren
 suffix:semicolon
+multiline_comment|/* nAutoFd low */
 id|parport_write_control
 c_func
 (paren
@@ -311,7 +275,6 @@ op_complement
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*  AutoFeed low */
 r_return
 (paren
 id|parport_wait_peripheral

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;8390.h&quot;
@@ -1094,9 +1095,11 @@ op_plus
 id|HPP_OPTION
 )paren
 suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
 suffix:semicolon
 multiline_comment|/* Unreset the board and enable interrupts. */
 id|outw
@@ -1309,9 +1312,11 @@ id|HPP_OPTION
 )paren
 suffix:semicolon
 multiline_comment|/* Pause a few cycles for the hardware reset to take place. */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
 suffix:semicolon
 id|ei_status.txing
 op_assign
@@ -1335,9 +1340,11 @@ op_plus
 id|HPP_OPTION
 )paren
 suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
 suffix:semicolon
 r_if
 c_cond

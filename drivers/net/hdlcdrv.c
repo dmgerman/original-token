@@ -223,7 +223,7 @@ r_static
 r_char
 id|ax25_bcast
 (braket
-l_int|7
+id|AX25_ADDR_LEN
 )braket
 op_assign
 (brace
@@ -256,12 +256,12 @@ op_lshift
 l_int|1
 )brace
 suffix:semicolon
-DECL|variable|ax25_test
+DECL|variable|ax25_nocall
 r_static
 r_char
-id|ax25_test
+id|ax25_nocall
 (braket
-l_int|7
+id|AX25_ADDR_LEN
 )braket
 op_assign
 (brace
@@ -3721,17 +3721,18 @@ suffix:semicolon
 multiline_comment|/* AF_AX25 device */
 id|dev-&gt;hard_header_len
 op_assign
-l_int|73
+id|AX25_MAX_HEADER_LEN
+op_plus
+id|AX25_BPQ_HEADER_LEN
 suffix:semicolon
-multiline_comment|/* We do digipeaters now */
 id|dev-&gt;mtu
 op_assign
-l_int|1500
+id|AX25_DEF_PACLEN
 suffix:semicolon
 multiline_comment|/* eth_mtu is the default */
 id|dev-&gt;addr_len
 op_assign
-l_int|7
+id|AX25_ADDR_LEN
 suffix:semicolon
 multiline_comment|/* sizeof an ax.25 address */
 id|memcpy
@@ -3741,7 +3742,7 @@ id|dev-&gt;broadcast
 comma
 id|ax25_bcast
 comma
-l_int|7
+id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
 id|memcpy
@@ -3749,9 +3750,9 @@ c_func
 (paren
 id|dev-&gt;dev_addr
 comma
-id|ax25_test
+id|ax25_nocall
 comma
-l_int|7
+id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
 multiline_comment|/* New style flags */

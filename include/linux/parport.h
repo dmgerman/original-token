@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport.h,v 1.2.6.3.2.2 1997/04/18 15:03:53 phil Exp $ */
+multiline_comment|/* $Id: parport.h,v 1.3 1997/10/19 18:02:00 phil Exp $ */
 macro_line|#ifndef _PARPORT_H_
 DECL|macro|_PARPORT_H_
 mdefine_line|#define _PARPORT_H_
@@ -1088,7 +1088,6 @@ op_star
 id|pp
 )paren
 suffix:semicolon
-multiline_comment|/* Prototypes from parport_ksyms.c */
 r_extern
 r_void
 id|dec_parport_count
@@ -1127,6 +1126,19 @@ r_extern
 r_void
 id|parport_probe_one
 c_func
+(paren
+r_struct
+id|parport
+op_star
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|parport_probe_hook
+)paren
 (paren
 r_struct
 id|parport

@@ -27,6 +27,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
@@ -2263,7 +2264,11 @@ id|timer
 op_decrement
 )paren
 (brace
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond

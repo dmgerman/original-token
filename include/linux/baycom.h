@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Linux BAYCOM driver for the Baycom serial 1200 baud modem&n; * and the parallel 9600 baud modem&n; * (C) 1996 by Thomas Sailer, HB9JNX&n; */
+multiline_comment|/*&n; * The Linux BAYCOM driver for the Baycom serial 1200 baud modem&n; * and the parallel 9600 baud modem&n; * (C) 1997 by Thomas Sailer, HB9JNX/AE4WA&n; */
 macro_line|#ifndef _BAYCOM_H
 DECL|macro|_BAYCOM_H
 mdefine_line|#define _BAYCOM_H

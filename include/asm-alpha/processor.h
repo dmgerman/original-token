@@ -70,6 +70,7 @@ multiline_comment|/* the fields below are Linux-specific: */
 multiline_comment|/* bit 1..5: IEEE_TRAP_ENABLE bits (see fpu.h) */
 multiline_comment|/* bit 6..8: UAC bits (see sysinfo.h) */
 multiline_comment|/* bit 17..21: IEEE_STATUS_MASK bits (see fpu.h) */
+multiline_comment|/* bit 63: die_if_kernel recursion lock */
 DECL|member|flags
 r_int
 r_int

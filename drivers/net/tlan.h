@@ -1057,23 +1057,7 @@ id|b
 suffix:semicolon
 )brace
 DECL|macro|XOR8
-mdefine_line|#define XOR8( a, b, c, d, e, f, g, h )&t;xor( a, xor( b, xor( c, xor( d, xor( e, x
-op_logical_or
-(paren
-id|f
-comma
-op_xor
-(paren
-id|g
-comma
-id|h
-)paren
-)paren
-)paren
-)paren
-)paren
-)paren
-)paren
+mdefine_line|#define XOR8( a, b, c, d, e, f, g, h )&t;xor( a, xor( b, xor( c, xor( d, xor( e, xor( f, xor( g, h ) ) ) ) ) ) )
 DECL|macro|DA
 mdefine_line|#define DA( a, bit )&t;&t;&t;&t;&t;( ( (u8) a[bit/8] ) &amp; ( (u8) ( 1 &lt;&lt; bit%8 ) ) )
 DECL|function|TLan_HashFunc
@@ -1148,8 +1132,7 @@ c_func
 (paren
 id|a
 comma
-l_int|3
-l_int|6
+l_int|36
 )paren
 comma
 id|DA
@@ -1219,8 +1202,7 @@ c_func
 (paren
 id|a
 comma
-l_int|3
-l_int|7
+l_int|37
 )paren
 comma
 id|DA
@@ -1292,8 +1274,7 @@ c_func
 (paren
 id|a
 comma
-l_int|3
-l_int|8
+l_int|38
 )paren
 comma
 id|DA
@@ -1365,8 +1346,7 @@ c_func
 (paren
 id|a
 comma
-l_int|3
-l_int|9
+l_int|39
 )paren
 comma
 id|DA
@@ -1438,8 +1418,7 @@ c_func
 (paren
 id|a
 comma
-l_int|4
-l_int|0
+l_int|40
 )paren
 comma
 id|DA
@@ -1511,8 +1490,7 @@ c_func
 (paren
 id|a
 comma
-l_int|4
-l_int|1
+l_int|41
 )paren
 comma
 id|DA

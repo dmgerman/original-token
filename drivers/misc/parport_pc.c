@@ -3454,7 +3454,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: PC-style at 0x%x&quot;
+l_string|&quot;%s: PC-style at 0x%lx&quot;
 comma
 id|p-&gt;name
 comma
@@ -3618,6 +3618,19 @@ c_func
 id|p
 comma
 l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|parport_probe_hook
+)paren
+(paren
+op_star
+id|parport_probe_hook
+)paren
+(paren
+id|p
 )paren
 suffix:semicolon
 r_return

@@ -325,6 +325,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Negative d_count (%d) for %s/%s&bslash;n&quot;
 comma
 id|count
@@ -1181,6 +1182,7 @@ macro_line|#ifdef DCACHE_DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;select_parent: descending to %s/%s, found=%d&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
@@ -1217,6 +1219,7 @@ macro_line|#ifdef DCACHE_DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;select_parent: ascending to %s/%s, found=%d&bslash;n&quot;
 comma
 id|this_parent-&gt;d_parent-&gt;d_name.name
@@ -1363,6 +1366,7 @@ macro_line|#ifdef DCACHE_DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;check_dcache_memory: goal=%d, count=%d&bslash;n&quot;
 comma
 id|goal
@@ -2246,6 +2250,7 @@ id|dentry-&gt;d_inode
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;VFS: moving negative dcache entry&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * PCI defines and function prototypes&n; * Copyright 1994, Drew Eckhardt&n; *&n; * For more information, please consult &n; * &n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; * &n; * Manuals are $25 each or $50 for all three, plus $7 shipping &n; * within the United States, $35 abroad.&n; */
 multiline_comment|/*&t;PROCEDURE TO REPORT NEW PCI DEVICES&n; * We are trying to collect information on new PCI devices, using&n; * the standard PCI identification procedure. If some warning is&n; * displayed at boot time, please report &n; *&t;- /proc/pci&n; *&t;- your exact hardware description. Try to find out&n; *&t;  which device is unknown. It may be you mainboard chipset.&n; *&t;  PCI-CPU bridge or PCI-ISA bridge.&n; *&t;- If you can&squot;t find the actual information in your hardware&n; *&t;  booklet, try to read the references of the chip on the board.&n; *&t;- Send all that to linux-pcisupport@cck.uni-kl.de&n; *&t;  and I&squot;ll add your device to the list as soon as possible&n; *&n; * BEFORE you send a mail, please check the latest linux releases&n; * to be sure it has not been recently added.&n; *&n; *        Thanks&n; *&t;&t;Jens Maurer&n; */
-macro_line|#ifndef PCI_H
-DECL|macro|PCI_H
-mdefine_line|#define PCI_H
+macro_line|#ifndef LINUX_PCI_H
+DECL|macro|LINUX_PCI_H
+mdefine_line|#define LINUX_PCI_H
 multiline_comment|/*&n; * Under PCI, each device has 256 bytes of configuration address space,&n; * of which the first 64 bytes are standardized as follows:&n; */
 DECL|macro|PCI_VENDOR_ID
 mdefine_line|#define PCI_VENDOR_ID&t;&t;0x00&t;/* 16 bits */
@@ -1225,6 +1225,7 @@ DECL|macro|PCI_DEVICE_ID_ARK_STINGARK
 mdefine_line|#define PCI_DEVICE_ID_ARK_STINGARK&t;0xa099
 DECL|macro|PCI_DEVICE_ID_ARK_2000MT
 mdefine_line|#define PCI_DEVICE_ID_ARK_2000MT&t;0xa0a1
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:3 = slot&n; *&t;2:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))
@@ -1520,5 +1521,6 @@ op_star
 id|buf
 )paren
 suffix:semicolon
-macro_line|#endif /* PCI_H */
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* LINUX_PCI_H */
 eof

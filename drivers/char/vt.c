@@ -3281,7 +3281,7 @@ c_cond
 (paren
 id|arg
 template_param
-id|NSIG
+id|_NSIG
 op_logical_or
 id|arg
 op_eq

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * csum_partial_copy - do IP checksumming and copy&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Don&squot;t look at this too closely - you&squot;ll go mad. The things&n; * we do for performance..&n; */
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|ldq_u
 mdefine_line|#define ldq_u(x,y) &bslash;&n;__asm__ __volatile__(&quot;ldq_u %0,%1&quot;:&quot;=r&quot; (x):&quot;m&quot; (*(const unsigned long *)(y)))

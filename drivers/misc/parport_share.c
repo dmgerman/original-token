@@ -1,4 +1,4 @@
-multiline_comment|/* Parallel-port resource manager code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* $Id: parport_share.c,v 1.8 1997/11/08 18:55:29 philip Exp $&n; * Parallel-port resource manager code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -34,6 +34,21 @@ r_int
 id|portcount
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|parport_probe_hook
+r_void
+(paren
+op_star
+id|parport_probe_hook
+)paren
+(paren
+r_struct
+id|parport
+op_star
+id|port
+)paren
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Return a list of all the ports we know about. */
 DECL|function|parport_enumerate
@@ -1081,8 +1096,8 @@ r_if
 c_cond
 (paren
 id|dev-&gt;port-&gt;irq
-op_ge
-l_int|0
+op_ne
+id|PARPORT_IRQ_NONE
 )paren
 (brace
 id|free_irq
@@ -1109,7 +1124,9 @@ id|SA_INTERRUPT
 comma
 id|dev-&gt;name
 comma
-id|dev-&gt;port
+id|dev
+op_member_access_from_pointer
+r_private
 )paren
 suffix:semicolon
 )brace
@@ -1187,8 +1204,8 @@ r_if
 c_cond
 (paren
 id|dev-&gt;port-&gt;irq
-op_ge
-l_int|0
+op_ne
+id|PARPORT_IRQ_NONE
 )paren
 (brace
 id|free_irq
@@ -1210,7 +1227,7 @@ id|SA_INTERRUPT
 comma
 id|dev-&gt;port-&gt;name
 comma
-id|dev-&gt;port
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

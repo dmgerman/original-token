@@ -935,8 +935,7 @@ id|irq
 comma
 id|io_base
 comma
-id|TLan
-id|DeviceList
+id|TLanDeviceList
 (braket
 id|dl_ix
 )braket
@@ -946,7 +945,7 @@ id|deviceName
 suffix:semicolon
 )brace
 )brace
-singleline_comment|// printk( &quot;TLAN:  Found %d device(s).&bslash;n&quot;, TLanDevicesInstalled );
+multiline_comment|/* printk( &quot;TLAN:  Found %d device(s).&bslash;n&quot;, TLanDevicesInstalled ); */
 r_return
 (paren
 (paren
@@ -1346,8 +1345,7 @@ id|pci_rev
 comma
 id|u32
 op_star
-id|pci_
-id|io_base
+id|pci_io_base
 comma
 id|u32
 op_star
@@ -1521,8 +1519,7 @@ id|pci_dfn
 comma
 id|PCI_BASE_ADDRESS_0
 comma
-id|pci_io_ba
-id|se
+id|pci_io_base
 )paren
 suffix:semicolon
 id|pcibios_read_config_byte
@@ -1536,8 +1533,7 @@ comma
 id|PCI_LATENCY_TIMER
 comma
 op_amp
-id|pci_laten
-id|cy
+id|pci_latency
 )paren
 suffix:semicolon
 r_if
@@ -1631,8 +1627,7 @@ comma
 l_string|&quot;TLAN:    IO mapping is available at %x.&bslash;n&quot;
 comma
 op_star
-id|pc
-id|i_io_base
+id|pci_io_base
 )paren
 suffix:semicolon
 r_break
@@ -2248,8 +2243,7 @@ id|TLAN_DEBUG_GNRL
 comma
 l_string|&quot;TLAN:  Device %s opened.  Revision = %x&bslash;n&quot;
 comma
-id|dev-&gt;na
-id|me
+id|dev-&gt;name
 comma
 id|priv-&gt;tlanRev
 )paren
@@ -2347,9 +2341,7 @@ id|TLAN_DEBUG_TX
 comma
 l_string|&quot;TLAN TRANSMIT:  %s is busy (Head=%d Tail=%d)&bslash;n&quot;
 comma
-id|dev
-op_member_access_from_pointer
-id|name
+id|dev-&gt;name
 comma
 id|priv-&gt;txHead
 comma
@@ -2496,7 +2488,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-singleline_comment|// are we transferring?
+multiline_comment|/* are we transferring? */
 id|cli
 c_func
 (paren
@@ -2534,8 +2526,7 @@ id|TLAN_DEBUG_TX
 comma
 l_string|&quot;TLAN TRANSMIT:  Starting TX on buffer %d&bslash;n&quot;
 comma
-id|priv-&gt;t
-id|xTail
+id|priv-&gt;txTail
 )paren
 suffix:semicolon
 id|outl
@@ -2574,8 +2565,7 @@ id|TLAN_DEBUG_TX
 comma
 l_string|&quot;TLAN TRANSMIT:  Adding buffer %d to TX channel&bslash;n&quot;
 comma
-id|p
-id|riv-&gt;txTail
+id|priv-&gt;txTail
 )paren
 suffix:semicolon
 r_if
@@ -2600,8 +2590,7 @@ op_assign
 id|virt_to_bus
 c_func
 (paren
-id|tail_lis
-id|t
+id|tail_list
 )paren
 suffix:semicolon
 r_else
@@ -2717,9 +2706,7 @@ l_string|&quot;TLAN:   Re-entering interrupt handler for %s: %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|dev
-op_member_access_from_pointer
-id|interrupt
+id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 id|dev-&gt;interrupt
@@ -2750,7 +2737,7 @@ op_plus
 id|TLAN_HOST_INT
 )paren
 suffix:semicolon
-singleline_comment|// Deactivate Ints
+multiline_comment|/* Deactivate Ints */
 id|type
 op_assign
 (paren
@@ -2944,10 +2931,7 @@ l_string|&quot;TLAN RECEIVE:  %s EOC count = %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|priv
-op_minus
-OG
-id|rxEocCount
+id|priv-&gt;rxEocCount
 )paren
 suffix:semicolon
 id|TLAN_DBG
@@ -2959,8 +2943,7 @@ l_string|&quot;TLAN TRANSMIT:  %s Busy count = %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|pri
-id|v-&gt;txBusyCount
+id|priv-&gt;txBusyCount
 )paren
 suffix:semicolon
 r_if
@@ -3369,7 +3352,7 @@ id|host_int
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|// printk( &quot;TLAN:  Invalid interrupt on %s.&bslash;n&quot;, dev-&gt;name );
+multiline_comment|/* printk( &quot;TLAN:  Invalid interrupt on %s.&bslash;n&quot;, dev-&gt;name ); */
 r_return
 l_int|0
 suffix:semicolon
@@ -3463,7 +3446,7 @@ l_string|&quot;TLAN:  Received interrupt for uncompleted TX frame.&bslash;n&quot
 )paren
 suffix:semicolon
 )brace
-singleline_comment|// printk( &quot;Ack %d CSTAT=%hx&bslash;n&quot;, priv-&gt;txHead, head_list-&gt;cStat );
+multiline_comment|/* printk( &quot;Ack %d CSTAT=%hx&bslash;n&quot;, priv-&gt;txHead, head_list-&gt;cStat ); */
 macro_line|#if LINUX_KERNEL_VERSION &gt; 0x20100
 id|priv-&gt;stats-&gt;tx_bytes
 op_add_assign
@@ -3583,7 +3566,7 @@ op_eq
 l_int|0
 )paren
 (brace
-singleline_comment|// printk(&quot;TxEOF Starting timer...&bslash;n&quot;);
+multiline_comment|/* printk(&quot;TxEOF Starting timer...&bslash;n&quot;); */
 id|priv-&gt;timerSetAt
 op_assign
 id|jiffies
@@ -3619,7 +3602,7 @@ id|priv-&gt;timerSetAt
 op_assign
 id|jiffies
 suffix:semicolon
-singleline_comment|// printk(&quot;TxEOF continuing timer...&bslash;n&quot;);
+multiline_comment|/* printk(&quot;TxEOF continuing timer...&bslash;n&quot;); */
 )brace
 )brace
 r_return
@@ -3835,7 +3818,7 @@ comma
 id|head_list-&gt;frameSize
 )paren
 suffix:semicolon
-singleline_comment|// printk( &quot; %hd %p %p&bslash;n&quot;, head_list-&gt;frameSize, skb-&gt;data, t );
+multiline_comment|/* printk( &quot; %hd %p %p&bslash;n&quot;, head_list-&gt;frameSize, skb-&gt;data, t ); */
 macro_line|#if LINUX_KERNEL_VERSION &gt; 0x20100
 id|priv-&gt;stats-&gt;rx_bytes
 op_add_assign
@@ -4001,7 +3984,7 @@ op_eq
 l_int|0
 )paren
 (brace
-singleline_comment|// printk(&quot;RxEOF Starting timer...&bslash;n&quot;);
+multiline_comment|/* printk(&quot;RxEOF Starting timer...&bslash;n&quot;); */
 id|priv-&gt;timerSetAt
 op_assign
 id|jiffies
@@ -4033,7 +4016,7 @@ op_eq
 id|TLAN_TIMER_ACT
 )paren
 (brace
-singleline_comment|// printk(&quot;RxEOF tarting continuing timer...&bslash;n&quot;);
+multiline_comment|/* printk(&quot;RxEOF tarting continuing timer...&bslash;n&quot;); */
 id|priv-&gt;timerSetAt
 op_assign
 id|jiffies
@@ -4132,28 +4115,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-"&quot;"
-id|TLAN
-id|TRANSMIT
-suffix:colon
-id|Handling
-id|TX
-id|EOC
-(paren
-id|Head
-op_assign
-op_mod
-id|d
-id|Tail
-op_assign
-op_mod
-id|d
-)paren
-op_decrement
-id|IRQ
-"&bslash;"
-id|n
-"&quot;"
+l_string|&quot;TLAN TRANSMIT:  Handling TX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
 comma
 id|priv-&gt;txHead
 comma
@@ -4360,7 +4322,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-singleline_comment|//printk( &quot; RX GO----&gt;&bslash;n&quot; );
+multiline_comment|/*printk( &quot; RX GO----&gt;&bslash;n&quot; ); */
 id|outl
 c_func
 (paren
@@ -4523,28 +4485,7 @@ c_func
 (paren
 id|TLAN_DEBUG_RX
 comma
-"&quot;"
-id|TLAN
-id|RECEIVE
-suffix:colon
-id|Handling
-id|RX
-id|EOC
-(paren
-id|Head
-op_assign
-op_mod
-id|d
-id|Tail
-op_assign
-op_mod
-id|d
-)paren
-op_decrement
-id|IRQ
-"&bslash;"
-id|n
-"&quot;"
+l_string|&quot;TLAN RECEIVE:  Handling RX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
 comma
 id|priv-&gt;rxHead
 comma
@@ -4623,8 +4564,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-singleline_comment|// printk( &quot;TLAN:  %s Entered Timer, type = %d&bslash;n&quot;, dev-&gt;name, priv-&gt;timerType )
-suffix:semicolon
+multiline_comment|/* printk( &quot;TLAN:  %s Entered Timer, type = %d&bslash;n&quot;, dev-&gt;name, priv-&gt;timerType ); */
 r_switch
 c_cond
 (paren
@@ -4851,8 +4791,7 @@ op_plus
 (paren
 id|i
 op_star
-id|TLAN_MAX_FRAME_S
-id|IZE
+id|TLAN_MAX_FRAME_SIZE
 )paren
 )paren
 suffix:semicolon
@@ -4940,8 +4879,7 @@ op_plus
 (paren
 id|i
 op_star
-id|TLAN_MAX_FRAME_S
-id|IZE
+id|TLAN_MAX_FRAME_SIZE
 )paren
 )paren
 suffix:semicolon
@@ -5013,8 +4951,7 @@ c_func
 (paren
 l_string|&quot;TLAN:   Contents of internal registers for io base 0x%04hx.&bslash;n&quot;
 comma
-id|io_bas
-id|e
+id|io_base
 )paren
 suffix:semicolon
 id|printk
@@ -5136,7 +5073,7 @@ comma
 id|list-&gt;frameSize
 )paren
 suffix:semicolon
-singleline_comment|// for ( i = 0; i &lt; 10; i++ ) {
+multiline_comment|/* for ( i = 0; i &lt; 10; i++ ) { */
 r_for
 c_loop
 (paren
@@ -5159,8 +5096,7 @@ l_string|&quot;TLAN:      Buffer[%d].count, addr = 0x%08x, 0x%08x&bslash;n&quot;
 comma
 id|i
 comma
-id|list-&gt;buffe
-id|r
+id|list-&gt;buffer
 (braket
 id|i
 )braket
@@ -5609,7 +5545,7 @@ suffix:semicolon
 id|u8
 id|data8
 suffix:semicolon
-singleline_comment|//  1.&t;Assert reset bit.
+multiline_comment|/*  1.&t;Assert reset bit. */
 id|data
 op_assign
 id|inl
@@ -5634,7 +5570,7 @@ op_plus
 id|TLAN_HOST_CMD
 )paren
 suffix:semicolon
-singleline_comment|//  2.&t;Turn off interrupts. ( Probably isn&squot;t necessary )
+multiline_comment|/*  2.&t;Turn off interrupts. ( Probably isn&squot;t necessary ) */
 id|data
 op_assign
 id|inl
@@ -5659,7 +5595,7 @@ op_plus
 id|TLAN_HOST_CMD
 )paren
 suffix:semicolon
-singleline_comment|//  3.&t;Clear AREGs and HASHs.
+multiline_comment|/*  3.&t;Clear AREGs and HASHs. */
 r_for
 c_loop
 (paren
@@ -5690,7 +5626,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-singleline_comment|//  4.&t;Setup NetConfig register.
+multiline_comment|/*  4.&t;Setup NetConfig register. */
 id|data
 op_assign
 id|TLAN_NET_CFG_1FRAG
@@ -5712,7 +5648,7 @@ id|u16
 id|data
 )paren
 suffix:semicolon
-singleline_comment|//  5.&t;Load Ld_Tmr and Ld_Thr in HOST_CMD.
+multiline_comment|/*  5.&t;Load Ld_Tmr and Ld_Thr in HOST_CMD. */
 id|outl
 c_func
 (paren
@@ -5737,7 +5673,7 @@ op_plus
 id|TLAN_HOST_CMD
 )paren
 suffix:semicolon
-singleline_comment|//  6.&t;Unreset the MII by setting NMRST (in NetSio) to 1.
+multiline_comment|/*  6.&t;Unreset the MII by setting NMRST (in NetSio) to 1. */
 id|outw
 c_func
 (paren
@@ -5764,7 +5700,7 @@ comma
 id|addr
 )paren
 suffix:semicolon
-singleline_comment|//  7.&t;Setup the remaining registers.
+multiline_comment|/*  7.&t;Setup the remaining registers. */
 r_if
 c_cond
 (paren
@@ -6445,7 +6381,7 @@ op_assign
 op_amp
 id|TLan_PhyNop
 suffix:semicolon
-singleline_comment|// Make sure these aren&squot;t ever NULL
+multiline_comment|/* Make sure these aren&squot;t ever NULL */
 id|priv-&gt;phyService
 op_assign
 op_amp
@@ -6469,10 +6405,7 @@ id|priv-&gt;pciEntry
 dot
 id|deviceId
 suffix:semicolon
-singleline_comment|// This is a bit uglier than I&squot;d like, but the 0xF130 device must
-singleline_comment|// NOT be assigned a valid PHY as it uses an unmanaged, bit-rate
-singleline_comment|// PHY.  It is simplest just to use another goto, rather than
-singleline_comment|// nesting the two for loops in the if statement.
+multiline_comment|/*&n;&t; * This is a bit uglier than I&squot;d like, but the 0xF130 device must&n;&t; * NOT be assigned a valid PHY as it uses an unmanaged, bit-rate&n;&t; * PHY.  It is simplest just to use another goto, rather than&n;&t; * nesting the two for loops in the if statement.&n;&t; */
 r_if
 c_cond
 (paren
@@ -6908,8 +6841,7 @@ id|MII_GC_PDOWN
 op_or
 id|MII_GC_LOOPBK
 op_or
-id|MII_GC_
-id|ISOLATE
+id|MII_GC_ISOLATE
 )paren
 suffix:semicolon
 id|TLan_MiiWriteReg
@@ -6984,8 +6916,8 @@ op_amp
 id|value
 )paren
 suffix:semicolon
-singleline_comment|// TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_LOOPBK | MII_GC_DUPLEX );
-singleline_comment|// TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_DUPLEX );
+multiline_comment|/* TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_LOOPBK | MII_GC_DUPLEX ); */
+multiline_comment|/* TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_DUPLEX ); */
 id|TLan_MiiWriteReg
 c_func
 (paren
@@ -7044,7 +6976,7 @@ comma
 id|value
 )paren
 suffix:semicolon
-singleline_comment|// Read Possible Latched Link Status
+multiline_comment|/* Read Possible Latched Link Status */
 id|TLan_MiiReadReg
 c_func
 (paren
@@ -7058,7 +6990,7 @@ op_amp
 id|value
 )paren
 suffix:semicolon
-singleline_comment|// Read Real Link Status
+multiline_comment|/* Read Real Link Status */
 id|TLan_MiiReadReg
 c_func
 (paren
@@ -7116,7 +7048,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-singleline_comment|// Enable Interrupts
+multiline_comment|/* Enable Interrupts */
 id|TLan_MiiReadReg
 c_func
 (paren
@@ -7442,8 +7374,7 @@ id|MII_GC_PDOWN
 op_or
 id|MII_GC_LOOPBK
 op_or
-id|MII_GC_
-id|ISOLATE
+id|MII_GC_ISOLATE
 )paren
 suffix:semicolon
 id|TLan_MiiWriteReg
@@ -7458,21 +7389,11 @@ comma
 id|MII_GC_LOOPBK
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
 l_int|500000
-suffix:semicolon
-id|i
-op_increment
 )paren
-id|SLOW_DOWN_IO
 suffix:semicolon
 id|TLan_MiiWriteReg
 c_func
@@ -7528,8 +7449,8 @@ op_amp
 id|value
 )paren
 suffix:semicolon
-singleline_comment|// TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_LOOPBK | MII_GC_DUPLEX );
-singleline_comment|// TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_DUPLEX );
+multiline_comment|/* TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_LOOPBK | MII_GC_DUPLEX ); */
+multiline_comment|/* TLan_MiiWriteReg( io, phy, MII_GEN_CTL, MII_GC_DUPLEX ); */
 id|TLan_MiiWriteReg
 c_func
 (paren
@@ -7596,23 +7517,112 @@ comma
 l_int|0x1200
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|i
+l_int|50000
+)paren
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* Read Possible Latched Link Status */
+id|TLan_MiiReadReg
+c_func
+(paren
+id|io
+comma
+id|phy
+comma
+id|MII_GEN_STS
+comma
+op_amp
+id|value
+)paren
+suffix:semicolon
+multiline_comment|/* Read Real Link Status */
+id|TLan_MiiReadReg
+c_func
+(paren
+id|io
+comma
+id|phy
+comma
+id|MII_GEN_STS
+comma
+op_amp
+id|value
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|value
+op_amp
+id|MII_GS_LINK
+)paren
+(brace
+id|priv-&gt;phyOnline
+op_assign
+l_int|1
+suffix:semicolon
+id|TLan_DioWrite8
+c_func
+(paren
+id|io
+comma
+id|TLAN_LED_REG
+comma
+id|TLAN_LED_LINK
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|priv-&gt;phyOnline
 op_assign
 l_int|0
 suffix:semicolon
-id|i
-OL
-l_int|50000
-suffix:semicolon
-id|i
-op_increment
+id|TLan_DioWrite8
+c_func
+(paren
+id|io
+comma
+id|TLAN_LED_REG
+comma
+l_int|0
 )paren
-id|SLOW_DOWN_IO
 suffix:semicolon
-multiline_comment|/*&n;&t;// Read Possible Latched Link Status&n;&t;TLan_MiiReadReg( io, phy, MII_GEN_STS, &amp;value ); &n;&t;// Read Real Link Status&n;&t;TLan_MiiReadReg( io, phy, MII_GEN_STS, &amp;value ); &n;&t;if ( value &amp; MII_GS_LINK ) {&n;&t;&t;priv-&gt;phyOnline = 1;&n;&t;&t;TLan_DioWrite8( io, TLAN_LED_REG, TLAN_LED_LINK );&n;&t;} else {&n;&t;&t;priv-&gt;phyOnline = 0;&n;&t;&t;TLan_DioWrite8( io, TLAN_LED_REG, 0 );&n;&t;}&n;&n;&t;// Enable Interrupts&n;&t;TLan_MiiReadReg( io, phy, TLAN_TLPHY_CTL, &amp;value );&n;&t;value |= TLAN_TC_INTEN;&n;&t;TLan_MiiWriteReg( io, phy, TLAN_TLPHY_CTL, value );&n;*/
+)brace
+multiline_comment|/* Enable Interrupts */
+id|TLan_MiiReadReg
+c_func
+(paren
+id|io
+comma
+id|phy
+comma
+id|TLAN_TLPHY_CTL
+comma
+op_amp
+id|value
+)paren
+suffix:semicolon
+id|value
+op_or_assign
+id|TLAN_TC_INTEN
+suffix:semicolon
+id|TLan_MiiWriteReg
+c_func
+(paren
+id|io
+comma
+id|phy
+comma
+id|TLAN_TLPHY_CTL
+comma
+id|value
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sio
 op_assign
 id|TLan_DioRead8
@@ -7638,7 +7648,7 @@ comma
 id|sio
 )paren
 suffix:semicolon
-singleline_comment|//&t;priv-&gt;phyOnline = 1;
+multiline_comment|/*&t;priv-&gt;phyOnline = 1; */
 r_return
 l_int|0
 suffix:semicolon
@@ -8495,7 +8505,7 @@ id|TLAN_DIO_DATA
 op_plus
 id|TLAN_NET_SIO
 suffix:semicolon
-singleline_comment|// Assume clock is low, tx is enabled;
+multiline_comment|/* Assume clock is low, tx is enabled; */
 r_for
 c_loop
 (paren
@@ -8614,8 +8624,7 @@ comma
 id|sio
 )paren
 suffix:semicolon
-singleline_comment|// STOP, raise data while clock is h
-id|igh
+multiline_comment|/* STOP, raise data while clock is high */
 id|TLan_SetBit
 c_func
 (paren
@@ -8686,7 +8695,7 @@ id|data
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|// Assume clock is low, tx is enabled;
+multiline_comment|/* Assume clock is low, tx is enabled; */
 id|TLan_ClearBit
 c_func
 (paren
@@ -8765,7 +8774,7 @@ comma
 id|sio
 )paren
 suffix:semicolon
-singleline_comment|// Ack = 0
+multiline_comment|/* Ack = 0 */
 id|TLan_SetBit
 c_func
 (paren
@@ -8793,7 +8802,7 @@ comma
 id|sio
 )paren
 suffix:semicolon
-singleline_comment|// No ack = 1 (?)
+multiline_comment|/* No ack = 1 (?) */
 id|TLan_SetBit
 c_func
 (paren
@@ -8818,8 +8827,7 @@ comma
 id|sio
 )paren
 suffix:semicolon
-singleline_comment|// STOP, raise data while clock is h
-id|igh
+multiline_comment|/* STOP, raise data while clock is high */
 id|TLan_SetBit
 c_func
 (paren

@@ -1057,9 +1057,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Pause just a few cycles for the hardware reset to take place. */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
 suffix:semicolon
 id|outb_p
 c_func
@@ -1071,9 +1073,11 @@ op_plus
 id|HP_CONFIGURE
 )paren
 suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
 suffix:semicolon
 r_if
 c_cond

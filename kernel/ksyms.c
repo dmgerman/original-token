@@ -1568,27 +1568,6 @@ c_func
 id|kstat
 )paren
 suffix:semicolon
-DECL|variable|kill_proc
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|kill_proc
-)paren
-suffix:semicolon
-DECL|variable|kill_pg
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|kill_pg
-)paren
-suffix:semicolon
-DECL|variable|kill_sl
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|kill_sl
-)paren
-suffix:semicolon
 multiline_comment|/* misc */
 DECL|variable|panic
 id|EXPORT_SYMBOL
@@ -1700,14 +1679,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_random_bytes
-)paren
-suffix:semicolon
-multiline_comment|/* Signal interfaces */
-DECL|variable|send_sig
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|send_sig
 )paren
 suffix:semicolon
 multiline_comment|/* Program loader interfaces */

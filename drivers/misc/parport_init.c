@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#ifndef MODULE
 DECL|variable|__initdata
 r_static
@@ -20,8 +21,15 @@ l_int|1
 id|__initdata
 op_assign
 (brace
+(braket
 l_int|0
-comma
+dot
+dot
+dot
+id|PARPORT_MAX
+)braket
+op_assign
+l_int|0
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -34,8 +42,17 @@ id|PARPORT_MAX
 id|__initdata
 op_assign
 (brace
+(braket
+l_int|0
+dot
+dot
+dot
+id|PARPORT_MAX
+op_minus
+l_int|1
+)braket
+op_assign
 id|PARPORT_IRQ_NONE
-comma
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -48,8 +65,17 @@ id|PARPORT_MAX
 id|__initdata
 op_assign
 (brace
+(braket
+l_int|0
+dot
+dot
+dot
+id|PARPORT_MAX
+op_minus
+l_int|1
+)braket
+op_assign
 id|PARPORT_DMA_NONE
-comma
 )brace
 suffix:semicolon
 r_extern
@@ -68,6 +94,14 @@ comma
 r_int
 op_star
 id|dma
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|parport_ax_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|variable|__initdata
@@ -319,6 +353,13 @@ id|PARPORT_DISABLE
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_PNP_PARPORT
+id|parport_probe_hook
+op_assign
+op_amp
+id|parport_probe_one
+suffix:semicolon
+macro_line|#endif
 id|parport_proc_init
 c_func
 (paren
@@ -333,6 +374,13 @@ comma
 id|irq
 comma
 id|dma
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARPORT_AX
+id|parport_ax_init
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -424,6 +472,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|parport_proc_unregister
+)paren
+suffix:semicolon
+DECL|variable|parport_probe_hook
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|parport_probe_hook
 )paren
 suffix:semicolon
 DECL|function|inc_parport_count

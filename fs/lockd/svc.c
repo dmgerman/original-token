@@ -24,9 +24,7 @@ mdefine_line|#define NLMDBG_FACILITY&t;&t;NLMDBG_SVC
 DECL|macro|LOCKD_BUFSIZE
 mdefine_line|#define LOCKD_BUFSIZE&t;&t;(1024 + NLMSSVC_XDRSIZE)
 DECL|macro|BLOCKABLE_SIGS
-mdefine_line|#define BLOCKABLE_SIGS&t;&t;(~(_S(SIGKILL) | _S(SIGSTOP)))
-DECL|macro|_S
-mdefine_line|#define _S(sig)&t;&t;&t;(1 &lt;&lt; ((sig) - 1))
+mdefine_line|#define BLOCKABLE_SIGS&t;&t;(~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
 r_extern
 r_struct
 id|svc_program
@@ -129,9 +127,6 @@ op_star
 id|serv
 op_assign
 id|rqstp-&gt;rq_server
-suffix:semicolon
-id|sigset_t
-id|oldsigmask
 suffix:semicolon
 r_int
 id|err
@@ -289,10 +284,28 @@ c_func
 (paren
 )paren
 )paren
-id|current-&gt;signal
-op_assign
-l_int|0
+(brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
+id|flush_signals
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * Retry any blocked locks that have been notified by&n;&t;&t; * the VFS. Don&squot;t do this during grace period.&n;&t;&t; * (Theoretically, there shouldn&squot;t even be blocked locks&n;&t;&t; * during grace period).&n;&t;&t; */
 r_if
 c_cond
@@ -420,13 +433,35 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Process request with all signals blocked.  */
-id|oldsigmask
-op_assign
-id|current-&gt;blocked
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
+id|siginitsetinv
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
+comma
+op_complement
 id|BLOCKABLE_SIGS
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
 id|svc_process
 c_func
@@ -436,9 +471,32 @@ comma
 id|rqstp
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|sigemptyset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|oldsigmask
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
 multiline_comment|/* Unlock export hash tables */
 r_if

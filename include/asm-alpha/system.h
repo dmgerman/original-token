@@ -129,6 +129,24 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|whami
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wripir
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|halt
 mdefine_line|#define halt() __asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_halt) : &quot;memory&quot;)
 DECL|macro|switch_to
@@ -163,6 +181,8 @@ DECL|macro|__sti
 mdefine_line|#define __sti()&t;&t;&t;setipl(0)
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;do { (flags) = getipl(); } while (0)
+DECL|macro|__save_and_cli
+mdefine_line|#define __save_and_cli(flags)&t;do { (flags) = swpipl(7); } while (0)
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
 DECL|macro|cli
@@ -171,6 +191,8 @@ DECL|macro|sti
 mdefine_line|#define sti()&t;&t;&t;setipl(0)
 DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;do { (flags) = getipl(); } while (0)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(flags)&t;do { (flags) = swpipl(7); } while (0)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;setipl(flags)
 multiline_comment|/*&n; * TB routines..&n; */

@@ -189,6 +189,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|signals_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|smp_setup
 c_func
 (paren
@@ -1311,10 +1319,42 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BAYCOM
+macro_line|#ifdef CONFIG_BAYCOM_PAR
 r_extern
 r_void
-id|baycom_setup
+id|baycom_par_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BAYCOM_SER_FDX
+r_extern
+r_void
+id|baycom_ser_fdx_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BAYCOM_SER_HDX
+r_extern
+r_void
+id|baycom_ser_hdx_setup
 c_func
 (paren
 r_char
@@ -2432,11 +2472,27 @@ id|riscom8_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_BAYCOM
+macro_line|#ifdef CONFIG_BAYCOM_PAR
 (brace
-l_string|&quot;baycom=&quot;
+l_string|&quot;baycom_par=&quot;
 comma
-id|baycom_setup
+id|baycom_par_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BAYCOM_SER_FDX
+(brace
+l_string|&quot;baycom_ser_fdx=&quot;
+comma
+id|baycom_ser_fdx_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BAYCOM_SER_HDX
+(brace
+l_string|&quot;baycom_ser_hdx=&quot;
+comma
+id|baycom_ser_hdx_setup
 )brace
 comma
 macro_line|#endif
@@ -4306,6 +4362,11 @@ c_func
 )paren
 suffix:semicolon
 id|buffer_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|signals_init
 c_func
 (paren
 )paren
