@@ -188,9 +188,14 @@ id|skbn-&gt;sk
 op_assign
 id|ax25-&gt;sk
 suffix:semicolon
-id|ax25-&gt;sk-&gt;rmem_alloc
-op_add_assign
+id|atomic_add
+c_func
+(paren
 id|skbn-&gt;truesize
+comma
+op_amp
+id|ax25-&gt;sk-&gt;rmem_alloc
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* get first fragment from queue */

@@ -2439,13 +2439,23 @@ op_assign
 id|newsk
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Charge the sock_buff to newsk. &n;&t; */
+id|atomic_sub
+c_func
+(paren
+id|skb-&gt;truesize
+comma
+op_amp
 id|sk-&gt;rmem_alloc
-op_sub_assign
-id|skb-&gt;truesize
+)paren
 suffix:semicolon
-id|newsk-&gt;rmem_alloc
-op_add_assign
+id|atomic_add
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|newsk-&gt;rmem_alloc
+)paren
 suffix:semicolon
 id|skb_queue_tail
 c_func

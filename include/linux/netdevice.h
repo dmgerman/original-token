@@ -895,14 +895,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|in_net_bh
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|net_bh
 c_func

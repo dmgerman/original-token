@@ -23,6 +23,7 @@ macro_line|#ifdef CONFIG_ATALK
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/igmp.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/* Think big (also on some systems a byte is faster) */
 DECL|macro|SOCK_ARRAY_SIZE
 mdefine_line|#define SOCK_ARRAY_SIZE&t;256
@@ -248,15 +249,11 @@ op_star
 id|opt
 suffix:semicolon
 DECL|member|wmem_alloc
-r_volatile
-r_int
-r_int
+id|atomic_t
 id|wmem_alloc
 suffix:semicolon
 DECL|member|rmem_alloc
-r_volatile
-r_int
-r_int
+id|atomic_t
 id|rmem_alloc
 suffix:semicolon
 DECL|member|allocation
@@ -1761,10 +1758,6 @@ op_star
 id|skb
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1774,36 +1767,22 @@ id|skb-&gt;truesize
 op_ge
 id|sk-&gt;rcvbuf
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
-id|save_flags
+id|atomic_add
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sk-&gt;rmem_alloc
-op_add_assign
 id|skb-&gt;truesize
+comma
+op_amp
+id|sk-&gt;rmem_alloc
+)paren
 suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|skb_queue_tail
 c_func

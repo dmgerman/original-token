@@ -66,6 +66,17 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+r_const
+r_char
+op_star
+id|generic_NCR5380_info
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef BIOSPARAM
 r_int
 id|generic_NCR5380_biosparam

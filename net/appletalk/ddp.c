@@ -6707,9 +6707,14 @@ id|sk
 suffix:semicolon
 )brace
 multiline_comment|/* loop back */
-id|sk-&gt;wmem_alloc
-op_sub_assign
+id|atomic_sub
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|sk-&gt;wmem_alloc
+)paren
 suffix:semicolon
 id|ddp_dl
 op_member_access_from_pointer

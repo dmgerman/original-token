@@ -6205,6 +6205,12 @@ op_logical_and
 id|count
 )paren
 (brace
+id|enable_bh
+c_func
+(paren
+id|CONSOLE_BH
+)paren
+suffix:semicolon
 id|c
 op_assign
 id|from_user
@@ -6227,6 +6233,12 @@ op_increment
 suffix:semicolon
 id|count
 op_decrement
+suffix:semicolon
+id|disable_bh
+c_func
+(paren
+id|CONSOLE_BH
+)paren
 suffix:semicolon
 r_if
 c_cond

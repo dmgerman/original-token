@@ -1299,19 +1299,6 @@ op_increment
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|DISABLED_OPTIONS
-op_amp
-id|B
-(paren
-id|i
-)paren
-)paren
-)paren
-r_if
-c_cond
-(paren
 id|mask
 op_eq
 id|B
@@ -2992,7 +2979,7 @@ id|OPT_SB
 comma
 l_string|&quot;SB_MPU_IRQ&quot;
 comma
-l_string|&quot;SB MPU401 IRQ (Jazz16 and ES1688)&quot;
+l_string|&quot;SB MPU401 IRQ (Jazz16, SM Wave and ES1688)&quot;
 comma
 id|FMT_INT
 comma

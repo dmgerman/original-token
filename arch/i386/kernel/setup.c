@@ -956,6 +956,8 @@ c_func
 id|model
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|5
 suffix:colon
@@ -966,6 +968,8 @@ c_func
 (paren
 id|model
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_if
@@ -1086,7 +1090,10 @@ r_int
 id|n
 suffix:semicolon
 DECL|macro|CD
-mdefine_line|#define CD(X) (cpu_data[n].(X))
+mdefine_line|#define CD(X)&t;&t;(cpu_data[n].X)
+multiline_comment|/* SMP has the wrong name for loops_per_sec */
+DECL|macro|loops_per_sec
+mdefine_line|#define loops_per_sec&t;udelay_val
 DECL|macro|CPUN
 mdefine_line|#define CPUN n
 r_for

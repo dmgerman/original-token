@@ -744,6 +744,11 @@ id|sum
 op_assign
 l_int|0
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|total_forks
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -951,6 +956,7 @@ id|len
 comma
 l_string|&quot;&bslash;nctxt %u&bslash;n&quot;
 l_string|&quot;btime %lu&bslash;n&quot;
+l_string|&quot;processes %lu&bslash;n&quot;
 comma
 id|kstat.context_swtch
 comma
@@ -959,6 +965,8 @@ op_minus
 id|jiffies
 op_div
 id|HZ
+comma
+id|total_forks
 )paren
 suffix:semicolon
 r_return

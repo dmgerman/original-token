@@ -3298,7 +3298,7 @@ r_if
 c_cond
 (paren
 id|it_virt
-OL
+op_le
 id|ticks
 )paren
 (brace
@@ -3360,7 +3360,7 @@ r_if
 c_cond
 (paren
 id|it_prof
-OL
+op_le
 id|ticks
 )paren
 (brace

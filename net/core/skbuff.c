@@ -21,43 +21,37 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 multiline_comment|/*&n; *&t;Resource tracking variables&n; */
 DECL|variable|net_skbcount
-r_int
-r_int
+id|atomic_t
 id|net_skbcount
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|net_locked
-r_int
-r_int
+id|atomic_t
 id|net_locked
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|net_allocs
-r_int
-r_int
+id|atomic_t
 id|net_allocs
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|net_fails
-r_int
-r_int
+id|atomic_t
 id|net_fails
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|net_free_locked
-r_int
-r_int
+id|atomic_t
 id|net_free_locked
 op_assign
 l_int|0
 suffix:semicolon
 r_extern
-r_int
-r_int
+id|atomic_t
 id|ip_frag_mem
 suffix:semicolon
 DECL|function|show_net_buffers
@@ -71,7 +65,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Networking buffers in use          : %lu&bslash;n&quot;
+l_string|&quot;Networking buffers in use          : %u&bslash;n&quot;
 comma
 id|net_skbcount
 )paren
@@ -79,7 +73,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Network buffers locked by drivers  : %lu&bslash;n&quot;
+l_string|&quot;Network buffers locked by drivers  : %u&bslash;n&quot;
 comma
 id|net_locked
 )paren
@@ -87,7 +81,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Total network buffer allocations   : %lu&bslash;n&quot;
+l_string|&quot;Total network buffer allocations   : %u&bslash;n&quot;
 comma
 id|net_allocs
 )paren
@@ -95,7 +89,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Total failed network buffer allocs : %lu&bslash;n&quot;
+l_string|&quot;Total failed network buffer allocs : %u&bslash;n&quot;
 comma
 id|net_fails
 )paren
@@ -103,7 +97,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Total free while locked events     : %lu&bslash;n&quot;
+l_string|&quot;Total free while locked events     : %u&bslash;n&quot;
 comma
 id|net_free_locked
 )paren
@@ -112,7 +106,7 @@ macro_line|#ifdef CONFIG_INET
 id|printk
 c_func
 (paren
-l_string|&quot;IP fragment buffer size            : %lu&bslash;n&quot;
+l_string|&quot;IP fragment buffer size            : %u&bslash;n&quot;
 comma
 id|ip_frag_mem
 )paren
@@ -2199,10 +2193,17 @@ c_cond
 id|skb-&gt;sk
 )paren
 (brace
+r_struct
+id|sock
+op_star
+id|sk
+op_assign
+id|skb-&gt;sk
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb-&gt;sk-&gt;prot
+id|sk-&gt;prot
 op_ne
 l_int|NULL
 )paren
@@ -2215,7 +2216,7 @@ id|rw
 id|sock_rfree
 c_func
 (paren
-id|skb-&gt;sk
+id|sk
 comma
 id|skb
 )paren
@@ -2224,7 +2225,7 @@ r_else
 id|sock_wfree
 c_func
 (paren
-id|skb-&gt;sk
+id|sk
 comma
 id|skb
 )paren
@@ -2232,57 +2233,47 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* Non INET - default wmalloc/rmalloc handler */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|rw
 )paren
-id|skb-&gt;sk-&gt;rmem_alloc
-op_sub_assign
-id|skb-&gt;truesize
-suffix:semicolon
-r_else
-id|skb-&gt;sk-&gt;wmem_alloc
-op_sub_assign
-id|skb-&gt;truesize
-suffix:semicolon
-id|restore_flags
+id|atomic_sub
 c_func
 (paren
-id|flags
+id|skb-&gt;truesize
+comma
+op_amp
+id|sk-&gt;rmem_alloc
+)paren
+suffix:semicolon
+r_else
+(brace
+id|atomic_sub
+c_func
+(paren
+id|skb-&gt;truesize
+comma
+op_amp
+id|sk-&gt;wmem_alloc
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|skb-&gt;sk-&gt;dead
+id|sk-&gt;dead
 )paren
 (brace
-id|skb-&gt;sk
+id|sk
 op_member_access_from_pointer
 id|write_space
 c_func
 (paren
-id|skb-&gt;sk
+id|sk
 )paren
 suffix:semicolon
+)brace
 )brace
 id|kfree_skbmem
 c_func
@@ -2711,10 +2702,6 @@ r_int
 id|priority
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -2776,30 +2763,25 @@ id|skb
 op_assign
 id|skb-&gt;data_skb
 suffix:semicolon
-id|save_flags
+id|atomic_inc
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+op_amp
 id|skb-&gt;count
-op_increment
+)paren
 suffix:semicolon
-id|net_allocs
-op_increment
-suffix:semicolon
-id|net_skbcount
-op_increment
-suffix:semicolon
-id|restore_flags
+id|atomic_inc
 c_func
 (paren
-id|flags
+op_amp
+id|net_allocs
+)paren
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|net_skbcount
 )paren
 suffix:semicolon
 id|n-&gt;data_skb

@@ -873,9 +873,14 @@ id|skb-&gt;sk
 op_assign
 id|ax25-&gt;sk
 suffix:semicolon
-id|ax25-&gt;sk-&gt;wmem_alloc
-op_add_assign
+id|atomic_add
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|ax25-&gt;sk-&gt;wmem_alloc
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Assume a response - address structure for DTE */
@@ -2103,9 +2108,14 @@ id|skb-&gt;sk
 op_assign
 id|ax25-&gt;sk
 suffix:semicolon
-id|ax25-&gt;sk-&gt;wmem_alloc
-op_add_assign
+id|atomic_add
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|ax25-&gt;sk-&gt;wmem_alloc
+)paren
 suffix:semicolon
 )brace
 id|skb-&gt;protocol

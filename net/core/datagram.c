@@ -126,14 +126,12 @@ suffix:colon
 r_while
 c_loop
 (paren
-id|skb_peek
+id|skb_queue_empty
 c_func
 (paren
 op_amp
 id|sk-&gt;receive_queue
 )paren
-op_eq
-l_int|NULL
 )paren
 multiline_comment|/* No data */
 (brace
@@ -373,20 +371,12 @@ r_if
 c_cond
 (paren
 id|skb-&gt;users
-OG
+op_le
 l_int|0
 )paren
 (brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* See if it needs destroying */
+multiline_comment|/* Been dequeued by someone - ie it&squot;s read */
 r_if
 c_cond
 (paren
@@ -397,7 +387,6 @@ op_logical_neg
 id|skb-&gt;prev
 )paren
 (brace
-multiline_comment|/* Been dequeued by someone - ie it&squot;s read */
 id|kfree_skb
 c_func
 (paren
@@ -406,6 +395,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
+)brace
 )brace
 id|restore_flags
 c_func

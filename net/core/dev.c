@@ -1290,35 +1290,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/**********************************************************************************&n;&n;&t;&t;&t;Receive Queue Processor&n;&t;&t;&t;&n;***********************************************************************************/
-multiline_comment|/*&n; *&t;This is a single non-reentrant routine which takes the received packet&n; *&t;queue and throws it at the networking layers in the hope that something&n; *&t;useful will emerge.&n; */
-DECL|variable|in_bh
-r_volatile
-r_int
-r_int
-id|in_bh
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Non-reentrant remember */
-DECL|function|in_net_bh
-r_int
-id|in_net_bh
-c_func
-(paren
-)paren
-multiline_comment|/* Used by timer.c */
-(brace
-r_return
-id|in_bh
-op_eq
-l_int|0
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;When we are called the queue is ready to grab, the interrupts are&n; *&t;on and hardware can interrupt and queue to the receive queue a we&n; *&t;run with no problems.&n; *&t;This is run as a bottom half after an interrupt handler that does&n; *&t;mark_bh(NET_BH);&n; */
 DECL|function|net_bh
 r_void
@@ -1328,11 +1299,6 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
 r_struct
 id|packet_type
 op_star
@@ -1347,25 +1313,6 @@ r_int
 r_int
 id|type
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Atomically check and mark our BUSY state. &n;&t; */
-r_if
-c_cond
-(paren
-id|set_bit
-c_func
-(paren
-l_int|1
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|in_bh
-)paren
-)paren
-r_return
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Can we send anything now? We want to clear the&n;&t; *&t;decks for any more sends that get done as we&n;&t; *&t;process the input. This also minimises the&n;&t; *&t;latency on a transmit interrupt bh.&n;&t; */
 id|dev_transmit
 c_func
@@ -1373,30 +1320,41 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Any data left to process. This may occur because a&n;&t; *&t;mark_bh() is done after we empty the queue including&n;&t; *&t;that from the device which does a mark_bh() just after&n;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;While the queue is not empty&n;&t; */
+multiline_comment|/*&n;&t; *&t;While the queue is not empty..&n;&t; *&n;&t; *&t;Note that the queue never shrinks due to&n;&t; *&t;an interrupt, so we can do this test without&n;&t; *&t;disabling interrupts.&n;&t; */
 r_while
 c_loop
 (paren
-(paren
-id|skb
-op_assign
-id|__skb_dequeue
+op_logical_neg
+id|skb_queue_empty
 c_func
 (paren
 op_amp
 id|backlog
 )paren
 )paren
-op_ne
-l_int|NULL
-)paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+id|backlog.next
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;We have a packet. Therefore the queue has shrunk&n;&t;&t; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|__skb_unlink
+c_func
+(paren
+id|skb
+comma
+op_amp
+id|backlog
+)paren
+suffix:semicolon
 id|backlog_size
 op_decrement
 suffix:semicolon
@@ -1611,23 +1569,9 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* End of queue loop */
 multiline_comment|/*&n;  &t; *&t;We have emptied the queue&n;  &t; */
-id|in_bh
-op_assign
-l_int|0
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;One last output flush.&n;&t; */
 macro_line|#ifdef XMIT_AFTER&t; 
 id|dev_transmit

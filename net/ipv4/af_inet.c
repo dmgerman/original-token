@@ -1157,7 +1157,11 @@ multiline_comment|/* actually it can if an ack has just been sent. */
 id|printk
 c_func
 (paren
-l_string|&quot;Socket destroy delayed&bslash;n&quot;
+l_string|&quot;Socket destroy delayed (r=%d w=%d)&bslash;n&quot;
+comma
+id|sk-&gt;rmem_alloc
+comma
+id|sk-&gt;wmem_alloc
 )paren
 suffix:semicolon
 id|sk-&gt;destroy

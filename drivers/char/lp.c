@@ -3333,6 +3333,11 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|failed
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3462,9 +3467,8 @@ comma
 id|offset
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EIO
+id|failed
+op_increment
 suffix:semicolon
 )brace
 r_else
@@ -3473,6 +3477,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Successful specified devices increase count&n;&t; * Unsuccessful specified devices increase failed&n;&t; */
 r_if
 c_cond
 (paren
@@ -3481,6 +3486,33 @@ id|count
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|failed
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;lp: No override devices found.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|unregister_chrdev
+c_func
+(paren
+id|LP_MAJOR
+comma
+l_string|&quot;lp&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+multiline_comment|/* Only get here if there were no specified devices. To continue &n;&t; * would be silly since the above code has scribbled all over the&n;&t; * probe list.&n;&t; */
 macro_line|#endif
 multiline_comment|/* take on all known port values */
 r_for

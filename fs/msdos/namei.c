@@ -3760,12 +3760,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|msdos_read_inode
-c_func
-(paren
-id|old_inode
-)paren
-suffix:semicolon
 id|MSDOS_I
 c_func
 (paren

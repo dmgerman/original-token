@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com (no longer valid - where are you now, Martin?)&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioctls and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;&n;&n;        0.4   &n;        Added support for loadable MODULEs, so mcd can now also be loaded by &n;        insmod and removed by rmmod during runtime.&n;        Werner Zimmermann (zimmerma@rz.fht-esslingen.de), Mar. 26, 95&n;&n;&t;0.5&n;&t;I added code for FX001 D to drop from double speed to single speed &n;&t;when encountering errors... this helps with some &quot;problematic&quot; CD&squot;s&n;&t;that are supposedly &quot;OUT OF TOLERANCE&quot; (but are really shitty presses!)&n;&t;severly scratched, or possibly slightly warped! I have noticed that&n;&t;the Mitsumi 2x/4x drives are just less tolerant and the firmware is &n;&t;not smart enough to drop speed,&t;so let&squot;s just kludge it with software!&n;&t;****** THE 4X SPEED MITSUMI DRIVES HAVE THE SAME PROBLEM!!!!!! ******&n;&t;Anyone want to &quot;DONATE&quot; one to me?! ;) I hear sometimes they are&n;&t;even WORSE! ;)&n;&t;** HINT... HINT... TAKE NOTES MITSUMI This could save some hassels with&n;&t;certain &quot;large&quot; CD&squot;s that have data on the outside edge in your &n;&t;DOS DRIVERS .... Accuracy counts... speed is secondary ;)&n;&t;17 June 95 Modifications By Andrew J. Kroll &lt;ag784@freenet.buffalo.edu&gt;&n;&t;07 July 1995 Modifications by Andrew J. Kroll&n;&n;*/
+multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com (no longer valid - where are you now, Martin?)&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioctls and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;&n;&n;        0.4   &n;        Added support for loadable MODULEs, so mcd can now also be loaded by &n;        insmod and removed by rmmod during runtime.&n;        Werner Zimmermann (zimmerma@rz.fht-esslingen.de), Mar. 26, 95&n;&n;&t;0.5&n;&t;I added code for FX001 D to drop from double speed to single speed &n;&t;when encountering errors... this helps with some &quot;problematic&quot; CD&squot;s&n;&t;that are supposedly &quot;OUT OF TOLERANCE&quot; (but are really shitty presses!)&n;&t;severly scratched, or possibly slightly warped! I have noticed that&n;&t;the Mitsumi 2x/4x drives are just less tolerant and the firmware is &n;&t;not smart enough to drop speed,&t;so let&squot;s just kludge it with software!&n;&t;****** THE 4X SPEED MITSUMI DRIVES HAVE THE SAME PROBLEM!!!!!! ******&n;&t;Anyone want to &quot;DONATE&quot; one to me?! ;) I hear sometimes they are&n;&t;even WORSE! ;)&n;&t;** HINT... HINT... TAKE NOTES MITSUMI This could save some hassels with&n;&t;certain &quot;large&quot; CD&squot;s that have data on the outside edge in your &n;&t;DOS DRIVERS .... Accuracy counts... speed is secondary ;)&n;&t;17 June 95 Modifications By Andrew J. Kroll &lt;ag784@freenet.buffalo.edu&gt;&n;&t;07 July 1995 Modifications by Andrew J. Kroll&n;&n;&t;Bjorn Ekwall &lt;bj0rn@blox.se&gt; added unregister_blkdev to mcd_init()&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -4345,6 +4345,14 @@ l_int|4
 )paren
 )paren
 (brace
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;mcd&quot;
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4488,6 +4496,14 @@ comma
 id|mcd_irq
 )paren
 suffix:semicolon
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;mcd&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -4544,6 +4560,14 @@ id|count
 )paren
 )paren
 (brace
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;mcd&quot;
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4580,10 +4604,20 @@ id|result
 l_int|2
 )braket
 )paren
+(brace
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;mcd&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -4691,6 +4725,14 @@ c_func
 l_string|&quot;Unable to get IRQ%d for Mitsumi CD-ROM&bslash;n&quot;
 comma
 id|mcd_irq
+)paren
+suffix:semicolon
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;mcd&quot;
 )paren
 suffix:semicolon
 r_return

@@ -281,7 +281,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %08lX:%04X %08lX:%04X %02X %08lX:%08lX %02X:%08lX %08X %d %d&bslash;n&quot;
+l_string|&quot;%2d: %08lX:%04X %08lX:%04X %02X %08X:%08X %02X:%08lX %08X %d %d&bslash;n&quot;
 comma
 id|i
 comma

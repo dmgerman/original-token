@@ -25,6 +25,15 @@ id|nr_running
 op_assign
 l_int|1
 suffix:semicolon
+DECL|variable|total_forks
+r_int
+r_int
+r_int
+id|total_forks
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Handle normal Linux uptimes. */
 DECL|function|find_empty_process
 r_static
 r_inline
@@ -1230,6 +1239,9 @@ id|p
 )paren
 suffix:semicolon
 multiline_comment|/* do this last, just in case */
+op_increment
+id|total_forks
+suffix:semicolon
 r_return
 id|p-&gt;pid
 suffix:semicolon

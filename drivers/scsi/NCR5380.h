@@ -366,6 +366,55 @@ op_star
 id|next_timer
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef NCR5380_STATS
+DECL|member|timebase
+r_int
+id|timebase
+suffix:semicolon
+multiline_comment|/* Base for time calcs */
+DECL|member|time_read
+r_int
+id|time_read
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* time to do reads */
+DECL|member|time_write
+r_int
+id|time_write
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* time to do writes */
+DECL|member|bytes_read
+r_int
+r_int
+id|bytes_read
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* bytes read */
+DECL|member|bytes_write
+r_int
+r_int
+id|bytes_write
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* byytes written */
+DECL|member|pendingr
+r_int
+id|pendingr
+suffix:semicolon
+DECL|member|pendingw
+r_int
+id|pendingw
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

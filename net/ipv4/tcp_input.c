@@ -4509,9 +4509,14 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|sk-&gt;rmem_alloc
-op_add_assign
+id|atomic_add
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|sk-&gt;rmem_alloc
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We should now do header prediction.&n;&t; */
 multiline_comment|/*&n;&t; *&t;This basically follows the flow suggested by RFC793, with the corrections in RFC1122. We&n;&t; *&t;don&squot;t implement precedence and we process URG incorrectly (deliberately so) for BSD bug&n;&t; *&t;compatibility. We also set up variables more thoroughly [Karn notes in the&n;&t; *&t;KA9Q code the RFC793 incoming segment rules don&squot;t initialise the variables for all paths].&n;&t; */
@@ -5008,9 +5013,14 @@ suffix:semicolon
 id|tcp_statistics.TcpEstabResets
 op_increment
 suffix:semicolon
-id|sk-&gt;rmem_alloc
-op_sub_assign
+id|atomic_sub
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|sk-&gt;rmem_alloc
+)paren
 suffix:semicolon
 id|skb-&gt;sk
 op_assign
@@ -5064,9 +5074,14 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|sk-&gt;rmem_alloc
-op_add_assign
+id|atomic_add
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|sk-&gt;rmem_alloc
+)paren
 suffix:semicolon
 id|tcp_conn_request
 c_func
@@ -5281,6 +5296,8 @@ id|rfc_step6
 suffix:colon
 multiline_comment|/* I&squot;ll clean this up later */
 multiline_comment|/*&n;&t; *&t;If the accepted buffer put us over our queue size we&n;&t; *&t;now drop it (we must process the ack first to avoid&n;&t; *&t;deadlock cases).&n;&t; */
+macro_line|#if 0
+multiline_comment|/*&n;&t; *&t;Is this test really a good idea? We should&n;&t; *&t;throw away packets that aren&squot;t in order, not&n;&t; *&t;new packets.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5301,6 +5318,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Process urgent data&n;&t; */
 id|tcp_urg
 c_func
