@@ -1323,25 +1323,23 @@ suffix:semicolon
 id|put_fs_long
 c_func
 (paren
-l_int|0
+id|current-&gt;tss.trap_no
 comma
 id|frame
 op_plus
 l_int|14
 )paren
 suffix:semicolon
-multiline_comment|/* trapno - not implemented */
 id|put_fs_long
 c_func
 (paren
-l_int|0
+id|current-&gt;tss.error_code
 comma
 id|frame
 op_plus
 l_int|15
 )paren
 suffix:semicolon
-multiline_comment|/* err - not implemented */
 id|put_fs_long
 c_func
 (paren
@@ -2103,6 +2101,12 @@ op_assign
 id|eip
 suffix:semicolon
 multiline_comment|/* &quot;return&quot; to the first handler */
+id|current-&gt;tss.trap_no
+op_assign
+id|current-&gt;tss.error_code
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

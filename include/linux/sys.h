@@ -950,6 +950,13 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* 130 */
+r_extern
+r_int
+id|sys_quotactl
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; */
 macro_line|#ifdef notdef
 DECL|macro|sys_waitpid
@@ -971,6 +978,9 @@ mdefine_line|#define sys_sgetmask&t;sys_old_syscall /* sys_sigprocmask */
 DECL|macro|sys_ssetmask
 mdefine_line|#define sys_ssetmask&t;sys_old_syscall /* sig_sigprocmask */
 macro_line|#endif
+multiline_comment|/*&n; * These are system calls that haven&squot;t been implemented yet&n; * but have an entry in the table for future expansion..&n; */
+DECL|macro|sys_quotactl
+mdefine_line|#define sys_quotactl&t;sys_ni_syscall
 DECL|typedef|fn_ptr
 r_typedef
 r_int

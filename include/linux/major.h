@@ -51,8 +51,8 @@ mdefine_line|#define SCSI_GENERIC_MAJOR 21
 multiline_comment|/* unused: 22 */
 DECL|macro|MITSUMI_CDROM_MAJOR
 mdefine_line|#define MITSUMI_CDROM_MAJOR 23
-DECL|macro|SONY535_CDROM_MAJOR
-mdefine_line|#define SONY535_CDROM_MAJOR 24
+DECL|macro|CDU535_CDROM_MAJOR
+mdefine_line|#define CDU535_CDROM_MAJOR 24
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_MAJOR
 mdefine_line|#define SCSI_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_TAPE_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR&t;&bslash;&n;   || (M) == SCSI_GENERIC_MAJOR)

@@ -319,6 +319,19 @@ r_extern
 l_string|&quot;C&quot;
 (brace
 macro_line|#endif
+DECL|function|sys_ni_syscall
+r_int
+id|sys_ni_syscall
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 DECL|variable|sys_call_table
 id|fn_ptr
 id|sys_call_table
@@ -587,6 +600,8 @@ comma
 id|sys_delete_module
 comma
 id|sys_get_kernel_syms
+comma
+id|sys_quotactl
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */

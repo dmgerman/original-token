@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/segment.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 id|asmlinkage
@@ -784,10 +785,6 @@ c_cond
 id|p-&gt;ldt
 )paren
 (brace
-r_if
-c_cond
-(paren
-(paren
 id|p-&gt;ldt
 op_assign
 (paren
@@ -795,12 +792,18 @@ r_struct
 id|desc_struct
 op_star
 )paren
-id|__get_free_page
+id|vmalloc
 c_func
 (paren
-id|GFP_KERNEL
+id|LDT_ENTRIES
+op_star
+id|LDT_ENTRY_SIZE
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;ldt
 op_ne
 l_int|NULL
 )paren
@@ -811,7 +814,9 @@ id|p-&gt;ldt
 comma
 id|current-&gt;ldt
 comma
-id|PAGE_SIZE
+id|LDT_ENTRIES
+op_star
+id|LDT_ENTRY_SIZE
 )paren
 suffix:semicolon
 )brace

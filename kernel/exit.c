@@ -1881,13 +1881,9 @@ c_cond
 id|current-&gt;ldt
 )paren
 (brace
-id|free_page
+id|vfree
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|current-&gt;ldt
 )paren
 suffix:semicolon

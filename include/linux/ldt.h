@@ -2,6 +2,12 @@ multiline_comment|/*&n; * ldt.h&n; *&n; * Definitions of structures used with th
 macro_line|#ifndef _LINUX_LDT_H
 DECL|macro|_LINUX_LDT_H
 mdefine_line|#define _LINUX_LDT_H
+multiline_comment|/* Maximum number of LDT entries supported. */
+DECL|macro|LDT_ENTRIES
+mdefine_line|#define LDT_ENTRIES&t;8192
+multiline_comment|/* The size of each LDT entry. */
+DECL|macro|LDT_ENTRY_SIZE
+mdefine_line|#define LDT_ENTRY_SIZE&t;8
 DECL|struct|modify_ldt_ldt_s
 r_struct
 id|modify_ldt_ldt_s
