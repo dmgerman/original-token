@@ -279,7 +279,7 @@ id|module_end
 suffix:semicolon
 r_extern
 r_char
-id|start_kernel
+id|_stext
 comma
 id|_etext
 suffix:semicolon
@@ -318,18 +318,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CPU:    %d&bslash;n&quot;
+l_string|&quot;CPU:    %d&bslash;nEIP:    %04x:[&lt;%08lx&gt;]&bslash;nEFLAGS: %08lx&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
 (paren
 )paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;EIP:    %04x:[&lt;%08lx&gt;]&bslash;nEFLAGS: %08lx&bslash;n&quot;
 comma
 l_int|0xffff
 op_amp
@@ -580,7 +574,7 @@ r_int
 r_int
 )paren
 op_amp
-id|start_kernel
+id|_stext
 )paren
 op_logical_and
 (paren
