@@ -3548,6 +3548,17 @@ id|dotdot_bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+id|old_dir-&gt;i_nlink
+op_decrement
+suffix:semicolon
+id|new_dir-&gt;i_nlink
+op_increment
+suffix:semicolon
+multiline_comment|/* no need to mark them dirty */
+id|dotdot_inode-&gt;i_nlink
+op_assign
+id|new_dir-&gt;i_nlink
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -3560,13 +3571,6 @@ c_func
 id|dotdot_bh
 )paren
 suffix:semicolon
-id|old_dir-&gt;i_nlink
-op_decrement
-suffix:semicolon
-id|new_dir-&gt;i_nlink
-op_increment
-suffix:semicolon
-multiline_comment|/* no need to mark them dirty */
 )brace
 id|error
 op_assign

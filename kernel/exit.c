@@ -1123,9 +1123,6 @@ id|pgrp
 r_if
 c_cond
 (paren
-id|sig
-op_logical_and
-(paren
 id|err
 op_assign
 id|send_sig
@@ -1137,7 +1134,6 @@ op_star
 id|p
 comma
 id|priv
-)paren
 )paren
 )paren
 id|retval
@@ -1308,9 +1304,6 @@ op_eq
 id|pid
 )paren
 r_return
-id|sig
-ques
-c_cond
 id|send_sig
 c_func
 (paren
@@ -1321,8 +1314,6 @@ id|p
 comma
 id|priv
 )paren
-suffix:colon
-l_int|0
 suffix:semicolon
 r_return
 op_minus

@@ -1317,6 +1317,15 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+(paren
+r_void
+)paren
+id|inb_p
+c_func
+(paren
+id|HD_STATUS
+)paren
+suffix:semicolon
 macro_line|#if (HD_DELAY &gt; 0)
 id|last_req
 op_assign

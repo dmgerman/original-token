@@ -5,6 +5,7 @@ multiline_comment|/*&n; * As with hd.c, all routines within this file can (and w
 multiline_comment|/*&n; * 28.02.92 - made track-buffering routines, based on the routines written&n; * by entropy@wintermute.wpi.edu (Lawrence Foard). Linus.&n; */
 multiline_comment|/*&n; * Automatic floppy-detection and formatting written by Werner Almesberger&n; * (almesber@nessie.cs.id.ethz.ch), who also corrected some problems with&n; * the floppy-change signal detection.&n; */
 multiline_comment|/*&n; * 1992/7/22 -- Hennus Bergman: Added better error reporting, fixed &n; * FDC data overrun bug, added some preliminary stuff for vertical&n; * recording support.&n; * TODO: Errors are still not counted properly.&n; */
+multiline_comment|/* 1992/9/20&n; * Modifications for ``Sector Shifting&squot;&squot; by Rob Hooft (hooft@chem.ruu.nl)&n; * modelled after the freeware MS/DOS program fdformat/88 V1.8 by &n; * Christoph H. Hochst&bslash;&quot;atter.&n; * I have fixed the shift values to the ones I always use. Maybe a new&n; * ioctl() should be created to be able to modify them.&n; * There is a bug in the driver that makes it impossible to format a&n; * floppy as the first thing after bootup.&n; */
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 DECL|macro|FLOPPY_IRQ
@@ -880,7 +881,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;floppy_deselect: drive not selected&bslash;n&bslash;r&quot;
+l_string|&quot;floppy_deselect: drive not selected&bslash;n&quot;
 )paren
 suffix:semicolon
 id|selected
@@ -985,7 +986,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;floppy_changed: not a floppy&bslash;r&bslash;n&quot;
+l_string|&quot;floppy_changed: not a floppy&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1508,7 +1509,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to send byte to FDC&bslash;n&bslash;r&quot;
+l_string|&quot;Unable to send byte to FDC&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1638,7 +1639,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Getstatus times out&bslash;n&bslash;r&quot;
+l_string|&quot;Getstatus times out&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2195,7 +2196,7 @@ id|drive
 id|printk
 c_func
 (paren
-l_string|&quot;Auto-detected floppy type %s in fd%d&bslash;r&bslash;n&quot;
+l_string|&quot;Auto-detected floppy type %s in fd%d&bslash;n&quot;
 comma
 id|floppy-&gt;name
 comma
@@ -3160,7 +3161,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Reset-floppy called&bslash;n&bslash;r&quot;
+l_string|&quot;Reset-floppy called&bslash;n&quot;
 )paren
 suffix:semicolon
 id|cli
@@ -3502,7 +3503,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;Disk type is undefined after disk &quot;
-l_string|&quot;change in fd%d&bslash;r&bslash;n&quot;
+l_string|&quot;change in fd%d&bslash;n&quot;
 comma
 id|current_drive
 )paren
@@ -3677,6 +3678,47 @@ id|tmp_floppy_area
 suffix:semicolon
 r_int
 id|count
+comma
+id|head_shift
+comma
+id|track_shift
+comma
+id|total_shift
+suffix:semicolon
+multiline_comment|/* allow for about 30ms for data transport per track */
+id|head_shift
+op_assign
+id|floppy-&gt;sect
+op_div
+l_int|6
+suffix:semicolon
+multiline_comment|/* a ``cylinder&squot;&squot; is two tracks plus a little stepping time */
+id|track_shift
+op_assign
+l_int|2
+op_star
+id|head_shift
+op_plus
+l_int|1
+suffix:semicolon
+multiline_comment|/* count backwards */
+id|total_shift
+op_assign
+id|floppy-&gt;sect
+op_minus
+(paren
+(paren
+id|track_shift
+op_star
+id|track
+op_plus
+id|head_shift
+op_star
+id|head
+)paren
+op_mod
+id|floppy-&gt;sect
+)paren
 suffix:semicolon
 multiline_comment|/* XXX: should do a check to see this fits in tmp_floppy_area!! */
 r_for
@@ -3684,10 +3726,10 @@ c_loop
 (paren
 id|count
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|count
-op_le
+OL
 id|floppy-&gt;sect
 suffix:semicolon
 id|count
@@ -3710,7 +3752,17 @@ op_star
 id|here
 op_increment
 op_assign
+l_int|1
+op_plus
+(paren
+(paren
 id|count
+op_plus
+id|total_shift
+)paren
+op_mod
+id|floppy-&gt;sect
+)paren
 suffix:semicolon
 op_star
 id|here
@@ -5203,7 +5255,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;r&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

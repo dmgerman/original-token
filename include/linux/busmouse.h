@@ -103,20 +103,14 @@ DECL|member|active
 r_int
 id|active
 suffix:semicolon
-DECL|member|inode
+DECL|member|wait
 r_struct
-id|inode
+id|wait_queue
 op_star
-id|inode
+id|wait
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Variable Definitions */
-r_extern
-r_int
-id|mse_busmouse_type
-suffix:semicolon
-multiline_comment|/* to distinguish what type mouse we&squot;re working with */
 multiline_comment|/* Function Prototypes */
 r_extern
 r_int

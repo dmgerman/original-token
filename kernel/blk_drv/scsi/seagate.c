@@ -3,18 +3,11 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SCSI_SEAGATE) || defined(CONFIG_SCSI_FD_88x) 
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &quot;seagate.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-r_extern
-r_void
-id|seagate_intr
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_static
 r_int
 id|internal_command
@@ -39,18 +32,6 @@ comma
 r_int
 id|reselect
 )paren
-suffix:semicolon
-DECL|variable|do_seagate
-r_void
-(paren
-op_star
-id|do_seagate
-)paren
-(paren
-r_void
-)paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|incommand
 r_static
@@ -245,6 +226,14 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_static
+r_void
+id|seagate_reconnect_intr
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
 DECL|function|seagate_st0x_detect
 r_int
 id|seagate_st0x_detect
@@ -260,6 +249,22 @@ comma
 id|j
 suffix:semicolon
 macro_line|#endif
+r_static
+r_struct
+id|sigaction
+id|seagate_sigaction
+op_assign
+(brace
+op_amp
+id|seagate_reconnect_intr
+comma
+l_int|0
+comma
+id|SA_INTERRUPT
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *&t;First, we try for the manual override.&n; */
 macro_line|#ifdef DEBUG 
 id|printk
@@ -467,49 +472,34 @@ id|st0x_dr
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; *&t;At all times, we will use IRQ 5.  &n; */
 id|hostno
 op_assign
 id|hostnum
 suffix:semicolon
-multiline_comment|/*&n; *&t;At all times, we will use IRQ 5.  &n; */
-macro_line|#if 1
-id|set_intr_gate
+r_if
+c_cond
 (paren
-l_int|0x25
-comma
-id|seagate_intr
-)paren
-suffix:semicolon
-id|__asm__
+id|irqaction
 c_func
 (paren
-"&quot;"
-id|inb
-"$"
-l_int|0x21
+l_int|5
 comma
-op_mod
-op_mod
-id|al
-id|andb
-"$"
-l_int|0xdf
-comma
-op_mod
-op_mod
-id|al
-id|outb
-op_mod
-op_mod
-id|al
-comma
-"$"
-l_int|0x21
-"&quot;"
-op_scope_resolution
+op_amp
+id|seagate_sigaction
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to allocate IRQ5 for ST0x driver&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_return
 op_minus
 l_int|1
@@ -590,7 +580,7 @@ r_int
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * These control weather or not disconnect / reconnect will be attempted,&n; * or are being attempted.&n; */
+multiline_comment|/*&n; * These control whether or not disconnect / reconnect will be attempted,&n; * or are being attempted.&n; */
 DECL|macro|NO_RECONNECT
 mdefine_line|#define NO_RECONNECT &t;0
 DECL|macro|RECONNECT_NOW
@@ -605,32 +595,24 @@ id|should_reconnect
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|seagate_unexpected_intr
-r_void
-id|seagate_unexpected_intr
-(paren
-r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;scsi%d: unexpected interrupt.&bslash;n&quot;
-comma
-id|hostno
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * The seagate_reconnect_intr routine is called when a target reselects the &n; * host adapter.  This occurs on the interrupt triggered by the target &n; * asserting SEL.&n; */
 DECL|function|seagate_reconnect_intr
+r_static
 r_void
 id|seagate_reconnect_intr
 (paren
-r_void
+r_int
+id|unused
 )paren
 (brace
 r_int
 id|temp
+suffix:semicolon
+multiline_comment|/* enable all other interrupts. */
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#if (DEBUG &amp; PHASE_RESELECT)
 id|printk
@@ -648,9 +630,12 @@ c_cond
 op_logical_neg
 id|should_reconnect
 )paren
-id|seagate_unexpected_intr
+id|printk
 c_func
 (paren
+l_string|&quot;scsi%d: unexpected interrupt.&bslash;n&quot;
+comma
+id|hostno
 )paren
 suffix:semicolon
 r_else
@@ -960,10 +945,6 @@ r_int
 r_char
 id|status_read
 suffix:semicolon
-id|do_seagate
-op_assign
-id|seagate_unexpected_intr
-suffix:semicolon
 id|len
 op_assign
 id|bufflen
@@ -1108,11 +1089,6 @@ id|reselect
 op_eq
 id|RECONNECT_NOW
 )paren
-id|eoi
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|DID_BAD_TARGET
 suffix:semicolon
@@ -1183,11 +1159,6 @@ id|hostno
 )paren
 suffix:semicolon
 macro_line|#endif
-id|eoi
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|DID_BAD_INTR
@@ -1225,11 +1196,6 @@ id|temp
 )paren
 suffix:semicolon
 macro_line|#endif
-id|eoi
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|DID_BAD_INTR
@@ -1261,11 +1227,6 @@ comma
 id|hostno
 comma
 id|temp
-)paren
-suffix:semicolon
-id|eoi
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -1352,11 +1313,6 @@ id|hostno
 )paren
 suffix:semicolon
 macro_line|#endif
-id|eoi
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|DID_BAD_INTR
@@ -1370,11 +1326,6 @@ op_assign
 id|BASE_CMD
 suffix:semicolon
 multiline_comment|/*&n; *&t;At this point, we have connected with the target and can get &n; *&t;on with our lives.&n; */
-id|eoi
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2651,10 +2602,6 @@ id|hostno
 )paren
 suffix:semicolon
 macro_line|#endif
-id|do_seagate
-op_assign
-id|seagate_reconnect_intr
-suffix:semicolon
 id|CONTROL
 op_assign
 id|BASE_CMD

@@ -78,6 +78,14 @@ id|sense_buffer
 l_int|255
 )braket
 suffix:semicolon
+DECL|variable|slow_scsi_io
+r_int
+id|slow_scsi_io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* This is set by aha1542.c, and others, if needed */
 r_extern
 r_int
 id|sd_ioctl
@@ -308,6 +316,14 @@ id|CURRENT-&gt;nr_sectors
 op_sub_assign
 id|this_count
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|slow_scsi_io
+op_eq
+id|host
+)paren
+(brace
 id|total_count
 op_sub_assign
 id|this_count
@@ -336,6 +352,8 @@ c_func
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+)brace
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -781,6 +799,14 @@ multiline_comment|/* This is a temporary hack for the AHA1742. */
 r_if
 c_cond
 (paren
+id|slow_scsi_io
+op_eq
+id|HOST
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|total_count
 op_eq
 l_int|0
@@ -796,6 +822,8 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Take only 512 bytes at a time */
+)brace
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func

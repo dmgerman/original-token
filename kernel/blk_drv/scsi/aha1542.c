@@ -36,6 +36,10 @@ r_struct
 id|ccb
 id|ccb
 suffix:semicolon
+r_extern
+r_int
+id|slow_scsi_io
+suffix:semicolon
 DECL|variable|WAITtimeout
 DECL|variable|WAITnexttimeout
 r_int
@@ -1721,6 +1725,8 @@ r_void
 id|aha1542_query
 c_func
 (paren
+r_int
+id|hostnum
 )paren
 (brace
 r_static
@@ -1765,12 +1771,6 @@ id|inb
 c_func
 (paren
 id|DATA
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Stale data:%x &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1823,39 +1823,30 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
-c_func
+multiline_comment|/* For an AHA1740 series board, we select slower I/O because there is a&n;   hardware bug which can lead to wrong blocks being returned.  The slow&n;   I/O somehow prevents this.  Once we have drivers for extended mode&n;   on the aha1740, this will no longer be required.&n;*/
+r_if
+c_cond
 (paren
-l_string|&quot;Inquiry:&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%x &quot;
-comma
 id|inquiry_result
 (braket
-id|i
+l_int|0
 )braket
+op_eq
+l_int|0x43
+)paren
+(brace
+id|slow_scsi_io
+op_assign
+id|hostnum
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;aha1542.c: Slow SCSI disk I/O selected for AHA 174N hardware.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 )brace
 multiline_comment|/* return non-zero on detection */
 DECL|function|aha1542_detect
@@ -1898,6 +1889,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if MAX_MEGABYTES &gt; 16
+id|printk
+c_func
+(paren
+l_string|&quot;Adaptec 1542 disabled for kernels for which MAX_MEGABYTES &gt; 16.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Set the Bus on/off-times as not to ruin floppy performens */
 (brace
 r_static
@@ -1998,6 +2000,7 @@ suffix:semicolon
 id|aha1542_query
 c_func
 (paren
+id|hostnum
 )paren
 suffix:semicolon
 id|DEB
