@@ -260,7 +260,7 @@ suffix:semicolon
 r_int
 id|waitpid_result
 suffix:semicolon
-multiline_comment|/* Don&squot;t allow request_mode() before the root fs is mounted!  */
+multiline_comment|/* Don&squot;t allow request_module() before the root fs is mounted!  */
 r_if
 c_cond
 (paren

@@ -20,6 +20,8 @@ DECL|macro|MACH_MVME16x
 mdefine_line|#define MACH_MVME16x  7
 DECL|macro|MACH_BVME6000
 mdefine_line|#define MACH_BVME6000 8
+DECL|macro|MACH_HP300
+mdefine_line|#define MACH_HP300    9
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 r_extern
@@ -30,12 +32,12 @@ macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#if !defined(CONFIG_AMIGA)
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (0)
-macro_line|#elif defined(CONFIG_ATARI) || defined(CONFIG_MAC) || defined(CONFIG_APOLLO) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
+macro_line|#elif defined(CONFIG_ATARI) || defined(CONFIG_MAC) || defined(CONFIG_APOLLO) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000) || defined(CONFIG_HP300)
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (m68k_machtype == MACH_AMIGA)
 macro_line|#else
-DECL|macro|MACH_AMIGA_ONLY
-macro_line|#  define MACH_AMIGA_ONLY
+DECL|macro|CONFIG_AMIGA_ONLY
+macro_line|#  define CONFIG_AMIGA_ONLY
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (1)
 DECL|macro|MACH_TYPE
@@ -44,12 +46,12 @@ macro_line|#endif
 macro_line|#if !defined(CONFIG_ATARI)
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (0)
-macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_APOLLO) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_APOLLO) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000) || defined(CONFIG_HP300)
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (m68k_machtype == MACH_ATARI)
 macro_line|#else
-DECL|macro|MACH_ATARI_ONLY
-macro_line|#  define MACH_ATARI_ONLY
+DECL|macro|CONFIG_ATARI_ONLY
+macro_line|#  define CONFIG_ATARI_ONLY
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (1)
 DECL|macro|MACH_TYPE
@@ -58,7 +60,7 @@ macro_line|#endif
 macro_line|#if !defined(CONFIG_MAC)
 DECL|macro|MACH_IS_MAC
 macro_line|#  define MACH_IS_MAC (0)
-macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_ATARI) || defined(CONFIG_APOLLO)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_ATARI) || defined(CONFIG_APOLLO) &bslash;&n;&t;|| defined(CONFIG_HP300) || defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
 DECL|macro|MACH_IS_MAC
 macro_line|#  define MACH_IS_MAC (m68k_machtype == MACH_MAC)
 macro_line|#else
@@ -78,7 +80,7 @@ macro_line|#endif
 macro_line|#if !defined (CONFIG_APOLLO)
 DECL|macro|MACH_IS_APOLLO
 macro_line|#  define MACH_IS_APOLLO (0)
-macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000) || defined(CONFIG_HP300)
 DECL|macro|MACH_IS_APOLLO
 macro_line|#  define MACH_IS_APOLLO (m68k_machtype == MACH_APOLLO)
 macro_line|#else
@@ -92,7 +94,7 @@ macro_line|#endif
 macro_line|#if !defined (CONFIG_MVME16x)
 DECL|macro|MACH_IS_MVME16x
 macro_line|#  define MACH_IS_MVME16x (0)
-macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_APOLLO) || defined(CONFIG_BVME6000)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_APOLLO) || defined(CONFIG_BVME6000) || defined(CONFIG_HP300)
 DECL|macro|MACH_IS_MVME16x
 macro_line|#  define MACH_IS_MVME16x (m68k_machtype == MACH_MVME16x)
 macro_line|#else
@@ -106,7 +108,7 @@ macro_line|#endif
 macro_line|#if !defined (CONFIG_BVME6000)
 DECL|macro|MACH_IS_BVME6000
 macro_line|#  define MACH_IS_BVME6000 (0)
-macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_APOLLO) || defined(CONFIG_MVME16x)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_APOLLO) || defined(CONFIG_MVME16x) || defined(CONFIG_HP300)
 DECL|macro|MACH_IS_BVME6000
 macro_line|#  define MACH_IS_BVME6000 (m68k_machtype == MACH_BVME6000)
 macro_line|#else
@@ -116,6 +118,20 @@ DECL|macro|MACH_IS_BVME6000
 macro_line|#  define MACH_IS_BVME6000 (1)
 DECL|macro|MACH_TYPE
 macro_line|#  define MACH_TYPE (MACH_BVME6000)
+macro_line|#endif
+macro_line|#if !defined (CONFIG_HP300)
+DECL|macro|MACH_IS_HP300
+macro_line|#  define MACH_IS_HP300 (0)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_APOLLO) || defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
+DECL|macro|MAC_IS_HP300
+macro_line|#  define MAC_IS_HP300 (m68k_machtype == MACH_HP300)
+macro_line|#else
+DECL|macro|CONFIG_HP300_ONLY
+macro_line|#  define CONFIG_HP300_ONLY
+DECL|macro|MACH_IS_HP300
+macro_line|#  define MACH_IS_HP300 (1)
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (MACH_HP300)
 macro_line|#endif
 macro_line|#ifndef MACH_TYPE
 DECL|macro|MACH_TYPE

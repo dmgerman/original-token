@@ -43,13 +43,15 @@ id|s_max_size
 suffix:semicolon
 DECL|member|s_dirsize
 r_int
-r_int
 id|s_dirsize
 suffix:semicolon
 DECL|member|s_namelen
 r_int
-r_int
 id|s_namelen
+suffix:semicolon
+DECL|member|s_link_max
+r_int
+id|s_link_max
 suffix:semicolon
 DECL|member|s_imap
 r_struct

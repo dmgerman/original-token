@@ -225,7 +225,7 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#if MACH == ATARI
-multiline_comment|/*&n; * These non-internal functions are provided to be called by other parts of&n; * the kernel. It&squot;s up to the caller to ensure correct checksum before reading&n; * or after writing (needs to be done only once).&n; *&n; * They&squot;re only built if CONFIG_ATARI is defined, because Atari drivers use&n; * them. For other configurations (PC), the rest of the kernel can&squot;t rely on&n; * them being present (this driver couldn&squot;t be configured at all, or as a&n; * module), so they access config information themselves.&n; */
+multiline_comment|/*&n; * These non-internal functions are provided to be called by other parts of&n; * the kernel. It&squot;s up to the caller to ensure correct checksum before reading&n; * or after writing (needs to be done only once).&n; *&n; * They&squot;re only built if CONFIG_ATARI is defined, because Atari drivers use&n; * them. For other configurations (PC), the rest of the kernel can&squot;t rely on&n; * them being present (this driver may not be configured at all, or as a&n; * module), so they access config information themselves.&n; */
 DECL|function|nvram_read_byte
 r_int
 r_char
@@ -503,6 +503,18 @@ id|tmp
 op_assign
 id|buf
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_ne
+op_star
+id|ppos
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -628,6 +640,18 @@ id|buf
 suffix:semicolon
 r_char
 id|c
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_ne
+op_star
+id|ppos
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|save_flags
 c_func
@@ -1255,6 +1279,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Non-volatile memory driver v%s&bslash;n&quot;
 comma
 id|NVRAM_VERSION
@@ -2503,6 +2528,7 @@ op_ne
 id|ATARI_MCH_FALCON
 )paren
 r_return
+l_int|1
 suffix:semicolon
 id|PRINT_PROC
 c_func

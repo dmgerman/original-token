@@ -1569,6 +1569,15 @@ c_func
 id|system_utsname
 )paren
 suffix:semicolon
+multiline_comment|/* UTS data */
+DECL|variable|uts_sem
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|uts_sem
+)paren
+suffix:semicolon
+multiline_comment|/* UTS semaphore */
 DECL|variable|sys_call_table
 id|EXPORT_SYMBOL
 c_func

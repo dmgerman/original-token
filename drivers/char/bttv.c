@@ -9383,7 +9383,6 @@ id|btv-&gt;win.swidth
 op_assign
 id|v.width
 suffix:semicolon
-op_plus
 id|btv-&gt;win.bpp
 op_assign
 (paren
@@ -9393,7 +9392,7 @@ op_plus
 l_int|1
 )paren
 op_amp
-l_int|0x18
+l_int|0x38
 )paren
 op_div
 l_int|8
@@ -11195,6 +11194,16 @@ comma
 l_string|&quot;Matrox Millennium&quot;
 comma
 id|PCI_BASE_ADDRESS_1
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_MATROX
+comma
+id|PCI_DEVICE_ID_MATROX_MIL_2
+comma
+l_string|&quot;Matrox Millennium II&quot;
+comma
+id|PCI_BASE_ADDRESS_0
 )brace
 comma
 (brace

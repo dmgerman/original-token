@@ -111,6 +111,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|adb_mouse_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|watchdog_init
 c_func
@@ -820,6 +828,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MACMOUSE
+id|adb_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PC110_PAD
 id|pc110pad_init
 c_func
@@ -870,7 +885,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_RTC
+macro_line|#if defined(CONFIG_RTC) || defined(CONFIG_SUN_MOSTEK_RTC)
 id|rtc_init
 c_func
 (paren

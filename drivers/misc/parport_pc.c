@@ -1,5 +1,5 @@
 multiline_comment|/* Low-level parallel-port routines for PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
-multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP command&n; *&t;base+4&t;&t;EPP&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants in parport_pc.h to&n; * accomodate this.&n; */
+multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP address&n; *&t;base+4&t;&t;EPP data&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants in parport_pc.h to&n; * accomodate this.&n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -59,7 +59,7 @@ id|d
 comma
 id|p-&gt;base
 op_plus
-id|EPPREG
+id|EPPDATA
 )paren
 suffix:semicolon
 )brace
@@ -81,8 +81,96 @@ c_func
 (paren
 id|p-&gt;base
 op_plus
-id|EPPREG
+id|EPPDATA
 )paren
+suffix:semicolon
+)brace
+DECL|function|parport_pc_write_epp_addr
+r_void
+id|parport_pc_write_epp_addr
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+comma
+r_int
+r_char
+id|d
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|d
+comma
+id|p-&gt;base
+op_plus
+id|EPPADDR
+)paren
+suffix:semicolon
+)brace
+DECL|function|parport_pc_read_epp_addr
+r_int
+r_char
+id|parport_pc_read_epp_addr
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+r_return
+id|inb
+c_func
+(paren
+id|p-&gt;base
+op_plus
+id|EPPADDR
+)paren
+suffix:semicolon
+)brace
+DECL|function|parport_pc_check_epp_timeout
+r_int
+id|parport_pc_check_epp_timeout
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+id|p-&gt;base
+op_plus
+id|STATUS
+)paren
+op_amp
+l_int|1
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|parport_pc_epp_clear_timeout
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|parport_pc_read_configb
@@ -796,7 +884,7 @@ id|inb
 (paren
 id|p-&gt;base
 op_plus
-id|EPPREG
+id|EPPDATA
 )paren
 suffix:semicolon
 r_if
@@ -867,7 +955,7 @@ op_increment
 comma
 id|p-&gt;base
 op_plus
-id|EPPREG
+id|EPPDATA
 )paren
 suffix:semicolon
 r_if
@@ -1055,6 +1143,16 @@ id|parport_pc_release_resources
 comma
 id|parport_pc_claim_resources
 comma
+id|parport_pc_write_epp
+comma
+id|parport_pc_read_epp
+comma
+id|parport_pc_write_epp_addr
+comma
+id|parport_pc_read_epp_addr
+comma
+id|parport_pc_check_epp_timeout
+comma
 id|parport_pc_epp_write_block
 comma
 id|parport_pc_epp_read_block
@@ -1082,10 +1180,9 @@ id|parport_pc_dec_use_count
 suffix:semicolon
 multiline_comment|/* --- Mode detection ------------------------------------- */
 multiline_comment|/*&n; * Clear TIMEOUT BIT in EPP MODE&n; */
-DECL|function|epp_clear_timeout
-r_static
+DECL|function|parport_pc_epp_clear_timeout
 r_int
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 r_struct
@@ -1182,6 +1279,13 @@ op_star
 id|pb
 )paren
 (brace
+multiline_comment|/*&n;&t; * first clear an eventually pending EPP timeout &n;&t; * I (sailer@ife.ee.ethz.ch) have an SMSC chipset&n;&t; * that does not even respond to SPP cycles if an EPP&n;&t; * timeout is pending&n;&t; */
+id|parport_pc_epp_clear_timeout
+c_func
+(paren
+id|pb
+)paren
+suffix:semicolon
 multiline_comment|/* Do a simple read-write test to make sure the port exists. */
 id|parport_pc_write_control
 c_func
@@ -1545,7 +1649,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb
@@ -1583,7 +1687,7 @@ op_or
 l_int|0x10
 )paren
 suffix:semicolon
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb
@@ -1614,7 +1718,7 @@ op_amp
 l_int|0x01
 )paren
 (brace
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb
@@ -1730,7 +1834,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb
@@ -2169,7 +2273,7 @@ comma
 l_int|0x10
 )paren
 suffix:semicolon
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb
@@ -2193,7 +2297,7 @@ comma
 l_int|0x10
 )paren
 suffix:semicolon
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb
@@ -2547,7 +2651,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb
@@ -2574,7 +2678,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|epp_clear_timeout
+id|parport_pc_epp_clear_timeout
 c_func
 (paren
 id|pb

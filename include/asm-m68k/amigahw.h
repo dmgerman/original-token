@@ -1461,5 +1461,5 @@ DECL|macro|TOD2000_HOUR1_PM
 mdefine_line|#define TOD2000_HOUR1_PM&t;(1&lt;&lt;2)
 DECL|macro|TOD_2000
 mdefine_line|#define TOD_2000 ((struct tod2000 *)(zTwoBase+0xDC0000))
-macro_line|#endif /* __ASMm68k_AMIGAHW_H */
+macro_line|#endif /* _M68K_AMIGAHW_H */
 eof

@@ -140,6 +140,21 @@ id|arc_claim_resources
 comma
 l_int|NULL
 comma
+multiline_comment|/* epp_write_data */
+l_int|NULL
+comma
+multiline_comment|/* epp_read_data */
+l_int|NULL
+comma
+multiline_comment|/* epp_write_addr */
+l_int|NULL
+comma
+multiline_comment|/* epp_read_addr */
+l_int|NULL
+comma
+multiline_comment|/* epp_check_timeout */
+l_int|NULL
+comma
 multiline_comment|/* epp_write_block */
 l_int|NULL
 comma

@@ -264,6 +264,8 @@ DECL|macro|MAC_SCC_QUADRA
 mdefine_line|#define MAC_SCC_QUADRA&t;&t;2
 DECL|macro|MAC_SCC_QUADRA2
 mdefine_line|#define MAC_SCC_QUADRA2&t;&t;3
+DECL|macro|MAC_SCC_IOP
+mdefine_line|#define MAC_SCC_IOP&t;&t;4
 DECL|macro|MAC_ETHER_NONE
 mdefine_line|#define MAC_ETHER_NONE&t;&t;0&t;
 DECL|macro|MAC_ETHER_SONIC
@@ -287,6 +289,8 @@ DECL|macro|MAC_MODEL_IIFX
 mdefine_line|#define MAC_MODEL_IIFX&t;&t;13&t;/* And well numbered it is too */
 DECL|macro|MAC_MODEL_IISI
 mdefine_line|#define MAC_MODEL_IISI&t;&t;18
+DECL|macro|MAC_MODEL_LC
+mdefine_line|#define MAC_MODEL_LC&t;&t;19
 DECL|macro|MAC_MODEL_Q900
 mdefine_line|#define MAC_MODEL_Q900&t;&t;20
 DECL|macro|MAC_MODEL_PB170
@@ -361,12 +365,16 @@ DECL|macro|MAC_MODEL_TV
 mdefine_line|#define MAC_MODEL_TV&t;&t;88
 DECL|macro|MAC_MODEL_P475
 mdefine_line|#define MAC_MODEL_P475&t;&t;89&t;/* aka: LC475, P476 */
+DECL|macro|MAC_MODEL_P475F
+mdefine_line|#define MAC_MODEL_P475F&t;&t;90&t;/* aka: P475 w/ FPU (no LC040) */
 DECL|macro|MAC_MODEL_P575
 mdefine_line|#define MAC_MODEL_P575&t;&t;92&t;/* aka: LC575/580, P577/578/508 */
 DECL|macro|MAC_MODEL_Q605
 mdefine_line|#define MAC_MODEL_Q605&t;&t;94
 DECL|macro|MAC_MODEL_Q630
 mdefine_line|#define MAC_MODEL_Q630&t;&t;98&t;/* aka: LC630, P630/631/636/640 */
+DECL|macro|MAC_MODEL_P588
+mdefine_line|#define MAC_MODEL_P588&t;&t;99&t;/* aka: ?? */
 DECL|macro|MAC_MODEL_PB280
 mdefine_line|#define MAC_MODEL_PB280&t;&t;102
 DECL|macro|MAC_MODEL_PB280C

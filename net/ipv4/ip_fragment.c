@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.36 1998/04/18 02:13:07 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.37 1998/06/10 00:22:00 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -168,15 +168,6 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Memory used for fragments */
-r_char
-op_star
-id|in_ntoa
-c_func
-(paren
-id|__u32
-id|in
-)paren
-suffix:semicolon
 multiline_comment|/* Memory Tracking Functions. */
 DECL|function|frag_kfree_skb
 r_extern
@@ -231,12 +222,10 @@ op_amp
 id|ip_frag_mem
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ptr
-comma
-id|len
 )paren
 suffix:semicolon
 )brace
@@ -348,22 +337,9 @@ id|fp
 op_eq
 l_int|NULL
 )paren
-(brace
-id|NETDEBUG
-c_func
-(paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;IP: frag_create: no memory left !&bslash;n&quot;
-)paren
-)paren
+r_goto
+id|out_nomem
 suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/* Fill in the structure. */
 id|fp-&gt;offset
 op_assign
@@ -405,6 +381,22 @@ id|ip_frag_mem
 suffix:semicolon
 r_return
 id|fp
+suffix:semicolon
+id|out_nomem
+suffix:colon
+id|NETDEBUG
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IP: frag_create: no memory left !&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Find the correct entry in the &quot;incomplete datagrams&quot; queue for&n; * this IP datagram, and return the queue entry address if found.&n; */
@@ -469,11 +461,7 @@ id|ipq
 op_star
 id|qp
 suffix:semicolon
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* Always, we are in a BH context, so no locking.  -DaveM */
 r_for
 c_loop
 (paren
@@ -522,16 +510,11 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|qp
 suffix:semicolon
 )brace
-multiline_comment|/* Remove an entry from the &quot;incomplete datagrams&quot; queue, either&n; * because we completed, reassembled and processed it, or because&n; * it timed out.&n; */
+multiline_comment|/* Remove an entry from the &quot;incomplete datagrams&quot; queue, either&n; * because we completed, reassembled and processed it, or because&n; * it timed out.&n; *&n; * This is called _only_ from BH contexts, on packet reception&n; * processing and from frag queue expiration timers.  -DaveM&n; */
 DECL|function|ip_free
 r_static
 r_void
@@ -558,11 +541,6 @@ id|qp-&gt;timer
 )paren
 suffix:semicolon
 multiline_comment|/* Remove this entry from the &quot;incomplete datagrams&quot; queue. */
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -578,11 +556,6 @@ op_star
 id|qp-&gt;pprev
 op_assign
 id|qp-&gt;next
-suffix:semicolon
-id|end_bh_atomic
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* Release all fragment data. */
 id|fp
@@ -650,7 +623,7 @@ id|ipq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Oops, a fragment queue timed out.  Kill it and send an ICMP reply. */
+multiline_comment|/*&n; * Oops, a fragment queue timed out.  Kill it and send an ICMP reply.&n; */
 DECL|function|ip_expire
 r_static
 r_void
@@ -689,13 +662,8 @@ l_string|&quot;warning: possible ip-expire attack&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|ip_free
-c_func
-(paren
-id|qp
-)paren
-suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* Send an ICMP &quot;Fragment Reassembly Timeout&quot; message. */
@@ -717,6 +685,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 multiline_comment|/* Nuke the fragment queue. */
 id|ip_free
 c_func
@@ -735,21 +705,16 @@ c_func
 r_void
 )paren
 (brace
-r_while
-c_loop
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|ip_frag_mem
-)paren
-OG
-id|sysctl_ipfrag_low_thresh
-)paren
-(brace
 r_int
 id|i
+comma
+id|progress
+suffix:semicolon
+id|restart
+suffix:colon
+id|progress
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME: Make LRU queue of frag heads. -DaveM */
 r_for
@@ -766,43 +731,76 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_struct
+id|ipq
+op_star
+id|qp
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|ip_frag_mem
+)paren
+op_le
+id|sysctl_ipfrag_low_thresh
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* We are in a BH context, so these queue&n;&t;&t; * accesses are safe.  -DaveM&n;&t;&t; */
+id|qp
+op_assign
 id|ipq_hash
 (braket
 id|i
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qp
 )paren
 (brace
-r_break
+multiline_comment|/* find the oldest queue for this hash bucket */
+r_while
+c_loop
+(paren
+id|qp-&gt;next
+)paren
+id|qp
+op_assign
+id|qp-&gt;next
 suffix:semicolon
+id|ip_free
+c_func
+(paren
+id|qp
+)paren
+suffix:semicolon
+id|progress
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
 (paren
-id|i
-op_ge
-id|IPQ_HASHSZ
+id|progress
 )paren
-(brace
+r_goto
+id|restart
+suffix:semicolon
 id|panic
 c_func
 (paren
 l_string|&quot;ip_evictor: memcount&quot;
 )paren
 suffix:semicolon
-)brace
-id|ip_free
-c_func
-(paren
-id|ipq_hash
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Add an entry to the &squot;ipq&squot; queue for a newly received IP datagram.&n; * We will (hopefully :-) receive all other fragments of this datagram&n; * in time, so we just create a queue for this datagram, in which we&n; * will insert the received fragments at their respective positions.&n; */
 DECL|function|ip_create
@@ -862,22 +860,9 @@ id|qp
 op_eq
 l_int|NULL
 )paren
-(brace
-id|NETDEBUG
-c_func
-(paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;IP: create: no memory left !&bslash;n&quot;
-)paren
-)paren
+r_goto
+id|out_nomem
 suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/* Allocate memory for the IP header (plus 8 octets for ICMP). */
 id|ihlen
 op_assign
@@ -909,34 +894,9 @@ id|qp-&gt;iph
 op_eq
 l_int|NULL
 )paren
-(brace
-id|NETDEBUG
-c_func
-(paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;IP: create: no memory left !&bslash;n&quot;
-)paren
-)paren
+r_goto
+id|out_free
 suffix:semicolon
-id|frag_kfree_s
-c_func
-(paren
-id|qp
-comma
-r_sizeof
-(paren
-r_struct
-id|ipq
-)paren
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 id|memcpy
 c_func
 (paren
@@ -965,7 +925,7 @@ id|qp-&gt;dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
-multiline_comment|/* Start a timer for this entry. */
+multiline_comment|/* Initialize a timer for this entry. */
 id|init_timer
 c_func
 (paren
@@ -975,11 +935,9 @@ id|qp-&gt;timer
 suffix:semicolon
 id|qp-&gt;timer.expires
 op_assign
-id|jiffies
-op_plus
-id|sysctl_ipfrag_time
+l_int|0
 suffix:semicolon
-multiline_comment|/* about 30 seconds&t;*/
+multiline_comment|/* (to be set later)&t;*/
 id|qp-&gt;timer.data
 op_assign
 (paren
@@ -994,13 +952,6 @@ op_assign
 id|ip_expire
 suffix:semicolon
 multiline_comment|/* expire function&t;*/
-id|add_timer
-c_func
-(paren
-op_amp
-id|qp-&gt;timer
-)paren
-suffix:semicolon
 multiline_comment|/* Add this entry to the queue. */
 id|hash
 op_assign
@@ -1016,11 +967,7 @@ comma
 id|iph-&gt;protocol
 )paren
 suffix:semicolon
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* We are in a BH context, no locking necessary.  -DaveM */
 r_if
 c_cond
 (paren
@@ -1057,13 +1004,38 @@ id|ipq_hash
 id|hash
 )braket
 suffix:semicolon
-id|end_bh_atomic
+r_return
+id|qp
+suffix:semicolon
+id|out_free
+suffix:colon
+id|frag_kfree_s
 c_func
 (paren
+id|qp
+comma
+r_sizeof
+(paren
+r_struct
+id|ipq
+)paren
+)paren
+suffix:semicolon
+id|out_nomem
+suffix:colon
+id|NETDEBUG
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IP: create: no memory left !&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
-id|qp
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* See if a fragment queue is complete. */
@@ -1193,44 +1165,10 @@ OG
 l_int|65535
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|net_ratelimit
-c_func
-(paren
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Oversized IP packet from %d.%d.%d.%d.&bslash;n&quot;
-comma
-id|NIPQUAD
-c_func
-(paren
-id|qp-&gt;iph-&gt;saddr
-)paren
-)paren
-suffix:semicolon
-id|ip_statistics.IpReasmFails
-op_increment
-suffix:semicolon
-id|ip_free
-c_func
-(paren
-id|qp
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|out_oversize
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -1238,37 +1176,16 @@ c_func
 (paren
 id|len
 )paren
-)paren
-op_eq
-l_int|NULL
-)paren
-(brace
-id|ip_statistics.IpReasmFails
-op_increment
 suffix:semicolon
-id|NETDEBUG
-c_func
+r_if
+c_cond
 (paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;IP: queue_glue: no memory for gluing queue %p&bslash;n&quot;
-comma
-id|qp
+op_logical_neg
+id|skb
 )paren
-)paren
+r_goto
+id|out_nomem
 suffix:semicolon
-id|ip_free
-c_func
-(paren
-id|qp
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/* Fill in the basic details. */
 id|skb-&gt;mac.raw
 op_assign
@@ -1326,42 +1243,25 @@ id|fp
 r_if
 c_cond
 (paren
+(paren
 id|fp-&gt;len
-template_param
+OL
+l_int|0
+)paren
+op_logical_or
+(paren
+(paren
+id|count
+op_plus
+id|fp-&gt;len
+)paren
+OG
 id|skb-&gt;len
 )paren
-(brace
-id|NETDEBUG
-c_func
-(paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;Invalid fragment list: &quot;
-l_string|&quot;Fragment over size.&bslash;n&quot;
 )paren
-)paren
+r_goto
+id|out_invalid
 suffix:semicolon
-id|ip_free
-c_func
-(paren
-id|qp
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|ip_statistics.IpReasmFails
-op_increment
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 id|memcpy
 c_func
 (paren
@@ -1414,13 +1314,6 @@ id|skb-&gt;protocol
 op_assign
 id|qp-&gt;fragments-&gt;skb-&gt;protocol
 suffix:semicolon
-multiline_comment|/* We glued together all fragments, so remove the queue entry. */
-id|ip_free
-c_func
-(paren
-id|qp
-)paren
-suffix:semicolon
 multiline_comment|/* Done with all fragments. Fixup the new IP header. */
 id|iph
 op_assign
@@ -1443,6 +1336,77 @@ op_increment
 suffix:semicolon
 r_return
 id|skb
+suffix:semicolon
+id|out_invalid
+suffix:colon
+id|NETDEBUG
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Invalid fragment list: Fragment over size.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_goto
+id|out_fail
+suffix:semicolon
+id|out_nomem
+suffix:colon
+id|NETDEBUG
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IP: queue_glue: no memory for gluing queue %p&bslash;n&quot;
+comma
+id|qp
+)paren
+)paren
+suffix:semicolon
+r_goto
+id|out_fail
+suffix:semicolon
+id|out_oversize
+suffix:colon
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Oversized IP packet from %d.%d.%d.%d.&bslash;n&quot;
+comma
+id|NIPQUAD
+c_func
+(paren
+id|qp-&gt;iph-&gt;saddr
+)paren
+)paren
+suffix:semicolon
+id|out_fail
+suffix:colon
+id|ip_statistics.IpReasmFails
+op_increment
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Process an incoming IP datagram fragment. */
@@ -1476,9 +1440,7 @@ id|next
 comma
 op_star
 id|tmp
-suffix:semicolon
-r_struct
-id|ipfrag
+comma
 op_star
 id|tfp
 suffix:semicolon
@@ -1486,11 +1448,6 @@ r_struct
 id|ipq
 op_star
 id|qp
-suffix:semicolon
-r_struct
-id|sk_buff
-op_star
-id|skb2
 suffix:semicolon
 r_int
 r_char
@@ -1525,14 +1482,12 @@ id|ip_frag_mem
 OG
 id|sysctl_ipfrag_high_thresh
 )paren
-(brace
 id|ip_evictor
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* Find the entry of this IP datagram in the &quot;incomplete datagrams&quot; queue. */
+multiline_comment|/*&n;&t; * Look for the entry for this IP datagram in the&n;&t; * &quot;incomplete datagrams&quot; queue. If found, the&n;&t; * timer is removed.&n;&t; */
 id|qp
 op_assign
 id|ip_find
@@ -1563,46 +1518,6 @@ id|offset
 op_and_assign
 id|IP_OFFSET
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|flags
-op_amp
-id|IP_MF
-)paren
-op_eq
-l_int|0
-)paren
-op_logical_and
-(paren
-id|offset
-op_eq
-l_int|0
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|qp
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* Fragmented frame replaced by full unfragmented copy. */
-id|ip_free
-c_func
-(paren
-id|qp
-)paren
-suffix:semicolon
-)brace
-r_return
-id|skb
-suffix:semicolon
-)brace
 id|offset
 op_lshift_assign
 l_int|3
@@ -1614,7 +1529,7 @@ id|iph-&gt;ihl
 op_star
 l_int|4
 suffix:semicolon
-multiline_comment|/* If the queue already existed, keep restarting its timer as long&n;&t; * as we still are receiving fragments.  Otherwise, create a fresh&n;&t; * queue entry.&n;&t; */
+multiline_comment|/*&n;&t; * Check whether to create a fresh queue entry. If the&n;&t; * queue already exists, its timer will be restarted as&n;&t; * long as we continue to receive fragments.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1630,6 +1545,21 @@ op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/* Fragmented frame replaced by unfragmented copy? */
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|IP_MF
+)paren
+op_eq
+l_int|0
+)paren
+r_goto
+id|out_freequeue
+suffix:semicolon
 id|qp-&gt;ihlen
 op_assign
 id|ihl
@@ -1641,32 +1571,41 @@ id|qp-&gt;iph
 comma
 id|iph
 comma
+(paren
 id|ihl
 op_plus
 l_int|8
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/* about 30 seconds */
-id|mod_timer
-c_func
-(paren
-op_amp
-id|qp-&gt;timer
-comma
-id|jiffies
-op_plus
-id|sysctl_ipfrag_time
 )paren
 suffix:semicolon
 )brace
+)brace
 r_else
 (brace
-multiline_comment|/* If we failed to create it, then discard the frame. */
+multiline_comment|/* Fragmented frame replaced by unfragmented copy? */
 r_if
 c_cond
 (paren
 (paren
+id|offset
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|flags
+op_amp
+id|IP_MF
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+r_goto
+id|out_skb
+suffix:semicolon
+multiline_comment|/* If we failed to create it, then discard the frame. */
 id|qp
 op_assign
 id|ip_create
@@ -1676,28 +1615,21 @@ id|skb
 comma
 id|iph
 )paren
-)paren
-op_eq
-l_int|NULL
-)paren
-(brace
-id|kfree_skb
-c_func
+suffix:semicolon
+r_if
+c_cond
 (paren
-id|skb
+op_logical_neg
+id|qp
 )paren
+r_goto
+id|out_freeskb
 suffix:semicolon
-id|ip_statistics.IpReasmFails
-op_increment
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Attempt to construct an oversize packet. */
 r_if
 c_cond
+(paren
 (paren
 id|ntohs
 c_func
@@ -1706,45 +1638,18 @@ id|iph-&gt;tot_len
 )paren
 op_plus
 (paren
+(paren
 r_int
 )paren
 id|offset
+)paren
+)paren
 OG
 l_int|65535
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|net_ratelimit
-c_func
-(paren
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Oversized packet received from %d.%d.%d.%d&bslash;n&quot;
-comma
-id|NIPQUAD
-c_func
-(paren
-id|iph-&gt;saddr
-)paren
-)paren
-suffix:semicolon
-id|frag_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|ip_statistics.IpReasmFails
-op_increment
-suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|out_oversize
 suffix:semicolon
 )brace
 multiline_comment|/* Determine the position of this fragment. */
@@ -1758,13 +1663,6 @@ c_func
 id|iph-&gt;tot_len
 )paren
 op_minus
-id|ihl
-suffix:semicolon
-multiline_comment|/* Point into the IP datagram &squot;data&squot; part. */
-id|ptr
-op_assign
-id|skb-&gt;data
-op_plus
 id|ihl
 suffix:semicolon
 multiline_comment|/* Is this the final fragment? */
@@ -1819,17 +1717,28 @@ op_assign
 id|next
 suffix:semicolon
 )brace
+multiline_comment|/* Point into the IP datagram &squot;data&squot; part. */
+id|ptr
+op_assign
+id|skb-&gt;data
+op_plus
+id|ihl
+suffix:semicolon
 multiline_comment|/* We found where to put this one.  Check for overlap with&n;&t; * preceding fragment, and, if needed, align things so that&n;&t; * any overlaps are eliminated.&n;&t; */
 r_if
 c_cond
 (paren
+(paren
 id|prev
 op_ne
 l_int|NULL
+)paren
 op_logical_and
+(paren
 id|offset
 OL
 id|prev-&gt;end
+)paren
 )paren
 (brace
 id|i
@@ -1879,7 +1788,7 @@ id|end
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* no overlaps at all */
+multiline_comment|/* no overlaps at all&t;*/
 id|i
 op_assign
 id|end
@@ -1962,11 +1871,7 @@ id|ipfrag
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Insert this fragment in the chain of fragments. */
-id|tfp
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/*&n;&t; * Create a fragment to hold this skb.&n;&t; * No memory to save the fragment? throw the lot ...&n;&t; */
 id|tfp
 op_assign
 id|ip_frag_create
@@ -1981,24 +1886,16 @@ comma
 id|ptr
 )paren
 suffix:semicolon
-multiline_comment|/* No memory to save the fragment - so throw the lot. */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|tfp
 )paren
-(brace
-id|frag_kfree_skb
-c_func
-(paren
-id|skb
-)paren
+r_goto
+id|out_freeskb
 suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
+multiline_comment|/* Insert this fragment in the chain of fragments. */
 id|tfp-&gt;prev
 op_assign
 id|prev
@@ -2046,7 +1943,7 @@ id|qp
 )paren
 (brace
 multiline_comment|/* Glue together the fragments. */
-id|skb2
+id|skb
 op_assign
 id|ip_glue
 c_func
@@ -2054,12 +1951,87 @@ c_func
 id|qp
 )paren
 suffix:semicolon
+multiline_comment|/* Free the queue entry. */
+id|out_freequeue
+suffix:colon
+id|ip_free
+c_func
+(paren
+id|qp
+)paren
+suffix:semicolon
+id|out_skb
+suffix:colon
 r_return
-id|skb2
+id|skb
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * The queue is still active ... reset its timer.&n;&t; */
+id|out_timer
+suffix:colon
+id|mod_timer
+c_func
+(paren
+op_amp
+id|qp-&gt;timer
+comma
+id|jiffies
+op_plus
+id|sysctl_ipfrag_time
+)paren
+suffix:semicolon
+multiline_comment|/* ~ 30 seconds */
+id|out
+suffix:colon
 r_return
 l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n;&t; * Error exits ... we need to reset the timer if there&squot;s a queue.&n;&t; */
+id|out_oversize
+suffix:colon
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Oversized packet received from %d.%d.%d.%d&bslash;n&quot;
+comma
+id|NIPQUAD
+c_func
+(paren
+id|iph-&gt;saddr
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* the skb isn&squot;t in a fragment, so fall through to free it */
+id|out_freeskb
+suffix:colon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|ip_statistics.IpReasmFails
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qp
+)paren
+r_goto
+id|out_timer
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 eof

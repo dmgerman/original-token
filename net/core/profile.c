@@ -1251,7 +1251,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Sorry, you CPU does not support tsc. Net profiler is dying...&bslash;n&quot;
+l_string|&quot;Sorry, your CPU does not support TSC. Net profiler disabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

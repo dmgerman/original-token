@@ -14237,28 +14237,13 @@ op_logical_neg
 id|gus_no_wave_dma
 )paren
 (brace
-r_if
-c_cond
-(paren
-(paren
-id|dev
-op_assign
-id|sound_alloc_audiodev
-c_func
-(paren
-)paren
-)paren
-op_ne
-op_minus
-l_int|1
-)paren
-(brace
 id|hw_config-&gt;slots
 (braket
 l_int|4
 )braket
 op_assign
-id|dev
+op_minus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -14362,15 +14347,6 @@ op_member_access_from_pointer
 id|flags
 op_or_assign
 id|DMA_HARDSTOP
-suffix:semicolon
-)brace
-r_else
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;GUS: Too many audio devices available&bslash;n&quot;
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  Mixer dependent initialization.&n;&t; */

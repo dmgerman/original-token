@@ -30,6 +30,9 @@ macro_line|#include &lt;stdarg.h&gt;
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_DIO
+macro_line|#include &lt;linux/dio.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Versions of gcc older than that listed below may actually compile&n; * and link okay, but the end product can have subtle run time bugs.&n; * To avoid associated bogus bug reports, we flatly refuse to compile&n; * with a gcc that is known to be too old from the very beginning.&n; */
 macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 6)
 macro_line|#error sorry, your GCC is too old. It builds incorrect kernels.
@@ -180,6 +183,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ARCH_ACORN
+r_extern
+r_void
+id|ecard_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|smp_setup
@@ -497,6 +510,22 @@ macro_line|#ifdef CONFIG_PARIDE_PT
 r_extern
 r_void
 id|pt_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PG
+r_extern
+r_void
+id|pg_setup
 c_func
 (paren
 r_char
@@ -3400,6 +3429,14 @@ id|pt_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PG
+(brace
+l_string|&quot;pg.&quot;
+comma
+id|pg_setup
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0
 comma
@@ -4712,6 +4749,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DIO
+id|dio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Ok, at this point all CPU&squot;s should be initialized, so&n;&t; * we can start looking into devices..&n;&t; */
 macro_line|#ifdef CONFIG_PCI
 id|pci_init
@@ -4736,6 +4780,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MCA
 id|mca_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ACORN
+id|ecard_init
 c_func
 (paren
 )paren

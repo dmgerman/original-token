@@ -12,12 +12,12 @@ DECL|macro|VIA1_SOURCE_BASE
 mdefine_line|#define VIA1_SOURCE_BASE&t;8
 DECL|macro|VIA2_SOURCE_BASE
 mdefine_line|#define VIA2_SOURCE_BASE&t;16
-DECL|macro|RBF_SOURCE_BASE
-mdefine_line|#define RBF_SOURCE_BASE&t;&t;24
+DECL|macro|RBV_SOURCE_BASE
+mdefine_line|#define RBV_SOURCE_BASE&t;&t;24
 DECL|macro|MAC_SCC_SOURCE_BASE
 mdefine_line|#define MAC_SCC_SOURCE_BASE&t;32
 DECL|macro|NUBUS_SOURCE_BASE
-mdefine_line|#define NUBUS_SOURCE_BASE&t;40
+mdefine_line|#define NUBUS_SOURCE_BASE&t;56
 DECL|macro|NUBUS_MAX_SOURCES
 mdefine_line|#define NUBUS_MAX_SOURCES&t;8
 multiline_comment|/* FIXME: sources not contigous ... */
@@ -30,12 +30,6 @@ mdefine_line|#define IRQ_IDX_MASK 7
 multiline_comment|/* &n; * quick hack to adapt old MACHSPEC-aware source&n; */
 DECL|macro|IRQ_IDX
 mdefine_line|#define&t;IRQ_IDX(irq)&t;(irq)
-macro_line|#if 0
-multiline_comment|/* convert vector number to int source number */
-mdefine_line|#define IRQ_VECTOR_TO_SOURCE(v)&t;(v)
-multiline_comment|/* convert irq_handler index to vector number */
-mdefine_line|#define IRQ_SOURCE_TO_VECTOR(i)&t;(i)
-macro_line|#endif
 multiline_comment|/* interrupt service types */
 DECL|macro|IRQ_TYPE_SLOW
 mdefine_line|#define IRQ_TYPE_SLOW     0
@@ -114,29 +108,35 @@ DECL|macro|IRQ_VIA2_6
 mdefine_line|#define IRQ_VIA2_6&t;  (22)
 DECL|macro|IRQ_VIA2_7
 mdefine_line|#define IRQ_VIA2_7        (23)
+macro_line|#if 0
 multiline_comment|/* RBV interrupts */
-DECL|macro|IRQ_RBV_0
 mdefine_line|#define IRQ_RBV_0&t;  (24)
-DECL|macro|IRQ_RBV_1
 mdefine_line|#define IRQ_RBV_1&t;  (25)
-DECL|macro|IRQ_RBV_2
 mdefine_line|#define IRQ_RBV_2 &t;  (26)
-DECL|macro|IRQ_RBV_3
 mdefine_line|#define IRQ_RBV_3&t;  (27)
-DECL|macro|IRQ_RBV_4
 mdefine_line|#define IRQ_RBV_4&t;  (28)
-DECL|macro|IRQ_RBV_5
 mdefine_line|#define IRQ_RBV_5&t;  (29)
-DECL|macro|IRQ_RBV_6
 mdefine_line|#define IRQ_RBV_6&t;  (30)
-DECL|macro|IRQ_RBV_7
 mdefine_line|#define IRQ_RBV_7&t;  (31)
+macro_line|#endif
+multiline_comment|/* Level 3 (PSC, AV Macs only) interrupts */
+DECL|macro|IRQ_PSC3_0
+mdefine_line|#define IRQ_PSC3_0&t;  (24)
+DECL|macro|IRQ_MAC_MACE
+mdefine_line|#define IRQ_MAC_MACE&t;  IRQ_PSC3_0
+DECL|macro|IRQ_PSC3_1
+mdefine_line|#define IRQ_PSC3_1&t;  (25)
+DECL|macro|IRQ_PSC3_2
+mdefine_line|#define IRQ_PSC3_2&t;  (26)
+DECL|macro|IRQ_PSC3_3
+mdefine_line|#define IRQ_PSC3_3&t;  (27)
+multiline_comment|/* Level 4 (SCC) interrupts */
 DECL|macro|IRQ_SCC
 mdefine_line|#define IRQ_SCC &t;     (32)
 DECL|macro|IRQ_SCCB
-mdefine_line|#define IRQ_SCCB&t;     (32)
+mdefine_line|#define IRQ_SCCB&t;     (33)
 DECL|macro|IRQ_SCCA
-mdefine_line|#define IRQ_SCCA&t;     (33)
+mdefine_line|#define IRQ_SCCA&t;     (34)
 macro_line|#if 0 /* FIXME: are there multiple interrupt conditions on the SCC ?? */
 multiline_comment|/* SCC interrupts */
 mdefine_line|#define IRQ_SCCB_TX&t;     (32)
@@ -148,8 +148,38 @@ mdefine_line|#define IRQ_SCCA_STAT&t;     (37)
 mdefine_line|#define IRQ_SCCA_RX&t;     (38)
 mdefine_line|#define IRQ_SCCA_SPCOND&t;     (39)
 macro_line|#endif
+multiline_comment|/* Level 4 (PSC, AV Macs only) interrupts */
+DECL|macro|IRQ_PSC4_0
+mdefine_line|#define IRQ_PSC4_0&t;  (32)
+DECL|macro|IRQ_PSC4_1
+mdefine_line|#define IRQ_PSC4_1&t;  (33)
+DECL|macro|IRQ_PSC4_2
+mdefine_line|#define IRQ_PSC4_2&t;  (34)
+DECL|macro|IRQ_PSC4_3
+mdefine_line|#define IRQ_PSC4_3&t;  (35)
+DECL|macro|IRQ_MAC_MACE_DMA
+mdefine_line|#define IRQ_MAC_MACE_DMA  IRQ_PSC4_3
+multiline_comment|/* Level 5 (PSC, AV Macs only) interrupts */
+DECL|macro|IRQ_PSC5_0
+mdefine_line|#define IRQ_PSC5_0&t;  (40)
+DECL|macro|IRQ_PSC5_1
+mdefine_line|#define IRQ_PSC5_1&t;  (41)
+DECL|macro|IRQ_PSC5_2
+mdefine_line|#define IRQ_PSC5_2&t;  (42)
+DECL|macro|IRQ_PSC5_3
+mdefine_line|#define IRQ_PSC5_3&t;  (43)
+multiline_comment|/* Level 6 (PSC, AV Macs only) interrupts */
+DECL|macro|IRQ_PSC6_0
+mdefine_line|#define IRQ_PSC6_0&t;  (48)
+DECL|macro|IRQ_PSC6_1
+mdefine_line|#define IRQ_PSC6_1&t;  (49)
+DECL|macro|IRQ_PSC6_2
+mdefine_line|#define IRQ_PSC6_2&t;  (50)
+DECL|macro|IRQ_PSC6_3
+mdefine_line|#define IRQ_PSC6_3&t;  (51)
+multiline_comment|/* Nubus interrupts (cascaded to VIA2) */
 DECL|macro|IRQ_NUBUS_1
-mdefine_line|#define IRQ_NUBUS_1&t;     (40)
+mdefine_line|#define IRQ_NUBUS_1&t;  (56)
 DECL|macro|INT_CLK
 mdefine_line|#define INT_CLK   24576&t;    /* CLK while int_clk =2.456MHz and divide = 100 */
 DECL|macro|INT_TICKS

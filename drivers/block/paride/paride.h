@@ -11,6 +11,8 @@ DECL|macro|PI_PF
 mdefine_line|#define PI_PF   2&t;/* ATAPI disk */
 DECL|macro|PI_PT
 mdefine_line|#define PI_PT&t;3&t;/* ATAPI tape */
+DECL|macro|PI_PG
+mdefine_line|#define PI_PG   4       /* ATAPI generic */
 multiline_comment|/* The paride module contains no state, instead the drivers allocate&n;   a pi_adapter data structure and pass it to paride in every operation.&n;&n;*/
 DECL|struct|pi_adapter
 r_struct

@@ -398,6 +398,7 @@ r_void
 id|clear_config
 c_func
 (paren
+r_void
 )paren
 (brace
 id|len_config
@@ -737,7 +738,7 @@ id|buffer
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Macros for stunningly fast map-based character access.&n; * __buf is a register which holds the current word of the input.&n; * Thus, there is one memory access per sizeof(unsigned long) characters.&n; */
-macro_line|#if defined(__alpha__) || defined(__i386__)
+macro_line|#if defined(__alpha__) || defined(__i386__) || defined(__arm__)
 DECL|macro|LE_MACHINE
 mdefine_line|#define LE_MACHINE
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *  Paul Mackerras &lt;Paul.Mackerras@cs.anu.edu.au&gt;&n; *  Cyrus Durgin &lt;cider@speakeasy.org&gt; (changes for kmod)&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  Machine hang caused by NULLing a live wait queue fix. &lt;Alan.Cox@linux.org&gt;&n; *&n; *  ==FILEVERSION 980607==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *  Paul Mackerras &lt;Paul.Mackerras@cs.anu.edu.au&gt;&n; *  Cyrus Durgin &lt;cider@speakeasy.org&gt; (changes for kmod)&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  Machine hang caused by NULLing a live wait queue fix. &lt;Alan.Cox@linux.org&gt;&n; *&n; *  ==FILEVERSION 980608==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   OPTIMIZE_FLAG_TIME - Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If zero then the leading&n;&t;&t;&t;flag is always sent.&n;&n;   CHECK_CHARACTERS   - Enable the checking on all received characters for&n;&t;&t;&t;8 data bits, no parity. This adds a small amount of&n;&t;&t;&t;processing for each received character.&n;*/
 DECL|macro|OPTIMIZE_FLAG_TIME
 mdefine_line|#define OPTIMIZE_FLAG_TIME&t;((HZ * 3)/2)
@@ -602,7 +602,7 @@ mdefine_line|#define CHECK_PPP_MAGIC(ppp)&t;do { &bslash;&n;&t;if (ppp-&gt;magic
 DECL|macro|CHECK_PPP
 mdefine_line|#define CHECK_PPP(a)&t;do { &bslash;&n;&t;CHECK_PPP_MAGIC(ppp); &bslash;&n;&t;if (!ppp-&gt;inuse) { &bslash;&n;&t;&t;printk (ppp_warning, __LINE__); &bslash;&n;&t;&t;return a; &bslash;&n;&t;} &bslash;&n;} while (0)
 DECL|macro|CHECK_PPP_VOID
-mdefine_line|#define CHECK_PPP_VOID() do { &bslash;&n;&t;CHECK_PPP_MAGIC(ppp); &bslash;&n;&t;if (!ppp-&gt;inuse) { &bslash;&n;&t;&t;printk (ppp_warning, __LINE__); &bslash;&n;&t;} &bslash;&n;} while (0)
+mdefine_line|#define CHECK_PPP_VOID() do { &bslash;&n;&t;CHECK_PPP_MAGIC(ppp); &bslash;&n;&t;if (!ppp-&gt;inuse) { &bslash;&n;&t;&t;printk (ppp_warning, __LINE__); &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;} while (0)
 DECL|macro|in_xmap
 mdefine_line|#define in_xmap(ppp,c)&t;(ppp-&gt;xmit_async_map[(c) &gt;&gt; 5] &amp; (1 &lt;&lt; ((c) &amp; 0x1f)))
 DECL|macro|in_rmap
@@ -5912,9 +5912,6 @@ suffix:semicolon
 id|__u8
 id|c
 suffix:semicolon
-r_int
-id|error
-suffix:semicolon
 id|ssize_t
 id|len
 comma
@@ -5933,7 +5930,6 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-multiline_comment|/* if (ppp-&gt;magic != PPP_MAGIC)&n;&t;&t;return -EIO; */
 id|CHECK_PPP
 (paren
 op_minus
@@ -5941,8 +5937,9 @@ id|ENXIO
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Before we attempt to write the frame to the user, ensure that the&n; * user has access to the pages for the total buffer length.&n; */
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|verify_area
 (paren
 id|VERIFY_WRITE
@@ -5951,18 +5948,13 @@ id|buf
 comma
 id|nr
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-op_ne
-l_int|0
 )paren
 r_return
-(paren
-id|error
-)paren
+op_minus
+id|EFAULT
+suffix:semicolon
+multiline_comment|/*&n; * Increment the module use count so that the module can&squot;t get unloaded&n; * while we&squot;re sleeping below.  The problem is that ppp_tty_close() can&n; * get called (as a result of a hangup from the tty) while we&squot;re sleeping.&n; */
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/*&n; * Acquire the read lock.&n; */
 r_for
@@ -5972,6 +5964,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 id|ppp
 op_assign
 id|tty2ppp
@@ -5996,8 +5992,8 @@ id|tty
 op_ne
 id|ppp-&gt;tty
 )paren
-r_return
-l_int|0
+r_goto
+id|done
 suffix:semicolon
 r_if
 c_cond
@@ -6013,21 +6009,6 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|ppp-&gt;flags
-op_amp
-id|SC_DEBUG
-)paren
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;ppp_tty_read: sleeping(ubuf)&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|current-&gt;timeout
 op_assign
 l_int|0
@@ -6037,8 +6018,14 @@ op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|schedule
+c_func
 (paren
 )paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EINTR
 suffix:semicolon
 r_if
 c_cond
@@ -6049,9 +6036,8 @@ c_func
 id|current
 )paren
 )paren
-r_return
-op_minus
-id|EINTR
+r_goto
+id|done
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -6108,6 +6094,11 @@ op_amp
 id|ppp-&gt;ubuf-&gt;locked
 )paren
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EAGAIN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6115,34 +6106,23 @@ id|file-&gt;f_flags
 op_amp
 id|O_NONBLOCK
 )paren
-r_return
-op_minus
-id|EAGAIN
+r_goto
+id|done
 suffix:semicolon
 id|current-&gt;timeout
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|ppp-&gt;flags
-op_amp
-id|SC_DEBUG
-)paren
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;ppp_tty_read: sleeping(read_wait)&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|interruptible_sleep_on
 (paren
 op_amp
 id|ppp-&gt;read_wait
 )paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EINTR
 suffix:semicolon
 r_if
 c_cond
@@ -6153,9 +6133,8 @@ c_func
 id|current
 )paren
 )paren
-r_return
-op_minus
-id|EINTR
+r_goto
+id|done
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Ensure that the frame will fit within the caller&squot;s buffer. If not, then&n; * discard the frame from the input buffer.&n; */
@@ -6200,7 +6179,7 @@ suffix:semicolon
 id|ppp-&gt;stats.ppp_ierrors
 op_increment
 suffix:semicolon
-id|error
+id|ret
 op_assign
 op_minus
 id|EOVERFLOW
@@ -6210,8 +6189,14 @@ id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fake the insertion of the ADDRESS and CONTROL information because these&n; * were not saved in the buffer.&n; */
-id|error
+id|ret
 op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|put_user
 c_func
 (paren
@@ -6222,20 +6207,7 @@ id|PPP_ALLSTATIONS
 comma
 id|buf
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_goto
-id|out
-suffix:semicolon
-op_increment
-id|buf
-suffix:semicolon
-id|error
-op_assign
+op_logical_or
 id|put_user
 c_func
 (paren
@@ -6245,21 +6217,19 @@ id|u_char
 id|PPP_UI
 comma
 id|buf
+op_plus
+l_int|1
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_goto
 id|out
 suffix:semicolon
-op_increment
 id|buf
+op_add_assign
+l_int|2
 suffix:semicolon
 multiline_comment|/*&n; * Copy the received data from the buffer to the caller&squot;s area.&n; */
-id|ret
+id|nr
 op_assign
 id|len
 op_plus
@@ -6280,8 +6250,9 @@ id|GETC
 id|c
 )paren
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|put_user
 c_func
 (paren
@@ -6289,11 +6260,6 @@ id|c
 comma
 id|buf
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_goto
 id|out
@@ -6302,28 +6268,31 @@ op_increment
 id|buf
 suffix:semicolon
 )brace
-id|clear_bit
-(paren
-l_int|0
-comma
-op_amp
-id|ppp-&gt;ubuf-&gt;locked
-)paren
-suffix:semicolon
-r_return
 id|ret
+op_assign
+id|nr
 suffix:semicolon
 id|out
 suffix:colon
-id|ppp-&gt;ubuf-&gt;tail
-op_add_assign
+r_if
+c_cond
+(paren
 id|len
-suffix:semicolon
+OG
+l_int|0
+)paren
 id|ppp-&gt;ubuf-&gt;tail
-op_and_assign
+op_assign
+(paren
+id|ppp-&gt;ubuf-&gt;tail
+op_plus
+id|len
+)paren
+op_amp
 id|ppp-&gt;ubuf-&gt;size
 suffix:semicolon
 id|clear_bit
+c_func
 (paren
 l_int|0
 comma
@@ -6331,8 +6300,12 @@ op_amp
 id|ppp-&gt;ubuf-&gt;locked
 )paren
 suffix:semicolon
+id|done
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
-id|error
+id|ret
 suffix:semicolon
 DECL|macro|GETC
 macro_line|#undef GETC
@@ -7262,6 +7235,9 @@ id|count
 r_goto
 id|out_free
 suffix:semicolon
+multiline_comment|/*&n; * Increment the module use count so that the module can&squot;t get unloaded&n; * while we&squot;re sleeping below.  The problem is that ppp_tty_close() can&n; * get called (as a result of a hangup from the tty) while we&squot;re sleeping.&n; */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/*&n; * Lock this PPP unit so we will be the only writer,&n; * sleeping if necessary.&n; *&n; * Note that we add our task to the wait queue before&n; * attempting to lock, as the lock flag may be cleared&n; * from an interrupt.&n; */
 id|add_wait_queue
 c_func
@@ -7387,7 +7363,7 @@ c_cond
 id|error
 )paren
 r_goto
-id|out_free
+id|out_free_dec
 suffix:semicolon
 multiline_comment|/*&n; * Change the LQR frame&n; */
 id|count
@@ -7451,6 +7427,10 @@ suffix:semicolon
 id|error
 op_assign
 id|count
+suffix:semicolon
+id|out_free_dec
+suffix:colon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|out_free
 suffix:colon
@@ -9397,6 +9377,8 @@ op_minus
 id|ENXIO
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9422,6 +9404,8 @@ id|dev2ppp
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -11036,6 +11020,14 @@ suffix:semicolon
 id|ppp-&gt;next
 op_assign
 l_int|0
+suffix:semicolon
+id|ppp-&gt;read_wait
+op_assign
+l_int|NULL
+suffix:semicolon
+id|ppp-&gt;write_wait
+op_assign
+l_int|NULL
 suffix:semicolon
 id|dev
 op_assign

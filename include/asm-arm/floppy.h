@@ -6,7 +6,7 @@ macro_line|#if 0
 macro_line|#include &lt;asm/arch/floppy.h&gt;
 macro_line|#endif
 DECL|macro|fd_outb
-mdefine_line|#define fd_outb(val,port)&t;outb((val),(port))
+mdefine_line|#define fd_outb(val,port)&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((port) == FD_DOR)&t;&t;&bslash;&n;&t;&t;&t;fd_setdor((val));&t;&bslash;&n;&t;&t;else&t;&t;&t;&t;&bslash;&n;&t;&t;&t;outb((val),(port));&t;&bslash;&n;&t;} while(0)
 DECL|macro|fd_inb
 mdefine_line|#define fd_inb(port)&t;&t;inb((port))
 DECL|macro|fd_request_irq
@@ -35,6 +35,9 @@ DECL|macro|fd_set_dma_count
 mdefine_line|#define fd_set_dma_count(len)&t;set_dma_count(FLOPPY_DMA, (len))
 DECL|macro|fd_cacheflush
 mdefine_line|#define fd_cacheflush(addr,sz)
+multiline_comment|/* need to clean up dma.h */
+DECL|macro|DMA_FLOPPYDISK
+mdefine_line|#define DMA_FLOPPYDISK&t;&t;DMA_FLOPPY
 multiline_comment|/* Floppy_selects is the list of DOR&squot;s to select drive fd&n; *&n; * On initialisation, the floppy list is scanned, and the drives allocated&n; * in the order that they are found.  This is done by seeking the drive&n; * to a non-zero track, and then restoring it to track 0.  If an error occurs,&n; * then there is no floppy drive present.       [to be put back in again]&n; */
 DECL|variable|floppy_selects
 r_static
@@ -71,7 +74,7 @@ l_int|0x33
 )brace
 suffix:semicolon
 DECL|macro|fd_setdor
-mdefine_line|#define fd_setdor(dor)&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int new_dor = (dor);&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (new_dor &amp; 0xf0)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;fd_outb((new_dor &amp; 0x0c) | floppy_selects[fdc][new_dor &amp; 3], FD_DOR);&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;fd_outb((new_dor &amp; 0x0c), FD_DOR);&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define fd_setdor(dor)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int new_dor = (dor);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (new_dor &amp; 0xf0)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;new_dor = (new_dor &amp; 0x0c) | floppy_selects[fdc][new_dor &amp; 3];&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;new_dor &amp;= 0x0c;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;outb(new_dor, FD_DOR);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * Someday, we&squot;ll automatically detect which drives are present...&n; */
 DECL|function|fd_scandrives
 r_extern

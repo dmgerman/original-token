@@ -549,6 +549,55 @@ op_minus
 id|n
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
+DECL|macro|ffs
+mdefine_line|#define ffs(x) generic_ffs(x)
+macro_line|#if 0
+multiline_comment|/* untested, someone with PPC knowledge? */
+multiline_comment|/* From Alexander Kjeldaas &lt;astor@guardian.no&gt; */
+r_extern
+id|__inline__
+r_int
+id|ffs
+c_func
+(paren
+r_int
+id|x
+)paren
+(brace
+r_int
+id|result
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;cntlzw %0,%1&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|x
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|32
+op_minus
+id|result
+suffix:semicolon
+multiline_comment|/* IBM backwards ordering of bits */
+)brace
+macro_line|#endif
+multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
+DECL|macro|hweight32
+mdefine_line|#define hweight32(x) generic_hweight32(x)
+DECL|macro|hweight16
+mdefine_line|#define hweight16(x) generic_hweight16(x)
+DECL|macro|hweight8
+mdefine_line|#define hweight8(x) generic_hweight8(x)
 multiline_comment|/*&n; * This implementation of find_{first,next}_zero_bit was stolen from&n; * Linus&squot; asm-alpha/bitops.h.&n; */
 DECL|macro|find_first_zero_bit
 mdefine_line|#define find_first_zero_bit(addr, size) &bslash;&n;&t;find_next_zero_bit((addr), (size), 0)

@@ -1093,7 +1093,7 @@ id|maxoff
 (brace
 id|offset
 op_assign
-l_int|0xffffffff
+id|maxoff
 suffix:semicolon
 id|filp-&gt;f_pos
 op_assign

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * This code is heavily based on the code in ip_fw.c; see that file for&n; * copyrights and attributions.  This code is basically GPL.&n; *&n; * 15-Aug-1997: Major changes to allow graphs for firewall rules.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt; and&n; *&t;&t;Michael Neuling &lt;Michael.Neuling@rustcorp.com.au&gt; &n; * 24-Aug-1997: Generalised protocol handling (not just TCP/UDP/ICMP).&n; *              Added explicit RETURN from chains.&n; *              Removed TOS mangling (done in ipchains 1.0.1).&n; *              Fixed read &amp; reset bug by reworking proc handling.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 28-Sep-1997: Added packet marking for net sched code.&n; *              Removed fw_via comparisons: all done on device name now,&n; *              similar to changes in ip_fw.c in DaveM&squot;s CVS970924 tree.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 2-Nov-1997:  Moved types across to __u16, etc.&n; *              Added inverse flags.&n; *              Fixed fragment bug (in args to port_match).&n; *              Changed mark to only one flag (MARKABS).&n; * 21-Nov-1997: Added ability to test ICMP code.&n; * 19-Jan-1998: Added wildcard interfaces.&n; * 6-Feb-1998:  Merged 2.0 and 2.1 versions.&n; *              Initialised ip_masq for 2.0.x version.&n; *              Added explicit NETLINK option for 2.1.x version.&n; *              Added packet and byte counters for policy matches.&n; * 26-Feb-1998: Fixed race conditions, added SMP support.&n; * 18-Mar-1998: Fix SMP, fix race condition fix.&n; * 1-May-1998:  Remove caching of device pointer, added caching&n; *              for proc output (no longer order n^2).&n; */
+multiline_comment|/*&n; * This code is heavily based on the code on the old ip_fw.c code; see below for&n; * copyrights and attributions of the old code.  This code is basically GPL.&n; *&n; * 15-Aug-1997: Major changes to allow graphs for firewall rules.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt; and&n; *&t;&t;Michael Neuling &lt;Michael.Neuling@rustcorp.com.au&gt; &n; * 24-Aug-1997: Generalised protocol handling (not just TCP/UDP/ICMP).&n; *              Added explicit RETURN from chains.&n; *              Removed TOS mangling (done in ipchains 1.0.1).&n; *              Fixed read &amp; reset bug by reworking proc handling.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 28-Sep-1997: Added packet marking for net sched code.&n; *              Removed fw_via comparisons: all done on device name now,&n; *              similar to changes in ip_fw.c in DaveM&squot;s CVS970924 tree.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 2-Nov-1997:  Moved types across to __u16, etc.&n; *              Added inverse flags.&n; *              Fixed fragment bug (in args to port_match).&n; *              Changed mark to only one flag (MARKABS).&n; * 21-Nov-1997: Added ability to test ICMP code.&n; * 19-Jan-1998: Added wildcard interfaces.&n; * 6-Feb-1998:  Merged 2.0 and 2.1 versions.&n; *              Initialised ip_masq for 2.0.x version.&n; *              Added explicit NETLINK option for 2.1.x version.&n; *              Added packet and byte counters for policy matches.&n; * 26-Feb-1998: Fixed race conditions, added SMP support.&n; * 18-Mar-1998: Fix SMP, fix race condition fix.&n; * 1-May-1998:  Remove caching of device pointer.&n; * 12-May-1998: Allow tiny fragment case for TCP/UDP.&n; * 15-May-1998: Treat short packets as fragments, don&squot;t just block.&n; */
+multiline_comment|/*&n; *&n; * The origina Linux port was done Alan Cox, with changes/fixes from&n; * Pauline Middlelink, Jos Vos, Thomas Quinot, Wouter Gadeyne, Juan&n; * Jose Ciarlante, Bernd Eckenfels, Keith Owens and others.&n; * &n; * Copyright from the original FreeBSD version follows:&n; *&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.  */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -31,7 +32,7 @@ macro_line|#endif
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-multiline_comment|/* Understanding locking in this code: (thanks to Alan Cox for using&n; * little words to explain this to me). -- PR&n; *&n; * In UP, there can be two packets traversing the chains:&n; * 1) A packet from the current userspace context&n; * 2) A packet off the bh handlers (timer or net).&n; *&n; * For SMP (kernel v2.1+), multiply this by # CPUs.&n; *&n; * This means counters and backchains can get corrupted if no precautions&n; * are taken.&n; *&n; * To actually alter a chain on UP, we need only do a cli(), as this will&n; * stop a bh handler firing, as we are in the current userspace context&n; * (coming from a setsockopt()).&n; *&n; * On SMP, we need a write_lock_irqsave(), which is a simple cli() in&n; * UP.&n; *&n; * For backchains and counters, we use an array, indexed by&n; * [smp_processor_id()*2 + !in_interrupt()]; the array is of size&n; * [smp_num_cpus*2].  For v2.0, smp_num_cpus is effectively 1.  So,&n; * confident of uniqueness, we modify counters even though we only&n; * have a read lock (to read the counters, you need a write lock,&n; * though).  */
+multiline_comment|/* Understanding locking in this code: (thanks to Alan Cox for using&n; * little words to explain this to me). -- PR&n; *&n; * In UP, there can be two packets traversing the chains:&n; * 1) A packet from the current userspace context&n; * 2) A packet off the bh handlers (timer or net).&n; *&n; * For SMP (kernel v2.1+), multiply this by # CPUs.&n; *&n; * [Note that this in not correct for 2.2 - because the socket code always&n; *  uses lock_kernel() to serialize, and bottom halves (timers and net_bhs)&n; *  only run on one CPU at a time.  This will probably change for 2.3.&n; *  It is still good to use spinlocks because that avoids the global cli() &n; *  for updating the tables, which is rather costly in SMP kernels -AK]&n; *&n; * This means counters and backchains can get corrupted if no precautions&n; * are taken.&n; *&n; * To actually alter a chain on UP, we need only do a cli(), as this will&n; * stop a bh handler firing, as we are in the current userspace context&n; * (coming from a setsockopt()).&n; *&n; * On SMP, we need a write_lock_irqsave(), which is a simple cli() in&n; * UP.&n; *&n; * For backchains and counters, we use an array, indexed by&n; * [smp_processor_id()*2 + !in_interrupt()]; the array is of size&n; * [smp_num_cpus*2].  For v2.0, smp_num_cpus is effectively 1.  So,&n; * confident of uniqueness, we modify counters even though we only&n; * have a read lock (to read the counters, you need a write lock,&n; * though).  */
 multiline_comment|/* Why I didn&squot;t use straight locking... -- PR&n; * &n; * The backchains can be separated out of the ip_chains structure, and&n; * allocated as needed inside ip_fw_check().&n; *&n; * The counters, however, can&squot;t.  Trying to lock these means blocking&n; * interrupts every time we want to access them.  This would suck HARD&n; * performance-wise.  Not locking them leads to possible corruption,&n; * made worse on 32-bit machines (counters are 64-bit).  */
 multiline_comment|/*#define DEBUG_IP_FIREWALL*/
 multiline_comment|/*#define DEBUG_ALLOW_ALL*/
@@ -1966,7 +1967,7 @@ r_return
 id|FW_BLOCK
 suffix:semicolon
 )brace
-multiline_comment|/* Check for too-small packets (not non-first fragments).&n;&t; * For each protocol, we assume that we can get the required&n;&t; * information, eg. port number or ICMP type.  If this fails,&n;&t; * reject it. &n;&t; * &n;&t; * Sizes might as well be rounded up to 8 here, since either&n;&t; * there are more fragments to come (which must be on 8-byte&n;&t; * boundaries), or this is a bogus packet anyway.&n;&t; */
+multiline_comment|/* If we can&squot;t investigate ports, treat as fragment.  It&squot;s&n;&t; * either a trucated whole packet, or a truncated first&n;&t; * fragment, or a TCP first fragment of length 8-15, in which&n;&t; * case the above rule stops reassembly.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2014,8 +2015,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
+id|offset
+op_assign
 (paren
 id|ntohs
 c_func
@@ -2031,46 +2032,7 @@ l_int|2
 op_plus
 id|size_req
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|testing
-op_logical_and
-id|net_ratelimit
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Packet too short.&bslash;n&quot;
-)paren
 suffix:semicolon
-id|dump_packet
-c_func
-(paren
-id|ip
-comma
-id|rif
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_return
-id|FW_BLOCK
-suffix:semicolon
-)brace
 )brace
 id|src
 op_assign
@@ -2084,7 +2046,7 @@ id|oldtos
 op_assign
 id|ip-&gt;tos
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If we got interface from which packet came&n;&t; *&t;we can use the address directly. This is unlike&n;&t; *&t;4.4BSD derived systems that have an address chain&n;&t; *&t;per device. We have a device per address with dummy&n;&t; *&t;devices instead.&n;&t; */
+multiline_comment|/*&n;&t; *&t;If we got interface from which packet came&n;&t; *&t;we can use the address directly. Linux 2.1 now uses address&n;&t; *&t;chains per device too, but unlike BSD we first check if the&n;&t; *&t;incoming packet matches a device address and the routing&n;&t; *&t;table before calling the firewall. &n;&t; */
 id|dprintf
 c_func
 (paren
@@ -4089,7 +4051,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#if DEBUG_IP_FIREWALL_USER
+macro_line|#ifdef DEBUG_IP_FIREWALL_USER
 multiline_comment|/* These are sanity checks that don&squot;t really matter.&n;&t; * We can get rid of these once testing is complete. &n;&t; */
 r_if
 c_cond

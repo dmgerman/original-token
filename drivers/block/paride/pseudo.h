@@ -79,6 +79,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|ps_spinlock
+r_static
 id|spinlock_t
 id|ps_spinlock
 op_assign

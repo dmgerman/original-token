@@ -172,12 +172,11 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|MINIX_I_MAP_SLOTS
+id|sb-&gt;u.minix_sb.s_imap_blocks
 suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|brelse
 c_func
 (paren
@@ -187,7 +186,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -197,12 +195,11 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|MINIX_Z_MAP_SLOTS
+id|sb-&gt;u.minix_sb.s_zmap_blocks
 suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|brelse
 c_func
 (paren
@@ -212,7 +209,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|brelse
 (paren
 id|sb-&gt;u.minix_sb.s_sbh
@@ -661,7 +657,7 @@ id|inode
 op_star
 id|root_inode
 suffix:semicolon
-multiline_comment|/* N.B. These should be compile-time tests */
+multiline_comment|/* N.B. These should be compile-time tests.&n;&t;   Unfortunately that is impossible. */
 r_if
 c_cond
 (paren
@@ -814,6 +810,10 @@ id|s-&gt;u.minix_sb.s_namelen
 op_assign
 l_int|14
 suffix:semicolon
+id|s-&gt;u.minix_sb.s_link_max
+op_assign
+id|MINIX_LINK_MAX
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -836,6 +836,10 @@ id|s-&gt;u.minix_sb.s_namelen
 op_assign
 l_int|30
 suffix:semicolon
+id|s-&gt;u.minix_sb.s_link_max
+op_assign
+id|MINIX_LINK_MAX
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -850,6 +854,10 @@ id|s-&gt;u.minix_sb.s_version
 op_assign
 id|MINIX_V2
 suffix:semicolon
+id|s-&gt;u.minix_sb.s_nzones
+op_assign
+id|ms-&gt;s_zones
+suffix:semicolon
 id|s-&gt;u.minix_sb.s_dirsize
 op_assign
 l_int|16
@@ -857,6 +865,10 @@ suffix:semicolon
 id|s-&gt;u.minix_sb.s_namelen
 op_assign
 l_int|14
+suffix:semicolon
+id|s-&gt;u.minix_sb.s_link_max
+op_assign
+id|MINIX2_LINK_MAX
 suffix:semicolon
 )brace
 r_else
@@ -872,6 +884,10 @@ id|s-&gt;u.minix_sb.s_version
 op_assign
 id|MINIX_V2
 suffix:semicolon
+id|s-&gt;u.minix_sb.s_nzones
+op_assign
+id|ms-&gt;s_zones
+suffix:semicolon
 id|s-&gt;u.minix_sb.s_dirsize
 op_assign
 l_int|32
@@ -880,28 +896,22 @@ id|s-&gt;u.minix_sb.s_namelen
 op_assign
 l_int|30
 suffix:semicolon
+id|s-&gt;u.minix_sb.s_link_max
+op_assign
+id|MINIX2_LINK_MAX
+suffix:semicolon
 )brace
 r_else
 r_goto
 id|out_no_fs
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|s-&gt;u.minix_sb.s_zmap_blocks
-OG
-id|MINIX_Z_MAP_SLOTS
-)paren
-r_goto
-id|out_too_big
-suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate the buffer map to keep the superblock small.&n;&t; */
 id|i
 op_assign
 (paren
-id|MINIX_I_MAP_SLOTS
+id|s-&gt;u.minix_sb.s_imap_blocks
 op_plus
-id|MINIX_Z_MAP_SLOTS
+id|s-&gt;u.minix_sb.s_zmap_blocks
 )paren
 op_star
 r_sizeof
@@ -951,7 +961,7 @@ op_assign
 op_amp
 id|map
 (braket
-id|MINIX_I_MAP_SLOTS
+id|s-&gt;u.minix_sb.s_imap_blocks
 )braket
 suffix:semicolon
 id|block
@@ -1044,20 +1054,6 @@ id|block
 op_increment
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|block
-op_ne
-l_int|2
-op_plus
-id|s-&gt;u.minix_sb.s_imap_blocks
-op_plus
-id|s-&gt;u.minix_sb.s_zmap_blocks
-)paren
-r_goto
-id|out_no_bitmap
-suffix:semicolon
 id|minix_set_bit
 c_func
 (paren
@@ -1146,6 +1142,11 @@ id|s-&gt;s_root
 )paren
 r_goto
 id|out_iput
+suffix:semicolon
+id|s-&gt;s_root-&gt;d_op
+op_assign
+op_amp
+id|minix_dentry_operations
 suffix:semicolon
 r_if
 c_cond
@@ -1278,12 +1279,11 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|MINIX_I_MAP_SLOTS
+id|s-&gt;u.minix_sb.s_imap_blocks
 suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|brelse
 c_func
 (paren
@@ -1293,7 +1293,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -1303,12 +1302,11 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|MINIX_Z_MAP_SLOTS
+id|s-&gt;u.minix_sb.s_zmap_blocks
 suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|brelse
 c_func
 (paren
@@ -1318,7 +1316,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|kfree
 c_func
 (paren
@@ -1339,22 +1336,6 @@ id|silent
 id|printk
 (paren
 l_string|&quot;MINIX-fs: can&squot;t allocate map&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out_release
-suffix:semicolon
-id|out_too_big
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|silent
-)paren
-id|printk
-(paren
-l_string|&quot;MINIX-fs: filesystem too big&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -3654,7 +3635,7 @@ op_logical_neg
 id|ino
 op_logical_or
 id|ino
-op_ge
+OG
 id|inode-&gt;i_sb-&gt;u.minix_sb.s_ninodes
 )paren
 (brace
@@ -3975,7 +3956,7 @@ op_logical_neg
 id|ino
 op_logical_or
 id|ino
-op_ge
+OG
 id|inode-&gt;i_sb-&gt;u.minix_sb.s_ninodes
 )paren
 (brace
@@ -4331,7 +4312,7 @@ op_logical_neg
 id|ino
 op_logical_or
 id|ino
-op_ge
+OG
 id|inode-&gt;i_sb-&gt;u.minix_sb.s_ninodes
 )paren
 (brace
@@ -4546,7 +4527,7 @@ op_logical_neg
 id|ino
 op_logical_or
 id|ino
-op_ge
+OG
 id|inode-&gt;i_sb-&gt;u.minix_sb.s_ninodes
 )paren
 (brace

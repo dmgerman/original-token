@@ -99,6 +99,14 @@ DECL|macro|INTERNAL_ESP_ERROR
 mdefine_line|#define INTERNAL_ESP_ERROR &bslash;&n;        (panic (&quot;Internal ESP driver error in file %s, line %d&bslash;n&quot;, &bslash;&n;&t;&t;__FILE__, __LINE__))
 DECL|macro|INTERNAL_ESP_ERROR_NOPANIC
 mdefine_line|#define INTERNAL_ESP_ERROR_NOPANIC &bslash;&n;        (printk (&quot;Internal ESP driver error in file %s, line %d&bslash;n&quot;, &bslash;&n;&t;&t; __FILE__, __LINE__))
+multiline_comment|/*&n; * padding for register structure&n; */
+macro_line|#ifdef CONFIG_JAZZ_ESP
+DECL|macro|EREGS_PAD
+mdefine_line|#define EREGS_PAD(n)
+macro_line|#else
+DECL|macro|EREGS_PAD
+mdefine_line|#define EREGS_PAD(n)    unchar n[3];
+macro_line|#endif
 multiline_comment|/* The ESP SCSI controllers have their register sets in three&n; * &quot;classes&quot;:&n; *&n; * 1) Registers which are both read and write.&n; * 2) Registers which are read only.&n; * 3) Registers which are write only.&n; *&n; * Yet, they all live within the same IO space.&n; */
 multiline_comment|/* All the ESP registers are one byte each and are accessed longwords&n; * apart with a big-endian ordering to the bytes.&n; */
 DECL|struct|ESP_regs
@@ -112,12 +120,11 @@ id|unchar
 id|esp_tclow
 suffix:semicolon
 multiline_comment|/* rw  Low bits of the transfer count 0x00   */
-DECL|member|tlpad1
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|tlpad1
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_tcmed
 r_volatile
@@ -125,12 +132,11 @@ id|unchar
 id|esp_tcmed
 suffix:semicolon
 multiline_comment|/* rw  Mid bits of the transfer count 0x04   */
-DECL|member|fdpad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|fdpad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_fdata
 r_volatile
@@ -138,12 +144,11 @@ id|unchar
 id|esp_fdata
 suffix:semicolon
 multiline_comment|/* rw  FIFO data bits                 0x08   */
-DECL|member|cbpad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|cbpad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_cmd
 r_volatile
@@ -151,12 +156,11 @@ id|unchar
 id|esp_cmd
 suffix:semicolon
 multiline_comment|/* rw  SCSI command bits              0x0c   */
-DECL|member|stpad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|stpad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_status
 r_volatile
@@ -166,12 +170,11 @@ suffix:semicolon
 multiline_comment|/* ro  ESP status register            0x10   */
 DECL|macro|esp_busid
 mdefine_line|#define esp_busid   esp_status  /* wo  Bus ID for select/reselect     0x10   */
-DECL|member|irqpd
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|irqpd
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_intrpt
 r_volatile
@@ -181,12 +184,11 @@ suffix:semicolon
 multiline_comment|/* ro  Kind of interrupt              0x14   */
 DECL|macro|esp_timeo
 mdefine_line|#define esp_timeo   esp_intrpt  /* wo  Timeout value for select/resel 0x14   */
-DECL|member|sspad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|sspad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_sstep
 r_volatile
@@ -196,12 +198,11 @@ suffix:semicolon
 multiline_comment|/* ro  Sequence step register         0x18   */
 DECL|macro|esp_stp
 mdefine_line|#define esp_stp     esp_sstep   /* wo  Transfer period per sync       0x18   */
-DECL|member|ffpad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|ffpad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_fflags
 r_volatile
@@ -211,12 +212,11 @@ suffix:semicolon
 multiline_comment|/* ro  Bits of current FIFO info      0x1c   */
 DECL|macro|esp_soff
 mdefine_line|#define esp_soff    esp_fflags  /* wo  Sync offset                    0x1c   */
-DECL|member|cf1pd
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|cf1pd
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_cfg1
 r_volatile
@@ -224,12 +224,11 @@ id|unchar
 id|esp_cfg1
 suffix:semicolon
 multiline_comment|/* rw  First configuration register   0x20   */
-DECL|member|cfpad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|cfpad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_cfact
 r_volatile
@@ -239,12 +238,11 @@ suffix:semicolon
 multiline_comment|/* wo  Clock conversion factor        0x24   */
 DECL|macro|esp_status2
 mdefine_line|#define esp_status2 esp_cfact   /* ro  HME status2 register           0x24   */
-DECL|member|ctpad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|ctpad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_ctest
 r_volatile
@@ -252,12 +250,11 @@ id|unchar
 id|esp_ctest
 suffix:semicolon
 multiline_comment|/* wo  Chip test register             0x28   */
-DECL|member|cf2pd
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|cf2pd
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_cfg2
 r_volatile
@@ -265,12 +262,11 @@ id|unchar
 id|esp_cfg2
 suffix:semicolon
 multiline_comment|/* rw  Second configuration register  0x2c   */
-DECL|member|cf3pd
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|cf3pd
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 multiline_comment|/* The following is only found on the 53C9X series SCSI chips */
 DECL|member|esp_cfg3
@@ -279,12 +275,23 @@ id|unchar
 id|esp_cfg3
 suffix:semicolon
 multiline_comment|/* rw  Third configuration register   0x30  */
-DECL|member|thpd
+id|EREGS_PAD
+c_func
+(paren
+id|holep
+)paren
+suffix:semicolon
+DECL|member|esp_hole
+r_volatile
 id|unchar
+id|esp_hole
+suffix:semicolon
+multiline_comment|/* hole in register map               0x34  */
+id|EREGS_PAD
+c_func
+(paren
 id|thpd
-(braket
-l_int|7
-)braket
+)paren
 suffix:semicolon
 multiline_comment|/* The following is found on all chips except the NCR53C90 (ESP100) */
 DECL|member|esp_tchi
@@ -297,12 +304,11 @@ DECL|macro|esp_uid
 mdefine_line|#define esp_uid     esp_tchi    /* ro  Unique ID code                 0x38  */
 DECL|macro|fas_rlo
 mdefine_line|#define fas_rlo     esp_tchi    /* rw  HME extended counter           0x38  */
-DECL|member|fgpad
-id|unchar
+id|EREGS_PAD
+c_func
+(paren
 id|fgpad
-(braket
-l_int|3
-)braket
+)paren
 suffix:semicolon
 DECL|member|esp_fgrnd
 r_volatile
@@ -356,10 +362,15 @@ id|fashme
 op_assign
 l_int|0x06
 comma
+DECL|enumerator|fas216
+id|fas216
+op_assign
+l_int|0x07
+comma
 DECL|enumerator|espunknown
 id|espunknown
 op_assign
-l_int|0x07
+l_int|0x08
 )brace
 suffix:semicolon
 multiline_comment|/* We get one of these for each ESP probed. */
@@ -968,6 +979,78 @@ id|dma_reset
 (paren
 r_struct
 id|NCR_ESP
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Optional virtual DMA functions */
+DECL|member|dma_mmu_get_scsi_one
+r_void
+(paren
+op_star
+id|dma_mmu_get_scsi_one
+)paren
+(paren
+r_struct
+id|NCR_ESP
+op_star
+comma
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|dma_mmu_get_scsi_sgl
+r_void
+(paren
+op_star
+id|dma_mmu_get_scsi_sgl
+)paren
+(paren
+r_struct
+id|NCR_ESP
+op_star
+comma
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|dma_mmu_release_scsi_one
+r_void
+(paren
+op_star
+id|dma_mmu_release_scsi_one
+)paren
+(paren
+r_struct
+id|NCR_ESP
+op_star
+comma
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|dma_mmu_release_scsi_sgl
+r_void
+(paren
+op_star
+id|dma_mmu_release_scsi_sgl
+)paren
+(paren
+r_struct
+id|NCR_ESP
+op_star
+comma
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|dma_advance_sg
+r_void
+(paren
+op_star
+id|dma_advance_sg
+)paren
+(paren
+id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon

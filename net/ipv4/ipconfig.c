@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.12 1998/05/03 14:30:53 alan Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.13 1998/06/09 03:40:47 zaitcev Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -1080,6 +1080,7 @@ r_void
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t; *&t;At this point we have no userspace running so need not&n;&t; *&t;claim locks on system_utsname&n;&t; */
 r_if
 c_cond
 (paren
@@ -4711,7 +4712,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Decode any IP configuration options in the &quot;ipconfig&quot; kernel command&n; *  line parameter. It consists of option fields separated by colons in&n; *  the following order:&n; *&n; *  &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;host name&gt;:&lt;device&gt;:&lt;bootp|rarp&gt;&n; *&n; *  Any of the fields can be empty which means to use a default value:&n; *&t;&lt;client-ip&gt;&t;- address given by BOOTP or RARP&n; *&t;&lt;server-ip&gt;&t;- address of host returning BOOTP or RARP packet&n; *&t;&lt;gw-ip&gt;&t;&t;- none, or the address returned by BOOTP&n; *&t;&lt;netmask&gt;&t;- automatically determined from &lt;client-ip&gt;, or the&n; *&t;&t;&t;  one returned by BOOTP&n; *&t;&lt;host name&gt;&t;- &lt;client-ip&gt; in ASCII notation, or the name returned&n; *&t;&t;&t;  by BOOTP&n; *&t;&lt;device&gt;&t;- use all available devices&n; *&t;&lt;bootp|rarp|both|off&gt; - use both protocols to determine my own address&n; */
+multiline_comment|/*&n; *  Decode any IP configuration options in the &quot;ip=&quot; or &quot;nfsaddrs=&quot; kernel&n; *  command line parameter. It consists of option fields separated by colons in&n; *  the following order:&n; *&n; *  &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;host name&gt;:&lt;device&gt;:&lt;bootp|rarp&gt;&n; *&n; *  Any of the fields can be empty which means to use a default value:&n; *&t;&lt;client-ip&gt;&t;- address given by BOOTP or RARP&n; *&t;&lt;server-ip&gt;&t;- address of host returning BOOTP or RARP packet&n; *&t;&lt;gw-ip&gt;&t;&t;- none, or the address returned by BOOTP&n; *&t;&lt;netmask&gt;&t;- automatically determined from &lt;client-ip&gt;, or the&n; *&t;&t;&t;  one returned by BOOTP&n; *&t;&lt;host name&gt;&t;- &lt;client-ip&gt; in ASCII notation, or the name returned&n; *&t;&t;&t;  by BOOTP&n; *&t;&lt;device&gt;&t;- use all available devices&n; *&t;&lt;bootp|rarp|both|off&gt; - use both protocols to determine my own address&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func

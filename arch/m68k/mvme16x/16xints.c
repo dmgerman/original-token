@@ -627,9 +627,9 @@ op_star
 id|fp
 )paren
 (brace
-id|panic
+id|printk
 (paren
-l_string|&quot;Unknown interrupt 0x%02x&quot;
+l_string|&quot;Unknown interrupt 0x%02x&bslash;n&quot;
 comma
 id|irq
 )paren

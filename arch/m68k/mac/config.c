@@ -24,7 +24,7 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/macintosh.h&gt;
 macro_line|#include &lt;asm/macints.h&gt;
 macro_line|#include &quot;via6522.h&quot;
-multiline_comment|/* old bootinfo stuff */
+multiline_comment|/* Mac bootinfo struct */
 DECL|variable|mac_bi_data
 r_struct
 id|mac_booter_data
@@ -42,27 +42,7 @@ op_assign
 r_sizeof
 id|mac_bi_data
 suffix:semicolon
-DECL|variable|compat_boot_info
-r_struct
-id|compat_bootinfo
-id|compat_boot_info
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|compat_bisize
-r_int
-id|compat_bisize
-op_assign
-r_sizeof
-id|compat_boot_info
-suffix:semicolon
-DECL|variable|compat_bi
-r_int
-id|compat_bi
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* New bootinfo stuff */
+multiline_comment|/* New m68k bootinfo stuff and videobase */
 r_extern
 r_int
 id|m68k_num_memory
@@ -93,7 +73,7 @@ op_star
 id|mac_env
 suffix:semicolon
 multiline_comment|/* Loaded by the boot asm */
-multiline_comment|/* The locgial video addr. determined by head.S - testing */
+multiline_comment|/* The logical video addr. determined by head.S - testing */
 r_extern
 r_int
 r_int
@@ -253,6 +233,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+multiline_comment|/* XXX FIXME: Atari scancodes still */
 DECL|variable|mac_sysrq_xlate
 r_static
 r_char
@@ -293,7 +274,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|function|mac_get_model
+r_static
 r_void
 id|mac_get_model
 c_func
@@ -302,16 +283,7 @@ r_char
 op_star
 id|str
 )paren
-(brace
-id|strcpy
-c_func
-(paren
-id|str
-comma
-l_string|&quot;Macintosh&quot;
-)paren
 suffix:semicolon
-)brace
 DECL|function|mac_bang
 r_void
 id|mac_bang
@@ -387,6 +359,7 @@ r_extern
 r_int
 id|console_loglevel
 suffix:semicolon
+multiline_comment|/*&n; * This function translates the boot timeval into a proper date, to initialize&n; * the system time.&n; * Known problem: off by one after Feb. 27 on leap years&n; */
 DECL|function|mac_gettod
 r_void
 id|mac_gettod
@@ -439,7 +412,7 @@ l_int|1
 comma
 l_int|31
 comma
-l_int|27
+l_int|28
 comma
 l_int|31
 comma
@@ -474,18 +447,6 @@ op_star
 id|mac_bi_data.gmtbias
 suffix:semicolon
 multiline_comment|/* seconds */
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;mac_gettod: boottime 0x%lx gmtbias %ld &bslash;n&quot;
-comma
-id|mac_bi_data.boottime
-comma
-id|mac_bi_data.gmtbias
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 op_star
 id|minp
 op_assign
@@ -574,7 +535,7 @@ op_plus
 l_int|1970
 suffix:semicolon
 multiline_comment|/* approx. year */
-multiline_comment|/* leap year calculation - there&squot;s an easier way, I bet */
+multiline_comment|/* leap year calculation - there&squot;s an easier way, I bet. And it&squot;s broken :-( */
 multiline_comment|/* calculate leap days up to previous year */
 id|oldleap
 op_assign
@@ -698,8 +659,8 @@ id|mon_days
 (braket
 l_int|2
 )braket
-op_assign
-l_int|28
+op_add_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* count the months */
 r_for
@@ -737,38 +698,6 @@ id|dayp
 op_assign
 id|time
 suffix:semicolon
-macro_line|#if 1
-id|printk
-c_func
-(paren
-l_string|&quot;mac_gettod: %d-%d-%d %d:%d.%d GMT (GMT offset %d)&bslash;n&quot;
-comma
-op_star
-id|yearp
-comma
-op_star
-id|monp
-comma
-op_star
-id|dayp
-comma
-op_star
-id|hourp
-comma
-op_star
-id|minp
-comma
-op_star
-id|secp
-comma
-(paren
-r_int
-r_int
-)paren
-id|mac_bi_data.gmtbias
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -782,6 +711,22 @@ r_void
 suffix:semicolon
 )brace
 r_extern
+r_struct
+id|consw
+id|fb_con
+suffix:semicolon
+r_extern
+r_struct
+id|fb_info
+op_star
+id|mac_fb_init
+c_func
+(paren
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|mac_video_setup
 c_func
@@ -793,15 +738,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-DECL|function|mac_debug_init
-r_void
-id|mac_debug_init
-(paren
-r_void
-)paren
-(brace
-suffix:semicolon
-)brace
 DECL|variable|mac_handlers
 r_void
 (paren
@@ -888,6 +824,7 @@ suffix:semicolon
 r_case
 id|BI_MAC_VADDR
 suffix:colon
+multiline_comment|/* save booter supplied videobase; use the one mapped in head.S! */
 id|mac_orig_videoaddr
 op_assign
 op_star
@@ -1027,12 +964,6 @@ l_string|&quot;ERROR: no Mac, but config_mac() called!! &bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|mac_debugging_penguin
-c_func
-(paren
-l_int|5
-)paren
-suffix:semicolon
 id|mac_debug_init
 c_func
 (paren
@@ -1107,12 +1038,6 @@ id|mach_reset
 op_assign
 id|mac_reset
 suffix:semicolon
-macro_line|#ifdef CONFIG_MAC_FLOPPY
-id|mach_floppy_setup
-op_assign
-id|mac_floppy_setup
-suffix:semicolon
-macro_line|#endif
 id|conswitchp
 op_assign
 op_amp
@@ -1197,14 +1122,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|mac_debugging_penguin
-c_func
-(paren
-l_int|6
-)paren
-suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Macintosh Table&n; */
+multiline_comment|/*&n; *&t;Macintosh Table: hardcoded model configuration data. &n; *&n; *&t;Much of this was defined by Alan, based on who knows what docs. &n; *&t;I&squot;ve added a lot more, and some of that was pure guesswork based &n; *&t;on hardware pages present on the Mac web site. Possibly wildly &n; *&t;inaccurate, so look here if a new Mac model won&squot;t run. Example: if&n; *&t;a Mac crashes immediately after the VIA1 registers have been dumped&n; *&t;to the screen, it probably died attempting to read DirB on a RBV. &n; *&t;Meaning it should have MAC_VIA_IIci here :-)&n; */
 DECL|variable|macintosh_config
 r_struct
 id|mac_model
@@ -1293,7 +1212,7 @@ comma
 id|MAC_NUBUS
 )brace
 comma
-multiline_comment|/*&n;&t; *&t;Weirdified MacII hardware - all subtley different. Gee thanks&n;&t; *&t;Apple. All these boxes seem to have VIA2 in a different place to&n;&t; *&t;the MacII (+1A000 rather than +4000)&n;&t; *&n;&t; *&t;The IIfx apparently has different ADB hardware, and stuff&n;&t; *&t;so zany nobody knows how to drive it.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Weirdified MacII hardware - all subtley different. Gee thanks&n;&t; *&t;Apple. All these boxes seem to have VIA2 in a different place to&n;&t; *&t;the MacII (+1A000 rather than +4000)&n;&t; *&n;&t; *&t;The IIfx apparently has different ADB hardware, and stuff&n;&t; *&t;so zany nobody knows how to drive it.&n;&t; *&t;Even so, with Marten&squot;s help we&squot;ll try to deal with it :-)&n;&t; */
 (brace
 id|MAC_MODEL_IICI
 comma
@@ -1319,7 +1238,7 @@ id|MAC_MODEL_IIFX
 comma
 l_string|&quot;IIfx&quot;
 comma
-id|MAC_ADB_NONE
+id|MAC_ADB_II
 comma
 id|MAC_VIA_IIci
 comma
@@ -1437,6 +1356,26 @@ id|MAC_NUBUS
 comma
 multiline_comment|/*&n;&t; *&t;Some Mac LC machines. Basically the same as the IIci, ADB like IIsi&n;&t; */
 (brace
+id|MAC_MODEL_LC
+comma
+l_string|&quot;LC&quot;
+comma
+id|MAC_ADB_IISI
+comma
+id|MAC_VIA_IIci
+comma
+id|MAC_SCSI_OLD
+comma
+id|MAC_IDE_NONE
+comma
+id|MAC_SCC_II
+comma
+id|MAC_ETHER_NONE
+comma
+id|MAC_NUBUS
+)brace
+comma
+(brace
 id|MAC_MODEL_LCII
 comma
 l_string|&quot;LC II&quot;
@@ -1528,7 +1467,7 @@ id|MAC_VIA_QUADRA
 comma
 id|MAC_SCSI_QUADRA
 comma
-id|MAC_IDE_NONE
+id|MAC_IDE_QUADRA
 comma
 id|MAC_SCC_QUADRA
 comma
@@ -1633,7 +1572,7 @@ id|MAC_SCSI_QUADRA2
 comma
 id|MAC_IDE_NONE
 comma
-id|MAC_SCC_QUADRA2
+id|MAC_SCC_IOP
 comma
 id|MAC_ETHER_SONIC
 comma
@@ -1653,7 +1592,7 @@ id|MAC_SCSI_QUADRA2
 comma
 id|MAC_IDE_NONE
 comma
-id|MAC_SCC_QUADRA2
+id|MAC_SCC_IOP
 comma
 id|MAC_ETHER_SONIC
 comma
@@ -1668,7 +1607,7 @@ l_string|&quot;Performa 460&quot;
 comma
 id|MAC_ADB_IISI
 comma
-id|MAC_VIA_QUADRA
+id|MAC_VIA_IIci
 comma
 id|MAC_SCSI_OLD
 comma
@@ -1702,6 +1641,26 @@ id|MAC_NUBUS
 )brace
 comma
 (brace
+id|MAC_MODEL_P475F
+comma
+l_string|&quot;Performa 475&quot;
+comma
+id|MAC_ADB_CUDA
+comma
+id|MAC_VIA_QUADRA
+comma
+id|MAC_SCSI_QUADRA
+comma
+id|MAC_IDE_NONE
+comma
+id|MAC_SCC_II
+comma
+id|MAC_ETHER_NONE
+comma
+id|MAC_NUBUS
+)brace
+comma
+(brace
 id|MAC_MODEL_P520
 comma
 l_string|&quot;Performa 520&quot;
@@ -1710,7 +1669,7 @@ id|MAC_ADB_CUDA
 comma
 id|MAC_VIA_QUADRA
 comma
-id|MAC_SCSI_OLD
+id|MAC_SCSI_QUADRA
 comma
 id|MAC_IDE_NONE
 comma
@@ -1730,7 +1689,7 @@ id|MAC_ADB_CUDA
 comma
 id|MAC_VIA_QUADRA
 comma
-id|MAC_SCSI_OLD
+id|MAC_SCSI_QUADRA
 comma
 id|MAC_IDE_NONE
 comma
@@ -1748,9 +1707,29 @@ l_string|&quot;Performa 575&quot;
 comma
 id|MAC_ADB_CUDA
 comma
-id|MAC_VIA_IIci
+id|MAC_VIA_QUADRA
 comma
-id|MAC_SCSI_OLD
+id|MAC_SCSI_QUADRA
+comma
+id|MAC_IDE_NONE
+comma
+id|MAC_SCC_II
+comma
+id|MAC_ETHER_NONE
+comma
+id|MAC_NUBUS
+)brace
+comma
+(brace
+id|MAC_MODEL_P588
+comma
+l_string|&quot;Performa 588&quot;
+comma
+id|MAC_ADB_CUDA
+comma
+id|MAC_VIA_QUADRA
+comma
+id|MAC_SCSI_QUADRA
 comma
 id|MAC_IDE_NONE
 comma
@@ -1769,6 +1748,26 @@ comma
 id|MAC_ADB_CUDA
 comma
 id|MAC_VIA_QUADRA
+comma
+id|MAC_SCSI_OLD
+comma
+id|MAC_IDE_NONE
+comma
+id|MAC_SCC_II
+comma
+id|MAC_ETHER_NONE
+comma
+id|MAC_NUBUS
+)brace
+comma
+(brace
+id|MAC_MODEL_P600
+comma
+l_string|&quot;Performa 600&quot;
+comma
+id|MAC_ADB_IISI
+comma
+id|MAC_VIA_IIci
 comma
 id|MAC_SCSI_OLD
 comma
@@ -2057,7 +2056,7 @@ id|MAC_VIA_QUADRA
 comma
 id|MAC_SCSI_QUADRA
 comma
-id|MAC_IDE_NONE
+id|MAC_IDE_PB
 comma
 id|MAC_SCC_QUADRA
 comma
@@ -2114,9 +2113,9 @@ l_string|&quot;PowerBook Duo 230&quot;
 comma
 id|MAC_ADB_PB2
 comma
-id|MAC_VIA_QUADRA
+id|MAC_VIA_IIci
 comma
-id|MAC_SCSI_QUADRA
+id|MAC_SCSI_OLD
 comma
 id|MAC_IDE_NONE
 comma
@@ -2321,28 +2320,6 @@ comma
 id|model
 )paren
 suffix:semicolon
-id|mac_debugging_long
-c_func
-(paren
-l_int|1
-comma
-(paren
-r_int
-)paren
-l_int|0x55555555
-)paren
-suffix:semicolon
-id|mac_debugging_long
-c_func
-(paren
-l_int|1
-comma
-(paren
-r_int
-)paren
-id|model
-)paren
-suffix:semicolon
 id|model
 op_assign
 id|MAC_MODEL_Q800
@@ -2413,11 +2390,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Report booter data:&n;&t; */
 id|printk
 (paren
-l_string|&quot; Penguin (bootinfo version %d) data:&bslash;n&quot;
-comma
-l_int|2
-op_minus
-id|compat_bi
+l_string|&quot; Penguin bootinfo data:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -2500,6 +2473,34 @@ id|printk
 c_func
 (paren
 l_string|&quot;Apple Macintosh %s&bslash;n&quot;
+comma
+id|macintosh_config-&gt;name
+)paren
+suffix:semicolon
+)brace
+DECL|function|mac_get_model
+r_static
+r_void
+id|mac_get_model
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|str
+comma
+l_string|&quot;Macintosh &quot;
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|str
 comma
 id|macintosh_config-&gt;name
 )paren

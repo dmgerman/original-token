@@ -38,7 +38,12 @@ r_int
 r_int
 id|mac_rowbytes
 suffix:semicolon
+DECL|macro|DEBUG_SCREEN
+mdefine_line|#define DEBUG_SCREEN
+DECL|macro|DEBUG_SERIAL
+mdefine_line|#define DEBUG_SERIAL
 multiline_comment|/*&n; * These two auxiliary debug functions should go away ASAP. Only usage: &n; * before the console output is up (after head.S come some other crucial&n; * setup routines :-) it permits writing &squot;data&squot; to the screen as bit patterns&n; * (good luck reading those). Helped to figure that the bootinfo contained&n; * garbage data on the amount and size of memory chunks ...&n; *&n; * The &squot;pos&squot; argument now simply means &squot;linefeed after print&squot; ...&n; */
+macro_line|#ifdef DEBUG_SCREEN
 DECL|variable|peng
 DECL|variable|line
 r_static
@@ -51,6 +56,7 @@ id|line
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|function|mac_debugging_short
 r_void
 id|mac_debugging_short
@@ -63,6 +69,7 @@ r_int
 id|num
 )paren
 (brace
+macro_line|#ifdef DEBUG_SCREEN
 r_int
 r_char
 op_star
@@ -76,6 +83,18 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_SERIAL
+id|printk
+c_func
+(paren
+l_string|&quot;debug: %d !&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_SCREEN
 r_if
 c_cond
 (paren
@@ -99,7 +118,7 @@ op_star
 id|mac_videobase
 op_plus
 (paren
-l_int|20
+l_int|150
 op_plus
 id|line
 op_star
@@ -187,6 +206,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|mac_debugging_long
 r_void
@@ -200,6 +220,7 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#ifdef DEBUG_SCREEN
 r_int
 r_char
 op_star
@@ -213,6 +234,18 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_SERIAL
+id|printk
+c_func
+(paren
+l_string|&quot;debug: #%ld !&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_SCREEN
 r_if
 c_cond
 (paren
@@ -235,7 +268,7 @@ op_star
 id|mac_videobase
 op_plus
 (paren
-l_int|20
+l_int|150
 op_plus
 id|line
 op_star
@@ -322,6 +355,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Penguin - used by head.S console; obsolete&n; */
 DECL|variable|that_penguin
@@ -332,6 +366,7 @@ id|that_penguin
 op_assign
 initialization_block
 suffix:semicolon
+macro_line|#ifdef DEBUG_SCREEN
 multiline_comment|/* &n; * B/W version of penguin, unfinished - any takers??&n; */
 DECL|variable|bw_penguin
 r_static
@@ -342,6 +377,7 @@ id|bw_penguin
 op_assign
 initialization_block
 suffix:semicolon
+macro_line|#endif
 DECL|function|mac_debugging_penguin
 r_void
 id|mac_debugging_penguin
@@ -351,6 +387,7 @@ r_int
 id|peng
 )paren
 (brace
+macro_line|#ifdef DEBUG_SCREEN
 r_int
 r_char
 op_star
@@ -371,6 +408,18 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_SERIAL
+id|printk
+c_func
+(paren
+l_string|&quot;Penguin: #%d !&bslash;n&quot;
+comma
+id|peng
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_SCREEN
 r_if
 c_cond
 (paren
@@ -463,7 +512,9 @@ op_add_assign
 id|mac_rowbytes
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
+macro_line|#ifdef DEBUG_SCREEN
 multiline_comment|/*&n; * B/W version of flaming Mac, unfinished (see above).&n; */
 DECL|variable|bw_kaboom_map
 r_static
@@ -474,6 +525,8 @@ id|bw_kaboom_map
 op_assign
 initialization_block
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_SCREEN
 DECL|function|mac_boom_boom
 r_static
 r_void
@@ -505,6 +558,22 @@ id|bw_kaboom_map
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+macro_line|#ifdef DEBUG_SERIAL
+id|printk
+c_func
+(paren
+l_string|&quot;BOOM !&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MAC
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -610,6 +679,7 @@ id|mac_rowbytes
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|mac_boom
 r_void
 id|mac_boom
@@ -619,9 +689,11 @@ r_int
 id|booms
 )paren
 (brace
+macro_line|#ifdef DEBUG_SCREEN
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -630,6 +702,7 @@ id|MACH_IS_MAC
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef DEBUG_SCREEN
 r_for
 c_loop
 (paren
@@ -659,21 +732,63 @@ l_int|1
 (brace
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
-macro_line|#if 0
+macro_line|#ifdef DEBUG_SERIAL
 multiline_comment|/*&n; * TODO: serial debug code&n; */
+DECL|macro|SCC_BAS
+mdefine_line|#define SCC_BAS (0x50F04000)
+DECL|struct|SCC
+r_struct
+id|SCC
+(brace
+DECL|member|cha_b_ctrl
+id|u_char
+id|cha_b_ctrl
+suffix:semicolon
+DECL|member|char_dummy1
+id|u_char
+id|char_dummy1
+suffix:semicolon
+DECL|member|cha_a_ctrl
+id|u_char
+id|cha_a_ctrl
+suffix:semicolon
+DECL|member|char_dummy2
+id|u_char
+id|char_dummy2
+suffix:semicolon
+DECL|member|cha_b_data
+id|u_char
+id|cha_b_data
+suffix:semicolon
+DECL|member|char_dummy3
+id|u_char
+id|char_dummy3
+suffix:semicolon
+DECL|member|cha_a_data
+id|u_char
+id|cha_a_data
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|scc
+macro_line|# define scc ((*(volatile struct SCC*)SCC_BAS))
 multiline_comment|/* Flag that serial port is already initialized and used */
+DECL|variable|mac_SCC_init_done
 r_int
 id|mac_SCC_init_done
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Can be set somewhere, if a SCC master reset has already be done and should&n; * not be repeated; used by kgdb */
+DECL|variable|mac_SCC_reset_done
 r_int
 id|mac_SCC_reset_done
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|mac_console_driver
 r_static
 r_struct
 id|console
@@ -710,26 +825,50 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|variable|scc_port
 r_static
 r_int
 id|scc_port
 suffix:semicolon
+multiline_comment|/* Mac: loops_per_sec min. 1900000 ^= .5 us; MFPDELAY was 0.6 us*/
+DECL|macro|US
+mdefine_line|#define US 1
+DECL|function|mac_sccb_out
 r_static
 r_inline
 r_void
-id|mac_scc_out
+id|mac_sccb_out
 (paren
 r_char
 id|c
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_do
 (brace
-id|MFPDELAY
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 r_while
 c_loop
@@ -743,18 +882,110 @@ l_int|0x04
 )paren
 suffix:semicolon
 multiline_comment|/* wait for tx buf empty */
-id|MFPDELAY
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 id|scc.cha_b_data
 op_assign
 id|c
 suffix:semicolon
 )brace
+DECL|function|mac_scca_out
+r_static
+r_inline
 r_void
-id|mac_scc_console_write
+id|mac_scca_out
+(paren
+r_char
+id|c
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_do
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|scc.cha_a_ctrl
+op_amp
+l_int|0x04
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* wait for tx buf empty */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|scc.cha_a_data
+op_assign
+id|c
+suffix:semicolon
+)brace
+DECL|function|mac_sccb_console_write
+r_void
+id|mac_sccb_console_write
 (paren
 r_struct
 id|console
@@ -786,13 +1017,63 @@ id|str
 op_eq
 l_char|&squot;&bslash;n&squot;
 )paren
-id|mac_scc_out
+id|mac_sccb_out
 c_func
 (paren
 l_char|&squot;&bslash;r&squot;
 )paren
 suffix:semicolon
-id|mac_scc_out
+id|mac_sccb_out
+c_func
+(paren
+op_star
+id|str
+op_increment
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|mac_scca_console_write
+r_void
+id|mac_scca_console_write
+(paren
+r_struct
+id|console
+op_star
+id|co
+comma
+r_const
+r_char
+op_star
+id|str
+comma
+r_int
+r_int
+id|count
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|count
+op_decrement
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|str
+op_eq
+l_char|&squot;&bslash;n&squot;
+)paren
+id|mac_scca_out
+c_func
+(paren
+l_char|&squot;&bslash;r&squot;
+)paren
+suffix:semicolon
+id|mac_scca_out
 c_func
 (paren
 op_star
@@ -803,8 +1084,9 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
+DECL|function|mac_sccb_console_wait_key
 r_int
-id|mac_scc_console_wait_key
+id|mac_sccb_console_wait_key
 c_func
 (paren
 r_struct
@@ -813,13 +1095,32 @@ op_star
 id|co
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_do
 (brace
-id|MFPDELAY
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 r_while
 c_loop
@@ -835,21 +1136,120 @@ l_int|0x01
 suffix:semicolon
 )brace
 multiline_comment|/* wait for rx buf filled */
-id|MFPDELAY
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_return
 id|scc.cha_b_data
 suffix:semicolon
 )brace
+DECL|function|mac_scca_console_wait_key
+r_int
+id|mac_scca_console_wait_key
+c_func
+(paren
+r_struct
+id|console
+op_star
+id|co
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_do
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|scc.cha_a_ctrl
+op_amp
+l_int|0x01
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+multiline_comment|/* wait for rx buf filled */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|US
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+id|scc.cha_a_data
+suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/* The following two functions do a quick&squot;n&squot;dirty initialization of the MFP or&n; * SCC serial ports. They&squot;re used by the debugging interface, kgdb, and the&n; * serial console code. */
-mdefine_line|#define SCC_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;MFPDELAY();&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;MFPDELAY();&t;&t;&t;&t;&t;&bslash;&n;    } while(0)
+DECL|macro|SCCB_WRITE
+mdefine_line|#define SCCB_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
+DECL|macro|SCCA_WRITE
+mdefine_line|#define SCCA_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_a_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;&t;scc.cha_a_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
 multiline_comment|/* loops_per_sec isn&squot;t initialized yet, so we can&squot;t use udelay(). This does a&n; * delay of ~ 60us. */
-mdefine_line|#define LONG_DELAY()&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&bslash;&n;&t;for( i = 100; i &gt; 0; --i )&t;&t;&bslash;&n;&t;    MFPDELAY();&t;&t;&t;&t;&bslash;&n;    } while(0)
+multiline_comment|/* Mac: loops_per_sec min. 1900000 ^= .5 us; MFPDELAY was 0.6 us*/
+DECL|macro|LONG_DELAY
+mdefine_line|#define LONG_DELAY()&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&bslash;&n;&t;for( i = 60*US; i &gt; 0; --i )&t;&t;&bslash;&n;&t;    barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
 macro_line|#ifndef CONFIG_SERIAL_CONSOLE
+DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -1096,13 +1496,21 @@ op_or
 l_int|0x82
 multiline_comment|/* assert DTR/RTS */
 suffix:semicolon
+macro_line|#if 0    
+r_if
+c_cond
+(paren
+id|port
+)paren
+(brace
+macro_line|#endif
 (paren
 r_void
 )paren
 id|scc.cha_b_ctrl
 suffix:semicolon
 multiline_comment|/* reset reg pointer */
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|9
@@ -1117,7 +1525,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* extra delay after WR9 access */
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|4
@@ -1150,7 +1558,7 @@ op_or
 id|clkmode
 )paren
 suffix:semicolon
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|3
@@ -1158,7 +1566,7 @@ comma
 id|reg3
 )paren
 suffix:semicolon
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|5
@@ -1166,7 +1574,7 @@ comma
 id|reg5
 )paren
 suffix:semicolon
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|9
@@ -1181,7 +1589,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* extra delay after WR9 access */
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|10
@@ -1190,7 +1598,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* NRZ mode */
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|11
@@ -1199,7 +1607,7 @@ id|clksrc
 )paren
 suffix:semicolon
 multiline_comment|/* main clock source */
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|12
@@ -1208,7 +1616,7 @@ id|div
 )paren
 suffix:semicolon
 multiline_comment|/* BRG value */
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|13
@@ -1217,7 +1625,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* BRG high byte */
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|14
@@ -1228,7 +1636,7 @@ id|baud
 )braket
 )paren
 suffix:semicolon
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|14
@@ -1248,7 +1656,7 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|3
@@ -1258,7 +1666,7 @@ op_or
 l_int|1
 )paren
 suffix:semicolon
-id|SCC_WRITE
+id|SCCB_WRITE
 c_func
 (paren
 l_int|5
@@ -1268,6 +1676,186 @@ op_or
 l_int|8
 )paren
 suffix:semicolon
+macro_line|#if 0
+)brace
+r_else
+(brace
+macro_line|#endif
+(paren
+r_void
+)paren
+id|scc.cha_a_ctrl
+suffix:semicolon
+multiline_comment|/* reset reg pointer */
+id|SCCA_WRITE
+c_func
+(paren
+l_int|9
+comma
+l_int|0xc0
+)paren
+suffix:semicolon
+multiline_comment|/* reset */
+id|LONG_DELAY
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* extra delay after WR9 access */
+id|SCCA_WRITE
+c_func
+(paren
+l_int|4
+comma
+(paren
+id|cflag
+op_amp
+id|PARENB
+)paren
+ques
+c_cond
+(paren
+(paren
+id|cflag
+op_amp
+id|PARODD
+)paren
+ques
+c_cond
+l_int|0x01
+suffix:colon
+l_int|0x03
+)paren
+suffix:colon
+l_int|0
+op_or
+l_int|0x04
+multiline_comment|/* 1 stopbit */
+op_or
+id|clkmode
+)paren
+suffix:semicolon
+id|SCCA_WRITE
+c_func
+(paren
+l_int|3
+comma
+id|reg3
+)paren
+suffix:semicolon
+id|SCCA_WRITE
+c_func
+(paren
+l_int|5
+comma
+id|reg5
+)paren
+suffix:semicolon
+id|SCCA_WRITE
+c_func
+(paren
+l_int|9
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* no interrupts */
+id|LONG_DELAY
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* extra delay after WR9 access */
+id|SCCA_WRITE
+c_func
+(paren
+l_int|10
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* NRZ mode */
+id|SCCA_WRITE
+c_func
+(paren
+l_int|11
+comma
+id|clksrc
+)paren
+suffix:semicolon
+multiline_comment|/* main clock source */
+id|SCCA_WRITE
+c_func
+(paren
+l_int|12
+comma
+id|div
+)paren
+suffix:semicolon
+multiline_comment|/* BRG value */
+id|SCCA_WRITE
+c_func
+(paren
+l_int|13
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* BRG high byte */
+id|SCCA_WRITE
+c_func
+(paren
+l_int|14
+comma
+id|brgsrc_table
+(braket
+id|baud
+)braket
+)paren
+suffix:semicolon
+id|SCCA_WRITE
+c_func
+(paren
+l_int|14
+comma
+id|brgsrc_table
+(braket
+id|baud
+)braket
+op_or
+(paren
+id|div
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|SCCA_WRITE
+c_func
+(paren
+l_int|3
+comma
+id|reg3
+op_or
+l_int|1
+)paren
+suffix:semicolon
+id|SCCA_WRITE
+c_func
+(paren
+l_int|5
+comma
+id|reg5
+op_or
+l_int|8
+)paren
+suffix:semicolon
+macro_line|#if 0
+)brace
+macro_line|#endif
 id|mac_SCC_reset_done
 op_assign
 l_int|1
@@ -1277,6 +1865,8 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif /* DEBUG_SERIAL */
+DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -1293,6 +1883,7 @@ multiline_comment|/* the m68k_debug_device is used by the GDB stub, do nothing h
 r_return
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef DEBUG_SERIAL
 r_if
 c_cond
 (paren
@@ -1341,7 +1932,7 @@ l_int|0
 suffix:semicolon
 id|mac_console_driver.write
 op_assign
-id|mac_scc_console_write
+id|mac_scca_console_write
 suffix:semicolon
 )brace
 r_else
@@ -1371,7 +1962,7 @@ l_int|1
 suffix:semicolon
 id|mac_console_driver.write
 op_assign
-id|mac_scc_console_write
+id|mac_sccb_console_write
 suffix:semicolon
 )brace
 r_if
@@ -1386,7 +1977,7 @@ op_amp
 id|mac_console_driver
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
 multiline_comment|/*&n; * Local variables:&n; *  c-indent-level: 4&n; *  tab-width: 8&n; * End:&n; */
 eof

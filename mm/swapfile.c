@@ -25,21 +25,9 @@ id|nr_swapfiles
 op_assign
 l_int|0
 suffix:semicolon
-r_static
-r_struct
-(brace
-DECL|member|head
-r_int
-id|head
-suffix:semicolon
-multiline_comment|/* head of priority-ordered swapfile list */
-DECL|member|next
-r_int
-id|next
-suffix:semicolon
-multiline_comment|/* swapfile to be used next */
 DECL|variable|swap_list
-)brace
+r_struct
+id|swap_list_t
 id|swap_list
 op_assign
 (brace
@@ -2920,6 +2908,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Adding Swap: %dk swap-space (priority %d)&bslash;n&quot;
 comma
 id|j

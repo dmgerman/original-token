@@ -46,7 +46,7 @@ id|LTSS_FPCTXT
 op_assign
 l_int|24
 multiline_comment|/* the following macro is used when enabling interrupts */
-macro_line|#if defined(MACH_ATARI_ONLY) &amp;&amp; !defined(CONFIG_HADES)
+macro_line|#if defined(CONFIG_ATARI_ONLY) &amp;&amp; !defined(CONFIG_HADES)
 multiline_comment|/* block out HSYNC on the atari */
 DECL|macro|ALLOWINT
 mdefine_line|#define ALLOWINT 0xfbff

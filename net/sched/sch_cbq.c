@@ -5838,7 +5838,7 @@ c_func
 (paren
 id|skb
 comma
-id|TCA_CBQ_OVL_STRATEGY
+id|TCA_CBQ_POLICE
 comma
 r_sizeof
 (paren

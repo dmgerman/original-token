@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl.h,v 1.1 1998/01/28 09:56:22 ecd Exp $&n; *&n; * linux/ioctl.h for Linux by H.H. Bergman.&n; */
+multiline_comment|/*&n; * linux/ioctl.h for Linux by H.H. Bergman.&n; */
 macro_line|#ifndef _ASMARM_IOCTL_H
 DECL|macro|_ASMARM_IOCTL_H
 mdefine_line|#define _ASMARM_IOCTL_H

@@ -540,6 +540,26 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|bionet_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|pamsnet_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tlan_probe
 c_func
 (paren
@@ -582,6 +602,28 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
+id|acorn_ethif_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|am79c961_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|epic100_probe
 c_func
 (paren
@@ -594,6 +636,17 @@ suffix:semicolon
 r_extern
 r_int
 id|rtl8139_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|hplance_probe
 c_func
 (paren
 r_struct
@@ -1125,6 +1178,30 @@ c_func
 id|dev
 )paren
 macro_line|#endif
+macro_line|#ifdef CONFIG_ATARI_BIONET&t;/* Atari Bionet Ethernet board */
+op_logical_and
+id|bionet_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATARI_PAMSNET&t;/* Atari PAMsNet Ethernet board */
+op_logical_and
+id|pamsnet_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_HPLANCE&t;&t;/* HP300 internal Ethernet */
+op_logical_and
+id|hplance_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUNLANCE
 op_logical_and
 id|sparc_lance_probe
@@ -1180,7 +1257,7 @@ c_func
 (paren
 id|dev
 )paren
-macro_line|#endif&t;
+macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_ACORN
 op_logical_and
 id|acorn_ethif_probe
@@ -1711,7 +1788,7 @@ macro_line|#ifndef ETH0_IRQ
 DECL|macro|ETH0_IRQ
 macro_line|# define ETH0_IRQ 0
 macro_line|#endif
-macro_line|#ifndef __sparc__
+macro_line|#if !defined(__sparc__) &amp;&amp; !defined(CONFIG_ARCH_ACORN)
 DECL|macro|ETH_NOPROBE_ADDR
 mdefine_line|#define ETH_NOPROBE_ADDR 0xffe0
 macro_line|#else

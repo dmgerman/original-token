@@ -298,6 +298,27 @@ r_int
 )paren
 )paren
 suffix:semicolon
+DECL|struct|swap_list_t
+r_struct
+id|swap_list_t
+(brace
+DECL|member|head
+r_int
+id|head
+suffix:semicolon
+multiline_comment|/* head of priority-ordered swapfile list */
+DECL|member|next
+r_int
+id|next
+suffix:semicolon
+multiline_comment|/* swapfile to be used next */
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|swap_list_t
+id|swap_list
+suffix:semicolon
 multiline_comment|/*&n; * vm_ops not present page codes for shared memory.&n; *&n; * Will go away eventually..&n; */
 DECL|macro|SHM_SWP_TYPE
 mdefine_line|#define SHM_SWP_TYPE 0x20

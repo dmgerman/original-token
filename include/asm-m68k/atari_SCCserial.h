@@ -29,10 +29,12 @@ DECL|macro|SCC_BAUD_BASE_NONE
 mdefine_line|#define SCC_BAUD_BASE_NONE&t;0&t;&t;/* for not connected or unused&n;&t;&t;&t;&t;&t;&t; * clock sources */
 DECL|macro|SCC_BAUD_BASE_MVME_PCLK
 mdefine_line|#define SCC_BAUD_BASE_MVME_PCLK&t;781250&t;/* 12.5 MHz */
-DECL|macro|SCC_BAUD_BASE_BVM
-mdefine_line|#define SCC_BAUD_BASE_BVM&t;460800&t;/* 7.3728 MHz */
 DECL|macro|SCC_BAUD_BASE_MVME
 mdefine_line|#define SCC_BAUD_BASE_MVME&t;625000&t;/* 10.000 MHz */
+DECL|macro|SCC_BAUD_BASE_BVME_PCLK
+mdefine_line|#define SCC_BAUD_BASE_BVME_PCLK&t;781250&t;/* 12.5 MHz */   /* XXX ??? */
+DECL|macro|SCC_BAUD_BASE_BVME
+mdefine_line|#define SCC_BAUD_BASE_BVME&t;460800&t;/* 7.3728 MHz */
 multiline_comment|/* The SCC configuration structure */
 DECL|struct|atari_SCCserial
 r_struct

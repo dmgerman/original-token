@@ -118,57 +118,112 @@ comma
 DECL|member|data
 id|data
 suffix:semicolon
-DECL|typedef|lpr_ctrl
+DECL|typedef|MVMElp
+DECL|typedef|MVMElpPtr
 )brace
-id|lpr_ctrl
+id|MVMElp
+comma
+op_star
+id|MVMElpPtr
 suffix:semicolon
-DECL|macro|LPR_REGS
-mdefine_line|#define LPR_REGS&t;((volatile lpr_ctrl *)0xfff42030)
-DECL|macro|I596_BASE
-mdefine_line|#define I596_BASE&t;0xfff46000
-DECL|macro|SCC_A_ADDR
-mdefine_line|#define SCC_A_ADDR&t;0xfff45005
-DECL|macro|SCC_B_ADDR
-mdefine_line|#define SCC_B_ADDR&t;0xfff45001
-DECL|macro|IRQ_MVME162_TYPE_PRIO
-mdefine_line|#define IRQ_MVME162_TYPE_PRIO&t;0
-DECL|macro|IRQ_MVME167_PRN
-mdefine_line|#define IRQ_MVME167_PRN&t;&t;0x54
-DECL|macro|IRQ_MVME16x_I596
-mdefine_line|#define IRQ_MVME16x_I596&t;0x57
-DECL|macro|IRQ_MVME16x_SCSI
-mdefine_line|#define IRQ_MVME16x_SCSI&t;0x55
-DECL|macro|IRQ_MVME16x_FLY
-mdefine_line|#define IRQ_MVME16x_FLY&t;&t;0x7f
-DECL|macro|IRQ_MVME167_SER_ERR
-mdefine_line|#define IRQ_MVME167_SER_ERR&t;0x5c
-DECL|macro|IRQ_MVME167_SER_MODEM
-mdefine_line|#define IRQ_MVME167_SER_MODEM&t;0x5d
-DECL|macro|IRQ_MVME167_SER_TX
-mdefine_line|#define IRQ_MVME167_SER_TX&t;0x5e
-DECL|macro|IRQ_MVME167_SER_RX
-mdefine_line|#define IRQ_MVME167_SER_RX&t;0x5f
-DECL|macro|IRQ_MVME16x_TIMER
-mdefine_line|#define IRQ_MVME16x_TIMER&t;0x59
+DECL|macro|MVME_LPR_BASE
+mdefine_line|#define MVME_LPR_BASE&t;0xfff42030
+DECL|macro|mvmelp
+mdefine_line|#define mvmelp   ((*(volatile MVMElpPtr)(MVME_LPR_BASE)))
+r_typedef
+r_struct
+(brace
+r_int
+r_char
+DECL|member|ctrl
+id|ctrl
+comma
+DECL|member|bcd_sec
+id|bcd_sec
+comma
+DECL|member|bcd_min
+id|bcd_min
+comma
+DECL|member|bcd_hr
+id|bcd_hr
+comma
+DECL|member|bcd_dow
+id|bcd_dow
+comma
+DECL|member|bcd_dom
+id|bcd_dom
+comma
+DECL|member|bcd_mth
+id|bcd_mth
+comma
+DECL|member|bcd_year
+id|bcd_year
+suffix:semicolon
+DECL|typedef|MK48T08_t
+DECL|typedef|MK48T08ptr_t
+)brace
+id|MK48T08_t
+comma
+op_star
+id|MK48T08ptr_t
+suffix:semicolon
+DECL|macro|RTC_WRITE
+mdefine_line|#define RTC_WRITE&t;0x80
+DECL|macro|RTC_READ
+mdefine_line|#define RTC_READ&t;0x40
+DECL|macro|RTC_STOP
+mdefine_line|#define RTC_STOP&t;0x20
+DECL|macro|MVME_RTC_BASE
+mdefine_line|#define MVME_RTC_BASE&t;0xfffc1ff8
+DECL|macro|MVME_I596_BASE
+mdefine_line|#define MVME_I596_BASE&t;0xfff46000
+DECL|macro|MVME_SCC_A_ADDR
+mdefine_line|#define MVME_SCC_A_ADDR&t;0xfff45005
+DECL|macro|MVME_SCC_B_ADDR
+mdefine_line|#define MVME_SCC_B_ADDR&t;0xfff45001
+DECL|macro|MVME162_IRQ_TYPE_PRIO
+mdefine_line|#define MVME162_IRQ_TYPE_PRIO&t;0
+DECL|macro|MVME167_IRQ_PRN
+mdefine_line|#define MVME167_IRQ_PRN&t;&t;0x54
+DECL|macro|MVME16x_IRQ_I596
+mdefine_line|#define MVME16x_IRQ_I596&t;0x57
+DECL|macro|MVME16x_IRQ_SCSI
+mdefine_line|#define MVME16x_IRQ_SCSI&t;0x55
+DECL|macro|MVME16x_IRQ_FLY
+mdefine_line|#define MVME16x_IRQ_FLY&t;&t;0x7f
+DECL|macro|MVME167_IRQ_SER_ERR
+mdefine_line|#define MVME167_IRQ_SER_ERR&t;0x5c
+DECL|macro|MVME167_IRQ_SER_MODEM
+mdefine_line|#define MVME167_IRQ_SER_MODEM&t;0x5d
+DECL|macro|MVME167_IRQ_SER_TX
+mdefine_line|#define MVME167_IRQ_SER_TX&t;0x5e
+DECL|macro|MVME167_IRQ_SER_RX
+mdefine_line|#define MVME167_IRQ_SER_RX&t;0x5f
+DECL|macro|MVME16x_IRQ_TIMER
+mdefine_line|#define MVME16x_IRQ_TIMER&t;0x59
+DECL|macro|MVME167_IRQ_ABORT
+mdefine_line|#define MVME167_IRQ_ABORT&t;0x6e
+DECL|macro|MVME162_IRQ_ABORT
+mdefine_line|#define MVME162_IRQ_ABORT&t;0x5e
 multiline_comment|/* SCC interrupts, for MVME162 */
-DECL|macro|IRQ_MVME162_SCC_BASE
-mdefine_line|#define IRQ_MVME162_SCC_BASE&t;&t;0x40
-DECL|macro|IRQ_MVME162_SCCB_TX
-mdefine_line|#define IRQ_MVME162_SCCB_TX&t;&t;0x40
-DECL|macro|IRQ_MVME162_SCCB_STAT
-mdefine_line|#define IRQ_MVME162_SCCB_STAT&t;&t;0x42
-DECL|macro|IRQ_MVME162_SCCB_RX
-mdefine_line|#define IRQ_MVME162_SCCB_RX&t;&t;0x44
-DECL|macro|IRQ_MVME162_SCCB_SPCOND
-mdefine_line|#define IRQ_MVME162_SCCB_SPCOND&t;&t;0x46
-DECL|macro|IRQ_MVME162_SCCA_TX
-mdefine_line|#define IRQ_MVME162_SCCA_TX&t;&t;0x48
-DECL|macro|IRQ_MVME162_SCCA_STAT
-mdefine_line|#define IRQ_MVME162_SCCA_STAT&t;&t;0x4a
-DECL|macro|IRQ_MVME162_SCCA_RX
-mdefine_line|#define IRQ_MVME162_SCCA_RX&t;&t;0x4c
-DECL|macro|IRQ_MVME162_SCCA_SPCOND
-mdefine_line|#define IRQ_MVME162_SCCA_SPCOND&t;&t;0x4e
+DECL|macro|MVME162_IRQ_SCC_BASE
+mdefine_line|#define MVME162_IRQ_SCC_BASE&t;&t;0x40
+DECL|macro|MVME162_IRQ_SCCB_TX
+mdefine_line|#define MVME162_IRQ_SCCB_TX&t;&t;0x40
+DECL|macro|MVME162_IRQ_SCCB_STAT
+mdefine_line|#define MVME162_IRQ_SCCB_STAT&t;&t;0x42
+DECL|macro|MVME162_IRQ_SCCB_RX
+mdefine_line|#define MVME162_IRQ_SCCB_RX&t;&t;0x44
+DECL|macro|MVME162_IRQ_SCCB_SPCOND
+mdefine_line|#define MVME162_IRQ_SCCB_SPCOND&t;&t;0x46
+DECL|macro|MVME162_IRQ_SCCA_TX
+mdefine_line|#define MVME162_IRQ_SCCA_TX&t;&t;0x48
+DECL|macro|MVME162_IRQ_SCCA_STAT
+mdefine_line|#define MVME162_IRQ_SCCA_STAT&t;&t;0x4a
+DECL|macro|MVME162_IRQ_SCCA_RX
+mdefine_line|#define MVME162_IRQ_SCCA_RX&t;&t;0x4c
+DECL|macro|MVME162_IRQ_SCCA_SPCOND
+mdefine_line|#define MVME162_IRQ_SCCA_SPCOND&t;&t;0x4e
 multiline_comment|/* MVME162 version register */
 DECL|macro|MVME162_VERSION_REG
 mdefine_line|#define MVME162_VERSION_REG&t;0xfff4202e
@@ -196,37 +251,5 @@ DECL|macro|MVME16x_CONFIG_GOT_SCCA
 mdefine_line|#define MVME16x_CONFIG_GOT_SCCA&t;&t;0x0400
 DECL|macro|MVME16x_CONFIG_GOT_SCCB
 mdefine_line|#define MVME16x_CONFIG_GOT_SCCB&t;&t;0x0800
-multiline_comment|/* Specials for the ethernet driver */
-DECL|macro|CA
-mdefine_line|#define CA()&t;&t;(((struct i596_reg *)dev-&gt;base_addr)-&gt;ca = 1)
-DECL|macro|MPU_PORT
-mdefine_line|#define MPU_PORT(c,x)&t;&bslash;&n;  ((struct i596_reg *)(dev-&gt;base_addr))-&gt;porthi = ((c) | (u32)(x)) &amp; 0xffff; &bslash;&n;  ((struct i596_reg *)(dev-&gt;base_addr))-&gt;portlo = ((c) | (u32)(x)) &gt;&gt; 16
-DECL|macro|SCP_SYSBUS
-mdefine_line|#define SCP_SYSBUS&t;0x00000054
-DECL|macro|WSWAPrfd
-mdefine_line|#define WSWAPrfd(x)&t;((struct i596_rfd *) (((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))
-DECL|macro|WSWAPrbd
-mdefine_line|#define WSWAPrbd(x)&t;((struct i596_rbd *) (((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))
-DECL|macro|WSWAPiscp
-mdefine_line|#define WSWAPiscp(x)&t;((struct i596_iscp *)(((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))
-DECL|macro|WSWAPscb
-mdefine_line|#define WSWAPscb(x)&t;((struct i596_scb *) (((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))
-DECL|macro|WSWAPcmd
-mdefine_line|#define WSWAPcmd(x)&t;((struct i596_cmd *) (((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))
-DECL|macro|WSWAPtbd
-mdefine_line|#define WSWAPtbd(x)&t;((struct i596_tbd *) (((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))
-DECL|macro|WSWAPchar
-mdefine_line|#define WSWAPchar(x)&t;((char *)            (((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))
-multiline_comment|/*&n; * The MPU_PORT command allows direct access to the 82596. With PORT access&n; * the following commands are available (p5-18). The 32-bit port command&n; * must be word-swapped with the most significant word written first.&n; */
-DECL|macro|PORT_RESET
-mdefine_line|#define PORT_RESET&t;0x00&t;/* reset 82596 */
-DECL|macro|PORT_SELFTEST
-mdefine_line|#define PORT_SELFTEST&t;0x01&t;/* selftest */
-DECL|macro|PORT_ALTSCP
-mdefine_line|#define PORT_ALTSCP&t;0x02&t;/* alternate SCB address */
-DECL|macro|PORT_ALTDUMP
-mdefine_line|#define PORT_ALTDUMP&t;0x03&t;/* Alternate DUMP address */
-DECL|macro|ISCP_BUSY
-mdefine_line|#define ISCP_BUSY&t;0x00010000
-macro_line|#endif /* _M68K_MVME16xHW_H_ */
+macro_line|#endif
 eof

@@ -208,6 +208,24 @@ r_int
 id|on
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_8xx
+r_extern
+r_int
+id|console_8xx_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|rs_8xx_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -8545,6 +8563,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAC_SERIAL
+id|macserial_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ROCKETPORT
 id|rp_init
 c_func
@@ -8601,6 +8626,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_8xx
+id|rs_8xx_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 id|pty_init
 c_func
 (paren

@@ -1363,6 +1363,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|rtnl
+op_logical_and
 id|rtnl-&gt;receive_queue.qlen
 )paren
 id|rtnl
@@ -1380,7 +1382,7 @@ suffix:semicolon
 macro_line|#else
 multiline_comment|/* The problem: inline requires to include &lt;net/sock.h&gt; and, hence,&n;   almost all of net includes :-(&n; */
 DECL|macro|rtnl_shunlock
-mdefine_line|#define rtnl_shunlock() ({ &bslash;&n;&t;atomic_dec(&amp;rtnl_rlockct); &bslash;&n;&t;if (atomic_read(&amp;rtnl_rlockct) &lt;= 1) { &bslash;&n;&t;&t;wake_up(&amp;rtnl_wait); &bslash;&n;&t;&t;if (rtnl-&gt;receive_queue.qlen) &bslash;&n;&t;&t;&t;rtnl-&gt;data_ready(rtnl, 0); &bslash;&n;&t;} &bslash;&n;})
+mdefine_line|#define rtnl_shunlock() ({ &bslash;&n;&t;atomic_dec(&amp;rtnl_rlockct); &bslash;&n;&t;if (atomic_read(&amp;rtnl_rlockct) &lt;= 1) { &bslash;&n;&t;&t;wake_up(&amp;rtnl_wait); &bslash;&n;&t;&t;if (rtnl &amp;&amp; rtnl-&gt;receive_queue.qlen) &bslash;&n;&t;&t;&t;rtnl-&gt;data_ready(rtnl, 0); &bslash;&n;&t;} &bslash;&n;})
 macro_line|#endif
 multiline_comment|/* Release exclusive lock. Note, that we do not wake up rtnetlink socket,&n; * it will be done later after releasing shared lock.&n; */
 DECL|function|rtnl_exunlock

@@ -2162,6 +2162,23 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_FIT3
+(brace
+r_extern
+r_struct
+id|pi_protocol
+id|fit3
+suffix:semicolon
+id|pi_register
+c_func
+(paren
+op_amp
+id|fit3
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PARIDE_KBIC
 (brace
 r_extern

@@ -259,9 +259,7 @@ c_cond
 (paren
 op_logical_neg
 id|error
-)paren
-id|error
-op_assign
+op_logical_and
 id|__copy_from_user
 c_func
 (paren
@@ -271,6 +269,11 @@ id|ufdset
 comma
 id|nr
 )paren
+)paren
+id|error
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 id|error

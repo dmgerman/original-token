@@ -2643,6 +2643,15 @@ id|fp
 op_assign
 id|f
 suffix:semicolon
+op_star
+id|arg
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|f
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

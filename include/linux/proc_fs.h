@@ -119,6 +119,9 @@ comma
 DECL|enumerator|PROC_PPC_HTAB
 id|PROC_PPC_HTAB
 comma
+DECL|enumerator|PROC_STRAM
+id|PROC_STRAM
+comma
 DECL|enumerator|PROC_SOUND
 id|PROC_SOUND
 comma

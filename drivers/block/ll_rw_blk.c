@@ -1756,6 +1756,9 @@ suffix:colon
 r_case
 id|ACSI_MAJOR
 suffix:colon
+r_case
+id|MFM_ACORN_MAJOR
+suffix:colon
 multiline_comment|/*&n;&t;&t; * The scsi disk and cdrom drivers completely remove the request&n;&t;&t; * from the queue when they start processing an entry.  For this&n;&t;&t; * reason it is safe to continue to add links to the top entry for&n;&t;&t; * those devices.&n;&t;&t; *&n;&t;&t; * All other drivers need to jump over the first entry, as that&n;&t;&t; * entry may be busy being processed and we thus can&squot;t change it.&n;&t;&t; */
 r_if
 c_cond
@@ -3490,6 +3493,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_XD
 id|xd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_MFM
+id|mfm_init
 c_func
 (paren
 )paren

@@ -41,6 +41,10 @@ DECL|macro|SER_SCC_MVME
 mdefine_line|#define SER_SCC_MVME&t;109&t;/* MVME162/MVME172 ports */
 DECL|macro|SER_SCC_MAC
 mdefine_line|#define SER_SCC_MAC&t;110&t;/* Macintosh SCC channel */
+DECL|macro|SER_HPDCA
+mdefine_line|#define SER_HPDCA&t;111&t;/* HP DCA serial */
+DECL|macro|SER_SCC_BVME
+mdefine_line|#define SER_SCC_BVME&t;112&t;/* BVME6000 ports */
 DECL|struct|serial_struct
 r_struct
 id|serial_struct

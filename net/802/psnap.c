@@ -304,7 +304,7 @@ l_string|&quot;SNAP - unable to register with 802.2&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Register SNAP clients. We don&squot;t yet use this for IP or IPX.&n; */
+multiline_comment|/*&n; *&t;Register SNAP clients. We don&squot;t yet use this for IP.&n; */
 DECL|function|register_snap_client
 r_struct
 id|datalink_proto

@@ -352,12 +352,31 @@ l_int|10
 )paren
 (brace
 multiline_comment|/* sleep 2 sec and try again */
+multiline_comment|/*&n;&t;&t;     * The spinlock is silly - we should really lock more of this&n;&t;&t;     * function, but the minimal locking required to not lock up&n;&t;&t;     * is around this - scsi_sleep() assumes we hold the spinlock.&n;&t;&t;     */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
 l_int|2
 op_star
 id|HZ
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_goto

@@ -292,8 +292,7 @@ suffix:semicolon
 r_case
 id|SO_SNDBUF
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; *&t;The spec isnt clear if ENOBUFS or EINVAL&n;&t;&t;&t; *&t;is best&n;&t;&t;&t; */
-multiline_comment|/* printk(KERN_DEBUG &quot;setting SO_SNDBUF %d&bslash;n&quot;, val); */
+multiline_comment|/* Don&squot;t error on this BSD doesn&squot;t and if you think&n;&t;&t;&t;   about it this is right. Otherwise apps have to&n;&t;&t;&t;   play &squot;guess the biggest size&squot; games. RCVBUF/SNDBUF&n;&t;&t;&t;   are treated in BSD as hints */
 r_if
 c_cond
 (paren
@@ -302,10 +301,8 @@ OG
 id|sysctl_wmem_max
 )paren
 r_return
-op_minus
-id|EINVAL
+l_int|0
 suffix:semicolon
-multiline_comment|/* FIXME: the tcp code should be made to work even&n;&t;&t;&t; * with small sndbuf values.&n;&t;&t;&t; */
 id|sk-&gt;sndbuf
 op_assign
 id|max
@@ -332,7 +329,7 @@ suffix:semicolon
 r_case
 id|SO_RCVBUF
 suffix:colon
-multiline_comment|/* printk(KERN_DEBUG &quot;setting SO_RCVBUF %d&bslash;n&quot;, val); */
+multiline_comment|/* Don&squot;t error on this BSD doesn&squot;t and if you think&n;&t;&t;&t;   about it this is right. Otherwise apps have to&n;&t;&t;&t;   play &squot;guess the biggest size&squot; games. RCVBUF/SNDBUF&n;&t;&t;&t;   are treated in BSD as hints */
 r_if
 c_cond
 (paren
@@ -341,8 +338,7 @@ OG
 id|sysctl_rmem_max
 )paren
 r_return
-op_minus
-id|EINVAL
+l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME: is this lower bound the right one? */
 id|sk-&gt;rcvbuf
@@ -1181,10 +1177,13 @@ r_if
 c_cond
 (paren
 id|sk
-op_logical_and
-id|zero_it
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|zero_it
+)paren
 id|memset
 c_func
 (paren
@@ -1560,12 +1559,6 @@ r_int
 id|priority
 )paren
 (brace
-r_void
-op_star
-id|mem
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1581,6 +1574,10 @@ OL
 id|sysctl_optmem_max
 )paren
 (brace
+r_void
+op_star
+id|mem
+suffix:semicolon
 multiline_comment|/* First do the add, to avoid the race if kmalloc&n; &t;&t; * might sleep.&n;&t;&t; */
 id|atomic_add
 c_func
@@ -1601,9 +1598,26 @@ comma
 id|priority
 )paren
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|mem
+)paren
 r_return
 id|mem
+suffix:semicolon
+id|atomic_sub
+c_func
+(paren
+id|size
+comma
+op_amp
+id|sk-&gt;omem_alloc
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|sock_kfree_s
@@ -2673,8 +2687,7 @@ id|pt
 )paren
 (brace
 r_return
-op_minus
-id|EOPNOTSUPP
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sock_no_ioctl

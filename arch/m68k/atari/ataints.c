@@ -541,6 +541,9 @@ l_string|&quot;i&quot;
 (paren
 op_amp
 id|kstat.irqs
+(braket
+l_int|0
+)braket
 )paren
 comma
 l_string|&quot;n&quot;

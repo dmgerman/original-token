@@ -366,6 +366,12 @@ DECL|macro|__NR_pwrite
 mdefine_line|#define __NR_pwrite&t;&t;181
 DECL|macro|__NR_lchown
 mdefine_line|#define __NR_lchown&t;&t;182
+DECL|macro|__NR_getcwd
+mdefine_line|#define __NR_getcwd&t;&t;183
+DECL|macro|__NR_capget
+mdefine_line|#define __NR_capget&t;&t;184
+DECL|macro|__NR_capset
+mdefine_line|#define __NR_capset&t;&t;185
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

@@ -308,11 +308,15 @@ DECL|macro|via_2
 macro_line|# define via_2         ((*(volatile struct VIA *)VIA2_BAS))
 DECL|macro|via1_regp
 macro_line|# define via1_regp    ((volatile unsigned char *)VIA1_BAS)
-DECL|macro|via2_regp
-macro_line|# define via2_regp    ((volatile unsigned char *)VIA2_BAS)
-DECL|macro|via2_ci_regp
-macro_line|# define via2_ci_regp ((volatile unsigned char *)VIA2_BAS_IIci)
-DECL|macro|rbv_regp
-macro_line|# define rbv_regp     ((volatile unsigned char *)VIA2_BAS_IIci)
+multiline_comment|/*&n; * OSS/RBV base address &n; */
+DECL|macro|OSS_BAS
+mdefine_line|#define OSS_BAS&t;&t;0x50f1a000
+DECL|macro|PSC_BAS
+mdefine_line|#define PSC_BAS&t;&t;0x50f31000
+multiline_comment|/* move to oss.h?? */
+DECL|macro|nIFR
+mdefine_line|#define nIFR&t;0x203
+DECL|macro|oIFR
+mdefine_line|#define oIFR&t;0x202
 macro_line|#endif /* linux/machw.h */
 eof

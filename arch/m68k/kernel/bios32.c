@@ -10,7 +10,6 @@ macro_line|# define DBG_DEVS(args)
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n; * PCI support for Linux/m68k. Currently only the Hades is supported.&n; *&n; * Notes:&n; *&n; * 1. The PCI memory area starts at address 0x80000000 and the&n; *    I/O area starts at 0xB0000000. Therefore these offsets&n; *    are added to the base addresses when they are read and&n; *    substracted when they are written.&n; *&n; * 2. The support for PCI bridges in the DEC Alpha version has&n; *    been removed in this version.&n; */
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -28,7 +27,7 @@ mdefine_line|#define GB&t;&t;(1024*MB)
 DECL|macro|MAJOR_REV
 mdefine_line|#define MAJOR_REV&t;0
 DECL|macro|MINOR_REV
-mdefine_line|#define MINOR_REV&t;0
+mdefine_line|#define MINOR_REV&t;1
 multiline_comment|/*&n; * Base addresses of the PCI memory and I/O areas on the Hades.&n; */
 DECL|variable|pci_mem_base
 r_static
@@ -860,6 +859,14 @@ r_struct
 id|pci_dev
 op_star
 id|dev
+comma
+r_int
+r_int
+id|pci_mem_base
+comma
+r_int
+r_int
+id|pci_io_base
 )paren
 )paren
 (brace
@@ -885,6 +892,9 @@ suffix:semicolon
 r_int
 r_int
 id|alignto
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 multiline_comment|/*&n;&t; * Skip video cards for the time being.&n;&t; */
 r_if
@@ -939,6 +949,10 @@ c_loop
 id|reg
 op_assign
 id|PCI_BASE_ADDRESS_0
+comma
+id|i
+op_assign
+l_int|0
 suffix:semicolon
 id|reg
 op_le
@@ -947,6 +961,9 @@ suffix:semicolon
 id|reg
 op_add_assign
 l_int|4
+comma
+id|i
+op_increment
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Figure out how much space and of what type this&n;&t;&t; * device wants.&n;&t;&t; */
@@ -983,6 +1000,13 @@ id|base
 )paren
 (brace
 multiline_comment|/* this base-address register is unused */
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -1065,6 +1089,19 @@ id|base
 op_or
 l_int|0x1
 )paren
+suffix:semicolon
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+op_assign
+(paren
+id|pci_io_base
+op_plus
+id|base
+)paren
+op_or
+l_int|1
 suffix:semicolon
 id|DBG_DEVS
 c_func
@@ -1225,6 +1262,15 @@ comma
 id|base
 )paren
 suffix:semicolon
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+op_assign
+id|pci_mem_base
+op_plus
+id|base
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Enable device:&n;&t; */
@@ -1322,6 +1368,14 @@ r_struct
 id|pci_bus
 op_star
 id|bus
+comma
+r_int
+r_int
+id|pci_mem_base
+comma
+r_int
+r_int
+id|pci_io_base
 )paren
 )paren
 (brace
@@ -1449,6 +1503,10 @@ id|layout_dev
 c_func
 (paren
 id|dev
+comma
+id|pci_mem_base
+comma
+id|pci_io_base
 )paren
 suffix:semicolon
 )brace
@@ -1667,18 +1725,11 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|pcibios_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 )paren
 (brace
@@ -1700,8 +1751,13 @@ l_string|&quot;...NOT modifying existing PCI configuration&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-id|mem_start
+id|pci_mem_base
+op_assign
+l_int|0x80000000
+suffix:semicolon
+id|pci_io_base
+op_assign
+l_int|0xB0000000
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * static inline void hades_fixup(void)&n; *&n; * Assign IRQ numbers as used by Linux to the interrupt pins&n; * of the PCI cards.&n; */
@@ -1812,47 +1868,82 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|pcibios_fixup
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 )paren
 (brace
 macro_line|#if PCI_MODIFY
+r_int
+r_int
+id|orig_mem_base
+comma
+id|orig_io_base
+suffix:semicolon
+id|orig_mem_base
+op_assign
+id|pci_mem_base
+suffix:semicolon
+id|orig_io_base
+op_assign
+id|pci_io_base
+suffix:semicolon
+id|pci_mem_base
+op_assign
+l_int|0
+suffix:semicolon
+id|pci_io_base
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Scan the tree, allocating PCI memory and I/O space.&n;&t; */
 id|layout_bus
 c_func
 (paren
 op_amp
 id|pci_root
+comma
+id|orig_mem_base
+comma
+id|orig_io_base
 )paren
 suffix:semicolon
-macro_line|#endif
 id|pci_mem_base
 op_assign
-l_int|0x80000000
+id|orig_mem_base
 suffix:semicolon
 id|pci_io_base
 op_assign
-l_int|0xB0000000
+id|orig_io_base
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Now is the time to do all those dirty little deeds...&n;&t; */
 id|hades_fixup
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_char
+op_star
+id|pcibios_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+)paren
+(brace
 r_return
-id|mem_start
+id|str
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PCI */

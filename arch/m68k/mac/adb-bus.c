@@ -189,6 +189,13 @@ r_static
 r_int
 id|last_status
 suffix:semicolon
+DECL|variable|driver_running
+r_static
+r_int
+id|driver_running
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*static int adb_delay;*/
 DECL|variable|in_keybinit
 r_int
@@ -303,11 +310,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Misc. defines for testing &n; */
+multiline_comment|/*&n; * debug level 10 required for ADB logging (should be &amp;&amp; debug_adb, ideally)&n; */
 r_extern
 r_int
 id|console_loglevel
 suffix:semicolon
+multiline_comment|/*&n; * Misc. defines for testing - should go to header :-(&n; */
 DECL|macro|ADBDEBUG_STATUS
 mdefine_line|#define ADBDEBUG_STATUS&t;&t;(1)
 DECL|macro|ADBDEBUG_STATE
@@ -336,8 +344,7 @@ DECL|macro|ADBDEBUG_DEVICE
 mdefine_line|#define ADBDEBUG_DEVICE&t;&t;(4096)
 DECL|macro|ADBDEBUG_IISI
 mdefine_line|#define ADBDEBUG_IISI&t;&t;(8192)
-DECL|macro|DEBUG_ADB
-mdefine_line|#define DEBUG_ADB
+multiline_comment|/*#define DEBUG_ADB*/
 macro_line|#ifdef DEBUG_ADB
 DECL|macro|ADBDEBUG
 mdefine_line|#define ADBDEBUG&t;(ADBDEBUG_INPUT | ADBDEBUG_READ | ADBDEBUG_START | ADBDEBUG_WRITE | ADBDEBUG_SRQ | ADBDEBUG_REQUEST)
@@ -2956,6 +2963,10 @@ id|x
 comma
 id|adbdir
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|adb_request
 op_star
@@ -2964,6 +2975,37 @@ suffix:semicolon
 id|last_status
 op_assign
 id|status
+suffix:semicolon
+multiline_comment|/* prevent races due to SCSI enabling ints */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|driver_running
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|driver_running
+op_assign
+l_int|1
 suffix:semicolon
 macro_line|#ifdef USE_ORIG
 id|status
@@ -6197,6 +6239,17 @@ id|adb_state
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/* reset mutex and interrupts */
+id|driver_running
+op_assign
+l_int|0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Restart of CUDA support: please modify this interrupt handler while &n; * working at the Quadra etc. ADB driver. We can try to merge them later, or&n; * remove the CUDA stuff from the MacII handler&n; *&n; * MSch 27/01/98: Implemented IIsi driver based on initial code by Robert &n; * Thompson and hints from the NetBSD driver. CUDA and IIsi seem more closely&n; * related than to the MacII code, so merging all three might be a bad&n; * idea.&n; */
 DECL|function|adb_cuda_interrupt

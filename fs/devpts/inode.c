@@ -21,36 +21,6 @@ id|mounts
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|devpts_put_inode
-r_static
-r_void
-id|devpts_put_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-)brace
-DECL|function|devpts_delete_inode
-r_static
-r_void
-id|devpts_delete_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|devpts_put_super
 r_static
 r_void
@@ -126,6 +96,9 @@ id|i
 comma
 id|inode-&gt;i_count
 )paren
+suffix:semicolon
+id|inode-&gt;i_nlink
+op_decrement
 suffix:semicolon
 id|iput
 c_func
@@ -218,10 +191,12 @@ id|devpts_read_inode
 comma
 id|devpts_write_inode
 comma
-id|devpts_put_inode
+l_int|NULL
 comma
-id|devpts_delete_inode
+multiline_comment|/* put_inode */
+l_int|NULL
 comma
+multiline_comment|/* delete_inode */
 l_int|NULL
 comma
 multiline_comment|/* notify_change */
@@ -1070,10 +1045,6 @@ id|NR_PTYS
 r_return
 suffix:semicolon
 multiline_comment|/* Bogus */
-id|inode-&gt;i_nlink
-op_assign
-l_int|1
-suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|S_IFCHR
@@ -1235,6 +1206,9 @@ id|inode-&gt;i_rdev
 op_assign
 id|device
 suffix:semicolon
+id|inode-&gt;i_nlink
+op_increment
+suffix:semicolon
 id|sbi-&gt;inodes
 (braket
 id|number
@@ -1312,10 +1286,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|inode-&gt;i_nlink
-op_assign
-l_int|0
+op_decrement
 suffix:semicolon
-multiline_comment|/* Is this right? */
 id|iput
 c_func
 (paren

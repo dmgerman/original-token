@@ -108,7 +108,7 @@ DECL|macro|ATARI_MACH_HADES
 mdefine_line|#define ATARI_MACH_HADES&t;2&t;/* Hades 040 or 060 */
 DECL|macro|ATARI_MACH_AB40
 mdefine_line|#define ATARI_MACH_AB40&t;&t;3&t;/* Afterburner040 on Falcon */
-multiline_comment|/*&n;     *  Macintosh-specific tags&n;     */
+multiline_comment|/*&n;     *  Macintosh-specific tags (all u_long)&n;     */
 DECL|macro|BI_MAC_MODEL
 mdefine_line|#define BI_MAC_MODEL&t;&t;0x8000&t;/* Mac Gestalt ID (model type) */
 DECL|macro|BI_MAC_VADDR
@@ -131,7 +131,46 @@ DECL|macro|BI_MAC_MEMSIZE
 mdefine_line|#define BI_MAC_MEMSIZE&t;&t;0x8009&t;/* Mac RAM size (sanity check) */
 DECL|macro|BI_MAC_CPUID
 mdefine_line|#define BI_MAC_CPUID&t;&t;0x800a&t;/* Mac CPU type (sanity check) */
-multiline_comment|/*&n;     * Mac: compatibility with old booter data format (temporarily)&n;     */
+DECL|macro|BI_MAC_ROMBASE
+mdefine_line|#define BI_MAC_ROMBASE&t;&t;0x800b&t;/* Mac system ROM base address */ 
+multiline_comment|/*&n;     *  Macintosh hardware profile data - unused, see macintosh.h for &n;     *  resonable type values &n;     */
+DECL|macro|BI_MAC_VIA1BASE
+mdefine_line|#define BI_MAC_VIA1BASE&t;&t;0x8010&t;/* Mac VIA1 base address (always present) */
+DECL|macro|BI_MAC_VIA2BASE
+mdefine_line|#define BI_MAC_VIA2BASE&t;&t;0x8011&t;/* Mac VIA2 base address (type varies) */
+DECL|macro|BI_MAC_VIA2TYPE
+mdefine_line|#define BI_MAC_VIA2TYPE&t;&t;0x8012&t;/* Mac VIA2 type (VIA, RBV, OSS) */
+DECL|macro|BI_MAC_ADBTYPE
+mdefine_line|#define BI_MAC_ADBTYPE&t;&t;0x8013&t;/* Mac ADB interface type */
+DECL|macro|BI_MAC_ASCBASE
+mdefine_line|#define BI_MAC_ASCBASE&t;&t;0x8014&t;/* Mac Apple Sound Chip base address */
+DECL|macro|BI_MAC_SCSI5380
+mdefine_line|#define BI_MAC_SCSI5380&t;&t;0x8015&t;/* Mac NCR 5380 SCSI (base address, multi) */
+DECL|macro|BI_MAC_SCSIDMA
+mdefine_line|#define BI_MAC_SCSIDMA&t;&t;0x8016&t;/* Mac SCSI DMA (base address) */
+DECL|macro|BI_MAC_SCSI5396
+mdefine_line|#define BI_MAC_SCSI5396&t;&t;0x8017&t;/* Mac NCR 53C96 SCSI (base address, multi) */
+DECL|macro|BI_MAC_IDETYPE
+mdefine_line|#define BI_MAC_IDETYPE&t;&t;0x8018&t;/* Mac IDE interface type */
+DECL|macro|BI_MAC_IDEBASE
+mdefine_line|#define BI_MAC_IDEBASE&t;&t;0x8019&t;/* Mac IDE interface base address */
+DECL|macro|BI_MAC_NUBUS
+mdefine_line|#define BI_MAC_NUBUS&t;&t;0x801a&t;/* Mac Nubus type (none, regular, pseudo) */
+DECL|macro|BI_MAC_SLOTMASK
+mdefine_line|#define BI_MAC_SLOTMASK&t;&t;0x801b&t;/* Mac Nubus slots present */
+DECL|macro|BI_MAC_SCCTYPE
+mdefine_line|#define BI_MAC_SCCTYPE&t;&t;0x801c&t;/* Mac SCC serial type (normal, IOP) */
+DECL|macro|BI_MAC_ETHTYPE
+mdefine_line|#define BI_MAC_ETHTYPE&t;&t;0x801d&t;/* Mac builtin ethernet type (Sonic, MACE */
+DECL|macro|BI_MAC_ETHBASE
+mdefine_line|#define BI_MAC_ETHBASE&t;&t;0x801e&t;/* Mac builtin ethernet base address */
+DECL|macro|BI_MAC_PMU
+mdefine_line|#define BI_MAC_PMU&t;&t;0x801f&t;/* Mac power managment / poweroff hardware */
+DECL|macro|BI_MAC_IOP_SWIM
+mdefine_line|#define BI_MAC_IOP_SWIM&t;&t;0x8020&t;/* Mac SWIM floppy IOP */
+DECL|macro|BI_MAC_IOP_ADB
+mdefine_line|#define BI_MAC_IOP_ADB&t;&t;0x8021&t;/* Mac ADB IOP */
+multiline_comment|/*&n;     * Mac: compatibility with old booter data format (temporarily)&n;     * Fields unused with the new bootinfo can be deleted now; instead of&n;     * adding new fields the struct might be splitted into a hardware address&n;     * part and a hardware type part&n;     */
 macro_line|#ifndef __ASSEMBLY__
 r_struct
 id|mac_booter_data
@@ -286,6 +325,8 @@ DECL|macro|MAC_BOOTI_VERSION
 mdefine_line|#define MAC_BOOTI_VERSION      MK_BI_VERSION( 2, 0 )
 DECL|macro|MVME16x_BOOTI_VERSION
 mdefine_line|#define MVME16x_BOOTI_VERSION  MK_BI_VERSION( 2, 0 )
+DECL|macro|BVME6000_BOOTI_VERSION
+mdefine_line|#define BVME6000_BOOTI_VERSION MK_BI_VERSION( 2, 0 )
 macro_line|#ifdef BOOTINFO_COMPAT_1_0
 multiline_comment|/*&n;     *  Backwards compatibility with bootinfo interface version 1.0&n;     */
 DECL|macro|COMPAT_AMIGA_BOOTI_VERSION

@@ -775,6 +775,16 @@ op_plus
 id|bofs
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
+DECL|macro|ffs
+mdefine_line|#define ffs(x) generic_ffs(x)
+multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
+DECL|macro|hweight32
+mdefine_line|#define hweight32(x) generic_hweight32(x)
+DECL|macro|hweight16
+mdefine_line|#define hweight16(x) generic_hweight16(x)
+DECL|macro|hweight8
+mdefine_line|#define hweight8(x) generic_hweight8(x)
 multiline_comment|/*&n; * Find next zero bit in a bitmap reasonably efficiently..&n; */
 DECL|function|find_next_zero_bit
 r_extern

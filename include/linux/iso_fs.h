@@ -1583,6 +1583,22 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_int
+id|get_acorn_filename
+c_func
+(paren
+r_struct
+id|iso_directory_record
+op_star
+comma
+r_char
+op_star
+comma
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* The stuff that follows may be totally unneeded. I have not checked to see &n; which prototypes we are still using.  */
 r_extern
 r_int

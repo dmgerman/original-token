@@ -8,6 +8,8 @@ mdefine_line|#define MINIX_ROOT_INO 1
 multiline_comment|/* Not the same as the bogus LINK_MAX in &lt;linux/limits.h&gt;. Oh well. */
 DECL|macro|MINIX_LINK_MAX
 mdefine_line|#define MINIX_LINK_MAX&t;250
+DECL|macro|MINIX2_LINK_MAX
+mdefine_line|#define MINIX2_LINK_MAX&t;65530
 DECL|macro|MINIX_I_MAP_SLOTS
 mdefine_line|#define MINIX_I_MAP_SLOTS&t;8
 DECL|macro|MINIX_Z_MAP_SLOTS
@@ -624,6 +626,11 @@ r_extern
 r_struct
 id|inode_operations
 id|minix_symlink_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|dentry_operations
+id|minix_dentry_operations
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif

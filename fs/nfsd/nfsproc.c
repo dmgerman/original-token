@@ -660,7 +660,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * CREATE processing is complicated. The keyword here is `overloaded.&squot;&n; * There&squot;s a small race condition here between the check for existence&n; * and the actual create() call, but one could even consider this a&n; * feature because this only happens if someone else creates the file&n; * at the same time.&n; * N.B. After this call _both_ argp-&gt;fh and resp-&gt;fh need an fh_put&n; */
+multiline_comment|/*&n; * CREATE processing is complicated. The keyword here is `overloaded.&squot;&n; * The parent directory is kept locked between the check for existence&n; * and the actual create() call in compliance with VFS protocols.&n; * N.B. After this call _both_ argp-&gt;fh and resp-&gt;fh need an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_create
@@ -709,8 +709,6 @@ r_struct
 id|inode
 op_star
 id|inode
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 id|nfserr
@@ -718,13 +716,10 @@ comma
 id|type
 comma
 id|mode
-suffix:semicolon
-r_int
+comma
 id|rdonly
 op_assign
 l_int|0
-comma
-id|exists
 suffix:semicolon
 id|dev_t
 id|rdev
@@ -751,7 +746,7 @@ comma
 id|argp-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* Get the directory inode */
+multiline_comment|/* First verify the parent filehandle */
 id|nfserr
 op_assign
 id|fh_verify
@@ -811,10 +806,9 @@ id|nfserr
 r_goto
 id|done
 suffix:semicolon
-multiline_comment|/* First, check if the file already exists.  */
-id|exists
+multiline_comment|/*&n;&t; * Do a lookup to verify the new filehandle.&n;&t; */
+id|nfserr
 op_assign
-op_logical_neg
 id|nfsd_lookup
 c_func
 (paren
@@ -832,36 +826,66 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|newfhp-&gt;fh_dverified
+id|nfserr
 )paren
-id|inode
-op_assign
-id|newfhp-&gt;fh_dentry-&gt;d_inode
-suffix:semicolon
-multiline_comment|/* Get rid of this soon... */
+(brace
 r_if
 c_cond
 (paren
-id|exists
-op_logical_and
+id|nfserr
+op_ne
+id|nfserr_noent
+)paren
+r_goto
+id|done
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If the new filehandle wasn&squot;t verified, we can&squot;t tell&n;&t;&t; * whether the file exists or not. Time to bail ...&n;&t;&t; */
+id|nfserr
+op_assign
+id|nfserr_acces
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
-id|inode
+id|newfhp-&gt;fh_dverified
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;nfsd_proc_create: Wheee... exists but d_inode==NULL&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;nfsd_proc_create: filehandle not verified&bslash;n&quot;
 )paren
-suffix:semicolon
-id|nfserr
-op_assign
-id|nfserr_rofs
 suffix:semicolon
 r_goto
 id|done
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n;&t; * Lock the parent directory and check for existence.&n;&t; */
+id|nfserr
+op_assign
+id|fh_lock_parent
+c_func
+(paren
+id|dirfhp
+comma
+id|newfhp-&gt;fh_dentry
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nfserr
+)paren
+r_goto
+id|done
+suffix:semicolon
+id|inode
+op_assign
+id|newfhp-&gt;fh_dentry-&gt;d_inode
+suffix:semicolon
 multiline_comment|/* Unfudge the mode bits */
 r_if
 c_cond
@@ -900,7 +924,7 @@ r_else
 r_if
 c_cond
 (paren
-id|exists
+id|inode
 )paren
 (brace
 id|type
@@ -941,7 +965,7 @@ id|rdonly
 op_logical_and
 (paren
 op_logical_neg
-id|exists
+id|inode
 op_logical_or
 id|type
 op_eq
@@ -949,7 +973,7 @@ id|S_IFREG
 )paren
 )paren
 r_goto
-id|done
+id|out_unlock
 suffix:semicolon
 id|attr-&gt;ia_valid
 op_or_assign
@@ -962,10 +986,6 @@ op_or
 id|mode
 suffix:semicolon
 multiline_comment|/* Special treatment for non-regular files according to the&n;&t; * gospel of sun micro&n;&t; */
-id|nfserr
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1053,7 +1073,7 @@ id|nfserr_io
 suffix:semicolon
 multiline_comment|/* or nfserr_inval? */
 r_goto
-id|done
+id|out_unlock
 suffix:semicolon
 )brace
 r_else
@@ -1065,10 +1085,14 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Make sure the type and device matches */
+id|nfserr
+op_assign
+id|nfserr_exist
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|exists
+id|inode
 op_logical_and
 (paren
 id|type
@@ -1088,21 +1112,19 @@ id|rdev
 )paren
 )paren
 )paren
-(brace
+r_goto
+id|out_unlock
+suffix:semicolon
+)brace
 id|nfserr
 op_assign
-id|nfserr_exist
+l_int|0
 suffix:semicolon
-r_goto
-id|done
-suffix:semicolon
-)brace
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|exists
+id|inode
 )paren
 (brace
 multiline_comment|/* File doesn&squot;t exist. Create it and set attrs */
@@ -1176,6 +1198,15 @@ id|attr
 )paren
 suffix:semicolon
 )brace
+id|out_unlock
+suffix:colon
+multiline_comment|/* We don&squot;t really need to unlock, as fh_put does it. */
+id|fh_unlock
+c_func
+(paren
+id|dirfhp
+)paren
+suffix:semicolon
 id|done
 suffix:colon
 id|fh_put
@@ -1484,6 +1515,21 @@ comma
 id|argp-&gt;tname
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|newfh
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|svc_fh
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Create the link, look up new file and set attrs.&n;&t; */
 id|nfserr
 op_assign
@@ -1589,12 +1635,20 @@ comma
 id|argp-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* N.B. what about the dentry count?? */
+r_if
+c_cond
+(paren
 id|resp-&gt;fh.fh_dverified
-op_assign
-l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;nfsd_proc_mkdir: response already verified??&bslash;n&quot;
+)paren
 suffix:semicolon
-multiline_comment|/* paranoia */
+)brace
 id|nfserr
 op_assign
 id|nfsd_create

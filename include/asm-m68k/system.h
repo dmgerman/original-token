@@ -93,7 +93,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__xg
 mdefine_line|#define __xg(x) ((volatile struct __xchg_dummy *)(x))
-macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC) &amp;&amp; !defined(CONFIG_HADES)
+macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC) &amp;&amp; !defined(CONFIG_HADES) &amp;&amp; !defined(CONFIG_VME) &amp;&amp; !defined(CONFIG_APOLLO)
 multiline_comment|/* block out HSYNC on the atari */
 DECL|macro|__sti
 mdefine_line|#define __sti() __asm__ __volatile__ (&quot;andiw #0xfbff,%/sr&quot;: : : &quot;memory&quot;)

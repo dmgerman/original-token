@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/m68k/mm/memory.c&n; *&n; *  Copyright (C) 1995  Hamish Macdonald&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -10,7 +11,9 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
+macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#endif
 multiline_comment|/* Strings for `extern inline&squot; functions in &lt;asm/pgtable.h&gt;.  If put&n;   directly into these functions, they are output for every file that&n;   includes pgtable.h */
 DECL|variable|PgtabStr_bad_pmd
 r_const
@@ -1898,6 +1901,7 @@ id|m68k_num_memory
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * assume that the kernel virtual address is the same as the&n;&t; * physical address.&n;&t; *&n;&t; * This should be reasonable in most situations:&n;&t; *  1) They shouldn&squot;t be dereferencing the virtual address&n;&t; *     unless they are sure that it is valid from kernel space.&n;&t; *  2) The only usage I see so far is converting a page table&n;&t; *     reference to some non-FASTMEM address space when freeing&n;         *     mmaped &quot;/dev/mem&quot; pages.  These addresses are just passed&n;&t; *     to &quot;free_page&quot;, which ignores addresses that aren&squot;t in&n;&t; *     the memory list anyway.&n;&t; *&n;&t; */
+macro_line|#ifdef CONFIG_AMIGA
 multiline_comment|/*&n;&t; * if on an amiga and address is in first 16M, move it &n;&t; * to the ZTWO_VADDR range&n;&t; */
 r_if
 c_cond
@@ -1919,6 +1923,7 @@ c_func
 id|paddr
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|paddr
 suffix:semicolon

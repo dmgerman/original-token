@@ -18,11 +18,11 @@ mdefine_line|#define readw(addr) &bslash;&n;    ({ unsigned short __v = (*(volat
 DECL|macro|readl
 mdefine_line|#define readl(addr) &bslash;&n;    ({ unsigned int __v = (*(volatile unsigned int *) (addr)); __v; })
 DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
+mdefine_line|#define writeb(b,addr) (void)((*(volatile unsigned char *) (addr)) = (b))
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) ((*(volatile unsigned short *) (addr)) = (b))
+mdefine_line|#define writew(b,addr) (void)((*(volatile unsigned short *) (addr)) = (b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
+mdefine_line|#define writel(b,addr) (void)((*(volatile unsigned int *) (addr)) = (b))
 DECL|macro|memset_io
 mdefine_line|#define memset_io(a,b,c)&t;memset((void *)(a),(b),(c))
 DECL|macro|memcpy_fromio

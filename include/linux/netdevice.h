@@ -613,6 +613,12 @@ op_star
 id|ip_ptr
 suffix:semicolon
 multiline_comment|/* IPv4 specific data&t;*/
+DECL|member|dn_ptr
+r_void
+op_star
+id|dn_ptr
+suffix:semicolon
+multiline_comment|/* DECnet specific data */
 DECL|member|qdisc
 r_struct
 id|Qdisc

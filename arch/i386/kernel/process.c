@@ -278,10 +278,17 @@ c_cond
 op_logical_neg
 id|start_idle
 )paren
+(brace
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 id|start_idle
 op_assign
 id|jiffies
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -395,6 +402,11 @@ l_string|&quot;hlt&quot;
 )paren
 suffix:semicolon
 )brace
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * tq_scheduler currently assumes we&squot;re running in a process&n;&t;&t; * context (ie that we hold the kernel lock..)&n;&t;&t; */
 r_if
 c_cond

@@ -26,6 +26,14 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|minor
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 r_static
 r_void
 id|lp_int_out

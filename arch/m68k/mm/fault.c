@@ -124,6 +124,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_IO
+)paren
+r_goto
+id|bad_area
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|vma-&gt;vm_start
 op_le
 id|address

@@ -718,6 +718,7 @@ comma
 id|tv.tv_usec
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This doesnt lock system.utsname. Howeve we are generating&n;&t; *&t;entropy so a race with a name set here is fine.&n;&t; */
 id|p
 op_assign
 (paren

@@ -21,12 +21,30 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef CONFIG_SOUND
 r_void
+id|soundcore_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_SOUND_OSS
+r_void
 id|soundcard_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DMASOUND
+r_void
+id|dmasound_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN
 r_int
@@ -2161,6 +2179,13 @@ c_func
 suffix:semicolon
 macro_line|#ifdef CONFIG_SOUND_OSS&t;
 id|soundcard_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_DMASOUND
+id|dmasound_init
 c_func
 (paren
 )paren

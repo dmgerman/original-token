@@ -249,13 +249,4 @@ c_func
 id|__up_wakeup
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-DECL|variable|pci_devices
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_devices
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

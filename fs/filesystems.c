@@ -250,6 +250,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ADFS_FS
+id|init_adfs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_DEVPTS_FS
 id|init_devpts_fs
 c_func

@@ -924,11 +924,6 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Change to page 0 and read the intr status reg. */
 id|outb_p
 c_func

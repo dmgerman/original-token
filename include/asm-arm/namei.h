@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.1 1998/01/28 09:56:37 ecd Exp $&n; * linux/include/asm-i386/namei.h&n; *&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/*&n; * linux/include/asm-i386/namei.h&n; *&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __ASMARM_NAMEI_H
 DECL|macro|__ASMARM_NAMEI_H
 mdefine_line|#define __ASMARM_NAMEI_H

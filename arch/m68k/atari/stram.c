@@ -3753,9 +3753,11 @@ comma
 id|page
 )paren
 suffix:semicolon
-id|read_swap_page
+id|rw_swap_page
 c_func
 (paren
+id|READ
+comma
 id|entry
 comma
 (paren
@@ -3763,6 +3765,8 @@ r_char
 op_star
 )paren
 id|page
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|for_each_task

@@ -509,6 +509,22 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|config_bmve6000
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|config_hp300
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|MASK_256K
 mdefine_line|#define MASK_256K 0xfffc0000
 DECL|function|__initfunc
@@ -1208,6 +1224,30 @@ r_case
 id|MACH_MVME16x
 suffix:colon
 id|config_mvme16x
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BVME6000
+r_case
+id|MACH_BVME6000
+suffix:colon
+id|config_bvme6000
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_HP300
+r_case
+id|MACH_HP300
+suffix:colon
+id|config_hp300
 c_func
 (paren
 )paren

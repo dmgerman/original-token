@@ -780,6 +780,53 @@ r_return
 id|word
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
+DECL|function|ffs
+r_extern
+id|__inline__
+r_int
+id|ffs
+c_func
+(paren
+r_int
+id|x
+)paren
+(brace
+r_int
+id|r
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;bsfl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;jnz 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movl $-1,%0&bslash;n&quot;
+l_string|&quot;1:&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|r
+)paren
+suffix:colon
+l_string|&quot;g&quot;
+(paren
+id|x
+)paren
+)paren
+suffix:semicolon
+r_return
+id|r
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
+DECL|macro|hweight32
+mdefine_line|#define hweight32(x) generic_hweight32(x)
+DECL|macro|hweight16
+mdefine_line|#define hweight16(x) generic_hweight16(x)
+DECL|macro|hweight8
+mdefine_line|#define hweight8(x) generic_hweight8(x)
 macro_line|#ifdef __KERNEL__
 DECL|macro|ext2_set_bit
 mdefine_line|#define ext2_set_bit                 test_and_set_bit

@@ -168,6 +168,24 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_ACORNSCSI_3
+macro_line|#include &quot;../acorn/scsi/acornscsi.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_CUMANA_1
+macro_line|#include &quot;../acorn/scsi/cumana_1.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_CUMANA_2
+macro_line|#include &quot;../acorn/scsi/cumana_2.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_ECOSCSI
+macro_line|#include &quot;../acorn/scsi/ecoscsi.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_OAK1
+macro_line|#include &quot;../acorn/scsi/oak.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_POWERTECSCSI
+macro_line|#include &quot;../acorn/scsi/powertec.h&quot;
+macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/hosts.c,v 1.20 1996/12/12 19:18:32 davem Exp $&quot;;&n;*/
 multiline_comment|/*&n; *  The scsi host entries should be in the order you wish the&n; *  cards to be detected.  A driver may appear more than once IFF&n; *  it can deal with being detected (and therefore initialized)&n; *  with more than one simultaneous host number, can handle being&n; *  reentrant, etc.&n; *&n; *  They may appear in any order, as each SCSI host is told which host &n; *  number it is during detection.&n; */
 multiline_comment|/* This is a placeholder for controllers that are not configured into&n; * the system - we do this to ensure that the controller numbering is&n; * always consistent, no matter how the kernel is configured. */
@@ -385,6 +403,32 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PLUTO
 id|PLUTO
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ACORN
+macro_line|#ifdef CONFIG_SCSI_ACORNSCSI_3
+id|ACORNSCSI_3
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_CUMANA_1
+id|CUMANA_NCR5380
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_CUMANA_2
+id|CUMANA_FAS216
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_ECOSCSI
+id|ECOSCSI_NCR5380
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_OAK1
+id|OAK_NCR5380
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_POWERTECSCSI
+id|POWERTECSCSI
+comma
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 id|SCSI_DEBUG

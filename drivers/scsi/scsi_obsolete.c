@@ -55,7 +55,6 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
-r_static
 r_int
 id|update_timeout
 (paren
@@ -3100,7 +3099,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * The strategy is to cause the timer code to call scsi_times_out()&n; * when the soonest timeout is pending.&n; * The arguments are used when we are queueing a new command, because&n; * we do not want to subtract the time used from this time, but when we&n; * set the timer, we want to take this value into account.&n; */
 DECL|function|update_timeout
-r_static
 r_int
 id|update_timeout
 c_func

@@ -764,6 +764,16 @@ r_extern
 r_int
 id|m68k_pgtable_cachemode
 suffix:semicolon
+multiline_comment|/* This is the cache mode for normal pages, for supervisor access on&n; * processors &gt;= &squot;040. It is used in pte_mkcache(), and the variable is&n; * defined and initialized in head.S */
+macro_line|#if defined(CONFIG_060_WRITETHROUGH)
+r_extern
+r_int
+id|m68k_supervisor_cachemode
+suffix:semicolon
+macro_line|#else
+DECL|macro|m68k_supervisor_cachemode
+mdefine_line|#define m68k_supervisor_cachemode _PAGE_CACHE040
+macro_line|#endif
 macro_line|#if defined(CPU_M68040_OR_M68060_ONLY)
 DECL|macro|mm_cachebits
 mdefine_line|#define mm_cachebits _PAGE_CACHE040
@@ -1796,7 +1806,7 @@ op_amp
 id|_CACHEMASK040
 )paren
 op_or
-id|_PAGE_CACHE040
+id|m68k_supervisor_cachemode
 suffix:semicolon
 r_return
 id|pte

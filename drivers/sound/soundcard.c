@@ -527,6 +527,13 @@ mdefine_line|#define MODULEPROCSTRING &quot;Driver loaded as a module&quot;
 macro_line|#else
 mdefine_line|#define MODULEPROCSTRING &quot;Driver compiled into kernel&quot;
 macro_line|#endif
+id|down
+c_func
+(paren
+op_amp
+id|uts_sem
+)paren
+suffix:semicolon
 id|len
 op_assign
 id|sprintf
@@ -554,6 +561,13 @@ comma
 id|system_utsname.machine
 comma
 id|SELECTED_SOUND_OPTIONS
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 r_for

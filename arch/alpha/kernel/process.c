@@ -328,6 +328,11 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren

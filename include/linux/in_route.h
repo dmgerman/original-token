@@ -25,8 +25,6 @@ DECL|macro|RTCF_SNAT
 mdefine_line|#define RTCF_SNAT&t;0x00800000
 DECL|macro|RTCF_DOREDIRECT
 mdefine_line|#define RTCF_DOREDIRECT 0x01000000
-DECL|macro|RTCF_LOG
-mdefine_line|#define RTCF_LOG&t;0x02000000
 DECL|macro|RTCF_DIRECTSRC
 mdefine_line|#define RTCF_DIRECTSRC&t;0x04000000
 DECL|macro|RTCF_DNAT

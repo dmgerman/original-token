@@ -10,6 +10,9 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
+DECL|macro|in_interrupt
+mdefine_line|#define in_interrupt() (local_irq_count[smp_processor_id()] + local_bh_count[smp_processor_id()] != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)

@@ -21,7 +21,7 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;&t;/* For the statistics structure. */
 macro_line|#include &lt;linux/if_arp.h&gt;&t;/* For ARPHRD_ETHER */
 DECL|macro|LOOPBACK_MTU
-mdefine_line|#define LOOPBACK_MTU (PAGE_SIZE*7/8)
+mdefine_line|#define LOOPBACK_MTU&t;(PAGE_SIZE - 172)
 multiline_comment|/*&n; * The higher levels take care of making this non-reentrant (it&squot;s&n; * called with bh&squot;s disabled).&n; */
 DECL|function|loopback_xmit
 r_static

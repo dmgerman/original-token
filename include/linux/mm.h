@@ -788,6 +788,14 @@ id|write_access
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|check_pgt_cache
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 r_int
 id|paging_init

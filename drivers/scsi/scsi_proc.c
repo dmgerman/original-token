@@ -621,7 +621,7 @@ r_sizeof
 id|parseHandle
 )paren
 comma
-l_int|1
+id|GFP_KERNEL
 )paren
 )paren
 op_eq
@@ -649,8 +649,10 @@ r_sizeof
 (paren
 r_int
 )paren
-comma
+op_star
 id|cmdNum
+comma
+id|GFP_KERNEL
 )paren
 )paren
 op_eq

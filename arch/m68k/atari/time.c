@@ -358,7 +358,7 @@ DECL|macro|COPY
 macro_line|#undef COPY
 )brace
 DECL|macro|RTC_READ
-mdefine_line|#define&t;RTC_READ(reg)&t;&t;&t;&t;&bslash;&n;    ({&t;unsigned char&t;__val;&t;&t;&t;&bslash;&n;&t;&t;writeb(reg,&amp;tt_rtc.regsel);&t;&bslash;&n;&t;&t;__val = tt_rtc.data;&t;&t;&bslash;&n;&t;&t;__val;&t;&t;&t;&t;&bslash;&n;&t;})
+mdefine_line|#define&t;RTC_READ(reg)&t;&t;&t;&t;&bslash;&n;    ({&t;unsigned char&t;__val;&t;&t;&t;&bslash;&n;&t;&t;(void) writeb(reg,&amp;tt_rtc.regsel);&t;&bslash;&n;&t;&t;__val = tt_rtc.data;&t;&t;&bslash;&n;&t;&t;__val;&t;&t;&t;&t;&bslash;&n;&t;})
 DECL|macro|RTC_WRITE
 mdefine_line|#define&t;RTC_WRITE(reg,val)&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;writeb(reg,&amp;tt_rtc.regsel);&t;&bslash;&n;&t;&t;tt_rtc.data = (val);&t;&t;&bslash;&n;&t;} while(0)
 DECL|function|atari_mste_gettod

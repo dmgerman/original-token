@@ -423,7 +423,7 @@ l_int|3
 )paren
 )paren
 r_goto
-id|end_coredump
+id|end_coredump_write
 suffix:semicolon
 r_if
 c_cond
@@ -856,6 +856,8 @@ op_amp
 id|file
 )paren
 suffix:semicolon
+id|end_coredump_write
+suffix:colon
 id|put_write_access
 c_func
 (paren

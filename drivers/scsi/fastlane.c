@@ -1,4 +1,4 @@
-multiline_comment|/* fastlane.c: Driver for Phase5&squot;s Fastlane SCSI Controller.&n; *&n; * Copyright (C) 1996 Jesper Skov (jskov@cygnus.co.uk)&n; *&n; * This driver is based on the CyberStorm driver, hence the occasional&n; * reference to CyberStorm.&n; *&n; * Betatesting &amp; crucial adjustments by Patrik Rak &n; * (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; */
+multiline_comment|/* fastlane.c: Driver for Phase5&squot;s Fastlane SCSI Controller.&n; *&n; * Copyright (C) 1996 Jesper Skov (jskov@cygnus.co.uk)&n; *&n; * This driver is based on the CyberStorm driver, hence the occasional&n; * reference to CyberStorm.&n; *&n; * Betatesting &amp; crucial adjustments by&n; *        Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; */
 multiline_comment|/* TODO:&n; *&n; * o According to the doc from laire, it is required to reset the DMA when&n; *   the transfer is done. ATM we reset DMA just before every new &n; *   dma_init_(read|write).&n; *&n; * 1) Figure out how to make a cleaner merge with the sparc driver with regard&n; *    to the caches and the Sparc MMU mapping.&n; * 2) Make as few routines required outside the generic driver. A lot of the&n; *    routines in this file used to be inline!&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -17,9 +17,11 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+multiline_comment|/* Such day has just come... */
+macro_line|#if 0
 multiline_comment|/* Let this defined unless you really need to enable DMA IRQ one day */
-DECL|macro|NODMAIRQ
 mdefine_line|#define NODMAIRQ
+macro_line|#endif
 r_static
 r_int
 id|dma_bytes_sent
@@ -131,6 +133,17 @@ suffix:semicolon
 r_static
 r_int
 id|dma_irq_p
+c_func
+(paren
+r_struct
+id|NCR_ESP
+op_star
+id|esp
+)paren
+suffix:semicolon
+r_static
+r_void
+id|dma_irq_exit
 c_func
 (paren
 r_struct
@@ -373,7 +386,8 @@ l_int|0
 suffix:semicolon
 id|esp-&gt;dma_irq_exit
 op_assign
-l_int|0
+op_amp
+id|dma_irq_exit
 suffix:semicolon
 id|esp-&gt;dma_led_on
 op_assign
@@ -493,6 +507,16 @@ op_star
 id|address
 suffix:semicolon
 multiline_comment|/* Set the command buffer */
+id|esp-&gt;esp_command
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|cmd_buffer
+suffix:semicolon
 id|esp-&gt;esp_command_dvma
 op_assign
 id|VTOP
@@ -977,6 +1001,53 @@ id|esp-&gt;irq
 )paren
 suffix:semicolon
 )brace
+DECL|function|dma_irq_exit
+r_static
+r_void
+id|dma_irq_exit
+c_func
+(paren
+r_struct
+id|NCR_ESP
+op_star
+id|esp
+)paren
+(brace
+r_struct
+id|fastlane_dma_registers
+op_star
+id|dregs
+op_assign
+(paren
+r_struct
+id|fastlane_dma_registers
+op_star
+)paren
+(paren
+id|esp-&gt;dregs
+)paren
+suffix:semicolon
+id|dregs-&gt;ctrl_reg
+op_assign
+id|ctrl_data
+op_amp
+op_complement
+(paren
+id|FASTLANE_DMA_EDI
+op_or
+id|FASTLANE_DMA_ESI
+)paren
+suffix:semicolon
+id|nop
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dregs-&gt;ctrl_reg
+op_assign
+id|ctrl_data
+suffix:semicolon
+)brace
 DECL|function|dma_irq_p
 r_static
 r_int
@@ -1003,15 +1074,9 @@ op_star
 id|esp-&gt;dregs
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_int
 r_char
 id|dma_status
-suffix:semicolon
-r_int
-id|r
-op_assign
-l_int|0
 suffix:semicolon
 id|dma_status
 op_assign
@@ -1030,9 +1095,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* not our IRQ */
-multiline_comment|/* Return 1 if ESP requested IRQ */
-r_if
-c_cond
+multiline_comment|/* Return non-zero if ESP requested IRQ */
+r_return
 (paren
 macro_line|#ifndef NODMAIRQ
 (paren
@@ -1070,74 +1134,7 @@ op_amp
 id|ESP_STAT_INTR
 )paren
 )paren
-(brace
-id|r
-op_assign
-l_int|1
 suffix:semicolon
-)brace
-id|dregs-&gt;ctrl_reg
-op_assign
-(paren
-id|ctrl_data
-op_amp
-op_complement
-(paren
-id|FASTLANE_DMA_EDI
-op_or
-id|FASTLANE_DMA_ESI
-)paren
-)paren
-suffix:semicolon
-id|dregs-&gt;ctrl_reg
-op_assign
-id|ctrl_data
-suffix:semicolon
-r_return
-id|r
-suffix:semicolon
-macro_line|#else
-r_int
-id|r
-suffix:semicolon
-id|r
-op_assign
-(paren
-(paren
-(paren
-r_struct
-id|ESP_regs
-op_star
-)paren
-(paren
-id|esp-&gt;eregs
-)paren
-)paren
-op_member_access_from_pointer
-id|esp_status
-)paren
-op_amp
-id|ESP_STAT_INTR
-suffix:semicolon
-id|dregs-&gt;ctrl_reg
-op_assign
-id|ctrl_data
-op_amp
-op_complement
-(paren
-id|FASTLANE_DMA_EDI
-op_or
-id|FASTLANE_DMA_ESI
-)paren
-suffix:semicolon
-id|dregs-&gt;ctrl_reg
-op_assign
-id|ctrl_data
-suffix:semicolon
-r_return
-id|r
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|dma_led_off
 r_static

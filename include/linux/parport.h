@@ -387,6 +387,74 @@ id|parport
 op_star
 )paren
 suffix:semicolon
+DECL|member|epp_write_data
+r_void
+(paren
+op_star
+id|epp_write_data
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_char
+)paren
+suffix:semicolon
+DECL|member|epp_read_data
+r_int
+r_char
+(paren
+op_star
+id|epp_read_data
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|epp_write_addr
+r_void
+(paren
+op_star
+id|epp_write_addr
+)paren
+(paren
+r_struct
+id|parport
+op_star
+comma
+r_int
+r_char
+)paren
+suffix:semicolon
+DECL|member|epp_read_addr
+r_int
+r_char
+(paren
+op_star
+id|epp_read_addr
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+DECL|member|epp_check_timeout
+r_int
+(paren
+op_star
+id|epp_check_timeout
+)paren
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
 DECL|member|epp_write_block
 r_int
 (paren
@@ -1372,6 +1440,16 @@ DECL|macro|parport_release_resources
 mdefine_line|#define parport_release_resources(p)       parport_pc_release_resources(p)
 DECL|macro|parport_claim_resources
 mdefine_line|#define parport_claim_resources(p)         parport_pc_claim_resources(p)
+DECL|macro|parport_epp_write_data
+mdefine_line|#define parport_epp_write_data(p,x)        parport_pc_write_epp(p,x)
+DECL|macro|parport_epp_read_data
+mdefine_line|#define parport_epp_read_data(p)           parport_pc_read_epp(p)
+DECL|macro|parport_epp_write_addr
+mdefine_line|#define parport_epp_write_addr(p,x)        parport_pc_write_epp_addr(p,x)
+DECL|macro|parport_epp_read_addr
+mdefine_line|#define parport_epp_read_addr(p)           parport_pc_read_epp_addr(p)
+DECL|macro|parport_epp_check_timeout
+mdefine_line|#define parport_epp_check_timeout(p)       parport_pc_check_epp_timeout(p)
 macro_line|#endif
 macro_line|#ifdef PARPORT_NEED_GENERIC_OPS
 multiline_comment|/* Generic operations vector through the dispatch table. */
@@ -1405,6 +1483,16 @@ DECL|macro|parport_release_resources
 mdefine_line|#define parport_release_resources(p)       (p)-&gt;ops-&gt;release_resources(p)
 DECL|macro|parport_claim_resources
 mdefine_line|#define parport_claim_resources(p)         (p)-&gt;ops-&gt;claim_resources(p)
+DECL|macro|parport_epp_write_data
+mdefine_line|#define parport_epp_write_data(p,x)        (p)-&gt;ops-&gt;epp_write_data(p,x)
+DECL|macro|parport_epp_read_data
+mdefine_line|#define parport_epp_read_data(p)           (p)-&gt;ops-&gt;epp_read_data(p)
+DECL|macro|parport_epp_write_addr
+mdefine_line|#define parport_epp_write_addr(p,x)        (p)-&gt;ops-&gt;epp_write_addr(p,x)
+DECL|macro|parport_epp_read_addr
+mdefine_line|#define parport_epp_read_addr(p)           (p)-&gt;ops-&gt;epp_read_addr(p)
+DECL|macro|parport_epp_check_timeout
+mdefine_line|#define parport_epp_check_timeout(p)       (p)-&gt;ops-&gt;epp_check_timeout(p)
 macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _PARPORT_H_ */
