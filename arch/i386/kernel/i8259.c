@@ -1084,6 +1084,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|function|init_ISA_irqs
 r_void
+id|__init
 id|init_ISA_irqs
 (paren
 r_void

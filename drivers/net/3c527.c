@@ -3706,7 +3706,7 @@ id|lp-&gt;tx_skb_top
 op_member_access_from_pointer
 id|len
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|lp-&gt;tx_skb
