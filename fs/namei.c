@@ -1841,6 +1841,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|S_ISFIFO
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+op_logical_or
+id|S_ISSOCK
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * 2-Feb-1995 Bruce Perens &lt;Bruce@Pixar.com&gt;&n;&t;&t; * Allow opens of Unix domain sockets and FIFOs for write on&n;&t;&t; * read-only filesystems. Their data does not live on the disk.&n;&t;&t; *&n;&t;&t; * If there was something like IS_NODEV(inode) for&n;&t;&t; * pipes and/or sockets I&squot;d check it here.&n;&t;&t; */
+)brace
+r_else
+r_if
+c_cond
+(paren
 id|S_ISBLK
 c_func
 (paren

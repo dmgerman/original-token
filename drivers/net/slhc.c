@@ -101,12 +101,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|variable|has_exported
-r_static
-id|has_exported
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Initialize compression data structure&n; *&t;slots must be in range 0 to 255 (zero meaning no compression)&n; */
 r_struct
 id|slcompress
@@ -136,17 +130,6 @@ r_struct
 id|slcompress
 op_star
 id|comp
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|has_exported
-)paren
-id|export_slhc_syms
-c_func
-(paren
-)paren
 suffix:semicolon
 id|comp
 op_assign
@@ -2968,10 +2951,6 @@ op_amp
 id|slhc_syms
 )paren
 suffix:semicolon
-id|has_exported
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -3008,6 +2987,21 @@ r_void
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#else /* MODULE */
+DECL|function|slhc_install
+r_void
+id|slhc_install
+c_func
+(paren
+r_void
+)paren
+(brace
+id|export_slhc_syms
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif /* CONFIG_INET */
 eof

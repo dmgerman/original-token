@@ -4507,6 +4507,7 @@ l_int|0x03
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MIDI
 r_void
 DECL|function|ess_midi_init
 id|ess_midi_init
@@ -4665,6 +4666,7 @@ id|cfg
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_void
 DECL|function|Jazz16_midi_init
 id|Jazz16_midi_init

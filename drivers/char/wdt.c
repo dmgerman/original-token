@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Industrial Computer Source WDT500/501 driver for Linux 1.3.x&n; *&n; *&t;(c) Copyright 1995&t;CymruNET Ltd&n; *&t;&t;&t;&t;Innovation Centre&n; *&t;&t;&t;&t;Singleton Park&n; *&t;&t;&t;&t;Swansea&n; *&t;&t;&t;&t;Wales&n; *&t;&t;&t;&t;UK&n; *&t;&t;&t;&t;SA2 8PP&n; *&n; *&t;http://www.cymru.net&n; *&n; *&t;This driver is provided under the GNU public license, incorporated&n; *&t;herein by reference. The driver is provided without warranty or &n; *&t;support.&n; *&n; *&t;Release 0.04.&n; *&n; */
+multiline_comment|/*&n; *&t;Industrial Computer Source WDT500/501 driver for Linux 1.3.x&n; *&n; *&t;(c) Copyright 1995&t;CymruNET Ltd&n; *&t;&t;&t;&t;Innovation Centre&n; *&t;&t;&t;&t;Singleton Park&n; *&t;&t;&t;&t;Swansea&n; *&t;&t;&t;&t;Wales&n; *&t;&t;&t;&t;UK&n; *&t;&t;&t;&t;SA2 8PP&n; *&n; *&t;http://www.cymru.net&n; *&n; *&t;This driver is provided under the GNU public license, incorporated&n; *&t;herein by reference. The driver is provided without warranty or &n; *&t;support.&n; *&n; *&t;Release 0.05.&n; *&n; *&t;Some changes by Dave Gregorich to fix modularisation and minor bugs.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -329,6 +329,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -461,6 +462,8 @@ suffix:semicolon
 id|cp
 op_assign
 id|c
+op_plus
+l_int|7
 suffix:semicolon
 id|memcpy_tofs
 c_func
@@ -745,6 +748,7 @@ op_amp
 id|wdt_fops
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_WDT_501
 DECL|variable|temp_mouse
 r_static
 r_struct
@@ -760,6 +764,7 @@ op_amp
 id|wdt_fops
 )brace
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -932,6 +937,7 @@ op_amp
 id|wdt_mouse
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_WDT_501&t;
 id|mouse_register
 c_func
 (paren
@@ -939,6 +945,7 @@ op_amp
 id|temp_mouse
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|request_region
 c_func
 (paren

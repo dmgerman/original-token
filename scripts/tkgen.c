@@ -1,4 +1,4 @@
-multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1995 01 04 - Aesthetic improvements by Avery Pennarun&n; *              &lt;apenwarr@foxnet.net&gt;&n; */
+multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04 - Avery Pennarun - Aesthetic improvements&n; *              &lt;apenwarr@foxnet.net&gt;&n; *&n; * 1996 01 24 - Avery Pennarun - Bugfixes and more aesthetics&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &quot;tkparse.h&quot;
 macro_line|#ifndef TRUE
@@ -99,9 +99,83 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;twm title $w &bslash;&quot;%s&bslash;&quot; &bslash;n&bslash;n&bslash;n&quot;
+l_string|&quot;&bslash;twm title $w &bslash;&quot;%s&bslash;&quot; &bslash;n&bslash;n&quot;
 comma
 id|label
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tframe $w.topline -relief ridge -borderwidth 2 -height 2&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.topline -side top -fill x&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tframe $w.config&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.config -fill y -expand on&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tscrollbar $w.config.vscroll -command &bslash;&quot;$w.config.canvas yview&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.config.vscroll -side right -fill y&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tframe $w.botline -relief ridge -borderwidth 2 -height 2&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.botline -side top -fill x&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tcanvas $w.config.canvas -height 1&bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t-relief flat -borderwidth 0 -yscrollcommand &bslash;&quot;$w.config.vscroll set&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t-width [expr [winfo screenwidth .] * 1 / 2] &bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tframe $w.config.f&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.config.canvas -side right -fill y&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -546,7 +620,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.x configure -state normal; &quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state normal -fore black; &quot;
 comma
 id|menu_num
 comma
@@ -556,7 +630,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.l configure -state normal; &quot;
+l_string|&quot;.menu%d.config.f.x%d.l configure -state normal; &quot;
 comma
 id|menu_num
 comma
@@ -572,7 +646,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.x configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state disabled -fore gray60;&quot;
 comma
 id|menu_num
 comma
@@ -582,7 +656,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.l configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.l configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -605,7 +679,7 @@ multiline_comment|/*&n;       * If a bool is just a button, then use this defini
 id|printf
 c_func
 (paren
-l_string|&quot;} then { .menu%d.x%d configure -state normal } else { .menu%d.x%d configure -state disabled }&bslash;n&quot;
+l_string|&quot;} then { .menu%d.config.f.x%d configure -state normal } else { .menu%d.config.f.x%d configure -state disabled }&bslash;n&quot;
 comma
 id|menu_num
 comma
@@ -627,7 +701,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.y configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.y configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -637,7 +711,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.n configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.n configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -647,7 +721,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.l configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.l configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -673,7 +747,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.y configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.y configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -683,7 +757,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.n configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.n configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -693,7 +767,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.l configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.l configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -742,6 +816,14 @@ id|tok_dep_tristate
 id|printf
 c_func
 (paren
+l_string|&quot;global %s;&quot;
+comma
+id|item-&gt;depend.str
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
 l_string|&quot;if { $%s == 2 } then {&quot;
 comma
 id|item-&gt;depend.str
@@ -750,7 +832,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.y configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.y configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -766,7 +848,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.y configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.y configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -785,7 +867,7 @@ r_else
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.y configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.y configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -796,7 +878,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.n configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.n configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -806,7 +888,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.m configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.m configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -816,7 +898,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.l configure -state normal;&quot;
+l_string|&quot;.menu%d.config.f.x%d.l configure -state normal;&quot;
 comma
 id|menu_num
 comma
@@ -843,7 +925,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.y configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.y configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -853,7 +935,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.n configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.n configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -863,7 +945,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.m configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.m configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -873,7 +955,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.x%d.l configure -state disabled;&quot;
+l_string|&quot;.menu%d.config.f.x%d.l configure -state disabled;&quot;
 comma
 id|menu_num
 comma
@@ -1510,7 +1592,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tpack $w.f -pady 10 -side top -anchor w -fill x -expand on&bslash;n&quot;
+l_string|&quot;&bslash;tpack $w.f -pady 10 -side bottom -anchor w -fill x&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -1522,7 +1604,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tupdate_menu%d $w&bslash;n&quot;
+l_string|&quot;&bslash;tupdate_menu%d $w.config.f&bslash;n&quot;
 comma
 id|menu_num
 )paren
@@ -1543,6 +1625,69 @@ id|printf
 c_func
 (paren
 l_string|&quot;&bslash;twm geometry $w +$winx+$winy&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;twm resizable $w no yes&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * Now that the whole window is in place, we need to wait for an &quot;update&quot;&n;   * so we can tell the canvas what its virtual size should be.&n;   *&n;   * Unfortunately, this causes some ugly screen-flashing because the whole&n;   * window is drawn, and then it is immediately resized.  It seems&n;   * unavoidable, though, since &quot;frame&quot; objects won&squot;t tell us their size&n;   * until after an update, and &quot;canvas&quot; objects can&squot;t automatically pack&n;   * around frames.  Sigh.&n;   */
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tupdate idletasks&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t$w.config.canvas create window 0 0 -anchor nw -window $w.config.f&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t$w.config.canvas configure &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t-width [expr [winfo reqwidth $w.config.f] + 1]&bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t-scrollregion &bslash;&quot;-1 -1 [expr [winfo reqwidth $w.config.f] + 1] &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t&bslash;t [expr [winfo reqheight $w.config.f] + 1]&bslash;&quot;&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * If the whole canvas will fit in 3/4 of the screen height, do it;&n;   * otherwise, resize to around 1/2 the screen and let us scroll.&n;   */
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tset winy [expr [winfo reqh $w] - [winfo reqh $w.config.canvas]]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tset scry [expr [winfo screenh $w] / 2]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tset maxy [expr [winfo screenh $w] * 3 / 4]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tset canvtotal [expr [winfo reqh $w.config.f] + 2]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tif [expr $winy + $canvtotal &lt; $maxy] {&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t$w.config.canvas configure -height $canvtotal&bslash;n&quot;
+l_string|&quot;&bslash;t} else {&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t$w.config.canvas configure -height [expr $scry - $winy]&bslash;n&quot;
+l_string|&quot;&bslash;t}&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -1716,7 +1861,15 @@ id|tok_dep_tristate
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tif {$%s == 2 } then { .menu3.x5.y configure -state normal} else { .menu3.x5.y configure -state disabled}&bslash;n&quot;
+l_string|&quot;&bslash;tglobal %s;&quot;
+comma
+id|cfg-&gt;depend.str
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tif {$%s == 2 } then { .menu%d.config.f.x%d.y configure -state disabled } else { .menu%d.config.f.x%d.y configure -state normal}&bslash;n&quot;
 comma
 id|cfg-&gt;depend.str
 comma
@@ -1839,6 +1992,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef OLD_SPLIT_MENUS
 multiline_comment|/*&n;   * Now figure out how many items go on each page.&n;   */
 id|div
 op_assign
@@ -1880,6 +2034,18 @@ l_int|1
 op_div
 id|div
 suffix:semicolon
+macro_line|#else
+op_star
+id|menu_max
+op_assign
+id|cfg-&gt;menu_number
+suffix:semicolon
+op_star
+id|menu_maxlines
+op_assign
+id|tot
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * This is the top level function for generating the tk script.&n; */
 DECL|function|dump_tk_script
@@ -2203,7 +2369,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tbool $w %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+l_string|&quot;&bslash;tbool $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2222,7 +2388,7 @@ suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t$w.x%d.x.menu add radiobutton -label &bslash;&quot;%s&bslash;&quot; -variable %s -value %d -command &bslash;&quot;update_menu%d .menu%d&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&bslash;t$w.config.f.x%d.x.menu add radiobutton -label &bslash;&quot;%s&bslash;&quot; -variable %s -value %d -command &bslash;&quot;update_menu%d .menu%d.config.f&bslash;&quot;&bslash;n&quot;
 comma
 id|cfg1-&gt;menu_line
 comma
@@ -2232,9 +2398,9 @@ id|cfg1-&gt;optionname
 comma
 id|cfg-&gt;choice_value
 comma
-id|cfg-&gt;menu_number
+id|cfg1-&gt;menu_number
 comma
-id|cfg-&gt;menu_number
+id|cfg1-&gt;menu_number
 )paren
 suffix:semicolon
 r_break
@@ -2279,7 +2445,7 @@ macro_line|#if 0
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tmenubutton $w.line%d -text &bslash;&quot;%s&bslash;&quot; -menu $w.line%d.menu &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;tmenubutton $w.config.f.line%d -text &bslash;&quot;%s&bslash;&quot; -menu $w.config.f.line%d.menu &bslash;&bslash;&bslash;n&quot;
 comma
 id|cfg-&gt;menu_line
 comma
@@ -2297,7 +2463,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tpack $w.line%d -anchor w&bslash;n&quot;
+l_string|&quot;&bslash;tpack $w.config.f.line%d -anchor w&bslash;n&quot;
 comma
 id|cfg-&gt;menu_line
 )paren
@@ -2305,7 +2471,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tmenu $w.line%d.menu&bslash;n&quot;
+l_string|&quot;&bslash;tmenu $w.config.f.line%d.menu&bslash;n&quot;
 comma
 id|cfg-&gt;menu_line
 )paren
@@ -2314,7 +2480,7 @@ macro_line|#else
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tminimenu $w %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+l_string|&quot;&bslash;tminimenu $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2328,7 +2494,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tmenu $w.x%d.x.menu&bslash;n&quot;
+l_string|&quot;&bslash;tmenu $w.config.f.x%d.x.menu&bslash;n&quot;
 comma
 id|cfg-&gt;menu_line
 )paren
@@ -2379,7 +2545,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;ttristate $w %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+l_string|&quot;&bslash;ttristate $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2431,7 +2597,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tdep_tristate $w %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+l_string|&quot;&bslash;tdep_tristate $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2485,7 +2651,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tint $w %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+l_string|&quot;&bslash;tint $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2537,7 +2703,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tdo_sound $w %d %d&bslash;n&quot;
+l_string|&quot;&bslash;tdo_sound $w.config.f %d %d&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2595,19 +2761,19 @@ macro_line|#endif
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tlabel $w.m0 -bitmap error&bslash;n&quot;
+l_string|&quot;&bslash;tlabel $w.config.f.m0 -bitmap error&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tmessage $w.m1 -width 400 -aspect 300 -text &bslash;&quot;The sound drivers cannot as of yet be configured via the X-based interface&bslash;&quot; -relief raised&bslash;n&quot;
+l_string|&quot;&bslash;tmessage $w.config.f.m1 -width 400 -aspect 300 -text &bslash;&quot;The sound drivers cannot as of yet be configured via the X-based interface&bslash;&quot; -relief raised&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tpack $w.m0 $w.m1 -side top -pady 10 -expand on&bslash;n&quot;
+l_string|&quot;&bslash;tpack $w.config.f.m0 $w.config.f.m1 -side top -pady 10 -expand on&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Close out the last menu.&n;   */
@@ -2985,15 +3151,21 @@ id|tok_dep_tristate
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tif {$%s == 2 } then { write_variable $cfg $autocfg %s $%s %s } else { write_variable $cfg $autocfg %s $notset $notmod }&bslash;n&quot;
+l_string|&quot;&bslash;tif {$%s == 2 } then {&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;twrite_variable $cfg $autocfg %s $notset $notmod&bslash;n&quot;
+l_string|&quot;&bslash;t} else {&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;twrite_variable $cfg $autocfg %s $%s %s&bslash;n&quot;
+l_string|&quot;&bslash;t}&bslash;n&quot;
+comma
+id|cfg-&gt;depend.str
+comma
+id|cfg-&gt;optionname
 comma
 id|cfg-&gt;optionname
 comma
 id|cfg-&gt;optionname
 comma
 id|cfg-&gt;depend.str
-comma
-id|cfg-&gt;optionname
 )paren
 suffix:semicolon
 )brace

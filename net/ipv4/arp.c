@@ -5624,7 +5624,7 @@ suffix:semicolon
 id|u32
 id|ip
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Find out about the hardware type.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Extract destination.&n;&t; */
 id|si
 op_assign
 (paren
@@ -5692,16 +5692,45 @@ id|rt
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* good guess about the device if it isn&squot;t a ATF_PUBL entry */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|dev
 )paren
-multiline_comment|/* this is can only be NULL if ATF_PUBL is not set */
+(brace
+r_if
+c_cond
+(paren
+id|dev1-&gt;flags
+op_amp
+(paren
+id|IFF_LOOPBACK
+op_or
+id|IFF_NOARP
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 id|dev
 op_assign
 id|dev1
+suffix:semicolon
+)brace
+multiline_comment|/* this needs to be checked only for dev=dev1 but it doesnt hurt */
+r_if
+c_cond
+(paren
+id|r-&gt;arp_ha.sa_family
+op_ne
+id|dev-&gt;type
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -7008,6 +7037,7 @@ op_amp
 id|arp_dev_notifier
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -7042,5 +7072,6 @@ id|arp_get_info
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 eof

@@ -164,11 +164,16 @@ op_assign
 op_minus
 id|EPERM
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 multiline_comment|/* #Specification: ioctl / acces&n;&t;&t;Only root (effective id) is allowed to do IOCTL on directory&n;&t;&t;in UMSDOS. EPERM is returned for other user.&n;&t;*/
 multiline_comment|/*&n;&t;&t;Well, not all case require write access, but it simplify the code&n;&t;&t;and let&squot;s face it, there is only one client (umssync) for all this&n;&t;*/
 r_if
 c_cond
 (paren
+id|err
+op_assign
 id|verify_area
 c_func
 (paren
@@ -192,8 +197,7 @@ l_int|0
 (brace
 id|ret
 op_assign
-op_minus
-id|EFAULT
+id|err
 suffix:semicolon
 )brace
 r_else
@@ -289,7 +293,7 @@ op_assign
 op_amp
 id|idata-&gt;dos_dirent
 suffix:semicolon
-id|msdos_readdir
+id|fat_readdir
 c_func
 (paren
 id|dir

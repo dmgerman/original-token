@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 030&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -277,6 +277,13 @@ op_and_assign
 op_complement
 id|OWN_RX_BUSY_CONDITION
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25-&gt;dama_slave
+)paren
+multiline_comment|/* dl1bke */
 id|ax25_send_control
 c_func
 (paren
@@ -299,12 +306,19 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t;&t;&t; * Check for frames to transmit.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25-&gt;dama_slave
+)paren
 id|ax25_kick
 c_func
 (paren
 id|ax25
 )paren
 suffix:semicolon
+multiline_comment|/* dl1bke 960114 */
 r_break
 suffix:semicolon
 r_default
@@ -350,6 +364,13 @@ op_and_assign
 op_complement
 id|ACK_PENDING_CONDITION
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25-&gt;dama_slave
+)paren
+multiline_comment|/* dl1bke 960114 */
 id|ax25_timeout_response
 c_func
 (paren
@@ -372,6 +393,96 @@ op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/* dl1bke 960114: T3 expires and we are in DAMA mode:  */
+multiline_comment|/*                send a DISC and abort the connection */
+r_if
+c_cond
+(paren
+id|ax25-&gt;dama_slave
+)paren
+(brace
+macro_line|#ifdef CONFIG_NETROM
+id|nr_link_failed
+c_func
+(paren
+op_amp
+id|ax25-&gt;dest_addr
+comma
+id|ax25-&gt;device
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ax25_clear_queues
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
+id|ax25_send_control
+c_func
+(paren
+id|ax25
+comma
+id|DISC
+comma
+id|POLLON
+comma
+id|C_COMMAND
+)paren
+suffix:semicolon
+id|ax25-&gt;state
+op_assign
+id|AX25_STATE_0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25-&gt;sk
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ax25-&gt;sk-&gt;debug
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;T3 Timeout&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ax25-&gt;sk-&gt;state
+op_assign
+id|TCP_CLOSE
+suffix:semicolon
+id|ax25-&gt;sk-&gt;err
+op_assign
+id|ETIMEDOUT
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25-&gt;sk-&gt;dead
+)paren
+id|ax25-&gt;sk
+op_member_access_from_pointer
+id|state_change
+c_func
+(paren
+id|ax25-&gt;sk
+)paren
+suffix:semicolon
+id|ax25-&gt;sk-&gt;dead
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -400,6 +511,8 @@ op_assign
 id|ax25-&gt;t3
 suffix:semicolon
 )brace
+multiline_comment|/* dl1bke 960114: DAMA T1 timeouts are handled in ax25_dama_slave_transmit */
+multiline_comment|/* &t;&t;  nevertheless we have to re-enqueue the timer struct...   */
 r_if
 c_cond
 (paren
@@ -422,6 +535,45 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25_dev_is_dama_slave
+c_func
+(paren
+id|ax25-&gt;device
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ax25-&gt;dama_slave
+)paren
+id|ax25-&gt;dama_slave
+op_assign
+l_int|0
+suffix:semicolon
+id|ax25_t1_timeout
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* dl1bke 960114: The DAMA protocol requires to send data and SABM/DISC&n; *                within the poll of any connected channel. Remember &n; *                that we are not allowed to send anything unless we&n; *                get polled by the Master.&n; *                &n; *                Thus we&squot;ll have to do parts of our T1 handling in&n; *                ax25_enquiry_response().&n; */
+DECL|function|ax25_t1_timeout
+r_void
+id|ax25_t1_timeout
+c_func
+(paren
+id|ax25_cb
+op_star
+id|ax25
+)paren
+(brace
 r_switch
 c_cond
 (paren
@@ -531,6 +683,15 @@ id|ax25
 comma
 id|SABM
 comma
+id|ax25_dev_is_dama_slave
+c_func
+(paren
+id|ax25-&gt;device
+)paren
+ques
+c_cond
+id|POLLOFF
+suffix:colon
 id|POLLON
 comma
 id|C_COMMAND
@@ -558,6 +719,15 @@ id|ax25
 comma
 id|SABM
 comma
+id|ax25_dev_is_dama_slave
+c_func
+(paren
+id|ax25-&gt;device
+)paren
+ques
+c_cond
+id|POLLOFF
+suffix:colon
 id|POLLON
 comma
 id|C_COMMAND
@@ -573,6 +743,15 @@ id|ax25
 comma
 id|SABME
 comma
+id|ax25_dev_is_dama_slave
+c_func
+(paren
+id|ax25-&gt;device
+)paren
+ques
+c_cond
+id|POLLOFF
+suffix:colon
 id|POLLON
 comma
 id|C_COMMAND
@@ -614,6 +793,19 @@ id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
 suffix:semicolon
+id|ax25_send_control
+c_func
+(paren
+id|ax25
+comma
+id|DISC
+comma
+id|POLLON
+comma
+id|C_COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* dl1bke */
 r_if
 c_cond
 (paren
@@ -655,6 +847,17 @@ r_else
 id|ax25-&gt;n2count
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25_dev_is_dama_slave
+c_func
+(paren
+id|ax25-&gt;device
+)paren
+)paren
+multiline_comment|/* dl1bke */
 id|ax25_send_control
 c_func
 (paren
@@ -677,6 +880,13 @@ id|ax25-&gt;n2count
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25-&gt;dama_slave
+)paren
+multiline_comment|/* dl1bke 960114 */
 id|ax25_transmit_enquiry
 c_func
 (paren
@@ -741,6 +951,17 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ax25-&gt;sk-&gt;debug
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Link Failure&bslash;n&quot;
+)paren
+suffix:semicolon
 id|ax25-&gt;sk-&gt;state
 op_assign
 id|TCP_CLOSE
@@ -774,6 +995,13 @@ r_else
 id|ax25-&gt;n2count
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25-&gt;dama_slave
+)paren
+multiline_comment|/* dl1bke 960114 */
 id|ax25_transmit_enquiry
 c_func
 (paren

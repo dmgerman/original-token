@@ -105,6 +105,21 @@ DECL|member|dotsOK
 r_char
 id|dotsOK
 suffix:semicolon
+DECL|member|sys_immutable
+r_char
+id|sys_immutable
+suffix:semicolon
+multiline_comment|/* system files are immutable */
+DECL|member|vfat
+r_int
+id|vfat
+suffix:semicolon
+multiline_comment|/* 0=no vfat long filename support, 1=vfat support */
+DECL|member|umsdos
+r_int
+id|umsdos
+suffix:semicolon
+multiline_comment|/* 1 if mounted by umsdos, 0 if not */
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -8,8 +8,8 @@ id|version
 op_assign
 l_string|&quot;Equalizer: $Revision: 3.12 $ $Date: 1995/01/19 $ Simon Janes (simon@ncm.com)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n; * Sources:&n; *   skeleton.c by Donald Becker.&n; * Inspirations:&n; *   The Harried and Overworked Alan Cox&n; * Conspiracies:&n; *   The Alan Cox and Mike McLagan plot to get someone else to do the code, which&n; *   turned out to be me.&n; */
-multiline_comment|/*&n; * $Log: eql.c,v $&n; * Revision 3.12  1995/03/22  21:07:51  anarchy&n; * Added suser() checks on configuration.&n; * Moved header file.&n; *&n; * Revision 3.11  1995/01/19  23:14:31  guru&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 8;&n; *&n; * Revision 3.10  1995/01/19  23:07:53  guru&n; * back to&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued;&n; *&n; * Revision 3.9  1995/01/19  22:38:20  guru&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 4;&n; *&n; * Revision 3.8  1995/01/19  22:30:55  guru&n; *       slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 2;&n; *&n; * Revision 3.7  1995/01/19  21:52:35  guru&n; * printk&squot;s trimmed out.&n; *&n; * Revision 3.6  1995/01/19  21:49:56  guru&n; * This is working pretty well. I gained 1 K/s in speed.. now its just&n; * robustness and printk&squot;s to be diked out.&n; *&n; * Revision 3.5  1995/01/18  22:29:59  guru&n; * still crashes the kernel when the lock_wait thing is woken up.&n; *&n; * Revision 3.4  1995/01/18  21:59:47  guru&n; * Broken set-bit locking snapshot&n; *&n; * Revision 3.3  1995/01/17  22:09:18  guru&n; * infinite sleep in a lock somewhere..&n; *&n; * Revision 3.2  1995/01/15  16:46:06  guru&n; * Log trimmed of non-pertinant 1.x branch messages&n; *&n; * Revision 3.1  1995/01/15  14:41:45  guru&n; * New Scheduler and timer stuff...&n; *&n; * Revision 1.15  1995/01/15  14:29:02  guru&n; * Will make 1.14 (now 1.15) the 3.0 branch, and the 1.12 the 2.0 branch, the one&n; * with the dumber scheduler&n; *&n; * Revision 1.14  1995/01/15  02:37:08  guru&n; * shock.. the kept-new-versions could have zonked working&n; * stuff.. shudder&n; *&n; * Revision 1.13  1995/01/15  02:36:31  guru&n; * big changes&n; *&n; * &t;scheduler was torn out and replaced with something smarter&n; *&n; * &t;global names not prefixed with eql_ were renamed to protect&n; * &t;against namespace collisions&n; *&n; * &t;a few more abstract interfaces were added to facilitate any&n; * &t;potential change of datastructure.  the driver is still using&n; * &t;a linked list of slaves.  going to a heap would be a bit of&n; * &t;an overkill.&n; *&n; * &t;this compiles fine with no warnings.&n; *&n; * &t;the locking mechanism and timer stuff must be written however,&n; * &t;this version will not work otherwise&n; *&n; */
+multiline_comment|/*&n; * Sources:&n; *   skeleton.c by Donald Becker.&n; * Inspirations:&n; *   The Harried and Overworked Alan Cox&n; * Conspiracies:&n; *   The Alan Cox and Mike McLagan plot to get someone else to do the code, &n; *   which turned out to be me.&n; */
+multiline_comment|/*&n; * $Log: eql.c,v $&n; * Revision 3.13  1996/01/21  15:17:18  alan&n; * tx_queue_len changes.&n; * reformatted.&n; *&n; * Revision 3.12  1995/03/22  21:07:51  anarchy&n; * Added suser() checks on configuration.&n; * Moved header file.&n; *&n; * Revision 3.11  1995/01/19  23:14:31  guru&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 8;&n; *&n; * Revision 3.10  1995/01/19  23:07:53  guru&n; * back to&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued;&n; *&n; * Revision 3.9  1995/01/19  22:38:20  guru&n; * &t;&t;      slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 4;&n; *&n; * Revision 3.8  1995/01/19  22:30:55  guru&n; *       slave_load = (ULONG_MAX - (ULONG_MAX / 2)) -&n; * &t;&t;&t;(priority_Bps) + bytes_queued * 2;&n; *&n; * Revision 3.7  1995/01/19  21:52:35  guru&n; * printk&squot;s trimmed out.&n; *&n; * Revision 3.6  1995/01/19  21:49:56  guru&n; * This is working pretty well. I gained 1 K/s in speed.. now its just&n; * robustness and printk&squot;s to be diked out.&n; *&n; * Revision 3.5  1995/01/18  22:29:59  guru&n; * still crashes the kernel when the lock_wait thing is woken up.&n; *&n; * Revision 3.4  1995/01/18  21:59:47  guru&n; * Broken set-bit locking snapshot&n; *&n; * Revision 3.3  1995/01/17  22:09:18  guru&n; * infinite sleep in a lock somewhere..&n; *&n; * Revision 3.2  1995/01/15  16:46:06  guru&n; * Log trimmed of non-pertinant 1.x branch messages&n; *&n; * Revision 3.1  1995/01/15  14:41:45  guru&n; * New Scheduler and timer stuff...&n; *&n; * Revision 1.15  1995/01/15  14:29:02  guru&n; * Will make 1.14 (now 1.15) the 3.0 branch, and the 1.12 the 2.0 branch, the one&n; * with the dumber scheduler&n; *&n; * Revision 1.14  1995/01/15  02:37:08  guru&n; * shock.. the kept-new-versions could have zonked working&n; * stuff.. shudder&n; *&n; * Revision 1.13  1995/01/15  02:36:31  guru&n; * big changes&n; *&n; * &t;scheduler was torn out and replaced with something smarter&n; *&n; * &t;global names not prefixed with eql_ were renamed to protect&n; * &t;against namespace collisions&n; *&n; * &t;a few more abstract interfaces were added to facilitate any&n; * &t;potential change of datastructure.  the driver is still using&n; * &t;a linked list of slaves.  going to a heap would be a bit of&n; * &t;an overkill.&n; *&n; * &t;this compiles fine with no warnings.&n; *&n; * &t;the locking mechanism and timer stuff must be written however,&n; * &t;this version will not work otherwise&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -562,8 +562,8 @@ suffix:semicolon
 multiline_comment|/*  */
 "&f;"
 multiline_comment|/* struct device * interface functions &n;   ---------------------------------------------------------&n;   */
-r_int
 DECL|function|eql_init
+r_int
 id|eql_init
 c_func
 (paren
@@ -607,7 +607,7 @@ c_func
 id|version
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize the device structure. */
+multiline_comment|/*&n;&t; *&t;Initialize the device structure. &n;&t; */
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -749,7 +749,7 @@ id|dev-&gt;get_stats
 op_assign
 id|eql_get_stats
 suffix:semicolon
-multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values.&n;     This should be in a common file instead of per-driver.  */
+multiline_comment|/*&n;  &t; *&t;Fill in the fields of the device structure with &n;&t; *&t;eql-generic values. This should be in a common &n;&t; *&t;file instead of per-driver.  &n;&t; */
 r_for
 c_loop
 (paren
@@ -782,7 +782,7 @@ id|dev-&gt;rebuild_header
 op_assign
 id|eql_rebuild_header
 suffix:semicolon
-multiline_comment|/* now we undo some of the things that eth_setup does that we don&squot;t like */
+multiline_comment|/*&n;&t; *&t;Now we undo some of the things that eth_setup does&n;&t; * &t;that we don&squot;t like &n;&t; */
 id|dev-&gt;mtu
 op_assign
 id|EQL_DEFAULT_MTU
@@ -816,14 +816,18 @@ id|dev-&gt;type
 op_assign
 id|ARPHRD_SLIP
 suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|5
+suffix:semicolon
+multiline_comment|/* Hands them off fast */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_open
 r_static
 r_int
-DECL|function|eql_open
 id|eql_open
 c_func
 (paren
@@ -926,9 +930,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|eql_close
 r_static
 r_int
-DECL|function|eql_close
 id|eql_close
 c_func
 (paren
@@ -964,7 +968,8 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* The timer has to be stopped first before we start hacking away&n;     at the data structure it scans every so often... */
+multiline_comment|/*&n;&t; *&t;The timer has to be stopped first before we start hacking away&n;&t; *&t;at the data structure it scans every so often... &n;&t; */
+macro_line|#ifdef EQL_DEBUG
 id|printk
 (paren
 l_string|&quot;%s: stopping timer&bslash;n&quot;
@@ -972,6 +977,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|eql-&gt;timer_on
 op_assign
 l_int|0
@@ -993,10 +999,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_ioctl
 r_static
 r_int
-DECL|function|eql_ioctl
 id|eql_ioctl
 c_func
 (paren
@@ -1141,10 +1146,9 @@ id|EOPNOTSUPP
 suffix:semicolon
 )brace
 )brace
-"&f;"
+DECL|function|eql_slave_xmit
 r_static
 r_int
-DECL|function|eql_slave_xmit
 id|eql_slave_xmit
 c_func
 (paren
@@ -1187,11 +1191,9 @@ id|skb
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|eql_schedule_slaves
 (paren
 id|eql-&gt;queue
@@ -1263,7 +1265,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* The alternative for this is the return 1 and have&n;         dev_queue_xmit just queue it up on the eql&squot;s queue. */
+multiline_comment|/*&n;&t;&t; *&t;The alternative for this is the return 1 and have&n;&t;&t; *&t;dev_queue_xmit just queue it up on the eql&squot;s queue. &n;&t;&t; */
 id|eql-&gt;stats-&gt;tx_dropped
 op_increment
 suffix:semicolon
@@ -1280,12 +1282,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-DECL|function|eql_get_stats
 id|eql_get_stats
 c_func
 (paren
@@ -1309,9 +1310,9 @@ r_return
 id|eql-&gt;stats
 suffix:semicolon
 )brace
+DECL|function|eql_header
 r_static
 r_int
-DECL|function|eql_header
 id|eql_header
 c_func
 (paren
@@ -1345,9 +1346,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|eql_rebuild_header
 r_static
 r_int
-DECL|function|eql_rebuild_header
 id|eql_rebuild_header
 c_func
 (paren
@@ -1374,11 +1375,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
-multiline_comment|/* private ioctl functions&n;   -----------------------------------------------------------------&n;   */
+multiline_comment|/*&n; *&t;Private ioctl functions&n; */
+DECL|function|eql_enslave
 r_static
 r_int
-DECL|function|eql_enslave
 id|eql_enslave
 c_func
 (paren
@@ -1467,7 +1467,7 @@ comma
 id|srq.priority
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif  
 id|master_dev
 op_assign
 id|dev
@@ -1571,10 +1571,9 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_emancipate
 r_static
 r_int
-DECL|function|eql_emancipate
 id|eql_emancipate
 c_func
 (paren
@@ -1717,10 +1716,9 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_g_slave_cfg
 r_static
 r_int
-DECL|function|eql_g_slave_cfg
 id|eql_g_slave_cfg
 c_func
 (paren
@@ -1906,10 +1904,9 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_s_slave_cfg
 r_static
 r_int
-DECL|function|eql_s_slave_cfg
 id|eql_s_slave_cfg
 c_func
 (paren
@@ -2065,10 +2062,9 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_g_master_cfg
 r_static
 r_int
-DECL|function|eql_g_master_cfg
 id|eql_g_master_cfg
 c_func
 (paren
@@ -2182,9 +2178,9 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|eql_s_master_cfg
 r_static
 r_int
-DECL|function|eql_s_master_cfg
 id|eql_s_master_cfg
 c_func
 (paren
@@ -2298,12 +2294,11 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-"&f;"
-multiline_comment|/* private device support functions&n;   ------------------------------------------------------------------&n;   */
+multiline_comment|/*&n; *&t;Private device support functions&n; */
+DECL|function|eql_is_slave
 r_static
 r_inline
 r_int
-DECL|function|eql_is_slave
 id|eql_is_slave
 c_func
 (paren
@@ -2338,10 +2333,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|eql_is_master
 r_static
 r_inline
 r_int
-DECL|function|eql_is_master
 id|eql_is_master
 c_func
 (paren
@@ -2376,11 +2371,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_new_slave
 r_static
 id|slave_t
 op_star
-DECL|function|eql_new_slave
 id|eql_new_slave
 c_func
 (paren
@@ -2434,9 +2428,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|eql_delete_slave
 r_static
 r_void
-DECL|function|eql_delete_slave
 id|eql_delete_slave
 c_func
 (paren
@@ -2485,11 +2479,10 @@ id|slave-&gt;priority_bps
 suffix:semicolon
 )brace
 macro_line|#endif
-"&f;"
+DECL|function|eql_number_slaves
 r_static
 r_inline
 r_int
-DECL|function|eql_number_slaves
 id|eql_number_slaves
 c_func
 (paren
@@ -2502,10 +2495,10 @@ r_return
 id|queue-&gt;num_slaves
 suffix:semicolon
 )brace
+DECL|function|eql_is_empty
 r_static
 r_inline
 r_int
-DECL|function|eql_is_empty
 id|eql_is_empty
 c_func
 (paren
@@ -2531,10 +2524,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|eql_is_full
 r_static
 r_inline
 r_int
-DECL|function|eql_is_full
 id|eql_is_full
 c_func
 (paren
@@ -2570,11 +2563,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_new_slave_queue
 r_static
 id|slave_queue_t
 op_star
-DECL|function|eql_new_slave_queue
 id|eql_new_slave_queue
 c_func
 (paren
@@ -2716,9 +2708,9 @@ r_return
 id|queue
 suffix:semicolon
 )brace
+DECL|function|eql_delete_slave_queue
 r_static
 r_void
-DECL|function|eql_delete_slave_queue
 id|eql_delete_slave_queue
 c_func
 (paren
@@ -2731,7 +2723,7 @@ id|slave_t
 op_star
 id|zapped
 suffix:semicolon
-multiline_comment|/* this should only be called when there isn&squot;t a timer running that scans&n;     the data periodicaly.. dev_close stops the timer... */
+multiline_comment|/*&n;&t; *&t;This should only be called when there isn&squot;t a&n;&t; *&t;timer running that scans the data periodicaly.. &n;&t; *&t;dev_close stops the timer... &n;&t; */
 r_while
 c_loop
 (paren
@@ -2773,10 +2765,9 @@ id|queue
 )paren
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_insert_slave
 r_static
 r_int
-DECL|function|eql_insert_slave
 id|eql_insert_slave
 c_func
 (paren
@@ -2826,7 +2817,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/*&t;  printk (&quot;%s: found a duplicate, killing it and replacing&bslash;n&quot;,&n;&t;&t;  queue-&gt;master_dev-&gt;name); */
+multiline_comment|/*&t;&t;&t;  printk (&quot;%s: found a duplicate, killing it and replacing&bslash;n&quot;,&n;&t;&t;&t;&t;  queue-&gt;master_dev-&gt;name); */
 id|eql_delete_slave
 (paren
 id|eql_remove_slave
@@ -2865,10 +2856,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|eql_remove_slave
 r_static
 id|slave_t
 op_star
-DECL|function|eql_remove_slave
 id|eql_remove_slave
 c_func
 (paren
@@ -2913,7 +2904,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* printk (&quot;%s: remove_slave; searching...&bslash;n&quot;, queue-&gt;master_dev-&gt;name); */
+multiline_comment|/* &t;&t;printk (&quot;%s: remove_slave; searching...&bslash;n&quot;, queue-&gt;master_dev-&gt;name); */
 id|prev
 op_assign
 id|curr
@@ -2956,7 +2947,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* not found */
 )brace
-"&f;"
 macro_line|#if 0
 r_static
 r_int
@@ -3040,9 +3030,9 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|eql_remove_slave_dev
 r_static
 r_int
-DECL|function|eql_remove_slave_dev
 id|eql_remove_slave_dev
 c_func
 (paren
@@ -3138,13 +3128,12 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_best_slave_dev
 r_static
 r_inline
 r_struct
 id|device
 op_star
-DECL|function|eql_best_slave_dev
 id|eql_best_slave_dev
 c_func
 (paren
@@ -3181,11 +3170,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|eql_best_slave
 r_static
 r_inline
 id|slave_t
 op_star
-DECL|function|eql_best_slave
 id|eql_best_slave
 c_func
 (paren
@@ -3198,11 +3187,10 @@ r_return
 id|queue-&gt;best_slave
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_schedule_slaves
 r_static
 r_inline
 r_void
-DECL|function|eql_schedule_slaves
 id|eql_schedule_slaves
 c_func
 (paren
@@ -3260,7 +3248,7 @@ id|queue
 )paren
 )paren
 (brace
-multiline_comment|/* no slaves to play with */
+multiline_comment|/*&n;&t;&t; *&t;No slaves to play with &n;&t;&t; */
 id|eql_set_best_slave
 (paren
 id|queue
@@ -3277,7 +3265,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* make a pass to set the best slave */
+multiline_comment|/*&n;&t;&t; *&t;Make a pass to set the best slave &n;&t;&t; */
 r_int
 r_int
 id|best_load
@@ -3335,7 +3323,7 @@ id|slave
 )paren
 )paren
 (brace
-multiline_comment|/* go through the slave list once, updating best_slave &n;&t;     whenever a new best_load is found, whenever a dead&n;&t;     slave is found, it is marked to be pulled out of the &n;&t;     queue */
+multiline_comment|/*&n;&t;&t;&t; *&t;Go through the slave list once, updating best_slave &n;&t;&t;&t; *      whenever a new best_load is found, whenever a dead&n;&t;&t;&t; *&t;slave is found, it is marked to be pulled out of the &n;&t;&t;&t; *&t;queue &n;&t;&t;&t; */
 r_int
 r_int
 id|slave_load
@@ -3425,7 +3413,7 @@ suffix:semicolon
 r_else
 multiline_comment|/* we found a dead slave */
 (brace
-multiline_comment|/* we only bury one slave at a time, if more than&n;&t;&t;&t; one slave dies, we will bury him on the next &n;&t;&t;&t; reschedule. slaves don&squot;t die all at once that much&n;&t;&t;&t; anyway */
+multiline_comment|/* &n;&t;&t;&t;&t;&t;&t; *&t;We only bury one slave at a time, if more than&n;&t;&t;&t;&t;&t;&t; *&t;one slave dies, we will bury him on the next &n;&t;&t;&t;&t;&t;&t; *&t;reschedule. slaves don&squot;t die all at once that &n;&t;&t;&t;&t;&t;&t; *&t;much anyway &n;&t;&t;&t;&t;&t;&t; */
 id|slave_corpse
 op_assign
 id|slave
@@ -3475,11 +3463,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-"&f;"
+DECL|function|eql_find_slave_dev
 r_static
 id|slave_t
 op_star
-DECL|function|eql_find_slave_dev
 id|eql_find_slave_dev
 c_func
 (paren
@@ -3555,11 +3542,11 @@ id|slave
 suffix:semicolon
 )brace
 "&f;"
+DECL|function|eql_first_slave
 r_static
 r_inline
 id|slave_t
 op_star
-DECL|function|eql_first_slave
 id|eql_first_slave
 c_func
 (paren
@@ -3572,11 +3559,11 @@ r_return
 id|queue-&gt;head-&gt;next
 suffix:semicolon
 )brace
+DECL|function|eql_next_slave
 r_static
 r_inline
 id|slave_t
 op_star
-DECL|function|eql_next_slave
 id|eql_next_slave
 c_func
 (paren
@@ -3593,10 +3580,10 @@ r_return
 id|slave-&gt;next
 suffix:semicolon
 )brace
+DECL|function|eql_set_best_slave
 r_static
 r_inline
 r_void
-DECL|function|eql_set_best_slave
 id|eql_set_best_slave
 c_func
 (paren
@@ -3614,7 +3601,6 @@ op_assign
 id|slave
 suffix:semicolon
 )brace
-"&f;"
 macro_line|#if 0
 r_static
 r_inline
@@ -3719,10 +3705,10 @@ id|result
 suffix:semicolon
 )brace
 macro_line|#endif 
+DECL|function|eql_is_locked_slave_queue
 r_static
 r_inline
 r_int
-DECL|function|eql_is_locked_slave_queue
 id|eql_is_locked_slave_queue
 c_func
 (paren
@@ -3746,9 +3732,9 @@ id|queue-&gt;lock
 )paren
 suffix:semicolon
 )brace
+DECL|function|eql_timer
 r_static
 r_void
-DECL|function|eql_timer
 id|eql_timer
 c_func
 (paren
@@ -3865,12 +3851,10 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
-(brace
 id|slave_corpse
 op_assign
 id|slave
 suffix:semicolon
-)brace
 )brace
 )brace
 id|sti
@@ -3993,8 +3977,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

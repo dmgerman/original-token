@@ -524,6 +524,8 @@ DECL|macro|ATTR_ATIME_SET
 mdefine_line|#define ATTR_ATIME_SET&t;128
 DECL|macro|ATTR_MTIME_SET
 mdefine_line|#define ATTR_MTIME_SET&t;256
+DECL|macro|ATTR_FORCE
+mdefine_line|#define ATTR_FORCE&t;512&t;/* Not a change, but a change it */
 multiline_comment|/*&n; * This is the Inode Attributes structure, used for notify_change().  It&n; * uses the above definitions as flags, to know which values have changed.&n; * Also, in this manner, a Filesystem can look at only the values it cares&n; * about.  Basically, these are the attributes that the VFS layer can&n; * request to change from the FS layer.&n; *&n; * Derek Atkins &lt;warlord@MIT.EDU&gt; 94-10-20&n; */
 DECL|struct|iattr
 r_struct
@@ -3443,6 +3445,9 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* kludge to get SCSI modules working */
+macro_line|#include &lt;linux/minix_fs.h&gt;
+macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

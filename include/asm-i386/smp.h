@@ -511,12 +511,6 @@ r_int
 id|smp_invalidate_needed
 suffix:semicolon
 r_extern
-r_volatile
-r_int
-r_int
-id|smp_spins
-suffix:semicolon
-r_extern
 r_void
 id|smp_invalidate
 c_func

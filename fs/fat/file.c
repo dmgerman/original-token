@@ -18,20 +18,20 @@ DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 DECL|macro|Printk
 mdefine_line|#define Printk(x) printk x
-DECL|variable|msdos_file_operations
+DECL|variable|fat_file_operations
 r_static
 r_struct
 id|file_operations
-id|msdos_file_operations
+id|fat_file_operations
 op_assign
 (brace
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
-id|msdos_file_read
+id|fat_file_read
 comma
 multiline_comment|/* read */
-id|msdos_file_write
+id|fat_file_write
 comma
 multiline_comment|/* write */
 l_int|NULL
@@ -56,14 +56,14 @@ id|file_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|variable|msdos_file_inode_operations
+DECL|variable|fat_file_inode_operations
 r_struct
 id|inode_operations
-id|msdos_file_inode_operations
+id|fat_file_inode_operations
 op_assign
 (brace
 op_amp
-id|msdos_file_operations
+id|fat_file_operations
 comma
 multiline_comment|/* default file operations */
 l_int|NULL
@@ -105,10 +105,10 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|msdos_bmap
+id|fat_bmap
 comma
 multiline_comment|/* bmap */
-id|msdos_truncate
+id|fat_truncate
 comma
 multiline_comment|/* truncate */
 l_int|NULL
@@ -119,20 +119,20 @@ multiline_comment|/* smap */
 )brace
 suffix:semicolon
 multiline_comment|/* #Specification: msdos / special devices / mmap&t;&n;&t;Mmapping does work because a special mmap is provide in that case.&n;&t;Note that it is much less efficient than the generic_mmap normally&n;&t;used since it allocate extra buffer. generic_mmap is used for&n;&t;normal device (512 bytes hardware sectors).&n;*/
-DECL|variable|msdos_file_operations_1024
+DECL|variable|fat_file_operations_1024
 r_static
 r_struct
 id|file_operations
-id|msdos_file_operations_1024
+id|fat_file_operations_1024
 op_assign
 (brace
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
-id|msdos_file_read
+id|fat_file_read
 comma
 multiline_comment|/* read */
-id|msdos_file_write
+id|fat_file_write
 comma
 multiline_comment|/* write */
 l_int|NULL
@@ -144,7 +144,7 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-id|msdos_mmap
+id|fat_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL
@@ -158,14 +158,14 @@ multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/* #Specification: msdos / special devices / swap file&n;&t;Swap file can&squot;t work on special devices with a large sector&n;&t;size (1024 bytes hard sector). Those devices have a weird&n;&t;MsDOS filesystem layout. Generally a single hardware sector&n;&t;may contain 2 unrelated logical sector. This mean that there is&n;&t;no easy way to do a mapping between disk sector of a file and virtual&n;&t;memory. So swap file is difficult (not available right now)&n;&t;on those devices. Off course, Ext2 does not have this problem.&n;*/
-DECL|variable|msdos_file_inode_operations_1024
+DECL|variable|fat_file_inode_operations_1024
 r_struct
 id|inode_operations
-id|msdos_file_inode_operations_1024
+id|fat_file_inode_operations_1024
 op_assign
 (brace
 op_amp
-id|msdos_file_operations_1024
+id|fat_file_operations_1024
 comma
 multiline_comment|/* default file operations */
 l_int|NULL
@@ -210,7 +210,7 @@ multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* bmap */
-id|msdos_truncate
+id|fat_truncate
 comma
 multiline_comment|/* truncate */
 l_int|NULL
@@ -222,9 +222,9 @@ multiline_comment|/* smap */
 suffix:semicolon
 DECL|macro|MSDOS_PREFETCH
 mdefine_line|#define MSDOS_PREFETCH&t;32
-DECL|struct|msdos_pre
+DECL|struct|fat_pre
 r_struct
-id|msdos_pre
+id|fat_pre
 (brace
 DECL|member|file_sector
 r_int
@@ -255,10 +255,10 @@ multiline_comment|/* index in bhlist */
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t;Order the prefetch of more sectors.&n;*/
-DECL|function|msdos_prefetch
+DECL|function|fat_prefetch
 r_static
 r_void
-id|msdos_prefetch
+id|fat_prefetch
 (paren
 r_struct
 id|inode
@@ -266,7 +266,7 @@ op_star
 id|inode
 comma
 r_struct
-id|msdos_pre
+id|fat_pre
 op_star
 id|pre
 comma
@@ -319,7 +319,7 @@ op_increment
 r_int
 id|sector
 op_assign
-id|msdos_smap
+id|fat_smap
 c_func
 (paren
 id|inode
@@ -389,7 +389,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|msdos_is_uptodate
+id|fat_is_uptodate
 c_func
 (paren
 id|sb
@@ -419,7 +419,7 @@ id|nbreq
 OG
 l_int|0
 )paren
-id|msdos_ll_rw_block
+id|fat_ll_rw_block
 (paren
 id|sb
 comma
@@ -453,9 +453,9 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;Read a file into user space&n;*/
-DECL|function|msdos_file_read
+DECL|function|fat_file_read
 r_int
-id|msdos_file_read
+id|fat_file_read
 c_func
 (paren
 r_struct
@@ -504,7 +504,7 @@ r_int
 id|left_in_file
 suffix:semicolon
 r_struct
-id|msdos_pre
+id|fat_pre
 id|pre
 suffix:semicolon
 r_if
@@ -517,7 +517,7 @@ id|inode
 id|printk
 c_func
 (paren
-l_string|&quot;msdos_file_read: inode = NULL&bslash;n&quot;
+l_string|&quot;fat_file_read: inode = NULL&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -547,7 +547,7 @@ id|inode-&gt;i_mode
 id|printk
 c_func
 (paren
-l_string|&quot;msdos_file_read: mode = %07o&bslash;n&quot;
+l_string|&quot;fat_file_read: mode = %07o&bslash;n&quot;
 comma
 id|inode-&gt;i_mode
 )paren
@@ -706,7 +706,7 @@ id|pre.nblist
 op_assign
 l_int|0
 suffix:semicolon
-id|msdos_prefetch
+id|fat_prefetch
 (paren
 id|inode
 comma
@@ -838,7 +838,7 @@ id|MSDOS_PREFETCH
 op_div
 l_int|2
 suffix:semicolon
-id|msdos_prefetch
+id|fat_prefetch
 (paren
 id|inode
 comma
@@ -880,7 +880,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|msdos_is_uptodate
+id|fat_is_uptodate
 c_func
 (paren
 id|sb
@@ -1115,9 +1115,9 @@ id|start
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;Write to a file either from user space&n;*/
-DECL|function|msdos_file_write
+DECL|function|fat_file_write
 r_int
-id|msdos_file_write
+id|fat_file_write
 c_func
 (paren
 r_struct
@@ -1199,7 +1199,7 @@ id|inode
 id|printk
 c_func
 (paren
-l_string|&quot;msdos_file_write: inode = NULL&bslash;n&quot;
+l_string|&quot;fat_file_write: inode = NULL&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1229,7 +1229,7 @@ id|inode-&gt;i_mode
 id|printk
 c_func
 (paren
-l_string|&quot;msdos_file_write: mode = %07o&bslash;n&quot;
+l_string|&quot;fat_file_write: mode = %07o&bslash;n&quot;
 comma
 id|inode-&gt;i_mode
 )paren
@@ -1304,7 +1304,7 @@ op_logical_neg
 (paren
 id|sector
 op_assign
-id|msdos_smap
+id|fat_smap
 c_func
 (paren
 id|inode
@@ -1321,7 +1321,7 @@ c_cond
 (paren
 id|error
 op_assign
-id|msdos_add_cluster
+id|fat_add_cluster
 c_func
 (paren
 id|inode
@@ -1338,7 +1338,7 @@ c_cond
 id|error
 )paren
 (brace
-id|msdos_truncate
+id|fat_truncate
 c_func
 (paren
 id|inode
@@ -1622,7 +1622,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|msdos_set_uptodate
+id|fat_set_uptodate
 c_func
 (paren
 id|sb
@@ -1683,9 +1683,9 @@ op_minus
 id|start
 suffix:semicolon
 )brace
-DECL|function|msdos_truncate
+DECL|function|fat_truncate
 r_void
-id|msdos_truncate
+id|fat_truncate
 c_func
 (paren
 r_struct

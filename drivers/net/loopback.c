@@ -366,9 +366,14 @@ op_assign
 id|ETH_ALEN
 suffix:semicolon
 multiline_comment|/* 6&t;&t;&t;*/
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|50000
+suffix:semicolon
+multiline_comment|/* No limit on loopback */
 id|dev-&gt;type
 op_assign
-id|ARPHRD_ETHER
+id|ARPHRD_LOOPBACK
 suffix:semicolon
 multiline_comment|/* 0x0001&t;&t;*/
 id|dev-&gt;rebuild_header

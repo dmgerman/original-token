@@ -300,17 +300,6 @@ id|arg
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|tcp_select_window
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|tcp_send_check
 c_func

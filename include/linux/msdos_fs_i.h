@@ -49,6 +49,11 @@ r_int
 id|i_binary
 suffix:semicolon
 multiline_comment|/* file contains non-text data */
+DECL|member|sys_immutable
+r_int
+id|sys_immutable
+suffix:semicolon
+multiline_comment|/* file is an immutable system file */
 )brace
 suffix:semicolon
 macro_line|#endif

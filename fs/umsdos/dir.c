@@ -328,7 +328,7 @@ l_int|0
 suffix:semicolon
 id|ret
 op_assign
-id|msdos_readdir
+id|fat_readdir
 c_func
 (paren
 id|dir
@@ -1230,7 +1230,7 @@ id|ret
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* So msdos_readdir will terminate */
+multiline_comment|/* So fat_readdir will terminate */
 )brace
 r_return
 id|ret
@@ -1346,7 +1346,7 @@ id|bufk.search_ino
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
-id|msdos_readdir
+id|fat_readdir
 (paren
 id|dir
 comma

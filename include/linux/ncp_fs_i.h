@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncp_fs_i.h&n; *&n; *  Copyright (C) 1995 by Paal-Kr. Engstad and Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ncp_fs_i.h&n; *&n; *  Copyright (C) 1995 Volker Lendecke&n; *&n; */
 macro_line|#ifndef _LINUX_NCP_FS_I
 DECL|macro|_LINUX_NCP_FS_I
 mdefine_line|#define _LINUX_NCP_FS_I

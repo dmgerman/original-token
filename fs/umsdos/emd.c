@@ -54,7 +54,7 @@ id|KERNEL_DS
 suffix:semicolon
 id|ret
 op_assign
-id|msdos_file_read
+id|fat_file_read
 c_func
 (paren
 id|inode
@@ -118,7 +118,7 @@ id|KERNEL_DS
 suffix:semicolon
 id|ret
 op_assign
-id|msdos_file_write
+id|fat_file_write
 c_func
 (paren
 id|inode

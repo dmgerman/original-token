@@ -613,29 +613,21 @@ id|dev-&gt;addr_len
 op_assign
 id|ETH_ALEN
 suffix:semicolon
-r_for
-c_loop
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|100
+suffix:semicolon
+multiline_comment|/* Ethernet wants good queues */
+id|memset
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETH_ALEN
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
 id|dev-&gt;broadcast
-(braket
-id|i
-)braket
-op_assign
-l_int|0xff
+comma
+l_int|0xFF
+comma
+id|ETH_ALEN
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign
@@ -729,29 +721,21 @@ id|dev-&gt;addr_len
 op_assign
 id|TR_ALEN
 suffix:semicolon
-r_for
-c_loop
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|100
+suffix:semicolon
+multiline_comment|/* Long queues on tr */
+id|memset
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|TR_ALEN
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
 id|dev-&gt;broadcast
-(braket
-id|i
-)braket
-op_assign
-l_int|0xff
+comma
+l_int|0xFF
+comma
+id|TR_ALEN
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign
@@ -1252,7 +1236,7 @@ id|dev
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t; * &t;critical: bypass by consider devices as blocks (maindev+aliases)&n;&t; */
+multiline_comment|/*&n;&t;&t;&t; * &t;Critical: Bypass by consider devices as blocks (maindev+aliases)&n;&t;&t;&t; */
 id|net_alias_nextdev_set
 c_func
 (paren
@@ -1376,7 +1360,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* You can i.e use a interfaces in a route though it is not up.&n;&t;   We call close_dev (which is changed: it will down a device even if&n;&t;   dev-&gt;flags==0 (but it will not call dev-&gt;stop if IFF_UP&n;&t;   is not set).&n;&t;   This will call notifier_call_chain(&amp;netdev_chain, NETDEV_DOWN, dev),&n;&t;   dev_mc_discard(dev), ....&n;&t;*/
+multiline_comment|/*&n;&t; *&t;You can i.e use a interfaces in a route though it is not up.&n;&t; *&t;We call close_dev (which is changed: it will down a device even if&n;&t; *&t;dev-&gt;flags==0 (but it will not call dev-&gt;stop if IFF_UP&n;&t; *&t;is not set).&n;&t; *&t;This will call notifier_call_chain(&amp;netdev_chain, NETDEV_DOWN, dev),&n;&t; *&t;dev_mc_discard(dev), ....&n;&t; */
 id|dev_close
 c_func
 (paren

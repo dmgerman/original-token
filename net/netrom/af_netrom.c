@@ -30,7 +30,6 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
-multiline_comment|/************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;*&t;&t;&t;Handlers for the socket list&t;&t;&t;*&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;&bslash;************************************************************************/
 DECL|variable|nr_default
 r_struct
 id|nr_parms_struct
@@ -833,7 +832,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;            *&n;* Handling for system calls applied via the various interfaces to a NET/ROM socket object&t;&t;    &t;    *&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;    *&n;&bslash;*******************************************************************************************************************/
+multiline_comment|/*&n; *&t;Handling for system calls applied via the various interfaces to a&n; *&t;NET/ROM socket object.&n; */
 DECL|function|nr_fcntl
 r_static
 r_int
@@ -854,19 +853,10 @@ r_int
 id|arg
 )paren
 (brace
-r_switch
-c_cond
-(paren
-id|cmd
-)paren
-(brace
-r_default
-suffix:colon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 )brace
 DECL|function|nr_setsockopt
 r_static
@@ -2622,39 +2612,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#ifdef DONTDO
-r_if
-c_cond
-(paren
-id|nr_find_listener
-c_func
-(paren
-op_amp
-id|addr-&gt;fsa_ax25.sax25_call
-comma
-id|sk-&gt;type
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;NET/ROM: bind failed: in use&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EADDRINUSE
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2990,6 +2947,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sk-&gt;zapped
+)paren
+(brace
+multiline_comment|/* Must bind first - autobinding in this may or may not work */
+id|sk-&gt;zapped
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|dev
 op_assign
@@ -3004,17 +2972,6 @@ l_int|NULL
 r_return
 op_minus
 id|ENETUNREACH
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;zapped
-)paren
-(brace
-multiline_comment|/* Must bind first - autobinding in this may or may not work */
-id|sk-&gt;zapped
-op_assign
-l_int|0
 suffix:semicolon
 id|source
 op_assign
@@ -3392,7 +3349,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* The write queue this time is holding sockets ready to use&n;&t;   hooked into the SABM we saved */
+multiline_comment|/*&n;&t; *&t;The write queue this time is holding sockets ready to use&n;&t; *&t;hooked into the SABM we saved&n;&t; */
 r_do
 (brace
 id|cli

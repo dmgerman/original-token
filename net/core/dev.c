@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack&n; *&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -23,6 +23,7 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
+macro_line|#include &lt;net/slhc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#ifdef CONFIG_NET_ALIAS
@@ -72,28 +73,6 @@ r_static
 r_struct
 id|sk_buff_head
 id|backlog
-op_assign
-(brace
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-op_amp
-id|backlog
-comma
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-op_amp
-id|backlog
-macro_line|#if CONFIG_SKB_CHECK
-comma
-id|SK_HEAD_SKB
-macro_line|#endif
-)brace
 suffix:semicolon
 multiline_comment|/* &n; *&t;We don&squot;t overdo the queue or we will thrash memory badly.&n; */
 DECL|variable|backlog_size
@@ -370,56 +349,45 @@ r_return
 id|dev
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_KERNELD
-r_if
-c_cond
-(paren
-id|request_module
-c_func
-(paren
-id|name
-)paren
-op_eq
-l_int|0
-)paren
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-op_ne
+r_return
 l_int|NULL
 suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
+)brace
+multiline_comment|/*&n; *&t;Find and possibly load an interface.&n; */
+macro_line|#ifdef CONFIG_KERNELD
+DECL|function|dev_load
+r_extern
+id|__inline__
+r_void
+id|dev_load
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|strcmp
+op_logical_neg
+id|dev_get
 c_func
 (paren
-id|dev-&gt;name
-comma
 id|name
 )paren
-op_eq
-l_int|0
 )paren
-r_return
-id|dev
+(brace
+id|request_module
+c_func
+(paren
+id|name
+)paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;Prepare an interface for use. &n; */
 DECL|function|dev_open
 r_int
@@ -857,6 +825,32 @@ id|where
 )paren
 multiline_comment|/* Always keep order. It helps other hosts&n;&t;&t;&t;&t;&t;   far more than it costs us */
 (brace
+multiline_comment|/*&n;&t;&t; *&t;Check we are not overruning the device queue length.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|skb_queue_len
+c_func
+(paren
+id|dev-&gt;buffs
+op_plus
+id|pri
+)paren
+OG
+id|dev-&gt;tx_queue_len
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|skb_queue_tail
 c_func
 (paren
@@ -1183,274 +1177,6 @@ id|NET_BH
 suffix:semicolon
 macro_line|#endif
 r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;The old interface to fetch a packet from a device driver.&n; *&t;This function is the base level entry point for all drivers that&n; *&t;want to send a packet to the upper (protocol) levels.  It takes&n; *&t;care of de-multiplexing the packet to the various modules based&n; *&t;on their protocol ID.&n; *&n; *&t;Return values:&t;1 &lt;- exit I can&squot;t do any more&n; *&t;&t;&t;0 &lt;- feed me more (i.e. &quot;done&quot;, &quot;OK&quot;). &n; *&n; *&t;This function is OBSOLETE and should not be used by any new&n; *&t;device.&n; */
-DECL|function|dev_rint
-r_int
-id|dev_rint
-c_func
-(paren
-r_int
-r_char
-op_star
-id|buff
-comma
-r_int
-id|len
-comma
-r_int
-id|flags
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_static
-r_int
-id|dropping
-op_assign
-l_int|0
-suffix:semicolon
-r_struct
-id|sk_buff
-op_star
-id|skb
-op_assign
-l_int|NULL
-suffix:semicolon
-r_int
-r_char
-op_star
-id|to
-suffix:semicolon
-r_int
-id|amount
-comma
-id|left
-suffix:semicolon
-r_int
-id|len2
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-op_logical_or
-id|buff
-op_eq
-l_int|NULL
-op_logical_or
-id|len
-op_le
-l_int|0
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-id|IN_SKBUFF
-)paren
-(brace
-id|skb
-op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|buff
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|dropping
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|skb_peek
-c_func
-(paren
-op_amp
-id|backlog
-)paren
-op_ne
-l_int|NULL
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;INET: dev_rint: no longer dropping packets.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dropping
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|skb
-op_assign
-id|alloc_skb
-c_func
-(paren
-id|len
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;dev_rint: packet dropped on %s (no memory) !&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dropping
-op_assign
-l_int|1
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* &n;&t;&t; *&t;First we copy the packet into a buffer, and save it for later. We&n;&t;&t; *&t;in effect handle the incoming data as if it were from a circular buffer&n;&t;&t; */
-id|to
-op_assign
-id|skb_put
-c_func
-(paren
-id|skb
-comma
-id|len
-)paren
-suffix:semicolon
-id|left
-op_assign
-id|len
-suffix:semicolon
-id|len2
-op_assign
-id|len
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|len2
-OG
-l_int|0
-)paren
-(brace
-id|amount
-op_assign
-id|min
-c_func
-(paren
-id|len2
-comma
-(paren
-r_int
-r_int
-)paren
-id|dev-&gt;rmem_end
-op_minus
-(paren
-r_int
-r_int
-)paren
-id|buff
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|to
-comma
-id|buff
-comma
-id|amount
-)paren
-suffix:semicolon
-id|len2
-op_sub_assign
-id|amount
-suffix:semicolon
-id|left
-op_sub_assign
-id|amount
-suffix:semicolon
-id|buff
-op_add_assign
-id|amount
-suffix:semicolon
-id|to
-op_add_assign
-id|amount
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-r_int
-r_int
-)paren
-id|buff
-op_eq
-id|dev-&gt;rmem_end
-)paren
-id|buff
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|dev-&gt;rmem_start
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;&t; *&t;Tag the frame and kick it to the proper receive routine&n;&t; */
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-id|netif_rx
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;OK, all done. &n;&t; */
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This routine causes all interfaces to try to send some data. &n; */
@@ -1876,7 +1602,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;&t; * aliases do not trasmit (by now :)&n;&t; */
+multiline_comment|/*&n;&t; * aliases do not transmit (for now :) )&n;&t; */
 macro_line|#ifdef CONFIG_NET_ALIAS
 r_if
 c_cond
@@ -2258,6 +1984,7 @@ id|arg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This is invoked by the /proc filesystem handler to display a device&n; *&t;in detail.&n; */
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|sprintf_stats
 r_static
 r_int
@@ -2542,6 +2269,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#endif&t;/* CONFIG_PROC_FS */
 multiline_comment|/*&n; *&t;This checks bitmasks for the ioctl calls for devices.&n; */
 DECL|function|bad_mask
 r_static
@@ -2673,6 +2401,14 @@ id|ifreq
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See which interface the caller is talking about. &n;&t; */
 multiline_comment|/*&n;&t; *&n;&t; *&t;net_alias_dev_get(): dev_get() with added alias naming magic.&n;&t; *&t;only allow alias creation/deletion if (getset==SIOCSIFADDR)&n;&t; *&n;&t; */
+macro_line|#ifdef CONFIG_KERNELD
+id|dev_load
+c_func
+(paren
+id|ifr.ifr_name
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 macro_line|#ifdef CONFIG_NET_ALIAS
 r_if
 c_cond
@@ -3877,6 +3613,14 @@ op_star
 op_star
 id|dp
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Initialise the packet receive queue.&n;&t; */
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|backlog
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * This is VeryUgly(tm).&n;&t; *&n;&t; * Some devices want to be initialized eary..&n;&t; */
 macro_line|#if defined(CONFIG_LANCE)
 id|lance_init
@@ -3901,6 +3645,14 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_DEC_ELCP)
 id|dec21040_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+multiline_comment|/*&n;&t; *&t;SLHC if present needs attaching so other people see it&n;&t; *&t;even if not opened.&n;&t; */
+macro_line|#if defined(CONFIG_SLIP_COMPRESSED) || defined(CONFIG_PPP)
+id|slhc_install
 c_func
 (paren
 )paren
@@ -3982,6 +3734,7 @@ id|dev-&gt;next
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -4016,6 +3769,7 @@ id|dev_get_info
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&t;&n;&t; *&t;Initialise net_alias engine &n;&t; *&n;&t; *&t;&t;- register net_alias device notifier&n;&t; *&t;&t;- register proc entries:&t;/proc/net/alias_types&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t;&t;/proc/net/aliases&n;&t; */
 macro_line|#ifdef CONFIG_NET_ALIAS
 id|net_alias_init

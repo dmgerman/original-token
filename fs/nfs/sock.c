@@ -293,6 +293,7 @@ l_int|0
 op_logical_and
 id|result
 op_ne
+op_minus
 id|ERESTARTSYS
 )paren
 (brace

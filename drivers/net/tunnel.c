@@ -204,6 +204,11 @@ id|dev-&gt;addr_len
 op_assign
 l_int|0
 suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Small queue - it should all run through */
 id|dev-&gt;hard_header_len
 op_assign
 l_int|0

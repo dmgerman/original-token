@@ -431,8 +431,6 @@ c_func
 l_string|&quot;rw_swap_page: bad swap file&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 )brace
 id|ll_rw_swap_file

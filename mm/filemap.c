@@ -302,6 +302,14 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|page-&gt;locked
+)paren
+r_goto
+id|next
+suffix:semicolon
 multiline_comment|/* First of all, regenerate the page&squot;s referenced bit&n;                   from any buffers in the page */
 id|bh
 op_assign
@@ -395,9 +403,6 @@ r_if
 c_cond
 (paren
 id|page-&gt;count
-op_logical_and
-op_logical_neg
-id|page-&gt;locked
 )paren
 (brace
 multiline_comment|/* The page is an old, unshared page --- try&n;                           to discard it. */
@@ -453,6 +458,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|next
+suffix:colon
 id|page
 op_increment
 suffix:semicolon
@@ -481,7 +488,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is called from try_to_swap_out() when we try to egt rid of some&n; * pages..  If we&squot;re unmapping the last occurrence of this page, we also&n; * free it from the page hash-queues etc, as we don&squot;t want to keep it&n; * in-core unnecessarily.&n; */
+multiline_comment|/*&n; * This is called from try_to_swap_out() when we try to get rid of some&n; * pages..  If we&squot;re unmapping the last occurrence of this page, we also&n; * free it from the page hash-queues etc, as we don&squot;t want to keep it&n; * in-core unnecessarily.&n; */
 DECL|function|page_unuse
 r_int
 r_int

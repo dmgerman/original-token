@@ -65,6 +65,7 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#include &lt;net/ip_forward.h&gt; 
 multiline_comment|/* Describe an IP fragment. */
 DECL|struct|ipfrag
 r_struct

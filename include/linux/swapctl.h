@@ -179,6 +179,14 @@ r_extern
 id|swapstat_t
 id|swapstats
 suffix:semicolon
+r_extern
+r_int
+id|min_free_pages
+comma
+id|free_pages_low
+comma
+id|free_pages_high
+suffix:semicolon
 DECL|macro|SC_VERSION
 mdefine_line|#define SC_VERSION&t;1
 DECL|macro|SC_MAX_VERSION

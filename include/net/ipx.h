@@ -32,6 +32,8 @@ id|ipx_address
 suffix:semicolon
 DECL|macro|ipx_broadcast_node
 mdefine_line|#define ipx_broadcast_node&t;&quot;&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&quot;
+DECL|macro|ipx_this_node
+mdefine_line|#define ipx_this_node           &quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 DECL|struct|ipx_packet
 r_typedef
 r_struct

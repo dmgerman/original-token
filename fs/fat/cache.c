@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/fat.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
+multiline_comment|/*&n; *  linux/fs/msdos/cache.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1100,7 +1100,7 @@ c_func
 l_string|&quot;FAT cache corruption&quot;
 )paren
 suffix:semicolon
-id|cache_inval_inode
+id|fat_cache_inval_inode
 c_func
 (paren
 id|inode
@@ -1178,9 +1178,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* Cache invalidation occurs rarely, thus the LRU chain is not updated. It&n;   fixes itself after a while. */
-DECL|function|cache_inval_inode
+DECL|function|fat_cache_inval_inode
 r_void
-id|cache_inval_inode
+id|fat_cache_inval_inode
 c_func
 (paren
 r_struct
@@ -1223,9 +1223,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cache_inval_dev
+DECL|function|fat_cache_inval_dev
 r_void
-id|cache_inval_dev
+id|fat_cache_inval_dev
 c_func
 (paren
 id|kdev_t
@@ -1386,9 +1386,9 @@ r_return
 id|nr
 suffix:semicolon
 )brace
-DECL|function|msdos_smap
+DECL|function|fat_smap
 r_int
-id|msdos_smap
+id|fat_smap
 c_func
 (paren
 r_struct
@@ -1682,7 +1682,7 @@ l_int|0
 )paren
 )paren
 (brace
-id|fs_panic
+id|fat_fs_panic
 c_func
 (paren
 id|inode-&gt;i_sb
@@ -1733,7 +1733,7 @@ c_func
 id|inode-&gt;i_sb
 )paren
 suffix:semicolon
-id|cache_inval_inode
+id|fat_cache_inval_inode
 c_func
 (paren
 id|inode

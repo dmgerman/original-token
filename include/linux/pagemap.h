@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_PAGEMAP_H
 DECL|macro|_LINUX_PAGEMAP_H
 mdefine_line|#define _LINUX_PAGEMAP_H
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Page-mapping primitive inline functions&n; *&n; * Copyright 1995 Linus Torvalds&n; */
 DECL|function|page_address
 r_static
@@ -121,6 +122,10 @@ id|page
 op_star
 id|page
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -159,12 +164,29 @@ id|offset
 )paren
 r_continue
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|page-&gt;referenced
 op_assign
 l_int|1
 suffix:semicolon
 id|page-&gt;count
 op_increment
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon

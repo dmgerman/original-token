@@ -42,7 +42,7 @@ multiline_comment|/* We have to set the access time because msdos don&squot;t ca
 r_int
 id|ret
 op_assign
-id|msdos_file_read
+id|fat_file_read
 c_func
 (paren
 id|inode
@@ -105,7 +105,7 @@ id|count
 )paren
 (brace
 r_return
-id|msdos_file_write
+id|fat_file_write
 c_func
 (paren
 id|inode
@@ -138,7 +138,7 @@ l_string|&quot;UMSDOS_truncate&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|msdos_truncate
+id|fat_truncate
 (paren
 id|inode
 )paren
@@ -241,7 +241,7 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|msdos_bmap
+id|fat_bmap
 comma
 multiline_comment|/* bmap */
 id|UMSDOS_truncate
@@ -250,7 +250,7 @@ multiline_comment|/* truncate */
 l_int|NULL
 comma
 multiline_comment|/* permission */
-id|msdos_smap
+id|fat_smap
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
@@ -279,7 +279,7 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-id|msdos_mmap
+id|fat_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL

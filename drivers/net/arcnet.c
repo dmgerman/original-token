@@ -2651,7 +2651,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Setup a struct device for ARCnet.  This should really be in net_init.c&n; * but since there are three different ARCnet devices ANYWAY... &lt;gargle&gt;&n; *&n; * Actually, the whole idea of having all this kernel-dependent stuff (ie.&n; * &quot;new-style flags&quot;) setup per-net-device is kind of weird anyway.&n; *&n; * Intelligent defaults?!  Nah.&n; */
+multiline_comment|/*&n; * Setup a struct device for ARCnet.  This should really be in net_init.c&n; * but since there are three different ARCnet devices ANYWAY... &lt;gargle&gt;&n; *&n; * Actually, the whole idea of having all this kernel-dependent stuff (ie.&n; * &quot;new-style flags&quot;) setup per-net-device is kind of weird anyway.&n; *&n; * Intelligent defaults?!  Nah.&n; */
 DECL|function|arcnet_setup
 r_void
 id|arcnet_setup
@@ -2706,6 +2706,11 @@ id|dev-&gt;type
 op_assign
 id|ARPHRD_ARCNET
 suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|30
+suffix:semicolon
+multiline_comment|/* Fairly long queue, arcnet is quite speedy */
 multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign

@@ -161,6 +161,8 @@ DECL|macro|FDC_82078
 mdefine_line|#define FDC_82078&t;0x60&t;/* 44pin 82078 or 64pin 82078SL */
 DECL|macro|FDC_82078_1
 mdefine_line|#define FDC_82078_1&t;0x61&t;/* 82078-1 (2Mbps fdc) */
+DECL|macro|FDC_S82078B
+mdefine_line|#define FDC_S82078B&t;0x62&t;/* S82078B (first seen on Adaptec AVA-2825 VLB&n;&t;&t;&t;&t; * SCSI/EIDE/Floppy controller) */
 DECL|macro|FDC_87306
 mdefine_line|#define FDC_87306&t;0x63&t;/* National Semiconductor PC 87306 */
 multiline_comment|/*&n; * Beware: the fdc type list is roughly sorted by increasing features.&n; * Presence of features is tested by comparing the FDC version id with the&n; * &quot;oldest&quot; version that has the needed feature.&n; * If during FDC detection, an obscure test fails late in the sequence, don&squot;t&n; * assign FDC_UNKNOWN. Else the FDC will be treated as a dumb 8272a, or worse.&n; * This is especially true if the tests are unneeded.&n; */

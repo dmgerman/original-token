@@ -114,8 +114,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_UMSDOS_FS
-id|init_umsdos_fs
+macro_line|#ifdef CONFIG_FAT_FS
+id|init_fat_fs
 c_func
 (paren
 )paren
@@ -123,6 +123,20 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MSDOS_FS
 id|init_msdos_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_VFAT_FS
+id|init_vfat_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_UMSDOS_FS
+id|init_umsdos_fs
 c_func
 (paren
 )paren

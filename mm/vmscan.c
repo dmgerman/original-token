@@ -198,6 +198,8 @@ r_if
 c_cond
 (paren
 id|page_map-&gt;reserved
+op_logical_or
+id|page_map-&gt;locked
 )paren
 r_return
 l_int|0

@@ -67,6 +67,12 @@ suffix:semicolon
 r_do
 (brace
 id|smp_spins
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Doing test_bit here doesn&squot;t lock the bus &n;&t;&t;&t; */

@@ -33,7 +33,7 @@ DECL|macro|IS_INVBCAST
 mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us (unused)*/
 DECL|macro|IS_MULTICAST
 mdefine_line|#define IS_MULTICAST&t;5&t;&t;/* Multicast IP address */
-multiline_comment|/*&n; *&t;We tag these structures with multicasts.&n; */
+multiline_comment|/*&n; *&t;We tag multicasts with these structures.&n; */
 DECL|struct|dev_mc_list
 r_struct
 id|dev_mc_list
@@ -356,6 +356,11 @@ op_star
 id|ip_mc_list
 suffix:semicolon
 multiline_comment|/* IP multicast filter chain    */
+DECL|member|tx_queue_len
+id|__u32
+id|tx_queue_len
+suffix:semicolon
+multiline_comment|/* Max frames per queue allowed */
 multiline_comment|/* For load balancing driver pair support */
 DECL|member|pkt_queue
 r_int
@@ -874,29 +879,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-)paren
-suffix:semicolon
-multiline_comment|/* The old interface to netif_rx(). */
-r_extern
-r_int
-id|dev_rint
-c_func
-(paren
-r_int
-r_char
-op_star
-id|buff
-comma
-r_int
-id|len
-comma
-r_int
-id|flags
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 suffix:semicolon
 r_extern

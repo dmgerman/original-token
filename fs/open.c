@@ -295,8 +295,6 @@ op_assign
 id|ATTR_SIZE
 op_or
 id|ATTR_CTIME
-op_or
-id|ATTR_MTIME
 suffix:semicolon
 id|error
 op_assign
@@ -1989,6 +1987,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|inode-&gt;i_sb
+op_logical_and
 id|inode-&gt;i_sb-&gt;dq_op
 )paren
 (brace

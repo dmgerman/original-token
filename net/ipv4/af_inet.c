@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&t;&t;Alan Cox&t;:&t;bind() shouldn&squot;t abort existing but dead&n; *&t;&t;&t;&t;&t;sockets. Stops FTP netin:.. I hope.&n; *&t;&t;Alan Cox&t;:&t;bind() works correctly for RAW sockets. Note&n; *&t;&t;&t;&t;&t;that FreeBSD at least was broken in this respect&n; *&t;&t;&t;&t;&t;so be careful with compatibility tests...&n; *&t;&t;Alan Cox&t;:&t;routing cache support&n; *&t;&t;Alan Cox&t;:&t;memzero the socket structure for compactness.&n; *&t;&t;Matt Day&t;:&t;nonblock connect error handler&n; *&t;&t;Alan Cox&t;:&t;Allow large numbers of pending sockets&n; *&t;&t;&t;&t;&t;(eg for big web sites), but only if&n; *&t;&t;&t;&t;&t;specifically application requested.&n; *&t;&t;Alan Cox&t;:&t;New buffering throughout IP. Used dumbly.&n; *&t;&t;Alan Cox&t;:&t;New buffering now used smartly.&n; *&t;&t;Alan Cox&t;:&t;BSD rather than common sense interpretation of&n; *&t;&t;&t;&t;&t;listen.&n; *&t;&t;Germano Caronni&t;:&t;Assorted small races.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basic support.&n; *&t;&t;Alan Cox&t;:&t;Only sendmsg/recvmsg now supported.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&t;&t;Alan Cox&t;:&t;bind() shouldn&squot;t abort existing but dead&n; *&t;&t;&t;&t;&t;sockets. Stops FTP netin:.. I hope.&n; *&t;&t;Alan Cox&t;:&t;bind() works correctly for RAW sockets. Note&n; *&t;&t;&t;&t;&t;that FreeBSD at least was broken in this respect&n; *&t;&t;&t;&t;&t;so be careful with compatibility tests...&n; *&t;&t;Alan Cox&t;:&t;routing cache support&n; *&t;&t;Alan Cox&t;:&t;memzero the socket structure for compactness.&n; *&t;&t;Matt Day&t;:&t;nonblock connect error handler&n; *&t;&t;Alan Cox&t;:&t;Allow large numbers of pending sockets&n; *&t;&t;&t;&t;&t;(eg for big web sites), but only if&n; *&t;&t;&t;&t;&t;specifically application requested.&n; *&t;&t;Alan Cox&t;:&t;New buffering throughout IP. Used dumbly.&n; *&t;&t;Alan Cox&t;:&t;New buffering now used smartly.&n; *&t;&t;Alan Cox&t;:&t;BSD rather than common sense interpretation of&n; *&t;&t;&t;&t;&t;listen.&n; *&t;&t;Germano Caronni&t;:&t;Assorted small races.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basic support.&n; *&t;&t;Alan Cox&t;:&t;Only sendmsg/recvmsg now supported.&n; *&t;&t;Alan Cox&t;:&t;Locked down bind (see security list).&n; *&t;&t;Alan Cox&t;:&t;Loosened bind a little.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2163,6 +2163,14 @@ op_assign
 l_int|2048
 suffix:semicolon
 multiline_comment|/* needs to be at most 2 full packets. */
+id|sk-&gt;delay_acks
+op_assign
+l_int|1
+suffix:semicolon
+id|sk-&gt;max_ack_backlog
+op_assign
+id|SOMAXCONN
+suffix:semicolon
 id|skb_queue_head_init
 c_func
 (paren
@@ -2882,7 +2890,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *      We keep a pair of addresses. rcv_saddr is the one&n;&t;&t; *      used by get_sock_*(), and saddr is used for transmit.&n;&t;&t; *&n;&t;&t; *      In the BSD API these are the same except where it&n;&t;&t; *      would be illegal to use (multicast/broadcast) in&n;&t;&t; *      which case the sending device address is used.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *      We keep a pair of addresses. rcv_saddr is the one&n;&t;&t; *      used by get_sock_*(), and saddr is used for transmit.&n;&t;&t; *&n;&t;&t; *      In the BSD API these are the same except where it&n;&t;&t; *      would be illegal to use them (multicast/broadcast) in&n;&t;&t; *      which case the sending device address is used.&n;&t;&t; */
 id|sk-&gt;rcv_saddr
 op_assign
 id|addr-&gt;sin_addr.s_addr
@@ -2950,7 +2958,7 @@ op_assign
 id|sk2-&gt;next
 )paren
 (brace
-multiline_comment|/* should be below! */
+multiline_comment|/*&n;&t;&t;&t; *&t;Hash collision or real match ?&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2960,6 +2968,50 @@ id|snum
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Either bind on the port is wildcard means&n;&t;&t;&t; *&t;they will overlap and thus be in error&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk2-&gt;rcv_saddr
+op_logical_or
+op_logical_neg
+id|sk-&gt;rcv_saddr
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Allow only if both are setting reuse.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk2-&gt;reuse
+op_logical_and
+id|sk-&gt;reuse
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EADDRINUSE
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Two binds match ?&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk2-&gt;rcv_saddr
+op_ne
+id|sk-&gt;rcv_saddr
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Reusable port ?&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2977,26 +3029,7 @@ op_minus
 id|EADDRINUSE
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk2-&gt;num
-op_ne
-id|snum
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/* more than one */
-r_if
-c_cond
-(paren
-id|sk2-&gt;rcv_saddr
-op_ne
-id|sk-&gt;rcv_saddr
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/* socket per slot ! -FB */
+multiline_comment|/*&n;&t;&t;&t; *&t;Reuse ?&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5429,7 +5462,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_INET_RARP
+id|rarp_ioctl_hook
+op_assign
+id|rarp_ioctl
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Create all the /proc entries.&n;&t; */
+macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifdef CONFIG_INET_RARP
 id|proc_net_register
 c_func
@@ -5465,11 +5505,7 @@ id|rarp_get_info
 )brace
 )paren
 suffix:semicolon
-id|rarp_ioctl_hook
-op_assign
-id|rarp_ioctl
-suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;&t;/* RARP */
 id|proc_net_register
 c_func
 (paren
@@ -5708,5 +5744,6 @@ id|rt_cache_get_info
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;/* CONFIG_PROC_FS */
 )brace
 eof

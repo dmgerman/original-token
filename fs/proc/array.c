@@ -3684,6 +3684,17 @@ r_char
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP_PROF__
+r_extern
+r_int
+id|get_smp_prof_list
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|get_root_array
 r_static
 r_int
@@ -3883,6 +3894,18 @@ id|PROC_APM
 suffix:colon
 r_return
 id|apm_proc
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef __SMP_PROF__
+r_case
+id|PROC_SMP_PROF
+suffix:colon
+r_return
+id|get_smp_prof_list
 c_func
 (paren
 id|page

@@ -59,13 +59,72 @@ r_int
 id|smp_threads_ready
 suffix:semicolon
 multiline_comment|/* True once the per process idle is forked */
+macro_line|#ifdef __SMP_PROF__
 r_extern
 r_volatile
 r_int
 r_int
 id|smp_spins
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
-multiline_comment|/* Count of spins */
+multiline_comment|/* count of interrupt spins */
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_spins_sys_idle
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* count of idle spins */
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_spins_syscall
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* count of syscall spins */
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_spins_syscall_cur
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* count of syscall spins for the current&n;&t;&t;&t;&t;&t;&t;&t;   call */
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_idle_count
+(braket
+l_int|1
+op_plus
+id|NR_CPUS
+)braket
+suffix:semicolon
+multiline_comment|/* count idle ticks */
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_idle_map
+suffix:semicolon
+multiline_comment|/* map with idle cpus */
+macro_line|#else
+DECL|variable|smp_spins
+id|exern
+r_volatile
+r_int
+r_int
+id|smp_spins
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_volatile
 r_int

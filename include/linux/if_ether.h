@@ -66,6 +66,10 @@ DECL|macro|ETH_P_SNAP
 mdefine_line|#define ETH_P_SNAP&t;0x0005&t;&t;/* Internal only&t;&t;*/
 DECL|macro|ETH_P_DDCMP
 mdefine_line|#define ETH_P_DDCMP     0x0006          /* DEC DDCMP: Internal only     */
+DECL|macro|ETH_P_WAN_PPP
+mdefine_line|#define ETH_P_WAN_PPP   0x0007          /* Dummy type for WAN PPP frames*/
+DECL|macro|ETH_P_PPP_MP
+mdefine_line|#define ETH_P_PPP_MP    0x0008          /* Dummy type for PPP MP frames */
 multiline_comment|/* This is an Ethernet frame header. */
 DECL|struct|ethhdr
 r_struct

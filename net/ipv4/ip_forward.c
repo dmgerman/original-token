@@ -287,7 +287,7 @@ op_logical_neg
 (paren
 id|is_frag
 op_amp
-l_int|4
+id|IPFWD_MASQUERADED
 )paren
 )paren
 (brace
@@ -422,7 +422,7 @@ op_logical_neg
 (paren
 id|is_frag
 op_amp
-l_int|8
+id|IPFWD_MULTICASTING
 )paren
 )paren
 (brace
@@ -580,7 +580,7 @@ c_cond
 (paren
 id|is_frag
 op_amp
-l_int|16
+id|IPFWD_MULTITUNNEL
 )paren
 (brace
 multiline_comment|/* VIFF_TUNNEL mode */
@@ -613,7 +613,7 @@ op_logical_neg
 (paren
 id|is_frag
 op_amp
-l_int|4
+id|IPFWD_MASQUERADED
 )paren
 op_logical_and
 id|fw_res
@@ -812,7 +812,7 @@ c_cond
 (paren
 id|is_frag
 op_amp
-l_int|16
+id|IPFWD_MULTITUNNEL
 )paren
 (brace
 id|skb_reserve
@@ -931,7 +931,7 @@ c_cond
 (paren
 id|is_frag
 op_amp
-l_int|16
+id|IPFWD_MULTITUNNEL
 )paren
 (brace
 id|ip_encap

@@ -175,6 +175,10 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren

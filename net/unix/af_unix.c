@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;No fd passing yet.&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesnt panic the kernel.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -3934,6 +3935,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|unix_get_info
 r_static
 r_int
@@ -4131,6 +4133,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|variable|unix_proto_ops
 r_static
 r_struct
@@ -4201,6 +4204,7 @@ op_amp
 id|unix_proto_ops
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -4235,6 +4239,7 @@ id|unix_get_info
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -g -D__KERNEL__ -Wall -O6 -I/usr/src/linux/include -c af_unix.c&quot;&n; * End:&n; */
 eof

@@ -993,14 +993,14 @@ id|saddr-&gt;sa_family
 op_assign
 id|skb-&gt;dev-&gt;type
 suffix:semicolon
-id|memcpy
+id|strncpy
 c_func
 (paren
 id|saddr-&gt;sa_data
 comma
 id|skb-&gt;dev-&gt;name
 comma
-l_int|14
+l_int|15
 )paren
 suffix:semicolon
 )brace

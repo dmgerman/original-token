@@ -299,6 +299,24 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP_PROF__
+id|smp_spins_sys_idle
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_add_assign
+id|smp_spins_syscall_cur
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+suffix:semicolon
+macro_line|#endif
 id|current-&gt;counter
 op_assign
 op_minus

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the mouse drivers, as they are now completely independent. Linus.&n; *&n; * Support for loadable modules. 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/char/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the mouse drivers, as they are now completely independent. Linus.&n; *&n; * Support for loadable modules. 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * Fixed a failing symbol register to free the device registration&n; *&t;&t;Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt; 21-Jan-96&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -394,13 +394,34 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-r_return
+r_if
+c_cond
+(paren
 id|register_symtab
 c_func
 (paren
 op_amp
 id|mouse_syms
 )paren
+op_ne
+l_int|0
+)paren
+(brace
+id|unregister_chrdev
+c_func
+(paren
+id|MOUSE_MAJOR
+comma
+l_string|&quot;mouse&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

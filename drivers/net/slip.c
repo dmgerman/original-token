@@ -3700,7 +3700,6 @@ id|err
 )paren
 (brace
 r_return
-op_minus
 id|err
 suffix:semicolon
 )brace
@@ -3748,7 +3747,6 @@ id|err
 )paren
 (brace
 r_return
-op_minus
 id|err
 suffix:semicolon
 )brace
@@ -3792,7 +3790,6 @@ id|err
 )paren
 (brace
 r_return
-op_minus
 id|err
 suffix:semicolon
 )brace
@@ -4477,6 +4474,10 @@ op_assign
 id|ARPHRD_SLIP
 op_plus
 id|SL_MODE_DEFAULT
+suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|10
 suffix:semicolon
 macro_line|#ifdef CONFIG_AX25
 r_if

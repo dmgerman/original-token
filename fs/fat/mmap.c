@@ -12,11 +12,11 @@ macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
-DECL|function|msdos_file_mmap_nopage
+DECL|function|fat_file_mmap_nopage
 r_static
 r_int
 r_int
-id|msdos_file_mmap_nopage
+id|fat_file_mmap_nopage
 c_func
 (paren
 r_struct
@@ -165,7 +165,7 @@ id|KERNEL_DS
 suffix:semicolon
 id|cur_read
 op_assign
-id|msdos_file_read
+id|fat_file_read
 (paren
 id|inode
 comma
@@ -236,10 +236,10 @@ r_return
 id|page
 suffix:semicolon
 )brace
-DECL|variable|msdos_file_mmap
+DECL|variable|fat_file_mmap
 r_struct
 id|vm_operations_struct
-id|msdos_file_mmap
+id|fat_file_mmap
 op_assign
 (brace
 l_int|NULL
@@ -260,7 +260,7 @@ multiline_comment|/* sync */
 l_int|NULL
 comma
 multiline_comment|/* advise */
-id|msdos_file_mmap_nopage
+id|fat_file_mmap_nopage
 comma
 multiline_comment|/* nopage */
 l_int|NULL
@@ -275,9 +275,9 @@ multiline_comment|/* swapin */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is used for a general mmap of an msdos file&n; * Returns 0 if ok, or a negative error code if not.&n; */
-DECL|function|msdos_mmap
+DECL|function|fat_mmap
 r_int
-id|msdos_mmap
+id|fat_mmap
 c_func
 (paren
 r_struct
@@ -370,7 +370,7 @@ suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
 op_amp
-id|msdos_file_mmap
+id|fat_file_mmap
 suffix:semicolon
 r_return
 l_int|0

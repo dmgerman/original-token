@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Finish Tunnels&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for rest of cards&n; */
+multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Finish Tunnels&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for rest of cards&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2550,7 +2550,7 @@ id|VIFF_TUNNEL
 (brace
 id|tunnel
 op_assign
-l_int|16
+id|IPFWD_MULTITUNNEL
 suffix:semicolon
 id|raddr
 op_assign
@@ -2572,9 +2572,14 @@ id|skb-&gt;raddr
 op_assign
 id|skb-&gt;h.iph-&gt;daddr
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If the vif went down as we were forwarding.. just throw the&n;&t; *&t;frame.&n;&t; */
 r_if
 c_cond
 (paren
+id|vif-&gt;dev
+op_eq
+l_int|NULL
+op_logical_or
 id|ip_forward
 c_func
 (paren
@@ -2584,7 +2589,7 @@ id|in_dev
 comma
 id|frag
 op_or
-l_int|8
+id|IPFWD_MULTICASTING
 op_or
 id|tunnel
 comma
@@ -2764,9 +2769,10 @@ op_minus
 l_int|1
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; &t;&t;&t; *&t;May get variant mac headers&n;&t;&t; &t;&t;&t; *&t;so must copy -- boo hoo.&n;&t;&t; &t;&t;&t; */
 id|skb2
 op_assign
-id|skb_clone
+id|skb_copy
 c_func
 (paren
 id|skb
@@ -3399,7 +3405,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Linux IP multicast router 0.04-might-work 8)&bslash;n&quot;
+l_string|&quot;Linux IP multicast router 0.05-maybe-works 8)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|register_netdevice_notifier

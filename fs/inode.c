@@ -1062,6 +1062,17 @@ op_star
 id|attr
 )paren
 (brace
+multiline_comment|/*&n;&t; *&t;If force is set do it anyway.&n;&t; */
+r_if
+c_cond
+(paren
+id|attr-&gt;ia_valid
+op_amp
+id|ATTR_FORCE
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/* Make sure a caller can chown */
 r_if
 c_cond
@@ -1386,6 +1397,10 @@ id|attr
 r_int
 id|retval
 suffix:semicolon
+id|attr-&gt;ia_ctime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1395,17 +1410,9 @@ op_amp
 id|ATTR_ATIME
 op_or
 id|ATTR_MTIME
-op_or
-id|ATTR_CTIME
 )paren
 )paren
 (brace
-r_int
-r_int
-id|now
-op_assign
-id|CURRENT_TIME
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1418,7 +1425,7 @@ id|ATTR_ATIME_SET
 )paren
 id|attr-&gt;ia_atime
 op_assign
-id|now
+id|attr-&gt;ia_ctime
 suffix:semicolon
 r_if
 c_cond
@@ -1432,11 +1439,7 @@ id|ATTR_MTIME_SET
 )paren
 id|attr-&gt;ia_mtime
 op_assign
-id|now
-suffix:semicolon
 id|attr-&gt;ia_ctime
-op_assign
-id|now
 suffix:semicolon
 )brace
 r_if

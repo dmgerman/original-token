@@ -2448,14 +2448,14 @@ id|isonum_733
 id|raw_inode-&gt;size
 )paren
 suffix:semicolon
-multiline_comment|/* There are defective discs out there - we do this to protect&n;&t;   ourselves.  A cdrom will never contain more than 700Mb */
+multiline_comment|/* There are defective discs out there - we do this to protect&n;&t;   ourselves.  A cdrom will never contain more than 800Mb */
 r_if
 c_cond
 (paren
 (paren
 id|inode-&gt;i_size
 template_param
-l_int|700000000
+l_int|800000000
 )paren
 op_logical_and
 id|inode-&gt;i_sb-&gt;u.isofs_sb.s_cruft

@@ -327,6 +327,25 @@ r_int
 r_int
 id|window
 suffix:semicolon
+DECL|member|lastwin_seq
+id|__u32
+id|lastwin_seq
+suffix:semicolon
+multiline_comment|/* sequence number when we last updated the window we offer */
+DECL|member|ato
+r_volatile
+r_int
+r_int
+id|ato
+suffix:semicolon
+multiline_comment|/* ack timeout */
+DECL|member|lrcvtime
+r_volatile
+r_int
+r_int
+id|lrcvtime
+suffix:semicolon
+multiline_comment|/* jiffies at last rcv */
 DECL|member|bytes_rcv
 r_int
 r_int
@@ -502,6 +521,16 @@ r_int
 r_int
 id|ipx_port
 suffix:semicolon
+macro_line|#ifdef CONFIG_IPX_INTERN
+DECL|member|ipx_node
+r_int
+r_char
+id|ipx_node
+(braket
+id|IPX_NODE_LEN
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|member|ipx_type
 r_int
 r_int

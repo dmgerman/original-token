@@ -47,6 +47,8 @@ DECL|macro|SSSID_SPARE
 mdefine_line|#define SSSID_SPARE&t;0x60&t;/* Unused bits in SSID for standard AX.25 */
 DECL|macro|ESSID_SPARE
 mdefine_line|#define ESSID_SPARE&t;0x20&t;/* Unused bits in SSID for extended AX.25 */
+DECL|macro|DAMA_FLAG
+mdefine_line|#define DAMA_FLAG&t;0x40&t;/* Well, it is *NOT* unused! (dl1bke 951121 */
 DECL|macro|AX25_REPEATED
 mdefine_line|#define AX25_REPEATED&t;0x80
 DECL|macro|ACK_PENDING_CONDITION
@@ -223,6 +225,12 @@ id|device
 op_star
 id|device
 suffix:semicolon
+DECL|member|dama_slave
+r_int
+r_char
+id|dama_slave
+suffix:semicolon
+multiline_comment|/* dl1bke 951121 */
 DECL|member|state
 DECL|member|modulus
 DECL|member|hdrincl
@@ -341,6 +349,10 @@ DECL|typedef|ax25_cb
 id|ax25_cb
 suffix:semicolon
 multiline_comment|/* af_ax25.c */
+r_extern
+id|ax25_address
+id|null_ax25_address
+suffix:semicolon
 r_extern
 r_char
 op_star
@@ -487,6 +499,17 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|ax25_dev_is_dama_slave
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* dl1bke 951121 */
 macro_line|#include &lt;net/ax25call.h&gt;
 multiline_comment|/* ax25_in.c */
 r_extern
@@ -500,6 +523,8 @@ comma
 r_struct
 id|sk_buff
 op_star
+comma
+r_int
 comma
 r_int
 )paren
@@ -612,6 +637,39 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|dama_enquiry_response
+c_func
+(paren
+id|ax25_cb
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* dl1bke 960114 */
+r_extern
+r_void
+id|dama_check_need_response
+c_func
+(paren
+id|ax25_cb
+op_star
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* dl1bke 960114 */
+r_extern
+r_void
+id|dama_establish_data_link
+c_func
+(paren
+id|ax25_cb
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* ax25_route.c */
 r_extern
 r_void
@@ -670,6 +728,18 @@ suffix:semicolon
 r_extern
 r_int
 id|ax25_rt_autobind
+c_func
+(paren
+id|ax25_cb
+op_star
+comma
+id|ax25_address
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_rt_build_path
 c_func
 (paren
 id|ax25_cb
@@ -939,8 +1009,12 @@ op_star
 comma
 r_int
 op_star
+comma
+r_int
+op_star
 )paren
 suffix:semicolon
+multiline_comment|/* dl1bke 951121 */
 r_extern
 r_int
 id|build_ax25_addr
@@ -1004,6 +1078,26 @@ id|ax25_digi
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ax25_dama_on
+c_func
+(paren
+id|ax25_cb
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* dl1bke 951121 */
+r_extern
+r_void
+id|ax25_dama_off
+c_func
+(paren
+id|ax25_cb
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* dl1bke 951121 */
 multiline_comment|/* ax25_timer */
 r_extern
 r_void
@@ -1013,6 +1107,22 @@ c_func
 id|ax25_cb
 op_star
 )paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_t1_timeout
+c_func
+(paren
+id|ax25_cb
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* ... */
+r_extern
+id|ax25_cb
+op_star
+r_volatile
+id|ax25_list
 suffix:semicolon
 macro_line|#endif
 eof

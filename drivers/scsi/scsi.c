@@ -160,11 +160,13 @@ op_star
 id|SDpnt
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
 r_extern
 r_struct
 id|symbol_table
 id|scsi_symbol_table
 suffix:semicolon
+macro_line|#endif
 DECL|variable|dma_malloc_freelist
 r_static
 id|FreeSectorBitmap
@@ -8668,6 +8670,7 @@ id|expires
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
 id|register_symtab
 c_func
 (paren
@@ -8675,6 +8678,7 @@ op_amp
 id|scsi_symbol_table
 )paren
 suffix:semicolon
+macro_line|#endif    
 multiline_comment|/* Register the /proc/scsi/scsi entry */
 macro_line|#if CONFIG_PROC_FS 
 id|proc_scsi_register

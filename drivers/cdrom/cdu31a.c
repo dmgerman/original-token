@@ -5913,6 +5913,9 @@ r_int
 id|arg
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_struct
 id|cdrom_subchnl
 id|schi
@@ -5944,6 +5947,8 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|err
+op_assign
 id|verify_area
 c_func
 (paren
@@ -5960,7 +5965,7 @@ r_sizeof
 id|schi
 )paren
 )paren
-suffix:semicolon
+op_logical_or
 id|verify_area
 c_func
 (paren
@@ -5977,6 +5982,14 @@ r_sizeof
 id|schi
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 id|memcpy_fromfs
 c_func

@@ -122,7 +122,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|halt
-mdefine_line|#define halt() __asm__ __volatile__(&quot;.long 0&quot;);
+mdefine_line|#define halt() __asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_halt) : &quot;memory&quot;)
 r_extern
 r_void
 id|alpha_switch_to

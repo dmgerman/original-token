@@ -65,10 +65,10 @@ l_string|&quot;PXL&quot;
 l_string|&quot;DVI&quot;
 suffix:semicolon
 multiline_comment|/* TeX */
-multiline_comment|/*&n; * fs_panic reports a severe file system problem and sets the file system&n; * read-only. The file system can be made writable again by remounting it.&n; */
-DECL|function|fs_panic
+multiline_comment|/*&n; * fat_fs_panic reports a severe file system problem and sets the file system&n; * read-only. The file system can be made writable again by remounting it.&n; */
+DECL|function|fat_fs_panic
 r_void
-id|fs_panic
+id|fat_fs_panic
 c_func
 (paren
 r_struct
@@ -248,9 +248,9 @@ id|creation_lock
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|lock_creation
+DECL|function|fat_lock_creation
 r_void
-id|lock_creation
+id|fat_lock_creation
 c_func
 (paren
 r_void
@@ -273,9 +273,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|unlock_creation
+DECL|function|fat_unlock_creation
 r_void
-id|unlock_creation
+id|fat_unlock_creation
 c_func
 (paren
 r_void
@@ -374,10 +374,10 @@ id|fat_wait
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * msdos_add_cluster tries to allocate a new cluster and adds it to the file&n; * represented by inode. The cluster is zero-initialized.&n; */
-DECL|function|msdos_add_cluster
+multiline_comment|/*&n; * fat_add_cluster tries to allocate a new cluster and adds it to the file&n; * represented by inode. The cluster is zero-initialized.&n; */
+DECL|function|fat_add_cluster
 r_int
-id|msdos_add_cluster
+id|fat_add_cluster
 c_func
 (paren
 r_struct
@@ -759,7 +759,7 @@ l_int|1
 )paren
 )paren
 (brace
-id|fs_panic
+id|fat_fs_panic
 c_func
 (paren
 id|inode-&gt;i_sb
@@ -929,7 +929,7 @@ comma
 id|SECTOR_SIZE
 )paren
 suffix:semicolon
-id|msdos_set_uptodate
+id|fat_set_uptodate
 c_func
 (paren
 id|sb
@@ -1016,7 +1016,7 @@ l_int|1
 )paren
 )paren
 (brace
-id|fs_panic
+id|fat_fs_panic
 c_func
 (paren
 id|inode-&gt;i_sb
@@ -1247,9 +1247,9 @@ id|secs
 suffix:semicolon
 )brace
 multiline_comment|/* Convert linear UNIX date to a MS-DOS time/date pair. */
-DECL|function|date_unix2dos
+DECL|function|fat_date_unix2dos
 r_void
-id|date_unix2dos
+id|fat_date_unix2dos
 c_func
 (paren
 r_int
@@ -1468,9 +1468,9 @@ l_int|9
 suffix:semicolon
 )brace
 multiline_comment|/* Returns the inode number of the directory entry at offset pos. If bh is&n;   non-NULL, it is brelse&squot;d before. Pos is incremented. The buffer header is&n;   returned in bh. */
-DECL|function|msdos_get_entry
+DECL|function|fat_get_entry
 r_int
-id|msdos_get_entry
+id|fat_get_entry
 c_func
 (paren
 r_struct
@@ -1533,7 +1533,7 @@ c_cond
 (paren
 id|sector
 op_assign
-id|msdos_smap
+id|fat_smap
 c_func
 (paren
 id|dir
@@ -2227,7 +2227,7 @@ l_int|1
 )paren
 )paren
 (brace
-id|fs_panic
+id|fat_fs_panic
 c_func
 (paren
 id|sb
@@ -2352,10 +2352,10 @@ id|scantype
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * msdos_parent_ino returns the inode number of the parent directory of dir.&n; * File creation has to be deferred while msdos_parent_ino is running to&n; * prevent renames.&n; */
-DECL|function|msdos_parent_ino
+multiline_comment|/*&n; * fat_parent_ino returns the inode number of the parent directory of dir.&n; * File creation has to be deferred while fat_parent_ino is running to&n; * prevent renames.&n; */
+DECL|function|fat_parent_ino
 r_int
-id|msdos_parent_ino
+id|fat_parent_ino
 c_func
 (paren
 r_struct
@@ -2414,7 +2414,7 @@ c_cond
 op_logical_neg
 id|locked
 )paren
-id|lock_creation
+id|fat_lock_creation
 c_func
 (paren
 )paren
@@ -2463,7 +2463,7 @@ c_cond
 op_logical_neg
 id|locked
 )paren
-id|unlock_creation
+id|fat_unlock_creation
 c_func
 (paren
 )paren
@@ -2521,7 +2521,7 @@ c_cond
 op_logical_neg
 id|locked
 )paren
-id|unlock_creation
+id|fat_unlock_creation
 c_func
 (paren
 )paren
@@ -2568,7 +2568,7 @@ c_cond
 op_logical_neg
 id|locked
 )paren
-id|unlock_creation
+id|fat_unlock_creation
 c_func
 (paren
 )paren
@@ -2584,7 +2584,7 @@ c_cond
 op_logical_neg
 id|locked
 )paren
-id|unlock_creation
+id|fat_unlock_creation
 c_func
 (paren
 )paren
@@ -2593,10 +2593,10 @@ r_return
 id|nr
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * msdos_subdirs counts the number of sub-directories of dir. It can be run&n; * on directories being created.&n; */
-DECL|function|msdos_subdirs
+multiline_comment|/*&n; * fat_subdirs counts the number of sub-directories of dir. It can be run&n; * on directories being created.&n; */
+DECL|function|fat_subdirs
 r_int
-id|msdos_subdirs
+id|fat_subdirs
 c_func
 (paren
 r_struct
@@ -2696,9 +2696,9 @@ id|count
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Scans a directory for a given file (name points to its formatted name) or&n; * for an empty directory slot (name is NULL). Returns an error code or zero.&n; */
-DECL|function|msdos_scan
+DECL|function|fat_scan
 r_int
-id|msdos_scan
+id|fat_scan
 c_func
 (paren
 r_struct

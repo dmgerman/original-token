@@ -22,6 +22,7 @@ DECL|macro|USRQUOTA
 mdefine_line|#define USRQUOTA  0&t;&t;/* element used for user quotas */
 DECL|macro|GRPQUOTA
 mdefine_line|#define GRPQUOTA  1&t;&t;/* element used for group quotas */
+macro_line|#include &lt;linux/mount.h&gt;
 multiline_comment|/*&n; * Definitions for the default names of the quotas files.&n; */
 DECL|macro|INITQFNAMES
 mdefine_line|#define INITQFNAMES { &bslash;&n;   &quot;user&quot;,      /* USRQUOTA */ &bslash;&n;   &quot;group&quot;,   /* GRPQUOTA */ &bslash;&n;   &quot;undefined&quot;, &bslash;&n;};

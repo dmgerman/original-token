@@ -1,10 +1,19 @@
-multiline_comment|/*&n; * Generic Generic NCR5380 driver defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix and Linux consulting and custom programming)&n; *&t;drew@colorado.edu&n; *      +1 (303) 440-4894&n; *&n; * ALPHA RELEASE 1. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
+multiline_comment|/*&n; * Generic Generic NCR5380 driver defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix and Linux consulting and custom programming)&n; *&t;drew@colorado.edu&n; *      +1 (303) 440-4894&n; *&n; * NCR53C400 extensions (c) 1994,1995,1996, Kevin Lentin&n; *    K.Lentin@cs.monash.edu.au&n; *&n; * ALPHA RELEASE 1. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 multiline_comment|/*&n; * $Log: generic_NCR5380.h,v $&n; */
 macro_line|#ifndef GENERIC_NCR5380_H
 DECL|macro|GENERIC_NCR5380_H
 mdefine_line|#define GENERIC_NCR5380_H
 DECL|macro|GENERIC_NCR5380_PUBLIC_RELEASE
 mdefine_line|#define GENERIC_NCR5380_PUBLIC_RELEASE 1
+macro_line|#ifdef NCR53C400
+DECL|macro|BIOSPARAM
+mdefine_line|#define BIOSPARAM
+DECL|macro|NCR5380_BIOSPARAM
+mdefine_line|#define NCR5380_BIOSPARAM generic_NCR5380_biosparam
+macro_line|#else
+DECL|macro|NCR5380_BIOSPARAM
+mdefine_line|#define NCR5380_BIOSPARAM NULL
+macro_line|#endif
 macro_line|#ifndef ASM
 r_int
 id|generic_NCR5380_abort
@@ -19,6 +28,15 @@ id|generic_NCR5380_detect
 c_func
 (paren
 id|Scsi_Host_Template
+op_star
+)paren
+suffix:semicolon
+r_int
+id|generic_NCR5380_release_resources
+c_func
+(paren
+r_struct
+id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
@@ -48,6 +66,47 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef BIOSPARAM
+r_int
+id|generic_NCR5380_biosparam
+c_func
+(paren
+id|Disk
+op_star
+comma
+id|kdev_t
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
+r_int
+id|generic_NCR5380_proc_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|hostno
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
@@ -62,19 +121,68 @@ mdefine_line|#define CAN_QUEUE 16
 macro_line|#endif
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|GENERIC_NCR5380
-mdefine_line|#define GENERIC_NCR5380 {NULL, NULL, NULL, NULL, &bslash;&n;&t;&quot;Trantor T128/T128F/T228&quot;, &t;&t;&bslash;&n;&t;generic_NCR5380_detect, NULL, NULL, NULL, &t;&t;&t;&bslash;&n;&t;generic_NCR5380_queue_command, generic_NCR5380_abort, &t;&t;&bslash;&n;&t;generic_NCR5380_reset, NULL, &t;&t;&t;&t;&t;&bslash;&n;&t;NULL, /* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define GENERIC_NCR5380 {NULL, NULL, NULL, &t; &t;&t;&t;&bslash;&n;&t;generic_NCR5380_proc_info,&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;Generic NCR5380/NCR53C400 Scsi Driver&quot;, &t;&t;&t;&bslash;&n;&t;generic_NCR5380_detect, generic_NCR5380_release_resources,&t;&bslash;&n;&t;generic_NCR5380_info, NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;generic_NCR5380_queue_command, generic_NCR5380_abort, &t;&t;&bslash;&n;&t;generic_NCR5380_reset, NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;NCR5380_BIOSPARAM,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif
 macro_line|#ifndef HOSTS_C
-DECL|macro|NCR5380_implementation_fields
-mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    int port
-DECL|macro|NCR5380_local_declare
-mdefine_line|#define NCR5380_local_declare() &bslash;&n;    register int port
-DECL|macro|NCR5380_setup
-mdefine_line|#define NCR5380_setup(instance) &bslash;&n;    port = (instance)-&gt;io_port
+DECL|macro|__STRVAL
+mdefine_line|#define __STRVAL(x) #x
+DECL|macro|STRVAL
+mdefine_line|#define STRVAL(x) __STRVAL(x)
+macro_line|#ifdef CONFIG_SCSI_G_NCR5380_PORT
+DECL|macro|NCR5380_map_config
+mdefine_line|#define NCR5380_map_config port
+DECL|macro|NCR5380_map_type
+mdefine_line|#define NCR5380_map_type int
+DECL|macro|NCR5380_map_name
+mdefine_line|#define NCR5380_map_name port
+DECL|macro|NCR5380_instance_name
+mdefine_line|#define NCR5380_instance_name io_port
+DECL|macro|NCR53C400_register_offset
+mdefine_line|#define NCR53C400_register_offset 0
+DECL|macro|NCR53C400_address_adjust
+mdefine_line|#define NCR53C400_address_adjust 8
+macro_line|#ifdef NCR53C400
+DECL|macro|NCR5380_region_size
+mdefine_line|#define NCR5380_region_size 16
+macro_line|#else
+DECL|macro|NCR5380_region_size
+mdefine_line|#define NCR5380_region_size 8
+macro_line|#endif
 DECL|macro|NCR5380_read
-mdefine_line|#define NCR5380_read(reg) (inb(port + (reg)))
+mdefine_line|#define NCR5380_read(reg) (inb(NCR5380_map_name + (reg)))
 DECL|macro|NCR5380_write
-mdefine_line|#define NCR5380_write(reg, value) (outb((value), (port + (reg))))
+mdefine_line|#define NCR5380_write(reg, value) (outb((value), (NCR5380_map_name + (reg))))
+macro_line|#else 
+multiline_comment|/* therefore CONFIG_SCSI_G_NCR5380_MEM */
+DECL|macro|NCR5380_map_config
+mdefine_line|#define NCR5380_map_config memory
+DECL|macro|NCR5380_map_type
+mdefine_line|#define NCR5380_map_type volatile unsigned char*
+DECL|macro|NCR5380_map_name
+mdefine_line|#define NCR5380_map_name base
+DECL|macro|NCR5380_instance_name
+mdefine_line|#define NCR5380_instance_name base
+DECL|macro|NCR53C400_register_offset
+mdefine_line|#define NCR53C400_register_offset 0x108
+DECL|macro|NCR53C400_address_adjust
+mdefine_line|#define NCR53C400_address_adjust 0
+DECL|macro|NCR53C400_mem_base
+mdefine_line|#define NCR53C400_mem_base 0x3880
+DECL|macro|NCR53C400_host_buffer
+mdefine_line|#define NCR53C400_host_buffer 0x3900
+DECL|macro|NCR5380_region_size
+mdefine_line|#define NCR5380_region_size 0x3a00
+DECL|macro|NCR5380_read
+mdefine_line|#define NCR5380_read(reg) (*(NCR5380_map_name + NCR53C400_mem_base + (reg)))
+DECL|macro|NCR5380_write
+mdefine_line|#define NCR5380_write(reg, value) (*(NCR5380_map_name + NCR53C400_mem_base + (reg)) = value)
+macro_line|#endif
+DECL|macro|NCR5380_implementation_fields
+mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    NCR5380_map_type NCR5380_map_name
+DECL|macro|NCR5380_local_declare
+mdefine_line|#define NCR5380_local_declare() &bslash;&n;    register NCR5380_implementation_fields
+DECL|macro|NCR5380_setup
+mdefine_line|#define NCR5380_setup(instance) &bslash;&n;    NCR5380_map_name = (NCR5380_map_type)((instance)-&gt;NCR5380_instance_name)
 DECL|macro|NCR5380_intr
 mdefine_line|#define NCR5380_intr generic_NCR5380_intr
 DECL|macro|NCR5380_queue_command
@@ -83,8 +191,12 @@ DECL|macro|NCR5380_abort
 mdefine_line|#define NCR5380_abort generic_NCR5380_abort
 DECL|macro|NCR5380_reset
 mdefine_line|#define NCR5380_reset generic_NCR5380_reset
-DECL|macro|BOARD_NORMAL
-mdefine_line|#define BOARD_NORMAL&t;0
+DECL|macro|NCR5380_pread
+mdefine_line|#define NCR5380_pread generic_NCR5380_pread
+DECL|macro|NCR5380_pwrite
+mdefine_line|#define NCR5380_pwrite generic_NCR5380_pwrite
+DECL|macro|BOARD_NCR5380
+mdefine_line|#define BOARD_NCR5380&t;0
 DECL|macro|BOARD_NCR53C400
 mdefine_line|#define BOARD_NCR53C400&t;1
 macro_line|#endif /* else def HOSTS_C */

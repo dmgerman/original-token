@@ -225,7 +225,7 @@ op_eq
 id|pseudo_root-&gt;i_sb-&gt;s_mounted
 suffix:semicolon
 r_return
-id|msdos_readdir
+id|fat_readdir
 c_func
 (paren
 id|dir

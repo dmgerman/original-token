@@ -279,11 +279,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|offset
 )paren
-r_continue
-suffix:semicolon
+(brace
 id|entry
 op_assign
 id|SWP_ENTRY
@@ -335,6 +333,7 @@ suffix:semicolon
 r_return
 id|entry
 suffix:semicolon
+)brace
 )brace
 id|type
 op_assign

@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *&t;linux/kernel/softirq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * do_bottom_half() runs at normal kernel priority: all interrupts&n; * enabled.  do_bottom_half() is atomic with respect to itself: a&n; * bottom_half handler need not be re-entrant.&n; */
+DECL|macro|INCLUDE_INLINE_FUNCS
+mdefine_line|#define INCLUDE_INLINE_FUNCS
+macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -10,9 +13,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-DECL|macro|INCLUDE_INLINE_FUNCS
-mdefine_line|#define INCLUDE_INLINE_FUNCS
-macro_line|#include &lt;linux/tqueue.h&gt;
 DECL|variable|intr_count
 r_int
 r_int

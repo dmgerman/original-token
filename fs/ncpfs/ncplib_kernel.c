@@ -2819,6 +2819,12 @@ c_func
 id|server
 comma
 l_int|2
+op_plus
+(paren
+id|offset
+op_amp
+l_int|1
+)paren
 )paren
 comma
 op_star

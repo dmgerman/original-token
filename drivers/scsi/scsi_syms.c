@@ -3,6 +3,7 @@ DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_MODULES
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -194,6 +195,12 @@ c_func
 id|request_queueable
 )paren
 comma
+id|X
+c_func
+(paren
+id|print_Scsi_Cmnd
+)paren
+comma
 macro_line|#if defined(CONFIG_PROC_FS)
 id|X
 c_func
@@ -231,4 +238,5 @@ multiline_comment|/********************************************************&n;  
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon
+macro_line|#endif
 eof

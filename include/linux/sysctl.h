@@ -106,8 +106,10 @@ DECL|macro|VM_SWAPCTL
 mdefine_line|#define VM_SWAPCTL&t;1&t;/* struct: Set vm swapping control */
 DECL|macro|VM_KSWAPD
 mdefine_line|#define VM_KSWAPD&t;2&t;/* struct: control background pagout */
+DECL|macro|VM_FREEPG
+mdefine_line|#define VM_FREEPG&t;3&t;/* struct: Set free page thresholds */
 DECL|macro|VM_MAXID
-mdefine_line|#define VM_MAXID&t;3
+mdefine_line|#define VM_MAXID&t;4
 multiline_comment|/* CTL_NET names: */
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */

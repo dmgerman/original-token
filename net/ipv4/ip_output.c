@@ -3470,6 +3470,10 @@ l_int|NULL
 r_return
 suffix:semicolon
 )brace
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|nrt
 op_assign
 (paren

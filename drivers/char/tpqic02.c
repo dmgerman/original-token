@@ -8722,6 +8722,8 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+id|error
+op_assign
 id|verify_area
 c_func
 (paren
@@ -8738,6 +8740,14 @@ r_sizeof
 r_int
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 id|c
 op_assign

@@ -4,11 +4,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
-DECL|function|msdos_bread
+DECL|function|fat_bread
 r_struct
 id|buffer_head
 op_star
-id|msdos_bread
+id|fat_bread
 (paren
 r_struct
 id|super_block
@@ -147,11 +147,11 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|msdos_getblk
+DECL|function|fat_getblk
 r_struct
 id|buffer_head
 op_star
-id|msdos_getblk
+id|fat_getblk
 (paren
 r_struct
 id|super_block
@@ -194,7 +194,7 @@ r_else
 multiline_comment|/* #Specification: msdos / special device / writing&n;&t;&t;&t;A write is always preceded by a read of the complete block&n;&t;&t;&t;(large hardware sector size). This defeat write performance.&n;&t;&t;&t;There is a possibility to optimize this when writing large&n;&t;&t;&t;chunk by making sure we are filling large block. Volunteer ?&n;&t;&t;*/
 id|ret
 op_assign
-id|msdos_bread
+id|fat_bread
 (paren
 id|sb
 comma
@@ -206,9 +206,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|msdos_brelse
+DECL|function|fat_brelse
 r_void
-id|msdos_brelse
+id|fat_brelse
 (paren
 r_struct
 id|super_block
@@ -250,7 +250,7 @@ id|brelse
 id|bh-&gt;b_next
 )paren
 suffix:semicolon
-multiline_comment|/* We can free the dummy because a new one is allocated at&n;&t;&t;&t;&t;each msdos_getblk() and msdos_bread().&n;&t;&t;&t;*/
+multiline_comment|/* We can free the dummy because a new one is allocated at&n;&t;&t;&t;&t;each fat_getblk() and fat_bread().&n;&t;&t;&t;*/
 id|kfree
 (paren
 id|bh
@@ -259,9 +259,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|msdos_mark_buffer_dirty
+DECL|function|fat_mark_buffer_dirty
 r_void
-id|msdos_mark_buffer_dirty
+id|fat_mark_buffer_dirty
 (paren
 r_struct
 id|super_block
@@ -298,9 +298,9 @@ id|dirty_val
 )paren
 suffix:semicolon
 )brace
-DECL|function|msdos_set_uptodate
+DECL|function|fat_set_uptodate
 r_void
-id|msdos_set_uptodate
+id|fat_set_uptodate
 (paren
 r_struct
 id|super_block
@@ -338,9 +338,9 @@ id|val
 )paren
 suffix:semicolon
 )brace
-DECL|function|msdos_is_uptodate
+DECL|function|fat_is_uptodate
 r_int
-id|msdos_is_uptodate
+id|fat_is_uptodate
 (paren
 r_struct
 id|super_block
@@ -374,9 +374,9 @@ id|bh
 )paren
 suffix:semicolon
 )brace
-DECL|function|msdos_ll_rw_block
+DECL|function|fat_ll_rw_block
 r_void
-id|msdos_ll_rw_block
+id|fat_ll_rw_block
 (paren
 r_struct
 id|super_block

@@ -331,6 +331,16 @@ c_func
 (paren
 id|CIRRUS
 comma
+id|CIRRUS_6205
+comma
+l_string|&quot;GD 6205&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CIRRUS
+comma
 id|CIRRUS_6729
 comma
 l_string|&quot;CL 6729&quot;
@@ -679,6 +689,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|N9
+comma
+id|N9_I128_2
+comma
+l_string|&quot;Imagine 128v2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|UMC
 comma
 id|UMC_UM8673F
@@ -1021,11 +1041,31 @@ comma
 id|DEVICE
 c_func
 (paren
+id|INTERG
+comma
+id|INTERG_1680
+comma
+l_string|&quot;IGA-1680&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|REALTEK
 comma
 id|REALTEK_8029
 comma
 l_string|&quot;8029&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INIT
+comma
+id|INIT_320P
+comma
+l_string|&quot;320 P&quot;
 )paren
 comma
 id|DEVICE
@@ -1056,6 +1096,16 @@ comma
 id|VIA_82C576
 comma
 l_string|&quot;VT 82C576 3V&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C416
+comma
+l_string|&quot;VT 82C416MV&quot;
 )paren
 comma
 id|DEVICE
@@ -1096,6 +1146,16 @@ comma
 id|IMAGINGTECH_ICPCI
 comma
 l_string|&quot;MVC IC-PCI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|FORE
+comma
+id|FORE_PCA200PC
+comma
+l_string|&quot;PCA-200PC&quot;
 )paren
 comma
 id|DEVICE
@@ -1597,7 +1657,7 @@ op_assign
 (brace
 l_string|&quot;Cache L2&quot;
 comma
-l_string|&quot;write trough&quot;
+l_string|&quot;write through&quot;
 comma
 l_string|&quot;write back&quot;
 )brace
@@ -2459,6 +2519,12 @@ r_return
 l_string|&quot;OPTI&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_SGS
+suffix:colon
+r_return
+l_string|&quot;SGS Thomson&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_BUSLOGIC
 suffix:colon
 r_return
@@ -2487,6 +2553,12 @@ id|PCI_VENDOR_ID_X
 suffix:colon
 r_return
 l_string|&quot;X TECHNOLOGY&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_NEXGEN
+suffix:colon
+r_return
+l_string|&quot;Nexgen&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_QLOGIC
@@ -2585,10 +2657,22 @@ r_return
 l_string|&quot;AMCC&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_INTERG
+suffix:colon
+r_return
+l_string|&quot;Intergraphics&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_REALTEK
 suffix:colon
 r_return
 l_string|&quot;Realtek&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_INIT
+suffix:colon
+r_return
+l_string|&quot;Initio Corp&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_VIA
@@ -2607,6 +2691,12 @@ id|PCI_VENDOR_ID_EF
 suffix:colon
 r_return
 l_string|&quot;Efficient Networks&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_FORE
+suffix:colon
+r_return
+l_string|&quot;Fore Systems&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_IMAGINGTECH

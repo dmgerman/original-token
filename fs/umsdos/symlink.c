@@ -429,7 +429,7 @@ id|inode
 comma
 id|buffer
 comma
-id|msdos_file_read
+id|fat_file_read
 comma
 id|buflen
 )paren

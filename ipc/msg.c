@@ -463,7 +463,14 @@ id|msgh
 op_plus
 id|msgsz
 comma
+(paren
+id|intr_count
+ques
+c_cond
+id|GFP_ATOMIC
+suffix:colon
 id|GFP_USER
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2858,6 +2865,29 @@ id|IPC_KERNELD
 op_or
 id|MSG_NOERROR
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|kerneld_msqid
+op_eq
+op_minus
+l_int|1
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+multiline_comment|/* Do not wait for an answer at interrupt-time! */
+r_if
+c_cond
+(paren
+id|intr_count
+)paren
+id|ret_size
+op_and_assign
+op_complement
+id|KERNELD_WAIT
+suffix:semicolon
 id|msgsz
 op_add_assign
 r_sizeof
@@ -2890,18 +2920,6 @@ op_assign
 id|id
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|kerneld_msqid
-op_eq
-op_minus
-l_int|1
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
 id|status
 op_assign
 id|real_msgsnd
@@ -2943,19 +2961,6 @@ op_and_assign
 op_complement
 id|KERNELD_WAIT
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|intr_count
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * Do not wait for an answer at interrupt-time!&n;&t;&t;&t; * OK, so fake it...&n;&t;&t;&t; * If the kerneld request failed in user-space&n;&t;&t;&t; * we will find out eventually, and retry again!&n;&t;&t;&t; */
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* i.e. say that it worked... */
-)brace
-multiline_comment|/* else */
 id|kmsp.text
 op_assign
 (paren

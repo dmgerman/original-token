@@ -256,15 +256,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of times the processor holds the syscall lock&t;*/
-DECL|variable|smp_spins
-r_volatile
-r_int
-r_int
-id|smp_spins
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Count of cycles wasted to spinning&t;&t;&t;*/
 DECL|variable|ipi_count
 r_volatile
 r_int
@@ -272,6 +263,81 @@ r_int
 id|ipi_count
 suffix:semicolon
 multiline_comment|/* Number of IPI&squot;s delivered&t;&t;&t;&t;*/
+macro_line|#ifdef __SMP_PROF__
+DECL|variable|smp_spins
+r_volatile
+r_int
+r_int
+id|smp_spins
+(braket
+id|NR_CPUS
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+multiline_comment|/* Count interrupt spins &t;&t;&t;&t;*/
+DECL|variable|smp_spins_syscall
+r_volatile
+r_int
+r_int
+id|smp_spins_syscall
+(braket
+id|NR_CPUS
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+multiline_comment|/* Count syscall spins                   &t;&t;*/
+DECL|variable|smp_spins_syscall_cur
+r_volatile
+r_int
+r_int
+id|smp_spins_syscall_cur
+(braket
+id|NR_CPUS
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+multiline_comment|/* Count spins for the actual syscall                 */
+DECL|variable|smp_spins_sys_idle
+r_volatile
+r_int
+r_int
+id|smp_spins_sys_idle
+(braket
+id|NR_CPUS
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+multiline_comment|/* Count spins for sys_idle &t;&t;&t;&t;*/
+DECL|variable|smp_idle_count
+r_volatile
+r_int
+r_int
+id|smp_idle_count
+(braket
+l_int|1
+op_plus
+id|NR_CPUS
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+multiline_comment|/* Count idle ticks&t;&t;&t;&t;&t;*/
+macro_line|#endif
+macro_line|#if defined (__SMP_PROF__)
+DECL|variable|smp_idle_map
+r_volatile
+r_int
+r_int
+id|smp_idle_map
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Map for idle processors &t;&t;&t;&t;*/
+macro_line|#endif
 multiline_comment|/* &n; *&t;Checksum an MP configuration block.&n; */
 DECL|function|mpf_checksum
 r_static
@@ -1742,6 +1808,14 @@ id|init_user_stack
 )braket
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
+multiline_comment|/* Mapping on non-Intel conforming platforms is a bad move. */
+r_if
+c_cond
+(paren
+l_int|1
+OL
+id|cpu_present_map
+)paren
 id|apic_reg
 op_assign
 id|vremap
@@ -1906,7 +1980,30 @@ comma
 id|cfg
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;This gunge sends an IPI (Inter Processor Interrupt) to the&n;&t;&t;&t; *&t;processor we wish to wake. When the startup IPI is received&n;&t;&t;&t; *&t;the target CPU does a real mode jump to the stack base.&n;&t;&t;&t; */
+r_for
+c_loop
+(paren
+id|timeout
+op_assign
+l_int|0
+suffix:semicolon
+id|timeout
+OL
+l_int|50000
+suffix:semicolon
+id|timeout
+op_increment
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;This gunge sends an IPI (Inter Processor Interrupt) to the&n;&t;&t;&t;&t; *&t;processor we wish to wake. When the startup IPI is received&n;&t;&t;&t;&t; *&t;the target CPU does a real mode jump to the stack base.&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; *&t;We do the following&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; *&t;Time 0&t;: Send a STARTUP IPI (This is all that is needed).&n;&t;&t;&t;&t; *&t;Time 20000  : Send an INIT IPI for broken boards.&n;&t;&t;&t;&t; *&t;Time 20001  : Send a second STARTUP IPI for broken boards.&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; *&t;We can&squot;t just do INIT/STARTUP - that breaks the correctly&n;&t;&t;&t;&t; *&t;implemented ASUS boards.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|timeout
+op_eq
+l_int|20000
+)paren
+(brace
 id|cfg
 op_assign
 id|apic_read
@@ -1948,6 +2045,60 @@ op_complement
 l_int|0xFDFFF
 suffix:semicolon
 multiline_comment|/* Clear bits &t;&t;*/
+id|cfg
+op_or_assign
+id|APIC_DEST_DM_INIT
+suffix:semicolon
+multiline_comment|/* INIT the CPU         */
+id|apic_write
+c_func
+(paren
+id|APIC_ICR
+comma
+id|cfg
+)paren
+suffix:semicolon
+multiline_comment|/* Kick the second      */
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;nBuggy motherboard ?, trying an INIT IPI: &quot;
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+multiline_comment|/* Masses of time       */
+)brace
+r_if
+c_cond
+(paren
+id|timeout
+op_eq
+l_int|0
+op_logical_or
+id|timeout
+op_eq
+l_int|20001
+)paren
+(brace
+id|cfg
+op_assign
+id|apic_read
+c_func
+(paren
+id|APIC_ICR
+)paren
+suffix:semicolon
+id|cfg
+op_and_assign
+op_complement
+l_int|0xFDFFF
+suffix:semicolon
+multiline_comment|/* Clear bits           */
 id|cfg
 op_or_assign
 id|APIC_DEST_FIELD
@@ -2007,23 +2158,7 @@ l_string|&quot;Processor refused startup request.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-r_for
-c_loop
-(paren
-id|timeout
-op_assign
-l_int|0
-suffix:semicolon
-id|timeout
-OL
-l_int|50000
-suffix:semicolon
-id|timeout
-op_increment
-)paren
-(brace
+)brace
 r_if
 c_cond
 (paren
@@ -2072,7 +2207,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;At this point we should set up a BIOS warm start and try&n;&t;&t;&t;&t;&t; *&t;a RESTART IPI. The 486+82489 MP pair don&squot;t support STARTUP IPI&squot;s&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;At this point we should set up a BIOS warm start and try&n;&t;&t;&t;&t; *&t;a RESTART IPI. The 486+82489 MP pair don&squot;t support STARTUP IPI&squot;s&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2112,7 +2247,6 @@ op_lshift
 id|i
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 )brace
@@ -2755,6 +2889,7 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef DEBUGGING_SMP_RESCHED
 r_static
 r_int
 id|ct
@@ -2785,6 +2920,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 r_if
 c_cond
 (paren

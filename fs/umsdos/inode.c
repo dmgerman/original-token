@@ -68,7 +68,7 @@ l_string|&quot;Umsdos: Oops releasing pseudo_root. Notify jacques@solucorp.qc.ca
 )paren
 suffix:semicolon
 )brace
-id|msdos_put_inode
+id|fat_put_inode
 c_func
 (paren
 id|inode
@@ -86,7 +86,7 @@ op_star
 id|sb
 )paren
 (brace
-id|msdos_put_super
+id|fat_put_super
 c_func
 (paren
 id|sb
@@ -114,7 +114,7 @@ r_int
 id|bufsiz
 )paren
 (brace
-id|msdos_statfs
+id|fat_statfs
 c_func
 (paren
 id|sb
@@ -756,7 +756,7 @@ id|inode-&gt;u.umsdos_i.i_emd_owner
 )paren
 )paren
 suffix:semicolon
-id|msdos_write_inode
+id|fat_write_inode
 c_func
 (paren
 id|inode
@@ -1171,7 +1171,7 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|sb
 op_assign
-id|msdos_read_super
+id|fat_read_super
 c_func
 (paren
 id|s
@@ -1209,6 +1209,17 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* disable hidden==dotfile */
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|umsdos
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Tell fat-support we&squot;re umsdos */
 id|sb-&gt;s_op
 op_assign
 op_amp

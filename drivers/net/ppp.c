@@ -84,7 +84,6 @@ macro_line|#ifndef PPP_LQR
 DECL|macro|PPP_LQR
 mdefine_line|#define PPP_LQR 0xc025  /* Link Quality Reporting Protocol */
 macro_line|#endif
-r_static
 r_int
 id|ppp_register_compressor
 (paren
@@ -94,7 +93,6 @@ op_star
 id|cp
 )paren
 suffix:semicolon
-r_static
 r_void
 id|ppp_unregister_compressor
 (paren
@@ -1916,6 +1914,10 @@ suffix:semicolon
 id|dev-&gt;type
 op_assign
 id|ARPHRD_PPP
+suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|10
 suffix:semicolon
 r_for
 c_loop
@@ -12236,7 +12238,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ppp_register_compressor
-r_static
 r_int
 id|ppp_register_compressor
 (paren
@@ -12350,7 +12351,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ppp_unregister_compressor
-r_static
 r_void
 id|ppp_unregister_compressor
 (paren

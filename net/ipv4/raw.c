@@ -917,7 +917,7 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
-id|get_fs
+id|get_ds
 c_func
 (paren
 )paren

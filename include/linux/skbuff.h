@@ -34,6 +34,11 @@ op_star
 r_volatile
 id|prev
 suffix:semicolon
+DECL|member|qlen
+id|__u32
+id|qlen
+suffix:semicolon
+multiline_comment|/* Must be same length as a pointer&n;&t;&t;&t;&t;&t;   for using debugging */
 macro_line|#if CONFIG_SKB_CHECK
 DECL|member|magic_debug_cookie
 r_int
@@ -53,7 +58,7 @@ op_star
 r_volatile
 id|next
 suffix:semicolon
-multiline_comment|/* Next buffer in list */
+multiline_comment|/* Next buffer in list &t;&t;&t;&t;*/
 DECL|member|prev
 r_struct
 id|sk_buff
@@ -61,7 +66,14 @@ op_star
 r_volatile
 id|prev
 suffix:semicolon
-multiline_comment|/* Previous buffer in list */
+multiline_comment|/* Previous buffer in list &t;&t;&t;*/
+DECL|member|list
+r_struct
+id|sk_buff_head
+op_star
+id|list
+suffix:semicolon
+multiline_comment|/* List we are on&t;&t;&t;&t;*/
 macro_line|#if CONFIG_SKB_CHECK
 DECL|member|magic_debug_cookie
 r_int
@@ -84,7 +96,6 @@ id|sk
 suffix:semicolon
 multiline_comment|/* Socket we are owned by &t;&t;&t;*/
 DECL|member|when
-r_volatile
 r_int
 r_int
 id|when
@@ -141,7 +152,7 @@ id|h
 suffix:semicolon
 r_union
 (brace
-multiline_comment|/* As yet incomplete physical layer views &t;*/
+multiline_comment|/* As yet incomplete physical layer views */
 DECL|member|raw
 r_int
 r_char
@@ -257,13 +268,13 @@ id|ip_summed
 suffix:semicolon
 multiline_comment|/* Driver fed us an IP checksum&t;&t;&t;*/
 DECL|macro|PACKET_HOST
-mdefine_line|#define PACKET_HOST&t;&t;0&t;&t;&t;/* To us&t;&t;&t;&t;&t;*/
+mdefine_line|#define PACKET_HOST&t;&t;0&t;&t;/* To us&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_BROADCAST
-mdefine_line|#define PACKET_BROADCAST&t;1&t;&t;&t;/* To all&t;&t;&t;&t;&t;*/
+mdefine_line|#define PACKET_BROADCAST&t;1&t;&t;/* To all&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_MULTICAST
-mdefine_line|#define PACKET_MULTICAST&t;2&t;&t;&t;/* To group&t;&t;&t;&t;&t;*/
+mdefine_line|#define PACKET_MULTICAST&t;2&t;&t;/* To group&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_OTHERHOST
-mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;&t;/* To someone else &t;&t;&t;&t;*/
+mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;/* To someone else &t;&t;&t;&t;*/
 DECL|member|users
 r_int
 r_int
@@ -486,6 +497,17 @@ id|buf
 )paren
 suffix:semicolon
 r_extern
+id|__u32
+id|skb_queue_len
+c_func
+(paren
+r_struct
+id|sk_buff_head
+op_star
+id|list
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|sk_buff
 op_star
@@ -541,6 +563,22 @@ r_struct
 id|sk_buff
 op_star
 id|skb_clone
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|priority
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|sk_buff
+op_star
+id|skb_copy
 c_func
 (paren
 r_struct
@@ -699,7 +737,7 @@ id|len
 suffix:semicolon
 multiline_comment|/*&n; *&t;Peek an sk_buff. Unlike most other operations you _MUST_&n; *&t;be careful with this one. A peek leaves the buffer on the&n; *&t;list and someone else may run off with it. For an interrupt&n; *&t;type system cli() peek the buffer copy the data and sti();&n; */
 DECL|function|skb_peek
-r_static
+r_extern
 id|__inline__
 r_struct
 id|sk_buff
@@ -736,6 +774,24 @@ c_cond
 id|list-&gt;next
 suffix:colon
 l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Return the length of an sk_buff queue&n; */
+DECL|function|skb_queue_len
+r_extern
+id|__inline__
+id|__u32
+id|skb_queue_len
+c_func
+(paren
+r_struct
+id|sk_buff_head
+op_star
+id|list_
+)paren
+(brace
+r_return
+id|list_-&gt;qlen
 suffix:semicolon
 )brace
 macro_line|#if CONFIG_SKB_CHECK
@@ -796,6 +852,10 @@ id|sk_buff
 op_star
 )paren
 id|list
+suffix:semicolon
+id|list-&gt;qlen
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Insert an sk_buff at the start of a list.&n; */
@@ -859,6 +919,13 @@ suffix:semicolon
 id|newsk-&gt;prev-&gt;next
 op_assign
 id|newsk
+suffix:semicolon
+id|newsk-&gt;list
+op_assign
+id|list_
+suffix:semicolon
+id|list_-&gt;qlen
+op_increment
 suffix:semicolon
 id|restore_flags
 c_func
@@ -928,6 +995,13 @@ suffix:semicolon
 id|newsk-&gt;prev-&gt;next
 op_assign
 id|newsk
+suffix:semicolon
+id|newsk-&gt;list
+op_assign
+id|list_
+suffix:semicolon
+id|list_-&gt;qlen
+op_increment
 suffix:semicolon
 id|restore_flags
 c_func
@@ -1023,6 +1097,13 @@ id|result-&gt;prev
 op_assign
 l_int|NULL
 suffix:semicolon
+id|list_-&gt;qlen
+op_decrement
+suffix:semicolon
+id|result-&gt;list
+op_assign
+l_int|NULL
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -1084,6 +1165,13 @@ id|newsk-&gt;prev-&gt;next
 op_assign
 id|newsk
 suffix:semicolon
+id|newsk-&gt;list
+op_assign
+id|old-&gt;list
+suffix:semicolon
+id|newsk-&gt;list-&gt;qlen
+op_increment
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -1141,6 +1229,13 @@ id|old-&gt;next
 op_assign
 id|newsk
 suffix:semicolon
+id|newsk-&gt;list
+op_assign
+id|old-&gt;list
+suffix:semicolon
+id|newsk-&gt;list-&gt;qlen
+op_increment
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -1180,11 +1275,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb-&gt;prev
-op_logical_and
-id|skb-&gt;next
+id|skb-&gt;list
 )paren
 (brace
+id|skb-&gt;list-&gt;qlen
+op_decrement
+suffix:semicolon
 id|skb-&gt;next-&gt;prev
 op_assign
 id|skb-&gt;prev
@@ -1198,6 +1294,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|skb-&gt;prev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|skb-&gt;list
 op_assign
 l_int|NULL
 suffix:semicolon

@@ -1288,7 +1288,7 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
-id|get_fs
+id|get_ds
 c_func
 (paren
 )paren
@@ -1484,6 +1484,12 @@ multiline_comment|/*&n;&t;&t;&t;&t; * We will only return the amount&n;&t;&t;&t;
 id|amount
 op_assign
 id|skb-&gt;len
+op_minus
+r_sizeof
+(paren
+r_struct
+id|udphdr
+)paren
 suffix:semicolon
 )brace
 id|err

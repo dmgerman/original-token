@@ -31,7 +31,9 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
+macro_line|#include &lt;linux/swap.h&gt;
 r_extern
 r_int
 r_char
@@ -56,6 +58,7 @@ macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif
@@ -574,6 +577,12 @@ comma
 id|X
 c_func
 (paren
+id|mark_buffer_uptodate
+)paren
+comma
+id|X
+c_func
+(paren
 id|unlock_buffer
 )paren
 comma
@@ -611,6 +620,12 @@ id|X
 c_func
 (paren
 id|generic_readpage
+)paren
+comma
+id|X
+c_func
+(paren
+id|mark_buffer_uptodate
 )paren
 comma
 multiline_comment|/* device registration */
@@ -1272,6 +1287,18 @@ comma
 id|X
 c_func
 (paren
+id|icmp_send
+)paren
+comma
+id|X
+c_func
+(paren
+id|ip_options_compile
+)paren
+comma
+id|X
+c_func
+(paren
 id|ip_rt_put
 )paren
 comma
@@ -1421,6 +1448,12 @@ comma
 id|X
 c_func
 (paren
+id|skb_clone
+)paren
+comma
+id|X
+c_func
+(paren
 id|dev_alloc_skb
 )paren
 comma
@@ -1434,12 +1467,6 @@ id|X
 c_func
 (paren
 id|netif_rx
-)paren
-comma
-id|X
-c_func
-(paren
-id|dev_rint
 )paren
 comma
 id|X
@@ -1520,6 +1547,14 @@ c_func
 id|kill_fasync
 )paren
 comma
+macro_line|#ifdef CONFIG_FIREWALL
+id|X
+c_func
+(paren
+id|call_in_firewall
+)paren
+comma
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifndef CONFIG_SCSI
 multiline_comment|/*&n;&t; * With no scsi configured, we still need to export a few&n;&t; * symbols so that scsi can be loaded later via insmod.&n;&t; * Don&squot;t remove this unless you are 100% sure of what you are&n;&t; * doing.  If you want to remove this, you don&squot;t know what&n;&t; * you are doing!&n;&t; */
@@ -1576,6 +1611,12 @@ comma
 id|X
 c_func
 (paren
+id|nr_async_pages
+)paren
+comma
+id|X
+c_func
+(paren
 id|___strtok
 )paren
 comma
@@ -1589,6 +1630,12 @@ id|X
 c_func
 (paren
 id|super_blocks
+)paren
+comma
+id|X
+c_func
+(paren
+id|reuse_list
 )paren
 comma
 id|X

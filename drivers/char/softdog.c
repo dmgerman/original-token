@@ -29,6 +29,7 @@ id|watchdog_fire
 c_func
 (paren
 r_int
+r_int
 id|data
 )paren
 (brace
