@@ -773,24 +773,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we failed to find anything, we&squot;ll return NULL, but we&squot;ll&n;&t; * wake up kswapd _now_ ad even wait for it synchronously if&n;&t; * we can.. This way we&squot;ll at least make some forward progress&n;&t; * over time.&n;&t; */
-id|wake_up
+multiline_comment|/*&n;&t; * If we failed to find anything, we&squot;ll return NULL, but we&squot;ll&n;&t; * wake up kswapd _now_ and even wait for it synchronously if&n;&t; * we can.. This way we&squot;ll at least make some forward progress&n;&t; * over time.&n;&t; */
+id|kswapd_notify
 c_func
-(paren
-op_amp
-id|kswapd_wait
-)paren
-suffix:semicolon
-r_if
-c_cond
 (paren
 id|gfp_mask
-op_amp
-id|__GFP_WAIT
-)paren
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
 id|nopage

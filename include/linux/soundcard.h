@@ -1306,6 +1306,10 @@ DECL|macro|SOUND_CAP_EXCL_INPUT
 macro_line|#&t;define SOUND_CAP_EXCL_INPUT&t;0x00000001&t;/* Only one recording source at a time */
 DECL|macro|SOUND_MIXER_STEREODEVS
 mdefine_line|#define SOUND_MIXER_STEREODEVS&t;0xfb&t;/* Mixer channels supporting stereo */
+DECL|macro|SOUND_MIXER_OUTSRC
+mdefine_line|#define SOUND_MIXER_OUTSRC&t;0xfa&t;/* Arg contains a bit for each input source to output */
+DECL|macro|SOUND_MIXER_OUTMASK
+mdefine_line|#define SOUND_MIXER_OUTMASK&t;0xf9&t;/* Arg contains a bit for each supported input source to output */
 multiline_comment|/*&t;Device mask bits&t;*/
 DECL|macro|SOUND_MASK_VOLUME
 mdefine_line|#define SOUND_MASK_VOLUME&t;(1 &lt;&lt; SOUND_MIXER_VOLUME)

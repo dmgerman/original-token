@@ -5112,6 +5112,13 @@ op_amp
 id|runqueue_lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;policy
+op_eq
+id|SCHED_OTHER
+)paren
 id|current-&gt;policy
 op_or_assign
 id|SCHED_YIELD

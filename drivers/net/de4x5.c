@@ -2378,7 +2378,7 @@ op_star
 id|lp
 )paren
 suffix:semicolon
-macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__alpha__)
 r_static
 r_void
 id|eisa_probe
@@ -2924,7 +2924,7 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
-macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__alpha__)
 DECL|variable|de4x5_irq
 r_static
 id|u_char
@@ -3122,7 +3122,7 @@ id|iobase
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__alpha__)
 id|eisa_probe
 c_func
 (paren
@@ -7797,7 +7797,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__alpha__)
 multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard. Upto 15 EISA devices are supported.&n;*/
 DECL|function|__initfunc
 id|__initfunc
@@ -8159,7 +8159,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif                         /* !(__sparc_v9__) &amp;&amp; !(__powerpc__) */
+macro_line|#endif          /* !(__sparc_v9__) &amp;&amp; !(__powerpc__) &amp;&amp; !defined(__alpha__) */
 multiline_comment|/*&n;** PCI bus I/O device probe&n;** NB: PCI I/O accesses and Bus Mastering are enabled by the PCI BIOS, not&n;** the driver. Some PCI BIOS&squot;s, pre V2.1, need the slot + features to be&n;** enabled by the user first in the set up utility. Hence we just check for&n;** enabled features and silently ignore the card if they&squot;re not.&n;**&n;** STOP PRESS: Some BIOS&squot;s __require__ the driver to enable the bus mastering&n;** bit. Here, check for I/O accesses and then set BM. If you put the card in&n;** a non BM slot, you&squot;re on your own (and complain to the PC vendor that your&n;** PC doesn&squot;t conform to the PCI standard)!&n;**&n;** This function is only compatible with the *latest* 2.1.x kernels. For 2.0.x&n;** kernels use the V0.535[n] drivers.&n;*/
 DECL|macro|PCI_LAST_DEV
 mdefine_line|#define PCI_LAST_DEV  32
@@ -27630,7 +27630,7 @@ suffix:semicolon
 id|u_int
 id|device
 suffix:semicolon
-macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__alpha__)
 r_char
 id|name
 (braket

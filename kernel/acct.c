@@ -128,7 +128,7 @@ r_return
 suffix:semicolon
 id|sb
 op_assign
-id|acct_file-&gt;f_dentry-&gt;f_inode-&gt;i_sb
+id|acct_file-&gt;f_dentry-&gt;d_inode-&gt;i_sb
 suffix:semicolon
 r_if
 c_cond
