@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      cmpci.c  --  C-Media PCI audio driver.&n; *&n; *      Copyright (C) 1999  ChenLi Tien (cltien@home.com)&n; *&n; *&t;Based on the PCI drivers by Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in cm_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.99   0.10  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.11  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.12  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    20 09 99   0.13  merged the generic changes in sonicvibes since this&n; *&t;&t;       diverged.&n; */
+multiline_comment|/*&n; *      cmpci.c  --  C-Media PCI audio driver.&n; *&n; *      Copyright (C) 1999  ChenLi Tien (cltien@home.com)&n; *&n; *&t;Based on the PCI drivers by Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi, Jan Pfeifer&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in cm_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.99   0.10  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.11  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.12  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    20 09 99   0.13  merged the generic changes in sonicvibes since this&n; *&t;&t;       diverged.&n; *    18.08.99   1.5   Only deallocate DMA buffer when unloading.&n; *    02.09.99   1.6   Enable SPDIF LOOP&n; *                     Change the mixer read back&n; *    21.09.99   2.33  Use RCS version aas driver version.&n; *                     Add support for modem, S/PDIF loop and 4 channels.&n; *                     (8738 only)&n; *                     Fix bug cause x11amp cannot play.&n; *    $Log: cmpci.c,v $&n; *    Revision 2.41  1999/10/27 02:00:05  cltien&n; *    Now the fragsize for modem is activated by parameter.&n; *&n; *    Revision 2.40  1999/10/26 23:38:26  cltien&n; *    Remove debugging message in cm_write which may cause module counter not 0.&n; *&n; *    Revision 2.39  1999/10/26 21:52:50  cltien&n; *    I forgor too adjust mic recording volume, as it should be moved to 5MUTEMONO.&n; *    Change the DYNAMIC macro to FIXEDDMA, which means static DMA buffer.&n; *&n; *    Revision 2.38  1999/10/08 21:59:03  cltien&n; *    Set FLINKON and reset FLINKOFF for modem.&n; *&n; *    Revision 2.37  1999/09/28 02:57:04  cltien&n; *    Add set_bus_master() to make sure bus master enabled.&n; *&n; *    Revision 2.36  1999/09/22 14:15:03  cltien&n; *    Use open_sem to avoid multiple access to open_mode.&n; *    Use wakeup in IntrClose to activate process in waiting queue.&n; *&n; *    Revision 2.35  1999/09/22 13:20:53  cltien&n; *    Use open_mode to check if DAC in used. Also more check in IntrWrite and IntrClose. Now the modem can access DAC safely.&n; *&n; *    Revision 2.34  1999/09/22 03:29:57  cltien&n; *    Use module count to decide which one to access the dac.&n; *&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -387,6 +387,10 @@ DECL|member|fragsamples
 r_int
 id|fragsamples
 suffix:semicolon
+DECL|member|dmasamples
+r_int
+id|dmasamples
+suffix:semicolon
 multiline_comment|/* OSS stuff */
 DECL|member|mapped
 r_int
@@ -490,6 +494,15 @@ r_struct
 id|cm_state
 op_star
 id|devs
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|devaudio
+r_static
+r_struct
+id|cm_state
+op_star
+id|devaudio
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -774,28 +787,7 @@ op_plus
 id|CODEC_CMI_FUNCTRL0
 )paren
 suffix:semicolon
-id|outb
-c_func
-(paren
-id|inb
-c_func
-(paren
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_FUNCTRL0
-op_plus
-l_int|2
-)paren
-op_or
-l_int|1
-comma
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_FUNCTRL0
-op_plus
-l_int|2
-)paren
-suffix:semicolon
+singleline_comment|//&t;outb(inb(s-&gt;iobase + CODEC_CMI_FUNCTRL0 + 2) | 1, s-&gt;iobase + CODEC_CMI_FUNCTRL0 + 2);
 )brace
 DECL|function|set_dmaadc
 r_static
@@ -858,28 +850,7 @@ op_plus
 id|CODEC_CMI_FUNCTRL0
 )paren
 suffix:semicolon
-id|outb
-c_func
-(paren
-id|inb
-c_func
-(paren
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_FUNCTRL0
-op_plus
-l_int|2
-)paren
-op_or
-l_int|2
-comma
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_FUNCTRL0
-op_plus
-l_int|2
-)paren
-suffix:semicolon
+singleline_comment|//&t;outb(inb(s-&gt;iobase + CODEC_CMI_FUNCTRL0 + 2) | 2, s-&gt;iobase + CODEC_CMI_FUNCTRL0 + 2);
 )brace
 DECL|function|get_dmadac
 r_extern
@@ -897,6 +868,22 @@ id|s
 r_int
 r_int
 id|curr_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;dma_dac.dmasize
+op_logical_or
+op_logical_neg
+(paren
+id|s-&gt;enable
+op_amp
+id|CM_CENABLE_PE
+)paren
+)paren
+r_return
+l_int|0
 suffix:semicolon
 id|curr_addr
 op_assign
@@ -960,6 +947,22 @@ id|s
 r_int
 r_int
 id|curr_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;dma_adc.dmasize
+op_logical_or
+op_logical_neg
+(paren
+id|s-&gt;enable
+op_amp
+id|CM_CENABLE_RE
+)paren
+)paren
+r_return
+l_int|0
 suffix:semicolon
 id|curr_addr
 op_assign
@@ -1462,7 +1465,13 @@ comma
 (brace
 l_int|48000
 comma
+(paren
+l_int|44100
+op_plus
 l_int|48000
+)paren
+op_div
+l_int|2
 comma
 l_int|48000
 comma
@@ -1853,6 +1862,19 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* disable channel */
+id|outb
+c_func
+(paren
+id|s-&gt;enable
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL0
+op_plus
+l_int|2
+)paren
+suffix:semicolon
 id|s-&gt;enable
 op_and_assign
 op_complement
@@ -1882,7 +1904,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* disable channel and reset */
+multiline_comment|/* reset */
 id|outb
 c_func
 (paren
@@ -1954,10 +1976,23 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* disable channel */
 id|s-&gt;enable
 op_and_assign
 op_complement
 id|CM_CENABLE_PE
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|s-&gt;enable
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL0
+op_plus
+l_int|2
+)paren
 suffix:semicolon
 multiline_comment|/* disable interrupt */
 id|outb
@@ -1983,7 +2018,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* disable channel and reset */
+multiline_comment|/* reset */
 id|outb
 c_func
 (paren
@@ -2068,23 +2103,6 @@ op_logical_and
 id|s-&gt;dma_dac.ready
 )paren
 (brace
-id|s-&gt;enable
-op_or_assign
-id|CM_CENABLE_PE
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|s-&gt;enable
-comma
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_FUNCTRL0
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-)brace
 id|outb
 c_func
 (paren
@@ -2107,6 +2125,23 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+id|s-&gt;enable
+op_or_assign
+id|CM_CENABLE_PE
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|s-&gt;enable
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL0
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+)brace
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -2165,23 +2200,6 @@ op_logical_and
 id|s-&gt;dma_adc.ready
 )paren
 (brace
-id|s-&gt;enable
-op_or_assign
-id|CM_CENABLE_RE
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|s-&gt;enable
-comma
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_FUNCTRL0
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-)brace
 id|outb
 c_func
 (paren
@@ -2204,6 +2222,23 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+id|s-&gt;enable
+op_or_assign
+id|CM_CENABLE_RE
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|s-&gt;enable
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL0
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+)brace
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -2557,7 +2592,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;cm: DMA buffer crosses 64k boundary: busaddr 0x%lx  size %ld&bslash;n&quot;
+l_string|&quot;cmpci: DMA buffer crosses 64k boundary: busaddr 0x%lx  size %ld&bslash;n&quot;
 comma
 id|virt_to_bus
 c_func
@@ -2596,7 +2631,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;cm: DMA buffer beyond 16MB: busaddr 0x%lx  size %ld&bslash;n&quot;
+l_string|&quot;cmpci: DMA buffer beyond 16MB: busaddr 0x%lx  size %ld&bslash;n&quot;
 comma
 id|virt_to_bus
 c_func
@@ -2785,8 +2820,14 @@ id|db-&gt;numfrag
 op_assign
 id|db-&gt;ossmaxfrags
 suffix:semicolon
-macro_line|#if 1
 multiline_comment|/* to make fragsize &gt;= 4096 */
+macro_line|#if 0 &t;
+r_if
+c_cond
+(paren
+id|s-&gt;modem
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -2811,7 +2852,8 @@ op_div_assign
 l_int|2
 suffix:semicolon
 )brace
-macro_line|#endif
+)brace
+macro_line|#endif&t;
 id|db-&gt;fragsamples
 op_assign
 id|db-&gt;fragsize
@@ -2826,6 +2868,15 @@ op_assign
 id|db-&gt;numfrag
 op_lshift
 id|db-&gt;fragshift
+suffix:semicolon
+id|db-&gt;dmasamples
+op_assign
+id|db-&gt;dmasize
+op_rshift
+id|sample_shift
+(braket
+id|fmt
+)braket
 suffix:semicolon
 id|memset
 c_func
@@ -3052,6 +3103,18 @@ comma
 id|c
 comma
 id|len
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|s-&gt;enable
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL0
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 )brace
@@ -3555,7 +3618,7 @@ suffix:semicolon
 multiline_comment|/* fastpath out, to ease interrupt sharing */
 id|intsrc
 op_assign
-id|inb
+id|inl
 c_func
 (paren
 id|s-&gt;iobase
@@ -3570,11 +3633,7 @@ op_logical_neg
 (paren
 id|intsrc
 op_amp
-(paren
-id|CM_INT_CH0
-op_or
-id|CM_INT_CH1
-)paren
+l_int|0x80000000
 )paren
 )paren
 r_return
@@ -3598,7 +3657,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* disable interrupt */
+multiline_comment|/* acknowledge interrupt */
 r_if
 c_cond
 (paren
@@ -3606,6 +3665,7 @@ id|intsrc
 op_amp
 id|CM_INT_CH0
 )paren
+(brace
 id|outb
 c_func
 (paren
@@ -3621,6 +3681,27 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|intstat
+op_or
+l_int|1
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_INT_HLDCLR
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3628,6 +3709,7 @@ id|intsrc
 op_amp
 id|CM_INT_CH1
 )paren
+(brace
 id|outb
 c_func
 (paren
@@ -3643,61 +3725,37 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|intstat
+op_or
+l_int|2
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_INT_HLDCLR
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+)brace
 id|cm_update_ptr
 c_func
 (paren
 id|s
 )paren
 suffix:semicolon
-macro_line|#ifdef SOUND_CONFIG_CMPCI_MIDI
 id|cm_handle_midi
 c_func
 (paren
 id|s
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* enable interrupt */
-r_if
-c_cond
-(paren
-id|intsrc
-op_amp
-id|CM_INT_CH0
-)paren
-id|outb
-c_func
-(paren
-id|intstat
-op_or
-l_int|1
-comma
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_INT_HLDCLR
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|intsrc
-op_amp
-id|CM_INT_CH1
-)paren
-id|outb
-c_func
-(paren
-id|intstat
-op_or
-l_int|2
-comma
-id|s-&gt;iobase
-op_plus
-id|CODEC_CMI_INT_HLDCLR
-op_plus
-l_int|2
 )paren
 suffix:semicolon
 id|spin_unlock
@@ -3783,7 +3841,7 @@ id|invalid_magic
 )braket
 op_assign
 id|KERN_CRIT
-l_string|&quot;cm: invalid magic value&bslash;n&quot;
+l_string|&quot;cmpci: invalid magic value&bslash;n&quot;
 suffix:semicolon
 macro_line|#ifdef CONFIG_SOUND_CMPCI&t;/* support multiple chips */
 DECL|macro|VALIDATE_STATE
@@ -3801,6 +3859,8 @@ DECL|macro|MT_4MUTEMONO
 mdefine_line|#define MT_4MUTEMONO  3
 DECL|macro|MT_6MUTE
 mdefine_line|#define MT_6MUTE      4
+DECL|macro|MT_5MUTEMONO
+mdefine_line|#define MT_5MUTEMONO  5
 r_static
 r_const
 r_struct
@@ -3872,9 +3932,9 @@ op_assign
 (brace
 id|DSP_MIX_MICVOLIDX
 comma
-id|CODEC_CMI_MIXER2
+id|DSP_MIX_MICVOLIDX
 comma
-id|MT_4MUTEMONO
+id|MT_5MUTEMONO
 comma
 l_int|0x01
 comma
@@ -4097,6 +4157,35 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|MT_5MUTEMONO
+suffix:colon
+id|r
+op_assign
+id|l
+suffix:semicolon
+id|rl
+op_assign
+l_int|100
+op_minus
+l_int|3
+op_star
+(paren
+(paren
+id|l
+op_rshift
+l_int|3
+)paren
+op_amp
+l_int|31
+)paren
+suffix:semicolon
+id|rr
+op_assign
+id|rl
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|MT_5MUTE
 suffix:colon
 r_default
@@ -4108,7 +4197,11 @@ op_minus
 l_int|3
 op_star
 (paren
+(paren
 id|l
+op_rshift
+l_int|3
+)paren
 op_amp
 l_int|31
 )paren
@@ -4120,7 +4213,11 @@ op_minus
 l_int|3
 op_star
 (paren
+(paren
 id|r
+op_rshift
+l_int|3
+)paren
 op_amp
 l_int|31
 )paren
@@ -5098,9 +5195,11 @@ op_amp
 l_int|1
 )paren
 op_or
+(paren
 id|j
 op_rshift
 l_int|1
+)paren
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -5434,6 +5533,80 @@ l_int|2
 )paren
 op_amp
 l_int|7
+suffix:semicolon
+id|wrmixer
+c_func
+(paren
+id|s
+comma
+id|mixtable
+(braket
+id|i
+)braket
+dot
+id|left
+comma
+id|rl
+op_lshift
+l_int|3
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MIXER2
+)paren
+op_amp
+op_complement
+l_int|0x0e
+)paren
+op_or
+id|rr
+op_lshift
+l_int|1
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MIXER2
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MT_5MUTEMONO
+suffix:colon
+id|r
+op_assign
+id|l
+suffix:semicolon
+id|rl
+op_assign
+id|l
+OL
+l_int|4
+ques
+c_cond
+l_int|0
+suffix:colon
+(paren
+id|l
+op_minus
+l_int|5
+)paren
+op_div
+l_int|3
+suffix:semicolon
+id|rr
+op_assign
+id|rl
+op_rshift
+l_int|2
 suffix:semicolon
 id|wrmixer
 c_func
@@ -6072,17 +6245,11 @@ suffix:semicolon
 )brace
 id|tmo
 op_assign
-l_int|3
-op_star
-id|HZ
-op_star
 (paren
 id|count
-op_plus
-id|s-&gt;dma_dac.fragsize
+op_star
+id|HZ
 )paren
-op_div
-l_int|2
 op_div
 id|s-&gt;ratedac
 suffix:semicolon
@@ -6107,15 +6274,19 @@ id|schedule_timeout
 c_func
 (paren
 id|tmo
-op_plus
+ques
+c_cond
+suffix:colon
 l_int|1
 )paren
+op_logical_and
+id|tmo
 )paren
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;cm: dma timed out??&bslash;n&quot;
+l_string|&quot;cmpci: dma timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6383,13 +6554,99 @@ suffix:colon
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|interruptible_sleep_on
+r_if
+c_cond
+(paren
+op_logical_neg
+id|interruptible_sleep_on_timeout
 c_func
 (paren
 op_amp
 id|s-&gt;dma_adc.wait
+comma
+id|HZ
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;cmpci: read: chip lockup? dmasz %u fragsz %u count %i hwptr %u swptr %u&bslash;n&quot;
+comma
+id|s-&gt;dma_adc.dmasize
+comma
+id|s-&gt;dma_adc.fragsize
+comma
+id|s-&gt;dma_adc.count
+comma
+id|s-&gt;dma_adc.hwptr
+comma
+id|s-&gt;dma_adc.swptr
 )paren
 suffix:semicolon
+id|stop_adc
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|set_dmaadc
+c_func
+(paren
+id|s
+comma
+id|virt_to_bus
+c_func
+(paren
+id|s-&gt;dma_adc.rawbuf
+)paren
+comma
+id|s-&gt;dma_adc.dmasamples
+)paren
+suffix:semicolon
+multiline_comment|/* program sample counts */
+id|outw
+c_func
+(paren
+id|s-&gt;dma_adc.fragsamples
+op_minus
+l_int|1
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_CH1_FRAME2
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+id|s-&gt;dma_adc.count
+op_assign
+id|s-&gt;dma_adc.hwptr
+op_assign
+id|s-&gt;dma_adc.swptr
+op_assign
+l_int|0
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -6748,13 +7005,99 @@ suffix:colon
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|interruptible_sleep_on
+r_if
+c_cond
+(paren
+op_logical_neg
+id|interruptible_sleep_on_timeout
 c_func
 (paren
 op_amp
 id|s-&gt;dma_dac.wait
+comma
+id|HZ
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;cmpci: write: chip lockup? dmasz %u fragsz %u count %i hwptr %u swptr %u&bslash;n&quot;
+comma
+id|s-&gt;dma_dac.dmasize
+comma
+id|s-&gt;dma_dac.fragsize
+comma
+id|s-&gt;dma_dac.count
+comma
+id|s-&gt;dma_dac.hwptr
+comma
+id|s-&gt;dma_dac.swptr
 )paren
 suffix:semicolon
+id|stop_dac
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|set_dmadac
+c_func
+(paren
+id|s
+comma
+id|virt_to_bus
+c_func
+(paren
+id|s-&gt;dma_dac.rawbuf
+)paren
+comma
+id|s-&gt;dma_dac.dmasamples
+)paren
+suffix:semicolon
+multiline_comment|/* program sample counts */
+id|outw
+c_func
+(paren
+id|s-&gt;dma_dac.fragsamples
+op_minus
+l_int|1
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_CH0_FRAME2
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+id|s-&gt;dma_dac.count
+op_assign
+id|s-&gt;dma_dac.hwptr
+op_assign
+id|s-&gt;dma_dac.swptr
+op_assign
+l_int|0
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -9639,7 +9982,6 @@ comma
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_CMPCI_MIDI
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|cm_midi_read
 r_static
@@ -11080,7 +11422,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;cm: midi timed out??&bslash;n&quot;
+l_string|&quot;cmpci: midi timed out??&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -11294,9 +11636,7 @@ comma
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
 DECL|function|cm_dmfm_ioctl
 r_static
 r_int
@@ -12553,7 +12893,6 @@ comma
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_SOUND_CMPCI_FM */
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/* maximum number of devices */
 DECL|macro|NR_DEVICE
@@ -12644,6 +12983,51 @@ l_int|0x4040
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE
+DECL|variable|spdif_loop
+r_static
+r_int
+id|spdif_loop
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|four_ch
+r_static
+r_int
+id|four_ch
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|rear_out
+r_static
+r_int
+id|rear_out
+op_assign
+l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|spdif_loop
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|four_ch
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|rear_out
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|__init
@@ -12653,6 +13037,51 @@ c_func
 r_void
 )paren
 macro_line|#else
+macro_line|#ifdef CONFIG_SOUND_CMPCI_SPDIFLOOP
+r_static
+r_int
+id|spdif_loop
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+r_static
+r_int
+id|spdif_loop
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_CMPCI_4CH
+r_static
+r_int
+id|four_ch
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+r_static
+r_int
+id|four_ch
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_CMPCI_REAR
+r_static
+r_int
+id|rear_out
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+r_static
+r_int
+id|read_out
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_int
 id|__init
 id|init_cmpci
@@ -12748,7 +13177,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cm: version v1.1 time &quot;
+l_string|&quot;cmpci: version v2.41-nomodem time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -12778,7 +13207,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cm: cannot allocate 1MB of contiguous nonpageable memory for wavetable data&bslash;n&quot;
+l_string|&quot;cmpci: cannot allocate 1MB of contiguous nonpageable memory for wavetable data&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -12872,7 +13301,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;cm: out of memory&bslash;n&quot;
+l_string|&quot;cmpci: out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -13000,18 +13429,14 @@ l_int|0
 dot
 id|start
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
 id|s-&gt;iosynth
 op_assign
 l_int|0x388
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_CMPCI_MIDI
 id|s-&gt;iomidi
 op_assign
 l_int|0x330
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -13041,7 +13466,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;cm: io ports %#x-%#x in use&bslash;n&quot;
+l_string|&quot;cmpci: io ports %#x-%#x in use&bslash;n&quot;
 comma
 id|s-&gt;iobase
 comma
@@ -13066,7 +13491,6 @@ comma
 l_string|&quot;cmpci&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_CMPCI_MIDI
 r_if
 c_cond
 (paren
@@ -13082,8 +13506,8 @@ id|CM_EXTENT_MIDI
 id|printk
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;cm: io ports %#x-%#x in use&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cmpci: io ports %#x-%#x in use, midi disabled.&bslash;n&quot;
 comma
 id|s-&gt;iomidi
 comma
@@ -13094,10 +13518,13 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-r_goto
-id|err_region4
+id|s-&gt;iomidi
+op_assign
+l_int|0
 suffix:semicolon
 )brace
+r_else
+(brace
 id|request_region
 c_func
 (paren
@@ -13132,8 +13559,7 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
+)brace
 r_if
 c_cond
 (paren
@@ -13149,8 +13575,8 @@ id|CM_EXTENT_SYNTH
 id|printk
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;cm: io ports %#x-%#x in use&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cmpci: io ports %#x-%#x in use, synth disabled.&bslash;n&quot;
 comma
 id|s-&gt;iosynth
 comma
@@ -13161,10 +13587,13 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-r_goto
-id|err_region1
+id|s-&gt;iosynth
+op_assign
+l_int|0
 suffix:semicolon
 )brace
+r_else
+(brace
 id|request_region
 c_func
 (paren
@@ -13196,7 +13625,7 @@ op_plus
 id|CODEC_CMI_MISC_CTRL
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 multiline_comment|/* initialize codec registers */
 id|outb
 c_func
@@ -13223,7 +13652,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* reset channels */
+multiline_comment|/* disable channels */
 multiline_comment|/* reset mixer */
 id|wrmixer
 c_func
@@ -13258,7 +13687,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;cm: irq %u in use&bslash;n&quot;
+l_string|&quot;cmpci: irq %u in use&bslash;n&quot;
 comma
 id|s-&gt;irq
 )paren
@@ -13271,7 +13700,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cm: found %s adapter at io %#06x irq %u&bslash;n&quot;
+l_string|&quot;cmpci: found %s adapter at io %#06x irq %u&bslash;n&quot;
 comma
 id|devicename
 comma
@@ -13325,10 +13754,11 @@ l_int|0
 r_goto
 id|err_dev2
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_CMPCI_MIDI
 r_if
 c_cond
 (paren
+id|s-&gt;iomidi
+op_logical_and
 (paren
 id|s-&gt;dev_midi
 op_assign
@@ -13348,11 +13778,11 @@ l_int|0
 r_goto
 id|err_dev3
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
 r_if
 c_cond
 (paren
+id|s-&gt;iosynth
+op_logical_and
 (paren
 id|s-&gt;dev_dmfm
 op_assign
@@ -13372,7 +13802,12 @@ l_int|0
 r_goto
 id|err_dev4
 suffix:semicolon
-macro_line|#endif
+id|pci_set_master
+c_func
+(paren
+id|pcidev
+)paren
+suffix:semicolon
 multiline_comment|/* initialize the chips */
 id|fs
 op_assign
@@ -13488,6 +13923,187 @@ c_func
 id|fs
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcidev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_CMEDIA_CM8738
+)paren
+(brace
+multiline_comment|/* enable SPDIF loop */
+r_if
+c_cond
+(paren
+id|spdif_loop
+)paren
+(brace
+multiline_comment|/* turn on spdif-in to spdif-out */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL1
+)paren
+op_or
+l_int|0x80
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL1
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;cmpci: Enable SPDIF loop&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL1
+)paren
+op_amp
+op_complement
+l_int|0x80
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_FUNCTRL1
+)paren
+suffix:semicolon
+multiline_comment|/* enable 4 channels mode */
+r_if
+c_cond
+(paren
+id|four_ch
+)paren
+(brace
+multiline_comment|/* 4 channel mode (analog duplicate) */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MISC_CTRL
+op_plus
+l_int|3
+)paren
+op_or
+l_int|0x04
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MISC_CTRL
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;cmpci: Enable 4 channels mode&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* has separate rear-out jack ? */
+r_if
+c_cond
+(paren
+id|rear_out
+)paren
+(brace
+multiline_comment|/* has separate rear out jack */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MIXER1
+)paren
+op_amp
+op_complement
+l_int|0x20
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MIXER1
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MIXER1
+)paren
+op_or
+l_int|0x20
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MIXER1
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;cmpci: line-in routed as rear-out&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MISC_CTRL
+op_plus
+l_int|3
+)paren
+op_amp
+op_complement
+l_int|0x04
+comma
+id|s-&gt;iobase
+op_plus
+id|CODEC_CMI_MISC_CTRL
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* queue it for later freeing */
 id|s-&gt;next
 op_assign
@@ -13532,7 +14148,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;cm: cannot register misc device&bslash;n&quot;
+l_string|&quot;cmpci: cannot register misc device&bslash;n&quot;
 )paren
 suffix:semicolon
 id|free_irq
@@ -13545,7 +14161,12 @@ id|s
 suffix:semicolon
 id|err_irq
 suffix:colon
-macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
+r_if
+c_cond
+(paren
+id|s-&gt;iosynth
+)paren
+(brace
 id|release_region
 c_func
 (paren
@@ -13554,10 +14175,15 @@ comma
 id|CM_EXTENT_SYNTH
 )paren
 suffix:semicolon
+)brace
 id|err_region1
 suffix:colon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_CMPCI_MIDI
+r_if
+c_cond
+(paren
+id|s-&gt;iomidi
+)paren
+(brace
 id|release_region
 c_func
 (paren
@@ -13566,7 +14192,7 @@ comma
 id|CM_EXTENT_MIDI
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 id|err_region4
 suffix:colon
 id|release_region
@@ -13694,7 +14320,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* reset channels */
+multiline_comment|/* disable channels */
 id|free_irq
 c_func
 (paren
@@ -13722,7 +14348,12 @@ comma
 id|CM_EXTENT_CODEC
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_CMPCI_MIDI
+r_if
+c_cond
+(paren
+id|s-&gt;iomidi
+)paren
+(brace
 id|release_region
 c_func
 (paren
@@ -13731,8 +14362,19 @@ comma
 id|CM_EXTENT_MIDI
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
+id|unregister_sound_midi
+c_func
+(paren
+id|s-&gt;dev_midi
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|s-&gt;iosynth
+)paren
+(brace
 id|release_region
 c_func
 (paren
@@ -13741,7 +14383,13 @@ comma
 id|CM_EXTENT_SYNTH
 )paren
 suffix:semicolon
-macro_line|#endif
+id|unregister_sound_special
+c_func
+(paren
+id|s-&gt;dev_dmfm
+)paren
+suffix:semicolon
+)brace
 id|unregister_sound_dsp
 c_func
 (paren
@@ -13754,22 +14402,6 @@ c_func
 id|s-&gt;dev_mixer
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_CMPCI_MIDI
-id|unregister_sound_midi
-c_func
-(paren
-id|s-&gt;dev_midi
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
-id|unregister_sound_special
-c_func
-(paren
-id|s-&gt;dev_dmfm
-)paren
-suffix:semicolon
-macro_line|#endif
 id|kfree_s
 c_func
 (paren
@@ -13802,7 +14434,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cm: unloading&bslash;n&quot;
+l_string|&quot;cmpci: unloading&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

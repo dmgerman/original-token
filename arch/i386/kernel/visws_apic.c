@@ -198,9 +198,9 @@ id|disable_cobalt_irq
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Not an __init, needed by the reboot code&n; */
-DECL|function|init_pic_mode
+DECL|function|disable_IO_APIC
 r_void
-id|init_pic_mode
+id|disable_IO_APIC
 c_func
 (paren
 r_void

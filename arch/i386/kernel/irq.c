@@ -867,7 +867,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * I had a lockup scenario where a tight loop doing&n; * spin_unlock()/spin_lock() on CPU#1 was racing with&n; * spin_lock() on CPU#0. CPU#0 should have noticed spin_unlock(), but&n; * apparently the spin_unlock() information did not make it&n; * through to CPU#0 ... nasty, is this by design, do we have to limit&n; * &squot;memory update oscillation frequency&squot; artificially like here?&n; *&n; * Such &squot;high frequency update&squot; races can be avoided by careful design, but&n; * some of our major constructs like spinlocks use similar techniques,&n; * it would be nice to clarify this issue. Set this define to 0 if you&n; * want to check whether your system freezes.  I suspect the delay done&n; * by SYNC_OTHER_CORES() is in correlation with &squot;snooping latency&squot;, but&n; * i thought that such things are guaranteed by design, since we use&n; * the &squot;LOCK&squot; prefix.&n; */
 DECL|macro|SUSPECTED_CPU_OR_CHIPSET_BUG_WORKAROUND
-mdefine_line|#define SUSPECTED_CPU_OR_CHIPSET_BUG_WORKAROUND 1
+mdefine_line|#define SUSPECTED_CPU_OR_CHIPSET_BUG_WORKAROUND 0
 macro_line|#if SUSPECTED_CPU_OR_CHIPSET_BUG_WORKAROUND
 DECL|macro|SYNC_OTHER_CORES
 macro_line|# define SYNC_OTHER_CORES(x) udelay(x+1)

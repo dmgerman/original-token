@@ -637,6 +637,14 @@ r_goto
 id|send_now
 suffix:semicolon
 multiline_comment|/*&n;&t; * The only heuristics - we use the tsk-&gt;avg_slice value&n;&t; * to detect &squot;frequent reschedulers&squot;.&n;&t; *&n;&t; * If both the woken-up process and the preferred CPU is&n;&t; * is a frequent rescheduler, then skip the asynchronous&n;&t; * wakeup, the frequent rescheduler will likely chose this&n;&t; * task during it&squot;s next schedule():&n;&t; */
+r_if
+c_cond
+(paren
+id|p-&gt;policy
+op_eq
+id|SCHED_OTHER
+)paren
+(brace
 id|tsk
 op_assign
 id|cpu_curr
@@ -648,21 +656,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|p-&gt;avg_slice
-OL
-id|cacheflush_time
-)paren
-op_logical_and
-(paren
+op_plus
 id|tsk-&gt;avg_slice
 OL
 id|cacheflush_time
 )paren
-)paren
 r_goto
 id|out_no_target
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * We know that the preferred CPU has a cache-affine current&n;&t; * process, lets try to find a new idle CPU for the woken-up&n;&t; * process:&n;&t; */
 r_for
 c_loop

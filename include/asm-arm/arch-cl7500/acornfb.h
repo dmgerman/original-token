@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|acornfb_valid_pixrate
 mdefine_line|#define acornfb_valid_pixrate(rate) (rate &gt;= 39325 &amp;&amp; rate &lt;= 40119)
 r_static

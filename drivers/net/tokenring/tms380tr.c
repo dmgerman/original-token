@@ -155,9 +155,9 @@ comma
 (brace
 id|TMS_PCI
 comma
-id|PCI_VENDOR_ID_SK
+id|PCI_VENDOR_ID_SYSKONNECT
 comma
-id|PCI_DEVICE_ID_SK_TR
+id|PCI_DEVICE_ID_SYSKONNECT_TR
 comma
 l_string|&quot;SK NET TR 4/16 PCI&quot;
 )brace

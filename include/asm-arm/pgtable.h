@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/pgtable.h&n; */
 macro_line|#ifndef _ASMARM_PGTABLE_H
 DECL|macro|_ASMARM_PGTABLE_H
 mdefine_line|#define _ASMARM_PGTABLE_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

@@ -15,6 +15,16 @@ r_extern
 r_int
 r_int
 id|__init
+id|bootmem_bootmap_pages
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__init
 id|init_bootmem
 (paren
 r_int

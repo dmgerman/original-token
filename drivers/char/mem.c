@@ -122,16 +122,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PPDEV
-r_extern
-r_int
-id|pp_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|do_write_mem
 r_static
 id|ssize_t
@@ -2541,13 +2531,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_DEV
 id|videodev_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_PPDEV
-id|pp_init
 c_func
 (paren
 )paren

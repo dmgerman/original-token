@@ -1033,6 +1033,10 @@ DECL|macro|VID_HARDWARE_TERRATEC
 mdefine_line|#define VID_HARDWARE_TERRATEC&t;23&t;/* TerraTec ActiveRadio */
 DECL|macro|VID_HARDWARE_CPIA
 mdefine_line|#define VID_HARDWARE_CPIA&t;24
+DECL|macro|VID_HARDWARE_ZR36120
+mdefine_line|#define VID_HARDWARE_ZR36120&t;25&t;/* Zoran ZR36120/ZR36125 */
+DECL|macro|VID_HARDWARE_ZR36067
+mdefine_line|#define VID_HARDWARE_ZR36067&t;26&t;/* Zoran ZR36067/36060 */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

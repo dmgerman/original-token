@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;8&t;28.7.99&n; *&n; * Authors :&t;Jean Tourrilhes - HPL - &lt;jt@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;9&t;16.10.99&n; *&n; * Authors :&t;Jean Tourrilhes - HPL - &lt;jt@hpl.hp.com&gt;&n; */
 macro_line|#ifndef _LINUX_WIRELESS_H
 DECL|macro|_LINUX_WIRELESS_H
 mdefine_line|#define _LINUX_WIRELESS_H
@@ -12,8 +12,8 @@ multiline_comment|/**************************** CONSTANTS **********************
 multiline_comment|/* --------------------------- VERSION --------------------------- */
 multiline_comment|/*&n; * This constant is used to know the availability of the wireless&n; * extensions and to know which version of wireless extensions it is&n; * (there is some stuff that will be added in the future...)&n; * I just plan to increment with each new version.&n; */
 DECL|macro|WIRELESS_EXT
-mdefine_line|#define WIRELESS_EXT&t;8
-multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support (ESSID ioctls)&n; *&n; * V6 to V7&n; * --------&n; *&t;- define IW_ESSID_MAX_SIZE and IW_MAX_AP&n; *&n; * V7 to V8&n; * --------&n; *&t;- Changed my e-mail address&n; *&t;- More 802.11 support (nickname, rate, rts, frag)&n; *&t;- List index in frequencies&n; */
+mdefine_line|#define WIRELESS_EXT&t;9
+multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support (ESSID ioctls)&n; *&n; * V6 to V7&n; * --------&n; *&t;- define IW_ESSID_MAX_SIZE and IW_MAX_AP&n; *&n; * V7 to V8&n; * --------&n; *&t;- Changed my e-mail address&n; *&t;- More 802.11 support (nickname, rate, rts, frag)&n; *&t;- List index in frequencies&n; *&n; * V8 to V9&n; * --------&n; *&t;- Support for &squot;mode of operation&squot; (ad-hoc, managed...)&n; *&t;- Support for unicast and multicast power saving&n; *&t;- Change encoding to support larger tokens (&gt;64 bits)&n; *&t;- Updated iw_params (disable, flags) and use it for NWID&n; *&t;- Extracted iw_point from iwreq for clarity&n; */
 multiline_comment|/* -------------------------- IOCTL LIST -------------------------- */
 multiline_comment|/* Basic operations */
 DECL|macro|SIOCSIWNAME
@@ -21,17 +21,17 @@ mdefine_line|#define SIOCSIWNAME&t;0x8B00&t;&t;/* Unused ??? */
 DECL|macro|SIOCGIWNAME
 mdefine_line|#define SIOCGIWNAME&t;0x8B01&t;&t;/* get name */
 DECL|macro|SIOCSIWNWID
-mdefine_line|#define SIOCSIWNWID&t;0x8B02&t;&t;/* set network id */
+mdefine_line|#define SIOCSIWNWID&t;0x8B02&t;&t;/* set network id (the cell) */
 DECL|macro|SIOCGIWNWID
 mdefine_line|#define SIOCGIWNWID&t;0x8B03&t;&t;/* get network id */
 DECL|macro|SIOCSIWFREQ
 mdefine_line|#define SIOCSIWFREQ&t;0x8B04&t;&t;/* set channel/frequency */
 DECL|macro|SIOCGIWFREQ
 mdefine_line|#define SIOCGIWFREQ&t;0x8B05&t;&t;/* get channel/frequency */
-DECL|macro|SIOCSIWENCODE
-mdefine_line|#define SIOCSIWENCODE&t;0x8B06&t;&t;/* set encoding info */
-DECL|macro|SIOCGIWENCODE
-mdefine_line|#define SIOCGIWENCODE&t;0x8B07&t;&t;/* get encoding info */
+DECL|macro|SIOCSIWMODE
+mdefine_line|#define SIOCSIWMODE&t;0x8B06&t;&t;/* set operation mode */
+DECL|macro|SIOCGIWMODE
+mdefine_line|#define SIOCGIWMODE&t;0x8B07&t;&t;/* get operation mode */
 DECL|macro|SIOCSIWSENS
 mdefine_line|#define SIOCSIWSENS&t;0x8B08&t;&t;/* set sensitivity */
 DECL|macro|SIOCGIWSENS
@@ -80,12 +80,22 @@ DECL|macro|SIOCSIWFRAG
 mdefine_line|#define SIOCSIWFRAG&t;0x8B24&t;&t;/* set fragmentation thr (bytes) */
 DECL|macro|SIOCGIWFRAG
 mdefine_line|#define SIOCGIWFRAG&t;0x8B25&t;&t;/* get fragmentation thr (bytes) */
+multiline_comment|/* Encoding stuff (scrambling, hardware security, WEP...) */
+DECL|macro|SIOCSIWENCODE
+mdefine_line|#define SIOCSIWENCODE&t;0x8B2A&t;&t;/* set encoding token &amp; mode */
+DECL|macro|SIOCGIWENCODE
+mdefine_line|#define SIOCGIWENCODE&t;0x8B2B&t;&t;/* get encoding token &amp; mode */
+multiline_comment|/* Power saving stuff (power management, unicast and multicast) */
+DECL|macro|SIOCSIWPOWER
+mdefine_line|#define SIOCSIWPOWER&t;0x8B2C&t;&t;/* set Power Management settings */
+DECL|macro|SIOCGIWPOWER
+mdefine_line|#define SIOCGIWPOWER&t;0x8B2D&t;&t;/* get Power Management settings */
 multiline_comment|/* ------------------------- IOCTL STUFF ------------------------- */
 multiline_comment|/* The first and the last (range) */
 DECL|macro|SIOCIWFIRST
 mdefine_line|#define SIOCIWFIRST&t;0x8B00
 DECL|macro|SIOCIWLAST
-mdefine_line|#define SIOCIWLAST&t;0x8B25
+mdefine_line|#define SIOCIWLAST&t;0x8B30
 multiline_comment|/* Even : get (world access), odd : set (root access) */
 DECL|macro|IW_IS_SET
 mdefine_line|#define IW_IS_SET(cmd)&t;(!((cmd) &amp; 0x1))
@@ -127,8 +137,110 @@ mdefine_line|#define IW_MAX_AP&t;&t;8
 multiline_comment|/* Maximum size of the ESSID and NICKN strings */
 DECL|macro|IW_ESSID_MAX_SIZE
 mdefine_line|#define IW_ESSID_MAX_SIZE&t;32
+multiline_comment|/* Modes of operation */
+DECL|macro|IW_MODE_AUTO
+mdefine_line|#define IW_MODE_AUTO&t;0&t;/* Let the driver decides */
+DECL|macro|IW_MODE_ADHOC
+mdefine_line|#define IW_MODE_ADHOC&t;1&t;/* Single cell network */
+DECL|macro|IW_MODE_INFRA
+mdefine_line|#define IW_MODE_INFRA&t;2&t;/* Multi cell network, roaming, ... */
+DECL|macro|IW_MODE_MASTER
+mdefine_line|#define IW_MODE_MASTER&t;3&t;/* Synchronisation master or Access Point */
+DECL|macro|IW_MODE_REPEAT
+mdefine_line|#define IW_MODE_REPEAT&t;4&t;/* Wireless Repeater (forwarder) */
+DECL|macro|IW_MODE_SECOND
+mdefine_line|#define IW_MODE_SECOND&t;5&t;/* Secondary master/repeater (backup) */
+multiline_comment|/* Maximum number of size of encoding token available&n; * they are listed in the range structure */
+DECL|macro|IW_MAX_ENCODING_SIZES
+mdefine_line|#define IW_MAX_ENCODING_SIZES&t;8
+multiline_comment|/* Maximum size of the encoding token in bytes */
+DECL|macro|IW_ENCODING_TOKEN_MAX
+mdefine_line|#define IW_ENCODING_TOKEN_MAX&t;32&t;/* 256 bits (for now) */
+multiline_comment|/* Flags for encoding (along with the token) */
+DECL|macro|IW_ENCODE_INDEX
+mdefine_line|#define IW_ENCODE_INDEX&t;&t;0x00FF&t;/* Token index (if needed) */
+DECL|macro|IW_ENCODE_FLAGS
+mdefine_line|#define IW_ENCODE_FLAGS&t;&t;0xF000&t;/* Flags defined below */
+DECL|macro|IW_ENCODE_DISABLED
+mdefine_line|#define IW_ENCODE_DISABLED&t;0x8000&t;/* Encoding disabled */
+DECL|macro|IW_ENCODE_ENABLED
+mdefine_line|#define IW_ENCODE_ENABLED&t;0x0000&t;/* Encoding enabled */
+DECL|macro|IW_ENCODE_RESTRICTED
+mdefine_line|#define IW_ENCODE_RESTRICTED&t;0x4000&t;/* Refuse non-encoded packets */
+DECL|macro|IW_ENCODE_OPEN
+mdefine_line|#define IW_ENCODE_OPEN&t;&t;0x2000&t;/* Accept non-encoded packets */
+multiline_comment|/* Power management flags available (along with the value, if any) */
+DECL|macro|IW_POWER_ON
+mdefine_line|#define IW_POWER_ON&t;&t;0x0000&t;/* No details... */
+DECL|macro|IW_POWER_TYPE
+mdefine_line|#define IW_POWER_TYPE&t;&t;0xF000&t;/* Type of parameter */
+DECL|macro|IW_POWER_PERIOD
+mdefine_line|#define IW_POWER_PERIOD&t;&t;0x1000&t;/* Value is a period/duration of  */
+DECL|macro|IW_POWER_TIMEOUT
+mdefine_line|#define IW_POWER_TIMEOUT&t;0x2000&t;/* Value is a timeout (to go asleep) */
+DECL|macro|IW_POWER_MODE
+mdefine_line|#define IW_POWER_MODE&t;&t;0x0F00&t;/* Power Management mode */
+DECL|macro|IW_POWER_UNICAST_R
+mdefine_line|#define IW_POWER_UNICAST_R&t;0x0100&t;/* Receive only unicast messages */
+DECL|macro|IW_POWER_MULTICAST_R
+mdefine_line|#define IW_POWER_MULTICAST_R&t;0x0200&t;/* Receive only multicast messages */
+DECL|macro|IW_POWER_ALL_R
+mdefine_line|#define IW_POWER_ALL_R&t;&t;0x0300&t;/* Receive all messages though PM */
+DECL|macro|IW_POWER_FORCE_S
+mdefine_line|#define IW_POWER_FORCE_S&t;0x0400&t;/* Force PM procedure for sending unicast */
+DECL|macro|IW_POWER_REPEATER
+mdefine_line|#define IW_POWER_REPEATER&t;0x0800&t;/* Repeat broadcast messages in PM period */
 multiline_comment|/****************************** TYPES ******************************/
 multiline_comment|/* --------------------------- SUBTYPES --------------------------- */
+multiline_comment|/*&n; *&t;Generic format for most parameters that fit in an int&n; */
+DECL|struct|iw_param
+r_struct
+id|iw_param
+(brace
+DECL|member|value
+id|__s32
+id|value
+suffix:semicolon
+multiline_comment|/* The value of the parameter itself */
+DECL|member|fixed
+id|__u8
+id|fixed
+suffix:semicolon
+multiline_comment|/* Hardware should not use auto select */
+DECL|member|disabled
+id|__u8
+id|disabled
+suffix:semicolon
+multiline_comment|/* Disable the feature */
+DECL|member|flags
+id|__u16
+id|flags
+suffix:semicolon
+multiline_comment|/* Various specifc flags (if any) */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;For all data larger than 16 octets, we need to use a&n; *&t;pointer to memory alocated in user space.&n; */
+DECL|struct|iw_point
+r_struct
+id|iw_point
+(brace
+DECL|member|pointer
+id|caddr_t
+id|pointer
+suffix:semicolon
+multiline_comment|/* Pointer to the data  (in user space) */
+DECL|member|length
+id|__u16
+id|length
+suffix:semicolon
+multiline_comment|/* number of fields or size in bytes */
+DECL|member|flags
+id|__u16
+id|flags
+suffix:semicolon
+multiline_comment|/* Optional params */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *&t;A frequency&n; *&t;For numbers lower than 10^9, we encode the number in &squot;m&squot; and&n; *&t;set &squot;e&squot; to 0&n; *&t;For number greater than 10^9, we divide it by the lowest power&n; *&t;of 10 to get &squot;m&squot; lower than 10^9, with &squot;m&squot;= f / (10^&squot;e&squot;)...&n; *&t;The power of 10 is in &squot;e&squot;, the result of the division is in &squot;m&squot;.&n; */
 DECL|struct|iw_freq
 r_struct
@@ -160,7 +272,7 @@ DECL|member|qual
 id|__u8
 id|qual
 suffix:semicolon
-multiline_comment|/* link quality (SNR or better...) */
+multiline_comment|/* link quality (%retries, SNR or better...) */
 DECL|member|level
 id|__u8
 id|level
@@ -200,40 +312,6 @@ suffix:semicolon
 multiline_comment|/* Others cases */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;Encoding information (setting and so on)&n; *&t;Encoding might be hardware encryption, scrambing or others&n; */
-DECL|struct|iw_encoding
-r_struct
-id|iw_encoding
-(brace
-DECL|member|method
-id|__u8
-id|method
-suffix:semicolon
-multiline_comment|/* Algorithm number / key used */
-DECL|member|code
-id|__u64
-id|code
-suffix:semicolon
-multiline_comment|/* Data/key used for algorithm */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *&t;Generic format for parameters&n; */
-DECL|struct|iw_param
-r_struct
-id|iw_param
-(brace
-DECL|member|value
-id|__s32
-id|value
-suffix:semicolon
-multiline_comment|/* The value of the parameter itself */
-DECL|member|fixed
-id|__u8
-id|fixed
-suffix:semicolon
-multiline_comment|/* Hardware should not use auto select */
-)brace
-suffix:semicolon
 multiline_comment|/* ------------------------ WIRELESS STATS ------------------------ */
 multiline_comment|/*&n; * Wireless statistics (used for /proc/net/wireless)&n; */
 DECL|struct|iw_statistics
@@ -241,7 +319,7 @@ r_struct
 id|iw_statistics
 (brace
 DECL|member|status
-id|__u8
+id|__u16
 id|status
 suffix:semicolon
 multiline_comment|/* Status&n;&t;&t;&t;&t;&t; * - device dependent for now */
@@ -291,41 +369,24 @@ id|IFNAMSIZ
 )braket
 suffix:semicolon
 multiline_comment|/* Name : used to verify the presence of  wireless extensions.&n;&t;&t; * Name of the protocol/provider... */
+DECL|member|essid
 r_struct
-multiline_comment|/* network id (or domain) : used to to */
-(brace
-multiline_comment|/* create logical channels on the air */
+id|iw_point
+id|essid
+suffix:semicolon
+multiline_comment|/* Extended network name */
 DECL|member|nwid
-id|__u32
+r_struct
+id|iw_param
 id|nwid
 suffix:semicolon
-multiline_comment|/* value */
-DECL|member|on
-id|__u8
-id|on
-suffix:semicolon
-multiline_comment|/* active/unactive nwid */
-DECL|member|nwid
-)brace
-id|nwid
-suffix:semicolon
+multiline_comment|/* network id (or domain - the cell) */
 DECL|member|freq
 r_struct
 id|iw_freq
 id|freq
 suffix:semicolon
 multiline_comment|/* frequency or channel :&n;&t;&t;&t;&t;&t; * 0-1000 = channel&n;&t;&t;&t;&t;&t; * &gt; 1000 = frequency in Hz */
-DECL|member|encoding
-r_struct
-id|iw_encoding
-id|encoding
-suffix:semicolon
-multiline_comment|/* Encoding stuff */
-DECL|member|sensitivity
-id|__u32
-id|sensitivity
-suffix:semicolon
-multiline_comment|/* Obsolete, but compatible */
 DECL|member|sens
 r_struct
 id|iw_param
@@ -350,34 +411,35 @@ id|iw_param
 id|frag
 suffix:semicolon
 multiline_comment|/* Fragmentation threshold */
+DECL|member|mode
+id|__u32
+id|mode
+suffix:semicolon
+multiline_comment|/* Operation mode */
+DECL|member|encoding
+r_struct
+id|iw_point
+id|encoding
+suffix:semicolon
+multiline_comment|/* Encoding stuff : tokens */
+DECL|member|power
+r_struct
+id|iw_param
+id|power
+suffix:semicolon
+multiline_comment|/* PM duration/timeout */
 DECL|member|ap_addr
 r_struct
 id|sockaddr
 id|ap_addr
 suffix:semicolon
 multiline_comment|/* Access point address */
-r_struct
-multiline_comment|/* For all data bigger than 16 octets */
-(brace
-DECL|member|pointer
-id|caddr_t
-id|pointer
-suffix:semicolon
-multiline_comment|/* Pointer to the data&n;&t;&t;&t;&t;&t;&t; * (in user space) */
-DECL|member|length
-id|__u16
-id|length
-suffix:semicolon
-multiline_comment|/* fields or byte size */
-DECL|member|flags
-id|__u16
-id|flags
-suffix:semicolon
-multiline_comment|/* Optional params */
 DECL|member|data
-)brace
+r_struct
+id|iw_point
 id|data
 suffix:semicolon
+multiline_comment|/* Other large parameters */
 DECL|member|u
 )brace
 id|u
@@ -442,13 +504,6 @@ id|iw_quality
 id|max_qual
 suffix:semicolon
 multiline_comment|/* Quality of the link */
-multiline_comment|/* Encoder stuff */
-DECL|member|max_encoding
-r_struct
-id|iw_encoding
-id|max_encoding
-suffix:semicolon
-multiline_comment|/* Encoding max range */
 multiline_comment|/* Rates */
 DECL|member|num_bitrates
 id|__u8
@@ -485,6 +540,46 @@ id|__s32
 id|max_frag
 suffix:semicolon
 multiline_comment|/* Maximal frag threshold */
+multiline_comment|/* Power Management duration &amp; timeout */
+DECL|member|min_pmd
+id|__s32
+id|min_pmd
+suffix:semicolon
+multiline_comment|/* Minimal PM duration */
+DECL|member|max_pmd
+id|__s32
+id|max_pmd
+suffix:semicolon
+multiline_comment|/* Maximal PM duration */
+DECL|member|min_pmt
+id|__s32
+id|min_pmt
+suffix:semicolon
+multiline_comment|/* Minimal PM timeout */
+DECL|member|max_pmt
+id|__s32
+id|max_pmt
+suffix:semicolon
+multiline_comment|/* Maximal PM timeout */
+multiline_comment|/* Encoder stuff */
+DECL|member|encoding_size
+id|__u16
+id|encoding_size
+(braket
+id|IW_MAX_ENCODING_SIZES
+)braket
+suffix:semicolon
+multiline_comment|/* Different token sizes */
+DECL|member|num_encoding_sizes
+id|__u8
+id|num_encoding_sizes
+suffix:semicolon
+multiline_comment|/* Number of entry in the list */
+DECL|member|max_encoding_tokens
+id|__u8
+id|max_encoding_tokens
+suffix:semicolon
+multiline_comment|/* Max number of tokens */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Private ioctl interface information&n; */

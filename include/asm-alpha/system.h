@@ -801,13 +801,6 @@ DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) &bslash;&n;  ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 DECL|macro|tas
 mdefine_line|#define tas(ptr) (xchg((ptr),1))
-multiline_comment|/* Very dirty but nevertheless very fun hack ;). I recall the aboot printf()&n;   that will in turn use the SRM  console to do the debugging of the boot&n;   process. As there&squot;s no runtime symbol table, the address of printf()&n;   is hardwired and is in function of the bootlx binary you have in /boot...&n;   1999 Andrea Arcangeli &lt;andrea@suse.de&gt; */
-macro_line|#if 0
-mdefine_line|#define SRM_printf(args...) ({ int (*__SRM_printf)(const char *fmt, ...) = (int (*)(const char *fmt, ...)) 0x20000aa0; __SRM_printf(args); })
-macro_line|#else
-DECL|macro|SRM_printf
-mdefine_line|#define SRM_printf(args...)
-macro_line|#endif
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif
 eof

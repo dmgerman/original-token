@@ -904,7 +904,7 @@ r_else
 (brace
 id|zones_size
 (braket
-l_int|0
+id|ZONE_DMA
 )braket
 op_assign
 id|dma_pfn
@@ -1155,8 +1155,12 @@ c_func
 l_string|&quot;Memory: %luk available&bslash;n&quot;
 comma
 id|totalram_pages
-op_rshift
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
 l_int|10
+)paren
 )paren
 suffix:semicolon
 )brace

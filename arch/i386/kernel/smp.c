@@ -981,17 +981,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|call_data
-)paren
-singleline_comment|// temporary debugging check
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 id|call_data
 op_assign
 op_amp
@@ -1164,6 +1153,16 @@ op_amp
 id|cpu_online_map
 )paren
 suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|disable_local_APIC
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1208,6 +1207,21 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|smp_call_function
 c_func
 (paren
@@ -1218,6 +1232,17 @@ comma
 l_int|1
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|disable_local_APIC
+c_func
+(paren
+)paren
+suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1354,7 +1379,7 @@ op_amp
 id|call_data-&gt;started
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * At this point the structure may be out of scope unless wait==1&n;&t; */
+multiline_comment|/*&n;&t; * At this point the info structure may be out of scope unless wait==1&n;&t; */
 (paren
 op_star
 id|func
@@ -1466,7 +1491,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|v
-op_assign
+op_or_assign
 id|apic_read
 c_func
 (paren
@@ -1479,6 +1504,111 @@ c_func
 l_string|&quot;... APIC ESR1: %08lx&bslash;n&quot;
 comma
 id|v
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Be a bit more verbose. (multiple bits can be set)&n;&t; */
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x01
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 0: APIC Send CS Error (hw problem).&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x02
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 1: APIC Receive CS Error (hw problem).&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x04
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 2: APIC Send Accept Error.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x08
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 3: APIC Receive Accept Error.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x10
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 4: Reserved!.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x20
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 5: Send Illegal Vector (kernel bug).&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x40
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 6: Received Illegal Vector.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+op_amp
+l_int|0x80
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;... bit 7: Illegal Register Address.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ack_APIC_irq

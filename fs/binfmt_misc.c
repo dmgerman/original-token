@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  binfmt_misc.c&n; *&n; *  Copyright (C) 1997 Richard G&#xfffd;nther&n; *&n; *  binfmt_misc detects binaries via a magic or filename extension and invokes&n; *  a specified wrapper. This should obsolete binfmt_java, binfmt_em86 and&n; *  binfmt_mz.&n; *&n; *  1997-04-25 first version&n; *  [...]&n; *  1997-05-19 cleanup&n; *  1997-06-26 hpa: pass the real filename rather than argv[0]&n; *  1997-06-30 minor cleanup&n; *  1997-08-09 removed extension stripping, locking cleanup&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

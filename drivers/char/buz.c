@@ -13619,9 +13619,8 @@ id|VID_TYPE_SCALES
 op_or
 id|VID_TYPE_SUBCAPTURE
 comma
-id|VID_HARDWARE_BT848
+id|VID_HARDWARE_ZR36067
 comma
-multiline_comment|/* Not true, but the buz is not yet in the list */
 id|zoran_open
 comma
 id|zoran_close

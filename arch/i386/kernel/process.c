@@ -568,8 +568,13 @@ id|__unused
 )paren
 (brace
 macro_line|#if __SMP__
-multiline_comment|/*&n;&t; * turn off the IO-APIC, so we can do a clean reboot&n;&t; */
-id|init_pic_mode
+multiline_comment|/*&n;&t; * Stop all CPUs and turn off local APICs and the IO-APIC, so&n;&t; * other OSs see a clean IRQ state.&n;&t; */
+id|smp_send_stop
+c_func
+(paren
+)paren
+suffix:semicolon
+id|disable_IO_APIC
 c_func
 (paren
 )paren
