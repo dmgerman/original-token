@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * MPC8260 Communication Processor Module.&n; * Copyright (c) 1999 Dan Malek (dmalek@jlc.net)&n; *&n; * This file contains structures and information for the communication&n; * processor channels found in the dual port RAM or parameter RAM.&n; * All CPM control and status is available through the MPC8260 internal&n; * memory map.  See immap.h for details.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __CPM_82XX__
 DECL|macro|__CPM_82XX__
 mdefine_line|#define __CPM_82XX__
@@ -1850,4 +1851,5 @@ suffix:semicolon
 DECL|macro|BD_IIC_START
 mdefine_line|#define BD_IIC_START&t;&t;((ushort)0x0400)
 macro_line|#endif /* __CPM_82XX__ */
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -431,7 +431,7 @@ c_func
 id|irlap
 comma
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 )paren
 id|self
@@ -727,6 +727,13 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* No user QoS! */
+id|skb_get
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/*LEVEL4*/
 id|irlmp_link_connect_indication
 c_func
 (paren
@@ -779,6 +786,12 @@ comma
 id|skb
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 )brace
@@ -929,6 +942,13 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|skb_get
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/*LEVEL4*/
 id|irlmp_link_connect_confirm
 c_func
 (paren
@@ -979,6 +999,13 @@ c_cond
 id|self-&gt;qos_tx.compression.value
 )paren
 (brace
+id|skb_get
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/*LEVEL4*/
 id|skb
 op_assign
 id|irlap_decompress_frame
@@ -1010,6 +1037,13 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+id|skb_get
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/*LEVEL4*/
 id|irlmp_link_data_indication
 c_func
 (paren
@@ -1232,6 +1266,12 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 )brace
 r_else
 id|skb_queue_tail
@@ -1430,6 +1470,13 @@ op_plus
 id|LAP_CTRL_HEADER
 )paren
 suffix:semicolon
+id|skb_get
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/*LEVEL4*/
 id|irlmp_link_unitdata_indication
 c_func
 (paren
@@ -2107,6 +2154,11 @@ r_void
 id|irlap_status_indication
 c_func
 (paren
+r_struct
+id|irlap_cb
+op_star
+id|self
+comma
 r_int
 id|quality_of_link
 )paren
@@ -2147,6 +2199,8 @@ suffix:semicolon
 id|irlmp_status_indication
 c_func
 (paren
+id|self-&gt;notify.instance
+comma
 id|quality_of_link
 comma
 id|LOCK_NO_CHANGE
@@ -2261,6 +2315,10 @@ r_int
 id|s
 )paren
 (brace
+r_static
+r_int
+id|rand
+suffix:semicolon
 r_int
 id|slot
 suffix:semicolon
@@ -2280,11 +2338,31 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
+id|rand
+op_add_assign
+id|jiffies
+suffix:semicolon
+id|rand
+op_xor_assign
+(paren
+id|rand
+op_lshift
+l_int|12
+)paren
+suffix:semicolon
+id|rand
+op_xor_assign
+(paren
+id|rand
+op_rshift
+l_int|20
+)paren
+suffix:semicolon
 id|slot
 op_assign
 id|s
 op_plus
-id|jiffies
+id|rand
 op_mod
 (paren
 id|S
@@ -2856,6 +2934,11 @@ r_int
 id|now
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
@@ -2899,14 +2982,25 @@ c_cond
 (paren
 id|now
 )paren
-id|irda_device_change_speed
+(brace
+multiline_comment|/* Send down empty frame to trigger speed change */
+id|skb
+op_assign
+id|dev_alloc_skb
 c_func
 (paren
-id|self-&gt;netdev
-comma
-id|speed
+l_int|0
 )paren
 suffix:semicolon
+id|irlap_queue_xmit
+c_func
+(paren
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#ifdef CONFIG_IRDA_COMPRESSION
 DECL|function|irlap_init_comp_qos_capabilities
@@ -3234,11 +3328,8 @@ l_int|0x01
 suffix:semicolon
 multiline_comment|/* Set data size */
 multiline_comment|/*self-&gt;qos_rx.data_size.bits &amp;= 0x03;*/
-multiline_comment|/* Set disconnect time */
-id|self-&gt;qos_rx.link_disc_time.bits
-op_and_assign
-l_int|0x07
-suffix:semicolon
+multiline_comment|/* Set disconnect time -&gt; done properly in qos.c */
+multiline_comment|/*self-&gt;qos_rx.link_disc_time.bits &amp;= 0x07;*/
 id|irda_qos_bits_to_value
 c_func
 (paren
@@ -3312,7 +3403,7 @@ suffix:semicolon
 multiline_comment|/* Default value in NDM */
 id|self-&gt;bofs_count
 op_assign
-l_int|11
+l_int|12
 suffix:semicolon
 multiline_comment|/* &n;&t; * Generate random connection address for this session, which must&n;&t; * be 7 bits wide and different from 0x00 and 0xfe &n;&t; */
 r_while
@@ -3408,11 +3499,11 @@ l_int|1
 suffix:semicolon
 id|self-&gt;qos_tx.additional_bofs.value
 op_assign
-l_int|11
+l_int|12
 suffix:semicolon
 id|self-&gt;qos_rx.additional_bofs.value
 op_assign
-l_int|11
+l_int|12
 suffix:semicolon
 id|self-&gt;qos_tx.link_disc_time.value
 op_assign
@@ -3532,10 +3623,13 @@ id|self-&gt;qos_tx.link_disc_time.value
 op_eq
 l_int|3
 )paren
+multiline_comment|/* &n;&t;&t; * If we set N1 to 0, it will trigger immediately, which is&n;&t;&t; * not what we want. What we really want is to disable it,&n;&t;&t; * Jean II &n;&t;&t; */
 id|self-&gt;N1
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
+multiline_comment|/* Disable */
 r_else
 id|self-&gt;N1
 op_assign

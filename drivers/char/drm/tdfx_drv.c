@@ -1431,6 +1431,7 @@ multiline_comment|/* tdfx_init is called via init_module at module load time, or
 DECL|function|tdfx_init
 r_static
 r_int
+id|__init
 id|tdfx_init
 c_func
 (paren
@@ -1621,6 +1622,7 @@ multiline_comment|/* tdfx_cleanup is called via cleanup_module at module unload 
 DECL|function|tdfx_cleanup
 r_static
 r_void
+id|__exit
 id|tdfx_cleanup
 c_func
 (paren

@@ -21,6 +21,9 @@ macro_line|#include &lt;net/irda/irlan_client.h&gt;
 macro_line|#include &lt;net/irda/irlan_provider.h&gt; 
 macro_line|#include &lt;net/irda/irlan_eth.h&gt;
 macro_line|#include &lt;net/irda/irlan_filter.h&gt;
+multiline_comment|/* &n; * Send gratuitous ARP when connected to a new AP or not. May be a clever&n; * thing to do, but for some reason the machine crashes if you use DHCP. So&n; * lets not use it by default.&n; */
+DECL|macro|CONFIG_IRLAN_SEND_GRATUITOUS_ARP
+macro_line|#undef CONFIG_IRLAN_SEND_GRATUITOUS_ARP
 multiline_comment|/* extern char sysctl_devname[]; */
 multiline_comment|/*&n; *  Master structure&n; */
 DECL|variable|irlan
@@ -55,6 +58,7 @@ op_assign
 id|ACCESS_PEER
 suffix:semicolon
 multiline_comment|/* PEER, DIRECT or HOSTED */
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|irlan_state
 r_static
 r_char
@@ -121,6 +125,7 @@ comma
 l_string|&quot;802.5&quot;
 )brace
 suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
 r_static
 r_void
 id|__irlan_close
@@ -202,170 +207,6 @@ op_star
 id|proc_irda
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
-multiline_comment|/*&n; * Function irlan_watchdog_timer_expired (data)&n; *&n; *    Something has gone wrong during the connection establishment&n; *&n; */
-DECL|function|irlan_watchdog_timer_expired
-r_void
-id|irlan_watchdog_timer_expired
-c_func
-(paren
-r_void
-op_star
-id|data
-)paren
-(brace
-r_struct
-id|irmanager_event
-id|mgr_event
-suffix:semicolon
-r_struct
-id|irlan_cb
-op_star
-id|self
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self
-op_assign
-(paren
-r_struct
-id|irlan_cb
-op_star
-)paren
-id|data
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|IRLAN_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Check if device still configured */
-r_if
-c_cond
-(paren
-id|netif_running
-c_func
-(paren
-op_amp
-id|self-&gt;dev
-)paren
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), notifying irmanager to stop irlan!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|mgr_event.event
-op_assign
-id|EVENT_IRLAN_STOP
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|mgr_event.devname
-comma
-l_string|&quot;%s&quot;
-comma
-id|self-&gt;dev.name
-)paren
-suffix:semicolon
-id|irmanager_notify
-c_func
-(paren
-op_amp
-id|mgr_event
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *  We set this to false, so that irlan_dev_close known that&n;&t;&t; *  notify_irmanager should actually be set to TRUE again &n;&t;&t; *  instead of FALSE, since this close has not been initiated&n;&t;&t; *  by the user.&n;&t;&t; */
-id|self-&gt;notify_irmanager
-op_assign
-id|FALSE
-suffix:semicolon
-)brace
-r_else
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), closing instance!&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*irlan_close(self);*/
-)brace
-)brace
-multiline_comment|/*&n; * Function irlan_start_watchdog_timer (self, timeout)&n; *&n; *    &n; *&n; */
-DECL|function|irlan_start_watchdog_timer
-r_void
-id|irlan_start_watchdog_timer
-c_func
-(paren
-r_struct
-id|irlan_cb
-op_star
-id|self
-comma
-r_int
-id|timeout
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irda_start_timer
-c_func
-(paren
-op_amp
-id|self-&gt;watchdog_timer
-comma
-id|timeout
-comma
-(paren
-r_void
-op_star
-)paren
-id|self
-comma
-id|irlan_watchdog_timer_expired
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Function irlan_init (void)&n; *&n; *    Initialize IrLAN layer&n; *&n; */
 DECL|function|irlan_init
 r_int
@@ -387,7 +228,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -461,7 +302,10 @@ c_func
 (paren
 id|hints
 comma
+op_amp
 id|irlan_client_discovery_indication
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -475,7 +319,7 @@ c_func
 id|hints
 )paren
 suffix:semicolon
-multiline_comment|/* Start the master IrLAN instance */
+multiline_comment|/* Start the master IrLAN instance (the only one for now) */
 r_new
 op_assign
 id|irlan_open
@@ -484,8 +328,6 @@ c_func
 id|DEV_ADDR_ANY
 comma
 id|DEV_ADDR_ANY
-comma
-id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* The master will only open its (listen) control TSAP */
@@ -494,12 +336,6 @@ c_func
 (paren
 r_new
 )paren
-suffix:semicolon
-r_new
-op_member_access_from_pointer
-id|master
-op_assign
-id|TRUE
 suffix:semicolon
 multiline_comment|/* Do some fast discovery! */
 id|irlmp_discovery_request
@@ -653,10 +489,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|self-&gt;netdev_registered
-op_assign
-id|TRUE
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -674,9 +506,6 @@ id|saddr
 comma
 id|__u32
 id|daddr
-comma
-r_int
-id|netdev
 )paren
 (brace
 r_struct
@@ -792,9 +621,9 @@ id|self-&gt;media
 op_assign
 id|MEDIA_802_3
 suffix:semicolon
-id|self-&gt;notify_irmanager
+id|self-&gt;disconnect_reason
 op_assign
-id|TRUE
+id|LM_USER_REQUEST
 suffix:semicolon
 id|init_timer
 c_func
@@ -810,13 +639,20 @@ op_amp
 id|self-&gt;client.kick_timer
 )paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|self-&gt;open_wait
+)paren
+suffix:semicolon
 id|hashbin_insert
 c_func
 (paren
 id|irlan
 comma
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 )paren
 id|self
@@ -849,12 +685,6 @@ comma
 id|IRLAN_IDLE
 )paren
 suffix:semicolon
-multiline_comment|/* Register network device now, or wait until some later time? */
-r_if
-c_cond
-(paren
-id|netdev
-)paren
 id|irlan_register_netdev
 c_func
 (paren
@@ -865,7 +695,7 @@ r_return
 id|self
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_close (self)&n; *&n; *    This function closes and deallocates the IrLAN client instances. Be &n; *    aware that other functions which calles client_close() must call &n; *    hashbin_remove() first!!!&n; *&n; */
+multiline_comment|/*&n; * Function __irlan_close (self)&n; *&n; *    This function closes and deallocates the IrLAN client instances. Be &n; *    aware that other functions which calles client_close() must call &n; *    hashbin_remove() first!!!&n; */
 DECL|function|__irlan_close
 r_static
 r_void
@@ -961,20 +791,12 @@ id|self-&gt;client.txq
 )paren
 )paren
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|self-&gt;netdev_registered
-)paren
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -982,138 +804,11 @@ op_amp
 id|self-&gt;dev
 )paren
 suffix:semicolon
-id|self-&gt;netdev_registered
-op_assign
-id|FALSE
-suffix:semicolon
-)brace
 id|self-&gt;magic
 op_assign
 l_int|0
 suffix:semicolon
 id|kfree
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function irlan_close (self)&n; *&n; *    Close instance&n; *&n; */
-DECL|function|irlan_close
-r_void
-id|irlan_close
-c_func
-(paren
-r_struct
-id|irlan_cb
-op_star
-id|self
-)paren
-(brace
-r_struct
-id|irlan_cb
-op_star
-id|entry
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|IRLAN_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Check if device is still configured */
-r_if
-c_cond
-(paren
-id|netif_running
-c_func
-(paren
-op_amp
-id|self-&gt;dev
-)paren
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Device still configured, closing later!&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Give it a chance to reconnect */
-id|irlan_start_watchdog_timer
-c_func
-(paren
-id|self
-comma
-id|IRLAN_TIMEOUT
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), daddr=%08x&bslash;n&quot;
-comma
-id|self-&gt;daddr
-)paren
-suffix:semicolon
-id|entry
-op_assign
-id|hashbin_remove
-c_func
-(paren
-id|irlan
-comma
-id|self-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|entry
-op_eq
-id|self
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|__irlan_close
 c_func
 (paren
 id|self
@@ -1294,6 +989,7 @@ op_amp
 id|self-&gt;dev
 )paren
 suffix:semicolon
+multiline_comment|/* Clear reason */
 )brace
 DECL|function|irlan_connect_confirm
 r_void
@@ -1423,11 +1119,25 @@ op_amp
 id|self-&gt;dev
 )paren
 suffix:semicolon
+id|self-&gt;disconnect_reason
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Clear reason */
+macro_line|#ifdef CONFIG_IRLAN_SEND_GRATUITOUS_ARP
 id|irlan_eth_send_gratuitous_arp
 c_func
 (paren
 op_amp
 id|self-&gt;dev
+)paren
+suffix:semicolon
+macro_line|#endif
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;open_wait
 )paren
 suffix:semicolon
 )brace
@@ -1556,6 +1266,11 @@ comma
 l_string|&quot;IrLAN, data channel disconnected by peer!&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Save reason so we know if we should try to reconnect or not */
+id|self-&gt;disconnect_reason
+op_assign
+id|reason
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1566,10 +1281,13 @@ r_case
 id|LM_USER_REQUEST
 suffix:colon
 multiline_comment|/* User request */
-id|irlan_close
+id|IRDA_DEBUG
 c_func
 (paren
-id|self
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), User requested&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1578,12 +1296,13 @@ r_case
 id|LM_LAP_DISCONNECT
 suffix:colon
 multiline_comment|/* Unexpected IrLAP disconnect */
-id|irlan_start_watchdog_timer
+id|IRDA_DEBUG
 c_func
 (paren
-id|self
+l_int|2
 comma
-id|IRLAN_TIMEOUT
+id|__FUNCTION__
+l_string|&quot;(), Unexpected IrLAP disconnect&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1598,7 +1317,7 @@ c_func
 l_int|2
 comma
 id|__FUNCTION__
-l_string|&quot;(), LM_CONNECT_FAILURE not impl&bslash;n&quot;
+l_string|&quot;(), IrLAP connect failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1613,7 +1332,7 @@ c_func
 l_int|2
 comma
 id|__FUNCTION__
-l_string|&quot;(), LM_CONNECT_FAILURE not impl&bslash;n&quot;
+l_string|&quot;(), IrLAP reset&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1627,13 +1346,20 @@ c_func
 l_int|2
 comma
 id|__FUNCTION__
-l_string|&quot;(), LM_CONNECT_FAILURE not impl&bslash;n&quot;
+l_string|&quot;(), IrLMP connect failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|ERROR
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), Unknown disconnect reason&bslash;n&quot;
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1655,6 +1381,13 @@ comma
 id|IRLAN_LMP_DISCONNECT
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;open_wait
 )paren
 suffix:semicolon
 )brace
@@ -1842,7 +1575,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Disconnect and close all open TSAP connections&n;&t; */
+multiline_comment|/* Disconnect and close all open TSAP connections */
 r_if
 c_cond
 (paren
@@ -1924,6 +1657,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|self-&gt;disconnect_reason
+op_assign
+id|LM_USER_REQUEST
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_ias_register (self, tsap_sel)&n; *&n; *    Register with LM-IAS&n; *&n; */
 DECL|function|irlan_ias_register
@@ -2002,6 +1739,8 @@ comma
 l_string|&quot;IrDA:TinyTP:LsapSel&quot;
 comma
 id|tsap_sel
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_insert_object
@@ -2063,6 +1802,8 @@ comma
 l_string|&quot;Name&quot;
 comma
 id|sysctl_devname
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2074,6 +1815,8 @@ comma
 l_string|&quot;Name&quot;
 comma
 l_string|&quot;Linux&quot;
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2085,6 +1828,8 @@ comma
 l_string|&quot;DeviceID&quot;
 comma
 l_string|&quot;HWP19F0&quot;
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_add_integer_attrib
@@ -2095,6 +1840,8 @@ comma
 l_string|&quot;CompCnt&quot;
 comma
 l_int|1
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 r_if
@@ -2112,6 +1859,8 @@ comma
 l_string|&quot;Comp#01&quot;
 comma
 l_string|&quot;PNP8389&quot;
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 r_else
@@ -2123,6 +1872,8 @@ comma
 l_string|&quot;Comp#01&quot;
 comma
 l_string|&quot;PNP8294&quot;
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_add_string_attrib
@@ -2133,6 +1884,8 @@ comma
 l_string|&quot;Manufacturer&quot;
 comma
 l_string|&quot;Linux-IrDA Project&quot;
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_insert_object
@@ -2163,7 +1916,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|3
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -2244,7 +1997,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|3
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), sending ...&bslash;n&quot;
@@ -2543,7 +2296,6 @@ l_string|&quot;DIRECT&quot;
 suffix:semicolon
 multiline_comment|/* irlan_insert_string_param(skb, &quot;MODE&quot;, &quot;UNRELIABLE&quot;); */
 multiline_comment|/* &t;self-&gt;use_udata = TRUE; */
-multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
 id|irlan_ctrl_data_request
 c_func
 (paren
@@ -2819,7 +2571,6 @@ comma
 l_string|&quot;FILTER&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
 id|irlan_ctrl_data_request
 c_func
 (paren
@@ -2982,7 +2733,6 @@ comma
 l_string|&quot;NONE&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
 id|irlan_ctrl_data_request
 c_func
 (paren
@@ -3145,7 +2895,6 @@ comma
 l_string|&quot;NONE&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
 id|irlan_ctrl_data_request
 c_func
 (paren
@@ -3289,7 +3038,6 @@ comma
 l_string|&quot;DYNAMIC&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
 id|irlan_ctrl_data_request
 c_func
 (paren
@@ -3414,7 +3162,6 @@ comma
 l_string|&quot;802.3&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
 id|irlan_ctrl_data_request
 c_func
 (paren
@@ -4249,15 +3996,6 @@ id|len
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Don&squot;t display the master server */
-r_if
-c_cond
-(paren
-id|self-&gt;master
-op_eq
-l_int|0
-)paren
-(brace
 id|len
 op_add_assign
 id|sprintf
@@ -4462,7 +4200,6 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|self
 op_assign
 (paren
@@ -4675,6 +4412,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|eth
+comma
+l_string|&quot;Name devices ethX (0) or irlanX (1)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -4683,12 +4428,12 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-id|MODULE_PARM
+id|MODULE_PARM_DESC
 c_func
 (paren
-id|timeout
+id|access
 comma
-l_string|&quot;i&quot;
+l_string|&quot;Access type DIRECT=1, PEER=2, HOSTED=3&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize the IrLAN module, this function is called by the&n; *    modprobe(1) program.&n; */

@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_CURRENT_H
 DECL|macro|_PPC_CURRENT_H
 mdefine_line|#define _PPC_CURRENT_H
@@ -13,4 +14,5 @@ l_string|&quot;r2&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* !(_PPC_CURRENT_H) */
+macro_line|#endif /* __KERNEL__ */
 eof

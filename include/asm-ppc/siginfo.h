@@ -2,7 +2,6 @@ macro_line|#ifndef _PPC_SIGINFO_H
 DECL|macro|_PPC_SIGINFO_H
 mdefine_line|#define _PPC_SIGINFO_H
 multiline_comment|/* Copied from i386 from alpha. */
-macro_line|#include &lt;linux/types.h&gt;
 DECL|union|sigval
 r_typedef
 r_union

@@ -13,13 +13,18 @@ DECL|macro|IAS_OCT_SEQ
 mdefine_line|#define IAS_OCT_SEQ 2
 DECL|macro|IAS_STRING
 mdefine_line|#define IAS_STRING  3
+multiline_comment|/* Object ownership of attributes (user or kernel) */
+DECL|macro|IAS_KERNEL_ATTR
+mdefine_line|#define IAS_KERNEL_ATTR&t;0
+DECL|macro|IAS_USER_ATTR
+mdefine_line|#define IAS_USER_ATTR&t;1
 multiline_comment|/*&n; *  LM-IAS Object&n; */
 DECL|struct|ias_object
 r_struct
 id|ias_object
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first! */
@@ -53,6 +58,11 @@ id|__u8
 id|type
 suffix:semicolon
 multiline_comment|/* Value description */
+DECL|member|owner
+id|__u8
+id|owner
+suffix:semicolon
+multiline_comment|/* Managed from user/kernel space */
 DECL|member|charset
 r_int
 id|charset
@@ -91,7 +101,7 @@ r_struct
 id|ias_attrib
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first! */
@@ -158,6 +168,21 @@ op_star
 id|obj
 )paren
 suffix:semicolon
+r_int
+id|irias_delete_attrib
+c_func
+(paren
+r_struct
+id|ias_object
+op_star
+id|obj
+comma
+r_struct
+id|ias_attrib
+op_star
+id|attrib
+)paren
+suffix:semicolon
 r_void
 id|__irias_delete_object
 c_func
@@ -183,6 +208,9 @@ id|name
 comma
 r_int
 id|value
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_void
@@ -201,6 +229,9 @@ comma
 r_char
 op_star
 id|value
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_void
@@ -222,6 +253,9 @@ id|octets
 comma
 r_int
 id|len
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_int

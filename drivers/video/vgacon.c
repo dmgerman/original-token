@@ -12,9 +12,17 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+DECL|variable|vga_lock
+r_static
+id|spinlock_t
+id|vga_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|macro|BLANK
 mdefine_line|#define BLANK 0x0020
 DECL|macro|CAN_LOAD_EGA_FONTS
@@ -450,15 +458,13 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/*&n;&t; * ddprintk might set the console position from interrupt&n;&t; * handlers, thus the write has to be IRQ-atomic.&n;&t; */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|vga_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#ifndef SLOW_VGA
@@ -544,9 +550,12 @@ id|vga_video_port_val
 )paren
 suffix:semicolon
 macro_line|#endif
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|vga_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1787,15 +1796,13 @@ id|lastto
 op_assign
 id|to
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|vga_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|outb_p
@@ -1886,9 +1893,12 @@ comma
 id|vga_video_port_val
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|vga_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -2431,9 +2441,11 @@ op_logical_neg
 id|vga_vesa_blanked
 )paren
 (brace
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|vga_state.SeqCtrlIndex
@@ -2460,9 +2472,11 @@ c_func
 id|video_misc_rd
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|outb_p
@@ -2621,9 +2635,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* assure that video is enabled */
 multiline_comment|/* &quot;0x20&quot; is VIDEO_ENABLE_bit in register 01 of sequencer */
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|outb_p
@@ -2795,9 +2811,11 @@ comma
 id|vga_video_port_reg
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 )brace
@@ -2811,9 +2829,11 @@ r_void
 )paren
 (brace
 multiline_comment|/* restore original values of VGA controller registers */
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|outb_p
@@ -2994,9 +3014,11 @@ comma
 id|vga_video_port_reg
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 )brace
@@ -3419,9 +3441,11 @@ op_star
 id|cmapsz
 suffix:semicolon
 macro_line|#endif
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|outb_p
@@ -3545,9 +3569,11 @@ id|gr_port_val
 )paren
 suffix:semicolon
 multiline_comment|/* map start at A000:0000 */
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 r_if
@@ -3695,9 +3721,11 @@ id|i
 suffix:semicolon
 )brace
 )brace
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|outb_p
@@ -3958,9 +3986,11 @@ id|attrib_port
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 r_return
@@ -4024,9 +4054,11 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Scan lines to actually display-1 */
 multiline_comment|/* Reprogram the CRTC for the new font size&n;&t;   Note: the attempt to read the overflow register will fail&n;&t;   on an EGA, but using 0xff for the previous value appears to&n;&t;   be OK for EGA text modes in the range 257-512 scan lines, so I&n;&t;   guess we don&squot;t need to worry about it.&n;&n;&t;   The same applies for the spill bits in the font size and cursor&n;&t;   registers; they are write-only on EGA, but it appears that they&n;&t;   are all don&squot;t care bits on EGA, so I guess it doesn&squot;t matter. */
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|outb_p
@@ -4063,9 +4095,11 @@ c_func
 id|vga_video_port_val
 )paren
 suffix:semicolon
-id|sti
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|vde
@@ -4119,9 +4153,11 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*  Font size register */
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|outb_p
@@ -4175,9 +4211,11 @@ comma
 id|vga_video_port_val
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|vga_lock
 )paren
 suffix:semicolon
 id|vc_resize_all

@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_USER_H
 DECL|macro|_PPC_USER_H
 mdefine_line|#define _PPC_USER_H
@@ -88,4 +89,5 @@ mdefine_line|#define HOST_DATA_START_ADDR&t;(u.start_data)
 DECL|macro|HOST_STACK_END_ADDR
 mdefine_line|#define HOST_STACK_END_ADDR&t;(u.start_stack + u.u_ssize * NBPG)
 macro_line|#endif /* _PPC_USER_H */
+macro_line|#endif /* __KERNEL__ */
 eof

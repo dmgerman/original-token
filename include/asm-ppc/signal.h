@@ -1,7 +1,9 @@
 macro_line|#ifndef _ASMPPC_SIGNAL_H
 DECL|macro|_ASMPPC_SIGNAL_H
 mdefine_line|#define _ASMPPC_SIGNAL_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* Avoid too many header ordering problems.  */
 r_struct
 id|siginfo

@@ -1,4 +1,5 @@
 multiline_comment|/* smp.h: PPC specific SMP stuff.&n; *&n; * Taken from asm-sparc/smp.h&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_SMP_H
 DECL|macro|_PPC_SMP_H
 mdefine_line|#define _PPC_SMP_H
@@ -154,4 +155,5 @@ macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#else /* !(CONFIG_SMP) */
 macro_line|#endif /* !(CONFIG_SMP) */
 macro_line|#endif /* !(_PPC_SMP_H) */
+macro_line|#endif /* __KERNEL__ */
 eof

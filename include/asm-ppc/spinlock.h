@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASM_SPINLOCK_H
 DECL|macro|__ASM_SPINLOCK_H
 mdefine_line|#define __ASM_SPINLOCK_H
@@ -155,4 +156,5 @@ mdefine_line|#define write_unlock(rw)&t;_write_unlock(rw)
 DECL|macro|read_unlock
 mdefine_line|#define read_unlock(rw)&t;&t;_read_unlock(rw)
 macro_line|#endif /* __ASM_SPINLOCK_H */
+macro_line|#endif /* __KERNEL__ */
 eof

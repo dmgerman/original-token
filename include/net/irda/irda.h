@@ -115,10 +115,28 @@ id|FLOW_START
 )brace
 id|LOCAL_FLOW
 suffix:semicolon
-multiline_comment|/* IrDA Socket */
+multiline_comment|/* A few forward declarations (to make compiler happy) */
 r_struct
 id|tsap_cb
 suffix:semicolon
+multiline_comment|/* in &lt;net/irda/irttp.h&gt; */
+r_struct
+id|lsap_cb
+suffix:semicolon
+multiline_comment|/* in &lt;net/irda/irlmp.h&gt; */
+r_struct
+id|iriap_cb
+suffix:semicolon
+multiline_comment|/* in &lt;net/irda/iriap.h&gt; */
+r_struct
+id|ias_value
+suffix:semicolon
+multiline_comment|/* in &lt;net/irda/irias_object.h&gt; */
+r_struct
+id|discovery_t
+suffix:semicolon
+multiline_comment|/* in &lt;net/irda/discovery.h&gt; */
+multiline_comment|/* IrDA Socket */
 DECL|struct|irda_sock
 r_struct
 id|irda_sock
@@ -223,7 +241,20 @@ id|ias_value
 op_star
 id|ias_result
 suffix:semicolon
-multiline_comment|/* Used by getsockopt(IRLMP_IAS_QUERY) */
+multiline_comment|/* Result of remote IAS query */
+DECL|member|cachelog
+id|hashbin_t
+op_star
+id|cachelog
+suffix:semicolon
+multiline_comment|/* Result of discovery query */
+DECL|member|cachediscovery
+r_struct
+id|discovery_t
+op_star
+id|cachediscovery
+suffix:semicolon
+multiline_comment|/* Result of selective discovery query */
 DECL|member|nslots
 r_int
 id|nslots
@@ -240,11 +271,17 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-DECL|member|ias_wait
+DECL|member|query_wait
 id|wait_queue_head_t
-id|ias_wait
+id|query_wait
 suffix:semicolon
-multiline_comment|/* Wait for LM-IAS answer */
+multiline_comment|/* Wait for the answer to a query */
+DECL|member|watchdog
+r_struct
+id|timer_list
+id|watchdog
+suffix:semicolon
+multiline_comment|/* Timeout for discovery */
 DECL|member|tx_flow
 id|LOCAL_FLOW
 id|tx_flow
@@ -295,15 +332,16 @@ id|mtt
 suffix:semicolon
 multiline_comment|/* Minimum turn around time */
 DECL|member|xbofs
-r_int
+id|__u16
 id|xbofs
 suffix:semicolon
 multiline_comment|/* Number of xbofs required, used by SIR mode */
-DECL|member|line
-id|__u8
-id|line
+DECL|member|context
+r_void
+op_star
+id|context
 suffix:semicolon
-multiline_comment|/* Used by IrCOMM in IrLPT mode */
+multiline_comment|/* May be used by drivers */
 DECL|member|destructor
 r_void
 (paren
@@ -318,6 +356,16 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Used for flow control */
+DECL|member|xbofs_delay
+id|__u16
+id|xbofs_delay
+suffix:semicolon
+multiline_comment|/* Number of xbofs used for generating the mtt */
+DECL|member|line
+id|__u8
+id|line
+suffix:semicolon
+multiline_comment|/* Used by IrCOMM in IrLPT mode */
 )brace
 suffix:semicolon
 multiline_comment|/* Misc status information */
@@ -593,6 +641,24 @@ id|sap
 comma
 id|LOCAL_FLOW
 id|flow
+)paren
+suffix:semicolon
+DECL|member|status_indication
+r_void
+(paren
+op_star
+id|status_indication
+)paren
+(paren
+r_void
+op_star
+id|instance
+comma
+id|LINK_STATUS
+id|link
+comma
+id|LOCK_STATUS
+id|lock
 )paren
 suffix:semicolon
 DECL|member|instance

@@ -12,11 +12,6 @@ id|ipc64_perm
 id|sem_perm
 suffix:semicolon
 multiline_comment|/* permissions .. see ipc.h */
-DECL|member|__unused0
-r_int
-r_int
-id|__unused0
-suffix:semicolon
 DECL|member|__unused1
 r_int
 r_int

@@ -905,6 +905,17 @@ id|WD33C93_hostdata
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|instance
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|instance-&gt;base
 op_assign
 id|ZTWO_VADDR

@@ -282,7 +282,7 @@ id|netlink_sock_nr
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* This lock without TASK_EXCLUSIVE is good on UP and it is _very_ bad on SMP.&n; * Look, when several writers sleep and reader wakes them up, all but one&n; * immediately hit write lock and grab all the cpus. Exclusive sleep solves&n; * this, _but_ remember, it adds useless work on UP machines.&n; */
+multiline_comment|/* This lock without WQ_FLAG_EXCLUSIVE is good on UP and it is _very_ bad on SMP.&n; * Look, when several writers sleep and reader wakes them up, all but one&n; * immediately hit write lock and grab all the cpus. Exclusive sleep solves&n; * this, _but_ remember, it adds useless work on UP machines.&n; */
 DECL|function|netlink_table_grab
 r_static
 r_void
@@ -339,8 +339,6 @@ id|set_current_state
 c_func
 (paren
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 r_if

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * PreP compliant NVRAM access&n; */
 multiline_comment|/* Corey Minyard (minyard@acm.org) - Stolen from PReP book.   Per the&n;   license I must say:&n;     (C) Copyright (Corey Minyard), (1998).  All rights reserved&n; */
 multiline_comment|/* Structure map for NVRAM on PowerPC Reference Platform */
 multiline_comment|/* All fields are either character/byte strings which are valid either&n;  endian or they are big-endian numbers.&n;&n;  There are a number of Date and Time fields which are in RTC format,&n;  big-endian. These are stored in UT (GMT).&n;&n;  For enum&squot;s: if given in hex then they are bit significant, i.e. only&n;  one bit is on for each enum.&n;*/
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_PREP_NVRAM_H
 DECL|macro|_PPC_PREP_NVRAM_H
 mdefine_line|#define _PPC_PREP_NVRAM_H
@@ -562,4 +563,5 @@ id|val
 )paren
 suffix:semicolon
 macro_line|#endif /* _PPC_PREP_NVRAM_H */
+macro_line|#endif /* __KERNEL__ */
 eof

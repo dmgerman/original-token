@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Things to sort out:&n; *&n; *&t;o&t;tbusy handling&n; *&t;o&t;allow users to set the parameters&n; *&t;o&t;sync/async switching ?&n; *&n; *&t;Note: This does _not_ implement CCITT X.25 asynchronous framing&n; *&t;recommendations. Its primarily for testing purposes. If you wanted&n; *&t;to do CCITT then in theory all you need is to nick the HDLC async&n; *&t;checksum routines from ppp.c&n; */
+multiline_comment|/*&n; *&t;Things to sort out:&n; *&n; *&t;o&t;tbusy handling&n; *&t;o&t;allow users to set the parameters&n; *&t;o&t;sync/async switching ?&n; *&n; *&t;Note: This does _not_ implement CCITT X.25 asynchronous framing&n; *&t;recommendations. Its primarily for testing purposes. If you wanted&n; *&t;to do CCITT then in theory all you need is to nick the HDLC async&n; *&t;checksum routines from ppp.c&n; *      Changes:&n; *&n; *&t;2000-10-29&t;Henner Eisen&t;lapb_data_indication() return status.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1469,7 +1469,7 @@ multiline_comment|/*&n; *&t;LAPB interface boilerplate&n; */
 multiline_comment|/*&n; *&t;Called when I frame data arrives. We did the work above - throw it&n; *&t;at the net layer.&n; */
 DECL|function|x25_asy_data_indication
 r_static
-r_void
+r_int
 id|x25_asy_data_indication
 c_func
 (paren
@@ -1483,6 +1483,7 @@ op_star
 id|skb
 )paren
 (brace
+r_return
 id|netif_rx
 c_func
 (paren

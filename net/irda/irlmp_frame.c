@@ -8,6 +8,14 @@ macro_line|#include &lt;net/irda/timer.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irlmp_frame.h&gt;
 macro_line|#include &lt;net/irda/discovery.h&gt;
+DECL|macro|DISCO_SMALL_DELAY
+mdefine_line|#define&t;DISCO_SMALL_DELAY&t;250&t;/* Delay for some discoveries in ms */
+DECL|variable|disco_delay
+r_struct
+id|timer_list
+id|disco_delay
+suffix:semicolon
+multiline_comment|/* The timer associated */
 r_static
 r_struct
 id|lsap_cb
@@ -406,6 +414,16 @@ c_cond
 op_logical_neg
 id|lsap
 )paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), incoming connection for LSAP already connected&bslash;n&quot;
+)paren
+suffix:semicolon
 id|lsap
 op_assign
 id|irlmp_find_lsap
@@ -422,6 +440,7 @@ comma
 id|self-&gt;lsaps
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 id|lsap
@@ -1238,7 +1257,64 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlmp_link_discovery_indication (self, log)&n; *&n; *    Device is discovering us&n; *&n; */
+multiline_comment|/*&n; * Function irlmp_discovery_timeout (priv)&n; *&n; *    Create a discovery event to the state machine (called after a delay)&n; *&n; * Note : irlmp_do_lap_event will handle the very rare case where the LAP&n; * is destroyed while we were sleeping.&n; */
+DECL|function|irlmp_discovery_timeout
+r_static
+r_void
+id|irlmp_discovery_timeout
+c_func
+(paren
+id|u_long
+id|priv
+)paren
+(brace
+r_struct
+id|lap_cb
+op_star
+id|self
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|self
+op_assign
+(paren
+r_struct
+id|lap_cb
+op_star
+)paren
+id|priv
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* Just handle it the same way as a discovery confirm */
+id|irlmp_do_lap_event
+c_func
+(paren
+id|self
+comma
+id|LM_LAP_DISCOVERY_CONFIRM
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function irlmp_link_discovery_indication (self, log)&n; *&n; *    Device is discovering us&n; *&n; * It&squot;s not an answer to our own discoveries, just another device trying&n; * to perform discovery, but we don&squot;t want to miss the opportunity&n; * to exploit this information, because :&n; *&t;o We may not actively perform discovery (just passive discovery)&n; *&t;o This type of discovery is much more reliable. In some cases, it&n; *&t;  seem that less than 50% of our discoveries get an answer, while&n; *&t;  we always get ~100% of these.&n; *&t;o Make faster discovery, statistically divide time of discovery&n; *&t;  events by 2 (important for the latency aspect and user feel)&n; * However, when both devices discover each other, they might attempt to&n; * connect to each other, and it would create collisions on the medium.&n; * The trick here is to defer the event by a little delay to avoid both&n; * devices to jump in exactly at the same time...&n; *&n; * The delay is currently set to 0.25s, which leave enough time to perform&n; * a connection and don&squot;t interfer with next discovery (the lowest discovery&n; * period/timeout that may be set is 1s). The message triggering this&n; * event was the last of the discovery, so the medium is now free...&n; * Maybe more testing is needed to get the value right...&n; */
 DECL|function|irlmp_link_discovery_indication
 r_void
 id|irlmp_link_discovery_indication
@@ -1284,19 +1360,58 @@ comma
 id|discovery
 )paren
 suffix:semicolon
-macro_line|#if 0   /* This will just cause a lot of connection collisions */
-multiline_comment|/* Just handle it the same way as a discovery confirm */
-id|irlmp_do_lap_event
+multiline_comment|/* If delay was activated, kill it! */
+r_if
+c_cond
+(paren
+id|timer_pending
 c_func
 (paren
-id|self
-comma
-id|LM_LAP_DISCOVERY_CONFIRM
-comma
-l_int|NULL
+op_amp
+id|disco_delay
+)paren
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|disco_delay
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
+multiline_comment|/* Set delay timer to expire in 0.25s. */
+id|disco_delay.expires
+op_assign
+id|jiffies
+op_plus
+(paren
+id|DISCO_SMALL_DELAY
+op_star
+id|HZ
+op_div
+l_int|1000
+)paren
+suffix:semicolon
+id|disco_delay.function
+op_assign
+id|irlmp_discovery_timeout
+suffix:semicolon
+id|disco_delay.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|self
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|disco_delay
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlmp_link_discovery_confirm (self, log)&n; *&n; *    Called by IrLAP with a list of discoveries after the discovery&n; *    request has been carried out. A NULL log is received if IrLAP&n; *    was unable to carry out the discovery request&n; *&n; */
 DECL|function|irlmp_link_discovery_confirm
@@ -1353,6 +1468,27 @@ comma
 id|log
 )paren
 suffix:semicolon
+multiline_comment|/* If discovery delay was activated, kill it! */
+r_if
+c_cond
+(paren
+id|timer_pending
+c_func
+(paren
+op_amp
+id|disco_delay
+)paren
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|disco_delay
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Propagate event to the state machine */
 id|irlmp_do_lap_event
 c_func
 (paren

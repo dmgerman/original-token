@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * include/asm-ppc/cache.h&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ARCH_PPC_CACHE_H
 DECL|macro|__ARCH_PPC_CACHE_H
 mdefine_line|#define __ARCH_PPC_CACHE_H
@@ -113,4 +114,5 @@ DECL|macro|DC_LES
 mdefine_line|#define DC_LES&t;&t;0x20000000&t;/* Caches are little endian mode */
 macro_line|#endif /* CONFIG_8xx */
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

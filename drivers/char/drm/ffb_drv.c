@@ -1466,6 +1466,7 @@ suffix:semicolon
 DECL|function|ffb_init_one
 r_static
 r_int
+id|__init
 id|ffb_init_one
 c_func
 (paren
@@ -1776,6 +1777,7 @@ suffix:semicolon
 DECL|function|ffb_init_dev_table
 r_static
 r_int
+id|__init
 id|ffb_init_dev_table
 c_func
 (paren
@@ -1868,6 +1870,7 @@ suffix:semicolon
 )brace
 DECL|function|ffb_init
 r_int
+id|__init
 id|ffb_init
 c_func
 (paren
@@ -1968,6 +1971,7 @@ suffix:semicolon
 )brace
 DECL|function|ffb_cleanup
 r_void
+id|__exit
 id|ffb_cleanup
 c_func
 (paren

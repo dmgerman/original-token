@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/sound/waveartist.c&n; *&n; * The low level driver for the RWA010 Rockwell Wave Artist&n; * codec chip used in the Rebel.com NetWinder.&n; *&n; * Cleaned up and integrated into 2.1 by Russell King (rmk@arm.linux.org.uk)&n; * and Pat Beirne (patb@corel.ca)&n; *&n; *&n; * Copyright (C) by Rebel.com 1998-1999&n; *&n; * RWA010 specs received under NDA from Rockwell&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * linux/drivers/sound/waveartist.c&n; *&n; * The low level driver for the RWA010 Rockwell Wave Artist&n; * codec chip used in the Rebel.com NetWinder.&n; *&n; * Cleaned up and integrated into 2.1 by Russell King (rmk@arm.linux.org.uk)&n; * and Pat Beirne (patb@corel.ca)&n; *&n; *&n; * Copyright (C) by Rebel.com 1998-1999&n; *&n; * RWA010 specs received under NDA from Rockwell&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; * 11-10-2000&t;Bartlomiej Zolnierkiewicz &lt;bkz@linux-ide.org&gt;&n; *&t;&t;Added __init to waveartist_init()&n; */
 multiline_comment|/* Debugging */
 DECL|macro|DEBUG_CMD
 mdefine_line|#define DEBUG_CMD&t;1
@@ -4795,9 +4795,10 @@ suffix:colon
 id|waveartist_mixer_ioctl
 )brace
 suffix:semicolon
+DECL|function|waveartist_init
 r_static
 r_int
-DECL|function|waveartist_init
+id|__init
 id|waveartist_init
 c_func
 (paren

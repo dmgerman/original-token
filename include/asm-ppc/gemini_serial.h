@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASMPPC_GEMINI_SERIAL_H
 DECL|macro|__ASMPPC_GEMINI_SERIAL_H
 mdefine_line|#define __ASMPPC_GEMINI_SERIAL_H
@@ -36,4 +37,5 @@ macro_line|#endif
 DECL|macro|SERIAL_PORT_DFNS
 mdefine_line|#define SERIAL_PORT_DFNS &bslash;&n;        STD_SERIAL_PORT_DEFNS &bslash;&n;        PU32_SERIAL_PORT_DEFNS
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

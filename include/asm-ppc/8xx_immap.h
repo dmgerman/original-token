@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * MPC8xx Internal Memory Map&n; * Copyright (c) 1997 Dan Malek (dmalek@jlc.net)&n; *&n; * The I/O on the MPC860 is comprised of blocks of special registers&n; * and the dual port ram for the Communication Processor Module.&n; * Within this space are functional units such as the SIU, memory&n; * controller, system timers, and other control functions.  It is&n; * a combination that I found difficult to separate into logical&n; * functional files.....but anyone else is welcome to try.  -- Dan&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __IMMAP_8XX__
 DECL|macro|__IMMAP_8XX__
 mdefine_line|#define __IMMAP_8XX__
@@ -1678,4 +1679,5 @@ DECL|typedef|immap_t
 id|immap_t
 suffix:semicolon
 macro_line|#endif /* __IMMAP_8XX__ */
+macro_line|#endif /* __KERNEL__ */
 eof

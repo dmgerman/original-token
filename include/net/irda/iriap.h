@@ -67,7 +67,7 @@ r_struct
 id|iriap_cb
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first */

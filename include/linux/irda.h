@@ -125,13 +125,13 @@ mdefine_line|#define SOL_IRLMP      266 /* Same as SOL_IRDA for now */
 DECL|macro|SOL_IRTTP
 mdefine_line|#define SOL_IRTTP      266 /* Same as SOL_IRDA for now */
 DECL|macro|IRLMP_ENUMDEVICES
-mdefine_line|#define IRLMP_ENUMDEVICES        1
+mdefine_line|#define IRLMP_ENUMDEVICES        1&t;/* Return discovery log */
 DECL|macro|IRLMP_IAS_SET
-mdefine_line|#define IRLMP_IAS_SET            2
+mdefine_line|#define IRLMP_IAS_SET            2&t;/* Set an attribute in local IAS */
 DECL|macro|IRLMP_IAS_QUERY
-mdefine_line|#define IRLMP_IAS_QUERY          3
+mdefine_line|#define IRLMP_IAS_QUERY          3&t;/* Query remote IAS for attribute */
 DECL|macro|IRLMP_HINTS_SET
-mdefine_line|#define IRLMP_HINTS_SET          4
+mdefine_line|#define IRLMP_HINTS_SET          4&t;/* Set hint bits advertised */
 DECL|macro|IRLMP_QOS_SET
 mdefine_line|#define IRLMP_QOS_SET            5
 DECL|macro|IRLMP_QOS_GET
@@ -139,7 +139,13 @@ mdefine_line|#define IRLMP_QOS_GET            6
 DECL|macro|IRLMP_MAX_SDU_SIZE
 mdefine_line|#define IRLMP_MAX_SDU_SIZE       7
 DECL|macro|IRLMP_IAS_GET
-mdefine_line|#define IRLMP_IAS_GET            8
+mdefine_line|#define IRLMP_IAS_GET            8&t;/* Get an attribute from local IAS */
+DECL|macro|IRLMP_IAS_DEL
+mdefine_line|#define IRLMP_IAS_DEL&t;&t; 9&t;/* Remove attribute from local IAS */
+DECL|macro|IRLMP_HINT_MASK_SET
+mdefine_line|#define IRLMP_HINT_MASK_SET&t;10&t;/* Set discovery filter */
+DECL|macro|IRLMP_WAITDEVICE
+mdefine_line|#define IRLMP_WAITDEVICE&t;11&t;/* Wait for a new discovery */
 DECL|macro|IRTTP_MAX_SDU_SIZE
 mdefine_line|#define IRTTP_MAX_SDU_SIZE IRLMP_MAX_SDU_SIZE /* Compatibility */
 DECL|macro|IAS_MAX_STRING
@@ -150,6 +156,15 @@ DECL|macro|IAS_MAX_CLASSNAME
 mdefine_line|#define IAS_MAX_CLASSNAME       64
 DECL|macro|IAS_MAX_ATTRIBNAME
 mdefine_line|#define IAS_MAX_ATTRIBNAME     256
+multiline_comment|/* Attribute type needed for struct irda_ias_set */
+DECL|macro|IAS_MISSING
+mdefine_line|#define IAS_MISSING 0
+DECL|macro|IAS_INTEGER
+mdefine_line|#define IAS_INTEGER 1
+DECL|macro|IAS_OCT_SEQ
+mdefine_line|#define IAS_OCT_SEQ 2
+DECL|macro|IAS_STRING
+mdefine_line|#define IAS_STRING  3
 DECL|macro|LSAP_ANY
 mdefine_line|#define LSAP_ANY              0xff
 DECL|struct|sockaddr_irda
@@ -309,6 +324,11 @@ DECL|member|attribute
 )brace
 id|attribute
 suffix:semicolon
+DECL|member|daddr
+id|__u32
+id|daddr
+suffix:semicolon
+multiline_comment|/* Address of device (for some queries only) */
 )brace
 suffix:semicolon
 multiline_comment|/* Some private IOCTL&squot;s (max 16) */

@@ -1,4 +1,4 @@
-multiline_comment|/*  -*- linux-c -*-&n; *&n; * sound/wavfront.c&n; *&n; * A Linux driver for Turtle Beach WaveFront Series (Maui, Tropez, Tropez Plus)&n; *&n; * This driver supports the onboard wavetable synthesizer (an ICS2115),&n; * including patch, sample and program loading and unloading, conversion&n; * of GUS patches during loading, and full user-level access to all&n; * WaveFront commands. It tries to provide semi-intelligent patch and&n; * sample management as well.&n; *&n; * It also provides support for the ICS emulation of an MPU-401.  Full&n; * support for the ICS emulation&squot;s &quot;virtual MIDI mode&quot; is provided in&n; * wf_midi.c.&n; *&n; * Support is also provided for the Tropez Plus&squot; onboard FX processor,&n; * a Yamaha YSS225. Currently, code exists to configure the YSS225,&n; * and there is an interface allowing tweaking of any of its memory&n; * addresses. However, I have been unable to decipher the logical&n; * positioning of the configuration info for various effects, so for&n; * now, you just get the YSS225 in the same state as Turtle Beach&squot;s&n; * &quot;SETUPSND.EXE&quot; utility leaves it.&n; *&n; * The boards&squot; DAC/ADC (a Crystal CS4232) is supported by cs4232.[co],&n; * This chip also controls the configuration of the card: the wavefront&n; * synth is logical unit 4.&n; *&n; *&n; * Supported devices:&n; *&n; *   /dev/dsp                      - using cs4232+ad1848 modules, OSS compatible&n; *   /dev/midiNN and /dev/midiNN+1 - using wf_midi code, OSS compatible&n; *   /dev/synth00                  - raw synth interface&n; * &n; **********************************************************************&n; *&n; * Copyright (C) by Paul Barton-Davis 1998&n; *&n; * Some portions of this file are taken from work that is&n; * copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * Although the relevant code here is all new, the handling of&n; * sample/alias/multi- samples is entirely based on a driver by Matt&n; * Martin and Rutger Nijlunsing which demonstrated how to get things&n; * to work correctly. The GUS patch loading code has been almost&n; * unaltered by me, except to fit formatting and function names in the&n; * rest of the file. Many thanks to them.&n; *&n; * Appreciation and thanks to Hannu Savolainen for his early work on the Maui&n; * driver, and answering a few questions while this one was developed.&n; *&n; * Absolutely NO thanks to Turtle Beach/Voyetra and Yamaha for their&n; * complete lack of help in developing this driver, and in particular&n; * for their utter silence in response to questions about undocumented&n; * aspects of configuring a WaveFront soundcard, particularly the&n; * effects processor.&n; *&n; * $Id: wavfront.c,v 0.7 1998/09/09 15:47:36 pbd Exp $&n; *&n; * This program is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.  */
+multiline_comment|/*  -*- linux-c -*-&n; *&n; * sound/wavfront.c&n; *&n; * A Linux driver for Turtle Beach WaveFront Series (Maui, Tropez, Tropez Plus)&n; *&n; * This driver supports the onboard wavetable synthesizer (an ICS2115),&n; * including patch, sample and program loading and unloading, conversion&n; * of GUS patches during loading, and full user-level access to all&n; * WaveFront commands. It tries to provide semi-intelligent patch and&n; * sample management as well.&n; *&n; * It also provides support for the ICS emulation of an MPU-401.  Full&n; * support for the ICS emulation&squot;s &quot;virtual MIDI mode&quot; is provided in&n; * wf_midi.c.&n; *&n; * Support is also provided for the Tropez Plus&squot; onboard FX processor,&n; * a Yamaha YSS225. Currently, code exists to configure the YSS225,&n; * and there is an interface allowing tweaking of any of its memory&n; * addresses. However, I have been unable to decipher the logical&n; * positioning of the configuration info for various effects, so for&n; * now, you just get the YSS225 in the same state as Turtle Beach&squot;s&n; * &quot;SETUPSND.EXE&quot; utility leaves it.&n; *&n; * The boards&squot; DAC/ADC (a Crystal CS4232) is supported by cs4232.[co],&n; * This chip also controls the configuration of the card: the wavefront&n; * synth is logical unit 4.&n; *&n; *&n; * Supported devices:&n; *&n; *   /dev/dsp                      - using cs4232+ad1848 modules, OSS compatible&n; *   /dev/midiNN and /dev/midiNN+1 - using wf_midi code, OSS compatible&n; *   /dev/synth00                  - raw synth interface&n; * &n; **********************************************************************&n; *&n; * Copyright (C) by Paul Barton-Davis 1998&n; *&n; * Some portions of this file are taken from work that is&n; * copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * Although the relevant code here is all new, the handling of&n; * sample/alias/multi- samples is entirely based on a driver by Matt&n; * Martin and Rutger Nijlunsing which demonstrated how to get things&n; * to work correctly. The GUS patch loading code has been almost&n; * unaltered by me, except to fit formatting and function names in the&n; * rest of the file. Many thanks to them.&n; *&n; * Appreciation and thanks to Hannu Savolainen for his early work on the Maui&n; * driver, and answering a few questions while this one was developed.&n; *&n; * Absolutely NO thanks to Turtle Beach/Voyetra and Yamaha for their&n; * complete lack of help in developing this driver, and in particular&n; * for their utter silence in response to questions about undocumented&n; * aspects of configuring a WaveFront soundcard, particularly the&n; * effects processor.&n; *&n; * $Id: wavfront.c,v 0.7 1998/09/09 15:47:36 pbd Exp $&n; *&n; * This program is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; * 11-10-2000&t;Bartlomiej Zolnierkiewicz &lt;bkz@linux-ide.org&gt;&n; *&t;&t;Added some __init and __initdata to entries in yss225.c&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -7975,9 +7975,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|wavefront_hw_reset
 r_static
 r_int
-DECL|function|wavefront_hw_reset
+id|__init
 id|wavefront_hw_reset
 (paren
 r_void
@@ -9275,9 +9276,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|wavefront_do_reset
 r_static
 r_int
-DECL|function|wavefront_do_reset
+id|__init
 id|wavefront_do_reset
 (paren
 r_int
@@ -10528,6 +10530,7 @@ multiline_comment|/* YSS225 initialization.&n;&n;   This code was developed usin
 DECL|function|wffx_init
 r_static
 r_int
+id|__init
 id|wffx_init
 (paren
 r_void

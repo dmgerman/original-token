@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * $Id: time.h,v 1.12 1999/08/27 04:21:23 cort Exp $&n; * Common time prototypes and such for all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -390,4 +391,5 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -503,7 +503,11 @@ id|word
 op_assign
 l_int|1
 op_lshift
+(paren
+l_int|31
+op_minus
 id|bit
+)paren
 suffix:semicolon
 )brace
 DECL|variable|ppc8260_pic

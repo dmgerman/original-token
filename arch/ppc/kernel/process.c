@@ -1229,25 +1229,14 @@ comma
 op_star
 id|kregs
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
-id|ret_from_smpfork
+id|ret_from_fork
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#else
-r_extern
-r_void
-id|ret_from_except
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Copy registers */
 id|childregs
 op_assign
@@ -1350,25 +1339,14 @@ op_plus
 id|STACK_FRAME_OVERHEAD
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
 id|kregs-&gt;nip
 op_assign
 (paren
 r_int
 r_int
 )paren
-id|ret_from_smpfork
+id|ret_from_fork
 suffix:semicolon
-macro_line|#else&t;
-id|kregs-&gt;nip
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|ret_from_except
-suffix:semicolon
-macro_line|#endif&t;
 id|asm
 r_volatile
 (paren

@@ -1248,6 +1248,7 @@ c_func
 l_string|&quot;inia100: ESCB memory allocation error&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* ?? does pHCB-&gt;HCS_virtScbArray leak ??*/
 r_return
 (paren
 l_int|0
@@ -1363,11 +1364,17 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|release_region
 c_func
 (paren
-l_string|&quot;Invalid scsi_register pointer.&bslash;n&quot;
+id|pHCB-&gt;HCS_Base
+comma
+l_int|256
 )paren
+suffix:semicolon
+multiline_comment|/* Register */
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|hreg-&gt;io_port

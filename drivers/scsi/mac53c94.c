@@ -320,13 +320,9 @@ c_cond
 (paren
 id|host
 op_eq
-l_int|0
+l_int|NULL
 )paren
-id|panic
-c_func
-(paren
-l_string|&quot;couldn&squot;t register 53c94 host&quot;
-)paren
+r_break
 suffix:semicolon
 id|host-&gt;unique_id
 op_assign

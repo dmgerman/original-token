@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_CHECKSUM_H
 DECL|macro|_PPC_CHECKSUM_H
 mdefine_line|#define _PPC_CHECKSUM_H
@@ -300,4 +301,5 @@ id|sum
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

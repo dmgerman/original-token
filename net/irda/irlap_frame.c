@@ -67,7 +67,9 @@ multiline_comment|/* &n;&t; * Delay equals negotiated BOFs count, plus the numbe
 id|cb-&gt;xbofs
 op_assign
 id|self-&gt;bofs_count
-op_plus
+suffix:semicolon
+id|cb-&gt;xbofs_delay
+op_assign
 id|self-&gt;xbofs_delay
 suffix:semicolon
 multiline_comment|/* Reset XBOF&squot;s delay (used only for getting min turn time) */
@@ -396,12 +398,6 @@ id|__FUNCTION__
 l_string|&quot;(), invalid connection address!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -440,12 +436,6 @@ id|__FUNCTION__
 l_string|&quot;(), not addressed to us!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -463,6 +453,7 @@ id|info
 suffix:semicolon
 )brace
 r_else
+(brace
 multiline_comment|/* Signal that this SNRM frame does not contain and I-field */
 id|irlap_do_event
 c_func
@@ -476,6 +467,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function irlap_send_ua_response_frame (qos)&n; *&n; *    Send UA (Unnumbered Acknowledgement) frame&n; *&n; */
 DECL|function|irlap_send_ua_response_frame
@@ -1384,12 +1376,6 @@ id|__FUNCTION__
 l_string|&quot;(), frame is not addressed to us!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1419,12 +1405,6 @@ c_func
 (paren
 id|__FUNCTION__
 l_string|&quot;(), kmalloc failed!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
 )paren
 suffix:semicolon
 r_return
@@ -1705,12 +1685,6 @@ id|__FUNCTION__
 l_string|&quot;(), frame is not addressed to us!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1797,6 +1771,33 @@ op_eq
 l_int|0xff
 )paren
 (brace
+multiline_comment|/* Check if things are sane at this point... */
+r_if
+c_cond
+(paren
+(paren
+id|discovery_info
+op_eq
+l_int|NULL
+)paren
+op_logical_or
+(paren
+id|skb-&gt;len
+OL
+l_int|3
+)paren
+)paren
+(brace
+id|ERROR
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), discovery frame to short!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; *  We now have some discovery info to deliver!&n;&t;&t; */
 id|discovery
 op_assign
@@ -1823,12 +1824,6 @@ c_func
 (paren
 id|__FUNCTION__
 l_string|&quot;(), unable to malloc!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
 )paren
 suffix:semicolon
 r_return
@@ -2760,12 +2755,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2792,7 +2781,11 @@ c_func
 op_amp
 id|self-&gt;wx_list
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 )paren
 suffix:semicolon
 id|self-&gt;vs
@@ -2840,7 +2833,11 @@ c_func
 (paren
 id|self
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 comma
 id|self-&gt;caddr
 comma
@@ -2920,12 +2917,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2952,7 +2943,11 @@ c_func
 op_amp
 id|self-&gt;wx_list
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*  &n;&t;&t; *  Set poll bit if necessary. We do this to the copied&n;&t;&t; *  skb, since retransmitted need to set or clear the poll&n;&t;&t; *  bit depending on when they are sent.  &n;&t;&t; */
@@ -3037,7 +3032,11 @@ c_func
 (paren
 id|self
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 comma
 id|self-&gt;caddr
 comma
@@ -3071,7 +3070,11 @@ c_func
 (paren
 id|self
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 comma
 id|self-&gt;caddr
 comma
@@ -3194,12 +3197,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3225,7 +3222,11 @@ c_func
 op_amp
 id|self-&gt;wx_list
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 )paren
 suffix:semicolon
 id|tx_skb-&gt;data
@@ -3285,7 +3286,11 @@ c_func
 (paren
 id|self
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 comma
 id|self-&gt;caddr
 comma
@@ -3319,7 +3324,11 @@ c_func
 (paren
 id|self
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 comma
 id|self-&gt;caddr
 comma
@@ -3409,12 +3418,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3440,7 +3443,11 @@ c_func
 op_amp
 id|self-&gt;wx_list
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 )paren
 suffix:semicolon
 id|self-&gt;vs
@@ -3479,7 +3486,11 @@ c_func
 (paren
 id|self
 comma
+id|skb_get
+c_func
+(paren
 id|skb
+)paren
 comma
 id|self-&gt;caddr
 comma
@@ -3816,6 +3827,12 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 )brace
 )brace
 macro_line|#endif
@@ -4575,7 +4592,13 @@ op_assign
 id|dev_alloc_skb
 c_func
 (paren
-l_int|32
+id|cmd-&gt;len
+op_plus
+r_sizeof
+(paren
+r_struct
+id|test_frame
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -4645,7 +4668,9 @@ c_func
 (paren
 id|skb
 comma
-id|LAP_MAX_HEADER
+id|LAP_ADDR_HEADER
+op_plus
+id|LAP_CTRL_HEADER
 )paren
 suffix:semicolon
 id|frame-&gt;caddr
@@ -4655,6 +4680,8 @@ suffix:semicolon
 id|frame-&gt;control
 op_assign
 id|TEST_RSP
+op_or
+id|PF_BIT
 suffix:semicolon
 multiline_comment|/* Copy info */
 id|info
@@ -4775,12 +4802,6 @@ id|__FUNCTION__
 l_string|&quot;() test frame to short!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -4818,12 +4839,6 @@ id|BROADCAST
 )paren
 )paren
 (brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -5024,14 +5039,8 @@ id|__FUNCTION__
 l_string|&quot;(), wrong connection address!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*  &n;&t; *  Optimize for the common case and check if the frame is an&n;&t; *  I(nformation) frame. Only I-frames have bit 0 set to 0&n;&t; */
@@ -5057,8 +5066,8 @@ comma
 id|command
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  We now check is the frame is an S(upervisory) frame. Only &n;&t; *  S-frames have bit 0 set to 1 and bit 1 set to 0&n;&t; */
@@ -5163,17 +5172,11 @@ comma
 id|info.control
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* &n;&t; *  This must be a C(ontrol) frame &n;&t; */
@@ -5345,15 +5348,17 @@ comma
 id|info.control
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|out
+suffix:colon
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

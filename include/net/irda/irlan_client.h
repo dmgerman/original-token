@@ -27,6 +27,9 @@ c_func
 (paren
 id|discovery_t
 op_star
+comma
+r_void
+op_star
 )paren
 suffix:semicolon
 r_void

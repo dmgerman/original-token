@@ -937,10 +937,33 @@ id|skb
 op_ne
 id|self-&gt;io.speed
 )paren
+(brace
+multiline_comment|/* Check for empty frame */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb-&gt;len
+)paren
+(brace
+id|toshoboe_change_speed
+c_func
+(paren
+id|self
+comma
+id|speed
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
 id|self-&gt;new_speed
 op_assign
 id|speed
 suffix:semicolon
+)brace
 id|netif_stop_queue
 c_func
 (paren
@@ -2051,11 +2074,31 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Toshiba OBOE IrDA Device Driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;James McKenzie &lt;james@fishsoup.dhs.org&gt;&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 (paren
 id|max_baud
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|max_baus
+comma
+l_string|&quot;Maximum baud rate&quot;
 )paren
 suffix:semicolon
 r_static

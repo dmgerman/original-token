@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-ppc/timex.h&n; *&n; * ppc architecture timex specifications&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _ASMppc_TIMEX_H
 DECL|macro|_ASMppc_TIMEX_H
 mdefine_line|#define _ASMppc_TIMEX_H
@@ -56,4 +57,5 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

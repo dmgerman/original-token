@@ -1,6 +1,7 @@
 macro_line|#ifndef _PPC_STRING_H_
 DECL|macro|_PPC_STRING_H_
 mdefine_line|#define _PPC_STRING_H_
+macro_line|#ifdef __KERNEL__
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|macro|__HAVE_ARCH_STRNCPY
@@ -198,5 +199,6 @@ comma
 id|__kernel_size_t
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

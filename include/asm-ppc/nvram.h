@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * PreP compliant NVRAM access&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_NVRAM_H
 DECL|macro|_PPC_NVRAM_H
 mdefine_line|#define _PPC_NVRAM_H
@@ -119,4 +120,5 @@ multiline_comment|/* /dev/nvram ioctls */
 DECL|macro|PMAC_NVRAM_GET_OFFSET
 mdefine_line|#define PMAC_NVRAM_GET_OFFSET&t;_IOWR(&squot;p&squot;, 0x40, int) /* Get NVRAM partition offset */
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

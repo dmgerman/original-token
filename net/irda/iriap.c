@@ -307,6 +307,8 @@ comma
 l_string|&quot;DeviceName&quot;
 comma
 l_string|&quot;Linux&quot;
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|oct_seq
@@ -353,6 +355,8 @@ comma
 id|oct_seq
 comma
 l_int|3
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_insert_object
@@ -578,7 +582,7 @@ c_func
 id|iriap
 comma
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 )paren
 id|self
@@ -3472,9 +3476,11 @@ suffix:semicolon
 r_case
 id|IAS_CLASS_UNKNOWN
 suffix:colon
-id|WARNING
+id|IRDA_DEBUG
 c_func
 (paren
+l_int|1
+comma
 id|__FUNCTION__
 l_string|&quot;(), No such class!&bslash;n&quot;
 )paren
@@ -3517,9 +3523,11 @@ suffix:semicolon
 r_case
 id|IAS_ATTRIB_UNKNOWN
 suffix:colon
-id|WARNING
+id|IRDA_DEBUG
 c_func
 (paren
+l_int|1
+comma
 id|__FUNCTION__
 l_string|&quot;(), No such attribute!&bslash;n&quot;
 )paren
@@ -3542,7 +3550,7 @@ op_member_access_from_pointer
 id|confirm
 c_func
 (paren
-id|IAS_CLASS_UNKNOWN
+id|IAS_ATTRIB_UNKNOWN
 comma
 l_int|0
 comma

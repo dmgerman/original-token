@@ -1394,9 +1394,6 @@ r_switch
 c_cond
 (paren
 id|prev-&gt;state
-op_amp
-op_complement
-id|TASK_EXCLUSIVE
 )paren
 (brace
 r_case
@@ -1890,6 +1887,10 @@ r_int
 r_int
 id|mode
 comma
+r_int
+r_int
+id|wq_mode
+comma
 r_const
 r_int
 id|sync
@@ -2047,12 +2048,7 @@ c_cond
 (paren
 id|state
 op_amp
-(paren
 id|mode
-op_amp
-op_complement
-id|TASK_EXCLUSIVE
-)paren
 )paren
 (brace
 macro_line|#if WAITQUEUE_DEBUG
@@ -2075,11 +2071,11 @@ c_cond
 id|irq
 op_logical_and
 (paren
-id|state
+id|curr-&gt;flags
 op_amp
-id|mode
+id|wq_mode
 op_amp
-id|TASK_EXCLUSIVE
+id|WQ_FLAG_EXCLUSIVE
 )paren
 )paren
 (brace
@@ -2132,11 +2128,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|state
+id|curr-&gt;flags
 op_amp
-id|mode
+id|wq_mode
 op_amp
-id|TASK_EXCLUSIVE
+id|WQ_FLAG_EXCLUSIVE
 )paren
 r_break
 suffix:semicolon
@@ -2194,6 +2190,10 @@ comma
 r_int
 r_int
 id|mode
+comma
+r_int
+r_int
+id|wq_mode
 )paren
 (brace
 id|__wake_up_common
@@ -2202,6 +2202,8 @@ c_func
 id|q
 comma
 id|mode
+comma
+id|wq_mode
 comma
 l_int|0
 )paren
@@ -2219,6 +2221,10 @@ comma
 r_int
 r_int
 id|mode
+comma
+r_int
+r_int
+id|wq_mode
 )paren
 (brace
 id|__wake_up_common
@@ -2227,6 +2233,8 @@ c_func
 id|q
 comma
 id|mode
+comma
+id|wq_mode
 comma
 l_int|1
 )paren

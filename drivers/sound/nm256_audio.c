@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Audio driver for the NeoMagic 256AV and 256ZX chipsets in native&n; * mode, with AC97 mixer support.&n; *&n; * Overall design and parts of this code stolen from vidc_*.c and&n; * skeleton.c.&n; *&n; * Yeah, there are a lot of magic constants in here.  You tell ME what&n; * they are.  I just get this stuff psychically, remember? &n; *&n; * This driver was written by someone who wishes to remain anonymous. &n; * It is in the public domain, so share and enjoy.  Try to make a profit&n; * off of it; go on, I dare you.  &n; */
+multiline_comment|/* &n; * Audio driver for the NeoMagic 256AV and 256ZX chipsets in native&n; * mode, with AC97 mixer support.&n; *&n; * Overall design and parts of this code stolen from vidc_*.c and&n; * skeleton.c.&n; *&n; * Yeah, there are a lot of magic constants in here.  You tell ME what&n; * they are.  I just get this stuff psychically, remember? &n; *&n; * This driver was written by someone who wishes to remain anonymous. &n; * It is in the public domain, so share and enjoy.  Try to make a profit&n; * off of it; go on, I dare you.  &n; *&n; * Changes:&n; * 11-10-2000&t;Bartlomiej Zolnierkiewicz &lt;bkz@linux-ide.org&gt;&n; *&t;&t;Added some __init&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/pci.h&gt;
@@ -3416,6 +3416,7 @@ suffix:semicolon
 multiline_comment|/* Installs the AC97 mixer into CARD.  */
 r_static
 r_int
+id|__init
 DECL|function|nm256_install_mixer
 id|nm256_install_mixer
 (paren
@@ -3551,6 +3552,7 @@ suffix:semicolon
 multiline_comment|/* &n; * See if the signature left by the NM256 BIOS is intact; if so, we use&n; * the associated address as the end of our audio buffer in the video&n; * RAM.&n; */
 r_static
 r_void
+id|__init
 DECL|function|nm256_peek_for_sig
 id|nm256_peek_for_sig
 (paren
@@ -3698,6 +3700,7 @@ suffix:semicolon
 multiline_comment|/* &n; * Install a driver for the PCI device referenced by PCIDEV.&n; * VERSTR is a human-readable version string.&n; */
 r_static
 r_int
+id|__init
 DECL|function|nm256_install
 id|nm256_install
 c_func
@@ -4572,6 +4575,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * &t;This loop walks the PCI configuration database and finds where&n; *&t;the sound cards are.&n; */
 r_int
+id|__init
 DECL|function|init_nm256
 id|init_nm256
 c_func

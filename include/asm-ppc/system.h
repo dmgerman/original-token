@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * $Id: system.h,v 1.49 1999/09/11 18:37:54 cort Exp $&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __PPC_SYSTEM_H
 DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
@@ -869,4 +870,5 @@ suffix:semicolon
 DECL|macro|cmpxchg
 mdefine_line|#define cmpxchg(ptr,o,n)&t;&t;&t;&t;&t;&t; &bslash;&n;  ({&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;     __typeof__(*(ptr)) _o_ = (o);&t;&t;&t;&t;&t; &bslash;&n;     __typeof__(*(ptr)) _n_ = (n);&t;&t;&t;&t;&t; &bslash;&n;     (__typeof__(*(ptr))) __cmpxchg((ptr), (unsigned long)_o_,&t;&t; &bslash;&n;&t;&t;&t;&t;    (unsigned long)_n_, sizeof(*(ptr))); &bslash;&n;  })
 macro_line|#endif /* __PPC_SYSTEM_H */
+macro_line|#endif /* __KERNEL__ */
 eof

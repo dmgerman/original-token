@@ -9,7 +9,7 @@ singleline_comment|//===========================================================
 macro_line|#ifndef _HWMCODE_
 DECL|macro|_HWMCODE_
 mdefine_line|#define _HWMCODE_
-DECL|variable|DspInst
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -17,6 +17,7 @@ r_int
 id|DspInst
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x00000081
@@ -84,7 +85,7 @@ comma
 l_int|0x00000000
 )brace
 suffix:semicolon
-DECL|variable|CntrlInst
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -92,6 +93,7 @@ r_int
 id|CntrlInst
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x000007
@@ -6247,7 +6249,7 @@ singleline_comment|// --------------------------------------------
 singleline_comment|// 04/09?@creat
 singleline_comment|// 04/12  stop nise fix
 singleline_comment|// 06/21?@WorkingOff timming
-DECL|variable|CntrlInst1E
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -6255,6 +6257,7 @@ r_int
 id|CntrlInst1E
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x000007

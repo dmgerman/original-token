@@ -12,7 +12,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
-macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

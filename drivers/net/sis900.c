@@ -447,10 +447,6 @@ r_int
 id|tx_full
 suffix:semicolon
 multiline_comment|/* The Tx queue is full.    */
-DECL|member|LinkOn
-r_int
-id|LinkOn
-suffix:semicolon
 )brace
 suffix:semicolon
 id|MODULE_AUTHOR
@@ -1826,14 +1822,18 @@ id|sis_priv-&gt;mii-&gt;status
 op_amp
 id|MII_STAT_LINK
 )paren
-id|sis_priv-&gt;LinkOn
-op_assign
-id|TRUE
+id|netif_carrier_on
+c_func
+(paren
+id|net_dev
+)paren
 suffix:semicolon
 r_else
-id|sis_priv-&gt;LinkOn
-op_assign
-id|FALSE
+id|netif_carrier_off
+c_func
+(paren
+id|net_dev
+)paren
 suffix:semicolon
 r_return
 l_int|1
@@ -3495,9 +3495,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sis_priv-&gt;LinkOn
-op_eq
-id|TRUE
+id|netif_carrier_ok
+c_func
+(paren
+id|net_dev
+)paren
 )paren
 (brace
 id|reg14h
@@ -3848,7 +3850,11 @@ l_int|NULL
 r_if
 c_cond
 (paren
-id|sis_priv-&gt;LinkOn
+id|netif_carrier_ok
+c_func
+(paren
+id|net_dev
+)paren
 )paren
 (brace
 multiline_comment|/* link stat change from ON to OFF */
@@ -3856,9 +3862,11 @@ id|next_tick
 op_assign
 id|HZ
 suffix:semicolon
-id|sis_priv-&gt;LinkOn
-op_assign
-id|FALSE
+id|netif_carrier_off
+c_func
+(paren
+id|net_dev
+)paren
 suffix:semicolon
 multiline_comment|/* Equalizer workaroung Rule */
 id|pci_read_config_byte
@@ -3936,13 +3944,19 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sis_priv-&gt;LinkOn
+id|netif_carrier_ok
+c_func
+(paren
+id|net_dev
+)paren
 )paren
 (brace
 multiline_comment|/* link stat change forn OFF to ON, read and report link mode */
-id|sis_priv-&gt;LinkOn
-op_assign
-id|TRUE
+id|netif_carrier_on
+c_func
+(paren
+id|net_dev
+)paren
 suffix:semicolon
 id|next_tick
 op_assign
@@ -6574,9 +6588,11 @@ op_assign
 id|map-&gt;port
 suffix:semicolon
 multiline_comment|/* we are going to change the media type, so the Link will&n;                &t;&t;be temporary down and we need to reflect that here. When&n;                &t;&t;the Link comes up again, it will be sensed by the sis_timer&n;                &t;&t;procedure, which also does all the rest for us */
-id|sis_priv-&gt;LinkOn
-op_assign
-id|FALSE
+id|netif_carrier_off
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* read current state */
 id|status
@@ -6619,9 +6635,11 @@ op_assign
 id|map-&gt;port
 suffix:semicolon
 multiline_comment|/* we are going to change the media type, so the Link will&n;                &t;&t;be temporary down and we need to reflect that here. When&n;                &t;&t;the Link comes up again, it will be sensed by the sis_timer&n;                &t;&t;procedure, which also does all the rest for us */
-id|sis_priv-&gt;LinkOn
-op_assign
-id|FALSE
+id|netif_carrier_off
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* set Speed to 10Mbps */
 multiline_comment|/* read current state */
@@ -6672,9 +6690,11 @@ op_assign
 id|map-&gt;port
 suffix:semicolon
 multiline_comment|/* we are going to change the media type, so the Link will&n;                &t;&t;be temporary down and we need to reflect that here. When&n;                &t;&t;the Link comes up again, it will be sensed by the sis_timer&n;                &t;&t;procedure, which also does all the rest for us */
-id|sis_priv-&gt;LinkOn
-op_assign
-id|FALSE
+id|netif_carrier_off
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* set Speed to 100Mbps */
 multiline_comment|/* disable auto negotiation and enable 100MBit Mode */

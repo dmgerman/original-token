@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;Access to VGA videoram&n; *&n; *&t;(c) 1998 Martin Mares &lt;mj@ucw.cz&gt;&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _LINUX_ASM_VGA_H_
 DECL|macro|_LINUX_ASM_VGA_H_
 mdefine_line|#define _LINUX_ASM_VGA_H_
@@ -72,4 +73,5 @@ mdefine_line|#define vga_readb(x) (*(x))
 DECL|macro|vga_writeb
 mdefine_line|#define vga_writeb(x,y) (*(y) = (x))
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASMPPC_AMIGAHW_H
 DECL|macro|__ASMPPC_AMIGAHW_H
 mdefine_line|#define __ASMPPC_AMIGAHW_H
@@ -13,4 +14,5 @@ DECL|macro|CHIP_PHYSADDR
 mdefine_line|#define CHIP_PHYSADDR      (0x004000)
 macro_line|#endif
 macro_line|#endif /* __ASMPPC_AMIGAHW_H */
+macro_line|#endif /* __KERNEL__ */
 eof

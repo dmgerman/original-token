@@ -1228,8 +1228,6 @@ id|__set_current_state
 c_func
 (paren
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 id|spin_lock_irq

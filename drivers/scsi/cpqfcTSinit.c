@@ -735,6 +735,17 @@ id|CPQFCHBA
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|HostAdapter
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|DEBUG_PCI
 c_func
 (paren

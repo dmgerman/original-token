@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Machine dependent access functions for RTC registers.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASM_PPC_MC146818RTC_H
 DECL|macro|__ASM_PPC_MC146818RTC_H
 mdefine_line|#define __ASM_PPC_MC146818RTC_H
@@ -17,4 +18,5 @@ mdefine_line|#define CMOS_WRITE(val, addr) ({ &bslash;&n;outb_p((addr),RTC_PORT(
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ 8
 macro_line|#endif /* __ASM_PPC_MC146818RTC_H */
+macro_line|#endif /* __KERNEL__ */
 eof

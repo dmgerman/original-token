@@ -101,8 +101,6 @@ DECL|macro|TASK_ZOMBIE
 mdefine_line|#define TASK_ZOMBIE&t;&t;4
 DECL|macro|TASK_STOPPED
 mdefine_line|#define TASK_STOPPED&t;&t;8
-DECL|macro|TASK_EXCLUSIVE
-mdefine_line|#define TASK_EXCLUSIVE&t;&t;32
 DECL|macro|__set_task_state
 mdefine_line|#define __set_task_state(tsk, state_value)&t;&t;&bslash;&n;&t;do { (tsk)-&gt;state = (state_value); } while (0)
 macro_line|#ifdef CONFIG_SMP
@@ -1375,6 +1373,10 @@ comma
 r_int
 r_int
 id|mode
+comma
+r_int
+r_int
+id|wq_mode
 )paren
 )paren
 suffix:semicolon
@@ -1393,6 +1395,10 @@ comma
 r_int
 r_int
 id|mode
+comma
+r_int
+r_int
+id|wq_mode
 )paren
 )paren
 suffix:semicolon
@@ -1476,17 +1482,17 @@ id|tsk
 )paren
 suffix:semicolon
 DECL|macro|wake_up
-mdefine_line|#define wake_up(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
+mdefine_line|#define wake_up(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE,WQ_FLAG_EXCLUSIVE)
 DECL|macro|wake_up_all
-mdefine_line|#define wake_up_all(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE)
+mdefine_line|#define wake_up_all(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE,0)
 DECL|macro|wake_up_sync
-mdefine_line|#define wake_up_sync(x)&t;&t;&t;__wake_up_sync((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
+mdefine_line|#define wake_up_sync(x)&t;&t;&t;__wake_up_sync((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE,WQ_FLAG_EXCLUSIVE)
 DECL|macro|wake_up_interruptible
-mdefine_line|#define wake_up_interruptible(x)&t;__wake_up((x),TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
+mdefine_line|#define wake_up_interruptible(x)&t;__wake_up((x),TASK_INTERRUPTIBLE,WQ_FLAG_EXCLUSIVE)
 DECL|macro|wake_up_interruptible_all
-mdefine_line|#define wake_up_interruptible_all(x)&t;__wake_up((x),TASK_INTERRUPTIBLE)
+mdefine_line|#define wake_up_interruptible_all(x)&t;__wake_up((x),TASK_INTERRUPTIBLE,0)
 DECL|macro|wake_up_interruptible_sync
-mdefine_line|#define wake_up_interruptible_sync(x)&t;__wake_up_sync((x),TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
+mdefine_line|#define wake_up_interruptible_sync(x)&t;__wake_up_sync((x),TASK_INTERRUPTIBLE,WQ_FLAG_EXCLUSIVE)
 r_extern
 r_int
 id|in_group_p

@@ -100,7 +100,7 @@ r_struct
 id|ircomm_cb
 (brace
 DECL|member|queue
-id|queue_t
+id|irda_queue_t
 id|queue
 suffix:semicolon
 DECL|member|magic

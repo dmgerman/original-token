@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * Please report both successes and troubles to the author at omninet@kroah.com&n; *&n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; *&t;Fixed potential race in omninet_write_bulk_callback&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; */
+multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * Please report both successes and troubles to the author at omninet@kroah.com&n; *&n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; *&t;Fixed potential race in omninet_write_bulk_callback&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -121,20 +121,37 @@ op_star
 id|serial
 )paren
 suffix:semicolon
-multiline_comment|/* All of the device info needed for the omni.net */
-DECL|variable|zyxel_vendor_id
+DECL|variable|id_table
 r_static
-id|__u16
-id|zyxel_vendor_id
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table
+(braket
+)braket
 op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
 id|ZYXEL_VENDOR_ID
-suffix:semicolon
-DECL|variable|zyxel_omninet_product_id
-r_static
-id|__u16
-id|zyxel_omninet_product_id
-op_assign
+comma
+id|idProduct
+suffix:colon
 id|ZYXEL_OMNINET_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|id_table
+)paren
 suffix:semicolon
 DECL|variable|zyxel_omninet_device
 r_struct
@@ -146,15 +163,9 @@ id|name
 suffix:colon
 l_string|&quot;ZyXEL - omni.net lcd plus usb&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|zyxel_vendor_id
-comma
-id|idProduct
-suffix:colon
-op_amp
-id|zyxel_omninet_product_id
+id|id_table
 comma
 id|needs_interrupt_in
 suffix:colon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1dma.c,v 1.7 2000/08/04 12:20:08 calle Exp $&n; * &n; * Common module for AVM B1 cards that support dma with AMCC&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1dma.c,v $&n; * Revision 1.7  2000/08/04 12:20:08  calle&n; * - Fix unsigned/signed warning in the right way ...&n; *&n; * Revision 1.6  2000/06/29 13:59:06  calle&n; * Bugfix: reinit txdma without interrupt will confuse some AMCC chips.&n; *&n; * Revision 1.5  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.4  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.3  2000/02/26 01:00:53  keil&n; * changes from 2.3.47&n; *&n; * Revision 1.2  2000/01/25 14:44:47  calle&n; * typo in b1pciv4_detect().&n; *&n; * Revision 1.1  2000/01/25 14:36:43  calle&n; * common function for  T1 PCI and B1 PCI V4.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: b1dma.c,v 1.9 2000/11/01 14:05:02 calle Exp $&n; * &n; * Common module for AVM B1 cards that support dma with AMCC&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1dma.c,v $&n; * Revision 1.9  2000/11/01 14:05:02  calle&n; * - use module_init/module_exit from linux/init.h.&n; * - all static struct variables are initialized with &quot;membername:&quot; now.&n; * - avm_cs.c, let it work with newer pcmcia-cs.&n; *&n; * Revision 1.8  2000/10/10 17:44:19  kai&n; * changes from/for 2.2.18&n; *&n; * Revision 1.7  2000/08/04 12:20:08  calle&n; * - Fix unsigned/signed warning in the right way ...&n; *&n; * Revision 1.6  2000/06/29 13:59:06  calle&n; * Bugfix: reinit txdma without interrupt will confuse some AMCC chips.&n; *&n; * Revision 1.5  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.4  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.3  2000/02/26 01:00:53  keil&n; * changes from 2.3.47&n; *&n; * Revision 1.2  2000/01/25 14:44:47  calle&n; * typo in b1pciv4_detect().&n; *&n; * Revision 1.1  2000/01/25 14:36:43  calle&n; * common function for  T1 PCI and B1 PCI V4.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -21,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 id|MODULE_AUTHOR
@@ -955,12 +955,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|10
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 id|b1dmaoutmeml
@@ -974,12 +972,10 @@ l_int|0x0f000000
 )paren
 suffix:semicolon
 multiline_comment|/* reset all */
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|10
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 id|b1dmaoutmeml
@@ -999,21 +995,17 @@ id|card-&gt;cardtype
 op_eq
 id|avm_t1pci
 )paren
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|42
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 r_else
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|10
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 )brace
@@ -1038,12 +1030,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|10
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 id|b1dmaoutmeml
@@ -1057,12 +1047,10 @@ l_int|0x0f000000
 )paren
 suffix:semicolon
 multiline_comment|/* reset all */
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|10
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 id|b1dmaoutmeml
@@ -1075,12 +1063,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|42
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 id|b1dmaoutmeml

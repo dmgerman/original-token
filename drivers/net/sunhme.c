@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.98 2000/10/22 16:08:38 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.99 2000/11/10 05:44:33 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ethtool.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -37,7 +38,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifndef __sparc_v9__
 macro_line|#include &lt;asm/io-unit.h&gt;
 macro_line|#endif
-macro_line|#include &lt;asm/ethtool.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;

@@ -40,6 +40,7 @@ singleline_comment|// 10/03/00 trw - fixed mmap (fixed GRECORD and the XMMS mmap
 singleline_comment|//                libOSSm.so)
 singleline_comment|// 10/11/00 trw - modified for 2.4.0-test9 kernel enhancements (NR_MAP removal)
 singleline_comment|// 11/03/00 trw - fixed interrupt loss/stutter, added debug.
+singleline_comment|// 11/10/00 bkz - added __devinit to cs4281_hw_init()
 singleline_comment|//
 singleline_comment|// *****************************************************************************
 macro_line|#include &lt;linux/config.h&gt;
@@ -2358,6 +2359,7 @@ singleline_comment|//***********************************************************
 DECL|function|cs4281_hw_init
 r_static
 r_int
+id|__devinit
 id|cs4281_hw_init
 c_func
 (paren

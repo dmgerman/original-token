@@ -1018,11 +1018,16 @@ c_cond
 op_logical_neg
 id|host
 )paren
-id|panic
+(brace
+id|kfree
+c_func
 (paren
-l_string|&quot;Cannot register PLUTO host&bslash;n&quot;
+id|ages
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|nplutos
 op_increment
 suffix:semicolon

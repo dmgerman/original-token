@@ -481,8 +481,6 @@ suffix:semicolon
 r_static
 r_int
 id|version_printed
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -495,12 +493,12 @@ id|ioaddr
 comma
 id|HP_IO_EXTENT
 comma
-l_string|&quot;hp-plus&quot;
+id|dev-&gt;name
 )paren
 )paren
 r_return
 op_minus
-id|ENODEV
+id|EBUSY
 suffix:semicolon
 multiline_comment|/* Check for the HP+ signature, 50 48 0x 53. */
 r_if
@@ -1014,9 +1012,15 @@ suffix:semicolon
 r_int
 id|option_reg
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -1026,15 +1030,15 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;hp-plus&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
 )paren
+)paren
 (brace
 r_return
-op_minus
-id|EAGAIN
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/* Reset the 8390 and HP chip. */

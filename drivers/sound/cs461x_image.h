@@ -1,7 +1,8 @@
-DECL|variable|BA1Struct
+DECL|variable|__initdata
 r_struct
 id|BA1struct
 id|BA1Struct
+id|__initdata
 op_assign
 (brace
 (brace

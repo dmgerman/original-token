@@ -458,8 +458,6 @@ c_func
 id|tsk
 comma
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 r_if
@@ -682,8 +680,6 @@ c_func
 id|tsk
 comma
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 r_if

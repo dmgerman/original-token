@@ -264,7 +264,7 @@ r_struct
 id|irlan_cb
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -293,14 +293,11 @@ id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Destination device address */
-DECL|member|netdev_registered
+DECL|member|disconnect_reason
 r_int
-id|netdev_registered
+id|disconnect_reason
 suffix:semicolon
-DECL|member|notify_irmanager
-r_int
-id|notify_irmanager
-suffix:semicolon
+multiline_comment|/* Why we got disconnected */
 DECL|member|media
 r_int
 id|media
@@ -320,11 +317,7 @@ id|tsap_cb
 op_star
 id|tsap_data
 suffix:semicolon
-DECL|member|master
-r_int
-id|master
-suffix:semicolon
-multiline_comment|/* Master instance? */
+multiline_comment|/* Data TSAP */
 DECL|member|use_udata
 r_int
 id|use_udata
@@ -365,6 +358,10 @@ DECL|member|max_header_size
 id|__u8
 id|max_header_size
 suffix:semicolon
+DECL|member|open_wait
+id|wait_queue_head_t
+id|open_wait
+suffix:semicolon
 DECL|member|watchdog_timer
 r_struct
 id|timer_list
@@ -383,9 +380,6 @@ id|saddr
 comma
 id|__u32
 id|daddr
-comma
-r_int
-id|netdev
 )paren
 suffix:semicolon
 r_void

@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_SEMAPHORE_HELPER_H
 DECL|macro|_PPC_SEMAPHORE_HELPER_H
 mdefine_line|#define _PPC_SEMAPHORE_HELPER_H
@@ -279,4 +280,5 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#endif /* _PPC_SEMAPHORE_HELPER_H */
+macro_line|#endif /* __KERNEL__ */
 eof

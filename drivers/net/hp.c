@@ -375,8 +375,6 @@ suffix:semicolon
 r_static
 r_int
 id|version_printed
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -389,7 +387,7 @@ id|ioaddr
 comma
 id|HP_IO_EXTENT
 comma
-l_string|&quot;hp&quot;
+id|dev-&gt;name
 )paren
 )paren
 r_return
@@ -725,7 +723,7 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;hp&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
@@ -800,6 +798,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -809,9 +810,10 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;hp&quot;
+id|dev-&gt;name
 comma
 id|dev
+)paren
 )paren
 )paren
 (brace
@@ -821,11 +823,6 @@ l_string|&quot; unable to get IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
 )paren
-suffix:semicolon
-id|retval
-op_assign
-op_minus
-id|EBUSY
 suffix:semicolon
 r_goto
 id|out1

@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_SCATTERLIST_H
 DECL|macro|_PPC_SCATTERLIST_H
 mdefine_line|#define _PPC_SCATTERLIST_H
@@ -26,4 +27,5 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* !(_PPC_SCATTERLIST_H) */
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -1,7 +1,6 @@
 macro_line|#ifndef _PPC_TERMBITS_H
 DECL|macro|_PPC_TERMBITS_H
 mdefine_line|#define _PPC_TERMBITS_H
-macro_line|#include &lt;linux/posix_types.h&gt;
 DECL|typedef|cc_t
 r_typedef
 r_int

@@ -714,6 +714,17 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hreg
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|hreg-&gt;io_port
 op_assign
 id|pb-&gt;base

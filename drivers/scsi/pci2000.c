@@ -2546,6 +2546,17 @@ id|ADAPTER2000
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pshost
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|padapter
 op_assign
 id|HOSTDATA

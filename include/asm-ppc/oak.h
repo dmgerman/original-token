@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&n; *    Copyright (c) 1999 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *&n; *    Module name: oak.h&n; *&n; *    Description:&n; *&t;Macros, definitions, and data structures specific to the IBM PowerPC&n; *      403G{A,B,C,CX} &quot;Oak&quot; evaluation board. Anything specific to the pro-&n; *      cessor itself is defined elsewhere.&n; *&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef&t;__OAK_H__
 DECL|macro|__OAK_H__
 mdefine_line|#define&t;__OAK_H__
@@ -99,4 +100,5 @@ macro_line|#ifdef __cplusplus
 )brace
 macro_line|#endif
 macro_line|#endif /* __OAK_H__ */
+macro_line|#endif /* __KERNEL__ */
 eof

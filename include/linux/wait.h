@@ -48,11 +48,13 @@ DECL|struct|__wait_queue
 r_struct
 id|__wait_queue
 (brace
-DECL|member|compiler_warning
+DECL|member|flags
 r_int
 r_int
-id|compiler_warning
+id|flags
 suffix:semicolon
+DECL|macro|WQ_FLAG_EXCLUSIVE
+mdefine_line|#define WQ_FLAG_EXCLUSIVE&t;0x01
 DECL|member|task
 r_struct
 id|task_struct
@@ -171,7 +173,7 @@ DECL|macro|__WAITQUEUE_HEAD_DEBUG_INIT
 macro_line|# define __WAITQUEUE_HEAD_DEBUG_INIT(name)
 macro_line|#endif
 DECL|macro|__WAITQUEUE_INITIALIZER
-mdefine_line|#define __WAITQUEUE_INITIALIZER(name,task) &bslash;&n;&t;{ 0x1234567, task, { NULL, NULL } __WAITQUEUE_DEBUG_INIT(name)}
+mdefine_line|#define __WAITQUEUE_INITIALIZER(name,task) &bslash;&n;&t;{ 0x0, task, { NULL, NULL } __WAITQUEUE_DEBUG_INIT(name)}
 DECL|macro|DECLARE_WAITQUEUE
 mdefine_line|#define DECLARE_WAITQUEUE(name,task) &bslash;&n;&t;wait_queue_t name = __WAITQUEUE_INITIALIZER(name,task)
 DECL|macro|__WAIT_QUEUE_HEAD_INITIALIZER

@@ -45,6 +45,7 @@ id|num_devs
 suffix:semicolon
 DECL|function|msnd_register
 r_int
+id|__init
 id|msnd_register
 c_func
 (paren

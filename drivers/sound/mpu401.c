@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/mpu401.c&n; *&n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;&t;modularisation, use normal request_irq, use dev_id&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;&t;modularisation, use normal request_irq, use dev_id&n; * Bartlomiej Zolnierkiewicz&t;removed some __init to allow using many drivers&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|USE_SEQ_MACROS
@@ -3358,7 +3358,6 @@ suffix:semicolon
 DECL|function|mpu401_chk_version
 r_static
 r_void
-id|__init
 id|mpu401_chk_version
 c_func
 (paren
@@ -3496,7 +3495,6 @@ suffix:semicolon
 )brace
 DECL|function|attach_mpu401
 r_void
-id|__init
 id|attach_mpu401
 c_func
 (paren
@@ -4566,7 +4564,6 @@ suffix:semicolon
 )brace
 DECL|function|probe_mpu401
 r_int
-id|__init
 id|probe_mpu401
 c_func
 (paren
@@ -6731,7 +6728,6 @@ suffix:semicolon
 DECL|function|mpu_timer_init
 r_static
 r_int
-id|__init
 id|mpu_timer_init
 c_func
 (paren
@@ -6956,6 +6952,7 @@ l_string|&quot;i&quot;
 suffix:semicolon
 DECL|function|init_mpu401
 r_int
+id|__init
 id|init_mpu401
 c_func
 (paren
@@ -7017,6 +7014,7 @@ suffix:semicolon
 )brace
 DECL|function|cleanup_mpu401
 r_void
+id|__exit
 id|cleanup_mpu401
 c_func
 (paren

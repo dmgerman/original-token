@@ -680,6 +680,12 @@ c_func
 id|new_vma
 )paren
 suffix:semicolon
+id|lock_vma_mappings
+c_func
+(paren
+id|vma
+)paren
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -687,7 +693,7 @@ op_amp
 id|current-&gt;mm-&gt;page_table_lock
 )paren
 suffix:semicolon
-id|insert_vm_struct
+id|__insert_vm_struct
 c_func
 (paren
 id|current-&gt;mm
@@ -710,6 +716,12 @@ c_func
 (paren
 op_amp
 id|current-&gt;mm-&gt;page_table_lock
+)paren
+suffix:semicolon
+id|unlock_vma_mappings
+c_func
+(paren
+id|vma
 )paren
 suffix:semicolon
 id|do_munmap

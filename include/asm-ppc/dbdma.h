@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Definitions for using the Apple Descriptor-Based DMA controller&n; * in Power Macintosh computers.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _ASM_DBDMA_H_
 DECL|macro|_ASM_DBDMA_H_
 mdefine_line|#define _ASM_DBDMA_H_
@@ -212,4 +213,5 @@ multiline_comment|/* Align an address for a DBDMA command structure */
 DECL|macro|DBDMA_ALIGN
 mdefine_line|#define DBDMA_ALIGN(x)&t;(((unsigned)(x) + sizeof(struct dbdma_cmd) - 1) &bslash;&n;&t;&t;&t; &amp; -sizeof(struct dbdma_cmd))
 macro_line|#endif /* _ASM_DBDMA_H_ */
+macro_line|#endif /* __KERNEL__ */
 eof

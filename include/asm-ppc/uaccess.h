@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_UACCESS_H
 DECL|macro|_PPC_UACCESS_H
 mdefine_line|#define _PPC_UACCESS_H
@@ -583,4 +584,5 @@ DECL|macro|strlen_user
 mdefine_line|#define strlen_user(str)&t;strnlen_user((str), 0x7ffffffe)
 macro_line|#endif  /* __ASSEMBLY__ */
 macro_line|#endif&t;/* _PPC_UACCESS_H */
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -4593,24 +4593,6 @@ id|kapmd_running
 op_assign
 l_int|1
 suffix:semicolon
-id|exit_files
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-multiline_comment|/* daemonize doesn&squot;t do exit_files */
-id|current-&gt;files
-op_assign
-id|init_task.files
-suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|current-&gt;files-&gt;count
-)paren
-suffix:semicolon
 id|daemonize
 c_func
 (paren

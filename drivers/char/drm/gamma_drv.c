@@ -1634,6 +1634,7 @@ multiline_comment|/* gamma_init is called via init_module at module load time, o
 DECL|function|gamma_init
 r_static
 r_int
+id|__init
 id|gamma_init
 c_func
 (paren
@@ -1793,6 +1794,7 @@ multiline_comment|/* gamma_cleanup is called via cleanup_module at module unload
 DECL|function|gamma_cleanup
 r_static
 r_void
+id|__exit
 id|gamma_cleanup
 c_func
 (paren

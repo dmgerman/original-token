@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * linux/drivers/video/rivafb.c - nVidia RIVA 128/TNT/TNT2 fb driver&n; *&n; * Maintained by Ani Joshi &lt;ajoshi@shell.unixbox.com&gt;&n; *&n; * Copyright 1999-2000 Jeff Garzik&n; *&n; * Contributors:&n; *&n; *&t;Ani Joshi:  Lots of debugging and cleanup work, really helped&n; *&t;get the driver going&n; *&n; *&t;Ferenc Bakonyi:  Bug fixes, cleanup, modularization&n; *&n; * Initial template from skeletonfb.c, created 28 Dec 1997 by Geert Uytterhoeven&n; * Includes riva_hw.c from nVidia, see copyright below.&n; * KGI code provided the basis for state storage, init, and mode switching.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/drivers/video/fbdev.c - nVidia RIVA 128/TNT/TNT2 fb driver&n; *&n; * Maintained by Ani Joshi &lt;ajoshi@shell.unixbox.com&gt;&n; *&n; * Copyright 1999-2000 Jeff Garzik&n; *&n; * Contributors:&n; *&n; *&t;Ani Joshi:  Lots of debugging and cleanup work, really helped&n; *&t;get the driver going&n; *&n; *&t;Ferenc Bakonyi:  Bug fixes, cleanup, modularization&n; *&n; * Initial template from skeletonfb.c, created 28 Dec 1997 by Geert Uytterhoeven&n; * Includes riva_hw.c from nVidia, see copyright below.&n; * KGI code provided the basis for state storage, init, and mode switching.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/* version number of this driver */
 DECL|macro|RIVAFB_VERSION
-mdefine_line|#define RIVAFB_VERSION &quot;0.7.2&quot;
+mdefine_line|#define RIVAFB_VERSION &quot;0.7.3&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1294,7 +1294,7 @@ multiline_comment|/* MISC */
 )brace
 suffix:semicolon
 multiline_comment|/* ------------------- general utility functions -------------------------- */
-multiline_comment|/**&n; * riva_set_dispsw&n; * @rivainfo: pointer to internal driver struct for a given Riva card&n; *&n; * DESCRIPTION:&n; * Sets up console Low level operations depending on the current? color depth&n; * of the display&n; */
+multiline_comment|/**&n; * riva_set_dispsw&n; * @rinfo: pointer to internal driver struct for a given Riva card&n; *&n; * DESCRIPTION:&n; * Sets up console Low level operations depending on the current? color depth&n; * of the display&n; */
 DECL|function|riva_set_dispsw
 r_static
 r_void
@@ -1959,7 +1959,7 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;cannot ioremap ctrl base&bslash;n&quot;
+l_string|&quot;cannot ioremap MMIO base&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1986,7 +1986,7 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;cannot ioremap ctrl base&bslash;n&quot;
+l_string|&quot;cannot ioremap FB base&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2125,7 +2125,7 @@ r_int
 op_star
 )paren
 (paren
-id|rinfo-&gt;ctrl_base
+id|rinfo-&gt;fb_base
 op_plus
 l_int|0x00C00000
 )paren
@@ -2306,6 +2306,8 @@ id|rinfo
 suffix:semicolon
 id|printk
 (paren
+id|KERN_INFO
+id|PFX
 l_string|&quot;PCI Riva NV%d framebuffer ver %s (%s, %dMB @ 0x%lX)&bslash;n&quot;
 comma
 id|rinfo-&gt;riva.Architecture
@@ -3411,7 +3413,7 @@ l_int|5
 suffix:semicolon
 id|v.green.length
 op_assign
-l_int|6
+l_int|5
 suffix:semicolon
 id|v.blue.length
 op_assign
@@ -4229,7 +4231,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * rivafb_pan_display&n; * @var: standard kernel fb changeable data&n; * @par: riva-specific hardware info about current video mode&n; * @info: pointer to rivafb_info object containing info for current riva board&n; *&n; * DESCRIPTION:&n; * Pan (or wrap, depending on the `vmode&squot; field) the display using the&n; * `xoffset&squot; and `yoffset&squot; fields of the `var&squot; structure.&n; * If the values don&squot;t fit, return -EINVAL.&n; *&n; * This call looks only at xoffset, yoffset and the FB_VMODE_YWRAP flag&n; */
+multiline_comment|/**&n; * rivafb_pan_display&n; * @var: standard kernel fb changeable data&n; * @con:&n; * @info: pointer to rivafb_info object containing info for current riva board&n; *&n; * DESCRIPTION:&n; * Pan (or wrap, depending on the `vmode&squot; field) the display using the&n; * `xoffset&squot; and `yoffset&squot; fields of the `var&squot; structure.&n; * If the values don&squot;t fit, return -EINVAL.&n; *&n; * This call looks only at xoffset, yoffset and the FB_VMODE_YWRAP flag&n; */
 DECL|function|rivafb_pan_display
 r_static
 r_int
@@ -5041,8 +5043,13 @@ r_if
 c_cond
 (paren
 id|regno
-OG
-l_int|255
+op_ge
+id|riva_get_cmap_len
+c_func
+(paren
+op_amp
+id|rivainfo-&gt;currcon_display-&gt;var
+)paren
 )paren
 r_return
 l_int|1
@@ -5154,20 +5161,52 @@ op_ne
 l_int|NULL
 )paren
 suffix:semicolon
+id|p
+op_assign
+id|rivainfo-&gt;currcon_display
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|regno
-OG
-l_int|255
+op_ge
+id|riva_get_cmap_len
+c_func
+(paren
+op_amp
+id|p-&gt;var
+)paren
 )paren
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|p
+id|rivainfo-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|red
 op_assign
-id|rivainfo-&gt;currcon_display
+id|red
+suffix:semicolon
+id|rivainfo-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_assign
+id|green
+suffix:semicolon
+id|rivainfo-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+op_assign
+id|blue
 suffix:semicolon
 r_if
 c_cond
@@ -5227,13 +5266,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef FBCON_HAS_CFB8
 r_switch
 c_cond
 (paren
 id|p-&gt;var.bits_per_pixel
 )paren
 (brace
+macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|8
 suffix:colon
@@ -5257,56 +5296,7 @@ id|shift
 suffix:semicolon
 r_break
 suffix:semicolon
-r_default
-suffix:colon
-multiline_comment|/* do nothing */
-r_break
-suffix:semicolon
-)brace
 macro_line|#endif&t;&t;&t;&t;/* FBCON_HAS_CFB8 */
-id|rivainfo-&gt;palette
-(braket
-id|regno
-)braket
-dot
-id|red
-op_assign
-id|red
-suffix:semicolon
-id|rivainfo-&gt;palette
-(braket
-id|regno
-)braket
-dot
-id|green
-op_assign
-id|green
-suffix:semicolon
-id|rivainfo-&gt;palette
-(braket
-id|regno
-)braket
-dot
-id|blue
-op_assign
-id|blue
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|regno
-op_ge
-l_int|16
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|p-&gt;var.bits_per_pixel
-)paren
-(brace
 macro_line|#ifdef FBCON_HAS_CFB16
 r_case
 l_int|16
@@ -5377,7 +5367,7 @@ op_amp
 l_int|0xf800
 )paren
 op_rshift
-l_int|0
+l_int|1
 )paren
 op_or
 (paren
@@ -5387,7 +5377,7 @@ op_amp
 l_int|0xf800
 )paren
 op_rshift
-l_int|5
+l_int|6
 )paren
 op_or
 (paren

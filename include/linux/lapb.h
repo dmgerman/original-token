@@ -95,7 +95,7 @@ id|reason
 )paren
 suffix:semicolon
 DECL|member|data_indication
-r_void
+r_int
 (paren
 op_star
 id|data_indication

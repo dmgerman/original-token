@@ -1,4 +1,5 @@
 multiline_comment|/* This is the single file included by all MPC8xx build options.&n; * Since there are many different boards and no standard configuration,&n; * we have a unique include file for each.  Rather than change every&n; * file that has to include MPC8xx configuration, they all include&n; * this one and the configuration switching is done here.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __CONFIG_8xx_DEFS
 DECL|macro|__CONFIG_8xx_DEFS
 mdefine_line|#define __CONFIG_8xx_DEFS
@@ -110,4 +111,5 @@ id|dev_id
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

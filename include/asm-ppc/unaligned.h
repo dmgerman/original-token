@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __PPC_UNALIGNED_H
 DECL|macro|__PPC_UNALIGNED_H
 mdefine_line|#define __PPC_UNALIGNED_H
@@ -7,4 +8,5 @@ mdefine_line|#define get_unaligned(ptr) (*(ptr))
 DECL|macro|put_unaligned
 mdefine_line|#define put_unaligned(val, ptr) ((void)( *(ptr) = (val) ))
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

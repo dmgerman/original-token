@@ -72,7 +72,7 @@ r_struct
 id|irda_compressor
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 DECL|member|cp
@@ -96,7 +96,7 @@ r_struct
 id|irlap_cb
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -593,6 +593,10 @@ r_void
 id|irlap_status_indication
 c_func
 (paren
+r_struct
+id|irlap_cb
+op_star
+comma
 r_int
 id|quality_of_link
 )paren

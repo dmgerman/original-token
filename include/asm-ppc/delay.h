@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_DELAY_H
 DECL|macro|_PPC_DELAY_H
 mdefine_line|#define _PPC_DELAY_H
@@ -93,4 +94,5 @@ id|loops
 suffix:semicolon
 )brace
 macro_line|#endif /* defined(_PPC_DELAY_H) */
+macro_line|#endif /* __KERNEL__ */
 eof

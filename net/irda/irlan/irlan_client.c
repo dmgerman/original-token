@@ -262,10 +262,6 @@ id|__u32
 id|daddr
 )paren
 (brace
-r_struct
-id|irmanager_event
-id|mgr_event
-suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
@@ -313,25 +309,44 @@ op_eq
 id|ACCESS_DIRECT
 )paren
 )paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), already awake!&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* saddr may have changed! */
+)brace
+multiline_comment|/* Address may have changed! */
 id|self-&gt;saddr
 op_assign
 id|saddr
 suffix:semicolon
-multiline_comment|/* Before we try to connect, we check if network device is up. If it&n;&t; * is up, that means that the &quot;user&quot; really wants to connect. If not&n;&t; * we notify the user about the possibility of an IrLAN connection&n;&t; */
 r_if
 c_cond
 (paren
-id|netif_running
-c_func
-(paren
-op_amp
-id|self-&gt;dev
-)paren
+id|self-&gt;disconnect_reason
+op_eq
+id|LM_USER_REQUEST
 )paren
 (brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), still stopped by user&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Open TSAPs */
 id|irlan_client_open_ctrl_tsap
 c_func
@@ -355,49 +370,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|self-&gt;notify_irmanager
-)paren
-(brace
-multiline_comment|/* &n;&t;&t; * Tell irmanager that the device can now be &n;&t;&t; * configured but only if the device was not taken&n;&t;&t; * down by the user&n;&t;&t; */
-id|mgr_event.event
-op_assign
-id|EVENT_IRLAN_START
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|mgr_event.devname
-comma
-id|self-&gt;dev.name
-)paren
-suffix:semicolon
-id|irmanager_notify
-c_func
-(paren
-op_amp
-id|mgr_event
-)paren
-suffix:semicolon
-multiline_comment|/* &n;&t;&t; * We set this so that we only notify once, since if &n;&t;&t; * configuration of the network device fails, the user&n;&t;&t; * will have to sort it out first anyway. No need to &n;&t;&t; * try again.&n;&t;&t; */
-id|self-&gt;notify_irmanager
-op_assign
-id|FALSE
-suffix:semicolon
-)brace
-multiline_comment|/* Restart watchdog timer */
-id|irlan_start_watchdog_timer
-c_func
-(paren
-id|self
-comma
-id|IRLAN_TIMEOUT
-)paren
-suffix:semicolon
 multiline_comment|/* Start kick timer */
 id|irlan_client_start_kick_timer
 c_func
@@ -419,6 +391,10 @@ c_func
 id|discovery_t
 op_star
 id|discovery
+comma
+r_void
+op_star
+id|priv
 )paren
 (brace
 r_struct
@@ -470,7 +446,7 @@ id|daddr
 op_assign
 id|discovery-&gt;daddr
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Check if we already dealing with this provider.&n;&t; */
+multiline_comment|/* Find instance */
 id|self
 op_assign
 (paren
@@ -478,14 +454,10 @@ r_struct
 id|irlan_cb
 op_star
 )paren
-id|hashbin_find
+id|hashbin_get_first
 c_func
 (paren
 id|irlan
-comma
-id|daddr
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -526,40 +498,7 @@ comma
 id|daddr
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * We have no instance for daddr, so start a new one&n;&t; */
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;(), starting new instance!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self
-op_assign
-id|irlan_open
-c_func
-(paren
-id|saddr
-comma
-id|daddr
-comma
-id|TRUE
-)paren
-suffix:semicolon
-multiline_comment|/* Restart watchdog timer */
-id|irlan_start_watchdog_timer
-c_func
-(paren
-id|self
-comma
-id|IRLAN_TIMEOUT
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_client_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the control channel&n; *&n; */
 DECL|function|irlan_client_ctrl_data_indication
@@ -1544,7 +1483,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Media type&n;&t; */
+multiline_comment|/* Media type */
 r_if
 c_cond
 (paren
@@ -1804,7 +1743,7 @@ l_string|&quot;(), unknown access type!&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *  IRLAN version&n;&t; */
+multiline_comment|/* IRLAN version */
 r_if
 c_cond
 (paren
@@ -1866,7 +1805,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Which remote TSAP to use for data channel&n;&t; */
+multiline_comment|/* Which remote TSAP to use for data channel */
 r_if
 c_cond
 (paren
@@ -2001,7 +1940,7 @@ id|self-&gt;client.max_frame
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  RECONNECT_KEY, in case the link goes down!&n;&t; */
+multiline_comment|/* RECONNECT_KEY, in case the link goes down! */
 r_if
 c_cond
 (paren
@@ -2049,7 +1988,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  FILTER_ENTRY, have we got an ethernet address?&n;&t; */
+multiline_comment|/* FILTER_ENTRY, have we got an ethernet address? */
 r_if
 c_cond
 (paren

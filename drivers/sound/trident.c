@@ -51,14 +51,13 @@ id|ali_multi_channels_5_1
 )braket
 op_assign
 (brace
-id|ALI_SURR_LEFT_CHANNEL
-comma
-id|ALI_SURR_RIGHT_CHANNEL
-comma
 id|ALI_CENTER_CHANNEL
 comma
 id|ALI_LEF_CHANNEL
-multiline_comment|/*, ALI_SURR_LEFT_CHANNEL, ALI_SURR_RIGHT_CHANNEL*/
+comma
+id|ALI_SURR_LEFT_CHANNEL
+comma
+id|ALI_SURR_RIGHT_CHANNEL
 )brace
 suffix:semicolon
 DECL|variable|sample_size

@@ -29,6 +29,7 @@ macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#if defined(CONFIG_NET_RADIO) || defined(CONFIG_NET_PCMCIA_RADIO)
 macro_line|#include &lt;linux/wireless.h&gt;&t;&t;/* Note : will define WIRELESS_EXT */
 macro_line|#endif&t;/* CONFIG_NET_RADIO || CONFIG_NET_PCMCIA_RADIO */
@@ -1551,8 +1552,19 @@ multiline_comment|/*&n;&t; *&t;Call device private open method&n;&t; */
 r_if
 c_cond
 (paren
+id|try_inc_mod_count
+c_func
+(paren
+id|dev-&gt;owner
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|dev-&gt;open
 )paren
+(brace
 id|ret
 op_assign
 id|dev
@@ -1563,6 +1575,31 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_ne
+l_int|0
+op_logical_and
+id|dev-&gt;owner
+)paren
+id|__MOD_DEC_USE_COUNT
+c_func
+(paren
+id|dev-&gt;owner
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|ret
+op_assign
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;If it went open OK then:&n;&t; */
 r_if
 c_cond
@@ -1848,6 +1885,18 @@ comma
 id|NETDEV_DOWN
 comma
 id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Drop the module refcount&n;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;owner
+)paren
+id|__MOD_DEC_USE_COUNT
+c_func
+(paren
+id|dev-&gt;owner
 )paren
 suffix:semicolon
 r_return
@@ -6641,6 +6690,7 @@ suffix:colon
 r_if
 c_cond
 (paren
+(paren
 id|cmd
 op_ge
 id|SIOCDEVPRIVATE
@@ -6650,6 +6700,11 @@ op_le
 id|SIOCDEVPRIVATE
 op_plus
 l_int|15
+)paren
+op_logical_or
+id|cmd
+op_eq
+id|SIOCETHTOOL
 )paren
 (brace
 r_if
@@ -7091,6 +7146,7 @@ suffix:colon
 r_if
 c_cond
 (paren
+(paren
 id|cmd
 op_ge
 id|SIOCDEVPRIVATE
@@ -7100,6 +7156,11 @@ op_le
 id|SIOCDEVPRIVATE
 op_plus
 l_int|15
+)paren
+op_logical_or
+id|cmd
+op_eq
+id|SIOCETHTOOL
 )paren
 (brace
 id|dev_load

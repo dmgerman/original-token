@@ -702,6 +702,17 @@ id|NCR5380_hostdata
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|instance
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|default_instance
 op_assign
 id|instance

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Non-machine dependent bootinfo structure.  Basic idea&n; * borrowed from the m68k.&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@ppc.kernel.org&gt;&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_BOOTINFO_H
 DECL|macro|_PPC_BOOTINFO_H
 mdefine_line|#define _PPC_BOOTINFO_H
@@ -49,4 +50,5 @@ DECL|macro|BI_MACHTYPE
 mdefine_line|#define BI_MACHTYPE&t;&t;0x1016
 macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif /* _PPC_BOOTINFO_H */
+macro_line|#endif /* __KERNEL__ */
 eof

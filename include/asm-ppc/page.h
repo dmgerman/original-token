@@ -1,7 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifndef __ASSEMBLY__
-macro_line|#include &lt;asm/system.h&gt; /* for xmon definition */
-macro_line|#endif /* ndef __ASSEMBLY__ */
 macro_line|#ifndef _PPC_PAGE_H
 DECL|macro|_PPC_PAGE_H
 mdefine_line|#define _PPC_PAGE_H
@@ -12,12 +8,14 @@ DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;0xc0000000
 DECL|macro|KERNELBASE
 mdefine_line|#define KERNELBASE&t;PAGE_OFFSET
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/system.h&gt; /* for xmon definition */
 macro_line|#ifdef CONFIG_XMON
 DECL|macro|BUG
 mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;xmon(0); &bslash;&n;} while (0)
@@ -360,7 +358,7 @@ r_return
 id|order
 suffix:semicolon
 )brace
-macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASSEMBLY__ */
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _PPC_PAGE_H */
 eof

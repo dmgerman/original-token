@@ -1,4 +1,5 @@
 multiline_comment|/*&n;** amigaints.h -- Amiga Linux interrupt handling structs and prototypes&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created 10/2/92 by Greg Harp&n;*/
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _ASMm68k_AMIGAINTS_H_
 DECL|macro|_ASMm68k_AMIGAINTS_H_
 mdefine_line|#define _ASMm68k_AMIGAINTS_H_
@@ -239,4 +240,5 @@ id|enable
 )paren
 suffix:semicolon
 macro_line|#endif /* asm-m68k/amigaints.h */
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * PowerPC memory management structures&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_MMU_H_
 DECL|macro|_PPC_MMU_H_
 mdefine_line|#define _PPC_MMU_H_
@@ -855,4 +856,5 @@ mdefine_line|#define TLB_M           0x00000002      /* Memory is coherent */
 DECL|macro|TLB_G
 mdefine_line|#define TLB_G           0x00000001      /* Memory is guarded from prefetch */
 macro_line|#endif /* _PPC_MMU_H_ */
+macro_line|#endif /* __KERNEL__ */
 eof

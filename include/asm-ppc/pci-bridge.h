@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _ASM_PCI_BRIDGE_H
 DECL|macro|_ASM_PCI_BRIDGE_H
 mdefine_line|#define _ASM_PCI_BRIDGE_H
@@ -138,4 +139,5 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Routines for handling backlight control on PowerBooks&n; * &n; * For now, implementation resides in arch/ppc/kernel/pmac_support.c&n; * &n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASM_PPC_BACKLIGHT_H
 DECL|macro|__ASM_PPC_BACKLIGHT_H
 mdefine_line|#define __ASM_PPC_BACKLIGHT_H
@@ -117,4 +118,5 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

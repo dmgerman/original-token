@@ -1,7 +1,8 @@
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;&t;&t;/* ppc_md */
 r_extern
 r_void
@@ -392,4 +393,5 @@ id|NR_MASK_WORDS
 )braket
 suffix:semicolon
 macro_line|#endif /* _ASM_IRQ_H */
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -1795,6 +1795,7 @@ multiline_comment|/* mga_init is called via init_module at module load time, or 
 DECL|function|mga_init
 r_static
 r_int
+id|__init
 id|mga_init
 c_func
 (paren
@@ -2042,6 +2043,7 @@ multiline_comment|/* mga_cleanup is called via cleanup_module at module unload t
 DECL|function|mga_cleanup
 r_static
 r_void
+id|__exit
 id|mga_cleanup
 c_func
 (paren

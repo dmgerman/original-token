@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Got rid of always calling kmalloc for every urb we wrote out to the&n; *&t;device.&n; *&t;Added visor_read_callback so we can keep track of bytes in and out for&n; *&t;those people who like to know the speed of their device.&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (09/06/2000) gkh&n; *&t;Fixed oops in visor_exit.  Need to uncomment usb_unlink_urb call _after_&n; *&t;the host controller drivers set urb-&gt;dev = NULL when the urb is finished.&n; *&n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&n; * (08/08/2000) gkh&n; *&t;Fixed endian problem in visor_startup.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; * &n; * (07/23/2000) gkh&n; *&t;Added pool of write urbs to speed up transfers to the visor.&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Got rid of always calling kmalloc for every urb we wrote out to the&n; *&t;device.&n; *&t;Added visor_read_callback so we can keep track of bytes in and out for&n; *&t;those people who like to know the speed of their device.&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (09/06/2000) gkh&n; *&t;Fixed oops in visor_exit.  Need to uncomment usb_unlink_urb call _after_&n; *&t;the host controller drivers set urb-&gt;dev = NULL when the urb is finished.&n; *&n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&n; * (08/08/2000) gkh&n; *&t;Fixed endian problem in visor_startup.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; * &n; * (07/23/2000) gkh&n; *&t;Added pool of write urbs to speed up transfers to the visor.&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -176,21 +176,39 @@ op_star
 id|urb
 )paren
 suffix:semicolon
-multiline_comment|/* All of the device info needed for the Handspring Visor */
-DECL|variable|handspring_vendor_id
+DECL|variable|id_table
 r_static
-id|__u16
-id|handspring_vendor_id
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table
+(braket
+)braket
 op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
 id|HANDSPRING_VENDOR_ID
-suffix:semicolon
-DECL|variable|handspring_product_id
-r_static
-id|__u16
-id|handspring_product_id
-op_assign
+comma
+id|idProduct
+suffix:colon
 id|HANDSPRING_VISOR_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
 suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|id_table
+)paren
+suffix:semicolon
+multiline_comment|/* All of the device info needed for the Handspring Visor */
 DECL|variable|handspring_device
 r_struct
 id|usb_serial_device_type
@@ -201,18 +219,10 @@ id|name
 suffix:colon
 l_string|&quot;Handspring Visor&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|handspring_vendor_id
+id|id_table
 comma
-multiline_comment|/* the Handspring vendor ID */
-id|idProduct
-suffix:colon
-op_amp
-id|handspring_product_id
-comma
-multiline_comment|/* the Handspring Visor product id */
 id|needs_interrupt_in
 suffix:colon
 id|MUST_HAVE_NOT

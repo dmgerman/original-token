@@ -1128,15 +1128,6 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Sets task-&gt;state to TASK_RUNNING */
-id|current-&gt;policy
-op_or_assign
-id|SCHED_YIELD
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
 r_goto
 id|repeat_bh
 suffix:semicolon
@@ -1166,15 +1157,6 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Sets task-&gt;state to TASK_RUNNING */
-id|current-&gt;policy
-op_or_assign
-id|SCHED_YIELD
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
 r_goto
 id|repeat_page
 suffix:semicolon

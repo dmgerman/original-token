@@ -31,6 +31,10 @@ c_func
 id|discovery_t
 op_star
 id|discovery
+comma
+r_void
+op_star
+id|priv
 )paren
 suffix:semicolon
 r_static
@@ -683,6 +687,8 @@ comma
 l_string|&quot;IrDA:IrLMP:LsapSel&quot;
 comma
 id|self-&gt;slsap_sel
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_insert_object
@@ -721,6 +727,8 @@ comma
 l_string|&quot;IrDA:TinyTP:LsapSel&quot;
 comma
 id|self-&gt;slsap_sel
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 multiline_comment|/* Code the parameters into the buffer */
@@ -755,6 +763,8 @@ comma
 id|oct_seq
 comma
 l_int|6
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_insert_object
@@ -782,6 +792,12 @@ comma
 id|ircomm_tty_discovery_indication
 comma
 l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+id|self
 )paren
 suffix:semicolon
 )brace
@@ -1013,6 +1029,10 @@ c_func
 id|discovery_t
 op_star
 id|discovery
+comma
+r_void
+op_star
+id|priv
 )paren
 (brace
 r_struct

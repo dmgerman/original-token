@@ -917,9 +917,19 @@ id|probe
 r_struct
 id|usb_device
 op_star
+id|dev
 comma
+multiline_comment|/* the device */
 r_int
-r_int
+id|intf
+comma
+multiline_comment|/* what interface */
+r_const
+r_struct
+id|usb_device_id
+op_star
+id|id
+multiline_comment|/* from id_table */
 )paren
 suffix:semicolon
 DECL|member|disconnect
@@ -986,32 +996,6 @@ r_struct
 id|usb_device_id
 op_star
 id|id_table
-suffix:semicolon
-DECL|member|bind
-r_void
-op_star
-(paren
-op_star
-id|bind
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-id|dev
-comma
-multiline_comment|/* the device */
-r_int
-id|intf
-comma
-multiline_comment|/* what interface */
-r_const
-r_struct
-id|usb_device_id
-op_star
-id|id
-multiline_comment|/* from id_table */
-)paren
 suffix:semicolon
 multiline_comment|/* suspend before the bus suspends;&n;&t; * disconnect or resume when the bus resumes */
 singleline_comment|// void (*suspend)(struct usb_device *dev);
@@ -1716,6 +1700,30 @@ r_struct
 id|usb_interface
 op_star
 id|iface
+)paren
+suffix:semicolon
+r_const
+r_struct
+id|usb_device_id
+op_star
+id|usb_match_id
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_struct
+id|usb_interface
+op_star
+id|interface
+comma
+r_const
+r_struct
+id|usb_device_id
+op_star
+id|id
 )paren
 suffix:semicolon
 r_extern

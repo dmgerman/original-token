@@ -2,12 +2,6 @@ macro_line|#ifndef _PPC_TYPES_H
 DECL|macro|_PPC_TYPES_H
 mdefine_line|#define _PPC_TYPES_H
 macro_line|#ifndef __ASSEMBLY__
-DECL|typedef|umode_t
-r_typedef
-r_int
-r_int
-id|umode_t
-suffix:semicolon
 DECL|typedef|__s8
 r_typedef
 id|__signed__
@@ -70,7 +64,7 @@ id|u
 l_int|4
 )braket
 suffix:semicolon
-DECL|typedef|vector128
+DECL|typedef|__vector128
 )brace
 id|__attribute
 c_func
@@ -83,7 +77,7 @@ l_int|16
 )paren
 )paren
 )paren
-id|vector128
+id|__vector128
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
@@ -137,6 +131,11 @@ r_int
 r_int
 id|u64
 suffix:semicolon
+DECL|typedef|vector128
+r_typedef
+id|__vector128
+id|vector128
+suffix:semicolon
 DECL|macro|BITS_PER_LONG
 mdefine_line|#define BITS_PER_LONG 32
 multiline_comment|/* DMA addresses are 32-bits wide */
@@ -144,6 +143,12 @@ DECL|typedef|dma_addr_t
 r_typedef
 id|u32
 id|dma_addr_t
+suffix:semicolon
+DECL|typedef|umode_t
+r_typedef
+r_int
+r_int
+id|umode_t
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASSEMBLY__ */

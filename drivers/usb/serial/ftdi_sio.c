@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
+multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
 multiline_comment|/* Bill Ryder - bryder@sgi.com - wrote the FTDI_SIO implementation */
 multiline_comment|/* Thanx to FTDI for so kindly providing details of the protocol required */
 multiline_comment|/*   to talk to the device */
@@ -30,6 +30,38 @@ DECL|macro|FTDI_VENDOR_ID
 mdefine_line|#define FTDI_VENDOR_ID&t;&t;&t;0x0403
 DECL|macro|FTDI_SIO_SERIAL_CONVERTER_ID
 mdefine_line|#define FTDI_SIO_SERIAL_CONVERTER_ID&t;0x8372
+DECL|variable|id_table
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|FTDI_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
+id|FTDI_SIO_SERIAL_CONVERTER_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|id_table
+)paren
+suffix:semicolon
 multiline_comment|/* function prototypes for a FTDI serial converter */
 r_static
 r_int
@@ -152,20 +184,6 @@ id|arg
 )paren
 suffix:semicolon
 multiline_comment|/* All of the device info needed for the FTDI SIO serial converter */
-DECL|variable|ftdi_vendor_id
-r_static
-id|__u16
-id|ftdi_vendor_id
-op_assign
-id|FTDI_VENDOR_ID
-suffix:semicolon
-DECL|variable|ftdi_sio_product_id
-r_static
-id|__u16
-id|ftdi_sio_product_id
-op_assign
-id|FTDI_SIO_SERIAL_CONVERTER_ID
-suffix:semicolon
 DECL|variable|ftdi_sio_device
 r_struct
 id|usb_serial_device_type
@@ -176,18 +194,10 @@ id|name
 suffix:colon
 l_string|&quot;FTDI SIO&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|ftdi_vendor_id
+id|id_table
 comma
-multiline_comment|/* the FTDI vendor ID */
-id|idProduct
-suffix:colon
-op_amp
-id|ftdi_sio_product_id
-comma
-multiline_comment|/* the FTDI SIO product id */
 id|needs_interrupt_in
 suffix:colon
 id|MUST_HAVE_NOT

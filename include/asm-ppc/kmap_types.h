@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _ASM_KMAP_TYPES_H
 DECL|macro|_ASM_KMAP_TYPES_H
 mdefine_line|#define _ASM_KMAP_TYPES_H
@@ -16,4 +17,5 @@ id|KM_TYPE_NR
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

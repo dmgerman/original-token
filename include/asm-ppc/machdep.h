@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_MACHDEP_H
 DECL|macro|_PPC_MACHDEP_H
 mdefine_line|#define _PPC_MACHDEP_H
@@ -620,4 +621,5 @@ id|sys_ctrler_t
 id|sys_ctrler
 suffix:semicolon
 macro_line|#endif /* _PPC_MACHDEP_H */
+macro_line|#endif /* __KERNEL__ */
 eof

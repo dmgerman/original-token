@@ -1315,6 +1315,7 @@ id|found
 )paren
 multiline_comment|/* Assume there&squot;s only one board possible... That seems true, since&n;&t;&t; * the Riebl/PAM board&squot;s address cannot be changed. */
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_for
@@ -1358,6 +1359,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

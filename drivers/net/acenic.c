@@ -13,13 +13,9 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-DECL|macro|ETHTOOL
-macro_line|#undef ETHTOOL
 DECL|macro|INDEX_DEBUG
 macro_line|#undef INDEX_DEBUG
-macro_line|#ifdef ETHTOOL
 macro_line|#include &lt;linux/ethtool.h&gt;
-macro_line|#endif
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -8786,7 +8782,6 @@ r_int
 id|cmd
 )paren
 (brace
-macro_line|#ifdef ETHTOOL
 r_struct
 id|ace_private
 op_star
@@ -8934,7 +8929,7 @@ c_cond
 (paren
 id|ecmd.cmd
 op_eq
-id|ETH_GSET
+id|ETHTOOL_GSET
 )paren
 (brace
 id|ecmd.supported
@@ -9061,6 +9056,7 @@ id|ecmd.autoneg
 op_assign
 id|AUTONEG_DISABLE
 suffix:semicolon
+macro_line|#if 0
 id|ecmd.trace
 op_assign
 id|readl
@@ -9088,6 +9084,7 @@ op_amp
 id|regs-&gt;TuneRxCoalTicks
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ecmd.maxtxpkt
 op_assign
 id|readl
@@ -9139,7 +9136,7 @@ c_cond
 (paren
 id|ecmd.cmd
 op_eq
-id|ETH_SSET
+id|ETHTOOL_SSET
 )paren
 (brace
 r_if
@@ -9406,7 +9403,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 op_minus
 id|EOPNOTSUPP

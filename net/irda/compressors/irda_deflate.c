@@ -2146,48 +2146,61 @@ id|compressor
 id|irda_deflate
 op_assign
 (brace
+id|compress_proto
+suffix:colon
 id|CI_DEFLATE
 comma
-multiline_comment|/* compress_proto */
+id|comp_alloc
+suffix:colon
 id|z_comp_alloc
 comma
-multiline_comment|/* comp_alloc */
+id|comp_free
+suffix:colon
 id|z_comp_free
 comma
-multiline_comment|/* comp_free */
+id|comp_init
+suffix:colon
 id|z_comp_init
 comma
-multiline_comment|/* comp_init */
+id|comp_reset
+suffix:colon
 id|z_comp_reset
 comma
-multiline_comment|/* comp_reset */
+id|compress
+suffix:colon
 id|z_compress
 comma
-multiline_comment|/* compress */
+id|comp_stat
+suffix:colon
 id|z_comp_stats
 comma
-multiline_comment|/* comp_stat */
+id|decomp_alloc
+suffix:colon
 id|z_decomp_alloc
 comma
-multiline_comment|/* decomp_alloc */
+id|decomp_free
+suffix:colon
 id|z_decomp_free
 comma
-multiline_comment|/* decomp_free */
+id|decomp_init
+suffix:colon
 id|z_decomp_init
 comma
-multiline_comment|/* decomp_init */
+id|decomp_reset
+suffix:colon
 id|z_decomp_reset
 comma
-multiline_comment|/* decomp_reset */
+id|decompress
+suffix:colon
 id|z_decompress
 comma
-multiline_comment|/* decompress */
+id|incomp
+suffix:colon
 id|z_incomp
 comma
-multiline_comment|/* incomp */
+id|decomp_stat
+suffix:colon
 id|z_comp_stats
-comma
-multiline_comment|/* decomp_stat */
 )brace
 suffix:semicolon
 DECL|variable|irda_deflate_draft
@@ -2197,48 +2210,61 @@ id|compressor
 id|irda_deflate_draft
 op_assign
 (brace
+id|compress_proto
+suffix:colon
 id|CI_DEFLATE_DRAFT
 comma
-multiline_comment|/* compress_proto */
+id|comp_alloc
+suffix:colon
 id|z_comp_alloc
 comma
-multiline_comment|/* comp_alloc */
+id|comp_free
+suffix:colon
 id|z_comp_free
 comma
-multiline_comment|/* comp_free */
+id|comp_init
+suffix:colon
 id|z_comp_init
 comma
-multiline_comment|/* comp_init */
+id|comp_reset
+suffix:colon
 id|z_comp_reset
 comma
-multiline_comment|/* comp_reset */
+id|compress
+suffix:colon
 id|z_compress
 comma
-multiline_comment|/* compress */
+id|comp_stat
+suffix:colon
 id|z_comp_stats
 comma
-multiline_comment|/* comp_stat */
+id|decomp_alloc
+suffix:colon
 id|z_decomp_alloc
 comma
-multiline_comment|/* decomp_alloc */
+id|decomp_free
+suffix:colon
 id|z_decomp_free
 comma
-multiline_comment|/* decomp_free */
+id|decomp_init
+suffix:colon
 id|z_decomp_init
 comma
-multiline_comment|/* decomp_init */
+id|decomp_reset
+suffix:colon
 id|z_decomp_reset
 comma
-multiline_comment|/* decomp_reset */
+id|decompress
+suffix:colon
 id|z_decompress
 comma
-multiline_comment|/* decompress */
+id|incomp
+suffix:colon
 id|z_incomp
 comma
-multiline_comment|/* incomp */
+id|decomp_stat
+suffix:colon
 id|z_comp_stats
-comma
-multiline_comment|/* decomp_stat */
 )brace
 suffix:semicolon
 DECL|function|irda_deflate_init

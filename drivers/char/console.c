@@ -10382,11 +10382,6 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-id|poke_blanked_console
-c_func
-(paren
-)paren
-suffix:semicolon
 id|quit
 suffix:colon
 id|clear_bit

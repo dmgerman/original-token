@@ -12,11 +12,13 @@ mdefine_line|#define DISCOVERY_DEFAULT_SLOTS  0
 DECL|macro|NICKNAME_MAX_LEN
 mdefine_line|#define NICKNAME_MAX_LEN 21
 multiline_comment|/*&n; * The DISCOVERY structure is used for both discovery requests and responses&n; */
+DECL|struct|discovery_t
 r_typedef
 r_struct
+id|discovery_t
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first! */
@@ -74,6 +76,12 @@ r_int
 id|timestamp
 suffix:semicolon
 multiline_comment|/* Time discovered */
+DECL|member|first_timestamp
+r_int
+r_int
+id|first_timestamp
+suffix:semicolon
+multiline_comment|/* First time discovered */
 DECL|typedef|discovery_t
 )brace
 id|discovery_t
@@ -117,6 +125,24 @@ id|saddr
 comma
 r_int
 id|force
+)paren
+suffix:semicolon
+r_struct
+id|irda_device_info
+op_star
+id|irlmp_copy_discoveries
+c_func
+(paren
+id|hashbin_t
+op_star
+id|log
+comma
+r_int
+op_star
+id|pn
+comma
+id|__u16
+id|mask
 )paren
 suffix:semicolon
 macro_line|#endif

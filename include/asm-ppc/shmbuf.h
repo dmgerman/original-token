@@ -12,16 +12,6 @@ id|ipc64_perm
 id|shm_perm
 suffix:semicolon
 multiline_comment|/* operation perms */
-DECL|member|__unused0
-r_int
-r_int
-id|__unused0
-suffix:semicolon
-DECL|member|shm_segsz
-r_int
-id|shm_segsz
-suffix:semicolon
-multiline_comment|/* size of segment (bytes) */
 DECL|member|__unused1
 r_int
 r_int
@@ -52,6 +42,16 @@ id|__kernel_time_t
 id|shm_ctime
 suffix:semicolon
 multiline_comment|/* last change time */
+DECL|member|__unused4
+r_int
+r_int
+id|__unused4
+suffix:semicolon
+DECL|member|shm_segsz
+r_int
+id|shm_segsz
+suffix:semicolon
+multiline_comment|/* size of segment (bytes) */
 DECL|member|shm_cpid
 id|__kernel_pid_t
 id|shm_cpid
@@ -68,15 +68,15 @@ r_int
 id|shm_nattch
 suffix:semicolon
 multiline_comment|/* no. of current attaches */
-DECL|member|__unused4
-r_int
-r_int
-id|__unused4
-suffix:semicolon
 DECL|member|__unused5
 r_int
 r_int
 id|__unused5
+suffix:semicolon
+DECL|member|__unused6
+r_int
+r_int
+id|__unused6
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -22,7 +22,7 @@ r_struct
 id|ircomm_tty_cb
 (brace
 DECL|member|queue
-id|queue_t
+id|irda_queue_t
 id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */

@@ -1,7 +1,9 @@
 macro_line|#ifndef _PPC_STAT_H
 DECL|macro|_PPC_STAT_H
 mdefine_line|#define _PPC_STAT_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|__old_kernel_stat
 r_struct
 id|__old_kernel_stat

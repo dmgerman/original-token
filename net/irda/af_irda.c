@@ -1,9 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.9&n; * Description:   IrDA sockets implementation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Sat Dec 25 21:10:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1999 Jean Tourrilhes &lt;jeant@rockfort.hpl.hp.com&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     Linux-IrDA now supports four different types of IrDA sockets:&n; *&n; *     o SOCK_STREAM:    TinyTP connections with SAR disabled. The&n; *                       max SDU size is 0 for conn. of this type&n; *     o SOCK_SEQPACKET: TinyTP connections with SAR enabled. TTP may &n; *                       fragment the messages, but will preserve&n; *                       the message boundaries&n; *     o SOCK_DGRAM:     IRDAPROTO_UNITDATA: TinyTP connections with Unitdata &n; *                       (unreliable) transfers&n; *                       IRDAPROTO_ULTRA: Connectionless and unreliable data&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.9&n; * Description:   IrDA sockets implementation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Sat Dec 25 21:10:23 1999&n; * Modified by:   Dag Brattli &lt;dag@brattli.net&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1999 Jean Tourrilhes &lt;jt@hpl.hp.com&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     Linux-IrDA now supports four different types of IrDA sockets:&n; *&n; *     o SOCK_STREAM:    TinyTP connections with SAR disabled. The&n; *                       max SDU size is 0 for conn. of this type&n; *     o SOCK_SEQPACKET: TinyTP connections with SAR enabled. TTP may &n; *                       fragment the messages, but will preserve&n; *                       the message boundaries&n; *     o SOCK_DGRAM:     IRDAPROTO_UNITDATA: TinyTP connections with Unitdata &n; *                       (unreliable) transfers&n; *                       IRDAPROTO_ULTRA: Connectionless and unreliable data&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/irda.h&gt;
@@ -92,24 +93,16 @@ suffix:semicolon
 DECL|macro|ULTRA_MAX_DATA
 mdefine_line|#define ULTRA_MAX_DATA 382
 macro_line|#endif /* CONFIG_IRDA_ULTRA */
-DECL|variable|cachelog
-r_static
-id|hashbin_t
-op_star
-id|cachelog
-op_assign
-l_int|NULL
-suffix:semicolon
-r_static
-id|DECLARE_WAIT_QUEUE_HEAD
-c_func
-(paren
-id|discovery_wait
-)paren
-suffix:semicolon
-multiline_comment|/* Wait for discovery */
 DECL|macro|IRDA_MAX_HEADER
 mdefine_line|#define IRDA_MAX_HEADER (TTP_MAX_HEADER)
+macro_line|#ifdef CONFIG_IRDA_DEBUG
+DECL|variable|irda_debug
+id|__u32
+id|irda_debug
+op_assign
+id|IRDA_DEBUG_LEVEL
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Function irda_data_indication (instance, sap, skb)&n; *&n; *    Received some data from TinyTP. Just queue it on the receive queue&n; *&n; */
 DECL|function|irda_data_indication
 r_static
@@ -221,7 +214,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irda_disconnect_indication (instance, sap, reason, skb)&n; *&n; *    Connection has been closed. Chech reason to find out why&n; *&n; */
+multiline_comment|/*&n; * Function irda_disconnect_indication (instance, sap, reason, skb)&n; *&n; *    Connection has been closed. Check reason to find out why&n; *&n; */
 DECL|function|irda_disconnect_indication
 r_static
 r_void
@@ -318,6 +311,18 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Close our TSAP.&n;&t; * If we leave it open, IrLMP put it back into the list of&n;&t; * unconnected LSAPs. The problem is that any incomming request&n;&t; * can then be matched to this socket (and it will be, because&n;&t; * it is at the head of the list). This would prevent any&n;&t; * listening socket waiting on the same TSAP to get those requests.&n;&t; * Some apps forget to close sockets, or hang to it a bit too long,&n;&t; * so we may stay in this dead state long enough to be noticed...&n;&t; * Note : all socket function do check sk-&gt;state, so we are safe...&n;&t; * Jean II&n;&t; */
+id|irttp_close_tsap
+c_func
+(paren
+id|self-&gt;tsap
+)paren
+suffix:semicolon
+id|self-&gt;tsap
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Note : once we are there, there is not much you want to do&n;&t; * with the socket anymore, apart from closing it.&n;&t; * For example, bind() and connect() won&squot;t reset sk-&gt;err,&n;&t; * sk-&gt;shutdown and sk-&gt;dead to valid values...&n;&t; * Jean II&n;&t; */
 )brace
 multiline_comment|/*&n; * Function irda_connect_confirm (instance, sap, qos, max_sdu_size, skb)&n; *&n; *    Connections has been confirmed by the remote device&n; *&n; */
 DECL|function|irda_connect_confirm
@@ -958,7 +963,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function irda_getvalue_confirm (obj_id, value, priv)&n; *&n; *    Got answer from remote LM-IAS&n; *&n; */
+multiline_comment|/*&n; * Function irda_getvalue_confirm (obj_id, value, priv)&n; *&n; *    Got answer from remote LM-IAS, just pass object to requester...&n; *&n; * Note : duplicate from above, but we need our own version that&n; * doesn&squot;t touch the dtsap_sel and save the full value structure...&n; */
 DECL|function|irda_getvalue_confirm
 r_static
 r_void
@@ -993,17 +998,6 @@ l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|priv
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
 )paren
 suffix:semicolon
 id|self
@@ -1043,10 +1037,6 @@ id|self-&gt;iriap
 op_assign
 l_int|NULL
 suffix:semicolon
-id|self-&gt;errno
-op_assign
-id|result
-suffix:semicolon
 multiline_comment|/* Check if request succeeded */
 r_if
 c_cond
@@ -1059,105 +1049,69 @@ id|IAS_SUCCESS
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;(), IAS query failed!&bslash;n&quot;
+l_string|&quot;(), IAS query failed! (%d)&bslash;n&quot;
+comma
+id|result
 )paren
 suffix:semicolon
+id|self-&gt;errno
+op_assign
+id|result
+suffix:semicolon
+multiline_comment|/* We really need it later */
 multiline_comment|/* Wake up any processes waiting for result */
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|self-&gt;ias_wait
+id|self-&gt;query_wait
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_switch
-c_cond
-(paren
-id|value-&gt;type
-)paren
-(brace
-r_case
-id|IAS_INTEGER
-suffix:colon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;() int=%d&bslash;n&quot;
-comma
-id|value-&gt;t.integer
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|value-&gt;t.integer
-op_ne
-op_minus
-l_int|1
-)paren
-(brace
-id|self-&gt;dtsap_sel
+multiline_comment|/* Pass the object to the caller (so the caller must delete it) */
+id|self-&gt;ias_result
 op_assign
-id|value-&gt;t.integer
-suffix:semicolon
-)brace
-r_else
-id|self-&gt;dtsap_sel
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), bad type!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|irias_delete_value
-c_func
-(paren
 id|value
-)paren
+suffix:semicolon
+id|self-&gt;errno
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Wake up any processes waiting for result */
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|self-&gt;ias_wait
+id|self-&gt;query_wait
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irda_discovery_indication (log)&n; *&n; *    Got a discovery log from IrLMP, wake ut any process waiting for answer&n; *&n; */
-DECL|function|irda_discovery_indication
+multiline_comment|/*&n; * Function irda_selective_discovery_indication (discovery)&n; *&n; *    Got a selective discovery indication from IrLMP.&n; *&n; * IrLMP is telling us that this node is matching our hint bit&n; * filter. Check if it&squot;s a newly discovered node (or if node changed its&n; * hint bits), and then wake up any process waiting for answer...&n; */
+DECL|function|irda_selective_discovery_indication
 r_static
 r_void
-id|irda_discovery_indication
+id|irda_selective_discovery_indication
 c_func
 (paren
-id|hashbin_t
+id|discovery_t
 op_star
-id|log
+id|discovery
+comma
+r_void
+op_star
+id|priv
 )paren
 (brace
+r_struct
+id|irda_sock
+op_star
+id|self
+suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
@@ -1167,16 +1121,132 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-id|cachelog
+id|self
 op_assign
-id|log
+(paren
+r_struct
+id|irda_sock
+op_star
+)paren
+id|priv
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), lost myself!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Check if node is discovered is a new one or an old one.&n;&t; * We check when how long ago this node was discovered, with a&n;&t; * coarse timeout (we may miss some discovery events or be delayed).&n;&t; * Note : by doing this test here, we avoid waking up a process ;-)&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|jiffies
+op_minus
+id|discovery-&gt;first_timestamp
+)paren
+OG
+(paren
+id|sysctl_discovery_timeout
+op_star
+id|HZ
+)paren
+)paren
+(brace
+r_return
+suffix:semicolon
+multiline_comment|/* Too old, not interesting -&gt; goodbye */
+)brace
+multiline_comment|/* Pass parameter to the caller */
+id|self-&gt;cachediscovery
+op_assign
+id|discovery
 suffix:semicolon
 multiline_comment|/* Wake up process if its waiting for device to be discovered */
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|discovery_wait
+id|self-&gt;query_wait
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function irda_discovery_timeout (priv)&n; *&n; *    Timeout in the selective discovery process&n; *&n; * We were waiting for a node to be discovered, but nothing has come up&n; * so far. Wake up the user and tell him that we failed...&n; */
+DECL|function|irda_discovery_timeout
+r_static
+r_void
+id|irda_discovery_timeout
+c_func
+(paren
+id|u_long
+id|priv
+)paren
+(brace
+r_struct
+id|irda_sock
+op_star
+id|self
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|self
+op_assign
+(paren
+r_struct
+id|irda_sock
+op_star
+)paren
+id|priv
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* Nothing for the caller */
+id|self-&gt;cachelog
+op_assign
+l_int|NULL
+suffix:semicolon
+id|self-&gt;cachediscovery
+op_assign
+l_int|NULL
+suffix:semicolon
+id|self-&gt;errno
+op_assign
+op_minus
+id|ETIME
+suffix:semicolon
+multiline_comment|/* Wake up process if its still waiting... */
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;query_wait
 )paren
 suffix:semicolon
 )brace
@@ -1415,7 +1485,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_IRDA_ULTRA */
-multiline_comment|/*&n; * Function irda_find_lsap_sel (self, name)&n; *&n; *    Try to lookup LSAP selector in remote LM-IAS&n; *&n; */
+multiline_comment|/*&n; * Function irda_find_lsap_sel (self, name)&n; *&n; *    Try to lookup LSAP selector in remote LM-IAS&n; *&n; * Basically, we start a IAP query, and then go to sleep. When the query&n; * return, irda_getvalue_confirm will wake us up, and we can examine the&n; * result of the query...&n; * Note that in some case, the query fail even before we go to sleep,&n; * creating some races...&n; */
 DECL|function|irda_find_lsap_sel
 r_static
 r_int
@@ -1488,6 +1558,12 @@ comma
 id|irda_getvalue_confirm
 )paren
 suffix:semicolon
+multiline_comment|/* Treat unexpected signals as disconnect */
+id|self-&gt;errno
+op_assign
+op_minus
+id|EHOSTUNREACH
+suffix:semicolon
 multiline_comment|/* Query remote LM-IAS */
 id|iriap_getvaluebyclass_request
 c_func
@@ -1503,12 +1579,129 @@ comma
 l_string|&quot;IrDA:TinyTP:LsapSel&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Wait for answer */
+multiline_comment|/* Wait for answer (if not already failed) */
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+op_ne
+l_int|NULL
+)paren
+(brace
 id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|self-&gt;ias_wait
+id|self-&gt;query_wait
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Check what happened */
+r_if
+c_cond
+(paren
+id|self-&gt;errno
+)paren
+(brace
+multiline_comment|/* Requested object/attribute doesn&squot;t exist */
+r_if
+c_cond
+(paren
+(paren
+id|self-&gt;errno
+op_eq
+id|IAS_CLASS_UNKNOWN
+)paren
+op_logical_or
+(paren
+id|self-&gt;errno
+op_eq
+id|IAS_ATTRIB_UNKNOWN
+)paren
+)paren
+(brace
+r_return
+(paren
+op_minus
+id|EADDRNOTAVAIL
+)paren
+suffix:semicolon
+)brace
+r_else
+r_return
+(paren
+op_minus
+id|EHOSTUNREACH
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Get the remote TSAP selector */
+r_switch
+c_cond
+(paren
+id|self-&gt;ias_result-&gt;type
+)paren
+(brace
+r_case
+id|IAS_INTEGER
+suffix:colon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;() int=%d&bslash;n&quot;
+comma
+id|self-&gt;ias_result-&gt;t.integer
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;ias_result-&gt;t.integer
+op_ne
+op_minus
+l_int|1
+)paren
+id|self-&gt;dtsap_sel
+op_assign
+id|self-&gt;ias_result-&gt;t.integer
+suffix:semicolon
+r_else
+id|self-&gt;dtsap_sel
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|self-&gt;dtsap_sel
+op_assign
+l_int|0
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), bad type!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|self-&gt;ias_result
+)paren
+id|irias_delete_value
+c_func
+(paren
+id|self-&gt;ias_result
 )paren
 suffix:semicolon
 r_if
@@ -1521,9 +1714,8 @@ l_int|0
 suffix:semicolon
 r_return
 op_minus
-id|ENETUNREACH
+id|EADDRNOTAVAIL
 suffix:semicolon
-multiline_comment|/* May not be true */
 )brace
 multiline_comment|/*&n; * Function irda_discover_daddr_and_lsap_sel (self, name)&n; *&n; *    This try to find a device with the requested service.&n; *&n; * It basically look into the discovery log. For each address in the list,&n; * it queries the LM-IAS of the device to find if this device offer&n; * the requested service.&n; * If there is more than one node supporting the service, we complain&n; * to the user (it should move devices around).&n; * The, we set both the destination address and the lsap selector to point&n; * on the service on the unique device we have found.&n; *&n; * Note : this function fails if there is more than one device in range,&n; * because IrLMP doesn&squot;t disconnect the LAP when the last LSAP is closed.&n; * Moreover, we would need to wait the LAP disconnection...&n; */
 DECL|function|irda_discover_daddr_and_lsap_sel
@@ -1542,9 +1734,18 @@ op_star
 id|name
 )paren
 (brace
-id|discovery_t
+r_struct
+id|irda_device_info
 op_star
-id|discovery
+id|discoveries
+suffix:semicolon
+multiline_comment|/* Copy of the discovery log */
+r_int
+id|number
+suffix:semicolon
+multiline_comment|/* Number of nodes in the log */
+r_int
+id|i
 suffix:semicolon
 r_int
 id|err
@@ -1555,7 +1756,7 @@ suffix:semicolon
 id|__u32
 id|daddr
 op_assign
-l_int|0x0
+id|DEV_ADDR_ANY
 suffix:semicolon
 multiline_comment|/* Address we found the service on */
 id|__u8
@@ -1588,73 +1789,56 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Tell IrLMP we want to be notified */
-id|irlmp_update_client
+multiline_comment|/* Ask lmp for the current discovery log&n;&t; * Note : we have to use irlmp_get_discoveries(), as opposed&n;&t; * to play with the cachelog directly, because while we are&n;&t; * making our ias query, le log might change... */
+id|discoveries
+op_assign
+id|irlmp_get_discoveries
 c_func
 (paren
-id|self-&gt;ckey
+op_amp
+id|number
 comma
 id|self-&gt;mask
-comma
-l_int|NULL
-comma
-id|irda_discovery_indication
-)paren
-suffix:semicolon
-multiline_comment|/* Do some discovery */
-id|irlmp_discovery_request
-c_func
-(paren
-id|self-&gt;nslots
 )paren
 suffix:semicolon
 multiline_comment|/* Check if the we got some results */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|cachelog
-)paren
-multiline_comment|/* Wait for answer */
-multiline_comment|/*interruptible_sleep_on(&amp;self-&gt;discovery_wait);*/
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-multiline_comment|/* &n;&t; * Now, check all discovered devices (if any), and connect&n;&t; * client only about the services that the client is&n;&t; * interested in...&n;&t; */
-id|discovery
-op_assign
-(paren
-id|discovery_t
-op_star
-)paren
-id|hashbin_get_first
-c_func
-(paren
-id|cachelog
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|discovery
-op_ne
+id|discoveries
+op_eq
 l_int|NULL
 )paren
-(brace
-multiline_comment|/* Mask out the ones we don&squot;t want */
-r_if
-c_cond
+r_return
+op_minus
+id|ENETUNREACH
+suffix:semicolon
+multiline_comment|/* No nodes discovered */
+multiline_comment|/* &n;&t; * Now, check all discovered devices (if any), and connect&n;&t; * client only about the services that the client is&n;&t; * interested in...&n;&t; */
+r_for
+c_loop
 (paren
-id|discovery-&gt;hints.word
-op_amp
-id|self-&gt;mask
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|number
+suffix:semicolon
+id|i
+op_increment
 )paren
 (brace
-multiline_comment|/* Try this address */
+multiline_comment|/* Try the address in the log */
 id|self-&gt;daddr
 op_assign
-id|discovery-&gt;daddr
+id|discoveries
+(braket
+id|i
+)braket
+dot
+id|daddr
 suffix:semicolon
 id|self-&gt;saddr
 op_assign
@@ -1682,27 +1866,28 @@ comma
 id|name
 )paren
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|err
-op_eq
-l_int|0
 )paren
 (brace
+r_case
+l_int|0
+suffix:colon
 multiline_comment|/* We found the requested service */
 r_if
 c_cond
 (paren
 id|daddr
 op_ne
-l_int|0x0
+id|DEV_ADDR_ANY
 )paren
 (brace
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), discovered service &squot;&squot;%s&squot;&squot; in two different devices !!!&bslash;n&quot;
@@ -1710,12 +1895,22 @@ comma
 id|name
 )paren
 suffix:semicolon
+id|self-&gt;daddr
+op_assign
+id|DEV_ADDR_ANY
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|discoveries
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOTUNIQ
 suffix:semicolon
 )brace
-multiline_comment|/* First time we foun that one, save it ! */
+multiline_comment|/* First time we found that one, save it ! */
 id|daddr
 op_assign
 id|self-&gt;daddr
@@ -1724,25 +1919,51 @@ id|dtsap_sel
 op_assign
 id|self-&gt;dtsap_sel
 suffix:semicolon
-)brace
-)brace
-multiline_comment|/* Next node, maybe we will be more lucky...  */
-id|discovery
-op_assign
-(paren
-id|discovery_t
-op_star
-)paren
-id|hashbin_get_next
+r_break
+suffix:semicolon
+r_case
+op_minus
+id|EADDRNOTAVAIL
+suffix:colon
+multiline_comment|/* Requested service simply doesn&squot;t exist on this node */
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* Something bad did happen :-( */
+id|IRDA_DEBUG
 c_func
 (paren
-id|cachelog
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), unexpected IAS query failure&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-id|cachelog
+id|self-&gt;daddr
 op_assign
-l_int|NULL
+id|DEV_ADDR_ANY
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|discoveries
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EHOSTUNREACH
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Cleanup our copy of the discovery log */
+id|kfree
+c_func
+(paren
+id|discoveries
+)paren
 suffix:semicolon
 multiline_comment|/* Check out what we found */
 r_if
@@ -1750,13 +1971,13 @@ c_cond
 (paren
 id|daddr
 op_eq
-l_int|0x0
+id|DEV_ADDR_ANY
 )paren
 (brace
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), cannot discover service &squot;&squot;%s&squot;&squot; in any device !!!&bslash;n&quot;
@@ -1766,12 +1987,11 @@ id|name
 suffix:semicolon
 id|self-&gt;daddr
 op_assign
-l_int|0
+id|DEV_ADDR_ANY
 suffix:semicolon
-multiline_comment|/* Guessing */
 r_return
 op_minus
-id|ENETUNREACH
+id|EADDRNOTAVAIL
 suffix:semicolon
 )brace
 multiline_comment|/* Revert back to discovered device &amp; service */
@@ -1790,7 +2010,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), discovered requested service &squot;&squot;%s&squot;&squot; at address %08x&bslash;n&quot;
@@ -1840,6 +2060,13 @@ id|sk
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
+r_struct
+id|irda_sock
+op_star
+id|self
+op_assign
+id|sk-&gt;protinfo.irda
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1863,11 +2090,11 @@ id|AF_IRDA
 suffix:semicolon
 id|saddr.sir_lsap_sel
 op_assign
-id|sk-&gt;protinfo.irda-&gt;dtsap_sel
+id|self-&gt;dtsap_sel
 suffix:semicolon
 id|saddr.sir_addr
 op_assign
-id|sk-&gt;protinfo.irda-&gt;daddr
+id|self-&gt;daddr
 suffix:semicolon
 )brace
 r_else
@@ -1878,11 +2105,11 @@ id|AF_IRDA
 suffix:semicolon
 id|saddr.sir_lsap_sel
 op_assign
-id|sk-&gt;protinfo.irda-&gt;stsap_sel
+id|self-&gt;stsap_sel
 suffix:semicolon
 id|saddr.sir_addr
 op_assign
-id|sk-&gt;protinfo.irda-&gt;saddr
+id|self-&gt;saddr
 suffix:semicolon
 )brace
 id|IRDA_DEBUG
@@ -1907,18 +2134,7 @@ comma
 id|saddr.sir_addr
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|uaddr_len
-OG
-r_sizeof
-(paren
-r_struct
-id|sockaddr_irda
-)paren
-)paren
+multiline_comment|/* uaddr_len come to us uninitialised */
 op_star
 id|uaddr_len
 op_assign
@@ -2251,6 +2467,8 @@ comma
 l_string|&quot;IrDA:TinyTP:LsapSel&quot;
 comma
 id|self-&gt;stsap_sel
+comma
+id|IAS_KERNEL_ATTR
 )paren
 suffix:semicolon
 id|irias_insert_object
@@ -2702,7 +2920,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irda_connect (sock, uaddr, addr_len, flags)&n; *&n; *    Connect to a IrDA device&n; *&n; */
+multiline_comment|/*&n; * Function irda_connect (sock, uaddr, addr_len, flags)&n; *&n; *    Connect to a IrDA device&n; *&n; * The main difference with a &quot;standard&quot; connect is that with IrDA we need&n; * to resolve the service name into a TSAP selector (in TCP, port number&n; * doesn&squot;t have to be resolved).&n; * Because of this service name resoltion, we can offer &quot;auto-connect&quot;,&n; * where we connect to a service without specifying a destination address.&n; *&n; * Note : by consulting &quot;errno&quot;, the user space caller may learn the cause&n; * of the failure. Most of them are visible in the function, others may come&n; * from subroutines called and are listed here :&n; *&t;o EBUSY : already processing a connect&n; *&t;o EHOSTUNREACH : bad addr-&gt;sir_addr argument&n; *&t;o EADDRNOTAVAIL : bad addr-&gt;sir_name argument&n; *&t;o ENOTUNIQ : more than one node has addr-&gt;sir_name (auto-connect)&n; *&t;o ENETUNREACH : no node found on the network (auto-connect)&n; */
 DECL|function|irda_connect
 r_static
 r_int
@@ -2867,8 +3085,16 @@ multiline_comment|/* Check if user supplied any destination device address */
 r_if
 c_cond
 (paren
+(paren
 op_logical_neg
 id|addr-&gt;sir_addr
+)paren
+op_logical_or
+(paren
+id|addr-&gt;sir_addr
+op_eq
+id|DEV_ADDR_ANY
+)paren
 )paren
 (brace
 multiline_comment|/* Try to find one suitable */
@@ -2898,8 +3124,7 @@ l_string|&quot;(), auto-connect failed!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EINVAL
+id|err
 suffix:semicolon
 )brace
 )brace
@@ -3113,6 +3338,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* At this point, IrLMP has assigned our source address */
+id|self-&gt;saddr
+op_assign
+id|irttp_get_saddr
+c_func
+(paren
+id|self-&gt;tsap
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3247,7 +3481,7 @@ id|init_waitqueue_head
 c_func
 (paren
 op_amp
-id|self-&gt;ias_wait
+id|self-&gt;query_wait
 )paren
 suffix:semicolon
 id|self-&gt;sk
@@ -3374,6 +3608,8 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|self-&gt;mask
@@ -3394,11 +3630,13 @@ id|self-&gt;daddr
 op_assign
 id|DEV_ADDR_ANY
 suffix:semicolon
-multiline_comment|/* Notify that we are using the irda module, so nobody removes it */
-id|irda_mod_inc_use_count
-c_func
-(paren
-)paren
+multiline_comment|/* Until we get connected */
+id|self-&gt;saddr
+op_assign
+l_int|0x0
+suffix:semicolon
+multiline_comment|/* so IrLMP assign us any link */
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3455,23 +3693,35 @@ c_cond
 (paren
 id|self-&gt;ias_obj
 )paren
+(brace
 id|irias_delete_object
 c_func
 (paren
 id|self-&gt;ias_obj
 )paren
 suffix:semicolon
+id|self-&gt;ias_obj
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|self-&gt;iriap
 )paren
+(brace
 id|iriap_close
 c_func
 (paren
 id|self-&gt;iriap
 )paren
 suffix:semicolon
+id|self-&gt;iriap
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3524,11 +3774,7 @@ c_func
 id|self
 )paren
 suffix:semicolon
-multiline_comment|/* Notify that we are not using the irda module anymore */
-id|irda_mod_dec_use_count
-c_func
-(paren
-)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3673,13 +3919,18 @@ comma
 id|len
 )paren
 suffix:semicolon
+multiline_comment|/* Note : socket.c set MSG_EOR on SEQPACKET sockets */
 r_if
 c_cond
 (paren
 id|msg-&gt;msg_flags
 op_amp
 op_complement
+(paren
 id|MSG_DONTWAIT
+op_or
+id|MSG_EOR
+)paren
 )paren
 r_return
 op_minus
@@ -5156,12 +5407,18 @@ c_cond
 (paren
 id|self-&gt;iriap
 )paren
+(brace
 id|iriap_close
 c_func
 (paren
 id|self-&gt;iriap
 )paren
 suffix:semicolon
+id|self-&gt;iriap
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5189,6 +5446,24 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* A few cleanup so the socket look as good as new... */
+id|self-&gt;rx_flow
+op_assign
+id|self-&gt;tx_flow
+op_assign
+id|FLOW_START
+suffix:semicolon
+multiline_comment|/* needed ??? */
+id|self-&gt;daddr
+op_assign
+id|DEV_ADDR_ANY
+suffix:semicolon
+multiline_comment|/* Until we get re-connected */
+id|self-&gt;saddr
+op_assign
+l_int|0x0
+suffix:semicolon
+multiline_comment|/* so IrLMP assign us any link */
 r_return
 l_int|0
 suffix:semicolon
@@ -5669,6 +5944,12 @@ id|ias_object
 op_star
 id|ias_obj
 suffix:semicolon
+r_struct
+id|ias_attrib
+op_star
+id|ias_attr
+suffix:semicolon
+multiline_comment|/* Attribute in IAS object */
 r_int
 id|opt
 suffix:semicolon
@@ -5709,6 +5990,7 @@ id|optname
 r_case
 id|IRLMP_IAS_SET
 suffix:colon
+multiline_comment|/* The user want to add an attribute to an existing IAS object&n;&t;&t; * (in the IAS database) or to create a new object with this&n;&t;&t; * attribute.&n;&t;&t; * We first query IAS to know if the object exist, and then&n;&t;&t; * create the right attribute...&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5818,6 +6100,8 @@ comma
 id|ias_opt.irda_attrib_name
 comma
 id|ias_opt.attribute.irda_attrib_int
+comma
+id|IAS_USER_ATTR
 )paren
 suffix:semicolon
 r_break
@@ -5850,6 +6134,8 @@ comma
 id|ias_opt.attribute.irda_attrib_octet_seq.octet_seq
 comma
 id|ias_opt.attribute.irda_attrib_octet_seq.len
+comma
+id|IAS_USER_ATTR
 )paren
 suffix:semicolon
 r_break
@@ -5889,6 +6175,8 @@ comma
 id|ias_opt.irda_attrib_name
 comma
 id|ias_opt.attribute.irda_attrib_string.string
+comma
+id|IAS_USER_ATTR
 )paren
 suffix:semicolon
 r_break
@@ -5908,18 +6196,137 @@ id|ias_obj
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|IRLMP_IAS_DEL
+suffix:colon
+multiline_comment|/* The user want to delete an object from our local IAS&n;&t;&t; * database. We just need to query the IAS, check is the&n;&t;&t; * object is not owned by the kernel and delete it.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|optlen
+op_ne
+r_sizeof
+(paren
+r_struct
+id|irda_ias_set
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* Copy query to the driver. */
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+op_amp
+id|ias_opt
+comma
+(paren
+r_char
+op_star
+)paren
+id|optval
+comma
+id|optlen
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+multiline_comment|/* Find the object we target */
+id|ias_obj
+op_assign
+id|irias_find_object
+c_func
+(paren
+id|ias_opt.irda_class_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ias_obj
+op_eq
+(paren
+r_struct
+id|ias_object
+op_star
+)paren
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+multiline_comment|/* Find the attribute (in the object) we target */
+id|ias_attr
+op_assign
+id|irias_find_attrib
+c_func
+(paren
+id|ias_obj
+comma
+id|ias_opt.irda_attrib_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ias_attr
+op_eq
+(paren
+r_struct
+id|ias_attrib
+op_star
+)paren
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+multiline_comment|/* Check is the user space own the object */
+r_if
+c_cond
+(paren
+id|ias_attr-&gt;value-&gt;owner
+op_ne
+id|IAS_USER_ATTR
+)paren
+(brace
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;(), sorry not impl. yet!&bslash;n&quot;
+l_string|&quot;(), attempting to delete a kernel attribute&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 op_minus
-id|ENOPROTOOPT
+id|EPERM
+suffix:semicolon
+)brace
+multiline_comment|/* Remove the attribute (and maybe the object) */
+id|irias_delete_attrib
+c_func
+(paren
+id|ias_obj
+comma
+id|ias_attr
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|IRLMP_MAX_SDU_SIZE
@@ -6060,6 +6467,71 @@ id|opt
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|IRLMP_HINT_MASK_SET
+suffix:colon
+multiline_comment|/* As opposed to the previous case which set the hint bits&n;&t;&t; * that we advertise, this one set the filter we use when&n;&t;&t; * making a discovery (nodes which don&squot;t match any hint&n;&t;&t; * bit in the mask are not reported).&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|optlen
+OL
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|get_user
+c_func
+(paren
+id|opt
+comma
+(paren
+r_int
+op_star
+)paren
+id|optval
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+multiline_comment|/* Set the new hint mask */
+id|self-&gt;mask
+op_assign
+(paren
+id|__u16
+)paren
+id|opt
+suffix:semicolon
+multiline_comment|/* Mask out extension bits */
+id|self-&gt;mask
+op_and_assign
+l_int|0x7f7f
+suffix:semicolon
+multiline_comment|/* Check if no bits */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;mask
+)paren
+(brace
+id|self-&gt;mask
+op_assign
+l_int|0xFFFF
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -6069,173 +6541,6 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function irda_simple_getvalue_confirm (obj_id, value, priv)&n; *&n; *    Got answer from remote LM-IAS, just copy object to requester...&n; *&n; * Note : duplicate from above, but we need our own version that&n; * doesn&squot;t touch the dtsap_sel and save the full value structure...&n; */
-DECL|function|irda_simple_getvalue_confirm
-r_static
-r_void
-id|irda_simple_getvalue_confirm
-c_func
-(paren
-r_int
-id|result
-comma
-id|__u16
-id|obj_id
-comma
-r_struct
-id|ias_value
-op_star
-id|value
-comma
-r_void
-op_star
-id|priv
-)paren
-(brace
-r_struct
-id|irda_sock
-op_star
-id|self
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|priv
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|self
-op_assign
-(paren
-r_struct
-id|irda_sock
-op_star
-)paren
-id|priv
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self
-)paren
-(brace
-id|WARNING
-c_func
-(paren
-id|__FUNCTION__
-l_string|&quot;(), lost myself!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* We probably don&squot;t need to make any more queries */
-id|iriap_close
-c_func
-(paren
-id|self-&gt;iriap
-)paren
-suffix:semicolon
-id|self-&gt;iriap
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Check if request succeeded */
-r_if
-c_cond
-(paren
-id|result
-op_ne
-id|IAS_SUCCESS
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), IAS query failed!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self-&gt;errno
-op_assign
-op_minus
-id|EHOSTUNREACH
-suffix:semicolon
-multiline_comment|/* Wake up any processes waiting for result */
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|self-&gt;ias_wait
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Clone the object (so the requester can free it) */
-id|self-&gt;ias_result
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|ias_value
-)paren
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|self-&gt;ias_result
-comma
-id|value
-comma
-r_sizeof
-(paren
-r_struct
-id|ias_value
-)paren
-)paren
-suffix:semicolon
-id|irias_delete_value
-c_func
-(paren
-id|value
-)paren
-suffix:semicolon
-id|self-&gt;errno
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Wake up any processes waiting for result */
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|self-&gt;ias_wait
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irda_extract_ias_value(ias_opt, ias_value)&n; *&n; *    Translate internal IAS value structure to the user space representation&n; *&n; * The external representation of IAS values, as we exchange them with&n; * user space program is quite different from the internal representation,&n; * as stored in the IAS database (because we need a flat structure for&n; * crossing kernel boundary).&n; * This function transform the former in the latter. We also check&n; * that the value type is valid.&n; */
@@ -6327,6 +6632,9 @@ l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|IAS_MISSING
+suffix:colon
 r_default
 suffix:colon
 r_return
@@ -6389,11 +6697,7 @@ suffix:semicolon
 r_struct
 id|irda_device_info
 op_star
-id|info
-suffix:semicolon
-id|discovery_t
-op_star
-id|discovery
+id|discoveries
 suffix:semicolon
 r_struct
 id|irda_ias_set
@@ -6412,6 +6716,12 @@ op_star
 id|ias_attr
 suffix:semicolon
 multiline_comment|/* Attribute in IAS object */
+r_int
+id|daddr
+op_assign
+id|DEV_ADDR_ANY
+suffix:semicolon
+multiline_comment|/* Dest address for IAS queries */
 r_int
 id|val
 op_assign
@@ -6469,226 +6779,34 @@ id|optname
 r_case
 id|IRLMP_ENUMDEVICES
 suffix:colon
-multiline_comment|/* Tell IrLMP we want to be notified */
-id|irlmp_update_client
+multiline_comment|/* Ask lmp for the current discovery log */
+id|discoveries
+op_assign
+id|irlmp_get_discoveries
 c_func
 (paren
-id|self-&gt;ckey
+op_amp
+id|list.len
 comma
 id|self-&gt;mask
-comma
-l_int|NULL
-comma
-id|irda_discovery_indication
-)paren
-suffix:semicolon
-multiline_comment|/* Do some discovery */
-id|irlmp_discovery_request
-c_func
-(paren
-id|self-&gt;nslots
 )paren
 suffix:semicolon
 multiline_comment|/* Check if the we got some results */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|cachelog
+id|discoveries
+op_eq
+l_int|NULL
 )paren
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|info
-op_assign
-op_amp
-id|list.dev
-(braket
-l_int|0
-)braket
-suffix:semicolon
-multiline_comment|/* Offset to first device entry */
-id|offset
-op_assign
-r_sizeof
-(paren
-r_struct
-id|irda_device_list
-)paren
-op_minus
-r_sizeof
-(paren
-r_struct
-id|irda_device_info
-)paren
-suffix:semicolon
-id|total
-op_assign
-id|offset
-suffix:semicolon
-multiline_comment|/* Initialized to size of the device list */
-id|list.len
+multiline_comment|/* Didn&squot;t find any devices */
+id|err
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Initialize lenght of list */
-multiline_comment|/* &n;&t;&t; * Now, check all discovered devices (if any), and notify&n;&t;&t; * client only about the services that the client is&n;&t;&t; * interested in &n;&t;&t; */
-id|discovery
-op_assign
-(paren
-id|discovery_t
-op_star
-)paren
-id|hashbin_get_first
-c_func
-(paren
-id|cachelog
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|discovery
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* Mask out the ones we don&squot;t want */
-r_if
-c_cond
-(paren
-id|discovery-&gt;hints.word
-op_amp
-id|self-&gt;mask
-)paren
-(brace
-multiline_comment|/* Check if room for this device entry */
-r_if
-c_cond
-(paren
-id|len
-op_minus
-id|total
-OL
-r_sizeof
-(paren
-r_struct
-id|irda_device_info
-)paren
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/* Copy discovery information */
-id|info-&gt;saddr
-op_assign
-id|discovery-&gt;saddr
-suffix:semicolon
-id|info-&gt;daddr
-op_assign
-id|discovery-&gt;daddr
-suffix:semicolon
-id|info-&gt;charset
-op_assign
-id|discovery-&gt;charset
-suffix:semicolon
-id|info-&gt;hints
-(braket
-l_int|0
-)braket
-op_assign
-id|discovery-&gt;hints.byte
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|info-&gt;hints
-(braket
-l_int|1
-)braket
-op_assign
-id|discovery-&gt;hints.byte
-(braket
-l_int|1
-)braket
-suffix:semicolon
-id|strncpy
-c_func
-(paren
-id|info-&gt;info
-comma
-id|discovery-&gt;nickname
-comma
-id|NICKNAME_MAX_LEN
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|copy_to_user
-c_func
-(paren
-id|optval
-op_plus
-id|total
-comma
-id|info
-comma
-r_sizeof
-(paren
-r_struct
-id|irda_device_info
-)paren
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-id|list.len
-op_increment
-suffix:semicolon
-id|total
-op_add_assign
-r_sizeof
-(paren
-r_struct
-id|irda_device_info
-)paren
-suffix:semicolon
-)brace
-id|discovery
-op_assign
-(paren
-id|discovery_t
-op_star
-)paren
-id|hashbin_get_next
-c_func
-(paren
-id|cachelog
-)paren
-suffix:semicolon
-)brace
-id|cachelog
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Write total number of bytes used back to client */
-r_if
-c_cond
-(paren
-id|put_user
-c_func
-(paren
-id|total
-comma
-id|optlen
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 multiline_comment|/* Write total list length back to client */
 r_if
@@ -6715,9 +6833,105 @@ id|irda_device_info
 )paren
 )paren
 )paren
-r_return
+id|err
+op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+multiline_comment|/* Offset to first device entry */
+id|offset
+op_assign
+r_sizeof
+(paren
+r_struct
+id|irda_device_list
+)paren
+op_minus
+r_sizeof
+(paren
+r_struct
+id|irda_device_info
+)paren
+suffix:semicolon
+multiline_comment|/* Copy the list itself */
+id|total
+op_assign
+id|offset
+op_plus
+(paren
+id|list.len
+op_star
+r_sizeof
+(paren
+r_struct
+id|irda_device_info
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|total
+OG
+id|len
+)paren
+id|total
+op_assign
+id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|optval
+op_plus
+id|offset
+comma
+id|discoveries
+comma
+id|total
+op_minus
+id|offset
+)paren
+)paren
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+multiline_comment|/* Write total number of bytes used back to client */
+r_if
+c_cond
+(paren
+id|put_user
+c_func
+(paren
+id|total
+comma
+id|optlen
+)paren
+)paren
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+multiline_comment|/* Free up our buffer */
+id|kfree
+c_func
+(paren
+id|discoveries
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -6973,6 +7187,49 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+multiline_comment|/* At this point, there are two cases...&n;&t;&t; * 1) the socket is connected - that&squot;s the easy case, we&n;&t;&t; *&t;just query the device we are connected to...&n;&t;&t; * 2) the socket is not connected - the user doesn&squot;t want&n;&t;&t; *&t;to connect and/or may not have a valid service name&n;&t;&t; *&t;(so can&squot;t create a fake connection). In this case,&n;&t;&t; *&t;we assume that the user pass us a valid destination&n;&t;&t; *&t;address in the requesting structure...&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|self-&gt;daddr
+op_ne
+id|DEV_ADDR_ANY
+)paren
+(brace
+multiline_comment|/* We are connected - reuse known daddr */
+id|daddr
+op_assign
+id|self-&gt;daddr
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* We are not connected, we must specify a valid&n;&t;&t;&t; * destination address */
+id|daddr
+op_assign
+id|ias_opt.daddr
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|daddr
+)paren
+op_logical_or
+(paren
+id|daddr
+op_eq
+id|DEV_ADDR_ANY
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Check that we can proceed with IAP */
 r_if
 c_cond
@@ -7003,7 +7260,7 @@ id|IAS_CLIENT
 comma
 id|self
 comma
-id|irda_simple_getvalue_confirm
+id|irda_getvalue_confirm
 )paren
 suffix:semicolon
 multiline_comment|/* Treat unexpected signals as disconnect */
@@ -7020,32 +7277,69 @@ id|self-&gt;iriap
 comma
 id|self-&gt;saddr
 comma
-id|self-&gt;daddr
+id|daddr
 comma
 id|ias_opt.irda_class_name
 comma
 id|ias_opt.irda_attrib_name
 )paren
 suffix:semicolon
-multiline_comment|/* Wait for answer */
+multiline_comment|/* Wait for answer (if not already failed) */
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+op_ne
+l_int|NULL
+)paren
+(brace
 id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|self-&gt;ias_wait
+id|self-&gt;query_wait
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Check what happened */
 r_if
 c_cond
 (paren
 id|self-&gt;errno
 )paren
-r_return
+(brace
+multiline_comment|/* Requested object/attribute doesn&squot;t exist */
+r_if
+c_cond
+(paren
 (paren
 id|self-&gt;errno
+op_eq
+id|IAS_CLASS_UNKNOWN
+)paren
+op_logical_or
+(paren
+id|self-&gt;errno
+op_eq
+id|IAS_ATTRIB_UNKNOWN
+)paren
+)paren
+(brace
+r_return
+(paren
+op_minus
+id|EADDRNOTAVAIL
 )paren
 suffix:semicolon
+)brace
+r_else
+r_return
+(paren
+op_minus
+id|EHOSTUNREACH
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Translate from internal to user structure */
 id|err
 op_assign
@@ -7063,7 +7357,7 @@ c_cond
 (paren
 id|self-&gt;ias_result
 )paren
-id|kfree
+id|irias_delete_value
 c_func
 (paren
 id|self-&gt;ias_result
@@ -7108,6 +7402,209 @@ op_minus
 id|EFAULT
 suffix:semicolon
 multiline_comment|/* Note : don&squot;t need to put optlen, we checked it */
+r_break
+suffix:semicolon
+r_case
+id|IRLMP_WAITDEVICE
+suffix:colon
+multiline_comment|/* This function is just another way of seeing life ;-)&n;&t;&t; * IRLMP_ENUMDEVICES assumes that you have a static network,&n;&t;&t; * and that you just want to pick one of the devices present.&n;&t;&t; * On the other hand, in here we assume that no device is&n;&t;&t; * present and that at some point in the future a device will&n;&t;&t; * come into range. When this device arrive, we just wake&n;&t;&t; * up the caller, so that he has time to connect to it before&n;&t;&t; * the device goes away...&n;&t;&t; * Note : once the node has been discovered for more than a&n;&t;&t; * few second, it won&squot;t trigger this function, unless it&n;&t;&t; * goes away and come back changes its hint bits (so we&n;&t;&t; * might call it IRLMP_WAITNEWDEVICE).&n;&t;&t; */
+multiline_comment|/* Check that the user is passing us an int */
+r_if
+c_cond
+(paren
+id|len
+op_ne
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* Get timeout in ms (max time we block the caller) */
+r_if
+c_cond
+(paren
+id|get_user
+c_func
+(paren
+id|val
+comma
+(paren
+r_int
+op_star
+)paren
+id|optval
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+multiline_comment|/* Tell IrLMP we want to be notified */
+id|irlmp_update_client
+c_func
+(paren
+id|self-&gt;ckey
+comma
+id|self-&gt;mask
+comma
+id|irda_selective_discovery_indication
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+id|self
+)paren
+suffix:semicolon
+multiline_comment|/* Do some discovery (and also return cached results) */
+id|irlmp_discovery_request
+c_func
+(paren
+id|self-&gt;nslots
+)paren
+suffix:semicolon
+multiline_comment|/* Wait until a node is discovered */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;cachediscovery
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), nothing discovered yet, going to sleep...&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Set watchdog timer to expire in &lt;val&gt; ms. */
+id|self-&gt;watchdog.function
+op_assign
+id|irda_discovery_timeout
+suffix:semicolon
+id|self-&gt;watchdog.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|self
+suffix:semicolon
+id|self-&gt;watchdog.expires
+op_assign
+id|jiffies
+op_plus
+(paren
+id|val
+op_star
+id|HZ
+op_div
+l_int|1000
+)paren
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+(paren
+id|self-&gt;watchdog
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Wait for IR-LMP to call us back */
+id|interruptible_sleep_on
+c_func
+(paren
+op_amp
+id|self-&gt;query_wait
+)paren
+suffix:semicolon
+multiline_comment|/* If watchdog is still activated, kill it! */
+r_if
+c_cond
+(paren
+id|timer_pending
+c_func
+(paren
+op_amp
+(paren
+id|self-&gt;watchdog
+)paren
+)paren
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+(paren
+id|self-&gt;watchdog
+)paren
+)paren
+suffix:semicolon
+)brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), ...waking up !&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), found immediately !&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Tell IrLMP that we have been notified */
+id|irlmp_update_client
+c_func
+(paren
+id|self-&gt;ckey
+comma
+id|self-&gt;mask
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* Check if the we got some results */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;cachediscovery
+)paren
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+multiline_comment|/* Didn&squot;t find any devices */
+multiline_comment|/* Cleanup */
+id|self-&gt;cachediscovery
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Note : We don&squot;t return anything to the user.&n;&t;&t; * We could return the device that triggered the wake up,&n;&t;&t; * but it&squot;s probably better to force the user to query&n;&t;&t; * the whole discovery log and let him pick one device...&n;&t;&t; */
 r_break
 suffix:semicolon
 r_default
@@ -7593,9 +8090,38 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Function irda_proc_modcount (inode, fill)&n; *&n; *    Use by the proc file system functions to prevent the irda module&n; *    being removed while the use is standing in the net/irda directory&n; */
+DECL|function|irda_proc_modcount
+r_void
+id|irda_proc_modcount
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|fill
+)paren
+(brace
+macro_line|#ifdef MODULE
+macro_line|#ifdef CONFIG_PROC_FS
+r_if
+c_cond
+(paren
+id|fill
+)paren
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_else
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
+macro_line|#endif /* MODULE */
+)brace
 multiline_comment|/*&n; * Function irda_proto_init (pro)&n; *&n; *    Initialize IrDA protocol layer&n; *&n; */
 DECL|function|irda_proto_init
-r_static
 r_int
 id|__init
 id|irda_proto_init
@@ -7638,17 +8164,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|irda_device_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Called by init/main.c when non-modular */
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|irda_proto_init
-id|module_init
-c_func
-(paren
-id|irda_proto_init
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Function irda_proto_cleanup (void)&n; *&n; *    Remove IrDA protocol layer&n; *&n; */
 macro_line|#ifdef MODULE
 DECL|function|irda_proto_cleanup
@@ -7695,11 +8222,38 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|variable|irda_proto_init
+id|module_init
+c_func
+(paren
+id|irda_proto_init
+)paren
+suffix:semicolon
 DECL|variable|irda_proto_cleanup
 id|module_exit
 c_func
 (paren
 id|irda_proto_cleanup
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;The Linux IrDA Protocol Subsystem&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irda_debug
+comma
+l_string|&quot;1l&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE */

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  asm-ppc/raven.h -- Raven MPIC chip.&n; *&n; *  Copyright (C) 1998 Johnnie Peters&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _ASMPPC_RAVEN_H
 DECL|macro|_ASMPPC_RAVEN_H
 mdefine_line|#define _ASMPPC_RAVEN_H
@@ -46,4 +47,5 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif _ASMPPC_RAVEN_H
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -7479,6 +7479,8 @@ l_int|1
 )braket
 dot
 id|line
+comma
+id|dev
 )paren
 suffix:semicolon
 id|err_out_irq0
@@ -7487,6 +7489,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+id|dev
 )paren
 suffix:semicolon
 id|err_out_iounmap_rx

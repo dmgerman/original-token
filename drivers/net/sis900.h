@@ -1182,10 +1182,6 @@ DECL|macro|NUM_TX_DESC
 mdefine_line|#define NUM_TX_DESC     16      &t;/* Number of Tx descriptor registers. */
 DECL|macro|NUM_RX_DESC
 mdefine_line|#define NUM_RX_DESC     16       &t;/* Number of Rx descriptor registers. */
-DECL|macro|TRUE
-mdefine_line|#define TRUE            1
-DECL|macro|FALSE
-mdefine_line|#define FALSE           0
 multiline_comment|/* PCI stuff, should be move to pic.h */
 DECL|macro|PCI_DEVICE_ID_SI_900
 mdefine_line|#define PCI_DEVICE_ID_SI_900&t;0x900   

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Crystal SoundFusion CS46xx driver&n; *&n; *&t;Copyright 1999-2000 Jaroslav Kysela &lt;perex@suse.cz&gt;&n; *&t;Copyright 2000 Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *&t;The core of this code is taken from the ALSA project driver by &n; *&t;Jaroslav. Please send Jaroslav the credit for the driver and &n; *&t;report bugs in this port to &lt;alan@redhat.com&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Changes:&n; *&t;20000815&t;Updated driver to kernel 2.4, some cleanups/fixes&n; *&t;&t;&t;Nils Faerber &lt;nils@kernelconcepts.de&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;Crystal SoundFusion CS46xx driver&n; *&n; *&t;Copyright 1999-2000 Jaroslav Kysela &lt;perex@suse.cz&gt;&n; *&t;Copyright 2000 Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *&t;The core of this code is taken from the ALSA project driver by &n; *&t;Jaroslav. Please send Jaroslav the credit for the driver and &n; *&t;report bugs in this port to &lt;alan@redhat.com&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Changes:&n; *&t;20000815&t;Updated driver to kernel 2.4, some cleanups/fixes&n; *&t;&t;&t;Nils Faerber &lt;nils@kernelconcepts.de&gt;&n; *&t;20001110&t;Added __initdata to BA1Struct in cs461x_image.h&n; *&t;&t;&t;and three more __init here&n; *&t;&t;&t;Bartlomiej Zolnierkiewicz &lt;bkz@linux-ide.org&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -8733,6 +8733,7 @@ multiline_comment|/* Boot the card&n; */
 DECL|function|cs461x_download
 r_static
 r_void
+id|__init
 id|cs461x_download
 c_func
 (paren
@@ -8857,6 +8858,7 @@ macro_line|#include &quot;cs461x_image.h&quot;
 DECL|function|cs461x_download_image
 r_static
 r_void
+id|__init
 id|cs461x_download_image
 c_func
 (paren
@@ -9618,6 +9620,7 @@ suffix:semicolon
 DECL|function|cs_hardware_init
 r_static
 r_int
+id|__init
 id|cs_hardware_init
 c_func
 (paren

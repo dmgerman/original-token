@@ -5442,6 +5442,17 @@ id|aha1542_hostdata
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|shpnt
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/* For now we do this - until kmalloc is more intelligent&n;&t;&t;&t;   we are resigned to stupid hacks like this */
 r_if
 c_cond

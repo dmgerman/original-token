@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;LAPB release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naulor&t;Started Coding&n; *&t;LAPB 002&t;Jonathan Naylor&t;New timer architecture.&n; */
+multiline_comment|/*&n; *&t;LAPB release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naulor&t;Started Coding&n; *&t;LAPB 002&t;Jonathan Naylor&t;New timer architecture.&n; *&t;2000-10-29&t;Henner Eisen&t;lapb_data_indication() return status.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_LAPB) || defined(CONFIG_LAPB_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1922,6 +1922,42 @@ op_eq
 id|lapb-&gt;vr
 )paren
 (brace
+r_int
+id|cn
+suffix:semicolon
+id|cn
+op_assign
+id|lapb_data_indication
+c_func
+(paren
+id|lapb
+comma
+id|skb
+)paren
+suffix:semicolon
+id|queued
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * If upper layer has dropped the frame, we&n;&t;&t;&t;&t; * basically ignore any further protocol&n;&t;&t;&t;&t; * processing. This will cause the peer&n;&t;&t;&t;&t; * to re-transmit the frame later like&n;&t;&t;&t;&t; * a frame lost on the wire.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|cn
+op_eq
+id|NET_RX_DROP
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;LAPB: rx congestion&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|lapb-&gt;vr
 op_assign
 (paren
@@ -1931,16 +1967,6 @@ l_int|1
 )paren
 op_mod
 id|modulus
-suffix:semicolon
-id|queued
-op_assign
-id|lapb_data_indication
-c_func
-(paren
-id|lapb
-comma
-id|skb
-)paren
 suffix:semicolon
 id|lapb-&gt;condition
 op_and_assign

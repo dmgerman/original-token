@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/pas2_mixer.c&n; *&n; * Mixer routines for the Pro Audio Spectrum cards.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Bartlomiej Zolnierkiewicz : added __init to pas_init_mixer()&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;pas2.h&quot;
 macro_line|#ifndef DEB
@@ -1457,6 +1457,7 @@ id|pas_mixer_ioctl
 )brace
 suffix:semicolon
 r_int
+id|__init
 DECL|function|pas_init_mixer
 id|pas_init_mixer
 c_func

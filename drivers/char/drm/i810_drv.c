@@ -1800,6 +1800,7 @@ multiline_comment|/* i810_init is called via init_module at module load time, or
 DECL|function|i810_init
 r_static
 r_int
+id|__init
 id|i810_init
 c_func
 (paren
@@ -2057,6 +2058,7 @@ multiline_comment|/* i810_cleanup is called via cleanup_module at module unload 
 DECL|function|i810_cleanup
 r_static
 r_void
+id|__exit
 id|i810_cleanup
 c_func
 (paren

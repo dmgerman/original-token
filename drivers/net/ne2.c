@@ -615,6 +615,8 @@ comma
 id|base_addr
 comma
 id|irq
+comma
+id|retval
 suffix:semicolon
 r_int
 r_char
@@ -642,8 +644,6 @@ suffix:semicolon
 r_static
 r_int
 id|version_printed
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -735,6 +735,24 @@ op_rshift
 l_int|5
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|base_addr
+comma
+id|NE_IO_EXTENT
+comma
+id|dev-&gt;name
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -813,9 +831,13 @@ c_func
 l_string|&quot;NE/2 adapter not responding&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|retval
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* In the crynwr sources they do a RAM-test here. I skip it. I suppose&n;&t;   my RAM is okay.  Suppose your memory is broken.  Then this test&n;&t;   should fail and you won&squot;t be able to use your card.  But if I do not&n;&t;   test, you won&squot;t be able to use your card, neither.  So this test&n;&t;   won&squot;t help you. */
@@ -882,9 +904,13 @@ c_func
 l_string|&quot; not found (no reset ack).&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|retval
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|outb_p
@@ -1099,9 +1125,7 @@ op_assign
 id|irq
 suffix:semicolon
 multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;&t;   share and the board will usually be enabled. */
-(brace
-r_int
-id|irqval
+id|retval
 op_assign
 id|request_irq
 c_func
@@ -1112,7 +1136,7 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-id|name
+id|dev-&gt;name
 comma
 id|dev
 )paren
@@ -1120,7 +1144,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irqval
+id|retval
 )paren
 (brace
 id|printk
@@ -1129,15 +1153,12 @@ l_string|&quot; unable to get IRQ %d (irqval=%d).&bslash;n&quot;
 comma
 id|dev-&gt;irq
 comma
-op_plus
-id|irqval
+id|retval
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
+r_goto
+id|out
 suffix:semicolon
-)brace
 )brace
 id|dev-&gt;base_addr
 op_assign
@@ -1167,21 +1188,15 @@ comma
 id|dev
 )paren
 suffix:semicolon
-r_return
+id|retval
+op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
-id|request_region
-c_func
-(paren
-id|base_addr
-comma
-id|NE_IO_EXTENT
-comma
-id|name
-)paren
+r_goto
+id|out
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -1325,6 +1340,19 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|release_region
+c_func
+(paren
+id|base_addr
+comma
+id|NE_IO_EXTENT
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 DECL|function|ne_open

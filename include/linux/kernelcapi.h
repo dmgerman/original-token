@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.7 2000/06/12 09:20:20 kai Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; */
+multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.8 2000/08/22 10:11:00 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; */
 macro_line|#ifndef __KERNELCAPI_H__
 DECL|macro|__KERNELCAPI_H__
 mdefine_line|#define __KERNELCAPI_H__

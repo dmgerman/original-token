@@ -337,7 +337,7 @@ c_func
 id|ircomm
 comma
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 )paren
 id|self
@@ -1670,6 +1670,18 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PROC_FS */
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;IrCOMM protocol&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

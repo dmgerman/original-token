@@ -526,12 +526,6 @@ op_star
 id|page
 suffix:semicolon
 r_int
-r_int
-id|kaddr
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 id|block
 suffix:semicolon
 multiline_comment|/* from now on we have normal address_space methods */
@@ -661,6 +655,8 @@ id|page
 )paren
 )paren
 (brace
+r_char
+op_star
 id|kaddr
 op_assign
 id|kmap
@@ -672,10 +668,6 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|kaddr
 op_plus
 id|UDF_I_LENALLOC
@@ -698,10 +690,6 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|kaddr
 comma
 id|bh-&gt;b_data

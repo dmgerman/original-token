@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * MPC8260 Internal Memory Map&n; * Copyright (c) 1999 Dan Malek (dmalek@jlc.net)&n; *&n; * The Internal Memory Map of the 8260.  I don&squot;t know how generic&n; * this will be, as I don&squot;t have any knowledge of the subsequent&n; * parts at this time.  I copied this from the 8xx_immap.h.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __IMMAP_82XX__
 DECL|macro|__IMMAP_82XX__
 mdefine_line|#define __IMMAP_82XX__
@@ -1762,4 +1763,5 @@ op_star
 id|immr
 suffix:semicolon
 macro_line|#endif /* __IMMAP_82XX__ */
+macro_line|#endif /* __KERNEL__ */
 eof

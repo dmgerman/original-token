@@ -239,6 +239,7 @@ id|LOCAL_FLOW
 id|cmd
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_int
 id|ircomm_tty_read_proc
@@ -268,6 +269,7 @@ op_star
 id|unused
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
 DECL|variable|driver
 r_static
 r_struct
@@ -499,10 +501,12 @@ id|driver.wait_until_sent
 op_assign
 id|ircomm_tty_wait_until_sent
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|driver.read_proc
 op_assign
 id|ircomm_tty_read_proc
 suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
 r_if
 c_cond
 (paren
@@ -1612,7 +1616,7 @@ c_func
 id|ircomm_tty
 comma
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 )paren
 id|self
@@ -5198,6 +5202,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function ircomm_tty_read_proc (buf, start, offset, len, eof, unused)&n; *&n; *    &n; *&n; */
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|ircomm_tty_read_proc
 r_static
 r_int
@@ -5400,7 +5405,20 @@ id|offset
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_PROC_FS */
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;IrCOMM serial TTY driver&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

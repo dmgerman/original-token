@@ -434,11 +434,7 @@ c_func
 (paren
 id|tsk
 comma
-(paren
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -560,11 +556,7 @@ c_func
 (paren
 id|tsk
 comma
-(paren
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
-)paren
 )paren
 suffix:semicolon
 r_if

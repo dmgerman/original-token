@@ -227,15 +227,12 @@ r_char
 op_star
 id|name
 suffix:semicolon
-DECL|member|idVendor
-id|__u16
+DECL|member|id_table
+r_const
+r_struct
+id|usb_device_id
 op_star
-id|idVendor
-suffix:semicolon
-DECL|member|idProduct
-id|__u16
-op_star
-id|idProduct
+id|id_table
 suffix:semicolon
 DECL|member|needs_interrupt_in
 r_char
@@ -272,6 +269,7 @@ id|list_head
 id|driver_list
 suffix:semicolon
 multiline_comment|/* function call to make before accepting driver */
+multiline_comment|/* return 0 to continue initialization, anything else to abort */
 DECL|member|startup
 r_int
 (paren
@@ -285,7 +283,6 @@ op_star
 id|serial
 )paren
 suffix:semicolon
-multiline_comment|/* return 0 to continue initialization, anything else to abort */
 DECL|member|shutdown
 r_void
 (paren

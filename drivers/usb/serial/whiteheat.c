@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (10/03/2000) smd&n; *&t;firmware is improved to guard against crap sent to device&n; *&t;firmware now replies CMD_FAILURE on bad things&n; *&t;read_callback fix you provided for private info struct&n; *&t;command_finished now indicates success or fail&n; *&t;setup_port struct now packed to avoid gcc padding&n; *&t;firmware uses 1 based port numbering, driver now handles that&n; *&n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&t;Fixed bug with port-&gt;minor that was found by Al Borchers&n; *&n; * (07/04/2000) gkh&n; *&t;Added support for port settings. Baud rate can now be changed. Line signals&n; *&t;are not transferred to and from the tty layer yet, but things seem to be &n; *&t;working well now.&n; *&n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (10/03/2000) smd&n; *&t;firmware is improved to guard against crap sent to device&n; *&t;firmware now replies CMD_FAILURE on bad things&n; *&t;read_callback fix you provided for private info struct&n; *&t;command_finished now indicates success or fail&n; *&t;setup_port struct now packed to avoid gcc padding&n; *&t;firmware uses 1 based port numbering, driver now handles that&n; *&n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&t;Fixed bug with port-&gt;minor that was found by Al Borchers&n; *&n; * (07/04/2000) gkh&n; *&t;Added support for port settings. Baud rate can now be changed. Line signals&n; *&t;are not transferred to and from the tty layer yet, but things seem to be &n; *&t;working well now.&n; *&n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -30,6 +30,99 @@ DECL|macro|CONNECT_TECH_FAKE_WHITE_HEAT_ID
 mdefine_line|#define CONNECT_TECH_FAKE_WHITE_HEAT_ID&t;0x0001
 DECL|macro|CONNECT_TECH_WHITE_HEAT_ID
 mdefine_line|#define CONNECT_TECH_WHITE_HEAT_ID&t;0x8001
+multiline_comment|/*&n;   ID tables for whiteheat are unusual, because we want to different&n;   things for different versions of the device.  Eventually, this&n;   will be doable from a single table.  But, for now, we define two&n;   separate ID tables, and then a third table that combines them&n;   just for the purpose of exporting the autoloading information.&n;*/
+DECL|variable|id_table_std
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_std
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|CONNECT_TECH_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
+id|CONNECT_TECH_WHITE_HEAT_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+DECL|variable|id_table_prerenumeration
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_prerenumeration
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|CONNECT_TECH_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
+id|CONNECT_TECH_WHITE_HEAT_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+DECL|variable|id_table_combined
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_combined
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|CONNECT_TECH_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
+id|CONNECT_TECH_WHITE_HEAT_ID
+)brace
+comma
+(brace
+id|idVendor
+suffix:colon
+id|CONNECT_TECH_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
+id|CONNECT_TECH_FAKE_WHITE_HEAT_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|id_table_combined
+)paren
+suffix:semicolon
 multiline_comment|/* function prototypes for the Connect Tech WhiteHEAT serial converter */
 r_static
 r_int
@@ -139,28 +232,6 @@ op_star
 id|serial
 )paren
 suffix:semicolon
-multiline_comment|/* All of the device info needed for the Connect Tech WhiteHEAT */
-DECL|variable|connecttech_vendor_id
-r_static
-id|__u16
-id|connecttech_vendor_id
-op_assign
-id|CONNECT_TECH_VENDOR_ID
-suffix:semicolon
-DECL|variable|connecttech_whiteheat_fake_product_id
-r_static
-id|__u16
-id|connecttech_whiteheat_fake_product_id
-op_assign
-id|CONNECT_TECH_FAKE_WHITE_HEAT_ID
-suffix:semicolon
-DECL|variable|connecttech_whiteheat_product_id
-r_static
-id|__u16
-id|connecttech_whiteheat_product_id
-op_assign
-id|CONNECT_TECH_WHITE_HEAT_ID
-suffix:semicolon
 DECL|variable|whiteheat_fake_device
 r_struct
 id|usb_serial_device_type
@@ -171,18 +242,10 @@ id|name
 suffix:colon
 l_string|&quot;Connect Tech - WhiteHEAT - (prerenumeration)&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|connecttech_vendor_id
+id|id_table_prerenumeration
 comma
-multiline_comment|/* the Connect Tech vendor id */
-id|idProduct
-suffix:colon
-op_amp
-id|connecttech_whiteheat_fake_product_id
-comma
-multiline_comment|/* the White Heat initial product id */
 id|needs_interrupt_in
 suffix:colon
 id|DONT_CARE
@@ -229,18 +292,10 @@ id|name
 suffix:colon
 l_string|&quot;Connect Tech - WhiteHEAT&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|connecttech_vendor_id
+id|id_table_std
 comma
-multiline_comment|/* the Connect Tech vendor id */
-id|idProduct
-suffix:colon
-op_amp
-id|connecttech_whiteheat_product_id
-comma
-multiline_comment|/* the White Heat real product id */
 id|needs_interrupt_in
 suffix:colon
 id|DONT_CARE

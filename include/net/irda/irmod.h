@@ -114,7 +114,7 @@ r_struct
 id|irda_event
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -131,7 +131,7 @@ r_struct
 id|irda_todo
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -169,13 +169,13 @@ r_int
 id|in_use
 suffix:semicolon
 DECL|member|event_queue
-id|queue_t
+id|irda_queue_t
 op_star
 id|event_queue
 suffix:semicolon
 multiline_comment|/* Events queued for the irmanager */
 DECL|member|todo_queue
-id|queue_t
+id|irda_queue_t
 op_star
 id|todo_queue
 suffix:semicolon

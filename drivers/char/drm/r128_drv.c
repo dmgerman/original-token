@@ -1643,6 +1643,7 @@ multiline_comment|/* r128_init is called via init_module at module load time, or
 DECL|function|r128_init
 r_static
 r_int
+id|__init
 id|r128_init
 c_func
 (paren
@@ -1890,6 +1891,7 @@ multiline_comment|/* r128_cleanup is called via cleanup_module at module unload 
 DECL|function|r128_cleanup
 r_static
 r_void
+id|__exit
 id|r128_cleanup
 c_func
 (paren

@@ -308,6 +308,13 @@ c_func
 id|disable_irq_nosync
 )paren
 suffix:semicolon
+DECL|variable|probe_irq_mask
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|probe_irq_mask
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
@@ -976,6 +983,20 @@ c_func
 id|pmu_poll
 )paren
 suffix:semicolon
+DECL|variable|pmu_suspend
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmu_suspend
+)paren
+suffix:semicolon
+DECL|variable|pmu_resume
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmu_resume
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_ADB_PMU */
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 DECL|variable|pmu_register_sleep_notifier
@@ -1380,6 +1401,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|down_read_failed
+)paren
+suffix:semicolon
+DECL|variable|down_write_failed
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|down_write_failed
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_KGDB) || defined(CONFIG_XMON)

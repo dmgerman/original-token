@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: c4.c,v 1.16 2000/08/20 07:30:13 keil Exp $&n; * &n; * Module for AVM C4 card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: c4.c,v $&n; * Revision 1.16  2000/08/20 07:30:13  keil&n; * changes for 2.4&n; *&n; * Revision 1.15  2000/08/08 09:24:19  calle&n; * calls to pci_enable_device surounded by #ifndef COMPAT_HAS_2_2_PCI&n; *&n; * Revision 1.14  2000/08/04 12:20:08  calle&n; * - Fix unsigned/signed warning in the right way ...&n; *&n; * Revision 1.13  2000/07/20 10:21:21  calle&n; * Bugfix: driver will not be unregistered, if not cards were detected.&n; *         this result in an oops in kcapi.c&n; *&n; * Revision 1.12  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.11  2000/06/19 15:11:24  keil&n; * avoid use of freed structs&n; * changes from 2.4.0-ac21&n; *&n; * Revision 1.10  2000/05/29 12:29:18  keil&n; * make pci_enable_dev compatible to 2.2 kernel versions&n; *&n; * Revision 1.9  2000/05/19 15:43:22  calle&n; * added calls to pci_device_start().&n; *&n; * Revision 1.8  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.7  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.6  2000/03/17 12:21:08  calle&n; * send patchvalues now working.&n; *&n; * Revision 1.5  2000/03/16 15:21:03  calle&n; * Bugfix in c4_remove: loop 5 times instead of 4 :-(&n; *&n; * Revision 1.4  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.3  2000/01/25 14:37:39  calle&n; * new message after successfull detection including card revision and&n; * used resources.&n; *&n; * Revision 1.2  2000/01/21 20:52:58  keil&n; * pci_find_subsys as local function for 2.2.X kernel&n; *&n; * Revision 1.1  2000/01/20 10:51:37  calle&n; * Added driver for C4.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: c4.c,v 1.18 2000/11/01 14:05:02 calle Exp $&n; * &n; * Module for AVM C4 card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: c4.c,v $&n; * Revision 1.18  2000/11/01 14:05:02  calle&n; * - use module_init/module_exit from linux/init.h.&n; * - all static struct variables are initialized with &quot;membername:&quot; now.&n; * - avm_cs.c, let it work with newer pcmcia-cs.&n; *&n; * Revision 1.17  2000/10/10 17:44:19  kai&n; * changes from/for 2.2.18&n; *&n; * Revision 1.16  2000/08/20 07:30:13  keil&n; * changes for 2.4&n; *&n; * Revision 1.15  2000/08/08 09:24:19  calle&n; * calls to pci_enable_device surounded by #ifndef COMPAT_HAS_2_2_PCI&n; *&n; * Revision 1.14  2000/08/04 12:20:08  calle&n; * - Fix unsigned/signed warning in the right way ...&n; *&n; * Revision 1.13  2000/07/20 10:21:21  calle&n; * Bugfix: driver will not be unregistered, if not cards were detected.&n; *         this result in an oops in kcapi.c&n; *&n; * Revision 1.12  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.11  2000/06/19 15:11:24  keil&n; * avoid use of freed structs&n; * changes from 2.4.0-ac21&n; *&n; * Revision 1.10  2000/05/29 12:29:18  keil&n; * make pci_enable_dev compatible to 2.2 kernel versions&n; *&n; * Revision 1.9  2000/05/19 15:43:22  calle&n; * added calls to pci_device_start().&n; *&n; * Revision 1.8  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.7  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.6  2000/03/17 12:21:08  calle&n; * send patchvalues now working.&n; *&n; * Revision 1.5  2000/03/16 15:21:03  calle&n; * Bugfix in c4_remove: loop 5 times instead of 4 :-(&n; *&n; * Revision 1.4  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.3  2000/01/25 14:37:39  calle&n; * new message after successfull detection including card revision and&n; * used resources.&n; *&n; * Revision 1.2  2000/01/21 20:52:58  keil&n; * pci_find_subsys as local function for 2.2.X kernel&n; *&n; * Revision 1.1  2000/01/20 10:51:37  calle&n; * Added driver for C4.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -22,7 +22,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.16 $&quot;
+l_string|&quot;$Revision: 1.18 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_C4_DEBUG
 macro_line|#undef CONFIG_C4_DEBUG
@@ -1411,10 +1411,10 @@ l_int|0
 r_return
 l_int|9
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1557,10 +1557,10 @@ l_int|0
 r_return
 l_int|17
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -4468,10 +4468,10 @@ comma
 id|DBELL_INIT
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|c4outmeml

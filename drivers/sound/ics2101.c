@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/ics2101.c&n; *&n; * Driver for the ICS2101 mixer of GUS v3.7.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * sound/ics2101.c&n; *&n; * Driver for the ICS2101 mixer of GUS v3.7.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Bartlomiej Zolnierkiewicz : added __init to ics2101_mixer_init()&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus.h&quot;
@@ -791,8 +791,9 @@ suffix:colon
 id|ics2101_mixer_ioctl
 )brace
 suffix:semicolon
-r_int
 DECL|function|ics2101_mixer_init
+r_int
+id|__init
 id|ics2101_mixer_init
 c_func
 (paren

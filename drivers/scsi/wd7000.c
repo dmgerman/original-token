@@ -5770,6 +5770,17 @@ id|Adapter
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sh
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|host
 op_assign
 (paren

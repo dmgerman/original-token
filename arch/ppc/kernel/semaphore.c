@@ -205,8 +205,6 @@ c_func
 id|tsk
 comma
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 id|spin_unlock_irq
@@ -292,8 +290,6 @@ c_func
 id|tsk
 comma
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 id|spin_unlock_irq

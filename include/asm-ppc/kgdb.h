@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: kgdb.h,v 1.2 1998/04/11 17:29:07 geert Exp $&n; * kgdb.h: Defines and declarations for serial line source level&n; *         remote debugging of the Linux kernel using gdb.&n; *&n; * PPC Mods (C) 1998 Michael Tesch (tesch@cs.wisc.edu)&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_KGDB_H
 DECL|macro|_PPC_KGDB_H
 mdefine_line|#define _PPC_KGDB_H
@@ -212,4 +213,5 @@ suffix:semicolon
 multiline_comment|/* read and return a single char */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_PPC_KGDB_H) */
+macro_line|#endif /* __KERNEL__ */
 eof

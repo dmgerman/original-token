@@ -1,9 +1,9 @@
 multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.h&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:26:50 1998&n; * Modified at:   Thu Oct  7 13:25:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998-1999, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (c) 1998, Dag Brattli&n; *     All Rights Reserved.&n; *      &n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes and has been ported to Linux and Linux/IR by Dag Brattli&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#ifndef QUEUE_H
-DECL|macro|QUEUE_H
-mdefine_line|#define QUEUE_H
+macro_line|#ifndef IRDA_QUEUE_H
+DECL|macro|IRDA_QUEUE_H
+mdefine_line|#define IRDA_QUEUE_H
 DECL|macro|NAME_SIZE
 mdefine_line|#define NAME_SIZE      32
 multiline_comment|/*&n; * Hash types&n; */
@@ -42,19 +42,19 @@ suffix:semicolon
 multiline_comment|/*&n; * Hashbin&n; */
 DECL|macro|GET_HASHBIN
 mdefine_line|#define GET_HASHBIN(x) ( x &amp; HASHBIN_MASK )
-DECL|struct|irqueue
+DECL|struct|irda_queue
 r_struct
-id|irqueue
+id|irda_queue
 (brace
 DECL|member|q_next
 r_struct
-id|irqueue
+id|irda_queue
 op_star
 id|q_next
 suffix:semicolon
 DECL|member|q_prev
 r_struct
-id|irqueue
+id|irda_queue
 op_star
 id|q_prev
 suffix:semicolon
@@ -71,11 +71,11 @@ id|q_hash
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|typedef|queue_t
+DECL|typedef|irda_queue_t
 r_typedef
 r_struct
-id|irqueue
-id|queue_t
+id|irda_queue
+id|irda_queue_t
 suffix:semicolon
 DECL|struct|hashbin_t
 r_typedef
@@ -103,7 +103,7 @@ id|HASHBIN_SIZE
 id|ALIGN
 suffix:semicolon
 DECL|member|ALIGN
-id|queue_t
+id|irda_queue_t
 op_star
 id|hb_queue
 (braket
@@ -112,7 +112,7 @@ id|HASHBIN_SIZE
 id|ALIGN
 suffix:semicolon
 DECL|member|hb_current
-id|queue_t
+id|irda_queue_t
 op_star
 id|hb_current
 suffix:semicolon
@@ -161,7 +161,7 @@ id|hashbin_t
 op_star
 id|hashbin
 comma
-id|queue_t
+id|irda_queue_t
 op_star
 id|entry
 comma
@@ -217,7 +217,21 @@ op_star
 id|hashbin
 )paren
 suffix:semicolon
-id|queue_t
+r_void
+op_star
+id|hashbin_remove_this
+c_func
+(paren
+id|hashbin_t
+op_star
+id|hashbin
+comma
+id|irda_queue_t
+op_star
+id|entry
+)paren
+suffix:semicolon
+id|irda_queue_t
 op_star
 id|hashbin_get_first
 c_func
@@ -227,7 +241,7 @@ op_star
 id|hashbin
 )paren
 suffix:semicolon
-id|queue_t
+id|irda_queue_t
 op_star
 id|hashbin_get_next
 c_func
@@ -241,12 +255,12 @@ r_void
 id|enqueue_last
 c_func
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 op_star
 id|queue
 comma
-id|queue_t
+id|irda_queue_t
 op_star
 id|element
 )paren
@@ -255,22 +269,22 @@ r_void
 id|enqueue_first
 c_func
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 op_star
 id|queue
 comma
-id|queue_t
+id|irda_queue_t
 op_star
 id|element
 )paren
 suffix:semicolon
-id|queue_t
+id|irda_queue_t
 op_star
 id|dequeue_first
 c_func
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 op_star
 id|queue

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer    : ioctl code reworked (vmalloc/vfree removed)&n; * Frank van de Pol : Fixed GUS MAX interrupt handling. Enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; */
+multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer    : ioctl code reworked (vmalloc/vfree removed)&n; * Frank van de Pol : Fixed GUS MAX interrupt handling. Enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; * Bartlomiej Zolnierkiewicz : added some __init/__exit&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|GUSPNP_AUTODETECT
 mdefine_line|#define GUSPNP_AUTODETECT
@@ -4091,6 +4091,7 @@ suffix:semicolon
 DECL|function|pnp_mem_init
 r_static
 r_void
+id|__init
 id|pnp_mem_init
 c_func
 (paren
@@ -4979,6 +4980,7 @@ suffix:semicolon
 )brace
 DECL|function|gus_wave_detect
 r_int
+id|__init
 id|gus_wave_detect
 c_func
 (paren
@@ -13416,6 +13418,7 @@ suffix:semicolon
 DECL|function|gus_default_mixer_init
 r_static
 r_int
+id|__init
 id|gus_default_mixer_init
 c_func
 (paren
@@ -13485,6 +13488,7 @@ suffix:semicolon
 )brace
 DECL|function|gus_wave_init
 r_void
+id|__init
 id|gus_wave_init
 c_func
 (paren
@@ -14504,6 +14508,7 @@ suffix:semicolon
 )brace
 DECL|function|gus_wave_unload
 r_void
+id|__exit
 id|gus_wave_unload
 c_func
 (paren

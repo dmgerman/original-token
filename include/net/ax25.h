@@ -347,9 +347,9 @@ DECL|typedef|ax25_dama_info
 )brace
 id|ax25_dama_info
 suffix:semicolon
-macro_line|#ifndef _LINUX_SYSCTL_H
-macro_line|#include &lt;linux/sysctl.h&gt;
-macro_line|#endif
+r_struct
+id|ctl_table
+suffix:semicolon
 DECL|struct|ax25_dev
 r_typedef
 r_struct
@@ -376,12 +376,8 @@ suffix:semicolon
 DECL|member|systable
 r_struct
 id|ctl_table
+op_star
 id|systable
-(braket
-id|AX25_MAX_VALUES
-op_plus
-l_int|1
-)braket
 suffix:semicolon
 DECL|member|values
 r_int

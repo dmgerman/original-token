@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* 11/02/95                                                                   */
 multiline_comment|/*----------------------------------------------------------------------------*/
 multiline_comment|/*      Plug and Play header definitions                                      */
@@ -1931,4 +1932,5 @@ id|PnP_TAG_PACKET
 suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif  /* ndef _PNP_ */
+macro_line|#endif /* __KERNEL__ */
 eof

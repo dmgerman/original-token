@@ -159,10 +159,6 @@ id|current
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|current-&gt;state
-op_or_assign
-id|TASK_EXCLUSIVE
-suffix:semicolon
 id|CPUNR
 op_assign
 l_int|0
@@ -391,8 +387,6 @@ id|set_current_state
 c_func
 (paren
 id|TASK_INTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 r_if

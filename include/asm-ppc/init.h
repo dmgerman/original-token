@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_INIT_H
 DECL|macro|_PPC_INIT_H
 mdefine_line|#define _PPC_INIT_H
@@ -34,4 +35,5 @@ mdefine_line|#define __openfirmwaredata __attribute__ ((__section__ (&quot;.data
 DECL|macro|__openfirmwarefunc
 mdefine_line|#define __openfirmwarefunc(__argopenfirmware) &bslash;&n;&t;__argopenfirmware __openfirmware; &bslash;&n;&t;__argopenfirmware
 macro_line|#endif /* _PPC_INIT_H */
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -2216,6 +2216,17 @@ id|ADAPTER240I
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pshost
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|save_flags
 (paren
 id|flags

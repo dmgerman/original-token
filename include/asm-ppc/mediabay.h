@@ -2,6 +2,7 @@ multiline_comment|/*&n; * mediabay.h: definitions for using the media bay&n; * o
 macro_line|#ifndef _PPC_MEDIABAY_H
 DECL|macro|_PPC_MEDIABAY_H
 mdefine_line|#define _PPC_MEDIABAY_H
+macro_line|#ifdef __KERNEL__
 DECL|macro|MB_FD
 mdefine_line|#define MB_FD&t;0&t;&t;/* media bay contains floppy drive */
 DECL|macro|MB_FD1
@@ -10,7 +11,6 @@ DECL|macro|MB_CD
 mdefine_line|#define MB_CD&t;3&t;&t;/* media bay contains ATA drive such as CD */
 DECL|macro|MB_NO
 mdefine_line|#define MB_NO&t;7&t;&t;/* media bay contains nothing */
-macro_line|#ifdef __KERNEL__
 r_void
 id|media_bay_init
 c_func

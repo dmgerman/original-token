@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * include/asm-ppc/serial.h&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_GEMINI
 macro_line|#include &lt;asm/gemini_serial.h&gt;
@@ -60,4 +61,5 @@ mdefine_line|#define MCA_SERIAL_PORT_DFNS
 DECL|macro|SERIAL_PORT_DFNS
 mdefine_line|#define SERIAL_PORT_DFNS&t;&t;&bslash;&n;&t;STD_SERIAL_PORT_DEFNS&t;&t;&bslash;&n;&t;EXTRA_SERIAL_PORT_DEFNS&t;&t;&bslash;&n;&t;HUB6_SERIAL_PORT_DFNS&t;&t;&bslash;&n;&t;MCA_SERIAL_PORT_DFNS
 macro_line|#endif /* CONFIG_GEMINI */
+macro_line|#endif /* __KERNEL__ */
 eof

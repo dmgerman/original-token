@@ -6769,6 +6769,7 @@ macro_line|#ifdef MODULE
 DECL|function|unload_multisound
 r_static
 r_void
+id|__exit
 id|unload_multisound
 c_func
 (paren

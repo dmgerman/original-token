@@ -11012,6 +11012,17 @@ id|asc_board_t
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|shp
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/* Save a pointer to the Scsi_host of each board found. */
 id|asc_host
 (braket

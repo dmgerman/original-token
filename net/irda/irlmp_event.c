@@ -362,7 +362,7 @@ id|irlmp_event
 id|event
 )braket
 comma
-id|irlmp_state
+id|irlsap_state
 (braket
 id|self-&gt;lsap_state
 )braket
@@ -1404,6 +1404,13 @@ id|self-&gt;refcount
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* In some case, at this point our side has already closed&n;&t;&t; * all lsaps, and we are waiting for the idle_timer to&n;&t;&t; * expire. If another device reconnect immediately, the&n;&t;&t; * idle timer will expire in the midle of the connection&n;&t;&t; * initialisation, screwing up things a lot...&n;&t;&t; * Therefore, we must stop the timer... */
+id|irlmp_stop_idle_timer
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
 multiline_comment|/* &n;&t;&t; *  Inform all connected LSAP&squot;s using this link&n;&t;&t; */
 id|lsap
 op_assign
@@ -1476,9 +1483,12 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), Unknown event %d&bslash;n&quot;
+l_string|&quot;(), Unknown event %s&bslash;n&quot;
 comma
+id|irlmp_event
+(braket
 id|event
+)braket
 )paren
 suffix:semicolon
 r_if
@@ -1859,7 +1869,7 @@ c_func
 id|self-&gt;lap-&gt;lsaps
 comma
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 )paren
 id|self

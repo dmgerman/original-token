@@ -59,8 +59,6 @@ suffix:semicolon
 id|tsk-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 suffix:semicolon
 id|add_wait_queue_exclusive
 c_func
@@ -138,8 +136,6 @@ suffix:semicolon
 id|tsk-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 suffix:semicolon
 id|spin_lock_irq
 c_func
@@ -212,8 +208,6 @@ suffix:semicolon
 id|tsk-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 suffix:semicolon
 id|add_wait_queue_exclusive
 c_func
@@ -323,8 +317,6 @@ suffix:semicolon
 id|tsk-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 suffix:semicolon
 id|spin_lock_irq
 c_func
@@ -606,8 +598,6 @@ c_func
 id|tsk
 comma
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 r_if
@@ -834,8 +824,6 @@ c_func
 id|tsk
 comma
 id|TASK_UNINTERRUPTIBLE
-op_or
-id|TASK_EXCLUSIVE
 )paren
 suffix:semicolon
 r_if

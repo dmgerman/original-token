@@ -1,4 +1,5 @@
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __PPC_MMU_CONTEXT_H
 DECL|macro|__PPC_MMU_CONTEXT_H
 mdefine_line|#define __PPC_MMU_CONTEXT_H
@@ -187,4 +188,5 @@ multiline_comment|/*&n; * compute the vsid from the context and segment&n; * seg
 DECL|macro|VSID_FROM_CONTEXT
 mdefine_line|#define&t;VSID_FROM_CONTEXT(segment,context) &bslash;&n;   ((segment &lt; 8) ? ((segment) | (context)&lt;&lt;4) : (segment))
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

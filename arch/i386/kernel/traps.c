@@ -127,6 +127,14 @@ r_extern
 r_int
 id|console_loglevel
 suffix:semicolon
+r_extern
+r_void
+id|bust_spinlocks
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|console_silent
 r_static
 r_inline
@@ -1645,12 +1653,6 @@ comma
 id|setup_nmi_watchdog
 )paren
 suffix:semicolon
-r_extern
-id|spinlock_t
-id|console_lock
-comma
-id|timerlist_lock
-suffix:semicolon
 DECL|variable|nmi_print_lock
 r_static
 id|spinlock_t
@@ -1658,30 +1660,6 @@ id|nmi_print_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/*&n; * Unlock any spinlocks which will prevent us from getting the&n; * message out (timerlist_lock is aquired through the&n; * console unblank code)&n; */
-DECL|function|bust_spinlocks
-r_void
-id|bust_spinlocks
-c_func
-(paren
-r_void
-)paren
-(brace
-id|spin_lock_init
-c_func
-(paren
-op_amp
-id|console_lock
-)paren
-suffix:semicolon
-id|spin_lock_init
-c_func
-(paren
-op_amp
-id|timerlist_lock
-)paren
-suffix:semicolon
-)brace
 DECL|function|nmi_watchdog_tick
 r_inline
 r_void
@@ -3469,6 +3447,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_EISA
 r_if
 c_cond
 (paren
@@ -3502,6 +3481,7 @@ id|EISA_bus
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 id|set_trap_gate
 c_func
 (paren

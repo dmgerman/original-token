@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_PGTABLE_H
 DECL|macro|_PPC_PGTABLE_H
 mdefine_line|#define _PPC_PGTABLE_H
@@ -1417,4 +1418,5 @@ mdefine_line|#define io_remap_page_range remap_page_range
 macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|#endif __ASSEMBLY__
 macro_line|#endif /* _PPC_PGTABLE_H */
+macro_line|#endif /* __KERNEL__ */
 eof

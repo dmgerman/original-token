@@ -1,10 +1,10 @@
-multiline_comment|/*&n; * sound/iwmem.c&n; *&n; * DRAM size encoding table for AMD Interwave chip.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/iwmem.h&n; *&n; * DRAM size encoding table for AMD Interwave chip.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; * Bartlomiej Zolnierkiewicz&t;: added __initdata to mem_decode&n; */
 DECL|macro|K
 mdefine_line|#define K 1024
 DECL|macro|M
 mdefine_line|#define M (1024*K)
-DECL|variable|mem_decode
+DECL|variable|__initdata
 r_static
 r_int
 id|mem_decode
@@ -13,6 +13,7 @@ id|mem_decode
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*&t;Bank0&t;Bank1&t;Bank2&t;Bank3&t;Encoding bits&t;*/

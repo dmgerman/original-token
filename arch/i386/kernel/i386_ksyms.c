@@ -125,6 +125,7 @@ c_func
 id|boot_cpu_data
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_EISA
 DECL|variable|EISA_bus
 id|EXPORT_SYMBOL
 c_func
@@ -132,6 +133,7 @@ c_func
 id|EISA_bus
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|MCA_bus
 id|EXPORT_SYMBOL
 c_func

@@ -2,83 +2,89 @@ macro_line|#ifndef _PPC_PTRACE_H
 DECL|macro|_PPC_PTRACE_H
 mdefine_line|#define _PPC_PTRACE_H
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the&n; * kernel stack during a system call or other kernel entry.&n; *&n; * this should only contain volatile regs&n; * since we can keep non-volatile in the thread_struct&n; * should set this up when only volatiles are saved&n; * by intr code.&n; *&n; * Since this is going on the stack, *CARE MUST BE TAKEN* to insure&n; * that the overall structure is a multiple of 16 bytes in length.&n; *&n; * Note that the offsets of the fields in this struct correspond with&n; * the PT_* values below.  This simplifies arch/ppc/kernel/ptrace.c.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#ifdef CONFIG_PPC64BRIDGE
-DECL|macro|PPC_REG
-mdefine_line|#define PPC_REG unsigned long /*long*/
-macro_line|#else
-DECL|macro|PPC_REG
-mdefine_line|#define PPC_REG unsigned long
-macro_line|#endif
 DECL|struct|pt_regs
 r_struct
 id|pt_regs
 (brace
 DECL|member|gpr
-id|PPC_REG
+r_int
+r_int
 id|gpr
 (braket
 l_int|32
 )braket
 suffix:semicolon
 DECL|member|nip
-id|PPC_REG
+r_int
+r_int
 id|nip
 suffix:semicolon
 DECL|member|msr
-id|PPC_REG
+r_int
+r_int
 id|msr
 suffix:semicolon
 DECL|member|orig_gpr3
-id|PPC_REG
+r_int
+r_int
 id|orig_gpr3
 suffix:semicolon
 multiline_comment|/* Used for restarting system calls */
 DECL|member|ctr
-id|PPC_REG
+r_int
+r_int
 id|ctr
 suffix:semicolon
 DECL|member|link
-id|PPC_REG
+r_int
+r_int
 id|link
 suffix:semicolon
 DECL|member|xer
-id|PPC_REG
+r_int
+r_int
 id|xer
 suffix:semicolon
 DECL|member|ccr
-id|PPC_REG
+r_int
+r_int
 id|ccr
 suffix:semicolon
 DECL|member|mq
-id|PPC_REG
+r_int
+r_int
 id|mq
 suffix:semicolon
 multiline_comment|/* 601 only (not used at present) */
 multiline_comment|/* Used on APUS to hold IPL value. */
 DECL|member|trap
-id|PPC_REG
+r_int
+r_int
 id|trap
 suffix:semicolon
 multiline_comment|/* Reason for being here */
 DECL|member|dar
-id|PPC_REG
+r_int
+r_int
 id|dar
 suffix:semicolon
 multiline_comment|/* Fault registers */
 DECL|member|dsisr
-id|PPC_REG
+r_int
+r_int
 id|dsisr
 suffix:semicolon
 DECL|member|result
-id|PPC_REG
+r_int
+r_int
 id|result
 suffix:semicolon
 multiline_comment|/* Result of a system call */
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef __KERNEL__
 DECL|macro|STACK_FRAME_OVERHEAD
 mdefine_line|#define STACK_FRAME_OVERHEAD&t;16&t;/* size of minimum stack frame */
 multiline_comment|/* Size of stack frame allocated when calling signal handler. */
@@ -88,6 +94,7 @@ DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;nip)
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) (((regs)-&gt;msr &amp; MSR_PR) != 0)
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Offsets used by &squot;ptrace&squot; system call interface.&n; * These can&squot;t be changed without breaking binary compatibility&n; * with MkLinux, etc.&n; */
 DECL|macro|PT_R0
 mdefine_line|#define PT_R0&t;0

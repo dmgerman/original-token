@@ -1064,11 +1064,16 @@ c_cond
 op_logical_neg
 id|host
 )paren
-id|panic
+(brace
+id|kfree
+c_func
 (paren
-l_string|&quot;Cannot register FCAL host&bslash;n&quot;
+id|ages
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|nfcals
 op_increment
 suffix:semicolon

@@ -1,4 +1,5 @@
 multiline_comment|/*&n;** asm-m68k/amigappc.h -- This header defines some values and pointers for&n;**                        the Phase 5 PowerUp card.&n;**&n;** Copyright 1997, 1998 by Phase5, Germany.&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created: 7/22/97 by Jesper Skov&n;*/
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _M68K_AMIGAPPC_H
 DECL|macro|_M68K_AMIGAPPC_H
 mdefine_line|#define _M68K_AMIGAPPC_H
@@ -89,4 +90,5 @@ mdefine_line|#define INTLVL_SETRESET         (0x80)
 DECL|macro|INTLVL_MASK
 mdefine_line|#define INTLVL_MASK             (0x7f)
 macro_line|#endif /* _M68k_AMIGAPPC_H */
+macro_line|#endif /* __KERNEL__ */
 eof

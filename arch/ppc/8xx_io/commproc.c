@@ -441,7 +441,7 @@ id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_cisr
-op_or_assign
+op_assign
 (paren
 l_int|1
 op_lshift

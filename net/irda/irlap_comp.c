@@ -122,7 +122,7 @@ c_func
 id|irlap_compressors
 comma
 (paren
-id|queue_t
+id|irda_queue_t
 op_star
 )paren
 r_new

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  include/asm-ppc/gemini.h&n; *&n; *&n; *  Onboard registers and descriptions for Synergy Microsystems&squot; &n; *  &quot;Gemini&quot; boards.&n; *&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __PPC_GEMINI_H
 DECL|macro|__PPC_GEMINI_H
 mdefine_line|#define __PPC_GEMINI_H
@@ -444,4 +445,5 @@ r_void
 suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * pas2_pcm.c Audio routines for PAS16&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;   : Swatted a double allocation of device bug. Made a few&n; *&t;&t;     more things module options.&n; */
+multiline_comment|/*&n; * pas2_pcm.c Audio routines for PAS16&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;   : Swatted a double allocation of device bug. Made a few&n; *&t;&t;     more things module options.&n; * Bartlomiej Zolnierkiewicz : Added __init to pas_pcm_init()&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;pas2.h&quot;
 macro_line|#ifndef DEB
@@ -1643,6 +1643,7 @@ id|pas_audio_trigger
 suffix:semicolon
 DECL|function|pas_pcm_init
 r_void
+id|__init
 id|pas_pcm_init
 c_func
 (paren

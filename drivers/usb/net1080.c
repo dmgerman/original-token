@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * NetChip 1080 Driver (USB Host-to-Host Link)&n; * Copyright (C) 2000 by David Brownell &lt;dbrownell@users.sourceforge.net&gt;&n; */
-multiline_comment|/*&n; * This talks to the NetChip 1080, which can appear in &quot;network cables&quot;&n; * and other designs.  This driver interoperates with the Win32 network&n; * drivers from NetChip, using the NetChip reference design.&n; *&n; * The IP-over-USB protocol here may be of interest.  Embedded devices&n; * could implement it at the cost of two bulk endpoints, and whatever&n; * other system resources the desired IP-based applications need.&n; * Some Linux palmtops could support that today.&n; * &n; * STATUS:&n; *&n; * 13-sept-2000&t;&t;experimental, new&n; *&n; * This doesn&squot;t yet do any network hotplugging, and there&squot;s no matching&n; * ifup policy script ... it should arrange bridging with &quot;brctl&quot;, and&n; * should handle static and dynamic (&quot;pump&quot;) setups.&n; *&n; * RX/TX queue sizes currently fixed at one due to URB unlink problems.&n; * &n; *-------------------------------------------------------------------------*/
+multiline_comment|/*&n; * This talks to the NetChip 1080, which can appear in &quot;network cables&quot;&n; * and other designs.  This driver interoperates with the Win32 network&n; * drivers from NetChip, using the NetChip reference design.&n; *&n; * The IP-over-USB protocol here may be of interest.  Embedded devices&n; * could implement it at the cost of two bulk endpoints, and whatever&n; * other system resources the desired IP-based applications need.&n; * Some Linux palmtops could support that today.  (Devices that don&squot;t&n; * support the TTL-driven data mangling of the net1080 chip won&squot;t need&n; * the header/trailer support though.)&n; * &n; * STATUS:&n; *&n; * 13-sept-2000&t;&t;experimental, new&n; *&n; * This doesn&squot;t yet do any network hotplugging, and there&squot;s no matching&n; * ifup policy script ... it should arrange bridging with &quot;brctl&quot;, and&n; * should handle static and dynamic (&quot;pump&quot;) setups.&n; *&n; * RX/TX queue sizes currently fixed at one due to URB unlink problems.&n; *&n; * 10-oct-2000&n; * usb_device_id table created. &n; *&n; * 28-oct-2000&n; * misc fixes; mostly, discard more TTL-mangled rx packets.&n; *&n; * 01-nov-2000&n; * usb_device_id table support added by Adam J. Richter &lt;adam@yggdrasil.com&gt;.&n; * &n; *-------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
@@ -3683,8 +3683,8 @@ singleline_comment|// precondition: never called in_interrupt
 r_static
 r_void
 op_star
-DECL|function|net1080_bind
-id|net1080_bind
+DECL|function|net1080_probe
+id|net1080_probe
 (paren
 r_struct
 id|usb_device
@@ -4031,9 +4031,9 @@ id|id_table
 suffix:colon
 id|products
 comma
-id|bind
+id|probe
 suffix:colon
-id|net1080_bind
+id|net1080_probe
 comma
 id|disconnect
 suffix:colon

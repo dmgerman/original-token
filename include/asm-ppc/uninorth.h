@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * uninorth.h: definitions for using the &quot;UniNorth&quot; host bridge chip&n; *             from Apple. This chip is used on &quot;Core99&quot; machines&n; *&n; */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Uni-N config space reg. definitions&n; * &n; * (Little endian)&n; */
 multiline_comment|/* Address ranges selection. This one should work with Bandit too */
 DECL|macro|UNI_N_ADDR_SELECT
@@ -69,4 +70,5 @@ mdefine_line|#define UNI_N_HWINIT_STATE_RUNNING&t;0x02
 multiline_comment|/* This last bit appear to be used by the bootROM to know the second&n; * CPU has started and will enter it&squot;s sleep loop with IP=0&n; */
 DECL|macro|UNI_N_HWINIT_STATE_CPU1_FLAG
 mdefine_line|#define UNI_N_HWINIT_STATE_CPU1_FLAG&t;0x10000000
+macro_line|#endif /* __KERNEL__ */
 eof

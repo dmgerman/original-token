@@ -5,7 +5,7 @@ multiline_comment|/*&n; * XXX to do -&n; *&n; *&t;External sync.&n; *&t;Rename s
 multiline_comment|/*&n; * Things to test -&n; *&n; *&t;Will readv/writev work?  Write a test.&n; *&n; *&t;insmod/rmmod 100 million times.&n; *&n; *&t;Run I/O until int ptrs wrap around (roughly 6.2 hours @ DAT&n; *&t;rate).&n; *&n; *&t;Concurrent threads banging on mixer simultaneously, both UP&n; *&t;and SMP kernels.  Especially, watch for thread A changing&n; *&t;OUTSRC while thread B changes gain -- both write to the same&n; *&t;ad1843 register.&n; *&n; *&t;What happens if a client opens /dev/audio then forks?&n; *&t;Do two procs have /dev/audio open?  Test.&n; *&n; *&t;Pump audio through the CD, MIC and line inputs and verify that&n; *&t;they mix/mute into the output.&n; *&n; *&t;Apps:&n; *&t;&t;amp&n; *&t;&t;mpg123&n; *&t;&t;x11amp&n; *&t;&t;mxv&n; *&t;&t;kmedia&n; *&t;&t;esound&n; *&t;&t;need more input apps&n; *&n; *&t;Run tests while bombarding with signals.  setitimer(2) will do it...  */
 multiline_comment|/*&n; * This driver is organized in nine sections.&n; * The nine sections are:&n; *&n; *&t;debug stuff&n; * &t;low level lithium access&n; *&t;high level lithium access&n; *&t;AD1843 access&n; *&t;PCM I/O&n; *&t;audio driver&n; *&t;mixer driver&n; *&t;probe/attach/unload&n; *&t;initialization and loadable kernel module interface&n; *&n; * That is roughly the order of increasing abstraction, so forward&n; * dependencies are minimal.&n; */
 multiline_comment|/*&n; * Locking Notes&n; *&n; *&t;INC_USE_COUNT and DEC_USE_COUNT keep track of the number of&n; *&t;open descriptors to this driver. They store it in vwsnd_use_count.&n; * &t;The global device list, vwsnd_dev_list,&t;is immutable when the IN_USE&n; *&t;is true.&n; *&n; *&t;devc-&gt;open_lock is a semaphore that is used to enforce the&n; *&t;single reader/single writer rule for /dev/audio.  The rule is&n; *&t;that each device may have at most one reader and one writer.&n; *&t;Open will block until the previous client has closed the&n; *&t;device, unless O_NONBLOCK is specified.&n; *&n; *&t;The semaphore devc-&gt;io_sema serializes PCM I/O syscalls.  This&n; *&t;is unnecessary in Linux 2.2, because the kernel lock&n; *&t;serializes read, write, and ioctl globally, but it&squot;s there,&n; *&t;ready for the brave, new post-kernel-lock world.&n; *&n; *&t;Locking between interrupt and baselevel is handled by the&n; *&t;&quot;lock&quot; spinlock in vwsnd_port (one lock each for read and&n; *&t;write).  Each half holds the lock just long enough to see what&n; *&t;area it owns and update its pointers.  See pcm_output() and&n; *&t;pcm_input() for most of the gory stuff.&n; *&n; *&t;devc-&gt;mix_sema serializes all mixer ioctls.  This is also&n; *&t;redundant because of the kernel lock.&n; *&n; *&t;The lowest level lock is lith-&gt;lithium_lock.  It is a&n; *&t;spinlock which is held during the two-register tango of&n; *&t;reading/writing an AD1843 register.  See&n; *&t;li_{read,write}_ad1843_reg().&n; */
-multiline_comment|/*&n; * Sample Format Notes&n; *&n; *&t;Lithium&squot;s DMA engine has two formats: 16-bit 2&squot;s complement&n; *&t;and 8-bit unsigned .  16-bit transfers the data unmodified, 2&n; *&t;bytes per sample.  8-bit unsigned transfers 1 byte per sample&n; *&t;and XORs each byte with 0x80.  Lithium can input or output&n; *&t;either mono or stereo in either format.&n; *&n; *&t;The AD1843 has four formats: 16-bit 2&squot;s complement, 8-bit&n; *&t;unsigned, 8-bit mu-Law and 8-bit A-Law.&n; *&n; *&t;This driver supports five formats: AFMT_S8, AFMT_U8,&n; *&t;AFMT_MU_LAW, AFMT_A_LAW, and AFMT_S16_LE.&n; *&n; *&t;For AFMT_U8 output, we keep the AD1843 in 16-bit mode, and&n; *&t;rely on Lithium&squot;s XOR to translate between U8 and S8.&n; *&n; *&t;For AFMT_S8, AFMT_MU_LAW and AFMT_A_LAW output, we have to XOR&n; *&t;the 0x80 bit in software to compensate for Lithium&squot;s XOR.&n; *&t;This happens in pcm_copy_{in,out}().&n; */
+multiline_comment|/*&n; * Sample Format Notes&n; *&n; *&t;Lithium&squot;s DMA engine has two formats: 16-bit 2&squot;s complement&n; *&t;and 8-bit unsigned .  16-bit transfers the data unmodified, 2&n; *&t;bytes per sample.  8-bit unsigned transfers 1 byte per sample&n; *&t;and XORs each byte with 0x80.  Lithium can input or output&n; *&t;either mono or stereo in either format.&n; *&n; *&t;The AD1843 has four formats: 16-bit 2&squot;s complement, 8-bit&n; *&t;unsigned, 8-bit mu-Law and 8-bit A-Law.&n; *&n; *&t;This driver supports five formats: AFMT_S8, AFMT_U8,&n; *&t;AFMT_MU_LAW, AFMT_A_LAW, and AFMT_S16_LE.&n; *&n; *&t;For AFMT_U8 output, we keep the AD1843 in 16-bit mode, and&n; *&t;rely on Lithium&squot;s XOR to translate between U8 and S8.&n; *&n; *&t;For AFMT_S8, AFMT_MU_LAW and AFMT_A_LAW output, we have to XOR&n; *&t;the 0x80 bit in software to compensate for Lithium&squot;s XOR.&n; *&t;This happens in pcm_copy_{in,out}().&n; *&n; * Changes:&n; * 11-10-2000&t;Bartlomiej Zolnierkiewicz &lt;bkz@linux-ide.org&gt;&n; *&t;&t;Added some __init/__exit&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
@@ -4644,6 +4644,7 @@ multiline_comment|/*&n; * Fully initialize the ad1843.  As described in the AD18
 DECL|function|ad1843_init
 r_static
 r_int
+id|__init
 id|ad1843_init
 c_func
 (paren
@@ -13270,6 +13271,7 @@ multiline_comment|/* driver probe routine.  Return nonzero if hardware is found.
 DECL|function|probe_vwsnd
 r_static
 r_int
+id|__init
 id|probe_vwsnd
 c_func
 (paren
@@ -13444,6 +13446,7 @@ multiline_comment|/*&n; * driver attach routine.  Initialize driver data structu
 DECL|function|attach_vwsnd
 r_static
 r_int
+id|__init
 id|attach_vwsnd
 c_func
 (paren
@@ -13926,6 +13929,7 @@ suffix:semicolon
 DECL|function|unload_vwsnd
 r_static
 r_int
+id|__exit
 id|unload_vwsnd
 c_func
 (paren
@@ -14188,5 +14192,4 @@ c_func
 id|cleanup_vwsnd
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;cd ../..; make modules SUBDIRS=drivers/sound&quot;&n; * c-basic-offset: 8&n; * End:&n; */
 eof

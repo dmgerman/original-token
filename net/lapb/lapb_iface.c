@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;LAPB release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; *&t;LAPB 002&t;Jonathan Naylor&t;New timer architecture.&n; */
+multiline_comment|/*&n; *&t;LAPB release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; *&t;LAPB 002&t;Jonathan Naylor&t;New timer architecture.&n; *&t;2000-10-29&t;Henner Eisen&t;lapb_data_indication() return status.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_LAPB) || defined(CONFIG_LAPB_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -1254,11 +1254,6 @@ op_star
 id|skb
 )paren
 (brace
-r_int
-id|used
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1267,6 +1262,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_return
 (paren
 id|lapb-&gt;callbacks.data_indication
 )paren
@@ -1276,14 +1272,17 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|used
-op_assign
-l_int|1
-suffix:semicolon
 )brace
-r_return
-id|used
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
 suffix:semicolon
+r_return
+id|NET_RX_CN_HIGH
+suffix:semicolon
+multiline_comment|/* For now; must be != NET_RX_DROP */
 )brace
 DECL|function|lapb_data_transmit
 r_int

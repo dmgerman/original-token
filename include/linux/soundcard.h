@@ -65,8 +65,8 @@ mdefine_line|#define SNDCARD_UART401&t;&t;26
 multiline_comment|/* Sound card numbers 27 to N are reserved. Don&squot;t add more numbers here. */
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _SIOWR
-macro_line|#if defined(_IOWR) &amp;&amp; (defined(_AIX) || (!defined(sun) &amp;&amp; !defined(sparc) &amp;&amp; !defined(__INCioctlh) &amp;&amp; !defined(__Lynx__)))
-multiline_comment|/* Use already defined ioctl defines if they exist (except with Sun) */
+macro_line|#if defined(_IOWR) &amp;&amp; (defined(_AIX) || (!defined(sun) &amp;&amp; !defined(sparc) &amp;&amp; !defined(__sparc__) &amp;&amp; !defined(__INCioctlh) &amp;&amp; !defined(__Lynx__)))
+multiline_comment|/* Use already defined ioctl defines if they exist (except with Sun or Sparc) */
 DECL|macro|SIOCPARM_MASK
 mdefine_line|#define&t;SIOCPARM_MASK&t;IOCPARM_MASK
 DECL|macro|SIOC_VOID
@@ -266,7 +266,7 @@ mdefine_line|#define SNDCTL_TMR_METRONOME&t;&t;_SIOW (&squot;T&squot;, 7, int)
 DECL|macro|SNDCTL_TMR_SELECT
 mdefine_line|#define SNDCTL_TMR_SELECT&t;&t;_SIOW (&squot;T&squot;, 8, int)
 multiline_comment|/*&n; * Some big endian/little endian handling macros&n; */
-macro_line|#if defined(_AIX) || defined(AIX) || defined(sparc) || defined(HPPA) || defined(PPC)
+macro_line|#if defined(_AIX) || defined(AIX) || defined(sparc) || defined(__sparc__) || defined(HPPA) || defined(PPC)
 multiline_comment|/* Big endian machines */
 DECL|macro|_PATCHKEY
 macro_line|#  define _PATCHKEY(id) (0xfd00|id)

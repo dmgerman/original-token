@@ -355,7 +355,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Out of Memory: Killed process %d (%s).&quot;
+l_string|&quot;Out of Memory: Killed process %d (%s).&bslash;n&quot;
 comma
 id|p-&gt;pid
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn.h,v 1.106 2000/08/10 22:52:46 kai Exp $&n;&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
+multiline_comment|/* $Id: isdn.h,v 1.110 2000/11/01 17:54:01 detabc Exp $&n;&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
 macro_line|#ifndef isdn_h
 DECL|macro|isdn_h
 mdefine_line|#define isdn_h
@@ -63,10 +63,8 @@ DECL|macro|CONFIG_ISDN_WITH_ABC_CONN_ERROR
 macro_line|#undef CONFIG_ISDN_WITH_ABC_CONN_ERROR
 DECL|macro|CONFIG_ISDN_WITH_ABC_RAWIPCOMPRESS
 macro_line|#undef CONFIG_ISDN_WITH_ABC_RAWIPCOMPRESS
-DECL|macro|CONFIG_ISDN_WITH_ABC_IPV4_RW_SOCKADDR
-macro_line|#undef CONFIG_ISDN_WITH_ABC_IPV4_RW_SOCKADDR 
-DECL|macro|CONFIG_ISDN_WITH_ABC_IPV4_RWUDP_SOCKADDR
-macro_line|#undef CONFIG_ISDN_WITH_ABC_IPV4_RWUDP_SOCKADDR 
+DECL|macro|CONFIG_ISDN_WITH_ABC_IPTABLES_NETFILTER
+macro_line|#undef CONFIG_ISDN_WITH_ABC_IPTABLES_NETFILTER
 multiline_comment|/* New ioctl-codes */
 DECL|macro|IIOCNETAIF
 mdefine_line|#define IIOCNETAIF  _IO(&squot;I&squot;,1)

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASM_PPC_FLOPPY_H
 DECL|macro|__ASM_PPC_FLOPPY_H
 mdefine_line|#define __ASM_PPC_FLOPPY_H
@@ -73,4 +74,5 @@ multiline_comment|/*&n; * The PowerPC has no problems with floppy DMA crossing 6
 DECL|macro|CROSS_64KB
 mdefine_line|#define CROSS_64KB(a,s)&t;(0)
 macro_line|#endif /* __ASM_PPC_FLOPPY_H */
+macro_line|#endif /* __KERNEL__ */
 eof

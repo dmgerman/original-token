@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * &lt;asm/smplock.h&gt;&n; *&n; * Default SMP lock implementation&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 r_extern
@@ -65,4 +66,5 @@ id|kernel_flag
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __KERNEL__ */
 eof

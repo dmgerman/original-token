@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASM_HARDIRQ_H
 DECL|macro|__ASM_HARDIRQ_H
 mdefine_line|#define __ASM_HARDIRQ_H
@@ -287,4 +288,5 @@ r_void
 suffix:semicolon
 macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* __ASM_HARDIRQ_H */
+macro_line|#endif /* __KERNEL__ */
 eof

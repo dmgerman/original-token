@@ -1,3 +1,4 @@
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASM_PPC_PROCESSOR_H
 DECL|macro|__ASM_PPC_PROCESSOR_H
 mdefine_line|#define __ASM_PPC_PROCESSOR_H
@@ -1343,4 +1344,5 @@ macro_line|#error &quot;Machine not defined correctly&quot;
 macro_line|#endif
 macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 macro_line|#endif /* __ASM_PPC_PROCESSOR_H */
+macro_line|#endif /* __KERNEL__ */
 eof

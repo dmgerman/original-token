@@ -1147,6 +1147,12 @@ comma
 r_int
 r_int
 id|i
+comma
+r_const
+r_struct
+id|usb_device_id
+op_star
+id|id
 )paren
 (brace
 r_struct
@@ -1180,17 +1186,6 @@ id|altsetting
 (braket
 l_int|0
 )braket
-suffix:semicolon
-multiline_comment|/* Is it a hub? */
-r_if
-c_cond
-(paren
-id|interface-&gt;bInterfaceClass
-op_ne
-id|USB_CLASS_HUB
-)paren
-r_return
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Some hubs have a subclass of 1, which AFAICT according to the */
 multiline_comment|/*  specs is not defined, but it works */
@@ -3493,6 +3488,33 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|hub_id_table
+r_static
+r_struct
+id|usb_device_id
+id|hub_id_table
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|bInterfaceClass
+suffix:colon
+id|USB_CLASS_HUB
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|hub_id_table
+)paren
+suffix:semicolon
 DECL|variable|hub_driver
 r_static
 r_struct
@@ -3515,6 +3537,11 @@ comma
 id|disconnect
 suffix:colon
 id|hub_disconnect
+comma
+id|id_table
+suffix:colon
+id|hub_id_table
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This should be a separate module.&n; */

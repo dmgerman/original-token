@@ -988,7 +988,7 @@ c_func
 suffix:semicolon
 id|err
 op_assign
-id|register_netdev
+id|register_netdevice
 c_func
 (paren
 id|dev
@@ -1009,7 +1009,7 @@ id|ERROR
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;(), register_netdev() failed!&bslash;n&quot;
+l_string|&quot;(), register_netdevice() failed!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2098,10 +2098,33 @@ id|skb
 op_ne
 id|self-&gt;io.speed
 )paren
+(brace
+multiline_comment|/* Check for empty frame */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb-&gt;len
+)paren
+(brace
+id|w83977af_change_speed
+c_func
+(paren
+id|self
+comma
+id|speed
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
 id|self-&gt;new_speed
 op_assign
 id|speed
 suffix:semicolon
+)brace
 multiline_comment|/* Save current set */
 id|set
 op_assign
@@ -5245,6 +5268,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|qos_mtt_bits
+comma
+l_string|&quot;Mimimum Turn Time&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -5253,12 +5284,12 @@ comma
 l_string|&quot;1-4i&quot;
 )paren
 suffix:semicolon
-id|MODULE_PARM
+id|MODULE_PARM_DESC
 c_func
 (paren
-id|io2
+id|io
 comma
-l_string|&quot;1-4i&quot;
+l_string|&quot;Base I/O addresses&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -5267,6 +5298,14 @@ c_func
 id|irq
 comma
 l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;IRQ lines&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    &n; *&n; */

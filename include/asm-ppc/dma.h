@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: dma.h,v 1.3 1997/03/16 06:20:39 cort Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; * Changes for ppc sound by Christoph Nadig&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
@@ -1292,4 +1293,5 @@ DECL|macro|isa_dma_bridge_buggy
 mdefine_line|#define isa_dma_bridge_buggy   (0)
 macro_line|#endif
 macro_line|#endif /* _ASM_DMA_H */
+macro_line|#endif /* __KERNEL__ */
 eof

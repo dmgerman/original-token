@@ -173,6 +173,18 @@ r_int
 id|buffsize
 )paren
 (brace
+r_struct
+id|irda_skb_cb
+op_star
+id|cb
+op_assign
+(paren
+r_struct
+id|irda_skb_cb
+op_star
+)paren
+id|skb-&gt;cb
+suffix:semicolon
 r_int
 id|xbofs
 suffix:semicolon
@@ -209,18 +221,7 @@ multiline_comment|/*&n;&t; *  Send  XBOF&squot;s for required min. turn time and
 r_if
 c_cond
 (paren
-(paren
-(paren
-r_struct
-id|irda_skb_cb
-op_star
-)paren
-(paren
-id|skb-&gt;cb
-)paren
-)paren
-op_member_access_from_pointer
-id|magic
+id|cb-&gt;magic
 op_ne
 id|LAP_MAGIC
 )paren
@@ -243,18 +244,9 @@ suffix:semicolon
 r_else
 id|xbofs
 op_assign
-(paren
-(paren
-r_struct
-id|irda_skb_cb
-op_star
-)paren
-(paren
-id|skb-&gt;cb
-)paren
-)paren
-op_member_access_from_pointer
-id|xbofs
+id|cb-&gt;xbofs
+op_plus
+id|cb-&gt;xbofs_delay
 suffix:semicolon
 id|IRDA_DEBUG
 c_func
@@ -914,6 +906,15 @@ r_case
 id|BOF
 suffix:colon
 multiline_comment|/* New frame? */
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Discarding incomplete frame&bslash;n&quot;
+)paren
+suffix:semicolon
 id|rx_buff-&gt;state
 op_assign
 id|BEGIN_FRAME
@@ -1048,6 +1049,15 @@ r_case
 id|BOF
 suffix:colon
 multiline_comment|/* New frame? */
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Discarding incomplete frame&bslash;n&quot;
+)paren
+suffix:semicolon
 id|rx_buff-&gt;state
 op_assign
 id|BEGIN_FRAME

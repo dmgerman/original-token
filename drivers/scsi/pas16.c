@@ -1114,6 +1114,17 @@ id|NCR5380_hostdata
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|instance
+op_eq
+l_int|NULL
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 id|instance-&gt;io_port
 op_assign
 id|io_port

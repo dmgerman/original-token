@@ -25,10 +25,6 @@ id|dev
 )paren
 (brace
 r_struct
-id|irmanager_event
-id|mgr_event
-suffix:semicolon
-r_struct
 id|irlan_cb
 op_star
 id|self
@@ -153,33 +149,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * Network device has now been registered, so tell irmanager about&n;&t; * it, so it can be configured with network parameters&n;&t; */
-id|mgr_event.event
-op_assign
-id|EVENT_IRLAN_START
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|mgr_event.devname
-comma
-l_string|&quot;%s&quot;
-comma
-id|self-&gt;dev.name
-)paren
-suffix:semicolon
-id|irmanager_notify
-c_func
-(paren
-op_amp
-id|mgr_event
-)paren
-suffix:semicolon
-multiline_comment|/* &n;&t; * We set this so that we only notify once, since if &n;&t; * configuration of the network device fails, the user&n;&t; * will have to sort it out first anyway. No need to &n;&t; * try again.&n;&t; */
-id|self-&gt;notify_irmanager
-op_assign
-id|FALSE
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -246,13 +215,18 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* Ready to play! */
-multiline_comment|/* &t;netif_start_queue(dev) */
-multiline_comment|/* Wait until data link is ready */
-id|self-&gt;notify_irmanager
-op_assign
-id|TRUE
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
+multiline_comment|/* Wait until data link is ready */
 multiline_comment|/* We are now open, so time to do some work */
+id|self-&gt;disconnect_reason
+op_assign
+l_int|0
+suffix:semicolon
 id|irlan_client_wakeup
 c_func
 (paren
@@ -266,6 +240,14 @@ suffix:semicolon
 id|irlan_mod_inc_use_count
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure we have a hardware address before we return, so DHCP clients gets happy */
+id|interruptible_sleep_on
+c_func
+(paren
+op_amp
+id|self-&gt;open_wait
 )paren
 suffix:semicolon
 r_return
@@ -295,6 +277,11 @@ id|irlan_cb
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb
 suffix:semicolon
 id|IRDA_DEBUG
 c_func
@@ -349,28 +336,30 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|irlan_start_watchdog_timer
+multiline_comment|/* Remove frames queued on the control channel */
+r_while
+c_loop
+(paren
+(paren
+id|skb
+op_assign
+id|skb_dequeue
 c_func
 (paren
-id|self
-comma
-id|IRLAN_TIMEOUT
+op_amp
+id|self-&gt;client.txq
 )paren
-suffix:semicolon
-multiline_comment|/* Device closed by user! */
-r_if
-c_cond
+)paren
+)paren
+id|dev_kfree_skb
+c_func
 (paren
-id|self-&gt;notify_irmanager
+id|skb
 )paren
-id|self-&gt;notify_irmanager
-op_assign
-id|FALSE
 suffix:semicolon
-r_else
-id|self-&gt;notify_irmanager
+id|self-&gt;client.tx_busy
 op_assign
-id|TRUE
+l_int|0
 suffix:semicolon
 r_return
 l_int|0

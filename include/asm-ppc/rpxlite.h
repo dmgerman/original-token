@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * A collection of structures, addresses, and values associated with&n; * the RPCG RPX-Lite board.  Copied from the MBX stuff.&n; *&n; * Copyright (c) 1998 Dan Malek (dmalek@jlc.net)&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __MACH_RPX_DEFS
 DECL|macro|__MACH_RPX_DEFS
 mdefine_line|#define __MACH_RPX_DEFS
@@ -109,4 +110,5 @@ multiline_comment|/* Machine type&n;*/
 DECL|macro|_MACH_8xx
 mdefine_line|#define _MACH_8xx (_MACH_rpxlite)
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 eof

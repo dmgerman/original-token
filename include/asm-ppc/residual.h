@@ -8,6 +8,7 @@ multiline_comment|/*              Load point passed in r4 to boot image.        
 multiline_comment|/* For enum&squot;s: if given in hex then they are bit significant,                 */
 multiline_comment|/*             i.e. only one bit is on for each enum                          */
 multiline_comment|/* Reserved fields must be filled with zeros.                                */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _RESIDUAL_
 DECL|macro|_RESIDUAL_
 mdefine_line|#define _RESIDUAL_
@@ -1297,4 +1298,5 @@ id|n
 suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif  /* ndef _RESIDUAL_ */
+macro_line|#endif /* __KERNEL__ */
 eof

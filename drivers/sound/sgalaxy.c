@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sgalaxy.c&n; *&n; * Low level driver for Aztech Sound Galaxy cards.&n; * Copyright 1998 Artur Skawina &lt;skawina@geocities.com&gt;&n; *&n; * Supported cards:&n; *    Aztech Sound Galaxy Waverider Pro 32 - 3D&n; *    Aztech Sound Galaxy Washington 16&n; *&n; * Based on cs4232.c by Hannu Savolainen and Alan Cox.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/sgalaxy.c&n; *&n; * Low level driver for Aztech Sound Galaxy cards.&n; * Copyright 1998 Artur Skawina &lt;skawina@geocities.com&gt;&n; *&n; * Supported cards:&n; *    Aztech Sound Galaxy Waverider Pro 32 - 3D&n; *    Aztech Sound Galaxy Washington 16&n; *&n; * Based on cs4232.c by Hannu Savolainen and Alan Cox.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; * 11-10-2000&t;Bartlomiej Zolnierkiewicz &lt;bkz@linux-ide.org&gt;&n; *&t;&t;Added __init to sb_rst() and sb_cmd()&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -40,6 +40,7 @@ mdefine_line|#define SBDSP_DATA_AVAIL 0xE
 DECL|function|sb_rst
 r_static
 r_int
+id|__init
 id|sb_rst
 c_func
 (paren
@@ -146,6 +147,7 @@ suffix:semicolon
 DECL|function|sb_cmd
 r_static
 r_int
+id|__init
 id|sb_cmd
 c_func
 (paren

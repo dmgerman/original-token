@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * $Id: bitops.h,v 1.12 2000/02/09 03:28:31 davem Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef _PPC_BITOPS_H
 DECL|macro|_PPC_BITOPS_H
 mdefine_line|#define _PPC_BITOPS_H
@@ -1774,4 +1775,5 @@ DECL|macro|minix_find_first_zero_bit
 mdefine_line|#define minix_find_first_zero_bit(addr,size) ext2_find_first_zero_bit(addr,size)
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif /* _PPC_BITOPS_H */
+macro_line|#endif /* __KERNEL__ */
 eof

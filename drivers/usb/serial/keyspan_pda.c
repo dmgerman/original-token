@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Keyspan PDA Converter driver&n; *&n; * Copyright (c) 1999, 2000 Greg Kroah-Hartman&t;&lt;greg@kroah.com&gt;&n; * Copyright (c) 1999, 2000 Brian Warner&t;&lt;warner@lothar.com&gt;&n; * Copyright (c) 2000 Al Borchers&t;&t;&lt;borchers@steinerpoint.com&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; * &n; * (07/20/2000) borchers&n; *&t;- keyspan_pda_write no longer sleeps if it is called on interrupt time;&n; *&t;  PPP and the line discipline with stty echo on can call write on&n; *&t;  interrupt time and this would cause an oops if write slept&n; *&t;- if keyspan_pda_write is in an interrupt, it will not call&n; *&t;  usb_control_msg (which sleeps) to query the room in the device&n; *&t;  buffer, it simply uses the current room value it has&n; *&t;- if the urb is busy or if it is throttled keyspan_pda_write just&n; *&t;  returns 0, rather than sleeping to wait for this to change; the&n; *&t;  write_chan code in n_tty.c will sleep if needed before calling&n; *&t;  keyspan_pda_write again&n; *&t;- if the device needs to be unthrottled, write now queues up the&n; *&t;  call to usb_control_msg (which sleeps) to unthrottle the device&n; *&t;- the wakeups from keyspan_pda_write_bulk_callback are queued rather&n; *&t;  than done directly from the callback to avoid the race in write_chan&n; *&t;- keyspan_pda_chars_in_buffer also indicates its buffer is full if the&n; *&t;  urb status is -EINPROGRESS, meaning it cannot write at the moment&n; *      &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB Keyspan PDA Converter driver&n; *&n; * Copyright (c) 1999, 2000 Greg Kroah-Hartman&t;&lt;greg@kroah.com&gt;&n; * Copyright (c) 1999, 2000 Brian Warner&t;&lt;warner@lothar.com&gt;&n; * Copyright (c) 2000 Al Borchers&t;&t;&lt;borchers@steinerpoint.com&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; * &n; * (07/20/2000) borchers&n; *&t;- keyspan_pda_write no longer sleeps if it is called on interrupt time;&n; *&t;  PPP and the line discipline with stty echo on can call write on&n; *&t;  interrupt time and this would cause an oops if write slept&n; *&t;- if keyspan_pda_write is in an interrupt, it will not call&n; *&t;  usb_control_msg (which sleeps) to query the room in the device&n; *&t;  buffer, it simply uses the current room value it has&n; *&t;- if the urb is busy or if it is throttled keyspan_pda_write just&n; *&t;  returns 0, rather than sleeping to wait for this to change; the&n; *&t;  write_chan code in n_tty.c will sleep if needed before calling&n; *&t;  keyspan_pda_write again&n; *&t;- if the device needs to be unthrottled, write now queues up the&n; *&t;  call to usb_control_msg (which sleeps) to unthrottle the device&n; *&t;- the wakeups from keyspan_pda_write_bulk_callback are queued rather&n; *&t;  than done directly from the callback to avoid the race in write_chan&n; *&t;- keyspan_pda_chars_in_buffer also indicates its buffer is full if the&n; *&t;  urb status is -EINPROGRESS, meaning it cannot write at the moment&n; *      &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -75,27 +75,97 @@ DECL|macro|KEYSPAN_PDA_FAKE_ID
 mdefine_line|#define KEYSPAN_PDA_FAKE_ID&t;&t;0x0103
 DECL|macro|KEYSPAN_PDA_ID
 mdefine_line|#define KEYSPAN_PDA_ID&t;&t;&t;0x0104 /* no clue */
-multiline_comment|/* All of the device info needed for the Keyspan PDA serial converter */
-DECL|variable|keyspan_vendor_id
+DECL|variable|id_table_combined
 r_static
-id|__u16
-id|keyspan_vendor_id
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_combined
+(braket
+)braket
 op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
 id|KEYSPAN_VENDOR_ID
-suffix:semicolon
-DECL|variable|keyspan_pda_fake_product_id
-r_static
-id|__u16
-id|keyspan_pda_fake_product_id
-op_assign
+comma
+id|idProduct
+suffix:colon
 id|KEYSPAN_PDA_FAKE_ID
-suffix:semicolon
-DECL|variable|keyspan_pda_product_id
-r_static
-id|__u16
-id|keyspan_pda_product_id
-op_assign
+)brace
+comma
+(brace
+id|idVendor
+suffix:colon
+id|KEYSPAN_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
 id|KEYSPAN_PDA_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|id_table_combined
+)paren
+suffix:semicolon
+DECL|variable|id_table_std
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_std
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|KEYSPAN_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
+id|KEYSPAN_PDA_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+DECL|variable|id_table_fake
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_fake
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|KEYSPAN_VENDOR_ID
+comma
+id|idProduct
+suffix:colon
+id|KEYSPAN_PDA_FAKE_ID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
 suffix:semicolon
 DECL|function|keyspan_pda_wakeup_write
 r_static
@@ -2917,15 +2987,9 @@ id|name
 suffix:colon
 l_string|&quot;Keyspan PDA - (prerenumeration)&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|keyspan_vendor_id
-comma
-id|idProduct
-suffix:colon
-op_amp
-id|keyspan_pda_fake_product_id
+id|id_table_fake
 comma
 id|needs_interrupt_in
 suffix:colon
@@ -2971,15 +3035,9 @@ id|name
 suffix:colon
 l_string|&quot;Keyspan PDA&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|keyspan_vendor_id
-comma
-id|idProduct
-suffix:colon
-op_amp
-id|keyspan_pda_product_id
+id|id_table_std
 comma
 id|needs_interrupt_in
 suffix:colon

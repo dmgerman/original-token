@@ -47,7 +47,7 @@ r_struct
 id|tsap_cb
 (brace
 DECL|member|q
-id|queue_t
+id|irda_queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -359,6 +359,21 @@ id|self
 comma
 id|LOCAL_FLOW
 id|flow
+)paren
+suffix:semicolon
+r_void
+id|irttp_status_indication
+c_func
+(paren
+r_void
+op_star
+id|instance
+comma
+id|LINK_STATUS
+id|link
+comma
+id|LOCK_STATUS
+id|lock
 )paren
 suffix:semicolon
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq SoundScape&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   &t;: ioctl code reworked (vmalloc/vfree removed)&n; * Sergey Smitienko&t;: ensoniq p&squot;n&squot;p support&n; * Christoph Hellwig&t;: adapted to module_init/module_exit&n; */
+multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq SoundScape&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   &t;: ioctl code reworked (vmalloc/vfree removed)&n; * Sergey Smitienko&t;: ensoniq p&squot;n&squot;p support&n; * Christoph Hellwig&t;: adapted to module_init/module_exit&n; * Bartlomiej Zolnierkiewicz : added __init to attach_sscape()&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -2372,6 +2372,7 @@ l_int|0
 suffix:semicolon
 DECL|function|attach_sscape
 r_void
+id|__init
 id|attach_sscape
 c_func
 (paren

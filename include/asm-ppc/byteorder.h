@@ -3,6 +3,7 @@ DECL|macro|_PPC_BYTEORDER_H
 mdefine_line|#define _PPC_BYTEORDER_H
 multiline_comment|/*&n; *  $Id: byteorder.h,v 1.14 1998/08/12 05:07:12 paulus Exp $&n; */
 macro_line|#include &lt;asm/types.h&gt;
+macro_line|#ifdef __KERNEL__
 macro_line|#ifdef __GNUC__
 DECL|function|ld_le16
 r_extern
@@ -271,11 +272,12 @@ DECL|macro|__arch__swab16s
 mdefine_line|#define __arch__swab16s(addr) st_le16(addr,*addr)
 DECL|macro|__arch__swab32s
 mdefine_line|#define __arch__swab32s(addr) st_le32(addr,*addr)
-macro_line|#endif /* __GNUC__ */
-macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
+macro_line|#ifndef __STRICT_ANSI__
 DECL|macro|__BYTEORDER_HAS_U64__
 mdefine_line|#define __BYTEORDER_HAS_U64__
 macro_line|#endif
+macro_line|#endif /* __GNUC__ */
+macro_line|#endif /* __KERNEL__ */
 macro_line|#include &lt;linux/byteorder/big_endian.h&gt;
 macro_line|#endif /* _PPC_BYTEORDER_H */
 eof
