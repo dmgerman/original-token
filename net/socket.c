@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -168,6 +168,7 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;Socket files have a set of &squot;special&squot; operations as well as the generic file ones. These don&squot;t appear&n; *&t;in the operation structures but are done directly via the socketcall() multiplexor.&n; */
 DECL|variable|socket_file_ops
 r_static
 r_struct
@@ -196,6 +197,7 @@ multiline_comment|/* no special open code... */
 id|sock_close
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;The list of sockets - make this atomic.&n; */
 DECL|variable|sockets
 r_static
 r_struct
@@ -205,6 +207,7 @@ id|sockets
 id|NSOCKETS
 )braket
 suffix:semicolon
+multiline_comment|/*&n; *&t;Used to wait for a socket.&n; */
 DECL|variable|socket_wait_free
 r_static
 r_struct
@@ -214,6 +217,7 @@ id|socket_wait_free
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n; *&t;The protocol list. Each protocol is registered in here.&n; */
 DECL|variable|pops
 r_static
 r_struct
@@ -226,10 +230,238 @@ id|NPROTO
 suffix:semicolon
 DECL|macro|last_socket
 mdefine_line|#define last_socket&t;(sockets + NSOCKETS - 1)
-multiline_comment|/* Obtains the first available file descriptor and sets it up for use. */
+multiline_comment|/*&n; *&t;Support routines. Move socket addresses back and forth across the kernel/user&n; *&t;divide and look after the messy bits.&n; */
+DECL|macro|MAX_SOCK_ADDR
+mdefine_line|#define MAX_SOCK_ADDR&t;128&t;&t;/* 108 for Unix domain - 16 for IP, 16 for IPX, about 80 for AX.25 */
+DECL|function|move_addr_to_kernel
 r_static
 r_int
+id|move_addr_to_kernel
+c_func
+(paren
+r_void
+op_star
+id|uaddr
+comma
+r_int
+id|ulen
+comma
+r_void
+op_star
+id|kaddr
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ulen
+id|MAX_SOCK_ADDR
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ulen
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|uaddr
+comma
+id|ulen
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|memcpy_fromfs
+c_func
+(paren
+id|kaddr
+comma
+id|uaddr
+comma
+id|ulen
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|move_addr_to_user
+r_static
+r_int
+id|move_addr_to_user
+c_func
+(paren
+r_void
+op_star
+id|kaddr
+comma
+r_int
+id|klen
+comma
+r_void
+op_star
+id|uaddr
+comma
+r_int
+op_star
+id|ulen
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|ulen
+comma
+r_sizeof
+(paren
+op_star
+id|ulen
+)paren
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|len
+op_assign
+id|get_fs_long
+c_func
+(paren
+id|ulen
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|klen
+)paren
+(brace
+id|len
+op_assign
+id|klen
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|len
+id|MAX_SOCK_ADDR
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|uaddr
+comma
+id|len
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|memcpy_tofs
+c_func
+(paren
+id|uaddr
+comma
+id|kaddr
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+id|put_fs_long
+c_func
+(paren
+id|len
+comma
+id|ulen
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Obtains the first available file descriptor and sets it up for use. &n; */
 DECL|function|get_fd
+r_static
+r_int
 id|get_fd
 c_func
 (paren
@@ -247,7 +479,7 @@ id|file
 op_star
 id|file
 suffix:semicolon
-multiline_comment|/* Find a file descriptor suitable for return to the user. */
+multiline_comment|/*&n;&t; *&t;Find a file descriptor suitable for return to the user. &n;&t; */
 id|file
 op_assign
 id|get_empty_filp
@@ -361,10 +593,10 @@ id|fd
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Reverses the action of get_fd() by releasing the file. it closes&n; * the descriptor, but makes sure it does nothing more. Called when&n; * an incomplete socket must be closed, along with sock_release().&n; */
+DECL|function|toss_fd
 r_static
 r_inline
 r_void
-DECL|function|toss_fd
 id|toss_fd
 c_func
 (paren
@@ -380,10 +612,11 @@ id|fd
 suffix:semicolon
 multiline_comment|/* the count protects us from iput */
 )brace
+multiline_comment|/*&n; *&t;Go from an inode to its socket slot.&n; */
+DECL|function|socki_lookup
 r_struct
 id|socket
 op_star
-DECL|function|socki_lookup
 id|socki_lookup
 c_func
 (paren
@@ -479,12 +712,13 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Go from a file number to its socket slot.&n; */
+DECL|function|sockfd_lookup
 r_static
 r_inline
 r_struct
 id|socket
 op_star
-DECL|function|sockfd_lookup
 id|sockfd_lookup
 c_func
 (paren
@@ -545,11 +779,12 @@ id|file-&gt;f_inode
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Allocate a socket. Wait if we are out of sockets.&n; */
+DECL|function|sock_alloc
 r_static
 r_struct
 id|socket
 op_star
-DECL|function|sock_alloc
 id|sock_alloc
 c_func
 (paren
@@ -596,6 +831,7 @@ op_eq
 id|SS_FREE
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Got one..&n;&t;&t;&t; */
 id|sock-&gt;state
 op_assign
 id|SS_UNCONNECTED
@@ -719,6 +955,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;If its a &squot;now or never request&squot; then return.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -728,6 +965,7 @@ id|wait
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Sleep on the socket free&squot;ing queue.&n;&t;&t; */
 id|interruptible_sleep_on
 c_func
 (paren
@@ -735,6 +973,7 @@ op_amp
 id|socket_wait_free
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;If we have been interrupted then return.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -750,10 +989,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; *&t;Release a socket.&n; */
+DECL|function|sock_release_peer
 r_static
 r_inline
 r_void
-DECL|function|sock_release_peer
 id|sock_release_peer
 c_func
 (paren
@@ -774,9 +1014,9 @@ id|peer-&gt;wait
 )paren
 suffix:semicolon
 )brace
+DECL|function|sock_release
 r_static
 r_void
-DECL|function|sock_release
 id|sock_release
 c_func
 (paren
@@ -817,7 +1057,7 @@ id|sock-&gt;state
 op_assign
 id|SS_DISCONNECTING
 suffix:semicolon
-multiline_comment|/* Wake up anyone waiting for connections. */
+multiline_comment|/*&n;&t; *&t;Wake up anyone waiting for connections. &n;&t; */
 r_for
 c_loop
 (paren
@@ -843,7 +1083,7 @@ id|peersock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Wake up anyone we&squot;re connected to. First, we release the&n;   * protocol, to give it a chance to flush data, etc.&n;   */
+multiline_comment|/*&n;&t; * Wake up anyone we&squot;re connected to. First, we release the&n;&t; * protocol, to give it a chance to flush data, etc.&n;&t; */
 id|peersock
 op_assign
 (paren
@@ -896,6 +1136,7 @@ op_assign
 id|SS_FREE
 suffix:semicolon
 multiline_comment|/* this really releases us */
+multiline_comment|/*&n;&t; *&t;This will wake anyone waiting for a free socket.&n;&t; */
 id|wake_up_interruptible
 c_func
 (paren
@@ -903,7 +1144,7 @@ op_amp
 id|socket_wait_free
 )paren
 suffix:semicolon
-multiline_comment|/* We need to do this. If sock alloc was called we already have an inode. */
+multiline_comment|/*&n;&t; *&t;We need to do this. If sock alloc was called we already have an inode. &n;&t; */
 id|iput
 c_func
 (paren
@@ -911,9 +1152,10 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Sockets are not seekable.&n; */
+DECL|function|sock_lseek
 r_static
 r_int
-DECL|function|sock_lseek
 id|sock_lseek
 c_func
 (paren
@@ -939,9 +1181,10 @@ op_minus
 id|ESPIPE
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Read data from a socket. ubuf is a user mode pointer. We make sure the user&n; *&t;area ubuf...ubuf+size-1 is writeable before asking the protocol.&n; */
+DECL|function|sock_read
 r_static
 r_int
-DECL|function|sock_read
 id|sock_read
 c_func
 (paren
@@ -967,6 +1210,9 @@ r_struct
 id|socket
 op_star
 id|sock
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -1005,6 +1251,53 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|size
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|ubuf
+comma
+id|size
+)paren
+)paren
+OL
+l_int|0
+)paren
+r_return
+id|err
+suffix:semicolon
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
@@ -1025,9 +1318,10 @@ id|O_NONBLOCK
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Write data to a socket. We verify that the user area ubuf..ubuf+size-1 is&n; *&t;readable by the user process.&n; */
+DECL|function|sock_write
 r_static
 r_int
-DECL|function|sock_write
 id|sock_write
 c_func
 (paren
@@ -1053,6 +1347,9 @@ r_struct
 id|socket
 op_star
 id|sock
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -1091,6 +1388,53 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|size
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|ubuf
+comma
+id|size
+)paren
+)paren
+OL
+l_int|0
+)paren
+r_return
+id|err
+suffix:semicolon
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
@@ -1111,9 +1455,10 @@ id|O_NONBLOCK
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;You can&squot;t read directories from a socket!&n; */
+DECL|function|sock_readdir
 r_static
 r_int
-DECL|function|sock_readdir
 id|sock_readdir
 c_func
 (paren
@@ -1141,8 +1486,9 @@ op_minus
 id|EBADF
 suffix:semicolon
 )brace
-r_int
+multiline_comment|/*&n; *&t;With an ioctl arg may well be a user mode pointer, but we don&squot;t know what to do&n; *&t;with it - thats up to the protocol still.&n; */
 DECL|function|sock_ioctl
+r_int
 id|sock_ioctl
 c_func
 (paren
@@ -1210,9 +1556,9 @@ id|arg
 )paren
 suffix:semicolon
 )brace
+DECL|function|sock_select
 r_static
 r_int
-DECL|function|sock_select
 id|sock_select
 c_func
 (paren
@@ -1264,7 +1610,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* We can&squot;t return errors to select, so its either yes or no. */
+multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to select, so its either yes or no. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1289,8 +1635,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|sock_close
+r_void
 id|sock_close
 c_func
 (paren
@@ -1310,7 +1656,7 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
-multiline_comment|/* It&squot;s possible the inode is NULL if we&squot;re closing an unfinished socket. */
+multiline_comment|/*&n;&t; *&t;It&squot;s possible the inode is NULL if we&squot;re closing an unfinished socket. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1350,8 +1696,9 @@ id|sock
 )paren
 suffix:semicolon
 )brace
-r_int
+multiline_comment|/*&n; *&t;Wait for a connection.&n; */
 DECL|function|sock_awaitconn
+r_int
 id|sock_awaitconn
 c_func
 (paren
@@ -1371,6 +1718,7 @@ id|socket
 op_star
 id|last
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We must be listening&n;&t; */
 r_if
 c_cond
 (paren
@@ -1387,7 +1735,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* Put ourselves on the server&squot;s incomplete connection queue. */
+multiline_comment|/*&n;  &t; *&t;Put ourselves on the server&squot;s incomplete connection queue. &n;  &t; */
 id|mysock-&gt;next
 op_assign
 l_int|NULL
@@ -1440,7 +1788,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Wake up server, then await connection. server will set state to&n;   * SS_CONNECTED if we&squot;re connected.&n;   */
+multiline_comment|/*&n;&t; * Wake up server, then await connection. server will set state to&n;&t; * SS_CONNECTED if we&squot;re connected.&n;&t; */
 id|wake_up_interruptible
 c_func
 (paren
@@ -1542,10 +1890,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Perform the socket system call. we locate the appropriate&n; * family, then create a fresh socket.&n; */
+multiline_comment|/*&n; *&t;Perform the socket system call. we locate the appropriate&n; *&t;family, then create a fresh socket.&n; */
+DECL|function|sock_socket
 r_static
 r_int
-DECL|function|sock_socket
 id|sock_socket
 c_func
 (paren
@@ -1637,7 +1985,7 @@ id|pops
 id|i
 )braket
 suffix:semicolon
-multiline_comment|/*&n;   * Check that this is a type that we know how to manipulate and&n;   * the protocol makes sense here. The family can still reject the&n;   * protocol later.&n;   */
+multiline_comment|/*&n; *&t;Check that this is a type that we know how to manipulate and&n; *&t;the protocol makes sense here. The family can still reject the&n; *&t;protocol later.&n; */
 r_if
 c_cond
 (paren
@@ -1671,7 +2019,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;   * allocate the socket and allow the family to set things up. if&n;   * the protocol is 0, the family is instructed to select an appropriate&n;   * default.&n;   */
+multiline_comment|/*&n; *&t;Allocate the socket and allow the family to set things up. if&n; *&t;the protocol is 0, the family is instructed to select an appropriate&n; *&t;default.&n; */
 r_if
 c_cond
 (paren
@@ -1771,9 +2119,10 @@ r_return
 id|fd
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Create a pair of connected sockets.&n; */
+DECL|function|sock_socketpair
 r_static
 r_int
-DECL|function|sock_socketpair
 id|sock_socketpair
 c_func
 (paren
@@ -1812,7 +2161,7 @@ suffix:semicolon
 r_int
 id|er
 suffix:semicolon
-multiline_comment|/*&n;   * Obtain the first socket and check if the underlying protocol&n;   * supports the socketpair call.&n;   */
+multiline_comment|/*&n;&t; * Obtain the first socket and check if the underlying protocol&n;&t; * supports the socketpair call.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1863,7 +2212,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* Now grab another socket and try to connect the two together. */
+multiline_comment|/*&n;&t; *&t;Now grab another socket and try to connect the two together. &n;&t; */
 r_if
 c_cond
 (paren
@@ -2012,10 +2361,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Bind a name to a socket. Nothing much to do here since its&n; * the protocol&squot;s responsibility to handle the local address.&n; */
+multiline_comment|/*&n; *&t;Bind a name to a socket. Nothing much to do here since its&n; *&t;the protocol&squot;s responsibility to handle the local address.&n; *&n; *&t;We move the socket address to kernel space before we call&n; *&t;the protocol layer (having also checked the address is ok).&n; */
+DECL|function|sock_bind
 r_static
 r_int
-DECL|function|sock_bind
 id|sock_bind
 c_func
 (paren
@@ -2038,6 +2387,15 @@ id|sock
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_char
+id|address
+(braket
+id|MAX_SOCK_ADDR
+)braket
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2085,6 +2443,30 @@ r_if
 c_cond
 (paren
 (paren
+id|err
+op_assign
+id|move_addr_to_kernel
+c_func
+(paren
+id|umyaddr
+comma
+id|addrlen
+comma
+id|address
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
 id|i
 op_assign
 id|sock-&gt;ops
@@ -2094,7 +2476,12 @@ c_func
 (paren
 id|sock
 comma
-id|umyaddr
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+id|address
 comma
 id|addrlen
 )paren
@@ -2111,10 +2498,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Perform a listen. Basically, we allow the protocol to do anything&n; * necessary for a listen, and if that works, we mark the socket as&n; * ready for listening.&n; */
+multiline_comment|/*&n; *&t;Perform a listen. Basically, we allow the protocol to do anything&n; *&t;necessary for a listen, and if that works, we mark the socket as&n; *&t;ready for listening.&n; */
+DECL|function|sock_listen
 r_static
 r_int
-DECL|function|sock_listen
 id|sock_listen
 c_func
 (paren
@@ -2210,10 +2597,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * For accept, we attempt to create a new socket, set up the link&n; * with the client, wake up the client, then return the new&n; * connected fd.&n; */
+multiline_comment|/*&n; *&t;For accept, we attempt to create a new socket, set up the link&n; *&t;with the client, wake up the client, then return the new&n; *&t;connected fd. We collect the address of the connector in kernel&n; *&t;space and move it to user at the very end. This is buggy because&n; *&t;we open the socket then return an error.&n; */
+DECL|function|sock_accept
 r_static
 r_int
-DECL|function|sock_accept
 id|sock_accept
 c_func
 (paren
@@ -2245,6 +2632,15 @@ id|newsock
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_char
+id|address
+(braket
+id|MAX_SOCK_ADDR
+)braket
+suffix:semicolon
+r_int
+id|len
 suffix:semicolon
 r_if
 c_cond
@@ -2456,6 +2852,7 @@ c_cond
 (paren
 id|upeer_sockaddr
 )paren
+(brace
 id|newsock-&gt;ops
 op_member_access_from_pointer
 id|getname
@@ -2463,21 +2860,40 @@ c_func
 (paren
 id|newsock
 comma
-id|upeer_sockaddr
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+id|address
 comma
-id|upeer_addrlen
+op_amp
+id|len
 comma
 l_int|1
 )paren
 suffix:semicolon
+id|move_addr_to_user
+c_func
+(paren
+id|address
+comma
+id|len
+comma
+id|upeer_sockaddr
+comma
+id|upeer_addrlen
+)paren
+suffix:semicolon
+)brace
 r_return
 id|fd
 suffix:semicolon
 )brace
-multiline_comment|/* Attempt to connect to a socket with the server address. */
+multiline_comment|/*&n; *&t;Attempt to connect to a socket with the server address.  The address&n; *&t;is in user space so we verify it is OK and move it to kernel space.&n; */
+DECL|function|sock_connect
 r_static
 r_int
-DECL|function|sock_connect
 id|sock_connect
 c_func
 (paren
@@ -2505,6 +2921,15 @@ id|file
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_char
+id|address
+(braket
+id|MAX_SOCK_ADDR
+)braket
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2553,6 +2978,30 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|move_addr_to_kernel
+c_func
+(paren
+id|uservaddr
+comma
+id|addrlen
+comma
+id|address
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -2589,7 +3038,7 @@ r_case
 id|SS_CONNECTING
 suffix:colon
 multiline_comment|/* Not yet connected... we will check this. */
-multiline_comment|/*&n;&t;&t; *&t;FIXME:  for all protocols what happens if you start&n;&t;&t; *&t;an async connect fork and both children connect. Clean&n;&t;&t; *&t;this up in the protocols!&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;FIXME:  for all protocols what happens if you start&n;&t;&t;&t; *&t;an async connect fork and both children connect. Clean&n;&t;&t;&t; *&t;this up in the protocols!&n;&t;&t;&t; */
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
@@ -2621,7 +3070,12 @@ c_func
 (paren
 id|sock
 comma
-id|uservaddr
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+id|address
 comma
 id|addrlen
 comma
@@ -2644,9 +3098,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Get the local address (&squot;name&squot;) of a socket object. Move the obtained&n; *&t;name to user space.&n; */
+DECL|function|sock_getsockname
 r_static
 r_int
-DECL|function|sock_getsockname
 id|sock_getsockname
 c_func
 (paren
@@ -2668,6 +3123,18 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
+r_char
+id|address
+(braket
+id|MAX_SOCK_ADDR
+)braket
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2710,7 +3177,8 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
-r_return
+id|err
+op_assign
 id|sock-&gt;ops
 op_member_access_from_pointer
 id|getname
@@ -2718,17 +3186,63 @@ c_func
 (paren
 id|sock
 comma
-id|usockaddr
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+id|address
 comma
-id|usockaddr_len
+op_amp
+id|len
 comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|move_addr_to_user
+c_func
+(paren
+id|address
+comma
+id|len
+comma
+id|usockaddr
+comma
+id|usockaddr_len
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Get the remote address (&squot;name&squot;) of a socket object. Move the obtained&n; *&t;name to user space.&n; */
+DECL|function|sock_getpeername
 r_static
 r_int
-DECL|function|sock_getpeername
 id|sock_getpeername
 c_func
 (paren
@@ -2750,6 +3264,18 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
+r_char
+id|address
+(braket
+id|MAX_SOCK_ADDR
+)braket
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2792,7 +3318,8 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
-r_return
+id|err
+op_assign
 id|sock-&gt;ops
 op_member_access_from_pointer
 id|getname
@@ -2800,17 +3327,63 @@ c_func
 (paren
 id|sock
 comma
-id|usockaddr
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+id|address
 comma
-id|usockaddr_len
+op_amp
+id|len
 comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|move_addr_to_user
+c_func
+(paren
+id|address
+comma
+id|len
+comma
+id|usockaddr
+comma
+id|usockaddr_len
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Send a datagram down a socket. The datagram as with write() is&n; *&t;in user space. We check it can be read.&n; */
+DECL|function|sock_send
 r_static
 r_int
-DECL|function|sock_send
 id|sock_send
 c_func
 (paren
@@ -2838,6 +3411,9 @@ id|file
 op_star
 id|file
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2886,6 +3462,53 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|len
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|buff
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
@@ -2908,9 +3531,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Send a datagram to a given address. We move the address into kernel&n; *&t;spacee and check the user space data area is readable before invoking&n; *&t;the protocol.&n; */
+DECL|function|sock_sendto
 r_static
 r_int
-DECL|function|sock_sendto
 id|sock_sendto
 c_func
 (paren
@@ -2946,6 +3570,15 @@ id|file
 op_star
 id|file
 suffix:semicolon
+r_char
+id|address
+(braket
+id|MAX_SOCK_ADDR
+)braket
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2994,6 +3627,77 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|len
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|buff
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|move_addr_to_kernel
+c_func
+(paren
+id|addr
+comma
+id|addr_len
+comma
+id|address
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
@@ -3014,15 +3718,21 @@ id|O_NONBLOCK
 comma
 id|flags
 comma
-id|addr
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+id|address
 comma
 id|addr_len
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Receive a datagram from a socket. This isn&squot;t really right. The BSD manual&n; *&t;pages explicitly state that recv is recvfrom with a NULL to argument. The&n; *&t;Linux stack gets the right results for the wrong reason and this need to&n; *&t;be tidied in the inet layer and removed from here.&n; *&t;We check the buffer is writable and valid.&n; */
+DECL|function|sock_recv
 r_static
 r_int
-DECL|function|sock_recv
 id|sock_recv
 c_func
 (paren
@@ -3050,6 +3760,9 @@ id|file
 op_star
 id|file
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3098,6 +3811,53 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|len
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|buff
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
@@ -3120,9 +3880,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Receive a frame from the socket and optionally record the address of the &n; *&t;sender. We verify the buffers are writable and if needed move the&n; *&t;sender address from kernel to user space.&n; */
+DECL|function|sock_recvfrom
 r_static
 r_int
-DECL|function|sock_recvfrom
 id|sock_recvfrom
 c_func
 (paren
@@ -3159,6 +3920,18 @@ id|file
 op_star
 id|file
 suffix:semicolon
+r_char
+id|address
+(braket
+id|MAX_SOCK_ADDR
+)braket
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+r_int
+id|alen
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3207,7 +3980,55 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
 r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|len
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|buff
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|len
+op_assign
 id|sock-&gt;ops
 op_member_access_from_pointer
 id|recvfrom
@@ -3227,15 +4048,67 @@ id|O_NONBLOCK
 comma
 id|flags
 comma
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+id|address
+comma
+op_amp
+id|alen
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|len
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|addr
+op_ne
+l_int|NULL
+op_logical_and
+(paren
+id|err
+op_assign
+id|move_addr_to_user
+c_func
+(paren
+id|address
+comma
+id|alen
+comma
 id|addr
 comma
 id|addr_len
 )paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
 suffix:semicolon
 )brace
+r_return
+id|len
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Set a socket option. Because we don&squot;t know the option lengths we have&n; *&t;to pass the user mode parameter for the protocols to sort out.&n; */
+DECL|function|sock_setsockopt
 r_static
 r_int
-DECL|function|sock_setsockopt
 id|sock_setsockopt
 c_func
 (paren
@@ -3332,9 +4205,10 @@ id|optlen
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Get a socket option. Because we don&squot;t know the option lengths we have&n; *&t;to pass a user mode parameter for the protocols to sort out.&n; */
+DECL|function|sock_getsockopt
 r_static
 r_int
-DECL|function|sock_getsockopt
 id|sock_getsockopt
 c_func
 (paren
@@ -3444,9 +4318,10 @@ id|optlen
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Shutdown a socket.&n; */
+DECL|function|sock_shutdown
 r_static
 r_int
-DECL|function|sock_shutdown
 id|sock_shutdown
 c_func
 (paren
@@ -3527,8 +4402,9 @@ id|how
 )paren
 suffix:semicolon
 )brace
-r_int
+multiline_comment|/*&n; *&t;Perform a file control on a socket file descriptor.&n; */
 DECL|function|sock_fcntl
+r_int
 id|sock_fcntl
 c_func
 (paren
@@ -3591,10 +4467,10 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; * we have this level of indirection. Not a lot of overhead, since more of&n; * the work is done via read/write/select directly.&n; */
+multiline_comment|/*&n; *&t;System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; *&t;we have this level of indirection. Not a lot of overhead, since more of&n; *&t;the work is done via read/write/select directly.&n; *&n; *&t;I&squot;m now expanding this up to a higher level to seperate the assorted&n; *&t;kernel/user space manipulations and global assumptions from the protocol&n; *&t;layers proper - AC.&n; */
+DECL|function|sys_socketcall
 id|asmlinkage
 r_int
-DECL|function|sys_socketcall
 id|sys_socketcall
 c_func
 (paren
@@ -4688,9 +5564,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This function is called by a protocol handler that wants to&n; * advertise its address family, and have it linked into the&n; * SOCKET module.&n; */
-r_int
+multiline_comment|/*&n; *&t;This function is called by a protocol handler that wants to&n; *&t;advertise its address family, and have it linked into the&n; *&t;SOCKET module.&n; */
 DECL|function|sock_register
+r_int
 id|sock_register
 c_func
 (paren
@@ -4821,8 +5697,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* We&squot;re all done... */
 )brace
-r_void
 DECL|function|sock_init
+r_void
 id|sock_init
 c_func
 (paren
@@ -4837,7 +5713,13 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Release all sockets. */
+id|printk
+c_func
+(paren
+l_string|&quot;Swansea University Computer Society NET3.016&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Release all sockets. &n;&t; */
 r_for
 c_loop
 (paren
@@ -4856,7 +5738,7 @@ id|sock-&gt;state
 op_assign
 id|SS_FREE
 suffix:semicolon
-multiline_comment|/* Initialize all address (protocol) families. */
+multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */
 r_for
 c_loop
 (paren
@@ -4878,20 +5760,20 @@ id|i
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Initialize the protocols module. */
+multiline_comment|/*&n;&t; *&t;Initialize the protocols module. &n;&t; */
 id|proto_init
 c_func
 (paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET
-multiline_comment|/* Initialize the DEV module. */
+multiline_comment|/* &n;&t; *&t;Initialize the DEV module. &n;&t; */
 id|dev_init
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* And the bottom half handler */
+multiline_comment|/*&n;&t; *&t;And the bottom half handler &n;&t; */
 id|bh_base
 (braket
 id|NET_BH
@@ -4901,6 +5783,6 @@ id|routine
 op_assign
 id|net_bh
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif  
 )brace
 eof

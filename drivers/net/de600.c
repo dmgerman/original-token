@@ -980,12 +980,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* interrupts back on */
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 (paren
 id|skb
 comma
@@ -2153,7 +2148,7 @@ id|device
 id|de600_dev
 op_assign
 (brace
-l_string|&quot;&quot;
+l_string|&quot;        &quot;
 multiline_comment|/*&quot;de600&quot;*/
 comma
 l_int|0

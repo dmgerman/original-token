@@ -15,7 +15,7 @@ mdefine_line|#define SIOCGPGRP&t;0x8904
 DECL|macro|SIOCATMARK
 mdefine_line|#define SIOCATMARK&t;0x8905
 DECL|macro|SIOCGSTAMP
-mdefine_line|#define SIOCGSTAMP&t;0x8096&t;&t;/* Get stamp */
+mdefine_line|#define SIOCGSTAMP&t;0x8906&t;&t;/* Get stamp */
 multiline_comment|/* Routing table calls. */
 DECL|macro|SIOCADDRT
 mdefine_line|#define SIOCADDRT&t;0x890B&t;&t;/* add routing table entry&t;*/

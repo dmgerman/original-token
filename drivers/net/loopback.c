@@ -97,6 +97,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: Optimise so buffers with skb-&gt;free=1 are not copied but&n;     instead are lobbed from tx queue to rx queue */
 id|done
 op_assign
 id|dev_rint
@@ -111,12 +112,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb

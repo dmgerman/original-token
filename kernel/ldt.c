@@ -237,6 +237,7 @@ id|limit
 op_add_assign
 id|base
 suffix:semicolon
+macro_line|#ifdef&t;NOTDEF_KLUDGE
 r_if
 c_cond
 (paren
@@ -252,6 +253,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -457,7 +459,17 @@ op_lshift
 l_int|23
 )paren
 op_or
-l_int|0xf000
+(paren
+(paren
+id|ldt_info.seg_not_present
+op_xor
+l_int|1
+)paren
+op_lshift
+l_int|15
+)paren
+op_or
+l_int|0x7000
 suffix:semicolon
 r_return
 l_int|0

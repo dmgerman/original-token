@@ -1768,12 +1768,7 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 (paren
 id|skb
 comma
@@ -3178,7 +3173,7 @@ id|device
 id|dev_3c509
 op_assign
 (brace
-l_string|&quot;&quot;
+l_string|&quot;        &quot;
 multiline_comment|/*&quot;3c509&quot;*/
 comma
 l_int|0

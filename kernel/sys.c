@@ -58,6 +58,17 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 multiline_comment|/* Map out the low memory: it&squot;s no longer needed */
 r_for
 c_loop

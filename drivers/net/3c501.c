@@ -1027,12 +1027,7 @@ c_func
 l_string|&quot; queued xmit.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 (paren
 id|skb
 comma
@@ -2048,7 +2043,7 @@ id|device
 id|dev_3c501
 op_assign
 (brace
-l_string|&quot;&quot;
+l_string|&quot;        &quot;
 multiline_comment|/*&quot;3c501&quot;*/
 comma
 l_int|0
@@ -2061,7 +2056,7 @@ l_int|0
 comma
 l_int|0x280
 comma
-l_int|7
+l_int|5
 comma
 l_int|0
 comma

@@ -66,6 +66,8 @@ DECL|macro|AF_AX25
 mdefine_line|#define AF_AX25&t;&t;3
 DECL|macro|AF_IPX
 mdefine_line|#define AF_IPX&t;&t;4
+DECL|macro|AF_MAX
+mdefine_line|#define AF_MAX&t;&t;8&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
 DECL|macro|PF_UNIX
 mdefine_line|#define PF_UNIX&t;&t;AF_UNIX
@@ -75,6 +77,8 @@ DECL|macro|PF_AX25
 mdefine_line|#define PF_AX25&t;&t;AF_AX25
 DECL|macro|PF_IPX
 mdefine_line|#define PF_IPX&t;&t;AF_IPX
+DECL|macro|PF_MAX
+mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Flags we can use with send/ and recv. */
 DECL|macro|MSG_OOB
 mdefine_line|#define MSG_OOB&t;&t;1

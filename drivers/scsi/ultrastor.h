@@ -66,6 +66,8 @@ op_star
 suffix:semicolon
 DECL|macro|ULTRASTOR_14F_MAX_SG
 mdefine_line|#define ULTRASTOR_14F_MAX_SG 16
+DECL|macro|ULTRASTOR_24F_MAX_SG
+mdefine_line|#define ULTRASTOR_24F_MAX_SG 33
 DECL|macro|ULTRASTOR_MAX_CMDS_PER_LUN
 mdefine_line|#define ULTRASTOR_MAX_CMDS_PER_LUN 5
 DECL|macro|ULTRASTOR_MAX_CMDS

@@ -77,7 +77,7 @@ DECL|macro|ifa_broadaddr
 mdefine_line|#define&t;ifa_broadaddr&t;ifa_ifu.ifu_broadaddr&t;/* broadcast address&t;*/
 DECL|macro|ifa_dstaddr
 mdefine_line|#define&t;ifa_dstaddr&t;ifa_ifu.ifu_dstaddr&t;/* other end of link&t;*/
-multiline_comment|/*&n; *&t;Device mapping structure. I&squot;d just gone off and designed a &n; *&t;beautiful scheme using only loadable modules with arguments&n; *&t;for driver options and along come the PCMICA people 8)&n; *&n; *&t;Ah well. The get() side of this is good for WDSETUP, and it&squot;ll&n; *&t;be handy for debugging things. The set side is fine for now and&n; *&t;being very small might be worth keeping for clean configuration.&n; */
+multiline_comment|/*&n; *&t;Device mapping structure. I&squot;d just gone off and designed a &n; *&t;beautiful scheme using only loadable modules with arguments&n; *&t;for driver options and along come the PCMCIA people 8)&n; *&n; *&t;Ah well. The get() side of this is good for WDSETUP, and it&squot;ll&n; *&t;be handy for debugging things. The set side is fine for now and&n; *&t;being very small might be worth keeping for clean configuration.&n; */
 DECL|struct|ifmap
 r_struct
 id|ifmap

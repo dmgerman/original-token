@@ -148,6 +148,8 @@ DECL|macro|SONY_HWC_EJECT
 mdefine_line|#define SONY_HWC_EJECT(c)&t;&t;(c.hw_config[0] &amp; 0x04)
 DECL|macro|SONY_HWC_LED_SUPPORT
 mdefine_line|#define SONY_HWC_LED_SUPPORT(c)&t;&t;(c.hw_config[0] &amp; 0x08)
+DECL|macro|SONY_HWC_DOUBLE_SPEED
+mdefine_line|#define SONY_HWC_DOUBLE_SPEED(c)&t;(c.hw_config[0] &amp; 0x10)
 DECL|macro|SONY_HWC_GET_BUF_MEM_SIZE
 mdefine_line|#define SONY_HWC_GET_BUF_MEM_SIZE(c)&t;((c.hw_config[0] &amp; 0xc0) &gt;&gt; 6)
 DECL|macro|SONY_HWC_AUDIO_PLAYBACK

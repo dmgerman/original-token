@@ -1826,12 +1826,7 @@ id|TX_INTR
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 (paren
 id|skb
 comma

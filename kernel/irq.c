@@ -1316,6 +1316,9 @@ r_if
 c_cond
 (paren
 id|ignore_irq13
+op_logical_or
+op_logical_neg
+id|hard_math
 )paren
 r_return
 suffix:semicolon

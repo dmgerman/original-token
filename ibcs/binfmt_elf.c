@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/binfmt_elf.c&n; */
+multiline_comment|/*&n; * linux/fs/binfmt_elf.c&n; *&n; * These are the functions used to load ELF format executables as used&n; * on SVr4 machines.  Information on the format may be found in the book&n; * &quot;UNIX SYSTEM V RELEASE 4 Programmers Guide: Ansi C and Programming Support&n; * Tools&quot;.&n; *&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
+macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 id|asmlinkage
 r_int
@@ -779,9 +780,6 @@ op_logical_neg
 id|interpreter_inode-&gt;i_op
 op_logical_or
 op_logical_neg
-id|interpreter_inode-&gt;i_op-&gt;bmap
-op_logical_or
-op_logical_neg
 id|interpreter_inode-&gt;i_op-&gt;default_file_ops-&gt;mmap
 )paren
 )paren
@@ -1402,6 +1400,7 @@ mdefine_line|#define INTERPRETER_AOUT 1
 DECL|macro|INTERPRETER_ELF
 mdefine_line|#define INTERPRETER_ELF 2
 DECL|function|load_elf_binary
+r_static
 r_int
 id|load_elf_binary
 c_func
@@ -2555,8 +2554,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|elf_interpreter
+id|interpreter_type
+op_ne
+id|INTERPRETER_AOUT
 )paren
 (brace
 id|sys_close
@@ -2566,9 +2566,20 @@ id|elf_exec_fileno
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;elf_executable
+multiline_comment|/* The following 3 lines need a little bit of work if we are loading&n;&t;   an iBCS2 binary.  We should initially load it this way, and if&n;&t;   we get a lcall7, then we should look to see if the iBCS2 execution&n;&t;   profile is present.  If it is, then switch to that, otherwise&n;&t;   bomb. */
+id|current-&gt;personality
 op_assign
-l_int|1
+id|PER_LINUX
+suffix:semicolon
+id|current-&gt;lcall7
+op_assign
+id|no_lcall7
+suffix:semicolon
+id|current-&gt;signal_map
+op_assign
+id|current-&gt;signal_invmap
+op_assign
+id|ident_map
 suffix:semicolon
 id|current-&gt;executable
 op_assign
@@ -2776,6 +2787,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* This is really simpleminded and specialized - we are loading an&n;   a.out library that is given an ELF header. */
 DECL|function|load_elf_library
+r_static
 r_int
 (def_block
 id|load_elf_library
@@ -2960,9 +2972,6 @@ op_logical_or
 (paren
 op_logical_neg
 id|inode-&gt;i_op
-op_logical_or
-op_logical_neg
-id|inode-&gt;i_op-&gt;bmap
 op_logical_or
 op_logical_neg
 id|inode-&gt;i_op-&gt;default_file_ops-&gt;mmap
@@ -3276,4 +3285,17 @@ l_int|0
 suffix:semicolon
 )brace
 )def_block
+DECL|variable|elf_format
+r_struct
+id|linux_binfmt
+id|elf_format
+op_assign
+(brace
+l_int|NULL
+comma
+id|load_elf_binary
+comma
+id|load_elf_library
+)brace
+suffix:semicolon
 eof

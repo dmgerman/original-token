@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *&t;ultrastor.c&t;Copyright (C) 1992 David B. Gentzel&n; *&t;Low-level SCSI driver for UltraStor 14F, 24F, and 34F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *  scatter/gather added by Scott Taylor (n217cg@tamuts.tamu.edu)&n; *  24F and multiple command support by John F. Carr (jfc@athena.mit.edu)&n; *    John&squot;s work modified by Caleb Epstein (cae@jpmorgan.com) and &n; *    Eric Youngdale (ericy@cais.com).&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
-multiline_comment|/*&n; * TODO:&n; *&t;1. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;2. Look at command linking (mscp.command_link and&n; *&t;   mscp.command_link_id).  (Does not work with many disks, &n; *&t;&t;&t;&t;and no performance increase.  ERY).&n; *&t;3. Allow multiple adapters.&n; */
+multiline_comment|/*&n; * TODO:&n; *&t;1. Find out why scatter/gather is limited to 16 requests per command.&n; *         This is fixed, at least on the 24F, as of version 1.12 - CAE.&n; *&t;2. Look at command linking (mscp.command_link and&n; *&t;   mscp.command_link_id).  (Does not work with many disks, &n; *&t;&t;&t;&t;and no performance increase.  ERY).&n; *&t;3. Allow multiple adapters.&n; */
 multiline_comment|/*&n; * NOTES:&n; *    The UltraStor 14F, 24F, and 34F are a family of intelligent, high&n; *    performance SCSI-2 host adapters.  They all support command queueing&n; *    and scatter/gather I/O.  Some of them can also emulate the standard&n; *    WD1003 interface for use with OS&squot;s which don&squot;t support SCSI.  Here&n; *    is the scoop on the various models:&n; *&t;14F - ISA first-party DMA HA with floppy support and WD1003 emulation.&n; *&t;14N - ISA HA with floppy support.  I think that this is a non-DMA&n; *&t;      HA.  Nothing further known.&n; *&t;24F - EISA Bus Master HA with floppy support and WD1003 emulation.&n; *&t;34F - VL-Bus Bus Master HA with floppy support (no WD1003 emulation).&n; *&n; *    The 14F, 24F, and 34F are supported by this driver.&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
+multiline_comment|/* Changes from version 1.11 alpha to 1.12&n; *&n; * Increased the size of the scatter-gather list to 33 entries for&n; * the 24F adapter (it was 16).  I don&squot;t have the specs for the 14F&n; * or the 34F, so they may support larger s-g lists as well.&n; *&n; * Caleb Epstein &lt;cae@jpmorgan.com&gt;&n; */
 multiline_comment|/* Changes from version 1.9 to 1.11&n; *&n; * Patches to bring this driver up to speed with the default kernel&n; * driver which supports only the 14F and 34F adapters.  This version&n; * should compile cleanly into 0.99.13, 0.99.12 and probably 0.99.11.&n; *&n; * Fixes from Eric Youngdale to fix a few possible race conditions and&n; * several problems with bit testing operations (insufficient&n; * parentheses).&n; *&n; * Removed the ultrastor_abort() and ultrastor_reset() functions&n; * (enclosed them in #if 0 / #endif).  These functions, at least on&n; * the 24F, cause the SCSI bus to do odd things and generally lead to&n; * kernel panics and machine hangs.  This is like the Adaptec code.&n; *&n; * Use check/snarf_region for 14f, 34f to avoid I/O space address conflicts.&n; */
 multiline_comment|/* Changes from version 1.8 to version 1.9&n; *&n; *  0.99.11 patches (cae@jpmorgan.com) */
 multiline_comment|/* Changes from version 1.7 to version 1.8&n; *&n; * Better error reporting.&n; */
@@ -32,7 +33,7 @@ DECL|macro|ULTRASTOR_DEBUG
 mdefine_line|#define ULTRASTOR_DEBUG (UD_ABORT|UD_CSIR|UD_RESET)
 macro_line|#endif
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;1.11 alpha&quot;
+mdefine_line|#define VERSION &quot;1.12&quot;
 DECL|macro|ARRAY_SIZE
 mdefine_line|#define ARRAY_SIZE(arr) (sizeof (arr) / sizeof (arr)[0])
 DECL|macro|PACKED
@@ -218,9 +219,10 @@ DECL|member|sglist
 id|ultrastor_sg_list
 id|sglist
 (braket
-id|ULTRASTOR_14F_MAX_SG
+id|ULTRASTOR_24F_MAX_SG
 )braket
 suffix:semicolon
+multiline_comment|/* use larger size for 24F */
 )brace
 suffix:semicolon
 multiline_comment|/* Port addresses (relative to the base address) */
@@ -1568,6 +1570,13 @@ r_register
 r_int
 id|i
 suffix:semicolon
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
 c_func
@@ -1915,7 +1924,29 @@ id|hostnum
 dot
 id|sg_tablesize
 op_assign
-id|ULTRASTOR_14F_MAX_SG
+id|ULTRASTOR_24F_MAX_SG
+suffix:semicolon
+id|shpnt
+op_assign
+id|scsi_register
+c_func
+(paren
+id|hostnum
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|shpnt-&gt;irq
+op_assign
+id|config.interrupt
+suffix:semicolon
+id|shpnt-&gt;dma_channel
+op_assign
+id|config.dma_channel
+suffix:semicolon
+id|shpnt-&gt;io_port
+op_assign
+id|config.port_address
 suffix:semicolon
 macro_line|#if ULTRASTOR_MAX_CMDS &gt; 1
 id|config.mscp_free
@@ -1986,7 +2017,12 @@ l_string|&quot;UltraStor driver version &quot;
 id|VERSION
 l_string|&quot;.  Using %d SG lists.&bslash;n&quot;
 comma
-id|ULTRASTOR_14F_MAX_SG
+id|scsi_hosts
+(braket
+id|hostnum
+)braket
+dot
+id|sg_tablesize
 )paren
 suffix:semicolon
 r_return
@@ -2836,6 +2872,18 @@ id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
 multiline_comment|/* Do not attempt an abort for the 24f */
+multiline_comment|/* Simple consistency checking */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|SCpnt-&gt;host_scribble
+)paren
+(brace
+r_return
+id|SCSI_ABORT_NOT_RUNNING
+suffix:semicolon
+)brace
 id|mscp_index
 op_assign
 (paren
@@ -3285,7 +3333,7 @@ id|SCpnt
 id|printk
 c_func
 (paren
-l_string|&quot;abort: command mismatch, %x != %x&bslash;n&quot;
+l_string|&quot;abort: command mismatch, %p != %p&bslash;n&quot;
 comma
 id|config.mscp
 (braket

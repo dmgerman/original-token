@@ -153,12 +153,7 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb

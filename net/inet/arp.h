@@ -24,6 +24,17 @@ id|force
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|arp_device_down
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|arp_rcv
 c_func

@@ -32,7 +32,7 @@ suffix:semicolon
 DECL|macro|DO_ERROR
 mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;tss.error_code = error_code; &bslash;&n;&t;tsk-&gt;tss.trap_no = trapnr; &bslash;&n;&t;if (signr == SIGTRAP &amp;&amp; current-&gt;flags &amp; PF_PTRACED) &bslash;&n;&t;&t;current-&gt;blocked &amp;= ~(1 &lt;&lt; (SIGTRAP-1)); &bslash;&n;&t;send_sig(signr, tsk, 1); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;}
 DECL|macro|get_seg_byte
-mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register char __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movb %%fs:%2,%%al;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
+mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register unsigned char __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movb %%fs:%2,%%al;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
 DECL|macro|get_seg_long
 mdefine_line|#define get_seg_long(seg,addr) ({ &bslash;&n;register unsigned long __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movl %%fs:%2,%%eax;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
 DECL|macro|_fs
@@ -603,7 +603,7 @@ c_func
 (paren
 l_int|11
 comma
-id|SIGSEGV
+id|SIGBUS
 comma
 l_string|&quot;segment not present&quot;
 comma
@@ -616,7 +616,7 @@ c_func
 (paren
 l_int|12
 comma
-id|SIGSEGV
+id|SIGBUS
 comma
 l_string|&quot;stack segment&quot;
 comma
@@ -665,6 +665,11 @@ r_int
 id|error_code
 )paren
 (brace
+r_int
+id|signr
+op_assign
+id|SIGSEGV
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -689,6 +694,53 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|die_if_kernel
+c_func
+(paren
+l_string|&quot;general protection&quot;
+comma
+id|regs
+comma
+id|error_code
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|get_seg_byte
+c_func
+(paren
+id|regs-&gt;cs
+comma
+(paren
+r_char
+op_star
+)paren
+id|regs-&gt;eip
+)paren
+)paren
+(brace
+r_case
+l_int|0xCD
+suffix:colon
+multiline_comment|/* INT */
+r_case
+l_int|0xF4
+suffix:colon
+multiline_comment|/* HLT */
+r_case
+l_int|0xFA
+suffix:colon
+multiline_comment|/* CLI */
+r_case
+l_int|0xFB
+suffix:colon
+multiline_comment|/* STI */
+id|signr
+op_assign
+id|SIGILL
+suffix:semicolon
+)brace
 id|current-&gt;tss.error_code
 op_assign
 id|error_code
@@ -700,21 +752,11 @@ suffix:semicolon
 id|send_sig
 c_func
 (paren
-id|SIGSEGV
+id|signr
 comma
 id|current
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|die_if_kernel
-c_func
-(paren
-l_string|&quot;general protection&quot;
-comma
-id|regs
-comma
-id|error_code
 )paren
 suffix:semicolon
 )brace

@@ -522,6 +522,7 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+multiline_comment|/*&n;  extern unsigned long tcp_rx_miss, tcp_rx_hit1,tcp_rx_hit2;&n;*/
 id|len
 op_assign
 id|sprintf
@@ -689,6 +690,7 @@ comma
 id|udp_statistics.UdpOutDatagrams
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;  len += sprintf( buffer + len,&n;&t;  &t;&quot;TCP fast path RX:  H2: %ul H1: %ul L: %ul&bslash;n&quot;,&n;&t;  &t;&t;tcp_rx_hit2,tcp_rx_hit1,tcp_rx_miss);&n;*/
 r_if
 c_cond
 (paren

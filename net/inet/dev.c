@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independant device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independant device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
 multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -546,7 +546,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+id|arp_device_down
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
 macro_line|#ifdef CONFIG_IPX
 id|ipxrtr_device_down
 c_func
@@ -629,7 +635,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send (or queue for sending) a packet. &n; */
+multiline_comment|/*&n; *&t;Send (or queue for sending) a packet. &n; *&n; *&t;IMPORTANT: When this is called to resend frames. The caller MUST&n; *&t;already have locked the sk_buff. Apart from that we do the&n; *&t;rest of the magic.&n; */
 DECL|function|dev_queue_xmit
 r_void
 id|dev_queue_xmit
@@ -660,7 +666,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* used to say if the packet should go&t;*/
 multiline_comment|/* at the front or the back of the&t;*/
-multiline_comment|/* queue.&t;&t;&t;&t;*/
+multiline_comment|/* queue - front is a retranmsit try&t;*/
 r_if
 c_cond
 (paren
@@ -678,6 +684,29 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|pri
+op_ge
+l_int|0
+op_logical_and
+op_logical_neg
+id|skb_device_locked
+c_func
+(paren
+id|skb
+)paren
+)paren
+(brace
+id|skb_device_lock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Shove a lock on the frame */
 macro_line|#ifdef CONFIG_SLAVE_BALANCING
 id|save_flags
 c_func
@@ -821,6 +850,13 @@ id|skb
 )paren
 )paren
 (brace
+id|skb_device_unlock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* It&squot;s now safely on the arp queue */
 r_return
 suffix:semicolon
 )brace
@@ -858,6 +894,13 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|skb_device_unlock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Buffer is on the device queue and can be freed safely */
 id|skb
 op_assign
 id|skb_dequeue
@@ -868,6 +911,13 @@ op_plus
 id|pri
 )paren
 suffix:semicolon
+id|skb_device_lock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* New buffer needs locking down */
 macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;&t;
 id|skb-&gt;in_dev_queue
 op_assign
@@ -897,6 +947,7 @@ op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;Packet is now solely the responsibility of the driver&n;&t;&t; */
 macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;
 id|dev-&gt;pkt_queue
 op_decrement
@@ -905,7 +956,7 @@ macro_line|#endif
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Transmission failed, put skb back into a list. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Transmission failed, put skb back into a list. Once on the list its safe and&n;&t; *&t;no longer device locked (it can be freed safely from the device queue)&n;&t; */
 id|cli
 c_func
 (paren
@@ -920,6 +971,12 @@ id|dev-&gt;pkt_queue
 op_increment
 suffix:semicolon
 macro_line|#endif&t;&t;
+id|skb_device_unlock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|skb_queue_head
 c_func
 (paren
@@ -1766,6 +1823,16 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Work the queues in priority order&n;&t; */
 r_for
 c_loop
@@ -1783,6 +1850,11 @@ op_increment
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Pull packets from the queue&n;&t;&t; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1803,6 +1875,19 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Stop anyone freeing the buffer while we retransmit it&n;&t;&t;&t; */
+id|skb_device_lock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Feed them to the output stage and if it fails&n;&t;&t;&t; *&t;indicate they re-queue at the front.&n;&t;&t;&t; */
 id|dev_queue_xmit
 c_func
@@ -1825,8 +1910,19 @@ id|dev-&gt;tbusy
 )paren
 r_return
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Perform a SIOCGIFCONF call. This structure will change&n; *&t;size shortly, and there is nothing I can do about it.&n; *&t;Thus we will need a &squot;compatibility mode&squot;.&n; */
 DECL|function|dev_ifconf
@@ -3412,7 +3508,8 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-r_return
+id|ret
+op_assign
 id|dev
 op_member_access_from_pointer
 id|do_ioctl
@@ -3423,6 +3520,23 @@ comma
 op_amp
 id|ifr
 )paren
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|arg
+comma
+op_amp
+id|ifr
+comma
+r_sizeof
+(paren
+r_struct
+id|ifreq
+)paren
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|SIOCGIFMAP

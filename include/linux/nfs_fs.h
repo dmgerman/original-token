@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/*&n; * The readdir cache size controls how many directory entries are cached.&n; * Its size is limited by the number of nfs_entry structures that can fit&n; * in one 4096-byte page, currently 256.&n; */
 DECL|macro|NFS_READDIR_CACHE_SIZE
 mdefine_line|#define NFS_READDIR_CACHE_SIZE&t;&t;64
-multiline_comment|/*&n; * WARNING!  The I/O buffer size cannot be bigger than about 3900 for now.&n; * It needs to fit inside a 4096-byte page and leave room for the RPC and&n; * NFS headers.  But it ought to at least be a multiple of 512 and probably&n; * should be a power of 2.  I don&squot;t think Linux TCP/IP can handle more than&n; * about 1800 yet.&n; */
 DECL|macro|NFS_MAX_FILE_IO_BUFFER_SIZE
 mdefine_line|#define NFS_MAX_FILE_IO_BUFFER_SIZE&t;(7*512)
 DECL|macro|NFS_DEF_FILE_IO_BUFFER_SIZE

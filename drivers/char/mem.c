@@ -464,6 +464,10 @@ id|mpnt-&gt;vm_page_prot
 op_assign
 id|prot
 suffix:semicolon
+id|mpnt-&gt;vm_flags
+op_assign
+l_int|0
+suffix:semicolon
 id|mpnt-&gt;vm_share
 op_assign
 l_int|NULL
@@ -978,6 +982,10 @@ suffix:semicolon
 id|mpnt-&gt;vm_page_prot
 op_assign
 id|prot
+suffix:semicolon
+id|mpnt-&gt;vm_flags
+op_assign
+l_int|0
 suffix:semicolon
 id|mpnt-&gt;vm_share
 op_assign

@@ -2297,12 +2297,7 @@ id|entry
 op_or
 l_int|0x83000000
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 (paren
 id|skb
 comma
@@ -2312,13 +2307,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* We can&squot;t free the packet yet, so we inform the memory management&n;&t;   code that we are still using it. */
-id|skb_kept_by_device
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|lp-&gt;tx_ring
 (braket
 id|entry
@@ -2781,7 +2769,7 @@ id|databuff
 op_minus
 l_int|1
 suffix:semicolon
-id|skb_device_release
+id|dev_kfree_skb
 c_func
 (paren
 id|skb

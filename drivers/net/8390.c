@@ -781,12 +781,7 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
+id|dev_kfree_skb
 (paren
 id|skb
 comma
@@ -2366,7 +2361,7 @@ c_func
 (paren
 id|E8390_RXCONFIG
 op_or
-l_int|0x10
+l_int|0x18
 comma
 id|ioaddr
 op_plus

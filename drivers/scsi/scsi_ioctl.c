@@ -491,6 +491,8 @@ id|cmdlen
 suffix:semicolon
 r_int
 id|needed
+comma
+id|buf_needed
 suffix:semicolon
 r_int
 id|result
@@ -563,6 +565,8 @@ id|cmd_in
 suffix:semicolon
 id|needed
 op_assign
+id|buf_needed
+op_assign
 (paren
 id|inlen
 OG
@@ -577,13 +581,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|needed
+id|buf_needed
 )paren
 (brace
-id|needed
+id|buf_needed
 op_assign
 (paren
-id|needed
+id|buf_needed
 op_plus
 l_int|511
 )paren
@@ -594,11 +598,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|needed
+id|buf_needed
 OG
 id|MAX_BUF
 )paren
-id|needed
+id|buf_needed
 op_assign
 id|MAX_BUF
 suffix:semicolon
@@ -611,7 +615,7 @@ op_star
 id|scsi_malloc
 c_func
 (paren
-id|needed
+id|buf_needed
 )paren
 suffix:semicolon
 r_if
@@ -880,7 +884,7 @@ c_func
 (paren
 id|buf
 comma
-id|needed
+id|buf_needed
 )paren
 suffix:semicolon
 r_if

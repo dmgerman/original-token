@@ -1,6 +1,8 @@
 macro_line|#ifndef _LINUX_UN_H
 DECL|macro|_LINUX_UN_H
 mdefine_line|#define _LINUX_UN_H
+DECL|macro|UNIX_PATH_MAX
+mdefine_line|#define UNIX_PATH_MAX&t;108
 DECL|struct|sockaddr_un
 r_struct
 id|sockaddr_un
@@ -15,7 +17,7 @@ DECL|member|sun_path
 r_char
 id|sun_path
 (braket
-l_int|108
+id|UNIX_PATH_MAX
 )braket
 suffix:semicolon
 multiline_comment|/* pathname */

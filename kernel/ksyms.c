@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
+macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
@@ -291,7 +292,7 @@ multiline_comment|/* process memory management */
 id|X
 c_func
 (paren
-id|__verify_write
+id|verify_area
 )paren
 comma
 id|X
@@ -441,6 +442,25 @@ id|X
 c_func
 (paren
 id|unregister_binfmt
+)paren
+comma
+multiline_comment|/* execution environment registration */
+id|X
+c_func
+(paren
+id|lookup_exec_domain
+)paren
+comma
+id|X
+c_func
+(paren
+id|register_exec_domain
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_exec_domain
 )paren
 comma
 multiline_comment|/* interrupt handling */
