@@ -234,12 +234,23 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#ifdef __sparc__
+(brace
+r_extern
+r_int
+id|stop_a_enabled
+suffix:semicolon
+multiline_comment|/* Make sure the user can actually press L1-A */
+id|stop_a_enabled
+op_assign
+l_int|1
+suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;Press L1-A to return to the boot prom&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|sti
 c_func

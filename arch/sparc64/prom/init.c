@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.9 1999/08/31 06:55:03 davem Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: init.c,v 1.10 1999/09/21 14:35:59 davem Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -38,14 +38,6 @@ multiline_comment|/* You must call prom_init() before you attempt to use any of 
 r_extern
 r_void
 id|prom_meminit
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|prom_ranges_init
 c_func
 (paren
 r_void
@@ -357,11 +349,6 @@ l_int|4
 )paren
 suffix:semicolon
 id|prom_meminit
-c_func
-(paren
-)paren
-suffix:semicolon
-id|prom_ranges_init
 c_func
 (paren
 )paren

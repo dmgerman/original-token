@@ -360,7 +360,9 @@ id|spinlock_t
 id|lock
 suffix:semicolon
 DECL|member|ss_entry
-id|ss_entry_t
+r_struct
+id|pccard_operations
+op_star
 id|ss_entry
 suffix:semicolon
 DECL|member|sock

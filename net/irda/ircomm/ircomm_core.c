@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_core.c&n; * Version:       1.0&n; * Description:   IrCOMM service interface&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 20:37:34 1999&n; * Modified at:   Sat Oct 30 12:48:14 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_core.c&n; * Version:       1.0&n; * Description:   IrCOMM service interface&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 20:37:34 1999&n; * Modified at:   Thu Dec 16 21:15:26 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -381,32 +381,6 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|IRCOMM_MAGIC
-comma
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Disconnect link if any */
 id|ircomm_do_event
 c_func
@@ -484,6 +458,41 @@ r_struct
 id|ircomm_cb
 op_star
 id|entry
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|IRCOMM_MAGIC
+comma
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)paren
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
 suffix:semicolon
 id|entry
 op_assign
@@ -676,25 +685,6 @@ l_int|0
 )braket
 suffix:semicolon
 multiline_comment|/* &n;&t; * If there are any data hiding in the control channel, we must &n;&t; * deliver it first. The side effect is that the control channel &n;&t; * will be removed from the skb&n;&t; */
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|clen
-OG
-l_int|0
-)paren
-id|ircomm_control_indication
-c_func
-(paren
-id|self
-comma
-id|skb
-comma
-id|clen
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -718,6 +708,24 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_else
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), missing handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function ircomm_connect_response (self, userdata, max_sdu_size)&n; *&n; *    User accepts connection&n; *&n; */
 DECL|function|ircomm_connect_response
@@ -846,6 +854,24 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_else
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), missing handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function ircomm_data_request (self, userdata)&n; *&n; *    Send IrCOMM data to peer device&n; *&n; */
 DECL|function|ircomm_data_request
@@ -987,6 +1013,24 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_else
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), missing handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function ircomm_process_data (self, skb)&n; *&n; *    Data arrived which may contain control channel data&n; *&n; */
 DECL|function|ircomm_process_data
@@ -1255,6 +1299,24 @@ comma
 id|ctrl_skb
 )paren
 suffix:semicolon
+r_else
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), missing handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function ircomm_disconnect_request (self, userdata, priority)&n; *&n; *    User layer wants to disconnect the IrCOMM connection&n; *&n; */
 DECL|function|ircomm_disconnect_request
@@ -1397,6 +1459,24 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), missing handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function ircomm_flow_request (self, flow)&n; *&n; *    &n; *&n; */
 DECL|function|ircomm_flow_request
@@ -1463,7 +1543,7 @@ id|flow
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function ircomm_proc_read (buf, start, offset, len)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function ircomm_proc_read (buf, start, offset, len, unused)&n; *&n; *    &n; *&n; */
 DECL|function|ircomm_proc_read
 r_int
 id|ircomm_proc_read

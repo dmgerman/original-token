@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.22 1999/08/31 07:02:12 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: floppy.h,v 1.23 1999/09/21 14:39:34 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef __ASM_SPARC64_FLOPPY_H
 DECL|macro|__ASM_SPARC64_FLOPPY_H
 mdefine_line|#define __ASM_SPARC64_FLOPPY_H
@@ -98,16 +98,14 @@ op_minus
 l_int|1
 suffix:semicolon
 DECL|variable|fdc_status
-r_volatile
 r_int
-r_char
-op_star
+r_int
 id|fdc_status
 suffix:semicolon
 DECL|variable|floppy_sdev
 r_static
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|floppy_sdev
 op_assign
@@ -393,7 +391,12 @@ l_int|4
 suffix:colon
 multiline_comment|/* FD_STATUS */
 r_return
+id|sbus_readb
+c_func
+(paren
+op_amp
 id|sun_fdc-&gt;status_82077
+)paren
 op_amp
 op_complement
 id|STATUS_DMA
@@ -403,7 +406,12 @@ l_int|5
 suffix:colon
 multiline_comment|/* FD_DATA */
 r_return
+id|sbus_readb
+c_func
+(paren
+op_amp
 id|sun_fdc-&gt;data_82077
+)paren
 suffix:semicolon
 r_case
 l_int|7
@@ -411,7 +419,12 @@ suffix:colon
 multiline_comment|/* FD_DIR */
 multiline_comment|/* XXX: Is DCL on 0x80 in sun4m? */
 r_return
+id|sbus_readb
+c_func
+(paren
+op_amp
 id|sun_fdc-&gt;dir_82077
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -472,9 +485,14 @@ l_int|2
 suffix:colon
 multiline_comment|/* FD_DOR */
 multiline_comment|/* Happily, the 82077 has a real DOR register. */
-id|sun_fdc-&gt;dor_82077
-op_assign
+id|sbus_writeb
+c_func
+(paren
 id|value
+comma
+op_amp
+id|sun_fdc-&gt;dor_82077
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -482,9 +500,14 @@ r_case
 l_int|5
 suffix:colon
 multiline_comment|/* FD_DATA */
-id|sun_fdc-&gt;data_82077
-op_assign
+id|sbus_writeb
+c_func
+(paren
 id|value
+comma
+op_amp
+id|sun_fdc-&gt;data_82077
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -492,9 +515,14 @@ r_case
 l_int|7
 suffix:colon
 multiline_comment|/* FD_DCR */
-id|sun_fdc-&gt;dcr_82077
-op_assign
+id|sbus_writeb
+c_func
+(paren
 id|value
+comma
+op_amp
+id|sun_fdc-&gt;dcr_82077
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -502,9 +530,14 @@ r_case
 l_int|4
 suffix:colon
 multiline_comment|/* FD_STATUS */
-id|sun_fdc-&gt;status_82077
-op_assign
+id|sbus_writeb
+c_func
+(paren
 id|value
+comma
+op_amp
+id|sun_fdc-&gt;status_82077
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2138,12 +2171,12 @@ comma
 id|num_regs
 suffix:semicolon
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|bus
 suffix:semicolon
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|sdev
 op_assign
@@ -2437,6 +2470,10 @@ id|sun_pci_fd_eject
 suffix:semicolon
 id|fdc_status
 op_assign
+(paren
+r_int
+r_int
+)paren
 op_amp
 id|sun_fdc-&gt;status_82077
 suffix:semicolon
@@ -2847,18 +2884,6 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|prom_apply_sbus_ranges
-c_func
-(paren
-id|sdev-&gt;my_bus
-comma
-id|fd_regs
-comma
-id|num_regs
-comma
-id|sdev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * We cannot do sparc_alloc_io here: it does request_region,&n;&t; * which the generic floppy driver tries to do once again.&n;&t; */
 id|sun_fdc
 op_assign
@@ -2899,7 +2924,12 @@ multiline_comment|/* Last minute sanity check... */
 r_if
 c_cond
 (paren
+id|sbus_readb
+c_func
+(paren
+op_amp
 id|sun_fdc-&gt;status1_82077
+)paren
 op_eq
 l_int|0xff
 )paren
@@ -2978,6 +3008,10 @@ id|sun_fd_eject
 suffix:semicolon
 id|fdc_status
 op_assign
+(paren
+r_int
+r_int
+)paren
 op_amp
 id|sun_fdc-&gt;status_82077
 suffix:semicolon

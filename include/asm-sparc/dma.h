@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.31 1999/09/10 10:44:15 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.34 1999/10/24 16:01:21 zaitcev Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
@@ -79,37 +79,15 @@ DECL|macro|SIZE_16MB
 mdefine_line|#define SIZE_16MB      (16*1024*1024)
 DECL|macro|SIZE_64K
 mdefine_line|#define SIZE_64K       (64*1024)
-multiline_comment|/* Structure to describe the current status of DMA registers on the Sparc */
-DECL|struct|sparc_dma_registers
-r_struct
-id|sparc_dma_registers
-(brace
-DECL|member|cond_reg
-id|__volatile__
-id|__u32
-id|cond_reg
-suffix:semicolon
-multiline_comment|/* DMA condition register */
-DECL|member|st_addr
-id|__volatile__
-id|__u32
-id|st_addr
-suffix:semicolon
-multiline_comment|/* Start address of this transfer */
-DECL|member|cnt
-id|__volatile__
-id|__u32
-id|cnt
-suffix:semicolon
-multiline_comment|/* How many bytes to transfer */
-DECL|member|dma_test
-id|__volatile__
-id|__u32
-id|dma_test
-suffix:semicolon
-multiline_comment|/* DMA test register */
-)brace
-suffix:semicolon
+multiline_comment|/* SBUS DMA controller reg offsets */
+DECL|macro|DMA_CSR
+mdefine_line|#define DMA_CSR&t;&t;0x00UL&t;&t;/* rw  DMA control/status register    0x00   */
+DECL|macro|DMA_ADDR
+mdefine_line|#define DMA_ADDR&t;0x04UL&t;&t;/* rw  DMA transfer address register  0x04   */
+DECL|macro|DMA_COUNT
+mdefine_line|#define DMA_COUNT&t;0x08UL&t;&t;/* rw  DMA transfer count register    0x08   */
+DECL|macro|DMA_TEST
+mdefine_line|#define DMA_TEST&t;0x0cUL&t;&t;/* rw  DMA test/debug register        0x0c   */
 multiline_comment|/* DVMA chip revisions */
 DECL|enum|dvma_rev
 r_enum
@@ -140,26 +118,25 @@ suffix:semicolon
 DECL|macro|DMA_HASCOUNT
 mdefine_line|#define DMA_HASCOUNT(rev)  ((rev)==dvmaesc1)
 multiline_comment|/* Linux DMA information structure, filled during probe. */
-DECL|struct|Linux_SBus_DMA
+DECL|struct|sbus_dma
 r_struct
-id|Linux_SBus_DMA
+id|sbus_dma
 (brace
 DECL|member|next
 r_struct
-id|Linux_SBus_DMA
+id|sbus_dma
 op_star
 id|next
 suffix:semicolon
-DECL|member|SBus_dev
+DECL|member|sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|SBus_dev
+id|sdev
 suffix:semicolon
 DECL|member|regs
-r_struct
-id|sparc_dma_registers
-op_star
+r_int
+r_int
 id|regs
 suffix:semicolon
 multiline_comment|/* Status, misc info */
@@ -205,7 +182,7 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_struct
-id|Linux_SBus_DMA
+id|sbus_dma
 op_star
 id|dma_chain
 suffix:semicolon
@@ -227,7 +204,7 @@ id|dvma_init
 c_func
 (paren
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 )paren
 suffix:semicolon
@@ -293,8 +270,12 @@ DECL|macro|DMA_DSBL_WR_INV
 mdefine_line|#define DMA_DSBL_WR_INV  0x00020000        /* No EC inval. on slave writes */
 DECL|macro|DMA_ADD_ENABLE
 mdefine_line|#define DMA_ADD_ENABLE   0x00040000        /* Special ESC DVMA optimization */
-DECL|macro|DMA_E_BURST8
-mdefine_line|#define DMA_E_BURST8&t; 0x00040000&t;   /* ENET: SBUS r/w burst size */
+DECL|macro|DMA_E_BURSTS
+mdefine_line|#define DMA_E_BURSTS&t; 0x000c0000&t;   /* ENET: SBUS r/w burst mask */
+DECL|macro|DMA_E_BURST32
+mdefine_line|#define DMA_E_BURST32&t; 0x00040000&t;   /* ENET: SBUS 32 byte r/w burst */
+DECL|macro|DMA_E_BURST16
+mdefine_line|#define DMA_E_BURST16&t; 0x00000000&t;   /* ENET: SBUS 16 byte r/w burst */
 DECL|macro|DMA_BRST_SZ
 mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SCSI: SBUS r/w burst size */
 DECL|macro|DMA_BRST64
@@ -375,8 +356,8 @@ DECL|macro|DMA_IRQ_ENTRY
 mdefine_line|#define DMA_IRQ_ENTRY(dma, dregs) do { &bslash;&n;        if(DMA_ISBROKEN(dma)) DMA_INTSOFF(dregs); &bslash;&n;   } while (0)
 DECL|macro|DMA_IRQ_EXIT
 mdefine_line|#define DMA_IRQ_EXIT(dma, dregs) do { &bslash;&n;&t;if(DMA_ISBROKEN(dma)) DMA_INTSON(dregs); &bslash;&n;   } while(0)
+macro_line|#if 0&t;/* P3 this stuff is inline in ledma.c:init_restart_ledma() */
 multiline_comment|/* Pause until counter runs out or BIT isn&squot;t set in the DMA condition&n; * register.&n; */
-DECL|function|sparc_dma_pause
 r_extern
 id|__inline__
 r_void
@@ -443,8 +424,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Reset the friggin&squot; thing... */
-DECL|macro|DMA_RESET
 mdefine_line|#define DMA_RESET(dma) do { &bslash;&n;&t;struct sparc_dma_registers *regs = dma-&gt;regs;                      &bslash;&n;&t;/* Let the current FIFO drain itself */                            &bslash;&n;&t;sparc_dma_pause(regs, (DMA_FIFO_ISDRAIN));                         &bslash;&n;&t;/* Reset the logic */                                              &bslash;&n;&t;regs-&gt;cond_reg |= (DMA_RST_SCSI);     /* assert */                 &bslash;&n;&t;__delay(400);                         /* let the bits set ;) */    &bslash;&n;&t;regs-&gt;cond_reg &amp;= ~(DMA_RST_SCSI);    /* de-assert */              &bslash;&n;&t;sparc_dma_enable_interrupts(regs);    /* Re-enable interrupts */   &bslash;&n;&t;/* Enable FAST transfers if available */                           &bslash;&n;&t;if(dma-&gt;revision&gt;dvmarev1) regs-&gt;cond_reg |= DMA_3CLKS;            &bslash;&n;&t;dma-&gt;running = 0;                                                  &bslash;&n;} while(0)
+macro_line|#endif
 DECL|macro|for_each_dvma
 mdefine_line|#define for_each_dvma(dma) &bslash;&n;        for((dma) = dma_chain; (dma); (dma) = (dma)-&gt;next)
 r_extern
@@ -478,5 +459,15 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* From PCI */
+macro_line|#ifdef CONFIG_PCI
+r_extern
+r_int
+id|isa_dma_bridge_buggy
+suffix:semicolon
+macro_line|#else
+DECL|macro|isa_dma_bridge_buggy
+mdefine_line|#define isa_dma_bridge_buggy&t;(0)
+macro_line|#endif
 macro_line|#endif /* !(_ASM_SPARC_DMA_H) */
 eof

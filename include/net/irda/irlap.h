@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.h&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Nov 16 10:00:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.h&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Dec 10 13:21:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLAP_H
 DECL|macro|IRLAP_H
 mdefine_line|#define IRLAP_H
@@ -10,6 +10,8 @@ macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#include &lt;linux/ppp-comp.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;net/irda/irlap_event.h&gt;
+DECL|macro|CONFIG_IRDA_DYNAMIC_WINDOW
+mdefine_line|#define CONFIG_IRDA_DYNAMIC_WINDOW 1
 DECL|macro|LAP_RELIABLE
 mdefine_line|#define LAP_RELIABLE   1
 DECL|macro|LAP_UNRELIABLE
@@ -178,12 +180,17 @@ DECL|member|wd_timeout
 r_int
 id|wd_timeout
 suffix:semicolon
-DECL|member|tx_list
+DECL|member|txq
 r_struct
 id|sk_buff_head
-id|tx_list
+id|txq
 suffix:semicolon
 multiline_comment|/* Frames to be transmitted */
+DECL|member|txq_ultra
+r_struct
+id|sk_buff_head
+id|txq_ultra
+suffix:semicolon
 DECL|member|caddr
 id|__u8
 id|caddr
@@ -227,7 +234,7 @@ DECL|member|fast_RR
 r_int
 id|fast_RR
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IRDA_FAST_RR */
 DECL|member|N1
 r_int
 id|N1
@@ -280,16 +287,18 @@ r_int
 id|window_size
 suffix:semicolon
 multiline_comment|/* Current negotiated window size */
-DECL|member|window_bytes
+macro_line|#ifdef CONFIG_IRDA_DYNAMIC_WINDOW
+DECL|member|line_capacity
 id|__u32
-id|window_bytes
+id|line_capacity
 suffix:semicolon
 multiline_comment|/* Number of bytes allowed to send */
 DECL|member|bytes_left
 id|__u32
 id|bytes_left
 suffix:semicolon
-multiline_comment|/* Number of bytes allowed to transmit */
+multiline_comment|/* Number of bytes still allowed to transmit */
+macro_line|#endif /* CONFIG_IRDA_DYNAMIC_WINDOW */
 DECL|member|wx_list
 r_struct
 id|sk_buff_head
@@ -384,7 +393,7 @@ r_struct
 id|irda_compressor
 id|decompressor
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IRDA_COMPRESSION */
 )brace
 suffix:semicolon
 r_extern
@@ -510,19 +519,9 @@ comma
 r_struct
 id|sk_buff
 op_star
-)paren
-suffix:semicolon
-r_void
-id|irlap_unit_data_indication
-c_func
-(paren
-r_struct
-id|irlap_cb
-op_star
 comma
-r_struct
-id|sk_buff
-op_star
+r_int
+id|unreliable
 )paren
 suffix:semicolon
 r_void
@@ -538,9 +537,37 @@ id|sk_buff
 op_star
 comma
 r_int
-id|reliable
+id|unreliable
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+r_void
+id|irlap_unitdata_request
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+r_void
+id|irlap_unitdata_indication
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
 r_void
 id|irlap_disconnect_request
 c_func
@@ -762,10 +789,7 @@ c_func
 r_struct
 id|irlap_cb
 op_star
-comma
-r_struct
-id|qos_info
-op_star
+id|self
 )paren
 suffix:semicolon
 r_void
@@ -784,6 +808,6 @@ suffix:semicolon
 DECL|macro|IRLAP_GET_HEADER_SIZE
 mdefine_line|#define IRLAP_GET_HEADER_SIZE(self) 2 /* Will be different when we get VFIR */
 DECL|macro|IRLAP_GET_TX_QUEUE_LEN
-mdefine_line|#define IRLAP_GET_TX_QUEUE_LEN(self) skb_queue_len(&amp;self-&gt;tx_list)
+mdefine_line|#define IRLAP_GET_TX_QUEUE_LEN(self) skb_queue_len(&amp;self-&gt;txq)
 macro_line|#endif
 eof

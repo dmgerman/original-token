@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.82 1999/09/10 10:44:21 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.86 1999/12/16 14:41:19 anton Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -61,23 +61,6 @@ r_int
 )paren
 DECL|macro|quick_kernel_fault
 mdefine_line|#define quick_kernel_fault(addr) BTFIXUP_CALL(quick_kernel_fault)(addr)
-multiline_comment|/* Allocate a block of RAM which is aligned to its size.&n;   This procedure can be used until the call to mem_init(). */
-r_extern
-r_void
-op_star
-id|sparc_init_alloc
-c_func
-(paren
-r_int
-r_int
-op_star
-id|kbrk
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
 multiline_comment|/* Routines for data transfer buffers. */
 id|BTFIXUPDEF_CALL
 c_func
@@ -110,32 +93,7 @@ DECL|macro|mmu_lockarea
 mdefine_line|#define mmu_lockarea(vaddr,len) BTFIXUP_CALL(mmu_lockarea)(vaddr,len)
 DECL|macro|mmu_unlockarea
 mdefine_line|#define mmu_unlockarea(vaddr,len) BTFIXUP_CALL(mmu_unlockarea)(vaddr,len)
-multiline_comment|/* Routines for getting a dvma scsi buffer. */
-DECL|struct|mmu_sglist
-r_struct
-id|mmu_sglist
-(brace
-DECL|member|addr
-r_char
-op_star
-id|addr
-suffix:semicolon
-DECL|member|__dont_touch
-r_char
-op_star
-id|__dont_touch
-suffix:semicolon
-DECL|member|len
-r_int
-r_int
-id|len
-suffix:semicolon
-DECL|member|dvma_addr
-id|__u32
-id|dvma_addr
-suffix:semicolon
-)brace
-suffix:semicolon
+multiline_comment|/* These are implementations for sbus_map_sg/sbus_unmap_sg... collapse later */
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -150,7 +108,7 @@ r_int
 r_int
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -162,13 +120,13 @@ comma
 id|mmu_get_scsi_sgl
 comma
 r_struct
-id|mmu_sglist
+id|scatterlist
 op_star
 comma
 r_int
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -185,7 +143,7 @@ r_int
 r_int
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -197,29 +155,15 @@ comma
 id|mmu_release_scsi_sgl
 comma
 r_struct
-id|mmu_sglist
+id|scatterlist
 op_star
 comma
 r_int
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|mmu_map_dma_area
-comma
-r_int
-r_int
-id|addr
-comma
-r_int
-id|len
 )paren
 DECL|macro|mmu_get_scsi_one
 mdefine_line|#define mmu_get_scsi_one(vaddr,len,sbus) BTFIXUP_CALL(mmu_get_scsi_one)(vaddr,len,sbus)
@@ -229,8 +173,74 @@ DECL|macro|mmu_release_scsi_one
 mdefine_line|#define mmu_release_scsi_one(vaddr,len,sbus) BTFIXUP_CALL(mmu_release_scsi_one)(vaddr,len,sbus)
 DECL|macro|mmu_release_scsi_sgl
 mdefine_line|#define mmu_release_scsi_sgl(sg,sz,sbus) BTFIXUP_CALL(mmu_release_scsi_sgl)(sg,sz,sbus)
+multiline_comment|/* mmu_map/unmap is provided by iommu/iounit; mmu_flush/inval probably belongs to CPU... */
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|mmu_map_dma_area
+comma
+r_int
+r_int
+id|va
+comma
+id|__u32
+id|addr
+comma
+r_int
+id|len
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|mmu_unmap_dma_area
+comma
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|mmu_inval_dma_area
+comma
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|mmu_flush_dma_area
+comma
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+)paren
 DECL|macro|mmu_map_dma_area
-mdefine_line|#define mmu_map_dma_area(addr,len) BTFIXUP_CALL(mmu_map_dma_area)(addr,len)
+mdefine_line|#define mmu_map_dma_area(va, ba,len) BTFIXUP_CALL(mmu_map_dma_area)(va,ba,len)
+DECL|macro|mmu_unmap_dma_area
+mdefine_line|#define mmu_unmap_dma_area(ba,len) BTFIXUP_CALL(mmu_unmap_dma_area)(ba,len)
+DECL|macro|mmu_inval_dma_area
+mdefine_line|#define mmu_inval_dma_area(va,len) BTFIXUP_CALL(mmu_unmap_dma_area)(va,len)
+DECL|macro|mmu_flush_dma_area
+mdefine_line|#define mmu_flush_dma_area(va,len) BTFIXUP_CALL(mmu_unmap_dma_area)(va,len)
 id|BTFIXUPDEF_SIMM13
 c_func
 (paren
@@ -392,6 +402,12 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START (0xfe300000)
 DECL|macro|VMALLOC_END
 mdefine_line|#define VMALLOC_END   ~0x0UL
+DECL|macro|pte_ERROR
+mdefine_line|#define pte_ERROR(e)&t;__builtin_trap()
+DECL|macro|pmd_ERROR
+mdefine_line|#define pmd_ERROR(e)&t;__builtin_trap()
+DECL|macro|pgd_ERROR
+mdefine_line|#define pgd_ERROR(e)&t;__builtin_trap()
 id|BTFIXUPDEF_INT
 c_func
 (paren
@@ -547,10 +563,17 @@ r_extern
 r_int
 id|num_contexts
 suffix:semicolon
+multiline_comment|/* First physical page can be anywhere, the following is needed so that&n; * va--&gt;pa and vice versa conversions work properly without performance&n; * hit for all __pa()/__va() operations.&n; */
+r_extern
+r_int
+r_int
+id|phys_base
+suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
-id|__bad_page
+op_star
+id|__bad_pagetable
 c_func
 (paren
 r_void
@@ -558,8 +581,7 @@ r_void
 suffix:semicolon
 r_extern
 id|pte_t
-op_star
-id|__bad_pagetable
+id|__bad_page
 c_func
 (paren
 r_void
@@ -575,7 +597,7 @@ mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) ((unsigned long)(&amp;(empty_zero_page)))
+mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + (((unsigned long)&amp;empty_zero_page - PAGE_OFFSET + phys_base) &gt;&gt; PAGE_SHIFT))
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR      (8*sizeof(unsigned long))
@@ -590,7 +612,7 @@ c_func
 r_int
 r_int
 comma
-id|pte_page
+id|pte_pagenr
 comma
 id|pte_t
 )paren
@@ -614,32 +636,12 @@ id|pgd_page
 comma
 id|pgd_t
 )paren
-DECL|macro|pte_page
-mdefine_line|#define pte_page(pte) BTFIXUP_CALL(pte_page)(pte)
+DECL|macro|pte_pagenr
+mdefine_line|#define pte_pagenr(pte) BTFIXUP_CALL(pte_pagenr)(pte)
 DECL|macro|pmd_page
 mdefine_line|#define pmd_page(pmd) BTFIXUP_CALL(pmd_page)(pmd)
 DECL|macro|pgd_page
 mdefine_line|#define pgd_page(pgd) BTFIXUP_CALL(pgd_page)(pgd)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|sparc_update_rootmmu_dir
-comma
-r_struct
-id|task_struct
-op_star
-comma
-id|pgd_t
-op_star
-id|pgdir
-)paren
-DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) BTFIXUP_CALL(sparc_update_rootmmu_dir)(tsk, pgdir)
-multiline_comment|/* to find an entry in a page-table */
-DECL|macro|PAGE_PTR
-mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 id|BTFIXUPDEF_SETHI
 c_func
 (paren
@@ -1130,6 +1132,15 @@ DECL|macro|pte_mkdirty
 mdefine_line|#define pte_mkdirty(pte) BTFIXUP_CALL(pte_mkdirty)(pte)
 DECL|macro|pte_mkyoung
 mdefine_line|#define pte_mkyoung(pte) BTFIXUP_CALL(pte_mkyoung)(pte)
+DECL|macro|page_pte_prot
+mdefine_line|#define page_pte_prot(page, prot)&t;mk_pte(page, prot)
+DECL|macro|page_pte
+mdefine_line|#define page_pte(page)&t;&t;&t;page_pte_prot(page, __pgprot(0))
+multiline_comment|/* Permanent address of a page. */
+DECL|macro|page_address
+mdefine_line|#define page_address(page) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
+DECL|macro|pte_page
+mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 id|BTFIXUPDEF_CALL_CONST
 c_func
@@ -1138,8 +1149,9 @@ id|pte_t
 comma
 id|mk_pte
 comma
-r_int
-r_int
+r_struct
+id|page
+op_star
 comma
 id|pgprot_t
 )paren
@@ -1718,8 +1730,9 @@ r_void
 comma
 id|local_flush_page_to_ram
 comma
-r_int
-r_int
+r_struct
+id|page
+op_star
 )paren
 id|BTFIXUPDEF_CALL
 c_func
@@ -1736,7 +1749,7 @@ r_int
 r_int
 )paren
 DECL|macro|local_flush_page_to_ram
-mdefine_line|#define local_flush_page_to_ram(addr) BTFIXUP_CALL(local_flush_page_to_ram)(addr)
+mdefine_line|#define local_flush_page_to_ram(page) BTFIXUP_CALL(local_flush_page_to_ram)(page)
 DECL|macro|local_flush_sig_insns
 mdefine_line|#define local_flush_sig_insns(mm,insn_addr) BTFIXUP_CALL(local_flush_sig_insns)(mm,insn_addr)
 r_extern
@@ -1850,8 +1863,9 @@ r_void
 id|smp_flush_page_to_ram
 c_func
 (paren
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 )paren
 suffix:semicolon
@@ -1998,8 +2012,9 @@ r_void
 comma
 id|flush_page_to_ram
 comma
-r_int
-r_int
+r_struct
+id|page
+op_star
 )paren
 id|BTFIXUPDEF_CALL
 c_func
@@ -2016,7 +2031,7 @@ r_int
 r_int
 )paren
 DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(addr) BTFIXUP_CALL(flush_page_to_ram)(addr)
+mdefine_line|#define flush_page_to_ram(page) BTFIXUP_CALL(flush_page_to_ram)(page)
 DECL|macro|flush_sig_insns
 mdefine_line|#define flush_sig_insns(mm,insn_addr) BTFIXUP_CALL(flush_sig_insns)(mm,insn_addr)
 multiline_comment|/* The permissions for pgprot_val to make a page mapped on the obio space */
@@ -2025,20 +2040,6 @@ r_int
 r_int
 id|pg_iobits
 suffix:semicolon
-multiline_comment|/* MMU context switching. */
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|switch_to_context
-comma
-r_struct
-id|task_struct
-op_star
-)paren
-DECL|macro|switch_to_context
-mdefine_line|#define switch_to_context(tsk) BTFIXUP_CALL(switch_to_context)(tsk)
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 id|BTFIXUPDEF_CALL
 c_func
@@ -2336,8 +2337,6 @@ op_star
 id|sparc_valid_addr_bitmap
 suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
-DECL|macro|PageSkip
-mdefine_line|#define PageSkip(page)&t;&t;(test_bit(PG_skip, &amp;(page)-&gt;flags))
 DECL|macro|kern_addr_valid
 mdefine_line|#define kern_addr_valid(addr)&t;(test_bit(__pa((unsigned long)(addr))&gt;&gt;20, sparc_valid_addr_bitmap))
 macro_line|#endif /* !(_SPARC_PGTABLE_H) */

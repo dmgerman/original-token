@@ -38,6 +38,9 @@ DECL|macro|SHMGET
 mdefine_line|#define SHMGET&t;&t;23
 DECL|macro|SHMCTL
 mdefine_line|#define SHMCTL&t;&t;24
+multiline_comment|/* Used by the DIPC package, try and avoid reusing it */
+DECL|macro|DIPC
+mdefine_line|#define DIPC            25
 multiline_comment|/* We don&squot;t need to maintain backward compatibility on 64bit, we&squot;ve started fresh */
 DECL|macro|IPCCALL
 mdefine_line|#define IPCCALL(version,op)&t;(op)

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.4 1999/09/05 09:33:36 ecd Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.7 1999/12/17 12:31:57 jj Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -1388,13 +1388,10 @@ id|ino_bucket
 op_star
 id|bucket
 suffix:semicolon
-r_volatile
 r_int
 r_int
-op_star
 id|imap
 comma
-op_star
 id|iclr
 suffix:semicolon
 r_int
@@ -1479,23 +1476,13 @@ id|ino
 suffix:semicolon
 id|imap
 op_assign
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-id|__va
-c_func
-(paren
 id|p-&gt;controller_regs
 op_plus
 id|imap_off
-)paren
 suffix:semicolon
 id|imap
 op_add_assign
-l_int|1
+l_int|4
 suffix:semicolon
 id|iclr_off
 op_assign
@@ -1507,23 +1494,13 @@ id|ino
 suffix:semicolon
 id|iclr
 op_assign
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-id|__va
-c_func
-(paren
 id|p-&gt;controller_regs
 op_plus
 id|iclr_off
-)paren
 suffix:semicolon
 id|iclr
 op_add_assign
-l_int|1
+l_int|4
 suffix:semicolon
 r_if
 c_cond
@@ -3375,6 +3352,7 @@ l_string|&quot;???&quot;
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* XXX Use syndrome and afar to print out module string just like&n;&t; * XXX UDB CE trap handler does... -DaveM&n;&t; */
 id|printk
 c_func
 (paren
@@ -5153,11 +5131,28 @@ r_struct
 id|pci_controller_info
 op_star
 id|p
-comma
-r_int
-id|tsbsize
 )paren
 (brace
+macro_line|#ifndef NEW_PCI_DMA_MAP
+r_struct
+id|linux_mlist_p1275
+op_star
+id|mlist
+suffix:semicolon
+r_int
+r_int
+id|n
+suffix:semicolon
+id|iopte_t
+op_star
+id|iopte
+suffix:semicolon
+r_int
+id|tsbsize
+op_assign
+l_int|32
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|this_is_starfire
@@ -5171,24 +5166,11 @@ c_func
 r_int
 )paren
 suffix:semicolon
-r_struct
-id|linux_mlist_p1275
-op_star
-id|mlist
-suffix:semicolon
 r_int
 r_int
 id|tsbbase
 comma
 id|i
-comma
-id|n
-comma
-id|order
-suffix:semicolon
-id|iopte_t
-op_star
-id|iopte
 suffix:semicolon
 id|u64
 id|control
@@ -5202,11 +5184,6 @@ id|p-&gt;iommu.lock
 )paren
 suffix:semicolon
 id|p-&gt;iommu.iommu_cur_ctx
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* PSYCHO&squot;s IOMMU lacks ctx flushing. */
-id|p-&gt;iommu.iommu_has_ctx_flush
 op_assign
 l_int|0
 suffix:semicolon
@@ -5229,6 +5206,7 @@ id|p-&gt;controller_regs
 op_plus
 id|PSYCHO_IOMMU_FLUSH
 suffix:semicolon
+multiline_comment|/* PSYCHO&squot;s IOMMU lacks ctx flushing. */
 id|p-&gt;iommu.iommu_ctxflush
 op_assign
 l_int|0
@@ -5314,50 +5292,31 @@ comma
 id|control
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|order
-op_assign
-l_int|0
-suffix:semicolon
-suffix:semicolon
-id|order
-op_increment
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|PAGE_SIZE
-op_lshift
-id|order
-)paren
-op_ge
-(paren
-(paren
-id|tsbsize
-op_star
-l_int|1024
-)paren
-op_star
-l_int|8
-)paren
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
+macro_line|#ifndef NEW_PCI_DMA_MAP
+multiline_comment|/* Using assumed page size 64K with 32K entries we need 256KB iommu page&n;&t; * table (32K ioptes * 8 bytes per iopte).  This is&n;&t; * page order 5 on UltraSparc.&n;&t; */
 id|tsbbase
 op_assign
 id|__get_free_pages
 c_func
 (paren
-id|GFP_DMA
+id|GFP_KERNEL
 comma
-id|order
+l_int|5
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Using assumed page size 8K with 128K entries we need 1MB iommu page&n;&t; * table (128K ioptes * 8 bytes per iopte).  This is&n;&t; * page order 7 on UltraSparc.&n;&t; */
+id|tsbbase
+op_assign
+id|__get_free_pages
+c_func
+(paren
+id|GFP_KERNEL
+comma
+l_int|7
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 r_if
 c_cond
 (paren
@@ -5379,6 +5338,21 @@ suffix:semicolon
 )brace
 id|p-&gt;iommu.page_table
 op_assign
+(paren
+id|iopte_t
+op_star
+)paren
+id|tsbbase
+suffix:semicolon
+id|p-&gt;iommu.page_table_sz_bits
+op_assign
+l_int|17
+suffix:semicolon
+id|p-&gt;iommu.page_table_map_base
+op_assign
+l_int|0xc0000000
+suffix:semicolon
+macro_line|#ifndef NEW_PCI_DMA_MAP
 id|iopte
 op_assign
 (paren
@@ -5386,14 +5360,6 @@ id|iopte_t
 op_star
 )paren
 id|tsbbase
-suffix:semicolon
-id|p-&gt;iommu.page_table_sz
-op_assign
-(paren
-id|tsbsize
-op_star
-l_int|1024
-)paren
 suffix:semicolon
 multiline_comment|/* Initialize to &quot;none&quot; settings. */
 r_for
@@ -5791,6 +5757,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|psycho_write
 c_func
 (paren
@@ -5815,6 +5782,7 @@ op_plus
 id|PSYCHO_IOMMU_CONTROL
 )paren
 suffix:semicolon
+macro_line|#ifndef NEW_PCI_DMA_MAP
 id|control
 op_and_assign
 op_complement
@@ -5893,6 +5861,25 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#else
+id|control
+op_and_assign
+op_complement
+(paren
+id|PSYCHO_IOMMU_CTRL_TSBSZ
+op_or
+id|PSYCHO_IOMMU_CTRL_TBWSZ
+)paren
+suffix:semicolon
+id|control
+op_or_assign
+(paren
+id|PSYCHO_IOMMU_TSBSZ_128K
+op_or
+id|PSYCHO_IOMMU_CTRL_ENAB
+)paren
+suffix:semicolon
+macro_line|#endif
 id|psycho_write
 c_func
 (paren
@@ -6176,11 +6163,6 @@ id|pbm-&gt;stc.strbuf_enabled
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* PSYCHO&squot;s streaming buffer lacks ctx flushing. */
-id|pbm-&gt;stc.strbuf_has_ctx_flush
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6227,6 +6209,7 @@ op_plus
 id|PSYCHO_STRBUF_FSYNC_B
 suffix:semicolon
 )brace
+multiline_comment|/* PSYCHO&squot;s streaming buffer lacks ctx flushing. */
 id|pbm-&gt;stc.strbuf_ctxflush
 op_assign
 l_int|0
@@ -6992,8 +6975,6 @@ id|psycho_iommu_init
 c_func
 (paren
 id|p
-comma
-l_int|32
 )paren
 suffix:semicolon
 id|is_pbm_a

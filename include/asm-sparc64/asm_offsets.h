@@ -357,8 +357,20 @@ DECL|macro|AOFF_task_sas_ss_size
 mdefine_line|#define AOFF_task_sas_ss_size&t;0x00000820
 DECL|macro|ASIZ_task_sas_ss_size
 mdefine_line|#define ASIZ_task_sas_ss_size&t;0x00000008
+DECL|macro|AOFF_task_parent_exec_id
+mdefine_line|#define AOFF_task_parent_exec_id&t;0x00000828
+DECL|macro|ASIZ_task_parent_exec_id
+mdefine_line|#define ASIZ_task_parent_exec_id&t;0x00000004
+DECL|macro|AOFF_task_self_exec_id
+mdefine_line|#define AOFF_task_self_exec_id&t;0x0000082c
+DECL|macro|ASIZ_task_self_exec_id
+mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
+DECL|macro|AOFF_task_exit_sem
+mdefine_line|#define AOFF_task_exit_sem&t;0x00000830
+DECL|macro|ASIZ_task_exit_sem
+mdefine_line|#define ASIZ_task_exit_sem&t;0x00000030
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000830
+mdefine_line|#define ASIZ_task&t;0x00000860
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap
@@ -925,8 +937,20 @@ DECL|macro|AOFF_task_sas_ss_size
 mdefine_line|#define AOFF_task_sas_ss_size&t;0x00000a18
 DECL|macro|ASIZ_task_sas_ss_size
 mdefine_line|#define ASIZ_task_sas_ss_size&t;0x00000008
+DECL|macro|AOFF_task_parent_exec_id
+mdefine_line|#define AOFF_task_parent_exec_id&t;0x00000a20
+DECL|macro|ASIZ_task_parent_exec_id
+mdefine_line|#define ASIZ_task_parent_exec_id&t;0x00000004
+DECL|macro|AOFF_task_self_exec_id
+mdefine_line|#define AOFF_task_self_exec_id&t;0x00000a24
+DECL|macro|ASIZ_task_self_exec_id
+mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
+DECL|macro|AOFF_task_exit_sem
+mdefine_line|#define AOFF_task_exit_sem&t;0x00000a28
+DECL|macro|ASIZ_task_exit_sem
+mdefine_line|#define ASIZ_task_exit_sem&t;0x00000038
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000a20
+mdefine_line|#define ASIZ_task&t;0x00000a60
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap
@@ -1492,8 +1516,20 @@ DECL|macro|AOFF_task_sas_ss_size
 mdefine_line|#define AOFF_task_sas_ss_size&t;0x00000a30
 DECL|macro|ASIZ_task_sas_ss_size
 mdefine_line|#define ASIZ_task_sas_ss_size&t;0x00000008
+DECL|macro|AOFF_task_parent_exec_id
+mdefine_line|#define AOFF_task_parent_exec_id&t;0x00000a38
+DECL|macro|ASIZ_task_parent_exec_id
+mdefine_line|#define ASIZ_task_parent_exec_id&t;0x00000004
+DECL|macro|AOFF_task_self_exec_id
+mdefine_line|#define AOFF_task_self_exec_id&t;0x00000a3c
+DECL|macro|ASIZ_task_self_exec_id
+mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
+DECL|macro|AOFF_task_exit_sem
+mdefine_line|#define AOFF_task_exit_sem&t;0x00000a40
+DECL|macro|ASIZ_task_exit_sem
+mdefine_line|#define ASIZ_task_exit_sem&t;0x00000040
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000a40
+mdefine_line|#define ASIZ_task&t;0x00000a80
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap

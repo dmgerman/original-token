@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.36 1999/04/20 13:22:42 anton Exp $ */
+multiline_comment|/* $Id: head.h,v 1.38 1999/12/01 23:52:04 davem Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H
@@ -44,6 +44,8 @@ mdefine_line|#define LINUX_SYSCALL_TRAP &bslash;&n;        sethi %hi(C_LABEL(sys
 multiline_comment|/* Software trap for SunOS4.1.x system calls. */
 DECL|macro|SUNOS_SYSCALL_TRAP
 mdefine_line|#define SUNOS_SYSCALL_TRAP &bslash;&n;        rd %psr, %l0; &bslash;&n;        sethi %hi(C_LABEL(sunos_sys_table)), %l7; &bslash;&n;        b linux_sparc_syscall; &bslash;&n;        or %l7, %lo(C_LABEL(sunos_sys_table)), %l7;
+DECL|macro|SUNOS_NO_SYSCALL_TRAP
+mdefine_line|#define SUNOS_NO_SYSCALL_TRAP &bslash;&n;        b sunos_syscall; &bslash;&n;        rd %psr, %l0; &bslash;&n;        nop; &bslash;&n;        nop;
 multiline_comment|/* Software trap for Slowaris system calls. */
 DECL|macro|SOLARIS_SYSCALL_TRAP
 mdefine_line|#define SOLARIS_SYSCALL_TRAP &bslash;&n;        b solaris_syscall; &bslash;&n;        rd %psr, %l0; &bslash;&n;        nop; &bslash;&n;        nop;
@@ -60,6 +62,9 @@ mdefine_line|#define GETCC_TRAP &bslash;&n;        b getcc_trap_handler; mov %ps
 multiline_comment|/* The Set Condition Codes software trap for userland. */
 DECL|macro|SETCC_TRAP
 mdefine_line|#define SETCC_TRAP &bslash;&n;        b setcc_trap_handler; mov %psr, %l0; nop; nop;
+multiline_comment|/* The Get PSR software trap for userland. */
+DECL|macro|GETPSR_TRAP
+mdefine_line|#define GETPSR_TRAP &bslash;&n;&t;mov %psr, %o0; jmpl %l2, %g0; rett %l2 + 4; nop;
 multiline_comment|/* This is for hard interrupts from level 1-14, 15 is non-maskable (nmi) and&n; * gets handled with another macro.&n; */
 DECL|macro|TRAP_ENTRY_INTERRUPT
 mdefine_line|#define TRAP_ENTRY_INTERRUPT(int_level) &bslash;&n;        mov int_level, %l7; rd %psr, %l0; b real_irq_entry; rd %wim, %l3;

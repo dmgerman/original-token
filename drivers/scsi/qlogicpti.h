@@ -2,811 +2,55 @@ multiline_comment|/* qlogicpti.h: Performance Technologies QlogicISP sbus card d
 macro_line|#ifndef _QLOGICPTI_H
 DECL|macro|_QLOGICPTI_H
 mdefine_line|#define _QLOGICPTI_H
-DECL|struct|qlogicpti_regs
-r_struct
-id|qlogicpti_regs
-(brace
-multiline_comment|/* SBUS control registers. */
-DECL|member|sbus_idlow
-r_volatile
-r_int
-r_int
-id|sbus_idlow
-suffix:semicolon
-multiline_comment|/* SBUS ID, low bytes             */
-DECL|member|sbus_idhi
-r_volatile
-r_int
-r_int
-id|sbus_idhi
-suffix:semicolon
-multiline_comment|/* SBUS ID, high bytes            */
-DECL|member|sbus_cfg0
-r_volatile
-r_int
-r_int
-id|sbus_cfg0
-suffix:semicolon
-multiline_comment|/* SBUS Config reg zero           */
-DECL|member|sbus_cfg1
-r_volatile
-r_int
-r_int
-id|sbus_cfg1
-suffix:semicolon
-multiline_comment|/* SBUS Config reg one            */
-DECL|member|sbus_ctrl
-r_volatile
-r_int
-r_int
-id|sbus_ctrl
-suffix:semicolon
-multiline_comment|/* SBUS Control reg               */
-DECL|member|sbus_stat
-r_volatile
-r_int
-r_int
-id|sbus_stat
-suffix:semicolon
-multiline_comment|/* SBUS Status reg                */
-DECL|member|sbus_semaphore
-r_volatile
-r_int
-r_int
-id|sbus_semaphore
-suffix:semicolon
-multiline_comment|/* SBUS Semaphore, p/v this...    */
-DECL|member|_unused0
-r_int
-r_char
-id|_unused0
-(braket
-l_int|18
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-multiline_comment|/* Command DVMA control registers. */
-DECL|member|cmd_dma_cfg
-r_volatile
-r_int
-r_int
-id|cmd_dma_cfg
-suffix:semicolon
-multiline_comment|/* CMD DVMA Config reg            */
-DECL|member|cmd_dma_ctrl
-r_volatile
-r_int
-r_int
-id|cmd_dma_ctrl
-suffix:semicolon
-multiline_comment|/* CMD DVMA Control reg           */
-DECL|member|cmd_dma_stat
-r_volatile
-r_int
-r_int
-id|cmd_dma_stat
-suffix:semicolon
-multiline_comment|/* CMD DVMA Status reg            */
-DECL|member|cmd_dma_fstat
-r_volatile
-r_int
-r_int
-id|cmd_dma_fstat
-suffix:semicolon
-multiline_comment|/* CMD DVMA FIFO Status reg       */
-DECL|member|cmd_dma_cnt
-r_volatile
-r_int
-r_int
-id|cmd_dma_cnt
-suffix:semicolon
-multiline_comment|/* CMD DVMA Counter reg           */
-DECL|member|_unused1
-r_int
-r_int
-id|_unused1
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cmd_dma_alow
-r_volatile
-r_int
-r_int
-id|cmd_dma_alow
-suffix:semicolon
-multiline_comment|/* CMD DVMA Address low bytes     */
-DECL|member|cmd_dma_ahi
-r_volatile
-r_int
-r_int
-id|cmd_dma_ahi
-suffix:semicolon
-multiline_comment|/* CMD DVMA Address high bytes    */
-DECL|member|_unused2
-r_int
-r_char
-id|_unused2
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-multiline_comment|/* Data DVMA control registers. */
-DECL|member|data_dma_cfg
-r_volatile
-r_int
-r_int
-id|data_dma_cfg
-suffix:semicolon
-multiline_comment|/* DATA DVMA Config reg           */
-DECL|member|data_dma_ctrl
-r_volatile
-r_int
-r_int
-id|data_dma_ctrl
-suffix:semicolon
-multiline_comment|/* DATA DVMA Control reg          */
-DECL|member|data_dma_stat
-r_volatile
-r_int
-r_int
-id|data_dma_stat
-suffix:semicolon
-multiline_comment|/* DATA DVMA Status reg           */
-DECL|member|data_dma_fstat
-r_volatile
-r_int
-r_int
-id|data_dma_fstat
-suffix:semicolon
-multiline_comment|/* DATA DVMA FIFO Status reg      */
-DECL|member|data_dma_clo
-r_volatile
-r_int
-r_int
-id|data_dma_clo
-suffix:semicolon
-multiline_comment|/* DATA DVMA Counter low bytes    */
-DECL|member|data_dma_chi
-r_volatile
-r_int
-r_int
-id|data_dma_chi
-suffix:semicolon
-multiline_comment|/* DATA DVMA Counter high bytes   */
-DECL|member|data_dma_alow
-r_volatile
-r_int
-r_int
-id|data_dma_alow
-suffix:semicolon
-multiline_comment|/* DATA DVMA Address low bytes    */
-DECL|member|data_dma_ahi
-r_volatile
-r_int
-r_int
-id|data_dma_ahi
-suffix:semicolon
-multiline_comment|/* DATA DVMA Address high bytes   */
-DECL|member|_unused3
-r_int
-r_char
-id|_unused3
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-multiline_comment|/* Data FIFO registers. */
-DECL|member|fcmd
-r_volatile
-r_int
-r_int
-id|fcmd
-suffix:semicolon
-multiline_comment|/* FIFO Command port              */
-DECL|member|fdata
-r_volatile
-r_int
-r_int
-id|fdata
-suffix:semicolon
-multiline_comment|/* FIFO Data port                 */
-DECL|member|_unused4
-r_int
-r_char
-id|_unused4
-(braket
-l_int|28
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-multiline_comment|/* Mailboxen. */
-DECL|member|mbox0
-r_volatile
-r_int
-r_int
-id|mbox0
-suffix:semicolon
-multiline_comment|/* MailBOX 0                      */
-DECL|member|mbox1
-r_volatile
-r_int
-r_int
-id|mbox1
-suffix:semicolon
-multiline_comment|/* MailBOX 1                      */
-DECL|member|mbox2
-r_volatile
-r_int
-r_int
-id|mbox2
-suffix:semicolon
-multiline_comment|/* MailBOX 2                      */
-DECL|member|mbox3
-r_volatile
-r_int
-r_int
-id|mbox3
-suffix:semicolon
-multiline_comment|/* MailBOX 3                      */
-DECL|member|mbox4
-r_volatile
-r_int
-r_int
-id|mbox4
-suffix:semicolon
-multiline_comment|/* MailBOX 4                      */
-DECL|member|mbox5
-r_volatile
-r_int
-r_int
-id|mbox5
-suffix:semicolon
-multiline_comment|/* MailBOX 5                      */
-DECL|member|_unused5
-r_int
-r_char
-id|_unused5
-(braket
-l_int|372
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-multiline_comment|/* Scsi processor registers. */
-DECL|member|cpu_id
-r_volatile
-r_int
-r_int
-id|cpu_id
-suffix:semicolon
-multiline_comment|/* PART ID                        */
-DECL|member|cpu_cfg1
-r_volatile
-r_int
-r_int
-id|cpu_cfg1
-suffix:semicolon
-multiline_comment|/* Config reg 1                   */
-DECL|member|cpu_cfg2
-r_volatile
-r_int
-r_int
-id|cpu_cfg2
-suffix:semicolon
-multiline_comment|/* Config reg 2                   */
-DECL|member|cpu_cfg3
-r_volatile
-r_int
-r_int
-id|cpu_cfg3
-suffix:semicolon
-multiline_comment|/* Config reg 3                   */
-DECL|member|_unused6
-r_int
-r_char
-id|_unused6
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_pc
-r_volatile
-r_int
-r_int
-id|cpu_pc
-suffix:semicolon
-multiline_comment|/* Program Counter                */
-DECL|member|_unused7
-r_int
-r_int
-id|_unused7
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_rpc
-r_volatile
-r_int
-r_int
-id|cpu_rpc
-suffix:semicolon
-multiline_comment|/* Return Program Counter         */
-DECL|member|_unused8
-r_int
-r_int
-id|_unused8
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_cmd
-r_volatile
-r_int
-r_int
-id|cpu_cmd
-suffix:semicolon
-multiline_comment|/* Command                        */
-DECL|member|_unused9
-r_int
-r_int
-id|_unused9
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_irq
-r_volatile
-r_int
-r_int
-id|cpu_irq
-suffix:semicolon
-multiline_comment|/* IRQ status                     */
-DECL|member|_unused10
-r_int
-r_int
-id|_unused10
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_seq
-r_volatile
-r_int
-r_int
-id|cpu_seq
-suffix:semicolon
-multiline_comment|/* Sequence reg                   */
-DECL|member|cpu_gerr
-r_volatile
-r_int
-r_int
-id|cpu_gerr
-suffix:semicolon
-multiline_comment|/* Gross Error reg (ESP lineage?) */
-DECL|member|cpu_exc
-r_volatile
-r_int
-r_int
-id|cpu_exc
-suffix:semicolon
-multiline_comment|/* Enable Exception reg           */
-DECL|member|_unused11
-r_int
-r_int
-id|_unused11
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_oride
-r_volatile
-r_int
-r_int
-id|cpu_oride
-suffix:semicolon
-multiline_comment|/* Override reg                   */
-DECL|member|_unused12
-r_int
-r_int
-id|_unused12
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_lbase
-r_volatile
-r_int
-r_int
-id|cpu_lbase
-suffix:semicolon
-multiline_comment|/* Literal Base reg               */
-DECL|member|_unused13
-r_int
-r_int
-id|_unused13
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_uflags
-r_volatile
-r_int
-r_int
-id|cpu_uflags
-suffix:semicolon
-multiline_comment|/* User Flags reg                 */
-DECL|member|_unused14
-r_int
-r_int
-id|_unused14
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_uexc
-r_volatile
-r_int
-r_int
-id|cpu_uexc
-suffix:semicolon
-multiline_comment|/* User Exception reg             */
-DECL|member|_unused15
-r_int
-r_int
-id|_unused15
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_bkpt
-r_volatile
-r_int
-r_int
-id|cpu_bkpt
-suffix:semicolon
-multiline_comment|/* Breakpoint reg                 */
-DECL|member|_unused16
-r_int
-r_int
-id|_unused16
-(braket
-l_int|5
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_sid
-r_volatile
-r_int
-r_int
-id|cpu_sid
-suffix:semicolon
-multiline_comment|/* SCSI ID reg                    */
-DECL|member|cpu_dcfg1
-r_volatile
-r_int
-r_int
-id|cpu_dcfg1
-suffix:semicolon
-multiline_comment|/* Device Config 1                */
-DECL|member|cpu_dcfg2
-r_volatile
-r_int
-r_int
-id|cpu_dcfg2
-suffix:semicolon
-multiline_comment|/* Device Config 2                */
-DECL|member|_unused17
-r_int
-r_int
-id|_unused17
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_pptr
-r_volatile
-r_int
-r_int
-id|cpu_pptr
-suffix:semicolon
-multiline_comment|/* Phase Pointer                  */
-DECL|member|_unused18
-r_int
-r_int
-id|_unused18
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_bptr
-r_volatile
-r_int
-r_int
-id|cpu_bptr
-suffix:semicolon
-multiline_comment|/* Buffer Pointer                 */
-DECL|member|_unused19
-r_int
-r_int
-id|_unused19
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_bcnt
-r_volatile
-r_int
-r_int
-id|cpu_bcnt
-suffix:semicolon
-multiline_comment|/* Buffer Counter                 */
-DECL|member|cpu_buf
-r_volatile
-r_int
-r_int
-id|cpu_buf
-suffix:semicolon
-multiline_comment|/* Buffer itself                  */
-DECL|member|cpu_bbyte
-r_volatile
-r_int
-r_int
-id|cpu_bbyte
-suffix:semicolon
-multiline_comment|/* Buffer Byte                    */
-DECL|member|cpu_bword
-r_volatile
-r_int
-r_int
-id|cpu_bword
-suffix:semicolon
-multiline_comment|/* Buffer Word                    */
-DECL|member|_unused20
-r_int
-r_int
-id|_unused20
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_fifo
-r_volatile
-r_int
-r_int
-id|cpu_fifo
-suffix:semicolon
-multiline_comment|/* FIFO                           */
-DECL|member|cpu_fstat
-r_volatile
-r_int
-r_int
-id|cpu_fstat
-suffix:semicolon
-multiline_comment|/* FIFO Status                    */
-DECL|member|cpu_ftop
-r_volatile
-r_int
-r_int
-id|cpu_ftop
-suffix:semicolon
-multiline_comment|/* Top of FIFO                    */
-DECL|member|cpu_fbottom
-r_volatile
-r_int
-r_int
-id|cpu_fbottom
-suffix:semicolon
-multiline_comment|/* Bottom of FIFO                 */
-DECL|member|_unused21
-r_int
-r_int
-id|_unused21
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_treg
-r_volatile
-r_int
-r_int
-id|cpu_treg
-suffix:semicolon
-multiline_comment|/* Transfer reg                   */
-DECL|member|_unused22
-r_int
-r_int
-id|_unused22
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|cpu_clo
-r_volatile
-r_int
-r_int
-id|cpu_clo
-suffix:semicolon
-multiline_comment|/* Transfer Count low bytes       */
-DECL|member|cpu_chi
-r_volatile
-r_int
-r_int
-id|cpu_chi
-suffix:semicolon
-multiline_comment|/* Transfer Count high bytes      */
-DECL|member|cpu_cntlo
-r_volatile
-r_int
-r_int
-id|cpu_cntlo
-suffix:semicolon
-multiline_comment|/* Transfer Counter low bytes     */
-DECL|member|cpu_cnthi
-r_volatile
-r_int
-r_int
-id|cpu_cnthi
-suffix:semicolon
-multiline_comment|/* Transfer Counter low bytes     */
-DECL|member|cpu_adata
-r_volatile
-r_int
-r_int
-id|cpu_adata
-suffix:semicolon
-multiline_comment|/* Arbitration Data               */
-DECL|member|cpu_pctrl
-r_volatile
-r_int
-r_int
-id|cpu_pctrl
-suffix:semicolon
-multiline_comment|/* Pin Control                    */
-DECL|member|cpu_pdata
-r_volatile
-r_int
-r_int
-id|cpu_pdata
-suffix:semicolon
-multiline_comment|/* Pin Data                       */
-DECL|member|cpu_pdiff
-r_volatile
-r_int
-r_int
-id|cpu_pdiff
-suffix:semicolon
-multiline_comment|/* Differential Pins              */
-DECL|member|_unused23
-r_int
-r_char
-id|_unused23
-(braket
-l_int|392
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-multiline_comment|/* RISC processor registers. */
-DECL|member|risc_a
-r_volatile
-r_int
-r_int
-id|risc_a
-suffix:semicolon
-multiline_comment|/* Accumulator                    */
-DECL|member|risc_r
-r_volatile
-r_int
-r_int
-id|risc_r
-(braket
-l_int|15
-)braket
-suffix:semicolon
-multiline_comment|/* General Purpose Registers      */
-DECL|member|risc_psr
-r_volatile
-r_int
-r_int
-id|risc_psr
-suffix:semicolon
-multiline_comment|/* Processor Status Register      */
-DECL|member|risc_ivec
-r_volatile
-r_int
-r_int
-id|risc_ivec
-suffix:semicolon
-multiline_comment|/* Interrupt Vector               */
-DECL|member|risc_pcr
-r_volatile
-r_int
-r_int
-id|risc_pcr
-suffix:semicolon
-multiline_comment|/* Processor Control Register     */
-DECL|member|risc_raddr0
-r_volatile
-r_int
-r_int
-id|risc_raddr0
-suffix:semicolon
-multiline_comment|/* RAM Addr reg 0                 */
-DECL|member|risc_raddr1
-r_volatile
-r_int
-r_int
-id|risc_raddr1
-suffix:semicolon
-multiline_comment|/* RAM Addr reg 1                 */
-DECL|member|risc_lcr
-r_volatile
-r_int
-r_int
-id|risc_lcr
-suffix:semicolon
-multiline_comment|/* Loop Counter reg               */
-DECL|member|risc_pc
-r_volatile
-r_int
-r_int
-id|risc_pc
-suffix:semicolon
-multiline_comment|/* Program Counter                */
-DECL|member|risc_mtreg
-r_volatile
-r_int
-r_int
-id|risc_mtreg
-suffix:semicolon
-multiline_comment|/* Memory Timing reg              */
-DECL|member|risc_embreg
-r_volatile
-r_int
-r_int
-id|risc_embreg
-suffix:semicolon
-multiline_comment|/* External Memory Boundry reg    */
-DECL|member|risc_sp
-r_volatile
-r_int
-r_int
-id|risc_sp
-suffix:semicolon
-multiline_comment|/* Stack Pointer                  */
-DECL|member|risc_hrev
-r_volatile
-r_int
-r_int
-id|risc_hrev
-suffix:semicolon
-multiline_comment|/* Hardware Revision              */
-DECL|member|_unused24
-r_int
-r_char
-id|_unused24
-(braket
-l_int|10
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-multiline_comment|/* Generic control/command registers. */
-DECL|member|hcctrl
-r_volatile
-r_int
-r_int
-id|hcctrl
-suffix:semicolon
-multiline_comment|/* Host cmd/control reg           */
-DECL|member|pbkpt0
-r_volatile
-r_int
-r_int
-id|pbkpt0
-suffix:semicolon
-multiline_comment|/* Processor Breakpoint 0         */
-DECL|member|pbkpt1
-r_volatile
-r_int
-r_int
-id|pbkpt1
-suffix:semicolon
-multiline_comment|/* Processor Breakpoint 1         */
-DECL|member|tcntrl
-r_volatile
-r_int
-r_int
-id|tcntrl
-suffix:semicolon
-multiline_comment|/* Test Control reg               */
-DECL|member|tmreg
-r_volatile
-r_int
-r_int
-id|tmreg
-suffix:semicolon
-multiline_comment|/* Test Mode reg                  */
-)brace
-suffix:semicolon
+multiline_comment|/* Qlogic/SBUS controller registers. */
+DECL|macro|SBUS_CFG1
+mdefine_line|#define SBUS_CFG1&t;0x006UL
+DECL|macro|SBUS_CTRL
+mdefine_line|#define SBUS_CTRL&t;0x008UL
+DECL|macro|SBUS_STAT
+mdefine_line|#define SBUS_STAT&t;0x00aUL
+DECL|macro|SBUS_SEMAPHORE
+mdefine_line|#define SBUS_SEMAPHORE&t;0x00cUL
+DECL|macro|CMD_DMA_CTRL
+mdefine_line|#define CMD_DMA_CTRL&t;0x022UL
+DECL|macro|DATA_DMA_CTRL
+mdefine_line|#define DATA_DMA_CTRL&t;0x042UL
+DECL|macro|MBOX0
+mdefine_line|#define MBOX0&t;&t;0x080UL
+DECL|macro|MBOX1
+mdefine_line|#define MBOX1&t;&t;0x082UL
+DECL|macro|MBOX2
+mdefine_line|#define MBOX2&t;&t;0x084UL
+DECL|macro|MBOX3
+mdefine_line|#define MBOX3&t;&t;0x086UL
+DECL|macro|MBOX4
+mdefine_line|#define MBOX4&t;&t;0x088UL
+DECL|macro|MBOX5
+mdefine_line|#define MBOX5&t;&t;0x08aUL
+DECL|macro|CPU_CMD
+mdefine_line|#define CPU_CMD&t;&t;0x214UL
+DECL|macro|CPU_ORIDE
+mdefine_line|#define CPU_ORIDE&t;0x224UL
+DECL|macro|CPU_PCTRL
+mdefine_line|#define CPU_PCTRL&t;0x272UL
+DECL|macro|CPU_PDIFF
+mdefine_line|#define CPU_PDIFF&t;0x276UL
+DECL|macro|RISC_PSR
+mdefine_line|#define RISC_PSR&t;0x420UL
+DECL|macro|RISC_MTREG
+mdefine_line|#define RISC_MTREG&t;0x42EUL
+DECL|macro|HCCTRL
+mdefine_line|#define HCCTRL&t;&t;0x440UL
+multiline_comment|/* SCSI parameters for this driver. */
 DECL|macro|MAX_TARGETS
 mdefine_line|#define MAX_TARGETS&t;16
 DECL|macro|MAX_LUNS
 mdefine_line|#define MAX_LUNS&t;8
 multiline_comment|/* With the qlogic interface, every queue slot can hold a SCSI&n; * command with up to 4 scatter/gather entries.  If we need more&n; * than 4 entries, continuation entries can be used that hold&n; * another 7 entries each.  Unlike for other drivers, this means&n; * that the maximum number of scatter/gather entries we can&n; * support at any given time is a function of the number of queue&n; * slots available.  That is, host-&gt;can_queue and host-&gt;sg_tablesize&n; * are dynamic and _not_ independent.  This all works fine because&n; * requests are queued serially and the scatter/gather limit is&n; * determined for each queue request anew.&n; */
-DECL|macro|QLOGICISP_REQ_QUEUE_LEN
-mdefine_line|#define QLOGICISP_REQ_QUEUE_LEN&t;255&t;/* must be power of two - 1 */
-DECL|macro|QLOGICISP_MAX_SG
-mdefine_line|#define QLOGICISP_MAX_SG(ql)&t;(4 + ((ql) &gt; 0) ? 7*((ql) - 1) : 0)
+DECL|macro|QLOGICPTI_REQ_QUEUE_LEN
+mdefine_line|#define QLOGICPTI_REQ_QUEUE_LEN&t;255&t;/* must be power of two - 1 */
+DECL|macro|QLOGICPTI_MAX_SG
+mdefine_line|#define QLOGICPTI_MAX_SG(ql)&t;(4 + ((ql) &gt; 0) ? 7*((ql) - 1) : 0)
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL (0)
@@ -841,6 +85,24 @@ op_star
 suffix:semicolon
 r_int
 id|qlogicpti_queuecommand
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+comma
+r_void
+(paren
+op_star
+id|done
+)paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+)paren
+suffix:semicolon
+r_int
+id|qlogicpti_queuecommand_slow
 c_func
 (paren
 id|Scsi_Cmnd
@@ -909,32 +171,32 @@ id|Entry_header
 (brace
 macro_line|#ifdef __BIG_ENDIAN
 DECL|member|entry_cnt
-id|u_char
+id|u8
 id|entry_cnt
 suffix:semicolon
 DECL|member|entry_type
-id|u_char
+id|u8
 id|entry_type
 suffix:semicolon
 DECL|member|flags
-id|u_char
+id|u8
 id|flags
 suffix:semicolon
 DECL|member|sys_def_1
-id|u_char
+id|u8
 id|sys_def_1
 suffix:semicolon
 macro_line|#else /* __LITTLE_ENDIAN */
-id|u_char
+id|u8
 id|entry_type
 suffix:semicolon
-id|u_char
+id|u8
 id|entry_cnt
 suffix:semicolon
-id|u_char
+id|u8
 id|sys_def_1
 suffix:semicolon
-id|u_char
+id|u8
 id|flags
 suffix:semicolon
 macro_line|#endif
@@ -965,11 +227,11 @@ r_struct
 id|dataseg
 (brace
 DECL|member|d_base
-id|u_int
+id|u32
 id|d_base
 suffix:semicolon
 DECL|member|d_count
-id|u_int
+id|u32
 id|d_count
 suffix:semicolon
 )brace
@@ -984,50 +246,50 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|handle
-id|u_int
+id|u32
 id|handle
 suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
 DECL|member|target_id
-id|u_char
+id|u8
 id|target_id
 suffix:semicolon
 DECL|member|target_lun
-id|u_char
+id|u8
 id|target_lun
 suffix:semicolon
 macro_line|#else /* __LITTLE_ENDIAN */
 DECL|member|target_lun
-id|u_char
+id|u8
 id|target_lun
 suffix:semicolon
 DECL|member|target_id
-id|u_char
+id|u8
 id|target_id
 suffix:semicolon
 macro_line|#endif
 DECL|member|cdb_length
-id|u_short
+id|u16
 id|cdb_length
 suffix:semicolon
 DECL|member|control_flags
-id|u_short
+id|u16
 id|control_flags
 suffix:semicolon
 DECL|member|rsvd
-id|u_short
+id|u16
 id|rsvd
 suffix:semicolon
 DECL|member|time_out
-id|u_short
+id|u16
 id|time_out
 suffix:semicolon
 DECL|member|segment_cnt
-id|u_short
+id|u16
 id|segment_cnt
 suffix:semicolon
 DECL|member|cdb
-id|u_char
+id|u8
 id|cdb
 (braket
 l_int|12
@@ -1068,50 +330,50 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|handle
-id|u_int
+id|u32
 id|handle
 suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
 DECL|member|target_id
-id|u_char
+id|u8
 id|target_id
 suffix:semicolon
 DECL|member|target_lun
-id|u_char
+id|u8
 id|target_lun
 suffix:semicolon
 macro_line|#else /* __LITTLE_ENDIAN */
 DECL|member|target_lun
-id|u_char
+id|u8
 id|target_lun
 suffix:semicolon
 DECL|member|target_id
-id|u_char
+id|u8
 id|target_id
 suffix:semicolon
 macro_line|#endif
 DECL|member|cdb_length
-id|u_short
+id|u16
 id|cdb_length
 suffix:semicolon
 DECL|member|control_flags
-id|u_short
+id|u16
 id|control_flags
 suffix:semicolon
 DECL|member|rsvd
-id|u_short
+id|u16
 id|rsvd
 suffix:semicolon
 DECL|member|time_out
-id|u_short
+id|u16
 id|time_out
 suffix:semicolon
 DECL|member|segment_cnt
-id|u_short
+id|u16
 id|segment_cnt
 suffix:semicolon
 DECL|member|cdb
-id|u_char
+id|u8
 id|cdb
 (braket
 l_int|44
@@ -1129,7 +391,7 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|reserved
-id|u_int
+id|u32
 id|reserved
 suffix:semicolon
 DECL|member|dataseg
@@ -1152,49 +414,49 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|reserved
-id|u_int
+id|u32
 id|reserved
 suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
 DECL|member|target_id
-id|u_char
+id|u8
 id|target_id
 suffix:semicolon
 DECL|member|target_lun
-id|u_char
+id|u8
 id|target_lun
 suffix:semicolon
 macro_line|#else /* __LITTLE_ENDIAN */
 DECL|member|target_lun
-id|u_char
+id|u8
 id|target_lun
 suffix:semicolon
 DECL|member|target_id
-id|u_char
+id|u8
 id|target_id
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef __BIG_ENDIAN
 DECL|member|rsvd
-id|u_char
+id|u8
 id|rsvd
 suffix:semicolon
 DECL|member|modifier
-id|u_char
+id|u8
 id|modifier
 suffix:semicolon
 macro_line|#else /* __LITTLE_ENDIAN */
 DECL|member|modifier
-id|u_char
+id|u8
 id|modifier
 suffix:semicolon
 DECL|member|rsvd
-id|u_char
+id|u8
 id|rsvd
 suffix:semicolon
 macro_line|#endif
 DECL|member|rsvds
-id|u_char
+id|u8
 id|rsvds
 (braket
 l_int|52
@@ -1219,46 +481,46 @@ id|Entry_header
 id|hdr
 suffix:semicolon
 DECL|member|handle
-id|u_int
+id|u32
 id|handle
 suffix:semicolon
 DECL|member|scsi_status
-id|u_short
+id|u16
 id|scsi_status
 suffix:semicolon
 DECL|member|completion_status
-id|u_short
+id|u16
 id|completion_status
 suffix:semicolon
 DECL|member|state_flags
-id|u_short
+id|u16
 id|state_flags
 suffix:semicolon
 DECL|member|status_flags
-id|u_short
+id|u16
 id|status_flags
 suffix:semicolon
 DECL|member|time
-id|u_short
+id|u16
 id|time
 suffix:semicolon
 DECL|member|req_sense_len
-id|u_short
+id|u16
 id|req_sense_len
 suffix:semicolon
 DECL|member|residual
-id|u_int
+id|u32
 id|residual
 suffix:semicolon
 DECL|member|rsvd
-id|u_char
+id|u8
 id|rsvd
 (braket
 l_int|8
 )braket
 suffix:semicolon
 DECL|member|req_sense_data
-id|u_char
+id|u8
 id|req_sense_data
 (braket
 l_int|32
@@ -1526,11 +788,11 @@ mdefine_line|#define RES_QUEUE_LEN&t;&t;255&t;/* Must be power of two - 1 */
 DECL|macro|QUEUE_ENTRY_LEN
 mdefine_line|#define QUEUE_ENTRY_LEN&t;&t;64
 DECL|macro|NEXT_REQ_PTR
-mdefine_line|#define NEXT_REQ_PTR(wheee)   (((wheee) + 1) &amp; QLOGICISP_REQ_QUEUE_LEN)
+mdefine_line|#define NEXT_REQ_PTR(wheee)   (((wheee) + 1) &amp; QLOGICPTI_REQ_QUEUE_LEN)
 DECL|macro|NEXT_RES_PTR
 mdefine_line|#define NEXT_RES_PTR(wheee)   (((wheee) + 1) &amp; RES_QUEUE_LEN)
 DECL|macro|PREV_REQ_PTR
-mdefine_line|#define PREV_REQ_PTR(wheee)   (((wheee) - 1) &amp; QLOGICISP_REQ_QUEUE_LEN)
+mdefine_line|#define PREV_REQ_PTR(wheee)   (((wheee) - 1) &amp; QLOGICPTI_REQ_QUEUE_LEN)
 DECL|macro|PREV_RES_PTR
 mdefine_line|#define PREV_RES_PTR(wheee)   (((wheee) - 1) &amp; RES_QUEUE_LEN)
 DECL|struct|pti_queue_entry
@@ -1552,17 +814,14 @@ r_struct
 id|qlogicpti
 (brace
 multiline_comment|/* These are the hot elements in the cache, so they come first. */
-DECL|member|next
-r_struct
-id|qlogicpti
-op_star
-id|next
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
-multiline_comment|/* Next active adapter        */
+multiline_comment|/* Driver mutex&t;&t;      */
 DECL|member|qregs
-r_struct
-id|qlogicpti_regs
-op_star
+r_int
+r_int
 id|qregs
 suffix:semicolon
 multiline_comment|/* Adapter registers          */
@@ -1580,16 +839,6 @@ op_star
 id|req_cpu
 suffix:semicolon
 multiline_comment|/* Ptr to REQUEST bufs (CPU)  */
-DECL|member|res_dvma
-id|__u32
-id|res_dvma
-suffix:semicolon
-multiline_comment|/* Ptr to RESPONSE bufs (DVMA)*/
-DECL|member|req_dvma
-id|__u32
-id|req_dvma
-suffix:semicolon
-multiline_comment|/* Ptr to REQUEST bufs (DVMA) */
 DECL|member|req_in_ptr
 id|u_int
 id|req_in_ptr
@@ -1600,6 +849,22 @@ id|u_int
 id|res_out_ptr
 suffix:semicolon
 multiline_comment|/* index of next result slot  */
+DECL|member|send_marker
+r_int
+id|send_marker
+suffix:semicolon
+multiline_comment|/* must we send a marker?     */
+DECL|member|sdev
+r_struct
+id|sbus_dev
+op_star
+id|sdev
+suffix:semicolon
+DECL|member|__pad
+r_int
+r_int
+id|__pad
+suffix:semicolon
 DECL|member|cmd_count
 r_int
 id|cmd_count
@@ -1615,41 +880,49 @@ id|tag_ages
 id|MAX_TARGETS
 )braket
 suffix:semicolon
-DECL|member|send_marker
-r_int
-id|send_marker
-suffix:semicolon
-multiline_comment|/* must we send a marker?     */
 multiline_comment|/* The cmd-&gt;handler is only 32-bits, so that things work even on monster&n;&t; * Ex000 sparc64 machines with &gt;4GB of ram we just keep track of the&n;&t; * scsi command pointers here.  This is essentially what Matt Jacob does. -DaveM&n;&t; */
 DECL|member|cmd_slots
 id|Scsi_Cmnd
 op_star
 id|cmd_slots
 (braket
-id|QLOGICISP_REQ_QUEUE_LEN
+id|QLOGICPTI_REQ_QUEUE_LEN
 op_plus
 l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* The rest of the elements are unimportant for performance. */
+DECL|member|next
+r_struct
+id|qlogicpti
+op_star
+id|next
+suffix:semicolon
+DECL|member|res_dvma
+id|__u32
+id|res_dvma
+suffix:semicolon
+multiline_comment|/* Ptr to RESPONSE bufs (DVMA)*/
+DECL|member|req_dvma
+id|__u32
+id|req_dvma
+suffix:semicolon
+multiline_comment|/* Ptr to REQUEST bufs (DVMA) */
 DECL|member|fware_majrev
 DECL|member|fware_minrev
+DECL|member|fware_micrev
 id|u_char
 id|fware_majrev
 comma
 id|fware_minrev
+comma
+id|fware_micrev
 suffix:semicolon
 DECL|member|qhost
 r_struct
 id|Scsi_Host
 op_star
 id|qhost
-suffix:semicolon
-DECL|member|qdev
-r_struct
-id|linux_sbus_device
-op_star
-id|qdev
 suffix:semicolon
 DECL|member|qpti_id
 r_int
@@ -1676,10 +949,13 @@ id|irq
 suffix:semicolon
 DECL|member|differential
 DECL|member|ultra
+DECL|member|clock
 r_char
 id|differential
 comma
 id|ultra
+comma
+id|clock
 suffix:semicolon
 DECL|member|bursts
 r_int
@@ -1700,10 +976,8 @@ id|MAX_TARGETS
 )braket
 suffix:semicolon
 DECL|member|sreg
-r_volatile
 r_int
-r_char
-op_star
+r_int
 id|sreg
 suffix:semicolon
 DECL|macro|SREG_TPOWER
@@ -1723,18 +997,29 @@ r_int
 r_char
 id|swsreg
 suffix:semicolon
-DECL|member|is_pti
 r_int
-r_char
+r_int
+DECL|member|gotirq
+id|gotirq
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* this instance got an irq */
+DECL|member|is_pti
 id|is_pti
-suffix:semicolon
+suffix:colon
+l_int|1
+comma
 multiline_comment|/* Non-zero if this is a PTI board. */
+DECL|member|sbits
+id|sbits
+suffix:colon
+l_int|16
+suffix:semicolon
+multiline_comment|/* syncmode known bits */
 )brace
 suffix:semicolon
 multiline_comment|/* How to twiddle them bits... */
-multiline_comment|/* SBUS config register zero. */
-DECL|macro|SBUS_CFG0_HREVMASK
-mdefine_line|#define SBUS_CFG0_HREVMASK      0x000f      /* To get the revision              */
 multiline_comment|/* SBUS config register one. */
 DECL|macro|SBUS_CFG1_EPAR
 mdefine_line|#define SBUS_CFG1_EPAR          0x0100      /* Enable parity checking           */
@@ -1779,15 +1064,6 @@ DECL|macro|SBUS_SEMAPHORE_STAT
 mdefine_line|#define SBUS_SEMAPHORE_STAT     0x0002      /* Semaphore status bit             */
 DECL|macro|SBUS_SEMAPHORE_LCK
 mdefine_line|#define SBUS_SEMAPHORE_LCK      0x0001      /* Semaphore lock bit               */
-multiline_comment|/* DVMA config register */
-DECL|macro|DMA_CFG_DVMAENAB
-mdefine_line|#define DMA_CFG_DVMAENAB        0x0008      /* Enable scsi cpu --&gt; dma data     */
-DECL|macro|DMA_CFG_EIRQ
-mdefine_line|#define DMA_CFG_EIRQ            0x0004      /* Enable interrupts to risc cpu    */
-DECL|macro|DMA_CFG_EBURST
-mdefine_line|#define DMA_CFG_EBURST          0x0002      /* Enable sbus dvma bursts          */
-DECL|macro|DMA_CFG_DIRECTION
-mdefine_line|#define DMA_CFG_DIRECTION       0x0001      /* DMA direction (0=fifo-&gt;ram)      */
 multiline_comment|/* DVMA control register */
 DECL|macro|DMA_CTRL_CSUSPEND
 mdefine_line|#define DMA_CTRL_CSUSPEND       0x0010      /* DMA channel suspend              */
@@ -1799,117 +1075,6 @@ DECL|macro|DMA_CTRL_CIRQ
 mdefine_line|#define DMA_CTRL_CIRQ           0x0002      /* DMA irq clear                    */
 DECL|macro|DMA_CTRL_DMASTART
 mdefine_line|#define DMA_CTRL_DMASTART       0x0001      /* DMA transfer start               */
-multiline_comment|/* DVMA status register */
-DECL|macro|DMA_STAT_PFULL
-mdefine_line|#define DMA_STAT_PFULL          0x00c0      /* Pipe full                        */
-DECL|macro|DMA_STAT_PORUN
-mdefine_line|#define DMA_STAT_PORUN          0x0080      /* Pipe overrun                     */
-DECL|macro|DMA_STAT_PSTG1
-mdefine_line|#define DMA_STAT_PSTG1          0x0040      /* Pipe has stage 1 loaded          */
-DECL|macro|DMA_STAT_PEMPTY
-mdefine_line|#define DMA_STAT_PEMPTY         0x0000      /* Pipe is empty                    */
-DECL|macro|DMA_STAT_CSUSP
-mdefine_line|#define DMA_STAT_CSUSP          0x0030      /* Channel suspended                */
-DECL|macro|DMA_STAT_CTRAN
-mdefine_line|#define DMA_STAT_CTRAN          0x0020      /* Channel transfer in progress     */
-DECL|macro|DMA_STAT_CACTIVE
-mdefine_line|#define DMA_STAT_CACTIVE        0x0010      /* Channel active                   */
-DECL|macro|DMA_STAT_CIDLE
-mdefine_line|#define DMA_STAT_CIDLE          0x0000      /* Channel idle                     */
-DECL|macro|DMA_STAT_SPAR
-mdefine_line|#define DMA_STAT_SPAR           0x0008      /* SBUS parity error                */
-DECL|macro|DMA_STAT_SERR
-mdefine_line|#define DMA_STAT_SERR           0x0004      /* SBUS dma error                   */
-DECL|macro|DMA_STAT_TCNT
-mdefine_line|#define DMA_STAT_TCNT           0x0002      /* Terminal count expired           */
-DECL|macro|DMA_STAT_IRQ
-mdefine_line|#define DMA_STAT_IRQ            0x0001      /* DMA interrupt                    */
-multiline_comment|/* DVMA FIFO status register */
-DECL|macro|DMA_FSTAT_ORUN
-mdefine_line|#define DMA_FSTAT_ORUN          0x0200      /* FIFO overrun                     */
-DECL|macro|DMA_FSTAT_URUN
-mdefine_line|#define DMA_FSTAT_URUN          0x0100      /* FIFO underrun                    */
-DECL|macro|DMA_FSTAT_CMASK
-mdefine_line|#define DMA_FSTAT_CMASK         0x007f      /* FIFO count mask                  */
-multiline_comment|/* SCSI processor config 1 register */
-DECL|macro|CPU_CFG1_ASTIME
-mdefine_line|#define CPU_CFG1_ASTIME         0xf000      /* Asynchronous setup time mask     */
-DECL|macro|CPU_CFG1_STUNIT
-mdefine_line|#define CPU_CFG1_STUNIT         0x0000      /* Selection time unit              */
-DECL|macro|CPU_CFG1_STIMEO
-mdefine_line|#define CPU_CFG1_STIMEO         0x0600      /* Selection timeout value          */
-DECL|macro|CPU_CFG1_CFACT
-mdefine_line|#define CPU_CFG1_CFACT          0x00e0      /* Clock factor                     */
-DECL|macro|CPU_CFG1_SID
-mdefine_line|#define CPU_CFG1_SID            0x000f      /* SCSI ID                          */
-multiline_comment|/* SCSI processor config 2 register */
-DECL|macro|CPU_CFG2_FDISAB
-mdefine_line|#define CPU_CFG2_FDISAB         0x0040      /* SCSI filter disable              */
-DECL|macro|CPU_CFG2_ERAPUPS
-mdefine_line|#define CPU_CFG2_ERAPUPS        0x0020      /* Req/Ack pullup enable            */
-DECL|macro|CPU_CFG2_EDPUPS
-mdefine_line|#define CPU_CFG2_EDPUPS         0x0010      /* Data active pullup enable        */
-DECL|macro|CPU_CFG2_ECAUTO
-mdefine_line|#define CPU_CFG2_ECAUTO         0x0008      /* Autoload device config enable    */
-DECL|macro|CPU_CFG2_ERESEL
-mdefine_line|#define CPU_CFG2_ERESEL         0x0002      /* Enable reselections              */
-DECL|macro|CPU_CFG2_ESEL
-mdefine_line|#define CPU_CFG2_ESEL           0x0001      /* Enable selections                */
-multiline_comment|/* SCSI processor interrupt register */
-DECL|macro|CPU_IRQ_PERR
-mdefine_line|#define CPU_IRQ_PERR            0x8000      /* Parity error                     */
-DECL|macro|CPU_IRQ_GERR
-mdefine_line|#define CPU_IRQ_GERR            0x4000      /* Gross error                      */
-DECL|macro|CPU_IRQ_FABORT
-mdefine_line|#define CPU_IRQ_FABORT          0x2000      /* Function abort                   */
-DECL|macro|CPU_IRQ_CFAIL
-mdefine_line|#define CPU_IRQ_CFAIL           0x1000      /* Condition failed                 */
-DECL|macro|CPU_IRQ_FEMPTY
-mdefine_line|#define CPU_IRQ_FEMPTY          0x0800      /* FIFO empty                       */
-DECL|macro|CPU_IRQ_BCZ
-mdefine_line|#define CPU_IRQ_BCZ             0x0400      /* Byte counter is zero             */
-DECL|macro|CPU_IRQ_XZ
-mdefine_line|#define CPU_IRQ_XZ              0x0200      /* Transfer counter is zero         */
-DECL|macro|CPU_IRQ_IRQ
-mdefine_line|#define CPU_IRQ_IRQ             0x0080      /* SCSI processor interrupt pending */
-DECL|macro|CPU_IRQ_CRUN
-mdefine_line|#define CPU_IRQ_CRUN            0x0040      /* Command is running               */
-DECL|macro|CPU_IRQ_RCODE
-mdefine_line|#define CPU_IRQ_RCODE           0x000f      /* Return code for interrupt        */
-multiline_comment|/* SCSI processor gross error register */
-DECL|macro|CPU_GERR_ONZ
-mdefine_line|#define CPU_GERR_ONZ            0x0040      /* Offset not zero                  */
-DECL|macro|CPU_GERR_OUF
-mdefine_line|#define CPU_GERR_OUF            0x0020      /* Offset underflowed               */
-DECL|macro|CPU_GERR_OOF
-mdefine_line|#define CPU_GERR_OOF            0x0010      /* Offset overflowed                */
-DECL|macro|CPU_GERR_FUF
-mdefine_line|#define CPU_GERR_FUF            0x0008      /* FIFO underflowed                 */
-DECL|macro|CPU_GERR_FOF
-mdefine_line|#define CPU_GERR_FOF            0x0004      /* FIFO overflowed                  */
-DECL|macro|CPU_GERR_WERR
-mdefine_line|#define CPU_GERR_WERR           0x0002      /* Error on write                   */
-DECL|macro|CPU_GERR_ILL
-mdefine_line|#define CPU_GERR_ILL            0x0001      /* Instruction was illegal          */
-multiline_comment|/* SCSI processor exception register */
-DECL|macro|CPU_EXC_UZERO
-mdefine_line|#define CPU_EXC_UZERO           0x8000      /* User exception zero              */
-DECL|macro|CPU_EXC_UONE
-mdefine_line|#define CPU_EXC_UONE            0x4000      /* User exception one               */
-DECL|macro|CPU_EXC_BFREE
-mdefine_line|#define CPU_EXC_BFREE           0x0200      /* Bus free                         */
-DECL|macro|CPU_EXC_TATN
-mdefine_line|#define CPU_EXC_TATN            0x0100      /* ATN in target mode               */
-DECL|macro|CPU_EXC_RESEL
-mdefine_line|#define CPU_EXC_RESEL           0x0080      /* Reselect exception               */
-DECL|macro|CPU_EXC_SEL
-mdefine_line|#define CPU_EXC_SEL             0x0040      /* Selection exception              */
-DECL|macro|CPU_EXC_ARB
-mdefine_line|#define CPU_EXC_ARB             0x0020      /* Arbitration exception            */
-DECL|macro|CPU_EXC_GERR
-mdefine_line|#define CPU_EXC_GERR            0x0010      /* Gross error exception            */
-DECL|macro|CPU_EXC_RESET
-mdefine_line|#define CPU_EXC_RESET           0x0008      /* Bus reset exception              */
 multiline_comment|/* SCSI processor override register */
 DECL|macro|CPU_ORIDE_ETRIG
 mdefine_line|#define CPU_ORIDE_ETRIG         0x8000      /* External trigger enable          */
@@ -1940,52 +1105,6 @@ mdefine_line|#define CPU_ORIDE_RMOD          0x0001      /* Reset SCSI processor
 multiline_comment|/* SCSI processor commands */
 DECL|macro|CPU_CMD_BRESET
 mdefine_line|#define CPU_CMD_BRESET          0x300b      /* Reset SCSI bus                   */
-multiline_comment|/* SCSI processor user exception register */
-DECL|macro|CPU_UEXC_ONE
-mdefine_line|#define CPU_UEXC_ONE            0x0002      /* User exception one               */
-DECL|macro|CPU_UEXC_ZERO
-mdefine_line|#define CPU_UEXC_ZERO           0x0001      /* User exception zero              */
-multiline_comment|/* SCSI processor SCSI id register */
-DECL|macro|CPU_SID_RSEID
-mdefine_line|#define CPU_SID_RSEID           0x0f00      /* Who is sel/resel&squot;ing us          */
-DECL|macro|CPU_SID_SID
-mdefine_line|#define CPU_SID_SID             0x000f      /* Selection ID                     */
-multiline_comment|/* SCSI processor device config 1 */
-DECL|macro|CPU_DCFG1_SHOLD
-mdefine_line|#define CPU_DCFG1_SHOLD         0x7000      /* Sync data hold                   */
-DECL|macro|CPU_DCFG1_SSETUP
-mdefine_line|#define CPU_DCFG1_SSETUP        0x0f00      /* Sync data setup                  */
-DECL|macro|CPU_DCFG1_SOFF
-mdefine_line|#define CPU_DCFG1_SOFF          0x000f      /* Sync data offset                 */
-multiline_comment|/* SCSI processor device config 2 */
-DECL|macro|CPU_DCFG2_FMASK
-mdefine_line|#define CPU_DCFG2_FMASK         0xf000      /* Device flags                     */
-DECL|macro|CPU_DCFG2_EWIDE
-mdefine_line|#define CPU_DCFG2_EWIDE         0x0400      /* WIDE enable                      */
-DECL|macro|CPU_DCFG2_EPAR
-mdefine_line|#define CPU_DCFG2_EPAR          0x0200      /* Parity enable                    */
-DECL|macro|CPU_DCFG2_EBLK
-mdefine_line|#define CPU_DCFG2_EBLK          0x0100      /* Block mode transfer enable       */
-DECL|macro|CPU_DCFG2_AMASK
-mdefine_line|#define CPU_DCFG2_AMASK         0x0007      /* Assertion period mask            */
-multiline_comment|/* SCSI processor phase pointer register */
-DECL|macro|CPU_PPTR_STAT
-mdefine_line|#define CPU_PPTR_STAT           0x1000      /* Status buf offset                */
-DECL|macro|CPU_PPTR_MSGIN
-mdefine_line|#define CPU_PPTR_MSGIN          0x0700      /* Msg-in buf offset                */
-DECL|macro|CPU_PPTR_COM
-mdefine_line|#define CPU_PPTR_COM            0x00f0      /* Cmd buf offset                   */
-DECL|macro|CPU_PPTR_MSGOUT
-mdefine_line|#define CPU_PPTR_MSGOUT         0x0007      /* Msg-out buf offset               */
-multiline_comment|/* SCSI processor fifo status register */
-DECL|macro|CPU_FSTAT_TFULL
-mdefine_line|#define CPU_FSTAT_TFULL         0x8000      /* Top residue full                 */
-DECL|macro|CPU_FSTAT_ARES
-mdefine_line|#define CPU_FSTAT_ARES          0x4000      /* Odd residue for wide transfer    */
-DECL|macro|CPU_FSTAT_CMSK
-mdefine_line|#define CPU_FSTAT_CMSK          0x001c      /* FIFO count mask                  */
-DECL|macro|CPU_FSTAT_BRES
-mdefine_line|#define CPU_FSTAT_BRES          0x0001      /* Bottom residue full              */
 multiline_comment|/* SCSI processor pin control register */
 DECL|macro|CPU_PCTRL_PVALID
 mdefine_line|#define CPU_PCTRL_PVALID        0x8000      /* Phase bits are valid             */
@@ -2096,7 +1215,7 @@ mdefine_line|#define HCCTRL_B1ENAB           0x0008      /* Breakpoint 1 enable 
 DECL|macro|HCCTRL_B0ENAB
 mdefine_line|#define HCCTRL_B0ENAB           0x0004      /* Breakpoint 0 enable              */
 DECL|macro|QLOGICPTI
-mdefine_line|#define QLOGICPTI {&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;detect:&t;&t;qlogicpti_detect,&t;&t;&t;   &bslash;&n;&t;release:&t;qlogicpti_release,&t;&t;&t;   &bslash;&n;&t;info:&t;&t;qlogicpti_info,&t;&t;&t;&t;   &bslash;&n;&t;queuecommand:&t;qlogicpti_queuecommand,&t;&t;&t;   &bslash;&n;&t;abort:&t;&t;qlogicpti_abort,&t;&t;&t;   &bslash;&n;&t;reset:&t;&t;qlogicpti_reset,&t;&t;&t;   &bslash;&n;&t;can_queue:&t;QLOGICISP_REQ_QUEUE_LEN,&t;&t;   &bslash;&n;&t;this_id:&t;7,&t;&t;&t;&t;&t;   &bslash;&n;&t;sg_tablesize:&t;QLOGICISP_MAX_SG(QLOGICISP_REQ_QUEUE_LEN), &bslash;&n;&t;cmd_per_lun:&t;1,&t;&t;&t;&t;&t;   &bslash;&n;&t;use_clustering:&t;DISABLE_CLUSTERING,&t;&t;&t;   &bslash;&n;&t;use_new_eh_code: 0&t;&t;&t;&t;&t;   &bslash;&n;}
+mdefine_line|#define QLOGICPTI {&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;detect:&t;&t;qlogicpti_detect,&t;&t;&t;   &bslash;&n;&t;release:&t;qlogicpti_release,&t;&t;&t;   &bslash;&n;&t;info:&t;&t;qlogicpti_info,&t;&t;&t;&t;   &bslash;&n;&t;queuecommand:&t;qlogicpti_queuecommand_slow,&t;&t;   &bslash;&n;&t;abort:&t;&t;qlogicpti_abort,&t;&t;&t;   &bslash;&n;&t;reset:&t;&t;qlogicpti_reset,&t;&t;&t;   &bslash;&n;&t;can_queue:&t;QLOGICPTI_REQ_QUEUE_LEN,&t;&t;   &bslash;&n;&t;this_id:&t;7,&t;&t;&t;&t;&t;   &bslash;&n;&t;sg_tablesize:&t;QLOGICPTI_MAX_SG(QLOGICPTI_REQ_QUEUE_LEN), &bslash;&n;&t;cmd_per_lun:&t;1,&t;&t;&t;&t;&t;   &bslash;&n;&t;use_clustering:&t;ENABLE_CLUSTERING,&t;&t;&t;   &bslash;&n;&t;use_new_eh_code: 0&t;&t;&t;&t;&t;   &bslash;&n;}
 multiline_comment|/* For our interrupt engine. */
 DECL|macro|for_each_qlogicpti
 mdefine_line|#define for_each_qlogicpti(qp) &bslash;&n;        for((qp) = qptichain; (qp); (qp) = (qp)-&gt;next)

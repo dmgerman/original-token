@@ -297,12 +297,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_SUN_OPENPROMFS) || defined(CONFIG_SUN_OPENPROMFS_MODULE)
-macro_line|#ifdef CONFIG_SUN_OPENPROMFS
-id|openpromfs_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* just give it a mountpoint */
 id|proc_mkdir
 c_func

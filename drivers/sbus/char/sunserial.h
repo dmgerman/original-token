@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.h,v 1.17 1997/12/19 07:33:12 ecd Exp $&n; * sunserial.h: SUN serial driver infrastructure (including keyboards).&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.h,v 1.19 1999/12/01 10:45:59 davem Exp $&n; * sunserial.h: SUN serial driver infrastructure (including keyboards).&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_SUNSERIAL_H
 DECL|macro|_SPARC_SUNSERIAL_H
 mdefine_line|#define _SPARC_SUNSERIAL_H 1
@@ -175,10 +175,6 @@ id|sunserial_setinitfunc
 c_func
 (paren
 r_int
-r_int
-op_star
-comma
-r_int
 (paren
 op_star
 )paren
@@ -193,10 +189,6 @@ id|sunkbd_setinitfunc
 c_func
 (paren
 r_int
-r_int
-op_star
-comma
-r_int
 (paren
 op_star
 )paren
@@ -208,6 +200,10 @@ suffix:semicolon
 r_extern
 r_int
 id|serial_console
+suffix:semicolon
+r_extern
+r_int
+id|stop_a_enabled
 suffix:semicolon
 r_extern
 r_void
@@ -225,10 +221,6 @@ r_void
 id|sunkbd_install_keymaps
 c_func
 (paren
-r_int
-r_int
-op_star
-comma
 id|ushort
 op_star
 op_star

@@ -273,7 +273,7 @@ DECL|macro|PROC_BLOCK_SIZE
 mdefine_line|#define PROC_BLOCK_SIZE (3*1024)     /* 4K page size, but our output routines &n;&t;&t;&t;&t;      * use some slack for overruns &n;&t;&t;&t;&t;      */
 DECL|function|proc_scsi_write
 r_static
-id|ssize_t
+r_int
 id|proc_scsi_write
 c_func
 (paren

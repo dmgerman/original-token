@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.27 1999/07/31 00:07:25 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.29 1999/12/09 10:32:43 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -25,8 +25,8 @@ r_void
 id|clear_page
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|page
 )paren
 suffix:semicolon
@@ -35,12 +35,12 @@ r_void
 id|copy_page
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|to
 comma
-r_int
-r_int
+r_void
+op_star
 id|from
 )paren
 suffix:semicolon
@@ -263,6 +263,10 @@ DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long) (x) + PAGE_OFFSET))
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+DECL|macro|virt_to_phys
+mdefine_line|#define virt_to_phys __pa
+DECL|macro|phys_to_virt
+mdefine_line|#define phys_to_virt __va
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* The following structure is used to hold the physical&n; * memory configuration of the machine.  This is filled in&n; * probe_memory() and is later used by mem_init() to set up&n; * mem_map[].  We statically allocate SPARC_PHYS_BANKS of&n; * these structs, this is arbitrary.  The entry after the&n; * last valid one has num_bytes==0.&n; */
 DECL|struct|sparc_phys_banks

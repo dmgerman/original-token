@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Sat Oct  9 17:00:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       1.0&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Thu Dec 16 22:59:40 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -216,7 +216,7 @@ id|irlmp-&gt;free_lsap_sel
 op_assign
 l_int|0x10
 suffix:semicolon
-multiline_comment|/* Servers use 0x00-0x0f */
+multiline_comment|/* Reserved 0x00-0x0f */
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
 id|irlmp-&gt;cache.valid
 op_assign
@@ -373,6 +373,9 @@ comma
 id|notify_t
 op_star
 id|notify
+comma
+id|__u8
+id|pid
 )paren
 (brace
 r_struct
@@ -416,7 +419,7 @@ l_int|NULL
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Does the client care which Source LSAP selector it gets? &n;&t; */
+multiline_comment|/*  Does the client care which Source LSAP selector it gets?  */
 r_if
 c_cond
 (paren
@@ -425,7 +428,6 @@ op_eq
 id|LSAP_ANY
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *  Find unused LSAP&n;&t;&t; */
 id|slsap_sel
 op_assign
 id|irlmp_find_free_slsap
@@ -436,17 +438,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|slsap_sel
-op_eq
-l_int|0
 )paren
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
 r_else
-(brace
-multiline_comment|/*&n;&t;&t; *  Client wants specific LSAP, so check if it&squot;s already&n;&t;&t; *  in use&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -456,13 +455,10 @@ c_func
 id|slsap_sel
 )paren
 )paren
-(brace
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;&t; *  Allocate new instance of a LSAP connection&n;&t; */
+multiline_comment|/* Allocate new instance of a LSAP connection */
 id|self
 op_assign
 id|kmalloc
@@ -485,12 +481,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;IrLMP: Can&squot;t allocate memory for &quot;
-l_string|&quot;LSAP control block!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), can&squot;t allocate memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -519,6 +514,27 @@ id|self-&gt;slsap_sel
 op_assign
 id|slsap_sel
 suffix:semicolon
+multiline_comment|/* Fix connectionless LSAP&squot;s */
+r_if
+c_cond
+(paren
+id|slsap_sel
+op_eq
+id|LSAP_CONNLESS
+)paren
+(brace
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+id|self-&gt;dlsap_sel
+op_assign
+id|LSAP_CONNLESS
+suffix:semicolon
+id|self-&gt;pid
+op_assign
+id|pid
+suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
+)brace
+r_else
 id|self-&gt;dlsap_sel
 op_assign
 id|LSAP_ANY
@@ -559,7 +575,7 @@ comma
 id|LSAP_DISCONNECTED
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Insert into queue of unconnected LSAPs&n;&t; */
+multiline_comment|/* Insert into queue of unconnected LSAPs */
 id|hashbin_insert
 c_func
 (paren
@@ -630,8 +646,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *  Set some of the variables to preset values&n;&t; */
 id|self-&gt;magic
 op_assign
-op_complement
-id|LMP_LSAP_MAGIC
+l_int|0
 suffix:semicolon
 id|del_timer
 c_func
@@ -641,6 +656,17 @@ id|self-&gt;watchdog_timer
 )paren
 suffix:semicolon
 multiline_comment|/* Important! */
+r_if
+c_cond
+(paren
+id|self-&gt;conn_skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|self-&gt;conn_skb
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
 id|ASSERT
 c_func
@@ -1240,10 +1266,6 @@ id|self-&gt;dlsap_sel
 op_assign
 id|dlsap_sel
 suffix:semicolon
-id|self-&gt;tmp_skb
-op_assign
-id|skb
-suffix:semicolon
 multiline_comment|/*  &n;&t; * Find the link to where we should try to connect since there may&n;&t; * be more than one IrDA port on this machine. If the client has&n;&t; * passed us the saddr (and already knows which link to use), then&n;&t; * we use that to find the link, if not then we have to look in the&n;&t; * discovery log and check if any of the links has discovered a&n;&t; * device with the given daddr &n;&t; */
 r_if
 c_cond
@@ -1556,17 +1578,6 @@ id|self-&gt;lap-&gt;qos-&gt;data_size.value
 op_minus
 id|LMP_HEADER
 suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), max_seg_size=%d&bslash;n&quot;
-comma
-id|max_seg_size
-)paren
-suffix:semicolon
 id|lap_header_size
 op_assign
 id|IRLAP_GET_HEADER_SIZE
@@ -1580,17 +1591,6 @@ op_assign
 id|LMP_HEADER
 op_plus
 id|lap_header_size
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), max_header_size=%d&bslash;n&quot;
-comma
-id|max_header_size
-)paren
 suffix:semicolon
 multiline_comment|/* Hide LMP_CONTROL_HEADER header from layer above */
 id|skb_pull
@@ -1699,7 +1699,7 @@ comma
 id|self-&gt;dlsap_sel
 )paren
 suffix:semicolon
-multiline_comment|/* Make room for MUX control header ( 3 bytes) */
+multiline_comment|/* Make room for MUX control header (3 bytes) */
 id|ASSERT
 c_func
 (paren
@@ -2479,7 +2479,6 @@ c_cond
 (paren
 id|self-&gt;notify.disconnect_indication
 )paren
-(brace
 id|self-&gt;notify
 dot
 id|disconnect_indication
@@ -2491,6 +2490,23 @@ id|self
 comma
 id|reason
 comma
+id|userdata
+)paren
+suffix:semicolon
+r_else
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), no handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
 id|userdata
 )paren
 suffix:semicolon
@@ -3239,7 +3255,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlmp_data_indication (handle, skb)&n; *&n; *    Got data from LAP layer so pass it up to upper layer&n; *&n; */
 DECL|function|irlmp_data_indication
-r_inline
 r_void
 id|irlmp_data_indication
 c_func
@@ -3281,11 +3296,17 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlmp_udata_request (self, skb)&n; *&n; *    &n; *&n; */
 DECL|function|irlmp_udata_request
-r_inline
-r_void
+r_int
 id|irlmp_udata_request
 c_func
 (paren
@@ -3317,6 +3338,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -3333,6 +3356,8 @@ op_ge
 id|LMP_HEADER
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -3344,6 +3369,7 @@ comma
 id|LMP_HEADER
 )paren
 suffix:semicolon
+r_return
 id|irlmp_do_lsap_event
 c_func
 (paren
@@ -3440,51 +3466,306 @@ comma
 id|skb
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function irlmp_connection_less_data_request (skb)&n; *&n; *    Send out of connection UI frames&n; *&n; */
-DECL|function|irlmp_connectionless_data_request
-r_void
-id|irlmp_connectionless_data_request
+r_else
+id|dev_kfree_skb
 c_func
 (paren
-r_struct
-id|sk_buff
-op_star
 id|skb
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;(), Sorry not implemented&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlmp_connection_less_data_indication (skb)&n; *&n; *    &n; *&n; */
-DECL|function|irlmp_connectionless_data_indication
-r_void
-id|irlmp_connectionless_data_indication
+multiline_comment|/*&n; * Function irlmp_connless_data_request (self, skb)&n; *&n; *    &n; *&n; */
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+DECL|function|irlmp_connless_data_request
+r_int
+id|irlmp_connless_data_request
 c_func
 (paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+comma
 r_struct
 id|sk_buff
 op_star
 id|skb
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|clone_skb
+suffix:semicolon
+r_struct
+id|lap_cb
+op_star
+id|lap
+suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|1
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* Make room for MUX and PID header */
+id|ASSERT
+c_func
+(paren
+id|skb_headroom
+c_func
+(paren
+id|skb
+)paren
+op_ge
+id|LMP_HEADER
+op_plus
+id|LMP_PID_HEADER
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* Insert protocol identifier */
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|LMP_PID_HEADER
+)paren
+suffix:semicolon
+id|skb-&gt;data
+(braket
+l_int|0
+)braket
+op_assign
+id|self-&gt;pid
+suffix:semicolon
+multiline_comment|/* Connectionless sockets must use 0x70 */
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|LMP_HEADER
+)paren
+suffix:semicolon
+id|skb-&gt;data
+(braket
+l_int|0
+)braket
+op_assign
+id|skb-&gt;data
+(braket
+l_int|1
+)braket
+op_assign
+id|LSAP_CONNLESS
+suffix:semicolon
+multiline_comment|/* Try to send Connectionless  packets out on all links */
+id|lap
+op_assign
+(paren
+r_struct
+id|lap_cb
+op_star
+)paren
+id|hashbin_get_first
+c_func
+(paren
+id|irlmp-&gt;links
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|lap
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ASSERT
+c_func
+(paren
+id|lap-&gt;magic
+op_eq
+id|LMP_LAP_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|clone_skb
+op_assign
+id|skb_clone
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|clone_skb
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|irlap_unitdata_request
+c_func
+(paren
+id|lap-&gt;irlap
+comma
+id|clone_skb
+)paren
+suffix:semicolon
+id|lap
+op_assign
+(paren
+r_struct
+id|lap_cb
+op_star
+)paren
+id|hashbin_get_next
+c_func
+(paren
+id|irlmp-&gt;links
+)paren
+suffix:semicolon
 )brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
+multiline_comment|/*&n; * Function irlmp_connless_data_indication (self, skb)&n; *&n; *    Receive unreliable data outside any connection. Mostly used by Ultra&n; *&n; */
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+DECL|function|irlmp_connless_data_indication
+r_void
+id|irlmp_connless_data_indication
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|LMP_LSAP_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* Hide LMP and PID header from layer above */
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|LMP_HEADER
+op_plus
+id|LMP_PID_HEADER
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;notify.udata_indication
+)paren
+id|self-&gt;notify
+dot
+id|udata_indication
+c_func
+(paren
+id|self-&gt;notify.instance
+comma
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+r_else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
 DECL|function|irlmp_status_request
 r_void
 id|irlmp_status_request
@@ -4719,13 +5000,26 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+multiline_comment|/* Accept all bindings to the connectionless LSAP */
+r_if
+c_cond
+(paren
+id|slsap_sel
+op_eq
+id|LSAP_CONNLESS
+)paren
+r_return
+id|FALSE
+suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
 multiline_comment|/* Valid values are between 0 and 127 */
 r_if
 c_cond
 (paren
 id|slsap_sel
 OG
-l_int|127
+id|LSAP_MAX
 )paren
 r_return
 id|TRUE
@@ -4915,13 +5209,13 @@ id|irlmp-&gt;free_lsap_sel
 id|irlmp-&gt;free_lsap_sel
 op_increment
 suffix:semicolon
-multiline_comment|/* Check if we need to wraparound */
+multiline_comment|/* Check if we need to wraparound (0x70-0x7f are reserved) */
 r_if
 c_cond
 (paren
 id|irlmp-&gt;free_lsap_sel
 OG
-l_int|127
+id|LSAP_MAX
 )paren
 (brace
 id|irlmp-&gt;free_lsap_sel
@@ -5159,7 +5453,7 @@ id|self-&gt;lap-&gt;daddr
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function irlmp_proc_read (buf, start, offset, len)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
+multiline_comment|/*&n; * Function irlmp_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
 DECL|function|irlmp_proc_read
 r_int
 id|irlmp_proc_read
@@ -5404,6 +5698,20 @@ comma
 id|lap-&gt;saddr
 comma
 id|lap-&gt;daddr
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;refcount: %d&quot;
+comma
+id|lap-&gt;refcount
 )paren
 suffix:semicolon
 id|len

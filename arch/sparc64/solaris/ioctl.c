@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl.c,v 1.13 1999/08/20 00:27:15 davem Exp $&n; * ioctl.c: Solaris ioctl emulation.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
+multiline_comment|/* $Id: ioctl.c,v 1.14 1999/09/22 09:28:50 davem Exp $&n; * ioctl.c: Solaris ioctl emulation.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; * 1999-08-19 Implemented solaris &squot;m&squot; (mag tape) and&n; *            &squot;O&squot; (openprom) ioctls, by Jason Rappleye&n; *             (rappleye@ccr.buffalo.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8,8 +8,11 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/mtio.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/termios.h&gt;
+macro_line|#include &lt;asm/openpromio.h&gt;
 macro_line|#include &quot;conv.h&quot;
 macro_line|#include &quot;socksys.h&quot;
 r_extern
@@ -4370,6 +4373,428 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+DECL|function|solaris_m
+r_static
+r_int
+id|solaris_m
+c_func
+(paren
+r_int
+r_int
+id|fd
+comma
+r_int
+r_int
+id|cmd
+comma
+id|u32
+id|arg
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cmd
+op_amp
+l_int|0xff
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* MTIOCTOP */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|MTIOCTOP
+comma
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* MTIOCGET */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|MTIOCGET
+comma
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+multiline_comment|/* MTIOCGETDRIVETYPE */
+r_case
+l_int|4
+suffix:colon
+multiline_comment|/* MTIOCPERSISTENT */
+r_case
+l_int|5
+suffix:colon
+multiline_comment|/* MTIOCPERSISTENTSTATUS */
+r_case
+l_int|6
+suffix:colon
+multiline_comment|/* MTIOCLRERR */
+r_case
+l_int|7
+suffix:colon
+multiline_comment|/* MTIOCGUARANTEEDORDER */
+r_case
+l_int|8
+suffix:colon
+multiline_comment|/* MTIOCRESERVE */
+r_case
+l_int|9
+suffix:colon
+multiline_comment|/* MTIOCRELEASE */
+r_case
+l_int|10
+suffix:colon
+multiline_comment|/* MTIOCFORCERESERVE */
+r_case
+l_int|13
+suffix:colon
+multiline_comment|/* MTIOCSTATE */
+r_case
+l_int|14
+suffix:colon
+multiline_comment|/* MTIOCREADIGNOREILI */
+r_case
+l_int|15
+suffix:colon
+multiline_comment|/* MTIOCREADIGNOREEOFS */
+r_case
+l_int|16
+suffix:colon
+multiline_comment|/* MTIOCSHORTFMK */
+r_default
+suffix:colon
+id|ret
+op_assign
+op_minus
+id|ENOSYS
+suffix:semicolon
+multiline_comment|/* linux doesn&squot;t support these */
+r_break
+suffix:semicolon
+)brace
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|solaris_O
+r_static
+r_int
+id|solaris_O
+c_func
+(paren
+r_int
+r_int
+id|fd
+comma
+r_int
+r_int
+id|cmd
+comma
+id|u32
+id|arg
+)paren
+(brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cmd
+op_amp
+l_int|0xff
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* OPROMGETOPT */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMGETOPT
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* OPROMSETOPT */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMSETOPT
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+multiline_comment|/* OPROMNXTOPT */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMNXTOPT
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+multiline_comment|/* OPROMSETOPT2 */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMSETOPT2
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|5
+suffix:colon
+multiline_comment|/* OPROMNEXT */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMNEXT
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|6
+suffix:colon
+multiline_comment|/* OPROMCHILD */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMCHILD
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+multiline_comment|/* OPROMGETPROP */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMGETPROP
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|8
+suffix:colon
+multiline_comment|/* OPROMNXTPROP */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMNXTPROP
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|9
+suffix:colon
+multiline_comment|/* OPROMU2P */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMU2P
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|10
+suffix:colon
+multiline_comment|/* OPROMGETCONS */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMGETCONS
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|11
+suffix:colon
+multiline_comment|/* OPROMGETFBNAME */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMGETFBNAME
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|12
+suffix:colon
+multiline_comment|/* OPROMGETBOOTARGS */
+id|ret
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|OPROMGETBOOTARGS
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|13
+suffix:colon
+multiline_comment|/* OPROMGETVERSION */
+r_case
+l_int|14
+suffix:colon
+multiline_comment|/* OPROMPATH2DRV */
+r_case
+l_int|15
+suffix:colon
+multiline_comment|/* OPROMDEV2PROMNAME */
+r_case
+l_int|16
+suffix:colon
+multiline_comment|/* OPROMPROM2DEVNAME */
+r_case
+l_int|17
+suffix:colon
+multiline_comment|/* OPROMGETPROPLEN */
+r_default
+suffix:colon
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 multiline_comment|/* }}} */
 DECL|function|solaris_ioctl
 id|asmlinkage
@@ -4549,6 +4974,40 @@ suffix:colon
 id|error
 op_assign
 id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_char|&squot;m&squot;
+suffix:colon
+id|error
+op_assign
+id|solaris_m
+c_func
+(paren
+id|fd
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_char|&squot;O&squot;
+suffix:colon
+id|error
+op_assign
+id|solaris_O
 c_func
 (paren
 id|fd

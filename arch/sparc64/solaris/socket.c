@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: socket.c,v 1.1 1998/10/28 08:12:11 jj Exp $&n; * socket.c: Socket syscall emulation for Solaris 2.6+&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: socket.c,v 1.2 1999/09/22 09:28:50 davem Exp $&n; * socket.c: Socket syscall emulation for Solaris 2.6+&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; *&n; * 1999-08-19 Fixed socketpair code &n; *            Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -21,6 +21,24 @@ DECL|macro|SOCK_SOL_RDM
 mdefine_line|#define SOCK_SOL_RDM&t;&t;5
 DECL|macro|SOCK_SOL_SEQPACKET
 mdefine_line|#define SOCK_SOL_SEQPACKET&t;6
+DECL|macro|SOL_SO_SNDLOWAT
+mdefine_line|#define SOL_SO_SNDLOWAT&t;&t;0x1003
+DECL|macro|SOL_SO_RCVLOWAT
+mdefine_line|#define SOL_SO_RCVLOWAT&t;&t;0x1004
+DECL|macro|SOL_SO_SNDTIMEO
+mdefine_line|#define SOL_SO_SNDTIMEO&t;&t;0x1005
+DECL|macro|SOL_SO_RCVTIMEO
+mdefine_line|#define SOL_SO_RCVTIMEO&t;&t;0x1006
+DECL|macro|SOL_SO_STATE
+mdefine_line|#define SOL_SO_STATE&t;&t;0x2000
+DECL|macro|SOL_SS_NDELAY
+mdefine_line|#define SOL_SS_NDELAY&t;&t;0x040
+DECL|macro|SOL_SS_NONBLOCK
+mdefine_line|#define SOL_SS_NONBLOCK&t;&t;0x080
+DECL|macro|SOL_SS_ASYNC
+mdefine_line|#define SOL_SS_ASYNC&t;&t;0x100
+DECL|macro|SO_STATE
+mdefine_line|#define SO_STATE&t;&t;0x000e
 DECL|function|socket_check
 r_static
 r_int
@@ -111,6 +129,73 @@ r_return
 id|type
 suffix:semicolon
 )brace
+DECL|function|solaris_to_linux_sockopt
+r_static
+r_int
+id|solaris_to_linux_sockopt
+c_func
+(paren
+r_int
+id|optname
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|optname
+)paren
+(brace
+r_case
+id|SOL_SO_SNDLOWAT
+suffix:colon
+id|optname
+op_assign
+id|SO_SNDLOWAT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOL_SO_RCVLOWAT
+suffix:colon
+id|optname
+op_assign
+id|SO_RCVLOWAT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOL_SO_SNDTIMEO
+suffix:colon
+id|optname
+op_assign
+id|SO_SNDTIMEO
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOL_SO_RCVTIMEO
+suffix:colon
+id|optname
+op_assign
+id|SO_RCVTIMEO
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOL_SO_STATE
+suffix:colon
+id|optname
+op_assign
+id|SO_STATE
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+suffix:semicolon
+r_return
+id|optname
+suffix:semicolon
+)brace
 DECL|function|solaris_socket
 id|asmlinkage
 r_int
@@ -197,15 +282,6 @@ id|solaris_socketpair
 c_func
 (paren
 r_int
-id|family
-comma
-r_int
-id|type
-comma
-r_int
-id|protocol
-comma
-r_int
 op_star
 id|usockvec
 )paren
@@ -248,35 +324,21 @@ c_func
 id|socketpair
 )paren
 suffix:semicolon
-id|type
-op_assign
-id|socket_check
-(paren
-id|family
-comma
-id|type
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|type
-OL
-l_int|0
-)paren
-r_return
-id|type
-suffix:semicolon
+multiline_comment|/* solaris socketpair really only takes one arg at the syscall&n;&t; * level, int * usockvec. The libs apparently take care of &n;&t; * making sure that family==AF_UNIX and type==SOCK_STREAM. The &n;&t; * pointer we really want ends up residing in the first (and&n;&t; * supposedly only) argument.&n;&t; */
 r_return
 id|sys_socketpair
 c_func
 (paren
-id|family
+id|AF_UNIX
 comma
-id|type
+id|SOCK_STREAM
 comma
-id|protocol
+l_int|0
 comma
+(paren
+r_int
+op_star
+)paren
 id|usockvec
 )paren
 suffix:semicolon
@@ -409,6 +471,34 @@ c_func
 l_int|105
 )paren
 suffix:semicolon
+id|optname
+op_assign
+id|solaris_to_linux_sockopt
+c_func
+(paren
+id|optname
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|optname
+OL
+l_int|0
+)paren
+r_return
+id|optname
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|optname
+op_eq
+id|SO_STATE
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_return
 id|sunos_setsockopt
 c_func
@@ -486,6 +576,35 @@ c_func
 (paren
 l_int|118
 )paren
+suffix:semicolon
+id|optname
+op_assign
+id|solaris_to_linux_sockopt
+c_func
+(paren
+id|optname
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|optname
+OL
+l_int|0
+)paren
+r_return
+id|optname
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|optname
+op_eq
+id|SO_STATE
+)paren
+id|optname
+op_assign
+id|SOL_SO_STATE
 suffix:semicolon
 r_return
 id|sunos_getsockopt

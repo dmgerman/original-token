@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.14 1999/06/25 11:00:53 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.19 1999/12/15 17:51:25 jj Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -2806,11 +2806,11 @@ r_struct
 id|rlimit32
 (brace
 DECL|member|rlim_cur
-id|s32
+id|u32
 id|rlim_cur
 suffix:semicolon
 DECL|member|rlim_max
-id|s32
+id|u32
 id|rlim_max
 suffix:semicolon
 )brace
@@ -4480,14 +4480,8 @@ id|solaris_to_linux_signals
 comma
 id|linux_to_solaris_signals
 comma
-macro_line|#ifdef MODULE
-op_amp
-id|__this_module
+id|THIS_MODULE
 comma
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
 l_int|NULL
 )brace
 suffix:semicolon

@@ -1,4 +1,5 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       0.8&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon Oct 18 23:37:06 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       1.0&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Beta.&n; * Authors:       Dag Brattli &lt;dagb@cs.uit.no&gt; (initially)&n; *&t;&t;  Jean Tourrilhes &lt;jt@hpl.hp.com&gt; (new version)&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Fri Dec 17 09:16:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1999 Jean Tourrilhes&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*&n; * Changelog&n; *&n; * 0.8 -&gt; 0.9999 - Jean&n; *&t;o New initialisation procedure : much safer and correct&n; *&t;o New procedure the change speed : much faster and simpler&n; *&t;o Other cleanups &amp; comments&n; *&t;Thanks to Lichen Wang @ Actisys for his excellent help...&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -7,6 +8,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
+multiline_comment|/* &n; * Define the timing of the pulses we send to the dongle (to reset it, and&n; * to toggle speeds). Basically, the limit here is the propagation speed of&n; * the signals through the serial port, the dongle being much faster.  Any&n; * serial port support 115 kb/s, so we are sure that pulses 8.5 us wide can&n; * go through cleanly . If you are on the wild side, you can try to lower&n; * this value (Actisys recommended me 2 us, and 0 us work for me on a P233!)&n; */
+DECL|macro|MIN_DELAY
+mdefine_line|#define MIN_DELAY 10&t;/* 10 us to be on the conservative side */
 r_static
 r_int
 id|actisys_change_speed
@@ -54,7 +58,8 @@ op_star
 id|self
 )paren
 suffix:semicolon
-multiline_comment|/* These are the baudrates supported */
+multiline_comment|/* These are the baudrates supported, in the order available */
+multiline_comment|/* Note : the 220L doesn&squot;t support 38400, but we will fix that below */
 DECL|variable|baud_rates
 r_static
 id|__u32
@@ -74,6 +79,8 @@ comma
 l_int|38400
 )brace
 suffix:semicolon
+DECL|macro|MAX_SPEEDS
+mdefine_line|#define MAX_SPEEDS 5
 DECL|variable|dongle
 r_static
 r_struct
@@ -116,6 +123,7 @@ id|actisys_change_speed
 comma
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Function actisys_change_speed (task)&n; *&n; *&t;There is two model of Actisys dongle we are dealing with,&n; * the 220L and 220L+. At this point, only irattach knows with&n; * kind the user has requested (it was an argument on irattach&n; * command line).&n; *&t;So, we register a dongle of each sort and let irattach&n; * pick the right one...&n; */
 DECL|function|actisys_init
 r_int
 id|__init
@@ -128,6 +136,7 @@ r_void
 r_int
 id|ret
 suffix:semicolon
+multiline_comment|/* First, register an Actisys 220L dongle */
 id|ret
 op_assign
 id|irda_device_register_dongle
@@ -147,6 +156,7 @@ l_int|0
 r_return
 id|ret
 suffix:semicolon
+multiline_comment|/* Now, register an Actisys 220L+ dongle */
 id|ret
 op_assign
 id|irda_device_register_dongle
@@ -187,6 +197,7 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* We have to remove both dongles */
 id|irda_device_unregister_dongle
 c_func
 (paren
@@ -218,6 +229,20 @@ op_star
 id|qos
 )paren
 (brace
+multiline_comment|/* Power on the dongle */
+id|self
+op_member_access_from_pointer
+id|set_dtr_rts
+c_func
+(paren
+id|self-&gt;dev
+comma
+id|TRUE
+comma
+id|TRUE
+)paren
+suffix:semicolon
+multiline_comment|/* Set the speeds we can accept */
 id|qos-&gt;baud_rate.bits
 op_and_assign
 id|IR_9600
@@ -244,8 +269,8 @@ op_complement
 id|IR_38400
 suffix:semicolon
 id|qos-&gt;min_turn_time.bits
-op_and_assign
-l_int|0x40
+op_assign
+l_int|0x7f
 suffix:semicolon
 multiline_comment|/* Needs 0.01 ms */
 id|MOD_INC_USE_COUNT
@@ -262,7 +287,7 @@ op_star
 id|self
 )paren
 (brace
-multiline_comment|/* Power off dongle */
+multiline_comment|/* Power off the dongle */
 id|self
 op_member_access_from_pointer
 id|set_dtr_rts
@@ -278,7 +303,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function actisys_change_speed (tty, baud)&n; *&n; *    Change speed of the ACTiSYS IR-220L and IR-220L+ type IrDA dongles.&n; *    To cycle through the available baud rates, pulse RTS low for a few&n; *    ms.  &n; */
+multiline_comment|/*&n; * Function actisys_change_speed (task)&n; *&n; *    Change speed of the ACTiSYS IR-220L and IR-220L+ type IrDA dongles.&n; *    To cycle through the available baud rates, pulse RTS low for a few us.&n; *&n; *&t;First, we reset the dongle to always start from a known state.&n; *&t;Then, we cycle through the speeds by pulsing RTS low and then up.&n; *&t;The dongle allow us to pulse quite fast, se we can set speed in one go,&n; * which is must faster ( &lt; 100 us) and less complex than what is found&n; * in some other dongle drivers...&n; *&t;Note that even if the new speed is the same as the current speed,&n; * we reassert the speed. This make sure that things are all right,&n; * and it&squot;s fast anyway...&n; *&t;By the way, this function will work for both type of dongles,&n; * because the additional speed is at the end of the sequence...&n; */
 DECL|function|actisys_change_speed
 r_static
 r_int
@@ -309,16 +334,14 @@ id|__u32
 )paren
 id|task-&gt;param
 suffix:semicolon
-id|__u32
-id|current_speed
-suffix:semicolon
+multiline_comment|/* Target speed */
 r_int
-id|index
+id|ret
 op_assign
 l_int|0
 suffix:semicolon
 r_int
-id|ret
+id|i
 op_assign
 l_int|0
 suffix:semicolon
@@ -328,294 +351,151 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), speed=%d (was %d)&bslash;n&quot;
+comma
+id|speed
+comma
+id|self-&gt;speed
 )paren
 suffix:semicolon
-id|current_speed
-op_assign
-id|self-&gt;speed
+multiline_comment|/* Go to a known state by reseting the dongle */
+multiline_comment|/* Reset the dongle : set DTR low for 10 us */
+id|self
+op_member_access_from_pointer
+id|set_dtr_rts
+c_func
+(paren
+id|self-&gt;dev
+comma
+id|FALSE
+comma
+id|TRUE
+)paren
 suffix:semicolon
-multiline_comment|/* Find the correct baudrate index for the currently used baudrate */
-r_while
+id|udelay
+c_func
+(paren
+id|MIN_DELAY
+)paren
+suffix:semicolon
+multiline_comment|/* Go back to normal mode (we are now at 9600 b/s) */
+id|self
+op_member_access_from_pointer
+id|set_dtr_rts
+c_func
+(paren
+id|self-&gt;dev
+comma
+id|TRUE
+comma
+id|TRUE
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Now, we can set the speed requested. Send RTS pulses until we&n;         * reach the target speed &n;&t; */
+r_for
 c_loop
 (paren
-id|current_speed
-op_ne
-id|baud_rates
-(braket
-id|index
-)braket
-)paren
-id|index
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_SPEEDS
+suffix:semicolon
+id|i
 op_increment
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), index=%d&bslash;n&quot;
-comma
-id|index
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|task-&gt;state
 )paren
 (brace
-r_case
-id|IRDA_TASK_INIT
-suffix:colon
-multiline_comment|/* Lock dongle */
 r_if
 c_cond
 (paren
-id|irda_lock
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|self-&gt;busy
-)paren
-op_eq
-id|FALSE
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), busy!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ret
-op_assign
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|100
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), current baudrate = %d&bslash;n&quot;
-comma
-id|baud_rates
-(braket
-id|index
-)braket
-)paren
-suffix:semicolon
-multiline_comment|/* Set DTR, clear RTS */
-id|self
-op_member_access_from_pointer
-id|set_dtr_rts
-c_func
-(paren
-id|self-&gt;dev
-comma
-id|TRUE
-comma
-id|FALSE
-)paren
-suffix:semicolon
-id|irda_task_next_state
-c_func
-(paren
-id|task
-comma
-id|IRDA_TASK_WAIT1
-)paren
-suffix:semicolon
-multiline_comment|/* Wait at a few ms */
-id|ret
-op_assign
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|20
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|IRDA_TASK_WAIT1
-suffix:colon
-multiline_comment|/* Set DTR, Set RTS */
-id|self
-op_member_access_from_pointer
-id|set_dtr_rts
-c_func
-(paren
-id|self-&gt;dev
-comma
-id|TRUE
-comma
-id|TRUE
-)paren
-suffix:semicolon
-id|irda_task_next_state
-c_func
-(paren
-id|task
-comma
-id|IRDA_TASK_WAIT2
-)paren
-suffix:semicolon
-multiline_comment|/* Wait at a few ms again */
-id|ret
-op_assign
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|20
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|IRDA_TASK_WAIT2
-suffix:colon
-multiline_comment|/* Go to next baudrate */
-r_if
-c_cond
-(paren
-id|self-&gt;issue-&gt;type
-op_eq
-id|IRDA_ACTISYS_DONGLE
-)paren
-id|index
-op_assign
-(paren
-id|index
-op_plus
-l_int|1
-)paren
-op_mod
-l_int|4
-suffix:semicolon
-multiline_comment|/* IR-220L */
-r_else
-id|index
-op_assign
-(paren
-id|index
-op_plus
-l_int|1
-)paren
-op_mod
-l_int|5
-suffix:semicolon
-multiline_comment|/* IR-220L+ */
-id|current_speed
-op_assign
-id|baud_rates
-(braket
-id|index
-)braket
-suffix:semicolon
-multiline_comment|/* Check if we need to go some more rounds */
-r_if
-c_cond
-(paren
-id|current_speed
-op_ne
 id|speed
+op_eq
+id|baud_rates
+(braket
+id|i
+)braket
 )paren
-id|irda_task_next_state
-c_func
-(paren
-id|task
-comma
-id|IRDA_TASK_INIT
-)paren
-suffix:semicolon
-r_else
 (brace
-id|irda_task_next_state
-c_func
-(paren
-id|task
-comma
-id|IRDA_TASK_DONE
-)paren
-suffix:semicolon
-id|self-&gt;busy
+id|self-&gt;speed
 op_assign
-l_int|0
+id|baud_rates
+(braket
+id|i
+)braket
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
-r_default
-suffix:colon
-id|ERROR
+)brace
+multiline_comment|/* Make sure previous pulse is finished */
+id|udelay
 c_func
 (paren
-id|__FUNCTION__
-l_string|&quot;(), unknown state %d&bslash;n&quot;
-comma
-id|task-&gt;state
+id|MIN_DELAY
 )paren
 suffix:semicolon
-id|irda_task_next_state
+multiline_comment|/* Set RTS low for 10 us */
+id|self
+op_member_access_from_pointer
+id|set_dtr_rts
 c_func
 (paren
-id|task
+id|self-&gt;dev
 comma
-id|IRDA_TASK_DONE
+id|TRUE
+comma
+id|FALSE
 )paren
 suffix:semicolon
-id|self-&gt;busy
-op_assign
-l_int|0
+id|udelay
+c_func
+(paren
+id|MIN_DELAY
+)paren
 suffix:semicolon
+multiline_comment|/* Set RTS high for 10 us */
+id|self
+op_member_access_from_pointer
+id|set_dtr_rts
+c_func
+(paren
+id|self-&gt;dev
+comma
+id|TRUE
+comma
+id|TRUE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Check if life is sweet... */
+r_if
+c_cond
+(paren
+id|i
+op_ge
+id|MAX_SPEEDS
+)paren
 id|ret
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|self-&gt;speed
-op_assign
-id|speed
-suffix:semicolon
-id|IRDA_DEBUG
+multiline_comment|/* This should not happen */
+multiline_comment|/* Basta lavoro, on se casse d&squot;ici... */
+id|irda_task_next_state
 c_func
 (paren
-l_int|4
+id|task
 comma
-id|__FUNCTION__
-l_string|&quot;(), current baudrate = %d&bslash;n&quot;
-comma
-id|baud_rates
-(braket
-id|index
-)braket
+id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function actisys_reset (dev)&n; *&n; *      Reset the Actisys type dongle. Warning, this function must only be&n; *      called with a process context!&n; *&n; *    &t;1. Clear DTR for a few ms.&n; */
+multiline_comment|/*&n; * Function actisys_reset (task)&n; *&n; *      Reset the Actisys type dongle. Warning, this function must only be&n; *      called with a process context!&n; *&n; * We need to do two things in this function :&n; *&t;o first make sure that the dongle is in a state where it can operate&n; *&t;o second put the dongle in a know state&n; *&n; *&t;The dongle is powered of the RTS and DTR lines. In the dongle, there&n; * is a big capacitor to accomodate the current spikes. This capacitor&n; * takes a least 50 ms to be charged. In theory, the Bios set those lines&n; * up, so by the time we arrive here we should be set. It doesn&squot;t hurt&n; * to be on the conservative side, so we will wait...&n; *&t;Then, we set the speed to 9600 b/s to get in a known state (see in&n; * change_speed for details). It is needed because the IrDA stack&n; * has tried to set the speed immediately after our first return,&n; * so before we can be sure the dongle is up and running.&n; */
 DECL|function|actisys_reset
 r_static
 r_int
@@ -656,6 +536,10 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+id|task
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -665,7 +549,43 @@ id|task-&gt;state
 r_case
 id|IRDA_TASK_INIT
 suffix:colon
-multiline_comment|/* Clear DTR */
+multiline_comment|/* Set both DTR &amp; RTS to power up the dongle */
+multiline_comment|/* In theory redundant with power up in actisys_open() */
+id|self
+op_member_access_from_pointer
+id|set_dtr_rts
+c_func
+(paren
+id|self-&gt;dev
+comma
+id|TRUE
+comma
+id|TRUE
+)paren
+suffix:semicolon
+multiline_comment|/* Sleep 50 ms to make sure capacitor is charged */
+id|ret
+op_assign
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|50
+)paren
+suffix:semicolon
+id|irda_task_next_state
+c_func
+(paren
+id|task
+comma
+id|IRDA_TASK_WAIT
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|IRDA_TASK_WAIT
+suffix:colon
+multiline_comment|/* Reset the dongle : set DTR low for 10 us */
 id|self
 op_member_access_from_pointer
 id|set_dtr_rts
@@ -678,28 +598,12 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
-id|irda_task_next_state
+id|udelay
 c_func
 (paren
-id|task
-comma
-id|IRDA_TASK_WAIT
+id|MIN_DELAY
 )paren
 suffix:semicolon
-multiline_comment|/* Sleep 10-20 ms*/
-id|ret
-op_assign
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|20
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|IRDA_TASK_WAIT
-suffix:colon
 multiline_comment|/* Go back to normal mode */
 id|self
 op_member_access_from_pointer
@@ -721,10 +625,15 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+l_int|NULL
+suffix:semicolon
 id|self-&gt;speed
 op_assign
 l_int|9600
 suffix:semicolon
+multiline_comment|/* That&squot;s the default */
 r_break
 suffix:semicolon
 r_default
@@ -746,6 +655,10 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+l_int|NULL
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -762,7 +675,7 @@ macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt; - Jean Tourrilhes &lt;jt@hpl.hp.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION

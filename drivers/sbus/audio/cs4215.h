@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/sbus/audio/cs4215.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; * Used with dbri.h&n; */
+multiline_comment|/* $Id: cs4215.h,v 1.7 1999/09/21 14:37:19 davem Exp $&n; * drivers/sbus/audio/cs4215.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; * Used with dbri.h&n; */
 macro_line|#ifndef _CS4215_H_
 DECL|macro|_CS4215_H_
 mdefine_line|#define _CS4215_H_
@@ -396,5 +396,5 @@ DECL|macro|CS4215_RG
 mdefine_line|#define CS4215_RG(v)&t;v&t;/* Right Gain Setting 0xf: 22.5 dB */
 DECL|macro|CS4215_MA
 mdefine_line|#define CS4215_MA(v)&t;(v&lt;&lt;4)&t;/* Monitor Path Attenuation 0xf: mute */
-macro_line|#endif
+macro_line|#endif /* _CS4215_H_ */
 eof

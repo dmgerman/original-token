@@ -5,76 +5,19 @@ mdefine_line|#define __SOCAL_H
 macro_line|#include &quot;fc.h&quot;
 macro_line|#include &quot;fcp.h&quot;
 macro_line|#include &quot;fcp_impl.h&quot;
-multiline_comment|/* Hardware structures and constants first {{{ */
-DECL|union|socal_rq_reg
-r_union
-id|socal_rq_reg
-(brace
-DECL|member|read
-r_volatile
-id|u8
-id|read
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|member|write
-r_volatile
-id|u32
-id|write
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|socal_regs
-r_struct
-id|socal_regs
-(brace
-DECL|member|cfg
-r_volatile
-id|u32
-id|cfg
-suffix:semicolon
-multiline_comment|/* Config Register */
-DECL|member|sae
-r_volatile
-id|u32
-id|sae
-suffix:semicolon
-multiline_comment|/* Slave Access Error Register */
-DECL|member|cmd
-r_volatile
-id|u32
-id|cmd
-suffix:semicolon
-multiline_comment|/* Command &amp; Status Register */
-DECL|member|imask
-r_volatile
-id|u32
-id|imask
-suffix:semicolon
-multiline_comment|/* Interrupt Mask Register */
-DECL|member|reqp
-r_union
-id|socal_rq_reg
-id|reqp
-suffix:semicolon
-multiline_comment|/* Request Queue Index Register */
-DECL|member|resp
-r_union
-id|socal_rq_reg
-id|resp
-suffix:semicolon
-multiline_comment|/* Response Queue Index Register */
-DECL|macro|reqpr
-mdefine_line|#define reqpr reqp.read
-DECL|macro|reqpw
-mdefine_line|#define reqpw reqp.write
-DECL|macro|respr
-mdefine_line|#define respr resp.read
-DECL|macro|respw
-mdefine_line|#define respw resp.write
-)brace
-suffix:semicolon
+multiline_comment|/* Hardware register offsets and constants first {{{ */
+DECL|macro|CFG
+mdefine_line|#define CFG&t;0x00UL
+DECL|macro|SAE
+mdefine_line|#define SAE&t;0x04UL
+DECL|macro|CMD
+mdefine_line|#define CMD&t;0x08UL
+DECL|macro|IMASK
+mdefine_line|#define IMASK&t;0x0cUL
+DECL|macro|REQP
+mdefine_line|#define REQP&t;0x10UL
+DECL|macro|RESP
+mdefine_line|#define RESP&t;0x14UL
 multiline_comment|/* Config Register */
 DECL|macro|SOCAL_CFG_EXT_RAM_BANK_MASK
 mdefine_line|#define SOCAL_CFG_EXT_RAM_BANK_MASK&t;0x07000000
@@ -169,7 +112,7 @@ mdefine_line|#define SOCAL_IMASK_NON_QUEUED&t;&t;0x00000004
 DECL|macro|SOCAL_INTR
 mdefine_line|#define SOCAL_INTR(s, cmd) &bslash;&n;&t;(((cmd &amp; SOCAL_CMD_RSP_QALL) | ((~cmd) &amp; SOCAL_CMD_REQ_QALL)) &bslash;&n;&t; &amp; s-&gt;imask)
 DECL|macro|SOCAL_SETIMASK
-mdefine_line|#define SOCAL_SETIMASK(s, i) &bslash;&n;&t;(s)-&gt;imask = (i); (s)-&gt;regs-&gt;imask = (i)
+mdefine_line|#define SOCAL_SETIMASK(s, i) &bslash;&n;do {&t;(s)-&gt;imask = (i); &bslash;&n;&t;sbus_writel((i), (s)-&gt;regs + IMASK); &bslash;&n;} while (0)
 DECL|macro|SOCAL_MAX_EXCHANGES
 mdefine_line|#define SOCAL_MAX_EXCHANGES&t;&t;1024
 multiline_comment|/* XRAM&n; *&n; * This is a 64KB register area.&n; * From the documentation, it seems like it is finally able to cope&n; * at least with 1,2,4 byte accesses for read and 2,4 byte accesses for write.&n; */
@@ -734,19 +677,18 @@ r_int
 id|socal_no
 suffix:semicolon
 DECL|member|regs
-r_struct
-id|socal_regs
-op_star
+r_int
+r_int
 id|regs
 suffix:semicolon
 DECL|member|xram
-id|u8
-op_star
+r_int
+r_int
 id|xram
 suffix:semicolon
 DECL|member|eeprom
-id|u8
-op_star
+r_int
+r_int
 id|eeprom
 suffix:semicolon
 DECL|member|wwn
@@ -781,6 +723,15 @@ r_int
 id|curr_port
 suffix:semicolon
 multiline_comment|/* Which port will have priority to fcp_queue_empty */
+DECL|member|req_cpu
+id|socal_req
+op_star
+id|req_cpu
+suffix:semicolon
+DECL|member|req_dvma
+id|u32
+id|req_dvma
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* }}} */

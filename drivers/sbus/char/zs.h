@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: zs.h,v 1.2 1999/05/12 11:15:31 davem Exp $&n; * zs.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
-macro_line|#ifndef _SPARC_SERIAL_H
-DECL|macro|_SPARC_SERIAL_H
-mdefine_line|#define _SPARC_SERIAL_H
+multiline_comment|/* $Id: zs.h,v 1.3 1999/09/21 14:38:18 davem Exp $&n; * zs.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+macro_line|#ifndef _ZS_H
+DECL|macro|_ZS_H
+mdefine_line|#define _ZS_H
 multiline_comment|/* Just one channel */
 DECL|struct|sun_zschannel
 r_struct
@@ -793,10 +793,10 @@ multiline_comment|/* Read Register 13 (upper byte of baud rate generator constan
 multiline_comment|/* Read Register 15 (value of WR 15) */
 multiline_comment|/* Misc macros */
 DECL|macro|ZS_CLEARERR
-mdefine_line|#define ZS_CLEARERR(channel)    do { channel-&gt;control = ERR_RES; &bslash;&n;&t;&t;&t;&t;     udelay(5); } while(0)
+mdefine_line|#define ZS_CLEARERR(channel)    do { sbus_writeb(ERR_RES, &amp;channel-&gt;control); &bslash;&n;&t;&t;&t;&t;     udelay(5); } while(0)
 DECL|macro|ZS_CLEARSTAT
-mdefine_line|#define ZS_CLEARSTAT(channel)   do { channel-&gt;control = RES_EXT_INT; &bslash;&n;&t;&t;&t;&t;     udelay(5); } while(0)
+mdefine_line|#define ZS_CLEARSTAT(channel)   do { sbus_writeb(RES_EXT_INT, &amp;channel-&gt;control); &bslash;&n;&t;&t;&t;&t;     udelay(5); } while(0)
 DECL|macro|ZS_CLEARFIFO
-mdefine_line|#define ZS_CLEARFIFO(channel)   do { volatile unsigned char garbage; &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); } while(0)
-macro_line|#endif /* !(_SPARC_SERIAL_H) */
+mdefine_line|#define ZS_CLEARFIFO(channel)   do { sbus_readb(&amp;channel-&gt;data); &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     sbus_readb(&amp;channel-&gt;data); &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     sbus_readb(&amp;channel-&gt;data); &bslash;&n;&t;&t;&t;&t;     udelay(2); } while(0)
+macro_line|#endif /* !(_ZS_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_ioctl.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Jun 10 14:39:09 1999&n; * Modified at:   Sat Oct 30 12:50:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_ioctl.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Jun 10 14:39:09 1999&n; * Modified at:   Tue Dec 14 18:08:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -34,6 +34,15 @@ id|cval
 suffix:semicolon
 r_int
 id|baud
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -163,7 +172,7 @@ op_assign
 l_int|9600
 suffix:semicolon
 multiline_comment|/* B0 transition handled in rs_set_termios */
-id|self-&gt;session.data_rate
+id|self-&gt;settings.data_rate
 op_assign
 id|baud
 suffix:semicolon
@@ -190,10 +199,7 @@ id|self-&gt;flags
 op_or_assign
 id|ASYNC_CTS_FLOW
 suffix:semicolon
-id|self-&gt;session.flow_control
-op_or_assign
-id|IRCOMM_RTS_CTS_IN
-suffix:semicolon
+multiline_comment|/* self-&gt;settings.flow_control |= IRCOMM_RTS_CTS_IN; */
 )brace
 r_else
 id|self-&gt;flags
@@ -304,7 +310,7 @@ id|LSR_OE
 suffix:semicolon
 )brace
 macro_line|#endif
-id|self-&gt;session.data_format
+id|self-&gt;settings.data_format
 op_assign
 id|cval
 suffix:semicolon
@@ -364,6 +370,15 @@ id|cflag
 op_assign
 id|tty-&gt;termios-&gt;c_cflag
 suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -415,7 +430,7 @@ id|CBAUD
 )paren
 )paren
 (brace
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_and_assign
 op_complement
 (paren
@@ -453,7 +468,7 @@ id|CBAUD
 )paren
 )paren
 (brace
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_or_assign
 id|IRCOMM_DTR
 suffix:semicolon
@@ -478,7 +493,7 @@ id|tty-&gt;flags
 )paren
 )paren
 (brace
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_or_assign
 id|IRCOMM_RTS
 suffix:semicolon
@@ -549,7 +564,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -559,7 +574,7 @@ id|result
 op_assign
 (paren
 (paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_amp
 id|IRCOMM_RTS
 )paren
@@ -572,7 +587,7 @@ l_int|0
 op_or
 (paren
 (paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_amp
 id|IRCOMM_DTR
 )paren
@@ -585,7 +600,7 @@ l_int|0
 op_or
 (paren
 (paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_amp
 id|IRCOMM_CD
 )paren
@@ -598,7 +613,7 @@ l_int|0
 op_or
 (paren
 (paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_amp
 id|IRCOMM_RI
 )paren
@@ -611,7 +626,7 @@ l_int|0
 op_or
 (paren
 (paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_amp
 id|IRCOMM_DSR
 )paren
@@ -624,7 +639,7 @@ l_int|0
 op_or
 (paren
 (paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_amp
 id|IRCOMM_CTS
 )paren
@@ -734,13 +749,13 @@ id|error
 suffix:semicolon
 id|old_rts
 op_assign
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_amp
 id|IRCOMM_RTS
 suffix:semicolon
 id|old_dtr
 op_assign
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_amp
 id|IRCOMM_DTR
 suffix:semicolon
@@ -760,7 +775,7 @@ id|arg
 op_amp
 id|TIOCM_RTS
 )paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_or_assign
 id|IRCOMM_RTS
 suffix:semicolon
@@ -771,7 +786,7 @@ id|arg
 op_amp
 id|TIOCM_DTR
 )paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_or_assign
 id|IRCOMM_DTR
 suffix:semicolon
@@ -787,7 +802,7 @@ id|arg
 op_amp
 id|TIOCM_RTS
 )paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_and_assign
 op_complement
 id|IRCOMM_RTS
@@ -799,7 +814,7 @@ id|arg
 op_amp
 id|TIOCM_DTR
 )paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_and_assign
 op_complement
 id|IRCOMM_DTR
@@ -809,11 +824,11 @@ suffix:semicolon
 r_case
 id|TIOCMSET
 suffix:colon
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_assign
 (paren
 (paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_amp
 op_complement
 (paren
@@ -863,14 +878,14 @@ r_if
 c_cond
 (paren
 (paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_amp
 id|IRCOMM_RTS
 )paren
 op_ne
 id|old_rts
 )paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_or_assign
 id|IRCOMM_DELTA_RTS
 suffix:semicolon
@@ -878,14 +893,14 @@ r_if
 c_cond
 (paren
 (paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_amp
 id|IRCOMM_DTR
 )paren
 op_ne
 id|old_dtr
 )paren
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 op_or_assign
 id|IRCOMM_DELTA_DTR
 suffix:semicolon
@@ -938,7 +953,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -968,7 +983,7 @@ id|self-&gt;flags
 suffix:semicolon
 id|info.baud_base
 op_assign
-id|self-&gt;session.data_rate
+id|self-&gt;settings.data_rate
 suffix:semicolon
 id|info.close_delay
 op_assign
@@ -1039,7 +1054,7 @@ c_func
 r_struct
 id|ircomm_tty_cb
 op_star
-id|tty
+id|self
 comma
 r_struct
 id|serial_struct
@@ -1054,12 +1069,15 @@ id|new_serial
 suffix:semicolon
 r_struct
 id|ircomm_tty_cb
-id|old_driver
+id|old_state
+comma
+op_star
+id|state
 suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1086,10 +1104,13 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|old_driver
+id|state
+op_assign
+id|self
+id|old_state
 op_assign
 op_star
-id|driver
+id|self
 suffix:semicolon
 r_if
 c_cond
@@ -1108,13 +1129,13 @@ c_cond
 (paren
 id|new_serial.baud_base
 op_ne
-id|driver-&gt;comm-&gt;data_rate
+id|state-&gt;settings.data_rate
 )paren
 op_logical_or
 (paren
 id|new_serial.close_delay
 op_ne
-id|driver-&gt;close_delay
+id|state-&gt;close_delay
 )paren
 op_logical_or
 (paren
@@ -1126,7 +1147,7 @@ id|ASYNC_USR_MASK
 )paren
 op_ne
 (paren
-id|driver-&gt;flags
+id|self-&gt;flags
 op_amp
 op_complement
 id|ASYNC_USR_MASK
@@ -1137,11 +1158,11 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-id|driver-&gt;flags
+id|state-&gt;flags
 op_assign
 (paren
 (paren
-id|driver-&gt;flags
+id|state-&gt;flags
 op_amp
 op_complement
 id|ASYNC_USR_MASK
@@ -1154,10 +1175,24 @@ id|ASYNC_USR_MASK
 )paren
 )paren
 suffix:semicolon
-id|driver-&gt;custom_divisor
+id|self-&gt;flags
 op_assign
-id|new_serial.custom_divisor
+(paren
+(paren
+id|self-&gt;flags
+op_amp
+op_complement
+id|ASYNC_USR_MASK
+)paren
+op_or
+(paren
+id|new_serial.flags
+op_amp
+id|ASYNC_USR_MASK
+)paren
+)paren
 suffix:semicolon
+multiline_comment|/* self-&gt;custom_divisor = new_serial.custom_divisor; */
 r_goto
 id|check_and_exit
 suffix:semicolon
@@ -1166,32 +1201,27 @@ multiline_comment|/*&n;&t; * OK, past this point, all the error checking has bee
 r_if
 c_cond
 (paren
-id|self-&gt;session.data_rate
+id|self-&gt;settings.data_rate
 op_ne
 id|new_serial.baud_base
 )paren
 (brace
-id|self-&gt;session.data_rate.data_rate
+id|self-&gt;settings.data_rate
 op_assign
 id|new_serial.baud_base
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|driver-&gt;comm-&gt;state
-op_eq
-id|IRCOMM_CONN
-)paren
-id|ircomm_control_request
+id|ircomm_param_request
 c_func
 (paren
-id|driver-&gt;comm
+id|self
 comma
-id|DATA_RATE
+id|IRCOMM_DATA_RATE
+comma
+id|TRUE
 )paren
 suffix:semicolon
 )brace
-id|driver-&gt;close_delay
+id|self-&gt;close_delay
 op_assign
 id|new_serial.close_delay
 op_star
@@ -1199,7 +1229,7 @@ id|HZ
 op_div
 l_int|100
 suffix:semicolon
-id|driver-&gt;closing_wait
+id|self-&gt;closing_wait
 op_assign
 id|new_serial.closing_wait
 op_star
@@ -1207,10 +1237,7 @@ id|HZ
 op_div
 l_int|100
 suffix:semicolon
-id|driver-&gt;custom_divisor
-op_assign
-id|new_serial.custom_divisor
-suffix:semicolon
+multiline_comment|/* self-&gt;custom_divisor = new_serial.custom_divisor; */
 id|self-&gt;flags
 op_assign
 (paren
@@ -1256,7 +1283,7 @@ c_cond
 (paren
 (paren
 (paren
-id|old_driver.flags
+id|old_state.flags
 op_amp
 id|ASYNC_SPD_MASK
 )paren
@@ -1389,6 +1416,15 @@ r_int
 id|ret
 op_assign
 l_int|0
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
 suffix:semicolon
 r_if
 c_cond

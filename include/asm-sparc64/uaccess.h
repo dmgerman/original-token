@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.31 1999/07/30 09:31:24 davem Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.32 1999/11/23 08:56:48 davem Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -402,8 +402,23 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|__strnlen_user
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
 DECL|macro|strlen_user
 mdefine_line|#define strlen_user __strlen_user
+DECL|macro|strnlen_user
+mdefine_line|#define strnlen_user __strnlen_user
 macro_line|#endif  /* __ASSEMBLY__ */
 macro_line|#endif /* _ASM_UACCESS_H */
 eof

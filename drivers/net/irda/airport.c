@@ -176,7 +176,7 @@ id|IR_115200
 suffix:semicolon
 multiline_comment|/* May need 1ms */
 id|qos-&gt;min_turn_time.bits
-op_and_assign
+op_assign
 l_int|0x07
 suffix:semicolon
 id|MOD_INC_USE_COUNT

@@ -4993,19 +4993,6 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#ifdef __sparc__
-r_if
-c_cond
-(paren
-id|mem_base
-)paren
-id|mem_base
-op_assign
-id|__pa
-c_func
-(paren
-id|mem_base
-)paren
-suffix:semicolon
 id|command
 op_or_assign
 (paren

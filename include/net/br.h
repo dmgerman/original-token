@@ -22,8 +22,17 @@ DECL|macro|Forwarding
 mdefine_line|#define Forwarding&t;3&t;&t;&t;  /* (4 4 4)&t; */
 DECL|macro|Blocking
 mdefine_line|#define Blocking&t;4&t;&t;&t;  /* (4.4.1)&t; */
+multiline_comment|/* MAG Yich! Easiest way of giving a configurable number of ports&n; * If you want more than 32, change BR_MAX_PORTS and recompile brcfg!&n; */
+DECL|macro|BR_MAX_PORTS
+mdefine_line|#define BR_MAX_PORTS (32)
+macro_line|#if CONFIG_BRIDGE_NUM_PORTS &gt; BR_MAX_PORTS
+DECL|macro|CONFIG_BRIDGE_NUM_PORTS
+macro_line|#undef CONFIG_BRIDGE_NUM_PORTS
+DECL|macro|CONFIG_BRIDGE_NUM_PORTS
+mdefine_line|#define CONFIG_BRIDGE_NUM_PORTS BR_MAX_PORTS
+macro_line|#endif
 DECL|macro|No_of_ports
-mdefine_line|#define No_of_ports 8
+mdefine_line|#define No_of_ports CONFIG_BRIDGE_NUM_PORTS
 multiline_comment|/* arbitrary choice, to allow the code below to compile */
 DECL|macro|All_ports
 mdefine_line|#define All_ports (No_of_ports + 1)
@@ -320,6 +329,11 @@ r_int
 id|hold_time
 suffix:semicolon
 multiline_comment|/* (4.5.3.14)&t; */
+DECL|member|instance
+r_int
+r_int
+id|instance
+suffix:semicolon
 DECL|typedef|Bridge_data
 )brace
 id|Bridge_data
@@ -380,6 +394,18 @@ r_int
 id|config_pending
 suffix:semicolon
 multiline_comment|/* (4.5.5.9)&t; */
+DECL|member|ifmac
+id|bridge_id_t
+id|ifmac
+suffix:semicolon
+DECL|member|ifname
+r_char
+id|ifname
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
+multiline_comment|/* Make life easier for brcfg */
 DECL|member|dev
 r_struct
 id|net_device
@@ -654,13 +680,6 @@ DECL|member|bridge_data
 id|Bridge_data
 id|bridge_data
 suffix:semicolon
-DECL|member|port_data
-id|Port_data
-id|port_data
-(braket
-id|No_of_ports
-)braket
-suffix:semicolon
 DECL|member|policy
 r_int
 r_int
@@ -700,6 +719,20 @@ multiline_comment|/* How many packets ? */
 DECL|member|packet_cnts
 id|br_stats_counter
 id|packet_cnts
+suffix:semicolon
+DECL|member|num_ports
+r_int
+r_int
+id|num_ports
+suffix:semicolon
+DECL|member|port_data
+id|Port_data
+id|port_data
+(braket
+id|BR_MAX_PORTS
+op_plus
+l_int|1
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -749,7 +782,7 @@ mdefine_line|#define&t;BRCMD_SET_PORT_PRIORITY&t;6&t;/* arg1 = port, arg2 = prio
 DECL|macro|BRCMD_SET_PATH_COST
 mdefine_line|#define&t;BRCMD_SET_PATH_COST&t;7&t;/* arg1 = port, arg2 = cost */
 DECL|macro|BRCMD_DISPLAY_FDB
-mdefine_line|#define&t;BRCMD_DISPLAY_FDB&t;8&t;/* arg1 = port */
+mdefine_line|#define&t;BRCMD_DISPLAY_FDB&t;8
 DECL|macro|BRCMD_ENABLE_DEBUG
 mdefine_line|#define&t;BRCMD_ENABLE_DEBUG&t;9
 DECL|macro|BRCMD_DISABLE_DEBUG
@@ -766,7 +799,16 @@ DECL|macro|BRCMD_ZERO_PROT_STATS
 mdefine_line|#define BRCMD_ZERO_PROT_STATS&t;15
 DECL|macro|BRCMD_TOGGLE_STP
 mdefine_line|#define BRCMD_TOGGLE_STP&t;16
+DECL|macro|BRCMD_IF_ENABLE
+mdefine_line|#define BRCMD_IF_ENABLE&t;&t;17&t;/* arg1 = if_index */
+DECL|macro|BRCMD_IF_DISABLE
+mdefine_line|#define BRCMD_IF_DISABLE&t;18&t;/* arg1 = if_index */
+DECL|macro|BRCMD_SET_IF_PRIORITY
+mdefine_line|#define BRCMD_SET_IF_PRIORITY&t;19&t;/* arg1 = if_index, arg2 = priority */
+DECL|macro|BRCMD_SET_IF_PATH_COST
+mdefine_line|#define&t;BRCMD_SET_IF_PATH_COST&t;20&t;/* arg1 = if_index, arg2 = cost */
 multiline_comment|/* prototypes of exported bridging functions... */
+macro_line|#ifdef __KERNEL__
 r_void
 id|br_init
 c_func
@@ -796,6 +838,13 @@ id|skb
 )paren
 suffix:semicolon
 r_int
+id|brg_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|br_ioctl
 c_func
 (paren
@@ -806,15 +855,6 @@ comma
 r_void
 op_star
 id|arg
-)paren
-suffix:semicolon
-r_int
-id|br_protocol_ok
-c_func
-(paren
-r_int
-r_int
-id|protocol
 )paren
 suffix:semicolon
 r_void
@@ -891,6 +931,27 @@ r_int
 id|port
 )paren
 suffix:semicolon
+r_int
+id|br_call_bridge
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+r_int
+id|type
+)paren
+suffix:semicolon
+r_void
+id|br_spacedevice_register
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* externs */
 r_extern
 r_struct
@@ -903,4 +964,5 @@ id|port_info
 (braket
 )braket
 suffix:semicolon
+macro_line|#endif
 eof

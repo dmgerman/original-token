@@ -171,6 +171,13 @@ DECL|macro|PM2R_FB_SOURCE_DELTA
 mdefine_line|#define PM2R_FB_SOURCE_DELTA&t;&t;&t;&t;0x8d88
 DECL|macro|PM2R_CONFIG
 mdefine_line|#define PM2R_CONFIG&t;&t;&t;&t;&t;0x8d90
+multiline_comment|/* Permedia2v */
+DECL|macro|PM2VR_RD_INDEX_LOW
+mdefine_line|#define PM2VR_RD_INDEX_LOW&t;&t;&t;&t;0x4020
+DECL|macro|PM2VR_RD_INDEX_HIGH
+mdefine_line|#define PM2VR_RD_INDEX_HIGH&t;&t;&t;&t;0x4028
+DECL|macro|PM2VR_RD_INDEXED_DATA
+mdefine_line|#define PM2VR_RD_INDEXED_DATA&t;&t;&t;&t;0x4030
 multiline_comment|/* Permedia2 RAMDAC indexed registers */
 DECL|macro|PM2I_RD_CURSOR_CONTROL
 mdefine_line|#define PM2I_RD_CURSOR_CONTROL&t;&t;&t;&t;0x06
@@ -206,6 +213,47 @@ DECL|macro|PM2I_RD_GREEN_KEY
 mdefine_line|#define PM2I_RD_GREEN_KEY&t;&t;&t;&t;0x43
 DECL|macro|PM2I_RD_BLUE_KEY
 mdefine_line|#define PM2I_RD_BLUE_KEY&t;&t;&t;&t;0x44
+multiline_comment|/* Permedia2v extensions */
+DECL|macro|PM2VI_RD_MISC_CONTROL
+mdefine_line|#define PM2VI_RD_MISC_CONTROL&t;&t;&t;&t;0x000
+DECL|macro|PM2VI_RD_SYNC_CONTROL
+mdefine_line|#define PM2VI_RD_SYNC_CONTROL&t;&t;&t;&t;0x001
+DECL|macro|PM2VI_RD_DAC_CONTROL
+mdefine_line|#define PM2VI_RD_DAC_CONTROL&t;&t;&t;&t;0x002
+DECL|macro|PM2VI_RD_PIXEL_SIZE
+mdefine_line|#define PM2VI_RD_PIXEL_SIZE&t;&t;&t;&t;0x003
+DECL|macro|PM2VI_RD_COLOR_FORMAT
+mdefine_line|#define PM2VI_RD_COLOR_FORMAT&t;&t;&t;&t;0x004
+DECL|macro|PM2VI_RD_CURSOR_MODE
+mdefine_line|#define PM2VI_RD_CURSOR_MODE&t;&t;&t;&t;0x005
+DECL|macro|PM2VI_RD_CURSOR_X_LOW
+mdefine_line|#define PM2VI_RD_CURSOR_X_LOW&t;&t;&t;&t;0x007
+DECL|macro|PM2VI_RD_CURSOR_X_HIGH
+mdefine_line|#define PM2VI_RD_CURSOR_X_HIGH&t;&t;&t;&t;0x008
+DECL|macro|PM2VI_RD_CURSOR_Y_LOW
+mdefine_line|#define PM2VI_RD_CURSOR_Y_LOW&t;&t;&t;&t;0x009
+DECL|macro|PM2VI_RD_CURSOR_Y_HIGH
+mdefine_line|#define PM2VI_RD_CURSOR_Y_HIGH&t;&t;&t;&t;0x00A
+DECL|macro|PM2VI_RD_CURSOR_X_HOT
+mdefine_line|#define PM2VI_RD_CURSOR_X_HOT&t;&t;&t;&t;0x00B
+DECL|macro|PM2VI_RD_CURSOR_Y_HOT
+mdefine_line|#define PM2VI_RD_CURSOR_Y_HOT&t;&t;&t;&t;0x00C
+DECL|macro|PM2VI_RD_CLK0_PRESCALE
+mdefine_line|#define PM2VI_RD_CLK0_PRESCALE&t;&t;&t;&t;0x201
+DECL|macro|PM2VI_RD_CLK0_FEEDBACK
+mdefine_line|#define PM2VI_RD_CLK0_FEEDBACK&t;&t;&t;&t;0x202
+DECL|macro|PM2VI_RD_CLK0_POSTSCALE
+mdefine_line|#define PM2VI_RD_CLK0_POSTSCALE&t;&t;&t;&t;0x203
+DECL|macro|PM2VI_RD_CLK1_PRESCALE
+mdefine_line|#define PM2VI_RD_CLK1_PRESCALE&t;&t;&t;&t;0x204
+DECL|macro|PM2VI_RD_CLK1_FEEDBACK
+mdefine_line|#define PM2VI_RD_CLK1_FEEDBACK&t;&t;&t;&t;0x205
+DECL|macro|PM2VI_RD_CLK1_POSTSCALE
+mdefine_line|#define PM2VI_RD_CLK1_POSTSCALE&t;&t;&t;&t;0x206
+DECL|macro|PM2VI_RD_CURSOR_PALETTE
+mdefine_line|#define PM2VI_RD_CURSOR_PALETTE&t;&t;&t;&t;0x303
+DECL|macro|PM2VI_RD_CURSOR_PATTERN
+mdefine_line|#define PM2VI_RD_CURSOR_PATTERN&t;&t;&t;&t;0x400
 multiline_comment|/* Fields and flags */
 DECL|macro|PM2F_RENDER_AREASTIPPLE
 mdefine_line|#define PM2F_RENDER_AREASTIPPLE&t;&t;&t;&t;(1L&lt;&lt;0)
@@ -307,6 +355,18 @@ DECL|macro|PM2F_MEM_BANKS_3
 mdefine_line|#define PM2F_MEM_BANKS_3&t;&t;&t;&t;(2L&lt;&lt;29)
 DECL|macro|PM2F_MEM_BANKS_4
 mdefine_line|#define PM2F_MEM_BANKS_4&t;&t;&t;&t;(3L&lt;&lt;29)
+r_typedef
+r_enum
+(brace
+DECL|enumerator|PM2_TYPE_PERMEDIA2
+id|PM2_TYPE_PERMEDIA2
+comma
+DECL|enumerator|PM2_TYPE_PERMEDIA2V
+id|PM2_TYPE_PERMEDIA2V
+DECL|typedef|pm2type_t
+)brace
+id|pm2type_t
+suffix:semicolon
 macro_line|#endif /* PM2FB_H */
 multiline_comment|/*****************************************************************************&n; * That&squot;s all folks!&n; *****************************************************************************/
 eof

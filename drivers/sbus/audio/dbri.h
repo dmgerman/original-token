@@ -1,58 +1,21 @@
-multiline_comment|/*&n; * drivers/sbus/audio/cs4231.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; */
+multiline_comment|/* $Id: dbri.h,v 1.12 1999/09/21 14:37:34 davem Exp $&n; * drivers/sbus/audio/cs4231.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; */
 macro_line|#ifndef _DBRI_H_
 DECL|macro|_DBRI_H_
 mdefine_line|#define _DBRI_H_
 macro_line|#include &lt;linux/types.h&gt;
-DECL|struct|dbri_regs
-r_struct
-id|dbri_regs
-(brace
-DECL|member|reg0
-id|__volatile__
-id|__u32
-id|reg0
-suffix:semicolon
-multiline_comment|/* Status &amp; Control */
-DECL|member|reg1
-id|__volatile__
-id|__u32
-id|reg1
-suffix:semicolon
-multiline_comment|/* Mode &amp; Interrupt */
-DECL|member|reg2
-id|__volatile__
-id|__u32
-id|reg2
-suffix:semicolon
-multiline_comment|/* Parallel IO */
-DECL|member|reg3
-id|__volatile__
-id|__u32
-id|reg3
-suffix:semicolon
-multiline_comment|/* Test */
-DECL|member|unused
-id|__volatile__
-id|__u32
-id|unused
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|member|reg8
-id|__volatile__
-id|__u32
-id|reg8
-suffix:semicolon
-multiline_comment|/* Command Queue Pointer */
-DECL|member|reg9
-id|__volatile__
-id|__u32
-id|reg9
-suffix:semicolon
-multiline_comment|/* Interrupt Queue Pointer */
-)brace
-suffix:semicolon
+multiline_comment|/* DBRI main registers */
+DECL|macro|REG0
+mdefine_line|#define REG0&t;0x00UL&t;&t;/* Status and Control */
+DECL|macro|REG1
+mdefine_line|#define REG1&t;0x04UL&t;&t;/* Mode and Interrupt */
+DECL|macro|REG2
+mdefine_line|#define REG2&t;0x08UL&t;&t;/* Parallel IO */
+DECL|macro|REG3
+mdefine_line|#define REG3&t;0x0cUL&t;&t;/* Test */
+DECL|macro|REG8
+mdefine_line|#define REG8&t;0x20UL&t;&t;/* Command Queue Pointer */
+DECL|macro|REG9
+mdefine_line|#define REG9&t;0x24UL&t;&t;/* Interrupt Queue Pointer */
 DECL|macro|DBRI_NO_CMDS
 mdefine_line|#define DBRI_NO_CMDS&t;64
 DECL|macro|DBRI_NO_INTS
@@ -70,20 +33,24 @@ r_struct
 id|dbri_mem
 (brace
 DECL|member|word1
+r_volatile
 id|__u32
 id|word1
 suffix:semicolon
 DECL|member|ba
+r_volatile
 id|__u32
 id|ba
 suffix:semicolon
 multiline_comment|/* Transmit/Receive Buffer Address */
 DECL|member|nda
+r_volatile
 id|__u32
 id|nda
 suffix:semicolon
 multiline_comment|/* Next Descriptor Address */
 DECL|member|word4
+r_volatile
 id|__u32
 id|word4
 suffix:semicolon
@@ -96,7 +63,8 @@ r_struct
 id|dbri_dma
 (brace
 DECL|member|cmd
-r_int
+r_volatile
+id|s32
 id|cmd
 (braket
 id|DBRI_NO_CMDS
@@ -104,7 +72,8 @@ id|DBRI_NO_CMDS
 suffix:semicolon
 multiline_comment|/* Place for commands */
 DECL|member|intr
-r_int
+r_volatile
+id|s32
 id|intr
 (braket
 id|DBRI_NO_INTS
@@ -124,6 +93,8 @@ suffix:semicolon
 multiline_comment|/* Xmit/receive descriptors */
 )brace
 suffix:semicolon
+DECL|macro|dbri_dma_off
+mdefine_line|#define dbri_dma_off(member, elem)&t;&bslash;&n;&t;((u32)(unsigned long)&t;&t;&bslash;&n;&t; (&amp;(((struct dbri_dma *)0)-&gt;member[elem])))
 DECL|enum|in_or_out
 DECL|enumerator|PIPEinput
 DECL|enumerator|PIPEoutput
@@ -212,6 +183,12 @@ r_void
 op_star
 id|buffer
 suffix:semicolon
+multiline_comment|/* CPU view of buffer */
+DECL|member|buffer_dvma
+id|u32
+id|buffer_dvma
+suffix:semicolon
+multiline_comment|/* Device view */
 DECL|member|len
 r_int
 r_int
@@ -273,10 +250,11 @@ suffix:semicolon
 multiline_comment|/* Needed for unload */
 DECL|member|sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|sdev
 suffix:semicolon
+multiline_comment|/* SBUS device info */
 DECL|member|dma
 r_volatile
 r_struct
@@ -286,16 +264,13 @@ id|dma
 suffix:semicolon
 multiline_comment|/* Pointer to our DMA block */
 DECL|member|dma_dvma
-r_struct
-id|dbri_dma
-op_star
+id|u32
 id|dma_dvma
 suffix:semicolon
 multiline_comment|/* DBRI visible DMA address */
 DECL|member|regs
-r_struct
-id|dbri_regs
-op_star
+r_int
+r_int
 id|regs
 suffix:semicolon
 multiline_comment|/* dbri HW regs */
@@ -349,12 +324,12 @@ id|mm
 suffix:semicolon
 multiline_comment|/* mmcodec special info */
 macro_line|#if 0
+multiline_comment|/* Where to sleep if busy */
 id|wait_queue_head_t
 id|wait
 comma
 id|int_wait
 suffix:semicolon
-multiline_comment|/* Where to sleep if busy */
 macro_line|#endif
 DECL|member|perchip_info
 r_struct

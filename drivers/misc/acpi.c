@@ -2695,8 +2695,6 @@ suffix:semicolon
 r_int
 r_int
 id|time
-comma
-id|usec
 suffix:semicolon
 singleline_comment|// return to C0 on bus master request (necessary for C3 only)
 id|pm1_cnt
@@ -2774,30 +2772,17 @@ comma
 id|ACPI_BM
 )paren
 suffix:semicolon
-singleline_comment|// get current time (fallback to CPU cycles if no PM timer)
+singleline_comment|// get current time
 id|timer
 op_assign
 id|acpi_facp-&gt;pm_tmr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|timer
-)paren
 id|time
 op_assign
 id|inl
 c_func
 (paren
 id|timer
-)paren
-suffix:semicolon
-r_else
-id|time
-op_assign
-id|get_cycles
-c_func
-(paren
 )paren
 suffix:semicolon
 singleline_comment|// sleep
@@ -2912,12 +2897,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-singleline_comment|// calculate time spent sleeping (fallback to CPU cycles)
-r_if
-c_cond
-(paren
-id|timer
-)paren
+singleline_comment|// calculate time spent sleeping
 id|time
 op_assign
 (paren
@@ -2931,20 +2911,6 @@ id|time
 )paren
 op_amp
 id|ACPI_TMR_MASK
-suffix:semicolon
-r_else
-id|time
-op_assign
-id|ACPI_CPU_TO_TMR_TICKS
-c_func
-(paren
-id|get_cycles
-c_func
-(paren
-)paren
-op_minus
-id|time
-)paren
 suffix:semicolon
 singleline_comment|// check for bus master activity
 id|bm_active
@@ -3019,18 +2985,10 @@ c_cond
 id|acpi_p_blk
 )paren
 (brace
-id|usec
-op_assign
-id|ACPI_TMR_TICKS_TO_uS
-c_func
-(paren
-id|time
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|usec
+id|time
 OG
 id|acpi_p_lvl3_lat
 op_logical_and
@@ -3045,7 +3003,7 @@ r_else
 r_if
 c_cond
 (paren
-id|usec
+id|time
 OG
 id|acpi_p_lvl2_lat
 )paren
@@ -4673,6 +4631,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+multiline_comment|/*&n;    &t; * Are the latencies in uS or in ticks in the tables? &n;    &t; * Maybe this should do ACPI_uS_TO_TMR_TICKS?&n;    &t; *&n;    &t; * Whatever. Internally we always keep them in timer&n;    &t; * ticks, which is simpler and more consistent (what is&n;    &t; * an uS to us?). Besides, that gives people more&n;    &t; * control in the /proc interfaces.&n;    &t; */
 r_if
 c_cond
 (paren
@@ -4793,6 +4752,11 @@ r_return
 l_int|0
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|acpi_facp-&gt;pm_tmr
+)paren
 id|acpi_idle
 op_assign
 id|acpi_idle_handler

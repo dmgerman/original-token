@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Nov 16 02:50:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Thu Dec 16 09:37:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -703,9 +703,9 @@ id|self-&gt;magic
 op_assign
 id|IRTTY_MAGIC
 suffix:semicolon
-id|self-&gt;rx_buff.state
+id|self-&gt;mode
 op_assign
-id|OUTSIDE_FRAME
+id|IRDA_IRLAP
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Initialize QoS capabilities, we fill in all the stuff that&n;&t; *  we support. Be careful not to place any restrictions on values&n;&t; *  that are not device dependent (such as link disconnect time) so&n;&t; *  this parameter can be set by IrLAP (or the user) instead. DB&n;&t; */
 id|irda_init_max_qos_capabilies
@@ -851,10 +851,6 @@ id|self-&gt;tx_buff.truesize
 )paren
 suffix:semicolon
 )brace
-id|self-&gt;magic
-op_assign
-id|IRTTY_MAGIC
-suffix:semicolon
 id|self-&gt;rx_buff.in_frame
 op_assign
 id|FALSE
@@ -1083,22 +1079,6 @@ id|tty-&gt;disc_data
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* We are not using any dongle anymore! */
-r_if
-c_cond
-(paren
-id|self-&gt;dongle
-)paren
-id|irda_device_dongle_cleanup
-c_func
-(paren
-id|self-&gt;dongle
-)paren
-suffix:semicolon
-id|self-&gt;dongle
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* Remove netdevice */
 r_if
 c_cond
@@ -1122,7 +1102,42 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Must free the old-style 2.2.x device */
+id|kfree
+c_func
+(paren
+id|self-&gt;netdev
+)paren
+suffix:semicolon
 )brace
+multiline_comment|/* We are not using any dongle anymore! */
+r_if
+c_cond
+(paren
+id|self-&gt;dongle
+)paren
+id|irda_device_dongle_cleanup
+c_func
+(paren
+id|self-&gt;dongle
+)paren
+suffix:semicolon
+id|self-&gt;dongle
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Remove speed changing task if any */
+r_if
+c_cond
+(paren
+id|self-&gt;task
+)paren
+id|irda_task_delete
+c_func
+(paren
+id|self-&gt;task
+)paren
+suffix:semicolon
 id|self-&gt;tty
 op_assign
 l_int|NULL
@@ -1479,6 +1494,39 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Check if busy */
+r_if
+c_cond
+(paren
+id|self-&gt;task
+op_logical_and
+id|self-&gt;task
+op_ne
+id|task
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), busy!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+)brace
+r_else
+id|self-&gt;task
+op_assign
+id|task
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1663,6 +1711,10 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
+id|self-&gt;task
+op_assign
+l_int|NULL
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -1683,6 +1735,10 @@ id|task
 comma
 id|IRDA_TASK_DONE
 )paren
+suffix:semicolon
+id|self-&gt;task
+op_assign
+l_int|NULL
 suffix:semicolon
 id|ret
 op_assign
@@ -2071,6 +2127,28 @@ op_star
 )paren
 id|tty-&gt;disc_data
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self
+op_logical_or
+op_logical_neg
+id|self-&gt;netdev
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), not ready yet!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Read the characters out of the buffer */
 r_while
 c_loop
@@ -2748,9 +2826,11 @@ id|arg
 )paren
 )paren
 (brace
-id|ERROR
+id|IRDA_DEBUG
 c_func
 (paren
+l_int|2
+comma
 id|__FUNCTION__
 l_string|&quot;(), error doing ioctl!&bslash;n&quot;
 )paren
@@ -3536,6 +3616,19 @@ comma
 id|irq-&gt;ifr_dtr
 comma
 id|irq-&gt;ifr_rts
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SIOCSMODE
+suffix:colon
+id|irtty_set_mode
+c_func
+(paren
+id|dev
+comma
+id|irq-&gt;ifr_mode
 )paren
 suffix:semicolon
 r_break

@@ -994,47 +994,6 @@ mdefine_line|#define CS_BAD_HANDLE&t;&t;0x21
 DECL|macro|CS_BAD_TUPLE
 mdefine_line|#define CS_BAD_TUPLE&t;&t;0x40
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; *  Calls to set up low-level &quot;Socket Services&quot; drivers&n; */
-DECL|typedef|ss_entry_t
-r_typedef
-r_int
-(paren
-op_star
-id|ss_entry_t
-)paren
-(paren
-id|u_int
-id|sock
-comma
-id|u_int
-id|cmd
-comma
-r_void
-op_star
-id|arg
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|register_ss_entry
-c_func
-(paren
-r_int
-id|nsock
-comma
-id|ss_entry_t
-id|entry
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|unregister_ss_entry
-c_func
-(paren
-id|ss_entry_t
-id|entry
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *  The main Card Services entry point&n; */
 DECL|enum|service
 r_enum

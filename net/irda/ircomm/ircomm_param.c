@@ -1,4 +1,6 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_param.c&n; * Version:       1.0&n; * Description:   Parameter handling for the IrCOMM protocol&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 10:25:11 1999&n; * Modified at:   Sat Oct 30 13:05:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_param.c&n; * Version:       1.0&n; * Description:   Parameter handling for the IrCOMM protocol&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 10:25:11 1999&n; * Modified at:   Tue Dec 14 15:26:30 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/parameters.h&gt;
 macro_line|#include &lt;net/irda/ircomm_core.h&gt;
@@ -323,7 +325,7 @@ comma
 (brace
 id|ircomm_param_poll
 comma
-id|PV_INT_8_BITS
+id|PV_NO_VALUE
 )brace
 comma
 )brace
@@ -423,6 +425,11 @@ r_int
 id|flush
 )paren
 (brace
+r_struct
+id|tty_struct
+op_star
+id|tty
+suffix:semicolon
 r_int
 r_int
 id|flags
@@ -470,27 +477,19 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+id|tty
+op_assign
+id|self-&gt;tty
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|self-&gt;state
-op_ne
-id|IRCOMM_TTY_READY
+op_logical_neg
+id|tty
 )paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), not ready yet!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* Make sure we don&squot;t send parameters for raw mode */
 r_if
 c_cond
@@ -593,11 +592,9 @@ OL
 l_int|0
 )paren
 (brace
-id|IRDA_DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), no room for parameter!&bslash;n&quot;
 )paren
@@ -627,23 +624,39 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), skb-&gt;len=%d&bslash;n&quot;
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|flush
 )paren
 (brace
-id|ircomm_control_request
+multiline_comment|/* ircomm_tty_do_softint will take care of the rest */
+id|queue_task
 c_func
 (paren
-id|self-&gt;ircomm
+op_amp
+id|self-&gt;tqueue
 comma
-id|skb
+op_amp
+id|tq_immediate
 )paren
 suffix:semicolon
-id|self-&gt;ctrl_skb
-op_assign
-l_int|NULL
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -721,102 +734,14 @@ id|get
 (brace
 id|param-&gt;pv.b
 op_assign
-id|self-&gt;session.service_type
+id|self-&gt;settings.service_type
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Now choose a preferred service type of those available&n;&t; */
-r_if
-c_cond
-(paren
+multiline_comment|/* Find all common service types */
 id|service_type
-op_amp
-id|IRCOMM_3_WIRE_RAW
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), peer supports 3 wire raw&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self-&gt;session.service_type
-op_or_assign
-id|IRCOMM_3_WIRE_RAW
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|service_type
-op_amp
-id|IRCOMM_3_WIRE
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), peer supports 3 wire&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self-&gt;session.service_type
-op_or_assign
-id|IRCOMM_3_WIRE
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|service_type
-op_amp
-id|IRCOMM_9_WIRE
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), peer supports 9 wire&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self-&gt;session.service_type
-op_or_assign
-id|IRCOMM_9_WIRE
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|service_type
-op_amp
-id|IRCOMM_CENTRONICS
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), peer supports Centronics&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self-&gt;session.service_type
-op_or_assign
-id|IRCOMM_CENTRONICS
-suffix:semicolon
-)brace
-id|self-&gt;session.service_type
 op_and_assign
 id|self-&gt;service_type
 suffix:semicolon
@@ -824,7 +749,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|self-&gt;session.service_type
+id|service_type
 )paren
 (brace
 id|IRDA_DEBUG
@@ -844,14 +769,101 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), services in common=%02x&bslash;n&quot;
+comma
+id|service_type
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Now choose a preferred service type of those available&n;&t; */
+r_if
+c_cond
+(paren
+id|service_type
+op_amp
+id|IRCOMM_CENTRONICS
+)paren
+id|self-&gt;settings.service_type
+op_assign
+id|IRCOMM_CENTRONICS
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|service_type
+op_amp
+id|IRCOMM_9_WIRE
+)paren
+id|self-&gt;settings.service_type
+op_assign
+id|IRCOMM_9_WIRE
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|service_type
+op_amp
+id|IRCOMM_3_WIRE
+)paren
+id|self-&gt;settings.service_type
+op_assign
+id|IRCOMM_3_WIRE
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|service_type
+op_amp
+id|IRCOMM_3_WIRE_RAW
+)paren
+id|self-&gt;settings.service_type
+op_assign
+id|IRCOMM_3_WIRE_RAW
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), resulting service type=0x%02x&bslash;n&quot;
 comma
-id|self-&gt;session.service_type
+id|self-&gt;settings.service_type
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * Now the line is ready for some communication. Check if we are a&n;         * server, and send over some initial parameters &n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;client
+op_logical_and
+(paren
+id|self-&gt;settings.service_type
+op_ne
+id|IRCOMM_3_WIRE_RAW
+)paren
+)paren
+(brace
+multiline_comment|/* Init connection */
+id|ircomm_tty_send_initial_parameters
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|ircomm_tty_link_established
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -924,7 +936,7 @@ id|IRCOMM_SERIAL
 suffix:semicolon
 r_else
 (brace
-id|self-&gt;session.port_type
+id|self-&gt;settings.port_type
 op_assign
 id|param-&gt;pv.b
 suffix:semicolon
@@ -936,7 +948,7 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), port type=%d&bslash;n&quot;
 comma
-id|self-&gt;session.port_type
+id|self-&gt;settings.port_type
 )paren
 suffix:semicolon
 )brace
@@ -1033,7 +1045,7 @@ suffix:semicolon
 id|strncpy
 c_func
 (paren
-id|self-&gt;session.port_name
+id|self-&gt;settings.port_name
 comma
 id|param-&gt;pv.c
 comma
@@ -1045,7 +1057,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function ircomm_param_data_rate (self, param)&n; *&n; *    Exchange data rate to be used in this session&n; *&n; */
+multiline_comment|/*&n; * Function ircomm_param_data_rate (self, param)&n; *&n; *    Exchange data rate to be used in this settings&n; *&n; */
 DECL|function|ircomm_param_data_rate
 r_static
 r_int
@@ -1109,10 +1121,10 @@ id|get
 )paren
 id|param-&gt;pv.i
 op_assign
-id|self-&gt;session.data_rate
+id|self-&gt;settings.data_rate
 suffix:semicolon
 r_else
-id|self-&gt;session.data_rate
+id|self-&gt;settings.data_rate
 op_assign
 id|param-&gt;pv.i
 suffix:semicolon
@@ -1131,7 +1143,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function ircomm_param_data_format (self, param)&n; *&n; *    Exchange data format to be used in this session&n; *&n; */
+multiline_comment|/*&n; * Function ircomm_param_data_format (self, param)&n; *&n; *    Exchange data format to be used in this settings&n; *&n; */
 DECL|function|ircomm_param_data_format
 r_static
 r_int
@@ -1195,10 +1207,10 @@ id|get
 )paren
 id|param-&gt;pv.b
 op_assign
-id|self-&gt;session.data_format
+id|self-&gt;settings.data_format
 suffix:semicolon
 r_else
-id|self-&gt;session.data_format
+id|self-&gt;settings.data_format
 op_assign
 id|param-&gt;pv.b
 suffix:semicolon
@@ -1206,7 +1218,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function ircomm_param_flow_control (self, param)&n; *&n; *    Exchange flow control settings to be used in this session&n; *&n; */
+multiline_comment|/*&n; * Function ircomm_param_flow_control (self, param)&n; *&n; *    Exchange flow control settings to be used in this settings&n; *&n; */
 DECL|function|ircomm_param_flow_control
 r_static
 r_int
@@ -1270,10 +1282,10 @@ id|get
 )paren
 id|param-&gt;pv.b
 op_assign
-id|self-&gt;session.flow_control
+id|self-&gt;settings.flow_control
 suffix:semicolon
 r_else
-id|self-&gt;session.flow_control
+id|self-&gt;settings.flow_control
 op_assign
 id|param-&gt;pv.b
 suffix:semicolon
@@ -1357,14 +1369,14 @@ id|get
 (brace
 id|param-&gt;pv.s
 op_assign
-id|self-&gt;session.xonxoff
+id|self-&gt;settings.xonxoff
 (braket
 l_int|0
 )braket
 suffix:semicolon
 id|param-&gt;pv.s
 op_or_assign
-id|self-&gt;session.xonxoff
+id|self-&gt;settings.xonxoff
 (braket
 l_int|1
 )braket
@@ -1374,7 +1386,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|self-&gt;session.xonxoff
+id|self-&gt;settings.xonxoff
 (braket
 l_int|0
 )braket
@@ -1383,7 +1395,7 @@ id|param-&gt;pv.s
 op_amp
 l_int|0xff
 suffix:semicolon
-id|self-&gt;session.xonxoff
+id|self-&gt;settings.xonxoff
 (braket
 l_int|1
 )braket
@@ -1399,7 +1411,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), XON/XOFF = 0x%02x&bslash;n,0x%02x&quot;
+l_string|&quot;(), XON/XOFF = 0x%02x,0x%02x&bslash;n&quot;
 comma
 id|param-&gt;pv.s
 op_amp
@@ -1479,14 +1491,14 @@ id|get
 (brace
 id|param-&gt;pv.s
 op_assign
-id|self-&gt;session.enqack
+id|self-&gt;settings.enqack
 (braket
 l_int|0
 )braket
 suffix:semicolon
 id|param-&gt;pv.s
 op_or_assign
-id|self-&gt;session.enqack
+id|self-&gt;settings.enqack
 (braket
 l_int|1
 )braket
@@ -1496,7 +1508,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|self-&gt;session.enqack
+id|self-&gt;settings.enqack
 (braket
 l_int|0
 )braket
@@ -1505,7 +1517,7 @@ id|param-&gt;pv.s
 op_amp
 l_int|0xff
 suffix:semicolon
-id|self-&gt;session.enqack
+id|self-&gt;settings.enqack
 (braket
 l_int|1
 )braket
@@ -1635,7 +1647,7 @@ id|get
 )paren
 id|param-&gt;pv.b
 op_assign
-id|self-&gt;session.dte
+id|self-&gt;settings.dte
 suffix:semicolon
 r_else
 (brace
@@ -1650,7 +1662,7 @@ id|dte
 op_amp
 id|IRCOMM_DELTA_DTR
 )paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_or_assign
 (paren
 id|IRCOMM_DELTA_DSR
@@ -1667,7 +1679,7 @@ id|dte
 op_amp
 id|IRCOMM_DTR
 )paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_or_assign
 (paren
 id|IRCOMM_DSR
@@ -1684,7 +1696,7 @@ id|dte
 op_amp
 id|IRCOMM_DELTA_RTS
 )paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_or_assign
 id|IRCOMM_DELTA_CTS
 suffix:semicolon
@@ -1695,7 +1707,7 @@ id|dte
 op_amp
 id|IRCOMM_RTS
 )paren
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_or_assign
 id|IRCOMM_CTS
 suffix:semicolon
@@ -1707,7 +1719,7 @@ id|self
 )paren
 suffix:semicolon
 multiline_comment|/* Null modem cable emulator */
-id|self-&gt;session.null_modem
+id|self-&gt;settings.null_modem
 op_assign
 id|TRUE
 suffix:semicolon
@@ -1791,7 +1803,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|self-&gt;session.dce
+id|self-&gt;settings.dce
 op_assign
 id|dce
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: iga.h,v 1.1 1998/10/07 11:36:07 jj Exp $&n; * iga1682.h: Sparc/PCI iga1682 driver constants etc.&n; *&n; * Copyleft 1998 V. Roganov and G. Raiko&n; */
+multiline_comment|/* $Id: iga.h,v 1.2 1999/09/11 22:56:31 zaitcev Exp $&n; * iga1682.h: Sparc/PCI iga1682 driver constants etc.&n; *&n; * Copyleft 1998 V. Roganov and G. Raiko&n; */
 macro_line|#ifndef _IGA1682_H
 DECL|macro|_IGA1682_H
 mdefine_line|#define _IGA1682_H 1
@@ -13,6 +13,10 @@ id|total_vram
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|IGA_ATTR_CTL
+mdefine_line|#define IGA_ATTR_CTL&t;&t;&t;0x3C0
+DECL|macro|IGA_IDX_VGA_OVERSCAN
+mdefine_line|#define   IGA_IDX_VGA_OVERSCAN&t;&t;0x11
 DECL|macro|DAC_W_INDEX
 mdefine_line|#define DAC_W_INDEX                     0x03C8
 DECL|macro|DAC_DATA

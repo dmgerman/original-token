@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.16 1999/09/06 01:17:52 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.h,v 1.17 1999/09/21 14:39:41 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
@@ -64,23 +64,36 @@ suffix:semicolon
 multiline_comment|/* Sun5 Interrupt Clear Register. */
 DECL|member|iclr
 multiline_comment|/*0x10*/
-r_volatile
 r_int
 r_int
-op_star
 id|iclr
 suffix:semicolon
 multiline_comment|/* Sun5 Interrupt Mapping Register. */
 DECL|member|imap
 multiline_comment|/*0x18*/
-r_volatile
 r_int
 r_int
-op_star
 id|imap
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* IMAP/ICLR register defines */
+DECL|macro|IMAP_VALID
+mdefine_line|#define IMAP_VALID&t;&t;0x80000000&t;/* IRQ Enabled&t;&t;*/
+DECL|macro|IMAP_TID
+mdefine_line|#define IMAP_TID&t;&t;0x7c000000&t;/* UPA TargetID&t;&t;*/
+DECL|macro|IMAP_IGN
+mdefine_line|#define IMAP_IGN&t;&t;0x000007c0&t;/* IRQ Group Number&t;*/
+DECL|macro|IMAP_INO
+mdefine_line|#define IMAP_INO&t;&t;0x0000003f&t;/* IRQ Number&t;&t;*/
+DECL|macro|IMAP_INR
+mdefine_line|#define IMAP_INR&t;&t;0x000007ff&t;/* Full interrupt number*/
+DECL|macro|ICLR_IDLE
+mdefine_line|#define ICLR_IDLE&t;&t;0x00000000&t;/* Idle state&t;&t;*/
+DECL|macro|ICLR_TRANSMIT
+mdefine_line|#define ICLR_TRANSMIT&t;&t;0x00000001&t;/* Transmit state&t;*/
+DECL|macro|ICLR_PENDING
+mdefine_line|#define ICLR_PENDING&t;&t;0x00000003&t;/* Pending state&t;*/
 multiline_comment|/* Only 8-bits are available, be careful.  -DaveM */
 DECL|macro|IBF_DMA_SYNC
 mdefine_line|#define IBF_DMA_SYNC&t;0x01&t;/* DMA synchronization behind PCI bridge needed. */
@@ -216,16 +229,12 @@ comma
 r_int
 id|inofixup
 comma
-r_volatile
 r_int
 r_int
-op_star
 id|iclr
 comma
-r_volatile
 r_int
 r_int
-op_star
 id|imap
 )paren
 suffix:semicolon

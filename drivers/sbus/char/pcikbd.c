@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.35 1999/09/01 08:09:26 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.40 1999/12/01 10:45:53 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -151,8 +151,11 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-DECL|function|pcikbd_inb
+DECL|macro|pcikbd_inb
+mdefine_line|#define pcikbd_inb(x)     inb(x)
+DECL|macro|pcikbd_outb
+mdefine_line|#define pcikbd_outb(v,x)  outb(v,x)
+macro_line|#if 0 /* deadwood */
 r_static
 id|__inline__
 r_int
@@ -173,7 +176,6 @@ id|port
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcikbd_outb
 r_static
 id|__inline__
 r_void
@@ -196,59 +198,6 @@ id|val
 comma
 id|port
 )paren
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|function|pcikbd_inb
-r_static
-id|__inline__
-r_int
-r_char
-id|pcikbd_inb
-c_func
-(paren
-r_int
-r_int
-id|port
-)paren
-(brace
-r_return
-op_star
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|port
-suffix:semicolon
-)brace
-DECL|function|pcikbd_outb
-r_static
-id|__inline__
-r_void
-id|pcikbd_outb
-c_func
-(paren
-r_int
-r_char
-id|val
-comma
-r_int
-r_int
-id|port
-)paren
-(brace
-op_star
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|port
-op_assign
-id|val
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -2090,20 +2039,12 @@ op_assign
 r_int
 r_int
 )paren
-id|sparc_alloc_io
+id|ioremap
 c_func
 (paren
 l_int|0x71300060
 comma
-l_int|0
-comma
 l_int|8
-comma
-l_string|&quot;ps2kbd-regs&quot;
-comma
-l_int|0x0
-comma
-l_int|0
 )paren
 )paren
 op_eq
@@ -2162,7 +2103,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;8042(kbd): iobase[%08x] irq[%x]&bslash;n&quot;
+l_string|&quot;8042(kbd): iobase[%x] irq[%x]&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2527,8 +2468,11 @@ id|aux_present
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-DECL|function|pcimouse_inb
+DECL|macro|pcimouse_inb
+mdefine_line|#define pcimouse_inb(x)     inb(x)
+DECL|macro|pcimouse_outb
+mdefine_line|#define pcimouse_outb(v,x)  outb(v,x)
+macro_line|#if 0
 r_static
 id|__inline__
 r_int
@@ -2549,7 +2493,6 @@ id|port
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcimouse_outb
 r_static
 id|__inline__
 r_void
@@ -2572,59 +2515,6 @@ id|val
 comma
 id|port
 )paren
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|function|pcimouse_inb
-r_static
-id|__inline__
-r_int
-r_char
-id|pcimouse_inb
-c_func
-(paren
-r_int
-r_int
-id|port
-)paren
-(brace
-r_return
-op_star
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|port
-suffix:semicolon
-)brace
-DECL|function|pcimouse_outb
-r_static
-id|__inline__
-r_void
-id|pcimouse_outb
-c_func
-(paren
-r_int
-r_char
-id|val
-comma
-r_int
-r_int
-id|port
-)paren
-(brace
-op_star
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|port
-op_assign
-id|val
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -3813,6 +3703,65 @@ id|aux_fasync
 comma
 )brace
 suffix:semicolon
+DECL|function|aux_no_open
+r_static
+r_int
+id|aux_no_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+DECL|variable|psaux_no_fops
+r_struct
+id|file_operations
+id|psaux_no_fops
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* seek */
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+id|aux_no_open
+comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+)brace
+suffix:semicolon
 DECL|variable|psaux_mouse
 r_static
 r_struct
@@ -3826,6 +3775,21 @@ l_string|&quot;ps2aux&quot;
 comma
 op_amp
 id|psaux_fops
+)brace
+suffix:semicolon
+DECL|variable|psaux_no_mouse
+r_static
+r_struct
+id|miscdevice
+id|psaux_no_mouse
+op_assign
+(brace
+id|PSMOUSE_MINOR
+comma
+l_string|&quot;ps2aux&quot;
+comma
+op_amp
+id|psaux_no_fops
 )brace
 suffix:semicolon
 DECL|function|pcimouse_init
@@ -3876,9 +3840,8 @@ c_func
 l_string|&quot;pcimouse_init: no 8042 given&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|do_enodev
 suffix:semicolon
 )brace
 id|pcimouse_irq
@@ -3959,9 +3922,8 @@ c_func
 l_string|&quot;pcimouse_init: no 8042 found&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|do_enodev
 suffix:semicolon
 id|found
 suffix:colon
@@ -4075,9 +4037,8 @@ id|pcimouse_irq
 )paren
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|do_enodev
 suffix:semicolon
 )brace
 id|printk
@@ -4224,6 +4185,40 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+id|do_enodev
+suffix:colon
+id|misc_register
+c_func
+(paren
+op_amp
+id|psaux_no_mouse
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+DECL|function|pcimouse_no_init
+r_int
+id|__init
+id|pcimouse_no_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|misc_register
+c_func
+(paren
+op_amp
+id|psaux_no_mouse
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 )brace
 DECL|function|ps2kbd_probe
 r_int
@@ -4231,10 +4226,7 @@ id|__init
 id|ps2kbd_probe
 c_func
 (paren
-r_int
-r_int
-op_star
-id|memory_start
+r_void
 )paren
 (brace
 r_int
@@ -4308,9 +4300,8 @@ c_func
 l_string|&quot;ps2kbd_probe: no name of root node&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|do_enodev
 suffix:semicolon
 )brace
 r_if
@@ -4364,9 +4355,8 @@ c_cond
 op_logical_neg
 id|node
 )paren
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|do_enodev
 suffix:semicolon
 id|len
 op_assign
@@ -4415,9 +4405,8 @@ c_cond
 op_logical_neg
 id|kbnode
 )paren
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|do_enodev
 suffix:semicolon
 id|len
 op_assign
@@ -4466,9 +4455,8 @@ c_cond
 op_logical_neg
 id|msnode
 )paren
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|do_enodev
 suffix:semicolon
 multiline_comment|/*&n;&t; * Find matching EBus nodes...&n;&t; */
 id|node
@@ -4789,6 +4777,14 @@ l_string|&quot;pci&quot;
 )paren
 suffix:semicolon
 )brace
+id|do_enodev
+suffix:colon
+id|sunkbd_setinitfunc
+c_func
+(paren
+id|pcimouse_no_init
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -4798,16 +4794,12 @@ suffix:colon
 id|sunkbd_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|pcimouse_init
 )paren
 suffix:semicolon
 id|sunkbd_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|pcikbd_init
 )paren
 suffix:semicolon

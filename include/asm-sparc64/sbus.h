@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: sbus.h,v 1.10 1998/12/16 04:33:58 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
-multiline_comment|/* XXX This needs to be mostly redone for sun5 SYSIO. */
+multiline_comment|/* $Id: sbus.h,v 1.12 1999/12/20 14:08:25 jj Exp $&n; * sbus.h: Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _SPARC64_SBUS_H
 DECL|macro|_SPARC64_SBUS_H
 mdefine_line|#define _SPARC64_SBUS_H
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/iommu.h&gt;
+macro_line|#include &lt;asm/scatterlist.h&gt;
 multiline_comment|/* We scan which devices are on the SBus using the PROM node device&n; * tree.  SBus devices are described in two different ways.  You can&n; * either get an absolute address at which to access the device, or&n; * you can get a SBus &squot;slot&squot; number and an offset within that slot.&n; */
 multiline_comment|/* The base address at which to calculate device OBIO addresses. */
 DECL|macro|SUN_SBUS_BVADDR
@@ -79,79 +80,68 @@ l_int|28
 )paren
 suffix:semicolon
 )brace
-DECL|function|sbus_dev_offset
-r_extern
-id|__inline__
-r_int
-r_int
-id|sbus_dev_offset
-c_func
-(paren
-r_int
-r_int
-id|dev_addr
-)paren
-(brace
-r_return
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-(paren
-id|dev_addr
-)paren
-op_minus
-id|SUN_SBUS_BVADDR
-)paren
-op_amp
-id|SBUS_OFF_MASK
-)paren
-suffix:semicolon
-)brace
 r_struct
-id|linux_sbus
+id|sbus_bus
 suffix:semicolon
 multiline_comment|/* Linux SBUS device tables */
-DECL|struct|linux_sbus_device
+DECL|struct|sbus_dev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 (brace
+DECL|member|bus
+r_struct
+id|sbus_bus
+op_star
+id|bus
+suffix:semicolon
+multiline_comment|/* Our toplevel parent SBUS&t;*/
 DECL|member|next
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|next
 suffix:semicolon
-multiline_comment|/* next device on this SBus or null */
+multiline_comment|/* Chain of siblings&t;&t;*/
 DECL|member|child
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|child
 suffix:semicolon
-multiline_comment|/* For ledma and espdma on sun4m */
-DECL|member|my_bus
+multiline_comment|/* Chain of children&t;&t;*/
+DECL|member|parent
 r_struct
-id|linux_sbus
+id|sbus_dev
 op_star
-id|my_bus
+id|parent
 suffix:semicolon
-multiline_comment|/* Back ptr to sbus */
+multiline_comment|/* Parent device if not toplevel*/
 DECL|member|prom_node
 r_int
 id|prom_node
 suffix:semicolon
-multiline_comment|/* PROM device tree node for this device */
+multiline_comment|/* OBP node of this device&t;*/
 DECL|member|prom_name
 r_char
 id|prom_name
 (braket
-l_int|32
+l_int|64
 )braket
 suffix:semicolon
-multiline_comment|/* PROM device name */
+multiline_comment|/* OBP device name property&t;*/
+DECL|member|slot
+r_int
+id|slot
+suffix:semicolon
+multiline_comment|/* SBUS slot number&t;&t;*/
+DECL|member|resource
+r_struct
+id|resource
+id|resource
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
 DECL|member|reg_addrs
 r_struct
 id|linux_prom_registers
@@ -167,6 +157,18 @@ id|num_registers
 comma
 id|ranges_applied
 suffix:semicolon
+DECL|member|device_ranges
+r_struct
+id|linux_prom_ranges
+id|device_ranges
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
+DECL|member|num_device_ranges
+r_int
+id|num_device_ranges
+suffix:semicolon
 DECL|member|irqs
 r_int
 r_int
@@ -179,68 +181,38 @@ DECL|member|num_irqs
 r_int
 id|num_irqs
 suffix:semicolon
-DECL|member|sbus_addr
-r_int
-r_int
-id|sbus_addr
-suffix:semicolon
-multiline_comment|/* Absolute base address for device. */
-DECL|member|sbus_vaddrs
-r_int
-r_int
-id|sbus_vaddrs
-(braket
-id|PROMVADDR_MAX
-)braket
-suffix:semicolon
-DECL|member|num_vaddrs
-r_int
-r_int
-id|num_vaddrs
-suffix:semicolon
-DECL|member|offset
-r_int
-r_int
-id|offset
-suffix:semicolon
-multiline_comment|/* Offset given by PROM */
-DECL|member|slot
-r_int
-id|slot
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* This struct describes the SBus(s) found on this machine. */
-DECL|struct|linux_sbus
+DECL|struct|sbus_bus
 r_struct
-id|linux_sbus
+id|sbus_bus
 (brace
-DECL|member|next
-r_struct
-id|linux_sbus
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* next SBus, if more than one SBus */
-DECL|member|devices
-r_struct
-id|linux_sbus_device
-op_star
-id|devices
-suffix:semicolon
-multiline_comment|/* Link to devices on this SBus */
 DECL|member|iommu
-r_struct
-id|iommu_struct
+r_void
 op_star
 id|iommu
 suffix:semicolon
-multiline_comment|/* IOMMU for this sbus if applicable */
+multiline_comment|/* Opaque IOMMU cookie&t;*/
+DECL|member|devices
+r_struct
+id|sbus_dev
+op_star
+id|devices
+suffix:semicolon
+multiline_comment|/* Tree of SBUS devices&t;*/
+DECL|member|next
+r_struct
+id|sbus_bus
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* Next SBUS in system&t;*/
 DECL|member|prom_node
 r_int
 id|prom_node
 suffix:semicolon
-multiline_comment|/* PROM device tree node for this SBus */
+multiline_comment|/* OBP node of SBUS&t;*/
 DECL|member|prom_name
 r_char
 id|prom_name
@@ -265,9 +237,9 @@ DECL|member|num_sbus_ranges
 r_int
 id|num_sbus_ranges
 suffix:semicolon
-DECL|member|upaid
+DECL|member|portid
 r_int
-id|upaid
+id|portid
 suffix:semicolon
 DECL|member|starfire_cookie
 r_void
@@ -278,60 +250,160 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
-id|SBus_chain
+id|sbus_root
 suffix:semicolon
 multiline_comment|/* Device probing routines could find these handy */
 DECL|macro|for_each_sbus
-mdefine_line|#define for_each_sbus(bus) &bslash;&n;        for((bus) = SBus_chain; (bus); (bus)=(bus)-&gt;next)
+mdefine_line|#define for_each_sbus(bus) &bslash;&n;        for((bus) = sbus_root; (bus); (bus)=(bus)-&gt;next)
 DECL|macro|for_each_sbusdev
 mdefine_line|#define for_each_sbusdev(device, bus) &bslash;&n;        for((device) = (bus)-&gt;devices; (device); (device)=(device)-&gt;next)
 DECL|macro|for_all_sbusdev
-mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = SBus_chain, ((device) = (bus) ? (bus)-&gt;devices : 0); (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
+mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = sbus_root, ((device) = (bus) ? (bus)-&gt;devices : 0); (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
+multiline_comment|/* Driver DVMA interfaces. */
+DECL|macro|sbus_can_dma_64bit
+mdefine_line|#define sbus_can_dma_64bit(sdev)&t;(1)
+DECL|macro|sbus_can_burst64
+mdefine_line|#define sbus_can_burst64(sdev)&t;&t;(1)
 r_extern
 r_void
-id|mmu_set_sbus64
+id|sbus_set_sbus64
 c_func
 (paren
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* If you did not get the buffer from mmu_get_*() or sparc_alloc_dvma()&n; * then you must use this to get the 32-bit SBUS dvma address.&n; * And in this case it is your responsibility to make sure the buffer&n; * is GFP_DMA, ie. that it is not greater than MAX_DMA_ADDRESS.&n; */
-r_extern
-r_int
-r_int
-id|phys_base
-suffix:semicolon
-DECL|macro|sbus_dvma_addr
-mdefine_line|#define sbus_dvma_addr(__addr)&t;((__u32)(__pa(__addr) - phys_base))
-multiline_comment|/* Apply promlib probed SBUS ranges to registers. */
+multiline_comment|/* These yield IOMMU mappings in consistant mode. */
 r_extern
 r_void
-id|prom_apply_sbus_ranges
+op_star
+id|sbus_alloc_consistant
 c_func
 (paren
 r_struct
-id|linux_sbus
+id|sbus_dev
 op_star
-id|sbus
-comma
-r_struct
-id|linux_prom_registers
-op_star
-id|sbusregs
 comma
 r_int
-id|nregs
+comma
+id|u32
+op_star
+id|dma_addrp
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sbus_free_consistant
+c_func
+(paren
+r_struct
+id|sbus_dev
+op_star
+comma
+r_int
+comma
+r_void
+op_star
+comma
+id|u32
+)paren
+suffix:semicolon
+multiline_comment|/* All the rest use streaming mode mappings. */
+r_extern
+id|u32
+id|sbus_map_single
+c_func
+(paren
+r_struct
+id|sbus_dev
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sbus_unmap_single
+c_func
+(paren
+r_struct
+id|sbus_dev
+op_star
+comma
+id|u32
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sbus_map_sg
+c_func
+(paren
+r_struct
+id|sbus_dev
+op_star
 comma
 r_struct
-id|linux_sbus_device
+id|scatterlist
 op_star
-id|sdev
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sbus_unmap_sg
+c_func
+(paren
+r_struct
+id|sbus_dev
+op_star
+comma
+r_struct
+id|scatterlist
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Finally, allow explicit synchronization of streamable mappings. */
+r_extern
+r_void
+id|sbus_dma_sync_single
+c_func
+(paren
+r_struct
+id|sbus_dev
+op_star
+comma
+id|u32
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sbus_dma_sync_sg
+c_func
+(paren
+r_struct
+id|sbus_dev
+op_star
+comma
+r_struct
+id|scatterlist
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* !(_SPARC64_SBUS_H) */

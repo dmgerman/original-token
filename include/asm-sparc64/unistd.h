@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.31 1999/08/04 03:20:06 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.35 1999/12/15 17:52:09 jj Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -259,7 +259,7 @@ mdefine_line|#define __NR_getpeername        141 /* Common                      
 multiline_comment|/* #define __NR_gethostid       142    SunOS Specific                              */
 multiline_comment|/* #define __NR_ni_syscall      143    ENOSYS under SunOS                          */
 DECL|macro|__NR_getrlimit
-mdefine_line|#define __NR_getrlimit          144 /* Common                                      */
+mdefine_line|#define __NR_getrlimit&t;&t;144 /* Common                                      */
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit          145 /* Common                                      */
 multiline_comment|/* #define __NR_killpg          146    SunOS Specific                              */

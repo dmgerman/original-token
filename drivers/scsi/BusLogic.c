@@ -42,15 +42,25 @@ id|BusLogic_DriverOptions
 id|BusLogic_MaxHostAdapters
 )braket
 suffix:semicolon
-multiline_comment|/*&n;  BusLogic_Options can be assigned a string by the Loadable Kernel Module&n;  Installation Facility to be parsed for BusLogic Driver Options&n;  specifications.&n;*/
+multiline_comment|/*&n;  BusLogic can be assigned a string by insmod.&n;*/
+macro_line|#ifdef MODULE
+DECL|variable|BusLogic
 r_static
 r_char
-DECL|variable|BusLogic_Options
 op_star
-id|BusLogic_Options
+id|BusLogic
 op_assign
 l_int|NULL
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|BusLogic
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;  BusLogic_ProbeOptions is a set of Probe Options to be applied across&n;  all BusLogic Host Adapters.&n;*/
 r_static
 id|BusLogic_ProbeOptions_T
@@ -9259,19 +9269,21 @@ id|BusLogic_HostAdapter_T
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
-id|BusLogic_Options
+id|BusLogic
 op_ne
 l_int|NULL
 )paren
-id|BusLogic_ParseDriverOptions
+id|BusLogic_Setup
 c_func
 (paren
-id|BusLogic_Options
+id|BusLogic
 )paren
 suffix:semicolon
+macro_line|#endif
 id|BusLogic_InitializeProbeInfoList
 c_func
 (paren
@@ -15294,10 +15306,11 @@ r_return
 l_bool|true
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_ParseDriverOptions handles processing of BusLogic Driver Options&n;  specifications.&n;&n;  BusLogic Driver Options may be specified either via the Linux Kernel Command&n;  Line or via the Loadable Kernel Module Installation Facility.  Driver Options&n;  for multiple host adapters may be specified either by separating the option&n;  strings by a semicolon, or by specifying multiple &quot;BusLogic=&quot; strings on the&n;  command line.  Individual option specifications for a single host adapter are&n;  separated by commas.  The Probing and Debugging Options apply to all host&n;  adapters whereas the remaining options apply individually only to the&n;  selected host adapter.&n;&n;  The BusLogic Driver Probing Options comprise the following:&n;&n;  IO:&lt;integer&gt;&n;&n;    The &quot;IO:&quot; option specifies an ISA I/O Address to be probed for a non-PCI&n;    MultiMaster Host Adapter.  If neither &quot;IO:&quot; nor &quot;NoProbeISA&quot; options are&n;    specified, then the standard list of BusLogic MultiMaster ISA I/O Addresses&n;    will be probed (0x330, 0x334, 0x230, 0x234, 0x130, and 0x134).  Multiple&n;    &quot;IO:&quot; options may be specified to precisely determine the I/O Addresses to&n;    be probed, but the probe order will always follow the standard list.&n;&n;  NoProbe&n;&n;    The &quot;NoProbe&quot; option disables all probing and therefore no BusLogic Host&n;    Adapters will be detected.&n;&n;  NoProbeISA&n;&n;    The &quot;NoProbeISA&quot; option disables probing of the standard BusLogic ISA I/O&n;    Addresses and therefore only PCI MultiMaster and FlashPoint Host Adapters&n;    will be detected.&n;&n;  NoProbePCI&n;&n;    The &quot;NoProbePCI&quot; options disables the interrogation of PCI Configuration&n;    Space and therefore only ISA Multimaster Host Adapters will be detected, as&n;    well as PCI Multimaster Host Adapters that have their ISA Compatible I/O&n;    Port set to &quot;Primary&quot; or &quot;Alternate&quot;.&n;&n;  NoSortPCI&n;&n;    The &quot;NoSortPCI&quot; option forces PCI MultiMaster Host Adapters to be&n;    enumerated in the order provided by the PCI BIOS, ignoring any setting of&n;    the AutoSCSI &quot;Use Bus And Device # For PCI Scanning Seq.&quot; option.&n;&n;  MultiMasterFirst&n;&n;    The &quot;MultiMasterFirst&quot; option forces MultiMaster Host Adapters to be probed&n;    before FlashPoint Host Adapters.  By default, if both FlashPoint and PCI&n;    MultiMaster Host Adapters are present, this driver will probe for&n;    FlashPoint Host Adapters first unless the BIOS primary disk is controlled&n;    by the first PCI MultiMaster Host Adapter, in which case MultiMaster Host&n;    Adapters will be probed first.&n;&n;  FlashPointFirst&n;&n;    The &quot;FlashPointFirst&quot; option forces FlashPoint Host Adapters to be probed&n;    before MultiMaster Host Adapters.&n;&n;  The BusLogic Driver Tagged Queuing Options allow for explicitly specifying&n;  the Queue Depth and whether Tagged Queuing is permitted for each Target&n;  Device (assuming that the Target Device supports Tagged Queuing).  The Queue&n;  Depth is the number of SCSI Commands that are allowed to be concurrently&n;  presented for execution (either to the Host Adapter or Target Device).  Note&n;  that explicitly enabling Tagged Queuing may lead to problems; the option to&n;  enable or disable Tagged Queuing is provided primarily to allow disabling&n;  Tagged Queuing on Target Devices that do not implement it correctly.  The&n;  following options are available:&n;&n;  QueueDepth:&lt;integer&gt;&n;&n;    The &quot;QueueDepth:&quot; or QD:&quot; option specifies the Queue Depth to use for all&n;    Target Devices that support Tagged Queuing, as well as the maximum Queue&n;    Depth for devices that do not support Tagged Queuing.  If no Queue Depth&n;    option is provided, the Queue Depth will be determined automatically based&n;    on the Host Adapter&squot;s Total Queue Depth and the number, type, speed, and&n;    capabilities of the detected Target Devices.  For Host Adapters that&n;    require ISA Bounce Buffers, the Queue Depth is automatically set by default&n;    to BusLogic_TaggedQueueDepthBB or BusLogic_UntaggedQueueDepthBB to avoid&n;    excessive preallocation of DMA Bounce Buffer memory.  Target Devices that&n;    do not support Tagged Queuing always have their Queue Depth set to&n;    BusLogic_UntaggedQueueDepth or BusLogic_UntaggedQueueDepthBB, unless a&n;    lower Queue Depth option is provided.  A Queue Depth of 1 automatically&n;    disables Tagged Queuing.&n;&n;  QueueDepth:[&lt;integer&gt;,&lt;integer&gt;...]&n;&n;    The &quot;QueueDepth:[...]&quot; or &quot;QD:[...]&quot; option specifies the Queue Depth&n;    individually for each Target Device.  If an &lt;integer&gt; is omitted, the&n;    associated Target Device will have its Queue Depth selected automatically.&n;&n;  TaggedQueuing:Default&n;&n;    The &quot;TaggedQueuing:Default&quot; or &quot;TQ:Default&quot; option permits Tagged Queuing&n;    based on the firmware version of the BusLogic Host Adapter and based on&n;    whether the Queue Depth allows queuing multiple commands.&n;&n;  TaggedQueuing:Enable&n;&n;    The &quot;TaggedQueuing:Enable&quot; or &quot;TQ:Enable&quot; option enables Tagged Queuing for&n;    all Target Devices on this Host Adapter, overriding any limitation that&n;    would otherwise be imposed based on the Host Adapter firmware version.&n;&n;  TaggedQueuing:Disable&n;&n;    The &quot;TaggedQueuing:Disable&quot; or &quot;TQ:Disable&quot; option disables Tagged Queuing&n;    for all Target Devices on this Host Adapter.&n;&n;  TaggedQueuing:&lt;Target-Spec&gt;&n;&n;    The &quot;TaggedQueuing:&lt;Target-Spec&gt;&quot; or &quot;TQ:&lt;Target-Spec&gt;&quot; option controls&n;    Tagged Queuing individually for each Target Device.  &lt;Target-Spec&gt; is a&n;    sequence of &quot;Y&quot;, &quot;N&quot;, and &quot;X&quot; characters.  &quot;Y&quot; enables Tagged Queuing, &quot;N&quot;&n;    disables Tagged Queuing, and &quot;X&quot; accepts the default based on the firmware&n;    version.  The first character refers to Target Device 0, the second to&n;    Target Device 1, and so on; if the sequence of &quot;Y&quot;, &quot;N&quot;, and &quot;X&quot; characters&n;    does not cover all the Target Devices, unspecified characters are assumed&n;    to be &quot;X&quot;.&n;&n;  The BusLogic Driver Error Recovery Option allows for explicitly specifying&n;  the Error Recovery action to be performed when BusLogic_ResetCommand is&n;  called due to a SCSI Command failing to complete successfully.  The following&n;  options are available:&n;&n;  ErrorRecovery:Default&n;&n;    The &quot;ErrorRecovery:Default&quot; or &quot;ER:Default&quot; option selects between the Hard&n;    Reset and Bus Device Reset options based on the recommendation of the SCSI&n;    Subsystem.&n;&n;  ErrorRecovery:HardReset&n;&n;    The &quot;ErrorRecovery:HardReset&quot; or &quot;ER:HardReset&quot; option will initiate a Host&n;    Adapter Hard Reset which also causes a SCSI Bus Reset.&n;&n;  ErrorRecovery:BusDeviceReset&n;&n;    The &quot;ErrorRecovery:BusDeviceReset&quot; or &quot;ER:BusDeviceReset&quot; option will send&n;    a Bus Device Reset message to the individual Target Device causing the&n;    error.  If Error Recovery is again initiated for this Target Device and no&n;    SCSI Command to this Target Device has completed successfully since the Bus&n;    Device Reset message was sent, then a Hard Reset will be attempted.&n;&n;  ErrorRecovery:None&n;&n;    The &quot;ErrorRecovery:None&quot; or &quot;ER:None&quot; option suppresses Error Recovery.&n;    This option should only be selected if a SCSI Bus Reset or Bus Device Reset&n;    will cause the Target Device or a critical operation to suffer a complete&n;    and unrecoverable failure.&n;&n;  ErrorRecovery:&lt;Target-Spec&gt;&n;&n;    The &quot;ErrorRecovery:&lt;Target-Spec&gt;&quot; or &quot;ER:&lt;Target-Spec&gt;&quot; option controls&n;    Error Recovery individually for each Target Device.  &lt;Target-Spec&gt; is a&n;    sequence of &quot;D&quot;, &quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters.  &quot;D&quot; selects Default, &quot;H&quot;&n;    selects Hard Reset, &quot;B&quot; selects Bus Device Reset, and &quot;N&quot; selects None.&n;    The first character refers to Target Device 0, the second to Target Device&n;    1, and so on; if the sequence of &quot;D&quot;, &quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters does not&n;    cover all the possible Target Devices, unspecified characters are assumed&n;    to be &quot;D&quot;.&n;&n;  The BusLogic Driver Miscellaneous Options comprise the following:&n;&n;  BusSettleTime:&lt;seconds&gt;&n;&n;    The &quot;BusSettleTime:&quot; or &quot;BST:&quot; option specifies the Bus Settle Time in&n;    seconds.  The Bus Settle Time is the amount of time to wait between a Host&n;    Adapter Hard Reset which initiates a SCSI Bus Reset and issuing any SCSI&n;    Commands.  If unspecified, it defaults to BusLogic_DefaultBusSettleTime.&n;&n;  InhibitTargetInquiry&n;&n;    The &quot;InhibitTargetInquiry&quot; option inhibits the execution of an Inquire&n;    Target Devices or Inquire Installed Devices command on MultiMaster Host&n;    Adapters.  This may be necessary with some older Target Devices that do not&n;    respond correctly when Logical Units above 0 are addressed.&n;&n;  The BusLogic Driver Debugging Options comprise the following:&n;&n;  TraceProbe&n;&n;    The &quot;TraceProbe&quot; option enables tracing of Host Adapter Probing.&n;&n;  TraceHardwareReset&n;&n;    The &quot;TraceHardwareReset&quot; option enables tracing of Host Adapter Hardware&n;    Reset.&n;&n;  TraceConfiguration&n;&n;    The &quot;TraceConfiguration&quot; option enables tracing of Host Adapter&n;    Configuration.&n;&n;  TraceErrors&n;&n;    The &quot;TraceErrors&quot; option enables tracing of SCSI Commands that return an&n;    error from the Target Device.  The CDB and Sense Data will be printed for&n;    each SCSI Command that fails.&n;&n;  Debug&n;&n;    The &quot;Debug&quot; option enables all debugging options.&n;&n;  The following examples demonstrate setting the Queue Depth for Target Devices&n;  1 and 2 on the first host adapter to 7 and 15, the Queue Depth for all Target&n;  Devices on the second host adapter to 31, and the Bus Settle Time on the&n;  second host adapter to 30 seconds.&n;&n;  Linux Kernel Command Line:&n;&n;    linux BusLogic=QueueDepth:[,7,15];QueueDepth:31,BusSettleTime:30&n;&n;  LILO Linux Boot Loader (in /etc/lilo.conf):&n;&n;    append = &quot;BusLogic=QueueDepth:[,7,15];QueueDepth:31,BusSettleTime:30&quot;&n;&n;  INSMOD Loadable Kernel Module Installation Facility:&n;&n;    insmod BusLogic.o &bslash;&n;&t;&squot;BusLogic_Options=&quot;QueueDepth:[,7,15];QueueDepth:31,BusSettleTime:30&quot;&squot;&n;&n;  NOTE: Module Utilities 2.1.71 or later is required for correct parsing&n;&t;of driver options containing commas.&n;&n;*/
+multiline_comment|/*&n;  BusLogic_ParseDriverOptions handles processing of BusLogic Driver Options&n;  specifications.&n;&n;  BusLogic Driver Options may be specified either via the Linux Kernel Command&n;  Line or via the Loadable Kernel Module Installation Facility.  Driver Options&n;  for multiple host adapters may be specified either by separating the option&n;  strings by a semicolon, or by specifying multiple &quot;BusLogic=&quot; strings on the&n;  command line.  Individual option specifications for a single host adapter are&n;  separated by commas.  The Probing and Debugging Options apply to all host&n;  adapters whereas the remaining options apply individually only to the&n;  selected host adapter.&n;&n;  The BusLogic Driver Probing Options comprise the following:&n;&n;  IO:&lt;integer&gt;&n;&n;    The &quot;IO:&quot; option specifies an ISA I/O Address to be probed for a non-PCI&n;    MultiMaster Host Adapter.  If neither &quot;IO:&quot; nor &quot;NoProbeISA&quot; options are&n;    specified, then the standard list of BusLogic MultiMaster ISA I/O Addresses&n;    will be probed (0x330, 0x334, 0x230, 0x234, 0x130, and 0x134).  Multiple&n;    &quot;IO:&quot; options may be specified to precisely determine the I/O Addresses to&n;    be probed, but the probe order will always follow the standard list.&n;&n;  NoProbe&n;&n;    The &quot;NoProbe&quot; option disables all probing and therefore no BusLogic Host&n;    Adapters will be detected.&n;&n;  NoProbeISA&n;&n;    The &quot;NoProbeISA&quot; option disables probing of the standard BusLogic ISA I/O&n;    Addresses and therefore only PCI MultiMaster and FlashPoint Host Adapters&n;    will be detected.&n;&n;  NoProbePCI&n;&n;    The &quot;NoProbePCI&quot; options disables the interrogation of PCI Configuration&n;    Space and therefore only ISA Multimaster Host Adapters will be detected, as&n;    well as PCI Multimaster Host Adapters that have their ISA Compatible I/O&n;    Port set to &quot;Primary&quot; or &quot;Alternate&quot;.&n;&n;  NoSortPCI&n;&n;    The &quot;NoSortPCI&quot; option forces PCI MultiMaster Host Adapters to be&n;    enumerated in the order provided by the PCI BIOS, ignoring any setting of&n;    the AutoSCSI &quot;Use Bus And Device # For PCI Scanning Seq.&quot; option.&n;&n;  MultiMasterFirst&n;&n;    The &quot;MultiMasterFirst&quot; option forces MultiMaster Host Adapters to be probed&n;    before FlashPoint Host Adapters.  By default, if both FlashPoint and PCI&n;    MultiMaster Host Adapters are present, this driver will probe for&n;    FlashPoint Host Adapters first unless the BIOS primary disk is controlled&n;    by the first PCI MultiMaster Host Adapter, in which case MultiMaster Host&n;    Adapters will be probed first.&n;&n;  FlashPointFirst&n;&n;    The &quot;FlashPointFirst&quot; option forces FlashPoint Host Adapters to be probed&n;    before MultiMaster Host Adapters.&n;&n;  The BusLogic Driver Tagged Queuing Options allow for explicitly specifying&n;  the Queue Depth and whether Tagged Queuing is permitted for each Target&n;  Device (assuming that the Target Device supports Tagged Queuing).  The Queue&n;  Depth is the number of SCSI Commands that are allowed to be concurrently&n;  presented for execution (either to the Host Adapter or Target Device).  Note&n;  that explicitly enabling Tagged Queuing may lead to problems; the option to&n;  enable or disable Tagged Queuing is provided primarily to allow disabling&n;  Tagged Queuing on Target Devices that do not implement it correctly.  The&n;  following options are available:&n;&n;  QueueDepth:&lt;integer&gt;&n;&n;    The &quot;QueueDepth:&quot; or QD:&quot; option specifies the Queue Depth to use for all&n;    Target Devices that support Tagged Queuing, as well as the maximum Queue&n;    Depth for devices that do not support Tagged Queuing.  If no Queue Depth&n;    option is provided, the Queue Depth will be determined automatically based&n;    on the Host Adapter&squot;s Total Queue Depth and the number, type, speed, and&n;    capabilities of the detected Target Devices.  For Host Adapters that&n;    require ISA Bounce Buffers, the Queue Depth is automatically set by default&n;    to BusLogic_TaggedQueueDepthBB or BusLogic_UntaggedQueueDepthBB to avoid&n;    excessive preallocation of DMA Bounce Buffer memory.  Target Devices that&n;    do not support Tagged Queuing always have their Queue Depth set to&n;    BusLogic_UntaggedQueueDepth or BusLogic_UntaggedQueueDepthBB, unless a&n;    lower Queue Depth option is provided.  A Queue Depth of 1 automatically&n;    disables Tagged Queuing.&n;&n;  QueueDepth:[&lt;integer&gt;,&lt;integer&gt;...]&n;&n;    The &quot;QueueDepth:[...]&quot; or &quot;QD:[...]&quot; option specifies the Queue Depth&n;    individually for each Target Device.  If an &lt;integer&gt; is omitted, the&n;    associated Target Device will have its Queue Depth selected automatically.&n;&n;  TaggedQueuing:Default&n;&n;    The &quot;TaggedQueuing:Default&quot; or &quot;TQ:Default&quot; option permits Tagged Queuing&n;    based on the firmware version of the BusLogic Host Adapter and based on&n;    whether the Queue Depth allows queuing multiple commands.&n;&n;  TaggedQueuing:Enable&n;&n;    The &quot;TaggedQueuing:Enable&quot; or &quot;TQ:Enable&quot; option enables Tagged Queuing for&n;    all Target Devices on this Host Adapter, overriding any limitation that&n;    would otherwise be imposed based on the Host Adapter firmware version.&n;&n;  TaggedQueuing:Disable&n;&n;    The &quot;TaggedQueuing:Disable&quot; or &quot;TQ:Disable&quot; option disables Tagged Queuing&n;    for all Target Devices on this Host Adapter.&n;&n;  TaggedQueuing:&lt;Target-Spec&gt;&n;&n;    The &quot;TaggedQueuing:&lt;Target-Spec&gt;&quot; or &quot;TQ:&lt;Target-Spec&gt;&quot; option controls&n;    Tagged Queuing individually for each Target Device.  &lt;Target-Spec&gt; is a&n;    sequence of &quot;Y&quot;, &quot;N&quot;, and &quot;X&quot; characters.  &quot;Y&quot; enables Tagged Queuing, &quot;N&quot;&n;    disables Tagged Queuing, and &quot;X&quot; accepts the default based on the firmware&n;    version.  The first character refers to Target Device 0, the second to&n;    Target Device 1, and so on; if the sequence of &quot;Y&quot;, &quot;N&quot;, and &quot;X&quot; characters&n;    does not cover all the Target Devices, unspecified characters are assumed&n;    to be &quot;X&quot;.&n;&n;  The BusLogic Driver Error Recovery Option allows for explicitly specifying&n;  the Error Recovery action to be performed when BusLogic_ResetCommand is&n;  called due to a SCSI Command failing to complete successfully.  The following&n;  options are available:&n;&n;  ErrorRecovery:Default&n;&n;    The &quot;ErrorRecovery:Default&quot; or &quot;ER:Default&quot; option selects between the Hard&n;    Reset and Bus Device Reset options based on the recommendation of the SCSI&n;    Subsystem.&n;&n;  ErrorRecovery:HardReset&n;&n;    The &quot;ErrorRecovery:HardReset&quot; or &quot;ER:HardReset&quot; option will initiate a Host&n;    Adapter Hard Reset which also causes a SCSI Bus Reset.&n;&n;  ErrorRecovery:BusDeviceReset&n;&n;    The &quot;ErrorRecovery:BusDeviceReset&quot; or &quot;ER:BusDeviceReset&quot; option will send&n;    a Bus Device Reset message to the individual Target Device causing the&n;    error.  If Error Recovery is again initiated for this Target Device and no&n;    SCSI Command to this Target Device has completed successfully since the Bus&n;    Device Reset message was sent, then a Hard Reset will be attempted.&n;&n;  ErrorRecovery:None&n;&n;    The &quot;ErrorRecovery:None&quot; or &quot;ER:None&quot; option suppresses Error Recovery.&n;    This option should only be selected if a SCSI Bus Reset or Bus Device Reset&n;    will cause the Target Device or a critical operation to suffer a complete&n;    and unrecoverable failure.&n;&n;  ErrorRecovery:&lt;Target-Spec&gt;&n;&n;    The &quot;ErrorRecovery:&lt;Target-Spec&gt;&quot; or &quot;ER:&lt;Target-Spec&gt;&quot; option controls&n;    Error Recovery individually for each Target Device.  &lt;Target-Spec&gt; is a&n;    sequence of &quot;D&quot;, &quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters.  &quot;D&quot; selects Default, &quot;H&quot;&n;    selects Hard Reset, &quot;B&quot; selects Bus Device Reset, and &quot;N&quot; selects None.&n;    The first character refers to Target Device 0, the second to Target Device&n;    1, and so on; if the sequence of &quot;D&quot;, &quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters does not&n;    cover all the possible Target Devices, unspecified characters are assumed&n;    to be &quot;D&quot;.&n;&n;  The BusLogic Driver Miscellaneous Options comprise the following:&n;&n;  BusSettleTime:&lt;seconds&gt;&n;&n;    The &quot;BusSettleTime:&quot; or &quot;BST:&quot; option specifies the Bus Settle Time in&n;    seconds.  The Bus Settle Time is the amount of time to wait between a Host&n;    Adapter Hard Reset which initiates a SCSI Bus Reset and issuing any SCSI&n;    Commands.  If unspecified, it defaults to BusLogic_DefaultBusSettleTime.&n;&n;  InhibitTargetInquiry&n;&n;    The &quot;InhibitTargetInquiry&quot; option inhibits the execution of an Inquire&n;    Target Devices or Inquire Installed Devices command on MultiMaster Host&n;    Adapters.  This may be necessary with some older Target Devices that do not&n;    respond correctly when Logical Units above 0 are addressed.&n;&n;  The BusLogic Driver Debugging Options comprise the following:&n;&n;  TraceProbe&n;&n;    The &quot;TraceProbe&quot; option enables tracing of Host Adapter Probing.&n;&n;  TraceHardwareReset&n;&n;    The &quot;TraceHardwareReset&quot; option enables tracing of Host Adapter Hardware&n;    Reset.&n;&n;  TraceConfiguration&n;&n;    The &quot;TraceConfiguration&quot; option enables tracing of Host Adapter&n;    Configuration.&n;&n;  TraceErrors&n;&n;    The &quot;TraceErrors&quot; option enables tracing of SCSI Commands that return an&n;    error from the Target Device.  The CDB and Sense Data will be printed for&n;    each SCSI Command that fails.&n;&n;  Debug&n;&n;    The &quot;Debug&quot; option enables all debugging options.&n;&n;  The following examples demonstrate setting the Queue Depth for Target Devices&n;  1 and 2 on the first host adapter to 7 and 15, the Queue Depth for all Target&n;  Devices on the second host adapter to 31, and the Bus Settle Time on the&n;  second host adapter to 30 seconds.&n;&n;  Linux Kernel Command Line:&n;&n;    linux BusLogic=QueueDepth:[,7,15];QueueDepth:31,BusSettleTime:30&n;&n;  LILO Linux Boot Loader (in /etc/lilo.conf):&n;&n;    append = &quot;BusLogic=QueueDepth:[,7,15];QueueDepth:31,BusSettleTime:30&quot;&n;&n;  INSMOD Loadable Kernel Module Installation Facility:&n;&n;    insmod BusLogic.o &bslash;&n;&t;&squot;BusLogic=&quot;QueueDepth:[,7,15];QueueDepth:31,BusSettleTime:30&quot;&squot;&n;&n;  NOTE: Module Utilities 2.1.71 or later is required for correct parsing&n;&t;of driver options containing commas.&n;&n;*/
 DECL|function|BusLogic_ParseDriverOptions
 r_static
-r_void
+r_int
+id|__init
 id|BusLogic_ParseDriverOptions
 c_func
 (paren
@@ -15480,6 +15493,7 @@ id|IO_Address
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -15659,6 +15673,7 @@ id|QueueDepth
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|DriverOptions-&gt;QueueDepth
@@ -15704,6 +15719,7 @@ id|OptionsString
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -15728,6 +15744,7 @@ id|OptionsString
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -15797,6 +15814,7 @@ id|QueueDepth
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|DriverOptions-&gt;CommonQueueDepth
@@ -16302,6 +16320,7 @@ id|BusSettleTime
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|DriverOptions-&gt;BusSettleTime
@@ -16499,6 +16518,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;Tagged Queuing is disabled when the Queue Depth is 1 since queuing&n;&t;multiple commands is not possible.&n;      */
@@ -16565,28 +16585,53 @@ op_eq
 l_char|&squot;&bslash;0&squot;
 )paren
 r_return
+l_int|0
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_Setup handles processing of Kernel Command Line Arguments.&n;*/
+r_static
+r_int
+id|__init
 DECL|function|BusLogic_Setup
-r_void
 id|BusLogic_Setup
 c_func
 (paren
 r_char
 op_star
-id|CommandLineString
-comma
-r_int
-op_star
-id|CommandLineIntegers
+id|str
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|3
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|CommandLineIntegers
+id|ints
 (braket
 l_int|0
 )braket
@@ -16604,39 +16649,42 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|CommandLineString
+id|str
 op_eq
 l_int|NULL
 op_logical_or
 op_star
-id|CommandLineString
+id|str
 op_eq
 l_char|&squot;&bslash;0&squot;
 )paren
 r_return
+l_int|0
 suffix:semicolon
+r_return
 id|BusLogic_ParseDriverOptions
 c_func
 (paren
-id|CommandLineString
+id|str
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Include Module support if requested.&n;*/
-macro_line|#ifdef MODULE
-id|MODULE_PARM
+id|__setup
 c_func
 (paren
-id|BusLogic_Options
+l_string|&quot;BusLogic=&quot;
 comma
-l_string|&quot;s&quot;
+id|BusLogic_Setup
 )paren
 suffix:semicolon
+multiline_comment|/*&n;  Include Module support if requested.&n;*/
+macro_line|#ifdef MODULE
 DECL|variable|driver_template
 id|SCSI_Host_Template_T
 id|driver_template

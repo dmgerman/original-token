@@ -18,7 +18,7 @@ macro_line|#if defined(__sparc__)
 macro_line|# include &lt;linux/init.h&gt;
 macro_line|# include &lt;linux/delay.h&gt;         /* udelay() */
 macro_line|# include &lt;asm/oplib.h&gt;           /* OpenProm Library */
-macro_line|# include &lt;asm/sbus.h&gt;            /* struct linux_sbus *SBus_chain */
+macro_line|# include &lt;asm/sbus.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bpp.h&gt;
 DECL|macro|BPP_PROBE_CODE
@@ -479,81 +479,33 @@ suffix:semicolon
 macro_line|#endif /* __i386__ */
 macro_line|#if defined(__sparc__)
 multiline_comment|/*&n; * Register block&n; */
-DECL|struct|bpp_regs
-r_struct
-id|bpp_regs
-(brace
 multiline_comment|/* DMA registers */
-DECL|member|p_csr
-id|__volatile__
-id|__u32
-id|p_csr
-suffix:semicolon
-multiline_comment|/* DMA Control/Status Register */
-DECL|member|p_addr
-id|__volatile__
-id|__u32
-id|p_addr
-suffix:semicolon
-multiline_comment|/* Address Register */
-DECL|member|p_bcnt
-id|__volatile__
-id|__u32
-id|p_bcnt
-suffix:semicolon
-multiline_comment|/* Byte Count Register */
-DECL|member|p_tst_csr
-id|__volatile__
-id|__u32
-id|p_tst_csr
-suffix:semicolon
-multiline_comment|/* Test Control/Status (DMA2 only) */
+DECL|macro|BPP_CSR
+mdefine_line|#define BPP_CSR      0x00
+DECL|macro|BPP_ADDR
+mdefine_line|#define BPP_ADDR     0x04
+DECL|macro|BPP_BCNT
+mdefine_line|#define BPP_BCNT     0x08
+DECL|macro|BPP_TST_CSR
+mdefine_line|#define BPP_TST_CSR  0x0C
 multiline_comment|/* Parallel Port registers */
-DECL|member|p_hcr
-id|__volatile__
-id|__u16
-id|p_hcr
-suffix:semicolon
-multiline_comment|/* Hardware Configuration Register */
-DECL|member|p_ocr
-id|__volatile__
-id|__u16
-id|p_ocr
-suffix:semicolon
-multiline_comment|/* Operation Configuration Register */
-DECL|member|p_dr
-id|__volatile__
-id|__u8
-id|p_dr
-suffix:semicolon
-multiline_comment|/* Parallel Data Register */
-DECL|member|p_tcr
-id|__volatile__
-id|__u8
-id|p_tcr
-suffix:semicolon
-multiline_comment|/* Transfer Control Register */
-DECL|member|p_or
-id|__volatile__
-id|__u8
-id|p_or
-suffix:semicolon
-multiline_comment|/* Output Register */
-DECL|member|p_ir
-id|__volatile__
-id|__u8
-id|p_ir
-suffix:semicolon
-multiline_comment|/* Input Register */
-DECL|member|p_icr
-id|__volatile__
-id|__u16
-id|p_icr
-suffix:semicolon
-multiline_comment|/* Interrupt Control Register */
-)brace
-suffix:semicolon
-multiline_comment|/* P_CSR.  Bits of type RW1 are cleared with writting &squot;1&squot;. */
+DECL|macro|BPP_HCR
+mdefine_line|#define BPP_HCR      0x10
+DECL|macro|BPP_OCR
+mdefine_line|#define BPP_OCR      0x12
+DECL|macro|BPP_DR
+mdefine_line|#define BPP_DR       0x14
+DECL|macro|BPP_TCR
+mdefine_line|#define BPP_TCR      0x15
+DECL|macro|BPP_OR
+mdefine_line|#define BPP_OR       0x16
+DECL|macro|BPP_IR
+mdefine_line|#define BPP_IR       0x17
+DECL|macro|BPP_ICR
+mdefine_line|#define BPP_ICR      0x18
+DECL|macro|BPP_SIZE
+mdefine_line|#define BPP_SIZE     0x1A
+multiline_comment|/* BPP_CSR.  Bits of type RW1 are cleared with writting &squot;1&squot;. */
 DECL|macro|P_DEV_ID_MASK
 mdefine_line|#define P_DEV_ID_MASK   0xf0000000      /* R   */
 DECL|macro|P_DEV_ID_ZEBRA
@@ -602,14 +554,14 @@ DECL|macro|P_ERR_PEND
 mdefine_line|#define P_ERR_PEND      0x00000002      /* R    */
 DECL|macro|P_INT_PEND
 mdefine_line|#define P_INT_PEND      0x00000001      /* R    */
-multiline_comment|/* P_HCR. Time is in increments of SBus clock. */
+multiline_comment|/* BPP_HCR. Time is in increments of SBus clock. */
 DECL|macro|P_HCR_TEST
 mdefine_line|#define P_HCR_TEST      0x8000      /* Allows buried counters to be read */
 DECL|macro|P_HCR_DSW
 mdefine_line|#define P_HCR_DSW       0x7f00      /* Data strobe width (in ticks) */
 DECL|macro|P_HCR_DDS
 mdefine_line|#define P_HCR_DDS       0x007f      /* Data setup before strobe (in ticks) */
-multiline_comment|/* P_OCR. */
+multiline_comment|/* BPP_OCR. */
 DECL|macro|P_OCR_MEM_CLR
 mdefine_line|#define P_OCR_MEM_CLR   0x8000
 DECL|macro|P_OCR_DATA_SRC
@@ -634,7 +586,7 @@ DECL|macro|P_OCR_V_ILCK
 mdefine_line|#define P_OCR_V_ILCK    0x0002      /* Versatec faded. Zebra only. */
 DECL|macro|P_OCR_EN_VER
 mdefine_line|#define P_OCR_EN_VER    0x0001      /* Enable Versatec (0 - enable). Zebra only. */
-multiline_comment|/* P_TCR */
+multiline_comment|/* BPP_TCR */
 DECL|macro|P_TCR_DIR
 mdefine_line|#define P_TCR_DIR       0x08
 DECL|macro|P_TCR_BUSY
@@ -643,7 +595,7 @@ DECL|macro|P_TCR_ACK
 mdefine_line|#define P_TCR_ACK       0x02
 DECL|macro|P_TCR_DS
 mdefine_line|#define P_TCR_DS        0x01        /* Strobe */
-multiline_comment|/* P_OR */
+multiline_comment|/* BPP_OR */
 DECL|macro|P_OR_V3
 mdefine_line|#define P_OR_V3         0x20        /* )                 */
 DECL|macro|P_OR_V2
@@ -656,14 +608,14 @@ DECL|macro|P_OR_AFXN
 mdefine_line|#define P_OR_AFXN       0x02        /* Auto Feed */
 DECL|macro|P_OR_SLCT_IN
 mdefine_line|#define P_OR_SLCT_IN    0x01
-multiline_comment|/* P_IR */
+multiline_comment|/* BPP_IR */
 DECL|macro|P_IR_PE
 mdefine_line|#define P_IR_PE         0x04
 DECL|macro|P_IR_SLCT
 mdefine_line|#define P_IR_SLCT       0x02
 DECL|macro|P_IR_ERR
 mdefine_line|#define P_IR_ERR        0x01
-multiline_comment|/* P_ICR */
+multiline_comment|/* BPP_ICR */
 DECL|macro|P_DS_IRQ
 mdefine_line|#define P_DS_IRQ        0x8000      /* RW1  */
 DECL|macro|P_ACK_IRQ
@@ -697,61 +649,19 @@ mdefine_line|#define P_ERR_IRP       0x0002      /* RW1  1= rising edge */
 DECL|macro|P_ERR_IRQ_EN
 mdefine_line|#define P_ERR_IRQ_EN    0x0001      /* RW   */
 DECL|variable|base_addrs
-r_volatile
-r_struct
-id|bpp_regs
-op_star
+r_int
+r_int
 id|base_addrs
 (braket
 id|BPP_NO
 )braket
 suffix:semicolon
-DECL|function|bpp_outb_p
-r_static
-r_inline
-r_void
-(def_block
-id|bpp_outb_p
-c_func
-(paren
-id|__u8
-id|data
-comma
-r_volatile
-r_struct
-id|bpp_regs
-op_star
-id|base
-)paren
-(brace
-id|base-&gt;p_dr
-op_assign
-id|data
-suffix:semicolon
-)brace
-)def_block
+DECL|macro|bpp_outb_p
+mdefine_line|#define bpp_outb_p(data, base)&t;sbus_writeb(data, (base) + BPP_DR)
 DECL|macro|bpp_inb_p
-mdefine_line|#define bpp_inb_p(base)  bpp_inb(base)
-DECL|function|bpp_inb
-r_static
-r_inline
-id|__u8
-(def_block
-id|bpp_inb
-c_func
-(paren
-r_volatile
-r_struct
-id|bpp_regs
-op_star
-id|base
-)paren
-(brace
-r_return
-id|base-&gt;p_dr
-suffix:semicolon
-)brace
-)def_block
+mdefine_line|#define bpp_inb_p(base)&t;&t;sbus_readb((base) + BPP_DR)
+DECL|macro|bpp_inb
+mdefine_line|#define bpp_inb(base)&t;&t;sbus_readb((base) + BPP_DR)
 DECL|function|set_pins
 r_static
 r_void
@@ -766,10 +676,8 @@ r_int
 id|minor
 )paren
 (brace
-r_volatile
-r_struct
-id|bpp_regs
-op_star
+r_int
+r_int
 id|base
 op_assign
 id|base_addrs
@@ -853,13 +761,25 @@ id|bits_or
 op_or_assign
 id|P_OR_SLCT_IN
 suffix:semicolon
-id|base-&gt;p_or
-op_assign
+id|sbus_writeb
+c_func
+(paren
 id|bits_or
+comma
+id|base
+op_plus
+id|BPP_OR
+)paren
 suffix:semicolon
-id|base-&gt;p_tcr
-op_assign
+id|sbus_writeb
+c_func
+(paren
 id|bits_tcr
+comma
+id|base
+op_plus
+id|BPP_TCR
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * i386 people read output pins from a software image.&n; * We may get them back from hardware.&n; * Again, inversion of pins must he buried here.&n; */
@@ -874,10 +794,8 @@ r_int
 id|minor
 )paren
 (brace
-r_volatile
-r_struct
-id|bpp_regs
-op_star
+r_int
+r_int
 id|base
 op_assign
 id|base_addrs
@@ -894,17 +812,35 @@ suffix:semicolon
 r_int
 id|value_tcr
 op_assign
-id|base-&gt;p_tcr
+id|sbus_readb
+c_func
+(paren
+id|base
+op_plus
+id|BPP_TCR
+)paren
 suffix:semicolon
 r_int
 id|value_ir
 op_assign
-id|base-&gt;p_ir
+id|sbus_readb
+c_func
+(paren
+id|base
+op_plus
+id|BPP_IR
+)paren
 suffix:semicolon
 r_int
 id|value_or
 op_assign
-id|base-&gt;p_or
+id|sbus_readb
+c_func
+(paren
+id|base
+op_plus
+id|BPP_OR
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1024,50 +960,6 @@ r_return
 id|bits
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* P3 */
-r_static
-r_inline
-r_void
-id|bpp_snap
-c_func
-(paren
-r_const
-r_char
-op_star
-id|msg
-comma
-r_int
-id|minor
-)paren
-(brace
-r_volatile
-r_struct
-id|bpp_regs
-op_star
-id|r
-op_assign
-id|base_addrs
-(braket
-id|minor
-)braket
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;bpp.%s: c=%02x o=%02x i=%02x&bslash;n&quot;
-comma
-id|msg
-comma
-id|r-&gt;p_tcr
-comma
-id|r-&gt;p_or
-comma
-id|r-&gt;p_ir
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#endif /* __sparc__ */
 DECL|function|bpp_wake_up
 r_static
@@ -4032,15 +3924,13 @@ macro_line|#endif
 macro_line|#if defined(__sparc__)
 DECL|function|map_bpp
 r_static
-r_volatile
-r_struct
-id|bpp_regs
-op_star
+r_int
+r_int
 id|map_bpp
 c_func
 (paren
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|dev
 comma
@@ -4048,99 +3938,22 @@ r_int
 id|idx
 )paren
 (brace
-r_volatile
-r_struct
-id|bpp_regs
-op_star
-id|regs
-suffix:semicolon
-multiline_comment|/*&n;       * PROM reports different numbers on Zebra and on DMA2.&n;       * We need to figure out when to apply parent ranges.&n;       * printk will show this on different machines.&n;       */
-multiline_comment|/* IPC Zebra   1.fa200000[1c] i=2  */
-id|prom_apply_sbus_ranges
+r_return
+id|sbus_ioremap
 c_func
 (paren
-id|dev-&gt;my_bus
-comma
 op_amp
-id|dev-&gt;reg_addrs
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
 comma
-id|dev-&gt;num_registers
-comma
-id|dev
-)paren
-suffix:semicolon
-id|regs
-op_assign
-id|sparc_alloc_io
-c_func
-(paren
-id|dev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-dot
-id|phys_addr
-comma
 l_int|0
 comma
-id|dev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-dot
-id|reg_size
+id|BPP_SIZE
 comma
 l_string|&quot;bpp&quot;
-comma
-id|dev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-dot
-id|which_io
-comma
-l_int|0x0
 )paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;bpp%d.map_bpp: 0x%x.%p[0x%x] i=%d&bslash;n&quot;
-comma
-id|idx
-comma
-id|dev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-dot
-id|which_io
-comma
-id|dev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-dot
-id|phys_addr
-comma
-id|dev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-dot
-id|reg_size
-comma
-id|dev-&gt;irqs
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-r_return
-id|regs
 suffix:semicolon
 )brace
 DECL|function|collectLptPorts
@@ -4153,12 +3966,12 @@ r_void
 )paren
 (brace
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|bus
 suffix:semicolon
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|dev
 suffix:semicolon
@@ -4245,10 +4058,8 @@ r_int
 id|idx
 )paren
 (brace
-r_volatile
-r_struct
-id|bpp_regs
-op_star
+r_int
+r_int
 id|rp
 op_assign
 id|base_addrs
@@ -4378,15 +4189,21 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Sure */
+id|csr
+op_assign
+id|sbus_readl
+c_func
+(paren
+id|rp
+op_plus
+id|BPP_CSR
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-(paren
 id|csr
-op_assign
-id|rp-&gt;p_csr
-)paren
 op_amp
 id|P_DRAINING
 )paren
@@ -4410,7 +4227,13 @@ l_int|20
 suffix:semicolon
 id|csr
 op_assign
-id|rp-&gt;p_csr
+id|sbus_readl
+c_func
+(paren
+id|rp
+op_plus
+id|BPP_CSR
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4454,8 +4277,9 @@ comma
 id|csr
 )paren
 suffix:semicolon
-id|rp-&gt;p_csr
-op_assign
+id|sbus_writel
+c_func
+(paren
 (paren
 id|csr
 op_or
@@ -4464,6 +4288,11 @@ id|P_RESET
 op_amp
 op_complement
 id|P_INT_EN
+comma
+id|rp
+op_plus
+id|BPP_CSR
+)paren
 suffix:semicolon
 id|udelay
 c_func
@@ -4471,25 +4300,55 @@ c_func
 l_int|500
 )paren
 suffix:semicolon
-id|rp-&gt;p_csr
-op_and_assign
+id|sbus_writel
+c_func
+(paren
+id|sbus_readl
+c_func
+(paren
+id|rp
+op_plus
+id|BPP_CSR
+)paren
+op_amp
 op_complement
 id|P_RESET
+comma
+id|rp
+op_plus
+id|BPP_CSR
+)paren
+suffix:semicolon
+id|csr
+op_assign
+id|sbus_readl
+c_func
+(paren
+id|rp
+op_plus
+id|BPP_CSR
+)paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot; done with csr=0x%08x ocr=0x%04x&bslash;n&quot;
 comma
-id|rp-&gt;p_csr
+id|csr
 comma
-id|rp-&gt;p_ocr
+id|sbus_readw
+c_func
+(paren
+id|rp
+op_plus
+id|BPP_OCR
+)paren
 )paren
 suffix:semicolon
 r_switch
 c_cond
 (paren
-id|rp-&gt;p_csr
+id|csr
 op_amp
 id|P_DEV_ID_MASK
 )paren
@@ -4522,7 +4381,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;bpp%d: %s at 0x%p&bslash;n&quot;
+l_string|&quot;bpp%d: %s at 0x%lx&bslash;n&quot;
 comma
 id|idx
 comma
@@ -4558,22 +4417,15 @@ r_int
 id|idx
 )paren
 (brace
-id|sparc_free_io
+id|sbus_iounmap
+c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|base_addrs
 (braket
 id|idx
 )braket
 comma
-r_sizeof
-(paren
-r_struct
-id|bpp_regs
-)paren
+id|BPP_SIZE
 )paren
 suffix:semicolon
 )brace

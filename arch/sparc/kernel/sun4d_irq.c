@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: sun4d_irq.c,v 1.20 1999/09/10 10:40:30 davem Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
+multiline_comment|/*  $Id: sun4d_irq.c,v 1.23 1999/10/19 04:33:26 zaitcev Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -1159,7 +1159,7 @@ id|sun4d_build_irq
 c_func
 (paren
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|sdev
 comma
@@ -1183,7 +1183,7 @@ id|sbusl
 r_return
 (paren
 (paren
-id|sdev-&gt;my_bus-&gt;board
+id|sdev-&gt;bus-&gt;board
 op_plus
 l_int|1
 )paren
@@ -1842,7 +1842,7 @@ r_void
 (brace
 macro_line|#ifdef DISTRIBUTE_IRQS
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 suffix:semicolon
@@ -2089,7 +2089,7 @@ suffix:semicolon
 )brace
 macro_line|#else
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 suffix:semicolon
@@ -2250,13 +2250,28 @@ suffix:semicolon
 r_int
 id|cpu
 suffix:semicolon
+r_struct
+id|resource
+id|r
+suffix:semicolon
 multiline_comment|/* Map the User Timer registers. */
-macro_line|#ifdef __SMP__
-id|sun4d_timers
-op_assign
-id|sparc_alloc_io
+id|memset
 c_func
 (paren
+op_amp
+id|r
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|r
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+id|r.start
+op_assign
 id|CSR_BASE
 c_func
 (paren
@@ -2264,24 +2279,10 @@ id|boot_cpu_id
 )paren
 op_plus
 id|BW_TIMER_LIMIT
-comma
-l_int|0
-comma
-id|PAGE_SIZE
-comma
-l_string|&quot;user timer&quot;
-comma
-l_int|0xf
-comma
-l_int|0x0
-)paren
 suffix:semicolon
 macro_line|#else
-id|sun4d_timers
+id|r.start
 op_assign
-id|sparc_alloc_io
-c_func
-(paren
 id|CSR_BASE
 c_func
 (paren
@@ -2289,19 +2290,32 @@ l_int|0
 )paren
 op_plus
 id|BW_TIMER_LIMIT
+suffix:semicolon
+macro_line|#endif
+id|r.flags
+op_assign
+l_int|0xf
+suffix:semicolon
+id|sun4d_timers
+op_assign
+(paren
+r_struct
+id|sun4d_timer_regs
+op_star
+)paren
+id|sbus_ioremap
+c_func
+(paren
+op_amp
+id|r
 comma
 l_int|0
 comma
 id|PAGE_SIZE
 comma
 l_string|&quot;user timer&quot;
-comma
-l_int|0xf
-comma
-l_int|0x0
 )paren
 suffix:semicolon
-macro_line|#endif
 id|sun4d_timers-&gt;l10_timer_limit
 op_assign
 (paren
@@ -2529,7 +2543,7 @@ r_void
 )paren
 (brace
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 suffix:semicolon

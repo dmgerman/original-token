@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.47 1999/08/31 06:54:55 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.50 1999/12/01 10:44:45 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1145,11 +1145,11 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-DECL|variable|memory_size
-r_static
+multiline_comment|/* Exported for mm/init.c:paging_init. */
+DECL|variable|cmdline_memory_size
 r_int
 r_int
-id|memory_size
+id|cmdline_memory_size
 op_assign
 l_int|0
 suffix:semicolon
@@ -1622,7 +1622,7 @@ l_int|4
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t; * &quot;mem=XXX[kKmM]&quot; overrides the PROM-reported&n;&t;&t;&t;&t; * memory size.&n;&t;&t;&t;&t; */
-id|memory_size
+id|cmdline_memory_size
 op_assign
 id|simple_strtoul
 c_func
@@ -1651,7 +1651,7 @@ op_eq
 l_char|&squot;k&squot;
 )paren
 (brace
-id|memory_size
+id|cmdline_memory_size
 op_lshift_assign
 l_int|10
 suffix:semicolon
@@ -1674,7 +1674,7 @@ op_eq
 l_char|&squot;m&squot;
 )paren
 (brace
-id|memory_size
+id|cmdline_memory_size
 op_lshift_assign
 l_int|20
 suffix:semicolon
@@ -1807,6 +1807,42 @@ r_struct
 id|consw
 id|sun_serial_con
 suffix:semicolon
+DECL|function|register_prom_callbacks
+r_void
+id|register_prom_callbacks
+c_func
+(paren
+r_void
+)paren
+(brace
+id|prom_setcallback
+c_func
+(paren
+id|prom_callback
+)paren
+suffix:semicolon
+id|prom_feval
+c_func
+(paren
+l_string|&quot;: linux-va&gt;tte-data 2 &bslash;&quot; va&gt;tte-data&bslash;&quot; $callback drop ; &quot;
+l_string|&quot;&squot; linux-va&gt;tte-data to va&gt;tte-data&quot;
+)paren
+suffix:semicolon
+id|prom_feval
+c_func
+(paren
+l_string|&quot;: linux-.soft1 1 &bslash;&quot; .soft1&bslash;&quot; $callback 2drop ; &quot;
+l_string|&quot;&squot; linux-.soft1 to .soft1&quot;
+)paren
+suffix:semicolon
+id|prom_feval
+c_func
+(paren
+l_string|&quot;: linux-.soft2 1 &bslash;&quot; .soft2&bslash;&quot; $callback 2drop ; &quot;
+l_string|&quot;&squot; linux-.soft2 to .soft2&quot;
+)paren
+suffix:semicolon
+)brace
 DECL|function|setup_arch
 r_void
 id|__init
@@ -1817,16 +1853,6 @@ r_char
 op_star
 op_star
 id|cmdline_p
-comma
-r_int
-r_int
-op_star
-id|memory_start_p
-comma
-r_int
-r_int
-op_star
-id|memory_end_p
 )paren
 (brace
 r_extern
@@ -1836,15 +1862,9 @@ suffix:semicolon
 multiline_comment|/* in console.c, of course */
 r_int
 r_int
-id|lowest_paddr
-comma
-id|end_of_phys_memory
-op_assign
-l_int|0
+id|highest_paddr
 suffix:semicolon
 r_int
-id|total
-comma
 id|i
 suffix:semicolon
 multiline_comment|/* Initialize PROM console and command line. */
@@ -1905,16 +1925,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|total
-op_assign
+(paren
+r_void
+)paren
 id|prom_probe_memory
 c_func
 (paren
 )paren
 suffix:semicolon
-id|lowest_paddr
+multiline_comment|/* In paging_init() we tip off this value to see if we need&n;&t; * to change init_mm.pgd to point to the real alias mapping.&n;&t; */
+id|phys_base
 op_assign
 l_int|0xffffffffffffffffUL
+suffix:semicolon
+id|highest_paddr
+op_assign
+l_int|0UL
 suffix:semicolon
 r_for
 c_loop
@@ -1936,6 +1962,10 @@ id|i
 op_increment
 )paren
 (brace
+r_int
+r_int
+id|top
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1946,10 +1976,9 @@ id|i
 dot
 id|base_addr
 OL
-id|lowest_paddr
+id|phys_base
 )paren
-(brace
-id|lowest_paddr
+id|phys_base
 op_assign
 id|sp_banks
 (braket
@@ -1958,8 +1987,7 @@ id|i
 dot
 id|base_addr
 suffix:semicolon
-)brace
-id|end_of_phys_memory
+id|top
 op_assign
 id|sp_banks
 (braket
@@ -1978,129 +2006,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|memory_size
+id|highest_paddr
+OL
+id|top
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|end_of_phys_memory
-OG
-id|memory_size
-)paren
-(brace
-id|sp_banks
-(braket
-id|i
-)braket
-dot
-id|num_bytes
-op_sub_assign
-(paren
-id|end_of_phys_memory
-op_minus
-id|memory_size
-)paren
-suffix:semicolon
-id|end_of_phys_memory
+id|highest_paddr
 op_assign
-id|memory_size
-suffix:semicolon
-id|sp_banks
-(braket
-op_increment
-id|i
-)braket
-dot
-id|base_addr
-op_assign
-l_int|0xdeadbeef
-suffix:semicolon
-id|sp_banks
-(braket
-id|i
-)braket
-dot
-id|num_bytes
-op_assign
-l_int|0
+id|top
 suffix:semicolon
 )brace
-)brace
-)brace
-id|prom_setcallback
-c_func
-(paren
-id|prom_callback
-)paren
-suffix:semicolon
-id|prom_feval
-c_func
-(paren
-l_string|&quot;: linux-va&gt;tte-data 2 &bslash;&quot; va&gt;tte-data&bslash;&quot; $callback drop ; &quot;
-l_string|&quot;&squot; linux-va&gt;tte-data to va&gt;tte-data&quot;
-)paren
-suffix:semicolon
-id|prom_feval
-c_func
-(paren
-l_string|&quot;: linux-.soft1 1 &bslash;&quot; .soft1&bslash;&quot; $callback 2drop ; &quot;
-l_string|&quot;&squot; linux-.soft1 to .soft1&quot;
-)paren
-suffix:semicolon
-id|prom_feval
-c_func
-(paren
-l_string|&quot;: linux-.soft2 1 &bslash;&quot; .soft2&bslash;&quot; $callback 2drop ; &quot;
-l_string|&quot;&squot; linux-.soft2 to .soft2&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* In paging_init() we tip off this value to see if we need&n;&t; * to change init_mm.pgd to point to the real alias mapping.&n;&t; */
-id|phys_base
-op_assign
-id|lowest_paddr
-suffix:semicolon
-op_star
-id|memory_start_p
-op_assign
-id|PAGE_ALIGN
-c_func
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|end
-)paren
-)paren
-suffix:semicolon
-op_star
-id|memory_end_p
-op_assign
-(paren
-id|end_of_phys_memory
-op_plus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-macro_line|#ifdef DAVEM_DEBUGGING
-id|prom_printf
-c_func
-(paren
-l_string|&quot;phys_base[%016lx] memory_start[%016lx] memory_end[%016lx]&bslash;n&quot;
-comma
-id|phys_base
-comma
-op_star
-id|memory_start_p
-comma
-op_star
-id|memory_end_p
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2153,6 +2067,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+singleline_comment|// FIXME needs to do the new bootmem alloc stuff
 r_if
 c_cond
 (paren
@@ -2283,8 +2198,9 @@ id|PAGE_OFFSET
 suffix:semicolon
 id|init_mm.mmap-&gt;vm_end
 op_assign
-op_star
-id|memory_end_p
+id|PAGE_OFFSET
+op_plus
+id|highest_paddr
 suffix:semicolon
 id|init_task.thread.kregs
 op_assign
@@ -2715,6 +2631,31 @@ op_plus
 id|len
 )paren
 suffix:semicolon
+macro_line|#endif
+DECL|macro|ZS_LOG
+macro_line|#undef ZS_LOG
+macro_line|#ifdef ZS_LOG
+(brace
+r_extern
+r_int
+id|zs_dumplog
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|zs_dumplog
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 id|len

@@ -1,4 +1,4 @@
-multiline_comment|/* esp.h:  Defines and structures for the Sparc ESP (Enhanced SCSI&n; *         Processor) driver under Linux.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: esp.h,v 1.27 1999/12/15 14:12:52 davem Exp $&n; * esp.h:  Defines and structures for the Sparc ESP (Enhanced SCSI&n; *         Processor) driver under Linux.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_ESP_H
 DECL|macro|_SPARC_ESP_H
 mdefine_line|#define _SPARC_ESP_H
@@ -6,219 +6,55 @@ multiline_comment|/* For dvma controller register definitions. */
 macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/* The ESP SCSI controllers have their register sets in three&n; * &quot;classes&quot;:&n; *&n; * 1) Registers which are both read and write.&n; * 2) Registers which are read only.&n; * 3) Registers which are write only.&n; *&n; * Yet, they all live within the same IO space.&n; */
 multiline_comment|/* All the ESP registers are one byte each and are accessed longwords&n; * apart with a big-endian ordering to the bytes.&n; */
-DECL|struct|Sparc_ESP_regs
-r_struct
-id|Sparc_ESP_regs
-(brace
 multiline_comment|/* Access    Description              Offset */
-DECL|member|esp_tclow
-r_volatile
-id|unchar
-id|esp_tclow
-suffix:semicolon
-multiline_comment|/* rw  Low bits of the transfer count 0x00   */
-DECL|member|tlpad1
-id|unchar
-id|tlpad1
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_tcmed
-r_volatile
-id|unchar
-id|esp_tcmed
-suffix:semicolon
-multiline_comment|/* rw  Mid bits of the transfer count 0x04   */
-DECL|member|fdpad
-id|unchar
-id|fdpad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_fdata
-r_volatile
-id|unchar
-id|esp_fdata
-suffix:semicolon
-multiline_comment|/* rw  FIFO data bits                 0x08   */
-DECL|member|cbpad
-id|unchar
-id|cbpad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_cmd
-r_volatile
-id|unchar
-id|esp_cmd
-suffix:semicolon
-multiline_comment|/* rw  SCSI command bits              0x0c   */
-DECL|member|stpad
-id|unchar
-id|stpad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_status
-r_volatile
-id|unchar
-id|esp_status
-suffix:semicolon
-multiline_comment|/* ro  ESP status register            0x10   */
-DECL|macro|esp_busid
-mdefine_line|#define esp_busid   esp_status  /* wo  Bus ID for select/reselect     0x10   */
-DECL|member|irqpd
-id|unchar
-id|irqpd
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_intrpt
-r_volatile
-id|unchar
-id|esp_intrpt
-suffix:semicolon
-multiline_comment|/* ro  Kind of interrupt              0x14   */
-DECL|macro|esp_timeo
-mdefine_line|#define esp_timeo   esp_intrpt  /* wo  Timeout value for select/resel 0x14   */
-DECL|member|sspad
-id|unchar
-id|sspad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_sstep
-r_volatile
-id|unchar
-id|esp_sstep
-suffix:semicolon
-multiline_comment|/* ro  Sequence step register         0x18   */
-DECL|macro|esp_stp
-mdefine_line|#define esp_stp     esp_sstep   /* wo  Transfer period per sync       0x18   */
-DECL|member|ffpad
-id|unchar
-id|ffpad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_fflags
-r_volatile
-id|unchar
-id|esp_fflags
-suffix:semicolon
-multiline_comment|/* ro  Bits of current FIFO info      0x1c   */
-DECL|macro|esp_soff
-mdefine_line|#define esp_soff    esp_fflags  /* wo  Sync offset                    0x1c   */
-DECL|member|cf1pd
-id|unchar
-id|cf1pd
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_cfg1
-r_volatile
-id|unchar
-id|esp_cfg1
-suffix:semicolon
-multiline_comment|/* rw  First configuration register   0x20   */
-DECL|member|cfpad
-id|unchar
-id|cfpad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_cfact
-r_volatile
-id|unchar
-id|esp_cfact
-suffix:semicolon
-multiline_comment|/* wo  Clock conversion factor        0x24   */
-DECL|macro|esp_status2
-mdefine_line|#define esp_status2 esp_cfact   /* ro  HME status2 register           0x24   */
-DECL|member|ctpad
-id|unchar
-id|ctpad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_ctest
-r_volatile
-id|unchar
-id|esp_ctest
-suffix:semicolon
-multiline_comment|/* wo  Chip test register             0x28   */
-DECL|member|cf2pd
-id|unchar
-id|cf2pd
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_cfg2
-r_volatile
-id|unchar
-id|esp_cfg2
-suffix:semicolon
-multiline_comment|/* rw  Second configuration register  0x2c   */
-DECL|member|cf3pd
-id|unchar
-id|cf3pd
-(braket
-l_int|3
-)braket
-suffix:semicolon
-multiline_comment|/* The following is only found on the 53C9X series SCSI chips */
-DECL|member|esp_cfg3
-r_volatile
-id|unchar
-id|esp_cfg3
-suffix:semicolon
-multiline_comment|/* rw  Third configuration register   0x30  */
-DECL|member|thpd
-id|unchar
-id|thpd
-(braket
-l_int|7
-)braket
-suffix:semicolon
-multiline_comment|/* The following is found on all chips except the NCR53C90 (ESP100) */
-DECL|member|esp_tchi
-r_volatile
-id|unchar
-id|esp_tchi
-suffix:semicolon
-multiline_comment|/* rw  High bits of transfer count    0x38  */
-DECL|macro|esp_uid
-mdefine_line|#define esp_uid     esp_tchi    /* ro  Unique ID code                 0x38  */
-DECL|macro|fas_rlo
-mdefine_line|#define fas_rlo     esp_tchi    /* rw  HME extended counter           0x38  */
-DECL|member|fgpad
-id|unchar
-id|fgpad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|esp_fgrnd
-r_volatile
-id|unchar
-id|esp_fgrnd
-suffix:semicolon
-multiline_comment|/* rw  Data base for fifo             0x3c  */
-DECL|macro|fas_rhi
-mdefine_line|#define fas_rhi     esp_fgrnd   /* rw  HME extended counter           0x3c  */
-)brace
-suffix:semicolon
+DECL|macro|ESP_TCLOW
+mdefine_line|#define ESP_TCLOW&t;0x00UL&t;&t;/* rw  Low bits of the transfer count 0x00   */
+DECL|macro|ESP_TCMED
+mdefine_line|#define ESP_TCMED&t;0x04UL&t;&t;/* rw  Mid bits of the transfer count 0x04   */
+DECL|macro|ESP_FDATA
+mdefine_line|#define ESP_FDATA&t;0x08UL&t;&t;/* rw  FIFO data bits                 0x08   */
+DECL|macro|ESP_CMD
+mdefine_line|#define ESP_CMD&t;&t;0x0cUL&t;&t;/* rw  SCSI command bits              0x0c   */
+DECL|macro|ESP_STATUS
+mdefine_line|#define ESP_STATUS&t;0x10UL&t;&t;/* ro  ESP status register            0x10   */
+DECL|macro|ESP_BUSID
+mdefine_line|#define ESP_BUSID&t;ESP_STATUS&t;/* wo  Bus ID for select/reselect     0x10   */
+DECL|macro|ESP_INTRPT
+mdefine_line|#define ESP_INTRPT&t;0x14UL&t;&t;/* ro  Kind of interrupt              0x14   */
+DECL|macro|ESP_TIMEO
+mdefine_line|#define ESP_TIMEO&t;ESP_INTRPT&t;/* wo  Timeout value for select/resel 0x14   */
+DECL|macro|ESP_SSTEP
+mdefine_line|#define ESP_SSTEP&t;0x18UL&t;&t;/* ro  Sequence step register         0x18   */
+DECL|macro|ESP_STP
+mdefine_line|#define ESP_STP&t;&t;ESP_SSTEP&t;/* wo  Transfer period per sync       0x18   */
+DECL|macro|ESP_FFLAGS
+mdefine_line|#define ESP_FFLAGS&t;0x1cUL&t;&t;/* ro  Bits of current FIFO info      0x1c   */
+DECL|macro|ESP_SOFF
+mdefine_line|#define ESP_SOFF&t;ESP_FFLAGS&t;/* wo  Sync offset                    0x1c   */
+DECL|macro|ESP_CFG1
+mdefine_line|#define ESP_CFG1&t;0x20UL&t;&t;/* rw  First configuration register   0x20   */
+DECL|macro|ESP_CFACT
+mdefine_line|#define ESP_CFACT&t;0x24UL&t;&t;/* wo  Clock conversion factor        0x24   */
+DECL|macro|ESP_STATUS2
+mdefine_line|#define ESP_STATUS2&t;ESP_CFACT&t;/* ro  HME status2 register           0x24   */
+DECL|macro|ESP_CTEST
+mdefine_line|#define ESP_CTEST&t;0x28UL&t;&t;/* wo  Chip test register             0x28   */
+DECL|macro|ESP_CFG2
+mdefine_line|#define ESP_CFG2&t;0x2cUL&t;&t;/* rw  Second configuration register  0x2c   */
+DECL|macro|ESP_CFG3
+mdefine_line|#define ESP_CFG3&t;0x30UL&t;&t;/* rw  Third configuration register   0x30   */
+DECL|macro|ESP_TCHI
+mdefine_line|#define ESP_TCHI&t;0x38UL&t;&t;/* rw  High bits of transfer count    0x38   */
+DECL|macro|ESP_UID
+mdefine_line|#define ESP_UID&t;&t;ESP_TCHI&t;/* ro  Unique ID code                 0x38   */
+DECL|macro|FAS_RLO
+mdefine_line|#define FAS_RLO&t;&t;ESP_TCHI&t;/* rw  HME extended counter           0x38   */
+DECL|macro|ESP_FGRND
+mdefine_line|#define ESP_FGRND&t;0x3cUL&t;&t;/* rw  Data base for fifo             0x3c   */
+DECL|macro|FAS_RHI
+mdefine_line|#define FAS_RHI&t;&t;ESP_FGRND&t;/* rw  HME extended counter           0x3c   */
+DECL|macro|ESP_REG_SIZE
+mdefine_line|#define ESP_REG_SIZE&t;0x40UL
 multiline_comment|/* Various revisions of the ESP board. */
 DECL|enum|esp_rev
 r_enum
@@ -268,38 +104,33 @@ l_int|0x07
 )brace
 suffix:semicolon
 multiline_comment|/* We get one of these for each ESP probed. */
-DECL|struct|Sparc_ESP
+DECL|struct|esp
 r_struct
-id|Sparc_ESP
+id|esp
 (brace
-DECL|member|next
-r_struct
-id|Sparc_ESP
-op_star
-id|next
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
-multiline_comment|/* Next ESP on probed or NULL */
 DECL|member|eregs
-r_struct
-id|Sparc_ESP_regs
-op_star
+r_int
+r_int
 id|eregs
 suffix:semicolon
-multiline_comment|/* All esp registers */
+multiline_comment|/* ESP controller registers */
+DECL|member|dregs
+r_int
+r_int
+id|dregs
+suffix:semicolon
+multiline_comment|/* DMA controller registers */
 DECL|member|dma
 r_struct
-id|Linux_SBus_DMA
+id|sbus_dma
 op_star
 id|dma
 suffix:semicolon
-multiline_comment|/* Who I do transfers with. */
-DECL|member|dregs
-r_struct
-id|sparc_dma_registers
-op_star
-id|dregs
-suffix:semicolon
-multiline_comment|/* And his registers. */
+multiline_comment|/* DMA controller sw state */
 DECL|member|ehost
 r_struct
 id|Scsi_Host
@@ -307,57 +138,36 @@ op_star
 id|ehost
 suffix:semicolon
 multiline_comment|/* Backpointer to SCSI Host */
-DECL|member|edev
+DECL|member|sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|edev
+id|sdev
 suffix:semicolon
 multiline_comment|/* Pointer to SBus entry */
-DECL|member|prom_name
-r_char
-id|prom_name
-(braket
-l_int|64
-)braket
-suffix:semicolon
-multiline_comment|/* Name of ESP device from prom */
-DECL|member|prom_node
-r_int
-id|prom_node
-suffix:semicolon
-multiline_comment|/* Prom node where ESP found */
-DECL|member|esp_id
-r_int
-id|esp_id
-suffix:semicolon
-multiline_comment|/* Unique per-ESP ID number */
 multiline_comment|/* ESP Configuration Registers */
 DECL|member|config1
-r_int
-r_char
+id|u8
 id|config1
 suffix:semicolon
 multiline_comment|/* Copy of the 1st config register */
 DECL|member|config2
-r_int
-r_char
+id|u8
 id|config2
 suffix:semicolon
 multiline_comment|/* Copy of the 2nd config register */
 DECL|member|config3
-r_int
-r_char
+id|u8
 id|config3
 (braket
 l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* Copy of the 3rd config register */
-multiline_comment|/* The current command we are sending to the ESP chip.  This esp_command&n;   * ptr needs to be mapped in DVMA area so we can send commands and read&n;   * from the ESP fifo without burning precious CPU cycles.  Programmed I/O&n;   * sucks when we have the DVMA to do it for us.  The ESP is stupid and will&n;   * only send out 6, 10, and 12 byte SCSI commands, others we need to send&n;   * one byte at a time.  esp_slowcmd being set says that we are doing one&n;   * of the command types ESP doesn&squot;t understand, esp_scmdp keeps track of&n;   * which byte we are sending, esp_scmdleft says how many bytes to go.&n;   */
+multiline_comment|/* The current command we are sending to the ESP chip.  This esp_command&n;&t; * ptr needs to be mapped in DVMA area so we can send commands and read&n;&t; * from the ESP fifo without burning precious CPU cycles.  Programmed I/O&n;&t; * sucks when we have the DVMA to do it for us.  The ESP is stupid and will&n;&t; * only send out 6, 10, and 12 byte SCSI commands, others we need to send&n;&t; * one byte at a time.  esp_slowcmd being set says that we are doing one&n;&t; * of the command types ESP doesn&squot;t understand, esp_scmdp keeps track of&n;&t; * which byte we are sending, esp_scmdleft says how many bytes to go.&n;&t; */
 DECL|member|esp_command
 r_volatile
-id|unchar
+id|u8
 op_star
 id|esp_command
 suffix:semicolon
@@ -389,50 +199,50 @@ r_int
 r_char
 id|esp_scmdleft
 suffix:semicolon
-multiline_comment|/* The following are used to determine the cause of an IRQ. Upon every&n;   * IRQ entry we synchronize these with the hardware registers.&n;   */
+multiline_comment|/* The following are used to determine the cause of an IRQ. Upon every&n;&t; * IRQ entry we synchronize these with the hardware registers.&n;&t; */
 DECL|member|ireg
-id|unchar
+id|u8
 id|ireg
 suffix:semicolon
 multiline_comment|/* Copy of ESP interrupt register */
 DECL|member|sreg
-id|unchar
+id|u8
 id|sreg
 suffix:semicolon
-multiline_comment|/* Same for ESP status register */
+multiline_comment|/* Copy of ESP status register */
 DECL|member|seqreg
-id|unchar
+id|u8
 id|seqreg
 suffix:semicolon
-multiline_comment|/* The ESP sequence register */
+multiline_comment|/* Copy of ESP sequence step register */
 DECL|member|sreg2
-id|unchar
+id|u8
 id|sreg2
 suffix:semicolon
 multiline_comment|/* Copy of HME status2 register */
-multiline_comment|/* To save register writes to the ESP, which can be expensive, we&n;   * keep track of the previous value that various registers had for&n;   * the last target we connected to.  If they are the same for the&n;   * current target, we skip the register writes as they are not needed.&n;   */
+multiline_comment|/* To save register writes to the ESP, which can be expensive, we&n;&t; * keep track of the previous value that various registers had for&n;&t; * the last target we connected to.  If they are the same for the&n;&t; * current target, we skip the register writes as they are not needed.&n;&t; */
 DECL|member|prev_soff
 DECL|member|prev_stp
-DECL|member|prev_cfg3
-DECL|member|__cache_pad
-id|unchar
+id|u8
 id|prev_soff
 comma
 id|prev_stp
-comma
+suffix:semicolon
+DECL|member|prev_cfg3
+DECL|member|__cache_pad
+id|u8
 id|prev_cfg3
 comma
 id|__cache_pad
 suffix:semicolon
 multiline_comment|/* We also keep a cache of the previous FAS/HME DMA CSR register value.  */
 DECL|member|prev_hme_dmacsr
-r_int
-r_int
+id|u32
 id|prev_hme_dmacsr
 suffix:semicolon
 multiline_comment|/* The HME is the biggest piece of shit I have ever seen. */
 DECL|member|hme_fifo_workaround_buffer
-id|unchar
+id|u8
 id|hme_fifo_workaround_buffer
 (braket
 l_int|16
@@ -440,12 +250,11 @@ op_star
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* 16-bit/entry fifo for wide scsi */
 DECL|member|hme_fifo_workaround_count
-id|unchar
+id|u8
 id|hme_fifo_workaround_count
 suffix:semicolon
-multiline_comment|/* For each target we keep track of save/restore data&n;   * pointer information.  This needs to be updated majorly&n;   * when we add support for tagged queueing.  -DaveM&n;   */
+multiline_comment|/* For each target we keep track of save/restore data&n;&t; * pointer information.  This needs to be updated majorly&n;&t; * when we add support for tagged queueing.  -DaveM&n;&t; */
 DECL|struct|esp_pointers
 r_struct
 id|esp_pointers
@@ -490,6 +299,12 @@ r_int
 id|cfact
 suffix:semicolon
 multiline_comment|/* Clock conversion factor */
+DECL|member|raw_cfact
+r_int
+r_int
+id|raw_cfact
+suffix:semicolon
+multiline_comment|/* Raw copy from probing */
 DECL|member|ccycle
 r_int
 r_int
@@ -532,7 +347,32 @@ r_int
 id|min_period
 suffix:semicolon
 multiline_comment|/* shortest period we can withstand */
-multiline_comment|/* For slow to medium speed input clock rates we shoot for 5mb/s,&n;   * but for high input clock rates we try to do 10mb/s although I&n;   * don&squot;t think a transfer can even run that fast with an ESP even&n;   * with DMA2 scatter gather pipelining.&n;   */
+DECL|member|next
+r_struct
+id|esp
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* Next ESP we probed or NULL */
+DECL|member|prom_name
+r_char
+id|prom_name
+(braket
+l_int|64
+)braket
+suffix:semicolon
+multiline_comment|/* Name of ESP device from prom */
+DECL|member|prom_node
+r_int
+id|prom_node
+suffix:semicolon
+multiline_comment|/* Prom node where ESP found */
+DECL|member|esp_id
+r_int
+id|esp_id
+suffix:semicolon
+multiline_comment|/* Unique per-ESP ID number */
+multiline_comment|/* For slow to medium speed input clock rates we shoot for 5mb/s,&n;&t; * but for high input clock rates we try to do 10mb/s although I&n;&t; * don&squot;t think a transfer can even run that fast with an ESP even&n;&t; * with DMA2 scatter gather pipelining.&n;&t; */
 DECL|macro|SYNC_DEFP_SLOW
 mdefine_line|#define SYNC_DEFP_SLOW            0x32   /* 5mb/s  */
 DECL|macro|SYNC_DEFP_FAST
@@ -561,7 +401,7 @@ id|current_transfer_size
 suffix:semicolon
 multiline_comment|/* Set at beginning of data dma */
 DECL|member|espcmdlog
-id|unchar
+id|u8
 id|espcmdlog
 (braket
 l_int|32
@@ -569,7 +409,7 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* Log of current esp cmds sent. */
 DECL|member|espcmdent
-id|unchar
+id|u8
 id|espcmdent
 suffix:semicolon
 multiline_comment|/* Current entry in esp cmd log. */
@@ -626,14 +466,14 @@ suffix:semicolon
 multiline_comment|/* Commands disconnected from the bus */
 multiline_comment|/* Message goo */
 DECL|member|cur_msgout
-id|unchar
+id|u8
 id|cur_msgout
 (braket
 l_int|16
 )braket
 suffix:semicolon
 DECL|member|cur_msgin
-id|unchar
+id|u8
 id|cur_msgin
 (braket
 l_int|16
@@ -641,28 +481,28 @@ l_int|16
 suffix:semicolon
 DECL|member|prevmsgout
 DECL|member|prevmsgin
-id|unchar
+id|u8
 id|prevmsgout
 comma
 id|prevmsgin
 suffix:semicolon
 DECL|member|msgout_len
 DECL|member|msgin_len
-id|unchar
+id|u8
 id|msgout_len
 comma
 id|msgin_len
 suffix:semicolon
 DECL|member|msgout_ctr
 DECL|member|msgin_ctr
-id|unchar
+id|u8
 id|msgout_ctr
 comma
 id|msgin_ctr
 suffix:semicolon
-multiline_comment|/* States that we cannot keep in the per cmd structure because they&n;   * cannot be assosciated with any specific command.&n;   */
+multiline_comment|/* States that we cannot keep in the per cmd structure because they&n;&t; * cannot be assosciated with any specific command.&n;&t; */
 DECL|member|resetting_bus
-id|unchar
+id|u8
 id|resetting_bus
 suffix:semicolon
 )brace
@@ -1062,7 +902,7 @@ id|inout
 )paren
 suffix:semicolon
 DECL|macro|SCSI_SPARC_ESP
-mdefine_line|#define SCSI_SPARC_ESP {                                        &bslash;&n;&t;&t;proc_name:      &quot;esp&quot;,&t;&t;&t;&t;&bslash;&n;&t;&t;proc_info:      &amp;esp_proc_info,&t;&t;&t;&bslash;&n;&t;&t;name:           &quot;Sun ESP 100/100a/200&quot;,&t;&t;&bslash;&n;&t;&t;detect:         esp_detect,&t;&t;&t;&bslash;&n;&t;&t;info:           esp_info,&t;&t;&t;&bslash;&n;&t;&t;command:        esp_command,&t;&t;&t;&bslash;&n;&t;&t;queuecommand:   esp_queue,&t;&t;&t;&bslash;&n;&t;&t;abort:          esp_abort,&t;&t;&t;&bslash;&n;&t;&t;reset:          esp_reset,&t;&t;&t;&bslash;&n;&t;&t;can_queue:      7,&t;&t;&t;&t;&bslash;&n;&t;&t;this_id:        7,&t;&t;&t;&t;&bslash;&n;&t;&t;sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;&t;&t;cmd_per_lun:    1,&t;&t;&t;&t;&bslash;&n;&t;&t;use_clustering: DISABLE_CLUSTERING,&t;&t;&bslash;&n;&t;&t;use_new_eh_code: 0&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define SCSI_SPARC_ESP {                                        &bslash;&n;&t;&t;proc_name:      &quot;esp&quot;,&t;&t;&t;&t;&bslash;&n;&t;&t;proc_info:      &amp;esp_proc_info,&t;&t;&t;&bslash;&n;&t;&t;name:           &quot;Sun ESP 100/100a/200&quot;,&t;&t;&bslash;&n;&t;&t;detect:         esp_detect,&t;&t;&t;&bslash;&n;&t;&t;info:           esp_info,&t;&t;&t;&bslash;&n;&t;&t;command:        esp_command,&t;&t;&t;&bslash;&n;&t;&t;queuecommand:   esp_queue,&t;&t;&t;&bslash;&n;&t;&t;abort:          esp_abort,&t;&t;&t;&bslash;&n;&t;&t;reset:          esp_reset,&t;&t;&t;&bslash;&n;&t;&t;can_queue:      7,&t;&t;&t;&t;&bslash;&n;&t;&t;this_id:        7,&t;&t;&t;&t;&bslash;&n;&t;&t;sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;&t;&t;cmd_per_lun:    1,&t;&t;&t;&t;&bslash;&n;&t;&t;use_clustering: ENABLE_CLUSTERING,&t;&t;&bslash;&n;&t;&t;use_new_eh_code: 0&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/* For our interrupt engine. */
 DECL|macro|for_each_esp
 mdefine_line|#define for_each_esp(esp) &bslash;&n;        for((esp) = espchain; (esp); (esp) = (esp)-&gt;next)

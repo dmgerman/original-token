@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.46 1999/08/31 13:11:26 anton Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+multiline_comment|/* $Id: time.c,v 1.49 1999/11/17 07:34:07 zaitcev Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/timer.h&gt;
@@ -21,6 +22,7 @@ macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/sun4paddr.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pcic.h&gt;
 r_extern
 id|rwlock_t
 id|xtime_lock
@@ -700,6 +702,24 @@ macro_line|#ifdef CONFIG_SUN4
 r_int
 id|temp
 suffix:semicolon
+r_struct
+id|resource
+id|r
+suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|r
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|r
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -716,16 +736,17 @@ id|sp_clock_typ
 op_assign
 id|MSTK48T02
 suffix:semicolon
+id|r.start
+op_assign
+id|sun4_clock_physaddr
+suffix:semicolon
 id|mstk48t02_regs
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|sparc_alloc_io
+id|sbus_ioremap
 c_func
 (paren
-id|sun4_clock_physaddr
+op_amp
+id|r
 comma
 l_int|0
 comma
@@ -735,11 +756,7 @@ r_struct
 id|mostek48t02
 )paren
 comma
-l_string|&quot;clock&quot;
-comma
-l_int|0x0
-comma
-l_int|0x0
+l_int|0
 )paren
 suffix:semicolon
 id|mstk48t08_regs
@@ -798,6 +815,10 @@ id|sp_clock_typ
 op_assign
 id|INTERSIL
 suffix:semicolon
+id|r.start
+op_assign
+id|sun4_clock_physaddr
+suffix:semicolon
 id|intersil_clock
 op_assign
 (paren
@@ -805,10 +826,11 @@ r_struct
 id|intersil
 op_star
 )paren
-id|sparc_alloc_io
+id|sparc_ioremap
 c_func
 (paren
-id|sun4_clock_physaddr
+op_amp
+id|r
 comma
 l_int|0
 comma
@@ -818,11 +840,7 @@ op_star
 id|intersil_clock
 )paren
 comma
-l_string|&quot;clock&quot;
-comma
-l_int|0x0
-comma
-l_int|0x0
+l_string|&quot;intersil&quot;
 )paren
 suffix:semicolon
 id|mstk48t02_regs
@@ -943,11 +961,29 @@ id|cpuunit
 comma
 id|bootbus
 suffix:semicolon
+r_struct
+id|resource
+id|r
+suffix:semicolon
 id|cpuunit
 op_assign
 id|bootbus
 op_assign
 l_int|0
+suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|r
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|r
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* Determine the correct starting PROM node for the probe. */
 id|node
@@ -1176,26 +1212,32 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Map the clock register io area read-only */
-id|mstk48t02_regs
+id|r.flags
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|sparc_alloc_io
-c_func
-(paren
+id|clk_reg
+(braket
+l_int|0
+)braket
+dot
+id|which_io
+suffix:semicolon
+id|r.start
+op_assign
 id|clk_reg
 (braket
 l_int|0
 )braket
 dot
 id|phys_addr
-comma
+suffix:semicolon
+id|mstk48t02_regs
+op_assign
+id|sbus_ioremap
+c_func
 (paren
-r_void
-op_star
-)paren
+op_amp
+id|r
+comma
 l_int|0
 comma
 r_sizeof
@@ -1204,16 +1246,7 @@ r_struct
 id|mostek48t02
 )paren
 comma
-l_string|&quot;clock&quot;
-comma
-id|clk_reg
-(braket
-l_int|0
-)braket
-dot
-id|which_io
-comma
-l_int|0x0
+l_string|&quot;mk48t02&quot;
 )paren
 suffix:semicolon
 id|mstk48t08_regs
@@ -1307,6 +1340,25 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Map the clock register io area read-only */
+multiline_comment|/* XXX r/o attribute is somewhere in r.flags */
+id|r.flags
+op_assign
+id|clk_reg
+(braket
+l_int|0
+)braket
+dot
+id|which_io
+suffix:semicolon
+id|r.start
+op_assign
+id|clk_reg
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
+suffix:semicolon
 id|mstk48t08_regs
 op_assign
 (paren
@@ -1314,38 +1366,21 @@ r_struct
 id|mostek48t08
 op_star
 )paren
-id|sparc_alloc_io
+id|sbus_ioremap
 c_func
 (paren
-id|clk_reg
-(braket
-l_int|0
-)braket
-dot
-id|phys_addr
+op_amp
+id|r
 comma
-(paren
-r_void
-op_star
-)paren
 l_int|0
 comma
 r_sizeof
 (paren
-op_star
-id|mstk48t08_regs
+r_struct
+id|mostek48t08
 )paren
 comma
-l_string|&quot;clock&quot;
-comma
-id|clk_reg
-(braket
-l_int|0
-)braket
-dot
-id|which_io
-comma
-l_int|0x0
+l_string|&quot;mk48t08&quot;
 )paren
 suffix:semicolon
 id|mstk48t02_regs
@@ -1812,7 +1847,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pci_present
+id|pcic_present
 c_func
 (paren
 )paren

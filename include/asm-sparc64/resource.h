@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: resource.h,v 1.5 1999/07/30 09:31:21 davem Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: resource.h,v 1.7 1999/12/15 17:52:08 jj Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_RESOURCE_H
 DECL|macro|_SPARC64_RESOURCE_H
 mdefine_line|#define _SPARC64_RESOURCE_H
@@ -30,7 +30,7 @@ DECL|macro|RLIM_INFINITY
 mdefine_line|#define RLIM_INFINITY&t;(~0UL)
 macro_line|#ifdef __KERNEL__
 DECL|macro|INIT_RLIMITS
-mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {_STK_LIM, LONG_MAX},&t;&bslash;&n;    {       0, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&bslash;&n;    {INR_OPEN, INR_OPEN}, {0, 0},&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX}&t;&bslash;&n;}
+mdefine_line|#define INIT_RLIMITS&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&bslash;&n;    {RLIM_INFINITY, RLIM_INFINITY},&t;&bslash;&n;    {RLIM_INFINITY, RLIM_INFINITY},&t;&bslash;&n;    {RLIM_INFINITY, RLIM_INFINITY},&t;&bslash;&n;    {_STK_LIM, RLIM_INFINITY},&t;&t;&bslash;&n;    {       0, RLIM_INFINITY},&t;&t;&bslash;&n;    {RLIM_INFINITY, RLIM_INFINITY},&t;&bslash;&n;    {INR_OPEN, INR_OPEN}, {0, 0},&t;&bslash;&n;    {RLIM_INFINITY, RLIM_INFINITY},&t;&bslash;&n;    {RLIM_INFINITY, RLIM_INFINITY}&t;&bslash;&n;}
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(_SPARC64_RESOURCE_H) */
 eof

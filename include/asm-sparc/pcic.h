@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.h,v 1.2 1999/06/03 15:02:51 davem Exp $&n; * pcic.h: JavaEngine 1 specific PCI definitions.&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; */
+multiline_comment|/* $Id: pcic.h,v 1.4 1999/11/17 07:34:20 zaitcev Exp $&n; * pcic.h: JavaEngine 1 specific PCI definitions.&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; */
 macro_line|#ifndef __SPARC_PCIC_H
 DECL|macro|__SPARC_PCIC_H
 mdefine_line|#define __SPARC_PCIC_H
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 DECL|struct|linux_pcic
 r_struct
@@ -22,16 +23,6 @@ r_int
 r_int
 id|pcic_io
 suffix:semicolon
-DECL|member|pcic_io_phys
-r_int
-r_int
-id|pcic_io_phys
-suffix:semicolon
-DECL|member|pcic_mapped_io
-r_int
-r_int
-id|pcic_mapped_io
-suffix:semicolon
 DECL|member|pcic_config_space_addr
 r_int
 r_int
@@ -41,6 +32,26 @@ DECL|member|pcic_config_space_data
 r_int
 r_int
 id|pcic_config_space_data
+suffix:semicolon
+DECL|member|pcic_res_regs
+r_struct
+id|resource
+id|pcic_res_regs
+suffix:semicolon
+DECL|member|pcic_res_io
+r_struct
+id|resource
+id|pcic_res_io
+suffix:semicolon
+DECL|member|pcic_res_cfg_addr
+r_struct
+id|resource
+id|pcic_res_cfg_addr
+suffix:semicolon
+DECL|member|pcic_res_cfg_data
+r_struct
+id|resource
+id|pcic_res_cfg_data
 suffix:semicolon
 DECL|member|pbm
 r_struct
@@ -61,19 +72,16 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_int
-r_int
-id|pcic_alloc_io
+id|pcic_probe
 c_func
 (paren
-r_int
-r_int
-op_star
-id|addr
+r_void
 )paren
 suffix:semicolon
+multiline_comment|/* Erm... MJ redefined pcibios_present() so that it does not work early. */
 r_extern
-r_void
-id|pcic_probe
+r_int
+id|pcic_present
 c_func
 (paren
 r_void

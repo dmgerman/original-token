@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.9&n; * Description:   Utility functions used by the device drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Oct  9 09:22:27 1999&n; * Modified at:   Tue Nov 16 12:54:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.9&n; * Description:   Utility functions used by the device drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Oct  9 09:22:27 1999&n; * Modified at:   Sun Dec 12 12:24:32 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -75,6 +75,17 @@ id|girbil_init
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|__irda_task_delete
+c_func
+(paren
+r_struct
+id|irda_task
+op_star
+id|task
 )paren
 suffix:semicolon
 DECL|variable|dongles
@@ -191,7 +202,7 @@ op_assign
 id|hashbin_new
 c_func
 (paren
-id|HB_LOCAL
+id|HB_GLOBAL
 )paren
 suffix:semicolon
 r_if
@@ -219,7 +230,7 @@ op_assign
 id|hashbin_new
 c_func
 (paren
-id|HB_LOCAL
+id|HB_GLOBAL
 )paren
 suffix:semicolon
 r_if
@@ -320,6 +331,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_OLD_BELKIN
+id|old_belkin_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -346,7 +364,10 @@ c_func
 (paren
 id|tasks
 comma
-l_int|NULL
+(paren
+id|FREE_FUNC
+)paren
+id|__irda_task_delete
 )paren
 suffix:semicolon
 id|hashbin_delete
@@ -492,7 +513,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -574,7 +595,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -743,6 +764,64 @@ op_assign
 id|state
 suffix:semicolon
 )brace
+DECL|function|__irda_task_delete
+r_static
+r_void
+id|__irda_task_delete
+c_func
+(paren
+r_struct
+id|irda_task
+op_star
+id|task
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|task-&gt;timer
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
+)brace
+DECL|function|irda_task_delete
+r_void
+id|irda_task_delete
+c_func
+(paren
+r_struct
+id|irda_task
+op_star
+id|task
+)paren
+(brace
+multiline_comment|/* Unregister task */
+id|hashbin_remove
+c_func
+(paren
+id|tasks
+comma
+(paren
+r_int
+)paren
+id|task
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|__irda_task_delete
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Function irda_task_kick (task)&n; *&n; *    Tries to execute a task possible multiple times until the task is either&n; *    finished, or askes for a timeout. When a task is finished, we do post&n; *    processing, and notify the parent task, that is waiting for this task&n; *    to complete.&n; */
 DECL|function|irda_task_kick
 r_int
@@ -756,17 +835,17 @@ id|task
 )paren
 (brace
 r_int
-id|timeout
-suffix:semicolon
-r_int
-id|ret
+id|finished
 op_assign
-l_int|0
+id|TRUE
 suffix:semicolon
 r_int
 id|count
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|timeout
 suffix:semicolon
 id|IRDA_DEBUG
 c_func
@@ -832,9 +911,14 @@ id|__FUNCTION__
 l_string|&quot;(), error in task handler!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|irda_task_delete
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|TRUE
 suffix:semicolon
 )brace
 )brace
@@ -869,9 +953,14 @@ id|__FUNCTION__
 l_string|&quot;(), Error executing task!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|irda_task_delete
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|TRUE
 suffix:semicolon
 )brace
 multiline_comment|/* Check if we are finished */
@@ -941,21 +1030,7 @@ id|task-&gt;parent
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Unregister task */
-id|hashbin_remove
-c_func
-(paren
-id|tasks
-comma
-(paren
-r_int
-)paren
-id|task
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|kfree
+id|irda_task_delete
 c_func
 (paren
 id|task
@@ -988,9 +1063,9 @@ comma
 id|irda_task_timer_expired
 )paren
 suffix:semicolon
-id|ret
+id|finished
 op_assign
-l_int|1
+id|FALSE
 suffix:semicolon
 )brace
 r_else
@@ -1004,18 +1079,20 @@ id|__FUNCTION__
 l_string|&quot;(), not finished, and no timeout!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|ret
+id|finished
 op_assign
-l_int|1
+id|FALSE
 suffix:semicolon
 )brace
 r_return
-id|ret
+id|finished
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irda_task_execute (instance, function, finished)&n; *&n; *    This function registers and tries to execute tasks that may take some&n; *    time to complete. We do it this hairy way since we may have been&n; *    called from interrupt context, so it&squot;s not possible to use&n; *    schedule_timeout() &n; */
 DECL|function|irda_task_execute
-r_int
+r_struct
+id|irda_task
+op_star
 id|irda_task_execute
 c_func
 (paren
@@ -1043,6 +1120,9 @@ r_struct
 id|irda_task
 op_star
 id|task
+suffix:semicolon
+r_int
+id|ret
 suffix:semicolon
 id|IRDA_DEBUG
 c_func
@@ -1074,8 +1154,7 @@ op_logical_neg
 id|task
 )paren
 r_return
-op_minus
-id|ENOMEM
+l_int|NULL
 suffix:semicolon
 id|task-&gt;state
 op_assign
@@ -1133,12 +1212,25 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* No time to waste, so lets get going! */
-r_return
+id|ret
+op_assign
 id|irda_task_kick
 c_func
 (paren
 id|task
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+r_else
+r_return
+id|task
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irda_task_timer_expired (data)&n; *&n; *    Task time has expired. We now try to execute task (again), and restart&n; *    the timer if the task has not finished yet&n; */
@@ -1216,10 +1308,7 @@ id|dev-&gt;addr_len
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;new_style
-op_assign
-l_int|1
-suffix:semicolon
+multiline_comment|/* dev-&gt;new_style       = 1; */
 multiline_comment|/* dev-&gt;destructor      = irda_device_destructor; */
 id|dev-&gt;type
 op_assign
@@ -1405,6 +1494,19 @@ id|dongle
 r_return
 l_int|NULL
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|dongle
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|dongle_t
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Bind the registration info to this particular instance */
 id|dongle-&gt;issue
 op_assign
@@ -1570,10 +1672,10 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function irda_device_set_raw_mode (self, mode)&n; *&n; *    &n; *&n; */
-DECL|function|irda_device_set_raw_mode
+multiline_comment|/*&n; * Function irda_device_set_mode (self, mode)&n; *&n; *    Set the Infrared device driver into mode where it sends and receives&n; *    data without using IrLAP framing. Check out the particular device&n; *    driver to find out which modes it support.&n; */
+DECL|function|irda_device_set_mode
 r_int
-id|irda_device_set_raw_mode
+id|irda_device_set_mode
 c_func
 (paren
 r_struct
@@ -1621,7 +1723,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|req.ifr_raw_mode
+id|req.ifr_mode
 op_assign
 id|mode
 suffix:semicolon
@@ -1642,14 +1744,14 @@ op_star
 op_amp
 id|req
 comma
-id|SIOCSRAWMODE
+id|SIOCSMODE
 )paren
 suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function setup_dma (idev, buffer, count, mode)&n; *&n; *    Setup the DMA channel&n; *&n; */
+multiline_comment|/*&n; * Function setup_dma (idev, buffer, count, mode)&n; *&n; *    Setup the DMA channel. Commonly used by ISA FIR drivers&n; *&n; */
 DECL|function|setup_dma
 r_void
 id|setup_dma

@@ -19,7 +19,7 @@ mdefine_line|#define _FP_MUL_MEAT_Q(R,X,Y)&t;&t;&t;&t;&t;&bslash;&n;  _FP_MUL_ME
 DECL|macro|_FP_DIV_MEAT_S
 mdefine_line|#define _FP_DIV_MEAT_S(R,X,Y)&t;_FP_DIV_MEAT_1_imm(S,R,X,Y,_FP_DIV_HELP_imm)
 DECL|macro|_FP_DIV_MEAT_D
-mdefine_line|#define _FP_DIV_MEAT_D(R,X,Y)&t;_FP_DIV_MEAT_1_udiv(D,R,X,Y)
+mdefine_line|#define _FP_DIV_MEAT_D(R,X,Y)&t;_FP_DIV_MEAT_1_udiv_norm(D,R,X,Y)
 DECL|macro|_FP_DIV_MEAT_Q
 mdefine_line|#define _FP_DIV_MEAT_Q(R,X,Y)&t;_FP_DIV_MEAT_2_udiv(Q,R,X,Y)
 DECL|macro|_FP_NANFRAC_S

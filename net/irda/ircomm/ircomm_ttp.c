@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_ttp.c&n; * Version:       &n; * Description:   Interface between IrCOMM and IrTTP&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 20:48:27 1999&n; * Modified at:   Sat Oct 30 12:55:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_ttp.c&n; * Version:       1.0&n; * Description:   Interface between IrCOMM and IrTTP&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 20:48:27 1999&n; * Modified at:   Mon Dec 13 11:35:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -183,7 +183,7 @@ id|info-&gt;daddr
 comma
 l_int|NULL
 comma
-id|SAR_DISABLE
+id|TTP_SAR_DISABLE
 comma
 id|userdata
 )paren
@@ -228,7 +228,7 @@ c_func
 (paren
 id|self-&gt;tsap
 comma
-id|SAR_DISABLE
+id|TTP_SAR_DISABLE
 comma
 id|skb
 )paren
@@ -294,7 +294,7 @@ c_func
 id|skb
 )paren
 op_ge
-l_int|1
+id|IRCOMM_HEADER_SIZE
 comma
 r_return
 op_minus
@@ -551,7 +551,7 @@ c_cond
 (paren
 id|max_sdu_size
 op_ne
-id|SAR_DISABLE
+id|TTP_SAR_DISABLE
 )paren
 (brace
 id|ERROR
@@ -561,12 +561,18 @@ id|__FUNCTION__
 l_string|&quot;(), SAR not allowed for IrCOMM!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|info.max_data_size
 op_assign
-id|irttp_get_max_seq_size
+id|irttp_get_max_seg_size
 c_func
 (paren
 id|self-&gt;tsap
@@ -703,7 +709,7 @@ c_cond
 (paren
 id|max_sdu_size
 op_ne
-id|SAR_DISABLE
+id|TTP_SAR_DISABLE
 )paren
 (brace
 id|ERROR
@@ -713,12 +719,18 @@ id|__FUNCTION__
 l_string|&quot;(), SAR not allowed for IrCOMM!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|info.max_data_size
 op_assign
-id|irttp_get_max_seq_size
+id|irttp_get_max_seg_size
 c_func
 (paren
 id|self-&gt;tsap
@@ -833,7 +845,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.4 1999/08/31 06:54:19 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
+multiline_comment|/* $Id: ebus.c,v 1.8 1999/11/27 22:40:38 zaitcev Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -14,10 +14,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/bpp.h&gt;
 DECL|macro|PROM_DEBUG
 macro_line|#undef PROM_DEBUG
-DECL|macro|DEBUG_FILL_EBUS_DEV
-macro_line|#undef DEBUG_FILL_EBUS_DEV
-macro_line|#ifdef PROM_DEBUG
-DECL|macro|dprintk
+macro_line|#if 0&t;/* separate from PROM_DEBUG for the sake of PROLL */
 mdefine_line|#define dprintk prom_printf
 macro_line|#else
 DECL|macro|dprintk
@@ -282,19 +279,24 @@ id|__FUNCTION__
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 op_assign
-id|dev-&gt;parent-&gt;base_address
+id|dev-&gt;parent-&gt;resource
 (braket
 id|regs
 (braket
 id|i
 )braket
 )braket
+dot
+id|start
 suffix:semicolon
+multiline_comment|/* XXX resource */
 )brace
 multiline_comment|/*&n;&t; * Houston, we have a problem...&n;&t; * Sometimes PROM supplies absolutely meaningless properties.&n;&t; * Still, we take what it gives since we have nothing better.&n;&t; * Children of ebus may be wired on any input pin of PCIC.&n;&t; */
 id|len
@@ -461,119 +463,8 @@ comma
 id|dev-&gt;prom_name
 )paren
 suffix:semicolon
-multiline_comment|/* P3 remove */
-id|printk
-c_func
-(paren
-l_string|&quot;EBUS: dev %s irq %d from PROM&bslash;n&quot;
-comma
-id|dev-&gt;prom_name
-comma
-id|dev-&gt;irqs
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef DEBUG_FILL_EBUS_DEV
-id|dprintk
-c_func
-(paren
-l_string|&quot;child &squot;%s&squot;: address%s&bslash;n&quot;
-comma
-id|dev-&gt;prom_name
-comma
-id|dev-&gt;num_addrs
-OG
-l_int|1
-ques
-c_cond
-l_string|&quot;es&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|dev-&gt;num_addrs
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dprintk
-c_func
-(paren
-l_string|&quot;        %016lx&bslash;n&quot;
-comma
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;num_irqs
-)paren
-(brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;        IRQ%s&quot;
-comma
-id|dev-&gt;num_irqs
-OG
-l_int|1
-ques
-c_cond
-l_string|&quot;s&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|dev-&gt;num_irqs
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dprintk
-c_func
-(paren
-l_string|&quot; %08x&quot;
-comma
-id|dev-&gt;irqs
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 DECL|function|fill_ebus_device
 r_void
@@ -620,6 +511,10 @@ comma
 id|n
 comma
 id|len
+suffix:semicolon
+r_int
+r_int
+id|baseaddr
 suffix:semicolon
 id|dev-&gt;prom_node
 op_assign
@@ -771,54 +666,55 @@ r_else
 (brace
 suffix:semicolon
 )brace
-id|dev-&gt;base_address
+multiline_comment|/*&n; * XXX Now as we have regions, why don&squot;t we make an on-demand allocation...&n; */
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 op_assign
-id|dev-&gt;bus-&gt;self-&gt;base_address
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|baseaddr
+op_assign
+id|dev-&gt;bus-&gt;self-&gt;resource
 (braket
 id|n
 )braket
-suffix:semicolon
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
-op_add_assign
+dot
+id|start
+op_plus
 id|regs
 (braket
 id|i
 )braket
 dot
 id|phys_addr
-suffix:semicolon
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* dev-&gt;resource[i].name = dev-&gt;prom_name; */
 r_if
 c_cond
 (paren
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
-)paren
-(brace
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
+(paren
+id|baseaddr
 op_assign
 (paren
 r_int
 r_int
 )paren
-id|sparc_alloc_io
+id|ioremap
+c_func
 (paren
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
-comma
-l_int|0
+id|baseaddr
 comma
 id|regs
 (braket
@@ -826,38 +722,8 @@ id|i
 )braket
 dot
 id|reg_size
-comma
-id|dev-&gt;prom_name
-comma
-l_int|0
-comma
-l_int|0
 )paren
-suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n; * This release_region() screwes those who do sparc_alloc_io().&n; * Change drivers which do check_region(). See drivers/block/floppy.c.&n; */
-multiline_comment|/* Some drivers call &squot;check_region&squot;, so we release it */
-id|release_region
-c_func
-(paren
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
-op_amp
-id|PAGE_MASK
-comma
-id|PAGE_SIZE
 )paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
 op_eq
 l_int|0
 )paren
@@ -865,13 +731,23 @@ l_int|0
 id|panic
 c_func
 (paren
-l_string|&quot;ebus: unable sparc_alloc_io for dev %s&quot;
+l_string|&quot;ebus: unable to remap dev %s&quot;
 comma
 id|dev-&gt;prom_name
 )paren
 suffix:semicolon
 )brace
 )brace
+id|dev-&gt;resource
+(braket
+id|i
+)braket
+dot
+id|start
+op_assign
+id|baseaddr
+suffix:semicolon
+multiline_comment|/* XXX Unaligned */
 )brace
 id|len
 op_assign
@@ -1020,119 +896,8 @@ comma
 id|dev-&gt;prom_name
 )paren
 suffix:semicolon
-multiline_comment|/* P3 remove */
-id|printk
-c_func
-(paren
-l_string|&quot;EBUS: child %s irq %d from PROM&bslash;n&quot;
-comma
-id|dev-&gt;prom_name
-comma
-id|dev-&gt;irqs
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef DEBUG_FILL_EBUS_DEV
-id|dprintk
-c_func
-(paren
-l_string|&quot;&squot;%s&squot;: address%s&bslash;n&quot;
-comma
-id|dev-&gt;prom_name
-comma
-id|dev-&gt;num_addrs
-OG
-l_int|1
-ques
-c_cond
-l_string|&quot;es&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|dev-&gt;num_addrs
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dprintk
-c_func
-(paren
-l_string|&quot;  %016lx&bslash;n&quot;
-comma
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;num_irqs
-)paren
-(brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;  IRQ%s&quot;
-comma
-id|dev-&gt;num_irqs
-OG
-l_int|1
-ques
-c_cond
-l_string|&quot;s&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|dev-&gt;num_irqs
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dprintk
-c_func
-(paren
-l_string|&quot; %08x&quot;
-comma
-id|dev-&gt;irqs
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1545,10 +1310,12 @@ suffix:semicolon
 id|base
 op_assign
 op_amp
-id|ebus-&gt;self-&gt;base_address
+id|ebus-&gt;self-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 r_for
 c_loop

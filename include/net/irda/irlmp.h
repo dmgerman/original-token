@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Tue Oct  5 15:20:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Fri Dec 10 13:23:01 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLMP_H
 DECL|macro|IRLMP_H
 mdefine_line|#define IRLMP_H
@@ -18,21 +18,18 @@ DECL|macro|LSAP_IAS
 mdefine_line|#define LSAP_IAS      0x00
 DECL|macro|LSAP_ANY
 mdefine_line|#define LSAP_ANY      0xff
+DECL|macro|LSAP_MAX
+mdefine_line|#define LSAP_MAX      0x6f /* 0x70-0x7f are reserved */
+DECL|macro|LSAP_CONNLESS
+mdefine_line|#define LSAP_CONNLESS 0x70 /* Connectionless LSAP, mostly used for Ultra */
 DECL|macro|DEV_ADDR_ANY
 mdefine_line|#define DEV_ADDR_ANY  0xffffffff
-multiline_comment|/* Predefined LSAPs used by the various servers */
-DECL|macro|TSAP_IRLAN
-mdefine_line|#define TSAP_IRLAN    0x05
-DECL|macro|LSAP_IRLPT
-mdefine_line|#define LSAP_IRLPT    0x06
-DECL|macro|TSAP_IROBEX
-mdefine_line|#define TSAP_IROBEX   0x07
-DECL|macro|TSAP_IRCOMM
-mdefine_line|#define TSAP_IRCOMM   0x08
 DECL|macro|LMP_HEADER
 mdefine_line|#define LMP_HEADER          2    /* Dest LSAP + Source LSAP */
 DECL|macro|LMP_CONTROL_HEADER
 mdefine_line|#define LMP_CONTROL_HEADER  4
+DECL|macro|LMP_PID_HEADER
+mdefine_line|#define LMP_PID_HEADER      1    /* Used by Ultra */
 DECL|macro|LMP_MAX_HEADER
 mdefine_line|#define LMP_MAX_HEADER      (LMP_CONTROL_HEADER+LAP_MAX_HEADER)
 DECL|macro|LM_MAX_CONNECTIONS
@@ -183,11 +180,18 @@ id|__u8
 id|dlsap_sel
 suffix:semicolon
 multiline_comment|/* Destination LSAP address (if connected) */
-DECL|member|tmp_skb
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+DECL|member|pid
+id|__u8
+id|pid
+suffix:semicolon
+multiline_comment|/* Used by connectionless LSAP */
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
+DECL|member|conn_skb
 r_struct
 id|sk_buff
 op_star
-id|tmp_skb
+id|conn_skb
 suffix:semicolon
 multiline_comment|/* Store skb here while connecting */
 DECL|member|watchdog_timer
@@ -256,6 +260,10 @@ op_star
 id|lsaps
 suffix:semicolon
 multiline_comment|/* LSAP associated with this link */
+DECL|member|refcount
+r_int
+id|refcount
+suffix:semicolon
 DECL|member|caddr
 id|__u8
 id|caddr
@@ -418,6 +426,9 @@ comma
 id|notify_t
 op_star
 id|notify
+comma
+id|__u8
+id|pid
 )paren
 suffix:semicolon
 r_void
@@ -675,21 +686,6 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
-r_inline
-r_void
-id|irlmp_udata_request
-c_func
-(paren
-r_struct
-id|lsap_cb
-op_star
-comma
-r_struct
-id|sk_buff
-op_star
-)paren
-suffix:semicolon
-r_inline
 r_void
 id|irlmp_data_indication
 c_func
@@ -703,7 +699,19 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
-r_inline
+r_int
+id|irlmp_udata_request
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
 r_void
 id|irlmp_udata_indication
 c_func
@@ -717,6 +725,34 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+r_int
+id|irlmp_connless_data_request
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+r_void
+id|irlmp_connless_data_indication
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
 r_void
 id|irlmp_status_request
 c_func

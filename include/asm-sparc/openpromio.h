@@ -49,6 +49,14 @@ DECL|macro|OPROMGETFBNAME
 mdefine_line|#define&t;OPROMGETFBNAME&t;&t;0x20004F0B
 DECL|macro|OPROMGETBOOTARGS
 mdefine_line|#define&t;OPROMGETBOOTARGS&t;0x20004F0C
+multiline_comment|/* Linux extensions */
+multiline_comment|/* Arguments in oprom_array: */
+DECL|macro|OPROMSETCUR
+mdefine_line|#define OPROMSETCUR&t;&t;0x20004FF0&t;/* int node - Sets current node */
+DECL|macro|OPROMPCI2NODE
+mdefine_line|#define OPROMPCI2NODE&t;&t;0x20004FF1&t;/* int pci_bus, pci_devfn - Sets current node to PCI device&squot;s node */
+DECL|macro|OPROMPATH2NODE
+mdefine_line|#define OPROMPATH2NODE&t;&t;0x20004FF2&t;/* char path[] - Set current node from fully qualified PROM path */
 multiline_comment|/*&n; * Return values from OPROMGETCONS:&n; */
 DECL|macro|OPROMCONS_NOT_WSCONS
 mdefine_line|#define OPROMCONS_NOT_WSCONS    0

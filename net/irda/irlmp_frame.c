@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.9&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Thu Jul  8 12:12:02 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.9&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Mon Dec 13 13:41:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -95,7 +95,7 @@ id|self-&gt;irlap
 comma
 id|skb
 comma
-id|FALSE
+id|TRUE
 )paren
 suffix:semicolon
 )brace
@@ -107,7 +107,7 @@ id|self-&gt;irlap
 comma
 id|skb
 comma
-id|TRUE
+id|FALSE
 )paren
 suffix:semicolon
 )brace
@@ -144,7 +144,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -234,17 +234,6 @@ op_assign
 l_int|0x00
 suffix:semicolon
 multiline_comment|/* rsvd */
-id|ASSERT
-c_func
-(paren
-id|self-&gt;irlap
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|irlap_data_request
 c_func
 (paren
@@ -252,7 +241,7 @@ id|self-&gt;irlap
 comma
 id|skb
 comma
-id|TRUE
+id|FALSE
 )paren
 suffix:semicolon
 )brace
@@ -267,13 +256,13 @@ id|lap_cb
 op_star
 id|self
 comma
-r_int
-id|reliable
-comma
 r_struct
 id|sk_buff
 op_star
 id|skb
+comma
+r_int
+id|unreliable
 )paren
 (brace
 r_struct
@@ -292,6 +281,15 @@ multiline_comment|/* Destination LSAP address */
 id|__u8
 op_star
 id|fp
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -375,7 +373,9 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;Incoming connection, source LSAP=%d, dest LSAP=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), incoming connection, &quot;
+l_string|&quot;source LSAP=%d, dest LSAP=%d&bslash;n&quot;
 comma
 id|slsap_sel
 comma
@@ -606,6 +606,12 @@ comma
 l_string|&quot;Access mode cmd not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -617,6 +623,12 @@ c_func
 l_int|0
 comma
 l_string|&quot;Access mode cnf not implemented!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_break
@@ -637,6 +649,12 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -645,10 +663,38 @@ r_else
 r_if
 c_cond
 (paren
-id|reliable
-op_eq
-id|LAP_RELIABLE
+id|unreliable
 )paren
+(brace
+multiline_comment|/* Optimize and bypass the state machine if possible */
+r_if
+c_cond
+(paren
+id|lsap-&gt;lsap_state
+op_eq
+id|LSAP_DATA_TRANSFER_READY
+)paren
+id|irlmp_udata_indication
+c_func
+(paren
+id|lsap
+comma
+id|skb
+)paren
+suffix:semicolon
+r_else
+id|irlmp_do_lsap_event
+c_func
+(paren
+id|lsap
+comma
+id|LM_UDATA_INDICATION
+comma
+id|skb
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 multiline_comment|/* Optimize and bypass the state machine if possible */
 r_if
@@ -678,24 +724,244 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
+)brace
+multiline_comment|/*&n; * Function irlmp_link_unitdata_indication (self, skb)&n; *&n; *    &n; *&n; */
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+DECL|function|irlmp_link_unitdata_indication
+r_void
+id|irlmp_link_unitdata_indication
+c_func
 (paren
-id|reliable
-op_eq
-id|LAP_UNRELIABLE
+r_struct
+id|lap_cb
+op_star
+id|self
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 (brace
-multiline_comment|/* Optimize and bypass the state machine if possible */
+r_struct
+id|lsap_cb
+op_star
+id|lsap
+suffix:semicolon
+id|__u8
+id|slsap_sel
+suffix:semicolon
+multiline_comment|/* Source (this) LSAP address */
+id|__u8
+id|dlsap_sel
+suffix:semicolon
+multiline_comment|/* Destination LSAP address */
+id|__u8
+id|pid
+suffix:semicolon
+multiline_comment|/* Protocol identifier */
+id|__u8
+op_star
+id|fp
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|LMP_LAP_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+OG
+l_int|2
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|fp
+op_assign
+id|skb-&gt;data
+suffix:semicolon
+multiline_comment|/*&n;&t; *  The next statements may be confusing, but we do this so that &n;&t; *  destination LSAP of received frame is source LSAP in our view&n;&t; */
+id|slsap_sel
+op_assign
+id|fp
+(braket
+l_int|0
+)braket
+op_amp
+id|LSAP_MASK
+suffix:semicolon
+id|dlsap_sel
+op_assign
+id|fp
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|pid
+op_assign
+id|fp
+(braket
+l_int|2
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|lsap-&gt;lsap_state
-op_eq
-id|LSAP_DATA_TRANSFER_READY
+id|pid
+op_amp
+l_int|0x80
 )paren
-id|irlmp_data_indication
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), extension in PID not supp!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Check if frame is addressed to the connectionless LSAP */
+r_if
+c_cond
+(paren
+(paren
+id|slsap_sel
+op_ne
+id|LSAP_CONNLESS
+)paren
+op_logical_or
+(paren
+id|dlsap_sel
+op_ne
+id|LSAP_CONNLESS
+)paren
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), dropping frame!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|lsap
+op_assign
+(paren
+r_struct
+id|lsap_cb
+op_star
+)paren
+id|hashbin_get_first
+c_func
+(paren
+id|irlmp-&gt;unconnected_lsaps
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|lsap
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *  Check if source LSAP and dest LSAP selectors and PID match.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|lsap-&gt;slsap_sel
+op_eq
+id|slsap_sel
+)paren
+op_logical_and
+(paren
+id|lsap-&gt;dlsap_sel
+op_eq
+id|dlsap_sel
+)paren
+op_logical_and
+(paren
+id|lsap-&gt;pid
+op_eq
+id|pid
+)paren
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+id|lsap
+op_assign
+(paren
+r_struct
+id|lsap_cb
+op_star
+)paren
+id|hashbin_get_next
+c_func
+(paren
+id|irlmp-&gt;unconnected_lsaps
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|lsap
+)paren
+id|irlmp_connless_data_indication
 c_func
 (paren
 id|lsap
@@ -704,18 +970,25 @@ id|skb
 )paren
 suffix:semicolon
 r_else
-id|irlmp_do_lsap_event
+(brace
+id|IRDA_DEBUG
 c_func
 (paren
-id|lsap
+l_int|0
 comma
-id|LM_UDATA_INDICATION
-comma
+id|__FUNCTION__
+l_string|&quot;(), found no matching LSAP!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
 id|skb
 )paren
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
 multiline_comment|/*&n; * Function irlmp_link_disconnect_indication (reason, userdata)&n; *&n; *    IrLAP has disconnected &n; *&n; */
 DECL|function|irlmp_link_disconnect_indication
 r_void
@@ -781,6 +1054,17 @@ op_assign
 id|DEV_ADDR_ANY
 suffix:semicolon
 multiline_comment|/* FIXME: must do something with the userdata if any */
+r_if
+c_cond
+(paren
+id|userdata
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|userdata
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *  Inform station state machine&n;&t; */
 id|irlmp_do_lap_event
 c_func
@@ -926,6 +1210,18 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t need use the userdata for now */
+r_if
+c_cond
+(paren
+id|userdata
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|userdata
+)paren
+suffix:semicolon
 multiline_comment|/* Copy QoS settings for this session */
 id|self-&gt;qos
 op_assign
@@ -988,8 +1284,8 @@ comma
 id|discovery
 )paren
 suffix:semicolon
+macro_line|#if 0   /* This will just cause a lot of connection collisions */
 multiline_comment|/* Just handle it the same way as a discovery confirm */
-macro_line|#if 0
 id|irlmp_do_lap_event
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Tue Nov 16 12:33:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Tue Dec 14 18:58:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -391,6 +391,8 @@ l_string|&quot;RESET_RESPONSE&quot;
 comma
 l_string|&quot;SEND_I_CMD&quot;
 comma
+l_string|&quot;SEND_UI_FRAME&quot;
+comma
 l_string|&quot;RECV_DISCOVERY_XID_CMD&quot;
 comma
 l_string|&quot;RECV_DISCOVERY_XID_RSP&quot;
@@ -645,7 +647,7 @@ id|skb_queue_len
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 op_eq
 l_int|0
@@ -716,15 +718,17 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|3
 comma
 id|__FUNCTION__
-l_string|&quot;(), Timeout=%d&bslash;n&quot;
+l_string|&quot;(), timeout=%d (%ld)&bslash;n&quot;
 comma
 id|timeout
+comma
+id|jiffies
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IRDA_FAST_RR */
 r_if
 c_cond
 (paren
@@ -802,7 +806,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|3
 comma
 id|__FUNCTION__
 l_string|&quot;(), event = %s, state = %s&bslash;n&quot;
@@ -859,7 +863,7 @@ id|skb_queue_len
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 )paren
 (brace
@@ -874,7 +878,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 )paren
 op_ne
@@ -1040,6 +1044,7 @@ id|self-&gt;state
 op_assign
 id|state
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_DYNAMIC_WINDOW
 multiline_comment|/*&n;&t; *  If we are swithing away from a XMIT state then we are allowed to &n;&t; *  transmit a maximum number of bytes again when we enter the XMIT &n;&t; *  state again. Since its possible to &quot;switch&quot; from XMIT to XMIT,&n;&t; *  we cannot do this when swithing into the XMIT state :-)&n;&t; */
 r_if
 c_cond
@@ -1058,8 +1063,9 @@ id|LAP_XMIT_S
 )paren
 id|self-&gt;bytes_left
 op_assign
-id|self-&gt;window_bytes
+id|self-&gt;line_capacity
 suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_DYNAMIC_WINDOW */
 )brace
 multiline_comment|/*&n; * Function irlap_state_ndm (event, skb, frame)&n; *&n; *    NDM (Normal Disconnected Mode) state&n; *&n; */
 DECL|function|irlap_state_ndm
@@ -1095,6 +1101,9 @@ r_int
 id|ret
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1300,15 +1309,6 @@ l_string|&quot;(), media busy!&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* irlap-&gt;log.condition = MEDIA_BUSY; */
-multiline_comment|/* Always switch state before calling upper layers */
-id|irlap_next_state
-c_func
-(paren
-id|self
-comma
-id|LAP_NDM
-)paren
-suffix:semicolon
 multiline_comment|/* This will make IrLMP try again */
 id|irlap_discovery_confirm
 c_func
@@ -1486,6 +1486,126 @@ id|skb
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+r_case
+id|SEND_UI_FRAME
+suffix:colon
+multiline_comment|/* Only allowed to repeat an operation twice */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+(paren
+id|i
+OL
+l_int|2
+)paren
+op_logical_and
+(paren
+id|self-&gt;media_busy
+op_eq
+id|FALSE
+)paren
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|self-&gt;txq_ultra
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|irlap_send_ui_frame
+c_func
+(paren
+id|self
+comma
+id|skb
+comma
+id|CBROADCAST
+comma
+id|CMD_FRAME
+)paren
+suffix:semicolon
+r_else
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|2
+)paren
+(brace
+multiline_comment|/* Force us to listen 500 ms again */
+id|irda_device_set_media_busy
+c_func
+(paren
+id|self-&gt;netdev
+comma
+id|TRUE
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|RECV_UI_FRAME
+suffix:colon
+multiline_comment|/* Only accept broadcast frames in NDM mode */
+r_if
+c_cond
+(paren
+id|info-&gt;caddr
+op_ne
+id|CBROADCAST
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), not a broadcast frame!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+r_else
+id|irlap_unitdata_indication
+c_func
+(paren
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_ULTRA */
 r_case
 id|RECV_TEST_CMD
 suffix:colon
@@ -1699,6 +1819,12 @@ l_string|&quot;maybe the discovery timeout has been set to &quot;
 l_string|&quot;short?&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1718,19 +1844,12 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/* Keep state */
+multiline_comment|/* irlap_next_state(self, LAP_QUERY);  */
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
-)paren
-suffix:semicolon
-multiline_comment|/* Keep state */
-id|irlap_next_state
-c_func
-(paren
-id|self
-comma
-id|LAP_QUERY
 )paren
 suffix:semicolon
 r_break
@@ -1832,9 +1951,7 @@ c_func
 l_int|2
 comma
 id|__FUNCTION__
-l_string|&quot;(), Unknown event %d, %s&bslash;n&quot;
-comma
-id|event
+l_string|&quot;(), Unknown event %s&bslash;n&quot;
 comma
 id|irlap_event
 (braket
@@ -2199,7 +2316,6 @@ id|event
 r_case
 id|CONNECT_RESPONSE
 suffix:colon
-multiline_comment|/* skb_pull(skb, 11); */
 id|skb_pull
 c_func
 (paren
@@ -2256,9 +2372,6 @@ id|irlap_apply_connection_parameters
 c_func
 (paren
 id|self
-comma
-op_amp
-id|self-&gt;qos_tx
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;&t; * Sending this frame will force a speed change after it has&n;&t;&t; * been sent&n;&t;&t; */
@@ -2288,6 +2401,12 @@ comma
 id|LAP_NRM_S
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2308,6 +2427,12 @@ c_func
 id|self
 comma
 id|LAP_NDM
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_break
@@ -2630,9 +2755,14 @@ id|irlap_apply_connection_parameters
 c_func
 (paren
 id|self
+)paren
+suffix:semicolon
+id|irlap_next_state
+c_func
+(paren
+id|self
 comma
-op_amp
-id|self-&gt;qos_tx
+id|LAP_NRM_S
 )paren
 suffix:semicolon
 id|irlap_connect_confirm
@@ -2650,14 +2780,6 @@ c_func
 id|self
 comma
 id|self-&gt;wd_timeout
-)paren
-suffix:semicolon
-id|irlap_next_state
-c_func
-(paren
-id|self
-comma
-id|LAP_NRM_S
 )paren
 suffix:semicolon
 )brace
@@ -2750,9 +2872,6 @@ id|irlap_apply_connection_parameters
 c_func
 (paren
 id|self
-comma
-op_amp
-id|self-&gt;qos_tx
 )paren
 suffix:semicolon
 id|self-&gt;retry_count
@@ -2820,6 +2939,12 @@ c_func
 id|self
 comma
 id|LAP_DISC_INDICATION
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_break
@@ -2962,15 +3087,12 @@ id|self-&gt;remote_busy
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_IRDA_DYNAMIC_WINDOW
 multiline_comment|/*&n;&t;&t;&t; *  Test if we have transmitted more bytes over the &n;&t;&t;&t; *  link than its possible to do with the current &n;&t;&t;&t; *  speed and turn-around-time.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
-(paren
 id|skb-&gt;len
-op_plus
-id|self-&gt;bofs_count
-)paren
 OG
 id|self-&gt;bytes_left
 )paren
@@ -2981,15 +3103,15 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;(), Not allowed to &quot;
-l_string|&quot;transmit more bytes!&bslash;n&quot;
+l_string|&quot;(), Not allowed to transmit more &quot;
+l_string|&quot;bytes!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|skb_queue_head
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 comma
 id|skb
 )paren
@@ -3002,12 +3124,9 @@ suffix:semicolon
 )brace
 id|self-&gt;bytes_left
 op_sub_assign
-(paren
 id|skb-&gt;len
-op_plus
-id|self-&gt;bofs_count
-)paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_DYNAMIC_WINDOW */
 multiline_comment|/*&n;&t;&t;&t; *  Send data with poll bit cleared only if window &gt; 1&n;&t;&t;&t; *  and there is more frames after this one to be sent&n;&t;&t;&t; */
 r_if
 c_cond
@@ -3022,7 +3141,7 @@ id|skb_queue_len
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 OG
 l_int|0
@@ -3076,7 +3195,7 @@ id|self-&gt;fast_RR
 op_assign
 id|FALSE
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IRDA_FAST_RR */
 )brace
 r_else
 (brace
@@ -3093,7 +3212,7 @@ id|skb_queue_head
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 comma
 id|skb
 )paren
@@ -3110,6 +3229,17 @@ suffix:semicolon
 r_case
 id|POLL_TIMER_EXPIRED
 suffix:colon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|3
+comma
+id|__FUNCTION__
+l_string|&quot;(), POLL_TIMER_EXPIRED (%ld)&bslash;n&quot;
+comma
+id|jiffies
+)paren
+suffix:semicolon
 id|irlap_send_rr_frame
 c_func
 (paren
@@ -3333,6 +3463,12 @@ comma
 id|LAP_DISC_INDICATION
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3492,7 +3628,7 @@ id|self-&gt;fast_RR
 op_assign
 id|FALSE
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IRDA_FAST_RR */
 id|ASSERT
 c_func
 (paren
@@ -3543,7 +3679,7 @@ id|NR_EXPECTED
 )paren
 )paren
 (brace
-multiline_comment|/* &n;&t;&t;&t; *  poll bit cleared?&n;&t;&t;&t; */
+multiline_comment|/*  poll bit cleared?  */
 r_if
 c_cond
 (paren
@@ -3589,6 +3725,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 )brace
@@ -3653,6 +3791,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* This is the last frame */
@@ -3668,7 +3808,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *  Unexpected next to send (Ns)&n;&t;&t; */
+multiline_comment|/* Unexpected next to send (Ns) */
 r_if
 c_cond
 (paren
@@ -3856,6 +3996,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 )brace
@@ -3900,6 +4042,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 )brace
@@ -3928,7 +4072,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;IrLAP: unexpected nr and ns!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), unexpected nr and ns!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -3974,6 +4119,12 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -4050,6 +4201,12 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -4085,7 +4242,7 @@ suffix:semicolon
 r_case
 id|RECV_UI_FRAME
 suffix:colon
-multiline_comment|/*  poll bit cleared?  */
+multiline_comment|/* Poll bit cleared? */
 r_if
 c_cond
 (paren
@@ -4093,12 +4250,14 @@ op_logical_neg
 id|info-&gt;pf
 )paren
 (brace
-id|irlap_unit_data_indication
+id|irlap_data_indication
 c_func
 (paren
 id|self
 comma
 id|skb
+comma
+id|TRUE
 )paren
 suffix:semicolon
 id|irlap_next_state
@@ -4119,12 +4278,14 @@ op_amp
 id|self-&gt;final_timer
 )paren
 suffix:semicolon
-id|irlap_unit_data_indication
+id|irlap_data_indication
 c_func
 (paren
 id|self
 comma
 id|skb
+comma
+id|TRUE
 )paren
 suffix:semicolon
 id|irlap_start_poll_timer
@@ -4330,11 +4491,6 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-)paren
 id|dev_kfree_skb
 c_func
 (paren
@@ -4416,11 +4572,6 @@ comma
 id|self-&gt;poll_timeout
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
 id|dev_kfree_skb
 c_func
 (paren
@@ -4457,11 +4608,6 @@ c_func
 id|self
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
 id|dev_kfree_skb
 c_func
 (paren
@@ -4490,7 +4636,7 @@ id|self-&gt;add_wait
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|1
 comma
 l_string|&quot;FINAL_TIMER_EXPIRED when receiving a &quot;
 l_string|&quot;frame! Waiting a little bit more!&bslash;n&quot;
@@ -4734,11 +4880,6 @@ comma
 id|LAP_DISC_INDICATION
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
 id|dev_kfree_skb
 c_func
 (paren
@@ -5122,6 +5263,12 @@ comma
 id|LAP_NO_RESPONSE
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -5164,6 +5311,12 @@ c_func
 id|self
 comma
 id|self-&gt;poll_timeout
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_break
@@ -5339,17 +5492,16 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), SNRM frame contained an I &quot;
-l_string|&quot;field!&bslash;n&quot;
+l_string|&quot;(), SNRM frame contained an I field!&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_default
@@ -5487,15 +5639,12 @@ id|self-&gt;remote_busy
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_IRDA_DYNAMIC_WINDOW
 multiline_comment|/*&n;&t;&t;&t; *  Test if we have transmitted more bytes over the &n;&t;&t;&t; *  link than its possible to do with the current &n;&t;&t;&t; *  speed and turn-around-time.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
-(paren
 id|skb-&gt;len
-op_plus
-id|self-&gt;bofs_count
-)paren
 OG
 id|self-&gt;bytes_left
 )paren
@@ -5504,7 +5653,7 @@ id|skb_queue_head
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 comma
 id|skb
 )paren
@@ -5526,12 +5675,9 @@ multiline_comment|/* Try again later */
 )brace
 id|self-&gt;bytes_left
 op_sub_assign
-(paren
 id|skb-&gt;len
-op_plus
-id|self-&gt;bofs_count
-)paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_DYNAMIC_WINDOW */
 multiline_comment|/*&n;&t;&t;&t; *  Send data with final bit cleared only if window &gt; 1&n;&t;&t;&t; *  and there is more frames to be sent&n;&t;&t;&t; */
 r_if
 c_cond
@@ -5546,7 +5692,7 @@ id|skb_queue_len
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 OG
 l_int|0
@@ -5600,7 +5746,7 @@ r_else
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to send!&bslash;n&quot;
@@ -5610,7 +5756,7 @@ id|skb_queue_head
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 comma
 id|skb
 )paren
@@ -5628,7 +5774,7 @@ suffix:colon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %s&bslash;n&quot;
@@ -5864,6 +6010,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 r_break
@@ -5907,6 +6055,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* Any pending data requests?  */
@@ -5918,7 +6068,7 @@ id|skb_queue_len
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 OG
 l_int|0
@@ -6145,6 +6295,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 id|irlap_start_wd_timer
@@ -6200,6 +6352,8 @@ c_func
 id|self
 comma
 id|skb
+comma
+id|FALSE
 )paren
 suffix:semicolon
 id|irlap_start_wd_timer
@@ -6211,6 +6365,8 @@ id|self-&gt;wd_timeout
 )paren
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -6226,6 +6382,12 @@ c_func
 l_int|0
 comma
 l_string|&quot;NRM_S, NR_INVALID not implemented!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 )brace
@@ -6245,6 +6407,12 @@ comma
 l_string|&quot;NRM_S, NS_INVALID not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -6259,12 +6427,14 @@ op_logical_neg
 id|info-&gt;pf
 )paren
 (brace
-id|irlap_unit_data_indication
+id|irlap_data_indication
 c_func
 (paren
 id|self
 comma
 id|skb
+comma
+id|TRUE
 )paren
 suffix:semicolon
 id|irlap_next_state
@@ -6288,7 +6458,7 @@ id|skb_queue_len
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 OG
 l_int|0
@@ -6304,12 +6474,14 @@ op_logical_neg
 id|self-&gt;remote_busy
 )paren
 (brace
-id|irlap_unit_data_indication
+id|irlap_data_indication
 c_func
 (paren
 id|self
 comma
 id|skb
+comma
+id|TRUE
 )paren
 suffix:semicolon
 id|del_timer
@@ -6330,12 +6502,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|irlap_unit_data_indication
+id|irlap_data_indication
 c_func
 (paren
 id|self
 comma
 id|skb
+comma
+id|TRUE
 )paren
 suffix:semicolon
 id|irlap_wait_min_turn_around
@@ -6414,7 +6588,7 @@ id|skb_queue_len
 c_func
 (paren
 op_amp
-id|self-&gt;tx_list
+id|self-&gt;txq
 )paren
 OG
 l_int|0
@@ -6574,11 +6748,6 @@ l_string|&quot;(), invalid nr not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-)paren
 id|dev_kfree_skb
 c_func
 (paren
@@ -6637,17 +6806,16 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), SNRM frame contained an &quot;
-l_string|&quot;I-field!&bslash;n&quot;
+l_string|&quot;(), SNRM frame contained an I-field!&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -6823,11 +6991,6 @@ comma
 id|LAP_DISC_INDICATION
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
 id|dev_kfree_skb
 c_func
 (paren
@@ -6874,6 +7037,12 @@ c_func
 id|self
 comma
 id|LAP_NRM_S
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_break
@@ -6948,10 +7117,21 @@ id|event
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -6993,6 +7173,17 @@ l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), Not implemented!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_return
@@ -7159,10 +7350,21 @@ id|event
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.18 1999/09/10 10:44:40 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.19 1999/12/17 12:32:13 jj Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -10,6 +10,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* The abstraction used here is that there are PCI controllers,&n; * each with one (Sabre) or two (PSYCHO/SCHIZO) PCI bus modules&n; * underneath.  Each PCI controller has a single IOMMU shared&n; * by the PCI bus modules underneath, and if a streaming buffer&n; * is present, each PCI bus module has it&squot;s own. (ie. the IOMMU&n; * is shared between PBMs, the STC is not)  Furthermore, each&n; * PCI bus module controls it&squot;s own autonomous PCI bus.&n; */
+DECL|macro|PBM_LOGCLUSTERS
+mdefine_line|#define PBM_LOGCLUSTERS 3
+DECL|macro|PBM_NCLUSTERS
+mdefine_line|#define PBM_NCLUSTERS (1 &lt;&lt; PBM_LOGCLUSTERS)
 r_struct
 id|pci_controller_info
 suffix:semicolon
@@ -36,22 +40,17 @@ op_star
 id|page_table
 suffix:semicolon
 multiline_comment|/* The page table itself. */
-DECL|member|page_table_sz
+DECL|member|page_table_sz_bits
 r_int
-id|page_table_sz
+id|page_table_sz_bits
 suffix:semicolon
-multiline_comment|/* How many pages does it map? */
+multiline_comment|/* log2 of ow many pages does it map? */
 multiline_comment|/* Base PCI memory space address where IOMMU mappings&n;&t; * begin.&n;&t; */
 DECL|member|page_table_map_base
 id|u32
 id|page_table_map_base
 suffix:semicolon
 multiline_comment|/* IOMMU Controller Registers */
-DECL|member|iommu_has_ctx_flush
-r_int
-id|iommu_has_ctx_flush
-suffix:semicolon
-multiline_comment|/* Feature test. */
 DECL|member|iommu_control
 r_int
 r_int
@@ -82,6 +81,14 @@ r_int
 r_int
 id|write_complete_reg
 suffix:semicolon
+multiline_comment|/* If PBM_NCLUSTERS is ever decreased to 4 or lower,&n;&t; * or if largest supported page_table_sz * 8K goes above&n;&t; * 2GB, you must increase the size of the type of&n;&t; * these counters.  You have been duly warned. -DaveM&n;&t; */
+DECL|member|lowest_free
+id|u16
+id|lowest_free
+(braket
+id|PBM_NCLUSTERS
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* This describes a PCI bus module&squot;s streaming buffer. */
@@ -94,11 +101,6 @@ r_int
 id|strbuf_enabled
 suffix:semicolon
 multiline_comment|/* Present and using it? */
-DECL|member|strbuf_has_ctx_flush
-r_int
-id|strbuf_has_ctx_flush
-suffix:semicolon
-multiline_comment|/* Supports context flushing? */
 multiline_comment|/* Streaming Buffer Control Registers */
 DECL|member|strbuf_control
 r_int

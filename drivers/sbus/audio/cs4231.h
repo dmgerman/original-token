@@ -1,154 +1,60 @@
-multiline_comment|/*&n; * drivers/sbus/audio/cs4231.h&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright (C) 1997 Derrick J. Brashear (shadow@dementia.org)&n; */
+multiline_comment|/* $Id: cs4231.h,v 1.13 1999/09/21 14:37:27 davem Exp $&n; * drivers/sbus/audio/cs4231.h&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright (C) 1997 Derrick J. Brashear (shadow@dementia.org)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _CS4231_H_
 DECL|macro|_CS4231_H_
 mdefine_line|#define _CS4231_H_
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* According to the CS4231A data provided on CS web site and sun&squot;s includes */
-DECL|struct|cs4231_regs
-r_struct
-id|cs4231_regs
-(brace
-DECL|member|iar
-id|__volatile__
-id|__u8
-id|iar
-suffix:semicolon
-multiline_comment|/* Index Address Register */
-DECL|member|pad0
-id|__volatile__
-id|__u8
-id|pad0
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|idr
-id|__volatile__
-id|__u8
-id|idr
-suffix:semicolon
-multiline_comment|/* Indexed Data Register */
-DECL|member|pad1
-id|__volatile__
-id|__u8
-id|pad1
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|statr
-id|__volatile__
-id|__u8
-id|statr
-suffix:semicolon
-multiline_comment|/* Status Register */
-DECL|member|pad2
-id|__volatile__
-id|__u8
-id|pad2
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|piodr
-id|__volatile__
-id|__u8
-id|piodr
-suffix:semicolon
-multiline_comment|/* PIO Data Register */
-DECL|member|pad3
-id|__volatile__
-id|__u8
-id|pad3
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|dmacsr
-id|__volatile__
-id|__u32
-id|dmacsr
-suffix:semicolon
-multiline_comment|/* APC CSR */
-DECL|member|dmapad
-id|__volatile__
-id|__u32
-id|dmapad
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|dmacva
-id|__volatile__
-id|__u32
-id|dmacva
-suffix:semicolon
-multiline_comment|/* Capture Virtual Address */
-DECL|member|dmacc
-id|__volatile__
-id|__u32
-id|dmacc
-suffix:semicolon
-multiline_comment|/* Capture Count */
-DECL|member|dmacnva
-id|__volatile__
-id|__u32
-id|dmacnva
-suffix:semicolon
-multiline_comment|/* Capture Next Virtual Address */
-DECL|member|dmacnc
-id|__volatile__
-id|__u32
-id|dmacnc
-suffix:semicolon
-multiline_comment|/* Capture Next Count */
-DECL|member|dmapva
-id|__volatile__
-id|__u32
-id|dmapva
-suffix:semicolon
-multiline_comment|/* Playback Virtual Address */
-DECL|member|dmapc
-id|__volatile__
-id|__u32
-id|dmapc
-suffix:semicolon
-multiline_comment|/* Playback Count */
-DECL|member|dmapnva
-id|__volatile__
-id|__u32
-id|dmapnva
-suffix:semicolon
-multiline_comment|/* Playback Next Virtual Address */
-DECL|member|dmapnc
-id|__volatile__
-id|__u32
-id|dmapnc
-suffix:semicolon
-multiline_comment|/* Playback Next Count */
-)brace
-suffix:semicolon
+DECL|macro|IAR
+mdefine_line|#define IAR&t;0x00UL&t;/* Index Address Register */
+DECL|macro|IDR
+mdefine_line|#define IDR&t;0x04UL&t;/* Index Data Register */
+DECL|macro|STAT
+mdefine_line|#define STAT&t;0x08UL&t;/* Status Register */
+DECL|macro|PIOD
+mdefine_line|#define PIOD&t;0x0cUL&t;/* PIO Data Register */
+DECL|macro|APCCSR
+mdefine_line|#define APCCSR&t;0x10UL&t;/* APC DMA CSR */
+DECL|macro|APCCVA
+mdefine_line|#define APCCVA&t;0x20UL&t;/* APC Capture DMA Address */
+DECL|macro|APCCC
+mdefine_line|#define APCCC&t;0x24UL&t;/* APC Capture Count */
+DECL|macro|APCCNVA
+mdefine_line|#define APCCNVA&t;0x28UL&t;/* APC Capture DMA Next Address */
+DECL|macro|APCCNC
+mdefine_line|#define APCCNC&t;0x2cUL&t;/* APC Capture Next Count */
+DECL|macro|APCPVA
+mdefine_line|#define APCPVA&t;0x30UL&t;/* APC Play DMA Address */
+DECL|macro|APCPC
+mdefine_line|#define APCPC&t;0x34UL&t;/* APC Play Count */
+DECL|macro|APCPNVA
+mdefine_line|#define APCPNVA&t;0x38UL&t;/* APC Play DMA Next Address */
+DECL|macro|APCPNC
+mdefine_line|#define APCPNC&t;0x3cUL&t;/* APC Play Next Count */
+multiline_comment|/* EBUS DMA Registers */
+DECL|macro|EBDMA_CSR
+mdefine_line|#define EBDMA_CSR&t;0x00UL&t;/* Control/Status */
+DECL|macro|EBDMA_ADDR
+mdefine_line|#define EBDMA_ADDR&t;0x04UL&t;/* DMA Address */
+DECL|macro|EBDMA_COUNT
+mdefine_line|#define EBDMA_COUNT&t;0x08UL&t;/* DMA Count */
 multiline_comment|/* Our structure for each chip */
 DECL|struct|cs4231_chip
 r_struct
 id|cs4231_chip
 (brace
 DECL|member|regs
-r_struct
-id|cs4231_regs
-op_star
+r_int
+r_int
 id|regs
 suffix:semicolon
 DECL|member|eb2c
-r_struct
-id|linux_ebus_dma
-op_star
+r_int
+r_int
 id|eb2c
 suffix:semicolon
 DECL|member|eb2p
-r_struct
-id|linux_ebus_dma
-op_star
+r_int
+r_int
 id|eb2p
 suffix:semicolon
 DECL|member|perchip_info
@@ -195,8 +101,7 @@ id|output_ptr
 suffix:semicolon
 DECL|member|output_size
 r_volatile
-r_int
-r_int
+id|__u32
 id|output_size
 suffix:semicolon
 DECL|member|output_dma_handle
@@ -210,8 +115,7 @@ suffix:semicolon
 DECL|member|output_dma_size
 DECL|member|output_next_dma_size
 r_volatile
-r_int
-r_int
+id|__u32
 id|output_dma_size
 comma
 id|output_next_dma_size
@@ -225,8 +129,7 @@ id|input_ptr
 suffix:semicolon
 DECL|member|input_size
 r_volatile
-r_int
-r_int
+id|__u32
 id|input_size
 suffix:semicolon
 DECL|member|input_dma_handle
@@ -240,8 +143,7 @@ suffix:semicolon
 DECL|member|input_dma_size
 DECL|member|input_next_dma_size
 r_volatile
-r_int
-r_int
+id|__u32
 id|input_dma_size
 comma
 id|input_next_dma_size
@@ -249,37 +151,35 @@ suffix:semicolon
 multiline_comment|/* Number of buffers in the pipe. */
 DECL|member|playing_count
 r_volatile
-r_int
-r_int
+id|__u32
 id|playing_count
 suffix:semicolon
 DECL|member|recording_count
 r_volatile
-r_int
-r_int
+id|__u32
 id|recording_count
 suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef EB4231_SUPPORT
 DECL|macro|CS4231_READ32
-mdefine_line|#define CS4231_READ32(__C, __REG) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? readl((unsigned long)(__REG)) : (*(__REG)))
+mdefine_line|#define CS4231_READ32(__C, __REG)&t;&t;&bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ?&t;&bslash;&n;&t;readl((__REG)) :&t;&t;&t;&bslash;&n;&t;sbus_readl((__REG)))
 DECL|macro|CS4231_READ8
-mdefine_line|#define CS4231_READ8(__C, __REG) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? readb((unsigned long)(__REG)) : (*(__REG)))
+mdefine_line|#define CS4231_READ8(__C, __REG) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ?&t;&bslash;&n;&t;readb((__REG)) :&t;&t;&t;&bslash;&n;&t;sbus_readb((__REG)))
 DECL|macro|CS4231_WRITE32
-mdefine_line|#define CS4231_WRITE32(__C, __REG, __VAL) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? &bslash;&n;         writel((__VAL), (unsigned long)(__REG)) : &bslash;&n;         (*(__REG) = (__VAL)))
+mdefine_line|#define CS4231_WRITE32(__C, __REG, __VAL)&t;&bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ?&t;&bslash;&n;         writel((__VAL), (__REG)) :&t;&t;&bslash;&n;         sbus_writel((__VAL), (__REG)))
 DECL|macro|CS4231_WRITE8
-mdefine_line|#define CS4231_WRITE8(__C, __REG, __VAL) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? &bslash;&n;         writeb((__VAL), (unsigned long)(__REG)) : &bslash;&n;         (*(__REG) = (__VAL)))
+mdefine_line|#define CS4231_WRITE8(__C, __REG, __VAL)&t;&bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ?&t;&bslash;&n;         writeb((__VAL), (__REG)) :&t;&t;&bslash;&n;         sbus_writeb((__VAL), (__REG)))
 macro_line|#else
 multiline_comment|/* We can assume all is SBUS in this case. */
 DECL|macro|CS4231_READ32
-mdefine_line|#define CS4231_READ32(__C, __REG) (*(__REG))
+mdefine_line|#define CS4231_READ32(__C, __REG) sbus_readl((__REG))
 DECL|macro|CS4231_READ8
-mdefine_line|#define CS4231_READ8(__C, __REG) (*(__REG))
+mdefine_line|#define CS4231_READ8(__C, __REG) sbus_readb((__REG))
 DECL|macro|CS4231_WRITE32
-mdefine_line|#define CS4231_WRITE32(__C, __REG, __VAL) (*(__REG) = (__VAL))
+mdefine_line|#define CS4231_WRITE32(__C, __REG, __VAL) sbus_writel((__VAL), (__REG))
 DECL|macro|CS4231_WRITE8
-mdefine_line|#define CS4231_WRITE8(__C, __REG, __VAL) (*(__REG) = (__VAL))
+mdefine_line|#define CS4231_WRITE8(__C, __REG, __VAL) sbus_writeb((__VAL), (__REG))
 macro_line|#endif
 multiline_comment|/* Local status bits */
 DECL|macro|CS_STATUS_NEED_INIT
@@ -543,17 +443,17 @@ mdefine_line|#define APC_CDMA_READY  0x04     /* Capture DMA Go */
 DECL|macro|APC_CHIP_RESET
 mdefine_line|#define APC_CHIP_RESET  0x01     /* Reset the chip */
 DECL|macro|APC_INIT_SETUP
-mdefine_line|#define APC_INIT_SETUP  (APC_CDMA_READY | APC_PDMA_READY | APC_XINT_ENA | APC_XINT_PLAY | APC_XINT_GENL | APC_INT_PENDING | APC_PLAY_INT | APC_CAPT_INT | APC_GENL_INT) 
+mdefine_line|#define APC_INIT_SETUP  (APC_CDMA_READY | APC_PDMA_READY | APC_XINT_ENA | &bslash;&n;&t;&t;&t; APC_XINT_PLAY | APC_XINT_GENL | APC_INT_PENDING | &bslash;&n;&t;&t;&t; APC_PLAY_INT | APC_CAPT_INT | APC_GENL_INT) 
 DECL|macro|APC_PLAY_SETUP
-mdefine_line|#define APC_PLAY_SETUP  (APC_GENL_INT | APC_PLAY_INT | APC_XINT_ENA | APC_XINT_PLAY | APC_XINT_EMPT | APC_XINT_GENL | APC_XINT_PENA | APC_PDMA_READY)
+mdefine_line|#define APC_PLAY_SETUP  (APC_GENL_INT | APC_PLAY_INT | APC_XINT_ENA | &bslash;&n;&t;&t;&t; APC_XINT_PLAY | APC_XINT_EMPT | APC_XINT_GENL | &bslash;&n;&t;&t;&t; APC_XINT_PENA | APC_PDMA_READY)
 DECL|macro|APC_CAPT_SETUP
-mdefine_line|#define APC_CAPT_SETUP  (APC_GENL_INT | APC_CAPT_INT | APC_XINT_ENA | APC_XINT_CAPT | APC_XINT_CEMP | APC_XINT_GENL | APC_CDMA_READY)
+mdefine_line|#define APC_CAPT_SETUP  (APC_GENL_INT | APC_CAPT_INT | APC_XINT_ENA | &bslash;&n;&t;&t;&t; APC_XINT_CAPT | APC_XINT_CEMP | APC_XINT_GENL | &bslash;&n;&t;&t;&t; APC_CDMA_READY)
 multiline_comment|/* Following are EB2 CSR register definitions for the Sparc */
 multiline_comment|/* asm/ebus.h has the base settings */
 DECL|macro|EB2_PLAY_SETUP
-mdefine_line|#define EB2_PLAY_SETUP (EBUS_DCSR_BURST_SZ_8|EBUS_DCSR_INT_EN|EBUS_DCSR_EN_DMA|EBUS_DCSR_EN_CNT|EBUS_DCSR_TC)
+mdefine_line|#define EB2_PLAY_SETUP (EBUS_DCSR_BURST_SZ_8 | EBUS_DCSR_INT_EN | EBUS_DCSR_EN_DMA | &bslash;&n;&t;&t;&t;EBUS_DCSR_EN_CNT | EBUS_DCSR_TC)
 DECL|macro|EB2_CAPT_SETUP
-mdefine_line|#define EB2_CAPT_SETUP (EBUS_DCSR_BURST_SZ_8|EBUS_DCSR_INT_EN|EBUS_DCSR_EN_DMA|EBUS_DCSR_EN_CNT|EBUS_DCSR_TC|EBUS_DCSR_WRITE)
+mdefine_line|#define EB2_CAPT_SETUP (EBUS_DCSR_BURST_SZ_8 | EBUS_DCSR_INT_EN | EBUS_DCSR_EN_DMA| &bslash;&n;&t;&t;&t;EBUS_DCSR_EN_CNT | EBUS_DCSR_TC | EBUS_DCSR_WRITE)
 DECL|macro|CS4231_MIN_ATEN
 mdefine_line|#define CS4231_MIN_ATEN     (0)
 DECL|macro|CS4231_MAX_ATEN
@@ -578,5 +478,5 @@ DECL|macro|CS4231_CHANNELS
 mdefine_line|#define CS4231_CHANNELS     (1)             /* channels/sample */
 DECL|macro|CS4231_RATE
 mdefine_line|#define CS4231_RATE   (8000)                /* default sample rate */
-macro_line|#endif
+macro_line|#endif /* _CS4231_H_ */
 eof

@@ -2636,21 +2636,22 @@ r_int
 id|type
 )paren
 (brace
+multiline_comment|/* &n;&t; * The br_stats.flags is checked here to save the expense of a &n;&t; * function call.&n;&t; */
 r_if
 c_cond
+(paren
 (paren
 id|br_stats.flags
 op_amp
 id|BR_UP
-op_logical_and
-id|br_protocol_ok
-c_func
-(paren
-id|ntohs
-c_func
-(paren
-id|type
 )paren
+op_logical_and
+id|br_call_bridge
+c_func
+(paren
+id|skb
+comma
+id|type
 )paren
 )paren
 (brace
@@ -7037,6 +7038,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BRIDGE
+multiline_comment|/*&n;&t; * Register any statically linked ethernet devices with the bridge&n;&t; */
+id|br_spacedevice_register
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialise network devices&n;&t; */
 id|net_device_init
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.35 1999/09/01 08:09:29 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.40 1999/12/19 23:28:08 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
+macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -32,6 +33,11 @@ c_func
 id|tq_serial
 )paren
 suffix:semicolon
+multiline_comment|/* This is (one of many) a special gross hack to allow SU and&n; * SAB serials to co-exist on the same machine. -DaveM&n; */
+DECL|macro|SERIAL_BH
+macro_line|#undef SERIAL_BH
+DECL|macro|SERIAL_BH
+mdefine_line|#define SERIAL_BH&t;AURORA_BH
 DECL|variable|serial_driver
 DECL|variable|callout_driver
 r_static
@@ -940,6 +946,14 @@ r_char
 id|saved_rfc
 comma
 id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|stop_a_enabled
+)paren
+r_return
 suffix:semicolon
 multiline_comment|/* If we are doing kadb, we call the debugger&n;&t; * else we just drop into the boot monitor.&n;&t; * Note that we must flush the user windows&n;&t; * first before giving up control.&n;&t; */
 id|printk
@@ -9555,15 +9569,18 @@ id|sab82532
 suffix:semicolon
 id|sab-&gt;regs
 op_assign
-(paren
-r_union
-id|sab82532_async_regs
-op_star
-)paren
+id|ioremap
+c_func
 (paren
 id|regs
 op_plus
 id|offset
+comma
+r_sizeof
+(paren
+r_union
+id|sab82532_async_regs
+)paren
 )paren
 suffix:semicolon
 id|sab-&gt;irq
@@ -9655,7 +9672,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.35 $&quot;
+l_string|&quot;$Revision: 1.40 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9707,6 +9724,10 @@ id|serial_version
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_int
+id|su_num_ports
+suffix:semicolon
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|sab82532_init
 r_int
@@ -9795,6 +9816,8 @@ suffix:semicolon
 id|serial_driver.minor_start
 op_assign
 l_int|64
+op_plus
+id|su_num_ports
 suffix:semicolon
 id|serial_driver.num
 op_assign
@@ -10307,6 +10330,8 @@ id|KERN_INFO
 l_string|&quot;ttyS%02d at 0x%lx (irq = %s) is a SAB82532 %s&bslash;n&quot;
 comma
 id|info-&gt;line
+op_plus
+id|su_num_ports
 comma
 (paren
 r_int
@@ -10345,10 +10370,7 @@ id|__init
 id|sab82532_probe
 c_func
 (paren
-r_int
-r_int
-op_star
-id|memory_start
+r_void
 )paren
 (brace
 r_int
@@ -10549,8 +10571,6 @@ macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 id|sunserial_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|sab82532_console_init
 )paren
 suffix:semicolon
@@ -10558,8 +10578,6 @@ macro_line|#endif
 id|sunserial_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|sab82532_init
 )paren
 suffix:semicolon
@@ -10608,6 +10626,11 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|sab82532
+op_star
+id|sab
+suffix:semicolon
 r_int
 r_int
 id|flags
@@ -10733,6 +10756,25 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+r_for
+c_loop
+(paren
+id|sab
+op_assign
+id|sab82532_chain
+suffix:semicolon
+id|sab
+suffix:semicolon
+id|sab
+op_assign
+id|sab-&gt;next
+)paren
+id|iounmap
+c_func
+(paren
+id|sab-&gt;regs
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
@@ -11697,6 +11739,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|su_console_registered
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11704,6 +11750,8 @@ id|con_is_present
 c_func
 (paren
 )paren
+op_logical_or
+id|su_console_registered
 )paren
 r_return
 l_int|0

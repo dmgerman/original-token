@@ -2,313 +2,93 @@ multiline_comment|/* myri_sbus.h: Defines for MyriCOM MyriNET SBUS card driver.&
 macro_line|#ifndef _MYRI_SBUS_H
 DECL|macro|_MYRI_SBUS_H
 mdefine_line|#define _MYRI_SBUS_H
-DECL|struct|lanai_regs
-r_struct
-id|lanai_regs
-(brace
-DECL|member|ipf0
-r_volatile
-r_int
-r_int
-id|ipf0
-suffix:semicolon
-multiline_comment|/* Context zero state registers.*/
-DECL|member|cur0
-r_volatile
-r_int
-r_int
-id|cur0
-suffix:semicolon
-DECL|member|prev0
-r_volatile
-r_int
-r_int
-id|prev0
-suffix:semicolon
-DECL|member|data0
-r_volatile
-r_int
-r_int
-id|data0
-suffix:semicolon
-DECL|member|dpf0
-r_volatile
-r_int
-r_int
-id|dpf0
-suffix:semicolon
-DECL|member|ipf1
-r_volatile
-r_int
-r_int
-id|ipf1
-suffix:semicolon
-multiline_comment|/* Context one state registers.&t;*/
-DECL|member|cur1
-r_volatile
-r_int
-r_int
-id|cur1
-suffix:semicolon
-DECL|member|prev1
-r_volatile
-r_int
-r_int
-id|prev1
-suffix:semicolon
-DECL|member|data1
-r_volatile
-r_int
-r_int
-id|data1
-suffix:semicolon
-DECL|member|dpf1
-r_volatile
-r_int
-r_int
-id|dpf1
-suffix:semicolon
-DECL|member|istat
-r_volatile
-r_int
-r_int
-id|istat
-suffix:semicolon
-multiline_comment|/* Interrupt status.&t;&t;*/
-DECL|member|eimask
-r_volatile
-r_int
-r_int
-id|eimask
-suffix:semicolon
-multiline_comment|/* External IRQ mask.&t;&t;*/
-DECL|member|itimer
-r_volatile
-r_int
-r_int
-id|itimer
-suffix:semicolon
-multiline_comment|/* IRQ timer.&t;&t;&t;*/
-DECL|member|rtc
-r_volatile
-r_int
-r_int
-id|rtc
-suffix:semicolon
-multiline_comment|/* Real Time Clock&t;&t;*/
-DECL|member|csum
-r_volatile
-r_int
-r_int
-id|csum
-suffix:semicolon
-multiline_comment|/* Checksum.&t;&t;&t;*/
-DECL|member|dma_xaddr
-r_volatile
-r_int
-r_int
-id|dma_xaddr
-suffix:semicolon
-multiline_comment|/* SBUS DMA external address.&t;*/
-DECL|member|dma_laddr
-r_volatile
-r_int
-r_int
-id|dma_laddr
-suffix:semicolon
-multiline_comment|/* SBUS DMA local address.&t;*/
-DECL|member|dma_ctr
-r_volatile
-r_int
-r_int
-id|dma_ctr
-suffix:semicolon
-multiline_comment|/* SBUS DMA counter.&t;&t;*/
-DECL|member|rx_dmaptr
-r_volatile
-r_int
-r_int
-id|rx_dmaptr
-suffix:semicolon
-multiline_comment|/* Receive DMA pointer.&t;&t;*/
-DECL|member|rx_dmalim
-r_volatile
-r_int
-r_int
-id|rx_dmalim
-suffix:semicolon
-multiline_comment|/* Receive DMA limit.&t;&t;*/
-DECL|member|tx_dmaptr
-r_volatile
-r_int
-r_int
-id|tx_dmaptr
-suffix:semicolon
-multiline_comment|/* Transmit DMA pointer.&t;*/
-DECL|member|tx_dmalim
-r_volatile
-r_int
-r_int
-id|tx_dmalim
-suffix:semicolon
-multiline_comment|/* Transmit DMA limit.&t;&t;*/
-DECL|member|tx_dmalimt
-r_volatile
-r_int
-r_int
-id|tx_dmalimt
-suffix:semicolon
-multiline_comment|/* Transmit DMA limit w/tail.&t;*/
-DECL|member|_unused0
-r_int
-r_int
-id|_unused0
-suffix:semicolon
-DECL|member|rbyte
-r_volatile
-r_int
-r_char
-id|rbyte
-suffix:semicolon
-multiline_comment|/* Receive byte.&t;&t;*/
-DECL|member|_unused1
-r_int
-r_char
-id|_unused1
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|rhalf
-r_volatile
-r_int
-r_int
-id|rhalf
-suffix:semicolon
-multiline_comment|/* Receive half-word.&t;&t;*/
-DECL|member|_unused2
-r_int
-r_char
-id|_unused2
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|member|rword
-r_volatile
-r_int
-r_int
-id|rword
-suffix:semicolon
-multiline_comment|/* Receive word.&t;&t;*/
-DECL|member|salign
-r_volatile
-r_int
-r_int
-id|salign
-suffix:semicolon
-multiline_comment|/* Send align.&t;&t;&t;*/
-DECL|member|ss_sendbyte
-r_volatile
-r_int
-r_int
-id|ss_sendbyte
-suffix:semicolon
-multiline_comment|/* SingleSend send-byte.&t;*/
-DECL|member|ss_sendhalf
-r_volatile
-r_int
-r_int
-id|ss_sendhalf
-suffix:semicolon
-multiline_comment|/* SingleSend send-halfword.&t;*/
-DECL|member|ss_sendword
-r_volatile
-r_int
-r_int
-id|ss_sendword
-suffix:semicolon
-multiline_comment|/* SingleSend send-word.&t;*/
-DECL|member|ss_sendt
-r_volatile
-r_int
-r_int
-id|ss_sendt
-suffix:semicolon
-multiline_comment|/* SingleSend special.&t;&t;*/
-DECL|member|dma_dir
-r_volatile
-r_int
-r_int
-id|dma_dir
-suffix:semicolon
-multiline_comment|/* DMA direction.&t;&t;*/
-DECL|member|dma_stat
-r_volatile
-r_int
-r_int
-id|dma_stat
-suffix:semicolon
-multiline_comment|/* DMA status.&t;&t;&t;*/
-DECL|member|timeo
-r_volatile
-r_int
-r_int
-id|timeo
-suffix:semicolon
-multiline_comment|/* Timeout register.&t;&t;*/
-DECL|member|myrinet
-r_volatile
-r_int
-r_int
-id|myrinet
-suffix:semicolon
-multiline_comment|/* XXX MAGIC myricom thing&t;*/
-DECL|member|hwdebug
-r_volatile
-r_int
-r_int
-id|hwdebug
-suffix:semicolon
-multiline_comment|/* Hardware debugging reg.&t;*/
-DECL|member|leds
-r_volatile
-r_int
-r_int
-id|leds
-suffix:semicolon
-multiline_comment|/* LED control.&t;&t;&t;*/
-DECL|member|vers
-r_volatile
-r_int
-r_int
-id|vers
-suffix:semicolon
-multiline_comment|/* Version register.&t;&t;*/
-DECL|member|link_on
-r_volatile
-r_int
-r_int
-id|link_on
-suffix:semicolon
-multiline_comment|/* Link activation reg.&t;&t;*/
-DECL|member|_unused3
-r_int
-r_int
-id|_unused3
-(braket
-l_int|0x17
-)braket
-suffix:semicolon
-DECL|member|cval
-r_volatile
-r_int
-r_int
-id|cval
-suffix:semicolon
-multiline_comment|/* Clock value register.&t;*/
-)brace
-suffix:semicolon
+multiline_comment|/* LANAI Registers */
+DECL|macro|LANAI_IPF0
+mdefine_line|#define LANAI_IPF0&t;0x00UL&t;&t;/* Context zero state registers.*/
+DECL|macro|LANAI_CUR0
+mdefine_line|#define LANAI_CUR0&t;0x04UL
+DECL|macro|LANAI_PREV0
+mdefine_line|#define LANAI_PREV0&t;0x08UL
+DECL|macro|LANAI_DATA0
+mdefine_line|#define LANAI_DATA0&t;0x0cUL
+DECL|macro|LANAI_DPF0
+mdefine_line|#define LANAI_DPF0&t;0x10UL
+DECL|macro|LANAI_IPF1
+mdefine_line|#define LANAI_IPF1&t;0x14UL&t;&t;/* Context one state registers.&t;*/
+DECL|macro|LANAI_CUR1
+mdefine_line|#define LANAI_CUR1&t;0x18UL
+DECL|macro|LANAI_PREV1
+mdefine_line|#define LANAI_PREV1&t;0x1cUL
+DECL|macro|LANAI_DATA1
+mdefine_line|#define LANAI_DATA1&t;0x20UL
+DECL|macro|LANAI_DPF1
+mdefine_line|#define LANAI_DPF1&t;0x24UL
+DECL|macro|LANAI_ISTAT
+mdefine_line|#define LANAI_ISTAT&t;0x28UL&t;&t;/* Interrupt status.&t;&t;*/
+DECL|macro|LANAI_EIMASK
+mdefine_line|#define LANAI_EIMASK&t;0x2cUL&t;&t;/* External IRQ mask.&t;&t;*/
+DECL|macro|LANAI_ITIMER
+mdefine_line|#define LANAI_ITIMER&t;0x30UL&t;&t;/* IRQ timer.&t;&t;&t;*/
+DECL|macro|LANAI_RTC
+mdefine_line|#define LANAI_RTC&t;0x34UL&t;&t;/* Real Time Clock&t;&t;*/
+DECL|macro|LANAI_CSUM
+mdefine_line|#define LANAI_CSUM&t;0x38UL&t;&t;/* Checksum.&t;&t;&t;*/
+DECL|macro|LANAI_DMAXADDR
+mdefine_line|#define LANAI_DMAXADDR&t;0x3cUL&t;&t;/* SBUS DMA external address.&t;*/
+DECL|macro|LANAI_DMALADDR
+mdefine_line|#define LANAI_DMALADDR&t;0x40UL&t;&t;/* SBUS DMA local address.&t;*/
+DECL|macro|LANAI_DMACTR
+mdefine_line|#define LANAI_DMACTR&t;0x44UL&t;&t;/* SBUS DMA counter.&t;&t;*/
+DECL|macro|LANAI_RXDMAPTR
+mdefine_line|#define LANAI_RXDMAPTR&t;0x48UL&t;&t;/* Receive DMA pointer.&t;&t;*/
+DECL|macro|LANAI_RXDMALIM
+mdefine_line|#define LANAI_RXDMALIM&t;0x4cUL&t;&t;/* Receive DMA limit.&t;&t;*/
+DECL|macro|LANAI_TXDMAPTR
+mdefine_line|#define LANAI_TXDMAPTR&t;0x50UL&t;&t;/* Transmit DMA pointer.&t;*/
+DECL|macro|LANAI_TXDMALIM
+mdefine_line|#define LANAI_TXDMALIM&t;0x54UL&t;&t;/* Transmit DMA limit.&t;&t;*/
+DECL|macro|LANAI_TXDMALIMT
+mdefine_line|#define LANAI_TXDMALIMT&t;0x58UL&t;&t;/* Transmit DMA limit w/tail.&t;*/
+multiline_comment|/* 0x5cUL, reserved */
+DECL|macro|LANAI_RBYTE
+mdefine_line|#define LANAI_RBYTE&t;0x60UL&t;&t;/* Receive byte.&t;&t;*/
+multiline_comment|/* 0x64--&gt;0x6c, reserved */
+DECL|macro|LANAI_RHALF
+mdefine_line|#define LANAI_RHALF&t;0x70UL&t;&t;/* Receive half-word.&t;&t;*/
+multiline_comment|/* 0x72UL, reserved */
+DECL|macro|LANAI_RWORD
+mdefine_line|#define LANAI_RWORD&t;0x74UL&t;&t;/* Receive word.&t;&t;*/
+DECL|macro|LANAI_SALIGN
+mdefine_line|#define LANAI_SALIGN&t;0x78UL&t;&t;/* Send align.&t;&t;&t;*/
+DECL|macro|LANAI_SBYTE
+mdefine_line|#define LANAI_SBYTE&t;0x7cUL&t;&t;/* SingleSend send-byte.&t;*/
+DECL|macro|LANAI_SHALF
+mdefine_line|#define LANAI_SHALF&t;0x80UL&t;&t;/* SingleSend send-halfword.&t;*/
+DECL|macro|LANAI_SWORD
+mdefine_line|#define LANAI_SWORD&t;0x84UL&t;&t;/* SingleSend send-word.&t;*/
+DECL|macro|LANAI_SSENDT
+mdefine_line|#define LANAI_SSENDT&t;0x88UL&t;&t;/* SingleSend special.&t;&t;*/
+DECL|macro|LANAI_DMADIR
+mdefine_line|#define LANAI_DMADIR&t;0x8cUL&t;&t;/* DMA direction.&t;&t;*/
+DECL|macro|LANAI_DMASTAT
+mdefine_line|#define LANAI_DMASTAT&t;0x90UL&t;&t;/* DMA status.&t;&t;&t;*/
+DECL|macro|LANAI_TIMEO
+mdefine_line|#define LANAI_TIMEO&t;0x94UL&t;&t;/* Timeout register.&t;&t;*/
+DECL|macro|LANAI_MYRINET
+mdefine_line|#define LANAI_MYRINET&t;0x98UL&t;&t;/* XXX MAGIC myricom thing&t;*/
+DECL|macro|LANAI_HWDEBUG
+mdefine_line|#define LANAI_HWDEBUG&t;0x9cUL&t;&t;/* Hardware debugging reg.&t;*/
+DECL|macro|LANAI_LEDS
+mdefine_line|#define LANAI_LEDS&t;0xa0UL&t;&t;/* LED control.&t;&t;&t;*/
+DECL|macro|LANAI_VERS
+mdefine_line|#define LANAI_VERS&t;0xa4UL&t;&t;/* Version register.&t;&t;*/
+DECL|macro|LANAI_LINKON
+mdefine_line|#define LANAI_LINKON&t;0xa8UL&t;&t;/* Link activation reg.&t;&t;*/
+multiline_comment|/* 0xac--&gt;0x104, reserved */
+DECL|macro|LANAI_CVAL
+mdefine_line|#define LANAI_CVAL&t;0x108UL&t;&t;/* Clock value register.&t;*/
+DECL|macro|LANAI_REG_SIZE
+mdefine_line|#define LANAI_REG_SIZE&t;0x10cUL
 multiline_comment|/* Interrupt status bits. */
 DECL|macro|ISTAT_DEBUG
 mdefine_line|#define ISTAT_DEBUG&t;0x80000000
@@ -364,71 +144,26 @@ DECL|macro|ISTAT_RECV
 mdefine_line|#define ISTAT_RECV&t;0x00000002
 DECL|macro|ISTAT_BRDY
 mdefine_line|#define ISTAT_BRDY&t;0x00000001
-DECL|struct|myri_regs
-r_struct
-id|myri_regs
-(brace
-DECL|member|reset_off
-r_volatile
-r_int
-r_int
-id|reset_off
-suffix:semicolon
-DECL|member|reset_on
-r_volatile
-r_int
-r_int
-id|reset_on
-suffix:semicolon
-DECL|member|irq_off
-r_volatile
-r_int
-r_int
-id|irq_off
-suffix:semicolon
-DECL|member|irq_on
-r_volatile
-r_int
-r_int
-id|irq_on
-suffix:semicolon
-DECL|member|wakeup_off
-r_volatile
-r_int
-r_int
-id|wakeup_off
-suffix:semicolon
-DECL|member|wakeup_on
-r_volatile
-r_int
-r_int
-id|wakeup_on
-suffix:semicolon
-DECL|member|irq_read
-r_volatile
-r_int
-r_int
-id|irq_read
-suffix:semicolon
-DECL|member|_unused
-r_int
-r_int
-id|_unused
-(braket
-l_int|0xfff9
-)braket
-suffix:semicolon
-DECL|member|local_mem
-r_volatile
-r_int
-r_int
-id|local_mem
-(braket
-l_int|0x10800
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
+multiline_comment|/* MYRI Registers */
+DECL|macro|MYRI_RESETOFF
+mdefine_line|#define MYRI_RESETOFF&t;0x00UL
+DECL|macro|MYRI_RESETON
+mdefine_line|#define MYRI_RESETON&t;0x04UL
+DECL|macro|MYRI_IRQOFF
+mdefine_line|#define MYRI_IRQOFF&t;0x08UL
+DECL|macro|MYRI_IRQON
+mdefine_line|#define MYRI_IRQON&t;0x0cUL
+DECL|macro|MYRI_WAKEUPOFF
+mdefine_line|#define MYRI_WAKEUPOFF&t;0x10UL
+DECL|macro|MYRI_WAKEUPON
+mdefine_line|#define MYRI_WAKEUPON&t;0x14UL
+DECL|macro|MYRI_IRQREAD
+mdefine_line|#define MYRI_IRQREAD&t;0x18UL
+multiline_comment|/* 0x1c--&gt;0x3ffc, reserved */
+DECL|macro|MYRI_LOCALMEM
+mdefine_line|#define MYRI_LOCALMEM&t;0x4000UL
+DECL|macro|MYRI_REG_SIZE
+mdefine_line|#define MYRI_REG_SIZE&t;0x25000UL
 multiline_comment|/* Shared memory interrupt mask. */
 DECL|macro|SHMEM_IMASK_RX
 mdefine_line|#define SHMEM_IMASK_RX&t;&t;0x00000002
@@ -544,24 +279,13 @@ DECL|macro|CPUVERS_4_2
 mdefine_line|#define CPUVERS_4_2&t;&t;0x0402
 DECL|macro|CPUVERS_5_0
 mdefine_line|#define CPUVERS_5_0&t;&t;0x0500
-DECL|struct|myri_control
-r_struct
-id|myri_control
-(brace
-DECL|member|ctrl
-r_volatile
-r_int
-r_int
-id|ctrl
-suffix:semicolon
-DECL|member|irqlvl
-r_volatile
-r_int
-r_int
-id|irqlvl
-suffix:semicolon
-)brace
-suffix:semicolon
+multiline_comment|/* MYRI Control Registers */
+DECL|macro|MYRICTRL_CTRL
+mdefine_line|#define MYRICTRL_CTRL&t;&t;0x00UL
+DECL|macro|MYRICTRL_IRQLVL
+mdefine_line|#define MYRICTRL_IRQLVL&t;&t;0x02UL
+DECL|macro|MYRICTRL_REG_SIZE
+mdefine_line|#define MYRICTRL_REG_SIZE&t;0x04UL
 multiline_comment|/* Global control register defines. */
 DECL|macro|CONTROL_ROFF
 mdefine_line|#define CONTROL_ROFF&t;&t;0x8000&t;/* Reset OFF.&t;&t;*/
@@ -582,13 +306,11 @@ r_struct
 id|myri_sglist
 (brace
 DECL|member|addr
-r_int
-r_int
+id|u32
 id|addr
 suffix:semicolon
 DECL|member|len
-r_int
-r_int
+id|u32
 id|len
 suffix:semicolon
 )brace
@@ -607,19 +329,16 @@ id|MYRI_SCATTER_ENTRIES
 suffix:semicolon
 multiline_comment|/* DMA scatter list.*/
 DECL|member|csum
-r_int
-r_int
+id|u32
 id|csum
 suffix:semicolon
 multiline_comment|/* HW computed checksum.    */
 DECL|member|ctx
-r_int
-r_int
+id|u32
 id|ctx
 suffix:semicolon
 DECL|member|num_sg
-r_int
-r_int
+id|u32
 id|num_sg
 suffix:semicolon
 multiline_comment|/* Total scatter entries.   */
@@ -639,14 +358,12 @@ id|MYRI_GATHER_ENTRIES
 suffix:semicolon
 multiline_comment|/* DMA scatter list.  */
 DECL|member|num_sg
-r_int
-r_int
+id|u32
 id|num_sg
 suffix:semicolon
 multiline_comment|/* Total scatter entries.   */
 DECL|member|addr
-r_int
-r_int
+id|u16
 id|addr
 (braket
 l_int|4
@@ -654,25 +371,21 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* XXX address              */
 DECL|member|chan
-r_int
-r_int
+id|u32
 id|chan
 suffix:semicolon
 DECL|member|len
-r_int
-r_int
+id|u32
 id|len
 suffix:semicolon
 multiline_comment|/* Total length of packet.  */
 DECL|member|csum_off
-r_int
-r_int
+id|u32
 id|csum_off
 suffix:semicolon
 multiline_comment|/* Where data to csum is.   */
 DECL|member|csum_field
-r_int
-r_int
+id|u32
 id|csum_field
 suffix:semicolon
 multiline_comment|/* Where csum goes in pkt.  */
@@ -707,6 +420,7 @@ r_int
 id|num
 )paren
 (brace
+multiline_comment|/* XXX &gt;=??? */
 r_if
 c_cond
 (paren
@@ -765,23 +479,19 @@ r_struct
 id|sendq
 (brace
 DECL|member|tail
-r_int
-r_int
+id|u32
 id|tail
 suffix:semicolon
 DECL|member|head
-r_int
-r_int
+id|u32
 id|head
 suffix:semicolon
 DECL|member|hdebug
-r_int
-r_int
+id|u32
 id|hdebug
 suffix:semicolon
 DECL|member|mdebug
-r_int
-r_int
+id|u32
 id|mdebug
 suffix:semicolon
 DECL|member|myri_txd
@@ -799,23 +509,19 @@ r_struct
 id|recvq
 (brace
 DECL|member|head
-r_int
-r_int
+id|u32
 id|head
 suffix:semicolon
 DECL|member|tail
-r_int
-r_int
+id|u32
 id|tail
 suffix:semicolon
 DECL|member|hdebug
-r_int
-r_int
+id|u32
 id|hdebug
 suffix:semicolon
 DECL|member|mdebug
-r_int
-r_int
+id|u32
 id|mdebug
 suffix:semicolon
 DECL|member|myri_rxd
@@ -837,18 +543,15 @@ r_struct
 id|mclist
 (brace
 DECL|member|maxlen
-r_int
-r_int
+id|u32
 id|maxlen
 suffix:semicolon
 DECL|member|len
-r_int
-r_int
+id|u32
 id|len
 suffix:semicolon
 DECL|member|cache
-r_int
-r_int
+id|u32
 id|cache
 suffix:semicolon
 DECL|struct|pair
@@ -856,16 +559,14 @@ r_struct
 id|pair
 (brace
 DECL|member|addr
-r_int
-r_char
+id|u8
 id|addr
 (braket
 l_int|8
 )braket
 suffix:semicolon
 DECL|member|val
-r_int
-r_int
+id|u32
 id|val
 suffix:semicolon
 DECL|member|mc_pairs
@@ -876,8 +577,7 @@ id|MYRI_MLIST_SIZE
 )braket
 suffix:semicolon
 DECL|member|bcast_addr
-r_int
-r_char
+id|u8
 id|bcast_addr
 (braket
 l_int|8
@@ -890,14 +590,12 @@ r_struct
 id|myri_channel
 (brace
 DECL|member|state
-r_int
-r_int
+id|u32
 id|state
 suffix:semicolon
 multiline_comment|/* State of the channel.&t;*/
 DECL|member|busy
-r_int
-r_int
+id|u32
 id|busy
 suffix:semicolon
 multiline_comment|/* Channel is busy.&t;&t;*/
@@ -920,26 +618,22 @@ id|recvqa
 suffix:semicolon
 multiline_comment|/* Device rx queue acked.&t;*/
 DECL|member|rbytes
-r_int
-r_int
+id|u32
 id|rbytes
 suffix:semicolon
 multiline_comment|/* Receive bytes.&t;&t;*/
 DECL|member|sbytes
-r_int
-r_int
+id|u32
 id|sbytes
 suffix:semicolon
 multiline_comment|/* Send bytes.&t;&t;&t;*/
 DECL|member|rmsgs
-r_int
-r_int
+id|u32
 id|rmsgs
 suffix:semicolon
 multiline_comment|/* Receive messages.&t;&t;*/
 DECL|member|smsgs
-r_int
-r_int
+id|u32
 id|smsgs
 suffix:semicolon
 multiline_comment|/* Send messages.&t;&t;*/
@@ -963,8 +657,7 @@ r_struct
 id|myri_shmem
 (brace
 DECL|member|addr
-r_int
-r_char
+id|u8
 id|addr
 (braket
 l_int|8
@@ -972,44 +665,37 @@ l_int|8
 suffix:semicolon
 multiline_comment|/* Board&squot;s address.&t;&t;*/
 DECL|member|nchan
-r_int
-r_int
+id|u32
 id|nchan
 suffix:semicolon
 multiline_comment|/* Number of channels.&t;&t;*/
 DECL|member|burst
-r_int
-r_int
+id|u32
 id|burst
 suffix:semicolon
 multiline_comment|/* SBUS dma burst enable.&t;*/
 DECL|member|shakedown
-r_int
-r_int
+id|u32
 id|shakedown
 suffix:semicolon
 multiline_comment|/* DarkkkkStarrr Crashesss...&t;*/
 DECL|member|send
-r_int
-r_int
+id|u32
 id|send
 suffix:semicolon
 multiline_comment|/* Send wanted.&t;&t;&t;*/
 DECL|member|imask
-r_int
-r_int
+id|u32
 id|imask
 suffix:semicolon
 multiline_comment|/* Interrupt enable mask.&t;*/
 DECL|member|mlevel
-r_int
-r_int
+id|u32
 id|mlevel
 suffix:semicolon
 multiline_comment|/* Map level.&t;&t;&t;*/
 DECL|member|debug
-r_int
-r_int
+id|u32
 id|debug
 (braket
 l_int|4
@@ -1037,9 +723,8 @@ id|shmem
 suffix:semicolon
 multiline_comment|/* Shared data structures.    */
 DECL|member|cregs
-r_struct
-id|myri_control
-op_star
+r_int
+r_int
 id|cregs
 suffix:semicolon
 multiline_comment|/* Control register space.    */
@@ -1077,9 +762,8 @@ id|tx_old
 suffix:semicolon
 multiline_comment|/* To speed up tx cleaning.   */
 DECL|member|lregs
-r_struct
-id|lanai_regs
-op_star
+r_int
+r_int
 id|lregs
 suffix:semicolon
 multiline_comment|/* Quick ptr to LANAI regs.   */
@@ -1113,9 +797,8 @@ suffix:semicolon
 multiline_comment|/* Interface stats.           */
 multiline_comment|/* These are less frequently accessed. */
 DECL|member|regs
-r_struct
-id|myri_regs
-op_star
+r_int
+r_int
 id|regs
 suffix:semicolon
 multiline_comment|/* MyriCOM register space.    */
@@ -1157,11 +840,11 @@ r_int
 id|shmem_base
 suffix:semicolon
 multiline_comment|/* Offset to shared ram.      */
-DECL|member|myri_sbus_dev
+DECL|member|myri_sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|myri_sbus_dev
+id|myri_sdev
 suffix:semicolon
 multiline_comment|/* Our SBUS device struct.    */
 DECL|member|next_module

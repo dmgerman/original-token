@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: envctrl.c,v 1.12 1999/08/31 06:58:04 davem Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: envctrl.c,v 1.13 1999/12/19 23:28:07 davem Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -90,6 +90,8 @@ DECL|macro|I2C_DATA
 mdefine_line|#define I2C_DATA&t;0x00UL
 DECL|macro|I2C_CSR
 mdefine_line|#define I2C_CSR&t;&t;0x01UL
+DECL|macro|I2C_REG_SIZE
+mdefine_line|#define I2C_REG_SIZE&t;0x02UL
 DECL|struct|i2c_device
 r_struct
 id|i2c_device
@@ -9130,12 +9132,22 @@ suffix:semicolon
 )brace
 id|i2c_regs
 op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
 id|edev-&gt;resource
 (braket
 l_int|0
 )braket
 dot
 id|start
+comma
+id|I2C_REG_SIZE
+)paren
 suffix:semicolon
 id|writeb
 c_func
@@ -9429,6 +9441,12 @@ suffix:semicolon
 id|i2c_free_devices
 c_func
 (paren
+)paren
+suffix:semicolon
+id|iounmap
+c_func
+(paren
+id|i2c_regs
 )paren
 suffix:semicolon
 id|misc_deregister

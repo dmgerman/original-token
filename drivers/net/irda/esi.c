@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.5&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon Oct 18 12:35:43 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, &lt;dagb@cs.uit.no&gt;,&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.5&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Fri Dec 17 09:17:05 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, &lt;dagb@cs.uit.no&gt;,&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -134,7 +134,7 @@ op_or
 id|IR_115200
 suffix:semicolon
 id|qos-&gt;min_turn_time.bits
-op_and_assign
+op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* Needs at least 10 ms */
@@ -204,41 +204,6 @@ id|dtr
 comma
 id|rts
 suffix:semicolon
-multiline_comment|/* Lock dongle */
-r_if
-c_cond
-(paren
-id|irda_lock
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|self-&gt;busy
-)paren
-op_eq
-id|FALSE
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), busy!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|100
-)paren
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -309,11 +274,6 @@ id|task
 comma
 id|IRDA_TASK_DONE
 )paren
-suffix:semicolon
-multiline_comment|/* Unlock */
-id|self-&gt;busy
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0

@@ -101,7 +101,7 @@ id|iounit_map_dma_init
 c_func
 (paren
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 comma
 r_int
@@ -120,7 +120,7 @@ r_void
 op_star
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 )paren
 suffix:semicolon

@@ -17,6 +17,10 @@ mdefine_line|#define VFC_I2C_DEBUG
 macro_line|#endif
 macro_line|#include &quot;vfc.h&quot;
 macro_line|#include &quot;vfc_i2c.h&quot;
+DECL|macro|WRITE_S1
+mdefine_line|#define WRITE_S1(__val) &bslash;&n;&t;sbus_writel(__val, &amp;dev-&gt;regs-&gt;i2c_s1)
+DECL|macro|WRITE_REG
+mdefine_line|#define WRITE_REG(__val) &bslash;&n;&t;sbus_writel(__val, &amp;dev-&gt;regs-&gt;i2c_reg)
 DECL|macro|VFC_I2C_READ
 mdefine_line|#define VFC_I2C_READ (0x1)
 DECL|macro|VFC_I2C_WRITE
@@ -33,34 +37,44 @@ op_star
 id|dev
 )paren
 (brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+multiline_comment|/* This will also choose register S0_OWN so we can set it. */
+id|WRITE_S1
+c_func
+(paren
 id|RESET
+)paren
 suffix:semicolon
-multiline_comment|/* This will also choose&n;&t;&t;&t;&t;&t;   register S0_OWN so we can set it*/
-id|dev-&gt;regs-&gt;i2c_reg
-op_assign
+multiline_comment|/* The pcf8584 shifts this value left one bit and uses&n;&t; * it as its i2c bus address.&n;&t; */
+id|WRITE_REG
+c_func
+(paren
 l_int|0x55000000
+)paren
 suffix:semicolon
-multiline_comment|/* the pcf8584 shifts this&n;&t;&t;&t;&t;&t;   value left one bit and uses&n;&t;&t;&t;&t;&t;   it as its i2c bus address */
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+multiline_comment|/* This will set the i2c bus at the same speed sun uses,&n;&t; * and set another magic bit.&n;&t; */
+id|WRITE_S1
+c_func
+(paren
 id|SELECT
 c_func
 (paren
 id|S2
 )paren
+)paren
 suffix:semicolon
-id|dev-&gt;regs-&gt;i2c_reg
-op_assign
+id|WRITE_REG
+c_func
+(paren
 l_int|0x14000000
+)paren
 suffix:semicolon
-multiline_comment|/* this will set the i2c bus at&n;&t;&t;&t;&t;&t;   the same speed sun uses,&n;&t;&t;&t;&t;&t;   and set another magic bit */
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+multiline_comment|/* Enable the serial port, idle the i2c bus and set&n;&t; * the data reg to s0.&n;&t; */
+id|WRITE_S1
+c_func
+(paren
 id|CLEAR_I2C_BUS
+)paren
 suffix:semicolon
-multiline_comment|/* enable the serial port,&n;&t;&t;&t;&t;&t;   idle the i2c bus and set&n;&t;&t;&t;&t;&t;   the data reg to s0 */
 id|udelay
 c_func
 (paren
@@ -216,8 +230,9 @@ op_star
 id|dev
 )paren
 (brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|ENABLE_SERIAL
 op_or
 id|SELECT
@@ -227,6 +242,7 @@ id|S0
 )paren
 op_or
 id|ACK
+)paren
 suffix:semicolon
 id|vfc_i2c_reset_bus
 c_func
@@ -263,8 +279,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|dev
+op_eq
+id|NULl
 )paren
 (brace
 r_return
@@ -275,8 +292,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|dev-&gt;regs
+op_eq
+l_int|NULL
 )paren
 (brace
 r_return
@@ -284,15 +302,19 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
+)paren
 suffix:semicolon
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
 op_or
 id|ACK
+)paren
 suffix:semicolon
 id|vfc_i2c_delay
 c_func
@@ -300,9 +322,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|CLEAR_I2C_BUS
+)paren
 suffix:semicolon
 id|VFC_I2C_DEBUG_PRINTK
 c_func
@@ -313,7 +337,12 @@ l_string|&quot;vfc%d: I2C status %x&bslash;n&quot;
 comma
 id|dev-&gt;instance
 comma
+id|sbus_readl
+c_func
+(paren
+op_amp
 id|dev-&gt;regs-&gt;i2c_s1
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -342,7 +371,12 @@ c_loop
 (paren
 op_logical_neg
 (paren
+id|sbus_readl
+c_func
+(paren
+op_amp
 id|dev-&gt;regs-&gt;i2c_s1
+)paren
 op_amp
 id|BB
 )paren
@@ -402,7 +436,12 @@ c_loop
 (paren
 id|s1
 op_assign
+id|sbus_readl
+c_func
+(paren
+op_amp
 id|dev-&gt;regs-&gt;i2c_s1
+)paren
 )paren
 op_amp
 id|PIN
@@ -417,12 +456,10 @@ id|timeout
 op_decrement
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|ETIMEDOUT
 suffix:semicolon
-)brace
 id|vfc_i2c_delay
 c_func
 (paren
@@ -482,14 +519,17 @@ comma
 id|raddr
 suffix:semicolon
 macro_line|#if 1
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
 op_or
 id|ACK
+)paren
 suffix:semicolon
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SELECT
 c_func
 (paren
@@ -497,6 +537,7 @@ id|S0
 )paren
 op_or
 id|ENABLE_SERIAL
+)paren
 suffix:semicolon
 id|vfc_i2c_delay
 c_func
@@ -514,12 +555,11 @@ id|mode
 r_case
 id|VFC_I2C_READ
 suffix:colon
-id|dev-&gt;regs-&gt;i2c_reg
-op_assign
 id|raddr
 op_assign
 id|SHIFT
 c_func
+(paren
 (paren
 (paren
 r_int
@@ -528,6 +568,13 @@ r_int
 id|addr
 op_or
 l_int|0x1
+)paren
+)paren
+suffix:semicolon
+id|WRITE_REG
+c_func
+(paren
+id|raddr
 )paren
 suffix:semicolon
 id|VFC_I2C_DEBUG_PRINTK
@@ -549,8 +596,6 @@ suffix:semicolon
 r_case
 id|VFC_I2C_WRITE
 suffix:colon
-id|dev-&gt;regs-&gt;i2c_reg
-op_assign
 id|raddr
 op_assign
 id|SHIFT
@@ -564,6 +609,12 @@ id|addr
 op_amp
 op_complement
 l_int|0x1
+)paren
+suffix:semicolon
+id|WRITE_REG
+c_func
+(paren
+id|raddr
 )paren
 suffix:semicolon
 id|VFC_I2C_DEBUG_PRINTK
@@ -590,9 +641,12 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+suffix:semicolon
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_START
+)paren
 suffix:semicolon
 id|vfc_i2c_delay
 c_func
@@ -610,7 +664,7 @@ comma
 id|VFC_I2C_ACK_CHECK
 )paren
 suffix:semicolon
-multiline_comment|/* We wait&n;&t;&t;&t;&t;&t;&t;&t;    for the&n;&t;&t;&t;&t;&t;&t;&t;    i2c send&n;&t;&t;&t;&t;&t;&t;&t;    to finish&n;&t;&t;&t;&t;&t;&t;&t;    here but&n;&t;&t;&t;&t;&t;&t;&t;    Sun&n;&t;&t;&t;&t;&t;&t;&t;    doesn&squot;t,&n;&t;&t;&t;&t;&t;&t;&t;    hmm */
+multiline_comment|/* We wait&n;&t;&t;&t;&t;&t;&t;&t;      for the&n;&t;&t;&t;&t;&t;&t;&t;      i2c send&n;&t;&t;&t;&t;&t;&t;&t;      to finish&n;&t;&t;&t;&t;&t;&t;&t;      here but&n;&t;&t;&t;&t;&t;&t;&t;      Sun&n;&t;&t;&t;&t;&t;&t;&t;      doesn&squot;t,&n;&t;&t;&t;&t;&t;&t;&t;      hmm */
 r_if
 c_cond
 (paren
@@ -645,7 +699,12 @@ c_cond
 (paren
 id|ret
 op_assign
+id|sbus_readl
+c_func
+(paren
+op_amp
 id|dev-&gt;regs-&gt;i2c_reg
+)paren
 op_amp
 l_int|0xff000000
 )paren
@@ -692,7 +751,8 @@ id|byte
 r_int
 id|ret
 suffix:semicolon
-id|dev-&gt;regs-&gt;i2c_reg
+id|u32
+id|val
 op_assign
 id|SHIFT
 c_func
@@ -703,6 +763,12 @@ r_int
 )paren
 op_star
 id|byte
+)paren
+suffix:semicolon
+id|WRITE_REG
+c_func
+(paren
+id|val
 )paren
 suffix:semicolon
 id|ret
@@ -751,6 +817,7 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -783,9 +850,11 @@ c_cond
 id|last
 )paren
 (brace
-id|dev-&gt;regs-&gt;i2c_reg
-op_assign
+id|WRITE_REG
+c_func
+(paren
 id|NEGATIVE_ACK
+)paren
 suffix:semicolon
 id|VFC_I2C_DEBUG_PRINTK
 c_func
@@ -800,9 +869,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|ACK
+)paren
 suffix:semicolon
 )brace
 id|ret
@@ -836,7 +907,12 @@ op_star
 id|byte
 op_assign
 (paren
+id|sbus_readl
+c_func
+(paren
+op_amp
 id|dev-&gt;regs-&gt;i2c_reg
+)paren
 )paren
 op_rshift
 l_int|24
@@ -937,9 +1013,11 @@ id|VFC_I2C_READ
 )paren
 )paren
 (brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
+)paren
 suffix:semicolon
 id|vfc_i2c_delay
 c_func
@@ -968,12 +1046,10 @@ c_cond
 op_logical_neg
 id|count
 )paren
-(brace
 id|last
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1002,9 +1078,11 @@ comma
 id|dev-&gt;instance
 )paren
 suffix:semicolon
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -1016,11 +1094,13 @@ id|buf
 op_increment
 suffix:semicolon
 )brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
 op_or
 id|ACK
+)paren
 suffix:semicolon
 id|vfc_i2c_delay
 c_func
@@ -1069,12 +1149,10 @@ op_logical_and
 id|dev-&gt;regs
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1120,9 +1198,11 @@ id|VFC_I2C_WRITE
 )paren
 )paren
 (brace
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
+)paren
 suffix:semicolon
 id|vfc_i2c_delay
 c_func
@@ -1203,17 +1283,20 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+suffix:semicolon
 id|buf
 op_increment
 suffix:semicolon
 )brace
 id|done
 suffix:colon
-id|dev-&gt;regs-&gt;i2c_s1
-op_assign
+id|WRITE_S1
+c_func
+(paren
 id|SEND_I2C_STOP
 op_or
 id|ACK
+)paren
 suffix:semicolon
 id|vfc_i2c_delay
 c_func

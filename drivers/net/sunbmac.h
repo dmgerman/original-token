@@ -1,56 +1,22 @@
-multiline_comment|/* sunbmac.h: Defines for the Sun &quot;Big MAC&quot; 100baseT ethernet cards.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunbmac.h,v 1.5 1999/09/21 14:36:26 davem Exp $&n; * sunbmac.h: Defines for the Sun &quot;Big MAC&quot; 100baseT ethernet cards.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SUNBMAC_H
 DECL|macro|_SUNBMAC_H
 mdefine_line|#define _SUNBMAC_H
 multiline_comment|/* QEC global registers. */
-DECL|struct|qe_globreg
-r_struct
-id|qe_globreg
-(brace
-DECL|member|ctrl
-r_volatile
-r_int
-r_int
-id|ctrl
-suffix:semicolon
-multiline_comment|/* Control                  */
-DECL|member|stat
-r_volatile
-r_int
-r_int
-id|stat
-suffix:semicolon
-multiline_comment|/* Status                   */
-DECL|member|psize
-r_volatile
-r_int
-r_int
-id|psize
-suffix:semicolon
-multiline_comment|/* Packet Size              */
-DECL|member|msize
-r_volatile
-r_int
-r_int
-id|msize
-suffix:semicolon
-multiline_comment|/* Local-mem size (64K)     */
-DECL|member|rsize
-r_volatile
-r_int
-r_int
-id|rsize
-suffix:semicolon
-multiline_comment|/* Receive partition size   */
-DECL|member|tsize
-r_volatile
-r_int
-r_int
-id|tsize
-suffix:semicolon
-multiline_comment|/* Transmit partition size  */
-)brace
-suffix:semicolon
+DECL|macro|GLOB_CTRL
+mdefine_line|#define GLOB_CTRL&t;0x00UL&t;/* Control                  */
+DECL|macro|GLOB_STAT
+mdefine_line|#define GLOB_STAT&t;0x04UL&t;/* Status                   */
+DECL|macro|GLOB_PSIZE
+mdefine_line|#define GLOB_PSIZE&t;0x08UL&t;/* Packet Size              */
+DECL|macro|GLOB_MSIZE
+mdefine_line|#define GLOB_MSIZE&t;0x0cUL&t;/* Local-mem size (64K)     */
+DECL|macro|GLOB_RSIZE
+mdefine_line|#define GLOB_RSIZE&t;0x10UL&t;/* Receive partition size   */
+DECL|macro|GLOB_TSIZE
+mdefine_line|#define GLOB_TSIZE&t;0x14UL&t;/* Transmit partition size  */
+DECL|macro|GLOB_REG_SIZE
+mdefine_line|#define GLOB_REG_SIZE&t;0x18UL
 DECL|macro|GLOB_CTRL_MMODE
 mdefine_line|#define GLOB_CTRL_MMODE       0x40000000 /* MACE qec mode            */
 DECL|macro|GLOB_CTRL_BMODE
@@ -84,103 +50,34 @@ mdefine_line|#define GLOB_PSIZE_6144       0x10       /* 6k packet size         
 DECL|macro|GLOB_PSIZE_8192
 mdefine_line|#define GLOB_PSIZE_8192       0x11       /* 8k packet size           */
 multiline_comment|/* QEC BigMAC channel registers. */
-DECL|struct|qe_creg
-r_struct
-id|qe_creg
-(brace
-DECL|member|ctrl
-r_volatile
-r_int
-r_int
-id|ctrl
-suffix:semicolon
-multiline_comment|/* Control                     */
-DECL|member|stat
-r_volatile
-r_int
-r_int
-id|stat
-suffix:semicolon
-multiline_comment|/* Status                      */
-DECL|member|rxds
-r_volatile
-r_int
-r_int
-id|rxds
-suffix:semicolon
-multiline_comment|/* RX descriptor ring ptr      */
-DECL|member|txds
-r_volatile
-r_int
-r_int
-id|txds
-suffix:semicolon
-multiline_comment|/* TX descriptor ring ptr      */
-DECL|member|rimask
-r_volatile
-r_int
-r_int
-id|rimask
-suffix:semicolon
-multiline_comment|/* RX Interrupt Mask           */
-DECL|member|timask
-r_volatile
-r_int
-r_int
-id|timask
-suffix:semicolon
-multiline_comment|/* TX Interrupt Mask           */
-DECL|member|qmask
-r_volatile
-r_int
-r_int
-id|qmask
-suffix:semicolon
-multiline_comment|/* QEC Error Interrupt Mask    */
-DECL|member|bmask
-r_volatile
-r_int
-r_int
-id|bmask
-suffix:semicolon
-multiline_comment|/* BigMAC Error Interrupt Mask */
-DECL|member|rxwbufptr
-r_volatile
-r_int
-r_int
-id|rxwbufptr
-suffix:semicolon
-multiline_comment|/* Local memory rx write ptr   */
-DECL|member|rxrbufptr
-r_volatile
-r_int
-r_int
-id|rxrbufptr
-suffix:semicolon
-multiline_comment|/* Local memory rx read ptr    */
-DECL|member|txwbufptr
-r_volatile
-r_int
-r_int
-id|txwbufptr
-suffix:semicolon
-multiline_comment|/* Local memory tx write ptr   */
-DECL|member|txrbufptr
-r_volatile
-r_int
-r_int
-id|txrbufptr
-suffix:semicolon
-multiline_comment|/* Local memory tx read ptr    */
-DECL|member|ccnt
-r_volatile
-r_int
-r_int
-id|ccnt
-suffix:semicolon
-multiline_comment|/* Collision Counter           */
-)brace
-suffix:semicolon
+DECL|macro|CREG_CTRL
+mdefine_line|#define CREG_CTRL&t;0x00UL&t;/* Control                   */
+DECL|macro|CREG_STAT
+mdefine_line|#define CREG_STAT&t;0x04UL&t;/* Status                    */
+DECL|macro|CREG_RXDS
+mdefine_line|#define CREG_RXDS&t;0x08UL&t;/* RX descriptor ring ptr    */
+DECL|macro|CREG_TXDS
+mdefine_line|#define CREG_TXDS&t;0x0cUL&t;/* TX descriptor ring ptr    */
+DECL|macro|CREG_RIMASK
+mdefine_line|#define CREG_RIMASK&t;0x10UL&t;/* RX Interrupt Mask         */
+DECL|macro|CREG_TIMASK
+mdefine_line|#define CREG_TIMASK&t;0x14UL&t;/* TX Interrupt Mask         */
+DECL|macro|CREG_QMASK
+mdefine_line|#define CREG_QMASK&t;0x18UL&t;/* QEC Error Interrupt Mask  */
+DECL|macro|CREG_BMASK
+mdefine_line|#define CREG_BMASK&t;0x1cUL&t;/* BigMAC Error Interrupt Mask*/
+DECL|macro|CREG_RXWBUFPTR
+mdefine_line|#define CREG_RXWBUFPTR&t;0x20UL&t;/* Local memory rx write ptr */
+DECL|macro|CREG_RXRBUFPTR
+mdefine_line|#define CREG_RXRBUFPTR&t;0x24UL&t;/* Local memory rx read ptr  */
+DECL|macro|CREG_TXWBUFPTR
+mdefine_line|#define CREG_TXWBUFPTR&t;0x28UL&t;/* Local memory tx write ptr */
+DECL|macro|CREG_TXRBUFPTR
+mdefine_line|#define CREG_TXRBUFPTR&t;0x2cUL&t;/* Local memory tx read ptr  */
+DECL|macro|CREG_CCNT
+mdefine_line|#define CREG_CCNT&t;0x30UL&t;/* Collision Counter         */
+DECL|macro|CREG_REG_SIZE
+mdefine_line|#define CREG_REG_SIZE&t;0x34UL
 DECL|macro|CREG_CTRL_TWAKEUP
 mdefine_line|#define CREG_CTRL_TWAKEUP     0x00000001  /* Transmitter Wakeup, &squot;go&squot;. */
 DECL|macro|CREG_STAT_BERROR
@@ -227,357 +124,101 @@ DECL|macro|CREG_QMASK_RXPERR
 mdefine_line|#define CREG_QMASK_RXPERR     0x00000002  /* RX parity error           */
 DECL|macro|CREG_QMASK_RXSERR
 mdefine_line|#define CREG_QMASK_RXSERR     0x00000001  /* RX sbus error ack         */
-DECL|struct|BIG_MAC_regs
-r_struct
-id|BIG_MAC_regs
-(brace
-DECL|member|xif_cfg
-r_volatile
-r_int
-r_int
-id|xif_cfg
-suffix:semicolon
-multiline_comment|/* XIF config register                */
-DECL|member|_unused
-r_volatile
-r_int
-r_int
-id|_unused
-(braket
-l_int|63
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                        */
-DECL|member|status
-r_volatile
-r_int
-r_int
-id|status
-suffix:semicolon
-multiline_comment|/* Status register, clear on read     */
-DECL|member|imask
-r_volatile
-r_int
-r_int
-id|imask
-suffix:semicolon
-multiline_comment|/* Interrupt mask register            */
-DECL|member|_unused2
-r_volatile
-r_int
-r_int
-id|_unused2
-(braket
-l_int|64
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                        */
-DECL|member|tx_swreset
-r_volatile
-r_int
-r_int
-id|tx_swreset
-suffix:semicolon
-multiline_comment|/* Transmitter software reset         */
-DECL|member|tx_cfg
-r_volatile
-r_int
-r_int
-id|tx_cfg
-suffix:semicolon
-multiline_comment|/* Transmitter config register        */
-DECL|member|ipkt_gap1
-r_volatile
-r_int
-r_int
-id|ipkt_gap1
-suffix:semicolon
-multiline_comment|/* Inter-packet gap 1                 */
-DECL|member|ipkt_gap2
-r_volatile
-r_int
-r_int
-id|ipkt_gap2
-suffix:semicolon
-multiline_comment|/* Inter-packet gap 2                 */
-DECL|member|attempt_limit
-r_volatile
-r_int
-r_int
-id|attempt_limit
-suffix:semicolon
-multiline_comment|/* Transmit attempt limit             */
-DECL|member|stime
-r_volatile
-r_int
-r_int
-id|stime
-suffix:semicolon
-multiline_comment|/* Transmit slot time                 */
-DECL|member|preamble_len
-r_volatile
-r_int
-r_int
-id|preamble_len
-suffix:semicolon
-multiline_comment|/* Size of transmit preamble          */
-DECL|member|preamble_pattern
-r_volatile
-r_int
-r_int
-id|preamble_pattern
-suffix:semicolon
-multiline_comment|/* Pattern for transmit preamble      */
-DECL|member|tx_sframe_delim
-r_volatile
-r_int
-r_int
-id|tx_sframe_delim
-suffix:semicolon
-multiline_comment|/* Transmit delimiter                 */
-DECL|member|jsize
-r_volatile
-r_int
-r_int
-id|jsize
-suffix:semicolon
-multiline_comment|/* Toe jam...                         */
-DECL|member|tx_pkt_max
-r_volatile
-r_int
-r_int
-id|tx_pkt_max
-suffix:semicolon
-multiline_comment|/* Transmit max pkt size              */
-DECL|member|tx_pkt_min
-r_volatile
-r_int
-r_int
-id|tx_pkt_min
-suffix:semicolon
-multiline_comment|/* Transmit min pkt size              */
-DECL|member|peak_attempt
-r_volatile
-r_int
-r_int
-id|peak_attempt
-suffix:semicolon
-multiline_comment|/* Count of transmit peak attempts    */
-DECL|member|dt_ctr
-r_volatile
-r_int
-r_int
-id|dt_ctr
-suffix:semicolon
-multiline_comment|/* Transmit defer timer               */
-DECL|member|nc_ctr
-r_volatile
-r_int
-r_int
-id|nc_ctr
-suffix:semicolon
-multiline_comment|/* Transmit normal-collision counter  */
-DECL|member|fc_ctr
-r_volatile
-r_int
-r_int
-id|fc_ctr
-suffix:semicolon
-multiline_comment|/* Transmit first-collision counter   */
-DECL|member|ex_ctr
-r_volatile
-r_int
-r_int
-id|ex_ctr
-suffix:semicolon
-multiline_comment|/* Transmit excess-collision counter  */
-DECL|member|lt_ctr
-r_volatile
-r_int
-r_int
-id|lt_ctr
-suffix:semicolon
-multiline_comment|/* Transmit late-collision counter    */
-DECL|member|rand_seed
-r_volatile
-r_int
-r_int
-id|rand_seed
-suffix:semicolon
-multiline_comment|/* Transmit random number seed        */
-DECL|member|tx_smachine
-r_volatile
-r_int
-r_int
-id|tx_smachine
-suffix:semicolon
-multiline_comment|/* Transmit state machine             */
-DECL|member|_unused3
-r_volatile
-r_int
-r_int
-id|_unused3
-(braket
-l_int|44
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved                           */
-DECL|member|rx_swreset
-r_volatile
-r_int
-r_int
-id|rx_swreset
-suffix:semicolon
-multiline_comment|/* Receiver software reset            */
-DECL|member|rx_cfg
-r_volatile
-r_int
-r_int
-id|rx_cfg
-suffix:semicolon
-multiline_comment|/* Receiver config register           */
-DECL|member|rx_pkt_max
-r_volatile
-r_int
-r_int
-id|rx_pkt_max
-suffix:semicolon
-multiline_comment|/* Receive max pkt size               */
-DECL|member|rx_pkt_min
-r_volatile
-r_int
-r_int
-id|rx_pkt_min
-suffix:semicolon
-multiline_comment|/* Receive min pkt size               */
-DECL|member|mac_addr2
-r_volatile
-r_int
-r_int
-id|mac_addr2
-suffix:semicolon
-multiline_comment|/* Ether address register 2           */
-DECL|member|mac_addr1
-r_volatile
-r_int
-r_int
-id|mac_addr1
-suffix:semicolon
-multiline_comment|/* Ether address register 1           */
-DECL|member|mac_addr0
-r_volatile
-r_int
-r_int
-id|mac_addr0
-suffix:semicolon
-multiline_comment|/* Ether address register 0           */
-DECL|member|fr_ctr
-r_volatile
-r_int
-r_int
-id|fr_ctr
-suffix:semicolon
-multiline_comment|/* Receive frame receive counter      */
-DECL|member|gle_ctr
-r_volatile
-r_int
-r_int
-id|gle_ctr
-suffix:semicolon
-multiline_comment|/* Receive giant-length error counter */
-DECL|member|unale_ctr
-r_volatile
-r_int
-r_int
-id|unale_ctr
-suffix:semicolon
-multiline_comment|/* Receive unaligned error counter    */
-DECL|member|rcrce_ctr
-r_volatile
-r_int
-r_int
-id|rcrce_ctr
-suffix:semicolon
-multiline_comment|/* Receive CRC error counter          */
-DECL|member|rx_smachine
-r_volatile
-r_int
-r_int
-id|rx_smachine
-suffix:semicolon
-multiline_comment|/* Receiver state machine             */
-DECL|member|rx_cvalid
-r_volatile
-r_int
-r_int
-id|rx_cvalid
-suffix:semicolon
-multiline_comment|/* Receiver code violation            */
-DECL|member|_unused4
-r_volatile
-r_int
-r_int
-id|_unused4
-suffix:semicolon
-multiline_comment|/* Reserved...                        */
-DECL|member|htable3
-r_volatile
-r_int
-r_int
-id|htable3
-suffix:semicolon
-multiline_comment|/* Hash table 3                       */
-DECL|member|htable2
-r_volatile
-r_int
-r_int
-id|htable2
-suffix:semicolon
-multiline_comment|/* Hash table 2                       */
-DECL|member|htable1
-r_volatile
-r_int
-r_int
-id|htable1
-suffix:semicolon
-multiline_comment|/* Hash table 1                       */
-DECL|member|htable0
-r_volatile
-r_int
-r_int
-id|htable0
-suffix:semicolon
-multiline_comment|/* Hash table 0                       */
-DECL|member|afilter2
-r_volatile
-r_int
-r_int
-id|afilter2
-suffix:semicolon
-multiline_comment|/* Address filter 2                   */
-DECL|member|afilter1
-r_volatile
-r_int
-r_int
-id|afilter1
-suffix:semicolon
-multiline_comment|/* Address filter 1                   */
-DECL|member|afilter0
-r_volatile
-r_int
-r_int
-id|afilter0
-suffix:semicolon
-multiline_comment|/* Address filter 0                   */
-DECL|member|afilter_mask
-r_volatile
-r_int
-r_int
-id|afilter_mask
-suffix:semicolon
-multiline_comment|/* Address filter mask                */
-)brace
-suffix:semicolon
+multiline_comment|/* BIGMAC core registers */
+DECL|macro|BMAC_XIFCFG
+mdefine_line|#define BMAC_XIFCFG&t;0x000UL&t;/* XIF config register                */
+multiline_comment|/* 0x004--&gt;0x0fc, reserved */
+DECL|macro|BMAC_STATUS
+mdefine_line|#define BMAC_STATUS&t;0x100UL&t;/* Status register, clear on read     */
+DECL|macro|BMAC_IMASK
+mdefine_line|#define BMAC_IMASK&t;0x104UL&t;/* Interrupt mask register            */
+multiline_comment|/* 0x108--&gt;0x204, reserved */
+DECL|macro|BMAC_TXSWRESET
+mdefine_line|#define BMAC_TXSWRESET&t;0x208UL&t;/* Transmitter software reset         */
+DECL|macro|BMAC_TXCFG
+mdefine_line|#define BMAC_TXCFG&t;0x20cUL&t;/* Transmitter config register        */
+DECL|macro|BMAC_IGAP1
+mdefine_line|#define BMAC_IGAP1&t;0x210UL&t;/* Inter-packet gap 1                 */
+DECL|macro|BMAC_IGAP2
+mdefine_line|#define BMAC_IGAP2&t;0x214UL&t;/* Inter-packet gap 2                 */
+DECL|macro|BMAC_ALIMIT
+mdefine_line|#define BMAC_ALIMIT&t;0x218UL&t;/* Transmit attempt limit             */
+DECL|macro|BMAC_STIME
+mdefine_line|#define BMAC_STIME&t;0x21cUL&t;/* Transmit slot time                 */
+DECL|macro|BMAC_PLEN
+mdefine_line|#define BMAC_PLEN&t;0x220UL&t;/* Size of transmit preamble          */
+DECL|macro|BMAC_PPAT
+mdefine_line|#define BMAC_PPAT&t;0x224UL&t;/* Pattern for transmit preamble      */
+DECL|macro|BMAC_TXDELIM
+mdefine_line|#define BMAC_TXDELIM&t;0x228UL&t;/* Transmit delimiter                 */
+DECL|macro|BMAC_JSIZE
+mdefine_line|#define BMAC_JSIZE&t;0x22cUL&t;/* Toe jam...                         */
+DECL|macro|BMAC_TXPMAX
+mdefine_line|#define BMAC_TXPMAX&t;0x230UL&t;/* Transmit max pkt size              */
+DECL|macro|BMAC_TXPMIN
+mdefine_line|#define BMAC_TXPMIN&t;0x234UL&t;/* Transmit min pkt size              */
+DECL|macro|BMAC_PATTEMPT
+mdefine_line|#define BMAC_PATTEMPT&t;0x238UL&t;/* Count of transmit peak attempts    */
+DECL|macro|BMAC_DTCTR
+mdefine_line|#define BMAC_DTCTR&t;0x23cUL&t;/* Transmit defer timer               */
+DECL|macro|BMAC_NCCTR
+mdefine_line|#define BMAC_NCCTR&t;0x240UL&t;/* Transmit normal-collision counter  */
+DECL|macro|BMAC_FCCTR
+mdefine_line|#define BMAC_FCCTR&t;0x244UL&t;/* Transmit first-collision counter   */
+DECL|macro|BMAC_EXCTR
+mdefine_line|#define BMAC_EXCTR&t;0x248UL&t;/* Transmit excess-collision counter  */
+DECL|macro|BMAC_LTCTR
+mdefine_line|#define BMAC_LTCTR&t;0x24cUL&t;/* Transmit late-collision counter    */
+DECL|macro|BMAC_RSEED
+mdefine_line|#define BMAC_RSEED&t;0x250UL&t;/* Transmit random number seed        */
+DECL|macro|BMAC_TXSMACHINE
+mdefine_line|#define BMAC_TXSMACHINE&t;0x254UL /* Transmit state machine             */
+multiline_comment|/* 0x258--&gt;0x304, reserved */
+DECL|macro|BMAC_RXSWRESET
+mdefine_line|#define BMAC_RXSWRESET&t;0x308UL&t;/* Receiver software reset            */
+DECL|macro|BMAC_RXCFG
+mdefine_line|#define BMAC_RXCFG&t;0x30cUL&t;/* Receiver config register           */
+DECL|macro|BMAC_RXPMAX
+mdefine_line|#define BMAC_RXPMAX&t;0x310UL&t;/* Receive max pkt size               */
+DECL|macro|BMAC_RXPMIN
+mdefine_line|#define BMAC_RXPMIN&t;0x314UL&t;/* Receive min pkt size               */
+DECL|macro|BMAC_MACADDR2
+mdefine_line|#define BMAC_MACADDR2&t;0x318UL&t;/* Ether address register 2           */
+DECL|macro|BMAC_MACADDR1
+mdefine_line|#define BMAC_MACADDR1&t;0x31cUL&t;/* Ether address register 1           */
+DECL|macro|BMAC_MACADDR0
+mdefine_line|#define BMAC_MACADDR0&t;0x320UL&t;/* Ether address register 0           */
+DECL|macro|BMAC_FRCTR
+mdefine_line|#define BMAC_FRCTR&t;0x324UL&t;/* Receive frame receive counter      */
+DECL|macro|BMAC_GLECTR
+mdefine_line|#define BMAC_GLECTR&t;0x328UL&t;/* Receive giant-length error counter */
+DECL|macro|BMAC_UNALECTR
+mdefine_line|#define BMAC_UNALECTR&t;0x32cUL&t;/* Receive unaligned error counter    */
+DECL|macro|BMAC_RCRCECTR
+mdefine_line|#define BMAC_RCRCECTR&t;0x330UL&t;/* Receive CRC error counter          */
+DECL|macro|BMAC_RXSMACHINE
+mdefine_line|#define BMAC_RXSMACHINE&t;0x334UL&t;/* Receiver state machine             */
+DECL|macro|BMAC_RXCVALID
+mdefine_line|#define BMAC_RXCVALID&t;0x338UL&t;/* Receiver code violation            */
+multiline_comment|/* 0x33c, reserved */
+DECL|macro|BMAC_HTABLE3
+mdefine_line|#define BMAC_HTABLE3&t;0x340UL&t;/* Hash table 3                       */
+DECL|macro|BMAC_HTABLE2
+mdefine_line|#define BMAC_HTABLE2&t;0x344UL&t;/* Hash table 2                       */
+DECL|macro|BMAC_HTABLE1
+mdefine_line|#define BMAC_HTABLE1&t;0x348UL&t;/* Hash table 1                       */
+DECL|macro|BMAC_HTABLE0
+mdefine_line|#define BMAC_HTABLE0&t;0x34cUL&t;/* Hash table 0                       */
+DECL|macro|BMAC_AFILTER2
+mdefine_line|#define BMAC_AFILTER2&t;0x350UL&t;/* Address filter 2                   */
+DECL|macro|BMAC_AFILTER1
+mdefine_line|#define BMAC_AFILTER1&t;0x354UL&t;/* Address filter 1                   */
+DECL|macro|BMAC_AFILTER0
+mdefine_line|#define BMAC_AFILTER0&t;0x358UL&t;/* Address filter 0                   */
+DECL|macro|BMAC_AFMASK
+mdefine_line|#define BMAC_AFMASK&t;0x35cUL&t;/* Address filter mask                */
+DECL|macro|BMAC_REG_SIZE
+mdefine_line|#define BMAC_REG_SIZE&t;0x360UL
 multiline_comment|/* BigMac XIF config register. */
 DECL|macro|BIGMAC_XCFG_ODENABLE
 mdefine_line|#define BIGMAC_XCFG_ODENABLE   0x00000001 /* Output driver enable                     */
@@ -686,22 +327,12 @@ mdefine_line|#define BIGMAC_RXCFG_HENABLE   0x00000800 /* Enable the hash filter
 DECL|macro|BIGMAC_RXCFG_AENABLE
 mdefine_line|#define BIGMAC_RXCFG_AENABLE   0x00001000 /* Enable the address filter                */
 multiline_comment|/* The BigMAC PHY transceiver.  Not nearly as sophisticated as the happy meal&n; * one.  But it does have the &quot;bit banger&quot;, oh baby.&n; */
-DECL|struct|bmac_tcvr
-r_struct
-id|bmac_tcvr
-(brace
-DECL|member|tcvr_pal
-r_int
-r_int
-id|tcvr_pal
-suffix:semicolon
-DECL|member|mgmt_pal
-r_int
-r_int
-id|mgmt_pal
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|TCVR_TPAL
+mdefine_line|#define TCVR_TPAL&t;0x00UL
+DECL|macro|TCVR_MPAL
+mdefine_line|#define TCVR_MPAL&t;0x04UL
+DECL|macro|TCVR_REG_SIZE
+mdefine_line|#define TCVR_REG_SIZE&t;0x08UL
 multiline_comment|/* Frame commands. */
 DECL|macro|FRAME_WRITE
 mdefine_line|#define FRAME_WRITE           0x50020000
@@ -767,13 +398,11 @@ r_struct
 id|be_rxd
 (brace
 DECL|member|rx_flags
-r_int
-r_int
+id|u32
 id|rx_flags
 suffix:semicolon
 DECL|member|rx_addr
-r_int
-r_int
+id|u32
 id|rx_addr
 suffix:semicolon
 )brace
@@ -789,13 +418,11 @@ r_struct
 id|be_txd
 (brace
 DECL|member|tx_flags
-r_int
-r_int
+id|u32
 id|tx_flags
 suffix:semicolon
 DECL|member|tx_addr
-r_int
-r_int
+id|u32
 id|tx_addr
 suffix:semicolon
 )brace
@@ -828,10 +455,8 @@ DECL|macro|PREV_TX
 mdefine_line|#define PREV_TX(num)       (((num) - 1) &amp; (TX_RING_SIZE - 1))
 DECL|macro|TX_BUFFS_AVAIL
 mdefine_line|#define TX_BUFFS_AVAIL(bp)                                    &bslash;&n;        (((bp)-&gt;tx_old &lt;= (bp)-&gt;tx_new) ?                     &bslash;&n;&t;  (bp)-&gt;tx_old + (TX_RING_SIZE - 1) - (bp)-&gt;tx_new :  &bslash;&n;&t;&t;&t;    (bp)-&gt;tx_old - (bp)-&gt;tx_new - 1)
-DECL|macro|SUN4C_TX_BUFFS_AVAIL
-mdefine_line|#define SUN4C_TX_BUFFS_AVAIL(bp)                                    &bslash;&n;        (((bp)-&gt;tx_old &lt;= (bp)-&gt;tx_new) ?                           &bslash;&n;&t;  (bp)-&gt;tx_old + (SUN4C_TX_RING_SIZE - 1) - (bp)-&gt;tx_new :  &bslash;&n;&t;  (bp)-&gt;tx_old - (bp)-&gt;tx_new - (TX_RING_SIZE - SUN4C_TX_RING_SIZE))
 DECL|macro|RX_COPY_THRESHOLD
-mdefine_line|#define RX_COPY_THRESHOLD  128
+mdefine_line|#define RX_COPY_THRESHOLD  256
 DECL|macro|RX_BUF_ALLOC_SIZE
 mdefine_line|#define RX_BUF_ALLOC_SIZE  (ETH_FRAME_LEN + (64 * 3))
 DECL|struct|bmac_init_block
@@ -858,52 +483,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|bib_offset
 mdefine_line|#define bib_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct bmac_init_block *)0)-&gt;mem[elem]))))
-DECL|macro|SUN4C_PKT_BUF_SZ
-mdefine_line|#define SUN4C_PKT_BUF_SZ&t;1546
-DECL|macro|SUN4C_RX_BUFF_SIZE
-mdefine_line|#define SUN4C_RX_BUFF_SIZE&t;SUN4C_PKT_BUF_SZ
-DECL|macro|SUN4C_TX_BUFF_SIZE
-mdefine_line|#define SUN4C_TX_BUFF_SIZE&t;SUN4C_PKT_BUF_SZ
-DECL|macro|SUN4C_RX_RING_SIZE
-mdefine_line|#define SUN4C_RX_RING_SIZE&t;16
-DECL|macro|SUN4C_TX_RING_SIZE
-mdefine_line|#define SUN4C_TX_RING_SIZE&t;16
-DECL|struct|bigmac_buffers
-r_struct
-id|bigmac_buffers
-(brace
-DECL|member|tx_buf
-r_char
-id|tx_buf
-(braket
-id|SUN4C_TX_RING_SIZE
-)braket
-(braket
-id|SUN4C_TX_BUFF_SIZE
-)braket
-suffix:semicolon
-DECL|member|pad
-r_char
-id|pad
-(braket
-l_int|2
-)braket
-suffix:semicolon
-multiline_comment|/* Align rx_buf for copy_and_sum(). */
-DECL|member|rx_buf
-r_char
-id|rx_buf
-(braket
-id|SUN4C_RX_RING_SIZE
-)braket
-(braket
-id|SUN4C_RX_BUFF_SIZE
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|bbuf_offset
-mdefine_line|#define bbuf_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct bigmac_buffers *)0)-&gt;mem[elem][0]))))
 multiline_comment|/* Now software state stuff. */
 DECL|enum|bigmac_transceiver
 r_enum
@@ -950,30 +529,26 @@ r_struct
 id|bigmac
 (brace
 DECL|member|gregs
-r_struct
-id|qe_globreg
-op_star
+r_int
+r_int
 id|gregs
 suffix:semicolon
 multiline_comment|/* QEC Global Registers               */
 DECL|member|creg
-r_struct
-id|qe_creg
-op_star
+r_int
+r_int
 id|creg
 suffix:semicolon
 multiline_comment|/* QEC BigMAC Channel Registers       */
 DECL|member|bregs
-r_struct
-id|BIG_MAC_regs
-op_star
+r_int
+r_int
 id|bregs
 suffix:semicolon
 multiline_comment|/* BigMAC Registers                   */
 DECL|member|tregs
-r_struct
-id|bmac_tcvr
-op_star
+r_int
+r_int
 id|tregs
 suffix:semicolon
 multiline_comment|/* BigMAC Transceiver                 */
@@ -983,12 +558,12 @@ id|bmac_init_block
 op_star
 id|bmac_block
 suffix:semicolon
-multiline_comment|/* RX and TX descriptors              */
+multiline_comment|/* RX and TX descriptors */
 DECL|member|bblock_dvma
 id|__u32
 id|bblock_dvma
 suffix:semicolon
-multiline_comment|/* RX and TX descriptors              */
+multiline_comment|/* RX and TX descriptors */
 DECL|member|rx_skbs
 r_struct
 id|sk_buff
@@ -1019,16 +594,6 @@ comma
 id|rx_old
 comma
 id|tx_old
-suffix:semicolon
-DECL|member|sun4c_buffers
-r_struct
-id|bigmac_buffers
-op_star
-id|sun4c_buffers
-suffix:semicolon
-DECL|member|s4c_buf_dvma
-id|__u32
-id|s4c_buf_dvma
 suffix:semicolon
 DECL|member|board_rev
 r_int
@@ -1082,17 +647,17 @@ r_struct
 id|enet_statistics
 id|enet_stats
 suffix:semicolon
-DECL|member|qec_sbus_dev
+DECL|member|qec_sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|qec_sbus_dev
+id|qec_sdev
 suffix:semicolon
-DECL|member|bigmac_sbus_dev
+DECL|member|bigmac_sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|bigmac_sbus_dev
+id|bigmac_sdev
 suffix:semicolon
 DECL|member|dev
 r_struct

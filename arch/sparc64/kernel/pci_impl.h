@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_impl.h,v 1.3 1999/09/10 10:40:44 davem Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_impl.h,v 1.4 1999/12/17 12:32:03 jj Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef PCI_IMPL_H
 DECL|macro|PCI_IMPL_H
 mdefine_line|#define PCI_IMPL_H
@@ -156,6 +156,7 @@ id|pci_bus
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifndef NEW_PCI_DMA_MAP
 multiline_comment|/* IOMMU/DVMA initialization. */
 DECL|macro|PCI_DVMA_HASH_NONE
 mdefine_line|#define PCI_DVMA_HASH_NONE&t;~0UL
@@ -228,6 +229,7 @@ op_minus
 id|dvma_addr
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Configuration space access. */
 r_extern
 id|spinlock_t

@@ -1,10 +1,12 @@
-multiline_comment|/* $Id: openpromfs.c,v 1.36 1999/08/31 07:01:03 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1998 Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: inode.c,v 1.1 1999/12/20 12:23:44 jj Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1999 Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/openprom_fs.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -143,18 +145,16 @@ id|alias_names
 id|ALIASES_NNODES
 )braket
 suffix:semicolon
-r_extern
-r_struct
-id|openpromfs_dev
-op_star
-id|openprom_devices
-suffix:semicolon
+DECL|macro|OPENPROM_ROOT_INO
+mdefine_line|#define OPENPROM_ROOT_INO&t;16
+DECL|macro|OPENPROM_FIRST_INO
+mdefine_line|#define OPENPROM_FIRST_INO&t;OPENPROM_ROOT_INO
 DECL|macro|NODE
-mdefine_line|#define NODE(ino) nodes[ino - PROC_OPENPROM_FIRST]
+mdefine_line|#define NODE(ino) nodes[ino - OPENPROM_FIRST_INO]
 DECL|macro|NODE2INO
-mdefine_line|#define NODE2INO(node) (node + PROC_OPENPROM_FIRST)
+mdefine_line|#define NODE2INO(node) (node + OPENPROM_FIRST_INO)
 DECL|macro|NODEP2INO
-mdefine_line|#define NODEP2INO(no) (no + PROC_OPENPROM_FIRST + last_node)
+mdefine_line|#define NODEP2INO(no) (no + OPENPROM_FIRST_INO + last_node)
 r_static
 r_int
 id|openpromfs_create
@@ -3244,7 +3244,7 @@ l_int|0
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;/proc/openprom: &quot;
+l_string|&quot;openpromfs: &quot;
 l_string|&quot;Couldn&squot;t write property %s&bslash;n&quot;
 comma
 id|op-&gt;name
@@ -3298,7 +3298,7 @@ l_int|0
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;/proc/openprom: &quot;
+l_string|&quot;openpromfs: &quot;
 l_string|&quot;Couldn&squot;t write property %s&bslash;n&quot;
 comma
 id|op-&gt;name
@@ -3310,7 +3310,7 @@ r_else
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;/proc/openprom: &quot;
+l_string|&quot;openpromfs: &quot;
 l_string|&quot;Unknown property type of %s&bslash;n&quot;
 comma
 id|op-&gt;name
@@ -3790,8 +3790,6 @@ DECL|macro|OPFSL_PROPERTY
 mdefine_line|#define OPFSL_PROPERTY&t;1
 DECL|macro|OPFSL_NODENUM
 mdefine_line|#define OPFSL_NODENUM&t;2
-DECL|macro|OPFSL_DEVICE
-mdefine_line|#define OPFSL_DEVICE&t;3
 r_int
 id|type
 op_assign
@@ -3829,13 +3827,6 @@ r_struct
 id|inode
 op_star
 id|inode
-suffix:semicolon
-r_struct
-id|openpromfs_dev
-op_star
-id|d
-op_assign
-l_int|NULL
 suffix:semicolon
 r_char
 id|buffer2
@@ -4061,7 +4052,7 @@ id|dirnode
 op_assign
 id|dir-&gt;i_ino
 op_minus
-id|PROC_OPENPROM_FIRST
+id|OPENPROM_FIRST_INO
 suffix:semicolon
 r_if
 c_cond
@@ -4239,67 +4230,6 @@ op_logical_neg
 id|ino
 )paren
 (brace
-r_for
-c_loop
-(paren
-id|d
-op_assign
-id|openprom_devices
-suffix:semicolon
-id|d
-suffix:semicolon
-id|d
-op_assign
-id|d-&gt;next
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|d-&gt;node
-op_eq
-id|n
-)paren
-op_logical_and
-(paren
-id|strlen
-(paren
-id|d-&gt;name
-)paren
-op_eq
-id|len
-)paren
-op_logical_and
-op_logical_neg
-id|strncmp
-(paren
-id|d-&gt;name
-comma
-id|name
-comma
-id|len
-)paren
-)paren
-(brace
-id|ino
-op_assign
-id|d-&gt;inode
-suffix:semicolon
-id|type
-op_assign
-id|OPFSL_DEVICE
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ino
-)paren
-(brace
 id|ino
 op_assign
 id|lookup_children
@@ -4343,8 +4273,6 @@ id|iget
 id|dir-&gt;i_sb
 comma
 id|ino
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -4383,7 +4311,7 @@ c_cond
 (paren
 id|ino
 op_eq
-id|PROC_OPENPROM_FIRST
+id|OPENPROM_FIRST_INO
 op_plus
 id|aliases
 )paren
@@ -4588,21 +4516,6 @@ l_int|16
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|OPFSL_DEVICE
-suffix:colon
-id|init_special_inode
-c_func
-(paren
-id|d-&gt;mode
-comma
-id|kdev_to_nr
-c_func
-(paren
-id|d-&gt;rdev
-)paren
-)paren
-suffix:semicolon
 )brace
 id|inode-&gt;i_gid
 op_assign
@@ -4674,11 +4587,6 @@ suffix:semicolon
 r_char
 op_star
 id|p
-suffix:semicolon
-r_struct
-id|openpromfs_dev
-op_star
-id|d
 suffix:semicolon
 r_char
 id|buffer2
@@ -4762,7 +4670,7 @@ l_int|0xffff
 )paren
 ques
 c_cond
-id|PROC_ROOT_INO
+id|OPENPROM_ROOT_INO
 suffix:colon
 id|NODE2INO
 c_func
@@ -4967,7 +4875,7 @@ c_cond
 (paren
 id|ino
 op_eq
-id|PROC_OPENPROM_FIRST
+id|OPENPROM_FIRST_INO
 op_plus
 id|aliases
 )paren
@@ -5097,70 +5005,6 @@ comma
 id|filp-&gt;f_pos
 comma
 id|j
-)paren
-OL
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-id|filp-&gt;f_pos
-op_increment
-suffix:semicolon
-)brace
-)brace
-)brace
-r_for
-c_loop
-(paren
-id|d
-op_assign
-id|openprom_devices
-suffix:semicolon
-id|d
-suffix:semicolon
-id|d
-op_assign
-id|d-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|d-&gt;node
-op_eq
-id|n
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|i
-)paren
-id|i
-op_decrement
-suffix:semicolon
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|filldir
-c_func
-(paren
-id|dirent
-comma
-id|d-&gt;name
-comma
-id|strlen
-c_func
-(paren
-id|d-&gt;name
-)paren
-comma
-id|filp-&gt;f_pos
-comma
-id|d-&gt;inode
 )paren
 OL
 l_int|0
@@ -6122,97 +5966,6 @@ r_return
 id|n
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|openpromfs_use
-r_void
-id|openpromfs_use
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|inc
-)paren
-(brace
-r_static
-r_int
-id|root_fresh
-op_assign
-l_int|1
-suffix:semicolon
-r_static
-r_int
-id|dec_first
-op_assign
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inc
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_count
-op_eq
-l_int|1
-)paren
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|root_fresh
-op_logical_and
-id|inode-&gt;i_ino
-op_eq
-id|PROC_OPENPROM_FIRST
-)paren
-(brace
-id|root_fresh
-op_assign
-l_int|0
-suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_ino
-op_eq
-id|PROC_OPENPROM_FIRST
-)paren
-id|root_fresh
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dec_first
-)paren
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
-id|dec_first
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|macro|openpromfs_use
-mdefine_line|#define openpromfs_use 0
-macro_line|#endif
 DECL|variable|openprom_operations
 r_static
 r_struct
@@ -6278,13 +6031,21 @@ c_cond
 (paren
 id|inode-&gt;i_ino
 op_eq
-id|PROC_OPENPROM
+id|OPENPROM_ROOT_INO
 )paren
 (brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|openprom_inode_operations
+suffix:semicolon
+id|inode-&gt;i_mode
+op_assign
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
 suffix:semicolon
 )brace
 )brace
@@ -6329,9 +6090,8 @@ id|tmp
 suffix:semicolon
 id|tmp.f_type
 op_assign
-id|PROC_SUPER_MAGIC
+id|OPENPROM_SUPER_MAGIC
 suffix:semicolon
-multiline_comment|/* FIXME */
 id|tmp.f_bsize
 op_assign
 id|PAGE_SIZE
@@ -6454,9 +6214,8 @@ l_int|10
 suffix:semicolon
 id|s-&gt;s_magic
 op_assign
-id|PROC_SUPER_MAGIC
+id|OPENPROM_SUPER_MAGIC
 suffix:semicolon
-multiline_comment|/* FIXME */
 id|s-&gt;s_op
 op_assign
 op_amp
@@ -6469,7 +6228,7 @@ c_func
 (paren
 id|s
 comma
-id|PROC_OPENPROM
+id|OPENPROM_ROOT_INO
 )paren
 suffix:semicolon
 r_if
@@ -6512,7 +6271,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;proc_read_super: get root inode failed&bslash;n&quot;
+l_string|&quot;openprom_read_super: get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
 id|iput
@@ -6542,7 +6301,7 @@ id|file_system_type
 id|openprom_fs_type
 op_assign
 (brace
-l_string|&quot;openprom&quot;
+l_string|&quot;openpromfs&quot;
 comma
 l_int|0
 comma
@@ -6584,7 +6343,7 @@ id|nodes
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;/proc/openprom: can&squot;t get free page&bslash;n&quot;
+l_string|&quot;openpromfs: can&squot;t get free page&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6608,7 +6367,7 @@ l_int|0xffff
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;/proc/openprom: couldn&squot;t setup tree&bslash;n&quot;
+l_string|&quot;openpromfs: couldn&squot;t setup tree&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

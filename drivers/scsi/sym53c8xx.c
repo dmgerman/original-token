@@ -1012,13 +1012,9 @@ DECL|macro|iounmap
 mdefine_line|#define iounmap vfree
 macro_line|#endif
 macro_line|#ifdef __sparc__
-macro_line|#include &lt;asm/irq.h&gt;
-DECL|macro|ioremap
-macro_line|#  define ioremap(base, size)&t;((u_long) __va(base))
-DECL|macro|iounmap
-macro_line|#  define iounmap(vaddr)
+macro_line|#  include &lt;asm/irq.h&gt;
 DECL|macro|pcivtobus
-macro_line|#  define pcivtobus(p)&t;&t;&t;((p) &amp; pci_dvma_mask)
+macro_line|#  define pcivtobus(p)&t;&t;&t;bus_dvma_to_mem(p)
 DECL|macro|memcpy_to_pci
 macro_line|#  define memcpy_to_pci(a, b, c)&t;memcpy_toio((a), (b), (c))
 macro_line|#elif defined(__alpha__)
@@ -35006,22 +35002,6 @@ macro_line|#endif
 macro_line|#endif&t;/* __powerpc__ */
 macro_line|#ifdef __sparc__
 multiline_comment|/*&n;&t;**    Fix-ups for sparc.&n;&t;*/
-id|base
-op_assign
-id|__pa
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-id|base_2
-op_assign
-id|__pa
-c_func
-(paren
-id|base_2
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -35031,6 +35011,10 @@ id|cache_line_size
 id|suggested_cache_line_size
 op_assign
 l_int|16
+suffix:semicolon
+id|driver_setup.pci_fix_up
+op_or_assign
+l_int|0x7
 suffix:semicolon
 macro_line|#endif&t;/* __sparc__ */
 macro_line|#if defined(__i386__) &amp;&amp; !defined(MODULE)

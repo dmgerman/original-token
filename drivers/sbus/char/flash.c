@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: flash.c,v 1.13 1999/08/31 06:58:06 davem Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: flash.c,v 1.15 1999/12/09 00:44:22 davem Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -160,27 +160,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_pgoff
-OG
 (paren
-id|size
-op_rshift
+id|vma-&gt;vm_pgoff
+op_lshift
 id|PAGE_SHIFT
 )paren
+OG
+id|size
 )paren
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-id|off
-op_assign
+id|addr
+op_add_assign
+(paren
 id|vma-&gt;vm_pgoff
 op_lshift
 id|PAGE_SHIFT
-suffix:semicolon
-id|addr
-op_add_assign
-id|off
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -190,7 +188,11 @@ op_minus
 (paren
 id|vma-&gt;vm_start
 op_plus
-id|off
+(paren
+id|vma-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
+)paren
 )paren
 OG
 id|size
@@ -202,7 +204,11 @@ op_minus
 (paren
 id|vma-&gt;vm_start
 op_plus
-id|off
+(paren
+id|vma-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
+)paren
 )paren
 suffix:semicolon
 id|pgprot_val
@@ -544,12 +550,12 @@ r_void
 macro_line|#endif
 (brace
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 suffix:semicolon
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|sdev
 op_assign
@@ -602,22 +608,6 @@ l_string|&quot;flashprom&quot;
 )paren
 )paren
 (brace
-id|prom_apply_sbus_ranges
-c_func
-(paren
-id|sdev-&gt;my_bus
-comma
-op_amp
-id|sdev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-comma
-id|sdev-&gt;num_registers
-comma
-id|sdev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

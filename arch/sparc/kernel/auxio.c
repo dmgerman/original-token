@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
+macro_line|#include &lt;asm/string.h&gt;&t;&t;/* memset(), Linux has no bzero() */
 multiline_comment|/* Probe and map in the Auxiliary I/O register */
 DECL|variable|auxio_register
 r_int
@@ -32,6 +33,10 @@ id|auxregs
 (braket
 l_int|1
 )braket
+suffix:semicolon
+r_struct
+id|resource
+id|r
 suffix:semicolon
 r_switch
 c_cond
@@ -187,6 +192,44 @@ l_int|0x1
 )paren
 suffix:semicolon
 multiline_comment|/* Map the register both read and write */
+id|r.flags
+op_assign
+id|auxregs
+(braket
+l_int|0
+)braket
+dot
+id|which_io
+op_amp
+l_int|0xF
+suffix:semicolon
+id|r.start
+op_assign
+id|auxregs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
+suffix:semicolon
+id|r.end
+op_assign
+id|auxregs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
+op_plus
+id|auxregs
+(braket
+l_int|0
+)braket
+dot
+id|reg_size
+op_minus
+l_int|1
+suffix:semicolon
 id|auxio_register
 op_assign
 (paren
@@ -194,15 +237,11 @@ r_int
 r_char
 op_star
 )paren
-id|sparc_alloc_io
+id|sbus_ioremap
 c_func
 (paren
-id|auxregs
-(braket
-l_int|0
-)braket
-dot
-id|phys_addr
+op_amp
+id|r
 comma
 l_int|0
 comma
@@ -213,16 +252,7 @@ l_int|0
 dot
 id|reg_size
 comma
-l_string|&quot;auxiliaryIO&quot;
-comma
-id|auxregs
-(braket
-l_int|0
-)braket
-dot
-id|which_io
-comma
-l_int|0x0
+l_string|&quot;auxio&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Fix the address on sun4m and sun4c. */
@@ -298,6 +328,10 @@ id|regs
 suffix:semicolon
 r_int
 id|node
+suffix:semicolon
+r_struct
+id|resource
+id|r
 suffix:semicolon
 multiline_comment|/* Attempt to find the sun4m power control node. */
 id|node
@@ -380,28 +414,56 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|r
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|r
+)paren
+)paren
+suffix:semicolon
+id|r.flags
+op_assign
+id|regs.which_io
+op_amp
+l_int|0xF
+suffix:semicolon
+id|r.start
+op_assign
+id|regs.phys_addr
+suffix:semicolon
+id|r.end
+op_assign
+id|regs.phys_addr
+op_plus
+id|regs.reg_size
+op_minus
+l_int|1
+suffix:semicolon
 id|auxio_power_register
 op_assign
 (paren
-r_volatile
 r_int
 r_char
 op_star
 )paren
-id|sparc_alloc_io
+id|sbus_ioremap
 c_func
 (paren
-id|regs.phys_addr
+op_amp
+id|r
 comma
 l_int|0
 comma
 id|regs.reg_size
 comma
-l_string|&quot;power off control&quot;
-comma
-id|regs.which_io
-comma
-l_int|0
+l_string|&quot;auxpower&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Display a quick message on the console. */

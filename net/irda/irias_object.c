@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.c&n; * Version:       0.3&n; * Description:   IAS object database and functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:50:04 1998&n; * Modified at:   Sat Oct  9 17:11:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.c&n; * Version:       0.3&n; * Description:   IAS object database and functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:50:04 1998&n; * Modified at:   Wed Dec 15 11:23:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -1544,6 +1544,80 @@ id|octseq
 comma
 id|len
 )paren
+suffix:semicolon
+r_return
+id|value
+suffix:semicolon
+)brace
+DECL|function|irias_new_missing_value
+r_struct
+id|ias_value
+op_star
+id|irias_new_missing_value
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|ias_value
+op_star
+id|value
+suffix:semicolon
+id|value
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|ias_value
+)paren
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|value
+op_eq
+l_int|NULL
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|value
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|ias_value
+)paren
+)paren
+suffix:semicolon
+id|value-&gt;type
+op_assign
+id|IAS_MISSING
+suffix:semicolon
+id|value-&gt;len
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 id|value

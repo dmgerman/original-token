@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sfp-util.h,v 1.2 1999/06/07 18:24:15 jj Exp $&n; * arch/sparc64/math-emu/sfp-util.h&n; *&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+multiline_comment|/* $Id: sfp-util.h,v 1.4 1999/09/20 12:14:19 jj Exp $&n; * arch/sparc64/math-emu/sfp-util.h&n; *&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

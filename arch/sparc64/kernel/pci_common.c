@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_common.c,v 1.3 1999/09/04 22:26:32 ecd Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_common.c,v 1.5 1999/12/20 05:02:11 davem Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1491,6 +1491,10 @@ comma
 id|max
 comma
 id|align
+comma
+l_int|NULL
+comma
+l_int|NULL
 )paren
 OL
 l_int|0

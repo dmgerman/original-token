@@ -94,7 +94,7 @@ mdefine_line|#define UART_SCE_CFGB&t;0x01
 DECL|macro|UART_FIFO_THRESHOLD
 mdefine_line|#define UART_FIFO_THRESHOLD&t;0x02
 DECL|macro|UART_CFGA_AUX_IR
-mdefine_line|#define UART_CFGA_AUX_IR&t;&t;0x01&lt;&lt;7
+mdefine_line|#define UART_CFGA_AUX_IR&t;0x01&lt;&lt;7
 DECL|macro|UART_CFGA_HALF_DUPLEX
 mdefine_line|#define UART_CFGA_HALF_DUPLEX&t;0x01&lt;&lt;2
 DECL|macro|UART_CFGA_TX_POLARITY
@@ -106,7 +106,7 @@ mdefine_line|#define UART_CFGA_COM&t;&t;0x00&lt;&lt;3
 DECL|macro|UART_CFGA_IRDA_SIR_A
 mdefine_line|#define UART_CFGA_IRDA_SIR_A&t;0x01&lt;&lt;3
 DECL|macro|UART_CFGA_ASK_SIR
-mdefine_line|#define UART_CFGA_ASK_SIR&t;&t;0x02&lt;&lt;3
+mdefine_line|#define UART_CFGA_ASK_SIR&t;0x02&lt;&lt;3
 DECL|macro|UART_CFGA_IRDA_SIR_B
 mdefine_line|#define UART_CFGA_IRDA_SIR_B&t;0x03&lt;&lt;3
 DECL|macro|UART_CFGA_IRDA_HDLC
@@ -114,9 +114,9 @@ mdefine_line|#define UART_CFGA_IRDA_HDLC &t;0x04&lt;&lt;3
 DECL|macro|UART_CFGA_IRDA_4PPM
 mdefine_line|#define UART_CFGA_IRDA_4PPM &t;0x05&lt;&lt;3
 DECL|macro|UART_CFGA_CONSUMER
-mdefine_line|#define UART_CFGA_CONSUMER&t;&t;0x06&lt;&lt;3
+mdefine_line|#define UART_CFGA_CONSUMER&t;0x06&lt;&lt;3
 DECL|macro|UART_CFGA_RAW_IR
-mdefine_line|#define UART_CFGA_RAW_IR&t;&t;0x07&lt;&lt;3
+mdefine_line|#define UART_CFGA_RAW_IR&t;0x07&lt;&lt;3
 DECL|macro|UART_CFGA_OTHER
 mdefine_line|#define UART_CFGA_OTHER&t;&t;0x08&lt;&lt;3
 DECL|macro|UART_IR_HDLC
@@ -126,11 +126,11 @@ mdefine_line|#define UART_IR_4PPM&t;&t;&t;0x01
 DECL|macro|UART_IR_CONSUMER
 mdefine_line|#define UART_IR_CONSUMER&t;&t;0x02
 DECL|macro|UART_CFGB_LOOPBACK
-mdefine_line|#define UART_CFGB_LOOPBACK&t;&t;0x01&lt;&lt;5
+mdefine_line|#define UART_CFGB_LOOPBACK      0x01&lt;&lt;5
 DECL|macro|UART_CFGB_LPBCK_TX_CRC
 mdefine_line|#define UART_CFGB_LPBCK_TX_CRC&t;0x01&lt;&lt;4
 DECL|macro|UART_CFGB_NOWAIT
-mdefine_line|#define UART_CFGB_NOWAIT&t;&t;0x01&lt;&lt;3
+mdefine_line|#define UART_CFGB_NOWAIT&t;0x01&lt;&lt;3
 DECL|macro|UART_CFGB_STRING_MOVE
 mdefine_line|#define UART_CFGB_STRING_MOVE&t;0x01&lt;&lt;2
 DECL|macro|UART_CFGB_DMA_BURST
@@ -144,7 +144,7 @@ mdefine_line|#define UART_CFGB_IR&t;&t;0x01&lt;&lt;6
 DECL|macro|UART_CFGB_AUX
 mdefine_line|#define UART_CFGB_AUX&t;&t;0x02&lt;&lt;6
 DECL|macro|UART_CFGB_INACTIVE
-mdefine_line|#define UART_CFGB_INACTIVE&t;&t;0x03&lt;&lt;6
+mdefine_line|#define UART_CFGB_INACTIVE&t;0x03&lt;&lt;6
 multiline_comment|/* Register block 2 - Consumer IR - not used */
 multiline_comment|/* Register block 3 - Identification Registers! */
 DECL|macro|UART_ID_HIGH
@@ -159,19 +159,19 @@ DECL|macro|UART_INTERFACE
 mdefine_line|#define UART_INTERFACE&t;0x04   /* low 4 = DMA, high 4 = IRQ */
 multiline_comment|/* Register block 4 - IrDA */
 DECL|macro|UART_CONTROL
-mdefine_line|#define UART_CONTROL        0x00
+mdefine_line|#define UART_CONTROL             0x00
 DECL|macro|UART_BOF_COUNT_LO
-mdefine_line|#define UART_BOF_COUNT_LO      0x01
+mdefine_line|#define UART_BOF_COUNT_LO        0x01
 DECL|macro|UART_BRICKWALL_CNT_LO
-mdefine_line|#define UART_BRICKWALL_CNT_LO 0x02
+mdefine_line|#define UART_BRICKWALL_CNT_LO    0x02
 DECL|macro|UART_BRICKWALL_TX_CNT_HI
-mdefine_line|#define UART_BRICKWALL_TX_CNT_HI   0x03
+mdefine_line|#define UART_BRICKWALL_TX_CNT_HI 0x03
 DECL|macro|UART_TX_SIZE_LO
-mdefine_line|#define UART_TX_SIZE_LO   0x04
+mdefine_line|#define UART_TX_SIZE_LO          0x04
 DECL|macro|UART_RX_SIZE_HI
-mdefine_line|#define UART_RX_SIZE_HI   0x05
+mdefine_line|#define UART_RX_SIZE_HI          0x05
 DECL|macro|UART_RX_SIZE_LO
-mdefine_line|#define UART_RX_SIZE_LO   0x06
+mdefine_line|#define UART_RX_SIZE_LO          0x06
 DECL|macro|UART_1152
 mdefine_line|#define UART_1152     0x01&lt;&lt;7
 DECL|macro|UART_CRC
@@ -229,11 +229,6 @@ op_star
 id|netdev
 suffix:semicolon
 multiline_comment|/* Yes! we are some kind of netdevice */
-DECL|member|stats
-r_struct
-id|net_device_stats
-id|stats
-suffix:semicolon
 DECL|member|irlap
 r_struct
 id|irlap_cb
@@ -268,7 +263,12 @@ multiline_comment|/* QoS capabilities for this device */
 DECL|member|irport
 r_struct
 id|irport_cb
+op_star
 id|irport
+suffix:semicolon
+DECL|member|new_speed
+id|__u32
+id|new_speed
 suffix:semicolon
 DECL|member|flags
 id|__u32

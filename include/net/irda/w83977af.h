@@ -1,12 +1,10 @@
 macro_line|#ifndef W83977AF_H
 DECL|macro|W83977AF_H
 mdefine_line|#define W83977AF_H
-DECL|macro|W977_EFER
-mdefine_line|#define W977_EFER 0x370
-DECL|macro|W977_EFIR
-mdefine_line|#define W977_EFIR 0x370
-DECL|macro|W977_EFDR
-mdefine_line|#define W977_EFDR 0x371
+DECL|macro|W977_EFIO_BASE
+mdefine_line|#define W977_EFIO_BASE 0x370
+DECL|macro|W977_EFIO2_BASE
+mdefine_line|#define W977_EFIO2_BASE 0x3f0
 DECL|macro|W977_DEVICE_IR
 mdefine_line|#define W977_DEVICE_IR 0x06
 multiline_comment|/*&n; * Enter extended function mode&n; */
@@ -17,7 +15,9 @@ r_void
 id|w977_efm_enter
 c_func
 (paren
-r_void
+r_int
+r_int
+id|efio
 )paren
 (brace
 id|outb
@@ -25,7 +25,7 @@ c_func
 (paren
 l_int|0x87
 comma
-id|W977_EFER
+id|efio
 )paren
 suffix:semicolon
 id|outb
@@ -33,7 +33,7 @@ c_func
 (paren
 l_int|0x87
 comma
-id|W977_EFER
+id|efio
 )paren
 suffix:semicolon
 )brace
@@ -47,6 +47,10 @@ c_func
 (paren
 id|__u8
 id|devnum
+comma
+r_int
+r_int
+id|efio
 )paren
 (brace
 id|outb
@@ -54,7 +58,7 @@ c_func
 (paren
 l_int|0x07
 comma
-id|W977_EFIR
+id|efio
 )paren
 suffix:semicolon
 id|outb
@@ -62,7 +66,9 @@ c_func
 (paren
 id|devnum
 comma
-id|W977_EFDR
+id|efio
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -79,6 +85,10 @@ id|reg
 comma
 id|__u8
 id|value
+comma
+r_int
+r_int
+id|efio
 )paren
 (brace
 id|outb
@@ -86,7 +96,7 @@ c_func
 (paren
 id|reg
 comma
-id|W977_EFIR
+id|efio
 )paren
 suffix:semicolon
 id|outb
@@ -94,7 +104,9 @@ c_func
 (paren
 id|value
 comma
-id|W977_EFDR
+id|efio
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -108,6 +120,10 @@ c_func
 (paren
 id|__u8
 id|reg
+comma
+r_int
+r_int
+id|efio
 )paren
 (brace
 id|outb
@@ -115,14 +131,16 @@ c_func
 (paren
 id|reg
 comma
-id|W977_EFIR
+id|efio
 )paren
 suffix:semicolon
 r_return
 id|inb
 c_func
 (paren
-id|W977_EFDR
+id|efio
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -134,7 +152,9 @@ r_void
 id|w977_efm_exit
 c_func
 (paren
-r_void
+r_int
+r_int
+id|efio
 )paren
 (brace
 id|outb
@@ -142,7 +162,7 @@ c_func
 (paren
 l_int|0xAA
 comma
-id|W977_EFER
+id|efio
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/sbus/audio/dummy.c&n; *&n; * Copyright 1998 Derrick J Brashear (shadow@andrew.cmu.edu)&n; *&n; * This is a dummy lowlevel driver. Consider it a distant cousin of &n; * /proc/audio; It pretends to be a piece of audio hardware, and writes&n; * to a file instead. (or will shortly)&n; */
+multiline_comment|/* $Id: dmy.c,v 1.5 1999/09/21 14:37:37 davem Exp $&n; * drivers/sbus/audio/dummy.c&n; *&n; * Copyright 1998 Derrick J Brashear (shadow@andrew.cmu.edu)&n; *&n; * This is a dummy lowlevel driver. Consider it a distant cousin of &n; * /proc/audio; It pretends to be a piece of audio hardware, and writes&n; * to a file instead. (or will shortly)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -466,6 +466,7 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 id|dummy_chip-&gt;perchip_info.play.channels
 op_assign
 id|value
@@ -527,6 +528,7 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 id|dummy_chip-&gt;perchip_info.record.channels
 op_assign
 id|value
@@ -911,9 +913,7 @@ op_assign
 id|value
 suffix:semicolon
 r_return
-(paren
 id|value
-)paren
 suffix:semicolon
 )brace
 DECL|function|dummy_set_input_port
@@ -950,9 +950,7 @@ op_assign
 id|value
 suffix:semicolon
 r_return
-(paren
 id|value
-)paren
 suffix:semicolon
 )brace
 DECL|function|dummy_get_output_port
@@ -1529,6 +1527,7 @@ id|value
 op_eq
 id|l
 )paren
+(brace
 id|tmp
 op_assign
 (paren
@@ -1551,6 +1550,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -1559,6 +1559,7 @@ id|value
 op_eq
 id|r
 )paren
+(brace
 id|tmp
 op_assign
 (paren
@@ -1581,6 +1582,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 id|dummy_chip-&gt;perchip_info.play.gain
 op_assign
@@ -2072,6 +2074,7 @@ id|value
 op_eq
 id|l
 )paren
+(brace
 id|tmp
 op_assign
 (paren
@@ -2094,6 +2097,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -2102,6 +2106,7 @@ id|value
 op_eq
 id|r
 )paren
+(brace
 id|tmp
 op_assign
 (paren
@@ -2124,6 +2129,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 id|dummy_chip-&gt;perchip_info.record.gain
 op_assign
@@ -2818,9 +2824,6 @@ r_int
 id|value
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|dummy_chip
 op_star
@@ -2834,6 +2837,9 @@ op_star
 id|drv
 op_member_access_from_pointer
 r_private
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|i
 op_assign
@@ -2862,9 +2868,6 @@ r_int
 id|value
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|dummy_chip
 op_star
@@ -2878,6 +2881,9 @@ op_star
 id|drv
 op_member_access_from_pointer
 r_private
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|i
 op_assign
@@ -2906,9 +2912,6 @@ r_int
 id|value
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|dummy_chip
 op_star
@@ -2922,6 +2925,9 @@ op_star
 id|drv
 op_member_access_from_pointer
 r_private
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|i
 op_assign
@@ -3011,9 +3017,7 @@ id|drv
 )paren
 (brace
 r_return
-(paren
 l_int|5
-)paren
 suffix:semicolon
 )brace
 DECL|variable|dummy_ops
@@ -3235,10 +3239,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|drv
 op_member_access_from_pointer
 r_private
+op_eq
+l_int|NULL
 )paren
 r_return
 op_minus
@@ -3377,7 +3382,6 @@ c_func
 r_void
 )paren
 (brace
-r_register
 r_int
 id|i
 suffix:semicolon

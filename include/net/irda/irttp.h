@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Oct  5 15:17:14 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Sun Dec 12 13:09:07 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRTTP_H
 DECL|macro|IRTTP_H
 mdefine_line|#define IRTTP_H
@@ -23,10 +23,10 @@ DECL|macro|TTP_MORE
 mdefine_line|#define TTP_MORE               0x80
 DECL|macro|DEFAULT_INITIAL_CREDIT
 mdefine_line|#define DEFAULT_INITIAL_CREDIT 14
-DECL|macro|LOW_THRESHOLD
-mdefine_line|#define LOW_THRESHOLD           4
-DECL|macro|HIGH_THRESHOLD
-mdefine_line|#define HIGH_THRESHOLD         10
+DECL|macro|TTP_LOW_THRESHOLD
+mdefine_line|#define TTP_LOW_THRESHOLD       4
+DECL|macro|TTP_HIGH_THRESHOLD
+mdefine_line|#define TTP_HIGH_THRESHOLD     10
 DECL|macro|TTP_MAX_QUEUE
 mdefine_line|#define TTP_MAX_QUEUE          14
 multiline_comment|/* Some priorities for disconnect requests */
@@ -34,10 +34,10 @@ DECL|macro|P_NORMAL
 mdefine_line|#define P_NORMAL    0
 DECL|macro|P_HIGH
 mdefine_line|#define P_HIGH      1
-DECL|macro|SAR_DISABLE
-mdefine_line|#define SAR_DISABLE 0
-DECL|macro|SAR_UNBOUND
-mdefine_line|#define SAR_UNBOUND 0xffffffff
+DECL|macro|TTP_SAR_DISABLE
+mdefine_line|#define TTP_SAR_DISABLE 0
+DECL|macro|TTP_SAR_UNBOUND
+mdefine_line|#define TTP_SAR_UNBOUND 0xffffffff
 multiline_comment|/* Parameters */
 DECL|macro|TTP_MAX_SDU_SIZE
 mdefine_line|#define TTP_MAX_SDU_SIZE 0x01
@@ -419,11 +419,11 @@ id|self-&gt;lsap
 )paren
 suffix:semicolon
 )brace
-DECL|function|irttp_get_max_seq_size
+DECL|function|irttp_get_max_seg_size
 r_static
 id|__inline
 id|__u32
-id|irttp_get_max_seq_size
+id|irttp_get_max_seg_size
 c_func
 (paren
 r_struct

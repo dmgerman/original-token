@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: keyboard.h,v 1.2 1999/04/28 11:59:07 davem Exp $&n; * linux/include/asm-sparc/keyboard.h&n; *&n; * sparc64 Created Aug 29 1997 by Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: keyboard.h,v 1.3 1999/11/23 08:56:44 davem Exp $&n; * linux/include/asm-sparc/keyboard.h&n; *&n; * sparc64 Created Aug 29 1997 by Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/*&n; *  This file contains the Ultra/PCI architecture specific keyboard definitions&n; */
 macro_line|#ifndef _SPARC_KEYBOARD_H
 DECL|macro|_SPARC_KEYBOARD_H

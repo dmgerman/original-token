@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      girbil.c&n; * Version:       1.2&n; * Description:   Implementation for the Greenwich GIrBIL dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb  6 21:02:33 1999&n; * Modified at:   Sat Oct 30 20:25:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      girbil.c&n; * Version:       1.2&n; * Description:   Implementation for the Greenwich GIrBIL dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb  6 21:02:33 1999&n; * Modified at:   Fri Dec 17 09:16:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -178,7 +178,7 @@ op_or
 id|IR_115200
 suffix:semicolon
 id|qos-&gt;min_turn_time.bits
-op_and_assign
+op_assign
 l_int|0x03
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -253,6 +253,10 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+id|self-&gt;speed_task
+op_assign
+id|task
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -262,41 +266,6 @@ id|task-&gt;state
 r_case
 id|IRDA_TASK_INIT
 suffix:colon
-multiline_comment|/* Lock dongle */
-r_if
-c_cond
-(paren
-id|irda_lock
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|self-&gt;busy
-)paren
-op_eq
-id|FALSE
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), busy!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|100
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Need to reset the dongle and go to 9600 bps before&n;                   programming */
 r_if
 c_cond
@@ -505,9 +474,9 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
-id|self-&gt;busy
+id|self-&gt;speed_task
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -530,9 +499,9 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
-id|self-&gt;busy
+id|self-&gt;speed_task
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|ret
 op_assign
@@ -580,6 +549,10 @@ r_int
 id|ret
 op_assign
 l_int|0
+suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+id|task
 suffix:semicolon
 r_switch
 c_cond
@@ -715,6 +688,10 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+l_int|NULL
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -735,6 +712,10 @@ id|task
 comma
 id|IRDA_TASK_DONE
 )paren
+suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+l_int|NULL
 suffix:semicolon
 id|ret
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.16 1999/09/10 10:44:32 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.18 1999/12/01 10:47:22 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
@@ -24,50 +24,22 @@ DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ    1
 DECL|macro|DMA_MODE_WRITE
 mdefine_line|#define DMA_MODE_WRITE   2
-multiline_comment|/* This is actually used. */
-r_extern
-r_int
-r_int
-id|phys_base
-suffix:semicolon
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS  (phys_base + (0xfe000000UL) + PAGE_OFFSET)
+mdefine_line|#define MAX_DMA_ADDRESS  (~0UL)
 multiline_comment|/* Useful constants */
 DECL|macro|SIZE_16MB
 mdefine_line|#define SIZE_16MB      (16*1024*1024)
 DECL|macro|SIZE_64K
 mdefine_line|#define SIZE_64K       (64*1024)
-multiline_comment|/* Structure to describe the current status of DMA registers on the Sparc */
-DECL|struct|sparc_dma_registers
-r_struct
-id|sparc_dma_registers
-(brace
-DECL|member|cond_reg
-id|__volatile__
-id|__u32
-id|cond_reg
-suffix:semicolon
-multiline_comment|/* DMA condition register */
-DECL|member|st_addr
-id|__volatile__
-id|__u32
-id|st_addr
-suffix:semicolon
-multiline_comment|/* Start address of this transfer */
-DECL|member|cnt
-id|__volatile__
-id|__u32
-id|cnt
-suffix:semicolon
-multiline_comment|/* How many bytes to transfer */
-DECL|member|dma_test
-id|__volatile__
-id|__u32
-id|dma_test
-suffix:semicolon
-multiline_comment|/* DMA test register */
-)brace
-suffix:semicolon
+multiline_comment|/* SBUS DMA controller reg offsets */
+DECL|macro|DMA_CSR
+mdefine_line|#define DMA_CSR&t;&t;0x00UL&t;&t;/* rw  DMA control/status register    0x00   */
+DECL|macro|DMA_ADDR
+mdefine_line|#define DMA_ADDR&t;0x04UL&t;&t;/* rw  DMA transfer address register  0x04   */
+DECL|macro|DMA_COUNT
+mdefine_line|#define DMA_COUNT&t;0x08UL&t;&t;/* rw  DMA transfer count register    0x08   */
+DECL|macro|DMA_TEST
+mdefine_line|#define DMA_TEST&t;0x0cUL&t;&t;/* rw  DMA test/debug register        0x0c   */
 multiline_comment|/* DVMA chip revisions */
 DECL|enum|dvma_rev
 r_enum
@@ -98,26 +70,25 @@ suffix:semicolon
 DECL|macro|DMA_HASCOUNT
 mdefine_line|#define DMA_HASCOUNT(rev)  ((rev)==dvmaesc1)
 multiline_comment|/* Linux DMA information structure, filled during probe. */
-DECL|struct|Linux_SBus_DMA
+DECL|struct|sbus_dma
 r_struct
-id|Linux_SBus_DMA
+id|sbus_dma
 (brace
 DECL|member|next
 r_struct
-id|Linux_SBus_DMA
+id|sbus_dma
 op_star
 id|next
 suffix:semicolon
-DECL|member|SBus_dev
+DECL|member|sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|SBus_dev
+id|sdev
 suffix:semicolon
 DECL|member|regs
-r_struct
-id|sparc_dma_registers
-op_star
+r_int
+r_int
 id|regs
 suffix:semicolon
 multiline_comment|/* Status, misc info */
@@ -138,8 +109,7 @@ suffix:semicolon
 multiline_comment|/* Are we &quot;owned&quot; by anyone yet? */
 multiline_comment|/* Transfer information. */
 DECL|member|addr
-r_int
-r_int
+id|u32
 id|addr
 suffix:semicolon
 multiline_comment|/* Start address of current transfer */
@@ -163,7 +133,7 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_struct
-id|Linux_SBus_DMA
+id|sbus_dma
 op_star
 id|dma_chain
 suffix:semicolon
@@ -179,7 +149,7 @@ id|dvma_init
 c_func
 (paren
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 )paren
 suffix:semicolon
@@ -243,8 +213,12 @@ DECL|macro|DMA_DSBL_WR_INV
 mdefine_line|#define DMA_DSBL_WR_INV  0x00020000        /* No EC inval. on slave writes */
 DECL|macro|DMA_ADD_ENABLE
 mdefine_line|#define DMA_ADD_ENABLE   0x00040000        /* Special ESC DVMA optimization */
-DECL|macro|DMA_E_BURST8
-mdefine_line|#define DMA_E_BURST8&t; 0x00040000&t;   /* ENET: SBUS r/w burst size */
+DECL|macro|DMA_E_BURSTS
+mdefine_line|#define DMA_E_BURSTS&t; 0x000c0000&t;   /* ENET: SBUS r/w burst mask */
+DECL|macro|DMA_E_BURST32
+mdefine_line|#define DMA_E_BURST32&t; 0x00040000&t;   /* ENET: SBUS 32 byte r/w burst */
+DECL|macro|DMA_E_BURST16
+mdefine_line|#define DMA_E_BURST16&t; 0x00000000&t;   /* ENET: SBUS 16 byte r/w burst */
 DECL|macro|DMA_BRST_SZ
 mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SCSI: SBUS r/w burst size */
 DECL|macro|DMA_BRST64
@@ -299,25 +273,25 @@ DECL|macro|DMA_MAXEND
 mdefine_line|#define DMA_MAXEND(addr) (0x01000000UL-(((unsigned long)(addr))&amp;0x00ffffffUL))
 multiline_comment|/* Yes, I hack a lot of elisp in my spare time... */
 DECL|macro|DMA_ERROR_P
-mdefine_line|#define DMA_ERROR_P(regs)  ((((regs)-&gt;cond_reg) &amp; DMA_HNDL_ERROR))
+mdefine_line|#define DMA_ERROR_P(regs)  (((sbus_readl((regs) + DMA_CSR) &amp; DMA_HNDL_ERROR))
 DECL|macro|DMA_IRQ_P
-mdefine_line|#define DMA_IRQ_P(regs)    ((((regs)-&gt;cond_reg) &amp; (DMA_HNDL_INTR | DMA_HNDL_ERROR)))
+mdefine_line|#define DMA_IRQ_P(regs)    (((sbus_readl((regs) + DMA_CSR)) &amp; (DMA_HNDL_INTR | DMA_HNDL_ERROR)))
 DECL|macro|DMA_WRITE_P
-mdefine_line|#define DMA_WRITE_P(regs)  ((((regs)-&gt;cond_reg) &amp; DMA_ST_WRITE))
+mdefine_line|#define DMA_WRITE_P(regs)  (((sbus_readl((regs) + DMA_CSR) &amp; DMA_ST_WRITE))
 DECL|macro|DMA_OFF
-mdefine_line|#define DMA_OFF(regs)      ((((regs)-&gt;cond_reg) &amp;= (~DMA_ENABLE)))
+mdefine_line|#define DMA_OFF(__regs)&t;&t;&bslash;&n;do {&t;u32 tmp = sbus_readl((__regs) + DMA_CSR); &bslash;&n;&t;tmp &amp;= ~DMA_ENABLE; &bslash;&n;&t;sbus_writel(tmp, (__regs) + DMA_CSR); &bslash;&n;} while(0)
 DECL|macro|DMA_INTSOFF
-mdefine_line|#define DMA_INTSOFF(regs)  ((((regs)-&gt;cond_reg) &amp;= (~DMA_INT_ENAB)))
+mdefine_line|#define DMA_INTSOFF(__regs)&t;&bslash;&n;do {&t;u32 tmp = sbus_readl((__regs) + DMA_CSR); &bslash;&n;&t;tmp &amp;= ~DMA_INT_ENAB; &bslash;&n;&t;sbus_writel(tmp, (__regs) + DMA_CSR); &bslash;&n;} while(0)
 DECL|macro|DMA_INTSON
-mdefine_line|#define DMA_INTSON(regs)   ((((regs)-&gt;cond_reg) |= (DMA_INT_ENAB)))
+mdefine_line|#define DMA_INTSON(__regs)&t;&bslash;&n;do {&t;u32 tmp = sbus_readl((__regs) + DMA_CSR); &bslash;&n;&t;tmp |= DMA_INT_ENAB; &bslash;&n;&t;sbus_writel(tmp, (__regs) + DMA_CSR); &bslash;&n;} while(0)
 DECL|macro|DMA_PUNTFIFO
-mdefine_line|#define DMA_PUNTFIFO(regs) ((((regs)-&gt;cond_reg) |= DMA_FIFO_INV))
+mdefine_line|#define DMA_PUNTFIFO(__regs)&t;&bslash;&n;do {&t;u32 tmp = sbus_readl((__regs) + DMA_CSR); &bslash;&n;&t;tmp |= DMA_FIFO_INV; &bslash;&n;&t;sbus_writel(tmp, (__regs) + DMA_CSR); &bslash;&n;} while(0)
 DECL|macro|DMA_SETSTART
-mdefine_line|#define DMA_SETSTART(regs, addr)  ((((regs)-&gt;st_addr) = (char *) addr))
+mdefine_line|#define DMA_SETSTART(__regs, __addr)&t;&bslash;&n;&t;sbus_writel((u32)(__addr), (__regs) + DMA_ADDR);
 DECL|macro|DMA_BEGINDMA_W
-mdefine_line|#define DMA_BEGINDMA_W(regs) &bslash;&n;        ((((regs)-&gt;cond_reg |= (DMA_ST_WRITE|DMA_ENABLE|DMA_INT_ENAB))))
+mdefine_line|#define DMA_BEGINDMA_W(__regs)&t;&bslash;&n;do {&t;u32 tmp = sbus_readl((__regs) + DMA_CSR); &bslash;&n;&t;tmp |= (DMA_ST_WRITE|DMA_ENABLE|DMA_INT_ENAB); &bslash;&n;&t;sbus_writel(tmp, (__regs) + DMA_CSR); &bslash;&n;} while(0)
 DECL|macro|DMA_BEGINDMA_R
-mdefine_line|#define DMA_BEGINDMA_R(regs) &bslash;&n;        ((((regs)-&gt;cond_reg |= ((DMA_ENABLE|DMA_INT_ENAB)&amp;(~DMA_ST_WRITE)))))
+mdefine_line|#define DMA_BEGINDMA_R(__regs)&t;&bslash;&n;do {&t;u32 tmp = sbus_readl((__regs) + DMA_CSR); &bslash;&n;&t;tmp |= (DMA_ENABLE|DMA_INT_ENAB); &bslash;&n;&t;tmp &amp;= ~DMA_ST_WRITE; &bslash;&n;&t;sbus_writel(tmp, (__regs) + DMA_CSR); &bslash;&n;} while(0)
 multiline_comment|/* For certain DMA chips, we need to disable ints upon irq entry&n; * and turn them back on when we are done.  So in any ESP interrupt&n; * handler you *must* call DMA_IRQ_ENTRY upon entry and DMA_IRQ_EXIT&n; * when leaving the handler.  You have been warned...&n; */
 DECL|macro|DMA_IRQ_ENTRY
 mdefine_line|#define DMA_IRQ_ENTRY(dma, dregs) do { &bslash;&n;        if(DMA_ISBROKEN(dma)) DMA_INTSOFF(dregs); &bslash;&n;   } while (0)

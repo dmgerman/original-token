@@ -1,53 +1,19 @@
-multiline_comment|/* sunhme.h: Definitions for Sparc HME/BigMac 10/100baseT ethernet driver.&n; *           Also known as the &quot;Happy Meal&quot;.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caipfs.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunhme.h,v 1.28 1999/09/21 14:36:34 davem Exp $&n; * sunhme.h: Definitions for Sparc HME/BigMac 10/100baseT ethernet driver.&n; *           Also known as the &quot;Happy Meal&quot;.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _SUNHME_H
 DECL|macro|_SUNHME_H
 mdefine_line|#define _SUNHME_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Happy Meal global registers. */
-DECL|struct|hmeal_gregs
-r_struct
-id|hmeal_gregs
-(brace
-DECL|member|sw_reset
-r_volatile
-r_int
-r_int
-id|sw_reset
-suffix:semicolon
-multiline_comment|/* Software Reset  */
-DECL|member|cfg
-r_volatile
-r_int
-r_int
-id|cfg
-suffix:semicolon
-multiline_comment|/* Config Register */
-DECL|member|_padding
-r_volatile
-r_int
-r_int
-id|_padding
-(braket
-l_int|62
-)braket
-suffix:semicolon
-multiline_comment|/* Unused          */
-DECL|member|stat
-r_volatile
-r_int
-r_int
-id|stat
-suffix:semicolon
-multiline_comment|/* Status          */
-DECL|member|imask
-r_volatile
-r_int
-r_int
-id|imask
-suffix:semicolon
-multiline_comment|/* Interrupt Mask  */
-)brace
-suffix:semicolon
+DECL|macro|GREG_SWRESET
+mdefine_line|#define GREG_SWRESET&t;0x000UL&t;/* Software Reset  */
+DECL|macro|GREG_CFG
+mdefine_line|#define GREG_CFG&t;0x004UL&t;/* Config Register */
+DECL|macro|GREG_STAT
+mdefine_line|#define GREG_STAT&t;0x108UL&t;/* Status          */
+DECL|macro|GREG_IMASK
+mdefine_line|#define GREG_IMASK&t;0x10cUL&t;/* Interrupt Mask  */
+DECL|macro|GREG_REG_SIZE
+mdefine_line|#define GREG_REG_SIZE&t;0x110UL
 multiline_comment|/* Global reset register. */
 DECL|macro|GREG_RESET_ETX
 mdefine_line|#define GREG_RESET_ETX         0x01
@@ -204,103 +170,34 @@ mdefine_line|#define GREG_IMASK_SLVERR      0x40000000 /* PIO access got an erro
 DECL|macro|GREG_IMASK_SLVPERR
 mdefine_line|#define GREG_IMASK_SLVPERR     0x80000000 /* PIO access got a parity error            */
 multiline_comment|/* Happy Meal external transmitter registers. */
-DECL|struct|hmeal_etxregs
-r_struct
-id|hmeal_etxregs
-(brace
-DECL|member|tx_pnding
-r_volatile
-r_int
-r_int
-id|tx_pnding
-suffix:semicolon
-multiline_comment|/* Transmit pending/wakeup register */
-DECL|member|cfg
-r_volatile
-r_int
-r_int
-id|cfg
-suffix:semicolon
-multiline_comment|/* Transmit config register         */
-DECL|member|tx_ring
-r_volatile
-r_int
-r_int
-id|tx_ring
-suffix:semicolon
-multiline_comment|/* Transmit ring pointer            */
-DECL|member|tx_bbase
-r_volatile
-r_int
-r_int
-id|tx_bbase
-suffix:semicolon
-multiline_comment|/* Transmit buffer base             */
-DECL|member|tx_bdisp
-r_volatile
-r_int
-r_int
-id|tx_bdisp
-suffix:semicolon
-multiline_comment|/* Transmit buffer displacement     */
-DECL|member|tx_fifo_wptr
-r_volatile
-r_int
-r_int
-id|tx_fifo_wptr
-suffix:semicolon
-multiline_comment|/* FIFO write ptr                   */
-DECL|member|tx_fifo_swptr
-r_volatile
-r_int
-r_int
-id|tx_fifo_swptr
-suffix:semicolon
-multiline_comment|/* FIFO write ptr (shadow register) */
-DECL|member|tx_fifo_rptr
-r_volatile
-r_int
-r_int
-id|tx_fifo_rptr
-suffix:semicolon
-multiline_comment|/* FIFO read ptr                    */
-DECL|member|tx_fifo_srptr
-r_volatile
-r_int
-r_int
-id|tx_fifo_srptr
-suffix:semicolon
-multiline_comment|/* FIFO read ptr (shadow register)  */
-DECL|member|tx_fifo_pcnt
-r_volatile
-r_int
-r_int
-id|tx_fifo_pcnt
-suffix:semicolon
-multiline_comment|/* FIFO packet counter              */
-DECL|member|smachine
-r_volatile
-r_int
-r_int
-id|smachine
-suffix:semicolon
-multiline_comment|/* Transmitter state machine        */
-DECL|member|tx_rsize
-r_volatile
-r_int
-r_int
-id|tx_rsize
-suffix:semicolon
-multiline_comment|/* Ring descriptor size             */
-DECL|member|tx_bptr
-r_volatile
-r_int
-r_int
-id|tx_bptr
-suffix:semicolon
-multiline_comment|/* Transmit data buffer ptr         */
-)brace
-suffix:semicolon
+DECL|macro|ETX_PENDING
+mdefine_line|#define ETX_PENDING&t;0x00UL&t;/* Transmit pending/wakeup register */
+DECL|macro|ETX_CFG
+mdefine_line|#define ETX_CFG&t;&t;0x04UL&t;/* Transmit config register         */
+DECL|macro|ETX_RING
+mdefine_line|#define ETX_RING&t;0x08UL&t;/* Transmit ring pointer            */
+DECL|macro|ETX_BBASE
+mdefine_line|#define ETX_BBASE&t;0x0cUL&t;/* Transmit buffer base             */
+DECL|macro|ETX_BDISP
+mdefine_line|#define ETX_BDISP&t;0x10UL&t;/* Transmit buffer displacement     */
+DECL|macro|ETX_FIFOWPTR
+mdefine_line|#define ETX_FIFOWPTR&t;0x14UL&t;/* FIFO write ptr                   */
+DECL|macro|ETX_FIFOSWPTR
+mdefine_line|#define ETX_FIFOSWPTR&t;0x18UL&t;/* FIFO write ptr (shadow register) */
+DECL|macro|ETX_FIFORPTR
+mdefine_line|#define ETX_FIFORPTR&t;0x1cUL&t;/* FIFO read ptr                    */
+DECL|macro|ETX_FIFOSRPTR
+mdefine_line|#define ETX_FIFOSRPTR&t;0x20UL&t;/* FIFO read ptr (shadow register)  */
+DECL|macro|ETX_FIFOPCNT
+mdefine_line|#define ETX_FIFOPCNT&t;0x24UL&t;/* FIFO packet counter              */
+DECL|macro|ETX_SMACHINE
+mdefine_line|#define ETX_SMACHINE&t;0x28UL&t;/* Transmitter state machine        */
+DECL|macro|ETX_RSIZE
+mdefine_line|#define ETX_RSIZE&t;0x2cUL&t;/* Ring descriptor size             */
+DECL|macro|ETX_BPTR
+mdefine_line|#define ETX_BPTR&t;0x30UL&t;/* Transmit data buffer ptr         */
+DECL|macro|ETX_REG_SIZE
+mdefine_line|#define ETX_REG_SIZE&t;0x34UL
 multiline_comment|/* ETX transmit pending register. */
 DECL|macro|ETX_TP_DMAWAKEUP
 mdefine_line|#define ETX_TP_DMAWAKEUP         0x00000001 /* Restart transmit dma             */
@@ -316,68 +213,24 @@ mdefine_line|#define ETX_CFG_IRQDBEFORE       0x00000000 /* Interrupt before TX-
 DECL|macro|ETX_RSIZE_SHIFT
 mdefine_line|#define ETX_RSIZE_SHIFT          4
 multiline_comment|/* Happy Meal external receiver registers. */
-DECL|struct|hmeal_erxregs
-r_struct
-id|hmeal_erxregs
-(brace
-DECL|member|cfg
-r_volatile
-r_int
-r_int
-id|cfg
-suffix:semicolon
-multiline_comment|/* Receiver config register         */
-DECL|member|rx_ring
-r_volatile
-r_int
-r_int
-id|rx_ring
-suffix:semicolon
-multiline_comment|/* Receiver ring ptr                */
-DECL|member|rx_bptr
-r_volatile
-r_int
-r_int
-id|rx_bptr
-suffix:semicolon
-multiline_comment|/* Receiver buffer ptr              */
-DECL|member|rx_fifo_wptr
-r_volatile
-r_int
-r_int
-id|rx_fifo_wptr
-suffix:semicolon
-multiline_comment|/* FIFO write ptr                   */
-DECL|member|rx_fifo_swptr
-r_volatile
-r_int
-r_int
-id|rx_fifo_swptr
-suffix:semicolon
-multiline_comment|/* FIFO write ptr (shadow register) */
-DECL|member|rx_fifo_rptr
-r_volatile
-r_int
-r_int
-id|rx_fifo_rptr
-suffix:semicolon
-multiline_comment|/* FIFO read ptr                    */
-DECL|member|rx_fifo_srptr
-r_volatile
-r_int
-r_int
-id|rx_fifo_srptr
-suffix:semicolon
-multiline_comment|/* FIFO read ptr (shadow register)  */
-DECL|member|smachine
-r_volatile
-r_int
-r_int
-id|smachine
-suffix:semicolon
-multiline_comment|/* Receiver state machine           */
-)brace
-suffix:semicolon
+DECL|macro|ERX_CFG
+mdefine_line|#define ERX_CFG&t;&t;0x00UL&t;/* Receiver config register         */
+DECL|macro|ERX_RING
+mdefine_line|#define ERX_RING&t;0x04UL&t;/* Receiver ring ptr                */
+DECL|macro|ERX_BPTR
+mdefine_line|#define ERX_BPTR&t;0x08UL&t;/* Receiver buffer ptr              */
+DECL|macro|ERX_FIFOWPTR
+mdefine_line|#define ERX_FIFOWPTR&t;0x0cUL&t;/* FIFO write ptr                   */
+DECL|macro|ERX_FIFOSWPTR
+mdefine_line|#define ERX_FIFOSWPTR&t;0x10UL&t;/* FIFO write ptr (shadow register) */
+DECL|macro|ERX_FIFORPTR
+mdefine_line|#define ERX_FIFORPTR&t;0x14UL&t;/* FIFO read ptr                    */
+DECL|macro|ERX_FIFOSRPTR
+mdefine_line|#define ERX_FIFOSRPTR&t;0x18UL&t;/* FIFO read ptr (shadow register)  */
+DECL|macro|ERX_SMACHINE
+mdefine_line|#define ERX_SMACHINE&t;0x1cUL&t;/* Receiver state machine           */
+DECL|macro|ERX_REG_SIZE
+mdefine_line|#define ERX_REG_SIZE&t;0x20UL
 multiline_comment|/* ERX config register. */
 DECL|macro|ERX_CFG_DMAENABLE
 mdefine_line|#define ERX_CFG_DMAENABLE    0x00000001 /* Enable receive DMA        */
@@ -400,333 +253,95 @@ mdefine_line|#define ERX_CFG_RESV3        0x0000f800 /* Unused...               
 DECL|macro|ERX_CFG_CSUMSTART
 mdefine_line|#define ERX_CFG_CSUMSTART    0x007f0000 /* Offset of checksum start  */
 multiline_comment|/* I&squot;d like a Big Mac, small fries, small coke, and SparcLinux please. */
-DECL|struct|hmeal_bigmacregs
-r_struct
-id|hmeal_bigmacregs
-(brace
-DECL|member|xif_cfg
-r_volatile
-r_int
-r_int
-id|xif_cfg
-suffix:semicolon
-multiline_comment|/* XIF config register                */
-DECL|member|_unused
-r_volatile
-r_int
-r_int
-id|_unused
-(braket
-l_int|129
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved...                        */
-DECL|member|tx_swreset
-r_volatile
-r_int
-r_int
-id|tx_swreset
-suffix:semicolon
-multiline_comment|/* Transmitter software reset         */
-DECL|member|tx_cfg
-r_volatile
-r_int
-r_int
-id|tx_cfg
-suffix:semicolon
-multiline_comment|/* Transmitter config register        */
-DECL|member|ipkt_gap1
-r_volatile
-r_int
-r_int
-id|ipkt_gap1
-suffix:semicolon
-multiline_comment|/* Inter-packet gap 1                 */
-DECL|member|ipkt_gap2
-r_volatile
-r_int
-r_int
-id|ipkt_gap2
-suffix:semicolon
-multiline_comment|/* Inter-packet gap 2                 */
-DECL|member|attempt_limit
-r_volatile
-r_int
-r_int
-id|attempt_limit
-suffix:semicolon
-multiline_comment|/* Transmit attempt limit             */
-DECL|member|stime
-r_volatile
-r_int
-r_int
-id|stime
-suffix:semicolon
-multiline_comment|/* Transmit slot time                 */
-DECL|member|preamble_len
-r_volatile
-r_int
-r_int
-id|preamble_len
-suffix:semicolon
-multiline_comment|/* Size of transmit preamble          */
-DECL|member|preamble_pattern
-r_volatile
-r_int
-r_int
-id|preamble_pattern
-suffix:semicolon
-multiline_comment|/* Pattern for transmit preamble      */
-DECL|member|tx_sframe_delim
-r_volatile
-r_int
-r_int
-id|tx_sframe_delim
-suffix:semicolon
-multiline_comment|/* Transmit delimiter                 */
-DECL|member|jsize
-r_volatile
-r_int
-r_int
-id|jsize
-suffix:semicolon
-multiline_comment|/* Jam size                           */
-DECL|member|tx_pkt_max
-r_volatile
-r_int
-r_int
-id|tx_pkt_max
-suffix:semicolon
-multiline_comment|/* Transmit max pkt size              */
-DECL|member|tx_pkt_min
-r_volatile
-r_int
-r_int
-id|tx_pkt_min
-suffix:semicolon
-multiline_comment|/* Transmit min pkt size              */
-DECL|member|peak_attempt
-r_volatile
-r_int
-r_int
-id|peak_attempt
-suffix:semicolon
-multiline_comment|/* Count of transmit peak attempts    */
-DECL|member|dt_ctr
-r_volatile
-r_int
-r_int
-id|dt_ctr
-suffix:semicolon
-multiline_comment|/* Transmit defer timer               */
-DECL|member|nc_ctr
-r_volatile
-r_int
-r_int
-id|nc_ctr
-suffix:semicolon
-multiline_comment|/* Transmit normal-collision counter  */
-DECL|member|fc_ctr
-r_volatile
-r_int
-r_int
-id|fc_ctr
-suffix:semicolon
-multiline_comment|/* Transmit first-collision counter   */
-DECL|member|ex_ctr
-r_volatile
-r_int
-r_int
-id|ex_ctr
-suffix:semicolon
-multiline_comment|/* Transmit excess-collision counter  */
-DECL|member|lt_ctr
-r_volatile
-r_int
-r_int
-id|lt_ctr
-suffix:semicolon
-multiline_comment|/* Transmit late-collision counter    */
-DECL|member|rand_seed
-r_volatile
-r_int
-r_int
-id|rand_seed
-suffix:semicolon
-multiline_comment|/* Transmit random number seed        */
-DECL|member|tx_smachine
-r_volatile
-r_int
-r_int
-id|tx_smachine
-suffix:semicolon
-multiline_comment|/* Transmit state machine             */
-DECL|member|_unused2
-r_volatile
-r_int
-r_int
-id|_unused2
-(braket
-l_int|44
-)braket
-suffix:semicolon
-multiline_comment|/* Reserved                           */
-DECL|member|rx_swreset
-r_volatile
-r_int
-r_int
-id|rx_swreset
-suffix:semicolon
-multiline_comment|/* Receiver software reset            */
-DECL|member|rx_cfg
-r_volatile
-r_int
-r_int
-id|rx_cfg
-suffix:semicolon
-multiline_comment|/* Receiver config register           */
-DECL|member|rx_pkt_max
-r_volatile
-r_int
-r_int
-id|rx_pkt_max
-suffix:semicolon
-multiline_comment|/* Receive max pkt size               */
-DECL|member|rx_pkt_min
-r_volatile
-r_int
-r_int
-id|rx_pkt_min
-suffix:semicolon
-multiline_comment|/* Receive min pkt size               */
-DECL|member|mac_addr2
-r_volatile
-r_int
-r_int
-id|mac_addr2
-suffix:semicolon
-multiline_comment|/* Ether address register 2           */
-DECL|member|mac_addr1
-r_volatile
-r_int
-r_int
-id|mac_addr1
-suffix:semicolon
-multiline_comment|/* Ether address register 1           */
-DECL|member|mac_addr0
-r_volatile
-r_int
-r_int
-id|mac_addr0
-suffix:semicolon
-multiline_comment|/* Ether address register 0           */
-DECL|member|fr_ctr
-r_volatile
-r_int
-r_int
-id|fr_ctr
-suffix:semicolon
-multiline_comment|/* Receive frame receive counter      */
-DECL|member|gle_ctr
-r_volatile
-r_int
-r_int
-id|gle_ctr
-suffix:semicolon
-multiline_comment|/* Receive giant-length error counter */
-DECL|member|unale_ctr
-r_volatile
-r_int
-r_int
-id|unale_ctr
-suffix:semicolon
-multiline_comment|/* Receive unaligned error counter    */
-DECL|member|rcrce_ctr
-r_volatile
-r_int
-r_int
-id|rcrce_ctr
-suffix:semicolon
-multiline_comment|/* Receive CRC error counter          */
-DECL|member|rx_smachine
-r_volatile
-r_int
-r_int
-id|rx_smachine
-suffix:semicolon
-multiline_comment|/* Receiver state machine             */
-DECL|member|rx_cvalid
-r_volatile
-r_int
-r_int
-id|rx_cvalid
-suffix:semicolon
-multiline_comment|/* Receiver code violation            */
-DECL|member|_unused3
-r_volatile
-r_int
-r_int
-id|_unused3
-suffix:semicolon
-multiline_comment|/* Reserved...                        */
-DECL|member|htable3
-r_volatile
-r_int
-r_int
-id|htable3
-suffix:semicolon
-multiline_comment|/* Hash table 3                       */
-DECL|member|htable2
-r_volatile
-r_int
-r_int
-id|htable2
-suffix:semicolon
-multiline_comment|/* Hash table 2                       */
-DECL|member|htable1
-r_volatile
-r_int
-r_int
-id|htable1
-suffix:semicolon
-multiline_comment|/* Hash table 1                       */
-DECL|member|htable0
-r_volatile
-r_int
-r_int
-id|htable0
-suffix:semicolon
-multiline_comment|/* Hash table 0                       */
-DECL|member|afilter2
-r_volatile
-r_int
-r_int
-id|afilter2
-suffix:semicolon
-multiline_comment|/* Address filter 2                   */
-DECL|member|afilter1
-r_volatile
-r_int
-r_int
-id|afilter1
-suffix:semicolon
-multiline_comment|/* Address filter 1                   */
-DECL|member|afilter0
-r_volatile
-r_int
-r_int
-id|afilter0
-suffix:semicolon
-multiline_comment|/* Address filter 0                   */
-DECL|member|afilter_mask
-r_volatile
-r_int
-r_int
-id|afilter_mask
-suffix:semicolon
-multiline_comment|/* Address filter mask                */
-)brace
-suffix:semicolon
+DECL|macro|BMAC_XIFCFG
+mdefine_line|#define BMAC_XIFCFG&t;0x0000UL&t;/* XIF config register                */
+multiline_comment|/* 0x4--&gt;0x204, reserved */
+DECL|macro|BMAC_TXSWRESET
+mdefine_line|#define BMAC_TXSWRESET&t;0x208UL&t;/* Transmitter software reset         */
+DECL|macro|BMAC_TXCFG
+mdefine_line|#define BMAC_TXCFG&t;0x20cUL&t;/* Transmitter config register        */
+DECL|macro|BMAC_IGAP1
+mdefine_line|#define BMAC_IGAP1&t;0x210UL&t;/* Inter-packet gap 1                 */
+DECL|macro|BMAC_IGAP2
+mdefine_line|#define BMAC_IGAP2&t;0x214UL&t;/* Inter-packet gap 2                 */
+DECL|macro|BMAC_ALIMIT
+mdefine_line|#define BMAC_ALIMIT&t;0x218UL&t;/* Transmit attempt limit             */
+DECL|macro|BMAC_STIME
+mdefine_line|#define BMAC_STIME&t;0x21cUL&t;/* Transmit slot time                 */
+DECL|macro|BMAC_PLEN
+mdefine_line|#define BMAC_PLEN&t;0x220UL&t;/* Size of transmit preamble          */
+DECL|macro|BMAC_PPAT
+mdefine_line|#define BMAC_PPAT&t;0x224UL&t;/* Pattern for transmit preamble      */
+DECL|macro|BMAC_TXSDELIM
+mdefine_line|#define BMAC_TXSDELIM&t;0x228UL&t;/* Transmit delimiter                 */
+DECL|macro|BMAC_JSIZE
+mdefine_line|#define BMAC_JSIZE&t;0x22cUL&t;/* Jam size                           */
+DECL|macro|BMAC_TXMAX
+mdefine_line|#define BMAC_TXMAX&t;0x230UL&t;/* Transmit max pkt size              */
+DECL|macro|BMAC_TXMIN
+mdefine_line|#define BMAC_TXMIN&t;0x234UL&t;/* Transmit min pkt size              */
+DECL|macro|BMAC_PATTEMPT
+mdefine_line|#define BMAC_PATTEMPT&t;0x238UL&t;/* Count of transmit peak attempts    */
+DECL|macro|BMAC_DTCTR
+mdefine_line|#define BMAC_DTCTR&t;0x23cUL&t;/* Transmit defer timer               */
+DECL|macro|BMAC_NCCTR
+mdefine_line|#define BMAC_NCCTR&t;0x240UL&t;/* Transmit normal-collision counter  */
+DECL|macro|BMAC_FCCTR
+mdefine_line|#define BMAC_FCCTR&t;0x244UL&t;/* Transmit first-collision counter   */
+DECL|macro|BMAC_EXCTR
+mdefine_line|#define BMAC_EXCTR&t;0x248UL&t;/* Transmit excess-collision counter  */
+DECL|macro|BMAC_LTCTR
+mdefine_line|#define BMAC_LTCTR&t;0x24cUL&t;/* Transmit late-collision counter    */
+DECL|macro|BMAC_RSEED
+mdefine_line|#define BMAC_RSEED&t;0x250UL&t;/* Transmit random number seed        */
+DECL|macro|BMAC_TXSMACHINE
+mdefine_line|#define BMAC_TXSMACHINE&t;0x254UL&t;/* Transmit state machine             */
+multiline_comment|/* 0x258--&gt;0x304, reserved */
+DECL|macro|BMAC_RXSWRESET
+mdefine_line|#define BMAC_RXSWRESET&t;0x308UL&t;/* Receiver software reset            */
+DECL|macro|BMAC_RXCFG
+mdefine_line|#define BMAC_RXCFG&t;0x30cUL&t;/* Receiver config register           */
+DECL|macro|BMAC_RXMAX
+mdefine_line|#define BMAC_RXMAX&t;0x310UL&t;/* Receive max pkt size               */
+DECL|macro|BMAC_RXMIN
+mdefine_line|#define BMAC_RXMIN&t;0x314UL&t;/* Receive min pkt size               */
+DECL|macro|BMAC_MACADDR2
+mdefine_line|#define BMAC_MACADDR2&t;0x318UL&t;/* Ether address register 2           */
+DECL|macro|BMAC_MACADDR1
+mdefine_line|#define BMAC_MACADDR1&t;0x31cUL&t;/* Ether address register 1           */
+DECL|macro|BMAC_MACADDR0
+mdefine_line|#define BMAC_MACADDR0&t;0x320UL&t;/* Ether address register 0           */
+DECL|macro|BMAC_FRCTR
+mdefine_line|#define BMAC_FRCTR&t;0x324UL&t;/* Receive frame receive counter      */
+DECL|macro|BMAC_GLECTR
+mdefine_line|#define BMAC_GLECTR&t;0x328UL&t;/* Receive giant-length error counter */
+DECL|macro|BMAC_UNALECTR
+mdefine_line|#define BMAC_UNALECTR&t;0x32cUL&t;/* Receive unaligned error counter    */
+DECL|macro|BMAC_RCRCECTR
+mdefine_line|#define BMAC_RCRCECTR&t;0x330UL&t;/* Receive CRC error counter          */
+DECL|macro|BMAC_RXSMACHINE
+mdefine_line|#define BMAC_RXSMACHINE&t;0x334UL&t;/* Receiver state machine             */
+DECL|macro|BMAC_RXCVALID
+mdefine_line|#define BMAC_RXCVALID&t;0x338UL&t;/* Receiver code violation            */
+multiline_comment|/* 0x33c, reserved */
+DECL|macro|BMAC_HTABLE3
+mdefine_line|#define BMAC_HTABLE3&t;0x340UL&t;/* Hash table 3                       */
+DECL|macro|BMAC_HTABLE2
+mdefine_line|#define BMAC_HTABLE2&t;0x344UL&t;/* Hash table 2                       */
+DECL|macro|BMAC_HTABLE1
+mdefine_line|#define BMAC_HTABLE1&t;0x348UL&t;/* Hash table 1                       */
+DECL|macro|BMAC_HTABLE0
+mdefine_line|#define BMAC_HTABLE0&t;0x34cUL&t;/* Hash table 0                       */
+DECL|macro|BMAC_AFILTER2
+mdefine_line|#define BMAC_AFILTER2&t;0x350UL&t;/* Address filter 2                   */
+DECL|macro|BMAC_AFILTER1
+mdefine_line|#define BMAC_AFILTER1&t;0x354UL&t;/* Address filter 1                   */
+DECL|macro|BMAC_AFILTER0
+mdefine_line|#define BMAC_AFILTER0&t;0x358UL&t;/* Address filter 0                   */
+DECL|macro|BMAC_AFMASK
+mdefine_line|#define BMAC_AFMASK&t;0x35cUL&t;/* Address filter mask                */
+DECL|macro|BMAC_REG_SIZE
+mdefine_line|#define BMAC_REG_SIZE&t;0x360UL
 multiline_comment|/* BigMac XIF config register. */
 DECL|macro|BIGMAC_XCFG_ODENABLE
 mdefine_line|#define BIGMAC_XCFG_ODENABLE  0x00000001 /* Output driver enable         */
@@ -779,68 +394,24 @@ mdefine_line|#define BIGMAC_RXCFG_HENABLE  0x00000800 /* Enable the hash filter 
 DECL|macro|BIGMAC_RXCFG_AENABLE
 mdefine_line|#define BIGMAC_RXCFG_AENABLE  0x00001000 /* Enable the address filter       */
 multiline_comment|/* These are the &quot;Management Interface&quot; (ie. MIF) registers of the transceiver. */
-DECL|struct|hmeal_tcvregs
-r_struct
-id|hmeal_tcvregs
-(brace
-DECL|member|bb_clock
-r_volatile
-r_int
-r_int
-id|bb_clock
-suffix:semicolon
-multiline_comment|/* Bit bang clock register          */
-DECL|member|bb_data
-r_volatile
-r_int
-r_int
-id|bb_data
-suffix:semicolon
-multiline_comment|/* Bit bang data register           */
-DECL|member|bb_oenab
-r_volatile
-r_int
-r_int
-id|bb_oenab
-suffix:semicolon
-multiline_comment|/* Bit bang output enable           */
-DECL|member|frame
-r_volatile
-r_int
-r_int
-id|frame
-suffix:semicolon
-multiline_comment|/* Frame control/data register      */
-DECL|member|cfg
-r_volatile
-r_int
-r_int
-id|cfg
-suffix:semicolon
-multiline_comment|/* MIF config register              */
-DECL|member|int_mask
-r_volatile
-r_int
-r_int
-id|int_mask
-suffix:semicolon
-multiline_comment|/* MIF interrupt mask               */
-DECL|member|status
-r_volatile
-r_int
-r_int
-id|status
-suffix:semicolon
-multiline_comment|/* MIF status                       */
-DECL|member|smachine
-r_volatile
-r_int
-r_int
-id|smachine
-suffix:semicolon
-multiline_comment|/* MIF state machine                */
-)brace
-suffix:semicolon
+DECL|macro|TCVR_BBCLOCK
+mdefine_line|#define TCVR_BBCLOCK&t;0x00UL&t;/* Bit bang clock register          */
+DECL|macro|TCVR_BBDATA
+mdefine_line|#define TCVR_BBDATA&t;0x04UL&t;/* Bit bang data register           */
+DECL|macro|TCVR_BBOENAB
+mdefine_line|#define TCVR_BBOENAB&t;0x08UL&t;/* Bit bang output enable           */
+DECL|macro|TCVR_FRAME
+mdefine_line|#define TCVR_FRAME&t;0x0cUL&t;/* Frame control/data register      */
+DECL|macro|TCVR_CFG
+mdefine_line|#define TCVR_CFG&t;0x10UL&t;/* MIF config register              */
+DECL|macro|TCVR_IMASK
+mdefine_line|#define TCVR_IMASK&t;0x14UL&t;/* MIF interrupt mask               */
+DECL|macro|TCVR_STATUS
+mdefine_line|#define TCVR_STATUS&t;0x18UL&t;/* MIF status                       */
+DECL|macro|TCVR_SMACHINE
+mdefine_line|#define TCVR_SMACHINE&t;0x1cUL&t;/* MIF state machine                */
+DECL|macro|TCVR_REG_SIZE
+mdefine_line|#define TCVR_REG_SIZE&t;0x20UL
 multiline_comment|/* Frame commands. */
 DECL|macro|FRAME_WRITE
 mdefine_line|#define FRAME_WRITE           0x50020000
@@ -1108,19 +679,17 @@ DECL|macro|NCONFIG_LDISABLE
 mdefine_line|#define NCONFIG_LDISABLE        0x0020  /* Disable the link            */
 DECL|macro|NCONFIG_RESV2
 mdefine_line|#define NCONFIG_RESV2           0xffc0  /* Unused...                   */
-multiline_comment|/* Happy Meal descriptor rings and such.&n; * All descriptor rings must be aligned on a 2K boundry.&n; * All receive buffers must be 64 byte aligned.&n; */
+multiline_comment|/* Happy Meal descriptor rings and such.&n; * All descriptor rings must be aligned on a 2K boundry.&n; * All receive buffers must be 64 byte aligned.&n; * Always write the address first before setting the ownership&n; * bits to avoid races with the hardware scanning the ring.&n; */
 DECL|struct|happy_meal_rxd
 r_struct
 id|happy_meal_rxd
 (brace
 DECL|member|rx_flags
-r_int
-r_int
+id|u32
 id|rx_flags
 suffix:semicolon
 DECL|member|rx_addr
-r_int
-r_int
+id|u32
 id|rx_addr
 suffix:semicolon
 )brace
@@ -1138,13 +707,11 @@ r_struct
 id|happy_meal_txd
 (brace
 DECL|member|tx_flags
-r_int
-r_int
+id|u32
 id|tx_flags
 suffix:semicolon
 DECL|member|tx_addr
-r_int
-r_int
+id|u32
 id|tx_addr
 suffix:semicolon
 )brace
@@ -1214,40 +781,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|hblock_offset
 mdefine_line|#define hblock_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct hmeal_init_block *)0)-&gt;mem[elem]))))
-DECL|macro|SUN4C_PKT_BUF_SZ
-mdefine_line|#define SUN4C_PKT_BUF_SZ&t;1546
-DECL|macro|SUN4C_RX_BUFF_SIZE
-mdefine_line|#define SUN4C_RX_BUFF_SIZE&t;SUN4C_PKT_BUF_SZ
-DECL|macro|SUN4C_TX_BUFF_SIZE
-mdefine_line|#define SUN4C_TX_BUFF_SIZE&t;SUN4C_PKT_BUF_SZ
-DECL|struct|hmeal_buffers
-r_struct
-id|hmeal_buffers
-(brace
-DECL|member|tx_buf
-r_char
-id|tx_buf
-(braket
-id|TX_RING_SIZE
-)braket
-(braket
-id|SUN4C_TX_BUFF_SIZE
-)braket
-suffix:semicolon
-DECL|member|rx_buf
-r_char
-id|rx_buf
-(braket
-id|RX_RING_SIZE
-)braket
-(braket
-id|SUN4C_RX_BUFF_SIZE
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|hbuf_offset
-mdefine_line|#define hbuf_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct hmeal_buffers *)0)-&gt;mem[elem][0]))))
 multiline_comment|/* Now software state stuff. */
 DECL|enum|happy_transceiver
 r_enum
@@ -1310,40 +843,11 @@ r_struct
 id|happy_meal
 (brace
 DECL|member|gregs
-r_struct
-id|hmeal_gregs
-op_star
+r_int
+r_int
 id|gregs
 suffix:semicolon
 multiline_comment|/* Happy meal global registers       */
-DECL|member|etxregs
-r_struct
-id|hmeal_etxregs
-op_star
-id|etxregs
-suffix:semicolon
-multiline_comment|/* External transmitter regs         */
-DECL|member|erxregs
-r_struct
-id|hmeal_erxregs
-op_star
-id|erxregs
-suffix:semicolon
-multiline_comment|/* External receiver regs            */
-DECL|member|bigmacregs
-r_struct
-id|hmeal_bigmacregs
-op_star
-id|bigmacregs
-suffix:semicolon
-multiline_comment|/* I said NO SOLARIS with my bigmac! */
-DECL|member|tcvregs
-r_struct
-id|hmeal_tcvregs
-op_star
-id|tcvregs
-suffix:semicolon
-multiline_comment|/* MIF transceiver regs              */
 DECL|member|happy_block
 r_struct
 id|hmeal_init_block
@@ -1351,11 +855,103 @@ op_star
 id|happy_block
 suffix:semicolon
 multiline_comment|/* RX and TX descriptors (CPU addr)  */
-DECL|member|hblock_dvma
-id|__u32
-id|hblock_dvma
+macro_line|#if defined(CONFIG_SBUS) &amp;&amp; defined(CONFIG_PCI)
+DECL|member|read_desc32
+id|u32
+(paren
+op_star
+id|read_desc32
+)paren
+(paren
+id|u32
+op_star
+)paren
 suffix:semicolon
-multiline_comment|/* DVMA visible address happy block  */
+DECL|member|write_txd
+r_void
+(paren
+op_star
+id|write_txd
+)paren
+(paren
+r_struct
+id|happy_meal_txd
+op_star
+comma
+id|u32
+comma
+id|u32
+)paren
+suffix:semicolon
+DECL|member|write_rxd
+r_void
+(paren
+op_star
+id|write_rxd
+)paren
+(paren
+r_struct
+id|happy_meal_rxd
+op_star
+comma
+id|u32
+comma
+id|u32
+)paren
+suffix:semicolon
+DECL|member|dma_map
+id|u32
+(paren
+op_star
+id|dma_map
+)paren
+(paren
+r_void
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|dma_unmap
+r_void
+(paren
+op_star
+id|dma_unmap
+)paren
+(paren
+r_void
+op_star
+comma
+id|u32
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|dma_sync
+r_void
+(paren
+op_star
+id|dma_sync
+)paren
+(paren
+r_void
+op_star
+comma
+id|u32
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* This is either a sbus_dev or a pci_dev. */
+DECL|member|happy_dev
+r_void
+op_star
+id|happy_dev
+suffix:semicolon
 DECL|member|rx_skbs
 r_struct
 id|sk_buff
@@ -1387,21 +983,67 @@ id|rx_old
 comma
 id|tx_old
 suffix:semicolon
-multiline_comment|/* We may use this for Ultra as well, will have to see, maybe not. */
-DECL|member|sun4c_buffers
+DECL|member|net_stats
 r_struct
-id|hmeal_buffers
+id|net_device_stats
+id|net_stats
+suffix:semicolon
+multiline_comment|/* Statistical counters              */
+macro_line|#if defined(CONFIG_SBUS) &amp;&amp; defined(CONFIG_PCI)
+DECL|member|read32
+id|u32
+(paren
 op_star
-id|sun4c_buffers
+id|read32
+)paren
+(paren
+r_int
+r_int
+)paren
 suffix:semicolon
-multiline_comment|/* CPU visible address.              */
-DECL|macro|sun4d_buffers
-mdefine_line|#define&t;sun4d_buffers&t;&t;  sun4c_buffers&t;  /* No need to make this a separate.  */
-DECL|member|s4c_buf_dvma
+DECL|member|write32
+r_void
+(paren
+op_star
+id|write32
+)paren
+(paren
+r_int
+r_int
+comma
+id|u32
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|member|etxregs
+r_int
+r_int
+id|etxregs
+suffix:semicolon
+multiline_comment|/* External transmitter regs         */
+DECL|member|erxregs
+r_int
+r_int
+id|erxregs
+suffix:semicolon
+multiline_comment|/* External receiver regs            */
+DECL|member|bigmacregs
+r_int
+r_int
+id|bigmacregs
+suffix:semicolon
+multiline_comment|/* BIGMAC core regs&t;&t;     */
+DECL|member|tcvregs
+r_int
+r_int
+id|tcvregs
+suffix:semicolon
+multiline_comment|/* MIF transceiver regs              */
+DECL|member|hblock_dvma
 id|__u32
-id|s4c_buf_dvma
+id|hblock_dvma
 suffix:semicolon
-multiline_comment|/* DVMA visible address.             */
+multiline_comment|/* DVMA visible address happy block  */
 DECL|member|happy_flags
 r_int
 r_int
@@ -1546,27 +1188,6 @@ r_int
 id|timer_ticks
 suffix:semicolon
 multiline_comment|/* Number of clicks at each state.   */
-DECL|member|net_stats
-r_struct
-id|net_device_stats
-id|net_stats
-suffix:semicolon
-multiline_comment|/* Statistical counters              */
-DECL|member|happy_sbus_dev
-r_struct
-id|linux_sbus_device
-op_star
-id|happy_sbus_dev
-suffix:semicolon
-multiline_comment|/* ;-)                               */
-macro_line|#ifdef CONFIG_PCI
-DECL|member|happy_pci_dev
-r_struct
-id|pci_dev
-op_star
-id|happy_pci_dev
-suffix:semicolon
-macro_line|#endif
 DECL|member|dev
 r_struct
 id|net_device
@@ -1630,15 +1251,6 @@ DECL|struct|quattro
 r_struct
 id|quattro
 (brace
-DECL|member|irq_status
-r_volatile
-id|u32
-op_star
-id|irq_status
-(braket
-l_int|4
-)braket
-suffix:semicolon
 DECL|member|happy_meals
 r_struct
 id|net_device
@@ -1648,37 +1260,12 @@ id|happy_meals
 l_int|4
 )braket
 suffix:semicolon
-DECL|member|handler
-r_void
-(paren
-op_star
-id|handler
-)paren
-(paren
-r_int
-comma
+multiline_comment|/* This is either a sbus_dev or a pci_dev. */
+DECL|member|quattro_dev
 r_void
 op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
+id|quattro_dev
 suffix:semicolon
-DECL|member|quattro_sbus_dev
-r_struct
-id|linux_sbus_device
-op_star
-id|quattro_sbus_dev
-suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-DECL|member|quattro_pci_dev
-r_struct
-id|pci_dev
-op_star
-id|quattro_pci_dev
-suffix:semicolon
-macro_line|#endif
 DECL|member|next
 r_struct
 id|quattro
@@ -1702,37 +1289,8 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* We use this to acquire receive skb&squot;s that we can DMA directly into. */
 DECL|macro|ALIGNED_RX_SKB_ADDR
-mdefine_line|#define ALIGNED_RX_SKB_ADDR(addr) &bslash;&n;        ((((unsigned long)(addr) + (64 - 1)) &amp; ~(64 - 1)) - (unsigned long)(addr))
+mdefine_line|#define ALIGNED_RX_SKB_ADDR(addr) &bslash;&n;        ((((unsigned long)(addr) + (64UL - 1UL)) &amp; ~(64UL - 1UL)) - (unsigned long)(addr))
 DECL|macro|happy_meal_alloc_skb
-mdefine_line|#define happy_meal_alloc_skb(__length, __gfp_flags) &bslash;&n;({&t;struct sk_buff *__skb; &bslash;&n;&t;__skb = alloc_skb((__length) + 64, (__gfp_flags)); &bslash;&n;&t;if(__skb) { &bslash;&n;&t;&t;int __offset = ALIGNED_RX_SKB_ADDR(__skb-&gt;data); &bslash;&n;&t;&t;if(__offset) &bslash;&n;&t;&t;&t;skb_reserve(__skb, __offset); &bslash;&n;&t;} &bslash;&n;&t;__skb; &bslash;&n;})
-multiline_comment|/* Register/DMA access stuff, used to cope with differences between&n; * PCI and SBUS happy meals.&n; */
-macro_line|#if defined(CONFIG_PCI)
-DECL|macro|kva_to_hva
-mdefine_line|#define kva_to_hva(__hp, __addr) &bslash;&n;({&t;u32 __ret; &bslash;&n;&t;if ((__hp)-&gt;happy_flags &amp; HFLAG_PCI) &bslash;&n;&t;&t;(__ret) = (u32) virt_to_bus((volatile void *)(__addr)); &bslash;&n;&t;else &bslash;&n;&t;&t;(__ret) = sbus_dvma_addr(__addr); &bslash;&n;&t;__ret; &bslash;&n;})
-DECL|macro|hme_read32
-mdefine_line|#define hme_read32(__hp, __reg) &bslash;&n;({&t;unsigned int __ret; &bslash;&n;&t;if ((__hp)-&gt;happy_flags &amp; HFLAG_PCI) &bslash;&n;&t;&t;__ret = readl((unsigned long)(__reg)); &bslash;&n;&t;else &bslash;&n;&t;&t;__ret = *(__reg); &bslash;&n;&t;__ret; &bslash;&n;})
-DECL|macro|hme_write32
-mdefine_line|#define hme_write32(__hp, __reg, __val) &bslash;&n;do {&t;if ((__hp)-&gt;happy_flags &amp; HFLAG_PCI) &bslash;&n;&t;&t;writel((__val), (unsigned long)(__reg)); &bslash;&n;&t;else &bslash;&n;&t;&t;*(__reg) = (__val); &bslash;&n;} while(0)
-macro_line|#else
-DECL|macro|kva_to_hva
-mdefine_line|#define kva_to_hva(__hp, __addr) ((u32)sbus_dvma_addr(__addr))
-DECL|macro|hme_read32
-mdefine_line|#define hme_read32(__hp, __reg)&t;(*(__reg))
-DECL|macro|hme_write32
-mdefine_line|#define hme_write32(__hp, __reg, __val)&t;((*(__reg)) = (__val))
-macro_line|#endif
-macro_line|#ifdef CONFIG_PCI
-macro_line|#ifdef __sparc_v9__
-DECL|macro|pcihme_write_rxd
-mdefine_line|#define pcihme_write_rxd(__rp, __flags, __addr) &bslash;&n;&t;__asm__ __volatile__(&quot;stwa&t;%3, [%0] %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;stwa&t;%4, [%1] %2&quot; &bslash;&n;&t;&t;&t;     : /* no outputs */ &bslash;&n;&t;&t;&t;     : &quot;r&quot; (&amp;(__rp)-&gt;rx_addr), &quot;r&quot; (&amp;(__rp)-&gt;rx_flags), &bslash;&n;&t;&t;&t;       &quot;i&quot; (ASI_PL), &quot;r&quot; (__addr), &quot;r&quot; (__flags))
-DECL|macro|pcihme_write_txd
-mdefine_line|#define pcihme_write_txd(__tp, __flags, __addr) &bslash;&n;&t;__asm__ __volatile__(&quot;stwa&t;%3, [%0] %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;stwa&t;%4, [%1] %2&quot; &bslash;&n;&t;&t;&t;     : /* no outputs */ &bslash;&n;&t;&t;&t;     : &quot;r&quot; (&amp;(__tp)-&gt;tx_addr), &quot;r&quot; (&amp;(__tp)-&gt;tx_flags), &bslash;&n;&t;&t;&t;       &quot;i&quot; (ASI_PL), &quot;r&quot; (__addr), &quot;r&quot; (__flags))
-macro_line|#else
-DECL|macro|pcihme_write_rxd
-mdefine_line|#define pcihme_write_rxd(__rp, __flags, __addr) &bslash;&n;do {&t;(__rp)-&gt;rx_addr = flip_dword(__addr); &bslash;&n;&t;(__rp)-&gt;rx_flags = flip_dword(__flags); &bslash;&n;} while(0)
-DECL|macro|pcihme_write_txd
-mdefine_line|#define pcihme_write_txd(__tp, __flags, __addr) &bslash;&n;do {&t;(__tp)-&gt;tx_addr = flip_dword(__addr); &bslash;&n;&t;(__tp)-&gt;tx_flags = flip_dword(__flags); &bslash;&n;} while(0)
-macro_line|#endif  /* def __sparc_v9__ */
-macro_line|#endif  /* def CONFIG_PCI */
+mdefine_line|#define happy_meal_alloc_skb(__length, __gfp_flags) &bslash;&n;({&t;struct sk_buff *__skb; &bslash;&n;&t;__skb = alloc_skb((__length) + 64, (__gfp_flags)); &bslash;&n;&t;if(__skb) { &bslash;&n;&t;&t;int __offset = (int) ALIGNED_RX_SKB_ADDR(__skb-&gt;data); &bslash;&n;&t;&t;if(__offset) &bslash;&n;&t;&t;&t;skb_reserve(__skb, __offset); &bslash;&n;&t;} &bslash;&n;&t;__skb; &bslash;&n;})
 macro_line|#endif /* !(_SUNHME_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.68 1999/09/10 05:59:25 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.71 1999/12/19 23:13:13 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12633,6 +12633,15 @@ suffix:colon
 r_case
 id|TIOCSPTLCK
 suffix:colon
+r_case
+id|TIOCGSERIAL
+suffix:colon
+r_case
+id|TIOCSSERIAL
+suffix:colon
+r_case
+id|TIOCSERGETLSR
+suffix:colon
 multiline_comment|/* Big F */
 r_case
 id|FBIOGTYPE
@@ -13235,6 +13244,15 @@ suffix:colon
 r_case
 id|OPROMGETBOOTARGS
 suffix:colon
+r_case
+id|OPROMSETCUR
+suffix:colon
+r_case
+id|OPROMPCI2NODE
+suffix:colon
+r_case
+id|OPROMPATH2NODE
+suffix:colon
 multiline_comment|/* Socket level stuff */
 r_case
 id|FIOSETOWN
@@ -13369,6 +13387,18 @@ suffix:colon
 r_case
 id|PPPIOCSDEBUG
 suffix:colon
+r_case
+id|PPPIOCGIDLE
+suffix:colon
+r_case
+id|PPPIOCNEWUNIT
+suffix:colon
+r_case
+id|PPPIOCATTACH
+suffix:colon
+r_case
+id|PPPIOCDETACH
+suffix:colon
 multiline_comment|/* CDROM stuff */
 r_case
 id|CDROMPAUSE
@@ -13450,6 +13480,15 @@ id|CDROM_DISC_STATUS
 suffix:colon
 r_case
 id|CDROM_CHANGER_NSLOTS
+suffix:colon
+r_case
+id|CDROM_LOCKDOOR
+suffix:colon
+r_case
+id|CDROM_DEBUG
+suffix:colon
+r_case
+id|CDROM_GET_CAPABILITY
 suffix:colon
 multiline_comment|/* Big L */
 r_case

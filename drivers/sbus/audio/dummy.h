@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/sbus/audio/dummy.h&n; *&n; * Copyright (C) 1998 Derrick J. Brashear (shadow@dementia.org)&n; */
+multiline_comment|/* $Id: dummy.h,v 1.3 1999/09/21 14:37:41 davem Exp $&n; * drivers/sbus/audio/dummy.h&n; *&n; * Copyright (C) 1998 Derrick J. Brashear (shadow@dementia.org)&n; */
 macro_line|#ifndef _DUMMY_H_
 DECL|macro|_DUMMY_H_
 mdefine_line|#define _DUMMY_H_
@@ -52,5 +52,5 @@ DECL|macro|DUMMY_CHANNELS
 mdefine_line|#define DUMMY_CHANNELS     (1)             /* channels/sample */
 DECL|macro|DUMMY_RATE
 mdefine_line|#define DUMMY_RATE   (8000)                /* default sample rate */
-macro_line|#endif
+macro_line|#endif /* _DUMMY_H_ */
 eof

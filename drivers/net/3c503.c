@@ -320,7 +320,7 @@ r_int
 r_int
 id|base_bits
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 op_star
@@ -1059,7 +1059,7 @@ id|test_val
 op_assign
 l_int|0xbbadf00d
 suffix:semicolon
-id|writel
+id|isa_writel
 c_func
 (paren
 l_int|0xba5eba5e
@@ -1089,7 +1089,7 @@ id|test_val
 )paren
 )paren
 (brace
-id|writel
+id|isa_writel
 c_func
 (paren
 id|test_val
@@ -1102,7 +1102,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|readl
+id|isa_readl
 c_func
 (paren
 id|mem_base
@@ -1110,7 +1110,7 @@ id|mem_base
 op_ne
 l_int|0xba5eba5e
 op_logical_or
-id|readl
+id|isa_readl
 c_func
 (paren
 id|mem_base
@@ -1142,7 +1142,7 @@ id|test_val
 op_add_assign
 l_int|0x55555555
 suffix:semicolon
-id|writel
+id|isa_writel
 c_func
 (paren
 l_int|0

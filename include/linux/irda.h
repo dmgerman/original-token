@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Mar  8 14:06:12 1999&n; * Modified at:   Sun Oct 10 23:00:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Mar  8 14:06:12 1999&n; * Modified at:   Sun Dec 12 12:23:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     You probably need to include &lt;sys/types.h&gt; before this one if your&n; *     including this file from user-space &n; *&n; ********************************************************************/
 macro_line|#ifndef KERNEL_IRDA_H
 DECL|macro|KERNEL_IRDA_H
 mdefine_line|#define KERNEL_IRDA_H
@@ -61,28 +61,64 @@ r_enum
 (brace
 DECL|enumerator|IRDA_TEKRAM_DONGLE
 id|IRDA_TEKRAM_DONGLE
+op_assign
+l_int|0
 comma
 DECL|enumerator|IRDA_ESI_DONGLE
 id|IRDA_ESI_DONGLE
+op_assign
+l_int|1
 comma
 DECL|enumerator|IRDA_ACTISYS_DONGLE
 id|IRDA_ACTISYS_DONGLE
+op_assign
+l_int|2
 comma
 DECL|enumerator|IRDA_ACTISYS_PLUS_DONGLE
 id|IRDA_ACTISYS_PLUS_DONGLE
+op_assign
+l_int|3
 comma
 DECL|enumerator|IRDA_GIRBIL_DONGLE
 id|IRDA_GIRBIL_DONGLE
+op_assign
+l_int|4
 comma
 DECL|enumerator|IRDA_LITELINK_DONGLE
 id|IRDA_LITELINK_DONGLE
+op_assign
+l_int|5
 comma
 DECL|enumerator|IRDA_AIRPORT_DONGLE
 id|IRDA_AIRPORT_DONGLE
+op_assign
+l_int|6
+comma
+DECL|enumerator|IRDA_OLD_BELKIN_DONGLE
+id|IRDA_OLD_BELKIN_DONGLE
+op_assign
+l_int|7
 comma
 DECL|typedef|IRDA_DONGLE
 )brace
 id|IRDA_DONGLE
+suffix:semicolon
+multiline_comment|/* Protocol types to be used for SOCK_DGRAM */
+r_enum
+(brace
+DECL|enumerator|IRDAPROTO_UNITDATA
+id|IRDAPROTO_UNITDATA
+op_assign
+l_int|0
+comma
+DECL|enumerator|IRDAPROTO_ULTRA
+id|IRDAPROTO_ULTRA
+op_assign
+l_int|1
+comma
+DECL|enumerator|IRDAPROTO_MAX
+id|IRDAPROTO_MAX
+)brace
 suffix:semicolon
 DECL|macro|SOL_IRLMP
 mdefine_line|#define SOL_IRLMP      266 /* Same as SOL_IRDA for now */
@@ -92,16 +128,18 @@ DECL|macro|IRLMP_ENUMDEVICES
 mdefine_line|#define IRLMP_ENUMDEVICES        1
 DECL|macro|IRLMP_IAS_SET
 mdefine_line|#define IRLMP_IAS_SET            2
+DECL|macro|IRLMP_IAS_GET
+mdefine_line|#define IRLMP_IAS_GET            3
 DECL|macro|IRLMP_IAS_QUERY
-mdefine_line|#define IRLMP_IAS_QUERY          3
-DECL|macro|IRLMP_DISCOVERY_MASK_SET
-mdefine_line|#define IRLMP_DISCOVERY_MASK_SET 4
+mdefine_line|#define IRLMP_IAS_QUERY          4
+DECL|macro|IRLMP_HINTS_SET
+mdefine_line|#define IRLMP_HINTS_SET          5
 DECL|macro|IRTTP_QOS_SET
-mdefine_line|#define IRTTP_QOS_SET            5
+mdefine_line|#define IRTTP_QOS_SET            6
 DECL|macro|IRTTP_QOS_GET
-mdefine_line|#define IRTTP_QOS_GET            6
+mdefine_line|#define IRTTP_QOS_GET            7
 DECL|macro|IRTTP_MAX_SDU_SIZE
-mdefine_line|#define IRTTP_MAX_SDU_SIZE       7
+mdefine_line|#define IRTTP_MAX_SDU_SIZE       8
 DECL|macro|IAS_MAX_STRING
 mdefine_line|#define IAS_MAX_STRING         256
 DECL|macro|IAS_MAX_OCTET_STRING
@@ -122,14 +160,12 @@ id|sir_family
 suffix:semicolon
 multiline_comment|/* AF_IRDA */
 DECL|member|sir_lsap_sel
-r_int
-r_char
+id|u_int8_t
 id|sir_lsap_sel
 suffix:semicolon
-multiline_comment|/* LSAP/TSAP selector */
+multiline_comment|/* LSAP selector */
 DECL|member|sir_addr
-r_int
-r_int
+id|u_int32_t
 id|sir_addr
 suffix:semicolon
 multiline_comment|/* Device address */
@@ -148,17 +184,15 @@ r_struct
 id|irda_device_info
 (brace
 DECL|member|saddr
-r_int
-r_int
+id|u_int32_t
 id|saddr
 suffix:semicolon
-multiline_comment|/* Address of remote device */
+multiline_comment|/* Address of local interface */
 DECL|member|daddr
-r_int
-r_int
+id|u_int32_t
 id|daddr
 suffix:semicolon
-multiline_comment|/* Link where it was discovered */
+multiline_comment|/* Address of remote device */
 DECL|member|info
 r_char
 id|info
@@ -168,14 +202,12 @@ l_int|22
 suffix:semicolon
 multiline_comment|/* Description */
 DECL|member|charset
-r_int
-r_char
+id|u_int8_t
 id|charset
 suffix:semicolon
 multiline_comment|/* Charset used for description */
 DECL|member|hints
-r_int
-r_char
+id|u_int8_t
 id|hints
 (braket
 l_int|2
@@ -189,8 +221,7 @@ r_struct
 id|irda_device_list
 (brace
 DECL|member|len
-r_int
-r_int
+id|u_int32_t
 id|len
 suffix:semicolon
 DECL|member|dev
@@ -294,12 +325,14 @@ DECL|macro|SIOCGMEDIABUSY
 mdefine_line|#define SIOCGMEDIABUSY (SIOCDEVPRIVATE + 4)
 DECL|macro|SIOCGRECEIVING
 mdefine_line|#define SIOCGRECEIVING (SIOCDEVPRIVATE + 5)
-DECL|macro|SIOCSRAWMODE
-mdefine_line|#define SIOCSRAWMODE   (SIOCDEVPRIVATE + 6)
+DECL|macro|SIOCSMODE
+mdefine_line|#define SIOCSMODE      (SIOCDEVPRIVATE + 6)
+DECL|macro|SIOCGMODE
+mdefine_line|#define SIOCGMODE      (SIOCDEVPRIVATE + 7)
 DECL|macro|SIOCSDTRRTS
-mdefine_line|#define SIOCSDTRRTS    (SIOCDEVPRIVATE + 7)
+mdefine_line|#define SIOCSDTRRTS    (SIOCDEVPRIVATE + 8)
 DECL|macro|SIOCGQOS
-mdefine_line|#define SIOCGQOS       (SIOCDEVPRIVATE + 8)
+mdefine_line|#define SIOCGQOS       (SIOCDEVPRIVATE + 9)
 multiline_comment|/* No reason to include &lt;linux/if.h&gt; just because of this one ;-) */
 DECL|macro|IRNAMSIZ
 mdefine_line|#define IRNAMSIZ 16 
@@ -404,10 +437,10 @@ r_int
 r_int
 id|ifru_receiving
 suffix:semicolon
-DECL|member|ifru_raw_mode
+DECL|member|ifru_mode
 r_int
 r_int
-id|ifru_raw_mode
+id|ifru_mode
 suffix:semicolon
 DECL|member|ifru_dongle
 r_int
@@ -426,8 +459,8 @@ DECL|macro|ifr_receiving
 mdefine_line|#define ifr_receiving ifr_ifru.ifru_receiving 
 DECL|macro|ifr_dongle
 mdefine_line|#define ifr_dongle    ifr_ifru.ifru_dongle
-DECL|macro|ifr_raw_mode
-mdefine_line|#define ifr_raw_mode  ifr_ifru.ifru_raw_mode
+DECL|macro|ifr_mode
+mdefine_line|#define ifr_mode      ifr_ifru.ifru_mode
 DECL|macro|ifr_dtr
 mdefine_line|#define ifr_dtr       ifr_ifru.ifru_line.dtr
 DECL|macro|ifr_rts

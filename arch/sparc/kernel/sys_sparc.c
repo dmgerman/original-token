@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.53 1999/08/14 03:51:25 anton Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.54 1999/11/19 04:11:36 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -848,8 +848,24 @@ op_amp
 id|MAP_FIXED
 )paren
 op_logical_and
+(paren
 op_logical_neg
 id|addr
+op_logical_or
+(paren
+id|ARCH_SUN4C_SUN4
+op_logical_and
+(paren
+id|addr
+op_ge
+l_int|0x20000000
+op_logical_and
+id|addr
+OL
+l_int|0xe0000000
+)paren
+)paren
+)paren
 )paren
 (brace
 id|addr
@@ -857,7 +873,7 @@ op_assign
 id|get_unmapped_area
 c_func
 (paren
-id|addr
+l_int|0
 comma
 id|len
 )paren
@@ -869,6 +885,31 @@ op_logical_neg
 id|addr
 )paren
 (brace
+r_goto
+id|out_putf
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ARCH_SUN4C_SUN4
+op_logical_and
+(paren
+id|addr
+op_ge
+l_int|0x20000000
+op_logical_and
+id|addr
+OL
+l_int|0xe0000000
+)paren
+)paren
+(brace
+id|retval
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_goto
 id|out_putf
 suffix:semicolon
@@ -909,40 +950,6 @@ id|PAGE_SIZE
 r_goto
 id|out_putf
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|ARCH_SUN4C_SUN4
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|addr
-op_ge
-l_int|0x20000000
-)paren
-op_logical_and
-(paren
-id|addr
-OL
-l_int|0xe0000000
-)paren
-)paren
-)paren
-(brace
-multiline_comment|/* VM hole */
-id|retval
-op_assign
-id|current-&gt;mm-&gt;brk
-suffix:semicolon
-r_goto
-id|out_putf
-suffix:semicolon
-)brace
 )brace
 id|flags
 op_and_assign

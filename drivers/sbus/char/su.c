@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.28 1999/09/01 08:09:32 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.34 1999/12/02 09:55:21 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -39,6 +39,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
+macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -47,6 +48,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 macro_line|#include &lt;linux/console.h&gt;
@@ -167,6 +169,10 @@ id|su_type
 id|port_type
 suffix:semicolon
 multiline_comment|/* Hookup type: e.g. mouse */
+DECL|member|is_console
+r_int
+id|is_console
+suffix:semicolon
 DECL|member|port_node
 r_int
 id|port_node
@@ -998,6 +1004,9 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+comma
+r_int
+id|is_brk
 )paren
 (brace
 r_int
@@ -1135,6 +1144,8 @@ id|sun_mouse_inbyte
 c_func
 (paren
 id|ch
+comma
+id|is_brk
 )paren
 suffix:semicolon
 )brace
@@ -1195,6 +1206,10 @@ r_int
 id|ignored
 op_assign
 l_int|0
+comma
+id|saw_console_brk
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|async_icount
@@ -1217,6 +1232,28 @@ id|info
 comma
 id|UART_RX
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;is_console
+op_logical_and
+(paren
+id|ch
+op_eq
+l_int|0
+op_logical_or
+(paren
+op_star
+id|status
+op_amp
+id|UART_LSR_BI
+)paren
+)paren
+)paren
+id|saw_console_brk
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -1518,6 +1555,18 @@ id|tty_flip_buffer_push
 c_func
 (paren
 id|tty
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|saw_console_brk
+op_ne
+l_int|0
+)paren
+id|batten_down_hatches
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -2131,9 +2180,17 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+(paren
 id|status
 op_amp
 id|UART_LSR_DR
+)paren
+op_logical_or
+(paren
+id|status
+op_amp
+id|UART_LSR_BI
+)paren
 )paren
 id|receive_kbd_ms_chars
 c_func
@@ -2141,6 +2198,14 @@ c_func
 id|info
 comma
 id|regs
+comma
+(paren
+id|status
+op_amp
+id|UART_LSR_BI
+)paren
+op_ne
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_INTR
@@ -9264,7 +9329,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.28 $&quot;
+l_string|&quot;$Revision: 1.34 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9474,6 +9539,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|reg0.which_io
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* Just in case... */
+id|prom_printf
+c_func
+(paren
+l_string|&quot;su: bus number nonzero: 0x%x:%x&bslash;n&quot;
+comma
+id|reg0.which_io
+comma
+id|reg0.phys_addr
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 (paren
 id|info-&gt;port
 op_assign
@@ -9481,20 +9568,12 @@ op_assign
 r_int
 r_int
 )paren
-id|sparc_alloc_io
+id|ioremap
 c_func
 (paren
 id|reg0.phys_addr
 comma
-l_int|0
-comma
 id|reg0.reg_size
-comma
-l_string|&quot;su-regs&quot;
-comma
-id|reg0.which_io
-comma
-l_int|0
 )paren
 )paren
 op_eq
@@ -10168,6 +10247,13 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* This is used by the SAB driver to adjust where its minor&n; * numbers start, we always are probed for first.&n; */
+DECL|variable|su_num_ports
+r_int
+id|su_num_ports
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|su_serial_init
 r_int
@@ -10584,6 +10670,46 @@ id|name
 )paren
 suffix:semicolon
 )brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+comma
+id|info
+op_assign
+id|su_table
+suffix:semicolon
+id|i
+OL
+id|NR_PORTS
+suffix:semicolon
+id|i
+op_increment
+comma
+id|info
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|info-&gt;type
+op_eq
+id|PORT_UNKNOWN
+)paren
+r_break
+suffix:semicolon
+id|su_num_ports
+op_assign
+id|i
+suffix:semicolon
+id|serial_driver.num
+op_assign
+id|callout_driver.num
+op_assign
+id|i
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -10934,6 +11060,10 @@ op_assign
 id|SU_PORT_PORT
 suffix:semicolon
 )brace
+id|info-&gt;is_console
+op_assign
+l_int|0
+suffix:semicolon
 id|info-&gt;port_node
 op_assign
 id|sunode
@@ -10963,11 +11093,9 @@ DECL|function|su_probe
 r_int
 id|__init
 id|su_probe
+c_func
 (paren
-r_int
-r_int
-op_star
-id|memory_start
+r_void
 )paren
 (brace
 r_int
@@ -11149,6 +11277,15 @@ id|su_table
 l_int|0
 )braket
 dot
+id|is_console
+op_assign
+l_int|0
+suffix:semicolon
+id|su_table
+(braket
+l_int|0
+)braket
+dot
 id|port_node
 op_assign
 id|scan.msnode
@@ -11167,6 +11304,15 @@ id|su_table
 l_int|1
 )braket
 dot
+id|is_console
+op_assign
+l_int|0
+suffix:semicolon
+id|su_table
+(braket
+l_int|1
+)braket
+dot
 id|port_node
 op_assign
 id|scan.kbnode
@@ -11174,8 +11320,6 @@ suffix:semicolon
 id|sunserial_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|su_kbd_ms_init
 )paren
 suffix:semicolon
@@ -11186,8 +11330,6 @@ suffix:semicolon
 id|sunkbd_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|sun_kbd_init
 )paren
 suffix:semicolon
@@ -11215,8 +11357,6 @@ macro_line|#ifdef CONFIG_PCI
 id|sunkbd_install_keymaps
 c_func
 (paren
-id|memory_start
-comma
 id|sun_key_maps
 comma
 id|sun_keymap_count
@@ -11280,8 +11420,6 @@ multiline_comment|/*&n;&t; * Console must be initiated after the generic initial
 id|sunserial_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|su_serial_console_init
 )paren
 suffix:semicolon
@@ -11289,8 +11427,6 @@ macro_line|#endif
 id|sunserial_setinitfunc
 c_func
 (paren
-id|memory_start
-comma
 id|su_serial_init
 )paren
 suffix:semicolon
@@ -12052,6 +12188,10 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+id|info-&gt;is_console
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -12086,6 +12226,12 @@ l_int|0
 comma
 l_int|NULL
 )brace
+suffix:semicolon
+DECL|variable|su_console_registered
+r_int
+id|su_console_registered
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
 DECL|function|su_serial_console_init
@@ -12160,6 +12306,10 @@ c_func
 op_amp
 id|sercons
 )paren
+suffix:semicolon
+id|su_console_registered
+op_assign
+l_int|1
 suffix:semicolon
 r_return
 l_int|0

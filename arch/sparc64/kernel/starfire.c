@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: starfire.c,v 1.3 1999/08/30 10:01:13 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@dm.cobaltmicro.com)&n; */
+multiline_comment|/* $Id: starfire.c,v 1.4 1999/09/21 14:35:25 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@dm.cobaltmicro.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/upa.h&gt;
 multiline_comment|/* A few places around the kernel check this to see if&n; * they need to call us to do things in a Starfire specific&n; * way.&n; */
 DECL|variable|this_is_starfire
 r_int
@@ -126,19 +127,10 @@ r_void
 )paren
 (brace
 r_return
-op_star
-(paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-id|__va
+id|upa_readl
 c_func
 (paren
-l_int|0x1fff40000d0
-)paren
+l_int|0x1fff40000d0UL
 )paren
 suffix:semicolon
 )brace
@@ -148,20 +140,16 @@ r_struct
 id|starfire_irqinfo
 (brace
 DECL|member|imap_slots
-r_volatile
 r_int
 r_int
-op_star
 id|imap_slots
 (braket
 l_int|32
 )braket
 suffix:semicolon
 DECL|member|tregs
-r_volatile
 r_int
 r_int
-op_star
 id|tregs
 (braket
 l_int|32
@@ -316,29 +304,19 @@ id|p-&gt;imap_slots
 id|i
 )braket
 op_assign
-l_int|NULL
+l_int|0UL
 suffix:semicolon
 id|p-&gt;tregs
 (braket
 id|i
 )braket
 op_assign
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-id|__va
-c_func
-(paren
 id|treg_base
 op_plus
 (paren
 id|i
 op_star
-l_int|0x10
-)paren
+l_int|0x10UL
 )paren
 suffix:semicolon
 )brace
@@ -368,10 +346,8 @@ r_int
 id|starfire_translate
 c_func
 (paren
-r_volatile
 r_int
 r_int
-op_star
 id|imap
 comma
 r_int
@@ -492,7 +468,7 @@ id|p-&gt;imap_slots
 id|i
 )braket
 op_eq
-l_int|NULL
+l_int|0UL
 )paren
 (brace
 r_break
@@ -527,15 +503,16 @@ id|i
 op_assign
 id|imap
 suffix:semicolon
-op_star
+id|upa_writel
+c_func
 (paren
+id|upaid
+comma
 id|p-&gt;tregs
 (braket
 id|i
 )braket
 )paren
-op_assign
-id|upaid
 suffix:semicolon
 r_return
 id|i

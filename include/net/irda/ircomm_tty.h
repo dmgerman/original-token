@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 23:24:22 1999&n; * Modified at:   Sun Oct 31 19:50:35 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 23:24:22 1999&n; * Modified at:   Sun Dec 12 15:57:38 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRCOMM_TTY_H
 DECL|macro|IRCOMM_TTY_H
 mdefine_line|#define IRCOMM_TTY_H
@@ -25,6 +25,7 @@ DECL|member|queue
 id|queue_t
 id|queue
 suffix:semicolon
+multiline_comment|/* Must be first */
 DECL|member|magic
 id|magic_t
 id|magic
@@ -33,6 +34,7 @@ DECL|member|state
 r_int
 id|state
 suffix:semicolon
+multiline_comment|/* Connect state */
 DECL|member|tty
 r_struct
 id|tty_struct
@@ -45,28 +47,42 @@ id|ircomm_cb
 op_star
 id|ircomm
 suffix:semicolon
+multiline_comment|/* IrCOMM layer instance */
 DECL|member|tx_skb
 r_struct
 id|sk_buff
 op_star
 id|tx_skb
 suffix:semicolon
+multiline_comment|/* Transmit buffer */
 DECL|member|ctrl_skb
 r_struct
 id|sk_buff
 op_star
 id|ctrl_skb
 suffix:semicolon
+multiline_comment|/* Control data buffer */
 multiline_comment|/* Parameters */
-DECL|member|session
+DECL|member|settings
 r_struct
 id|ircomm_params
-id|session
+id|settings
 suffix:semicolon
 DECL|member|service_type
 id|__u8
 id|service_type
 suffix:semicolon
+multiline_comment|/* The service that we support */
+DECL|member|client
+r_int
+id|client
+suffix:semicolon
+multiline_comment|/* True if we are a client */
+DECL|member|flow
+id|LOCAL_FLOW
+id|flow
+suffix:semicolon
+multiline_comment|/* IrTTP flow status */
 DECL|member|line
 r_int
 id|line
@@ -95,16 +111,19 @@ DECL|member|max_data_size
 id|__u32
 id|max_data_size
 suffix:semicolon
+multiline_comment|/* Max data we can transmit in one packet */
 DECL|member|max_header_size
 id|__u32
 id|max_header_size
 suffix:semicolon
+multiline_comment|/* The amount of header space we must reserve */
 DECL|member|iriap
 r_struct
 id|iriap_cb
 op_star
 id|iriap
 suffix:semicolon
+multiline_comment|/* Instance used for querying remote IAS */
 DECL|member|obj
 r_struct
 id|ias_object
@@ -158,6 +177,11 @@ r_int
 id|closing_wait
 suffix:semicolon
 multiline_comment|/* time to wait before closing */
+DECL|member|session
+r_int
+id|session
+suffix:semicolon
+multiline_comment|/* Session of opening process */
 DECL|member|pgrp
 r_int
 id|pgrp

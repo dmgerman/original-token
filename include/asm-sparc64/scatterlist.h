@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: scatterlist.h,v 1.7 1999/08/30 10:15:01 davem Exp $ */
+multiline_comment|/* $Id: scatterlist.h,v 1.9 1999/12/17 12:32:15 jj Exp $ */
 macro_line|#ifndef _SPARC64_SCATTERLIST_H
 DECL|macro|_SPARC64_SCATTERLIST_H
 mdefine_line|#define _SPARC64_SCATTERLIST_H
@@ -35,12 +35,11 @@ id|dvma_length
 suffix:semicolon
 )brace
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|phys_base
-suffix:semicolon
+DECL|macro|sg_dma_address
+mdefine_line|#define sg_dma_address(sg) ((sg)-&gt;dvma_address)
+DECL|macro|sg_dma_len
+mdefine_line|#define sg_dma_len(sg)     ((sg)-&gt;dvma_length)
 DECL|macro|ISA_DMA_THRESHOLD
-mdefine_line|#define ISA_DMA_THRESHOLD (phys_base + (0xfe000000UL) + PAGE_OFFSET)
+mdefine_line|#define ISA_DMA_THRESHOLD&t;(~0UL)
 macro_line|#endif /* !(_SPARC64_SCATTERLIST_H) */
 eof

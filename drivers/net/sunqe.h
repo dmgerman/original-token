@@ -1,56 +1,22 @@
-multiline_comment|/* sunqe.h: Definitions for the Sun QuadEthernet driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunqe.h,v 1.12 1999/09/21 14:36:44 davem Exp $&n; * sunqe.h: Definitions for the Sun QuadEthernet driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SUNQE_H
 DECL|macro|_SUNQE_H
 mdefine_line|#define _SUNQE_H
 multiline_comment|/* QEC global registers. */
-DECL|struct|qe_globreg
-r_struct
-id|qe_globreg
-(brace
-DECL|member|ctrl
-r_volatile
-r_int
-r_int
-id|ctrl
-suffix:semicolon
-multiline_comment|/* Control                  */
-DECL|member|stat
-r_volatile
-r_int
-r_int
-id|stat
-suffix:semicolon
-multiline_comment|/* Status                   */
-DECL|member|psize
-r_volatile
-r_int
-r_int
-id|psize
-suffix:semicolon
-multiline_comment|/* Packet Size              */
-DECL|member|msize
-r_volatile
-r_int
-r_int
-id|msize
-suffix:semicolon
-multiline_comment|/* Local-mem size (64K)     */
-DECL|member|rsize
-r_volatile
-r_int
-r_int
-id|rsize
-suffix:semicolon
-multiline_comment|/* Receive partition size   */
-DECL|member|tsize
-r_volatile
-r_int
-r_int
-id|tsize
-suffix:semicolon
-multiline_comment|/* Transmit partition size  */
-)brace
-suffix:semicolon
+DECL|macro|GLOB_CTRL
+mdefine_line|#define GLOB_CTRL&t;0x00UL&t;&t;/* Control&t;&t;&t;*/
+DECL|macro|GLOB_STAT
+mdefine_line|#define GLOB_STAT&t;0x04UL&t;&t;/* Status&t;&t;&t;*/
+DECL|macro|GLOB_PSIZE
+mdefine_line|#define GLOB_PSIZE&t;0x08UL&t;&t;/* Packet Size&t;&t;&t;*/
+DECL|macro|GLOB_MSIZE
+mdefine_line|#define GLOB_MSIZE&t;0x0cUL&t;&t;/* Local-memory Size&t;&t;*/
+DECL|macro|GLOB_RSIZE
+mdefine_line|#define GLOB_RSIZE&t;0x10UL&t;&t;/* Receive partition size&t;*/
+DECL|macro|GLOB_TSIZE
+mdefine_line|#define GLOB_TSIZE&t;0x14UL&t;&t;/* Transmit partition size&t;*/
+DECL|macro|GLOB_REG_SIZE
+mdefine_line|#define GLOB_REG_SIZE&t;0x18UL
 DECL|macro|GLOB_CTRL_MMODE
 mdefine_line|#define GLOB_CTRL_MMODE       0x40000000 /* MACE qec mode            */
 DECL|macro|GLOB_CTRL_BMODE
@@ -87,110 +53,36 @@ multiline_comment|/* In MACE mode, there are four qe channels.  Each channel has
 DECL|macro|GLOB_STAT_PER_QE
 mdefine_line|#define GLOB_STAT_PER_QE(status, channel) (((status) &gt;&gt; ((channel) * 4)) &amp; 0xf)
 multiline_comment|/* The following registers are for per-qe channel information/status. */
-DECL|struct|qe_creg
-r_struct
-id|qe_creg
-(brace
-DECL|member|ctrl
-r_volatile
-r_int
-r_int
-id|ctrl
-suffix:semicolon
-multiline_comment|/* Control                   */
-DECL|member|stat
-r_volatile
-r_int
-r_int
-id|stat
-suffix:semicolon
-multiline_comment|/* Status                    */
-DECL|member|rxds
-r_volatile
-r_int
-r_int
-id|rxds
-suffix:semicolon
-multiline_comment|/* RX descriptor ring ptr    */
-DECL|member|txds
-r_volatile
-r_int
-r_int
-id|txds
-suffix:semicolon
-multiline_comment|/* TX descriptor ring ptr    */
-DECL|member|rimask
-r_volatile
-r_int
-r_int
-id|rimask
-suffix:semicolon
-multiline_comment|/* RX Interrupt Mask         */
-DECL|member|timask
-r_volatile
-r_int
-r_int
-id|timask
-suffix:semicolon
-multiline_comment|/* TX Interrupt Mask         */
-DECL|member|qmask
-r_volatile
-r_int
-r_int
-id|qmask
-suffix:semicolon
-multiline_comment|/* QEC Error Interrupt Mask  */
-DECL|member|mmask
-r_volatile
-r_int
-r_int
-id|mmask
-suffix:semicolon
-multiline_comment|/* MACE Error Interrupt Mask */
-DECL|member|rxwbufptr
-r_volatile
-r_int
-r_int
-id|rxwbufptr
-suffix:semicolon
-multiline_comment|/* Local memory rx write ptr */
-DECL|member|rxrbufptr
-r_volatile
-r_int
-r_int
-id|rxrbufptr
-suffix:semicolon
-multiline_comment|/* Local memory rx read ptr  */
-DECL|member|txwbufptr
-r_volatile
-r_int
-r_int
-id|txwbufptr
-suffix:semicolon
-multiline_comment|/* Local memory tx write ptr */
-DECL|member|txrbufptr
-r_volatile
-r_int
-r_int
-id|txrbufptr
-suffix:semicolon
-multiline_comment|/* Local memory tx read ptr  */
-DECL|member|ccnt
-r_volatile
-r_int
-r_int
-id|ccnt
-suffix:semicolon
-multiline_comment|/* Collision Counter         */
-DECL|member|pipg
-r_volatile
-r_int
-r_int
-id|pipg
-suffix:semicolon
-multiline_comment|/* Inter-Frame Gap           */
-)brace
-suffix:semicolon
+DECL|macro|CREG_CTRL
+mdefine_line|#define CREG_CTRL&t;0x00UL&t;/* Control                   */
+DECL|macro|CREG_STAT
+mdefine_line|#define CREG_STAT&t;0x04UL&t;/* Status                    */
+DECL|macro|CREG_RXDS
+mdefine_line|#define CREG_RXDS&t;0x08UL&t;/* RX descriptor ring ptr    */
+DECL|macro|CREG_TXDS
+mdefine_line|#define CREG_TXDS&t;0x0cUL&t;/* TX descriptor ring ptr    */
+DECL|macro|CREG_RIMASK
+mdefine_line|#define CREG_RIMASK&t;0x10UL&t;/* RX Interrupt Mask         */
+DECL|macro|CREG_TIMASK
+mdefine_line|#define CREG_TIMASK&t;0x14UL&t;/* TX Interrupt Mask         */
+DECL|macro|CREG_QMASK
+mdefine_line|#define CREG_QMASK&t;0x18UL&t;/* QEC Error Interrupt Mask  */
+DECL|macro|CREG_MMASK
+mdefine_line|#define CREG_MMASK&t;0x1cUL&t;/* MACE Error Interrupt Mask */
+DECL|macro|CREG_RXWBUFPTR
+mdefine_line|#define CREG_RXWBUFPTR&t;0x20UL&t;/* Local memory rx write ptr */
+DECL|macro|CREG_RXRBUFPTR
+mdefine_line|#define CREG_RXRBUFPTR&t;0x24UL&t;/* Local memory rx read ptr  */
+DECL|macro|CREG_TXWBUFPTR
+mdefine_line|#define CREG_TXWBUFPTR&t;0x28UL&t;/* Local memory tx write ptr */
+DECL|macro|CREG_TXRBUFPTR
+mdefine_line|#define CREG_TXRBUFPTR&t;0x2cUL&t;/* Local memory tx read ptr  */
+DECL|macro|CREG_CCNT
+mdefine_line|#define CREG_CCNT&t;0x30UL&t;/* Collision Counter         */
+DECL|macro|CREG_PIPG
+mdefine_line|#define CREG_PIPG&t;0x34UL&t;/* Inter-Frame Gap           */
+DECL|macro|CREG_REG_SIZE
+mdefine_line|#define CREG_REG_SIZE&t;0x38UL
 DECL|macro|CREG_CTRL_RXOFF
 mdefine_line|#define CREG_CTRL_RXOFF       0x00000004  /* Disable this qe&squot;s receiver*/
 DECL|macro|CREG_CTRL_RESET
@@ -300,236 +192,67 @@ mdefine_line|#define CREG_PIPG_MMODE       0x00000010  /* Manual Mode           
 DECL|macro|CREG_PIPG_WMASK
 mdefine_line|#define CREG_PIPG_WMASK       0x0000000f  /* SBUS Wait Mask            */
 multiline_comment|/* Per-channel AMD 79C940 MACE registers. */
-DECL|struct|qe_mregs
-r_struct
-id|qe_mregs
-(brace
-DECL|member|rxfifo
-r_volatile
-r_int
-r_char
-id|rxfifo
-suffix:semicolon
-multiline_comment|/* Receive FIFO                   */
-DECL|member|txfifo
-r_volatile
-r_int
-r_char
-id|txfifo
-suffix:semicolon
-multiline_comment|/* Transmit FIFO                  */
-DECL|member|txfcntl
-r_volatile
-r_int
-r_char
-id|txfcntl
-suffix:semicolon
-multiline_comment|/* Transmit Frame Control         */
-DECL|member|txfstat
-r_volatile
-r_int
-r_char
-id|txfstat
-suffix:semicolon
-multiline_comment|/* Transmit Frame Status          */
-DECL|member|txrcnt
-r_volatile
-r_int
-r_char
-id|txrcnt
-suffix:semicolon
-multiline_comment|/* Transmit Retry Count           */
-DECL|member|rxfcntl
-r_volatile
-r_int
-r_char
-id|rxfcntl
-suffix:semicolon
-multiline_comment|/* Receive Frame Control          */
-DECL|member|rxfstat
-r_volatile
-r_int
-r_char
-id|rxfstat
-suffix:semicolon
-multiline_comment|/* Receive Frame Status           */
-DECL|member|ffcnt
-r_volatile
-r_int
-r_char
-id|ffcnt
-suffix:semicolon
-multiline_comment|/* FIFO Frame Count               */
-DECL|member|ireg
-r_volatile
-r_int
-r_char
-id|ireg
-suffix:semicolon
-multiline_comment|/* Interrupt Register             */
-DECL|member|imask
-r_volatile
-r_int
-r_char
-id|imask
-suffix:semicolon
-multiline_comment|/* Interrupt Mask                 */
-DECL|member|poll
-r_volatile
-r_int
-r_char
-id|poll
-suffix:semicolon
-multiline_comment|/* POLL Register                  */
-DECL|member|bconfig
-r_volatile
-r_int
-r_char
-id|bconfig
-suffix:semicolon
-multiline_comment|/* BIU Config                     */
-DECL|member|fconfig
-r_volatile
-r_int
-r_char
-id|fconfig
-suffix:semicolon
-multiline_comment|/* FIFO Config                    */
-DECL|member|mconfig
-r_volatile
-r_int
-r_char
-id|mconfig
-suffix:semicolon
-multiline_comment|/* MAC Config                     */
-DECL|member|plsconfig
-r_volatile
-r_int
-r_char
-id|plsconfig
-suffix:semicolon
-multiline_comment|/* PLS Config                     */
-DECL|member|phyconfig
-r_volatile
-r_int
-r_char
-id|phyconfig
-suffix:semicolon
-multiline_comment|/* PHY Config                     */
-DECL|member|chipid1
-r_volatile
-r_int
-r_char
-id|chipid1
-suffix:semicolon
-multiline_comment|/* Chip-ID, low bits              */
-DECL|member|chipid2
-r_volatile
-r_int
-r_char
-id|chipid2
-suffix:semicolon
-multiline_comment|/* Chip-ID, high bits             */
-DECL|member|iaconfig
-r_volatile
-r_int
-r_char
-id|iaconfig
-suffix:semicolon
-multiline_comment|/* Internal Address Config        */
-DECL|member|_unused0
-r_volatile
-r_int
-r_char
-id|_unused0
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|filter
-r_volatile
-r_int
-r_char
-id|filter
-suffix:semicolon
-multiline_comment|/* Logical Address Filter         */
-DECL|member|ethaddr
-r_volatile
-r_int
-r_char
-id|ethaddr
-suffix:semicolon
-multiline_comment|/* Our Ethernet Address           */
-DECL|member|_unused1
-r_volatile
-r_int
-r_char
-id|_unused1
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|_unused2
-r_volatile
-r_int
-r_char
-id|_unused2
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|mpcnt
-r_volatile
-r_int
-r_char
-id|mpcnt
-suffix:semicolon
-multiline_comment|/* Missed Packet Count            */
-DECL|member|_unused3
-r_volatile
-r_int
-r_char
-id|_unused3
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|rpcnt
-r_volatile
-r_int
-r_char
-id|rpcnt
-suffix:semicolon
-multiline_comment|/* Runt Packet Count              */
-DECL|member|rccnt
-r_volatile
-r_int
-r_char
-id|rccnt
-suffix:semicolon
-multiline_comment|/* RX Collision Count             */
-DECL|member|_unused4
-r_volatile
-r_int
-r_char
-id|_unused4
-suffix:semicolon
-multiline_comment|/* Reserved...                    */
-DECL|member|utest
-r_volatile
-r_int
-r_char
-id|utest
-suffix:semicolon
-multiline_comment|/* User Test                      */
-DECL|member|rtest1
-r_volatile
-r_int
-r_char
-id|rtest1
-suffix:semicolon
-multiline_comment|/* Reserved Test 1                */
-DECL|member|rtest2
-r_volatile
-r_int
-r_char
-id|rtest2
-suffix:semicolon
-multiline_comment|/* Reserved Test 2                */
-)brace
-suffix:semicolon
+DECL|macro|MREGS_RXFIFO
+mdefine_line|#define MREGS_RXFIFO&t;0x00UL&t;/* Receive FIFO                   */
+DECL|macro|MREGS_TXFIFO
+mdefine_line|#define MREGS_TXFIFO&t;0x01UL&t;/* Transmit FIFO                  */
+DECL|macro|MREGS_TXFCNTL
+mdefine_line|#define MREGS_TXFCNTL&t;0x02UL&t;/* Transmit Frame Control         */
+DECL|macro|MREGS_TXFSTAT
+mdefine_line|#define MREGS_TXFSTAT&t;0x03UL&t;/* Transmit Frame Status          */
+DECL|macro|MREGS_TXRCNT
+mdefine_line|#define MREGS_TXRCNT&t;0x04UL&t;/* Transmit Retry Count           */
+DECL|macro|MREGS_RXFCNTL
+mdefine_line|#define MREGS_RXFCNTL&t;0x05UL&t;/* Receive Frame Control          */
+DECL|macro|MREGS_RXFSTAT
+mdefine_line|#define MREGS_RXFSTAT&t;0x06UL&t;/* Receive Frame Status           */
+DECL|macro|MREGS_FFCNT
+mdefine_line|#define MREGS_FFCNT&t;0x07UL&t;/* FIFO Frame Count               */
+DECL|macro|MREGS_IREG
+mdefine_line|#define MREGS_IREG&t;0x08UL&t;/* Interrupt Register             */
+DECL|macro|MREGS_IMASK
+mdefine_line|#define MREGS_IMASK&t;0x09UL&t;/* Interrupt Mask                 */
+DECL|macro|MREGS_POLL
+mdefine_line|#define MREGS_POLL&t;0x0aUL&t;/* POLL Register                  */
+DECL|macro|MREGS_BCONFIG
+mdefine_line|#define MREGS_BCONFIG&t;0x0bUL&t;/* BIU Config                     */
+DECL|macro|MREGS_FCONFIG
+mdefine_line|#define MREGS_FCONFIG&t;0x0cUL&t;/* FIFO Config                    */
+DECL|macro|MREGS_MCONFIG
+mdefine_line|#define MREGS_MCONFIG&t;0x0dUL&t;/* MAC Config                     */
+DECL|macro|MREGS_PLSCONFIG
+mdefine_line|#define MREGS_PLSCONFIG&t;0x0eUL&t;/* PLS Config                     */
+DECL|macro|MREGS_PHYCONFIG
+mdefine_line|#define MREGS_PHYCONFIG&t;0x0fUL&t;/* PHY Config                     */
+DECL|macro|MREGS_CHIPID1
+mdefine_line|#define MREGS_CHIPID1&t;0x10UL&t;/* Chip-ID, low bits              */
+DECL|macro|MREGS_CHIPID2
+mdefine_line|#define MREGS_CHIPID2&t;0x11UL&t;/* Chip-ID, high bits             */
+DECL|macro|MREGS_IACONFIG
+mdefine_line|#define MREGS_IACONFIG&t;0x12UL&t;/* Internal Address Config        */
+multiline_comment|/* 0x13UL, reserved */
+DECL|macro|MREGS_FILTER
+mdefine_line|#define MREGS_FILTER&t;0x14UL&t;/* Logical Address Filter         */
+DECL|macro|MREGS_ETHADDR
+mdefine_line|#define MREGS_ETHADDR&t;0x15UL&t;/* Our Ethernet Address           */
+multiline_comment|/* 0x16UL, reserved */
+multiline_comment|/* 0x17UL, reserved */
+DECL|macro|MREGS_MPCNT
+mdefine_line|#define MREGS_MPCNT&t;0x18UL&t;/* Missed Packet Count            */
+multiline_comment|/* 0x19UL, reserved */
+DECL|macro|MREGS_RPCNT
+mdefine_line|#define MREGS_RPCNT&t;0x1aUL&t;/* Runt Packet Count              */
+DECL|macro|MREGS_RCCNT
+mdefine_line|#define MREGS_RCCNT&t;0x1bUL&t;/* RX Collision Count             */
+multiline_comment|/* 0x1cUL, reserved */
+DECL|macro|MREGS_UTEST
+mdefine_line|#define MREGS_UTEST&t;0x1dUL&t;/* User Test                      */
+DECL|macro|MREGS_RTEST1
+mdefine_line|#define MREGS_RTEST1&t;0x1eUL&t;/* Reserved Test 1                */
+DECL|macro|MREGS_RTEST2
+mdefine_line|#define MREGS_RTEST2&t;0x1fUL&t;/* Reserved Test 2                */
+DECL|macro|MREGS_REG_SIZE
+mdefine_line|#define MREGS_REG_SIZE&t;0x20UL
 DECL|macro|MREGS_TXFCNTL_DRETRY
 mdefine_line|#define MREGS_TXFCNTL_DRETRY        0x80 /* Retry disable                  */
 DECL|macro|MREGS_TXFCNTL_DFCS
@@ -711,13 +434,11 @@ r_struct
 id|qe_rxd
 (brace
 DECL|member|rx_flags
-r_int
-r_int
+id|u32
 id|rx_flags
 suffix:semicolon
 DECL|member|rx_addr
-r_int
-r_int
+id|u32
 id|rx_addr
 suffix:semicolon
 )brace
@@ -733,13 +454,11 @@ r_struct
 id|qe_txd
 (brace
 DECL|member|tx_flags
-r_int
-r_int
+id|u32
 id|tx_flags
 suffix:semicolon
 DECL|member|tx_addr
-r_int
-r_int
+id|u32
 id|tx_addr
 suffix:semicolon
 )brace
@@ -804,9 +523,8 @@ r_struct
 id|sunqec
 (brace
 DECL|member|gregs
-r_struct
-id|qe_globreg
-op_star
+r_int
+r_int
 id|gregs
 suffix:semicolon
 multiline_comment|/* QEC Global Registers         */
@@ -826,11 +544,11 @@ r_int
 id|qec_bursts
 suffix:semicolon
 multiline_comment|/* Support burst sizes          */
-DECL|member|qec_sbus_dev
+DECL|member|qec_sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|qec_sbus_dev
+id|qec_sdev
 suffix:semicolon
 multiline_comment|/* QEC&squot;s SBUS device            */
 DECL|member|next_module
@@ -851,7 +569,7 @@ r_struct
 id|sunqe_buffers
 (brace
 DECL|member|tx_buf
-r_char
+id|u8
 id|tx_buf
 (braket
 id|TX_RING_SIZE
@@ -861,14 +579,14 @@ id|PKT_BUF_SZ
 )braket
 suffix:semicolon
 DECL|member|__pad
-r_char
+id|u8
 id|__pad
 (braket
 l_int|2
 )braket
 suffix:semicolon
 DECL|member|rx_buf
-r_char
+id|u8
 id|rx_buf
 (braket
 id|RX_RING_SIZE
@@ -886,31 +604,29 @@ r_struct
 id|sunqe
 (brace
 DECL|member|qcregs
-r_struct
-id|qe_creg
-op_star
+r_int
+r_int
 id|qcregs
 suffix:semicolon
-multiline_comment|/* QEC per-channel Registers      */
+multiline_comment|/* QEC per-channel Registers   */
 DECL|member|mregs
-r_struct
-id|qe_mregs
-op_star
+r_int
+r_int
 id|mregs
 suffix:semicolon
-multiline_comment|/* Per-channel MACE Registers     */
+multiline_comment|/* Per-channel MACE Registers  */
 DECL|member|qe_block
 r_struct
 id|qe_init_block
 op_star
 id|qe_block
 suffix:semicolon
-multiline_comment|/* RX and TX descriptors          */
+multiline_comment|/* RX and TX descriptors       */
 DECL|member|qblock_dvma
 id|__u32
 id|qblock_dvma
 suffix:semicolon
-multiline_comment|/* RX and TX descriptors          */
+multiline_comment|/* RX and TX descriptors       */
 DECL|member|rx_new
 DECL|member|rx_old
 r_int
@@ -918,7 +634,7 @@ id|rx_new
 comma
 id|rx_old
 suffix:semicolon
-multiline_comment|/* RX ring extents&t;&t;       */
+multiline_comment|/* RX ring extents&t;       */
 DECL|member|tx_new
 DECL|member|tx_old
 r_int
@@ -926,19 +642,19 @@ id|tx_new
 comma
 id|tx_old
 suffix:semicolon
-multiline_comment|/* TX ring extents&t;&t;       */
+multiline_comment|/* TX ring extents&t;       */
 DECL|member|buffers
 r_struct
 id|sunqe_buffers
 op_star
 id|buffers
 suffix:semicolon
-multiline_comment|/* CPU visible address.           */
+multiline_comment|/* CPU visible address.        */
 DECL|member|buffers_dvma
 id|__u32
 id|buffers_dvma
 suffix:semicolon
-multiline_comment|/* DVMA visible address.          */
+multiline_comment|/* DVMA visible address.       */
 DECL|member|parent
 r_struct
 id|sunqec
@@ -946,36 +662,35 @@ op_star
 id|parent
 suffix:semicolon
 DECL|member|mconfig
-r_int
-r_char
+id|u8
 id|mconfig
 suffix:semicolon
-multiline_comment|/* Base MACE mconfig value        */
+multiline_comment|/* Base MACE mconfig value     */
 DECL|member|net_stats
 r_struct
 id|net_device_stats
 id|net_stats
 suffix:semicolon
-multiline_comment|/* Statistical counters           */
-DECL|member|qe_sbusdev
+multiline_comment|/* Statistical counters        */
+DECL|member|qe_sdev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
-id|qe_sbusdev
+id|qe_sdev
 suffix:semicolon
-multiline_comment|/* QE&squot;s SBUS device struct        */
+multiline_comment|/* QE&squot;s SBUS device struct     */
 DECL|member|dev
 r_struct
 id|net_device
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* QE&squot;s netdevice struct          */
+multiline_comment|/* QE&squot;s netdevice struct       */
 DECL|member|channel
 r_int
 id|channel
 suffix:semicolon
-multiline_comment|/* Who am I?                      */
+multiline_comment|/* Who am I?                   */
 )brace
 suffix:semicolon
 macro_line|#endif /* !(_SUNQE_H) */

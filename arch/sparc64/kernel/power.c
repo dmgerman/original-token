@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: power.c,v 1.4 1999/08/31 18:22:05 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: power.c,v 1.5 1999/12/19 23:28:00 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -311,12 +311,22 @@ id|found
 suffix:colon
 id|power_reg
 op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
 id|edev-&gt;resource
 (braket
 l_int|0
 )braket
 dot
 id|start
+comma
+l_int|0x4
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -360,6 +370,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|edev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_ne
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|request_irq
 c_func
 (paren
@@ -389,6 +410,7 @@ c_func
 l_string|&quot;power: Error, cannot register IRQ handler.&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* CONFIG_PCI */
 eof

@@ -44,25 +44,20 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_void
 id|central_probe
 c_func
 (paren
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
-r_int
-r_int
-id|__init
 DECL|function|device_scan
+r_void
+id|__init
 id|device_scan
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 (brace
 r_char
@@ -271,9 +266,6 @@ id|mid
 op_assign
 id|thismid
 suffix:semicolon
-macro_line|#ifdef __SMP__&t;&t;&t;&t;
-multiline_comment|/* Don&squot;t pollute PROM screen with these messages. If the kernel is screwed enough&n;&t;&t;&t;&t;   that console does not start up, then we don&squot;t care how many CPUs have been found,&n;&t;&t;&t;&t;   if it starts up, the user can use console=prom to see it. */
-multiline_comment|/* prom_printf(&quot;Found CPU %d (node=%08x,mid=%d)&bslash;n&quot;, cpu_ctr, (unsigned) scan, thismid); */
 id|printk
 c_func
 (paren
@@ -289,7 +281,6 @@ comma
 id|thismid
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;       
 id|cpu_ctr
 op_increment
 suffix:semicolon
@@ -316,7 +307,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__&t;&t;
 id|printk
 c_func
 (paren
@@ -325,9 +315,7 @@ comma
 id|cpu_ctr
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
 )brace
-suffix:semicolon
 id|prom_node_cpu
 op_assign
 id|cpu_nds
@@ -346,21 +334,15 @@ l_int|0
 op_assign
 id|prom_node_cpu
 suffix:semicolon
-id|mem_start
-op_assign
 id|central_probe
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|cpu_probe
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 eof

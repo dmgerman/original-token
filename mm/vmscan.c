@@ -250,6 +250,14 @@ id|pte
 )paren
 )paren
 (brace
+id|flush_cache_page
+c_func
+(paren
+id|vma
+comma
+id|address
+)paren
+suffix:semicolon
 id|pte_clear
 c_func
 (paren

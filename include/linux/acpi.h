@@ -542,9 +542,6 @@ DECL|macro|ACPI_uS_TO_TMR_TICKS
 mdefine_line|#define ACPI_uS_TO_TMR_TICKS(val) &bslash;&n;  (((val) * (ACPI_TMR_HZ / 10000)) / 100)
 DECL|macro|ACPI_TMR_TICKS_TO_uS
 mdefine_line|#define ACPI_TMR_TICKS_TO_uS(ticks) &bslash;&n;  (((ticks) * 100) / (ACPI_TMR_HZ / 10000))
-multiline_comment|/* CPU cycles -&gt; PM timer cycles, looks somewhat heuristic but&n;   (ticks = 3/11 * CPU_MHz + 2) comes pretty close for my systems&n; */
-DECL|macro|ACPI_CPU_TO_TMR_TICKS
-mdefine_line|#define ACPI_CPU_TO_TMR_TICKS(cycles) &bslash;&n;  ((cycles) / (3 * (loops_per_sec + 2500) / 500000 / 11 + 2))
 multiline_comment|/* PM2_CNT flags */
 DECL|macro|ACPI_ARB_DIS
 mdefine_line|#define ACPI_ARB_DIS 0x01

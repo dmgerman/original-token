@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/sbus/audio/audio.c&n; *&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright 1997,1998,1999 Derrick J. Brashear (shadow@dementia.org)&n; * Copyright 1997 Brent Baccala (baccala@freesoft.org)&n; * &n; * Mixer code adapted from code contributed by and&n; * Copyright 1998 Michael Mraka (michael@fi.muni.cz)&n; * and with fixes from Michael Shuey (shuey@ecn.purdue.edu)&n; * The mixer code cheats; Sparc hardware doesn&squot;t generally allow independent&n; * line control, and this fakes it badly.&n; *&n; * SNDCTL_DSP_SETFMT based on code contributed by&n; * Ion Badulescu (ionut@moisil.cs.columbia.edu)&n; *&n; * This is the audio midlayer that sits between the VFS character&n; * devices and the low-level audio hardware device drivers.&n; */
+multiline_comment|/* $Id: audio.c,v 1.47 1999/12/15 22:30:16 davem Exp $&n; * drivers/sbus/audio/audio.c&n; *&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright 1997,1998,1999 Derrick J. Brashear (shadow@dementia.org)&n; * Copyright 1997 Brent Baccala (baccala@freesoft.org)&n; * &n; * Mixer code adapted from code contributed by and&n; * Copyright 1998 Michael Mraka (michael@fi.muni.cz)&n; * and with fixes from Michael Shuey (shuey@ecn.purdue.edu)&n; * The mixer code cheats; Sparc hardware doesn&squot;t generally allow independent&n; * line control, and this fakes it badly.&n; *&n; * SNDCTL_DSP_SETFMT based on code contributed by&n; * Ion Badulescu (ionut@moisil.cs.columbia.edu)&n; *&n; * This is the audio midlayer that sits between the VFS character&n; * devices and the low-level audio hardware device drivers.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -212,10 +212,8 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -225,12 +223,10 @@ id|drivers
 id|dev
 )braket
 )paren
-(brace
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-)brace
 multiline_comment|/* Ensure that the driver has a proper operations structure. */
 r_if
 c_cond
@@ -397,11 +393,7 @@ op_star
 id|drv-&gt;num_output_buffers
 )paren
 comma
-(paren
-id|GFP_DMA
-op_or
 id|GFP_KERNEL
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -567,11 +559,7 @@ op_star
 id|drv-&gt;num_input_buffers
 )paren
 comma
-(paren
 id|GFP_DMA
-op_or
-id|GFP_KERNEL
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -597,7 +585,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|drv-&gt;input_buffers
 (braket
 id|i
@@ -617,7 +604,6 @@ id|drv-&gt;input_buffer_size
 )paren
 )paren
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -931,7 +917,7 @@ r_int
 id|status
 )paren
 (brace
-multiline_comment|/* &n;   * If !status, just restart current output.&n;   * If status &amp; 1, a buffer is finished; make it available again.&n;   * If status &amp; 2, a buffer was claimed for DMA and is still in use.&n;   *&n;   * The playing_count for non-DMA hardware should never be non-zero.&n;   * Value of status for non-DMA hardware should always be 1.&n;   */
+multiline_comment|/* If !status, just restart current output.&n;         * If status &amp; 1, a buffer is finished; make it available again.&n;         * If status &amp; 2, a buffer was claimed for DMA and is still in use.&n;         *&n;         * The playing_count for non-DMA hardware should never be non-zero.&n;         * Value of status for non-DMA hardware should always be 1.&n;         */
 r_if
 c_cond
 (paren
@@ -945,9 +931,11 @@ c_cond
 (paren
 id|drv-&gt;playing_count
 )paren
+(brace
 id|drv-&gt;playing_count
 op_decrement
 suffix:semicolon
+)brace
 r_else
 (brace
 id|drv-&gt;output_count
@@ -1201,10 +1189,12 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+(brace
 id|drv-&gt;output_active
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 DECL|function|sparcaudio_input_done
 r_void
@@ -1264,7 +1254,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n;   * If status % 2, they filled a buffer for us. &n;   * If status &amp; 2, they took a buffer from us.&n;   */
+multiline_comment|/* If status % 2, they filled a buffer for us. &n;         * If status &amp; 2, they took a buffer from us.&n;         */
 r_if
 c_cond
 (paren
@@ -1522,11 +1512,9 @@ OL
 id|drv-&gt;num_output_buffers
 )paren
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
 id|select_wait
 c_func
 (paren
@@ -1544,6 +1532,7 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1808,9 +1797,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
+)paren
 )paren
 r_return
 op_minus
@@ -1990,7 +1981,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* If we&squot;re in &quot;loop audio&quot; mode, try waking up the other side&n;     * in case they&squot;re waiting for us to eat a block. &n;     */
+multiline_comment|/* If we&squot;re in &quot;loop audio&quot; mode, try waking up the other side&n;                 * in case they&squot;re waiting for us to eat a block. &n;                 */
 r_if
 c_cond
 (paren
@@ -1998,7 +1989,6 @@ id|drv-&gt;duplex
 op_eq
 l_int|2
 )paren
-(brace
 id|wake_up_interruptible
 c_func
 (paren
@@ -2006,7 +1996,6 @@ op_amp
 id|drv-&gt;output_write_wait
 )paren
 suffix:semicolon
-)brace
 )brace
 r_return
 id|bytes_read
@@ -2170,15 +2159,17 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
+)paren
 )paren
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* &n;   * A signal they want notification when this is processed. Too bad&n;   * sys_write doesn&squot;t tell us unless you patch it, in 2.0 kernels.&n;   */
+multiline_comment|/* A signal they want notification when this is processed. Too bad&n;         * sys_write doesn&squot;t tell us unless you patch it, in 2.0 kernels.&n;         */
 r_if
 c_cond
 (paren
@@ -2248,12 +2239,10 @@ id|file-&gt;f_flags
 op_amp
 id|O_NONBLOCK
 )paren
-(brace
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
 id|interruptible_sleep_on
 c_func
 (paren
@@ -2296,7 +2285,7 @@ id|drv-&gt;playing_count
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* Deal with the weird case of a reader in the write area by trying to&n;     * let them keep ahead of us... Go to sleep until they start servicing.&n;     */
+multiline_comment|/* Deal with the weird case of a reader in the write area by trying to&n;                 * let them keep ahead of us... Go to sleep until they start servicing.&n;                 */
 r_if
 c_cond
 (paren
@@ -2332,12 +2321,10 @@ id|file-&gt;f_flags
 op_amp
 id|O_NONBLOCK
 )paren
-(brace
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
 id|interruptible_sleep_on
 c_func
 (paren
@@ -2492,10 +2479,12 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
+(brace
 id|drv-&gt;output_offset
 op_add_assign
 id|bytes_to_copy
 suffix:semicolon
+)brace
 id|drv-&gt;output_size
 op_add_assign
 id|bytes_to_copy
@@ -4081,6 +4070,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+suffix:semicolon
 )brace
 multiline_comment|/* AUDIO_SETINFO uses these to set values if possible. */
 r_static
@@ -4477,11 +4467,13 @@ comma
 id|S_ALL
 )paren
 )paren
+(brace
 id|retval
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -4489,10 +4481,12 @@ c_cond
 op_logical_neg
 id|drv-&gt;sd_siglist
 )paren
+(brace
 id|drv-&gt;sd_sigflags
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 r_else
 r_if
@@ -4514,12 +4508,15 @@ r_int
 id|arg
 )paren
 )paren
+(brace
 id|retval
 op_assign
 op_minus
 id|EAGAIN
 suffix:semicolon
+)brace
 r_else
+(brace
 (paren
 (paren
 id|drv-&gt;sd_sigflags
@@ -4531,6 +4528,7 @@ id|arg
 )paren
 suffix:semicolon
 )brace
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -4539,7 +4537,7 @@ suffix:colon
 r_case
 id|I_NREAD_SOLARIS
 suffix:colon
-multiline_comment|/* According to the Solaris man page, this copies out&n;&t;     * the size of the first streams buffer and returns &n;             * the number of streams messages on the read queue as&n;&t;     * as its retval. (streamio(7I)) This should work. */
+multiline_comment|/* According to the Solaris man page, this copies out&n;                         * the size of the first streams buffer and returns &n;                         * the number of streams messages on the read queue as&n;                         * as its retval. (streamio(7I)) This should work.&n;                         */
 id|j
 op_assign
 (paren
@@ -4567,7 +4565,7 @@ id|drv-&gt;input_count
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;     * A poor substitute until we do true resizable buffers.&n;&t;     */
+multiline_comment|/* A poor substitute until we do true resizable buffers. */
 r_case
 id|SNDCTL_DSP_GETISPACE
 suffix:colon
@@ -4755,7 +4753,7 @@ suffix:colon
 r_case
 id|SNDCTL_DSP_GETOPTR
 suffix:colon
-multiline_comment|/*&n;&t;     * int bytes (number of bytes read/written since last)&n;             * int blocks (number of frags read/wrote since last call)&n;             * int ptr (current position of dma in buffer)&n;&t;     */
+multiline_comment|/* int bytes (number of bytes read/written since last)&n;                         * int blocks (number of frags read/wrote since last call)&n;                         * int ptr (current position of dma in buffer)&n;                         */
 id|retval
 op_assign
 l_int|0
@@ -4845,7 +4843,7 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_SUBDIVIDE
 suffix:colon
-multiline_comment|/*&n;&t;     * I don&squot;t understand what I need to do yet.&n;&t;     */
+multiline_comment|/* I don&squot;t understand what I need to do yet. */
 id|retval
 op_assign
 op_minus
@@ -4993,6 +4991,7 @@ c_cond
 (paren
 id|drv-&gt;ops-&gt;get_input_pause
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -5008,11 +5007,13 @@ id|j
 op_assign
 id|PCM_ENABLE_INPUT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|drv-&gt;ops-&gt;get_output_pause
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -5028,6 +5029,7 @@ id|j
 op_or_assign
 id|PCM_ENABLE_OUTPUT
 suffix:semicolon
+)brace
 id|COPY_OUT
 c_func
 (paren
@@ -5141,7 +5143,7 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETCAPS
 suffix:colon
-multiline_comment|/* &n;&t;     * All Sparc audio hardware is full duplex.&n;&t;     * 4231 supports DMA pointer reading, 7930 is byte at a time.&n;             * Pause functionality emulates trigger&n;             */
+multiline_comment|/* All Sparc audio hardware is full duplex.&n;                         * 4231 supports DMA pointer reading, 7930 is byte at a time.&n;                         * Pause functionality emulates trigger&n;                         */
 id|j
 op_assign
 id|DSP_CAP_DUPLEX
@@ -5189,11 +5191,13 @@ id|j
 suffix:semicolon
 )brace
 r_else
+(brace
 id|retval
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -5244,10 +5248,12 @@ id|j
 op_eq
 id|AUDIO_ENCODING_DVI
 )paren
+(brace
 id|i
 op_assign
 id|AFMT_IMA_ADPCM
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -5291,6 +5297,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -5326,6 +5333,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+suffix:semicolon
 )brace
 id|COPY_OUT
 c_func
@@ -5376,6 +5384,7 @@ c_cond
 (paren
 id|drv-&gt;ops-&gt;get_formats
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -5405,6 +5414,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 )brace
 r_switch
 c_cond
@@ -5498,6 +5508,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+suffix:semicolon
 id|tprintk
 c_func
 (paren
@@ -6379,11 +6390,13 @@ id|tmp
 suffix:semicolon
 )brace
 r_else
+(brace
 id|retval
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -6451,11 +6464,13 @@ id|tmp
 suffix:semicolon
 )brace
 r_else
+(brace
 id|retval
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -7248,7 +7263,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Do bounds checking for things which always apply.&n;&t;       * Follow with enforcement of basic tenets of certain&n;&t;       * encodings. Everything over and above generic is&n;&t;       * enforced by the driver, which can assume that&n;&t;       * Martian cases are taken care of here. */
+multiline_comment|/* Do bounds checking for things which always apply.&n;                         * Follow with enforcement of basic tenets of certain&n;                         * encodings. Everything over and above generic is&n;                         * enforced by the driver, which can assume that&n;                         * Martian cases are taken care of here.&n;                         */
 r_if
 c_cond
 (paren
@@ -7444,7 +7459,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* If any of these changed, record them all, then make&n;&t;       * changes atomically. If something fails, back it all out. */
+multiline_comment|/* If any of these changed, record them all, then make&n;                         * changes atomically. If something fails, back it all out.&n;                         */
 r_if
 c_cond
 (paren
@@ -7497,7 +7512,7 @@ id|ainfo.play.encoding
 )paren
 )paren
 (brace
-multiline_comment|/* If they&squot;re trying to change something we&n;&t;&t;   * have no routine for, they lose */
+multiline_comment|/* If they&squot;re trying to change something we&n;                                 * have no routine for, they lose.&n;                                 */
 r_if
 c_cond
 (paren
@@ -7678,7 +7693,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;rec law precision bounds: failed&bslash;n&quot;
+l_string|&quot;rec law precision bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7702,7 +7718,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;rec law channel bounds: failed&bslash;n&quot;
+l_string|&quot;rec law channel bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7734,7 +7751,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;rec lin precision bounds: failed&bslash;n&quot;
+l_string|&quot;rec lin precision bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7762,7 +7780,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;rec lin channel bounds: failed&bslash;n&quot;
+l_string|&quot;rec lin channel bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7791,7 +7810,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;rec lin8 precision bounds: failed&bslash;n&quot;
+l_string|&quot;rec lin8 precision bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7819,7 +7839,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;rec lin8 channel bounds: failed&bslash;n&quot;
+l_string|&quot;rec lin8 channel bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7832,6 +7853,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7841,7 +7863,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* If they&squot;re trying to change something we&n;&t;&t;   * have no routine for, they lose */
+multiline_comment|/* If they&squot;re trying to change something we&n;                                 * have no routine for, they lose.&n;                                 */
 r_if
 c_cond
 (paren
@@ -8022,7 +8044,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;play law precision bounds: failed&bslash;n&quot;
+l_string|&quot;play law precision bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -8046,7 +8069,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;play law channel bounds: failed&bslash;n&quot;
+l_string|&quot;play law channel bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -8078,7 +8102,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;play lin precision bounds: failed&bslash;n&quot;
+l_string|&quot;play lin precision bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -8106,7 +8131,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;play lin channel bounds: failed&bslash;n&quot;
+l_string|&quot;play lin channel bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -8135,7 +8161,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;play lin8 precision bounds: failed&bslash;n&quot;
+l_string|&quot;play lin8 precision bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -8163,7 +8190,8 @@ id|eprintk
 c_func
 (paren
 (paren
-l_string|&quot;play lin8 channel bounds: failed&bslash;n&quot;
+l_string|&quot;play lin8 channel bounds: &quot;
+l_string|&quot;failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -8176,6 +8204,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8185,7 +8214,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* If we got this far, we&squot;re at least sane with&n;&t;&t;   * respect to generics. Try the changes. */
+multiline_comment|/* If we got this far, we&squot;re at least sane with&n;                                 * respect to generics. Try the changes.&n;                                 */
 r_if
 c_cond
 (paren
@@ -8670,10 +8699,12 @@ id|ainfo.record.buffer_size
 suffix:semicolon
 )brace
 r_else
+(brace
 id|newinfo.record.buffer_size
 op_assign
 id|drv-&gt;buffer_size
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8698,10 +8729,12 @@ id|ainfo.play.eof
 suffix:semicolon
 )brace
 r_else
+(brace
 id|newinfo.play.eof
 op_assign
 id|drv-&gt;output_eof
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8744,10 +8777,12 @@ id|drv
 suffix:semicolon
 )brace
 r_else
+(brace
 id|newinfo.record.pause
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8790,10 +8825,12 @@ id|drv
 suffix:semicolon
 )brace
 r_else
+(brace
 id|newinfo.play.pause
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|retval
 op_assign
 id|verify_area
@@ -8889,6 +8926,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -8923,6 +8961,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -9405,6 +9444,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+suffix:semicolon
 multiline_comment|/* From the dbri driver:&n;         * SunOS 5.5.1 audio(7I) man page says:&n;         * &quot;Upon the initial open() of the audio device, the driver&n;         *  will reset the data format of the device to the default&n;         *  state of 8-bit, 8KHz, mono u-law data.&quot;&n;         *&n;         * Of course, we only do this for /dev/audio, and assume&n;         * OSS semantics on /dev/dsp&n;         */
 r_if
 c_cond
@@ -10044,12 +10084,8 @@ op_eq
 op_star
 id|list
 )paren
-multiline_comment|/* no slot for pid in list */
 (brace
-r_if
-c_cond
-(paren
-(paren
+multiline_comment|/* no slot for pid in list */
 id|ev
 op_assign
 (paren
@@ -10066,7 +10102,11 @@ id|strevent_t
 comma
 id|GFP_KERNEL
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ev
 op_eq
 l_int|NULL
 )paren
@@ -10081,16 +10121,12 @@ op_logical_neg
 op_star
 id|list
 )paren
-multiline_comment|/* create dummy head node */
 (brace
+multiline_comment|/* create dummy head node */
 id|strevent_t
 op_star
 id|hd
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|hd
 op_assign
 (paren
@@ -10107,7 +10143,11 @@ id|strevent_t
 comma
 id|GFP_KERNEL
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hd
 op_eq
 l_int|NULL
 )paren
@@ -10200,10 +10240,6 @@ id|strevent_t
 op_star
 r_new
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 r_new
 op_assign
 (paren
@@ -10220,16 +10256,18 @@ id|strevent_t
 comma
 id|GFP_KERNEL
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+r_new
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 r_new
 op_member_access_from_pointer
 id|se_prev
@@ -10490,9 +10528,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -10560,11 +10596,6 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
-(paren
-r_void
-)paren
-id|sig
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10598,10 +10629,6 @@ op_ne
 l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-(paren
 id|res
 op_assign
 id|kill_proc
@@ -10613,7 +10640,11 @@ id|SIGPOLL
 comma
 l_int|1
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|res
 OL
 l_int|0
 )paren

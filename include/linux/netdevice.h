@@ -708,6 +708,11 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* Bridge stuff */
+DECL|member|bridge_port_id
+r_int
+id|bridge_port_id
+suffix:semicolon
 multiline_comment|/* Pointers to interface service routines.&t;*/
 DECL|member|open
 r_int

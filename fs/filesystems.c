@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/hfs_fs.h&gt;
 macro_line|#include &lt;linux/devpts_fs.h&gt;
 macro_line|#include &lt;linux/bfs_fs.h&gt;
 macro_line|#include &lt;linux/adfs_fs.h&gt;
+macro_line|#include &lt;linux/openprom_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -247,6 +248,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BFS_FS
 id|init_bfs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN_OPENPROMFS
+id|init_openprom_fs
 c_func
 (paren
 )paren

@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: io-unit.c,v 1.15 1999/09/10 10:40:38 davem Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: io-unit.c,v 1.17 1999/10/18 01:46:54 zaitcev Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -35,7 +36,7 @@ r_int
 id|io_node
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -58,6 +59,10 @@ id|iommu_promregs
 (braket
 id|PROMREG_MAX
 )braket
+suffix:semicolon
+r_struct
+id|resource
+id|r
 suffix:semicolon
 id|iounit
 op_assign
@@ -160,40 +165,57 @@ comma
 l_int|3
 )paren
 suffix:semicolon
-id|xpt
-op_assign
-(paren
-id|iopte_t
-op_star
-)paren
-id|sparc_alloc_io
+id|memset
 c_func
 (paren
-id|iommu_promregs
-(braket
-l_int|2
-)braket
-dot
-id|phys_addr
+op_amp
+id|r
 comma
 l_int|0
 comma
+r_sizeof
 (paren
-id|PAGE_SIZE
-op_star
-l_int|16
+id|r
 )paren
-comma
-l_string|&quot;XPT&quot;
-comma
+)paren
+suffix:semicolon
+id|r.flags
+op_assign
 id|iommu_promregs
 (braket
 l_int|2
 )braket
 dot
 id|which_io
+suffix:semicolon
+id|r.start
+op_assign
+id|iommu_promregs
+(braket
+l_int|2
+)braket
+dot
+id|phys_addr
+suffix:semicolon
+id|xpt
+op_assign
+(paren
+id|iopte_t
+op_star
+)paren
+id|sbus_ioremap
+c_func
+(paren
+op_amp
+id|r
 comma
-l_int|0x0
+l_int|0
+comma
+id|PAGE_SIZE
+op_star
+l_int|16
+comma
+l_string|&quot;XPT&quot;
 )paren
 suffix:semicolon
 r_if
@@ -637,7 +659,7 @@ r_int
 id|len
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -705,7 +727,7 @@ id|iounit_get_scsi_sgl
 c_func
 (paren
 r_struct
-id|mmu_sglist
+id|scatterlist
 op_star
 id|sg
 comma
@@ -713,7 +735,7 @@ r_int
 id|sz
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -761,7 +783,7 @@ id|sg
 id|sz
 )braket
 dot
-id|dvma_addr
+id|dvma_address
 op_assign
 id|iounit_get_area
 c_func
@@ -777,15 +799,29 @@ id|sg
 id|sz
 )braket
 dot
-id|addr
+id|address
 comma
 id|sg
 (braket
 id|sz
 )braket
 dot
-id|len
+id|length
 )paren
+suffix:semicolon
+id|sg
+(braket
+id|sz
+)braket
+dot
+id|dvma_length
+op_assign
+id|sg
+(braket
+id|sz
+)braket
+dot
+id|length
 suffix:semicolon
 )brace
 id|spin_unlock_irqrestore
@@ -812,7 +848,7 @@ r_int
 id|len
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -932,7 +968,7 @@ id|iounit_release_scsi_sgl
 c_func
 (paren
 r_struct
-id|mmu_sglist
+id|scatterlist
 op_star
 id|sg
 comma
@@ -940,7 +976,7 @@ r_int
 id|sz
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren
@@ -997,7 +1033,7 @@ id|sg
 id|sz
 )braket
 dot
-id|dvma_addr
+id|dvma_address
 op_amp
 op_complement
 id|PAGE_MASK
@@ -1008,7 +1044,7 @@ id|sg
 id|sz
 )braket
 dot
-id|len
+id|length
 op_plus
 (paren
 id|PAGE_SIZE
@@ -1027,7 +1063,7 @@ id|sg
 id|sz
 )braket
 dot
-id|dvma_addr
+id|dvma_address
 op_minus
 id|IOUNIT_DMA_BASE
 )paren
@@ -1096,6 +1132,9 @@ c_func
 (paren
 r_int
 r_int
+id|va
+comma
+id|__u32
 id|addr
 comma
 r_int
@@ -1116,7 +1155,7 @@ op_star
 id|iopte
 suffix:semicolon
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 suffix:semicolon
@@ -1154,32 +1193,8 @@ id|end
 (brace
 id|page
 op_assign
-id|get_free_page
-c_func
-(paren
-id|GFP_KERNEL
-)paren
+id|va
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|page
-)paren
-(brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;alloc_dvma: Cannot get a dvma page&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_else
 (brace
 id|pgd_t
 op_star
@@ -1309,6 +1324,10 @@ id|addr
 op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
+id|va
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
 )brace
 id|flush_cache_all
 c_func
@@ -1320,6 +1339,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|iounit_unmap_dma_area
+r_static
+r_void
+id|iounit_unmap_dma_area
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+)paren
+(brace
 )brace
 macro_line|#endif
 DECL|function|iounit_lockarea
@@ -1440,6 +1474,16 @@ comma
 id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|mmu_unmap_dma_area
+comma
+id|iounit_unmap_dma_area
+comma
+id|BTFIXUPCALL_NORM
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|iounit_map_dma_init
@@ -1448,7 +1492,7 @@ id|iounit_map_dma_init
 c_func
 (paren
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 comma
@@ -1744,7 +1788,7 @@ op_star
 id|addr
 comma
 r_struct
-id|linux_sbus
+id|sbus_bus
 op_star
 id|sbus
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      parameters.h&n; * Version:       1.0&n; * Description:   A more general way to handle (pi,pl,pv) parameters&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 08:47:28 1999&n; * Modified at:   Sun Jun 13 09:17:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      parameters.h&n; * Version:       1.0&n; * Description:   A more general way to handle (pi,pl,pv) parameters&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 08:47:28 1999&n; * Modified at:   Mon Dec 13 11:51:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_PARAMS_H
 DECL|macro|IRDA_PARAMS_H
 mdefine_line|#define IRDA_PARAMS_H
@@ -309,39 +309,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-DECL|function|irda_param_insert_byte
-r_extern
-r_inline
-r_int
-id|irda_param_insert_byte
-c_func
-(paren
-id|__u8
-op_star
-id|buf
-comma
-id|__u8
-id|pi
-comma
-id|__u8
-id|pv
-)paren
-(brace
-r_return
-id|irda_param_pack
-c_func
-(paren
-id|buf
-comma
-l_string|&quot;bbb&quot;
-comma
-id|pi
-comma
-l_int|1
-comma
-id|pv
-)paren
-suffix:semicolon
-)brace
+DECL|macro|irda_param_insert_byte
+mdefine_line|#define irda_param_insert_byte(buf,pi,pv) irda_param_pack(buf,&quot;bbb&quot;,pi,1,pv)
 macro_line|#endif /* IRDA_PARAMS_H */
 eof

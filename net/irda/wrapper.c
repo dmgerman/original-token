@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Oct 30 17:24:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sun Dec 12 13:46:40 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -230,6 +230,7 @@ op_ne
 id|LAP_MAGIC
 )paren
 (brace
+multiline_comment|/* &n;&t;&t; * This will happen for all frames sent from user-space.&n;&t;&t; * Nothing to worry about, but we set the default number of &n;&t;&t; * BOF&squot;s&n;&t;&t; */
 id|IRDA_DEBUG
 c_func
 (paren
@@ -260,6 +261,42 @@ id|skb-&gt;cb
 op_member_access_from_pointer
 id|xbofs
 suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), xbofs=%d&bslash;n&quot;
+comma
+id|xbofs
+)paren
+suffix:semicolon
+multiline_comment|/* Check that we never use more than 115 + 48 xbofs */
+r_if
+c_cond
+(paren
+id|xbofs
+OG
+l_int|163
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), too many xbofs (%d)&bslash;n&quot;
+comma
+id|xbofs
+)paren
+suffix:semicolon
+id|xbofs
+op_assign
+l_int|163
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -658,7 +695,7 @@ id|byte
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function state_outside_frame (dev, rx_buff, byte)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function state_outside_frame (dev, rx_buff, byte)&n; *&n; *    Not receiving any frame (or just bogus data)&n; *&n; */
 DECL|function|state_outside_frame
 r_static
 r_void
@@ -724,6 +761,14 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|irda_device_set_media_busy
+c_func
+(paren
+id|dev
+comma
+id|TRUE
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -797,6 +842,15 @@ id|rx_buff-&gt;state
 op_assign
 id|OUTSIDE_FRAME
 suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), abort frame&bslash;n&quot;
+)paren
+suffix:semicolon
 id|stats-&gt;rx_errors
 op_increment
 suffix:semicolon
@@ -833,7 +887,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function state_link_escape (idev, byte)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function state_link_escape (idev, byte)&n; *&n; *    Found link escape character&n; *&n; */
 DECL|function|state_link_escape
 r_static
 r_void
@@ -886,12 +940,11 @@ suffix:semicolon
 r_case
 id|CE
 suffix:colon
-id|IRDA_DEBUG
+id|WARNING
 c_func
 (paren
-l_int|4
-comma
-l_string|&quot;WARNING: State not defined&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), state not defined&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -952,7 +1005,7 @@ c_func
 l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;(), Rx buffer overflow, aborting&bslash;n&quot;
+l_string|&quot;(), rx buffer overflow&bslash;n&quot;
 )paren
 suffix:semicolon
 id|rx_buff-&gt;state
@@ -1079,6 +1132,15 @@ c_func
 id|dev
 comma
 id|TRUE
+)paren
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), crc error&bslash;n&quot;
 )paren
 suffix:semicolon
 id|stats-&gt;rx_errors

@@ -1500,9 +1500,11 @@ suffix:semicolon
 macro_line|#ifdef __sparc__
 id|SPRINTF
 (paren
-l_string|&quot;Sun Enterprise Network Array (A5000 or E?500) on %s&bslash;n&quot;
+l_string|&quot;Sun Enterprise Network Array (A5000 or E?500) on %s PROM node %x&bslash;n&quot;
 comma
 id|fc-&gt;name
+comma
+id|fc-&gt;dev-&gt;prom_node
 )paren
 suffix:semicolon
 macro_line|#else

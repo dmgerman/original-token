@@ -21,6 +21,8 @@ DECL|macro|POLLRDBAND
 mdefine_line|#define POLLRDBAND&t;128
 DECL|macro|POLLWRBAND
 mdefine_line|#define POLLWRBAND&t;256
+DECL|macro|POLLMSG
+mdefine_line|#define POLLMSG&t;&t;512
 DECL|struct|pollfd
 r_struct
 id|pollfd

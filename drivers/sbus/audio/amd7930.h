@@ -1,72 +1,34 @@
-multiline_comment|/*&n; * drivers/sbus/audio/amd7930.h&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * Definitions for the AMD79C30 Digital Subscriber Controller which is&n; * used as an audio chip in sun4c architecture machines. The&n; * information in this file is based on Advanced Micro Devices&n; * Publication 09893, Rev G, Amendment /0, Final (a.k.a. the data&n; * sheet).&n; */
+multiline_comment|/* $Id: amd7930.h,v 1.8 1999/09/21 14:37:10 davem Exp $&n; * drivers/sbus/audio/amd7930.h&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * Definitions for the AMD79C30 Digital Subscriber Controller which is&n; * used as an audio chip in sun4c architecture machines. The&n; * information in this file is based on Advanced Micro Devices&n; * Publication 09893, Rev G, Amendment /0, Final (a.k.a. the data&n; * sheet).&n; */
 macro_line|#ifndef _AMD7930_H_
 DECL|macro|_AMD7930_H_
 mdefine_line|#define _AMD7930_H_
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* Register interface presented to the CPU by the amd7930. */
-DECL|struct|amd7930
-r_struct
-id|amd7930
-(brace
-DECL|member|cr
-id|__volatile__
-id|__u8
-id|cr
-suffix:semicolon
-multiline_comment|/* Command Register (W) */
-DECL|macro|ir
-mdefine_line|#define ir cr&t;&t;&t;&t;/* Interrupt Register (R) */
-DECL|member|dr
-id|__volatile__
-id|__u8
-id|dr
-suffix:semicolon
-multiline_comment|/* Data Register (R/W) */
-DECL|member|dsr1
-id|__volatile__
-id|__u8
-id|dsr1
-suffix:semicolon
-multiline_comment|/* D-channel Status Register 1 (R) */
-DECL|member|der
-id|__volatile__
-id|__u8
-id|der
-suffix:semicolon
-multiline_comment|/* D-channel Error Register (R) */
-DECL|member|dctb
-id|__volatile__
-id|__u8
-id|dctb
-suffix:semicolon
-multiline_comment|/* D-channel Transmit Buffer (W) */
-DECL|macro|dcrb
-mdefine_line|#define dcrb dctb&t;&t;&t;/* D-channel Receive Buffer (R) */
-DECL|member|bbtb
-id|__volatile__
-id|__u8
-id|bbtb
-suffix:semicolon
-multiline_comment|/* Bb-channel Transmit Buffer (W) */
-DECL|macro|bbrb
-mdefine_line|#define bbrb bbtb&t;&t;&t;/* Bb-channel Receive Buffer (R) */
-DECL|member|bctb
-id|__volatile__
-id|__u8
-id|bctb
-suffix:semicolon
-multiline_comment|/* Bc-channel Transmit Buffer (W) */
-DECL|macro|bcrb
-mdefine_line|#define bcrb bctb&t;&t;&t;/* Bc-channel Receive Buffer (R) */
-DECL|member|dsr2
-id|__volatile__
-id|__u8
-id|dsr2
-suffix:semicolon
-multiline_comment|/* D-channel Status Register 2 (R) */
-)brace
-suffix:semicolon
+DECL|macro|CR
+mdefine_line|#define CR&t;0x00UL&t;&t;/* Command Register (W) */
+DECL|macro|IR
+mdefine_line|#define IR&t;CR&t;&t;/* Interrupt Register (R) */
+DECL|macro|DR
+mdefine_line|#define DR&t;0x01UL&t;&t;/* Data Register (R/W) */
+DECL|macro|DSR1
+mdefine_line|#define DSR1&t;0x02UL&t;&t;/* D-channel Status Register 1 (R) */
+DECL|macro|DER
+mdefine_line|#define DER&t;0x03UL&t;&t;/* D-channel Error Register (R) */
+DECL|macro|DCTB
+mdefine_line|#define DCTB&t;0x04UL&t;&t;/* D-channel Transmit Buffer (W) */
+DECL|macro|DCRB
+mdefine_line|#define DCRB&t;DCTB&t;&t;/* D-channel Receive Buffer (R) */
+DECL|macro|BBTB
+mdefine_line|#define BBTB&t;0x05UL&t;&t;/* Bb-channel Transmit Buffer (W) */
+DECL|macro|BBRB
+mdefine_line|#define BBRB&t;BBTB&t;&t;/* Bb-channel Receive Buffer (R) */
+DECL|macro|BCTB
+mdefine_line|#define BCTB&t;0x06UL&t;&t;/* Bc-channel Transmit Buffer (W) */
+DECL|macro|BCRB
+mdefine_line|#define BCRB&t;BCTB&t;&t;/* Bc-channel Receive Buffer (R) */
+DECL|macro|DSR2
+mdefine_line|#define DSR2&t;0x07UL&t;&t;/* D-channel Status Register 2 (R) */
 multiline_comment|/* Indirect registers in the Main Audio Processor. */
 DECL|struct|amd7930_map
 r_struct
@@ -513,5 +475,5 @@ mdefine_line|#define&t;AMR_PP_PPCR3&t;&t;&t;0xC9
 multiline_comment|/* Give this chip a &quot;default&quot; sample rate */
 DECL|macro|AMD7930_RATE
 mdefine_line|#define AMD7930_RATE                    (8000)
-macro_line|#endif
+macro_line|#endif /* _AMD7930_H_ */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.11 1999/08/31 19:25:49 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.12 1999/11/19 05:53:12 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -572,6 +572,60 @@ comma
 r_int
 r_int
 id|tte_data
+comma
+r_int
+r_int
+id|vaddr
+)paren
+suffix:semicolon
+multiline_comment|/* Map/Unmap client program address ranges.  First the format of&n; * the mapping mode argument.&n; */
+DECL|macro|PROM_MAP_WRITE
+mdefine_line|#define PROM_MAP_WRITE&t;0x0001 /* Writable */
+DECL|macro|PROM_MAP_READ
+mdefine_line|#define PROM_MAP_READ&t;0x0002 /* Readable - sw */
+DECL|macro|PROM_MAP_EXEC
+mdefine_line|#define PROM_MAP_EXEC&t;0x0004 /* Executable - sw */
+DECL|macro|PROM_MAP_LOCKED
+mdefine_line|#define PROM_MAP_LOCKED&t;0x0010 /* Locked, use i/dtlb load calls for this instead */
+DECL|macro|PROM_MAP_CACHED
+mdefine_line|#define PROM_MAP_CACHED&t;0x0020 /* Cacheable in both L1 and L2 caches */
+DECL|macro|PROM_MAP_SE
+mdefine_line|#define PROM_MAP_SE&t;0x0040 /* Side-Effects */
+DECL|macro|PROM_MAP_GLOB
+mdefine_line|#define PROM_MAP_GLOB&t;0x0080 /* Global */
+DECL|macro|PROM_MAP_IE
+mdefine_line|#define PROM_MAP_IE&t;0x0100 /* Invert-Endianness */
+DECL|macro|PROM_MAP_DEFAULT
+mdefine_line|#define PROM_MAP_DEFAULT (PROM_MAP_WRITE | PROM_MAP_READ | PROM_MAP_EXEC | PROM_MAP_CACHED)
+r_extern
+r_int
+id|prom_map
+c_func
+(paren
+r_int
+id|mode
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|vaddr
+comma
+r_int
+r_int
+id|paddr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|prom_unmap
+c_func
+(paren
+r_int
+r_int
+id|size
 comma
 r_int
 r_int

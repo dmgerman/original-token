@@ -5230,15 +5230,6 @@ dot
 dot
 )paren
 suffix:semicolon
-r_static
-r_void
-id|BusLogic_ParseDriverOptions
-c_func
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/*&n;  Declare the Initialization Functions.&n;*/
 r_static
 r_void
@@ -5480,7 +5471,7 @@ op_star
 id|__init
 suffix:semicolon
 r_static
-r_void
+r_int
 id|BusLogic_ParseDriverOptions
 c_func
 (paren
@@ -5489,14 +5480,12 @@ op_star
 )paren
 id|__init
 suffix:semicolon
-r_void
+r_static
+r_int
 id|BusLogic_Setup
 c_func
 (paren
 r_char
-op_star
-comma
-r_int
 op_star
 )paren
 id|__init

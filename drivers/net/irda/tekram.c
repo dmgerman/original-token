@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       1.2&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon Oct 18 23:25:44 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       1.2&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Fri Dec 17 09:17:45 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -160,7 +160,7 @@ op_or
 id|IR_115200
 suffix:semicolon
 id|qos-&gt;min_turn_time.bits
-op_and_assign
+op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* Needs at least 10 ms */
@@ -204,6 +204,28 @@ comma
 id|FALSE
 comma
 id|FALSE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;reset_task
+)paren
+id|irda_task_delete
+c_func
+(paren
+id|self-&gt;reset_task
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;speed_task
+)paren
+id|irda_task_delete
+c_func
+(paren
+id|self-&gt;speed_task
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -270,6 +292,38 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;speed_task
+op_logical_and
+id|self-&gt;speed_task
+op_ne
+id|task
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), busy!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+)brace
+r_else
+id|self-&gt;speed_task
+op_assign
+id|task
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -327,8 +381,6 @@ l_int|115200
 suffix:colon
 id|byte
 op_assign
-id|TEKRAM_PW
-op_or
 id|TEKRAM_115200
 suffix:semicolon
 r_break
@@ -343,51 +395,6 @@ id|task-&gt;state
 r_case
 id|IRDA_TASK_INIT
 suffix:colon
-multiline_comment|/* Lock dongle */
-r_if
-c_cond
-(paren
-id|irda_lock
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|self-&gt;busy
-)paren
-op_eq
-id|FALSE
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), busy!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|100
-)paren
-suffix:semicolon
-)brace
-id|irda_task_next_state
-c_func
-(paren
-id|task
-comma
-id|IRDA_TASK_CHILD_INIT
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|IRDA_TASK_CHILD_INIT
 suffix:colon
@@ -481,7 +488,7 @@ multiline_comment|/* Wait at least 7us */
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|14
 )paren
 suffix:semicolon
 multiline_comment|/* Write control byte */
@@ -512,7 +519,7 @@ op_assign
 id|MSECS_TO_JIFFIES
 c_func
 (paren
-l_int|100
+l_int|150
 )paren
 suffix:semicolon
 r_break
@@ -541,9 +548,9 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
-id|self-&gt;busy
+id|self-&gt;speed_task
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -566,9 +573,9 @@ comma
 id|IRDA_TASK_DONE
 )paren
 suffix:semicolon
-id|self-&gt;busy
+id|self-&gt;speed_task
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|ret
 op_assign
@@ -631,7 +638,40 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;reset_task
+op_logical_and
+id|self-&gt;reset_task
+op_ne
+id|task
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), busy!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+)brace
+r_else
+id|self-&gt;reset_task
+op_assign
+id|task
+suffix:semicolon
 multiline_comment|/* Power off dongle */
+singleline_comment|//self-&gt;set_dtr_rts(self-&gt;dev, FALSE, FALSE);
 id|self
 op_member_access_from_pointer
 id|set_dtr_rts
@@ -639,9 +679,9 @@ c_func
 (paren
 id|self-&gt;dev
 comma
-id|FALSE
+id|TRUE
 comma
-id|FALSE
+id|TRUE
 )paren
 suffix:semicolon
 r_switch
@@ -696,13 +736,13 @@ comma
 id|IRDA_TASK_WAIT2
 )paren
 suffix:semicolon
-multiline_comment|/* Should sleep 1 ms, but 10 should not do any harm */
+multiline_comment|/* Should sleep 1 ms */
 id|ret
 op_assign
 id|MSECS_TO_JIFFIES
 c_func
 (paren
-l_int|10
+l_int|1
 )paren
 suffix:semicolon
 r_break
@@ -723,10 +763,11 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
+multiline_comment|/* Wait at least 50 us */
 id|udelay
 c_func
 (paren
-l_int|50
+l_int|75
 )paren
 suffix:semicolon
 id|irda_task_next_state
@@ -736,6 +777,10 @@ id|task
 comma
 id|IRDA_TASK_DONE
 )paren
+suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -757,6 +802,10 @@ id|task
 comma
 id|IRDA_TASK_DONE
 )paren
+suffix:semicolon
+id|self-&gt;reset_task
+op_assign
+l_int|NULL
 suffix:semicolon
 id|ret
 op_assign

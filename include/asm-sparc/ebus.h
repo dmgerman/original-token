@@ -1,7 +1,10 @@
-multiline_comment|/* $Id: ebus.h,v 1.1 1998/09/22 05:54:41 jj Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be) &n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; */
+multiline_comment|/* $Id: ebus.h,v 1.2 1999/09/11 23:05:55 zaitcev Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be) &n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; */
 macro_line|#ifndef __SPARC_EBUS_H
 DECL|macro|__SPARC_EBUS_H
 mdefine_line|#define __SPARC_EBUS_H
+macro_line|#ifndef _LINUX_IOPORT_H
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|struct|linux_ebus_child
 r_struct
@@ -36,10 +39,10 @@ id|prom_name
 l_int|64
 )braket
 suffix:semicolon
-DECL|member|base_address
-r_int
-r_int
-id|base_address
+DECL|member|resource
+r_struct
+id|resource
+id|resource
 (braket
 id|PROMREG_MAX
 )braket
@@ -95,10 +98,10 @@ id|prom_name
 l_int|64
 )braket
 suffix:semicolon
-DECL|member|base_address
-r_int
-r_int
-id|base_address
+DECL|member|resource
+r_struct
+id|resource
+id|resource
 (braket
 id|PROMREG_MAX
 )braket
@@ -267,8 +270,5 @@ DECL|macro|for_each_ebusdev
 mdefine_line|#define for_each_ebusdev(dev, bus)&t;&t;&t;&t;&t;&bslash;&n;        for((dev) = (bus)-&gt;devices; (dev); (dev) = (dev)-&gt;next)
 DECL|macro|for_each_edevchild
 mdefine_line|#define for_each_edevchild(dev, child)&t;&t;&t;&t;&t;&bslash;&n;        for((child) = (dev)-&gt;children; (child); (child) = (child)-&gt;next)
-multiline_comment|/* P3: Actually unused in sparc */
-DECL|macro|for_all_ebusdev
-mdefine_line|#define for_all_ebusdev(dev, bus)&t;&t;&t;&t;&t;&bslash;&n;&t;for ((bus) = ebus_chain, ((dev) = (bus) ? (bus)-&gt;devices : 0);&t;&bslash;&n;&t;     (bus); ((dev) = (dev)-&gt;next ? (dev)-&gt;next :&t;&t;&bslash;&n;&t;     ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
 macro_line|#endif /* !(__SPARC_EBUS_H) */
 eof

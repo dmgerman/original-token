@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: auxio.h,v 1.1 1997/03/14 21:05:27 jj Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: auxio.h,v 1.2 1999/09/21 14:39:25 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_AUXIO_H
 DECL|macro|_SPARC64_AUXIO_H
 mdefine_line|#define _SPARC64_AUXIO_H
@@ -6,8 +6,7 @@ macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* FIXME: All of this should be checked for sun4u. It has /sbus/auxio, but&n;   I don&squot;t know whether it is the same and don&squot;t have a floppy */
 r_extern
 r_int
-r_char
-op_star
+r_int
 id|auxio_register
 suffix:semicolon
 multiline_comment|/* This register is an unsigned char in IO space.  It does two things.&n; * First, it is used to control the front panel LED light on machines&n; * that have it (good for testing entry points to trap handlers and irq&squot;s)&n; * Secondly, it controls various floppy drive parameters.&n; */
@@ -34,22 +33,22 @@ mdefine_line|#define AUXIO_FLPY_EJCT   0x02    /* Eject floppy disk.  Write only
 DECL|macro|AUXIO_LED
 mdefine_line|#define AUXIO_LED         0x01    /* On if set, off if unset. Read/Write */
 DECL|macro|AUXREG
-mdefine_line|#define AUXREG   ((volatile unsigned char *)(auxio_register))
+mdefine_line|#define AUXREG   (auxio_register)
 multiline_comment|/* These are available on sun4c */
 DECL|macro|TURN_ON_LED
-mdefine_line|#define TURN_ON_LED   if (AUXREG) *AUXREG = (*AUXREG | AUXIO_ORMEIN | AUXIO_LED)
+mdefine_line|#define TURN_ON_LED   &bslash;&n;do {&t;if (AUXREG) &bslash;&n;&t;&t;sbus_writeb(sbus_readb(AUXREG) | &bslash;&n;&t;&t;&t;    (AUXIO_ORMEIN | AUXIO_LED), AUXREG); &bslash;&n;} while(0)
 DECL|macro|TURN_OFF_LED
-mdefine_line|#define TURN_OFF_LED  if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_LED))
+mdefine_line|#define TURN_OFF_LED  &bslash;&n;do {&t;if (AUXREG) &bslash;&n;&t;&t;sbus_writeb((sbus_readb(AUXREG) | &bslash;&n;&t;&t;&t;     AUXIO_ORMEIN) &amp; (~AUXIO_LED), &bslash;&n;&t;&t;&t;    AUXREG); &bslash;&n;} while(0)
 DECL|macro|FLIP_LED
-mdefine_line|#define FLIP_LED      if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) ^ AUXIO_LED)
+mdefine_line|#define FLIP_LED&t;&bslash;&n;do {&t;if (AUXREG)  &bslash;&n;&t;&t;sbus_writeb((sbus_readb(AUXREG) | &bslash;&n;&t;&t;&t;     AUXIO_ORMEIN) ^ AUXIO_LEN, &bslash;&n;&t;&t;&t;    AUXREG); &bslash;&n;} while(0)
 DECL|macro|FLPY_MOTORON
-mdefine_line|#define FLPY_MOTORON  if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) | AUXIO_FLPY_DSEL)
+mdefine_line|#define FLPY_MOTORON&t;&bslash;&n;do {&t;if (AUXREG) &bslash;&n;&t;&t;sbus_writeb(sbus_readb(AUXREG) | &bslash;&n;&t;&t;&t;    (AUXIO_ORMEIN | AUXIO_FLPY_DSEL), &bslash;&n;&t;&t;&t;    AUXREG); &bslash;&n;} while(0)
 DECL|macro|FLPY_MOTOROFF
-mdefine_line|#define FLPY_MOTOROFF if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_DSEL))
+mdefine_line|#define FLPY_MOTOROFF&t;&bslash;&n;do {&t;if (AUXREG) &bslash;&n;&t;&t;sbus_writeb((sbus_readb(AUXREG) | &bslash;&n;&t;&t;&t;     AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_DSEL), &bslash;&n;&t;&t;&t;    AUXREG); &bslash;&n;} while(0)
 DECL|macro|FLPY_TCNTON
-mdefine_line|#define FLPY_TCNTON   if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) | AUXIO_FLPY_TCNT)
+mdefine_line|#define FLPY_TCNTON&t;&bslash;&n;do {&t;if (AUXREG) &bslash;&n;&t;&t;sbus_writeb((sbus_readb(AUXREG) | &bslash;&n;&t;&t;&t;     AUXIO_ORMEIN) | AUXIO_FLPY_TCNT, &bslash;&n;&t;&t;&t;    AUXREG); &bslash;&n;} while(0)
 DECL|macro|FLPY_TCNTOFF
-mdefine_line|#define FLPY_TCNTOFF  if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_TCNT))
+mdefine_line|#define FLPY_TCNTOFF&t;&bslash;&n;do {&t;if (AUXREG) &bslash;&n;&t;&t;sbus_writeb((sbus_readb(AUXREG) | &bslash;&n;&t;&t;&t;     AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_TCNT), &bslash;&n;&t;&t;&t;    AUXREG); &bslash;&n;} while(0)
 macro_line|#ifndef __ASSEMBLY__
 DECL|function|set_auxio
 r_extern
@@ -92,26 +91,40 @@ c_cond
 id|AUXREG
 )paren
 (brace
+r_int
+r_char
+id|newval
+suffix:semicolon
 id|regval
 op_assign
-op_star
+id|sbus_readb
+c_func
+(paren
 id|AUXREG
+)paren
 suffix:semicolon
-op_star
-id|AUXREG
+id|newval
 op_assign
-(paren
-(paren
 id|regval
 op_or
 id|bits_on
-)paren
-op_amp
+suffix:semicolon
+id|newval
+op_and_assign
 op_complement
 id|bits_off
-)paren
-op_or
+suffix:semicolon
+id|newval
+op_or_assign
 id|AUXIO_ORMEIN4M
+suffix:semicolon
+id|sbus_writeb
+c_func
+(paren
+id|newval
+comma
+id|AUXREG
+)paren
 suffix:semicolon
 )brace
 id|restore_flags

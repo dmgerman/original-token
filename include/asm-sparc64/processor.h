@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.57 1999/08/04 03:20:05 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.58 1999/12/15 14:19:14 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -230,7 +230,21 @@ id|t
 (brace
 r_int
 r_int
+id|ret
+op_assign
+l_int|0xdeadbeefUL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;ksp
+)paren
+(brace
+r_int
+r_int
 op_star
+id|sp
+suffix:semicolon
 id|sp
 op_assign
 (paren
@@ -244,9 +258,39 @@ op_plus
 id|STACK_BIAS
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sp
+op_amp
+(paren
+r_sizeof
+(paren
+r_int
+)paren
+op_minus
+l_int|1
+)paren
+)paren
+op_eq
+l_int|0UL
+op_logical_and
+id|sp
+(braket
+l_int|14
+)braket
+)paren
+(brace
 r_int
 r_int
 op_star
+id|fp
+suffix:semicolon
 id|fp
 op_assign
 (paren
@@ -263,11 +307,39 @@ op_plus
 id|STACK_BIAS
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|fp
+op_amp
+(paren
+r_sizeof
+(paren
+r_int
+)paren
+op_minus
+l_int|1
+)paren
+)paren
+op_eq
+l_int|0UL
+)paren
+id|ret
+op_assign
 id|fp
 (braket
 l_int|15
 )braket
+suffix:semicolon
+)brace
+)brace
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* On Uniprocessor, even in RMO processes see TSO semantics */
@@ -316,17 +388,8 @@ DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|forget_segments
 mdefine_line|#define forget_segments()&t;&t;do { } while (0)
-r_int
-r_int
-id|get_wchan
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|p
-)paren
-suffix:semicolon
+DECL|macro|get_wchan
+mdefine_line|#define get_wchan(__TSK) &bslash;&n;({&t;extern void scheduling_functions_start_here(void); &bslash;&n;&t;extern void scheduling_functions_end_here(void); &bslash;&n;&t;unsigned long pc, fp, bias = 0; &bslash;&n;&t;unsigned long task_base = (unsigned long) (__TSK); &bslash;&n;&t;struct reg_window *rw; &bslash;&n;        unsigned long __ret = 0; &bslash;&n;&t;int count = 0; &bslash;&n;&t;if (!(__TSK) || (__TSK) == current || &bslash;&n;            (__TSK)-&gt;state == TASK_RUNNING) &bslash;&n;&t;&t;goto __out; &bslash;&n;&t;bias = STACK_BIAS; &bslash;&n;&t;fp = (__TSK)-&gt;thread.ksp + bias; &bslash;&n;&t;do { &bslash;&n;&t;&t;/* Bogus frame pointer? */ &bslash;&n;&t;&t;if (fp &lt; (task_base + sizeof(struct task_struct)) || &bslash;&n;&t;&t;    fp &gt;= (task_base + (2 * PAGE_SIZE))) &bslash;&n;&t;&t;&t;break; &bslash;&n;&t;&t;rw = (struct reg_window *) fp; &bslash;&n;&t;&t;pc = rw-&gt;ins[7]; &bslash;&n;&t;&t;if (pc &lt; ((unsigned long) scheduling_functions_start_here) || &bslash;&n;&t;&t;    pc &gt;= ((unsigned long) scheduling_functions_end_here)) { &bslash;&n;&t;&t;&t;__ret = pc; &bslash;&n;&t;&t;&t;goto __out; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;fp = rw-&gt;ins[6] + bias; &bslash;&n;&t;} while (++count &lt; 16); &bslash;&n;__out:&t;__ret; &bslash;&n;})
 DECL|macro|KSTK_EIP
 mdefine_line|#define KSTK_EIP(tsk)  ((tsk)-&gt;thread.kregs-&gt;tpc)
 DECL|macro|KSTK_ESP

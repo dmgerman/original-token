@@ -2081,6 +2081,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* remove the local mac too */
+multiline_comment|/*        next = br_avl_find_addr(port_info[port].dev-&gt;dev_addr); */
 id|next
 op_assign
 id|br_avl_find_addr
@@ -2091,7 +2092,7 @@ id|port_info
 id|port
 )braket
 dot
-id|dev-&gt;dev_addr
+id|ifmac.BRIDGE_ID_ULA
 )paren
 suffix:semicolon
 r_if

@@ -7,11 +7,9 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &quot;pci-i386.h&quot;
 multiline_comment|/*&n; * Assign new address to PCI resource.  We hope our resource information&n; * is complete.  On the PC, we don&squot;t re-assign resources unless we are&n; * forced to do so.&n; *&n; * Expects start=0, end=size-1, flags=resource type.&n; */
-DECL|function|pcibios_assign_resource
-r_static
+DECL|function|pci_assign_resource
 r_int
-id|__init
-id|pcibios_assign_resource
+id|pci_assign_resource
 c_func
 (paren
 r_struct
@@ -849,7 +847,7 @@ id|r-&gt;end
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t; *  We shall assign a new address to this resource, either because&n;&t;&t;&t;&t; *  the BIOS forgot to do so or because we have decided the old&n;&t;&t;&t;&t; *  address was unusable for some reason.&n;&t;&t;&t;&t; */
-id|pcibios_assign_resource
+id|pci_assign_resource
 c_func
 (paren
 id|dev
@@ -888,7 +886,7 @@ c_cond
 (paren
 id|r-&gt;end
 )paren
-id|pcibios_assign_resource
+id|pci_assign_resource
 c_func
 (paren
 id|dev

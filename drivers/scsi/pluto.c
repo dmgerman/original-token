@@ -1392,8 +1392,11 @@ r_static
 r_char
 id|buf
 (braket
-l_int|80
+l_int|128
 )braket
+comma
+op_star
+id|p
 suffix:semicolon
 r_struct
 id|pluto
@@ -1427,6 +1430,28 @@ comma
 id|pluto-&gt;fc-&gt;name
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|p
+op_assign
+id|strchr
+c_func
+(paren
+id|buf
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot; PROM node %x&quot;
+comma
+id|pluto-&gt;fc-&gt;dev-&gt;prom_node
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 r_return
 id|buf
 suffix:semicolon

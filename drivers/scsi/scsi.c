@@ -6948,7 +6948,7 @@ id|flags
 suffix:semicolon
 )brace
 r_static
-id|ssize_t
+r_int
 id|proc_scsi_gen_write
 c_func
 (paren
@@ -7895,7 +7895,7 @@ suffix:semicolon
 )brace
 DECL|function|proc_scsi_gen_write
 r_static
-id|ssize_t
+r_int
 id|proc_scsi_gen_write
 c_func
 (paren

@@ -5,37 +5,15 @@ mdefine_line|#define __SOC_H
 macro_line|#include &quot;fc.h&quot;
 macro_line|#include &quot;fcp.h&quot;
 macro_line|#include &quot;fcp_impl.h&quot;
-multiline_comment|/* Hardware structures and constants first {{{ */
-DECL|struct|soc_regs
-r_struct
-id|soc_regs
-(brace
-DECL|member|cfg
-r_volatile
-id|u32
-id|cfg
-suffix:semicolon
-multiline_comment|/* Config Register */
-DECL|member|sae
-r_volatile
-id|u32
-id|sae
-suffix:semicolon
-multiline_comment|/* Slave Access Error Register */
-DECL|member|cmd
-r_volatile
-id|u32
-id|cmd
-suffix:semicolon
-multiline_comment|/* Command &amp; Status Register */
-DECL|member|imask
-r_volatile
-id|u32
-id|imask
-suffix:semicolon
-multiline_comment|/* Interrupt Mask Register */
-)brace
-suffix:semicolon
+multiline_comment|/* Hardware register offsets and constants first {{{ */
+DECL|macro|CFG
+mdefine_line|#define CFG&t;0x00UL&t;&t;/* Config Register */
+DECL|macro|SAE
+mdefine_line|#define SAE&t;0x04UL&t;&t;/* Slave Access Error Register */
+DECL|macro|CMD
+mdefine_line|#define CMD&t;0x08UL&t;&t;/* Command and Status Register */
+DECL|macro|IMASK
+mdefine_line|#define IMASK&t;0x0cUL&t;&t;/* Interrupt Mask Register */
 multiline_comment|/* Config Register */
 DECL|macro|SOC_CFG_EXT_RAM_BANK_MASK
 mdefine_line|#define SOC_CFG_EXT_RAM_BANK_MASK&t;0x07000000
@@ -126,12 +104,12 @@ mdefine_line|#define SOC_IMASK_NON_QUEUED&t;&t;0x00000004
 DECL|macro|SOC_INTR
 mdefine_line|#define SOC_INTR(s, cmd) &bslash;&n;&t;(((cmd &amp; SOC_CMD_RSP_QALL) | ((~cmd) &amp; SOC_CMD_REQ_QALL)) &bslash;&n;&t; &amp; s-&gt;imask)
 DECL|macro|SOC_SETIMASK
-mdefine_line|#define SOC_SETIMASK(s, i) &bslash;&n;&t;(s)-&gt;imask = (i); (s)-&gt;regs-&gt;imask = (i)
+mdefine_line|#define SOC_SETIMASK(s, i) &bslash;&n;do {&t;(s)-&gt;imask = (i); &bslash;&n;&t;sbus_writel((i), (s)-&gt;regs + IMASK); &bslash;&n;} while(0)
 multiline_comment|/* XRAM&n; *&n; * This is a 64KB register area. It accepts only halfword access.&n; * That&squot;s why here are the following inline functions...&n; */
 DECL|typedef|xram_p
 r_typedef
-id|u16
-op_star
+r_int
+r_int
 id|xram_p
 suffix:semicolon
 multiline_comment|/* Get 32bit number from XRAM */
@@ -148,21 +126,26 @@ id|x
 r_return
 (paren
 (paren
+id|sbus_readw
+c_func
 (paren
-id|u32
-)paren
-op_star
 id|x
+op_plus
+l_int|0x00UL
 )paren
 op_lshift
 l_int|16
 )paren
 op_or
 (paren
+id|sbus_readw
+c_func
+(paren
 id|x
-(braket
-l_int|1
-)braket
+op_plus
+l_int|0x02UL
+)paren
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -181,10 +164,13 @@ r_return
 (paren
 id|u32
 )paren
+id|sbus_readw
+c_func
+(paren
 id|x
-(braket
-l_int|1
-)braket
+op_plus
+l_int|0x02UL
+)paren
 suffix:semicolon
 )brace
 DECL|function|xram_get_8
@@ -200,50 +186,48 @@ id|x
 r_if
 c_cond
 (paren
-(paren
-(paren
-r_int
-)paren
 id|x
-)paren
 op_amp
-l_int|1
+(paren
+id|xram_p
+)paren
+l_int|0x1
 )paren
 (brace
 id|x
 op_assign
-(paren
-id|xram_p
-)paren
-(paren
-(paren
-r_int
-)paren
 id|x
 op_minus
 l_int|1
-)paren
 suffix:semicolon
 r_return
 (paren
 id|u8
 )paren
-op_star
+id|sbus_readw
+c_func
+(paren
 id|x
+)paren
 suffix:semicolon
 )brace
 r_else
+(brace
 r_return
 (paren
 id|u8
 )paren
 (paren
-op_star
+id|sbus_readw
+c_func
+(paren
 id|x
+)paren
 op_rshift
 l_int|8
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|xram_copy_from
 r_static
@@ -278,9 +262,41 @@ op_decrement
 comma
 id|x
 op_add_assign
-l_int|2
+r_sizeof
+(paren
+id|u32
+)paren
 )paren
 (brace
+id|u32
+id|val
+suffix:semicolon
+id|val
+op_assign
+(paren
+(paren
+id|sbus_readw
+c_func
+(paren
+id|x
+op_plus
+l_int|0x00UL
+)paren
+op_lshift
+l_int|16
+)paren
+op_or
+(paren
+id|sbus_readw
+c_func
+(paren
+id|x
+op_plus
+l_int|0x02UL
+)paren
+)paren
+)paren
+suffix:semicolon
 op_star
 (paren
 (paren
@@ -291,26 +307,7 @@ id|p
 )paren
 op_increment
 op_assign
-(paren
-(paren
-(paren
-id|u32
-)paren
-(paren
-op_star
-id|x
-)paren
-)paren
-op_lshift
-l_int|16
-)paren
-op_or
-(paren
-id|x
-(braket
-l_int|1
-)braket
-)paren
+id|val
 suffix:semicolon
 )brace
 )brace
@@ -331,10 +328,6 @@ r_int
 id|len
 )paren
 (brace
-r_register
-id|u32
-id|tmp
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -351,9 +344,13 @@ op_decrement
 comma
 id|x
 op_add_assign
-l_int|2
+r_sizeof
+(paren
+id|u32
+)paren
 )paren
 (brace
+id|u32
 id|tmp
 op_assign
 op_star
@@ -366,19 +363,27 @@ id|p
 )paren
 op_increment
 suffix:semicolon
-op_star
-id|x
-op_assign
+id|sbus_writew
+c_func
+(paren
 id|tmp
 op_rshift
 l_int|16
-suffix:semicolon
+comma
 id|x
-(braket
-l_int|1
-)braket
-op_assign
+op_plus
+l_int|0x00UL
+)paren
+suffix:semicolon
+id|sbus_writew
+c_func
+(paren
 id|tmp
+comma
+id|x
+op_plus
+l_int|0x02UL
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -408,20 +413,28 @@ l_int|0
 suffix:semicolon
 id|len
 op_decrement
-)paren
-op_star
+comma
 id|x
-op_increment
-op_assign
+op_add_assign
+r_sizeof
+(paren
+id|u16
+)paren
+)paren
+id|sbus_writew
+c_func
+(paren
 l_int|0
+comma
+id|x
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Circular Queue */
-multiline_comment|/* These two are in sizeof(u16) units */
 DECL|macro|SOC_CQ_REQ_OFFSET
-mdefine_line|#define SOC_CQ_REQ_OFFSET&t;0x100
+mdefine_line|#define SOC_CQ_REQ_OFFSET&t;(0x100 * sizeof(u16))
 DECL|macro|SOC_CQ_RSP_OFFSET
-mdefine_line|#define SOC_CQ_RSP_OFFSET&t;0x110
+mdefine_line|#define SOC_CQ_RSP_OFFSET&t;(0x110 * sizeof(u16))
 r_typedef
 r_struct
 (brace
@@ -772,9 +785,8 @@ r_int
 id|soc_no
 suffix:semicolon
 DECL|member|regs
-r_struct
-id|soc_regs
-op_star
+r_int
+r_int
 id|regs
 suffix:semicolon
 DECL|member|xram
@@ -813,6 +825,15 @@ r_int
 id|curr_port
 suffix:semicolon
 multiline_comment|/* Which port will have priority to fcp_queue_empty */
+DECL|member|req_cpu
+id|soc_req
+op_star
+id|req_cpu
+suffix:semicolon
+DECL|member|req_dvma
+id|u32
+id|req_dvma
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* }}} */

@@ -390,9 +390,13 @@ id|type
 suffix:semicolon
 DECL|member|sbdp
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|sbdp
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 DECL|member|prom_node
 DECL|member|prom_parent

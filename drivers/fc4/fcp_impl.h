@@ -259,7 +259,7 @@ suffix:semicolon
 macro_line|#ifdef __sparc__&t;
 DECL|member|dev
 r_struct
-id|linux_sbus_device
+id|sbus_dev
 op_star
 id|dev
 suffix:semicolon

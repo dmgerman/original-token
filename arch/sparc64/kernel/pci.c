@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.c,v 1.6 1999/09/08 03:40:41 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: pci.c,v 1.11 1999/12/20 05:02:07 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
+macro_line|#ifndef NEW_PCI_DMA_MAP
 DECL|variable|pci_dvma_v2p_hash
 r_int
 r_int
@@ -27,6 +28,7 @@ id|pci_dvma_p2v_hash
 id|PCI_DVMA_HASHSZ
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|variable|pci_memspace_mask
 r_int
 r_int
@@ -721,6 +723,112 @@ r_struct
 id|pci_bus
 op_star
 id|pbus
+)paren
+(brace
+)brace
+DECL|function|pcibios_update_resource
+r_void
+id|pcibios_update_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+comma
+r_struct
+id|resource
+op_star
+id|res1
+comma
+r_struct
+id|resource
+op_star
+id|res2
+comma
+r_int
+id|index
+)paren
+(brace
+)brace
+DECL|function|pcibios_update_irq
+r_void
+id|pcibios_update_irq
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+comma
+r_int
+id|irq
+)paren
+(brace
+)brace
+DECL|function|resource_fixup
+r_int
+r_int
+id|resource_fixup
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+comma
+r_struct
+id|resource
+op_star
+id|res
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_return
+id|start
+suffix:semicolon
+)brace
+DECL|function|pcibios_fixup_pbus_ranges
+r_void
+id|pcibios_fixup_pbus_ranges
+c_func
+(paren
+r_struct
+id|pci_bus
+op_star
+id|pbus
+comma
+r_struct
+id|pbus_set_ranges_data
+op_star
+id|pranges
+)paren
+(brace
+)brace
+DECL|function|pcibios_align_resource
+r_void
+id|pcibios_align_resource
+c_func
+(paren
+r_void
+op_star
+id|data
+comma
+r_struct
+id|resource
+op_star
+id|res
+comma
+r_int
+r_int
+id|size
 )paren
 (brace
 )brace

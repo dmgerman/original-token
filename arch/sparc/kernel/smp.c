@@ -595,12 +595,12 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|mm-&gt;count
+id|mm-&gt;mm_users
 )paren
 op_eq
 l_int|1
 op_logical_and
-id|current-&gt;mm
+id|current-&gt;active_mm
 op_eq
 id|mm
 )paren

@@ -1,12 +1,12 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.40 1999/09/10 10:44:37 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.41 1999/09/10 15:39:03 jj Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
 multiline_comment|/* Derived heavily from Linus&squot;s Alpha/AXP ASN code... */
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
-macro_line|#ifndef __ASSEMBLY__
 r_extern
 id|spinlock_t
 id|ctx_alloc_lock

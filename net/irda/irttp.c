@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Oct 19 21:40:00 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Thu Dec 16 23:00:03 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -647,6 +647,8 @@ id|stsap_sel
 comma
 op_amp
 id|ttp_notify
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1221,7 +1223,7 @@ op_logical_and
 (paren
 id|self-&gt;tx_max_sdu_size
 op_ne
-id|SAR_UNBOUND
+id|TTP_SAR_UNBOUND
 )paren
 op_logical_and
 (paren
@@ -1362,7 +1364,7 @@ op_amp
 id|self-&gt;tx_queue
 )paren
 OG
-id|HIGH_THRESHOLD
+id|TTP_HIGH_THRESHOLD
 )paren
 )paren
 (brace
@@ -1595,7 +1597,7 @@ op_amp
 id|self-&gt;tx_queue
 )paren
 OL
-id|LOW_THRESHOLD
+id|TTP_LOW_THRESHOLD
 )paren
 )paren
 (brace
@@ -1891,7 +1893,6 @@ c_cond
 (paren
 id|self-&gt;notify.udata_indication
 )paren
-(brace
 id|self-&gt;notify
 dot
 id|udata_indication
@@ -1904,7 +1905,13 @@ comma
 id|skb
 )paren
 suffix:semicolon
-)brace
+r_else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|self-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
@@ -1992,11 +1999,19 @@ id|skb
 suffix:semicolon
 )brace
 r_else
+(brace
 id|self-&gt;send_credit
 op_add_assign
 id|n
 suffix:semicolon
 multiline_comment|/* Dataless flowdata TTP-PDU */
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 id|irttp_run_rx_queue
 c_func
 (paren
@@ -2019,7 +2034,7 @@ op_logical_and
 (paren
 id|self-&gt;remote_credit
 OL
-id|LOW_THRESHOLD
+id|TTP_LOW_THRESHOLD
 )paren
 op_logical_and
 (paren
@@ -2969,6 +2984,9 @@ suffix:semicolon
 id|self-&gt;max_seg_size
 op_assign
 id|max_seg_size
+op_minus
+id|TTP_HEADER
+suffix:semicolon
 suffix:semicolon
 id|self-&gt;max_header_size
 op_assign
@@ -3144,6 +3162,13 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+r_else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_connect_response (handle, userdata)&n; *&n; *    Service user is accepting the connection, just pass it down to&n; *    IrLMP!&n; * &n; */
 DECL|function|irttp_connect_response
@@ -3954,7 +3979,7 @@ comma
 r_struct
 id|sk_buff
 op_star
-id|userdata
+id|skb
 )paren
 (brace
 r_struct
@@ -4009,11 +4034,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|self-&gt;notify.disconnect_indication
 )paren
-r_return
-suffix:semicolon
 id|self-&gt;notify
 dot
 id|disconnect_indication
@@ -4025,9 +4047,23 @@ id|self
 comma
 id|reason
 comma
-id|userdata
+id|skb
 )paren
 suffix:semicolon
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function irttp_do_data_indication (self, skb)&n; *&n; *    Try to deliver reassebled skb to layer above, and requeue it if that&n; *    for some reason should fail. We mark rx sdu as busy to apply back&n; *    pressure is necessary.&n; */
 DECL|function|irttp_do_data_indication
@@ -4141,7 +4177,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;() send=%d,avail=%d,remote=%d&bslash;n&quot;
@@ -4218,7 +4254,7 @@ c_cond
 (paren
 id|self-&gt;rx_max_sdu_size
 op_eq
-id|SAR_DISABLE
+id|TTP_SAR_DISABLE
 )paren
 (brace
 id|irttp_do_data_indication
@@ -4297,7 +4333,7 @@ op_logical_or
 (paren
 id|self-&gt;rx_max_sdu_size
 op_eq
-id|SAR_UNBOUND
+id|TTP_SAR_UNBOUND
 )paren
 )paren
 (brace
@@ -4563,7 +4599,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), self-&gt;rx_sdu_size=%d&bslash;n&quot;
@@ -4576,6 +4612,8 @@ op_assign
 id|dev_alloc_skb
 c_func
 (paren
+id|TTP_HEADER
+op_plus
 id|self-&gt;rx_sdu_size
 )paren
 suffix:semicolon
@@ -4649,7 +4687,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), frame len=%d&bslash;n&quot;
@@ -4657,11 +4695,10 @@ comma
 id|n
 )paren
 suffix:semicolon
-multiline_comment|/* Set the new length */
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), rx_sdu_size=%d&bslash;n&quot;
@@ -4681,6 +4718,7 @@ l_int|NULL
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Set the new length */
 id|skb_trim
 c_func
 (paren
@@ -4727,7 +4765,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -4772,57 +4810,18 @@ c_loop
 (paren
 id|skb-&gt;len
 OG
-l_int|0
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; *  Instead of making the last segment, we just&n;&t;&t; *  queue what is left of the original skb&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-OL
 id|self-&gt;max_seg_size
 )paren
 (brace
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
-l_string|&quot;(), queuing last segment&bslash;n&quot;
+l_string|&quot;(), fragmenting ...&bslash;n&quot;
 )paren
 suffix:semicolon
-id|frame
-op_assign
-id|skb_push
-c_func
-(paren
-id|skb
-comma
-id|TTP_HEADER
-)paren
-suffix:semicolon
-id|frame
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0x00
-suffix:semicolon
-multiline_comment|/* Clear more bit */
-id|skb_queue_tail
-c_func
-(paren
-op_amp
-id|self-&gt;tx_queue
-comma
-id|skb
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* Make new segment */
 id|frag
 op_assign
@@ -4850,16 +4849,31 @@ comma
 id|self-&gt;max_header_size
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *  Copy data from the original skb into this fragment. We&n;&t;&t; *  first insert the TTP header with the more bit set&n;&t;&t; */
-id|frame
-op_assign
+multiline_comment|/* Copy data from the original skb into this fragment. */
+id|memcpy
+c_func
+(paren
 id|skb_put
 c_func
 (paren
 id|frag
 comma
 id|self-&gt;max_seg_size
-op_plus
+)paren
+comma
+id|skb-&gt;data
+comma
+id|self-&gt;max_seg_size
+)paren
+suffix:semicolon
+multiline_comment|/* Insert TTP header, with the more bit set */
+id|frame
+op_assign
+id|skb_push
+c_func
+(paren
+id|frag
+comma
 id|TTP_HEADER
 )paren
 suffix:semicolon
@@ -4870,18 +4884,6 @@ l_int|0
 op_assign
 id|TTP_MORE
 suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|frag-&gt;data
-op_plus
-l_int|1
-comma
-id|skb-&gt;data
-comma
-id|self-&gt;max_seg_size
-)paren
-suffix:semicolon
 multiline_comment|/* Hide the copied data from the original skb */
 id|skb_pull
 c_func
@@ -4891,6 +4893,7 @@ comma
 id|self-&gt;max_seg_size
 )paren
 suffix:semicolon
+multiline_comment|/* Queue fragment */
 id|skb_queue_tail
 c_func
 (paren
@@ -4901,6 +4904,44 @@ id|frag
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Queue what is left of the original skb */
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), queuing last segment&bslash;n&quot;
+)paren
+suffix:semicolon
+id|frame
+op_assign
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|TTP_HEADER
+)paren
+suffix:semicolon
+id|frame
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x00
+suffix:semicolon
+multiline_comment|/* Clear more bit */
+multiline_comment|/* Queue fragment */
+id|skb_queue_tail
+c_func
+(paren
+op_amp
+id|self-&gt;tx_queue
+comma
+id|skb
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_param_max_sdu_size (self, param)&n; *&n; *    Handle the MaxSduSize parameter in the connect frames, this function&n; *    will be called both when this parameter needs to be inserted into, and&n; *    extracted from the connect frames&n; */
 DECL|function|irttp_param_max_sdu_size
@@ -5046,7 +5087,7 @@ c_cond
 (paren
 id|self-&gt;remote_credit
 OL
-id|LOW_THRESHOLD
+id|TTP_LOW_THRESHOLD
 )paren
 op_logical_and
 (paren
@@ -5233,7 +5274,7 @@ id|self-&gt;todo_timer
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function irttp_proc_read (buf, start, offset, len)&n; *&n; *    Give some info to the /proc file system&n; */
+multiline_comment|/*&n; * Function irttp_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; */
 DECL|function|irttp_proc_read
 r_int
 id|irttp_proc_read

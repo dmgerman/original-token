@@ -22,16 +22,6 @@ DECL|macro|PROC_DYNAMIC_FIRST
 mdefine_line|#define PROC_DYNAMIC_FIRST 4096
 DECL|macro|PROC_NDYNAMIC
 mdefine_line|#define PROC_NDYNAMIC      4096
-DECL|macro|PROC_OPENPROM_FIRST
-mdefine_line|#define PROC_OPENPROM_FIRST (PROC_DYNAMIC_FIRST+PROC_NDYNAMIC)
-DECL|macro|PROC_OPENPROM
-mdefine_line|#define PROC_OPENPROM&t;   PROC_OPENPROM_FIRST
-DECL|macro|PROC_NOPENPROM
-mdefine_line|#define PROC_NOPENPROM&t;   4096
-DECL|macro|PROC_OPENPROMD_FIRST
-mdefine_line|#define PROC_OPENPROMD_FIRST (PROC_OPENPROM_FIRST+PROC_NOPENPROM)
-DECL|macro|PROC_NOPENPROMD
-mdefine_line|#define PROC_NOPENPROMD&t;   4096
 DECL|macro|PROC_SUPER_MAGIC
 mdefine_line|#define PROC_SUPER_MAGIC 0x9fa0
 multiline_comment|/*&n; * This is not completely implemented yet. The idea is to&n; * create an in-memory tree (like the actual /proc filesystem&n; * tree) of these proc_dir_entries, so that we can dynamically&n; * add new files to /proc.&n; *&n; * The &quot;next&quot; pointer creates a linked list of one /proc directory,&n; * while parent/subdir create the directory structure (every&n; * /proc file has a parent, but &quot;subdir&quot; is NULL for all&n; * non-directory entries).&n; *&n; * &quot;get_info&quot; is called at &quot;read&quot;, while &quot;owner&quot; is used to protect module&n; * from unloading while proc_dir_entry is in use&n; */
@@ -457,61 +447,6 @@ op_star
 comma
 r_struct
 id|dentry
-op_star
-)paren
-suffix:semicolon
-DECL|struct|openpromfs_dev
-r_struct
-id|openpromfs_dev
-(brace
-DECL|member|next
-r_struct
-id|openpromfs_dev
-op_star
-id|next
-suffix:semicolon
-DECL|member|node
-id|u32
-id|node
-suffix:semicolon
-DECL|member|inode
-id|ino_t
-id|inode
-suffix:semicolon
-DECL|member|rdev
-id|kdev_t
-id|rdev
-suffix:semicolon
-DECL|member|mode
-id|mode_t
-id|mode
-suffix:semicolon
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|32
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_int
-id|proc_openprom_regdev
-c_func
-(paren
-r_struct
-id|openpromfs_dev
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|proc_openprom_unregdev
-c_func
-(paren
-r_struct
-id|openpromfs_dev
 op_star
 )paren
 suffix:semicolon

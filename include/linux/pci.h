@@ -976,19 +976,6 @@ id|pci_bus
 op_star
 )paren
 suffix:semicolon
-r_void
-id|pcibios_fixup_pbus_ranges
-c_func
-(paren
-r_struct
-id|pci_bus
-op_star
-comma
-r_struct
-id|pbus_set_ranges_data
-op_star
-)paren
-suffix:semicolon
 r_int
 id|pcibios_enable_device
 c_func
@@ -1007,6 +994,7 @@ op_star
 id|str
 )paren
 suffix:semicolon
+multiline_comment|/* Used only when drivers/pci/setup.c is used */
 r_void
 id|pcibios_align_resource
 c_func
@@ -1051,6 +1039,19 @@ op_star
 comma
 r_int
 id|irq
+)paren
+suffix:semicolon
+r_void
+id|pcibios_fixup_pbus_ranges
+c_func
+(paren
+r_struct
+id|pci_bus
+op_star
+comma
+r_struct
+id|pbus_set_ranges_data
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Backward compatibility, don&squot;t use in new code! */
@@ -1234,7 +1235,7 @@ op_star
 id|dev_fn
 )paren
 suffix:semicolon
-multiline_comment|/* Generic PCI interface functions */
+multiline_comment|/* Generic PCI functions used internally */
 r_void
 id|pci_init
 c_func
@@ -1327,6 +1328,7 @@ op_star
 id|res
 )paren
 suffix:semicolon
+multiline_comment|/* Generic PCI functions exported to card drivers */
 r_struct
 id|pci_dev
 op_star
@@ -1546,6 +1548,19 @@ id|dev
 comma
 r_int
 id|state
+)paren
+suffix:semicolon
+r_int
+id|pci_assign_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_int
+id|i
 )paren
 suffix:semicolon
 multiline_comment|/* Helper functions for low-level code (drivers/pci/setup.c) */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.39 1999/08/30 10:07:09 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.40 1999/12/01 10:44:53 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -447,11 +447,21 @@ r_int
 op_star
 )paren
 (paren
-id|pte_page
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|pte_pagenr
 c_func
 (paren
 op_star
 id|ptep
+)paren
+op_lshift
+id|PAGE_SHIFT
 )paren
 op_plus
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      toshoboe.c&n; * Version:       0.1&n; * Description:   Driver for the Toshiba OBOE (or type-O or 700 or 701)&n; *                FIR Chipset. &n; * Status:        Experimental.&n; * Author:        James McKenzie &lt;james@fishsoup.dhs.org&gt;&n; * Created at:    Sat May 8  12:35:27 1999&n; * &n; *     Copyright (c) 1999 James McKenzie, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither James McKenzie nor Cambridge University admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Libretto 100CT. and many more&n; *     Toshiba refers to this chip as the type-O IR port.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      toshoboe.c&n; * Version:       0.1&n; * Description:   Driver for the Toshiba OBOE (or type-O or 700 or 701)&n; *                FIR Chipset. &n; * Status:        Experimental.&n; * Author:        James McKenzie &lt;james@fishsoup.dhs.org&gt;&n; * Created at:    Sat May 8  12:35:27 1999&n; * Modified:      Paul Bristow &lt;paul.bristow@technologist.com&gt;&n; * Modified:      Mon Nov 11 19:10:05 1999&n; * &n; *     Copyright (c) 1999 James McKenzie, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither James McKenzie nor Cambridge University admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Libretto 100CT. and many more&n; *     Toshiba refers to this chip as the type-O IR port.&n; *&n; ********************************************************************/
 multiline_comment|/* This driver is experimental, I have only three ir devices */
 multiline_comment|/* an olivetti notebook which doesn&squot;t have FIR, a toshiba libretto, and */
 multiline_comment|/* an hp printer, this works fine at 4MBPS with my HP printer */
@@ -8,7 +8,7 @@ r_char
 op_star
 id|rcsid
 op_assign
-l_string|&quot;$Id: toshoboe.c,v 1.9 1999/06/29 14:21:06 root Exp $&quot;
+l_string|&quot;$Id: toshoboe.c,v 1.91 1999/06/29 14:21:06 root Exp $&quot;
 suffix:semicolon
 multiline_comment|/* &n; * $Log: toshoboe.c,v $&n; * Revision 1.9  1999/06/29 14:21:06  root&n; * *** empty log message ***&n; *&n; * Revision 1.8  1999/06/29 14:15:08  root&n; * *** empty log message ***&n; *&n; * Revision 1.7  1999/06/29 13:46:42  root&n; * *** empty log message ***&n; *&n; * Revision 1.6  1999/06/29 12:31:03  root&n; * *** empty log message ***&n; *&n; * Revision 1.5  1999/05/12 12:24:39  root&n; * *** empty log message ***&n; *&n; * Revision 1.4  1999/05/12 11:55:08  root&n; * *** empty log message ***&n; *&n; * Revision 1.3  1999/05/09 01:33:12  root&n; * *** empty log message ***&n; *&n; * Revision 1.2  1999/05/09 01:30:38  root&n; * *** empty log message ***&n; *&n; * Revision 1.1  1999/05/09 01:25:04  root&n; * Initial revision&n; * &n; */
 multiline_comment|/* Define this to have only one frame in the XMIT or RECV queue */
@@ -16,7 +16,7 @@ multiline_comment|/* Toshiba&squot;s drivers do this, but it disables back to ba
 multiline_comment|/* I think that the chip may have some problems certainly, I have */
 multiline_comment|/* seen it jump over tasks in the taskfile-&gt;xmit with this turned on */
 DECL|macro|ONETASK
-mdefine_line|#define ONETASK
+mdefine_line|#define ONETASK 
 multiline_comment|/* To adjust the number of tasks in use edit toshoboe.h */
 multiline_comment|/* Define this to enable FIR and MIR support */
 DECL|macro|ENABLE_FAST
@@ -33,7 +33,6 @@ mdefine_line|#define RX_BUF_SZ &t;4196
 DECL|macro|TX_BUF_SZ
 mdefine_line|#define TX_BUF_SZ&t;4196
 multiline_comment|/* No user servicable parts below here */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -218,7 +217,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;ToshOboe: seting baud to %d&bslash;n&quot;
+l_string|&quot;ToshOboe: setting baud to %d&bslash;n&quot;
 comma
 id|baud
 )paren
@@ -498,6 +497,10 @@ l_int|0x01
 comma
 id|OBOE_REG_9
 )paren
+suffix:semicolon
+id|self-&gt;io.speed
+op_assign
+id|baud
 suffix:semicolon
 )brace
 multiline_comment|/* Wake the chip up and get it looking at the taskfile */
@@ -1504,32 +1507,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|toshoboe_is_receiving
-id|toshoboe_is_receiving
-(paren
-r_struct
-id|toshoboe_cb
-op_star
-id|self
-)paren
-(brace
-id|IRDA_DEBUG
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*FIXME Can&squot;t tell! */
-r_return
-(paren
-id|FALSE
-)paren
-suffix:semicolon
-)brace
-r_static
-r_int
 DECL|function|toshoboe_net_init
 id|toshoboe_net_init
 (paren
@@ -1890,6 +1867,169 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function toshoboe_net_ioctl (dev, rq, cmd)&n; *&n; *    Process IOCTL commands for this device&n; *&n; */
+DECL|function|toshoboe_net_ioctl
+r_static
+r_int
+id|toshoboe_net_ioctl
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_struct
+id|ifreq
+op_star
+id|rq
+comma
+r_int
+id|cmd
+)paren
+(brace
+r_struct
+id|if_irda_req
+op_star
+id|irq
+op_assign
+(paren
+r_struct
+id|if_irda_req
+op_star
+)paren
+id|rq
+suffix:semicolon
+r_struct
+id|toshoboe_cb
+op_star
+id|self
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|dev
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|self
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), %s, (cmd=0x%X)&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|cmd
+)paren
+suffix:semicolon
+multiline_comment|/* Disable interrupts &amp; save flags */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cmd
+)paren
+(brace
+r_case
+id|SIOCSBANDWIDTH
+suffix:colon
+multiline_comment|/* Set bandwidth */
+multiline_comment|/* toshoboe_setbaud(self, irq-&gt;ifr_baudrate); */
+multiline_comment|/* Just change speed once - inserted by Paul Bristow */
+id|self-&gt;new_speed
+op_assign
+id|irq-&gt;ifr_baudrate
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SIOCSMEDIABUSY
+suffix:colon
+multiline_comment|/* Set media busy */
+id|irda_device_set_media_busy
+c_func
+(paren
+id|self-&gt;netdev
+comma
+id|TRUE
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SIOCGRECEIVING
+suffix:colon
+multiline_comment|/* Check if we are receiving right now */
+id|irq-&gt;ifr_receiving
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Can&squot;t tell */
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|ret
+op_assign
+op_minus
+id|EOPNOTSUPP
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 macro_line|#ifdef MODULE
 id|MODULE_PARM
 (paren
@@ -2040,6 +2180,13 @@ suffix:semicolon
 id|rtnl_unlock
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* Must free the old-style 2.2.x device */
+id|kfree
+c_func
+(paren
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 )brace
@@ -2765,6 +2912,10 @@ suffix:semicolon
 id|dev-&gt;stop
 op_assign
 id|toshoboe_net_close
+suffix:semicolon
+id|dev-&gt;do_ioctl
+op_assign
+id|toshoboe_net_ioctl
 suffix:semicolon
 id|rtnl_lock
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.29 1999/08/04 07:04:10 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.30 1999/10/13 11:48:07 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1164,6 +1164,72 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_SUNOS_EMUL
+DECL|function|sunos_syscall
+id|asmlinkage
+r_int
+id|sunos_syscall
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|regs-&gt;tpc
+op_assign
+id|regs-&gt;tnpc
+suffix:semicolon
+id|regs-&gt;tnpc
+op_add_assign
+l_int|4
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|count
+op_le
+l_int|20
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;SunOS binary emulation not compiled in&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|force_sig
+c_func
+(paren
+id|SIGSEGV
+comma
+id|current
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|sys_utrap_install
 id|asmlinkage
 r_int

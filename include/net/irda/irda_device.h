@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       0.9&n; * Description:   Contains various declarations used by the drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Tue Nov 16 12:54:01 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       0.9&n; * Description:   Contains various declarations used by the drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Mon Dec 13 12:05:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
@@ -134,7 +134,6 @@ DECL|member|finished
 id|TASK_CALLBACK
 id|finished
 suffix:semicolon
-multiline_comment|/* struct net_device *dev; */
 DECL|member|parent
 r_struct
 id|irda_task
@@ -181,15 +180,25 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Device we are attached to */
+DECL|member|speed_task
+r_struct
+id|irda_task
+op_star
+id|speed_task
+suffix:semicolon
+multiline_comment|/* Task handling speed change */
+DECL|member|reset_task
+r_struct
+id|irda_task
+op_star
+id|reset_task
+suffix:semicolon
+multiline_comment|/* Task handling reset */
 DECL|member|speed
 id|__u32
 id|speed
 suffix:semicolon
 multiline_comment|/* Current speed */
-DECL|member|busy
-r_int
-id|busy
-suffix:semicolon
 multiline_comment|/* Callbacks to the IrDA device driver */
 DECL|member|set_mode
 r_int
@@ -632,6 +641,16 @@ r_int
 id|mode
 )paren
 suffix:semicolon
+r_void
+id|irda_task_delete
+c_func
+(paren
+r_struct
+id|irda_task
+op_star
+id|task
+)paren
+suffix:semicolon
 r_int
 id|irda_task_kick
 c_func
@@ -642,7 +661,9 @@ op_star
 id|task
 )paren
 suffix:semicolon
-r_int
+r_struct
+id|irda_task
+op_star
 id|irda_task_execute
 c_func
 (paren
@@ -688,7 +709,9 @@ id|infrared_mode
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * Function irda_get_mtt (skb)&n; *&n; *    Utility function for getting the minimum turnaround time out of &n; *    the skb, where it has been hidden in the cb field.&n; */
-DECL|function|irda_get_mtt
+DECL|macro|irda_get_mtt
+mdefine_line|#define irda_get_mtt(skb) (                                                 &bslash;&n;        IRDA_MIN(10000,                                                     &bslash;&n;                  (((struct irda_skb_cb *) skb-&gt;cb)-&gt;magic == LAP_MAGIC) ?  &bslash;&n;                          ((struct irda_skb_cb *)(skb-&gt;cb))-&gt;mtt : 10000    &bslash;&n;                 )&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;)
+macro_line|#if 0
 r_extern
 r_inline
 id|__u16
@@ -758,8 +781,11 @@ r_return
 id|mtt
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Function irda_get_speed (skb)&n; *&n; *    Extact the speed this frame should be sent out with from the skb&n; *&n; */
-DECL|function|irda_get_speed
+DECL|macro|irda_get_speed
+mdefine_line|#define irda_get_speed(skb) (&t;                                        &bslash;&n;&t;(((struct irda_skb_cb*) skb-&gt;cb)-&gt;magic == LAP_MAGIC) ? &t;&bslash;&n;                  ((struct irda_skb_cb *)(skb-&gt;cb))-&gt;speed : 9600 &t;&bslash;&n;)
+macro_line|#if 0
 r_extern
 r_inline
 id|__u32
@@ -818,4 +844,5 @@ id|speed
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#endif /* IRDA_DEVICE_H */
 eof

@@ -4,21 +4,21 @@ DECL|macro|_P9100_H_
 mdefine_line|#define _P9100_H_
 multiline_comment|/* P9100 control registers */
 DECL|macro|P9100_SYSCTL_OFF
-mdefine_line|#define P9100_SYSCTL_OFF 0x0
+mdefine_line|#define P9100_SYSCTL_OFF&t;0x0UL
 DECL|macro|P9100_VIDEOCTL_OFF
-mdefine_line|#define P9100_VIDEOCTL_OFF 0x100
+mdefine_line|#define P9100_VIDEOCTL_OFF&t;0x100UL
 DECL|macro|P9100_VRAMCTL_OFF
-mdefine_line|#define P9100_VRAMCTL_OFF 0x180
+mdefine_line|#define P9100_VRAMCTL_OFF &t;0x180UL
 DECL|macro|P9100_RAMDAC_OFF
-mdefine_line|#define P9100_RAMDAC_OFF 0x200
+mdefine_line|#define P9100_RAMDAC_OFF &t;0x200UL
 DECL|macro|P9100_VIDEOCOPROC_OFF
-mdefine_line|#define P9100_VIDEOCOPROC_OFF 0x400
+mdefine_line|#define P9100_VIDEOCOPROC_OFF &t;0x400UL
 multiline_comment|/* P9100 command registers */
 DECL|macro|P9100_CMD_OFF
-mdefine_line|#define P9100_CMD_OFF 0x0
+mdefine_line|#define P9100_CMD_OFF 0x0UL
 multiline_comment|/* P9100 framebuffer memory */
 DECL|macro|P9100_FB_OFF
-mdefine_line|#define P9100_FB_OFF 0x0
+mdefine_line|#define P9100_FB_OFF 0x0UL
 multiline_comment|/* 3 bits: 2=8bpp 3=16bpp 5=32bpp 7=24bpp */
 DECL|macro|SYS_CONFIG_PIXELSIZE_SHIFT
 mdefine_line|#define SYS_CONFIG_PIXELSIZE_SHIFT 26 

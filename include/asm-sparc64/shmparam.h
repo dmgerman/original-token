@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: shmparam.h,v 1.3 1998/09/28 07:15:03 jj Exp $ */
+multiline_comment|/* $Id: shmparam.h,v 1.4 1999/12/09 10:32:44 davem Exp $ */
 macro_line|#ifndef _ASMSPARC64_SHMPARAM_H
 DECL|macro|_ASMSPARC64_SHMPARAM_H
 mdefine_line|#define _ASMSPARC64_SHMPARAM_H
