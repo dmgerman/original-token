@@ -658,17 +658,6 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|new_page_tables
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|zap_page_range
 c_func

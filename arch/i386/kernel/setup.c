@@ -1329,7 +1329,6 @@ id|dummy_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/*&n;&t; *&t;Check the bugs that will bite us before we get booting&n;&t; */
 )brace
 DECL|function|__initfunc
 id|__initfunc

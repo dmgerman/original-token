@@ -7301,11 +7301,6 @@ id|device
 )paren
 suffix:semicolon
 )brace
-id|str
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* to keep gcc shut... */
 r_switch
 c_cond
 (paren
@@ -7340,6 +7335,12 @@ op_assign
 l_string|&quot;Slow devsel.  &quot;
 suffix:semicolon
 r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|str
+op_assign
+l_string|&quot;Unknown devsel.  &quot;
 suffix:semicolon
 )brace
 r_if

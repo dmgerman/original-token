@@ -1166,6 +1166,9 @@ c_cond
 (paren
 op_logical_neg
 id|p-&gt;swappable
+op_logical_or
+op_logical_neg
+id|p-&gt;mm
 )paren
 r_continue
 suffix:semicolon

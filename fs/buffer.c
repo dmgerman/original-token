@@ -8159,7 +8159,6 @@ op_eq
 l_int|1
 )paren
 (brace
-macro_line|#if 0
 r_struct
 id|mm_struct
 op_star
@@ -8180,7 +8179,7 @@ id|current-&gt;mm
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/* active_mm is still &squot;user_mm&squot; */
 id|error
 op_assign
 id|sync_old_buffers
@@ -8188,7 +8187,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
 id|current-&gt;mm
 op_assign
 id|user_mm
@@ -8203,7 +8201,6 @@ id|current-&gt;active_mm
 op_assign
 id|user_mm
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
