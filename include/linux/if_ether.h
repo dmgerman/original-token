@@ -34,6 +34,8 @@ DECL|macro|ETH_P_802_3
 mdefine_line|#define ETH_P_802_3&t;0x0001&t;&t;/* Dummy type for 802.3 frames  */
 DECL|macro|ETH_P_AX25
 mdefine_line|#define ETH_P_AX25&t;0x0002&t;&t;/* Dummy protocol id for AX.25  */
+DECL|macro|ETH_P_ALL
+mdefine_line|#define ETH_P_ALL&t;0x0003&t;&t;/* Every packet (be careful!!!) */
 multiline_comment|/* Define the Ethernet Broadcast Address (48 bits set to &quot;1&quot;). */
 DECL|macro|ETH_A_BCAST
 mdefine_line|#define ETH_A_BCAST     &quot;&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&quot;

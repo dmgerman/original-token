@@ -1101,10 +1101,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;HD-controller reset&bslash;n&quot;
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|4
@@ -1331,6 +1332,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Unexpected HD interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2028,6 +2030,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;HD timeout&bslash;n&quot;
 )paren
 suffix:semicolon

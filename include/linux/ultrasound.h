@@ -36,6 +36,8 @@ DECL|macro|_GUS_VOLUME_SCALE
 mdefine_line|#define _GUS_VOLUME_SCALE&t;0x0e
 DECL|macro|_GUS_VOICEVOL2
 mdefine_line|#define _GUS_VOICEVOL2&t;&t;0x0f
+DECL|macro|_GUS_VOICE_POS
+mdefine_line|#define _GUS_VOICE_POS&t;&t;0x10
 multiline_comment|/*&n; *&t;GUS API macros&n; */
 DECL|macro|_GUS_CMD
 mdefine_line|#define _GUS_CMD(chn, voice, cmd, p1, p2) &bslash;&n;&t;&t;&t;&t;&t;{_SEQ_NEEDBUF(8); _seqbuf[_seqbufptr] = SEQ_PRIVATE;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = (chn); _seqbuf[_seqbufptr+2] = cmd;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = voice;&bslash;&n;&t;&t;&t;&t;&t;*(unsigned short*)&amp;_seqbuf[_seqbufptr+4] = p1;&bslash;&n;&t;&t;&t;&t;&t;*(unsigned short*)&amp;_seqbuf[_seqbufptr+6] = p2;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
@@ -71,5 +73,7 @@ DECL|macro|GUS_RAMPOFF
 mdefine_line|#define GUS_RAMPOFF(chn, voice)&t;&t;&t;_GUS_CMD(chn, voice, _GUS_RAMPOFF, 0, 0)
 DECL|macro|GUS_VOLUME_SCALE
 mdefine_line|#define GUS_VOLUME_SCALE(chn, voice, p1, p2)&t;_GUS_CMD(chn, voice, _GUS_VOLUME_SCALE, (p1), (p2))
+DECL|macro|GUS_VOICE_POS
+mdefine_line|#define GUS_VOICE_POS(chn, voice, p)&t;&t;_GUS_CMD(chn, voice, _GUS_VOICE_POS, &bslash;&n;&t;&t;&t;&t;&t;&t;&t;(p) &amp; 0xffff, ((p) &gt;&gt; 16) &amp; 0xffff)
 macro_line|#endif
 eof

@@ -225,6 +225,13 @@ r_int
 r_char
 id|src
 suffix:semicolon
+macro_line|#ifdef linux
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren

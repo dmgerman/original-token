@@ -327,7 +327,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|10
+l_int|20
 suffix:semicolon
 id|i
 op_increment

@@ -947,28 +947,6 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_GUS
-(brace
-id|SNDCARD_GUS
-comma
-l_string|&quot;Gravis Ultrasound&quot;
-comma
-id|attach_gus_card
-comma
-id|probe_gus
-comma
-(brace
-id|GUS_BASE
-comma
-id|GUS_IRQ
-comma
-id|GUS_DMA
-)brace
-comma
-id|SND_DEFAULT_ENABLE
-)brace
-comma
-macro_line|#endif
 macro_line|#ifndef EXCLUDE_PAS
 (brace
 id|SNDCARD_PAS
@@ -1058,6 +1036,28 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifndef EXCLUDE_GUS
+(brace
+id|SNDCARD_GUS
+comma
+l_string|&quot;Gravis Ultrasound&quot;
+comma
+id|attach_gus_card
+comma
+id|probe_gus
+comma
+(brace
+id|GUS_BASE
+comma
+id|GUS_IRQ
+comma
+id|GUS_DMA
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_YM3812
 (brace

@@ -284,7 +284,7 @@ suffix:semicolon
 r_return
 id|RET_ERROR
 (paren
-id|ENODEV
+id|ENXIO
 )paren
 suffix:semicolon
 )brace

@@ -119,6 +119,9 @@ comma
 multiline_comment|/* In ax25 &amp; ipx means not linked */
 DECL|member|broadcast
 id|broadcast
+comma
+DECL|member|nonagle
+id|nonagle
 suffix:semicolon
 DECL|member|lingertime
 r_int

@@ -1568,6 +1568,13 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_FTAPE
+DECL|variable|ftape_big_buffer
+r_char
+op_star
+id|ftape_big_buffer
+suffix:semicolon
+macro_line|#endif
 DECL|function|chr_dev_init
 r_int
 id|chr_dev_init
@@ -1650,6 +1657,48 @@ id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; *      Rude way to allocate kernel memory buffer for tape device&n; */
+macro_line|#ifdef CONFIG_FTAPE
+multiline_comment|/* allocate NR_FTAPE_BUFFERS 32Kb buffers at aligned address */
+id|ftape_big_buffer
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+(paren
+id|mem_start
+op_plus
+l_int|0x7fff
+)paren
+op_amp
+op_complement
+l_int|0x7fff
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ftape: allocated %d buffers alligned at: %p&bslash;n&quot;
+comma
+id|NR_FTAPE_BUFFERS
+comma
+id|ftape_big_buffer
+)paren
+suffix:semicolon
+id|mem_start
+op_assign
+(paren
+r_int
+)paren
+id|ftape_big_buffer
+op_plus
+id|NR_FTAPE_BUFFERS
+op_star
+l_int|0x8000
+suffix:semicolon
+macro_line|#endif 
 r_return
 id|mem_start
 suffix:semicolon

@@ -1165,6 +1165,9 @@ id|frame
 op_sub_assign
 l_int|32
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|verify_area
 c_func
 (paren
@@ -1175,6 +1178,12 @@ comma
 l_int|32
 op_star
 l_int|4
+)paren
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 multiline_comment|/* set up the &quot;normal&quot; stack seen by the signal handler (iBCS2) */

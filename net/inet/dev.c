@@ -132,8 +132,13 @@ op_amp
 id|ax25_packet_type
 macro_line|#endif
 macro_line|#else
+macro_line|#ifdef CONFIG_AX25
+op_amp
+id|ax25_packet_type
+macro_line|#else
 l_int|NULL
 multiline_comment|/* next */
+macro_line|#endif
 macro_line|#endif
 )brace
 suffix:semicolon
@@ -849,6 +854,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|dev_nit
+r_static
+r_int
+id|dev_nit
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Number of network taps running */
 multiline_comment|/* Add a protocol ID to the list.  This will change soon. */
 r_void
 DECL|function|dev_add_pack
@@ -870,6 +883,30 @@ id|pt-&gt;next
 op_assign
 id|ptype_base
 suffix:semicolon
+multiline_comment|/* Don&squot;t use copy counts on ETH_P_ALL. Instead keep a global&n;     count of number of these and use it and pt-&gt;copy to decide&n;     copies */
+id|pt-&gt;copy
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pt-&gt;type
+op_eq
+id|NET16
+c_func
+(paren
+id|ETH_P_ALL
+)paren
+)paren
+(brace
+id|dev_nit
+op_increment
+suffix:semicolon
+)brace
+multiline_comment|/* I&squot;d like a /dev/nit too one day 8) */
+r_else
+(brace
 multiline_comment|/* See if we need to copy it. */
 r_for
 c_loop
@@ -903,6 +940,64 @@ r_break
 suffix:semicolon
 )brace
 )brace
+)brace
+multiline_comment|/*&n;   *&t;NIT taps must go at the end or inet_bh will leak!&n;   */
+r_if
+c_cond
+(paren
+id|pt-&gt;type
+op_eq
+id|NET16
+c_func
+(paren
+id|ETH_P_ALL
+)paren
+)paren
+(brace
+id|pt-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ptype_base
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ptype_base
+op_assign
+id|pt
+suffix:semicolon
+)brace
+r_else
+(brace
+r_for
+c_loop
+(paren
+id|p1
+op_assign
+id|ptype_base
+suffix:semicolon
+id|p1-&gt;next
+op_ne
+l_int|NULL
+suffix:semicolon
+id|p1
+op_assign
+id|p1-&gt;next
+)paren
+(brace
+suffix:semicolon
+)brace
+id|p1-&gt;next
+op_assign
+id|pt
+suffix:semicolon
+)brace
+)brace
+r_else
 id|ptype_base
 op_assign
 id|pt
@@ -927,6 +1022,20 @@ id|lpt
 comma
 op_star
 id|pt1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pt-&gt;type
+op_eq
+id|NET16
+c_func
+(paren
+id|ETH_P_ALL
+)paren
+)paren
+id|dev_nit
+op_decrement
 suffix:semicolon
 r_if
 c_cond
@@ -1010,6 +1119,14 @@ op_eq
 id|pt
 op_member_access_from_pointer
 id|type
+op_logical_and
+id|pt-&gt;type
+op_ne
+id|NET16
+c_func
+(paren
+id|ETH_P_ALL
+)paren
 )paren
 (brace
 id|lpt
@@ -2035,6 +2152,9 @@ id|flag
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|nitcount
+suffix:semicolon
 multiline_comment|/* Atomically check and mark our BUSY state. */
 r_if
 c_cond
@@ -2078,6 +2198,10 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|nitcount
+op_assign
+id|dev_nit
+suffix:semicolon
 id|flag
 op_assign
 l_int|0
@@ -2098,7 +2222,7 @@ id|skb-&gt;len
 op_sub_assign
 id|skb-&gt;dev-&gt;hard_header_len
 suffix:semicolon
-multiline_comment|/*&n;&t;* Fetch the packet protocol ID.  This is also quite ugly, as&n;&t;* it depends on the protocol driver (the interface itself) to&n;&t;* know what the type is, or where to get it from.  The Ethernet&n;&t;* interfaces fetch the ID from the two bytes in the Ethernet MAC&n;&t;* header (the h_proto field in struct ethhdr), but drivers like&n;&t;* SLIP and PLIP have no alternative but to force the type to be&n;&t;* IP or something like that.  Sigh- FvK&n;&t;* FIXME: Ethernet drivers need potty training in 802.3 packets -AC&n;&t;*/
+multiline_comment|/*&n;&t;* Fetch the packet protocol ID.  This is also quite ugly, as&n;&t;* it depends on the protocol driver (the interface itself) to&n;&t;* know what the type is, or where to get it from.  The Ethernet&n;&t;* interfaces fetch the ID from the two bytes in the Ethernet MAC&n;&t;* header (the h_proto field in struct ethhdr), but drivers like&n;&t;* SLIP and PLIP have no alternative but to force the type to be&n;&t;* IP or something like that.  Sigh- FvK&n;&t;*/
 id|type
 op_assign
 id|skb-&gt;dev
@@ -2134,6 +2258,14 @@ c_cond
 id|ptype-&gt;type
 op_eq
 id|type
+op_logical_or
+id|ptype-&gt;type
+op_eq
+id|NET16
+c_func
+(paren
+id|ETH_P_ALL
+)paren
 )paren
 (brace
 r_struct
@@ -2144,7 +2276,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ptype-&gt;type
+op_eq
+id|NET16
+c_func
+(paren
+id|ETH_P_ALL
+)paren
+)paren
+id|nitcount
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|ptype-&gt;copy
+op_logical_or
+id|nitcount
 )paren
 (brace
 multiline_comment|/* copy if we need to&t;*/

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Numerous verify_area() calls&n; *&t;&t;Alan Cox&t;:&t;Set the ACK bit on a reset&n; *&t;&t;Alan Cox&t;:&t;Stopped it crashing if it closed while sk-&gt;inuse=1&n; *&t;&t;&t;&t;&t;and was trying to connect (tcp_err()).&n; *&t;&t;Alan Cox&t;:&t;All icmp error handling was broken&n; *&t;&t;&t;&t;&t;pointers passed where wrong and the&n; *&t;&t;&t;&t;&t;socket was looked up backwards. Nobody&n; *&t;&t;&t;&t;&t;tested any icmp error code obviously.&n; *&t;&t;Alan Cox&t;:&t;tcp_err() now handled properly. It wakes people&n; *&t;&t;&t;&t;&t;on errors. select behaves and the icmp error race&n; *&t;&t;&t;&t;&t;has gone by moving it into sock.c&n; *&t;&t;Alan Cox&t;:&t;tcp_reset() fixed to work for everything not just&n; *&t;&t;&t;&t;&t;packets for unknown sockets.&n; *&t;&t;Alan Cox&t;:&t;tcp option processing.&n; *&t;&t;Alan Cox&t;:&t;Reset tweaked (still not 100%) [Had syn rule wrong]&n; *&t;&t;Herp Rosmanith  :&t;More reset fixes&n; *&t;&t;Alan Cox&t;:&t;No longer acks invalid rst frames. Acking&n; *&t;&t;&t;&t;&t;any kind of RST is right out.&n; *&t;&t;Alan Cox&t;:&t;Sets an ignore me flag on an rst receive&n; *&t;&t;&t;&t;&t;otherwise odd bits of prattle escape still&n; *&t;&t;Alan Cox&t;:&t;Fixed another acking RST frame bug. Should stop&n; *&t;&t;&t;&t;&t;LAN workplace lockups.&n; *&t;&t;Alan Cox&t;: &t;Some tidyups using the new skb list facilities&n; *&t;&t;Alan Cox&t;:&t;sk-&gt;keepopen now seems to work&n; *&t;&t;Alan Cox&t;:&t;Pulls options out correctly on accepts&n; *&t;&t;Alan Cox&t;:&t;Fixed assorted sk-&gt;rqueue-&gt;next errors&n; *&t;&t;Alan Cox&t;:&t;PSH doesn&squot;t end a TCP read. Switched a bit to skb ops.&n; *&t;&t;Alan Cox&t;:&t;Tidied tcp_data to avoid a potential nasty.&n; *&t;&t;Alan Cox&t;:&t;Added some beter commenting, as the tcp is hard to follow&n; *&t;&t;Alan Cox&t;:&t;Removed incorrect check for 20 * psh&n; *&t;Michael O&squot;Reilly&t;:&t;ack &lt; copied bug fix.&n; *&t;Johannes Stille&t;&t;:&t;Misc tcp fixes (not all in yet).&n; *&t;&t;Alan Cox&t;:&t;FIN with no memory -&gt; CRASH&n; *&t;&t;Alan Cox&t;:&t;Added socket option proto entries. Also added awareness of them to accept.&n; *&t;&t;Alan Cox&t;:&t;Added TCP options (SOL_TCP)&n; *&t;&t;Alan Cox&t;:&t;Switched wakeup calls to callbacks, so the kernel can layer network sockets.&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings.&n; *&t;&t;Alan Cox&t;:&t;Handle FIN (more) properly (we hope).&n; *&t;&t;Alan Cox&t;:&t;RST frames sent on unsynchronised state ack error/&n; *&t;&t;Alan Cox&t;:&t;Put in missing check for SYN bit.&n; *&t;&t;Alan Cox&t;:&t;Added tcp_select_window() aka NET2E &n; *&t;&t;&t;&t;&t;window non shrink trick.&n; *&t;&t;Alan Cox&t;:&t;Added a couple of small NET2E timer fixes&n; *&n; *&n; * To Fix:&n; *&t;&t;&t;Possibly a problem with accept(). BSD accept never fails after&n; *&t;&t;it causes a select. Linux can - given the official select semantics I&n; *&t;&t;feel that _really_ its the BSD network programs that are bust (notably&n; *&t;&t;inetd, which hangs occasionally because of this).&n; *&t;&t;&t;Add VJ Fastrecovery algorithm ?&n; *&t;&t;&t;Protocol closedown badly messed up.&n; *&t;&t;&t;Incompatiblity with spider ports (tcp hangs on that &n; *&t;&t;&t;socket occasionally).&n; *&t;&t;MSG_PEEK and read on same socket at once can cause crashes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Numerous verify_area() calls&n; *&t;&t;Alan Cox&t;:&t;Set the ACK bit on a reset&n; *&t;&t;Alan Cox&t;:&t;Stopped it crashing if it closed while sk-&gt;inuse=1&n; *&t;&t;&t;&t;&t;and was trying to connect (tcp_err()).&n; *&t;&t;Alan Cox&t;:&t;All icmp error handling was broken&n; *&t;&t;&t;&t;&t;pointers passed where wrong and the&n; *&t;&t;&t;&t;&t;socket was looked up backwards. Nobody&n; *&t;&t;&t;&t;&t;tested any icmp error code obviously.&n; *&t;&t;Alan Cox&t;:&t;tcp_err() now handled properly. It wakes people&n; *&t;&t;&t;&t;&t;on errors. select behaves and the icmp error race&n; *&t;&t;&t;&t;&t;has gone by moving it into sock.c&n; *&t;&t;Alan Cox&t;:&t;tcp_reset() fixed to work for everything not just&n; *&t;&t;&t;&t;&t;packets for unknown sockets.&n; *&t;&t;Alan Cox&t;:&t;tcp option processing.&n; *&t;&t;Alan Cox&t;:&t;Reset tweaked (still not 100%) [Had syn rule wrong]&n; *&t;&t;Herp Rosmanith  :&t;More reset fixes&n; *&t;&t;Alan Cox&t;:&t;No longer acks invalid rst frames. Acking&n; *&t;&t;&t;&t;&t;any kind of RST is right out.&n; *&t;&t;Alan Cox&t;:&t;Sets an ignore me flag on an rst receive&n; *&t;&t;&t;&t;&t;otherwise odd bits of prattle escape still&n; *&t;&t;Alan Cox&t;:&t;Fixed another acking RST frame bug. Should stop&n; *&t;&t;&t;&t;&t;LAN workplace lockups.&n; *&t;&t;Alan Cox&t;: &t;Some tidyups using the new skb list facilities&n; *&t;&t;Alan Cox&t;:&t;sk-&gt;keepopen now seems to work&n; *&t;&t;Alan Cox&t;:&t;Pulls options out correctly on accepts&n; *&t;&t;Alan Cox&t;:&t;Fixed assorted sk-&gt;rqueue-&gt;next errors&n; *&t;&t;Alan Cox&t;:&t;PSH doesn&squot;t end a TCP read. Switched a bit to skb ops.&n; *&t;&t;Alan Cox&t;:&t;Tidied tcp_data to avoid a potential nasty.&n; *&t;&t;Alan Cox&t;:&t;Added some beter commenting, as the tcp is hard to follow&n; *&t;&t;Alan Cox&t;:&t;Removed incorrect check for 20 * psh&n; *&t;Michael O&squot;Reilly&t;:&t;ack &lt; copied bug fix.&n; *&t;Johannes Stille&t;&t;:&t;Misc tcp fixes (not all in yet).&n; *&t;&t;Alan Cox&t;:&t;FIN with no memory -&gt; CRASH&n; *&t;&t;Alan Cox&t;:&t;Added socket option proto entries. Also added awareness of them to accept.&n; *&t;&t;Alan Cox&t;:&t;Added TCP options (SOL_TCP)&n; *&t;&t;Alan Cox&t;:&t;Switched wakeup calls to callbacks, so the kernel can layer network sockets.&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings.&n; *&t;&t;Alan Cox&t;:&t;Handle FIN (more) properly (we hope).&n; *&t;&t;Alan Cox&t;:&t;RST frames sent on unsynchronised state ack error/&n; *&t;&t;Alan Cox&t;:&t;Put in missing check for SYN bit.&n; *&t;&t;Alan Cox&t;:&t;Added tcp_select_window() aka NET2E &n; *&t;&t;&t;&t;&t;window non shrink trick.&n; *&t;&t;Alan Cox&t;:&t;Added a couple of small NET2E timer fixes&n; *&t;&t;Charles Hedrick :&t;TCP fixes&n; *&t;&t;Toomas Tamm&t;:&t;TCP window fixes&n; *&n; *&n; * To Fix:&n; *&t;&t;&t;Possibly a problem with accept(). BSD accept never fails after&n; *&t;&t;it causes a select. Linux can - given the official select semantics I&n; *&t;&t;feel that _really_ its the BSD network programs that are bust (notably&n; *&t;&t;inetd, which hangs occasionally because of this).&n; *&t;&t;&t;Add VJ Fastrecovery algorithm ?&n; *&t;&t;&t;Protocol closedown badly messed up.&n; *&t;&t;&t;Incompatiblity with spider ports (tcp hangs on that &n; *&t;&t;&t;socket occasionally).&n; *&t;&t;MSG_PEEK and read on same socket at once can cause crashes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -22,8 +22,6 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-DECL|macro|USE_NAGLE
-mdefine_line|#define USE_NAGLE
 DECL|macro|SEQ_TICK
 mdefine_line|#define SEQ_TICK 3
 DECL|variable|seq_offset
@@ -4157,7 +4155,7 @@ id|sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * In its original form, the following code implements&n; * Nagle&squot;s rule.  Everybody recommends it, and probably&n; * production code should use it.  But it slows down response enough&n; * that I dont&squot; like it.  So as long as we&squot;re not bumping into &n; * the window, I go ahead and send it.  If you want Nagle, just&n; * define USE_NAGLE  --C. Hedrick&n; */
+multiline_comment|/*&n; *&t;Nagles rule. Turn Nagle off with TCP_NODELAY for highly&n; *&t;interactive fast network servers. It&squot;s meant to be on and&n; *&t;it really improves the throughput though not the echo time&n; *&t;on my slow slip link - Alan&n; */
 multiline_comment|/* Avoid possible race on send_tmp - c/o Johannes Stille */
 r_if
 c_cond
@@ -4169,8 +4167,11 @@ op_logical_and
 op_logical_neg
 id|sk-&gt;packets_out
 )paren
-macro_line|#ifndef USE_NAGLE
+multiline_comment|/* If not nagling we can send on the before case too.. */
 op_logical_or
+(paren
+id|sk-&gt;nonagle
+op_logical_and
 id|before
 c_func
 (paren
@@ -4178,7 +4179,7 @@ id|sk-&gt;send_seq
 comma
 id|sk-&gt;window_seq
 )paren
-macro_line|#endif
+)paren
 )paren
 )paren
 (brace
@@ -5263,16 +5264,6 @@ c_cond
 id|amt
 )paren
 (brace
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|to
-comma
-id|amt
-)paren
-suffix:semicolon
 id|memcpy_tofs
 c_func
 (paren
@@ -9124,6 +9115,8 @@ c_func
 id|sk-&gt;wfront-&gt;h.seq
 comma
 id|sk-&gt;window_seq
+op_plus
+l_int|1
 )paren
 op_logical_and
 (paren
@@ -10262,6 +10255,8 @@ c_cond
 id|after
 (paren
 id|sk-&gt;window_seq
+op_plus
+l_int|1
 comma
 id|sk-&gt;wfront-&gt;h.seq
 )paren
@@ -15502,6 +15497,10 @@ c_cond
 (paren
 id|val
 l_int|2048
+op_logical_or
+id|val
+OG
+id|sk-&gt;mtu
 )paren
 (brace
 r_return
@@ -15519,7 +15518,19 @@ suffix:semicolon
 r_case
 id|TCP_NODELAY
 suffix:colon
-multiline_comment|/* Ready for Johannes delayed ACK code */
+id|sk-&gt;nonagle
+op_assign
+(paren
+id|val
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -15605,7 +15616,7 @@ id|TCP_NODELAY
 suffix:colon
 id|val
 op_assign
-l_int|1
+id|sk-&gt;nonagle
 suffix:semicolon
 multiline_comment|/* Until Johannes stuff is in */
 r_break

@@ -611,6 +611,8 @@ comma
 id|sys_quotactl
 comma
 id|sys_getpgid
+comma
+id|sys_fchdir
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */

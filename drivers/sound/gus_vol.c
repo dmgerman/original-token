@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * gus_vol.c - Compute volume for GUS.&n; * &n; * Greg Lee 1993.&n; */
+multiline_comment|/* &n; * gus_vol.c - Compute volume for GUS.&n; * &n; * Greg Lee 1993.&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifndef EXCLUDE_GUS
 DECL|macro|GUS_VOLUME
@@ -7,7 +7,7 @@ r_extern
 r_int
 id|gus_wave_volume
 suffix:semicolon
-multiline_comment|/*&n; * Calculate gus volume from note velocity, main volume, expression, and&n; * intrinsic patch volume given in patch library.  Expression is multiplied&n; * in, so it emphasizes differences in note velocity, while main volume is&n; * added in -- I don&squot;t know whether this is right, but it seems reasonable to&n; * me.  (In the previous stage, main volume controller messages were changed&n; * to expression controller messages, if they were found to be used for&n; * dynamic volume adjustments, so here, main volume can be assumed to be&n; * constant throughout a song.)&n; * &n; * Intrinsic patch volume is added in, but if over 64 is also multiplied in, so&n; * we can give a big boost to very weak voices like nylon guitar and the&n; * basses.  The normal value is 64.  Strings are assigned lower values.&n; */
+multiline_comment|/* &n; * Calculate gus volume from note velocity, main volume, expression, and&n; * intrinsic patch volume given in patch library.  Expression is multiplied&n; * in, so it emphasizes differences in note velocity, while main volume is&n; * added in -- I don&squot;t know whether this is right, but it seems reasonable to&n; * me.  (In the previous stage, main volume controller messages were changed&n; * to expression controller messages, if they were found to be used for&n; * dynamic volume adjustments, so here, main volume can be assumed to be&n; * constant throughout a song.)&n; * &n; * Intrinsic patch volume is added in, but if over 64 is also multiplied in, so&n; * we can give a big boost to very weak voices like nylon guitar and the&n; * basses.  The normal value is 64.  Strings are assigned lower values.&n; */
 r_int
 r_int
 DECL|function|gus_adagio_vol
@@ -35,7 +35,7 @@ id|n
 comma
 id|x
 suffix:semicolon
-multiline_comment|/*&n;   * A voice volume of 64 is considered neutral, so adjust the main volume if&n;   * something other than this neutral value was assigned in the patch&n;   * library.&n;   */
+multiline_comment|/* &n;   * A voice volume of 64 is considered neutral, so adjust the main volume if&n;   * something other than this neutral value was assigned in the patch&n;   * library.&n;   */
 id|x
 op_assign
 l_int|256
@@ -48,7 +48,7 @@ op_minus
 l_int|64
 )paren
 suffix:semicolon
-multiline_comment|/* Boost expression by voice volume above neutral. */
+multiline_comment|/* &n;   * Boost expression by voice volume above neutral. &n;   */
 r_if
 c_cond
 (paren
@@ -72,7 +72,7 @@ l_int|64
 op_div
 l_int|2
 suffix:semicolon
-multiline_comment|/* Combine multiplicative and level components. */
+multiline_comment|/* &n;   * Combine multiplicative and level components. &n;   */
 id|x
 op_assign
 id|vel
@@ -90,7 +90,7 @@ op_star
 id|x
 suffix:semicolon
 macro_line|#ifdef GUS_VOLUME
-multiline_comment|/*&n;   * Further adjustment by installation-specific master volume control&n;   * (default 50).&n;   */
+multiline_comment|/* &n;   * Further adjustment by installation-specific master volume control&n;   * (default 60).&n;   */
 id|x
 op_assign
 (paren
@@ -104,22 +104,42 @@ op_div
 l_int|10000
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef GUS_USE_CHN_MAIN_VOLUME
+multiline_comment|/*&n;   * Experimental support for the channel main volume&n;   */
+id|mainv
+op_assign
+(paren
+id|mainv
+op_div
+l_int|2
+)paren
+op_plus
+l_int|64
+suffix:semicolon
+multiline_comment|/* Scale to 64 to 127 */
+id|x
+op_assign
+(paren
+id|x
+op_star
+id|mainv
+op_star
+id|mainv
+)paren
+op_div
+l_int|16384
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|x
 OL
-(paren
-l_int|1
-op_lshift
-l_int|11
-)paren
+l_int|2
 )paren
 r_return
 (paren
-l_int|11
-op_lshift
-l_int|8
+l_int|0
 )paren
 suffix:semicolon
 r_else
@@ -141,7 +161,7 @@ op_or
 l_int|255
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Convert to gus&squot;s logarithmic form with 4 bit exponent i and 8 bit&n;   * mantissa m.&n;   */
+multiline_comment|/* &n;   * Convert to gus&squot;s logarithmic form with 4 bit exponent i and 8 bit&n;   * mantissa m.&n;   */
 id|n
 op_assign
 id|x
@@ -194,7 +214,7 @@ id|i
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Mantissa is part of linear volume not expressed in exponent.  (This is&n;   * not quite like real logs -- I wonder if it&squot;s right.)&n;   */
+multiline_comment|/* &n;   * Mantissa is part of linear volume not expressed in exponent.  (This is&n;   * not quite like real logs -- I wonder if it&squot;s right.)&n;   */
 id|m
 op_assign
 id|x
@@ -205,7 +225,7 @@ op_lshift
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/* Adjust mantissa to 8 bits. */
+multiline_comment|/* &n;   * Adjust mantissa to 8 bits. &n;   */
 r_if
 c_cond
 (paren
@@ -242,21 +262,6 @@ op_minus
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/* low volumes give occasional sour notes */
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|11
-)paren
-r_return
-(paren
-l_int|11
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
 r_return
 (paren
 (paren

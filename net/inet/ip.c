@@ -6344,11 +6344,6 @@ r_if
 c_cond
 (paren
 id|val
-OL
-l_int|1
-op_logical_or
-id|val
-OL
 l_int|255
 )paren
 (brace

@@ -177,14 +177,15 @@ r_int
 id|baud_base
 suffix:semicolon
 DECL|member|close_delay
-r_char
+r_int
+r_int
 id|close_delay
 suffix:semicolon
 DECL|member|reserved_char
 r_char
 id|reserved_char
 (braket
-l_int|3
+l_int|2
 )braket
 suffix:semicolon
 DECL|member|hub6
@@ -214,6 +215,8 @@ mdefine_line|#define PORT_16550A&t;4
 DECL|macro|PORT_MAX
 mdefine_line|#define PORT_MAX&t;4
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
+DECL|macro|ASYNC_HUP_NOTIFY
+mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */
 DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ASYNC_SAK
@@ -803,6 +806,36 @@ comma
 r_int
 r_int
 id|arg
+)paren
+suffix:semicolon
+DECL|member|select
+r_int
+(paren
+op_star
+id|select
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+id|sel_type
+comma
+id|select_table
+op_star
+id|wait
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The following routines are called from below.&n;&t; */

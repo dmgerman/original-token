@@ -322,6 +322,17 @@ suffix:semicolon
 id|skb-&gt;len
 op_assign
 id|len
+op_plus
+id|skb-&gt;ip_hdr-&gt;ihl
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+id|skb-&gt;h.raw
+op_assign
+id|skb-&gt;ip_hdr
 suffix:semicolon
 id|skb-&gt;dev
 op_assign

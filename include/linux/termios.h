@@ -497,5 +497,7 @@ DECL|macro|N_SLIP
 mdefine_line|#define N_SLIP&t;&t;1
 DECL|macro|N_MOUSE
 mdefine_line|#define N_MOUSE&t;&t;2
+DECL|macro|N_PPP
+mdefine_line|#define N_PPP&t;&t;3
 macro_line|#endif
 eof

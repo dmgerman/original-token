@@ -145,7 +145,7 @@ mdefine_line|#define OFF&t;&t;0
 DECL|macro|MAX_DSP_DEV
 mdefine_line|#define MAX_DSP_DEV&t;4
 DECL|macro|MAX_MIXER_DEV
-mdefine_line|#define MAX_MIXER_DEV&t;1
+mdefine_line|#define MAX_MIXER_DEV&t;2
 DECL|macro|MAX_SYNTH_DEV
 mdefine_line|#define MAX_SYNTH_DEV&t;3
 DECL|macro|MAX_MIDI_DEV

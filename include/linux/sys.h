@@ -967,6 +967,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sys_fchdir
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; */
 macro_line|#ifdef notdef
 DECL|macro|sys_waitpid

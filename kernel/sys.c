@@ -1930,9 +1930,8 @@ c_cond
 op_logical_neg
 id|pid
 )paren
-id|pid
-op_assign
-id|current-&gt;pid
+r_return
+id|current-&gt;pgrp
 suffix:semicolon
 id|for_each_task
 c_func

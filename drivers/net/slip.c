@@ -5053,6 +5053,10 @@ r_int
 )paren
 id|slip_ioctl
 suffix:semicolon
+id|sl_ldisc.select
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sl_ldisc.handler
 op_assign
 id|slip_recv
