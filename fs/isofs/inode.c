@@ -4196,6 +4196,10 @@ l_string|&quot;_isofs_bmap: block &gt;= EOF (%ld, %ld)&bslash;n&quot;
 comma
 id|iblock
 comma
+(paren
+r_int
+r_int
+)paren
 id|inode-&gt;i_size
 )paren
 suffix:semicolon

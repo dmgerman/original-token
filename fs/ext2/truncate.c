@@ -16,7 +16,7 @@ mdefine_line|#define RANDOM_INT (ext2_secrm_seed = ext2_secrm_seed * 69069l +1)
 macro_line|#endif
 multiline_comment|/*&n; * Macros to return the block number for the inode size and offset.&n; * Currently we always hold the inode semaphore during truncate, so&n; * there&squot;s no need to test for changes during the operation.&n; */
 DECL|macro|DIRECT_BLOCK
-mdefine_line|#define DIRECT_BLOCK(inode) &bslash;&n;&t;((inode-&gt;i_size + inode-&gt;i_sb-&gt;s_blocksize - 1) / &bslash;&n;&t;&t;&t;  inode-&gt;i_sb-&gt;s_blocksize)
+mdefine_line|#define DIRECT_BLOCK(inode) &bslash;&n;&t;((unsigned long) ((inode-&gt;i_size + inode-&gt;i_sb-&gt;s_blocksize - 1) &gt;&gt; inode-&gt;i_sb-&gt;s_blocksize_bits))
 DECL|macro|INDIRECT_BLOCK
 mdefine_line|#define INDIRECT_BLOCK(inode,offset) ((int)DIRECT_BLOCK(inode) - offset)
 DECL|macro|DINDIRECT_BLOCK

@@ -2563,7 +2563,7 @@ id|fattr.size
 id|printk
 c_func
 (paren
-l_string|&quot;nfs_notify_change: attr=%ld, fattr=%d??&bslash;n&quot;
+l_string|&quot;nfs_notify_change: attr=%Ld, fattr=%d??&bslash;n&quot;
 comma
 id|attr-&gt;ia_size
 comma

@@ -331,14 +331,10 @@ DECL|macro|MAX_SEGMENTS
 mdefine_line|#define MAX_SEGMENTS MAX_SECTORS
 DECL|macro|PageAlignSize
 mdefine_line|#define PageAlignSize(size) (((size) + PAGE_SIZE -1) &amp; PAGE_MASK)
-macro_line|#if 0  /* small readahead */
-mdefine_line|#define MAX_READAHEAD PageAlignSize(4096*7)
-mdefine_line|#define MIN_READAHEAD PageAlignSize(4096*2)
-macro_line|#else /* large readahead */
+multiline_comment|/* read-ahead in pages.. */
 DECL|macro|MAX_READAHEAD
-mdefine_line|#define MAX_READAHEAD PageAlignSize(4096*31)
+mdefine_line|#define MAX_READAHEAD&t;31
 DECL|macro|MIN_READAHEAD
-mdefine_line|#define MIN_READAHEAD PageAlignSize(4096*3)
-macro_line|#endif
+mdefine_line|#define MIN_READAHEAD&t;3
 macro_line|#endif
 eof

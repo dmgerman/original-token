@@ -517,7 +517,7 @@ id|gid_t
 id|ia_gid
 suffix:semicolon
 DECL|member|ia_size
-id|off_t
+id|loff_t
 id|ia_size
 suffix:semicolon
 DECL|member|ia_atime
@@ -627,7 +627,7 @@ id|kdev_t
 id|i_rdev
 suffix:semicolon
 DECL|member|i_size
-id|off_t
+id|loff_t
 id|i_size
 suffix:semicolon
 DECL|member|i_atime
