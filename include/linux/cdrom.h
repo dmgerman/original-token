@@ -674,6 +674,8 @@ DECL|macro|GPCMD_PLAY_AUDIO_10
 mdefine_line|#define GPCMD_PLAY_AUDIO_10&t;&t;    0x45
 DECL|macro|GPCMD_PLAY_AUDIO_MSF
 mdefine_line|#define GPCMD_PLAY_AUDIO_MSF&t;&t;    0x47
+DECL|macro|GPCMD_PLAY_AUDIO_TI
+mdefine_line|#define GPCMD_PLAY_AUDIO_TI&t;&t;    0x48
 DECL|macro|GPCMD_PLAY_CD
 mdefine_line|#define GPCMD_PLAY_CD&t;&t;&t;    0xbc
 DECL|macro|GPCMD_PREVENT_ALLOW_MEDIUM_REMOVAL
@@ -744,12 +746,9 @@ mdefine_line|#define GPCMD_SET_SPEED&t;&t;&t;    0xbb
 multiline_comment|/* This seems to be a SCSI specific CD-ROM opcode &n; * to play data at track/index */
 DECL|macro|GPCMD_PLAYAUDIO_TI
 mdefine_line|#define GPCMD_PLAYAUDIO_TI&t;&t;    0x48
-multiline_comment|/* Is this really used by anything?  I couldn&squot;t find these...*/
-macro_line|#if 0
-multiline_comment|/* MMC2/MTFuji Opcodes */
-mdefine_line|#define ERASE&t;&t;&t;0x2c
-mdefine_line|#define READ_BUFFER&t;&t;0x3c
-macro_line|#endif
+multiline_comment|/*&n; * From MS Media Status Notification Support Specification. For&n; * older drives only.&n; */
+DECL|macro|GPCMD_GET_MEDIA_STATUS
+mdefine_line|#define GPCMD_GET_MEDIA_STATUS&t;&t;    0xda
 multiline_comment|/* Mode page codes for mode sense/set */
 DECL|macro|GPMODE_R_W_ERROR_PAGE
 mdefine_line|#define GPMODE_R_W_ERROR_PAGE&t;&t;0x01
@@ -2876,6 +2875,130 @@ id|packed
 )paren
 )paren
 id|write_param_page
+suffix:semicolon
+DECL|struct|modesel_head
+r_struct
+id|modesel_head
+(brace
+DECL|member|reserved1
+id|__u8
+id|reserved1
+suffix:semicolon
+DECL|member|medium
+id|__u8
+id|medium
+suffix:semicolon
+DECL|member|reserved2
+id|__u8
+id|reserved2
+suffix:semicolon
+DECL|member|block_desc_length
+id|__u8
+id|block_desc_length
+suffix:semicolon
+DECL|member|density
+id|__u8
+id|density
+suffix:semicolon
+DECL|member|number_of_blocks_hi
+id|__u8
+id|number_of_blocks_hi
+suffix:semicolon
+DECL|member|number_of_blocks_med
+id|__u8
+id|number_of_blocks_med
+suffix:semicolon
+DECL|member|number_of_blocks_lo
+id|__u8
+id|number_of_blocks_lo
+suffix:semicolon
+DECL|member|reserved3
+id|__u8
+id|reserved3
+suffix:semicolon
+DECL|member|block_length_hi
+id|__u8
+id|block_length_hi
+suffix:semicolon
+DECL|member|block_length_med
+id|__u8
+id|block_length_med
+suffix:semicolon
+DECL|member|block_length_lo
+id|__u8
+id|block_length_lo
+suffix:semicolon
+)brace
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|report_key_length
+id|__u16
+id|report_key_length
+suffix:semicolon
+DECL|member|reserved1
+id|__u8
+id|reserved1
+suffix:semicolon
+DECL|member|reserved2
+id|__u8
+id|reserved2
+suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|type_code
+id|__u8
+id|type_code
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|vra
+id|__u8
+id|vra
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|ucca
+id|__u8
+id|ucca
+suffix:colon
+l_int|3
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|ucca
+id|__u8
+id|ucca
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|vra
+id|__u8
+id|vra
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|type_code
+id|__u8
+id|type_code
+suffix:colon
+l_int|2
+suffix:semicolon
+macro_line|#endif
+DECL|member|region_mask
+id|__u8
+id|region_mask
+suffix:semicolon
+DECL|member|rpc_scheme
+id|__u8
+id|rpc_scheme
+suffix:semicolon
+DECL|member|reserved3
+id|__u8
+id|reserved3
+suffix:semicolon
+DECL|typedef|rpc_state_t
+)brace
+id|rpc_state_t
 suffix:semicolon
 macro_line|#endif  /* End of kernel only stuff */ 
 macro_line|#endif  /* _LINUX_CDROM_H */

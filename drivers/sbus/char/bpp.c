@@ -3501,6 +3501,10 @@ id|file_operations
 id|bpp_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|bpp_read

@@ -7,9 +7,11 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
-multiline_comment|/*&n; * This allocates one page of cache-coherent memory space and returns&n; * both the virtual and a &quot;dma&quot; address to that space.  It is not clear&n; * whether this could be called from an interrupt context or not.  For&n; * now, we expressly forbid it, especially as some of the stuff we do&n; * here is not interrupt context safe.&n; */
+multiline_comment|/*&n; * This allocates one page of cache-coherent memory space and returns&n; * both the virtual and a &quot;dma&quot; address to that space.  It is not clear&n; * whether this could be called from an interrupt context or not.  For&n; * now, we expressly forbid it, especially as some of the stuff we do&n; * here is not interrupt context safe.&n; *&n; * Note that this does *not* zero the allocated area!&n; */
 DECL|function|consistent_alloc
 r_void
 op_star
@@ -86,41 +88,6 @@ id|page
 r_goto
 id|no_page
 suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-comma
-l_int|0
-comma
-id|size
-)paren
-suffix:semicolon
-id|clean_cache_area
-c_func
-(paren
-id|page
-comma
-id|size
-)paren
-suffix:semicolon
-op_star
-id|dma_handle
-op_assign
-id|virt_to_bus
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-)paren
-suffix:semicolon
 id|ret
 op_assign
 id|__ioremap
@@ -158,6 +125,36 @@ op_plus
 id|PAGE_SIZE
 op_lshift
 id|order
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * we need to ensure that there are no&n;&t;&t; * cachelines in use, or worse dirty in&n;&t;&t; * this area.&n;&t;&t; */
+id|dma_cache_inv
+c_func
+(paren
+id|page
+comma
+id|size
+)paren
+suffix:semicolon
+id|dma_cache_inv
+c_func
+(paren
+id|ret
+comma
+id|size
+)paren
+suffix:semicolon
+op_star
+id|dma_handle
+op_assign
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|page
 )paren
 suffix:semicolon
 id|page

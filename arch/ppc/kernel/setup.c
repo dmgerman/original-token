@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigappc.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#ifdef CONFIG_8xx
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
@@ -332,6 +333,19 @@ multiline_comment|/* orig-video-isVGA */
 l_int|16
 multiline_comment|/* orig-video-points */
 )brace
+suffix:semicolon
+multiline_comment|/*&n; * These are used in binfmt_elf.c to put aux entries on the stack&n; * for each elf executable being started.&n; */
+DECL|variable|dcache_bsize
+r_int
+id|dcache_bsize
+suffix:semicolon
+DECL|variable|icache_bsize
+r_int
+id|icache_bsize
+suffix:semicolon
+DECL|variable|ucache_bsize
+r_int
+id|ucache_bsize
 suffix:semicolon
 multiline_comment|/*&n; * I really need to add multiple-console support... -- Cort&n; */
 DECL|function|pmac_display_supported
@@ -974,7 +988,33 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;7400 (G4)&bslash;n&quot;
+l_string|&quot;7400 (G4&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_ALTIVEC
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;, altivec enabled&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ALTIVEC */
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1041,6 +1081,57 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
+r_case
+l_int|0x0035
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;POWER4&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0040
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;POWER3 (630)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0041
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;POWER3 (630+)&bslash;n&quot;
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1964,6 +2055,17 @@ op_ne
 l_int|0xdeadbeef
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|r3
+OL
+id|KERNELBASE
+)paren
+id|r3
+op_add_assign
+id|KERNELBASE
+suffix:semicolon
 id|initrd_start
 op_assign
 id|r3
@@ -2908,6 +3010,55 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * Set cache line size based on type of cpu as a default.&n;&t; * Systems with OF can look in the properties on the cpu node(s)&n;&t; * for a possibly more accurate value.&n;&t; */
+id|dcache_bsize
+op_assign
+id|icache_bsize
+op_assign
+l_int|32
+suffix:semicolon
+multiline_comment|/* most common value */
+r_switch
+c_cond
+(paren
+id|_get_PVR
+c_func
+(paren
+)paren
+op_rshift
+l_int|16
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* 601, with unified cache */
+id|ucache_bsize
+op_assign
+l_int|32
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* XXX need definitions in here for 8xx etc. */
+r_case
+l_int|0x40
+suffix:colon
+r_case
+l_int|0x41
+suffix:colon
+r_case
+l_int|0x35
+suffix:colon
+multiline_comment|/* 64-bit POWER3, POWER3+, POWER4 */
+id|dcache_bsize
+op_assign
+id|icache_bsize
+op_assign
+l_int|128
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* reboot on panic */
 id|panic_timeout
 op_assign
@@ -3699,7 +3850,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|4
+l_int|3
 suffix:semicolon
 id|i
 op_increment

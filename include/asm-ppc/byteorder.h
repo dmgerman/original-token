@@ -11,6 +11,7 @@ r_int
 id|ld_le16
 c_func
 (paren
+r_const
 r_volatile
 r_int
 r_int
@@ -60,6 +61,7 @@ r_int
 op_star
 id|addr
 comma
+r_const
 r_int
 id|val
 )paren
@@ -94,6 +96,7 @@ r_int
 id|ld_le32
 c_func
 (paren
+r_const
 r_volatile
 r_int
 op_star
@@ -141,6 +144,7 @@ r_int
 op_star
 id|addr
 comma
+r_const
 r_int
 id|val
 )paren

@@ -150,15 +150,15 @@ mdefine_line|#define BAMR_ASID&t;&t;(1 &lt;&lt; 2)
 DECL|macro|BAMR_NONE
 mdefine_line|#define BAMR_NONE&t;&t;0
 DECL|macro|BAMR_10
-mdefine_line|#define BAMR_10&t;&t;0x1
+mdefine_line|#define BAMR_10&t;&t;&t;0x1
 DECL|macro|BAMR_12
-mdefine_line|#define BAMR_12&t;&t;0x2
+mdefine_line|#define BAMR_12&t;&t;&t;0x2
 DECL|macro|BAMR_ALL
 mdefine_line|#define BAMR_ALL&t;&t;0x3
 DECL|macro|BAMR_16
-mdefine_line|#define BAMR_16&t;&t;0x8
+mdefine_line|#define BAMR_16&t;&t;&t;0x8
 DECL|macro|BAMR_20
-mdefine_line|#define BAMR_20&t;&t;0x9
+mdefine_line|#define BAMR_20&t;&t;&t;0x9
 DECL|macro|BBR_INST
 mdefine_line|#define BBR_INST&t;&t;(1 &lt;&lt; 4)
 DECL|macro|BBR_DATA

@@ -4,6 +4,7 @@ macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|function|ebsa110_leds_event
+r_static
 r_void
 id|ebsa110_leds_event
 c_func

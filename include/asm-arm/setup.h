@@ -252,6 +252,10 @@ r_int
 r_int
 id|size
 suffix:semicolon
+DECL|member|node
+r_int
+id|node
+suffix:semicolon
 DECL|member|bank
 )brace
 id|bank

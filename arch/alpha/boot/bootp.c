@@ -233,7 +233,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-id|halt
+id|__halt
 c_func
 (paren
 )paren
@@ -494,11 +494,9 @@ suffix:semicolon
 macro_line|#endif
 id|nbytes
 op_assign
-id|srm_dispatch
+id|callback_getenv
 c_func
 (paren
-id|CCB_GET_ENV
-comma
 id|ENV_BOOTED_OSFLAGS
 comma
 id|envval
@@ -545,7 +543,7 @@ id|envval
 )paren
 suffix:semicolon
 multiline_comment|/* NOTE: *no* callbacks or printouts from here on out!!! */
-multiline_comment|/*&n;&t; * This is a hack, as some consoles seem to get virtual 20000000&n;&t; * (ie where the SRM console puts the kernel bootp image) memory&n;&t; * overlapping physical 310000 memory, which causes real problems&n;&t; * when attempting to copy the former to the latter... :-(&n;&t; *&n;&t; * So, we first move the kernel virtual-to-physical way above where&n;&t; * we physically want the kernel to end up, then copy it from there&n;&t; * to its final resting place... ;-}&n;&t; *&n;&t; * Sigh...&n;&t; */
+multiline_comment|/* This is a hack, as some consoles seem to get virtual 20000000 (ie&n;&t; * where the SRM console puts the kernel bootp image) memory&n;&t; * overlapping physical memory where the kernel wants to be put,&n;&t; * which causes real problems when attempting to copy the former to&n;&t; * the latter... :-(&n;&t; *&n;&t; * So, we first move the kernel virtual-to-physical way above where&n;&t; * we physically want the kernel to end up, then copy it from there&n;&t; * to its final resting place... ;-}&n;&t; *&n;&t; * Sigh...  */
 macro_line|#ifdef INITRD_SIZE
 id|load
 c_func

@@ -520,6 +520,7 @@ op_assign
 id|TCODE_ISO_DATA
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * get_tlabel - allocate a transaction label&n; * @host: host to be used for transmission&n; * @nodeid: the node ID of the transmission target&n; * @wait: whether to sleep if no tlabel is available&n; *&n; * Every asynchronous transaction on the 1394 bus needs a transaction label to&n; * match the response to the request.  This label has to be different from any&n; * other transaction label in an outstanding request to the same node to make&n; * matching possible without ambiguity.&n; *&n; * There are 64 different tlabels, so an allocated tlabel has to be freed with&n; * free_tlabel() after the transaction is complete (unless it&squot;s reused again for&n; * the same target node).&n; *&n; * @wait must not be set to true if you are calling from interrupt context.&n; *&n; * Return value: The allocated transaction label or -1 if there was no free&n; * tlabel and @wait is false.&n; */
 DECL|function|get_tlabel
 r_int
 id|get_tlabel
@@ -673,6 +674,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/**&n; * free_tlabel - free an allocated transaction label&n; * @host: host to be used for transmission&n; * @nodeid: the node ID of the transmission target&n; * @tlabel: the transaction label to free&n; *&n; * Frees the transaction label allocated with get_tlabel().  The tlabel has to&n; * be freed after the transaction is complete (i.e. response was received for a&n; * split transaction or packet was sent for a unified transaction).&n; *&n; * A tlabel must not be freed twice.&n; */
 DECL|function|free_tlabel
 r_void
 id|free_tlabel

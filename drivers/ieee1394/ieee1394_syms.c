@@ -1,12 +1,14 @@
 multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Exported symbols for module usage.&n; *&n; * Copyright (C) 1999 Andreas E. Bombe&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;ieee1394_types.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;ieee1394_core.h&quot;
 macro_line|#include &quot;ieee1394_transactions.h&quot;
 multiline_comment|/* #include &quot;events.h&quot; */
 macro_line|#include &quot;highlevel.h&quot;
+macro_line|#include &quot;guid.h&quot;
 DECL|variable|hpsb_register_lowlevel
 id|EXPORT_SYMBOL
 c_func
@@ -236,6 +238,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|highlevel_lock64
+)paren
+suffix:semicolon
+DECL|variable|hpsb_guid_get_handle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hpsb_guid_get_handle
+)paren
+suffix:semicolon
+DECL|variable|hpsb_guid_localhost
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hpsb_guid_localhost
+)paren
+suffix:semicolon
+DECL|variable|hpsb_guid_fill_packet
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hpsb_guid_fill_packet
 )paren
 suffix:semicolon
 eof

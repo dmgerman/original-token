@@ -348,13 +348,7 @@ c_func
 r_void
 )paren
 (brace
-id|alpha_mv
-dot
-id|init_irq
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* Uh, this really MUST come first, just in case&n;&t; * the platform init_irq() causes interrupts/mchecks&n;&t; * (as is the case with RAWHIDE, at least).&n;&t; */
 id|wrent
 c_func
 (paren
@@ -363,6 +357,28 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|alpha_mv
+dot
+id|init_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* If we had wanted SRM console printk echoing early, undo it now. */
+r_if
+c_cond
+(paren
+id|alpha_using_srm
+op_logical_and
+id|srmcons_output
+)paren
+(brace
+id|unregister_srm_console
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * machine error checks&n; */
 DECL|macro|MCHK_K_TPERR

@@ -17,11 +17,13 @@ mdefine_line|#define EV45_CPU                6       /* EV4.5 (21064/xxx)    */
 DECL|macro|EV56_CPU
 mdefine_line|#define EV56_CPU&t;&t;7&t;/* EV5.6 (21164)&t;*/
 DECL|macro|EV6_CPU
-mdefine_line|#define EV6_CPU&t;&t;&t;8&t;/* EV6 (21164)&t;&t;*/
+mdefine_line|#define EV6_CPU&t;&t;&t;8&t;/* EV6 (21264)&t;&t;*/
 DECL|macro|PCA56_CPU
 mdefine_line|#define PCA56_CPU&t;&t;9&t;/* PCA56 (21164PC)&t;*/
 DECL|macro|PCA57_CPU
 mdefine_line|#define PCA57_CPU&t;&t;10&t;/* PCA57 (notyet)&t;*/
+DECL|macro|EV67_CPU
+mdefine_line|#define EV67_CPU&t;&t;11&t;/* EV67 (21264A)&t;*/
 multiline_comment|/*&n; * DEC system types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
 DECL|macro|ST_ADU
 mdefine_line|#define ST_ADU&t;&t;&t;  1&t;/* Alpha ADU systype&t;*/
@@ -89,6 +91,8 @@ DECL|macro|ST_DEC_CUSCO
 mdefine_line|#define ST_DEC_CUSCO&t;&t; 36&t;/* CUSCO systype&t;*/
 DECL|macro|ST_DEC_EIGER
 mdefine_line|#define ST_DEC_EIGER&t;&t; 37&t;/* Eiger systype&t;*/
+DECL|macro|ST_DEC_TITAN
+mdefine_line|#define ST_DEC_TITAN&t;&t; 38&t;/* Titan systype&t;*/
 multiline_comment|/* UNOFFICIAL!!! */
 DECL|macro|ST_UNOFFICIAL_BIAS
 mdefine_line|#define ST_UNOFFICIAL_BIAS&t;100

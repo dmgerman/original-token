@@ -1360,7 +1360,7 @@ comma
 )brace
 suffix:semicolon
 DECL|macro|MAY_PTRACE
-mdefine_line|#define MAY_PTRACE(p) &bslash;&n;(p==current||(p-&gt;p_pptr==current&amp;&amp;(p-&gt;flags&amp;PF_PTRACED)&amp;&amp;p-&gt;state==TASK_STOPPED))
+mdefine_line|#define MAY_PTRACE(p) &bslash;&n;(p==current||(p-&gt;p_pptr==current&amp;&amp;(p-&gt;ptrace &amp; PT_PTRACED)&amp;&amp;p-&gt;state==TASK_STOPPED))
 DECL|function|mem_read
 r_static
 id|ssize_t

@@ -1,12 +1,13 @@
 macro_line|#ifndef _INPUT_H
 DECL|macro|_INPUT_H
 mdefine_line|#define _INPUT_H
-multiline_comment|/*&n; *  input.h  Version 0.1&n; *&n; *  Copyright (c) 1999 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: input.h,v 1.13 2000/05/29 10:54:53 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#else
 macro_line|#include &lt;sys/time.h&gt;
+macro_line|#include &lt;sys/ioctl.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * The event structure itself&n; */
 DECL|struct|input_event
@@ -35,45 +36,30 @@ id|value
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The device ID structure;&n; */
-DECL|struct|input_id
-r_struct
-id|input_id
-(brace
-DECL|member|bus
-id|__u16
-id|bus
-suffix:semicolon
-DECL|member|vendor
-id|__u16
-id|vendor
-suffix:semicolon
-DECL|member|product
-id|__u16
-id|product
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * Protocol version.&n; */
 DECL|macro|EV_VERSION
 mdefine_line|#define EV_VERSION&t;&t;0x010000
 multiline_comment|/*&n; * IOCTLs (0x00 - 0x7f)&n; */
 DECL|macro|EVIOCGVERSION
-mdefine_line|#define EVIOCGVERSION&t;&t;_IOR(&squot;E&squot;, 0x01, __u32)                  /* get driver version */
+mdefine_line|#define EVIOCGVERSION&t;&t;_IOR(&squot;E&squot;, 0x01, int)                    /* get driver version */
 DECL|macro|EVIOCGID
-mdefine_line|#define EVIOCGID&t;&t;_IOR(&squot;E&squot;, 0x02, struct input_id)&t;/* get device ID */
+mdefine_line|#define EVIOCGID&t;&t;_IOR(&squot;E&squot;, 0x02, short[4])&t;&t;/* get device ID */
 DECL|macro|EVIOCGREP
 mdefine_line|#define EVIOCGREP&t;&t;_IOR(&squot;E&squot;, 0x03, int[2])&t;&t;&t;/* get repeat settings */
 DECL|macro|EVIOCSREP
 mdefine_line|#define EVIOCSREP&t;&t;_IOW(&squot;E&squot;, 0x03, int[2])&t;&t;&t;/* get repeat settings */
+DECL|macro|EVIOCGKEYCODE
+mdefine_line|#define EVIOCGKEYCODE&t;&t;_IOR(&squot;E&squot;, 0x04, int[2])&t;&t;&t;/* get keycode */
+DECL|macro|EVIOCSKEYCODE
+mdefine_line|#define EVIOCSKEYCODE&t;&t;_IOW(&squot;E&squot;, 0x04, int[2])&t;&t;&t;/* set keycode */
+DECL|macro|EVIOCGKEY
+mdefine_line|#define EVIOCGKEY&t;&t;_IOR(&squot;E&squot;, 0x05, int[2])&t;&t;&t;/* get key value */
 DECL|macro|EVIOCGNAME
-mdefine_line|#define EVIOCGNAME(len)&t;&t;_IOC(_IOC_READ, &squot;E&squot;, 0x03, len)&t;&t;/* get device name */
+mdefine_line|#define EVIOCGNAME(len)&t;&t;_IOC(_IOC_READ, &squot;E&squot;, 0x06, len)&t;&t;/* get device name */
 DECL|macro|EVIOCGBIT
 mdefine_line|#define EVIOCGBIT(ev,len)&t;_IOC(_IOC_READ, &squot;E&squot;, 0x20 + ev, len)&t;/* get event bits */
-DECL|macro|EVIOCGABSLIM
-mdefine_line|#define EVIOCGABSLIM(num)&t;_IOR(&squot;E&squot;, 0x40 + num, int[4])&t;&t;/* get abs event limits */ 
 DECL|macro|EVIOCGABS
-mdefine_line|#define EVIOCGABS(num)&t;&t;_IOR(&squot;E&squot;, 0x80 + num, int)&t;&t;/* get abs value */
+mdefine_line|#define EVIOCGABS(abs)&t;&t;_IOR(&squot;E&squot;, 0x40 + abs, int[5])&t;&t;/* get abs value/limits */ 
 multiline_comment|/*&n; * Event types&n; */
 DECL|macro|EV_RST
 mdefine_line|#define EV_RST&t;&t;&t;0x00
@@ -512,6 +498,8 @@ DECL|macro|BTN_BASE4
 mdefine_line|#define BTN_BASE4&t;&t;0x129
 DECL|macro|BTN_BASE5
 mdefine_line|#define BTN_BASE5&t;&t;0x12a
+DECL|macro|BTN_BASE6
+mdefine_line|#define BTN_BASE6&t;&t;0x12b
 DECL|macro|BTN_GAMEPAD
 mdefine_line|#define BTN_GAMEPAD&t;&t;0x130
 DECL|macro|BTN_A
@@ -600,6 +588,10 @@ DECL|macro|ABS_THROTTLE
 mdefine_line|#define ABS_THROTTLE&t;&t;0x06
 DECL|macro|ABS_RUDDER
 mdefine_line|#define ABS_RUDDER&t;&t;0x07
+DECL|macro|ABS_TL
+mdefine_line|#define ABS_TL&t;&t;&t;0x08
+DECL|macro|ABS_TR
+mdefine_line|#define ABS_TR&t;&t;&t;0x09
 DECL|macro|ABS_HAT0X
 mdefine_line|#define ABS_HAT0X&t;&t;0x10
 DECL|macro|ABS_HAT0Y
@@ -655,6 +647,35 @@ DECL|macro|SND_BELL
 mdefine_line|#define SND_BELL&t;&t;0x01
 DECL|macro|SND_MAX
 mdefine_line|#define SND_MAX&t;&t;&t;0x07
+multiline_comment|/*&n; * IDs.&n; */
+DECL|macro|ID_BUS
+mdefine_line|#define ID_BUS&t;&t;&t;0
+DECL|macro|ID_VENDOR
+mdefine_line|#define ID_VENDOR&t;&t;1
+DECL|macro|ID_PRODUCT
+mdefine_line|#define ID_PRODUCT&t;&t;2
+DECL|macro|ID_VERSION
+mdefine_line|#define ID_VERSION&t;&t;3
+DECL|macro|BUS_PCI
+mdefine_line|#define BUS_PCI&t;&t;&t;0x01
+DECL|macro|BUS_ISAPNP
+mdefine_line|#define BUS_ISAPNP&t;&t;0x02
+DECL|macro|BUS_USB
+mdefine_line|#define BUS_USB&t;&t;&t;0x03
+DECL|macro|BUS_ISA
+mdefine_line|#define BUS_ISA&t;&t;&t;0x10
+DECL|macro|BUS_I8042
+mdefine_line|#define BUS_I8042&t;&t;0x11
+DECL|macro|BUS_XTKBD
+mdefine_line|#define BUS_XTKBD&t;&t;0x12
+DECL|macro|BUS_RS232
+mdefine_line|#define BUS_RS232&t;&t;0x13
+DECL|macro|BUS_GAMEPORT
+mdefine_line|#define BUS_GAMEPORT&t;&t;0x14
+DECL|macro|BUS_PARPORT
+mdefine_line|#define BUS_PARPORT&t;&t;0x15
+DECL|macro|BUS_AMIGA
+mdefine_line|#define BUS_AMIGA&t;&t;0x16
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * In-kernel definitions.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
@@ -683,10 +704,25 @@ r_char
 op_star
 id|name
 suffix:semicolon
-DECL|member|id
-r_struct
-id|input_id
-id|id
+DECL|member|idbus
+r_int
+r_int
+id|idbus
+suffix:semicolon
+DECL|member|idvendor
+r_int
+r_int
+id|idvendor
+suffix:semicolon
+DECL|member|idproduct
+r_int
+r_int
+id|idproduct
+suffix:semicolon
+DECL|member|idversion
+r_int
+r_int
+id|idversion
 suffix:semicolon
 DECL|member|evbit
 r_int
@@ -760,9 +796,18 @@ id|SND_MAX
 )paren
 )braket
 suffix:semicolon
-DECL|member|keycode
+DECL|member|keycodemax
 r_int
-r_char
+r_int
+id|keycodemax
+suffix:semicolon
+DECL|member|keycodesize
+r_int
+r_int
+id|keycodesize
+suffix:semicolon
+DECL|member|keycode
+r_void
 op_star
 id|keycode
 suffix:semicolon
@@ -1158,9 +1203,7 @@ id|value
 )paren
 suffix:semicolon
 DECL|macro|input_report_key
-mdefine_line|#define input_report_key(a,b,c) input_event(a, EV_KEY, b, c)
-DECL|macro|input_report_btn
-mdefine_line|#define input_report_btn(a,b,c) input_event(a, EV_KEY, b, !!(c))
+mdefine_line|#define input_report_key(a,b,c) input_event(a, EV_KEY, b, !!(c))
 DECL|macro|input_report_rel
 mdefine_line|#define input_report_rel(a,b,c) input_event(a, EV_REL, b, c)
 DECL|macro|input_report_abs

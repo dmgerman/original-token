@@ -2655,6 +2655,8 @@ r_int
 id|purpose
 )paren
 (brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2686,8 +2688,6 @@ suffix:semicolon
 )brace
 op_increment
 id|cd-&gt;openfiles
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|stats
 c_func
@@ -5534,6 +5534,9 @@ multiline_comment|/* link */
 l_int|NULL
 comma
 multiline_comment|/* handle (not used by cm206) */
+l_int|0
+comma
+multiline_comment|/* devfs handle */
 l_int|0
 comma
 multiline_comment|/* dev */

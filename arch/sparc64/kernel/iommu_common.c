@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: iommu_common.c,v 1.3 2000/01/28 13:41:59 jj Exp $&n; * iommu_common.c: UltraSparc SBUS/PCI common iommu code.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: iommu_common.c,v 1.4 2000/06/04 21:50:23 anton Exp $&n; * iommu_common.c: UltraSparc SBUS/PCI common iommu code.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &quot;iommu_common.h&quot;
 multiline_comment|/* You are _strongly_ advised to enable the following debugging code&n; * any time you make changes to the sg code below, run it for a while&n; * with filesystems mounted read-only before buying the farm... -DaveM&n; */
 macro_line|#ifdef VERIFY_SG
@@ -214,7 +214,7 @@ id|npages
 id|printk
 c_func
 (paren
-l_string|&quot;verify_langths: Error, page count wrong, &quot;
+l_string|&quot;verify_lengths: Error, page count wrong, &quot;
 l_string|&quot;npages[%d] pgcount[%d]&bslash;n&quot;
 comma
 id|npages

@@ -16,6 +16,7 @@ macro_line|#include &quot;ieee1394_core.h&quot;
 macro_line|#include &quot;highlevel.h&quot;
 macro_line|#include &quot;ieee1394_transactions.h&quot;
 macro_line|#include &quot;csr.h&quot;
+macro_line|#include &quot;guid.h&quot;
 DECL|variable|hpsb_generation
 id|atomic_t
 id|hpsb_generation
@@ -108,6 +109,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * alloc_hpsb_packet - allocate new packet structure&n; * @data_size: size of the data block to be allocated&n; *&n; * This function allocates, initializes and returns a new &amp;struct hpsb_packet.&n; * It can be used in interrupt context.  A header block is always included, its&n; * size is big enough to contain all possible 1394 headers.  The data block is&n; * only allocated when @data_size is not zero.&n; *&n; * For packets for which responses will be received the @data_size has to be big&n; * enough to contain the response&squot;s data block since no further allocation&n; * occurs at response matching time.&n; *&n; * The packet&squot;s generation value will be set to the current generation number&n; * for ease of use.  Remember to overwrite it with your own recorded generation&n; * number if you can not be sure that your code will not race with a bus reset.&n; *&n; * Return value: A pointer to a &amp;struct hpsb_packet or NULL on allocation&n; * failure.&n; */
 DECL|function|alloc_hpsb_packet
 r_struct
 id|hpsb_packet
@@ -308,6 +310,7 @@ r_return
 id|packet
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * free_hpsb_packet - free packet and data associated with it&n; * @packet: packet to free (is NULL safe)&n; *&n; * This function will free packet-&gt;data, packet-&gt;header and finally the packet&n; * itself.&n; */
 DECL|function|free_hpsb_packet
 r_void
 id|free_hpsb_packet
@@ -1664,6 +1667,7 @@ id|tq_timer
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * hpsb_send_packet - transmit a packet on the bus&n; * @packet: packet to send&n; *&n; * The packet is sent through the host specified in the packet-&gt;host field.&n; * Before sending, the packet&squot;s transmit speed is automatically determined using&n; * the local speed map.&n; *&n; * Possibilities for failure are that host is either not initialized, in bus&n; * reset, the packet&squot;s generation number doesn&squot;t match the current generation&n; * number or the host reports a transmit error.&n; *&n; * Return value: False (0) on failure, true (1) otherwise.&n; */
 DECL|function|hpsb_send_packet
 r_int
 id|hpsb_send_packet
@@ -3601,151 +3605,6 @@ id|packet-&gt;complete_tq
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0
-r_int
-id|hpsb_host_thread
-c_func
-(paren
-r_void
-op_star
-id|hostPointer
-)paren
-(brace
-r_struct
-id|hpsb_host
-op_star
-id|host
-op_assign
-(paren
-r_struct
-id|hpsb_host
-op_star
-)paren
-id|hostPointer
-suffix:semicolon
-multiline_comment|/* I don&squot;t understand why, but I just want to be on the safe side. */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|HPSB_INFO
-c_func
-(paren
-id|__FUNCTION__
-l_string|&quot; starting for one %s adapter&quot;
-comma
-id|host
-op_member_access_from_pointer
-r_template
-op_member_access_from_pointer
-id|name
-)paren
-suffix:semicolon
-id|exit_mm
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|exit_files
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|exit_fs
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|current-&gt;comm
-comma
-l_string|&quot;ieee1394 thread&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* ... but then again, I think the following is safe. */
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
-id|siginfo_t
-id|info
-suffix:semicolon
-r_int
-r_int
-id|signr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|signal_pending
-c_func
-(paren
-id|current
-)paren
-)paren
-(brace
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
-suffix:semicolon
-id|signr
-op_assign
-id|dequeue_signal
-c_func
-(paren
-op_amp
-id|current-&gt;blocked
-comma
-op_amp
-id|info
-)paren
-suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|abort_timedouts
-c_func
-(paren
-id|host
-)paren
-suffix:semicolon
-)brace
-id|HPSB_INFO
-c_func
-(paren
-id|__FUNCTION__
-l_string|&quot; exiting&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifndef MODULE
 DECL|function|ieee1394_init
 r_void
@@ -3771,6 +3630,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|init_ieee1394_guid
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#else
 DECL|function|init_module
@@ -3787,6 +3651,11 @@ c_func
 )paren
 suffix:semicolon
 id|init_csr
+c_func
+(paren
+)paren
+suffix:semicolon
+id|init_ieee1394_guid
 c_func
 (paren
 )paren

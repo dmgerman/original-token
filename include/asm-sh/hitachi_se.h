@@ -51,6 +51,38 @@ DECL|macro|PA_BCR
 mdefine_line|#define PA_BCR&t;&t;0xb1400000&t;/* FPGA */
 DECL|macro|PA_MRSHPC
 mdefine_line|#define PA_MRSHPC&t;0xb83fffe0&t;/* MR-SHPC-01 PCMCIA controler */
+DECL|macro|PA_MRSHPC_MW1
+mdefine_line|#define PA_MRSHPC_MW1&t;0xb8400000&t;/* MR-SHPC-01 memory window base */
+DECL|macro|PA_MRSHPC_MW2
+mdefine_line|#define PA_MRSHPC_MW2&t;0xb8500000&t;/* MR-SHPC-01 attribute window base */
+DECL|macro|PA_MRSHPC_IO
+mdefine_line|#define PA_MRSHPC_IO&t;0xb8600000&t;/* MR-SHPC-01 I/O window base */
+DECL|macro|MRSHPC_OPTION
+mdefine_line|#define MRSHPC_OPTION   (PA_MRSHPC + 6)
+DECL|macro|MRSHPC_CSR
+mdefine_line|#define MRSHPC_CSR      (PA_MRSHPC + 8)
+DECL|macro|MRSHPC_ISR
+mdefine_line|#define MRSHPC_ISR      (PA_MRSHPC + 10)
+DECL|macro|MRSHPC_ICR
+mdefine_line|#define MRSHPC_ICR      (PA_MRSHPC + 12)
+DECL|macro|MRSHPC_CPWCR
+mdefine_line|#define MRSHPC_CPWCR    (PA_MRSHPC + 14)
+DECL|macro|MRSHPC_MW0CR1
+mdefine_line|#define MRSHPC_MW0CR1   (PA_MRSHPC + 16)
+DECL|macro|MRSHPC_MW1CR1
+mdefine_line|#define MRSHPC_MW1CR1   (PA_MRSHPC + 18)
+DECL|macro|MRSHPC_IOWCR1
+mdefine_line|#define MRSHPC_IOWCR1   (PA_MRSHPC + 20)
+DECL|macro|MRSHPC_MW0CR2
+mdefine_line|#define MRSHPC_MW0CR2   (PA_MRSHPC + 22)
+DECL|macro|MRSHPC_MW1CR2
+mdefine_line|#define MRSHPC_MW1CR2   (PA_MRSHPC + 24)
+DECL|macro|MRSHPC_IOWCR2
+mdefine_line|#define MRSHPC_IOWCR2   (PA_MRSHPC + 26)
+DECL|macro|MRSHPC_CDCR
+mdefine_line|#define MRSHPC_CDCR     (PA_MRSHPC + 28)
+DECL|macro|MRSHPC_PCIC_INFO
+mdefine_line|#define MRSHPC_PCIC_INFO (PA_MRSHPC + 30)
 DECL|macro|BCR_ILCRA
 mdefine_line|#define BCR_ILCRA&t;(PA_BCR + 0)
 DECL|macro|BCR_ILCRB

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.4 2000/05/09 17:40:15 davem Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.5 2000/06/04 06:23:53 anton Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H
@@ -514,46 +514,6 @@ mdefine_line|#define pgd_cache_size&t;&t;(pgt_quicklists.pgd_cache_sz)
 id|BTFIXUPDEF_CALL
 c_func
 (paren
-id|pte_t
-op_star
-comma
-id|get_pte_fast
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pgd_t
-op_star
-comma
-id|get_pgd_fast
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|free_pte_slow
-comma
-id|pte_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|free_pgd_slow
-comma
-id|pgd_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
 r_int
 comma
 id|do_check_pgt_cache
@@ -562,46 +522,6 @@ r_int
 comma
 r_int
 )paren
-DECL|macro|get_pte_fast
-mdefine_line|#define get_pte_fast() BTFIXUP_CALL(get_pte_fast)()
-DECL|function|get_pmd_fast
-r_extern
-id|__inline__
-id|pmd_t
-op_star
-id|get_pmd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-l_int|0
-suffix:semicolon
-)brace
-DECL|macro|get_pgd_fast
-mdefine_line|#define get_pgd_fast() BTFIXUP_CALL(get_pgd_fast)()
-DECL|macro|free_pte_slow
-mdefine_line|#define free_pte_slow(pte) BTFIXUP_CALL(free_pte_slow)(pte)
-DECL|function|free_pmd_slow
-r_extern
-id|__inline__
-r_void
-id|free_pmd_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-DECL|macro|free_pgd_slow
-mdefine_line|#define free_pgd_slow(pgd) BTFIXUP_CALL(free_pgd_slow)(pgd)
 DECL|macro|do_check_pgt_cache
 mdefine_line|#define do_check_pgt_cache(low,high) BTFIXUP_CALL(do_check_pgt_cache)(low,high)
 multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any, and marks the page tables reserved.&n; */

@@ -410,7 +410,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * open callback: claim parport.&n; */
+multiline_comment|/*&n; * open callback: claim parport.&n; * FIXME: race possible here.&n; */
 DECL|function|js_tg_open
 r_int
 id|js_tg_open
@@ -998,6 +998,8 @@ l_int|1
 )braket
 comma
 l_string|&quot;Multisystem joystick&quot;
+comma
+l_int|NULL
 comma
 id|js_tg_open
 comma

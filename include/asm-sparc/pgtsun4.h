@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsun4.h,v 1.4 1998/07/26 03:05:42 davem Exp $&n; * pgtsun4.h:  Sun4 specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtsun4.h,v 1.5 2000/06/05 06:08:46 anton Exp $&n; * pgtsun4.h:  Sun4 specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
@@ -45,11 +45,6 @@ DECL|macro|SUN4C_PTRS_PER_PMD
 mdefine_line|#define SUN4C_PTRS_PER_PMD    1
 DECL|macro|SUN4C_PTRS_PER_PGD
 mdefine_line|#define SUN4C_PTRS_PER_PGD    1024
-multiline_comment|/* On the sun4 the physical ram limit is 128MB.  We set up our I/O&n; * translations at KERNBASE + 128MB for 1MB, then we begin the VMALLOC&n; * area, makes sense.  This works out to the value below.&n; */
-DECL|macro|SUN4C_VMALLOC_START
-mdefine_line|#define SUN4C_VMALLOC_START   (0xfe300000)
-DECL|macro|SUN4C_VMALLOC_END
-mdefine_line|#define SUN4C_VMALLOC_END     ~0x0UL
 multiline_comment|/*&n; * Sparc SUN4C pte fields.&n; */
 DECL|macro|_SUN4C_PAGE_VALID
 mdefine_line|#define _SUN4C_PAGE_VALID        0x80000000

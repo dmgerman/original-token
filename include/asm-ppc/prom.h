@@ -1,4 +1,7 @@
 multiline_comment|/*&n; * Definitions for talking to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+macro_line|#ifndef _PPC_PROM_H
+DECL|macro|_PPC_PROM_H
+mdefine_line|#define _PPC_PROM_H
 DECL|typedef|phandle
 r_typedef
 r_void
@@ -483,4 +486,5 @@ r_char
 id|c
 )paren
 suffix:semicolon
+macro_line|#endif /* _PPC_PROM_H */
 eof

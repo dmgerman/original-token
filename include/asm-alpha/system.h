@@ -13,20 +13,22 @@ mdefine_line|#define BOOT_ADDR&t;0x20000000
 multiline_comment|/* Remove when official MILO sources have ELF support: */
 DECL|macro|BOOT_SIZE
 mdefine_line|#define BOOT_SIZE&t;(16*1024)
+DECL|macro|KERNEL_START_PHYS
+mdefine_line|#define KERNEL_START_PHYS&t;0x800000 /* Wildfire has a huge console */
 DECL|macro|KERNEL_START
-mdefine_line|#define KERNEL_START&t;(PAGE_OFFSET+0x300000)
+mdefine_line|#define KERNEL_START&t;(PAGE_OFFSET+KERNEL_START_PHYS)
 DECL|macro|SWAPPER_PGD
-mdefine_line|#define SWAPPER_PGD&t;(PAGE_OFFSET+0x300000)
+mdefine_line|#define SWAPPER_PGD&t;KERNEL_START
 DECL|macro|INIT_STACK
-mdefine_line|#define INIT_STACK&t;(PAGE_OFFSET+0x302000)
+mdefine_line|#define INIT_STACK&t;(PAGE_OFFSET+KERNEL_START_PHYS+0x02000)
 DECL|macro|EMPTY_PGT
-mdefine_line|#define EMPTY_PGT&t;(PAGE_OFFSET+0x304000)
+mdefine_line|#define EMPTY_PGT&t;(PAGE_OFFSET+KERNEL_START_PHYS+0x04000)
 DECL|macro|EMPTY_PGE
-mdefine_line|#define EMPTY_PGE&t;(PAGE_OFFSET+0x308000)
+mdefine_line|#define EMPTY_PGE&t;(PAGE_OFFSET+KERNEL_START_PHYS+0x08000)
 DECL|macro|ZERO_PGE
-mdefine_line|#define ZERO_PGE&t;(PAGE_OFFSET+0x30A000)
+mdefine_line|#define ZERO_PGE&t;(PAGE_OFFSET+KERNEL_START_PHYS+0x0A000)
 DECL|macro|START_ADDR
-mdefine_line|#define START_ADDR&t;(PAGE_OFFSET+0x310000)
+mdefine_line|#define START_ADDR&t;(PAGE_OFFSET+KERNEL_START_PHYS+0x10000)
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * This is the logout header that should be common to all platforms&n; * (assuming they are running OSF/1 PALcode, I guess).&n; */
 DECL|struct|el_common
@@ -339,6 +341,8 @@ id|noreturn
 )paren
 )paren
 suffix:semicolon
+DECL|macro|__halt
+mdefine_line|#define __halt() __asm__ __volatile__ (&quot;call_pal %0 #halt&quot; : : &quot;i&quot; (PAL_halt))
 DECL|macro|prepare_to_switch
 mdefine_line|#define prepare_to_switch()&t;do { } while(0)
 DECL|macro|switch_to

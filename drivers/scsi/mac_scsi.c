@@ -185,7 +185,9 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Function : mac_scsi_setup(char *str, int *ints)&n; *&n; * Purpose : booter command line initialization of the overrides array,&n; *&n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
 DECL|function|mac_scsi_setup
-r_void
+r_static
+r_int
+id|__init
 id|mac_scsi_setup
 c_func
 (paren
@@ -324,6 +326,7 @@ l_string|&quot;mac_scsi_setup: no arguments!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -521,6 +524,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
 )brace
 id|__setup
 c_func

@@ -65,7 +65,53 @@ suffix:semicolon
 )brace
 DECL|macro|__constant_cpu_to_be32
 mdefine_line|#define __constant_cpu_to_be32(x) __constant_htonl((x))
-macro_line|#endif
+DECL|macro|set_current_state
+mdefine_line|#define set_current_state(state_value) &bslash;&n; do { current-&gt;state = (state_value); } while (0)
+macro_line|#include &lt;linux/pci.h&gt;
+DECL|function|pci_enable_device
+r_inline
+r_static
+r_int
+id|pci_enable_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+id|u16
+id|cmd
+suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|cmd
+)paren
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+id|cmd
+op_or
+id|PCI_COMMAND_MEMORY
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* Linux version &lt; 2.3 */
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,18)
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#else
@@ -74,6 +120,10 @@ macro_line|#endif
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
+macro_line|#endif
+macro_line|#ifndef MAX
+DECL|macro|MAX
+mdefine_line|#define MAX(a,b) ((a) &gt; (b) ? (a) : (b))
 macro_line|#endif
 DECL|typedef|quadlet_t
 r_typedef

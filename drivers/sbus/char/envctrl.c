@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: envctrl.c,v 1.16 2000/03/22 21:29:23 ecd Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: envctrl.c,v 1.17 2000/06/19 06:24:47 davem Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -8947,31 +8947,6 @@ id|file-&gt;private_data
 op_assign
 l_int|0
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|envctrl_release
-id|envctrl_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8983,6 +8958,10 @@ id|file_operations
 id|envctrl_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|envctrl_llseek
@@ -9002,10 +8981,6 @@ comma
 id|open
 suffix:colon
 id|envctrl_open
-comma
-id|release
-suffix:colon
-id|envctrl_release
 comma
 )brace
 suffix:semicolon

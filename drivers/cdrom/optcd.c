@@ -7433,6 +7433,8 @@ l_string|&quot;starting opt_open&quot;
 )paren
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7515,9 +7517,8 @@ id|status
 )paren
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|DEBUG
@@ -7555,9 +7556,8 @@ id|KERN_INFO
 l_string|&quot;optcd: no disk or door open&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|status
@@ -7651,17 +7651,14 @@ id|status
 )paren
 suffix:semicolon
 )brace
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|open_count
 op_increment
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -7674,6 +7671,14 @@ l_string|&quot;exiting opt_open&quot;
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|err_out
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/* Release device special file; flush all blocks from the buffer cache */

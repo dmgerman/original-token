@@ -558,6 +558,11 @@ DECL|member|processor
 r_int
 id|processor
 suffix:semicolon
+DECL|member|ptrace
+r_int
+r_int
+id|ptrace
+suffix:semicolon
 DECL|member|run_list
 r_struct
 id|list_head
@@ -955,10 +960,6 @@ DECL|macro|PF_STARTING
 mdefine_line|#define PF_STARTING&t;0x00000002&t;/* being created */
 DECL|macro|PF_EXITING
 mdefine_line|#define PF_EXITING&t;0x00000004&t;/* getting shut down */
-DECL|macro|PF_PTRACED
-mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called */
-DECL|macro|PF_TRACESYS
-mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
 DECL|macro|PF_FORKNOEXEC
 mdefine_line|#define PF_FORKNOEXEC&t;0x00000040&t;/* forked but didn&squot;t exec */
 DECL|macro|PF_SUPERPRIV
@@ -973,8 +974,13 @@ DECL|macro|PF_VFORK
 mdefine_line|#define PF_VFORK&t;0x00001000&t;/* Wake up parent in mm_release */
 DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* task used FPU this quantum (SMP) */
-DECL|macro|PF_DTRACE
-mdefine_line|#define PF_DTRACE&t;0x00200000&t;/* delayed trace (used on m68k, i386) */
+multiline_comment|/*&n; * Ptrace flags&n; */
+DECL|macro|PT_PTRACED
+mdefine_line|#define PT_PTRACED&t;0x00000001
+DECL|macro|PT_TRACESYS
+mdefine_line|#define PT_TRACESYS&t;0x00000002
+DECL|macro|PT_DTRACE
+mdefine_line|#define PT_DTRACE&t;0x00000004&t;/* delayed trace (used on m68k, i386) */
 multiline_comment|/*&n; * Limit the stack by to some sane default: root can always&n; * increase this limit if needed..  8MB seems reasonable.&n; */
 DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)

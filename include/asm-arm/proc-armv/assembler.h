@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/asm-arm/proc-armv/assembler.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * This file contains arm architecture specific defines&n; * for the different processors&n; */
+multiline_comment|/*&n; * linux/asm-arm/proc-armv/assembler.h&n; *&n; * Copyright (C) 1996-2000 Russell King&n; *&n; * This file contains ARM processor specifics for&n; * the ARM6 and better processors.&n; */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#error &quot;Only include this from assembly code&quot;
 macro_line|#endif
@@ -12,37 +12,58 @@ DECL|macro|MODE_SVC
 mdefine_line|#define MODE_SVC&t;SVC_MODE
 DECL|macro|DEFAULT_FIQ
 mdefine_line|#define DEFAULT_FIQ&t;MODE_FIQ
-multiline_comment|/*&n; * LOADREGS - ldm with PC in register list (eg, ldmfd sp!, {pc})&n; * RETINSTR - return instruction (eg, mov pc, lr)&n; */
+multiline_comment|/*&n; * LOADREGS - ldm with PC in register list (eg, ldmfd sp!, {pc})&n; */
 macro_line|#ifdef __STDC__
 DECL|macro|LOADREGS
 mdefine_line|#define LOADREGS(cond, base, reglist...)&bslash;&n;&t;ldm##cond&t;base,reglist
-DECL|macro|RETINSTR
-mdefine_line|#define RETINSTR(instr, regs...)&bslash;&n;&t;instr&t;regs
 macro_line|#else
 DECL|macro|LOADREGS
 mdefine_line|#define LOADREGS(cond, base, reglist...)&bslash;&n;&t;ldm/**/cond&t;base,reglist
-DECL|macro|RETINSTR
-mdefine_line|#define RETINSTR(instr, regs...)&bslash;&n;&t;instr&t;&t;regs
 macro_line|#endif
-multiline_comment|/*&n; * No nop required after mode change&n; */
-DECL|macro|MODENOP
-mdefine_line|#define MODENOP
-multiline_comment|/*&n; * Change to `mode&squot;&n; */
-DECL|macro|MODE
-mdefine_line|#define MODE(savereg,tmpreg,mode) &bslash;&n;&t;mrs&t;savereg, cpsr; &bslash;&n;&t;bic&t;tmpreg, savereg, $0x1f; &bslash;&n;&t;orr&t;tmpreg, tmpreg, $mode; &bslash;&n;&t;msr&t;cpsr, tmpreg
-multiline_comment|/*&n; * Restore mode&n; */
-DECL|macro|RESTOREMODE
-mdefine_line|#define RESTOREMODE(savereg) &bslash;&n;&t;msr&t;cpsr, savereg
-multiline_comment|/*&n; * save interrupt state (uses stack)&n; */
-DECL|macro|SAVEIRQS
-mdefine_line|#define SAVEIRQS(tmpreg)&bslash;&n;&t;mrs&t;tmpreg, cpsr; &bslash;&n;&t;str&t;tmpreg, [sp, $-4]!
-multiline_comment|/*&n; * restore interrupt state (uses stack)&n; */
-DECL|macro|RESTOREIRQS
-mdefine_line|#define RESTOREIRQS(tmpreg)&bslash;&n;&t;ldr&t;tmpreg, [sp], $4; &bslash;&n;&t;msr&t;cpsr, tmpreg
-multiline_comment|/*&n; * disable IRQs&n; */
-DECL|macro|DISABLEIRQS
-mdefine_line|#define DISABLEIRQS(tmpreg)&bslash;&n;&t;mrs&t;tmpreg , cpsr; &bslash;&n;&t;orr&t;tmpreg , tmpreg , $I_BIT; &bslash;&n;&t;msr&t;cpsr, tmpreg
-multiline_comment|/*&n; * enable IRQs&n; */
-DECL|macro|ENABLEIRQS
-mdefine_line|#define ENABLEIRQS(tmpreg)&bslash;&n;&t;mrs&t;tmpreg , cpsr; &bslash;&n;&t;bic&t;tmpreg , tmpreg , $I_BIT; &bslash;&n;&t;msr&t;cpsr, tmpreg
+multiline_comment|/*&n; * Build a return instruction for this processor type.&n; */
+DECL|macro|RETINSTR
+mdefine_line|#define RETINSTR(instr, regs...)&bslash;&n;&t;instr&t;regs
+multiline_comment|/*&n; * Save the current IRQ state and disable IRQs&n; * Note that this macro assumes FIQs are enabled, and&n; * that the processor is in SVC mode.&n; */
+DECL|variable|oldcpsr
+dot
+id|macro
+id|save_and_disable_irqs
+comma
+id|oldcpsr
+comma
+id|temp
+DECL|variable|oldcpsr
+id|mrs
+"&bslash;"
+id|oldcpsr
+comma
+id|cpsr
+DECL|variable|temp
+id|mov
+"&bslash;"
+id|temp
+comma
+macro_line|#I_BIT | MODE_SVC
+DECL|variable|cpsr_c
+id|msr
+id|cpsr_c
+comma
+"&bslash;"
+id|temp
+dot
+id|endm
+multiline_comment|/*&n; * Restore interrupt state previously stored in&n; * a register&n; */
+dot
+id|macro
+id|restore_irqs
+comma
+id|oldcpsr
+DECL|variable|cpsr_c
+id|msr
+id|cpsr_c
+comma
+"&bslash;"
+id|oldcpsr
+dot
+id|endm
 eof

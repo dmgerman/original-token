@@ -324,20 +324,6 @@ OL
 id|n
 )paren
 (brace
-multiline_comment|/* Reached the end.  Flush the TLB and restart the&n;&t;&t;   search from the beginning.  */
-id|alpha_mv
-dot
-id|mv_pci_tbi
-c_func
-(paren
-id|arena-&gt;hose
-comma
-l_int|0
-comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
 id|p
 op_assign
 l_int|0
@@ -519,7 +505,7 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/* Map a single buffer of the indicate size for PCI DMA in streaming&n;   mode.  The 32-bit PCI bus mastering address to use is returned.&n;   Once the device is given the dma address, the device owns this memory&n;   until either pci_unmap_single or pci_dma_sync_single is performed.  */
+multiline_comment|/* Map a single buffer of the indicated size for PCI DMA in streaming&n;   mode.  The 32-bit PCI bus mastering address to use is returned.&n;   Once the device is given the dma address, the device owns this memory&n;   until either pci_unmap_single or pci_dma_sync_single is performed.  */
 id|dma_addr_t
 DECL|function|pci_map_single
 id|pci_map_single
@@ -811,6 +797,22 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+id|alpha_mv
+dot
+id|mv_pci_tbi
+c_func
+(paren
+id|hose
+comma
+id|ret
+comma
+id|ret
+op_plus
+id|size
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -991,14 +993,6 @@ comma
 id|npages
 )paren
 suffix:semicolon
-multiline_comment|/* If we&squot;re freeing ptes above the `next_entry&squot; pointer, they&n;&t;   may have snuck back into the TLB since the last wrap flush.&n;&t;   We need to flush the TLB before reallocating these.  */
-r_if
-c_cond
-(paren
-id|dma_ofs
-op_ge
-id|arena-&gt;next_entry
-)paren
 id|alpha_mv
 dot
 id|mv_pci_tbi
@@ -1786,6 +1780,22 @@ OL
 l_int|0
 )paren
 suffix:semicolon
+id|alpha_mv
+dot
+id|mv_pci_tbi
+c_func
+(paren
+id|arena-&gt;hose
+comma
+id|out-&gt;dma_address
+comma
+id|out-&gt;dma_address
+op_plus
+id|out-&gt;dma_length
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -2377,20 +2387,6 @@ op_assign
 id|tend
 suffix:semicolon
 )brace
-multiline_comment|/* If we&squot;re freeing ptes above the `next_entry&squot; pointer, they&n;&t;   may have snuck back into the TLB since the last wrap flush.&n;&t;   We need to flush the TLB before reallocating these.  */
-r_if
-c_cond
-(paren
-(paren
-id|fend
-op_minus
-id|arena-&gt;dma_base
-)paren
-op_rshift
-id|PAGE_SHIFT
-op_ge
-id|arena-&gt;next_entry
-)paren
 id|alpha_mv
 dot
 id|mv_pci_tbi

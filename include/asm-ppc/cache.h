@@ -6,8 +6,13 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/* bytes per L1 cache line */
 macro_line|#if !defined(CONFIG_8xx) || defined(CONFIG_8260)
+macro_line|#if defined(CONFIG_PPC64BRIDGE)
+DECL|macro|L1_CACHE_BYTES
+mdefine_line|#define L1_CACHE_BYTES&t;128
+macro_line|#else
 DECL|macro|L1_CACHE_BYTES
 mdefine_line|#define&t;L1_CACHE_BYTES  32
+macro_line|#endif /* PPC64 */
 macro_line|#else
 DECL|macro|L1_CACHE_BYTES
 mdefine_line|#define&t;L1_CACHE_BYTES&t;16

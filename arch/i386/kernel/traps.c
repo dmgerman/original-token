@@ -171,13 +171,6 @@ DECL|macro|DO_VM86_ERROR
 mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
 DECL|macro|DO_VM86_ERROR_INFO
 mdefine_line|#define DO_VM86_ERROR_INFO(trapnr, signr, str, name, tsk, sicode, siaddr) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;siginfo_t info; &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;info.si_signo = signr; &bslash;&n;&t;info.si_errno = 0; &bslash;&n;&t;info.si_code = sicode; &bslash;&n;&t;info.si_addr = (void *)siaddr; &bslash;&n;&t;force_sig_info(signr, &amp;info, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
-r_void
-id|page_exception
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 id|asmlinkage
 r_void
 id|divide_error
@@ -2035,21 +2028,21 @@ op_amp
 id|DR_STEP
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * The TF error should be masked out only if the current&n;&t;&t; * process is not traced and if the TRAP flag has been set&n;&t;&t; * previously by a tracing process (condition detected by&n;&t;&t; * the PF_DTRACE flag); remember that the i386 TRAP flag&n;&t;&t; * can be modified by the process itself in user mode,&n;&t;&t; * allowing programs to debug themselves without the ptrace()&n;&t;&t; * interface.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The TF error should be masked out only if the current&n;&t;&t; * process is not traced and if the TRAP flag has been set&n;&t;&t; * previously by a tracing process (condition detected by&n;&t;&t; * the PT_DTRACE flag); remember that the i386 TRAP flag&n;&t;&t; * can be modified by the process itself in user mode,&n;&t;&t; * allowing programs to debug themselves without the ptrace()&n;&t;&t; * interface.&n;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
-id|tsk-&gt;flags
+id|tsk-&gt;ptrace
 op_amp
 (paren
-id|PF_DTRACE
+id|PT_DTRACE
 op_or
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 )paren
 op_eq
-id|PF_DTRACE
+id|PT_DTRACE
 )paren
 r_goto
 id|clear_TF

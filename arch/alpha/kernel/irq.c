@@ -813,6 +813,8 @@ id|irq
 r_static
 r_int
 id|last_cpu
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|cpu
@@ -859,7 +861,11 @@ op_assign
 (paren
 id|cpu
 OL
+(paren
 id|NR_CPUS
+op_minus
+l_int|1
+)paren
 ques
 c_cond
 id|cpu
@@ -2107,6 +2113,7 @@ comma
 id|i
 )paren
 suffix:semicolon
+macro_line|#ifdef DO_BROADCAST_INTS
 r_for
 c_loop
 (paren
@@ -2133,6 +2140,7 @@ comma
 id|i
 )paren
 suffix:semicolon
+macro_line|#endif
 op_star
 id|p
 op_increment
@@ -2238,6 +2246,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef DO_BROADCAST_INTS
 r_for
 c_loop
 (paren
@@ -2274,6 +2283,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|p
 op_add_assign

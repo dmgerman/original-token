@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.46 2000/05/03 06:37:05 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.48 2000/06/19 06:24:47 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2995,14 +2995,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|queue-&gt;fasync
-)paren
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|queue-&gt;fasync
 comma
 id|SIGIO
@@ -3105,8 +3101,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3195,8 +3189,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Flush input queue */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|poll_aux_status
 c_func
 (paren
@@ -3659,6 +3651,10 @@ id|file_operations
 id|psaux_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|aux_read
@@ -3713,6 +3709,10 @@ id|file_operations
 id|psaux_no_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|open
 suffix:colon
 id|aux_no_open

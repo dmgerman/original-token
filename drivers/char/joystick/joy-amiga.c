@@ -219,44 +219,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * js_am_open() is a callback from the file open routine.&n; */
-DECL|function|js_am_open
-r_static
-r_int
-id|js_am_open
-c_func
-(paren
-r_struct
-id|js_dev
-op_star
-id|jd
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * js_am_close() is a callback from the file release routine.&n; */
-DECL|function|js_am_close
-r_static
-r_int
-id|js_am_close
-c_func
-(paren
-r_struct
-id|js_dev
-op_star
-id|jd
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * js_am_init_corr() initializes correction values of&n; * Amiga joysticks.&n; */
 DECL|function|js_am_init_corr
 r_static
@@ -532,9 +494,11 @@ l_int|1
 comma
 l_string|&quot;Amiga joystick&quot;
 comma
-id|js_am_open
+id|THIS_MODULE
 comma
-id|js_am_close
+l_int|NULL
+comma
+l_int|NULL
 )paren
 comma
 id|i

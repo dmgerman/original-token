@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/pgtable.h&n; */
 macro_line|#ifndef _ASMARM_PGTABLE_H
 DECL|macro|_ASMARM_PGTABLE_H
 mdefine_line|#define _ASMARM_PGTABLE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -154,8 +155,14 @@ DECL|macro|pte_none
 mdefine_line|#define pte_none(pte)&t;&t;(!pte_val(pte))
 DECL|macro|pte_clear
 mdefine_line|#define pte_clear(ptep)&t;&t;set_pte((ptep), __pte(0))
+macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|macro|pte_pagenr
 mdefine_line|#define pte_pagenr(pte)&t;&t;((unsigned long)(((pte_val(pte) - PHYS_OFFSET) &gt;&gt; PAGE_SHIFT)))
+macro_line|#else
+multiline_comment|/*&n; * I&squot;m not happy with this - we needlessly convert a physical address&n; * to a virtual one, and then immediately back to a physical address,&n; * which, if __va and __pa are expensive causes twice the expense for&n; * zero gain. --rmk&n; */
+DECL|macro|pte_pagenr
+mdefine_line|#define pte_pagenr(pte)&t;&t;MAP_NR(__va(pte_val(pte)))
+macro_line|#endif
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(pmd)&t;&t;(!pmd_val(pmd))
 DECL|macro|pmd_clear

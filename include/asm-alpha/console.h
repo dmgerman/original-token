@@ -32,6 +32,10 @@ DECL|macro|CCB_GET_ENV
 mdefine_line|#define CCB_GET_ENV&t;&t;0x22
 DECL|macro|CCB_SAVE_ENV
 mdefine_line|#define CCB_SAVE_ENV&t;&t;0x23
+DECL|macro|CCB_PSWITCH
+mdefine_line|#define CCB_PSWITCH            0x30
+DECL|macro|CCB_BIOS_EMUL
+mdefine_line|#define CCB_BIOS_EMUL          0x32
 multiline_comment|/*&n; * Environment variable numbers&n; */
 DECL|macro|ENV_AUTO_ACTION
 mdefine_line|#define ENV_AUTO_ACTION&t;&t;0x01
@@ -55,8 +59,8 @@ DECL|macro|ENV_DUMP_DEV
 mdefine_line|#define ENV_DUMP_DEV&t;&t;0x0A
 DECL|macro|ENV_ENABLE_AUDIT
 mdefine_line|#define ENV_ENABLE_AUDIT&t;0x0B
-DECL|macro|ENV_LICENCE
-mdefine_line|#define ENV_LICENCE&t;&t;0x0C
+DECL|macro|ENV_LICENSE
+mdefine_line|#define ENV_LICENSE&t;&t;0x0C
 DECL|macro|ENV_CHAR_SET
 mdefine_line|#define ENV_CHAR_SET&t;&t;0x0D
 DECL|macro|ENV_LANGUAGE
@@ -64,27 +68,109 @@ mdefine_line|#define ENV_LANGUAGE&t;&t;0x0E
 DECL|macro|ENV_TTY_DEV
 mdefine_line|#define ENV_TTY_DEV&t;&t;0x0F
 macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_int
-id|srm_dispatch
+id|callback_puts
 c_func
 (paren
 r_int
-id|code
+id|unit
 comma
-dot
-dot
-dot
+r_const
+r_char
+op_star
+id|s
+comma
+r_int
+id|length
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
+id|callback_open
+c_func
+(paren
+r_const
+r_char
+op_star
+id|device
+comma
+r_int
+id|length
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|callback_close
+c_func
+(paren
+r_int
+id|unit
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|callback_read
+c_func
+(paren
+r_int
+id|channel
+comma
+r_int
+id|count
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+r_int
+id|lbn
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|callback_getenv
+c_func
+(paren
+r_int
+id|id
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+r_int
+r_int
+id|buf_size
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|srm_fixup
+c_func
+(paren
+r_int
+r_int
+id|new_callback_addr
+comma
+r_int
+r_int
+id|new_hwrpb_addr
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|srm_puts
 c_func
 (paren
 r_const
 r_char
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -122,18 +208,19 @@ id|hwrpb_struct
 suffix:semicolon
 r_extern
 r_int
-id|srm_fixup
+id|callback_init_done
+suffix:semicolon
+r_extern
+r_void
+op_star
+id|callback_init
 c_func
 (paren
-r_struct
-id|crb_struct
-op_star
-comma
-r_struct
-id|hwrpb_struct
+r_void
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __AXP_CONSOLE_H */
 eof

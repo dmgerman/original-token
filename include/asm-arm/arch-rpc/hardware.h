@@ -90,7 +90,6 @@ mdefine_line|#define PCIO_FLOPPYDMABASE&t;0xe002a000
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xe0010000
 macro_line|#endif
-macro_line|#ifdef HAS_EXPMASK
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|__EXPMASK
 mdefine_line|#define __EXPMASK(offset)&t;(((volatile unsigned char *)EXPMASK_BASE)[offset])
@@ -102,6 +101,5 @@ DECL|macro|EXPMASK_STATUS
 mdefine_line|#define&t;EXPMASK_STATUS&t;__EXPMASK(0x00)
 DECL|macro|EXPMASK_ENABLE
 mdefine_line|#define EXPMASK_ENABLE&t;__EXPMASK(0x04)
-macro_line|#endif
 macro_line|#endif
 eof

@@ -264,7 +264,6 @@ DECL|macro|IRQLIST_16
 macro_line|#undef IRQLIST_16
 multiline_comment|/*&n; * This is the &squot;legacy&squot; 8259A Programmable Interrupt Controller,&n; * present in the majority of PC/AT boxes.&n; * plus some generic x86 specific things if generic specifics makes&n; * any sense at all.&n; * this file should become arch/i386/kernel/irq.c when the old irq.c&n; * moves to arch independent land&n; */
 DECL|variable|i8259A_lock
-r_static
 id|spinlock_t
 id|i8259A_lock
 op_assign
@@ -387,7 +386,6 @@ id|io_apic_irqs
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * These have to be protected by the irq controller spinlock&n; * before being called.&n; */
 DECL|function|disable_8259A_irq
 r_void
 id|disable_8259A_irq
@@ -650,7 +648,7 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function assumes to be called rarely. Switching between&n; * 8259A registers is slow.&n; */
+multiline_comment|/*&n; * This function assumes to be called rarely. Switching between&n; * 8259A registers is slow.&n; * This has to be protected by the irq controller spinlock&n; * before being called.&n; */
 DECL|function|i8259A_irq_real
 r_static
 r_inline
@@ -957,15 +955,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|i8259A_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|outb
@@ -1113,9 +1109,12 @@ l_int|0xA1
 )paren
 suffix:semicolon
 multiline_comment|/* restore slave IRQ mask */
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|i8259A_lock
+comma
 id|flags
 )paren
 suffix:semicolon

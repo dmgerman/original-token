@@ -1253,15 +1253,34 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mov&t;r0, %1&t;&t;@ kernel_thread sys_clone&bslash;n&quot;
-l_string|&quot;&t;mov&t;r1, #0&bslash;n&quot;
-id|__syscall
-c_func
-(paren
-id|clone
-)paren
-l_string|&quot;&bslash;n&quot;
-l_string|&quot;&t;mov&t;%0, r0&quot;
+"&quot;"
+id|mov
+id|r0
+comma
+op_mod
+l_int|1
+"@"
+id|kernel_thread
+id|sys_clone
+id|mov
+id|r1
+comma
+macro_line|#0
+l_string|&quot;__syscall(clone)&quot;
+id|teq
+id|r0
+comma
+macro_line|#0&t;&t;@ if we are the child
+id|moveq
+id|fp
+comma
+macro_line|#0&t;&t;@ ensure that fp is zero
+id|mov
+op_mod
+l_int|0
+comma
+id|r0
+"&quot;"
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

@@ -2242,6 +2242,12 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

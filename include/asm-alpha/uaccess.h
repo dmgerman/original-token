@@ -1020,6 +1020,9 @@ c_func
 (paren
 r_int
 r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Returns the new pc */

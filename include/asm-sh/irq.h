@@ -40,8 +40,13 @@ macro_line|#elif defined(CONFIG_CPU_SUBTYPE_SH7708)
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS 32
 macro_line|#elif defined(CONFIG_CPU_SUBTYPE_SH7709)
+macro_line|#ifdef CONFIG_HD64461
+DECL|macro|NR_IRQS
+mdefine_line|#define NR_IRQS 80&t;&t;/* HD64461_IRQBASE+16, see hd64461.h */
+macro_line|#else
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS 61
+macro_line|#endif
 macro_line|#endif
 r_extern
 r_void

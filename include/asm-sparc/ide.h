@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ide.h,v 1.5 2000/05/22 07:29:43 davem Exp $&n; * ide.h: SPARC PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; * Adaptation from sparc64 version to sparc by Pete Zaitcev.&n; */
+multiline_comment|/* $Id: ide.h,v 1.6 2000/05/27 00:49:37 davem Exp $&n; * ide.h: SPARC PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; * Adaptation from sparc64 version to sparc by Pete Zaitcev.&n; */
 macro_line|#ifndef _SPARC_IDE_H
 DECL|macro|_SPARC_IDE_H
 mdefine_line|#define _SPARC_IDE_H

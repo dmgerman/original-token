@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsrmmu.h,v 1.29 1998/07/26 03:05:42 davem Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsrmmu.h,v 1.30 2000/06/05 06:08:46 anton Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSRMMU_H
 DECL|macro|_SPARC_PGTSRMMU_H
 mdefine_line|#define _SPARC_PGTSRMMU_H
@@ -33,10 +33,6 @@ DECL|macro|SRMMU_PMD_TABLE_SIZE
 mdefine_line|#define SRMMU_PMD_TABLE_SIZE    0x100 /* 64 entries, 4 bytes a piece */
 DECL|macro|SRMMU_PGD_TABLE_SIZE
 mdefine_line|#define SRMMU_PGD_TABLE_SIZE    0x400 /* 256 entries, 4 bytes a piece */
-DECL|macro|SRMMU_VMALLOC_START
-mdefine_line|#define SRMMU_VMALLOC_START   (0xfe300000)
-DECL|macro|SRMMU_VMALLOC_END
-mdefine_line|#define SRMMU_VMALLOC_END     ~0x0UL
 multiline_comment|/* Definition of the values in the ET field of PTD&squot;s and PTE&squot;s */
 DECL|macro|SRMMU_ET_MASK
 mdefine_line|#define SRMMU_ET_MASK         0x3

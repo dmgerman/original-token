@@ -9,12 +9,12 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/* Machine State Register (MSR) Fields */
-macro_line|#ifdef CONFIG_PPC64
+macro_line|#ifdef CONFIG_PPC64BRIDGE
 DECL|macro|MSR_SF
 mdefine_line|#define MSR_SF&t;&t;(1&lt;&lt;63)
 DECL|macro|MSR_ISF
 mdefine_line|#define MSR_ISF&t;&t;(1&lt;&lt;61)
-macro_line|#endif /* CONFIG_PPC64 */   
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 DECL|macro|MSR_VEC
 mdefine_line|#define MSR_VEC&t;&t;(1&lt;&lt;25)&t;&t;/* Enable AltiVec */
 DECL|macro|MSR_POW

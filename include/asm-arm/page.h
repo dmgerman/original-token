@@ -222,13 +222,16 @@ id|order
 suffix:semicolon
 )brace
 macro_line|#endif /* !__ASSEMBLY__ */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;__virt_to_phys((unsigned long)(x))
 DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;&t;((void *)__phys_to_virt((unsigned long)(x)))
+macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;((__pa(addr) - PHYS_OFFSET) &gt;&gt; PAGE_SHIFT)
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

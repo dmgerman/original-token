@@ -15,6 +15,9 @@ comma
 DECL|enumerator|U32_APER_SIZE
 id|U32_APER_SIZE
 comma
+DECL|enumerator|LVL2_APER_SIZE
+id|LVL2_APER_SIZE
+comma
 DECL|enumerator|FIXED_APER_SIZE
 id|FIXED_APER_SIZE
 )brace
@@ -112,6 +115,27 @@ suffix:semicolon
 DECL|typedef|aper_size_info_32
 )brace
 id|aper_size_info_32
+suffix:semicolon
+DECL|struct|_aper_size_info_lvl2
+r_typedef
+r_struct
+id|_aper_size_info_lvl2
+(brace
+DECL|member|size
+r_int
+id|size
+suffix:semicolon
+DECL|member|num_entries
+r_int
+id|num_entries
+suffix:semicolon
+DECL|member|size_value
+id|u32
+id|size_value
+suffix:semicolon
+DECL|typedef|aper_size_info_lvl2
+)brace
+id|aper_size_info_lvl2
 suffix:semicolon
 DECL|struct|_aper_size_info_fixed
 r_typedef
@@ -425,6 +449,8 @@ DECL|macro|A_SIZE_16
 mdefine_line|#define A_SIZE_16(x)&t;((aper_size_info_16 *) x)
 DECL|macro|A_SIZE_32
 mdefine_line|#define A_SIZE_32(x)&t;((aper_size_info_32 *) x)
+DECL|macro|A_SIZE_LVL2
+mdefine_line|#define A_SIZE_LVL2(x)  ((aper_size_info_lvl2 *) x)
 DECL|macro|A_SIZE_FIX
 mdefine_line|#define A_SIZE_FIX(x)&t;((aper_size_info_fixed *) x)
 DECL|macro|A_IDX8
@@ -433,6 +459,8 @@ DECL|macro|A_IDX16
 mdefine_line|#define A_IDX16()&t;(A_SIZE_16(agp_bridge.aperture_sizes) + i)
 DECL|macro|A_IDX32
 mdefine_line|#define A_IDX32()&t;(A_SIZE_32(agp_bridge.aperture_sizes) + i)
+DECL|macro|A_IDXLVL2
+mdefine_line|#define A_IDXLVL2()&t;(A_SIZE_LVL2(agp_bridge.aperture_sizes) + i)
 DECL|macro|A_IDXFIX
 mdefine_line|#define A_IDXFIX()&t;(A_SIZE_FIX(agp_bridge.aperture_sizes) + i)
 DECL|macro|MAXKEY
@@ -460,6 +488,10 @@ macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_INTEL_810_0
 DECL|macro|PCI_DEVICE_ID_INTEL_810_0
 mdefine_line|#define PCI_DEVICE_ID_INTEL_810_0       0x7120
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_INTEL_840_0
+DECL|macro|PCI_DEVICE_ID_INTEL_840_0
+mdefine_line|#define PCI_DEVICE_ID_INTEL_840_0&t;&t;0x1a21
 macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_INTEL_810_DC100_0
 DECL|macro|PCI_DEVICE_ID_INTEL_810_DC100_0
@@ -514,6 +546,11 @@ DECL|macro|INTEL_NBXCFG
 mdefine_line|#define INTEL_NBXCFG    0x50
 DECL|macro|INTEL_ERRSTS
 mdefine_line|#define INTEL_ERRSTS    0x91
+multiline_comment|/* intel i840 registers */
+DECL|macro|INTEL_I840_MCHCFG
+mdefine_line|#define INTEL_I840_MCHCFG   0x50
+DECL|macro|INTEL_I840_ERRSTS
+mdefine_line|#define INTEL_I840_ERRSTS&t;0xc8
 multiline_comment|/* intel i810 registers */
 DECL|macro|I810_GMADDR
 mdefine_line|#define I810_GMADDR 0x10

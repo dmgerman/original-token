@@ -474,10 +474,14 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;clock&bslash;t&bslash;t: %dMHz&bslash;n&quot;
-l_string|&quot;bus clock&bslash;t: %dMHz&bslash;n&quot;
+l_string|&quot;core clock&bslash;t: %d MHz&bslash;n&quot;
+l_string|&quot;CPM  clock&bslash;t: %d MHz&bslash;n&quot;
+l_string|&quot;bus  clock&bslash;t: %d MHz&bslash;n&quot;
 comma
 id|bp-&gt;bi_intfreq
+multiline_comment|/*/ 1000000*/
+comma
+id|bp-&gt;bi_cpmfreq
 multiline_comment|/*/ 1000000*/
 comma
 id|bp-&gt;bi_busfreq

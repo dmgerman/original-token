@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.55 2000/05/09 17:40:13 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+multiline_comment|/* $Id: time.c,v 1.56 2000/06/13 22:51:28 anton Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -134,6 +134,12 @@ id|__atomic_end
 suffix:semicolon
 r_extern
 r_int
+id|__bzero_begin
+comma
+id|__bzero_end
+suffix:semicolon
+r_extern
+r_int
 id|__bitops_begin
 comma
 id|__bitops_end
@@ -179,6 +185,26 @@ r_int
 )paren
 op_amp
 id|__atomic_end
+)paren
+op_logical_or
+(paren
+id|pc
+op_ge
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|__bzero_begin
+op_logical_and
+id|pc
+OL
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|__bzero_end
 )paren
 op_logical_or
 (paren

@@ -39,17 +39,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
-DECL|macro|NOTIFY_DONE
-mdefine_line|#define NOTIFY_DONE&t;&t;0x0000&t;&t;/* Don&squot;t care */
-DECL|macro|NOTIFY_OK
-mdefine_line|#define NOTIFY_OK&t;&t;0x0001&t;&t;/* Suits me */
-DECL|macro|NOTIFY_STOP_MASK
-mdefine_line|#define NOTIFY_STOP_MASK&t;0x8000&t;&t;/* Don&squot;t call further */
-DECL|macro|NOTIFY_BAD
-mdefine_line|#define NOTIFY_BAD&t;&t;(NOTIFY_STOP_MASK|0x0002)&t;/* Bad/Veto action&t;*/
-DECL|function|notifier_chain_register
 r_extern
-id|__inline__
 r_int
 id|notifier_chain_register
 c_func
@@ -65,61 +55,8 @@ id|notifier_block
 op_star
 id|n
 )paren
-(brace
-r_while
-c_loop
-(paren
-op_star
-id|list
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|n-&gt;priority
-OG
-(paren
-op_star
-id|list
-)paren
-op_member_access_from_pointer
-id|priority
-)paren
-(brace
-r_break
 suffix:semicolon
-)brace
-id|list
-op_assign
-op_amp
-(paren
-(paren
-op_star
-id|list
-)paren
-op_member_access_from_pointer
-id|next
-)paren
-suffix:semicolon
-)brace
-id|n-&gt;next
-op_assign
-op_star
-id|list
-suffix:semicolon
-op_star
-id|list
-op_assign
-id|n
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Warning to any non GPL module writers out there.. these functions are&n; *&t;GPL&squot;d&n; */
-DECL|function|notifier_chain_unregister
 r_extern
-id|__inline__
 r_int
 id|notifier_chain_unregister
 c_func
@@ -135,60 +72,8 @@ id|notifier_block
 op_star
 id|n
 )paren
-(brace
-r_while
-c_loop
-(paren
-(paren
-op_star
-id|nl
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-op_star
-id|nl
-)paren
-op_eq
-id|n
-)paren
-(brace
-op_star
-id|nl
-op_assign
-id|n-&gt;next
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|nl
-op_assign
-op_amp
-(paren
-(paren
-op_star
-id|nl
-)paren
-op_member_access_from_pointer
-id|next
-)paren
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;This is one of these things that is generally shorter inline&n; */
-DECL|function|notifier_call_chain
 r_extern
-id|__inline__
 r_int
 id|notifier_call_chain
 c_func
@@ -207,61 +92,15 @@ r_void
 op_star
 id|v
 )paren
-(brace
-r_int
-id|ret
-op_assign
-id|NOTIFY_DONE
 suffix:semicolon
-r_struct
-id|notifier_block
-op_star
-id|nb
-op_assign
-op_star
-id|n
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|nb
-)paren
-(brace
-id|ret
-op_assign
-id|nb
-op_member_access_from_pointer
-id|notifier_call
-c_func
-(paren
-id|nb
-comma
-id|val
-comma
-id|v
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-op_amp
-id|NOTIFY_STOP_MASK
-)paren
-(brace
-r_return
-id|ret
-suffix:semicolon
-)brace
-id|nb
-op_assign
-id|nb-&gt;next
-suffix:semicolon
-)brace
-r_return
-id|ret
-suffix:semicolon
-)brace
+DECL|macro|NOTIFY_DONE
+mdefine_line|#define NOTIFY_DONE&t;&t;0x0000&t;&t;/* Don&squot;t care */
+DECL|macro|NOTIFY_OK
+mdefine_line|#define NOTIFY_OK&t;&t;0x0001&t;&t;/* Suits me */
+DECL|macro|NOTIFY_STOP_MASK
+mdefine_line|#define NOTIFY_STOP_MASK&t;0x8000&t;&t;/* Don&squot;t call further */
+DECL|macro|NOTIFY_BAD
+mdefine_line|#define NOTIFY_BAD&t;&t;(NOTIFY_STOP_MASK|0x0002)&t;/* Bad/Veto action&t;*/
 multiline_comment|/*&n; *&t;Declared notifiers so far. I can imagine quite a few more chains&n; *&t;over time (eg laptop power reset chains, reboot chain (to clean &n; *&t;device units up), device [un]mount chain, module load/unload chain,&n; *&t;low memory chain, screenblank chain (for plug in modular screenblankers) &n; *&t;VC switch chains (for loadable kernel svgalib VC switch helpers) etc...&n; */
 multiline_comment|/* netdevice notifier chain */
 DECL|macro|NETDEV_UP
@@ -292,13 +131,6 @@ DECL|macro|SYS_HALT
 mdefine_line|#define SYS_HALT&t;0x0002&t;/* Notify of system halt */
 DECL|macro|SYS_POWER_OFF
 mdefine_line|#define SYS_POWER_OFF&t;0x0003&t;/* Notify of system power off */
-multiline_comment|/*&n; *&t;Publically visible notifier objects&n; */
-r_extern
-r_struct
-id|notifier_block
-op_star
-id|boot_notifier_list
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _LINUX_NOTIFIER_H */
 eof

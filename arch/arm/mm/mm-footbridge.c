@@ -11,7 +11,7 @@ macro_line|#include &quot;map.h&quot;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 multiline_comment|/*&n; * The first entry allows us to fiddle with the EEPROM from user-space.&n; *  This entry will go away in time, once the fmu32 can mmap() the&n; *  flash.  It can&squot;t at the moment.&n; *&n; * If you want to fiddle with PCI VGA cards from user space, then&n; * change the &squot;0, 1 }&squot; for the PCI MEM and PCI IO to &squot;1, 1 }&squot;&n; * You can then access the PCI bus at 0xe0000000 and 0xffe00000.&n; */
-macro_line|#ifdef CONFIG_HOST_FOOTBRIDGE
+macro_line|#ifdef CONFIG_FOOTBRIDGE_HOST
 multiline_comment|/*&n; * The mapping when the footbridge is in host mode.&n; */
 DECL|macro|MAPPING
 mdefine_line|#define MAPPING &bslash;&n; { FLASH_BASE,   DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIMEM_BASE,  DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCICFG0_BASE, DC21285_PCI_TYPE_0_CONFIG,&t;PCICFG0_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCICFG1_BASE, DC21285_PCI_TYPE_1_CONFIG,&t;PCICFG1_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIIACK_BASE, DC21285_PCI_IACK,&t;&t;PCIIACK_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { WFLUSH_BASE,  DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIO_BASE,    DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { XBUS_BASE,    0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }

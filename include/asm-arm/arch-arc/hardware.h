@@ -12,9 +12,6 @@ mdefine_line|#define HAS_MEMC
 macro_line|#include &lt;asm/memc.h&gt;
 DECL|macro|HAS_VIDC
 mdefine_line|#define HAS_VIDC
-multiline_comment|/*&n; * Optional hardware&n; */
-DECL|macro|HAS_EXPMASK
-mdefine_line|#define HAS_EXPMASK
 multiline_comment|/* Hardware addresses of major areas.&n; *  *_START is the physical address&n; *  *_SIZE  is the size of the region&n; *  *_BASE  is the virtual address&n; */
 DECL|macro|IO_START
 mdefine_line|#define IO_START&t;&t;0x03000000
@@ -92,7 +89,6 @@ mdefine_line|#define PCIO_FLOPPYDMABASE&t;0x0302a000
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0x03010000
 macro_line|#endif
-macro_line|#ifdef HAS_EXPMASK
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|__EXPMASK
 mdefine_line|#define __EXPMASK(offset)&t;(((volatile unsigned char *)EXPMASK_BASE)[offset])
@@ -104,6 +100,5 @@ DECL|macro|EXPMASK_STATUS
 mdefine_line|#define&t;EXPMASK_STATUS&t;__EXPMASK(0x00)
 DECL|macro|EXPMASK_ENABLE
 mdefine_line|#define EXPMASK_ENABLE&t;__EXPMASK(0x04)
-macro_line|#endif
 macro_line|#endif
 eof

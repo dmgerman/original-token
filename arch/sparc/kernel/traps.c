@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.62 2000/05/09 17:40:13 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 2000 Jakub Jelinek (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: traps.c,v 1.63 2000/06/04 06:23:52 anton Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 2000 Jakub Jelinek (jakub@redhat.com)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -2376,11 +2376,6 @@ c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-r_extern
-id|ctxd_t
-op_star
-id|srmmu_ctx_table_phys
 suffix:semicolon
 DECL|variable|linux_smp_still_initting
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.147 2000/05/22 07:29:40 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.149 2000/06/19 06:24:37 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16876,22 +16876,12 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|file
 op_assign
 id|open_exec
 c_func
 (paren
 id|filename
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|retval
@@ -16950,6 +16940,12 @@ OL
 l_int|0
 )paren
 (brace
+id|allow_write_access
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren
@@ -16976,6 +16972,12 @@ OL
 l_int|0
 )paren
 (brace
+id|allow_write_access
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren
@@ -17104,6 +17106,12 @@ suffix:semicolon
 id|out
 suffix:colon
 multiline_comment|/* Something went wrong, return the inode and free the argument pages*/
+id|allow_write_access
+c_func
+(paren
+id|bprm.file
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

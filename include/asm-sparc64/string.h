@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.16 2000/05/02 01:47:01 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997,1999 Jakub Jelinek (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: string.h,v 1.17 2000/06/19 06:24:58 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997,1999 Jakub Jelinek (jakub@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_STRING_H__
 DECL|macro|__SPARC64_STRING_H__
 mdefine_line|#define __SPARC64_STRING_H__
@@ -359,7 +359,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 91)
 r_extern
 id|__kernel_size_t
 id|strlen

@@ -2206,9 +2206,9 @@ id|p
 (brace
 r_return
 (paren
-id|p-&gt;flags
+id|p-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 op_logical_and
 op_logical_neg

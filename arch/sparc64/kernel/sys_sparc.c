@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.39 2000/04/27 02:49:03 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.40 2000/06/19 06:24:37 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -984,13 +984,6 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|current-&gt;mm-&gt;mmap_sem
-)paren
-suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -1056,6 +1049,13 @@ r_goto
 id|out_putf
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_mmap
@@ -1074,18 +1074,18 @@ comma
 id|off
 )paren
 suffix:semicolon
-id|out_putf
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|up
 c_func
 (paren
 op_amp
 id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|out_putf
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

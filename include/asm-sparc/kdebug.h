@@ -1,13 +1,9 @@
-multiline_comment|/* $Id: kdebug.h,v 1.10 1997/12/14 23:24:40 ecd Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: kdebug.h,v 1.11 2000/06/04 06:23:53 anton Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_KDEBUG_H
 DECL|macro|_SPARC_KDEBUG_H
 mdefine_line|#define _SPARC_KDEBUG_H
 macro_line|#include &lt;asm/openprom.h&gt;
-multiline_comment|/* The debugger lives in 1MB of virtual address space right underneath&n; * the boot prom.&n; */
-DECL|macro|DEBUG_FIRSTVADDR
-mdefine_line|#define DEBUG_FIRSTVADDR       0xffc00000
-DECL|macro|DEBUG_LASTVADDR
-mdefine_line|#define DEBUG_LASTVADDR        LINUX_OPPROM_BEGVM
+macro_line|#include &lt;asm/vaddrs.h&gt;
 multiline_comment|/* Breakpoints are enter through trap table entry 126.  So in sparc assembly&n; * if you want to drop into the debugger you do:&n; *&n; * t DEBUG_BP_TRAP&n; */
 DECL|macro|DEBUG_BP_TRAP
 mdefine_line|#define DEBUG_BP_TRAP     126

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uctrl.c,v 1.7 2000/02/09 22:33:28 davem Exp $&n; * uctrl.c: TS102 Microcontroller interface on Tadpole Sparcbook 3&n; *&n; * Copyright 1999 Derrick J Brashear (shadow@dementia.org)&n; */
+multiline_comment|/* $Id: uctrl.c,v 1.8 2000/06/19 06:24:47 davem Exp $&n; * uctrl.c: TS102 Microcontroller interface on Tadpole Sparcbook 3&n; *&n; * Copyright 1999 Derrick J Brashear (shadow@dementia.org)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -789,8 +789,6 @@ op_star
 id|file
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|uctrl_get_event_status
 c_func
 (paren
@@ -800,29 +798,6 @@ id|uctrl_get_external_status
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|uctrl_release
-id|uctrl_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -872,6 +847,10 @@ id|file_operations
 id|uctrl_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|uctrl_llseek
@@ -883,10 +862,6 @@ comma
 id|open
 suffix:colon
 id|uctrl_open
-comma
-id|release
-suffix:colon
-id|uctrl_release
 comma
 )brace
 suffix:semicolon

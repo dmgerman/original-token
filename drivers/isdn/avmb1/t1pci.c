@@ -1174,6 +1174,17 @@ r_struct
 id|capicardparams
 id|param
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|dev
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|param.port
 op_assign
 id|pci_resource_start
@@ -1196,12 +1207,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|pci_enable_device
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* XXX check return */
 id|printk
 c_func
 (paren

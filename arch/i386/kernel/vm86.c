@@ -1600,9 +1600,9 @@ multiline_comment|/* we let this handle by the calling routine */
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 (brace
 r_int

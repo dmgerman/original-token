@@ -1,7 +1,6 @@
 macro_line|#ifndef _PPC_POSIX_TYPES_H
 DECL|macro|_PPC_POSIX_TYPES_H
 mdefine_line|#define _PPC_POSIX_TYPES_H
-macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PPC64 */
 multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
 DECL|typedef|__kernel_dev_t
 r_typedef
@@ -49,8 +48,6 @@ r_int
 r_int
 id|__kernel_gid_t
 suffix:semicolon
-multiline_comment|/* Grrr... gcc thinks size_t is unsigned int, so we either&n;   have to have this nonsense or use -fno-builtin. - paulus */
-macro_line|#ifdef CONFIG_PPC64
 DECL|typedef|__kernel_size_t
 r_typedef
 r_int
@@ -62,19 +59,6 @@ r_typedef
 r_int
 id|__kernel_ssize_t
 suffix:semicolon
-macro_line|#else
-DECL|typedef|__kernel_size_t
-r_typedef
-r_int
-r_int
-id|__kernel_size_t
-suffix:semicolon
-DECL|typedef|__kernel_ssize_t
-r_typedef
-r_int
-id|__kernel_ssize_t
-suffix:semicolon
-macro_line|#endif /* CONFIG_PPC64 */
 DECL|typedef|__kernel_ptrdiff_t
 r_typedef
 r_int

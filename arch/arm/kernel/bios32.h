@@ -14,6 +14,11 @@ DECL|member|maxdevsel
 id|u16
 id|maxdevsel
 suffix:semicolon
+multiline_comment|/*&n;&t; * The maximum latency that devices on this&n;&t; * bus can withstand.&n;&t; */
+DECL|member|max_lat
+id|u8
+id|max_lat
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|arm_pci_sysdata

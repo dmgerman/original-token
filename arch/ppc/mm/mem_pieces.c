@@ -3,37 +3,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/prom.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;mem_pieces.h&quot;
 r_extern
-r_char
-id|_start
-(braket
-)braket
-comma
-id|_end
-(braket
-)braket
-suffix:semicolon
-r_extern
-r_char
-id|_stext
-(braket
-)braket
-comma
-id|etext
-(braket
-)braket
-suffix:semicolon
-DECL|variable|klimit
-r_char
-op_star
-id|klimit
-op_assign
-id|_end
-suffix:semicolon
-DECL|variable|phys_avail
 r_struct
 id|mem_pieces
 id|phys_avail
@@ -616,7 +588,7 @@ op_assign
 id|size
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_APUS || CONFIG_ALL_PPC */
 r_void
 id|__init
 DECL|function|mem_pieces_sort
@@ -890,106 +862,5 @@ id|mp-&gt;n_regions
 op_assign
 id|d
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * Set phys_avail to phys_mem less the kernel text/data/bss.&n; */
-r_void
-id|__init
-DECL|function|set_phys_avail
-id|set_phys_avail
-c_func
-(paren
-r_struct
-id|mem_pieces
-op_star
-id|mp
-)paren
-(brace
-r_int
-r_int
-id|kstart
-comma
-id|ksize
-suffix:semicolon
-multiline_comment|/*&n;&t; * Initially, available phyiscal memory is equivalent to all&n;&t; * physical memory.&n;&t; */
-id|phys_avail
-op_assign
-op_star
-id|mp
-suffix:semicolon
-multiline_comment|/*&n;&t; * Map out the kernel text/data/bss from the available physical&n;&t; * memory.&n;&t; */
-id|kstart
-op_assign
-id|__pa
-c_func
-(paren
-id|_stext
-)paren
-suffix:semicolon
-multiline_comment|/* should be 0 */
-id|ksize
-op_assign
-id|PAGE_ALIGN
-c_func
-(paren
-id|klimit
-op_minus
-id|_stext
-)paren
-suffix:semicolon
-id|mem_pieces_remove
-c_func
-(paren
-op_amp
-id|phys_avail
-comma
-id|kstart
-comma
-id|ksize
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|mem_pieces_remove
-c_func
-(paren
-op_amp
-id|phys_avail
-comma
-l_int|0
-comma
-l_int|0x4000
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#if defined(CONFIG_BLK_DEV_INITRD)
-multiline_comment|/* Remove the init RAM disk from the available memory. */
-r_if
-c_cond
-(paren
-id|initrd_start
-)paren
-(brace
-id|mem_pieces_remove
-c_func
-(paren
-op_amp
-id|phys_avail
-comma
-id|__pa
-c_func
-(paren
-id|initrd_start
-)paren
-comma
-id|initrd_end
-op_minus
-id|initrd_start
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
 )brace
 eof

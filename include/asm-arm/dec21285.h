@@ -15,6 +15,7 @@ DECL|macro|DC21285_PCI_IO
 mdefine_line|#define DC21285_PCI_IO&t;&t;&t;0x7c000000
 DECL|macro|DC21285_PCI_MEM
 mdefine_line|#define DC21285_PCI_MEM&t;&t;&t;0x80000000
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/arch/hardware.h&gt;
 DECL|macro|DC21285_IO
@@ -139,6 +140,30 @@ DECL|macro|SA110_CNTL_XCSDIR
 mdefine_line|#define SA110_CNTL_XCSDIR(x)&t;&t;((x)&lt;&lt;28)
 DECL|macro|SA110_CNTL_PCICFN
 mdefine_line|#define SA110_CNTL_PCICFN&t;&t;(1 &lt;&lt; 31)
+multiline_comment|/*&n; * footbridge_cfn_mode() is used when we want&n; * to check whether we are the central function&n; */
+DECL|macro|__footbridge_cfn_mode
+mdefine_line|#define __footbridge_cfn_mode() (*CSR_SA110_CNTL &amp; SA110_CNTL_PCICFN)
+macro_line|#if defined(CONFIG_FOOTBRIDGE_HOST) &amp;&amp; defined(CONFIG_FOOTBRIDGE_ADDIN)
+DECL|macro|footbridge_cfn_mode
+mdefine_line|#define footbridge_cfn_mode() __footbridge_cfn_mode()
+macro_line|#elif defined(CONFIG_FOOTBRIDGE_HOST)
+DECL|macro|footbridge_cfn_mode
+mdefine_line|#define footbridge_cfn_mode() (1)
+macro_line|#else
+DECL|macro|footbridge_cfn_mode
+mdefine_line|#define footbridge_cfn_mode() (0)
+macro_line|#endif
+multiline_comment|/*&n; * footbridge_cfn_mode() is used when we want&n; * to check whether we are the central function&n; */
+macro_line|#if defined(CONFIG_FOOTBRIDGE_HOST) &amp;&amp; defined(CONFIG_FOOTBRIDGE_ADDIN)
+DECL|macro|footbridge_cfn_mode
+mdefine_line|#define footbridge_cfn_mode() (*CSR_SA110_CNTL &amp; SA110_CNTL_PCICFN)
+macro_line|#elif defined(CONFIG_FOOTBRIDGE_HOST)
+DECL|macro|footbridge_cfn_mode
+mdefine_line|#define footbridge_cfn_mode() (1)
+macro_line|#else
+DECL|macro|footbridge_cfn_mode
+mdefine_line|#define footbridge_cfn_mode() (0)
+macro_line|#endif
 DECL|macro|CSR_PCIADDR_EXTN
 mdefine_line|#define CSR_PCIADDR_EXTN&t;DC21285_IO(0x0140)
 DECL|macro|CSR_PREFETCHMEMRANGE

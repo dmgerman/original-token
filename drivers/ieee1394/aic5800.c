@@ -3232,7 +3232,7 @@ id|dev
 )paren
 (brace
 DECL|macro|FAIL
-mdefine_line|#define FAIL(fmt, args...) &bslash;&n;        PRINT_G(KERN_ERR, fmt , ## args); &bslash;&n;        num_of_cards--; &bslash;&n;        remove_card(aic); &bslash;&n;        return 1;
+mdefine_line|#define FAIL(fmt, args...) do {&bslash;&n;        PRINT_G(KERN_ERR, fmt , ## args); &bslash;&n;        num_of_cards--; &bslash;&n;        remove_card(aic); &bslash;&n;        return 1; } while (0)
 r_struct
 id|aic5800
 op_star
@@ -3242,6 +3242,18 @@ multiline_comment|/* shortcut to currently handled device */
 r_int
 r_int
 id|page
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|dev
+)paren
+)paren
+r_return
+l_int|1
 suffix:semicolon
 r_if
 c_cond

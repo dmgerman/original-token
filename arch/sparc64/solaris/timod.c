@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timod.c,v 1.6 2000/03/25 03:23:21 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
+multiline_comment|/* $Id: timod.c,v 1.7 2000/06/09 07:35:30 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/termios.h&gt;
 macro_line|#include &quot;conv.h&quot;
@@ -612,6 +613,13 @@ op_amp
 id|sock-&gt;wait
 )paren
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|sock-&gt;sk-&gt;callback_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -627,7 +635,7 @@ op_amp
 id|sock-&gt;flags
 )paren
 )paren
-id|kill_fasync
+id|__kill_fasync
 c_func
 (paren
 id|sock-&gt;fasync_list
@@ -635,6 +643,13 @@ comma
 id|SIGIO
 comma
 id|POLL_IN
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|sock-&gt;sk-&gt;callback_lock
 )paren
 suffix:semicolon
 id|SOLD

@@ -1080,8 +1080,8 @@ r_void
 )paren
 (brace
 r_extern
-id|rwlock_t
-id|xtime_lock
+id|spinlock_t
+id|i8253_lock
 suffix:semicolon
 r_int
 r_int
@@ -1091,11 +1091,11 @@ r_int
 r_int
 id|count
 suffix:semicolon
-id|write_lock_irqsave
+id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|xtime_lock
+id|i8253_lock
 comma
 id|flags
 )paren
@@ -1126,11 +1126,11 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
-id|write_unlock_irqrestore
+id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|xtime_lock
+id|i8253_lock
 comma
 id|flags
 )paren
@@ -1362,20 +1362,58 @@ op_assign
 id|apic_read
 c_func
 (paren
+id|APIC_TMICT
+)paren
+op_star
+id|APIC_DIVISOR
+suffix:semicolon
+multiline_comment|/* Wait till TMCCT gets reloaded from TMICT... */
+r_do
+(brace
+id|t1
+op_assign
+id|apic_read
+c_func
+(paren
 id|APIC_TMCCT
 )paren
 op_star
 id|APIC_DIVISOR
 suffix:semicolon
-r_do
-(brace
-multiline_comment|/*&n;&t;&t; * It looks like the 82489DX cannot handle&n;&t;&t; * consecutive reads of the TMCCT register well;&n;&t;&t; * this dummy read prevents it from a lockup.&n;&t;&t; */
-id|apic_read
+id|delta
+op_assign
+(paren
+r_int
+)paren
+(paren
+id|t0
+op_minus
+id|t1
+op_minus
+id|slice
+op_star
+(paren
+id|smp_processor_id
 c_func
 (paren
-id|APIC_SPIV
+)paren
+op_plus
+l_int|1
+)paren
 )paren
 suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|delta
+op_ge
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Now wait for our slice for real. */
+r_do
+(brace
 id|t1
 op_assign
 id|apic_read
@@ -1426,7 +1464,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CPU%d&lt;C0:%d,C:%d,D:%d,S:%d,C:%d&gt;&bslash;n&quot;
+l_string|&quot;CPU%d&lt;T0:%d,T1:%d,D:%d,S:%d,C:%d&gt;&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
@@ -1494,7 +1532,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;calibrating APIC timer ... &quot;
+l_string|&quot;calibrating APIC timer ...&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Put whatever arbitrary (but long enough) timeout&n;&t; * value into the APIC clock, we just want to get the&n;&t; * counter running for calibration.&n;&t; */
@@ -1590,7 +1628,7 @@ id|cpu_has_tsc
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n..... CPU clock speed is %ld.%04ld MHz.&bslash;n&quot;
+l_string|&quot;..... CPU clock speed is %ld.%04ld MHz.&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2134,6 +2172,7 @@ multiline_comment|/* see sw-dev-man vol 3, chapter 7.4.13.5 */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;spurious APIC interrupt on CPU#%d, should never happen.&bslash;n&quot;
 comma
 id|smp_processor_id
@@ -2182,6 +2221,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;APIC error interrupt on CPU#%d, should never happen.&bslash;n&quot;
 comma
 id|smp_processor_id
@@ -2193,6 +2233,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... APIC ESR0: %08lx&bslash;n&quot;
 comma
 id|v
@@ -2217,6 +2258,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... APIC ESR1: %08lx&bslash;n&quot;
 comma
 id|v
@@ -2233,6 +2275,7 @@ l_int|0x01
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 0: APIC Send CS Error (hw problem).&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2246,6 +2289,7 @@ l_int|0x02
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 1: APIC Receive CS Error (hw problem).&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2259,6 +2303,7 @@ l_int|0x04
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 2: APIC Send Accept Error.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2272,6 +2317,7 @@ l_int|0x08
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 3: APIC Receive Accept Error.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2285,6 +2331,7 @@ l_int|0x10
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 4: Reserved!.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2298,6 +2345,7 @@ l_int|0x20
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 5: Send Illegal Vector (kernel bug).&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2311,6 +2359,7 @@ l_int|0x40
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 6: Received Illegal Vector.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2324,6 +2373,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... bit 7: Illegal Register Address.&bslash;n&quot;
 )paren
 suffix:semicolon

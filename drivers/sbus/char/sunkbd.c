@@ -5538,13 +5538,9 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|kb_fasync
-)paren
 id|kill_fasync
 (paren
+op_amp
 id|kb_fasync
 comma
 id|SIGIO

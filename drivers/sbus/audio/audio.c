@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: audio.c,v 1.50 2000/03/13 03:54:07 davem Exp $&n; * drivers/sbus/audio/audio.c&n; *&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright 1997,1998,1999 Derrick J. Brashear (shadow@dementia.org)&n; * Copyright 1997 Brent Baccala (baccala@freesoft.org)&n; * &n; * Mixer code adapted from code contributed by and&n; * Copyright 1998 Michael Mraka (michael@fi.muni.cz)&n; * and with fixes from Michael Shuey (shuey@ecn.purdue.edu)&n; * The mixer code cheats; Sparc hardware doesn&squot;t generally allow independent&n; * line control, and this fakes it badly.&n; *&n; * SNDCTL_DSP_SETFMT based on code contributed by&n; * Ion Badulescu (ionut@moisil.cs.columbia.edu)&n; *&n; * This is the audio midlayer that sits between the VFS character&n; * devices and the low-level audio hardware device drivers.&n; */
+multiline_comment|/* $Id: audio.c,v 1.51 2000/06/19 06:24:47 davem Exp $&n; * drivers/sbus/audio/audio.c&n; *&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright 1997,1998,1999 Derrick J. Brashear (shadow@dementia.org)&n; * Copyright 1997 Brent Baccala (baccala@freesoft.org)&n; * &n; * Mixer code adapted from code contributed by and&n; * Copyright 1998 Michael Mraka (michael@fi.muni.cz)&n; * and with fixes from Michael Shuey (shuey@ecn.purdue.edu)&n; * The mixer code cheats; Sparc hardware doesn&squot;t generally allow independent&n; * line control, and this fakes it badly.&n; *&n; * SNDCTL_DSP_SETFMT based on code contributed by&n; * Ion Badulescu (ionut@moisil.cs.columbia.edu)&n; *&n; * This is the audio midlayer that sits between the VFS character&n; * devices and the low-level audio hardware device drivers.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -168,10 +168,6 @@ DECL|macro|COPY_IN
 mdefine_line|#define COPY_IN(arg, get) get_user(get, (int *)arg)
 DECL|macro|COPY_OUT
 mdefine_line|#define COPY_OUT(arg, ret) put_user(ret, (int *)arg)
-DECL|macro|sparcaudio_release_ret
-mdefine_line|#define sparcaudio_release_ret sparcaudio_release
-DECL|macro|sparcaudioctl_release_ret
-mdefine_line|#define sparcaudioctl_release_ret sparcaudioctl_release
 DECL|macro|sparcaudio_select
 mdefine_line|#define sparcaudio_select sparcaudio_poll
 macro_line|#endif
@@ -8238,58 +8234,6 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|function|sparcaudioctl_release_ret
-r_static
-r_int
-id|sparcaudioctl_release_ret
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* For 2.0 kernels */
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x20100
-DECL|function|sparcaudioctl_release
-r_static
-r_void
-id|sparcaudioctl_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|sparcaudioctl_release_ret
-c_func
-(paren
-id|inode
-comma
-id|file
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|variable|sparcaudioctl_fops
 r_static
 r_struct
@@ -8297,6 +8241,10 @@ id|file_operations
 id|sparcaudioctl_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|poll
 suffix:colon
 id|sparcaudio_select
@@ -8304,10 +8252,6 @@ comma
 id|ioctl
 suffix:colon
 id|sparcaudio_ioctl
-comma
-id|release
-suffix:colon
-id|sparcaudioctl_release
 comma
 )brace
 suffix:semicolon
@@ -8826,17 +8770,15 @@ l_int|8000
 suffix:semicolon
 )brace
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* Success! */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|sparcaudio_release_ret
+DECL|function|sparcaudio_release
 r_static
 r_int
-id|sparcaudio_release_ret
+id|sparcaudio_release
 c_func
 (paren
 r_struct
@@ -9031,8 +8973,6 @@ comma
 id|S_MSG
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren
@@ -9044,35 +8984,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* For 2.0 kernels */
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x20100
-DECL|function|sparcaudio_release
-r_static
-r_void
-id|sparcaudio_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|sparcaudio_release_ret
-c_func
-(paren
-id|inode
-comma
-id|file
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|variable|sparcaudio_fops
 r_static
 r_struct

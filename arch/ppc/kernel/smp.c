@@ -106,6 +106,18 @@ DECL|variable|cacheflush_time
 id|cycles_t
 id|cacheflush_time
 suffix:semicolon
+multiline_comment|/* this has to go in the data section because it is accessed from prom_init */
+DECL|variable|smp_hw_index
+r_int
+id|smp_hw_index
+(braket
+id|NR_CPUS
+)braket
+op_assign
+(brace
+l_int|0
+)brace
+suffix:semicolon
 multiline_comment|/* all cpu mappings are 1-1 -- Cort */
 DECL|variable|cpu_callin_map
 r_volatile
@@ -735,6 +747,7 @@ suffix:colon
 r_case
 id|_MACH_gemini
 suffix:colon
+macro_line|#ifndef CONFIG_POWER4
 multiline_comment|/* make sure we&squot;re sending something that translates to an IPI */
 r_if
 c_cond
@@ -817,6 +830,64 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_POWER4 */
+multiline_comment|/* for now, only do reschedule messages&n;&t;&t;   since we only have one IPI */
+r_if
+c_cond
+(paren
+id|msg
+op_ne
+id|MSG_RESCHEDULE
+)paren
+r_break
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|target
+op_eq
+id|MSG_ALL
+op_logical_or
+id|target
+op_eq
+id|i
+op_logical_or
+(paren
+id|target
+op_eq
+id|MSG_ALL_BUT_SELF
+op_logical_and
+id|i
+op_ne
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+)paren
+id|xics_cause_IPI
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_POWER4 */
 r_break
 suffix:semicolon
 )brace
@@ -993,6 +1064,11 @@ suffix:semicolon
 r_case
 id|_MACH_chrp
 suffix:colon
+r_if
+c_cond
+(paren
+id|OpenPIC
+)paren
 r_for
 c_loop
 (paren
@@ -1397,6 +1473,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|OpenPIC
+op_logical_and
+(paren
 id|_machine
 op_amp
 (paren
@@ -1405,6 +1484,7 @@ op_or
 id|_MACH_chrp
 op_or
 id|_MACH_prep
+)paren
 )paren
 )paren
 id|do_openpic_setup_cpu
@@ -1543,20 +1623,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|current-&gt;mm-&gt;mmap-&gt;vm_page_prot
-op_assign
-id|PAGE_SHARED
-suffix:semicolon
-id|current-&gt;mm-&gt;mmap-&gt;vm_start
-op_assign
-id|PAGE_OFFSET
-suffix:semicolon
-id|current-&gt;mm-&gt;mmap-&gt;vm_end
-op_assign
-id|init_mm.mmap-&gt;vm_end
-suffix:semicolon
-macro_line|#endif
 id|cpu_callin_map
 (braket
 id|current-&gt;processor
@@ -1564,10 +1630,13 @@ id|current-&gt;processor
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifndef CONFIG_POWER4
 multiline_comment|/*&n;&t; * Each processor has to do this and this is the best&n;&t; * place to stick it for now.&n;&t; *  -- Cort&n;&t; */
 r_if
 c_cond
 (paren
+id|OpenPIC
+op_logical_and
 id|_machine
 op_amp
 (paren
@@ -1583,6 +1652,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|xics_setup_cpu
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_POWER4 */
 macro_line|#ifdef CONFIG_GEMINI&t;
 r_if
 c_cond

@@ -126,6 +126,10 @@ DECL|member|mctl
 id|tsunami_64
 id|mctl
 suffix:semicolon
+DECL|member|__pad1
+id|tsunami_64
+id|__pad1
+suffix:semicolon
 DECL|member|ttr
 id|tsunami_64
 id|ttr

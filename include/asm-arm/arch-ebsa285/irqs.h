@@ -1,12 +1,16 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/irqs.h&n; *&n; * Copyright (C) 1998 Russell King&n; * Copyright (C) 1998 Phil Blundell&n; *&n; * Changelog:&n; *  20-Jan-1998&t;RMK&t;Started merge of EBSA286, CATS and NetWinder&n; *  01-Feb-1999&t;PJB&t;ISA IRQs start at 0 not 16&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;&t;&t;32
+mdefine_line|#define NR_IRQS&t;&t;&t;36
 DECL|macro|NR_DC21285_IRQS
 mdefine_line|#define NR_DC21285_IRQS&t;&t;16
 DECL|macro|_ISA_IRQ
 mdefine_line|#define _ISA_IRQ(x)&t;&t;(0 + (x))
+DECL|macro|_ISA_INR
+mdefine_line|#define _ISA_INR(x)&t;&t;((x) - 0)
 DECL|macro|_DC21285_IRQ
 mdefine_line|#define _DC21285_IRQ(x)&t;&t;(16 + (x))
+DECL|macro|_DC21285_INR
+mdefine_line|#define _DC21285_INR(x)&t;&t;((x) - 16)
 multiline_comment|/*&n; * This is a list of all interrupts that the 21285&n; * can generate and we handle.&n; */
 DECL|macro|IRQ_CONRX
 mdefine_line|#define IRQ_CONRX&t;&t;_DC21285_IRQ(0)
@@ -38,8 +42,16 @@ DECL|macro|IRQ_SDRAMPARITY
 mdefine_line|#define IRQ_SDRAMPARITY&t;&t;_DC21285_IRQ(13)
 DECL|macro|IRQ_I2OINPOST
 mdefine_line|#define IRQ_I2OINPOST&t;&t;_DC21285_IRQ(14)
-DECL|macro|IRQ_PCI_ERR
-mdefine_line|#define IRQ_PCI_ERR&t;&t;_DC21285_IRQ(15)
+DECL|macro|IRQ_PCI_ABORT
+mdefine_line|#define IRQ_PCI_ABORT&t;&t;_DC21285_IRQ(15)
+DECL|macro|IRQ_PCI_SERR
+mdefine_line|#define IRQ_PCI_SERR&t;&t;_DC21285_IRQ(16)
+DECL|macro|IRQ_DISCARD_TIMER
+mdefine_line|#define IRQ_DISCARD_TIMER&t;_DC21285_IRQ(17)
+DECL|macro|IRQ_PCI_DPERR
+mdefine_line|#define IRQ_PCI_DPERR&t;&t;_DC21285_IRQ(18)
+DECL|macro|IRQ_PCI_PERR
+mdefine_line|#define IRQ_PCI_PERR&t;&t;_DC21285_IRQ(19)
 DECL|macro|IRQ_ISA_TIMER
 mdefine_line|#define IRQ_ISA_TIMER&t;&t;_ISA_IRQ(0)
 DECL|macro|IRQ_ISA_KEYBOARD
@@ -94,8 +106,16 @@ DECL|macro|IRQ_MASK_SDRAMPARITY
 mdefine_line|#define IRQ_MASK_SDRAMPARITY&t;(1 &lt;&lt; 24)
 DECL|macro|IRQ_MASK_I2OINPOST
 mdefine_line|#define IRQ_MASK_I2OINPOST&t;(1 &lt;&lt; 25)
-DECL|macro|IRQ_MASK_PCI_ERR
-mdefine_line|#define IRQ_MASK_PCI_ERR&t;((1 &lt;&lt;23) | (1 &lt;&lt; 27) | (1 &lt;&lt; 28) | (1 &lt;&lt; 29) | (1 &lt;&lt; 30) | (1 &lt;&lt; 31))
+DECL|macro|IRQ_MASK_PCI_ABORT
+mdefine_line|#define IRQ_MASK_PCI_ABORT&t;((1 &lt;&lt; 29) | (1 &lt;&lt; 30))
+DECL|macro|IRQ_MASK_PCI_SERR
+mdefine_line|#define IRQ_MASK_PCI_SERR&t;(1 &lt;&lt; 23)
+DECL|macro|IRQ_MASK_DISCARD_TIMER
+mdefine_line|#define IRQ_MASK_DISCARD_TIMER&t;(1 &lt;&lt; 27)
+DECL|macro|IRQ_MASK_PCI_DPERR
+mdefine_line|#define IRQ_MASK_PCI_DPERR&t;(1 &lt;&lt; 28)
+DECL|macro|IRQ_MASK_PCI_PERR
+mdefine_line|#define IRQ_MASK_PCI_PERR&t;(1 &lt;&lt; 31)
 multiline_comment|/*&n; * Netwinder interrupt allocations&n; */
 DECL|macro|IRQ_NETWINDER_ETHER10
 mdefine_line|#define IRQ_NETWINDER_ETHER10&t;IRQ_IN0

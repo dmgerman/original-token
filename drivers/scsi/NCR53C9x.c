@@ -14868,7 +14868,6 @@ suffix:semicolon
 macro_line|#else
 multiline_comment|/* For SMP we only service one ESP on the list list at our IRQ level! */
 DECL|function|esp_intr
-r_static
 r_void
 id|esp_intr
 c_func

@@ -7,7 +7,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
-mdefine_line|#define MAX_HWIFS&t;1&t;/* XXX: For my board -- gniibe */
+mdefine_line|#define MAX_HWIFS&t;1
 macro_line|#endif
 DECL|macro|ide__sti
 mdefine_line|#define ide__sti()&t;__sti()
@@ -28,18 +28,33 @@ c_cond
 id|base
 )paren
 (brace
+macro_line|#ifdef CONFIG_SH_HP600
 r_case
-l_int|0xba0001f0
+l_int|0x201f0
+suffix:colon
+r_return
+l_int|77
+suffix:semicolon
+r_case
+l_int|0x20170
+suffix:colon
+r_return
+l_int|77
+suffix:semicolon
+macro_line|#else
+r_case
+l_int|0x01f0
 suffix:colon
 r_return
 l_int|14
 suffix:semicolon
 r_case
-l_int|0xba000170
+l_int|0x0170
 suffix:colon
 r_return
-l_int|14
+l_int|15
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 r_return
@@ -64,18 +79,33 @@ c_cond
 id|index
 )paren
 (brace
+macro_line|#ifdef CONFIG_SH_HP600
 r_case
 l_int|0
 suffix:colon
 r_return
-l_int|0xba0001f0
+l_int|0x201f0
 suffix:semicolon
 r_case
 l_int|1
 suffix:colon
 r_return
-l_int|0xba000170
+l_int|0x20170
 suffix:semicolon
+macro_line|#else
+r_case
+l_int|0
+suffix:colon
+r_return
+l_int|0x1f0
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+r_return
+l_int|0x170
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 r_return

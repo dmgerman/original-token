@@ -565,6 +565,8 @@ id|p
 r_if
 c_cond
 (paren
+id|p-&gt;mm
+op_logical_and
 (paren
 id|ptr-&gt;vsid
 op_rshift
@@ -2363,7 +2365,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;%08x: &quot;
+l_string|&quot;0x%08x: &quot;
 comma
 id|val
 )paren
@@ -2379,9 +2381,11 @@ l_string|&quot; %s&quot;
 comma
 (paren
 id|val
-op_amp
-l_int|0x80000000
+op_rshift
+l_int|31
 )paren
+op_amp
+l_int|1
 ques
 c_cond
 l_string|&quot;enabled&quot;
@@ -2396,13 +2400,15 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;,%sparity&quot;
+l_string|&quot;, %sparity&quot;
 comma
 (paren
 id|val
-op_amp
-l_int|0x40000000
+op_rshift
+l_int|30
 )paren
+op_amp
+l_int|1
 ques
 c_cond
 l_string|&quot;&quot;
@@ -2417,7 +2423,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;,%s&quot;
+l_string|&quot;, %s&quot;
 comma
 id|sizestrings
 (braket
@@ -2438,7 +2444,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;,%s&quot;
+l_string|&quot;, %s&quot;
 comma
 id|clockstrings
 (braket
@@ -2459,7 +2465,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;,%s&quot;
+l_string|&quot;, %s&quot;
 comma
 id|typestrings
 (braket
@@ -2469,7 +2475,7 @@ op_rshift
 l_int|23
 )paren
 op_amp
-l_int|0x2
+l_int|2
 )braket
 )paren
 suffix:semicolon
@@ -2491,9 +2497,9 @@ op_amp
 l_int|1
 ques
 c_cond
-l_string|&quot;&quot;
+l_string|&quot;, data only&quot;
 suffix:colon
-l_string|&quot;,data only&quot;
+l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|p
@@ -2514,7 +2520,7 @@ op_amp
 l_int|1
 ques
 c_cond
-l_string|&quot;,ZZ enabled&quot;
+l_string|&quot;, ZZ enabled&quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren
@@ -2526,7 +2532,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;,%s&quot;
+l_string|&quot;, %s&quot;
 comma
 (paren
 id|val
@@ -2549,7 +2555,30 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;,%sns hold&quot;
+l_string|&quot;%s&quot;
+comma
+(paren
+id|val
+op_rshift
+l_int|18
+)paren
+op_amp
+l_int|1
+ques
+c_cond
+l_string|&quot;, testing&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;, %sns hold&quot;
 comma
 id|holdstrings
 (braket
@@ -2561,6 +2590,75 @@ l_int|16
 op_amp
 l_int|3
 )braket
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;%s&quot;
+comma
+(paren
+id|val
+op_rshift
+l_int|15
+)paren
+op_amp
+l_int|1
+ques
+c_cond
+l_string|&quot;, DLL slow&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;%s&quot;
+comma
+(paren
+id|val
+op_rshift
+l_int|14
+)paren
+op_amp
+l_int|1
+ques
+c_cond
+l_string|&quot;, diff clock&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;%s&quot;
+comma
+(paren
+id|val
+op_rshift
+l_int|13
+)paren
+op_amp
+l_int|1
+ques
+c_cond
+l_string|&quot;, DLL bypass&quot;
+suffix:colon
+l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|p

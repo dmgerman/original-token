@@ -2905,10 +2905,10 @@ id|error
 op_eq
 l_int|0
 )paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_and_assign
 op_complement
-id|PF_DTRACE
+id|PT_DTRACE
 suffix:semicolon
 id|putname
 c_func

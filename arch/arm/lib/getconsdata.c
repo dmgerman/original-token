@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/lib/getconsdata.c&n; *&n; * Copyright (C) 1995-1998 Russell King&n; */
+multiline_comment|/*&n; * linux/arch/arm/lib/getconsdata.c&n; *&n; * Copyright (C) 1995-2000 Russell King&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -17,39 +17,6 @@ DECL|macro|OFF_TSK
 mdefine_line|#define OFF_TSK(n) (unsigned long)&amp;(((struct task_struct *)0)-&gt;n)
 DECL|macro|OFF_MM
 mdefine_line|#define OFF_MM(n) (unsigned long)&amp;(((struct mm_struct *)0)-&gt;n)
-DECL|variable|TSK_STATE
-r_int
-r_int
-id|TSK_STATE
-op_assign
-id|OFF_TSK
-c_func
-(paren
-id|state
-)paren
-suffix:semicolon
-DECL|variable|TSK_FLAGS
-r_int
-r_int
-id|TSK_FLAGS
-op_assign
-id|OFF_TSK
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-DECL|variable|TSK_NEED_RESCHED
-r_int
-r_int
-id|TSK_NEED_RESCHED
-op_assign
-id|OFF_TSK
-c_func
-(paren
-id|need_resched
-)paren
-suffix:semicolon
 DECL|variable|TSK_SIGPENDING
 r_int
 r_int
@@ -72,6 +39,28 @@ c_func
 id|addr_limit
 )paren
 suffix:semicolon
+DECL|variable|TSK_NEED_RESCHED
+r_int
+r_int
+id|TSK_NEED_RESCHED
+op_assign
+id|OFF_TSK
+c_func
+(paren
+id|need_resched
+)paren
+suffix:semicolon
+DECL|variable|TSK_PTRACE
+r_int
+r_int
+id|TSK_PTRACE
+op_assign
+id|OFF_TSK
+c_func
+(paren
+id|ptrace
+)paren
+suffix:semicolon
 DECL|variable|TSK_USED_MATH
 r_int
 r_int
@@ -81,28 +70,6 @@ id|OFF_TSK
 c_func
 (paren
 id|used_math
-)paren
-suffix:semicolon
-DECL|variable|MM
-r_int
-r_int
-id|MM
-op_assign
-id|OFF_TSK
-c_func
-(paren
-id|mm
-)paren
-suffix:semicolon
-DECL|variable|PGD
-r_int
-r_int
-id|PGD
-op_assign
-id|OFF_MM
-c_func
-(paren
-id|pgd
 )paren
 suffix:semicolon
 DECL|variable|TSS_SAVE

@@ -65,6 +65,8 @@ DECL|macro|DEBUG_TAGS
 mdefine_line|#define DEBUG_TAGS     (0x0400)
 DECL|macro|DEBUG_SCATTER
 mdefine_line|#define DEBUG_SCATTER  (0x0800)
+DECL|macro|DEBUG_IC
+mdefine_line|#define DEBUG_IC        (0x1000)
 multiline_comment|/*&n;**    Enable/Disable debug messages.&n;**    Can be changed at runtime too.&n;*/
 macro_line|#ifdef SCSI_NCR_DEBUG_INFO_SUPPORT
 DECL|variable|ncr_debug
@@ -7687,6 +7689,34 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;**    Check if the chip is supported&n;&t;*/
+r_if
+c_cond
+(paren
+(paren
+id|device_id
+op_eq
+id|PCI_DEVICE_ID_LSI_53C1010
+)paren
+op_logical_or
+(paren
+id|device_id
+op_eq
+id|PCI_DEVICE_ID_LSI_53C1010_66
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|NAME53C8XX
+l_string|&quot;: not initializing, device not supported&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|chip
 op_assign
 l_int|0

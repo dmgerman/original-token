@@ -401,13 +401,8 @@ c_func
 r_void
 )paren
 (brace
-r_static
-r_int
-r_int
-id|count
-op_assign
-l_int|50
-suffix:semicolon
+macro_line|#ifdef CONFIG_LEDS_CPU
+(brace
 r_static
 r_int
 id|last_pid
@@ -443,6 +438,17 @@ id|led_idle_start
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_LEDS_TIMER
+(brace
+r_static
+r_int
+r_int
+id|count
+op_assign
+l_int|50
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -463,6 +469,8 @@ id|led_timer
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
 )brace
 macro_line|#else
 DECL|macro|do_leds

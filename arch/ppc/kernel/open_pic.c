@@ -143,25 +143,6 @@ mdefine_line|#define check_arg_irq(irq)&t;do {} while (0)
 DECL|macro|check_arg_cpu
 mdefine_line|#define check_arg_cpu(cpu)&t;do {} while (0)
 macro_line|#endif
-DECL|function|no_action
-r_void
-id|no_action
-c_func
-(paren
-r_int
-id|ir1
-comma
-r_void
-op_star
-id|dev
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-)brace
 macro_line|#ifdef CONFIG_SMP
 DECL|function|openpic_ipi_action
 r_void
@@ -1117,7 +1098,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_PPC64
+macro_line|#ifdef CONFIG_PPC64BRIDGE
 multiline_comment|/* hardcode this for now since the IBM 260 is the only thing with&n;&t; * a distributed openpic right now.  -- Cort&n;&t; */
 id|ISU
 op_assign

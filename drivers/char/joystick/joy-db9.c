@@ -1455,7 +1455,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * open callback: claim parport.&n; */
+multiline_comment|/*&n; * open callback: claim parport.&n; * FIXME: race possible.&n; */
 DECL|function|js_db9_open
 r_int
 id|js_db9_open
@@ -2136,6 +2136,8 @@ id|name
 (braket
 id|info.mode
 )braket
+comma
+l_int|NULL
 comma
 id|js_db9_open
 comma

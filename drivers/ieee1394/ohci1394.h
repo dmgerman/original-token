@@ -1,7 +1,10 @@
+multiline_comment|/*&n; * ohci1394.h - driver for OHCI 1394 boards&n; * Copyright (C)1999,2000 Sebastien Rougeaux &lt;sebastien.rougeaux@anu.edu.au&gt;&n; *                        Gord Peters &lt;GordPeters@smarttech.com&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.&n; */
 macro_line|#ifndef _OHCI1394_H
 DECL|macro|_OHCI1394_H
 mdefine_line|#define _OHCI1394_H
 macro_line|#include &quot;ieee1394_types.h&quot;
+multiline_comment|/* include this for the video frame grabber */
+multiline_comment|/* #include &quot;video1394.h&quot; */
 DECL|macro|OHCI1394_DRIVER_NAME
 mdefine_line|#define OHCI1394_DRIVER_NAME      &quot;ohci1394&quot;
 macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_LV22
@@ -44,6 +47,10 @@ macro_line|#ifndef PCI_DEVICE_ID_NEC_UPD72871
 DECL|macro|PCI_DEVICE_ID_NEC_UPD72871
 mdefine_line|#define PCI_DEVICE_ID_NEC_UPD72871      0x00ce
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_APPLE_UNI_N_FW
+DECL|macro|PCI_DEVICE_ID_APPLE_UNI_N_FW
+mdefine_line|#define PCI_DEVICE_ID_APPLE_UNI_N_FW&t;0x0018
+macro_line|#endif
 DECL|macro|MAX_OHCI1394_CARDS
 mdefine_line|#define MAX_OHCI1394_CARDS        4
 DECL|macro|OHCI1394_MAX_AT_REQ_RETRIES
@@ -52,6 +59,8 @@ DECL|macro|OHCI1394_MAX_AT_RESP_RETRIES
 mdefine_line|#define OHCI1394_MAX_AT_RESP_RETRIES      0x2
 DECL|macro|OHCI1394_MAX_PHYS_RESP_RETRIES
 mdefine_line|#define OHCI1394_MAX_PHYS_RESP_RETRIES    0x8
+DECL|macro|OHCI1394_MAX_SELF_ID_ERRORS
+mdefine_line|#define OHCI1394_MAX_SELF_ID_ERRORS       16
 DECL|macro|AR_REQ_NUM_DESC
 mdefine_line|#define AR_REQ_NUM_DESC                   4 /* number of AR req descriptors */
 DECL|macro|AR_REQ_BUF_SIZE
@@ -276,8 +285,100 @@ DECL|member|cmdPtr
 r_int
 id|cmdPtr
 suffix:semicolon
+DECL|member|waitq
+id|wait_queue_head_t
+id|waitq
+suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef _VIDEO_1394_H
+DECL|macro|OHCI1394_MAJOR
+mdefine_line|#define OHCI1394_MAJOR 172
+DECL|macro|ISO_CHANNELS
+mdefine_line|#define ISO_CHANNELS 64
+DECL|struct|dma_fbuf_ctx
+r_struct
+id|dma_fbuf_ctx
+(brace
+DECL|member|ohci
+r_void
+op_star
+id|ohci
+suffix:semicolon
+DECL|member|ctx
+r_int
+id|ctx
+suffix:semicolon
+DECL|member|channel
+r_int
+id|channel
+suffix:semicolon
+DECL|member|last_buffer
+r_int
+id|last_buffer
+suffix:semicolon
+DECL|member|num_desc
+r_int
+r_int
+id|num_desc
+suffix:semicolon
+DECL|member|buf_size
+r_int
+r_int
+id|buf_size
+suffix:semicolon
+DECL|member|frame_size
+r_int
+r_int
+id|frame_size
+suffix:semicolon
+DECL|member|nb_cmd
+r_int
+r_int
+id|nb_cmd
+suffix:semicolon
+DECL|member|buf
+r_int
+r_char
+op_star
+id|buf
+suffix:semicolon
+DECL|member|prg
+r_struct
+id|dma_cmd
+op_star
+op_star
+id|prg
+suffix:semicolon
+DECL|member|buffer_status
+r_int
+r_int
+op_star
+id|buffer_status
+suffix:semicolon
+DECL|member|ctrlClear
+r_int
+id|ctrlClear
+suffix:semicolon
+DECL|member|ctrlSet
+r_int
+id|ctrlSet
+suffix:semicolon
+DECL|member|cmdPtr
+r_int
+id|cmdPtr
+suffix:semicolon
+DECL|member|ctxMatch
+r_int
+id|ctxMatch
+suffix:semicolon
+DECL|member|waitq
+id|wait_queue_head_t
+id|waitq
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|struct|ti_ohci
 r_struct
 id|ti_ohci
@@ -365,6 +466,22 @@ DECL|member|nb_iso_ctx
 r_int
 id|nb_iso_ctx
 suffix:semicolon
+macro_line|#ifdef _VIDEO_1394_H
+multiline_comment|/* frame buffer context */
+DECL|member|fbuf_context
+r_struct
+id|dma_fbuf_ctx
+op_star
+op_star
+id|fbuf_context
+suffix:semicolon
+DECL|member|current_fbuf_ctx
+r_struct
+id|dma_fbuf_ctx
+op_star
+id|current_fbuf_ctx
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* IEEE-1394 part follows */
 DECL|member|host
 r_struct
@@ -382,6 +499,10 @@ suffix:semicolon
 DECL|member|phy_reg_lock
 id|spinlock_t
 id|phy_reg_lock
+suffix:semicolon
+DECL|member|self_id_errors
+r_int
+id|self_id_errors
 suffix:semicolon
 DECL|member|NumBusResets
 r_int
@@ -770,9 +891,9 @@ mdefine_line|#define OHCI1394_isochTx                 0x00000040
 DECL|macro|OHCI1394_isochRx
 mdefine_line|#define OHCI1394_isochRx                 0x00000080
 DECL|macro|OHCI1394_postedWriteErr
-mdefine_line|#define OHCI1394_postedWriteErr          0x00001000
+mdefine_line|#define OHCI1394_postedWriteErr          0x00000100
 DECL|macro|OHCI1394_lockRespErr
-mdefine_line|#define OHCI1394_lockRespErr             0x00002000
+mdefine_line|#define OHCI1394_lockRespErr             0x00000200
 DECL|macro|OHCI1394_selfIDComplete
 mdefine_line|#define OHCI1394_selfIDComplete          0x00010000
 DECL|macro|OHCI1394_busReset

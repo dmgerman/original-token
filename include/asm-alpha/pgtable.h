@@ -37,8 +37,10 @@ mdefine_line|#define FIRST_USER_PGD_NR&t;0
 multiline_comment|/* Number of pointers that fit on a page:  this will go away. */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
+DECL|macro|CONSOLE_REMAP_START
+mdefine_line|#define CONSOLE_REMAP_START    0xFFFFFE0000000000
 DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START&t;&t;0xFFFFFE0000000000
+mdefine_line|#define VMALLOC_START          (CONSOLE_REMAP_START + PMD_SIZE)
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x)&t;((unsigned long)(x))
 DECL|macro|VMALLOC_END

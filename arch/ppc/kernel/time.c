@@ -36,6 +36,10 @@ id|last_rtc_update
 op_assign
 l_int|0
 suffix:semicolon
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
 multiline_comment|/* The decrementer counts down by 128 every 128ns on a 601. */
 DECL|macro|DECREMENTER_COUNT_601
 mdefine_line|#define DECREMENTER_COUNT_601&t;(1000000000 / HZ)
@@ -79,6 +83,10 @@ r_int
 id|dval
 comma
 id|d
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_int
 r_int
@@ -249,6 +257,15 @@ id|regs
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * update the rtc when needed&n;&t;&t; */
+id|read_lock_irqsave
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -299,6 +316,15 @@ op_assign
 id|xtime.tv_sec
 suffix:semicolon
 )brace
+id|read_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SMP
 id|smp_local_timer_interrupt
@@ -364,10 +390,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|read_lock_irqsave
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 op_star
 id|tv
 op_assign
 id|xtime
+suffix:semicolon
+id|read_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/* XXX we don&squot;t seem to have the decrementers synced properly yet */
 macro_line|#ifndef CONFIG_SMP
@@ -458,6 +502,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|write_lock_irqsave
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|tv-&gt;tv_sec
@@ -467,6 +520,15 @@ op_assign
 id|tv-&gt;tv_usec
 op_minus
 id|frac_tick
+suffix:semicolon
+id|write_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|set_dec
 c_func
@@ -516,6 +578,10 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -580,6 +646,15 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|write_lock_irqsave
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|ppc_md
@@ -592,6 +667,15 @@ suffix:semicolon
 id|xtime.tv_usec
 op_assign
 l_int|0
+suffix:semicolon
+id|write_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|set_dec
 c_func

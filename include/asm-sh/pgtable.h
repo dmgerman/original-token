@@ -180,37 +180,36 @@ DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 DECL|macro|VMALLOC_END
 mdefine_line|#define VMALLOC_END&t;P4SEG
-DECL|macro|_PAGE_READ
-mdefine_line|#define _PAGE_READ &t;0x001  /* software: read access allowed */
+DECL|macro|_PAGE_PRESENT
+mdefine_line|#define _PAGE_PRESENT&t;0x001  /* software: page is present */
 DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED&t;0x002  /* software: page referenced */
 DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x004  /* D-bit   : page changed */
 DECL|macro|_PAGE_CACHABLE
 mdefine_line|#define _PAGE_CACHABLE&t;0x008  /* C-bit   : cachable */
-multiline_comment|/*&t;&t; &t;0x010  */
+multiline_comment|/*&t;&t; &t;0x010     SZ-bit  : size of page */
 DECL|macro|_PAGE_RW
 mdefine_line|#define _PAGE_RW&t;0x020  /* PR0-bit : write access allowed */
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x040  /* PR1-bit : user space access allowed */
 DECL|macro|_PAGE_PROTNONE
 mdefine_line|#define _PAGE_PROTNONE&t;0x080  /* software: if not present */
-DECL|macro|_PAGE_PRESENT
-mdefine_line|#define _PAGE_PRESENT&t;0x100  /* V-bit   : page is valid */
+multiline_comment|/*&t;&t;&t;0x100     V-bit   : page is valid */
 macro_line|#if defined(__sh3__)
 multiline_comment|/* Mask which drop software flags */
 DECL|macro|_PAGE_FLAGS_HARDWARE_MASK
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff16c
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff06c
 multiline_comment|/* Flags defalult: SZ=1 (4k-byte), C=0 (non-cachable), SH=0 (not shared) */
 DECL|macro|_PAGE_FLAGS_HARDWARE_DEFAULT
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000010
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000110
 macro_line|#elif defined(__SH4__)
 multiline_comment|/* Mask which drops software flags */
 DECL|macro|_PAGE_FLAGS_HARDWARE_MASK
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff16c
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff06c
 multiline_comment|/* Flags defalult: SZ=01 (4k-byte), C=0 (non-cachable), SH=0 (not shared), WT=0 */
 DECL|macro|_PAGE_FLAGS_HARDWARE_DEFAULT
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000010
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000110
 macro_line|#endif
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)

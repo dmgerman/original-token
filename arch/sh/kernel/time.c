@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: time.c,v 1.20 2000/02/28 12:42:51 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/time.c&n; *&n; *  Copyright (C) 1999  Tetsuya Okada &amp; Niibe Yutaka&n; *&n; *  Some code taken from i386 version.&n; *    Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1605,10 +1606,19 @@ id|pfc_table
 id|tmp
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_SH_HP600
+id|master_clock
+op_assign
+id|cpu_clock
+op_div
+l_int|6
+suffix:semicolon
+macro_line|#else
 id|master_clock
 op_assign
 id|cpu_clock
 suffix:semicolon
+macro_line|#endif
 id|bus_clock
 op_assign
 id|master_clock
@@ -1744,6 +1754,22 @@ l_string|&quot;Interval = %ld&bslash;n&quot;
 comma
 id|interval
 )paren
+suffix:semicolon
+id|current_cpu_data.cpu_clock
+op_assign
+id|cpu_clock
+suffix:semicolon
+id|current_cpu_data.master_clock
+op_assign
+id|master_clock
+suffix:semicolon
+id|current_cpu_data.bus_clock
+op_assign
+id|bus_clock
+suffix:semicolon
+id|current_cpu_data.module_clock
+op_assign
+id|module_clock
 suffix:semicolon
 multiline_comment|/* Start TMU0 */
 id|ctrl_outb

@@ -247,11 +247,11 @@ id|cbd_t
 suffix:semicolon
 id|up-&gt;smc_rfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_EB
 suffix:semicolon
 id|up-&gt;smc_tfcr
 op_assign
-id|SMC_EB
+id|CPMFCR_EB
 suffix:semicolon
 id|up-&gt;smc_brklen
 op_assign

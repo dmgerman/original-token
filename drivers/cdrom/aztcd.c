@@ -6675,6 +6675,8 @@ op_minus
 id|ENXIO
 suffix:semicolon
 multiline_comment|/* no hardware */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6707,9 +6709,8 @@ op_eq
 op_minus
 l_int|1
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 multiline_comment|/* drive doesn&squot;t respond */
 r_if
@@ -6776,15 +6777,12 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 op_increment
 id|azt_open_count
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|aztLockDoor
 c_func
@@ -6801,6 +6799,14 @@ suffix:semicolon
 macro_line|#endif
 r_return
 l_int|0
+suffix:semicolon
+id|err_out
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * On close, we flush all azt blocks from the buffer cache.&n; */

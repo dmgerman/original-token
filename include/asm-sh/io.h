@@ -408,10 +408,6 @@ DECL|macro|isa_memcpy_fromio
 mdefine_line|#define isa_memcpy_fromio(a,b,c) &bslash;&n;  memcpy((a),(void *)(sh_isa_slot((unsigned long)(b))),(c))
 DECL|macro|isa_memcpy_toio
 mdefine_line|#define isa_memcpy_toio(a,b,c) &bslash;&n;  memcpy((void *)(sh_isa_slot((unsigned long)(a))),(b),(c))
-DECL|macro|ctrl_in
-mdefine_line|#define ctrl_in(addr)&t;&t;*(addr)
-DECL|macro|ctrl_out
-mdefine_line|#define ctrl_out(data,addr)&t;*(addr) = (data)
 DECL|function|ctrl_inb
 r_extern
 id|__inline__

@@ -27,6 +27,14 @@ comma
 l_string|&quot;PCI IO bus 2&quot;
 comma
 l_string|&quot;PCI IO bus 3&quot;
+comma
+l_string|&quot;PCI IO bus 4&quot;
+comma
+l_string|&quot;PCI IO bus 5&quot;
+comma
+l_string|&quot;PCI IO bus 6&quot;
+comma
+l_string|&quot;PCI IO bus 7&quot;
 )brace
 suffix:semicolon
 DECL|variable|pci_mem_names
@@ -46,6 +54,14 @@ comma
 l_string|&quot;PCI mem bus 2&quot;
 comma
 l_string|&quot;PCI mem bus 3&quot;
+comma
+l_string|&quot;PCI mem bus 4&quot;
+comma
+l_string|&quot;PCI mem bus 5&quot;
+comma
+l_string|&quot;PCI mem bus 6&quot;
+comma
+l_string|&quot;PCI mem bus 7&quot;
 )brace
 suffix:semicolon
 DECL|variable|pci_hae0_name
@@ -998,6 +1014,7 @@ id|list_head
 op_star
 id|ln
 suffix:semicolon
+multiline_comment|/* ???? */
 id|bus-&gt;resource
 (braket
 l_int|0
@@ -1154,11 +1171,11 @@ id|dev-&gt;rom_base_reg
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/* Don&squot;t update non-standard resources here */
 r_return
 suffix:semicolon
+multiline_comment|/* Don&squot;t update non-standard resources here. */
 )brace
-multiline_comment|/* Point root at the hose root */
+multiline_comment|/* Point root at the hose root. */
 r_if
 c_cond
 (paren
@@ -1744,6 +1761,42 @@ id|end
 op_assign
 id|bridge-&gt;resource
 (braket
+l_int|1
+)braket
+dot
+id|start
+op_plus
+id|inner.mem_end
+suffix:semicolon
+id|bridge-&gt;resource
+(braket
+id|PCI_BRIDGE_RESOURCES
+)braket
+dot
+id|end
+op_assign
+id|bridge-&gt;resource
+(braket
+id|PCI_BRIDGE_RESOURCES
+)braket
+dot
+id|start
+op_plus
+id|inner.io_end
+suffix:semicolon
+id|bridge-&gt;resource
+(braket
+id|PCI_BRIDGE_RESOURCES
+op_plus
+l_int|1
+)braket
+dot
+id|end
+op_assign
+id|bridge-&gt;resource
+(braket
+id|PCI_BRIDGE_RESOURCES
+op_plus
 l_int|1
 )braket
 dot

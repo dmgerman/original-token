@@ -28,6 +28,10 @@ macro_line|#else
 DECL|macro|oldlatch_init
 mdefine_line|#define oldlatch_init()
 macro_line|#endif
+macro_line|#ifndef CONFIG_ARCH_RPC
+DECL|macro|HAVE_EXPMASK
+mdefine_line|#define HAVE_EXPMASK
+macro_line|#endif
 DECL|enum|req
 r_enum
 id|req

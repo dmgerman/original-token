@@ -54,7 +54,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Set the current MMU context.&n; * On 32-bit PowerPCs (other than the 8xx embedded chips), this is done by&n; * loading up the segment registers for the user part of the address space.&n; */
+multiline_comment|/*&n; * Set the current MMU context.&n; * On 32-bit PowerPCs (other than the 8xx embedded chips), this is done by&n; * loading up the segment registers for the user part of the address space.&n; *&n; * On the 8xx parts, the context currently includes the page directory,&n; * and once I implement a real TLB context manager this will disappear.&n; * The PGD is ignored on other processors. - Dan&n; */
 r_extern
 r_void
 id|set_context
@@ -62,6 +62,10 @@ c_func
 (paren
 r_int
 id|context
+comma
+r_void
+op_star
+id|pgd
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_8xx
@@ -136,6 +140,8 @@ id|set_context
 c_func
 (paren
 id|next-&gt;context
+comma
+id|next-&gt;pgd
 )paren
 suffix:semicolon
 )brace
@@ -172,6 +178,8 @@ id|set_context
 c_func
 (paren
 id|mm-&gt;context
+comma
+id|mm-&gt;pgd
 )paren
 suffix:semicolon
 )brace

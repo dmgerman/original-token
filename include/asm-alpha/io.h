@@ -350,6 +350,10 @@ macro_line|#elif defined(CONFIG_ALPHA_T2)
 macro_line|# include &lt;asm/core_t2.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
 macro_line|# include &lt;asm/core_tsunami.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_TITAN)
+macro_line|# include &lt;asm/core_titan.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_WILDFIRE)
+macro_line|# include &lt;asm/core_wildfire.h&gt;
 macro_line|#else
 macro_line|#error &quot;What system is this?&quot;
 macro_line|#endif

@@ -38,16 +38,12 @@ l_int|4
 )braket
 op_assign
 (brace
-op_complement
 l_int|0UL
 comma
-op_complement
 l_int|0UL
 comma
-op_complement
 l_int|0UL
 comma
-op_complement
 l_int|0UL
 )brace
 suffix:semicolon
@@ -123,6 +119,11 @@ comma
 id|mask3
 comma
 id|dummy
+suffix:semicolon
+id|mask
+op_and_assign
+op_complement
+id|isa_enable
 suffix:semicolon
 id|mask0
 op_assign
@@ -1114,6 +1115,23 @@ l_int|0x800
 op_rshift
 l_int|4
 suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;clipper_srm_device_interrupt: vector 0x%lx IRQ %d cpu %d&bslash;n&quot;
+comma
+id|vector
+comma
+id|irq
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * The SRM console reports PCI interrupts with a vector calculated by:&n;&t; *&n;&t; *&t;0x900 + (0x10 * DRIR-bit)&n;&t; *&n;&t; * So bit 16 shows up as IRQ 32, etc.&n;&t; * &n;&t; * CLIPPER uses bits 8-47 for PCI interrupts, so we do not need&n;&t; * to scale down the vector reported, we just use it.&n;&t; *&n;&t; * Eg IRQ 24 is DRIR bit 8, etc, etc&n;&t; */
 id|handle_irq
 c_func

@@ -519,6 +519,39 @@ id|address
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/*&n; * The PCI bus bridge can translate addresses issued by the processor(s)&n; * into a different address on the PCI bus.  On 32-bit cpus, we assume&n; * this mapping is 1-1, but on 64-bit systems it often isn&squot;t.&n; */
+macro_line|#ifndef CONFIG_PPC64BRIDGE
+DECL|macro|phys_to_bus
+mdefine_line|#define phys_to_bus(x)&t;(x)
+DECL|macro|bus_to_phys
+mdefine_line|#define bus_to_phys(x)&t;(x)
+macro_line|#else
+r_extern
+r_int
+r_int
+id|phys_to_bus
+c_func
+(paren
+r_int
+r_int
+id|pa
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|bus_to_phys
+c_func
+(paren
+r_int
+r_int
+id|ba
+comma
+r_int
+id|busnr
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv, for&n; * addresses in the area where the kernel has the RAM mapped.&n; */
 DECL|function|virt_to_phys
 r_extern

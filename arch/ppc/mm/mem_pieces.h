@@ -2,7 +2,7 @@ multiline_comment|/*&n; *    Copyright (c) 1996 Paul Mackerras &lt;paulus@cs.anu
 macro_line|#ifndef __MEM_PIECES_H__
 DECL|macro|__MEM_PIECES_H__
 mdefine_line|#define&t;__MEM_PIECES_H__
-macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#ifdef __cplusplus
 r_extern
 l_string|&quot;C&quot;
@@ -28,17 +28,6 @@ id|MEM_PIECES_MAX
 )braket
 suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/* Global Variables */
-r_extern
-r_char
-op_star
-id|klimit
-suffix:semicolon
-r_extern
-r_struct
-id|mem_pieces
-id|phys_avail
 suffix:semicolon
 multiline_comment|/* Function Prototypes */
 r_extern
@@ -111,17 +100,6 @@ suffix:semicolon
 r_extern
 r_void
 id|mem_pieces_sort
-c_func
-(paren
-r_struct
-id|mem_pieces
-op_star
-id|mp
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|set_phys_avail
 c_func
 (paren
 r_struct

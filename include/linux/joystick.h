@@ -390,6 +390,12 @@ DECL|member|devfs_handle
 id|devfs_handle_t
 id|devfs_handle
 suffix:semicolon
+DECL|member|owner
+r_struct
+id|module
+op_star
+id|owner
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|js_list
@@ -545,6 +551,11 @@ comma
 r_char
 op_star
 id|name
+comma
+r_struct
+id|module
+op_star
+id|owner
 comma
 id|js_ops_func
 id|open

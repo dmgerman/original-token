@@ -13,13 +13,9 @@ id|fiq_handler
 id|fh
 op_assign
 (brace
-l_int|NULL
-comma
+id|name
+suffix:colon
 l_string|&quot;floppydma&quot;
-comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|arch_request_dma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.38 1999/12/01 23:52:04 davem Exp $ */
+multiline_comment|/* $Id: head.h,v 1.39 2000/05/26 22:18:45 ecd Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H
@@ -64,7 +64,7 @@ DECL|macro|SETCC_TRAP
 mdefine_line|#define SETCC_TRAP &bslash;&n;        b setcc_trap_handler; mov %psr, %l0; nop; nop;
 multiline_comment|/* The Get PSR software trap for userland. */
 DECL|macro|GETPSR_TRAP
-mdefine_line|#define GETPSR_TRAP &bslash;&n;&t;mov %psr, %o0; jmpl %l2, %g0; rett %l2 + 4; nop;
+mdefine_line|#define GETPSR_TRAP &bslash;&n;&t;mov %psr, %i0; jmp %l2; rett %l2 + 4; nop;
 multiline_comment|/* This is for hard interrupts from level 1-14, 15 is non-maskable (nmi) and&n; * gets handled with another macro.&n; */
 DECL|macro|TRAP_ENTRY_INTERRUPT
 mdefine_line|#define TRAP_ENTRY_INTERRUPT(int_level) &bslash;&n;        mov int_level, %l7; rd %psr, %l0; b real_irq_entry; rd %wim, %l3;

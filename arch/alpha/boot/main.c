@@ -247,7 +247,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-id|halt
+id|__halt
 c_func
 (paren
 )paren
@@ -315,11 +315,9 @@ id|result
 suffix:semicolon
 id|result
 op_assign
-id|srm_dispatch
+id|callback_getenv
 c_func
 (paren
-id|CCB_GET_ENV
-comma
 id|ENV_BOOTED_DEV
 comma
 id|bootdev
@@ -338,11 +336,9 @@ r_return
 id|result
 suffix:semicolon
 r_return
-id|srm_dispatch
+id|callback_open
 c_func
 (paren
-id|CCB_OPEN
-comma
 id|bootdev
 comma
 id|result
@@ -363,11 +359,9 @@ id|dev
 )paren
 (brace
 r_return
-id|srm_dispatch
+id|callback_close
 c_func
 (paren
-id|CCB_CLOSE
-comma
 id|dev
 )paren
 suffix:semicolon
@@ -417,11 +411,9 @@ id|BOOT_ADDR
 suffix:semicolon
 id|result
 op_assign
-id|srm_dispatch
+id|callback_getenv
 c_func
 (paren
-id|CCB_GET_ENV
-comma
 id|ENV_BOOTED_FILE
 comma
 id|bootfile
@@ -464,11 +456,9 @@ id|bootfile
 )paren
 suffix:semicolon
 r_return
-id|srm_dispatch
+id|callback_read
 c_func
 (paren
-id|CCB_READ
-comma
 id|dev
 comma
 id|count
@@ -649,11 +639,9 @@ suffix:semicolon
 )brace
 id|nbytes
 op_assign
-id|srm_dispatch
+id|callback_getenv
 c_func
 (paren
-id|CCB_GET_ENV
-comma
 id|ENV_BOOTED_OSFLAGS
 comma
 id|envval
@@ -723,7 +711,7 @@ op_increment
 )paren
 multiline_comment|/* nothing */
 suffix:semicolon
-id|halt
+id|__halt
 c_func
 (paren
 )paren

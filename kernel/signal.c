@@ -867,9 +867,9 @@ r_if
 c_cond
 (paren
 (paren
-id|t-&gt;flags
+id|t-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 op_logical_or
 id|sigismember
@@ -2461,9 +2461,9 @@ multiline_comment|/* FIXME -- can we deduce CLD_TRAPPED or CLD_CONTINUED? */
 r_if
 c_cond
 (paren
-id|tsk-&gt;flags
+id|tsk-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 id|why
 op_assign

@@ -50,14 +50,14 @@ r_int
 op_star
 )paren
 suffix:semicolon
-DECL|macro|get_16be
-mdefine_line|#define get_16be(x)&t;(*(unsigned short *)(x))
-DECL|macro|get_32be
-mdefine_line|#define get_32be(x)&t;(*(unsigned *)(x))
 DECL|macro|RAM_START
 mdefine_line|#define RAM_START&t;0x00000000
 DECL|macro|RAM_END
-mdefine_line|#define RAM_END&t;&t;(8&lt;&lt;20)
+mdefine_line|#define RAM_END&t;&t;(64&lt;&lt;20)
+DECL|macro|BOOT_START
+mdefine_line|#define BOOT_START&t;((unsigned long)_start)
+DECL|macro|BOOT_END
+mdefine_line|#define BOOT_END&t;((unsigned long)(_end + 0xFFF) &amp; ~0xFFF)
 DECL|macro|RAM_FREE
 mdefine_line|#define RAM_FREE&t;((unsigned long)(_end+0x1000)&amp;~0xFFF)
 DECL|macro|PROG_START
@@ -108,6 +108,17 @@ r_extern
 r_int
 id|sysmap_len
 suffix:semicolon
+DECL|variable|scratch
+r_static
+r_char
+id|scratch
+(braket
+l_int|1024
+op_lshift
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* 1MB of scratch space for gunzip */
 DECL|function|chrpboot
 id|chrpboot
 c_func
@@ -162,14 +173,74 @@ op_amp
 id|_start
 )paren
 suffix:semicolon
-id|end_avail
+r_if
+c_cond
+(paren
+id|initrd_len
+)paren
+(brace
+id|initrd_size
 op_assign
+id|initrd_len
+suffix:semicolon
+id|initrd_start
+op_assign
+(paren
+id|RAM_END
+op_minus
+id|initrd_size
+)paren
+op_amp
+op_complement
+l_int|0xFFF
+suffix:semicolon
+id|a1
+op_assign
+id|initrd_start
+suffix:semicolon
+id|a2
+op_assign
+id|initrd_size
+suffix:semicolon
+id|claim
+c_func
+(paren
+id|initrd_start
+comma
+id|RAM_END
+op_minus
+id|initrd_start
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;initial ramdisk moving 0x%x &lt;- 0x%x (%x bytes)&bslash;n&bslash;r&quot;
+comma
+id|initrd_start
+comma
+id|initrd_data
+comma
+id|initrd_size
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
 (paren
 r_char
 op_star
 )paren
-id|RAM_END
+id|initrd_start
+comma
+id|initrd_data
+comma
+id|initrd_size
+)paren
 suffix:semicolon
+)brace
 id|im
 op_assign
 id|image_data
@@ -177,6 +248,23 @@ suffix:semicolon
 id|len
 op_assign
 id|image_len
+suffix:semicolon
+multiline_comment|/* claim 4MB starting at PROG_START */
+id|claim
+c_func
+(paren
+id|PROG_START
+comma
+(paren
+l_int|4
+op_lshift
+l_int|20
+)paren
+op_minus
+id|PROG_START
+comma
+l_int|0
+)paren
 suffix:semicolon
 id|dst
 op_assign
@@ -206,11 +294,16 @@ l_int|0x8b
 (brace
 id|avail_ram
 op_assign
+id|scratch
+suffix:semicolon
+id|end_avail
+op_assign
+id|scratch
+op_plus
+r_sizeof
 (paren
-r_char
-op_star
+id|scratch
 )paren
-id|RAM_FREE
 suffix:semicolon
 id|printf
 c_func
@@ -451,6 +544,7 @@ op_plus
 id|rec-&gt;size
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|rec-&gt;tag
 op_assign
 id|BI_SYSMAP
@@ -504,6 +598,7 @@ op_plus
 id|rec-&gt;size
 )paren
 suffix:semicolon
+macro_line|#endif
 id|rec-&gt;tag
 op_assign
 id|BI_LAST
@@ -547,15 +642,11 @@ op_star
 id|sa
 )paren
 (paren
-l_int|0
-comma
-l_int|0
-comma
-id|prom
-comma
 id|a1
 comma
 id|a2
+comma
+id|prom
 )paren
 suffix:semicolon
 id|printf

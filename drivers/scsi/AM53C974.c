@@ -1927,7 +1927,7 @@ macro_line|#if defined (CONFIG_PCI)
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_pci_detect(Scsi_Host_Template *tpnt)&n;*&n;* Purpose : detects and initializes AM53C974 SCSI chips with PCI Bios&n;*&n;* Inputs : tpnt - host template&n;* &n;* Returns : number of host adapters detected&n;**************************************************************************/
 DECL|function|AM53C974_pci_detect
 r_static
-id|__inline__
+r_inline
 r_int
 id|AM53C974_pci_detect
 c_func
@@ -1972,6 +1972,17 @@ id|pdev
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|pci_read_config_word
 c_func
 (paren
@@ -1996,39 +2007,11 @@ id|PCI_COMMAND_IO
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* PCI Spec 2.1 states that it is either the driver&squot;s or the PCI card&squot;s responsibility&n;&t;&t;   to set the PCI Master Enable Bit if needed. &n;&t;&t;   (from Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;) */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|command
-op_amp
-id|PCI_COMMAND_MASTER
-)paren
-)paren
-(brace
-id|command
-op_or_assign
-id|PCI_COMMAND_MASTER
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;PCI Master Bit has not been set. Setting...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|pci_write_config_word
-c_func
+id|pci_set_master
 (paren
 id|pdev
-comma
-id|PCI_COMMAND
-comma
-id|command
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* everything seems OK now, so initialize */
 r_if
 c_cond
@@ -2179,12 +2162,13 @@ l_int|0
 suffix:semicolon
 id|instance-&gt;io_port
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|instance-&gt;irq
 op_assign

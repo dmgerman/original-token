@@ -454,6 +454,8 @@ id|search_exception_table
 c_func
 (paren
 id|regs-&gt;pc
+comma
+id|regs-&gt;gp
 )paren
 )paren
 op_ne
@@ -476,10 +478,11 @@ comma
 id|regs-&gt;pc
 )paren
 suffix:semicolon
+macro_line|#if 1
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
+l_string|&quot;%s: Exception at [&lt;%lx&gt;] (%lx) handled successfully&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -488,6 +491,7 @@ comma
 id|newpc
 )paren
 suffix:semicolon
+macro_line|#endif
 id|regs-&gt;pc
 op_assign
 id|newpc

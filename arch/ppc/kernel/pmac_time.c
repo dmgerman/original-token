@@ -17,6 +17,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;time.h&quot;
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
 multiline_comment|/* Apparently the RTC stores seconds since 1 Jan 1904 */
 DECL|macro|RTC_OFFSET
 mdefine_line|#define RTC_OFFSET&t;2082844800
@@ -572,6 +576,10 @@ r_int
 r_int
 id|time_diff
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -581,6 +589,15 @@ id|when
 r_case
 id|PBOOK_SLEEP_NOW
 suffix:colon
+id|read_lock_irqsave
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|time_diff
 op_assign
 id|xtime.tv_sec
@@ -590,11 +607,29 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|read_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|PBOOK_WAKE
 suffix:colon
+id|write_lock_irqsave
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|pmac_get_rtc_time
@@ -617,6 +652,15 @@ suffix:semicolon
 id|last_rtc_update
 op_assign
 id|xtime.tv_sec
+suffix:semicolon
+id|write_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon

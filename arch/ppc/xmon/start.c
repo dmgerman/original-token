@@ -1139,14 +1139,14 @@ id|sccd
 l_int|0
 )braket
 op_assign
-l_int|3
+l_int|12
 suffix:semicolon
 id|eieio
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* DLL = 38400 baud */
+multiline_comment|/* DLL = 9600 baud */
 id|sccd
 (braket
 l_int|1

@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-sa1100.c&n; *&n; * Extra MM routines for the SA1100 architecture&n; *&n; * Copyright (C) 1998-1999 Russell King&n; * Copyright (C) 1999 Hugo Fiennes&n; *&n; * 1999/12/04 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Converted memory definition for struct meminfo initialisations.&n; *&t;Memory is listed physically now.&n; *&n; * 2000/04/07 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Reworked for real-time selection of memory definitions&n; *&n; */
+multiline_comment|/*&n; * arch/arm/mm/mm-sa1100.c&n; *&n; * Extra MM routines for the SA1100 architecture&n; *&n; * Copyright (C) 1998-1999 Russell King&n; * Copyright (C) 1999 Hugo Fiennes&n; *&n; * 1999/12/04 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Converted memory definition for struct meminfo initialisations.&n; *&t;Memory is listed physically now.&n; *&n; * 2000/04/07 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Reworked for run-time selection of memory definitions&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &quot;map.h&quot;
@@ -40,6 +41,25 @@ l_int|0
 comma
 multiline_comment|/* Flash bank 0 */
 (brace
+l_int|0xd4000000
+comma
+l_int|0x10000000
+comma
+l_int|0x00100000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* System Registers */
+(brace
 l_int|0xdc000000
 comma
 l_int|0x12000000
@@ -58,6 +78,25 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Board Control Register */
+(brace
+l_int|0xd8000000
+comma
+l_int|0x40000000
+comma
+l_int|0x00800000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* SA-1111 */
 id|SA1100_STD_IO_MAPPING
 macro_line|#endif
 )brace
@@ -652,4 +691,64 @@ id|default_io_desc
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_DISCONTIGMEM
+multiline_comment|/*&n; * Our node_data structure for discontigous memory.&n; * There is 4 possible nodes i.e. the 4 SA1100 RAM banks.&n; */
+DECL|variable|node_bootmem_data
+r_static
+id|bootmem_data_t
+id|node_bootmem_data
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|variable|sa1100_node_data
+id|pg_data_t
+id|sa1100_node_data
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+(brace
+id|bdata
+suffix:colon
+op_amp
+id|node_bootmem_data
+(braket
+l_int|0
+)braket
+)brace
+comma
+(brace
+id|bdata
+suffix:colon
+op_amp
+id|node_bootmem_data
+(braket
+l_int|1
+)braket
+)brace
+comma
+(brace
+id|bdata
+suffix:colon
+op_amp
+id|node_bootmem_data
+(braket
+l_int|2
+)braket
+)brace
+comma
+(brace
+id|bdata
+suffix:colon
+op_amp
+id|node_bootmem_data
+(braket
+l_int|3
+)braket
+)brace
+)brace
+suffix:semicolon
+macro_line|#endif
 eof

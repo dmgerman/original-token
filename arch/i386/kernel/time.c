@@ -137,13 +137,17 @@ suffix:semicolon
 )brace
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
-macro_line|#ifndef CONFIG_X86_TSC
 DECL|variable|i8253_lock
 id|spinlock_t
 id|i8253_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|i8259A_lock
+suffix:semicolon
+macro_line|#ifndef CONFIG_X86_TSC
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|function|do_slow_gettimeoffset
 r_static
@@ -219,6 +223,13 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|i8253_lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * avoiding timer inconsistencies (they are rare, but they happen)...&n;&t; * there are two kinds of problems that must be avoided here:&n;&t; *  1. the timer counter underflows&n;&t; *  2. hardware problem with the timer, not giving us continuous time,&n;&t; *     the counter does small &quot;jumps&quot; upwards on some Pentium systems,&n;&t; *     (see c&squot;t 95/10 page 335 for Neptun bug.)&n;&t; */
 multiline_comment|/* you can safely undefine this if you don&squot;t have the Neptune chipset */
 DECL|macro|BUGGY_NEPTUN_TIMER
@@ -240,23 +251,37 @@ id|count_p
 )paren
 (brace
 multiline_comment|/* the nutcase */
-id|outb_p
+r_int
+id|i
+suffix:semicolon
+id|spin_lock
 c_func
 (paren
-l_int|0x0A
-comma
-l_int|0x20
+op_amp
+id|i8259A_lock
 )paren
 suffix:semicolon
-multiline_comment|/* assumption about timer being IRQ1 */
-r_if
-c_cond
-(paren
+multiline_comment|/*&n;&t;&t;&t; * This is tricky when I/O APICs are used;&n;&t;&t;&t; * see do_timer_interrupt().&n;&t;&t;&t; */
+id|i
+op_assign
 id|inb
 c_func
 (paren
 l_int|0x20
 )paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|i8259A_lock
+)paren
+suffix:semicolon
+multiline_comment|/* assumption about timer being IRQ0 */
+r_if
+c_cond
+(paren
+id|i
 op_amp
 l_int|0x01
 )paren
@@ -290,13 +315,6 @@ r_else
 id|jiffies_p
 op_assign
 id|jiffies_t
-suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|i8253_lock
-)paren
 suffix:semicolon
 id|count_p
 op_assign
@@ -796,6 +814,12 @@ id|last_rtc_update
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|timer_ack
+r_int
+id|timer_ack
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * timer_interrupt() needs to keep up the real-time clock,&n; * as well as call the &quot;do_timer()&quot; routine every clocktick&n; */
 DECL|function|do_timer_interrupt
 r_static
@@ -817,6 +841,45 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef CONFIG_X86_IO_APIC
+r_if
+c_cond
+(paren
+id|timer_ack
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Subtle, when I/O APICs are used we have to ack timer IRQ&n;&t;&t; * manually to reset the IRR bit for do_slow_gettimeoffset().&n;&t;&t; * This will also deassert NMI lines for the watchdog if run&n;&t;&t; * on an 82489DX-based system.&n;&t;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|i8259A_lock
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0c
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+multiline_comment|/* Ack the IRQ; AEOI will end it automatically. */
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|i8259A_lock
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_VISWS
 multiline_comment|/* Clear the interrupt */
 id|co_cpu_write
@@ -1026,7 +1089,6 @@ c_func
 id|last_tsc_low
 )paren
 suffix:semicolon
-macro_line|#if 0 /*&n;       * SUBTLE: this is not necessary from here because it&squot;s implicit in the&n;       * write xtime_lock.&n;       */
 id|spin_lock
 c_func
 (paren
@@ -1034,7 +1096,6 @@ op_amp
 id|i8253_lock
 )paren
 suffix:semicolon
-macro_line|#endif
 id|outb_p
 c_func
 (paren
@@ -1063,7 +1124,6 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
-macro_line|#if 0
 id|spin_unlock
 c_func
 (paren
@@ -1071,7 +1131,6 @@ op_amp
 id|i8253_lock
 )paren
 suffix:semicolon
-macro_line|#endif
 id|count
 op_assign
 (paren
@@ -1767,9 +1826,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_TSC
+id|cpu_has_tsc
 )paren
 (brace
 r_int

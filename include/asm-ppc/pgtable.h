@@ -326,11 +326,6 @@ op_star
 id|va_to_pte
 c_func
 (paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
 r_int
 r_int
 id|address

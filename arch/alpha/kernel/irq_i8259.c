@@ -443,6 +443,9 @@ macro_line|# define IACK_SC&t;CIA_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
 DECL|macro|IACK_SC
 macro_line|# define IACK_SC&t;PYXIS_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_TITAN)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;TITAN_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
 DECL|macro|IACK_SC
 macro_line|# define IACK_SC&t;TSUNAMI_IACK_SC

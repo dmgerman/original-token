@@ -90,6 +90,8 @@ DECL|macro|MACH_TYPE_RANGER
 mdefine_line|#define MACH_TYPE_RANGER&t;&t;28
 DECL|macro|MACH_TYPE_GRAPHICSCLIENT
 mdefine_line|#define MACH_TYPE_GRAPHICSCLIENT&t;29
+DECL|macro|MACH_TYPE_XP860
+mdefine_line|#define MACH_TYPE_XP860&t;&t;&t;30
 multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; *&n; * In general, you should use machine_is_xxxx() in your code, not:&n; *  -  switch (machine_arch_type) { }&n; *  -  if (machine_arch_type = xxxx)&n; *  -  __machine_arch_type&n; *&n; * Please note that these are kept in numeric order (ie, the same&n; * order as the list above).&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type
@@ -378,6 +380,38 @@ macro_line|# define machine_is_lart()&t;(machine_arch_type == MACH_TYPE_LART)
 macro_line|#else
 DECL|macro|machine_is_lart
 macro_line|# define machine_is_lart()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_GRAPHICSCLIENT
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_GRAPHICSCLIENT
+macro_line|# endif
+DECL|macro|machine_is_grpahicsclient
+macro_line|# define machine_is_grpahicsclient() &bslash;&n;&t;&t;&t;&t;(machine_arch_type == MACH_TYPE_GRAPHICSCLIENT)
+macro_line|#else
+DECL|macro|machine_is_graphicsclient
+macro_line|# define machine_is_graphicsclient() &bslash;&n;&t;&t;&t;&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_XP860
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_XP860
+macro_line|# endif
+DECL|macro|machine_is_xp860
+macro_line|# define machine_is_xp860()&t;(machine_arch_type == MACH_TYPE_XP860)
+macro_line|#else
+DECL|macro|machine_is_xp860
+macro_line|# define machine_is_xp860()&t;(0)
 macro_line|#endif
 multiline_comment|/*&n; * The following are currently unregistered&n; */
 macro_line|#ifdef CONFIG_SA1100_ITSY

@@ -179,6 +179,13 @@ id|boot_infos_t
 op_star
 id|boot_infos
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|rtas_data
+comma
+id|rtas_size
+suffix:semicolon
 macro_line|#ifndef CONFIG_SMP
 DECL|variable|quicklists
 r_struct
@@ -305,6 +312,16 @@ r_int
 id|flags
 )paren
 suffix:semicolon
+r_void
+id|set_phys_avail
+c_func
+(paren
+r_struct
+id|mem_pieces
+op_star
+id|mp
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|die_if_kernel
@@ -320,10 +337,25 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|variable|phys_mem
-r_struct
-id|mem_pieces
-id|phys_mem
+r_extern
+r_char
+id|_start
+(braket
+)braket
+comma
+id|_end
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_char
+id|_stext
+(braket
+)braket
+comma
+id|etext
+(braket
+)braket
 suffix:semicolon
 r_extern
 r_struct
@@ -334,11 +366,30 @@ id|current_set
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|variable|phys_mem
+r_struct
+id|mem_pieces
+id|phys_mem
+suffix:semicolon
+DECL|variable|klimit
+r_char
+op_star
+id|klimit
+op_assign
+id|_end
+suffix:semicolon
+DECL|variable|phys_avail
+r_struct
+id|mem_pieces
+id|phys_avail
+suffix:semicolon
 DECL|variable|Hash
 DECL|variable|Hash_end
 id|PTE
 op_star
 id|Hash
+op_assign
+l_int|0
 comma
 op_star
 id|Hash_end
@@ -348,6 +399,8 @@ DECL|variable|Hash_mask
 r_int
 r_int
 id|Hash_size
+op_assign
+l_int|0
 comma
 id|Hash_mask
 suffix:semicolon
@@ -356,6 +409,8 @@ DECL|variable|_SDR1
 r_int
 r_int
 id|_SDR1
+op_assign
+l_int|0
 suffix:semicolon
 r_static
 r_void
@@ -374,7 +429,7 @@ DECL|member|bat
 id|BAT
 id|bat
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC64
+macro_line|#ifdef CONFIG_PPC64BRIDGE
 DECL|member|word
 id|u64
 id|word
@@ -2003,6 +2058,11 @@ id|flags
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem_init_done
+)paren
 id|flush_hash_page
 c_func
 (paren
@@ -2023,17 +2083,23 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_PPC64BRIDGE
+multiline_comment|/* XXX this assumes that the vmalloc arena starts no lower than&n;&t; * 0xd0000000 on 64-bit machines. */
+id|flush_hash_segments
+c_func
+(paren
+l_int|0xd
+comma
+l_int|0xffffff
+)paren
+suffix:semicolon
+macro_line|#else
 id|__clear_user
 c_func
 (paren
 id|Hash
 comma
 id|Hash_size
-)paren
-suffix:semicolon
-id|_tlbia
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
@@ -2043,7 +2109,8 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif /* CONFIG_SMP */
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 )brace
 multiline_comment|/*&n; * Flush all the (user) entries for the address space described&n; * by mm.  We can&squot;t rely on mm-&gt;mmap describing all the entries&n; * that might be in the hash table.&n; */
 r_void
@@ -2303,10 +2370,13 @@ id|next_mmu_context
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* The PGD is only a placeholder.  It is only used on&n;&t; * 8xx processors.&n;&t; */
 id|set_context
 c_func
 (paren
 id|current-&gt;mm-&gt;context
+comma
+id|current-&gt;mm-&gt;pgd
 )paren
 suffix:semicolon
 )brace
@@ -2777,7 +2847,7 @@ id|s
 comma
 id|f
 suffix:semicolon
-macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx) &amp;&amp; !defined(CONFIG_POWER4)
 r_if
 c_cond
 (paren
@@ -2987,7 +3057,7 @@ id|RAM_PAGE
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* !CONFIG_4xx &amp;&amp; !CONFIG_8xx */
+macro_line|#endif /* !CONFIG_4xx &amp;&amp; !CONFIG_8xx &amp;&amp; !CONFIG_POWER4 */
 r_for
 c_loop
 (paren
@@ -3899,29 +3969,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC64
-id|_SDR1
-op_assign
-id|__pa
-c_func
-(paren
-id|Hash
-)paren
-op_or
-(paren
-id|ffz
-c_func
-(paren
-op_complement
-id|Hash_size
-)paren
-op_minus
-l_int|7
-)paren
-op_minus
-l_int|11
-suffix:semicolon
-macro_line|#else
+macro_line|#ifndef CONFIG_PPC64BRIDGE
 id|_SDR1
 op_assign
 id|__pa
@@ -3962,6 +4010,30 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_POWER4
+id|ioremap_base
+op_assign
+id|ioremap_bot
+op_assign
+l_int|0xfffff000
+suffix:semicolon
+id|isa_io_base
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+l_int|0xffd00000
+comma
+l_int|0x200000
+)paren
+op_plus
+l_int|0x100000
+suffix:semicolon
+macro_line|#else /* CONFIG_POWER4 */
 multiline_comment|/*&n;&t; * Setup the bat mappings we&squot;re going to load that cover&n;&t; * the io areas.  RAM was mapped by mapin_ram().&n;&t; * -- Cort&n;&t; */
 r_if
 c_cond
@@ -4038,17 +4110,15 @@ comma
 id|IO_PAGE
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC64
-multiline_comment|/* temporary hack to get working until page tables are stable -- Cort*/
-multiline_comment|/*&t;&t;setbat(1, 0x80000000, 0xc0000000, 0x10000000, IO_PAGE);*/
+macro_line|#ifdef CONFIG_PPC64BRIDGE
 id|setbat
 c_func
 (paren
-l_int|3
+l_int|1
 comma
-l_int|0xd0000000
+l_int|0x80000000
 comma
-l_int|0xd0000000
+l_int|0xc0000000
 comma
 l_int|0x10000000
 comma
@@ -4084,66 +4154,15 @@ comma
 id|IO_PAGE
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
 id|_MACH_Pmac
 suffix:colon
-macro_line|#if 0
-(brace
-r_int
-r_int
-id|base
-op_assign
-l_int|0xf3000000
-suffix:semicolon
-r_struct
-id|device_node
-op_star
-id|macio
-op_assign
-id|find_devices
-c_func
-(paren
-l_string|&quot;mac-io&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|macio
-op_logical_and
-id|macio-&gt;n_addrs
-)paren
-id|base
-op_assign
-id|macio-&gt;addrs
-(braket
-l_int|0
-)braket
-dot
-id|address
-suffix:semicolon
-id|setbat
-c_func
-(paren
-l_int|0
-comma
-id|base
-comma
-id|base
-comma
-l_int|0x100000
-comma
-id|IO_PAGE
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|ioremap_base
 op_assign
-l_int|0xf0000000
+l_int|0xf8000000
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4258,6 +4277,7 @@ id|ioremap_bot
 op_assign
 id|ioremap_base
 suffix:semicolon
+macro_line|#endif /* CONFIG_POWER4 */
 macro_line|#else /* CONFIG_8xx */
 id|end_of_DRAM
 op_assign
@@ -4876,15 +4896,6 @@ id|initpages
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALL_PPC)&t;
-r_extern
-r_int
-r_int
-id|rtas_data
-comma
-id|rtas_size
-suffix:semicolon
-macro_line|#endif /* defined(CONFIG_ALL_PPC) */
 id|max_mapnr
 op_assign
 id|max_low_pfn
@@ -5218,36 +5229,10 @@ r_int
 r_int
 id|ram_limit
 op_assign
-l_int|0xf0000000
+l_int|0xe0000000
 op_minus
 id|KERNELBASE
 suffix:semicolon
-multiline_comment|/* allow 0x08000000 for IO space */
-r_if
-c_cond
-(paren
-id|_machine
-op_amp
-(paren
-id|_MACH_prep
-op_or
-id|_MACH_Pmac
-)paren
-)paren
-id|ram_limit
-op_assign
-l_int|0xd8000000
-op_minus
-id|KERNELBASE
-suffix:semicolon
-macro_line|#ifdef CONFIG_PPC64
-id|ram_limit
-op_assign
-l_int|64
-op_lshift
-l_int|20
-suffix:semicolon
-macro_line|#endif
 id|memory_node
 op_assign
 id|find_devices
@@ -5939,12 +5924,18 @@ r_void
 (brace
 r_int
 id|Hash_bits
+comma
+id|mb
+comma
+id|mb2
 suffix:semicolon
 r_int
 r_int
-id|h
+id|hmask
 comma
 id|ramsize
+comma
+id|h
 suffix:semicolon
 r_extern
 r_int
@@ -5965,6 +5956,67 @@ id|hash_page
 (braket
 )braket
 suffix:semicolon
+id|ramsize
+op_assign
+(paren
+id|ulong
+)paren
+id|end_of_DRAM
+op_minus
+id|KERNELBASE
+suffix:semicolon
+macro_line|#ifdef CONFIG_PPC64BRIDGE
+multiline_comment|/* The hash table has already been allocated and initialized&n;&t;   in prom.c */
+id|Hash_mask
+op_assign
+(paren
+id|Hash_size
+op_rshift
+l_int|7
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+id|hmask
+op_assign
+id|Hash_mask
+op_rshift
+l_int|9
+suffix:semicolon
+id|Hash_bits
+op_assign
+id|__ilog2
+c_func
+(paren
+id|Hash_size
+)paren
+op_minus
+l_int|7
+suffix:semicolon
+id|mb
+op_assign
+l_int|25
+op_minus
+id|Hash_bits
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|Hash_bits
+OG
+l_int|16
+)paren
+id|Hash_bits
+op_assign
+l_int|16
+suffix:semicolon
+id|mb2
+op_assign
+l_int|25
+op_minus
+id|Hash_bits
+suffix:semicolon
+macro_line|#else /* CONFIG_PPC64BRIDGE */
 r_if
 c_cond
 (paren
@@ -5981,15 +6033,6 @@ l_int|0x105
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allow 64k of hash table for every 16MB of memory,&n;&t; * up to a maximum of 2MB.&n;&t; */
-id|ramsize
-op_assign
-(paren
-id|ulong
-)paren
-id|end_of_DRAM
-op_minus
-id|KERNELBASE
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -6007,9 +6050,11 @@ l_int|256
 op_logical_and
 id|h
 OL
+(paren
 l_int|2
 op_lshift
 l_int|20
+)paren
 suffix:semicolon
 id|h
 op_mul_assign
@@ -6020,18 +6065,6 @@ id|Hash_size
 op_assign
 id|h
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC64
-id|Hash_mask
-op_assign
-(paren
-id|h
-op_rshift
-l_int|7
-)paren
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#else&t;
 id|Hash_mask
 op_assign
 (paren
@@ -6042,7 +6075,45 @@ l_int|6
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#endif&t;
+id|hmask
+op_assign
+id|Hash_mask
+op_rshift
+l_int|10
+suffix:semicolon
+id|Hash_bits
+op_assign
+id|__ilog2
+c_func
+(paren
+id|h
+)paren
+op_minus
+l_int|6
+suffix:semicolon
+id|mb
+op_assign
+l_int|26
+op_minus
+id|Hash_bits
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|Hash_bits
+OG
+l_int|16
+)paren
+id|Hash_bits
+op_assign
+l_int|16
+suffix:semicolon
+id|mb2
+op_assign
+l_int|26
+op_minus
+id|Hash_bits
+suffix:semicolon
 multiline_comment|/* shrink the htab since we don&squot;t use it on 603&squot;s -- Cort */
 r_switch
 c_cond
@@ -6108,6 +6179,7 @@ c_cond
 (paren
 id|Hash_size
 )paren
+(brace
 id|Hash
 op_assign
 id|mem_pieces_find
@@ -6118,15 +6190,18 @@ comma
 id|Hash_size
 )paren
 suffix:semicolon
+multiline_comment|/*__clear_user(Hash, Hash_size);*/
+)brace
 r_else
 id|Hash
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 id|printk
 c_func
 (paren
-l_string|&quot;Total memory = %ldMB; using %ldkB for hash table (at %p)&bslash;n&quot;
+l_string|&quot;Total memory = %dMB; using %ldkB for hash table (at %p)&bslash;n&quot;
 comma
 id|ramsize
 op_rshift
@@ -6176,33 +6251,7 @@ op_plus
 id|Hash_size
 )paren
 suffix:semicolon
-multiline_comment|/*__clear_user(Hash, Hash_size);*/
 multiline_comment|/*&n;&t;&t; * Patch up the instructions in head.S:hash_page&n;&t;&t; */
-macro_line|#ifdef CONFIG_PPC64&t;&t;
-id|Hash_bits
-op_assign
-id|ffz
-c_func
-(paren
-op_complement
-id|Hash_size
-)paren
-op_minus
-l_int|7
-suffix:semicolon
-macro_line|#else
-id|Hash_bits
-op_assign
-id|ffz
-c_func
-(paren
-op_complement
-id|Hash_size
-)paren
-op_minus
-l_int|6
-suffix:semicolon
-macro_line|#endif&t;&t;
 id|hash_page_patch_A
 (braket
 l_int|0
@@ -6244,25 +6293,10 @@ l_int|0x7c0
 )paren
 op_or
 (paren
-(paren
-l_int|26
-op_minus
-id|Hash_bits
-)paren
+id|mb
 op_lshift
 l_int|6
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|Hash_bits
-OG
-l_int|16
-)paren
-id|Hash_bits
-op_assign
-l_int|16
 suffix:semicolon
 id|hash_page_patch_A
 (braket
@@ -6280,11 +6314,7 @@ l_int|0x7c0
 )paren
 op_or
 (paren
-(paren
-l_int|26
-op_minus
-id|Hash_bits
-)paren
+id|mb2
 op_lshift
 l_int|6
 )paren
@@ -6303,23 +6333,9 @@ op_amp
 op_complement
 l_int|0xffff
 )paren
-macro_line|#ifdef CONFIG_PPC64&t;&t;&t;
 op_or
-(paren
-id|Hash_mask
-op_rshift
-l_int|11
-)paren
+id|hmask
 suffix:semicolon
-macro_line|#else
-op_or
-(paren
-id|Hash_mask
-op_rshift
-l_int|10
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
 id|hash_page_patch_C
 (braket
 l_int|0
@@ -6334,23 +6350,9 @@ op_amp
 op_complement
 l_int|0xffff
 )paren
-macro_line|#ifdef CONFIG_PPC64&t;&t;&t;
 op_or
-(paren
-id|Hash_mask
-op_rshift
-l_int|11
-)paren
+id|hmask
 suffix:semicolon
-macro_line|#else
-op_or
-(paren
-id|Hash_mask
-op_rshift
-l_int|10
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
 macro_line|#if 0&t;/* see hash_page in head.S, note also patch_C ref below */
 id|hash_page_patch_D
 (braket
@@ -6367,11 +6369,7 @@ op_complement
 l_int|0xffff
 )paren
 op_or
-(paren
-id|Hash_mask
-op_rshift
-l_int|10
-)paren
+id|hmask
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Ensure that the locations we&squot;ve patched have been written&n;&t;&t; * out from the data cache and invalidated in the instruction&n;&t;&t; * cache, on those machines with split caches.&n;&t;&t; */
@@ -6637,4 +6635,151 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Set phys_avail to phys_mem less the kernel text/data/bss.&n; */
+r_void
+id|__init
+DECL|function|set_phys_avail
+id|set_phys_avail
+c_func
+(paren
+r_struct
+id|mem_pieces
+op_star
+id|mp
+)paren
+(brace
+r_int
+r_int
+id|kstart
+comma
+id|ksize
+suffix:semicolon
+multiline_comment|/*&n;&t; * Initially, available phyiscal memory is equivalent to all&n;&t; * physical memory.&n;&t; */
+id|phys_avail
+op_assign
+op_star
+id|mp
+suffix:semicolon
+multiline_comment|/*&n;&t; * Map out the kernel text/data/bss from the available physical&n;&t; * memory.&n;&t; */
+id|kstart
+op_assign
+id|__pa
+c_func
+(paren
+id|_stext
+)paren
+suffix:semicolon
+multiline_comment|/* should be 0 */
+id|ksize
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|klimit
+op_minus
+id|_stext
+)paren
+suffix:semicolon
+id|mem_pieces_remove
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+id|kstart
+comma
+id|ksize
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|mem_pieces_remove
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+l_int|0
+comma
+l_int|0x4000
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#if defined(CONFIG_BLK_DEV_INITRD)
+multiline_comment|/* Remove the init RAM disk from the available memory. */
+r_if
+c_cond
+(paren
+id|initrd_start
+)paren
+(brace
+id|mem_pieces_remove
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+id|__pa
+c_func
+(paren
+id|initrd_start
+)paren
+comma
+id|initrd_end
+op_minus
+id|initrd_start
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
+macro_line|#ifdef CONFIG_ALL_PPC
+multiline_comment|/* remove the RTAS pages from the available memory */
+r_if
+c_cond
+(paren
+id|rtas_data
+)paren
+id|mem_pieces_remove
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+id|rtas_data
+comma
+id|rtas_size
+comma
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ALL_PPC */
+macro_line|#ifdef CONFIG_PPC64BRIDGE
+multiline_comment|/* Remove the hash table from the available memory */
+r_if
+c_cond
+(paren
+id|Hash
+)paren
+id|mem_pieces_remove
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+id|__pa
+c_func
+(paren
+id|Hash
+)paren
+comma
+id|Hash_size
+comma
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
+)brace
 eof

@@ -23,7 +23,7 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_4xx)
+macro_line|#if defined(CONFIG_4xx) || defined(CONFIG_POWER4)
 DECL|macro|OPCD
 mdefine_line|#define&t;OPCD(inst)&t;(((inst) &amp; 0xFC000000) &gt;&gt; 26)
 DECL|macro|RS
@@ -778,7 +778,7 @@ id|nb
 comma
 id|flags
 suffix:semicolon
-macro_line|#if defined(CONFIG_4xx)
+macro_line|#if defined(CONFIG_4xx) || defined(CONFIG_POWER4)
 r_int
 id|opcode
 comma
@@ -825,8 +825,8 @@ suffix:semicolon
 )brace
 id|data
 suffix:semicolon
-macro_line|#if defined(CONFIG_4xx)
-multiline_comment|/* The 4xx-family processors have no DSISR register,&n;&t; * so we emulate it.&n;&t; */
+macro_line|#if defined(CONFIG_4xx) || defined(CONFIG_POWER4)
+multiline_comment|/* The 4xx-family processors have no DSISR register,&n;&t; * so we emulate it.&n;&t; * The POWER4 has a DSISR register but doesn&squot;t set it on&n;&t; * an alignment fault.  -- paulus&n;&t; */
 id|instr
 op_assign
 op_star

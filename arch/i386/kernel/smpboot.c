@@ -1035,6 +1035,11 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|init_deasserted
+r_static
+id|atomic_t
+id|init_deasserted
+suffix:semicolon
 DECL|function|smp_callin
 r_void
 id|__init
@@ -1052,6 +1057,19 @@ suffix:semicolon
 r_int
 r_int
 id|timeout
+suffix:semicolon
+multiline_comment|/*&n;&t; * If waken up by an INIT in an 82489DX configuration&n;&t; * we may get here before an INIT-deassert IPI reaches&n;&t; * our local APIC.  We have to wait for the IPI or we&squot;ll&n;&t; * lock up on an APIC access.&n;&t; */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
+id|init_deasserted
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * (This works even if the APIC is not enabled.)&n;&t; */
 id|phys_id
@@ -1755,6 +1773,15 @@ id|idle
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This grunge runs the startup process for&n;&t; * the targeted processor.&n;&t; */
+id|atomic_set
+c_func
+(paren
+op_amp
+id|init_deasserted
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|Dprintk
 c_func
 (paren
@@ -2041,6 +2068,15 @@ op_increment
 OL
 l_int|1000
 )paren
+)paren
+suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
+id|init_deasserted
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Should we send STARTUP IPIs ?&n;&t; *&n;&t; * Determine this based on the APIC version.&n;&t; * If we don&squot;t have an integrated APIC, don&squot;t&n;&t; * send the STARTUP IPIs.&n;&t; */
@@ -2865,26 +2901,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If SMP should be disabled, then really disable it!&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|max_cpus
-)paren
-(brace
-id|smp_found_config
-op_assign
-l_int|0
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;SMP mode deactivated, forcing use of dummy APIC emulation.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 (brace
 r_int
 id|reg
@@ -2962,6 +2978,45 @@ l_string|&quot;Getting LVT1: %x&bslash;n&quot;
 comma
 id|reg
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * If SMP should be disabled, then really disable it!&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|max_cpus
+)paren
+(brace
+id|smp_found_config
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;SMP mode deactivated, forcing use of dummy APIC emulation.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_VISWS
+id|io_apic_irqs
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+id|cpu_online_map
+op_assign
+id|phys_cpu_present_map
+op_assign
+l_int|1
+suffix:semicolon
+id|smp_num_cpus
+op_assign
+l_int|1
+suffix:semicolon
+r_goto
+id|smp_done
 suffix:semicolon
 )brace
 id|connect_bsp_APIC
@@ -3278,8 +3333,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|smp_done
-suffix:colon
 multiline_comment|/*&n;&t; * Set up all local APIC timers in the system:&n;&t; */
 id|setup_APIC_clocks
 c_func
@@ -3299,6 +3352,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|smp_done
+suffix:colon
 id|zap_low_mappings
 c_func
 (paren

@@ -280,9 +280,9 @@ id|handle_vmalloc_fault
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_int
 r_int
@@ -423,6 +423,19 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if defined(__SH4__)
+multiline_comment|/*&n;&t; * ITLB is not affected by &quot;ldtlb&quot; instruction.&n;&t; * So, we need to flush the entry by ourselves.&n;&t; */
+id|__flush_tlb_page
+c_func
+(paren
+id|mm
+comma
+id|address
+op_amp
+id|PAGE_MASK
+)paren
+suffix:semicolon
+macro_line|#endif
 id|update_mmu_cache
 c_func
 (paren
@@ -501,7 +514,7 @@ id|VMALLOC_END
 id|handle_vmalloc_fault
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|address
 )paren
@@ -1020,20 +1033,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if defined(__SH4__)
-multiline_comment|/*&n;&t; * ITLB is not affected by &quot;ldtlb&quot; instruction.&n;&t; * So, we need to flush the entry by ourselves.&n;&t; */
-id|__flush_tlb_page
-c_func
-(paren
-id|vma-&gt;vm_mm
-comma
-id|address
-op_amp
-id|PAGE_MASK
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Set PTEH register */
+r_if
+c_cond
+(paren
+id|vma
+)paren
+(brace
 id|pteaddr
 op_assign
 (paren
@@ -1056,6 +1062,7 @@ comma
 id|MMU_PTEH
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Set PTEL register */
 id|pteval
 op_assign

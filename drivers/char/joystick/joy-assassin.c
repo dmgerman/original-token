@@ -1285,44 +1285,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * js_as_open() is a callback from the file open routine.&n; */
-DECL|function|js_as_open
-r_static
-r_int
-id|js_as_open
-c_func
-(paren
-r_struct
-id|js_dev
-op_star
-id|jd
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * js_as_close() is a callback from the file release routine.&n; */
-DECL|function|js_as_close
-r_static
-r_int
-id|js_as_close
-c_func
-(paren
-r_struct
-id|js_dev
-op_star
-id|jd
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * js_as_pxl_init_corr() initializes the correction values for&n; * the Panther XL.&n; */
 DECL|function|js_as_pxl_init_corr
 r_static
@@ -2387,9 +2349,11 @@ l_int|9
 comma
 l_string|&quot;MadCatz Panther XL&quot;
 comma
-id|js_as_open
+id|THIS_MODULE
 comma
-id|js_as_close
+l_int|NULL
+comma
+l_int|NULL
 )paren
 comma
 id|info-&gt;io
@@ -2443,9 +2407,11 @@ l_int|0
 comma
 l_string|&quot;Analog rudder&quot;
 comma
-id|js_as_open
+id|THIS_MODULE
 comma
-id|js_as_close
+l_int|NULL
+comma
+l_int|NULL
 )paren
 )paren
 suffix:semicolon
@@ -2540,9 +2506,11 @@ l_int|3
 comma
 id|name
 comma
-id|js_as_open
+id|THIS_MODULE
 comma
-id|js_as_close
+l_int|NULL
+comma
+l_int|NULL
 )paren
 comma
 id|name
@@ -2681,9 +2649,11 @@ op_amp
 id|info-&gt;an
 )paren
 comma
-id|js_as_open
+id|THIS_MODULE
 comma
-id|js_as_close
+l_int|NULL
+comma
+l_int|NULL
 )paren
 comma
 id|js_an_name

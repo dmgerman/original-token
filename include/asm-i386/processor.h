@@ -1462,5 +1462,7 @@ l_int|500
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|MICROCODE_IOCFREE
+mdefine_line|#define MICROCODE_IOCFREE&t;_IO(&squot;6&squot;,0) /* because it is for P6 */
 macro_line|#endif /* __ASM_I386_PROCESSOR_H */
 eof

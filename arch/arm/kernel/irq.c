@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/arch/arm/kernel/irq.c&n; *&n; *  Copyright (C) 1992 Linus Torvalds&n; *  Modifications for ARM processor Copyright (C) 1995-1998 Russell King.&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
 multiline_comment|/*&n; * IRQ&squot;s are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_DEBUG_ERRORS */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -16,14 +16,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifndef SMP
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
-macro_line|#else
-macro_line|#error SMP not supported
-macro_line|#endif
 macro_line|#ifndef cliIF
 DECL|macro|cliIF
 mdefine_line|#define cliIF()
@@ -217,6 +209,13 @@ id|irq_desc
 (braket
 id|NR_IRQS
 )braket
+suffix:semicolon
+DECL|variable|irq_err_count
+r_static
+r_volatile
+r_int
+r_int
+id|irq_err_count
 suffix:semicolon
 multiline_comment|/*&n; * Get architecture specific interrupt handlers&n; * and interrupt initialisation.&n; */
 macro_line|#include &lt;asm/arch/irq.h&gt;
@@ -430,7 +429,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;%3d: %10u   %s&quot;
+l_string|&quot;%3d: %10u &quot;
 comma
 id|i
 comma
@@ -439,6 +438,16 @@ c_func
 (paren
 id|i
 )paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;  %s&quot;
 comma
 id|action-&gt;name
 )paren
@@ -487,6 +496,18 @@ id|p
 )paren
 suffix:semicolon
 macro_line|#endif
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;Err: %10lu&bslash;n&quot;
+comma
+id|irq_err_count
+)paren
+suffix:semicolon
 r_return
 id|p
 op_minus
@@ -618,8 +639,6 @@ op_star
 id|action
 suffix:semicolon
 r_int
-id|status
-comma
 id|cpu
 suffix:semicolon
 id|irq
@@ -629,6 +648,17 @@ c_func
 (paren
 id|irq
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Some hardware gives randomly wrong interrupts.  Rather&n;&t; * than crashing, do something sensible.&n;&t; */
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+id|NR_IRQS
+)paren
+r_goto
+id|bad_irq
 suffix:semicolon
 id|desc
 op_assign
@@ -687,10 +717,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Return with this interrupt masked if no action */
-id|status
-op_assign
-l_int|0
-suffix:semicolon
 id|action
 op_assign
 id|desc-&gt;action
@@ -701,6 +727,11 @@ c_cond
 id|action
 )paren
 (brace
+r_int
+id|status
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -866,8 +897,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+id|bad_irq
+suffix:colon
+id|irq_err_count
+op_add_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IRQ: spurious interrupt %d&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_ARCH_ACORN)
+macro_line|#ifdef CONFIG_ARCH_ACORN
 DECL|function|do_ecard_IRQ
 r_void
 id|do_ecard_IRQ

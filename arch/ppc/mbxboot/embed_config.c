@@ -802,31 +802,28 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 multiline_comment|/* This is actually provided by my boot rom.  I have it&n;&t; * here for those people that may load the kernel with&n;&t; * a JTAG/COP tool and not the rom monitor.&n;&t; */
 id|bd-&gt;bi_baudrate
 op_assign
-l_int|19200
+l_int|115200
 suffix:semicolon
 id|bd-&gt;bi_intfreq
 op_assign
-l_int|165
+l_int|200
 suffix:semicolon
 id|bd-&gt;bi_busfreq
 op_assign
-l_int|33
+l_int|66
 suffix:semicolon
 id|bd-&gt;bi_cpmfreq
 op_assign
-l_int|132
+l_int|66
 suffix:semicolon
 id|bd-&gt;bi_brgfreq
 op_assign
-id|bd-&gt;bi_cpmfreq
-op_div
-l_int|2
+l_int|33
 suffix:semicolon
-multiline_comment|/* BRGCLK = (CPM*2/4) */
 id|bd-&gt;bi_memsize
 op_assign
 l_int|16

@@ -632,9 +632,9 @@ id|regs
 )paren
 (brace
 DECL|macro|MCHK_NO_DEVSEL
-mdefine_line|#define MCHK_NO_DEVSEL 0x205L
+mdefine_line|#define MCHK_NO_DEVSEL 0x205U
 DECL|macro|MCHK_NO_TABT
-mdefine_line|#define MCHK_NO_TABT 0x204L
+mdefine_line|#define MCHK_NO_TABT 0x204U
 r_struct
 id|el_common
 op_star

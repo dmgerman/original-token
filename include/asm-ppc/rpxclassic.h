@@ -2,6 +2,7 @@ multiline_comment|/*&n; * A collection of structures, addresses, and values asso
 macro_line|#ifndef __MACH_RPX_DEFS
 DECL|macro|__MACH_RPX_DEFS
 mdefine_line|#define __MACH_RPX_DEFS
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* A Board Information structure that is given to a program when&n; * prom starts it up.&n; */
 DECL|struct|bd_info
 r_typedef
@@ -54,10 +55,6 @@ id|bd_t
 id|m8xx_board_info
 suffix:semicolon
 multiline_comment|/* Memory map is configured by the PROM startup.&n; * We just map a few things we need.  The CSR is actually 4 byte-wide&n; * registers that can be accessed as 8-, 16-, or 32-bit values.&n; */
-DECL|macro|PCMCIA_MEM_ADDR
-mdefine_line|#define PCMCIA_MEM_ADDR&t;&t;((uint)0x04000000)
-DECL|macro|PCMCIA_MEM_SIZE
-mdefine_line|#define PCMCIA_MEM_SIZE&t;&t;((uint)(64 * 1024))
 DECL|macro|PCI_ISA_IO_ADDR
 mdefine_line|#define PCI_ISA_IO_ADDR&t;&t;((unsigned)0x80000000)
 DECL|macro|PCI_ISA_IO_SIZE
@@ -78,6 +75,18 @@ DECL|macro|PCI_CSR_ADDR
 mdefine_line|#define PCI_CSR_ADDR&t;&t;((uint)0x80000000)
 DECL|macro|PCI_CSR_SIZE
 mdefine_line|#define PCI_CSR_SIZE&t;&t;((uint)(64 * 1024))
+DECL|macro|PCMCIA_MEM_ADDR
+mdefine_line|#define PCMCIA_MEM_ADDR&t;&t;((uint)0xe0000000)
+DECL|macro|PCMCIA_MEM_SIZE
+mdefine_line|#define PCMCIA_MEM_SIZE&t;&t;((uint)(64 * 1024))
+DECL|macro|PCMCIA_IO_ADDR
+mdefine_line|#define PCMCIA_IO_ADDR&t;&t;((uint)0xe4000000)
+DECL|macro|PCMCIA_IO_SIZE
+mdefine_line|#define PCMCIA_IO_SIZE&t;&t;((uint)(4 * 1024))
+DECL|macro|PCMCIA_ATTRB_ADDR
+mdefine_line|#define PCMCIA_ATTRB_ADDR&t;((uint)0xe8000000)
+DECL|macro|PCMCIA_ATTRB_SIZE
+mdefine_line|#define PCMCIA_ATTRB_SIZE&t;((uint)(4 * 1024))
 multiline_comment|/* Things of interest in the CSR.&n;*/
 DECL|macro|BCSR0_ETHEN
 mdefine_line|#define BCSR0_ETHEN&t;&t;((uint)0x80000000)
@@ -93,10 +102,22 @@ DECL|macro|BCSR0_FLASH_SEL
 mdefine_line|#define BCSR0_FLASH_SEL&t;&t;((uint)0x02000000)
 DECL|macro|BCSR0_ENMONXCVR
 mdefine_line|#define BCSR0_ENMONXCVR&t;&t;((uint)0x01000000)
+DECL|macro|BCSR0_PCMCIAVOLT
+mdefine_line|#define BCSR0_PCMCIAVOLT&t;((uint)0x000f0000)&t;/* CLLF */
+DECL|macro|BCSR0_PCMCIA3VOLT
+mdefine_line|#define BCSR0_PCMCIA3VOLT&t;((uint)0x000a0000)&t;/* CLLF */
+DECL|macro|BCSR0_PCMCIA5VOLT
+mdefine_line|#define BCSR0_PCMCIA5VOLT&t;((uint)0x00060000)&t;/* CLLF */
 DECL|macro|BCSR2_EN232XCVR
 mdefine_line|#define BCSR2_EN232XCVR&t;&t;((uint)0x00008000)
 DECL|macro|BCSR2_QSPACESEL
 mdefine_line|#define BCSR2_QSPACESEL&t;&t;((uint)0x00004000)
+DECL|macro|BCSR2_FETHLEDMODE
+mdefine_line|#define BCSR2_FETHLEDMODE&t;((uint)0x00000800)&t;/* CLLF */
+macro_line|#if defined(CONFIG_RPXLCD) || defined(CONFIG_HTDMSOUND)
+multiline_comment|/* HIOX Expansion card.&n;*/
+macro_line|#include &lt;asm/rpx_hiox.h&gt;
+macro_line|#endif
 multiline_comment|/* Interrupt level assignments.&n;*/
 DECL|macro|FEC_INTERRUPT
 mdefine_line|#define FEC_INTERRUPT&t;SIU_LEVEL1&t;/* FEC interrupt */

@@ -135,6 +135,7 @@ r_void
 suffix:semicolon
 "&f;"
 multiline_comment|/* Generic arbitrary sized copy.  */
+multiline_comment|/* Return the number of bytes NOT copied */
 multiline_comment|/* XXX: should be such that: 4byte and the rest. */
 r_extern
 id|__inline__
@@ -167,6 +168,15 @@ suffix:semicolon
 id|__kernel_size_t
 id|res
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|res
+op_assign
+id|__n
+)paren
+)paren
 id|__asm__
 id|__volatile__
 c_func
@@ -183,14 +193,14 @@ l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&bslash;n&bslash;t&quot;
 l_string|&quot;mov.l&t;5f, %1&bslash;n&bslash;t&quot;
 l_string|&quot;jmp&t;@%1&bslash;n&bslash;t&quot;
-l_string|&quot; mov&t;%7, %0&bslash;n&bslash;t&quot;
+l_string|&quot; add&t;#1, %0&bslash;n&bslash;t&quot;
 l_string|&quot;.balign 4&bslash;n&quot;
 l_string|&quot;5:&t;.long 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;&t;.balign 4&bslash;n&quot;
-l_string|&quot;&t;.long 9b,3b&bslash;n&quot;
-l_string|&quot;&t;.long 1b,2b&bslash;n&quot;
+l_string|&quot;&t;.long 9b,2b&bslash;n&quot;
+l_string|&quot;&t;.long 1b,3b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -225,13 +235,7 @@ id|__to
 comma
 l_string|&quot;0&quot;
 (paren
-id|__n
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-op_minus
-id|EFAULT
+id|res
 )paren
 suffix:colon
 l_string|&quot;memory&quot;

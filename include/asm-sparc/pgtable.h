@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.94 2000/03/28 06:07:25 anton Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.96 2000/06/05 06:08:46 anton Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -150,7 +150,7 @@ DECL|macro|mmu_release_scsi_one
 mdefine_line|#define mmu_release_scsi_one(vaddr,len,sbus) BTFIXUP_CALL(mmu_release_scsi_one)(vaddr,len,sbus)
 DECL|macro|mmu_release_scsi_sgl
 mdefine_line|#define mmu_release_scsi_sgl(sg,sz,sbus) BTFIXUP_CALL(mmu_release_scsi_sgl)(sg,sz,sbus)
-multiline_comment|/*&n; * mmu_map/unmap are provided by iommu/iounit; Invalid to call on IIep.&n; * mmu_flush/inval belong to CPU. Valid on IIep.&n; */
+multiline_comment|/*&n; * mmu_map/unmap are provided by iommu/iounit; Invalid to call on IIep.&n; */
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -195,44 +195,12 @@ comma
 r_int
 id|len
 )paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|mmu_inval_dma_area
-comma
-r_int
-r_int
-id|virt
-comma
-r_int
-id|len
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|mmu_flush_dma_area
-comma
-r_int
-r_int
-id|virt
-comma
-r_int
-id|len
-)paren
 DECL|macro|mmu_map_dma_area
 mdefine_line|#define mmu_map_dma_area(va, ba,len) BTFIXUP_CALL(mmu_map_dma_area)(va,ba,len)
 DECL|macro|mmu_unmap_dma_area
 mdefine_line|#define mmu_unmap_dma_area(ba,len) BTFIXUP_CALL(mmu_unmap_dma_area)(ba,len)
 DECL|macro|mmu_translate_dvma
 mdefine_line|#define mmu_translate_dvma(ba)     BTFIXUP_CALL(mmu_translate_dvma)(ba)
-DECL|macro|mmu_inval_dma_area
-mdefine_line|#define mmu_inval_dma_area(va,len) BTFIXUP_CALL(mmu_inval_dma_area)(va,len)
-DECL|macro|mmu_flush_dma_area
-mdefine_line|#define mmu_flush_dma_area(va,len) BTFIXUP_CALL(mmu_flush_dma_area)(va,len)
 id|BTFIXUPDEF_SIMM13
 c_func
 (paren
@@ -389,11 +357,6 @@ id|user_ptrs_per_pgd
 )paren
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
-multiline_comment|/* This is the same accross all platforms */
-DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START (0xfe300000)
-DECL|macro|VMALLOC_END
-mdefine_line|#define VMALLOC_END   ~0x0UL
 macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|macro|pte_ERROR
 mdefine_line|#define pte_ERROR(e)   __builtin_trap()

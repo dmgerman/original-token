@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale&n; *&n; *  adapted from:&n; *      sd.c Copyright (C) 1992 Drew Eckhardt&n; *      Linux scsi disk driver by&n; *              Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@andante.org to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *          Modified by Eric Youngdale eric@andante.org to support loadable&n; *          low-level scsi drivers.&n; *&n; *       Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *       provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; *       Modified by Jens Axboe &lt;axboe@image.dk&gt; - Uniform sr_packet()&n; *       interface, capabilities probe additions, ioctl cleanups, etc.&n; *&n; *       Modified by Richard Gooch &lt;rgooch@atnf.csiro.au&gt; to support devfs&n; *&n; */
+multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale&n; *&n; *  adapted from:&n; *      sd.c Copyright (C) 1992 Drew Eckhardt&n; *      Linux scsi disk driver by&n; *              Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@andante.org to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *          Modified by Eric Youngdale eric@andante.org to support loadable&n; *          low-level scsi drivers.&n; *&n; *       Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *       provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; *       Modified by Jens Axboe &lt;axboe@image.dk&gt; - Uniform sr_packet()&n; *       interface, capabilities probe additions, ioctl cleanups, etc.&n; *&n; *       Modified by Richard Gooch &lt;rgooch@atnf.csiro.au&gt; to support devfs&n; *&n; *       Modified by Jens Axboe &lt;axboe@suse.de&gt; - support DVD-RAM&n; *&t; transparently and loose the GHOST hack&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1066,15 +1066,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|SCpnt-&gt;request.cmd
 op_eq
 id|WRITE
 )paren
-(brace
+op_logical_and
+op_logical_neg
+id|scsi_CDs
+(braket
+id|dev
+)braket
+dot
+id|device-&gt;writeable
+)paren
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1202,22 +1210,6 @@ id|SCpnt-&gt;request.cmd
 r_case
 id|WRITE
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scsi_CDs
-(braket
-id|dev
-)braket
-dot
-id|device-&gt;writeable
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|SCpnt-&gt;cmnd
 (braket
 l_int|0
@@ -2452,7 +2444,7 @@ multiline_comment|/* print some capability bits */
 id|printk
 c_func
 (paren
-l_string|&quot;sr%i: scsi3-mmc drive: %dx/%dx %s%s%s%s%s&bslash;n&quot;
+l_string|&quot;sr%i: scsi3-mmc drive: %dx/%dx %s%s%s%s%s%s&bslash;n&quot;
 comma
 id|i
 comma
@@ -2500,6 +2492,20 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 multiline_comment|/* CD Writer */
+id|buffer
+(braket
+id|n
+op_plus
+l_int|3
+)braket
+op_amp
+l_int|0x20
+ques
+c_cond
+l_string|&quot;dvd-ram &quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
 id|buffer
 (braket
 id|n
@@ -2626,6 +2632,7 @@ l_int|0x20
 op_eq
 l_int|0
 )paren
+(brace
 multiline_comment|/* can&squot;t write DVD-RAM media */
 id|scsi_CDs
 (braket
@@ -2636,6 +2643,19 @@ id|cdi.mask
 op_or_assign
 id|CDC_DVD_RAM
 suffix:semicolon
+)brace
+r_else
+(brace
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|device-&gt;writeable
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

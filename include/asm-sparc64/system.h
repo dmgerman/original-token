@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.59 2000/05/09 17:40:15 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.60 2000/05/29 05:34:02 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -567,7 +567,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cas [%2], %3, %0&quot;
+l_string|&quot;cas [%2], %3, %0&bslash;n&bslash;t&quot;
+l_string|&quot;membar #StoreStore | #StoreLoad&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -622,7 +623,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;casx [%2], %3, %0&quot;
+l_string|&quot;casx [%2], %3, %0&bslash;n&bslash;t&quot;
+l_string|&quot;membar #StoreStore | #StoreLoad&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

@@ -766,8 +766,6 @@ id|dev-&gt;busy
 op_assign
 l_int|1
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|vfc_lock_device
 c_func
 (paren
@@ -874,8 +872,6 @@ suffix:semicolon
 id|dev-&gt;busy
 op_assign
 l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|vfc_debug
@@ -3076,6 +3072,10 @@ id|file_operations
 id|vfc_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|vfc_lseek

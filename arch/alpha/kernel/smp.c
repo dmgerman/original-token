@@ -570,17 +570,41 @@ c_cond
 suffix:colon
 id|est_cycle_freq
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* Magic estimation stolen from x86 port.  */
 id|cacheflush_time
 op_assign
 id|freq
 op_div
-l_int|1024
+l_int|1024L
 op_star
 id|on_chip_cache
 op_div
-l_int|5000
+l_int|5000L
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Using heuristic of %d cycles.&bslash;n&quot;
+comma
+id|cacheflush_time
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Magic value to force potential preemption of other CPUs.  */
+id|cacheflush_time
+op_assign
+id|INT_MAX
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Using heuristic of %d cycles.&bslash;n&quot;
+comma
+id|cacheflush_time
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Send a message to a secondary&squot;s console.  &quot;START&quot; is one such&n; * interesting message.  ;-)&n; */
 r_static
@@ -1076,8 +1100,9 @@ l_char|&squot; &squot;
 suffix:semicolon
 )brace
 )brace
-id|printk
+id|DBGS
 c_func
+(paren
 (paren
 id|KERN_INFO
 l_string|&quot;recv_secondary_console_msg: on %d &quot;
@@ -1086,6 +1111,7 @@ comma
 id|mycpu
 comma
 id|buf
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1206,6 +1232,7 @@ id|hwpcb-&gt;res2
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
 id|DBGS
 c_func
 (paren
@@ -1222,6 +1249,7 @@ id|hwcpb-&gt;unique
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DBGS
 c_func
 (paren
@@ -2653,11 +2681,12 @@ r_int
 r_int
 id|ops
 suffix:semicolon
+macro_line|#if 0
 id|DBGS
 c_func
 (paren
 (paren
-l_string|&quot;handle_ipi: on CPU %d ops 0x%x PC 0x%lx&bslash;n&quot;
+l_string|&quot;handle_ipi: on CPU %d ops 0x%lx PC 0x%lx&bslash;n&quot;
 comma
 id|this_cpu
 comma
@@ -2668,6 +2697,7 @@ id|regs-&gt;pc
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|mb
 c_func
 (paren

@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * include/asm-arm/arch-ebsa285/irq.h&n; *&n; * Copyright (C) 1996-1998 Russell King&n; *&n; * Changelog:&n; *  22-Aug-1998&t;RMK&t;Restructured IRQ routines&n; *  03-Sep-1998&t;PJB&t;Merged CATS support&n; *  20-Jan-1998&t;RMK&t;Started merge of EBSA286, CATS and NetWinder&n; *  26-Jan-1999&t;PJB&t;Don&squot;t use IACK on CATS&n; *  16-Mar-1999&t;RMK&t;Added autodetect of ISA PICs&n; */
-multiline_comment|/* no need for config.h - arch/arm/kernel/irq.c does this for us */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -58,8 +56,21 @@ multiline_comment|/* 13 */
 id|IRQ_MASK_I2OINPOST
 comma
 multiline_comment|/* 14 */
-id|IRQ_MASK_PCI_ERR
+id|IRQ_MASK_PCI_ABORT
+comma
 multiline_comment|/* 15 */
+id|IRQ_MASK_PCI_SERR
+comma
+multiline_comment|/* 16 */
+id|IRQ_MASK_DISCARD_TIMER
+comma
+multiline_comment|/* 17 */
+id|IRQ_MASK_PCI_DPERR
+comma
+multiline_comment|/* 18 */
+id|IRQ_MASK_PCI_PERR
+comma
+multiline_comment|/* 19 */
 )brace
 suffix:semicolon
 DECL|variable|isa_irq
@@ -82,7 +93,6 @@ r_int
 id|irq
 )paren
 (brace
-macro_line|#ifdef CONFIG_HOST_FOOTBRIDGE
 r_if
 c_cond
 (paren
@@ -100,7 +110,6 @@ op_star
 )paren
 id|PCIIACK_BASE
 suffix:semicolon
-macro_line|#endif
 r_return
 id|irq
 suffix:semicolon
@@ -121,9 +130,11 @@ id|CSR_IRQ_DISABLE
 op_assign
 id|dc21285_irq_mask
 (braket
+id|_DC21285_INR
+c_func
+(paren
 id|irq
-op_amp
-l_int|15
+)paren
 )braket
 suffix:semicolon
 )brace
@@ -143,9 +154,11 @@ id|CSR_IRQ_ENABLE
 op_assign
 id|dc21285_irq_mask
 (braket
+id|_DC21285_INR
+c_func
+(paren
 id|irq
-op_amp
-l_int|15
+)paren
 )braket
 suffix:semicolon
 )brace
@@ -513,7 +526,7 @@ OL
 id|_DC21285_IRQ
 c_func
 (paren
-l_int|16
+l_int|20
 )paren
 suffix:semicolon
 id|irq
@@ -575,12 +588,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|footbridge_cfn_mode
+c_func
+(paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|machine_is_ebsa285
 c_func
 (paren
 )paren
 )paren
-multiline_comment|/* The following is dependent on which slot&n;&t;&t; * you plug the Southbridge card into.  We&n;&t;&t; * currently assume that you plug it into&n;&t;&t; * the right-hand most slot.&n;&t;&t; */
+multiline_comment|/* The following is dependent on which slot&n;&t;&t;&t; * you plug the Southbridge card into.  We&n;&t;&t;&t; * currently assume that you plug it into&n;&t;&t;&t; * the right-hand most slot.&n;&t;&t;&t; */
 id|isa_irq
 op_assign
 id|IRQ_PCI
@@ -609,6 +631,7 @@ id|isa_irq
 op_assign
 id|IRQ_IN3
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-shark/time.h&n; *&n; * by Alexander.Schulz@stud.uni-karlsruhe.de&n; *&n; * Uses the real time clock because you can&squot;t run&n; * the timer with level triggered interrupts and&n; * you can&squot;t run the shark with edge triggered&n; * inetrrupts (loses ints and hangs).&n; *&n; * derived from linux/drivers/char/rtc.c and:&n; * linux/include/asm-arm/arch-ebsa110/time.h&n; * Copyright (c) 1996,1997,1998 Russell King.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 DECL|macro|IRQ_TIMER
@@ -55,36 +54,11 @@ c_func
 id|RTC_INTR_FLAGS
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_LEDS
-(brace
-r_static
-r_int
-id|count
-op_assign
-l_int|50
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_decrement
-id|count
-op_eq
-l_int|0
-)paren
-(brace
-id|count
-op_assign
-l_int|50
-suffix:semicolon
-id|leds_event
+id|do_leds
 c_func
 (paren
-id|led_timer
 )paren
 suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 (brace
 macro_line|#ifdef DIVISOR
 r_static

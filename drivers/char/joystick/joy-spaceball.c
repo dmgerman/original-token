@@ -636,8 +636,6 @@ suffix:semicolon
 id|info-&gt;used
 op_increment
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -688,8 +686,6 @@ id|jd-&gt;port
 )paren
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -998,6 +994,8 @@ comma
 l_int|12
 comma
 l_string|&quot;SpaceBall 4000 FLX&quot;
+comma
+id|THIS_MODULE
 comma
 id|js_sball_open
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.52 2000/03/28 06:07:25 anton Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.53 2000/06/04 08:36:33 anton Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
@@ -27,9 +27,10 @@ multiline_comment|/* This is always 2048*sizeof(long), doesn&squot;t change with
 DECL|macro|TASK_UNION_SIZE
 mdefine_line|#define TASK_UNION_SIZE&t;&t;8192
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
+multiline_comment|/*&n; * XXX I am hitting compiler bugs with __builtin_trap. This has&n; * hit me before and rusty was blaming his netfilter bugs on&n; * this so lets disable it. - Anton&n; */
+macro_line|#if 0
+multiline_comment|/* #if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8) */
 multiline_comment|/* We need the mb()&squot;s so we don&squot;t trigger a compiler bug - Anton */
-DECL|macro|BUG
 mdefine_line|#define BUG() do { &bslash;&n;&t;mb(); &bslash;&n;&t;__builtin_trap(); &bslash;&n;&t;mb(); &bslash;&n;} while(0)
 macro_line|#else
 DECL|macro|BUG

@@ -212,8 +212,6 @@ DECL|macro|__NR_lstat
 mdefine_line|#define __NR_lstat&t;&t;&t;(__NR_SYSCALL_BASE+107)
 DECL|macro|__NR_fstat
 mdefine_line|#define __NR_fstat&t;&t;&t;(__NR_SYSCALL_BASE+108)
-DECL|macro|__NR_iopl
-mdefine_line|#define __NR_iopl&t;&t;&t;(__NR_SYSCALL_BASE+110)
 DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup&t;&t;&t;(__NR_SYSCALL_BASE+111)
 DECL|macro|__NR_idle

@@ -2455,8 +2455,10 @@ id|CONFIG_PORT
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Initialise any other hardware after we&squot;ve got the PCI bus&n; * initialised.  We may need the PCI bus to talk to this other&n; * hardware.&n; */
 DECL|function|hw_init
-r_void
+r_static
+r_int
 id|__init
 id|hw_init
 c_func
@@ -2464,31 +2466,6 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_void
-id|register_isa_ports
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-id|register_isa_ports
-c_func
-(paren
-id|DC21285_PCI_MEM
-comma
-id|DC21285_PCI_IO
-comma
-l_int|0
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_ARCH_NETWINDER
 multiline_comment|/*&n;&t; * this ought to have a better home...&n;&t; * Since this calls the above routines, which are&n;&t; * compiled only if CONFIG_ARCH_NETWINDER is set,&n;&t; * these should only be parsed by the compiler&n;&t; * in the same circumstance.&n;&t; */
 r_if
@@ -2503,10 +2480,6 @@ c_func
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_extern
-r_int
-id|isapnp_disable
 suffix:semicolon
 id|wb977_init
 c_func
@@ -2551,13 +2524,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
-multiline_comment|/*&n;&t;&t; * We must not use the kernels ISAPnP code&n;&t;&t; * on the NetWinder - it will reset the settings&n;&t;&t; * for the WaveArtist chip and render it inoperable.&n;&t;&t; */
-id|isapnp_disable
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_CATS
@@ -2575,11 +2541,15 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|leds_event
-c_func
-(paren
-id|led_start
-)paren
+r_return
+l_int|0
 suffix:semicolon
 )brace
+DECL|variable|hw_init
+id|__initcall
+c_func
+(paren
+id|hw_init
+)paren
+suffix:semicolon
 eof

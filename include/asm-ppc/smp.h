@@ -116,10 +116,17 @@ id|cpu_callin_map
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|macro|hard_smp_processor_id
-mdefine_line|#define hard_smp_processor_id() (0)
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() (current-&gt;processor)
+r_extern
+r_int
+id|smp_hw_index
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+DECL|macro|hard_smp_processor_id
+mdefine_line|#define hard_smp_processor_id() (smp_hw_index[smp_processor_id()])
 DECL|struct|klock_info_struct
 r_struct
 id|klock_info_struct

@@ -632,6 +632,12 @@ r_struct
 id|fb_ops
 (brace
 multiline_comment|/* open/release and usage marking */
+DECL|member|owner
+r_struct
+id|module
+op_star
+id|owner
+suffix:semicolon
 DECL|member|fb_open
 r_int
 (paren

@@ -3,9 +3,7 @@ DECL|macro|SJCD_VERSION_MAJOR
 mdefine_line|#define SJCD_VERSION_MAJOR 1
 DECL|macro|SJCD_VERSION_MINOR
 mdefine_line|#define SJCD_VERSION_MINOR 7
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -5388,6 +5386,8 @@ op_minus
 id|EROFS
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5465,9 +5465,8 @@ l_string|&quot;SJCD: open: timed out when check status.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 r_else
@@ -5533,18 +5532,16 @@ l_string|&quot;SJCD: open: tray close attempt failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 r_continue
 suffix:semicolon
 )brace
 r_else
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 r_break
@@ -5578,9 +5575,8 @@ l_string|&quot;SJCD: open: tray lock attempt failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 macro_line|#if defined( SJCD_TRACE )
@@ -5592,15 +5588,19 @@ l_string|&quot;SJCD: open: done&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 op_increment
 id|sjcd_open_count
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|err_out
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 )def_block

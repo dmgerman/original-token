@@ -43,6 +43,7 @@ macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;i8259.h&quot;
 macro_line|#include &quot;open_pic.h&quot;
+macro_line|#include &quot;xics.h&quot;
 r_extern
 r_volatile
 r_int
@@ -1135,6 +1136,7 @@ comma
 l_string|&quot;dma2&quot;
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_PPC64BRIDGE
 multiline_comment|/* PCI bridge config space access area -&n;&t; * appears to be not in devtree on longtrail. */
 id|ioremap
 c_func
@@ -1151,6 +1153,8 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Mac I/O */
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
+macro_line|#ifndef CONFIG_POWER4
 multiline_comment|/* Some IBM machines don&squot;t have the hydra -- Cort */
 r_if
 c_cond
@@ -1159,14 +1163,13 @@ op_logical_neg
 id|OpenPIC
 )paren
 (brace
-id|OpenPIC
+r_int
+r_int
+op_star
+id|opprop
+suffix:semicolon
+id|opprop
 op_assign
-(paren
-r_struct
-id|OpenPIC
-op_star
-)paren
-op_star
 (paren
 r_int
 r_int
@@ -1186,16 +1189,44 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|opprop
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;OpenPIC addrs: %lx %lx %lx&bslash;n&quot;
+comma
+id|opprop
+(braket
+l_int|0
+)braket
+comma
+id|opprop
+(braket
+l_int|1
+)braket
+comma
+id|opprop
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
 id|OpenPIC
 op_assign
 id|ioremap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-id|OpenPIC
+id|opprop
+(braket
+l_int|0
+)braket
 comma
 r_sizeof
 (paren
@@ -1205,6 +1236,8 @@ id|OpenPIC
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; *  Fix the Super I/O configuration&n;&t; */
 id|sio_init
 c_func
@@ -1218,11 +1251,13 @@ op_amp
 id|dummy_con
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef CONFIG_PPC64BRIDGE
 id|pmac_find_bridges
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 multiline_comment|/* Get the event scan rate for the rtas so we know how&n;&t; * often it expects a heartbeat. -- Cort&n;&t; */
 r_if
 c_cond
@@ -1638,6 +1673,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+op_star
+id|addrp
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1651,25 +1691,11 @@ c_func
 l_string|&quot;pci&quot;
 )paren
 )paren
-)paren
-id|printk
-c_func
+op_logical_or
+op_logical_neg
 (paren
-l_string|&quot;Cannot find pci to get ack address&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
-id|chrp_int_ack_special
+id|addrp
 op_assign
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-(paren
-op_star
 (paren
 r_int
 r_int
@@ -1685,8 +1711,31 @@ comma
 l_int|NULL
 )paren
 )paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Cannot find pci to get ack address&bslash;n&quot;
+)paren
 suffix:semicolon
-)brace
+r_else
+id|chrp_int_ack_special
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|ioremap
+c_func
+(paren
+op_star
+id|addrp
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|open_pic_irq_offset
 op_assign
 l_int|16
@@ -1813,6 +1862,21 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;  Have fun!    &quot;
+comma
+l_int|0x7777
+)paren
+suffix:semicolon
 )brace
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 multiline_comment|/*&n; * IDE stuff.&n; */
@@ -2303,6 +2367,7 @@ id|ppc_md.irq_cannonicalize
 op_assign
 id|chrp_irq_cannonicalize
 suffix:semicolon
+macro_line|#ifndef CONFIG_POWER4
 id|ppc_md.init_IRQ
 op_assign
 id|chrp_init_IRQ
@@ -2315,6 +2380,20 @@ id|ppc_md.post_irq
 op_assign
 id|chrp_post_irq
 suffix:semicolon
+macro_line|#else
+id|ppc_md.init_IRQ
+op_assign
+id|xics_init_IRQ
+suffix:semicolon
+id|ppc_md.get_irq
+op_assign
+id|xics_get_irq
+suffix:semicolon
+id|ppc_md.post_irq
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_POWER4 */
 id|ppc_md.init
 op_assign
 id|chrp_init2
@@ -2619,6 +2698,24 @@ l_char|&squot;&bslash;r&squot;
 )paren
 (brace
 multiline_comment|/* assume no display-character RTAS method - use hex display */
+id|call_rtas
+c_func
+(paren
+l_string|&quot;set-indicator&quot;
+comma
+l_int|3
+comma
+l_int|1
+comma
+l_int|NULL
+comma
+l_int|6
+comma
+l_int|0
+comma
+id|hex
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

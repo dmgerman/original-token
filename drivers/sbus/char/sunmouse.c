@@ -350,13 +350,9 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sunmouse.fasync
-)paren
 id|kill_fasync
 (paren
+op_amp
 id|sunmouse.fasync
 comma
 id|SIGIO
@@ -1135,13 +1131,9 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* We just completed a transaction, wake up whoever is awaiting&n;&t;&t; * this event.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|sunmouse.fasync
-)paren
 id|kill_fasync
 (paren
+op_amp
 id|sunmouse.fasync
 comma
 id|SIGIO

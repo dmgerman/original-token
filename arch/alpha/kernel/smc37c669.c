@@ -5446,6 +5446,15 @@ c_func
 id|FLOPPY_0
 )paren
 suffix:semicolon
+multiline_comment|/* Wake up sometimes forgotten floppy, especially on DP264. */
+id|outb
+c_func
+(paren
+l_int|0xc
+comma
+l_int|0x3f2
+)paren
+suffix:semicolon
 id|SMC37c669_disable_device
 c_func
 (paren

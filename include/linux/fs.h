@@ -2196,6 +2196,12 @@ DECL|struct|file_operations
 r_struct
 id|file_operations
 (brace
+DECL|member|owner
+r_struct
+id|module
+op_star
+id|owner
+suffix:semicolon
 DECL|member|llseek
 id|loff_t
 (paren
@@ -3055,6 +3061,11 @@ DECL|macro|DECLARE_FSTYPE
 mdefine_line|#define DECLARE_FSTYPE(var,type,read,flags) &bslash;&n;struct file_system_type var = { &bslash;&n;&t;name:&t;&t;type, &bslash;&n;&t;read_super:&t;read, &bslash;&n;&t;fs_flags:&t;flags, &bslash;&n;&t;owner:&t;&t;THIS_MODULE, &bslash;&n;}
 DECL|macro|DECLARE_FSTYPE_DEV
 mdefine_line|#define DECLARE_FSTYPE_DEV(var,type,read) &bslash;&n;&t;DECLARE_FSTYPE(var,type,read,FS_REQUIRES_DEV)
+multiline_comment|/* Alas, no aliases. Too much hassle with bringing module.h everywhere */
+DECL|macro|fops_get
+mdefine_line|#define fops_get(fops) &bslash;&n;&t;(((fops) &amp;&amp; (fops)-&gt;owner)&t;&bslash;&n;&t;&t;? __MOD_INC_USE_COUNT((fops)-&gt;owner), (fops) &bslash;&n;&t;&t;: (fops))
+DECL|macro|fops_put
+mdefine_line|#define fops_put(fops) &bslash;&n;do {&t;&bslash;&n;&t;if ((fops) &amp;&amp; (fops)-&gt;owner) &bslash;&n;&t;&t;__MOD_DEC_USE_COUNT((fops)-&gt;owner);&t;&bslash;&n;} while(0)
 r_extern
 r_int
 id|register_filesystem

@@ -2624,7 +2624,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * open callback: claim parport.&n; */
+multiline_comment|/*&n; * open callback: claim parport.&n; * FIXME: if parport_claim() will sleep we can get into mess.&n; */
 DECL|function|js_console_open
 r_int
 id|js_console_open
@@ -3959,6 +3959,8 @@ id|name
 (braket
 id|i
 )braket
+comma
+l_int|NULL
 comma
 id|js_console_open
 comma

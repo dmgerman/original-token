@@ -24,11 +24,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|pcibios_report_device_errors
+DECL|function|pcibios_report_status
 r_void
-id|pcibios_report_device_errors
+id|pcibios_report_status
 c_func
 (paren
+id|u_int
+id|status_mask
+comma
 r_int
 id|warn
 )paren
@@ -47,6 +50,20 @@ id|dev
 id|u16
 id|status
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * ignore host bridge - we handle&n;&t;&t; * that separately&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;bus-&gt;number
+op_eq
+l_int|0
+op_logical_and
+id|dev-&gt;devfn
+op_eq
+l_int|0
+)paren
+r_continue
+suffix:semicolon
 id|pci_read_config_word
 c_func
 (paren
@@ -58,19 +75,20 @@ op_amp
 id|status
 )paren
 suffix:semicolon
+id|status
+op_and_assign
+id|status_mask
+suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|status
-op_amp
-l_int|0xf900
-)paren
 op_eq
 l_int|0
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* clear the status errors */
 id|pci_write_config_word
 c_func
 (paren
@@ -79,8 +97,6 @@ comma
 id|PCI_STATUS
 comma
 id|status
-op_amp
-l_int|0xf900
 )paren
 suffix:semicolon
 r_if
@@ -91,22 +107,28 @@ id|warn
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;PCI: %02X:%02X: status %04X &quot;
-l_string|&quot;on %s&bslash;n&quot;
+l_string|&quot;(%02x:%02x.%d: %04X) &quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma
+id|PCI_SLOT
+c_func
+(paren
 id|dev-&gt;devfn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
 comma
 id|status
-comma
-id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * We don&squot;t use this to fix the device, but initialisation of it.&n; * It&squot;s not the correct use for this, but it works.  The actions we&n; * take are:&n; * - enable only IO&n; * - set memory region to start at zero&n; * - (0x48) enable all memory requests from ISA to be channeled to PCI&n; * - (0x42) disable ping-pong (as per errata)&n; * - (0x40) enable PCI packet retry&n; */
+multiline_comment|/*&n; * We don&squot;t use this to fix the device, but initialisation of it.&n; * It&squot;s not the correct use for this, but it works.&n; * Note that the arbiter/ISA bridge appears to be buggy, specifically in&n; * the following area:&n; * 1. park on CPU&n; * 2. ISA bridge ping-pong&n; * 3. ISA bridge master handling of target RETRY&n; *&n; * Bug 3 is responsible for the sound DMA grinding to a halt.  We now&n; * live with bug 2.&n; */
 DECL|function|pci_fixup_83c553
 r_static
 r_void
@@ -120,6 +142,7 @@ op_star
 id|dev
 )paren
 (brace
+multiline_comment|/*&n;&t; * Set memory region to start at address 0, and enable IO&n;&t; */
 id|pci_write_config_dword
 c_func
 (paren
@@ -163,6 +186,7 @@ id|start
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; * All memory requests from ISA to be channelled to PCI&n;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -173,6 +197,7 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Enable ping-pong on bus master to ISA bridge transactions.&n;&t; * This improves the sound DMA substantially.  The fixed&n;&t; * priority arbiter also helps (see below).&n;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -180,9 +205,10 @@ id|dev
 comma
 l_int|0x42
 comma
-l_int|0x00
+l_int|0x01
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Enable PCI retry&n;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -193,7 +219,7 @@ comma
 l_int|0x22
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We used to set the arbiter to &quot;park on last master&quot;&n;&t; * (bit 1 set), but unfortunately the CyberPro does not&n;&t; * park the bus.  We must therefore park on CPU.&n;&t; */
+multiline_comment|/*&n;&t; * We used to set the arbiter to &quot;park on last master&quot; (bit&n;&t; * 1 set), but unfortunately the CyberPro does not park the&n;&t; * bus.  We must therefore park on CPU.  Unfortunately, this&n;&t; * may trigger yet another bug in the 553.&n;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -201,10 +227,10 @@ id|dev
 comma
 l_int|0x83
 comma
-l_int|0x00
+l_int|0x02
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Rotate priorities of each PCI request&n;&t; */
+multiline_comment|/*&n;&t; * Make the ISA DMA request lowest priority, and disable&n;&t; * rotating priorities completely.&n;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -212,7 +238,7 @@ id|dev
 comma
 l_int|0x80
 comma
-l_int|0xe0
+l_int|0x11
 )paren
 suffix:semicolon
 id|pci_write_config_byte
@@ -222,10 +248,10 @@ id|dev
 comma
 l_int|0x81
 comma
-l_int|0x01
+l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Route INTA input to IRQ 11, and set&n;&t; * IRQ11 to be level sensitive.&n;&t; */
+multiline_comment|/*&n;&t; * Route INTA input to IRQ 11, and set IRQ11 to be level&n;&t; * sensitive.&n;&t; */
 id|pci_write_config_word
 c_func
 (paren
@@ -703,7 +729,7 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Called after each bus is probed, but before its children&n; * are examined.&n; */
+multiline_comment|/**&n; * pcibios_fixup_bus - Called after each bus is probed, but before its children&n; * are examined.&n; */
 DECL|function|pcibios_fixup_bus
 r_void
 id|__init
@@ -760,6 +786,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|busdata-&gt;max_lat
+op_assign
+l_int|255
+suffix:semicolon
 multiline_comment|/*&n;&t; * Walk the devices on this bus, working out what we can&n;&t; * and can&squot;t support.&n;&t; */
 r_for
 c_loop
@@ -792,6 +822,11 @@ suffix:semicolon
 id|u16
 id|status
 suffix:semicolon
+id|u8
+id|max_lat
+comma
+id|min_gnt
+suffix:semicolon
 id|pci_read_config_word
 c_func
 (paren
@@ -819,6 +854,29 @@ op_and_assign
 op_complement
 id|PCI_COMMAND_FAST_BACK
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If we encounter a CyberPro 2000, then we disable&n;&t;&t; * SERR and PERR reporting - this chip doesn&squot;t drive the&n;&t;&t; * parity line correctly.&n;&t;&t; */
+macro_line|#if 1 /* !testing */
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_INTERG
+op_logical_and
+id|dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_INTERG_2000
+)paren
+id|busdata-&gt;features
+op_and_assign
+op_complement
+(paren
+id|PCI_COMMAND_SERR
+op_or
+id|PCI_COMMAND_PARITY
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Calculate the maximum devsel latency.&n;&t;&t; */
 r_if
 c_cond
@@ -864,6 +922,46 @@ op_assign
 op_logical_neg
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Calculate the maximum latency on this bus.  Note&n;&t;&t; * that we ignore any device which reports its max&n;&t;&t; * latency is the same as its use.&n;&t;&t; */
+id|pci_read_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_MAX_LAT
+comma
+op_amp
+id|max_lat
+)paren
+suffix:semicolon
+id|pci_read_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_MIN_GNT
+comma
+op_amp
+id|min_gnt
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|max_lat
+op_logical_and
+id|max_lat
+op_ne
+id|min_gnt
+op_logical_and
+id|max_lat
+OL
+id|busdata-&gt;max_lat
+)paren
+id|busdata-&gt;max_lat
+op_assign
+id|max_lat
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Now walk the devices again, this time setting them up.&n;&t; */
 id|walk
@@ -902,6 +1000,11 @@ suffix:semicolon
 id|u16
 id|cmd
 suffix:semicolon
+id|u8
+id|min_gnt
+comma
+id|latency
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * architecture specific hacks. I don&squot;t really want&n;&t;&t; * this here, but I don&squot;t see any other place for it&n;&t;&t; * to live.  Shame the device doesn&squot;t support&n;&t;&t; * capabilities&n;&t;&t; */
 r_if
 c_cond
@@ -930,7 +1033,53 @@ comma
 l_int|0x80000000
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Set latency timer to 32, and a cache line size to 32 bytes.&n;&t;&t; * Also, set system error enable, parity error enable.&n;&t;&t; * Disable ROM.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Calculate this masters latency timer value.&n;&t;&t; * This is rather primitive - it does not take&n;&t;&t; * account of the number of masters in a system&n;&t;&t; * wanting to use the bus.&n;&t;&t; */
+id|pci_read_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_MIN_GNT
+comma
+op_amp
+id|min_gnt
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|min_gnt
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|min_gnt
+OG
+id|busdata-&gt;max_lat
+)paren
+id|min_gnt
+op_assign
+id|busdata-&gt;max_lat
+suffix:semicolon
+id|latency
+op_assign
+(paren
+r_int
+)paren
+id|min_gnt
+op_star
+l_int|25
+op_div
+l_int|3
+suffix:semicolon
+)brace
+r_else
+id|latency
+op_assign
+l_int|32
+suffix:semicolon
+multiline_comment|/* 1us */
 id|pci_write_config_byte
 c_func
 (paren
@@ -938,9 +1087,10 @@ id|dev
 comma
 id|PCI_LATENCY_TIMER
 comma
-l_int|32
+id|latency
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set the cache line size to 32 bytes.&n;&t;&t; * Also, set system error enable, parity error enable.&n;&t;&t; * Disable ROM.&n;&t;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -1886,14 +2036,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FOOTBRIDGE
-multiline_comment|/*&n;&t; * Initialise any other hardware after we&squot;ve got the PCI bus&n;&t; * initialised.  We may need the PCI bus to talk to this other&n;&t; * hardware.&n;&t; */
-id|hw_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|pcibios_setup
 r_char
@@ -1952,6 +2094,7 @@ id|size
 )paren
 (brace
 )brace
+multiline_comment|/**&n; * pcibios_set_master - Setup device for bus mastering.&n; * @dev: PCI device to be setup&n; */
 DECL|function|pcibios_set_master
 r_void
 id|pcibios_set_master
@@ -1964,6 +2107,7 @@ id|dev
 )paren
 (brace
 )brace
+multiline_comment|/**&n; * pcibios_enable_device - Enable I/O and memory.&n; * @dev: PCI device to be enabled&n; */
 DECL|function|pcibios_enable_device
 r_int
 id|pcibios_enable_device

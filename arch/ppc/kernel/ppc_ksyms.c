@@ -390,6 +390,7 @@ id|ucSystemType
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
+macro_line|#if !__INLINE_BITOPS
 DECL|variable|set_bit
 id|EXPORT_SYMBOL
 c_func
@@ -432,6 +433,7 @@ c_func
 id|test_and_change_bit
 )paren
 suffix:semicolon
+macro_line|#endif /* __INLINE_BITOPS */
 DECL|variable|strcpy
 id|EXPORT_SYMBOL
 c_func
@@ -1240,6 +1242,13 @@ c_func
 id|console_drivers
 )paren
 suffix:semicolon
+DECL|variable|console_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|console_lock
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_XMON
 DECL|variable|xmon
 id|EXPORT_SYMBOL
@@ -1256,6 +1265,7 @@ c_func
 id|down_read_failed
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_KGDB) || defined(CONFIG_XMON)
 r_extern
 r_void
 (paren
@@ -1376,11 +1386,19 @@ c_func
 id|debugger_fault_handler
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|ret_to_user_hook
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|ret_to_user_hook
+)paren
+suffix:semicolon
+DECL|variable|do_softirq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|do_softirq
 )paren
 suffix:semicolon
 eof

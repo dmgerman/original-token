@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: ptrace.c,v 1.5 2000/05/09 01:42:21 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/ptrace.c&n; *&n; * Original x86 implementation:&n; *&t;By Ross Biro 1/23/92&n; *&t;edited by Linus Torvalds&n; *&n; * SuperH version:   Copyright (C) 1999, 2000  Kaz Kojima &amp; Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: ptrace.c,v 1.6 2000/06/08 23:44:50 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/ptrace.c&n; *&n; * Original x86 implementation:&n; *&t;By Ross Biro 1/23/92&n; *&t;edited by Linus Torvalds&n; *&n; * SuperH version:   Copyright (C) 1999, 2000  Kaz Kojima &amp; Niibe Yutaka&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -567,6 +568,16 @@ comma
 id|UBC_BASRA
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_CPU_SUBTYPE_SH7709)
+id|ctrl_outl
+c_func
+(paren
+l_int|0x0fff
+comma
+id|UBC_BAMRA
+)paren
+suffix:semicolon
+macro_line|#else
 id|ctrl_outb
 c_func
 (paren
@@ -575,6 +586,7 @@ comma
 id|UBC_BAMRA
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ctrl_outw
 c_func
 (paren
@@ -614,6 +626,16 @@ comma
 id|UBC_BASRB
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_CPU_SUBTYPE_SH7709)
+id|ctrl_outl
+c_func
+(paren
+l_int|0x0fff
+comma
+id|UBC_BAMRA
+)paren
+suffix:semicolon
+macro_line|#else
 id|ctrl_outb
 c_func
 (paren
@@ -622,6 +644,7 @@ comma
 id|UBC_BAMRB
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ctrl_outw
 c_func
 (paren
@@ -705,17 +728,17 @@ multiline_comment|/* are we already being traced? */
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* set the ptrace bit in the process flags. */
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_or_assign
-id|PF_PTRACED
+id|PT_PTRACED
 suffix:semicolon
 id|ret
 op_assign
@@ -875,16 +898,16 @@ multiline_comment|/* the same process cannot be attached many times */
 r_if
 c_cond
 (paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 r_goto
 id|out_tsk
 suffix:semicolon
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_or_assign
-id|PF_PTRACED
+id|PT_PTRACED
 suffix:semicolon
 id|write_lock_irq
 c_func
@@ -953,9 +976,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 )paren
 r_goto
@@ -1454,15 +1477,15 @@ id|request
 op_eq
 id|PTRACE_SYSCALL
 )paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_or_assign
-id|PF_TRACESYS
+id|PT_TRACESYS
 suffix:semicolon
 r_else
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_and_assign
 op_complement
-id|PF_TRACESYS
+id|PT_TRACESYS
 suffix:semicolon
 id|child-&gt;exit_code
 op_assign
@@ -1563,27 +1586,27 @@ id|_NSIG
 )paren
 r_break
 suffix:semicolon
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_and_assign
 op_complement
-id|PF_TRACESYS
+id|PT_TRACESYS
 suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_amp
-id|PF_DTRACE
+id|PT_DTRACE
 )paren
 op_eq
 l_int|0
 )paren
 (brace
 multiline_comment|/* Spurious delayed TF traps may occur */
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_or_assign
-id|PF_DTRACE
+id|PT_DTRACE
 suffix:semicolon
 )brace
 multiline_comment|/* Compute next pc.  */
@@ -1645,12 +1668,12 @@ r_sizeof
 id|tmp
 )paren
 comma
-l_int|1
+l_int|0
 )paren
 op_ne
 r_sizeof
 (paren
-id|data
+id|tmp
 )paren
 )paren
 r_break
@@ -1793,13 +1816,13 @@ id|_NSIG
 )paren
 r_break
 suffix:semicolon
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_and_assign
 op_complement
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
 op_or
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 suffix:semicolon
 id|child-&gt;exit_code
@@ -1898,19 +1921,19 @@ r_if
 c_cond
 (paren
 (paren
-id|tsk-&gt;flags
+id|tsk-&gt;ptrace
 op_amp
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
 op_or
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 )paren
 op_ne
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
 op_or
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 )paren
 r_return

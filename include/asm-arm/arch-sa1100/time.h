@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/time.h&n; *&n; * Copyright (C) 1998 Deborah Wallach.&n; * Twiddles  (C) 1999 &t;Hugo Fiennes &lt;hugo@empeg.com&gt;&n; * &n; * 2000/03/29 (C) Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Rewritten: big cleanup, much simpler, better HZ acuracy.&n; *&n; */
-macro_line|#include &lt;asm/arch/hardware.h&gt;
-macro_line|#include &lt;asm/arch/irqs.h&gt;
 multiline_comment|/* IRQs are disabled before entering here from do_gettimeofday() */
 DECL|function|sa1100_gettimeoffset
 r_static
@@ -72,11 +70,25 @@ id|regs
 )paren
 (brace
 r_int
+id|flags
+suffix:semicolon
+r_int
 id|next_match
 suffix:semicolon
-multiline_comment|/* Loop until we get ahead of the free running timer.&n;&t; * This ensures an exact clock tick count and time acuracy.&n;&t; * Should be IRQ race free.&n;&t; */
+multiline_comment|/* Loop until we get ahead of the free running timer.&n;&t; * This ensures an exact clock tick count and time acuracy.&n;&t; * IRQs are disabled inside the loop to ensure coherence between&n;&t; * lost_ticks (updated in do_timer()) and the match reg value, so we&n;&t; * can use do_gettimeofday() from interrupt handlers.&n;&t; */
 r_do
 (brace
+id|do_leds
+c_func
+(paren
+)paren
+suffix:semicolon
+id|save_flags_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|do_timer
 c_func
 (paren
@@ -94,6 +106,12 @@ op_assign
 id|OSMR0
 op_add_assign
 id|LATCH
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace

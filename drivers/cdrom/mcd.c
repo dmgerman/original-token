@@ -4013,17 +4013,20 @@ op_minus
 id|ENXIO
 suffix:semicolon
 multiline_comment|/* no hardware */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|mcd_open_count
-op_logical_and
+op_logical_or
 id|mcd_state
-op_eq
+op_ne
 id|MCD_S_IDLE
 )paren
-(brace
+r_goto
+id|bump_count
+suffix:semicolon
 id|mcd_invalidate_buffers
 c_func
 (paren
@@ -4047,9 +4050,8 @@ op_eq
 op_minus
 l_int|1
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
 multiline_comment|/* drive doesn&squot;t respond */
 r_if
@@ -4106,18 +4108,24 @@ c_func
 OL
 l_int|0
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|err_out
 suffix:semicolon
-)brace
+id|bump_count
+suffix:colon
 op_increment
 id|mcd_open_count
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|err_out
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * On close, we flush all mcd blocks from the buffer cache.&n; */

@@ -281,6 +281,8 @@ op_assign
 id|_PAGE_INVALID
 suffix:semicolon
 )brace
+DECL|macro|PTE_INIT
+mdefine_line|#define PTE_INIT(x) pte_clear(x)
 DECL|function|pte_pagenr
 r_extern
 r_inline

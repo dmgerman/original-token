@@ -3,7 +3,7 @@ macro_line|#ifndef __ASM_ARCH_MMU_H
 DECL|macro|__ASM_ARCH_MMU_H
 mdefine_line|#define __ASM_ARCH_MMU_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_HOST_FOOTBRIDGE)
+macro_line|#if defined(CONFIG_FOOTBRIDGE_HOST)
 multiline_comment|/*&n; * Task size: 3GB&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;&t;(0xc0000000UL)
@@ -22,7 +22,7 @@ DECL|macro|__bus_to_virt__is_a_macro
 mdefine_line|#define __bus_to_virt__is_a_macro
 DECL|macro|__bus_to_virt
 mdefine_line|#define __bus_to_virt(x)&t;((x) + 0xe0000000)
-macro_line|#elif defined(CONFIG_ADDIN_FOOTBRIDGE)
+macro_line|#elif defined(CONFIG_FOOTBRIDGE_ADDIN)
 macro_line|#if defined(CONFIG_ARCH_CO285)
 multiline_comment|/*&n; * Task size: 1.5GB&n; */
 DECL|macro|TASK_SIZE

@@ -10,7 +10,7 @@ r_typedef
 r_struct
 id|_PTE
 (brace
-macro_line|#ifdef CONFIG_PPC64
+macro_line|#ifdef CONFIG_PPC64BRIDGE
 DECL|member|vsid
 r_int
 r_int
@@ -53,7 +53,7 @@ id|rpn
 suffix:colon
 l_int|52
 suffix:semicolon
-macro_line|#else /* CONFIG_PPC64 */
+macro_line|#else /* CONFIG_PPC64BRIDGE */
 r_int
 r_int
 id|v
@@ -89,7 +89,7 @@ suffix:colon
 l_int|20
 suffix:semicolon
 multiline_comment|/* Real (physical) page number */
-macro_line|#endif /* CONFIG_PPC64 */
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 r_int
 r_int
 suffix:colon
@@ -305,7 +305,7 @@ r_struct
 id|_BATU
 (brace
 multiline_comment|/* Upper part of BAT (all except 601) */
-macro_line|#ifdef CONFIG_PPC64
+macro_line|#ifdef CONFIG_PPC64BRIDGE
 DECL|member|bepi
 r_int
 r_int
@@ -314,7 +314,7 @@ id|bepi
 suffix:colon
 l_int|47
 suffix:semicolon
-macro_line|#else /* CONFIG_PPC64 */
+macro_line|#else /* CONFIG_PPC64BRIDGE */
 r_int
 r_int
 id|bepi
@@ -322,7 +322,7 @@ suffix:colon
 l_int|15
 suffix:semicolon
 multiline_comment|/* Effective page index (virtual address) */
-macro_line|#endif /* CONFIG_PPC64 */
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 r_int
 r_int
 suffix:colon
@@ -403,7 +403,7 @@ r_struct
 id|_BATL
 (brace
 multiline_comment|/* Lower part of BAT (all except 601) */
-macro_line|#ifdef CONFIG_PPC64
+macro_line|#ifdef CONFIG_PPC64BRIDGE
 DECL|member|brpn
 r_int
 r_int
@@ -412,7 +412,7 @@ id|brpn
 suffix:colon
 l_int|47
 suffix:semicolon
-macro_line|#else /* CONFIG_PPC64 */
+macro_line|#else /* CONFIG_PPC64BRIDGE */
 r_int
 r_int
 id|brpn
@@ -420,7 +420,7 @@ suffix:colon
 l_int|15
 suffix:semicolon
 multiline_comment|/* Real page index (physical address) */
-macro_line|#endif /* CONFIG_PPC64 */
+macro_line|#endif /* CONFIG_PPC64BRIDGE */
 r_int
 r_int
 suffix:colon
@@ -575,10 +575,7 @@ DECL|typedef|MMU_context
 )brace
 id|MMU_context
 suffix:semicolon
-multiline_comment|/* invalidate a TLB entry */
-DECL|function|_tlbie
 r_extern
-r_inline
 r_void
 id|_tlbie
 c_func
@@ -587,20 +584,8 @@ r_int
 r_int
 id|va
 )paren
-(brace
-id|asm
-r_volatile
-(paren
-l_string|&quot;tlbie %0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|va
-)paren
-)paren
 suffix:semicolon
-)brace
+multiline_comment|/* invalidate a TLB entry */
 r_extern
 r_void
 id|_tlbia
