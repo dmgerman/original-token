@@ -446,6 +446,39 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Check for semi-valid mem_start/end values if supplied. */
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;mem_start
+op_mod
+l_int|0x2000
+)paren
+op_logical_or
+(paren
+id|dev-&gt;mem_end
+op_mod
+l_int|0x2000
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;wd.c: user supplied mem_start or mem_end not on 8kB boundary - ignored.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev-&gt;mem_start
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;mem_end
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1244,7 +1277,7 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;wd&quot;
+id|model_name
 )paren
 )paren
 (brace
@@ -1294,7 +1327,7 @@ id|ioaddr
 comma
 id|WD_IO_EXTENT
 comma
-l_string|&quot;wd&quot;
+id|model_name
 )paren
 suffix:semicolon
 id|ei_status.name
@@ -1722,6 +1755,8 @@ op_plus
 id|WD_CMDREG5
 )paren
 suffix:semicolon
+macro_line|#ifdef notdef
+multiline_comment|/* Officially this is what we are doing, but the readl() is faster */
 id|memcpy_fromio
 c_func
 (paren
@@ -1736,6 +1771,26 @@ id|e8390_pkt_hdr
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|hdr
+)paren
+(braket
+l_int|0
+)braket
+op_assign
+id|readl
+c_func
+(paren
+id|hdr_start
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Block input and output are easy on shared memory ethercards, and trivial&n;   on the Western digital card where there is no choice of how to do it.&n;   The only complications are that the ring buffer wraps, and need to map&n;   switch between 8- and 16-bit modes. */
 r_static

@@ -5768,14 +5768,6 @@ dot
 id|device
 )paren
 (brace
-id|i
-op_assign
-id|sd_init_onedisk
-c_func
-(paren
-id|i
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5804,6 +5796,7 @@ id|i
 dot
 id|capacity
 suffix:semicolon
+multiline_comment|/* revalidate does sd_init_onedisk via MAYBE_REINIT*/
 id|revalidate_scsidisk
 c_func
 (paren
@@ -5821,6 +5814,15 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_else
+id|i
+op_assign
+id|sd_init_onedisk
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
 id|rscsi_disks
 (braket
 id|i

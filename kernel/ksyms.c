@@ -130,6 +130,9 @@ macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 macro_line|#include &quot;../drivers/net/slhc.h&quot;
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_ALIAS
+macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/bios32.h&gt;
@@ -1571,6 +1574,20 @@ c_func
 id|unregister_netdevice_notifier
 )paren
 comma
+macro_line|#ifdef CONFIG_NET_ALIAS
+id|X
+c_func
+(paren
+id|register_net_alias_type
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_net_alias_type
+)paren
+comma
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* support for loadable net drivers */
 macro_line|#ifdef CONFIG_AX25
@@ -1734,13 +1751,7 @@ id|kill_fasync
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
-multiline_comment|/* Supports loadable scsi drivers &n; &t; * technically some of this stuff could be moved to scsi.c, but&n; &t; * scsi.c is initialized before the memory manager is set up.&n; &t; * So we add it here too.  There is a duplicate set in scsi.c&n; &t; * that is used when the entire scsi subsystem is a loadable&n; &t; * module.&n;    &t; * &n; &t; * in_scan_scsis is a hack, and should go away once the new &n;&t; * memory allocation code is in the NCR driver &n;&t; */
-id|X
-c_func
-(paren
-id|in_scan_scsis
-)paren
-comma
+multiline_comment|/* Supports loadable scsi drivers &n; &t; * technically some of this stuff could be moved to scsi.c, but&n; &t; * scsi.c is initialized before the memory manager is set up.&n; &t; * So we add it here too.  There is a duplicate set in scsi.c&n; &t; * that is used when the entire scsi subsystem is a loadable&n; &t; * module.&n;&t; */
 id|X
 c_func
 (paren

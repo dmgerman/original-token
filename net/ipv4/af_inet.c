@@ -32,6 +32,9 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#ifdef CONFIG_IP_ALIAS
+macro_line|#include &lt;net/ip_alias.h&gt;
+macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 r_extern
@@ -5413,6 +5416,14 @@ macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialise the multicast router&n;&t; */
 macro_line|#if defined(CONFIG_IP_MROUTE)
 id|ip_mr_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; *  Initialise AF_INET alias type (register net_alias_type)&n;&t; */
+macro_line|#if defined(CONFIG_IP_ALIAS)
+id|ip_alias_init
 c_func
 (paren
 )paren

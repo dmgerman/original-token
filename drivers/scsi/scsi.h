@@ -79,6 +79,8 @@ DECL|macro|DRIVER_TIMEOUT
 mdefine_line|#define DRIVER_TIMEOUT      0x06
 DECL|macro|DRIVER_HARD
 mdefine_line|#define DRIVER_HARD         0x07
+DECL|macro|DRIVER_SENSE
+mdefine_line|#define DRIVER_SENSE&t;    0x08
 DECL|macro|SUGGEST_RETRY
 mdefine_line|#define SUGGEST_RETRY       0x10
 DECL|macro|SUGGEST_ABORT
@@ -91,8 +93,6 @@ DECL|macro|SUGGEST_SENSE
 mdefine_line|#define SUGGEST_SENSE       0x80
 DECL|macro|SUGGEST_IS_OK
 mdefine_line|#define SUGGEST_IS_OK       0xff
-DECL|macro|DRIVER_SENSE
-mdefine_line|#define DRIVER_SENSE        0x08
 DECL|macro|DRIVER_MASK
 mdefine_line|#define DRIVER_MASK         0x0f
 DECL|macro|SUGGEST_MASK
@@ -924,6 +924,24 @@ op_star
 comma
 id|Scsi_Cmnd
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_driverbyte
+c_func
+(paren
+r_int
+id|scsiresult
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_hostbyte
+c_func
+(paren
+r_int
+id|scsiresult
 )paren
 suffix:semicolon
 r_extern

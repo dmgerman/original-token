@@ -1202,6 +1202,8 @@ comma
 id|ring_page
 )paren
 suffix:semicolon
+macro_line|#ifdef notdef
+multiline_comment|/* Officially this is what we are doing, but the readl() is faster */
 id|memcpy_fromio
 c_func
 (paren
@@ -1216,6 +1218,26 @@ id|e8390_pkt_hdr
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|hdr
+)paren
+(braket
+l_int|0
+)braket
+op_assign
+id|readl
+c_func
+(paren
+id|shared_mem
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Turn off memory access: we would need to reprogram the window anyway. */
 id|mem_off
 c_func

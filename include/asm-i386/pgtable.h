@@ -5,26 +5,191 @@ multiline_comment|/*&n; * Define USE_PENTIUM_MM if you want the 4MB page table o
 DECL|macro|USE_PENTIUM_MM
 mdefine_line|#define USE_PENTIUM_MM 1
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
-multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities.&n; */
+multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities,&n; * and page-granular invalidates are available only on i486 and up.&n; */
+DECL|macro|__invalidate
+mdefine_line|#define __invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+macro_line|#ifdef __i486__
+DECL|macro|__invalidate_one
+mdefine_line|#define __invalidate_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))
+macro_line|#else
+DECL|macro|__invalidate_one
+mdefine_line|#define __invalidate_one(addr) invalidate()
+macro_line|#endif
 macro_line|#ifndef __SMP__
 DECL|macro|invalidate
-mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+mdefine_line|#define invalidate() __invalidate()
+DECL|macro|invalidate_all
+mdefine_line|#define invalidate_all() __invalidate()
+DECL|function|invalidate_mm
+r_static
+r_inline
+r_void
+id|invalidate_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mm
+op_eq
+id|current-&gt;mm
+)paren
+id|__invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|invalidate_page
+r_static
+r_inline
+r_void
+id|invalidate_page
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mm
+op_eq
+id|current-&gt;mm
+)paren
+id|__invalidate_one
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|invalidate_range
+r_static
+r_inline
+r_void
+id|invalidate_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mm
+op_eq
+id|current-&gt;mm
+)paren
+id|__invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 macro_line|#else
+multiline_comment|/*&n; * We aren&squot;t very clever about this yet -  SMP could certainly&n; * avoid some global invalidates..&n; */
 macro_line|#include &lt;asm/smp.h&gt;
 DECL|macro|local_invalidate
-mdefine_line|#define local_invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+mdefine_line|#define local_invalidate() &bslash;&n;&t;__invalidate()
 DECL|macro|invalidate
-mdefine_line|#define invalidate() &bslash;&n;&t;smp_invalidate();
-macro_line|#endif
-multiline_comment|/*&n; * We aren&squot;t very clever about this yet. On a 486+ we could actually do&n; * page-granularity invalidates for better performance in some cases.&n; * And SMP could certainly avoid some global invalidates..&n; */
+mdefine_line|#define invalidate() &bslash;&n;&t;smp_invalidate()
 DECL|macro|invalidate_all
 mdefine_line|#define invalidate_all() invalidate()
-DECL|macro|invalidate_mm
-mdefine_line|#define invalidate_mm(mm_struct) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
-DECL|macro|invalidate_page
-mdefine_line|#define invalidate_page(mm_struct,addr) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
-DECL|macro|invalidate_range
-mdefine_line|#define invalidate_range(mm_struct,start,end) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
+DECL|function|invalidate_mm
+r_static
+r_inline
+r_void
+id|invalidate_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|invalidate_page
+r_static
+r_inline
+r_void
+id|invalidate_page
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|invalidate_range
+r_static
+r_inline
+r_void
+id|invalidate_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/tty_io.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was a array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; *&n; * New TIOCLINUX variants added.&n; *&t;-- mj@k332.feld.cvut.cz, 19-Nov-95&n; */
+multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was a array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; *&n; * New TIOCLINUX variants added.&n; *&t;-- mj@k332.feld.cvut.cz, 19-Nov-95&n; * &n; * Restrict vt switching via ioctl()&n; *      -- grif@cs.ucr.edu, 5-Dec-95&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -111,6 +111,12 @@ op_star
 id|keypress_wait
 op_assign
 l_int|NULL
+suffix:semicolon
+DECL|variable|vt_dont_switch
+r_char
+id|vt_dont_switch
+op_assign
+l_int|0
 suffix:semicolon
 r_static
 r_void
@@ -2027,9 +2033,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|new_console
 op_eq
 id|fg_console
+)paren
+op_logical_or
+(paren
+id|vt_dont_switch
+)paren
 )paren
 r_return
 suffix:semicolon
@@ -2195,9 +2207,15 @@ id|new_console
 r_if
 c_cond
 (paren
+(paren
 id|new_console
 op_eq
 id|fg_console
+)paren
+op_logical_or
+(paren
+id|vt_dont_switch
+)paren
 )paren
 r_return
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by Donald&n;&t;Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&n;&t;v2.21 ALPHA (95/11/29)&n;&t;  - &quot;Unknown protocol ID&quot; messages now also indicate the station&n;&t;    which sent the unrecognized packet, to aid in debugging network&n;&t;    confusion.  Also, if anyone knows why Novell servers send packets&n;&t;    with protocol ID 0xEC, be sure to tell me.  For now they&squot;re&n;&t;    ignored.&n;&t;  - Rearranged ARC_P_* handling a bit, so it makes slightly more&n;&t;    sense.&n;&t;  - We were clearing irq2dev_map too soon, and causing spurious&n;&t;    &quot;irq %d for unknown device&quot; messages.  Moved all the set/clear&n;&t;    irq2dev_map operations to more intelligent places.&n;&t;  - 1.2.x kernels really didn&squot;t work with 2.20 ALPHA.  Maybe this&n;&t;    will fix it.&n;&t;  - Fixed the setting of set_multicast_list.  Since we don&squot;t have&n;&t;    multicast support, there&squot;s no point in using this at all.&n;&n;&t;v2.20 ALPHA (95/11/12)&n;&t;  - Added a bit of protocol confusion to the arc0 code to allow&n;&t;    trxnet-compatible IPX support - and the use of all that new&n;&t;    Linux-IPX stuff (including lwared).  Just tell the ipx_interface&n;&t;    command that arc0 uses 802.3 (other protocols will probably also&n;&t;    work).&n;&t;  - Fixed lp-&gt;stats to update tx_packets on all devices, not just&n;&t;    arc0.  Also, changed a lot of the error counting to make more&n;&t;    sense.&n;&t;  - rx_packets on arc0 was being updated for each completely received&n;&t;    packet.  It now updates for each segment received, which makes&n;&t;    more sense. &n;&t;  - Removed unneeded extra check of dev-&gt;start in arcnet_inthandler.&n;&t;  - Included someone else&squot;s fixes from kernel 1.3.39.  Does it still&n;&t;    work with kernel 1.2?&n;&t;  - Added a new define to disable PRINTING (not checking) of RECON&n;&t;    messages.&n;&t;  - Separated the duplicated error checking code from the various&n;&t;    arcnet??_send_packet routines into a new function.&n;&t;  - Cleaned up lock variables and ping-pong buffers a bit.  This&n;&t;    should mean more stability, fewer missing packets, and less ugly&n;&t;    debug messages.  Assuming it works.&n;&t;  - Changed the format of debug messages to always include the actual&n;&t;    device name instead of just &quot;arcnet:&quot;.  Used more macros to&n;&t;    shorten debugging code even more.&n;&t;  - Finally squashed the &quot;startup NULL pointer&quot; bug.  irq2dev_map&n;&t;    wasn&squot;t being cleared to NULL when the driver was closed.&n;&t;  - Improved RECON checking; if a certain number of RECON messages&n;&t;    are received within one minute, a warning message is printed&n;&t;    to the effect of &quot;cabling problem.&quot;  One-log-message-per-recon&n;&t;    now defaults to OFF.&n;&n;&t;v2.12 ALPHA (95/10/27)&n;&t;  - Tried to improve skb handling and init code to fix problems with&n;&t;    the latest 1.3.x kernels. (We no longer use ether_setup except&n;&t;    in arc0e since they keep coming up with new and improved&n;&t;    incompatibilities for us.)&n;&n;&t;v2.11 ALPHA (95/10/25)&n;&t;  - Removed superfluous sti() from arcnet_inthandler.&n;&t;  - &quot;Cleaned up&quot; (?) handling of dev-&gt;interrupt for multiple&n;&t;    devices.&n;&t;  - Place includes BEFORE configuration settings (solves some&n;&t;    problems with insmod and undefined symbols)&n;&t;  - Removed race condition in arcnet_open that could cause&n;&t;    packet reception to be disabled until after the first TX.&n;&t;  &n;&t;v2.10 ALPHA (95/09/10)&n;&t;  - Integrated Tomasz Motylewski&squot;s new RFC1051 compliant &quot;arc0s&quot;&n;&t;    ([S]imple [S]tandard?) device.  This should make Linux-ARCnet&n;&t;    work with the NetBSD/AmiTCP implementation of this older RFC,&n;&t;    via the arc0s device.&n;&t;  - Decided the current implementation of Multiprotocol ARCnet&n;&t;    involved way too much duplicated code, and tried to share things&n;&t;    a _bit_ more, at least.  This means, pretty much, that any&n;&t;    bugs in the arc0s module are now my fault :)&n;&t;  - Added a new ARCNET_DEBUG_MAX define that sets the highest&n;&t;    debug message level to be included in the driver.  This can&n;&t;    reduce the size of the object file, and probably increases&n;&t;    efficiency a bit.  I get a 0.1 ms speedup in my &quot;ping&quot; times if&n;&t;    I disable all debug messages.  Oh, wow.&n;&t;  - Fixed a long-standing annoyance with some of the power-up debug&n;&t;    messages.  (&quot;IRQ for unknown device&quot; was showing up too often)&n;&n;&t;v2.00 (95/09/06)&n;&t;  - THIS IS ONLY A SUMMARY.  The complete changelog is available&n;&t;    from me upon request.&n;&n;&t;  - ARCnet RECON messages are now detected and logged.  These occur&n;&t;    when a new computer is powered up on the network, or in a&n;&t;    constant stream when the network cable is broken.  Thanks to&n;&t;    Tomasz Motylewski for this.  You must have D_EXTRA enabled&n;&t;    if you want these messages sent to syslog, otherwise they will&n;&t;    only show up in the network statistics (/proc/net/dev).&n;&t;  - The TX Acknowledge flag is now checked, and a log message is sent&n;&t;    if a completed transmit is not ACK&squot;d.  (I have yet to have this&n;&t;    happen to me.)&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Many code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  - Documentation updates and improvements.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  Currently, we do cause some NE2000&squot;s&n;           to die.  Autoprobe is also way too slow and verbose, particularly&n;           if there aren&squot;t any ARCnet cards in the system.  And why shouldn&squot;t&n;           it work as a module again?&n;         - Rewrite autoprobe.&n;         - Make sure RESET flag is cleared during an IRQ even if dev-&gt;start==0;&n;           mainly a portability fix.  This will confuse autoprobe a bit, so&n;           test that too.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;         - NFS mount freezes after several megabytes to SOSS for DOS. &n; &t;   unmount/remount fixes it.  Is this arcnet-specific?  I don&squot;t know.&n;         - Some newer ARCnets support promiscuous mode, supposedly.  If&n;           someone sends me information, I&squot;ll try to implement it.&n;         - Dump Linux 1.2 support and its ugly #ifdefs.&n;         - Add support for the new 1.3.x IP header cache features.&n;         - ATA protocol support?? &n;         - Banyan VINES TCP/IP support??&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - The official ARCnet data sheets (!) thanks to Ken Cornetet&n;&t;&t;&lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info...&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
+multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by Donald&n;&t;Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&n;&t;v2.22 (95/12/08)&n;&t;  - IRQ is always printed as a decimal, instead of a hex number.&n;&t;  - Replaced most remaining printk&squot;s with BUGMSG macros.&n;&t;  - Moved variables for VERIFY_ACK from the Outgoing struct into&n;&t;    the lp struct; Outgoing is really for packet-splitting info&n;&t;    only.&n;&t;  - Simplified INTMASK handling using a memory variable to keep a&n;&t;    &quot;running total.&quot;&n;&t;  - Tracked down more (maybe the last?) &quot;missed IRQ&quot; messages caused&n;&t;    by TX-done IRQ&squot;s occurring WHILE arcnet??_send_packet was in&n;&t;    progress.  These were pretty obscure and mostly harmless.&n;&t;  - Made an actual non-ALPHA release of the thing.&n;&n;&t;v2.21 ALPHA (95/11/29)&n;&t;  - &quot;Unknown protocol ID&quot; messages now also indicate the station&n;&t;    which sent the unrecognized packet, to aid in debugging network&n;&t;    confusion.  Also, if anyone knows why Novell servers send packets&n;&t;    with protocol ID 0xEC, be sure to tell me.  For now they&squot;re&n;&t;    ignored.&n;&t;  - Rearranged ARC_P_* handling a bit, so it makes slightly more&n;&t;    sense.&n;&t;  - We were clearing irq2dev_map too soon, and causing spurious&n;&t;    &quot;irq %d for unknown device&quot; messages.  Moved all the set/clear&n;&t;    irq2dev_map operations to more intelligent places.&n;&t;  - 1.2.x kernels really didn&squot;t work with 2.20 ALPHA.  Maybe this&n;&t;    will fix it.&n;&t;  - Fixed the setting of set_multicast_list.  Since we don&squot;t have&n;&t;    multicast support, there&squot;s no point in using this at all.&n;&n;&t;v2.20 ALPHA (95/11/12)&n;&t;  - Added a bit of protocol confusion to the arc0 code to allow&n;&t;    trxnet-compatible IPX support - and the use of all that new&n;&t;    Linux-IPX stuff (including lwared).  Just tell the ipx_interface&n;&t;    command that arc0 uses 802.3 (other protocols will probably also&n;&t;    work).&n;&t;  - Fixed lp-&gt;stats to update tx_packets on all devices, not just&n;&t;    arc0.  Also, changed a lot of the error counting to make more&n;&t;    sense.&n;&t;  - rx_packets on arc0 was being updated for each completely received&n;&t;    packet.  It now updates for each segment received, which makes&n;&t;    more sense. &n;&t;  - Removed unneeded extra check of dev-&gt;start in arcnet_inthandler.&n;&t;  - Included someone else&squot;s fixes from kernel 1.3.39.  Does it still&n;&t;    work with kernel 1.2?&n;&t;  - Added a new define to disable PRINTING (not checking) of RECON&n;&t;    messages.&n;&t;  - Separated the duplicated error checking code from the various&n;&t;    arcnet??_send_packet routines into a new function.&n;&t;  - Cleaned up lock variables and ping-pong buffers a bit.  This&n;&t;    should mean more stability, fewer missing packets, and less ugly&n;&t;    debug messages.  Assuming it works.&n;&t;  - Changed the format of debug messages to always include the actual&n;&t;    device name instead of just &quot;arcnet:&quot;.  Used more macros to&n;&t;    shorten debugging code even more.&n;&t;  - Finally squashed the &quot;startup NULL pointer&quot; bug.  irq2dev_map&n;&t;    wasn&squot;t being cleared to NULL when the driver was closed.&n;&t;  - Improved RECON checking; if a certain number of RECON messages&n;&t;    are received within one minute, a warning message is printed&n;&t;    to the effect of &quot;cabling problem.&quot;  One-log-message-per-recon&n;&t;    now defaults to OFF.&n;&n;&t;v2.12 ALPHA (95/10/27)&n;&t;  - Tried to improve skb handling and init code to fix problems with&n;&t;    the latest 1.3.x kernels. (We no longer use ether_setup except&n;&t;    in arc0e since they keep coming up with new and improved&n;&t;    incompatibilities for us.)&n;&n;&t;v2.11 ALPHA (95/10/25)&n;&t;  - Removed superfluous sti() from arcnet_inthandler.&n;&t;  - &quot;Cleaned up&quot; (?) handling of dev-&gt;interrupt for multiple&n;&t;    devices.&n;&t;  - Place includes BEFORE configuration settings (solves some&n;&t;    problems with insmod and undefined symbols)&n;&t;  - Removed race condition in arcnet_open that could cause&n;&t;    packet reception to be disabled until after the first TX.&n;&t;  &n;&t;v2.10 ALPHA (95/09/10)&n;&t;  - Integrated Tomasz Motylewski&squot;s new RFC1051 compliant &quot;arc0s&quot;&n;&t;    ([S]imple [S]tandard?) device.  This should make Linux-ARCnet&n;&t;    work with the NetBSD/AmiTCP implementation of this older RFC,&n;&t;    via the arc0s device.&n;&t;  - Decided the current implementation of Multiprotocol ARCnet&n;&t;    involved way too much duplicated code, and tried to share things&n;&t;    a _bit_ more, at least.  This means, pretty much, that any&n;&t;    bugs in the arc0s module are now my fault :)&n;&t;  - Added a new ARCNET_DEBUG_MAX define that sets the highest&n;&t;    debug message level to be included in the driver.  This can&n;&t;    reduce the size of the object file, and probably increases&n;&t;    efficiency a bit.  I get a 0.1 ms speedup in my &quot;ping&quot; times if&n;&t;    I disable all debug messages.  Oh, wow.&n;&t;  - Fixed a long-standing annoyance with some of the power-up debug&n;&t;    messages.  (&quot;IRQ for unknown device&quot; was showing up too often)&n;&n;&t;v2.00 (95/09/06)&n;&t;  - THIS IS ONLY A SUMMARY.  The complete changelog is available&n;&t;    from me upon request.&n;&n;&t;  - ARCnet RECON messages are now detected and logged.  These occur&n;&t;    when a new computer is powered up on the network, or in a&n;&t;    constant stream when the network cable is broken.  Thanks to&n;&t;    Tomasz Motylewski for this.  You must have D_EXTRA enabled&n;&t;    if you want these messages sent to syslog, otherwise they will&n;&t;    only show up in the network statistics (/proc/net/dev).&n;&t;  - The TX Acknowledge flag is now checked, and a log message is sent&n;&t;    if a completed transmit is not ACK&squot;d.  (I have yet to have this&n;&t;    happen to me.)&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Many code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  - Documentation updates and improvements.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  Currently, we do cause some NE2000&squot;s&n;           to die.  Autoprobe is also way too slow and verbose, particularly&n;           if there aren&squot;t any ARCnet cards in the system.  And why shouldn&squot;t&n;           it work as a module again?&n;         - Rewrite autoprobe.&n;         - Make sure RESET flag is cleared during an IRQ even if dev-&gt;start==0;&n;           mainly a portability fix.  This will confuse autoprobe a bit, so&n;           test that too.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Some newer ARCnets support promiscuous mode, supposedly.  If&n;           someone sends me information, I&squot;ll try to implement it.&n;         - Dump Linux 1.2 support and its ugly #ifdefs.&n;         - Add support for the new 1.3.x IP header cache features.&n;         - Support printk&squot;s priority levels.&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;         - Move the SKB and memory dump code into separate functions.&n;         - ATA protocol support?? &n;         - Banyan VINES TCP/IP support??&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet data sheets (!) thanks to Ken Cornetet&n;&t;&t;&lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c: v2.21 ALPHA 95/11/29 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
+l_string|&quot;arcnet.c: v2.22 95/12/08 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -185,6 +185,8 @@ DECL|macro|COMMAND
 mdefine_line|#define COMMAND (ioaddr+1)&t;/* writable, returns random vals on read (?) */
 DECL|macro|RESET
 mdefine_line|#define RESET  (ioaddr+8)&t;&t;/* software reset writable */
+DECL|macro|SETMASK
+mdefine_line|#define SETMASK outb(lp-&gt;intmask,INTMASK);
 multiline_comment|/* Time needed for various things (in clock ticks, 1/100 sec) */
 multiline_comment|/* We mostly don&squot;t bother with these - watch out. */
 DECL|macro|RESETtime
@@ -217,13 +219,6 @@ DECL|macro|RES2flag
 mdefine_line|#define RES2flag        0x40            /* unused */
 DECL|macro|NORXflag
 mdefine_line|#define NORXflag        0x80            /* receiver inhibited */
-macro_line|#ifdef DETECT_RECONFIGS
-DECL|macro|RECON_flag
-mdefine_line|#define RECON_flag RECONflag
-macro_line|#else
-DECL|macro|RECON_flag
-mdefine_line|#define RECON_flag 0
-macro_line|#endif
 multiline_comment|/* in the command register, the following bits have these meanings:&n;        *                0-2     command&n;        *                3-4     page number (for enable rcv/xmt command)&n;        *                 7      receive broadcasts&n;        */
 DECL|macro|NOTXcmd
 mdefine_line|#define NOTXcmd         0x01            /* disable transmitter */
@@ -467,17 +462,6 @@ DECL|member|seglen
 id|seglen
 suffix:semicolon
 multiline_comment|/* length of segment */
-macro_line|#ifdef VERIFY_ACK
-DECL|member|lastload_dest
-r_int
-id|lastload_dest
-comma
-multiline_comment|/* can last loaded packet be acked? */
-DECL|member|lasttrans_dest
-id|lasttrans_dest
-suffix:semicolon
-multiline_comment|/* can last TX&squot;d packet be acked? */
-macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* Information that needs to be kept for each board. */
@@ -490,18 +474,17 @@ r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
-DECL|member|arcnum
-id|u_char
-id|arcnum
-suffix:semicolon
-multiline_comment|/* arcnet number - our 8-bit address */
 DECL|member|sequence
 id|u_short
 id|sequence
 suffix:semicolon
 multiline_comment|/* sequence number (incs with each packet) */
-DECL|member|recbuf
+DECL|member|stationid
 id|u_char
+id|stationid
+comma
+multiline_comment|/* our 8-bit station address */
+DECL|member|recbuf
 id|recbuf
 comma
 multiline_comment|/* receive buffer # (0 or 1) */
@@ -511,8 +494,12 @@ comma
 multiline_comment|/* transmit buffer # (2 or 3) */
 DECL|member|txready
 id|txready
-suffix:semicolon
+comma
 multiline_comment|/* buffer where a packet is ready to send */
+DECL|member|intmask
+id|intmask
+suffix:semicolon
+multiline_comment|/* current value of INTMASK register */
 DECL|member|intx
 r_int
 id|intx
@@ -526,11 +513,17 @@ DECL|member|sending
 id|sending
 suffix:semicolon
 multiline_comment|/* transmit in progress? */
-DECL|member|tx_left
+macro_line|#ifdef VERIFY_ACK
+DECL|member|lastload_dest
 r_int
-id|tx_left
+id|lastload_dest
+comma
+multiline_comment|/* can last loaded packet be acked? */
+DECL|member|lasttrans_dest
+id|lasttrans_dest
 suffix:semicolon
-multiline_comment|/* segments of split packet left to TX */
+multiline_comment|/* can last TX&squot;d packet be acked? */
+macro_line|#endif
 macro_line|#if defined(DETECT_RECONFIGS) &amp;&amp; defined(RECON_THRESHOLD)
 DECL|member|first_recon
 id|time_t
@@ -1346,7 +1339,7 @@ c_func
 id|version
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 id|BUGLVL
 c_func
 (paren
@@ -1394,7 +1387,7 @@ macro_line|#else
 id|BUGLVL
 c_func
 (paren
-id|D_INIT
+id|D_EXTRA
 )paren
 (brace
 id|printk
@@ -1440,7 +1433,7 @@ c_func
 (paren
 id|D_INIT
 comma
-l_string|&quot;given: base %lXh, IRQ %Xh, shmem %lXh&bslash;n&quot;
+l_string|&quot;given: base %lXh, IRQ %d, shmem %lXh&bslash;n&quot;
 comma
 id|dev-&gt;base_addr
 comma
@@ -1686,28 +1679,28 @@ op_logical_neg
 id|dev-&gt;rmem_start
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: loadable modules can&squot;t autoprobe!&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;loadable modules can&squot;t autoprobe!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s:  try using io=, irqnum=, and shmem= on the insmod line.&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;try using io=, irqnum=, and shmem= on the insmod line.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s:  you may also need num= to change the device name. (ie. num=1 for arc1)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;you may also need num= to change the device name. (ie. num=1 for arc1)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1739,12 +1732,12 @@ c_cond
 id|irqval
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: unable to get IRQ %d (irqval=%d).&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;unable to get IRQ %d (irqval=%d).&bslash;n&quot;
 comma
 id|dev-&gt;irq
 comma
@@ -1774,12 +1767,12 @@ comma
 l_string|&quot;arcnet&quot;
 )paren
 suffix:semicolon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: ARCnet card found at %03lXh, IRQ %d, ShMem at %lXh.&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;ARCnet card found at %03lXh, IRQ %d, ShMem at %lXh.&bslash;n&quot;
 comma
 id|dev-&gt;base_addr
 comma
@@ -1933,39 +1926,39 @@ id|D_NORMAL
 comma
 l_string|&quot;We appear to be station %d (%02Xh)&bslash;n&quot;
 comma
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 comma
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 op_eq
 l_int|0
 )paren
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: WARNING!  Station address 0 is reserved for broadcasts!&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;WARNING!  Station address 0 is reserved for broadcasts!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 op_eq
 l_int|255
 )paren
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: WARNING!  Station address 255 may confuse DOS networking programs!&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;WARNING!  Station address 255 may confuse DOS networking programs!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dev-&gt;dev_addr
@@ -1973,7 +1966,7 @@ id|dev-&gt;dev_addr
 l_int|0
 )braket
 op_assign
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 suffix:semicolon
 id|lp-&gt;sequence
 op_assign
@@ -2216,7 +2209,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the card has&n;&t; * just reset and the NORXflag is on until we tell it to start&n;&t; * receiving.&n;&t; *&n;&t; * However, this could, theoretically, cause a lockup.  Maybe I&squot;m just&n;&t; * not very good at theory! :)&n;&t; */
+multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the card has&n;&t; * just reset and the NORXflag is on until we tell it to start&n;&t; * receiving.&n;&t; */
 id|outb
 c_func
 (paren
@@ -2260,22 +2253,17 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|BUGLVL
-c_func
-(paren
-id|D_INIT
-)paren
 r_if
 c_cond
 (paren
 id|airq
 )paren
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s:  autoirq is %d&bslash;n&quot;
+id|D_INIT
 comma
-id|dev-&gt;name
+l_string|&quot; autoirq is %d&bslash;n&quot;
 comma
 id|airq
 )paren
@@ -2624,13 +2612,11 @@ id|u_char
 op_star
 id|cardmem
 suffix:semicolon
-id|outb
-c_func
-(paren
+id|lp-&gt;intmask
+op_assign
 l_int|0
-comma
-id|INTMASK
-)paren
+suffix:semicolon
+id|SETMASK
 suffix:semicolon
 multiline_comment|/* no IRQ&squot;s, please! */
 id|BUGMSG
@@ -2715,7 +2701,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 op_assign
 id|cardmem
 (braket
@@ -2772,15 +2758,17 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* re-enable interrupts */
-id|outb
-c_func
-(paren
+id|lp-&gt;intmask
+op_or_assign
 id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
+suffix:semicolon
+macro_line|#ifdef DETECT_RECONFIGS
+id|lp-&gt;intmask
+op_or_assign
+id|RECONflag
+suffix:semicolon
+macro_line|#endif
+id|SETMASK
 suffix:semicolon
 multiline_comment|/* done!  return success. */
 r_return
@@ -2912,7 +2900,7 @@ id|dev-&gt;dev_addr
 l_int|5
 )braket
 op_assign
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 suffix:semicolon
 id|dev-&gt;mtu
 op_assign
@@ -2989,7 +2977,7 @@ id|dev-&gt;dev_addr
 l_int|0
 )braket
 op_assign
-id|lp-&gt;arcnum
+id|lp-&gt;stationid
 suffix:semicolon
 id|dev-&gt;hard_header_len
 op_assign
@@ -3356,7 +3344,7 @@ id|START
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* make sure we&squot;re ready to receive IRQ&squot;s.&n;&t; * arcnet_reset sets this for us, but if we receive one before&n;&t; * START is set to 1, bad things happen.&n;&t; */
+multiline_comment|/* make sure we&squot;re ready to receive IRQ&squot;s.&n;&t; * arcnet_reset sets this for us, but if we receive one before&n;&t; * START is set to 1, it could be ignored.&n;&t; */
 id|outb
 c_func
 (paren
@@ -3371,15 +3359,7 @@ c_func
 id|ACKtime
 )paren
 suffix:semicolon
-id|outb
-c_func
-(paren
-id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
+id|SETMASK
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -3426,13 +3406,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Flush TX and disable RX */
-id|outb
-c_func
-(paren
+id|lp-&gt;intmask
+op_assign
 l_int|0
-comma
-id|INTMASK
-)paren
+suffix:semicolon
+id|SETMASK
 suffix:semicolon
 multiline_comment|/* no IRQ&squot;s (except RESET, of course) */
 id|outb
@@ -3686,13 +3664,12 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|outb
-c_func
-(paren
-l_int|0
-comma
-id|INTMASK
-)paren
+id|lp-&gt;intmask
+op_and_assign
+op_complement
+id|TXFREEflag
+suffix:semicolon
+id|SETMASK
 suffix:semicolon
 r_if
 c_cond
@@ -3706,17 +3683,17 @@ multiline_comment|/* transmit _DID_ finish */
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
-l_string|&quot;tx timed out - missed IRQ? (status=%Xh, inTX=%d, inTXh=%d, tickssofar=%d)&bslash;n&quot;
+l_string|&quot;tx timeout - missed IRQ? (status=%Xh, inTXh=%d, ticks=%d, mask=%Xh)&bslash;n&quot;
 comma
 id|status
-comma
-id|lp-&gt;intx
 comma
 id|lp-&gt;in_txhandler
 comma
 id|tickssofar
+comma
+id|lp-&gt;intmask
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_errors
@@ -3730,15 +3707,15 @@ c_func
 (paren
 id|D_NORMAL
 comma
-l_string|&quot;tx timed out (status=%Xh, inTX=%d, inTXh=%d, tickssofar=%d)&bslash;n&quot;
+l_string|&quot;tx timed out (status=%Xh, inTXh=%d, tickssofar=%d, intmask=%Xh)&bslash;n&quot;
 comma
 id|status
-comma
-id|lp-&gt;intx
 comma
 id|lp-&gt;in_txhandler
 comma
 id|tickssofar
+comma
+id|lp-&gt;intmask
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_errors
@@ -3790,16 +3767,6 @@ id|lp-&gt;sending
 op_assign
 l_int|0
 suffix:semicolon
-id|outb
-c_func
-(paren
-id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3813,12 +3780,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: tx passed null skb (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;tx passed null skb (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -3853,12 +3820,12 @@ id|lp-&gt;txready
 )paren
 multiline_comment|/* transmit already in progress! */
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: trying to start new packet while busy! (status=%Xh)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;trying to start new packet while busy! (status=%Xh)&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -3867,13 +3834,12 @@ id|STATUS
 )paren
 )paren
 suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0
-comma
-id|INTMASK
-)paren
+id|lp-&gt;intmask
+op_and_assign
+op_complement
+id|TXFREEflag
+suffix:semicolon
+id|SETMASK
 suffix:semicolon
 id|outb
 c_func
@@ -3926,12 +3892,12 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: transmitter called with busy bit set! (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;transmitter called with busy bit set! (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -4006,22 +3972,6 @@ op_assign
 op_amp
 (paren
 id|lp-&gt;outgoing
-)paren
-suffix:semicolon
-id|BUGMSG
-c_func
-(paren
-id|D_DURING
-comma
-l_string|&quot;transmit requested (status=%Xh, inTX=%d)&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
-comma
-id|lp-&gt;intx
 )paren
 suffix:semicolon
 id|lp-&gt;intx
@@ -4154,8 +4104,6 @@ id|lp-&gt;sequence
 op_increment
 )paren
 suffix:semicolon
-multiline_comment|/*arcnet_go_tx(dev);*/
-multiline_comment|/* Make sure buffers are clear */
 multiline_comment|/* fits in one packet? */
 r_if
 c_cond
@@ -4179,22 +4127,17 @@ comma
 id|out-&gt;hdr-&gt;split_flag
 )paren
 suffix:semicolon
-id|BUGLVL
-c_func
-(paren
-id|D_EXTRA
-)paren
 r_if
 c_cond
 (paren
 id|out-&gt;hdr-&gt;split_flag
 )paren
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: short packet has split_flag set?! (split_flag=%d)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;short packet has split_flag set?! (split_flag=%d)&bslash;n&quot;
 comma
 id|out-&gt;hdr-&gt;split_flag
 )paren
@@ -4447,6 +4390,13 @@ suffix:semicolon
 id|lp-&gt;intx
 op_decrement
 suffix:semicolon
+multiline_comment|/* make sure we didn&squot;t ignore a TX IRQ while we were in here */
+id|lp-&gt;intmask
+op_or_assign
+id|TXFREEflag
+suffix:semicolon
+id|SETMASK
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4482,6 +4432,10 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+comma
 id|bad
 suffix:semicolon
 r_union
@@ -4521,16 +4475,6 @@ id|skb-&gt;len
 op_plus
 l_int|1
 suffix:semicolon
-id|BUGMSG
-c_func
-(paren
-id|D_DURING
-comma
-l_string|&quot;in arcnetE_send_packet (skb=%p)&bslash;n&quot;
-comma
-id|skb
-)paren
-suffix:semicolon
 id|lp-&gt;intx
 op_increment
 suffix:semicolon
@@ -4569,22 +4513,22 @@ OG
 id|XMTU
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: MTU must be &lt;= 493 for ethernet encap (length=%d).&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;MTU must be &lt;= 493 for ethernet encap (length=%d).&bslash;n&quot;
 comma
 id|length
 )paren
 suffix:semicolon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: transmit aborted.&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;transmit aborted.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -4594,6 +4538,9 @@ id|skb
 comma
 id|FREE_WRITE
 )paren
+suffix:semicolon
+id|lp-&gt;intx
+op_decrement
 suffix:semicolon
 r_return
 l_int|0
@@ -4890,7 +4837,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#ifdef VERIFY_ACK
-id|lp-&gt;outgoing.lastload_dest
+id|lp-&gt;lastload_dest
 op_assign
 id|daddr
 suffix:semicolon
@@ -4938,6 +4885,13 @@ id|jiffies
 suffix:semicolon
 id|lp-&gt;intx
 op_decrement
+suffix:semicolon
+multiline_comment|/* make sure we didn&squot;t ignore a TX IRQ while we were in here */
+id|lp-&gt;intmask
+op_or_assign
+id|TXFREEflag
+suffix:semicolon
+id|SETMASK
 suffix:semicolon
 r_return
 l_int|0
@@ -4996,22 +4950,6 @@ id|skb-&gt;data
 suffix:semicolon
 id|lp-&gt;intx
 op_increment
-suffix:semicolon
-id|BUGMSG
-c_func
-(paren
-id|D_DURING
-comma
-l_string|&quot;transmit requested (status=%Xh, inTX=%d)&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
-comma
-id|lp-&gt;intx
-)paren
 suffix:semicolon
 id|bad
 op_assign
@@ -5084,7 +5022,6 @@ l_int|16
 op_eq
 l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -5093,7 +5030,6 @@ comma
 id|i
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -5120,7 +5056,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*if (lp-&gt;txready &amp;&amp; inb(STATUS)&amp;TXFREEflag)&n;&t;&t;arcnet_go_tx(dev);*/
 multiline_comment|/* fits in one packet? */
 r_if
 c_cond
@@ -5207,10 +5142,12 @@ suffix:semicolon
 r_else
 multiline_comment|/* too big for one - not accepted */
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;arcnetS: packet too long (length=%d)&bslash;n&quot;
+id|D_NORMAL
+comma
+l_string|&quot;packet too long (length=%d)&bslash;n&quot;
 comma
 id|length
 )paren
@@ -5244,6 +5181,13 @@ suffix:semicolon
 id|lp-&gt;intx
 op_decrement
 suffix:semicolon
+multiline_comment|/* make sure we didn&squot;t ignore a TX IRQ while we were in here */
+id|lp-&gt;intmask
+op_or_assign
+id|TXFREEflag
+suffix:semicolon
+id|SETMASK
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5274,6 +5218,10 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+comma
 id|maxsegsize
 op_assign
 id|XMTU
@@ -5290,18 +5238,38 @@ op_amp
 id|lp-&gt;outgoing
 )paren
 suffix:semicolon
+id|BUGMSG
+c_func
+(paren
+id|D_DURING
+comma
+l_string|&quot;continue_tx called (status=%Xh, intx=%d, intxh=%d, intmask=%Xh&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+comma
+id|lp-&gt;intx
+comma
+id|lp-&gt;in_txhandler
+comma
+id|lp-&gt;intmask
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|lp-&gt;txready
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: continue_tx: called with packet in buffer!&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;continue_tx: called with packet in buffer!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5315,12 +5283,12 @@ op_ge
 id|out-&gt;numsegs
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: continue_tx: building segment %d of %d!&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;continue_tx: building segment %d of %d!&bslash;n&quot;
 comma
 id|out-&gt;segnum
 op_plus
@@ -5906,7 +5874,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#ifdef VERIFY_ACK
-id|lp-&gt;outgoing.lastload_dest
+id|lp-&gt;lastload_dest
 op_assign
 id|daddr
 suffix:semicolon
@@ -5917,7 +5885,7 @@ id|lp-&gt;txbuf
 suffix:semicolon
 multiline_comment|/* packet is ready for sending */
 )brace
-multiline_comment|/* Actually start transmitting a packet that was placed in the card&squot;s&n; * buffer by arcnetAS_prepare_tx.  Returns 1 if a Tx is really started.&n; */
+multiline_comment|/* Actually start transmitting a packet that was placed in the card&squot;s&n; * buffer by arcnetAS_prepare_tx.  Returns 1 if a Tx is really started.&n; *&n; * This should probably always be called with the INTMASK register set to 0,&n; * so go_tx is not called recursively.&n; *&n; * The enable_irq flag determines whether to actually write INTMASK value&n; * to the card; TXFREEflag is always OR&squot;ed into the memory variable either&n; * way.&n; */
 r_static
 r_int
 DECL|function|arcnet_go_tx
@@ -5955,21 +5923,19 @@ c_func
 (paren
 id|D_DURING
 comma
-l_string|&quot;go_tx: status=%Xh&bslash;n&quot;
+l_string|&quot;go_tx: status=%Xh, intmask=%Xh, txready=%d, sending=%d&bslash;n&quot;
 comma
 id|inb
 c_func
 (paren
 id|STATUS
 )paren
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0
 comma
-id|INTMASK
+id|lp-&gt;intmask
+comma
+id|lp-&gt;txready
+comma
+id|lp-&gt;sending
 )paren
 suffix:semicolon
 r_if
@@ -5985,35 +5951,15 @@ r_if
 c_cond
 (paren
 id|enable_irq
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 id|lp-&gt;sending
 )paren
-id|outb
-c_func
-(paren
+(brace
+id|lp-&gt;intmask
+op_or_assign
 id|TXFREEflag
-op_or
-id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
 suffix:semicolon
-r_else
-id|outb
-c_func
-(paren
-id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
+id|SETMASK
 suffix:semicolon
 )brace
 r_return
@@ -6046,31 +5992,25 @@ id|lp-&gt;sending
 op_increment
 suffix:semicolon
 macro_line|#ifdef VERIFY_ACK&t;
-id|lp-&gt;outgoing.lasttrans_dest
+id|lp-&gt;lasttrans_dest
 op_assign
-id|lp-&gt;outgoing.lastload_dest
+id|lp-&gt;lastload_dest
 suffix:semicolon
-id|lp-&gt;outgoing.lastload_dest
+id|lp-&gt;lastload_dest
 op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+id|lp-&gt;intmask
+op_or_assign
+id|TXFREEflag
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|enable_irq
 )paren
-id|outb
-c_func
-(paren
-id|TXFREEflag
-op_or
-id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
+id|SETMASK
 suffix:semicolon
 r_return
 l_int|1
@@ -6201,12 +6141,12 @@ c_cond
 id|IF_INTERRUPT
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: DRIVER PROBLEM!  Nested arcnet interrupts!&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;DRIVER PROBLEM!  Nested arcnet interrupts!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6230,16 +6170,17 @@ c_func
 (paren
 id|D_DURING
 comma
-l_string|&quot;in arcnet_inthandler (status=%Xh)&bslash;n&quot;
+l_string|&quot;in arcnet_inthandler (status=%Xh, intmask=%Xh)&bslash;n&quot;
 comma
 id|inb
 c_func
 (paren
 id|STATUS
 )paren
+comma
+id|lp-&gt;intmask
 )paren
 suffix:semicolon
-macro_line|#if 1 /* Whatever you do, don&squot;t set this to 0. */
 r_do
 (brace
 id|status
@@ -6254,53 +6195,6 @@ id|didsomething
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0 /* no longer necessary - doing checking in arcnet_interrupt now */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;start
-)paren
-(brace
-id|BUGMSG
-c_func
-(paren
-id|D_DURING
-comma
-l_string|&quot;ARCnet not yet initialized.  irq ignored. (status=%Xh)&bslash;n&quot;
-comma
-id|status
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|status
-op_amp
-id|NORXflag
-)paren
-)paren
-id|outb
-c_func
-(paren
-id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
-suffix:semicolon
-multiline_comment|/* using dev-&gt;interrupt here instead of INTERRUPT&n;&t;&t;&t; * because if dev-&gt;start is 0, the other devices&n;&t;&t;&t; * probably do not exist.&n;&t;&t;&t; */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* RESET flag was enabled - card is resetting and if RX&n;&t;&t; * is disabled, it&squot;s NOT because we just got a packet.&n;&t;&t; */
 r_if
 c_cond
@@ -6336,6 +6230,10 @@ r_if
 c_cond
 (paren
 id|status
+op_amp
+(paren
+id|lp-&gt;intmask
+)paren
 op_amp
 id|RECONflag
 )paren
@@ -6390,12 +6288,12 @@ c_cond
 (paren
 id|lp-&gt;network_down
 )paren
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: reconfiguration detected: cabling restored?&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;reconfiguration detected: cabling restored?&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lp-&gt;first_recon
@@ -6475,12 +6373,12 @@ id|lp-&gt;network_down
 op_assign
 l_int|1
 suffix:semicolon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: many reconfigurations detected: cabling problem?&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;many reconfigurations detected: cabling problem?&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6534,12 +6432,12 @@ c_cond
 (paren
 id|lp-&gt;network_down
 )paren
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: cabling restored?&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;cabling restored?&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lp-&gt;first_recon
@@ -6570,6 +6468,8 @@ r_if
 c_cond
 (paren
 id|status
+op_amp
+id|lp-&gt;intmask
 op_amp
 id|NORXflag
 )paren
@@ -6613,17 +6513,15 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* it can only be an xmit-done irq if we&squot;re xmitting :) */
+multiline_comment|/*if (status&amp;TXFREEflag &amp;&amp; !lp-&gt;in_txhandler &amp;&amp; lp-&gt;sending)*/
 r_if
 c_cond
 (paren
 id|status
 op_amp
+id|lp-&gt;intmask
+op_amp
 id|TXFREEflag
-op_logical_and
-op_logical_neg
-id|lp-&gt;in_txhandler
-op_logical_and
-id|lp-&gt;sending
 )paren
 (brace
 r_struct
@@ -6636,9 +6534,24 @@ op_amp
 id|lp-&gt;outgoing
 )paren
 suffix:semicolon
+r_int
+id|was_sending
+op_assign
+id|lp-&gt;sending
+suffix:semicolon
+id|lp-&gt;intmask
+op_and_assign
+op_complement
+id|TXFREEflag
+suffix:semicolon
 id|lp-&gt;in_txhandler
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|was_sending
+)paren
 id|lp-&gt;sending
 op_decrement
 suffix:semicolon
@@ -6662,6 +6575,8 @@ macro_line|#ifdef VERIFY_ACK
 r_if
 c_cond
 (paren
+id|was_sending
+op_logical_and
 op_logical_neg
 (paren
 id|status
@@ -6673,21 +6588,21 @@ id|TXACKflag
 r_if
 c_cond
 (paren
-id|lp-&gt;outgoing.lasttrans_dest
+id|lp-&gt;lasttrans_dest
 op_ne
 l_int|0
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: transmit was not acknowledged! (status=%Xh, dest=%d)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;transmit was not acknowledged! (status=%Xh, dest=%d)&bslash;n&quot;
 comma
 id|status
 comma
-id|lp-&gt;outgoing.lasttrans_dest
+id|lp-&gt;lasttrans_dest
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_errors
@@ -6708,7 +6623,7 @@ l_string|&quot;broadcast was not acknowledged; that&squot;s normal (status=%Xh, 
 comma
 id|status
 comma
-id|lp-&gt;outgoing.lasttrans_dest
+id|lp-&gt;lasttrans_dest
 )paren
 suffix:semicolon
 )brace
@@ -6732,6 +6647,22 @@ c_cond
 id|lp-&gt;intx
 )paren
 (brace
+id|BUGMSG
+c_func
+(paren
+id|D_DURING
+comma
+l_string|&quot;TXDONE while intx! (status=%Xh, intx=%d)&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+comma
+id|lp-&gt;intx
+)paren
+suffix:semicolon
 id|lp-&gt;in_txhandler
 op_decrement
 suffix:semicolon
@@ -6922,71 +6853,9 @@ comma
 id|boguscount
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;start
-op_logical_and
-(paren
-id|lp-&gt;sending
-op_logical_or
-(paren
-id|lp-&gt;txready
-op_logical_and
-op_logical_neg
-id|lp-&gt;intx
-)paren
-)paren
-)paren
-id|outb
-c_func
-(paren
-id|NORXflag
-op_or
-id|TXFREEflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
+id|SETMASK
 suffix:semicolon
-r_else
-id|outb
-c_func
-(paren
-id|NORXflag
-op_or
-id|RECON_flag
-comma
-id|INTMASK
-)paren
-suffix:semicolon
-macro_line|#else /* Disable everything */
-id|outb
-c_func
-(paren
-id|RXcmd
-op_or
-(paren
-l_int|0
-op_lshift
-l_int|3
-)paren
-op_or
-id|RXbcasts
-comma
-id|COMMAND
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|NORXflag
-comma
-id|INTMASK
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* put back interrupt mask */
 id|INTERRUPT
 op_assign
 l_int|0
@@ -7078,12 +6947,12 @@ op_eq
 l_int|0
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: discarding old packet. (status=%Xh)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;discarding old packet. (status=%Xh)&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -7252,12 +7121,12 @@ suffix:colon
 multiline_comment|/* don&squot;t understand.  fall through. */
 r_default
 suffix:colon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: received unknown protocol %d (%Xh) from station %d.&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;received unknown protocol %d (%Xh) from station %d.&bslash;n&quot;
 comma
 id|arcsoft
 (braket
@@ -7550,7 +7419,7 @@ multiline_comment|/* already assembling one! */
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;aborting assembly (seq=%d) for unsplit packet (splitflag=%d, seq=%d)&bslash;n&quot;
 comma
@@ -7602,12 +7471,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: Memory squeeze, dropping packet.&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;Memory squeeze, dropping packet.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
@@ -7774,12 +7643,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: funny-shaped ARP packet. (%Xh, %Xh)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;funny-shaped ARP packet. (%Xh, %Xh)&bslash;n&quot;
 comma
 id|arp-&gt;ar_hln
 comma
@@ -7922,9 +7791,11 @@ id|arcsoft-&gt;sequence
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
-l_string|&quot;wrong seq number, aborting assembly (expected=%d, seq=%d, splitflag=%d)&bslash;n&quot;
+l_string|&quot;wrong seq number, aborting assembly (saddr=%d, expected=%d, seq=%d, splitflag=%d)&bslash;n&quot;
+comma
+id|saddr
 comma
 id|in-&gt;sequence
 comma
@@ -7987,7 +7858,7 @@ multiline_comment|/* already assembling one! */
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;aborting previous (seq=%d) assembly (splitflag=%d, seq=%d)&bslash;n&quot;
 comma
@@ -8045,7 +7916,7 @@ l_int|16
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;incoming packet more than 16 segments; dropping. (splitflag=%d)&bslash;n&quot;
 comma
@@ -8089,12 +7960,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: (split) memory squeeze, dropping packet.&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;(split) memory squeeze, dropping packet.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
@@ -8191,7 +8062,7 @@ id|in-&gt;skb
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;can&squot;t continue split without starting first! (splitflag=%d, seq=%d)&bslash;n&quot;
 comma
@@ -8235,7 +8106,7 @@ l_int|1
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;duplicate splitpacket ignored! (splitflag=%d)&bslash;n&quot;
 comma
@@ -8255,7 +8126,7 @@ multiline_comment|/* &quot;bad&quot; duplicate, kill reassembly */
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;out-of-order splitpacket, reassembly (seq=%d) aborted (splitflag=%d, seq=%d)&bslash;n&quot;
 comma
@@ -8372,12 +8243,12 @@ op_logical_neg
 id|in-&gt;skb
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: ?!? done reassembling packet, no skb? (skb=%ph, in-&gt;skb=%ph)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;?!? done reassembling packet, no skb? (skb=%ph, in-&gt;skb=%ph)&bslash;n&quot;
 comma
 id|skb
 comma
@@ -8559,12 +8430,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: Memory squeeze, dropping packet.&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;Memory squeeze, dropping packet.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
@@ -8791,10 +8662,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;arcnetS: Memory squeeze, dropping packet.&bslash;n&quot;
+id|D_NORMAL
+comma
+l_string|&quot;Memory squeeze, dropping packet.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
@@ -9265,12 +9138,12 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: I don&squot;t understand protocol %d (%Xh)&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;I don&squot;t understand protocol %d (%Xh)&bslash;n&quot;
 comma
 id|type
 comma
@@ -9518,10 +9391,12 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;arcnetS: I don&squot;t understand protocol %d (%Xh)&bslash;n&quot;
+id|D_NORMAL
+comma
+l_string|&quot;I don&squot;t understand protocol %d (%Xh)&bslash;n&quot;
 comma
 id|type
 comma
@@ -9673,12 +9548,12 @@ op_ne
 id|ARC_P_IP
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;%6s: I don&squot;t understand protocol type %d (%Xh) addresses!&bslash;n&quot;
+id|D_NORMAL
 comma
-id|dev-&gt;name
+l_string|&quot;I don&squot;t understand protocol type %d (%Xh) addresses!&bslash;n&quot;
 comma
 id|head-&gt;protocol_id
 comma
@@ -9822,10 +9697,12 @@ op_ne
 id|ARC_P_IP_RFC1051
 )paren
 (brace
-id|printk
+id|BUGMSG
 c_func
 (paren
-l_string|&quot;arcnetS: I don&squot;t understand protocol type %d (%Xh) addresses!&bslash;n&quot;
+id|D_NORMAL
+comma
+l_string|&quot;I don&squot;t understand protocol type %d (%Xh) addresses!&bslash;n&quot;
 comma
 id|head-&gt;protocol_id
 comma
@@ -10040,7 +9917,7 @@ suffix:colon
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;received packet of unknown protocol id %d (%Xh)&bslash;n&quot;
 comma
@@ -10216,7 +10093,7 @@ suffix:colon
 id|BUGMSG
 c_func
 (paren
-id|D_EXTRA
+id|D_NORMAL
 comma
 l_string|&quot;received packet of unknown protocol id %d (%Xh)&bslash;n&quot;
 comma

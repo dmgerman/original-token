@@ -370,6 +370,20 @@ op_star
 id|slave
 suffix:semicolon
 multiline_comment|/* Slave device */
+DECL|member|alias_info
+r_struct
+id|net_alias_info
+op_star
+id|alias_info
+suffix:semicolon
+multiline_comment|/* main dev alias info */
+DECL|member|my_alias
+r_struct
+id|net_alias
+op_star
+id|my_alias
+suffix:semicolon
+multiline_comment|/* alias devs */
 multiline_comment|/* Pointer to the interface buffers. */
 DECL|member|buffs
 r_struct

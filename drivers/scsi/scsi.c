@@ -129,6 +129,15 @@ op_star
 id|scsi_result
 )paren
 suffix:semicolon
+r_void
+id|scsi_build_commandblocks
+c_func
+(paren
+id|Scsi_Device
+op_star
+id|SDpnt
+)paren
+suffix:semicolon
 DECL|variable|dma_malloc_freelist
 r_static
 r_int
@@ -1040,19 +1049,6 @@ l_int|0
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/*&n; *  As the actual SCSI command runs in the background, we must set up a&n; *  flag that tells scan_scsis() when the result it has is valid.&n; *  scan_scsis can set the_result to -1, and watch for it to become the&n; *  actual return code for that call.  the scan_scsis_done function() is&n; *  our user specified completion function that is passed on to the&n; *  scsi_do_cmd() function.&n; */
-DECL|variable|in_scan_scsis
-r_volatile
-r_int
-id|in_scan_scsis
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|the_result
-r_static
-r_int
-id|the_result
-suffix:semicolon
 DECL|function|scsi_make_blocked_list
 r_void
 id|scsi_make_blocked_list
@@ -1393,9 +1389,6 @@ id|Scsi_Cmnd
 op_star
 id|SCpnt
 suffix:semicolon
-id|in_scan_scsis
-op_increment
-suffix:semicolon
 id|SCpnt
 op_assign
 (paren
@@ -1428,6 +1421,18 @@ id|Scsi_Device
 )paren
 comma
 id|GFP_ATOMIC
+)paren
+suffix:semicolon
+id|memset
+(paren
+id|SCpnt
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|Scsi_Cmnd
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure we have something that is valid for DMA purposes */
@@ -1472,11 +1477,30 @@ r_goto
 id|leave
 suffix:semicolon
 )brace
+multiline_comment|/* We must chain ourself in the host_queue, so commands can time out */
+r_if
+c_cond
+(paren
+id|shpnt-&gt;host_queue
+)paren
+(brace
+id|shpnt-&gt;host_queue-&gt;prev
+op_assign
+id|SCpnt
+suffix:semicolon
+)brace
+id|SCpnt-&gt;next
+op_assign
+id|shpnt-&gt;host_queue
+suffix:semicolon
+id|SCpnt-&gt;prev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|shpnt-&gt;host_queue
 op_assign
 id|SCpnt
 suffix:semicolon
-multiline_comment|/* We need this so that commands can time out */
 r_if
 c_cond
 (paren
@@ -1485,6 +1509,17 @@ op_eq
 l_int|1
 )paren
 (brace
+id|Scsi_Device
+op_star
+id|oldSDpnt
+op_assign
+id|SDpnt
+suffix:semicolon
+r_struct
+id|Scsi_Device_Template
+op_star
+id|sdtpnt
+suffix:semicolon
 id|channel
 op_assign
 id|hchannel
@@ -1554,6 +1589,126 @@ comma
 id|scsi_result
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SDpnt
+op_ne
+id|oldSDpnt
+)paren
+(brace
+multiline_comment|/* it could happen the blockdevice hasn&squot;t yet been inited */
+r_for
+c_loop
+(paren
+id|sdtpnt
+op_assign
+id|scsi_devicelist
+suffix:semicolon
+id|sdtpnt
+suffix:semicolon
+id|sdtpnt
+op_assign
+id|sdtpnt-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|sdtpnt-&gt;init
+op_logical_and
+id|sdtpnt-&gt;dev_noticed
+)paren
+(brace
+(paren
+op_star
+id|sdtpnt-&gt;init
+)paren
+(paren
+)paren
+suffix:semicolon
+)brace
+id|oldSDpnt-&gt;scsi_request_fn
+op_assign
+l_int|NULL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|sdtpnt
+op_assign
+id|scsi_devicelist
+suffix:semicolon
+id|sdtpnt
+suffix:semicolon
+id|sdtpnt
+op_assign
+id|sdtpnt-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|sdtpnt-&gt;attach
+)paren
+(brace
+(paren
+op_star
+id|sdtpnt-&gt;attach
+)paren
+(paren
+id|oldSDpnt
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|oldSDpnt-&gt;attached
+)paren
+(brace
+id|scsi_build_commandblocks
+c_func
+(paren
+id|oldSDpnt
+)paren
+suffix:semicolon
+)brace
+)brace
+id|resize_dma_pool
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|sdtpnt
+op_assign
+id|scsi_devicelist
+suffix:semicolon
+id|sdtpnt
+suffix:semicolon
+id|sdtpnt
+op_assign
+id|sdtpnt-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sdtpnt-&gt;finish
+op_logical_and
+id|sdtpnt-&gt;nr_dev
+)paren
+(brace
+(paren
+op_star
+id|sdtpnt-&gt;finish
+)paren
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
 )brace
 r_else
 (brace
@@ -1651,7 +1806,7 @@ id|scsi_result
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* break means don&squot;t probe for luns!=0 */
+multiline_comment|/* break means don&squot;t probe further for luns!=0 */
 )brace
 multiline_comment|/* for lun ends */
 )brace
@@ -1660,13 +1815,83 @@ multiline_comment|/* if this_id != id ends */
 multiline_comment|/* for dev ends */
 )brace
 multiline_comment|/* for channel ends */
+)brace
+multiline_comment|/* if/else hardcoded */
 id|leave
 suffix:colon
+(brace
+multiline_comment|/* Unchain SCpnt from host_queue */
+id|Scsi_Cmnd
+op_star
+id|prev
+comma
+op_star
+id|next
+comma
+op_star
+id|hqptr
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|hqptr
+op_assign
+id|shpnt-&gt;host_queue
+suffix:semicolon
+id|hqptr
+op_ne
+id|SCpnt
+suffix:semicolon
+id|hqptr
+op_assign
+id|hqptr-&gt;next
+)paren
+(brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hqptr
+)paren
+(brace
+id|prev
+op_assign
+id|hqptr-&gt;prev
+suffix:semicolon
+id|next
+op_assign
+id|hqptr-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prev
+)paren
+(brace
+id|prev-&gt;next
+op_assign
+id|next
+suffix:semicolon
+)brace
+r_else
 id|shpnt-&gt;host_queue
 op_assign
-l_int|NULL
+id|next
 suffix:semicolon
-multiline_comment|/* No longer needed here */
+r_if
+c_cond
+(paren
+id|next
+)paren
+(brace
+id|next-&gt;prev
+op_assign
+id|prev
+suffix:semicolon
+)brace
+)brace
+)brace
 multiline_comment|/* Last device block does not exist.  Free memory. */
 r_if
 c_cond
@@ -1733,12 +1958,8 @@ comma
 l_int|512
 )paren
 suffix:semicolon
-id|in_scan_scsis
-op_decrement
-suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n; * The worker for scan_scsis.&n; * Returning 0 means Please don&squot;t ask further for lun!=0, 1 means OK go on.&n; * Global variables used : scsi_devices(linked list), the_result&n; */
+multiline_comment|/*&n; * The worker for scan_scsis.&n; * Returning 0 means Please don&squot;t ask further for lun!=0, 1 means OK go on.&n; * Global variables used : scsi_devices(linked list)&n; */
 DECL|function|scan_scsis_single
 r_int
 id|scan_scsis_single
@@ -1908,18 +2129,6 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
-id|memset
-(paren
-id|SCpnt
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|Scsi_Cmnd
-)paren
-)paren
-suffix:semicolon
 id|SCpnt-&gt;host
 op_assign
 id|SDpnt-&gt;host
@@ -1995,13 +2204,31 @@ suffix:semicolon
 macro_line|#if defined(DEBUG) || defined(DEBUG_INIT)
 id|printk
 (paren
-l_string|&quot;scsi: scan_scsis_single id %d lun %d. Return code %d&bslash;n&quot;
+l_string|&quot;scsi: scan_scsis_single id %d lun %d. Return code 0x%08x&bslash;n&quot;
 comma
 id|dev
 comma
 id|lun
 comma
 id|SCpnt-&gt;result
+)paren
+suffix:semicolon
+id|print_driverbyte
+c_func
+(paren
+id|SCpnt-&gt;result
+)paren
+suffix:semicolon
+id|print_hostbyte
+c_func
+(paren
+id|SCpnt-&gt;result
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2196,30 +2423,26 @@ id|sem
 )paren
 suffix:semicolon
 )brace
-id|the_result
-op_assign
-id|SCpnt-&gt;result
-suffix:semicolon
 macro_line|#if defined(DEBUG) || defined(DEBUG_INIT)
 id|printk
 (paren
 l_string|&quot;scsi: INQUIRY %s with code 0x%x&bslash;n&quot;
 comma
-id|the_result
+id|SCpnt-&gt;result
 ques
 c_cond
 l_string|&quot;failed&quot;
 suffix:colon
 l_string|&quot;successful&quot;
 comma
-id|the-&gt;result
+id|SCpnt-&gt;result
 )paren
 suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
 (paren
-id|the_result
+id|SCpnt-&gt;result
 )paren
 r_return
 l_int|0
@@ -2871,7 +3094,7 @@ id|SDpnt
 )paren
 id|printk
 (paren
-l_string|&quot;scsi: scan_scsis_single: No memory&bslash;n&quot;
+l_string|&quot;scsi: scan_scsis_single: Cannot malloc&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Some scsi devices cannot be polled for lun != 0 due to firmware bugs&n;   */
@@ -2995,12 +3218,6 @@ id|IN_RESET
 r_case
 id|NORMAL_TIMEOUT
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|in_scan_scsis
-)paren
 (brace
 macro_line|#ifdef DEBUG_TIMEOUT
 id|scsi_dump_status
@@ -5407,6 +5624,7 @@ id|__LINE__
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* end WAS_SENSE */
 r_else
 (brace
 macro_line|#ifdef DEBUG
@@ -6536,6 +6754,14 @@ r_case
 id|SCSI_ABORT_SUCCESS
 suffix:colon
 multiline_comment|/* We should have already aborted this one.  No&n;&t;&t; * need to adjust timeout &n;&t;&t; */
+id|SCpnt-&gt;internal_timeout
+op_and_assign
+op_complement
+id|IN_ABORT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 id|SCSI_ABORT_NOT_RUNNING
 suffix:colon
@@ -6664,16 +6890,14 @@ id|host
 op_assign
 id|SCpnt-&gt;host
 suffix:semicolon
-macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Danger Will Robinson! - SCSI bus for host %d is being reset.&bslash;n&quot;
+l_string|&quot;SCSI bus is being reset for host %d.&bslash;n&quot;
 comma
 id|host-&gt;host_no
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;     * First of all, we need to make a recommendation to the low-level&n;     * driver as to whether a BUS_DEVICE_RESET should be performed,&n;     * or whether we should do a full BUS_RESET.  There is no simple&n;     * algorithm here - we basically use a series of heuristics&n;     * to determine what we should do.&n;     */
 id|SCpnt-&gt;host-&gt;suggest_bus_reset
 op_assign
@@ -7845,7 +8069,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Sfree %p %d&bslash;n&quot;
+l_string|&quot;scsi_free %p %d&bslash;n&quot;
 comma
 id|obj
 comma
@@ -7954,7 +8178,7 @@ l_int|3
 id|panic
 c_func
 (paren
-l_string|&quot;Bad offset&quot;
+l_string|&quot;scsi_free:Bad offset&quot;
 )paren
 suffix:semicolon
 id|sector
@@ -7973,7 +8197,7 @@ id|dma_sectors
 (brace
 id|panic
 (paren
-l_string|&quot;Bad page&quot;
+l_string|&quot;scsi_free:Bad page&quot;
 )paren
 suffix:semicolon
 )brace
@@ -8026,7 +8250,7 @@ l_int|0xffff
 )paren
 id|panic
 (paren
-l_string|&quot;Bad memory alignment&quot;
+l_string|&quot;scsi_free:Bad memory alignment&quot;
 )paren
 suffix:semicolon
 id|save_flags
@@ -8066,7 +8290,7 @@ id|sector
 id|panic
 c_func
 (paren
-l_string|&quot;Trying to free unused memory&quot;
+l_string|&quot;scsi_free:Trying to free unused memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -9270,7 +9494,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Usage: echo &quot;scsi singledevice 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     * Consider this feature ALPHA, as you can easily hang your&n;     * scsi system (depending on your low level driver).&n;     */
+multiline_comment|/*&n;     * Usage: echo &quot;scsi singledevice 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     * Consider this feature BETA.&n;     *     CAUTION: This is not for hotplugging your peripherals. As&n;     *     SCSI was not designed for this you could damage your&n;     *     hardware !  &n;     * However perhaps it is legal to switch on an&n;     * already connected device. It is perhaps not &n;     * guaranteed this device doesn&squot;t corrupt an ongoing data transfer.&n;     */
 r_if
 c_cond
 (paren

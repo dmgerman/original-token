@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/vt.c&n; *&n; *  Copyright (C) 1992 obz under the linux copyright&n; *&n; *  Dynamic diacritical handling - aeb@cwi.nl - Dec 1993&n; *  Dynamic keymap and string allocation - aeb@cwi.nl - May 1994&n; */
+multiline_comment|/*&n; *  linux/drivers/char/vt.c&n; *&n; *  Copyright (C) 1992 obz under the linux copyright&n; *&n; *  Dynamic diacritical handling - aeb@cwi.nl - Dec 1993&n; *  Dynamic keymap and string allocation - aeb@cwi.nl - May 1994&n; *  Restrict VT switching via ioctl() - grif@cs.ucr.edu - Dec 1995&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17,6 +17,10 @@ macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#include &quot;diacr.h&quot;
 macro_line|#include &quot;selection.h&quot;
+r_extern
+r_char
+id|vt_dont_switch
+suffix:semicolon
 r_extern
 r_struct
 id|tty_driver
@@ -5347,6 +5351,52 @@ id|list
 )paren
 suffix:semicolon
 )brace
+r_case
+id|VT_LOCKSWITCH
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|vt_dont_switch
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|VT_UNLOCKSWITCH
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|vt_dont_switch
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_default
 suffix:colon
 r_return

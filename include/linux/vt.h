@@ -139,5 +139,9 @@ multiline_comment|/* number of pixel columns per character */
 suffix:semicolon
 DECL|macro|VT_RESIZEX
 mdefine_line|#define VT_RESIZEX      0x560A  /* set kernel&squot;s idea of screensize + more */
+DECL|macro|VT_LOCKSWITCH
+mdefine_line|#define VT_LOCKSWITCH   0x560B  /* disallow vt switching */
+DECL|macro|VT_UNLOCKSWITCH
+mdefine_line|#define VT_UNLOCKSWITCH 0x560C  /* allow vt switching */
 macro_line|#endif /* _LINUX_VT_H */
 eof

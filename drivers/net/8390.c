@@ -9,7 +9,7 @@ id|version
 op_assign
 l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Doesn&squot;t currently work on all shared memory cards.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
+multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2103,15 +2103,13 @@ id|high_water_mark
 op_assign
 id|rx_pkt_count
 suffix:semicolon
-multiline_comment|/* Bug alert!  Reset ENISR_OVER to avoid spurious overruns! */
+multiline_comment|/* We used to also ack ENISR_OVER here, but that would sometimes mask&n;    a real overrun, leaving the 8390 in a stopped state with rec&squot;vr off. */
 id|outb_p
 c_func
 (paren
 id|ENISR_RX
 op_plus
 id|ENISR_RX_ERR
-op_plus
-id|ENISR_OVER
 comma
 id|e8390_base
 op_plus
@@ -2251,7 +2249,7 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-l_int|0xff
+id|ENISR_OVER
 comma
 id|e8390_base
 op_plus

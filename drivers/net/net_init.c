@@ -12,6 +12,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
+macro_line|#ifdef CONFIG_NET_ALIAS
+macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#endif
 multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;   &n;   [Removed all support for /dev network devices. When someone adds&n;    streams then by magic we get them, but otherwise they are un-needed&n;&t;and a space waste]&n;*/
 multiline_comment|/* The list of used and available &quot;eth&quot; slots (for &quot;eth0&quot;, &quot;eth1&quot;, etc.) */
 DECL|macro|MAX_ETH_CARDS
@@ -1177,6 +1180,82 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * &t;must jump over main_device+aliases&n;&t; * &t;avoid alias devices unregistration so that only&n;&t; * &t;net_alias module manages them&n;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS&t;&t;
+r_if
+c_cond
+(paren
+id|dev_base
+op_eq
+id|dev
+)paren
+id|dev_base
+op_assign
+id|net_alias_nextdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_else
+(brace
+r_while
+c_loop
+(paren
+id|d
+op_logical_and
+(paren
+id|net_alias_nextdev
+c_func
+(paren
+id|d
+)paren
+op_ne
+id|dev
+)paren
+)paren
+(brace
+multiline_comment|/* skip aliases */
+id|d
+op_assign
+id|net_alias_nextdev
+c_func
+(paren
+id|d
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|d
+op_logical_and
+(paren
+id|net_alias_nextdev
+c_func
+(paren
+id|d
+)paren
+op_eq
+id|dev
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t; * &t;critical: bypass by consider devices as blocks (maindev+aliases)&n;&t; */
+id|net_alias_nextdev_set
+c_func
+(paren
+id|d
+comma
+id|net_alias_nextdev
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1222,6 +1301,7 @@ op_assign
 id|dev-&gt;next
 suffix:semicolon
 )brace
+macro_line|#endif
 r_else
 (brace
 id|printk

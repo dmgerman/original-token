@@ -2660,7 +2660,7 @@ l_int|16
 suffix:semicolon
 id|ptr
 op_member_access_from_pointer
-id|done
+id|scsi_done
 c_func
 (paren
 id|ptr
@@ -2738,7 +2738,7 @@ l_int|16
 suffix:semicolon
 id|current_SC
 op_member_access_from_pointer
-id|done
+id|scsi_done
 c_func
 (paren
 id|current_SC
@@ -3208,7 +3208,7 @@ l_int|16
 suffix:semicolon
 id|current_SC
 op_member_access_from_pointer
-id|done
+id|scsi_done
 c_func
 (paren
 id|current_SC
@@ -3291,7 +3291,7 @@ l_int|16
 suffix:semicolon
 id|ptr
 op_member_access_from_pointer
-id|done
+id|scsi_done
 c_func
 (paren
 id|ptr

@@ -25,6 +25,9 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#ifdef CONFIG_NET_ALIAS
+macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; *&t;The list of packet types we will receive (as opposed to discard)&n; *&t;and the routines to invoke.&n; */
 DECL|variable|ptype_base
 r_struct
@@ -764,6 +767,28 @@ id|skb
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&n;&t; * &t;If dev is an alias, switch to its main device.&n;&t; *&t;&quot;arp&quot; resolution has been made with alias device, so&n;&t; *&t;arp entries refer to alias, not main.&n;&t; *&n;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+id|net_alias_is
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|skb-&gt;dev
+op_assign
+id|dev
+op_assign
+id|net_alias_main_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -1802,6 +1827,20 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+multiline_comment|/*&n;&t; * aliases do not trasmit (by now :)&n;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+id|net_alias_is
+c_func
+(paren
+id|dev
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -2584,6 +2623,38 @@ id|ifreq
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See which interface the caller is talking about. &n;&t; */
+multiline_comment|/*&n;&t; *&n;&t; *&t;net_alias_dev_get(): dev_get() with added alias naming magic.&n;&t; *&t;only allow alias creation/deletion if (getset==SIOCSIFADDR)&n;&t; *&n;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_assign
+id|net_alias_dev_get
+c_func
+(paren
+id|ifr.ifr_name
+comma
+id|getset
+op_eq
+id|SIOCSIFADDR
+comma
+op_amp
+id|err
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+id|err
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2603,6 +2674,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -2865,6 +2937,27 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;if dev is an alias, must rehash to update&n;&t;&t;&t;&t; *&t;address change&n;&t;&t;&t;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+id|net_alias_is
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|net_alias_rehash
+c_func
+(paren
+id|dev-&gt;my_alias
+comma
+op_amp
+id|ifr.ifr_addr
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dev-&gt;pa_addr
 op_assign
 (paren
@@ -3867,6 +3960,14 @@ id|dev_get_info
 )brace
 )paren
 suffix:semicolon
+multiline_comment|/*&t;&n;&t; *&t;Initialise net_alias engine &n;&t; *&n;&t; *&t;&t;- register net_alias device notifier&n;&t; *&t;&t;- register proc entries:&t;/proc/net/alias_types&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t;&t;/proc/net/aliases&n;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+id|net_alias_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|bh_base
 (braket
 id|NET_BH

@@ -379,6 +379,8 @@ c_func
 (paren
 id|tmp
 )paren
+op_plus
+l_int|1
 comma
 id|GFP_KERNEL
 )paren
@@ -439,6 +441,8 @@ c_func
 (paren
 id|tmp
 )paren
+op_plus
+l_int|1
 comma
 id|GFP_KERNEL
 )paren

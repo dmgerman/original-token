@@ -31,6 +31,9 @@ macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_ALIAS
+macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
@@ -2620,6 +2623,52 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Process entry.  The idea here is we want to send a reply if it is a&n; *  request for us or if it is a request for someone else that we hold&n; *  a proxy for.  We want to add an entry to our cache if it is a reply&n; *  to us or if it is a request for our address.  &n; *  (The assumption for this last is that if someone is requesting our &n; *  address, they are probably intending to talk to us, so it saves time &n; *  if we cache their address.  Their address is also probably not in &n; *  our cache, since ours is not in their cache.)&n; * &n; *  Putting this another way, we only care about replies if they are to&n; *  us, in which case we add them to the cache.  For requests, we care&n; *  about those for us and those for our proxies.  We reply to both,&n; *  and in the case of requests for us we add the requester to the arp &n; *  cache.&n; */
+multiline_comment|/*&n; *&t;try to switch to alias device whose address is tip, if any&n; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+id|net_alias_has
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|adev
+suffix:semicolon
+id|adev
+op_assign
+id|net_alias_chk32
+c_func
+(paren
+id|dev
+comma
+id|AF_INET
+comma
+id|tip
+comma
+id|IFF_UP
+comma
+id|IFF_NOARP
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|adev
+op_ne
+l_int|NULL
+)paren
+id|dev
+op_assign
+id|adev
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3025,10 +3074,18 @@ id|entry-&gt;last_used
 op_assign
 id|jiffies
 suffix:semicolon
+multiline_comment|/*&n; *&t;make entry point to&t;&squot;correct&squot; device&n; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+id|entry-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+macro_line|#else
 id|entry-&gt;dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+macro_line|#endif
 id|skb_queue_head_init
 c_func
 (paren

@@ -115,9 +115,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PRIO_MIN
-mdefine_line|#define&t;PRIO_MIN&t;(-99)
+mdefine_line|#define&t;PRIO_MIN&t;(-20)
 DECL|macro|PRIO_MAX
-mdefine_line|#define&t;PRIO_MAX&t;14
+mdefine_line|#define&t;PRIO_MAX&t;20
 DECL|macro|PRIO_PROCESS
 mdefine_line|#define&t;PRIO_PROCESS&t;0
 DECL|macro|PRIO_PGRP

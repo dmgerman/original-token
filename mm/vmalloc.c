@@ -479,7 +479,7 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
-id|invalidate
+id|invalidate_all
 c_func
 (paren
 )paren
@@ -827,7 +827,7 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
-id|invalidate
+id|invalidate_all
 c_func
 (paren
 )paren
@@ -1182,7 +1182,7 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
-id|invalidate
+id|invalidate_all
 c_func
 (paren
 )paren
