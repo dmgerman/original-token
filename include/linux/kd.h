@@ -7,6 +7,32 @@ DECL|macro|GIO_FONT
 mdefine_line|#define GIO_FONT&t;0x4B60&t;/* gets font in expanded form */
 DECL|macro|PIO_FONT
 mdefine_line|#define PIO_FONT&t;0x4B61&t;/* use font in expanded form */
+DECL|macro|GIO_FONTX
+mdefine_line|#define GIO_FONTX&t;0x4B6B&t;/* get font using struct consolefontdesc */
+DECL|macro|PIO_FONTX
+mdefine_line|#define PIO_FONTX&t;0x4B6C&t;/* set font using struct consolefontdesc */
+DECL|struct|consolefontdesc
+r_struct
+id|consolefontdesc
+(brace
+DECL|member|charcount
+id|u_short
+id|charcount
+suffix:semicolon
+multiline_comment|/* characters in font (256 or 512) */
+DECL|member|charheight
+id|u_short
+id|charheight
+suffix:semicolon
+multiline_comment|/* scan lines per character (1-32) */
+DECL|member|chardata
+r_char
+op_star
+id|chardata
+suffix:semicolon
+multiline_comment|/* font data in expanded form */
+)brace
+suffix:semicolon
 DECL|macro|KIOCSOUND
 mdefine_line|#define KIOCSOUND&t;0x4B2F&t;/* start sound generation (0 for off) */
 DECL|macro|KDMKTONE
@@ -64,6 +90,10 @@ DECL|macro|GIO_SCRNMAP
 mdefine_line|#define GIO_SCRNMAP&t;0x4B40&t;/* get screen mapping from kernel */
 DECL|macro|PIO_SCRNMAP
 mdefine_line|#define PIO_SCRNMAP&t;0x4B41&t;/* put screen mapping table in kernel */
+DECL|macro|GIO_UNISCRNMAP
+mdefine_line|#define GIO_UNISCRNMAP  0x4B69&t;/* get full Unicode screen mapping */
+DECL|macro|PIO_UNISCRNMAP
+mdefine_line|#define PIO_UNISCRNMAP  0x4B6A  /* set full Unicode screen mapping */
 DECL|macro|GIO_UNIMAP
 mdefine_line|#define GIO_UNIMAP&t;0x4B66&t;/* get unicode-to-font mapping from kernel */
 DECL|struct|unipair
@@ -121,6 +151,10 @@ suffix:semicolon
 multiline_comment|/* 0 if no opinion */
 )brace
 suffix:semicolon
+DECL|macro|UNI_DIRECT_BASE
+mdefine_line|#define UNI_DIRECT_BASE 0xF000&t;/* start of Direct Font Region */
+DECL|macro|UNI_DIRECT_MASK
+mdefine_line|#define UNI_DIRECT_MASK 0x01FF&t;/* Direct Font Region bitmask */
 DECL|macro|K_RAW
 mdefine_line|#define&t;&t;K_RAW&t;&t;0x00
 DECL|macro|K_XLATE
@@ -264,6 +298,6 @@ mdefine_line|#define KDSETKEYCODE&t;0x4B4D&t;/* write kernel keycode table entry
 DECL|macro|KDSIGACCEPT
 mdefine_line|#define KDSIGACCEPT&t;0x4B4E&t;/* accept kbd generated signals */
 multiline_comment|/* note: 0x4B00-0x4B4E all have had a value at some time;&n;   don&squot;t reuse for the time being */
-multiline_comment|/* note: 0x4B60-0x4B68 used above */
+multiline_comment|/* note: 0x4B60-0x4B6C used above */
 macro_line|#endif /* _LINUX_KD_H */
 eof

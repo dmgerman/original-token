@@ -945,7 +945,7 @@ r_if
 c_cond
 (paren
 id|type
-op_eq
+op_amp
 id|SHM_SWP_TYPE
 )paren
 r_return
@@ -1059,7 +1059,7 @@ r_if
 c_cond
 (paren
 id|type
-op_eq
+op_amp
 id|SHM_SWP_TYPE
 )paren
 r_return

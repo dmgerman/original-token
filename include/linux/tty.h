@@ -79,6 +79,11 @@ r_int
 r_char
 id|orig_video_lines
 suffix:semicolon
+DECL|member|orig_video_points
+r_int
+r_int
+id|orig_video_points
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -104,6 +109,8 @@ DECL|macro|ORIG_VIDEO_EGA_CX
 mdefine_line|#define ORIG_VIDEO_EGA_CX&t;(screen_info.orig_video_ega_cx)
 DECL|macro|ORIG_VIDEO_LINES
 mdefine_line|#define ORIG_VIDEO_LINES&t;(screen_info.orig_video_lines)
+DECL|macro|ORIG_VIDEO_POINTS
+mdefine_line|#define ORIG_VIDEO_POINTS       (screen_info.orig_video_points)
 DECL|macro|VIDEO_TYPE_MDA
 mdefine_line|#define VIDEO_TYPE_MDA&t;&t;0x10&t;/* Monochrome Text Display&t;*/
 DECL|macro|VIDEO_TYPE_CGA

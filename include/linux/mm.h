@@ -1094,7 +1094,7 @@ DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;0x80
 multiline_comment|/*&n; * vm_ops not present page codes for shared memory.&n; *&n; * Will go away eventually..&n; */
 DECL|macro|SHM_SWP_TYPE
-mdefine_line|#define SHM_SWP_TYPE 0x41
+mdefine_line|#define SHM_SWP_TYPE 0x40
 r_extern
 r_void
 id|shm_no_page

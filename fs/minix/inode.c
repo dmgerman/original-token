@@ -1095,7 +1095,7 @@ id|sb
 suffix:semicolon
 id|tmp.f_bavail
 op_assign
-id|tmp.f_bavail
+id|tmp.f_bfree
 suffix:semicolon
 id|tmp.f_files
 op_assign
