@@ -4,9 +4,20 @@ mdefine_line|#define __ASM_HARDIRQ_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+multiline_comment|/* entry.S is sensitive to the offsets of these fields */
 r_typedef
 r_struct
 (brace
+DECL|member|__softirq_active
+r_int
+r_int
+id|__softirq_active
+suffix:semicolon
+DECL|member|__softirq_mask
+r_int
+r_int
+id|__softirq_mask
+suffix:semicolon
 DECL|member|__local_irq_count
 r_int
 r_int
@@ -17,38 +28,23 @@ r_int
 r_int
 id|__local_bh_count
 suffix:semicolon
-DECL|member|__nmi_counter
+DECL|member|__syscall_count
 r_int
 r_int
-id|__nmi_counter
+id|__syscall_count
 suffix:semicolon
-DECL|member|__pad
+DECL|member|__nmi_count
 r_int
 r_int
-id|__pad
-(braket
-l_int|5
-)braket
+id|__nmi_count
 suffix:semicolon
+multiline_comment|/* arch dependent */
 DECL|typedef|irq_cpustat_t
 )brace
 id|____cacheline_aligned
 id|irq_cpustat_t
 suffix:semicolon
-r_extern
-id|irq_cpustat_t
-id|irq_stat
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-multiline_comment|/*&n; * Simple wrappers reducing source bloat&n; */
-DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count(cpu) (irq_stat[(cpu)].__local_irq_count)
-DECL|macro|local_bh_count
-mdefine_line|#define local_bh_count(cpu) (irq_stat[(cpu)].__local_bh_count)
-DECL|macro|nmi_counter
-mdefine_line|#define nmi_counter(cpu) (irq_stat[(cpu)].__nmi_counter)
+macro_line|#include &lt;linux/irq_cpustat.h&gt;&t;/* Standard mappings for irq_cpustat_t above */
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu) != 0); })

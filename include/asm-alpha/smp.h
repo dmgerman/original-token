@@ -113,13 +113,6 @@ r_int
 r_int
 id|prof_counter
 suffix:semicolon
-DECL|member|irq_count
-DECL|member|bh_count
-r_int
-id|irq_count
-comma
-id|bh_count
-suffix:semicolon
 DECL|member|mcheck_expected
 r_int
 r_char

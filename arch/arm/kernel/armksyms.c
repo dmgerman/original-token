@@ -397,20 +397,6 @@ c_func
 id|udelay
 )paren
 suffix:semicolon
-DECL|variable|local_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_bh_count
-)paren
-suffix:semicolon
-DECL|variable|local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_irq_count
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_CPU_32
 DECL|variable|__ioremap
 id|EXPORT_SYMBOL

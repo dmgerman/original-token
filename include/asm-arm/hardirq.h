@@ -3,26 +3,41 @@ DECL|macro|__ASM_HARDIRQ_H
 mdefine_line|#define __ASM_HARDIRQ_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
-r_extern
+multiline_comment|/* entry.S is sensitive to the offsets of these fields */
+r_typedef
+r_struct
+(brace
+DECL|member|__softirq_active
 r_int
 r_int
-id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
+id|__softirq_active
 suffix:semicolon
-r_extern
+DECL|member|__softirq_mask
 r_int
 r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
+id|__softirq_mask
 suffix:semicolon
-DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count(cpu)&t;(local_irq_count[(cpu)])
-DECL|macro|local_bh_count
-mdefine_line|#define local_bh_count(cpu)&t;(local_bh_count[(cpu)])
+DECL|member|__local_irq_count
+r_int
+r_int
+id|__local_irq_count
+suffix:semicolon
+DECL|member|__local_bh_count
+r_int
+r_int
+id|__local_bh_count
+suffix:semicolon
+DECL|member|__syscall_count
+r_int
+r_int
+id|__syscall_count
+suffix:semicolon
+DECL|typedef|irq_cpustat_t
+)brace
+id|____cacheline_aligned
+id|irq_cpustat_t
+suffix:semicolon
+macro_line|#include &lt;linux/irq_cpustat.h&gt;&t;/* Standard mappings for irq_cpustat_t above */
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ const int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu) != 0); })

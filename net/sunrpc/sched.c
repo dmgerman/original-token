@@ -1071,7 +1071,7 @@ c_cond
 id|task-&gt;tk_callback
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
 id|KERN_ERR

@@ -4526,7 +4526,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|nmi_counter
+id|nmi_count
 c_func
 (paren
 id|cpu
@@ -4537,7 +4537,7 @@ id|tmp
 id|cpu
 )braket
 dot
-id|__nmi_counter
+id|__nmi_count
 op_le
 l_int|3
 )paren

@@ -8,16 +8,7 @@ macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
-multiline_comment|/* Only uniprocessor needs this IRQ/BH locking depth, on SMP it lives&n;   in the per-cpu structure for cache reasons.  */
 macro_line|#ifndef CONFIG_SMP
-DECL|variable|__local_irq_count
-r_int
-id|__local_irq_count
-suffix:semicolon
-DECL|variable|__local_bh_count
-r_int
-id|__local_bh_count
-suffix:semicolon
 DECL|variable|__irq_attempt
 r_int
 r_int

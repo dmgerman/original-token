@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * valkyriefb.h: Constants of all sorts for valkyriefb&n; *&n; * Created 8 August 1998 by Martin Costabel and Kevin Schoedel&n; *&n; * Vmode-switching changes and vmode 15/17 modifications created 29 August&n; * 1998 by Barry K. Nathan &lt;barryn@pobox.com&gt;.&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Based directly on:&n; *&n; *  controlfb.h: Constants of all sorts for controlfb&n; *  Copyright (C) 1998 Daniel Jacobowitz &lt;dan@debian.org&gt;&n; *&n; *  pmc-valkyrie.h: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1997 Paul Mackerras.&n; *&n; *  pmc-valkyrie.c: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1997 Paul Mackerras.&n; *&n; * and indirectly from:&n; *&n; *  pmc-control.h: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1997 Paul Mackerras.&n; *&n; *  pmc-control.c: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1996 Paul Mackerras.&n; *&n; *  platinumfb.c: Console support for PowerMac &quot;platinum&quot; display adaptor.&n; *  Copyright (C) 1998 Jon Howell&n; */
+multiline_comment|/*&n; * valkyriefb.h: Constants of all sorts for valkyriefb&n; *&n; *  Created 8 August 1998 by &n; *  Martin Costabel &lt;costabel@wanadoo.fr&gt; and Kevin Schoedel&n; *&n; * Vmode-switching changes and vmode 15/17 modifications created 29 August&n; * 1998 by Barry K. Nathan &lt;barryn@pobox.com&gt;.&n; * &n; * vmode 10 changed by Steven Borley &lt;sjb@salix.demon.co.uk&gt;, 14 mai 2000&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Based directly on:&n; *&n; *  controlfb.h: Constants of all sorts for controlfb&n; *  Copyright (C) 1998 Daniel Jacobowitz &lt;dan@debian.org&gt;&n; *&n; *  pmc-valkyrie.h: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1997 Paul Mackerras.&n; *&n; *  pmc-valkyrie.c: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1997 Paul Mackerras.&n; *&n; * and indirectly from:&n; *&n; *  pmc-control.h: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1997 Paul Mackerras.&n; *&n; *  pmc-control.c: Console support for PowerMac &quot;control&quot; display adaptor.&n; *  Copyright (C) 1996 Paul Mackerras.&n; *&n; *  platinumfb.c: Console support for PowerMac &quot;platinum&quot; display adaptor.&n; *  Copyright (C) 1998 Jon Howell&n; */
 multiline_comment|/*&n; * Structure of the registers for the Valkyrie colormap registers.&n; */
 DECL|struct|cmap_regs
 r_struct
@@ -289,14 +289,14 @@ op_assign
 l_int|12
 comma
 (brace
-l_int|20
+l_int|25
 comma
-l_int|53
+l_int|32
 comma
-l_int|2
+l_int|3
 )brace
 comma
-multiline_comment|/* pixel clock = 41.41MHz for V=59.78Hz */
+multiline_comment|/* pixel clock = 40.0015MHz,&n;                     used to be 20,53,2, pixel clock 41.41MHz for V=59.78Hz */
 (brace
 l_int|800
 comma

@@ -218,6 +218,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_static
 r_void
 id|chips_of_init
 c_func
@@ -3286,7 +3287,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef CONFIG_FB_OF
 r_struct
 id|device_node
 op_star
@@ -3313,12 +3313,12 @@ c_func
 id|dp
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_FB_OF */
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|chips_of_init
+r_static
 r_void
 id|__init
 id|chips_of_init
@@ -3404,6 +3404,35 @@ l_int|0
 dot
 id|address
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|addr
+comma
+id|dp-&gt;addrs
+(braket
+l_int|0
+)braket
+dot
+id|size
+comma
+l_string|&quot;chipsfb&quot;
+)paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 macro_line|#ifdef __BIG_ENDIAN
 id|addr
 op_add_assign

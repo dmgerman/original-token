@@ -18,13 +18,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/baget/baget.h&gt;
-DECL|variable|irq_stat
-id|irq_cpustat_t
-id|irq_stat
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|variable|spurious_count
 r_int
 r_int

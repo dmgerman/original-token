@@ -2896,13 +2896,6 @@ c_func
 id|net_call_rx_atomic
 )paren
 suffix:semicolon
-DECL|variable|softirq_state
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|softirq_state
-)paren
-suffix:semicolon
 DECL|variable|softnet_data
 id|EXPORT_SYMBOL
 c_func

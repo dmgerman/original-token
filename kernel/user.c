@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * The &quot;user cache&quot;.&n; *&n; * (C) Copyright 1991-2000 Linus Torvalds&n; *&n; * We have a per-user structure to keep track of how many&n; * processes, files etc the user has claimed, in order to be&n; * able to have per-user limits for system resources. &n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;

@@ -5,14 +5,16 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*&n;   - No shared variables, all the data are CPU local.&n;   - If a softirq needs serialization, let it serialize itself&n;     by its own spinlocks.&n;   - Even if softirq is serialized, only local cpu is marked for&n;     execution. Hence, we get something sort of weak cpu binding.&n;     Though it is still not clear, will it result in better locality&n;     or will not.&n;   - These softirqs are not masked by global cli() and start_bh_atomic()&n;     (by clear reasons). Hence, old parts of code still using global locks&n;     MUST NOT use softirqs, but insert interfacing routines acquiring&n;     global locks. F.e. look at BHs implementation.&n;&n;   Examples:&n;   - NET RX softirq. It is multithreaded and does not require&n;     any global serialization.&n;   - NET TX softirq. It kicks software netdevice queues, hence&n;     it is logically serialized per device, but this serialization&n;     is invisible to common code.&n;   - Tasklets: serialized wrt itself.&n;   - Bottom halves: globally serialized, grr...&n; */
-DECL|variable|softirq_state
-r_struct
-id|softirq_state
-id|softirq_state
+multiline_comment|/* No separate irq_stat for s390, it is part of PSA */
+macro_line|#if !defined(CONFIG_ARCH_S390)
+DECL|variable|irq_stat
+id|irq_cpustat_t
+id|irq_stat
 (braket
 id|NR_CPUS
 )braket
 suffix:semicolon
+macro_line|#endif&t;/* CONFIG_ARCH_S390 */
 DECL|variable|softirq_vec
 r_static
 r_struct
@@ -65,21 +67,19 @@ c_func
 suffix:semicolon
 id|mask
 op_assign
-id|softirq_state
-(braket
+id|softirq_mask
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|mask
+)paren
 suffix:semicolon
 id|active
 op_assign
-id|softirq_state
-(braket
+id|softirq_active
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|active
+)paren
 op_amp
 id|mask
 suffix:semicolon
@@ -97,12 +97,11 @@ suffix:semicolon
 id|restart
 suffix:colon
 multiline_comment|/* Reset active bitmask before enabling irqs */
-id|softirq_state
-(braket
+id|softirq_active
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|active
+)paren
 op_and_assign
 op_complement
 id|active
@@ -159,12 +158,11 @@ c_func
 suffix:semicolon
 id|active
 op_assign
-id|softirq_state
-(braket
+id|softirq_active
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|active
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -274,12 +272,11 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|softirq_state
-(braket
+id|softirq_mask
+c_func
+(paren
 id|i
-)braket
-dot
-id|mask
+)paren
 op_or_assign
 (paren
 l_int|1

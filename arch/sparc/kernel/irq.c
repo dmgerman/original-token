@@ -681,35 +681,8 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_SMP
-DECL|variable|__local_bh_count
-r_int
-r_int
-id|__local_bh_count
-suffix:semicolon
-DECL|variable|__local_irq_count
-r_int
-r_int
-id|__local_irq_count
-suffix:semicolon
-macro_line|#else
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* SMP interrupt locking on Sparc. */
-DECL|variable|__local_bh_count
-r_int
-r_int
-id|__local_bh_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-DECL|variable|__local_irq_count
-r_int
-r_int
-id|__local_irq_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 multiline_comment|/* Who has global_irq_lock. */
 DECL|variable|global_irq_holder
 r_int
@@ -819,10 +792,11 @@ c_func
 (paren
 l_string|&quot;%d &quot;
 comma
-id|__local_irq_count
-(braket
+id|local_irq_count
+c_func
+(paren
 id|i
-)braket
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -872,10 +846,11 @@ c_func
 (paren
 l_string|&quot;%d &quot;
 comma
-id|__local_bh_count
-(braket
+id|local_bh_count
+c_func
+(paren
 id|cpu
-)braket
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -941,10 +916,11 @@ id|global_irq_count
 r_if
 c_cond
 (paren
-id|__local_bh_count
-(braket
+id|local_bh_count
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_logical_or
 op_logical_neg
 id|spin_is_locked
@@ -1035,10 +1011,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__local_bh_count
-(braket
+id|local_bh_count
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_logical_and
 id|spin_is_locked
 c_func
@@ -1254,10 +1231,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__local_irq_count
-(braket
+id|local_irq_count
+c_func
+(paren
 id|cpu
-)braket
+)paren
 )paren
 id|get_irqlock
 c_func
@@ -1287,10 +1265,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__local_irq_count
-(braket
+id|local_irq_count
+c_func
+(paren
 id|cpu
-)braket
+)paren
 )paren
 id|release_irqlock
 c_func
@@ -1359,13 +1338,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__local_irq_count
-(braket
+id|local_irq_count
+c_func
+(paren
 id|smp_processor_id
 c_func
 (paren
 )paren
-)braket
+)paren
 )paren
 (brace
 r_if

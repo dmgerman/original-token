@@ -24,9 +24,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_OF
-macro_line|#include &lt;asm/prom.h&gt;
-macro_line|#endif
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-mfb.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
@@ -1165,17 +1162,6 @@ r_int
 id|user
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_FB_OF)
-r_int
-id|clgen_of_init
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* function table of the above functions */
 DECL|variable|clgenfb_ops
 r_static
@@ -10230,119 +10216,6 @@ l_string|&quot;EXIT&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif&t;&t;&t;&t;/* CONFIG_PREP */
-macro_line|#ifdef CONFIG_FB_OF
-DECL|function|get_of_addrs
-r_static
-r_void
-id|__init
-id|get_of_addrs
-(paren
-r_const
-r_struct
-id|device_node
-op_star
-id|dp
-comma
-r_int
-r_int
-op_star
-id|display
-comma
-r_int
-r_int
-op_star
-id|registers
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;ENTER&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Map in frame buffer and registers */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|dp-&gt;n_addrs
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-r_int
-r_int
-id|addr
-op_assign
-id|dp-&gt;addrs
-(braket
-id|i
-)braket
-dot
-id|address
-suffix:semicolon
-r_int
-r_int
-id|size
-op_assign
-id|dp-&gt;addrs
-(braket
-id|i
-)braket
-dot
-id|size
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;dp-&gt;addrs[%d].address = %lx, dp-&gt;addrs[%d].size = %lx&bslash;n&quot;
-comma
-id|i
-comma
-id|addr
-comma
-id|i
-comma
-id|size
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|size
-op_ge
-l_int|0x800000
-)paren
-(brace
-op_star
-id|display
-op_assign
-id|addr
-suffix:semicolon
-)brace
-r_else
-(brace
-op_star
-id|registers
-op_assign
-id|addr
-suffix:semicolon
-)brace
-)brace
-id|DPRINTK
-(paren
-l_string|&quot;EXIT&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;&t;&t;/* CONFIG_FB_OF */
 macro_line|#ifdef CONFIG_PCI
 multiline_comment|/* Pulled the logic from XFree86 Cirrus driver to get the memory size,&n; * based on the DRAM bandwidth bit and DRAM bank switching bit.  This&n; * works with 1MB, 2MB and 4MB configurations (which the Motorola boards&n; * seem to have. */
 DECL|function|clgen_get_memsize
@@ -10743,13 +10616,6 @@ op_star
 id|btype
 )paren
 (brace
-macro_line|#ifdef CONFIG_FB_OF
-r_struct
-id|device_node
-op_star
-id|dp
-suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;/* CONFIG_FB_OF */
 r_struct
 id|pci_dev
 op_star
@@ -10840,68 +10706,6 @@ l_int|0x00000000
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_OF
-multiline_comment|/* Ok, so its an ugly hack, since we could have passed it down from&n;&t; * clgen_of_init() if we&squot;d done it right. */
-id|DPRINTK
-(paren
-l_string|&quot;Attempt to get OF info for MacPicasso&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dp
-op_assign
-id|find_devices
-(paren
-l_string|&quot;MacPicasso&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dp
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dp-&gt;n_addrs
-op_ne
-l_int|2
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;expecting 2 address for clgen (got %d)&bslash;n&quot;
-comma
-id|dp-&gt;n_addrs
-)paren
-suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;EXIT, returning 1&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|get_of_addrs
-(paren
-id|dp
-comma
-op_amp
-id|board_addr
-comma
-op_amp
-id|info-&gt;fbregs_phys
-)paren
-suffix:semicolon
-)brace
-r_else
-macro_line|#endif
-(brace
 macro_line|#ifdef CONFIG_PREP
 id|get_prep_addrs
 (paren
@@ -10930,7 +10734,6 @@ id|info-&gt;fbregs_phys
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;/* CONFIG_PREP */
-)brace
 id|DPRINTK
 (paren
 l_string|&quot;Board address: 0x%lx, register address: 0x%lx&bslash;n&quot;
@@ -12052,25 +11855,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_FB_OF)
-DECL|function|clgen_of_init
-r_int
-id|__init
-id|clgen_of_init
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-(brace
-r_return
-id|clgenfb_init
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;&t;&t;/* CONFIG_FB_OF */
 multiline_comment|/*&n;     *  Cleanup (only needed for module)&n;     */
 DECL|function|clgenfb_cleanup
 r_static

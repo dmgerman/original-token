@@ -10,7 +10,7 @@ macro_line|#include &quot;matroxfb_maven.h&quot;
 macro_line|#include &quot;matroxfb_crtc2.h&quot;
 macro_line|#include &lt;linux/matroxfb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#if defined(CONFIG_FB_OF)
+macro_line|#ifdef CONFIG_PPC
 r_int
 r_char
 id|nvram_read_byte
@@ -13522,7 +13522,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_OF
+macro_line|#ifdef CONFIG_PPC
 r_else
 r_if
 c_cond
@@ -14697,7 +14697,7 @@ comma
 l_string|&quot;Specifies whether to use digital flat panel interface of G200/G400 (0 or 1) (default=0)&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_OF
+macro_line|#ifdef CONFIG_PPC
 id|MODULE_PARM
 c_func
 (paren

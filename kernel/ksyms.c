@@ -1850,6 +1850,16 @@ c_func
 id|free_irq
 )paren
 suffix:semicolon
+macro_line|#if !defined(CONFIG_ARCH_S390)
+DECL|variable|irq_stat
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irq_stat
+)paren
+suffix:semicolon
+multiline_comment|/* No separate irq_stat for s390, it is part of PSA */
+macro_line|#endif
 multiline_comment|/* waitqueue handling */
 DECL|variable|add_wait_queue
 id|EXPORT_SYMBOL

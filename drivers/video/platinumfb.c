@@ -369,6 +369,17 @@ id|fb
 suffix:semicolon
 multiline_comment|/*&n; * internal functions&n; */
 r_static
+r_void
+id|platinum_of_init
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|dp
+)paren
+suffix:semicolon
+r_static
 r_inline
 r_int
 id|platinum_vram_reqd
@@ -589,18 +600,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_OF
-r_void
-id|platinum_of_init
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-suffix:semicolon
-macro_line|#endif
 r_int
 id|platinum_setup
 c_func
@@ -3160,7 +3159,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef CONFIG_FB_OF
 r_struct
 id|device_node
 op_star
@@ -3187,7 +3185,6 @@ c_func
 id|dp
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_FB_OF */
 r_return
 l_int|0
 suffix:semicolon
@@ -3200,6 +3197,7 @@ DECL|macro|invalidate_cache
 mdefine_line|#define invalidate_cache(addr)
 macro_line|#endif
 DECL|function|platinum_of_init
+r_static
 r_void
 id|__init
 id|platinum_of_init
@@ -3329,6 +3327,31 @@ id|i
 dot
 id|size
 suffix:semicolon
+multiline_comment|/* Let&squot;s assume we can request either all or nothing */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|addr
+comma
+id|size
+comma
+l_string|&quot;platinumfb&quot;
+)paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3383,6 +3406,16 @@ op_assign
 l_int|0xf301b000
 suffix:semicolon
 multiline_comment|/* XXX not in prom? */
+id|request_mem_region
+c_func
+(paren
+id|info-&gt;cmap_regs_phys
+comma
+l_int|0x1000
+comma
+l_string|&quot;platinumfb cmap&quot;
+)paren
+suffix:semicolon
 id|info-&gt;cmap_regs
 op_assign
 id|ioremap

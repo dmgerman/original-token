@@ -612,13 +612,6 @@ c_func
 id|get_wchan
 )paren
 suffix:semicolon
-DECL|variable|irq_stat
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|irq_stat
-)paren
-suffix:semicolon
 DECL|variable|rtc_lock
 id|EXPORT_SYMBOL
 c_func

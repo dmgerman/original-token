@@ -337,6 +337,13 @@ op_amp
 id|current-&gt;user-&gt;__count
 )paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|user-&gt;processes
+)paren
+suffix:semicolon
 id|free_uid
 c_func
 (paren

@@ -25,13 +25,6 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/*&n; * Linux has a controller-independent x86 interrupt architecture.&n; * every controller has a &squot;controller-template&squot;, that is used&n; * by the main code to do the right thing. Each driver-visible&n; * interrupt source is transparently wired to the apropriate&n; * controller. Thus drivers need not be aware of the&n; * interrupt-controller.&n; *&n; * Various interrupt controllers we handle: 8259 PIC, SMP IO-APIC,&n; * PIIX4&squot;s internal 8259 PIC and SGI&squot;s Visual Workstation Cobalt (IO-)APIC.&n; * (IO-APICs assumed to be messaging to Pentium local-APICs)&n; *&n; * the code is designed to be easily extended with new/different&n; * interrupt controllers, without having to do assembly magic.&n; */
-DECL|variable|irq_stat
-id|irq_cpustat_t
-id|irq_stat
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 multiline_comment|/*&n; * Controller mappings for all interrupt sources:&n; */
 DECL|variable|__cacheline_aligned
 id|irq_desc_t
@@ -463,7 +456,7 @@ id|p
 comma
 l_string|&quot;%10u &quot;
 comma
-id|nmi_counter
+id|nmi_count
 c_func
 (paren
 id|cpu_logical_map
@@ -1957,19 +1950,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|softirq_state
-(braket
+id|softirq_active
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|active
+)paren
 op_amp
-id|softirq_state
-(braket
+id|softirq_mask
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|mask
+)paren
 )paren
 id|do_softirq
 c_func

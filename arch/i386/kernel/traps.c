@@ -1859,7 +1859,7 @@ l_int|0x61
 )paren
 suffix:semicolon
 op_increment
-id|nmi_counter
+id|nmi_count
 c_func
 (paren
 id|smp_processor_id

@@ -130,46 +130,7 @@ DECL|enumerator|TASKLET_SOFTIRQ
 id|TASKLET_SOFTIRQ
 )brace
 suffix:semicolon
-macro_line|#if SMP_CACHE_BYTES &lt;= 32
-multiline_comment|/* It is trick to make assembly easier. */
-DECL|macro|SOFTIRQ_STATE_PAD
-mdefine_line|#define SOFTIRQ_STATE_PAD 32
-macro_line|#else
-DECL|macro|SOFTIRQ_STATE_PAD
-mdefine_line|#define SOFTIRQ_STATE_PAD SMP_CACHE_BYTES
-macro_line|#endif
-DECL|struct|softirq_state
-r_struct
-id|softirq_state
-(brace
-DECL|member|active
-id|__u32
-id|active
-suffix:semicolon
-DECL|member|mask
-id|__u32
-id|mask
-suffix:semicolon
-)brace
-id|__attribute__
-(paren
-(paren
-id|__aligned__
-c_func
-(paren
-id|SOFTIRQ_STATE_PAD
-)paren
-)paren
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|softirq_state
-id|softirq_state
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
+multiline_comment|/* softirq mask and active fields moved to irq_cpustat_t in&n; * asm/hardirq.h to get better cache usage.  KAO&n; */
 DECL|struct|softirq_action
 r_struct
 id|softirq_action
@@ -239,12 +200,11 @@ r_int
 id|nr
 )paren
 (brace
-id|softirq_state
-(braket
+id|softirq_active
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|active
+)paren
 op_or_assign
 (paren
 l_int|1

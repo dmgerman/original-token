@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.109 2000/07/11 01:38:57 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.110 2000/07/28 09:43:39 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -2647,10 +2647,7 @@ r_void
 id|fault_in_user_windows
 c_func
 (paren
-r_struct
-id|pt_regs
-op_star
-id|regs
+r_void
 )paren
 (brace
 r_struct

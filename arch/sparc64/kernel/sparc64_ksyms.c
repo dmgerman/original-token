@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.86 2000/06/30 10:18:38 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.89 2000/07/28 12:15:02 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -221,16 +221,6 @@ r_char
 id|saved_command_line
 (braket
 )braket
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|getname32
-c_func
-(paren
-id|u32
-id|name
-)paren
 suffix:semicolon
 r_extern
 r_void
@@ -468,6 +458,16 @@ id|prot
 comma
 r_int
 id|space
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_dcache_page
+c_func
+(paren
+r_void
+op_star
+id|addr
 )paren
 suffix:semicolon
 r_extern
@@ -763,21 +763,6 @@ id|_do_write_unlock
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#else
-DECL|variable|__local_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__local_bh_count
-)paren
-suffix:semicolon
-DECL|variable|__local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__local_irq_count
-)paren
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/* rw semaphores */
 DECL|variable|__down_read_failed
@@ -878,6 +863,13 @@ id|EXPORT_SYMBOL_PRIVATE
 c_func
 (paren
 id|flushw_user
+)paren
+suffix:semicolon
+DECL|variable|flush_dcache_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|flush_dcache_page
 )paren
 suffix:semicolon
 DECL|variable|mstk48t02_regs
@@ -1399,13 +1391,6 @@ id|strstr
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SOLARIS_EMUL_MODULE
-DECL|variable|getname32
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|getname32
-)paren
-suffix:semicolon
 DECL|variable|linux_sparc_syscall
 id|EXPORT_SYMBOL
 c_func

@@ -132,15 +132,6 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
-macro_line|#include &lt;asm/current.h&gt;
-macro_line|#include &lt;asm/hardirq.h&gt;
-DECL|variable|irq_stat
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|irq_stat
-)paren
-suffix:semicolon
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|variable|cpu_data
 id|EXPORT_SYMBOL

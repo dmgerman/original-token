@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl32.c,v 1.10 1998/08/15 20:42:46 davem Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl32.c,v 1.11 2000/07/30 23:12:24 davem Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -299,11 +299,6 @@ id|ret
 op_assign
 op_minus
 id|EBADF
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1645,11 +1640,6 @@ id|ret
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon

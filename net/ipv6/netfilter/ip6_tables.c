@@ -1111,9 +1111,15 @@ op_assign
 id|u_int32_t
 op_star
 )paren
+(paren
+(paren
+r_char
+op_star
+)paren
 id|ipv6
 op_plus
 id|IPV6_HDR_LEN
+)paren
 suffix:semicolon
 id|datalen
 op_assign

@@ -1,9 +1,28 @@
-multiline_comment|/* $Id: vaddrs.h,v 1.25 2000/06/05 06:08:46 anton Exp $ */
+multiline_comment|/* $Id: vaddrs.h,v 1.26 2000/08/01 04:53:58 anton Exp $ */
 macro_line|#ifndef _SPARC_VADDRS_H
 DECL|macro|_SPARC_VADDRS_H
 mdefine_line|#define _SPARC_VADDRS_H
 macro_line|#include &lt;asm/head.h&gt;
 multiline_comment|/*&n; * asm-sparc/vaddrs.h:  Here we define the virtual addresses at&n; *                      which important things will be mapped.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
+DECL|macro|SRMMU_MAXMEM
+mdefine_line|#define SRMMU_MAXMEM&t;&t;0x0c000000
+DECL|macro|SRMMU_NOCACHE_VADDR
+mdefine_line|#define SRMMU_NOCACHE_VADDR&t;0xfc000000&t;/* KERNBASE + SRMMU_MAXMEM */
+multiline_comment|/* XXX Make this dynamic based on ram size - Anton */
+DECL|macro|SRMMU_NOCACHE_NPAGES
+mdefine_line|#define SRMMU_NOCACHE_NPAGES&t;256
+DECL|macro|SRMMU_NOCACHE_SIZE
+mdefine_line|#define SRMMU_NOCACHE_SIZE&t;(SRMMU_NOCACHE_NPAGES * PAGE_SIZE)
+DECL|macro|SRMMU_NOCACHE_END
+mdefine_line|#define SRMMU_NOCACHE_END&t;(SRMMU_NOCACHE_VADDR + SRMMU_NOCACHE_SIZE)
+DECL|macro|FIX_KMAP_BEGIN
+mdefine_line|#define FIX_KMAP_BEGIN&t;&t;0xfc100000
+DECL|macro|FIX_KMAP_END
+mdefine_line|#define FIX_KMAP_END (FIX_KMAP_BEGIN + ((KM_TYPE_NR*NR_CPUS)-1)*PAGE_SIZE)
+DECL|macro|PKMAP_BASE
+mdefine_line|#define PKMAP_BASE&t;&t;0xfc140000
+DECL|macro|PKMAP_BASE_END
+mdefine_line|#define PKMAP_BASE_END&t;&t;(PKMAP_BASE+LAST_PKMAP*PAGE_SIZE)
 DECL|macro|SUN4M_IOBASE_VADDR
 mdefine_line|#define SUN4M_IOBASE_VADDR&t;0xfd000000 /* Base for mapping pages */
 DECL|macro|IOBASE_VADDR

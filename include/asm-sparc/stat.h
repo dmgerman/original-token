@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: stat.h,v 1.11 2000/01/16 15:22:53 jj Exp $ */
+multiline_comment|/* $Id: stat.h,v 1.12 2000/08/04 05:35:55 davem Exp $ */
 macro_line|#ifndef _SPARC_STAT_H
 DECL|macro|_SPARC_STAT_H
 mdefine_line|#define _SPARC_STAT_H

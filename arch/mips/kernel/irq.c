@@ -21,13 +21,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
 macro_line|#include &lt;asm/nile4.h&gt;
 multiline_comment|/*&n; * Linux has a controller-independent x86 interrupt architecture.&n; * every controller has a &squot;controller-template&squot;, that is used&n; * by the main code to do the right thing. Each driver-visible&n; * interrupt source is transparently wired to the apropriate&n; * controller. Thus drivers need not be aware of the&n; * interrupt-controller.&n; *&n; * Various interrupt controllers we handle: 8259 PIC, SMP IO-APIC,&n; * PIIX4&squot;s internal 8259 PIC and SGI&squot;s Visual Workstation Cobalt (IO-)APIC.&n; * (IO-APICs assumed to be messaging to Pentium local-APICs)&n; *&n; * the code is designed to be easily extended with new/different&n; * interrupt controllers, without having to do assembly magic.&n; */
-DECL|variable|irq_stat
-id|irq_cpustat_t
-id|irq_stat
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 multiline_comment|/*&n; * This contains the irq mask for both 8259A irq controllers, it&squot;s an&n; * int so we can deal with the third PIC in some systems like the RM300.&n; * (XXX This is broken for big endian.)&n; */
 DECL|variable|cached_irq_mask
 r_static
@@ -47,22 +40,6 @@ DECL|macro|cached_21
 mdefine_line|#define cached_21       (__byte(0,cached_irq_mask))
 DECL|macro|cached_A1
 mdefine_line|#define cached_A1       (__byte(1,cached_irq_mask))
-DECL|variable|local_bh_count
-r_int
-r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-DECL|variable|local_irq_count
-r_int
-r_int
-id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|variable|spurious_count
 r_int
 r_int
@@ -919,19 +896,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|softirq_state
-(braket
+id|softirq_active
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|active
+)paren
 op_amp
-id|softirq_state
-(braket
+id|softirq_mask
+c_func
+(paren
 id|cpu
-)braket
-dot
-id|mask
+)paren
 )paren
 id|do_softirq
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timod.c,v 1.9 2000/07/12 23:21:02 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
+multiline_comment|/* $Id: timod.c,v 1.10 2000/07/28 12:15:02 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,18 +14,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/termios.h&gt;
 macro_line|#include &quot;conv.h&quot;
 macro_line|#include &quot;socksys.h&quot;
-r_extern
-r_char
-op_star
-id|getname32
-c_func
-(paren
-id|u32
-id|filename
-)paren
-suffix:semicolon
-DECL|macro|putname32
-mdefine_line|#define putname32 putname
 r_extern
 id|asmlinkage
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fs.c,v 1.21 2000/07/10 20:57:35 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * 1999-08-19 Implemented solaris F_FREESP (truncate)&n; *            fcntl, by Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
+multiline_comment|/* $Id: fs.c,v 1.22 2000/07/28 12:15:02 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * 1999-08-19 Implemented solaris F_FREESP (truncate)&n; *            fcntl, by Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -14,16 +14,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &quot;conv.h&quot;
-r_extern
-r_char
-op_star
-id|getname32
-c_func
-(paren
-id|u32
-id|filename
-)paren
-suffix:semicolon
 DECL|macro|R4_DEV
 mdefine_line|#define R4_DEV(DEV) ((DEV &amp; 0xff) | ((DEV &amp; 0xff00) &lt;&lt; 10))
 DECL|macro|R4_MAJOR
@@ -652,9 +642,17 @@ id|stat
 suffix:semicolon
 id|filenam
 op_assign
-id|getname32
+id|getname
+(paren
+(paren
+r_char
+op_star
+)paren
+id|A
+c_func
 (paren
 id|filename
+)paren
 )paren
 suffix:semicolon
 id|ret
@@ -826,9 +824,17 @@ id|stat
 suffix:semicolon
 id|filenam
 op_assign
-id|getname32
+id|getname
+(paren
+(paren
+r_char
+op_star
+)paren
+id|A
+c_func
 (paren
 id|filename
+)paren
 )paren
 suffix:semicolon
 id|ret
@@ -973,9 +979,17 @@ id|lstat
 suffix:semicolon
 id|filenam
 op_assign
-id|getname32
+id|getname
+(paren
+(paren
+r_char
+op_star
+)paren
+id|A
+c_func
 (paren
 id|filename
+)paren
 )paren
 suffix:semicolon
 id|ret
@@ -1146,9 +1160,17 @@ id|lstat
 suffix:semicolon
 id|filenam
 op_assign
-id|getname32
+id|getname
+(paren
+(paren
+r_char
+op_star
+)paren
+id|A
+c_func
 (paren
 id|filename
+)paren
 )paren
 suffix:semicolon
 id|ret

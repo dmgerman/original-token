@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  valkyriefb.c -- frame buffer device for the PowerMac &squot;valkyrie&squot; display&n; *&n; *  Created 8 August 1998 by Martin Costabel and Kevin Schoedel&n; *&n; *  Vmode-switching changes and vmode 15/17 modifications created 29 August&n; *  1998 by Barry K. Nathan &lt;barryn@pobox.com&gt;.&n; *&n; *  Derived directly from:&n; *&n; *   controlfb.c -- frame buffer device for the PowerMac &squot;control&squot; display&n; *   Copyright (C) 1998 Dan Jacobowitz &lt;dan@debian.org&gt;&n; *&n; *   pmc-valkyrie.c -- Console support for PowerMac &quot;valkyrie&quot; display adaptor.&n; *   Copyright (C) 1997 Paul Mackerras.&n; *&n; *  and indirectly:&n; *&n; *  Frame buffer structure from:&n; *    drivers/video/chipsfb.c -- frame buffer device for&n; *    Chips &amp; Technologies 65550 chip.&n; *&n; *    Copyright (C) 1998 Paul Mackerras&n; *&n; *    This file is derived from the Powermac &quot;chips&quot; driver:&n; *    Copyright (C) 1997 Fabio Riccardi.&n; *    And from the frame buffer device for Open Firmware-initialized devices:&n; *    Copyright (C) 1997 Geert Uytterhoeven.&n; *&n; *  Hardware information from:&n; *    control.c: Console support for PowerMac &quot;control&quot; display adaptor.&n; *    Copyright (C) 1996 Paul Mackerras&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*&n; *  valkyriefb.c -- frame buffer device for the PowerMac &squot;valkyrie&squot; display&n; *&n; *  Created 8 August 1998 by &n; *  Martin Costabel &lt;costabel@wanadoo.fr&gt; and Kevin Schoedel&n; *&n; *  Vmode-switching changes and vmode 15/17 modifications created 29 August&n; *  1998 by Barry K. Nathan &lt;barryn@pobox.com&gt;.&n; *&n; *  Derived directly from:&n; *&n; *   controlfb.c -- frame buffer device for the PowerMac &squot;control&squot; display&n; *   Copyright (C) 1998 Dan Jacobowitz &lt;dan@debian.org&gt;&n; *&n; *   pmc-valkyrie.c -- Console support for PowerMac &quot;valkyrie&quot; display adaptor.&n; *   Copyright (C) 1997 Paul Mackerras.&n; *&n; *  and indirectly:&n; *&n; *  Frame buffer structure from:&n; *    drivers/video/chipsfb.c -- frame buffer device for&n; *    Chips &amp; Technologies 65550 chip.&n; *&n; *    Copyright (C) 1998 Paul Mackerras&n; *&n; *    This file is derived from the Powermac &quot;chips&quot; driver:&n; *    Copyright (C) 1997 Fabio Riccardi.&n; *    And from the frame buffer device for Open Firmware-initialized devices:&n; *    Copyright (C) 1997 Geert Uytterhoeven.&n; *&n; *  Hardware information from:&n; *    control.c: Console support for PowerMac &quot;control&quot; display adaptor.&n; *    Copyright (C) 1996 Paul Mackerras&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -218,6 +218,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|valkyriefb_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_static
 r_void
 id|valkyrie_of_init
 c_func
@@ -226,14 +235,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
-suffix:semicolon
-r_int
-id|valkyriefb_setup
-c_func
-(paren
-r_char
-op_star
 )paren
 suffix:semicolon
 r_static
@@ -2720,7 +2721,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef CONFIG_FB_OF
 r_struct
 id|device_node
 op_star
@@ -2747,12 +2747,12 @@ c_func
 id|dp
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_FB_OF */
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|valkyrie_of_init
+r_static
 r_void
 id|__init
 id|valkyrie_of_init
@@ -2772,8 +2772,6 @@ suffix:semicolon
 r_int
 r_int
 id|addr
-comma
-id|size
 suffix:semicolon
 r_if
 c_cond
@@ -2842,10 +2840,35 @@ l_int|0
 dot
 id|address
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|addr
+comma
+id|dp-&gt;addrs
+(braket
+l_int|0
+)braket
+dot
 id|size
-op_assign
-l_int|4096
+comma
+l_string|&quot;valkyriefb&quot;
+)paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|p-&gt;frame_buffer_phys
 op_assign
 id|addr
@@ -2875,7 +2898,7 @@ c_func
 (paren
 id|p-&gt;cmap_regs_phys
 comma
-id|size
+l_int|4096
 )paren
 suffix:semicolon
 id|p-&gt;valkyrie_regs_phys
@@ -2891,7 +2914,7 @@ c_func
 (paren
 id|p-&gt;valkyrie_regs_phys
 comma
-id|size
+l_int|4096
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * kps: As far as I know, all Valkyries have fixed usable VRAM.&n;&t; */
@@ -3133,8 +3156,6 @@ op_star
 )paren
 id|fb_info
 suffix:semicolon
-multiline_comment|/* these are old variables that are no longer needed with my new code&n;       [bkn]&n;&n;&t;int xres = var-&gt;xres;&n;&t;int yres = var-&gt;yres;&n;     */
-multiline_comment|/*&n;     *  Get the video params out of &squot;var&squot;. If a value doesn&squot;t fit, round it up,&n;     *  if it&squot;s too big, return -EINVAL.&n;     *&n;     *  Suggestion: Round up in the following order: bits_per_pixel, xres,&n;     *  yres, xres_virtual, yres_virtual, xoffset, yoffset, grayscale,&n;     *  bitfields, horizontal timing, vertical timing.&n;     */
 r_if
 c_cond
 (paren
@@ -3157,70 +3178,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: mac_var_to_vmode unsuccessful.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: var-&gt;xres = %d&bslash;n&quot;
+l_string|&quot;valkyrie_var_to_par: %dx%dx%d unsuccessful.&bslash;n&quot;
 comma
 id|var-&gt;xres
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: var-&gt;yres = %d&bslash;n&quot;
 comma
 id|var-&gt;yres
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: var-&gt;xres_virtual = %d&bslash;n&quot;
-comma
-id|var-&gt;xres_virtual
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: var-&gt;yres_virtual = %d&bslash;n&quot;
-comma
-id|var-&gt;yres_virtual
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: var-&gt;bits_per_pixel = %d&bslash;n&quot;
 comma
 id|var-&gt;bits_per_pixel
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: var-&gt;pixclock = %d&bslash;n&quot;
-comma
-id|var-&gt;pixclock
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;valkyrie_var_to_par: var-&gt;vmode = %d&bslash;n&quot;
-comma
-id|var-&gt;vmode
 )paren
 suffix:semicolon
 r_return

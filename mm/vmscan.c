@@ -1526,6 +1526,11 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|all_recent
+op_assign
+l_int|1
+suffix:semicolon
 id|pg_data_t
 op_star
 id|pgdat
@@ -1564,13 +1569,29 @@ r_if
 c_cond
 (paren
 id|zone-&gt;size
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|zone-&gt;free_pages
+OL
+id|zone-&gt;pages_min
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|zone-&gt;zone_wake_kswapd
 )paren
-r_return
+id|all_recent
+op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 id|pgdat
 op_assign
@@ -1584,10 +1605,10 @@ id|pgdat
 )paren
 suffix:semicolon
 r_return
-l_int|1
+id|all_recent
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We need to make the locks finer granularity, but right&n; * now we need this so that we can do page allocations&n; * without holding the kernel lock etc.&n; *&n; * We want to try to free &quot;count&quot; pages, and we want to &n; * cluster them so that we get good swap-out behaviour.&n; *&n; * Don&squot;t try _too_ hard, though. We don&squot;t want to have bad&n; * latency.&n; */
+multiline_comment|/*&n; * We need to make the locks finer granularity, but right&n; * now we need this so that we can do page allocations&n; * without holding the kernel lock etc.&n; *&n; * We want to try to free &quot;count&quot; pages, and we want to &n; * cluster them so that we get good swap-out behaviour.&n; *&n; * Don&squot;t try _too_ hard, though. We don&squot;t want to have bad&n; * latency.&n; *&n; * Note: only called by kswapd and try_to_free_pages&n; *       both can WAIT at top level.&n; */
 DECL|macro|FREE_COUNT
 mdefine_line|#define FREE_COUNT&t;8
 DECL|macro|SWAP_COUNT
@@ -1823,7 +1844,7 @@ OL
 id|FREE_COUNT
 op_logical_or
 op_logical_neg
-id|memory_pressure
+id|keep_kswapd_awake
 c_func
 (paren
 )paren

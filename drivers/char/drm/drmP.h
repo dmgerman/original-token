@@ -2011,6 +2011,21 @@ op_star
 id|vma
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|vm_operations_struct
+id|drm_vm_ops
+suffix:semicolon
+r_extern
+r_struct
+id|vm_operations_struct
+id|drm_vm_shm_ops
+suffix:semicolon
+r_extern
+r_struct
+id|vm_operations_struct
+id|drm_vm_dma_ops
+suffix:semicolon
 multiline_comment|/* Proc support (proc.c) */
 r_extern
 r_int

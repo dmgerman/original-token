@@ -100,11 +100,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
+id|in_irq
 c_func
 (paren
-op_amp
-id|S390_lowcore.local_irq_count
 )paren
 )paren
 id|die

@@ -591,7 +591,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_OF
+r_void
+id|control_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_static
 r_void
 id|control_of_init
 c_func
@@ -600,15 +608,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
-suffix:semicolon
-macro_line|#endif
-r_void
-id|control_setup
-c_func
-(paren
-r_char
-op_star
 )paren
 suffix:semicolon
 r_static
@@ -858,6 +857,7 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* FIXME: clean up and release regions */
 )brace
 macro_line|#endif
 multiline_comment|/*********** Providing our information to the user ************/
@@ -3324,7 +3324,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef CONFIG_FB_OF
 r_struct
 id|device_node
 op_star
@@ -3351,12 +3350,12 @@ c_func
 id|dp
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_FB_OF */
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|control_of_init
+r_static
 r_void
 id|__init
 id|control_of_init
@@ -3477,6 +3476,31 @@ id|i
 dot
 id|size
 suffix:semicolon
+multiline_comment|/* Let&squot;s assume we can request either all or nothing */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|addr
+comma
+id|size
+comma
+l_string|&quot;controlfb&quot;
+)paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3531,6 +3555,16 @@ op_assign
 l_int|0xf301b000
 suffix:semicolon
 multiline_comment|/* XXX not in prom? */
+id|request_mem_region
+c_func
+(paren
+id|p-&gt;cmap_regs_phys
+comma
+l_int|0x1000
+comma
+l_string|&quot;controlfb cmap&quot;
+)paren
+suffix:semicolon
 id|p-&gt;cmap_regs
 op_assign
 id|ioremap

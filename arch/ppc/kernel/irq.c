@@ -77,13 +77,6 @@ id|ppc_spurious_interrupts
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|irq_stat
-id|irq_cpustat_t
-id|irq_stat
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|variable|ppc_irq_action
 r_struct
 id|irqaction

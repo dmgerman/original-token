@@ -8783,6 +8783,20 @@ comma
 macro_line|#endif /* CONFIG_AGP_SIS */
 macro_line|#ifdef CONFIG_AGP_VIA
 (brace
+id|PCI_DEVICE_ID_VIA_8371_0
+comma
+id|PCI_VENDOR_ID_VIA
+comma
+id|VIA_APOLLO_SUPER
+comma
+l_string|&quot;Via&quot;
+comma
+l_string|&quot;Apollo Super&quot;
+comma
+id|via_generic_setup
+)brace
+comma
+(brace
 id|PCI_DEVICE_ID_VIA_8501_0
 comma
 id|PCI_VENDOR_ID_VIA
@@ -9040,7 +9054,7 @@ c_func
 id|KERN_WARNING
 id|PFX
 l_string|&quot;Trying generic %s routines&quot;
-l_string|&quot; for device id: %x&bslash;n&quot;
+l_string|&quot; for device id: %04x&bslash;n&quot;
 comma
 id|agp_bridge_info
 (braket
@@ -9078,9 +9092,8 @@ c_func
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;Unsupported %s chipset,&quot;
-l_string|&quot; you might want to try &quot;
-l_string|&quot;agp_try_unsupported=1.&bslash;n&quot;
+l_string|&quot;Unsupported %s chipset (device id: %04x),&quot;
+l_string|&quot; you might want to try agp_try_unsupported=1.&bslash;n&quot;
 comma
 id|agp_bridge_info
 (braket
@@ -9088,6 +9101,8 @@ id|i
 )braket
 dot
 id|vendor_name
+comma
+id|pdev-&gt;device
 )paren
 suffix:semicolon
 r_return

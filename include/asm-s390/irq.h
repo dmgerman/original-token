@@ -2609,9 +2609,9 @@ suffix:semicolon
 )brace
 macro_line|#else
 DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count[cpu])
+mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count(cpu))
 DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count[cpu])
+mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count(cpu))
 macro_line|#endif
 DECL|macro|__STR
 mdefine_line|#define __STR(x) #x

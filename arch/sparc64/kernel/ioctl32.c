@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.93 2000/07/24 22:43:15 anton Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.96 2000/08/02 06:22:35 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -65,6 +65,7 @@ macro_line|#include &lt;asm/openpromio.h&gt;
 macro_line|#include &lt;asm/envctrl.h&gt;
 macro_line|#include &lt;asm/audioio.h&gt;
 macro_line|#include &lt;asm/ethtool.h&gt;
+macro_line|#include &lt;asm/display7seg.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmarp.h&gt;
@@ -19981,6 +19982,21 @@ c_func
 (paren
 id|I2CIOCGADR
 )paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|D7SIOCRD
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|D7SIOCWR
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|D7SIOCTM
+)paren
 multiline_comment|/* Little m */
 id|COMPATIBLE_IOCTL
 c_func
@@ -22888,6 +22904,16 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|additional_ioctls
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
 )brace
 r_for
 c_loop
@@ -23220,11 +23246,6 @@ id|ioctl_trans
 op_star
 id|t
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|filp
 op_assign
 id|fget
@@ -23396,11 +23417,6 @@ id|filp
 suffix:semicolon
 id|out2
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

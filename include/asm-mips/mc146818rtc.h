@@ -2,6 +2,7 @@ multiline_comment|/*&n; * This file is subject to the terms and conditions of th
 macro_line|#ifndef _ASM_MC146818RTC_H
 DECL|macro|_ASM_MC146818RTC_H
 mdefine_line|#define _ASM_MC146818RTC_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef RTC_PORT
 DECL|macro|RTC_PORT

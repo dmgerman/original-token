@@ -58,12 +58,14 @@ DECL|macro|__LC_KERNEL_STACK
 mdefine_line|#define __LC_KERNEL_STACK               0xC40
 DECL|macro|__LC_KERNEL_LEVEL
 mdefine_line|#define __LC_KERNEL_LEVEL               0xC44
+DECL|macro|__LC_IRQ_STAT
+mdefine_line|#define __LC_IRQ_STAT                   0xC48
 DECL|macro|__LC_CPUID
-mdefine_line|#define __LC_CPUID                      0xC50
+mdefine_line|#define __LC_CPUID                      0xC60
 DECL|macro|__LC_CPUADDR
-mdefine_line|#define __LC_CPUADDR                    0xC58
+mdefine_line|#define __LC_CPUADDR                    0xC68
 DECL|macro|__LC_IPLDEV
-mdefine_line|#define __LC_IPLDEV                     0xC6C
+mdefine_line|#define __LC_IPLDEV                     0xC7C
 multiline_comment|/* interrupt handler start with all io, external and mcck interrupt disabled */
 DECL|macro|_RESTART_PSW_MASK
 mdefine_line|#define _RESTART_PSW_MASK    0x00080000
@@ -460,59 +462,87 @@ id|__u32
 id|kernel_level
 suffix:semicolon
 multiline_comment|/* 0xc44 */
-DECL|member|local_bh_count
-id|atomic_t
-id|local_bh_count
+multiline_comment|/* entry.S sensitive area start */
+multiline_comment|/* Next 6 words are the s390 equivalent of irq_stat */
+DECL|member|__softirq_active
+id|__u32
+id|__softirq_active
 suffix:semicolon
 multiline_comment|/* 0xc48 */
-DECL|member|local_irq_count
-id|atomic_t
-id|local_irq_count
+DECL|member|__softirq_mask
+id|__u32
+id|__softirq_mask
 suffix:semicolon
 multiline_comment|/* 0xc4c */
+DECL|member|__local_irq_count
+id|__u32
+id|__local_irq_count
+suffix:semicolon
+multiline_comment|/* 0xc50 */
+DECL|member|__local_bh_count
+id|__u32
+id|__local_bh_count
+suffix:semicolon
+multiline_comment|/* 0xc54 */
+DECL|member|__syscall_count
+id|__u32
+id|__syscall_count
+suffix:semicolon
+multiline_comment|/* 0xc58 */
+DECL|member|pad10
+id|__u8
+id|pad10
+(braket
+l_int|0xc60
+op_minus
+l_int|0xc5c
+)braket
+suffix:semicolon
+multiline_comment|/* 0xc5c */
 DECL|member|cpu_data
 r_struct
 id|cpuinfo_S390
 id|cpu_data
 suffix:semicolon
-multiline_comment|/* 0xc50 */
+multiline_comment|/* 0xc60 */
 DECL|member|ipl_device
 id|__u32
 id|ipl_device
 suffix:semicolon
-multiline_comment|/* 0xc6c */
+multiline_comment|/* 0xc7c */
+multiline_comment|/* entry.S sensitive area end */
 multiline_comment|/* SMP info area: defined by DJB */
 DECL|member|jiffy_timer_cc
 id|__u64
 id|jiffy_timer_cc
 suffix:semicolon
-multiline_comment|/* 0xc70 */
+multiline_comment|/* 0xc80 */
 DECL|member|ext_call_fast
 id|atomic_t
 id|ext_call_fast
 suffix:semicolon
-multiline_comment|/* 0xc78 */
+multiline_comment|/* 0xc88 */
 DECL|member|ext_call_queue
 id|atomic_t
 id|ext_call_queue
 suffix:semicolon
-multiline_comment|/* 0xc7c */
+multiline_comment|/* 0xc8c */
 DECL|member|ext_call_count
 id|atomic_t
 id|ext_call_count
 suffix:semicolon
-multiline_comment|/* 0xc80 */
+multiline_comment|/* 0xc90 */
 multiline_comment|/* Align SMP info to the top 1k of prefix area */
-DECL|member|pad10
+DECL|member|pad11
 id|__u8
-id|pad10
+id|pad11
 (braket
 l_int|0x1000
 op_minus
-l_int|0xc84
+l_int|0xc94
 )braket
 suffix:semicolon
-multiline_comment|/* 0xc84 */
+multiline_comment|/* 0xc94 */
 )brace
 id|__attribute__
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.47 2000/03/25 05:18:10 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1999  David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.48 2000/08/02 06:22:35 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1999  David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -54,6 +54,16 @@ macro_line|#ifdef CONFIG_ENVCTRL
 r_extern
 r_int
 id|envctrl_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DISPLAY7SEG
+r_extern
+r_int
+id|d7s_init
 c_func
 (paren
 r_void
@@ -1884,6 +1894,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_OBP_FLASH
 id|flash_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DISPLAY7SEG
+id|d7s_init
 c_func
 (paren
 )paren

@@ -6,18 +6,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;&t;&t;/* for membar() */
-macro_line|#ifndef CONFIG_SMP
-r_extern
-r_int
-r_int
-id|__local_bh_count
-suffix:semicolon
-DECL|macro|local_bh_count
-mdefine_line|#define local_bh_count(cpu)&t;__local_bh_count
-macro_line|#else
-DECL|macro|local_bh_count
-mdefine_line|#define local_bh_count(cpu)&t;(cpu_data[cpu].bh_count)
-macro_line|#endif
 DECL|macro|local_bh_disable
 mdefine_line|#define local_bh_disable()&t;(local_bh_count(smp_processor_id())++)
 DECL|macro|local_bh_enable

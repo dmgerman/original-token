@@ -28,26 +28,13 @@ DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
 multiline_comment|/* IRQ handler dispatch entry and exit. */
 macro_line|#ifdef CONFIG_SMP
-r_extern
-r_int
-r_int
-id|__local_irq_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)                     &bslash;&n;do {    hardirq_enter(cpu);                     &bslash;&n;        spin_unlock_wait(&amp;global_irq_lock);     &bslash;&n;&t;} while(0)
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)      hardirq_exit(cpu)
 macro_line|#else
-r_extern
-r_int
-r_int
-id|__local_irq_count
-suffix:semicolon
-mdefine_line|#define irq_enter(cpu, irq)     (__local_irq_count++)
-mdefine_line|#define irq_exit(cpu, irq)      (__local_irq_count--)
+mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count(cpu))
+mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count(cpu))
 macro_line|#endif
 multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; * Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Changed these to btfixup entities... It saves cycles :)&n; */
 id|BTFIXUPDEF_CALL

@@ -2901,6 +2901,7 @@ op_complement
 l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME: is the mask correct? */
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
@@ -2980,6 +2981,7 @@ id|in_dev
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;
 multiline_comment|/* I hope both addr and mask are in the net order */
 id|sppp_cisco_send
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.66 2000/05/09 17:40:14 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999,2000 Jakub Jelinek (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: traps.c,v 1.67 2000/07/30 23:12:24 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999,2000 Jakub Jelinek (jakub@redhat.com)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -1898,10 +1898,6 @@ id|lvl
 id|siginfo_t
 id|info
 suffix:semicolon
-id|lock_kernel
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1984,10 +1980,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|unlock_kernel
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|bad_trap_tl1
 r_void
@@ -2008,11 +2000,6 @@ id|buffer
 l_int|24
 )braket
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sprintf
 (paren
 id|buffer
@@ -2027,11 +2014,6 @@ id|die_if_kernel
 id|buffer
 comma
 id|regs
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2055,11 +2037,6 @@ id|sfar
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2123,11 +2100,6 @@ op_amp
 id|info
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2289,11 +2261,6 @@ id|info.si_trapno
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|force_sig_info
 c_func
 (paren
@@ -2303,11 +2270,6 @@ op_amp
 id|info
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2453,11 +2415,6 @@ id|info.si_trapno
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|force_sig_info
 c_func
 (paren
@@ -2467,11 +2424,6 @@ op_amp
 id|info
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -4211,12 +4163,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Or else! */
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Generic parts&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br.c,v 1.43 2000/05/25 02:21:36 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Generic parts&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br.c,v 1.44 2000/08/04 06:08:32 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -52,10 +52,12 @@ id|br_handle_frame_hook
 op_assign
 id|br_handle_frame
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 id|br_ioctl_hook
 op_assign
 id|br_ioctl_deviceless_stub
 suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_ATM_LANE) || defined(CONFIG_ATM_LANE_MODULE)
 id|br_fdb_get_hook
 op_assign
@@ -100,10 +102,12 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_INET
 id|br_ioctl_hook
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 DECL|function|br_deinit
 r_static

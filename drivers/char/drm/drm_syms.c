@@ -147,6 +147,27 @@ c_func
 id|drm_mmap
 )paren
 suffix:semicolon
+DECL|variable|drm_vm_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|drm_vm_ops
+)paren
+suffix:semicolon
+DECL|variable|drm_vm_shm_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|drm_vm_shm_ops
+)paren
+suffix:semicolon
+DECL|variable|drm_vm_dma_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|drm_vm_dma_ops
+)paren
+suffix:semicolon
 multiline_comment|/* Proc support (proc.c) */
 DECL|variable|drm_proc_init
 id|EXPORT_SYMBOL

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.6 2000/07/10 20:56:53 anton Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.9 2000/08/01 04:53:58 anton Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H
@@ -457,8 +457,19 @@ DECL|macro|__flush_page_to_ram
 mdefine_line|#define __flush_page_to_ram(addr) BTFIXUP_CALL(__flush_page_to_ram)(addr)
 DECL|macro|flush_sig_insns
 mdefine_line|#define flush_sig_insns(mm,insn_addr) BTFIXUP_CALL(flush_sig_insns)(mm,insn_addr)
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page)    __flush_page_to_ram(page_address(page))
+r_extern
+r_void
+id|flush_page_to_ram
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 DECL|struct|pgtable_cache_struct
 r_extern
 r_struct

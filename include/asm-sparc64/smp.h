@@ -44,11 +44,12 @@ r_struct
 id|cpuinfo_sparc
 (brace
 multiline_comment|/* Dcache line 1 */
-DECL|member|bh_count
+DECL|member|__pad0
 r_int
 r_int
-id|bh_count
+id|__pad0
 suffix:semicolon
+multiline_comment|/* bh_count moved to irq_stat for consistency. KAO */
 DECL|member|multiplier
 r_int
 r_int

@@ -26,13 +26,6 @@ macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
 macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 multiline_comment|/*&n; * Linux has a controller-independent x86 interrupt architecture.&n; * every controller has a &squot;controller-template&squot;, that is used&n; * by the main code to do the right thing. Each driver-visible&n; * interrupt source is transparently wired to the apropriate&n; * controller. Thus drivers need not be aware of the&n; * interrupt-controller.&n; *&n; * Various interrupt controllers we handle: 8259 PIC, SMP IO-APIC,&n; * PIIX4&squot;s internal 8259 PIC and SGI&squot;s Visual Workstation Cobalt (IO-)APIC.&n; * (IO-APICs assumed to be messaging to Pentium local-APICs)&n; *&n; * the code is designed to be easily extended with new/different&n; * interrupt controllers, without having to do assembly magic.&n; */
-DECL|variable|irq_stat
-id|irq_cpustat_t
-id|irq_stat
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|variable|sgi_i2regs
 r_struct
 id|sgi_int2_regs
@@ -126,22 +119,6 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|local_bh_count
-r_int
-r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-DECL|variable|local_irq_count
-r_int
-r_int
-id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|variable|spurious_count
 r_int
 r_int

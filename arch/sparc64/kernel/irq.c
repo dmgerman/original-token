@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.89 2000/06/30 10:18:38 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.90 2000/08/01 00:28:33 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2302,19 +2302,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Only uniprocessor needs this IRQ/BH locking depth, on SMP it&n; * lives in the brlock table for cache reasons.&n; */
-macro_line|#ifndef CONFIG_SMP
-DECL|variable|__local_irq_count
-r_int
-r_int
-id|__local_irq_count
-suffix:semicolon
-DECL|variable|__local_bh_count
-r_int
-r_int
-id|__local_bh_count
-suffix:semicolon
-macro_line|#else
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Who has global_irq_lock. */
 DECL|variable|global_irq_holder
 r_int
@@ -2433,12 +2421,11 @@ c_func
 (paren
 l_string|&quot;%u &quot;
 comma
-id|cpu_data
-(braket
+id|local_bh_count
+c_func
+(paren
 id|i
-)braket
-dot
-id|bh_count
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -3293,6 +3280,7 @@ op_ne
 l_int|0
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
@@ -3321,6 +3309,7 @@ id|pci_dma_wsync
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

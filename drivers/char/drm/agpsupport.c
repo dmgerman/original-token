@@ -1660,6 +1660,15 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|VIA_APOLLO_SUPER
+suffix:colon
+id|head-&gt;chipset
+op_assign
+l_string|&quot;VIA Apollo Super&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|SIS_GENERIC
 suffix:colon
 id|head-&gt;chipset

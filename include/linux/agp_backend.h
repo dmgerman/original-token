@@ -51,6 +51,9 @@ comma
 DECL|enumerator|VIA_MVP4
 id|VIA_MVP4
 comma
+DECL|enumerator|VIA_APOLLO_SUPER
+id|VIA_APOLLO_SUPER
+comma
 DECL|enumerator|VIA_APOLLO_PRO
 id|VIA_APOLLO_PRO
 comma

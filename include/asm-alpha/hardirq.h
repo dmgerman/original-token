@@ -1,16 +1,49 @@
 macro_line|#ifndef _ALPHA_HARDIRQ_H
 DECL|macro|_ALPHA_HARDIRQ_H
 mdefine_line|#define _ALPHA_HARDIRQ_H
-multiline_comment|/* Initially just a straight copy of the i386 code.  */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
-macro_line|#ifndef CONFIG_SMP
-r_extern
+multiline_comment|/* entry.S is sensitive to the offsets of these fields */
+r_typedef
+r_struct
+(brace
+DECL|member|__softirq_active
+r_int
+r_int
+id|__softirq_active
+suffix:semicolon
+DECL|member|__softirq_mask
+r_int
+r_int
+id|__softirq_mask
+suffix:semicolon
+DECL|member|__local_irq_count
+r_int
 r_int
 id|__local_irq_count
 suffix:semicolon
-DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count(cpu)  ((void)(cpu), __local_irq_count)
+DECL|member|__local_bh_count
+r_int
+r_int
+id|__local_bh_count
+suffix:semicolon
+DECL|member|__syscall_count
+r_int
+r_int
+id|__syscall_count
+suffix:semicolon
+DECL|typedef|irq_cpustat_t
+)brace
+id|____cacheline_aligned
+id|irq_cpustat_t
+suffix:semicolon
+macro_line|#include &lt;linux/irq_cpustat.h&gt;&t;/* Standard mappings for irq_cpustat_t above */
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
+DECL|macro|in_interrupt
+mdefine_line|#define in_interrupt()&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __cpu = smp_processor_id();&t;&t;&t;&t;&bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu)) != 0;&t;&bslash;&n;})
+DECL|macro|in_irq
+mdefine_line|#define in_irq() (local_irq_count(smp_processor_id()) != 0)
+macro_line|#ifndef CONFIG_SMP
 r_extern
 r_int
 r_int
@@ -20,18 +53,6 @@ id|__irq_attempt
 suffix:semicolon
 DECL|macro|irq_attempt
 mdefine_line|#define irq_attempt(cpu, irq)  ((void)(cpu), __irq_attempt[irq])
-macro_line|#else
-DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count(cpu)  (cpu_data[cpu].irq_count)
-DECL|macro|irq_attempt
-mdefine_line|#define irq_attempt(cpu, irq) (cpu_data[cpu].irq_attempt[irq])
-macro_line|#endif
-multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
-DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt()&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __cpu = smp_processor_id();&t;&t;&t;&t;&bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu)) != 0;&t;&bslash;&n;})
-DECL|macro|in_irq
-mdefine_line|#define in_irq() (local_irq_count(smp_processor_id()) != 0)
-macro_line|#ifndef CONFIG_SMP
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count(cpu) == 0)
 DECL|macro|hardirq_endlock
@@ -43,6 +64,8 @@ mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count(cpu)--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
+DECL|macro|irq_attempt
+mdefine_line|#define irq_attempt(cpu, irq) (cpu_data[cpu].irq_attempt[irq])
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;

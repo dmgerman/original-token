@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.218 2000/07/10 23:22:32 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.219 2000/08/01 04:53:58 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -152,8 +152,6 @@ suffix:semicolon
 DECL|variable|viking_mxcc_present
 r_int
 id|viking_mxcc_present
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|srmmu_context_spinlock
 id|spinlock_t
@@ -273,14 +271,6 @@ r_int
 id|srmmu_cache_pagetables
 suffix:semicolon
 multiline_comment|/* XXX Make this dynamic based on ram size - Anton */
-DECL|macro|SRMMU_NOCACHE_NPAGES
-mdefine_line|#define SRMMU_NOCACHE_NPAGES 256
-DECL|macro|SRMMU_NOCACHE_VADDR
-mdefine_line|#define SRMMU_NOCACHE_VADDR 0xfc000000
-DECL|macro|SRMMU_NOCACHE_SIZE
-mdefine_line|#define SRMMU_NOCACHE_SIZE (SRMMU_NOCACHE_NPAGES*PAGE_SIZE)
-DECL|macro|SRMMU_NOCACHE_END
-mdefine_line|#define SRMMU_NOCACHE_END (SRMMU_NOCACHE_VADDR + SRMMU_NOCACHE_SIZE)
 DECL|macro|SRMMU_NOCACHE_BITMAP_SIZE
 mdefine_line|#define SRMMU_NOCACHE_BITMAP_SIZE (SRMMU_NOCACHE_NPAGES * 16)
 DECL|macro|SRMMU_NOCACHE_BITMAP_SHIFT
@@ -6614,13 +6604,21 @@ id|node_str
 l_int|128
 )braket
 suffix:semicolon
-r_int
-r_int
-id|end_pfn
+id|pgd_t
+op_star
+id|pgd
+suffix:semicolon
+id|pmd_t
+op_star
+id|pmd
+suffix:semicolon
+id|pte_t
+op_star
+id|pte
 suffix:semicolon
 id|sparc_iomap.start
 op_assign
-l_int|0xfd000000
+id|SUN4M_IOBASE_VADDR
 suffix:semicolon
 multiline_comment|/* 16MB of IOSPACE on all sun4m&squot;s. */
 r_if
@@ -6730,10 +6728,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|last_valid_pfn
-op_assign
-id|end_pfn
-op_assign
 id|bootmem_init
 c_func
 (paren
@@ -6881,6 +6875,54 @@ id|DVMA_END
 )paren
 suffix:semicolon
 macro_line|#endif
+id|srmmu_allocate_ptable_skeleton
+c_func
+(paren
+id|FIX_KMAP_BEGIN
+comma
+id|FIX_KMAP_END
+)paren
+suffix:semicolon
+id|srmmu_allocate_ptable_skeleton
+c_func
+(paren
+id|PKMAP_BASE
+comma
+id|PKMAP_BASE_END
+)paren
+suffix:semicolon
+id|pgd
+op_assign
+id|pgd_offset_k
+c_func
+(paren
+id|PKMAP_BASE
+)paren
+suffix:semicolon
+id|pmd
+op_assign
+id|pmd_offset
+c_func
+(paren
+id|pgd
+comma
+id|PKMAP_BASE
+)paren
+suffix:semicolon
+id|pte
+op_assign
+id|pte_offset
+c_func
+(paren
+id|pmd
+comma
+id|PKMAP_BASE
+)paren
+suffix:semicolon
+id|pkmap_page_table
+op_assign
+id|pte
+suffix:semicolon
 id|flush_cache_all
 c_func
 (paren
@@ -6931,6 +6973,11 @@ c_func
 id|num_contexts
 )paren
 suffix:semicolon
+id|kmap_init
+c_func
+(paren
+)paren
+suffix:semicolon
 (brace
 r_int
 r_int
@@ -6952,7 +6999,16 @@ id|zones_size
 id|ZONE_DMA
 )braket
 op_assign
-id|end_pfn
+id|max_low_pfn
+suffix:semicolon
+id|zones_size
+(braket
+id|ZONE_HIGHMEM
+)braket
+op_assign
+id|highend_pfn
+op_minus
+id|max_low_pfn
 suffix:semicolon
 id|free_area_init
 c_func

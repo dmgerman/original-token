@@ -977,21 +977,6 @@ id|read_lock
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#else /* CONFIG_SMP */
-DECL|variable|__local_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__local_bh_count
-)paren
-suffix:semicolon
-DECL|variable|__local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__local_irq_count
-)paren
-suffix:semicolon
 macro_line|#endif /* CONFIG_SMP */
 DECL|variable|rtc_lock
 id|EXPORT_SYMBOL

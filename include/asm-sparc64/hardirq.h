@@ -6,19 +6,59 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/brlock.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+multiline_comment|/* entry.S is sensitive to the offsets of these fields */
+r_typedef
+r_struct
+(brace
+DECL|member|__softirq_active
+r_int
+r_int
+id|__softirq_active
+suffix:semicolon
+DECL|member|__softirq_mask
+r_int
+r_int
+id|__softirq_mask
+suffix:semicolon
 macro_line|#ifndef CONFIG_SMP
-r_extern
+DECL|member|__local_irq_count
 r_int
 r_int
 id|__local_irq_count
 suffix:semicolon
-DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count(cpu)&t;__local_irq_count
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(__local_irq_count++)
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(__local_irq_count--)
 macro_line|#else
+DECL|member|__unused_on_SMP
+r_int
+r_int
+id|__unused_on_SMP
+suffix:semicolon
+multiline_comment|/* DaveM says use brlock for SMP irq. KAO */
+macro_line|#endif
+DECL|member|__local_bh_count
+r_int
+r_int
+id|__local_bh_count
+suffix:semicolon
+DECL|member|__syscall_count
+r_int
+r_int
+id|__syscall_count
+suffix:semicolon
+DECL|typedef|irq_cpustat_t
+)brace
+id|____cacheline_aligned
+id|irq_cpustat_t
+suffix:semicolon
+macro_line|#include &lt;linux/irq_cpustat.h&gt;&t;/* Standard mappings for irq_cpustat_t above */
+multiline_comment|/* Note that local_irq_count() is replaced by sparc64 specific version for SMP */
+macro_line|#ifndef CONFIG_SMP
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)&t;((void)(irq), local_irq_count(cpu)++)
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)&t;((void)(irq), local_irq_count(cpu)--)
+macro_line|#else
+DECL|macro|local_irq_count
+macro_line|#undef local_irq_count
 DECL|macro|local_irq_count
 mdefine_line|#define local_irq_count(cpu)&t;(__brlock_array[cpu][BR_GLOBALIRQ_LOCK])
 DECL|macro|irq_enter

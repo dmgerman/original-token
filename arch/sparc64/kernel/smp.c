@@ -327,15 +327,6 @@ id|id
 r_int
 id|i
 suffix:semicolon
-id|cpu_data
-(braket
-id|id
-)braket
-dot
-id|bh_count
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* multiplier and counter set by&n;&t;   smp_setup_percpu_timer()  */
 id|cpu_data
 (braket

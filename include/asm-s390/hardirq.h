@@ -6,20 +6,46 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/lowcore.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
+multiline_comment|/* No irq_cpustat_t for s390, the data is held directly in S390_lowcore */
+multiline_comment|/*&n; * Simple wrappers reducing source bloat.  S390 specific because each&n; * cpu stores its data in S390_lowcore (PSA) instead of using a cache&n; * aligned array element like most architectures.&n; */
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|softirq_active
+mdefine_line|#define softirq_active(cpu)&t;(safe_get_cpu_lowcore(cpu).__softirq_active)
+DECL|macro|softirq_mask
+mdefine_line|#define softirq_mask(cpu)&t;(safe_get_cpu_lowcore(cpu).__softirq_mask)
+DECL|macro|local_irq_count
+mdefine_line|#define local_irq_count(cpu)&t;(safe_get_cpu_lowcore(cpu).__local_irq_count)
+DECL|macro|local_bh_count
+mdefine_line|#define local_bh_count(cpu)&t;(safe_get_cpu_lowcore(cpu).__local_bh_count)
+DECL|macro|syscall_count
+mdefine_line|#define syscall_count(cpu)&t;(safe_get_cpu_lowcore(cpu).__syscall_count)
+macro_line|#else&t;/* CONFIG_SMP */
+multiline_comment|/* Optimize away the cpu calculation, it is always current PSA */
+DECL|macro|softirq_active
+mdefine_line|#define softirq_active(cpu)&t;((void)(cpu), S390_lowcore.__softirq_active)
+DECL|macro|softirq_mask
+mdefine_line|#define softirq_mask(cpu)&t;((void)(cpu), S390_lowcore.__softirq_mask)
+DECL|macro|local_irq_count
+mdefine_line|#define local_irq_count(cpu)&t;((void)(cpu), S390_lowcore.__local_irq_count)
+DECL|macro|local_bh_count
+mdefine_line|#define local_bh_count(cpu)&t;((void)(cpu), S390_lowcore.__local_bh_count)
+DECL|macro|syscall_count
+mdefine_line|#define syscall_count(cpu)&t;((void)(cpu), S390_lowcore.__syscall_count)
+macro_line|#endif&t;/* CONFIG_SMP */
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; * Special definitions for s390, always access current PSA.&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() ((atomic_read(&amp;S390_lowcore.local_irq_count) + atomic_read(&amp;S390_lowcore.local_bh_count)) != 0)
+mdefine_line|#define in_interrupt() ((S390_lowcore.__local_irq_count + S390_lowcore.__local_bh_count) != 0)
 DECL|macro|in_irq
-mdefine_line|#define in_irq() (atomic_read(&amp;S390_lowcore.local_irq_count) != 0)
+mdefine_line|#define in_irq() (S390_lowcore.__local_irq_count != 0)
 macro_line|#ifndef CONFIG_SMP
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;(atomic_read(&amp;S390_lowcore.local_irq_count) == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count(cpu) == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
 DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(atomic_inc(&amp;S390_lowcore.local_irq_count))
+mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count(cpu)++)
 DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(atomic_dec(&amp;S390_lowcore.local_irq_count))
+mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count(cpu)--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;do { } while (0)
 macro_line|#else
@@ -93,17 +119,11 @@ r_int
 id|cpu
 )paren
 (brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|safe_get_cpu_lowcore
+op_increment
+id|local_irq_count
 c_func
 (paren
 id|cpu
-)paren
-dot
-id|local_irq_count
 )paren
 suffix:semicolon
 id|atomic_inc
@@ -132,17 +152,11 @@ op_amp
 id|global_irq_count
 )paren
 suffix:semicolon
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|safe_get_cpu_lowcore
+op_decrement
+id|local_irq_count
 c_func
 (paren
 id|cpu
-)paren
-dot
-id|local_irq_count
 )paren
 suffix:semicolon
 )brace

@@ -224,15 +224,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|offb_setup
-c_func
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|atyfb_init
 c_func
 (paren
@@ -360,15 +351,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|s3triofb_setup
-c_func
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|vesafb_init
 c_func
 (paren
@@ -471,6 +453,40 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|control_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|control_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|platinum_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|platinum_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|valkyriefb_init
 c_func
 (paren
@@ -488,19 +504,10 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|control_init
+id|chips_init
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|control_setup
-c_func
-(paren
-r_char
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -687,26 +694,7 @@ id|sbusfb_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_3DFX
-(brace
-l_string|&quot;tdfx&quot;
-comma
-id|tdfxfb_init
-comma
-id|tdfxfb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_SGIVW
-(brace
-l_string|&quot;sgivw&quot;
-comma
-id|sgivwfb_init
-comma
-id|sgivwfb_setup
-)brace
-comma
-macro_line|#endif
+multiline_comment|/*&n;&t; * Chipset specific drivers that use resource management&n;&t; */
 macro_line|#ifdef CONFIG_FB_RETINAZ3
 (brace
 l_string|&quot;retz3&quot;
@@ -717,16 +705,6 @@ id|retz3fb_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_ACORN
-(brace
-l_string|&quot;acorn&quot;
-comma
-id|acornfb_init
-comma
-id|acornfb_setup
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_FB_AMIGA
 (brace
 l_string|&quot;amifb&quot;
@@ -734,26 +712,6 @@ comma
 id|amifb_init
 comma
 id|amifb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_ATARI
-(brace
-l_string|&quot;atafb&quot;
-comma
-id|atafb_init
-comma
-id|atafb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_MAC
-(brace
-l_string|&quot;macfb&quot;
-comma
-id|macfb_init
-comma
-id|macfb_setup
 )brace
 comma
 macro_line|#endif
@@ -827,24 +785,63 @@ id|aty128fb_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_OF
-multiline_comment|/*&n;&t; * Offb must be initialized _after_ all other frame buffer devices&n;&t; * that use PCI probing and PCI resources! [ Geert ]&n;&t; */
+macro_line|#ifdef CONFIG_FB_VIRGE
 (brace
-l_string|&quot;offb&quot;
+l_string|&quot;virge&quot;
 comma
-id|offb_init
+id|virgefb_init
 comma
-id|offb_setup
+id|virgefb_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_IGA
+macro_line|#ifdef CONFIG_FB_RIVA
 (brace
-l_string|&quot;igafb&quot;
+l_string|&quot;riva&quot;
 comma
-id|igafb_init
+id|rivafb_init
 comma
-id|igafb_setup
+id|rivafb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_CONTROL
+(brace
+l_string|&quot;controlfb&quot;
+comma
+id|control_init
+comma
+id|control_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_PLATINUM
+(brace
+l_string|&quot;platinumfb&quot;
+comma
+id|platinum_init
+comma
+id|platinum_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_VALKYRIE
+(brace
+l_string|&quot;valkyriefb&quot;
+comma
+id|valkyriefb_init
+comma
+id|valkyriefb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_CT65550
+(brace
+l_string|&quot;chipsfb&quot;
+comma
+id|chips_init
+comma
+l_int|NULL
 )brace
 comma
 macro_line|#endif
@@ -855,6 +852,128 @@ comma
 id|imsttfb_init
 comma
 id|imsttfb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_S3TRIO
+(brace
+l_string|&quot;s3trio&quot;
+comma
+id|s3triofb_init
+comma
+l_int|NULL
+)brace
+comma
+macro_line|#endif 
+macro_line|#ifdef CONFIG_FB_FM2
+(brace
+l_string|&quot;fm2fb&quot;
+comma
+id|fm2fb_init
+comma
+id|fm2fb_setup
+)brace
+comma
+macro_line|#endif 
+macro_line|#ifdef CONFIG_FB_SIS
+(brace
+l_string|&quot;sisfb&quot;
+comma
+id|sisfb_init
+comma
+id|sisfb_setup
+)brace
+comma
+macro_line|#endif
+multiline_comment|/*&n;&t; * Generic drivers that are used as fallbacks&n;&t; * &n;&t; * These depend on resource management and must be initialized&n;&t; * _after_ all other frame buffer devices that use resource&n;&t; * management!&n;&t; */
+macro_line|#ifdef CONFIG_FB_OF
+(brace
+l_string|&quot;offb&quot;
+comma
+id|offb_init
+comma
+l_int|NULL
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_VESA
+(brace
+l_string|&quot;vesa&quot;
+comma
+id|vesafb_init
+comma
+id|vesafb_setup
+)brace
+comma
+macro_line|#endif 
+multiline_comment|/*&n;&t; * Chipset specific drivers that don&squot;t use resource management (yet)&n;&t; */
+macro_line|#ifdef CONFIG_FB_3DFX
+(brace
+l_string|&quot;tdfx&quot;
+comma
+id|tdfxfb_init
+comma
+id|tdfxfb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_SGIVW
+(brace
+l_string|&quot;sgivw&quot;
+comma
+id|sgivwfb_init
+comma
+id|sgivwfb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_ACORN
+(brace
+l_string|&quot;acorn&quot;
+comma
+id|acornfb_init
+comma
+id|acornfb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_ATARI
+(brace
+l_string|&quot;atafb&quot;
+comma
+id|atafb_init
+comma
+id|atafb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_MAC
+(brace
+l_string|&quot;macfb&quot;
+comma
+id|macfb_init
+comma
+id|macfb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_HGA
+(brace
+l_string|&quot;hga&quot;
+comma
+id|hgafb_init
+comma
+id|hgafb_setup
+)brace
+comma
+macro_line|#endif 
+macro_line|#ifdef CONFIG_FB_IGA
+(brace
+l_string|&quot;igafb&quot;
+comma
+id|igafb_init
+comma
+id|igafb_setup
 )brace
 comma
 macro_line|#endif
@@ -878,16 +997,6 @@ l_int|NULL
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_S3TRIO
-(brace
-l_string|&quot;s3trio&quot;
-comma
-id|s3triofb_init
-comma
-id|s3triofb_setup
-)brace
-comma
-macro_line|#endif 
 macro_line|#ifdef CONFIG_FB_TGA
 (brace
 l_string|&quot;tga&quot;
@@ -898,56 +1007,6 @@ id|tgafb_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_VIRGE
-(brace
-l_string|&quot;virge&quot;
-comma
-id|virgefb_init
-comma
-id|virgefb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_RIVA
-(brace
-l_string|&quot;riva&quot;
-comma
-id|rivafb_init
-comma
-id|rivafb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_VESA
-(brace
-l_string|&quot;vesa&quot;
-comma
-id|vesafb_init
-comma
-id|vesafb_setup
-)brace
-comma
-macro_line|#endif 
-macro_line|#ifdef CONFIG_FB_VGA16
-(brace
-l_string|&quot;vga16&quot;
-comma
-id|vga16fb_init
-comma
-id|vga16fb_setup
-)brace
-comma
-macro_line|#endif 
-macro_line|#ifdef CONFIG_FB_HGA
-(brace
-l_string|&quot;hga&quot;
-comma
-id|hgafb_init
-comma
-id|hgafb_setup
-)brace
-comma
-macro_line|#endif 
 macro_line|#ifdef CONFIG_FB_HP300
 (brace
 l_string|&quot;hpfb&quot;
@@ -958,26 +1017,6 @@ id|hpfb_setup
 )brace
 comma
 macro_line|#endif 
-macro_line|#ifdef CONFIG_FB_CONTROL
-(brace
-l_string|&quot;controlfb&quot;
-comma
-id|control_init
-comma
-id|control_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_VALKYRIE
-(brace
-l_string|&quot;valkyriefb&quot;
-comma
-id|valkyriefb_init
-comma
-id|valkyriefb_setup
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_FB_G364
 (brace
 l_string|&quot;g364&quot;
@@ -998,16 +1037,6 @@ id|sa1100fb_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_FM2
-(brace
-l_string|&quot;fm2fb&quot;
-comma
-id|fm2fb_init
-comma
-id|fm2fb_setup
-)brace
-comma
-macro_line|#endif 
 macro_line|#ifdef CONFIG_FB_SUN3
 (brace
 l_string|&quot;sun3&quot;
@@ -1028,6 +1057,17 @@ id|hitfb_setup
 )brace
 comma
 macro_line|#endif
+multiline_comment|/*&n;&t; * Generic drivers that don&squot;t use resource management (yet)&n;&t; */
+macro_line|#ifdef CONFIG_FB_VGA16
+(brace
+l_string|&quot;vga16&quot;
+comma
+id|vga16fb_init
+comma
+id|vga16fb_setup
+)brace
+comma
+macro_line|#endif 
 macro_line|#ifdef CONFIG_GSP_RESOLVER
 multiline_comment|/* Not a real frame buffer device... */
 (brace
@@ -1039,18 +1079,8 @@ id|resolver_video_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_SIS
-(brace
-l_string|&quot;sisfb&quot;
-comma
-id|sisfb_init
-comma
-id|sisfb_setup
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_FB_VIRTUAL
-multiline_comment|/* Must be last to avoid that vfb becomes your primary display */
+multiline_comment|/*&n;&t; * Vfb must be last to avoid that it becomes your primary display if&n;&t; * other display devices are present&n;&t; */
 (brace
 l_string|&quot;vfb&quot;
 comma
@@ -1128,6 +1158,16 @@ id|fbcon_is_default
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_OF
+DECL|variable|__initdata
+r_static
+r_int
+id|ofonly
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|function|fbmem_read_proc
 r_static
 r_int
@@ -3764,6 +3804,22 @@ comma
 id|FB_MAJOR
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_OF
+r_if
+c_cond
+(paren
+id|ofonly
+)paren
+(brace
+id|offb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; *  Probe for all builtin frame buffer devices&n;&t; */
 r_for
 c_loop
@@ -4091,6 +4147,29 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_FB_OF
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|options
+comma
+l_string|&quot;ofonly&quot;
+)paren
+)paren
+(brace
+id|ofonly
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.44 2000/07/10 20:57:35 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.45 2000/07/30 23:12:24 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1371,11 +1371,6 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 (paren
 l_string|&quot;Unimplemented SPARC system call %ld&bslash;n&quot;
@@ -1393,11 +1388,6 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOSYS
@@ -1417,11 +1407,6 @@ id|regs
 (brace
 id|siginfo_t
 id|info
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_SPARC_BREAKPOINT
 id|printk
@@ -1480,11 +1465,6 @@ id|regs-&gt;tnpc
 )paren
 suffix:semicolon
 macro_line|#endif
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 r_extern
 r_void
@@ -1626,11 +1606,6 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|regs-&gt;tpc
 op_assign
 id|regs-&gt;tnpc
@@ -1669,11 +1644,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOSYS
@@ -1697,11 +1667,6 @@ r_int
 id|count
 op_assign
 l_int|0
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|regs-&gt;tpc
 op_assign
@@ -1732,11 +1697,6 @@ c_func
 id|SIGSEGV
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -1858,11 +1818,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2071,11 +2026,6 @@ op_assign
 r_int
 )paren
 id|new_p
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 l_int|0

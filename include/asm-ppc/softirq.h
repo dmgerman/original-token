@@ -3,14 +3,6 @@ DECL|macro|__ASM_SOFTIRQ_H
 mdefine_line|#define __ASM_SOFTIRQ_H
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-r_extern
-r_int
-r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|macro|local_bh_disable
 mdefine_line|#define local_bh_disable()&t;do { local_bh_count(smp_processor_id())++; barrier(); } while (0)
 DECL|macro|local_bh_enable

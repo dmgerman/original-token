@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos32.c,v 1.52 2000/07/10 20:57:35 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/* $Id: sys_sunos32.c,v 1.53 2000/07/30 23:12:24 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -669,11 +669,6 @@ comma
 id|oldbrk
 suffix:semicolon
 multiline_comment|/* This should do it hopefully... */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|oldbrk
 op_assign
 (paren
@@ -708,11 +703,6 @@ op_assign
 id|oldbrk
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -727,11 +717,6 @@ r_int
 id|increment
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -740,11 +725,6 @@ comma
 id|current-&gt;comm
 comma
 id|increment
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -793,12 +773,21 @@ id|u32
 id|strategy
 )paren
 (brace
-multiline_comment|/* I wanna see who uses this... */
-id|lock_kernel
-c_func
-(paren
-)paren
+r_static
+r_int
+id|count
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* I wanna see who uses this... */
+r_if
+c_cond
+(paren
+id|count
+op_increment
+OL
+l_int|5
+)paren
 id|printk
 c_func
 (paren
@@ -817,11 +806,6 @@ id|strategy
 )braket
 suffix:colon
 l_string|&quot;BOGUS&quot;
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2048,11 +2032,6 @@ r_static
 r_int
 id|cnt
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|regs
 op_assign
 id|current-&gt;thread.kregs
@@ -2127,11 +2106,6 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOSYS
@@ -3207,11 +3181,6 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* We don&squot;t handle the integer fs type */
 r_if
 c_cond
@@ -3514,6 +3483,11 @@ id|dev_fname
 r_goto
 id|out2
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|do_mount
@@ -3528,6 +3502,11 @@ comma
 id|linux_flags
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -3559,11 +3538,6 @@ id|dir_page
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -3746,16 +3720,7 @@ r_int
 id|sig
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
+r_return
 id|kill_pg
 c_func
 (paren
@@ -3765,14 +3730,6 @@ id|sig
 comma
 l_int|0
 )paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 DECL|function|sunos_audit
@@ -3807,11 +3764,6 @@ r_void
 id|u32
 id|ret
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|ret
 op_assign
 (paren
@@ -3830,11 +3782,6 @@ id|u32
 )paren
 id|idprom-&gt;id_sernum
 )paren
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

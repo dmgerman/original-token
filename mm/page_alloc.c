@@ -53,7 +53,7 @@ id|MAX_NR_ZONES
 )braket
 op_assign
 (brace
-l_int|128
+l_int|32
 comma
 l_int|128
 comma
@@ -1718,7 +1718,40 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  %s: &quot;
+l_string|&quot;  %c%d%d %s: &quot;
+comma
+(paren
+id|zone-&gt;free_pages
+OG
+id|zone-&gt;pages_low
+ques
+c_cond
+(paren
+id|zone-&gt;free_pages
+OG
+id|zone-&gt;pages_high
+ques
+c_cond
+l_char|&squot; &squot;
+suffix:colon
+l_char|&squot;H&squot;
+)paren
+suffix:colon
+(paren
+id|zone-&gt;free_pages
+OG
+id|zone-&gt;pages_min
+ques
+c_cond
+l_char|&squot;M&squot;
+suffix:colon
+l_char|&squot;L&squot;
+)paren
+)paren
+comma
+id|zone-&gt;zone_wake_kswapd
+comma
+id|zone-&gt;low_on_memory
 comma
 id|zone-&gt;name
 )paren

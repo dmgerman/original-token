@@ -307,13 +307,6 @@ c_func
 id|disable_irq_nosync
 )paren
 suffix:semicolon
-DECL|variable|irq_stat
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|irq_stat
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl.c,v 1.14 1999/09/22 09:28:50 davem Exp $&n; * ioctl.c: Solaris ioctl emulation.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; * 1999-08-19 Implemented solaris &squot;m&squot; (mag tape) and&n; *            &squot;O&squot; (openprom) ioctls, by Jason Rappleye&n; *             (rappleye@ccr.buffalo.edu)&n; */
+multiline_comment|/* $Id: ioctl.c,v 1.15 2000/07/28 12:15:02 davem Exp $&n; * ioctl.c: Solaris ioctl emulation.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; * 1999-08-19 Implemented solaris &squot;m&squot; (mag tape) and&n; *            &squot;O&squot; (openprom) ioctls, by Jason Rappleye&n; *             (rappleye@ccr.buffalo.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -15,18 +15,6 @@ macro_line|#include &lt;asm/termios.h&gt;
 macro_line|#include &lt;asm/openpromio.h&gt;
 macro_line|#include &quot;conv.h&quot;
 macro_line|#include &quot;socksys.h&quot;
-r_extern
-r_char
-op_star
-id|getname32
-c_func
-(paren
-id|u32
-id|filename
-)paren
-suffix:semicolon
-DECL|macro|putname32
-mdefine_line|#define putname32 putname
 r_extern
 id|asmlinkage
 r_int
@@ -3104,9 +3092,17 @@ multiline_comment|/* I_PUSH */
 (brace
 id|p
 op_assign
-id|getname32
+id|getname
+(paren
+(paren
+r_char
+op_star
+)paren
+id|A
+c_func
 (paren
 id|arg
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3202,7 +3198,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|putname32
+id|putname
 (paren
 id|p
 )paren
@@ -3493,9 +3489,17 @@ id|i
 suffix:semicolon
 id|p
 op_assign
-id|getname32
+id|getname
+(paren
+(paren
+r_char
+op_star
+)paren
+id|A
+c_func
 (paren
 id|arg
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3567,7 +3571,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|putname32
+id|putname
 (paren
 id|p
 )paren
