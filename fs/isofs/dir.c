@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_static
 r_int
@@ -800,6 +801,7 @@ r_continue
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_JOLIET
 r_if
 c_cond
 (paren
@@ -824,6 +826,8 @@ id|tmpname
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
+multiline_comment|/* if not joliet */
 (brace
 id|map
 op_assign

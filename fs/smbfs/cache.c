@@ -390,7 +390,7 @@ op_star
 id|cachep
 comma
 r_struct
-id|dirent
+id|cache_dirent
 op_star
 id|entry
 comma
@@ -431,7 +431,7 @@ id|offset
 comma
 id|len
 op_assign
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 suffix:semicolon
 r_int
 r_int
@@ -534,7 +534,7 @@ id|block-&gt;cb_data.names
 id|offset
 )braket
 comma
-id|entry-&gt;d_name
+id|entry-&gt;name
 comma
 id|len
 )paren
@@ -564,7 +564,7 @@ id|nent
 dot
 id|ino
 op_assign
-id|entry-&gt;d_ino
+id|entry-&gt;ino
 suffix:semicolon
 id|cachep-&gt;entries
 op_increment

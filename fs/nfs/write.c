@@ -810,9 +810,6 @@ id|inode
 comma
 id|pid_t
 id|pid
-comma
-r_int
-id|all
 )paren
 (brace
 r_struct
@@ -823,22 +820,19 @@ comma
 op_star
 id|req
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|req
 op_assign
 id|head
 op_assign
 id|nfs_failed_requests
-)paren
-)paren
-r_return
-l_int|NULL
 suffix:semicolon
-r_do
+r_while
+c_loop
+(paren
+id|req
+op_ne
+l_int|NULL
+)paren
 (brace
 r_if
 c_cond
@@ -848,7 +842,9 @@ op_eq
 id|inode
 op_logical_and
 (paren
-id|all
+id|pid
+op_eq
+l_int|0
 op_logical_or
 id|req-&gt;wb_pid
 op_eq
@@ -858,9 +854,8 @@ id|pid
 r_return
 id|req
 suffix:semicolon
-)brace
-r_while
-c_loop
+r_if
+c_cond
 (paren
 (paren
 id|req
@@ -871,10 +866,12 @@ c_func
 id|req
 )paren
 )paren
-op_ne
+op_eq
 id|head
 )paren
+r_break
 suffix:semicolon
+)brace
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1000,8 +997,6 @@ c_func
 id|inode
 comma
 l_int|0
-comma
-l_int|1
 )paren
 )paren
 op_ne
@@ -1858,11 +1853,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Create the write request. */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
+id|status
+op_assign
+op_minus
+id|ENOBUFS
+suffix:semicolon
 id|req
 op_assign
 id|create_write_request
@@ -1876,19 +1871,18 @@ id|offset
 comma
 id|count
 )paren
-)paren
-)paren
-(brace
-id|status
-op_assign
-op_minus
-id|ENOBUFS
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|req
+)paren
 r_goto
 id|done
 suffix:semicolon
-)brace
 multiline_comment|/* Copy data to page buffer. */
+multiline_comment|/* N.B. should check for fault here ... */
 id|copy_from_user
 c_func
 (paren
@@ -1990,6 +1984,7 @@ c_cond
 id|sync
 )paren
 (brace
+multiline_comment|/* N.B. if signalled, result not ready? */
 id|wait_on_write_request
 c_func
 (paren
@@ -2264,17 +2259,50 @@ c_func
 id|req
 )paren
 )paren
+(brace
+macro_line|#ifdef NFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_flush: flushing inode=%ld, %d @ %lu&bslash;n&quot;
+comma
+id|req-&gt;wb_inode-&gt;i_ino
+comma
+id|req-&gt;wb_bytes
+comma
+id|rqoffset
+)paren
+suffix:semicolon
+macro_line|#endif
 id|nfs_flush_request
 c_func
 (paren
 id|req
 )paren
 suffix:semicolon
+)brace
 id|last
 op_assign
 id|req
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+macro_line|#ifdef NFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_flush_pages: in progress inode=%ld, %d @ %lu&bslash;n&quot;
+comma
+id|req-&gt;wb_inode-&gt;i_ino
+comma
+id|req-&gt;wb_bytes
+comma
+id|rqoffset
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -2307,7 +2335,7 @@ r_return
 id|last
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Cancel all writeback requests, both pending and in progress.&n; */
+multiline_comment|/*&n; * Cancel all writeback requests, both pending and in progress.&n; *&n; * N.B. This doesn&squot;t seem to wake up the tasks -- are we sure&n; * they will eventually complete? Also, this could overwrite a&n; * failed status code from an already-completed task.&n; */
 r_static
 r_void
 DECL|function|nfs_cancel_dirty
@@ -2349,9 +2377,14 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* N.B. check for task already finished? */
 r_if
 c_cond
 (paren
+id|pid
+op_eq
+l_int|0
+op_logical_or
 id|req-&gt;wb_pid
 op_eq
 id|pid
@@ -2401,6 +2434,9 @@ id|inode
 op_star
 id|inode
 comma
+id|pid_t
+id|pid
+comma
 id|off_t
 id|offset
 comma
@@ -2417,6 +2453,10 @@ l_int|NULL
 suffix:semicolon
 r_int
 id|result
+op_assign
+l_int|0
+comma
+id|cancel
 op_assign
 l_int|0
 suffix:semicolon
@@ -2436,6 +2476,30 @@ comma
 id|len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SOFT
+op_logical_and
+id|signalled
+c_func
+(paren
+)paren
+)paren
+(brace
+id|nfs_cancel_dirty
+c_func
+(paren
+id|inode
+comma
+id|pid
+)paren
+suffix:semicolon
+id|cancel
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -2454,12 +2518,18 @@ c_func
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cancel
+)paren
 id|nfs_cancel_dirty
 c_func
 (paren
 id|inode
 comma
-id|current-&gt;pid
+id|pid
 )paren
 suffix:semicolon
 id|result
@@ -2470,7 +2540,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Flush all pending writes for this pid and file region */
+multiline_comment|/* Flush all pending writes for the pid and file region */
 id|last
 op_assign
 id|nfs_flush_pages
@@ -2478,7 +2548,7 @@ c_func
 (paren
 id|inode
 comma
-id|current-&gt;pid
+id|pid
 comma
 id|offset
 comma
@@ -2507,7 +2577,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Flush out any pending write requests and flag that they be discarded&n; * after the write is complete.&n; *&n; * This function is called from nfs_revalidate_inode just before it calls&n; * invalidate_inode_pages. After nfs_flush_pages returns, we can be sure&n; * that all dirty pages are locked, so that invalidate_inode_pages does&n; * not throw away any dirty pages.&n; */
+multiline_comment|/*&n; * Flush out any pending write requests and flag that they be discarded&n; * after the write is complete.&n; *&n; * This function is called from nfs_refresh_inode just before it calls&n; * invalidate_inode_pages. After nfs_flush_pages returns, we can be sure&n; * that all dirty pages are locked, so that invalidate_inode_pages does&n; * not throw away any dirty pages.&n; */
 r_void
 DECL|function|nfs_invalidate_pages
 id|nfs_invalidate_pages
@@ -2710,8 +2780,6 @@ c_func
 id|inode
 comma
 id|current-&gt;pid
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -3091,8 +3159,6 @@ c_func
 id|inode
 comma
 id|req-&gt;wb_pid
-comma
-l_int|0
 )paren
 )paren
 id|status

@@ -1,11 +1,7 @@
 multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
-DECL|macro|SMBFS_DCACHE_EXT
-mdefine_line|#define SMBFS_DCACHE_EXT 1
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/smb_fs.h&gt;
-macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -15,34 +11,22 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
+macro_line|#include &lt;linux/smb_fs.h&gt;
+macro_line|#include &lt;linux/smbno.h&gt;
+macro_line|#include &lt;linux/smb_mount.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|SMBFS_PARANOIA
 mdefine_line|#define SMBFS_PARANOIA 1
 multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
-macro_line|#ifndef SMBFS_DCACHE_EXT
-DECL|macro|shrink_dcache_sb
-mdefine_line|#define shrink_dcache_sb(sb) shrink_dcache()
-macro_line|#endif
-r_extern
+r_static
 r_void
-id|smb_renew_times
+id|smb_read_inode
 c_func
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|close_fp
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
 )paren
 suffix:semicolon
 r_static
@@ -58,16 +42,6 @@ suffix:semicolon
 r_static
 r_void
 id|smb_delete_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|smb_read_inode
 c_func
 (paren
 r_struct
@@ -476,6 +450,7 @@ id|server
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This is called when we want to check whether the inode&n; * has changed on the server.  If it has changed, we must&n; * invalidate our local caches.&n; */
 r_int
 DECL|function|smb_revalidate_inode
 id|smb_revalidate_inode
@@ -530,7 +505,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Save the last modified time, then refresh the inode&n;&t; */
+multiline_comment|/*&n;&t; * Save the last modified time, then refresh the inode.&n;&t; * (Note: a size change should have a different mtime.)&n;&t; */
 id|last_time
 op_assign
 id|inode-&gt;i_mtime
@@ -546,13 +521,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|error
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_or
 id|inode-&gt;i_mtime
 op_ne
 id|last_time
@@ -621,7 +591,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-)brace
 )brace
 id|out
 suffix:colon
@@ -793,13 +762,24 @@ id|inode-&gt;i_nlink
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * No need to worry about unhashing the dentry: the&n;&t;&t;&t; * lookup validation will see that the inode is bad.&n;&t;&t;&t; * But we may need to invalidate the caches ...&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * No need to worry about unhashing the dentry: the&n;&t;&t;&t; * lookup validation will see that the inode is bad.&n;&t;&t;&t; * But we do want to invalidate the caches ...&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|S_ISDIR
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
 id|invalidate_inode_pages
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+r_else
 id|smb_invalid_dir_cache
 c_func
 (paren
@@ -1021,6 +1001,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|server-&gt;mnt
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1067,6 +1053,9 @@ id|silent
 (brace
 r_struct
 id|smb_mount_data
+op_star
+id|mnt
+comma
 op_star
 id|data
 op_assign
@@ -1173,14 +1162,18 @@ l_int|0
 suffix:semicolon
 id|sb-&gt;u.smbfs_sb.packet_size
 op_assign
+id|smb_round_length
+c_func
+(paren
 id|SMB_INITIAL_PACKET_SIZE
+)paren
 suffix:semicolon
 id|sb-&gt;u.smbfs_sb.packet
 op_assign
 id|smb_vmalloc
 c_func
 (paren
-id|SMB_INITIAL_PACKET_SIZE
+id|sb-&gt;u.smbfs_sb.packet_size
 )paren
 suffix:semicolon
 r_if
@@ -1192,16 +1185,48 @@ id|sb-&gt;u.smbfs_sb.packet
 r_goto
 id|out_no_mem
 suffix:semicolon
-id|sb-&gt;u.smbfs_sb.m
+id|mnt
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|smb_mount_data
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mnt
+)paren
+r_goto
+id|out_no_mount
+suffix:semicolon
+op_star
+id|mnt
 op_assign
 op_star
 id|data
 suffix:semicolon
-id|sb-&gt;u.smbfs_sb.m.file_mode
+id|mnt-&gt;version
 op_assign
-(paren
-id|sb-&gt;u.smbfs_sb.m.file_mode
-op_amp
+l_int|0
+suffix:semicolon
+multiline_comment|/* dynamic flags */
+macro_line|#ifdef CONFIG_SMB_WIN95
+id|mnt-&gt;version
+op_or_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
+id|mnt-&gt;file_mode
+op_and_assign
 (paren
 id|S_IRWXU
 op_or
@@ -1209,15 +1234,13 @@ id|S_IRWXG
 op_or
 id|S_IRWXO
 )paren
-)paren
-op_or
+suffix:semicolon
+id|mnt-&gt;file_mode
+op_or_assign
 id|S_IFREG
 suffix:semicolon
-id|sb-&gt;u.smbfs_sb.m.dir_mode
-op_assign
-(paren
-id|sb-&gt;u.smbfs_sb.m.dir_mode
-op_amp
+id|mnt-&gt;dir_mode
+op_and_assign
 (paren
 id|S_IRWXU
 op_or
@@ -1225,9 +1248,14 @@ id|S_IRWXG
 op_or
 id|S_IRWXO
 )paren
-)paren
-op_or
+suffix:semicolon
+id|mnt-&gt;dir_mode
+op_or_assign
 id|S_IFDIR
+suffix:semicolon
+id|sb-&gt;u.smbfs_sb.mnt
+op_assign
+id|mnt
 suffix:semicolon
 multiline_comment|/*&n;&t; * Keep the super block locked while we get the root inode.&n;&t; */
 id|smb_init_root_dirent
@@ -1313,6 +1341,14 @@ c_func
 id|root_inode
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|sb-&gt;u.smbfs_sb.mnt
+)paren
+suffix:semicolon
+id|out_no_mount
+suffix:colon
 id|smb_vfree
 c_func
 (paren
@@ -1330,17 +1366,25 @@ c_func
 l_string|&quot;smb_read_super: could not alloc packet&bslash;n&quot;
 )paren
 suffix:semicolon
-r_goto
 id|out_unlock
+suffix:colon
+id|unlock_super
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+r_goto
+id|out_fail
 suffix:semicolon
 id|out_wrong_data
 suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;smb_read_super: wrong data argument.&quot;
-l_string|&quot; Recompile smbmount.&bslash;n&quot;
+l_string|&quot;smb_read_super: need mount version %d&bslash;n&quot;
+comma
+id|SMB_MOUNT_VERSION
 )paren
 suffix:semicolon
 r_goto
@@ -1352,17 +1396,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;smb_read_super: missing data argument&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out_fail
-suffix:semicolon
-id|out_unlock
-suffix:colon
-id|unlock_super
-c_func
-(paren
-id|sb
 )paren
 suffix:semicolon
 id|out_fail
@@ -1496,6 +1529,22 @@ op_assign
 id|inode-&gt;u.smbfs_i.dentry
 suffix:semicolon
 r_int
+r_int
+id|mask
+op_assign
+(paren
+id|S_IFREG
+op_or
+id|S_IFDIR
+op_or
+id|S_IRWXU
+op_or
+id|S_IRWXG
+op_or
+id|S_IRWXO
+)paren
+suffix:semicolon
+r_int
 id|error
 comma
 id|refresh
@@ -1570,7 +1619,6 @@ r_if
 c_cond
 (paren
 (paren
-(paren
 id|attr-&gt;ia_valid
 op_amp
 id|ATTR_UID
@@ -1579,8 +1627,7 @@ op_logical_and
 (paren
 id|attr-&gt;ia_uid
 op_ne
-id|server-&gt;m.uid
-)paren
+id|server-&gt;mnt-&gt;uid
 )paren
 )paren
 r_goto
@@ -1588,7 +1635,6 @@ id|out
 suffix:semicolon
 r_if
 c_cond
-(paren
 (paren
 (paren
 id|attr-&gt;ia_valid
@@ -1599,8 +1645,7 @@ op_logical_and
 (paren
 id|attr-&gt;ia_uid
 op_ne
-id|server-&gt;m.gid
-)paren
+id|server-&gt;mnt-&gt;gid
 )paren
 )paren
 r_goto
@@ -1608,7 +1653,6 @@ id|out
 suffix:semicolon
 r_if
 c_cond
-(paren
 (paren
 (paren
 id|attr-&gt;ia_valid
@@ -1620,18 +1664,7 @@ op_logical_and
 id|attr-&gt;ia_mode
 op_amp
 op_complement
-(paren
-id|S_IFREG
-op_or
-id|S_IFDIR
-op_or
-id|S_IRWXU
-op_or
-id|S_IRWXG
-op_or
-id|S_IRWXO
-)paren
-)paren
+id|mask
 )paren
 )paren
 r_goto

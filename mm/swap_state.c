@@ -11,9 +11,6 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
-macro_line|#include &lt;asm/uaccess.h&gt; /* for cop_to/from_user */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef SWAP_CACHE_INFO
@@ -166,6 +163,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * If swap_map[] reaches 127, the entries are treated as &quot;permanent&quot;.&n; */
 DECL|function|swap_duplicate
 r_void
 id|swap_duplicate
@@ -193,15 +191,8 @@ c_cond
 op_logical_neg
 id|entry
 )paren
-r_return
-suffix:semicolon
-id|offset
-op_assign
-id|SWP_OFFSET
-c_func
-(paren
-id|entry
-)paren
+r_goto
+id|out
 suffix:semicolon
 id|type
 op_assign
@@ -218,7 +209,8 @@ id|type
 op_amp
 id|SHM_SWP_TYPE
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -227,21 +219,22 @@ id|type
 op_ge
 id|nr_swapfiles
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Trying to duplicate nonexistent swap-page&bslash;n&quot;
-)paren
+r_goto
+id|bad_file
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|p
 op_assign
 id|type
 op_plus
 id|swap_info
+suffix:semicolon
+id|offset
+op_assign
+id|SWP_OFFSET
+c_func
+(paren
+id|entry
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -250,16 +243,9 @@ id|offset
 op_ge
 id|p-&gt;max
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;swap_duplicate: weirdness&bslash;n&quot;
-)paren
+r_goto
+id|bad_offset
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -269,23 +255,98 @@ id|p-&gt;swap_map
 id|offset
 )braket
 )paren
-(brace
-id|printk
-c_func
+r_goto
+id|bad_unused
+suffix:semicolon
+r_if
+c_cond
 (paren
-l_string|&quot;swap_duplicate: trying to duplicate unused page&bslash;n&quot;
+id|p-&gt;swap_map
+(braket
+id|offset
+)braket
+OL
+l_int|126
 )paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|p-&gt;swap_map
 (braket
 id|offset
 )braket
 op_increment
 suffix:semicolon
+r_else
+(brace
+r_static
+r_int
+id|overflow
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|overflow
+op_increment
+OL
+l_int|5
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;swap_duplicate: entry %08lx map count=%d&bslash;n&quot;
+comma
+id|entry
+comma
+id|p-&gt;swap_map
+(braket
+id|offset
+)braket
+)paren
+suffix:semicolon
+id|p-&gt;swap_map
+(braket
+id|offset
+)braket
+op_assign
+l_int|127
+suffix:semicolon
+)brace
+id|out
+suffix:colon
 r_return
+suffix:semicolon
+id|bad_file
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;swap_duplicate: Trying to duplicate nonexistent swap-page&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+id|bad_offset
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;swap_duplicate: offset exceeds max&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+id|bad_unused
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;swap_duplicate: unused page&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 eof

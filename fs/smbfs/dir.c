@@ -1,19 +1,15 @@
 multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|macro|SMBFS_PARANOIA
 mdefine_line|#define SMBFS_PARANOIA 1
 multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
 multiline_comment|/* #define pr_debug printk */
+DECL|macro|SMBFS_MAX_AGE
+mdefine_line|#define SMBFS_MAX_AGE 5*HZ
 r_static
 id|ssize_t
 id|smb_dir_read
@@ -340,8 +336,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * If a dentry already exists, we have to give the cache entry&n; * the correct inode number.  This is needed for getcwd().&n; */
 r_static
-r_int
-r_int
+r_void
 DECL|function|smb_find_ino
 id|smb_find_ino
 c_func
@@ -366,12 +361,7 @@ r_struct
 id|qstr
 id|qname
 suffix:semicolon
-r_int
-r_int
-id|ino
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* N.B. Make cache_dirent name a qstr! */
 id|qname.name
 op_assign
 id|entry-&gt;name
@@ -419,7 +409,7 @@ c_cond
 (paren
 id|inode
 )paren
-id|ino
+id|entry-&gt;ino
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
@@ -434,18 +424,15 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|ino
+id|entry-&gt;ino
 )paren
-id|ino
+id|entry-&gt;ino
 op_assign
 id|smb_invent_inos
 c_func
 (paren
 l_int|1
 )paren
-suffix:semicolon
-r_return
-id|ino
 suffix:semicolon
 )brace
 r_static
@@ -489,10 +476,15 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-id|pr_debug
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
 c_func
 (paren
-l_string|&quot;smb_readdir: filp-&gt;f_pos = %d&bslash;n&quot;
+l_string|&quot;smb_readdir: reading %s/%s, f_pos=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 comma
 (paren
 r_int
@@ -500,16 +492,7 @@ r_int
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
-id|pr_debug
-c_func
-(paren
-l_string|&quot;smb_readdir: dir-&gt;i_ino = %ld, c_ino = %ld&bslash;n&quot;
-comma
-id|dir-&gt;i_ino
-comma
-id|c_ino
-)paren
-suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Make sure our inode is up-to-date.&n;&t; */
 id|result
 op_assign
@@ -528,6 +511,11 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * Get the cache pointer ...&n;&t; */
+id|result
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 id|cachep
 op_assign
 id|smb_get_dircache
@@ -569,9 +557,13 @@ c_cond
 id|result
 )paren
 r_goto
-id|up_and_out
+id|out_free
 suffix:semicolon
 )brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -605,7 +597,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|up_and_out
+id|out_free
 suffix:semicolon
 id|filp-&gt;f_pos
 op_assign
@@ -634,7 +626,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|up_and_out
+id|out_free
 suffix:semicolon
 id|filp-&gt;f_pos
 op_assign
@@ -680,9 +672,6 @@ c_cond
 op_logical_neg
 id|entry-&gt;ino
 )paren
-(brace
-id|entry-&gt;ino
-op_assign
 id|smb_find_ino
 c_func
 (paren
@@ -691,7 +680,6 @@ comma
 id|entry
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -718,12 +706,8 @@ op_add_assign
 l_int|1
 suffix:semicolon
 )brace
-id|result
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; * Release the dircache.&n;&t; */
-id|up_and_out
+id|out_free
 suffix:colon
 id|smb_free_dircache
 c_func
@@ -816,9 +800,9 @@ multiline_comment|/* d_delete(struct dentry *) */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is the callback when the dcache has a lookup hit.&n; */
-DECL|function|smb_lookup_validate
 r_static
 r_int
+DECL|function|smb_lookup_validate
 id|smb_lookup_validate
 c_func
 (paren
@@ -849,11 +833,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * The default validation is based on dentry age:&n;&t; * we believe in dentries for 5 seconds.  (But each&n;&t; * successful server lookup renews the timestamp.)&n;&t; */
 id|valid
 op_assign
+(paren
 id|age
-OL
-l_int|5
-op_star
-id|HZ
+op_le
+id|SMBFS_MAX_AGE
+)paren
 op_logical_or
 id|IS_ROOT
 c_func
@@ -871,7 +855,7 @@ id|valid
 id|printk
 c_func
 (paren
-l_string|&quot;smb_lookup_validate: %s/%s not valid, age=%d&bslash;n&quot;
+l_string|&quot;smb_lookup_validate: %s/%s not valid, age=%lu&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -879,6 +863,7 @@ id|dentry-&gt;d_name.name
 comma
 id|age
 )paren
+suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
@@ -922,10 +907,10 @@ r_return
 id|valid
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is the callback from dput() when d_count is going to 0.&n; * We use this to close files and unhash dentries with bad inodes.&n; */
-DECL|function|smb_delete_dentry
+multiline_comment|/*&n; * This is the callback from dput() when d_count is going to 0.&n; * We use this to unhash dentries with bad inodes and close files.&n; */
 r_static
 r_void
+DECL|function|smb_delete_dentry
 id|smb_delete_dentry
 c_func
 (paren
@@ -935,6 +920,41 @@ op_star
 id|dentry
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|jiffies
+op_minus
+id|dentry-&gt;d_time
+)paren
+OG
+id|SMBFS_MAX_AGE
+)paren
+(brace
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot;smb_delete_dentry: %s/%s expired, d_time=%lu, now=%lu&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_time
+comma
+id|jiffies
+)paren
+suffix:semicolon
+macro_line|#endif
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -983,8 +1003,8 @@ multiline_comment|/* N.B. Unhash negative dentries? */
 )brace
 )brace
 multiline_comment|/*&n; * Whenever a lookup succeeds, we know the parent directories&n; * are all valid, so we want to update the dentry timestamps.&n; * N.B. Move this to dcache?&n; */
-DECL|function|smb_renew_times
 r_void
+DECL|function|smb_renew_times
 id|smb_renew_times
 c_func
 (paren
@@ -1297,6 +1317,20 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot;smb_instantiate: file %s/%s, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|error
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|error
 suffix:semicolon
@@ -1325,6 +1359,20 @@ id|mode
 r_int
 id|error
 suffix:semicolon
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot;smb_create: creating %s/%s, mode=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|mode
+)paren
+suffix:semicolon
+macro_line|#endif
 id|error
 op_assign
 op_minus

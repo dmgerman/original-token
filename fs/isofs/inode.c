@@ -214,12 +214,6 @@ id|this_char
 comma
 op_star
 id|value
-comma
-op_star
-id|p
-suffix:semicolon
-r_int
-id|len
 suffix:semicolon
 id|popt-&gt;map
 op_assign
@@ -465,6 +459,13 @@ l_string|&quot;iocharset&quot;
 )paren
 )paren
 (brace
+r_char
+op_star
+id|p
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
 id|p
 op_assign
 id|value
@@ -1223,10 +1224,6 @@ suffix:semicolon
 r_int
 id|orig_zonesize
 suffix:semicolon
-r_char
-op_star
-id|p
-suffix:semicolon
 r_struct
 id|iso_primary_descriptor
 op_star
@@ -1861,11 +1858,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_JOLIET
 id|s-&gt;u.isofs_sb.s_joliet_level
 op_assign
 id|joliet_level
 suffix:semicolon
+macro_line|#ifdef CONFIG_JOLIET
 r_if
 c_cond
 (paren
@@ -2302,6 +2299,10 @@ op_eq
 l_int|0
 )paren
 (brace
+r_char
+op_star
+id|p
+suffix:semicolon
 id|p
 op_assign
 id|opt.iocharset

@@ -5,7 +5,6 @@ mdefine_line|#define _SMB_FS_SB
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smb.h&gt;
-macro_line|#include &lt;linux/smb_mount.h&gt;
 multiline_comment|/* Get the server for the specified dentry */
 DECL|macro|server_from_dentry
 mdefine_line|#define server_from_dentry(dentry) &amp;dentry-&gt;d_sb-&gt;u.smbfs_sb
@@ -26,10 +25,11 @@ id|file
 op_star
 id|sock_file
 suffix:semicolon
-DECL|member|m
+DECL|member|mnt
 r_struct
 id|smb_mount_data
-id|m
+op_star
+id|mnt
 suffix:semicolon
 multiline_comment|/* Connections are counted. Each time a new socket arrives,&n;&t; * generation is incremented.&n;&t; */
 DECL|member|generation

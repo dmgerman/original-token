@@ -248,6 +248,9 @@ op_star
 id|inode
 )paren
 (brace
+r_int
+id|failed
+suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -284,7 +287,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;NFS: invalidating pending RPC requests&bslash;n&quot;
+l_string|&quot;NFS: inode %ld, invalidating pending RPC requests&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 id|nfs_invalidate_pages
@@ -311,7 +316,7 @@ id|timeout
 (brace
 id|current-&gt;state
 op_assign
-id|TASK_UNINTERRUPTIBLE
+id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|current-&gt;timeout
 op_assign
@@ -349,19 +354,27 @@ l_string|&quot;NFS: Arghhh, stuck RPC requests!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
+id|failed
+op_assign
 id|check_failed_request
 c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|failed
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;NFS: inode had failed requests&bslash;n&quot;
+l_string|&quot;NFS: inode %ld had %d failed requests&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+comma
+id|failed
 )paren
 suffix:semicolon
 id|clear_inode

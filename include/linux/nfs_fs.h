@@ -713,6 +713,8 @@ r_struct
 id|inode
 op_star
 comma
+id|pid_t
+comma
 id|off_t
 comma
 id|off_t

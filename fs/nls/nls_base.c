@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * linux/fs/nls.c&n; *&n; * Native language support--charsets and unicode translations.&n; * By Gordon Chaffee 1996, 1997&n; *&n; */
-DECL|macro|ASC_LINUX_VERSION
-mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -3519,20 +3517,16 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(2,1,0)
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#else
-r_return
-id|register_symtab
+macro_line|#ifdef CONFIG_NLS_KOI8_R
+id|init_nls_koi8_r
 c_func
 (paren
-op_amp
-id|nls_syms
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|init_module

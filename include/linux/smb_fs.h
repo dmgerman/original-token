@@ -94,8 +94,19 @@ mdefine_line|#define smb_vmalloc(s)   vmalloc(s)
 DECL|macro|smb_vfree
 mdefine_line|#define smb_vfree(o)     vfree(o)
 macro_line|#endif /* DEBUG_SMB_MALLOC */
+multiline_comment|/* linux/fs/smbfs/mmap.c */
+r_int
+id|smb_mmap
+c_func
+(paren
 r_struct
-id|smb_sb_info
+id|file
+op_star
+comma
+r_struct
+id|vm_area_struct
+op_star
+)paren
 suffix:semicolon
 multiline_comment|/* linux/fs/smbfs/file.c */
 r_extern
@@ -108,24 +119,6 @@ r_extern
 r_struct
 id|inode_operations
 id|smb_dir_inode_operations
-suffix:semicolon
-r_void
-id|smb_init_root
-c_func
-(paren
-r_struct
-id|smb_sb_info
-op_star
-)paren
-suffix:semicolon
-r_int
-id|smb_stat_root
-c_func
-(paren
-r_struct
-id|smb_sb_info
-op_star
-)paren
 suffix:semicolon
 r_void
 id|smb_renew_times
@@ -143,20 +136,16 @@ id|smb_ioctl
 r_struct
 id|inode
 op_star
-id|inode
 comma
 r_struct
 id|file
 op_star
-id|filp
 comma
 r_int
 r_int
-id|cmd
 comma
 r_int
 r_int
-id|arg
 )paren
 suffix:semicolon
 multiline_comment|/* linux/fs/smbfs/inode.c */
@@ -619,6 +608,13 @@ op_star
 suffix:semicolon
 multiline_comment|/* linux/fs/smbfs/sock.c */
 r_int
+id|smb_round_length
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+r_int
 id|smb_valid_socket
 c_func
 (paren
@@ -764,22 +760,6 @@ r_char
 op_star
 op_star
 id|rparam
-)paren
-suffix:semicolon
-multiline_comment|/* linux/fs/smbfs/mmap.c */
-r_int
-id|smb_mmap
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|vm_area_struct
-op_star
-id|vma
 )paren
 suffix:semicolon
 multiline_comment|/* fs/smbfs/cache.c */
@@ -972,7 +952,7 @@ id|cache_head
 op_star
 comma
 r_struct
-id|dirent
+id|cache_dirent
 op_star
 comma
 id|off_t

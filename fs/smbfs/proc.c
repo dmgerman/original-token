@@ -1,8 +1,5 @@
 multiline_comment|/*&n; *  proc.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  28/06/96 - Fixed long file name support (smb_proc_readdir_long) by Yuri Per&n; *  28/09/97 - Fixed smb_d_path [now smb_build_path()] to be non-recursive&n; *             by Riccardo Facchetti&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/smbno.h&gt;
-macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -10,8 +7,14 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/dirent.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/smb_fs.h&gt;
+macro_line|#include &lt;linux/smbno.h&gt;
+macro_line|#include &lt;linux/smb_mount.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
+DECL|macro|SMBFS_PARANOIA
+mdefine_line|#define SMBFS_PARANOIA 1
+multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
+multiline_comment|/* #define pr_debug printk */
 DECL|macro|SMB_VWV
 mdefine_line|#define SMB_VWV(packet)  ((packet) + SMB_HEADER_LEN)
 DECL|macro|SMB_CMD
@@ -26,20 +29,6 @@ DECL|macro|SMB_DIRINFO_SIZE
 mdefine_line|#define SMB_DIRINFO_SIZE 43
 DECL|macro|SMB_STATUS_SIZE
 mdefine_line|#define SMB_STATUS_SIZE  21
-DECL|macro|SMBFS_PARANOIA
-mdefine_line|#define SMBFS_PARANOIA 1
-multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
-multiline_comment|/* #define pr_debug printk */
-r_extern
-r_void
-id|smb_renew_times
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-)paren
-suffix:semicolon
 r_static
 r_inline
 r_int
@@ -74,13 +63,16 @@ c_func
 r_char
 op_star
 id|name
+comma
+r_int
+id|len
 )paren
 (brace
 r_while
 c_loop
 (paren
-op_star
-id|name
+id|len
+op_decrement
 )paren
 (brace
 r_if
@@ -119,13 +111,16 @@ c_func
 r_char
 op_star
 id|name
+comma
+r_int
+id|len
 )paren
 (brace
 r_while
 c_loop
 (paren
-op_star
-id|name
+id|len
+op_decrement
 )paren
 (brace
 r_if
@@ -542,6 +537,10 @@ id|SMB_PROTOCOL_COREPLUS
 id|str_upper
 c_func
 (paren
+id|start
+comma
+id|buf
+op_minus
 id|start
 )paren
 suffix:semicolon
@@ -2167,16 +2166,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|current-&gt;uid
+op_ne
+id|server-&gt;mnt-&gt;mounted_uid
+)paren
+op_logical_and
 op_logical_neg
 id|suser
 c_func
 (paren
-)paren
-op_logical_and
-(paren
-id|current-&gt;uid
-op_ne
-id|server-&gt;m.mounted_uid
 )paren
 )paren
 r_goto
@@ -2320,16 +2319,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|current-&gt;uid
+op_ne
+id|server-&gt;mnt-&gt;mounted_uid
+)paren
+op_logical_and
 op_logical_neg
 id|suser
 c_func
 (paren
-)paren
-op_logical_and
-(paren
-id|current-&gt;uid
-op_ne
-id|server-&gt;m.mounted_uid
 )paren
 )paren
 r_goto
@@ -3499,17 +3498,21 @@ id|server
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* Consider dropping negative dentries? */
-macro_line|#if 0
-r_else
-id|d_drop
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
 c_func
 (paren
-id|dentry
+l_string|&quot;smb_close_dentry: closed %s/%s, count=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_count
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 )brace
 multiline_comment|/* In smb_proc_read and smb_proc_write we do not retry, because the&n;   file-id would not be valid after a reconnection. */
 r_int
@@ -3807,22 +3810,32 @@ id|server
 )paren
 suffix:semicolon
 macro_line|#if SMBFS_DEBUG_VERBOSE
-(brace
-r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|ino-&gt;u.smbfs_i.dentry
-suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;smb_proc_write: file %s/%s, count=%d@%ld, packet_size=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
+(paren
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+id|ino-&gt;u.smbfs_i.dentry
+)paren
+op_member_access_from_pointer
+id|d_parent-&gt;d_name.name
 comma
-id|dentry-&gt;d_name.name
+(paren
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+id|ino-&gt;u.smbfs_i.dentry
+)paren
+op_member_access_from_pointer
+id|d_name.name
 comma
 id|count
 comma
@@ -3831,7 +3844,6 @@ comma
 id|server-&gt;packet_size
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|p
 op_assign
@@ -3917,10 +3929,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|result
 op_assign
 id|smb_request_ok
@@ -3934,7 +3942,11 @@ l_int|1
 comma
 l_int|0
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 op_ge
 l_int|0
 )paren
@@ -4105,11 +4117,9 @@ c_func
 id|server
 )paren
 )paren
-(brace
 r_goto
 id|retry
 suffix:semicolon
-)brace
 r_goto
 id|out
 suffix:semicolon
@@ -4305,12 +4315,19 @@ c_func
 id|server
 )paren
 )paren
-(brace
 r_goto
 id|retry
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
-)brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
 id|smb_unlock_server
 c_func
 (paren
@@ -4438,12 +4455,19 @@ c_func
 id|server
 )paren
 )paren
-(brace
 r_goto
 id|retry
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
-)brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
 id|smb_unlock_server
 c_func
 (paren
@@ -4571,12 +4595,19 @@ c_func
 id|server
 )paren
 )paren
-(brace
 r_goto
 id|retry
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
-)brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
 id|smb_unlock_server
 c_func
 (paren
@@ -4716,12 +4747,19 @@ c_func
 id|server
 )paren
 )paren
-(brace
 r_goto
 id|retry
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
-)brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
 id|smb_unlock_server
 c_func
 (paren
@@ -4753,10 +4791,6 @@ r_char
 op_star
 id|p
 suffix:semicolon
-r_char
-op_star
-id|buf
-suffix:semicolon
 r_int
 id|result
 suffix:semicolon
@@ -4768,10 +4802,6 @@ id|server
 suffix:semicolon
 id|retry
 suffix:colon
-id|buf
-op_assign
-id|server-&gt;packet
-suffix:semicolon
 id|p
 op_assign
 id|smb_setup_header
@@ -4789,7 +4819,7 @@ suffix:semicolon
 id|WSET
 c_func
 (paren
-id|buf
+id|server-&gt;packet
 comma
 id|smb_vwv0
 comma
@@ -4799,7 +4829,7 @@ suffix:semicolon
 id|WSET
 c_func
 (paren
-id|buf
+id|server-&gt;packet
 comma
 id|smb_vwv1
 comma
@@ -4809,7 +4839,7 @@ suffix:semicolon
 id|DSET
 c_func
 (paren
-id|buf
+id|server-&gt;packet
 comma
 id|smb_vwv2
 comma
@@ -4819,7 +4849,7 @@ suffix:semicolon
 id|WSET
 c_func
 (paren
-id|buf
+id|server-&gt;packet
 comma
 id|smb_vwv4
 comma
@@ -4877,12 +4907,19 @@ c_func
 id|server
 )paren
 )paren
-(brace
 r_goto
 id|retry
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
-)brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
 id|smb_unlock_server
 c_func
 (paren
@@ -4930,11 +4967,11 @@ l_int|1
 suffix:semicolon
 id|fattr-&gt;f_uid
 op_assign
-id|server-&gt;m.uid
+id|server-&gt;mnt-&gt;uid
 suffix:semicolon
 id|fattr-&gt;f_gid
 op_assign
-id|server-&gt;m.gid
+id|server-&gt;mnt-&gt;gid
 suffix:semicolon
 id|fattr-&gt;f_blksize
 op_assign
@@ -4960,7 +4997,7 @@ id|fattr
 (brace
 id|fattr-&gt;f_mode
 op_assign
-id|server-&gt;m.file_mode
+id|server-&gt;mnt-&gt;file_mode
 suffix:semicolon
 r_if
 c_cond
@@ -4972,7 +5009,7 @@ id|aDIR
 (brace
 id|fattr-&gt;f_mode
 op_assign
-id|server-&gt;m.dir_mode
+id|server-&gt;mnt-&gt;dir_mode
 suffix:semicolon
 id|fattr-&gt;f_size
 op_assign
@@ -5061,6 +5098,7 @@ id|fattr
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Note that we are now returning the name as a reference to avoid&n; * an extra copy, and that the upper/lower casing is done in place.&n; */
 r_static
 id|__u8
 op_star
@@ -5078,7 +5116,7 @@ op_star
 id|p
 comma
 r_struct
-id|dirent
+id|cache_dirent
 op_star
 id|entry
 )paren
@@ -5086,19 +5124,28 @@ id|entry
 r_int
 id|len
 suffix:semicolon
+multiline_comment|/*&n;&t; * SMB doesn&squot;t have a concept of inode numbers ...&n;&t; */
+id|entry-&gt;ino
+op_assign
+l_int|0
+suffix:semicolon
 id|p
 op_add_assign
 id|SMB_STATUS_SIZE
 suffix:semicolon
 multiline_comment|/* reserved (search_status) */
+id|entry-&gt;name
+op_assign
+id|p
+op_plus
+l_int|9
+suffix:semicolon
 id|len
 op_assign
 id|strlen
 c_func
 (paren
-id|p
-op_plus
-l_int|9
+id|entry-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -5114,19 +5161,6 @@ op_assign
 l_int|12
 suffix:semicolon
 )brace
-id|memcpy
-c_func
-(paren
-id|entry-&gt;d_name
-comma
-id|p
-op_plus
-l_int|9
-comma
-id|len
-)paren
-suffix:semicolon
-macro_line|#ifdef SMBFS_TRIM_BLANKS
 multiline_comment|/*&n;&t; * Trim trailing blanks for Pathworks servers&n;&t; */
 r_while
 c_loop
@@ -5135,7 +5169,7 @@ id|len
 OG
 l_int|2
 op_logical_and
-id|entry-&gt;d_name
+id|entry-&gt;name
 (braket
 id|len
 op_minus
@@ -5147,23 +5181,10 @@ l_char|&squot; &squot;
 id|len
 op_decrement
 suffix:semicolon
-macro_line|#endif
-id|entry-&gt;d_name
-(braket
-id|len
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 op_assign
 id|len
 suffix:semicolon
-id|entry-&gt;d_ino
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* no inode number available */
 r_switch
 c_cond
 (paren
@@ -5176,7 +5197,9 @@ suffix:colon
 id|str_upper
 c_func
 (paren
-id|entry-&gt;d_name
+id|entry-&gt;name
+comma
+id|len
 )paren
 suffix:semicolon
 r_break
@@ -5187,7 +5210,9 @@ suffix:colon
 id|str_lower
 c_func
 (paren
-id|entry-&gt;d_name
+id|entry-&gt;name
+comma
+id|len
 )paren
 suffix:semicolon
 r_break
@@ -5200,7 +5225,9 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;smb_decode_dirent: name = %s&bslash;n&quot;
+l_string|&quot;smb_decode_dirent: len=%d, name=%s&bslash;n&quot;
+comma
+id|len
 comma
 id|entry-&gt;name
 )paren
@@ -5288,16 +5315,20 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-id|pr_debug
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_short: %d @ %d&bslash;n&quot;
+l_string|&quot;smb_proc_readdir_short: %s/%s, pos=%d&bslash;n&quot;
 comma
-id|cache_size
+id|dir-&gt;d_parent-&gt;d_name.name
+comma
+id|dir-&gt;d_name.name
 comma
 id|fpos
 )paren
 suffix:semicolon
+macro_line|#endif
 id|smb_lock_server
 c_func
 (paren
@@ -5629,7 +5660,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|dirent
+id|cache_dirent
 id|this_ent
 comma
 op_star
@@ -5657,7 +5688,7 @@ id|entries_seen
 op_eq
 l_int|2
 op_logical_and
-id|entry-&gt;d_name
+id|entry-&gt;name
 (braket
 l_int|0
 )braket
@@ -5668,7 +5699,7 @@ l_char|&squot;.&squot;
 r_if
 c_cond
 (paren
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 op_eq
 l_int|1
 )paren
@@ -5677,14 +5708,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|entry-&gt;d_name
+id|entry-&gt;name
 (braket
 l_int|1
 )braket
 op_eq
 l_char|&squot;.&squot;
 op_logical_and
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 op_eq
 l_int|2
 )paren
@@ -5721,8 +5752,9 @@ id|entries
 op_increment
 suffix:semicolon
 )brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 r_else
+(brace
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
@@ -5736,6 +5768,7 @@ id|fpos
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 id|entries_seen
 op_increment
 suffix:semicolon
@@ -5757,7 +5790,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Interpret a long filename structure using the specified info level:&n; *   level 1 -- Win NT, Win 95, OS/2&n; *   level 2 -- OS/2&n; *   level 259 -- File name and length only, Win NT, Win 95&n; *   level 260 -- Win NT, Win 95&n; * There seem to be numerous inconsistencies and bugs in implementation.&n; */
+multiline_comment|/*&n; * Interpret a long filename structure using the specified info level:&n; *   level 1   -- Win NT, Win 95, OS/2&n; *   level 259 -- File name and length only, Win NT, Win 95&n; * There seem to be numerous inconsistencies and bugs in implementation.&n; *&n; * We return a reference to the name string to avoid copying, and perform&n; * any needed upper/lower casing in place.  Note!! Level 259 entries may&n; * not have any space beyond the name, so don&squot;t try to write a null byte!&n; */
 r_static
 r_char
 op_star
@@ -5775,7 +5808,7 @@ op_star
 id|p
 comma
 r_struct
-id|dirent
+id|cache_dirent
 op_star
 id|entry
 comma
@@ -5790,9 +5823,11 @@ suffix:semicolon
 r_int
 r_int
 id|len
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * SMB doesn&squot;t have a concept of inode numbers ...&n;&t; */
-id|entry-&gt;d_ino
+id|entry-&gt;ino
 op_assign
 l_int|0
 suffix:semicolon
@@ -5819,28 +5854,15 @@ op_plus
 l_int|26
 )paren
 suffix:semicolon
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 op_assign
 id|len
 suffix:semicolon
-id|strncpy
-c_func
-(paren
-id|entry-&gt;d_name
-comma
+id|entry-&gt;name
+op_assign
 id|p
 op_plus
 l_int|27
-comma
-id|len
-)paren
-suffix:semicolon
-id|entry-&gt;d_name
-(braket
-id|len
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|result
 op_assign
@@ -5856,7 +5878,6 @@ r_case
 l_int|259
 suffix:colon
 multiline_comment|/* SMB_FIND_FILE_NAMES_INFO = 0x103 */
-multiline_comment|/*&n;&t;&t; * This info level returns just the file name and length,&n;&t;&t; * which is all we need right now.&n;&t;&t; */
 id|result
 op_assign
 id|p
@@ -5891,17 +5912,11 @@ id|len
 op_assign
 l_int|255
 suffix:semicolon
-id|strncpy
-c_func
-(paren
-id|entry-&gt;d_name
-comma
+id|entry-&gt;name
+op_assign
 id|p
 op_plus
 l_int|12
-comma
-id|len
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Kludge alert: Win NT 4.0 adds a trailing null byte and&n;&t;&t; * counts it in the name length, but Win 95 doesn&squot;t.  Hence&n;&t;&t; * we test for a trailing null and decrement the length ...&n;&t;&t; */
 r_if
@@ -5909,7 +5924,7 @@ c_cond
 (paren
 id|len
 op_logical_and
-id|entry-&gt;d_name
+id|entry-&gt;name
 (braket
 id|len
 op_minus
@@ -5921,14 +5936,7 @@ l_char|&squot;&bslash;0&squot;
 id|len
 op_decrement
 suffix:semicolon
-id|entry-&gt;d_name
-(braket
-id|len
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 op_assign
 id|len
 suffix:semicolon
@@ -5936,11 +5944,13 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_decode_long_dirent: info 259, len=%d, name=%s&bslash;n&quot;
+l_string|&quot;smb_decode_long_dirent: info 259 at %p, len=%d, name=%s&bslash;n&quot;
+comma
+id|p
 comma
 id|len
 comma
-id|entry-&gt;d_name
+id|entry-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5981,7 +5991,9 @@ suffix:colon
 id|str_upper
 c_func
 (paren
-id|entry-&gt;d_name
+id|entry-&gt;name
+comma
+id|len
 )paren
 suffix:semicolon
 r_break
@@ -5992,7 +6004,9 @@ suffix:colon
 id|str_lower
 c_func
 (paren
-id|entry-&gt;d_name
+id|entry-&gt;name
+comma
+id|len
 )paren
 suffix:semicolon
 r_break
@@ -6148,7 +6162,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether to change the info level.  There appears to be&n;&t; * a bug in Win NT 4.0&squot;s handling of info level 1, whereby it&n;&t; * truncates the directory scan for certain patterns of files.&n;&t; * Hence we use level 259 for NT. (Win 95 uses this too?)&n;&t; */
+multiline_comment|/*&n;&t; * Check whether to change the info level.  There appears to be&n;&t; * a bug in Win NT 4.0&squot;s handling of info level 1, whereby it&n;&t; * truncates the directory scan for certain patterns of files.&n;&t; * Hence we use level 259 for NT. (And Win 95 as well ...)&n;&t; */
 r_if
 c_cond
 (paren
@@ -6420,8 +6434,15 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* resume required +&n;&t;&t;&t;&t;&t;&t;&t;   close on end +&n;&t;&t;&t;&t;&t;&t;&t;   continue */
-macro_line|#ifdef CONFIG_SMB_WIN95
-multiline_comment|/* Windows 95 is not able to deliver answers&n;&t;&t;&t;   to FIND_NEXT fast enough, so sleep 0.2 seconds */
+r_if
+c_cond
+(paren
+id|server-&gt;mnt-&gt;version
+op_amp
+l_int|1
+)paren
+(brace
+multiline_comment|/* Windows 95 is not able to deliver answers&n;&t;&t;&t;&t; * to FIND_NEXT fast enough, so sleep 0.2 sec&n;&t;&t;&t;&t; */
 id|current-&gt;timeout
 op_assign
 id|jiffies
@@ -6443,7 +6464,7 @@ id|current-&gt;timeout
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
+)brace
 )brace
 id|result
 op_assign
@@ -6711,7 +6732,7 @@ id|info_level
 )paren
 (brace
 r_case
-l_int|260
+l_int|259
 suffix:colon
 r_if
 c_cond
@@ -6830,7 +6851,7 @@ op_increment
 )paren
 (brace
 r_struct
-id|dirent
+id|cache_dirent
 id|this_ent
 comma
 op_star
@@ -6869,7 +6890,7 @@ id|entries_seen
 op_eq
 l_int|2
 op_logical_and
-id|entry-&gt;d_name
+id|entry-&gt;name
 (braket
 l_int|0
 )braket
@@ -6880,7 +6901,7 @@ l_char|&squot;.&squot;
 r_if
 c_cond
 (paren
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 op_eq
 l_int|1
 )paren
@@ -6889,14 +6910,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|entry-&gt;d_name
+id|entry-&gt;name
 (braket
 l_int|1
 )braket
 op_eq
 l_char|&squot;.&squot;
 op_logical_and
-id|entry-&gt;d_reclen
+id|entry-&gt;len
 op_eq
 l_int|2
 )paren
@@ -7424,9 +7445,27 @@ id|resp_data_len
 OL
 l_int|22
 )paren
+(brace
+macro_line|#ifdef SMBFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;smb_proc_getattr_trans2: not enough data for %s, len=%d&bslash;n&quot;
+comma
+op_amp
+id|param
+(braket
+l_int|6
+)braket
+comma
+id|resp_data_len
+)paren
+suffix:semicolon
+macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
+)brace
 id|attr-&gt;f_ctime
 op_assign
 id|date_dos2unix
@@ -7574,13 +7613,20 @@ comma
 id|fattr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * N.B. Why would we want to fall back to xxx_core on error?&n;&t; * If the file doesn&squot;t exist (a very common case), the core&n;&t; * protocol won&squot;t find it either.&n;&t; */
+multiline_comment|/*&n;&t; * Win 95 is painfully slow at returning trans2 getattr info ...&n; &t; */
 r_if
 c_cond
 (paren
 id|server-&gt;opt.protocol
 op_ge
 id|SMB_PROTOCOL_LANMAN2
+op_logical_and
+op_logical_neg
+(paren
+id|server-&gt;mnt-&gt;version
+op_amp
+l_int|1
+)paren
 )paren
 id|result
 op_assign
@@ -7747,10 +7793,6 @@ comma
 id|p
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|result
 op_assign
 id|smb_request_ok
@@ -7764,10 +7806,15 @@ l_int|0
 comma
 l_int|0
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 OL
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -7780,6 +7827,16 @@ id|server
 r_goto
 id|retry
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
 id|smb_unlock_server
 c_func
 (paren
@@ -8065,6 +8122,10 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+id|result
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8092,7 +8153,7 @@ id|server
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|result
 suffix:semicolon
 )brace
 r_int
@@ -8119,7 +8180,6 @@ id|fattr
 r_int
 id|result
 suffix:semicolon
-multiline_comment|/*&n;&t; * N.B. Why would we want to fall back to xxx_core on error?&n;&t; */
 r_if
 c_cond
 (paren

@@ -1,10 +1,11 @@
 multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smb_fs.h&gt;
+macro_line|#include &lt;linux/smb_mount.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_int
 DECL|function|smb_ioctl
@@ -30,6 +31,12 @@ r_int
 id|arg
 )paren
 (brace
+r_int
+id|result
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -39,7 +46,8 @@ id|cmd
 r_case
 id|SMB_IOC_GETMOUNTUID
 suffix:colon
-r_return
+id|result
+op_assign
 id|put_user
 c_func
 (paren
@@ -49,7 +57,7 @@ c_func
 id|inode
 )paren
 op_member_access_from_pointer
-id|m.mounted_uid
+id|mnt-&gt;mounted_uid
 comma
 (paren
 id|uid_t
@@ -58,6 +66,8 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|SMB_IOC_NEWCONN
 suffix:colon
@@ -65,9 +75,6 @@ suffix:colon
 r_struct
 id|smb_conn_opt
 id|opt
-suffix:semicolon
-r_int
-id|result
 suffix:semicolon
 r_if
 c_cond
@@ -78,7 +85,8 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* The process offers a new connection upon SIGUSR1 */
-r_return
+id|result
+op_assign
 id|smb_offerconn
 c_func
 (paren
@@ -90,37 +98,17 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+id|result
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-id|uid_t
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-id|opt
-)paren
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_return
-id|result
-suffix:semicolon
-)brace
+op_logical_neg
 id|copy_from_user
 c_func
 (paren
@@ -138,8 +126,9 @@ r_sizeof
 id|opt
 )paren
 )paren
-suffix:semicolon
-r_return
+)paren
+id|result
+op_assign
 id|smb_newconn
 c_func
 (paren
@@ -154,12 +143,16 @@ id|opt
 )paren
 suffix:semicolon
 )brace
-r_default
-suffix:colon
-r_return
-op_minus
-id|EINVAL
+r_break
 suffix:semicolon
 )brace
+r_default
+suffix:colon
+(brace
+)brace
+)brace
+r_return
+id|result
+suffix:semicolon
 )brace
 eof

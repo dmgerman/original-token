@@ -577,6 +577,7 @@ op_assign
 id|inode
 suffix:semicolon
 )brace
+multiline_comment|/* If this is a directory that isn&squot;t a mount point, bitch at the&n;&t;   daemon and fix it in user space */
 r_if
 c_cond
 (paren
@@ -585,18 +586,21 @@ c_func
 (paren
 id|dentry-&gt;d_inode-&gt;i_mode
 )paren
+op_logical_and
+id|dentry-&gt;d_mounts
+op_eq
+id|dentry
 )paren
 (brace
-r_while
-c_loop
-(paren
-id|dentry
-op_eq
-id|dentry-&gt;d_mounts
-)paren
-id|schedule
+r_return
+op_logical_neg
+id|autofs_wait
 c_func
 (paren
+id|sbi
+comma
+op_amp
+id|dentry-&gt;d_name
 )paren
 suffix:semicolon
 )brace
@@ -678,6 +682,7 @@ id|sbi
 r_return
 l_int|1
 suffix:semicolon
+r_else
 r_return
 id|try_to_fill_dentry
 c_func
@@ -706,6 +711,46 @@ op_le
 id|AUTOFS_NEGATIVE_TIMEOUT
 )paren
 suffix:semicolon
+multiline_comment|/* Check for a non-mountpoint directory */
+r_if
+c_cond
+(paren
+id|S_ISDIR
+c_func
+(paren
+id|dentry-&gt;d_inode-&gt;i_mode
+)paren
+op_logical_and
+id|dentry-&gt;d_mounts
+op_eq
+id|dentry
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|autofs_oz_mode
+c_func
+(paren
+id|sbi
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_else
+r_return
+id|try_to_fill_dentry
+c_func
+(paren
+id|dentry
+comma
+id|dir-&gt;i_sb
+comma
+id|sbi
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Update the usage list */
 id|ent
 op_assign
@@ -738,6 +783,7 @@ op_assign
 (brace
 id|autofs_revalidate
 comma
+multiline_comment|/* d_revalidate */
 l_int|NULL
 comma
 multiline_comment|/* d_hash */
