@@ -1,5 +1,4 @@
 multiline_comment|/*&n;  Madge Ambassador ATM Adapter driver.&n;  Copyright (C) 1995-1999  Madge Networks Ltd.&n;&n;  This program is free software; you can redistribute it and/or modify&n;  it under the terms of the GNU General Public License as published by&n;  the Free Software Foundation; either version 2 of the License, or&n;  (at your option) any later version.&n;&n;  This program is distributed in the hope that it will be useful,&n;  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;  GNU General Public License for more details.&n;&n;  You should have received a copy of the GNU General Public License&n;  along with this program; if not, write to the Free Software&n;  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n;&n;  The GNU GPL is contained in /usr/doc/copyright/GPL on a Debian&n;  system and in the file COPYING in the Linux kernel source.&n;*/
-multiline_comment|/*&n;  IMPORTANT NOTE: Madge Networks does not license the microcode for&n;  this driver under the GPL. See the .data file for the licence.&n;*/
 macro_line|#ifndef AMBASSADOR_H
 DECL|macro|AMBASSADOR_H
 mdefine_line|#define AMBASSADOR_H
@@ -109,9 +108,6 @@ mdefine_line|#define NUM_RX_POOLS&t;   4
 singleline_comment|// minimum RX buffers required to cope with replenishing delay
 DECL|macro|MIN_RX_BUFFERS
 mdefine_line|#define MIN_RX_BUFFERS&t;   1
-singleline_comment|// RX buffer tailroom to cope with writing too much
-DECL|macro|RX_FUDGE
-mdefine_line|#define RX_FUDGE           3
 singleline_comment|// minimum PCI latency we will tolerate (32 IS TOO SMALL)
 DECL|macro|MIN_PCI_LATENCY
 mdefine_line|#define MIN_PCI_LATENCY   64 
@@ -221,8 +217,12 @@ multiline_comment|/* RxPool0:&t;0x0000&t;&t;*/
 multiline_comment|/* RxPool1:&t;0x0020&t;&t;*/
 multiline_comment|/* RxPool2:&t;0x0040&t;&t;*/
 multiline_comment|/* RxPool3:&t;0x0060&t;&t;*/
+DECL|macro|SRB_RATE_SHIFT
+mdefine_line|#define SRB_RATE_SHIFT          16
 DECL|macro|SRB_POOL_SHIFT
-mdefine_line|#define SRB_POOL_SHIFT           5
+mdefine_line|#define SRB_POOL_SHIFT          (SRB_FLAGS_SHIFT+5)
+DECL|macro|SRB_FLAGS_SHIFT
+mdefine_line|#define SRB_FLAGS_SHIFT         16
 DECL|macro|SRB_STOP_TASKING
 mdefine_line|#define&t;SRB_STOP_TASKING&t;19
 DECL|macro|SRB_START_TASKING
@@ -460,8 +460,6 @@ DECL|typedef|amb_mem
 )brace
 id|amb_mem
 suffix:semicolon
-DECL|macro|mem
-mdefine_line|#define mem ((amb_mem *)0)
 multiline_comment|/* IRQ (card to host) and doorbell (host to card) enable bits */
 DECL|macro|AMB_INTERRUPT_BITS
 mdefine_line|#define AMB_INTERRUPT_BITS 0x00030000
@@ -722,7 +720,6 @@ DECL|member|handle
 id|u32
 id|handle
 suffix:semicolon
-singleline_comment|// really? what about a BE host?
 DECL|member|vc
 id|u16
 id|vc
@@ -736,7 +733,6 @@ id|u32
 id|next_descriptor
 suffix:semicolon
 macro_line|#ifdef AMB_NEW_MICROCODE
-singleline_comment|// BE host?
 DECL|member|cpcs_uu
 id|u8
 id|cpcs_uu
@@ -793,7 +789,6 @@ multiline_comment|/* this &quot;points&quot; to the sequence of fragments and tr
 r_typedef
 r_struct
 (brace
-singleline_comment|// what about a BE host?
 DECL|member|vc
 id|u16
 id|vc
@@ -831,7 +826,6 @@ DECL|member|handle
 id|u32
 id|handle
 suffix:semicolon
-singleline_comment|// what about a BE host?
 DECL|member|vc
 id|u16
 id|vc
@@ -949,7 +943,6 @@ id|NUM_RX_POOLS
 )braket
 suffix:semicolon
 macro_line|#ifdef AMB_NEW_MICROCODE
-singleline_comment|// BE?
 DECL|member|init_flags
 id|u16
 id|init_flags
@@ -967,7 +960,6 @@ multiline_comment|/* This structure must be kept in line with the vcr image in s
 r_typedef
 r_struct
 (brace
-singleline_comment|// what about a BE host?
 DECL|member|racp_chcs
 id|u8
 id|racp_chcs

@@ -1,9 +1,9 @@
 multiline_comment|/* $Id: dma.c,v 1.7 1994/12/28 03:35:33 root Exp root $&n; * linux/kernel/dma.c: A DMA channel allocator. Inspired by linux/kernel/irq.c.&n; *&n; * Written by Hennus Bergman, 1992.&n; *&n; * 1994/12/26: Changes by Alex Nash to fix a minor bug in /proc/dma.&n; *   In the previous version the reported device could end up being wrong,&n; *   if a device requested a DMA channel that was already in use.&n; *   [It also happened to remove the sizeof(char *) == sizeof(int)&n; *   assumption introduced because of those /proc/dma patches. -- Hennus]&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* A note on resource allocation:&n; *&n; * All drivers needing DMA channels, should allocate and release them&n; * through the public routines `request_dma()&squot; and `free_dma()&squot;.&n; *&n; * In order to avoid problems, all processes should allocate resources in&n; * the same sequence and release them in the reverse order.&n; *&n; * So, when allocating DMAs and IRQs, first allocate the IRQ, then the DMA.&n; * When releasing them, first release the DMA, then release the IRQ.&n; * If you don&squot;t, you may cause allocation requests to fail unnecessarily.&n; * This doesn&squot;t really matter now, but it will once we get real semaphores&n; * in the kernel.&n; */
 DECL|variable|dma_spin_lock
 id|spinlock_t

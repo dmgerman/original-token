@@ -147,7 +147,7 @@ DECL|macro|mb
 macro_line|#  define mb() &bslash;&n;     __asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
-macro_line|#  include &lt;asm/spinlock.h&gt;
+macro_line|#  include &lt;linux/spinlock.h&gt;
 macro_line|#  include &lt;linux/smp.h&gt;
 DECL|macro|cpuid
 macro_line|#  define cpuid smp_processor_id()

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.15 1999/08/30 10:14:48 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.h,v 1.16 1999/09/06 01:17:52 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
@@ -167,6 +167,8 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|macro|disable_irq_nosync
+mdefine_line|#define disable_irq_nosync disable_irq
 r_extern
 r_void
 id|enable_irq

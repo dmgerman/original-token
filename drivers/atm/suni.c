@@ -1,5 +1,5 @@
 multiline_comment|/* drivers/atm/suni.c - PMC SUNI (PHY) driver */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -67,18 +67,6 @@ r_static
 r_struct
 id|timer_list
 id|poll_timer
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0L
-comma
-l_int|0L
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|start_timer
 r_static
@@ -524,28 +512,17 @@ c_cond
 op_logical_neg
 id|start_timer
 )paren
-(brace
-id|del_timer
+id|mod_timer
 c_func
 (paren
 op_amp
 id|poll_timer
-)paren
-suffix:semicolon
-id|poll_timer.expires
-op_assign
+comma
 id|jiffies
 op_plus
 id|HZ
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|poll_timer
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|fetch_stats
 r_static
@@ -1515,7 +1492,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*init_timer(&amp;poll_timer);*/
+id|init_timer
+c_func
+(paren
+op_amp
+id|poll_timer
+)paren
+suffix:semicolon
 id|poll_timer.expires
 op_assign
 id|jiffies
@@ -1669,7 +1652,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|suni_init
 id|EXPORT_SYMBOL
 c_func
@@ -1677,6 +1659,7 @@ c_func
 id|suni_init
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.79 1999/08/31 06:57:40 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.80 1999/09/02 05:44:33 shadow Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1097,6 +1097,16 @@ macro_line|#ifdef CONFIG_SUN_AURORA
 r_extern
 r_int
 id|aurora_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_TADPOLE_TS102_UCTRL
+r_extern
+r_int
+id|ts102_uctrl_init
 c_func
 (paren
 r_void
@@ -2312,6 +2322,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_AURORA
 id|aurora_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_TADPOLE_TS102_UCTRL
+id|ts102_uctrl_init
 c_func
 (paren
 )paren

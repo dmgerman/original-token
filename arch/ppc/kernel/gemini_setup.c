@@ -1951,6 +1951,15 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_void
+id|layout_bus
+c_func
+(paren
+r_struct
+id|pci_bus
+op_star
+)paren
+suffix:semicolon
 id|gemini_setup_pci_ptrs
 c_func
 (paren
@@ -2076,5 +2085,9 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+id|ppc_md.pcibios_fixup_bus
+op_assign
+id|layout_bus
+suffix:semicolon
 )brace
 eof

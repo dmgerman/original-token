@@ -2,9 +2,9 @@ multiline_comment|/* $Id: debuglocks.c,v 1.9 1999/08/14 03:51:39 anton Exp $&n; 
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;&t;/* For NR_CPUS */
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* To enable this code, just define SPIN_LOCK_DEBUG in asm/spinlock.h */
 macro_line|#ifdef SPIN_LOCK_DEBUG
 multiline_comment|/* Some notes on how these debugging routines work.  When a lock is acquired&n; * an extra debugging member lock-&gt;owner_pc is set to the caller of the lock&n; * acquisition routine.  Right before releasing a lock, the debugging program&n; * counter is cleared to zero.&n; *&n; * Furthermore, since PC&squot;s are 4 byte aligned on Sparc, we stuff the CPU&n; * number of the owner in the lowest two bits.&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.42 1999/08/31 09:12:31 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1999  David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.44 1999/09/05 09:28:09 ecd Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1999  David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -299,6 +299,9 @@ r_struct
 id|linux_ebus_child
 op_star
 id|dev
+comma
+r_int
+id|non_standard_regs
 )paren
 (brace
 r_int
@@ -340,7 +343,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(%s)&quot;
+l_string|&quot; (%s)&quot;
 comma
 id|dev-&gt;prom_name
 )paren
@@ -378,6 +381,42 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|non_standard_regs
+)paren
+(brace
+multiline_comment|/* This is to handle reg properties which are not&n;&t;&t; * in the parent relative format.  One example are&n;&t;&t; * children of the i2c device on CompactPCI systems.&n;&t;&t; *&n;&t;&t; * So, for such devices we just record the property&n;&t;&t; * raw in the child resources.&n;&t;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|dev-&gt;num_addrs
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|dev-&gt;resource
+(braket
+id|i
+)braket
+dot
+id|start
+op_assign
+id|regs
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
 r_for
 c_loop
 (paren
@@ -474,6 +513,7 @@ id|name
 op_assign
 id|dev-&gt;prom_name
 suffix:semicolon
+)brace
 )brace
 id|len
 op_assign
@@ -658,6 +698,38 @@ id|i
 suffix:semicolon
 )brace
 )brace
+)brace
+DECL|function|child_regs_nonstandard
+r_static
+r_int
+id|__init
+id|child_regs_nonstandard
+c_func
+(paren
+r_struct
+id|linux_ebus_device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|dev-&gt;prom_name
+comma
+l_string|&quot;i2c&quot;
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|fill_ebus_device
 r_void
@@ -1107,6 +1179,12 @@ l_int|0
 )braket
 comma
 id|child
+comma
+id|child_regs_nonstandard
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_while
@@ -1163,6 +1241,12 @@ l_int|0
 )braket
 comma
 id|child
+comma
+id|child_regs_nonstandard
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 )brace

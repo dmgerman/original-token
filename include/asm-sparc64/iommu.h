@@ -2,9 +2,9 @@ multiline_comment|/* iommu.h: Definitions for the sun5 IOMMU.&n; *&n; * Copyrigh
 macro_line|#ifndef _SPARC64_IOMMU_H
 DECL|macro|_SPARC64_IOMMU_H
 mdefine_line|#define _SPARC64_IOMMU_H
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/sysio.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* The iommu handles all virtual to physical address translations&n; * that occur between the SYSIO and physical memory.  Access by&n; * the cpu to IO registers and similar go over the UPA so are&n; * translated by the on chip TLB&squot;s.  The iommu and the TLB do&n; * not need to have the same translations at all, in fact most&n; * of the time the translations they handle are a disjoint set.&n; * Basically the iommu handles all SYSIO dvma translations.&n; */
 multiline_comment|/* The IOMMU register set. */
 DECL|macro|IOMMU_CTRL_IMPL

@@ -1966,7 +1966,7 @@ c_loop
 (paren
 id|flow
 op_assign
-id|p-&gt;link.next
+id|p-&gt;flows
 suffix:semicolon
 id|flow
 suffix:semicolon

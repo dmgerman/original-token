@@ -5,6 +5,7 @@ mdefine_line|#define _SPARC_PGTABLE_H
 multiline_comment|/*  asm-sparc/pgtable.h:  Defines and functions used to work&n; *                        with Sparc page tables.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#ifdef CONFIG_SUN4
 macro_line|#include &lt;asm/pgtsun4.h&gt;
@@ -16,7 +17,6 @@ macro_line|#include &lt;asm/vac-ops.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/btfixup.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 r_extern
 r_void
 id|load_mmu

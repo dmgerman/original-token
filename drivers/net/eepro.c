@@ -35,7 +35,7 @@ multiline_comment|/*                                */
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* For linux 2.1.xx */
 macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 DECL|macro|compat_dev_kfree_skb

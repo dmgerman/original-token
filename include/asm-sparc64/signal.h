@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.8 1998/07/29 16:32:39 jj Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.9 1999/09/06 08:22:11 jj Exp $ */
 macro_line|#ifndef _ASMSPARC64_SIGNAL_H
 DECL|macro|_ASMSPARC64_SIGNAL_H
 mdefine_line|#define _ASMSPARC64_SIGNAL_H
@@ -298,13 +298,8 @@ id|__sighandler_t
 (paren
 r_int
 comma
-r_int
-comma
 r_struct
 id|sigcontext
-op_star
-comma
-r_char
 op_star
 )paren
 suffix:semicolon
@@ -381,6 +376,7 @@ id|sa_mask
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 DECL|struct|k_sigaction
 r_struct
 id|k_sigaction
@@ -397,6 +393,7 @@ id|ka_restorer
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|struct|__old_sigaction
 r_struct
 id|__old_sigaction
@@ -466,13 +463,14 @@ r_int
 id|ss_flags
 suffix:semicolon
 DECL|member|ss_size
-id|__kernel_size_t
+r_int
 id|ss_size
 suffix:semicolon
 DECL|typedef|stack_t
 )brace
 id|stack_t
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 DECL|struct|sigaltstack32
 r_typedef
 r_struct
@@ -494,6 +492,7 @@ DECL|typedef|stack_t32
 )brace
 id|stack_t32
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMSPARC64_SIGNAL_H) */
 eof

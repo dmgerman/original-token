@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|macro|I2C_DELAY
 mdefine_line|#define I2C_DELAY   10
 DECL|variable|debug

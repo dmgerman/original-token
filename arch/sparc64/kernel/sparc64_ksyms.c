@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.62 1999/08/06 01:42:48 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.64 1999/09/05 09:33:38 ecd Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -901,20 +901,6 @@ c_func
 id|ebus_chain
 )paren
 suffix:semicolon
-DECL|variable|pci_dvma_offset
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_dvma_offset
-)paren
-suffix:semicolon
-DECL|variable|pci_dvma_mask
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_dvma_mask
-)paren
-suffix:semicolon
 DECL|variable|pci_dvma_v2p_hash
 id|EXPORT_SYMBOL
 c_func
@@ -927,6 +913,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_dvma_p2v_hash
+)paren
+suffix:semicolon
+DECL|variable|pci_memspace_mask
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_memspace_mask
 )paren
 suffix:semicolon
 DECL|variable|empty_zero_page

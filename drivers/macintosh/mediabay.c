@@ -172,9 +172,8 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * It seems that the bit for the media-bay interrupt in the IRQ_LEVEL&n; * register is always set when there is something in the media bay.&n; * This causes problems for the interrupt code if we attach an interrupt&n; * handler to the media-bay interrupt, because it tends to go into&n; * an infinite loop calling the media bay interrupt handler.&n; * Therefore we do it all by polling the media bay once each tick.&n; */
-id|__pmac
-multiline_comment|/* I don&squot;t know of any chrp with a mediabay -- Cort */
 r_void
+id|__pmac
 DECL|function|media_bay_init
 id|media_bay_init
 c_func
@@ -552,6 +551,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 r_int
+id|__pmac
 DECL|function|check_media_bay
 id|check_media_bay
 c_func
@@ -642,6 +642,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 r_int
+id|__pmac
 DECL|function|check_media_bay_by_base
 id|check_media_bay_by_base
 c_func
@@ -731,6 +732,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 r_int
+id|__pmac
 DECL|function|media_bay_set_ide_infos
 id|media_bay_set_ide_infos
 c_func
@@ -832,6 +834,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This procedure runs as a kernel thread to poll the media bay&n; * once each tick and register and unregister the IDE interface&n; * with the IDE driver.  It needs to be a thread because&n; * ide_register can&squot;t be called from interrupt context.&n; */
 r_int
+id|__pmac
 DECL|function|media_bay_task
 id|media_bay_task
 c_func
@@ -1124,6 +1127,7 @@ suffix:semicolon
 )brace
 )brace
 r_void
+id|__pmac
 DECL|function|poll_media_bay
 id|poll_media_bay
 c_func
@@ -1209,6 +1213,7 @@ suffix:semicolon
 )brace
 r_static
 r_void
+id|__pmac
 DECL|function|set_media_bay
 id|set_media_bay
 c_func

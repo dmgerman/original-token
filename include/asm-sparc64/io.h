@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.21 1999/08/30 10:14:44 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.24 1999/09/06 01:17:54 davem Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -14,16 +14,6 @@ DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|PCI_DVMA_HASHSZ
 mdefine_line|#define PCI_DVMA_HASHSZ&t;256
-r_extern
-r_int
-r_int
-id|pci_dvma_offset
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|pci_dvma_mask
-suffix:semicolon
 r_extern
 r_int
 r_int
@@ -160,25 +150,14 @@ DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus virt_to_phys
 DECL|macro|bus_to_virt
 mdefine_line|#define bus_to_virt phys_to_virt
-DECL|function|bus_dvma_to_mem
+multiline_comment|/* Different PCI controllers we support have their PCI MEM space&n; * mapped to an either 2GB (Psycho) or 4GB (Sabre) aligned area,&n; * so need to chop off the top 33 or 32 bits.&n; */
 r_extern
-id|__inline__
 r_int
 r_int
-id|bus_dvma_to_mem
-c_func
-(paren
-r_int
-r_int
-id|vaddr
-)paren
-(brace
-r_return
-id|vaddr
-op_amp
-id|pci_dvma_mask
+id|pci_memspace_mask
 suffix:semicolon
-)brace
+DECL|macro|bus_dvma_to_mem
+mdefine_line|#define bus_dvma_to_mem(__vaddr) ((__vaddr) &amp; pci_memspace_mask)
 DECL|function|inb
 r_extern
 id|__inline__
@@ -547,18 +526,270 @@ id|count
 )paren
 suffix:semicolon
 multiline_comment|/* Memory functions, same as I/O accesses on Ultra. */
+DECL|function|_readb
+r_extern
+id|__inline__
+r_int
+r_int
+id|_readb
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lduba [%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E_L
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|_readw
+r_extern
+id|__inline__
+r_int
+r_int
+id|_readw
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lduha [%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E_L
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|_readl
+r_extern
+id|__inline__
+r_int
+r_int
+id|_readl
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lduwa [%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E_L
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|_writeb
+r_extern
+id|__inline__
+r_void
+id|_writeb
+c_func
+(paren
+r_int
+r_char
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stba %0, [%1] %2&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|b
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E_L
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|_writew
+r_extern
+id|__inline__
+r_void
+id|_writew
+c_func
+(paren
+r_int
+r_int
+id|w
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stha %0, [%1] %2&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|w
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E_L
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|_writel
+r_extern
+id|__inline__
+r_void
+id|_writel
+c_func
+(paren
+r_int
+r_int
+id|l
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stwa %0, [%1] %2&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|l
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E_L
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|macro|readb
-mdefine_line|#define readb(addr)&t;&t;inb((unsigned long)(addr))
+mdefine_line|#define readb(__addr)&t;&t;(_readb((unsigned long)(__addr)))
 DECL|macro|readw
-mdefine_line|#define readw(addr)&t;&t;inw((unsigned long)(addr))
+mdefine_line|#define readw(__addr)&t;&t;(_readw((unsigned long)(__addr)))
 DECL|macro|readl
-mdefine_line|#define readl(addr)&t;&t;inl((unsigned long)(addr))
+mdefine_line|#define readl(__addr)&t;&t;(_readl((unsigned long)(__addr)))
 DECL|macro|writeb
-mdefine_line|#define writeb(b, addr)&t;&t;outb((b), (unsigned long)(addr))
+mdefine_line|#define writeb(__b, __addr)&t;(_writeb((__b), (unsigned long)(__addr)))
 DECL|macro|writew
-mdefine_line|#define writew(w, addr)&t;&t;outw((w), (unsigned long)(addr))
+mdefine_line|#define writew(__w, __addr)&t;(_writew((__w), (unsigned long)(__addr)))
 DECL|macro|writel
-mdefine_line|#define writel(l, addr)&t;&t;outl((l), (unsigned long)(addr))
+mdefine_line|#define writel(__l, __addr)&t;(_writel((__l), (unsigned long)(__addr)))
 multiline_comment|/*&n; * Memcpy to/from I/O space is just a regular memory operation on&n; * Ultra as well.&n; */
 multiline_comment|/*&n; * FIXME: Write faster routines using ASL_*L for this.&n; */
 r_static

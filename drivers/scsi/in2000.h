@@ -655,7 +655,7 @@ DECL|macro|CLISPIN_UNLOCK
 macro_line|# define CLISPIN_UNLOCK(flags) restore_flags(flags)
 macro_line|#else                               /* 2.1.xxx */
 macro_line|# include &lt;linux/init.h&gt;
-macro_line|# include &lt;asm/spinlock.h&gt;
+macro_line|# include &lt;linux/spinlock.h&gt;
 DECL|macro|in2000__INITFUNC
 macro_line|# define in2000__INITFUNC(function) __initfunc(function)
 DECL|macro|in2000__INIT

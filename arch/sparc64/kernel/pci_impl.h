@@ -1,9 +1,9 @@
-multiline_comment|/* $Id: pci_impl.h,v 1.1 1999/08/30 10:00:44 davem Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_impl.h,v 1.2 1999/09/05 04:58:05 davem Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef PCI_IMPL_H
 DECL|macro|PCI_IMPL_H
 mdefine_line|#define PCI_IMPL_H
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
 id|spinlock_t
@@ -157,16 +157,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* IOMMU/DVMA initialization. */
-r_extern
-r_int
-r_int
-id|pci_dvma_offset
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|pci_dvma_mask
-suffix:semicolon
 DECL|macro|PCI_DVMA_HASH_NONE
 mdefine_line|#define PCI_DVMA_HASH_NONE&t;~0UL
 DECL|function|set_dvma_hash
@@ -176,6 +166,10 @@ r_void
 id|set_dvma_hash
 c_func
 (paren
+r_int
+r_int
+id|dvma_offset
+comma
 r_int
 r_int
 id|paddr
@@ -189,7 +183,7 @@ r_int
 r_int
 id|dvma_addr
 op_assign
-id|pci_dvma_offset
+id|dvma_offset
 op_plus
 id|daddr
 suffix:semicolon

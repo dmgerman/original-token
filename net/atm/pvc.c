@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/pvc.c - ATM PVC sockets */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/net.h&gt;&t;&t;/* struct socket, struct net_proto,&n;&t;&t;&t;&t;   struct proto_ops */
 macro_line|#include &lt;linux/atm.h&gt;&t;&t;/* ATM stuff */
@@ -10,9 +10,6 @@ macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;&t;&t;/* for sock_no_* */
-macro_line|#ifdef CONFIG_AREQUIPA
-macro_line|#include &lt;linux/arequipa.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_ATM_CLIP
 macro_line|#include &lt;net/atmclip.h&gt;
 macro_line|#endif
@@ -241,20 +238,30 @@ r_struct
 id|atm_vcc
 op_star
 id|vcc
+op_assign
+id|ATM_SD
+c_func
+(paren
+id|sock
+)paren
 suffix:semicolon
-macro_line|#if 0 /* add some sanity checks later ... @@@ */
 r_if
 c_cond
 (paren
-id|sock-&gt;state
-op_ne
-id|SS_CONNECTED
+op_logical_neg
+id|vcc-&gt;dev
+op_logical_or
+op_logical_neg
+(paren
+id|vcc-&gt;flags
+op_amp
+id|ATM_VF_ADDR
+)paren
 )paren
 r_return
 op_minus
-id|EINVAL
+id|ENOTCONN
 suffix:semicolon
-macro_line|#endif
 op_star
 id|sockaddr_len
 op_assign
@@ -272,14 +279,6 @@ id|sockaddr_atmpvc
 op_star
 )paren
 id|sockaddr
-suffix:semicolon
-id|vcc
-op_assign
-id|ATM_SD
-c_func
-(paren
-id|sock
-)paren
 suffix:semicolon
 id|addr-&gt;sap_family
 op_assign
@@ -455,41 +454,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ATM_CLIP
-id|clip_tbl.lock
-op_assign
-id|RW_LOCK_UNLOCKED
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|clip_tbl.kmem_cachep
-op_eq
-l_int|NULL
-)paren
-id|clip_tbl.kmem_cachep
-op_assign
-id|kmem_cache_create
-c_func
-(paren
-id|clip_tbl.id
-comma
-id|clip_tbl.entry_size
-comma
-l_int|0
-comma
-id|SLAB_HWCACHE_ALIGN
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AREQUIPA
-(paren
-r_void
-)paren
-id|atm_init_arequipa
+id|atm_clip_init
 c_func
 (paren
 )paren

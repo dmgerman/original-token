@@ -11,8 +11,8 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * Temporary debugging help until all code is converted to the new&n; * waitqueue usage.&n; */
 DECL|macro|WAITQUEUE_DEBUG

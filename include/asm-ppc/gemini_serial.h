@@ -3,17 +3,24 @@ DECL|macro|__ASMPPC_GEMINI_SERIAL_H
 mdefine_line|#define __ASMPPC_GEMINI_SERIAL_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/gemini.h&gt;
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
+DECL|macro|RS_TABLE_SIZE
+mdefine_line|#define RS_TABLE_SIZE  64
+macro_line|#else
+DECL|macro|RS_TABLE_SIZE
+mdefine_line|#define RS_TABLE_SIZE  4
+macro_line|#endif
 multiline_comment|/* Rate for the 24.576 Mhz clock for the onboard serial chip */
 DECL|macro|BASE_BAUD
 mdefine_line|#define BASE_BAUD  (24576000 / 16)
 macro_line|#ifdef CONFIG_SERIAL_DETECT_IRQ
 DECL|macro|STD_COM_FLAGS
-mdefine_line|#define STD_COM_FLAGS (ASYNC_BOOT_AUTOCONF|ASYNC_SKIP_TEST|ASYNC_AUTO_IRQ)
+mdefine_line|#define STD_COM_FLAGS (/*ASYNC_BOOT_AUTOCONF|*/ASYNC_SKIP_TEST|ASYNC_AUTO_IRQ)
 DECL|macro|STD_COM4_FLAGS
 mdefine_line|#define STD_COM4_FLAGS (ASYNC_BOOT_AUTOCONF|ASYNC_AUTO_IRQ)
 macro_line|#else
 DECL|macro|STD_COM_FLAGS
-mdefine_line|#define STD_COM_FLAGS (ASYNC_BOOT_AUTOCONF|ASYNC_SKIP_TEST)
+mdefine_line|#define STD_COM_FLAGS (/*ASYNC_BOOT_AUTOCONF|*/ASYNC_SKIP_TEST)
 DECL|macro|STD_COM4_FLAGS
 mdefine_line|#define STD_COM4_FLAGS (ASYNC_BOOT_AUTOCONF)
 macro_line|#endif

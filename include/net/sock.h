@@ -789,6 +789,30 @@ DECL|member|write_pending
 r_int
 id|write_pending
 suffix:semicolon
+DECL|member|keepalive_time
+r_int
+r_int
+id|keepalive_time
+suffix:semicolon
+multiline_comment|/* time before keep alive takes place */
+DECL|member|keepalive_intvl
+r_int
+r_int
+id|keepalive_intvl
+suffix:semicolon
+multiline_comment|/* time interval between keep alive probes */
+DECL|member|keepalive_probes
+r_int
+r_char
+id|keepalive_probes
+suffix:semicolon
+multiline_comment|/* num of allowed keep alive probes */
+DECL|member|syn_retries
+r_int
+r_char
+id|syn_retries
+suffix:semicolon
+multiline_comment|/* num of allowed syn retries */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */

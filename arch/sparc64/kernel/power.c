@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: power.c,v 1.2 1999/08/31 04:39:38 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: power.c,v 1.4 1999/08/31 18:22:05 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

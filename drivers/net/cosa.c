@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|macro|COSA_SLOW_IO
 macro_line|#undef COSA_SLOW_IO&t;/* for testing purposes only */
 DECL|macro|REALLY_SLOW_IO
@@ -22,7 +23,6 @@ macro_line|#undef REALLY_SLOW_IO
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;syncppp.h&quot;
 macro_line|#include &quot;cosa.h&quot;
 multiline_comment|/* Linux version stuff */

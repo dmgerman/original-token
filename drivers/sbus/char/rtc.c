@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: rtc.c,v 1.17 1999/08/31 13:32:01 anton Exp $&n; *&n; * Linux/SPARC Real Time Clock Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This is a little driver that lets a user-level program access&n; * the SPARC Mostek real time clock chip. It is no use unless you&n; * use the modified clock utility.&n; *&n; * Get the modified clock utility from:&n; *   ftp://vger.rutgers.edu/pub/linux/Sparc/userland/clock.c&n; */
+multiline_comment|/* $Id: rtc.c,v 1.18 1999/08/31 18:51:36 davem Exp $&n; *&n; * Linux/SPARC Real Time Clock Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This is a little driver that lets a user-level program access&n; * the SPARC Mostek real time clock chip. It is no use unless you&n; * use the modified clock utility.&n; *&n; * Get the modified clock utility from:&n; *   ftp://vger.rutgers.edu/pub/linux/Sparc/userland/clock.c&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -30,16 +30,10 @@ op_star
 id|t
 )paren
 (brace
-r_struct
-id|mostek48t02
-op_star
+r_int
+r_int
 id|regs
 op_assign
-(paren
-r_struct
-id|mostek48t02
-op_star
-)paren
 id|mstk48t02_regs
 suffix:semicolon
 r_int
@@ -188,16 +182,10 @@ op_star
 id|t
 )paren
 (brace
-r_struct
-id|mostek48t02
-op_star
+r_int
+r_int
 id|regs
 op_assign
-(paren
-r_struct
-id|mostek48t02
-op_star
-)paren
 id|mstk48t02_regs
 suffix:semicolon
 r_int

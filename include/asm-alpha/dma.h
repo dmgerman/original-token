@@ -4,8 +4,8 @@ macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|macro|dma_outb
 mdefine_line|#define dma_outb&t;outb
 DECL|macro|dma_inb

@@ -604,7 +604,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|u8
+r_int
 id|pci_irq_line
 suffix:semicolon
 id|u16
@@ -612,7 +612,8 @@ id|pci_command
 comma
 id|new_command
 suffix:semicolon
-id|u32
+r_int
+r_int
 id|pci_ioaddr
 suffix:semicolon
 multiline_comment|/* Note: some vendor IDs (RealTek) have non-NE2k cards as well. */
@@ -775,6 +776,7 @@ id|new_command
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef __sparc__
 r_if
 c_cond
 (paren
@@ -799,10 +801,11 @@ comma
 id|pci_irq_line
 )paren
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;ne2k-pci.c: PCI NE2000 clone &squot;%s&squot; at I/O %#x, IRQ %d.&bslash;n&quot;
+l_string|&quot;ne2k-pci.c: PCI NE2000 clone &squot;%s&squot; at I/O %#lx, IRQ %d.&bslash;n&quot;
 comma
 id|pci_clone_list
 (braket
@@ -843,7 +846,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ne2k-pci: Probe of PCI card at %#x failed.&bslash;n&quot;
+l_string|&quot;ne2k-pci: Probe of PCI card at %#lx failed.&bslash;n&quot;
 comma
 id|pci_ioaddr
 )paren
@@ -1473,7 +1476,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s found at %#x, IRQ %d, &quot;
+l_string|&quot;%s: %s found at %#lx, IRQ %d, &quot;
 comma
 id|dev-&gt;name
 comma

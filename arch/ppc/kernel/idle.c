@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.65 1999/08/03 19:16:19 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.66 1999/09/05 11:56:30 paulus Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -97,8 +97,6 @@ id|idled
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 (brace
 multiline_comment|/* endless loop with no priority at all */
@@ -193,15 +191,11 @@ r_int
 id|cpu_idle
 c_func
 (paren
-r_void
-op_star
-id|unused
 )paren
 (brace
 id|idled
 c_func
 (paren
-id|unused
 )paren
 suffix:semicolon
 r_return

@@ -81,12 +81,12 @@ macro_line|#include &lt;linux/cyclades.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|macro|CY_LOCK
 mdefine_line|#define&t;CY_LOCK(info,flags)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock_irqsave(&amp;cy_card[info-&gt;card].card_lock, flags); &bslash;&n;&t;&t;} while (0)
 DECL|macro|CY_UNLOCK

@@ -4,7 +4,7 @@ DECL|macro|__ASM_MIPS_DMA_H
 mdefine_line|#define __ASM_MIPS_DMA_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;&t;&t;&t;/* need byte IO */
-macro_line|#include &lt;asm/spinlock.h&gt;&t;&t;/* And spinlocks */
+macro_line|#include &lt;linux/spinlock.h&gt;&t;&t;/* And spinlocks */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER

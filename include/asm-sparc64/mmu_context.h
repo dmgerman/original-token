@@ -3,9 +3,9 @@ macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
 multiline_comment|/* Derived heavily from Linus&squot;s Alpha/AXP ASN code... */
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 r_extern
 id|spinlock_t

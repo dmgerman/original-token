@@ -11,8 +11,7 @@ macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-singleline_comment|//#include &lt;sys/ioctl.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
 DECL|macro|NR_PORTS
 mdefine_line|#define NR_PORTS 3

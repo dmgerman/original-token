@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -23,7 +24,6 @@ macro_line|#include &lt;asm/msi.h&gt;
 macro_line|#include &lt;asm/a.out.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/io-unit.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* Now the cpu specific definitions. */
 macro_line|#include &lt;asm/viking.h&gt;
 macro_line|#include &lt;asm/mxcc.h&gt;

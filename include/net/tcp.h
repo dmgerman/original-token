@@ -32,7 +32,7 @@ c_func
 id|__aligned__
 c_func
 (paren
-id|SMP_CACHE_BYTES
+l_int|8
 )paren
 )paren
 )paren
@@ -591,8 +591,16 @@ DECL|macro|TCP_KEEPALIVE_TIME
 mdefine_line|#define TCP_KEEPALIVE_TIME (120*60*HZ)&t;&t;/* two hours */
 DECL|macro|TCP_KEEPALIVE_PROBES
 mdefine_line|#define TCP_KEEPALIVE_PROBES&t;9&t;&t;/* Max of 9 keepalive probes&t;*/
-DECL|macro|TCP_KEEPALIVE_PERIOD
-mdefine_line|#define TCP_KEEPALIVE_PERIOD ((75*HZ)&gt;&gt;2)&t;/* period of keepalive check&t;*/
+DECL|macro|TCP_KEEPALIVE_INTVL
+mdefine_line|#define TCP_KEEPALIVE_INTVL&t;(75*HZ)
+DECL|macro|MAX_TCP_KEEPIDLE
+mdefine_line|#define MAX_TCP_KEEPIDLE&t;32767
+DECL|macro|MAX_TCP_KEEPINTVL
+mdefine_line|#define MAX_TCP_KEEPINTVL&t;32767
+DECL|macro|MAX_TCP_KEEPCNT
+mdefine_line|#define MAX_TCP_KEEPCNT&t;&t;127
+DECL|macro|MAX_TCP_SYNCNT
+mdefine_line|#define MAX_TCP_SYNCNT&t;&t;127
 DECL|macro|TCP_SYNACK_PERIOD
 mdefine_line|#define TCP_SYNACK_PERIOD&t;(HZ/2) /* How often to run the synack slow timer */
 DECL|macro|TCP_QUICK_TRIES
@@ -649,6 +657,23 @@ DECL|macro|TIME_PROBE0
 mdefine_line|#define TIME_PROBE0&t;4
 DECL|macro|TIME_KEEPOPEN
 mdefine_line|#define TIME_KEEPOPEN&t;5
+multiline_comment|/* sysctl variables for tcp */
+r_extern
+r_int
+id|sysctl_tcp_keepalive_time
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_keepalive_probes
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_keepalive_intvl
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_syn_retries
+suffix:semicolon
 r_struct
 id|open_request
 suffix:semicolon
@@ -2018,6 +2043,9 @@ r_struct
 id|sock
 op_star
 id|sk
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 r_extern
@@ -4326,6 +4354,58 @@ c_func
 op_amp
 id|tcp_lhash_wait
 )paren
+suffix:semicolon
+)brace
+DECL|function|keepalive_intvl_when
+r_static
+r_inline
+r_int
+id|keepalive_intvl_when
+c_func
+(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tp-&gt;keepalive_intvl
+)paren
+r_return
+id|tp-&gt;keepalive_intvl
+suffix:semicolon
+r_else
+r_return
+id|sysctl_tcp_keepalive_intvl
+suffix:semicolon
+)brace
+DECL|function|keepalive_time_when
+r_static
+r_inline
+r_int
+id|keepalive_time_when
+c_func
+(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tp-&gt;keepalive_time
+)paren
+r_return
+id|tp-&gt;keepalive_time
+suffix:semicolon
+r_else
+r_return
+id|sysctl_tcp_keepalive_time
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* _TCP_H */

@@ -784,6 +784,12 @@ DECL|enumerator|NET_TCP_TW_RECYCLE
 id|NET_TCP_TW_RECYCLE
 op_assign
 l_int|66
+comma
+DECL|enumerator|NET_IPV4_TCP_KEEPALIVE_INTVL
+id|NET_IPV4_TCP_KEEPALIVE_INTVL
+op_assign
+l_int|67
+comma
 )brace
 suffix:semicolon
 r_enum

@@ -413,6 +413,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#if BITS_PER_LONG &lt; 64
 r_if
 c_cond
 (paren
@@ -430,30 +431,12 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if BITS_PER_LONG &lt; 64
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|offset
-OG
-ques
-c_cond
-ques
-c_cond
-ques
-c_cond
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-macro_line|#endif
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

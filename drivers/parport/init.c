@@ -123,6 +123,14 @@ op_star
 id|dma
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|parport_sunbpp_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_int
@@ -599,16 +607,17 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PARPORT_SUNBPP
+id|parport_sunbpp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|parport_init
-id|__initcall
-(paren
-id|parport_init
-)paren
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Exported symbols for modules. */
 DECL|variable|parport_claim

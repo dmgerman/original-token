@@ -10665,6 +10665,22 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|init_pcnet_cs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|init_ray_cs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|pcmcia_init
 r_int
 id|pcmcia_init
@@ -10686,11 +10702,27 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Get the ball rolling.. */
-r_return
 id|pcmcia_ds_init
 c_func
 (paren
 )paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PCMCIA_PCNET
+id|init_pcnet_cs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCMCIA_RAYCS
+id|init_ray_cs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif

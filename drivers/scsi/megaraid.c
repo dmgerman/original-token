@@ -48,7 +48,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#else
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;

@@ -82,12 +82,12 @@ mdefine_line|#define PCI_DEVICE_ID_AMD53C974 &t;PCI_DEVICE_ID_AMD_SCSI
 multiline_comment|/* Locking */
 multiline_comment|/* Note: Starting from 2.1.9x, the mid-level scsi code issues a &n; * spinlock_irqsave (&amp;io_request_lock) before calling the driver&squot;s &n; * routines, so we don&squot;t need to lock.&n; * TODO: Verify, if we are locked in every case!&n; * The policy 3, let the midlevel scsi code do the io_request_locks&n; * and us locking on a driver specific lock, shouldn&squot;t hurt anybody; it&n; * just causes a minor performance degradation for setting the locks.&n; */
 multiline_comment|/* spinlock things&n; * level 3: lock on both adapter specific locks and (global) io_request_lock&n; * level 2: lock on adapter specific locks only&n; * level 1: rely on the locking of the mid level code (io_request_lock)&n; * undef  : traditional save_flags; cli; restore_flags;&n; */
-singleline_comment|//#define DEBUG_SPINLOCKS 2&t;/* Set to 0, 1 or 2 in include/asm/spinlock.h */
+singleline_comment|//#define DEBUG_SPINLOCKS 2&t;/* Set to 0, 1 or 2 in include/linux/spinlock.h */
 DECL|macro|LinuxVersionCode
 mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,30)
 macro_line|# include &lt;linux/init.h&gt;
-macro_line|# include &lt;asm/spinlock.h&gt;
+macro_line|# include &lt;linux/spinlock.h&gt;
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,93) 
 DECL|macro|USE_SPINLOCKS

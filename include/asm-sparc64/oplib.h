@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.10 1998/12/18 10:02:03 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.11 1999/08/31 19:25:49 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -501,12 +501,11 @@ id|prom_getunumber
 c_func
 (paren
 r_int
-r_int
-id|phys_lo
+id|syndrome_code
 comma
 r_int
 r_int
-id|phys_hi
+id|phys_addr
 comma
 r_char
 op_star
@@ -978,6 +977,8 @@ DECL|macro|P1275_ARG_IN_FUNCTION
 mdefine_line|#define P1275_ARG_IN_FUNCTION&t;&t;4
 DECL|macro|P1275_ARG_IN_BUF
 mdefine_line|#define P1275_ARG_IN_BUF&t;&t;5
+DECL|macro|P1275_ARG_IN_64B
+mdefine_line|#define P1275_ARG_IN_64B&t;&t;6
 DECL|macro|P1275_IN
 mdefine_line|#define P1275_IN(x) ((x) &amp; 0xf)
 DECL|macro|P1275_OUT

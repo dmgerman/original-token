@@ -11,9 +11,9 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicfc.h&quot;
@@ -8204,23 +8204,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|command
 op_amp
 id|PCI_COMMAND_IO
-op_logical_and
+)paren
+op_logical_or
+op_logical_neg
 (paren
-id|io_base
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|flags
 op_amp
-l_int|3
+id|IORESOURCE_IO
 )paren
-op_eq
-l_int|1
 )paren
-id|io_base
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
-r_else
 (brace
 id|printk
 c_func

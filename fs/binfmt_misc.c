@@ -10,8 +10,8 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/*&n; * We should make this work with a &quot;stub-only&quot; /proc,&n; * which would just not be able to be configured.&n; * Right now the /proc-fs support is too black and white,&n; * though, so just remind people that this should be&n; * fixed..&n; */
 macro_line|#ifndef CONFIG_PROC_FS
 macro_line|#error You really need /proc support for binfmt_misc. Please reconfigure!

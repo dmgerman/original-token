@@ -884,7 +884,11 @@ comma
 multiline_comment|/* leave descriptors as they are, alive */
 DECL|enumerator|CB_ABORT
 id|CB_ABORT
+comma
 multiline_comment|/* kill this USB transfer request */
+DECL|enumerator|CB_CONT_RUN
+id|CB_CONT_RUN
+multiline_comment|/* append the isoc_desc at the end of all active isoc_desc */
 )brace
 suffix:semicolon
 DECL|struct|isoc_frame_desc
@@ -969,6 +973,13 @@ DECL|member|buf_size
 r_int
 id|buf_size
 suffix:semicolon
+DECL|member|prev_isocdesc
+r_struct
+id|usb_isoc_desc
+op_star
+id|prev_isocdesc
+suffix:semicolon
+multiline_comment|/* previous isoc_desc, for CB_CONT_RUN */
 multiline_comment|/*&n;&t; * The following fields are set by the usb_run_isoc() call.&n;&t; */
 DECL|member|end_frame
 r_int

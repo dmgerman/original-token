@@ -30,7 +30,7 @@ DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int

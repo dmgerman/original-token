@@ -428,6 +428,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|gemini_prom_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|gemini_init_l2
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.53 1999/08/03 05:16:14 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.54 1999/09/01 08:06:12 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -162,6 +162,12 @@ DECL|macro|rmb
 mdefine_line|#define rmb()&t;&t;membar(&quot;#LoadLoad | #LoadStore&quot;)
 DECL|macro|wmb
 mdefine_line|#define wmb()&t;&t;membar(&quot;#StoreLoad | #StoreStore&quot;)
+DECL|macro|set_mb
+mdefine_line|#define set_mb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreLoad | #StoreStore&quot;); } while(0)
+DECL|macro|set_rmb
+mdefine_line|#define set_rmb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreLoad&quot;); } while(0)
+DECL|macro|set_wmb
+mdefine_line|#define set_wmb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreStore&quot;); } while(0)
 DECL|macro|flushi
 mdefine_line|#define flushi(addr)&t;__asm__ __volatile__ (&quot;flush %0&quot; : : &quot;r&quot; (addr) : &quot;memory&quot;)
 DECL|macro|flushw_all

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.146 1999/08/31 06:54:08 davem Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.148 1999/09/05 11:56:34 paulus Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -977,6 +977,7 @@ id|cpu_node-&gt;next
 )paren
 multiline_comment|/* nothing */
 suffix:semicolon
+macro_line|#if 0 /* SMP Pmacs don&squot;t have all cpu nodes -- Cort */
 r_if
 c_cond
 (paren
@@ -991,6 +992,7 @@ l_string|&quot;get_cpuinfo(): ran out of &quot;
 l_string|&quot;cpu nodes.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|fp
 op_assign

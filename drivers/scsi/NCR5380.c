@@ -3977,7 +3977,7 @@ suffix:semicolon
 )brace
 macro_line|#ifndef DONT_USE_INTR
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 multiline_comment|/*&n; * Function : void NCR5380_intr (int irq)&n; * &n; * Purpose : handle interrupts, reestablishing I_T_L or I_T_L_Q nexuses&n; *      from the disconnected queue, and restarting NCR5380_main() &n; *      as required.&n; *&n; * Inputs : int irq, irq that caused this interrupt.&n; *&n; */
 DECL|function|NCR5380_intr
 r_static

@@ -549,11 +549,9 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/************************* End of Prototypes **************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun3lance_probe
 r_int
+id|__init
 id|sun3lance_probe
 c_func
 (paren
@@ -561,7 +559,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -602,12 +599,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lance_probe
 r_static
 r_int
+id|__init
 id|lance_probe
 c_func
 (paren
@@ -615,7 +610,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

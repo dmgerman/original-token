@@ -4,7 +4,7 @@ DECL|macro|_CYCLOMX_H
 mdefine_line|#define&t;_CYCLOMX_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifdef&t;__KERNEL__
 multiline_comment|/* Kernel Interface */
 macro_line|#include &lt;linux/cycx_drv.h&gt;&t;/* CYCLOM X support module API definitions */

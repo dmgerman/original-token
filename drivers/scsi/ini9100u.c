@@ -21,7 +21,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/config.h&gt;

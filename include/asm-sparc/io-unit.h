@@ -2,8 +2,8 @@ multiline_comment|/* io-unit.h: Definitions for the sun4d IO-UNIT.&n; *&n; * Cop
 macro_line|#ifndef _SPARC_IO_UNIT_H
 DECL|macro|_SPARC_IO_UNIT_H
 mdefine_line|#define _SPARC_IO_UNIT_H
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* The io-unit handles all virtual to physical address translations&n; * that occur between the SBUS and physical memory.  Access by&n; * the cpu to IO registers and similar go over the xdbus so are&n; * translated by the on chip SRMMU.  The io-unit and the srmmu do&n; * not need to have the same translations at all, in fact most&n; * of the time the translations they handle are a disjunct set.&n; * Basically the io-unit handles all dvma sbus activity.&n; */
 multiline_comment|/* AIEEE, unlike the nice sun4m, these monsters have &n;   fixed DMA range 64M */

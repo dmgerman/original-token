@@ -109,7 +109,7 @@ DECL|macro|__init
 mdefine_line|#define __init
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,101)
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|macro|IRQ_FLAGS
 mdefine_line|#define IRQ_FLAGS
 DECL|macro|IRQ_LOCK

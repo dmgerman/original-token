@@ -4,7 +4,7 @@ DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/dongle.h&gt;

@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifdef CONFIG_PARPORT_MODULE
 DECL|macro|CONFIG_PARPORT
 mdefine_line|#define CONFIG_PARPORT

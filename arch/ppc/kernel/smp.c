@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.61 1999/08/24 22:06:26 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.62 1999/09/05 11:56:34 paulus Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -11,12 +11,12 @@ mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
@@ -878,6 +878,12 @@ id|smp_num_cpus
 op_assign
 l_int|1
 suffix:semicolon
+id|smp_store_cpu_info
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * assume for now that the first cpu booted is&n;&t; * cpu 0, the master -- Cort&n;&t; */
 id|cpu_callin_map
 (braket
@@ -886,12 +892,6 @@ l_int|0
 op_assign
 l_int|1
 suffix:semicolon
-id|smp_store_cpu_info
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
 id|active_kernel_processor
 op_assign
 l_int|0
@@ -899,6 +899,11 @@ suffix:semicolon
 id|current-&gt;processor
 op_assign
 l_int|0
+suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1028,23 +1033,46 @@ op_increment
 r_int
 id|c
 suffix:semicolon
+r_struct
+id|pt_regs
+id|regs
+suffix:semicolon
+r_struct
+id|task_struct
+op_star
+id|idle
+suffix:semicolon
 multiline_comment|/* create a process for the processor */
-id|kernel_thread
+multiline_comment|/* we don&squot;t care about the values in regs since we&squot;ll&n;&t;&t;   never reschedule the forked task. */
+r_if
+c_cond
+(paren
+id|do_fork
 c_func
 (paren
-id|start_secondary
-comma
-l_int|NULL
-comma
+id|CLONE_VM
+op_or
 id|CLONE_PID
+comma
+l_int|0
+comma
+op_amp
+id|regs
+)paren
+OL
+l_int|0
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;failed fork for CPU %d&quot;
+comma
+id|i
 )paren
 suffix:semicolon
 id|p
 op_assign
-id|init_tasks
-(braket
-id|i
-)braket
+id|init_task.prev_task
 suffix:semicolon
 r_if
 c_cond
@@ -1055,8 +1083,29 @@ id|p
 id|panic
 c_func
 (paren
-l_string|&quot;No idle task for secondary processor&bslash;n&quot;
+l_string|&quot;No idle task for CPU %d&quot;
+comma
+id|i
 )paren
+suffix:semicolon
+id|del_from_runqueue
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|unhash_process
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|init_tasks
+(braket
+id|i
+)braket
+op_assign
+id|p
 suffix:semicolon
 id|p-&gt;processor
 op_assign
@@ -1154,6 +1203,12 @@ id|PSURGE_INTR
 comma
 op_complement
 l_int|0
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
 )paren
 suffix:semicolon
 id|out_be32
@@ -1410,6 +1465,11 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Lets the callin&squot;s below out of their loop.&n;&t; */
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|smp_commenced
 op_assign
 l_int|1
@@ -1428,7 +1488,6 @@ r_void
 )brace
 multiline_comment|/* Activate a secondary processor. */
 DECL|function|start_secondary
-id|asmlinkage
 r_int
 id|__init
 id|start_secondary
@@ -1439,6 +1498,18 @@ op_star
 id|unused
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|init_mm.mm_count
+)paren
+suffix:semicolon
+id|current-&gt;active_mm
+op_assign
+op_amp
+id|init_mm
+suffix:semicolon
 id|smp_callin
 c_func
 (paren

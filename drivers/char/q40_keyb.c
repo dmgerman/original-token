@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * linux/drivers/char/q40_keyb.c&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;

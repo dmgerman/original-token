@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifdef CONFIG_MCA
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -19,7 +20,6 @@ macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/debugreg.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
@@ -1597,16 +1597,6 @@ id|tsk
 op_assign
 id|current
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|regs-&gt;eflags
-op_amp
-id|VM_MASK
-)paren
-r_goto
-id|debug_vm86
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -1619,35 +1609,6 @@ id|condition
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Mask out spurious TF errors due to lazy TF clearing */
-r_if
-c_cond
-(paren
-id|condition
-op_amp
-id|DR_STEP
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * The TF error should be masked out only if the current&n;&t;&t; * process is not traced and if the TRAP flag has been set&n;&t;&t; * previously by a tracing process (condition detected by&n;&t;&t; * the PF_DTRACE flag); remember that the i386 TRAP flag&n;&t;&t; * can be modified by the process itself in user mode,&n;&t;&t; * allowing programs to debug themselves without the ptrace()&n;&t;&t; * interface.&n;&t;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|tsk-&gt;flags
-op_amp
-(paren
-id|PF_DTRACE
-op_or
-id|PF_PTRACED
-)paren
-)paren
-op_eq
-id|PF_DTRACE
-)paren
-r_goto
-id|clear_TF
-suffix:semicolon
-)brace
 multiline_comment|/* Mask out spurious debug traps due to lazy DR7 setting */
 r_if
 c_cond
@@ -1676,6 +1637,45 @@ l_int|7
 )paren
 r_goto
 id|clear_dr7
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|regs-&gt;eflags
+op_amp
+id|VM_MASK
+)paren
+r_goto
+id|debug_vm86
+suffix:semicolon
+multiline_comment|/* Mask out spurious TF errors due to lazy TF clearing */
+r_if
+c_cond
+(paren
+id|condition
+op_amp
+id|DR_STEP
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * The TF error should be masked out only if the current&n;&t;&t; * process is not traced and if the TRAP flag has been set&n;&t;&t; * previously by a tracing process (condition detected by&n;&t;&t; * the PF_DTRACE flag); remember that the i386 TRAP flag&n;&t;&t; * can be modified by the process itself in user mode,&n;&t;&t; * allowing programs to debug themselves without the ptrace()&n;&t;&t; * interface.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|tsk-&gt;flags
+op_amp
+(paren
+id|PF_DTRACE
+op_or
+id|PF_PTRACED
+)paren
+)paren
+op_eq
+id|PF_DTRACE
+)paren
+r_goto
+id|clear_TF
 suffix:semicolon
 )brace
 multiline_comment|/* If this is a kernel mode trap, we need to reset db7 to allow us to continue sanely */

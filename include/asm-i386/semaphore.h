@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Modified 1996-12-23 by Dave Grothe &lt;dave@gcom.com&gt; to fix bugs in&n; *                     the original code and to make semaphore waits&n; *                     interruptible so that processes waiting on&n; *                     semaphores can be killed.&n; * Modified 1999-02-14 by Andrea Arcangeli, split the sched.c helper&n; *&t;&t;       functions in asm/sempahore-helper.h while fixing a&n; *&t;&t;       potential and subtle race discovered by Ulrich Schmid&n; *&t;&t;       in down_interruptible(). Since I started to play here I&n; *&t;&t;       also implemented the `trylock&squot; semaphore operation.&n; *          1999-07-02 Artur Skawina &lt;skawina@geocities.com&gt;&n; *                     Optimized &quot;0(ecx)&quot; -&gt; &quot;(ecx)&quot; (the assembler does not&n; *                     do this). Changed calling sequences from push/jmp to&n; *                     traditional call/ret.&n; *&n; * If you would like to see an analysis of this implementation, please&n; * ftp to gcom.com and download the file&n; * /pub/linux/src/semaphore/semaphore-2.0.24.tar.gz.&n; *&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|semaphore
 r_struct

@@ -1,6 +1,6 @@
-macro_line|#ifndef _SPARC_SEMAPHORE_H
-DECL|macro|_SPARC_SEMAPHORE_H
-mdefine_line|#define _SPARC_SEMAPHORE_H
+macro_line|#ifndef _PPC_SEMAPHORE_H
+DECL|macro|_PPC_SEMAPHORE_H
+mdefine_line|#define _PPC_SEMAPHORE_H
 multiline_comment|/*&n; * Swiped from asm-sparc/semaphore.h and modified&n; * -- Cort (cort@cs.nmt.edu)&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
@@ -355,5 +355,5 @@ id|sem
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* !(_SPARC_SEMAPHORE_H) */
+macro_line|#endif /* !(_PPC_SEMAPHORE_H) */
 eof

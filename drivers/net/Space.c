@@ -820,6 +820,17 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
+id|starfire_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tc515_probe
 c_func
 (paren
@@ -1210,6 +1221,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_VIA_RHINE
 (brace
 id|via_rhine_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADAPTEC_STARFIRE
+(brace
+id|starfire_probe
 comma
 l_int|0
 )brace

@@ -192,9 +192,6 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_AREQUIPA
-macro_line|#include &lt;net/sock.h&gt; /* for struct sock */
-macro_line|#endif
 DECL|macro|ATM_VF_ADDR
 mdefine_line|#define ATM_VF_ADDR&t;1&t;/* Address is in use. Set by anybody, cleared&n;&t;&t;&t;&t;   by device driver. */
 DECL|macro|ATM_VF_READY
@@ -484,6 +481,7 @@ DECL|member|reply
 r_int
 id|reply
 suffix:semicolon
+multiline_comment|/* also used by ATMTCP */
 multiline_comment|/* Multipoint part ------------------------------------------------- */
 DECL|member|session
 r_struct
@@ -499,39 +497,6 @@ op_star
 id|user_back
 suffix:semicolon
 multiline_comment|/* user backlink - not touched */
-macro_line|#ifdef CONFIG_AREQUIPA
-DECL|member|upper
-r_struct
-id|sock
-op_star
-id|upper
-suffix:semicolon
-multiline_comment|/* our &quot;master&quot; */
-DECL|member|sock
-r_struct
-id|socket
-op_star
-id|sock
-suffix:semicolon
-multiline_comment|/* back pointer to our own socket */
-DECL|member|aq_next
-DECL|member|aq_prev
-r_struct
-id|atm_vcc
-op_star
-id|aq_next
-comma
-op_star
-id|aq_prev
-suffix:semicolon
-multiline_comment|/* for consistency checks */
-DECL|member|generation
-r_int
-r_int
-id|generation
-suffix:semicolon
-multiline_comment|/* generation number */
-macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|atm_dev_addr
@@ -1195,12 +1160,12 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* This is the algorithm used by alloc_skb&n;&n;   SHIT! It is fully illegal. If we could derive truesize&n;   from another skb parameter, we would not create this variable.&n;   Do not wonder, if allocating 5K skbm truesize will be &gt; 8K.&n; */
-DECL|function|atm_pdu2truesize
+multiline_comment|/*&n; * This is approximately the algorithm used by alloc_skb.&n; *&n; */
+DECL|function|atm_guess_pdu2truesize
 r_static
 id|__inline__
 r_int
-id|atm_pdu2truesize
+id|atm_guess_pdu2truesize
 c_func
 (paren
 r_int
@@ -1295,8 +1260,10 @@ r_int
 id|truesize
 )paren
 suffix:semicolon
-r_void
-id|atm_return
+r_struct
+id|sk_buff
+op_star
+id|atm_alloc_charge
 c_func
 (paren
 r_struct
@@ -1305,7 +1272,10 @@ op_star
 id|vcc
 comma
 r_int
-id|truesize
+id|pdu_size
+comma
+r_int
+id|gfp_flags
 )paren
 suffix:semicolon
 r_int

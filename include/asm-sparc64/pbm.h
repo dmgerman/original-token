@@ -5,10 +5,10 @@ mdefine_line|#define __SPARC64_PBM_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* The abstraction used here is that there are PCI controllers,&n; * each with one (Sabre) or two (PSYCHO/SCHIZO) PCI bus modules&n; * underneath.  Each PCI controller has a single IOMMU shared&n; * by the PCI bus modules underneath, and if a streaming buffer&n; * is present, each PCI bus module has it&squot;s own. (ie. the IOMMU&n; * is shared between PBMs, the STC is not)  Furthermore, each&n; * PCI bus module controls it&squot;s own autonomous PCI bus.&n; */
 r_struct
 id|pci_controller_info

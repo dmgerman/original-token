@@ -10,10 +10,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* The driver prints some debugging information on the console if DEBUG&n;   is defined and non-zero. */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0

@@ -1919,6 +1919,7 @@ l_int|0
 op_ne
 l_int|0xffff
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -1933,6 +1934,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 (paren
 (paren
 id|u16
@@ -1946,6 +1948,9 @@ id|dev-&gt;dev_addr
 id|i
 )braket
 op_assign
+id|le16_to_cpu
+c_func
+(paren
 id|read_eeprom
 c_func
 (paren
@@ -1955,8 +1960,12 @@ id|i
 op_plus
 l_int|7
 )paren
+)paren
 suffix:semicolon
+)brace
+)brace
 r_else
+(brace
 r_for
 c_loop
 (paren
@@ -1986,6 +1995,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -6475,6 +6485,9 @@ suffix:semicolon
 id|u32
 id|rx_status
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 op_star
 (paren
 id|u32
@@ -6484,6 +6497,7 @@ op_star
 id|rx_ring
 op_plus
 id|ring_offset
+)paren
 )paren
 suffix:semicolon
 r_int
@@ -6547,12 +6561,16 @@ c_func
 (paren
 l_string|&quot; %2.2x&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|rx_ring
 (braket
 id|ring_offset
 op_plus
 id|i
 )braket
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -6885,10 +6903,14 @@ c_func
 (paren
 l_string|&quot; %2.2x&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|rx_ring
 (braket
 id|i
 )braket
+)paren
 )paren
 suffix:semicolon
 id|printk

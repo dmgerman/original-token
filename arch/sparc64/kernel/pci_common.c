@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_common.c,v 1.2 1999/08/31 09:12:33 davem Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_common.c,v 1.3 1999/09/04 22:26:32 ecd Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -37,6 +37,44 @@ id|nregs
 r_int
 id|node
 suffix:semicolon
+multiline_comment|/*&n;&t; * Return the PBM&squot;s PROM node in case we are it&squot;s PCI device,&n;&t; * as the PBM&squot;s reg property is different to standard PCI reg&n;&t; * properties. We would delete this device entry otherwise,&n;&t; * which confuses XFree86&squot;s device probing...&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|pdev-&gt;bus-&gt;number
+op_eq
+id|pbm-&gt;pci_bus-&gt;number
+)paren
+op_logical_and
+(paren
+id|pdev-&gt;devfn
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|pdev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_SUN
+)paren
+op_logical_and
+(paren
+id|pdev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_SUN_PBM
+)paren
+)paren
+(brace
+op_star
+id|nregs
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|bus_prom_node
+suffix:semicolon
+)brace
 id|node
 op_assign
 id|prom_getchild

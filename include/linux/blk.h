@@ -4,7 +4,7 @@ mdefine_line|#define _BLK_H
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 multiline_comment|/*&n; * Spinlock for protecting the request queue which&n; * is mucked around with in interrupts on potentially&n; * multiple CPU&squot;s..&n; */
 r_extern
 id|spinlock_t

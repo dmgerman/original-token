@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.134 1999/08/31 06:54:58 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.135 1999/09/06 22:55:10 ecd Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -7874,6 +7874,14 @@ suffix:semicolon
 id|val-&gt;sharedram
 op_lshift_assign
 id|PAGE_SHIFT
+suffix:semicolon
+id|val-&gt;totalbig
+op_assign
+l_int|0
+suffix:semicolon
+id|val-&gt;freebig
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 eof

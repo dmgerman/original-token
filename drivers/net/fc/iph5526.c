@@ -22,9 +22,9 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/fcdevice.h&gt; /* had the declarations for init_fcdev among others + includes if_fcdevice.h */
 macro_line|#include &lt;linux/blk.h&gt;

@@ -30,7 +30,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/if_ec.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|variable|econet_ops
 r_static
 r_struct

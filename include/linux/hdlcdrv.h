@@ -237,7 +237,7 @@ multiline_comment|/* -----------------------------------------------------------
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|macro|HDLCDRV_MAGIC
 mdefine_line|#define HDLCDRV_MAGIC      0x5ac6e778
 DECL|macro|HDLCDRV_IFNAMELEN

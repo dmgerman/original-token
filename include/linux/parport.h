@@ -143,9 +143,9 @@ mdefine_line|#define PARPORT_EPP_FAST&t;&t;(1&lt;&lt;0) /* Unreliable counts. */
 multiline_comment|/* The rest is for the kernel only */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -2118,7 +2118,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* If PC hardware is the only type supported, we can optimise a bit.  */
-macro_line|#if (defined(CONFIG_PARPORT_PC) || defined(CONFIG_PARPORT_PC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AX) || defined(CONFIG_PARPORT_AX_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ARC) || defined(CONFIG_PARPORT_ARC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AMIGA) || defined(CONFIG_PARPORT_AMIGA_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_MFC3) || defined(CONFIG_PARPORT_MFC3_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ATARI) || defined(CONFIG_PARPORT_ATARI_MODULE)) &amp;&amp; !(defined(CONFIG_USB_USS720) || defined(CONFIG_USB_USS720_MODULE)) &amp;&amp; !defined(CONFIG_PARPORT_OTHER)
+macro_line|#if (defined(CONFIG_PARPORT_PC) || defined(CONFIG_PARPORT_PC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ARC) || defined(CONFIG_PARPORT_ARC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AMIGA) || defined(CONFIG_PARPORT_AMIGA_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_MFC3) || defined(CONFIG_PARPORT_MFC3_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ATARI) || defined(CONFIG_PARPORT_ATARI_MODULE)) &amp;&amp; !(defined(CONFIG_USB_USS720) || defined(CONFIG_USB_USS720_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_SUNBPP) || defined(CONFIG_PARPORT_SUNBPP_MODULE)) &amp;&amp; !defined(CONFIG_PARPORT_OTHER)
 DECL|macro|PARPORT_NEED_GENERIC_OPS
 macro_line|#undef PARPORT_NEED_GENERIC_OPS
 macro_line|#include &lt;linux/parport_pc.h&gt;

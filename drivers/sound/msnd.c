@@ -20,7 +20,7 @@ macro_line|#else
 macro_line|#  include &lt;linux/init.h&gt;
 macro_line|#  include &lt;asm/io.h&gt;
 macro_line|#  include &lt;asm/uaccess.h&gt;
-macro_line|#  include &lt;asm/spinlock.h&gt;
+macro_line|#  include &lt;linux/spinlock.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;msnd.h&quot;

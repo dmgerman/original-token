@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 r_void
 DECL|function|check_bugs
 id|check_bugs

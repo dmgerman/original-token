@@ -4,7 +4,7 @@ mdefine_line|#define _MPC_H_
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmmpc.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;mpoa_caches.h&quot;
 multiline_comment|/* kernel -&gt; mpc-daemon */
 r_int

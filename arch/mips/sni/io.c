@@ -1,9 +1,9 @@
 multiline_comment|/* $Id: io.c,v 1.3 1999/01/04 16:03:58 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Low level I/O functions for SNI.&n; */
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
 multiline_comment|/*&n; * Urgs...  We only can see a 16mb window of the 4gb EISA address space&n; * at PCIMT_EISA_BASE.  Maladia segmentitis ...&n; *&n; * To avoid locking and all the related headacke we implement this such&n; * that accessing the bus address space nests, so we&squot;re treating this&n; * correctly even for interrupts.  This is going to suck seriously for&n; * the SMP members of the RM family.&n; *&n; * Making things worse the PCIMT_CSMAPISA register resides on the X bus with&n; * it&squot;s unbeatable 1.4 mb/s transfer rate.&n; */
 DECL|function|eisa_map

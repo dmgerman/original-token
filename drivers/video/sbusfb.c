@@ -6627,6 +6627,7 @@ macro_line|#ifdef CONFIG_FB_P9100
 r_case
 id|FBTYPE_P9100COLOR
 suffix:colon
+multiline_comment|/* Temporary crock. For now we are a cg3 */
 id|p
 op_assign
 id|p9100fb_init
@@ -6634,6 +6635,10 @@ c_func
 (paren
 id|fb
 )paren
+suffix:semicolon
+id|type-&gt;fb_type
+op_assign
+id|FBTYPE_SUN3COLOR
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -26,7 +26,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015F
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/blk.h&gt;

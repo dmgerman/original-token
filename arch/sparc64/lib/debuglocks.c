@@ -1,8 +1,8 @@
 multiline_comment|/* $Id: debuglocks.c,v 1.2 1998/10/13 09:07:27 davem Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@dm.cobaltmicro.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#ifdef __SMP__
 multiline_comment|/* To enable this code, just define SPIN_LOCK_DEBUG in asm/spinlock.h */
 macro_line|#ifdef SPIN_LOCK_DEBUG

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * linux/drivers/char/pc_keyb.c&n; *&n; * Separation of the PC low-level part by Geert Uytterhoeven, May 1997&n; * See keyboard.c for the whole history.&n; *&n; * Major cleanup by Martin Mares, May 1997&n; *&n; * Combined the keyboard and PS/2 mouse handling into one file,&n; * because they share the same hardware.&n; * Johan Myreen &lt;jem@iki.fi&gt; 1998-10-08.&n; *&n; * Code fixes to handle mouse ACKs properly.&n; * C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt; 1999-01-29.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;

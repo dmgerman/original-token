@@ -1,15 +1,15 @@
-multiline_comment|/* $Id: p1275.c,v 1.16 1999/08/02 12:05:57 jj Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: p1275.c,v 1.17 1999/08/31 19:25:43 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#include &lt;asm/pstate.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 r_struct
 (brace
 DECL|member|prom_callback
@@ -3065,6 +3065,27 @@ c_func
 (paren
 id|list
 comma
+r_int
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|P1275_ARG_IN_64B
+suffix:colon
+id|p1275buf.prom_args
+(braket
+id|i
+op_plus
+l_int|3
+)braket
+op_assign
+id|va_arg
+c_func
+(paren
+id|list
+comma
+r_int
 r_int
 )paren
 suffix:semicolon

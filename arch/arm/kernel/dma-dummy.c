@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * arch/arm/kernel/dma-dummy.c&n; *&n; * Copyright (C) 1998 Philip Blundell&n; * Copyright (c) 1998 Russell King&n; *&n; * Dummy DMA functions&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|variable|dma_spin_lock
 id|spinlock_t
 id|dma_spin_lock

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.74 1999/05/08 03:03:14 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.75 1999/09/01 08:06:08 davem Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
@@ -690,6 +690,12 @@ DECL|macro|rmb
 mdefine_line|#define rmb()&t;mb()
 DECL|macro|wmb
 mdefine_line|#define wmb()&t;mb()
+DECL|macro|set_mb
+mdefine_line|#define set_mb(__var, __value)  do { __var = __value; mb(); } while(0)
+DECL|macro|set_rmb
+mdefine_line|#define set_rmb(__var, __value) set_mb(__var, __value)
+DECL|macro|set_wmb
+mdefine_line|#define set_wmb(__var, __value) set_mb(__var, __value)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;);
 multiline_comment|/* This has special calling conventions */

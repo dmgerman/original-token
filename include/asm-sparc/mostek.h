@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mostek.h,v 1.11 1999/08/30 10:14:32 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; * Added intersil code 05/25/98 Chris Davis (cdavis@cois.on.ca)&n; */
+multiline_comment|/* $Id: mostek.h,v 1.12 1999/08/31 18:51:41 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; * Added intersil code 05/25/98 Chris Davis (cdavis@cois.on.ca)&n; */
 macro_line|#ifndef _SPARC_MOSTEK_H
 DECL|macro|_SPARC_MOSTEK_H
 mdefine_line|#define _SPARC_MOSTEK_H
@@ -152,12 +152,12 @@ DECL|macro|MSTK_DECIMAL_TO_REGVAL
 mdefine_line|#define MSTK_DECIMAL_TO_REGVAL(x)  ((((x) / 0x0A) &lt;&lt; 0x04) + ((x) % 0x0A))
 multiline_comment|/* Generic register set and get macros for internal use. */
 DECL|macro|MSTK_GET
-mdefine_line|#define MSTK_GET(regs,var,mask) (MSTK_REGVAL_TO_DECIMAL(regs-&gt;var &amp; MSTK_ ## mask ## _MASK))
+mdefine_line|#define MSTK_GET(regs,var,mask) (MSTK_REGVAL_TO_DECIMAL(((struct mostek48t02 *)regs)-&gt;var &amp; MSTK_ ## mask ## _MASK))
 DECL|macro|MSTK_SET
-mdefine_line|#define MSTK_SET(regs,var,value,mask) do { regs-&gt;var &amp;= ~(MSTK_ ## mask ## _MASK); regs-&gt;var |= MSTK_DECIMAL_TO_REGVAL(value) &amp; (MSTK_ ## mask ## _MASK); } while (0)
+mdefine_line|#define MSTK_SET(regs,var,value,mask) do { ((struct mostek48t02 *)regs)-&gt;var &amp;= ~(MSTK_ ## mask ## _MASK); ((struct mostek48t02 *)regs)-&gt;var |= MSTK_DECIMAL_TO_REGVAL(value) &amp; (MSTK_ ## mask ## _MASK); } while (0)
 multiline_comment|/* Macros to make register access easier on our fingers. These give you&n; * the decimal value of the register requested if applicable. You pass&n; * the a pointer to a &squot;struct mostek48t02&squot;.&n; */
 DECL|macro|MSTK_REG_CREG
-mdefine_line|#define&t;MSTK_REG_CREG(regs)&t;(regs-&gt;creg)
+mdefine_line|#define&t;MSTK_REG_CREG(regs)&t;(((struct mostek48t02 *)regs)-&gt;creg)
 DECL|macro|MSTK_REG_SEC
 mdefine_line|#define&t;MSTK_REG_SEC(regs)&t;MSTK_GET(regs,sec,SEC)
 DECL|macro|MSTK_REG_MIN

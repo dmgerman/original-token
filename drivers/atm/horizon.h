@@ -5,6 +5,7 @@ macro_line|#ifndef DRIVER_ATM_HORIZON_H
 DECL|macro|DRIVER_ATM_HORIZON_H
 mdefine_line|#define DRIVER_ATM_HORIZON_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef CONFIG_ATM_HORIZON_DEBUG
 DECL|macro|DEBUG_HORIZON
 mdefine_line|#define DEBUG_HORIZON
@@ -15,7 +16,7 @@ macro_line|#ifndef PCI_VENDOR_ID_MADGE
 DECL|macro|PCI_VENDOR_ID_MADGE
 mdefine_line|#define PCI_VENDOR_ID_MADGE               0x10B6
 macro_line|#endif
-macro_line|#ifndef PCI_VENDOR_ID_MADGE_HORIZON
+macro_line|#ifndef PCI_DEVICE_ID_MADGE_HORIZON
 DECL|macro|PCI_DEVICE_ID_MADGE_HORIZON
 mdefine_line|#define PCI_DEVICE_ID_MADGE_HORIZON       0x1000
 macro_line|#endif
@@ -621,8 +622,6 @@ id|MEMMAP
 suffix:semicolon
 DECL|macro|memmap
 mdefine_line|#define memmap ((MEMMAP *)0)
-DECL|macro|BUF_PTR
-mdefine_line|#define BUF_PTR(cbptr) ((cbptr) - (cell_buf *) 0)
 multiline_comment|/* end horizon specific bits */
 r_typedef
 r_enum
@@ -770,10 +769,19 @@ DECL|member|mem_lock
 id|spinlock_t
 id|mem_lock
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20303
 DECL|member|tx_queue
 id|wait_queue_head_t
 id|tx_queue
 suffix:semicolon
+macro_line|#else
+DECL|member|tx_queue
+r_struct
+id|wait_queue
+op_star
+id|tx_queue
+suffix:semicolon
+macro_line|#endif
 DECL|member|irq
 id|u8
 id|irq
@@ -909,6 +917,8 @@ id|hrz_dev
 id|hrz_dev
 suffix:semicolon
 multiline_comment|/* macros for use later */
+DECL|macro|BUF_PTR
+mdefine_line|#define BUF_PTR(cbptr) ((cbptr) - (cell_buf *) 0)
 DECL|macro|INTERESTING_INTERRUPTS
 mdefine_line|#define INTERESTING_INTERRUPTS &bslash;&n;  (RX_DATA_AV | RX_DISABLED | TX_BUS_MASTER_COMPLETE | RX_BUS_MASTER_COMPLETE)
 singleline_comment|// 190 cells by default (192 TX buffers - 2 elbow room, see docs)

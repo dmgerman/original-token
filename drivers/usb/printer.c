@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
 DECL|macro|NAK_TIMEOUT
 mdefine_line|#define NAK_TIMEOUT (HZ)&t;&t;&t;&t;/* stall wait for printer */

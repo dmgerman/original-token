@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: system.h,v 1.47 1999/08/22 12:31:08 paulus Exp $&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; */
+multiline_comment|/*&n; * $Id: system.h,v 1.48 1999/09/05 11:56:40 paulus Exp $&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; */
 macro_line|#ifndef __PPC_SYSTEM_H
 DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
@@ -13,6 +13,12 @@ DECL|macro|rmb
 mdefine_line|#define rmb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|wmb
 mdefine_line|#define wmb()  __asm__ __volatile__ (&quot;eieio&quot; : : : &quot;memory&quot;)
+DECL|macro|set_mb
+mdefine_line|#define set_mb(var, value)&t;do { var = value; mb(); } while (0)
+DECL|macro|set_rmb
+mdefine_line|#define set_rmb(var, value)&t;do { var = value; rmb(); } while (0)
+DECL|macro|set_wmb
+mdefine_line|#define set_wmb(var, value)&t;do { var = value; wmb(); } while (0)
 r_extern
 r_void
 id|xmon_irq

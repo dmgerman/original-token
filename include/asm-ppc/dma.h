@@ -1,7 +1,7 @@
 multiline_comment|/* $Id: dma.h,v 1.3 1997/03/16 06:20:39 cort Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; * Changes for ppc sound by Christoph Nadig&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; * Modified by Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; *&n; * None of this really applies for Power Macintoshes.  There is&n; * basically just enough here to get kernel/dma.c to compile.&n; *&n; * There may be some comments or restrictions made here which are&n; * not valid for the PReP platform.  Take what you read&n; * with a grain of salt.&n; */
 macro_line|#ifndef _ASM_DMA_H

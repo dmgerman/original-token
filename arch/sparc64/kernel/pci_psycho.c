@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.2 1999/08/31 09:12:34 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.4 1999/09/05 09:33:36 ecd Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -5720,6 +5720,8 @@ l_int|0xff
 id|set_dvma_hash
 c_func
 (paren
+l_int|0x80000000
+comma
 id|paddr
 comma
 (paren
@@ -5841,10 +5843,6 @@ id|p-&gt;iommu.page_table_map_base
 op_assign
 l_int|0xe0000000
 suffix:semicolon
-id|pci_dvma_mask
-op_assign
-l_int|0x1fffffffUL
-suffix:semicolon
 id|control
 op_or_assign
 id|PSYCHO_IOMMU_TSBSZ_8K
@@ -5858,10 +5856,6 @@ id|p-&gt;iommu.page_table_map_base
 op_assign
 l_int|0xc0000000
 suffix:semicolon
-id|pci_dvma_mask
-op_assign
-l_int|0x3fffffffUL
-suffix:semicolon
 id|control
 op_or_assign
 id|PSYCHO_IOMMU_TSBSZ_16K
@@ -5874,10 +5868,6 @@ suffix:colon
 id|p-&gt;iommu.page_table_map_base
 op_assign
 l_int|0x80000000
-suffix:semicolon
-id|pci_dvma_mask
-op_assign
-l_int|0x7fffffffUL
 suffix:semicolon
 id|control
 op_or_assign
@@ -6987,15 +6977,16 @@ comma
 id|p-&gt;config_space
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Psycho&squot;s PCI MEM space is mapped to a 2GB aligned area, so&n;&t; * we need to adjust our MEM space mask.&n;&t; */
+id|pci_memspace_mask
+op_assign
+l_int|0x7fffffffUL
+suffix:semicolon
 id|psycho_controller_hwinit
 c_func
 (paren
 id|p
 )paren
-suffix:semicolon
-id|pci_dvma_offset
-op_assign
-l_int|0x80000000UL
 suffix:semicolon
 id|psycho_iommu_init
 c_func

@@ -2,9 +2,9 @@ multiline_comment|/*&n; * $Id: locks.c,v 1.24 1999/08/03 19:16:47 cort Exp $&n; 
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|DEBUG_LOCKS
 mdefine_line|#define DEBUG_LOCKS 1

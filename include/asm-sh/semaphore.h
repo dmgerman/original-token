@@ -3,9 +3,9 @@ DECL|macro|__ASM_SH_SEMAPHORE_H
 mdefine_line|#define __ASM_SH_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores.&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * SuperH verison by Niibe Yutaka&n; *&n; */
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore

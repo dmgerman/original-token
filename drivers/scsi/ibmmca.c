@@ -27,7 +27,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifndef OLDKERN
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;sd.h&quot;

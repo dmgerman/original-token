@@ -129,7 +129,7 @@ suffix:semicolon
 multiline_comment|/* for convenience ... */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|next
@@ -198,6 +198,13 @@ id|vcc
 comma
 r_int
 id|mode
+)paren
+suffix:semicolon
+r_void
+id|atm_clip_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.34 1998/07/29 16:32:38 jj Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.35 1999/09/06 08:22:04 jj Exp $ */
 macro_line|#ifndef _ASMSPARC_SIGNAL_H
 DECL|macro|_ASMSPARC_SIGNAL_H
 mdefine_line|#define _ASMSPARC_SIGNAL_H
@@ -316,6 +316,7 @@ id|sa_mask
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 DECL|struct|k_sigaction
 r_struct
 id|k_sigaction
@@ -332,6 +333,7 @@ id|ka_restorer
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|struct|__old_sigaction
 r_struct
 id|__old_sigaction
@@ -377,7 +379,7 @@ r_int
 id|ss_flags
 suffix:semicolon
 DECL|member|ss_size
-id|__kernel_size_t
+r_int
 id|ss_size
 suffix:semicolon
 DECL|typedef|stack_t

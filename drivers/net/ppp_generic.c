@@ -16,8 +16,8 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;net/slhc_vj.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|macro|PPP_VERSION
 mdefine_line|#define PPP_VERSION&t;&quot;2.4.0&quot;
 DECL|variable|ppp_register_channel

@@ -1,12 +1,13 @@
-multiline_comment|/*&n; * $Id: prom.c,v 1.70 1999/08/25 21:26:08 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.73 1999/09/05 11:56:32 paulus Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -15,6 +16,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/gemini.h&gt;
 multiline_comment|/*&n; * Properties whose value is longer than this get excluded from our&n; * copy of the device tree.  This way we don&squot;t waste space storing&n; * things like &quot;driver,AAPL,MacOS,PowerPC&quot; properties.&n; */
 DECL|macro|MAX_PROPERTY_LENGTH
 mdefine_line|#define MAX_PROPERTY_LENGTH&t;1024
@@ -1115,6 +1117,15 @@ comma
 op_star
 id|d
 suffix:semicolon
+macro_line|#ifdef CONFIG_GEMINI
+id|gemini_prom_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif /* CONFIG_GEMINI */
 multiline_comment|/* check if we&squot;re apus, return if we are */
 r_if
 c_cond

@@ -14,8 +14,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -3073,52 +3073,18 @@ macro_line|#ifdef CONFIG_USB_DEBUG_ISOC
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;uhci_init_isoc: bad start_frame value (%d)&bslash;n&quot;
+l_string|&quot;uhci_init_isoc: bad start_frame value (%d,%d)&bslash;n&quot;
 comma
 id|isocdesc-&gt;start_frame
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-)brace
-r_else
-multiline_comment|/* start_frame &lt;= cur_frame */
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|isocdesc-&gt;start_frame
-op_plus
-id|UHCI_MAX_SOF_NUMBER
-op_plus
-l_int|1
-op_minus
+comma
 id|cur_frame
 )paren
-OG
-id|CAN_SCHEDULE_FRAMES
-)paren
-(brace
-macro_line|#ifdef CONFIG_USB_DEBUG_ISOC
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;uhci_init_isoc: bad start_frame value (%d)&bslash;n&quot;
-comma
-id|isocdesc-&gt;start_frame
-)paren
 suffix:semicolon
 macro_line|#endif
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* end START_ABSOLUTE */

@@ -4,8 +4,8 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;net/dn.h&gt;
 multiline_comment|/*&n; * Fast timer is for delayed acks (200mS max)&n; * Slow timer is for everything else (n * 500mS)&n; */

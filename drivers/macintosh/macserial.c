@@ -238,7 +238,7 @@ id|timeout
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|set_scc_power
 c_func
 (paren
@@ -1220,9 +1220,14 @@ r_static
 r_int
 id|flip_buf_ovf
 suffix:semicolon
+r_if
+c_cond
+(paren
 op_increment
 id|flip_buf_ovf
-suffix:semicolon
+op_le
+l_int|1
+)paren
 id|printk
 c_func
 (paren
@@ -2245,8 +2250,14 @@ r_struct
 id|mac_serial
 op_star
 id|info
+comma
+r_int
+id|can_sleep
 )paren
 (brace
+r_int
+id|delay
+suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_OPEN
 id|printk
 c_func
@@ -2322,6 +2333,8 @@ id|info-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
+id|delay
+op_assign
 id|set_scc_power
 c_func
 (paren
@@ -2358,6 +2371,42 @@ c_func
 id|info-&gt;irq
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|delay
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|can_sleep
+)paren
+(brace
+multiline_comment|/* we need to wait a bit before using the port */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|delay
+op_star
+id|HZ
+op_div
+l_int|1000
+)paren
+suffix:semicolon
+)brace
+r_else
+id|mdelay
+c_func
+(paren
+id|delay
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2902,9 +2951,10 @@ op_complement
 id|ZILOG_INITIALIZED
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Turn power on or off to the SCC and associated stuff&n; * (port drivers, modem, IR port, etc.)&n; * Returns the number of milliseconds we should wait before&n; * trying to use the port.&n; */
 DECL|function|set_scc_power
 r_static
-r_void
+r_int
 id|set_scc_power
 c_func
 (paren
@@ -2917,6 +2967,11 @@ r_int
 id|state
 )paren
 (brace
+r_int
+id|delay
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2931,6 +2986,7 @@ OL
 l_int|0
 )paren
 r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* don&squot;t have serial power control */
 multiline_comment|/* The timings looks strange but that&squot;s the ones MacOS seems&n;&t;   to use for the internal modem. I think we can use a lot faster&n;&t;   ones, at least whe not using the modem, this should be tested.&n;&t; */
@@ -3012,11 +3068,9 @@ comma
 id|FEATURE_Serial_IO_B
 )paren
 suffix:semicolon
-id|mdelay
-c_func
-(paren
+id|delay
+op_assign
 l_int|1
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3035,7 +3089,7 @@ suffix:semicolon
 id|mdelay
 c_func
 (paren
-l_int|15
+l_int|5
 )paren
 suffix:semicolon
 id|feature_clear
@@ -3046,13 +3100,11 @@ comma
 id|FEATURE_Modem_Reset
 )paren
 suffix:semicolon
-multiline_comment|/* XXX Note the big 250ms, we should probably replace this &n;&t;&t;&t;   by something better since we have irqs disabled here&n;&t;&t;&t; */
-id|mdelay
-c_func
-(paren
-l_int|250
-)paren
+id|delay
+op_assign
+l_int|1000
 suffix:semicolon
+multiline_comment|/* wait for 1s before using */
 )brace
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 r_if
@@ -3098,6 +3150,7 @@ l_string|&quot;        (canceled by KGDB)&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -3119,6 +3172,7 @@ l_string|&quot;        (canceled by XMON)&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -3298,6 +3352,9 @@ l_int|5
 suffix:semicolon
 )brace
 )brace
+r_return
+id|delay
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine is called to set the UART divisor registers to match&n; * the specified baud rate for a serial port.&n; */
 DECL|function|change_speed
@@ -7646,6 +7703,8 @@ id|startup
 c_func
 (paren
 id|info
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if

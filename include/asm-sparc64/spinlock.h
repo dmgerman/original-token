@@ -3,103 +3,6 @@ macro_line|#ifndef __SPARC64_SPINLOCK_H
 DECL|macro|__SPARC64_SPINLOCK_H
 mdefine_line|#define __SPARC64_SPINLOCK_H
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#ifndef __SMP__
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
-DECL|typedef|spinlock_t
-r_typedef
-r_struct
-(brace
-)brace
-id|spinlock_t
-suffix:semicolon
-DECL|macro|SPIN_LOCK_UNLOCKED
-macro_line|# define SPIN_LOCK_UNLOCKED (spinlock_t) { }
-macro_line|#else
-DECL|typedef|spinlock_t
-r_typedef
-r_int
-r_char
-id|spinlock_t
-suffix:semicolon
-DECL|macro|SPIN_LOCK_UNLOCKED
-macro_line|# define SPIN_LOCK_UNLOCKED 0
-macro_line|#endif
-DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
-DECL|macro|spin_lock
-mdefine_line|#define spin_lock(lock)&t;&t;(void)(lock)&t;/* Avoid warnings about unused variable */
-DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock)&t;(1)
-DECL|macro|spin_unlock_wait
-mdefine_line|#define spin_unlock_wait(lock)&t;do { } while(0)
-DECL|macro|spin_unlock
-mdefine_line|#define spin_unlock(lock)&t;do { } while(0)
-DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(lock)&t;cli()
-DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(lock)&t;sti()
-DECL|macro|spin_lock_bh
-mdefine_line|#define spin_lock_bh(lock) &bslash;&n;do {&t;local_bh_count++; &bslash;&n;&t;barrier(); &bslash;&n;} while(0)
-DECL|macro|spin_unlock_bh
-mdefine_line|#define spin_unlock_bh(lock) &bslash;&n;do {&t;barrier(); &bslash;&n;&t;local_bh_count--; &bslash;&n;} while(0)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
-multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
-DECL|typedef|rwlock_t
-r_typedef
-r_struct
-(brace
-)brace
-id|rwlock_t
-suffix:semicolon
-DECL|macro|RW_LOCK_UNLOCKED
-macro_line|# define RW_LOCK_UNLOCKED (rwlock_t) { }
-macro_line|#else
-DECL|typedef|rwlock_t
-r_typedef
-r_int
-r_int
-id|rwlock_t
-suffix:semicolon
-DECL|macro|RW_LOCK_UNLOCKED
-macro_line|# define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
-macro_line|#endif
-DECL|macro|read_lock
-mdefine_line|#define read_lock(lock)&t;&t;(void)(lock)&t;/* Avoid warnings about unused variable */
-DECL|macro|read_unlock
-mdefine_line|#define read_unlock(lock)&t;do { } while(0)
-DECL|macro|write_lock
-mdefine_line|#define write_lock(lock)&t;(void)(lock)&t;/* Likewise */
-DECL|macro|write_unlock
-mdefine_line|#define write_unlock(lock)&t;do { } while(0)
-DECL|macro|read_lock_irq
-mdefine_line|#define read_lock_irq(lock)&t;cli()
-DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;sti()
-DECL|macro|read_lock_bh
-mdefine_line|#define read_lock_bh(lock) &bslash;&n;do {&t;local_bh_count++; &bslash;&n;&t;barrier(); &bslash;&n;} while(0)
-DECL|macro|read_unlock_bh
-mdefine_line|#define read_unlock_bh(lock) &bslash;&n;do {&t;barrier(); &bslash;&n;&t;local_bh_count--; &bslash;&n;} while(0)
-DECL|macro|write_lock_irq
-mdefine_line|#define write_lock_irq(lock)&t;cli()
-DECL|macro|write_unlock_irq
-mdefine_line|#define write_unlock_irq(lock)&t;sti()
-DECL|macro|write_lock_bh
-mdefine_line|#define write_lock_bh(lock) &bslash;&n;do {&t;local_bh_count++; &bslash;&n;&t;barrier(); &bslash;&n;} while(0)
-DECL|macro|write_unlock_bh
-mdefine_line|#define write_unlock_bh(lock) &bslash;&n;do {&t;barrier(); &bslash;&n;&t;local_bh_count--; &bslash;&n;} while(0)
-DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
-DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
-DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
-DECL|macro|write_unlock_irqrestore
-mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
-macro_line|#else /* !(__SMP__) */
 multiline_comment|/* To get debugging spinlocks which detect and catch&n; * deadlock situations, set DEBUG_SPINLOCKS in the sparc64&n; * specific makefile and rebuild your kernel.&n; */
 multiline_comment|/* All of these locking primitives are expected to work properly&n; * even in an RMO memory model, which currently is what the kernel&n; * runs in.&n; *&n; * There is another issue.  Because we play games to save cycles&n; * in the non-contention case, we need to be extra careful about&n; * branch targets into the &quot;spinning&quot; code.  They live in their&n; * own section, but the newer V9 branches have a shorter range&n; * than the traditional 32-bit sparc branch variants.  The rule&n; * is that the branches that go into and out of the spinner sections&n; * must be pre-V9 branches.&n; */
 macro_line|#ifndef SPIN_LOCK_DEBUG
@@ -700,7 +603,6 @@ mdefine_line|#define write_unlock_bh(lock)&t;do { _do_write_unlock(lock); local_
 DECL|macro|write_unlock_irqrestore
 mdefine_line|#define write_unlock_irqrestore(lock, flags) do { _do_write_unlock(lock); __restore_flags(flags); } while(0)
 macro_line|#endif /* SPIN_LOCK_DEBUG */
-macro_line|#endif /* __SMP__ */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_SPINLOCK_H) */
 eof

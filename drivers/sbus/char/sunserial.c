@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.69 1999/08/31 06:58:29 davem Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.70 1999/09/04 20:28:17 davem Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1727,21 +1727,12 @@ c_cond
 op_logical_neg
 id|serial_console
 )paren
-(brace
-r_if
-c_cond
-(paren
 id|ps2kbd_probe
 c_func
 (paren
 op_amp
 id|memory_start
 )paren
-op_eq
-l_int|0
-)paren
-r_return
-id|memory_start
 suffix:semicolon
 r_if
 c_cond
@@ -1758,7 +1749,6 @@ l_int|0
 r_return
 id|memory_start
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond

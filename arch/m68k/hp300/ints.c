@@ -5,13 +5,13 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;ints.h&quot;
 multiline_comment|/* Each ipl has a linked list of interrupt service routines.&n; * Service routines are added via hp300_request_irq() and removed&n; * via hp300_free_irq(). The device driver should set IRQ_FLG_FAST&n; * if it needs to be serviced early (eg FIFOless UARTs); this will&n; * cause it to be added at the front of the queue rather than &n; * the back.&n; * Currently IRQ_FLG_SLOW and flags=0 are treated identically; if&n; * we needed three levels of priority we could distinguish them&n; * but this strikes me as mildly ugly...&n; */
 multiline_comment|/* we start with no entries in any list */

@@ -2,9 +2,9 @@ multiline_comment|/*&n; * tqueue.h --- task queue handling for Linux.&n; *&n; * 
 macro_line|#ifndef _LINUX_TQUEUE_H
 DECL|macro|_LINUX_TQUEUE_H
 mdefine_line|#define _LINUX_TQUEUE_H
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/*&n; * New proposed &quot;bottom half&quot; handlers:&n; * (C) 1994 Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; * Advantages:&n; * - Bottom halfs are implemented as a linked list.  You can have as many&n; *   of them, as you want.&n; * - No more scanning of a bit field is required upon call of a bottom half.&n; * - Support for chained bottom half lists.  The run_task_queue() function can be&n; *   used as a bottom half handler.  This is for example useful for bottom&n; *   halfs, which want to be delayed until the next clock tick.&n; *&n; * Problems:&n; * - The queue_task_irq() inline function is only atomic with respect to itself.&n; *   Problems can occur, when queue_task_irq() is called from a normal system&n; *   call, and an interrupt comes in.  No problems occur, when queue_task_irq()&n; *   is called from an interrupt or bottom half, and interrupted, as run_task_queue()&n; *   will not be executed/continued before the last interrupt returns.  If in&n; *   doubt, use queue_task(), not queue_task_irq().&n; * - Bottom halfs are called in the reverse order that they were linked into&n; *   the list.&n; */
 DECL|struct|tq_struct
 r_struct

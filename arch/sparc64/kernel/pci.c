@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.c,v 1.1 1999/08/30 10:00:42 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: pci.c,v 1.6 1999/09/08 03:40:41 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -11,22 +11,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
-multiline_comment|/* This is the base address of IOMMU translated space&n; * on PCI bus segments.  This means that any PCI address&n; * greater than or equal this value will be translated&n; * into a physical address and transferred on the system&n; * bus.  Any address less than it will be considered a&n; * PCI peer-to-peer transaction.  For example, given a&n; * value of 0x80000000:&n; *&n; *&t;If a PCI device bus masters the address 0x80001000&n; *&t;then then PCI controller&squot;s IOMMU will take the offset&n; *&t;portion (0x1000) and translate that into a physical&n; *&t;address.  The data transfer will be performed to/from&n; *&t;that physical address on the system bus.&n; *&n; *&t;If the PCI device bus masters the address 0x00002000&n; *&t;then the PCI controller will not do anything, it will&n; *&t;proceed as a PCI peer-to-peer transfer.&n; *&n; * This all stems from the fact that PCI drivers in Linux are&n; * not conscious of DMA mappings to the extent they need to&n; * be for systems like Sparc64 and Alpha which have IOMMU&squot;s.&n; * Plans are already in the works to fix this.  So what we do&n; * at the moment is linearly map all of physical ram with the&n; * IOMMU in consistant mode, thus providing the illusion of&n; * a simplistic linear DMA mapping scheme to the drivers.&n; * This, while it works, is bad for performance (streaming&n; * DMA is not used) and limits the amount of total memory we&n; * can support (2GB on Psycho, 512MB on Sabre/APB).&n; */
-DECL|variable|pci_dvma_offset
-r_int
-r_int
-id|pci_dvma_offset
-op_assign
-l_int|0x00000000UL
-suffix:semicolon
-multiline_comment|/* Given a valid PCI dma address (ie. &gt;= pci_dvma_addset) this&n; * mask will give you the offset into the DMA space of a&n; * PCI bus.&n; */
-DECL|variable|pci_dvma_mask
-r_int
-r_int
-id|pci_dvma_mask
-op_assign
-l_int|0xffffffffUL
-suffix:semicolon
 DECL|variable|pci_dvma_v2p_hash
 r_int
 r_int
@@ -42,6 +26,13 @@ id|pci_dvma_p2v_hash
 (braket
 id|PCI_DVMA_HASHSZ
 )braket
+suffix:semicolon
+DECL|variable|pci_memspace_mask
+r_int
+r_int
+id|pci_memspace_mask
+op_assign
+l_int|0xffffffffUL
 suffix:semicolon
 macro_line|#ifndef CONFIG_PCI
 multiline_comment|/* A &quot;nop&quot; PCI implementation. */
@@ -233,7 +224,19 @@ id|sabre_init
 )brace
 comma
 (brace
+l_string|&quot;pci108e,a000&quot;
+comma
+id|sabre_init
+)brace
+comma
+(brace
 l_string|&quot;SUNW,psycho&quot;
+comma
+id|psycho_init
+)brace
+comma
+(brace
+l_string|&quot;pci108e,8000&quot;
 comma
 id|psycho_init
 )brace
@@ -414,6 +417,43 @@ comma
 id|node
 )paren
 suffix:semicolon
+r_else
+(brace
+id|len
+op_assign
+id|prom_getproperty
+c_func
+(paren
+id|node
+comma
+l_string|&quot;compatible&quot;
+comma
+id|namebuf
+comma
+r_sizeof
+(paren
+id|namebuf
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|0
+)paren
+id|pci_controller_init
+c_func
+(paren
+id|namebuf
+comma
+id|len
+comma
+id|node
+)paren
+suffix:semicolon
+)brace
 id|node
 op_assign
 id|prom_getsibling
@@ -683,6 +723,24 @@ op_star
 id|pbus
 )paren
 (brace
+)brace
+DECL|function|pcibios_assign_resource
+r_int
+id|pcibios_assign_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+comma
+r_int
+id|resource
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|pcibios_setup
 r_char

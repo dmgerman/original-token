@@ -1,6 +1,7 @@
 multiline_comment|/* net/atm/raw.c - Raw AAL0 and AAL5 transports */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -227,4 +228,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|atm_init_aal5
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|atm_init_aal5
+)paren
+suffix:semicolon
 eof

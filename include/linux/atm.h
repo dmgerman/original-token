@@ -47,11 +47,11 @@ DECL|macro|ATM_AAL34
 mdefine_line|#define ATM_AAL34&t;3&t;&t;/* AAL3/4 (data) */
 DECL|macro|ATM_AAL5
 mdefine_line|#define ATM_AAL5&t;5&t;&t;/* AAL5 (data) */
-multiline_comment|/* socket option name coding functions */
+multiline_comment|/*&n; * socket option name coding functions&n; *&n; * Note that __SO_ENCODE and __SO_LEVEL are somewhat a hack since the&n; * &lt;&lt; 22 only reserves 9 bits for the level.  On some architectures&n; * SOL_SOCKET is 0xFFFF, so that&squot;s a bit of a problem&n; */
 DECL|macro|__SO_ENCODE
-mdefine_line|#define __SO_ENCODE(l,n,t)&t;(((l) &lt;&lt; 22) | ((n) &lt;&lt; 16) | sizeof(t))
-DECL|macro|__SO_LEVEL
-mdefine_line|#define __SO_LEVEL(c)&t;&t;((c) &gt;&gt; 22)
+mdefine_line|#define __SO_ENCODE(l,n,t)&t;((((l) &amp; 0x1FF) &lt;&lt; 22) | ((n) &lt;&lt; 16) | &bslash;&n;&t;&t;&t;&t;sizeof(t))
+DECL|macro|__SO_LEVEL_MATCH
+mdefine_line|#define __SO_LEVEL_MATCH(c,m)&t;(((c) &gt;&gt; 22) == ((m) &amp; 0x1FF))
 DECL|macro|__SO_NUMBER
 mdefine_line|#define __SO_NUMBER(c)&t;&t;(((c) &gt;&gt; 16) &amp; 0x3f)
 DECL|macro|__SO_SIZE
@@ -69,6 +69,9 @@ multiline_comment|/* Quality of Service setting */
 DECL|macro|SO_ATMSAP
 mdefine_line|#define SO_ATMSAP&t;__SO_ENCODE(SOL_ATM,3,struct atm_sap)
 multiline_comment|/* Service Access Point */
+DECL|macro|SO_ATMPVC
+mdefine_line|#define SO_ATMPVC&t;__SO_ENCODE(SOL_ATM,4,struct sockaddr_atmpvc)
+multiline_comment|/* &quot;PVC&quot; address (also for SVCs); get only */
 multiline_comment|/*&n; * Note @@@: since the socket layers don&squot;t really distinguish the control and&n; * the data plane but generally seems to be data plane-centric, any layer is&n; * about equally wrong for the SAP. If you have a better idea about this,&n; * please speak up ...&n; */
 multiline_comment|/* socket layer */
 DECL|macro|SO_BCTXOPT

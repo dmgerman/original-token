@@ -228,7 +228,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;&t;/* for the eject ioctl */
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifndef MODULE
 macro_line|#include &quot;setup.h&quot;

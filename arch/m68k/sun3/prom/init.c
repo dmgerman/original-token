@@ -52,11 +52,9 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|prom_init
 r_void
+id|__init
 id|prom_init
 c_func
 (paren
@@ -64,7 +62,6 @@ r_struct
 id|linux_romvec
 op_star
 id|rp
-)paren
 )paren
 (brace
 macro_line|#if CONFIG_AP1000

@@ -192,7 +192,7 @@ macro_line|#if LINUX_VERSION_CODE &lt; 0x20155
 macro_line|#include &lt;linux/bios32.h&gt;&t;&t;/* Ignore the bogus warning in 2.1.100+ */
 macro_line|#endif
 macro_line|#endif
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -2046,7 +2046,7 @@ op_assign
 id|pciaddr
 op_amp
 op_complement
-l_int|3
+l_int|3UL
 suffix:semicolon
 r_if
 c_cond
@@ -2078,7 +2078,7 @@ c_func
 id|pciaddr
 op_amp
 op_complement
-l_int|0xf
+l_int|0xfUL
 comma
 l_int|0x1000
 )paren
