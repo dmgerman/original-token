@@ -1948,16 +1948,14 @@ id|p-&gt;state
 op_eq
 id|TASK_ZOMBIE
 )paren
-id|p-&gt;p_pptr-&gt;signal
-op_or_assign
-(paren
-l_int|1
-op_lshift
+id|send_sig
+c_func
 (paren
 id|SIGCHLD
-op_minus
+comma
+id|p-&gt;p_pptr
+comma
 l_int|1
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * process group orphan check&n;&t;&t; * Case ii: Our child is in a different pgrp &n;&t;&t; * than we are, and it was the only connection&n;&t;&t; * outside, so the child pgrp is now orphaned.&n;&t;&t; */
