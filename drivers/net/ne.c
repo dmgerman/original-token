@@ -1,5 +1,5 @@
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    13/04/95 -- Change in philosophy. We now monitor ENISR_RDC for&n;    handshaking the Tx PIO xfers. If we don&squot;t get a RDC within a&n;    reasonable period of time, we know the 8390 has gone south, and we&n;    kick the board before it locks the system. Also use set_bit() to&n;    create atomic locks on the PIO xfers, and added some defines&n;    that the end user can play with to save memory.&t;-- Paul Gortmaker&n;&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
 DECL|variable|version
 r_static
@@ -1541,6 +1541,10 @@ id|ei_status.txing
 op_assign
 l_int|0
 suffix:semicolon
+id|ei_status.dmaing
+op_assign
+l_int|0
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1590,8 +1594,19 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|outb_p
+c_func
+(paren
+id|ENISR_RESET
+comma
+id|NE_BASE
+op_plus
+id|NE_RESET
+)paren
+suffix:semicolon
+multiline_comment|/* Ack intr. */
 )brace
-multiline_comment|/* Block input and output, similar to the Crynwr packet driver.  If you&n;   porting to a new ethercard look at the packet driver source for hints.&n;   The NEx000 doesn&squot;t share it on-board packet memory -- you have to put&n;   the packet out through the &quot;remote DMA&quot; dataport using outb. */
+multiline_comment|/* Block input and output, similar to the Crynwr packet driver.  If you&n;   are porting to a new ethercard, look at the packet driver source for hints.&n;   The NEx000 doesn&squot;t share it on-board packet memory -- you have to put&n;   the packet out through the &quot;remote DMA&quot; dataport using outb. */
 r_static
 r_int
 DECL|function|ne_block_input
@@ -1630,18 +1645,7 @@ multiline_comment|/* This *shouldn&squot;t* happen. If it does, it&squot;s the l
 r_if
 c_cond
 (paren
-id|set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
 id|ei_status.dmaing
-)paren
 )paren
 (brace
 r_if
@@ -1672,7 +1676,7 @@ suffix:semicolon
 )brace
 id|ei_status.dmaing
 op_or_assign
-l_int|0x02
+l_int|0x01
 suffix:semicolon
 id|outb_p
 c_func
@@ -1931,7 +1935,7 @@ multiline_comment|/* Ack intr. */
 id|ei_status.dmaing
 op_and_assign
 op_complement
-l_int|0x03
+l_int|0x01
 suffix:semicolon
 r_return
 id|ring_offset
@@ -1999,18 +2003,7 @@ multiline_comment|/* This *shouldn&squot;t* happen. If it does, it&squot;s the l
 r_if
 c_cond
 (paren
-id|set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
 id|ei_status.dmaing
-)paren
 )paren
 (brace
 r_if
@@ -2040,7 +2033,7 @@ suffix:semicolon
 )brace
 id|ei_status.dmaing
 op_or_assign
-l_int|0x04
+l_int|0x01
 suffix:semicolon
 multiline_comment|/* We should already be in page 0, but to be safe... */
 id|outb_p
@@ -2414,7 +2407,7 @@ multiline_comment|/* Ack intr. */
 id|ei_status.dmaing
 op_and_assign
 op_complement
-l_int|0x05
+l_int|0x01
 suffix:semicolon
 r_return
 suffix:semicolon

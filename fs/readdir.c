@@ -112,7 +112,7 @@ id|dirent
 op_assign
 id|buf-&gt;dirent
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|ino
@@ -121,7 +121,7 @@ op_amp
 id|dirent-&gt;d_ino
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|offset
@@ -130,7 +130,7 @@ op_amp
 id|dirent-&gt;d_offset
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|namlen
@@ -149,7 +149,7 @@ comma
 id|namlen
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0
@@ -447,7 +447,7 @@ id|buf-&gt;previous
 op_assign
 id|dirent
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|ino
@@ -456,7 +456,7 @@ op_amp
 id|dirent-&gt;d_ino
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|reclen
@@ -475,7 +475,7 @@ comma
 id|namlen
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0

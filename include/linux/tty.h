@@ -79,6 +79,11 @@ r_int
 r_char
 id|orig_video_lines
 suffix:semicolon
+DECL|member|orig_video_isVGA
+r_int
+r_char
+id|orig_video_isVGA
+suffix:semicolon
 DECL|member|orig_video_points
 r_int
 r_int
@@ -109,6 +114,8 @@ DECL|macro|ORIG_VIDEO_EGA_CX
 mdefine_line|#define ORIG_VIDEO_EGA_CX&t;(screen_info.orig_video_ega_cx)
 DECL|macro|ORIG_VIDEO_LINES
 mdefine_line|#define ORIG_VIDEO_LINES&t;(screen_info.orig_video_lines)
+DECL|macro|ORIG_VIDEO_ISVGA
+mdefine_line|#define ORIG_VIDEO_ISVGA&t;(screen_info.orig_video_isVGA)
 DECL|macro|ORIG_VIDEO_POINTS
 mdefine_line|#define ORIG_VIDEO_POINTS       (screen_info.orig_video_points)
 DECL|macro|VIDEO_TYPE_MDA
@@ -118,7 +125,9 @@ mdefine_line|#define VIDEO_TYPE_CGA&t;&t;0x11&t;/* CGA Display &t;&t;&t;*/
 DECL|macro|VIDEO_TYPE_EGAM
 mdefine_line|#define VIDEO_TYPE_EGAM&t;&t;0x20&t;/* EGA/VGA in Monochrome Mode&t;*/
 DECL|macro|VIDEO_TYPE_EGAC
-mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA/VGA in Color Mode&t;*/
+mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA in Color Mode&t;&t;*/
+DECL|macro|VIDEO_TYPE_VGAC
+mdefine_line|#define VIDEO_TYPE_VGAC&t;&t;0x22&t;/* VGA+ in Color Mode&t;&t;*/
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR has no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;

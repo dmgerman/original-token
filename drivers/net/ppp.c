@@ -2243,6 +2243,10 @@ id|ppp-&gt;dev-&gt;name
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 multiline_comment|/* called when PPP line discipline is selected on a tty */
@@ -2669,10 +2673,6 @@ op_minus
 id|ENXIO
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

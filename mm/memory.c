@@ -3949,26 +3949,6 @@ id|VM_SHARED
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte_write
-c_func
-(paren
-id|from
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nonwritable, but dirty, shared page&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* is the page reasonable at all? */
 r_if
@@ -4175,27 +4155,6 @@ id|VM_SHARED
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pte_write
-c_func
-(paren
-id|from
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nonwritable, but dirty, shared page&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 )brace
 id|copy_page
 c_func

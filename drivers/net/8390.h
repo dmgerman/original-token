@@ -204,6 +204,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 8390&squot;s intrs disabled when &squot;1&squot;. */
+DECL|member|dmaing
+r_int
+id|dmaing
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Remote DMA Active */
 DECL|member|pingpong
 r_int
 id|pingpong
@@ -240,12 +247,6 @@ r_char
 id|txqueue
 suffix:semicolon
 multiline_comment|/* Tx Packet buffer queue length. */
-DECL|member|dmaing
-r_int
-r_char
-id|dmaing
-suffix:semicolon
-multiline_comment|/* Remote DMA (Tx/Rx/Active) */
 DECL|member|tx1
 DECL|member|tx2
 r_int

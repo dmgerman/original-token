@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  13/04/95 -- Don&squot;t blindly swallow ENISR_RDC interrupts for non-shared&n;  memory cards. We need to follow these closely for neX000 cards.&n;  Plus other minor cleanups.   -- Paul Gortmaker&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;&n;  */
 DECL|variable|version
 r_static
 r_char
@@ -245,10 +245,6 @@ id|length
 comma
 id|send_length
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 multiline_comment|/*&n; *  We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n; *  existing code does anyway. If it has been too long since the&n; *  last Tx, we assume the board has died and kick it.&n; */
 r_if
 c_cond
@@ -446,69 +442,6 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Block a timer-based transmit from overlapping. */
-r_if
-c_cond
-(paren
-(paren
-id|set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-op_logical_or
-id|ei_local-&gt;irqlock
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Tx access conflict. irq=%d lock=%d tx1=%d tx2=%d last=%d&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|dev-&gt;interrupt
-comma
-id|ei_local-&gt;irqlock
-comma
-id|ei_local-&gt;tx1
-comma
-id|ei_local-&gt;tx2
-comma
-id|ei_local-&gt;lasttx
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* Mask interrupts from the ethercard. */
 id|outb_p
 c_func
@@ -520,15 +453,37 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;interrupt
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Tx request while isr active.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|ENISR_ALL
+comma
+id|e8390_base
+op_plus
+id|EN0_IMR
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|ei_local-&gt;irqlock
 op_assign
 l_int|1
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|send_length
 op_assign
@@ -1153,6 +1108,7 @@ id|EN0_ISR
 suffix:semicolon
 multiline_comment|/* Ack intr. */
 )brace
+multiline_comment|/* Ignore any RDC interrupts that make it back to here. */
 r_if
 c_cond
 (paren
@@ -1161,11 +1117,6 @@ op_amp
 id|ENISR_RDC
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|dev-&gt;mem_start
-)paren
 id|outb_p
 c_func
 (paren
@@ -1195,12 +1146,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|interrupts
-op_amp
-op_complement
-id|ENISR_RDC
-)paren
 op_logical_and
 id|ei_debug
 )paren
@@ -1223,7 +1169,7 @@ r_if
 c_cond
 (paren
 id|nr_serviced
-op_eq
+op_ge
 id|MAX_SERVICE
 )paren
 (brace
@@ -2110,7 +2056,7 @@ id|EN0_BOUNDARY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;       has done a mark_bh(NET_BH) for us and will work on them&n;       when we get to the bottom-half routine. */
+multiline_comment|/* If any worth-while packets have been received, netif_rx()&n;       has done a mark_bh(NET_BH) for us and will work on them&n;       when we get to the bottom-half routine. */
 multiline_comment|/* Record the maximum Rx packet queue. */
 r_if
 c_cond

@@ -104,4 +104,20 @@ suffix:semicolon
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * GCC 2.5.8 doesn&squot;t always optimize correctly; see include/asm/segment.h&n; */
+DECL|function|bad_user_access_length
+r_int
+id|bad_user_access_length
+c_func
+(paren
+r_void
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;bad_user_access_length executed (not cool, dude)&quot;
+)paren
+suffix:semicolon
+)brace
 eof

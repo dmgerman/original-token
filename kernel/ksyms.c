@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
@@ -1113,6 +1114,12 @@ id|X
 c_func
 (paren
 id|ether_setup
+)paren
+comma
+id|X
+c_func
+(paren
+id|eth_type_trans
 )paren
 comma
 id|X

@@ -101,5 +101,43 @@ multiline_comment|/* number of lines of scrollback */
 suffix:semicolon
 DECL|macro|VT_RESIZE
 mdefine_line|#define VT_RESIZE&t;0x5609&t;/* set kernel&squot;s idea of screensize */
+DECL|struct|vt_consize
+r_struct
+id|vt_consize
+(brace
+DECL|member|v_rows
+id|ushort
+id|v_rows
+suffix:semicolon
+multiline_comment|/* number of rows */
+DECL|member|v_cols
+id|ushort
+id|v_cols
+suffix:semicolon
+multiline_comment|/* number of columns */
+DECL|member|v_vlin
+id|ushort
+id|v_vlin
+suffix:semicolon
+multiline_comment|/* number of pixel rows on screen */
+DECL|member|v_clin
+id|ushort
+id|v_clin
+suffix:semicolon
+multiline_comment|/* number of pixel rows per character */
+DECL|member|v_vcol
+id|ushort
+id|v_vcol
+suffix:semicolon
+multiline_comment|/* number of pixel columns on screen */
+DECL|member|v_ccol
+id|ushort
+id|v_ccol
+suffix:semicolon
+multiline_comment|/* number of pixel columns per character */
+)brace
+suffix:semicolon
+DECL|macro|VT_RESIZEX
+mdefine_line|#define VT_RESIZEX      0x560A  /* set kernel&squot;s idea of screensize + more */
 macro_line|#endif /* _LINUX_VT_H */
 eof

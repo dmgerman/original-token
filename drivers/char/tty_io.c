@@ -253,6 +253,23 @@ r_int
 id|on
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|reset_palette
+c_func
+(paren
+r_int
+id|currcons
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|set_palette
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -1991,6 +2008,11 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|reset_palette
+(paren
+id|new_console
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Performs the back end of a vt switch&n; */
 DECL|function|complete_change_console
@@ -2137,6 +2159,24 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Set the colour palette for this VT */
+r_if
+c_cond
+(paren
+id|vt_cons
+(braket
+id|new_console
+)braket
+op_member_access_from_pointer
+id|vc_mode
+op_eq
+id|KD_TEXT
+)paren
+id|set_palette
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Wake anyone waiting for their VT to activate&n;&t; */
 id|vt_wake_waitactive
 c_func

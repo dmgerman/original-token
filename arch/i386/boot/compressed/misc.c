@@ -60,6 +60,11 @@ r_int
 r_char
 id|orig_video_lines
 suffix:semicolon
+DECL|member|orig_video_isVGA
+r_int
+r_char
+id|orig_video_isVGA
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */

@@ -33,6 +33,10 @@ suffix:semicolon
 multiline_comment|/* font data in expanded form */
 )brace
 suffix:semicolon
+DECL|macro|GIO_CMAP
+mdefine_line|#define GIO_CMAP&t;0x4B70&t;/* gets colour palette on VGA+ */
+DECL|macro|PIO_CMAP
+mdefine_line|#define PIO_CMAP&t;0x4B71&t;/* sets colour palette on VGA+ */
 DECL|macro|KIOCSOUND
 mdefine_line|#define KIOCSOUND&t;0x4B2F&t;/* start sound generation (0 for off) */
 DECL|macro|KDMKTONE
@@ -298,6 +302,6 @@ mdefine_line|#define KDSETKEYCODE&t;0x4B4D&t;/* write kernel keycode table entry
 DECL|macro|KDSIGACCEPT
 mdefine_line|#define KDSIGACCEPT&t;0x4B4E&t;/* accept kbd generated signals */
 multiline_comment|/* note: 0x4B00-0x4B4E all have had a value at some time;&n;   don&squot;t reuse for the time being */
-multiline_comment|/* note: 0x4B60-0x4B6C used above */
+multiline_comment|/* note: 0x4B60-0x4B6C, 0x4B70, 0x4B71 used above */
 macro_line|#endif /* _LINUX_KD_H */
 eof
