@@ -15,9 +15,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
@@ -136,13 +134,11 @@ r_struct
 id|screen_info
 id|screen_info
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
 DECL|variable|apm_bios_info
 r_struct
 id|apm_bios_info
 id|apm_bios_info
 suffix:semicolon
-macro_line|#endif
 DECL|struct|sys_desc_table_struct
 r_struct
 id|sys_desc_table_struct
@@ -791,12 +787,10 @@ id|screen_info
 op_assign
 id|SCREEN_INFO
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
 id|apm_bios_info
 op_assign
 id|APM_BIOS_INFO
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

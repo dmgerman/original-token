@@ -254,7 +254,7 @@ macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
 macro_line|# include &lt;asm/core_tsunami.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_JENSEN)
 macro_line|# include &lt;asm/jensen.h&gt;
-macro_line|#elif defined(CONFIG_ALPHA_RX164)
+macro_line|#elif defined(CONFIG_ALPHA_POLARIS)
 macro_line|# include &lt;asm/core_polaris.h&gt;
 macro_line|#else
 macro_line|#error &quot;What system is this?&quot;

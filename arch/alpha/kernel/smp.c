@@ -1113,7 +1113,7 @@ op_star
 )paren
 id|cpu-&gt;hwpcb
 suffix:semicolon
-multiline_comment|/* Initialize the CPU&squot;s HWPCB to something just good enough for&n;&t;   us to get started.  Immediately after starting, we&squot;ll swpctx&n;&t;   to the target idle task&squot;s tss.  Reuse the stack in the mean&n;&t;   time.  Precalculate the target PCBB.  */
+multiline_comment|/* Initialize the CPU&squot;s HWPCB to something just good enough for&n;&t;   us to get started.  Immediately after starting, we&squot;ll swpctx&n;&t;   to the target idle task&squot;s ptb.  Reuse the stack in the mean&n;&t;   time.  Precalculate the target PCBB.  */
 id|hwpcb-&gt;ksp
 op_assign
 (paren
@@ -1136,7 +1136,7 @@ l_int|0
 suffix:semicolon
 id|hwpcb-&gt;ptbr
 op_assign
-id|idle-&gt;tss.ptbr
+id|idle-&gt;thread.ptbr
 suffix:semicolon
 id|hwpcb-&gt;pcc
 op_assign
@@ -1152,12 +1152,12 @@ id|virt_to_phys
 c_func
 (paren
 op_amp
-id|idle-&gt;tss
+id|idle-&gt;thread
 )paren
 suffix:semicolon
 id|hwpcb-&gt;flags
 op_assign
-id|idle-&gt;tss.pal_flags
+id|idle-&gt;thread.pal_flags
 suffix:semicolon
 id|hwpcb-&gt;res1
 op_assign
@@ -1191,7 +1191,7 @@ id|cpuid
 comma
 id|idle-&gt;state
 comma
-id|idle-&gt;tss.pal_flags
+id|idle-&gt;thread.pal_flags
 )paren
 )paren
 suffix:semicolon
@@ -1350,10 +1350,7 @@ id|CLONE_VM
 suffix:semicolon
 id|idle
 op_assign
-id|task
-(braket
-id|cpunum
-)braket
+id|init_task.prev_task
 suffix:semicolon
 r_if
 c_cond
@@ -1366,8 +1363,21 @@ c_func
 (paren
 l_string|&quot;No idle process for CPU %d&quot;
 comma
-id|cpuid
+id|cpunum
 )paren
+suffix:semicolon
+id|del_from_runqueue
+c_func
+(paren
+id|idle
+)paren
+suffix:semicolon
+id|init_tasks
+(braket
+id|cpunum
+)braket
+op_assign
+id|idle
 suffix:semicolon
 id|idle-&gt;processor
 op_assign

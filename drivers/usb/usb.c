@@ -1315,25 +1315,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|config-&gt;MaxPower
-op_eq
-l_int|200
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;bNumInterfaces kludge&bslash;n&quot;
-)paren
-suffix:semicolon
-id|config-&gt;bNumInterfaces
-op_add_assign
-l_int|3
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|config-&gt;bNumInterfaces
 OG
 id|USB_MAXINTERFACES

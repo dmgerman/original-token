@@ -493,7 +493,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 (paren
 l_int|1UL
@@ -520,7 +520,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_or_assign
 (paren
 l_int|1UL
@@ -779,7 +779,16 @@ id|regs
 id|die_if_kernel
 c_func
 (paren
+(paren
+id|type
+op_eq
+l_int|1
+ques
+c_cond
+l_string|&quot;Kernel Bug&quot;
+suffix:colon
 l_string|&quot;Instruction fault&quot;
+)paren
 comma
 op_amp
 id|regs
@@ -2084,7 +2093,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 (paren
 l_int|1UL
@@ -2111,7 +2120,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_or_assign
 (paren
 l_int|1UL
@@ -2554,7 +2563,7 @@ multiline_comment|/* Check the UAC bits to decide what the user wants us to do&n
 id|uac_bits
 op_assign
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_rshift
 id|UAC_SHIFT
 )paren

@@ -151,7 +151,7 @@ id|apm_bios_info
 suffix:semicolon
 r_extern
 r_void
-id|apm_bios_init
+id|apm_init
 c_func
 (paren
 r_void

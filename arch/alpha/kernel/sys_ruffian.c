@@ -755,6 +755,13 @@ id|mem_end
 )paren
 (brace
 multiline_comment|/* FIXME: What do we do with ruffian_get_bank_size above?  */
+macro_line|#if 1
+id|pyxis_init_arch
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|pyxis_enable_errors
 c_func
 (paren
@@ -783,6 +790,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_static
 r_void
@@ -793,14 +801,24 @@ r_void
 )paren
 (brace
 multiline_comment|/* Ruffian depends on the system timer established in MILO! */
-id|request_region
+id|timer_resource.start
+op_assign
+l_int|0x70
+suffix:semicolon
+id|timer_resource.end
+op_assign
+l_int|0x70
+op_plus
+l_int|0x10
+suffix:semicolon
+id|request_resource
 c_func
 (paren
-l_int|0x70
+op_amp
+id|ioport_resource
 comma
-l_int|0x10
-comma
-l_string|&quot;timer&quot;
+op_amp
+id|timer_resource
 )paren
 suffix:semicolon
 id|outb

@@ -4788,36 +4788,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
-multiline_comment|/*&n; *&t;Uniprocessor idle thread&n; */
-DECL|function|cpu_idle
-r_int
-id|cpu_idle
-c_func
-(paren
-r_void
-op_star
-id|unused
-)paren
-(brace
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
-id|idle
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-)brace
-DECL|macro|smp_init
-mdefine_line|#define smp_init()&t;do { } while (0)
-macro_line|#else
-multiline_comment|/*&n; *&t;Multiprocessor idle thread is in arch/...&n; */
 r_extern
 r_int
 id|cpu_idle
@@ -4828,6 +4798,10 @@ op_star
 id|unused
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
+DECL|macro|smp_init
+mdefine_line|#define smp_init()&t;do { } while (0)
+macro_line|#else
 multiline_comment|/* Called by boot processor to activate the rest. */
 DECL|function|smp_init
 r_static
@@ -5448,6 +5422,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MAC
 id|nubus_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_APM
+id|apm_init
 c_func
 (paren
 )paren

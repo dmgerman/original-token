@@ -797,7 +797,7 @@ op_assign
 id|sp
 suffix:semicolon
 r_return
-id|__reload_tss
+id|__reload_thread
 c_func
 (paren
 id|pcb
@@ -1029,16 +1029,16 @@ id|hwrpb
 suffix:semicolon
 )brace
 multiline_comment|/* Also set up the real kernel PCB while we&squot;re at it.  */
-id|init_task.tss.ptbr
+id|init_task.thread.ptbr
 op_assign
 id|newptbr
 suffix:semicolon
-id|init_task.tss.pal_flags
+id|init_task.thread.pal_flags
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* set FEN, clear everything else */
-id|init_task.tss.flags
+id|init_task.thread.flags
 op_assign
 l_int|0
 suffix:semicolon
@@ -1048,7 +1048,7 @@ id|load_PCB
 c_func
 (paren
 op_amp
-id|init_task.tss
+id|init_task.thread
 )paren
 suffix:semicolon
 id|tbia

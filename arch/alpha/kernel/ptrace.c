@@ -616,7 +616,7 @@ l_int|30
 id|addr
 op_assign
 op_amp
-id|task-&gt;tss.usp
+id|task-&gt;thread.usp
 suffix:semicolon
 )brace
 r_else
@@ -945,7 +945,7 @@ l_int|11
 op_rshift
 l_int|9
 suffix:semicolon
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|nsaved
 op_increment
@@ -961,7 +961,7 @@ c_cond
 id|displ
 )paren
 multiline_comment|/* guard against unoptimized code */
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|nsaved
 op_increment
@@ -1003,7 +1003,7 @@ l_int|16
 op_amp
 l_int|0x1f
 suffix:semicolon
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|nsaved
 op_increment
@@ -1030,7 +1030,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|nsaved
 op_increment
@@ -1074,7 +1074,7 @@ c_func
 (paren
 id|child
 comma
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|i
 )braket
@@ -1093,7 +1093,7 @@ l_int|0
 r_return
 id|res
 suffix:semicolon
-id|child-&gt;tss.bpt_insn
+id|child-&gt;thread.bpt_insn
 (braket
 id|i
 )braket
@@ -1108,7 +1108,7 @@ comma
 (paren
 l_string|&quot;    -&gt; next_pc=%lx&bslash;n&quot;
 comma
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|i
 )braket
@@ -1122,7 +1122,7 @@ c_func
 (paren
 id|child
 comma
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|i
 )braket
@@ -1141,7 +1141,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
-id|child-&gt;tss.bpt_nsaved
+id|child-&gt;thread.bpt_nsaved
 op_assign
 id|nsaved
 suffix:semicolon
@@ -1166,9 +1166,9 @@ id|i
 comma
 id|nsaved
 op_assign
-id|child-&gt;tss.bpt_nsaved
+id|child-&gt;thread.bpt_nsaved
 suffix:semicolon
-id|child-&gt;tss.bpt_nsaved
+id|child-&gt;thread.bpt_nsaved
 op_assign
 l_int|0
 suffix:semicolon
@@ -1213,12 +1213,12 @@ c_func
 (paren
 id|child
 comma
-id|child-&gt;tss.bpt_addr
+id|child-&gt;thread.bpt_addr
 (braket
 id|i
 )braket
 comma
-id|child-&gt;tss.bpt_insn
+id|child-&gt;thread.bpt_insn
 (braket
 id|i
 )braket
@@ -1915,7 +1915,7 @@ id|_NSIG
 r_goto
 id|out
 suffix:semicolon
-id|child-&gt;tss.bpt_nsaved
+id|child-&gt;thread.bpt_nsaved
 op_assign
 op_minus
 l_int|1

@@ -1644,7 +1644,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We don&squot;t have code that will init the CYPRESS bridge correctly&n;&t; * so we do the next best thing, and depend on the previous&n;&t; * console code to do the right thing, and ignore it here... :-&bslash;&n;&t; */
 r_if
 c_cond
 (paren
@@ -1655,6 +1654,14 @@ op_logical_and
 id|dev-&gt;device
 op_eq
 id|PCI_DEVICE_ID_CONTAQ_82C693
+op_logical_and
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_eq
+id|PCI_CLASS_BRIDGE_ISA
 )paren
 (brace
 id|DBG_DEVS
@@ -1828,6 +1835,34 @@ id|base
 op_amp
 l_int|0xffffffff
 suffix:semicolon
+multiline_comment|/* We don&squot;t want to disturb normal IDE functions, so&n;&t;&t;&t;   we don&squot;t touch the first two I/O ports on the&n;&t;&t;&t;   Cypress.  */
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_CONTAQ
+op_logical_and
+id|dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_CONTAQ_82C693
+op_logical_and
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_eq
+id|PCI_CLASS_BRIDGE_ISA
+op_logical_and
+id|idx
+OL
+l_int|2
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; * Aligning to 0x800 rather than the minimum base of&n;&t;&t;&t; * 0x400 is an attempt to avoid having devices in &n;&t;&t;&t; * any 0x?C?? range, which is where the de4x5 driver&n;&t;&t;&t; * probes for EISA cards.&n;&t;&t;&t; *&n;&t;&t;&t; * Adaptecs, especially, resent such intrusions.&n;&t;&t;&t; */
 id|alignto
 op_assign

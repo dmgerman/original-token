@@ -6640,7 +6640,7 @@ id|PARPORT_MODE_ECP
 multiline_comment|/*&n;&t;&t; * Put the ECP detected port in PS2 mode.&n;&t;&t; */
 id|outb
 (paren
-l_int|0x24
+l_int|0x34
 comma
 id|ECONTROL
 (paren

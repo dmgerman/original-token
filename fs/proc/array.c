@@ -2227,7 +2227,7 @@ id|thread_saved_pc
 c_func
 (paren
 op_amp
-id|p-&gt;tss
+id|p-&gt;thread
 )paren
 suffix:semicolon
 r_if
@@ -2250,7 +2250,7 @@ r_int
 r_int
 op_star
 )paren
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 )paren
 (braket
 l_int|6
@@ -2734,7 +2734,7 @@ macro_line|# define PT_REG(reg)&t;&t;(PAGE_SIZE - sizeof(struct pt_regs)&t;&bsla
 DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk) &bslash;&n;    (*(unsigned long *)(PT_REG(pc) + PAGE_SIZE + (unsigned long)(tsk)))
 DECL|macro|KSTK_ESP
-macro_line|# define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
+macro_line|# define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;thread.usp)
 macro_line|#elif defined(__arm__)
 DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1022])

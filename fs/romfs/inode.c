@@ -1675,9 +1675,6 @@ suffix:semicolon
 multiline_comment|/* hack? */
 id|page-&gt;owner
 op_assign
-(paren
-r_int
-)paren
 id|current
 suffix:semicolon
 id|offset

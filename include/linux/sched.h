@@ -498,6 +498,7 @@ op_star
 id|exec_domain
 suffix:semicolon
 DECL|member|need_resched
+r_volatile
 r_int
 id|need_resched
 suffix:semicolon

@@ -978,14 +978,12 @@ id|current-&gt;active_mm
 op_assign
 id|mm
 suffix:semicolon
-id|switch_mm
+id|activate_mm
 c_func
 (paren
 id|active_mm
 comma
 id|mm
-comma
-id|current-&gt;processor
 )paren
 suffix:semicolon
 )brace

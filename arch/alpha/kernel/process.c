@@ -747,7 +747,7 @@ r_void
 )paren
 (brace
 multiline_comment|/* Arrange for each exec&squot;ed process to start off with a clean slate&n;&t;   with respect to the FPU.  This is all exceptions disabled.  Note&n;           that EV6 defines UNFD valid only with UNDZ, which we don&squot;t want&n;&t;   for IEEE conformance -- so that disabled bit remains in software.  */
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_and_assign
 op_complement
 id|IEEE_SW_MASK
@@ -1059,11 +1059,11 @@ r_int
 id|ret_from_sys_call
 suffix:semicolon
 macro_line|#endif
-id|p-&gt;tss.usp
+id|p-&gt;thread.usp
 op_assign
 id|usp
 suffix:semicolon
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 op_assign
 (paren
 r_int
@@ -1071,14 +1071,14 @@ r_int
 )paren
 id|childstack
 suffix:semicolon
-id|p-&gt;tss.pal_flags
+id|p-&gt;thread.pal_flags
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* set FEN, clear everything else */
-id|p-&gt;tss.flags
+id|p-&gt;thread.flags
 op_assign
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 suffix:semicolon
 r_return
 l_int|0

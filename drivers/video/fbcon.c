@@ -652,7 +652,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAC
-multiline_comment|/*&n; * On the Macintoy, there may or may not be a working VBL int. We need to prob&n; */
+multiline_comment|/*&n; * On the Macintoy, there may or may not be a working VBL int. We need to probe&n; */
 DECL|variable|vbl_detected
 r_static
 r_int
@@ -7135,6 +7135,22 @@ l_int|2
 id|logo_shown
 op_assign
 id|fg_console
+suffix:semicolon
+id|fbcon_clear
+c_func
+(paren
+id|conp
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|LOGO_H
+comma
+id|p-&gt;var.xres
+op_minus
+id|LOGO_W
+)paren
 suffix:semicolon
 id|fbcon_show_logo
 c_func

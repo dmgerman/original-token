@@ -381,7 +381,7 @@ op_logical_neg
 id|entry
 )paren
 r_goto
-id|out_failed
+id|out_failed_unlock
 suffix:semicolon
 multiline_comment|/* No swap space left */
 id|vma-&gt;vm_mm-&gt;rss

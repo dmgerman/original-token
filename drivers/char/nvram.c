@@ -1524,6 +1524,8 @@ comma
 l_string|&quot;3.5&squot;&squot; 720k&quot;
 comma
 l_string|&quot;3.5&squot;&squot; 1.44M&quot;
+comma
+l_string|&quot;3.5&squot;&squot; 2.88M&quot;
 )brace
 suffix:semicolon
 DECL|variable|gfx_types
@@ -1776,7 +1778,7 @@ id|type
 id|PRINT_PROC
 c_func
 (paren
-l_string|&quot; %02x&bslash;n&quot;
+l_string|&quot;%02x&bslash;n&quot;
 comma
 id|type
 op_eq
@@ -1821,7 +1823,7 @@ id|type
 id|PRINT_PROC
 c_func
 (paren
-l_string|&quot; %02x&bslash;n&quot;
+l_string|&quot;%02x&bslash;n&quot;
 comma
 id|type
 op_eq

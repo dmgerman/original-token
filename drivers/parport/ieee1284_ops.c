@@ -1041,7 +1041,7 @@ id|port
 comma
 id|PARPORT_CONTROL_AUTOFD
 comma
-id|PARPORT_CONTROL_AUTOFD
+l_int|0
 )paren
 suffix:semicolon
 id|parport_data_reverse
@@ -1061,7 +1061,7 @@ id|port
 comma
 id|PARPORT_CONTROL_INIT
 comma
-id|PARPORT_CONTROL_INIT
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Event 40: PError goes low */
@@ -1959,6 +1959,10 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
+id|port-&gt;ieee1284.phase
+op_assign
+id|IEEE1284_PH_REV_IDLE
+suffix:semicolon
 r_return
 id|count
 suffix:semicolon

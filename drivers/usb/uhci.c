@@ -1771,6 +1771,13 @@ r_return
 id|USB_ST_INTERNALERROR
 suffix:semicolon
 multiline_comment|/* Remove it from the internal irq_list */
+id|uhci_remove_irq_list
+c_func
+(paren
+id|td
+)paren
+suffix:semicolon
+macro_line|#if 0
 id|spin_lock_irqsave
 c_func
 (paren
@@ -1796,6 +1803,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Remove the interrupt TD and QH */
 id|uhci_remove_td
 c_func
@@ -1968,27 +1976,7 @@ comma
 id|n
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|n
-op_logical_and
-id|n
-op_ne
-l_int|960
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;underrun: %d %d&bslash;n&quot;
-comma
-id|i
-comma
-id|n
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* Debugging */
 r_if
 c_cond
 (paren
@@ -2263,6 +2251,7 @@ op_logical_neg
 id|pisodesc
 )paren
 (brace
+multiline_comment|/* It&squot;s not guaranteed to be 1-1024 */
 id|frame
 op_assign
 id|inw
@@ -2298,16 +2287,6 @@ l_int|1
 op_mod
 l_int|1024
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;scheduling first at frame %d&bslash;n&quot;
-comma
-id|frame
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -2396,25 +2375,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;last at frame %d&bslash;n&quot;
-comma
-(paren
-id|frame
-op_plus
-id|i
-op_minus
-l_int|1
-)paren
-op_mod
-l_int|1024
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Interrupt */
+multiline_comment|/* IOC on the last TD */
 id|isodesc-&gt;td
 (braket
 id|i
@@ -2446,22 +2407,6 @@ l_int|1
 op_mod
 l_int|1024
 suffix:semicolon
-macro_line|#if 0
-r_return
-id|uhci_td_result
-c_func
-(paren
-id|dev
-comma
-id|td
-(braket
-id|num
-op_minus
-l_int|1
-)braket
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2579,17 +2524,9 @@ suffix:semicolon
 multiline_comment|/* Carefully work around the non contiguous pages */
 id|isodesc-&gt;num
 op_assign
-(paren
 id|len
 op_div
-id|PAGE_SIZE
-)paren
-op_star
-(paren
-id|PAGE_SIZE
-op_div
 id|maxsze
-)paren
 suffix:semicolon
 id|isodesc-&gt;td
 op_assign
@@ -2750,46 +2687,6 @@ id|data
 op_add_assign
 id|maxsze
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-(paren
-r_int
-)paren
-id|data
-op_mod
-id|PAGE_SIZE
-)paren
-op_plus
-id|maxsze
-op_ge
-id|PAGE_SIZE
-)paren
-id|data
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-(paren
-(paren
-r_int
-)paren
-id|data
-op_plus
-id|maxsze
-)paren
-op_amp
-op_complement
-(paren
-id|PAGE_SIZE
-op_minus
-l_int|1
-)paren
-)paren
-suffix:semicolon
 id|len
 op_sub_assign
 id|maxsze
@@ -2803,6 +2700,7 @@ OL
 id|isodesc-&gt;num
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* IOC on the last TD */
 id|td-&gt;status
 op_or_assign
@@ -2812,6 +2710,7 @@ op_lshift
 l_int|24
 )paren
 suffix:semicolon
+macro_line|#endif
 id|uhci_add_irq_list
 c_func
 (paren
@@ -4475,6 +4374,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* Allocate the USB device */
 id|usb_dev
 op_assign
 id|kmalloc
@@ -4512,6 +4412,7 @@ id|usb_dev
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Allocate the UHCI device private data */
 id|dev
 op_assign
 id|kmalloc
@@ -4533,12 +4434,6 @@ op_logical_neg
 id|dev
 )paren
 (brace
-id|usb_destroy_configuration
-c_func
-(paren
-id|usb_dev
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -5352,6 +5247,9 @@ l_int|23
 op_logical_or
 multiline_comment|/* No longer active? */
 (paren
+id|td-&gt;qh
+op_logical_and
+(paren
 (paren
 id|td-&gt;qh-&gt;element
 op_amp
@@ -5386,6 +5284,7 @@ op_amp
 l_int|0x760000
 )paren
 multiline_comment|/* is in error state (Stall, db, babble, timeout, bitstuff) */
+)paren
 )paren
 )paren
 (brace

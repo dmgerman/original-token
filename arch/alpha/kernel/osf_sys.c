@@ -3807,9 +3807,11 @@ id|IEEE_TRAP_ENABLE_UNF
 suffix:semicolon
 id|w
 op_or_assign
-id|current-&gt;tss.flags
+(paren
+id|current-&gt;thread.flags
 op_amp
 id|IEEE_TRAP_ENABLE_UNF
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -3818,7 +3820,7 @@ r_else
 multiline_comment|/* Otherwise we are forced to do everything in sw.  */
 id|w
 op_assign
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|IEEE_SW_MASK
 suffix:semicolon
@@ -3873,7 +3875,7 @@ suffix:semicolon
 id|w
 op_assign
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_rshift
 id|UAC_SHIFT
 )paren
@@ -4083,12 +4085,12 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_and_assign
 op_complement
 id|IEEE_SW_MASK
 suffix:semicolon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_or_assign
 id|swcr
 op_amp
@@ -4243,7 +4245,7 @@ id|v
 r_case
 id|SSIN_UACPROC
 suffix:colon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_and_assign
 op_complement
 (paren
@@ -4252,7 +4254,7 @@ op_lshift
 id|UAC_SHIFT
 )paren
 suffix:semicolon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_or_assign
 (paren
 id|w

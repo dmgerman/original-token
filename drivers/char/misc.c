@@ -10,9 +10,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
@@ -895,13 +892,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_DTLK
 id|dtlk_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_APM
-id|apm_bios_init
 c_func
 (paren
 )paren

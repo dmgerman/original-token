@@ -25,6 +25,11 @@ id|mm_struct
 op_star
 id|next
 comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
 r_int
 id|cpu
 )paren
@@ -88,5 +93,7 @@ id|next-&gt;cpu_vm_mask
 )paren
 suffix:semicolon
 )brace
+DECL|macro|activate_mm
+mdefine_line|#define activate_mm(prev, next) &bslash;&n;&t;switch_mm((prev),(next),NULL,smp_processor_id())
 macro_line|#endif
 eof

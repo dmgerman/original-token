@@ -2422,6 +2422,8 @@ id|oldmm
 comma
 id|mm
 comma
+id|next
+comma
 id|this_cpu
 )paren
 suffix:semicolon

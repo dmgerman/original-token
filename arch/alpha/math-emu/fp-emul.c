@@ -259,7 +259,7 @@ r_int
 r_int
 id|fpcw
 op_assign
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 suffix:semicolon
 r_int
 r_int
@@ -864,7 +864,7 @@ id|res
 )paren
 (brace
 multiline_comment|/* Record exceptions in software control word.  */
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_assign
 id|fpcw
 op_or_assign

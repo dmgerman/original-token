@@ -73,4 +73,7 @@ mdefine_line|#define PPWCTLONIRQ&t;_IOW(PP_IOCTL, 0x92, unsigned char)
 multiline_comment|/* Clear (and return) interrupt count. */
 DECL|macro|PPCLRIRQ
 mdefine_line|#define PPCLRIRQ&t;_IOR(PP_IOCTL, 0x93, int)
+multiline_comment|/* Set the IEEE 1284 phase that we&squot;re in (e.g. IEEE1284_PH_FWD_IDLE) */
+DECL|macro|PPSETPHASE
+mdefine_line|#define PPSETPHASE&t;_IOW(PP_IOCTL, 0x94, int)
 eof

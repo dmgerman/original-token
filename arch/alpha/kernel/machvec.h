@@ -1,9 +1,8 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/machvec.h&n; *&n; *&t;Copyright (C) 1997, 1998  Richard Henderson&n; *&n; * This file has goodies to help simplify instantiation of machine vectors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/* Whee.  TSUNAMI doesn&squot;t have an HAE.  Fix things up for the GENERIC&n;   kernel by defining the HAE address to be that of the cache.  Now&n;   we can read and write it as we like.  ;-)  */
+multiline_comment|/* Whee.  Both TSUNAMI and POLARIS don&squot;t have an HAE.  Fix things up for&n;   the GENERIC kernel by defining the HAE address to be that of the cache.&n;   Now we can read and write it as we like.  ;-)  */
 DECL|macro|TSUNAMI_HAE_ADDRESS
 mdefine_line|#define TSUNAMI_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
-multiline_comment|/* Whee.  POLARIS doesn&squot;t have an HAE.  Fix things up for the GENERIC&n;   kernel by defining the HAE address to be that of the cache.  Now&n;   we can read and write it as we like.  ;-)  */
 DECL|macro|POLARIS_HAE_ADDRESS
 mdefine_line|#define POLARIS_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
 multiline_comment|/* Only a few systems don&squot;t define IACK_SC, handling all interrupts through&n;   the SRM console.  But splitting out that one case from IO() below&n;   seems like such a pain.  Define this to get things to compile.  */
@@ -19,11 +18,11 @@ mdefine_line|#define CAT(x,y)   CAT1(x,y)
 DECL|macro|DO_DEFAULT_RTC
 mdefine_line|#define DO_DEFAULT_RTC rtc_port: 0x70
 DECL|macro|DO_EV4_MMU
-mdefine_line|#define DO_EV4_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV4_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mv_get_mmu_context:&t;&t;ev4_get_mmu_context,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev4_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_other:&t;&t;ev4_flush_tlb_other,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev4_flush_tlb_current_page
+mdefine_line|#define DO_EV4_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV4_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mv_switch_mm:&t;&t;&t;ev4_switch_mm,&t;&t;&t;&bslash;&n;&t;mv_activate_mm:&t;&t;&t;ev4_activate_mm,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev4_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_other:&t;&t;ev4_flush_tlb_other,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev4_flush_tlb_current_page
 DECL|macro|DO_EV5_MMU
-mdefine_line|#define DO_EV5_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV5_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mv_get_mmu_context:&t;&t;ev5_get_mmu_context,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev5_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_other:&t;&t;ev5_flush_tlb_other,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev5_flush_tlb_current_page
+mdefine_line|#define DO_EV5_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV5_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mv_switch_mm:&t;&t;&t;ev5_switch_mm,&t;&t;&t;&bslash;&n;&t;mv_activate_mm:&t;&t;&t;ev5_activate_mm,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev5_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_other:&t;&t;ev5_flush_tlb_other,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev5_flush_tlb_current_page
 DECL|macro|DO_EV6_MMU
-mdefine_line|#define DO_EV6_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV6_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mv_get_mmu_context:&t;&t;ev5_get_mmu_context,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev5_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_other:&t;&t;ev5_flush_tlb_other,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev5_flush_tlb_current_page
+mdefine_line|#define DO_EV6_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV6_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mv_switch_mm:&t;&t;&t;ev5_switch_mm,&t;&t;&t;&bslash;&n;&t;mv_activate_mm:&t;&t;&t;ev5_activate_mm,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev5_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_other:&t;&t;ev5_flush_tlb_other,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev5_flush_tlb_current_page
 DECL|macro|IO_LITE
 mdefine_line|#define IO_LITE(UP,low1,low2)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;hae_register:&t;&t;(unsigned long *) CAT(UP,_HAE_ADDRESS),&t;&bslash;&n;&t;iack_sc:&t;&t;CAT(UP,_IACK_SC),&t;&t;&t;&bslash;&n;&t;mv_inb:&t;&t;&t;CAT(low1,_inb),&t;&t;&t;&t;&bslash;&n;&t;mv_inw:&t;&t;&t;CAT(low1,_inw),&t;&t;&t;&t;&bslash;&n;&t;mv_inl:&t;&t;&t;CAT(low1,_inl),&t;&t;&t;&t;&bslash;&n;&t;mv_outb:&t;&t;CAT(low1,_outb),&t;&t;&t;&bslash;&n;&t;mv_outw:&t;&t;CAT(low1,_outw),&t;&t;&t;&bslash;&n;&t;mv_outl:&t;&t;CAT(low1,_outl),&t;&t;&t;&bslash;&n;&t;mv_readb:&t;&t;CAT(low1,_readb),&t;&t;&t;&bslash;&n;&t;mv_readw:&t;&t;CAT(low1,_readw),&t;&t;&t;&bslash;&n;&t;mv_readl:&t;&t;CAT(low1,_readl),&t;&t;&t;&bslash;&n;&t;mv_readq:&t;&t;CAT(low1,_readq),&t;&t;&t;&bslash;&n;&t;mv_writeb:&t;&t;CAT(low1,_writeb),&t;&t;&t;&bslash;&n;&t;mv_writew:&t;&t;CAT(low1,_writew),&t;&t;&t;&bslash;&n;&t;mv_writel:&t;&t;CAT(low1,_writel),&t;&t;&t;&bslash;&n;&t;mv_writeq:&t;&t;CAT(low1,_writeq),&t;&t;&t;&bslash;&n;&t;mv_dense_mem:&t;&t;CAT(low2,_dense_mem)
 DECL|macro|IO
