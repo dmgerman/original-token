@@ -3346,6 +3346,21 @@ r_int
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* fs/dcache.c -- generic fs support functions */
+r_extern
+r_int
+id|is_subdir
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 r_extern
 id|ino_t
 id|find_inode_number

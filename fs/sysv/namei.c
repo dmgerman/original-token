@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/sysv/namei.c&n; *&n; *  minix/namei.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  coh/namei.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/namei.c&n; *  Copyright (C) 1993  Bruno Haible&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/sysv/namei.c&n; *&n; *  minix/namei.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  coh/namei.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/namei.c&n; *  Copyright (C) 1993  Bruno Haible&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

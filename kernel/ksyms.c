@@ -470,6 +470,13 @@ id|vmtruncate
 )paren
 suffix:semicolon
 multiline_comment|/* filesystem internal functions */
+DECL|variable|update_atime
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|update_atime
+)paren
+suffix:semicolon
 DECL|variable|get_super
 id|EXPORT_SYMBOL
 c_func
@@ -888,6 +895,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|find_inode_number
+)paren
+suffix:semicolon
+DECL|variable|is_subdir
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|is_subdir
 )paren
 suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)

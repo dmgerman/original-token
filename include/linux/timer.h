@@ -1,38 +1,33 @@
 macro_line|#ifndef _LINUX_TIMER_H
 DECL|macro|_LINUX_TIMER_H
 mdefine_line|#define _LINUX_TIMER_H
-multiline_comment|/*&n; * DON&squot;T CHANGE THESE!! Most of them are hardcoded into some assembly language&n; * as well as being defined here.&n; */
-multiline_comment|/*&n; * The timers are:&n; *&n; * BLANK_TIMER&t;&t;console screen-saver timer&n; *&n; * BEEP_TIMER&t;&t;console beep timer&n; *&n; * RS_TIMER&t;&t;timer for the RS-232 ports&n; *&n; * SWAP_TIMER&t;&t;timer for the background pageout daemon&n; * &n; * HD_TIMER&t;&t;harddisk timer&n; *&n; * HD_TIMER2&t;&t;(atdisk2 patches)&n; *&n; * FLOPPY_TIMER&t;&t;floppy disk timer (not used right now)&n; * &n; * NET_TIMER&t;&t;tcp/ip timeout timer&n; *&n; * COPRO_TIMER&t;&t;387 timeout for buggy hardware..&n; *&n; * QIC02_TAPE_TIMER&t;timer for QIC-02 tape driver (it&squot;s not hardcoded)&n; *&n; * MCD_TIMER&t;&t;Mitsumi CD-ROM Timer&n; *&n; * GSCD_TIMER&t;&t;Goldstar CD-ROM Timer&n; *&n; */
+multiline_comment|/*&n; * Old-style timers. Please don&squot;t use for any new code.&n; *&n; * Numbering of these timers should be consecutive to minimize&n; * processing delays. [MJ]&n; */
 DECL|macro|BLANK_TIMER
-mdefine_line|#define BLANK_TIMER&t;0
+mdefine_line|#define BLANK_TIMER&t;0&t;/* Console screen-saver */
 DECL|macro|BEEP_TIMER
-mdefine_line|#define BEEP_TIMER&t;1
+mdefine_line|#define BEEP_TIMER&t;1&t;/* Console beep */
 DECL|macro|RS_TIMER
-mdefine_line|#define RS_TIMER&t;2
+mdefine_line|#define RS_TIMER&t;2&t;/* RS-232 ports */
 DECL|macro|SWAP_TIMER
-mdefine_line|#define SWAP_TIMER&t;3
+mdefine_line|#define SWAP_TIMER&t;3&t;/* Background pageout */
+DECL|macro|BACKGR_TIMER
+mdefine_line|#define BACKGR_TIMER    4&t;/* io_request background I/O */
 DECL|macro|HD_TIMER
-mdefine_line|#define HD_TIMER&t;16
+mdefine_line|#define HD_TIMER&t;5&t;/* Old IDE driver */
 DECL|macro|FLOPPY_TIMER
-mdefine_line|#define FLOPPY_TIMER&t;17
-DECL|macro|NET_TIMER
-mdefine_line|#define NET_TIMER&t;19
-DECL|macro|SOUND_TIMER
-mdefine_line|#define SOUND_TIMER&t;20
-DECL|macro|COPRO_TIMER
-mdefine_line|#define COPRO_TIMER&t;21
+mdefine_line|#define FLOPPY_TIMER&t;6&t;/* Floppy */
 DECL|macro|QIC02_TAPE_TIMER
-mdefine_line|#define QIC02_TAPE_TIMER&t;22&t;/* hhb */
+mdefine_line|#define QIC02_TAPE_TIMER 7&t;/* QIC 02 tape */
 DECL|macro|MCD_TIMER
-mdefine_line|#define MCD_TIMER&t;23
-DECL|macro|HD_TIMER2
-mdefine_line|#define HD_TIMER2&t;24
+mdefine_line|#define MCD_TIMER&t;8&t;/* Mitsumi CDROM */
 DECL|macro|GSCD_TIMER
-mdefine_line|#define GSCD_TIMER&t;25
+mdefine_line|#define GSCD_TIMER&t;9&t;/* Goldstar CDROM */
 DECL|macro|COMTROL_TIMER
-mdefine_line|#define COMTROL_TIMER&t;26
+mdefine_line|#define COMTROL_TIMER&t;10&t;/* Comtrol serial */
 DECL|macro|DIGI_TIMER
-mdefine_line|#define DIGI_TIMER&t;29
+mdefine_line|#define DIGI_TIMER&t;11&t;/* Digi serial */
+DECL|macro|COPRO_TIMER
+mdefine_line|#define COPRO_TIMER&t;31&t;/* 387 timeout for buggy hardware (boot only) */
 DECL|struct|timer_struct
 r_struct
 id|timer_struct

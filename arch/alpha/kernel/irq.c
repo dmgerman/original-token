@@ -2167,9 +2167,13 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|variable|__alpha_bh_counter
-id|atomic_t
-id|__alpha_bh_counter
+DECL|variable|local_bh_count
+r_int
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 macro_line|#ifdef __SMP__
 macro_line|#error &quot;Me no hablo Alpha SMP&quot;

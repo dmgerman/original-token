@@ -2673,37 +2673,6 @@ op_amp
 id|proc_array_inode_operations
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_OMIRR
-DECL|variable|proc_root_omirr
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_root_omirr
-op_assign
-(brace
-id|PROC_OMIRR
-comma
-l_int|5
-comma
-l_string|&quot;omirr&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUSR
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_omirr_inode_operations
-)brace
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef __powerpc__
 DECL|variable|proc_root_ppc_htab
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;G8BPQ compatible &quot;AX.25 via ethernet&quot; driver release 003&n; *&n; *&t;This code REQUIRES 2.0.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow AX.25 over Ethernet&n; *&t;using G8BPQ encapsulation. It has been extracted from the protocol&n; *&t;implementation because&n; *&n; *&t;&t;- things got unreadable within the protocol stack&n; *&t;&t;- to cure the protocol stack from &quot;feature-ism&quot;&n; *&t;&t;- a protocol implementation shouldn&squot;t need to know on&n; *&t;&t;  which hardware it is running&n; *&t;&t;- user-level programs like the AX.25 utilities shouldn&squot;t&n; *&t;&t;  need to know about the hardware.&n; *&t;&t;- IP over ethernet encapsulated AX.25 was impossible&n; *&t;&t;- rxecho.c did not work&n; *&t;&t;- to have room for extensions&n; *&t;&t;- it just deserves to &quot;live&quot; as an own driver&n; *&n; *&t;This driver can use any ethernet destination address, and can be&n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;Note that the driver sets up the BPQ devices automagically on&n; *&t;startup or (if started before the &quot;insmod&quot; of an ethernet device)&n; *&t;on &quot;ifconfig up&quot;. It hopefully will remove the BPQ on &quot;rmmod&quot;ing&n; *&t;the ethernet device (in fact: as soon as another ethernet or bpq&n; *&t;device gets &quot;ifconfig&quot;ured).&n; *&n; *&t;I have heard that several people are thinking of experiments&n; *&t;with highspeed packet radio using existing ethernet cards.&n; *&t;Well, this driver is prepared for this purpose, just add&n; *&t;your tx key control and a txdelay / tailtime algorithm,&n; *&t;probably some buffering, and /voila/...&n; *&n; *&t;History&n; *&t;BPQ   001&t;Joerg(DL1BKE)&t;&t;Extracted BPQ code from AX.25&n; *&t;&t;&t;&t;&t;&t;protocol stack and added my own&n; *&t;&t;&t;&t;&t;&t;yet existing patches&n; *&t;BPQ   002&t;Joerg(DL1BKE)&t;&t;Scan network device list on&n; *&t;&t;&t;&t;&t;&t;startup.&n; *&t;BPQ   003&t;Joerg(DL1BKE)&t;&t;Ethernet destination address&n; *&t;&t;&t;&t;&t;&t;and accepted source address&n; *&t;&t;&t;&t;&t;&t;can be configured by an ioctl()&n; *&t;&t;&t;&t;&t;&t;call.&n; *&t;&t;&t;&t;&t;&t;Fixed to match Linux networking&n; *&t;&t;&t;&t;&t;&t;changes - 2.1.15.&n; */
+multiline_comment|/*&n; *&t;G8BPQ compatible &quot;AX.25 via ethernet&quot; driver release 003&n; *&n; *&t;This code REQUIRES 2.0.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow AX.25 over Ethernet&n; *&t;using G8BPQ encapsulation. It has been extracted from the protocol&n; *&t;implementation because&n; *&n; *&t;&t;- things got unreadable within the protocol stack&n; *&t;&t;- to cure the protocol stack from &quot;feature-ism&quot;&n; *&t;&t;- a protocol implementation shouldn&squot;t need to know on&n; *&t;&t;  which hardware it is running&n; *&t;&t;- user-level programs like the AX.25 utilities shouldn&squot;t&n; *&t;&t;  need to know about the hardware.&n; *&t;&t;- IP over ethernet encapsulated AX.25 was impossible&n; *&t;&t;- rxecho.c did not work&n; *&t;&t;- to have room for extensions&n; *&t;&t;- it just deserves to &quot;live&quot; as an own driver&n; *&n; *&t;This driver can use any ethernet destination address, and can be&n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;Note that the driver sets up the BPQ devices automagically on&n; *&t;startup or (if started before the &quot;insmod&quot; of an ethernet device)&n; *&t;on &quot;ifconfig up&quot;. It hopefully will remove the BPQ on &quot;rmmod&quot;ing&n; *&t;the ethernet device (in fact: as soon as another ethernet or bpq&n; *&t;device gets &quot;ifconfig&quot;ured).&n; *&n; *&t;I have heard that several people are thinking of experiments&n; *&t;with highspeed packet radio using existing ethernet cards.&n; *&t;Well, this driver is prepared for this purpose, just add&n; *&t;your tx key control and a txdelay / tailtime algorithm,&n; *&t;probably some buffering, and /voila/...&n; *&n; *&t;History&n; *&t;BPQ   001&t;Joerg(DL1BKE)&t;&t;Extracted BPQ code from AX.25&n; *&t;&t;&t;&t;&t;&t;protocol stack and added my own&n; *&t;&t;&t;&t;&t;&t;yet existing patches&n; *&t;BPQ   002&t;Joerg(DL1BKE)&t;&t;Scan network device list on&n; *&t;&t;&t;&t;&t;&t;startup.&n; *&t;BPQ   003&t;Joerg(DL1BKE)&t;&t;Ethernet destination address&n; *&t;&t;&t;&t;&t;&t;and accepted source address&n; *&t;&t;&t;&t;&t;&t;can be configured by an ioctl()&n; *&t;&t;&t;&t;&t;&t;call.&n; *&t;&t;&t;&t;&t;&t;Fixed to match Linux networking&n; *&t;&t;&t;&t;&t;&t;changes - 2.1.15.&n; *&t;BPQ   004&t;Joerg(DL1BKE)&t;&t;Fixed to not lock up on ifconfig.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/bpqether.h&gt;
@@ -488,7 +489,8 @@ id|result
 op_assign
 l_int|1
 suffix:semicolon
-id|unregister_netdev
+multiline_comment|/* We should be locked, call &n;&t;&t;&t; * unregister_netdevice directly &n;&t;&t;&t; */
+id|unregister_netdevice
 c_func
 (paren
 op_amp
@@ -1904,10 +1906,11 @@ id|dev-&gt;init
 op_assign
 id|bpq_dev_init
 suffix:semicolon
+multiline_comment|/* We should be locked, call register_netdevice() directly. */
 r_if
 c_cond
 (paren
-id|register_netdev
+id|register_netdevice
 c_func
 (paren
 id|dev

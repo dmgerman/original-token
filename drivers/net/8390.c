@@ -20,6 +20,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
@@ -441,6 +443,12 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+id|disable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 id|synchronize_irq
 c_func
 (paren
@@ -468,6 +476,12 @@ comma
 id|e8390_base
 op_plus
 id|EN0_IMR
+)paren
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 id|ei_local-&gt;stat.tx_errors
@@ -627,6 +641,12 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 id|ei_local-&gt;stat.tx_errors
 op_increment
 suffix:semicolon
@@ -767,6 +787,12 @@ comma
 id|e8390_base
 op_plus
 id|EN0_IMR
+)paren
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -2318,10 +2344,6 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_int
-r_int
-id|wait_start_time
-suffix:semicolon
-r_int
 r_char
 id|was_txing
 comma
@@ -2387,26 +2409,12 @@ id|ei_local-&gt;stat.rx_over_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* &n;     * Wait a full Tx time (1.2ms) + some guard time, NS says 1.6ms total.&n;     * Early datasheets said to poll the reset bit, but now they say that&n;     * it &quot;is not a reliable indicator and subsequently should be ignored.&quot;&n;     * We wait at least 10ms.&n;     */
-id|wait_start_time
-op_assign
-id|jiffies
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|jiffies
-op_minus
-id|wait_start_time
-op_le
-l_int|1
-op_star
-id|HZ
-op_div
-l_int|100
-)paren
-id|barrier
+id|udelay
 c_func
 (paren
+l_int|10
+op_star
+l_int|1000
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Reset RBCR[01] back to zero as per magic incantation.&n;     */

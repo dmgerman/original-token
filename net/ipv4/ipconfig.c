@@ -3547,11 +3547,6 @@ r_void
 id|ic_do_bootp_ext
 c_func
 (paren
-r_struct
-id|bootp_pkt
-op_star
-id|b
-comma
 id|u8
 op_star
 id|ext
@@ -4053,8 +4048,6 @@ id|end
 id|ic_do_bootp_ext
 c_func
 (paren
-id|b
-comma
 id|opt
 )paren
 suffix:semicolon

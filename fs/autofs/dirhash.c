@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/dirhash.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
+multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/dirhash.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &quot;autofs_i.h&quot;
 multiline_comment|/* Functions for maintenance of expiry queue */
 DECL|function|autofs_init_usage
@@ -353,6 +353,18 @@ id|dhnp
 op_assign
 id|ent
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent-&gt;next
+)paren
+id|ent-&gt;next-&gt;back
+op_assign
+op_amp
+(paren
+id|ent-&gt;next
+)paren
+suffix:semicolon
 )brace
 DECL|function|autofs_hash_delete
 r_void
@@ -371,6 +383,15 @@ id|ent-&gt;back
 )paren
 op_assign
 id|ent-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent-&gt;next
+)paren
+id|ent-&gt;next-&gt;back
+op_assign
+id|ent-&gt;back
 suffix:semicolon
 id|autofs_delete_usage
 c_func

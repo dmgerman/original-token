@@ -124,11 +124,11 @@ id|__remqu
 r_void
 )paren
 suffix:semicolon
-DECL|variable|__alpha_bh_counter
+DECL|variable|local_bh_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__alpha_bh_counter
+id|local_bh_count
 )paren
 suffix:semicolon
 DECL|variable|local_irq_count

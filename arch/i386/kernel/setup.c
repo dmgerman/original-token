@@ -1586,8 +1586,6 @@ l_string|&quot;486 DX-50&quot;
 comma
 l_string|&quot;486 SX&quot;
 comma
-l_string|&quot;487 DX&quot;
-comma
 l_string|&quot;486 DX/2&quot;
 comma
 l_string|&quot;486 SL&quot;
@@ -1601,6 +1599,10 @@ comma
 l_string|&quot;486 DX/4&quot;
 comma
 l_string|&quot;486 DX/4-WB&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma

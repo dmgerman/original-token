@@ -29,18 +29,18 @@ r_int
 id|s_block_size_bits
 suffix:semicolon
 multiline_comment|/* log2(block_size) */
-DECL|member|s_block_size_ratio
+DECL|member|s_block_size_inc_bits
 r_int
 r_int
-id|s_block_size_ratio
+id|s_block_size_inc_bits
 suffix:semicolon
-multiline_comment|/* BLOCK_SIZE / block_size */
-DECL|member|s_block_size_ratio_bits
+multiline_comment|/* log2(block_size/BLOCK_SIZE) if &gt;0 */
+DECL|member|s_block_size_dec_bits
 r_int
 r_int
-id|s_block_size_ratio_bits
+id|s_block_size_dec_bits
 suffix:semicolon
-multiline_comment|/* log2(block_size_ratio) */
+multiline_comment|/* log2(BLOCK_SIZE/block_size) if &gt;0 */
 DECL|member|s_convert
 r_char
 id|s_convert
@@ -303,7 +303,7 @@ suffix:semicolon
 multiline_comment|/* same as s_sbd-&gt;s_fsize */
 )brace
 suffix:semicolon
-multiline_comment|/* The fields s_block_size_ratio, s_ind_per_block_2_1, s_toobig_block are currently unused. */
+multiline_comment|/* The fields s_ind_per_block_2_1, s_toobig_block are currently unused. */
 multiline_comment|/* sv_ == u.sysv_sb.s_ */
 DECL|macro|sv_type
 mdefine_line|#define sv_type&t;&t;&t;&t;&t;u.sysv_sb.s_type
@@ -313,10 +313,10 @@ DECL|macro|sv_block_size_1
 mdefine_line|#define sv_block_size_1&t;&t;&t;&t;u.sysv_sb.s_block_size_1
 DECL|macro|sv_block_size_bits
 mdefine_line|#define sv_block_size_bits&t;&t;&t;u.sysv_sb.s_block_size_bits
-DECL|macro|sv_block_size_ratio
-mdefine_line|#define sv_block_size_ratio&t;&t;&t;u.sysv_sb.s_block_size_ratio
-DECL|macro|sv_block_size_ratio_bits
-mdefine_line|#define sv_block_size_ratio_bits&t;&t;u.sysv_sb.s_block_size_ratio_bits
+DECL|macro|sv_block_size_inc_bits
+mdefine_line|#define sv_block_size_inc_bits&t;&t;&t;u.sysv_sb.s_block_size_inc_bits
+DECL|macro|sv_block_size_dec_bits
+mdefine_line|#define sv_block_size_dec_bits&t;&t;&t;u.sysv_sb.s_block_size_dec_bits
 DECL|macro|sv_convert
 mdefine_line|#define sv_convert&t;&t;&t;&t;u.sysv_sb.s_convert
 DECL|macro|sv_kludge_symlinks

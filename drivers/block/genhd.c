@@ -5062,6 +5062,17 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MD_BOOT
+r_extern
+r_void
+id|md_setup_drive
+c_func
+(paren
+r_void
+)paren
+id|__init
+suffix:semicolon
+macro_line|#endif
 r_struct
 id|gendisk
 op_star
@@ -5157,6 +5168,13 @@ suffix:semicolon
 r_else
 macro_line|#endif
 id|rd_load
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MD_BOOT
+id|md_setup_drive
 c_func
 (paren
 )paren

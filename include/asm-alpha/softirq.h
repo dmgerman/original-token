@@ -3,8 +3,12 @@ DECL|macro|_ALPHA_SOFTIRQ_H
 mdefine_line|#define _ALPHA_SOFTIRQ_H
 multiline_comment|/* The locking mechanism for base handlers, to prevent re-entrancy,&n; * is entirely private to an implementation, it should not be&n; * referenced at all outside of this file.&n; */
 r_extern
-id|atomic_t
-id|__alpha_bh_counter
+r_int
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
@@ -148,6 +152,66 @@ id|bh_active
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * start_bh_atomic/end_bh_atomic also nest&n; * naturally by using a counter&n; */
+DECL|function|start_bh_atomic
+r_extern
+r_inline
+r_void
+id|start_bh_atomic
+c_func
+(paren
+r_void
+)paren
+(brace
+id|local_bh_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_increment
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|end_bh_atomic
+r_extern
+r_inline
+r_void
+id|end_bh_atomic
+c_func
+(paren
+r_void
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+id|local_bh_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_decrement
+suffix:semicolon
+)brace
+macro_line|#ifndef __SMP__
+multiline_comment|/* These are for the irq&squot;s testing the lock */
+DECL|macro|softirq_trylock
+mdefine_line|#define softirq_trylock(cpu) &bslash;&n;  (local_bh_count[cpu] ? 0 : (local_bh_count[cpu] = 1))
+DECL|macro|softirq_endlock
+mdefine_line|#define softirq_endlock(cpu) &bslash;&n;  (local_bh_count[cpu] = 0)
+macro_line|#else
+macro_line|#error FIXME
+macro_line|#endif /* __SMP__ */
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
 DECL|function|disable_bh
 r_extern
@@ -204,66 +268,5 @@ op_lshift
 id|nr
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * start_bh_atomic/end_bh_atomic also nest&n; * naturally by using a counter&n; */
-DECL|function|start_bh_atomic
-r_extern
-r_inline
-r_void
-id|start_bh_atomic
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef __SMP__
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|__alpha_bh_counter
-)paren
-suffix:semicolon
-id|synchronize_irq
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|__alpha_bh_counter
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-DECL|function|end_bh_atomic
-r_extern
-r_inline
-r_void
-id|end_bh_atomic
-c_func
-(paren
-r_void
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|__alpha_bh_counter
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifndef __SMP__
-multiline_comment|/* These are for the irq&squot;s testing the lock */
-DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock(cpu)&t;(atomic_read(&amp;__alpha_bh_counter) ? &bslash;&n;&t;&t;&t;&t;0 : &bslash;&n;&t;&t;&t;&t;((atomic_set(&amp;__alpha_bh_counter,1)),1))
-DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock(cpu)&t;(atomic_set(&amp;__alpha_bh_counter, 0))
-macro_line|#else
-macro_line|#error FIXME
-macro_line|#endif /* __SMP__ */
 macro_line|#endif /* _ALPHA_SOFTIRQ_H */
 eof

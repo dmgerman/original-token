@@ -9,6 +9,11 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &quot;irq.h&quot;
 multiline_comment|/*&n; * Generic PCI access -- indirect calls according to detected HW.&n; */
 DECL|struct|pci_access
 r_struct
@@ -391,7 +396,11 @@ op_star
 id|value
 )paren
 (brace
-r_return
+r_int
+id|res
+suffix:semicolon
+id|res
+op_assign
 id|access_pci
 op_member_access_from_pointer
 id|read_config_byte
@@ -405,6 +414,97 @@ id|where
 comma
 id|value
 )paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/*&n; * IOAPICs can take PCI IRQs directly, lets first check the mptable:&n; */
+r_if
+c_cond
+(paren
+id|where
+op_eq
+id|PCI_INTERRUPT_LINE
+)paren
+(brace
+r_int
+id|irq
+suffix:semicolon
+r_char
+id|pin
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * get the PCI IRQ INT _physical pin_ for this device&n;&t;&t; */
+id|access_pci
+op_member_access_from_pointer
+id|read_config_byte
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_INTERRUPT_PIN
+comma
+op_amp
+id|pin
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * subtle, PCI pins are numbered starting from 1 ...&n;&t;&t; */
+id|pin
+op_decrement
+suffix:semicolon
+id|irq
+op_assign
+id|IO_APIC_get_PCI_irq_vector
+(paren
+id|bus
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|device_fn
+)paren
+comma
+id|pin
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+op_minus
+l_int|1
+)paren
+op_star
+id|value
+op_assign
+(paren
+r_int
+r_char
+)paren
+id|irq
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;PCI-&gt;APIC IRQ transform: (B%d,I%d,P%d) -&gt; %d&bslash;n&quot;
+comma
+id|bus
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|device_fn
+)paren
+comma
+id|pin
+comma
+id|irq
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_return
+id|res
 suffix:semicolon
 )brace
 DECL|function|pcibios_read_config_word

@@ -8870,6 +8870,8 @@ id|u_char
 id|pb
 comma
 id|dev_fn
+comma
+id|tirq
 suffix:semicolon
 id|u_short
 id|dev_id
@@ -9134,13 +9136,13 @@ id|PCI_DEVICE
 comma
 id|PCI_INTERRUPT_LINE
 comma
-(paren
-r_char
-op_star
-)paren
 op_amp
-id|irq
+id|tirq
 )paren
+suffix:semicolon
+id|irq
+op_assign
+id|tirq
 suffix:semicolon
 macro_line|#else
 id|irq

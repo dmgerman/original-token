@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * Low Level Driver for the IBM Microchannel SCSI Subsystem&n; *&n; * Copyright (c) 1995 Strom Systems, Inc. under the terms of the GNU &n; * General Public License. Written by Martin Kolinek, December 1995.&n; */
-multiline_comment|/* Update history:&n;   Jan 15 1996:  First public release.&n;   - Martin Kolinek&n;&n;   Jan 23 1996:  Scrapped code which reassigned scsi devices to logical&n;   device numbers. Instead, the existing assignment (created&n;   when the machine is powered-up or rebooted) is used. &n;   A side effect is that the upper layer of Linux SCSI &n;   device driver gets bogus scsi ids (this is benign), &n;   and also the hard disks are ordered under Linux the &n;   same way as they are under dos (i.e., C: disk is sda, &n;   D: disk is sdb, etc.).&n;   - Martin Kolinek&n;&n;   I think that the CD-ROM is now detected only if a CD is &n;   inside CD_ROM while Linux boots. This can be fixed later,&n;   once the driver works on all types of PS/2&squot;s.&n;   - Martin Kolinek&n;&n;   Feb 7 1996:   Modified biosparam function. Fixed the CD-ROM detection. &n;   For now, devices other than harddisk and CD_ROM are &n;   ignored. Temporarily modified abort() function &n;   to behave like reset().&n;   - Martin Kolinek&n;&n;   Mar 31 1996:  The integrated scsi subsystem is correctly found&n;   in PS/2 models 56,57, but not in model 76. Therefore&n;   the ibmmca_scsi_setup() function has been added today.&n;   This function allows the user to force detection of&n;   scsi subsystem. The kernel option has format&n;   ibmmcascsi=n&n;   where n is the scsi_id (pun) of the subsystem. Most likely, n is 7.&n;   - Martin Kolinek&n;&n;   Aug 21 1996:  Modified the code which maps ldns to (pun,0).  It was&n;   insufficient for those of us with CD-ROM changers.&n;   - Chris Beauregard&n; &n;   Dec 14 1996: More improvements to the ldn mapping.  See check_devices&n;   for details.  Did more fiddling with the integrated SCSI detection,&n;   but I think it&squot;s ultimately hopeless without actually testing the&n;   model of the machine.  The 56, 57, 76 and 95 (ultimedia) all have&n;   different integrated SCSI register configurations.  However, the 56&n;   and 57 are the only ones that have problems with forced detection.&n;   - Chris Beauregard&n; &n;   Mar 8-16 1997: Modified driver to run as a module and to support &n;   multiple adapters. A structure, called ibmmca_hostdata, is now&n;   present, containing all the variables, that were once only&n;   available for one single adapter. The find_subsystem-routine has vanished.&n;   The hardware recognition is now done in ibmmca_detect directly.&n;   This routine checks for presence of MCA-bus, checks the interrupt&n;   level and continues with checking the installed hardware.&n;   Certain PS/2-models do not recognize a SCSI-subsystem automatically.&n;   Hence, the setup defined by command-line-parameters is checked first.&n;   Thereafter, the routine probes for an integrated SCSI-subsystem.&n;   Finally, adapters are checked. This method has the advantage to cover all&n;   possible combinations of multiple SCSI-subsystems on one MCA-board. Up to&n;   eight SCSI-subsystems can be recognized and announced to the upper-level&n;   drivers with this improvement. A set of defines made changes to other&n;   routines as small as possible.&n;   - Klaus Kudielka&n;   &n;   May 30 1997: (v1.5b)&n;   1) SCSI-command capability enlarged by the recognition of MODE_SELECT.&n;      This needs the RD-Bit to be disabled on IM_OTHER_SCSI_CMD_CMD which &n;      allows data to be written from the system to the device. It is a&n;      necessary step to be allowed to set blocksize of SCSI-tape-drives and &n;      the tape-speed, whithout confusing the SCSI-Subsystem.&n;   2) The recognition of a tape is included in the check_devices routine.&n;      This is done by checking for TYPE_TAPE, that is already defined in&n;      the kernel-scsi-environment. The markup of a tape is done in the &n;      global ldn_is_tape[] array. If the entry on index ldn &n;      is 1, there is a tapedrive connected.&n;   3) The ldn_is_tape[] array is necessary to distinguish between tape- and &n;      other devices. Fixed blocklength devices should not cause a problem&n;      with the SCB-command for read and write in the ibmmca_queuecommand&n;      subroutine. Therefore, I only derivate the READ_XX, WRITE_XX for&n;      the tape-devices, as recommended by IBM in this Technical Reference,&n;      mentioned below. (IBM recommends to avoid using the read/write of the&n;      subsystem, but the fact was, that read/write causes a command error from&n;      the subsystem and this causes kernel-panic.)&n;   4) In addition, I propose to use the ldn instead of a fix char for the&n;      display of PS2_DISK_LED_ON(). On 95, one can distinguish between the&n;      devices that are accessed. It shows activity and easyfies debugging.   &n;   The tape-support has been tested with a SONY SDT-5200 and a HP DDS-2&n;   (I do not know yet the type). Optimization and CD-ROM audio-support, &n;   I am working on ...&n;   - Michael Lang&n;   &n;   June 19 1997: (v1.6b)&n;   1) Submitting the extra-array ldn_is_tape[] -&gt; to the local ld[]&n;      device-array. &n;   2) CD-ROM Audio-Play seems to work now.&n;   3) When using DDS-2 (120M) DAT-Tapes, mtst shows still density-code&n;      0x13 for ordinary DDS (61000 BPM) instead 0x24 for DDS-2. This appears &n;      also on Adaptec 2940 adaptor in a PCI-System. Therefore, I assume that &n;      the problem is independent of the low-level-driver/bus-architecture.&n;   4) Hexadecimal ldn on PS/2-95 LED-display.&n;   5) Fixing of the PS/2-LED on/off that it works right with tapedrives and&n;      does not confuse the disk_rw_in_progress counter.&n;   - Michael Lang&n;  &n;   June 21 1997: (v1.7b)&n;   1) Adding of a proc_info routine to inform in /proc/scsi/ibmmca/&lt;host&gt; the&n;      outer-world about operational load statistics on the different ldns,&n;      seen by the driver. Everybody that has more than one IBM-SCSI should&n;      test this, because I only have one and cannot see what happens with more&n;      than one IBM-SCSI hosts.&n;   2) Definition of a driver version-number to have a better recognition of &n;      the source when there are existing too much releases that may confuse&n;      the user, when reading about release-specific problems. Up to know,&n;      I calculated the version-number to be 1.7. Because we are in BETA-test&n;      yet, it is today 1.7b.&n;   3) Sorry for the heavy bug I programmed on June 19 1997! After that, the&n;      CD-ROM did not work any more! The C7-command was a fake impression&n;      I got while programming. Now, the READ and WRITE commands for CD-ROM are&n;      no longer running over the subsystem, but just over &n;      IM_OTHER_SCSI_CMD_CMD. On my observations (PS/2-95), now CD-ROM mounts&n;      much faster(!) and hopefully all fancy multimedia-functions, like direct&n;      digital recording from audio-CDs also work. (I tried it with cdda2wav&n;      from the cdwtools-package and it filled up the harddisk immediately :-).)&n;      To easify boolean logics, a further local device-type in ld[], called&n;      is_cdrom has been included.&n;   4) If one uses a SCSI-device of unsupported type/commands, one&n;      immediately runs into a kernel-panic caused by Command Error. To better&n;      understand which SCSI-command caused the problem, I extended this&n;      specific panic-message slightly.&n;   - Michael Lang&n; &n;   June 25 1997: (v1.8b)&n;   1) Some cosmetical changes for the handling of SCSI-device-types.&n;      Now, also CD-Burners / WORMs and SCSI-scanners should work. For&n;      MO-drives I have no experience, therefore not yet supported.&n;      In logical_devices I changed from different type-variables to one&n;      called &squot;device_type&squot; where the values, corresponding to scsi.h,&n;      of a SCSI-device are stored.&n;   2) There existed a small bug, that maps a device, coming after a SCSI-tape&n;      wrong. Therefore, e.g. a CD-ROM changer would have been mapped wrong&n;      -&gt; problem removed.&n;   3) Extension of the logical_device structure. Now it contains also device,&n;      vendor and revision-level of a SCSI-device for internal usage.&n;   - Michael Lang&n;&n;   June 26-29 1997: (v2.0b)&n;   1) The release number 2.0b is necessary because of the completely new done&n;      recognition and handling of SCSI-devices with the adapter. As I got&n;      from Chris the hint, that the subsystem can reassign ldns dynamically,&n;      I remembered this immediate_assign-command, I found once in the handbook.&n;      Now, the driver first kills all ldn assignments that are set by default&n;      on the SCSI-subsystem. After that, it probes on all puns and luns for&n;      devices by going through all combinations with immediate_assign and&n;      probing for devices, using device_inquiry. The found physical(!) pun,lun&n;      structure is stored in get_scsi[][] as device types. This is followed&n;      by the assignment of all ldns to existing SCSI-devices. If more ldns&n;      than devices are available, they are assigned to non existing pun,lun&n;      combinations to satisfy the adapter. With this, the dynamical mapping&n;      was possible to implement. (For further info see the text in the &n;      source-code and in the description below. Read the description&n;      below BEFORE installing this driver on your system!)&n;   2) Changed the name IBMMCA_DRIVER_VERSION to IBMMCA_SCSI_DRIVER_VERSION.&n;   3) The LED-display shows on PS/2-95 no longer the ldn, but the SCSI-ID&n;      (pun) of the accessed SCSI-device. This is now senseful, because the &n;      pun known within the driver is exactly the pun of the physical device&n;      and no longer a fake one.&n;   4) The /proc/scsi/ibmmca/&lt;host_no&gt; consists now of the first part, where&n;      hit-statistics of ldns is shown and a second part, where the maps of &n;      physical and logical SCSI-devices are displayed. This could be very &n;      interesting, when one is using more than 15 SCSI-devices in order to &n;      follow the dynamical remapping of ldns.&n;   - Michael Lang&n; &n;   June 26-29 1997: (v2.0b-1)&n;   1) I forgot to switch the local_checking_phase_flag to 1 and back to 0&n;      in the dynamical remapping part in ibmmca_queuecommand for the &n;      device_exist routine. Sorry.&n;   - Michael Lang&n; &n;   July 1-13 1997: (v3.0b,c)&n;   1) Merging of the driver-developments of Klaus Kudielka and Michael Lang &n;      in order to get a optimum and unified driver-release for the &n;      IBM-SCSI-Subsystem-Adapter(s).&n;         For people, using the Kernel-release &gt;=2.1.0, module-support should &n;      be no problem. For users, running under &lt;2.1.0, module-support may not &n;      work, because the methods have changed between 2.0.x and 2.1.x.&n;   2) Added some more effective statistics for /proc-output.&n;   3) Change typecasting at necessary points from (unsigned long) to&n;      virt_to_bus().&n;   4) Included #if... at special points to have specific adaption of the&n;      driver to kernel 2.0.x and 2.1.x. It should therefore also run with &n;      later releases.&n;   5) Magneto-Optical drives and medium-changers are also recognized, now.&n;      Therefore, we have a completely gapfree recognition of all SCSI-&n;      device-types, that are known by Linux up to kernel 2.1.31.&n;   6) The flag CONFIG_SCSI_IBMMCA_DEV_RESET has been inserted. If it is set&n;      within the configuration, each connected SCSI-device will get a reset&n;      command during boottime. This can be necessary for some special&n;      SCSI-devices.  (See also the new Config.in file.)&n;   Probable next improvement: bad disk handler.&n;   - Michael Lang&n; &n;   Sept 14 1997: (v3.0c)&n;   1) Some debugging and speed optimization applied.&n;   - Michael Lang&n;&n;&n; &n;&t;TODO:&n; &n;&t;- It seems that the handling of bad disks is really bad -&n;&t;  non-existent, in fact.&n;        - More testing of the full driver-controlled dynamical ldn &n;          (re)mapping for up to 56 SCSI-devices.&n;        - Support more SCSI-device-types, if Linux defines more.&n;        - Support more of the SCSI-command set.&n;&t;- Support some of the caching abilities, particularly Read Prefetch.&n;&t;  This fetches data into the cache, which later gets hit by the&n;&t;  regular Read Data.&n;        - Abort and Reset functions still slightly buggy. Especially when&n;          floppydisk(!) operations report errors.&n;&n;******************************************************************************/
+multiline_comment|/* Update history:&n;   Jan 15 1996:  First public release.&n;   - Martin Kolinek&n;&n;   Jan 23 1996:  Scrapped code which reassigned scsi devices to logical&n;   device numbers. Instead, the existing assignment (created&n;   when the machine is powered-up or rebooted) is used. &n;   A side effect is that the upper layer of Linux SCSI &n;   device driver gets bogus scsi ids (this is benign), &n;   and also the hard disks are ordered under Linux the &n;   same way as they are under dos (i.e., C: disk is sda, &n;   D: disk is sdb, etc.).&n;   - Martin Kolinek&n;&n;   I think that the CD-ROM is now detected only if a CD is &n;   inside CD_ROM while Linux boots. This can be fixed later,&n;   once the driver works on all types of PS/2&squot;s.&n;   - Martin Kolinek&n;&n;   Feb 7 1996:   Modified biosparam function. Fixed the CD-ROM detection. &n;   For now, devices other than harddisk and CD_ROM are &n;   ignored. Temporarily modified abort() function &n;   to behave like reset().&n;   - Martin Kolinek&n;&n;   Mar 31 1996:  The integrated scsi subsystem is correctly found&n;   in PS/2 models 56,57, but not in model 76. Therefore&n;   the ibmmca_scsi_setup() function has been added today.&n;   This function allows the user to force detection of&n;   scsi subsystem. The kernel option has format&n;   ibmmcascsi=n&n;   where n is the scsi_id (pun) of the subsystem. Most likely, n is 7.&n;   - Martin Kolinek&n;&n;   Aug 21 1996:  Modified the code which maps ldns to (pun,0).  It was&n;   insufficient for those of us with CD-ROM changers.&n;   - Chris Beauregard&n; &n;   Dec 14 1996: More improvements to the ldn mapping.  See check_devices&n;   for details.  Did more fiddling with the integrated SCSI detection,&n;   but I think it&squot;s ultimately hopeless without actually testing the&n;   model of the machine.  The 56, 57, 76 and 95 (ultimedia) all have&n;   different integrated SCSI register configurations.  However, the 56&n;   and 57 are the only ones that have problems with forced detection.&n;   - Chris Beauregard&n; &n;   Mar 8-16 1997: Modified driver to run as a module and to support &n;   multiple adapters. A structure, called ibmmca_hostdata, is now&n;   present, containing all the variables, that were once only&n;   available for one single adapter. The find_subsystem-routine has vanished.&n;   The hardware recognition is now done in ibmmca_detect directly.&n;   This routine checks for presence of MCA-bus, checks the interrupt&n;   level and continues with checking the installed hardware.&n;   Certain PS/2-models do not recognize a SCSI-subsystem automatically.&n;   Hence, the setup defined by command-line-parameters is checked first.&n;   Thereafter, the routine probes for an integrated SCSI-subsystem.&n;   Finally, adapters are checked. This method has the advantage to cover all&n;   possible combinations of multiple SCSI-subsystems on one MCA-board. Up to&n;   eight SCSI-subsystems can be recognized and announced to the upper-level&n;   drivers with this improvement. A set of defines made changes to other&n;   routines as small as possible.&n;   - Klaus Kudielka&n;   &n;   May 30 1997: (v1.5b)&n;   1) SCSI-command capability enlarged by the recognition of MODE_SELECT.&n;      This needs the RD-Bit to be disabled on IM_OTHER_SCSI_CMD_CMD which &n;      allows data to be written from the system to the device. It is a&n;      necessary step to be allowed to set blocksize of SCSI-tape-drives and &n;      the tape-speed, whithout confusing the SCSI-Subsystem.&n;   2) The recognition of a tape is included in the check_devices routine.&n;      This is done by checking for TYPE_TAPE, that is already defined in&n;      the kernel-scsi-environment. The markup of a tape is done in the &n;      global ldn_is_tape[] array. If the entry on index ldn &n;      is 1, there is a tapedrive connected.&n;   3) The ldn_is_tape[] array is necessary to distinguish between tape- and &n;      other devices. Fixed blocklength devices should not cause a problem&n;      with the SCB-command for read and write in the ibmmca_queuecommand&n;      subroutine. Therefore, I only derivate the READ_XX, WRITE_XX for&n;      the tape-devices, as recommended by IBM in this Technical Reference,&n;      mentioned below. (IBM recommends to avoid using the read/write of the&n;      subsystem, but the fact was, that read/write causes a command error from&n;      the subsystem and this causes kernel-panic.)&n;   4) In addition, I propose to use the ldn instead of a fix char for the&n;      display of PS2_DISK_LED_ON(). On 95, one can distinguish between the&n;      devices that are accessed. It shows activity and easyfies debugging.   &n;   The tape-support has been tested with a SONY SDT-5200 and a HP DDS-2&n;   (I do not know yet the type). Optimization and CD-ROM audio-support, &n;   I am working on ...&n;   - Michael Lang&n;   &n;   June 19 1997: (v1.6b)&n;   1) Submitting the extra-array ldn_is_tape[] -&gt; to the local ld[]&n;      device-array. &n;   2) CD-ROM Audio-Play seems to work now.&n;   3) When using DDS-2 (120M) DAT-Tapes, mtst shows still density-code&n;      0x13 for ordinary DDS (61000 BPM) instead 0x24 for DDS-2. This appears &n;      also on Adaptec 2940 adaptor in a PCI-System. Therefore, I assume that &n;      the problem is independent of the low-level-driver/bus-architecture.&n;   4) Hexadecimal ldn on PS/2-95 LED-display.&n;   5) Fixing of the PS/2-LED on/off that it works right with tapedrives and&n;      does not confuse the disk_rw_in_progress counter.&n;   - Michael Lang&n;  &n;   June 21 1997: (v1.7b)&n;   1) Adding of a proc_info routine to inform in /proc/scsi/ibmmca/&lt;host&gt; the&n;      outer-world about operational load statistics on the different ldns,&n;      seen by the driver. Everybody that has more than one IBM-SCSI should&n;      test this, because I only have one and cannot see what happens with more&n;      than one IBM-SCSI hosts.&n;   2) Definition of a driver version-number to have a better recognition of &n;      the source when there are existing too much releases that may confuse&n;      the user, when reading about release-specific problems. Up to know,&n;      I calculated the version-number to be 1.7. Because we are in BETA-test&n;      yet, it is today 1.7b.&n;   3) Sorry for the heavy bug I programmed on June 19 1997! After that, the&n;      CD-ROM did not work any more! The C7-command was a fake impression&n;      I got while programming. Now, the READ and WRITE commands for CD-ROM are&n;      no longer running over the subsystem, but just over &n;      IM_OTHER_SCSI_CMD_CMD. On my observations (PS/2-95), now CD-ROM mounts&n;      much faster(!) and hopefully all fancy multimedia-functions, like direct&n;      digital recording from audio-CDs also work. (I tried it with cdda2wav&n;      from the cdwtools-package and it filled up the harddisk immediately :-).)&n;      To easify boolean logics, a further local device-type in ld[], called&n;      is_cdrom has been included.&n;   4) If one uses a SCSI-device of unsupported type/commands, one&n;      immediately runs into a kernel-panic caused by Command Error. To better&n;      understand which SCSI-command caused the problem, I extended this&n;      specific panic-message slightly.&n;   - Michael Lang&n; &n;   June 25 1997: (v1.8b)&n;   1) Some cosmetical changes for the handling of SCSI-device-types.&n;      Now, also CD-Burners / WORMs and SCSI-scanners should work. For&n;      MO-drives I have no experience, therefore not yet supported.&n;      In logical_devices I changed from different type-variables to one&n;      called &squot;device_type&squot; where the values, corresponding to scsi.h,&n;      of a SCSI-device are stored.&n;   2) There existed a small bug, that maps a device, coming after a SCSI-tape&n;      wrong. Therefore, e.g. a CD-ROM changer would have been mapped wrong&n;      -&gt; problem removed.&n;   3) Extension of the logical_device structure. Now it contains also device,&n;      vendor and revision-level of a SCSI-device for internal usage.&n;   - Michael Lang&n;&n;   June 26-29 1997: (v2.0b)&n;   1) The release number 2.0b is necessary because of the completely new done&n;      recognition and handling of SCSI-devices with the adapter. As I got&n;      from Chris the hint, that the subsystem can reassign ldns dynamically,&n;      I remembered this immediate_assign-command, I found once in the handbook.&n;      Now, the driver first kills all ldn assignments that are set by default&n;      on the SCSI-subsystem. After that, it probes on all puns and luns for&n;      devices by going through all combinations with immediate_assign and&n;      probing for devices, using device_inquiry. The found physical(!) pun,lun&n;      structure is stored in get_scsi[][] as device types. This is followed&n;      by the assignment of all ldns to existing SCSI-devices. If more ldns&n;      than devices are available, they are assigned to non existing pun,lun&n;      combinations to satisfy the adapter. With this, the dynamical mapping&n;      was possible to implement. (For further info see the text in the &n;      source-code and in the description below. Read the description&n;      below BEFORE installing this driver on your system!)&n;   2) Changed the name IBMMCA_DRIVER_VERSION to IBMMCA_SCSI_DRIVER_VERSION.&n;   3) The LED-display shows on PS/2-95 no longer the ldn, but the SCSI-ID&n;      (pun) of the accessed SCSI-device. This is now senseful, because the &n;      pun known within the driver is exactly the pun of the physical device&n;      and no longer a fake one.&n;   4) The /proc/scsi/ibmmca/&lt;host_no&gt; consists now of the first part, where&n;      hit-statistics of ldns is shown and a second part, where the maps of &n;      physical and logical SCSI-devices are displayed. This could be very &n;      interesting, when one is using more than 15 SCSI-devices in order to &n;      follow the dynamical remapping of ldns.&n;   - Michael Lang&n; &n;   June 26-29 1997: (v2.0b-1)&n;   1) I forgot to switch the local_checking_phase_flag to 1 and back to 0&n;      in the dynamical remapping part in ibmmca_queuecommand for the &n;      device_exist routine. Sorry.&n;   - Michael Lang&n; &n;   July 1-13 1997: (v3.0b,c)&n;   1) Merging of the driver-developments of Klaus Kudielka and Michael Lang &n;      in order to get a optimum and unified driver-release for the &n;      IBM-SCSI-Subsystem-Adapter(s).&n;         For people, using the Kernel-release &gt;=2.1.0, module-support should &n;      be no problem. For users, running under &lt;2.1.0, module-support may not &n;      work, because the methods have changed between 2.0.x and 2.1.x.&n;   2) Added some more effective statistics for /proc-output.&n;   3) Change typecasting at necessary points from (unsigned long) to&n;      virt_to_bus().&n;   4) Included #if... at special points to have specific adaption of the&n;      driver to kernel 2.0.x and 2.1.x. It should therefore also run with &n;      later releases.&n;   5) Magneto-Optical drives and medium-changers are also recognized, now.&n;      Therefore, we have a completely gapfree recognition of all SCSI-&n;      device-types, that are known by Linux up to kernel 2.1.31.&n;   6) The flag SCSI_IBMMCA_DEV_RESET has been inserted. If it is set within&n;      the configuration, each connected SCSI-device will get a reset command&n;      during boottime. This can be necessary for some special SCSI-devices.&n;      This flag should be included in Config.in.&n;      (See also the new Config.in file.)&n;   Probable next improvement: bad disk handler.&n;   - Michael Lang&n; &n;   Sept 14 1997: (v3.0c)&n;   1) Some debugging and speed optimization applied.&n;   - Michael Lang&n;&n;   Dec 15, 1997&n;    - chrisb@truespectra.com&n;    - made the front panel display thingy optional, specified from the&n;    command-line via ibmmcascsi=display.  Along the lines of the /LED&n;    option for the OS/2 driver.&n;    - fixed small bug in the LED display that would hang some machines.&n;    - reversed ordering of the drives (using the&n;    IBMMCA_SCSI_ORDER_STANDARD define).  This is necessary for two main&n;    reasons:&n;&t;- users who&squot;ve already installed Linux won&squot;t be screwed.  Keep&n;&t;in mind that not everyone is a kernel hacker.&n;&t;- be consistent with the BIOS ordering of the drives.  In the&n;&t;BIOS, id 6 is C:, id 0 might be D:.  With this scheme, they&squot;d be&n;&t;backwards.  This confuses the crap out of those heathens who&squot;ve&n;&t;got a impure Linux installation (which, &lt;wince&gt;, I&squot;m one of).&n;    This whole problem arises because IBM is actually non-standard with&n;    the id to BIOS mappings.  You&squot;ll find, in fdomain.c, a similar&n;    comment about a few FD BIOS revisions.  The Linux (and apparently&n;    industry) standard is that C: maps to scsi id (0,0).  Let&squot;s stick&n;    with that standard.&n;    - Since this is technically a branch of my own, I changed the&n;    version number to 3.0e-cpb.&n;&n;   Jan 17, 1998: (v3.0f)&n;   1) Addition of some statistical info for /proc in proc_info.&n;   2) Taking care of the SCSI-assignment problem, dealed by Chris at Dec 15&n;      1997. In fact, IBM is right, concerning the assignment of SCSI-devices &n;      to driveletters. It is conform to the ANSI-definition of the SCSI-&n;      standard to assign drive C: to SCSI-id 6, because it is the highest&n;      hardware priority after the hostadapter (that has still today by&n;      default everywhere id 7). Also realtime-operating systems that I use, &n;      like LynxOS and OS9, which are quite industrial systems use top-down&n;      numbering of the harddisks, that is also starting at id 6. Now, one&n;      sits a bit between two chairs. On one hand side, using the define&n;      IBMMCA_SCSI_ORDER_STANDARD makes Linux assigning disks conform to&n;      the IBM- and ANSI-SCSI-standard and keeps this driver downward&n;      compatible to older releases, on the other hand side, people is quite&n;      habituated in believing that C: is assigned to (0,0) and much other&n;      SCSI-BIOS do so. Therefore, I moved the IBMMCA_SCSI_ORDER_STANDARD &n;      define out of the driver and put it into Config.in as subitem of &n;      &squot;IBM SCSI support&squot;. A help, added to Documentation/Configure.help &n;      explains the differences between saying &squot;y&squot; or &squot;n&squot; to the user, when &n;      IBMMCA_SCSI_ORDER_STANDARD prompts, so the ordinary user is enabled to &n;      choose the way of assignment, depending on his own situation and gusto.&n;   3) Adapted SCSI_IBMMCA_DEV_RESET to the local naming convention, so it is&n;      now called IBMMCA_SCSI_DEV_RESET.&n;   4) Optimization of proc_info and its subroutines.&n;   5) Added more in-source-comments and extended the driver description by&n;      some explanation about the SCSI-device-assignment problem.&n;   - Michael Lang&n;   &n;   Jan 18, 1998: (v3.0g)&n;   1) Correcting names to be absolutely conform to the later 2.1.x releases.&n;      This is necessary for &n;            IBMMCA_SCSI_DEV_RESET -&gt; CONFIG_IBMMCA_SCSI_DEV_RESET&n;            IBMMCA_SCSI_ORDER_STANDARD -&gt; CONFIG_IBMMCA_SCSI_ORDER_STANDARD&n;   - Michael Lang&n;&n;&t;TODO:&n; &n;&t;- It seems that the handling of bad disks is really bad -&n;&t;  non-existent, in fact.&n;        - More testing of the full driver-controlled dynamical ldn &n;          (re)mapping for up to 56 SCSI-devices.&n;        - Support more SCSI-device-types, if Linux defines more.&n;        - Support more of the SCSI-command set.&n;&t;- Support some of the caching abilities, particularly Read Prefetch.&n;&t;  This fetches data into the cache, which later gets hit by the&n;&t;  regular Read Data.&n;        - Abort and Reset functions still slightly buggy. Especially when&n;          floppydisk(!) operations report errors.&n;&n;******************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -22,8 +22,10 @@ macro_line|#include &lt;linux/config.h&gt;&t;&t;/* for CONFIG_SCSI_IBMMCA etc. *
 multiline_comment|/*--------------------------------------------------------------------*/
 multiline_comment|/* current version of this driver-source: */
 DECL|macro|IBMMCA_SCSI_DRIVER_VERSION
-mdefine_line|#define IBMMCA_SCSI_DRIVER_VERSION &quot;3.0d&quot;
-multiline_comment|/*&n;   Driver Description&n;&n;   (A) Subsystem Detection&n;   This is done in the ibmmca_detect() function and is easy, since&n;   the information about MCA integrated subsystems and plug-in &n;   adapters is readily available in structure *mca_info.&n;&n;   (B) Physical Units, Logical Units, and Logical Devices&n;   There can be up to 56 devices on SCSI bus (besides the adapter):&n;   there are up to 7 &quot;physical units&quot; (each identified by physical unit &n;   number or pun, also called the scsi id, this is the number you select&n;   with hardware jumpers), and each physical unit can have up to 8 &n;   &quot;logical units&quot; (each identified by logical unit number, or lun, &n;   between 0 and 7). &n;&n;   Typically the adapter has pun=7, so puns of other physical units&n;   are between 0 and 6. Almost all physical units have only one   &n;   logical unit, with lun=0. A CD-ROM jukebox would be an example of &n;   a physical unit with more than one logical unit.&n;&n;   The embedded microprocessor of IBM SCSI subsystem hides the complex&n;   two-dimensional (pun,lun) organization from the operating system.&n;   When the machine is powered-up (or rebooted, I am not sure), the &n;   embedded microprocessor checks, on it own, all 56 possible (pun,lun) &n;   combinations, and first 15 devices found are assigned into a &n;   one-dimensional array of so-called &quot;logical devices&quot;, identified by &n;   &quot;logical device numbers&quot; or ldn. The last ldn=15 is reserved for &n;   the subsystem itself. &n;&n;   One consequence of information hiding is that the real (pun,lun)    &n;   numbers are also hidden. Therefore this driver takes the following&n;   approach: It checks the ldn&squot;s (0 to 6) to find out which ldn&squot;s&n;   have devices assigned. This is done by function check_devices() and&n;   device_exists(). The interrupt handler has a special paragraph of code&n;   (see local_checking_phase_flag) to assist in the checking. Assume, for&n;   example, that three logical devices were found assigned at ldn 0, 1, 2.&n;   These are presented to the upper layer of Linux SCSI driver&n;   as devices with bogus (pun, lun) equal to (0,0), (1,0), (2,0). &n;   On the other hand, if the upper layer issues a command to device&n;   say (4,0), this driver returns DID_NO_CONNECT error.&n;&n;   That last paragraph is no longer correct, but is left for&n;   historical purposes.  It limited the number of devices to 7, far&n;   fewer than the 15 that it could use.  Now it just maps&n;   ldn -&gt; (ldn/8,ldn%8).  We end up with a real mishmash of puns&n;   and luns, but it all seems to work. - Chris Beaurgard&n;&n;   And that last paragraph is also no longer correct.  It uses a&n;   slightly more complex mapping that will always map hard disks to&n;   (x,0), for some x, and consecutive none disk devices will usually&n;   share puns.&n; &n;   Again, the last paragraphs are no longer correct. Now, the physical&n;   SCSI-devices on the SCSI-bus are probed via immediate_assign- and&n;   device_inquiry-commands. This delivers a exact map of the physical&n;   SCSI-world that is now stored in the get_scsi[][]-array. This means,&n;   that the once hidden pun,lun assignment is now known to this driver.&n;   It no longer believes in default-settings of the subsystem and maps all&n;   ldns to existing pun,lun by foot. This assures full control of the ldn&n;   mapping and allows dynamical remapping of ldns to different pun,lun, if&n;   there are more SCSI-devices installed than ldns available (n&gt;15). The&n;   ldns from 0 to 6 get &squot;hardwired&squot; by this driver to puns 0 to 7 at lun=0,&n;   excluding the pun of the subsystem. This assures, that at least simple &n;   SCSI-installations have optimum access-speed and are not touched by&n;   dynamical remapping. The ldns 7 to 14 are put to existing devices with &n;   lun&gt;0 or to non-existing devices, in order to satisfy the subsystem, if &n;   there are less than 15 SCSI-devices connected. In the case of more than 15 &n;   devices, the dynamical mapping goes active. If the get_scsi[][] reports a &n;   device to be existant, but it has no ldn assigned, it gets a ldn out of 7 &n;   to 14. The numbers are assigned in cyclic order. Therefore it takes 8 &n;   dynamical assignments on SCSI-devices, until a certain device &n;   looses its ldn again. This assures, that dynamical remapping is avoided &n;   during intense I/O between up to eight SCSI-devices (means pun,lun &n;   combinations). A further advantage of this method is, that people who&n;   build their kernel without probing on all luns will get what they expect.&n; &n;   IMPORTANT: Because of the now correct recognition of physical pun,lun, and &n;   their report to mid-level- and higher-level-drivers, the new reported puns&n;   can be different from the old, faked puns. Therefore, Linux will eventually&n;   change /dev/sdXXX assignments and prompt you for corrupted superblock&n;   repair on boottime. In this case DO NOT PANIC, YOUR DISKS ARE STILL OK!!!&n;   You have to reboot (CTRL-D) with a old kernel and set the /etc/fstab-file&n;   entries right. After that, the system should come up as errorfree as before.&n;   If your boot-partition is not coming up, also edit the /etc/lilo.conf-file&n;   in a Linux session booted on old kernel and run lilo before reboot. Check&n;   lilo.conf anyway to get boot on other partitions with foreign OSes right&n;   again.&n;&n;   (C) Regular Processing &n;   Only three functions get involved: ibmmca_queuecommand(), issue_cmd(),&n;   and interrupt_handler().&n;&n;   The upper layer issues a scsi command by calling function &n;   ibmmca_queuecommand(). This function fills a &quot;subsystem control block&quot;&n;   (scb) and calls a local function issue_cmd(), which writes a scb &n;   command into subsystem I/O ports. Once the scb command is carried out, &n;   interrupt_handler() is invoked. If a device is determined to be existant&n;   and it has not assigned any ldn, it gets one dynamically.&n;&n;   (D) Abort, Reset.&n;   These are implemented with busy waiting for interrupt to arrive.&n;   The abort does not worked well for me, so I instead call the &n;   ibmmca_reset() from the ibmmca_abort() function.&n;&n;   (E) Disk Geometry&n;   The ibmmca_biosparams() function should return same disk geometry &n;   as bios. This is needed for fdisk, etc. The returned geometry is &n;   certainly correct for disk smaller than 1 gigabyte, but I am not &n;   100% sure that it is correct for larger disks.&n;&n;   (F) Kernel Boot Option &n;   The function ibmmca_scsi_setup() is called if option ibmmcascsi=n &n;   is passed to the kernel. See file linux/init/main.c for details.&n;   &n;   (G) Driver Module Support&n;   Is implemented and tested by K. Kudielka. This could probably not work&n;   on kernels &lt;2.1.0.&n;  &n;   (H) Multiple Hostadapter Support&n;   This driver supports up to eight interfaces of type IBM-SCSI-Subsystem. &n;   Integrated-, and MCA-adapters are automatically recognized. Unrecognizable&n;   IBM-SCSI-Subsystem interfaces can be specified as kernel-parameters.&n; &n;   (I) /proc-Filesystem Information&n;   Information about the driver condition is given in &n;   /proc/scsi/ibmmca/&lt;host_no&gt;. ibmmca_proc_info provides this information.&n; */
+mdefine_line|#define IBMMCA_SCSI_DRIVER_VERSION &quot;3.0f&quot;
+multiline_comment|/* use standard Linux ordering, where C: maps to (0,0), unlike the IBM&n;standard which seems to like C: =&gt; (6,0) */
+multiline_comment|/* #define IBMMCA_SCSI_ORDER_STANDARD is defined/undefined in Config.in&n; * now, while configuring the kernel. */
+multiline_comment|/*&n;   Driver Description&n;&n;   (A) Subsystem Detection&n;   This is done in the ibmmca_detect() function and is easy, since&n;   the information about MCA integrated subsystems and plug-in &n;   adapters is readily available in structure *mca_info.&n;&n;   (B) Physical Units, Logical Units, and Logical Devices&n;   There can be up to 56 devices on SCSI bus (besides the adapter):&n;   there are up to 7 &quot;physical units&quot; (each identified by physical unit &n;   number or pun, also called the scsi id, this is the number you select&n;   with hardware jumpers), and each physical unit can have up to 8 &n;   &quot;logical units&quot; (each identified by logical unit number, or lun, &n;   between 0 and 7). &n;&n;   Typically the adapter has pun=7, so puns of other physical units&n;   are between 0 and 6. Almost all physical units have only one   &n;   logical unit, with lun=0. A CD-ROM jukebox would be an example of &n;   a physical unit with more than one logical unit.&n;&n;   The embedded microprocessor of IBM SCSI subsystem hides the complex&n;   two-dimensional (pun,lun) organization from the operating system.&n;   When the machine is powered-up (or rebooted, I am not sure), the &n;   embedded microprocessor checks, on it own, all 56 possible (pun,lun) &n;   combinations, and first 15 devices found are assigned into a &n;   one-dimensional array of so-called &quot;logical devices&quot;, identified by &n;   &quot;logical device numbers&quot; or ldn. The last ldn=15 is reserved for &n;   the subsystem itself. &n;&n;   One consequence of information hiding is that the real (pun,lun)    &n;   numbers are also hidden. Therefore this driver takes the following&n;   approach: It checks the ldn&squot;s (0 to 6) to find out which ldn&squot;s&n;   have devices assigned. This is done by function check_devices() and&n;   device_exists(). The interrupt handler has a special paragraph of code&n;   (see local_checking_phase_flag) to assist in the checking. Assume, for&n;   example, that three logical devices were found assigned at ldn 0, 1, 2.&n;   These are presented to the upper layer of Linux SCSI driver&n;   as devices with bogus (pun, lun) equal to (0,0), (1,0), (2,0). &n;   On the other hand, if the upper layer issues a command to device&n;   say (4,0), this driver returns DID_NO_CONNECT error.&n;&n;   That last paragraph is no longer correct, but is left for&n;   historical purposes.  It limited the number of devices to 7, far&n;   fewer than the 15 that it could use.  Now it just maps&n;   ldn -&gt; (ldn/8,ldn%8).  We end up with a real mishmash of puns&n;   and luns, but it all seems to work. - Chris Beaurgard&n;&n;   And that last paragraph is also no longer correct.  It uses a&n;   slightly more complex mapping that will always map hard disks to&n;   (x,0), for some x, and consecutive none disk devices will usually&n;   share puns.&n; &n;   Again, the last paragraphs are no longer correct. Now, the physical&n;   SCSI-devices on the SCSI-bus are probed via immediate_assign- and&n;   device_inquiry-commands. This delivers a exact map of the physical&n;   SCSI-world that is now stored in the get_scsi[][]-array. This means,&n;   that the once hidden pun,lun assignment is now known to this driver.&n;   It no longer believes in default-settings of the subsystem and maps all&n;   ldns to existing pun,lun by foot. This assures full control of the ldn&n;   mapping and allows dynamical remapping of ldns to different pun,lun, if&n;   there are more SCSI-devices installed than ldns available (n&gt;15). The&n;   ldns from 0 to 6 get &squot;hardwired&squot; by this driver to puns 0 to 7 at lun=0,&n;   excluding the pun of the subsystem. This assures, that at least simple &n;   SCSI-installations have optimum access-speed and are not touched by&n;   dynamical remapping. The ldns 7 to 14 are put to existing devices with &n;   lun&gt;0 or to non-existing devices, in order to satisfy the subsystem, if &n;   there are less than 15 SCSI-devices connected. In the case of more than 15 &n;   devices, the dynamical mapping goes active. If the get_scsi[][] reports a &n;   device to be existant, but it has no ldn assigned, it gets a ldn out of 7 &n;   to 14. The numbers are assigned in cyclic order. Therefore it takes 8 &n;   dynamical assignments on SCSI-devices, until a certain device &n;   looses its ldn again. This assures, that dynamical remapping is avoided &n;   during intense I/O between up to eight SCSI-devices (means pun,lun &n;   combinations). A further advantage of this method is, that people who&n;   build their kernel without probing on all luns will get what they expect.&n; &n;   IMPORTANT: Because of the now correct recognition of physical pun,lun, and &n;   their report to mid-level- and higher-level-drivers, the new reported puns&n;   can be different from the old, faked puns. Therefore, Linux will eventually&n;   change /dev/sdXXX assignments and prompt you for corrupted superblock&n;   repair on boottime. In this case DO NOT PANIC, YOUR DISKS ARE STILL OK!!!&n;   You have to reboot (CTRL-D) with a old kernel and set the /etc/fstab-file&n;   entries right. After that, the system should come up as errorfree as before.&n;   If your boot-partition is not coming up, also edit the /etc/lilo.conf-file&n;   in a Linux session booted on old kernel and run lilo before reboot. Check&n;   lilo.conf anyway to get boot on other partitions with foreign OSes right&n;   again. &n; &n;   The problem is, that Linux does not assign the SCSI-devices in the&n;   way as described in the ANSI-SCSI-standard. Linux assigns /dev/sda to &n;   the device with at minimum id 0. But the first drive should be at id 6,&n;   because for historical reasons, drive at id 6 has, by hardware, the highest&n;   priority and a drive at id 0 the lowest. IBM was one of the rare producers,&n;   where the BIOS assigns drives belonging to the ANSI-SCSI-standard. Most &n;   other producers&squot; BIOS does not (I think even Adaptec-BIOS). The &n;   IBMMCA_SCSI_ORDER_STANDARD flag helps to be able to choose the preferred &n;   way of SCSI-device-assignment. Defining this flag would result in Linux &n;   determining the devices in the same order as DOS and OS/2 does on your &n;   MCA-machine. This is also standard on most industrial computers. Leaving &n;   this flag undefined will get your devices ordered in the default way of &n;   Linux. See also the remarks of Chris Beauregard from Dec 15, 1997 and&n;   the followups.&n;   &n;   (C) Regular Processing &n;   Only three functions get involved: ibmmca_queuecommand(), issue_cmd(),&n;   and interrupt_handler().&n;&n;   The upper layer issues a scsi command by calling function &n;   ibmmca_queuecommand(). This function fills a &quot;subsystem control block&quot;&n;   (scb) and calls a local function issue_cmd(), which writes a scb &n;   command into subsystem I/O ports. Once the scb command is carried out, &n;   interrupt_handler() is invoked. If a device is determined to be existant&n;   and it has not assigned any ldn, it gets one dynamically.&n;&n;   (D) Abort, Reset.&n;   These are implemented with busy waiting for interrupt to arrive.&n;   The abort does not worked well for me, so I instead call the &n;   ibmmca_reset() from the ibmmca_abort() function.&n;&n;   (E) Disk Geometry&n;   The ibmmca_biosparams() function should return same disk geometry &n;   as bios. This is needed for fdisk, etc. The returned geometry is &n;   certainly correct for disk smaller than 1 gigabyte, but I am not &n;   100% sure that it is correct for larger disks.&n;&n;   (F) Kernel Boot Option &n;   The function ibmmca_scsi_setup() is called if option ibmmcascsi=n &n;   is passed to the kernel. See file linux/init/main.c for details.&n;   &n;   (G) Driver Module Support&n;   Is implemented and tested by K. Kudielka. This could probably not work&n;   on kernels &lt;2.1.0.&n;  &n;   (H) Multiple Hostadapter Support&n;   This driver supports up to eight interfaces of type IBM-SCSI-Subsystem. &n;   Integrated-, and MCA-adapters are automatically recognized. Unrecognizable&n;   IBM-SCSI-Subsystem interfaces can be specified as kernel-parameters.&n; &n;   (I) /proc-Filesystem Information&n;   Information about the driver condition is given in &n;   /proc/scsi/ibmmca/&lt;host_no&gt;. ibmmca_proc_info provides this information.&n; */
 multiline_comment|/*--------------------------------------------------------------------*/
 multiline_comment|/* Here are the values and structures specific for the subsystem. &n; * The source of information is &quot;Update for the PS/2 Hardware &n; * Interface Technical Reference, Common Interfaces&quot;, September 1991, &n; * part number 04G3281, available in the U.S. for $21.75 at &n; * 1-800-IBM-PCTB, elsewhere call your local friendly IBM &n; * representative.&n; * In addition to SCSI subsystem, this update contains fairly detailed &n; * (at hardware register level) sections on diskette  controller,&n; * keyboard controller, serial port controller, VGA, and XGA.&n; *&n; * Additional information from &quot;Personal System/2 Micro Channel SCSI&n; * Adapter with Cache Technical Reference&quot;, March 1990, PN 68X2365,&n; * probably available from the same source (or possibly found buried&n; * in officemates desk).&n; *&n; * Further literature/program-sources referred for this driver:&n; * &n; * Friedhelm Schmidt, &quot;SCSI-Bus und IDE-Schnittstelle - Moderne Peripherie-&n; * Schnittstellen: Hardware, Protokollbeschreibung und Anwendung&quot;, 2. Aufl.&n; * Addison Wesley, 1996.&n; * &n; * Michael K. Johnson, &quot;The Linux Kernel Hackers&squot; Guide&quot;, Version 0.6, Chapel&n; * Hill - North Carolina, 1995&n; * &n; * Andreas Kaiser, &quot;SCSI TAPE BACKUP for OS/2 2.0&quot;, Version 2.12, Stuttgart&n; * 1993&n; */
 multiline_comment|/*--------------------------------------------------------------------*/
@@ -65,7 +67,7 @@ mdefine_line|#define IM_STAT_REG  (shpnt-&gt;io_port+7) /*Basic Status (1 byte, 
 multiline_comment|/* basic I/O-port of first adapter */
 DECL|macro|IM_IO_PORT
 mdefine_line|#define IM_IO_PORT   0x3540
-multiline_comment|/* maximum number of hosts that can be find */
+multiline_comment|/* maximum number of hosts that can be found */
 DECL|macro|IM_N_IO_PORT
 mdefine_line|#define IM_N_IO_PORT 8
 multiline_comment|/*requests going into the upper nibble of the Attention register */
@@ -363,10 +365,19 @@ multiline_comment|/* system-control-register of PS/2s with diskindicator */
 DECL|macro|PS2_SYS_CTR
 mdefine_line|#define PS2_SYS_CTR        0x92
 multiline_comment|/* The SCSI-ID(!) of the accessed SCSI-device is shown on PS/2-95 machines&squot; LED&n;   displays. ldn is no longer displayed here, because the ldn mapping is now &n;   done dynamically and the ldn &lt;-&gt; pun,lun maps can be looked-up at boottime &n;   or during uptime in /proc/scsi/ibmmca/&lt;host_no&gt; in case of trouble, &n;   interest, debugging or just for having fun. The left number gives the&n;   host-adapter number and the right shows the accessed SCSI-ID. */
+multiline_comment|/* use_display is set by the ibmmcascsi=display command line arg */
+DECL|variable|use_display
+r_static
+r_int
+id|use_display
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|PS2_DISK_LED_ON
-mdefine_line|#define PS2_DISK_LED_ON(ad,id) {&bslash;&n;&t;if( machine_id == 0xf8 ) { outb((char)(id+48), MOD95_LED_PORT ); &bslash;&n;        outb((char)(ad+48), MOD95_LED_PORT+1); } &bslash;&n;&t;else outb(inb(PS2_SYS_CTR) | 0xc0, PS2_SYS_CTR); &bslash;&n;}
+mdefine_line|#define PS2_DISK_LED_ON(ad,id) {&bslash;&n;&t;if( use_display ) { outb((char)(id+48), MOD95_LED_PORT ); &bslash;&n;        outb((char)(ad+48), MOD95_LED_PORT+1); } &bslash;&n;&t;else outb(inb(PS2_SYS_CTR) | 0xc0, PS2_SYS_CTR); &bslash;&n;}
+multiline_comment|/* bug fixed, Dec 15, 1997, where | was replaced by &amp; here */
 DECL|macro|PS2_DISK_LED_OFF
-mdefine_line|#define PS2_DISK_LED_OFF() {&bslash;&n;&t;if( machine_id == 0xf8 ) { outb( &squot; &squot;, MOD95_LED_PORT ); &bslash;&n;        outb(&squot; &squot;, MOD95_LED_PORT+1); } &bslash;&n;&t;else outb(inb(PS2_SYS_CTR) | 0x3f, PS2_SYS_CTR); &bslash;&n;}
+mdefine_line|#define PS2_DISK_LED_OFF() {&bslash;&n;&t;if( use_display ) { outb( &squot; &squot;, MOD95_LED_PORT ); &bslash;&n;        outb(&squot; &squot;, MOD95_LED_PORT+1); } &bslash;&n;&t;else outb(inb(PS2_SYS_CTR) &amp; 0x3f, PS2_SYS_CTR); &bslash;&n;}
 multiline_comment|/*--------------------------------------------------------------------*/
 multiline_comment|/*list of supported subsystems */
 DECL|struct|subsys_list_struct
@@ -385,6 +396,7 @@ id|description
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* List of possible IBM-SCSI-adapters */
 DECL|variable|subsys_list
 r_struct
 id|subsys_list_struct
@@ -460,6 +472,7 @@ r_struct
 id|im_scb
 id|scb
 suffix:semicolon
+multiline_comment|/* SCSI-subsystem-control-block structure */
 DECL|member|tsb
 r_struct
 id|im_tsb
@@ -483,11 +496,12 @@ DECL|member|device_type
 r_int
 id|device_type
 suffix:semicolon
-multiline_comment|/* type of the SCSI-device. See include/scsi/scsi.h&n;&t;&t;        for interpreation of the possible values */
+multiline_comment|/* type of the SCSI-device. See include/scsi/scsi.h&n;&t;&t;        for interpretation of the possible values */
 DECL|member|block_length
 r_int
 id|block_length
 suffix:semicolon
+multiline_comment|/* blocksize of a particular logical SCSI-device */
 )brace
 suffix:semicolon
 multiline_comment|/* statistics of the driver during operations (for proc_info) */
@@ -526,6 +540,26 @@ l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* total write-access on a ldn */
+DECL|member|ldn_inquiry_access
+r_int
+id|ldn_inquiry_access
+(braket
+id|MAX_LOG_DEV
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* total inquiries on a ldn */
+DECL|member|ldn_modeselect_access
+r_int
+id|ldn_modeselect_access
+(braket
+id|MAX_LOG_DEV
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* total mode selects on ldn */
 DECL|member|total_accesses
 r_int
 id|total_accesses
@@ -569,7 +603,7 @@ DECL|struct|ibmmca_hostdata
 r_struct
 id|ibmmca_hostdata
 (brace
-multiline_comment|/* array of logical devices */
+multiline_comment|/* array of logical devices: */
 DECL|member|_ld
 r_struct
 id|logical_device
@@ -578,7 +612,7 @@ id|_ld
 id|MAX_LOG_DEV
 )braket
 suffix:semicolon
-multiline_comment|/* array to convert (pun, lun) into logical device number */
+multiline_comment|/* array to convert (pun, lun) into logical device number: */
 DECL|member|_get_ldn
 r_int
 r_char
@@ -590,7 +624,7 @@ l_int|8
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/*array that contains the information about the physical SCSI-devices&n;       attached to this host adapter */
+multiline_comment|/*array that contains the information about the physical SCSI-devices&n;   attached to this host adapter: */
 DECL|member|_get_scsi
 r_int
 r_char
@@ -602,36 +636,37 @@ l_int|8
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* used only when checking logical devices */
+multiline_comment|/* used only when checking logical devices: */
 DECL|member|_local_checking_phase_flag
 r_int
 id|_local_checking_phase_flag
 suffix:semicolon
+multiline_comment|/* report received interrupt: */
 DECL|member|_got_interrupt
 r_int
 id|_got_interrupt
 suffix:semicolon
+multiline_comment|/* report termination-status of SCSI-command: */
 DECL|member|_stat_result
 r_int
 id|_stat_result
 suffix:semicolon
-multiline_comment|/* reset status (used only when doing reset) */
+multiline_comment|/* reset status (used only when doing reset): */
 DECL|member|_reset_status
 r_int
 id|_reset_status
 suffix:semicolon
-multiline_comment|/* code of the last SCSI command (needed for panic info) */
+multiline_comment|/* code of the last SCSI command (needed for panic info): */
 DECL|member|_last_scsi_command
 r_int
 id|_last_scsi_command
 suffix:semicolon
-multiline_comment|/* counter that points on next reassignable ldn for dynamical remapping */
-multiline_comment|/* The default value is 7, that is the first reassignable number in&n;     the list on startup. */
+multiline_comment|/* Counter that points on the next reassignable ldn for dynamical &n;   remapping. The default value is 7, that is the first reassignable &n;   number in the list at boottime: */
 DECL|member|_next_ldn
 r_int
 id|_next_ldn
 suffix:semicolon
-multiline_comment|/* Statistics for this IBM-SCSI-host */
+multiline_comment|/* Statistics-structure for this IBM-SCSI-host: */
 DECL|member|_IBM_DS
 r_struct
 id|Driver_Statistics
@@ -664,18 +699,18 @@ DECL|macro|next_ldn
 mdefine_line|#define next_ldn (HOSTDATA(shpnt)-&gt;_next_ldn)
 DECL|macro|IBM_DS
 mdefine_line|#define IBM_DS (HOSTDATA(shpnt)-&gt;_IBM_DS)
-multiline_comment|/* Define a arbitrary number as subsystem-marker-type. This number is, as &n;   described in the SCSI-Standard, not occupied by other device-types. */
+multiline_comment|/* Define a arbitrary number as subsystem-marker-type. This number is, as &n;   described in the ANSI-SCSI-standard, not occupied by other device-types. */
 DECL|macro|TYPE_IBM_SCSI_ADAPTER
 mdefine_line|#define TYPE_IBM_SCSI_ADAPTER   0x2F
-multiline_comment|/* Define 0xFF for no device type, because this type is not defined within&n;   the SCSI-standard, therefore, it can be used and should not cause any&n;   harm. */
+multiline_comment|/* Define 0xFF for no device type, because this type is not defined within&n;   the ANSI-SCSI-standard, therefore, it can be used and should not cause any&n;   harm. */
 DECL|macro|TYPE_NO_DEVICE
 mdefine_line|#define TYPE_NO_DEVICE          0xFF
-multiline_comment|/* define medium-changer. If this is not defined previously, define &n;   this type here. */
+multiline_comment|/* define medium-changer. If this is not defined previously, e.g. Linux&n;   2.0.x, define this type here. */
 macro_line|#ifndef TYPE_MEDIUM_CHANGER
 DECL|macro|TYPE_MEDIUM_CHANGER
 mdefine_line|#define TYPE_MEDIUM_CHANGER     0x08
 macro_line|#endif
-multiline_comment|/* define operations for immediate_assign */
+multiline_comment|/* define possible operations for the immediate_assign command */
 DECL|macro|SET_LDN
 mdefine_line|#define SET_LDN        0
 DECL|macro|REMOVE_LDN
@@ -743,7 +778,7 @@ comma
 l_int|7
 )brace
 suffix:semicolon
-multiline_comment|/* fill module-parameters only, when this define is present.&n;   (that is kernel &gt;=2.1.0) */
+multiline_comment|/* fill module-parameters only, when this define is present.&n;   (that is kernel version 2.1.x) */
 macro_line|#ifdef MODULE_PARM
 id|MODULE_PARM
 c_func
@@ -2069,7 +2104,7 @@ r_return
 l_string|&quot;-&quot;
 suffix:semicolon
 )brace
-multiline_comment|/* type-interpreter for logical devices &n;   (A bit stupid, but it was necessary to get the &squot;-&squot; and the Hex-codes&n;   into one type.) */
+multiline_comment|/* interpreter for logical device numbers (ldn) */
 DECL|function|ti_l
 r_static
 r_char
@@ -2081,150 +2116,68 @@ r_int
 id|value
 )paren
 (brace
-r_switch
+r_const
+r_char
+id|hex
+(braket
+l_int|16
+)braket
+op_assign
+(paren
+l_string|&quot;0123456789abcdef&quot;
+)paren
+suffix:semicolon
+r_static
+r_char
+id|answer
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|answer
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+r_char
+)paren
+(paren
+l_int|0x0
+)paren
+suffix:semicolon
+r_if
 c_cond
 (paren
 id|value
+op_le
+id|MAX_LOG_DEV
 )paren
-(brace
-r_case
+id|answer
+(braket
 l_int|0
-suffix:colon
+)braket
+op_assign
+id|hex
+(braket
+id|value
+)braket
+suffix:semicolon
+r_else
+id|answer
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;-&squot;
+suffix:semicolon
 r_return
-l_string|&quot;0&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-r_return
-l_string|&quot;1&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-r_return
-l_string|&quot;2&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-r_return
-l_string|&quot;3&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-r_return
-l_string|&quot;4&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|5
-suffix:colon
-r_return
-l_string|&quot;5&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|6
-suffix:colon
-r_return
-l_string|&quot;6&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|7
-suffix:colon
-r_return
-l_string|&quot;7&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|8
-suffix:colon
-r_return
-l_string|&quot;8&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|9
-suffix:colon
-r_return
-l_string|&quot;9&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|10
-suffix:colon
-r_return
-l_string|&quot;a&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|11
-suffix:colon
-r_return
-l_string|&quot;b&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|12
-suffix:colon
-r_return
-l_string|&quot;c&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|13
-suffix:colon
-r_return
-l_string|&quot;d&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|14
-suffix:colon
-r_return
-l_string|&quot;e&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|15
-suffix:colon
-r_return
-l_string|&quot;f&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-r_return
-l_string|&quot;-&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_return
-l_string|&quot;-&quot;
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|answer
 suffix:semicolon
 )brace
 multiline_comment|/* &n;   The following routine probes the SCSI-devices in four steps:&n;   1. The current ldn -&gt; pun,lun mapping is removed on the SCSI-adapter.&n;   2. ldn 0 is used to go through all possible combinations of pun,lun and&n;      a device_inquiry is done to fiddle out whether there is a device&n;      responding or not. This physical map is stored in get_scsi[][].&n;   3. The 15 available ldns (0-14) are mapped to existing pun,lun.&n;      If there are more devices than ldns, it stops at 14 for the boot&n;      time. Dynamical remapping will be done in ibmmca_queuecommand.&n;   4. If there are less than 15 valid pun,lun, the remaining ldns are&n;      mapped to NON-existing pun,lun to satisfy the adapter. Information&n;      about pun,lun -&gt; ldn is stored as before in get_ldn[][].&n;   This method leads to the result, that the SCSI-pun,lun shown to Linux&n;   mid-level- and higher-level-drivers is exactly corresponding to the&n;   physical reality on the SCSI-bus. Therefore, it is possible that users&n;   of older releases of this driver have to rewrite their fstab-file, because&n;   the /dev/sdXXX could have changed due to the right pun,lun report, now.&n;   The assignment of ALL ldns avoids dynamical remapping by the adapter&n;   itself.&n; */
@@ -2316,8 +2269,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|lun
-op_le
-l_int|7
+OL
+l_int|8
 suffix:semicolon
 id|lun
 op_increment
@@ -2396,6 +2349,7 @@ id|lun
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* default lun is 0 */
 multiline_comment|/* STEP 2: */
 id|printk
 c_func
@@ -2411,8 +2365,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|id
-op_le
-l_int|7
+OL
+l_int|8
 suffix:semicolon
 id|id
 op_increment
@@ -2426,8 +2380,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|lun
-op_le
-l_int|7
+OL
+l_int|8
 suffix:semicolon
 id|lun
 op_increment
@@ -2555,8 +2509,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|lun
-op_le
-l_int|7
+OL
+l_int|8
 op_logical_and
 id|ldn
 OL
@@ -2574,8 +2528,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|id
-op_le
-l_int|7
+OL
+l_int|8
 op_logical_and
 id|ldn
 OL
@@ -2678,7 +2632,7 @@ id|device_type
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_SCSI_IBMMCA_DEV_RESET
+macro_line|#ifdef CONFIG_IBMMCA_SCSI_DEV_RESET
 r_int
 id|ticks
 suffix:semicolon
@@ -2855,8 +2809,8 @@ op_assign
 l_int|1
 suffix:semicolon
 id|lun
-op_le
-l_int|7
+OL
+l_int|8
 op_logical_and
 id|ldn
 OL
@@ -2873,8 +2827,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|id
-op_le
-l_int|7
+OL
+l_int|8
 op_logical_and
 id|ldn
 OL
@@ -2944,6 +2898,21 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IBMMCA_SCSI_ORDER_STANDARD
+id|printk
+c_func
+(paren
+l_string|&quot;IBM MCA SCSI: SCSI-access-order: IBM/ANSI.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;IBM MCA SCSI: SCSI-access-order: Linux.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef IM_DEBUG_PROBE
 multiline_comment|/* Show the physical and logical mapping during boot. */
 id|printk
@@ -2972,8 +2941,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|id
-op_le
-l_int|7
+OL
+l_int|8
 suffix:semicolon
 id|id
 op_increment
@@ -3086,21 +3055,29 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;       %2d     %2s %2s %2s %2s %2s %2s %2s %2s&bslash;n&quot;
+l_string|&quot;       %2d     &quot;
 comma
 id|id
-comma
-id|ti_l
-c_func
+)paren
+suffix:semicolon
+r_for
+c_loop
 (paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
+id|lun
+op_assign
 l_int|0
-)braket
+suffix:semicolon
+id|lun
+OL
+l_int|8
+suffix:semicolon
+id|lun
+op_increment
 )paren
+id|printk
+c_func
+(paren
+l_string|&quot;%2s &quot;
 comma
 id|ti_l
 c_func
@@ -3110,81 +3087,15 @@ id|get_ldn
 id|id
 )braket
 (braket
-l_int|1
+id|lun
 )braket
 )paren
-comma
-id|ti_l
+)paren
+suffix:semicolon
+id|printk
 c_func
 (paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|2
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|3
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|4
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|5
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|6
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|7
-)braket
-)paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3273,6 +3184,30 @@ comma
 r_sizeof
 (paren
 id|IBM_DS.ldn_write_access
+)paren
+)paren
+suffix:semicolon
+id|memset
+(paren
+id|IBM_DS.ldn_inquiry_access
+comma
+l_int|0x0
+comma
+r_sizeof
+(paren
+id|IBM_DS.ldn_inquiry_access
+)paren
+)paren
+suffix:semicolon
+id|memset
+(paren
+id|IBM_DS.ldn_modeselect_access
+comma
+l_int|0x0
+comma
+r_sizeof
+(paren
+id|IBM_DS.ldn_modeselect_access
 )paren
 )paren
 suffix:semicolon
@@ -3841,6 +3776,33 @@ op_star
 id|ints
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|str
+op_logical_and
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|str
+comma
+l_string|&quot;display&quot;
+)paren
+)paren
+(brace
+id|use_display
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|ints
+)paren
+(brace
 r_int
 id|i
 suffix:semicolon
@@ -3865,6 +3827,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|io_port
 (braket
 id|i
@@ -3877,6 +3840,8 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+)brace
+)brace
 )brace
 macro_line|#endif
 multiline_comment|/*--------------------------------------------------------------------*/
@@ -4644,6 +4609,22 @@ id|id
 comma
 id|lun
 suffix:semicolon
+multiline_comment|/* use industry standard ordering of the IDs */
+macro_line|#ifdef CONFIG_IBMMCA_SCSI_ORDER_STANDARD
+r_int
+id|target
+op_assign
+l_int|6
+op_minus
+id|cmd-&gt;target
+suffix:semicolon
+macro_line|#else
+r_int
+id|target
+op_assign
+id|cmd-&gt;target
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*if (target,lun) is NO LUN or not existing at all, return error */
 r_if
 c_cond
@@ -4651,7 +4632,7 @@ c_cond
 (paren
 id|get_scsi
 (braket
-id|cmd-&gt;target
+id|target
 )braket
 (braket
 id|cmd-&gt;lun
@@ -4663,7 +4644,7 @@ op_logical_or
 (paren
 id|get_scsi
 (braket
-id|cmd-&gt;target
+id|target
 )braket
 (braket
 id|cmd-&gt;lun
@@ -4693,7 +4674,7 @@ id|ldn
 op_assign
 id|get_ldn
 (braket
-id|cmd-&gt;target
+id|target
 )braket
 (braket
 id|cmd-&gt;lun
@@ -4776,7 +4757,7 @@ c_func
 (paren
 l_string|&quot;              Reporting DID_NO_CONNECT for device (%d,%d).&bslash;n&quot;
 comma
-id|cmd-&gt;target
+id|target
 comma
 id|cmd-&gt;lun
 )paren
@@ -4807,8 +4788,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|id
-op_le
-l_int|7
+OL
+l_int|8
 suffix:semicolon
 id|id
 op_increment
@@ -4821,8 +4802,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|lun
-op_le
-l_int|7
+OL
+l_int|8
 suffix:semicolon
 id|lun
 op_increment
@@ -4882,7 +4863,7 @@ c_func
 (paren
 id|shpnt
 comma
-id|cmd-&gt;target
+id|target
 comma
 id|cmd-&gt;lun
 comma
@@ -4894,7 +4875,7 @@ suffix:semicolon
 multiline_comment|/* map found ldn to pun,lun */
 id|get_ldn
 (braket
-id|cmd-&gt;target
+id|target
 )braket
 (braket
 id|cmd-&gt;lun
@@ -4970,7 +4951,7 @@ l_string|&quot;IBM MCA SCSI: ldn=0x%x, SCSI-device on (%d,%d) vanished!&bslash;n
 comma
 id|ldn
 comma
-id|cmd-&gt;target
+id|target
 comma
 id|cmd-&gt;lun
 )paren
@@ -4988,7 +4969,7 @@ l_string|&quot;IBM MCA SCSI: ldn=0x%x dynamically reassigned to (%d,%d).&bslash;
 comma
 id|ldn
 comma
-id|cmd-&gt;target
+id|target
 comma
 id|cmd-&gt;lun
 )paren
@@ -5251,7 +5232,7 @@ id|ldn
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* for specific device debugging: */
+multiline_comment|/* for specific device-type debugging: */
 macro_line|#ifdef IM_DEBUG_CMD_SPEC_DEV
 r_if
 c_cond
@@ -5616,7 +5597,7 @@ id|PS2_DISK_LED_ON
 (paren
 id|shpnt-&gt;host_no
 comma
-id|cmd-&gt;target
+id|target
 )paren
 suffix:semicolon
 r_break
@@ -5699,7 +5680,7 @@ id|PS2_DISK_LED_ON
 (paren
 id|shpnt-&gt;host_no
 comma
-id|cmd-&gt;target
+id|target
 )paren
 suffix:semicolon
 r_break
@@ -5710,6 +5691,12 @@ suffix:semicolon
 r_case
 id|INQUIRY
 suffix:colon
+id|IBM_DS.ldn_inquiry_access
+(braket
+id|ldn
+)braket
+op_increment
+suffix:semicolon
 id|scb-&gt;command
 op_assign
 id|IM_DEVICE_INQUIRY_CMD
@@ -5768,6 +5755,12 @@ suffix:colon
 r_case
 id|MODE_SELECT_10
 suffix:colon
+id|IBM_DS.ldn_modeselect_access
+(braket
+id|ldn
+)braket
+op_increment
+suffix:semicolon
 id|scb-&gt;command
 op_assign
 id|IM_OTHER_SCSI_CMD_CMD
@@ -5877,12 +5870,27 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IBMMCA_SCSI_ORDER_STANDARD
+r_int
+id|target
+op_assign
+l_int|6
+op_minus
+id|cmd-&gt;target
+suffix:semicolon
+macro_line|#else
+r_int
+id|target
+op_assign
+id|cmd-&gt;target
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*get logical device number, and disable system interrupts */
 id|printk
 (paren
 l_string|&quot;IBM MCA SCSI: sending abort to device id=%d lun=%d.&bslash;n&quot;
 comma
-id|cmd-&gt;target
+id|target
 comma
 id|cmd-&gt;lun
 )paren
@@ -5891,7 +5899,7 @@ id|ldn
 op_assign
 id|get_ldn
 (braket
-id|cmd-&gt;target
+id|target
 )braket
 (braket
 id|cmd-&gt;lun
@@ -6486,6 +6494,96 @@ r_return
 id|a
 suffix:semicolon
 )brace
+DECL|function|ldn_access_total_inquiry
+r_static
+r_int
+id|ldn_access_total_inquiry
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+)paren
+(brace
+r_int
+id|a
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|MAX_LOG_DEV
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|a
+op_add_assign
+id|IBM_DS.ldn_inquiry_access
+(braket
+id|i
+)braket
+suffix:semicolon
+r_return
+id|a
+suffix:semicolon
+)brace
+DECL|function|ldn_access_total_modeselect
+r_static
+r_int
+id|ldn_access_total_modeselect
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+)paren
+(brace
+r_int
+id|a
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|MAX_LOG_DEV
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|a
+op_add_assign
+id|IBM_DS.ldn_modeselect_access
+(braket
+id|i
+)braket
+suffix:semicolon
+r_return
+id|a
+suffix:semicolon
+)brace
 multiline_comment|/* routine to display info in the proc-fs-structure (a deluxe feature) */
 DECL|function|ibmmca_proc_info
 r_int
@@ -6522,6 +6620,8 @@ r_int
 id|i
 comma
 id|id
+comma
+id|lun
 suffix:semicolon
 r_struct
 id|Scsi_Host
@@ -6616,6 +6716,33 @@ comma
 l_string|&quot; SCSI Access-Statistics:&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IBMMCA_SCSI_ORDER_STANDARD
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;               ANSI-SCSI-standard order.: Yes&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;               ANSI-SCSI-standard order.: No&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_MULTI_LUN
 id|len
 op_add_assign
@@ -6740,11 +6867,59 @@ id|buffer
 op_plus
 id|len
 comma
+l_string|&quot;                 Total SCSI Inquiries...: %d&bslash;n&quot;
+comma
+id|ldn_access_total_inquiry
+c_func
+(paren
+id|shpnt
+)paren
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;                 Total SCSI Modeselects.: %d&bslash;n&quot;
+comma
+id|ldn_access_total_modeselect
+c_func
+(paren
+id|shpnt
+)paren
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
 l_string|&quot;                 Total SCSI other cmds..: %d&bslash;n&bslash;n&quot;
 comma
 id|IBM_DS.total_accesses
 op_minus
 id|ldn_access_total_read_write
+c_func
+(paren
+id|shpnt
+)paren
+op_minus
+id|ldn_access_total_modeselect
+c_func
+(paren
+id|shpnt
+)paren
+op_minus
+id|ldn_access_total_inquiry
 c_func
 (paren
 id|shpnt
@@ -7093,21 +7268,35 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;       %2d     %2s %2s %2s %2s %2s %2s %2s %2s&bslash;n&quot;
+l_string|&quot;       %2d     &quot;
 comma
 id|id
-comma
-id|ti_l
-c_func
+)paren
+suffix:semicolon
+r_for
+c_loop
 (paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
+id|lun
+op_assign
 l_int|0
-)braket
+suffix:semicolon
+id|lun
+OL
+l_int|8
+suffix:semicolon
+id|lun
+op_increment
 )paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;%2s &quot;
 comma
 id|ti_l
 c_func
@@ -7117,81 +7306,21 @@ id|get_ldn
 id|id
 )braket
 (braket
-l_int|1
+id|lun
 )braket
 )paren
-comma
-id|ti_l
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
 c_func
 (paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|2
-)braket
-)paren
+id|buffer
+op_plus
+id|len
 comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|3
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|4
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|5
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|6
-)braket
-)paren
-comma
-id|ti_l
-c_func
-(paren
-id|get_ldn
-(braket
-id|id
-)braket
-(braket
-l_int|7
-)braket
-)paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

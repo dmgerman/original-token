@@ -116,10 +116,6 @@ comma
 DECL|enumerator|PROC_PARPORT
 id|PROC_PARPORT
 comma
-DECL|enumerator|PROC_OMIRR
-id|PROC_OMIRR
-comma
-multiline_comment|/* whether enabled or not */
 DECL|enumerator|PROC_PPC_HTAB
 id|PROC_PPC_HTAB
 comma
