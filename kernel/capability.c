@@ -1,6 +1,12 @@
 multiline_comment|/*&n; * linux/kernel/capability.c&n; *&n; * Copyright (C) 1997  Andrew Main &lt;zefram@fysh.org&gt;&n; * Integrated into 2.1.97+,  Andrew G. Morgan &lt;morgan@transmeta.com&gt;&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|variable|cap_bset
+id|kernel_cap_t
+id|cap_bset
+op_assign
+id|CAP_INIT_EFF_SET
+suffix:semicolon
 multiline_comment|/* Note: never hold tasklist_lock while spinning for this one */
 DECL|variable|task_capability_lock
 id|spinlock_t
@@ -9,12 +15,6 @@ op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * For sys_getproccap() and sys_setproccap(), any of the three&n; * capability set pointers may be NULL -- indicating that that set is&n; * uninteresting and/or not to be changed.&n; */
-DECL|variable|cap_bset
-id|kernel_cap_t
-id|cap_bset
-op_assign
-id|CAP_FULL_SET
-suffix:semicolon
 DECL|function|sys_capget
 id|asmlinkage
 r_int

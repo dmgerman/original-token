@@ -15,6 +15,9 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 macro_line|#ifdef CONFIG_NFSD_V3
@@ -1646,7 +1649,11 @@ id|filp
 suffix:semicolon
 id|filp-&gt;f_op
 op_assign
+id|fops_get
+c_func
+(paren
 id|inode-&gt;i_fop
+)paren
 suffix:semicolon
 id|atomic_set
 c_func
@@ -1725,6 +1732,12 @@ c_cond
 id|err
 )paren
 (brace
+id|fops_put
+c_func
+(paren
+id|filp-&gt;f_op
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1810,6 +1823,12 @@ c_func
 id|inode
 comma
 id|filp
+)paren
+suffix:semicolon
+id|fops_put
+c_func
+(paren
+id|filp-&gt;f_op
 )paren
 suffix:semicolon
 r_if

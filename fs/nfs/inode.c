@@ -2884,18 +2884,19 @@ id|fattr-&gt;fileid
 )paren
 suffix:semicolon
 multiline_comment|/* Install the file handle in the dentry */
-op_star
+id|memcpy
+c_func
 (paren
+id|dentry-&gt;d_fsdata
+comma
+id|fhandle
+comma
+r_sizeof
 (paren
 r_struct
 id|nfs_fh
-op_star
 )paren
-id|dentry-&gt;d_fsdata
 )paren
-op_assign
-op_star
-id|fhandle
 suffix:semicolon
 macro_line|#ifdef CONFIG_NFS_SNAPSHOT
 multiline_comment|/*&n;&t; * Check for NetApp snapshot dentries, and get an &n;&t; * unhashed inode to avoid aliasing problems.&n;&t; */

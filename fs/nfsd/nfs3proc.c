@@ -2727,7 +2727,7 @@ id|rename
 comma
 id|rename
 comma
-id|fhandle
+id|fhandle2
 comma
 id|RC_REPLBUFF
 )paren

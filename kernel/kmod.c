@@ -224,7 +224,7 @@ c_func
 id|current
 )paren
 suffix:semicolon
-multiline_comment|/* Give kmod all privileges.. */
+multiline_comment|/* Give kmod all effective privileges.. */
 id|current-&gt;uid
 op_assign
 id|current-&gt;euid
@@ -232,12 +232,6 @@ op_assign
 id|current-&gt;fsuid
 op_assign
 l_int|0
-suffix:semicolon
-id|cap_set_full
-c_func
-(paren
-id|current-&gt;cap_inheritable
-)paren
 suffix:semicolon
 id|cap_set_full
 c_func

@@ -3936,19 +3936,8 @@ id|ino
 suffix:semicolon
 multiline_comment|/* file id */
 id|p
-(braket
-id|slen
-op_minus
-l_int|1
-)braket
 op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* don&squot;t leak kernel data */
-macro_line|#ifdef XDR_ENCODE_STRING_TAKES_LENGTH
-id|p
-op_assign
-id|xdr_encode_string
+id|xdr_encode_array
 c_func
 (paren
 id|p
@@ -3959,36 +3948,6 @@ id|namlen
 )paren
 suffix:semicolon
 multiline_comment|/* name length &amp; name */
-macro_line|#else
-multiline_comment|/* just like nfsproc.c */
-op_star
-id|p
-op_increment
-op_assign
-id|htonl
-c_func
-(paren
-(paren
-id|u32
-)paren
-id|namlen
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|p
-comma
-id|name
-comma
-id|namlen
-)paren
-suffix:semicolon
-id|p
-op_add_assign
-id|slen
-suffix:semicolon
-macro_line|#endif
 id|cd-&gt;offset
 op_assign
 id|p

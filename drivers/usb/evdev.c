@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: evdev.c,v 1.8 2000/05/29 09:01:52 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Event char devices, giving access to raw input device events.&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: evdev.c,v 1.10 2000/06/23 09:23:00 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Event char devices, giving access to raw input device events.&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 DECL|macro|EVDEV_MINOR_BASE
 mdefine_line|#define EVDEV_MINOR_BASE&t;64
@@ -15,9 +15,9 @@ DECL|struct|evdev
 r_struct
 id|evdev
 (brace
-DECL|member|used
+DECL|member|exist
 r_int
-id|used
+id|exist
 suffix:semicolon
 DECL|member|open
 r_int
@@ -366,6 +366,13 @@ op_logical_neg
 op_decrement
 id|list-&gt;evdev-&gt;open
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|list-&gt;evdev-&gt;exist
+)paren
+(brace
 id|input_close_device
 c_func
 (paren
@@ -373,13 +380,8 @@ op_amp
 id|list-&gt;evdev-&gt;handle
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-op_decrement
-id|list-&gt;evdev-&gt;used
-)paren
+)brace
+r_else
 (brace
 id|input_unregister_minor
 c_func
@@ -400,6 +402,7 @@ c_func
 id|list-&gt;evdev
 )paren
 suffix:semicolon
+)brace
 )brace
 id|kfree
 c_func
@@ -481,12 +484,10 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -530,15 +531,17 @@ id|file-&gt;private_data
 op_assign
 id|list
 suffix:semicolon
-id|list-&gt;evdev-&gt;used
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|list-&gt;evdev-&gt;open
 op_increment
+)paren
+r_if
+c_cond
+(paren
+id|list-&gt;evdev-&gt;exist
 )paren
 id|input_open_device
 c_func
@@ -1699,7 +1702,7 @@ r_private
 op_assign
 id|evdev
 suffix:semicolon
-id|evdev-&gt;used
+id|evdev-&gt;exist
 op_assign
 l_int|1
 suffix:semicolon
@@ -1752,24 +1755,24 @@ id|handle
 op_member_access_from_pointer
 r_private
 suffix:semicolon
+id|evdev-&gt;exist
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|evdev-&gt;open
 )paren
+(brace
 id|input_close_device
 c_func
 (paren
 id|handle
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-op_decrement
-id|evdev-&gt;used
-)paren
+)brace
+r_else
 (brace
 id|input_unregister_minor
 c_func

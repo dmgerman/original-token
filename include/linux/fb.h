@@ -37,6 +37,10 @@ DECL|macro|FBIO_ALLOC
 mdefine_line|#define FBIO_ALLOC              0x4613
 DECL|macro|FBIO_FREE
 mdefine_line|#define FBIO_FREE               0x4614
+DECL|macro|FBIOGET_GLYPH
+mdefine_line|#define FBIOGET_GLYPH           0x4615
+DECL|macro|FBIOGET_HWCINFO
+mdefine_line|#define FBIOGET_HWCINFO         0x4616
 DECL|macro|FB_TYPE_PACKED_PIXELS
 mdefine_line|#define FB_TYPE_PACKED_PIXELS&t;&t;0&t;/* Packed Pixels&t;*/
 DECL|macro|FB_TYPE_PLANES

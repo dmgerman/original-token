@@ -76,7 +76,7 @@ id|S42XX_REPLY_INTR_MASK_OFFSET
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *  For this card fifo is full if reading this port returns 0! &n; * &n; */
+multiline_comment|/*&n; *  For older cards FIFO Full = 0. &n; *  On this card 0 means there is room, anything else FIFO Full. &n; * &n; */
 DECL|function|smart4_fifo_full
 r_static
 r_int
@@ -91,7 +91,7 @@ id|h
 (brace
 r_return
 (paren
-op_complement
+op_logical_neg
 id|readl
 c_func
 (paren
@@ -132,8 +132,7 @@ c_cond
 (paren
 id|register_value
 op_eq
-op_minus
-l_int|1
+l_int|0xffffffff
 )paren
 (brace
 r_return

@@ -5670,9 +5670,9 @@ id|memset
 (paren
 id|arg
 comma
-id|size
-comma
 l_int|0
+comma
+id|size
 )paren
 suffix:semicolon
 )brace

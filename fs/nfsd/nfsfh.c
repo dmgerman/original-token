@@ -1411,9 +1411,6 @@ l_string|&quot;nfs_fh: need to look harder for %d/%ld&bslash;n&quot;
 comma
 id|sb-&gt;s_dev
 comma
-(paren
-r_int
-)paren
 id|ino
 )paren
 suffix:semicolon

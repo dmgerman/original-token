@@ -667,6 +667,7 @@ l_int|0
 )paren
 OL
 l_int|0
+macro_line|#ifdef CONFIG_NFSD_TCP
 op_logical_or
 (paren
 id|error
@@ -683,6 +684,7 @@ l_int|0
 )paren
 OL
 l_int|0
+macro_line|#endif
 )paren
 (brace
 r_if

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Kernel support for the ptrace() and syscall tracing interfaces.&n; *&n; * Copyright (C) 1999-2000 Hewlett-Packard Co&n; * Copyright (C) 1999-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * Derived from the x86 and Alpha versions.  Most of the code in here&n; * could actually be factored into a common set of routines.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

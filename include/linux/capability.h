@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This is &lt;linux/capability.h&gt;&n; *&n; * Andrew G. Morgan &lt;morgan@transmeta.com&gt;&n; * Alexander Kjeldaas &lt;astor@guardian.no&gt;&n; * with help from Aleph1, Roland Buresund and Andrew Main.&n; */
+multiline_comment|/*&n; * This is &lt;linux/capability.h&gt;&n; *&n; * Andrew G. Morgan &lt;morgan@transmeta.com&gt;&n; * Alexander Kjeldaas &lt;astor@guardian.no&gt;&n; * with help from Aleph1, Roland Buresund and Andrew Main.&n; *&n; * See here for the libcap library (&quot;POSIX draft&quot; compliance):&n; *&n; * ftp://linux.kernel.org/pub/linux/libs/security/linux-privs/kernel-2.2/&n; */
 macro_line|#ifndef _LINUX_CAPABILITY_H
 DECL|macro|_LINUX_CAPABILITY_H
 mdefine_line|#define _LINUX_CAPABILITY_H
@@ -146,7 +146,8 @@ mdefine_line|#define CAP_IPC_LOCK         14
 multiline_comment|/* Override IPC ownership checks */
 DECL|macro|CAP_IPC_OWNER
 mdefine_line|#define CAP_IPC_OWNER        15
-multiline_comment|/* Insert and remove kernel modules */
+multiline_comment|/* Insert and remove kernel modules - modify kernel without limit */
+multiline_comment|/* Modify cap_bset */
 DECL|macro|CAP_SYS_MODULE
 mdefine_line|#define CAP_SYS_MODULE       16
 multiline_comment|/* Allow ioperm/iopl access */
@@ -251,7 +252,7 @@ mdefine_line|#define CAP_FULL_SET        to_cap_t(~0)
 DECL|macro|CAP_INIT_EFF_SET
 mdefine_line|#define CAP_INIT_EFF_SET    to_cap_t(~0 &amp; ~CAP_TO_MASK(CAP_SETPCAP))
 DECL|macro|CAP_INIT_INH_SET
-mdefine_line|#define CAP_INIT_INH_SET    to_cap_t(~0 &amp; ~CAP_TO_MASK(CAP_SETPCAP))
+mdefine_line|#define CAP_INIT_INH_SET    to_cap_t(0)
 DECL|macro|CAP_TO_MASK
 mdefine_line|#define CAP_TO_MASK(x) (1 &lt;&lt; (x))
 DECL|macro|cap_raise
@@ -259,7 +260,7 @@ mdefine_line|#define cap_raise(c, flag)   (cap_t(c) |=  CAP_TO_MASK(flag))
 DECL|macro|cap_lower
 mdefine_line|#define cap_lower(c, flag)   (cap_t(c) &amp;= ~CAP_TO_MASK(flag))
 DECL|macro|cap_raised
-mdefine_line|#define cap_raised(c, flag)  (cap_t(c) &amp; CAP_TO_MASK(flag) &amp; cap_bset)
+mdefine_line|#define cap_raised(c, flag)  (cap_t(c) &amp; CAP_TO_MASK(flag))
 DECL|function|cap_combine
 r_static
 r_inline

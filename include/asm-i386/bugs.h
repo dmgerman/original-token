@@ -188,6 +188,7 @@ id|y
 op_assign
 l_float|3145727.0
 suffix:semicolon
+macro_line|#ifdef CONFIG_X86_XMM
 DECL|variable|zero
 r_static
 r_float
@@ -226,6 +227,7 @@ comma
 l_float|1.0
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|function|check_fpu
 r_static
 r_void

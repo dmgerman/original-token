@@ -1968,7 +1968,7 @@ c_cond
 id|elf_interpreter
 )paren
 r_goto
-id|out_free_interp
+id|out_free_dentry
 suffix:semicolon
 multiline_comment|/* This is the program interpreter used for&n;&t;&t;&t; * shared libraries - for now assume that this&n;&t;&t;&t; * is an a.out format binary&n;&t;&t;&t; */
 id|retval

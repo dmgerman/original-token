@@ -2315,21 +2315,9 @@ id|ino
 )paren
 suffix:semicolon
 multiline_comment|/* file id */
-op_star
 id|p
-op_increment
 op_assign
-id|htonl
-c_func
-(paren
-(paren
-id|u32
-)paren
-id|namlen
-)paren
-suffix:semicolon
-multiline_comment|/* name length &amp; name */
-id|memcpy
+id|xdr_encode_array
 c_func
 (paren
 id|p
@@ -2339,10 +2327,7 @@ comma
 id|namlen
 )paren
 suffix:semicolon
-id|p
-op_add_assign
-id|slen
-suffix:semicolon
+multiline_comment|/* name length &amp; name */
 id|cd-&gt;offset
 op_assign
 id|p

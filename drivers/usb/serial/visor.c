@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -194,7 +194,8 @@ id|filp
 id|dbg
 c_func
 (paren
-l_string|&quot;visor_open port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -207,7 +208,8 @@ id|port-&gt;active
 (brace
 id|dbg
 (paren
-l_string|&quot;device already open&quot;
+id|__FUNCTION__
+l_string|&quot; - device already open&quot;
 )paren
 suffix:semicolon
 r_return
@@ -232,7 +234,8 @@ id|port-&gt;read_urb
 id|dbg
 c_func
 (paren
-l_string|&quot;usb_submit_urb(read bulk) failed&quot;
+id|__FUNCTION__
+l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -279,7 +282,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;visor_close port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -294,7 +298,8 @@ id|transfer_buffer
 id|err
 c_func
 (paren
-l_string|&quot;visor_close: kmalloc(%d) failed.&quot;
+id|__FUNCTION__
+l_string|&quot; - kmalloc(%d) failed.&quot;
 comma
 l_int|0x12
 )paren
@@ -366,7 +371,8 @@ id|port
 id|dbg
 c_func
 (paren
-l_string|&quot;visor_throttle port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -393,7 +399,8 @@ id|port
 id|dbg
 c_func
 (paren
-l_string|&quot;visor_unthrottle port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -409,7 +416,8 @@ id|port-&gt;read_urb
 id|dbg
 c_func
 (paren
-l_string|&quot;usb_submit_urb(read bulk) failed&quot;
+id|__FUNCTION__
+l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -454,7 +462,8 @@ id|transfer_buffer
 id|err
 c_func
 (paren
-l_string|&quot;visor_startup: kmalloc(%d) failed.&quot;
+id|__FUNCTION__
+l_string|&quot; - kmalloc(%d) failed.&quot;
 comma
 l_int|256
 )paren
@@ -467,13 +476,14 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;visor_startup&quot;
+id|__FUNCTION__
 )paren
 suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;visor_setup: Set config to 1&quot;
+id|__FUNCTION__
+l_string|&quot; - Set config to 1&quot;
 )paren
 suffix:semicolon
 id|usb_set_configuration
@@ -524,7 +534,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;visor_startup: error getting connection information&quot;
+id|__FUNCTION__
+l_string|&quot; - error getting connection information&quot;
 )paren
 suffix:semicolon
 )brace
@@ -700,7 +711,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;visor_startup: error getting bytes available request&quot;
+id|__FUNCTION__
+l_string|&quot; - error getting bytes available request&quot;
 )paren
 suffix:semicolon
 )brace

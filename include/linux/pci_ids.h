@@ -567,16 +567,18 @@ DECL|macro|PCI_DEVICE_ID_SI_501
 mdefine_line|#define PCI_DEVICE_ID_SI_501&t;&t;0x0406
 DECL|macro|PCI_DEVICE_ID_SI_496
 mdefine_line|#define PCI_DEVICE_ID_SI_496&t;&t;0x0496
+DECL|macro|PCI_DEVICE_ID_SI_300
+mdefine_line|#define PCI_DEVICE_ID_SI_300        0x0300
 DECL|macro|PCI_DEVICE_ID_SI_530
 mdefine_line|#define PCI_DEVICE_ID_SI_530&t;&t;0x0530
 DECL|macro|PCI_DEVICE_ID_SI_540
-mdefine_line|#define PCI_DEVICE_ID_SI_540&t;&t;0x0540
+mdefine_line|#define PCI_DEVICE_ID_SI_540        0x5300
 DECL|macro|PCI_DEVICE_ID_SI_601
 mdefine_line|#define PCI_DEVICE_ID_SI_601&t;&t;0x0601
 DECL|macro|PCI_DEVICE_ID_SI_620
 mdefine_line|#define PCI_DEVICE_ID_SI_620&t;&t;0x0620
 DECL|macro|PCI_DEVICE_ID_SI_630
-mdefine_line|#define PCI_DEVICE_ID_SI_630&t;&t;0x0630
+mdefine_line|#define PCI_DEVICE_ID_SI_630        0x6300
 DECL|macro|PCI_DEVICE_ID_SI_5107
 mdefine_line|#define PCI_DEVICE_ID_SI_5107&t;&t;0x5107
 DECL|macro|PCI_DEVICE_ID_SI_5511
@@ -2186,12 +2188,4 @@ DECL|macro|PCI_DEVICE_ID_ARK_STINGARK
 mdefine_line|#define PCI_DEVICE_ID_ARK_STINGARK&t;0xa099
 DECL|macro|PCI_DEVICE_ID_ARK_2000MT
 mdefine_line|#define PCI_DEVICE_ID_ARK_2000MT&t;0xa0a1
-DECL|macro|PCI_VENDOR_ID_SIS
-mdefine_line|#define PCI_VENDOR_ID_SIS               0x1039
-DECL|macro|PCI_DEVICE_ID_SIS_300
-mdefine_line|#define PCI_DEVICE_ID_SIS_300           0x0300
-DECL|macro|PCI_DEVICE_ID_SIS_540
-mdefine_line|#define PCI_DEVICE_ID_SIS_540           0x5300
-DECL|macro|PCI_DEVICE_ID_SIS_630
-mdefine_line|#define PCI_DEVICE_ID_SIS_630           0x6300
 eof

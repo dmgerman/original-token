@@ -582,7 +582,7 @@ DECL|member|big_remap_map
 id|__u16
 id|big_remap_map
 (braket
-l_int|8
+l_int|128
 )braket
 suffix:semicolon
 DECL|member|big_repl_map
@@ -1129,7 +1129,7 @@ id|__u8
 id|sense_qual
 suffix:semicolon
 DECL|member|residual
-id|__u8
+id|__u32
 id|residual
 suffix:semicolon
 DECL|member|reserved

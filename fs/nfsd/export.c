@@ -1768,7 +1768,11 @@ id|fh
 comma
 id|exp
 comma
+id|dget
+c_func
+(paren
 id|nd.dentry
+)paren
 )paren
 )paren
 id|err
@@ -1802,9 +1806,6 @@ c_func
 op_amp
 id|fh
 )paren
-suffix:semicolon
-r_return
-id|err
 suffix:semicolon
 id|out
 suffix:colon

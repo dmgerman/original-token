@@ -175,7 +175,7 @@ id|nfscache
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;nfsd: cannot allocate %Zu bytes for reply cache&bslash;n&quot;
+l_string|&quot;nfsd: cannot allocate %d bytes for reply cache&bslash;n&quot;
 comma
 id|i
 )paren
@@ -237,7 +237,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;nfsd: cannot allocate %Zu bytes for hash list&bslash;n&quot;
+l_string|&quot;nfsd: cannot allocate %d bytes for hash list&bslash;n&quot;
 comma
 id|i
 )paren

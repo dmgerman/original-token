@@ -13,7 +13,6 @@ macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs2.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_PROC
 multiline_comment|/*&n; * Bare-bones access to getattr: this is for nfs_read_super.&n; */
@@ -1074,13 +1073,13 @@ c_cond
 id|S_ISCHR
 c_func
 (paren
-id|rdev
+id|mode
 )paren
 op_logical_or
 id|S_ISBLK
 c_func
 (paren
-id|rdev
+id|mode
 )paren
 )paren
 (brace

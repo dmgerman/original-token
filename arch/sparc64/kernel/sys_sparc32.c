@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.151 2000/06/22 11:42:25 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.152 2000/06/22 17:44:47 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20678,24 +20678,6 @@ id|res32
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|asmlinkage
-r_int
-id|sys_nfsservctl
-c_func
-(paren
-r_int
-id|cmd
-comma
-r_void
-op_star
-id|arg
-comma
-r_void
-op_star
-id|resp
-)paren
-suffix:semicolon
 DECL|function|sys32_nfsservctl
 r_int
 id|asmlinkage

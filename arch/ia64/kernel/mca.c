@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * File: &t;mca.c&n; * Purpose: &t;Generic MCA handling layer&n; *&n; * Updated for latest kernel&n; * Copyright (C) 2000 Intel&n; * Copyright (C) Chuck Fleckenstein (cfleck@co.intel.com)&n; *  &n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; * Copyright (C) Vijay Chander(vijay@engr.sgi.com)&n; *&n; * 00/03/29 C. Fleckenstein  Fixed PAL/SAL update issues, began MCA bug fixes, logging issues, &n; *                           added min save state dump, added INIT handler. &n; */
+multiline_comment|/*&n; * File: &t;mca.c&n; * Purpose: &t;Generic MCA handling layer&n; *&n; * Updated for latest kernel&n; * Copyright (C) 2000 Intel&n; * Copyright (C) Chuck Fleckenstein (cfleck@co.intel.com)&n; *  &n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; * Copyright (C) Vijay Chander(vijay@engr.sgi.com)&n; *&n; * 00/03/29 C. Fleckenstein  Fixed PAL/SAL update issues, began MCA bug fixes,&n; *                           logging issues, &n; *                           added min save state dump, added INIT handler. &n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

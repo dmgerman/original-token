@@ -346,9 +346,13 @@ DECL|member|idProduct
 id|__u16
 id|idProduct
 suffix:semicolon
-DECL|member|bcdDevice
+DECL|member|bcdDeviceMin
 id|__u16
-id|bcdDevice
+id|bcdDeviceMin
+suffix:semicolon
+DECL|member|bcdDeviceMax
+id|__u16
+id|bcdDeviceMax
 suffix:semicolon
 multiline_comment|/* the list specifies these parameters */
 DECL|member|name

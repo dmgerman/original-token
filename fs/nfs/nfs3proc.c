@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs3.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_PROC
 multiline_comment|/*&n; * Bare-bones access to getattr: this is for nfs_read_super.&n; */

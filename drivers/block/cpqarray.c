@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *    Disk Array driver for Compaq SMART2 Controllers&n; *    Copyright 1998 Compaq Computer Corporation&n; *&n; *    This program is free software; you can redistribute it and/or modify&n; *    it under the terms of the GNU General Public License as published by&n; *    the Free Software Foundation; either version 2 of the License, or&n; *    (at your option) any later version.&n; *&n; *    This program is distributed in the hope that it will be useful,&n; *    but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *    MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or&n; *    NON INFRINGEMENT.  See the GNU General Public License for more details.&n; *&n; *    You should have received a copy of the GNU General Public License&n; *    along with this program; if not, write to the Free Software&n; *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *    Questions/Comments/Bugfixes to arrays@compaq.com&n; *&n; *    If you want to make changes, improve or add functionality to this&n; *    driver, you&squot;ll probably need the Compaq Array Controller Interface&n; *    Specificiation (Document number ECG086/1198)&n; */
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_PROC_FS */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -20,9 +20,9 @@ macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|SMART2_DRIVER_VERSION
 mdefine_line|#define SMART2_DRIVER_VERSION(maj,min,submin) ((maj&lt;&lt;16)|(min&lt;&lt;8)|(submin))
 DECL|macro|DRIVER_NAME
-mdefine_line|#define DRIVER_NAME &quot;Compaq SMART2 Driver (v 1.0.4)&quot;
+mdefine_line|#define DRIVER_NAME &quot;Compaq SMART2 Driver (v 2.4.0)&quot;
 DECL|macro|DRIVER_VERSION
-mdefine_line|#define DRIVER_VERSION SMART2_DRIVER_VERSION(1,0,4)
+mdefine_line|#define DRIVER_VERSION SMART2_DRIVER_VERSION(2,4,0)
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR COMPAQ_SMART2_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -104,6 +104,7 @@ DECL|macro|NR_PRODUCTS
 mdefine_line|#define NR_PRODUCTS (sizeof(products)/sizeof(struct board_type))
 multiline_comment|/*  board_id = Subsystem Device ID &amp; Vendor ID&n; *  product = Marketing Name for the board&n; *  access = Address of the struct of function pointers &n; */
 DECL|variable|products
+r_static
 r_struct
 id|board_type
 id|products
@@ -228,6 +229,15 @@ op_amp
 id|smart4_access
 )brace
 comma
+(brace
+l_int|0x40580E11
+comma
+l_string|&quot;Smart Array 431&quot;
+comma
+op_amp
+id|smart4_access
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|variable|ida
@@ -265,6 +275,7 @@ id|MAX_CTLR
 )braket
 suffix:semicolon
 DECL|variable|proc_array
+r_static
 r_struct
 id|proc_dir_entry
 op_star
@@ -284,7 +295,7 @@ mdefine_line|#define DBGP(s)  do { } while(0)
 multiline_comment|/* Debug Extra Paranoid... */
 DECL|macro|DBGPX
 mdefine_line|#define DBGPX(s) do { } while(0)
-r_void
+r_int
 id|cpqarray_init
 c_func
 (paren
@@ -1573,22 +1584,22 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|cpqarray_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nr_ctlr
 op_eq
 l_int|0
 )paren
+multiline_comment|/* all the block dev numbers already used */
 r_return
 op_minus
 id|EIO
 suffix:semicolon
+multiline_comment|/* or no controllers were found */
 r_return
 l_int|0
 suffix:semicolon
@@ -1834,9 +1845,9 @@ id|ida_blocksizes
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n; *  This is it.  Find all the controllers and register them.  I really hate&n; *  stealing all these major device numbers.&n; */
+multiline_comment|/*&n; *  This is it.  Find all the controllers and register them.  I really hate&n; *  stealing all these major device numbers.&n; *  returns the number of block devices registered.&n; */
 DECL|function|cpqarray_init
-r_void
+r_int
 id|__init
 id|cpqarray_init
 c_func
@@ -1881,6 +1892,11 @@ id|i
 comma
 id|j
 suffix:semicolon
+r_int
+id|num_cntlrs_reg
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* detect controllers */
 id|cpqarray_pci_detect
 c_func
@@ -1900,6 +1916,7 @@ op_eq
 l_int|0
 )paren
 r_return
+id|num_cntlrs_reg
 suffix:semicolon
 id|printk
 c_func
@@ -1945,8 +1962,15 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_goto
-id|bail
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: out of memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|num_cntlrs_reg
 suffix:semicolon
 )brace
 id|ida_sizes
@@ -1976,8 +2000,21 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_goto
-id|bail2
+id|kfree
+c_func
+(paren
+id|ida
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: out of memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|num_cntlrs_reg
 suffix:semicolon
 )brace
 id|ida_blocksizes
@@ -2007,8 +2044,27 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_goto
-id|bail3
+id|kfree
+c_func
+(paren
+id|ida
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ida_sizes
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: out of memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|num_cntlrs_reg
 suffix:semicolon
 )brace
 id|ida_hardsizes
@@ -2038,8 +2094,33 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_goto
-id|bail4
+id|kfree
+c_func
+(paren
+id|ida
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ida_sizes
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ida_blocksizes
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: out of memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|num_cntlrs_reg
 suffix:semicolon
 )brace
 id|memset
@@ -2151,6 +2232,44 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* If this successful it should insure that we are the only */
+multiline_comment|/* instance of the driver */
+r_if
+c_cond
+(paren
+id|register_blkdev
+c_func
+(paren
+id|MAJOR_NR
+op_plus
+id|i
+comma
+id|hba
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|devname
+comma
+op_amp
+id|ida_fops
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: Unable to get major number %d for ida&bslash;n&quot;
+comma
+id|MAJOR_NR
+op_plus
+id|i
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|hba
 (braket
 id|i
@@ -2205,7 +2324,8 @@ id|i
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get irq %d for %s&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;cpqarray: Unable to get irq %d for %s&bslash;n&quot;
 comma
 id|hba
 (braket
@@ -2222,13 +2342,7 @@ op_member_access_from_pointer
 id|devname
 )paren
 suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|register_blkdev
+id|unregister_blkdev
 c_func
 (paren
 id|MAJOR_NR
@@ -2241,25 +2355,14 @@ id|i
 )braket
 op_member_access_from_pointer
 id|devname
-comma
-op_amp
-id|ida_fops
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to get major number %d for ida&bslash;n&quot;
-comma
-id|MAJOR_NR
-op_plus
-id|i
 )paren
 suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|num_cntlrs_reg
+op_increment
+suffix:semicolon
 id|hba
 (braket
 id|i
@@ -2338,118 +2441,50 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_int
-id|j
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hba
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|cmd_pool_bits
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|hba
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|cmd_pool_bits
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|hba
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|cmd_pool
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|hba
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|cmd_pool
-)paren
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|j
+id|nr_ctlr
 op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
 id|i
 suffix:semicolon
-id|j
-op_increment
+r_if
+c_cond
+(paren
+id|hba
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|cmd_pool_bits
 )paren
 (brace
-id|free_irq
-c_func
-(paren
-id|hba
-(braket
-id|j
-)braket
-op_member_access_from_pointer
-id|intr
-comma
-id|hba
-(braket
-id|j
-)braket
-)paren
-suffix:semicolon
-id|unregister_blkdev
-c_func
-(paren
-id|MAJOR_NR
-op_plus
-id|j
-comma
-id|hba
-(braket
-id|j
-)braket
-op_member_access_from_pointer
-id|devname
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
 id|hba
 (braket
-id|j
+id|i
 )braket
 op_member_access_from_pointer
 id|cmd_pool_bits
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hba
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|cmd_pool
+)paren
+(brace
 id|kfree
 c_func
 (paren
 id|hba
 (braket
-id|j
+id|i
 )braket
 op_member_access_from_pointer
 id|cmd_pool
@@ -2487,8 +2522,52 @@ op_member_access_from_pointer
 id|devname
 )paren
 suffix:semicolon
-r_goto
-id|bail5
+id|num_cntlrs_reg
+op_decrement
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: out of memory&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* If num_cntlrs_reg == 0, no controllers worked. &n;&t;&t;&t; *&t;init_module will fail, so clean up global &n;&t;&t;&t; *&t;memory that clean_module would do.&n;&t;&t;&t;*/
+r_if
+c_cond
+(paren
+id|num_cntlrs_reg
+op_eq
+l_int|0
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|ida
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ida_sizes
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ida_hardsizes
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ida_blocksizes
+)paren
+suffix:semicolon
+)brace
+r_return
+id|num_cntlrs_reg
 suffix:semicolon
 )brace
 id|memset
@@ -2542,7 +2621,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Finding drives on %s&quot;
+id|KERN_INFO
+l_string|&quot;cpqarray: Finding drives on %s&quot;
 comma
 id|hba
 (braket
@@ -2726,7 +2806,15 @@ op_star
 l_int|256
 )paren
 suffix:semicolon
-multiline_comment|/* ida_gendisk[i].nr_real is handled by getgeometry */
+id|ida_gendisk
+(braket
+id|i
+)braket
+dot
+id|nr_real
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Get on the disk list */
 id|ida_gendisk
 (braket
@@ -2869,47 +2957,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* done ! */
 r_return
-suffix:semicolon
-id|bail5
-suffix:colon
-id|kfree
-c_func
-(paren
-id|ida_hardsizes
-)paren
-suffix:semicolon
-id|bail4
-suffix:colon
-id|kfree
-c_func
-(paren
-id|ida_blocksizes
-)paren
-suffix:semicolon
-id|bail3
-suffix:colon
-id|kfree
-c_func
-(paren
-id|ida_sizes
-)paren
-suffix:semicolon
-id|bail2
-suffix:colon
-id|kfree
-c_func
-(paren
-id|ida
-)paren
-suffix:semicolon
-id|bail
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;cpqarray: out of memory.&bslash;n&quot;
-)paren
+id|num_cntlrs_reg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find the controller and initialize it&n; *  Cannot use the class code to search, because older array controllers use&n; *    0x018000 and new ones use 0x010400.  So I might as well search for each&n; *    each device IDs, being there are only going to be three of them. &n; */
@@ -2934,7 +2982,57 @@ id|dev_fn
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* This seems dumb, surely we could use an array of types to match ?? */
+DECL|macro|IDA_BOARD_TYPES
+mdefine_line|#define IDA_BOARD_TYPES 3
+r_static
+r_int
+id|ida_vendor_id
+(braket
+id|IDA_BOARD_TYPES
+)braket
+op_assign
+(brace
+id|PCI_VENDOR_ID_DEC
+comma
+id|PCI_VENDOR_ID_NCR
+comma
+id|PCI_VENDOR_ID_COMPAQ
+)brace
+suffix:semicolon
+r_static
+r_int
+id|ida_device_id
+(braket
+id|IDA_BOARD_TYPES
+)braket
+op_assign
+(brace
+id|PCI_DEVICE_ID_COMPAQ_42XX
+comma
+id|PCI_DEVICE_ID_NCR_53C1510
+comma
+id|PCI_DEVICE_ID_COMPAQ_SMART2P
+)brace
+suffix:semicolon
+r_int
+id|brdtype
+suffix:semicolon
+multiline_comment|/* search for all PCI board types that could be for this driver */
+r_for
+c_loop
+(paren
+id|brdtype
+op_assign
+l_int|0
+suffix:semicolon
+id|brdtype
+OL
+id|IDA_BOARD_TYPES
+suffix:semicolon
+id|brdtype
+op_increment
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -2953,9 +3051,15 @@ c_cond
 id|pcibios_find_device
 c_func
 (paren
-id|PCI_VENDOR_ID_DEC
+id|ida_vendor_id
+(braket
+id|brdtype
+)braket
 comma
-id|PCI_DEVICE_ID_COMPAQ_42XX
+id|ida_device_id
+(braket
+id|brdtype
+)braket
 comma
 id|index
 comma
@@ -2972,7 +3076,12 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;42XX Device has been found at %x %x&bslash;n&quot;
+l_string|&quot;cpqarray: Device %x has been found at %x %x&bslash;n&quot;
+comma
+id|ida_vendor_id
+(braket
+id|brdtype
+)braket
 comma
 id|bus
 comma
@@ -2999,124 +3108,24 @@ l_int|8
 id|printk
 c_func
 (paren
-l_string|&quot;This driver supports a maximum of &quot;
-l_string|&quot;8 controllers.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray: This driver&quot;
+l_string|&quot; supports a maximum of 8 controllers.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|hba
-(braket
-id|nr_ctlr
-)braket
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-id|ctlr_info_t
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
+multiline_comment|/* if it is a PCI_DEVICE_ID_NCR_53C1510, make sure it&squot;s &t;&t;&t;&t;the Compaq version of the chip */
 r_if
 c_cond
 (paren
-id|hba
+id|ida_device_id
 (braket
-id|nr_ctlr
+id|brdtype
 )braket
 op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;cpqarray: out of memory.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|hba
-(braket
-id|nr_ctlr
-)braket
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|ctlr_info_t
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cpqarray_pci_init
-c_func
-(paren
-id|hba
-(braket
-id|nr_ctlr
-)braket
-comma
-id|bus
-comma
-id|dev_fn
-)paren
-op_ne
-l_int|0
-)paren
-r_continue
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|hba
-(braket
-id|nr_ctlr
-)braket
-op_member_access_from_pointer
-id|devname
-comma
-l_string|&quot;ida%d&quot;
-comma
-id|nr_ctlr
-)paren
-suffix:semicolon
-id|hba
-(braket
-id|nr_ctlr
-)braket
-op_member_access_from_pointer
-id|ctlr
-op_assign
-id|nr_ctlr
-suffix:semicolon
-id|nr_ctlr
-op_increment
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|index
-op_assign
-l_int|0
-suffix:semicolon
-suffix:semicolon
-id|index
-op_increment
+id|PCI_DEVICE_ID_NCR_53C1510
 )paren
 (brace
 r_int
@@ -3124,38 +3133,6 @@ r_int
 id|subvendor
 op_assign
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-c_func
-(paren
-id|PCI_VENDOR_ID_NCR
-comma
-id|PCI_DEVICE_ID_NCR_53C1510
-comma
-id|index
-comma
-op_amp
-id|bus
-comma
-op_amp
-id|dev_fn
-)paren
-)paren
-r_break
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Integrated RAID Chip has been found at %x %x&bslash;n&quot;
-comma
-id|bus
-comma
-id|dev_fn
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3178,10 +3155,10 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;cpqarray failed to read subvendor&bslash;n&quot;
+l_string|&quot;cpqarray: failed to read subvendor&bslash;n&quot;
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
 r_if
@@ -3192,204 +3169,16 @@ op_ne
 id|PCI_VENDOR_ID_COMPAQ
 )paren
 (brace
-r_break
-suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Its a compaq RAID Chip&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|index
-op_eq
-l_int|1000000
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nr_ctlr
-op_eq
-l_int|8
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;This driver supports a maximum of &quot;
-l_string|&quot;8 controllers.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|hba
-(braket
-id|nr_ctlr
-)braket
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-id|ctlr_info_t
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hba
-(braket
-id|nr_ctlr
-)braket
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;cpqarray: out of memory.&bslash;n&quot;
+l_string|&quot;cpqarray: not a Compaq integrated array controller&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|memset
-c_func
-(paren
-id|hba
-(braket
-id|nr_ctlr
-)braket
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|ctlr_info_t
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* DOESNT THIS LEAK MEMORY ?????? - AC */
-r_if
-c_cond
-(paren
-id|cpqarray_pci_init
-c_func
-(paren
-id|hba
-(braket
-id|nr_ctlr
-)braket
-comma
-id|bus
-comma
-id|dev_fn
-)paren
-op_ne
-l_int|0
-)paren
-r_continue
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|hba
-(braket
-id|nr_ctlr
-)braket
-op_member_access_from_pointer
-id|devname
-comma
-l_string|&quot;ida%d&quot;
-comma
-id|nr_ctlr
-)paren
-suffix:semicolon
-id|hba
-(braket
-id|nr_ctlr
-)braket
-op_member_access_from_pointer
-id|ctlr
-op_assign
-id|nr_ctlr
-suffix:semicolon
-id|nr_ctlr
-op_increment
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|index
-op_assign
-l_int|0
-suffix:semicolon
-suffix:semicolon
-id|index
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-c_func
-(paren
-id|PCI_VENDOR_ID_COMPAQ
-comma
-id|PCI_DEVICE_ID_COMPAQ_SMART2P
-comma
-id|index
-comma
-op_amp
-id|bus
-comma
-op_amp
-id|dev_fn
-)paren
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|index
-op_eq
-l_int|1000000
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nr_ctlr
-op_eq
-l_int|8
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;This driver supports a maximum of &quot;
-l_string|&quot;8 controllers.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
 )brace
 id|hba
 (braket
@@ -3462,8 +3251,19 @@ id|dev_fn
 op_ne
 l_int|0
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|hba
+(braket
+id|nr_ctlr
+)braket
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 id|sprintf
 c_func
 (paren
@@ -3491,6 +3291,7 @@ suffix:semicolon
 id|nr_ctlr
 op_increment
 suffix:semicolon
+)brace
 )brace
 r_return
 id|nr_ctlr
@@ -3894,8 +3695,9 @@ id|NR_PRODUCTS
 id|printk
 c_func
 (paren
-l_string|&quot;Sorry, I don&squot;t know how to access the SMART Array&quot;
-l_string|&quot; controller %08lx&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray: Sorry, I don&squot;t know how&quot;
+l_string|&quot; to access the SMART Array controller %08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -4175,8 +3977,9 @@ l_int|8
 id|printk
 c_func
 (paren
-l_string|&quot;This driver supports a maximum of &quot;
-l_string|&quot;8 controllers.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray: This driver supports&quot;
+l_string|&quot; a maximum of 8 controllers.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4234,8 +4037,9 @@ id|NR_PRODUCTS
 id|printk
 c_func
 (paren
-l_string|&quot;Sorry, I don&squot;t know how to access the SMART&quot;
-l_string|&quot; Array controller %08lx&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray: Sorry, I don&squot;t know how&quot;
+l_string|&quot; to access the SMART Array controller %08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -4252,6 +4056,10 @@ id|hba
 id|nr_ctlr
 )braket
 op_assign
+(paren
+id|ctlr_info_t
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -4963,9 +4771,16 @@ c_func
 id|queue_head
 )paren
 )paren
-r_goto
-id|doreq_done
+(brace
+id|start_io
+c_func
+(paren
+id|h
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|creq
 op_assign
 id|blkdev_entry_next_request
@@ -4981,9 +4796,16 @@ id|creq-&gt;rq_status
 op_eq
 id|RQ_INACTIVE
 )paren
-r_goto
-id|doreq_done
+(brace
+id|start_io
+c_func
+(paren
+id|h
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5026,8 +4848,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_goto
-id|doreq_done
+id|start_io
+c_func
+(paren
+id|h
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -5045,9 +4872,16 @@ id|h
 op_eq
 l_int|NULL
 )paren
-r_goto
-id|doreq_done
+(brace
+id|start_io
+c_func
+(paren
+id|h
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|bh
 op_assign
 id|creq-&gt;bh
@@ -5424,8 +5258,6 @@ id|h-&gt;maxQsinceinit
 op_assign
 id|h-&gt;Qdepth
 suffix:semicolon
-id|doreq_done
-suffix:colon
 id|start_io
 c_func
 (paren
@@ -5580,12 +5412,6 @@ r_int
 id|timeout
 )paren
 (brace
-r_char
-id|buf
-(braket
-l_int|80
-)braket
-suffix:semicolon
 r_int
 id|ok
 op_assign
@@ -5612,22 +5438,15 @@ op_eq
 l_int|0
 )paren
 (brace
-id|sprintf
+id|printk
 c_func
 (paren
-id|buf
-comma
+id|KERN_WARNING
 l_string|&quot;Non Fatal error on ida/c%dd%d&bslash;n&quot;
 comma
 id|cmd-&gt;ctlr
 comma
 id|cmd-&gt;hdr.unit
-)paren
-suffix:semicolon
-id|console_print
-c_func
-(paren
-id|buf
 )paren
 suffix:semicolon
 id|hba
@@ -5648,22 +5467,15 @@ op_amp
 id|RCODE_FATAL
 )paren
 (brace
-id|sprintf
+id|printk
 c_func
 (paren
-id|buf
-comma
+id|KERN_WARNING
 l_string|&quot;Fatal error on ida/c%dd%d&bslash;n&quot;
 comma
 id|cmd-&gt;ctlr
 comma
 id|cmd-&gt;hdr.unit
-)paren
-suffix:semicolon
-id|console_print
-c_func
-(paren
-id|buf
 )paren
 suffix:semicolon
 id|ok
@@ -5679,11 +5491,10 @@ op_amp
 id|RCODE_INVREQ
 )paren
 (brace
-id|sprintf
+id|printk
 c_func
 (paren
-id|buf
-comma
+id|KERN_WARNING
 l_string|&quot;Invalid request on ida/c%dd%d = (cmd=%x sect=%d cnt=%d sg=%d ret=%x)&bslash;n&quot;
 comma
 id|cmd-&gt;ctlr
@@ -5699,12 +5510,6 @@ comma
 id|cmd-&gt;req.hdr.sg_cnt
 comma
 id|cmd-&gt;req.hdr.rcode
-)paren
-suffix:semicolon
-id|console_print
-c_func
-(paren
-id|buf
 )paren
 suffix:semicolon
 id|ok
@@ -5847,9 +5652,23 @@ id|h-&gt;cmpQ
 op_eq
 l_int|NULL
 )paren
-r_goto
-id|bad_completion
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;cpqarray: Completion of %08lx ignored&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|a1
+)paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -5932,20 +5751,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|bad_completion
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Completion of %08lx ignored&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|a1
-)paren
-suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * See if we can queue up some more IO&n;&t; */
@@ -6692,8 +6497,16 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-r_goto
-id|ioctl_err_exit
+id|cmd_free
+c_func
+(paren
+l_int|NULL
+comma
+id|c
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 id|copy_from_user
@@ -6720,7 +6533,7 @@ dot
 id|size
 )paren
 suffix:semicolon
-id|c-&gt;req.bp
+id|c-&gt;req.hdr.blk
 op_assign
 id|virt_to_bus
 c_func
@@ -6794,8 +6607,16 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-r_goto
-id|ioctl_err_exit
+id|cmd_free
+c_func
+(paren
+l_int|NULL
+comma
+id|c
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 id|c-&gt;req.sg
@@ -6867,8 +6688,16 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-r_goto
-id|ioctl_err_exit
+id|cmd_free
+c_func
+(paren
+l_int|NULL
+comma
+id|c
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 id|copy_from_user
@@ -7078,12 +6907,6 @@ id|io-&gt;rcode
 op_assign
 id|c-&gt;req.hdr.rcode
 suffix:semicolon
-id|error
-op_assign
-l_int|0
-suffix:semicolon
-id|ioctl_err_exit
-suffix:colon
 id|cmd_free
 c_func
 (paren
@@ -7093,7 +6916,7 @@ id|c
 )paren
 suffix:semicolon
 r_return
-id|error
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Commands are pre-allocated in a large block.  Here we use a simple bitmap&n; * scheme to suballocte them to the driver.  Operations that are not time&n; * critical (and can wait for kmalloc and possibly sleep) can pass in NULL&n; * as the first argument to get a new command.&n; */
@@ -7533,7 +7356,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;ida%d: idaSendPciCmd FIFO full, waiting!&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray ida%d: idaSendPciCmd FIFO full,&quot;
+l_string|&quot; waiting!&bslash;n&quot;
 comma
 id|ctlr
 )paren
@@ -7579,7 +7404,8 @@ id|c-&gt;busaddr
 id|printk
 c_func
 (paren
-l_string|&quot;ida%d: idaSendPciCmd &quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray ida%d: idaSendPciCmd &quot;
 l_string|&quot;Invalid command list address returned! (%08lx)&bslash;n&quot;
 comma
 id|ctlr
@@ -7611,7 +7437,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;ida%d: idaSendPciCmd Timeout out, &quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray ida%d: idaSendPciCmd Timeout out, &quot;
 l_string|&quot;No command list address returned!&bslash;n&quot;
 comma
 id|ctlr
@@ -7653,8 +7480,9 @@ id|BIG_PROBLEM
 id|printk
 c_func
 (paren
-l_string|&quot;ida%d: idaSendPciCmd, error: Controller failed &quot;
-l_string|&quot;at init time &quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray ida%d: idaSendPciCmd, error: &quot;
+l_string|&quot;Controller failed at init time &quot;
 l_string|&quot;cmd: 0x%x, return code = 0x%x&bslash;n&quot;
 comma
 id|ctlr
@@ -7792,7 +7620,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Device busy for volume revalidation (usage=%d)&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray: Device busy for volume&quot;
+l_string|&quot; revalidation (usage=%d)&bslash;n&quot;
 comma
 id|hba
 (braket
@@ -8156,7 +7986,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Device busy for revalidation (usage=%d)&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray: Device busy for &quot;
+l_string|&quot;revalidation (usage=%d)&bslash;n&quot;
 comma
 id|hba
 (braket
@@ -8449,6 +8281,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|hba
 (braket
 id|ctlr
@@ -8457,6 +8290,18 @@ op_member_access_from_pointer
 id|board_id
 op_ne
 l_int|0x40400E11
+)paren
+op_logical_and
+(paren
+id|hba
+(braket
+id|ctlr
+)braket
+op_member_access_from_pointer
+id|board_id
+op_ne
+l_int|0x40480E11
+)paren
 )paren
 (brace
 multiline_comment|/* Not a Integrated Raid, so there is nothing for us to do */
@@ -8467,7 +8312,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Starting firmware&squot;s background processing&bslash;n&quot;
+l_string|&quot;cpqarray: Starting firmware&squot;s background&quot;
+l_string|&quot; processing&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Command does not return anything, but idasend command needs a &n;&t;&t;buffer */
@@ -8500,7 +8346,8 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Out of memory. Unable to start background processing.&bslash;n&quot;
+l_string|&quot;cpqarray: Out of memory. &quot;
+l_string|&quot;Unable to start background processing.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -8538,7 +8385,8 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Unable to start background processing&bslash;n&quot;
+l_string|&quot;cpqarray: Unable to start&quot;
+l_string|&quot; background processing&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -8629,6 +8477,13 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray:  out of memory.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -8657,8 +8512,20 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_goto
-id|bail2
+id|kfree
+c_func
+(paren
+id|id_ldrive
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray:  out of memory.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|id_lstatus_buf
@@ -8686,8 +8553,26 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_goto
-id|bail3
+id|kfree
+c_func
+(paren
+id|id_ctlr_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ldrive
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray:  out of memory.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|sense_config_buf
@@ -8715,8 +8600,32 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_goto
-id|bail4
+id|kfree
+c_func
+(paren
+id|id_lstatus_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ctlr_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ldrive
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray:  out of memory.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|memset
@@ -8822,10 +8731,40 @@ id|IO_ERROR
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * If can&squot;t get controller info, set the logical drive map to 0,&n;&t;&t; * so the idastubopen will fail on all logical drives&n;&t;&t; * on the controller.&n;&t;&t; */
-r_goto
-id|geo_ret
+multiline_comment|/* Free all the buffers and return */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: error sending ID controller&bslash;n&quot;
+)paren
 suffix:semicolon
-multiline_comment|/* release the buf and return */
+id|kfree
+c_func
+(paren
+id|sense_config_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_lstatus_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ctlr_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ldrive
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 id|info_p-&gt;log_drives
 op_assign
@@ -8878,8 +8817,10 @@ l_int|16
 id|printk
 c_func
 (paren
-l_string|&quot;ida%d:  This driver supports 16 logical drives &quot;
-l_string|&quot;per controller.&bslash;n.  Additional drives will not be &quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray ida%d:  This driver supports &quot;
+l_string|&quot;16 logical drives per controller.&bslash;n.  &quot;
+l_string|&quot; Additional drives will not be &quot;
 l_string|&quot;detected&bslash;n&quot;
 comma
 id|ctlr
@@ -8952,8 +8893,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ida%d: idaGetGeometry - Controller failed &quot;
-l_string|&quot;to report status of logical drive %d&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cpqarray ida%d: idaGetGeometry - Controller&quot;
+l_string|&quot; failed to report status of logical drive %d&bslash;n&quot;
 l_string|&quot;Access to this controller has been disabled&bslash;n&quot;
 comma
 id|ctlr
@@ -8961,10 +8903,33 @@ comma
 id|log_unit
 )paren
 suffix:semicolon
-r_goto
-id|geo_ret
+multiline_comment|/* Free all the buffers and return */
+id|kfree
+c_func
+(paren
+id|sense_config_buf
+)paren
 suffix:semicolon
-multiline_comment|/* release the buf and return */
+id|kfree
+c_func
+(paren
+id|id_lstatus_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ctlr_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ldrive
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;   Make sure the logical drive is configured&n;&t;&t; */
 r_if
@@ -9046,7 +9011,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ida/c%dd%d: blksz=%d nr_blks=%d&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;cpqarray ida/c%dd%d: blksz=%d nr_blks=%d&bslash;n&quot;
 comma
 id|ctlr
 comma
@@ -9092,10 +9058,40 @@ id|info_p-&gt;log_drv_map
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|geo_ret
+multiline_comment|/* Free all the buffers and return */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cpqarray: error sending sense config&bslash;n&quot;
+)paren
 suffix:semicolon
-multiline_comment|/* release the buf and return */
+id|kfree
+c_func
+(paren
+id|sense_config_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_lstatus_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ctlr_buf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|id_ldrive
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 id|info_p-&gt;phys_drives
 op_assign
@@ -9125,37 +9121,31 @@ suffix:semicolon
 multiline_comment|/* end of if logical drive configured */
 )brace
 multiline_comment|/* end of for log_unit */
-id|geo_ret
-suffix:colon
 id|kfree
 c_func
 (paren
 id|sense_config_buf
 )paren
 suffix:semicolon
-id|bail4
-suffix:colon
 id|kfree
 c_func
 (paren
 id|id_ldrive
 )paren
 suffix:semicolon
-id|bail3
-suffix:colon
 id|kfree
 c_func
 (paren
 id|id_lstatus_buf
 )paren
 suffix:semicolon
-id|bail2
-suffix:colon
 id|kfree
 c_func
 (paren
 id|id_ctlr_buf
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 eof

@@ -32,11 +32,7 @@ DECL|macro|FALSE
 mdefine_line|#define FALSE   0
 DECL|macro|TRUE
 mdefine_line|#define TRUE    1
-multiline_comment|/* Draw Function */
-DECL|macro|FBIOGET_GLYPH
-mdefine_line|#define FBIOGET_GLYPH        0x4620
-DECL|macro|FBIOGET_HWCINFO
-mdefine_line|#define FBIOGET_HWCINFO      0x4621
+multiline_comment|/* Draw Function &n;#define FBIOGET_GLYPH        0x4620&n;#define FBIOGET_HWCINFO      0x4621&n;*/
 DECL|macro|BR
 mdefine_line|#define BR(x)   (0x8200 | (x) &lt;&lt; 2)
 DECL|macro|BITBLT
@@ -139,8 +135,10 @@ DECL|macro|MMIO_SIZE
 mdefine_line|#define MMIO_SIZE                 0x20000&t;/* 128K MMIO capability */
 DECL|macro|MAX_ROM_SCAN
 mdefine_line|#define MAX_ROM_SCAN              0x10000
-DECL|macro|RESERVED_MEM_SIZE
-mdefine_line|#define RESERVED_MEM_SIZE         0x400000&t;/* 4M */
+DECL|macro|RESERVED_MEM_SIZE_4M
+mdefine_line|#define RESERVED_MEM_SIZE_4M      0x400000&t;/* 4M */
+DECL|macro|RESERVED_MEM_SIZE_8M
+mdefine_line|#define RESERVED_MEM_SIZE_8M      0x800000&t;/* 8M */
 multiline_comment|/* Mode set stuff */
 DECL|macro|DEFAULT_MODE
 mdefine_line|#define DEFAULT_MODE      0
@@ -261,25 +259,25 @@ id|dev_list
 op_assign
 (brace
 (brace
-id|PCI_VENDOR_ID_SIS
+id|PCI_VENDOR_ID_SI
 comma
-id|PCI_DEVICE_ID_SIS_300
+id|PCI_DEVICE_ID_SI_300
 comma
 l_string|&quot;SIS 300&quot;
 )brace
 comma
 (brace
-id|PCI_VENDOR_ID_SIS
+id|PCI_VENDOR_ID_SI
 comma
-id|PCI_DEVICE_ID_SIS_540
+id|PCI_DEVICE_ID_SI_540
 comma
 l_string|&quot;SIS 540&quot;
 )brace
 comma
 (brace
-id|PCI_VENDOR_ID_SIS
+id|PCI_VENDOR_ID_SI
 comma
-id|PCI_DEVICE_ID_SIS_630
+id|PCI_DEVICE_ID_SI_630
 comma
 l_string|&quot;SIS 630&quot;
 )brace
@@ -5785,6 +5783,15 @@ id|jTemp
 comma
 id|tq_state
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ivideo.video_size
+OG
+l_int|0x800000
+)paren
+(brace
+multiline_comment|/* video ram is large than 8M */
 id|heap_start
 op_assign
 (paren
@@ -5793,9 +5800,20 @@ r_int
 )paren
 id|ivideo.video_vbase
 op_plus
-id|RESERVED_MEM_SIZE
+id|RESERVED_MEM_SIZE_8M
 suffix:semicolon
-singleline_comment|//heap_start = (unsigned long)ivideo.video_vbase + (video_size - RESERVED_MEM_SIZE);
+)brace
+r_else
+id|heap_start
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ivideo.video_vbase
+op_plus
+id|RESERVED_MEM_SIZE_4M
+suffix:semicolon
 id|heap_end
 op_assign
 (paren
@@ -7160,6 +7178,7 @@ id|u16
 id|ModeNo
 )paren
 (brace
+macro_line|#if 0
 r_int
 r_char
 id|ModeID
@@ -7243,6 +7262,10 @@ r_return
 (paren
 id|modeidlength
 )paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|10
 suffix:semicolon
 )brace
 DECL|function|search_modeID
@@ -13347,9 +13370,24 @@ id|fix-&gt;smem_start
 op_assign
 id|ivideo.video_base
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ivideo.video_size
+OG
+l_int|0x800000
+)paren
+(brace
 id|fix-&gt;smem_len
 op_assign
-id|RESERVED_MEM_SIZE
+id|RESERVED_MEM_SIZE_8M
+suffix:semicolon
+)brace
+multiline_comment|/* reserved for Xserver */
+r_else
+id|fix-&gt;smem_len
+op_assign
+id|RESERVED_MEM_SIZE_4M
 suffix:semicolon
 multiline_comment|/* reserved for Xserver */
 id|fix-&gt;type
