@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acm.c  Version 0.13&n; *&n; * Copyright (c) 1999 Armin Fuerst&t;&lt;fuerst@in.tum.de&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 1999 Johannes Erdfelt&t;&lt;jerdfelt@valinux.com&gt;&n; * Copyright (c) 1999 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; *&n; * USB Abstract Control Model driver for USB modems and ISDN adapters&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.9  - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.10 - some more cleanups&n; *&t;v0.11 - fixed flow control, read error doesn&squot;t stop reads&n; *&t;v0.12 - added TIOCM ioctls, added break handling, made struct acm kmalloced&n; *&t;v0.13 - added termios, added hangup&n; */
+multiline_comment|/*&n; * acm.c  Version 0.14&n; *&n; * Copyright (c) 1999 Armin Fuerst&t;&lt;fuerst@in.tum.de&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 1999 Johannes Erdfelt&t;&lt;jerdfelt@valinux.com&gt;&n; * Copyright (c) 2000 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; *&n; * USB Abstract Control Model driver for USB modems and ISDN adapters&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.9  - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.10 - some more cleanups&n; *&t;v0.11 - fixed flow control, read error doesn&squot;t stop reads&n; *&t;v0.12 - added TIOCM ioctls, added break handling, made struct acm kmalloced&n; *&t;v0.13 - added termios, added hangup&n; *&t;v0.14 - sized down struct acm&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -126,30 +126,6 @@ op_star
 id|tty
 suffix:semicolon
 multiline_comment|/* the coresponding tty */
-DECL|member|ctrlin
-r_int
-r_int
-id|ctrlin
-suffix:semicolon
-multiline_comment|/* input control lines (DCD, DSR, RI, break, overruns) */
-DECL|member|ctrlout
-r_int
-r_int
-id|ctrlout
-suffix:semicolon
-multiline_comment|/* output control lines (DTR, RTS) */
-DECL|member|line
-r_struct
-id|acm_line
-id|line
-suffix:semicolon
-multiline_comment|/* line coding (bits, stop, parity) */
-DECL|member|writesize
-r_int
-r_int
-id|writesize
-suffix:semicolon
-multiline_comment|/* max packet size for the output bulk endpoint */
 DECL|member|ctrlurb
 DECL|member|readurb
 DECL|member|writeurb
@@ -162,27 +138,45 @@ comma
 id|writeurb
 suffix:semicolon
 multiline_comment|/* urbs */
-DECL|member|minor
-r_int
-r_int
-id|minor
+DECL|member|line
+r_struct
+id|acm_line
+id|line
 suffix:semicolon
-multiline_comment|/* acm minor number */
-DECL|member|present
+multiline_comment|/* line coding (bits, stop, parity) */
+DECL|member|ctrlin
 r_int
 r_int
-id|present
+id|ctrlin
 suffix:semicolon
-multiline_comment|/* this device is connected to the usb bus */
+multiline_comment|/* input control lines (DCD, DSR, RI, break, overruns) */
+DECL|member|ctrlout
+r_int
+r_int
+id|ctrlout
+suffix:semicolon
+multiline_comment|/* output control lines (DTR, RTS) */
+DECL|member|writesize
+r_int
+r_int
+id|writesize
+suffix:semicolon
+multiline_comment|/* max packet size for the output bulk endpoint */
 DECL|member|used
 r_int
 r_int
 id|used
 suffix:semicolon
 multiline_comment|/* someone has this acm&squot;s device open */
+DECL|member|minor
+r_int
+r_int
+id|minor
+suffix:semicolon
+multiline_comment|/* acm minor number */
 DECL|member|clocal
 r_int
-r_int
+r_char
 id|clocal
 suffix:semicolon
 multiline_comment|/* termios CLOCAL */
@@ -211,7 +205,7 @@ multiline_comment|/* .... */
 )brace
 suffix:semicolon
 DECL|macro|ACM_READY
-mdefine_line|#define ACM_READY(acm)&t;(acm &amp;&amp; acm-&gt;present &amp;&amp; acm-&gt;used)
+mdefine_line|#define ACM_READY(acm)&t;(acm &amp;&amp; acm-&gt;dev &amp;&amp; acm-&gt;used)
 multiline_comment|/*&n; * Functions for ACM control messages.&n; */
 DECL|function|acm_ctrl_msg
 r_static
@@ -809,7 +803,7 @@ op_logical_neg
 id|acm
 op_logical_or
 op_logical_neg
-id|acm-&gt;present
+id|acm-&gt;dev
 )paren
 r_return
 op_minus
@@ -930,7 +924,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|acm-&gt;present
+id|acm-&gt;dev
 )paren
 (brace
 id|acm_set_control
@@ -2297,10 +2291,6 @@ id|acm-&gt;minor
 op_assign
 id|minor
 suffix:semicolon
-id|acm-&gt;present
-op_assign
-l_int|1
-suffix:semicolon
 id|acm-&gt;dev
 op_assign
 id|dev
@@ -2530,7 +2520,7 @@ op_logical_neg
 id|acm
 op_logical_or
 op_logical_neg
-id|acm-&gt;present
+id|acm-&gt;dev
 )paren
 (brace
 id|dbg
@@ -2542,9 +2532,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|acm-&gt;present
+id|acm-&gt;dev
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|usb_unlink_urb
 c_func

@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|PCILYNX_DRIVER_NAME
 mdefine_line|#define PCILYNX_DRIVER_NAME      &quot;pcilynx&quot;
 DECL|macro|PCILYNX_MAJOR

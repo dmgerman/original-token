@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    Resource management routines&n;&n;    rsrc_mgr.c 1.76 1999/11/08 20:47:02&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    Resource management routines&n;&n;    rsrc_mgr.c 1.77 1999/11/16 03:32:59&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -271,6 +271,15 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|q
+)paren
+r_return
+id|CS_OUT_OF_RESOURCE
+suffix:semicolon
 id|q-&gt;base
 op_assign
 id|base
@@ -288,10 +297,9 @@ op_assign
 id|q
 suffix:semicolon
 r_return
-l_int|0
+id|CS_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* add_interval */
 multiline_comment|/*====================================================================*/
 DECL|function|sub_interval
 r_static
@@ -458,6 +466,15 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p
+)paren
+r_return
+id|CS_OUT_OF_RESOURCE
+suffix:semicolon
 id|p-&gt;base
 op_assign
 id|base
@@ -490,10 +507,9 @@ suffix:semicolon
 )brace
 )brace
 r_return
-l_int|0
+id|CS_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* sub_interval */
 multiline_comment|/*======================================================================&n;&n;    These routines examine a region of IO or memory addresses to&n;    determine what ranges might be genuinely available.&n;    &n;======================================================================*/
 macro_line|#ifdef CONFIG_ISA
 DECL|function|do_io_probe
@@ -1838,7 +1854,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* find_io_region */
 DECL|function|find_mem_region
 r_int
 id|find_mem_region
@@ -2024,7 +2039,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* find_mem_region */
 multiline_comment|/*======================================================================&n;&n;    This checks to see if an interrupt is available, with support&n;    for interrupt sharing.  We don&squot;t support reserving interrupts&n;    yet.  If the interrupt is available, we allocate it.&n;    &n;======================================================================*/
 macro_line|#ifdef CONFIG_ISA
 DECL|function|fake_irq
@@ -2328,7 +2342,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* try_irq */
 macro_line|#endif
 multiline_comment|/*====================================================================*/
 macro_line|#ifdef CONFIG_ISA
@@ -2433,6 +2446,8 @@ id|num
 suffix:semicolon
 r_int
 id|i
+comma
+id|ret
 suffix:semicolon
 id|base
 op_assign
@@ -2464,6 +2479,10 @@ id|base
 r_return
 id|CS_BAD_SIZE
 suffix:semicolon
+id|ret
+op_assign
+id|CS_SUCCESS
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2473,9 +2492,8 @@ id|adj-&gt;Action
 r_case
 id|ADD_MANAGED_RESOURCE
 suffix:colon
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|add_interval
 c_func
 (paren
@@ -2486,17 +2504,14 @@ id|base
 comma
 id|num
 )paren
-op_ne
-l_int|0
-)paren
-r_return
-id|CS_IN_USE
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|REMOVE_MANAGED_RESOURCE
 suffix:colon
+id|ret
+op_assign
 id|sub_interval
 c_func
 (paren
@@ -2508,6 +2523,14 @@ comma
 id|num
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_eq
+id|CS_SUCCESS
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -2544,21 +2567,20 @@ id|i
 suffix:semicolon
 macro_line|#endif
 )brace
+)brace
 r_break
 suffix:semicolon
 r_default
 suffix:colon
-r_return
+id|ret
+op_assign
 id|CS_UNSUPPORTED_FUNCTION
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
 r_return
-id|CS_SUCCESS
+id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* adjust_mem */
 multiline_comment|/*====================================================================*/
 DECL|function|adjust_io
 r_static
@@ -2703,7 +2725,6 @@ r_return
 id|CS_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* adjust_io */
 multiline_comment|/*====================================================================*/
 DECL|function|adjust_irq
 r_static
@@ -2858,7 +2879,6 @@ r_return
 id|CS_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* adjust_irq */
 multiline_comment|/*====================================================================*/
 DECL|function|pcmcia_adjust_resource_info
 r_int
@@ -2932,7 +2952,6 @@ r_return
 id|CS_UNSUPPORTED_FUNCTION
 suffix:semicolon
 )brace
-multiline_comment|/* adjust_resource_info */
 multiline_comment|/*====================================================================*/
 DECL|function|release_resource_db
 r_void

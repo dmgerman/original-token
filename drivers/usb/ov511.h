@@ -6,10 +6,10 @@ DECL|macro|OV511_DEBUG
 mdefine_line|#define OV511_DEBUG&t;/* Turn on debug messages */
 macro_line|#ifdef OV511_DEBUG
 DECL|macro|PDEBUG
-macro_line|#  define PDEBUG(fmt, args...) printk(&quot;ov511: &quot; fmt, ## args)
+macro_line|#  define PDEBUG(fmt, args...) printk(&quot;ov511: &quot; fmt &quot;&bslash;n&quot; , ## args)
 macro_line|#else
 DECL|macro|PDEBUG
-macro_line|#  define PDEBUG(fmt, args...) /* Nothing */
+macro_line|#  define PDEBUG(fmt, args...) do {} while(0)
 macro_line|#endif
 multiline_comment|/* Camera interface register numbers */
 DECL|macro|OV511_REG_CAMERA_DELAY_MODE
@@ -165,6 +165,91 @@ DECL|macro|OV511_ALTERNATE_SIZE_257
 mdefine_line|#define OV511_ALTERNATE_SIZE_257&t;6
 DECL|macro|OV511_ALTERNATE_SIZE_0
 mdefine_line|#define OV511_ALTERNATE_SIZE_0&t;&t;7
+multiline_comment|/* ov7610 registers */
+DECL|macro|OV7610_REG_GAIN
+mdefine_line|#define OV7610_REG_GAIN          0x00
+DECL|macro|OV7610_REG_BLUE
+mdefine_line|#define OV7610_REG_BLUE          0x01
+DECL|macro|OV7610_REG_RED
+mdefine_line|#define OV7610_REG_RED           0x02
+DECL|macro|OV7610_REG_SAT
+mdefine_line|#define OV7610_REG_SAT           0x03
+DECL|macro|OV7610_REG_CNT
+mdefine_line|#define OV7610_REG_CNT           0x05
+DECL|macro|OV7610_REG_BRT
+mdefine_line|#define OV7610_REG_BRT           0x06
+DECL|macro|OV7610_REG_BLUE_BIAS
+mdefine_line|#define OV7610_REG_BLUE_BIAS     0x0C
+DECL|macro|OV7610_REG_RED_BIAS
+mdefine_line|#define OV7610_REG_RED_BIAS      0x0D
+DECL|macro|OV7610_REG_GAMMA_COEFF
+mdefine_line|#define OV7610_REG_GAMMA_COEFF   0x0E
+DECL|macro|OV7610_REG_WB_RANGE
+mdefine_line|#define OV7610_REG_WB_RANGE      0x0F
+DECL|macro|OV7610_REG_EXP
+mdefine_line|#define OV7610_REG_EXP           0x10
+DECL|macro|OV7610_REG_CLOCK
+mdefine_line|#define OV7610_REG_CLOCK         0x11
+DECL|macro|OV7610_REG_COM_A
+mdefine_line|#define OV7610_REG_COM_A         0x12
+DECL|macro|OV7610_REG_COM_B
+mdefine_line|#define OV7610_REG_COM_B         0x13
+DECL|macro|OV7610_REG_COM_C
+mdefine_line|#define OV7610_REG_COM_C         0x14
+DECL|macro|OV7610_REG_COM_D
+mdefine_line|#define OV7610_REG_COM_D         0x15
+DECL|macro|OV7610_REG_FIELD_DIVIDE
+mdefine_line|#define OV7610_REG_FIELD_DIVIDE  0x16
+DECL|macro|OV7610_REG_HWIN_START
+mdefine_line|#define OV7610_REG_HWIN_START    0x17
+DECL|macro|OV7610_REG_HWIN_END
+mdefine_line|#define OV7610_REG_HWIN_END      0x18
+DECL|macro|OV7610_REG_VWIN_START
+mdefine_line|#define OV7610_REG_VWIN_START    0x19
+DECL|macro|OV7610_REG_VWIN_END
+mdefine_line|#define OV7610_REG_VWIN_END      0x1A
+DECL|macro|OV7610_REG_PIXEL_SHIFT
+mdefine_line|#define OV7610_REG_PIXEL_SHIFT   0x1B
+DECL|macro|OV7610_REG_ID_HIGH
+mdefine_line|#define OV7610_REG_ID_HIGH       0x1C
+DECL|macro|OV7610_REG_ID_LOW
+mdefine_line|#define OV7610_REG_ID_LOW        0x1D
+DECL|macro|OV7610_REG_COM_E
+mdefine_line|#define OV7610_REG_COM_E         0x20
+DECL|macro|OV7610_REG_YOFFSET
+mdefine_line|#define OV7610_REG_YOFFSET       0x21
+DECL|macro|OV7610_REG_UOFFSET
+mdefine_line|#define OV7610_REG_UOFFSET       0x22
+DECL|macro|OV7610_REG_ECW
+mdefine_line|#define OV7610_REG_ECW           0x24
+DECL|macro|OV7610_REG_ECB
+mdefine_line|#define OV7610_REG_ECB           0x25
+DECL|macro|OV7610_REG_COM_F
+mdefine_line|#define OV7610_REG_COM_F         0x26
+DECL|macro|OV7610_REG_COM_G
+mdefine_line|#define OV7610_REG_COM_G         0x27
+DECL|macro|OV7610_REG_COM_H
+mdefine_line|#define OV7610_REG_COM_H         0x28
+DECL|macro|OV7610_REG_COM_I
+mdefine_line|#define OV7610_REG_COM_I         0x29
+DECL|macro|OV7610_REG_FRAMERATE_H
+mdefine_line|#define OV7610_REG_FRAMERATE_H   0x2A
+DECL|macro|OV7610_REG_FRAMERATE_L
+mdefine_line|#define OV7610_REG_FRAMERATE_L   0x2B
+DECL|macro|OV7610_REG_ALC
+mdefine_line|#define OV7610_REG_ALC           0x2C
+DECL|macro|OV7610_REG_COM_J
+mdefine_line|#define OV7610_REG_COM_J         0x2D
+DECL|macro|OV7610_REG_VOFFSET
+mdefine_line|#define OV7610_REG_VOFFSET       0x2E
+DECL|macro|OV7610_REG_YGAMMA
+mdefine_line|#define OV7610_REG_YGAMMA        0x33
+DECL|macro|OV7610_REG_BIAS_ADJUST
+mdefine_line|#define OV7610_REG_BIAS_ADJUST   0x34
+DECL|macro|OV7610_REG_COM_L
+mdefine_line|#define OV7610_REG_COM_L         0x35
+DECL|macro|OV7610_REG_COM_K
+mdefine_line|#define OV7610_REG_COM_K         0x38
 DECL|macro|STREAM_BUF_SIZE
 mdefine_line|#define STREAM_BUF_SIZE&t;(PAGE_SIZE * 4)
 DECL|macro|SCRATCH_BUF_SIZE

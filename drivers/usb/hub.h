@@ -2,6 +2,11 @@ macro_line|#ifndef __LINUX_HUB_H
 DECL|macro|__LINUX_HUB_H
 mdefine_line|#define __LINUX_HUB_H
 macro_line|#include &lt;linux/list.h&gt;
+multiline_comment|/*&n; * Hub request types&n; */
+DECL|macro|USB_RT_HUB
+mdefine_line|#define USB_RT_HUB&t;(USB_TYPE_CLASS | USB_RECIP_DEVICE)
+DECL|macro|USB_RT_PORT
+mdefine_line|#define USB_RT_PORT&t;(USB_TYPE_CLASS | USB_RECIP_OTHER)
 multiline_comment|/*&n; * Hub Class feature numbers&n; */
 DECL|macro|C_HUB_LOCAL_POWER
 mdefine_line|#define C_HUB_LOCAL_POWER&t;0

@@ -647,6 +647,22 @@ id|topCdromPtr
 op_assign
 id|cdi
 suffix:semicolon
+multiline_comment|/*FIXME:as soon as we&squot;ll switch to real thing, pass device number here*/
+id|register_disk
+c_func
+(paren
+l_int|NULL
+comma
+id|cdi-&gt;dev
+comma
+l_int|1
+comma
+op_amp
+id|cdrom_fops
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -758,6 +774,7 @@ id|topCdromPtr
 op_assign
 id|cdi-&gt;next
 suffix:semicolon
+multiline_comment|/*&t;unregister_disk();&t;*/
 id|cdi-&gt;ops-&gt;n_minors
 op_decrement
 suffix:semicolon

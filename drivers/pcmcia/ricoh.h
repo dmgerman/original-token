@@ -131,7 +131,7 @@ DECL|macro|RL5C4XX_HOLD_MASK
 mdefine_line|#define  RL5C4XX_HOLD_MASK&t;&t;0x1c00
 DECL|macro|RL5C4XX_HOLD_SHIFT
 mdefine_line|#define  RL5C4XX_HOLD_SHIFT&t;&t;10
-macro_line|#ifdef CONFIG_CARDBUS
+macro_line|#ifdef __YENTA_H
 DECL|macro|rl_misc
 mdefine_line|#define rl_misc(socket)&t;&t;((socket)-&gt;private[0])
 DECL|macro|rl_ctl

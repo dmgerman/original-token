@@ -992,6 +992,7 @@ id|__init_end
 suffix:semicolon
 DECL|function|set_pte_phys
 r_static
+r_inline
 r_void
 id|set_pte_phys
 (paren
@@ -1002,6 +1003,9 @@ comma
 r_int
 r_int
 id|phys
+comma
+id|pgprot_t
+id|flags
 )paren
 (brace
 id|pgprot_t
@@ -1051,7 +1055,7 @@ id|vaddr
 suffix:semicolon
 id|prot
 op_assign
-id|PAGE_KERNEL
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -1090,9 +1094,9 @@ id|vaddr
 )paren
 suffix:semicolon
 )brace
-DECL|function|set_fixmap
+DECL|function|__set_fixmap
 r_void
-id|set_fixmap
+id|__set_fixmap
 (paren
 r_enum
 id|fixed_addresses
@@ -1101,6 +1105,9 @@ comma
 r_int
 r_int
 id|phys
+comma
+id|pgprot_t
+id|flags
 )paren
 (brace
 r_int
@@ -1124,7 +1131,7 @@ id|__end_of_fixed_addresses
 id|printk
 c_func
 (paren
-l_string|&quot;Invalid set_fixmap&bslash;n&quot;
+l_string|&quot;Invalid __set_fixmap&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1136,6 +1143,8 @@ c_func
 id|address
 comma
 id|phys
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1903,7 +1912,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-id|flush_tlb_all
+id|flush_tlb_all_kernel
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A driver for CardBus serial devices&n;&n;    serial_cb.c 1.14 1999/11/11 02:18:08&n;&n;    Copyright 1998, 1999 by Donald Becker and David Hinds&n;    &n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;    All other rights reserved.&n;    &n;    This driver is an activator for CardBus serial cards, as&n;    found on multifunction (e.g. Ethernet and Modem) CardBus cards.&n;    &n;    Donald Becker may be reached as becker@CESDIS.edu, or C/O&n;    USRA Center of Excellence in Space Data and Information Sciences&n;    Code 930.5, NASA Goddard Space Flight Center, Greenbelt MD 20771&n;    David Hinds may be reached at dhinds@pcmcia.sourceforge.org&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A driver for CardBus serial devices&n;&n;    serial_cb.c 1.15 1999/11/24 02:52:06&n;&n;    Copyright 1998, 1999 by Donald Becker and David Hinds&n;    &n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;    All other rights reserved.&n;    &n;    This driver is an activator for CardBus serial cards, as&n;    found on multifunction (e.g. Ethernet and Modem) CardBus cards.&n;    &n;    Donald Becker may be reached as becker@CESDIS.edu, or C/O&n;    USRA Center of Excellence in Space Data and Information Sciences&n;    Code 930.5, NASA Goddard Space Flight Center, Greenbelt MD 20771&n;    David Hinds may be reached at dhinds@pcmcia.sourceforge.org&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -35,7 +35,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;serial_cb.c 1.14 1999/11/11 02:18:08 (David Hinds)&quot;
+l_string|&quot;serial_cb.c 1.15 1999/11/24 02:52:06 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -93,6 +93,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|a
 op_eq
 l_int|0x13a2
@@ -104,8 +105,23 @@ op_eq
 l_int|0x8007
 )paren
 )paren
+op_logical_or
+(paren
+(paren
+id|a
+op_eq
+l_int|0x1420
+)paren
+op_logical_and
+(paren
+id|b
+op_eq
+l_int|0x8003
+)paren
+)paren
+)paren
 (brace
-multiline_comment|/* Ositech Jack of Spades */
+multiline_comment|/* Ositech, Psion 83c175-based cards */
 id|DEBUG
 c_func
 (paren

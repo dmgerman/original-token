@@ -1,14 +1,6 @@
 multiline_comment|/*&n; *      sd.c Copyright (C) 1992 Drew Eckhardt&n; *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale&n; *&n; *      Linux scsi disk driver&n; *              Initial versions: Drew Eckhardt&n; *              Subsequent revisions: Eric Youngdale&n; *&n; *      &lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@andante.org to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; *&n; *       Modified by Eric Youngdale eric@andante.org to support loadable&n; *       low-level scsi drivers.&n; *&n; *       Modified by Jirka Hanika geo@ff.cuni.cz to support more&n; *       scsi disks using eight major numbers.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; * This is a variable in scsi.c that is set when we are processing something&n; * after boot time.  By definition, this is true when we are a loadable module&n; * ourselves.&n; */
-DECL|macro|MODULE_FLAG
-mdefine_line|#define MODULE_FLAG 1
-macro_line|#else
-DECL|macro|MODULE_FLAG
-mdefine_line|#define MODULE_FLAG scsi_loadable_module_flag
-macro_line|#endif&t;&t;&t;&t;/* MODULE */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1952,69 +1944,6 @@ DECL|macro|SD_GENDISK
 mdefine_line|#define SD_GENDISK(i)    sd_gendisks[(i) / SCSI_DISKS_PER_MAJOR]
 DECL|macro|LAST_SD_GENDISK
 mdefine_line|#define LAST_SD_GENDISK  sd_gendisks[N_USED_SD_MAJORS - 1]
-DECL|function|sd_geninit
-r_static
-r_void
-id|sd_geninit
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|sd_template.dev_max
-suffix:semicolon
-op_increment
-id|i
-)paren
-r_if
-c_cond
-(paren
-id|rscsi_disks
-(braket
-id|i
-)braket
-dot
-id|device
-)paren
-id|grok_partitions
-c_func
-(paren
-op_amp
-id|SD_GENDISK
-c_func
-(paren
-id|i
-)paren
-comma
-id|i
-op_mod
-id|SCSI_DISKS_PER_MAJOR
-comma
-l_int|1
-op_lshift
-l_int|4
-comma
-id|rscsi_disks
-(braket
-id|i
-)braket
-dot
-id|capacity
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * rw_intr is the interrupt routine for the device driver.&n; * It will be notified on the end of a SCSI read / write, and&n; * will take one of several actions based on success or failure.&n; */
 DECL|function|rw_intr
 r_static
@@ -4475,11 +4404,6 @@ id|LAST_SD_GENDISK.next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sd_geninit
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4609,11 +4533,15 @@ dot
 id|device
 )paren
 (brace
+id|sd_init_onedisk
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|MODULE_FLAG
-op_logical_and
 op_logical_neg
 id|rscsi_disks
 (braket
@@ -4637,27 +4565,35 @@ id|i
 dot
 id|capacity
 suffix:semicolon
-multiline_comment|/* revalidate does sd_init_onedisk via MAYBE_REINIT */
-id|revalidate_scsidisk
+id|register_disk
 c_func
 (paren
+op_amp
+id|SD_GENDISK
+c_func
+(paren
+id|i
+)paren
+comma
 id|MKDEV_SD
 c_func
 (paren
 id|i
 )paren
 comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_else
+l_int|1
+op_lshift
+l_int|4
+comma
+op_amp
+id|sd_fops
+comma
+id|rscsi_disks
+(braket
 id|i
-op_assign
-id|sd_init_onedisk
-c_func
-(paren
-id|i
+)braket
+dot
+id|capacity
 )paren
 suffix:semicolon
 id|rscsi_disks
@@ -4669,6 +4605,7 @@ id|has_part_table
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* If our host adapter is capable of scatter-gather, then we increase&n;&t; * the read-ahead to 60 blocks (120 sectors).  If not, we use&n;&t; * a two block (4 sector) read ahead. We can only respect this with the&n;&t; * granularity of every 16 disks (one device major).&n;&t; */
 r_for
@@ -5327,6 +5264,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* unregister_disk() */
 id|dpnt-&gt;has_part_table
 op_assign
 l_int|0

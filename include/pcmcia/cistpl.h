@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * cistpl.h 1.31 1999/10/25 20:23:17&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
+multiline_comment|/*&n; * cistpl.h 1.32 2000/01/11 19:06:50&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
 macro_line|#ifndef _LINUX_CISTPL_H
 DECL|macro|_LINUX_CISTPL_H
 mdefine_line|#define _LINUX_CISTPL_H
@@ -8,6 +8,8 @@ DECL|macro|CISTPL_DEVICE
 mdefine_line|#define CISTPL_DEVICE&t;&t;0x01
 DECL|macro|CISTPL_LONGLINK_CB
 mdefine_line|#define CISTPL_LONGLINK_CB&t;0x02
+DECL|macro|CISTPL_INDIRECT
+mdefine_line|#define CISTPL_INDIRECT&t;&t;0x03
 DECL|macro|CISTPL_CONFIG_CB
 mdefine_line|#define CISTPL_CONFIG_CB&t;0x04
 DECL|macro|CISTPL_CFTABLE_ENTRY_CB
@@ -16,6 +18,10 @@ DECL|macro|CISTPL_LONGLINK_MFC
 mdefine_line|#define CISTPL_LONGLINK_MFC&t;0x06
 DECL|macro|CISTPL_BAR
 mdefine_line|#define CISTPL_BAR&t;&t;0x07
+DECL|macro|CISTPL_PWR_MGMNT
+mdefine_line|#define CISTPL_PWR_MGMNT&t;0x08
+DECL|macro|CISTPL_EXTDEVICE
+mdefine_line|#define CISTPL_EXTDEVICE&t;0x09
 DECL|macro|CISTPL_CHECKSUM
 mdefine_line|#define CISTPL_CHECKSUM&t;&t;0x10
 DECL|macro|CISTPL_LONGLINK_A
@@ -74,6 +80,8 @@ mdefine_line|#define CISTPL_BATTERY&t;&t;0x45
 multiline_comment|/* Layer 3 tuples */
 DECL|macro|CISTPL_ORG
 mdefine_line|#define CISTPL_ORG&t;&t;0x46
+DECL|macro|CISTPL_SPCL
+mdefine_line|#define CISTPL_SPCL&t;&t;0x90
 DECL|struct|cistpl_longlink_t
 r_typedef
 r_struct

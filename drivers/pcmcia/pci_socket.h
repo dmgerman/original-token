@@ -1,4 +1,7 @@
 multiline_comment|/*&n; * drivers/pcmcia/pci_socket.h&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; */
+macro_line|#ifndef __PCI_SOCKET_H
+DECL|macro|__PCI_SOCKET_H
+mdefine_line|#define __PCI_SOCKET_H
 r_struct
 id|pci_socket_ops
 suffix:semicolon
@@ -267,4 +270,5 @@ r_struct
 id|pci_socket_ops
 id|ricoh_operations
 suffix:semicolon
+macro_line|#endif
 eof

@@ -1877,6 +1877,16 @@ id|byte
 id|speed
 )paren
 (brace
+id|ide_hwif_t
+op_star
+id|hwif
+op_assign
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
 r_struct
 id|pci_dev
 op_star

@@ -922,6 +922,12 @@ comma
 DECL|enumerator|ACPI_P_BLK
 id|ACPI_P_BLK
 comma
+DECL|enumerator|ACPI_ENTER_LVL2_LAT
+id|ACPI_ENTER_LVL2_LAT
+comma
+DECL|enumerator|ACPI_ENTER_LVL3_LAT
+id|ACPI_ENTER_LVL3_LAT
+comma
 DECL|enumerator|ACPI_P_LVL2_LAT
 id|ACPI_P_LVL2_LAT
 comma

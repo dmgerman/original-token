@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * ti_pcilynx.c - Texas Instruments PCILynx driver&n; * Copyright (C) 1999,2000 Andreas Bombe &lt;andreas.bombe@munich.netsurf.de&gt;,&n; *                         Stephan Linz &lt;linz@mazet.de&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.&n; */
 multiline_comment|/*&n; * Lynx DMA usage:&n; *&n; * 0 is used for Lynx local bus transfers&n; * 1 is async/selfid receive&n; * 2 is iso receive&n; * 3 is async transmit&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

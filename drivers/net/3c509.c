@@ -968,6 +968,12 @@ id|if_port
 )paren
 suffix:semicolon
 )brace
+id|EL3WINDOW
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren

@@ -2845,7 +2845,7 @@ id|apic_phys
 )paren
 suffix:semicolon
 )brace
-id|set_fixmap
+id|set_fixmap_nocache
 c_func
 (paren
 id|FIX_APIC_BASE
@@ -2930,7 +2930,7 @@ id|ioapic_phys
 )paren
 suffix:semicolon
 )brace
-id|set_fixmap
+id|set_fixmap_nocache
 c_func
 (paren
 id|idx

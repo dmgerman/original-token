@@ -1945,7 +1945,20 @@ op_eq
 op_minus
 id|EINPROGRESS
 )paren
+(brace
+r_while
+c_loop
+(paren
+id|timeout
+op_logical_and
+id|urb-&gt;status
+op_eq
+op_minus
+id|EINPROGRESS
+)paren
 id|status
+op_assign
+id|timeout
 op_assign
 id|schedule_timeout
 c_func
@@ -1953,7 +1966,7 @@ c_func
 id|timeout
 )paren
 suffix:semicolon
-singleline_comment|// ZZzzzz....
+)brace
 r_else
 id|status
 op_assign
@@ -5208,7 +5221,7 @@ l_int|0
 comma
 id|USB_REQ_GET_DESCRIPTOR
 comma
-id|USB_RT_INTERFACE
+id|USB_RECIP_INTERFACE
 op_or
 id|USB_DIR_IN
 comma
@@ -5465,7 +5478,9 @@ id|USB_REQ_GET_PROTOCOL
 comma
 id|USB_DIR_IN
 op_or
-id|USB_RT_HIDD
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_INTERFACE
 comma
 l_int|0
 comma
@@ -5521,7 +5536,9 @@ l_int|0
 comma
 id|USB_REQ_SET_PROTOCOL
 comma
-id|USB_RT_HIDD
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_INTERFACE
 comma
 id|protocol
 comma
@@ -5570,7 +5587,9 @@ l_int|0
 comma
 id|USB_REQ_SET_IDLE
 comma
-id|USB_RT_HIDD
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_INTERFACE
 comma
 (paren
 id|duration
@@ -5780,7 +5799,7 @@ l_int|0
 comma
 id|USB_REQ_CLEAR_FEATURE
 comma
-id|USB_RT_ENDPOINT
+id|USB_RECIP_ENDPOINT
 comma
 l_int|0
 comma
@@ -5825,7 +5844,7 @@ id|USB_REQ_GET_STATUS
 comma
 id|USB_DIR_IN
 op_or
-id|USB_RT_ENDPOINT
+id|USB_RECIP_ENDPOINT
 comma
 l_int|0
 comma
@@ -6015,7 +6034,7 @@ l_int|0
 comma
 id|USB_REQ_SET_INTERFACE
 comma
-id|USB_RT_INTERFACE
+id|USB_RECIP_INTERFACE
 comma
 id|alternate
 comma
@@ -6254,7 +6273,9 @@ id|USB_REQ_GET_REPORT
 comma
 id|USB_DIR_IN
 op_or
-id|USB_RT_HIDD
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_INTERFACE
 comma
 (paren
 id|type
@@ -6322,7 +6343,9 @@ l_int|0
 comma
 id|USB_REQ_SET_REPORT
 comma
-id|USB_RT_HIDD
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_INTERFACE
 comma
 (paren
 id|type

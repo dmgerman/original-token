@@ -24,6 +24,29 @@ DECL|macro|USB_CLASS_DATA
 mdefine_line|#define USB_CLASS_DATA&t;&t;&t;10
 DECL|macro|USB_CLASS_VENDOR_SPEC
 mdefine_line|#define USB_CLASS_VENDOR_SPEC&t;&t;0xff
+multiline_comment|/*&n; * USB types&n; */
+DECL|macro|USB_TYPE_STANDARD
+mdefine_line|#define USB_TYPE_STANDARD&t;&t;(0x00 &lt;&lt; 5)
+DECL|macro|USB_TYPE_CLASS
+mdefine_line|#define USB_TYPE_CLASS&t;&t;&t;(0x01 &lt;&lt; 5)
+DECL|macro|USB_TYPE_VENDOR
+mdefine_line|#define USB_TYPE_VENDOR&t;&t;&t;(0x02 &lt;&lt; 5)
+DECL|macro|USB_TYPE_RESERVED
+mdefine_line|#define USB_TYPE_RESERVED&t;&t;(0x03 &lt;&lt; 5)
+multiline_comment|/*&n; * USB recipients&n; */
+DECL|macro|USB_RECIP_DEVICE
+mdefine_line|#define USB_RECIP_DEVICE&t;&t;0x00
+DECL|macro|USB_RECIP_INTERFACE
+mdefine_line|#define USB_RECIP_INTERFACE&t;&t;0x01
+DECL|macro|USB_RECIP_ENDPOINT
+mdefine_line|#define USB_RECIP_ENDPOINT&t;&t;0x02
+DECL|macro|USB_RECIP_OTHER
+mdefine_line|#define USB_RECIP_OTHER&t;&t;&t;0x03
+multiline_comment|/*&n; * USB directions&n; */
+DECL|macro|USB_DIR_OUT
+mdefine_line|#define USB_DIR_OUT&t;&t;&t;0
+DECL|macro|USB_DIR_IN
+mdefine_line|#define USB_DIR_IN&t;&t;&t;0x80
 multiline_comment|/*&n; * Descriptor types&n; */
 DECL|macro|USB_DT_DEVICE
 mdefine_line|#define USB_DT_DEVICE&t;&t;&t;0x01
@@ -35,14 +58,14 @@ DECL|macro|USB_DT_INTERFACE
 mdefine_line|#define USB_DT_INTERFACE&t;&t;0x04
 DECL|macro|USB_DT_ENDPOINT
 mdefine_line|#define USB_DT_ENDPOINT&t;&t;&t;0x05
-DECL|macro|USB_DT_HUB
-mdefine_line|#define USB_DT_HUB&t;&t;&t;0x29
 DECL|macro|USB_DT_HID
-mdefine_line|#define USB_DT_HID&t;&t;&t;0x21
+mdefine_line|#define USB_DT_HID&t;&t;&t;(USB_TYPE_CLASS | 0x01)
 DECL|macro|USB_DT_REPORT
-mdefine_line|#define USB_DT_REPORT&t;&t;&t;0x22
+mdefine_line|#define USB_DT_REPORT&t;&t;&t;(USB_TYPE_CLASS | 0x02)
 DECL|macro|USB_DT_PHYSICAL
-mdefine_line|#define USB_DT_PHYSICAL&t;&t;&t;0x23
+mdefine_line|#define USB_DT_PHYSICAL&t;&t;&t;(USB_TYPE_CLASS | 0x03)
+DECL|macro|USB_DT_HUB
+mdefine_line|#define USB_DT_HUB&t;&t;&t;(USB_TYPE_CLASS | 0x09)
 multiline_comment|/*&n; * Descriptor sizes per descriptor type&n; */
 DECL|macro|USB_DT_DEVICE_SIZE
 mdefine_line|#define USB_DT_DEVICE_SIZE&t;&t;18
@@ -58,11 +81,7 @@ DECL|macro|USB_DT_HUB_NONVAR_SIZE
 mdefine_line|#define USB_DT_HUB_NONVAR_SIZE&t;&t;7
 DECL|macro|USB_DT_HID_SIZE
 mdefine_line|#define USB_DT_HID_SIZE&t;&t;&t;9
-multiline_comment|/*&n; * USB Request Type and Endpoint Directions&n; */
-DECL|macro|USB_DIR_OUT
-mdefine_line|#define USB_DIR_OUT&t;&t;&t;0
-DECL|macro|USB_DIR_IN
-mdefine_line|#define USB_DIR_IN&t;&t;&t;0x80
+multiline_comment|/*&n; * Endpoints&n; */
 DECL|macro|USB_ENDPOINT_NUMBER_MASK
 mdefine_line|#define USB_ENDPOINT_NUMBER_MASK&t;0x0f&t;/* in bEndpointAddress */
 DECL|macro|USB_ENDPOINT_DIR_MASK
@@ -89,10 +108,8 @@ DECL|macro|USB_REQ_GET_STATUS
 mdefine_line|#define USB_REQ_GET_STATUS&t;&t;0x00
 DECL|macro|USB_REQ_CLEAR_FEATURE
 mdefine_line|#define USB_REQ_CLEAR_FEATURE&t;&t;0x01
-multiline_comment|/* 0x02 is reserved */
 DECL|macro|USB_REQ_SET_FEATURE
 mdefine_line|#define USB_REQ_SET_FEATURE&t;&t;0x03
-multiline_comment|/* 0x04 is reserved */
 DECL|macro|USB_REQ_SET_ADDRESS
 mdefine_line|#define USB_REQ_SET_ADDRESS&t;&t;0x05
 DECL|macro|USB_REQ_GET_DESCRIPTOR
@@ -109,7 +126,7 @@ DECL|macro|USB_REQ_SET_INTERFACE
 mdefine_line|#define USB_REQ_SET_INTERFACE&t;&t;0x0B
 DECL|macro|USB_REQ_SYNCH_FRAME
 mdefine_line|#define USB_REQ_SYNCH_FRAME&t;&t;0x0C
-multiline_comment|/*&n; * HIDD requests&n; */
+multiline_comment|/*&n; * HID requests&n; */
 DECL|macro|USB_REQ_GET_REPORT
 mdefine_line|#define USB_REQ_GET_REPORT&t;&t;0x01
 DECL|macro|USB_REQ_GET_IDLE
@@ -122,42 +139,7 @@ DECL|macro|USB_REQ_SET_IDLE
 mdefine_line|#define USB_REQ_SET_IDLE&t;&t;0x0A
 DECL|macro|USB_REQ_SET_PROTOCOL
 mdefine_line|#define USB_REQ_SET_PROTOCOL&t;&t;0x0B
-DECL|macro|USB_TYPE_STANDARD
-mdefine_line|#define USB_TYPE_STANDARD&t;&t;(0x00 &lt;&lt; 5)
-DECL|macro|USB_TYPE_CLASS
-mdefine_line|#define USB_TYPE_CLASS&t;&t;&t;(0x01 &lt;&lt; 5)
-DECL|macro|USB_TYPE_VENDOR
-mdefine_line|#define USB_TYPE_VENDOR&t;&t;&t;(0x02 &lt;&lt; 5)
-DECL|macro|USB_TYPE_RESERVED
-mdefine_line|#define USB_TYPE_RESERVED&t;&t;(0x03 &lt;&lt; 5)
-DECL|macro|USB_RECIP_DEVICE
-mdefine_line|#define USB_RECIP_DEVICE&t;&t;0x00
-DECL|macro|USB_RECIP_INTERFACE
-mdefine_line|#define USB_RECIP_INTERFACE&t;&t;0x01
-DECL|macro|USB_RECIP_ENDPOINT
-mdefine_line|#define USB_RECIP_ENDPOINT&t;&t;0x02
-DECL|macro|USB_RECIP_OTHER
-mdefine_line|#define USB_RECIP_OTHER&t;&t;&t;0x03
-DECL|macro|USB_HID_RPT_INPUT
-mdefine_line|#define USB_HID_RPT_INPUT&t;&t;0x01
-DECL|macro|USB_HID_RPT_OUTPUT
-mdefine_line|#define USB_HID_RPT_OUTPUT&t;&t;0x02
-DECL|macro|USB_HID_RPT_FEATURE
-mdefine_line|#define USB_HID_RPT_FEATURE&t;&t;0x03
-multiline_comment|/*&n; * Request target types.&n; */
-DECL|macro|USB_RT_DEVICE
-mdefine_line|#define USB_RT_DEVICE&t;&t;&t;0x00
-DECL|macro|USB_RT_INTERFACE
-mdefine_line|#define USB_RT_INTERFACE&t;&t;0x01
-DECL|macro|USB_RT_ENDPOINT
-mdefine_line|#define USB_RT_ENDPOINT&t;&t;&t;0x02
-DECL|macro|USB_RT_HUB
-mdefine_line|#define USB_RT_HUB&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_DEVICE)
-DECL|macro|USB_RT_PORT
-mdefine_line|#define USB_RT_PORT&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_OTHER)
-DECL|macro|USB_RT_HIDD
-mdefine_line|#define USB_RT_HIDD&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_INTERFACE)
-multiline_comment|/* /proc/bus/usb/xxx/yyy ioctl codes */
+multiline_comment|/*&n; * /proc/bus/usb ioctl structs and codes&n; */
 DECL|struct|usb_proc_ctrltransfer
 r_struct
 id|usb_proc_ctrltransfer
@@ -441,7 +423,7 @@ id|packed
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* USB-status codes:&n; * USB_ST* maps to -E* and should go away in the future&n;*/
+multiline_comment|/*&n; * USB-status codes:&n; * USB_ST* maps to -E* and should go away in the future&n; */
 DECL|macro|USB_ST_NOERROR
 mdefine_line|#define USB_ST_NOERROR&t;&t;0
 DECL|macro|USB_ST_CRC
@@ -682,67 +664,6 @@ multiline_comment|/* Extra descriptors */
 DECL|member|extralen
 r_int
 id|extralen
-suffix:semicolon
-)brace
-id|__attribute__
-(paren
-(paren
-id|packed
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* HID descriptor */
-DECL|struct|usb_hid_class_descriptor
-r_struct
-id|usb_hid_class_descriptor
-(brace
-DECL|member|bDescriptorType
-id|__u8
-id|bDescriptorType
-suffix:semicolon
-DECL|member|wDescriptorLength
-id|__u16
-id|wDescriptorLength
-suffix:semicolon
-)brace
-id|__attribute__
-(paren
-(paren
-id|packed
-)paren
-)paren
-suffix:semicolon
-DECL|struct|usb_hid_descriptor
-r_struct
-id|usb_hid_descriptor
-(brace
-DECL|member|bLength
-id|__u8
-id|bLength
-suffix:semicolon
-DECL|member|bDescriptorType
-id|__u8
-id|bDescriptorType
-suffix:semicolon
-DECL|member|bcdHID
-id|__u16
-id|bcdHID
-suffix:semicolon
-DECL|member|bCountryCode
-id|__u8
-id|bCountryCode
-suffix:semicolon
-DECL|member|bNumDescriptors
-id|__u8
-id|bNumDescriptors
-suffix:semicolon
-DECL|member|desc
-r_struct
-id|usb_hid_class_descriptor
-id|desc
-(braket
-l_int|1
-)braket
 suffix:semicolon
 )brace
 id|__attribute__
@@ -2419,16 +2340,6 @@ c_func
 r_struct
 id|usb_interface_descriptor
 op_star
-)paren
-suffix:semicolon
-r_void
-id|usb_show_hid_descriptor
-c_func
-(paren
-r_struct
-id|usb_hid_descriptor
-op_star
-id|desc
 )paren
 suffix:semicolon
 r_void

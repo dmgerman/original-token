@@ -79,7 +79,7 @@ id|__end_of_fixed_addresses
 suffix:semicolon
 r_extern
 r_void
-id|set_fixmap
+id|__set_fixmap
 (paren
 r_enum
 id|fixed_addresses
@@ -88,8 +88,16 @@ comma
 r_int
 r_int
 id|phys
+comma
+id|pgprot_t
+id|flags
 )paren
 suffix:semicolon
+DECL|macro|set_fixmap
+mdefine_line|#define set_fixmap(idx, phys) &bslash;&n;&t;&t;__set_fixmap(idx, phys, PAGE_KERNEL)
+multiline_comment|/*&n; * Some hardware wants to get fixmapped without caching.&n; */
+DECL|macro|set_fixmap_nocache
+mdefine_line|#define set_fixmap_nocache(idx, phys) &bslash;&n;&t;&t;__set_fixmap(idx, phys, PAGE_KERNEL_NOCACHE)
 multiline_comment|/*&n; * used by vmalloc.c.&n; *&n; * Leave one empty page between vmalloc&squot;ed areas and&n; * the start of the fixmap, and leave one page empty&n; * at the top of mem..&n; */
 DECL|macro|FIXADDR_TOP
 mdefine_line|#define FIXADDR_TOP&t;(0xffffe000UL)

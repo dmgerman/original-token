@@ -887,12 +887,14 @@ id|entry
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
+multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_all_kernel() flushes all processes TLBs, including special TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
 macro_line|#ifndef __SMP__
 DECL|macro|flush_tlb
 mdefine_line|#define flush_tlb() __flush_tlb()
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all() __flush_tlb()
+DECL|macro|flush_tlb_all_kernel
+mdefine_line|#define flush_tlb_all_kernel() __flush_tlb_global()
 DECL|macro|local_flush_tlb
 mdefine_line|#define local_flush_tlb() __flush_tlb()
 DECL|function|flush_tlb_mm
@@ -994,6 +996,14 @@ mdefine_line|#define local_flush_tlb() &bslash;&n;&t;__flush_tlb()
 r_extern
 r_void
 id|flush_tlb_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_all_kernel
 c_func
 (paren
 r_void

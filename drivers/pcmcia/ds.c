@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.100 1999/11/08 20:47:02&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.104 2000/01/11 01:18:02&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -45,12 +45,25 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ds.c 1.100 1999/11/08 20:47:02 (David Hinds)&quot;
+l_string|&quot;ds.c 1.104 2000/01/11 01:18:02 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(n, args...)
 macro_line|#endif
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;David Hinds &lt;dhinds@pcmcia.sourceforge.org&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;PCMCIA Driver Services &quot;
+id|CS_RELEASE
+)paren
+suffix:semicolon
 multiline_comment|/*====================================================================*/
 DECL|struct|driver_info_t
 r_typedef
@@ -421,6 +434,16 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|driver
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|strncpy
 c_func
 (paren
@@ -639,7 +662,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-l_int|1
+id|ENODEV
 suffix:semicolon
 id|target
 op_assign
@@ -1414,6 +1437,16 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|driver
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|strncpy
 c_func
 (paren
@@ -2128,15 +2161,10 @@ id|d
 op_member_access_from_pointer
 id|next
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|c-&gt;driver
-comma
-r_sizeof
-(paren
-id|driver_info_t
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2146,15 +2174,10 @@ id|b
 op_assign
 id|c-&gt;next
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|c
-comma
-r_sizeof
-(paren
-id|socket_bind_t
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2263,8 +2286,6 @@ op_or_assign
 id|SOCKET_BUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|user
 op_assign
 id|kmalloc
@@ -2277,6 +2298,18 @@ id|user_info_t
 comma
 id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|user-&gt;event_tail
 op_assign
@@ -2482,15 +2515,10 @@ id|user-&gt;user_magic
 op_assign
 l_int|0
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|user
-comma
-r_sizeof
-(paren
-id|user_info_t
-)paren
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -3076,9 +3104,10 @@ id|IOC_OUT
 )paren
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_return
@@ -3461,9 +3490,10 @@ id|CS_WRITE
 )paren
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_return
@@ -3595,9 +3625,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_SYS_ADMIN
 )paren
 )paren
 r_return
@@ -3860,38 +3891,29 @@ id|file_operations
 id|ds_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-id|ds_read
-comma
-multiline_comment|/* read */
-id|ds_write
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-id|ds_poll
-comma
-multiline_comment|/* poll */
-id|ds_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|ds_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|ds_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync */
+id|ioctl
+suffix:colon
+id|ds_ioctl
+comma
+id|read
+suffix:colon
+id|ds_read
+comma
+id|write
+suffix:colon
+id|ds_write
+comma
+id|poll
+suffix:colon
+id|ds_poll
 )brace
 suffix:semicolon
 DECL|variable|register_pccard_driver
@@ -4011,6 +4033,16 @@ id|socket_info_t
 comma
 id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|socket_table
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 r_for
 c_loop

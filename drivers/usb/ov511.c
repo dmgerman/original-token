@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * OmniVision OV511 Camera-to-USB Bridge Driver&n; * Copyright 1999 Mark W. McClelland&n; *&n; * Based on the Linux CPiA driver.&n; * &n; * Released under GPL v.2 license.&n; *&n; * Important keywords in comments:&n; *    CAMERA SPECIFIC - Camera specific code; may not work with other cameras.&n; *    DEBUG - Debugging code.&n; *    FIXME - Something that is broken or needs improvement.&n; *&n; * Version History:&n; *    Version 1.00 - Initial version&n; */
+multiline_comment|/*&n; * OmniVision OV511 Camera-to-USB Bridge Driver&n; * Copyright 1999 Mark W. McClelland&n; *&n; * Based on the Linux CPiA driver.&n; * &n; * Released under GPL v.2 license.&n; *&n; * Important keywords in comments:&n; *    CAMERA SPECIFIC - Camera specific code; may not work with other cameras.&n; *    DEBUG - Debugging code.&n; *    FIXME - Something that is broken or needs improvement.&n; *&n; * Version: 1.05&n; *&n; * Please see the file: linux/Documentation/usb/ov511.txt &n; * and the website at:  http://people.delphi.com/mmcclelland/linux/ &n; * for more info.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -27,6 +27,8 @@ macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ov511.h&quot;
 DECL|macro|OV511_I2C_RETRIES
 mdefine_line|#define OV511_I2C_RETRIES 3
+DECL|macro|OV7610_AUTO_ADJUST
+mdefine_line|#define OV7610_AUTO_ADJUST 1
 multiline_comment|/* Video Size 640 x 480 x 3 bytes for RGB */
 DECL|macro|MAX_FRAME_SIZE
 mdefine_line|#define MAX_FRAME_SIZE (640 * 480 * 3)
@@ -703,7 +705,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;reg write: 0x%02X:0x%02X&bslash;n&quot;
+l_string|&quot;reg write: 0x%02X:0x%02X&quot;
 comma
 id|reg
 comma
@@ -783,7 +785,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;reg read: 0x%02X:0x%02X&bslash;n&quot;
+l_string|&quot;reg read: 0x%02X:0x%02X&quot;
 comma
 id|reg
 comma
@@ -842,7 +844,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;i2c write: 0x%02X:0x%02X&bslash;n&quot;
+l_string|&quot;i2c write: 0x%02X:0x%02X&quot;
 comma
 id|reg
 comma
@@ -1320,7 +1322,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;i2c read: 0x%02X:0x%02X&bslash;n&quot;
+l_string|&quot;i2c read: 0x%02X:0x%02X&quot;
 comma
 id|reg
 comma
@@ -1410,7 +1412,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;OV7610[0x%X] = 0x%X&bslash;n&quot;
+l_string|&quot;OV7610[0x%X] = 0x%X&quot;
 comma
 id|i
 comma
@@ -1434,7 +1436,7 @@ id|dev
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;I2C REGS&bslash;n&quot;
+l_string|&quot;I2C REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_i2c_range
@@ -1499,7 +1501,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;OV511[0x%X] = 0x%X&bslash;n&quot;
+l_string|&quot;OV511[0x%X] = 0x%X&quot;
 comma
 id|i
 comma
@@ -1522,7 +1524,7 @@ id|dev
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;CAMERA INTERFACE REGS&bslash;n&quot;
+l_string|&quot;CAMERA INTERFACE REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_reg_range
@@ -1538,7 +1540,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;DRAM INTERFACE REGS&bslash;n&quot;
+l_string|&quot;DRAM INTERFACE REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_reg_range
@@ -1554,7 +1556,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ISO FIFO REGS&bslash;n&quot;
+l_string|&quot;ISO FIFO REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_reg_range
@@ -1570,7 +1572,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;PIO REGS&bslash;n&quot;
+l_string|&quot;PIO REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_reg_range
@@ -1596,7 +1598,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;I2C REGS&bslash;n&quot;
+l_string|&quot;I2C REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_reg_range
@@ -1612,7 +1614,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;SYSTEM CONTROL REGS&bslash;n&quot;
+l_string|&quot;SYSTEM CONTROL REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_reg_range
@@ -1638,7 +1640,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;OmniCE REGS&bslash;n&quot;
+l_string|&quot;OmniCE REGS&quot;
 )paren
 suffix:semicolon
 id|ov511_dump_reg_range
@@ -1690,7 +1692,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;Reset 7610&bslash;n&quot;
+l_string|&quot;Reset 7610&quot;
 )paren
 suffix:semicolon
 id|rc
@@ -1712,11 +1714,10 @@ id|rc
 OL
 l_int|0
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: i2c reset: command failed&bslash;n&quot;
+l_string|&quot;i2c reset: command failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1744,7 +1745,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;Reset: type=0x%X&bslash;n&quot;
+l_string|&quot;Reset: type=0x%X&quot;
 comma
 id|reset_type
 )paren
@@ -1768,11 +1769,10 @@ id|rc
 OL
 l_int|0
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: reset: command failed&bslash;n&quot;
+l_string|&quot;reset: command failed&quot;
 )paren
 suffix:semicolon
 id|rc
@@ -1794,11 +1794,10 @@ id|rc
 OL
 l_int|0
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: reset: command failed&bslash;n&quot;
+l_string|&quot;reset: command failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1824,13 +1823,13 @@ id|alt
 comma
 id|multiplier
 comma
-id|err
+id|rc
 suffix:semicolon
 macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;set packet size: %d&bslash;n&quot;
+l_string|&quot;set packet size: %d&quot;
 comma
 id|size
 )paren
@@ -1949,11 +1948,10 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511_set_packet_size: invalid size (%d)&bslash;n&quot;
+l_string|&quot;Set packet size: invalid size (%d)&quot;
 comma
 id|size
 )paren
@@ -1963,7 +1961,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|err
+id|rc
 op_assign
 id|ov511_reg_write
 c_func
@@ -1978,18 +1976,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|err
+id|rc
 OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: Set packet size: Set FIFO size ret %d&bslash;n&quot;
+l_string|&quot;Set packet size: Set FIFO size ret %d&quot;
 comma
-id|err
+id|rc
 )paren
 suffix:semicolon
 r_return
@@ -2013,11 +2010,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: Set packet size: set interface error&bslash;n&quot;
+l_string|&quot;Set packet size: set interface error&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2042,6 +2038,227 @@ l_int|0
 r_return
 op_minus
 id|ENOMEM
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ov7610_set_picture
+r_static
+r_inline
+r_int
+id|ov7610_set_picture
+c_func
+(paren
+r_struct
+id|usb_ov511
+op_star
+id|ov511
+comma
+r_struct
+id|video_picture
+op_star
+id|p
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ov511_i2c_write
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+id|OV7610_REG_SAT
+comma
+id|p-&gt;colour
+op_rshift
+l_int|8
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ov511_i2c_write
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+id|OV7610_REG_CNT
+comma
+id|p-&gt;contrast
+op_rshift
+l_int|8
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ov511_i2c_write
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+id|OV7610_REG_BRT
+comma
+id|p-&gt;brightness
+op_rshift
+l_int|8
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ov7610_get_picture
+r_static
+r_inline
+r_int
+id|ov7610_get_picture
+c_func
+(paren
+r_struct
+id|usb_ov511
+op_star
+id|ov511
+comma
+r_struct
+id|video_picture
+op_star
+id|p
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+id|OV7610_REG_SAT
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+id|p-&gt;colour
+op_assign
+id|ret
+op_lshift
+l_int|8
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+id|OV7610_REG_CNT
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+id|p-&gt;contrast
+op_assign
+id|ret
+op_lshift
+l_int|8
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|ov511_i2c_read
+c_func
+(paren
+id|ov511-&gt;dev
+comma
+id|OV7610_REG_BRT
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+id|p-&gt;brightness
+op_assign
+id|ret
+op_lshift
+l_int|8
+suffix:semicolon
+id|p-&gt;hue
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|p-&gt;whiteness
+op_assign
+l_int|105
+op_lshift
+l_int|8
+suffix:semicolon
+id|p-&gt;depth
+op_assign
+l_int|24
+suffix:semicolon
+id|p-&gt;palette
+op_assign
+id|VIDEO_PALETTE_RGB24
 suffix:semicolon
 r_return
 l_int|0
@@ -2084,7 +2301,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511_mode_init_regs(ov511, %d, %d, %d)&bslash;n&quot;
+l_string|&quot;ov511_mode_init_regs(ov511, %d, %d, %d)&quot;
 comma
 id|width
 comma
@@ -2445,10 +2662,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|PDEBUG
+id|err
 c_func
 (paren
-l_string|&quot;ov511: Unknown mode (%d, %d): %d&bslash;n&quot;
+l_string|&quot;Unknown mode (%d, %d): %d&quot;
 comma
 id|width
 comma
@@ -3531,12 +3748,10 @@ c_cond
 (paren
 id|st
 )paren
-(brace
-singleline_comment|// Macro - must be in braces!
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;data error: [%d] len=%d, status=%d&bslash;n&quot;
+l_string|&quot;data error: [%d] len=%d, status=%d&quot;
 comma
 id|i
 comma
@@ -3545,7 +3760,6 @@ comma
 id|st
 )paren
 suffix:semicolon
-)brace
 id|frame
 op_assign
 op_amp
@@ -3625,7 +3839,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;Found Frame End!, packnum = %d&bslash;n&quot;
+l_string|&quot;Found Frame End!, packnum = %d&quot;
 comma
 (paren
 r_int
@@ -3641,7 +3855,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;Current frame = %d&bslash;n&quot;
+l_string|&quot;Current frame = %d&quot;
 comma
 id|ov511-&gt;curframe
 )paren
@@ -3670,7 +3884,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;About to wake up waiting processes&bslash;n&quot;
+l_string|&quot;About to wake up waiting processes&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3756,7 +3970,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511: Found Frame Start!, packnum = %d&bslash;n&quot;
+l_string|&quot;ov511: Found Frame Start!, packnum = %d&quot;
 comma
 (paren
 r_int
@@ -3772,7 +3986,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511: Frame Header Byte = 0x%x&bslash;n&quot;
+l_string|&quot;ov511: Frame Header Byte = 0x%x&quot;
 comma
 (paren
 r_int
@@ -4190,11 +4404,10 @@ op_logical_neg
 id|urb
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511_init_isoc: usb_alloc_urb ret. NULL&bslash;n&quot;
+l_string|&quot;ov511_init_isoc: usb_alloc_urb ret. NULL&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4307,11 +4520,10 @@ op_logical_neg
 id|urb
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511_init_isoc: usb_alloc_urb ret. NULL&bslash;n&quot;
+l_string|&quot;ov511_init_isoc: usb_alloc_urb ret. NULL&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4455,11 +4667,10 @@ c_cond
 (paren
 id|err
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511_init_isoc: usb_run_isoc(0) ret %d&bslash;n&quot;
+l_string|&quot;ov511_init_isoc: usb_run_isoc(0) ret %d&quot;
 comma
 id|err
 )paren
@@ -4482,10 +4693,9 @@ c_cond
 (paren
 id|err
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;ov511_init_isoc: usb_run_isoc(1) ret %d&bslash;n&quot;
 comma
 id|err
@@ -4772,7 +4982,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511_open&bslash;n&quot;
+l_string|&quot;ov511_open&quot;
 )paren
 suffix:semicolon
 id|down
@@ -4856,7 +5066,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;frame [0] @ %p&bslash;n&quot;
+l_string|&quot;frame [0] @ %p&quot;
 comma
 id|ov511-&gt;frame
 (braket
@@ -4869,7 +5079,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;frame [1] @ %p&bslash;n&quot;
+l_string|&quot;frame [1] @ %p&quot;
 comma
 id|ov511-&gt;frame
 (braket
@@ -4944,7 +5154,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;sbuf[0] @ %p&bslash;n&quot;
+l_string|&quot;sbuf[0] @ %p&quot;
 comma
 id|ov511-&gt;sbuf
 (braket
@@ -4957,7 +5167,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;sbuf[1] @ %p&bslash;n&quot;
+l_string|&quot;sbuf[1] @ %p&quot;
 comma
 id|ov511-&gt;sbuf
 (braket
@@ -5079,7 +5289,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511_close&bslash;n&quot;
+l_string|&quot;ov511_close&quot;
 )paren
 suffix:semicolon
 id|down
@@ -5195,7 +5405,7 @@ c_func
 r_struct
 id|video_device
 op_star
-id|dev
+id|vdev
 comma
 r_int
 r_int
@@ -5216,13 +5426,13 @@ r_struct
 id|usb_ov511
 op_star
 )paren
-id|dev
+id|vdev
 suffix:semicolon
 macro_line|#if 0&t;
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;IOCtl: 0x%X&bslash;n&quot;
+l_string|&quot;IOCtl: 0x%X&quot;
 comma
 id|cmd
 )paren
@@ -5441,42 +5651,21 @@ r_struct
 id|video_picture
 id|p
 suffix:semicolon
-id|p.colour
-op_assign
-l_int|0x8000
-suffix:semicolon
-id|p.hue
-op_assign
-l_int|0x8000
-suffix:semicolon
-id|p.brightness
-op_assign
-l_int|180
-op_lshift
-l_int|8
-suffix:semicolon
-multiline_comment|/* XXX */
-id|p.contrast
-op_assign
-l_int|192
-op_lshift
-l_int|8
-suffix:semicolon
-multiline_comment|/* XXX */
-id|p.whiteness
-op_assign
-l_int|105
-op_lshift
-l_int|8
-suffix:semicolon
-multiline_comment|/* XXX */
-id|p.depth
-op_assign
-l_int|24
-suffix:semicolon
-id|p.palette
-op_assign
-id|VIDEO_PALETTE_RGB24
+r_if
+c_cond
+(paren
+id|ov7610_get_picture
+c_func
+(paren
+id|ov511
+comma
+op_amp
+id|p
+)paren
+)paren
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -5531,6 +5720,22 @@ id|p
 r_return
 op_minus
 id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ov7610_set_picture
+c_func
+(paren
+id|ov511
+comma
+op_amp
+id|p
+)paren
+)paren
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 r_return
 l_int|0
@@ -5790,13 +5995,13 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;MCAPTURE&bslash;n&quot;
+l_string|&quot;MCAPTURE&quot;
 )paren
 suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;frame: %d, size: %dx%d, format: %d&bslash;n&quot;
+l_string|&quot;frame: %d, size: %dx%d, format: %d&quot;
 comma
 id|vm.frame
 comma
@@ -5901,7 +6106,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511: Setting frame %d to (%d, %d) : %d&bslash;n&quot;
+l_string|&quot;ov511: Setting frame %d to (%d, %d) : %d&quot;
 comma
 id|vm.frame
 comma
@@ -5988,7 +6193,7 @@ macro_line|#if 0
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;syncing to frame %d&bslash;n&quot;
+l_string|&quot;syncing to frame %d&quot;
 comma
 id|frame
 )paren
@@ -6317,7 +6522,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511_read: %ld bytes, noblock=%d&bslash;n&quot;
+l_string|&quot;ov511_read: %ld bytes, noblock=%d&quot;
 comma
 id|count
 comma
@@ -6509,11 +6714,10 @@ id|frame-&gt;bytes_read
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511_read: errored frame %d&bslash;n&quot;
+l_string|&quot;ov511_read: errored frame %d&quot;
 comma
 id|ov511-&gt;curframe
 )paren
@@ -6529,11 +6733,10 @@ comma
 id|frmx
 )paren
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511_read: ov511_new_frame error&bslash;n&quot;
+l_string|&quot;ov511_read: ov511_new_frame error&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -6543,7 +6746,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511_read: frmx=%d, bytes_read=%ld, scanlength=%ld&bslash;n&quot;
+l_string|&quot;ov511_read: frmx=%d, bytes_read=%ld, scanlength=%ld&quot;
 comma
 id|frmx
 comma
@@ -6596,7 +6799,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;ov511_read: {copy} count used=%ld, new bytes_read=%ld&bslash;n&quot;
+l_string|&quot;ov511_read: {copy} count used=%ld, new bytes_read=%ld&quot;
 comma
 id|count
 comma
@@ -6642,11 +6845,10 @@ suffix:colon
 l_int|1
 )paren
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511_read: ov511_new_frame returned error&bslash;n&quot;
+l_string|&quot;ov511_read: ov511_new_frame returned error&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6706,7 +6908,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;mmap: %ld (%lX) bytes&bslash;n&quot;
+l_string|&quot;mmap: %ld (%lX) bytes&quot;
 comma
 id|size
 comma
@@ -6990,7 +7192,7 @@ c_func
 (paren
 id|dev
 comma
-l_int|0x1C
+id|OV7610_REG_ID_HIGH
 )paren
 op_ne
 l_int|0x7F
@@ -7002,39 +7204,29 @@ c_func
 (paren
 id|dev
 comma
-l_int|0x1D
+id|OV7610_REG_ID_LOW
 )paren
 op_ne
 l_int|0xA2
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: Failed to read OV7610 ID. You might&bslash;n&quot;
+l_string|&quot;Failed to read OV7610 ID. You might not have an OV7610,&quot;
 )paren
 suffix:semicolon
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: not have an OV7610, or it may be&bslash;n&quot;
+l_string|&quot;or it may be not responding. Report this to&quot;
 )paren
 suffix:semicolon
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: not responding. Report this to&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;ov511: mmcclelland@delphi.com&bslash;n&quot;
+l_string|&quot;mmcclelland@delphi.com&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7082,11 +7274,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: usb_set_interface error&bslash;n&quot;
+l_string|&quot;usb_set_interface error&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7149,11 +7340,10 @@ op_minus
 l_int|1
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: video_register_device failed&bslash;n&quot;
+l_string|&quot;video_register_device failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7195,11 +7385,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: enable system: command failed&bslash;n&quot;
+l_string|&quot;enable system: command failed&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -7235,11 +7424,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: failed to configure OV7610&bslash;n&quot;
+l_string|&quot;failed to configure OV7610&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -7263,11 +7451,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: disable compression: command failed&bslash;n&quot;
+l_string|&quot;disable compression: command failed&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -7415,7 +7602,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;probing for device...&bslash;n&quot;
+l_string|&quot;probing for device...&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* We don&squot;t handle multi-config cameras */
@@ -7514,11 +7701,10 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: couldn&squot;t kmalloc ov511 struct&bslash;n&quot;
+l_string|&quot;couldn&squot;t kmalloc ov511 struct&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7565,10 +7751,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;ov511: Unable to read camera bridge registers&bslash;n&quot;
+l_string|&quot;Unable to read camera bridge registers&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7641,24 +7827,24 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;ov511: Specific camera type (%d) not recognized&bslash;n&quot;
+l_string|&quot;Specific camera type (%d) not recognized&quot;
 comma
 id|rc
 )paren
 suffix:semicolon
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;ov511: Please contact mmcclelland@delphi.com to request&bslash;n&quot;
+l_string|&quot;Please contact mmcclelland@delphi.com to request&quot;
 )paren
 suffix:semicolon
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;ov511: support for your camera.&bslash;n&quot;
+l_string|&quot;support for your camera.&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7694,11 +7880,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;ov511: Failed to configure camera&bslash;n&quot;
+l_string|&quot;Failed to configure camera&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7800,7 +7985,7 @@ r_void
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;usb_ov511_init()&bslash;n&quot;
+l_string|&quot;usb_ov511_init()&quot;
 )paren
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
@@ -7862,7 +8047,7 @@ suffix:semicolon
 id|PDEBUG
 c_func
 (paren
-l_string|&quot;Module unloaded&bslash;n&quot;
+l_string|&quot;Module unloaded&quot;
 )paren
 suffix:semicolon
 )brace

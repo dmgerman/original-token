@@ -1218,7 +1218,9 @@ id|usb_kbd_event
 suffix:semicolon
 id|kbd-&gt;dr.requesttype
 op_assign
-id|USB_RT_HIDD
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_INTERFACE
 suffix:semicolon
 id|kbd-&gt;dr.request
 op_assign

@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * cisreg.h 1.14 1999/10/25 20:23:17&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
+multiline_comment|/*&n; * cisreg.h 1.16 2000/01/16 19:19:14&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
 macro_line|#ifndef _LINUX_CISREG_H
 DECL|macro|_LINUX_CISREG_H
 mdefine_line|#define _LINUX_CISREG_H
-multiline_comment|/* Offsets from ConfigBase for CIS registers */
+multiline_comment|/*&n; * Offsets from ConfigBase for CIS registers&n; */
 DECL|macro|CISREG_COR
 mdefine_line|#define CISREG_COR&t;&t;0x00
 DECL|macro|CISREG_CCSR
@@ -109,5 +109,28 @@ DECL|macro|FEMR_PWM_ENA
 mdefine_line|#define FEMR_PWM_ENA&t;&t;0x0040
 DECL|macro|FEMR_WKUP_MASK
 mdefine_line|#define FEMR_WKUP_MASK&t;&t;0x4000
+multiline_comment|/*&n; * Indirect Addressing Registers for Zoomed Video: these are addresses&n; * in common memory space&n; */
+DECL|macro|CISREG_ICTRL0
+mdefine_line|#define CISREG_ICTRL0&t;&t;0x02&t;/* control registers */
+DECL|macro|CISREG_ICTRL1
+mdefine_line|#define CISREG_ICTRL1&t;&t;0x03
+DECL|macro|CISREG_IADDR0
+mdefine_line|#define CISREG_IADDR0&t;&t;0x04&t;/* address registers */
+DECL|macro|CISREG_IADDR1
+mdefine_line|#define CISREG_IADDR1&t;&t;0x05
+DECL|macro|CISREG_IADDR2
+mdefine_line|#define CISREG_IADDR2&t;&t;0x06
+DECL|macro|CISREG_IADDR3
+mdefine_line|#define CISREG_IADDR3&t;&t;0x07
+DECL|macro|CISREG_IDATA0
+mdefine_line|#define CISREG_IDATA0&t;&t;0x08&t;/* data registers */
+DECL|macro|CISREG_IDATA1
+mdefine_line|#define CISREG_IDATA1&t;&t;0x09
+DECL|macro|ICTRL0_COMMON
+mdefine_line|#define ICTRL0_COMMON&t;&t;0x01
+DECL|macro|ICTRL0_AUTOINC
+mdefine_line|#define ICTRL0_AUTOINC&t;&t;0x02
+DECL|macro|ICTRL0_BYTEGRAN
+mdefine_line|#define ICTRL0_BYTEGRAN&t;&t;0x04
 macro_line|#endif /* _LINUX_CISREG_H */
 eof

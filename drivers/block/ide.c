@@ -1589,6 +1589,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_extern
+r_struct
+id|block_device_operations
+id|ide_fops
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * ide_geninit() is called exactly *once* for each interface.&n; */
 DECL|function|ide_geninit
 r_void
@@ -1619,7 +1626,7 @@ l_int|0
 suffix:semicolon
 id|unit
 OL
-id|gd-&gt;nr_real
+id|MAX_DRIVES
 suffix:semicolon
 op_increment
 id|unit
@@ -1635,21 +1642,16 @@ id|hwif-&gt;drives
 id|unit
 )braket
 suffix:semicolon
-id|grok_partitions
-c_func
+r_if
+c_cond
 (paren
-id|gd
-comma
-id|unit
-comma
-macro_line|#ifdef CONFIG_BLK_DEV_ISAPNP
-(paren
-id|drive-&gt;forced_geom
-op_logical_and
-id|drive-&gt;noprobe
+op_logical_neg
+id|drive-&gt;present
 )paren
-op_logical_or
-macro_line|#endif /* CONFIG_BLK_DEV_ISAPNP */
+r_continue
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|drive-&gt;media
 op_ne
@@ -1659,13 +1661,39 @@ id|drive-&gt;media
 op_ne
 id|ide_floppy
 )paren
+r_continue
+suffix:semicolon
+id|register_disk
+c_func
+(paren
+id|gd
+comma
+id|MKDEV
+c_func
+(paren
+id|hwif-&gt;major
+comma
+id|unit
+op_lshift
+id|PARTN_BITS
+)paren
+comma
+macro_line|#ifdef CONFIG_BLK_DEV_ISAPNP
+(paren
+id|drive-&gt;forced_geom
+op_logical_and
+id|drive-&gt;noprobe
+)paren
 ques
 c_cond
 l_int|1
 suffix:colon
+macro_line|#endif /* CONFIG_BLK_DEV_ISAPNP */
 l_int|1
 op_lshift
 id|PARTN_BITS
+comma
+id|ide_fops
 comma
 id|current_capacity
 c_func

@@ -1065,7 +1065,7 @@ id|US_CBI_ADSC
 comma
 id|USB_TYPE_CLASS
 op_or
-id|USB_RT_INTERFACE
+id|USB_RECIP_INTERFACE
 comma
 l_int|0
 comma
@@ -1388,7 +1388,7 @@ id|US_CBI_ADSC
 comma
 id|USB_TYPE_CLASS
 op_or
-id|USB_RT_INTERFACE
+id|USB_RECIP_INTERFACE
 comma
 l_int|0
 comma
@@ -1497,7 +1497,7 @@ id|US_CBI_ADSC
 comma
 id|USB_TYPE_CLASS
 op_or
-id|USB_RT_INTERFACE
+id|USB_RECIP_INTERFACE
 comma
 l_int|0
 comma
@@ -1550,7 +1550,7 @@ id|US_CBI_ADSC
 comma
 id|USB_TYPE_CLASS
 op_or
-id|USB_RT_INTERFACE
+id|USB_RECIP_INTERFACE
 comma
 l_int|0
 comma
@@ -1668,7 +1668,7 @@ id|USB_DIR_IN
 op_or
 id|USB_TYPE_STANDARD
 op_or
-id|USB_RT_DEVICE
+id|USB_RECIP_DEVICE
 comma
 l_int|0
 comma
@@ -2159,7 +2159,7 @@ id|US_BULK_RESET
 comma
 id|USB_TYPE_CLASS
 op_or
-id|USB_RT_INTERFACE
+id|USB_RECIP_INTERFACE
 comma
 id|US_BULK_RESET_HARD
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.235 1999/11/11 17:52:05&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.247 2000/01/15 04:30:35&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -63,8 +63,36 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cs.c 1.235 1999/11/11 17:52:05 (David Hinds)&quot;
+l_string|&quot;cs.c 1.247 2000/01/15 04:30:35 (David Hinds)&quot;
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+DECL|macro|PCI_OPT
+mdefine_line|#define PCI_OPT &quot; [pci]&quot;
+macro_line|#else
+DECL|macro|PCI_OPT
+mdefine_line|#define PCI_OPT &quot;&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_CARDBUS
+DECL|macro|CB_OPT
+mdefine_line|#define CB_OPT &quot; [cardbus]&quot;
+macro_line|#else
+DECL|macro|CB_OPT
+mdefine_line|#define CB_OPT &quot;&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_APM
+DECL|macro|APM_OPT
+mdefine_line|#define APM_OPT &quot; [apm]&quot;
+macro_line|#else
+DECL|macro|APM_OPT
+mdefine_line|#define APM_OPT &quot;&quot;
+macro_line|#endif
+macro_line|#if !defined(CONFIG_CARDBUS) &amp;&amp; !defined(CONFIG_PCI) &amp;&amp; &bslash;&n;    !defined(CONFIG_APM)
+DECL|macro|OPTIONS
+mdefine_line|#define OPTIONS &quot; none&quot;
+macro_line|#else
+DECL|macro|OPTIONS
+mdefine_line|#define OPTIONS PCI_OPT CB_OPT APM_OPT
 macro_line|#endif
 DECL|variable|release
 r_static
@@ -98,18 +126,22 @@ op_star
 id|options
 op_assign
 l_string|&quot;options: &quot;
-macro_line|#ifdef CONFIG_PCI
-l_string|&quot; [pci]&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_CARDBUS
-l_string|&quot; [cardbus]&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_APM
-l_string|&quot; [apm]&quot;
-macro_line|#endif
-macro_line|#if !defined(CONFIG_CARDBUS) &amp;&amp; !defined(CONFIG_PCI) &amp;&amp; &bslash;&n;    !defined(CONFIG_APM) &amp;&amp; !defined(CONFIG_PNP_BIOS)
-l_string|&quot; none&quot;
-macro_line|#endif
+id|OPTIONS
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;David Hinds &lt;dhinds@pcmcia.sourceforge.org&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Linux PCMCIA Card Services &quot;
+id|CS_RELEASE
+l_string|&quot;&bslash;n  options:&quot;
+id|OPTIONS
+)paren
 suffix:semicolon
 multiline_comment|/*====================================================================*/
 multiline_comment|/* Parameters that can be set with &squot;insmod&squot; */
@@ -968,34 +1000,6 @@ c_func
 id|s-&gt;sock
 comma
 id|state
-)paren
-suffix:semicolon
-)brace
-DECL|function|get_io_map
-r_static
-r_int
-id|get_io_map
-c_func
-(paren
-id|socket_info_t
-op_star
-id|s
-comma
-r_struct
-id|pccard_io_map
-op_star
-id|io
-)paren
-(brace
-r_return
-id|s-&gt;ss_entry
-op_member_access_from_pointer
-id|get_io_map
-c_func
-(paren
-id|s-&gt;sock
-comma
-id|io
 )paren
 suffix:semicolon
 )brace
@@ -3205,9 +3209,14 @@ id|base
 ques
 c_cond
 (paren
+id|lines
+ques
+c_cond
 l_int|1
 op_lshift
 id|lines
+suffix:colon
+l_int|0
 )paren
 suffix:colon
 l_int|1
@@ -3224,10 +3233,18 @@ id|num
 )paren
 )paren
 (brace
-id|printk
+r_if
+c_cond
+(paren
+op_star
+id|base
+)paren
+(brace
+id|DEBUG
 c_func
 (paren
-id|KERN_INFO
+l_int|0
+comma
 l_string|&quot;odd IO request: num %04x align %04x&bslash;n&quot;
 comma
 id|num
@@ -3235,16 +3252,11 @@ comma
 id|align
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|base
-)paren
 id|align
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_else
 r_while
 c_loop
@@ -3265,24 +3277,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|align
-op_logical_and
-(paren
 op_star
 id|base
 op_amp
+op_complement
 (paren
 id|align
 op_minus
 l_int|1
 )paren
 )paren
-)paren
 (brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_INFO
+l_int|0
+comma
 l_string|&quot;odd IO request: base %04x align %04x&bslash;n&quot;
 comma
 op_star
@@ -3911,6 +3921,15 @@ id|client_t
 comma
 id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|client
+)paren
+r_return
+id|CS_OUT_OF_RESOURCE
 suffix:semicolon
 id|memset
 c_func
@@ -5118,7 +5137,7 @@ id|MAP_16BIT
 )paren
 id|req-&gt;Attributes
 op_or_assign
-id|WIN_DATA_WIDTH
+id|WIN_DATA_WIDTH_16
 suffix:semicolon
 r_if
 c_cond
@@ -6113,7 +6132,7 @@ c_cond
 (paren
 id|req-&gt;Attributes
 op_amp
-id|WIN_DATA_WIDTH
+id|WIN_DATA_WIDTH_16
 )paren
 id|win-&gt;ctl.flags
 op_or_assign
@@ -6562,6 +6581,18 @@ id|handle
 (brace
 id|pccard_io_map
 id|io
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|1
+)brace
 suffix:semicolon
 id|socket_info_t
 op_star
@@ -6741,20 +6772,6 @@ suffix:semicolon
 id|io.map
 op_assign
 id|i
-suffix:semicolon
-id|get_io_map
-c_func
-(paren
-id|s
-comma
-op_amp
-id|io
-)paren
-suffix:semicolon
-id|io.flags
-op_and_assign
-op_complement
-id|MAP_ACTIVE
 suffix:semicolon
 id|set_io_map
 c_func
@@ -8627,10 +8644,11 @@ id|window_t
 op_star
 id|win
 suffix:semicolon
+id|u_long
+id|align
+suffix:semicolon
 r_int
 id|w
-comma
-id|align
 suffix:semicolon
 r_if
 c_cond
@@ -8681,6 +8699,79 @@ id|WIN_SHARED
 r_return
 id|CS_BAD_ATTRIBUTE
 suffix:semicolon
+multiline_comment|/* Window size defaults to smallest available */
+r_if
+c_cond
+(paren
+id|req-&gt;Size
+op_eq
+l_int|0
+)paren
+id|req-&gt;Size
+op_assign
+id|s-&gt;cap.map_size
+suffix:semicolon
+id|align
+op_assign
+(paren
+(paren
+(paren
+id|s-&gt;cap.features
+op_amp
+id|SS_CAP_MEM_ALIGN
+)paren
+op_logical_or
+(paren
+id|req-&gt;Attributes
+op_amp
+id|WIN_STRICT_ALIGN
+)paren
+)paren
+ques
+c_cond
+id|req-&gt;Size
+suffix:colon
+id|s-&gt;cap.map_size
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;Size
+op_amp
+(paren
+id|s-&gt;cap.map_size
+op_minus
+l_int|1
+)paren
+)paren
+r_return
+id|CS_BAD_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;Base
+op_amp
+(paren
+id|align
+op_minus
+l_int|1
+)paren
+)paren
+r_return
+id|CS_BAD_BASE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;Base
+)paren
+id|align
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Allocate system memory window */
 r_for
 c_loop
 (paren
@@ -8721,19 +8812,6 @@ id|MAX_WIN
 r_return
 id|CS_OUT_OF_RESOURCE
 suffix:semicolon
-multiline_comment|/* Window size defaults to smallest available */
-r_if
-c_cond
-(paren
-id|req-&gt;Size
-op_eq
-l_int|0
-)paren
-id|req-&gt;Size
-op_assign
-id|s-&gt;cap.map_size
-suffix:semicolon
-multiline_comment|/* Allocate system memory window */
 id|win
 op_assign
 op_amp
@@ -8767,22 +8845,6 @@ id|win-&gt;size
 op_assign
 id|req-&gt;Size
 suffix:semicolon
-id|align
-op_assign
-(paren
-(paren
-id|s-&gt;cap.features
-op_amp
-id|SS_CAP_MEM_ALIGN
-)paren
-op_logical_or
-(paren
-id|req-&gt;Attributes
-op_amp
-id|WIN_STRICT_ALIGN
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8794,14 +8856,7 @@ id|win-&gt;base
 comma
 id|win-&gt;size
 comma
-(paren
 id|align
-ques
-c_cond
-id|req-&gt;Size
-suffix:colon
-id|s-&gt;cap.map_size
-)paren
 comma
 (paren
 id|req-&gt;Attributes
@@ -8886,7 +8941,7 @@ c_cond
 (paren
 id|req-&gt;Attributes
 op_amp
-id|WIN_DATA_WIDTH
+id|WIN_DATA_WIDTH_16
 )paren
 id|win-&gt;ctl.flags
 op_or_assign

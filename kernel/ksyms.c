@@ -1322,6 +1322,13 @@ c_func
 id|grok_partitions
 )paren
 suffix:semicolon
+DECL|variable|register_disk
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_disk
+)paren
+suffix:semicolon
 DECL|variable|unplug_device
 id|EXPORT_SYMBOL
 c_func

@@ -1,35 +1,15 @@
 macro_line|#ifndef __HID_H
 DECL|macro|__HID_H
 mdefine_line|#define __HID_H
-multiline_comment|/*&n; *  drivers/usb/hid.h  Version 0.8&n; *&n; *  Copyright (c) 1999 Vojtech Pavlik&n; *  Copyright (c) 1999 Andreas Gal&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; *  drivers/usb/hid.h  Version 0.8&n; *&n; *  Copyright (c) 1999 Andreas Gal&n; *  Copyright (c) 2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; *&n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
-multiline_comment|/*&n; * Enable/Disable debug information.&n; */
-macro_line|#ifdef CONFIG_USB_HID_DEBUG
-DECL|macro|hid_debug
-mdefine_line|#define hid_debug(fmt,arg...) printk(KERN_DEBUG &quot;hid: &quot; fmt &quot;&bslash;n&quot; , ##arg)
-macro_line|#else
-DECL|macro|hid_debug
-mdefine_line|#define hid_debug(fmt,arg...) do { } while (0)
-macro_line|#endif
 multiline_comment|/*&n; * USB HID (Human Interface Device) interface class code&n; */
 DECL|macro|USB_INTERFACE_CLASS_HID
 mdefine_line|#define USB_INTERFACE_CLASS_HID&t;&t;3
-multiline_comment|/*&n; * USB interface subclass codes. &n; */
-DECL|macro|USB_INTERFACE_SUBCLASS_NONE
-mdefine_line|#define USB_INTERFACE_SUBCLASS_NONE&t;0 
-DECL|macro|USB_INTERFACE_SUBCLASS_HID_BP
-mdefine_line|#define USB_INTERFACE_SUBCLASS_HID_BP&t;1
-multiline_comment|/*&n; * HID protocol codes (only for boot protocol)&n; */
-DECL|macro|HID_PROTOCOL_NONE
-mdefine_line|#define HID_PROTOCOL_NONE&t;0
-DECL|macro|HID_PROTOCOL_KBD
-mdefine_line|#define HID_PROTOCOL_KBD&t;1
-DECL|macro|HID_PROTOCOL_MOUSE
-mdefine_line|#define HID_PROTOCOL_MOUSE&t;2
 multiline_comment|/*&n; * We parse each description item into this structure. Short items data&n; * values are expanded to 32-bit signed int, long items contain a pointer&n; * into the data area.&n; */
 DECL|struct|hid_item
 r_struct
@@ -116,7 +96,7 @@ DECL|macro|HID_MAIN_ITEM_TAG_BEGIN_COLLECTION
 mdefine_line|#define HID_MAIN_ITEM_TAG_BEGIN_COLLECTION&t;10
 DECL|macro|HID_MAIN_ITEM_TAG_END_COLLECTION
 mdefine_line|#define HID_MAIN_ITEM_TAG_END_COLLECTION&t;12
-multiline_comment|/*&n; * HID report descriptor main item contents&n; * Warning: VOLATILE is not available for TAG_INPUT&n; */
+multiline_comment|/*&n; * HID report descriptor main item contents&n; */
 DECL|macro|HID_MAIN_ITEM_CONSTANT
 mdefine_line|#define HID_MAIN_ITEM_CONSTANT&t;&t;0x001
 DECL|macro|HID_MAIN_ITEM_VARIABLE
@@ -213,19 +193,6 @@ DECL|macro|HID_GD_GAMEPAD
 mdefine_line|#define HID_GD_GAMEPAD&t;&t;0x00010005
 DECL|macro|HID_GD_HATSWITCH
 mdefine_line|#define HID_GD_HATSWITCH&t;0x00010039
-multiline_comment|/*&n; * HID interface requests (this belongs here, the USB_REQ_xxx stuff should&n; * disapear).&n; */
-DECL|macro|HID_REQ_GET_REPORT
-mdefine_line|#define HID_REQ_GET_REPORT   0x01
-DECL|macro|HID_REQ_GET_IDLE
-mdefine_line|#define HID_REQ_GET_IDLE     0x02
-DECL|macro|HID_REQ_GET_PROTOCOL
-mdefine_line|#define HID_REQ_GET_PROTOCOL 0x03
-DECL|macro|HID_REQ_SET_REPORT
-mdefine_line|#define HID_REQ_SET_REPORT   0x09
-DECL|macro|HID_REQ_SET_IDLE
-mdefine_line|#define HID_REQ_SET_IDLE     0x0A
-DECL|macro|HID_REQ_SET_PROTOCOL
-mdefine_line|#define HID_REQ_SET_PROTOCOL 0x0B
 multiline_comment|/*&n; * HID report types --- Ouch! HID spec says 1 2 3!&n; */
 DECL|macro|HID_INPUT_REPORT
 mdefine_line|#define HID_INPUT_REPORT&t;0
@@ -233,11 +200,6 @@ DECL|macro|HID_OUTPUT_REPORT
 mdefine_line|#define HID_OUTPUT_REPORT&t;1
 DECL|macro|HID_FEATURE_REPORT
 mdefine_line|#define HID_FEATURE_REPORT&t;2
-multiline_comment|/*&n; * HID protocols&n; */
-DECL|macro|HID_PROTOCOL_BOOT
-mdefine_line|#define HID_PROTOCOL_BOOT&t;0
-DECL|macro|HID_PROTOCOL_REPORT
-mdefine_line|#define HID_PROTOCOL_REPORT&t;1
 multiline_comment|/*&n; * This is the global enviroment of the parser. This information is&n; * persistent for main-items. The global enviroment can be saved and&n; * restored with PUSH/POP statements.&n; */
 DECL|struct|hid_global
 r_struct
@@ -645,6 +607,66 @@ op_star
 id|device
 suffix:semicolon
 )brace
+suffix:semicolon
+DECL|struct|hid_class_descriptor
+r_struct
+id|hid_class_descriptor
+(brace
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+DECL|member|wDescriptorLength
+id|__u16
+id|wDescriptorLength
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|struct|hid_descriptor
+r_struct
+id|hid_descriptor
+(brace
+DECL|member|bLength
+id|__u8
+id|bLength
+suffix:semicolon
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+DECL|member|bcdHID
+id|__u16
+id|bcdHID
+suffix:semicolon
+DECL|member|bCountryCode
+id|__u8
+id|bCountryCode
+suffix:semicolon
+DECL|member|bNumDescriptors
+id|__u8
+id|bNumDescriptors
+suffix:semicolon
+DECL|member|desc
+r_struct
+id|hid_class_descriptor
+id|desc
+(braket
+l_int|1
+)braket
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 macro_line|#endif
 eof

@@ -377,7 +377,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|flush_tlb_all
+id|flush_tlb_all_kernel
 c_func
 (paren
 )paren
@@ -385,6 +385,7 @@ suffix:semicolon
 )brace
 DECL|function|map_new_virtual
 r_static
+r_inline
 r_int
 r_int
 id|map_new_virtual
@@ -555,13 +556,6 @@ c_func
 id|page
 comma
 id|kmap_prot
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Subtle! For some reason if we dont do this TLB flush then&n;&t; * we get data corruption and weird behavior in dbench runs.&n;&t; * But invlpg this should not be necessery ... Any ideas?&n;&t; */
-id|__flush_tlb_one
-c_func
-(paren
-id|vaddr
 )paren
 suffix:semicolon
 id|pkmap_count
