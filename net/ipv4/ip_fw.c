@@ -5632,7 +5632,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%s %08lX:%04X %08lX:%04X %04X %08lX %5d %lu&bslash;n&quot;
+l_string|&quot;%s %08lX:%04X %08lX:%04X %04X %08X %5d %lu&bslash;n&quot;
 comma
 id|strProt
 (braket

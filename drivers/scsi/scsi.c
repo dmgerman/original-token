@@ -2868,7 +2868,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|SDpnt
+id|SCpnt
 op_ne
 l_int|NULL
 )paren

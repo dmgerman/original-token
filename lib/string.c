@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/lib/string.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * stupid library routines.. The optimized versions should generally be found&n; * as inline code in &lt;asm-xx/string.h&gt;&n; *&n; * These are buggy as well..&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 DECL|variable|___strtok
 r_char
 op_star
@@ -8,6 +9,7 @@ id|___strtok
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifndef __HAVE_ARCH_STRCPY
 DECL|function|strcpy
 r_char
 op_star
@@ -51,6 +53,8 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRNCPY
 DECL|function|strncpy
 r_char
 op_star
@@ -100,6 +104,8 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRCAT
 DECL|function|strcat
 r_char
 op_star
@@ -151,6 +157,8 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRNCAT
 DECL|function|strncat
 r_char
 op_star
@@ -221,6 +229,8 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRCMP
 DECL|function|strcmp
 r_int
 id|strcmp
@@ -276,6 +286,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRNCMP
 DECL|function|strncmp
 r_int
 id|strncmp
@@ -339,6 +351,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRCHR
 DECL|function|strchr
 r_char
 op_star
@@ -385,6 +399,8 @@ op_star
 id|s
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRLEN
 DECL|function|strlen
 r_int
 id|strlen
@@ -424,6 +440,8 @@ op_minus
 id|s
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRNLEN
 DECL|function|strnlen
 r_int
 id|strnlen
@@ -469,6 +487,8 @@ op_minus
 id|s
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRSPN
 DECL|function|strspn
 r_int
 id|strspn
@@ -563,6 +583,8 @@ r_return
 id|count
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRPBRK
 DECL|function|strpbrk
 r_char
 op_star
@@ -642,6 +664,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRTOK
 DECL|function|strtok
 r_char
 op_star
@@ -748,6 +772,8 @@ id|sbegin
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_MEMSET
 DECL|function|memset
 r_void
 op_star
@@ -791,6 +817,8 @@ r_return
 id|s
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_BCOPY
 DECL|function|bcopy
 r_char
 op_star
@@ -834,6 +862,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_MEMCPY
 DECL|function|memcpy
 r_void
 op_star
@@ -890,6 +920,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
 r_void
 op_star
@@ -996,6 +1028,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_MEMCMP
 DECL|function|memcmp
 r_int
 id|memcmp
@@ -1075,7 +1109,9 @@ r_return
 id|res
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * find the first occurrence of byte &squot;c&squot;, or 1 past the area if none&n; */
+macro_line|#ifndef __HAVE_ARCH_MEMSCAN
 DECL|function|memscan
 r_void
 op_star
@@ -1142,6 +1178,8 @@ op_star
 id|p
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __HAVE_ARCH_STRSTR
 DECL|function|strstr
 r_char
 op_star
@@ -1233,4 +1271,5 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

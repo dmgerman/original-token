@@ -661,16 +661,6 @@ r_return
 id|current-&gt;pid
 suffix:semicolon
 )brace
-DECL|macro|OSF_MAP_ANONYMOUS
-mdefine_line|#define OSF_MAP_ANONYMOUS&t;0x0010
-DECL|macro|OSF_MAP_FIXED
-mdefine_line|#define OSF_MAP_FIXED&t;&t;0x0100
-DECL|macro|OSF_MAP_HASSEMAPHORE
-mdefine_line|#define OSF_MAP_HASSEMAPHORE&t;0x0200
-DECL|macro|OSF_MAP_INHERIT
-mdefine_line|#define OSF_MAP_INHERIT&t;&t;0x0400
-DECL|macro|OSF_MAP_UNALIGNED
-mdefine_line|#define OSF_MAP_UNALIGNED&t;0x0800
 DECL|function|osf_mmap
 id|asmlinkage
 r_int
@@ -692,7 +682,7 @@ id|prot
 comma
 r_int
 r_int
-id|osf_flags
+id|flags
 comma
 r_int
 r_int
@@ -710,25 +700,17 @@ id|file
 op_assign
 l_int|NULL
 suffix:semicolon
-r_int
-r_int
-id|flags
-op_assign
-id|osf_flags
-op_amp
-l_int|0x0f
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|osf_flags
+id|flags
 op_amp
 (paren
-id|OSF_MAP_HASSEMAPHORE
+id|MAP_HASSEMAPHORE
 op_or
-id|OSF_MAP_INHERIT
+id|MAP_INHERIT
 op_or
-id|OSF_MAP_UNALIGNED
+id|MAP_UNALIGNED
 )paren
 )paren
 id|printk
@@ -744,26 +726,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|osf_flags
-op_amp
-id|OSF_MAP_FIXED
-)paren
-id|flags
-op_or_assign
-id|MAP_FIXED
-suffix:semicolon
-r_if
-c_cond
+op_logical_neg
 (paren
-id|osf_flags
-op_amp
-id|OSF_MAP_ANONYMOUS
-)paren
 id|flags
-op_or_assign
+op_amp
 id|MAP_ANONYMOUS
-suffix:semicolon
-r_else
+)paren
+)paren
 (brace
 r_if
 c_cond

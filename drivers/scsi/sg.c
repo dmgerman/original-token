@@ -803,7 +803,7 @@ r_if
 c_cond
 (paren
 id|size
-OL
+op_le
 id|SG_BIG_BUFF
 )paren
 (brace

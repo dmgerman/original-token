@@ -1,26 +1,26 @@
 multiline_comment|/* cm206.h Header file for cm206.c.&n;   Copyright (c) 1995 David van Leeuwen &n;*/
 multiline_comment|/* First, the cm260 stuff */
-multiline_comment|/* The ports and irq used. If it is not defined, make it variable, &n;   and initialize them at some reasonable value */
+multiline_comment|/* The ports and irq used. Although CM206_BASE and CM206_IRQ are defined&n;   below, the values are not used unless autoprobing is turned off and &n;   no LILO boot options or module command line options are given. Change&n;   these values to your own as last resort if autoprobing and options&n;   don&squot;t work. */
 DECL|macro|CM206_BASE
 mdefine_line|#define CM206_BASE 0x340
 DECL|macro|CM206_IRQ
 mdefine_line|#define CM206_IRQ 11
 DECL|macro|r_data_status
-mdefine_line|#define r_data_status (CM206_BASE)
+mdefine_line|#define r_data_status (cm206_base)
 DECL|macro|r_uart_receive
-mdefine_line|#define r_uart_receive (CM206_BASE+0x2)
+mdefine_line|#define r_uart_receive (cm206_base+0x2)
 DECL|macro|r_fifo_output_buffer
-mdefine_line|#define r_fifo_output_buffer (CM206_BASE+0x4)
+mdefine_line|#define r_fifo_output_buffer (cm206_base+0x4)
 DECL|macro|r_line_status
-mdefine_line|#define r_line_status (CM206_BASE+0x6)
+mdefine_line|#define r_line_status (cm206_base+0x6)
 DECL|macro|r_data_control
-mdefine_line|#define r_data_control (CM206_BASE+0x8)
+mdefine_line|#define r_data_control (cm206_base+0x8)
 DECL|macro|r_uart_transmit
-mdefine_line|#define r_uart_transmit (CM206_BASE+0xa)
+mdefine_line|#define r_uart_transmit (cm206_base+0xa)
 DECL|macro|r_test_clock
-mdefine_line|#define r_test_clock (CM206_BASE+0xc)
+mdefine_line|#define r_test_clock (cm206_base+0xc)
 DECL|macro|r_test_control
-mdefine_line|#define r_test_control (CM206_BASE+0xe)
+mdefine_line|#define r_test_control (cm206_base+0xe)
 multiline_comment|/* the data_status flags */
 DECL|macro|ds_ram_size
 mdefine_line|#define ds_ram_size 0x4000
@@ -183,6 +183,4 @@ DECL|macro|CM206CTL_GET_STAT
 mdefine_line|#define CM206CTL_GET_STAT 0x2000
 DECL|macro|CM206CTL_GET_LAST_STAT
 mdefine_line|#define CM206CTL_GET_LAST_STAT 0x2001
-DECL|macro|CM206_RESET_DRIVE
-mdefine_line|#define CM206_RESET_DRIVE 0x2002 /* use with care */
 eof

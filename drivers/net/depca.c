@@ -3170,7 +3170,9 @@ c_cond
 (paren
 id|tickssofar
 OL
-l_int|100
+l_int|1
+op_star
+id|HZ
 )paren
 (brace
 id|status

@@ -2,6 +2,8 @@ macro_line|#ifndef _I386_STRING_H_
 DECL|macro|_I386_STRING_H_
 mdefine_line|#define _I386_STRING_H_
 multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. String instructions have been&n; * used through-out, making for &quot;slightly&quot; unclear code :-)&n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; */
+DECL|macro|__HAVE_ARCH_STRCPY
+mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|function|strcpy
 r_extern
 r_inline
@@ -55,6 +57,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRNCPY
+mdefine_line|#define __HAVE_ARCH_STRNCPY
 DECL|function|strncpy
 r_extern
 r_inline
@@ -123,6 +127,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRCAT
+mdefine_line|#define __HAVE_ARCH_STRCAT
 DECL|function|strcat
 r_extern
 r_inline
@@ -189,6 +195,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRNCAT
+mdefine_line|#define __HAVE_ARCH_STRNCAT
 DECL|function|strncat
 r_extern
 r_inline
@@ -270,6 +278,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRCMP
+mdefine_line|#define __HAVE_ARCH_STRCMP
 DECL|function|strcmp
 r_extern
 r_inline
@@ -332,6 +342,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRNCMP
+mdefine_line|#define __HAVE_ARCH_STRNCMP
 DECL|function|strncmp
 r_extern
 r_inline
@@ -406,6 +418,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRCHR
+mdefine_line|#define __HAVE_ARCH_STRCHR
 DECL|function|strchr
 r_extern
 r_inline
@@ -465,6 +479,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRRCHR
+mdefine_line|#define __HAVE_ARCH_STRRCHR
 DECL|function|strrchr
 r_extern
 r_inline
@@ -529,6 +545,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRSPN
+mdefine_line|#define __HAVE_ARCH_STRSPN
 DECL|function|strspn
 r_extern
 r_inline
@@ -613,6 +631,8 @@ op_minus
 id|cs
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRCSPN
+mdefine_line|#define __HAVE_ARCH_STRCSPN
 DECL|function|strcspn
 r_extern
 r_inline
@@ -697,6 +717,8 @@ op_minus
 id|cs
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRPBRK
+mdefine_line|#define __HAVE_ARCH_STRPBRK
 DECL|function|strpbrk
 r_extern
 r_inline
@@ -783,6 +805,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRSTR
+mdefine_line|#define __HAVE_ARCH_STRSTR
 DECL|function|strstr
 r_extern
 r_inline
@@ -872,6 +896,8 @@ r_return
 id|__res
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_STRLEN
+mdefine_line|#define __HAVE_ARCH_STRLEN
 DECL|function|strlen
 r_extern
 r_inline
@@ -931,6 +957,8 @@ r_char
 op_star
 id|___strtok
 suffix:semicolon
+DECL|macro|__HAVE_ARCH_STRTOK
+mdefine_line|#define __HAVE_ARCH_STRTOK
 DECL|function|strtok
 r_extern
 r_inline
@@ -1344,8 +1372,12 @@ suffix:semicolon
 DECL|macro|COMMON
 macro_line|#undef COMMON
 )brace
+DECL|macro|__HAVE_ARCH_MEMCPY
+mdefine_line|#define __HAVE_ARCH_MEMCPY
 DECL|macro|memcpy
 mdefine_line|#define memcpy(t, f, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy((t),(f),(n)) : &bslash;&n; __memcpy((t),(f),(n)))
+DECL|macro|__HAVE_ARCH_MEMMOVE
+mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
 r_extern
 r_inline
@@ -1465,6 +1497,8 @@ suffix:semicolon
 )brace
 DECL|macro|memcmp
 mdefine_line|#define memcmp __builtin_memcmp
+DECL|macro|__HAVE_ARCH_MEMCHR
+mdefine_line|#define __HAVE_ARCH_MEMCHR
 DECL|function|memchr
 r_extern
 r_inline
@@ -1848,9 +1882,13 @@ DECL|macro|__constant_c_x_memset
 mdefine_line|#define __constant_c_x_memset(s, c, count) &bslash;&n;(__builtin_constant_p(count) ? &bslash;&n; __constant_c_and_count_memset((s),(c),(count)) : &bslash;&n; __constant_c_memset((s),(c),(count)))
 DECL|macro|__memset
 mdefine_line|#define __memset(s, c, count) &bslash;&n;(__builtin_constant_p(count) ? &bslash;&n; __constant_count_memset((s),(c),(count)) : &bslash;&n; __memset_generic((s),(c),(count)))
+DECL|macro|__HAVE_ARCH_MEMSET
+mdefine_line|#define __HAVE_ARCH_MEMSET
 DECL|macro|memset
 mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_c_x_memset((s),(0x01010101UL*(unsigned char)c),(count)) : &bslash;&n; __memset((s),(c),(count)))
 multiline_comment|/*&n; * find the first occurrence of byte &squot;c&squot;, or 1 past the area if none&n; */
+DECL|macro|__HAVE_ARCH_MEMSCAN
+mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|function|memscan
 r_extern
 r_inline

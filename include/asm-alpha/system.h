@@ -260,6 +260,15 @@ DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 DECL|macro|tas
 mdefine_line|#define tas(ptr) (xchg((ptr),1))
+multiline_comment|/*&n; * This function doesn&squot;t exist, so you&squot;ll get a linker error&n; * if something tries to do an invalid xchg().&n; *&n; * This only works if the compiler isn&squot;t horribly bad at optimizing.&n; * gcc-2.5.8 reportedly can&squot;t handle this, but as that doesn&squot;t work&n; * too well on the alpha anyway..&n; */
+r_extern
+r_void
+id|__xchg_called_with_bad_pointer
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|__xchg
 r_static
 r_inline
@@ -312,10 +321,9 @@ id|x
 )paren
 suffix:semicolon
 )brace
-id|printk
+id|__xchg_called_with_bad_pointer
 c_func
 (paren
-l_string|&quot;Argh.. xchg() with unsupported size&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

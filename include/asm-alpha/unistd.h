@@ -86,8 +86,8 @@ DECL|macro|__NR_getgroups
 mdefine_line|#define __NR_getgroups&t;&t; 79
 DECL|macro|__NR_setgroups
 mdefine_line|#define __NR_setgroups&t;&t; 80
-DECL|macro|__NR_setpgid
-mdefine_line|#define __NR_setpgid&t;&t; 82
+DECL|macro|__NR_setpgrp
+mdefine_line|#define __NR_setpgrp&t;&t; 82
 DECL|macro|__NR_setitimer
 mdefine_line|#define __NR_setitimer&t;&t; 83
 DECL|macro|__NR_getitimer

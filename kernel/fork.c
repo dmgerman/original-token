@@ -831,6 +831,14 @@ id|p-&gt;pid
 op_assign
 id|last_pid
 suffix:semicolon
+id|p-&gt;next_run
+op_assign
+l_int|NULL
+suffix:semicolon
+id|p-&gt;prev_run
+op_assign
+l_int|NULL
+suffix:semicolon
 id|p-&gt;p_pptr
 op_assign
 id|p-&gt;p_opptr

@@ -206,13 +206,14 @@ macro_line|# define outw(w,p) _outw((w),(p))
 DECL|macro|outl
 macro_line|# define outl(l,p) _outl((l),(p))
 macro_line|#endif
-macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* !__KERNEL__ */
 multiline_comment|/*&n; * There are different version of the alpha motherboards: the&n; * &quot;interesting&quot; (read: slightly braindead) Jensen type hardware&n; * and the PCI version&n; */
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#else
 macro_line|#include &lt;asm/jensen.h&gt;
 macro_line|#endif
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */
 r_extern
 r_void
@@ -380,5 +381,6 @@ DECL|macro|memcpy_fromio
 mdefine_line|#define memcpy_fromio(to,from,len)&t;(memcpy_fromio)((to),(unsigned long)(from),(len))
 DECL|macro|memcpy_toio
 mdefine_line|#define memcpy_toio(to,from,len)&t;(memcpy_toio)((unsigned long)(to),(from),(len))
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

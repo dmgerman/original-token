@@ -256,6 +256,9 @@ suffix:semicolon
 id|stats-&gt;tx_packets
 op_increment
 suffix:semicolon
+id|stats-&gt;rx_packets
+op_increment
+suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0

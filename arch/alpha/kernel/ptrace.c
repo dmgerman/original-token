@@ -2538,6 +2538,27 @@ l_int|4
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nsaved
+OG
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ptrace_cancel_bpt: bogus nsaved: %d!&bslash;n&quot;
+comma
+id|nsaved
+)paren
+suffix:semicolon
+id|nsaved
+op_assign
+l_int|2
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -2698,6 +2719,7 @@ op_eq
 l_int|1
 )paren
 (brace
+multiline_comment|/* you may not mess with init */
 id|set_failure
 c_func
 (paren
@@ -3373,6 +3395,7 @@ c_func
 id|child
 )paren
 suffix:semicolon
+multiline_comment|/* make sure single-step breakpoint is gone. */
 id|ptrace_cancel_bpt
 c_func
 (paren
@@ -3407,6 +3430,7 @@ id|child-&gt;exit_code
 op_assign
 id|SIGKILL
 suffix:semicolon
+multiline_comment|/* make sure single-step breakpoint is gone. */
 id|ptrace_cancel_bpt
 c_func
 (paren
@@ -3421,7 +3445,7 @@ r_case
 id|PTRACE_SINGLESTEP
 suffix:colon
 (brace
-multiline_comment|/* set the trap flag. */
+multiline_comment|/* execute signle instruction. */
 r_if
 c_cond
 (paren
@@ -3556,7 +3580,7 @@ c_func
 id|child
 )paren
 suffix:semicolon
-multiline_comment|/* make sure the single step bit is not set. */
+multiline_comment|/* make sure single-step breakpoint is gone. */
 id|ptrace_cancel_bpt
 c_func
 (paren
@@ -3569,9 +3593,6 @@ suffix:semicolon
 )brace
 r_default
 suffix:colon
-(brace
-)brace
-(brace
 id|set_failure
 c_func
 (paren
@@ -3586,7 +3607,6 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|syscall_trace

@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/pas2_midi.c&n; *&n; * The low level driver for t
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &quot;pas.h&quot;
-macro_line|#if !defined(EXCLUDE_PAS) &amp;&amp; !defined(EXCLUDE_MIDI) &amp;&amp; defined(EXCLUDE_PRO_MIDI)
+macro_line|#if !defined(EXCLUDE_PAS) &amp;&amp; !defined(EXCLUDE_MIDI)
 DECL|variable|midi_busy
 DECL|variable|input_opened
 r_static

@@ -294,6 +294,14 @@ r_return
 suffix:semicolon
 )brace
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;dev_remove_pack: %p not found.&bslash;n&quot;
+comma
+id|pt
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************************&n;&n;&t;&t;&t;    Device Interface Subroutines&n;&n;******************************************************************************************/
 multiline_comment|/* &n; *&t;Find an interface by name.&n; */

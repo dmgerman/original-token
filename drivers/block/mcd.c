@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com (no longer valid - where are you now, Martin?)&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioctls and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;&n;        0.4   Added support for loadable MODULEs, so mcd can now also be&n;              loaded by insmod and removed by rmmod during runtime.&n;              Werner Zimmermann (zimmerma@rz.fht-esslingen.de), Mar. 26, 95&n;*/
+multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com (no longer valid - where are you now, Martin?)&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioctls and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;&n;&n;        0.4   &n;        Added support for loadable MODULEs, so mcd can now also be loaded by &n;        insmod and removed by rmmod during runtime.&n;        Werner Zimmermann (zimmerma@rz.fht-esslingen.de), Mar. 26, 95&n;&n;&t;0.5&n;&t;I added code for FX001 D to drop from double speed to single speed &n;&t;when encountering errors... this helps with some &quot;problematic&quot; CD&squot;s&n;&t;that are supposedly &quot;OUT OF TOLERANCE&quot; (but are really shitty presses!)&n;&t;severly scratched, or possibly slightly warped! I have noticed that&n;&t;the Mitsumi 2x/4x drives are just less tolerant and the firmware is &n;&t;not smart enough to drop speed,&t;so let&squot;s just kludge it with software!&n;&t;****** THE 4X SPEED MITSUMI DRIVES HAVE THE SAME PROBLEM!!!!!! ******&n;&t;Anyone want to &quot;DONATE&quot; one to me?! ;) I hear sometimes they are&n;&t;even WORSE! ;)&n;&t;** HINT... HINT... TAKE NOTES MITSUMI This could save some hassels with&n;&t;certain &quot;large&quot; CD&squot;s that have data on the outside edge in your &n;&t;DOS DRIVERS .... Accuracy counts... speed is secondary ;)&n;&t;17 June 95 Modifications By Andrew J. Kroll &lt;ag784@freenet.buffalo.edu&gt;&n;&t;07 July 1995 Modifications by Andrew J. Kroll&n;&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|# include &lt;linux/module.h&gt;
@@ -52,6 +52,33 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* I know putting defines in this file is probably stupid, but it should be */
+multiline_comment|/* the only place that they are really needed... I HOPE! :) */
+multiline_comment|/* How many sectors to read at 1x when an error at 2x speed occurs. */
+multiline_comment|/* You can change this to anything from 2 to 32767, but 30 seems to */
+multiline_comment|/* work best for me.  I have found that when the drive has problems */
+multiline_comment|/* reading one sector, it will have troubles reading the next few.  */
+DECL|macro|SINGLE_HOLD_SECTORS
+mdefine_line|#define SINGLE_HOLD_SECTORS 30&t;
+DECL|macro|MCMD_2X_READ
+mdefine_line|#define MCMD_2X_READ 0xC1&t;/* Double Speed Read DON&squot;T TOUCH! */
+multiline_comment|/* I added A flag to drop to 1x speed if too many errors 0 = 1X ; 1 = 2X */
+DECL|variable|mcdDouble
+r_static
+r_int
+id|mcdDouble
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* How many sectors to hold at 1x speed counter */
+DECL|variable|mcd1xhold
+r_static
+r_int
+id|mcd1xhold
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Is the drive connected properly and responding?? */
 DECL|variable|mcdPresent
 r_static
 r_int
@@ -2557,12 +2584,55 @@ id|mcd_error
 op_amp
 l_int|0x04
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot; (Read error)&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Bitch about the problem. */
+multiline_comment|/* Time to get fancy! If at 2x speed and 1 error, drop to 1x speed! */
+multiline_comment|/* Interesting how it STAYS at MCD_RETRY_ATTEMPTS on first error! */
+multiline_comment|/* But I find that rather HANDY!!! */
+multiline_comment|/* Neat! it REALLY WORKS on those LOW QUALITY CD&squot;s!!! Smile! :) */
+multiline_comment|/* AJK [06/17/95] */
+multiline_comment|/* Slap the CD down to single speed! */
+r_if
+c_cond
+(paren
+id|mcdDouble
+op_eq
+l_int|1
+op_logical_and
+id|McdTries
+op_eq
+id|MCD_RETRY_ATTEMPTS
+op_logical_and
+id|MCMD_DATA_READ
+op_eq
+id|MCMD_2X_READ
+)paren
+(brace
+id|MCMD_DATA_READ
+op_assign
+id|MCMD_PLAY_READ
+suffix:semicolon
+multiline_comment|/* Uhhh, Ummmm, muhuh-huh! */
+id|mcd1xhold
+op_assign
+id|SINGLE_HOLD_SECTORS
+suffix:semicolon
+multiline_comment|/* Hey Bevis! */
+id|printk
+c_func
+(paren
+l_string|&quot; Speed now 1x&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Pull my finger! */
+)brace
+)brace
 id|printk
 c_func
 (paren
@@ -2580,7 +2650,7 @@ c_cond
 (paren
 id|McdTries
 op_eq
-l_int|5
+id|MCD_RETRY_ATTEMPTS
 )paren
 id|printk
 c_func
@@ -2599,6 +2669,8 @@ id|McdTries
 op_decrement
 )paren
 (brace
+multiline_comment|/* Nuts! This cd is ready for recycling! */
+multiline_comment|/* When WAS the last time YOU cleaned it CORRECTLY?! */
 id|printk
 c_func
 (paren
@@ -2634,7 +2706,7 @@ l_int|0
 suffix:semicolon
 id|McdTries
 op_assign
-l_int|5
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 )brace
 )brace
@@ -2646,6 +2718,55 @@ id|mcd_state
 op_assign
 id|MCD_S_STOP
 suffix:semicolon
+)brace
+multiline_comment|/* Switch back to Double speed if enough GOOD sectors were read! */
+multiline_comment|/* Are we a double speed with a crappy CD?! */
+r_if
+c_cond
+(paren
+id|mcdDouble
+op_eq
+l_int|1
+op_logical_and
+id|McdTries
+op_eq
+id|MCD_RETRY_ATTEMPTS
+op_logical_and
+id|MCMD_DATA_READ
+op_eq
+id|MCMD_PLAY_READ
+)paren
+(brace
+multiline_comment|/* We ARE a double speed and we ARE bitching! */
+r_if
+c_cond
+(paren
+id|mcd1xhold
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Okay, Like are we STILL at single speed? */
+(brace
+multiline_comment|/* We need to switch back to double speed now... */
+id|MCMD_DATA_READ
+op_assign
+id|MCMD_2X_READ
+suffix:semicolon
+multiline_comment|/* Uhhh... BACK You GO! */
+id|printk
+c_func
+(paren
+l_string|&quot;mcd: Switching back to 2X speed!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Tell &squot;em! */
+)brace
+r_else
+id|mcd1xhold
+op_decrement
+suffix:semicolon
+multiline_comment|/* No?! Count down the good reads some more... */
+multiline_comment|/* and try, try again! */
 )brace
 id|immediately
 suffix:colon
@@ -4517,7 +4638,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;Mitsumi status, type and version : %02X %c %x&bslash;n&quot;
+l_string|&quot;Mitsumi status, type and version : %02X %c %x &quot;
 comma
 id|result
 (braket
@@ -4545,9 +4666,29 @@ l_int|1
 op_eq
 l_char|&squot;D&squot;
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Double Speed CD ROM&bslash;n&quot;
+)paren
+suffix:semicolon
 id|MCMD_DATA_READ
 op_assign
-l_int|0xC1
+id|MCMD_2X_READ
+suffix:semicolon
+id|mcdDouble
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Added flag to drop to 1x speed if too many errors */
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Single Speed CD ROM&bslash;n&quot;
+)paren
 suffix:semicolon
 id|mcdVersion
 op_assign

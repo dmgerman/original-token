@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aztcd.h,v 1.30 1995/07/04 08:28:17 root Exp $&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
+multiline_comment|/* $Id: aztcd.h,v 1.40 1995/07/15 20:35:01 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
 multiline_comment|/* *** change this to set the I/O port address of your CD-ROM drive*/
 DECL|macro|AZT_BASE_ADDR
 mdefine_line|#define AZT_BASE_ADDR&t;&t;0x320
@@ -14,11 +14,14 @@ mdefine_line|#define AZT_ALLOW_TRAY_LOCK&t;1
 multiline_comment|/*Set this to 1 to allow auto-eject when unmounting a disk, set to 0, if you &n;  don&squot;t want the auto-eject feature*/
 DECL|macro|AZT_AUTO_EJECT
 mdefine_line|#define AZT_AUTO_EJECT          0
+multiline_comment|/*Set this to 1, if you want multisession support. Be warned, this function has&n;not been tested !!!*/
+DECL|macro|AZT_MULTISESSION
+mdefine_line|#define AZT_MULTISESSION        0
+multiline_comment|/*Set this to 1, if you want to use incompatible ioctls for reading in raw and&n;  cooked mode */
+DECL|macro|AZT_PRIVATE_IOCTLS
+mdefine_line|#define AZT_PRIVATE_IOCTLS      1
 multiline_comment|/*---------------------------------------------------------------------------*/
 multiline_comment|/*------------nothing to be configured below this line-----------------------*/
-multiline_comment|/* use incompatible ioctls for reading in raw and cooked mode */
-DECL|macro|AZT_PRIVATE_IOCTLS
-mdefine_line|#define AZT_PRIVATE_IOCTLS
 multiline_comment|/* Increase this if you get lots of timeouts; if you get kernel panic, replace&n;   STEN_LOW_WAIT by STEN_LOW in the source code */
 DECL|macro|AZT_STATUS_DELAY
 mdefine_line|#define AZT_STATUS_DELAY&t;400       /*for timer wait, STEN_LOW_WAIT*/
@@ -113,6 +116,12 @@ DECL|macro|ACMD_SET_MODE
 mdefine_line|#define ACMD_SET_MODE&t;&t;0xA1&t;&t;/* set drive mode */
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS&t;&t;104
+DECL|macro|CD_DATA
+mdefine_line|#define CD_DATA&t;&t;&t;0x01
+DECL|macro|CD_AUDIO
+mdefine_line|#define CD_AUDIO&t;&t;0x02
+DECL|macro|CD_XA
+mdefine_line|#define CD_XA                   (CD_DATA|CD_AUDIO)
 DECL|struct|msf
 r_struct
 id|msf
@@ -173,6 +182,21 @@ DECL|member|firstTrack
 r_struct
 id|msf
 id|firstTrack
+suffix:semicolon
+DECL|member|multi
+r_int
+r_char
+id|multi
+suffix:semicolon
+DECL|member|lastTrack
+r_struct
+id|msf
+id|lastTrack
+suffix:semicolon
+DECL|member|type
+r_int
+r_char
+id|type
 suffix:semicolon
 )brace
 suffix:semicolon

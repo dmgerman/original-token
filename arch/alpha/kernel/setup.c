@@ -448,6 +448,21 @@ id|cpu_index
 comma
 id|system_index
 suffix:semicolon
+r_extern
+r_struct
+id|unaligned_stat
+(brace
+r_int
+r_int
+id|count
+comma
+id|va
+comma
+id|pc
+suffix:semicolon
+)brace
+id|unaligned
+suffix:semicolon
 DECL|macro|N
 macro_line|#&t;define N(a)&t;(sizeof(a)/sizeof(a[0]))
 id|cpu
@@ -510,6 +525,7 @@ l_string|&quot;page size [bytes]&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;phys. address bits&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;max. addr. space #&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;BogoMIPS&bslash;t&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;unaligned accesses&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
 comma
 (paren
 id|cpu_index
@@ -600,6 +616,12 @@ l_int|5000
 )paren
 op_mod
 l_int|100
+comma
+id|unaligned.count
+comma
+id|unaligned.pc
+comma
+id|unaligned.va
 )paren
 suffix:semicolon
 DECL|macro|N

@@ -112,7 +112,7 @@ mdefine_line|#define PKT_HDR_LEN     14              /* Addresses and data lengt
 DECL|macro|FAKE_FRAME_LEN
 mdefine_line|#define FAKE_FRAME_LEN  (MAX_PKT_SZ + 1)
 DECL|macro|QUEUE_PKT_TIMEOUT
-mdefine_line|#define QUEUE_PKT_TIMEOUT (300)         /* Jiffies */
+mdefine_line|#define QUEUE_PKT_TIMEOUT (3*HZ)        /* 3 second timeout */
 DECL|macro|CRC_POLYNOMIAL_BE
 mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL   /* Ethernet CRC, big endian */
 DECL|macro|CRC_POLYNOMIAL_LE
@@ -3373,8 +3373,12 @@ id|jiffies
 suffix:semicolon
 (paren
 id|i
-op_eq
+op_le
 id|jiffies
+op_plus
+id|HZ
+op_div
+l_int|100
 )paren
 op_logical_and
 (paren
@@ -3620,7 +3624,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;%s: transmit timed out, status %08x, tbusy:%d, lostMedia:%d tickssofar:%ld, resetting.&bslash;n&quot;
+l_string|&quot;%s: transmit timed out, status %08x, tbusy:%ld, lostMedia:%d tickssofar:%ld, resetting.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

@@ -1220,6 +1220,22 @@ id|sigaction
 op_star
 id|sa
 suffix:semicolon
+r_extern
+id|ptrace_cancel_bpt
+(paren
+r_struct
+id|task_struct
+op_star
+id|child
+)paren
+suffix:semicolon
+id|ptrace_cancel_bpt
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/* make sure single-step bpt is gone */
 r_while
 c_loop
 (paren

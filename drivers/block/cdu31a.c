@@ -486,6 +486,13 @@ id|readahead_bad
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Used to time a short period to abort an operation after the&n;   drive has been idle for a while.  This keeps the light on&n;   the drive from flashing for very long. */
+DECL|variable|cdu31a_abort_timer
+r_static
+r_struct
+id|timer_list
+id|cdu31a_abort_timer
+suffix:semicolon
 multiline_comment|/*&n; * This routine returns 1 if the disk has been changed since the last&n; * check or 0 if it hasn&squot;t.&n; */
 r_static
 r_int
@@ -3103,6 +3110,24 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Called when the timer times out.  This will abort the&n;   pending read operation. */
+r_static
+r_void
+DECL|function|handle_abort_timeout
+id|handle_abort_timeout
+c_func
+(paren
+r_int
+r_int
+id|data
+)paren
+(brace
+id|abort_read
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Actually get data and status from the drive. */
 r_static
 r_void
@@ -4138,6 +4163,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -4150,10 +4181,9 @@ id|has_cd_task
 op_assign
 id|current
 suffix:semicolon
-id|restore_flags
+id|sti
 c_func
 (paren
-id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Get drive status before doing anything. */
@@ -4166,6 +4196,23 @@ c_func
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* If the timer is running, cancel it. */
+r_if
+c_cond
+(paren
+id|cdu31a_abort_timer.next
+op_ne
+l_int|NULL
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|cdu31a_abort_timer
+)paren
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -4698,11 +4745,25 @@ suffix:semicolon
 )brace
 id|end_do_cdu31a_request
 suffix:colon
-macro_line|#if 1
+macro_line|#if 0
 multiline_comment|/* After finished, cancel any pending operations. */
 id|abort_read
 c_func
 (paren
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Start a timer to time out after a while to disable&n;      the read. */
+id|cdu31a_abort_timer.expires
+op_assign
+l_int|200
+suffix:semicolon
+multiline_comment|/* Wait 2 seconds */
+id|add_timer
+c_func
+(paren
+op_amp
+id|cdu31a_abort_timer
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4719,6 +4780,12 @@ c_func
 (paren
 op_amp
 id|sony_wait
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -10413,6 +10480,18 @@ r_sizeof
 r_struct
 id|s_sony_session_toc
 )paren
+suffix:semicolon
+id|cdu31a_abort_timer.next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|cdu31a_abort_timer.prev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|cdu31a_abort_timer.function
+op_assign
+id|handle_abort_timeout
 suffix:semicolon
 )brace
 id|disk_changed

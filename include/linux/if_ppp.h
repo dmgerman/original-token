@@ -450,7 +450,8 @@ id|slcomp
 suffix:semicolon
 multiline_comment|/* for header compression&t;*/
 DECL|member|last_xmit
-id|__u32
+r_int
+r_int
 id|last_xmit
 suffix:semicolon
 multiline_comment|/* time of last transmission&t;*/
