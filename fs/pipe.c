@@ -309,7 +309,7 @@ id|inode
 )paren
 op_decrement
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -654,7 +654,7 @@ id|inode
 )paren
 op_decrement
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -1215,7 +1215,7 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -1444,7 +1444,7 @@ id|inode
 )paren
 op_decrement
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -1482,7 +1482,7 @@ id|inode
 )paren
 op_decrement
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -1528,7 +1528,7 @@ id|inode
 )paren
 op_decrement
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp

@@ -56,7 +56,7 @@ id|inode
 )paren
 op_increment
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -149,7 +149,7 @@ op_star
 id|inode
 )paren
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -213,7 +213,7 @@ op_star
 id|inode
 )paren
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -274,7 +274,7 @@ id|inode
 )paren
 op_increment
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -360,7 +360,7 @@ op_star
 id|inode
 )paren
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -409,7 +409,7 @@ op_star
 id|inode
 )paren
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -444,7 +444,7 @@ id|inode
 )paren
 op_increment
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -490,7 +490,7 @@ id|inode
 )paren
 op_increment
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp

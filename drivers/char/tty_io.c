@@ -12,11 +12,11 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/keyboard.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;vt_kern.h&quot;
 DECL|macro|CONSOLE_DEV
 mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
@@ -1419,7 +1419,7 @@ id|vc_mode
 op_assign
 id|KD_TEXT
 suffix:semicolon
-id|clr_vc_kbd_flag
+id|clr_vc_kbd_mode
 c_func
 (paren
 id|kbd_table
@@ -1427,6 +1427,16 @@ op_plus
 id|new_console
 comma
 id|VC_RAW
+)paren
+suffix:semicolon
+id|clr_vc_kbd_mode
+c_func
+(paren
+id|kbd_table
+op_plus
+id|new_console
+comma
+id|VC_MEDIUMRAW
 )paren
 suffix:semicolon
 id|vt_cons
@@ -1642,7 +1652,7 @@ id|vc_mode
 op_assign
 id|KD_TEXT
 suffix:semicolon
-id|clr_vc_kbd_flag
+id|clr_vc_kbd_mode
 c_func
 (paren
 id|kbd_table
@@ -1650,6 +1660,16 @@ op_plus
 id|fg_console
 comma
 id|VC_RAW
+)paren
+suffix:semicolon
+id|clr_vc_kbd_mode
+c_func
+(paren
+id|kbd_table
+op_plus
+id|fg_console
+comma
+id|VC_MEDIUMRAW
 )paren
 suffix:semicolon
 id|vt_cons
@@ -1826,7 +1846,7 @@ id|tty-&gt;line
 )paren
 )paren
 (brace
-id|set_vc_kbd_flag
+id|set_vc_kbd_led
 c_func
 (paren
 id|kbd_table
@@ -1903,6 +1923,12 @@ id|tty-&gt;start
 id|tty
 )paren
 suffix:semicolon
+id|TTY_WRITE_FLUSH
+c_func
+(paren
+id|tty
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1913,7 +1939,7 @@ id|tty-&gt;line
 )paren
 )paren
 (brace
-id|clr_vc_kbd_flag
+id|clr_vc_kbd_led
 c_func
 (paren
 id|kbd_table
@@ -1929,12 +1955,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|TTY_WRITE_FLUSH
-c_func
-(paren
-id|tty
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* Perform OPOST processing.  Returns -1 when the write_q becomes full&n;   and the character must be retried. */
 DECL|function|opost

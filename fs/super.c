@@ -936,6 +936,12 @@ id|MS_RDONLY
 )paren
 )paren
 (brace
+id|fsync_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_remount_sb

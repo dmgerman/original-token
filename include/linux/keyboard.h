@@ -1,176 +1,14 @@
 macro_line|#ifndef __LINUX_KEYBOARD_H
 DECL|macro|__LINUX_KEYBOARD_H
 mdefine_line|#define __LINUX_KEYBOARD_H
-macro_line|#include &lt;linux/interrupt.h&gt;
-DECL|macro|set_leds
-mdefine_line|#define set_leds() mark_bh(KEYBOARD_BH)
-multiline_comment|/*&n; * kbd-&gt;xxx contains the VC-local things (flag settings etc..)&n; * The low 3 local flags are hardcoded to be the led setting..&n; */
-DECL|struct|kbd_struct
-r_struct
-id|kbd_struct
-(brace
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-DECL|member|default_flags
-r_int
-r_int
-id|default_flags
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|kbd_struct
-id|kbd_table
-(braket
-)braket
-suffix:semicolon
-multiline_comment|/*&n; * These are the local &quot;softflags&quot;, giving actual keyboard modes. The&n; * three first flags are coded to the led settings.&n; */
-DECL|macro|VC_SCROLLOCK
-mdefine_line|#define VC_SCROLLOCK&t;0&t;/* scroll-lock mode */
-DECL|macro|VC_NUMLOCK
-mdefine_line|#define VC_NUMLOCK&t;1&t;/* numeric lock mode */
-DECL|macro|VC_CAPSLOCK
-mdefine_line|#define VC_CAPSLOCK&t;2&t;/* capslock mode */
-DECL|macro|VC_APPLIC
-mdefine_line|#define VC_APPLIC&t;3&t;/* application key mode */
-DECL|macro|VC_CKMODE
-mdefine_line|#define VC_CKMODE&t;5&t;/* cursor key mode */
-DECL|macro|VC_REPEAT
-mdefine_line|#define VC_REPEAT&t;6&t;/* keyboard repeat */
-DECL|macro|VC_RAW
-mdefine_line|#define VC_RAW&t;&t;7&t;/* raw (scancode) mode */
-DECL|macro|VC_CRLF
-mdefine_line|#define VC_CRLF&t;&t;8&t;/* 0 - enter sends CR, 1 - enter sends CRLF */
-DECL|macro|VC_META
-mdefine_line|#define VC_META&t;&t;9&t;/* 0 - meta, 1 - meta=prefix with ESC */
-DECL|macro|VC_PAUSE
-mdefine_line|#define VC_PAUSE&t;10&t;/* pause key pressed */
-DECL|macro|VC_MEDIUMRAW
-mdefine_line|#define VC_MEDIUMRAW&t;11&t;/* medium raw (keycode) mode */
-DECL|macro|VC_SHIFTLOCK
-mdefine_line|#define VC_SHIFTLOCK&t;12&t;/* shift lock mode */
-DECL|macro|VC_ALTGRLOCK
-mdefine_line|#define VC_ALTGRLOCK&t;13&t;/* altgr lock mode */
-DECL|macro|VC_CTRLLOCK
-mdefine_line|#define VC_CTRLLOCK&t;14&t;/* control lock mode */
-DECL|macro|VC_ALTLOCK
-mdefine_line|#define VC_ALTLOCK&t;15&t;/* alt lock mode */
-DECL|macro|LED_MASK
-mdefine_line|#define LED_MASK&t;7
-r_extern
-r_int
-r_int
-id|kbd_init
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|function|vc_kbd_flag
-r_extern
-r_inline
-r_int
-id|vc_kbd_flag
-c_func
-(paren
-r_struct
-id|kbd_struct
-op_star
-id|kbd
-comma
-r_int
-id|flag
-)paren
-(brace
-r_return
-(paren
-(paren
-id|kbd-&gt;flags
-op_rshift
-id|flag
-)paren
-op_amp
-l_int|1
-)paren
-suffix:semicolon
-)brace
-DECL|function|set_vc_kbd_flag
-r_extern
-r_inline
-r_void
-id|set_vc_kbd_flag
-c_func
-(paren
-r_struct
-id|kbd_struct
-op_star
-id|kbd
-comma
-r_int
-id|flag
-)paren
-(brace
-id|kbd-&gt;flags
-op_or_assign
-l_int|1
-op_lshift
-id|flag
-suffix:semicolon
-)brace
-DECL|function|clr_vc_kbd_flag
-r_extern
-r_inline
-r_void
-id|clr_vc_kbd_flag
-c_func
-(paren
-r_struct
-id|kbd_struct
-op_star
-id|kbd
-comma
-r_int
-id|flag
-)paren
-(brace
-id|kbd-&gt;flags
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|flag
-)paren
-suffix:semicolon
-)brace
-DECL|function|chg_vc_kbd_flag
-r_extern
-r_inline
-r_void
-id|chg_vc_kbd_flag
-c_func
-(paren
-r_struct
-id|kbd_struct
-op_star
-id|kbd
-comma
-r_int
-id|flag
-)paren
-(brace
-id|kbd-&gt;flags
-op_xor_assign
-l_int|1
-op_lshift
-id|flag
-suffix:semicolon
-)brace
+DECL|macro|KG_SHIFT
+mdefine_line|#define KG_SHIFT&t;0
+DECL|macro|KG_CTRL
+mdefine_line|#define KG_CTRL&t;&t;2
+DECL|macro|KG_ALT
+mdefine_line|#define KG_ALT&t;&t;3
+DECL|macro|KG_ALTGR
+mdefine_line|#define KG_ALTGR&t;1
 DECL|macro|NR_KEYS
 mdefine_line|#define NR_KEYS 128
 DECL|macro|NR_KEYMAPS
@@ -219,6 +57,8 @@ id|NR_FUNC
 suffix:semicolon
 DECL|macro|KT_LATIN
 mdefine_line|#define KT_LATIN&t;0&t;/* we depend on this being zero */
+DECL|macro|KT_LETTER
+mdefine_line|#define KT_LETTER      11&t;/* symbol that can be acted upon by CapsLock */
 DECL|macro|KT_FN
 mdefine_line|#define KT_FN&t;&t;1
 DECL|macro|KT_SPEC
@@ -389,14 +229,6 @@ DECL|macro|K_RIGHT
 mdefine_line|#define K_RIGHT&t;&t;K(KT_CUR,2)
 DECL|macro|K_UP
 mdefine_line|#define K_UP&t;&t;K(KT_CUR,3)
-DECL|macro|KG_SHIFT
-mdefine_line|#define KG_SHIFT&t;0
-DECL|macro|KG_CTRL
-mdefine_line|#define KG_CTRL&t;&t;2
-DECL|macro|KG_ALT
-mdefine_line|#define KG_ALT&t;&t;3
-DECL|macro|KG_ALTGR
-mdefine_line|#define KG_ALTGR&t;1
 DECL|macro|K_SHIFT
 mdefine_line|#define K_SHIFT&t;&t;K(KT_SHIFT,KG_SHIFT)
 DECL|macro|K_CTRL
@@ -430,13 +262,13 @@ mdefine_line|#define K_ASC8&t;&t;K(KT_ASCII,8)
 DECL|macro|K_ASC9
 mdefine_line|#define K_ASC9&t;&t;K(KT_ASCII,9)
 DECL|macro|K_SHIFTLOCK
-mdefine_line|#define K_SHIFTLOCK&t;K(KT_LOCK,0)
+mdefine_line|#define K_SHIFTLOCK&t;K(KT_LOCK,KG_SHIFT)
 DECL|macro|K_CTRLLOCK
-mdefine_line|#define K_CTRLLOCK&t;K(KT_LOCK,2)
+mdefine_line|#define K_CTRLLOCK&t;K(KT_LOCK,KG_CTRL)
 DECL|macro|K_ALTLOCK
-mdefine_line|#define K_ALTLOCK&t;K(KT_LOCK,3)
+mdefine_line|#define K_ALTLOCK&t;K(KT_LOCK,KG_ALT)
 DECL|macro|K_ALTGRLOCK
-mdefine_line|#define K_ALTGRLOCK&t;K(KT_LOCK,1)
+mdefine_line|#define K_ALTGRLOCK&t;K(KT_LOCK,KG_ALTGR)
 DECL|macro|MAX_DIACR
 mdefine_line|#define MAX_DIACR       256
 macro_line|#endif

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
@@ -370,6 +371,87 @@ c_func
 (paren
 id|c
 )paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_kstat
+r_static
+r_int
+id|get_kstat
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_return
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;cpu  %u,%u,%u,%lu&bslash;n&quot;
+l_string|&quot;disk %u,%u,%u,%u&bslash;n&quot;
+l_string|&quot;page %u,%u&bslash;n&quot;
+l_string|&quot;swap %u,%u&bslash;n&quot;
+l_string|&quot;intr %u&bslash;n&quot;
+l_string|&quot;ctxt %u&bslash;n&quot;
+l_string|&quot;btime %lu&bslash;n&quot;
+comma
+id|kstat.cpu_user
+comma
+id|kstat.cpu_nice
+comma
+id|kstat.cpu_system
+comma
+id|jiffies
+op_minus
+(paren
+id|kstat.cpu_user
+op_plus
+id|kstat.cpu_nice
+op_plus
+id|kstat.cpu_system
+)paren
+comma
+id|kstat.dk_drive
+(braket
+l_int|0
+)braket
+comma
+id|kstat.dk_drive
+(braket
+l_int|1
+)braket
+comma
+id|kstat.dk_drive
+(braket
+l_int|2
+)braket
+comma
+id|kstat.dk_drive
+(braket
+l_int|3
+)braket
+comma
+id|kstat.pgpgin
+comma
+id|kstat.pgpgout
+comma
+id|kstat.pswpin
+comma
+id|kstat.pswpout
+comma
+id|kstat.interrupts
+comma
+id|kstat.context_swtch
+comma
+id|xtime.tv_sec
+op_minus
+id|jiffies
+op_div
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -2547,6 +2629,19 @@ suffix:colon
 id|length
 op_assign
 id|get_module_list
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|17
+suffix:colon
+id|length
+op_assign
+id|get_kstat
 c_func
 (paren
 id|page

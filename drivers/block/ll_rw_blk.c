@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/kernel/blk_dev/ll_rw.c&n; *&n; * Copyright (C) 
 multiline_comment|/*&n; * This handles all read/write requests to block devices&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1716,6 +1717,24 @@ id|bh
 id|i
 )braket
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rw
+op_eq
+id|READ
+op_logical_or
+id|rw
+op_eq
+id|READA
+)paren
+id|kstat.pgpgin
+op_increment
+suffix:semicolon
+r_else
+id|kstat.pgpgout
+op_increment
 suffix:semicolon
 )brace
 )brace

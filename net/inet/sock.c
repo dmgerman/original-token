@@ -2724,7 +2724,7 @@ op_logical_neg
 id|sk-&gt;dead
 )paren
 (brace
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|sk-&gt;sleep
@@ -2754,7 +2754,7 @@ op_logical_neg
 id|sk-&gt;dead
 )paren
 (brace
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|sk-&gt;sleep
@@ -3296,11 +3296,10 @@ id|sk-&gt;send_tmp
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;mss
+id|sk-&gt;user_mss
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* we will try not to send any packets smaller than this. */
 id|sk-&gt;debug
 op_assign
 l_int|0

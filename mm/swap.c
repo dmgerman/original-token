@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -246,6 +247,20 @@ c_func
 op_amp
 id|lock_queue
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rw
+op_eq
+id|READ
+)paren
+id|kstat.pswpin
+op_increment
+suffix:semicolon
+r_else
+id|kstat.pswpout
+op_increment
 suffix:semicolon
 r_if
 c_cond

@@ -270,6 +270,8 @@ DECL|macro|__NR_getpgid
 mdefine_line|#define __NR_getpgid&t;&t;132
 DECL|macro|__NR_fchdir
 mdefine_line|#define __NR_fchdir&t;&t;133
+DECL|macro|__NR_bdflush
+mdefine_line|#define __NR_bdflush&t;&t;134
 r_extern
 r_int
 id|errno

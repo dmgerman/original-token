@@ -135,7 +135,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|sk-&gt;sleep

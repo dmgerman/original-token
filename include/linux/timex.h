@@ -93,6 +93,11 @@ id|timeval
 id|time
 suffix:semicolon
 multiline_comment|/* (read only) */
+DECL|member|tick
+r_int
+id|tick
+suffix:semicolon
+multiline_comment|/* (modified) usecs between clock ticks */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Mode codes (timex.mode) &n; */
@@ -108,6 +113,8 @@ DECL|macro|ADJ_STATUS
 mdefine_line|#define ADJ_STATUS&t;&t;0x0010&t;/* clock status */
 DECL|macro|ADJ_TIMECONST
 mdefine_line|#define ADJ_TIMECONST&t;&t;0x0020&t;/* pll time constant */
+DECL|macro|ADJ_TICK
+mdefine_line|#define ADJ_TICK&t;&t;0x4000&t;/* tick value */
 DECL|macro|ADJ_OFFSET_SINGLESHOT
 mdefine_line|#define ADJ_OFFSET_SINGLESHOT&t;0x8001&t;/* old-fashioned adjtime */
 multiline_comment|/*&n; * Clock command/status codes (timex.status)&n; */

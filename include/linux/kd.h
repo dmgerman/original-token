@@ -181,6 +181,10 @@ DECL|macro|GIO_FONT8x16
 mdefine_line|#define GIO_FONT8x16&t;0x4B2C&t;/* gets current 8x16 font used */
 DECL|macro|PIO_FONT8x16
 mdefine_line|#define PIO_FONT8x16&t;0x4B2D&t;/* use supplied 8x16 font */
+DECL|macro|GIO_FONT
+mdefine_line|#define GIO_FONT&t;0x4B60&t;/* gets font in expanded form */
+DECL|macro|PIO_FONT
+mdefine_line|#define PIO_FONT&t;0x4B61&t;/* use font in expanded form */
 DECL|macro|MKDIOADDR
 mdefine_line|#define MKDIOADDR&t;32&t;/* io bitmap size from &lt;linux/sched.h&gt; */
 DECL|struct|kd_disparam
@@ -347,6 +351,15 @@ DECL|macro|KDGKBMODE
 mdefine_line|#define KDGKBMODE&t;0x4B44&t;/* gets current keyboard mode */
 DECL|macro|KDSKBMODE
 mdefine_line|#define KDSKBMODE&t;0x4B45&t;/* sets current keyboard mode */
+multiline_comment|/* merge with previous pair of ioctls? */
+DECL|macro|K_METABIT
+mdefine_line|#define&t;&t;K_METABIT&t;0x03
+DECL|macro|K_ESCPREFIX
+mdefine_line|#define&t;&t;K_ESCPREFIX&t;0x04
+DECL|macro|KDGKBMETA
+mdefine_line|#define KDGKBMETA&t;0x4B62&t;/* gets meta key handling mode */
+DECL|macro|KDSKBMETA
+mdefine_line|#define KDSKBMETA&t;0x4B63&t;/* sets meta key handling mode */
 DECL|struct|kbentry
 r_struct
 id|kbentry
@@ -442,5 +455,6 @@ DECL|macro|KDGKBDIACR
 mdefine_line|#define KDGKBDIACR      0x4B4A  /* read kernel accent table */
 DECL|macro|KDSKBDIACR
 mdefine_line|#define KDSKBDIACR      0x4B4B  /* write kernel accent table */
+multiline_comment|/* note: 0x4B60 and 0x4B61 used above for GIO_FONT and PIO_FONT&n;         0x4B62 and 0x4B63 used above for KDGKBMETA and KDSKBMETA */
 macro_line|#endif /* _LINUX_KD_H */
 eof

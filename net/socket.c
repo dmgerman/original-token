@@ -919,7 +919,7 @@ id|peer-&gt;state
 op_assign
 id|SS_DISCONNECTING
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|peer-&gt;wait
@@ -1066,7 +1066,7 @@ op_assign
 id|SS_FREE
 suffix:semicolon
 multiline_comment|/* this really releases us */
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -1745,7 +1745,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Wake up server, then await connection. server will set state to&n;   * SS_CONNECTED if we&squot;re connected.&n;   */
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|servsock-&gt;wait

@@ -227,12 +227,29 @@ r_int
 r_int
 id|bytes_rcv
 suffix:semicolon
+multiline_comment|/* mss is min(mtu, max_window) */
 DECL|member|mtu
 r_int
 r_int
 id|mtu
 suffix:semicolon
+multiline_comment|/* mss negotiated in the syn&squot;s */
+DECL|member|mss
+r_volatile
+r_int
+r_int
+id|mss
+suffix:semicolon
+multiline_comment|/* current eff. mss - can change */
+DECL|member|user_mss
+r_volatile
+r_int
+r_int
+id|user_mss
+suffix:semicolon
+multiline_comment|/* mss requested by user in ioctl */
 DECL|member|max_window
+r_volatile
 r_int
 r_int
 id|max_window
@@ -277,11 +294,6 @@ r_volatile
 r_int
 r_int
 id|shutdown
-suffix:semicolon
-DECL|member|mss
-r_int
-r_int
-id|mss
 suffix:semicolon
 DECL|member|rtt
 r_volatile

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/fdreg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -126,6 +127,12 @@ multiline_comment|/* time at last adjustment (s) */
 DECL|variable|time_adjust
 r_int
 id|time_adjust
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|time_adjust_step
+r_int
+id|time_adjust_step
 op_assign
 l_int|0
 suffix:semicolon
@@ -318,6 +325,51 @@ l_int|2
 )braket
 comma
 id|KERNEL_DS
+)brace
+suffix:semicolon
+DECL|variable|kstat
+r_struct
+id|kernel_stat
+id|kstat
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * int 0x80 entry points.. Moved away from the header file, as&n; * iBCS2 may also want to use the &squot;&lt;linux/sys.h&gt;&squot; headers..&n; */
@@ -613,6 +665,8 @@ comma
 id|sys_getpgid
 comma
 id|sys_fchdir
+comma
+id|sys_bdflush
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */
@@ -1121,6 +1175,18 @@ l_int|1
 )paren
 op_plus
 id|p-&gt;priority
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|current
+op_ne
+id|next
+)paren
+(brace
+id|kstat.context_swtch
+op_increment
 suffix:semicolon
 )brace
 id|switch_to
@@ -2581,6 +2647,8 @@ suffix:semicolon
 id|xtime.tv_usec
 op_add_assign
 id|tick
+op_plus
+id|time_adjust_step
 op_minus
 id|ltemp
 suffix:semicolon
@@ -2610,6 +2678,8 @@ id|xtime.tv_usec
 op_add_assign
 id|tick
 op_plus
+id|time_adjust_step
+op_plus
 id|ltemp
 suffix:semicolon
 )brace
@@ -2617,6 +2687,8 @@ r_else
 id|xtime.tv_usec
 op_add_assign
 id|tick
+op_plus
+id|time_adjust_step
 suffix:semicolon
 r_if
 c_cond
@@ -2624,8 +2696,7 @@ c_cond
 id|time_adjust
 )paren
 (brace
-multiline_comment|/* We are doing an adjtime thing. &n;&t;     */
-multiline_comment|/* Limit the amount of the step for *next* tick to be&n;&t;     * in the range -tickadj .. +tickadj&n;&t;     */
+multiline_comment|/* We are doing an adjtime thing. &n;&t;     *&n;&t;     * Modify the value of the tick for next time.&n;&t;     * Note that a positive delta means we want the clock&n;&t;     * to run fast. This means that the tick should be bigger&n;&t;     *&n;&t;     * Limit the amount of the step for *next* tick to be&n;&t;     * in the range -tickadj .. +tickadj&n;&t;     */
 r_if
 c_cond
 (paren
@@ -2633,7 +2704,7 @@ id|time_adjust
 OG
 id|tickadj
 )paren
-id|ltemp
+id|time_adjust_step
 op_assign
 id|tickadj
 suffix:semicolon
@@ -2646,37 +2717,26 @@ OL
 op_minus
 id|tickadj
 )paren
-id|ltemp
+id|time_adjust_step
 op_assign
 op_minus
 id|tickadj
 suffix:semicolon
 r_else
-id|ltemp
+id|time_adjust_step
 op_assign
 id|time_adjust
 suffix:semicolon
-multiline_comment|/* Reduce the amount of time left by this step */
+multiline_comment|/* Reduce by this step the amount of time left  */
 id|time_adjust
 op_sub_assign
-id|ltemp
-suffix:semicolon
-multiline_comment|/* Modify the value of the tick for next time.&n;&t;     * Note that a positive delta means we want the clock&n;&t;     * to run fast. This means that the tick should be bigger&n;&t;     */
-id|tick
-op_assign
-l_int|1000000
-op_div
-id|HZ
-op_plus
-id|ltemp
+id|time_adjust_step
 suffix:semicolon
 )brace
 r_else
-id|tick
+id|time_adjust_step
 op_assign
-l_int|1000000
-op_div
-id|HZ
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2726,6 +2786,34 @@ id|regs-&gt;cs
 id|current-&gt;utime
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current
+op_ne
+id|task
+(braket
+l_int|0
+)braket
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current-&gt;priority
+op_ne
+l_int|15
+)paren
+(brace
+id|kstat.cpu_nice
+op_increment
+suffix:semicolon
+)brace
+r_else
+id|kstat.cpu_user
+op_increment
+suffix:semicolon
+)brace
 multiline_comment|/* Update ITIMER_VIRT for current task if not in a system call */
 r_if
 c_cond
@@ -2760,6 +2848,21 @@ r_else
 id|current-&gt;stime
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current
+op_ne
+id|task
+(braket
+l_int|0
+)braket
+)paren
+(brace
+id|kstat.cpu_system
+op_increment
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond

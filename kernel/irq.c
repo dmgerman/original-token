@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;linux/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Li
 multiline_comment|/*&n; * IRQ&squot;s are in fact implemented a bit like signal handlers for the kernel.&n; * The same sigaction struct is used, and with similar semantics (ie there&n; * is a SA_INTERRUPT flag etc). Naturally it&squot;s not a 1:1 relation, but there&n; * are similarities.&n; *&n; * sa_handler(int irq_NR) is the default function called.&n; * sa_mask is 0 if nothing uses this IRQ&n; * sa_flags contains various info: SA_INTERRUPT etc&n; * sa_restorer is the unused&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -846,6 +847,9 @@ id|irq
 op_plus
 id|irq_sigaction
 suffix:semicolon
+id|kstat.interrupts
+op_increment
+suffix:semicolon
 id|sa
 op_member_access_from_pointer
 id|sa_handler
@@ -877,6 +881,9 @@ op_assign
 id|irq
 op_plus
 id|irq_sigaction
+suffix:semicolon
+id|kstat.interrupts
+op_increment
 suffix:semicolon
 id|sa
 op_member_access_from_pointer

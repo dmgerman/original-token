@@ -2595,7 +2595,7 @@ id|sock
 op_member_access_from_pointer
 id|sockaddr_len
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|clientsock-&gt;wait
@@ -3120,7 +3120,7 @@ id|sock-&gt;state
 op_eq
 id|SS_CONNECTED
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|sock-&gt;conn-&gt;wait
@@ -3542,7 +3542,7 @@ id|sock-&gt;state
 op_eq
 id|SS_CONNECTED
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|sock-&gt;conn-&gt;wait

@@ -29,8 +29,8 @@ r_int
 r_int
 id|seq_offset
 suffix:semicolon
-DECL|macro|LOCALNET_BIGPACKETS
-mdefine_line|#define LOCALNET_BIGPACKETS
+DECL|macro|SUBNETSARELOCAL
+mdefine_line|#define SUBNETSARELOCAL
 r_static
 id|__inline__
 r_int
@@ -307,7 +307,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * two things are going on here.  First, we don&squot;t ever offer a&n; * window less than min(sk-&gt;mtu, MAX_WINDOW/2).  This is the&n; * receiver side of SWS as specified in RFC1122.&n; * Second, we always give them at least the window they&n; * had before, in order to avoid retracting window.  This&n; * is technically allowed, but RFC1122 advises against it and&n; * in practice it causes trouble.&n; */
+multiline_comment|/*&n; * two things are going on here.  First, we don&squot;t ever offer a&n; * window less than min(sk-&gt;mss, MAX_WINDOW/2).  This is the&n; * receiver side of SWS as specified in RFC1122.&n; * Second, we always give them at least the window they&n; * had before, in order to avoid retracting window.  This&n; * is technically allowed, but RFC1122 advises against it and&n; * in practice it causes trouble.&n; */
 r_if
 c_cond
 (paren
@@ -316,7 +316,7 @@ OL
 id|min
 c_func
 (paren
-id|sk-&gt;mtu
+id|sk-&gt;mss
 comma
 id|MAX_WINDOW
 op_div
@@ -1268,7 +1268,7 @@ c_func
 id|sk
 )paren
 op_ge
-id|sk-&gt;mtu
+id|sk-&gt;mss
 )paren
 (brace
 id|release_sock
@@ -2349,21 +2349,10 @@ id|skb
 op_assign
 id|sk-&gt;send_tmp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
-(brace
 id|sk-&gt;send_tmp
-op_assign
-id|skb-&gt;next
-suffix:semicolon
-id|skb-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -2399,10 +2388,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-id|skb-&gt;next
-op_assign
-l_int|NULL
 suffix:semicolon
 id|save_flags
 c_func
@@ -3490,6 +3475,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * The following code can result in copy &lt;= if sk-&gt;mss is ever&n; * decreased.  It shouldn&squot;t be.  sk-&gt;mss is min(sk-&gt;mtu, sk-&gt;max_window).&n; * sk-&gt;mtu is constant once SYN processing is finished.  I.e. we&n; * had better not get here until we&squot;ve seen his SYN and at least one&n; * valid ack.  (The SYN sets sk-&gt;mtu and the ack sets sk-&gt;max_window.)&n; * But ESTABLISHED should guarantee that.  sk-&gt;max_window is by definition&n; * non-decreasing.  Note that any ioctl to set user_mss must be done&n; * before the exchange of SYN&squot;s.  If the initial ack from the other&n; * end has a window of 0, max_window and thus mss will both be 0.&n; */
 multiline_comment|/* Now we need to check if we have a half built packet. */
 r_if
 c_cond
@@ -3533,7 +3519,6 @@ r_struct
 id|tcphdr
 )paren
 suffix:semicolon
-multiline_comment|/* If sk-&gt;mtu has been changed this could cause problems. */
 multiline_comment|/* Add more stuff to the end of skb-&gt;len */
 r_if
 c_cond
@@ -3551,7 +3536,7 @@ op_assign
 id|min
 c_func
 (paren
-id|sk-&gt;mtu
+id|sk-&gt;mss
 op_minus
 (paren
 id|skb-&gt;len
@@ -3632,7 +3617,7 @@ op_minus
 id|hdrlen
 )paren
 op_ge
-id|sk-&gt;mtu
+id|sk-&gt;mss
 op_logical_or
 (paren
 id|flags
@@ -3651,7 +3636,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We also need to worry about the window.&n; &t; * If window &lt; 1/2 the maximum window we&squot;ve seen from this&n; &t; *   host, don&squot;t use it.  This is sender side&n; &t; *   silly window prevention, as specified in RFC1122.&n; &t; *   (Note that this is diffferent than earlier versions of&n; &t; *   SWS prevention, e.g. RFC813.).  What we actually do is &n;&t; *   use the whole MTU.  Since the results in the right&n;&t; *   edge of the packet being outside the window, it will&n;&t; *   be queued for later rather than sent.&n;&t; */
+multiline_comment|/*&n;&t; * We also need to worry about the window.&n; &t; * If window &lt; 1/2 the maximum window we&squot;ve seen from this&n; &t; *   host, don&squot;t use it.  This is sender side&n; &t; *   silly window prevention, as specified in RFC1122.&n; &t; *   (Note that this is diffferent than earlier versions of&n; &t; *   SWS prevention, e.g. RFC813.).  What we actually do is &n;&t; *   use the whole MSS.  Since the results in the right&n;&t; *   edge of the packet being outside the window, it will&n;&t; *   be queued for later rather than sent.&n;&t; */
 id|copy
 op_assign
 id|diff
@@ -3662,14 +3647,7 @@ comma
 id|sk-&gt;send_seq
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;max_window
-OG
-l_int|1
-)paren
-(brace
+multiline_comment|/* what if max_window == 1?  In that case max_window &gt;&gt; 1 is 0.&n;&t; * however in that case copy == max_window, so it&squot;s OK to use &n;&t; * the window */
 r_if
 c_cond
 (paren
@@ -3683,14 +3661,7 @@ l_int|1
 )paren
 id|copy
 op_assign
-id|sk-&gt;mtu
-suffix:semicolon
-)brace
-r_else
-multiline_comment|/* no max_window yet, punt this test */
-id|copy
-op_assign
-id|sk-&gt;mtu
+id|sk-&gt;mss
 suffix:semicolon
 id|copy
 op_assign
@@ -3699,7 +3670,7 @@ c_func
 (paren
 id|copy
 comma
-id|sk-&gt;mtu
+id|sk-&gt;mss
 )paren
 suffix:semicolon
 id|copy
@@ -3720,7 +3691,7 @@ id|sk-&gt;packets_out
 op_logical_and
 id|copy
 OL
-id|sk-&gt;mtu
+id|sk-&gt;mss
 op_logical_and
 op_logical_neg
 (paren
@@ -3737,6 +3708,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+multiline_comment|/* NB: following must be mtu, because mss can be increased.&n;&t;   * mss is always &lt;= mtu */
 id|skb
 op_assign
 id|prot
@@ -4907,6 +4879,7 @@ multiline_comment|/*&n;&t; * This area has caused the most trouble.  The current
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
+multiline_comment|/*&n; * It&squot;s unclear whether to use sk-&gt;mtu or sk-&gt;mss here.  They differ only&n; * if the other end is offering a window smaller than the agreed on MSS&n; * (called sk-&gt;mtu here).  In theory there&squot;s no connection between send&n; * and receive, and so no reason to think that they&squot;re going to send&n; * small packets.  For the moment I&squot;m using the hack of reducing the mss&n; * only on the send side, so I&squot;m putting mtu here.&n; */
 r_if
 c_cond
 (paren
@@ -7321,7 +7294,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Look for tcp options. Parses everything but only knows about MSS&n; */
+multiline_comment|/*&n; *&t;Look for tcp options. Parses everything but only knows about MSS.&n; *      This routine is always called with the packet containing the SYN.&n; *      However it may also be called with the ack to the SYN.  So you&n; *      can&squot;t assume this is always the SYN.  It&squot;s always called after&n; *      we have set up sk-&gt;mtu to our own MTU.&n; */
 r_static
 r_void
 DECL|function|tcp_options
@@ -7358,6 +7331,11 @@ r_sizeof
 r_struct
 id|tcphdr
 )paren
+suffix:semicolon
+r_int
+id|mss_seen
+op_assign
+l_int|0
 suffix:semicolon
 id|ptr
 op_assign
@@ -7445,6 +7423,8 @@ c_cond
 id|opsize
 op_eq
 l_int|4
+op_logical_and
+id|th-&gt;syn
 )paren
 (brace
 id|sk-&gt;mtu
@@ -7467,6 +7447,10 @@ id|ptr
 )paren
 )paren
 suffix:semicolon
+id|mss_seen
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -7484,6 +7468,40 @@ id|opsize
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|th-&gt;syn
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mss_seen
+)paren
+id|sk-&gt;mtu
+op_assign
+id|min
+c_func
+(paren
+id|sk-&gt;mtu
+comma
+l_int|536
+)paren
+suffix:semicolon
+multiline_comment|/* default MSS if none sent */
+)brace
+id|sk-&gt;mss
+op_assign
+id|min
+c_func
+(paren
+id|sk-&gt;max_window
+comma
+id|sk-&gt;mtu
+)paren
+suffix:semicolon
 )brace
 DECL|function|default_mask
 r_static
@@ -7931,6 +7949,10 @@ id|SEQ_TICK
 op_minus
 id|seq_offset
 suffix:semicolon
+id|newsk-&gt;window_seq
+op_assign
+id|newsk-&gt;send_seq
+suffix:semicolon
 id|newsk-&gt;rcv_ack_seq
 op_assign
 id|newsk-&gt;send_seq
@@ -8041,24 +8063,27 @@ op_assign
 id|skb-&gt;ip_hdr-&gt;tos
 suffix:semicolon
 multiline_comment|/* use 512 or whatever user asked for */
-multiline_comment|/* note use of sk-&gt;mss, since user has no direct access to newsk */
+multiline_comment|/* note use of sk-&gt;user_mss, since user has no direct access to newsk */
 r_if
 c_cond
 (paren
-id|sk-&gt;mss
+id|sk-&gt;user_mss
 )paren
 id|newsk-&gt;mtu
 op_assign
-id|sk-&gt;mss
+id|sk-&gt;user_mss
 suffix:semicolon
 r_else
 (brace
-macro_line|#ifdef LOCALNET_BIGPACKETS
+macro_line|#ifdef SUBNETSARELOCAL
 r_if
 c_cond
 (paren
 (paren
 id|saddr
+op_xor
+id|daddr
+)paren
 op_amp
 id|default_mask
 c_func
@@ -8066,28 +8091,29 @@ c_func
 id|saddr
 )paren
 )paren
-op_eq
+macro_line|#else
+r_if
+c_cond
 (paren
+(paren
+id|saddr
+op_xor
 id|daddr
+)paren
 op_amp
-id|default_mask
-c_func
-(paren
-id|daddr
+id|dev-&gt;pa_mask
 )paren
-)paren
-)paren
-id|newsk-&gt;mtu
-op_assign
-id|MAX_WINDOW
-suffix:semicolon
-r_else
 macro_line|#endif
 id|newsk-&gt;mtu
 op_assign
 l_int|576
 op_minus
 id|HEADER_SIZE
+suffix:semicolon
+r_else
+id|newsk-&gt;mtu
+op_assign
+id|MAX_WINDOW
 suffix:semicolon
 )brace
 multiline_comment|/* but not bigger than device MTU */
@@ -9687,6 +9713,7 @@ id|th-&gt;window
 OG
 id|sk-&gt;max_window
 )paren
+(brace
 id|sk-&gt;max_window
 op_assign
 id|ntohs
@@ -9695,6 +9722,17 @@ c_func
 id|th-&gt;window
 )paren
 suffix:semicolon
+id|sk-&gt;mss
+op_assign
+id|min
+c_func
+(paren
+id|sk-&gt;max_window
+comma
+id|sk-&gt;mtu
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -11866,7 +11904,7 @@ op_logical_neg
 id|skb-&gt;acked
 )paren
 (brace
-multiline_comment|/*&n;&t; * This is important.  If we don&squot;t have much room left,&n;&t; * we need to throw out a few packets so we have a good&n;&t; * window.&n;&t; */
+multiline_comment|/*&n;&t; * This is important.  If we don&squot;t have much room left,&n;&t; * we need to throw out a few packets so we have a good&n;&t; * window.  Note that mtu is used, not mss, because mss is really&n;&t; * for the send side.  He could be sending us stuff as large as mtu.&n;&t; */
 r_while
 c_loop
 (paren
@@ -12811,6 +12849,10 @@ id|SEQ_TICK
 op_minus
 id|seq_offset
 suffix:semicolon
+id|sk-&gt;window_seq
+op_assign
+id|sk-&gt;send_seq
+suffix:semicolon
 id|sk-&gt;rcv_ack_seq
 op_assign
 id|sk-&gt;send_seq
@@ -13052,20 +13094,23 @@ multiline_comment|/* use 512 or whatever user asked for */
 r_if
 c_cond
 (paren
-id|sk-&gt;mss
+id|sk-&gt;user_mss
 )paren
 id|sk-&gt;mtu
 op_assign
-id|sk-&gt;mss
+id|sk-&gt;user_mss
 suffix:semicolon
 r_else
 (brace
-macro_line|#ifdef LOCALNET_BIGPACKETS
+macro_line|#ifdef SUBNETSARELOCAL
 r_if
 c_cond
 (paren
 (paren
 id|sk-&gt;saddr
+op_xor
+id|sk-&gt;daddr
+)paren
 op_amp
 id|default_mask
 c_func
@@ -13073,28 +13118,29 @@ c_func
 id|sk-&gt;saddr
 )paren
 )paren
-op_eq
+macro_line|#else
+r_if
+c_cond
 (paren
+(paren
+id|sk-&gt;saddr
+op_xor
 id|sk-&gt;daddr
+)paren
 op_amp
-id|default_mask
-c_func
-(paren
-id|sk-&gt;daddr
+id|dev-&gt;pa_mask
 )paren
-)paren
-)paren
-id|sk-&gt;mtu
-op_assign
-id|MAX_WINDOW
-suffix:semicolon
-r_else
 macro_line|#endif
 id|sk-&gt;mtu
 op_assign
 l_int|576
 op_minus
 id|HEADER_SIZE
+suffix:semicolon
+r_else
+id|sk-&gt;mtu
+op_assign
+id|MAX_WINDOW
 suffix:semicolon
 )brace
 multiline_comment|/* but not bigger than device MTU */
@@ -14949,7 +14995,7 @@ op_logical_neg
 id|sk-&gt;dead
 )paren
 (brace
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|sk-&gt;sleep
@@ -15223,6 +15269,30 @@ id|state_change
 c_func
 (paren
 id|sk
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t;&t; * We&squot;ve already processed his first&n;&t;&t;&t;&t; * ack.  In just about all cases that&n;&t;&t;&t;&t; * will have set max_window.  This is&n;&t;&t;&t;&t; * to protect us against the possibility&n;&t;&t;&t;&t; * that the initial window he sent was 0.&n;&t;&t;&t;&t; * This must occur after tcp_options, which&n;&t;&t;&t;&t; * sets sk-&gt;mtu.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;max_window
+op_eq
+l_int|0
+)paren
+(brace
+id|sk-&gt;max_window
+op_assign
+l_int|32
+suffix:semicolon
+id|sk-&gt;mss
+op_assign
+id|min
+c_func
+(paren
+id|sk-&gt;max_window
+comma
+id|sk-&gt;mtu
 )paren
 suffix:semicolon
 )brace
@@ -16237,15 +16307,13 @@ id|optname
 r_case
 id|TCP_MAXSEG
 suffix:colon
+multiline_comment|/*&t;&t;&t;if(val&lt;200||val&gt;2048 || val&gt;sk-&gt;mtu) */
+multiline_comment|/*&n; * values greater than interface MTU won&squot;t take effect.  however at&n; * the point when this call is done we typically don&squot;t yet know&n; * which interface is going to be used&n; */
 r_if
 c_cond
 (paren
 id|val
-l_int|2048
-op_logical_or
-id|val
-OG
-id|sk-&gt;mtu
+id|MAX_WINDOW
 )paren
 (brace
 r_return
@@ -16253,7 +16321,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|sk-&gt;mss
+id|sk-&gt;user_mss
 op_assign
 id|val
 suffix:semicolon
@@ -16352,7 +16420,7 @@ id|TCP_MAXSEG
 suffix:colon
 id|val
 op_assign
-id|sk-&gt;mss
+id|sk-&gt;user_mss
 suffix:semicolon
 r_break
 suffix:semicolon

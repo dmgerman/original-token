@@ -974,6 +974,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sys_bdflush
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; */
 macro_line|#ifdef notdef
 DECL|macro|sys_waitpid
@@ -998,6 +1005,8 @@ macro_line|#endif
 multiline_comment|/*&n; * These are system calls that haven&squot;t been implemented yet&n; * but have an entry in the table for future expansion..&n; */
 DECL|macro|sys_quotactl
 mdefine_line|#define sys_quotactl&t;sys_ni_syscall
+DECL|macro|sys_bdflush
+mdefine_line|#define sys_bdflush&t;sys_ni_syscall
 DECL|typedef|fn_ptr
 r_typedef
 r_int

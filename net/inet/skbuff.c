@@ -1334,7 +1334,7 @@ op_logical_neg
 id|skb-&gt;sk-&gt;dead
 )paren
 (brace
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 id|skb-&gt;sk-&gt;sleep
@@ -1552,15 +1552,17 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|skb-&gt;lock
-op_decrement
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+op_decrement
 id|skb-&gt;lock
-op_eq
-l_int|0
 )paren
 (brace
 r_if
@@ -1570,7 +1572,6 @@ id|skb-&gt;free
 op_eq
 l_int|1
 )paren
-(brace
 id|kfree_skb
 c_func
 (paren
@@ -1579,7 +1580,6 @@ comma
 id|mode
 )paren
 suffix:semicolon
-)brace
 )brace
 id|restore_flags
 c_func
