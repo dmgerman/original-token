@@ -359,7 +359,7 @@ id|p-&gt;files-&gt;fd
 id|fd
 )braket
 op_member_access_from_pointer
-id|f_inode
+id|f_dentry
 )paren
 r_return
 op_minus
@@ -632,7 +632,7 @@ id|p-&gt;files-&gt;fd
 id|fd
 )braket
 op_member_access_from_pointer
-id|f_inode
+id|f_dentry
 )paren
 r_continue
 suffix:semicolon

@@ -448,6 +448,11 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+id|synchronize_irq
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -327,7 +327,7 @@ id|inode
 op_star
 id|swapf
 op_assign
-id|p-&gt;swap_file
+id|p-&gt;swap_file-&gt;d_inode
 suffix:semicolon
 r_int
 r_int

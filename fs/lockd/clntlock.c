@@ -479,7 +479,7 @@ id|fl-&gt;fl_next
 (brace
 id|inode
 op_assign
-id|fl-&gt;fl_file-&gt;f_inode
+id|fl-&gt;fl_file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond

@@ -492,20 +492,14 @@ id|file-&gt;f_flags
 op_assign
 id|O_RDWR
 suffix:semicolon
-id|file-&gt;f_inode
+id|file-&gt;f_dentry
 op_assign
-id|inode
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode
-)paren
-id|atomic_inc
+id|d_alloc_root
 c_func
 (paren
-op_amp
-id|inode-&gt;i_count
+id|inode
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|file-&gt;f_pos
@@ -592,7 +586,7 @@ suffix:semicolon
 )brace
 id|inode
 op_assign
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -621,8 +615,6 @@ id|fput
 c_func
 (paren
 id|file
-comma
-id|inode
 )paren
 suffix:semicolon
 r_return
@@ -654,8 +646,6 @@ id|fput
 c_func
 (paren
 id|sock-&gt;file
-comma
-id|sock-&gt;inode
 )paren
 suffix:semicolon
 )brace
@@ -1530,7 +1520,7 @@ op_assign
 id|socki_lookup
 c_func
 (paren
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to poll, so it&squot;s either yes or no. &n;&t; */
@@ -5004,7 +4994,7 @@ id|sock
 op_assign
 id|socki_lookup
 (paren
-id|filp-&gt;f_inode
+id|filp-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 r_if

@@ -904,11 +904,11 @@ op_star
 op_star
 id|f_pprev
 suffix:semicolon
-DECL|member|f_inode
+DECL|member|f_dentry
 r_struct
-id|inode
+id|dentry
 op_star
-id|f_inode
+id|f_dentry
 suffix:semicolon
 DECL|member|f_op
 r_struct
@@ -2289,7 +2289,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|statfs
-r_void
+r_int
 (paren
 op_star
 id|statfs
@@ -2540,7 +2540,8 @@ id|sig
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_char
+op_star
 id|getname
 c_func
 (paren
@@ -2548,11 +2549,6 @@ r_const
 r_char
 op_star
 id|filename
-comma
-r_char
-op_star
-op_star
-id|result
 )paren
 suffix:semicolon
 r_extern
@@ -3130,7 +3126,9 @@ id|inode
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|open_namei
 c_func
 (paren
@@ -3144,16 +3142,12 @@ id|flag
 comma
 r_int
 id|mode
-comma
-r_struct
-id|inode
-op_star
-op_star
-id|res_inode
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|do_mknod
 c_func
 (paren
@@ -3204,7 +3198,9 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|__namei
 c_func
 (paren
@@ -3212,18 +3208,13 @@ r_const
 r_char
 op_star
 comma
-r_struct
-id|inode
-op_star
-op_star
-comma
 r_int
 )paren
 suffix:semicolon
 DECL|macro|namei
-mdefine_line|#define namei(pathname, inode_p)&t;__namei(pathname, inode_p, 1)
+mdefine_line|#define namei(pathname)&t;&t;__namei(pathname, 1)
 DECL|macro|lnamei
-mdefine_line|#define lnamei(pathname, inode_p)&t;__namei(pathname, inode_p, 0)
+mdefine_line|#define lnamei(pathname)&t;__namei(pathname, 0)
 macro_line|#include &lt;asm/semaphore.h&gt;
 multiline_comment|/* Intended for short locks of the global data structures in inode.c.&n; * Could be replaced with spinlocks completely, since there is&n; * no blocking during manipulation of the static data; however the&n; * lock in invalidate_inodes() may last relatively long.&n; */
 r_extern

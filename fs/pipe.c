@@ -886,7 +886,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|filp-&gt;f_inode
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|poll_wait
 c_func
@@ -986,7 +986,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|filp-&gt;f_inode
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|poll_wait
 c_func
@@ -1135,7 +1135,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|filp-&gt;f_inode
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|poll_wait
 c_func
@@ -1833,11 +1833,17 @@ id|j
 op_assign
 id|error
 suffix:semicolon
-id|f1-&gt;f_inode
+id|f1-&gt;f_dentry
 op_assign
-id|f2-&gt;f_inode
+id|f2-&gt;f_dentry
 op_assign
+id|d_alloc_root
+c_func
+(paren
 id|inode
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* read file */
 id|f1-&gt;f_pos
@@ -1914,13 +1920,6 @@ id|i
 suffix:semicolon
 id|close_f12_inode
 suffix:colon
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|inode-&gt;i_count
-)paren
-suffix:semicolon
 id|iput
 c_func
 (paren

@@ -154,7 +154,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 r_static
-r_void
+r_int
 id|autofs_statfs
 c_func
 (paren
@@ -1057,7 +1057,7 @@ suffix:semicolon
 )brace
 DECL|function|autofs_statfs
 r_static
-r_void
+r_int
 id|autofs_statfs
 c_func
 (paren
@@ -1111,6 +1111,7 @@ id|tmp.f_namelen
 op_assign
 id|NAME_MAX
 suffix:semicolon
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -1121,6 +1122,12 @@ id|tmp
 comma
 id|bufsiz
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|autofs_read_inode

@@ -707,9 +707,9 @@ c_func
 (paren
 l_string|&quot;NFS: nfs_lock(f=%4x/%ld, t=%x, fl=%x, r=%ld:%ld)&bslash;n&quot;
 comma
-id|filp-&gt;f_inode-&gt;i_dev
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_dev
 comma
-id|filp-&gt;f_inode-&gt;i_ino
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|fl-&gt;fl_type
 comma
@@ -727,7 +727,7 @@ op_logical_neg
 (paren
 id|inode
 op_assign
-id|filp-&gt;f_inode
+id|filp-&gt;f_dentry-&gt;d_inode
 )paren
 )paren
 r_return

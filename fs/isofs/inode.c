@@ -2054,7 +2054,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|isofs_statfs
-r_void
+r_int
 id|isofs_statfs
 (paren
 r_struct
@@ -2115,6 +2115,7 @@ id|tmp.f_namelen
 op_assign
 id|NAME_MAX
 suffix:semicolon
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -2125,6 +2126,12 @@ id|tmp
 comma
 id|bufsiz
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|isofs_bmap

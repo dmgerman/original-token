@@ -153,7 +153,7 @@ op_star
 id|NFS_FH
 c_func
 (paren
-id|fl-&gt;fl_file-&gt;f_inode
+id|fl-&gt;fl_file-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 id|lock-&gt;caller

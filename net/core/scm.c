@@ -689,10 +689,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 op_logical_or
 op_logical_neg
-id|file-&gt;f_inode-&gt;i_sock
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_sock
 )paren
 r_return
 op_minus
@@ -701,7 +701,7 @@ suffix:semicolon
 id|p-&gt;sock
 op_assign
 op_amp
-id|file-&gt;f_inode-&gt;u.socket_i
+id|file-&gt;f_dentry-&gt;d_inode-&gt;u.socket_i
 suffix:semicolon
 r_if
 c_cond

@@ -30,14 +30,9 @@ DECL|member|swap_device
 id|kdev_t
 id|swap_device
 suffix:semicolon
-DECL|member|swap_filename
-r_char
-op_star
-id|swap_filename
-suffix:semicolon
 DECL|member|swap_file
 r_struct
-id|inode
+id|dentry
 op_star
 id|swap_file
 suffix:semicolon

@@ -93,11 +93,11 @@ r_int
 r_int
 id|vm_offset
 suffix:semicolon
-DECL|member|vm_inode
+DECL|member|vm_dentry
 r_struct
-id|inode
+id|dentry
 op_star
-id|vm_inode
+id|vm_dentry
 suffix:semicolon
 DECL|member|vm_pte
 r_int

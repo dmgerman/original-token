@@ -959,9 +959,9 @@ c_func
 (paren
 l_string|&quot;lockd: nlmsvc_lock(%04x/%ld, ty=%d, pi=%d, %ld-%ld, bl=%d)&bslash;n&quot;
 comma
-id|file-&gt;f_file.f_inode-&gt;i_dev
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma
-id|file-&gt;f_file.f_inode-&gt;i_ino
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|lock-&gt;fl.fl_type
 comma
@@ -1222,9 +1222,9 @@ c_func
 (paren
 l_string|&quot;lockd: nlmsvc_testlock(%04x/%ld, ty=%d, %ld-%ld)&bslash;n&quot;
 comma
-id|file-&gt;f_file.f_inode-&gt;i_dev
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma
-id|file-&gt;f_file.f_inode-&gt;i_ino
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|lock-&gt;fl.fl_type
 comma
@@ -1313,9 +1313,9 @@ c_func
 (paren
 l_string|&quot;lockd: nlmsvc_unlock(%04x/%ld, pi=%d, %ld-%ld)&bslash;n&quot;
 comma
-id|file-&gt;f_file.f_inode-&gt;i_dev
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma
-id|file-&gt;f_file.f_inode-&gt;i_ino
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|lock-&gt;fl.fl_pid
 comma
@@ -1391,9 +1391,9 @@ c_func
 (paren
 l_string|&quot;lockd: nlmsvc_cancel(%04x/%ld, pi=%d, %ld-%ld)&bslash;n&quot;
 comma
-id|file-&gt;f_file.f_inode-&gt;i_dev
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma
-id|file-&gt;f_file.f_inode-&gt;i_ino
+id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|lock-&gt;fl.fl_pid
 comma

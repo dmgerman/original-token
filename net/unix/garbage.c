@@ -68,7 +68,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|filp-&gt;f_inode
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Socket ?&n;&t; */
 r_if

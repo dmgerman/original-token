@@ -58,10 +58,6 @@ c_func
 r_struct
 id|file
 op_star
-comma
-r_struct
-id|inode
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -117,11 +113,6 @@ r_struct
 id|file
 op_star
 id|file
-comma
-r_struct
-id|inode
-op_star
-id|inode
 )paren
 (brace
 r_int
@@ -149,8 +140,6 @@ id|__fput
 c_func
 (paren
 id|file
-comma
-id|inode
 )paren
 suffix:semicolon
 id|file-&gt;f_count

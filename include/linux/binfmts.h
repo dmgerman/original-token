@@ -39,11 +39,11 @@ r_int
 id|java
 suffix:semicolon
 multiline_comment|/* Java binary, prevent recursive invocation */
-DECL|member|inode
+DECL|member|dentry
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 suffix:semicolon
 DECL|member|e_uid
 DECL|member|e_gid
@@ -73,11 +73,6 @@ id|loader
 comma
 id|exec
 suffix:semicolon
-DECL|member|dont_iput
-r_int
-id|dont_iput
-suffix:semicolon
-multiline_comment|/* binfmt handler has put inode */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure defines the functions that are used to load the binary formats that&n; * linux accepts.&n; */
@@ -169,9 +164,8 @@ id|read_exec
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
 comma
 r_int
 r_int
@@ -191,13 +185,12 @@ id|to_kmem
 suffix:semicolon
 r_extern
 r_int
-id|open_inode
+id|open_dentry
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
 comma
 r_int
 id|mode

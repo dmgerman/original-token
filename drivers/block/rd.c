@@ -1064,7 +1064,7 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|fp-&gt;f_inode
+id|fp-&gt;f_dentry-&gt;d_inode
 comma
 id|fp
 comma
@@ -1086,7 +1086,7 @@ op_member_access_from_pointer
 id|read
 c_func
 (paren
-id|fp-&gt;f_inode
+id|fp-&gt;f_dentry-&gt;d_inode
 comma
 id|fp
 comma
@@ -1197,7 +1197,7 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|fp-&gt;f_inode
+id|fp-&gt;f_dentry-&gt;d_inode
 comma
 id|fp
 comma
@@ -1227,7 +1227,7 @@ op_member_access_from_pointer
 id|read
 c_func
 (paren
-id|fp-&gt;f_inode
+id|fp-&gt;f_dentry-&gt;d_inode
 comma
 id|fp
 comma
@@ -1323,7 +1323,7 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|fp-&gt;f_inode
+id|fp-&gt;f_dentry-&gt;d_inode
 comma
 id|fp
 comma

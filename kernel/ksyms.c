@@ -1541,11 +1541,11 @@ c_func
 id|flush_old_exec
 )paren
 suffix:semicolon
-DECL|variable|open_inode
+DECL|variable|open_dentry
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|open_inode
+id|open_dentry
 )paren
 suffix:semicolon
 DECL|variable|read_exec

@@ -4335,7 +4335,7 @@ multiline_comment|/* don&squot;t stop on /dev/console */
 r_if
 c_cond
 (paren
-id|file-&gt;f_inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 op_ne
 id|CONSOLE_DEV
 op_logical_and
@@ -5154,7 +5154,7 @@ c_func
 id|tty
 )paren
 op_logical_and
-id|file-&gt;f_inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 op_ne
 id|CONSOLE_DEV
 )paren

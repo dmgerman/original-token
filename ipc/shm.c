@@ -2785,7 +2785,7 @@ op_or
 id|VM_WRITE
 )paren
 suffix:semicolon
-id|shmd-&gt;vm_inode
+id|shmd-&gt;vm_dentry
 op_assign
 l_int|NULL
 suffix:semicolon

@@ -1497,7 +1497,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|ext2_statfs
 (paren
 r_struct

@@ -3707,7 +3707,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|ext2_statfs
-r_void
+r_int
 id|ext2_statfs
 (paren
 r_struct
@@ -3852,6 +3852,7 @@ id|tmp.f_namelen
 op_assign
 id|EXT2_NAME_LEN
 suffix:semicolon
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -3862,6 +3863,12 @@ id|tmp
 comma
 id|bufsiz
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 eof

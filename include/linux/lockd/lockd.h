@@ -697,7 +697,7 @@ id|file
 )paren
 (brace
 r_return
-id|file-&gt;f_file.f_inode
+id|file-&gt;f_file.f_dentry-&gt;d_inode
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Compare two host addresses (needs modifying for ipv6)&n; */

@@ -216,22 +216,6 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Note that all these routines must be called with vfs_lock() held */
-multiline_comment|/* get inode, if necessary retrieve it with iget() */
-r_extern
-r_struct
-id|inode
-op_star
-id|d_inode
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-op_star
-id|changing_entry
-)paren
-suffix:semicolon
 multiline_comment|/* allocate/de-allocate */
 r_extern
 r_void
@@ -260,6 +244,14 @@ r_struct
 id|qstr
 op_star
 id|name
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|shrink_dcache
+c_func
+(paren
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* only used at mount-time */
