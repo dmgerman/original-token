@@ -211,31 +211,21 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Shrink the dcache. This is done when we need&n; * more memory, or simply when we need to unmount&n; * something (at which point we need to unuse&n; * all dentries).&n; *&n; * &quot;priority&quot; is a value between 0-6, 0 means that&n; * we should work really hard on releasing stuff..&n; */
+multiline_comment|/*&n; * Shrink the dcache. This is done when we need&n; * more memory, or simply when we need to unmount&n; * something (at which point we need to unuse&n; * all dentries).&n; */
 DECL|function|shrink_dcache
 r_void
 id|shrink_dcache
 c_func
 (paren
-r_int
-id|priority
+r_void
 )paren
 (brace
-r_int
-id|nr
-op_assign
-l_int|42
+r_for
+c_loop
+(paren
 suffix:semicolon
-multiline_comment|/* &quot;random&quot; number */
-id|nr
-op_lshift_assign
-l_int|6
 suffix:semicolon
-id|nr
-op_rshift_assign
-id|priority
-suffix:semicolon
-r_do
+)paren
 (brace
 r_struct
 id|dentry
@@ -352,13 +342,6 @@ id|parent
 suffix:semicolon
 )brace
 )brace
-r_while
-c_loop
-(paren
-op_decrement
-id|nr
-)paren
-suffix:semicolon
 )brace
 DECL|macro|NAME_ALLOC_LEN
 mdefine_line|#define NAME_ALLOC_LEN(len)&t;((len+16) &amp; ~15)

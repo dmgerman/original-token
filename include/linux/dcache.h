@@ -251,7 +251,7 @@ r_void
 id|shrink_dcache
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* only used at mount-time */
