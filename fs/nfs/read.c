@@ -634,12 +634,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren

@@ -2937,6 +2937,7 @@ id|dquot
 op_ne
 id|NODQUOT
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2978,6 +2979,7 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+(brace
 id|dqput
 c_func
 (paren
@@ -2985,6 +2987,8 @@ id|dquot
 )paren
 suffix:semicolon
 multiline_comment|/* We have guaranteed we won&squot;t block */
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon

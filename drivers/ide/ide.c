@@ -6689,6 +6689,10 @@ id|rq-&gt;nr_sectors
 op_assign
 l_int|0
 suffix:semicolon
+id|rq-&gt;nr_segments
+op_assign
+l_int|0
+suffix:semicolon
 id|rq-&gt;current_nr_sectors
 op_assign
 l_int|0

@@ -1504,7 +1504,7 @@ id|name
 comma
 l_int|NULL
 comma
-l_int|0
+id|LOOKUP_FOLLOW
 )paren
 suffix:semicolon
 id|putname
@@ -1892,7 +1892,7 @@ id|name
 comma
 l_int|NULL
 comma
-l_int|0
+id|LOOKUP_FOLLOW
 )paren
 suffix:semicolon
 id|putname
@@ -3099,7 +3099,7 @@ c_cond
 id|error
 )paren
 r_goto
-id|cleanup_dentry
+id|cleanup_file
 suffix:semicolon
 )brace
 id|f-&gt;f_dentry
@@ -3204,6 +3204,14 @@ id|f-&gt;f_vfsmnt
 op_assign
 l_int|NULL
 suffix:semicolon
+id|cleanup_file
+suffix:colon
+id|put_filp
+c_func
+(paren
+id|f
+)paren
+suffix:semicolon
 id|cleanup_dentry
 suffix:colon
 id|dput
@@ -3216,12 +3224,6 @@ id|mntput
 c_func
 (paren
 id|mnt
-)paren
-suffix:semicolon
-id|put_filp
-c_func
-(paren
-id|f
 )paren
 suffix:semicolon
 r_return

@@ -3815,7 +3815,7 @@ id|CURRENT-&gt;sector
 suffix:semicolon
 id|pcd_count
 op_assign
-id|CURRENT-&gt;nr_sectors
+id|CURRENT-&gt;current_nr_sectors
 suffix:semicolon
 id|pcd_buf
 op_assign

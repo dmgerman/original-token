@@ -2071,6 +2071,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|pp-&gt;pdev
+op_logical_and
 id|pp-&gt;pdev-&gt;port-&gt;ieee1284.mode
 op_ne
 id|IEEE1284_MODE_COMPAT

@@ -4547,13 +4547,10 @@ comma
 id|vma-&gt;vm_page_prot
 )paren
 suffix:semicolon
-id|set_bit
+id|SetPageSwapEntry
 c_func
 (paren
-id|PG_swap_entry
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Freeze the &quot;shared&quot;ness of the page, ie page_count + swap_count.&n;&t; * Must lock page before transferring our swap count to already&n;&t; * obtained page count.&n;&t; */

@@ -821,13 +821,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|test_bit
+id|PageSwapEntry
 c_func
 (paren
-id|PG_swap_entry
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 )paren
 r_goto

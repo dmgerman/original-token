@@ -1207,11 +1207,5 @@ op_amp
 id|cache-&gt;request_wait
 )paren
 suffix:semicolon
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 )brace
 eof

@@ -403,12 +403,6 @@ op_star
 )paren
 id|task-&gt;tk_calldata
 suffix:semicolon
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 id|nfs_writedata_free
 c_func
 (paren
@@ -4660,6 +4654,11 @@ id|task-&gt;tk_calldata
 op_assign
 id|data
 suffix:semicolon
+multiline_comment|/* Release requests */
+id|task-&gt;tk_release
+op_assign
+id|nfs_writedata_release
+suffix:semicolon
 macro_line|#ifdef CONFIG_NFS_V3
 id|msg.rpc_proc
 op_assign
@@ -5322,12 +5321,6 @@ id|req
 )paren
 suffix:semicolon
 )brace
-id|nfs_writedata_release
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NFS_V3
 multiline_comment|/*&n; * Set up the argument/result storage required for the RPC call.&n; */
@@ -5689,6 +5682,11 @@ id|task-&gt;tk_calldata
 op_assign
 id|data
 suffix:semicolon
+multiline_comment|/* Release requests */
+id|task-&gt;tk_release
+op_assign
+id|nfs_writedata_release
+suffix:semicolon
 id|msg.rpc_proc
 op_assign
 id|NFS3PROC_COMMIT
@@ -6008,12 +6006,6 @@ id|req
 )paren
 suffix:semicolon
 )brace
-id|nfs_writedata_release
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|nfs_flush_file

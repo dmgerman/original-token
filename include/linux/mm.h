@@ -479,8 +479,8 @@ DECL|macro|SetPageUptodate
 mdefine_line|#define SetPageUptodate(page)&t;set_bit(PG_uptodate, &amp;(page)-&gt;flags)
 DECL|macro|ClearPageUptodate
 mdefine_line|#define ClearPageUptodate(page)&t;clear_bit(PG_uptodate, &amp;(page)-&gt;flags)
-DECL|macro|Page_Dirty
-mdefine_line|#define Page_Dirty(page)&t;test_bit(PG_dirty, &amp;(page)-&gt;flags)
+DECL|macro|PageDirty
+mdefine_line|#define PageDirty(page)&t;&t;test_bit(PG_dirty, &amp;(page)-&gt;flags)
 DECL|macro|SetPageDirty
 mdefine_line|#define SetPageDirty(page)&t;set_bit(PG_dirty, &amp;(page)-&gt;flags)
 DECL|macro|PageLocked
@@ -519,6 +519,12 @@ DECL|macro|PageClearSwapCache
 mdefine_line|#define PageClearSwapCache(page)&t;clear_bit(PG_swap_cache, &amp;(page)-&gt;flags)
 DECL|macro|PageTestandClearSwapCache
 mdefine_line|#define PageTestandClearSwapCache(page)&t;test_and_clear_bit(PG_swap_cache, &amp;(page)-&gt;flags)
+DECL|macro|PageSwapEntry
+mdefine_line|#define PageSwapEntry(page)&t;&t;test_bit(PG_swap_entry, &amp;(page)-&gt;flags)
+DECL|macro|SetPageSwapEntry
+mdefine_line|#define SetPageSwapEntry(page)&t;&t;set_bit(PG_swap_entry, &amp;(page)-&gt;flags)
+DECL|macro|ClearPageSwapEntry
+mdefine_line|#define ClearPageSwapEntry(page)&t;clear_bit(PG_swap_entry, &amp;(page)-&gt;flags)
 macro_line|#ifdef CONFIG_HIGHMEM
 DECL|macro|PageHighMem
 mdefine_line|#define PageHighMem(page)&t;&t;test_bit(PG_highmem, &amp;(page)-&gt;flags)

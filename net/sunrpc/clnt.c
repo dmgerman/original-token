@@ -679,12 +679,6 @@ op_star
 id|task
 )paren
 (brace
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Export the signal mask handling for aysnchronous code that&n; *&t;sleeps on RPC calls&n; */
 DECL|function|rpc_clnt_sigmask
@@ -984,6 +978,7 @@ id|task
 )paren
 suffix:semicolon
 r_else
+(brace
 id|status
 op_assign
 id|task-&gt;tk_status
@@ -994,6 +989,7 @@ c_func
 id|task
 )paren
 suffix:semicolon
+)brace
 id|rpc_clnt_sigunmask
 c_func
 (paren
@@ -1263,20 +1259,14 @@ id|task
 r_if
 c_cond
 (paren
-id|task-&gt;tk_flags
-op_amp
-id|RPC_TASK_KILLED
-)paren
-(brace
-id|rpc_release_task
+id|RPC_ASSASSINATED
 c_func
 (paren
 id|task
 )paren
-suffix:semicolon
+)paren
 r_return
 suffix:semicolon
-)brace
 id|task-&gt;tk_action
 op_assign
 id|call_reserve

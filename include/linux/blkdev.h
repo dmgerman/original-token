@@ -68,6 +68,14 @@ r_int
 r_int
 id|nr_sectors
 suffix:semicolon
+DECL|member|hard_sector
+DECL|member|hard_nr_sectors
+r_int
+r_int
+id|hard_sector
+comma
+id|hard_nr_sectors
+suffix:semicolon
 DECL|member|nr_segments
 r_int
 r_int

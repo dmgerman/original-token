@@ -952,7 +952,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|Page_Dirty
+id|PageDirty
 c_func
 (paren
 id|page
@@ -1670,6 +1670,12 @@ op_or
 l_int|1
 op_lshift
 id|PG_error
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|PG_dirty
 )paren
 )paren
 suffix:semicolon

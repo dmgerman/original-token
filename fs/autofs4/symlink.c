@@ -65,6 +65,7 @@ comma
 r_struct
 id|vfsmount
 op_star
+op_star
 id|mnt
 comma
 r_int

@@ -4384,7 +4384,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|namei
-mdefine_line|#define namei(pathname)&t;&t;__namei(pathname, 1)
+mdefine_line|#define namei(pathname)&t;&t;__namei(pathname, LOOKUP_FOLLOW)
 DECL|macro|lnamei
 mdefine_line|#define lnamei(pathname)&t;__namei(pathname, 0)
 r_extern

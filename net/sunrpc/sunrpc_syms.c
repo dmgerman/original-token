@@ -42,13 +42,6 @@ c_func
 id|rpc_init_task
 )paren
 suffix:semicolon
-DECL|variable|rpc_release_task
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|rpc_release_task
-)paren
-suffix:semicolon
 DECL|variable|rpc_sleep_on
 id|EXPORT_SYMBOL
 c_func

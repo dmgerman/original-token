@@ -1963,12 +1963,6 @@ id|task-&gt;tk_status
 )paren
 suffix:semicolon
 )brace
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 id|nlm_release_host
 c_func
 (paren

@@ -4019,33 +4019,54 @@ id|drive-&gt;bios_sect
 op_div
 id|drive-&gt;bios_head
 suffix:semicolon
-macro_line|#if 0&t;/* done instead for entire identify block in arch/ide.h stuff */
-multiline_comment|/* fix byte-ordering of buffer size field */
-id|id-&gt;buf_size
-op_assign
-id|le16_to_cpu
-c_func
-(paren
-id|id-&gt;buf_size
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;%s: %.40s, %ldMB w/%dkB Cache, CHS=%d/%d/%d&quot;
+l_string|&quot;%s: %ld sectors&quot;
 comma
 id|drive-&gt;name
 comma
-id|id-&gt;model
+id|capacity
+)paren
+suffix:semicolon
+multiline_comment|/* Give size in megabytes (MB), not mebibytes (MiB). */
+multiline_comment|/* We compute the exact rounded value, avoiding overflow. */
+id|printk
+(paren
+l_string|&quot; (%ld MB)&quot;
 comma
+(paren
+id|capacity
+op_minus
 id|capacity
 op_div
-l_int|2048L
+l_int|625
+op_plus
+l_int|974
+)paren
+op_div
+l_int|1950
+)paren
+suffix:semicolon
+multiline_comment|/* Only print cache size when it was specified */
+r_if
+c_cond
+(paren
+id|id-&gt;buf_size
+)paren
+id|printk
+(paren
+l_string|&quot; w/%dKiB Cache&quot;
 comma
 id|id-&gt;buf_size
 op_div
 l_int|2
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;, CHS=%d/%d/%d&quot;
 comma
 id|drive-&gt;bios_cyl
 comma

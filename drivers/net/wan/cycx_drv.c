@@ -1,13 +1,6 @@
 multiline_comment|/*&n;* cycx_drv.c&t;Cyclom 2X Support Module.&n;*&n;*&t;&t;This module is a library of common hardware specific&n;*&t;&t;functions used by the Cyclades Cyclom 2X sync card.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998-2000 Arnaldo Carvalho de Melo&n;*&n;* Based on sdladrv.c by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/11/11&t;acme&t;&t;set_current_state(TASK_INTERRUPTIBLE), code&n;*&t;&t;&t;&t;cleanup&n;* 1999/11/08&t;acme&t;&t;init_cyc2x deleted, doing nothing&n;* 1999/11/06&t;acme&t;&t;back to read[bw], write[bw] and memcpy_to and&n;*&t;&t;&t;&t;fromio to use dpmbase ioremaped&n;* 1999/10/26&t;acme&t;&t;use isa_read[bw], isa_write[bw] &amp; isa_memcpy_to&n;*&t;&t;&t;&t;&amp; fromio&n;* 1999/10/23&t;acme&t;&t;cleanup to only supports cyclom2x: all the other&n;*&t;&t;&t;&t;boards are no longer manufactured by cyclades,&n;*&t;&t;&t;&t;if someone wants to support them... be my guest!&n;* 1999/05/28    acme&t;&t;cycx_intack &amp; cycx_intde gone for good&n;* 1999/05/18&t;acme&t;&t;lots of unlogged work, submitting to Linus...&n;* 1999/01/03&t;acme&t;&t;more judicious use of data types&n;* 1999/01/03&t;acme&t;&t;judicious use of data types :&gt;&n;*&t;&t;&t;&t;cycx_inten trying to reset pending interrupts&n;*&t;&t;&t;&t;from cyclom 2x - I think this isn&squot;t the way to&n;*&t;&t;&t;&t;go, but for now...&n;* 1999/01/02&t;acme&t;&t;cycx_intack ok, I think there&squot;s nothing to do&n;*&t;&t;&t;&t;to ack an int in cycx_drv.c, only handle it in&n;*&t;&t;&t;&t;cyx_isr (or in the other protocols: cyp_isr,&n;*&t;&t;&t;&t;cyf_isr, when they get implemented.&n;* Dec 31, 1998&t;acme&t;&t;cycx_data_boot &amp; cycx_code_boot fixed, crossing&n;*&t;&t;&t;&t;fingers to see x25_configure in cycx_x25.c&n;*&t;&t;&t;&t;work... :)&n;* Dec 26, 1998&t;acme&t;&t;load implementation fixed, seems to work! :)&n;*&t;&t;&t;&t;cycx_2x_dpmbase_options with all the possible&n;*&t;&t;&t;&t;DPM addresses (20).&n;*&t;&t;&t;&t;cycx_intr implemented (test this!)&n;*&t;&t;&t;&t;general code cleanup&n;* Dec  8, 1998&t;Ivan Passos&t;Cyclom-2X firmware load implementation.&n;* Aug  8, 1998&t;acme&t;&t;Initial version.&n;*/
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
+macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __init */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#else
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(function)
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk(), and other useful stuff */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -19,8 +12,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* read[wl], write[wl], ioremap, iounm
 DECL|macro|MOD_VERSION
 mdefine_line|#define&t;MOD_VERSION&t;0
 DECL|macro|MOD_RELEASE
-mdefine_line|#define&t;MOD_RELEASE&t;5
-macro_line|#ifdef MODULE
+mdefine_line|#define&t;MOD_RELEASE&t;6
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -33,7 +25,6 @@ c_func
 l_string|&quot;Cyclom 2x Sync Card Driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Function Prototypes */
 multiline_comment|/* Module entry points. These are called by the OS and must be public. */
 r_int
@@ -255,10 +246,10 @@ l_int|15
 suffix:semicolon
 multiline_comment|/* Kernel Loadable Module Entry Points */
 multiline_comment|/* Module &squot;insert&squot; entry point.&n; * o print announcement&n; * o initialize static data&n; *&n; * Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; * Context:&t;process */
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|cycx_drv_init
 r_int
-id|init_module
+id|__init
+id|cycx_drv_init
 c_func
 (paren
 r_void
@@ -284,16 +275,15 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Module &squot;remove&squot; entry point.&n; * o release all remaining system resources */
-DECL|function|cleanup_module
+DECL|function|cycx_drv_cleanup
 r_void
-id|cleanup_module
+id|cycx_drv_cleanup
 c_func
 (paren
 r_void
 )paren
 (brace
 )brace
-macro_line|#endif
 multiline_comment|/* Kernel APIs */
 multiline_comment|/* Set up adapter.&n; * o detect adapter type&n; * o verify hardware configuration options&n; * o check for hardware conflicts&n; * o set up adapter shared memory&n; * o test adapter memory&n; * o load firmware&n; * Return:&t;0&t;ok.&n; *&t;&t;&lt; 0&t;error */
 DECL|variable|cycx_setup
@@ -2287,5 +2277,19 @@ r_return
 id|crc
 suffix:semicolon
 )brace
+DECL|variable|cycx_drv_init
+id|module_init
+c_func
+(paren
+id|cycx_drv_init
+)paren
+suffix:semicolon
+DECL|variable|cycx_drv_cleanup
+id|module_exit
+c_func
+(paren
+id|cycx_drv_cleanup
+)paren
+suffix:semicolon
 multiline_comment|/* End */
 eof

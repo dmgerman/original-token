@@ -1995,8 +1995,6 @@ id|task
 r_goto
 id|die
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* FIXME: rpc_restart_call() is broken! */
 r_if
 c_cond
 (paren
@@ -2014,22 +2012,10 @@ op_minus
 id|task-&gt;tk_status
 )paren
 suffix:semicolon
-id|nlm_rebind_host
-c_func
-(paren
-id|req-&gt;a_host
-)paren
-suffix:semicolon
-id|rpc_restart_call
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
-r_return
+r_goto
+id|retry_unlock
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2053,12 +2039,6 @@ suffix:semicolon
 )brace
 id|die
 suffix:colon
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 id|nlm_release_host
 c_func
 (paren
@@ -2069,6 +2049,22 @@ id|kfree
 c_func
 (paren
 id|req
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|retry_unlock
+suffix:colon
+id|nlm_rebind_host
+c_func
+(paren
+id|req-&gt;a_host
+)paren
+suffix:semicolon
+id|rpc_restart_call
+c_func
+(paren
+id|task
 )paren
 suffix:semicolon
 )brace
@@ -2337,14 +2333,6 @@ suffix:semicolon
 )brace
 id|die
 suffix:colon
-id|retry_cancel
-suffix:colon
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
 id|nlm_release_host
 c_func
 (paren
@@ -2359,8 +2347,6 @@ id|req
 suffix:semicolon
 r_return
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* FIXME: rpc_restart_call() is broken */
 id|retry_cancel
 suffix:colon
 id|nlm_rebind_host
@@ -2385,9 +2371,6 @@ op_star
 id|HZ
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Convert an NLM status code to a generic kernel errno&n; */
 r_static
