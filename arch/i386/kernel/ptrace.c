@@ -136,9 +136,9 @@ id|get_long
 c_func
 (paren
 r_struct
-id|mm_struct
+id|task_struct
 op_star
-id|mm
+id|tsk
 comma
 r_struct
 id|vm_area_struct
@@ -192,7 +192,7 @@ id|pgdir
 id|handle_mm_fault
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -263,7 +263,7 @@ id|pgmiddle
 id|handle_mm_fault
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -335,7 +335,7 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -397,9 +397,9 @@ id|put_long
 c_func
 (paren
 r_struct
-id|mm_struct
+id|task_struct
 op_star
-id|mm
+id|tsk
 comma
 r_struct
 id|vm_area_struct
@@ -458,7 +458,7 @@ id|pgdir
 id|handle_mm_fault
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -528,7 +528,7 @@ id|pgmiddle
 id|handle_mm_fault
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -599,7 +599,7 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -636,7 +636,7 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -714,9 +714,9 @@ id|read_long
 c_func
 (paren
 r_struct
-id|mm_struct
+id|task_struct
 op_star
-id|mm
+id|tsk
 comma
 r_int
 r_int
@@ -736,7 +736,7 @@ op_assign
 id|find_extend_vma
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|addr
 )paren
@@ -819,7 +819,7 @@ op_assign
 id|get_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -841,7 +841,7 @@ op_assign
 id|get_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma_high
 comma
@@ -939,7 +939,7 @@ op_assign
 id|get_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -958,9 +958,9 @@ id|write_long
 c_func
 (paren
 r_struct
-id|mm_struct
+id|task_struct
 op_star
-id|mm
+id|tsk
 comma
 r_int
 r_int
@@ -979,7 +979,7 @@ op_assign
 id|find_extend_vma
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|addr
 )paren
@@ -1062,7 +1062,7 @@ op_assign
 id|get_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -1084,7 +1084,7 @@ op_assign
 id|get_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma_high
 comma
@@ -1215,7 +1215,7 @@ suffix:semicolon
 id|put_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -1237,7 +1237,7 @@ suffix:semicolon
 id|put_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma_high
 comma
@@ -1268,7 +1268,7 @@ r_else
 id|put_long
 c_func
 (paren
-id|mm
+id|tsk
 comma
 id|vma
 comma
@@ -1965,7 +1965,7 @@ op_assign
 id|read_long
 c_func
 (paren
-id|child-&gt;mm
+id|child
 comma
 id|addr
 comma
@@ -2162,7 +2162,7 @@ op_assign
 id|write_long
 c_func
 (paren
-id|child-&gt;mm
+id|child
 comma
 id|addr
 comma

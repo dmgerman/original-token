@@ -102,7 +102,7 @@ c_func
 id|page_addr
 )paren
 suffix:semicolon
-id|write_lock
+id|spin_lock
 c_func
 (paren
 op_amp
@@ -321,7 +321,7 @@ c_func
 id|page_table
 )paren
 suffix:semicolon
-id|write_unlock
+id|spin_unlock
 c_func
 (paren
 op_amp
@@ -387,7 +387,7 @@ multiline_comment|/* No swap space left */
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
-id|tsk-&gt;mm-&gt;nswap
+id|tsk-&gt;nswap
 op_increment
 suffix:semicolon
 id|set_pte
@@ -402,7 +402,7 @@ id|entry
 )paren
 )paren
 suffix:semicolon
-id|write_unlock
+id|spin_unlock
 c_func
 (paren
 op_amp
@@ -457,7 +457,7 @@ l_int|1
 suffix:semicolon
 id|out_failed_unlock
 suffix:colon
-id|write_unlock
+id|spin_unlock
 c_func
 (paren
 op_amp
@@ -1165,7 +1165,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|p-&gt;mm-&gt;swappable
+id|p-&gt;swappable
 )paren
 r_continue
 suffix:semicolon

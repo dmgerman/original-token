@@ -1753,9 +1753,9 @@ id|find_extend_vma
 c_func
 (paren
 r_struct
-id|mm_struct
+id|task_struct
 op_star
-id|mm
+id|tsk
 comma
 r_int
 r_int
@@ -1780,7 +1780,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|mm
+id|tsk-&gt;mm
 comma
 id|addr
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.169 1999/06/09 08:29:13 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.170 1999/07/02 11:26:28 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -3200,12 +3200,19 @@ op_star
 id|tw
 )paren
 (brace
+r_struct
+id|tcp_bind_bucket
+op_star
+id|tb
+op_assign
+id|tw-&gt;tb
+suffix:semicolon
 id|SOCKHASH_LOCK_WRITE_BH
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Unlink from various places. */
+multiline_comment|/* Disassociate with bind bucket. */
 r_if
 c_cond
 (paren
@@ -3227,18 +3234,37 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tw-&gt;tb-&gt;owners
+id|tb-&gt;owners
 op_eq
 l_int|NULL
 )paren
 (brace
-id|tcp_inc_slow_timer
+r_if
+c_cond
+(paren
+id|tb-&gt;next
+)paren
+id|tb-&gt;next-&gt;pprev
+op_assign
+id|tb-&gt;pprev
+suffix:semicolon
+op_star
+(paren
+id|tb-&gt;pprev
+)paren
+op_assign
+id|tb-&gt;next
+suffix:semicolon
+id|kmem_cache_free
 c_func
 (paren
-id|TCP_SLT_BUCKETGC
+id|tcp_bucket_cachep
+comma
+id|tb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Unlink from established hashes. */
 r_if
 c_cond
 (paren
@@ -3254,15 +3280,6 @@ op_star
 id|tw-&gt;pprev
 op_assign
 id|tw-&gt;next
-suffix:semicolon
-multiline_comment|/* We decremented the prot-&gt;inuse count when we entered TIME_WAIT&n;&t; * and the sock from which this came was destroyed.&n;&t; */
-id|tw-&gt;sklist_next-&gt;sklist_prev
-op_assign
-id|tw-&gt;sklist_prev
-suffix:semicolon
-id|tw-&gt;sklist_prev-&gt;sklist_next
-op_assign
-id|tw-&gt;sklist_next
 suffix:semicolon
 id|SOCKHASH_UNLOCK_WRITE_BH
 c_func
@@ -3641,41 +3658,11 @@ op_star
 )paren
 id|tw
 suffix:semicolon
-multiline_comment|/* Step 3: Same for the protocol sklist. */
-(paren
-id|tw-&gt;sklist_next
-op_assign
-id|sk-&gt;sklist_next
-)paren
-op_member_access_from_pointer
-id|sklist_prev
-op_assign
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|tw
-suffix:semicolon
-(paren
-id|tw-&gt;sklist_prev
-op_assign
-id|sk-&gt;sklist_prev
-)paren
-op_member_access_from_pointer
-id|sklist_next
-op_assign
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|tw
-suffix:semicolon
-id|sk-&gt;sklist_next
+id|sk-&gt;prev
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Step 3: Un-charge protocol socket in-use count. */
 id|sk-&gt;prot-&gt;inuse
 op_decrement
 suffix:semicolon

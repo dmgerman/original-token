@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/block/hpt343.c&t;&t;Version 0.23&t;May 12, 1999&n; *&n; * Copyright (C) 1998-99&t;Andre Hedrick&n; *&t;&t;&t;&t;&t;(hedrick@astro.dyer.vanderbilt.edu)&n; *&n; * 00:12.0 Unknown mass storage controller:&n; * Triones Technologies, Inc.&n; * Unknown device 0003 (rev 01)&n; *&n; * hde: UDMA 2 (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: UDMA 2 (0x0002 0x0012) (0x0010 0x0030)&n; * hde: DMA 2  (0x0000 0x0002) (0x0000 0x0010)&n; * hdf: DMA 2  (0x0002 0x0012) (0x0010 0x0030)&n; * hdg: DMA 1  (0x0012 0x0052) (0x0030 0x0070)&n; * hdh: DMA 1  (0x0052 0x0252) (0x0070 0x00f0)&n; *&n; * drive_number&n; *&t;= ((HWIF(drive)-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; *&t;= ((hwif-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

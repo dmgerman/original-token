@@ -951,6 +951,12 @@ r_goto
 id|out_req
 suffix:semicolon
 multiline_comment|/* Put the task on inode&squot;s writeback request list. */
+id|get_file
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|wreq-&gt;wb_file
 op_assign
 id|file
@@ -1563,13 +1569,6 @@ id|get_page
 c_func
 (paren
 id|page
-)paren
-suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|file-&gt;f_count
 )paren
 suffix:semicolon
 multiline_comment|/* Schedule request */

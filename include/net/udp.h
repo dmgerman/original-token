@@ -3,6 +3,7 @@ macro_line|#ifndef _UDP_H
 DECL|macro|_UDP_H
 mdefine_line|#define _UDP_H
 macro_line|#include &lt;linux/udp.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
 DECL|macro|UDP_HTABLE_SIZE
 mdefine_line|#define UDP_HTABLE_SIZE&t;&t;128
 multiline_comment|/* udp.c: This needs to be shared by v4 and v6 because the lookup&n; *        and hashing code needs to work with different AF&squot;s yet&n; *        the port space is shared.&n; */
@@ -17,13 +18,65 @@ id|UDP_HTABLE_SIZE
 suffix:semicolon
 r_extern
 r_int
+id|udp_port_rover
+suffix:semicolon
+DECL|function|udp_lport_inuse
+r_static
+r_inline
 r_int
-id|udp_good_socknum
+id|udp_lport_inuse
 c_func
 (paren
-r_void
+id|u16
+id|num
 )paren
+(brace
+r_struct
+id|sock
+op_star
+id|sk
+op_assign
+id|udp_hash
+(braket
+id|num
+op_amp
+(paren
+id|UDP_HTABLE_SIZE
+op_minus
+l_int|1
+)paren
+)braket
 suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|sk
+op_ne
+l_int|NULL
+suffix:semicolon
+id|sk
+op_assign
+id|sk-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;num
+op_eq
+id|num
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Note: this must match &squot;valbool&squot; in sock_setsockopt */
 DECL|macro|UDP_CSUM_NOXMIT
 mdefine_line|#define UDP_CSUM_NOXMIT&t;&t;1

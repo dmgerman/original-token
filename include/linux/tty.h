@@ -647,6 +647,11 @@ r_void
 op_star
 id|driver_data
 suffix:semicolon
+DECL|member|tty_files
+r_struct
+id|list_head
+id|tty_files
+suffix:semicolon
 DECL|macro|N_TTY_BUF_SIZE
 mdefine_line|#define N_TTY_BUF_SIZE 4096
 multiline_comment|/*&n;&t; * The following is data for the N_TTY line discipline.  For&n;&t; * historical reasons, this is included in the tty structure.&n;&t; */

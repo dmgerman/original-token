@@ -3284,13 +3284,13 @@ suffix:semicolon
 )brace
 r_else
 op_decrement
-id|current-&gt;mm-&gt;maj_flt
+id|current-&gt;maj_flt
 suffix:semicolon
 multiline_comment|/* was incremented in do_no_page */
 id|done
 suffix:colon
 multiline_comment|/* pte_val(pte) == shp-&gt;shm_pages[idx] */
-id|current-&gt;mm-&gt;min_flt
+id|current-&gt;min_flt
 op_increment
 suffix:semicolon
 id|get_page

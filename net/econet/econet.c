@@ -2836,7 +2836,7 @@ id|sk
 suffix:semicolon
 id|sk
 op_assign
-id|sk-&gt;sklist_next
+id|sk-&gt;next
 suffix:semicolon
 )brace
 r_return

@@ -1355,6 +1355,12 @@ suffix:semicolon
 )brace
 r_extern
 r_struct
+id|super_block
+op_star
+id|proc_super_blocks
+suffix:semicolon
+r_extern
+r_struct
 id|dentry_operations
 id|proc_dentry_operations
 suffix:semicolon

@@ -159,7 +159,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-macro_line|#if 0 /* FIXME! How do we do this right for threads? */
 id|current-&gt;cmin_flt
 op_add_assign
 id|p-&gt;min_flt
@@ -178,7 +177,6 @@ id|p-&gt;nswap
 op_plus
 id|p-&gt;cnswap
 suffix:semicolon
-macro_line|#endif
 id|free_task_struct
 c_func
 (paren
@@ -996,6 +994,10 @@ id|tsk-&gt;mm
 op_assign
 op_amp
 id|init_mm
+suffix:semicolon
+id|tsk-&gt;swappable
+op_assign
+l_int|0
 suffix:semicolon
 id|SET_PAGE_DIR
 c_func

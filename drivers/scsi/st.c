@@ -4457,11 +4457,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
+id|file_count
 c_func
 (paren
-op_amp
-id|filp-&gt;f_count
+id|filp
 )paren
 OG
 l_int|1

@@ -766,9 +766,9 @@ id|handle_mm_fault
 c_func
 (paren
 r_struct
-id|mm_struct
+id|task_struct
 op_star
-id|mm
+id|tsk
 comma
 r_struct
 id|vm_area_struct
@@ -784,7 +784,7 @@ id|write_access
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|make_pages_present
 c_func
 (paren
@@ -1277,9 +1277,9 @@ id|find_extend_vma
 c_func
 (paren
 r_struct
-id|mm_struct
+id|task_struct
 op_star
-id|mm
+id|tsk
 comma
 r_int
 r_int

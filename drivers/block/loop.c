@@ -1536,6 +1536,14 @@ id|lo-&gt;lo_backing_file-&gt;private_data
 op_assign
 id|file-&gt;private_data
 suffix:semicolon
+id|file_moveto
+c_func
+(paren
+id|lo-&gt;lo_backing_file
+comma
+id|file
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|get_write_access

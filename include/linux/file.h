@@ -12,6 +12,17 @@ id|file
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* goner? */
+r_extern
+r_void
+id|_fput
+c_func
+(paren
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Check whether the specified task has the fd open. Since the task&n; * may not have a files_struct, we must test for p-&gt;files != NULL.&n; */
 DECL|function|fcheck_task
 r_extern
@@ -242,7 +253,9 @@ id|files-&gt;file_lock
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * 23/12/1998 Marcin Dalecki &lt;dalecki@cs.net.pl&gt;: &n; * &n; * Since those functions where calling other functions, it was compleatly &n; * bogous to make them all &quot;extern inline&quot;.&n; *&n; * The removal of this pseudo optimization saved me scandaleous:&n; *&n; * &t;&t;3756 (i386 arch) &n; *&n; * precious bytes from my kernel, even without counting all the code compiled&n; * as module!&n; *&n; * I suspect there are many other similar &quot;optimizations&quot; across the&n; * kernel...&n; */
+DECL|function|fput
 r_extern
+r_inline
 r_void
 id|fput
 c_func
@@ -250,8 +263,26 @@ c_func
 r_struct
 id|file
 op_star
+id|file
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|file-&gt;f_count
+)paren
+)paren
+id|_fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
+)brace
 r_extern
 r_void
 id|put_filp

@@ -2487,6 +2487,13 @@ op_amp
 id|s-&gt;s_wait
 )paren
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|s-&gt;s_files
+)paren
+suffix:semicolon
 )brace
 r_return
 id|s

@@ -6596,7 +6596,7 @@ op_eq
 id|READ
 )paren
 op_increment
-id|current-&gt;mm-&gt;maj_flt
+id|current-&gt;maj_flt
 suffix:semicolon
 r_if
 c_cond
@@ -6937,7 +6937,7 @@ id|head
 )paren
 suffix:semicolon
 op_increment
-id|current-&gt;mm-&gt;maj_flt
+id|current-&gt;maj_flt
 suffix:semicolon
 r_if
 c_cond
