@@ -5112,11 +5112,19 @@ id|slip_ctrls
 (braket
 id|i
 )braket
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * VSV = if dev-&gt;start==0, then device&n;&t;&t;&t;&t; * unregistred while close proc.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|slip_ctrls
+(braket
+id|i
+)braket
 op_member_access_from_pointer
 id|dev.start
 )paren
-multiline_comment|/* VSV = if dev-&gt;start==0, then device&n;&t;&t;&t;unregistred while close proc. */
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -5139,6 +5147,13 @@ id|slip_ctrls
 id|i
 )braket
 )paren
+suffix:semicolon
+id|slip_ctrls
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 )brace

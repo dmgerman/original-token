@@ -458,6 +458,20 @@ op_star
 id|memory_end_p
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+op_star
+id|memory_start_p
+op_assign
+id|alcor_init
+c_func
+(paren
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * BUFFER is PAGE_SIZE bytes long.&n; */

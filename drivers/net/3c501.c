@@ -19,7 +19,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_IP_MULTICAST */
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -106,6 +105,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -859,6 +862,8 @@ comma
 l_int|0
 comma
 l_string|&quot;3c501&quot;
+comma
+l_int|NULL
 )paren
 )paren
 r_return
@@ -1327,6 +1332,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -2332,6 +2341,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|outb

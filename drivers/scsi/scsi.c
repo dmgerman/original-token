@@ -891,7 +891,7 @@ comma
 (brace
 l_string|&quot;PIONEER&quot;
 comma
-l_string|&quot;CD-ROMDRM-602X&quot;
+l_string|&quot;CD-ROM DRM-602X&quot;
 comma
 l_string|&quot;*&quot;
 comma
@@ -903,7 +903,7 @@ comma
 (brace
 l_string|&quot;PIONEER&quot;
 comma
-l_string|&quot;CD-ROMDRM-604X&quot;
+l_string|&quot;CD-ROM DRM-604X&quot;
 comma
 l_string|&quot;*&quot;
 comma
@@ -8552,6 +8552,10 @@ id|j
 op_increment
 )paren
 (brace
+id|host
+op_assign
+id|SDpnt-&gt;host
+suffix:semicolon
 id|SCpnt
 op_assign
 (paren
@@ -8567,11 +8571,20 @@ id|Scsi_Cmnd
 )paren
 comma
 id|GFP_ATOMIC
+op_or
+(paren
+id|host-&gt;unchecked_isa_dma
+ques
+c_cond
+id|GFP_DMA
+suffix:colon
+l_int|0
+)paren
 )paren
 suffix:semicolon
 id|SCpnt-&gt;host
 op_assign
-id|SDpnt-&gt;host
+id|host
 suffix:semicolon
 id|SCpnt-&gt;device
 op_assign
@@ -8620,10 +8633,6 @@ suffix:semicolon
 id|SCpnt-&gt;host_scribble
 op_assign
 l_int|NULL
-suffix:semicolon
-id|host
-op_assign
-id|SDpnt-&gt;host
 suffix:semicolon
 r_if
 c_cond
@@ -11213,6 +11222,8 @@ id|free_irq
 c_func
 (paren
 id|shpnt-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

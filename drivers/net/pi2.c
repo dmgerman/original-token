@@ -231,6 +231,10 @@ c_func
 r_int
 id|reg_ptr
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -6486,6 +6490,8 @@ comma
 l_int|0
 comma
 l_string|&quot;pi2&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -6715,6 +6721,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -6896,6 +6904,10 @@ c_func
 (paren
 r_int
 id|reg_ptr
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs

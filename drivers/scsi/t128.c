@@ -628,6 +628,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;t128&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace

@@ -5406,7 +5406,7 @@ comma
 id|htonl
 c_func
 (paren
-id|s-&gt;ipx_intrfc-&gt;if_netnum
+id|s-&gt;protinfo.af_ipx.intrfc-&gt;if_netnum
 )paren
 comma
 id|s-&gt;protinfo.af_ipx.node

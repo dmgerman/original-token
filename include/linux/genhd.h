@@ -188,5 +188,23 @@ op_star
 id|gendisk_head
 suffix:semicolon
 multiline_comment|/* linked list of disks */
+multiline_comment|/*&n; * disk_name() is used by genhd.c and md.c.&n; * It formats the devicename of the indicated disk&n; * into the supplied buffer, and returns a pointer&n; * to that same buffer (for convenience).&n; */
+r_char
+op_star
+id|disk_name
+(paren
+r_struct
+id|gendisk
+op_star
+id|hd
+comma
+r_int
+id|minor
+comma
+r_char
+op_star
+id|buf
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

@@ -495,6 +495,10 @@ c_func
 r_int
 id|cpl
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -610,6 +614,10 @@ c_func
 (paren
 r_int
 id|cpl
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -765,6 +773,8 @@ id|free_irq
 c_func
 (paren
 id|AUX_IRQ
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -867,6 +877,8 @@ id|free_irq
 c_func
 (paren
 id|QP_IRQ
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -1000,6 +1012,8 @@ comma
 l_int|0
 comma
 l_string|&quot;PS/2 Mouse&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1109,6 +1123,8 @@ comma
 l_int|0
 comma
 l_string|&quot;PS/2 Mouse&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1219,6 +1235,8 @@ id|free_irq
 c_func
 (paren
 id|QP_IRQ
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

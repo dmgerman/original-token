@@ -1504,6 +1504,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -1679,6 +1683,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -3404,6 +3412,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;serial probe&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -3462,6 +3472,8 @@ id|free_irq
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -11914,6 +11926,8 @@ id|i
 )braket
 dot
 id|irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -12140,6 +12154,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;cyclades&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -12607,6 +12623,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;cyclades&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace

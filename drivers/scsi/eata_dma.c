@@ -295,6 +295,10 @@ c_func
 id|s32
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -372,6 +376,8 @@ id|free_irq
 c_func
 (paren
 id|sh-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_else
@@ -526,6 +532,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -5055,6 +5065,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;eata_dma&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -5192,6 +5204,8 @@ id|free_irq
 c_func
 (paren
 id|gc-&gt;IRQ
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -5329,6 +5343,8 @@ id|free_irq
 c_func
 (paren
 id|gc-&gt;IRQ
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -5509,6 +5525,8 @@ id|free_irq
 c_func
 (paren
 id|gc-&gt;IRQ
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -7427,6 +7445,8 @@ id|free_irq
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* we used for probing with the real one */
@@ -7446,6 +7466,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;eata_dma&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

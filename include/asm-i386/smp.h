@@ -457,6 +457,10 @@ id|NR_CPUS
 suffix:semicolon
 multiline_comment|/*&n; *&t;Private routines/data&n; */
 r_extern
+r_int
+id|smp_found_config
+suffix:semicolon
+r_extern
 r_void
 id|smp_scan_config
 c_func
@@ -507,6 +511,14 @@ suffix:semicolon
 r_extern
 r_volatile
 r_int
+id|cpu_number_map
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+r_extern
+r_volatile
+r_int
 r_int
 id|smp_invalidate_needed
 suffix:semicolon
@@ -540,6 +552,10 @@ c_func
 r_int
 id|cpl
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -553,6 +569,10 @@ c_func
 (paren
 r_int
 id|cpl
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs

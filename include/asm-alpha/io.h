@@ -149,6 +149,8 @@ macro_line|#if defined(CONFIG_ALPHA_LCA)
 macro_line|# include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#elif defined(CONFIG_ALPHA_APECS)
 macro_line|# include &lt;asm/apecs.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+macro_line|# include &lt;asm/alcor.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#else
 macro_line|# include &lt;asm/jensen.h&gt;
 macro_line|#endif

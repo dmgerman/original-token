@@ -494,6 +494,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;NCR5380&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -658,6 +660,8 @@ id|free_irq
 c_func
 (paren
 id|instance-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

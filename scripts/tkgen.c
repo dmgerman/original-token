@@ -3167,10 +3167,10 @@ id|tok_dep_tristate
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tif {$%s == 2 } then {&bslash;n&quot;
+l_string|&quot;&bslash;tif {$%s == 0 } then {&bslash;n&quot;
 l_string|&quot;&bslash;t&bslash;twrite_variable $cfg $autocfg %s $notset $notmod&bslash;n&quot;
 l_string|&quot;&bslash;t} else {&bslash;n&quot;
-l_string|&quot;&bslash;t&bslash;twrite_variable $cfg $autocfg %s $%s %s&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;twrite_variable $cfg $autocfg %s $%s $%s&bslash;n&quot;
 l_string|&quot;&bslash;t}&bslash;n&quot;
 comma
 id|cfg-&gt;depend.str

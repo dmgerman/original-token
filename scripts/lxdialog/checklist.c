@@ -506,9 +506,6 @@ id|items
 comma
 r_int
 id|flag
-comma
-r_int
-id|separate_output
 )paren
 (brace
 r_int

@@ -2868,6 +2868,10 @@ c_cond
 id|sk2-&gt;reuse
 op_logical_and
 id|sk-&gt;reuse
+op_logical_and
+id|sk2-&gt;state
+op_ne
+id|TCP_LISTEN
 )paren
 (brace
 r_continue

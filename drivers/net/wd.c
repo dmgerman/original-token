@@ -1278,6 +1278,8 @@ comma
 l_int|0
 comma
 id|model_name
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1312,6 +1314,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -2430,6 +2434,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|irq2dev_map

@@ -97,6 +97,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -205,6 +209,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;irq probe&quot;
+comma
+l_int|NULL
 )paren
 op_eq
 l_int|0
@@ -304,6 +310,8 @@ id|free_irq
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -398,6 +406,8 @@ id|free_irq
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

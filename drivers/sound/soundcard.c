@@ -1715,6 +1715,9 @@ id|hndlr
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -1744,6 +1747,8 @@ l_int|0
 multiline_comment|/* SA_INTERRUPT */
 comma
 id|name
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1795,6 +1800,8 @@ suffix:semicolon
 id|free_irq
 (paren
 id|vect
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

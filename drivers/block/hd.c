@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/block/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * This is the low-level hd interrupt support. It traverses the&n; * request-list, using interrupts to jump between functions. As&n; * all the functions are called within interrupts, we may not&n; * sleep. Special care is recommended.&n; * &n; *  modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  and general streamlining by mlord@bnr.ca (Mark Lord).&n; */
+multiline_comment|/*&n; * This is the low-level hd interrupt support. It traverses the&n; * request-list, using interrupts to jump between functions. As&n; * all the functions are called within interrupts, we may not&n; * sleep. Special care is recommended.&n; * &n; *  modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  and general streamlining by Mark Lord.&n; */
 DECL|macro|DEFAULT_MULT_COUNT
 mdefine_line|#define DEFAULT_MULT_COUNT  0&t;/* set to 0 to disable multiple mode at boot */
 DECL|macro|DEFAULT_UNMASK_INTR
@@ -5306,6 +5306,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -5703,6 +5707,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;hd&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace

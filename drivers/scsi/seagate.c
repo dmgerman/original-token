@@ -460,6 +460,9 @@ c_func
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -979,6 +982,8 @@ c_cond
 l_string|&quot;seagate&quot;
 suffix:colon
 l_string|&quot;tmc-8xx&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1360,6 +1365,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs

@@ -179,6 +179,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -1021,6 +1025,8 @@ comma
 l_int|0
 comma
 l_string|&quot;eepro&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1457,6 +1463,8 @@ comma
 l_int|0
 comma
 l_string|&quot;bogus&quot;
+comma
+l_int|NULL
 )paren
 op_ne
 id|EBUSY
@@ -1506,6 +1514,8 @@ comma
 l_int|0
 comma
 l_string|&quot;eepro&quot;
+comma
+l_int|NULL
 )paren
 op_eq
 l_int|0
@@ -2391,6 +2401,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -2739,6 +2753,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|irq2dev_map

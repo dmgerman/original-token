@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;errno.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MD_MAJOR
@@ -207,18 +208,6 @@ id|find_gendisk
 id|dev
 )paren
 suffix:semicolon
-r_char
-id|base_name
-suffix:semicolon
-r_int
-id|minor
-op_assign
-id|MINOR
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -248,54 +237,21 @@ id|name
 )paren
 suffix:semicolon
 )brace
-id|base_name
-op_assign
+r_return
+id|disk_name
 (paren
-id|hd-&gt;major
-op_eq
-id|IDE1_MAJOR
-)paren
-ques
-c_cond
-l_char|&squot;c&squot;
-suffix:colon
-l_char|&squot;a&squot;
-suffix:semicolon
-id|sprintf
+id|hd
+comma
+id|MINOR
 c_func
 (paren
-id|name
-comma
-l_string|&quot;%s%c%d&quot;
-comma
-id|hd-&gt;major_name
-comma
-id|base_name
-op_plus
-(paren
-id|minor
-op_rshift
-id|hd-&gt;minor_shift
+id|dev
 )paren
 comma
-id|minor
-op_amp
-(paren
-(paren
-l_int|1
-op_lshift
-id|hd-&gt;minor_shift
-)paren
-op_minus
-l_int|1
-)paren
-)paren
-suffix:semicolon
-r_return
-(paren
 id|name
 )paren
 suffix:semicolon
+multiline_comment|/* routine in genhd.c */
 )brace
 DECL|function|set_ra
 r_static

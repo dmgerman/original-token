@@ -965,6 +965,8 @@ comma
 l_int|0
 comma
 id|ei_status.name
+comma
+l_int|NULL
 )paren
 )paren
 r_return
@@ -1433,6 +1435,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|irq2dev_map

@@ -9346,6 +9346,8 @@ suffix:semicolon
 id|console_driver.flags
 op_assign
 id|TTY_DRIVER_REAL_RAW
+op_or
+id|TTY_DRIVER_RESET_TERMIOS
 suffix:semicolon
 id|console_driver.refcount
 op_assign

@@ -3691,6 +3691,8 @@ comma
 id|SA_INTERRUPT
 comma
 id|HostAdapter-&gt;InterruptLabel
+comma
+l_int|NULL
 )paren
 OL
 l_int|0
@@ -3919,6 +3921,8 @@ id|free_irq
 c_func
 (paren
 id|HostAdapter-&gt;IRQ_Channel
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    Release exclusive access to the DMA Channel.&n;  */

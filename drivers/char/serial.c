@@ -1481,6 +1481,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -2240,6 +2244,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -2517,6 +2525,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -2737,6 +2749,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -3371,6 +3387,8 @@ c_func
 id|i
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_else
@@ -3378,6 +3396,8 @@ id|rs_interrupt
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -3388,6 +3408,8 @@ id|rs_interrupt_single
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -3438,6 +3460,8 @@ id|rs_interrupt
 c_func
 (paren
 l_int|0
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -3531,6 +3555,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;serial probe&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -3588,6 +3614,8 @@ id|free_irq
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -3719,6 +3747,9 @@ id|handler
 )paren
 (paren
 r_int
+comma
+r_void
+op_star
 comma
 r_struct
 id|pt_regs
@@ -4007,6 +4038,8 @@ id|free_irq
 c_func
 (paren
 id|info-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -4046,6 +4079,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;serial&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -4540,6 +4575,8 @@ id|free_irq
 c_func
 (paren
 id|info-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|retval
@@ -4554,6 +4591,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;serial&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -4576,6 +4615,8 @@ id|free_irq
 c_func
 (paren
 id|info-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -7924,6 +7965,9 @@ id|handler
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -8197,6 +8241,8 @@ id|free_irq
 c_func
 (paren
 id|info-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -8225,6 +8271,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;serial&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

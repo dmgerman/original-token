@@ -140,8 +140,10 @@ DECL|macro|PARTN_MASK
 mdefine_line|#define PARTN_MASK&t;((1&lt;&lt;PARTN_BITS)-1)&t;/* a useful bit mask */
 DECL|macro|MAX_DRIVES
 mdefine_line|#define MAX_DRIVES&t;2&t;/* per interface; 2 assumed by lots of code */
+macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
 mdefine_line|#define MAX_HWIFS&t;4&t;/* an arbitrary, but realistic limit */
+macro_line|#endif
 DECL|macro|SECTOR_WORDS
 mdefine_line|#define SECTOR_WORDS&t;(512 / 4)&t;/* number of 32bit words per sector */
 multiline_comment|/*&n; * Timeouts for various operations:&n; */

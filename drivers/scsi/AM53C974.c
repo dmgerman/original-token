@@ -256,6 +256,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -3338,6 +3342,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;AM53C974&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -4305,7 +4311,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*********************************************************************&n;* Function : AM53C974_intr(int irq, struct pt_regs *regs)            *&n;*                                                                    *&n;* Purpose : interrupt handler                                        *&n;*                                                                    *&n;* Inputs : irq - interrupt line, regs - ?                            *&n;*                                                                    *&n;* Returns : nothing                                                  *&n;**********************************************************************/
+multiline_comment|/************************************************************************&n;* Function : AM53C974_intr(int irq, void *dev_id, struct pt_regs *regs) *&n;*                                                                       *&n;* Purpose : interrupt handler                                           *&n;*                                                                       *&n;* Inputs : irq - interrupt line, regs - ?                               *&n;*                                                                       *&n;* Returns : nothing                                                     *&n;************************************************************************/
 DECL|function|AM53C974_intr
 r_static
 r_void
@@ -4314,6 +4320,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs

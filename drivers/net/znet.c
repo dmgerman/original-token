@@ -384,6 +384,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -747,6 +751,8 @@ comma
 l_int|0
 comma
 l_string|&quot;ZNet&quot;
+comma
+l_int|NULL
 )paren
 op_logical_or
 id|request_dma
@@ -1592,6 +1598,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -2708,6 +2718,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

@@ -2283,6 +2283,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -3421,6 +3425,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;wd7000&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -3460,6 +3466,8 @@ id|free_irq
 c_func
 (paren
 id|host-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -3501,6 +3509,8 @@ id|free_irq
 c_func
 (paren
 id|host-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -3937,6 +3947,8 @@ id|wd7000_intr_handle
 c_func
 (paren
 id|host-&gt;irq
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren

@@ -213,6 +213,9 @@ c_func
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -5332,6 +5335,8 @@ comma
 l_int|0
 comma
 l_string|&quot;WaveLAN&quot;
+comma
+l_int|NULL
 )paren
 op_ne
 l_int|0
@@ -5420,6 +5425,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|irq2dev_map
@@ -7871,6 +7878,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -8428,6 +8439,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|irq2dev_map

@@ -198,6 +198,9 @@ c_func
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -1945,6 +1948,8 @@ comma
 l_int|0
 comma
 l_string|&quot;NCR53c406a&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -2582,6 +2587,8 @@ c_func
 l_int|0
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -3080,6 +3087,10 @@ c_func
 (paren
 r_int
 id|unused
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs

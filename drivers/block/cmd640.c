@@ -1680,6 +1680,12 @@ id|drives_ra
 op_assign
 (brace
 (brace
+l_string|&quot;QUANTUM LIGHTNING 540A&quot;
+comma
+l_int|0
+)brace
+comma
+(brace
 l_string|&quot;ST3655A&quot;
 comma
 l_int|0

@@ -672,6 +672,8 @@ comma
 l_int|0
 comma
 l_string|&quot;bogus&quot;
+comma
+l_int|NULL
 )paren
 op_ne
 op_minus
@@ -977,6 +979,8 @@ comma
 l_int|0
 comma
 l_string|&quot;e2100&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1437,6 +1441,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|dev-&gt;irq

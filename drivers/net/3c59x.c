@@ -897,6 +897,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -2558,6 +2562,8 @@ comma
 l_int|0
 comma
 id|vp-&gt;product_name
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -3576,6 +3582,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -3775,6 +3785,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -4839,6 +4851,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Mmmm, we should diable all interrupt sources here. */

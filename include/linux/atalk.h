@@ -245,14 +245,6 @@ r_struct
 id|ddpshdr
 (brace
 multiline_comment|/* FIXME for bigendians */
-DECL|member|dsh_sport
-id|__u8
-id|dsh_sport
-suffix:semicolon
-DECL|member|dsh_dport
-id|__u8
-id|dsh_dport
-suffix:semicolon
 DECL|member|dsh_len
 DECL|member|dsh_pad
 id|__u16
@@ -263,6 +255,14 @@ comma
 id|dsh_pad
 suffix:colon
 l_int|6
+suffix:semicolon
+DECL|member|dsh_dport
+id|__u8
+id|dsh_dport
+suffix:semicolon
+DECL|member|dsh_sport
+id|__u8
+id|dsh_sport
 suffix:semicolon
 multiline_comment|/* And netatalk apps expect to stick the type in themselves */
 )brace

@@ -54,6 +54,7 @@ DECL|macro|ETH_P_IPX
 mdefine_line|#define ETH_P_IPX&t;0x8137&t;&t;/* IPX over DIX&t;&t;&t;*/
 DECL|macro|ETH_P_IPV6
 mdefine_line|#define ETH_P_IPV6&t;0x86DD&t;&t;/* IPv6 over bluebook&t;&t;*/
+multiline_comment|/*&n; *&t;Non DIX types. Won&squot;t clash for 1500 types.&n; */
 DECL|macro|ETH_P_802_3
 mdefine_line|#define ETH_P_802_3&t;0x0001&t;&t;/* Dummy type for 802.3 frames  */
 DECL|macro|ETH_P_AX25
@@ -70,6 +71,8 @@ DECL|macro|ETH_P_WAN_PPP
 mdefine_line|#define ETH_P_WAN_PPP   0x0007          /* Dummy type for WAN PPP frames*/
 DECL|macro|ETH_P_PPP_MP
 mdefine_line|#define ETH_P_PPP_MP    0x0008          /* Dummy type for PPP MP frames */
+DECL|macro|ETH_P_LOCALTALK
+mdefine_line|#define ETH_P_LOCALTALK 0x0009&t;&t;/* Localtalk pseudeo type &t;*/
 multiline_comment|/* This is an Ethernet frame header. */
 DECL|struct|ethhdr
 r_struct

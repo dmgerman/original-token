@@ -422,6 +422,10 @@ id|NCR5380_intr
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star

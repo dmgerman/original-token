@@ -29,9 +29,9 @@ mdefine_line|#define fd_disable_irq()        disable_irq(FLOPPY_IRQ)
 DECL|macro|fd_cacheflush
 mdefine_line|#define fd_cacheflush(addr,size) /* nothing */
 DECL|macro|fd_request_irq
-mdefine_line|#define fd_request_irq()        request_irq(FLOPPY_IRQ, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;&t;    SA_INTERRUPT|SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;            &quot;floppy&quot;)
+mdefine_line|#define fd_request_irq()        request_irq(FLOPPY_IRQ, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;&t;    SA_INTERRUPT|SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;            &quot;floppy&quot;, NULL)
 DECL|macro|fd_free_irq
-mdefine_line|#define fd_free_irq()           free_irq(FLOPPY_IRQ);
+mdefine_line|#define fd_free_irq()           free_irq(FLOPPY_IRQ, NULL);
 DECL|function|virtual_dma_init
 id|__inline__
 r_void

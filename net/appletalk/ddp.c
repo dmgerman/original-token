@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -32,7 +32,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#ifdef CONFIG_ATALK
 DECL|macro|APPLETALK_DEBUG
-mdefine_line|#define APPLETALK_DEBUG
+macro_line|#undef APPLETALK_DEBUG
 macro_line|#ifdef APPLETALK_DEBUG
 DECL|macro|DPRINT
 mdefine_line|#define DPRINT(x)&t;&t;print(x)
@@ -604,7 +604,11 @@ id|len
 comma
 l_string|&quot;%04X:%02X:%02X  &quot;
 comma
+id|ntohs
+c_func
+(paren
 id|s-&gt;protinfo.af_at.src_net
+)paren
 comma
 id|s-&gt;protinfo.af_at.src_node
 comma
@@ -621,7 +625,11 @@ id|len
 comma
 l_string|&quot;%04X:%02X:%02X  &quot;
 comma
+id|ntohs
+c_func
+(paren
 id|s-&gt;protinfo.af_at.dest_net
+)paren
 comma
 id|s-&gt;protinfo.af_at.dest_node
 comma
@@ -2483,6 +2491,10 @@ op_logical_and
 id|dev-&gt;type
 op_ne
 id|ARPHRD_LOOPBACK
+op_logical_and
+id|dev-&gt;type
+op_ne
+id|ARPHRD_LOCALTLK
 )paren
 (brace
 r_return
@@ -2503,9 +2515,14 @@ id|sa-&gt;sat_zero
 l_int|0
 )braket
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Phase 1 is fine on localtalk but we don&squot;t&n;&t;&t;&t; *&t;do Ethertalk phase 1. Anyone wanting to add&n;&t;&t;&t; *&t;it go ahead.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
+id|dev-&gt;type
+op_eq
+id|ARPHRD_ETHER
+op_logical_and
 id|nr-&gt;nr_phase
 op_ne
 l_int|2
@@ -3315,7 +3332,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;Default     %5d:%-3d  %-4d  %s&bslash;n&quot;
+l_string|&quot;Default     %04X:%02X  %-4d  %s&bslash;n&quot;
 comma
 id|ntohs
 c_func
@@ -3355,7 +3372,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%04X:%02X     %5d:%-3d  %-4d  %s&bslash;n&quot;
+l_string|&quot;%04X:%02X     %04X:%02X  %-4d  %s&bslash;n&quot;
 comma
 id|ntohs
 c_func
@@ -5128,6 +5145,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Receive a packet (in skb) from device dev. This has come from the SNAP decoder, and on entry&n; *&t;skb-&gt;h.raw is the DDP header, skb-&gt;len is the DDP length. The physical headers have been &n; *&t;extracted.&n; */
 DECL|function|atalk_rcv
+r_static
 r_int
 id|atalk_rcv
 c_func
@@ -5478,6 +5496,24 @@ suffix:semicolon
 id|ddp-&gt;deh_hops
 op_increment
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *      Route goes through another gateway, so&n;&t;&t; *      set the target to the gateway instead.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|rt-&gt;flags
+op_amp
+id|RTF_GATEWAY
+)paren
+(brace
+id|ta.s_net
+op_assign
+id|rt-&gt;gateway.s_net
+suffix:semicolon
+id|ta.s_node
+op_assign
+id|rt-&gt;gateway.s_node
+suffix:semicolon
+)brace
 multiline_comment|/* Fix up skb-&gt;len field */
 id|skb_trim
 c_func
@@ -5521,6 +5557,11 @@ id|ddp
 suffix:semicolon
 multiline_comment|/* Mend the byte order */
 multiline_comment|/*&n;&t;&t; *&t;Send the buffer onwards&n;&t;&t; */
+id|skb-&gt;arp
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Resolved */
 r_if
 c_cond
 (paren
@@ -5633,6 +5674,190 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Receive a localtalk frame. We make some demands on the caller here.&n; *&t;Caller must provide enough headroom on the packet to pull the short&n; *&t;header and append a long one.&n; */
+DECL|function|ltalk_rcv
+r_static
+r_int
+id|ltalk_rcv
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|packet_type
+op_star
+id|pt
+)paren
+(brace
+r_struct
+id|ddpehdr
+op_star
+id|ddp
+suffix:semicolon
+r_struct
+id|at_addr
+op_star
+id|ap
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Expand any short form frames.&n;&t; */
+r_if
+c_cond
+(paren
+id|skb-&gt;mac.raw
+(braket
+l_int|2
+)braket
+op_eq
+l_int|1
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;Find our address.&n;&t;&t; */
+id|ap
+op_assign
+id|atalk_find_dev_addr
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ap
+op_eq
+l_int|NULL
+op_logical_or
+id|skb-&gt;len
+OL
+r_sizeof
+(paren
+r_struct
+id|ddpshdr
+)paren
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *&t;The push leaves us with a ddephdr not an shdr, and&n;&t;&t; *&t;handily the port bytes in the right place preset.&n;&t;&t; */
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+op_star
+id|ddp
+)paren
+op_minus
+l_int|4
+)paren
+suffix:semicolon
+id|ddp
+op_assign
+(paren
+r_struct
+id|ddpehdr
+op_star
+)paren
+id|skb-&gt;data
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Now fill in the long header.&n;&t;&t; */
+multiline_comment|/*&n;&t; &t; *&t;These two first. The mac overlays the new source/dest&n;&t; &t; *&t;network information so we MUST copy these before&n;&t; &t; *&t;we write the network numbers !&n;&t; &t; */
+id|ddp-&gt;deh_dnode
+op_assign
+id|skb-&gt;mac.raw
+(braket
+l_int|0
+)braket
+suffix:semicolon
+multiline_comment|/* From physical header */
+id|ddp-&gt;deh_snode
+op_assign
+id|skb-&gt;mac.raw
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* From physical header */
+id|ddp-&gt;deh_dnet
+op_assign
+id|ap-&gt;s_net
+suffix:semicolon
+multiline_comment|/* Network number */
+id|ddp-&gt;deh_snet
+op_assign
+id|ap-&gt;s_net
+suffix:semicolon
+id|ddp-&gt;deh_sum
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* No checksum */
+multiline_comment|/*&n;&t;&t; *&t;Not sure about this bit...&n;&t;&t; */
+id|ddp-&gt;deh_len
+op_assign
+id|skb-&gt;len
+suffix:semicolon
+id|ddp-&gt;deh_hops
+op_assign
+l_int|15
+suffix:semicolon
+multiline_comment|/* Non routable, so force a drop &n;&t;&t;&t;&t;&t;&t;   if we slip up later */
+op_star
+(paren
+(paren
+id|__u16
+op_star
+)paren
+id|ddp
+)paren
+op_assign
+id|htons
+c_func
+(paren
+op_star
+(paren
+(paren
+id|__u16
+op_star
+)paren
+id|ddp
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Mend the byte order */
+)brace
+r_return
+id|atalk_rcv
+c_func
+(paren
+id|skb
+comma
+id|dev
+comma
+id|pt
+)paren
 suffix:semicolon
 )brace
 DECL|function|atalk_sendmsg
@@ -7260,6 +7485,23 @@ id|ddp_notifier
 op_assign
 initialization_block
 suffix:semicolon
+DECL|variable|ltalk_packet_type
+r_struct
+id|packet_type
+id|ltalk_packet_type
+op_assign
+(brace
+l_int|0
+comma
+l_int|NULL
+comma
+id|ltalk_rcv
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 multiline_comment|/* Called by proto.c on kernel start up */
 DECL|function|atalk_proto_init
 r_void
@@ -7313,6 +7555,21 @@ id|printk
 c_func
 (paren
 l_string|&quot;Unable to register DDP with SNAP.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ltalk_packet_type.type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_LOCALTALK
+)paren
+suffix:semicolon
+id|dev_add_pack
+c_func
+(paren
+op_amp
+id|ltalk_packet_type
 )paren
 suffix:semicolon
 id|register_netdevice_notifier
@@ -7432,7 +7689,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Appletalk 0.14 for Linux NET3.032&bslash;n&quot;
+l_string|&quot;Appletalk 0.16 for Linux NET3.033&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

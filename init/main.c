@@ -2680,17 +2680,29 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|i
 OL
-id|smp_num_cpus
+id|NR_CPUS
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;We use kernel_thread for the idlers which are&n;&t;&t; *&t;unlocked tasks running in kernel space.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;This should only do anything if the mapping&n;&t;&t; *&t;corresponds to a live CPU which is not the boot CPU.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|cpu_number_map
+(braket
+id|i
+)braket
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; *&t;We use kernel_thread for the idlers which are&n;&t;&t;&t; *&t;unlocked tasks running in kernel space.&n;&t;&t;&t; */
 id|kernel_thread
 c_func
 (paren
@@ -2701,7 +2713,7 @@ comma
 id|CLONE_PID
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Assume linear processor numbering&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Don&squot;t assume linear processor numbering&n;&t;&t;&t; */
 id|current_set
 (braket
 id|i
@@ -2709,7 +2721,10 @@ id|i
 op_assign
 id|task
 (braket
+id|cpu_number_map
+(braket
 id|i
+)braket
 )braket
 suffix:semicolon
 id|current_set
@@ -2721,6 +2736,7 @@ id|processor
 op_assign
 id|i
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; *&t;The autoprobe routines assume CPU#0 on the i386&n; *&t;so we don&squot;t actually set the game in motion until&n; *&t;they are finished.&n; */

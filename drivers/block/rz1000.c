@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/block/rz1000.c&t;Version 0.02  Feb 08, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  mlord@bnr.ca (Mark Lord)&n; *&n; *  This file provides support for disabling the buggy read-ahead&n; *  mode of the RZ1000 IDE chipset, commonly used on Intel motherboards.&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  mlord@pobox.com (Mark Lord)&n; *&n; *  This file provides support for disabling the buggy read-ahead&n; *  mode of the RZ1000 IDE chipset, commonly used on Intel motherboards.&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;

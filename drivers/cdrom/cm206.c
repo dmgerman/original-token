@@ -420,6 +420,10 @@ c_func
 r_int
 id|sig
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -5163,6 +5167,8 @@ id|free_irq
 c_func
 (paren
 id|cm206_irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_case
@@ -5753,6 +5759,8 @@ comma
 l_int|0
 comma
 l_string|&quot;cm206&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace

@@ -959,6 +959,9 @@ id|handler
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -972,6 +975,10 @@ r_const
 r_char
 op_star
 id|device
+comma
+r_void
+op_star
+id|dev_id
 )paren
 suffix:semicolon
 r_extern
@@ -982,6 +989,10 @@ c_func
 r_int
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 )paren
 suffix:semicolon
 r_extern

@@ -469,6 +469,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -2238,6 +2242,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -7297,6 +7305,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;AX.25 SCC&quot;
+comma
+l_int|NULL
 )paren
 )paren
 id|printk
@@ -10565,6 +10575,8 @@ id|free_irq
 c_func
 (paren
 id|k
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|restore_flags

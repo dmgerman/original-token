@@ -522,6 +522,9 @@ c_func
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -3970,6 +3973,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -4804,6 +4811,8 @@ id|free_irq
 c_func
 (paren
 id|stuffp-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -5682,6 +5691,8 @@ comma
 id|SA_INTERRUPT
 comma
 id|DEVICE_NAME
+comma
+l_int|NULL
 )paren
 )paren
 (brace

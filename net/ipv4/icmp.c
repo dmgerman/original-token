@@ -1038,7 +1038,7 @@ id|old_mtu
 OG
 l_int|216
 )paren
-id|old_mtu
+id|new_mtu
 op_assign
 l_int|216
 suffix:semicolon
@@ -1050,7 +1050,7 @@ id|old_mtu
 OG
 l_int|128
 )paren
-id|old_mtu
+id|new_mtu
 op_assign
 l_int|128
 suffix:semicolon

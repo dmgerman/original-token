@@ -2241,7 +2241,21 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Go through all devices, fixing up irqs as we see fit:&n;&t; */
 id|level_bits
 op_assign
-l_int|0
+id|inb
+c_func
+(paren
+l_int|0x4d0
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+l_int|0x4d1
+)paren
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
 r_for
 c_loop

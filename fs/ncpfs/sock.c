@@ -1060,7 +1060,7 @@ suffix:semicolon
 id|ncp_trigger_message
 c_func
 (paren
-id|sk-&gt;protinfo.ipx.ncp_server
+id|sk-&gt;protinfo.af_ipx.ncp_server
 )paren
 suffix:semicolon
 id|set_fs
@@ -1245,7 +1245,7 @@ id|sk-&gt;data_ready
 op_assign
 id|ncp_msg_data_ready
 suffix:semicolon
-id|sk-&gt;protinfo.ipx.ncp_server
+id|sk-&gt;protinfo.af_ipx.ncp_server
 op_assign
 id|server
 suffix:semicolon

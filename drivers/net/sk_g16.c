@@ -16,7 +16,6 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt; 
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -430,6 +429,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -1698,6 +1701,8 @@ comma
 l_int|0
 comma
 l_string|&quot;sk_g16&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|i
@@ -1779,6 +1784,8 @@ comma
 l_int|0
 comma
 l_string|&quot;sk_g16&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1833,6 +1840,8 @@ comma
 l_int|0
 comma
 l_string|&quot;sk_g16&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -2902,7 +2911,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* End of SK_send_packet */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_interrupt&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : SK_G16 interrupt handler which checks for LANCE&n; *                  Errors, handles transmit and receive interrupts&n; *&n; * Parameters     : I : int irq, struct pt_regs * regs -&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_interrupt&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : SK_G16 interrupt handler which checks for LANCE&n; *                  Errors, handles transmit and receive interrupts&n; *&n; * Parameters     : I : int irq, void *dev_id, struct pt_regs * regs -&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_interrupt
 r_static
 r_void
@@ -2911,6 +2920,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -3715,6 +3728,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Free IRQ */

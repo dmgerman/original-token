@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for testing against several Pentium and Pentium Pro&n; *&t;MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -15,7 +15,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 DECL|variable|smp_found_config
-r_static
 r_int
 id|smp_found_config
 op_assign
@@ -44,7 +43,6 @@ suffix:semicolon
 multiline_comment|/* Set when the idlers are all forked &t;&t;&t;*/
 DECL|variable|cpu_number_map
 r_volatile
-r_int
 r_int
 id|cpu_number_map
 (braket
@@ -129,6 +127,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Tripped once we need to start cross invalidating &t;*/
+DECL|variable|apic_version
+r_int
+id|apic_version
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+multiline_comment|/* APIC version number&t;&t;&t;&t;&t;*/
 DECL|variable|smp_commenced
 r_static
 r_volatile
@@ -440,6 +446,18 @@ comma
 l_string|&quot;80486DX/4&quot;
 )brace
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|family
+op_eq
+l_int|0x6
+)paren
+(brace
+r_return
+l_string|&quot;Pentium(tm) Pro&quot;
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -911,6 +929,7 @@ id|NR_CPUS
 suffix:semicolon
 )brace
 r_else
+(brace
 id|cpu_present_map
 op_or_assign
 (paren
@@ -919,6 +938,14 @@ op_lshift
 id|m-&gt;mpc_apicid
 )paren
 suffix:semicolon
+id|apic_version
+(braket
+id|m-&gt;mpc_apicid
+)braket
+op_assign
+id|m-&gt;mpc_apicver
+suffix:semicolon
+)brace
 )brace
 id|mpt
 op_add_assign
@@ -1474,6 +1501,9 @@ comma
 id|num_processors
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Only use the first one found.&n;&t;&t;&t;&t; */
+r_return
+suffix:semicolon
 )brace
 )brace
 id|bp
@@ -1886,13 +1916,17 @@ r_void
 (brace
 r_int
 id|i
-op_assign
-l_int|0
+comma
+id|j
 suffix:semicolon
 r_int
 id|cpucount
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+r_int
+id|cfg
 suffix:semicolon
 r_void
 op_star
@@ -1905,15 +1939,81 @@ id|init_user_stack
 (braket
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
-multiline_comment|/* Mapping on non-Intel conforming platforms is a bad move. */
+multiline_comment|/*&n;&t; *&t;Initialize the logical to physical cpu number mapping&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_CPUS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|cpu_number_map
+(braket
+id|i
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Setup boot CPU information&n;&t; */
+id|kernel_stacks
+(braket
+id|boot_cpu_id
+)braket
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|init_user_stack
+suffix:semicolon
+multiline_comment|/* Set up for boot processor first */
+id|smp_store_cpu_info
+c_func
+(paren
+id|boot_cpu_id
+)paren
+suffix:semicolon
+multiline_comment|/* Final full version of the data */
+id|cpu_present_map
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+id|cpu_number_map
+(braket
+id|boot_cpu_id
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|active_kernel_processor
+op_assign
+id|boot_cpu_id
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If we don&squot;t conform to the Intel MPS standard, get out&n;&t; *&t;of here now!&n;&t; */
 r_if
 c_cond
 (paren
-l_int|1
-OL
-id|cpu_present_map
+op_logical_neg
+id|smp_found_config
 )paren
+r_return
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
 id|apic_reg
 op_assign
 id|vremap
@@ -1944,6 +2044,7 @@ macro_line|#ifdef SMP_DEBUG&t;&t;
 r_int
 id|reg
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;This is to verify that we&squot;re looking at&n;&t;&t; *&t;a real local APIC.  Check these against&n;&t;&t; *&t;your board if the CPUs aren&squot;t getting&n;&t;&t; *&t;started for no apparent reason.&n;&t;&t; */
 id|reg
 op_assign
 id|apic_read
@@ -1952,12 +2053,14 @@ c_func
 id|APIC_VERSION
 )paren
 suffix:semicolon
-id|printk
+id|SMP_PRINTK
 c_func
+(paren
 (paren
 l_string|&quot;Getting VERSION: %x&bslash;n&quot;
 comma
 id|reg
+)paren
 )paren
 suffix:semicolon
 id|apic_write
@@ -1976,14 +2079,17 @@ c_func
 id|APIC_VERSION
 )paren
 suffix:semicolon
-id|printk
+id|SMP_PRINTK
 c_func
+(paren
 (paren
 l_string|&quot;Getting VERSION: %x&bslash;n&quot;
 comma
 id|reg
 )paren
+)paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;The two version reads above should print the same&n;&t;&t; *&t;NON-ZERO!!! numbers.  If the second one is zero,&n;&t;&t; *&t;there is a problem with the APIC write/read&n;&t;&t; *&t;definitions.&n;&t;&t; *&n;&t;&t; *&t;The next two are just to see if we have sane values.&n;&t;&t; *&t;They&squot;re only really relevant if we&squot;re in Virtual Wire&n;&t;&t; *&t;compatibility mode, but most boxes are anymore.&n;&t;&t; */
 id|reg
 op_assign
 id|apic_read
@@ -1992,12 +2098,14 @@ c_func
 id|APIC_LVT0
 )paren
 suffix:semicolon
-id|printk
+id|SMP_PRINTK
 c_func
+(paren
 (paren
 l_string|&quot;Getting LVT0: %x&bslash;n&quot;
 comma
 id|reg
+)paren
 )paren
 suffix:semicolon
 id|reg
@@ -2008,40 +2116,51 @@ c_func
 id|APIC_LVT1
 )paren
 suffix:semicolon
-id|printk
+id|SMP_PRINTK
 c_func
+(paren
 (paren
 l_string|&quot;Getting LVT1: %x&bslash;n&quot;
 comma
 id|reg
 )paren
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t; *&t;Now scan the cpu present map and fire up anything we find.&n;&t; */
-id|kernel_stacks
-(braket
-id|boot_cpu_id
-)braket
+multiline_comment|/*&n;&t; *&t;Enable the local APIC&n;&t; */
+id|cfg
 op_assign
-(paren
-r_void
-op_star
-)paren
-id|init_user_stack
-suffix:semicolon
-multiline_comment|/* Set up for boot processor first */
-id|smp_store_cpu_info
+id|apic_read
 c_func
 (paren
-id|boot_cpu_id
+id|APIC_SPIV
 )paren
 suffix:semicolon
-multiline_comment|/* Final full version of the data */
-id|active_kernel_processor
-op_assign
-id|boot_cpu_id
+id|cfg
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
+multiline_comment|/* Enable APIC */
+id|apic_write
+c_func
+(paren
+id|APIC_SPIV
+comma
+id|cfg
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Now scan the cpu present map and fire up the other CPUs.&n;&t; */
 id|SMP_PRINTK
 c_func
 (paren
@@ -2067,9 +2186,18 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;Don&squot;t even attempt to start the boot CPU!&n;&t;&t; */
 r_if
 c_cond
 (paren
+id|i
+op_eq
+id|boot_cpu_id
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|cpu_present_map
 op_amp
@@ -2079,23 +2207,17 @@ op_lshift
 id|i
 )paren
 )paren
-op_logical_and
-id|i
-op_ne
-id|boot_cpu_id
-)paren
-multiline_comment|/* Rebooting yourself is a bad move */
 (brace
 r_int
 r_int
-id|cfg
-comma
 id|send_status
 comma
 id|accept_status
 suffix:semicolon
 r_int
 id|timeout
+comma
+id|num_starts
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;We need a kernel stack for each processor.&n;&t;&t;&t; */
 id|stack
@@ -2145,33 +2267,7 @@ id|stack
 )paren
 suffix:semicolon
 multiline_comment|/* So we set whats up   */
-multiline_comment|/*&n;&t;&t;&t; *&t;Enable the local APIC&n;&t;&t;&t; */
-id|cfg
-op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_SPIV
-)paren
-suffix:semicolon
-id|cfg
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/* Enable APIC */
-id|apic_write
-c_func
-(paren
-id|APIC_SPIV
-comma
-id|cfg
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;This gunge runs the startup process for&n;&t;&t;&t; *&t;the targeted processor.&n;&t;&t;&t; */
+multiline_comment|/*&t;&t;&t;&t;&n;&t;&t;&t; *&t;This gunge runs the startup process for&n;&t;&t;&t; *&t;the targeted processor.&n;&t;&t;&t; */
 id|SMP_PRINTK
 c_func
 (paren
@@ -2180,7 +2276,7 @@ l_string|&quot;Setting warm reset code and vector.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Needed to boot a 486 board.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Install a writable page 0 entry.&n;&t;&t;&t; */
 id|CMOS_WRITE
 c_func
 (paren
@@ -2195,6 +2291,11 @@ l_int|0
 )braket
 op_assign
 l_int|7
+suffix:semicolon
+id|local_invalidate
+c_func
+(paren
+)paren
 suffix:semicolon
 op_star
 (paren
@@ -2230,6 +2331,7 @@ l_int|0x469
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Protect it again&n;&t;&t;&t; */
 id|pg0
 (braket
 l_int|0
@@ -2247,7 +2349,12 @@ id|PAGE_READONLY
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Clean up the errors&n;&t;&t;&t; */
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Be paranoid about clearing APIC errors.&n;&t;&t;&t; */
 id|apic_write
 c_func
 (paren
@@ -2277,6 +2384,7 @@ id|accept_status
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Starting actual IPI sequence...&n;&t;&t;&t; */
 id|SMP_PRINTK
 c_func
 (paren
@@ -2329,9 +2437,16 @@ suffix:semicolon
 multiline_comment|/* Clear bits &t;&t;*/
 id|cfg
 op_or_assign
-l_int|0x0000c500
+(paren
+id|APIC_DEST_FIELD
+op_or
+id|APIC_DEST_LEVELTRIG
+op_or
+id|APIC_DEST_ASSERT
+op_or
+id|APIC_DEST_DM_INIT
+)paren
 suffix:semicolon
-multiline_comment|/* Urgh.. fix for constants */
 id|apic_write
 c_func
 (paren
@@ -2341,89 +2456,12 @@ id|cfg
 )paren
 suffix:semicolon
 multiline_comment|/* Send IPI */
-id|timeout
-op_assign
-l_int|0
-suffix:semicolon
-r_do
-(brace
 id|udelay
 c_func
 (paren
-l_int|1000
+l_int|200
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|send_status
-op_assign
-(paren
-op_logical_neg
-(paren
-id|apic_read
-c_func
-(paren
-id|APIC_ICR
-)paren
-op_amp
-l_int|0x00001000
-)paren
-)paren
-)paren
-)paren
-r_break
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|timeout
-op_increment
-OL
-l_int|1000
-)paren
-suffix:semicolon
-macro_line|#ifdef EEK2
-r_if
-c_cond
-(paren
-id|send_status
-)paren
-(brace
-id|apic_write
-c_func
-(paren
-id|APIC_ESR
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|accept_status
-op_assign
-(paren
-id|apic_read
-c_func
-(paren
-id|APIC_ESR
-)paren
-op_amp
-l_int|0xEF
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/*&n;&t;&t;&t; *&t;And off again&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|send_status
-op_logical_and
-op_logical_neg
-id|accept_status
-)paren
-(brace
 id|SMP_PRINTK
 c_func
 (paren
@@ -2475,7 +2513,13 @@ suffix:semicolon
 multiline_comment|/* Clear bits &t;&t;*/
 id|cfg
 op_or_assign
-l_int|0x00008500
+(paren
+id|APIC_DEST_FIELD
+op_or
+id|APIC_DEST_LEVELTRIG
+op_or
+id|APIC_DEST_DM_INIT
+)paren
 suffix:semicolon
 id|apic_write
 c_func
@@ -2486,58 +2530,59 @@ id|cfg
 )paren
 suffix:semicolon
 multiline_comment|/* Send IPI */
-id|timeout
+multiline_comment|/*&n;&t;&t;&t; *&t;Should we send STARTUP IPIs ?&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Determine this based on the APIC version.&n;&t;&t;&t; *&t;If we don&squot;t have an integrated APIC, don&squot;t&n;&t;&t;&t; *&t;send the STARTUP IPIs.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|apic_version
+(braket
+id|i
+)braket
+op_amp
+l_int|0xF0
+)paren
+id|num_starts
+op_assign
+l_int|2
+suffix:semicolon
+r_else
+id|num_starts
 op_assign
 l_int|0
 suffix:semicolon
-r_do
-(brace
-id|udelay
-c_func
-(paren
-l_int|1000
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|send_status
-op_assign
-op_logical_neg
-(paren
-id|apic_read
-c_func
-(paren
-id|APIC_ICR
-)paren
-op_amp
-l_int|0x00001000
-)paren
-)paren
-)paren
-r_break
-suffix:semicolon
-)brace
-r_while
+multiline_comment|/*&n;&t;&t;&t; *&t;Run STARTUP IPI loop.&n;&t;&t;&t; */
+r_for
 c_loop
 (paren
-id|timeout
-op_increment
-OL
-l_int|1000
-)paren
+id|j
+op_assign
+l_int|0
 suffix:semicolon
-r_if
-c_cond
+op_logical_neg
 (paren
 id|send_status
+op_logical_or
+id|accept_status
+)paren
+op_logical_and
+(paren
+id|j
+OL
+id|num_starts
+)paren
+suffix:semicolon
+id|j
+op_increment
 )paren
 (brace
-id|udelay
+id|SMP_PRINTK
 c_func
 (paren
-l_int|1000000
+(paren
+l_string|&quot;Sending STARTUP #%d.&bslash;n&quot;
+comma
+id|j
+)paren
 )paren
 suffix:semicolon
 id|apic_write
@@ -2548,39 +2593,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|accept_status
-op_assign
-(paren
-id|apic_read
-c_func
-(paren
-id|APIC_ESR
-)paren
-op_amp
-l_int|0xEF
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;&t;&t;&t; *&t;We currently assume an integrated&n;&t;&t;&t; *&t;APIC only, so STARTUP IPIs must be&n;&t;&t;&t; *&t;sent as well.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|send_status
-op_logical_and
-op_logical_neg
-id|accept_status
-)paren
-(brace
-id|SMP_PRINTK
-c_func
-(paren
-(paren
-l_string|&quot;Sending first STARTUP.&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;First STARTUP IPI&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;STARTUP IPI&n;&t;&t;&t;&t; */
 id|cfg
 op_assign
 id|apic_read
@@ -2624,6 +2637,7 @@ suffix:semicolon
 multiline_comment|/* Clear bits &t;&t;*/
 id|cfg
 op_or_assign
+(paren
 id|APIC_DEST_FIELD
 op_or
 id|APIC_DEST_DM_STARTUP
@@ -2632,12 +2646,12 @@ op_or
 (paren
 (paren
 r_int
-r_int
 )paren
 id|stack
 )paren
 op_rshift
 l_int|12
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Boot on the stack &t;*/
@@ -2659,16 +2673,16 @@ r_do
 id|udelay
 c_func
 (paren
-l_int|1000
+l_int|10
 )paren
 suffix:semicolon
-r_if
-c_cond
+)brace
+r_while
+c_loop
 (paren
 (paren
 id|send_status
 op_assign
-op_logical_neg
 (paren
 id|apic_read
 c_func
@@ -2676,203 +2690,22 @@ c_func
 id|APIC_ICR
 )paren
 op_amp
-l_int|0x00001000
+l_int|0x1000
 )paren
 )paren
-)paren
-r_break
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|timeout
-op_increment
-OL
-l_int|1000
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|send_status
-)paren
-(brace
-id|udelay
-c_func
-(paren
-l_int|1000000
-)paren
-suffix:semicolon
-id|apic_write
-c_func
-(paren
-id|APIC_ESR
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|accept_status
-op_assign
-(paren
-id|apic_read
-c_func
-(paren
-id|APIC_ESR
-)paren
-op_amp
-l_int|0xEF
-)paren
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|send_status
 op_logical_and
-op_logical_neg
-id|accept_status
-)paren
-(brace
-id|SMP_PRINTK
-c_func
-(paren
-(paren
-l_string|&quot;Sending second STARTUP.&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Second STARTUP IPI&n;&t;&t;&t;&t; */
-id|cfg
-op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_ICR2
-)paren
-suffix:semicolon
-id|cfg
-op_and_assign
-l_int|0x00FFFFFF
-suffix:semicolon
-id|apic_write
-c_func
-(paren
-id|APIC_ICR2
-comma
-id|cfg
-op_or
-id|SET_APIC_DEST_FIELD
-c_func
-(paren
-id|i
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Target chip     &t;*/
-id|cfg
-op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_ICR
-)paren
-suffix:semicolon
-id|cfg
-op_and_assign
-op_complement
-l_int|0xCDFFF
-suffix:semicolon
-multiline_comment|/* Clear bits &t;&t;*/
-id|cfg
-op_or_assign
-id|APIC_DEST_FIELD
-op_or
-id|APIC_DEST_DM_STARTUP
-op_or
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|stack
-)paren
-op_rshift
-l_int|12
-)paren
-suffix:semicolon
-multiline_comment|/* Boot on the stack &t;*/
-id|apic_write
-c_func
-(paren
-id|APIC_ICR
-comma
-id|cfg
-)paren
-suffix:semicolon
-multiline_comment|/* Kick the second &t;*/
-id|timeout
-op_assign
-l_int|0
-suffix:semicolon
-r_do
-(brace
-id|udelay
-c_func
-(paren
-l_int|1000
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|send_status
-op_assign
-op_logical_neg
-(paren
-id|apic_read
-c_func
-(paren
-id|APIC_ICR
-)paren
-op_amp
-l_int|0x00001000
-)paren
-)paren
-)paren
-r_break
-suffix:semicolon
-)brace
-r_while
-c_loop
 (paren
 id|timeout
 op_increment
 OL
 l_int|1000
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|send_status
 )paren
-(brace
+suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|1000000
-)paren
-suffix:semicolon
-id|apic_write
-c_func
-(paren
-id|APIC_ESR
-comma
-l_int|0
+l_int|200
 )paren
 suffix:semicolon
 id|accept_status
@@ -2888,11 +2721,9 @@ l_int|0xEF
 )paren
 suffix:semicolon
 )brace
-)brace
 r_if
 c_cond
 (paren
-op_logical_neg
 id|send_status
 )paren
 multiline_comment|/* APIC never delivered?? */
@@ -2902,7 +2733,6 @@ c_func
 l_string|&quot;APIC never delivered???&bslash;n&quot;
 )paren
 suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -2917,6 +2747,16 @@ comma
 id|accept_status
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|send_status
+op_logical_or
+id|accept_status
+)paren
+)paren
 (brace
 r_for
 c_loop
@@ -3017,35 +2857,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Not responding val=(%lx).&bslash;n&quot;
-comma
-op_star
-(paren
-(paren
-r_int
-r_int
-op_star
+l_string|&quot;Not responding.&bslash;n&quot;
 )paren
-id|stack
-)paren
-)paren
-suffix:semicolon
-id|cpu_present_map
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|i
-)paren
-suffix:semicolon
-id|cpu_number_map
-(braket
-id|i
-)braket
-op_assign
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -3064,35 +2877,84 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
+multiline_comment|/* &n;&t;&t; *&t;Make sure we unmap all failed CPUs&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|i
-op_eq
-id|boot_cpu_id
-)paren
-(brace
 id|cpu_number_map
 (braket
 id|i
 )braket
+op_eq
+op_minus
+l_int|1
+)paren
+id|cpu_present_map
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|i
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Cleanup possible dangling ends...&n;&t; */
+multiline_comment|/*&n;&t; *&t;Install writable page 0 entry.&n;&t; */
+id|cfg
+op_assign
+id|pg0
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+l_int|3
+suffix:semicolon
+multiline_comment|/* writeable, present, addr 0 */
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Paranoid:  Set warm reset code and vector here back&n;&t; *&t;to default values.&n;&t; */
+id|CMOS_WRITE
+c_func
+(paren
+l_int|0
+comma
+l_int|0xf
+)paren
+suffix:semicolon
+op_star
+(paren
+(paren
+r_volatile
+r_int
+op_star
+)paren
+l_int|0x467
+)paren
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-r_else
-(brace
-id|cpu_number_map
+multiline_comment|/*&n;&t; *&t;Restore old page 0 entry.&n;&t; */
+id|pg0
 (braket
-id|i
+l_int|0
 )braket
 op_assign
-op_minus
-l_int|1
+id|cfg
 suffix:semicolon
-)brace
-)brace
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Allow the user to impress friends.&n;&t; */
 r_if
 c_cond
@@ -3726,6 +3588,10 @@ c_func
 r_int
 id|cpl
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -4146,6 +4012,10 @@ c_func
 (paren
 r_int
 id|cpl
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs

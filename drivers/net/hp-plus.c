@@ -1046,6 +1046,8 @@ comma
 l_int|0
 comma
 l_string|&quot;hp-plus&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -1197,6 +1199,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|irq2dev_map

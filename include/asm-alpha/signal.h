@@ -81,7 +81,7 @@ DECL|macro|SIGPWR
 mdefine_line|#define SIGPWR&t;SIGINFO
 DECL|macro|SIGIOT
 mdefine_line|#define SIGIOT&t;SIGABRT
-multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; */
+multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;0x00000004
 DECL|macro|SA_STACK
@@ -94,6 +94,8 @@ DECL|macro|SA_NOMASK
 mdefine_line|#define SA_NOMASK&t;0x00000008
 DECL|macro|SA_ONESHOT
 mdefine_line|#define SA_ONESHOT&t;0x00000010
+DECL|macro|SA_SHIRQ
+mdefine_line|#define SA_SHIRQ&t;0x00000020
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; */
 DECL|macro|SA_PROBE

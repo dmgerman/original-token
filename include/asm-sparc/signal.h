@@ -151,7 +151,7 @@ DECL|macro|SV_RESET
 mdefine_line|#define SV_RESET     4     /* Set handler to SIG_DFL upon taken signal */
 DECL|macro|SV_IGNCHILD
 mdefine_line|#define SV_IGNCHILD  8     /* Do not send SIGCHLD */
-multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; */
+multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;SV_IGNCHILD
 DECL|macro|SA_STACK
@@ -164,6 +164,8 @@ DECL|macro|SA_NOMASK
 mdefine_line|#define SA_NOMASK&t;0x10
 DECL|macro|SA_ONESHOT
 mdefine_line|#define SA_ONESHOT&t;0x20
+DECL|macro|SA_SHIRQ
+mdefine_line|#define SA_SHIRQ&t;0x40
 DECL|macro|SIG_BLOCK
 mdefine_line|#define SIG_BLOCK          0x00&t;/* for blocking signals */
 DECL|macro|SIG_UNBLOCK

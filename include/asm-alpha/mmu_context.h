@@ -5,7 +5,7 @@ multiline_comment|/*&n; * get a new mmu context..&n; *&n; * Copyright (C) 1996, 
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * The maximum ASN&squot;s the processor supports.  On the EV4 this is 63&n; * but the PAL-code doesn&squot;t actually use this information.  On the&n; * EV5 this is 127.&n; *&n; * On the EV4, the ASNs are more-or-less useless anyway, as they are&n; * only used as a icache tag, not for TB entries.  On the EV5 ASN&squot;s&n; * also validate the TB entries, and thus make a lot more sense.&n; *&n; * The EV4 ASN&squot;s don&squot;t even match the architecture manual, ugh.  And&n; * I quote: &quot;If a processor implements address space numbers (ASNs),&n; * and the old PTE has the Address Space Match (ASM) bit clear (ASNs&n; * in use) and the Valid bit set, then entries can also effectively be&n; * made coherent by assigning a new, unused ASN to the currently&n; * running process and not reusing the previous ASN before calling the&n; * appropriate PALcode routine to invalidate the translation buffer&n; * (TB)&quot;. &n; *&n; * In short, the EV4 has a &quot;kind of&quot; ASN capability, but it doesn&squot;t actually&n; * work correctly and can thus not be used (explaining the lack of PAL-code&n; * support).&n; */
-macro_line|#ifdef CONFIG_EV5
+macro_line|#ifdef CONFIG_ALPHA_EV5
 DECL|macro|MAX_ASN
 mdefine_line|#define MAX_ASN 127
 macro_line|#else
@@ -32,7 +32,7 @@ op_star
 id|p
 )paren
 (brace
-macro_line|#ifdef CONFIG_EV5
+macro_line|#ifdef CONFIG_ALPHA_EV5
 r_static
 r_int
 r_int
@@ -47,6 +47,12 @@ id|mm
 op_assign
 id|p-&gt;mm
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mm
+)paren
+(brace
 r_int
 r_int
 id|asn
@@ -136,6 +142,7 @@ op_complement
 id|ASN_VERSION_MASK
 suffix:semicolon
 multiline_comment|/* just asn */
+)brace
 )brace
 macro_line|#endif
 )brace

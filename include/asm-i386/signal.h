@@ -79,9 +79,11 @@ DECL|macro|SIGPWR
 mdefine_line|#define SIGPWR&t;&t;30
 DECL|macro|SIGUNUSED
 mdefine_line|#define&t;SIGUNUSED&t;31
-multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; */
+multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;1
+DECL|macro|SA_SHIRQ
+mdefine_line|#define SA_SHIRQ&t;0x04000000
 DECL|macro|SA_STACK
 mdefine_line|#define SA_STACK&t;0x08000000
 DECL|macro|SA_RESTART

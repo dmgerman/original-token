@@ -2279,7 +2279,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MSS
-macro_line|#&t;ifndef PSEUDO_MSS
+multiline_comment|/* always define full MSS even for DEC Alphas, just in case... */
 (brace
 id|SNDCARD_MSS
 comma
@@ -2297,7 +2297,8 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;else
+macro_line|#&t;ifdef __alpha__
+multiline_comment|/* MSS without IRQ/DMA config registers (for DEC Alphas) */
 (brace
 id|SNDCARD_PSEUDO_MSS
 comma

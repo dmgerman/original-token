@@ -479,6 +479,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -2515,9 +2519,11 @@ op_star
 )paren
 id|de4x5_interrupt
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 id|lp-&gt;adapter_name
+comma
+id|dev
 )paren
 )paren
 (brace
@@ -4036,6 +4042,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -4052,12 +4062,7 @@ r_struct
 id|device
 op_star
 )paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|de4x5_private
@@ -5454,6 +5459,8 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
+comma
+id|dev
 )paren
 suffix:semicolon
 id|irq2dev_map

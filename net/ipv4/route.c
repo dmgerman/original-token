@@ -3222,7 +3222,7 @@ id|buffer
 comma
 l_string|&quot;%-127s&bslash;n&quot;
 comma
-l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tSource&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&bslash;tHH&bslash;tARP&bslash;n&quot;
+l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tSource&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&bslash;tHH&bslash;tARP&quot;
 )paren
 suffix:semicolon
 id|len

@@ -292,6 +292,12 @@ l_int|3
 )brace
 comma
 (brace
+l_string|&quot;QUANTUM LIGHTNING 540A&quot;
+comma
+l_int|3
+)brace
+comma
+(brace
 l_string|&quot;QUANTUM FIREBALL&quot;
 comma
 l_int|3

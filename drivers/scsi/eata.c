@@ -759,6 +759,9 @@ c_func
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -1442,6 +1445,8 @@ comma
 id|SA_INTERRUPT
 comma
 id|driver_name
+comma
+l_int|NULL
 )paren
 )paren
 )paren
@@ -1490,6 +1495,8 @@ id|free_irq
 c_func
 (paren
 id|irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -1624,6 +1631,8 @@ id|free_irq
 c_func
 (paren
 id|irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -4274,6 +4283,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
