@@ -138,7 +138,7 @@ id|nRc
 op_assign
 l_int|1
 suffix:semicolon
-singleline_comment|//fp_printk(&quot;DoubleCPDO(0x%08x)&bslash;n&quot;,opcode);
+singleline_comment|//printk(&quot;DoubleCPDO(0x%08x)&bslash;n&quot;,opcode);
 id|Fm
 op_assign
 id|getFm
@@ -213,7 +213,7 @@ r_case
 id|typeExtended
 suffix:colon
 singleline_comment|// !! patb
-singleline_comment|//fp_printk(&quot;not implemented! why not?&bslash;n&quot;);
+singleline_comment|//printk(&quot;not implemented! why not?&bslash;n&quot;);
 singleline_comment|//!! ScottB
 singleline_comment|// should never get here, if extended involved
 singleline_comment|// then other operand should be promoted then

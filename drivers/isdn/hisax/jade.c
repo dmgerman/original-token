@@ -1,16 +1,15 @@
-multiline_comment|/* $Id: jade.c,v 1.4 2000/06/26 08:59:14 keil Exp $&n; *&n; * jade.c   JADE stuff (derived from original hscx.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: jade.c,v 1.6 2000/11/24 17:05:38 kai Exp $&n; *&n; * jade.c   JADE stuff (derived from original hscx.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;hscx.h&quot;
 macro_line|#include &quot;jade.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/interrupt.h&gt;
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_int
+id|__init
+DECL|function|JadeVersion
 id|JadeVersion
 c_func
 (paren
@@ -22,7 +21,6 @@ comma
 r_char
 op_star
 id|s
-)paren
 )paren
 (brace
 r_int
@@ -1427,11 +1425,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|clear_pending_jade_ints
 id|clear_pending_jade_ints
 c_func
 (paren
@@ -1439,7 +1435,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 r_int
@@ -1637,11 +1632,9 @@ l_int|0xF8
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|initjade
 id|initjade
 c_func
 (paren
@@ -1649,7 +1642,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;bcs

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  arch/m68k/q40/config.c&n; *&n; *  Copyright (C) 1999 Richard Zidlicky&n; *&n; * originally based on:&n; *&n; *  linux/bvme/config.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -9,6 +10,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/serial_reg.h&gt;
 macro_line|#include &lt;asm/rtc.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -21,7 +23,7 @@ macro_line|#include &lt;asm/q40_master.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 r_extern
 r_void
-id|fd_floppy_eject
+id|floppy_eject
 c_func
 (paren
 r_void
@@ -29,7 +31,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|fd_floppy_setup
+id|floppy_setup
 c_func
 (paren
 r_char
@@ -349,19 +351,23 @@ r_int
 id|count
 )paren
 suffix:semicolon
-DECL|variable|ql_ticks
-r_static
+macro_line|#if 0
+r_extern
 r_int
 id|ql_ticks
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|sound_ticks
-r_static
+r_extern
 r_int
 id|sound_ticks
 op_assign
 l_int|0
+suffix:semicolon
+macro_line|#endif
+r_extern
+r_int
+id|ql_ticks
 suffix:semicolon
 r_static
 r_int
@@ -427,8 +433,6 @@ l_int|1
 comma
 )brace
 suffix:semicolon
-multiline_comment|/* Save tick handler routine pointer, will point to do_timer() in&n; * kernel/sched.c */
-multiline_comment|/* static void (*tick_handler)(int, void *, struct pt_regs *); */
 multiline_comment|/* early debugging function:*/
 r_extern
 r_char
@@ -619,6 +623,176 @@ l_string|&quot;Q40&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* pasted code to make parport_pc happy */
+DECL|function|__get_order
+r_extern
+id|__inline__
+r_int
+id|__get_order
+c_func
+(paren
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|order
+suffix:semicolon
+id|size
+op_assign
+(paren
+id|size
+op_minus
+l_int|1
+)paren
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|order
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|size
+op_rshift_assign
+l_int|1
+suffix:semicolon
+id|order
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|size
+)paren
+suffix:semicolon
+r_return
+id|order
+suffix:semicolon
+)brace
+DECL|function|pci_alloc_consistent
+r_void
+op_star
+id|pci_alloc_consistent
+c_func
+(paren
+r_void
+op_star
+id|hwdev
+comma
+r_int
+id|size
+comma
+id|dma_addr_t
+op_star
+id|dma_handle
+)paren
+(brace
+r_void
+op_star
+id|ret
+suffix:semicolon
+r_int
+id|gfp
+op_assign
+id|GFP_ATOMIC
+suffix:semicolon
+id|ret
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|__get_free_pages
+c_func
+(paren
+id|gfp
+comma
+id|__get_order
+c_func
+(paren
+id|size
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_ne
+l_int|NULL
+)paren
+(brace
+id|memset
+c_func
+(paren
+id|ret
+comma
+l_int|0
+comma
+id|size
+)paren
+suffix:semicolon
+op_star
+id|dma_handle
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|ret
+)paren
+suffix:semicolon
+)brace
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|pci_free_consistent
+r_void
+id|pci_free_consistent
+c_func
+(paren
+r_void
+op_star
+id|hwdev
+comma
+r_int
+id|size
+comma
+r_void
+op_star
+id|vaddr
+comma
+id|dma_addr_t
+id|dma_handle
+)paren
+(brace
+id|free_pages
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|vaddr
+comma
+id|__get_order
+c_func
+(paren
+id|size
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* end pasted code */
 multiline_comment|/* No hardware options on Q40? */
 DECL|function|q40_get_hardware_list
 r_static
@@ -638,6 +812,75 @@ l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|variable|serports
+r_static
+r_int
+r_int
+id|serports
+(braket
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+DECL|function|q40_disable_irqs
+r_void
+id|q40_disable_irqs
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+comma
+id|j
+suffix:semicolon
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|i
+op_assign
+id|serports
+(braket
+id|j
+op_increment
+)braket
+)paren
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|i
+op_plus
+id|UART_IER
+)paren
+suffix:semicolon
+)brace
+id|master_outb
+c_func
+(paren
+l_int|0
+comma
+id|EXT_ENABLE_REG
+)paren
+suffix:semicolon
+id|master_outb
+c_func
+(paren
+l_int|0
+comma
+id|KEY_IRQ_ENABLE_REG
+)paren
 suffix:semicolon
 )brace
 DECL|function|config_q40
@@ -742,22 +985,31 @@ op_assign
 op_amp
 id|dummy_con
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_FD
+macro_line|#if 0 /*def CONFIG_BLK_DEV_FD*/
 id|mach_floppy_setup
 op_assign
-id|fd_floppy_setup
+id|floppy_setup
 suffix:semicolon
 id|mach_floppy_eject
 op_assign
-id|fd_floppy_eject
+id|floppy_eject
 suffix:semicolon
 multiline_comment|/**/
 macro_line|#endif
+id|q40_disable_irqs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mach_max_dma_address
 op_assign
-l_int|0
+l_int|32
+op_star
+l_int|1024
+op_star
+l_int|1024
 suffix:semicolon
-multiline_comment|/* no DMA at all */
+multiline_comment|/* no DMA at all, but ide-scsi requires it.. */
 multiline_comment|/* userfull for early debuging stages writes kernel messages into SRAM */
 r_if
 c_cond
@@ -820,11 +1072,9 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* unknown */
 )brace
-DECL|macro|DAC_LEFT
+macro_line|#if 0
 mdefine_line|#define DAC_LEFT  ((unsigned char *)0xff008000)
-DECL|macro|DAC_RIGHT
 mdefine_line|#define DAC_RIGHT ((unsigned char *)0xff008004)
-DECL|function|q40_mksound
 r_void
 id|q40_mksound
 c_func
@@ -891,7 +1141,6 @@ op_lshift
 l_int|1
 suffix:semicolon
 )brace
-DECL|variable|q40_timer_routine
 r_static
 r_void
 (paren
@@ -909,26 +1158,22 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-DECL|variable|rtc_oldsecs
 r_static
 r_int
 id|rtc_oldsecs
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|rtc_irq_flags
 r_int
 id|rtc_irq_flags
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|rtc_irq_ctrl
 r_int
 id|rtc_irq_ctrl
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|q40_timer_int
 r_static
 r_void
 id|q40_timer_int
@@ -1059,7 +1304,32 @@ id|fp
 )paren
 suffix:semicolon
 )brace
-DECL|function|q40_sched_init
+macro_line|#endif
+macro_line|#if 0
+r_extern
+r_void
+(paren
+op_star
+id|q40_timer_routine
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|q40_timer_int
+c_func
+(paren
+)paren
+suffix:semicolon
 r_void
 id|q40_sched_init
 (paren
@@ -1170,6 +1440,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 )brace
+macro_line|#endif
 DECL|function|q40_gettimeoffset
 r_int
 r_int

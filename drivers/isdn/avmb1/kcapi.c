@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;linux/kernelcapi.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
@@ -27,7 +28,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.18 $&quot;
+l_string|&quot;$Revision: 1.21 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 DECL|macro|CARD_FREE
@@ -8272,75 +8273,11 @@ c_func
 id|detach_capi_driver
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1ISA
-r_extern
-r_int
-id|b1isa_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1PCI
-r_extern
-r_int
-id|b1pci_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_T1ISA
-r_extern
-r_int
-id|t1isa_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1PCMCIA
-r_extern
-r_int
-id|b1pcmcia_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_T1PCI
-r_extern
-r_int
-id|t1pci_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_C4
-r_extern
-r_int
-id|c4_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/*&n; * init / exit functions&n; */
-macro_line|#ifdef MODULE
-DECL|macro|kcapi_init
-mdefine_line|#define kcapi_init init_module
-macro_line|#endif
 DECL|function|kcapi_init
+r_static
 r_int
+id|__init
 id|kcapi_init
 c_func
 (paren
@@ -8366,7 +8303,6 @@ op_amp
 id|recv_queue
 )paren
 suffix:semicolon
-multiline_comment|/* init_bh(CAPI_BH, do_capi_bh); */
 id|tq_state_notify.routine
 op_assign
 id|notify_handler
@@ -8459,66 +8395,6 @@ comma
 id|rev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1ISA
-(paren
-r_void
-)paren
-id|b1isa_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1PCI
-(paren
-r_void
-)paren
-id|b1pci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_T1ISA
-(paren
-r_void
-)paren
-id|t1isa_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1PCMCIA
-(paren
-r_void
-)paren
-id|b1pcmcia_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_T1PCI
-(paren
-r_void
-)paren
-id|t1pci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_C4
-(paren
-r_void
-)paren
-id|c4_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -8526,10 +8402,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|kcapi_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|kcapi_exit
 c_func
 (paren
 r_void
@@ -8613,5 +8490,18 @@ id|rev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|kcapi_init
+id|module_init
+c_func
+(paren
+id|kcapi_init
+)paren
+suffix:semicolon
+DECL|variable|kcapi_exit
+id|module_exit
+c_func
+(paren
+id|kcapi_exit
+)paren
+suffix:semicolon
 eof

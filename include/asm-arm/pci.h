@@ -2,12 +2,7 @@ macro_line|#ifndef ASMARM_PCI_H
 DECL|macro|ASMARM_PCI_H
 mdefine_line|#define ASMARM_PCI_H
 macro_line|#ifdef __KERNEL__
-DECL|macro|pcibios_assign_all_busses
-mdefine_line|#define pcibios_assign_all_busses()&t;0
-DECL|macro|PCIBIOS_MIN_IO
-mdefine_line|#define PCIBIOS_MIN_IO&t;&t;0x8000
-DECL|macro|PCIBIOS_MIN_MEM
-mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;0x40000000
+macro_line|#include &lt;asm/arch/hardware.h&gt;
 DECL|function|pcibios_set_master
 r_extern
 r_inline

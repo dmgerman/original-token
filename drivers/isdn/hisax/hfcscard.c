@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: hfcscard.c,v 1.7 2000/06/26 08:59:13 keil Exp $&n; *&n; * hfcscard.c     low level stuff for hfcs based cards (Teles3c, ACER P10)&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: hfcscard.c,v 1.8 2000/11/24 17:05:37 kai Exp $&n; *&n; * hfcscard.c     low level stuff for hfcs based cards (Teles3c, ACER P10)&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;hfc_2bds0.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
@@ -19,7 +20,7 @@ r_char
 op_star
 id|hfcs_revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.8 $&quot;
 suffix:semicolon
 r_static
 r_void
@@ -734,11 +735,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_hfcs
 id|setup_hfcs
 c_func
 (paren
@@ -746,7 +745,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

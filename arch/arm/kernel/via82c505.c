@@ -334,8 +334,6 @@ DECL|variable|size_wanted
 r_static
 r_char
 id|size_wanted
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int

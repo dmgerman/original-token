@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: ix1_micro.c,v 2.9 2000/06/26 08:59:13 keil Exp $&n; *&n; * ix1_micro.c  low level stuff for ITK ix1-micro Rev.2 isdn cards&n; *              derived from the original file teles3.c from Karsten Keil&n; *&n; * Copyright (C) 1997 Klaus-Peter Nischke (ITK AG) (for the modifications to&n; *                                                  the original file teles.c)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; */
+multiline_comment|/* $Id: ix1_micro.c,v 2.10 2000/11/24 17:05:38 kai Exp $&n; *&n; * ix1_micro.c  low level stuff for ITK ix1-micro Rev.2 isdn cards&n; *              derived from the original file teles3.c from Karsten Keil&n; *&n; * Copyright (C) 1997 Klaus-Peter Nischke (ITK AG) (for the modifications to&n; *                                                  the original file teles.c)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; */
 multiline_comment|/*&n;   For the modification done by the author the following terms and conditions&n;   apply (GNU PUBLIC LICENSE)&n;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;&n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&n;   You may contact Klaus-Peter Nischke by email: klaus@nischke.do.eunet.de&n;   or by conventional mail:&n;&n;   Klaus-Peter Nischke&n;   Deusener Str. 287&n;   44369 Dortmund&n;   Germany&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|ix1_revision
 op_assign
-l_string|&quot;$Revision: 2.9 $&quot;
+l_string|&quot;$Revision: 2.10 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -914,11 +915,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_ix1micro
 id|setup_ix1micro
 c_func
 (paren
@@ -926,7 +925,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

@@ -1,4 +1,4 @@
-singleline_comment|// $Id: icc.c,v 1.3 2000/08/20 07:34:04 keil Exp $
+singleline_comment|// $Id: icc.c,v 1.5 2000/11/24 17:05:37 kai Exp $
 singleline_comment|//-----------------------------------------------------------------------------
 singleline_comment|//
 singleline_comment|// ICC specific routines
@@ -15,6 +15,7 @@ singleline_comment|//
 singleline_comment|//-----------------------------------------------------------------------------
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;icc.h&quot;
 singleline_comment|// #include &quot;arcofi.h&quot;
@@ -24,14 +25,14 @@ DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
 DECL|macro|ARCOFI_USE
 mdefine_line|#define ARCOFI_USE 0
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_char
 op_star
 id|ICCVer
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 l_string|&quot;2070 A1/A3&quot;
@@ -3582,11 +3583,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|initicc
 id|initicc
 c_func
 (paren
@@ -3594,7 +3593,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;tqueue.routine
@@ -3865,11 +3863,9 @@ id|ICC_CMD_DI
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|clear_pending_icc_ints
 id|clear_pending_icc_ints
 c_func
 (paren
@@ -3877,7 +3873,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 r_int

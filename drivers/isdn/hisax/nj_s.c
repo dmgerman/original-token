@@ -1,10 +1,11 @@
-singleline_comment|// $Id: nj_s.c,v 2.3 2000/06/26 08:59:14 keil Exp $
+singleline_comment|// $Id: nj_s.c,v 2.7 2000/11/24 17:05:38 kai Exp $
 singleline_comment|//
 singleline_comment|// This file is (c) under GNU PUBLIC LICENSE
 singleline_comment|//
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
@@ -18,7 +19,7 @@ r_char
 op_star
 id|NETjet_S_revision
 op_assign
-l_string|&quot;$Revision: 2.3 $&quot;
+l_string|&quot;$Revision: 2.7 $&quot;
 suffix:semicolon
 DECL|function|dummyrr
 r_static
@@ -212,21 +213,80 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* start new code 13/07/00 GE */
+multiline_comment|/* set bits in sval to indicate which page is free */
 r_if
 c_cond
 (paren
-(paren
-id|sval
-op_assign
-id|bytein
+id|inl
 c_func
 (paren
 id|cs-&gt;hw.njet.base
 op_plus
-id|NETJET_IRQSTAT0
+id|NETJET_DMA_WRITE_ADR
+)paren
+OL
+id|inl
+c_func
+(paren
+id|cs-&gt;hw.njet.base
+op_plus
+id|NETJET_DMA_WRITE_IRQ
 )paren
 )paren
+multiline_comment|/* the 2nd write page is free */
+id|sval
+op_assign
+l_int|0x08
+suffix:semicolon
+r_else
+multiline_comment|/* the 1st write page is free */
+id|sval
+op_assign
+l_int|0x04
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inl
+c_func
+(paren
+id|cs-&gt;hw.njet.base
+op_plus
+id|NETJET_DMA_READ_ADR
 )paren
+OL
+id|inl
+c_func
+(paren
+id|cs-&gt;hw.njet.base
+op_plus
+id|NETJET_DMA_READ_IRQ
+)paren
+)paren
+multiline_comment|/* the 2nd read page is free */
+id|sval
+op_assign
+id|sval
+op_or
+l_int|0x02
+suffix:semicolon
+r_else
+multiline_comment|/* the 1st read page is free */
+id|sval
+op_assign
+id|sval
+op_or
+l_int|0x01
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sval
+op_ne
+id|cs-&gt;hw.njet.last_is0
+)paren
+multiline_comment|/* we have a DMA interrupt */
 (brace
 r_if
 c_cond
@@ -260,26 +320,22 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;debugl1(cs, &quot;tiger: ist0 %x  %x %x  %x/%x  pulse=%d&quot;,&n;&t;&t;&t;sval, &n;&t;&t;&t;bytein(cs-&gt;hw.njet.base + NETJET_DMACTRL),&n;&t;&t;&t;bytein(cs-&gt;hw.njet.base + NETJET_IRQMASK0),&n;&t;&t;&t;inl(cs-&gt;hw.njet.base + NETJET_DMA_READ_ADR),&n;&t;&t;&t;inl(cs-&gt;hw.njet.base + NETJET_DMA_WRITE_ADR),&n;&t;&t;&t;bytein(cs-&gt;hw.njet.base + NETJET_PULSE_CNT));&n;*/
-multiline_comment|/*&t;&t;cs-&gt;hw.njet.irqmask0 = ((0x0f &amp; cs-&gt;hw.njet.irqstat0) ^ 0x0f) | 0x30;&n;*/
-id|byteout
-c_func
-(paren
-id|cs-&gt;hw.njet.base
-op_plus
-id|NETJET_IRQSTAT0
-comma
-id|cs-&gt;hw.njet.irqstat0
-)paren
-suffix:semicolon
-multiline_comment|/*&t;&t;byteout(cs-&gt;hw.njet.base + NETJET_IRQMASK0, cs-&gt;hw.njet.irqmask0);&n;*/
 r_if
 c_cond
+(paren
 (paren
 id|cs-&gt;hw.njet.irqstat0
 op_amp
 id|NETJET_IRQM0_READ
 )paren
+op_ne
+(paren
+id|cs-&gt;hw.njet.last_is0
+op_amp
+id|NETJET_IRQM0_READ
+)paren
+)paren
+multiline_comment|/* we have a read dma int */
 id|read_tiger
 c_func
 (paren
@@ -293,12 +349,21 @@ id|cs-&gt;hw.njet.irqstat0
 op_amp
 id|NETJET_IRQM0_WRITE
 )paren
+op_ne
+(paren
+id|cs-&gt;hw.njet.last_is0
+op_amp
+id|NETJET_IRQM0_WRITE
+)paren
+)paren
+multiline_comment|/* we have a write dma int */
 id|write_tiger
 c_func
 (paren
 id|cs
 )paren
 suffix:semicolon
+multiline_comment|/* end new code 13/07/00 GE */
 id|test_and_clear_bit
 c_func
 (paren
@@ -380,9 +445,10 @@ suffix:semicolon
 multiline_comment|/* Timeout 10ms */
 id|cs-&gt;hw.njet.ctrl_reg
 op_assign
-l_int|0x00
+l_int|0x40
 suffix:semicolon
 multiline_comment|/* Reset Off and status read clear */
+multiline_comment|/* now edge triggered for TJ320 GE 13/07/00 */
 id|byteout
 c_func
 (paren
@@ -560,14 +626,10 @@ id|pci_dev
 op_star
 id|dev_netjet
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_netjet_s
 id|setup_netjet_s
 c_func
 (paren
@@ -575,7 +637,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_int
@@ -597,8 +658,6 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-macro_line|#if CONFIG_PCI
-macro_line|#endif
 macro_line|#ifdef __BIG_ENDIAN
 macro_line|#error &quot;not running on big endian machines now&quot;
 macro_line|#endif

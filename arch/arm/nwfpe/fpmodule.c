@@ -29,19 +29,6 @@ op_star
 id|PTASK
 suffix:semicolon
 macro_line|#ifdef MODULE
-r_int
-id|fp_printk
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
 r_void
 id|fp_send_sig
 c_func
@@ -72,8 +59,6 @@ l_string|&quot;NWFPE floating point emulator&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#else
-DECL|macro|fp_printk
-mdefine_line|#define fp_printk&t;printk
 DECL|macro|fp_send_sig
 mdefine_line|#define fp_send_sig&t;send_sig
 DECL|macro|kern_fp_enter
@@ -126,61 +111,6 @@ r_int
 op_star
 id|userRegisters
 suffix:semicolon
-DECL|function|fpe_version
-r_void
-id|__init
-id|fpe_version
-c_func
-(paren
-r_void
-)paren
-(brace
-r_static
-r_const
-r_char
-id|szTitle
-(braket
-)braket
-op_assign
-l_string|&quot;&lt;4&gt;NetWinder Floating Point Emulator &quot;
-suffix:semicolon
-r_static
-r_const
-r_char
-id|szVersion
-(braket
-)braket
-op_assign
-l_string|&quot;V0.95 &quot;
-suffix:semicolon
-r_static
-r_const
-r_char
-id|szCopyright
-(braket
-)braket
-op_assign
-l_string|&quot;(c) 1998-1999 Rebel.com&bslash;n&quot;
-suffix:semicolon
-id|fp_printk
-c_func
-(paren
-id|szTitle
-)paren
-suffix:semicolon
-id|fp_printk
-c_func
-(paren
-id|szVersion
-)paren
-suffix:semicolon
-id|fp_printk
-c_func
-(paren
-id|szCopyright
-)paren
-suffix:semicolon
-)brace
 DECL|function|fpe_init
 r_int
 id|__init
@@ -214,9 +144,12 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Display title, version and copyright information. */
-id|fpe_version
+id|printk
 c_func
 (paren
+id|KERN_WARNING
+l_string|&quot;NetWinder Floating Point Emulator V0.95 &quot;
+l_string|&quot;(c) 1998-1999 Rebel.com&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Save pointer to the old FP handler and then patch ourselves in */

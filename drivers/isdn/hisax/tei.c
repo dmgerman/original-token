@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: tei.c,v 2.15 2000/06/26 08:59:14 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
+multiline_comment|/* $Id: tei.c,v 2.17 2000/11/24 17:05:38 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl2.h&quot;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 DECL|variable|tei_revision
 r_const
@@ -10,7 +11,7 @@ r_char
 op_star
 id|tei_revision
 op_assign
-l_string|&quot;$Revision: 2.15 $&quot;
+l_string|&quot;$Revision: 2.17 $&quot;
 suffix:semicolon
 DECL|macro|ID_REQUEST
 mdefine_line|#define ID_REQUEST&t;1
@@ -28,23 +29,11 @@ DECL|macro|ID_VERIFY
 mdefine_line|#define ID_VERIFY&t;7
 DECL|macro|TEI_ENTITY_ID
 mdefine_line|#define TEI_ENTITY_ID&t;0xf
-r_static
 DECL|variable|teifsm
+r_static
 r_struct
 id|Fsm
 id|teifsm
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 r_void
 id|tei_handler
@@ -2359,14 +2348,14 @@ id|st-&gt;next
 suffix:semicolon
 )brace
 )brace
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_struct
 id|FsmNode
 id|TeiFnList
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 (brace
@@ -2461,16 +2450,13 @@ comma
 suffix:semicolon
 DECL|macro|TEI_FN_COUNT
 mdefine_line|#define TEI_FN_COUNT (sizeof(TeiFnList)/sizeof(struct FsmNode))
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|TeiNew
 id|TeiNew
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|teifsm.state_count

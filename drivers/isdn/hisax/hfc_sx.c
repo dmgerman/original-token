@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: hfc_sx.c,v 1.6 2000/06/26 08:59:13 keil Exp $&n;&n; * hfc_sx.c     low level driver for CCD&#xfffd;s hfc-s+/sp based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD HFC PCI cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* $Id: hfc_sx.c,v 1.9 2000/11/24 17:05:37 kai Exp $&n;&n; * hfc_sx.c     low level driver for CCD&#xfffd;s hfc-s+/sp based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD HFC PCI cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;hfc_sx.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|hfcsx_revision
 op_assign
-l_string|&quot;$Revision: 1.6 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 multiline_comment|/***************************************/
 multiline_comment|/* IRQ-table for CCDs demo board       */
@@ -7222,11 +7223,9 @@ suffix:semicolon
 multiline_comment|/********************************/
 multiline_comment|/* called for card init message */
 multiline_comment|/********************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__devinit
+DECL|function|inithfcsx
 id|inithfcsx
 c_func
 (paren
@@ -7234,7 +7233,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;setstack_d
@@ -7507,11 +7505,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__devinit
+DECL|function|setup_hfcsx
 id|setup_hfcsx
 c_func
 (paren
@@ -7519,7 +7515,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct
@@ -7590,9 +7585,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|cs-&gt;typ
 op_eq
 id|ISDN_CTYPE_HFC_SX
+)paren
+op_logical_or
+(paren
+id|cs-&gt;typ
+op_eq
+id|ISDN_CTYPE_HFC_SP_PCMCIA
+)paren
 )paren
 (brace
 r_if

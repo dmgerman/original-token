@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: avm_a1.c,v 2.12 2000/06/26 08:59:12 keil Exp $&n; *&n; * avm_a1.c     low level stuff for AVM A1 (Fritz) isdn cards&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: avm_a1.c,v 2.13 2000/11/24 17:05:37 kai Exp $&n; *&n; * avm_a1.c     low level stuff for AVM A1 (Fritz) isdn cards&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|avm_revision
 op_assign
-l_string|&quot;$Revision: 2.12 $&quot;
+l_string|&quot;$Revision: 2.13 $&quot;
 suffix:semicolon
 DECL|macro|AVM_A1_STAT_ISAC
 mdefine_line|#define&t; AVM_A1_STAT_ISAC&t;0x01
@@ -830,11 +831,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_avm_a1
 id|setup_avm_a1
 c_func
 (paren
@@ -842,7 +841,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 id|u_char

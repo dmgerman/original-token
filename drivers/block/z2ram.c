@@ -3,6 +3,7 @@ DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR    Z2RAM_MAJOR
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -639,23 +640,6 @@ suffix:semicolon
 macro_line|#ifdef __powerpc__
 multiline_comment|/* FIXME: ioremap doesn&squot;t build correct memory tables. */
 (brace
-r_extern
-r_void
-op_star
-id|vmalloc
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|vfree
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
 id|vfree
 c_func
 (paren

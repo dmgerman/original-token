@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: teleint.c,v 1.13 2000/06/26 08:59:14 keil Exp $&n; *&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: teleint.c,v 1.14 2000/11/24 17:05:38 kai Exp $&n; *&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hfc_2bs0.h&quot;
@@ -19,7 +20,7 @@ r_char
 op_star
 id|TeleInt_revision
 op_assign
-l_string|&quot;$Revision: 1.13 $&quot;
+l_string|&quot;$Revision: 1.14 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -1331,11 +1332,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_TeleInt
 id|setup_TeleInt
 c_func
 (paren
@@ -1343,7 +1342,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

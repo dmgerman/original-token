@@ -1,19 +1,20 @@
-multiline_comment|/* $Id: hscx.c,v 1.19 2000/06/26 08:59:13 keil Exp $&n; *&n; * hscx.c   HSCX specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: hscx.c,v 1.21 2000/11/24 17:05:37 kai Exp $&n; *&n; * hscx.c   HSCX specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;hscx.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/interrupt.h&gt;
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_char
 op_star
 id|HSCXVer
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 l_string|&quot;A1&quot;
@@ -49,11 +50,9 @@ comma
 l_string|&quot;???&quot;
 )brace
 suffix:semicolon
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_int
+id|__init
+DECL|function|HscxVersion
 id|HscxVersion
 c_func
 (paren
@@ -65,7 +64,6 @@ comma
 r_char
 op_star
 id|s
-)paren
 )paren
 (brace
 r_int
@@ -1334,11 +1332,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|clear_pending_hscx_ints
 id|clear_pending_hscx_ints
 c_func
 (paren
@@ -1346,7 +1342,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 r_int
@@ -1546,11 +1541,9 @@ l_int|0xFF
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|inithscx
 id|inithscx
 c_func
 (paren
@@ -1558,7 +1551,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;bcs
@@ -1674,11 +1666,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|inithscxisac
 id|inithscxisac
 c_func
 (paren
@@ -1689,7 +1679,6 @@ id|cs
 comma
 r_int
 id|part
-)paren
 )paren
 (brace
 r_if

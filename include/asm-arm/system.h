@@ -3,7 +3,7 @@ DECL|macro|__ASM_ARM_SYSTEM_H
 mdefine_line|#define __ASM_ARM_SYSTEM_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 multiline_comment|/* information about the system we&squot;re running on */
 r_extern
 r_int
@@ -93,7 +93,19 @@ DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;__sti()
 macro_line|#ifdef CONFIG_SMP
 macro_line|#error SMP not supported
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;&t;mb()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;&t;rmb()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;&t;wmb()
 macro_line|#else
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;&t;barrier()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;&t;barrier()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;&t;barrier()
 DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;__cli()
 DECL|macro|sti

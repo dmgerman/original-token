@@ -221,6 +221,13 @@ op_star
 op_assign
 id|dummy_free_irq
 suffix:semicolon
+r_void
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * void init_IRQ(void)&n; *&n; * Parameters:&t;None&n; *&n; * Returns:&t;Nothing&n; *&n; * This function should be called during kernel startup to initialize&n; * the IRQ handling routines.&n; */
 DECL|function|init_IRQ
 r_void
@@ -1133,5 +1140,15 @@ suffix:semicolon
 r_return
 id|len
 suffix:semicolon
+)brace
+DECL|function|init_irq_proc
+r_void
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Insert /proc/irq driver here */
 )brace
 eof

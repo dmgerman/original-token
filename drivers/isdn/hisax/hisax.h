@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hisax.h,v 2.48 2000/07/04 10:24:32 keil Exp $&n; *&n; *   Basic declarations, defines and prototypes&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: hisax.h,v 2.52 2000/11/25 17:01:00 kai Exp $&n; *&n; *   Basic declarations, defines and prototypes&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -1616,6 +1616,8 @@ DECL|macro|L1_MODE_HDLC
 mdefine_line|#define L1_MODE_HDLC&t;2
 DECL|macro|L1_MODE_EXTRN
 mdefine_line|#define L1_MODE_EXTRN&t;3
+DECL|macro|L1_MODE_HDLC_56K
+mdefine_line|#define L1_MODE_HDLC_56K 4
 DECL|macro|L1_MODE_MODEM
 mdefine_line|#define L1_MODE_MODEM&t;7
 DECL|macro|L1_MODE_V32
@@ -3800,24 +3802,14 @@ DECL|macro|ISDN_CTYPE_HFC_SX
 mdefine_line|#define  ISDN_CTYPE_HFC_SX      37
 DECL|macro|ISDN_CTYPE_NETJET_U
 mdefine_line|#define  ISDN_CTYPE_NETJET_U&t;38
+DECL|macro|ISDN_CTYPE_HFC_SP_PCMCIA
+mdefine_line|#define  ISDN_CTYPE_HFC_SP_PCMCIA      39
 DECL|macro|ISDN_CTYPE_COUNT
-mdefine_line|#define  ISDN_CTYPE_COUNT&t;38
+mdefine_line|#define  ISDN_CTYPE_COUNT&t;39
 macro_line|#ifdef ISDN_CHIP_ISAC
 DECL|macro|ISDN_CHIP_ISAC
 macro_line|#undef ISDN_CHIP_ISAC
 macro_line|#endif
-macro_line|#ifndef __initfunc
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(__arginit) __arginit
-macro_line|#endif
-macro_line|#ifndef __initdata
-DECL|macro|__initdata
-mdefine_line|#define __initdata
-macro_line|#endif
-DECL|macro|HISAX_INITFUNC
-mdefine_line|#define HISAX_INITFUNC(__arginit) __initfunc(__arginit)
-DECL|macro|HISAX_INITDATA
-mdefine_line|#define HISAX_INITDATA __initdata
 macro_line|#ifdef&t;CONFIG_HISAX_16_0
 DECL|macro|CARD_TELES0
 mdefine_line|#define  CARD_TELES0 1
@@ -3891,14 +3883,6 @@ macro_line|#ifndef ISDN_CHIP_ISAC
 DECL|macro|ISDN_CHIP_ISAC
 mdefine_line|#define ISDN_CHIP_ISAC 1
 macro_line|#endif
-DECL|macro|HISAX_INITFUNC
-macro_line|#undef HISAX_INITFUNC
-DECL|macro|HISAX_INITFUNC
-mdefine_line|#define HISAX_INITFUNC(__arginit) __arginit
-DECL|macro|HISAX_INITDATA
-macro_line|#undef HISAX_INITDATA
-DECL|macro|HISAX_INITDATA
-mdefine_line|#define HISAX_INITDATA
 macro_line|#else
 DECL|macro|CARD_ELSA
 mdefine_line|#define  CARD_ELSA  0

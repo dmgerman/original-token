@@ -1,4 +1,4 @@
-singleline_comment|// $Id: l3ni1.h,v 2.2 2000/06/26 08:59:14 keil Exp $
+singleline_comment|// $Id: l3ni1.h,v 2.3 2000/11/16 13:50:43 keil Exp $
 singleline_comment|//-----------------------------------------------------------------------------
 singleline_comment|//
 singleline_comment|// NI1 D-channel protocol
@@ -10,6 +10,7 @@ singleline_comment|// 2000.6.6 Initial implementation of routines for US NI1
 singleline_comment|// Layer 3 protocol based on the EURO/DSS1 D-channel protocol 
 singleline_comment|// driver written by Karsten Keil et al.  Thanks also for the 
 singleline_comment|// code provided by Ragnar Paulson.
+singleline_comment|//
 singleline_comment|//
 singleline_comment|// This file is (c) under GNU PUBLIC LICENSE
 singleline_comment|//
@@ -38,7 +39,7 @@ mdefine_line|#define T318&t;4000
 DECL|macro|T319
 mdefine_line|#define T319&t;4000
 DECL|macro|TSPID
-mdefine_line|#define TSPID&t;2000
+mdefine_line|#define TSPID&t;5000 /* was 2000 - Guy Ellis */
 multiline_comment|/*&n; * Message-Types&n; */
 DECL|macro|MT_ALERTING
 mdefine_line|#define MT_ALERTING&t;&t;0x01

@@ -281,6 +281,10 @@ id|file_operations
 id|proc_root_operations
 op_assign
 (brace
+id|read
+suffix:colon
+id|generic_read_dir
+comma
 id|readdir
 suffix:colon
 id|proc_root_readdir

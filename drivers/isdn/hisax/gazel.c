@@ -1,5 +1,6 @@
-multiline_comment|/* $Id: gazel.c,v 2.8 2000/06/26 08:59:12 keil Exp $&n; *&n; * gazel.c     low level stuff for Gazel isdn cards&n; *&n; * Author       BeWan Systems&n; *              based on source code from Karsten Keil&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: gazel.c,v 2.11 2000/11/24 17:05:37 kai Exp $&n; *&n; * gazel.c     low level stuff for Gazel isdn cards&n; *&n; * Author       BeWan Systems&n; *              based on source code from Karsten Keil&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -22,7 +23,7 @@ r_char
 op_star
 id|gazel_revision
 op_assign
-l_string|&quot;$Revision: 2.8 $&quot;
+l_string|&quot;$Revision: 2.11 $&quot;
 suffix:semicolon
 DECL|macro|R647
 mdefine_line|#define R647      1
@@ -2767,8 +2768,6 @@ id|pci_dev
 op_star
 id|dev_tel
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_int
@@ -3173,11 +3172,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_gazel
 id|setup_gazel
 c_func
 (paren
@@ -3185,7 +3182,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

@@ -32,7 +32,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BVME6000_SCC
 macro_line|#include &lt;asm/bvme6000hw.h&gt;
 macro_line|#endif
-macro_line|#include &quot;generic_serial.h&quot;
+macro_line|#include &lt;linux/generic_serial.h&gt;
 macro_line|#include &quot;scc.h&quot;
 DECL|macro|CHANNEL_A
 mdefine_line|#define CHANNEL_A&t;0
@@ -137,7 +137,7 @@ id|ptr
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|scc_set_real_termios
 c_func
 (paren
@@ -2924,7 +2924,7 @@ suffix:semicolon
 )brace
 DECL|function|scc_set_real_termios
 r_static
-r_void
+r_int
 id|scc_set_real_termios
 (paren
 r_void
@@ -2990,6 +2990,7 @@ op_logical_neg
 id|port-&gt;gs.tty-&gt;termios
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|channel
 op_assign
@@ -3003,6 +3004,7 @@ op_eq
 id|CHANNEL_A
 )paren
 r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* Settings controlled by boot PROM */
 id|cflag
@@ -3061,6 +3063,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -3107,6 +3110,7 @@ id|baud
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -3376,6 +3380,9 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|scc_chars_in_buffer

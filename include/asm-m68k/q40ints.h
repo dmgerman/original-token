@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * contains some Q40 related interrupt definitions&n; */
 DECL|macro|Q40_IRQ_MAX
 mdefine_line|#define Q40_IRQ_MAX      (34)
-DECL|macro|Q40_IRQ_TIMER
-mdefine_line|#define Q40_IRQ_TIMER    (34)
+DECL|macro|Q40_IRQ_SAMPLE
+mdefine_line|#define Q40_IRQ_SAMPLE    (34)
 DECL|macro|Q40_IRQ_KEYBOARD
 mdefine_line|#define Q40_IRQ_KEYBOARD (32)
 DECL|macro|Q40_IRQ_FRAME

@@ -15,7 +15,7 @@ r_char
 op_star
 id|NETjet_U_revision
 op_assign
-l_string|&quot;$Revision: 2.4 $&quot;
+l_string|&quot;$Revision: 2.8 $&quot;
 suffix:semicolon
 DECL|function|dummyrr
 r_static
@@ -377,9 +377,10 @@ suffix:semicolon
 multiline_comment|/* Timeout 10ms */
 id|cs-&gt;hw.njet.ctrl_reg
 op_assign
-l_int|0x00
+l_int|0x40
 suffix:semicolon
 multiline_comment|/* Reset Off and status read clear */
+multiline_comment|/* now edge triggered for TJ320 GE 13/07/00 */
 id|byteout
 c_func
 (paren
@@ -565,14 +566,10 @@ id|pci_dev
 op_star
 id|dev_netjet
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_netjet_u
 id|setup_netjet_u
 c_func
 (paren
@@ -580,7 +577,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_int
@@ -669,7 +665,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;NETspider-U: no PCI bus present&bslash;n&quot;
+l_string|&quot;Netjet: no PCI bus present&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1046,7 +1042,7 @@ id|cs-&gt;hw.njet.base
 comma
 id|bytecnt
 comma
-l_string|&quot;netjet-u isdn&quot;
+l_string|&quot;netspider-u isdn&quot;
 )paren
 suffix:semicolon
 )brace

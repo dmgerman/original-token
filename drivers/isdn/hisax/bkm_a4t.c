@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: bkm_a4t.c,v 1.11 2000/06/26 08:59:12 keil Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: bkm_a4t.c,v 1.13 2000/11/24 17:05:37 kai Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -23,7 +24,7 @@ r_char
 op_star
 id|bkm_a4t_revision
 op_assign
-l_string|&quot;$Revision: 1.11 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -1167,14 +1168,10 @@ id|pci_dev
 op_star
 id|dev_a4t
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_bkm_a4t
 id|setup_bkm_a4t
 c_func
 (paren
@@ -1182,7 +1179,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

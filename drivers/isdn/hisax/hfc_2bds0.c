@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: hfc_2bds0.c,v 1.13 2000/06/26 08:59:12 keil Exp $&n; *&n; *  specific routines for CCD&squot;s HFC 2BDS0&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: hfc_2bds0.c,v 1.15 2000/11/24 17:05:37 kai Exp $&n; *&n; *  specific routines for CCD&squot;s HFC 2BDS0&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;hfc_2bds0.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
@@ -6304,19 +6305,16 @@ id|cs
 )paren
 (brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
 r_int
+id|__init
+DECL|function|init_send_hfcd
 op_star
 id|init_send_hfcd
 c_func
 (paren
 r_int
 id|cnt
-)paren
 )paren
 (brace
 r_int
@@ -6384,11 +6382,9 @@ r_return
 id|send
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|init2bds0
 id|init2bds0
 c_func
 (paren
@@ -6396,7 +6392,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;setstack_d

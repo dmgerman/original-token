@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: isdnl3.c,v 2.14 2000/06/26 08:59:13 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
+multiline_comment|/* $Id: isdnl3.c,v 2.17 2000/11/24 17:05:38 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl3.h&quot;
 macro_line|#include &lt;linux/config.h&gt;
@@ -10,25 +11,13 @@ r_char
 op_star
 id|l3_revision
 op_assign
-l_string|&quot;$Revision: 2.14 $&quot;
+l_string|&quot;$Revision: 2.17 $&quot;
 suffix:semicolon
-r_static
 DECL|variable|l3fsm
+r_static
 r_struct
 id|Fsm
 id|l3fsm
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 r_enum
 (brace
@@ -1217,6 +1206,13 @@ comma
 l_string|&quot;release_l3_process: release link&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;st-&gt;protocol
+op_ne
+id|ISDN_PTYPE_NI1
+)paren
 id|FsmEvent
 c_func
 (paren
@@ -1224,6 +1220,18 @@ op_amp
 id|p-&gt;st-&gt;l3.l3m
 comma
 id|EV_RELEASE_REQ
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_else
+id|FsmEvent
+c_func
+(paren
+op_amp
+id|p-&gt;st-&gt;l3.l3m
+comma
+id|EV_RELEASE_IND
 comma
 l_int|NULL
 )paren
@@ -2309,14 +2317,14 @@ id|CONFIRM
 suffix:semicolon
 )brace
 multiline_comment|/* *INDENT-OFF* */
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_struct
 id|FsmNode
 id|L3FnList
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 (brace
@@ -2380,7 +2388,7 @@ id|ST_L3_LC_ESTAB
 comma
 id|EV_RELEASE_REQ
 comma
-id|lc_start_delay
+id|lc_start_delay_check
 )brace
 comma
 (brace
@@ -2634,16 +2642,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|Isdnl3New
 id|Isdnl3New
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|l3fsm.state_count

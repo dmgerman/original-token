@@ -561,16 +561,6 @@ id|iso_directory_record
 op_star
 id|de
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|filp-&gt;f_pos
-op_ge
-id|inode-&gt;i_size
-)paren
-r_return
-l_int|0
-suffix:semicolon
 id|offset
 op_assign
 id|filp-&gt;f_pos
@@ -1009,6 +999,7 @@ op_ne
 l_int|0
 )paren
 (brace
+multiline_comment|/* may be -1 */
 id|p
 op_assign
 id|tmpname

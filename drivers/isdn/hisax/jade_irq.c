@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: jade_irq.c,v 1.4 2000/06/26 08:59:14 keil Exp $&n; *&n; * jade_irq.c   Low level JADE IRQ stuff (derived from original hscx_irq.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: jade_irq.c,v 1.5 2000/11/19 17:02:48 kai Exp $&n; *&n; * jade_irq.c   Low level JADE IRQ stuff (derived from original hscx_irq.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 r_static
 r_inline
 r_void

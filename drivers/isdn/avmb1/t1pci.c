@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.11 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_T1PCI_DEBUG
 macro_line|#undef CONFIG_T1PCI_DEBUG
@@ -1004,17 +1005,6 @@ comma
 multiline_comment|/* no add_card function */
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|macro|t1pci_init
-mdefine_line|#define t1pci_init init_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|ncards
 r_static
 r_int
@@ -1023,7 +1013,9 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|t1pci_init
+r_static
 r_int
+id|__init
 id|t1pci_init
 c_func
 (paren
@@ -1397,10 +1389,11 @@ id|EIO
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|t1pci_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|t1pci_exit
 c_func
 (paren
 r_void
@@ -1414,5 +1407,18 @@ id|t1pci_driver
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|t1pci_init
+id|module_init
+c_func
+(paren
+id|t1pci_init
+)paren
+suffix:semicolon
+DECL|variable|t1pci_exit
+id|module_exit
+c_func
+(paren
+id|t1pci_exit
+)paren
+suffix:semicolon
 eof

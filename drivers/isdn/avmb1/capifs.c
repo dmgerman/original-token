@@ -29,7 +29,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.10 $&quot;
+l_string|&quot;$Revision: 1.14 $&quot;
 suffix:semicolon
 DECL|struct|capifs_ncci
 r_struct
@@ -2286,6 +2286,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|capifs_init
+r_static
 r_int
 id|__init
 id|capifs_init
@@ -2409,7 +2410,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|capifs_exit
+r_static
 r_void
+id|__exit
 id|capifs_exit
 c_func
 (paren
@@ -2438,35 +2441,18 @@ c_func
 id|capifs_free_ncci
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
+DECL|variable|capifs_init
+id|module_init
 c_func
 (paren
-r_void
-)paren
-(brace
-r_return
 id|capifs_init
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+DECL|variable|capifs_exit
+id|module_exit
 c_func
 (paren
-r_void
-)paren
-(brace
 id|capifs_exit
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 eof

@@ -421,6 +421,137 @@ suffix:semicolon
 )brace
 r_static
 r_void
+DECL|function|parport_atari_enable_irq
+id|parport_atari_enable_irq
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|enable_irq
+c_func
+(paren
+id|IRQ_MFP_BUSY
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|parport_atari_disable_irq
+id|parport_atari_disable_irq
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|disable_irq
+c_func
+(paren
+id|IRQ_MFP_BUSY
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|parport_atari_data_forward
+id|parport_atari_data_forward
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Soundchip port B as output. */
+id|sound_ym.rd_data_reg_sel
+op_assign
+l_int|7
+suffix:semicolon
+id|sound_ym.wd_data
+op_assign
+id|sound_ym.rd_data_reg_sel
+op_or
+l_int|0x40
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|parport_atari_data_reverse
+id|parport_atari_data_reverse
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+macro_line|#if 0 /* too dangerous, can kill sound chip */
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Soundchip port B as input. */
+id|sound_ym.rd_data_reg_sel
+op_assign
+l_int|7
+suffix:semicolon
+id|sound_ym.wd_data
+op_assign
+id|sound_ym.rd_data_reg_sel
+op_amp
+op_complement
+l_int|0x40
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_static
+r_void
 DECL|function|parport_atari_inc_use_count
 id|parport_atari_inc_use_count
 c_func
@@ -462,18 +593,14 @@ id|parport_atari_frob_control
 comma
 id|parport_atari_read_status
 comma
-l_int|NULL
+id|parport_atari_enable_irq
 comma
-multiline_comment|/* enable_irq - FIXME */
-l_int|NULL
+id|parport_atari_disable_irq
 comma
-multiline_comment|/* disable_irq - FIXME */
-l_int|NULL
+id|parport_atari_data_forward
 comma
-multiline_comment|/* data_forward - FIXME */
-l_int|NULL
+id|parport_atari_data_reverse
 comma
-multiline_comment|/* data_reverse - FIXME */
 id|parport_atari_init_state
 comma
 id|parport_atari_save_state
@@ -484,36 +611,26 @@ id|parport_atari_inc_use_count
 comma
 id|parport_atari_dec_use_count
 comma
-l_int|NULL
+id|parport_ieee1284_epp_write_data
 comma
-multiline_comment|/* epp_write_data */
-l_int|NULL
+id|parport_ieee1284_epp_read_data
 comma
-multiline_comment|/* epp_read_data */
-l_int|NULL
+id|parport_ieee1284_epp_write_addr
 comma
-multiline_comment|/* epp_write_addr */
-l_int|NULL
+id|parport_ieee1284_epp_read_addr
 comma
-multiline_comment|/* epp_read_addr */
-l_int|NULL
+id|parport_ieee1284_ecp_write_data
 comma
-multiline_comment|/* ecp_write_data */
-l_int|NULL
+id|parport_ieee1284_ecp_read_data
 comma
-multiline_comment|/* ecp_read_data */
-l_int|NULL
+id|parport_ieee1284_ecp_write_addr
 comma
-multiline_comment|/* ecp_write_addr */
-l_int|NULL
+id|parport_ieee1284_write_compat
 comma
-multiline_comment|/* compat_write_data */
-l_int|NULL
+id|parport_ieee1284_read_nibble
 comma
-multiline_comment|/* nibble_read_data */
-l_int|NULL
+id|parport_ieee1284_read_byte
 comma
-multiline_comment|/* byte_read_data */
 )brace
 suffix:semicolon
 r_int

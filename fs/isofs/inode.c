@@ -73,7 +73,7 @@ id|qstr
 suffix:semicolon
 r_static
 r_int
-id|isofs_cmpi
+id|isofs_dentry_cmpi
 c_func
 (paren
 r_struct
@@ -94,7 +94,7 @@ id|b
 suffix:semicolon
 r_static
 r_int
-id|isofs_cmp
+id|isofs_dentry_cmp
 c_func
 (paren
 r_struct
@@ -148,7 +148,7 @@ id|qstr
 suffix:semicolon
 r_static
 r_int
-id|isofs_cmpi_ms
+id|isofs_dentry_cmpi_ms
 c_func
 (paren
 r_struct
@@ -169,7 +169,7 @@ id|b
 suffix:semicolon
 r_static
 r_int
-id|isofs_cmp_ms
+id|isofs_dentry_cmp_ms
 c_func
 (paren
 r_struct
@@ -295,7 +295,7 @@ id|isofs_hash
 comma
 id|d_compare
 suffix:colon
-id|isofs_cmp
+id|isofs_dentry_cmp
 comma
 )brace
 comma
@@ -306,7 +306,7 @@ id|isofs_hashi
 comma
 id|d_compare
 suffix:colon
-id|isofs_cmpi
+id|isofs_dentry_cmpi
 comma
 )brace
 comma
@@ -318,7 +318,7 @@ id|isofs_hash_ms
 comma
 id|d_compare
 suffix:colon
-id|isofs_cmp_ms
+id|isofs_dentry_cmp_ms
 comma
 )brace
 comma
@@ -329,7 +329,7 @@ id|isofs_hashi_ms
 comma
 id|d_compare
 suffix:colon
-id|isofs_cmpi_ms
+id|isofs_dentry_cmpi_ms
 comma
 )brace
 macro_line|#endif
@@ -599,8 +599,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Case insensitive compare of two isofs names.&n; */
 r_static
 r_int
-DECL|function|isofs_cmpi_common
-id|isofs_cmpi_common
+DECL|function|isofs_dentry_cmpi_common
+id|isofs_dentry_cmpi_common
 c_func
 (paren
 r_struct
@@ -711,8 +711,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Case sensitive compare of two isofs names.&n; */
 r_static
 r_int
-DECL|function|isofs_cmp_common
-id|isofs_cmp_common
+DECL|function|isofs_dentry_cmp_common
+id|isofs_dentry_cmp_common
 c_func
 (paren
 r_struct
@@ -880,8 +880,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isofs_cmp
-id|isofs_cmp
+DECL|function|isofs_dentry_cmp
+id|isofs_dentry_cmp
 c_func
 (paren
 r_struct
@@ -901,7 +901,7 @@ id|b
 )paren
 (brace
 r_return
-id|isofs_cmp_common
+id|isofs_dentry_cmp_common
 c_func
 (paren
 id|dentry
@@ -916,8 +916,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isofs_cmpi
-id|isofs_cmpi
+DECL|function|isofs_dentry_cmpi
+id|isofs_dentry_cmpi
 c_func
 (paren
 r_struct
@@ -937,7 +937,7 @@ id|b
 )paren
 (brace
 r_return
-id|isofs_cmpi_common
+id|isofs_dentry_cmpi_common
 c_func
 (paren
 id|dentry
@@ -1011,8 +1011,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isofs_cmp_ms
-id|isofs_cmp_ms
+DECL|function|isofs_dentry_cmp_ms
+id|isofs_dentry_cmp_ms
 c_func
 (paren
 r_struct
@@ -1032,7 +1032,7 @@ id|b
 )paren
 (brace
 r_return
-id|isofs_cmp_common
+id|isofs_dentry_cmp_common
 c_func
 (paren
 id|dentry
@@ -1047,8 +1047,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isofs_cmpi_ms
-id|isofs_cmpi_ms
+DECL|function|isofs_dentry_cmpi_ms
+id|isofs_dentry_cmpi_ms
 c_func
 (paren
 r_struct
@@ -1068,7 +1068,7 @@ id|b
 )paren
 (brace
 r_return
-id|isofs_cmpi_common
+id|isofs_dentry_cmpi_common
 c_func
 (paren
 id|dentry
@@ -2381,17 +2381,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|blocksize
-op_ne
-l_int|0
-)paren
-op_logical_and
-(paren
 id|blocksize
 OG
 id|opt.blocksize
-)paren
 )paren
 (brace
 multiline_comment|/*&n; &t;     * Force the blocksize we are going to use to be the&n; &t;     * hardware blocksize.&n; &t;     */
@@ -2826,20 +2818,20 @@ l_int|NULL
 suffix:semicolon
 id|root_found
 suffix:colon
-id|brelse
-c_func
-(paren
-id|pri_bh
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|joliet_level
 op_logical_and
+(paren
+id|pri
+op_eq
+l_int|NULL
+op_logical_or
 id|opt.rock
 op_eq
 l_char|&squot;n&squot;
+)paren
 )paren
 (brace
 multiline_comment|/* This is the case of Joliet with the norock mount flag.&n;&t;     * A disc with both Joliet and Rock Ridge is handled later&n;&t;     */
@@ -3157,6 +3149,12 @@ id|u.isofs_sb.s_log_zone_size
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We&squot;re all done using the volume descriptor, and may need&n;&t; * to change the device blocksize, so release the buffer now.&n;&t; */
+id|brelse
+c_func
+(paren
+id|pri_bh
+)paren
+suffix:semicolon
 id|brelse
 c_func
 (paren
@@ -3689,6 +3687,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Life is simpler than for other filesystem since we never&n; * have to create a new block, only find an existing one.&n; */
 DECL|function|isofs_get_block
+r_static
 r_int
 id|isofs_get_block
 c_func
@@ -3946,7 +3945,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;_isofs_bmap: Kernel tries to allocate a block&bslash;n&quot;
+l_string|&quot;isofs_get_block: Kernel tries to allocate a block&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -3957,7 +3956,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;_isofs_bmap: block &lt; 0&bslash;n&quot;
+l_string|&quot;isofs_get_block: block &lt; 0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -3968,7 +3967,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;_isofs_bmap: block &gt;= EOF (%ld, %ld)&bslash;n&quot;
+l_string|&quot;isofs_get_block: block &gt;= EOF (%ld, %ld)&bslash;n&quot;
 comma
 id|iblock
 comma
@@ -3987,13 +3986,13 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;isofs_bmap: More than 100 file sections ?!?, aborting...&bslash;n&quot;
+l_string|&quot;isofs_get_block: More than 100 file sections ?!?, aborting...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;isofs_bmap: ino=%lu block=%ld firstext=%u sect_size=%u nextino=%lu&bslash;n&quot;
+l_string|&quot;isofs_get_block: ino=%lu block=%ld firstext=%u sect_size=%u nextino=%lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -4014,6 +4013,7 @@ m_abort
 suffix:semicolon
 )brace
 DECL|function|isofs_bmap
+r_static
 r_int
 id|isofs_bmap
 c_func

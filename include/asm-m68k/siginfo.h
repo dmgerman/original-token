@@ -55,13 +55,18 @@ multiline_comment|/* kill() */
 r_struct
 (brace
 DECL|member|_pid
-id|pid_t
+id|__kernel_pid_t
 id|_pid
 suffix:semicolon
 multiline_comment|/* sender&squot;s pid */
 DECL|member|_uid
-id|uid_t
+id|__kernel_uid_t
 id|_uid
+suffix:semicolon
+multiline_comment|/* backwards compatibility */
+DECL|member|_uid32
+id|__kernel_uid32_t
+id|_uid32
 suffix:semicolon
 multiline_comment|/* sender&squot;s uid */
 DECL|member|_kill
@@ -89,19 +94,24 @@ multiline_comment|/* POSIX.1b signals */
 r_struct
 (brace
 DECL|member|_pid
-id|pid_t
+id|__kernel_pid_t
 id|_pid
 suffix:semicolon
 multiline_comment|/* sender&squot;s pid */
 DECL|member|_uid
-id|uid_t
+id|__kernel_uid_t
 id|_uid
 suffix:semicolon
-multiline_comment|/* sender&squot;s uid */
+multiline_comment|/* backwards compatibility */
 DECL|member|_sigval
 id|sigval_t
 id|_sigval
 suffix:semicolon
+DECL|member|_uid32
+id|__kernel_uid32_t
+id|_uid32
+suffix:semicolon
+multiline_comment|/* sender&squot;s uid */
 DECL|member|_rt
 )brace
 id|_rt
@@ -110,15 +120,15 @@ multiline_comment|/* SIGCHLD */
 r_struct
 (brace
 DECL|member|_pid
-id|pid_t
+id|__kernel_pid_t
 id|_pid
 suffix:semicolon
 multiline_comment|/* which child */
 DECL|member|_uid
-id|uid_t
+id|__kernel_uid_t
 id|_uid
 suffix:semicolon
-multiline_comment|/* sender&squot;s uid */
+multiline_comment|/* backwards compatibility */
 DECL|member|_status
 r_int
 id|_status
@@ -132,6 +142,11 @@ DECL|member|_stime
 id|clock_t
 id|_stime
 suffix:semicolon
+DECL|member|_uid32
+id|__kernel_uid32_t
+id|_uid32
+suffix:semicolon
+multiline_comment|/* sender&squot;s uid */
 DECL|member|_sigchld
 )brace
 id|_sigchld
@@ -173,11 +188,20 @@ DECL|typedef|siginfo_t
 )brace
 id|siginfo_t
 suffix:semicolon
+DECL|macro|UID16_SIGINFO_COMPAT_NEEDED
+mdefine_line|#define UID16_SIGINFO_COMPAT_NEEDED
 multiline_comment|/*&n; * How these fields are to be accessed.&n; */
 DECL|macro|si_pid
 mdefine_line|#define si_pid&t;&t;_sifields._kill._pid
+macro_line|#ifdef __KERNEL__
+DECL|macro|si_uid
+mdefine_line|#define si_uid&t;&t;_sifields._kill._uid32
+DECL|macro|si_uid16
+mdefine_line|#define si_uid16&t;_sifields._kill._uid
+macro_line|#else
 DECL|macro|si_uid
 mdefine_line|#define si_uid&t;&t;_sifields._kill._uid
+macro_line|#endif /* __KERNEL__ */
 DECL|macro|si_status
 mdefine_line|#define si_status&t;_sifields._sigchld._status
 DECL|macro|si_utime

@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: elsa.c,v 2.23 2000/06/26 08:59:12 keil Exp $&n; *&n; * elsa.c     low level stuff for Elsa isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Elsa GmbH for documents and informations&n; *&n; *              Klaus Lichtenwalder (Klaus.Lichtenwalder@WebForum.DE)&n; *              for ELSA PCMCIA support&n; *&n; */
+multiline_comment|/* $Id: elsa.c,v 2.26 2000/11/24 17:05:37 kai Exp $&n; *&n; * elsa.c     low level stuff for Elsa isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Elsa GmbH for documents and informations&n; *&n; *              Klaus Lichtenwalder (Klaus.Lichtenwalder@WebForum.DE)&n; *              for ELSA PCMCIA support&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;arcofi.h&quot;
@@ -25,7 +26,7 @@ r_char
 op_star
 id|Elsa_revision
 op_assign
-l_string|&quot;$Revision: 2.23 $&quot;
+l_string|&quot;$Revision: 2.26 $&quot;
 suffix:semicolon
 DECL|variable|Elsa_Types
 r_const
@@ -4429,27 +4430,28 @@ id|i
 )paren
 suffix:semicolon
 )brace
-DECL|variable|__initdata
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_dev
 op_star
 id|dev_qs1000
-id|__initdata
+id|__devinitdata
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_dev
 op_star
 id|dev_qs3000
-id|__initdata
+id|__devinitdata
 op_assign
 l_int|NULL
 suffix:semicolon
 r_int
+id|__devinit
 DECL|function|setup_elsa
 id|setup_elsa
 c_func

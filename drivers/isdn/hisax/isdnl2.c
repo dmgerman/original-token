@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: isdnl2.c,v 2.23 2000/06/26 08:59:13 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
+multiline_comment|/* $Id: isdnl2.c,v 2.25 2000/11/24 17:05:38 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl2.h&quot;
 DECL|variable|l2_revision
@@ -9,7 +10,7 @@ r_char
 op_star
 id|l2_revision
 op_assign
-l_string|&quot;$Revision: 2.23 $&quot;
+l_string|&quot;$Revision: 2.25 $&quot;
 suffix:semicolon
 r_static
 r_void
@@ -30,23 +31,11 @@ dot
 dot
 )paren
 suffix:semicolon
-r_static
 DECL|variable|l2fsm
+r_static
 r_struct
 id|Fsm
 id|l2fsm
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 r_enum
 (brace
@@ -8840,14 +8829,14 @@ id|st-&gt;l2.flag
 )paren
 suffix:semicolon
 )brace
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_struct
 id|FsmNode
 id|L2FnList
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 (brace
@@ -10922,16 +10911,13 @@ id|st
 )paren
 (brace
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|Isdnl2New
 id|Isdnl2New
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|l2fsm.state_count

@@ -58,7 +58,7 @@ id|nRc
 op_assign
 l_int|1
 suffix:semicolon
-singleline_comment|//fp_printk(&quot;EmulateCPDO(0x%08x)&bslash;n&quot;,opcode);
+singleline_comment|//printk(&quot;EmulateCPDO(0x%08x)&bslash;n&quot;,opcode);
 multiline_comment|/* Get the destination size.  If not valid let Linux perform&n;      an invalid instruction trap. */
 id|nDest
 op_assign

@@ -91,8 +91,6 @@ DECL|macro|XBUS_SWITCH_J17_11
 mdefine_line|#define XBUS_SWITCH_J17_11&t;((*XBUS_SWITCH) &amp; (1 &lt;&lt; 5))
 DECL|macro|XBUS_SWITCH_J17_9
 mdefine_line|#define XBUS_SWITCH_J17_9&t;((*XBUS_SWITCH) &amp; (1 &lt;&lt; 6))
-DECL|macro|PARAMS_OFFSET
-mdefine_line|#define PARAMS_OFFSET&t;&t;0x0100
 DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x50000000
 DECL|macro|UNCACHEABLE_ADDR
@@ -186,5 +184,11 @@ id|set
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|macro|pcibios_assign_all_busses
+mdefine_line|#define pcibios_assign_all_busses()&t;1
+DECL|macro|PCIBIOS_MIN_IO
+mdefine_line|#define PCIBIOS_MIN_IO&t;&t;0x6000
+DECL|macro|PCIBIOS_MIN_MEM
+mdefine_line|#define PCIBIOS_MIN_MEM &t;0x40000000
 macro_line|#endif
 eof

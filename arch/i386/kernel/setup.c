@@ -8796,7 +8796,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%06lu&bslash;n&quot;
+l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%03lu&bslash;n&quot;
 comma
 id|cpu_khz
 op_div

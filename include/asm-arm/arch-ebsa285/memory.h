@@ -58,6 +58,9 @@ DECL|macro|TASK_SIZE_26
 mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
 DECL|macro|PHYS_OFFSET
 mdefine_line|#define PHYS_OFFSET&t;&t;(0x00000000UL)
+multiline_comment|/*&n; * This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
+DECL|macro|TASK_UNMAPPED_BASE
+mdefine_line|#define TASK_UNMAPPED_BASE (TASK_SIZE / 3)
 multiline_comment|/*&n; * The DRAM is always contiguous.&n; */
 DECL|macro|__virt_to_phys__is_a_macro
 mdefine_line|#define __virt_to_phys__is_a_macro

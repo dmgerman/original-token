@@ -92,7 +92,7 @@ id|nRc
 op_assign
 l_int|1
 suffix:semicolon
-singleline_comment|//fp_printk(&quot;EmulateCPRT(0x%08x)&bslash;n&quot;,opcode);
+singleline_comment|//printk(&quot;EmulateCPRT(0x%08x)&bslash;n&quot;,opcode);
 r_if
 c_cond
 (paren
@@ -698,7 +698,7 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|//fp_printk(&quot;PerformComparison(0x%08x)&bslash;n&quot;,opcode);
+singleline_comment|//printk(&quot;PerformComparison(0x%08x)&bslash;n&quot;,opcode);
 id|Fn
 op_assign
 id|getFn
@@ -728,7 +728,7 @@ id|Fn
 r_case
 id|typeSingle
 suffix:colon
-singleline_comment|//fp_printk(&quot;single.&bslash;n&quot;);
+singleline_comment|//printk(&quot;single.&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -764,7 +764,7 @@ suffix:semicolon
 r_case
 id|typeDouble
 suffix:colon
-singleline_comment|//fp_printk(&quot;double.&bslash;n&quot;);
+singleline_comment|//printk(&quot;double.&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -800,7 +800,7 @@ suffix:semicolon
 r_case
 id|typeExtended
 suffix:colon
-singleline_comment|//fp_printk(&quot;extended.&bslash;n&quot;);
+singleline_comment|//printk(&quot;extended.&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -845,7 +845,7 @@ id|opcode
 )paren
 )paren
 (brace
-singleline_comment|//fp_printk(&quot;Fm is a constant: #%d.&bslash;n&quot;,Fm);
+singleline_comment|//printk(&quot;Fm is a constant: #%d.&bslash;n&quot;,Fm);
 id|rFm
 op_assign
 id|getExtendedConstant
@@ -869,7 +869,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-singleline_comment|//fp_printk(&quot;Fm = r%d which contains a &quot;,Fm);
+singleline_comment|//printk(&quot;Fm = r%d which contains a &quot;,Fm);
 r_switch
 c_cond
 (paren
@@ -882,7 +882,7 @@ id|Fm
 r_case
 id|typeSingle
 suffix:colon
-singleline_comment|//fp_printk(&quot;single.&bslash;n&quot;);
+singleline_comment|//printk(&quot;single.&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -918,7 +918,7 @@ suffix:semicolon
 r_case
 id|typeDouble
 suffix:colon
-singleline_comment|//fp_printk(&quot;double.&bslash;n&quot;);
+singleline_comment|//printk(&quot;double.&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -954,7 +954,7 @@ suffix:semicolon
 r_case
 id|typeExtended
 suffix:colon
-singleline_comment|//fp_printk(&quot;extended.&bslash;n&quot;);
+singleline_comment|//printk(&quot;extended.&bslash;n&quot;);
 r_if
 c_cond
 (paren

@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: saphir.c,v 1.7 2000/06/26 08:59:14 keil Exp $&n; *&n; * saphir.c low level stuff for HST Saphir 1&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    HST High Soft Tech GmbH&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: saphir.c,v 1.8 2000/11/24 17:05:38 kai Exp $&n; *&n; * saphir.c low level stuff for HST Saphir 1&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    HST High Soft Tech GmbH&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -19,7 +20,7 @@ r_char
 op_star
 id|saphir_rev
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.8 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -1131,11 +1132,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_saphir
 id|setup_saphir
 c_func
 (paren
@@ -1143,7 +1142,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

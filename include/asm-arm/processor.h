@@ -61,12 +61,13 @@ id|mm_segment_t
 suffix:semicolon
 multiline_comment|/* domain register&t;*/
 macro_line|#ifdef __KERNEL__
-DECL|macro|NR_DEBUGS
-mdefine_line|#define NR_DEBUGS&t;5
+DECL|macro|EISA_bus
+mdefine_line|#define EISA_bus 0
+DECL|macro|MCA_bus
+mdefine_line|#define MCA_bus 0
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
-macro_line|#include &lt;asm/arch/processor.h&gt;
 macro_line|#include &lt;asm/proc/processor.h&gt;
 DECL|struct|debug_info
 r_struct
@@ -144,9 +145,9 @@ id|EXTRA_THREAD_STRUCT
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
+mdefine_line|#define INIT_MMAP {&t;&t;&t;&t;&t;&bslash;&n;&t;vm_mm:&t;&t;&amp;init_mm,&t;&t;&t;&bslash;&n;&t;vm_page_prot:&t;PAGE_SHARED,&t;&t;&t;&bslash;&n;&t;vm_flags:&t;VM_READ | VM_WRITE | VM_EXEC,&t;&bslash;&n;&t;vm_avl_height:&t;1,&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&bslash;&n;&t;ATOMIC_INIT(1),&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&t;&bslash;&n;&t;(struct context_save_struct *)0&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&t;&bslash;&n;&t;refcount:&t;ATOMIC_INIT(1),&t;&t;&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern
@@ -241,9 +242,6 @@ suffix:semicolon
 multiline_comment|/* Forward declaration, a strange C thing */
 r_struct
 id|task_struct
-suffix:semicolon
-r_struct
-id|mm_struct
 suffix:semicolon
 multiline_comment|/* Free all resources held by a thread. */
 r_extern

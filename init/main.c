@@ -1117,6 +1117,14 @@ l_int|0x48F0
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_NFTL
+(brace
+l_string|&quot;nftla&quot;
+comma
+l_int|0x5d00
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|NULL
 comma

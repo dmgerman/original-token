@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: teles3.c,v 2.16 2000/06/26 08:59:15 keil Exp $&n; *&n; * teles3.c     low level stuff for Teles 16.3 &amp; PNP isdn cards&n; *&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: teles3.c,v 2.17 2000/11/24 17:05:38 kai Exp $&n; *&n; * teles3.c     low level stuff for Teles 16.3 &amp; PNP isdn cards&n; *&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -19,7 +20,7 @@ r_char
 op_star
 id|teles3_revision
 op_assign
-l_string|&quot;$Revision: 2.16 $&quot;
+l_string|&quot;$Revision: 2.17 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -1130,11 +1131,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__devinit
+DECL|function|setup_teles3
 id|setup_teles3
 c_func
 (paren
@@ -1142,7 +1141,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 id|u_char

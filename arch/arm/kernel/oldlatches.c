@@ -37,7 +37,7 @@ id|newdata
 r_if
 c_cond
 (paren
-id|machine_is_arc
+id|machine_is_archimedes
 c_func
 (paren
 )paren
@@ -62,12 +62,12 @@ comma
 id|latch_a_copy
 )paren
 suffix:semicolon
-id|outb
+id|__raw_writeb
 c_func
 (paren
 id|latch_a_copy
 comma
-id|LATCHAADDR
+id|LATCHA_BASE
 )paren
 suffix:semicolon
 )brace
@@ -96,7 +96,7 @@ id|newdata
 r_if
 c_cond
 (paren
-id|machine_is_arc
+id|machine_is_archimedes
 c_func
 (paren
 )paren
@@ -121,12 +121,12 @@ comma
 id|latch_b_copy
 )paren
 suffix:semicolon
-id|outb
+id|__raw_writeb
 c_func
 (paren
 id|latch_b_copy
 comma
-id|LATCHBADDR
+id|LATCHB_BASE
 )paren
 suffix:semicolon
 )brace
@@ -150,7 +150,7 @@ r_void
 r_if
 c_cond
 (paren
-id|machine_is_arc
+id|machine_is_archimedes
 c_func
 (paren
 )paren

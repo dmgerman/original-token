@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: s0box.c,v 2.3 2000/06/26 08:59:14 keil Exp $&n; *&n; * s0box.c      low level stuff for Creatix S0BOX&n; *&n; * Author       S0BOX specific stuff: Enrik Berkhan (enrik@starfleet.inka.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: s0box.c,v 2.4 2000/11/24 17:05:38 kai Exp $&n; *&n; * s0box.c      low level stuff for Creatix S0BOX&n; *&n; * Author       S0BOX specific stuff: Enrik Berkhan (enrik@starfleet.inka.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -19,7 +20,7 @@ r_char
 op_star
 id|s0box_revision
 op_assign
-l_string|&quot;$Revision: 2.3 $&quot;
+l_string|&quot;$Revision: 2.4 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -1282,11 +1283,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_s0box
 id|setup_s0box
 c_func
 (paren
@@ -1294,7 +1293,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

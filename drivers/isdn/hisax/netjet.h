@@ -1,4 +1,4 @@
-singleline_comment|// $Id: netjet.h,v 2.3 2000/06/26 08:59:14 keil Exp $
+singleline_comment|// $Id: netjet.h,v 2.5 2000/11/24 17:05:38 kai Exp $
 singleline_comment|//-----------------------------------------------------------------------------
 singleline_comment|//
 singleline_comment|// NETjet common header file
@@ -210,9 +210,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-id|__initfunc
-c_func
-(paren
 r_void
 id|inittiger
 c_func
@@ -221,7 +218,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 suffix:semicolon
 r_void

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: sedlbauer.c,v 1.23 2000/06/26 08:59:14 keil Exp $&n; *&n; * sedlbauer.c  low level stuff for Sedlbauer cards&n; *              includes support for the Sedlbauer speed star (speed star II),&n; *              support for the Sedlbauer speed fax+,&n; *              support for the Sedlbauer ISDN-Controller PC/104 and&n; *              support for the Sedlbauer speed pci&n; *              derived from the original file asuscom.c from Karsten Keil&n; *&n; * Copyright (C) 1997,1998 Marcus Niemann (for the modifications to&n; *                                         the original file asuscom.c)&n; *&n; * Author     Marcus Niemann (niemann@www-bib.fh-bielefeld.de)&n; *&n; * Thanks to  Karsten Keil&n; *            Sedlbauer AG for informations&n; *            Edgar Toernig&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: sedlbauer.c,v 1.25 2000/11/24 17:05:38 kai Exp $&n; *&n; * sedlbauer.c  low level stuff for Sedlbauer cards&n; *              includes support for the Sedlbauer speed star (speed star II),&n; *              support for the Sedlbauer speed fax+,&n; *              support for the Sedlbauer ISDN-Controller PC/104 and&n; *              support for the Sedlbauer speed pci&n; *              derived from the original file asuscom.c from Karsten Keil&n; *&n; * Copyright (C) 1997,1998 Marcus Niemann (for the modifications to&n; *                                         the original file asuscom.c)&n; *&n; * Author     Marcus Niemann (niemann@www-bib.fh-bielefeld.de)&n; *&n; * Thanks to  Karsten Keil&n; *            Sedlbauer AG for informations&n; *            Edgar Toernig&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 multiline_comment|/* Supported cards:&n; * Card:&t;Chip:&t;&t;Configuration:&t;Comment:&n; * ---------------------------------------------------------------------&n; * Speed Card&t;ISAC_HSCX&t;DIP-SWITCH&n; * Speed Win&t;ISAC_HSCX&t;ISAPNP&n; * Speed Fax+&t;ISAC_ISAR&t;ISAPNP&t;&t;Full analog support&n; * Speed Star&t;ISAC_HSCX&t;CARDMGR&n; * Speed Win2&t;IPAC&t;&t;ISAPNP&n; * ISDN PC/104&t;IPAC&t;&t;DIP-SWITCH&n; * Speed Star2&t;IPAC&t;&t;CARDMGR&n; * Speed PCI&t;IPAC&t;&t;PCI PNP&t;&t;&n; * Speed Fax+ &t;ISAC_ISAR&t;PCI PNP&t;&t;Full analog support&n; *&n; * Important:&n; * For the sedlbauer speed fax+ to work properly you have to download &n; * the firmware onto the card.&n; * For example: hisaxctrl &lt;DriverID&gt; 9 ISAR.BIN&n;*/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
@@ -24,7 +25,7 @@ r_char
 op_star
 id|Sedlbauer_revision
 op_assign
-l_string|&quot;$Revision: 1.23 $&quot;
+l_string|&quot;$Revision: 1.25 $&quot;
 suffix:semicolon
 DECL|variable|Sedlbauer_Types
 r_const
@@ -2389,21 +2390,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|__initdata
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_dev
 op_star
 id|dev_sedl
-id|__initdata
-op_assign
-l_int|NULL
+id|__devinitdata
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__devinit
+DECL|function|setup_sedlbauer
 id|setup_sedlbauer
 c_func
 (paren
@@ -2411,7 +2408,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_int

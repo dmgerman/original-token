@@ -1449,7 +1449,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_get_8390_hdr &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1457,7 +1457,7 @@ id|ei_status.dmaing
 comma
 id|ei_status.irqlock
 comma
-id|dev-&gt;interrupt
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -1724,7 +1724,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_block_input &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1732,7 +1732,7 @@ id|ei_status.dmaing
 comma
 id|ei_status.irqlock
 comma
-id|dev-&gt;interrupt
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -2020,7 +2020,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_block_output.&quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld]&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d]&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2028,7 +2028,7 @@ id|ei_status.dmaing
 comma
 id|ei_status.irqlock
 comma
-id|dev-&gt;interrupt
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return

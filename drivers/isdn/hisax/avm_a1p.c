@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: avm_a1p.c,v 2.6 2000/06/26 08:59:12 keil Exp $&n; *&n; * avm_a1p.c    low level stuff for the following AVM cards:&n; *              A1 PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA 2.0&n; *&n; * Author       Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; *  This file is (c) under GNU PUBLIC LICENSE&n; */
+multiline_comment|/* $Id: avm_a1p.c,v 2.7 2000/11/24 17:05:37 kai Exp $&n; *&n; * avm_a1p.c    low level stuff for the following AVM cards:&n; *              A1 PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA 2.0&n; *&n; * Author       Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; *  This file is (c) under GNU PUBLIC LICENSE&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -69,7 +70,7 @@ r_char
 op_star
 id|avm_revision
 op_assign
-l_string|&quot;$Revision: 2.6 $&quot;
+l_string|&quot;$Revision: 2.7 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -1008,11 +1009,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__devinit
+DECL|function|setup_avm_a1_pcmcia
 id|setup_avm_a1_pcmcia
 c_func
 (paren
@@ -1020,7 +1019,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 id|u_char

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;capilli.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.16 $&quot;
+l_string|&quot;$Revision: 1.20 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 id|MODULE_AUTHOR
@@ -3771,19 +3772,10 @@ c_func
 id|b1ctl_read_proc
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|macro|b1_init
-mdefine_line|#define b1_init init_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|b1_init
+r_static
 r_int
+id|__init
 id|b1_init
 c_func
 (paren
@@ -3869,15 +3861,29 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|b1_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|b1_exit
 c_func
 (paren
 r_void
 )paren
 (brace
 )brace
-macro_line|#endif
+DECL|variable|b1_init
+id|module_init
+c_func
+(paren
+id|b1_init
+)paren
+suffix:semicolon
+DECL|variable|b1_exit
+id|module_exit
+c_func
+(paren
+id|b1_exit
+)paren
+suffix:semicolon
 eof

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: avm_pci.c,v 1.18 2000/08/20 07:34:04 keil Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: avm_pci.c,v 1.22 2000/11/24 17:05:37 kai Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
@@ -22,7 +23,7 @@ r_char
 op_star
 id|avm_pci_rev
 op_assign
-l_string|&quot;$Revision: 1.18 $&quot;
+l_string|&quot;$Revision: 1.22 $&quot;
 suffix:semicolon
 DECL|macro|AVM_FRITZ_PCI
 mdefine_line|#define  AVM_FRITZ_PCI&t;&t;1
@@ -3350,11 +3351,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|clear_pending_hdlc_ints
 id|clear_pending_hdlc_ints
 c_func
 (paren
@@ -3362,7 +3361,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|u_int
@@ -3613,11 +3611,9 @@ id|val
 suffix:semicolon
 )brace
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|inithdlc
 id|inithdlc
 c_func
 (paren
@@ -3625,7 +3621,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;bcs
@@ -4112,14 +4107,10 @@ id|pci_dev
 op_star
 id|dev_avm
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_avm_pcipnp
 id|setup_avm_pcipnp
 c_func
 (paren
@@ -4127,7 +4118,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 id|u_int

@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: callc.c,v 2.47 2000/06/26 08:59:12 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
+multiline_comment|/* $Id: callc.c,v 2.51 2000/11/24 17:05:37 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;../avmb1/capicmd.h&quot;  /* this should be moved in a common place */
 macro_line|#ifdef MODULE
@@ -13,7 +14,7 @@ r_char
 op_star
 id|lli_revision
 op_assign
-l_string|&quot;$Revision: 2.47 $&quot;
+l_string|&quot;$Revision: 2.51 $&quot;
 suffix:semicolon
 r_extern
 r_struct
@@ -72,25 +73,11 @@ r_static
 r_struct
 id|Fsm
 id|callcfsm
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|chancount
 r_static
 r_int
 id|chancount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* experimental REJECT after ALERTING for CALLBACK to beat the 4s delay */
 DECL|macro|ALERT_REJECT
@@ -3717,14 +3704,14 @@ id|arg
 suffix:semicolon
 )brace
 multiline_comment|/* *INDENT-OFF* */
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_struct
 id|FsmNode
 id|fnlist
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 (brace
@@ -4229,16 +4216,13 @@ suffix:semicolon
 multiline_comment|/* *INDENT-ON* */
 DECL|macro|FNCOUNT
 mdefine_line|#define FNCOUNT (sizeof(fnlist)/sizeof(struct FsmNode))
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|CallcNew
 id|CallcNew
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|callcfsm.state_count
@@ -4347,6 +4331,11 @@ suffix:semicolon
 r_case
 (paren
 id|ISDN_PROTO_L2_HDLC
+)paren
+suffix:colon
+r_case
+(paren
+id|ISDN_PROTO_L2_HDLC_56K
 )paren
 suffix:colon
 r_case
@@ -6515,6 +6504,17 @@ r_break
 suffix:semicolon
 r_case
 (paren
+id|ISDN_PROTO_L2_HDLC_56K
+)paren
+suffix:colon
+id|st-&gt;l1.mode
+op_assign
+id|L1_MODE_HDLC_56K
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+(paren
 id|ISDN_PROTO_L2_TRANS
 )paren
 suffix:colon
@@ -6695,6 +6695,11 @@ suffix:semicolon
 r_case
 (paren
 id|ISDN_PROTO_L2_HDLC
+)paren
+suffix:colon
+r_case
+(paren
+id|ISDN_PROTO_L2_HDLC_56K
 )paren
 suffix:colon
 r_case

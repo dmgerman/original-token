@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: diva.c,v 1.21 2000/06/26 08:59:12 keil Exp $&n; *&n; * diva.c     low level stuff for Eicon.Diehl Diva Family ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to Eicon Technology for documents and informations&n; *&n; */
+multiline_comment|/* $Id: diva.c,v 1.25 2000/11/24 17:05:37 kai Exp $&n; *&n; * diva.c     low level stuff for Eicon.Diehl Diva Family ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to Eicon Technology for documents and informations&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
@@ -22,7 +23,7 @@ r_char
 op_star
 id|Diva_revision
 op_assign
-l_string|&quot;$Revision: 1.21 $&quot;
+l_string|&quot;$Revision: 1.25 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -4256,8 +4257,6 @@ id|pci_dev
 op_star
 id|dev_diva
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -4266,8 +4265,6 @@ id|pci_dev
 op_star
 id|dev_diva_u
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -4276,14 +4273,10 @@ id|pci_dev
 op_star
 id|dev_diva201
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_diva
 id|setup_diva
 c_func
 (paren
@@ -4291,7 +4284,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_int

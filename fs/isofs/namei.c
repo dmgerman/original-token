@@ -124,7 +124,7 @@ id|qstr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;isofs_find_entry()&n; *&n; * finds an entry in the specified directory with the wanted name. It&n; * returns the cache buffer in which the entry was found, and the entry&n; * itself (as an inode number). It does NOT read the inode of the&n; * entry - you&squot;ll have to do that yourself if you want to.&n; */
+multiline_comment|/*&n; *&t;isofs_find_entry()&n; *&n; * finds an entry in the specified directory with the wanted name. It&n; * returns the inode number of the found entry, or 0 on error.&n; */
 r_static
 r_int
 r_int
@@ -486,6 +486,7 @@ id|dlen
 op_assign
 id|i
 suffix:semicolon
+multiline_comment|/* possibly -1 */
 id|dpnt
 op_assign
 id|tmpname
@@ -577,6 +578,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dlen
+OG
+l_int|0
+op_logical_and
 (paren
 op_logical_neg
 (paren
@@ -593,8 +598,6 @@ id|dir-&gt;i_sb-&gt;u.isofs_sb.s_unhide
 op_eq
 l_char|&squot;y&squot;
 )paren
-op_logical_and
-id|dlen
 )paren
 (brace
 id|match

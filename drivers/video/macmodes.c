@@ -3,7 +3,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
+macro_line|#endif
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/macmodes.h&gt;
 multiline_comment|/*&n;     *  MacOS video mode definitions&n;     *&n;     *  Order IS important! If you change these, don&squot;t forget to update&n;     *  mac_modes[] below!&n;     */

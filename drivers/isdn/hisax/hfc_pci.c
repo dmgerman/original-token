@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: hfc_pci.c,v 1.31 2000/08/20 07:32:55 keil Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* $Id: hfc_pci.c,v 1.34 2000/11/24 17:05:37 kai Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -7,7 +8,6 @@ macro_line|#include &quot;hfc_pci.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 r_extern
 r_const
 r_char
@@ -23,7 +23,7 @@ r_char
 op_star
 id|hfcpci_revision
 op_assign
-l_string|&quot;$Revision: 1.31 $&quot;
+l_string|&quot;$Revision: 1.34 $&quot;
 suffix:semicolon
 multiline_comment|/* table entry in the PCI devices list */
 r_typedef
@@ -8601,11 +8601,9 @@ suffix:semicolon
 multiline_comment|/********************************/
 multiline_comment|/* called for card init message */
 multiline_comment|/********************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|inithfcpci
 id|inithfcpci
 c_func
 (paren
@@ -8613,7 +8611,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;setstack_d

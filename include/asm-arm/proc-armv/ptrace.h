@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/include/asm-arm/proc-armv/ptrace.h&n; *&n; *  C
 macro_line|#ifndef __ASM_PROC_PTRACE_H
 DECL|macro|__ASM_PROC_PTRACE_H
 mdefine_line|#define __ASM_PROC_PTRACE_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USR26_MODE
 mdefine_line|#define USR26_MODE&t;0x00
 DECL|macro|FIQ26_MODE
@@ -96,8 +97,13 @@ mdefine_line|#define ARM_ORIG_r0&t;uregs[17]
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs)&t;&bslash;&n;&t;(((regs)-&gt;ARM_cpsr &amp; 0xf) == 0)
+macro_line|#ifdef CONFIG_ARM_THUMB
 DECL|macro|thumb_mode
 mdefine_line|#define thumb_mode(regs) &bslash;&n;&t;(((regs)-&gt;ARM_cpsr &amp; T_BIT))
+macro_line|#else
+DECL|macro|thumb_mode
+mdefine_line|#define thumb_mode(regs) (0)
+macro_line|#endif
 DECL|macro|processor_mode
 mdefine_line|#define processor_mode(regs) &bslash;&n;&t;((regs)-&gt;ARM_cpsr &amp; MODE_MASK)
 DECL|macro|interrupts_enabled

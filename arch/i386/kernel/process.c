@@ -1506,14 +1506,12 @@ id|old_mm-&gt;segments
 comma
 op_star
 id|ldt
-op_assign
-id|old_ldt
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|old_mm-&gt;segments
+id|old_ldt
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * default LDT - use the one from init_task&n;&t;&t; */

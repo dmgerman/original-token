@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: teles0.c,v 2.12 2000/06/26 08:59:14 keil Exp $&n; *&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: teles0.c,v 2.13 2000/11/24 17:05:38 kai Exp $&n; *&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &quot;isac.h&quot;
@@ -19,7 +20,7 @@ r_char
 op_star
 id|teles0_revision
 op_assign
-l_string|&quot;$Revision: 2.12 $&quot;
+l_string|&quot;$Revision: 2.13 $&quot;
 suffix:semicolon
 DECL|macro|TELES_IOMEM_SIZE
 mdefine_line|#define TELES_IOMEM_SIZE&t;0x400
@@ -1309,11 +1310,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_teles0
 id|setup_teles0
 c_func
 (paren
@@ -1321,7 +1320,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 id|u_char

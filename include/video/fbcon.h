@@ -711,10 +711,7 @@ l_string|&quot;lsrl   #1,%1 ; jcc 1f ; moveb %2,%0@-&bslash;n&bslash;t&quot;
 l_string|&quot;1: lsrl   #1,%1 ; jcc 1f ; movew %2,%0@-&bslash;n&bslash;t&quot;
 l_string|&quot;1: lsrl   #1,%1 ; jcc 1f ; movel %2,%0@-&bslash;n&bslash;t&quot;
 l_string|&quot;1: lsrl   #1,%1 ; jcc 1f ; movel %2,%0@- ; movel %2,%0@-&bslash;n&bslash;t&quot;
-l_string|&quot;1: subql  #1,%1 ; jcs 3f&bslash;n&bslash;t&quot;
-l_string|&quot;2: moveml %2/%3/%4/%5,%0@-&bslash;n&bslash;t&quot;
-l_string|&quot;dbra %1,2b&bslash;n&bslash;t&quot;
-l_string|&quot;3:&quot;
+l_string|&quot;1:&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -726,21 +723,6 @@ l_string|&quot;=d&quot;
 id|count
 )paren
 suffix:colon
-l_string|&quot;d&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-l_int|0
-)paren
-comma
 l_string|&quot;d&quot;
 (paren
 l_int|0
@@ -761,6 +743,48 @@ l_string|&quot;1&quot;
 (paren
 id|count
 )paren
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;subql  #1,%1 ; jcs 3f&bslash;n&bslash;t&quot;
+l_string|&quot;movel %2,%%d4; movel %2,%%d5; movel %2,%%d6&bslash;n&bslash;t&quot;
+l_string|&quot;2: moveml %2/%%d4/%%d5/%%d6,%0@-&bslash;n&bslash;t&quot;
+l_string|&quot;dbra %1,2b&bslash;n&bslash;t&quot;
+l_string|&quot;3:&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|s
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|count
+)paren
+suffix:colon
+l_string|&quot;d&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|s
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|count
+)paren
+suffix:colon
+l_string|&quot;d4&quot;
+comma
+l_string|&quot;d5&quot;
+comma
+l_string|&quot;d6&quot;
 )paren
 suffix:semicolon
 r_return
@@ -922,10 +946,7 @@ l_string|&quot;lsrl   #1,%1 ; jcc 1f ; moveb %2,%0@-&bslash;n&bslash;t&quot;
 l_string|&quot;1: lsrl   #1,%1 ; jcc 1f ; movew %2,%0@-&bslash;n&bslash;t&quot;
 l_string|&quot;1: lsrl   #1,%1 ; jcc 1f ; movel %2,%0@-&bslash;n&bslash;t&quot;
 l_string|&quot;1: lsrl   #1,%1 ; jcc 1f ; movel %2,%0@- ; movel %2,%0@-&bslash;n&bslash;t&quot;
-l_string|&quot;1: subql  #1,%1 ; jcs 3f&bslash;n&bslash;t&quot;
-l_string|&quot;2: moveml %2/%3/%4/%5,%0@-&bslash;n&bslash;t&quot;
-l_string|&quot;dbra %1,2b&bslash;n&bslash;t&quot;
-l_string|&quot;3:&quot;
+l_string|&quot;1:&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -937,24 +958,6 @@ l_string|&quot;=d&quot;
 id|count
 )paren
 suffix:colon
-l_string|&quot;d&quot;
-(paren
-op_minus
-l_int|1
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-op_minus
-l_int|1
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-op_minus
-l_int|1
-)paren
-comma
 l_string|&quot;d&quot;
 (paren
 op_minus
@@ -976,6 +979,49 @@ l_string|&quot;1&quot;
 (paren
 id|count
 )paren
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;subql  #1,%1 ; jcs 3f&bslash;n&bslash;t&quot;
+l_string|&quot;movel %2,%%d4; movel %2,%%d5; movel %2,%%d6&bslash;n&bslash;t&quot;
+l_string|&quot;2: moveml %2/%%d4/%%d5/%%d6,%0@-&bslash;n&bslash;t&quot;
+l_string|&quot;dbra %1,2b&bslash;n&bslash;t&quot;
+l_string|&quot;3:&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|s
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|count
+)paren
+suffix:colon
+l_string|&quot;d&quot;
+(paren
+op_minus
+l_int|1
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|s
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|count
+)paren
+suffix:colon
+l_string|&quot;d4&quot;
+comma
+l_string|&quot;d5&quot;
+comma
+l_string|&quot;d6&quot;
 )paren
 suffix:semicolon
 r_return

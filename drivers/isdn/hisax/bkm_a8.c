@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: bkm_a8.c,v 1.12 2000/06/26 08:59:12 keil Exp $&n; * bkm_a8.c     low level stuff for Scitel Quadro (4*S0, passive)&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: bkm_a8.c,v 1.14 2000/11/24 17:05:37 kai Exp $&n; * bkm_a8.c     low level stuff for Scitel Quadro (4*S0, passive)&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;ipac.h&quot;
@@ -27,7 +28,7 @@ id|sct_quadro_revision
 (braket
 )braket
 op_assign
-l_string|&quot;$Revision: 1.12 $&quot;
+l_string|&quot;$Revision: 1.14 $&quot;
 suffix:semicolon
 DECL|variable|sct_quadro_subtypes
 r_static
@@ -1247,11 +1248,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|sct_alloc_io
 id|sct_alloc_io
 c_func
 (paren
@@ -1260,7 +1259,6 @@ id|adr
 comma
 id|u_int
 id|len
-)paren
 )paren
 (brace
 r_if
@@ -1318,55 +1316,41 @@ id|pci_dev
 op_star
 id|dev_a8
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u16
 id|sub_vendor_id
 id|__initdata
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u16
 id|sub_sys_id
 id|__initdata
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u_char
 id|pci_bus
 id|__initdata
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u_char
 id|pci_device_fn
 id|__initdata
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|u_char
 id|pci_irq
 id|__initdata
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif /* CONFIG_PCI */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_sct_quadro
 id|setup_sct_quadro
 c_func
 (paren
@@ -1374,7 +1358,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 macro_line|#if CONFIG_PCI

@@ -313,12 +313,18 @@ id|ime_new
 )paren
 suffix:semicolon
 multiline_comment|/* Program logic error, fatal */
-id|panic
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;inter_module_register: duplicate im_name &squot;%s&squot;&quot;
 comma
 id|im_name
+)paren
+suffix:semicolon
+id|BUG
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -463,12 +469,18 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Program logic error, fatal */
-id|panic
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;inter_module_unregister: no entry for &squot;%s&squot;&quot;
 comma
 id|im_name
+)paren
+suffix:semicolon
+id|BUG
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -725,12 +737,18 @@ op_amp
 id|ime_lock
 )paren
 suffix:semicolon
-id|panic
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;inter_module_put: no entry for &squot;%s&squot;&quot;
 comma
 id|im_name
+)paren
+suffix:semicolon
+id|BUG
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

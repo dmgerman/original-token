@@ -1,5 +1,6 @@
-multiline_comment|/* $Id: w6692.c,v 1.8 2000/09/07 20:33:30 werner Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: w6692.c,v 1.12 2000/11/24 17:05:38 kai Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -103,18 +104,18 @@ r_char
 op_star
 id|w6692_revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.12 $&quot;
 suffix:semicolon
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_char
 op_star
 id|W6692Ver
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 l_string|&quot;W6692 V00&quot;
@@ -4862,11 +4863,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
+DECL|function|initW6692
 r_void
+id|__init
 id|initW6692
 c_func
 (paren
@@ -4877,7 +4876,6 @@ id|cs
 comma
 r_int
 id|part
-)paren
 )paren
 (brace
 r_if
@@ -5474,8 +5472,6 @@ DECL|variable|id_idx
 r_static
 r_int
 id|id_idx
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -5484,14 +5480,10 @@ id|pci_dev
 op_star
 id|dev_w6692
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_w6692
 id|setup_w6692
 c_func
 (paren
@@ -5499,7 +5491,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* Low-level parallel port routines for the Amiga buildin port&n; *&n; * Author: Joerg Dorchain &lt;joerg@dorchain.net&gt;&n; *&n; * This is a complete rewrite of the code, but based heaviy upon the old&n; * lp_intern. code.&n; *&n; * The built-in Amiga parallel port provides one port at a fixed address&n; * with 8 bisdirecttional data lines (D0 - D7) and 3 bidirectional status&n; * lines (BUSY, POUT, SEL), 1 output control line /STROBE (raised automatically in&n; * hardware when the data register is accessed), and 1 input control line&n; * /ACK, able to cause an interrupt, but both not directly settable by&n; * software.&n; */
+multiline_comment|/* Low-level parallel port routines for the Amiga built-in port&n; *&n; * Author: Joerg Dorchain &lt;joerg@dorchain.net&gt;&n; *&n; * This is a complete rewrite of the code, but based heaviy upon the old&n; * lp_intern. code.&n; *&n; * The built-in Amiga parallel port provides one port at a fixed address&n; * with 8 bidirectional data lines (D0 - D7) and 3 bidirectional status&n; * lines (BUSY, POUT, SEL), 1 output control line /STROBE (raised automatically&n; * in hardware when the data register is accessed), and 1 input control line&n; * /ACK, able to cause an interrupt, but both not directly settable by&n; * software.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
@@ -13,23 +14,8 @@ macro_line|#ifdef DEBUG
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK printk
 macro_line|#else
-DECL|function|DPRINTK
-r_static
-r_inline
-r_void
-id|DPRINTK
-c_func
-(paren
-r_void
-op_star
-id|nothing
-comma
-dot
-dot
-dot
-)paren
-(brace
-)brace
+DECL|macro|DPRINTK
+mdefine_line|#define DPRINTK(x...)&t;do { } while (0)
 macro_line|#endif
 DECL|variable|this_port
 r_static
@@ -68,6 +54,11 @@ multiline_comment|/* Triggers also /STROBE. This behavior cannot be changed */
 id|ciaa.prb
 op_assign
 id|data
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|amiga_read_data
@@ -566,6 +557,11 @@ op_assign
 l_int|0xff
 suffix:semicolon
 multiline_comment|/* all pins output */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|amiga_data_reverse
 r_static
@@ -590,6 +586,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* all pins input */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|amiga_init_state
 r_static
@@ -642,6 +643,11 @@ op_star
 id|s
 )paren
 (brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|s-&gt;u.amiga.data
 op_assign
 id|ciaa.prb
@@ -661,6 +667,11 @@ op_assign
 id|ciab.ddra
 op_amp
 l_int|7
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|amiga_restore_state
@@ -680,6 +691,11 @@ op_star
 id|s
 )paren
 (brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ciaa.prb
 op_assign
 id|s-&gt;u.amiga.data
@@ -707,6 +723,11 @@ l_int|0xf8
 )paren
 op_or
 id|s-&gt;u.amiga.statusdir
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|amiga_inc_use_count
@@ -807,18 +828,31 @@ id|parport
 op_star
 id|p
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|MACH_IS_AMIGA
-op_logical_and
+op_logical_or
+op_logical_neg
 id|AMIGAHW_PRESENT
 c_func
 (paren
 id|AMI_PARALLEL
 )paren
 )paren
-(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|err
+op_assign
+op_minus
+id|EBUSY
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -827,16 +861,18 @@ id|request_mem_region
 c_func
 (paren
 id|CIAA_PHYSADDR
+op_minus
+l_int|1
 op_plus
 l_int|0x100
 comma
-l_int|1
+l_int|0x100
 comma
 l_string|&quot;parallel&quot;
 )paren
 )paren
-r_return
-l_int|0
+r_goto
+id|out_mem
 suffix:semicolon
 id|ciaa.ddrb
 op_assign
@@ -846,11 +882,11 @@ id|ciab.ddra
 op_and_assign
 l_int|0xf8
 suffix:semicolon
-r_if
-c_cond
+id|mb
+c_func
 (paren
-op_logical_neg
-(paren
+)paren
+suffix:semicolon
 id|p
 op_assign
 id|parport_register_port
@@ -870,27 +906,18 @@ comma
 op_amp
 id|pp_amiga_ops
 )paren
-)paren
-)paren
-(brace
-id|release_mem_region
-c_func
-(paren
-id|CIAA_PHYSADDR
-op_plus
-l_int|0x100
-comma
-l_int|1
-)paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
+id|p
+)paren
+r_goto
+id|out_port
+suffix:semicolon
+id|err
+op_assign
 id|request_irq
 c_func
 (paren
@@ -904,27 +931,15 @@ id|p-&gt;name
 comma
 id|p
 )paren
-)paren
-(brace
-id|parport_unregister_port
+suffix:semicolon
+r_if
+c_cond
 (paren
-id|p
+id|err
 )paren
+r_goto
+id|out_irq
 suffix:semicolon
-id|release_mem_region
-c_func
-(paren
-id|CIAA_PHYSADDR
-op_plus
-l_int|0x100
-comma
-l_int|1
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|this_port
 op_assign
 id|p
@@ -952,51 +967,40 @@ id|p
 )paren
 suffix:semicolon
 r_return
-l_int|1
-suffix:semicolon
-)brace
-r_return
 l_int|0
 suffix:semicolon
-)brace
-macro_line|#ifdef MODULE
-id|MODULE_AUTHOR
+id|out_irq
+suffix:colon
+id|parport_unregister_port
 c_func
 (paren
-l_string|&quot;Joerg Dorchain &lt;joerg@dorchain.net&gt;&quot;
+id|p
 )paren
 suffix:semicolon
-id|MODULE_DESCRIPTION
+id|out_port
+suffix:colon
+id|release_mem_region
 c_func
 (paren
-l_string|&quot;Parport Driver for Amiga builtin Port&quot;
+id|CIAA_PHYSADDR
+op_minus
+l_int|1
+op_plus
+l_int|0x100
+comma
+l_int|0x100
 )paren
 suffix:semicolon
-id|MODULE_SUPPORTED_DEVICE
-c_func
-(paren
-l_string|&quot;Amiga builtin Parallel Port&quot;
-)paren
-suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
+id|out_mem
+suffix:colon
 r_return
-op_logical_neg
-id|parport_amiga_init
-c_func
-(paren
-)paren
+id|err
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|parport_amiga_exit
 r_void
-id|cleanup_module
+id|__exit
+id|parport_amiga_exit
 c_func
 (paren
 r_void
@@ -1033,12 +1037,41 @@ id|release_mem_region
 c_func
 (paren
 id|CIAA_PHYSADDR
+op_minus
+l_int|1
 op_plus
 l_int|0x100
 comma
-l_int|1
+l_int|0x100
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Joerg Dorchain &lt;joerg@dorchain.net&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Parport Driver for Amiga builtin Port&quot;
+)paren
+suffix:semicolon
+id|MODULE_SUPPORTED_DEVICE
+c_func
+(paren
+l_string|&quot;Amiga builtin Parallel Port&quot;
+)paren
+suffix:semicolon
+id|module_init
+c_func
+(paren
+id|parport_amiga_init
+)paren
+id|module_exit
+c_func
+(paren
+id|parport_amiga_exit
+)paren
 eof

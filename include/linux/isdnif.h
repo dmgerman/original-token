@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnif.h,v 1.35 2000/06/16 13:19:38 keil Exp $&n;&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.37 2000/11/19 17:01:54 kai Exp $&n;&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
@@ -41,6 +41,8 @@ DECL|macro|ISDN_PROTO_L2_MODEM
 mdefine_line|#define ISDN_PROTO_L2_MODEM  10  /* Analog Modem on Board */
 DECL|macro|ISDN_PROTO_L2_FAX
 mdefine_line|#define ISDN_PROTO_L2_FAX    11  /* Fax Group 2/3         */
+DECL|macro|ISDN_PROTO_L2_HDLC_56K
+mdefine_line|#define ISDN_PROTO_L2_HDLC_56K 12   /* HDLC 56k                          */
 DECL|macro|ISDN_PROTO_L2_MAX
 mdefine_line|#define ISDN_PROTO_L2_MAX    15  /* Max. 16 Protocols                 */
 multiline_comment|/*&n; * Values for Layer-3-protocol-selection&n; */
@@ -320,6 +322,8 @@ DECL|macro|ISDN_FEATURE_L2_MODEM
 mdefine_line|#define ISDN_FEATURE_L2_MODEM   (0x0001 &lt;&lt; ISDN_PROTO_L2_MODEM)
 DECL|macro|ISDN_FEATURE_L2_FAX
 mdefine_line|#define ISDN_FEATURE_L2_FAX&t;(0x0001 &lt;&lt; ISDN_PROTO_L2_FAX)
+DECL|macro|ISDN_FEATURE_L2_HDLC_56K
+mdefine_line|#define ISDN_FEATURE_L2_HDLC_56K (0x0001 &lt;&lt; ISDN_PROTO_L2_HDLC_56K)
 DECL|macro|ISDN_FEATURE_L2_MASK
 mdefine_line|#define ISDN_FEATURE_L2_MASK    (0x0FFFF) /* Max. 16 protocols */
 DECL|macro|ISDN_FEATURE_L2_SHIFT

@@ -1580,6 +1580,7 @@ id|p
 op_increment
 suffix:semicolon
 )brace
+macro_line|#ifdef FLUSH_BASE
 id|p-&gt;physical
 op_assign
 id|FLUSH_BASE_PHYS
@@ -1617,6 +1618,7 @@ suffix:semicolon
 id|p
 op_increment
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef FLUSH_BASE_MINICACHE
 id|p-&gt;physical
 op_assign

@@ -6915,6 +6915,10 @@ comma
 l_int|512
 )paren
 suffix:semicolon
+id|SCtmp-&gt;host_scribble
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 id|HOSTDATA
 c_func
@@ -7111,6 +7115,10 @@ id|SCtmp-&gt;host_scribble
 comma
 l_int|512
 )paren
+suffix:semicolon
+id|SCtmp-&gt;host_scribble
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 id|HOSTDATA
@@ -7320,6 +7328,10 @@ id|SCtmp-&gt;host_scribble
 comma
 l_int|512
 )paren
+suffix:semicolon
+id|SCtmp-&gt;host_scribble
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 id|HOSTDATA
@@ -7908,6 +7920,7 @@ c_cond
 (paren
 id|SCtmp-&gt;host_scribble
 )paren
+(brace
 id|scsi_free
 c_func
 (paren
@@ -7916,6 +7929,11 @@ comma
 l_int|512
 )paren
 suffix:semicolon
+id|SCtmp-&gt;host_scribble
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -8140,6 +8158,7 @@ c_cond
 (paren
 id|SCtmp-&gt;host_scribble
 )paren
+(brace
 id|scsi_free
 c_func
 (paren
@@ -8148,6 +8167,11 @@ comma
 l_int|512
 )paren
 suffix:semicolon
+id|SCtmp-&gt;host_scribble
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capilli.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.27 $&quot;
+l_string|&quot;$Revision: 1.29 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 macro_line|#ifndef PCI_VENDOR_ID_AVM
@@ -1796,17 +1797,6 @@ multiline_comment|/* no add_card function */
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_ISDN_DRV_AVMB1_B1PCIV4 */
-macro_line|#ifdef MODULE
-DECL|macro|b1pci_init
-mdefine_line|#define b1pci_init init_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|ncards
 r_static
 r_int
@@ -2094,7 +2084,9 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|b1pci_init
+r_static
 r_int
+id|__init
 id|b1pci_init
 c_func
 (paren
@@ -2485,10 +2477,11 @@ id|EIO
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|b1pci_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|b1pci_exit
 c_func
 (paren
 r_void
@@ -2511,5 +2504,18 @@ id|b1pciv4_driver
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif
+DECL|variable|b1pci_init
+id|module_init
+c_func
+(paren
+id|b1pci_init
+)paren
+suffix:semicolon
+DECL|variable|b1pci_exit
+id|module_exit
+c_func
+(paren
+id|b1pci_exit
+)paren
+suffix:semicolon
 eof

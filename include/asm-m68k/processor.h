@@ -138,6 +138,19 @@ r_int
 id|esp0
 suffix:semicolon
 multiline_comment|/* points to SR of stack frame */
+DECL|member|faddr
+r_int
+r_int
+id|faddr
+suffix:semicolon
+multiline_comment|/* info about last fault */
+DECL|member|signo
+DECL|member|code
+r_int
+id|signo
+comma
+id|code
+suffix:semicolon
 DECL|member|fp
 r_int
 r_int
@@ -171,7 +184,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, NULL, __pgprot(_PAGE_PRESENT|_PAGE_ACCESSED), VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD  { &bslash;&n;&t;sizeof(init_stack) + (unsigned long) init_stack, 0, &bslash;&n;&t;PS_S, __KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
+mdefine_line|#define INIT_THREAD  { &bslash;&n;&t;sizeof(init_stack) + (unsigned long) init_stack, 0, &bslash;&n;&t;PS_S, __KERNEL_DS, &bslash;&n;}
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|function|start_thread
 r_static

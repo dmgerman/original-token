@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: isar.c,v 1.15 2000/06/26 08:59:13 keil Exp $&n; *&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: isar.c,v 1.17 2000/11/24 17:05:37 kai Exp $&n; *&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isar.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
@@ -10083,11 +10084,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__devinit
+DECL|function|initisar
 id|initisar
 c_func
 (paren
@@ -10095,7 +10094,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;bcs

@@ -282,15 +282,7 @@ id|IO_DATA_PATH_WIDTH_8
 suffix:semicolon
 id|link-&gt;io.NumPorts2
 op_assign
-l_int|16
-suffix:semicolon
-id|link-&gt;io.Attributes2
-op_assign
-id|IO_DATA_PATH_WIDTH_16
-suffix:semicolon
-id|link-&gt;io.IOAddrLines
-op_assign
-l_int|5
+l_int|0
 suffix:semicolon
 multiline_comment|/* Interrupt setup */
 id|link-&gt;irq.Attributes
@@ -1067,6 +1059,10 @@ l_int|0
 dot
 id|len
 suffix:semicolon
+id|link-&gt;io.NumPorts2
+op_assign
+l_int|0
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1078,6 +1074,8 @@ comma
 id|link-&gt;io.BasePort1
 op_plus
 id|link-&gt;io.NumPorts1
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|i
@@ -1733,9 +1731,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* avmcs_event */
 multiline_comment|/*====================================================================*/
-DECL|function|init_module
+DECL|function|avmcs_init
+r_static
 r_int
-id|init_module
+id|__init
+id|avmcs_init
 c_func
 (paren
 r_void
@@ -1791,9 +1791,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|avmcs_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|avmcs_exit
 c_func
 (paren
 r_void
@@ -1838,4 +1840,18 @@ id|dev_list
 suffix:semicolon
 )brace
 )brace
+DECL|variable|avmcs_init
+id|module_init
+c_func
+(paren
+id|avmcs_init
+)paren
+suffix:semicolon
+DECL|variable|avmcs_exit
+id|module_exit
+c_func
+(paren
+id|avmcs_exit
+)paren
+suffix:semicolon
 eof

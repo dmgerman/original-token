@@ -381,6 +381,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/* return length of name field; 0: not found, -1: to be ignored */
 DECL|function|get_rock_ridge_filename
 r_int
 id|get_rock_ridge_filename
@@ -701,7 +702,8 @@ id|buffer
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 r_default
 suffix:colon

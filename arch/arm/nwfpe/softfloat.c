@@ -17,8 +17,6 @@ suffix:semicolon
 DECL|variable|float_exception_flags
 id|int8
 id|float_exception_flags
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;-------------------------------------------------------------------------------&n;Primitive arithmetic functions, including multi-word arithmetic, and&n;division and square root approximations.  (Can be specialized to target if&n;desired.)&n;-------------------------------------------------------------------------------&n;*/
 macro_line|#include &quot;softfloat-macros&quot;
@@ -1094,9 +1092,8 @@ l_int|0
 )paren
 )paren
 (brace
-singleline_comment|//register int lr;
-singleline_comment|//__asm__(&quot;mov %0, lr&quot; :: &quot;g&quot; (lr));
-singleline_comment|//fp_printk(&quot;roundAndPackFloat64 called from 0x%08x&bslash;n&quot;,lr);
+singleline_comment|//register int lr = __builtin_return_address(0);
+singleline_comment|//printk(&quot;roundAndPackFloat64 called from 0x%08x&bslash;n&quot;,lr);
 id|float_raise
 c_func
 (paren

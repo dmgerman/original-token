@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -22,7 +23,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.18 $&quot;
+l_string|&quot;$Revision: 1.20 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_C4_DEBUG
 macro_line|#undef CONFIG_C4_DEBUG
@@ -6806,17 +6807,6 @@ comma
 multiline_comment|/* no add_card function */
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|macro|c4_init
-mdefine_line|#define c4_init init_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|ncards
 r_static
 r_int
@@ -6825,7 +6815,9 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|c4_init
+r_static
 r_int
+id|__init
 id|c4_init
 c_func
 (paren
@@ -7200,10 +7192,11 @@ id|EIO
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|c4_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|c4_exit
 c_func
 (paren
 r_void
@@ -7217,5 +7210,18 @@ id|c4_driver
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|c4_init
+id|module_init
+c_func
+(paren
+id|c4_init
+)paren
+suffix:semicolon
+DECL|variable|c4_exit
+id|module_exit
+c_func
+(paren
+id|c4_exit
+)paren
+suffix:semicolon
 eof

@@ -1572,6 +1572,7 @@ r_return
 id|str
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * From arch/i386/kernel/pci-i386.c:&n; *&n; * We need to avoid collisions with `mirrored&squot; VGA ports&n; * and other strange ISA hardware, so we always want the&n; * addresses to be allocated in the 0x000-0x0ff region&n; * modulo 0x400.&n; *&n; * Why? Because some silly external IO cards only decode&n; * the low 10 bits of the IO address. The 0x00-0xff region&n; * is reserved for motherboard devices that decode all 16&n; * bits, so it&squot;s ok to allocate at, say, 0x2800-0x28ff,&n; * but we want to try to avoid allocating at 0x2900-0x2bff&n; * which might have be mirrored at 0x0100-0x03ff..&n; */
 DECL|function|pcibios_align_resource
 r_void
 id|pcibios_align_resource
@@ -1591,6 +1592,39 @@ r_int
 id|size
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|res-&gt;flags
+op_amp
+id|IORESOURCE_IO
+)paren
+(brace
+r_int
+r_int
+id|start
+op_assign
+id|res-&gt;start
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|start
+op_amp
+l_int|0x300
+)paren
+id|res-&gt;start
+op_assign
+(paren
+id|start
+op_plus
+l_int|0x3ff
+)paren
+op_amp
+op_complement
+l_int|0x3ff
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/**&n; * pcibios_set_master - Setup device for bus mastering.&n; * @dev: PCI device to be setup&n; */
 DECL|function|pcibios_set_master

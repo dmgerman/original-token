@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isac.c,v 1.26 2000/06/26 08:59:13 keil Exp $&n; *&n; * isac.c   ISAC specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; */
+multiline_comment|/* $Id: isac.c,v 1.28 2000/11/24 17:05:37 kai Exp $&n; *&n; * isac.c   ISAC specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -6,18 +6,19 @@ macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;arcofi.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
 DECL|macro|ARCOFI_USE
 mdefine_line|#define ARCOFI_USE 1
-DECL|variable|HISAX_INITDATA
+DECL|variable|__devinitdata
 r_static
 r_char
 op_star
 id|ISACVer
 (braket
 )braket
-id|HISAX_INITDATA
+id|__devinitdata
 op_assign
 (brace
 l_string|&quot;2086/2186 V1.1&quot;
@@ -3581,11 +3582,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__devinit
+DECL|function|initisac
 id|initisac
 c_func
 (paren
@@ -3593,7 +3592,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;tqueue.routine
@@ -3856,11 +3854,9 @@ l_int|0x0
 )paren
 suffix:semicolon
 )brace
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__devinit
+DECL|function|clear_pending_isac_ints
 id|clear_pending_isac_ints
 c_func
 (paren
@@ -3868,7 +3864,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 r_int

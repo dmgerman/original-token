@@ -7,6 +7,37 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|function|swap_writepage
+r_static
+r_int
+id|swap_writepage
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+id|rw_swap_page
+c_func
+(paren
+id|WRITE
+comma
+id|page
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|variable|swap_aops
 r_static
 r_struct
@@ -14,9 +45,14 @@ id|address_space_operations
 id|swap_aops
 op_assign
 (brace
+id|writepage
+suffix:colon
+id|swap_writepage
+comma
 id|sync_page
 suffix:colon
 id|block_sync_page
+comma
 )brace
 suffix:semicolon
 DECL|variable|swapper_space
@@ -359,6 +395,12 @@ c_func
 (paren
 op_amp
 id|pagecache_lock
+)paren
+suffix:semicolon
+id|ClearPageDirty
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|__delete_from_swap_cache

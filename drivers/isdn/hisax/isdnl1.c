@@ -1,53 +1,30 @@
-multiline_comment|/* $Id: isdnl1.c,v 2.39 2000/06/26 08:59:13 keil Exp $&n; *&n; * isdnl1.c     common low level stuff for Siemens Chipsetbased isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; */
+multiline_comment|/* $Id: isdnl1.c,v 2.41 2000/11/24 17:05:37 kai Exp $&n; *&n; * isdnl1.c     common low level stuff for Siemens Chipsetbased isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; */
 DECL|variable|l1_revision
 r_const
 r_char
 op_star
 id|l1_revision
 op_assign
-l_string|&quot;$Revision: 2.39 $&quot;
+l_string|&quot;$Revision: 2.41 $&quot;
 suffix:semicolon
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 DECL|macro|TIMER3_VALUE
 mdefine_line|#define TIMER3_VALUE 7000
-r_static
 DECL|variable|l1fsm_b
+r_static
 r_struct
 id|Fsm
 id|l1fsm_b
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
-r_static
 DECL|variable|l1fsm_s
+r_static
 r_struct
 id|Fsm
 id|l1fsm_s
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 r_enum
 (brace
@@ -2762,14 +2739,14 @@ id|st-&gt;l1.hardware
 suffix:semicolon
 )brace
 )brace
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_struct
 id|FsmNode
 id|L1SFnList
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 (brace
@@ -3322,14 +3299,14 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_struct
 id|FsmNode
 id|L1UFnList
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 (brace
@@ -3679,14 +3656,14 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-DECL|variable|HISAX_INITDATA
+DECL|variable|__initdata
 r_static
 r_struct
 id|FsmNode
 id|L1BFnList
 (braket
 )braket
-id|HISAX_INITDATA
+id|__initdata
 op_assign
 (brace
 (brace
@@ -3725,16 +3702,13 @@ comma
 suffix:semicolon
 DECL|macro|L1B_FN_COUNT
 mdefine_line|#define L1B_FN_COUNT (sizeof(L1BFnList)/sizeof(struct FsmNode))
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|Isdnl1New
 id|Isdnl1New
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef HISAX_UINTERFACE

@@ -1044,6 +1044,8 @@ suffix:semicolon
 r_int
 r_int
 id|mem_size
+comma
+id|mem_mask
 suffix:semicolon
 r_int
 r_int
@@ -1060,7 +1062,6 @@ suffix:semicolon
 r_int
 id|cfn_mode
 suffix:semicolon
-multiline_comment|/*&n;&t; * These registers need to be set up whether we&squot;re the&n;&t; * central function or not.&n;&t; */
 id|mem_size
 op_assign
 (paren
@@ -1071,11 +1072,36 @@ id|high_memory
 op_minus
 id|PAGE_OFFSET
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|mem_mask
+op_assign
+l_int|0x00100000
+suffix:semicolon
+id|mem_mask
+OL
+l_int|0x10000000
+suffix:semicolon
+id|mem_mask
+op_lshift_assign
+l_int|1
+)paren
+r_if
+c_cond
+(paren
+id|mem_mask
+op_ge
+id|mem_size
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/*&n;&t; * These registers need to be set up whether we&squot;re the&n;&t; * central function or not.&n;&t; */
 op_star
 id|CSR_SDRAMBASEMASK
 op_assign
 (paren
-id|mem_size
+id|mem_mask
 op_minus
 l_int|1
 )paren

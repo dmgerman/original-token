@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/logibusmouse.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -508,6 +509,26 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|10
+comma
+l_int|2
+comma
+l_string|&quot;amigamouse [Denise]&quot;
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 id|custom.joytest
 op_assign
 l_int|0
@@ -576,6 +597,16 @@ id|unregister_busmouse
 c_func
 (paren
 id|msedev
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|10
+comma
+l_int|2
 )paren
 suffix:semicolon
 )brace

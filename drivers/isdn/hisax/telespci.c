@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: telespci.c,v 2.13 2000/06/26 08:59:15 keil Exp $&n; *&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: telespci.c,v 2.16 2000/11/24 17:05:38 kai Exp $&n; *&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
@@ -21,7 +22,7 @@ r_char
 op_star
 id|telespci_revision
 op_assign
-l_string|&quot;$Revision: 2.13 $&quot;
+l_string|&quot;$Revision: 2.16 $&quot;
 suffix:semicolon
 DECL|macro|ZORAN_PO_RQ_PEN
 mdefine_line|#define ZORAN_PO_RQ_PEN&t;0x02000000
@@ -1151,14 +1152,10 @@ id|pci_dev
 op_star
 id|dev_tel
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_telespci
 id|setup_telespci
 c_func
 (paren
@@ -1166,7 +1163,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

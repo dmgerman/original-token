@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: niccy.c,v 1.12 2000/06/26 08:59:14 keil Exp $&n; *&n; * niccy.c  low level stuff for Dr. Neuhaus NICCY PnP and NICCY PCI and&n; *          compatible (SAGEM cybermodem)&n; *&n; * Author   Karsten Keil&n; * &n; * Thanks to Dr. Neuhaus and SAGEM for informations&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: niccy.c,v 1.15 2000/11/24 17:05:38 kai Exp $&n; *&n; * niccy.c  low level stuff for Dr. Neuhaus NICCY PnP and NICCY PCI and&n; *          compatible (SAGEM cybermodem)&n; *&n; * Author   Karsten Keil&n; * &n; * Thanks to Dr. Neuhaus and SAGEM for informations&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
@@ -21,7 +22,7 @@ r_char
 op_star
 id|niccy_revision
 op_assign
-l_string|&quot;$Revision: 1.12 $&quot;
+l_string|&quot;$Revision: 1.15 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -1018,14 +1019,10 @@ id|pci_dev
 op_star
 id|niccy_dev
 id|__initdata
-op_assign
-l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_niccy
 id|setup_niccy
 c_func
 (paren
@@ -1033,7 +1030,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

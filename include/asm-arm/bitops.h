@@ -3,6 +3,10 @@ macro_line|#ifndef __ASM_ARM_BITOPS_H
 DECL|macro|__ASM_ARM_BITOPS_H
 mdefine_line|#define __ASM_ARM_BITOPS_H
 macro_line|#ifdef __KERNEL__
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;do { } while (0)
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;do { } while (0)
 multiline_comment|/*&n; * Function prototypes to keep gcc -Wall happy.&n; */
 r_extern
 r_void

@@ -133,7 +133,7 @@ id|nRc
 op_assign
 l_int|1
 suffix:semicolon
-singleline_comment|//fp_printk(&quot;ExtendedCPDO(0x%08x)&bslash;n&quot;,opcode);
+singleline_comment|//printk(&quot;ExtendedCPDO(0x%08x)&bslash;n&quot;,opcode);
 id|Fm
 op_assign
 id|getFm

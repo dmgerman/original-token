@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
 DECL|function|sys_pipe
 id|asmlinkage
@@ -2513,6 +2514,19 @@ c_func
 suffix:semicolon
 r_return
 id|ret
+suffix:semicolon
+)brace
+DECL|function|sys_getpagesize
+id|asmlinkage
+r_int
+id|sys_getpagesize
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|PAGE_SIZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Old cruft&n; */

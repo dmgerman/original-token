@@ -31,10 +31,6 @@ DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x40000000&t;/* ROM */
 DECL|macro|FLUSH_BASE
 mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
-DECL|macro|PARAMS_OFFSET
-mdefine_line|#define PARAMS_OFFSET&t;&t;(0x0100)
-DECL|macro|Z_PARAMS_BASE
-mdefine_line|#define Z_PARAMS_BASE&t;&t;(RAM_START + PARAMS_OFFSET)
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;IO_BASE
 macro_line|#endif

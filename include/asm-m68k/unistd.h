@@ -152,8 +152,8 @@ DECL|macro|__NR_sethostname
 mdefine_line|#define __NR_sethostname&t; 74
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit&t;&t; 75
-DECL|macro|__NR_old_getrlimit
-mdefine_line|#define __NR_old_getrlimit&t; 76
+DECL|macro|__NR_getrlimit
+mdefine_line|#define __NR_getrlimit&t;&t; 76
 DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage&t;&t; 77
 DECL|macro|__NR_gettimeofday
@@ -332,6 +332,8 @@ DECL|macro|__NR_setresuid
 mdefine_line|#define __NR_setresuid&t;&t;164
 DECL|macro|__NR_getresuid
 mdefine_line|#define __NR_getresuid&t;&t;165
+DECL|macro|__NR_getpagesize
+mdefine_line|#define __NR_getpagesize&t;166
 DECL|macro|__NR_query_module
 mdefine_line|#define __NR_query_module&t;167
 DECL|macro|__NR_poll
@@ -380,8 +382,8 @@ DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;189&t;/* some people actually want streams */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;190
-DECL|macro|__NR_getrlimit
-mdefine_line|#define __NR_getrlimit&t;&t;191
+DECL|macro|__NR_ugetrlimit
+mdefine_line|#define __NR_ugetrlimit&t;&t;191
 DECL|macro|__NR_mmap2
 mdefine_line|#define __NR_mmap2&t;&t;192
 DECL|macro|__NR_truncate64

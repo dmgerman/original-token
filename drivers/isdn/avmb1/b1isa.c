@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
@@ -18,7 +19,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.10 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 id|MODULE_AUTHOR
@@ -872,19 +873,10 @@ id|b1isa_add_card
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|macro|b1isa_init
-mdefine_line|#define b1isa_init init_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|b1isa_init
+r_static
 r_int
+id|__init
 id|b1isa_init
 c_func
 (paren
@@ -1004,10 +996,11 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|b1isa_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|b1isa_exit
 c_func
 (paren
 r_void
@@ -1021,5 +1014,18 @@ id|b1isa_driver
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|b1isa_init
+id|module_init
+c_func
+(paren
+id|b1isa_init
+)paren
+suffix:semicolon
+DECL|variable|b1isa_exit
+id|module_exit
+c_func
+(paren
+id|b1isa_exit
+)paren
+suffix:semicolon
 eof

@@ -643,10 +643,7 @@ id|dma-&gt;buf.address
 suffix:semicolon
 id|regs.ARM_fp
 op_assign
-(paren
-r_int
-)paren
-id|PCIO_FLOPPYDMABASE
+id|FLOPPYDMA_BASE
 suffix:semicolon
 id|set_fiq_regs
 c_func
@@ -768,7 +765,7 @@ macro_line|#if defined(CONFIG_BLK_DEV_FD1772) || defined(CONFIG_BLK_DEV_FD1772_M
 r_if
 c_cond
 (paren
-id|machine_is_arc
+id|machine_is_archimedes
 c_func
 (paren
 )paren

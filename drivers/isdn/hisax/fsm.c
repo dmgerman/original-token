@@ -1,14 +1,13 @@
-multiline_comment|/* $Id: fsm.c,v 1.13 2000/06/26 08:59:12 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: fsm.c,v 1.14 2000/11/24 17:05:37 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 DECL|macro|FSM_TIMER_DEBUG
 mdefine_line|#define FSM_TIMER_DEBUG 0
-DECL|function|HISAX_INITFUNC
-id|HISAX_INITFUNC
-c_func
-(paren
 r_void
+id|__init
+DECL|function|FsmNew
 id|FsmNew
 c_func
 (paren
@@ -24,7 +23,6 @@ id|fnlist
 comma
 r_int
 id|fncount
-)paren
 )paren
 (brace
 r_int
