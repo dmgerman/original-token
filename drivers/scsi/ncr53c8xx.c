@@ -23465,6 +23465,22 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;** Not allow to disable tagged queue&n;&t;*/
+r_if
+c_cond
+(paren
+id|uc-&gt;cmd
+op_eq
+id|UC_SETTAGS
+op_logical_and
+id|uc-&gt;data
+OL
+l_int|1
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1,8 +1,8 @@
 multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster SCSI Host Adapters&n;&n;  Copyright 1995 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation, provided that none of the source code or runtime&n;  copyright notices are removed or modified.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen and Alex Win of BusLogic, whose advice has been&n;  invaluable, to David Gentzel, for writing the original Linux BusLogic driver,&n;  and to Paul Gortmaker, for being such a dedicated test site.&n;&n;*/
 DECL|macro|BusLogic_DriverVersion
-mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.4&quot;
+mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.5&quot;
 DECL|macro|BusLogic_DriverDate
-mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;5 June 1996&quot;
+mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;7 July 1996&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1671,11 +1671,11 @@ op_logical_and
 (paren
 id|DeviceID
 op_eq
-id|PCI_DEVICE_ID_BUSLOGIC_946C
+id|PCI_DEVICE_ID_BUSLOGIC_MULTIMASTER
 op_logical_or
 id|DeviceID
 op_eq
-id|PCI_DEVICE_ID_BUSLOGIC_946C_2
+id|PCI_DEVICE_ID_BUSLOGIC_MULTIMASTER_NC
 )paren
 op_logical_and
 id|pcibios_read_config_dword
@@ -2842,17 +2842,45 @@ multiline_comment|/*&n;    Issue the Inquire Board Model Number command.&n;  */
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|BoardID.FirmwareVersion1stDigit
-op_eq
-l_char|&squot;2&squot;
-op_logical_and
 id|ExtendedSetupInformation.BusType
 op_eq
 l_char|&squot;A&squot;
+op_logical_and
+id|BoardID.FirmwareVersion1stDigit
+op_eq
+l_char|&squot;2&squot;
 )paren
+multiline_comment|/* BusLogic BT-542B ISA 2.xx */
+id|strcpy
+c_func
+(paren
+id|BoardModelNumber
+comma
+l_string|&quot;542B&quot;
 )paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|ExtendedSetupInformation.BusType
+op_eq
+l_char|&squot;E&squot;
+op_logical_and
+id|BoardID.FirmwareVersion1stDigit
+op_eq
+l_char|&squot;0&squot;
+)paren
+multiline_comment|/* AMI FastDisk EISA Series 441 0.x */
+id|strcpy
+c_func
+(paren
+id|BoardModelNumber
+comma
+l_string|&quot;747A&quot;
+)paren
+suffix:semicolon
+r_else
 (brace
 id|RequestedReplyLength
 op_assign
@@ -2903,16 +2931,18 @@ l_string|&quot;INQUIRE BOARD MODEL NUMBER&quot;
 )paren
 suffix:semicolon
 )brace
-r_else
-id|strcpy
-c_func
-(paren
-id|BoardModelNumber
-comma
-l_string|&quot;542B&quot;
-)paren
-suffix:semicolon
 multiline_comment|/*&n;    Issue the Inquire Firmware Version 3rd Digit command.&n;  */
+id|FirmwareVersion3rdDigit
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|BoardID.FirmwareVersion1stDigit
+OG
+l_char|&squot;0&squot;
+)paren
 r_if
 c_cond
 (paren
@@ -8013,7 +8043,7 @@ id|CCB-&gt;TagEnable
 op_assign
 l_bool|false
 suffix:semicolon
-multiline_comment|/*&n;    BusLogic recommends that after a Reset the first couple of commands that&n;    are sent to a Target Device be sent in a non Tagged Queue fashion so that&n;    the Host Adapter and Target Device can establish Synchronous and Wide&n;    Transfer before Queue Tag messages can interfere with the Synchronous and&n;    Wide Negotiation message.  By waiting to enable Tagged Queuing until after&n;    the first BusLogic_PreferredQueueDepth commands have been sent, it is&n;    assured that after a Reset any pending commands are resent before Tagged&n;    Queuing is enabled and that the Tagged Queuing message will not occur while&n;    the partition table is being printed.&n;  */
+multiline_comment|/*&n;    BusLogic recommends that after a Reset the first couple of commands that&n;    are sent to a Target Device be sent in a non Tagged Queue fashion so that&n;    the Host Adapter and Target Device can establish Synchronous and Wide&n;    Transfer before Queue Tag messages can interfere with the Synchronous and&n;    Wide Negotiation message.  By waiting to enable Tagged Queuing until after&n;    the first 2*BusLogic_PreferredQueueDepth commands have been sent, it is&n;    assured that after a Reset any pending commands are resent before Tagged&n;    Queuing is enabled and that the Tagged Queuing message will not occur while&n;    the partition table is being printed.&n;  */
 r_if
 c_cond
 (paren
@@ -8023,6 +8053,8 @@ id|TargetID
 )braket
 op_increment
 op_eq
+l_int|2
+op_star
 id|BusLogic_PreferredTaggedQueueDepth
 op_logical_and
 (paren

@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ppc_machine.h&quot;
+macro_line|#include &lt;asm/ppc_machine.h&gt;
 r_int
 DECL|function|dump_fpu
 id|dump_fpu
@@ -99,11 +99,6 @@ comma
 id|regs-&gt;msr
 comma
 id|regs
-)paren
-suffix:semicolon
-id|cnpause
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -314,11 +309,6 @@ comma
 id|regs
 )paren
 suffix:semicolon
-id|cnpause
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Construct segment registers */
 id|segs
@@ -413,11 +403,6 @@ comma
 id|current
 comma
 id|current-&gt;mm
-)paren
-suffix:semicolon
-id|cnpause
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -669,11 +654,6 @@ c_func
 id|eip
 comma
 l_int|0x80
-)paren
-suffix:semicolon
-id|cnpause
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -985,7 +965,7 @@ c_cond
 (paren
 id|cnt
 OG
-l_int|16
+l_int|32
 )paren
 r_break
 suffix:semicolon

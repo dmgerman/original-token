@@ -68,70 +68,6 @@ c_func
 l_string|&quot;__bad_pagetable&quot;
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_extern
-r_char
-id|empty_bad_page_table
-(braket
-id|PAGE_SIZE
-)braket
-suffix:semicolon
-r_int
-r_int
-id|dummy
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;1:&bslash;tsw&bslash;t%2,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
-l_string|&quot;bne&bslash;t$0,%1,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|dummy
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dummy
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|pte_val
-c_func
-(paren
-id|BAD_PAGE
-)paren
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-(paren
-r_int
-)paren
-id|empty_bad_page_table
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|PTRS_PER_PAGE
-)paren
-)paren
-suffix:semicolon
-r_return
-(paren
-id|pte_t
-op_star
-)paren
-id|empty_bad_page_table
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|__bad_page
 id|pte_t
@@ -147,71 +83,6 @@ c_func
 l_string|&quot;__bad_page&quot;
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_extern
-r_char
-id|empty_bad_page
-(braket
-id|PAGE_SIZE
-)braket
-suffix:semicolon
-r_int
-r_int
-id|dummy
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;1:&bslash;tsw&bslash;t$0,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%1,%1,1&bslash;n&bslash;t&quot;
-l_string|&quot;bne&bslash;t$0,%1,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|dummy
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dummy
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-(paren
-r_int
-)paren
-id|empty_bad_page
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|PTRS_PER_PAGE
-)paren
-)paren
-suffix:semicolon
-r_return
-id|pte_mkdirty
-c_func
-(paren
-id|mk_pte
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|empty_bad_page
-comma
-id|PAGE_SHARED
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|__zero_page
 r_int
@@ -298,11 +169,14 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*i = high_memory &gt;&gt; PAGE_SHIFT;*/
 id|i
 op_assign
+id|MAP_NR
+c_func
+(paren
 id|high_memory
-op_rshift
-id|PAGE_SHIFT
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -432,166 +306,6 @@ r_int
 id|end_mem
 )paren
 (brace
-macro_line|#if 0&t;
-id|pgd_t
-op_star
-id|pg_dir
-suffix:semicolon
-id|pte_t
-op_star
-id|pg_table
-suffix:semicolon
-r_int
-r_int
-id|tmp
-suffix:semicolon
-r_int
-r_int
-id|address
-suffix:semicolon
-id|start_mem
-op_assign
-id|PAGE_ALIGN
-c_func
-(paren
-id|start_mem
-)paren
-suffix:semicolon
-id|address
-op_assign
-l_int|0
-suffix:semicolon
-id|pg_dir
-op_assign
-id|swapper_pg_dir
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|address
-OL
-id|end_mem
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|pgd_none
-c_func
-(paren
-id|pg_dir
-(braket
-l_int|0
-)braket
-)paren
-)paren
-(brace
-id|pgd_set
-c_func
-(paren
-id|pg_dir
-comma
-(paren
-id|pte_t
-op_star
-)paren
-id|start_mem
-)paren
-suffix:semicolon
-id|start_mem
-op_add_assign
-id|PAGE_SIZE
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * also map it in at 0x00000000 for init&n;&t;&t; */
-id|pg_table
-op_assign
-(paren
-id|pte_t
-op_star
-)paren
-id|pgd_page
-c_func
-(paren
-id|pg_dir
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-id|pgd_set
-c_func
-(paren
-id|pg_dir
-comma
-id|pg_table
-)paren
-suffix:semicolon
-id|pg_dir
-op_increment
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|tmp
-op_assign
-l_int|0
-suffix:semicolon
-id|tmp
-OL
-id|PTRS_PER_PAGE
-suffix:semicolon
-id|tmp
-op_increment
-comma
-id|pg_table
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|address
-OL
-id|end_mem
-)paren
-op_star
-id|pg_table
-op_assign
-id|mk_pte
-c_func
-(paren
-id|address
-comma
-id|PAGE_SHARED
-)paren
-suffix:semicolon
-r_else
-id|pte_clear
-c_func
-(paren
-id|pg_table
-)paren
-suffix:semicolon
-id|address
-op_add_assign
-id|PAGE_SIZE
-suffix:semicolon
-)brace
-)brace
-macro_line|#if KERNELBASE == KSEG0
-id|cacheflush
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|invalidate
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 r_return
 id|free_area_init
 c_func
@@ -651,18 +365,6 @@ c_func
 id|start_mem
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|_printk
-c_func
-(paren
-l_string|&quot;Mem init - Start: %x, End: %x&bslash;n&quot;
-comma
-id|start_mem
-comma
-id|high_memory
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -929,10 +631,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Kernel MMU setup &amp; lowest level hardware support */
-multiline_comment|/* Hardwired MMU segments */
-multiline_comment|/* Segment 0x8XXXXXXX, 0xCXXXXXXX always mapped (for I/O) */
-multiline_comment|/* Segment 0x9XXXXXXX mapped during init */
 DECL|variable|BAT0
 id|BAT
 id|BAT0
@@ -949,10 +647,10 @@ comma
 multiline_comment|/* bl */
 l_int|1
 comma
-multiline_comment|/* vs */
+multiline_comment|/* vs -- supervisor mode valid */
 l_int|1
 comma
-multiline_comment|/* vp */
+multiline_comment|/* vp -- user mode valid */
 )brace
 comma
 (brace
@@ -963,18 +661,18 @@ comma
 multiline_comment|/* brpn */
 l_int|1
 comma
-multiline_comment|/* w */
+multiline_comment|/* write-through */
 l_int|1
 comma
-multiline_comment|/* i (cache disabled) */
+multiline_comment|/* cache-inhibited */
 l_int|0
 comma
-multiline_comment|/* m */
+multiline_comment|/* memory coherence */
 l_int|1
 comma
-multiline_comment|/* g */
+multiline_comment|/* guarded */
 id|BPP_RW
-multiline_comment|/* pp */
+multiline_comment|/* protection */
 )brace
 )brace
 suffix:semicolon
@@ -1029,15 +727,15 @@ id|BAT2
 op_assign
 (brace
 (brace
-l_int|0x00000000
+l_int|0x90000000
 op_rshift
 l_int|17
 comma
 multiline_comment|/* bepi */
-id|BL_256M
+id|BL_16M
 comma
-multiline_comment|/* bl */
-l_int|0
+multiline_comment|/* this should be set to amount of phys ram */
+l_int|1
 comma
 multiline_comment|/* vs */
 l_int|0
@@ -1051,12 +749,12 @@ op_rshift
 l_int|17
 comma
 multiline_comment|/* brpn */
-l_int|1
+l_int|0
 comma
 multiline_comment|/* w */
-l_int|1
+l_int|0
 comma
-multiline_comment|/* i (cache disabled) */
+multiline_comment|/* i */
 l_int|0
 comma
 multiline_comment|/* m */
@@ -1125,7 +823,7 @@ op_rshift
 l_int|17
 comma
 multiline_comment|/* bepi */
-id|BL_16M
+id|BL_256M
 comma
 multiline_comment|/* bl */
 l_int|1
@@ -1142,7 +840,7 @@ op_rshift
 l_int|17
 comma
 multiline_comment|/* brpn */
-l_int|0
+l_int|1
 comma
 multiline_comment|/* w */
 l_int|0
@@ -1417,7 +1115,7 @@ id|SEGREG
 op_star
 id|segs
 suffix:semicolon
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;MMU init - started&bslash;n&quot;
@@ -1428,7 +1126,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;  Start at 0x%08X, End at 0x%08X, Hash at 0x%08X&bslash;n&quot;
@@ -1776,7 +1474,7 @@ id|_end
 )paren
 suffix:semicolon
 macro_line|#endif
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;MMU init - done!&bslash;n&quot;
@@ -1827,7 +1525,7 @@ id|MMU_PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;MMU Allocate Page at %08X&bslash;n&quot;
@@ -2606,11 +2304,6 @@ id|_pte-&gt;pp
 )paren
 suffix:semicolon
 )brace
-id|cnpause
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2672,11 +2365,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|cnpause
-c_func
-(paren
-)paren
-suffix:semicolon
 id|_panic
 c_func
 (paren
@@ -2692,7 +2380,7 @@ suffix:semicolon
 id|found_it
 suffix:colon
 macro_line|#if 0
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;Map VA: %08X, Slot: %08X[%08X/%08X], H: %d&bslash;n&quot;
@@ -4662,14 +4350,7 @@ id|Hash
 id|hash
 )braket
 suffix:semicolon
-id|dump_buf
-c_func
-(paren
-id|_pte
-comma
-l_int|64
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;dump_buf(_pte, 64);*/
 r_for
 c_loop
 (paren
@@ -4757,11 +4438,6 @@ suffix:semicolon
 )brace
 id|found_it
 suffix:colon
-id|cnpause
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|flush_cache_all
 id|flush_cache_all

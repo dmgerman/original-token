@@ -2092,12 +2092,12 @@ suffix:semicolon
 )brace
 macro_line|#endif /* BAYCOM_DEBUG */
 multiline_comment|/* ---------------------------------------------------------------------- */
-DECL|function|tenms_to_flags
+DECL|function|tenms_to_2flags
 r_static
 r_inline
 r_int
 r_int
-id|tenms_to_flags
+id|tenms_to_2flags
 c_func
 (paren
 r_struct
@@ -2122,9 +2122,9 @@ suffix:colon
 r_return
 id|tenms
 op_star
-l_int|12
+l_int|3
 op_div
-l_int|8
+l_int|4
 suffix:semicolon
 r_case
 id|BAYCOM_MODEM_PAR96
@@ -2132,7 +2132,7 @@ suffix:colon
 r_return
 id|tenms
 op_star
-l_int|12
+l_int|6
 suffix:semicolon
 r_default
 suffix:colon
@@ -2731,7 +2731,7 @@ l_int|1
 suffix:semicolon
 id|bc-&gt;hdlc_tx.numflags
 op_assign
-id|tenms_to_flags
+id|tenms_to_2flags
 (paren
 id|bc
 comma
@@ -3085,23 +3085,31 @@ id|bc-&gt;ch_params.ppersist
 r_return
 suffix:semicolon
 )brace
-id|bc-&gt;hdlc_tx.ptt
-op_assign
-l_int|1
-suffix:semicolon
 id|bc-&gt;hdlc_tx.tx_state
 op_assign
 l_int|0
 suffix:semicolon
 id|bc-&gt;hdlc_tx.numflags
 op_assign
-id|tenms_to_flags
+id|tenms_to_2flags
 c_func
 (paren
 id|bc
 comma
 id|bc-&gt;ch_params.tx_delay
 )paren
+suffix:semicolon
+id|bc-&gt;hdlc_tx.numbits
+op_assign
+id|bc-&gt;hdlc_tx.bitbuf
+op_assign
+id|bc-&gt;hdlc_tx.bitstream
+op_assign
+l_int|0
+suffix:semicolon
+id|bc-&gt;hdlc_tx.ptt
+op_assign
+l_int|1
 suffix:semicolon
 id|bc-&gt;stat.ptt_keyed
 op_increment
@@ -4832,7 +4840,7 @@ id|bc-&gt;irq
 comma
 id|baycom_ser12_interrupt
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 l_string|&quot;baycom_ser12&quot;
 comma
@@ -4989,6 +4997,8 @@ suffix:semicolon
 r_int
 r_int
 id|data
+comma
+id|descx
 comma
 id|mask
 comma
@@ -5253,10 +5263,6 @@ id|i
 op_increment
 )paren
 (brace
-r_int
-r_int
-id|descx
-suffix:semicolon
 id|bc-&gt;modem.par96.descram
 op_assign
 (paren
@@ -5503,6 +5509,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|bc-&gt;modem.par96.dcd_shreg
 op_amp
 id|mask
@@ -5510,12 +5517,12 @@ id|mask
 op_eq
 id|mask2
 )paren
-r_if
-c_cond
+op_logical_and
 (paren
 id|bc-&gt;modem.par96.dcd_count
 op_ge
 l_int|0
+)paren
 )paren
 id|bc-&gt;modem.par96.dcd_count
 op_sub_assign
@@ -6076,7 +6083,7 @@ id|bc-&gt;irq
 comma
 id|baycom_par96_interrupt
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 l_string|&quot;baycom_par96&quot;
 comma
@@ -6756,6 +6763,21 @@ id|bc-&gt;kiss_decode.dec_state
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ch
+op_eq
+id|KISS_FESC
+)paren
+(brace
+id|bc-&gt;kiss_decode.escaped
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -9636,6 +9658,12 @@ id|KERN_INFO
 l_string|&quot;baycom: cleanup_module called&bslash;n&quot;
 )paren
 suffix:semicolon
+id|disable_bh
+c_func
+(paren
+id|BAYCOM_BH
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9882,5 +9910,4 @@ suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
 eof

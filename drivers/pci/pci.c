@@ -741,9 +741,9 @@ c_func
 (paren
 id|BUSLOGIC
 comma
-id|BUSLOGIC_946C_2
+id|BUSLOGIC_MULTIMASTER_NC
 comma
-l_string|&quot;BT-946C&quot;
+l_string|&quot;MultiMaster NC&quot;
 )paren
 comma
 id|DEVICE
@@ -751,9 +751,9 @@ c_func
 (paren
 id|BUSLOGIC
 comma
-id|BUSLOGIC_946C
+id|BUSLOGIC_MULTIMASTER
 comma
-l_string|&quot;BT-946C&quot;
+l_string|&quot;MultiMaster&quot;
 )paren
 comma
 id|DEVICE
@@ -761,9 +761,9 @@ c_func
 (paren
 id|BUSLOGIC
 comma
-id|BUSLOGIC_930
+id|BUSLOGIC_FLASHPOINT
 comma
-l_string|&quot;BT-930&quot;
+l_string|&quot;FlashPoint&quot;
 )paren
 comma
 id|DEVICE

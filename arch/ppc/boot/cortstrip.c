@@ -131,6 +131,10 @@ comma
 id|O_WRONLY
 op_or
 id|O_CREAT
+op_or
+id|O_TRUNC
+comma
+l_int|0755
 )paren
 suffix:semicolon
 r_if

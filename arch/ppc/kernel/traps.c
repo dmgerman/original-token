@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ppc_machine.h&quot;
+macro_line|#include &lt;asm/ppc_machine.h&gt;
 multiline_comment|/*&n; * Trap &amp; Exception support&n; */
 r_void
 DECL|function|trap_init
@@ -40,12 +40,7 @@ op_star
 id|regs
 )paren
 (brace
-id|dump_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
+multiline_comment|/*&t;dump_regs(regs);*/
 id|force_sig
 c_func
 (paren
@@ -93,22 +88,7 @@ op_star
 id|regs
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Machine check at PC: %x[%x], SR: %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|va_to_phys
-c_func
-(paren
-id|regs-&gt;nip
-)paren
-comma
-id|regs-&gt;msr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Machine check at PC: %x[%x], SR: %x&bslash;n&quot;, regs-&gt;nip, va_to_phys(regs-&gt;nip), regs-&gt;msr);*/
 id|_exception
 c_func
 (paren
@@ -128,22 +108,7 @@ op_star
 id|regs
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Program check at PC: %x[%x], SR: %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|va_to_phys
-c_func
-(paren
-id|regs-&gt;nip
-)paren
-comma
-id|regs-&gt;msr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Program check at PC: %x[%x], SR: %x&bslash;n&quot;, regs-&gt;nip, va_to_phys(regs-&gt;nip), regs-&gt;msr);*/
 r_if
 c_cond
 (paren
@@ -183,22 +148,7 @@ op_star
 id|regs
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Single step at PC: %x[%x], SR: %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|va_to_phys
-c_func
-(paren
-id|regs-&gt;nip
-)paren
-comma
-id|regs-&gt;msr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Single step at PC: %x[%x], SR: %x&bslash;n&quot;, regs-&gt;nip, va_to_phys(regs-&gt;nip), regs-&gt;msr);*/
 id|regs-&gt;msr
 op_and_assign
 op_complement
@@ -224,22 +174,7 @@ op_star
 id|regs
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Floating point check at PC: %x[%x], SR: %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|va_to_phys
-c_func
-(paren
-id|regs-&gt;nip
-)paren
-comma
-id|regs-&gt;msr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Floating point check at PC: %x[%x], SR: %x&bslash;n&quot;, regs-&gt;nip, va_to_phys(regs-&gt;nip), regs-&gt;msr);*/
 id|_exception
 c_func
 (paren
@@ -259,43 +194,7 @@ op_star
 id|regs
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Alignment error at PC: %x, SR: %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|regs-&gt;msr
-)paren
-suffix:semicolon
-id|dump_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-id|cnpause
-c_func
-(paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Alignment error at PC: %x[%x], SR: %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|va_to_phys
-c_func
-(paren
-id|regs-&gt;nip
-)paren
-comma
-id|regs-&gt;msr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Alignment error at PC: %x, SR: %x&bslash;n&quot;, regs-&gt;nip, regs-&gt;msr);&n;&t;dump_regs(regs);&n;&t;printk(&quot;Alignment error at PC: %x[%x], SR: %x&bslash;n&quot;, regs-&gt;nip, va_to_phys(regs-&gt;nip), regs-&gt;msr);*/
 id|_exception
 c_func
 (paren
@@ -315,28 +214,7 @@ op_star
 id|regs
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Kernel stack overflow at PC: %x[%x], SR: %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|va_to_phys
-c_func
-(paren
-id|regs-&gt;nip
-)paren
-comma
-id|regs-&gt;msr
-)paren
-suffix:semicolon
-id|dump_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Kernel stack overflow at PC: %x[%x], SR: %x&bslash;n&quot;, regs-&gt;nip, va_to_phys(regs-&gt;nip), regs-&gt;msr);&n;&t;dump_regs(regs);*/
 r_while
 c_loop
 (paren
@@ -565,11 +443,6 @@ l_int|20
 id|count
 op_assign
 l_int|0
-suffix:semicolon
-id|cnpause
-c_func
-(paren
-)paren
 suffix:semicolon
 )brace
 )brace

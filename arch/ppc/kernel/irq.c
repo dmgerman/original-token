@@ -1398,11 +1398,6 @@ comma
 id|handler
 )paren
 suffix:semicolon
-id|cnpause
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif
 r_if
 c_cond

@@ -1912,19 +1912,19 @@ id|unload_sb
 comma
 macro_line|#ifdef CONFIG_MIDI
 (brace
-l_string|&quot;UART401&quot;
+l_string|&quot;SBMPU&quot;
 comma
 l_int|0
 comma
-id|SNDCARD_UART401
+id|SNDCARD_SB16MIDI
 comma
-l_string|&quot;MPU-401 UART&quot;
+l_string|&quot;SB MPU-401&quot;
 comma
-id|attach_uart401
+id|attach_sbmpu
 comma
-id|probe_uart401
+id|probe_sbmpu
 comma
-id|unload_uart401
+id|unload_sbmpu
 )brace
 comma
 macro_line|#endif

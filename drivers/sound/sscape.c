@@ -1038,7 +1038,7 @@ id|devc
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_MPU_EMU) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -2764,7 +2764,7 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MPU401)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MPU_EMU)
 r_if
 c_cond
 (paren
@@ -3461,7 +3461,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_MPU_EMU) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 (paren
 id|hw_config

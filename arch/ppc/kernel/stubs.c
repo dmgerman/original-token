@@ -80,7 +80,7 @@ c_func
 (paren
 )paren
 (brace
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n...Halt!&bslash;n&quot;
@@ -100,7 +100,7 @@ op_star
 id|msg
 )paren
 (brace
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;Panic: %s&bslash;n&quot;
@@ -130,7 +130,7 @@ op_star
 id|msg
 )paren
 (brace
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;*** Warning: %s UNIMPLEMENTED!&bslash;n&quot;

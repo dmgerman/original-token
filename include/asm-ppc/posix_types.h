@@ -293,14 +293,14 @@ c_cond
 id|__builtin_constant_p
 c_func
 (paren
-id|__FDSET_INTS
+id|__FDSET_LONGS
 )paren
 )paren
 (brace
 r_switch
 c_cond
 (paren
-id|__FDSET_INTS
+id|__FDSET_LONGS
 )paren
 (brace
 r_case
@@ -368,7 +368,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|__FDSET_INTS
+id|__FDSET_LONGS
 suffix:semicolon
 r_while
 c_loop

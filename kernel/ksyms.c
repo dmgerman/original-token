@@ -1342,6 +1342,12 @@ c_func
 id|__down
 )paren
 comma
+id|X
+c_func
+(paren
+id|securelevel
+)paren
+comma
 multiline_comment|/* all busmice */
 id|X
 c_func

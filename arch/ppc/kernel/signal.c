@@ -82,7 +82,7 @@ op_assign
 op_minus
 id|EINTR
 suffix:semicolon
-macro_line|#if 0&t;
+macro_line|#if 0
 id|printk
 c_func
 (paren

@@ -6014,6 +6014,9 @@ suffix:semicolon
 r_case
 id|CHECK_CONDITION
 suffix:colon
+r_case
+id|COMMAND_TERMINATED
+suffix:colon
 r_switch
 c_cond
 (paren
@@ -6116,6 +6119,9 @@ r_break
 suffix:semicolon
 r_case
 id|BUSY
+suffix:colon
+r_case
+id|QUEUE_FULL
 suffix:colon
 id|update_timeout
 c_func

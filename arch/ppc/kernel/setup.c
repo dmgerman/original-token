@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 DECL|macro|SIO_CONFIG_RA
 mdefine_line|#define SIO_CONFIG_RA&t;0x398
 DECL|macro|SIO_CONFIG_RD
@@ -52,7 +53,25 @@ r_int
 r_char
 id|aux_device_present
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+r_extern
+r_int
+id|rd_doload
+suffix:semicolon
+multiline_comment|/* 1 = load ramdisk, 0 = don&squot;t load */
+r_extern
+r_int
+id|rd_prompt
+suffix:semicolon
+multiline_comment|/* 1 = prompt for ramdisk, 0 = don&squot;t prompt */
+r_extern
+r_int
+id|rd_image_start
+suffix:semicolon
+multiline_comment|/* starting block # of image */
+macro_line|#endif
 multiline_comment|/*&n; * The format of &quot;screen_info&quot; is strange, and due to early&n; * i386-setup code. This is just enough to make the console&n; * code think we&squot;re on a EGA+ colour display.&n; */
+multiline_comment|/* this is changed only in minor ways from the original&n;        -- Cort&n; */
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -61,12 +80,14 @@ op_assign
 (brace
 l_int|0
 comma
-l_int|0
+l_int|25
 comma
 multiline_comment|/* orig-x, orig-y */
+(brace
 l_int|0
 comma
 l_int|0
+)brace
 comma
 multiline_comment|/* unused */
 l_int|0
@@ -80,21 +101,19 @@ comma
 multiline_comment|/* orig-video-cols */
 l_int|0
 comma
-multiline_comment|/* unused [short] */
 l_int|0
 comma
-multiline_comment|/* ega_bx */
 l_int|0
 comma
-multiline_comment|/* unused [short] */
+multiline_comment|/* ega_ax, ega_bx, ega_cx */
 l_int|25
 comma
 multiline_comment|/* orig-video-lines */
-l_int|0
+l_int|1
 comma
-multiline_comment|/* isVGA */
+multiline_comment|/* orig-video-isVGA */
 l_int|16
-multiline_comment|/* video points */
+multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
 DECL|function|bios32_init
@@ -139,7 +158,11 @@ r_int
 r_int
 id|total
 suffix:semicolon
-id|_printk
+r_extern
+id|BAT
+id|BAT2
+suffix:semicolon
+id|printk
 c_func
 (paren
 l_string|&quot;DRAM Size = %x&bslash;n&quot;
@@ -147,7 +170,7 @@ comma
 id|dram_size
 )paren
 suffix:semicolon
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;Config registers = %x/%x/%x/%x&bslash;n&quot;
@@ -394,6 +417,31 @@ op_assign
 id|HASH_TABLE_MASK_128K
 suffix:semicolon
 )brace
+r_switch
+c_cond
+(paren
+id|total
+)paren
+(brace
+r_case
+l_int|0x01000000
+suffix:colon
+multiline_comment|/*&t;    BAT2[0][1] = BL_16M;*/
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;WARNING: setup.c: find_end_of_memory() unknown total ram size %x&bslash;n&quot;
+comma
+id|total
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|Hash
 op_assign
 (paren
@@ -522,10 +570,22 @@ c_func
 id|DEFAULT_ROOT_DEVICE
 )paren
 suffix:semicolon
+multiline_comment|/*ROOT_DEV = MKDEV(UNNAMED_MAJOR, 255);*/
+multiline_comment|/* nfs */
 id|aux_device_present
 op_assign
 l_int|0xaa
 suffix:semicolon
+multiline_comment|/*nfsaddrs=myip:serverip:gateip:netmaskip:clientname*/
+id|strcpy
+c_func
+(paren
+id|cmd_line
+comma
+l_string|&quot;nfsaddrs=129.138.6.13:129.138.6.90:129.138.6.1:255.255.255.0:pandora&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*  strcpy(cmd_line,&quot;root=/dev/sda1&quot;);*/
 op_star
 id|cmdline_p
 op_assign
@@ -559,6 +619,50 @@ op_minus
 id|KERNELBASE
 suffix:semicolon
 multiline_comment|/* Relative size of memory */
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+id|rd_image_start
+op_assign
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_IMAGE_START_MASK
+suffix:semicolon
+id|rd_prompt
+op_assign
+(paren
+(paren
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_PROMPT_FLAG
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|rd_doload
+op_assign
+(paren
+(paren
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_LOAD_FLAG
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|rd_prompt
+op_assign
+l_int|0
+suffix:semicolon
+id|rd_doload
+op_assign
+l_int|0
+suffix:semicolon
+id|rd_image_start
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif  &t;
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage
@@ -583,6 +687,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_extern
 r_char
 id|builtin_ramdisk_image
@@ -592,7 +697,6 @@ r_int
 id|builtin_ramdisk_size
 suffix:semicolon
 r_void
-DECL|function|builtin_ramdisk_init
 id|builtin_ramdisk_init
 c_func
 (paren
@@ -638,6 +742,7 @@ id|MS_RDONLY
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|macro|MAJOR
 mdefine_line|#define MAJOR(n) (((n)&amp;0xFF00)&gt;&gt;8)
 DECL|macro|MINOR

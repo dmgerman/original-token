@@ -145,8 +145,10 @@ DECL|macro|INTERMEDIATE_C_GOOD
 mdefine_line|#define INTERMEDIATE_C_GOOD  0x0a
 DECL|macro|RESERVATION_CONFLICT
 mdefine_line|#define RESERVATION_CONFLICT 0x0c
+DECL|macro|COMMAND_TERMINATED
+mdefine_line|#define COMMAND_TERMINATED   0x11
 DECL|macro|QUEUE_FULL
-mdefine_line|#define QUEUE_FULL           0x1a
+mdefine_line|#define QUEUE_FULL           0x14
 DECL|macro|STATUS_MASK
 mdefine_line|#define STATUS_MASK          0x3e
 multiline_comment|/*&n; *  SENSE KEYS&n; */

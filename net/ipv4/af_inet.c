@@ -2205,15 +2205,6 @@ op_star
 )paren
 id|sk
 suffix:semicolon
-id|sk-&gt;dummy_th.doff
-op_assign
-r_sizeof
-(paren
-id|sk-&gt;dummy_th
-)paren
-op_div
-l_int|4
-suffix:semicolon
 id|sk-&gt;ip_ttl
 op_assign
 id|ip_statistics.IpDefaultTTL

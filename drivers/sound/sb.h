@@ -210,6 +210,7 @@ suffix:semicolon
 multiline_comment|/* Mixer fields */
 DECL|member|levels
 r_int
+r_int
 id|levels
 (braket
 id|SOUND_MIXER_NRDEVICES

@@ -3,6 +3,8 @@ macro_line|#ifndef _BAYCOM_H
 DECL|macro|_BAYCOM_H
 mdefine_line|#define _BAYCOM_H
 macro_line|#include &lt;linux/ioctl.h&gt;
+DECL|macro|BAYCOM_DEBUG
+macro_line|#undef BAYCOM_DEBUG
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|struct|baycom_statistics
 r_struct

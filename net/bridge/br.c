@@ -4697,6 +4697,9 @@ multiline_comment|/* 3.5 */
 r_int
 id|port
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5001,6 +5004,11 @@ op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/* Packet is for us */
+id|skb-&gt;pkt_type
+op_assign
+id|PACKET_HOST
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5076,6 +5084,24 @@ c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;br_tx_frame: no skb!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb-&gt;dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;br_tx_frame: no dev!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5493,7 +5519,7 @@ c_cond
 (paren
 op_logical_neg
 id|f
-op_or
+op_logical_or
 op_logical_neg
 (paren
 id|f-&gt;flags
@@ -5701,14 +5727,36 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nskb
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/* mark that&squot;s we&squot;ve been here... */
 id|nskb-&gt;pkt_bridged
 op_assign
 id|IS_BRIDGED
 suffix:semicolon
+multiline_comment|/* Send to each port in turn */
+id|nskb-&gt;dev
+op_assign
+id|port_info
+(braket
+id|i
+)braket
+dot
+id|dev
+suffix:semicolon
+multiline_comment|/* To get here we must have done ARP already,&n;&t;&t;&t;   or have a received valid MAC header */
 id|nskb-&gt;arp
 op_assign
-id|skb-&gt;arp
+l_int|1
 suffix:semicolon
 multiline_comment|/*&t;&t;&t;printk(&quot;Flood to port %d&bslash;n&quot;,i);*/
 id|nskb-&gt;h.raw

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_drive_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; * 2.05x Aug 11, 1995 -- lots of data structure renaming/restructuring in ide.c&n; *                       (my apologies to Scott, but now ide-cd.c is independent)&n; * 3.00  Aug 22, 1995 -- Implement CDROMMULTISESSION ioctl.&n; *                       Implement CDROMREADAUDIO ioctl (UNTESTED).&n; *                       Use input_ide_data() and output_ide_data().&n; *                       Add door locking.&n; *                       Fix usage count leak in cdrom_open, which happened&n; *                        when a read-write mount was attempted.&n; *                       Try to load the disk on open.&n; *                       Implement CDROMEJECT_SW ioctl (off by default).&n; *                       Read total cdrom capacity during open.&n; *                       Rearrange logic in cdrom_decode_status.  Issue&n; *                        request sense commands for failed packet commands&n; *                        from here instead of from cdrom_queue_packet_command.&n; *                        Fix a race condition in retrieving error information.&n; *                       Suppress printing normal unit attention errors and&n; *                        some drive not ready errors.&n; *                       Implement CDROMVOLREAD ioctl.&n; *                       Implement CDROMREADMODE1/2 ioctls.&n; *                       Fix race condition in setting up interrupt handlers&n; *                        when the `serialize&squot; option is used.&n; * 3.01  Sep  2, 1995 -- Fix ordering of reenabling interrupts in&n; *                        cdrom_queue_request.&n; *                       Another try at using ide_[input,output]_data.&n; * 3.02  Sep 16, 1995 -- Stick total disk capacity in partition table as well.&n; *                       Make VERBOSE_IDE_CD_ERRORS dump failed command again.&n; *                       Dump out more information for ILLEGAL REQUEST errs.&n; *                       Fix handling of errors occurring before the&n; *                        packet command is transferred.&n; *                       Fix transfers with odd bytelengths.&n; * 3.03  Oct 27, 1995 -- Some Creative drives have an id of just `CD&squot;.&n; *                       `DCI-2S10&squot; drives are broken too.&n; * 3.04  Nov 20, 1995 -- So are Vertos drives.&n; * 3.05  Dec  1, 1995 -- Changes to go with overhaul of ide.c and ide-tape.c&n; * 3.06  Dec 16, 1995 -- Add support needed for partitions.&n; *                       More workarounds for Vertos bugs (based on patches&n; *                        from Holger Dietze &lt;dietze@aix520.informatik.uni-leipzig.de&gt;).&n; *                       Try to eliminate byteorder assumptions.&n; *                       Use atapi_cdrom_subchnl struct definition.&n; *                       Add STANDARD_ATAPI compilation option.&n; * 3.07  Jan 29, 1996 -- More twiddling for broken drives: Sony 55D,&n; *                        Vertos 300.&n; *                       Add NO_DOOR_LOCKING configuration option.&n; *                       Handle drive_cmd requests w/NULL args (for hdparm -t).&n; *                       Work around sporadic Sony55e audio play problem.&n; * 3.07a Feb 11, 1996 -- check drive-&gt;id for NULL before dereferencing, to fix&n; *                        problem with &quot;hde=cdrom&quot; with no drive present.  -ml&n; * 3.08  Mar  6, 1996 -- More Vertos workarounds.&n; * 3.09  Apr  5, 1996 -- Add CDROMCLOSETRAY ioctl.&n; *                       Switch to using MSF addressing for audio commands.&n; *                       Reformat to match kernel tabbing style.&n; *                       Add CDROM_GET_UPC ioctl.&n; * 3.10  Apr 10, 1996 -- Fix compilation error with STANDARD_ATAPI.&n; * 3.11  Apr 29, 1996 -- Patch from Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;&n; *                       to remove redundant verify_area calls.&n; * 3.12  May  7, 1996 -- Rudimentary changer support.  Based on patches&n; *                        from Gerhard Zuber &lt;zuber@berlin.snafu.de&gt;.&n; *                       Let open succeed even if there&squot;s no loaded disc.&n; * 3.13  May 19, 1996 -- Fixes for changer code.&n; * 3.14  May 29, 1996 -- Add work-around for Vertos 600.&n; *                        (From Hennus Bergman &lt;hennus@sky.ow.nl&gt;.)&n; *&n; * NOTE: Direct audio reads will only work on some types of drive.&n; * So far, i&squot;ve received reports of success for Sony and Toshiba drives.&n; *&n; * NOTE: The changer functions were tested with the NEC CDR-251 drive.&n; * They may not work with the Sanyo 3-cd changer, which i understand&n; * uses a different protocol.&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; * See Documentation/cdrom/ide-cd for usage information.&n; *&n; * Copyright (C) 1994, 1995, 1996  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_drive_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; * 2.05x Aug 11, 1995 -- lots of data structure renaming/restructuring in ide.c&n; *                       (my apologies to Scott, but now ide-cd.c is independent)&n; * 3.00  Aug 22, 1995 -- Implement CDROMMULTISESSION ioctl.&n; *                       Implement CDROMREADAUDIO ioctl (UNTESTED).&n; *                       Use input_ide_data() and output_ide_data().&n; *                       Add door locking.&n; *                       Fix usage count leak in cdrom_open, which happened&n; *                        when a read-write mount was attempted.&n; *                       Try to load the disk on open.&n; *                       Implement CDROMEJECT_SW ioctl (off by default).&n; *                       Read total cdrom capacity during open.&n; *                       Rearrange logic in cdrom_decode_status.  Issue&n; *                        request sense commands for failed packet commands&n; *                        from here instead of from cdrom_queue_packet_command.&n; *                        Fix a race condition in retrieving error information.&n; *                       Suppress printing normal unit attention errors and&n; *                        some drive not ready errors.&n; *                       Implement CDROMVOLREAD ioctl.&n; *                       Implement CDROMREADMODE1/2 ioctls.&n; *                       Fix race condition in setting up interrupt handlers&n; *                        when the `serialize&squot; option is used.&n; * 3.01  Sep  2, 1995 -- Fix ordering of reenabling interrupts in&n; *                        cdrom_queue_request.&n; *                       Another try at using ide_[input,output]_data.&n; * 3.02  Sep 16, 1995 -- Stick total disk capacity in partition table as well.&n; *                       Make VERBOSE_IDE_CD_ERRORS dump failed command again.&n; *                       Dump out more information for ILLEGAL REQUEST errs.&n; *                       Fix handling of errors occurring before the&n; *                        packet command is transferred.&n; *                       Fix transfers with odd bytelengths.&n; * 3.03  Oct 27, 1995 -- Some Creative drives have an id of just `CD&squot;.&n; *                       `DCI-2S10&squot; drives are broken too.&n; * 3.04  Nov 20, 1995 -- So are Vertos drives.&n; * 3.05  Dec  1, 1995 -- Changes to go with overhaul of ide.c and ide-tape.c&n; * 3.06  Dec 16, 1995 -- Add support needed for partitions.&n; *                       More workarounds for Vertos bugs (based on patches&n; *                        from Holger Dietze &lt;dietze@aix520.informatik.uni-leipzig.de&gt;).&n; *                       Try to eliminate byteorder assumptions.&n; *                       Use atapi_cdrom_subchnl struct definition.&n; *                       Add STANDARD_ATAPI compilation option.&n; * 3.07  Jan 29, 1996 -- More twiddling for broken drives: Sony 55D,&n; *                        Vertos 300.&n; *                       Add NO_DOOR_LOCKING configuration option.&n; *                       Handle drive_cmd requests w/NULL args (for hdparm -t).&n; *                       Work around sporadic Sony55e audio play problem.&n; * 3.07a Feb 11, 1996 -- check drive-&gt;id for NULL before dereferencing, to fix&n; *                        problem with &quot;hde=cdrom&quot; with no drive present.  -ml&n; * 3.08  Mar  6, 1996 -- More Vertos workarounds.&n; * 3.09  Apr  5, 1996 -- Add CDROMCLOSETRAY ioctl.&n; *                       Switch to using MSF addressing for audio commands.&n; *                       Reformat to match kernel tabbing style.&n; *                       Add CDROM_GET_UPC ioctl.&n; * 3.10  Apr 10, 1996 -- Fix compilation error with STANDARD_ATAPI.&n; * 3.11  Apr 29, 1996 -- Patch from Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;&n; *                       to remove redundant verify_area calls.&n; * 3.12  May  7, 1996 -- Rudimentary changer support.  Based on patches&n; *                        from Gerhard Zuber &lt;zuber@berlin.snafu.de&gt;.&n; *                       Let open succeed even if there&squot;s no loaded disc.&n; * 3.13  May 19, 1996 -- Fixes for changer code.&n; * 3.14  May 29, 1996 -- Add work-around for Vertos 600.&n; *                        (From Hennus Bergman &lt;hennus@sky.ow.nl&gt;.)&n; * 3.15  July 2, 1996 -- Added support for Sanyo 3 CD changers&n; *                        from Ben Galliart &lt;bgallia@luc.edu&gt; with &n; *                        special help from Jeff Lightfoot &n; *                        &lt;jeffml@netcom.com&gt;&n; *&n; * NOTE: Direct audio reads will only work on some types of drive.&n; * So far, i&squot;ve received reports of success for Sony and Toshiba drives.&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; * See Documentation/cdrom/ide-cd for usage information.&n; *&n; * Copyright (C) 1994, 1995, 1996  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
 multiline_comment|/***************************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -190,11 +190,18 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive should eject when device is closed. */
+DECL|member|sanyo_slot
+id|__u8
+id|sanyo_slot
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Sanyo 3 CD changer support */
 DECL|member|reserved
 id|__u8
 id|reserved
 suffix:colon
-l_int|4
+l_int|2
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -4678,6 +4685,21 @@ l_int|0
 op_assign
 id|TEST_UNIT_READY
 suffix:semicolon
+multiline_comment|/* the Sanyo 3 CD changer uses byte 7 of TEST_UNIT_READY to &n;           switch CDs instead of supporting the LOAD_UNLOAD opcode   */
+id|pc.c
+(braket
+l_int|7
+)braket
+op_assign
+id|CDROM_STATE_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|sanyo_slot
+op_mod
+l_int|3
+suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
@@ -6843,6 +6865,83 @@ op_star
 id|reqbuf
 )paren
 (brace
+multiline_comment|/* if the drive is a Sanyo 3 CD changer then TEST_UNIT_READY&n;           (used in the cdrom_check_status function) is used to &n;           switch CDs instead of LOAD_UNLOAD */
+r_if
+c_cond
+(paren
+id|CDROM_STATE_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|sanyo_slot
+OG
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|slot
+op_eq
+l_int|1
+)paren
+op_logical_or
+(paren
+id|slot
+op_eq
+l_int|2
+)paren
+)paren
+(brace
+id|CDROM_STATE_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|sanyo_slot
+op_assign
+id|slot
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|slot
+op_ge
+l_int|0
+)paren
+(brace
+id|CDROM_STATE_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|sanyo_slot
+op_assign
+l_int|3
+suffix:semicolon
+)brace
+r_else
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+id|cdrom_check_status
+(paren
+id|drive
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* ATAPI Rev. 2.2+ standard for requesting switching of&n;                   CDs in a multiplatter device */
 r_struct
 id|packet_command
 id|pc
@@ -6900,6 +6999,7 @@ op_amp
 id|pc
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|ide_cdrom_ioctl
 r_int
@@ -9605,6 +9705,16 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* by default Sanyo 3 CD changer support is turned off and&n;           ATAPI Rev 2.2+ standard support for CD changers is used */
+id|CDROM_STATE_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|sanyo_slot
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9890,6 +10000,32 @@ op_member_access_from_pointer
 id|subchan_as_bcd
 op_assign
 l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Sanyo 3 CD changer uses a non-standard command &n;                   for CD changing */
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|drive-&gt;id-&gt;model
+comma
+l_string|&quot;CD-ROM CDR-C3 G&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* uses CD in slot 0 when value is set to 3 */
+id|CDROM_STATE_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|sanyo_slot
+op_assign
+l_int|3
 suffix:semicolon
 )brace
 )brace

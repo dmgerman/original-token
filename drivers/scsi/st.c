@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1996 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sun Jun 30 15:26:23 1996 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1996 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sun Jul  7 10:08:46 1996 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7348,6 +7348,10 @@ id|STp-&gt;eof
 op_assign
 id|ST_NOEOF
 suffix:semicolon
+id|STp-&gt;eof_hit
+op_assign
+l_int|0
+suffix:semicolon
 id|STp-&gt;drv_block
 op_assign
 l_int|0
@@ -10836,6 +10840,26 @@ c_cond
 id|cmd_in
 op_ne
 id|MTLOAD
+op_logical_and
+id|cmd_in
+op_ne
+id|MTLOCK
+op_logical_and
+id|cmd_in
+op_ne
+id|MTUNLOCK
+op_logical_and
+id|cmd_in
+op_ne
+id|MTSETBLK
+op_logical_and
+id|cmd_in
+op_ne
+id|MTSETDENSITY
+op_logical_and
+id|cmd_in
+op_ne
+id|MTSETDRVBUFFER
 )paren
 id|STps-&gt;moves_after_eof
 op_assign
@@ -13621,6 +13645,10 @@ id|MTFSF
 op_logical_or
 id|mtc.mt_op
 op_eq
+id|MTFSFM
+op_logical_or
+id|mtc.mt_op
+op_eq
 id|MTEOM
 )paren
 (brace
@@ -13655,6 +13683,10 @@ c_cond
 id|mtc.mt_op
 op_eq
 id|MTBSF
+op_logical_or
+id|mtc.mt_op
+op_eq
+id|MTBSFM
 )paren
 (brace
 id|mtc.mt_count

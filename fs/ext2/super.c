@@ -1867,6 +1867,10 @@ id|i
 comma
 id|j
 suffix:semicolon
+id|sb-&gt;u.ext2_sb.s_mount_opt
+op_assign
+l_int|0
+suffix:semicolon
 id|set_opt
 (paren
 id|sb-&gt;u.ext2_sb.s_mount_opt

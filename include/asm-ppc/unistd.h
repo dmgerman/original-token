@@ -1,4 +1,3 @@
-multiline_comment|/* * Last edited: Nov 17 16:28 1995 (cort) */
 macro_line|#ifndef _ASM_PPC_UNISTD_H_
 DECL|macro|_ASM_PPC_UNISTD_H_
 mdefine_line|#define _ASM_PPC_UNISTD_H_
@@ -297,118 +296,39 @@ DECL|macro|__NR_flock
 mdefine_line|#define __NR_flock&t;&t;143
 DECL|macro|__NR_msync
 mdefine_line|#define __NR_msync&t;&t;144
-multiline_comment|/*#define __NR_kclone&t;&t;145*/
-multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
+DECL|macro|__NR_readv
+mdefine_line|#define __NR_readv&t;&t;145
+DECL|macro|__NR_writev
+mdefine_line|#define __NR_writev&t;&t;146
+DECL|macro|__NR_getsid
+mdefine_line|#define __NR_getsid&t;&t;147
+DECL|macro|__NR_mlock
+mdefine_line|#define __NR_mlock&t;&t;150
+DECL|macro|__NR_munlock
+mdefine_line|#define __NR_munlock&t;&t;151
+DECL|macro|__NR_mlockall
+mdefine_line|#define __NR_mlockall&t;&t;152
+DECL|macro|__NR_munlockall
+mdefine_line|#define __NR_munlockall&t;&t;153
 DECL|macro|_syscall0
-mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;    long retval; &bslash;&n;    __asm__  ( &bslash;&n;&t;      &quot;li 0, %0 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;sc &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 31,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;bns 10f &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 0,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;lis 3,errno@ha &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;stw 0,errno@l(3) &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;li 3,-1 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;10: &bslash;n&bslash;t&quot; &bslash;&n;&t;      : &bslash;&n;&t;      : &quot;i&quot; (__NR_##name) &bslash;&n;&t;      : &quot;0&quot;, &quot;31&quot;, &quot;3&quot;, &quot;cc&quot;, &quot;memory&quot; &bslash;&n;&t;      );  &bslash;&n;    return(retval);&bslash;&n;}
 DECL|macro|_syscall1
-mdefine_line|#define _syscall1(type,name,type1,arg1) &bslash;&n;type name(type1 arg1) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall1(type,name,type1,arg1) &bslash;&n;type name(type1 arg1) &bslash;&n;{ &bslash;&n;    long retval; &bslash;&n;    __asm__  ( &bslash;&n;&t;      &quot;li 0, %0 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;sc &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 31,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;bns 10f &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 0,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;lis 3,errno@ha &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;stw 0,errno@l(3) &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;li 3,-1 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;10: &bslash;n&bslash;t&quot; &bslash;&n;&t;      : &bslash;&n;&t;      : &quot;i&quot; (__NR_##name) &bslash;&n;&t;      : &quot;0&quot;, &quot;31&quot;, &quot;3&quot;, &quot;cc&quot;, &quot;memory&quot; &bslash;&n;&t;      );  &bslash;&n;    return(retval); &bslash;&n;}
 DECL|macro|_syscall2
-mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2) &bslash;&n;type name(type1 arg1,type2 arg2) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2) &bslash;&n;type name(type1 arg1,type2 arg2) &bslash;&n;{ &bslash;&n;    long retval; &bslash;&n;    __asm__  ( &bslash;&n;&t;      &quot;li 0, %0 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;sc &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 31,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;bns 10f &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 0,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;lis 3,errno@ha &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;stw 0,errno@l(3) &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;li 3,-1 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;10: &bslash;n&bslash;t&quot; &bslash;&n;&t;      : &bslash;&n;&t;      : &quot;i&quot; (__NR_##name) &bslash;&n;&t;      : &quot;0&quot;, &quot;31&quot;, &quot;3&quot;, &quot;cc&quot;, &quot;memory&quot; &bslash;&n;&t;      );  &bslash;&n;    return(retval); &bslash;&n;}
 DECL|macro|_syscall3
-mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) &bslash;&n;type name(type1 arg1,type2 arg2,type3 arg3) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) &bslash;&n;type name(type1 arg1,type2 arg2, type3 arg3) &bslash;&n;{ &bslash;&n;    long retval; &bslash;&n;    __asm__  ( &bslash;&n;&t;      &quot;li 0, %0 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;sc &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 31,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;bns 10f &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 0,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;lis 3,errno@ha &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;stw 0,errno@l(3) &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;li 3,-1 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;10: &bslash;n&bslash;t&quot; &bslash;&n;&t;      : &bslash;&n;&t;      : &quot;i&quot; (__NR_##name) &bslash;&n;&t;      : &quot;0&quot;, &quot;31&quot;, &quot;3&quot;, &quot;cc&quot;, &quot;memory&quot; &bslash;&n;&t;      );  &bslash;&n;    return(retval); &bslash;&n;}
 DECL|macro|_syscall4
-mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;} 
+mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ &bslash;&n;    long retval; &bslash;&n;    __asm__  ( &bslash;&n;&t;      &quot;li 0, %0 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;sc &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 31,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;bns 10f &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 0,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;lis 3,errno@ha &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;stw 0,errno@l(3) &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;li 3,-1 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;10: &bslash;n&bslash;t&quot; &bslash;&n;&t;      : &bslash;&n;&t;      : &quot;i&quot; (__NR_##name) &bslash;&n;&t;      : &quot;0&quot;, &quot;31&quot;, &quot;3&quot;, &quot;cc&quot;, &quot;memory&quot; &bslash;&n;&t;      );  &bslash;&n;    return(retval); &bslash;&n;}
 DECL|macro|_syscall5
-mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ &bslash;&n;    long retval; &bslash;&n;    __asm__  ( &bslash;&n;&t;      &quot;li 0, %0 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;sc &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 31,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;bns 10f &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;mr 0,3 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;lis 3,errno@ha &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;stw 0,errno@l(3) &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;li 3,-1 &bslash;n&bslash;t&quot; &bslash;&n;&t;      &quot;10: &bslash;n&bslash;t&quot; &bslash;&n;&t;      : &bslash;&n;&t;      : &quot;i&quot; (__NR_##name) &bslash;&n;&t;      : &quot;0&quot;, &quot;31&quot;, &quot;3&quot;, &quot;cc&quot;, &quot;memory&quot; &bslash;&n;&t;      );  &bslash;&n;    return(retval); &bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
-r_extern
-r_int
-id|__kernel_thread
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-(paren
-op_star
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
-DECL|function|kernel_thread
-r_static
-r_inline
-r_int
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
-(brace
-r_return
-id|__kernel_thread
-c_func
-(paren
-id|flags
-op_or
-id|CLONE_VM
-comma
-id|fn
-comma
-id|arg
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;   some of these had problems getting the right arguments (namely sys_clone())&n;   when they were inline.&n;             -- Cort&n; */
+multiline_comment|/*&n;   some of these had problems getting the right arguments (namely sys_clone())&n;   when they were inline so I made them non-inline until we get problems with gcc&n;   worked out.  I need to check with Linus to find out which he wants inline now&n;   since the above comment was written a long time ago.&n;&n;   Once I understand the macro language better this should go away.&n;             -- Cort&n; */
 DECL|macro|__NR__exit
 mdefine_line|#define __NR__exit __NR_exit
 r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|idle
-)paren
-multiline_comment|/* made inline &quot;just in case&quot; -- Cort */
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|fork
-)paren
-multiline_comment|/* needs to be inline */
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|pause
-)paren
-multiline_comment|/* needs to be inline */
-r_static
-r_inline
+multiline_comment|/*__inline__*/
 id|_syscall0
 c_func
 (paren
@@ -416,9 +336,35 @@ r_int
 comma
 id|setup
 )paren
-multiline_comment|/* called in init before execve */
 r_static
-r_inline
+id|__inline__
+id|_syscall0
+c_func
+(paren
+r_int
+comma
+id|idle
+)paren
+r_static
+multiline_comment|/*__inline__*/
+id|_syscall0
+c_func
+(paren
+r_int
+comma
+id|fork
+)paren
+r_static
+id|__inline__
+id|_syscall0
+c_func
+(paren
+r_int
+comma
+id|pause
+)paren
+r_static
+id|__inline__
 id|_syscall0
 c_func
 (paren
@@ -427,7 +373,7 @@ comma
 id|sync
 )paren
 r_static
-r_inline
+id|__inline__
 id|_syscall0
 c_func
 (paren
@@ -436,7 +382,7 @@ comma
 id|setsid
 )paren
 r_static
-multiline_comment|/*inline*/
+id|__inline__
 id|_syscall3
 c_func
 (paren
@@ -459,7 +405,7 @@ comma
 id|count
 )paren
 r_static
-multiline_comment|/*inline*/
+multiline_comment|/*__inline__*/
 id|_syscall1
 c_func
 (paren
@@ -472,7 +418,7 @@ comma
 id|fd
 )paren
 r_static
-multiline_comment|/*inline*/
+multiline_comment|/*__inline__*/
 id|_syscall3
 c_func
 (paren
@@ -499,7 +445,7 @@ comma
 id|envp
 )paren
 r_static
-multiline_comment|/*inline*/
+id|__inline__
 id|_syscall3
 c_func
 (paren
@@ -522,7 +468,7 @@ comma
 id|mode
 )paren
 r_static
-r_inline
+multiline_comment|/*__inline__*/
 id|_syscall1
 c_func
 (paren
@@ -535,7 +481,7 @@ comma
 id|fd
 )paren
 r_static
-multiline_comment|/*inline*/
+multiline_comment|/*__inline__*/
 id|_syscall1
 c_func
 (paren
@@ -548,7 +494,26 @@ comma
 id|exitcode
 )paren
 r_static
-r_inline
+id|__inline__
+id|_syscall2
+c_func
+(paren
+r_int
+comma
+id|clone
+comma
+r_int
+r_int
+comma
+id|flags
+comma
+r_char
+op_star
+comma
+id|esp
+)paren
+r_static
+id|__inline__
 id|_syscall3
 c_func
 (paren
@@ -569,98 +534,9 @@ r_int
 comma
 id|options
 )paren
-multiline_comment|/*static inline _syscall2(int,clone,unsigned long,flags,char *,esp)*/
-multiline_comment|/*&n;   syscalls from kernel mode is a little strange and I can&squot;t get used to&n;   the idea -- this makes me feel better.   -- Cort&n; */
-multiline_comment|/*static inline int kclone (void)&n;{&n; __asm__ (_lisc(__NR_kclone)); &n; __asm__ (&quot;sc&quot;); &n; __asm__ (&quot;mr 31,3&quot;); &n; __asm__ (&quot;bns 10f&quot;); &n; __asm__ (&quot;mr 0,3&quot;); &n; __asm__ (&quot;lis 3,errno@ha&quot;); &n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &n; __asm__ (&quot;li 3,-1&quot;); &n; __asm__ (&quot;10:&quot;);   &n;}*/
-DECL|function|clone
-r_static
-r_inline
-r_int
-id|clone
-(paren
-r_int
-r_int
-id|flags
-comma
-r_char
-op_star
-id|esp
-)paren
-(brace
-multiline_comment|/*  printk(&quot;unistd.h: clone(): flags = %x, esp = %x&bslash;n&quot;, flags, esp);*/
-id|__asm__
-(paren
-id|_lisc
-c_func
-(paren
-id|__NR_clone
-)paren
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;sc&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;mr 31,3&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* this is a hack to get the damned thing to return something even though inlined&n;   -- Cort&n;   */
-id|__asm__
-(paren
-l_string|&quot;mr 0,3&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;lis 3,errno@ha&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;stw 0,errno@l(3)&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;bns 10f&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;mr 0,3&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;lis 3,errno@ha&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;stw 0,errno@l(3)&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;li 3,-1&quot;
-)paren
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;10:&quot;
-)paren
-suffix:semicolon
-r_return
-id|errno
-suffix:semicolon
-)brace
-multiline_comment|/* called from init before execve -- need to be inline? -- Cort */
 DECL|function|wait
 r_static
-r_inline
+id|__inline__
 id|pid_t
 id|wait
 c_func
@@ -683,6 +559,114 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+multiline_comment|/*&n;   This is the mechanism for creating a new kernel thread.&n;   For the time being it only behaves the same as clone().&n;   It should be changed very soon to work properly and cleanly.  This&n;   gets us going for now, though.&n;     -- Cort&n; */
+DECL|function|kernel_thread
+r_static
+id|__inline__
+r_int
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+(paren
+l_string|&quot;li 0, 120 &bslash;n&bslash;t&quot;
+multiline_comment|/* __NR_clone */
+l_string|&quot;li 3, %5 &bslash;n&bslash;t&quot;
+multiline_comment|/* load flags as arg to clone */
+multiline_comment|/*&quot;mr 1,7 &bslash;n&bslash;t&quot;*/
+multiline_comment|/* save kernel stack */
+l_string|&quot;sc &bslash;n&bslash;t&quot;
+multiline_comment|/* syscall */
+multiline_comment|/*&quot;cmp 0,1,7 &bslash;n&bslash;t&quot;*/
+multiline_comment|/* if kernel stack changes -- child */
+l_string|&quot;cmpi&t;0,3,0 &bslash;n&bslash;t&quot;
+l_string|&quot;bne 1f &bslash;n&bslash;t&quot;
+multiline_comment|/* return if parent */
+multiline_comment|/* this is in child */
+l_string|&quot;li 3, %3 &bslash;n&bslash;t&quot;
+multiline_comment|/* child -- load args and call fn */
+l_string|&quot;mtlr %4 &bslash;n&bslash;t&quot;
+l_string|&quot;blrl &bslash;n&bslash;t&quot;
+l_string|&quot;li 0, %2 &bslash;n&bslash;t&quot;
+multiline_comment|/* exit after child exits */
+l_string|&quot;li 3, 0 &bslash;n&bslash;t&quot;
+l_string|&quot;sc &bslash;n&bslash;t&quot;
+multiline_comment|/* parent */
+l_string|&quot;1: &bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=3&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|__NR_clone
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|__NR_exit
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|arg
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fn
+)paren
+comma
+l_string|&quot;g&quot;
+(paren
+id|CLONE_VM
+op_or
+id|flags
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+comma
+l_string|&quot;1&quot;
+comma
+l_string|&quot;0&quot;
+comma
+l_string|&quot;3&quot;
+comma
+l_string|&quot;7&quot;
+comma
+l_string|&quot;31&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+macro_line|#endif /* __KERNEL_SYSCALLS__ */
 macro_line|#endif /* _ASM_PPC_UNISTD_H_ */
 eof

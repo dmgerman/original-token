@@ -1,4 +1,6 @@
 multiline_comment|/*&n; * This program is used to generate definitions needed by&n; * assembly language modules.&n; */
+DECL|macro|MK_DEFS
+mdefine_line|#define MK_DEFS
 macro_line|#include &lt;stdio.h&gt; 
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

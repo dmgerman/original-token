@@ -6217,7 +6217,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Detected scsi disk sd%c at scsi%d, channel %d, id %d, lun %d&bslash;n&quot;
+l_string|&quot;Detected scsi %sdisk sd%c at scsi%d, channel %d, id %d, lun %d&bslash;n&quot;
+comma
+id|SDp-&gt;removable
+ques
+c_cond
+l_string|&quot;removable &quot;
+suffix:colon
+l_string|&quot;&quot;
 comma
 l_char|&squot;a&squot;
 op_plus
