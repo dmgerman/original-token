@@ -399,12 +399,24 @@ DECL|member|priority
 r_int
 id|priority
 suffix:semicolon
-DECL|member|binfmt
-r_struct
-id|linux_binfmt
-op_star
-id|binfmt
+multiline_comment|/* SMP and runqueue state */
+DECL|member|has_cpu
+r_int
+id|has_cpu
 suffix:semicolon
+DECL|member|processor
+r_int
+id|processor
+suffix:semicolon
+DECL|member|last_processor
+r_int
+id|last_processor
+suffix:semicolon
+DECL|member|lock_depth
+r_int
+id|lock_depth
+suffix:semicolon
+multiline_comment|/* Lock depth. We can context switch in and out of holding a syscall kernel lock... */
 DECL|member|next_task
 DECL|member|prev_task
 r_struct
@@ -424,6 +436,13 @@ id|next_run
 comma
 op_star
 id|prev_run
+suffix:semicolon
+multiline_comment|/* task state */
+DECL|member|binfmt
+r_struct
+id|linux_binfmt
+op_star
+id|binfmt
 suffix:semicolon
 DECL|member|exit_code
 DECL|member|exit_signal
@@ -761,6 +780,11 @@ op_star
 id|mm
 suffix:semicolon
 multiline_comment|/* signal handlers */
+DECL|member|sigmask_lock
+id|spinlock_t
+id|sigmask_lock
+suffix:semicolon
+multiline_comment|/* Protects signal and blocked */
 DECL|member|sig
 r_struct
 id|signal_struct
@@ -794,30 +818,6 @@ DECL|member|sas_ss_size
 r_int
 id|sas_ss_size
 suffix:semicolon
-multiline_comment|/* SMP state */
-DECL|member|has_cpu
-r_int
-id|has_cpu
-suffix:semicolon
-DECL|member|processor
-r_int
-id|processor
-suffix:semicolon
-DECL|member|last_processor
-r_int
-id|last_processor
-suffix:semicolon
-DECL|member|lock_depth
-r_int
-id|lock_depth
-suffix:semicolon
-multiline_comment|/* Lock depth. We can context switch in and out of holding a syscall kernel lock... */
-multiline_comment|/* Spinlocks for various pieces or per-task state. */
-DECL|member|sigmask_lock
-id|spinlock_t
-id|sigmask_lock
-suffix:semicolon
-multiline_comment|/* Protects signal and blocked */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Per process flags&n; */
@@ -859,7 +859,7 @@ mdefine_line|#define INIT_LOCKS
 macro_line|#endif
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, &bslash;&n;/* timeout */&t;0,SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, &bslash;&n;&t;&t;0, 0, &bslash;&n;/* SMP */&t;0,0,0,0, &bslash;&n;/* locks */&t;INIT_LOCKS &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, &bslash;&n;/* timeout */&t;0,SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;INIT_LOCKS, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
 DECL|union|task_union
 r_union
 id|task_union

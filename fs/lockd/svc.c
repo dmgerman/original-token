@@ -534,6 +534,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;lockd: new process, skipping host shutdown&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -570,6 +571,12 @@ c_func
 r_void
 )paren
 (brace
+r_static
+r_int
+id|warned
+op_assign
+l_int|0
+suffix:semicolon
 r_struct
 id|svc_serv
 op_star
@@ -611,6 +618,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;lockd_up: no pid, %d users??&bslash;n&quot;
 comma
 id|nlmsvc_users
@@ -644,6 +652,7 @@ id|serv
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;lockd_up: create service failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -687,9 +696,18 @@ OL
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|warned
+op_increment
+op_eq
+l_int|0
+)paren
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;lockd_up: makesock failed, error=%d&bslash;n&quot;
 comma
 id|error
@@ -699,6 +717,10 @@ r_goto
 id|destroy_and_out
 suffix:semicolon
 )brace
+id|warned
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Create the kernel thread and wait for it to start.&n;&t; */
 id|error
 op_assign
@@ -719,6 +741,7 @@ id|error
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;lockd_up: create thread failed, error=%d&bslash;n&quot;
 comma
 id|error
@@ -766,6 +789,12 @@ c_func
 r_void
 )paren
 (brace
+r_static
+r_int
+id|warned
+op_assign
+l_int|0
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -793,6 +822,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;lockd_down: no users! pid=%d&bslash;n&quot;
 comma
 id|nlmsvc_pid
@@ -805,16 +835,29 @@ op_logical_neg
 id|nlmsvc_pid
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|warned
+op_increment
+op_eq
+l_int|0
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;lockd_down: nothing to do!&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;lockd_down: no lockd running.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
 )brace
+id|warned
+op_assign
+l_int|0
+suffix:semicolon
 id|kill_proc
 c_func
 (paren
@@ -856,6 +899,7 @@ id|nlmsvc_pid
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;lockd_down: lockd failed to exit, clearing pid&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1,71 +1,13 @@
 multiline_comment|/*&n; *&t;Intel IO-APIC support for multi-Pentium hosts.&n; *&n; *&t;Copyright (C) 1997, 1998 Ingo Molnar, Hajnalka Szabo&n; *&n; *&t;Many thanks to Stig Venaas for trying out countless experimental&n; *&t;patches and reporting/debugging problems patiently!&n; */
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/mc146818rtc.h&gt;
-macro_line|#include &lt;asm/i82489.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;irq.h&quot;
-multiline_comment|/*&n; * volatile is justified in this case, it might change&n; * spontaneously, GCC should not cache it&n; */
+multiline_comment|/*&n; * volatile is justified in this case, IO-APIC register contents&n; * might change spontaneously, GCC should not cache it&n; */
 DECL|macro|IO_APIC_BASE
 mdefine_line|#define IO_APIC_BASE ((volatile int *)fix_to_virt(FIX_IO_APIC_BASE))
-DECL|enum|mp_irq_source_types
-r_enum
-id|mp_irq_source_types
-(brace
-DECL|enumerator|mp_INT
-id|mp_INT
-op_assign
-l_int|0
-comma
-DECL|enumerator|mp_NMI
-id|mp_NMI
-op_assign
-l_int|1
-comma
-DECL|enumerator|mp_SMI
-id|mp_SMI
-op_assign
-l_int|2
-comma
-DECL|enumerator|mp_ExtINT
-id|mp_ExtINT
-op_assign
-l_int|3
-)brace
-suffix:semicolon
-DECL|enum|ioapic_irq_destination_types
-r_enum
-id|ioapic_irq_destination_types
-(brace
-DECL|enumerator|dest_Fixed
-id|dest_Fixed
-op_assign
-l_int|0
-comma
-DECL|enumerator|dest_LowestPrio
-id|dest_LowestPrio
-op_assign
-l_int|1
-comma
-DECL|enumerator|dest_ExtINT
-id|dest_ExtINT
-op_assign
-l_int|7
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * The structure of the IO-APIC:&n; */
 DECL|struct|IO_APIC_reg_00
 r_struct
@@ -155,6 +97,33 @@ id|__attribute__
 id|packed
 )paren
 )paren
+suffix:semicolon
+multiline_comment|/*&n; * # of IRQ routing registers&n; */
+DECL|variable|nr_ioapic_registers
+r_int
+id|nr_ioapic_registers
+op_assign
+l_int|0
+suffix:semicolon
+DECL|enum|ioapic_irq_destination_types
+r_enum
+id|ioapic_irq_destination_types
+(brace
+DECL|enumerator|dest_Fixed
+id|dest_Fixed
+op_assign
+l_int|0
+comma
+DECL|enumerator|dest_LowestPrio
+id|dest_LowestPrio
+op_assign
+l_int|1
+comma
+DECL|enumerator|dest_ExtINT
+id|dest_ExtINT
+op_assign
+l_int|7
+)brace
 suffix:semicolon
 DECL|struct|IO_APIC_route_entry
 r_struct
@@ -263,15 +232,32 @@ id|packed
 )paren
 )paren
 suffix:semicolon
-DECL|macro|UNEXPECTED_IO_APIC
-mdefine_line|#define UNEXPECTED_IO_APIC()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;printk(&quot; WARNING: unexpected IO-APIC, please mail&bslash;n&quot;);&t;&bslash;&n;&t;&t;printk(&quot;          to linux-smp@vger.rutgers.edu&bslash;n&quot;);&t;&bslash;&n;&t;}
-DECL|variable|nr_ioapic_registers
-r_int
-id|nr_ioapic_registers
+multiline_comment|/*&n; * MP-BIOS irq configuration table structures:&n; */
+DECL|enum|mp_irq_source_types
+r_enum
+id|mp_irq_source_types
+(brace
+DECL|enumerator|mp_INT
+id|mp_INT
 op_assign
 l_int|0
+comma
+DECL|enumerator|mp_NMI
+id|mp_NMI
+op_assign
+l_int|1
+comma
+DECL|enumerator|mp_SMI
+id|mp_SMI
+op_assign
+l_int|2
+comma
+DECL|enumerator|mp_ExtINT
+id|mp_ExtINT
+op_assign
+l_int|3
+)brace
 suffix:semicolon
-multiline_comment|/* # of IRQ routing registers */
 DECL|variable|mp_irq_entries
 r_int
 id|mp_irq_entries
@@ -305,9 +291,12 @@ id|NR_IRQS
 )braket
 suffix:semicolon
 DECL|function|io_apic_read
+r_static
+r_inline
 r_int
 r_int
 id|io_apic_read
+c_func
 (paren
 r_int
 r_int
@@ -329,8 +318,11 @@ l_int|4
 suffix:semicolon
 )brace
 DECL|function|io_apic_write
+r_static
+r_inline
 r_void
 id|io_apic_write
+c_func
 (paren
 r_int
 r_int
@@ -380,6 +372,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * We disable IO-APIC IRQs by setting their &squot;destination CPU mask&squot; to&n; * zero. Trick, trick.&n; */
 DECL|function|disable_IO_APIC_irq
+r_static
+r_inline
 r_void
 id|disable_IO_APIC_irq
 c_func
@@ -470,6 +464,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|enable_IO_APIC_irq
+r_static
+r_inline
 r_void
 id|enable_IO_APIC_irq
 c_func
@@ -555,6 +551,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|mask_IO_APIC_irq
+r_static
+r_inline
 r_void
 id|mask_IO_APIC_irq
 c_func
@@ -645,6 +643,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|unmask_IO_APIC_irq
+r_static
+r_inline
 r_void
 id|unmask_IO_APIC_irq
 c_func
@@ -730,8 +730,11 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|clear_IO_APIC_pin
+r_static
 r_void
+id|__init
 id|clear_IO_APIC_pin
+c_func
 (paren
 r_int
 r_int
@@ -824,11 +827,9 @@ DECL|variable|pirqs_enabled
 r_int
 id|pirqs_enabled
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ioapic_pirq_setup
 r_void
+id|__init
 id|ioapic_pirq_setup
 c_func
 (paren
@@ -839,7 +840,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -883,7 +883,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PIRQ redirection SETUP, trusting MP-BIOS.&bslash;n&quot;
+l_string|&quot;PIRQ redirection, trusting MP-BIOS.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -896,7 +896,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PIRQ redirection SETUP, working around broken MP-BIOS.&bslash;n&quot;
+l_string|&quot;PIRQ redirection, working around broken MP-BIOS.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|max
@@ -971,12 +971,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Find the IRQ entry number of a certain pin.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|find_irq_entry
 r_static
 r_int
+id|__init
 id|find_irq_entry
 c_func
 (paren
@@ -985,7 +983,6 @@ id|pin
 comma
 r_int
 id|type
-)paren
 )paren
 (brace
 r_int
@@ -1039,16 +1036,15 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find the pin to which IRQ0 (ISA) is connected&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|find_timer_pin
+r_static
+r_int
+id|__init
+id|find_timer_pin
 c_func
 (paren
 r_int
-id|find_timer_pin
-(paren
-r_int
 id|type
-)paren
 )paren
 (brace
 r_int
@@ -1131,6 +1127,7 @@ multiline_comment|/*&n; * Find a specific PCI IRQ entry.&n; * Not an initfunc, p
 DECL|function|IO_APIC_get_PCI_irq_vector
 r_int
 id|IO_APIC_get_PCI_irq_vector
+c_func
 (paren
 r_int
 id|bus
@@ -1267,6 +1264,7 @@ multiline_comment|/*&n; * There are broken mptables which register ISA+high-acti
 DECL|function|MPBIOS_polarity
 r_static
 r_int
+id|__init
 id|MPBIOS_polarity
 c_func
 (paren
@@ -1430,6 +1428,7 @@ suffix:semicolon
 DECL|function|MPBIOS_trigger
 r_static
 r_int
+id|__init
 id|MPBIOS_trigger
 c_func
 (paren
@@ -1597,7 +1596,9 @@ suffix:semicolon
 DECL|function|trigger_flag_broken
 r_static
 r_int
+id|__init
 id|trigger_flag_broken
+c_func
 (paren
 r_int
 id|idx
@@ -1667,8 +1668,10 @@ suffix:semicolon
 )brace
 DECL|function|irq_polarity
 r_static
+r_inline
 r_int
 id|irq_polarity
+c_func
 (paren
 r_int
 id|idx
@@ -1685,8 +1688,10 @@ suffix:semicolon
 )brace
 DECL|function|irq_trigger
 r_static
+r_inline
 r_int
 id|irq_trigger
+c_func
 (paren
 r_int
 id|idx
@@ -1705,6 +1710,7 @@ r_if
 c_cond
 (paren
 id|trigger_flag_broken
+c_func
 (paren
 id|idx
 )paren
@@ -1720,7 +1726,9 @@ suffix:semicolon
 DECL|function|pin_2_irq
 r_static
 r_int
+id|__init
 id|pin_2_irq
+c_func
 (paren
 r_int
 id|idx
@@ -1906,8 +1914,11 @@ id|irq
 suffix:semicolon
 )brace
 DECL|function|IO_APIC_irq_trigger
+r_static
+r_inline
 r_int
 id|IO_APIC_irq_trigger
+c_func
 (paren
 r_int
 id|irq
@@ -1966,12 +1977,10 @@ id|pin
 )paren
 )paren
 r_return
-(paren
 id|irq_trigger
 c_func
 (paren
 id|idx
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1980,18 +1989,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|assign_irq_vector
 r_static
 r_int
+id|__init
 id|assign_irq_vector
 c_func
 (paren
 r_int
 id|irq
-)paren
 )paren
 (brace
 r_static
@@ -2064,15 +2070,13 @@ r_return
 id|current_vector
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|setup_IO_APIC_irqs
+r_void
+id|__init
+id|setup_IO_APIC_irqs
 c_func
 (paren
 r_void
-id|setup_IO_APIC_irqs
-(paren
-r_void
-)paren
 )paren
 (brace
 r_struct
@@ -2337,17 +2341,15 @@ l_string|&quot; not connected.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_IO_APIC_irq_ISA_default
 r_void
+id|__init
 id|setup_IO_APIC_irq_ISA_default
+c_func
 (paren
 r_int
 r_int
 id|irq
-)paren
 )paren
 (brace
 r_struct
@@ -2455,17 +2457,15 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set up a certain pin as ExtINT delivered interrupt&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_ExtINT_pin
 r_void
+id|__init
 id|setup_ExtINT_pin
+c_func
 (paren
 r_int
 r_int
 id|pin
-)paren
 )paren
 (brace
 r_struct
@@ -2568,9 +2568,33 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+DECL|function|UNEXPECTED_IO_APIC
+r_void
+id|__init
+id|UNEXPECTED_IO_APIC
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; WARNING: unexpected IO-APIC, please mail&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;          to linux-smp@vger.rutgers.edu&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 DECL|function|print_IO_APIC
 r_void
+id|__init
 id|print_IO_APIC
+c_func
 (paren
 r_void
 )paren
@@ -2990,16 +3014,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_sym_mode
 r_static
 r_void
+id|__init
 id|init_sym_mode
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -3128,6 +3150,7 @@ id|pin
 op_increment
 )paren
 id|clear_IO_APIC_pin
+c_func
 (paren
 id|pin
 )paren
@@ -3137,6 +3160,7 @@ multiline_comment|/*&n; * Not an initfunc, needed by the reboot code&n; */
 DECL|function|init_pic_mode
 r_void
 id|init_pic_mode
+c_func
 (paren
 r_void
 )paren
@@ -3148,6 +3172,7 @@ l_string|&quot;disabling symmetric IO mode... &quot;
 )paren
 suffix:semicolon
 id|outb_p
+c_func
 (paren
 l_int|0x70
 comma
@@ -3155,6 +3180,7 @@ l_int|0x22
 )paren
 suffix:semicolon
 id|outb_p
+c_func
 (paren
 l_int|0x00
 comma
@@ -3201,6 +3227,7 @@ suffix:semicolon
 DECL|variable|ioapic_whitelist
 r_struct
 id|ioapic_list_entry
+id|__initdata
 id|ioapic_whitelist
 (braket
 )braket
@@ -3234,6 +3261,7 @@ suffix:semicolon
 DECL|variable|ioapic_blacklist
 r_struct
 id|ioapic_list_entry
+id|__initdata
 id|ioapic_blacklist
 (braket
 )braket
@@ -3252,19 +3280,17 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|in_ioapic_list
 r_static
 r_int
+id|__init
 id|in_ioapic_list
+c_func
 (paren
 r_struct
 id|ioapic_list_entry
 op_star
 id|table
-)paren
 )paren
 (brace
 r_for
@@ -3308,16 +3334,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ioapic_whitelisted
 r_static
 r_int
+id|__init
 id|ioapic_whitelisted
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n; * Right now, whitelist everything to see whether the new parsing&n; * routines really do work for everybody.&n; */
@@ -3335,16 +3359,14 @@ id|ioapic_whitelist
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ioapic_blacklisted
 r_static
 r_int
+id|__init
 id|ioapic_blacklisted
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return
@@ -3355,16 +3377,14 @@ id|ioapic_blacklist
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_ioapic_id
 r_static
 r_void
+id|__init
 id|setup_ioapic_id
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -3458,16 +3478,14 @@ l_string|&quot;could not set ID&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|construct_default_ISA_mptable
 r_static
 r_void
+id|__init
 id|construct_default_ISA_mptable
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -3605,16 +3623,14 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * There is a nasty bug in some older SMP boards, their mptable lies&n; * about the timer IRQ. We do the following to work around the situation:&n; *&n; *&t;- timer IRQ defaults to IO-APIC IRQ&n; *&t;- if this function detects that timer IRQs are defunct, then we fall&n; *&t;  back to ISA timer IRQs&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|timer_irq_works
 r_static
 r_int
+id|__init
 id|timer_irq_works
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -3622,16 +3638,6 @@ r_int
 id|t1
 op_assign
 id|jiffies
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|sti
 c_func
@@ -3662,13 +3668,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * In the SMP+IOAPIC case it might happen that there are an unspecified&n; * number of pending IRQ events unhandled. These cases are very rare,&n; * so we &squot;resend&squot; these IRQs via IPIs, to the same CPU. It&squot;s much&n; * better to do it this way as thus we do not have to be aware of&n; * &squot;pending&squot; interrupts in the IRQ path, except at this point.&n; */
 DECL|function|self_IPI
 r_static
 r_inline
 r_void
 id|self_IPI
+c_func
 (paren
 r_int
 r_int
@@ -3974,6 +3980,7 @@ DECL|function|do_level_ioapic_IRQ
 r_static
 r_void
 id|do_level_ioapic_IRQ
+c_func
 (paren
 r_int
 r_int
@@ -4159,6 +4166,8 @@ id|disable_level_ioapic_irq
 )brace
 suffix:semicolon
 DECL|function|init_IO_APIC_traps
+r_static
+r_inline
 r_void
 id|init_IO_APIC_traps
 c_func
@@ -4248,18 +4257,15 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * This code may look a bit paranoid, but it&squot;s supposed to cooperate with&n; * a wide range of boards and BIOS bugs.  Fortunately only the timer IRQ&n; * is so screwy.  Thanks to Brian Perkins for testing/hacking this beast&n; * fanatically on his truly buggy board.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_timer
 r_static
+r_inline
 r_void
 id|check_timer
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -4270,6 +4276,7 @@ suffix:semicolon
 id|pin1
 op_assign
 id|find_timer_pin
+c_func
 (paren
 id|mp_INT
 )paren
@@ -4277,6 +4284,7 @@ suffix:semicolon
 id|pin2
 op_assign
 id|find_timer_pin
+c_func
 (paren
 id|mp_ExtINT
 )paren
@@ -4286,6 +4294,7 @@ c_cond
 (paren
 op_logical_neg
 id|timer_irq_works
+c_func
 (paren
 )paren
 )paren
@@ -4328,6 +4337,7 @@ id|pin2
 )paren
 suffix:semicolon
 id|setup_ExtINT_pin
+c_func
 (paren
 id|pin2
 )paren
@@ -4344,6 +4354,7 @@ c_cond
 (paren
 op_logical_neg
 id|timer_irq_works
+c_func
 (paren
 )paren
 )paren
@@ -4370,6 +4381,7 @@ op_minus
 l_int|1
 )paren
 id|clear_IO_APIC_pin
+c_func
 (paren
 id|pin1
 )paren
@@ -4383,6 +4395,7 @@ op_minus
 l_int|1
 )paren
 id|clear_IO_APIC_pin
+c_func
 (paren
 id|pin2
 )paren
@@ -4398,6 +4411,7 @@ c_cond
 (paren
 op_logical_neg
 id|timer_irq_works
+c_func
 (paren
 )paren
 )paren
@@ -4424,15 +4438,13 @@ l_string|&quot; works.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|setup_IO_APIC
+r_void
+id|__init
+id|setup_IO_APIC
 c_func
 (paren
 r_void
-id|setup_IO_APIC
-(paren
-r_void
-)paren
 )paren
 (brace
 id|init_sym_mode
@@ -4543,6 +4555,7 @@ c_func
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the IO-APIC IRQ routing table by parsing the MP-BIOS&n;&t; * mptable:&n;&t; */
 id|setup_IO_APIC_irqs
+c_func
 (paren
 )paren
 suffix:semicolon

@@ -2040,7 +2040,7 @@ r_int
 id|nr
 suffix:semicolon
 r_int
-id|error
+id|retval
 op_assign
 op_minus
 id|ENOMEM
@@ -2078,7 +2078,7 @@ id|p
 r_goto
 id|bad_fork
 suffix:semicolon
-id|error
+id|retval
 op_assign
 op_minus
 id|EAGAIN
@@ -2160,13 +2160,18 @@ c_func
 id|clone_flags
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * This is a &quot;shadow run&quot; state. The process&n;&t; * is marked runnable, but isn&squot;t actually on&n;&t; * any run queue yet.. (that happens at the&n;&t; * very end).&n;&t; */
+id|p-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|p-&gt;next_run
 op_assign
-l_int|NULL
+id|p
 suffix:semicolon
 id|p-&gt;prev_run
 op_assign
-l_int|NULL
+id|p
 suffix:semicolon
 id|p-&gt;p_pptr
 op_assign
@@ -2310,8 +2315,10 @@ suffix:semicolon
 macro_line|#endif
 id|p-&gt;lock_depth
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
+multiline_comment|/* -1 = no lock */
 id|p-&gt;start_time
 op_assign
 id|jiffies
@@ -2330,6 +2337,7 @@ op_assign
 id|p
 suffix:semicolon
 (brace
+multiline_comment|/* This makes it visible to the rest of the system */
 r_int
 r_int
 id|flags
@@ -2368,7 +2376,7 @@ suffix:semicolon
 id|nr_tasks
 op_increment
 suffix:semicolon
-id|error
+id|retval
 op_assign
 op_minus
 id|ENOMEM
@@ -2432,7 +2440,7 @@ id|p
 r_goto
 id|bad_fork_cleanup_sighand
 suffix:semicolon
-id|error
+id|retval
 op_assign
 id|copy_thread
 c_func
@@ -2451,7 +2459,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
+id|retval
 )paren
 r_goto
 id|bad_fork_cleanup_sighand
@@ -2484,39 +2492,35 @@ id|p-&gt;counter
 op_assign
 id|current-&gt;counter
 suffix:semicolon
+multiline_comment|/* Ok, add it to the run-queues, let it rip! */
+id|retval
+op_assign
+id|p-&gt;pid
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;pid
+id|retval
 )paren
 (brace
+id|p-&gt;next_run
+op_assign
+l_int|NULL
+suffix:semicolon
+id|p-&gt;prev_run
+op_assign
+l_int|NULL
+suffix:semicolon
 id|wake_up_process
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
-multiline_comment|/* do this last, just in case */
-)brace
-r_else
-(brace
-id|p-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
-id|p-&gt;next_run
-op_assign
-id|p-&gt;prev_run
-op_assign
-id|p
-suffix:semicolon
+multiline_comment|/* do this last */
 )brace
 op_increment
 id|total_forks
-suffix:semicolon
-id|error
-op_assign
-id|p-&gt;pid
 suffix:semicolon
 id|bad_fork
 suffix:colon
@@ -2533,7 +2537,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-id|error
+id|retval
 suffix:semicolon
 id|bad_fork_cleanup_sighand
 suffix:colon

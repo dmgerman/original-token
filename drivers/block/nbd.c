@@ -330,7 +330,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;NBD: %s - sock=%d at buf=%d, size=%d returned %d.&bslash;n&quot;
+l_string|&quot;NBD: %s - sock=%ld at buf=%ld, size=%d returned %d.&bslash;n&quot;
 comma
 id|send
 ques
@@ -1499,7 +1499,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;NBD device %d: head = %x, tail = %x. Global: in %d, out %d&bslash;n&quot;
+l_string|&quot;NBD device %d: head = %lx, tail = %lx. Global: in %d, out %d&bslash;n&quot;
 comma
 id|dev
 comma

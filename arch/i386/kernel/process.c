@@ -1288,7 +1288,8 @@ id|cr3
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Allocation and freeing of basic task resources.&n; *&n; * NOTE! The task struct and the stack go together&n; *&n; * The task structure is a two-page thing, and as such&n; * not reliable to allocate using the basic page alloc&n; * functions. We have a small cache of structures for&n; * when the allocations fail..&n; *&n; * This extra buffer essentially acts to make for less&n; * &quot;jitter&quot; in the allocations..&n; */
+multiline_comment|/*&n; * Allocation and freeing of basic task resources.&n; *&n; * NOTE! The task struct and the stack go together&n; *&n; * The task structure is a two-page thing, and as such&n; * not reliable to allocate using the basic page alloc&n; * functions. We have a small cache of structures for&n; * when the allocations fail..&n; *&n; * This extra buffer essentially acts to make for less&n; * &quot;jitter&quot; in the allocations..&n; *&n; * On SMP we don&squot;t do this right now because:&n; *  - we aren&squot;t holding any locks when called, and we might&n; *    as well just depend on the generic memory management&n; *    to do proper locking for us instead of complicating it&n; *    here.&n; *  - if you use SMP you have a beefy enough machine that&n; *    this shouldn&squot;t matter..&n; */
+macro_line|#ifndef __SMP__
 DECL|macro|EXTRA_TASK_STRUCT
 mdefine_line|#define EXTRA_TASK_STRUCT&t;16
 DECL|variable|task_struct_stack
@@ -1309,6 +1310,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#endif
 DECL|function|alloc_task_struct
 r_struct
 id|task_struct
@@ -1319,6 +1321,22 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef EXTRA_TASK_STRUCT
+r_return
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+id|__get_free_pages
+c_func
+(paren
+id|GFP_KERNEL
+comma
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 id|index
 suffix:semicolon
@@ -1397,6 +1415,7 @@ suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|free_task_struct
 r_void
@@ -1409,6 +1428,7 @@ op_star
 id|p
 )paren
 (brace
+macro_line|#ifdef EXTRA_TASK_STRUCT
 r_int
 id|index
 op_assign
@@ -1437,6 +1457,7 @@ id|index
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
 id|free_pages
 c_func
 (paren

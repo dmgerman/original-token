@@ -188,10 +188,14 @@ id|__dummy_lock_t
 suffix:semicolon
 DECL|macro|__dummy_lock
 mdefine_line|#define __dummy_lock(lock) (*(__dummy_lock_t *)(lock))
+DECL|macro|spin_lock_string
+mdefine_line|#define spin_lock_string &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&quot;lock ; btsl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jc 2f&bslash;n&quot; &bslash;&n;&t;&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;t&quot; &bslash;&n;&t;&quot;testb $1,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&quot;.previous&quot;
+DECL|macro|spin_unlock_string
+mdefine_line|#define spin_unlock_string &bslash;&n;&t;&quot;lock ; btrl $0,%0&quot;
 DECL|macro|spin_lock
-mdefine_line|#define spin_lock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&quot;lock ; btsl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jc 2f&bslash;n&quot; &bslash;&n;&t;&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;t&quot; &bslash;&n;&t;&quot;testb $1,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&quot;.previous&quot; &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
+mdefine_line|#define spin_lock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;spin_lock_string &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
 DECL|macro|spin_unlock
-mdefine_line|#define spin_unlock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lock ; btrl $0,%0&quot; &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
+mdefine_line|#define spin_unlock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;spin_unlock_string &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock) (!test_and_set_bit(0,(lock)))
 DECL|macro|spin_lock_irq
