@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#ifdef CONFIG_YM3812
 macro_line|#include &quot;opl3.h&quot;
 DECL|macro|MAX_VOICE
 mdefine_line|#define MAX_VOICE&t;18
@@ -5574,6 +5573,14 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|opl3_init
 id|EXPORT_SYMBOL
@@ -5589,13 +5596,4 @@ c_func
 id|opl3_detect
 )paren
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|io
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

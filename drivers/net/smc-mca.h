@@ -1,4 +1,4 @@
-multiline_comment|/* &n;   djweis weisd3458@uni.edu &n;   most of this file was taken from ps2esdi.h&n;*/
+multiline_comment|/*&n; * djweis weisd3458@uni.edu&n; * most of this file was taken from ps2esdi.h&n; */
 r_struct
 (brace
 DECL|member|base_addr
@@ -237,10 +237,15 @@ DECL|macro|IRQ_MASK
 mdefine_line|#define IRQ_MASK 243
 r_struct
 (brace
-DECL|member|irq
+DECL|member|new_irq
 r_int
 r_char
-id|irq
+id|new_irq
+suffix:semicolon
+DECL|member|old_irq
+r_int
+r_char
+id|old_irq
 suffix:semicolon
 DECL|variable|irq_table
 )brace
@@ -251,18 +256,26 @@ op_assign
 (brace
 (brace
 l_int|3
+comma
+l_int|3
 )brace
 comma
 (brace
+l_int|4
+comma
 l_int|4
 )brace
 comma
 (brace
 l_int|10
+comma
+l_int|10
 )brace
 comma
 (brace
 l_int|14
+comma
+l_int|15
 )brace
 )brace
 suffix:semicolon

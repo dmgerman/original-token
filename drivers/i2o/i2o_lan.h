@@ -4,7 +4,7 @@ DECL|macro|_I2O_LAN_H
 mdefine_line|#define _I2O_LAN_H
 multiline_comment|/* Tunable parameters first */
 DECL|macro|I2O_BUCKET_COUNT
-mdefine_line|#define I2O_BUCKET_COUNT &t;64
+mdefine_line|#define I2O_BUCKET_COUNT &t;256
 DECL|macro|I2O_BUCKET_THRESH
 mdefine_line|#define I2O_BUCKET_THRESH&t;16
 multiline_comment|/* LAN types */

@@ -76,9 +76,9 @@ mdefine_line|#define MAJOR_NR 8
 macro_line|#endif
 DECL|macro|START_PARTITION
 mdefine_line|#define START_PARTITION 4
-multiline_comment|/* Number of jiffies to wait before completing a command */
+multiline_comment|/* Time to wait before completing a command */
 DECL|macro|DISK_SPEED
-mdefine_line|#define DISK_SPEED     10
+mdefine_line|#define DISK_SPEED     (HZ/10)   /* 100ms */
 DECL|macro|CAPACITY
 mdefine_line|#define CAPACITY (0x80000)
 DECL|variable|starts
@@ -1778,7 +1778,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* End phony disk change code */
-macro_line|#
+macro_line|#endif
 macro_line|#ifdef CLEAR
 id|memcpy
 c_func

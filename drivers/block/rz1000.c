@@ -336,6 +336,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|dev
 op_assign
 id|pci_find_device
@@ -348,6 +349,9 @@ comma
 id|dev
 )paren
 )paren
+op_ne
+l_int|NULL
+)paren
 id|init_rz1000
 (paren
 id|dev
@@ -357,6 +361,7 @@ l_string|&quot;RZ1000&quot;
 suffix:semicolon
 r_while
 c_loop
+(paren
 (paren
 id|dev
 op_assign
@@ -369,6 +374,9 @@ id|PCI_DEVICE_ID_PCTECH_RZ1001
 comma
 id|dev
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 id|init_rz1000
 (paren

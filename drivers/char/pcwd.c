@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * These are the auto-probe addresses available.&n; *&n; * Revision A only uses ports 0x270 and 0x370.  Revision C introduced 0x350.&n; * Revision A has an address range of 2 addresses, while Revision C has 3.&n; */
@@ -82,6 +83,11 @@ comma
 id|supports_temp
 comma
 id|mode_debug
+suffix:semicolon
+DECL|variable|io_lock
+r_static
+id|spinlock_t
+id|io_lock
 suffix:semicolon
 multiline_comment|/*&n; * PCWD_CHECKCARD&n; *&n; * This routine checks the &quot;current_readport&quot; to see if the card lies there.&n; * If it does, it returns accordingly.&n; */
 DECL|function|pcwd_checkcard
@@ -627,6 +633,13 @@ suffix:semicolon
 r_case
 id|WDIOC_GETSTATUS
 suffix:colon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -651,6 +664,13 @@ c_func
 id|current_readport
 op_plus
 l_int|1
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_lock
 )paren
 suffix:semicolon
 id|rv
@@ -871,12 +891,26 @@ l_int|0
 )paren
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 id|rv
 op_assign
 id|inb
 c_func
 (paren
 id|current_readport
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_lock
 )paren
 suffix:semicolon
 r_if
@@ -972,6 +1006,13 @@ op_amp
 id|WDIOS_DISABLECARD
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1000,6 +1041,13 @@ c_func
 id|current_readport
 op_plus
 l_int|2
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_lock
 )paren
 suffix:semicolon
 r_if
@@ -1037,6 +1085,13 @@ op_amp
 id|WDIOS_ENABLECARD
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1055,6 +1110,13 @@ c_func
 id|current_readport
 op_plus
 l_int|2
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_lock
 )paren
 suffix:semicolon
 r_if
@@ -1219,6 +1281,14 @@ id|revision
 op_eq
 id|PCWD_REVISION_C
 )paren
+(brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1229,6 +1299,14 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
+)brace
 id|is_open
 op_assign
 l_int|1
@@ -1280,12 +1358,6 @@ id|ppos
 r_int
 r_int
 id|c
-op_assign
-id|inb
-c_func
-(paren
-id|current_readport
-)paren
 suffix:semicolon
 r_int
 r_char
@@ -1318,6 +1390,14 @@ r_case
 id|TEMP_MINOR
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t; * Convert metric to Fahrenheit, since this was&n;&t;&t;&t; * the decided &squot;standard&squot; for this return value.&n;&t;&t;&t; */
+id|c
+op_assign
+id|inb
+c_func
+(paren
+id|current_readport
+)paren
+suffix:semicolon
 id|cp
 op_assign
 (paren
@@ -1406,6 +1486,13 @@ op_eq
 id|PCWD_REVISION_C
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1424,6 +1511,13 @@ comma
 id|current_readport
 op_plus
 l_int|3
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_lock
 )paren
 suffix:semicolon
 )brace
@@ -1469,6 +1563,18 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|r
+op_assign
+id|PCWD_REVISION_C
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1496,11 +1602,19 @@ op_eq
 l_int|0xFF
 )paren
 )paren
-r_return
+id|r
+op_assign
 id|PCWD_REVISION_A
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
+suffix:semicolon
 r_return
-id|PCWD_REVISION_C
+id|r
 suffix:semicolon
 )brace
 DECL|function|send_command
@@ -2035,6 +2149,13 @@ comma
 id|found
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|io_lock
+)paren
 suffix:semicolon
 id|revision
 op_assign

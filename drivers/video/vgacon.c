@@ -563,6 +563,7 @@ id|saved1
 comma
 id|saved2
 suffix:semicolon
+r_volatile
 id|u16
 op_star
 id|p
@@ -1040,6 +1041,7 @@ multiline_comment|/*&n;&t; *&t;Find out if there is a graphics card present.&n;&
 id|p
 op_assign
 (paren
+r_volatile
 id|u16
 op_star
 )paren

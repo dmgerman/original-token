@@ -1,3 +1,4 @@
+macro_line|#if defined(CONFIG_ACI_MIXER) || defined(CONFIG_ACI_MIXER_MODULE)
 r_extern
 r_int
 id|aci_implied_cmd
@@ -77,4 +78,7 @@ op_star
 id|parameter
 )paren
 suffix:semicolon
+macro_line|#else
+macro_line|#error Compiling a driver that needs the ACI-mixer but ACI-mixer support is not configured
+macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Bulk Memory Services&n;&n;    bulkmem.c 1.29 1999/08/28 04:01:45&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Bulk Memory Services&n;&n;    bulkmem.c 1.32 1999/09/15 15:32:19&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -252,13 +252,11 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;cs: adding 0x%p to queue 0x%p&bslash;n&quot;
 comma
 id|entry
 comma
 id|head
-)paren
 )paren
 suffix:semicolon
 id|entry-&gt;next
@@ -294,11 +292,9 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;cs: unqueueing 0x%p&bslash;n&quot;
 comma
 id|entry
-)paren
 )paren
 suffix:semicolon
 id|entry-&gt;next-&gt;prev
@@ -349,11 +345,9 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;cs: trying erase request 0x%p...&bslash;n&quot;
 comma
 id|busy
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -429,11 +423,9 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;  Status = %d, requeueing.&bslash;n&quot;
 comma
 id|req.Status
-)paren
 )paren
 suffix:semicolon
 r_switch
@@ -510,11 +502,9 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;  Ret = %d&bslash;n&quot;
 comma
 id|ret
-)paren
 )paren
 suffix:semicolon
 r_switch
@@ -647,11 +637,9 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;cs: rescanning erase queue list 0x%p&bslash;n&quot;
 comma
 id|list
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -724,11 +712,9 @@ c_func
 (paren
 l_int|0
 comma
-(paren
 l_string|&quot;cs: erase timeout for entry 0x%lx&bslash;n&quot;
 comma
 id|arg
-)paren
 )paren
 suffix:semicolon
 id|retry_erase
@@ -1291,7 +1277,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;cs: setup_regions(0x%p, %d, 0x%p)&bslash;n&quot;
 comma
 id|handle
@@ -1299,7 +1284,6 @@ comma
 id|attr
 comma
 id|list
-)paren
 )paren
 suffix:semicolon
 id|code
@@ -1934,7 +1918,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;cs: register_mtd(0x%p, &squot;%s&squot;, 0x%x)&bslash;n&quot;
 comma
 id|handle
@@ -1942,7 +1925,6 @@ comma
 id|handle-&gt;dev_info
 comma
 id|reg-&gt;Offset
-)paren
 )paren
 suffix:semicolon
 r_while
@@ -2014,7 +1996,7 @@ id|CS_BAD_OFFSET
 suffix:semicolon
 )brace
 multiline_comment|/* register_mtd */
-multiline_comment|/*======================================================================&n;&n;    &n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    Erase queue management functions&n;    &n;======================================================================*/
 DECL|function|register_erase_queue
 r_int
 id|register_erase_queue
@@ -2355,7 +2337,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;cs: open_memory(0x%p, 0x%x) = 0x%p&bslash;n&quot;
 comma
 id|handle
@@ -2363,7 +2344,6 @@ comma
 id|open-&gt;Offset
 comma
 id|region
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2391,11 +2371,9 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;cs: close_memory(0x%p)&bslash;n&quot;
 comma
 id|handle
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2609,7 +2587,7 @@ id|buf
 suffix:semicolon
 )brace
 multiline_comment|/* write_memory */
-multiline_comment|/*======================================================================&n;&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    This isn&squot;t needed for anything I could think of.&n;    &n;======================================================================*/
 DECL|function|copy_memory
 r_int
 id|copy_memory
@@ -2639,5 +2617,4 @@ r_return
 id|CS_UNSUPPORTED_FUNCTION
 suffix:semicolon
 )brace
-multiline_comment|/* close_memory */
 eof

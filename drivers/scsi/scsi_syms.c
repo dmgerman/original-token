@@ -126,6 +126,13 @@ c_func
 id|scsi_do_cmd
 )paren
 suffix:semicolon
+DECL|variable|scsi_wait_cmd
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scsi_wait_cmd
+)paren
+suffix:semicolon
 DECL|variable|scsi_command_size
 id|EXPORT_SYMBOL
 c_func

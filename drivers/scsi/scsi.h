@@ -528,6 +528,43 @@ id|retries
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|scsi_wait_cmd
+(paren
+id|Scsi_Cmnd
+op_star
+comma
+r_const
+r_void
+op_star
+id|cmnd
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+id|bufflen
+comma
+r_void
+(paren
+op_star
+id|done
+)paren
+(paren
+r_struct
+id|scsi_cmnd
+op_star
+)paren
+comma
+r_int
+id|timeout
+comma
+r_int
+id|retries
+)paren
+suffix:semicolon
+r_extern
 id|Scsi_Cmnd
 op_star
 id|scsi_allocate_device
@@ -1166,6 +1203,11 @@ r_int
 id|transfersize
 suffix:semicolon
 multiline_comment|/* How much we are guaranteed to&n;&t;&t;&t;&t;   transfer with each SCSI transfer&n;&t;&t;&t;&t;   (ie, between disconnect / &n;&t;&t;&t;&t;   reconnects.   Probably == sector&n;&t;&t;&t;&t;   size */
+DECL|member|resid
+r_int
+id|resid
+suffix:semicolon
+multiline_comment|/* Number of bytes requested to be&n;&t;&t;&t;&t;   transferred less actual number&n;&t;&t;&t;&t;   transferred (0 if not supported) */
 DECL|member|request
 r_struct
 id|request
@@ -1177,10 +1219,10 @@ r_int
 r_char
 id|sense_buffer
 (braket
-l_int|16
+l_int|64
 )braket
 suffix:semicolon
-multiline_comment|/* Sense for this command, &n;&t;&t;&t;&t;&t;&t;   needed */
+multiline_comment|/* obtained by REQUEST SENSE when&n;&t;&t;&t;&t;&t;    CHECK CONDITION is received on&n;&t;&t;&t;&t;&t;    original command (auto-sense) */
 DECL|member|flags
 r_int
 id|flags

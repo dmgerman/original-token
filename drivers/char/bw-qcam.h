@@ -51,6 +51,11 @@ id|parport
 op_star
 id|pport
 suffix:semicolon
+DECL|member|lock
+r_struct
+id|semaphore
+id|lock
+suffix:semicolon
 DECL|member|width
 DECL|member|height
 r_int

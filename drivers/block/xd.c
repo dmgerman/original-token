@@ -22,7 +22,7 @@ macro_line|#include &quot;xd.h&quot;
 DECL|macro|XD_DONT_USE_DMA
 mdefine_line|#define XD_DONT_USE_DMA&t;&t;0  /* Initial value. may be overriden using&n;&t;&t;&t;&t;      &quot;nodma&quot; module option */
 DECL|macro|XD_INIT_DISK_DELAY
-mdefine_line|#define XD_INIT_DISK_DELAY&t;3  /* 30 ms delay during disk initialization */
+mdefine_line|#define XD_INIT_DISK_DELAY&t;(30*HZ/1000)  /* 30 ms delay during disk initialization */
 multiline_comment|/* Above may need to be increased if a problem with the 2nd drive detection&n;   (ST11M controller) or resetting a controler (WD) appears */
 DECL|variable|xd_info
 id|XD_INFO

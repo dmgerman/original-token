@@ -225,18 +225,11 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* We think that the drive door is locked. */
-DECL|member|sanyo_slot
-id|__u8
-id|sanyo_slot
-suffix:colon
-l_int|2
-suffix:semicolon
-multiline_comment|/* Sanyo 3 CD changer support */
 DECL|member|reserved
 id|__u8
 id|reserved
 suffix:colon
-l_int|3
+l_int|5
 suffix:semicolon
 DECL|member|current_speed
 id|byte
@@ -649,37 +642,6 @@ DECL|member|acdsc_reladdr
 id|acdsc_reladdr
 suffix:semicolon
 )brace
-suffix:semicolon
-r_typedef
-r_enum
-(brace
-DECL|enumerator|mechtype_caddy
-id|mechtype_caddy
-op_assign
-l_int|0
-comma
-DECL|enumerator|mechtype_tray
-id|mechtype_tray
-op_assign
-l_int|1
-comma
-DECL|enumerator|mechtype_popup
-id|mechtype_popup
-op_assign
-l_int|2
-comma
-DECL|enumerator|mechtype_individual_changer
-id|mechtype_individual_changer
-op_assign
-l_int|4
-comma
-DECL|enumerator|mechtype_cartridge_changer
-id|mechtype_cartridge_changer
-op_assign
-l_int|5
-DECL|typedef|mechtype_t
-)brace
-id|mechtype_t
 suffix:semicolon
 multiline_comment|/* This should probably go into cdrom.h along with the other&n; * generic stuff now in the Mt. Fuji spec.&n; */
 DECL|struct|atapi_capabilities_page

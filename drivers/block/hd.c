@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt; /* CMOS defines */
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/blkpg.h&gt;
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 macro_line|#include &lt;asm/system.h&gt;

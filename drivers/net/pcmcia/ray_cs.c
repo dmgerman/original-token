@@ -12267,7 +12267,9 @@ suffix:semicolon
 multiline_comment|/* End build_auth_frame */
 multiline_comment|/*===========================================================================*/
 DECL|function|init_ray_cs
+r_static
 r_int
+id|__init
 id|init_ray_cs
 c_func
 (paren
@@ -12344,6 +12346,7 @@ comma
 id|rc
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS    
 id|proc_register
 c_func
 (paren
@@ -12354,6 +12357,7 @@ op_amp
 id|ray_cs_proc_entry
 )paren
 suffix:semicolon
+macro_line|#endif    
 r_if
 c_cond
 (paren
@@ -12369,7 +12373,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* init_module */
+multiline_comment|/* init_ray_cs */
+macro_line|#ifndef MODULE
 DECL|variable|init_ess_id
 r_static
 r_char
@@ -12416,25 +12421,13 @@ comma
 id|essid_setup
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*===========================================================================*/
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|exit_ray_cs
+r_static
 r_void
-)paren
-(brace
-id|init_ray_cs
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|exit_ray_cs
 c_func
 (paren
 r_void
@@ -12486,6 +12479,7 @@ id|dev_list
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS    
 id|proc_unregister
 c_func
 (paren
@@ -12495,8 +12489,22 @@ comma
 id|ray_cs_proc_entry.low_ino
 )paren
 suffix:semicolon
+macro_line|#endif   
 )brace
-multiline_comment|/* cleanup_module */
-macro_line|#endif
+multiline_comment|/* exit_ray_cs */
+DECL|variable|init_ray_cs
+id|module_init
+c_func
+(paren
+id|init_ray_cs
+)paren
+suffix:semicolon
+DECL|variable|exit_ray_cs
+id|module_exit
+c_func
+(paren
+id|exit_ray_cs
+)paren
+suffix:semicolon
 multiline_comment|/*===========================================================================*/
 eof

@@ -236,7 +236,7 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|1
+id|howlong
 )paren
 suffix:semicolon
 )brace

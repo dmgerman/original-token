@@ -12831,6 +12831,17 @@ multiline_comment|/*&n;&t; *  These two ide-pci host adapters appear to need thi
 r_if
 c_cond
 (paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|pci_dev
+op_ne
+l_int|NULL
+op_logical_and
+(paren
 (paren
 id|HWIF
 c_func
@@ -12853,6 +12864,7 @@ op_member_access_from_pointer
 id|pci_dev-&gt;device
 op_eq
 id|PCI_DEVICE_ID_TTI_HPT343
+)paren
 )paren
 )paren
 (brace

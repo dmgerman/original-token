@@ -3276,6 +3276,11 @@ r_else
 multiline_comment|/*&n; *    We loop as long as we are in a data out phase, there is data to send,&n; *      and BSY is still active.&n; */
 multiline_comment|/* SJT: Start. Slow Write. */
 macro_line|#ifdef SEAGATE_USE_ASM
+r_int
+id|__dummy_1
+comma
+id|__dummy_2
+suffix:semicolon
 multiline_comment|/*&n; *      We loop as long as we are in a data out phase, there is data to send, &n; *      and BSY is still active.&n; */
 multiline_comment|/* Local variables : len = ecx , data = esi, &n;                     st0x_cr_sr = ebx, st0x_dr =  edi&n;*/
 id|__asm__
@@ -3312,6 +3317,16 @@ l_string|&quot;=c&quot;
 (paren
 id|len
 )paren
+comma
+l_string|&quot;=b&quot;
+(paren
+id|__dummy_1
+)paren
+comma
+l_string|&quot;=D&quot;
+(paren
+id|__dummy_2
+)paren
 multiline_comment|/* input */
 suffix:colon
 l_string|&quot;0&quot;
@@ -3324,7 +3339,7 @@ l_string|&quot;1&quot;
 id|len
 )paren
 comma
-l_string|&quot;b&quot;
+l_string|&quot;2&quot;
 (paren
 id|phys_to_virt
 c_func
@@ -3333,7 +3348,7 @@ id|st0x_cr_sr
 )paren
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;3&quot;
 (paren
 id|phys_to_virt
 c_func
@@ -3344,10 +3359,6 @@ id|st0x_dr
 multiline_comment|/* clobbered */
 suffix:colon
 l_string|&quot;eax&quot;
-comma
-l_string|&quot;ebx&quot;
-comma
-l_string|&quot;edi&quot;
 )paren
 suffix:semicolon
 macro_line|#else /* SEAGATE_USE_ASM */
@@ -3747,6 +3758,12 @@ macro_line|#endif
 multiline_comment|/*&n; *    We loop as long as we are in a data in phase, there is room to read,&n; *      and BSY is still active&n; */
 multiline_comment|/* SJT: Start. */
 macro_line|#ifdef SEAGATE_USE_ASM
+r_int
+id|__dummy_3
+comma
+id|__dummy_4
+suffix:semicolon
+multiline_comment|/* Dummy clobbering variables for the new gcc-2.95 */
 multiline_comment|/*&n; *      We loop as long as we are in a data in phase, there is room to read, &n; *      and BSY is still active&n; */
 multiline_comment|/* Local variables : ecx = len, edi = data&n;                                 esi = st0x_cr_sr, ebx = st0x_dr */
 id|__asm__
@@ -3785,6 +3802,16 @@ l_string|&quot;=c&quot;
 (paren
 id|len
 )paren
+comma
+l_string|&quot;=S&quot;
+(paren
+id|__dummy_3
+)paren
+comma
+l_string|&quot;=b&quot;
+(paren
+id|__dummy_4
+)paren
 multiline_comment|/* input */
 suffix:colon
 l_string|&quot;0&quot;
@@ -3797,7 +3824,7 @@ l_string|&quot;1&quot;
 id|len
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;2&quot;
 (paren
 id|phys_to_virt
 c_func
@@ -3806,7 +3833,7 @@ id|st0x_cr_sr
 )paren
 )paren
 comma
-l_string|&quot;b&quot;
+l_string|&quot;3&quot;
 (paren
 id|phys_to_virt
 c_func
@@ -3817,10 +3844,6 @@ id|st0x_dr
 multiline_comment|/* clobbered */
 suffix:colon
 l_string|&quot;eax&quot;
-comma
-l_string|&quot;ebx&quot;
-comma
-l_string|&quot;esi&quot;
 )paren
 suffix:semicolon
 macro_line|#else /* SEAGATE_USE_ASM */

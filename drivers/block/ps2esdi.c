@@ -463,6 +463,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Is it Integrated ESDI of ThinkPad-720? */
+DECL|variable|intg_esdi
+r_int
+id|intg_esdi
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* If integrated adapter */
 DECL|struct|ps2esdi_i_struct
 r_struct
 id|ps2esdi_i_struct
@@ -1611,7 +1618,7 @@ id|reset_status
 (brace
 id|esdi_timer.expires
 op_assign
-l_int|100
+id|HZ
 suffix:semicolon
 id|esdi_timer.data
 op_assign
@@ -1680,12 +1687,18 @@ id|adapterID
 op_eq
 id|INTG_ESDI_ID
 )paren
+(brace
 multiline_comment|/* if not &quot;normal&quot; PS2 ESDI adapter */
 id|ps2esdi_drives
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* then we have only one physical disk! */
+id|intg_esdi
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* finally this part sets up some global data structures etc. */
 id|ps2esdi_get_device_cfg
 c_func
@@ -2355,7 +2368,9 @@ id|expire
 op_assign
 id|jiffies
 op_plus
-l_int|200
+l_int|2
+op_star
+id|HZ
 suffix:semicolon
 r_while
 c_loop
@@ -3841,6 +3856,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|intg_esdi
+)paren
 id|ps2esdi_drives
 op_increment
 suffix:semicolon

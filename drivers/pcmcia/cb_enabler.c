@@ -1,5 +1,6 @@
-multiline_comment|/*======================================================================&n;&n;    Cardbus device enabler&n;&n;    cb_enabler.c 1.21 1999/08/28 04:01:45&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;    The general idea:&n;&n;    A client driver registers using register_driver().  This module&n;    then creates a Card Services pseudo-client and registers it, and&n;    configures the socket if this is the first client.  It then&n;    invokes the appropriate PCI client routines in response to Card&n;    Services events.  &n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    Cardbus device enabler&n;&n;    cb_enabler.c 1.23 1999/09/15 15:32:19&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;    The general idea:&n;&n;    A client driver registers using register_driver().  This module&n;    then creates a Card Services pseudo-client and registers it, and&n;    configures the socket if this is the first client.  It then&n;    invokes the appropriate PCI client routines in response to Card&n;    Services events.  &n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -34,7 +35,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cb_enabler.c 1.21 1999/08/28 04:01:45 (David Hinds)&quot;
+l_string|&quot;cb_enabler.c 1.23 1999/09/15 15:32:19 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -323,18 +324,6 @@ id|dev_link_t
 )paren
 )paren
 suffix:semicolon
-id|link-&gt;release.function
-op_assign
-op_amp
-id|cb_release
-suffix:semicolon
-id|link-&gt;release.data
-op_assign
-(paren
-id|u_long
-)paren
-id|link
-suffix:semicolon
 id|link-&gt;conf.IntType
 op_assign
 id|INT_CARDBUS
@@ -493,9 +482,6 @@ op_star
 )paren
 id|link-&gt;win
 suffix:semicolon
-id|u_long
-id|flags
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -547,44 +533,6 @@ op_eq
 l_int|NULL
 )paren
 r_return
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|link-&gt;state
-op_amp
-id|DEV_RELEASE_PENDING
-)paren
-(brace
-id|del_timer
-c_func
-(paren
-op_amp
-id|link-&gt;release
-)paren
-suffix:semicolon
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1242,27 +1190,15 @@ id|link-&gt;state
 op_amp
 id|DEV_CONFIG
 )paren
-(brace
-id|link-&gt;release.expires
-op_assign
-id|jiffies
-op_plus
-id|HZ
-op_div
-l_int|20
-suffix:semicolon
-id|link-&gt;state
-op_or_assign
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-id|add_timer
+id|cb_release
 c_func
 (paren
-op_amp
-id|link-&gt;release
+(paren
+id|u_long
+)paren
+id|link
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -1604,9 +1540,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*====================================================================*/
-DECL|function|init_module
+DECL|function|init_cb_enabler
+r_static
 r_int
-id|init_module
+id|__init
+id|init_cb_enabler
 c_func
 (paren
 r_void
@@ -1659,9 +1597,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|exit_cb_enabler
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|exit_cb_enabler
 c_func
 (paren
 r_void
@@ -1676,5 +1616,19 @@ l_string|&quot;cb_enabler: unloading&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|variable|init_cb_enabler
+id|module_init
+c_func
+(paren
+id|init_cb_enabler
+)paren
+suffix:semicolon
+DECL|variable|exit_cb_enabler
+id|module_exit
+c_func
+(paren
+id|exit_cb_enabler
+)paren
+suffix:semicolon
 multiline_comment|/*====================================================================*/
 eof

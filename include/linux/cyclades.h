@@ -1414,6 +1414,8 @@ DECL|macro|Cy_EVENT_SHUTDOWN_WAKEUP
 mdefine_line|#define Cy_EVENT_SHUTDOWN_WAKEUP&t;5
 DECL|macro|Cy_EVENT_DELTA_WAKEUP
 mdefine_line|#define&t;Cy_EVENT_DELTA_WAKEUP&t;&t;6
+DECL|macro|Cy_EVENT_Z_RX_FULL
+mdefine_line|#define&t;Cy_EVENT_Z_RX_FULL&t;&t;7
 DECL|macro|CLOSING_WAIT_DELAY
 mdefine_line|#define&t;CLOSING_WAIT_DELAY&t;30*HZ
 DECL|macro|CY_CLOSING_WAIT_NONE

@@ -14,8 +14,6 @@ DECL|macro|QNX4_VERSION
 mdefine_line|#define QNX4_VERSION  4
 DECL|macro|QNX4_BMNAME
 mdefine_line|#define QNX4_BMNAME   &quot;.bitmap&quot;
-DECL|macro|CHECK_BOOT_SIGNATURE
-mdefine_line|#define CHECK_BOOT_SIGNATURE 0
 DECL|variable|qnx4_sops
 r_static
 r_struct
@@ -1022,18 +1020,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-l_string|&quot;no qnx4 filesystem (null superblock).&quot;
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 op_star
 (paren
 id|s-&gt;u.qnx4_sb.sb-&gt;RootDir.di_fname
@@ -1192,6 +1178,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* WAIT! s-&gt;u.qnx4_sb.BitMap points into bh-&gt;b_data&n;&t;&t;&t;   and now we release bh?? */
 id|brelse
 c_func
 (paren
@@ -1258,12 +1245,15 @@ id|dev
 op_assign
 id|s-&gt;s_dev
 suffix:semicolon
-macro_line|#if CHECK_BOOT_SIGNATURE
+r_struct
+id|inode
+op_star
+id|root
+suffix:semicolon
 r_char
 op_star
 id|tmpc
 suffix:semicolon
-macro_line|#endif
 r_const
 r_char
 op_star
@@ -1297,7 +1287,7 @@ id|s-&gt;s_dev
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#if CHECK_BOOT_SIGNATURE
+multiline_comment|/* Check the boot signature. Since the qnx4 code is&n;&t;   dangerous, we should leave as quickly as possible&n;&t;   if we don&squot;t belong here... */
 id|bh
 op_assign
 id|bread
@@ -1381,6 +1371,12 @@ op_ne
 l_char|&squot;S&squot;
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|silent
+)paren
 id|printk
 c_func
 (paren
@@ -1397,7 +1393,6 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-macro_line|#endif
 id|bh
 op_assign
 id|bread
@@ -1456,40 +1451,7 @@ op_star
 )paren
 id|bh-&gt;b_data
 suffix:semicolon
-id|s-&gt;s_root
-op_assign
-id|d_alloc_root
-c_func
-(paren
-id|iget
-c_func
-(paren
-id|s
-comma
-id|QNX4_ROOT_INO
-op_star
-id|QNX4_INODES_PER_BLOCK
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|s-&gt;s_root
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;qnx4: get inode failed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
+multiline_comment|/* check before allocating dentries, inodes, .. */
 id|errmsg
 op_assign
 id|qnx4_checkroot
@@ -1506,6 +1468,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|silent
+)paren
 id|printk
 c_func
 (paren
@@ -1518,6 +1486,54 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+multiline_comment|/* does root not have inode number QNX4_ROOT_INO ?? */
+id|root
+op_assign
+id|iget
+c_func
+(paren
+id|s
+comma
+id|QNX4_ROOT_INO
+op_star
+id|QNX4_INODES_PER_BLOCK
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|root
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;qnx4: get inode failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+id|s-&gt;s_root
+op_assign
+id|d_alloc_root
+c_func
+(paren
+id|root
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s-&gt;s_root
+op_eq
+l_int|NULL
+)paren
+r_goto
+id|outi
+suffix:semicolon
 id|brelse
 c_func
 (paren
@@ -1536,6 +1552,14 @@ l_int|1
 suffix:semicolon
 r_return
 id|s
+suffix:semicolon
+id|outi
+suffix:colon
+id|iput
+c_func
+(paren
+id|root
+)paren
 suffix:semicolon
 id|out
 suffix:colon

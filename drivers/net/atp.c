@@ -487,10 +487,10 @@ comma
 id|CMR1h_RESET
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
-l_int|2048
+l_int|100
 )paren
 suffix:semicolon
 id|status
@@ -1029,7 +1029,7 @@ op_or
 id|EE_CLK_LOW
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
 l_int|5
@@ -1067,7 +1067,7 @@ id|EE_DATA_READ
 id|eedata_out
 op_increment
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
 l_int|5

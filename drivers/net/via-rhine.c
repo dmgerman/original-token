@@ -195,7 +195,7 @@ macro_line|#endif
 multiline_comment|/* Kernel compatibility defines, some common to David Hind&squot;s PCMCIA package.&n;   This is only in the support-all-kernels source code. */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20100)
+macro_line|#ifdef MODULE
 DECL|variable|kernel_version
 r_char
 id|kernel_version
@@ -4913,6 +4913,10 @@ id|skb
 comma
 id|dev
 )paren
+suffix:semicolon
+id|np-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 id|netif_rx
 c_func

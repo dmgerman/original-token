@@ -1,5 +1,6 @@
-multiline_comment|/*======================================================================&n;&n;    Device driver for Databook TCIC-2 PCMCIA controller&n;&n;    tcic.c 1.105 1999/09/06 06:55:14&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    Device driver for Databook TCIC-2 PCMCIA controller&n;&n;    tcic.c 1.106 1999/09/15 15:32:19&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -42,7 +43,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;tcic.c 1.105 1999/09/06 06:55:14 (David Hinds)&quot;
+l_string|&quot;tcic.c 1.106 1999/09/15 15:32:19 (David Hinds)&quot;
 suffix:semicolon
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(n, args...) if (pc_debug&gt;(n)) printk(KERN_DEBUG args)
@@ -797,6 +798,7 @@ suffix:semicolon
 DECL|function|irq_count
 r_static
 r_void
+id|__init
 id|irq_count
 c_func
 (paren
@@ -820,6 +822,7 @@ suffix:semicolon
 DECL|function|try_irq
 r_static
 id|u_int
+id|__init
 id|try_irq
 c_func
 (paren
@@ -982,6 +985,7 @@ suffix:semicolon
 DECL|function|irq_scan
 r_static
 id|u_int
+id|__init
 id|irq_scan
 c_func
 (paren
@@ -1294,6 +1298,7 @@ multiline_comment|/*============================================================
 DECL|function|is_active
 r_static
 r_int
+id|__init
 id|is_active
 c_func
 (paren
@@ -1509,6 +1514,7 @@ multiline_comment|/*============================================================
 DECL|function|get_tcic_id
 r_static
 r_int
+id|__init
 id|get_tcic_id
 c_func
 (paren
@@ -1557,9 +1563,11 @@ id|id
 suffix:semicolon
 )brace
 multiline_comment|/*====================================================================*/
-DECL|function|tcic_init
+DECL|function|init_tcic
+r_static
 r_int
-id|tcic_init
+id|__init
+id|init_tcic
 c_func
 (paren
 r_void
@@ -1575,6 +1583,9 @@ id|mask
 comma
 id|scan
 suffix:semicolon
+id|servinfo_t
+id|serv
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1585,6 +1596,36 @@ comma
 id|version
 )paren
 suffix:semicolon
+id|CardServices
+c_func
+(paren
+id|GetCardServicesInfo
+comma
+op_amp
+id|serv
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|serv.Revision
+op_ne
+id|CS_RELEASE_CODE
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;tcic: Card Services release &quot;
+l_string|&quot;does not match!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -2324,12 +2365,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* tcic_init */
+multiline_comment|/* init_tcic */
 multiline_comment|/*====================================================================*/
-DECL|function|tcic_finish
+DECL|function|exit_tcic
 r_static
 r_void
-id|tcic_finish
+id|__exit
+id|exit_tcic
 c_func
 (paren
 r_void
@@ -2410,7 +2452,7 @@ l_int|16
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* tcic_finish */
+multiline_comment|/* exit_tcic */
 multiline_comment|/*====================================================================*/
 DECL|function|tcic_interrupt
 r_static
@@ -5216,83 +5258,18 @@ suffix:semicolon
 )brace
 multiline_comment|/* tcic_service */
 multiline_comment|/*====================================================================*/
-DECL|function|pcmcia_tcic_init
-r_int
-id|pcmcia_tcic_init
+DECL|variable|init_tcic
+id|module_init
 c_func
 (paren
-r_void
-)paren
-(brace
-id|servinfo_t
-id|serv
-suffix:semicolon
-id|CardServices
-c_func
-(paren
-id|GetCardServicesInfo
-comma
-op_amp
-id|serv
+id|init_tcic
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|serv.Revision
-op_ne
-id|CS_RELEASE_CODE
-)paren
-(brace
-id|printk
+DECL|variable|exit_tcic
+id|module_exit
 c_func
 (paren
-id|KERN_NOTICE
-l_string|&quot;tcic: Card Services release &quot;
-l_string|&quot;does not match!&bslash;n&quot;
+id|exit_tcic
 )paren
 suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_return
-id|tcic_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|pcmcia_tcic_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|tcic_finish
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

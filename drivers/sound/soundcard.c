@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;soundmodule.h&quot;
 DECL|variable|sound_locker
 r_struct
@@ -1897,6 +1898,18 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The OSS drivers aren&squot;t remotely happy without this locking,&n;&t; *&t;and unless someone fixes them when they are about to bite the&n;&t; *&t;big one anyway, we might as well bandage here..&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|DEB
 c_func
 (paren
@@ -1922,7 +1935,8 @@ l_int|0x0f
 r_case
 id|SND_DEV_STATUS
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sndstat_file_read
 c_func
 (paren
@@ -1945,7 +1959,8 @@ suffix:colon
 r_case
 id|SND_DEV_AUDIO
 suffix:colon
-r_return
+id|ret
+op_assign
 id|audio_read
 c_func
 (paren
@@ -1958,6 +1973,8 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SEQUENCER
 r_case
@@ -1966,7 +1983,8 @@ suffix:colon
 r_case
 id|SND_DEV_SEQ2
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sequencer_read
 c_func
 (paren
@@ -1979,12 +1997,15 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
-r_return
+id|ret
+op_assign
 id|MIDIbuf_read
 c_func
 (paren
@@ -1998,13 +2019,14 @@ id|count
 )paren
 suffix:semicolon
 macro_line|#endif
-r_default
-suffix:colon
-suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-op_minus
-id|EINVAL
+id|ret
 suffix:semicolon
 )brace
 DECL|function|sound_write
@@ -2040,6 +2062,17 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|DEB
 c_func
 (paren
@@ -2069,7 +2102,8 @@ suffix:colon
 r_case
 id|SND_DEV_SEQ2
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sequencer_write
 c_func
 (paren
@@ -2082,6 +2116,8 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_AUDIO
 r_case
@@ -2093,7 +2129,8 @@ suffix:colon
 r_case
 id|SND_DEV_AUDIO
 suffix:colon
-r_return
+id|ret
+op_assign
 id|audio_write
 c_func
 (paren
@@ -2106,12 +2143,15 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
-r_return
+id|ret
+op_assign
 id|MIDIbuf_write
 c_func
 (paren
@@ -2124,11 +2164,17 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#endif
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-op_minus
-id|EINVAL
+id|ret
 suffix:semicolon
 )brace
 DECL|function|sound_lseek
@@ -4066,6 +4112,13 @@ id|dmabuf
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|dmabug
+r_static
+r_int
+id|dmabug
+op_assign
+l_int|0
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -4078,6 +4131,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|dmabuf
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dmabug
 comma
 l_string|&quot;i&quot;
 )paren
@@ -4106,6 +4167,34 @@ id|trace_init
 op_assign
 id|traceinit
 suffix:semicolon
+macro_line|#ifdef HAS_BRIDGE_BUGGY_FUNC
+r_if
+c_cond
+(paren
+id|dmabug
+)paren
+(brace
+id|isa_dma_bridge_buggy
+op_assign
+id|dmabug
+suffix:semicolon
+)brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|dmabug
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;sound: rebuild with PCI_QUIRKS enabled to configure this.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * &quot;sound=&quot; command line handling by Harald Milz.&n;&t; */
 id|i
 op_assign

@@ -234,6 +234,7 @@ macro_line|#endif
 DECL|variable|irq2dev
 r_static
 r_volatile
+r_int
 r_char
 id|irq2dev
 (braket
@@ -11315,6 +11316,7 @@ id|hw_config
 )paren
 (brace
 r_static
+r_int
 r_char
 id|interrupt_bits
 (braket
@@ -11354,9 +11356,11 @@ comma
 l_int|0x20
 )brace
 suffix:semicolon
+r_int
 r_char
 id|bits
-comma
+suffix:semicolon
+r_char
 id|dma2_bit
 op_assign
 l_int|0

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998, 1999 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional work by Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt; for initial&n; * Alpha and trace dump support. The trace dump support has not been&n; * integrated yet however.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -1437,8 +1438,8 @@ suffix:semicolon
 )brace
 DECL|function|ace_init
 r_static
-id|__init
 r_int
+id|__init
 id|ace_init
 c_func
 (paren

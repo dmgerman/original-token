@@ -22,6 +22,21 @@ comma
 DECL|enumerator|token_define_bool
 id|token_define_bool
 comma
+DECL|enumerator|token_define_hex
+id|token_define_hex
+comma
+DECL|enumerator|token_define_int
+id|token_define_int
+comma
+DECL|enumerator|token_define_string
+id|token_define_string
+comma
+DECL|enumerator|token_define_tristate
+id|token_define_tristate
+comma
+DECL|enumerator|token_dep_bool
+id|token_dep_bool
+comma
 DECL|enumerator|token_dep_tristate
 id|token_dep_tristate
 comma
@@ -101,14 +116,17 @@ comma
 DECL|enumerator|op_variable
 id|op_variable
 comma
-DECL|enumerator|op_kvariable
-id|op_kvariable
+DECL|enumerator|op_true
+id|op_true
+comma
+DECL|enumerator|op_false
+id|op_false
 comma
 DECL|enumerator|op_nuked
 id|op_nuked
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Conditions come in linked lists.&n; * Some operators take strings:&n; *&n; *   op_constant   &quot;foo&quot;&n; *   op_variable   &quot;$ARCH&quot;, &quot;$CONFIG_PMAC&quot;&n; *   op_kvariable  &quot;$CONFIG_EXPERIMENTAL&quot;&n; *&n; * Most &quot;$...&quot; constructs refer to a variable which is defined somewhere&n; * in the script, so they become op_kvariable&squot;s instead.  Note that it&n; * is legal to test variables which are never defined, such as variables&n; * that are meaningful only on other architectures.&n; */
+multiline_comment|/*&n; * Conditions come in linked lists.&n; * Some operators take strings:&n; *&n; *   op_constant   &quot;foo&quot;&n; *   op_variable   &quot;$ARCH&quot;, &quot;$CONFIG_PMAC&quot;, &quot;$CONFIG_EXPERIMENTAL&quot;&n; *&n; * Most &quot;$...&quot; constructs refer to a variable which is defined somewhere&n; * in the script.  Note that it is legal to test variables which are never&n; * defined, such as variables that are meaningful only on other architectures.&n; */
 DECL|struct|condition
 r_struct
 id|condition
@@ -130,14 +148,30 @@ r_char
 op_star
 id|str
 suffix:semicolon
-multiline_comment|/* op_constant, op_variable */
-DECL|member|cfg
-r_struct
-id|kconfig
-op_star
-id|cfg
+multiline_comment|/* op_constant */
+DECL|member|nameindex
+r_int
+id|nameindex
 suffix:semicolon
-multiline_comment|/* op_kvariable */
+multiline_comment|/* op_variable */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Dependency list for dep_bool, dep_tristate&n; */
+DECL|struct|dependency
+r_struct
+id|dependency
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|next
+r_struct
+id|dependency
+op_star
+id|next
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * A statement from a config.in file&n; */
@@ -156,10 +190,9 @@ r_enum
 id|e_token
 id|token
 suffix:semicolon
-DECL|member|optionname
-r_char
-op_star
-id|optionname
+DECL|member|nameindex
+r_int
+id|nameindex
 suffix:semicolon
 DECL|member|label
 r_char
@@ -178,7 +211,8 @@ op_star
 id|cond
 suffix:semicolon
 DECL|member|depend
-r_char
+r_struct
+id|dependency
 op_star
 id|depend
 suffix:semicolon
@@ -191,10 +225,6 @@ id|cfg_parent
 suffix:semicolon
 multiline_comment|/* token_choice_item */
 multiline_comment|/* used only in tkgen.c */
-DECL|member|global_written
-r_char
-id|global_written
-suffix:semicolon
 DECL|member|menu_number
 r_int
 id|menu_number
@@ -210,6 +240,36 @@ op_star
 id|menu_next
 suffix:semicolon
 )brace
+suffix:semicolon
+DECL|struct|variable
+r_struct
+id|variable
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|defined
+r_char
+id|defined
+suffix:semicolon
+DECL|member|global_written
+r_char
+id|global_written
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|variable
+id|vartable
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|max_varnum
 suffix:semicolon
 multiline_comment|/*&n; * Prototypes&n; */
 r_extern
@@ -234,4 +294,14 @@ id|scfg
 )paren
 suffix:semicolon
 multiline_comment|/* tkgen.c  */
+r_extern
+r_int
+id|get_varnum
+(paren
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+multiline_comment|/* tkparse.c */
 eof

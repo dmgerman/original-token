@@ -81,12 +81,6 @@ DECL|macro|PORT_ALTSCP
 mdefine_line|#define PORT_ALTSCP&t;&t;0x02&t;/* alternate SCB address */
 DECL|macro|PORT_ALTDUMP
 mdefine_line|#define PORT_ALTDUMP&t;&t;0x03&t;/* Alternate DUMP address */
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(addr, size)&t;0
-DECL|macro|request_region
-mdefine_line|#define request_region(addr, size,name)&t;do ; while(0)
-macro_line|#endif
 macro_line|#ifndef HAVE_ALLOC_SKB
 DECL|macro|alloc_skb
 mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)

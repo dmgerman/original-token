@@ -1,8 +1,9 @@
-multiline_comment|/*&n; * ac97.h &n; * &n; * definitions for the AC97, Intel&squot;s Audio Codec 97 Spec&n; */
+multiline_comment|/*&n; * ac97.h &n; * &n; * definitions for the AC97, Intel&squot;s Audio Codec 97 Spec&n; * also includes support for a generic AC97 interface&n; */
 macro_line|#ifndef _AC97_H_
 DECL|macro|_AC97_H_
 mdefine_line|#define _AC97_H_
-singleline_comment|// conections on concert 97 */
+macro_line|#include &quot;sound_config.h&quot;
+macro_line|#include &quot;sound_calls.h&quot;
 DECL|macro|AC97_RESET
 mdefine_line|#define  AC97_RESET              0x0000      
 singleline_comment|//  */
@@ -148,5 +149,251 @@ DECL|macro|AC97_PWR_D3
 mdefine_line|#define AC97_PWR_D3              AC97_PWR_PR0|AC97_PWR_PR1|AC97_PWR_PR2|AC97_PWR_PR3|AC97_PWR_PR4
 DECL|macro|AC97_PWR_ANLOFF
 mdefine_line|#define AC97_PWR_ANLOFF          AC97_PWR_PR2|AC97_PWR_PR3  /* analog section off */
-macro_line|#endif /* _AC97_H_ */
+multiline_comment|/* Total number of defined registers.  */
+DECL|macro|AC97_REG_CNT
+mdefine_line|#define AC97_REG_CNT 64
+multiline_comment|/* Generic AC97 mixer interface. */
+multiline_comment|/* Structure describing access to the hardware. */
+DECL|struct|ac97_hwint
+r_struct
+id|ac97_hwint
+(brace
+multiline_comment|/* Perform any hardware-specific reset and initialization.  Returns&n;     0 on success, or a negative error code.  */
+DECL|member|reset_device
+r_int
+(paren
+op_star
+id|reset_device
+)paren
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Returns the contents of the specified register REG.  The caller&n;       should check to see if the desired contents are available in&n;       the cache first, if applicable. Returns a positive unsigned value&n;       representing the contents of the register, or a negative error&n;       code.  */
+DECL|member|read_reg
+r_int
+(paren
+op_star
+id|read_reg
+)paren
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+id|u8
+id|reg
+)paren
+suffix:semicolon
+multiline_comment|/* Writes VALUE to register REG.  Returns 0 on success, or a&n;       negative error code.  */
+DECL|member|write_reg
+r_int
+(paren
+op_star
+id|write_reg
+)paren
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+id|u8
+id|reg
+comma
+id|u16
+id|value
+)paren
+suffix:semicolon
+multiline_comment|/* Hardware-specific information. */
+DECL|member|driver_private
+r_void
+op_star
+id|driver_private
+suffix:semicolon
+multiline_comment|/* Three OSS masks. */
+DECL|member|mixer_devmask
+r_int
+id|mixer_devmask
+suffix:semicolon
+DECL|member|mixer_stereomask
+r_int
+id|mixer_stereomask
+suffix:semicolon
+DECL|member|mixer_recmask
+r_int
+id|mixer_recmask
+suffix:semicolon
+multiline_comment|/* The mixer cache. The indices correspond to the AC97 hardware register&n;       number / 2, since the register numbers are always an even number.&n;&n;       Unknown values are set to -1; unsupported registers contain a&n;       -2.  */
+DECL|member|last_written_mixer_values
+r_int
+id|last_written_mixer_values
+(braket
+id|AC97_REG_CNT
+)braket
+suffix:semicolon
+multiline_comment|/* A cache of values written via OSS; we need these so we can return&n;       the values originally written by the user.&n;&n;       Why the original user values?  Because the real-world hardware&n;       has less precision, and some existing applications assume that&n;       they will get back the exact value that they wrote (aumix).&n;&n;       A -1 value indicates that no value has been written to this mixer&n;       channel via OSS.  */
+DECL|member|last_written_OSS_values
+r_int
+id|last_written_OSS_values
+(braket
+id|SOUND_MIXER_NRDEVICES
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* Values stored in the register cache.  */
+DECL|macro|AC97_REGVAL_UNKNOWN
+mdefine_line|#define AC97_REGVAL_UNKNOWN -1
+DECL|macro|AC97_REG_UNSUPPORTED
+mdefine_line|#define AC97_REG_UNSUPPORTED -2
+DECL|struct|ac97_mixer_value_list
+r_struct
+id|ac97_mixer_value_list
+(brace
+multiline_comment|/* Mixer channel to set.  List is terminated by a value of -1.  */
+DECL|member|oss_channel
+r_int
+id|oss_channel
+suffix:semicolon
+multiline_comment|/* The scaled value to set it to; values generally range from 0-100. */
+r_union
+(brace
+r_struct
+(brace
+DECL|member|left
+DECL|member|right
+id|u8
+id|left
+comma
+id|right
+suffix:semicolon
+DECL|member|stereo
+)brace
+id|stereo
+suffix:semicolon
+DECL|member|mono
+id|u8
+id|mono
+suffix:semicolon
+DECL|member|value
+)brace
+id|value
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* Initialize the ac97 mixer by resetting it.  */
+r_extern
+r_int
+id|ac97_init
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Sets the mixer DEV to the values in VALUE_LIST.  Returns 0 on success,&n;   or a negative error code.  */
+r_extern
+r_int
+id|ac97_set_values
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+r_struct
+id|ac97_mixer_value_list
+op_star
+id|value_list
+)paren
+suffix:semicolon
+multiline_comment|/* Sets one mixer channel OSS_CHANNEL to the scaled value OSS_VALUE.&n;   Returns the resulting (rescaled) value, or a negative value&n;   representing an error code.&n;&n;   Stereo channels have two values in OSS_VALUE (the left value is in the&n;   lower 8 bits, the right value is in the upper 8 bits). */
+r_extern
+r_int
+id|ac97_set_mixer
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+r_int
+id|oss_channel
+comma
+id|u16
+id|oss_value
+)paren
+suffix:semicolon
+multiline_comment|/* Return the contents of the specified AC97 register REG; it uses the&n;   last-written value if it is available.  */
+r_extern
+r_int
+id|ac97_get_register
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+id|u8
+id|reg
+)paren
+suffix:semicolon
+multiline_comment|/* Writes the specified VALUE to the AC97 register REG in the mixer.&n;   Takes care of setting the last-written cache as well.  */
+r_extern
+r_int
+id|ac97_put_register
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+id|u8
+id|reg
+comma
+id|u16
+id|value
+)paren
+suffix:semicolon
+multiline_comment|/* Returns the last OSS value written to the OSS_CHANNEL mixer channel.  */
+r_extern
+r_int
+id|ac97_get_mixer_scaled
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+r_int
+id|oss_channel
+)paren
+suffix:semicolon
+multiline_comment|/* Default ioctl. */
+r_extern
+r_int
+id|ac97_mixer_ioctl
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+comma
+r_int
+r_int
+id|cmd
+comma
+id|caddr_t
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif
+"&f;"
+multiline_comment|/*&n; * Local variables:&n; *  c-basic-offset: 4&n; * End:&n; */
 eof

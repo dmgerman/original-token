@@ -213,7 +213,12 @@ id|dev-&gt;device
 comma
 id|dev-&gt;open_count
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|filp-&gt;f_count
+)paren
 )paren
 suffix:semicolon
 r_return

@@ -813,23 +813,6 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* if we get this far, an adapter has been&n;&t;&t;&t;&t; * detected and is enabled&n;&t;&t;&t;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;3c509: found %s at slot %d&bslash;n&quot;
-comma
-id|el3_mca_adapters
-(braket
-id|j
-)braket
-dot
-id|name
-comma
-id|slot
-op_plus
-l_int|1
-)paren
-suffix:semicolon
 id|pos4
 op_assign
 id|mca_read_stored_pos
@@ -911,6 +894,23 @@ multiline_comment|/* probing next slot */
 r_continue
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;3c509: found %s at slot %d&bslash;n&quot;
+comma
+id|el3_mca_adapters
+(braket
+id|j
+)braket
+dot
+id|name
+comma
+id|slot
+op_plus
+l_int|1
+)paren
+suffix:semicolon
 multiline_comment|/* claim the slot */
 id|mca_set_adapter_name
 c_func

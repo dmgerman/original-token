@@ -619,7 +619,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-r_static
 r_int
 id|arlan_command
 c_func
@@ -826,7 +825,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|arlan_command
-r_static
 r_int
 id|arlan_command
 c_func

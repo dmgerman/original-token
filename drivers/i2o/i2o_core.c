@@ -3,9 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#if defined(CONFIG_I2O_PCI) || defined (CONFIG_I2O_PCI_MODULE)
 macro_line|#include &lt;linux/i2o.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -872,6 +870,9 @@ op_star
 op_star
 id|p
 suffix:semicolon
+r_int
+id|users
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -882,6 +883,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|users
+op_assign
 id|atomic_read
 c_func
 (paren
@@ -889,11 +893,14 @@ op_amp
 id|c-&gt;users
 )paren
 )paren
+)paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;Someone is using controller iop%d&bslash;n&quot;
+l_string|&quot;I2O: %d users for controller iop%d&bslash;n&quot;
+comma
+id|users
 comma
 id|c-&gt;unit
 )paren
@@ -942,7 +949,6 @@ id|EBUSY
 suffix:semicolon
 )brace
 )brace
-singleline_comment|//&t;c-&gt;destructor(c); /* We dont want to free the IRQ yet */
 id|p
 op_assign
 op_amp
@@ -9275,6 +9281,13 @@ c_func
 id|i2o_issue_claim
 )paren
 suffix:semicolon
+DECL|variable|i2o_issue_params
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|i2o_issue_params
+)paren
+suffix:semicolon
 DECL|variable|i2o_report_status
 id|EXPORT_SYMBOL
 c_func
@@ -9431,8 +9444,8 @@ r_void
 )paren
 suffix:semicolon
 DECL|function|i2o_init
-id|__init
 r_int
+id|__init
 id|i2o_init
 c_func
 (paren

@@ -8477,9 +8477,9 @@ id|range.throughput
 op_assign
 l_float|1.6
 op_star
-l_int|1024
+l_int|1000
 op_star
-l_int|1024
+l_int|1000
 suffix:semicolon
 multiline_comment|/* don&squot;t argue on this ! */
 id|range.min_nwid
@@ -9111,9 +9111,12 @@ c_func
 )paren
 )paren
 (brace
-r_return
+id|ret
+op_assign
 op_minus
 id|EPERM
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 id|psa.psa_quality_thr
@@ -9247,9 +9250,12 @@ c_func
 )paren
 )paren
 (brace
-r_return
+id|ret
+op_assign
 op_minus
 id|EPERM
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Check the number of intervals. */

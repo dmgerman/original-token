@@ -12532,8 +12532,12 @@ id|check_region
 c_func
 (paren
 id|s-&gt;sbbase
+op_plus
+l_int|4
 comma
 id|SBBASE_EXTENT
+op_minus
+l_int|4
 )paren
 op_logical_or
 id|check_region
@@ -12578,12 +12582,17 @@ id|request_region
 c_func
 (paren
 id|s-&gt;sbbase
+op_plus
+l_int|4
 comma
 id|SBBASE_EXTENT
+op_minus
+l_int|4
 comma
 l_string|&quot;ESS Solo1&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* allow OPL3 synth module */
 id|request_region
 c_func
 (paren
@@ -13100,8 +13109,12 @@ id|release_region
 c_func
 (paren
 id|s-&gt;sbbase
+op_plus
+l_int|4
 comma
 id|SBBASE_EXTENT
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 id|release_region
@@ -13260,8 +13273,12 @@ id|release_region
 c_func
 (paren
 id|s-&gt;sbbase
+op_plus
+l_int|4
 comma
 id|SBBASE_EXTENT
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 id|release_region

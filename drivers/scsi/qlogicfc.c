@@ -1316,8 +1316,10 @@ macro_line|#else
 DECL|macro|QLOGICFC_MAX_ID
 mdefine_line|#define QLOGICFC_MAX_ID    0x7d
 macro_line|#endif
+DECL|macro|QLOGICFC_MAX_LUN
+mdefine_line|#define QLOGICFC_MAX_LUN&t;128
 DECL|macro|QLOGICFC_MAX_LOOP_ID
-mdefine_line|#define QLOGICFC_MAX_LOOP_ID 0x7d
+mdefine_line|#define QLOGICFC_MAX_LOOP_ID&t;0x7d
 multiline_comment|/* adapter_state values */
 DECL|macro|AS_FIRMWARE_DEAD
 mdefine_line|#define AS_FIRMWARE_DEAD      -1
@@ -1854,6 +1856,10 @@ op_assign
 id|QLOGICFC_MAX_ID
 op_plus
 l_int|1
+suffix:semicolon
+id|host-&gt;max_lun
+op_assign
+id|QLOGICFC_MAX_LUN
 suffix:semicolon
 id|host-&gt;hostt-&gt;use_new_eh_code
 op_assign

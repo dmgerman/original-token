@@ -23,7 +23,9 @@ macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|MAX_I2OB
 mdefine_line|#define MAX_I2OB&t;16
 DECL|macro|MAX_I2OB_DEPTH
-mdefine_line|#define MAX_I2OB_DEPTH&t;32
+mdefine_line|#define MAX_I2OB_DEPTH&t;32                
+DECL|macro|MAX_I2OB_RETRIES
+mdefine_line|#define MAX_I2OB_RETRIES 4
 multiline_comment|/*&n; *&t;Some of these can be made smaller later&n; */
 DECL|variable|i2ob_blksizes
 r_static
@@ -77,13 +79,6 @@ DECL|variable|i2ob_context
 r_static
 r_int
 id|i2ob_context
-suffix:semicolon
-DECL|variable|i2ob_lock
-r_static
-id|spinlock_t
-id|i2ob_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|struct|i2ob_device
 r_struct
@@ -213,6 +208,19 @@ id|i2ob_request
 op_star
 id|i2ob_qhead
 suffix:semicolon
+DECL|variable|i2ob_timer
+r_static
+r_struct
+id|timer_list
+id|i2ob_timer
+suffix:semicolon
+DECL|variable|i2ob_timer_started
+r_static
+r_int
+id|i2ob_timer_started
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG( s )
 multiline_comment|/* #define DEBUG( s ) printk( s ) &n; */
@@ -244,12 +252,80 @@ op_star
 suffix:semicolon
 r_static
 r_void
-id|do_i2ob_request
+id|i2ob_request
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Dump messages.&n; */
+DECL|function|i2ob_dump_msg
+r_static
+r_void
+id|i2ob_dump_msg
+c_func
+(paren
+r_struct
+id|i2ob_device
+op_star
+id|dev
+comma
+id|u32
+op_star
+id|msg
+comma
+r_int
+id|size
+)paren
+(brace
+r_int
+id|cnt
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;&bslash;n&bslash;ni2o message:&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|cnt
+op_assign
+l_int|0
+suffix:semicolon
+id|cnt
+OL
+id|size
+suffix:semicolon
+id|cnt
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;m[%d]=%x&bslash;n&quot;
+comma
+id|cnt
+comma
+id|msg
+(braket
+id|cnt
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Get a message&n; */
 DECL|function|i2ob_get
 r_static
@@ -342,12 +418,6 @@ id|bh
 op_assign
 id|req-&gt;bh
 suffix:semicolon
-r_static
-r_int
-id|old_qd
-op_assign
-l_int|2
-suffix:semicolon
 r_int
 id|count
 op_assign
@@ -355,7 +425,7 @@ id|req-&gt;nr_sectors
 op_lshift
 l_int|9
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Build a message&n;&t; */
+multiline_comment|/* Map the message to a virtual address */
 id|msg
 op_assign
 id|bus_to_virt
@@ -366,6 +436,7 @@ op_plus
 id|m
 )paren
 suffix:semicolon
+multiline_comment|/*&n;         * Build the message based on the request.&n;&t; */
 id|msg
 (braket
 l_int|2
@@ -687,29 +758,6 @@ op_amp
 id|queue_depth
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|queue_depth
-)paren
-OG
-id|old_qd
-)paren
-(brace
-id|old_qd
-op_assign
-id|atomic_read
-c_func
-(paren
-op_amp
-id|queue_depth
-)paren
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -802,6 +850,10 @@ op_star
 id|msg
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|i2ob_request
 op_star
@@ -1149,25 +1201,120 @@ l_int|4
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Now error out the request block&n;&t;&t;&t; */
 id|ireq-&gt;req-&gt;errors
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ireq-&gt;req-&gt;errors
+OL
+id|MAX_I2OB_RETRIES
+)paren
+(brace
+id|u32
+id|retry_msg
+suffix:semicolon
+r_struct
+id|i2ob_device
+op_star
+id|dev
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;i2ob: attempting retry %d for request %p&bslash;n&quot;
+comma
+id|ireq-&gt;req-&gt;errors
+op_plus
+l_int|1
+comma
+id|ireq-&gt;req
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t; * Get a message for this retry.&n;&t;&t;&t;&t; */
+id|dev
+op_assign
+op_amp
+id|i2ob_dev
+(braket
+(paren
+id|unit
+op_amp
+l_int|0xF0
+)paren
+)braket
+suffix:semicolon
+id|retry_msg
+op_assign
+id|i2ob_get
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t; * If we cannot get a message then&n;&t;&t;&t;&t; * forget the retry and fail the&n;&t;&t;&t;&t; * request.   Note that since this is&n;&t;&t;&t;&t; * being called from the interrupt &n;&t;&t;&t;&t; * handler, a request has just been &n;&t;&t;&t;&t; * completed and there will most likely &n;&t;&t;&t;&t; * be space on the inbound message&n;&t;&t;&t;&t; * fifo so this won&squot;t happen often.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|retry_msg
+op_ne
+l_int|0xFFFFFFFF
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;                 * Decrement the queue depth since&n;&t;&t;&t;                 * this request has completed and&n;&t;&t;&t;                 * it will be incremented again when&n;&t;&t;&t;                 * i2ob_send is called below.&n;&t;&t;&t;                 */
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|queue_depth
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;                 * Send the request again.&n;&t;&t;&t;                 */
+id|i2ob_send
+c_func
+(paren
+id|retry_msg
+comma
+id|dev
+comma
+id|ireq
+comma
+id|i2ob
+(braket
+id|unit
+)braket
+dot
+id|start_sect
+comma
+(paren
+id|unit
+op_amp
+l_int|0xF0
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Don&squot;t fall through.&n;&t;&t;&t;&t;&t; */
+r_return
+suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Dequeue the request.&n;&t; */
-id|spin_lock
+)brace
+r_else
+id|ireq-&gt;req-&gt;errors
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Dequeue the request. We use irqsave locks as one day we&n;&t; *&t;may be running polled controllers from a BH...&n;&t; */
+id|spin_lock_irqsave
 c_func
 (paren
 op_amp
 id|io_request_lock
-)paren
-suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|i2ob_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|i2ob_unhook_request
@@ -1190,23 +1337,18 @@ op_amp
 id|queue_depth
 )paren
 suffix:semicolon
-id|do_i2ob_request
+id|i2ob_request
 c_func
 (paren
 )paren
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|i2ob_lock
-)paren
-suffix:semicolon
-id|spin_unlock
+id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
 id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1226,11 +1368,59 @@ comma
 id|I2O_CLASS_RANDOM_BLOCK_STORAGE
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;The I2O block driver is listed as one of those that pulls the&n; *&t;front entry off the queue before processing it. This is important&n; *&t;to remember here. If we drop the io lock then CURRENT will change&n; *&t;on us. We must unlink CURRENT in this routine before we return, if&n; *&t;we use it.&n; */
-DECL|function|do_i2ob_request
+multiline_comment|/*&n; * The timer handler will attempt to restart requests &n; * that are queued to the driver.  This handler&n; * currently only gets called if the controller&n; * had no more room in its inbound fifo.  &n; */
+DECL|function|i2ob_timer_handler
 r_static
 r_void
-id|do_i2ob_request
+id|i2ob_timer_handler
+c_func
+(paren
+r_int
+r_int
+id|dummy
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;&t; * We cannot touch the request queue or the timer&n;         * flag without holding the io_request_lock.&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Clear the timer started flag so that &n;&t; * the timer can be queued again.&n;&t; */
+id|i2ob_timer_started
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* &n;&t; * Restart any requests.&n;&t; */
+id|i2ob_request
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Free the lock.&n;&t; */
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;The I2O block driver is listed as one of those that pulls the&n; *&t;front entry off the queue before processing it. This is important&n; *&t;to remember here. If we drop the io lock then CURRENT will change&n; *&t;on us. We must unlink CURRENT in this routine before we return, if&n; *&t;we use it.&n; */
+DECL|function|i2ob_request
+r_static
+r_void
+id|i2ob_request
 c_func
 (paren
 r_void
@@ -1325,7 +1515,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* No messages -&gt; punt &n;&t;&t;   FIXME: if we have no messages, and there are no messages &n;&t;&t;   we deadlock now. Need a timer/callback ?? */
 r_if
 c_cond
 (paren
@@ -1334,14 +1523,46 @@ op_eq
 l_int|0xFFFFFFFF
 )paren
 (brace
+multiline_comment|/* &n;&t;&t;&t; * See if the timer has already been queued.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|i2ob_timer_started
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;i2ob: no messages!&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;i2ob: starting timer&bslash;n&quot;
 )paren
 suffix:semicolon
-r_break
+multiline_comment|/*&n;&t;&t;&t;&t; * Set the timer_started flag to insure&n;&t;&t;&t;&t; * that the timer is only queued once.&n;&t;&t;&t;&t; * Queing it more than once will corrupt&n;&t;&t;&t;&t; * the timer queue.&n;&t;&t;&t;&t; */
+id|i2ob_timer_started
+op_assign
+l_int|1
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t; * Set up the timer to expire in&n;&t;&t;&t;&t; * 500ms.&n;&t;&t;&t;&t; */
+id|i2ob_timer.expires
+op_assign
+id|jiffies
+op_plus
+(paren
+id|HZ
+op_rshift
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * Start it.&n;&t;&t;&t;&t; */
+id|add_timer
+c_func
+(paren
+op_amp
+id|i2ob_timer
+)paren
+suffix:semicolon
+)brace
 )brace
 id|req-&gt;errors
 op_assign
@@ -1395,43 +1616,6 @@ l_int|0xF0
 )paren
 suffix:semicolon
 )brace
-)brace
-DECL|function|i2ob_request
-r_static
-r_void
-id|i2ob_request
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|i2ob_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|do_i2ob_request
-c_func
-(paren
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|i2ob_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;SCSI-CAM for ioctl geometry mapping&n; *&t;Duplicated with SCSI - this should be moved into somewhere common&n; *&t;perhaps genhd ?&n; */
 DECL|function|i2o_block_biosparam
@@ -4220,6 +4404,22 @@ id|i2ob_queue
 (braket
 l_int|0
 )braket
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Timers&n;&t; */
+id|init_timer
+c_func
+(paren
+op_amp
+id|i2ob_timer
+)paren
+suffix:semicolon
+id|i2ob_timer.function
+op_assign
+id|i2ob_timer_handler
+suffix:semicolon
+id|i2ob_timer.data
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Register the OSM handler as we will need this to probe for&n;&t; *&t;drives, geometry and other goodies.&n;&t; */
 r_if

@@ -1168,8 +1168,8 @@ l_string|&quot;I2O PCI Interface&quot;
 suffix:semicolon
 macro_line|#else
 DECL|function|i2o_pci_init
-id|__init
 r_void
+id|__init
 id|i2o_pci_init
 c_func
 (paren

@@ -165,7 +165,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|pcmcia_init
+id|init_pcmcia_ds
 c_func
 (paren
 r_void
@@ -2431,7 +2431,7 @@ suffix:semicolon
 multiline_comment|/* Must be done after protocol initialization */
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCMCIA
-id|pcmcia_init
+id|init_pcmcia_ds
 c_func
 (paren
 )paren

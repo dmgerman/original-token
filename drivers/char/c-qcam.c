@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|struct|qcam_device
 r_struct
@@ -72,6 +73,11 @@ DECL|member|bidirectional
 r_int
 r_int
 id|bidirectional
+suffix:semicolon
+DECL|member|lock
+r_struct
+id|semaphore
+id|lock
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -2612,6 +2618,13 @@ id|p.whiteness
 op_rshift
 l_int|8
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
+)paren
+suffix:semicolon
 id|parport_claim_or_block
 c_func
 (paren
@@ -2628,6 +2641,13 @@ id|parport_release
 c_func
 (paren
 id|qcam-&gt;pdev
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
 )paren
 suffix:semicolon
 r_return
@@ -2807,6 +2827,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Ok we figured out what to use from our &n;&t;&t;&t;   wide choice */
+id|down
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
+)paren
+suffix:semicolon
 id|parport_claim_or_block
 c_func
 (paren
@@ -2823,6 +2850,13 @@ id|parport_release
 c_func
 (paren
 id|qcam-&gt;pdev
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
 )paren
 suffix:semicolon
 r_return
@@ -2992,6 +3026,13 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
+)paren
+suffix:semicolon
 id|parport_claim_or_block
 c_func
 (paren
@@ -3015,6 +3056,13 @@ id|parport_release
 c_func
 (paren
 id|qcam-&gt;pdev
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
 )paren
 suffix:semicolon
 r_return
@@ -3181,6 +3229,13 @@ r_sizeof
 (paren
 id|qcam_template
 )paren
+)paren
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|q-&gt;lock
 )paren
 suffix:semicolon
 id|q-&gt;width

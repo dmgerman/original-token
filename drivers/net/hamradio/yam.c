@@ -4672,6 +4672,7 @@ macro_line|#ifndef PROC_NET_YAM
 DECL|macro|PROC_NET_YAM
 mdefine_line|#define PROC_NET_YAM (PROC_NET_LAST+10)&t;&t;/* Sorry again... */
 macro_line|#endif
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|yam_proc_dir_entry
 r_struct
 id|proc_dir_entry
@@ -4706,6 +4707,12 @@ DECL|macro|yam_net_procfs_init
 mdefine_line|#define yam_net_procfs_init()   proc_net_register(&amp;yam_proc_dir_entry);
 DECL|macro|yam_net_procfs_remove
 mdefine_line|#define yam_net_procfs_remove() proc_net_unregister(PROC_NET_YAM);
+macro_line|#else
+DECL|macro|yam_net_procfs_init
+mdefine_line|#define yam_net_procfs_init()
+DECL|macro|yam_net_procfs_remove
+mdefine_line|#define yam_net_procfs_remove()
+macro_line|#endif
 macro_line|#else
 DECL|macro|yam_net_procfs_init
 mdefine_line|#define yam_net_procfs_init()

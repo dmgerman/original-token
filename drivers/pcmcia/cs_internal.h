@@ -1251,7 +1251,7 @@ r_int
 id|pc_debug
 suffix:semicolon
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args...) do { if (pc_debug&gt;(n)) printk(args); } while (0)
+mdefine_line|#define DEBUG(n, args...) do { if (pc_debug&gt;(n)) printk(KERN_DEBUG args); } while (0)
 macro_line|#else
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(n, args...) do { } while (0)

@@ -16,26 +16,9 @@ macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;bw-qcam.h&quot;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020117
-id|MODULE_PARM
-c_func
-(paren
-id|maxpoll
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|yieldlines
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|maxpoll
 r_static
 r_int
@@ -54,6 +37,24 @@ op_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* Yield after this many during capture */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020117
+id|MODULE_PARM
+c_func
+(paren
+id|maxpoll
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|yieldlines
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|read_lpstatus
 r_extern
 id|__inline__
@@ -444,6 +445,13 @@ r_sizeof
 (paren
 id|qcam_template
 )paren
+)paren
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|q-&gt;lock
 )paren
 suffix:semicolon
 id|q-&gt;port_mode
@@ -3182,17 +3190,30 @@ id|qcam-&gt;bpp
 op_assign
 id|p.depth
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
+)paren
+suffix:semicolon
 id|qc_setscanmode
 c_func
 (paren
 id|qcam
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
+)paren
+suffix:semicolon
 id|qcam-&gt;status
 op_or_assign
 id|QC_PARAM_CHANGE
 suffix:semicolon
-multiline_comment|/*&t;&t;&t;parport_claim_or_block(qcam-&gt;pdev);&n;&t;&t;&t;qc_set(qcam);&n;&t;&t;&t;parport_release(qcam-&gt;pdev);&n;*/
 r_return
 l_int|0
 suffix:semicolon
@@ -3328,10 +3349,24 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
+)paren
+suffix:semicolon
 id|qc_setscanmode
 c_func
 (paren
 id|qcam
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
 )paren
 suffix:semicolon
 multiline_comment|/* We must update the camera before we grab. We could&n;&t;&t;&t;   just have changed the grab size */
@@ -3517,7 +3552,13 @@ c_func
 id|qcam-&gt;pdev
 )paren
 suffix:semicolon
-multiline_comment|/* Probably should have a semaphore against multiple users */
+id|down
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
+)paren
+suffix:semicolon
 id|qc_reset
 c_func
 (paren
@@ -3548,6 +3589,13 @@ comma
 id|buf
 comma
 id|count
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|qcam-&gt;lock
 )paren
 suffix:semicolon
 id|parport_release

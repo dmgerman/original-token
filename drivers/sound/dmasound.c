@@ -28,12 +28,13 @@ macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#endif /* CONFIG_AMIGA */
 macro_line|#ifdef CONFIG_PPC
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
+macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &quot;awacs_defs.h&quot;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
@@ -929,6 +930,23 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|variable|is_pbook_3400
+r_static
+r_int
+id|is_pbook_3400
+suffix:semicolon
+DECL|variable|is_pbook_G3
+r_static
+r_int
+id|is_pbook_G3
+suffix:semicolon
+DECL|variable|macio_base
+r_static
+r_int
+r_char
+op_star
+id|macio_base
+suffix:semicolon
 multiline_comment|/* Burgundy functions */
 r_static
 r_void
@@ -1001,23 +1019,24 @@ id|awacs_sleep_notify
 c_func
 (paren
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 op_star
+id|self
 comma
 r_int
-r_int
-comma
-r_void
-op_star
+id|when
 )paren
 suffix:semicolon
 DECL|variable|awacs_sleep_notifier
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 id|awacs_sleep_notifier
 op_assign
 (brace
 id|awacs_sleep_notify
+comma
+id|SLEEP_LEVEL_SOUND
+comma
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
@@ -18300,12 +18319,9 @@ op_assign
 id|orig_mksound
 suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
-id|notifier_chain_unregister
+id|pmu_unregister_sleep_notifier
 c_func
 (paren
-op_amp
-id|sleep_notifier_list
-comma
 op_amp
 id|awacs_sleep_notifier
 )paren
@@ -20313,32 +20329,39 @@ id|awacs_sleep_notify
 c_func
 (paren
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 op_star
-id|this
+id|self
 comma
 r_int
-r_int
-id|code
-comma
-r_void
-op_star
-id|x
+id|when
 )paren
 (brace
 r_switch
 c_cond
 (paren
-id|code
+id|when
 )paren
 (brace
 r_case
-id|PBOOK_SLEEP
+id|PBOOK_SLEEP_NOW
 suffix:colon
 multiline_comment|/* XXX we should stop any dma in progress when going to sleep&n;&t;&t;   and restart it when we wake. */
 id|PMacSilence
 c_func
 (paren
+)paren
+suffix:semicolon
+id|disable_irq
+c_func
+(paren
+id|awacs_irq
+)paren
+suffix:semicolon
+id|disable_irq
+c_func
+(paren
+id|awacs_tx_irq
 )paren
 suffix:semicolon
 r_break
@@ -20429,9 +20452,21 @@ op_ne
 id|AFMT_S16_BE
 )paren
 suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|awacs_irq
+)paren
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|awacs_tx_irq
+)paren
+suffix:semicolon
 )brace
 r_return
-id|NOTIFY_DONE
+id|PBOOK_SLEEP_OK
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
@@ -21434,9 +21469,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|adb_hardware
+id|sys_ctrler
 op_ne
-id|ADB_VIACUDA
+id|SYS_CTRLER_CUDA
 )paren
 r_return
 suffix:semicolon
@@ -23483,6 +23518,7 @@ macro_line|#ifdef CONFIG_PPC
 r_case
 id|DMASND_AWACS
 suffix:colon
+multiline_comment|/* Different IOCTLS for burgundy*/
 r_if
 c_cond
 (paren
@@ -23491,7 +23527,6 @@ OL
 id|AWACS_BURGUNDY
 )paren
 (brace
-multiline_comment|/* Different IOCTLS for burgundy*/
 r_switch
 c_cond
 (paren
@@ -23929,9 +23964,9 @@ id|awacs_revision
 op_eq
 l_int|3
 op_logical_and
-id|adb_hardware
+id|sys_ctrler
 op_eq
-id|ADB_VIACUDA
+id|SYS_CTRLER_CUDA
 )paren
 id|data
 op_assign
@@ -23990,9 +24025,9 @@ id|awacs_revision
 op_eq
 l_int|3
 op_logical_and
-id|adb_hardware
+id|sys_ctrler
 op_eq
-id|ADB_VIACUDA
+id|SYS_CTRLER_CUDA
 )paren
 id|awacs_enable_amp
 c_func
@@ -26963,7 +26998,7 @@ op_assign
 id|file-&gt;f_mode
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCC
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -27166,7 +27201,7 @@ id|sq.open_queue
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCC
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -29528,17 +29563,108 @@ l_string|&quot;beep buffer&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
-id|notifier_chain_register
+id|pmu_register_sleep_notifier
 c_func
 (paren
-op_amp
-id|sleep_notifier_list
-comma
 op_amp
 id|awacs_sleep_notifier
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
+multiline_comment|/* Powerbooks have odd ways of enabling inputs such as&n;&t;&t;   an expansion-bay CD or sound from an internal modem&n;&t;&t;   or a PC-card modem. */
+r_if
+c_cond
+(paren
+id|machine_is_compatible
+c_func
+(paren
+l_string|&quot;AAPL,3400/2400&quot;
+)paren
+)paren
+(brace
+id|is_pbook_3400
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Enable CD and PC-card sound inputs.&n;&t;&t;&t; * This is done by reading from address&n;&t;&t;&t; * f301a000, + 0x10 to enable the expansion-bay&n;&t;&t;&t; * CD sound input, + 0x80 to enable the PC-card&n;&t;&t;&t; * sound input.  The 0x100 seems to enable the&n;&t;&t;&t; * MESH and/or its SCSI bus drivers.&n;&t;&t;&t; */
+id|in_8
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+l_int|0xf301a190
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_compatible
+c_func
+(paren
+l_string|&quot;PowerBook1,1&quot;
+)paren
+)paren
+(brace
+id|np
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;mac-io&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|np
+op_logical_and
+id|np-&gt;n_addrs
+OG
+l_int|0
+)paren
+(brace
+id|is_pbook_G3
+op_assign
+l_int|1
+suffix:semicolon
+id|macio_base
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|ioremap
+c_func
+(paren
+id|np-&gt;addrs
+(braket
+l_int|0
+)braket
+dot
+id|address
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/* enable CD sound input */
+id|out_8
+c_func
+(paren
+id|macio_base
+op_plus
+l_int|0x37
+comma
+l_int|3
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 macro_line|#endif /* CONFIG_PPC */
 r_if

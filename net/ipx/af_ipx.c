@@ -2524,6 +2524,23 @@ op_logical_and
 id|skb-&gt;pkt_type
 op_ne
 id|PACKET_OTHERHOST
+multiline_comment|/* header + 8 network numbers */
+op_logical_and
+id|ntohs
+c_func
+(paren
+id|ipx-&gt;ipx_pktsize
+)paren
+op_ge
+r_sizeof
+(paren
+r_struct
+id|ipxhdr
+)paren
+op_plus
+l_int|8
+op_star
+l_int|4
 )paren
 (brace
 r_int
@@ -8186,6 +8203,23 @@ r_sizeof
 r_struct
 id|ipxhdr
 )paren
+)paren
+(brace
+r_goto
+id|drop
+suffix:semicolon
+)brace
+multiline_comment|/* Invalid header */
+r_if
+c_cond
+(paren
+id|ntohs
+c_func
+(paren
+id|ipx-&gt;ipx_pktsize
+)paren
+OG
+id|skb-&gt;len
 )paren
 (brace
 r_goto

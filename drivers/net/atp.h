@@ -1324,9 +1324,6 @@ DECL|macro|EE_DATA_WRITE
 mdefine_line|#define EE_DATA_WRITE&t;0x01&t;/* EEPROM chip data in. */
 DECL|macro|EE_DATA_READ
 mdefine_line|#define EE_DATA_READ&t;0x08&t;/* EEPROM chip data out. */
-multiline_comment|/* Delay between EEPROM clock transitions. */
-DECL|macro|eeprom_delay
-mdefine_line|#define eeprom_delay(ticks) &bslash;&n;do { int _i = 40; while (--_i &gt; 0) { __SLOW_DOWN_IO; }} while (0)
 multiline_comment|/* The EEPROM commands include the alway-set leading bit. */
 DECL|macro|EE_WRITE_CMD
 mdefine_line|#define EE_WRITE_CMD(offset)&t;(((5 &lt;&lt; 6) + (offset)) &lt;&lt; 17)

@@ -1,7 +1,7 @@
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;arlan.h&quot;
-macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* void enableReceive(struct net_device* dev);&n;*/
 r_static
@@ -4529,6 +4529,23 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#else
+DECL|variable|arlan_table
+r_static
+id|ctl_table
+id|arlan_table
+(braket
+id|MAX_ARLANS
+op_plus
+l_int|1
+)braket
+op_assign
+(brace
+(brace
+l_int|0
+)brace
+)brace
+suffix:semicolon
 macro_line|#endif
 DECL|variable|mmtu
 r_static

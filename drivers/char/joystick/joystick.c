@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;

@@ -428,11 +428,39 @@ l_int|732
 )brace
 comma
 (brace
-l_string|&quot;Alps HSBH1&quot;
+l_string|&quot;Alps TSBH1&quot;
 comma
 id|TEMIC
 comma
 id|NTSC
+comma
+l_int|16
+op_star
+l_float|137.25
+comma
+l_int|16
+op_star
+l_float|385.25
+comma
+l_int|0x01
+comma
+l_int|0x02
+comma
+l_int|0x08
+comma
+l_int|0x8e
+comma
+l_int|0xc2
+comma
+l_int|732
+)brace
+comma
+(brace
+l_string|&quot;Alps TSBE1&quot;
+comma
+id|TEMIC
+comma
+id|PAL
 comma
 l_int|16
 op_star
@@ -926,13 +954,17 @@ id|tuner
 op_star
 id|t
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;For now we only try and attach these tuners to the BT848&n;&t; *&t;bus. This same module will however work different species&n;&t; *&t;of card using these chips. Just change the constraints&n;&t; *&t;(i2c doesn&squot;t have a totally clash free &squot;address&squot; space)&n;&t; */
+multiline_comment|/*&n;&t; *&t;For now we only try and attach these tuners to the BT848&n;&t; *&t;or ZORAN bus. This same module will however work different&n;&t; *&t;species&t;of card using these chips. Just change the constraints&n;&t; *&t;(i2c doesn&squot;t have a totally clash free &squot;address&squot; space)&n;&t; */
 r_if
 c_cond
 (paren
 id|device-&gt;bus-&gt;id
 op_ne
 id|I2C_BUSID_BT848
+op_logical_and
+id|device-&gt;bus-&gt;id
+op_ne
+id|I2C_BUSID_ZORAN
 )paren
 (brace
 r_return

@@ -10,7 +10,8 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/fixmap.h&gt;
-macro_line|#include &lt;asm/sgi-cobalt.h&gt;
+macro_line|#include &lt;asm/cobalt.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 multiline_comment|/*****************************************************************************/
 multiline_comment|/* debug stuff */

@@ -1,5 +1,6 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1998 David A. Hinds -- dhinds@hyper.stanford.edu&n;&n;    3c589_cs.c 1.126 1999/06/14 17:35:34&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@hyper.stanford.edu&n;&n;    3c589_cs.c 1.134 1999/09/15 15:33:09&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -34,10 +35,10 @@ DECL|macro|EL3_CMD
 mdefine_line|#define EL3_CMD&t;&t;0x0e
 DECL|macro|EL3_STATUS
 mdefine_line|#define EL3_STATUS&t;0x0e
-DECL|macro|ID_PORT
-mdefine_line|#define ID_PORT&t;&t;0x100
 DECL|macro|EEPROM_READ
-mdefine_line|#define&t;EEPROM_READ&t;0x80
+mdefine_line|#define EEPROM_READ&t;0x0080
+DECL|macro|EEPROM_BUSY
+mdefine_line|#define EEPROM_BUSY&t;0x8000
 DECL|macro|EL3WINDOW
 mdefine_line|#define EL3WINDOW(win_num) outw(SelectWindow + (win_num), ioaddr + EL3_CMD)
 multiline_comment|/* The top five bits written to EL3_CMD are a command, the lower&n;   11 bits are the parameter, if applicable. */
@@ -367,7 +368,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c589_cs.c 1.126 1999/06/14 17:35:34 (David Hinds)&quot;
+l_string|&quot;3c589_cs.c 1.134 1999/09/15 15:33:09 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -1334,41 +1335,23 @@ c_cond
 (paren
 id|dev-&gt;priv
 )paren
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev-&gt;priv
-comma
-r_sizeof
-(paren
-r_struct
-id|el3_private
-)paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|link-&gt;priv
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
 )paren
 suffix:semicolon
 )brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|link
-comma
-r_sizeof
-(paren
-r_struct
-id|dev_link_t
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1965,8 +1948,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: 3Com 3c%s, io %#3lx, irq %d, %s xcvr, &quot;
-l_string|&quot;hw_addr &quot;
+l_string|&quot;%s: 3Com 3c%s, io %#3lx, irq %d, hw_addr &quot;
 comma
 id|dev-&gt;name
 comma
@@ -1982,11 +1964,6 @@ comma
 id|dev-&gt;base_addr
 comma
 id|dev-&gt;irq
-comma
-id|if_names
-(braket
-id|dev-&gt;if_port
-)braket
 )paren
 suffix:semicolon
 r_for
@@ -2039,7 +2016,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  %dK FIFO split %s Rx:Tx&bslash;n&quot;
+l_string|&quot;  %dK FIFO split %s Rx:Tx, %s xcvr&bslash;n&quot;
 comma
 (paren
 id|i
@@ -2061,6 +2038,11 @@ l_int|16
 )paren
 op_amp
 l_int|3
+)braket
+comma
+id|if_names
+(braket
+id|dev-&gt;if_port
 )braket
 )paren
 suffix:semicolon
@@ -2263,11 +2245,9 @@ id|link-&gt;release.expires
 op_assign
 id|jiffies
 op_plus
-(paren
 id|HZ
 op_div
 l_int|20
-)paren
 suffix:semicolon
 id|add_timer
 c_func
@@ -2535,7 +2515,7 @@ op_plus
 l_int|10
 )paren
 op_amp
-l_int|0x8000
+id|EEPROM_BUSY
 )paren
 op_eq
 l_int|0
@@ -2706,22 +2686,43 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|if_port
+op_eq
+l_int|2
+)paren
 id|lp-&gt;media_status
 op_assign
 (paren
-id|if_port
-OL
-l_int|2
+(paren
+id|dev-&gt;if_port
+op_eq
+l_int|0
 )paren
 ques
 c_cond
-l_int|0x8800
+l_int|0x8000
 suffix:colon
-l_int|0x4800
+l_int|0x4000
+)paren
 suffix:semicolon
-id|lp-&gt;last_irq
+r_else
+id|lp-&gt;media_status
 op_assign
-id|jiffies
+(paren
+(paren
+id|dev-&gt;if_port
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+l_int|0x4010
+suffix:colon
+l_int|0x8800
+)paren
 suffix:semicolon
 )brace
 DECL|function|dump_status
@@ -4374,7 +4375,7 @@ id|lp-&gt;media.expires
 op_assign
 id|jiffies
 op_plus
-l_int|2
+l_int|1
 suffix:semicolon
 id|add_timer
 c_func
@@ -4479,6 +4480,12 @@ r_if
 c_cond
 (paren
 id|errs
+op_logical_or
+(paren
+id|lp-&gt;media_status
+op_amp
+l_int|0x0010
+)paren
 )paren
 id|media
 op_or_assign
@@ -4560,7 +4567,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: cable %s&bslash;n&quot;
+l_string|&quot;%s: coax cable %s&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4570,7 +4577,7 @@ op_amp
 l_int|0x0010
 ques
 c_cond
-l_string|&quot;fixed&quot;
+l_string|&quot;ok&quot;
 suffix:colon
 l_string|&quot;problem&quot;
 )paren
@@ -4618,6 +4625,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -5705,7 +5713,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*====================================================================*/
 DECL|function|init_3c589_cs
+r_static
 r_int
+id|__init
 id|init_3c589_cs
 c_func
 (paren
@@ -5755,7 +5765,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|register_pcmcia_driver
+id|register_pccard_driver
 c_func
 (paren
 op_amp
@@ -5772,25 +5782,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|exit_3c589_cs
+r_static
 r_void
-)paren
-(brace
-r_return
-id|init_3c589_cs
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|exit_3c589_cs
 c_func
 (paren
 r_void
@@ -5804,7 +5800,7 @@ comma
 l_string|&quot;3c589_cs: unloading&bslash;n&quot;
 )paren
 suffix:semicolon
-id|unregister_pcmcia_driver
+id|unregister_pccard_driver
 c_func
 (paren
 op_amp
@@ -5825,5 +5821,18 @@ id|dev_list
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|init_3c589_cs
+id|module_init
+c_func
+(paren
+id|init_3c589_cs
+)paren
+suffix:semicolon
+DECL|variable|exit_3c589_cs
+id|module_exit
+c_func
+(paren
+id|exit_3c589_cs
+)paren
+suffix:semicolon
 eof

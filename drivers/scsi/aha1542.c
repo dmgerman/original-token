@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; *  Modified by Chris Faulhaber&t;&lt;jedgar@fxp.org&gt;&n; *        Added module command-line options&n; *        18-Jul-99&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; *  Modified by Chris Faulhaber&t;&lt;jedgar@fxp.org&gt;&n; *        Added module command-line options&n; *        19-Jul-99&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1872,6 +1872,7 @@ c_cond
 (paren
 id|SCtmp-&gt;host_scribble
 )paren
+(brace
 id|scsi_free
 c_func
 (paren
@@ -1880,6 +1881,11 @@ comma
 l_int|512
 )paren
 suffix:semicolon
+id|SCtmp-&gt;host_scribble
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Fetch the sense data, and tuck it away, in the required slot.  The&n;&t; Adaptec automatically fetches it, and there is no guarantee that&n;&t; we will still have it in the cdb when we come back */
 r_if
 c_cond
@@ -2247,7 +2253,9 @@ op_eq
 id|REQUEST_SENSE
 )paren
 (brace
-macro_line|#ifndef DEBUG
+multiline_comment|/* Don&squot;t do the command - we have the sense data already */
+macro_line|#if 0
+multiline_comment|/* scsi_request_sense() provides a buffer of size 256,&n;&t; so there is no reason to expect equality */
 r_if
 c_cond
 (paren
@@ -2258,16 +2266,14 @@ r_sizeof
 id|SCpnt-&gt;sense_buffer
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
-l_string|&quot;Wrong buffer length supplied for request sense (%d)&bslash;n&quot;
+l_string|&quot;aha1542: Wrong buffer length supplied &quot;
+l_string|&quot;for request sense (%d)&bslash;n&quot;
 comma
 id|bufflen
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 macro_line|#endif
 id|SCpnt-&gt;result
@@ -2284,7 +2290,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#ifdef DEBUG
 r_if
 c_cond
@@ -4743,21 +4748,14 @@ id|bases
 l_int|0
 )braket
 op_assign
-l_int|4
-suffix:semicolon
-id|bases
-(braket
-l_int|1
-)braket
-op_assign
 id|aha1542
 (braket
 l_int|0
 )braket
 suffix:semicolon
-id|bases
+id|setup_buson
 (braket
-l_int|2
+l_int|0
 )braket
 op_assign
 id|aha1542
@@ -4765,9 +4763,9 @@ id|aha1542
 l_int|1
 )braket
 suffix:semicolon
-id|bases
+id|setup_busoff
 (braket
-l_int|3
+l_int|0
 )braket
 op_assign
 id|aha1542
@@ -4775,16 +4773,77 @@ id|aha1542
 l_int|2
 )braket
 suffix:semicolon
-id|bases
-(braket
-l_int|4
-)braket
+(brace
+r_int
+id|atbt
 op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_switch
+c_cond
+(paren
 id|aha1542
 (braket
 l_int|3
 )braket
+)paren
+(brace
+r_case
+l_int|5
+suffix:colon
+id|atbt
+op_assign
+l_int|0x00
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|6
+suffix:colon
+id|atbt
+op_assign
+l_int|0x04
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|atbt
+op_assign
+l_int|0x01
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|8
+suffix:colon
+id|atbt
+op_assign
+l_int|0x02
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|10
+suffix:colon
+id|atbt
+op_assign
+l_int|0x03
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+suffix:semicolon
+id|setup_dmaspeed
+(braket
+l_int|0
+)braket
+op_assign
+id|atbt
+suffix:semicolon
+)brace
 macro_line|#endif
 r_for
 c_loop

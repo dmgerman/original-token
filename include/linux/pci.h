@@ -562,6 +562,8 @@ mdefine_line|#define PCI_CLASS_OTHERS&t;&t;0xff
 multiline_comment|/*&n; * Vendor and card ID&squot;s: sort these numerically according to vendor&n; * (and according to card ID within vendor). Send all updates to&n; * &lt;pci-ids@ucw.cz&gt;.&n; */
 DECL|macro|PCI_VENDOR_ID_COMPAQ
 mdefine_line|#define PCI_VENDOR_ID_COMPAQ&t;&t;0x0e11
+DECL|macro|PCI_DEVICE_ID_COMPAQ_TOKENRING
+mdefine_line|#define PCI_DEVICE_ID_COMPAQ_TOKENRING&t;0x0508
 DECL|macro|PCI_DEVICE_ID_COMPAQ_1280
 mdefine_line|#define PCI_DEVICE_ID_COMPAQ_1280&t;0x3033
 DECL|macro|PCI_DEVICE_ID_COMPAQ_TRIFLEX
@@ -1942,9 +1944,9 @@ mdefine_line|#define PCI_VENDOR_ID_LAVA&t;&t;0x1407
 DECL|macro|PCI_DEVICE_ID_LAVA_PARALLEL
 mdefine_line|#define PCI_DEVICE_ID_LAVA_PARALLEL&t;0x8000
 DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_A
-mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_A&t;0x8001 /* The Lava Dual Parallel is */
+mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_A&t;0x8002 /* The Lava Dual Parallel is */
 DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_B
-mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_B&t;0x8002 /* two PCI devices on a card */
+mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_B&t;0x8003 /* two PCI devices on a card */
 DECL|macro|PCI_VENDOR_ID_PANACOM
 mdefine_line|#define PCI_VENDOR_ID_PANACOM&t;&t;0x14d4
 DECL|macro|PCI_DEVICE_ID_PANACOM_QUADMODEM
@@ -3445,6 +3447,22 @@ id|devfn
 (brace
 r_return
 l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|pci_set_master
+r_extern
+r_inline
+r_void
+id|pci_set_master
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* !CONFIG_PCI */
