@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.47 2000/04/25 04:13:25 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.48 2000/05/03 06:37:03 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1202,10 +1202,9 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
-(brace
-r_int
-id|fault
-op_assign
+r_switch
+c_cond
+(paren
 id|handle_mm_fault
 c_func
 (paren
@@ -1221,25 +1220,34 @@ op_amp
 id|FAULT_CODE_WRITE
 )paren
 )paren
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+id|current-&gt;min_flt
+op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fault
-OL
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|current-&gt;maj_flt
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|0
-)paren
-r_goto
-id|out_of_memory
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fault
-)paren
+suffix:colon
 r_goto
 id|do_sigbus
+suffix:semicolon
+r_default
+suffix:colon
+r_goto
+id|out_of_memory
 suffix:semicolon
 )brace
 id|up

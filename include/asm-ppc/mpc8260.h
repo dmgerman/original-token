@@ -2,6 +2,7 @@ multiline_comment|/* This is the single file included by all MPC8260 build optio
 macro_line|#ifndef __CONFIG_8260_DEFS
 DECL|macro|__CONFIG_8260_DEFS
 mdefine_line|#define __CONFIG_8260_DEFS
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_8260
 macro_line|#ifdef CONFIG_EST8260
 macro_line|#include &lt;asm/est8260.h&gt;

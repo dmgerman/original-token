@@ -1,5 +1,5 @@
 multiline_comment|/* pcnet32.c: An AMD PCnet32 ethernet driver for linux. */
-multiline_comment|/*&n; *      Copyright 1996-1999 Thomas Bogendoerfer&n; * &n; * &t;Derived from the lance driver written 1993,1994,1995 by Donald Becker.&n; * &n; * &t;Copyright 1993 United States Government as represented by the&n; * &t;Director, National Security Agency.&n; * &n; * &t;This software may be used and distributed according to the terms&n; * &t;of the GNU Public License, incorporated herein by reference.&n; *&n; * &t;This driver is for PCnet32 and PCnetPCI based ethercards&n; */
+multiline_comment|/*&n; *&t;Copyright 1996-1999 Thomas Bogendoerfer&n; * &n; *&t;Derived from the lance driver written 1993,1994,1995 by Donald Becker.&n; * &n; *&t;Copyright 1993 United States Government as represented by the&n; *&t;Director, National Security Agency.&n; * &n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;This driver is for PCnet32 and PCnetPCI based ethercards&n; */
 DECL|variable|version
 r_static
 r_const
@@ -105,7 +105,9 @@ mdefine_line|#define PORT_ASEL     0x04
 DECL|macro|PORT_100
 mdefine_line|#define PORT_100      0x40
 DECL|macro|PORT_FD
-mdefine_line|#define PORT_FD       0x80
+mdefine_line|#define PORT_FD&t;      0x80
+DECL|macro|PCNET32_DMA_MASK
+mdefine_line|#define PCNET32_DMA_MASK 0xffffffff
 multiline_comment|/*&n; * table to translate option values from tulip&n; * to internal options&n; */
 DECL|variable|options_mapping
 r_static
@@ -118,44 +120,44 @@ op_assign
 (brace
 id|PORT_ASEL
 comma
-multiline_comment|/*  0 Auto-select      */
+multiline_comment|/*  0 Auto-select&t;  */
 id|PORT_AUI
 comma
-multiline_comment|/*  1 BNC/AUI          */
+multiline_comment|/*  1 BNC/AUI&t;  */
 id|PORT_AUI
 comma
-multiline_comment|/*  2 AUI/BNC          */
+multiline_comment|/*  2 AUI/BNC&t;  */
 id|PORT_ASEL
 comma
-multiline_comment|/*  3 not supported    */
+multiline_comment|/*  3 not supported&t;  */
 id|PORT_10BT
 op_or
 id|PORT_FD
 comma
-multiline_comment|/*  4 10baseT-FD       */
+multiline_comment|/*  4 10baseT-FD&t;  */
 id|PORT_ASEL
 comma
-multiline_comment|/*  5 not supported    */
+multiline_comment|/*  5 not supported&t;  */
 id|PORT_ASEL
 comma
-multiline_comment|/*  6 not supported    */
+multiline_comment|/*  6 not supported&t;  */
 id|PORT_ASEL
 comma
-multiline_comment|/*  7 not supported    */
+multiline_comment|/*  7 not supported&t;  */
 id|PORT_ASEL
 comma
-multiline_comment|/*  8 not supported    */
+multiline_comment|/*  8 not supported&t;  */
 id|PORT_MII
 comma
-multiline_comment|/*  9 MII 10baseT      */
+multiline_comment|/*  9 MII 10baseT&t;  */
 id|PORT_MII
 op_or
 id|PORT_FD
 comma
-multiline_comment|/* 10 MII 10baseT-FD   */
+multiline_comment|/* 10 MII 10baseT-FD&t;  */
 id|PORT_MII
 comma
-multiline_comment|/* 11 MII (autosel)    */
+multiline_comment|/* 11 MII (autosel)&t;  */
 id|PORT_10BT
 comma
 multiline_comment|/* 12 10BaseT&t;  */
@@ -163,7 +165,7 @@ id|PORT_MII
 op_or
 id|PORT_100
 comma
-multiline_comment|/* 13 MII 100BaseTx    */
+multiline_comment|/* 13 MII 100BaseTx&t;  */
 id|PORT_MII
 op_or
 id|PORT_100
@@ -172,7 +174,7 @@ id|PORT_FD
 comma
 multiline_comment|/* 14 MII 100BaseTx-FD */
 id|PORT_ASEL
-multiline_comment|/* 15 not supported    */
+multiline_comment|/* 15 not supported&t;  */
 )brace
 suffix:semicolon
 DECL|macro|MAX_UNITS
@@ -203,8 +205,8 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * &t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
-multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; * v1.10:  workaround for stopped transmitter&n; *         added port selection for modules&n; *         detect special T1/E1 WAN card and setup port selection&n; * v1.11:  fixed wrong checking of Tx errors&n; * v1.20:  added check of return value kmalloc (cpeterso@cs.washington.edu)&n; *         added save original kmalloc addr for freeing (mcr@solidum.com)&n; *         added support for PCnetHome chip (joe@MIT.EDU)&n; *         rewritten PCI card detection&n; *         added dwio mode to get driver working on some PPC machines&n; * v1.21:  added mii selection and mii ioctl&n; * v1.22:  changed pci scanning code to make PPC people happy&n; *         fixed switching to 32bit mode in pcnet32_open() (thanks&n; *         to Michael Richard &lt;mcr@solidum.com&gt; for noticing this one)&n; *&t;   added sub vendor/device id matching (thanks again to &n; *&t;   Michael Richard &lt;mcr@solidum.com&gt;)&n; *         added chip id for 79c973/975 (thanks to Zach Brown &lt;zab@zabbo.net&gt;)&n; * v1.23   fixed small bug, when manual selecting MII speed/duplex&n; * v1.24   Applied Thomas&squot; patch to use TxStartPoint and thus decrease TxFIFO&n; *         underflows.  Added tx_start_pt module parameter. Increased&n; *         TX_RING_SIZE from 16 to 32.  Added #ifdef&squot;d code to use DXSUFLO&n; *         for FAST[+] chipsets. &lt;kaf@fc.hp.com&gt;&n; * v1.24ac Added SMP spinlocking - Alan Cox &lt;alan@redhat.com&gt;&n; * v1.25kf Added No Interrupt on successful Tx for some Tx&squot;s &lt;kaf@fc.hp.com&gt;&n; */
+multiline_comment|/*&n; *&t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
+multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *&t;   only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *&t;   tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *&t;   looks like the 974 doesn&squot;t like stopping and restarting in a&n; *&t;   short period of time; now we do a reinit of the lance; the&n; *&t;   bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *&t;   and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *&t;   made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *&t;   and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *&t;   added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *&t;   added module support&n; *&t;   changed irq probe to new style&n; *&t;   added PCnetFast chip id&n; *&t;   added fix for receive stalls with Intel saturn chipsets&n; *&t;   added in-place rx skbs like in the tulip driver&n; *&t;   minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *&t;   back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *&t;   added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *&t;   increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; * v1.10:  workaround for stopped transmitter&n; *&t;   added port selection for modules&n; *&t;   detect special T1/E1 WAN card and setup port selection&n; * v1.11:  fixed wrong checking of Tx errors&n; * v1.20:  added check of return value kmalloc (cpeterso@cs.washington.edu)&n; *&t;   added save original kmalloc addr for freeing (mcr@solidum.com)&n; *&t;   added support for PCnetHome chip (joe@MIT.EDU)&n; *&t;   rewritten PCI card detection&n; *&t;   added dwio mode to get driver working on some PPC machines&n; * v1.21:  added mii selection and mii ioctl&n; * v1.22:  changed pci scanning code to make PPC people happy&n; *&t;   fixed switching to 32bit mode in pcnet32_open() (thanks&n; *&t;   to Michael Richard &lt;mcr@solidum.com&gt; for noticing this one)&n; *&t;   added sub vendor/device id matching (thanks again to &n; *&t;   Michael Richard &lt;mcr@solidum.com&gt;)&n; *&t;   added chip id for 79c973/975 (thanks to Zach Brown &lt;zab@zabbo.net&gt;)&n; * v1.23   fixed small bug, when manual selecting MII speed/duplex&n; * v1.24   Applied Thomas&squot; patch to use TxStartPoint and thus decrease TxFIFO&n; *&t;   underflows.&t;Added tx_start_pt module parameter. Increased&n; *&t;   TX_RING_SIZE from 16 to 32.&t;Added #ifdef&squot;d code to use DXSUFLO&n; *&t;   for FAST[+] chipsets. &lt;kaf@fc.hp.com&gt;&n; * v1.24ac Added SMP spinlocking - Alan Cox &lt;alan@redhat.com&gt;&n; * v1.25kf Added No Interrupt on successful Tx for some Tx&squot;s &lt;kaf@fc.hp.com&gt;&n; * v1.26   Converted to pci_alloc_consistent, Jamey Hicks / George France&n; *                                           &lt;jamey@crl.dec.com&gt;&n; */
 multiline_comment|/*&n; * Set the number of Tx and Rx buffers, using Log_2(# buffers).&n; * Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n; * That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4).&n; */
 macro_line|#ifndef PCNET32_LOG_TX_BUFFERS
 DECL|macro|PCNET32_LOG_TX_BUFFERS
@@ -257,7 +259,7 @@ DECL|macro|PCI_DEVICE_ID_AMD_PCNETHOME
 mdefine_line|#define PCI_DEVICE_ID_AMD_PCNETHOME   0x2001
 macro_line|#endif
 DECL|macro|CRC_POLYNOMIAL_LE
-mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL  /* Ethernet CRC, little endian */
+mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL&t;/* Ethernet CRC, little endian */
 multiline_comment|/* The PCNET32 Rx and Tx ring descriptors. */
 DECL|struct|pcnet32_rx_head
 r_struct
@@ -451,6 +453,7 @@ r_int
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The first three fields of pcnet32_private are read by the ethernet device &n; * so we allocate the structure should be allocated by pci_alloc_consistent().&n; */
 DECL|struct|pcnet32_private
 r_struct
 id|pcnet32_private
@@ -477,6 +480,18 @@ r_struct
 id|pcnet32_init_block
 id|init_block
 suffix:semicolon
+DECL|member|dma_addr
+id|dma_addr_t
+id|dma_addr
+suffix:semicolon
+multiline_comment|/* DMA address of beginning of this object, returned by pci_alloc_consistent */
+DECL|member|pci_dev
+r_struct
+id|pci_dev
+op_star
+id|pci_dev
+suffix:semicolon
+multiline_comment|/* Pointer to the associated pci device structure */
 DECL|member|name
 r_const
 r_char
@@ -502,15 +517,24 @@ id|rx_skbuff
 id|RX_RING_SIZE
 )braket
 suffix:semicolon
+DECL|member|tx_dma_addr
+id|dma_addr_t
+id|tx_dma_addr
+(braket
+id|TX_RING_SIZE
+)braket
+suffix:semicolon
+DECL|member|rx_dma_addr
+id|dma_addr_t
+id|rx_dma_addr
+(braket
+id|RX_RING_SIZE
+)braket
+suffix:semicolon
 DECL|member|a
 r_struct
 id|pcnet32_access
 id|a
-suffix:semicolon
-DECL|member|origmem
-r_void
-op_star
-id|origmem
 suffix:semicolon
 DECL|member|lock
 id|spinlock_t
@@ -590,10 +614,26 @@ suffix:semicolon
 suffix:semicolon
 r_static
 r_int
-id|pcnet32_probe
+id|pcnet32_probe_vlbus
 c_func
 (paren
-r_void
+r_int
+id|cards_found
+)paren
+suffix:semicolon
+r_static
+r_int
+id|pcnet32_probe_pci
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_struct
+id|pci_device_id
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -610,6 +650,10 @@ comma
 r_int
 comma
 r_int
+comma
+r_struct
+id|pci_dev
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -826,6 +870,10 @@ comma
 r_int
 comma
 r_int
+comma
+r_struct
+id|pci_dev
+op_star
 )paren
 suffix:semicolon
 )brace
@@ -903,6 +951,83 @@ comma
 l_int|0
 comma
 )brace
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * PCI device identifiers for &quot;new style&quot; Linux PCI Device Drivers&n; */
+DECL|variable|__devinitdata
+r_static
+r_struct
+id|pci_device_id
+id|pcnet32_pci_tbl
+(braket
+)braket
+id|__devinitdata
+op_assign
+(brace
+(brace
+id|PCI_VENDOR_ID_AMD
+comma
+id|PCI_DEVICE_ID_AMD_PCNETHOME
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_AMD
+comma
+id|PCI_DEVICE_ID_AMD_LANCE
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_AMD
+comma
+id|PCI_DEVICE_ID_AMD_LANCE
+comma
+l_int|0x1014
+comma
+l_int|0x2000
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|function|pcnet32_wio_read_csr
@@ -1410,14 +1535,16 @@ id|pcnet32_dwio_reset
 )brace
 suffix:semicolon
 "&f;"
-DECL|function|pcnet32_probe
+multiline_comment|/* only probes for non-PCI devices, the rest are handled by pci_register_driver via pcnet32_probe_pci*/
+DECL|function|pcnet32_probe_vlbus
 r_static
 r_int
 id|__init
-id|pcnet32_probe
+id|pcnet32_probe_vlbus
 c_func
 (paren
-r_void
+r_int
+id|cards_found
 )paren
 (brace
 r_int
@@ -1438,10 +1565,14 @@ r_int
 op_star
 id|port
 suffix:semicolon
-r_int
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;pcnet32_probe_vlbus: cards_found=%d&bslash;n&quot;
+comma
 id|cards_found
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 macro_line|#ifndef __powerpc__
 r_if
@@ -1476,10 +1607,13 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_else
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1492,316 +1626,10 @@ id|ioaddr
 op_ne
 l_int|0
 )paren
-(brace
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
-)brace
-macro_line|#if defined(CONFIG_PCI)
-r_if
-c_cond
-(paren
-id|pci_present
-c_func
-(paren
-)paren
-)paren
-(brace
-r_struct
-id|pci_dev
-op_star
-id|pdev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;pcnet32.c: PCI bios is present, checking for devices...&bslash;n&quot;
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|pdev
-op_assign
-id|pci_find_class
-(paren
-id|PCI_CLASS_NETWORK_ETHERNET
-op_lshift
-l_int|8
-comma
-id|pdev
-)paren
-)paren
-)paren
-(brace
-id|u16
-id|pci_command
-suffix:semicolon
-r_int
-id|chip_idx
-suffix:semicolon
-id|u16
-id|sdid
-comma
-id|svid
-suffix:semicolon
-id|pci_read_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_SUBSYSTEM_VENDOR_ID
-comma
-op_amp
-id|svid
-)paren
-suffix:semicolon
-id|pci_read_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_SUBSYSTEM_ID
-comma
-op_amp
-id|sdid
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|chip_idx
-op_assign
-l_int|0
-suffix:semicolon
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|vendor_id
-suffix:semicolon
-id|chip_idx
-op_increment
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|pdev-&gt;vendor
-op_eq
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|vendor_id
-)paren
-op_logical_and
-(paren
-id|pdev-&gt;device
-op_eq
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|device_id
-)paren
-op_logical_and
-(paren
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|svid
-op_eq
-l_int|0
-op_logical_or
-(paren
-id|svid
-op_eq
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|svid
-)paren
-)paren
-op_logical_and
-(paren
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|sdid
-op_eq
-l_int|0
-op_logical_or
-(paren
-id|sdid
-op_eq
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|sdid
-)paren
-)paren
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|vendor_id
-op_eq
-l_int|0
-)paren
-r_continue
-suffix:semicolon
-id|ioaddr
-op_assign
-id|pdev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
-suffix:semicolon
-id|irq_line
-op_assign
-id|pdev-&gt;irq
-suffix:semicolon
-multiline_comment|/* Avoid already found cards from previous pcnet32_probe() calls */
-r_if
-c_cond
-(paren
-(paren
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|flags
-op_amp
-id|PCI_USES_IO
-)paren
-op_logical_and
-id|check_region
-c_func
-(paren
-id|ioaddr
-comma
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|io_size
-)paren
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/* PCI Spec 2.1 states that it is either the driver or PCI card&squot;s&n;&t;     * responsibility to set the PCI Master Enable Bit if needed.&n;&t;     *&t;(From Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;)&n;&t;     */
-id|pci_read_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|pci_command
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|pci_command
-op_amp
-id|PCI_COMMAND_MASTER
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;PCI Master Bit has not been set. Setting...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|pci_command
-op_or_assign
-id|PCI_COMMAND_MASTER
-op_or
-id|PCI_COMMAND_IO
-suffix:semicolon
-id|pci_write_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-id|pci_command
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;Found PCnet/PCI at %#lx, irq %d.&bslash;n&quot;
-comma
-id|ioaddr
-comma
-id|irq_line
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|probe1
-c_func
-(paren
-id|ioaddr
-comma
-id|irq_line
-comma
-l_int|1
-comma
-id|cards_found
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|cards_found
-op_increment
-suffix:semicolon
-)brace
-)brace
-)brace
-r_else
-macro_line|#endif  /* defined(CONFIG_PCI) */
 multiline_comment|/* now look for PCnet32 VLB cards */
 r_for
 c_loop
@@ -1877,6 +1705,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|NULL
 )paren
 op_eq
 l_int|0
@@ -1893,10 +1723,174 @@ ques
 c_cond
 l_int|0
 suffix:colon
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* pcnet32_probe1 */
+r_static
+r_int
+id|__init
+DECL|function|pcnet32_probe_pci
+id|pcnet32_probe_pci
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+comma
+r_const
+r_struct
+id|pci_device_id
+op_star
+id|ent
+)paren
+(brace
+r_static
+r_int
+id|card_idx
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|ioaddr
+suffix:semicolon
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;pcnet32_probe_pci: found device %#08x.%#08x&bslash;n&quot;
+comma
+id|ent-&gt;vendor
+comma
+id|ent-&gt;device
+)paren
+suffix:semicolon
+id|ioaddr
+op_assign
+id|pci_resource_start
+(paren
+id|pdev
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;  ioaddr=%#08lx  resource_flags=%#08lx&bslash;n&quot;
+comma
+id|ioaddr
+comma
+id|pci_resource_flags
+(paren
+id|pdev
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ioaddr
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;no PCI IO resources, aborting&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pci_dma_supported
+c_func
+(paren
+id|pdev
+comma
+id|PCNET32_DMA_MASK
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;pcnet32.c: architecture does not support 32bit PCI busmaster DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;pcnet32.c: failed to enable device -- err=%d&bslash;n&quot;
+comma
+id|err
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
+id|pci_set_master
+c_func
+(paren
+id|pdev
+)paren
+suffix:semicolon
+r_return
+id|pcnet32_probe1
+c_func
+(paren
+id|ioaddr
+comma
+id|pdev-&gt;irq
+comma
+l_int|1
+comma
+id|card_idx
+comma
+id|pdev
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* pcnet32_probe1 &n; *  Called from both pcnet32_probe_vlbus and pcnet_probe_pci.  &n; *  pdev will be NULL when called from pcnet32_probe_vlbus.&n; */
 r_static
 r_int
 id|__init
@@ -1917,12 +1911,20 @@ id|shared
 comma
 r_int
 id|card_idx
+comma
+r_struct
+id|pci_dev
+op_star
+id|pdev
 )paren
 (brace
 r_struct
 id|pcnet32_private
 op_star
 id|lp
+suffix:semicolon
+id|dma_addr_t
+id|lp_dma_addr
 suffix:semicolon
 r_int
 id|i
@@ -1960,10 +1962,6 @@ r_char
 op_star
 id|chipname
 suffix:semicolon
-r_char
-op_star
-id|priv
-suffix:semicolon
 r_struct
 id|net_device
 op_star
@@ -1973,6 +1971,8 @@ r_struct
 id|pcnet32_access
 op_star
 id|a
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* reset the chip */
 id|pcnet32_dwio_reset
@@ -2040,6 +2040,7 @@ suffix:semicolon
 )brace
 r_else
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2073,6 +2074,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;  PCnet chip version is %#x.&bslash;n&quot;
 comma
 id|chip_version
@@ -2090,6 +2092,7 @@ op_ne
 l_int|0x003
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|chip_version
@@ -2115,6 +2118,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/PCI 79C970&quot;
 suffix:semicolon
+multiline_comment|/* PCI */
 r_break
 suffix:semicolon
 r_case
@@ -2135,6 +2139,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/32 79C965&quot;
 suffix:semicolon
+multiline_comment|/* 486/VL bus */
 r_break
 suffix:semicolon
 r_case
@@ -2144,6 +2149,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/PCI II 79C970A&quot;
 suffix:semicolon
+multiline_comment|/* PCI */
 id|fdx
 op_assign
 l_int|1
@@ -2157,6 +2163,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/FAST 79C971&quot;
 suffix:semicolon
+multiline_comment|/* PCI */
 id|fdx
 op_assign
 l_int|1
@@ -2182,6 +2189,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/FAST+ 79C972&quot;
 suffix:semicolon
+multiline_comment|/* PCI */
 id|fdx
 op_assign
 l_int|1
@@ -2203,6 +2211,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/FAST III 79C973&quot;
 suffix:semicolon
+multiline_comment|/* PCI */
 id|fdx
 op_assign
 l_int|1
@@ -2220,6 +2229,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/Home 79C978&quot;
 suffix:semicolon
+multiline_comment|/* PCI */
 id|fdx
 op_assign
 l_int|1
@@ -2235,6 +2245,7 @@ comma
 l_int|49
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -2245,6 +2256,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;pcnet32: pcnet32 media value %#x.&bslash;n&quot;
 comma
 id|media
@@ -2259,6 +2271,7 @@ id|media
 op_or_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2269,6 +2282,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;pcnet32: pcnet32 media reset to %#x.&bslash;n&quot;
 comma
 id|media
@@ -2292,6 +2306,7 @@ id|chipname
 op_assign
 l_string|&quot;PCnet/FAST III 79C975&quot;
 suffix:semicolon
+multiline_comment|/* PCI */
 id|fdx
 op_assign
 l_int|1
@@ -2307,16 +2322,18 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;pcnet32: PCnet version %#x, no PCnet32 chip.&bslash;n&quot;
 comma
 id|chip_version
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *&t;On selected chips turn on the BCR18:NOUFLO bit. This stops transmit&n;     *  starting until the packet is loaded. Strike one for reliability, lose&n;     *  one for latency - although on PCI this isnt a big loss. Older chips &n;     *  have FIFO&squot;s smaller than a packet, so you can&squot;t do this.&n;     */
+multiline_comment|/*&n;     *&t;On selected chips turn on the BCR18:NOUFLO bit. This stops transmit&n;     *&t;starting until the packet is loaded. Strike one for reliability, lose&n;     *&t;one for latency - although on PCI this isnt a big loss. Older chips &n;     *&t;have FIFO&squot;s smaller than a packet, so you can&squot;t do this.&n;     */
 r_if
 c_cond
 (paren
@@ -2403,6 +2420,7 @@ l_int|NULL
 )paren
 (brace
 r_return
+op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
@@ -2419,7 +2437,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* There is a 16 byte station address PROM at the base address.&n;     The first six bytes are the station address. */
+multiline_comment|/* There is a 16 byte station address PROM at the base address.&n;       The first six bytes are the station address. */
 r_for
 c_loop
 (paren
@@ -2437,6 +2455,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot; %2.2x&quot;
 comma
 id|dev-&gt;dev_addr
@@ -2488,6 +2507,7 @@ multiline_comment|/* Check tx_start_pt */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;&bslash;n    tx_start_pt(0x%04x):&quot;
 comma
 id|i
@@ -2507,6 +2527,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;  20 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2518,6 +2539,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;  64 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2529,6 +2551,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot; 128 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2540,6 +2563,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;~220 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2562,6 +2586,7 @@ multiline_comment|/* Check Burst/Bus control */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot; BCR18(%x):&quot;
 comma
 id|i
@@ -2583,6 +2608,7 @@ l_int|5
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;BurstWrEn &quot;
 )paren
 suffix:semicolon
@@ -2600,6 +2626,7 @@ l_int|6
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;BurstRdEn &quot;
 )paren
 suffix:semicolon
@@ -2617,6 +2644,7 @@ l_int|7
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;DWordIO &quot;
 )paren
 suffix:semicolon
@@ -2634,6 +2662,7 @@ l_int|11
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;NoUFlow &quot;
 )paren
 suffix:semicolon
@@ -2652,6 +2681,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;&bslash;n    SRAMSIZE=0x%04x,&quot;
 comma
 id|i
@@ -2674,6 +2704,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot; SRAM_BND=0x%04x,&quot;
 comma
 id|i
@@ -2707,6 +2738,7 @@ l_int|14
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;LowLatRx,&quot;
 )paren
 suffix:semicolon
@@ -2725,33 +2757,11 @@ comma
 id|chipname
 )paren
 suffix:semicolon
+multiline_comment|/* pci_alloc_consistent returns page-aligned memory, so we do not have to check the alignment */
 r_if
 c_cond
 (paren
 (paren
-id|priv
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-op_star
-id|lp
-)paren
-op_plus
-l_int|15
-comma
-id|GFP_KERNEL
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-r_return
-id|ENOMEM
-suffix:semicolon
-multiline_comment|/*&n;     * Make certain the data structures used by&n;     * the PCnet32 are 16byte aligned&n;      */
 id|lp
 op_assign
 (paren
@@ -2759,20 +2769,27 @@ r_struct
 id|pcnet32_private
 op_star
 )paren
+id|pci_alloc_consistent
+c_func
 (paren
+id|pdev
+comma
+r_sizeof
 (paren
-(paren
-r_int
-r_int
+op_star
+id|lp
 )paren
-id|priv
-op_plus
-l_int|15
-)paren
+comma
 op_amp
-op_complement
-l_int|15
+id|lp_dma_addr
 )paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|memset
 c_func
@@ -2786,6 +2803,25 @@ r_sizeof
 op_star
 id|lp
 )paren
+)paren
+suffix:semicolon
+id|lp-&gt;dma_addr
+op_assign
+id|lp_dma_addr
+suffix:semicolon
+id|lp-&gt;pci_dev
+op_assign
+id|pdev
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;pcnet32: pcnet32_private lp=%p lp_dma_addr=%#08x&bslash;n&quot;
+comma
+id|lp
+comma
+id|lp_dma_addr
 )paren
 suffix:semicolon
 id|spin_lock_init
@@ -2874,15 +2910,31 @@ id|lp-&gt;options
 op_or_assign
 id|PORT_FD
 suffix:semicolon
-id|lp-&gt;origmem
-op_assign
-id|priv
-suffix:semicolon
 id|lp-&gt;a
 op_assign
 op_star
 id|a
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|a
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;pcnet32: No access methods&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 multiline_comment|/* detect special T1/E1 WAN card by checking for MAC address */
 r_if
 c_cond
@@ -2979,10 +3031,14 @@ id|u32
 id|le32_to_cpu
 c_func
 (paren
-id|virt_to_bus
-c_func
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
 (paren
-id|lp-&gt;rx_ring
+r_struct
+id|pcnet32_private
+comma
+id|rx_ring
 )paren
 )paren
 suffix:semicolon
@@ -2994,10 +3050,14 @@ id|u32
 id|le32_to_cpu
 c_func
 (paren
-id|virt_to_bus
-c_func
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
 (paren
-id|lp-&gt;tx_ring
+r_struct
+id|pcnet32_private
+comma
+id|tx_ring
 )paren
 )paren
 suffix:semicolon
@@ -3017,11 +3077,16 @@ id|ioaddr
 comma
 l_int|1
 comma
-id|virt_to_bus
-c_func
 (paren
-op_amp
-id|lp-&gt;init_block
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|init_block
+)paren
 )paren
 op_amp
 l_int|0xffff
@@ -3033,11 +3098,16 @@ id|ioaddr
 comma
 l_int|2
 comma
-id|virt_to_bus
-c_func
 (paren
-op_amp
-id|lp-&gt;init_block
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|init_block
+)paren
 )paren
 op_rshift
 l_int|16
@@ -3064,6 +3134,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot; assigned IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -3111,6 +3182,7 @@ id|dev-&gt;irq
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;, probed IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -3121,10 +3193,12 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;, failed to detect IRQ line.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -3139,6 +3213,8 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
+comma
 id|version
 )paren
 suffix:semicolon
@@ -3306,6 +3382,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: pcnet32_open() irq %d tx/rx rings %#x/%#x init %#x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3315,29 +3392,46 @@ comma
 (paren
 id|u32
 )paren
-id|virt_to_bus
-c_func
 (paren
-id|lp-&gt;tx_ring
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|tx_ring
+)paren
 )paren
 comma
 (paren
 id|u32
 )paren
-id|virt_to_bus
-c_func
 (paren
-id|lp-&gt;rx_ring
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|rx_ring
+)paren
 )paren
 comma
 (paren
 id|u32
 )paren
-id|virt_to_bus
-c_func
 (paren
-op_amp
-id|lp-&gt;init_block
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|init_block
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -3640,11 +3734,16 @@ id|ioaddr
 comma
 l_int|1
 comma
-id|virt_to_bus
-c_func
 (paren
-op_amp
-id|lp-&gt;init_block
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|init_block
+)paren
 )paren
 op_amp
 l_int|0xffff
@@ -3656,11 +3755,16 @@ id|ioaddr
 comma
 l_int|2
 comma
-id|virt_to_bus
-c_func
 (paren
-op_amp
-id|lp-&gt;init_block
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|init_block
+)paren
 )paren
 op_rshift
 l_int|16
@@ -3736,7 +3840,8 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;%s: PCNET32 open after %d ticks, init block %#x csr0 %4.4x.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;%s: pcnet32 open after %d ticks, init block %#x csr0 %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3745,11 +3850,16 @@ comma
 (paren
 id|u32
 )paren
-id|virt_to_bus
-c_func
 (paren
-op_amp
-id|lp-&gt;init_block
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pcnet32_private
+comma
+id|init_block
+)paren
 )paren
 comma
 id|lp-&gt;a.read_csr
@@ -3819,6 +3929,26 @@ id|i
 )braket
 )paren
 (brace
+id|pci_unmap_single
+c_func
+(paren
+id|lp-&gt;pci_dev
+comma
+id|lp-&gt;tx_dma_addr
+(braket
+id|i
+)braket
+comma
+id|lp-&gt;tx_skbuff
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|len
+comma
+id|PCI_DMA_TODEVICE
+)paren
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -3834,6 +3964,13 @@ id|i
 )braket
 op_assign
 l_int|NULL
+suffix:semicolon
+id|lp-&gt;tx_dma_addr
+(braket
+id|i
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -3897,13 +4034,20 @@ id|i
 op_increment
 )paren
 (brace
-r_if
-c_cond
-(paren
+r_struct
+id|sk_buff
+op_star
+id|rx_skbuff
+op_assign
 id|lp-&gt;rx_skbuff
 (braket
 id|i
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rx_skbuff
 op_eq
 l_int|NULL
 )paren
@@ -3913,6 +4057,8 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|rx_skbuff
+op_assign
 id|lp-&gt;rx_skbuff
 (braket
 id|i
@@ -3927,7 +4073,9 @@ id|PKT_BUF_SZ
 (brace
 multiline_comment|/* there is not much, we can do at this point */
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: pcnet32_init_ring dev_alloc_skb failed.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3940,15 +4088,29 @@ suffix:semicolon
 )brace
 id|skb_reserve
 (paren
-id|lp-&gt;rx_skbuff
-(braket
-id|i
-)braket
+id|rx_skbuff
 comma
 l_int|2
 )paren
 suffix:semicolon
 )brace
+id|lp-&gt;rx_dma_addr
+(braket
+id|i
+)braket
+op_assign
+id|pci_map_single
+c_func
+(paren
+id|lp-&gt;pci_dev
+comma
+id|rx_skbuff-&gt;tail
+comma
+id|rx_skbuff-&gt;len
+comma
+id|PCI_DMA_FROMDEVICE
+)paren
+suffix:semicolon
 id|lp-&gt;rx_ring
 (braket
 id|i
@@ -3962,16 +4124,10 @@ id|u32
 id|le32_to_cpu
 c_func
 (paren
-id|virt_to_bus
-c_func
-(paren
-id|lp-&gt;rx_skbuff
+id|lp-&gt;rx_dma_addr
 (braket
 id|i
 )braket
-op_member_access_from_pointer
-id|tail
-)paren
 )paren
 suffix:semicolon
 id|lp-&gt;rx_ring
@@ -4002,7 +4158,7 @@ l_int|0x8000
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The Tx buffer address is filled in as needed, but we do need to clear&n;     the upper ownership bit. */
+multiline_comment|/* The Tx buffer address is filled in as needed, but we do need to clear&n;       the upper ownership bit. */
 r_for
 c_loop
 (paren
@@ -4033,6 +4189,13 @@ id|i
 )braket
 dot
 id|status
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_dma_addr
+(braket
+id|i
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -4079,10 +4242,14 @@ id|u32
 id|le32_to_cpu
 c_func
 (paren
-id|virt_to_bus
-c_func
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
 (paren
-id|lp-&gt;rx_ring
+r_struct
+id|pcnet32_private
+comma
+id|rx_ring
 )paren
 )paren
 suffix:semicolon
@@ -4094,10 +4261,14 @@ id|u32
 id|le32_to_cpu
 c_func
 (paren
-id|virt_to_bus
-c_func
+id|lp-&gt;dma_addr
+op_plus
+m_offsetof
 (paren
-id|lp-&gt;tx_ring
+r_struct
+id|pcnet32_private
+comma
+id|tx_ring
 )paren
 )paren
 suffix:semicolon
@@ -4238,6 +4409,7 @@ multiline_comment|/* Transmitter timeout, serious problems. */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: transmit timed out, status %4.4x, resetting.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4276,6 +4448,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; Ring data dump: dirty_tx %d cur_tx %d%s cur_rx %d.&quot;
 comma
 id|lp-&gt;dirty_tx
@@ -4309,6 +4482,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s %08x %04x %08x %04x&quot;
 comma
 id|i
@@ -4370,6 +4544,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s %08x %04x %08x %04x&quot;
 comma
 id|i
@@ -4417,6 +4592,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4496,6 +4672,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: pcnet32_start_xmit() called, csr0 %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4598,6 +4775,23 @@ id|entry
 op_assign
 id|skb
 suffix:semicolon
+id|lp-&gt;tx_dma_addr
+(braket
+id|entry
+)braket
+op_assign
+id|pci_map_single
+c_func
+(paren
+id|lp-&gt;pci_dev
+comma
+id|skb-&gt;data
+comma
+id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
+)paren
+suffix:semicolon
 id|lp-&gt;tx_ring
 (braket
 id|entry
@@ -4611,11 +4805,10 @@ id|u32
 id|le32_to_cpu
 c_func
 (paren
-id|virt_to_bus
-c_func
-(paren
-id|skb-&gt;data
-)paren
+id|lp-&gt;tx_dma_addr
+(braket
+id|entry
+)braket
 )paren
 suffix:semicolon
 id|lp-&gt;tx_ring
@@ -4766,6 +4959,7 @@ l_int|NULL
 (brace
 id|printk
 (paren
+id|KERN_DEBUG
 l_string|&quot;pcnet32_interrupt(): irq %d for unknown device.&bslash;n&quot;
 comma
 id|irq
@@ -4853,6 +5047,7 @@ l_int|5
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: interrupt  csr0=%#2.2x new csr=%#2.2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5020,6 +5215,7 @@ multiline_comment|/* Remove this verbosity later! */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Tx FIFO error! CSR0=%4.4x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5057,6 +5253,7 @@ multiline_comment|/* Remove this verbosity later! */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Tx FIFO error! CSR0=%4.4x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5098,6 +5295,26 @@ id|entry
 )braket
 )paren
 (brace
+id|pci_unmap_single
+c_func
+(paren
+id|lp-&gt;pci_dev
+comma
+id|lp-&gt;tx_dma_addr
+(braket
+id|entry
+)braket
+comma
+id|lp-&gt;tx_skbuff
+(braket
+id|entry
+)braket
+op_member_access_from_pointer
+id|len
+comma
+id|PCI_DMA_TODEVICE
+)paren
+suffix:semicolon
 id|dev_kfree_skb_irq
 c_func
 (paren
@@ -5108,6 +5325,13 @@ id|entry
 )paren
 suffix:semicolon
 id|lp-&gt;tx_skbuff
+(braket
+id|entry
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_dma_addr
 (braket
 id|entry
 )braket
@@ -5133,6 +5357,7 @@ id|TX_RING_SIZE
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;out-of-sync dirty pointer, %d vs. %d, full=%d.&bslash;n&quot;
 comma
 id|dirty_tx
@@ -5227,6 +5452,7 @@ l_int|0x0800
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Bus master arbitration failure, status %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5292,6 +5518,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: exiting interrupt, csr0=%#4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5342,9 +5569,6 @@ op_assign
 id|lp-&gt;cur_rx
 op_amp
 id|RX_RING_MOD_MASK
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 multiline_comment|/* If we own the next entry, it&squot;s a new packet. Send it up. */
 r_while
@@ -5501,6 +5725,7 @@ l_int|60
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Runt packet!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5516,6 +5741,14 @@ r_int
 id|rx_in_place
 op_assign
 l_int|0
+suffix:semicolon
+id|dma_addr_t
+id|rx_dma_addr
+op_assign
+id|lp-&gt;rx_dma_addr
+(braket
+id|entry
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -5575,6 +5808,23 @@ id|newskb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|lp-&gt;rx_dma_addr
+(braket
+id|entry
+)braket
+op_assign
+id|pci_map_single
+c_func
+(paren
+id|lp-&gt;pci_dev
+comma
+id|newskb-&gt;tail
+comma
+id|newskb-&gt;len
+comma
+id|PCI_DMA_FROMDEVICE
+)paren
+suffix:semicolon
 id|lp-&gt;rx_ring
 (braket
 id|entry
@@ -5585,11 +5835,10 @@ op_assign
 id|le32_to_cpu
 c_func
 (paren
-id|virt_to_bus
-c_func
-(paren
-id|newskb-&gt;tail
-)paren
+id|lp-&gt;rx_dma_addr
+(braket
+id|entry
+)braket
 )paren
 suffix:semicolon
 id|rx_in_place
@@ -5604,6 +5853,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_else
+(brace
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -5614,6 +5864,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5622,9 +5873,13 @@ op_eq
 l_int|NULL
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Memory squeeze, deferring packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5743,19 +5998,13 @@ r_int
 r_char
 op_star
 )paren
-id|bus_to_virt
-c_func
 (paren
-id|le32_to_cpu
-c_func
-(paren
-id|lp-&gt;rx_ring
+id|lp-&gt;rx_skbuff
 (braket
 id|entry
 )braket
-dot
-id|base
-)paren
+op_member_access_from_pointer
+id|tail
 )paren
 comma
 id|pkt_len
@@ -5889,6 +6138,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Shutting down ethercard, status was %2.2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5962,6 +6212,27 @@ id|lp-&gt;rx_skbuff
 id|i
 )braket
 )paren
+(brace
+id|pci_unmap_single
+c_func
+(paren
+id|lp-&gt;pci_dev
+comma
+id|lp-&gt;rx_dma_addr
+(braket
+id|i
+)braket
+comma
+id|lp-&gt;rx_skbuff
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|len
+comma
+id|PCI_DMA_FROMDEVICE
+)paren
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -5971,12 +6242,20 @@ id|i
 )braket
 )paren
 suffix:semicolon
+)brace
 id|lp-&gt;rx_skbuff
 (braket
 id|i
 )braket
 op_assign
 l_int|NULL
+suffix:semicolon
+id|lp-&gt;rx_dma_addr
+(braket
+id|i
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_for
@@ -6002,6 +6281,27 @@ id|lp-&gt;tx_skbuff
 id|i
 )braket
 )paren
+(brace
+id|pci_unmap_single
+c_func
+(paren
+id|lp-&gt;pci_dev
+comma
+id|lp-&gt;tx_dma_addr
+(braket
+id|i
+)braket
+comma
+id|lp-&gt;tx_skbuff
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|len
+comma
+id|PCI_DMA_TODEVICE
+)paren
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -6011,12 +6311,20 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|lp-&gt;rx_skbuff
+)brace
+id|lp-&gt;tx_skbuff
 (braket
 id|i
 )braket
 op_assign
 l_int|NULL
+suffix:semicolon
+id|lp-&gt;tx_dma_addr
+(braket
+id|i
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
@@ -6411,6 +6719,7 @@ multiline_comment|/* Log any net taps. */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: Promiscuous mode enabled.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -6710,7 +7019,32 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-macro_line|#endif  /* HAVE_PRIVATE_IOCTL */
+macro_line|#endif&t;/* HAVE_PRIVATE_IOCTL */
+DECL|variable|pcnet32_driver
+r_static
+r_struct
+id|pci_driver
+id|pcnet32_driver
+op_assign
+(brace
+id|name
+suffix:colon
+l_string|&quot;pcnet32&quot;
+comma
+id|probe
+suffix:colon
+id|pcnet32_probe_pci
+comma
+id|remove
+suffix:colon
+l_int|NULL
+comma
+id|id_table
+suffix:colon
+id|pcnet32_pci_tbl
+comma
+)brace
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -6810,6 +7144,14 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|cards_found
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6844,10 +7186,113 @@ id|pcnet32_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-r_return
-id|pcnet32_probe
+multiline_comment|/* find the PCI devices */
+DECL|macro|USE_PCI_REGISTER_DRIVER
+mdefine_line|#define USE_PCI_REGISTER_DRIVER
+macro_line|#ifdef USE_PCI_REGISTER_DRIVER
+r_if
+c_cond
+(paren
+id|err
+op_assign
+id|pci_module_init
 c_func
 (paren
+op_amp
+id|pcnet32_driver
+)paren
+OL
+l_int|0
+)paren
+r_return
+id|err
+suffix:semicolon
+macro_line|#else
+(brace
+r_struct
+id|pci_device_id
+op_star
+id|devid
+op_assign
+id|pcnet32_pci_tbl
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|devid
+op_assign
+id|pcnet32_pci_tbl
+suffix:semicolon
+id|devid
+op_ne
+l_int|NULL
+op_logical_and
+id|devid-&gt;vendor
+op_ne
+l_int|0
+suffix:semicolon
+id|devid
+op_increment
+)paren
+(brace
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+id|pci_find_subsys
+c_func
+(paren
+id|devid-&gt;vendor
+comma
+id|devid-&gt;device
+comma
+id|devid-&gt;subvendor
+comma
+id|devid-&gt;subdevice
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pdev
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pcnet32_probe_pci
+c_func
+(paren
+id|pdev
+comma
+id|devid
+)paren
+op_ge
+l_int|0
+)paren
+(brace
+id|cards_found
+op_increment
+suffix:semicolon
+)brace
+)brace
+)brace
+)brace
+macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* find any remaining VLbus devices */
+r_return
+id|pcnet32_probe_vlbus
+c_func
+(paren
+id|cards_found
 )paren
 suffix:semicolon
 )brace
@@ -6873,18 +7318,21 @@ c_loop
 id|pcnet32_dev
 )paren
 (brace
-id|next_dev
+r_struct
+id|pcnet32_private
+op_star
+id|lp
 op_assign
-(paren
 (paren
 r_struct
 id|pcnet32_private
 op_star
 )paren
 id|pcnet32_dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|next
+suffix:semicolon
+id|next_dev
+op_assign
+id|lp-&gt;next
 suffix:semicolon
 id|unregister_netdev
 c_func
@@ -6900,19 +7348,20 @@ comma
 id|PCNET32_TOTAL_SIZE
 )paren
 suffix:semicolon
-id|kfree
+id|pci_free_consistent
 c_func
 (paren
+id|lp-&gt;pci_dev
+comma
+r_sizeof
 (paren
-(paren
-r_struct
-id|pcnet32_private
 op_star
+id|lp
 )paren
-id|pcnet32_dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|origmem
+comma
+id|lp
+comma
+id|lp-&gt;dma_addr
 )paren
 suffix:semicolon
 id|kfree
@@ -6941,5 +7390,5 @@ c_func
 id|pcnet32_cleanup_module
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c pcnet32.c&quot;&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c pcnet32.c&quot;&n; *  c-indent-level: 4&n; *  tab-width: 8&n; * End:&n; */
 eof

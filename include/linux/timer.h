@@ -149,7 +149,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|function|init_timer
-r_extern
+r_static
 r_inline
 r_void
 id|init_timer
@@ -175,7 +175,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|timer_pending
-r_extern
+r_static
 r_inline
 r_int
 id|timer_pending

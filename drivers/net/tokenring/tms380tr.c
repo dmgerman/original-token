@@ -934,14 +934,6 @@ r_int
 )paren
 id|dev
 suffix:semicolon
-id|tp-&gt;timer.next
-op_assign
-l_int|NULL
-suffix:semicolon
-id|tp-&gt;timer.prev
-op_assign
-l_int|NULL
-suffix:semicolon
 id|add_timer
 c_func
 (paren

@@ -91,6 +91,11 @@ op_star
 id|mnt
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|mnt
+)paren
 id|atomic_inc
 c_func
 (paren
@@ -118,6 +123,12 @@ id|mnt
 r_if
 c_cond
 (paren
+id|mnt
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|atomic_dec_and_test
 c_func
 (paren
@@ -130,6 +141,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 macro_line|#endif /* _LINUX_MOUNT_H */

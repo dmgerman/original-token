@@ -104,14 +104,6 @@ id|cadet_lock
 op_assign
 l_int|0
 suffix:semicolon
-r_static
-r_int
-id|cadet_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Signal Strength Threshold Values&n; * The V4L API spec does not define any particular unit for the signal &n; * strength value.  These values are in microvolts of RF at the tuner&squot;s input.&n; */
 DECL|variable|sigtable
 r_static
@@ -2484,6 +2476,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|cadet_init
+r_static
 r_int
 id|__init
 id|cadet_init

@@ -2761,14 +2761,8 @@ id|timer_list
 id|stli_timerlist
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|stli_poll
 )brace
 suffix:semicolon
@@ -2854,8 +2848,6 @@ r_int
 id|i
 comma
 id|j
-comma
-id|k
 suffix:semicolon
 macro_line|#if DEBUG
 id|printk

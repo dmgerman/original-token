@@ -99,14 +99,8 @@ id|timer_list
 id|ps_timer
 op_assign
 (brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|ps_timer_int
 )brace
 suffix:semicolon

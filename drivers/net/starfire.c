@@ -1413,20 +1413,9 @@ id|pci_enable_device
 id|pdev
 )paren
 )paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-id|PFX
-l_string|&quot;card %d: cannot enable PCI device, aborting&bslash;n&quot;
-comma
-id|card_idx
-)paren
-suffix:semicolon
 r_goto
 id|err_out_free_res
 suffix:semicolon
-)brace
 id|ioaddr
 op_assign
 (paren

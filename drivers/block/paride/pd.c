@@ -2461,11 +2461,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|err
-comma
-id|unit
-suffix:semicolon
 macro_line|#ifdef PARIDE_JUMBO
 (brace
 r_extern

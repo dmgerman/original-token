@@ -205,9 +205,6 @@ r_if
 c_cond
 (paren
 id|dev-&gt;name
-op_logical_and
-(paren
-id|dev-&gt;name
 (braket
 l_int|0
 )braket
@@ -220,7 +217,6 @@ l_int|0
 )braket
 op_eq
 l_char|&squot; &squot;
-)paren
 )paren
 (brace
 r_if
@@ -289,7 +285,7 @@ r_return
 id|dev
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * init_etherdev - Register ethernet device&n; * @dev: An ethernet device structure to be filled in, or %NULL if a new&n; *&t;struct should be allocated.&n; * @sizeof_priv: Size of additional driver-private structure to be allocated&n; *&t;for this ethernet device&n; *&n; * Fill in the fields of the device structure with ethernet-generic values.&n; *&n; * If no device structure is passed, a new one is constructed, complete with&n; * a private data area of size @sizeof_priv.  A 32-byte (not bit)&n; * alignment is enforced for this private data area.&n; *&n; * If an empty string area is passed as dev-&gt;name, or a new structure is made,&n; * a new name string is constructed.  The passed string area should be 8 bytes&n; * long.&n; */
+multiline_comment|/**&n; * init_etherdev - Register ethernet device&n; * @dev: An ethernet device structure to be filled in, or %NULL if a new&n; *&t;struct should be allocated.&n; * @sizeof_priv: Size of additional driver-private structure to be allocated&n; *&t;for this ethernet device&n; *&n; * Fill in the fields of the device structure with ethernet-generic values.&n; *&n; * If no device structure is passed, a new one is constructed, complete with&n; * a private data area of size @sizeof_priv.  A 32-byte (not bit)&n; * alignment is enforced for this private data area.&n; *&n; * If an empty string area is passed as dev-&gt;name, or a new structure is made,&n; * a new name string is constructed.&n; */
 DECL|function|init_etherdev
 r_struct
 id|net_device
@@ -1170,8 +1166,6 @@ multiline_comment|/*&n;&t; *&t;If the name is a format string the caller wants u
 r_if
 c_cond
 (paren
-id|dev-&gt;name
-op_logical_and
 id|strchr
 c_func
 (paren
@@ -1210,9 +1204,6 @@ r_if
 c_cond
 (paren
 id|dev-&gt;name
-op_logical_and
-(paren
-id|dev-&gt;name
 (braket
 l_int|0
 )braket
@@ -1225,7 +1216,6 @@ l_int|0
 )braket
 op_eq
 l_char|&squot; &squot;
-)paren
 )paren
 (brace
 id|err

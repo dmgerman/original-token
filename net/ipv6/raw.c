@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.35 2000/04/25 04:13:34 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.36 2000/05/03 06:37:07 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -2950,7 +2950,7 @@ comma
 id|srcp
 suffix:semicolon
 r_int
-id|timer_active
+id|sock_timer_active
 suffix:semicolon
 r_int
 r_int
@@ -2974,12 +2974,13 @@ id|srcp
 op_assign
 id|sp-&gt;num
 suffix:semicolon
-id|timer_active
+id|sock_timer_active
 op_assign
+id|timer_pending
+c_func
 (paren
-id|sp-&gt;timer.prev
-op_ne
-l_int|NULL
+op_amp
+id|sp-&gt;timer
 )paren
 ques
 c_cond
@@ -2990,7 +2991,7 @@ suffix:semicolon
 id|timer_expires
 op_assign
 (paren
-id|timer_active
+id|sock_timer_active
 op_eq
 l_int|2
 ques
@@ -3070,7 +3071,7 @@ op_amp
 id|sp-&gt;rmem_alloc
 )paren
 comma
-id|timer_active
+id|sock_timer_active
 comma
 id|timer_expires
 op_minus

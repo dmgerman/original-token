@@ -380,6 +380,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -437,6 +438,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -588,9 +590,14 @@ suffix:semicolon
 )brace
 r_else
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Grab the region so we can find the another board if autoIRQ fails.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
 id|request_region
 c_func
 (paren
@@ -600,6 +607,10 @@ id|EL1_IO_EXTENT
 comma
 l_string|&quot;3c501&quot;
 )paren
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We auto-IRQ by shutting off the interrupt line and letting it float&n;&t; *&t;high.&n;&t; */
 r_if
@@ -674,6 +685,7 @@ id|ioaddr
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -900,6 +912,8 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -933,10 +947,14 @@ comma
 id|dev
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+)brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -980,8 +998,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

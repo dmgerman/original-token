@@ -1040,6 +1040,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* XXX check return */
 multiline_comment|/* Does this function have an interrupt at all? */
 id|pci_readb
 c_func

@@ -678,8 +678,12 @@ comma
 id|d
 comma
 id|x
+op_assign
+l_int|0
 comma
 id|y
+op_assign
+l_int|0
 suffix:semicolon
 id|pi-&gt;saved_r0
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;INETPEER - A storage for permanent information about peers&n; *&n; *  This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; *  Version:&t;$Id: inetpeer.c,v 1.1 2000/01/06 00:41:55 davem Exp $&n; *&n; *  Authors:&t;Andrey V. Savochkin &lt;saw@msu.ru&gt;&n; */
+multiline_comment|/*&n; *&t;&t;INETPEER - A storage for permanent information about peers&n; *&n; *  This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; *  Version:&t;$Id: inetpeer.c,v 1.2 2000/05/03 06:37:06 davem Exp $&n; *&n; *  Authors:&t;Andrey V. Savochkin &lt;saw@msu.ru&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

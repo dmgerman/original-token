@@ -12221,6 +12221,11 @@ r_int
 r_int
 id|irq
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12424,12 +12429,35 @@ comma
 id|confreg
 )paren
 suffix:semicolon
-multiline_comment|/* Enable response in memory space, bus mastering,&n;&t;   use memory write and invalidate */
-id|pcibios_write_config_word
+id|pdev
+op_assign
+id|pci_find_slot
 (paren
 id|bus
 comma
 id|dev_fn
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pdev
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cannot find slot&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* XXX handle error */
+)brace
+multiline_comment|/* Enable response in memory space, bus mastering,&n;&t;   use memory write and invalidate */
+id|pci_write_config_word
+(paren
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -12441,22 +12469,18 @@ id|PCI_COMMAND_INVALIDATE
 )paren
 suffix:semicolon
 multiline_comment|/* Set PCI Cache line size &amp; latency timer */
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 (paren
-id|bus
-comma
-id|dev_fn
+id|pdev
 comma
 id|PCI_CACHE_LINE_SIZE
 comma
 l_int|0x8
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 (paren
-id|bus
-comma
-id|dev_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -12464,11 +12488,9 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* Set the new base address */
-id|pcibios_write_config_dword
+id|pci_write_config_dword
 (paren
-id|bus
-comma
-id|dev_fn
+id|pdev
 comma
 id|confreg
 comma

@@ -65,13 +65,6 @@ macro_line|#else
 DECL|macro|TRACE_Q
 mdefine_line|#define TRACE_Q(fmt, arg...) /**/
 macro_line|#endif
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_static
 r_void
 id|on_timer_1
@@ -644,12 +637,11 @@ suffix:semicolon
 )brace
 multiline_comment|/*************************************************************&n; * Driver initialisation&n; *************************************************************/
 multiline_comment|/*************************************************************&n; * Module support routines&n; *************************************************************/
-macro_line|#ifdef MODULE
-DECL|macro|r3964_init
-mdefine_line|#define r3964_init init_module
-DECL|function|cleanup_module
+DECL|function|r3964_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|r3964_exit
 c_func
 (paren
 r_void
@@ -701,7 +693,6 @@ l_string|&quot;linediscipline successfully unregistered&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
 DECL|function|r3964_init
 r_static
 r_int
@@ -796,14 +787,20 @@ r_return
 id|status
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
 DECL|variable|r3964_init
-id|__initcall
+id|module_init
+c_func
 (paren
 id|r3964_init
 )paren
 suffix:semicolon
-macro_line|#endif
+DECL|variable|r3964_exit
+id|module_exit
+c_func
+(paren
+id|r3964_exit
+)paren
+suffix:semicolon
 multiline_comment|/*************************************************************&n; * Protocol implementation routines&n; *************************************************************/
 DECL|function|on_timer_1
 r_static

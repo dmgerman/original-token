@@ -3281,13 +3281,6 @@ id|pci_dev
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;emu10k1: couldn&squot;t enable device&bslash;n&quot;
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren

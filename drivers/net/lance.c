@@ -5388,9 +5388,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 id|netif_stop_queue
 (paren
 id|dev

@@ -6407,6 +6407,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
+multiline_comment|/* XXX check return value */
 id|pci_enable_device
 c_func
 (paren

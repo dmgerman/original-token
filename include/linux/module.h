@@ -346,6 +346,7 @@ DECL|macro|MODULE_PARM
 mdefine_line|#define MODULE_PARM(var,type)&t;&t;&t;&bslash;&n;const char __module_parm_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_&quot; __MODULE_STRING(var) &quot;=&quot; type
 DECL|macro|MODULE_PARM_DESC
 mdefine_line|#define MODULE_PARM_DESC(var,desc)&t;&t;&bslash;&n;const char __module_parm_desc_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_desc_&quot; __MODULE_STRING(var) &quot;=&quot; desc
+multiline_comment|/*&n; * MODULE_DEVICE_TABLE exports information about devices&n; * currently supported by this module.  A device type, such as PCI,&n; * is a C-like identifier passed as the first arg to this macro.&n; * The second macro arg is the variable containing the device&n; * information being made public.&n; *&n; * The following is a list of known device types (arg 1),&n; * and the C types which are to be passed as arg 2.&n; * pci - struct pci_device_id - List of PCI ids supported by this module&n; */
 DECL|macro|MODULE_DEVICE_TABLE
 mdefine_line|#define MODULE_DEVICE_TABLE(type,name)&t;&bslash;&n;const struct type##_device_id * __module_##type##_device_table = name
 multiline_comment|/* not put to .modinfo section to avoid section type conflicts */

@@ -25089,59 +25089,62 @@ id|ide_driver_t
 id|idetape_driver
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;ide-tape&quot;
 comma
-multiline_comment|/* name */
+id|version
+suffix:colon
 id|IDETAPE_VERSION
 comma
-multiline_comment|/* version */
+id|media
+suffix:colon
 id|ide_tape
 comma
-multiline_comment|/* media */
+id|busy
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* busy */
+id|supports_dma
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* supports_dma */
+id|supports_dsc_overlap
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* supports_dsc_overlap */
+id|cleanup
+suffix:colon
 id|idetape_cleanup
 comma
-multiline_comment|/* cleanup */
+id|do_request
+suffix:colon
 id|idetape_do_request
 comma
-multiline_comment|/* do_request */
+id|end_request
+suffix:colon
 id|idetape_end_request
 comma
-multiline_comment|/* end_request */
+id|ioctl
+suffix:colon
 id|idetape_blkdev_ioctl
 comma
-multiline_comment|/* ioctl */
+id|open
+suffix:colon
 id|idetape_blkdev_open
 comma
-multiline_comment|/* open */
+id|release
+suffix:colon
 id|idetape_blkdev_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
+id|pre_reset
+suffix:colon
 id|idetape_pre_reset
 comma
-multiline_comment|/* pre_reset */
-l_int|NULL
-comma
-multiline_comment|/* capacity */
-l_int|NULL
-comma
-multiline_comment|/* special */
+id|proc
+suffix:colon
 id|idetape_proc
-multiline_comment|/* proc */
+comma
 )brace
 suffix:semicolon
 r_int

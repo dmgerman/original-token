@@ -25,11 +25,11 @@ multiline_comment|/* Proxy LEC knows about bridging */
 macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
 macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &quot;../bridge/br_private.h&quot;
-DECL|variable|bridge_ula
+DECL|variable|bridge_ula_lec
 r_static
 r_int
 r_char
-id|bridge_ula
+id|bridge_ula_lec
 (braket
 )braket
 op_assign
@@ -301,10 +301,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
-DECL|function|handle_bridge
+DECL|function|lec_handle_bridge
 r_static
 r_void
-id|handle_bridge
+id|lec_handle_bridge
 c_func
 (paren
 r_struct
@@ -911,17 +911,17 @@ c_func
 (paren
 id|skb-&gt;data
 comma
-id|bridge_ula
+id|bridge_ula_lec
 comma
 r_sizeof
 (paren
-id|bridge_ula
+id|bridge_ula_lec
 )paren
 )paren
 op_eq
 l_int|0
 )paren
-id|handle_bridge
+id|lec_handle_bridge
 c_func
 (paren
 id|skb

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.123 2000/04/25 04:13:34 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.124 2000/05/03 06:37:07 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -8368,9 +8368,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tp-&gt;retransmit_timer.prev
-op_ne
-l_int|NULL
+id|timer_pending
+c_func
+(paren
+op_amp
+id|tp-&gt;retransmit_timer
+)paren
 op_logical_and
 id|tp-&gt;retransmit_timer.expires
 OL
@@ -8390,9 +8393,12 @@ r_else
 r_if
 c_cond
 (paren
-id|tp-&gt;probe_timer.prev
-op_ne
-l_int|NULL
+id|timer_pending
+c_func
+(paren
+op_amp
+id|tp-&gt;probe_timer
+)paren
 op_logical_and
 id|tp-&gt;probe_timer.expires
 OL
@@ -8411,9 +8417,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sp-&gt;timer.prev
-op_ne
-l_int|NULL
+id|timer_pending
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
 op_logical_and
 id|sp-&gt;timer.expires
 OL

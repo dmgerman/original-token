@@ -6397,6 +6397,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|parse_options
+r_static
 r_void
 id|__init
 id|parse_options

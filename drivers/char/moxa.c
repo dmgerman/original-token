@@ -2491,10 +2491,6 @@ op_star
 id|board
 )paren
 (brace
-r_int
-r_int
-id|val
-suffix:semicolon
 id|board-&gt;baseAddr
 op_assign
 id|pci_resource_start

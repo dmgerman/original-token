@@ -174,14 +174,8 @@ id|timer_list
 id|uart6850_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|poll_uart6850
 )brace
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unaligned.c,v 1.19 2000/03/16 11:53:05 jj Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: unaligned.c,v 1.20 2000/04/29 08:05:21 anton Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1082,26 +1082,40 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;current-&gt;mm-&gt;context = %016lx&bslash;n&quot;
+l_string|&quot;current-&gt;{mm,active_mm}-&gt;context = %016lx&bslash;n&quot;
 comma
 (paren
-r_int
-r_int
-)paren
+id|current-&gt;mm
+ques
+c_cond
 id|current-&gt;mm-&gt;context
+suffix:colon
+id|current-&gt;active_mm-&gt;context
+)paren
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;current-&gt;mm-&gt;pgd = %016lx&bslash;n&quot;
+l_string|&quot;current-&gt;{mm,active_mm}-&gt;pgd = %016lx&bslash;n&quot;
 comma
+(paren
+id|current-&gt;mm
+ques
+c_cond
 (paren
 r_int
 r_int
 )paren
 id|current-&gt;mm-&gt;pgd
+suffix:colon
+(paren
+r_int
+r_int
+)paren
+id|current-&gt;active_mm-&gt;pgd
+)paren
 )paren
 suffix:semicolon
 id|die_if_kernel

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.37 2000/03/21 06:14:00 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.38 2000/05/03 06:37:07 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -62,7 +62,7 @@ id|net_device
 id|ipip6_fb_tunnel_dev
 op_assign
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
 l_int|0x0
 comma
@@ -800,9 +800,13 @@ id|nt-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|nt-&gt;parms.name
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign
@@ -3650,9 +3654,13 @@ op_star
 op_amp
 id|ipip6_fb_tunnel
 suffix:semicolon
+id|strcpy
+c_func
+(paren
 id|ipip6_fb_tunnel_dev.name
-op_assign
+comma
 id|ipip6_fb_tunnel.parms.name
+)paren
 suffix:semicolon
 macro_line|#ifdef MODULE
 id|register_netdev

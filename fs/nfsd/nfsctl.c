@@ -1077,12 +1077,21 @@ id|cmd
 dot
 id|argsize
 op_plus
-r_sizeof
 (paren
 r_int
 )paren
+op_amp
+(paren
+(paren
+r_struct
+id|nfsctl_arg
+op_star
+)paren
+l_int|0
+)paren
+op_member_access_from_pointer
+id|u
 suffix:semicolon
-multiline_comment|/* int for ca_version */
 id|respsize
 op_assign
 id|sizes

@@ -101,7 +101,9 @@ id|fc_timer
 id|__initdata
 op_assign
 (brace
-l_int|0
+id|function
+suffix:colon
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|fc_sem

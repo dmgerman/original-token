@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|GETREG
 mdefine_line|#define GETREG(reg)&t;&t;&bslash;&n;    static inline int get_ ## reg (void)&t;&bslash;&n;&t;{ int ret; asm volatile (&quot;mf&quot; #reg &quot; %0&quot; : &quot;=r&quot; (ret) :); return ret; }
 DECL|macro|SETREG

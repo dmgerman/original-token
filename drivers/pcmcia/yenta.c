@@ -4345,18 +4345,10 @@ c_func
 id|dev
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to enable device&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

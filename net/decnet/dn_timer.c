@@ -376,11 +376,12 @@ id|scp-&gt;delack_pending
 op_assign
 l_int|1
 suffix:semicolon
-id|scp-&gt;delack_timer.next
-op_assign
-id|scp-&gt;delack_timer.prev
-op_assign
-l_int|NULL
+id|init_timer
+c_func
+(paren
+op_amp
+id|scp-&gt;delack_timer
+)paren
 suffix:semicolon
 id|scp-&gt;delack_timer.expires
 op_assign

@@ -77,14 +77,8 @@ id|timer_list
 id|def_tmr
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|poll_def_tmr
 )brace
 suffix:semicolon

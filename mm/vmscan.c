@@ -150,6 +150,7 @@ r_goto
 id|out_failed
 suffix:semicolon
 )brace
+macro_line|#error Do not let this one slip through..
 r_if
 c_cond
 (paren

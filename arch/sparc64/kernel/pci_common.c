@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_common.c,v 1.11 2000/04/26 10:48:02 davem Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_common.c,v 1.12 2000/05/01 06:32:49 davem Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -2103,7 +2103,7 @@ id|pwalk-&gt;bus-&gt;self
 suffix:semicolon
 id|bus_pcp
 op_assign
-id|pwalk-&gt;bus-&gt;self-&gt;sysdata
+id|pwalk-&gt;sysdata
 suffix:semicolon
 id|pregs
 op_assign
@@ -2114,7 +2114,7 @@ op_assign
 id|prom_getint
 c_func
 (paren
-id|bus_pcp-&gt;prom_node
+id|dev_pcp-&gt;prom_node
 comma
 l_string|&quot;fcode-rom-offset&quot;
 )paren
@@ -2132,7 +2132,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|bus_pcp-&gt;prom_name
+id|dev_pcp-&gt;prom_name
 comma
 l_string|&quot;SUNW,qfe&quot;
 )paren
@@ -2141,7 +2141,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|bus_pcp-&gt;prom_name
+id|dev_pcp-&gt;prom_name
 comma
 l_string|&quot;qfe&quot;
 )paren

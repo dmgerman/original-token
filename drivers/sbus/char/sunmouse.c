@@ -2076,7 +2076,9 @@ suffix:colon
 multiline_comment|/* This is a buggy application doing termios on the mouse driver */
 multiline_comment|/* we ignore it.  I keep this check here so that we will notice   */
 multiline_comment|/* future mouse vuid ioctls */
-r_break
+r_return
+op_minus
+id|ENOTTY
 suffix:semicolon
 r_default
 suffix:colon
@@ -2091,7 +2093,7 @@ suffix:semicolon
 macro_line|#endif
 r_return
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 )brace
 r_return

@@ -1,6 +1,5 @@
 multiline_comment|/* Minimal serial functions needed to send messages out the serial&n; * port on SMC1.&n; */
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &quot;asm/mpc8260.h&quot;
 macro_line|#include &quot;asm/cpm_8260.h&quot;
 DECL|variable|no_print
