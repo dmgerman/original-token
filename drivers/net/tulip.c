@@ -16569,6 +16569,13 @@ r_goto
 id|err_out_free_netdev
 suffix:semicolon
 id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+suffix:semicolon
+id|pci_set_master
+c_func
 (paren
 id|pdev
 )paren
