@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;Some minor additions for cpuinfo&n; * &lt;danny@ow.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;Some minor additions for cpuinfo&n; *&t;&t;&t;&lt;danny@ow.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1385,12 +1385,8 @@ op_star
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-(paren
 op_star
 id|p
-)paren
-op_member_access_from_pointer
-id|tss.cr3
 comma
 id|ptr
 )paren
@@ -2509,17 +2505,14 @@ id|TASK_ZOMBIE
 (brace
 id|pagedir
 op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
+id|PAGE_DIR_OFFSET
+c_func
 (paren
 op_star
 id|p
+comma
+l_int|0
 )paren
-op_member_access_from_pointer
-id|tss.cr3
 suffix:semicolon
 r_for
 c_loop

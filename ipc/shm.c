@@ -102,6 +102,9 @@ op_star
 comma
 r_int
 r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|variable|shm_tot
@@ -1877,12 +1880,6 @@ id|tmp
 comma
 id|shm_sgn
 suffix:semicolon
-r_int
-r_int
-id|page_dir
-op_assign
-id|shmd-&gt;vm_task-&gt;tss.cr3
-suffix:semicolon
 multiline_comment|/* check that the range is unmapped */
 r_if
 c_cond
@@ -1911,7 +1908,7 @@ op_assign
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|page_dir
+id|shmd-&gt;vm_task
 comma
 id|tmp
 )paren
@@ -2017,7 +2014,7 @@ op_assign
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|page_dir
+id|shmd-&gt;vm_task
 comma
 id|tmp
 )paren
@@ -2191,7 +2188,7 @@ op_assign
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|page_dir
+id|shmd-&gt;vm_task
 comma
 id|tmp
 )paren
@@ -2592,17 +2589,6 @@ op_or
 id|id
 op_lshift
 id|SHM_ID_SHIFT
-)paren
-op_or
-(paren
-id|shmflg
-op_amp
-id|SHM_RDONLY
-ques
-c_cond
-id|SHM_READ_ONLY
-suffix:colon
-l_int|0
 )paren
 suffix:semicolon
 id|shmd-&gt;vm_start
@@ -3092,7 +3078,11 @@ c_func
 r_struct
 id|vm_area_struct
 op_star
-id|vma
+id|shmd
+comma
+r_int
+r_int
+id|offset
 comma
 r_int
 r_int
@@ -3128,13 +3118,50 @@ r_if
 c_cond
 (paren
 id|id
+op_ne
+(paren
+(paren
+id|shmd-&gt;vm_pte
+op_rshift
+id|SHM_ID_SHIFT
+)paren
+op_amp
+id|SHM_ID_MASK
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;shm_swap_in: code id = %d and shmd id = %ld differ&bslash;n&quot;
+comma
+id|id
+comma
+(paren
+id|shmd-&gt;vm_pte
+op_rshift
+id|SHM_ID_SHIFT
+)paren
+op_amp
+id|SHM_ID_MASK
+)paren
+suffix:semicolon
+r_return
+id|BAD_PAGE
+op_or
+id|PAGE_SHARED
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|id
 OG
 id|max_shmid
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;shm_no_page: id=%d too big. proc mem corrupted&bslash;n&quot;
+l_string|&quot;shm_swap_in: id=%d too big. proc mem corrupted&bslash;n&quot;
 comma
 id|id
 )paren
@@ -3166,7 +3193,7 @@ id|IPC_NOID
 (brace
 id|printk
 (paren
-l_string|&quot;shm_no_page: id=%d invalid. Race.&bslash;n&quot;
+l_string|&quot;shm_swap_in: id=%d invalid. Race.&bslash;n&quot;
 comma
 id|id
 )paren
@@ -3191,13 +3218,42 @@ r_if
 c_cond
 (paren
 id|idx
+op_ne
+(paren
+id|offset
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;shm_swap_in: code idx = %u and shmd idx = %lu differ&bslash;n&quot;
+comma
+id|idx
+comma
+id|offset
+op_rshift
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
+r_return
+id|BAD_PAGE
+op_or
+id|PAGE_SHARED
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|idx
 op_ge
 id|shp-&gt;shm_npages
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;shm_no_page : too large page index. id=%d&bslash;n&quot;
+l_string|&quot;shm_swap_in : too large page index. id=%d&bslash;n&quot;
 comma
 id|id
 )paren
@@ -3358,19 +3414,17 @@ id|shp-&gt;shm_pages
 id|idx
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|code
-op_amp
-id|SHM_READ_ONLY
-)paren
-multiline_comment|/* write-protect */
 id|page
 op_and_assign
 op_complement
+(paren
 id|PAGE_RW
+op_amp
+op_complement
+id|shmd-&gt;vm_page_prot
+)paren
 suffix:semicolon
+multiline_comment|/* write-protect */
 id|mem_map
 (braket
 id|MAP_NR
@@ -3688,7 +3742,7 @@ op_assign
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|shmd-&gt;vm_task-&gt;tss.cr3
+id|shmd-&gt;vm_task
 comma
 id|tmp
 )paren
@@ -3788,18 +3842,14 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|tmp
+op_star
+id|pte
 op_assign
 id|shmd-&gt;vm_pte
 op_or
 id|idx
 op_lshift
 id|SHM_IDX_SHIFT
-suffix:semicolon
-op_star
-id|pte
-op_assign
-id|tmp
 suffix:semicolon
 id|mem_map
 (braket

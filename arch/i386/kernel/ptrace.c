@@ -217,7 +217,7 @@ op_star
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|vma-&gt;vm_task-&gt;tss.cr3
+id|vma-&gt;vm_task
 comma
 id|addr
 )paren
@@ -354,7 +354,7 @@ op_star
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|vma-&gt;vm_task-&gt;tss.cr3
+id|vma-&gt;vm_task
 comma
 id|addr
 )paren

@@ -140,13 +140,24 @@ id|rename_module_symbol
 )paren
 comma
 multiline_comment|/* system info variables */
+multiline_comment|/* These check that they aren&squot;t defines (0/1) */
+macro_line|#ifndef EISA_bus
 id|X
 c_func
 (paren
 id|EISA_bus
 )paren
 comma
-macro_line|#ifdef __i386__
+macro_line|#endif
+macro_line|#ifndef MCA_bus
+id|X
+c_func
+(paren
+id|MCA_bus
+)paren
+comma
+macro_line|#endif
+macro_line|#ifndef wp_works_ok
 id|X
 c_func
 (paren
@@ -1141,6 +1152,12 @@ multiline_comment|/* support for umsdos fs */
 id|X
 c_func
 (paren
+id|msdos_bmap
+)paren
+comma
+id|X
+c_func
+(paren
 id|msdos_create
 )paren
 comma
@@ -1166,6 +1183,12 @@ id|X
 c_func
 (paren
 id|msdos_mkdir
+)paren
+comma
+id|X
+c_func
+(paren
+id|msdos_mmap
 )paren
 comma
 id|X

@@ -6,12 +6,13 @@ multiline_comment|/*&n; * We have a 8GB user address space to start with: 33 bit
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE (0x200000000UL)
 multiline_comment|/*&n; * Bus types&n; */
-r_extern
-r_int
-id|EISA_bus
-suffix:semicolon
+DECL|macro|EISA_bus
+mdefine_line|#define EISA_bus 1
 DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
+multiline_comment|/*&n; * The alpha has no problems with write protection&n; */
+DECL|macro|wp_works_ok
+mdefine_line|#define wp_works_ok 1
 DECL|struct|thread_struct
 r_struct
 id|thread_struct

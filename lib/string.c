@@ -944,8 +944,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * find the first occurrence of byte &squot;c&squot;, or 1 past the area if none&n; */
 DECL|function|memscan
-r_extern
-r_inline
 r_void
 op_star
 id|memscan

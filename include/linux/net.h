@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 DECL|macro|NSOCKETS
 mdefine_line|#define NSOCKETS&t;2000&t;&t;/* Dynamic, this is MAX LIMIT&t;*/
+DECL|macro|NSOCKETS_UNIX
+mdefine_line|#define NSOCKETS_UNIX&t;128&t;&t;/* unix domain static limit&t;*/
 DECL|macro|NPROTO
 mdefine_line|#define NPROTO&t;&t;16&t;&t;/* should be enough for now..&t;*/
 DECL|macro|SYS_SOCKET

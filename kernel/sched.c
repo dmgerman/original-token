@@ -163,86 +163,6 @@ id|event
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Tell us the machine setup..&n; */
-DECL|variable|hard_math
-r_char
-id|hard_math
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set by boot/head.S */
-DECL|variable|x86
-r_char
-id|x86
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set by boot/head.S to 3 or 4 */
-DECL|variable|x86_model
-r_char
-id|x86_model
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set by boot/head.S */
-DECL|variable|x86_mask
-r_char
-id|x86_mask
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set by boot/head.S */
-DECL|variable|x86_capability
-r_int
-id|x86_capability
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set by boot/head.S */
-DECL|variable|fdiv_bug
-r_int
-id|fdiv_bug
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set if Pentium(TM) with FP bug */
-DECL|variable|x86_vendor_id
-r_char
-id|x86_vendor_id
-(braket
-l_int|13
-)braket
-op_assign
-l_string|&quot;Unknown&quot;
-suffix:semicolon
-DECL|variable|ignore_irq13
-r_char
-id|ignore_irq13
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set if exception 16 works */
-DECL|variable|wp_works_ok
-r_char
-id|wp_works_ok
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* set if paging hardware honours WP */
-DECL|variable|hlt_works_ok
-r_char
-id|hlt_works_ok
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* set if the &quot;hlt&quot; instruction works */
-multiline_comment|/*&n; * Bus types ..&n; */
-DECL|variable|EISA_bus
-r_int
-id|EISA_bus
-op_assign
-l_int|0
-suffix:semicolon
 r_extern
 r_int
 id|_setitimer
@@ -2031,6 +1951,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|time_status
+op_ne
+id|TIME_BAD
+op_logical_and
 id|xtime.tv_sec
 OG
 id|last_rtc_update

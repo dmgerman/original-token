@@ -284,7 +284,7 @@ op_assign
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|current-&gt;tss.cr3
+id|current
 comma
 id|start
 )paren

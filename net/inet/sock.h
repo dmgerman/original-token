@@ -158,7 +158,7 @@ id|sock
 op_star
 id|prev
 suffix:semicolon
-multiline_comment|/* Doubdly linked chain.. */
+multiline_comment|/* Doubly linked chain.. */
 DECL|member|pair
 r_struct
 id|sock

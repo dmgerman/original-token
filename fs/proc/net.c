@@ -89,23 +89,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|afinet_get_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_INET
 r_extern
 r_int
@@ -229,6 +212,23 @@ suffix:semicolon
 r_extern
 r_int
 id|snmp_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|afinet_get_info
 c_func
 (paren
 r_char
@@ -619,6 +619,14 @@ comma
 l_string|&quot;snmp&quot;
 )brace
 comma
+(brace
+id|PROC_NET_SOCKSTAT
+comma
+l_int|8
+comma
+l_string|&quot;sockstat&quot;
+)brace
+comma
 macro_line|#ifdef CONFIG_INET_RARP
 (brace
 id|PROC_NET_RARP
@@ -730,14 +738,6 @@ l_string|&quot;nr&quot;
 comma
 macro_line|#endif /* CONFIG_NETROM */
 macro_line|#endif /* CONFIG_AX25 */
-(brace
-id|PROC_NET_SOCKSTAT
-comma
-l_int|8
-comma
-l_string|&quot;sockstat&quot;
-)brace
-comma
 (brace
 l_int|0
 comma
@@ -1180,6 +1180,7 @@ id|thistime
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_case
 id|PROC_NET_SOCKSTAT
 suffix:colon
@@ -1200,7 +1201,6 @@ id|thistime
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
 r_case
 id|PROC_NET_ARP
 suffix:colon

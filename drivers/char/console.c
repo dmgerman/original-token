@@ -2947,11 +2947,13 @@ r_int
 r_int
 op_star
 )paren
+(paren
 id|origin
 op_plus
 id|video_size_row
 op_star
 id|b
+)paren
 suffix:semicolon
 id|s
 op_assign
@@ -2960,6 +2962,7 @@ r_int
 r_int
 op_star
 )paren
+(paren
 id|origin
 op_plus
 id|video_size_row
@@ -2968,6 +2971,7 @@ op_star
 id|b
 op_minus
 l_int|1
+)paren
 )paren
 suffix:semicolon
 id|count

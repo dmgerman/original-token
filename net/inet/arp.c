@@ -1712,9 +1712,11 @@ macro_line|#endif
 r_case
 id|ARPHRD_ETHER
 suffix:colon
+macro_line|#ifdef CONFIG_ARCNET
 r_case
 id|ARPHRD_ARCNET
 suffix:colon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3366,6 +3368,7 @@ id|ETH_ALEN
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_ARCNET
 r_case
 id|ARPHRD_ARCNET
 suffix:colon
@@ -3380,6 +3383,7 @@ suffix:semicolon
 multiline_comment|/* length of arcnet addresses */
 r_break
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_AX25
 r_case
 id|ARPHRD_AX25

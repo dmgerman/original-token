@@ -35,14 +35,19 @@ multiline_comment|/* 64-bit machines, beware!  SRB. */
 DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;4
 multiline_comment|/* to find an entry in a page-table-directory */
+multiline_comment|/*&n; * XXXXX This isn&squot;t right: we shouldn&squot;t use the ptbr, but the L2 pointer.&n; * This is just for getting it through the compiler right now&n; */
 DECL|macro|PAGE_DIR_OFFSET
-mdefine_line|#define PAGE_DIR_OFFSET(base,address)&t;((unsigned long*)((base)+&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)*2&amp;PTR_MASK&amp;~PAGE_MASK)))
+mdefine_line|#define PAGE_DIR_OFFSET(tsk,address) &bslash;&n;((unsigned long *) ((tsk)-&gt;tss.ptbr + ((((unsigned long)(address)) &gt;&gt; 21) &amp; PTR_MASK &amp; ~PAGE_MASK)))
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 multiline_comment|/* the no. of pointers that fit on a page */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;&t;&t;(PAGE_SIZE/sizeof(void*))
+multiline_comment|/* to set the page-dir */
+multiline_comment|/*&n; * XXXXX This isn&squot;t right: we shouldn&squot;t use the ptbr, but the L2 pointer.&n; * This is just for getting it through the compiler right now&n; */
+DECL|macro|SET_PAGE_DIR
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.ptbr = (unsigned long) (pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;invalidate(); &bslash;&n;} while (0)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ALPHA_PAGE_H */
 eof

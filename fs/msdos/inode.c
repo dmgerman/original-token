@@ -128,21 +128,12 @@ id|inode
 id|printk
 c_func
 (paren
-l_string|&quot;Invalid link (0x%X): expected 0x%X, got 0x%X&bslash;n&quot;
+l_string|&quot;Invalid link (0x%p): expected 0x%p, got 0x%p&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|depend
 comma
-(paren
-r_int
-)paren
 id|inode
 comma
-(paren
-r_int
-)paren
 id|MSDOS_I
 c_func
 (paren

@@ -73,11 +73,11 @@ r_struct
 id|unix_proto_data
 id|unix_datas
 (braket
-id|NSOCKETS
+id|NSOCKETS_UNIX
 )braket
 suffix:semicolon
 DECL|macro|last_unix_data
-mdefine_line|#define last_unix_data&t;&t;(unix_datas + NSOCKETS - 1)
+mdefine_line|#define last_unix_data&t;&t;(unix_datas + NSOCKETS_UNIX - 1)
 DECL|macro|UN_DATA
 mdefine_line|#define UN_DATA(SOCK) &t;&t;((struct unix_proto_data *)(SOCK)-&gt;data)
 DECL|macro|UN_PATH_OFFSET

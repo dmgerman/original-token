@@ -973,14 +973,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sock_alloc: Alloced some more, now %d sockets&bslash;n&quot;
-comma
-id|nsockets
-)paren
-suffix:semicolon
 )brace
 id|cli
 c_func
@@ -1224,7 +1216,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The rest of these are in fact vestigal from the previous&n;&t;&t; * version, which didn&squot;t have growing list of sockets.&n;&t;&t; * These may become necessary if there are 2000 (or whatever&n;&t;&t; * the hard limit is set to) sockets already in system,&n;&t;&t; * but then the system itself is quite catatonic.. IMO [mea]&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The rest of these are in fact vestigial from the previous&n;&t;&t; * version, which didn&squot;t have growing list of sockets.&n;&t;&t; * These may become necessary if there are 2000 (or whatever&n;&t;&t; * the hard limit is set to) sockets already in system,&n;&t;&t; * but then the system itself is quite catatonic.. IMO [mea]&n;&t;&t; */
 multiline_comment|/*&n;&t;&t; *&t;If its a &squot;now or never request&squot; then return.&n;&t;&t; */
 r_if
 c_cond
@@ -3476,7 +3468,7 @@ r_return
 op_minus
 id|ENOSR
 suffix:semicolon
-multiline_comment|/* Was: EGAIN, but we are out of system&n;&t;&t;&t;&t;   resources! */
+multiline_comment|/* Was: EAGAIN, but we are out of system&n;&t;&t;&t;&t;   resources! */
 )brace
 id|newsock-&gt;type
 op_assign

@@ -24,7 +24,7 @@ r_struct
 id|unix_proto_data
 id|unix_datas
 (braket
-id|NSOCKETS
+id|NSOCKETS_UNIX
 )braket
 suffix:semicolon
 r_static
