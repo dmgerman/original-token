@@ -2769,6 +2769,9 @@ suffix:colon
 r_case
 id|TYPE_ENCLOSURE
 suffix:colon
+r_case
+id|TYPE_COMM
+suffix:colon
 id|SDpnt-&gt;writeable
 op_assign
 l_int|1

@@ -2219,7 +2219,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 DECL|macro|DRM_COPY
-mdefine_line|#define DRM_COPY(name,value)&t;&t;&t;&t;     &bslash;&n;&t;len = strlen(value);&t;&t;&t;&t;     &bslash;&n;&t;if (len &gt; name##_len) len = name##_len;&t;&t;     &bslash;&n;&t;name##_len = strlen(value);&t;&t;&t;     &bslash;&n;&t;if (len &amp;&amp; name) {&t;&t;&t;&t;     &bslash;&n;&t;&t;if (copy_to_user(name, value, len, -EFAULT)) &bslash;&n;&t;&t;&t;return -EFAULT;&t;&t;&t;     &bslash;&n;&t;}
+mdefine_line|#define DRM_COPY(name,value)&t;&t;&t;&t;     &bslash;&n;&t;len = strlen(value);&t;&t;&t;&t;     &bslash;&n;&t;if (len &gt; name##_len) len = name##_len;&t;&t;     &bslash;&n;&t;name##_len = strlen(value);&t;&t;&t;     &bslash;&n;&t;if (len &amp;&amp; name) {&t;&t;&t;&t;     &bslash;&n;&t;&t;if (copy_to_user(name, value, len))          &bslash;&n;&t;&t;&t;return -EFAULT;&t;&t;&t;     &bslash;&n;&t;}
 id|version.version_major
 op_assign
 id|I810_MAJOR

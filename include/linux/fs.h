@@ -4025,9 +4025,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-comma
-r_int
-id|flag
 )paren
 )paren
 suffix:semicolon
@@ -4043,9 +4040,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-comma
-r_int
-id|flag
 )paren
 )paren
 suffix:semicolon

@@ -848,6 +848,8 @@ id|swstack
 op_plus
 l_int|1
 )paren
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -887,6 +889,8 @@ id|swstack
 op_plus
 l_int|1
 )paren
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -906,6 +910,10 @@ comma
 r_int
 r_int
 id|usp
+comma
+r_int
+r_int
+id|unused
 comma
 r_struct
 id|task_struct

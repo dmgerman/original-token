@@ -804,8 +804,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|udf_release_data
@@ -1263,8 +1261,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|dbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|memset
@@ -1390,8 +1386,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|udf_release_data
@@ -1797,8 +1791,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -6632,8 +6624,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|tbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|udf_release_data
@@ -7368,8 +7358,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -8190,8 +8178,6 @@ c_func
 (paren
 op_star
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|udf_release_data
@@ -8324,8 +8310,6 @@ c_func
 (paren
 op_star
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -8652,8 +8636,6 @@ c_func
 (paren
 op_star
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -10473,8 +10455,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|obh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -10587,8 +10567,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|obh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

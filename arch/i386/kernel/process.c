@@ -1603,6 +1603,10 @@ r_int
 r_int
 id|esp
 comma
+r_int
+r_int
+id|unused
+comma
 r_struct
 id|task_struct
 op_star
@@ -2168,6 +2172,8 @@ id|regs.esp
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2218,6 +2224,8 @@ id|newsp
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2247,6 +2255,8 @@ id|regs.esp
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

@@ -188,6 +188,10 @@ r_int
 r_int
 id|usp
 comma
+r_int
+r_int
+id|unused
+comma
 r_struct
 id|task_struct
 op_star

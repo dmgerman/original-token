@@ -440,6 +440,8 @@ mdefine_line|#define fam12_drive&t;(D_S[d].drv_type&amp;(drv_fam1|drv_fam2))
 DECL|macro|fam2T_drive
 mdefine_line|#define fam2T_drive&t;(D_S[d].drv_type&amp;(drv_fam2|drv_famT))
 multiline_comment|/*&n; * audio states:&n; */
+DECL|macro|audio_completed
+mdefine_line|#define audio_completed&t;3 /* Forgot this one! --AJK */
 DECL|macro|audio_playing
 mdefine_line|#define audio_playing&t;2
 DECL|macro|audio_pausing

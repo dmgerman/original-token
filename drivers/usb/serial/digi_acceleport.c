@@ -7266,7 +7266,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|digi_init
+r_static
 r_int
+id|__init
 id|digi_init
 (paren
 r_void
@@ -7289,7 +7291,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|digi_exit
+r_static
 r_void
+id|__exit
 id|digi_exit
 (paren
 r_void

@@ -394,6 +394,27 @@ id|file_lock
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * linux/fs/nfs/unlink.c&n; */
+r_extern
+r_int
+id|nfs_async_unlink
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nfs_complete_unlink
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * linux/fs/nfs/write.c&n; */
 r_extern
 r_int

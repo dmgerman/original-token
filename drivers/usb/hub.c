@@ -3379,6 +3379,12 @@ comma
 id|ret
 )paren
 suffix:semicolon
+id|usb_destroy_configuration
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|clear_bit
 c_func
 (paren

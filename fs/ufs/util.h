@@ -1001,8 +1001,6 @@ id|ubh_mark_buffer_dirty
 r_struct
 id|ufs_buffer_head
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern

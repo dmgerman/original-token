@@ -5571,8 +5571,6 @@ id|sb
 comma
 op_star
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -5715,8 +5713,6 @@ id|sb
 comma
 op_star
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* slots can&squot;t be less than 1 */
@@ -6371,8 +6367,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* remove the longname */
@@ -6441,8 +6435,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -7348,8 +7340,6 @@ c_func
 id|sb
 comma
 id|dotdot_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|old_dir-&gt;i_nlink

@@ -86,8 +86,6 @@ comma
 r_struct
 id|buffer_head
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_void
@@ -100,8 +98,6 @@ comma
 r_struct
 id|buffer_head
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_void

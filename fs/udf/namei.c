@@ -696,16 +696,12 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|fibh-&gt;ebh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
 id|fibh-&gt;sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -5554,8 +5550,6 @@ c_func
 (paren
 id|inode-&gt;i_sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -5878,8 +5872,6 @@ c_func
 (paren
 id|inode-&gt;i_sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -6562,8 +6554,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|dir_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|old_dir-&gt;i_nlink

@@ -450,8 +450,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bm-&gt;bm_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -859,8 +857,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|zone-&gt;z_bm-&gt;bm_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt

@@ -34,8 +34,8 @@ DECL|macro|CLONE_FS
 mdefine_line|#define CLONE_FS&t;0x00000200&t;/* set if fs info shared between processes */
 DECL|macro|CLONE_FILES
 mdefine_line|#define CLONE_FILES&t;0x00000400&t;/* set if open files shared between processes */
-DECL|macro|CLONE_SIGNAL
-mdefine_line|#define CLONE_SIGNAL&t;0x00000800&t;/* set if signal handlers and blocked signals shared */
+DECL|macro|CLONE_SIGHAND
+mdefine_line|#define CLONE_SIGHAND&t;0x00000800&t;/* set if signal handlers and blocked signals shared */
 DECL|macro|CLONE_PID
 mdefine_line|#define CLONE_PID&t;0x00001000&t;/* set if pid shared */
 DECL|macro|CLONE_PTRACE
@@ -44,8 +44,10 @@ DECL|macro|CLONE_VFORK
 mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mm_release */
 DECL|macro|CLONE_PARENT
 mdefine_line|#define CLONE_PARENT&t;0x00008000&t;/* set if we want to have the same parent as the cloner */
-DECL|macro|CLONE_SIGHAND
-mdefine_line|#define CLONE_SIGHAND&t;CLONE_SIGNAL&t;/* Old name */
+DECL|macro|CLONE_THREAD
+mdefine_line|#define CLONE_THREAD&t;0x00010000&t;/* Same thread group? */
+DECL|macro|CLONE_SIGNAL
+mdefine_line|#define CLONE_SIGNAL&t;(CLONE_SIGHAND | CLONE_THREAD)
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -2398,6 +2400,9 @@ comma
 r_int
 r_int
 comma
+r_int
+r_int
+comma
 r_struct
 id|task_struct
 op_star
@@ -2496,6 +2501,9 @@ comma
 r_struct
 id|pt_regs
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/arm/mach-footbridge/netwinder-leds.c&n; *&n; * Copyright (C) 1998-1999 Russell King&n; *&n; * NetWinder LED control routines.&n; *&n; * The Netwinder uses the leds as follows:&n; *  - Green - toggles state every 50 timer interrupts&n; *  - Red   - On if the system is not idle&n; *&n; * Changelog:&n; *   02-05-1999&t;RMK&t;Various cleanups&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

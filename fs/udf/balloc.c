@@ -1320,8 +1320,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1365,8 +1363,6 @@ c_func
 (paren
 id|sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1689,8 +1685,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1755,8 +1749,6 @@ c_func
 (paren
 id|sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2585,8 +2577,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -2639,8 +2629,6 @@ c_func
 (paren
 id|sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

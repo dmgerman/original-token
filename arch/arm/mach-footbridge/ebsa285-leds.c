@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/arm/mach-footbridge/ebsa285-leds.c&n; *&n; * Copyright (C) 1998-1999 Russell King&n; *&n; * EBSA-285 control routines.&n; *&n; * The EBSA-285 uses the leds as follows:&n; *  - Green - toggles state every 50 timer interrupts&n; *  - Amber - On if system is not idle&n; *  - Red   - currently unused&n; *&n; * Changelog:&n; *   02-05-1999&t;RMK&t;Various cleanups&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

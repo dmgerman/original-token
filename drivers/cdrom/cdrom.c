@@ -139,9 +139,9 @@ mdefine_line|#define cdinfo(type, fmt, args...)
 macro_line|#endif
 multiline_comment|/* These are used to simplify getting data in from and back to user land */
 DECL|macro|IOCTL_IN
-mdefine_line|#define IOCTL_IN(arg, type, in)&t;&bslash;&n;&t;copy_from_user(&amp;in, (type *) arg, sizeof in)
+mdefine_line|#define IOCTL_IN(arg, type, in)&t;&t;&t;&t;&t;&bslash;&n;&t;if (copy_from_user(&amp;in, (type *) arg, sizeof in))&t;&bslash;&n;&t;&t;return -EFAULT;
 DECL|macro|IOCTL_OUT
-mdefine_line|#define IOCTL_OUT(arg, type, out) &bslash;&n;&t;copy_to_user((type *) arg, &amp;out, sizeof out)
+mdefine_line|#define IOCTL_OUT(arg, type, out) &bslash;&n;&t;if (copy_to_user((type *) arg, &amp;out, sizeof out))&t;&bslash;&n;&t;&t;return -EFAULT;
 multiline_comment|/* The (cdo-&gt;capability &amp; ~cdi-&gt;mask &amp; CDC_XXX) construct was used in&n;   a lot of places. This macro makes the code more clear. */
 DECL|macro|CDROM_CAN
 mdefine_line|#define CDROM_CAN(type) (cdi-&gt;ops-&gt;capability &amp; ~cdi-&gt;mask &amp; (type))
@@ -2462,6 +2462,19 @@ r_return
 op_minus
 id|EDRIVE_CANT_DO_THIS
 suffix:semicolon
+(paren
+r_void
+)paren
+id|cdi-&gt;ops
+op_member_access_from_pointer
+id|media_changed
+c_func
+(paren
+id|cdi
+comma
+id|slot
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2717,14 +2730,12 @@ r_return
 l_int|0
 suffix:semicolon
 r_return
-(paren
 id|media_changed
 c_func
 (paren
 id|cdi
 comma
 l_int|0
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2804,6 +2815,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Grab the TOC header so we can see how many tracks there are */
+r_if
+c_cond
+(paren
+(paren
 id|ret
 op_assign
 id|cdi-&gt;ops
@@ -2818,11 +2833,7 @@ comma
 op_amp
 id|header
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
+)paren
 )paren
 (brace
 r_if
@@ -6065,9 +6076,6 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -6078,10 +6086,6 @@ id|cdrom_multisession
 comma
 id|ms_info
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|requested_format
 op_assign
@@ -6146,9 +6150,6 @@ comma
 id|requested_format
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -6159,10 +6160,6 @@ id|cdrom_multisession
 comma
 id|ms_info
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|cdinfo
 c_func
@@ -6383,6 +6380,7 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
+multiline_comment|/* cannot select disc or select current disc */
 r_if
 c_cond
 (paren
@@ -6397,7 +6395,6 @@ id|arg
 op_eq
 id|CDSL_CURRENT
 )paren
-multiline_comment|/* cannot select disc or select current disc */
 r_return
 id|media_changed
 c_func
@@ -6418,12 +6415,10 @@ id|arg
 op_ge
 id|cdi-&gt;capacity
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6638,7 +6633,6 @@ op_ne
 id|CDSL_NONE
 )paren
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -6653,7 +6647,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 multiline_comment|/* cdo-&gt;select_disc is a hook to allow a driver-specific&n;&t;&t; * way of seleting disc.  However, since there is no&n;&t;&t; * equiv hook for cdrom_slot_status this may not &n;&t;&t; * actually be useful...&n;&t;&t; */
 r_if
 c_cond
@@ -6784,7 +6777,7 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/* don&squot;t unlock the door on multiple opens */
+multiline_comment|/* don&squot;t unlock the door on multiple opens,but allow root&n;&t;&t; * to do so */
 r_if
 c_cond
 (paren
@@ -6796,6 +6789,13 @@ l_int|1
 op_logical_and
 op_logical_neg
 id|arg
+op_logical_and
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_ADMIN
+)paren
 )paren
 r_return
 op_minus
@@ -6932,9 +6932,6 @@ id|mcn
 r_return
 id|ret
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -6945,10 +6942,6 @@ id|cdrom_mcn
 comma
 id|mcn
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|cdinfo
 c_func
@@ -7258,9 +7251,6 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 multiline_comment|/* cdinfo(CD_DO_IOCTL,&quot;entering CDROMSUBCHNL&bslash;n&quot;);*/
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -7271,10 +7261,6 @@ id|cdrom_subchnl
 comma
 id|q
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|requested
 op_assign
@@ -7358,9 +7344,6 @@ comma
 id|requested
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -7371,10 +7354,6 @@ id|cdrom_subchnl
 comma
 id|q
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMSUBCHNL successful&bslash;n&quot;); */
 r_return
@@ -7404,9 +7383,6 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;entering CDROMREADTOCHDR&bslash;n&quot;); */
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -7417,10 +7393,6 @@ id|cdrom_tochdr
 comma
 id|header
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -7445,9 +7417,6 @@ id|header
 r_return
 id|ret
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -7458,10 +7427,6 @@ id|cdrom_tochdr
 comma
 id|header
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMREADTOCHDR successful&bslash;n&quot;); */
 r_return
@@ -7494,9 +7459,6 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;entering CDROMREADTOCENTRY&bslash;n&quot;); */
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -7507,10 +7469,6 @@ id|cdrom_tocentry
 comma
 id|entry
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|requested_format
 op_assign
@@ -7578,9 +7536,6 @@ comma
 id|requested_format
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -7591,10 +7546,6 @@ id|cdrom_tocentry
 comma
 id|entry
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMREADTOCENTRY successful&bslash;n&quot;); */
 r_return
@@ -7631,9 +7582,6 @@ comma
 l_string|&quot;entering CDROMPLAYMSF&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -7644,10 +7592,6 @@ id|cdrom_msf
 comma
 id|msf
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_return
 id|cdo
@@ -7694,9 +7638,6 @@ comma
 l_string|&quot;entering CDROMPLAYTRKIND&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -7707,10 +7648,6 @@ id|cdrom_ti
 comma
 id|ti
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|CHECKAUDIO
 suffix:semicolon
@@ -7759,9 +7696,6 @@ comma
 l_string|&quot;entering CDROMVOLCTRL&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -7772,10 +7706,6 @@ id|cdrom_volctrl
 comma
 id|volume
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_return
 id|cdo
@@ -7845,9 +7775,6 @@ id|volume
 r_return
 id|ret
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -7858,10 +7785,6 @@ id|cdrom_volctrl
 comma
 id|volume
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -8016,9 +7939,6 @@ r_struct
 id|modesel_head
 id|mh
 suffix:semicolon
-r_int
-id|ret
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -8130,8 +8050,7 @@ id|size
 op_amp
 l_int|0xff
 suffix:semicolon
-id|ret
-op_assign
+r_return
 id|cdo
 op_member_access_from_pointer
 id|generic_packet
@@ -8142,47 +8061,6 @@ comma
 op_amp
 id|cgc
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;switch_blocksize failed, ret %x &quot;
-comma
-id|ret
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cgc.sense
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;sense %02x.%02x.%02x&quot;
-comma
-id|cgc.sense-&gt;sense_key
-comma
-id|cgc.sense-&gt;asc
-comma
-id|cgc.sense-&gt;ascq
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_return
-id|ret
 suffix:semicolon
 )brace
 DECL|function|mmc_ioctl
@@ -8316,9 +8194,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -8329,10 +8204,6 @@ id|cdrom_msf
 comma
 id|msf
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|lba
 op_assign
@@ -8461,44 +8332,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;read_cd failed, ret %x &quot;
-comma
-id|ret
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cgc.sense
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;sense %02x.%02x.%02x&quot;
-comma
-id|cgc.sense-&gt;sense_key
-comma
-id|cgc.sense-&gt;asc
-comma
-id|cgc.sense-&gt;ascq
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 id|ret
 op_or_assign
 id|cdrom_switch_blocksize
@@ -8558,9 +8391,6 @@ id|lba
 comma
 id|frames
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -8571,10 +8401,6 @@ id|cdrom_read_audio
 comma
 id|ra
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -8781,9 +8607,6 @@ id|requested
 comma
 id|back
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -8794,10 +8617,6 @@ id|cdrom_subchnl
 comma
 id|q
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|requested
 op_assign
@@ -8879,9 +8698,6 @@ comma
 id|requested
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -8892,96 +8708,10 @@ id|cdrom_subchnl
 comma
 id|q
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMSUBCHNL successful&bslash;n&quot;); */
 r_return
 l_int|0
-suffix:semicolon
-)brace
-r_case
-id|CDROMPLAYTRKIND
-suffix:colon
-(brace
-r_struct
-id|cdrom_ti
-id|ti
-suffix:semicolon
-id|cdinfo
-c_func
-(paren
-id|CD_DO_IOCTL
-comma
-l_string|&quot;entering CDROMPLAYTRKIND&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IOCTL_IN
-c_func
-(paren
-id|arg
-comma
-r_struct
-id|cdrom_ti
-comma
-id|ti
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-id|cgc.cmd
-(braket
-l_int|0
-)braket
-op_assign
-id|GPCMD_PLAY_AUDIO_TI
-suffix:semicolon
-id|cgc.cmd
-(braket
-l_int|4
-)braket
-op_assign
-id|ti.cdti_trk0
-suffix:semicolon
-id|cgc.cmd
-(braket
-l_int|5
-)braket
-op_assign
-id|ti.cdti_ind0
-suffix:semicolon
-id|cgc.cmd
-(braket
-l_int|7
-)braket
-op_assign
-id|ti.cdti_trk1
-suffix:semicolon
-id|cgc.cmd
-(braket
-l_int|8
-)braket
-op_assign
-id|ti.cdti_ind1
-suffix:semicolon
-r_return
-id|cdo
-op_member_access_from_pointer
-id|generic_packet
-c_func
-(paren
-id|cdi
-comma
-op_amp
-id|cgc
-)paren
 suffix:semicolon
 )brace
 r_case
@@ -9000,9 +8730,6 @@ comma
 l_string|&quot;entering CDROMPLAYMSF&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -9013,10 +8740,6 @@ id|cdrom_msf
 comma
 id|msf
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|cgc.cmd
 (braket
@@ -9100,9 +8823,6 @@ comma
 l_string|&quot;entering CDROMPLAYBLK&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -9113,10 +8833,6 @@ id|cdrom_blk
 comma
 id|blk
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|cgc.cmd
 (braket
@@ -9241,9 +8957,6 @@ comma
 l_string|&quot;entering CDROMVOLUME&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -9254,10 +8967,6 @@ id|cdrom_volctrl
 comma
 id|volctrl
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|cgc.buffer
 op_assign
@@ -9390,9 +9099,6 @@ op_plus
 l_int|15
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -9403,10 +9109,6 @@ id|cdrom_volctrl
 comma
 id|volctrl
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -9816,9 +9518,6 @@ comma
 l_string|&quot;entering DVD_AUTH&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -9828,10 +9527,6 @@ id|dvd_authinfo
 comma
 id|ai
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -9851,9 +9546,6 @@ id|ai
 r_return
 id|ret
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -9863,10 +9555,6 @@ id|dvd_authinfo
 comma
 id|ai
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -9911,9 +9599,6 @@ comma
 l_string|&quot;entering CDROM_SEND_PACKET&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_IN
 c_func
 (paren
@@ -9924,10 +9609,6 @@ id|cdrom_generic_command
 comma
 id|cgc
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|copy
 op_assign
@@ -10176,9 +9857,6 @@ id|next
 r_return
 id|ret
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -10188,10 +9866,6 @@ r_int
 comma
 id|next
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -10233,9 +9907,6 @@ id|last
 r_return
 id|ret
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -10245,10 +9916,6 @@ r_int
 comma
 id|last
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_return
 l_int|0

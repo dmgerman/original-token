@@ -1066,8 +1066,6 @@ id|ubh_mark_buffer_dirty
 c_func
 (paren
 id|ind_ubh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1543,8 +1541,6 @@ id|ubh_mark_buffer_dirty
 c_func
 (paren
 id|dind_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1932,8 +1928,6 @@ id|ubh_mark_buffer_dirty
 c_func
 (paren
 id|tind_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2338,8 +2332,6 @@ suffix:semicolon
 id|mark_buffer_dirty
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|brelse

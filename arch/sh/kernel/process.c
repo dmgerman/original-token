@@ -687,6 +687,10 @@ r_int
 r_int
 id|usp
 comma
+r_int
+r_int
+id|unused
+comma
 r_struct
 id|task_struct
 op_star
@@ -1055,6 +1059,8 @@ l_int|15
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1108,6 +1114,8 @@ id|newsp
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1156,6 +1164,8 @@ l_int|15
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

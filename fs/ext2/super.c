@@ -75,8 +75,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -281,8 +279,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -445,8 +441,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1550,8 +1544,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -3192,8 +3184,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -3445,8 +3435,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt

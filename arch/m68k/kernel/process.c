@@ -593,6 +593,8 @@ c_func
 )paren
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -624,6 +626,8 @@ c_func
 )paren
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -678,6 +682,8 @@ comma
 id|newsp
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -696,6 +702,10 @@ comma
 r_int
 r_int
 id|usp
+comma
+r_int
+r_int
+id|unused
 comma
 r_struct
 id|task_struct

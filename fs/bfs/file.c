@@ -111,8 +111,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 r_new
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|bforget
@@ -427,8 +425,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|s-&gt;su_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|err
@@ -513,8 +509,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|s-&gt;su_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|bh_result-&gt;b_dev

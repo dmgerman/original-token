@@ -749,8 +749,6 @@ c_func
 id|sb
 comma
 id|bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -760,8 +758,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_for
@@ -845,8 +841,6 @@ c_func
 id|sb
 comma
 id|c_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if

@@ -2218,8 +2218,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|affs_brelse
@@ -3017,8 +3015,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|old_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|end_rename

@@ -1946,8 +1946,6 @@ id|dir-&gt;bh
 (braket
 id|i
 )braket
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ret

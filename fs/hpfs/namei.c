@@ -434,8 +434,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -907,8 +905,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -1409,8 +1405,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|hpfs_lock_iget
@@ -1836,8 +1830,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -1974,8 +1966,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -3607,8 +3597,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse

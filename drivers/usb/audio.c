@@ -23371,7 +23371,9 @@ id|open_wait
 suffix:semicolon
 )brace
 DECL|function|usb_audio_init
+r_static
 r_int
+id|__init
 id|usb_audio_init
 c_func
 (paren
@@ -23389,25 +23391,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|usb_audio_cleanup
+r_static
 r_void
-)paren
-(brace
-r_return
-id|usb_audio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|usb_audio_cleanup
 c_func
 (paren
 r_void
@@ -23421,6 +23409,20 @@ id|usb_audio_driver
 )paren
 suffix:semicolon
 )brace
+DECL|variable|usb_audio_init
+id|module_init
+c_func
+(paren
+id|usb_audio_init
+)paren
+suffix:semicolon
+DECL|variable|usb_audio_cleanup
+id|module_exit
+c_func
+(paren
+id|usb_audio_cleanup
+)paren
+suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -23433,5 +23435,4 @@ c_func
 l_string|&quot;USB Audio Class driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

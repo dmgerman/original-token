@@ -33,49 +33,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * USB device drivers&n; */
-r_int
-id|usb_cpia_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|usb_audio_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|usb_ibmcam_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|dabusb_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|plusb_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|dsbr100_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * HCI drivers&n; */
 r_int
 id|uhci_init
@@ -145,48 +102,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_USB_MODULE
-macro_line|#ifdef CONFIG_VIDEO_CPIA_USB
-id|usb_cpia_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_AUDIO
-id|usb_audio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_IBMCAM
-id|usb_ibmcam_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_DABUSB
-id|dabusb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_DSBR
-id|dsbr100_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_PLUSB
-id|plusb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_USB_UHCI
 id|uhci_init
 c_func

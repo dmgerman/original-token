@@ -445,8 +445,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|buffer
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

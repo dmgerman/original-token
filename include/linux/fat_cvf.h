@@ -134,9 +134,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-comma
-r_int
-id|dirty_val
 )paren
 suffix:semicolon
 DECL|member|cvf_set_uptodate

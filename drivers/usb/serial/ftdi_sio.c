@@ -2984,7 +2984,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* ftdi_sio_ioctl */
 DECL|function|ftdi_sio_init
+r_static
 r_int
+id|__init
 id|ftdi_sio_init
 (paren
 r_void
@@ -3001,7 +3003,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ftdi_sio_exit
+r_static
 r_void
+id|__exit
 id|ftdi_sio_exit
 (paren
 r_void

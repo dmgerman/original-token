@@ -1044,8 +1044,6 @@ multiline_comment|/*  Peripheral Device Type definitions */
 multiline_comment|/*  see include/scsi/scsi.h for the rest */
 DECL|macro|TYPE_PRINTER
 mdefine_line|#define TYPE_PRINTER&t;&t; 0x02&t;   /* Printer device&t;&t;   */
-DECL|macro|TYPE_COMM
-mdefine_line|#define TYPE_COMM&t;&t; 0x09&t;   /* Communications device&t;   */
 multiline_comment|/*&n;** Inquiry flag definitions (Inq data byte 7)&n;*/
 DECL|macro|SCSI_INQ_RELADR
 mdefine_line|#define SCSI_INQ_RELADR       0x80    /* device supports relative addressing*/

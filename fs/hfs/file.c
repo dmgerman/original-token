@@ -1805,8 +1805,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|brelse

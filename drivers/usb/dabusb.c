@@ -3426,6 +3426,7 @@ id|DABUSB_MINOR
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|dabusb_init
+r_static
 r_int
 id|__init
 id|dabusb_init
@@ -3544,6 +3545,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|dabusb_cleanup
+r_static
 r_void
 id|__exit
 id|dabusb_cleanup
@@ -3590,33 +3592,18 @@ comma
 l_string|&quot;Number of buffers (default=256)&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|__init
-id|init_module
+DECL|variable|dabusb_init
+id|module_init
 (paren
-r_void
-)paren
-(brace
-r_return
 id|dabusb_init
-(paren
 )paren
 suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|__exit
-id|cleanup_module
+DECL|variable|dabusb_cleanup
+id|module_exit
 (paren
-r_void
-)paren
-(brace
 id|dabusb_cleanup
-(paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 eof

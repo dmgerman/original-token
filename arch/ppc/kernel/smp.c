@@ -1187,6 +1187,8 @@ l_int|0
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 OL
 l_int|0

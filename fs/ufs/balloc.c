@@ -614,15 +614,11 @@ suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|UCPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1102,15 +1098,11 @@ suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|UCPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1197,7 +1189,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|macro|NULLIFY_FRAGMENTS
-mdefine_line|#define NULLIFY_FRAGMENTS &bslash;&n;&t;for (i = oldcount; i &lt; newcount; i++) { &bslash;&n;&t;&t;bh = getblk (sb-&gt;s_dev, result + i, sb-&gt;s_blocksize); &bslash;&n;&t;&t;memset (bh-&gt;b_data, 0, sb-&gt;s_blocksize); &bslash;&n;&t;&t;mark_buffer_uptodate(bh, 1); &bslash;&n;&t;&t;mark_buffer_dirty (bh, 1); &bslash;&n;&t;&t;if (IS_SYNC(inode)) { &bslash;&n;&t;&t;&t;ll_rw_block (WRITE, 1, &amp;bh); &bslash;&n;&t;&t;&t;wait_on_buffer (bh); &bslash;&n;&t;&t;} &bslash;&n;&t;&t;brelse (bh); &bslash;&n;&t;}
+mdefine_line|#define NULLIFY_FRAGMENTS &bslash;&n;&t;for (i = oldcount; i &lt; newcount; i++) { &bslash;&n;&t;&t;bh = getblk (sb-&gt;s_dev, result + i, sb-&gt;s_blocksize); &bslash;&n;&t;&t;memset (bh-&gt;b_data, 0, sb-&gt;s_blocksize); &bslash;&n;&t;&t;mark_buffer_uptodate(bh, 1); &bslash;&n;&t;&t;mark_buffer_dirty (bh); &bslash;&n;&t;&t;if (IS_SYNC(inode)) { &bslash;&n;&t;&t;&t;ll_rw_block (WRITE, 1, &amp;bh); &bslash;&n;&t;&t;&t;wait_on_buffer (bh); &bslash;&n;&t;&t;} &bslash;&n;&t;&t;brelse (bh); &bslash;&n;&t;}
 DECL|function|ufs_new_fragments
 r_int
 id|ufs_new_fragments
@@ -1836,8 +1828,6 @@ suffix:semicolon
 id|mark_buffer_dirty
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -2408,15 +2398,11 @@ suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|UCPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -3052,15 +3038,11 @@ suffix:colon
 id|ubh_mark_buffer_dirty
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|UCPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if

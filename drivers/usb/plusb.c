@@ -2096,6 +2096,7 @@ comma
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|plusb_init
+r_static
 r_int
 id|__init
 id|plusb_init
@@ -2206,6 +2207,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|plusb_cleanup
+r_static
 r_void
 id|__exit
 id|plusb_cleanup
@@ -2287,7 +2289,6 @@ l_string|&quot;plusb_cleanup: finished&quot;
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 (paren
 l_string|&quot;Deti Fliegl, deti@fliegl.de&quot;
@@ -2298,35 +2299,17 @@ id|MODULE_DESCRIPTION
 l_string|&quot;PL-2302 USB Interface Driver for Linux (c)2000&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|init_module
-r_int
-id|__init
-id|init_module
+DECL|variable|plusb_init
+id|module_init
 (paren
-r_void
-)paren
-(brace
-r_return
 id|plusb_init
-(paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|cleanup_module
-r_void
-id|__exit
-id|cleanup_module
+DECL|variable|plusb_cleanup
+id|module_exit
 (paren
-r_void
-)paren
-(brace
 id|plusb_cleanup
-(paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 eof

@@ -46,6 +46,9 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+id|type
 )paren
 (brace
 r_int

@@ -171,8 +171,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.affs_sb.s_root_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -354,8 +352,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.affs_sb.s_root_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -2620,8 +2616,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bb
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|bmalt
@@ -2964,8 +2958,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|s-&gt;u.affs_sb.s_root_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

@@ -1448,8 +1448,6 @@ id|sb
 comma
 op_star
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -1804,8 +1802,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|fat_detach
@@ -2164,8 +2160,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|fat_brelse
@@ -2304,8 +2298,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|fat_detach
@@ -2640,8 +2632,6 @@ c_func
 id|sb
 comma
 id|old_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|fat_detach
@@ -2772,8 +2762,6 @@ c_func
 id|sb
 comma
 id|dotdot_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|old_dir-&gt;i_nlink

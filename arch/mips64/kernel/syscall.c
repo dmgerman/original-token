@@ -265,6 +265,8 @@ l_int|29
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -340,6 +342,8 @@ id|newsp
 comma
 op_amp
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return

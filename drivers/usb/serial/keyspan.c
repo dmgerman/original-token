@@ -2643,7 +2643,9 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|keyspan_init
+r_static
 r_int
+id|__init
 id|keyspan_init
 (paren
 r_void
@@ -2714,7 +2716,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|keyspan_exit
+r_static
 r_void
+id|__exit
 id|keyspan_exit
 (paren
 r_void

@@ -1208,6 +1208,10 @@ r_int
 r_int
 id|usp
 comma
+r_int
+r_int
+id|unused
+comma
 r_struct
 id|task_struct
 op_star
@@ -1902,6 +1906,8 @@ l_int|1
 )braket
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
@@ -1982,6 +1988,8 @@ l_int|1
 )braket
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
@@ -2057,6 +2065,8 @@ l_int|1
 )braket
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

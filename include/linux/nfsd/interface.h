@@ -2,6 +2,7 @@ multiline_comment|/*&n; * include/linux/nfsd/interface.h&n; *&n; * defines inter
 macro_line|#ifndef LINUX_NFSD_INTERFACE_H
 DECL|macro|LINUX_NFSD_INTERFACE_H
 mdefine_line|#define LINUX_NFSD_INTERFACE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NFSD_MODULE
 DECL|struct|nfsd_linkage
 r_extern

@@ -461,9 +461,6 @@ r_struct
 id|ufs_buffer_head
 op_star
 id|ubh
-comma
-r_int
-id|flag
 )paren
 (brace
 r_int
@@ -497,8 +494,6 @@ id|ubh-&gt;bh
 (braket
 id|i
 )braket
-comma
-id|flag
 )paren
 suffix:semicolon
 )brace

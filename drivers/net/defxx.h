@@ -3399,11 +3399,11 @@ suffix:semicolon
 macro_line|#endif&t;/* #ifndef BIG_ENDIAN */
 multiline_comment|/* Define EISA controller register offsets */
 DECL|macro|PI_ESIC_K_BURST_HOLDOFF
-mdefine_line|#define PI_ESIC_K_BURST_HOLDOFF&t;&t;&t;0x040
+mdefine_line|#define PI_ESIC_K_BURST_HOLDOFF&t;&t;0x040
 DECL|macro|PI_ESIC_K_SLOT_ID
 mdefine_line|#define PI_ESIC_K_SLOT_ID            &t;0xC80
 DECL|macro|PI_ESIC_K_SLOT_CNTRL
-mdefine_line|#define PI_ESIC_K_SLOT_CNTRL&t;&t;&t;0xC84
+mdefine_line|#define PI_ESIC_K_SLOT_CNTRL&t;&t;0xC84
 DECL|macro|PI_ESIC_K_MEM_ADD_CMP_0
 mdefine_line|#define PI_ESIC_K_MEM_ADD_CMP_0     &t;0xC85
 DECL|macro|PI_ESIC_K_MEM_ADD_CMP_1
@@ -3429,21 +3429,21 @@ mdefine_line|#define PI_ESIC_K_MEM_ADD_LO_CMP_1  &t;0xC8F
 DECL|macro|PI_ESIC_K_MEM_ADD_LO_CMP_2
 mdefine_line|#define PI_ESIC_K_MEM_ADD_LO_CMP_2  &t;0xC90
 DECL|macro|PI_ESIC_K_IO_CMP_0_0
-mdefine_line|#define PI_ESIC_K_IO_CMP_0_0&t;&t;&t;0xC91
+mdefine_line|#define PI_ESIC_K_IO_CMP_0_0&t;&t;0xC91
 DECL|macro|PI_ESIC_K_IO_CMP_0_1
-mdefine_line|#define PI_ESIC_K_IO_CMP_0_1&t;&t;&t;0xC92
+mdefine_line|#define PI_ESIC_K_IO_CMP_0_1&t;&t;0xC92
 DECL|macro|PI_ESIC_K_IO_CMP_1_0
-mdefine_line|#define PI_ESIC_K_IO_CMP_1_0&t;&t;&t;0xC93
+mdefine_line|#define PI_ESIC_K_IO_CMP_1_0&t;&t;0xC93
 DECL|macro|PI_ESIC_K_IO_CMP_1_1
-mdefine_line|#define PI_ESIC_K_IO_CMP_1_1&t;&t;&t;0xC94
+mdefine_line|#define PI_ESIC_K_IO_CMP_1_1&t;&t;0xC94
 DECL|macro|PI_ESIC_K_IO_CMP_2_0
-mdefine_line|#define PI_ESIC_K_IO_CMP_2_0&t;&t;&t;0xC95
+mdefine_line|#define PI_ESIC_K_IO_CMP_2_0&t;&t;0xC95
 DECL|macro|PI_ESIC_K_IO_CMP_2_1
-mdefine_line|#define PI_ESIC_K_IO_CMP_2_1&t;&t;&t;0xC96
+mdefine_line|#define PI_ESIC_K_IO_CMP_2_1&t;&t;0xC96
 DECL|macro|PI_ESIC_K_IO_CMP_3_0
-mdefine_line|#define PI_ESIC_K_IO_CMP_3_0&t;&t;&t;0xC97
+mdefine_line|#define PI_ESIC_K_IO_CMP_3_0&t;&t;0xC97
 DECL|macro|PI_ESIC_K_IO_CMP_3_1
-mdefine_line|#define PI_ESIC_K_IO_CMP_3_1&t;&t;&t;0xC98
+mdefine_line|#define PI_ESIC_K_IO_CMP_3_1&t;&t;0xC98
 DECL|macro|PI_ESIC_K_IO_ADD_MASK_0_0
 mdefine_line|#define PI_ESIC_K_IO_ADD_MASK_0_0    &t;0xC99
 DECL|macro|PI_ESIC_K_IO_ADD_MASK_0_1
@@ -3461,19 +3461,19 @@ mdefine_line|#define PI_ESIC_K_IO_ADD_MASK_3_0    &t;0xC9F
 DECL|macro|PI_ESIC_K_IO_ADD_MASK_3_1
 mdefine_line|#define PI_ESIC_K_IO_ADD_MASK_3_1    &t;0xCA0
 DECL|macro|PI_ESIC_K_MOD_CONFIG_1
-mdefine_line|#define PI_ESIC_K_MOD_CONFIG_1&t;&t;&t;0xCA1
+mdefine_line|#define PI_ESIC_K_MOD_CONFIG_1&t;&t;0xCA1
 DECL|macro|PI_ESIC_K_MOD_CONFIG_2
-mdefine_line|#define PI_ESIC_K_MOD_CONFIG_2&t;&t;&t;0xCA2
+mdefine_line|#define PI_ESIC_K_MOD_CONFIG_2&t;&t;0xCA2
 DECL|macro|PI_ESIC_K_MOD_CONFIG_3
-mdefine_line|#define PI_ESIC_K_MOD_CONFIG_3&t;&t;&t;0xCA3
+mdefine_line|#define PI_ESIC_K_MOD_CONFIG_3&t;&t;0xCA3
 DECL|macro|PI_ESIC_K_MOD_CONFIG_4
-mdefine_line|#define PI_ESIC_K_MOD_CONFIG_4&t;&t;&t;0xCA4
+mdefine_line|#define PI_ESIC_K_MOD_CONFIG_4&t;&t;0xCA4
 DECL|macro|PI_ESIC_K_MOD_CONFIG_5
-mdefine_line|#define PI_ESIC_K_MOD_CONFIG_5    &t;&t;0xCA5
+mdefine_line|#define PI_ESIC_K_MOD_CONFIG_5    &t;0xCA5
 DECL|macro|PI_ESIC_K_MOD_CONFIG_6
-mdefine_line|#define PI_ESIC_K_MOD_CONFIG_6&t;&t;&t;0xCA6
+mdefine_line|#define PI_ESIC_K_MOD_CONFIG_6&t;&t;0xCA6
 DECL|macro|PI_ESIC_K_MOD_CONFIG_7
-mdefine_line|#define PI_ESIC_K_MOD_CONFIG_7&t;&t;&t;0xCA7
+mdefine_line|#define PI_ESIC_K_MOD_CONFIG_7&t;&t;0xCA7
 DECL|macro|PI_ESIC_K_DIP_SWITCH
 mdefine_line|#define PI_ESIC_K_DIP_SWITCH         &t;0xCA8
 DECL|macro|PI_ESIC_K_IO_CONFIG_STAT_0
@@ -3487,9 +3487,9 @@ mdefine_line|#define PI_ESIC_K_INPUT_PORT         &t;0xCAC
 DECL|macro|PI_ESIC_K_OUTPUT_PORT
 mdefine_line|#define PI_ESIC_K_OUTPUT_PORT        &t;0xCAD
 DECL|macro|PI_ESIC_K_FUNCTION_CNTRL
-mdefine_line|#define PI_ESIC_K_FUNCTION_CNTRL&t;&t;0xCAE
+mdefine_line|#define PI_ESIC_K_FUNCTION_CNTRL&t;0xCAE
 DECL|macro|PI_ESIC_K_CSR_IO_LEN
-mdefine_line|#define PI_ESIC_K_CSR_IO_LEN&t;&t;&t;PI_ESIC_K_FUNCTION_CNTRL+1&t;/* always last reg + 1 */
+mdefine_line|#define PI_ESIC_K_CSR_IO_LEN&t;&t;PI_ESIC_K_FUNCTION_CNTRL+1&t;/* always last reg + 1 */
 multiline_comment|/* Define the value all drivers must write to the function control register. */
 DECL|macro|PI_ESIC_K_FUNCTION_CNTRL_IO_ENB
 mdefine_line|#define PI_ESIC_K_FUNCTION_CNTRL_IO_ENB&t;0x03
@@ -3499,7 +3499,7 @@ mdefine_line|#define PI_SLOT_CNTRL_M_RESET&t;&t;0x04&t;/* Don&squot;t use.      
 DECL|macro|PI_SLOT_CNTRL_M_ERROR
 mdefine_line|#define PI_SLOT_CNTRL_M_ERROR&t;&t;0x02&t;/* Not implemented. */
 DECL|macro|PI_SLOT_CNTRL_M_ENB
-mdefine_line|#define PI_SLOT_CNTRL_M_ENB&t;&t;&t;0x01&t;/* Must be set.     */
+mdefine_line|#define PI_SLOT_CNTRL_M_ENB&t;&t;0x01&t;/* Must be set.     */
 multiline_comment|/* Define the bits in the burst holdoff register. */
 DECL|macro|PI_BURST_HOLDOFF_M_HOLDOFF
 mdefine_line|#define PI_BURST_HOLDOFF_M_HOLDOFF&t;0xFC
@@ -3582,16 +3582,16 @@ mdefine_line|#define PFI_K_REG_RESERVED_0&t;&t; 0X00000038
 DECL|macro|PFI_K_REG_RESERVED_1
 mdefine_line|#define PFI_K_REG_RESERVED_1&t;&t; 0X0000003C
 DECL|macro|PFI_K_REG_MODE_CTRL
-mdefine_line|#define PFI_K_REG_MODE_CTRL&t;&t;&t; 0X00000040
+mdefine_line|#define PFI_K_REG_MODE_CTRL&t;&t; 0X00000040
 DECL|macro|PFI_K_REG_STATUS
-mdefine_line|#define PFI_K_REG_STATUS&t;&t;&t; 0X00000044
+mdefine_line|#define PFI_K_REG_STATUS&t;&t; 0X00000044
 DECL|macro|PFI_K_REG_FIFO_WRITE
 mdefine_line|#define PFI_K_REG_FIFO_WRITE&t;&t; 0X00000048
 DECL|macro|PFI_K_REG_FIFO_READ
-mdefine_line|#define PFI_K_REG_FIFO_READ&t;&t;&t; 0X0000004C
+mdefine_line|#define PFI_K_REG_FIFO_READ&t;&t; 0X0000004C
 multiline_comment|/* PFI Mode Control Register Constants */
 DECL|macro|PFI_MODE_M_RESERVED
-mdefine_line|#define PFI_MODE_M_RESERVED&t;&t;&t; 0XFFFFFFF0
+mdefine_line|#define PFI_MODE_M_RESERVED&t;&t; 0XFFFFFFF0
 DECL|macro|PFI_MODE_M_TGT_ABORT_ENB
 mdefine_line|#define PFI_MODE_M_TGT_ABORT_ENB&t; 0X00000008
 DECL|macro|PFI_MODE_M_PDQ_INT_ENB
@@ -3599,9 +3599,9 @@ mdefine_line|#define PFI_MODE_M_PDQ_INT_ENB&t;&t; 0X00000004
 DECL|macro|PFI_MODE_M_PFI_INT_ENB
 mdefine_line|#define PFI_MODE_M_PFI_INT_ENB&t;&t; 0X00000002
 DECL|macro|PFI_MODE_M_DMA_ENB
-mdefine_line|#define PFI_MODE_M_DMA_ENB&t;&t;&t; 0X00000001
+mdefine_line|#define PFI_MODE_M_DMA_ENB&t;&t; 0X00000001
 DECL|macro|PFI_MODE_V_RESERVED
-mdefine_line|#define PFI_MODE_V_RESERVED&t;&t;&t; 4
+mdefine_line|#define PFI_MODE_V_RESERVED&t;&t; 4
 DECL|macro|PFI_MODE_V_TGT_ABORT_ENB
 mdefine_line|#define PFI_MODE_V_TGT_ABORT_ENB&t; 3
 DECL|macro|PFI_MODE_V_PDQ_INT_ENB
@@ -3609,7 +3609,7 @@ mdefine_line|#define PFI_MODE_V_PDQ_INT_ENB&t;&t; 2
 DECL|macro|PFI_MODE_V_PFI_INT_ENB
 mdefine_line|#define PFI_MODE_V_PFI_INT_ENB&t;&t; 1
 DECL|macro|PFI_MODE_V_DMA_ENB
-mdefine_line|#define PFI_MODE_V_DMA_ENB&t;&t;&t; 0
+mdefine_line|#define PFI_MODE_V_DMA_ENB&t;&t; 0
 DECL|macro|PFI_MODE_K_ALL_DISABLE
 mdefine_line|#define PFI_MODE_K_ALL_DISABLE&t;&t; 0X00000000
 multiline_comment|/* PFI Status Register Constants */
@@ -3626,11 +3626,11 @@ mdefine_line|#define PFI_STATUS_M_FIFO_FULL&t;&t; 0X00000004
 DECL|macro|PFI_STATUS_M_FIFO_EMPTY
 mdefine_line|#define PFI_STATUS_M_FIFO_EMPTY&t;&t; 0X00000002
 DECL|macro|PFI_STATUS_M_DMA_IN_PROGRESS
-mdefine_line|#define PFI_STATUS_M_DMA_IN_PROGRESS 0X00000001
+mdefine_line|#define PFI_STATUS_M_DMA_IN_PROGRESS&t; 0X00000001
 DECL|macro|PFI_STATUS_V_RESERVED
 mdefine_line|#define PFI_STATUS_V_RESERVED&t;&t; 6
 DECL|macro|PFI_STATUS_V_PFI_ERROR
-mdefine_line|#define PFI_STATUS_V_PFI_ERROR&t;&t; 5&t;&t;&t;&t;/* only valid in rev 1 or later PFI */
+mdefine_line|#define PFI_STATUS_V_PFI_ERROR&t;&t; 5&t;&t;&t;/* only valid in rev 1 or later PFI */
 DECL|macro|PFI_STATUS_V_PDQ_INT
 mdefine_line|#define PFI_STATUS_V_PDQ_INT&t;&t; 4
 DECL|macro|PFI_STATUS_V_PDQ_DMA_ABORT
@@ -3650,7 +3650,7 @@ mdefine_line|#define DFX_BUS_TYPE_PCI&t;&t;0&t;&t;&t;/* type code for DEC FDDIco
 DECL|macro|DFX_BUS_TYPE_EISA
 mdefine_line|#define DFX_BUS_TYPE_EISA&t;&t;1&t;&t;&t;/* type code for DEC FDDIcontroller/EISA */
 DECL|macro|DFX_FC_PRH2_PRH1_PRH0
-mdefine_line|#define DFX_FC_PRH2_PRH1_PRH0&t;0x54003820&t;/* Packet Request Header bytes + FC */
+mdefine_line|#define DFX_FC_PRH2_PRH1_PRH0&t;&t;0x54003820&t;/* Packet Request Header bytes + FC */
 DECL|macro|DFX_PRH0_BYTE
 mdefine_line|#define DFX_PRH0_BYTE&t;&t;&t;0x20&t;&t;/* Packet Request Header byte 0 */
 DECL|macro|DFX_PRH1_BYTE
@@ -3713,7 +3713,7 @@ multiline_comment|/* Define constants for masking/unmasking interrupts */
 DECL|macro|DFX_MASK_INTERRUPTS
 mdefine_line|#define DFX_MASK_INTERRUPTS&t;&t;1
 DECL|macro|DFX_UNMASK_INTERRUPTS
-mdefine_line|#define DFX_UNMASK_INTERRUPTS&t;0
+mdefine_line|#define DFX_UNMASK_INTERRUPTS&t;&t;0
 multiline_comment|/* Define structure for driver transmit descriptor block */
 r_typedef
 r_struct
@@ -3735,6 +3735,12 @@ r_struct
 id|DFX_board_tag
 (brace
 multiline_comment|/* Keep virtual and physical pointers to locked, physically contiguous memory */
+DECL|member|kmalloced
+r_char
+op_star
+id|kmalloced
+suffix:semicolon
+multiline_comment|/* kfree this on unload */
 DECL|member|descr_block_virt
 id|PI_DESCR_BLOCK
 op_star

@@ -2041,7 +2041,7 @@ c_cond
 (paren
 id|clone_flags
 op_amp
-id|CLONE_SIGNAL
+id|CLONE_SIGHAND
 )paren
 (brace
 id|atomic_inc
@@ -2180,7 +2180,7 @@ op_assign
 id|new_flags
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Ok, this is the main fork-routine. It copies the system process&n; * information (task[nr]) and sets up the necessary registers. It&n; * also copies the data segment in its entirety.&n; */
+multiline_comment|/*&n; *  Ok, this is the main fork-routine. It copies the system process&n; * information (task[nr]) and sets up the necessary registers. It also&n; * copies the data segment in its entirety.  The &quot;stack_start&quot; and&n; * &quot;stack_top&quot; arguments are simply passed along to the platform&n; * specific copy_thread() routine.  Most platforms ignore stack_top.&n; * For an example that&squot;s using stack_top, see&n; * arch/ia64/kernel/process.c.&n; */
 DECL|function|do_fork
 r_int
 id|do_fork
@@ -2192,12 +2192,16 @@ id|clone_flags
 comma
 r_int
 r_int
-id|usp
+id|stack_start
 comma
 r_struct
 id|pt_regs
 op_star
 id|regs
+comma
+r_int
+r_int
+id|stack_top
 )paren
 (brace
 r_int
@@ -2628,7 +2632,9 @@ l_int|0
 comma
 id|clone_flags
 comma
-id|usp
+id|stack_start
+comma
+id|stack_top
 comma
 id|p
 comma
@@ -2720,7 +2726,7 @@ c_cond
 (paren
 id|clone_flags
 op_amp
-id|CLONE_SIGNAL
+id|CLONE_THREAD
 )paren
 (brace
 id|p-&gt;tgid

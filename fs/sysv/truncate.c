@@ -504,8 +504,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|indbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -871,8 +869,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|indbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1224,8 +1220,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|indbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

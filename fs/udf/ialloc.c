@@ -146,8 +146,6 @@ c_func
 (paren
 id|sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -445,8 +443,6 @@ c_func
 (paren
 id|sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

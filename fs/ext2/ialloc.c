@@ -754,8 +754,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|es-&gt;s_free_inodes_count
@@ -776,8 +774,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -785,8 +781,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1384,8 +1378,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1468,8 +1460,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1576,8 +1566,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|es-&gt;s_free_inodes_count
@@ -1598,8 +1586,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt

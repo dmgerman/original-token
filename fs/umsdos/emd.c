@@ -2224,7 +2224,7 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|ret
+id|demd
 )paren
 )paren
 r_goto
@@ -2322,7 +2322,7 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|ret
+id|demd
 )paren
 )paren
 r_goto
@@ -2432,7 +2432,7 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|ret
+id|demd
 )paren
 )paren
 r_goto
@@ -2701,7 +2701,7 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|ret
+id|demd
 )paren
 )paren
 r_goto

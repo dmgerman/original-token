@@ -1797,8 +1797,6 @@ id|qbh-&gt;bh
 (braket
 l_int|0
 )braket
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_dirty
@@ -1808,8 +1806,6 @@ id|qbh-&gt;bh
 (braket
 l_int|1
 )braket
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_dirty
@@ -1819,8 +1815,6 @@ id|qbh-&gt;bh
 (braket
 l_int|2
 )braket
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_dirty
@@ -1830,8 +1824,6 @@ id|qbh-&gt;bh
 (braket
 l_int|3
 )braket
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

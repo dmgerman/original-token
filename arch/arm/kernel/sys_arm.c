@@ -888,6 +888,8 @@ comma
 id|regs-&gt;ARM_sp
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -931,6 +933,8 @@ comma
 id|newsp
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -959,6 +963,8 @@ comma
 id|regs-&gt;ARM_sp
 comma
 id|regs
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

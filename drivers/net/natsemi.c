@@ -1,5 +1,5 @@
 multiline_comment|/* natsemi.c: A Linux PCI Ethernet driver for the NatSemi DP83810 series. */
-multiline_comment|/*&n;&t;Written/copyright 1999-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.  License for under other terms may be&n;&t;available.  Contact the original author for details.&n;&n;&t;The original author may be reached as becker@scyld.com, or at&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Support information and updates available at&n;&t;http://www.scyld.com/network/netsemi.html&n;*/
+multiline_comment|/*&n;&t;Written/copyright 1999-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.  License for under other terms may be&n;&t;available.  Contact the original author for details.&n;&n;&t;The original author may be reached as becker@scyld.com, or at&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Support information and updates available at&n;&t;http://www.scyld.com/network/netsemi.html&n;&n;&n;&t;Linux kernel modifications:&n;&n;&t;Version 1.0.1:&n;&t;&t;- Spinlock fixes&n;&t;&t;- Bug fixes and better intr performance (Tjeerd)&n;&n;*/
 multiline_comment|/* These identify the driver base version and may not be removed. */
 DECL|variable|version1
 r_static
@@ -29,7 +29,7 @@ id|version3
 (braket
 )braket
 op_assign
-l_string|&quot;  (unofficial 2.4.x kernel port, version 1.0.0, August 10, 2000)&bslash;n&quot;
+l_string|&quot;  (unofficial 2.4.x kernel port, version 1.0.1, September 5, 2000 Jeff Garzik, Tjeerd Mulder)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* Updated to recommendations in pci-skeleton v2.03. */
 multiline_comment|/* Automatically extracted configuration info:&n;probe-func: natsemi_probe&n;config-in: tristate &squot;National Semiconductor DP83810 series PCI Ethernet support&squot; CONFIG_NATSEMI&n;&n;c-help-name: National Semiconductor DP83810 series PCI Ethernet support&n;c-help-symbol: CONFIG_NATSEMI&n;c-help: This driver is for the National Semiconductor DP83810 series,&n;c-help: including the 83815 chip.&n;c-help: More specific information and updates are available from &n;c-help: http://www.scyld.com/network/natsemi.html&n;*/
@@ -259,7 +259,7 @@ id|MAX_UNITS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This driver is designed for National Semiconductor DP83815 PCI Ethernet NIC.&n;It also works with other chips in in the DP83810 series.&n;&n;II. Board-specific settings&n;&n;This driver requires the PCI interrupt line to be valid.&n;It honors the EEPROM-set values. &n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;This driver uses two statically allocated fixed-size descriptor lists&n;formed into rings by a branch from the final descriptor to the beginning of&n;the list.  The ring sizes are set at compile time by RX/TX_RING_SIZE.&n;The NatSemi design uses a &squot;next descriptor&squot; pointer that the driver forms&n;into a list. &n;&n;IIIb/c. Transmit/Receive Structure&n;&n;This driver uses a zero-copy receive and transmit scheme.&n;The driver allocates full frame size skbuffs for the Rx ring buffers at&n;open() time and passes the skb-&gt;data field to the chip as receive data&n;buffers.  When an incoming frame is less than RX_COPYBREAK bytes long,&n;a fresh skbuff is allocated and the frame is copied to the new skbuff.&n;When the incoming frame is larger, the skbuff is passed directly up the&n;protocol stack.  Buffers consumed this way are replaced by newly allocated&n;skbuffs in a later phase of receives.&n;&n;The RX_COPYBREAK value is chosen to trade-off the memory wasted by&n;using a full-sized skbuff for small frames vs. the copying costs of larger&n;frames.  New boards are typically used in generously configured machines&n;and the underfilled buffers have negligible impact compared to the benefit of&n;a single allocation size, so the default value of zero results in never&n;copying packets.  When copying is done, the cost is usually mitigated by using&n;a combined copy/checksum routine.  Copying also preloads the cache, which is&n;most useful with small frames.&n;&n;A subtle aspect of the operation is that unaligned buffers are not permitted&n;by the hardware.  Thus the IP header at offset 14 in an ethernet frame isn&squot;t&n;longword aligned for further processing.  On copies frames are put into the&n;skbuff at an offset of &quot;+2&quot;, 16-byte aligning the IP header.&n;&n;IIId. Synchronization&n;&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and interrupt handling software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  After reaping the stats, it marks the Tx queue entry as&n;empty by incrementing the dirty_tx mark. Iff the &squot;lp-&gt;tx_full&squot; flag is set, it&n;clears both the tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;NatSemi PCI network controllers are very uncommon.&n;&n;IVb. References&n;&n;http://www.scyld.com/expert/100mbps.html&n;http://www.scyld.com/expert/NWay.html&n;No NatSemi datasheet was publically available at the initial release date.&n;&n;IVc. Errata&n;&n;None characterised.&n;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This driver is designed for National Semiconductor DP83815 PCI Ethernet NIC.&n;It also works with other chips in in the DP83810 series.&n;&n;II. Board-specific settings&n;&n;This driver requires the PCI interrupt line to be valid.&n;It honors the EEPROM-set values. &n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;This driver uses two statically allocated fixed-size descriptor lists&n;formed into rings by a branch from the final descriptor to the beginning of&n;the list.  The ring sizes are set at compile time by RX/TX_RING_SIZE.&n;The NatSemi design uses a &squot;next descriptor&squot; pointer that the driver forms&n;into a list. &n;&n;IIIb/c. Transmit/Receive Structure&n;&n;This driver uses a zero-copy receive and transmit scheme.&n;The driver allocates full frame size skbuffs for the Rx ring buffers at&n;open() time and passes the skb-&gt;data field to the chip as receive data&n;buffers.  When an incoming frame is less than RX_COPYBREAK bytes long,&n;a fresh skbuff is allocated and the frame is copied to the new skbuff.&n;When the incoming frame is larger, the skbuff is passed directly up the&n;protocol stack.  Buffers consumed this way are replaced by newly allocated&n;skbuffs in a later phase of receives.&n;&n;The RX_COPYBREAK value is chosen to trade-off the memory wasted by&n;using a full-sized skbuff for small frames vs. the copying costs of larger&n;frames.  New boards are typically used in generously configured machines&n;and the underfilled buffers have negligible impact compared to the benefit of&n;a single allocation size, so the default value of zero results in never&n;copying packets.  When copying is done, the cost is usually mitigated by using&n;a combined copy/checksum routine.  Copying also preloads the cache, which is&n;most useful with small frames.&n;&n;A subtle aspect of the operation is that unaligned buffers are not permitted&n;by the hardware.  Thus the IP header at offset 14 in an ethernet frame isn&squot;t&n;longword aligned for further processing.  On copies frames are put into the&n;skbuff at an offset of &quot;+2&quot;, 16-byte aligning the IP header.&n;&n;IIId. Synchronization&n;&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and interrupt handling software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  After reaping the stats, it marks the Tx queue entry as&n;empty by incrementing the dirty_tx mark. Iff the &squot;lp-&gt;tx_full&squot; flag is set, it&n;clears both the tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;NatSemi PCI network controllers are very uncommon.&n;&n;IVb. References&n;&n;http://www.scyld.com/expert/100mbps.html&n;http://www.scyld.com/expert/NWay.html&n;Datasheet is available from:&n;http://www.national.com/pf/DP/DP83815.html&n;&n;IVc. Errata&n;&n;None characterised.&n;*/
 "&f;"
 DECL|enum|pcistuff
 r_enum
@@ -414,6 +414,7 @@ l_int|0x24
 comma
 DECL|enumerator|RxRingPtr
 DECL|enumerator|RxConfig
+DECL|enumerator|ClkRun
 id|RxRingPtr
 op_assign
 l_int|0x30
@@ -421,6 +422,10 @@ comma
 id|RxConfig
 op_assign
 l_int|0x34
+comma
+id|ClkRun
+op_assign
+l_int|0x3C
 comma
 DECL|enumerator|WOLCmd
 DECL|enumerator|PauseCmd
@@ -611,12 +616,7 @@ id|IntrPCIErr
 op_assign
 l_int|0x00f00000
 comma
-DECL|enumerator|IntrNormalSummary
 DECL|enumerator|IntrAbnormalSummary
-id|IntrNormalSummary
-op_assign
-l_int|0x0251
-comma
 id|IntrAbnormalSummary
 op_assign
 l_int|0xCD20
@@ -628,41 +628,48 @@ DECL|enum|rx_mode_bits
 r_enum
 id|rx_mode_bits
 (brace
-DECL|enumerator|AcceptErr
-DECL|enumerator|AcceptRunt
-id|AcceptErr
+DECL|enumerator|EnableFilter
+id|EnableFilter
 op_assign
-l_int|0x20
-comma
-id|AcceptRunt
-op_assign
-l_int|0x10
+l_int|0x80000000
 comma
 DECL|enumerator|AcceptBroadcast
 id|AcceptBroadcast
 op_assign
-l_int|0xC0000000
+l_int|0x40000000
 comma
-DECL|enumerator|AcceptMulticast
 DECL|enumerator|AcceptAllMulticast
-id|AcceptMulticast
-op_assign
-l_int|0x00200000
-comma
 id|AcceptAllMulticast
 op_assign
 l_int|0x20000000
 comma
 DECL|enumerator|AcceptAllPhys
-DECL|enumerator|AcceptMyPhys
 id|AcceptAllPhys
 op_assign
 l_int|0x10000000
 comma
+DECL|enumerator|AcceptMyPhys
 id|AcceptMyPhys
 op_assign
 l_int|0x08000000
 comma
+DECL|enumerator|AcceptMulticast
+id|AcceptMulticast
+op_assign
+l_int|0x00200000
+comma
+DECL|enumerator|AcceptErr
+id|AcceptErr
+op_assign
+l_int|0x20
+comma
+multiline_comment|/* these 2 are in another register */
+DECL|enumerator|AcceptRunt
+id|AcceptRunt
+op_assign
+l_int|0x10
+comma
+multiline_comment|/* and are not used in this driver */
 )brace
 suffix:semicolon
 multiline_comment|/* The Rx and Tx buffer descriptors. */
@@ -875,6 +882,11 @@ r_int
 id|tx_config
 comma
 id|rx_config
+suffix:semicolon
+multiline_comment|/* original contents of ClkRun register */
+DECL|member|SavedClkRun
+r_int
+id|SavedClkRun
 suffix:semicolon
 multiline_comment|/* MII transceiver section. */
 DECL|member|advertising
@@ -1179,6 +1191,8 @@ suffix:semicolon
 r_int
 r_int
 id|ioaddr
+comma
+id|iosize
 suffix:semicolon
 r_const
 r_int
@@ -1237,6 +1251,16 @@ suffix:semicolon
 id|ioaddr
 op_assign
 id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
+id|pcibar
+)paren
+suffix:semicolon
+id|iosize
+op_assign
+id|pci_resource_len
 c_func
 (paren
 id|pdev
@@ -1312,12 +1336,7 @@ c_func
 (paren
 id|ioaddr
 comma
-id|pci_resource_len
-(paren
-id|pdev
-comma
-id|pcibar
-)paren
+id|iosize
 comma
 id|dev-&gt;name
 )paren
@@ -1348,12 +1367,7 @@ id|ioremap
 (paren
 id|ioaddr
 comma
-id|pci_resource_len
-(paren
-id|pdev
-comma
-id|pcibar
-)paren
+id|iosize
 )paren
 suffix:semicolon
 r_if
@@ -1368,12 +1382,7 @@ c_func
 (paren
 id|ioaddr
 comma
-id|pci_resource_len
-(paren
-id|pdev
-comma
-id|pcibar
-)paren
+id|iosize
 )paren
 suffix:semicolon
 id|unregister_netdev
@@ -1429,7 +1438,9 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|3
+id|ETH_ALEN
+op_div
+l_int|2
 suffix:semicolon
 id|i
 op_increment
@@ -1468,7 +1479,9 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|5
+id|ETH_ALEN
+op_minus
+l_int|1
 suffix:semicolon
 id|i
 op_increment
@@ -1578,12 +1591,13 @@ id|dev
 suffix:semicolon
 id|np-&gt;iosize
 op_assign
-id|pci_resource_len
+id|iosize
+suffix:semicolon
+id|spin_lock_init
 c_func
 (paren
-id|pdev
-comma
-id|pcibar
+op_amp
+id|np-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -2237,7 +2251,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|6
+id|ETH_ALEN
 suffix:semicolon
 id|i
 op_add_assign
@@ -2284,8 +2298,37 @@ multiline_comment|/* Configure the PCI bus bursts and FIFO thresholds. */
 multiline_comment|/* Configure for standard, in-spec Ethernet. */
 id|np-&gt;tx_config
 op_assign
-l_int|0x10800802
+(paren
+l_int|1
+op_lshift
+l_int|28
+)paren
+op_plus
+multiline_comment|/* Automatic transmit padding */
+(paren
+l_int|1
+op_lshift
+l_int|23
+)paren
+op_plus
+multiline_comment|/* Excessive collision retry */
+(paren
+l_int|0x0
+op_lshift
+l_int|20
+)paren
+op_plus
+multiline_comment|/* Max DMA burst = 512 byte */
+(paren
+l_int|8
+op_lshift
+l_int|8
+)paren
+op_plus
+multiline_comment|/* fill threshold = 256 byte */
+l_int|2
 suffix:semicolon
+multiline_comment|/* drain threshold = 64 byte */
 id|writel
 c_func
 (paren
@@ -2298,8 +2341,20 @@ id|TxConfig
 suffix:semicolon
 id|np-&gt;rx_config
 op_assign
-l_int|0x0020
+(paren
+l_int|0x0
+op_lshift
+l_int|20
+)paren
+multiline_comment|/* Max DMA burst = 512 byte */
+op_plus
+(paren
+l_int|0x8
+op_lshift
+l_int|1
+)paren
 suffix:semicolon
+multiline_comment|/* Drain Threshold = 64 byte */
 id|writel
 c_func
 (paren
@@ -2321,6 +2376,30 @@ id|dev-&gt;if_port
 op_assign
 id|np-&gt;default_port
 suffix:semicolon
+multiline_comment|/* Disable PME */
+id|np-&gt;SavedClkRun
+op_assign
+id|readl
+c_func
+(paren
+id|ioaddr
+op_plus
+id|ClkRun
+)paren
+suffix:semicolon
+id|writel
+c_func
+(paren
+id|np-&gt;SavedClkRun
+op_amp
+op_complement
+l_int|0x100
+comma
+id|ioaddr
+op_plus
+id|ClkRun
+)paren
+suffix:semicolon
 id|netif_start_queue
 c_func
 (paren
@@ -2339,15 +2418,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Enable interrupts by setting the interrupt mask. */
+multiline_comment|/* Enable interrupts by setting the interrupt mask.&n;&t; * We don&squot;t listen for TxDone interrupts and rely on TxIdle. */
 id|writel
 c_func
 (paren
-id|IntrNormalSummary
-op_or
 id|IntrAbnormalSummary
 op_or
-l_int|0x1f
+id|IntrTxIdle
+op_or
+id|IntrRxIdle
+op_or
+id|IntrRxDone
 comma
 id|ioaddr
 op_plus
@@ -2573,7 +2654,7 @@ op_complement
 l_int|0xC0000000
 suffix:semicolon
 )brace
-id|writew
+id|writel
 c_func
 (paren
 id|np-&gt;tx_config
@@ -2583,7 +2664,7 @@ op_plus
 id|TxConfig
 )paren
 suffix:semicolon
-id|writew
+id|writel
 c_func
 (paren
 id|np-&gt;rx_config
@@ -3062,8 +3143,6 @@ op_assign
 id|cpu_to_le32
 c_func
 (paren
-id|DescIntr
-op_or
 id|np-&gt;rx_buf_sz
 )paren
 suffix:semicolon
@@ -3225,8 +3304,6 @@ c_func
 (paren
 id|DescOwn
 op_or
-id|DescIntr
-op_or
 id|skb-&gt;len
 )paren
 suffix:semicolon
@@ -3378,18 +3455,12 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|spin_trylock
+id|spin_lock
 c_func
 (paren
 op_amp
 id|np-&gt;lock
 )paren
-)paren
-r_return
 suffix:semicolon
 r_do
 (brace
@@ -3452,7 +3523,11 @@ op_amp
 (paren
 id|IntrRxDone
 op_or
-id|IntrRxIntr
+id|IntrRxErr
+op_or
+id|IntrRxIdle
+op_or
+id|IntrRxOverrun
 )paren
 )paren
 id|netdev_rx
@@ -3594,7 +3669,7 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|np-&gt;tx_skbuff
@@ -4392,8 +4467,6 @@ op_assign
 id|cpu_to_le32
 c_func
 (paren
-id|DescIntr
-op_or
 id|np-&gt;rx_buf_sz
 )paren
 suffix:semicolon
@@ -4876,14 +4949,6 @@ id|mc_filter
 )paren
 suffix:semicolon
 )brace
-id|rx_mode
-op_assign
-id|AcceptBroadcast
-op_or
-id|AcceptMulticast
-op_or
-id|AcceptMyPhys
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4933,11 +4998,21 @@ id|RxFilterData
 )paren
 suffix:semicolon
 )brace
+id|rx_mode
+op_assign
+id|AcceptBroadcast
+op_or
+id|AcceptMulticast
+op_or
+id|AcceptMyPhys
+suffix:semicolon
 )brace
 id|writel
 c_func
 (paren
 id|rx_mode
+op_or
+id|EnableFilter
 comma
 id|ioaddr
 op_plus
@@ -5477,6 +5552,17 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Restore PME enable bit */
+id|writel
+c_func
+(paren
+id|np-&gt;SavedClkRun
+comma
+id|ioaddr
+op_plus
+id|ClkRun
+)paren
+suffix:semicolon
 macro_line|#if 0
 id|writel
 c_func
@@ -5528,6 +5614,13 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_const
+r_int
+id|pcibar
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* PCI base address register */
 id|unregister_netdev
 (paren
 id|dev
@@ -5536,7 +5629,13 @@ suffix:semicolon
 id|release_mem_region
 c_func
 (paren
-id|dev-&gt;base_addr
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
+id|pcibar
+)paren
 comma
 id|np-&gt;iosize
 )paren

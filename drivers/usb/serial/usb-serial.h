@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (08/08/2000) gkh&n; *&t;Added open_count to port structure.&n; *&n; * (07/23/2000) gkh&n; *&t;Added bulk_out_endpointAddress to port structure.&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (08/28/2000) gkh&n; *&t;Added port_lock to port structure.&n; *&n; * (08/08/2000) gkh&n; *&t;Added open_count to port structure.&n; *&n; * (07/23/2000) gkh&n; *&t;Added bulk_out_endpointAddress to port structure.&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
@@ -107,6 +107,10 @@ r_int
 id|open_count
 suffix:semicolon
 multiline_comment|/* number of times this port has been opened */
+DECL|member|port_lock
+id|spinlock_t
+id|port_lock
+suffix:semicolon
 DECL|member|private
 r_void
 op_star
@@ -753,6 +757,56 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|get_usb_serial
+r_static
+r_inline
+r_struct
+id|usb_serial
+op_star
+id|get_usb_serial
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_const
+r_char
+op_star
+id|function
+)paren
+(brace
+multiline_comment|/* if no port was specified, or it fails a paranoia check */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port
+op_logical_or
+id|port_paranoia_check
+(paren
+id|port
+comma
+id|function
+)paren
+op_logical_or
+id|serial_paranoia_check
+(paren
+id|port-&gt;serial
+comma
+id|function
+)paren
+)paren
+(brace
+multiline_comment|/* then say that we dont have a valid usb_serial thing, which will&n;&t;&t; * end up genrating -ENODEV return values */
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_return
+id|port-&gt;serial
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* ifdef __LINUX_USB_SERIAL_H */

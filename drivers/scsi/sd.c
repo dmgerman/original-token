@@ -3949,7 +3949,7 @@ id|ready
 )paren
 (brace
 multiline_comment|/* FLOPTICAL */
-multiline_comment|/*&n;&t;&t; *    for removable scsi disk ( FLOPTICAL ) we have to recognise&n;&t;&t; * the Write Protect Flag. This flag is kept in the Scsi_Disk struct&n;&t;&t; * and tested at open !&n;&t;&t; * Daniel Roche ( dan@lectra.fr )&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * For removable scsi disk ( FLOPTICAL ) we have to recognise&n;&t;&t; * the Write Protect Flag. This flag is kept in the Scsi_Disk&n;&t;&t; * struct and tested at open !&n;&t;&t; * Daniel Roche ( dan@lectra.fr )&n;&t;&t; *&n;&t;&t; * Changed to get all pages (0x3f) rather than page 1 to&n;&t;&t; * get around devices which do not have a page 1.  Since&n;&t;&t; * we&squot;re only interested in the header anyway, this should&n;&t;&t; * be fine.&n;&t;&t; *   -- Matthew Dharm (mdharm-scsi@one-eyed-alien.net)&n;&t;&t; */
 id|memset
 c_func
 (paren
@@ -3998,16 +3998,17 @@ id|cmd
 l_int|2
 )braket
 op_assign
-l_int|1
+l_int|0x3f
 suffix:semicolon
-multiline_comment|/* page code 1 ?? */
+multiline_comment|/* Get all pages */
 id|cmd
 (braket
 l_int|4
 )braket
 op_assign
-l_int|12
+l_int|8
 suffix:semicolon
+multiline_comment|/* But we only want the 8 byte header */
 id|SRpnt-&gt;sr_cmd_len
 op_assign
 l_int|0

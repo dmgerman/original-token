@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -14303,7 +14304,9 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * usb_ibmcam_init()&n; *&n; * This code is run to initialize the driver.&n; *&n; * History:&n; * 1/27/00  Reworked to use statically allocated usb_ibmcam structures.&n; */
 DECL|function|usb_ibmcam_init
+r_static
 r_int
+id|__init
 id|usb_ibmcam_init
 c_func
 (paren
@@ -14364,7 +14367,9 @@ id|ibmcam_driver
 suffix:semicolon
 )brace
 DECL|function|usb_ibmcam_cleanup
+r_static
 r_void
+id|__exit
 id|usb_ibmcam_cleanup
 c_func
 (paren
@@ -14379,35 +14384,18 @@ id|ibmcam_driver
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
+DECL|variable|usb_ibmcam_init
+id|module_init
 c_func
 (paren
-r_void
-)paren
-(brace
-r_return
 id|usb_ibmcam_init
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+DECL|variable|usb_ibmcam_cleanup
+id|module_exit
 c_func
 (paren
-r_void
-)paren
-(brace
 id|usb_ibmcam_cleanup
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 eof

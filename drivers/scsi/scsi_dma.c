@@ -957,6 +957,10 @@ id|TYPE_PROCESSOR
 op_logical_or
 id|SDpnt-&gt;type
 op_eq
+id|TYPE_COMM
+op_logical_or
+id|SDpnt-&gt;type
+op_eq
 id|TYPE_MEDIUM_CHANGER
 op_logical_or
 id|SDpnt-&gt;type

@@ -6112,8 +6112,6 @@ c_func
 (paren
 id|sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -6445,8 +6443,6 @@ c_func
 (paren
 id|sb
 )paren
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

@@ -338,8 +338,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_uptodate
@@ -423,8 +421,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_uptodate
@@ -534,8 +530,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh1
-comma
-l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
@@ -550,8 +544,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -1077,8 +1069,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_uptodate
@@ -1129,8 +1119,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh1
-comma
-l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
@@ -1145,8 +1133,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -1692,8 +1678,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */

@@ -1947,8 +1947,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -2077,7 +2075,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Aargh... don&squot;t know how to create ea anodes :-( */
-multiline_comment|/*struct buffer_head *bh;&n;&t;&t;&t;&t;struct anode *anode;&n;&t;&t;&t;&t;anode_secno a_s;&n;&t;&t;&t;&t;if (!(anode = hpfs_alloc_anode(s, fno, &amp;a_s, &amp;bh)))&n;&t;&t;&t;&t;&t;goto bail;&n;&t;&t;&t;&t;anode-&gt;up = fno;&n;&t;&t;&t;&t;anode-&gt;btree.fnode_parent = 1;&n;&t;&t;&t;&t;anode-&gt;btree.n_free_nodes--;&n;&t;&t;&t;&t;anode-&gt;btree.n_used_nodes++;&n;&t;&t;&t;&t;anode-&gt;btree.first_free += 12;&n;&t;&t;&t;&t;anode-&gt;u.external[0].disk_secno = fnode-&gt;ea_secno;&n;&t;&t;&t;&t;anode-&gt;u.external[0].file_secno = 0;&n;&t;&t;&t;&t;anode-&gt;u.external[0].length = len;&n;&t;&t;&t;&t;mark_buffer_dirty(bh, 1);&n;&t;&t;&t;&t;brelse(bh);&n;&t;&t;&t;&t;fnode-&gt;ea_anode = 1;&n;&t;&t;&t;&t;fnode-&gt;ea_secno = a_s;*/
+multiline_comment|/*struct buffer_head *bh;&n;&t;&t;&t;&t;struct anode *anode;&n;&t;&t;&t;&t;anode_secno a_s;&n;&t;&t;&t;&t;if (!(anode = hpfs_alloc_anode(s, fno, &amp;a_s, &amp;bh)))&n;&t;&t;&t;&t;&t;goto bail;&n;&t;&t;&t;&t;anode-&gt;up = fno;&n;&t;&t;&t;&t;anode-&gt;btree.fnode_parent = 1;&n;&t;&t;&t;&t;anode-&gt;btree.n_free_nodes--;&n;&t;&t;&t;&t;anode-&gt;btree.n_used_nodes++;&n;&t;&t;&t;&t;anode-&gt;btree.first_free += 12;&n;&t;&t;&t;&t;anode-&gt;u.external[0].disk_secno = fnode-&gt;ea_secno;&n;&t;&t;&t;&t;anode-&gt;u.external[0].file_secno = 0;&n;&t;&t;&t;&t;anode-&gt;u.external[0].length = len;&n;&t;&t;&t;&t;mark_buffer_dirty(bh);&n;&t;&t;&t;&t;brelse(bh);&n;&t;&t;&t;&t;fnode-&gt;ea_anode = 1;&n;&t;&t;&t;&t;fnode-&gt;ea_secno = a_s;*/
 id|secno
 id|new_sec
 suffix:semicolon
@@ -2265,8 +2263,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse

@@ -207,6 +207,8 @@ DECL|macro|TYPE_MOD
 mdefine_line|#define TYPE_MOD            0x07    /* Magneto-optical disk - &n;&t;&t;&t;&t;     * - treated as TYPE_DISK */
 DECL|macro|TYPE_MEDIUM_CHANGER
 mdefine_line|#define TYPE_MEDIUM_CHANGER 0x08
+DECL|macro|TYPE_COMM
+mdefine_line|#define TYPE_COMM           0x09    /* Communications device */
 DECL|macro|TYPE_ENCLOSURE
 mdefine_line|#define TYPE_ENCLOSURE      0x0d    /* Enclosure Services Device */
 DECL|macro|TYPE_NO_LUN

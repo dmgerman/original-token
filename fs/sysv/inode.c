@@ -2808,8 +2808,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh2
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4014,8 +4012,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|result
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4077,8 +4073,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 op_star
@@ -4565,8 +4559,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -5982,8 +5974,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_return

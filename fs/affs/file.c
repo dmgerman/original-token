@@ -2233,8 +2233,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|ebh
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -2295,8 +2293,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|pbh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|affs_brelse
@@ -2368,8 +2364,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2572,8 +2566,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|ebh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|FILE_END
@@ -2610,8 +2602,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|affs_brelse
@@ -3565,8 +3555,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -3851,8 +3839,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4045,8 +4031,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace

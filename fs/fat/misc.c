@@ -446,8 +446,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|fat_brelse
@@ -1514,8 +1512,6 @@ c_func
 id|sb
 comma
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if

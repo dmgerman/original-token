@@ -920,8 +920,6 @@ id|ubh_mark_buffer_dirty
 c_func
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -1075,8 +1073,6 @@ id|ubh_mark_buffer_dirty
 c_func
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt
@@ -2294,8 +2290,6 @@ suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|ubh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|ubh_brelse
@@ -4392,8 +4386,6 @@ suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4702,8 +4694,6 @@ suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|USPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|sb-&gt;s_dirt

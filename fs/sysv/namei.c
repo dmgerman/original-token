@@ -749,8 +749,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 op_star
@@ -929,8 +927,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -1113,8 +1109,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -1356,8 +1350,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|dir_block
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -1435,8 +1427,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|dir-&gt;i_nlink
@@ -1892,8 +1882,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|inode-&gt;i_nlink
@@ -2047,8 +2035,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|dir-&gt;i_ctime
@@ -2258,8 +2244,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -2446,8 +2430,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|brelse
@@ -2828,16 +2810,12 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|old_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
 id|new_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -2858,8 +2836,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|dir_bh
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|old_dir-&gt;i_nlink

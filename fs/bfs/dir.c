@@ -916,8 +916,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|dir-&gt;i_ctime
@@ -1188,8 +1186,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|old_bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|error
@@ -1489,8 +1485,6 @@ id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|brelse

@@ -3611,9 +3611,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-comma
-r_int
-id|flag
 )paren
 (brace
 id|bh-&gt;b_flushtime
@@ -3639,9 +3636,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-comma
-r_int
-id|flag
 )paren
 (brace
 r_if
@@ -3658,8 +3652,6 @@ id|__mark_dirty
 c_func
 (paren
 id|bh
-comma
-id|flag
 )paren
 suffix:semicolon
 )brace
@@ -3672,17 +3664,12 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-comma
-r_int
-id|flag
 )paren
 (brace
 id|__mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-id|flag
 )paren
 suffix:semicolon
 id|balance_dirty
@@ -5653,8 +5640,6 @@ id|__mark_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|need_balance_dirty
@@ -6178,19 +6163,6 @@ id|block_start
 op_plus
 id|blocksize
 suffix:semicolon
-multiline_comment|/* This can happen for the truncate case */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|buffer_mapped
-c_func
-(paren
-id|bh
-)paren
-)paren
-r_continue
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6220,6 +6192,19 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* This can happen for the truncate case */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buffer_mapped
+c_func
+(paren
+id|bh
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|set_bit
 c_func
 (paren
@@ -6244,8 +6229,6 @@ id|__mark_dirty
 c_func
 (paren
 id|bh
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|need_balance_dirty

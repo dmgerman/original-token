@@ -482,8 +482,6 @@ suffix:semicolon
 id|ubh_mark_buffer_dirty
 (paren
 id|UCPI_UBH
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_for

@@ -1998,7 +1998,9 @@ id|WHITEHEAT_SET_BREAK
 suffix:semicolon
 )brace
 DECL|function|whiteheat_init
+r_static
 r_int
+id|__init
 id|whiteheat_init
 (paren
 r_void
@@ -2021,7 +2023,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|whiteheat_exit
+r_static
 r_void
+id|__exit
 id|whiteheat_exit
 (paren
 r_void

@@ -1929,6 +1929,10 @@ r_int
 r_int
 id|sp
 comma
+r_int
+r_int
+id|unused
+comma
 r_struct
 id|task_struct
 op_star
