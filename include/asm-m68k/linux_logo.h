@@ -9,32 +9,6 @@ macro_line|#ifdef INCLUDE_LINUX_LOGO_DATA
 DECL|macro|INCLUDE_LINUX_LOGO16
 mdefine_line|#define INCLUDE_LINUX_LOGO16
 macro_line|#include &lt;linux/linux_logo.h&gt;
-multiline_comment|/* Painted by Johnny Stenback &lt;jst@uwasa.fi&gt; */
-DECL|variable|__initdata
-r_int
-r_char
-op_star
-id|linux_serial_image
-id|__initdata
-op_assign
-l_string|&quot;&bslash;n&quot;
-l_string|&quot;         .u$e.&bslash;n&quot;
-l_string|&quot;       .$$$$$:S&bslash;n&quot;
-l_string|&quot;       $&bslash;&quot;*$/&bslash;&quot;*$$&bslash;n&quot;
-l_string|&quot;       $.`$ . ^F&bslash;n&quot;
-l_string|&quot;       4k+#+T.$F&bslash;n&quot;
-l_string|&quot;       4P+++&bslash;&quot;$&bslash;&quot;$&bslash;n&quot;
-l_string|&quot;       :R&bslash;&quot;+  t$$B&bslash;n&quot;
-l_string|&quot;    ___#       $$$&bslash;n&quot;
-l_string|&quot;    |  |       R$$k&bslash;n&quot;
-l_string|&quot;   dd. | Linux  $!$&bslash;n&quot;
-l_string|&quot;   ddd |  m68k  $9$F&bslash;n&quot;
-l_string|&quot; &squot;!!!!!$       !!#!`&bslash;n&quot;
-l_string|&quot;  !!!!!*     .!!!!!`&bslash;n&quot;
-l_string|&quot;&squot;!!!!!!!W..e$$!!!!!!`    %s&bslash;n&quot;
-l_string|&quot; &bslash;&quot;~^^~         ^~~^&bslash;n&quot;
-l_string|&quot;&bslash;n&quot;
-suffix:semicolon
 macro_line|#else
 multiline_comment|/* prototypes only */
 r_extern
@@ -99,22 +73,6 @@ r_char
 id|linux_logo16
 (braket
 )braket
-suffix:semicolon
-r_extern
-r_int
-r_char
-op_star
-id|linux_serial_image
-suffix:semicolon
-r_extern
-r_int
-(paren
-op_star
-id|console_show_logo
-)paren
-(paren
-r_void
-)paren
 suffix:semicolon
 macro_line|#endif
 eof

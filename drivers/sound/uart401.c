@@ -213,6 +213,11 @@ op_star
 id|devc
 )paren
 (brace
+r_int
+id|work_limit
+op_assign
+l_int|30000
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -221,6 +226,9 @@ c_func
 (paren
 id|devc
 )paren
+op_logical_and
+op_decrement
+id|work_limit
 )paren
 (brace
 r_int
@@ -265,6 +273,24 @@ id|c
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|work_limit
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Too much work in interrupt on uart401 (0x%X). UART jabbering ??&bslash;n&quot;
+comma
+id|devc-&gt;base
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|uart401intr
 r_void
@@ -293,21 +319,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irq
-template_param
-l_int|15
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|devc
 op_eq
 l_int|NULL
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;uart401: bad devc&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -381,12 +407,11 @@ c_cond
 (paren
 id|devc-&gt;opened
 )paren
-(brace
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
+multiline_comment|/* Flush the UART */
 r_while
 c_loop
 (paren
@@ -1209,12 +1234,6 @@ id|KERN_WARNING
 l_string|&quot;uart401: Failed to allocate memory&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sound_unload_mididev
-c_func
-(paren
-id|devc-&gt;my_dev
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -1228,6 +1247,12 @@ id|kfree
 c_func
 (paren
 id|devc
+)paren
+suffix:semicolon
+id|sound_unload_mididev
+c_func
+(paren
+id|devc-&gt;my_dev
 )paren
 suffix:semicolon
 id|devc

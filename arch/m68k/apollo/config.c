@@ -635,11 +635,13 @@ op_assign
 id|dn_dummy_reset
 suffix:semicolon
 multiline_comment|/* */
+macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 id|conswitchp
 op_assign
 op_amp
-id|fb_con
+id|dummy_con
 suffix:semicolon
+macro_line|#endif
 macro_line|#if 0
 id|mach_fb_init
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@ix.netcom.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, however this is not yet supported in this&n; * software.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 card. Support for miro soundcards with&n; * additional ACI functions can easily be added later.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1996-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1996-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; */
+multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@ix.netcom.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, however this is not yet supported in this&n; * software.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 card. Support for miro sound cards with&n; * additional ACI functions can easily be added later.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1996-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1996-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; */
 multiline_comment|/*&n; * Some driver specific information and features:&n; *&n; * This mixer driver identifies itself to applications as &quot;ACI&quot; in&n; * mixer_info.id as retrieved by ioctl(fd, SOUND_MIXER_INFO, &amp;mixer_info).&n; *&n; * Proprietary mixer features that go beyond the standard OSS mixer&n; * interface are:&n; * &n; * Full duplex solo configuration:&n; *&n; *   int solo_mode;&n; *   ioctl(fd, SOUND_MIXER_PRIVATE1, &amp;solo_mode);&n; *&n; *   solo_mode = 0: deactivate solo mode (default)&n; *   solo_mode &gt; 0: activate solo mode&n; *                  With activated solo mode, the PCM input can not any&n; *                  longer hear the signals produced by the PCM output.&n; *                  Activating solo mode is important in duplex mode in order&n; *                  to avoid feedback distortions.&n; *   solo_mode &lt; 0: do not change solo mode (just retrieve the status)&n; *&n; *   When the ioctl() returns 0, solo_mode contains the previous&n; *   status (0 = deactivated, 1 = activated). If solo mode is not&n; *   implemented on this card, ioctl() returns -1 and sets errno to&n; *   EINVAL.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_ACI_MIXER */
 macro_line|#include &quot;lowlevel.h&quot;
@@ -57,6 +57,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Default: don&squot;t reset if the driver is a  */
+id|MODULE_PARM
+c_func
+(paren
+id|aci_reset
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#else                          /* module; use &quot;insmod sound.o aci_reset=1&quot; */
 DECL|variable|aci_reset
 r_int
@@ -72,7 +80,7 @@ DECL|macro|STATUS_REGISTER
 mdefine_line|#define STATUS_REGISTER     (aci_port + 1)
 DECL|macro|BUSY_REGISTER
 mdefine_line|#define BUSY_REGISTER       (aci_port + 2)
-multiline_comment|/*&n; * Wait until the ACI microcontroller has set the READYFLAG in the&n; * Busy/IRQ Source Register to 0. This is required to avoid&n; * overrunning the soundcard microcontroller. We do a busy wait here,&n; * because the microcontroller is not supposed to signal a busy&n; * condition for more than a few clock cycles. In case of a time-out,&n; * this function returns -1.&n; *&n; * This busy wait code normally requires less than 15 loops and&n; * practically always less than 100 loops on my i486/DX2 66 MHz.&n; *&n; * Warning: Waiting on the general status flag after reseting the MUTE&n; * function can take a VERY long time, because the PCM12 does some kind&n; * of fade-in effect. For this reason, access to the MUTE function has&n; * not been implemented at all.&n; */
+multiline_comment|/*&n; * Wait until the ACI microcontroller has set the READYFLAG in the&n; * Busy/IRQ Source Register to 0. This is required to avoid&n; * overrunning the sound card microcontroller. We do a busy wait here,&n; * because the microcontroller is not supposed to signal a busy&n; * condition for more than a few clock cycles. In case of a time-out,&n; * this function returns -1.&n; *&n; * This busy wait code normally requires less than 15 loops and&n; * practically always less than 100 loops on my i486/DX2 66 MHz.&n; *&n; * Warning: Waiting on the general status flag after reseting the MUTE&n; * function can take a VERY long time, because the PCM12 does some kind&n; * of fade-in effect. For this reason, access to the MUTE function has&n; * not been implemented at all.&n; */
 DECL|function|busy_wait
 r_static
 r_int
@@ -1976,7 +1984,7 @@ op_eq
 l_int|0x6d
 )paren
 (brace
-multiline_comment|/* it looks like a miro soundcard */
+multiline_comment|/* It looks like a miro sound card. */
 r_switch
 c_cond
 (paren

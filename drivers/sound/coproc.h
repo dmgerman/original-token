@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Definitions for various on board processors on the soundcards. For&n; * example DSP processors.&n; */
+multiline_comment|/*&n; * Definitions for various on board processors on the sound cards. For&n; * example DSP processors.&n; */
 multiline_comment|/*&n; * Coprocessor access types &n; */
 DECL|macro|COPR_CUSTOM
 mdefine_line|#define COPR_CUSTOM&t;&t;0x0001&t;/* Custom applications */

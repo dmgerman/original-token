@@ -224,7 +224,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;soundblaster: DSP Command(%x) Timeout.&bslash;n&quot;
+l_string|&quot;Sound Blaster:  DSP command(%x) timeout.&bslash;n&quot;
 comma
 id|val
 )paren
@@ -3512,7 +3512,7 @@ comma
 id|hw_config
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Assuming that a soundcard is Sound Blaster (compatible) is the most common&n;&t; * configuration error and the mother of all problems. Usually soundcards&n;&t; * emulate SB Pro but in addition they have a 16 bit native mode which should be&n;&t; * used in Unix. See Readme.cards for more information about configuring OSS/Free&n;&t; * properly.&n;&t; */
+multiline_comment|/*&n;&t; * Assuming that a sound card is Sound Blaster (compatible) is the most common&n;&t; * configuration error and the mother of all problems. Usually sound cards&n;&t; * emulate SB Pro but in addition they have a 16 bit native mode which should be&n;&t; * used in Unix. See Readme.cards for more information about configuring OSS/Free&n;&t; * properly.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3538,7 +3538,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;This soundcard may not be fully Sound Blaster Pro compatible.&bslash;n&quot;
+l_string|&quot;This sound card may not be fully Sound Blaster Pro compatible.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -3682,7 +3682,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;soundblaster: Can&squot;t allocate 16 bit DMA channel %d&bslash;n&quot;
+l_string|&quot;Sound Blaster:  can&squot;t allocate 16 bit DMA channel %d.&bslash;n&quot;
 comma
 id|devc-&gt;dma16
 )paren
@@ -3712,7 +3712,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;soundblaster: No audio devices found.&bslash;n&quot;
+l_string|&quot;Sound Blaster:  no audio devices found.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5168,6 +5168,8 @@ id|hw_config-&gt;slots
 l_int|4
 )braket
 )braket
+op_member_access_from_pointer
+id|devc
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -5265,7 +5267,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;SB16: Invalid MIDI port %x&bslash;n&quot;
 comma
-id|hw_config-&gt;irq
+id|hw_config-&gt;io_base
 )paren
 suffix:semicolon
 r_return

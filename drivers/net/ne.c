@@ -136,6 +136,14 @@ l_string|&quot;VIA 82C926 Amazon&quot;
 )brace
 comma
 (brace
+id|PCI_VENDOR_ID_SURECOM
+comma
+id|PCI_DEVICE_ID_SURECOM_NE34
+comma
+l_string|&quot;SureCom NE34&quot;
+)brace
+comma
+(brace
 l_int|0
 comma
 )brace

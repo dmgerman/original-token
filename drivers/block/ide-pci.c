@@ -1728,6 +1728,22 @@ c_func
 (paren
 id|d-&gt;devid
 comma
+id|DEVID_SIS5513
+)paren
+)paren
+id|hwif-&gt;no_autodma
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* too many SIS-5513 systems have troubles */
+r_if
+c_cond
+(paren
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
 id|DEVID_PDC20246
 )paren
 op_logical_or

@@ -113,6 +113,14 @@ l_string|&quot;Via 82C926&quot;
 )brace
 comma
 (brace
+l_int|0x10bd
+comma
+l_int|0x0e34
+comma
+l_string|&quot;SureCom NE34&quot;
+)brace
+comma
+(brace
 l_int|0
 comma
 )brace

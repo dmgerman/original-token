@@ -1354,14 +1354,24 @@ DECL|macro|PCI_DEVICE_ID_COMPEX_RL2000
 mdefine_line|#define PCI_DEVICE_ID_COMPEX_RL2000&t;0x1401
 DECL|macro|PCI_VENDOR_ID_RP
 mdefine_line|#define PCI_VENDOR_ID_RP               0x11fe
-DECL|macro|PCI_DEVICE_ID_RP8OCTA
-mdefine_line|#define PCI_DEVICE_ID_RP8OCTA          0x0001
+DECL|macro|PCI_DEVICE_ID_RP32INTF
+mdefine_line|#define PCI_DEVICE_ID_RP32INTF         0x0001
 DECL|macro|PCI_DEVICE_ID_RP8INTF
 mdefine_line|#define PCI_DEVICE_ID_RP8INTF          0x0002
 DECL|macro|PCI_DEVICE_ID_RP16INTF
 mdefine_line|#define PCI_DEVICE_ID_RP16INTF         0x0003
-DECL|macro|PCI_DEVICE_ID_RP32INTF
-mdefine_line|#define PCI_DEVICE_ID_RP32INTF         0x0004
+DECL|macro|PCI_DEVICE_ID_RP4QUAD
+mdefine_line|#define PCI_DEVICE_ID_RP4QUAD&t;       0x0004
+DECL|macro|PCI_DEVICE_ID_RP8OCTA
+mdefine_line|#define PCI_DEVICE_ID_RP8OCTA          0x0005
+DECL|macro|PCI_DEVICE_ID_RP8J
+mdefine_line|#define PCI_DEVICE_ID_RP8J&t;       0x0006
+DECL|macro|PCI_DEVICE_ID_RPP4
+mdefine_line|#define PCI_DEVICE_ID_RPP4&t;       0x000A
+DECL|macro|PCI_DEVICE_ID_RPP8
+mdefine_line|#define PCI_DEVICE_ID_RPP8&t;       0x000B
+DECL|macro|PCI_DEVICE_ID_RP8M
+mdefine_line|#define PCI_DEVICE_ID_RP8M&t;       0x000C
 DECL|macro|PCI_VENDOR_ID_CYCLADES
 mdefine_line|#define PCI_VENDOR_ID_CYCLADES&t;&t;0x120e
 DECL|macro|PCI_DEVICE_ID_CYCLOM_Y_Lo

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -763,38 +764,6 @@ DECL|macro|X86_CR4_PGE
 mdefine_line|#define X86_CR4_PGE&t;&t;0x0080&t;&t;/* enable global pages */
 DECL|macro|X86_CR4_PCE
 mdefine_line|#define X86_CR4_PCE&t;&t;0x0100&t;&t;/* enable performance counters at ipl 3 */
-DECL|macro|X86_FEATURE_FPU
-mdefine_line|#define X86_FEATURE_FPU&t;&t;0x0001&t;&t;/* internal FPU */
-DECL|macro|X86_FEATURE_VME
-mdefine_line|#define X86_FEATURE_VME&t;&t;0x0002&t;&t;/* vm86 extensions */
-DECL|macro|X86_FEATURE_DE
-mdefine_line|#define X86_FEATURE_DE&t;&t;0x0004&t;&t;/* debugging extensions */
-DECL|macro|X86_FEATURE_PSE
-mdefine_line|#define X86_FEATURE_PSE&t;&t;0x0008&t;&t;/* Page size extensions */
-DECL|macro|X86_FEATURE_TSC
-mdefine_line|#define X86_FEATURE_TSC&t;&t;0x0010&t;&t;/* Time stamp counter */
-DECL|macro|X86_FEATURE_MSR
-mdefine_line|#define X86_FEATURE_MSR&t;&t;0x0020&t;&t;/* RDMSR/WRMSR */
-DECL|macro|X86_FEATURE_PAE
-mdefine_line|#define X86_FEATURE_PAE&t;&t;0x0040&t;&t;/* Physical address extension */
-DECL|macro|X86_FEATURE_MCE
-mdefine_line|#define X86_FEATURE_MCE&t;&t;0x0080&t;&t;/* Machine check exception */
-DECL|macro|X86_FEATURE_CXS
-mdefine_line|#define X86_FEATURE_CXS&t;&t;0x0100&t;&t;/* cmpxchg8 available */
-DECL|macro|X86_FEATURE_APIC
-mdefine_line|#define X86_FEATURE_APIC&t;0x0200&t;&t;/* internal APIC */
-DECL|macro|X86_FEATURE_10
-mdefine_line|#define X86_FEATURE_10&t;&t;0x0400
-DECL|macro|X86_FEATURE_11
-mdefine_line|#define X86_FEATURE_11&t;&t;0x0800
-DECL|macro|X86_FEATURE_MTRR
-mdefine_line|#define X86_FEATURE_MTRR&t;0x1000&t;&t;/* memory type registers */
-DECL|macro|X86_FEATURE_PGE
-mdefine_line|#define X86_FEATURE_PGE&t;&t;0x2000&t;&t;/* Global page */
-DECL|macro|X86_FEATURE_MCA
-mdefine_line|#define X86_FEATURE_MCA&t;&t;0x4000&t;&t;/* Machine Check Architecture */
-DECL|macro|X86_FEATURE_CMOV
-mdefine_line|#define X86_FEATURE_CMOV&t;0x8000&t;&t;/* Cmov/fcomi */
 multiline_comment|/*&n; * Save the cr4 feature set we&squot;re using (ie&n; * Pentium 4MB enable and PPro Global page&n; * enable), so that any CPU&squot;s that boot up&n; * after us can get the correct flags.&n; */
 DECL|variable|__initdata
 r_int

@@ -4641,7 +4641,7 @@ op_logical_neg
 id|sequencer_ok
 )paren
 (brace
-multiline_comment|/*&t;&t;printk(&quot;Soundcard: Sequencer not initialized&bslash;n&quot;);*/
+multiline_comment|/*&t;&t;printk(&quot;Sound card: sequencer not initialized&bslash;n&quot;);*/
 r_return
 op_minus
 id|ENXIO

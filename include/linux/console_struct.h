@@ -2,6 +2,7 @@ multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure and defines 
 multiline_comment|/*&n; * You can set here how should the cursor look by default.&n; * In case you set CONFIG_SOFTCURSOR, this might be really interesting.&n; */
 DECL|macro|CUR_DEFAULT
 mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
 DECL|struct|vc_data
@@ -19,6 +20,7 @@ r_int
 r_int
 id|vc_cols
 suffix:semicolon
+multiline_comment|/* Console size */
 DECL|member|vc_rows
 r_int
 r_int
@@ -29,12 +31,20 @@ r_int
 r_int
 id|vc_size_row
 suffix:semicolon
+multiline_comment|/* Bytes per row */
 DECL|member|vc_sw
 r_struct
 id|consw
 op_star
 id|vc_sw
 suffix:semicolon
+DECL|member|vc_screenbuf
+r_int
+r_int
+op_star
+id|vc_screenbuf
+suffix:semicolon
+multiline_comment|/* In-memory character/attribute buffer */
 DECL|member|vc_screenbuf_size
 r_int
 r_int
@@ -75,25 +85,13 @@ r_int
 r_char
 id|vc_ulcolor
 suffix:semicolon
-multiline_comment|/* Colour for underline mode */
+multiline_comment|/* Color for underline mode */
 DECL|member|vc_halfcolor
 r_int
 r_char
 id|vc_halfcolor
 suffix:semicolon
-multiline_comment|/* Colour for half intensity mode */
-DECL|member|vc_origin
-r_int
-r_int
-id|vc_origin
-suffix:semicolon
-multiline_comment|/* Used for EGA/VGA fast scroll&t;*/
-DECL|member|vc_scr_end
-r_int
-r_int
-id|vc_scr_end
-suffix:semicolon
-multiline_comment|/* Used for EGA/VGA fast scroll&t;*/
+multiline_comment|/* Color for half intensity mode */
 DECL|member|vc_x
 DECL|member|vc_y
 r_int
@@ -102,6 +100,7 @@ id|vc_x
 comma
 id|vc_y
 suffix:semicolon
+multiline_comment|/* Cursor position */
 DECL|member|vc_top
 DECL|member|vc_bottom
 r_int
@@ -110,11 +109,13 @@ id|vc_top
 comma
 id|vc_bottom
 suffix:semicolon
+multiline_comment|/* Scrolling region */
 DECL|member|vc_state
 r_int
 r_int
 id|vc_state
 suffix:semicolon
+multiline_comment|/* Escape sequence parser state */
 DECL|member|vc_npar
 DECL|member|vc_par
 r_int
@@ -126,23 +127,37 @@ id|vc_par
 id|NPAR
 )braket
 suffix:semicolon
+multiline_comment|/* Parameters of current escape sequence */
+DECL|member|vc_scr_top
+r_int
+r_int
+id|vc_scr_top
+suffix:semicolon
+multiline_comment|/* Top of video memory */
+DECL|member|vc_origin
+r_int
+r_int
+id|vc_origin
+suffix:semicolon
+multiline_comment|/* Start of real screen */
+DECL|member|vc_scr_end
+r_int
+r_int
+id|vc_scr_end
+suffix:semicolon
+multiline_comment|/* End of real screen */
+DECL|member|vc_visible_origin
+r_int
+r_int
+id|vc_visible_origin
+suffix:semicolon
+multiline_comment|/* Top of visible window */
 DECL|member|vc_pos
 r_int
 r_int
 id|vc_pos
 suffix:semicolon
-DECL|member|vc_video_mem_start
-r_int
-r_int
-id|vc_video_mem_start
-suffix:semicolon
-multiline_comment|/* Start of video RAM&t;&t;*/
-DECL|member|vc_video_mem_end
-r_int
-r_int
-id|vc_video_mem_end
-suffix:semicolon
-multiline_comment|/* End of video RAM (sort of)&t;*/
+multiline_comment|/* Cursor address */
 DECL|member|vc_saved_x
 r_int
 r_int
@@ -315,28 +330,19 @@ id|vc_can_do_color
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|vc_has_scrolled
-r_int
-r_int
-id|vc_has_scrolled
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Info for unblank_screen */
-DECL|member|vc_kmalloced
-r_int
-r_int
-id|vc_kmalloced
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* kfree_s() needed */
 DECL|member|vc_report_mouse
 r_int
 r_int
 id|vc_report_mouse
 suffix:colon
 l_int|2
+suffix:semicolon
+DECL|member|vc_kmalloced
+r_int
+r_int
+id|vc_kmalloced
+suffix:colon
+l_int|1
 suffix:semicolon
 DECL|member|vc_utf
 r_int

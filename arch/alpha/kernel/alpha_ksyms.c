@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -138,6 +139,13 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
+DECL|variable|screen_info
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|screen_info
+)paren
+suffix:semicolon
 multiline_comment|/* platform dependent support */
 DECL|variable|_inb
 id|EXPORT_SYMBOL
@@ -237,11 +245,11 @@ c_func
 id|_memcpy_toio
 )paren
 suffix:semicolon
-DECL|variable|_memset_io
+DECL|variable|_memset_c_io
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|_memset_io
+id|_memset_c_io
 )paren
 suffix:semicolon
 DECL|variable|insb
@@ -396,6 +404,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__memset
+)paren
+suffix:semicolon
+DECL|variable|__memsetw
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__memsetw
 )paren
 suffix:semicolon
 DECL|variable|__constant_c_memset

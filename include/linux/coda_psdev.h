@@ -425,6 +425,9 @@ comma
 r_int
 id|mode
 comma
+r_int
+id|rdev
+comma
 r_struct
 id|ViceFid
 op_star

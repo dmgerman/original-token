@@ -119,7 +119,6 @@ id|bufsiz
 suffix:semicolon
 multiline_comment|/* helper functions */
 r_static
-r_inline
 r_struct
 id|vcomm
 op_star
@@ -782,11 +781,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|coda_fid_is_volroot
+op_logical_neg
+id|list_empty
 c_func
 (paren
 op_amp
-id|cii-&gt;c_fid
+id|cii-&gt;c_volrootlist
 )paren
 )paren
 id|list_del
@@ -833,6 +833,18 @@ id|coda_cache_clear_inode
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;clearing inode: %ld, %x&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+comma
+id|cii-&gt;c_flags
 )paren
 suffix:semicolon
 id|inode-&gt;u.generic_ip
@@ -1102,7 +1114,6 @@ multiline_comment|/* MODULE stuff is in psdev.c */
 multiline_comment|/*  helpers */
 DECL|function|coda_psinode2vcomm
 r_static
-r_inline
 r_struct
 id|vcomm
 op_star

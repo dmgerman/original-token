@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/hfmodem.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
 macro_line|#include &lt;linux/version.h&gt;
@@ -67,7 +68,8 @@ c_cond
 (paren
 id|boot_cpu_data.x86_capability
 op_amp
-l_int|0x10
+id|X86_FEATURE_TSC
+)paren
 )paren
 id|rdtsc_ok
 op_assign

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -3124,6 +3125,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_static
@@ -3135,6 +3139,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_static
@@ -3366,14 +3373,11 @@ id|con
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Interface to the low level console driver&n;&t; */
-r_int
-r_int
+r_void
 id|amifb_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 suffix:semicolon
 r_static
@@ -4769,6 +4773,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 multiline_comment|/*&n;&t; * Nothing, only a usage count for the moment&n;&t; */
@@ -4788,6 +4795,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -6400,20 +6410,15 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|amifb_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 )paren
 (brace
 r_int
-id|err
-comma
 id|tag
 comma
 id|i
@@ -6435,7 +6440,6 @@ id|AMI_VIDEO
 )paren
 )paren
 r_return
-id|mem_start
 suffix:semicolon
 multiline_comment|/*&n;&t; * TODO: where should we put this? The DMI Resolver doesn&squot;t have a&n;&t; *&t; frame buffer accessible by the CPU&n;&t; */
 macro_line|#ifdef CONFIG_GSP_RESOLVER
@@ -6458,7 +6462,6 @@ op_or
 id|DMAF_SPRITE
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -6755,7 +6758,6 @@ id|default_chipset
 suffix:semicolon
 macro_line|#else /* CONFIG_FB_AMIGA_OCS */
 r_return
-id|mem_start
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_AMIGA_OCS */
 r_break
@@ -7017,25 +7019,6 @@ op_assign
 op_amp
 id|amifbcon_blank
 suffix:semicolon
-id|err
-op_assign
-id|register_framebuffer
-c_func
-(paren
-op_amp
-id|fb_info
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-OL
-l_int|0
-)paren
-r_return
-id|mem_start
-suffix:semicolon
 id|chipptr
 op_assign
 id|chipalloc
@@ -7276,6 +7259,20 @@ op_amp
 id|fb_info
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_framebuffer
+c_func
+(paren
+op_amp
+id|fb_info
+)paren
+OL
+l_int|0
+)paren
+r_return
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -7296,9 +7293,6 @@ l_int|10
 suffix:semicolon
 multiline_comment|/* TODO: This driver cannot be unloaded yet */
 id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 DECL|function|amifbcon_switch
@@ -16140,12 +16134,13 @@ c_func
 r_void
 )paren
 (brace
-r_return
 id|amifb_init
 c_func
 (paren
-l_int|NULL
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

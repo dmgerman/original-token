@@ -183,6 +183,40 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef SYMPHONY_PAS
+DECL|variable|symphony
+r_static
+r_int
+id|symphony
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+DECL|variable|symphony
+r_static
+r_int
+id|symphony
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef BROKEN_BUS_CLOCK
+DECL|variable|broken_bus_clock
+r_static
+r_int
+id|broken_bus_clock
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+DECL|variable|broken_bus_clock
+r_static
+r_int
+id|broken_bus_clock
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|variable|pas_model
 r_char
 id|pas_model
@@ -760,7 +794,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * This fixes the timing problems of the PAS due to the Symphony chipset&n;&t; * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n;&t; */
-macro_line|#ifdef SYMPHONY_PAS
+r_if
+c_cond
+(paren
+id|symphony
+)paren
+(brace
 id|outb
 c_func
 (paren
@@ -781,8 +820,13 @@ comma
 l_int|0xa9
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef BROKEN_BUS_CLOCK
+)brace
+r_if
+c_cond
+(paren
+id|broken_bus_clock
+)paren
+(brace
 id|pas_write
 c_func
 (paren
@@ -797,8 +841,9 @@ comma
 l_int|0x8388
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/*&n;&t; * pas_write(0x01, 0x8388);&n;&t; */
+)brace
+r_else
+multiline_comment|/*&n;&t;&t; * pas_write(0x01, 0x8388);&n;&t;&t; */
 id|pas_write
 c_func
 (paren
@@ -811,7 +856,6 @@ comma
 l_int|0x8388
 )paren
 suffix:semicolon
-macro_line|#endif
 id|pas_write
 c_func
 (paren
@@ -1265,8 +1309,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_int
 DECL|function|probe_pas
+r_int
 id|probe_pas
 c_func
 (paren
@@ -1284,8 +1328,8 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_pas
+r_void
 id|unload_pas
 c_func
 (paren
@@ -1439,6 +1483,22 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|symphony
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|broken_bus_clock
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|config
 r_struct
 id|address_info
@@ -1461,7 +1521,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;MediaTrix audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
+l_string|&quot;Pro Audio Spectrum driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

@@ -1956,11 +1956,13 @@ op_increment
 id|num_ebus
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_FB
 id|pci_console_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_OPENPROMIO
 id|openprom_init
 c_func

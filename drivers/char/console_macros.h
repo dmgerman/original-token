@@ -2,10 +2,16 @@ DECL|macro|cons_num
 mdefine_line|#define cons_num&t;(vc_cons[currcons].d-&gt;vc_num)
 DECL|macro|sw
 mdefine_line|#define sw&t;&t;(vc_cons[currcons].d-&gt;vc_sw)
+DECL|macro|screenbuf
+mdefine_line|#define screenbuf&t;(vc_cons[currcons].d-&gt;vc_screenbuf)
 DECL|macro|screenbuf_size
 mdefine_line|#define screenbuf_size&t;(vc_cons[currcons].d-&gt;vc_screenbuf_size)
 DECL|macro|origin
 mdefine_line|#define origin&t;&t;(vc_cons[currcons].d-&gt;vc_origin)
+DECL|macro|scr_top
+mdefine_line|#define scr_top&t;&t;(vc_cons[currcons].d-&gt;vc_scr_top)
+DECL|macro|visible_origin
+mdefine_line|#define visible_origin  (vc_cons[currcons].d-&gt;vc_visible_origin)
 DECL|macro|scr_end
 mdefine_line|#define scr_end&t;&t;(vc_cons[currcons].d-&gt;vc_scr_end)
 DECL|macro|pos
@@ -72,8 +78,6 @@ DECL|macro|deccolm
 mdefine_line|#define deccolm&t;&t;(vc_cons[currcons].d-&gt;vc_deccolm)
 DECL|macro|need_wrap
 mdefine_line|#define need_wrap&t;(vc_cons[currcons].d-&gt;vc_need_wrap)
-DECL|macro|has_scrolled
-mdefine_line|#define has_scrolled&t;(vc_cons[currcons].d-&gt;vc_has_scrolled)
 DECL|macro|kmalloced
 mdefine_line|#define kmalloced&t;(vc_cons[currcons].d-&gt;vc_kmalloced)
 DECL|macro|report_mouse

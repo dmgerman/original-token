@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/ad1848_mixer.h&n; *&n; * Definitions for the mixer of AD1848 and compatible codecs.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * The AD1848 codec has generic input lines called Line, Aux1 and Aux2.&n; * Soundcard manufacturers have connected actual inputs (CD, synth, line,&n; * etc) to these inputs in different order. Therefore it&squot;s difficult&n; * to assign mixer channels to to these inputs correctly. The following&n; * contains two alternative mappings. The first one is for GUS MAX and&n; * the second is just a generic one (line1, line2 and line3).&n; * (Actually this is not a mapping but rather some kind of interleaving&n; * solution).&n; */
+multiline_comment|/*&n; * The AD1848 codec has generic input lines called Line, Aux1 and Aux2.&n; * Sound card manufacturers have connected actual inputs (CD, synth, line,&n; * etc) to these inputs in different order. Therefore it&squot;s difficult&n; * to assign mixer channels to to these inputs correctly. The following&n; * contains two alternative mappings. The first one is for GUS MAX and&n; * the second is just a generic one (line1, line2 and line3).&n; * (Actually this is not a mapping but rather some kind of interleaving&n; * solution).&n; */
 DECL|macro|MODE1_REC_DEVICES
 mdefine_line|#define MODE1_REC_DEVICES&t;&t;(SOUND_MASK_LINE3 | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_LINE1|SOUND_MASK_IMIX)
 DECL|macro|MODE1_MIXER_DEVICES
@@ -280,7 +280,7 @@ id|mixer_ents
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Most of the mixer entries work in backwards. Setting the polarity field&n; * makes them to work correctly.&n; *&n; * The channel numbering used by individual soundcards is not fixed. Some&n; * cards have assigned different meanings for the AUX1, AUX2 and LINE inputs.&n; * The current version doesn&squot;t try to compensate this.&n; */
+multiline_comment|/*&n; * Most of the mixer entries work in backwards. Setting the polarity field&n; * makes them to work correctly.&n; *&n; * The channel numbering used by individual sound cards is not fixed. Some&n; * cards have assigned different meanings for the AUX1, AUX2 and LINE inputs.&n; * The current version doesn&squot;t try to compensate this.&n; */
 DECL|macro|MIX_ENT
 mdefine_line|#define MIX_ENT(name, reg_l, pola_l, pos_l, len_l, reg_r, pola_r, pos_r, len_r, mute_bit)&t;&bslash;&n;&t;{{reg_l, pola_l, pos_l, len_l, mute_bit}, {reg_r, pola_r, pos_r, len_r, mute_bit}}
 DECL|variable|ad1848_mix_devices

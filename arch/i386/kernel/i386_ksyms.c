@@ -497,4 +497,13 @@ id|mca_isadapter
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_VT
+DECL|variable|screen_info
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|screen_info
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

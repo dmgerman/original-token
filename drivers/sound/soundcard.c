@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/sound/soundcard.c&n; *&n; * Soundcard driver for Linux&n; */
+multiline_comment|/*&n; * linux/drivers/sound/soundcard.c&n; *&n; * Sound card driver for Linux&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; *                   integrated sound_switch.c&n; * Stefan Reinauer : integrated /proc/sound (equals to /dev/sndstat,&n; *                   which should disappear in the near future)&n; */
 macro_line|#include &lt;linux/config.h&gt;
@@ -2195,7 +2195,7 @@ op_ne
 id|SND_DEV_STATUS
 )paren
 (brace
-multiline_comment|/* printk(&quot;SoundCard Error: The soundcard system has not been configured&bslash;n&quot;);*/
+multiline_comment|/* printk(&quot;SoundCard Error: The sound system has not been configured&bslash;n&quot;);*/
 r_return
 op_minus
 id|ENXIO

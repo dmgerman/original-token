@@ -110,85 +110,116 @@ id|tr_statistics
 (brace
 DECL|member|rx_packets
 r_int
+r_int
 id|rx_packets
 suffix:semicolon
 multiline_comment|/* total packets received&t;*/
 DECL|member|tx_packets
 r_int
+r_int
 id|tx_packets
 suffix:semicolon
 multiline_comment|/* total packets transmitted&t;*/
+DECL|member|rx_bytes
+r_int
+r_int
+id|rx_bytes
+suffix:semicolon
+multiline_comment|/* total bytes received   &t;*/
+DECL|member|tx_bytes
+r_int
+r_int
+id|tx_bytes
+suffix:semicolon
+multiline_comment|/* total bytes transmitted&t;*/
 DECL|member|rx_errors
+r_int
 r_int
 id|rx_errors
 suffix:semicolon
 multiline_comment|/* bad packets received&t;&t;*/
 DECL|member|tx_errors
 r_int
+r_int
 id|tx_errors
 suffix:semicolon
 multiline_comment|/* packet transmit problems&t;*/
 DECL|member|rx_dropped
+r_int
 r_int
 id|rx_dropped
 suffix:semicolon
 multiline_comment|/* no space in linux buffers&t;*/
 DECL|member|tx_dropped
 r_int
+r_int
 id|tx_dropped
 suffix:semicolon
 multiline_comment|/* no space available in linux&t;*/
 DECL|member|multicast
+r_int
 r_int
 id|multicast
 suffix:semicolon
 multiline_comment|/* multicast packets received&t;*/
 DECL|member|transmit_collision
 r_int
+r_int
 id|transmit_collision
 suffix:semicolon
 multiline_comment|/* detailed Token-Ring errors. See IBM Token-Ring Network&n;&t;   Architecture for more info */
 DECL|member|line_errors
 r_int
+r_int
 id|line_errors
 suffix:semicolon
 DECL|member|internal_errors
+r_int
 r_int
 id|internal_errors
 suffix:semicolon
 DECL|member|burst_errors
 r_int
+r_int
 id|burst_errors
 suffix:semicolon
 DECL|member|A_C_errors
+r_int
 r_int
 id|A_C_errors
 suffix:semicolon
 DECL|member|abort_delimiters
 r_int
+r_int
 id|abort_delimiters
 suffix:semicolon
 DECL|member|lost_frames
+r_int
 r_int
 id|lost_frames
 suffix:semicolon
 DECL|member|recv_congest_count
 r_int
+r_int
 id|recv_congest_count
 suffix:semicolon
 DECL|member|frame_copied_errors
+r_int
 r_int
 id|frame_copied_errors
 suffix:semicolon
 DECL|member|frequency_errors
 r_int
+r_int
 id|frequency_errors
 suffix:semicolon
 DECL|member|token_errors
 r_int
+r_int
 id|token_errors
 suffix:semicolon
 DECL|member|dummy1
+r_int
 r_int
 id|dummy1
 suffix:semicolon
@@ -209,5 +240,7 @@ DECL|macro|TR_RCF_FRAME2K
 mdefine_line|#define TR_RCF_FRAME2K 0x20
 DECL|macro|TR_RCF_BROADCAST_MASK
 mdefine_line|#define TR_RCF_BROADCAST_MASK 0xC000
+DECL|macro|TR_MAXRIFLEN
+mdefine_line|#define TR_MAXRIFLEN 18
 macro_line|#endif&t;/* _LINUX_IF_TR_H */
 eof

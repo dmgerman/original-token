@@ -22,7 +22,7 @@ macro_line|#  include &quot;awe_version.h&quot;
 macro_line|#  include &lt;linux/awe_voice.h&gt;
 macro_line|#endif
 macro_line|#ifdef AWE_HAS_GUS_COMPATIBILITY
-multiline_comment|/* include finetune table */
+multiline_comment|/* include fine tuning table */
 macro_line|#ifdef AWE_OBSOLETE_VOXWARE
 macro_line|#  ifdef __FreeBSD__
 DECL|macro|SEQUENCER_C

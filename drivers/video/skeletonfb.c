@@ -39,7 +39,7 @@ id|xxxfb_par
 multiline_comment|/*&n;     *  The hardware specific data in this structure uniquely defines a video&n;     *  mode.&n;     *&n;     *  If your hardware supports only one video mode, you can leave it empty.&n;     */
 )brace
 suffix:semicolon
-multiline_comment|/*&n;     *  If your driver supports multiple boards, you should make these arrays,&n;     *  or allocate them dynamically (using mem_start for builtin drivers, and&n;     *  kmalloc() for loaded modules).&n;     */
+multiline_comment|/*&n;     *  If your driver supports multiple boards, you should make these arrays,&n;     *  or allocate them dynamically (using kmalloc()).&n;     */
 DECL|variable|fb_info
 r_static
 r_struct
@@ -633,20 +633,14 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|xxxfb_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
 r_struct
 id|fb_var_screeninfo
 id|var
@@ -729,25 +723,6 @@ op_amp
 id|fbinfo.gen
 )paren
 suffix:semicolon
-id|err
-op_assign
-id|register_framebuffer
-c_func
-(paren
-op_amp
-id|fb_info.gen.info
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-OL
-l_int|0
-)paren
-r_return
-id|mem_start
-suffix:semicolon
 id|fbgen_set_disp
 c_func
 (paren
@@ -767,6 +742,20 @@ op_amp
 id|fb_info.gen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_framebuffer
+c_func
+(paren
+op_amp
+id|fb_info.gen.info
+)paren
+OL
+l_int|0
+)paren
+r_return
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -783,9 +772,6 @@ id|fb_info.modename
 suffix:semicolon
 multiline_comment|/* uncomment this if your driver cannot be unloaded */
 multiline_comment|/* MOD_INC_USE_COUNT; */
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Cleanup&n;     */
 DECL|function|xxxfb_cleanup
@@ -843,6 +829,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 multiline_comment|/* Nothing, only a usage count for the moment */
@@ -863,6 +852,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -909,12 +901,13 @@ c_func
 r_void
 )paren
 (brace
-r_return
 id|xxxfb_init
 c_func
 (paren
-l_int|NULL
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

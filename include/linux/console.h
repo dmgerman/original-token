@@ -2,8 +2,6 @@ multiline_comment|/*&n; *  linux/include/linux/console.h&n; *&n; *  Copyright (C
 macro_line|#ifndef _LINUX_CONSOLE_H_
 DECL|macro|_LINUX_CONSOLE_H_
 mdefine_line|#define _LINUX_CONSOLE_H_ 1
-DECL|macro|NPAR
-mdefine_line|#define NPAR 16
 r_struct
 id|vc_data
 suffix:semicolon
@@ -18,20 +16,15 @@ r_struct
 id|consw
 (brace
 DECL|member|con_startup
-r_int
-r_int
+r_const
+r_char
+op_star
 (paren
 op_star
 id|con_startup
 )paren
 (paren
-r_int
-r_int
-comma
-r_const
-r_char
-op_star
-op_star
+r_void
 )paren
 suffix:semicolon
 DECL|member|con_init
@@ -44,6 +37,8 @@ id|con_init
 r_struct
 id|vc_data
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|con_deinit
@@ -108,7 +103,8 @@ id|vc_data
 op_star
 comma
 r_const
-r_char
+r_int
+r_int
 op_star
 comma
 r_int
@@ -133,7 +129,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|con_scroll
-r_void
+r_int
 (paren
 op_star
 id|con_scroll
@@ -268,6 +264,30 @@ comma
 r_int
 )paren
 suffix:semicolon
+DECL|member|con_set_origin
+r_int
+(paren
+op_star
+id|con_set_origin
+)paren
+(paren
+r_struct
+id|vc_data
+op_star
+)paren
+suffix:semicolon
+DECL|member|con_save_screen
+r_void
+(paren
+op_star
+id|con_save_screen
+)paren
+(paren
+r_struct
+id|vc_data
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -276,6 +296,12 @@ id|consw
 op_star
 id|conswitchp
 suffix:semicolon
+r_extern
+r_struct
+id|consw
+id|dummy_con
+suffix:semicolon
+multiline_comment|/* dummy console buffer */
 r_extern
 r_struct
 id|consw
@@ -294,6 +320,12 @@ id|consw
 id|compat_con
 suffix:semicolon
 multiline_comment|/* console wrapper */
+r_extern
+r_struct
+id|consw
+id|prom_con
+suffix:semicolon
+multiline_comment|/* SPARC PROM console */
 multiline_comment|/* flag bits */
 DECL|macro|CON_INITED
 mdefine_line|#define CON_INITED  (1)
@@ -313,23 +345,6 @@ DECL|macro|CM_ERASE
 mdefine_line|#define CM_ERASE    (2)
 DECL|macro|CM_MOVE
 mdefine_line|#define CM_MOVE     (3)
-r_struct
-id|tty_struct
-suffix:semicolon
-r_int
-id|tioclinux
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_int
-r_int
-id|arg
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *&t;Array of consoles built from command line options (console=)&n; */
 DECL|struct|console_cmdline
 r_struct

@@ -45,7 +45,7 @@ id|buffer
 )paren
 suffix:semicolon
 DECL|macro|UPARG
-mdefine_line|#define UPARG(op)&bslash;&n;do {&bslash;&n;  &t;CODA_ALLOC(inp, union inputArgs *, insize);&bslash;&n;&t;outp = (union outputArgs *) (inp);&bslash;&n;        inp-&gt;ih.opcode = (op);&bslash;&n;&t;inp-&gt;ih.pid = current-&gt;pid;&bslash;&n;&t;inp-&gt;ih.pgid = current-&gt;pgrp;&bslash;&n;&t;coda_load_creds(&amp;(inp-&gt;ih.cred));&bslash;&n;        outsize = insize;&bslash;&n;} while (0)
+mdefine_line|#define UPARG(op)&bslash;&n;do {&bslash;&n;  &t;CODA_ALLOC(inp, union inputArgs *, insize);&bslash;&n;        if ( !inp ) { return -ENOMEM; }&bslash;&n;        outp = (union outputArgs *) (inp);&bslash;&n;        inp-&gt;ih.opcode = (op);&bslash;&n;&t;inp-&gt;ih.pid = current-&gt;pid;&bslash;&n;&t;inp-&gt;ih.pgid = current-&gt;pgrp;&bslash;&n;&t;coda_load_creds(&amp;(inp-&gt;ih.cred));&bslash;&n;        outsize = insize;&bslash;&n;} while (0)
 DECL|function|max
 r_static
 r_inline
@@ -203,7 +203,6 @@ suffix:semicolon
 id|EXIT
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -312,7 +311,6 @@ suffix:semicolon
 id|EXIT
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -421,7 +419,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -604,7 +601,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -700,7 +696,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -835,7 +830,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -1016,7 +1010,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -1279,7 +1272,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -1311,6 +1303,9 @@ id|excl
 comma
 r_int
 id|mode
+comma
+r_int
+id|rdev
 comma
 r_struct
 id|ViceFid
@@ -1383,6 +1378,10 @@ suffix:semicolon
 id|inp-&gt;cfs_create.attr.va_mode
 op_assign
 id|mode
+suffix:semicolon
+id|inp-&gt;cfs_create.attr.va_rdev
+op_assign
+id|rdev
 suffix:semicolon
 id|inp-&gt;cfs_create.excl
 op_assign
@@ -1473,7 +1472,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -1628,7 +1626,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -1784,7 +1781,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -1977,7 +1973,6 @@ suffix:semicolon
 id|EXIT
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -2155,7 +2150,6 @@ suffix:semicolon
 id|EXIT
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -2400,7 +2394,6 @@ suffix:semicolon
 id|EXIT
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -2493,7 +2486,6 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -2591,7 +2583,6 @@ suffix:semicolon
 id|EXIT
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
@@ -2953,12 +2944,10 @@ id|insize
 )paren
 suffix:semicolon
 r_return
-op_minus
 id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * coda_upcall and coda_downcall routines.&n; * &n; */
-multiline_comment|/* &n; * coda_upcall will return a POSITIVE error in the case of &n; * failed communication with Venus _or_ will peek at Venus&n; * reply and return Venus&squot; error, also POSITIVE. &n; * &n; */
 DECL|function|coda_waitfor_upcall
 r_static
 r_inline
@@ -3042,18 +3031,44 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|coda_hard
+op_logical_and
 id|signal_pending
 c_func
 (paren
 id|current
 )paren
 )paren
-id|schedule
+(brace
+multiline_comment|/* if this process really wants to die, let it go */
+r_if
+c_cond
+(paren
+id|sigismember
 c_func
 (paren
+op_amp
+(paren
+id|current-&gt;signal
 )paren
+comma
+id|SIGKILL
+)paren
+op_logical_or
+id|sigismember
+c_func
+(paren
+op_amp
+(paren
+id|current-&gt;signal
+)paren
+comma
+id|SIGINT
+)paren
+)paren
+r_break
 suffix:semicolon
-multiline_comment|/* signal is present: after timeout always return */
+multiline_comment|/* signal is present: after timeout always return &n;&t;&t;&t;   really smart idea, probably useless ... */
 r_if
 c_cond
 (paren
@@ -3067,31 +3082,7 @@ id|HZ
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* if this process really wants to die, let it go */
-r_if
-c_cond
-(paren
-id|sigismember
-c_func
-(paren
-op_amp
-id|current-&gt;signal
-comma
-id|SIGKILL
-)paren
-op_logical_or
-id|sigismember
-c_func
-(paren
-op_amp
-id|current-&gt;signal
-comma
-id|SIGINT
-)paren
-)paren
-r_break
-suffix:semicolon
-r_else
+)brace
 id|schedule
 c_func
 (paren
@@ -3134,6 +3125,7 @@ id|posttime
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * coda_upcall will return an error in the case of &n; * failed communication with Venus _or_ will peek at Venus&n; * reply and return Venus&squot; error.&n; *&n; * As venus has 2 types of errors, normal errors (positive) and internal&n; * errors (negative), normal errors are negated, while internal errors&n; * are all mapped to -EINTR, while showing a nice warning message. (jh)&n; * &n; */
 DECL|function|coda_upcall
 r_static
 r_int
@@ -3193,6 +3185,7 @@ l_int|NULL
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -3211,7 +3204,8 @@ id|vcommp
 )paren
 )paren
 r_return
-id|ENODEV
+op_minus
+id|ENXIO
 suffix:semicolon
 multiline_comment|/* Format the request message. */
 id|CODA_ALLOC
@@ -3419,10 +3413,6 @@ op_amp
 id|VM_WRITE
 )paren
 (brace
-id|error
-op_assign
-l_int|0
-suffix:semicolon
 id|out
 op_assign
 (paren
@@ -3432,8 +3422,33 @@ op_star
 )paren
 id|vmp-&gt;vm_data
 suffix:semicolon
+multiline_comment|/* here we map positive Venus errors to kernel errors */
+r_if
+c_cond
+(paren
+id|out-&gt;oh.result
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Tell Peter: Venus returns negative error %ld, for oc %ld!&bslash;n&quot;
+comma
+id|out-&gt;oh.result
+comma
+id|out-&gt;oh.opcode
+)paren
+suffix:semicolon
+id|out-&gt;oh.result
+op_assign
+id|EINTR
+suffix:semicolon
+)brace
 id|error
 op_assign
+op_minus
 id|out-&gt;oh.result
 suffix:semicolon
 id|CDEBUG
@@ -3502,9 +3517,11 @@ id|vmp-&gt;vm_chain
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* perhaps the best way to convince the app to&n;&t;&t;   give up? */
 id|error
 op_assign
-id|ERESTARTNOHAND
+op_minus
+id|EINTR
 suffix:semicolon
 r_goto
 m_exit
@@ -3562,7 +3579,8 @@ id|vmp-&gt;vm_chain
 suffix:semicolon
 id|error
 op_assign
-id|ERESTARTNOHAND
+op_minus
+id|EINTR
 suffix:semicolon
 id|CODA_ALLOC
 c_func
@@ -3684,6 +3702,7 @@ l_string|&quot;Coda: Strange interruption..&bslash;n&quot;
 suffix:semicolon
 id|error
 op_assign
+op_minus
 id|EINTR
 suffix:semicolon
 )brace
@@ -3705,6 +3724,7 @@ id|vmp-&gt;vm_flags
 suffix:semicolon
 id|error
 op_assign
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -3736,6 +3756,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/*  &n;    The statements below are part of the Coda opportunistic&n;    programming -- taken from the Mach/BSD kernel code for Coda. &n;    You don&squot;t get correct semantics by stating what needs to be&n;    done without guaranteeing the invariants needed for it to happen.&n;    When will be have time to find out what exactly is going on?  (pjb)&n;*/
 multiline_comment|/* &n; * There are 7 cases where cache invalidations occur.  The semantics&n; *  of each is listed here:&n; *&n; * CFS_FLUSH     -- flush all entries from the name cache and the cnode cache.&n; * CFS_PURGEUSER -- flush all entries from the name cache for a specific user&n; *                  This call is a result of token expiration.&n; *&n; * The next arise as the result of callbacks on a file or directory.&n; * CFS_ZAPFILE   -- flush the cached attributes for a file.&n;&n; * CFS_ZAPDIR    -- flush the attributes for the dir and&n; *                  force a new lookup for all the children&n;                    of this dir.&n;&n; *&n; * The next is a result of Venus detecting an inconsistent file.&n; * CFS_PURGEFID  -- flush the attribute for the file&n; *                  purge it and its children from the dcache&n; *&n; * The last  allows Venus to replace local fids with global ones&n; * during reintegration.&n; *&n; * CFS_REPLACE -- replace one ViceFid with another throughout the name cache */
 DECL|function|coda_downcall
 r_int
@@ -3892,7 +3913,7 @@ c_func
 (paren
 id|D_DOWNCALL
 comma
-l_string|&quot;zapdir: fid = %s&bslash;n&quot;
+l_string|&quot;zapdir: fid = %s...&bslash;n&quot;
 comma
 id|coda_f2s
 c_func
@@ -3923,6 +3944,32 @@ c_cond
 id|inode
 )paren
 (brace
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;zapdir: inode = %ld children flagged&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+id|coda_purge_children
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;zapdir: inode = %ld cache cleared&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
 id|coda_flag_inode
 c_func
 (paren
@@ -3931,21 +3978,16 @@ comma
 id|C_VATTR
 )paren
 suffix:semicolon
-id|coda_cache_clear_inode
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-id|coda_flag_alias_children
-c_func
-(paren
-id|inode
-comma
-id|C_PURGE
-)paren
-suffix:semicolon
 )brace
+r_else
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;zapdir: no inode&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4003,6 +4045,16 @@ c_cond
 id|inode
 )paren
 (brace
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;zapfile: inode = %ld&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
 id|coda_flag_inode
 c_func
 (paren
@@ -4011,13 +4063,16 @@ comma
 id|C_VATTR
 )paren
 suffix:semicolon
-id|coda_cache_clear_inode
+)brace
+r_else
+id|CDEBUG
 c_func
 (paren
-id|inode
+id|D_DOWNCALL
+comma
+l_string|&quot;zapfile: no inode&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -4074,18 +4129,37 @@ c_cond
 id|inode
 )paren
 (brace
-id|coda_flag_inode
+id|CDEBUG
 c_func
 (paren
-id|inode
+id|D_DOWNCALL
 comma
-id|C_PURGE
+l_string|&quot;purgefid: inode = %ld&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-id|coda_cache_clear_inode
+id|coda_purge_children
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|coda_purge_dentries
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;purgefid: no inode&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4097,11 +4171,17 @@ r_case
 id|CFS_REPLACE
 suffix:colon
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;CFS_REPLACCE&bslash;n&quot;
-)paren
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+id|ViceFid
+op_star
+id|fid
+op_assign
+op_amp
+id|out-&gt;cfs_replace.OldFid
 suffix:semicolon
 id|clstats
 c_func
@@ -4117,22 +4197,52 @@ comma
 l_string|&quot;CFS_REPLACE&bslash;n&quot;
 )paren
 suffix:semicolon
-id|coda_cache_clear_all
+id|inode
+op_assign
+id|coda_fid_to_inode
 c_func
 (paren
+id|fid
+comma
 id|sb
 )paren
 suffix:semicolon
-id|shrink_dcache_sb
+r_if
+c_cond
+(paren
+id|inode
+)paren
+(brace
+id|CDEBUG
 c_func
 (paren
-id|sb
+id|D_DOWNCALL
+comma
+l_string|&quot;replacefid: inode = %ld&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+id|coda_purge_dentries
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;purgefid: no inode&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
 )brace

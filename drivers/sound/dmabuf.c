@@ -3860,6 +3860,12 @@ op_ge
 id|dmap-&gt;bytes_in_use
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

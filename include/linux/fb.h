@@ -40,10 +40,14 @@ DECL|macro|FB_TYPE_PLANES
 mdefine_line|#define FB_TYPE_PLANES&t;&t;&t;1&t;/* Non interleaved planes */
 DECL|macro|FB_TYPE_INTERLEAVED_PLANES
 mdefine_line|#define FB_TYPE_INTERLEAVED_PLANES&t;2&t;/* Interleaved planes&t;*/
-DECL|macro|FB_TYPE_VGA_TEXT
-mdefine_line|#define FB_TYPE_VGA_TEXT&t;&t;3&t;/* VGA text/attributes&t;*/
-DECL|macro|FB_TYPE_S3_MMIO_TEXT
-mdefine_line|#define FB_TYPE_S3_MMIO_TEXT&t;&t;4&t;/* S3 MMIO text&t;&t;*/
+DECL|macro|FB_TYPE_TEXT
+mdefine_line|#define FB_TYPE_TEXT&t;&t;&t;3&t;/* Text/attributes&t;*/
+DECL|macro|FB_AUX_TEXT_MDA
+mdefine_line|#define FB_AUX_TEXT_MDA&t;&t;0&t;/* Monochrome text */
+DECL|macro|FB_AUX_TEXT_CGA
+mdefine_line|#define FB_AUX_TEXT_CGA&t;&t;1&t;/* CGA/EGA/VGA Color text */
+DECL|macro|FB_AUX_TEXT_S3_MMIO
+mdefine_line|#define FB_AUX_TEXT_S3_MMIO&t;2&t;/* S3 MMIO fasttext */
 DECL|macro|FB_VISUAL_MONO01
 mdefine_line|#define FB_VISUAL_MONO01&t;&t;0&t;/* Monochr. 1=Black 0=White */
 DECL|macro|FB_VISUAL_MONO10
@@ -78,6 +82,12 @@ DECL|macro|FB_ACCEL_ATI_MACH64VT
 mdefine_line|#define FB_ACCEL_ATI_MACH64VT&t;9&t;/* ATI Mach 64CT family VT class */
 DECL|macro|FB_ACCEL_ATI_MACH64GT
 mdefine_line|#define FB_ACCEL_ATI_MACH64GT&t;10&t;/* ATI Mach 64CT family GT class */
+DECL|macro|FB_ACCEL_SUN_CREATOR
+mdefine_line|#define FB_ACCEL_SUN_CREATOR&t;11&t;/* Sun Creator/Creator3D&t;*/
+DECL|macro|FB_ACCEL_SUN_CGSIX
+mdefine_line|#define FB_ACCEL_SUN_CGSIX&t;12&t;/* Sun cg6&t;&t;&t;*/
+DECL|macro|FB_ACCEL_SUN_LEO
+mdefine_line|#define FB_ACCEL_SUN_LEO&t;13&t;/* Sun leo/zx&t;&t;&t;*/
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo
@@ -470,6 +480,12 @@ suffix:semicolon
 r_struct
 id|fb_info_gen
 suffix:semicolon
+r_struct
+id|vm_area_struct
+suffix:semicolon
+r_struct
+id|file
+suffix:semicolon
 multiline_comment|/*&n;     *  Frame buffer operations&n;     */
 DECL|struct|fb_ops
 r_struct
@@ -487,6 +503,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 DECL|member|fb_release
@@ -500,6 +519,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 multiline_comment|/* get non settable parameters */
@@ -673,6 +695,30 @@ r_struct
 id|fb_info
 op_star
 id|info
+)paren
+suffix:semicolon
+multiline_comment|/* perform fb specific mmap */
+DECL|member|fb_mmap
+r_int
+(paren
+op_star
+id|fb_mmap
+)paren
+(paren
+r_struct
+id|fb_info
+op_star
+id|info
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|vm_area_struct
+op_star
+id|vma
 )paren
 suffix:semicolon
 )brace
@@ -1223,18 +1269,6 @@ id|var
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* prototypes */
-DECL|typedef|fb_init_func
-r_typedef
-r_int
-r_int
-id|fb_init_func
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* drivers/char/fbmem.c */
 r_extern
 r_int
@@ -1257,17 +1291,6 @@ r_struct
 id|fb_info
 op_star
 id|fb_info
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|probe_framebuffers
-c_func
-(paren
-r_int
-r_int
-id|kmem_start
 )paren
 suffix:semicolon
 r_extern

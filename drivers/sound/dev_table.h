@@ -423,7 +423,7 @@ DECL|macro|BUFF_DIRTY
 mdefine_line|#define&t;&t; BUFF_DIRTY&t;&t;0x00000002 /* Buffer written */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Structure for use with various microcontrollers and DSP processors &n; * in the recent soundcards.&n; */
+multiline_comment|/*&n; * Structure for use with various microcontrollers and DSP processors &n; * in the recent sound cards.&n; */
 DECL|struct|coproc_operations
 r_typedef
 r_struct

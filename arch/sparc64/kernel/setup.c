@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.20 1998/02/24 17:02:39 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.26 1998/07/08 10:21:15 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -32,6 +33,8 @@ macro_line|#include &lt;asm/head.h&gt;
 macro_line|#ifdef CONFIG_IP_PNP
 macro_line|#include &lt;net/ipconfig.h&gt;
 macro_line|#endif
+DECL|macro|PROM_DEBUG_CONSOLE
+macro_line|#undef PROM_DEBUG_CONSOLE
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -43,12 +46,7 @@ comma
 l_int|0
 comma
 multiline_comment|/* orig-x, orig-y */
-(brace
 l_int|0
-comma
-l_int|0
-comma
-)brace
 comma
 multiline_comment|/* unused */
 l_int|0
@@ -66,7 +64,7 @@ l_int|0
 comma
 l_int|0
 comma
-multiline_comment|/* ega_ax, ega_bx, ega_cx */
+multiline_comment|/* unused, ega_bx, unused */
 l_int|54
 comma
 multiline_comment|/* orig-video-lines */
@@ -92,14 +90,16 @@ r_int
 id|sparc64_ttable_tl0
 suffix:semicolon
 macro_line|#if CONFIG_SUN_CONSOLE
-r_extern
+DECL|function|console_restore_palette
 r_void
 id|console_restore_palette
 c_func
 (paren
 r_void
 )paren
-suffix:semicolon
+(brace
+multiline_comment|/* FIXME */
+)brace
 macro_line|#endif
 id|asmlinkage
 r_void
@@ -252,15 +252,11 @@ mdefine_line|#define BOOTME_SINGLE 0x2
 DECL|macro|BOOTME_KGDB
 mdefine_line|#define BOOTME_KGDB   0x4
 macro_line|#ifdef CONFIG_SUN_CONSOLE
-r_extern
-r_char
-op_star
-id|console_fb_path
-suffix:semicolon
-DECL|variable|console_fb
+DECL|variable|__initdata
 r_static
 r_int
 id|console_fb
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
@@ -639,10 +635,6 @@ id|console_fb
 op_assign
 l_int|1
 suffix:semicolon
-id|console_fb_path
-op_assign
-id|commands
-suffix:semicolon
 )brace
 )brace
 r_else
@@ -825,7 +817,7 @@ id|reboot_command
 l_int|256
 )braket
 suffix:semicolon
-DECL|variable|phys_base
+r_extern
 r_int
 r_int
 id|phys_base
@@ -851,11 +843,16 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#if 0
-macro_line|#include &lt;linux/console.h&gt;
+r_extern
+r_struct
+id|consw
+id|sun_serial_con
+suffix:semicolon
+macro_line|#ifdef PROM_DEBUG_CONSOLE
 r_static
 r_void
-id|prom_cons_write
+DECL|function|prom_console_write
+id|prom_console_write
 c_func
 (paren
 r_struct
@@ -866,56 +863,50 @@ comma
 r_const
 r_char
 op_star
-id|str
+id|s
 comma
 r_int
-id|count
+id|n
 )paren
 (brace
-r_while
-c_loop
-(paren
-id|count
-op_decrement
-)paren
 id|prom_printf
 c_func
 (paren
-l_string|&quot;%c&quot;
+l_string|&quot;%s&quot;
 comma
-op_star
-id|str
-op_increment
+id|s
 )paren
 suffix:semicolon
 )brace
+DECL|variable|prom_console
 r_static
 r_struct
 id|console
 id|prom_console
 op_assign
 (brace
-l_string|&quot;PROM&quot;
+l_string|&quot;prom&quot;
 comma
-id|prom_cons_write
+id|prom_console_write
 comma
-l_int|0
+l_int|NULL
 comma
-l_int|0
+l_int|NULL
 comma
-l_int|0
+l_int|NULL
 comma
-l_int|0
+l_int|NULL
 comma
-l_int|0
+l_int|NULL
 comma
 id|CON_PRINTBUFFER
 comma
-l_int|0
+op_minus
+l_int|1
 comma
 l_int|0
 comma
-l_int|0
+l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -958,7 +949,7 @@ id|total
 comma
 id|i
 suffix:semicolon
-macro_line|#if 0
+macro_line|#ifdef PROM_DEBUG_CONSOLE
 id|register_console
 c_func
 (paren
@@ -1617,6 +1608,27 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial_console
+)paren
+(brace
+macro_line|#ifdef CONFIG_PROM_CONSOLE
+id|conswitchp
+op_assign
+op_amp
+id|prom_con
+suffix:semicolon
+macro_line|#elif defined(CONFIG_DUMMY_CONSOLE)&t;
+id|conswitchp
+op_assign
+op_amp
+id|dummy_con
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage

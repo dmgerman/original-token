@@ -325,6 +325,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 multiline_comment|/*&n;&t; * Nothing, only a usage count for the moment&n;&t; */
@@ -344,6 +347,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1793,14 +1799,11 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|vesafb_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 )paren
 (brace
@@ -1817,7 +1820,6 @@ op_ne
 id|VIDEO_TYPE_VLFB
 )paren
 r_return
-id|mem_start
 suffix:semicolon
 id|video_base
 op_assign
@@ -2156,21 +2158,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|register_framebuffer
-c_func
-(paren
-op_amp
-id|fb_info
-)paren
-OL
-l_int|0
-)paren
-r_return
-id|mem_start
-suffix:semicolon
 id|vesafb_get_var
 c_func
 (paren
@@ -2191,6 +2178,20 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_framebuffer
+c_func
+(paren
+op_amp
+id|fb_info
+)paren
+OL
+l_int|0
+)paren
+r_return
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2204,9 +2205,6 @@ id|fb_info.node
 comma
 id|fb_info.modename
 )paren
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */

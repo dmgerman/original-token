@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/pss.c&n; *&n; * The low level driver for the Personal Sound System (ECHO ESC614).&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;&t;modularisation, clean up.&n; *&n; * 98-02-21: Vladimir Michl &lt;vladimir.michl@upol.cz&gt;&n; *          Added mixer device for Beethoven ADSP-16 (master volume,&n; *&t;    bass, treble, synth), only for speakers.&n; *          Fixed bug in pss_write (exchange parameters)&n; *          Fixed config port of SB&n; *          Requested two regions for PSS (PSS mixer, PSS config)&n; *          Modified pss_download_boot&n; *          To probe_pss_mss added test for initialize AD1848&n; */
+multiline_comment|/*&n; * sound/pss.c&n; *&n; * The low level driver for the Personal Sound System (ECHO ESC614).&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;&t;modularisation, clean up.&n; *&n; * 98-02-21: Vladimir Michl &lt;vladimir.michl@upol.cz&gt;&n; *          Added mixer device for Beethoven ADSP-16 (master volume,&n; *&t;    bass, treble, synth), only for speakers.&n; *          Fixed bug in pss_write (exchange parameters)&n; *          Fixed config port of SB&n; *          Requested two regions for PSS (PSS mixer, PSS config)&n; *          Modified pss_download_boot&n; *          To probe_pss_mss added test for initialize AD1848&n; * 98-05-28: Vladimir Michl &lt;vladimir.michl@upol.cz&gt;&n; *          Fixed computation of mixer volumes&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -78,13 +78,26 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* If compiled into kernel, it enable or disable pss mixer */
+macro_line|#ifdef CONFIG_PSS_MIXER
 DECL|variable|pss_mixer
+r_static
 r_int
 r_char
 id|pss_mixer
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#else
+DECL|variable|pss_mixer
+r_static
+r_int
+r_char
+id|pss_mixer
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|struct|pss_mixerdata
 r_typedef
 r_struct
@@ -1698,18 +1711,17 @@ r_int
 id|volume
 )paren
 (brace
-multiline_comment|/* Should use:&n;&t;&t;int vol = (int)(0x8000/100.0 * (float)volume);&n;&t;&t;&n;&t;  Fixme: integerise the above cleanly&n;&t;*/
 r_int
 id|vol
 op_assign
 (paren
-l_int|0x8000
-op_div
 (paren
-l_int|100L
+l_int|0x8000
 op_star
 id|volume
 )paren
+op_div
+l_int|100L
 )paren
 suffix:semicolon
 id|pss_write
@@ -1759,7 +1771,6 @@ r_int
 id|level
 )paren
 (brace
-multiline_comment|/* Should use&n;&t;   int vol = (int)((0xfd - 0xf0)/100.0 * (float)level) + 0xf0;     &n;&t;   &n;&t;   Fixme: integerise cleanly &n;&t;*/
 r_int
 id|vol
 op_assign
@@ -1768,14 +1779,16 @@ r_int
 )paren
 (paren
 (paren
+(paren
 l_int|0xfd
 op_minus
 l_int|0xf0
 )paren
-op_div
-l_int|100L
 op_star
 id|level
+)paren
+op_div
+l_int|100L
 )paren
 op_plus
 l_int|0xf0
@@ -1814,20 +1827,21 @@ r_int
 id|level
 )paren
 (brace
-multiline_comment|/* Should use &n;&t;   int vol = (int)((0xfd - 0xf0)/100.0 * (float)level) + 0xf0;&n;&t;   &n;&t;   Fixme: integerise properly&n;&t;*/
 r_int
 id|vol
 op_assign
+(paren
 (paren
 (paren
 l_int|0xfd
 op_minus
 l_int|0xf0
 )paren
-op_div
-l_int|100L
 op_star
 id|level
+)paren
+op_div
+l_int|100L
 )paren
 op_plus
 l_int|0xf0
@@ -1868,9 +1882,9 @@ c_func
 (paren
 id|devc
 comma
-l_int|23
+l_int|33
 comma
-l_int|23
+l_int|33
 )paren
 suffix:semicolon
 id|set_bass
@@ -1924,7 +1938,7 @@ id|devc-&gt;mixer.volume_l
 op_assign
 id|devc-&gt;mixer.volume_r
 op_assign
-l_int|23
+l_int|33
 suffix:semicolon
 id|devc-&gt;mixer.bass
 op_assign
@@ -5212,7 +5226,7 @@ c_func
 (paren
 id|pss_mixer
 comma
-l_string|&quot;Enable (1) or disable (0) PSS mixer (controlling of output volume, bass, treble synth volume). The mixer is not available on all PSS cards.&quot;
+l_string|&quot;Enable (1) or disable (0) PSS mixer (controlling of output volume, bass, treble, synth volume). The mixer is not available on all PSS cards.&quot;
 )paren
 suffix:semicolon
 id|MODULE_AUTHOR

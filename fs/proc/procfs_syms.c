@@ -84,6 +84,13 @@ c_func
 id|proc_root
 )paren
 suffix:semicolon
+DECL|variable|proc_root_fs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_root_fs
+)paren
+suffix:semicolon
 DECL|variable|proc_get_inode
 id|EXPORT_SYMBOL
 c_func

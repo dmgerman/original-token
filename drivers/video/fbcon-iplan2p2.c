@@ -1476,10 +1476,6 @@ id|bgx
 comma
 id|fdx
 suffix:semicolon
-id|c
-op_and_assign
-l_int|0xff
-suffix:semicolon
 id|dest
 op_assign
 id|p-&gt;screen_base
@@ -1510,9 +1506,11 @@ id|p-&gt;fontdata
 op_plus
 (paren
 id|c
+op_amp
+l_int|0xff
+)paren
 op_star
 id|p-&gt;fontheight
-)paren
 suffix:semicolon
 id|fgx
 op_assign
@@ -1527,7 +1525,7 @@ c_func
 (paren
 id|p
 comma
-id|conp
+id|c
 )paren
 )paren
 )paren
@@ -1545,7 +1543,7 @@ c_func
 (paren
 id|p
 comma
-id|conp
+id|c
 )paren
 )paren
 )paren
@@ -1613,7 +1611,8 @@ op_star
 id|p
 comma
 r_const
-r_char
+r_int
+r_int
 op_star
 id|s
 comma
@@ -1696,7 +1695,8 @@ c_func
 (paren
 id|p
 comma
-id|conp
+op_star
+id|s
 )paren
 )paren
 )paren
@@ -1714,7 +1714,8 @@ c_func
 (paren
 id|p
 comma
-id|conp
+op_star
+id|s
 )paren
 )paren
 )paren
@@ -1917,6 +1918,29 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n;     *  Visible symbols for modules&n;     */
 DECL|variable|fbcon_iplan2p2
 id|EXPORT_SYMBOL

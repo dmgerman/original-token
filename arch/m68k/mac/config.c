@@ -1041,7 +1041,7 @@ suffix:semicolon
 id|conswitchp
 op_assign
 op_amp
-id|fb_con
+id|dummy_con
 suffix:semicolon
 id|mach_max_dma_address
 op_assign

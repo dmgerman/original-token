@@ -6,6 +6,7 @@ mdefine_line|#define _SM_H
 multiline_comment|/* ---------------------------------------------------------------------- */
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/soundmodem.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 DECL|macro|SM_DEBUG
 mdefine_line|#define SM_DEBUG
@@ -1260,7 +1261,7 @@ multiline_comment|/*&n; * ===================== profiling ======================
 macro_line|#ifdef __i386__
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|HAS_RDTSC
-mdefine_line|#define HAS_RDTSC (current_cpu_data.x86_capability &amp; 0x10)
+mdefine_line|#define HAS_RDTSC (current_cpu_data.x86_capability &amp; X86_FEATURE_TSC)
 multiline_comment|/*&n; * only do 32bit cycle counter arithmetic; we hope we won&squot;t overflow.&n; * in fact, overflowing modems would require over 2THz CPU clock speeds :-)&n; */
 DECL|macro|time_exec
 mdefine_line|#define time_exec(var,cmd)                                              &bslash;&n;({                                                                      &bslash;&n;&t;if (HAS_RDTSC) {                                                &bslash;&n;&t;&t;unsigned int cnt1, cnt2, cnt3;                          &bslash;&n;&t;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt1), &quot;=d&quot; (cnt3));  &bslash;&n;&t;&t;cmd;                                                    &bslash;&n;&t;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt2), &quot;=d&quot; (cnt3));  &bslash;&n;&t;&t;var = cnt2-cnt1;                                        &bslash;&n;&t;} else {                                                        &bslash;&n;&t;&t;cmd;                                                    &bslash;&n;&t;}                                                               &bslash;&n;})

@@ -1707,13 +1707,6 @@ c_func
 id|tr_freedev
 )paren
 suffix:semicolon
-DECL|variable|tr_reformat
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tr_reformat
-)paren
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Used by at least ipip.c.  */
 DECL|variable|ipv4_config

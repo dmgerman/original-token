@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer.&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit &n; *&t;liability nor provide warranty for any of this software. This material&n; *&t;is provided as is and at no charge.&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header&n; *&t;Revision 0.23:  IPX /proc by Mark Evans. Adding a route will&n; *     &t;&t;&t;will overwrite any existing route to the same network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network&n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for module)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support. Changed to use notifiers&n; *&t;&t;&t;and the newer packet_type stuff. Assorted major&n; *&t;&t;&t;fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of &n; *&t;&t;&t;testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&t;Revision 0.38:  Asynchronous socket stuff made current.&n; *&t;Revision 0.39:  SPX interfaces&n; *&t;Revision 0.40:  Tiny SIOCGSTAMP fix (chris@cybernet.co.nz)&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide&n; *&t;warranty for any of this software. This material is provided&n; *&t;&quot;AS-IS&quot; and at no charge.&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer.&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit &n; *&t;liability nor provide warranty for any of this software. This material&n; *&t;is provided as is and at no charge.&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header&n; *&t;Revision 0.23:  IPX /proc by Mark Evans. Adding a route will&n; *     &t;&t;&t;will overwrite any existing route to the same network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network&n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for module)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support. Changed to use notifiers&n; *&t;&t;&t;and the newer packet_type stuff. Assorted major&n; *&t;&t;&t;fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of &n; *&t;&t;&t;testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&t;Revision 0.38:  Asynchronous socket stuff made current.&n; *&t;Revision 0.39:  SPX interfaces&n; *&t;Revision 0.40:  Tiny SIOCGSTAMP fix (chris@cybernet.co.nz)&n; *      Revision 0.41:  802.2TR removed (p.norton@computer.org)&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide&n; *&t;warranty for any of this software. This material is provided&n; *&t;&quot;AS-IS&quot; and at no charge.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined (CONFIG_IPX) || defined (CONFIG_IPX_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -24,12 +24,12 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCOUTQ/INQ */
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
-macro_line|#include &lt;net/p8022tr.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#ifdef MODULE
 r_static
 r_void
@@ -70,15 +70,6 @@ r_struct
 id|datalink_proto
 op_star
 id|p8022_datalink
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|variable|p8022tr_datalink
-r_static
-r_struct
-id|datalink_proto
-op_star
-id|p8022tr_datalink
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3021,18 +3012,6 @@ id|ETH_P_802_2
 )paren
 suffix:semicolon
 r_case
-id|IPX_FRAME_TR_8022
-suffix:colon
-r_return
-(paren
-id|htons
-c_func
-(paren
-id|ETH_P_TR_802_2
-)paren
-)paren
-suffix:semicolon
-r_case
 id|IPX_FRAME_SNAP
 suffix:colon
 r_return
@@ -3160,6 +3139,29 @@ id|EADDRINUSE
 )paren
 suffix:semicolon
 )brace
+id|dev
+op_assign
+id|dev_get
+c_func
+(paren
+id|idef-&gt;ipx_device
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -3167,39 +3169,15 @@ id|idef-&gt;ipx_dlink_type
 )paren
 (brace
 r_case
-id|IPX_FRAME_ETHERII
-suffix:colon
-id|dlink_type
-op_assign
-id|htons
-c_func
-(paren
-id|ETH_P_IPX
-)paren
-suffix:semicolon
-id|datalink
-op_assign
-id|pEII_datalink
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
 id|IPX_FRAME_TR_8022
 suffix:colon
-id|dlink_type
-op_assign
-id|htons
+id|printk
 c_func
 (paren
-id|ETH_P_TR_802_2
+l_string|&quot;IPX frame type 802.2TR is obsolete. Use 802.2 instead.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|datalink
-op_assign
-id|p8022tr_datalink
-suffix:semicolon
-r_break
-suffix:semicolon
+multiline_comment|/* fall through */
 r_case
 id|IPX_FRAME_8022
 suffix:colon
@@ -3217,6 +3195,40 @@ id|p8022_datalink
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|IPX_FRAME_ETHERII
+suffix:colon
+r_if
+c_cond
+(paren
+id|dev-&gt;type
+op_ne
+id|ARPHRD_IEEE802
+)paren
+(brace
+id|dlink_type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IPX
+)paren
+suffix:semicolon
+id|datalink
+op_assign
+id|pEII_datalink
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;IPX frame type EtherII over token-ring is obsolete. Use SNAP instead.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* fall through */
 r_case
 id|IPX_FRAME_SNAP
 suffix:colon
@@ -3262,44 +3274,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|datalink
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-(paren
-op_minus
-id|EPROTONOSUPPORT
-)paren
-suffix:semicolon
-)brace
-id|dev
-op_assign
-id|dev_get
-c_func
-(paren
-id|idef-&gt;ipx_device
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-(paren
-op_minus
-id|ENODEV
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 op_logical_neg
 (paren
 id|dev-&gt;flags
@@ -3328,6 +3302,21 @@ r_return
 (paren
 op_minus
 id|EINVAL
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|datalink
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+(paren
+op_minus
+id|EPROTONOSUPPORT
 )paren
 suffix:semicolon
 )brace
@@ -3722,15 +3711,6 @@ suffix:colon
 id|datalink
 op_assign
 id|p8022_datalink
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ETH_P_TR_802_2
-suffix:colon
-id|datalink
-op_assign
-id|p8022tr_datalink
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -9587,32 +9567,6 @@ r_if
 c_cond
 (paren
 (paren
-id|p8022tr_datalink
-op_assign
-id|register_8022tr_client
-c_func
-(paren
-id|ipx_8022_type
-comma
-id|ipx_rcv
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;IPX: Unable to register with 802.2TR&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
 id|pSNAP_datalink
 op_assign
 id|register_snap_client
@@ -9827,16 +9781,6 @@ id|ipx_snap_id
 )paren
 suffix:semicolon
 id|pSNAP_datalink
-op_assign
-l_int|NULL
-suffix:semicolon
-id|unregister_8022tr_client
-c_func
-(paren
-id|ipx_8022_type
-)paren
-suffix:semicolon
-id|p8022tr_datalink
 op_assign
 l_int|NULL
 suffix:semicolon

@@ -83,11 +83,34 @@ id|fontdata_6x11
 (braket
 )braket
 suffix:semicolon
+multiline_comment|/* SUN8x16 */
+r_extern
+r_char
+id|fontname_sun8x16
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|fontwidth_sun8x16
+comma
+id|fontheight_sun8x16
+suffix:semicolon
+r_extern
+id|u8
+id|fontdata_sun8x16
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*&n;    *    Font Descriptor Array&n;    */
 DECL|struct|softfontdesc
 r_struct
 id|softfontdesc
 (brace
+DECL|member|idx
+r_int
+id|idx
+suffix:semicolon
 DECL|member|name
 r_char
 op_star
@@ -118,6 +141,8 @@ DECL|macro|PEARL8x8_IDX
 mdefine_line|#define PEARL8x8_IDX&t;2
 DECL|macro|VGA6x11_IDX
 mdefine_line|#define VGA6x11_IDX&t;3
+DECL|macro|SUN8x16_IDX
+mdefine_line|#define SUN8x16_IDX&t;4
 DECL|variable|softfonts
 r_static
 r_struct
@@ -128,6 +153,8 @@ id|softfonts
 op_assign
 (brace
 (brace
+id|VGA8x8_IDX
+comma
 id|fontname_8x8
 comma
 op_amp
@@ -139,7 +166,10 @@ comma
 id|fontdata_8x8
 )brace
 comma
+macro_line|#ifndef __sparc__
 (brace
+id|VGA8x16_IDX
+comma
 id|fontname_8x16
 comma
 op_amp
@@ -152,6 +182,8 @@ id|fontdata_8x16
 )brace
 comma
 (brace
+id|PEARL8x8_IDX
+comma
 id|fontname_pearl8x8
 comma
 op_amp
@@ -164,6 +196,8 @@ id|fontdata_pearl8x8
 )brace
 comma
 (brace
+id|VGA6x11_IDX
+comma
 id|fontname_6x11
 comma
 op_amp
@@ -175,6 +209,22 @@ comma
 id|fontdata_6x11
 )brace
 comma
+macro_line|#else
+(brace
+id|SUN8x16_IDX
+comma
+id|fontname_sun8x16
+comma
+op_amp
+id|fontwidth_sun8x16
+comma
+op_amp
+id|fontheight_sun8x16
+comma
+id|fontdata_sun8x16
+)brace
+comma
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|numsoftfonts
@@ -345,6 +395,8 @@ id|data
 (brace
 r_int
 id|i
+comma
+id|j
 suffix:semicolon
 r_if
 c_cond
@@ -402,6 +454,40 @@ id|VGA6x11_IDX
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef __sparc__
+id|i
+op_assign
+id|SUN8x16_IDX
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|numsoftfonts
+suffix:semicolon
+id|j
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|softfonts
+(braket
+id|j
+)braket
+dot
+id|idx
+op_eq
+id|i
+)paren
+r_break
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -412,7 +498,7 @@ id|name
 op_assign
 id|softfonts
 (braket
-id|i
+id|j
 )braket
 dot
 id|name
@@ -428,7 +514,7 @@ op_assign
 op_star
 id|softfonts
 (braket
-id|i
+id|j
 )braket
 dot
 id|width
@@ -444,7 +530,7 @@ op_assign
 op_star
 id|softfonts
 (braket
-id|i
+id|j
 )braket
 dot
 id|height
@@ -459,7 +545,7 @@ id|data
 op_assign
 id|softfonts
 (braket
-id|i
+id|j
 )braket
 dot
 id|data

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes&n; *&t;Alan Cox&t;:&t;Formatting and clean ups&n; *&n; * Status&n; *&t;Mostly working. mmap bug still present (swaps channels)&n; */
+multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes&n; *&t;Alan Cox&t;:&t;Formatting and clean ups&n; *&n; * Status&n; *&t;Mostly working. Weird uart bug causing irq storms&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
@@ -44,7 +44,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;SB: Incomplete initialization&bslash;n&quot;
+l_string|&quot;Sound Blaster: incomplete initialization.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -547,7 +547,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;soundblaster: Unable to start DAC&bslash;n&quot;
+l_string|&quot;Sound Blaster:  unable to start DAC.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -692,7 +692,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;soundblaster: Unable to start ADC&bslash;n&quot;
+l_string|&quot;Sound Blaster:  unable to start ADC.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1360,7 +1360,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;soundblaster: Unable to start DAC&bslash;n&quot;
+l_string|&quot;Sound Blaster:  unable to start DAC.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1369,7 +1369,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;soundblaster: Unable to start DAC&bslash;n&quot;
+l_string|&quot;Sound Blaster: unable to start DAC.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1557,7 +1557,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;soundblaster: Unable to start ADC&bslash;n&quot;
+l_string|&quot;Sound Blaster:  unable to start ADC.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1566,7 +1566,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;soundblaster: Unable to start ADC&bslash;n&quot;
+l_string|&quot;Sound Blaster:  unable to start ADC.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -5014,7 +5014,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;sb: unable to install audio.&bslash;n&quot;
+l_string|&quot;Sound Blaster:  unable to install audio.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

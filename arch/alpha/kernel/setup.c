@@ -163,11 +163,7 @@ comma
 l_int|25
 comma
 multiline_comment|/* orig-x, orig-y */
-(brace
 l_int|0
-comma
-l_int|0
-)brace
 comma
 multiline_comment|/* unused */
 l_int|0
@@ -765,20 +761,20 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_VGA_CONSOLE
+macro_line|#ifdef CONFIG_VT
+macro_line|#if defined(CONFIG_VGA_CONSOLE)
 id|conswitchp
 op_assign
 op_amp
 id|vga_con
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB
-multiline_comment|/* Frame buffer device based console */
+macro_line|#elif defined(CONFIG_DUMMY_CONSOLE)
 id|conswitchp
 op_assign
 op_amp
-id|fb_con
+id|dummy_con
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 )brace
 DECL|macro|N

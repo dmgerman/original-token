@@ -36,8 +36,6 @@ DECL|macro|TRUE
 mdefine_line|#define TRUE  1
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
-DECL|macro|X86_FEATURE_MTRR
-mdefine_line|#define X86_FEATURE_MTRR&t;0x1000&t;&t;/* memory type registers */
 DECL|macro|MTRRcap_MSR
 mdefine_line|#define MTRRcap_MSR     0x0fe
 DECL|macro|MTRRdefType_MSR

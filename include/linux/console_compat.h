@@ -1,8 +1,8 @@
 multiline_comment|/*&n; *  linux/include/linux/console_compat.h -- Abstract console wrapper&n; *&n; *&t;Copyright (C) 1998 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _LINUX_CONSOLE_COMPAT_H_
 DECL|macro|_LINUX_CONSOLE_COMPAT_H_
 mdefine_line|#define _LINUX_CONSOLE_COMPAT_H_
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|video_num_columns
 macro_line|#undef video_num_columns
 DECL|macro|video_num_lines
@@ -23,10 +23,10 @@ DECL|macro|scr_writew
 macro_line|#undef scr_writew
 DECL|macro|scr_readw
 macro_line|#undef scr_readw
-DECL|macro|memsetw
-macro_line|#undef memsetw
-DECL|macro|memcpyw
-macro_line|#undef memcpyw
+DECL|macro|scr_memsetw
+macro_line|#undef scr_memsetw
+DECL|macro|scr_memcpyw
+macro_line|#undef scr_memcpyw
 DECL|macro|set_cursor
 macro_line|#undef set_cursor
 DECL|macro|hide_cursor
@@ -69,10 +69,10 @@ DECL|macro|scr_writew
 mdefine_line|#define scr_writew&t;&t;compat_scr_writew
 DECL|macro|scr_readw
 mdefine_line|#define scr_readw&t;&t;compat_scr_readw
-DECL|macro|memsetw
-mdefine_line|#define memsetw&t;&t;&t;compat_memsetw
-DECL|macro|memcpyw
-mdefine_line|#define memcpyw&t;&t;&t;compat_memcpyw
+DECL|macro|scr_memsetw
+mdefine_line|#define scr_memsetw&t;&t;compat_memsetw
+DECL|macro|scr_memcpyw
+mdefine_line|#define scr_memcpyw&t;&t;compat_memcpyw
 DECL|macro|set_cursor
 mdefine_line|#define set_cursor&t;&t;compat_set_cursor
 DECL|macro|hide_cursor

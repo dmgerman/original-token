@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#ifdef CONFIG_CS4232
 DECL|macro|KEY_PORT
 mdefine_line|#define KEY_PORT&t;0x279&t;/* Same as LPT1 status port */
 DECL|macro|CSN_NUM
@@ -271,7 +270,7 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* The card is already active */
-multiline_comment|/*&n;&t; * This version of the driver doesn&squot;t use the PnP method when configuring&n;&t; * the card but a simplified method defined by Crystal. This means that&n;&t; * just one CS4232 compatible device can exist on the system. Also this&n;&t; * method conflicts with possible PnP support in the OS. For this reason &n;&t; * driver is just a temporary kludge.&n;&t; *&n;&t; * Also the Cirrus/Crystal method doesnt always work. Try ISAPnP first ;)&n;&t; */
+multiline_comment|/*&n;&t; * This version of the driver doesn&squot;t use the PnP method when configuring&n;&t; * the card but a simplified method defined by Crystal. This means that&n;&t; * just one CS4232 compatible device can exist on the system. Also this&n;&t; * method conflicts with possible PnP support in the OS. For this reason &n;&t; * driver is just a temporary kludge.&n;&t; *&n;&t; * Also the Cirrus/Crystal method doesnt always work. Try ISA PnP first ;)&n;&t; */
 multiline_comment|/*&n;&t; * Repeat initialization few times since it doesn&squot;t always succeed in&n;&t; * first time.&n;&t; */
 r_for
 c_loop
@@ -1153,6 +1152,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

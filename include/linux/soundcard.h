@@ -62,7 +62,7 @@ DECL|macro|SNDCARD_GUSPNP
 mdefine_line|#define SNDCARD_GUSPNP&t;&t;25
 DECL|macro|SNDCARD_UART401
 mdefine_line|#define SNDCARD_UART401&t;&t;26
-multiline_comment|/* Soundcard numbers 27 to N are reserved. Don&squot;t add more numbers here */
+multiline_comment|/* Sound card numbers 27 to N are reserved. Don&squot;t add more numbers here. */
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _SIOWR
 macro_line|#if defined(_IOWR) &amp;&amp; (defined(_AIX) || (!defined(sun) &amp;&amp; !defined(sparc) &amp;&amp; !defined(__INCioctlh) &amp;&amp; !defined(__Lynx__)))

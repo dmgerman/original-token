@@ -1,6 +1,4 @@
-multiline_comment|/*&n; * pas2_pcm.c Audio routines for PAS16&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * pas2_pcm.c Audio routines for PAS16&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;   : Swatted a double allocation of device bug. Made a few&n; *&t;&t;     more things module options.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_PAS
@@ -99,9 +97,9 @@ id|open_mode
 op_assign
 l_int|0
 suffix:semicolon
+DECL|function|pcm_set_speed
 r_static
 r_int
-DECL|function|pcm_set_speed
 id|pcm_set_speed
 c_func
 (paren
@@ -230,7 +228,7 @@ c_func
 l_int|0x0B8A
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Set anti-aliasing filters according to sample rate. You really *NEED*&n;&t;   * to enable this feature for all normal recording unless you want to&n;&t;   * experiment with aliasing effects.&n;&t;   * These filters apply to the selected &quot;recording&quot; source.&n;&t;   * I (pfw) don&squot;t know the encoding of these 5 bits. The values shown&n;&t;   * come from the SDK found on ftp.uwp.edu:/pub/msdos/proaudio/.&n;&t;   *&n;&t;   * I cleared bit 5 of these values, since that bit controls the master&n;&t;   * mute flag. (Olav W&#xfffd;lfelschneider)&n;&t;   *&n;&t; */
+multiline_comment|/*&n;&t; * Set anti-aliasing filters according to sample rate. You really *NEED*&n;&t; * to enable this feature for all normal recording unless you want to&n;&t; * experiment with aliasing effects.&n;&t; * These filters apply to the selected &quot;recording&quot; source.&n;&t; * I (pfw) don&squot;t know the encoding of these 5 bits. The values shown&n;&t; * come from the SDK found on ftp.uwp.edu:/pub/msdos/proaudio/.&n;&t; *&n;&t; * I cleared bit 5 of these values, since that bit controls the master&n;&t; * mute flag. (Olav W&#xfffd;lfelschneider)&n;&t; *&n;&t; */
 macro_line|#if !defined NO_AUTO_FILTER_SET
 id|tmp
 op_and_assign
@@ -404,9 +402,9 @@ r_return
 id|pcm_speed
 suffix:semicolon
 )brace
+DECL|function|pcm_set_channels
 r_static
 r_int
-DECL|function|pcm_set_channels
 id|pcm_set_channels
 c_func
 (paren
@@ -470,9 +468,9 @@ r_return
 id|pcm_channels
 suffix:semicolon
 )brace
+DECL|function|pcm_set_bits
 r_static
 r_int
-DECL|function|pcm_set_bits
 id|pcm_set_bits
 c_func
 (paren
@@ -583,7 +581,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -624,7 +622,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -660,7 +658,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -701,7 +699,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -744,7 +742,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|ret
@@ -757,9 +755,9 @@ id|arg
 )paren
 suffix:semicolon
 )brace
+DECL|function|pas_audio_reset
 r_static
 r_void
-DECL|function|pas_audio_reset
 id|pas_audio_reset
 c_func
 (paren
@@ -794,9 +792,9 @@ l_int|0xF8A
 suffix:semicolon
 multiline_comment|/* Disable PCM */
 )brace
+DECL|function|pas_audio_open
 r_static
 r_int
-DECL|function|pas_audio_open
 id|pas_audio_open
 c_func
 (paren
@@ -894,9 +892,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pas_audio_close
 r_static
 r_void
-DECL|function|pas_audio_close
 id|pas_audio_close
 c_func
 (paren
@@ -956,9 +954,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|pas_audio_output_block
 r_static
 r_void
-DECL|function|pas_audio_output_block
 id|pas_audio_output_block
 c_func
 (paren
@@ -1202,9 +1200,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|pas_audio_start_input
 r_static
 r_void
-DECL|function|pas_audio_start_input
 id|pas_audio_start_input
 c_func
 (paren
@@ -1438,9 +1436,9 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#ifndef NO_TRIGGER
+DECL|function|pas_audio_trigger
 r_static
 r_void
-DECL|function|pas_audio_trigger
 id|pas_audio_trigger
 c_func
 (paren
@@ -1544,9 +1542,9 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|pas_audio_prepare_for_input
 r_static
 r_int
-DECL|function|pas_audio_prepare_for_input
 id|pas_audio_prepare_for_input
 c_func
 (paren
@@ -1570,9 +1568,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pas_audio_prepare_for_output
 r_static
 r_int
-DECL|function|pas_audio_prepare_for_output
 id|pas_audio_prepare_for_output
 c_func
 (paren
@@ -1630,8 +1628,8 @@ comma
 id|pas_audio_trigger
 )brace
 suffix:semicolon
-r_void
 DECL|function|pas_pcm_init
+r_void
 id|pas_pcm_init
 c_func
 (paren
@@ -1682,22 +1680,6 @@ c_cond
 (paren
 id|pas_audiodev
 op_assign
-id|sound_alloc_audiodev
-c_func
-(paren
-)paren
-)paren
-op_ne
-op_minus
-l_int|1
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|pas_audiodev
-op_assign
 id|sound_install_audiodrv
 c_func
 (paren
@@ -1730,12 +1712,6 @@ id|hw_config-&gt;dma
 OL
 l_int|0
 )paren
-(brace
-r_return
-suffix:semicolon
-)brace
-)brace
-r_else
 id|printk
 c_func
 (paren
@@ -1744,8 +1720,8 @@ l_string|&quot;PAS16: Too many PCM devices available&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|pas_pcm_interrupt
+r_void
 id|pas_pcm_interrupt
 c_func
 (paren
@@ -1765,7 +1741,7 @@ op_eq
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;   * Halt the PCM first. Otherwise we don&squot;t have time to start a new&n;&t;&t;   * block before the PCM chip proceeds to the next sample&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Halt the PCM first. Otherwise we don&squot;t have time to start a new&n;&t;&t; * block before the PCM chip proceeds to the next sample&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1781,7 +1757,6 @@ op_amp
 id|DMA_AUTOMODE
 )paren
 )paren
-(brace
 id|pas_write
 c_func
 (paren
@@ -1797,7 +1772,6 @@ comma
 l_int|0xF8A
 )paren
 suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -1833,6 +1807,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;PAS: Unexpected PCM interrupt&bslash;n&quot;
 )paren
 suffix:semicolon

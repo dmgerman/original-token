@@ -387,14 +387,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|PTR_ERR
+id|IS_ERR
 c_func
 (paren
 id|target_de
 )paren
-op_eq
-op_minus
-id|ENOENT
 )paren
 (brace
 id|CDEBUG
@@ -466,12 +463,6 @@ c_func
 id|target_inode
 )paren
 suffix:semicolon
-id|CHECK_CNODE
-c_func
-(paren
-id|cnp
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|venus_pioctl
@@ -498,6 +489,20 @@ comma
 l_string|&quot;ioctl on inode %ld&bslash;n&quot;
 comma
 id|target_inode-&gt;i_ino
+)paren
+suffix:semicolon
+id|CDEBUG
+c_func
+(paren
+id|D_DOWNCALL
+comma
+l_string|&quot;dput on ino: %ld, icount %d, dcount %d&bslash;n&quot;
+comma
+id|target_inode-&gt;i_ino
+comma
+id|target_inode-&gt;i_count
+comma
+id|target_de-&gt;d_count
 )paren
 suffix:semicolon
 r_if

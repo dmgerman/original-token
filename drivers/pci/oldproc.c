@@ -3750,9 +3750,9 @@ c_func
 (paren
 id|RP
 comma
-id|RP8OCTA
+id|RP32INTF
 comma
-l_string|&quot;RocketPort 8 Oct&quot;
+l_string|&quot;RocketPort 32 Intf&quot;
 )paren
 comma
 id|DEVICE
@@ -3780,9 +3780,59 @@ c_func
 (paren
 id|RP
 comma
-id|RP32INTF
+id|RP4QUAD
 comma
-l_string|&quot;RocketPort 32 Intf&quot;
+l_string|&quot;Rocketport 4 Quad&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RP8OCTA
+comma
+l_string|&quot;RocketPort 8 Oct&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RP8J
+comma
+l_string|&quot;RocketPort 8 J&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RPP4
+comma
+l_string|&quot;RocketPort Plus 4 Quad&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RPP8
+comma
+l_string|&quot;RocketPort Plus 8 Oct&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RP8M
+comma
+l_string|&quot;RocketModem 8 J&quot;
 )paren
 comma
 id|DEVICE

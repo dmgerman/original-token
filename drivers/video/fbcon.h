@@ -127,7 +127,8 @@ op_star
 id|p
 comma
 r_const
-r_char
+r_int
+r_int
 op_star
 id|s
 comma
@@ -187,20 +188,29 @@ suffix:semicolon
 multiline_comment|/*&n;     *  Attribute Decoding&n;     */
 multiline_comment|/* Color */
 DECL|macro|attr_fgcol
-mdefine_line|#define attr_fgcol(p,conp)    &bslash;&n;&t;(((conp)-&gt;vc_attr &gt;&gt; ((p)-&gt;inverse ? 4 : 0)) &amp; 0x0f)
+mdefine_line|#define attr_fgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;inverse ? 12 : 8)) &amp; 0x0f)
 DECL|macro|attr_bgcol
-mdefine_line|#define attr_bgcol(p,conp)    &bslash;&n;&t;(((conp)-&gt;vc_attr &gt;&gt; ((p)-&gt;inverse ? 0 : 4)) &amp; 0x0f)
+mdefine_line|#define attr_bgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;inverse ? 8 : 12)) &amp; 0x0f)
 DECL|macro|attr_bgcol_ec
 mdefine_line|#define&t;attr_bgcol_ec(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_video_erase_char &gt;&gt; ((p)-&gt;inverse ? 8 : 12)) &amp; 0x0f)
 multiline_comment|/* Monochrome */
 DECL|macro|attr_bold
-mdefine_line|#define attr_bold(p,conp) &bslash;&n;&t;((conp)-&gt;vc_attr &amp; 2)
+mdefine_line|#define attr_bold(p,s) &bslash;&n;&t;((s) &amp; 0x200)
 DECL|macro|attr_reverse
-mdefine_line|#define attr_reverse(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_attr &amp; 8) ^ ((p)-&gt;inverse ? 8 : 0))
+mdefine_line|#define attr_reverse(p,s) &bslash;&n;&t;(((s) &amp; 0x800) ^ ((p)-&gt;inverse ? 0x800 : 0))
 DECL|macro|attr_underline
-mdefine_line|#define attr_underline(p,conp) &bslash;&n;&t;((conp)-&gt;vc_attr &amp; 4)
+mdefine_line|#define attr_underline(p,s) &bslash;&n;&t;((s) &amp; 0x400)
 DECL|macro|attr_blink
-mdefine_line|#define attr_blink(p,conp) &bslash;&n;&t;((conp)-&gt;vc_attr &amp; 0x80)
+mdefine_line|#define attr_blink(p,s) &bslash;&n;&t;((s) &amp; 0x8000)
+multiline_comment|/*&n;     *  Scroll Method&n;     */
+DECL|macro|SCROLL_YWRAP
+mdefine_line|#define SCROLL_YWRAP&t;(0)
+DECL|macro|SCROLL_YPAN
+mdefine_line|#define SCROLL_YPAN&t;(1)
+DECL|macro|SCROLL_YMOVE
+mdefine_line|#define SCROLL_YMOVE&t;(2)
+DECL|macro|SCROLL_YREDRAW
+mdefine_line|#define SCROLL_YREDRAW&t;(3)
 multiline_comment|/* ================================================================= */
 multiline_comment|/*                      Utility Assembler Functions                  */
 multiline_comment|/* ================================================================= */

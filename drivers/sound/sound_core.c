@@ -934,6 +934,42 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Now init non OSS drivers&n;&t; */
+macro_line|#ifdef CONFIG_SOUND_SONICVIBES
+id|init_sonicvibes
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_ES1370
+id|init_es1370
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_ES1371
+id|init_es1371
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_MSNDCLAS
+id|msnd_classic_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_MSNDPIN
+id|msnd_pinnacle_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

@@ -131,10 +131,17 @@ id|blue
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|FBIOPUTCMAP_SPARC
+mdefine_line|#define FBIOPUTCMAP_SPARC _IOW(&squot;F&squot;, 3, struct fbcmap)
+DECL|macro|FBIOGETCMAP_SPARC
+mdefine_line|#define FBIOGETCMAP_SPARC _IOW(&squot;F&squot;, 4, struct fbcmap)
+macro_line|#else
 DECL|macro|FBIOPUTCMAP
 mdefine_line|#define FBIOPUTCMAP _IOW(&squot;F&squot;, 3, struct fbcmap)
 DECL|macro|FBIOGETCMAP
 mdefine_line|#define FBIOGETCMAP _IOW(&squot;F&squot;, 4, struct fbcmap)
+macro_line|#endif
 multiline_comment|/* # of device specific values */
 DECL|macro|FB_ATTR_NDEVSPECIFIC
 mdefine_line|#define FB_ATTR_NDEVSPECIFIC    8

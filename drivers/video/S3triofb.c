@@ -125,6 +125,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_static
@@ -136,6 +139,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_static
@@ -350,14 +356,11 @@ id|doit
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
-r_int
-r_int
-id|s3trio_fb_init
+r_void
+id|s3triofb_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 suffix:semicolon
 r_static
@@ -616,6 +619,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 multiline_comment|/*&n;     *  Nothing, only a usage count for the moment&n;     */
@@ -635,6 +641,9 @@ r_struct
 id|fb_info
 op_star
 id|info
+comma
+r_int
+id|user
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1262,14 +1271,11 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|s3triofb_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 )paren
 (brace
@@ -1279,9 +1285,6 @@ multiline_comment|/* We rely on Open Firmware (offb) instead. */
 macro_line|#else /* !__powerpc__ */
 multiline_comment|/* To be merged with cybervision */
 macro_line|#endif /* !__powerpc__ */
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -1836,8 +1839,6 @@ id|dp
 (brace
 r_int
 id|i
-comma
-id|err
 comma
 op_star
 id|pp
@@ -3212,19 +3213,15 @@ id|s3trio_set_cmap
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC) */
-id|err
-op_assign
+r_if
+c_cond
+(paren
 id|register_framebuffer
 c_func
 (paren
 op_amp
 id|fb_info
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
 OL
 l_int|0
 )paren
@@ -4692,7 +4689,8 @@ op_star
 id|p
 comma
 r_const
-r_char
+r_int
+r_int
 op_star
 id|s
 comma

@@ -4620,7 +4620,7 @@ op_amp
 id|devc-&gt;finfo
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;printk(&quot;SoftOSS: A 16 bit stereo soundcard is required&bslash;n&quot;);*/
+multiline_comment|/*&t;&t;printk(&quot;SoftOSS: A 16 bit stereo sound card is required&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL

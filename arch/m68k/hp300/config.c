@@ -158,11 +158,11 @@ op_assign
 id|hp300_pulse
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB
+macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 id|conswitchp
 op_assign
 op_amp
-id|fb_con
+id|dummy_con
 suffix:semicolon
 macro_line|#endif
 id|mach_max_dma_address

@@ -665,6 +665,9 @@ mdefine_line|#define sDisAiop(CTLP,AIOPNUM) &bslash;&n;{ &bslash;&n;   (CTLP)-&g
 multiline_comment|/***************************************************************************&n;Function: sDisCTSFlowCtl&n;Purpose:  Disable output flow control using CTS&n;Call:     sDisCTSFlowCtl(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;*/
 DECL|macro|sDisCTSFlowCtl
 mdefine_line|#define sDisCTSFlowCtl(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;TxControl[2] &amp;= ~CTSFC_EN; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;TxControl[0]); &bslash;&n;}
+multiline_comment|/***************************************************************************&n;Function: sDisIXANY&n;Purpose:  Disable IXANY Software Flow Control&n;Call:     sDisIXANY(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;*/
+DECL|macro|sDisIXANY
+mdefine_line|#define sDisIXANY(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;R[0x0e] = 0x86; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;R[0x0c]); &bslash;&n;}
 multiline_comment|/***************************************************************************&n;Function: DisParity&n;Purpose:  Disable parity&n;Call:     sDisParity(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;Comments: Function sSetParity() can be used in place of functions sEnParity(),&n;          sDisParity(), sSetOddParity(), and sSetEvenParity().&n;*/
 DECL|macro|sDisParity
 mdefine_line|#define sDisParity(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;TxControl[2] &amp;= ~PARITY_EN; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;TxControl[0]); &bslash;&n;}
@@ -686,6 +689,9 @@ mdefine_line|#define sEnAiop(CTLP,AIOPNUM) &bslash;&n;{ &bslash;&n;   (CTLP)-&gt
 multiline_comment|/***************************************************************************&n;Function: sEnCTSFlowCtl&n;Purpose:  Enable output flow control using CTS&n;Call:     sEnCTSFlowCtl(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;*/
 DECL|macro|sEnCTSFlowCtl
 mdefine_line|#define sEnCTSFlowCtl(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;TxControl[2] |= CTSFC_EN; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;TxControl[0]); &bslash;&n;}
+multiline_comment|/***************************************************************************&n;Function: sEnIXANY&n;Purpose:  Enable IXANY Software Flow Control&n;Call:     sEnIXANY(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;*/
+DECL|macro|sEnIXANY
+mdefine_line|#define sEnIXANY(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;R[0x0e] = 0x21; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;R[0x0c]); &bslash;&n;}
 multiline_comment|/***************************************************************************&n;Function: EnParity&n;Purpose:  Enable parity&n;Call:     sEnParity(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;Comments: Function sSetParity() can be used in place of functions sEnParity(),&n;          sDisParity(), sSetOddParity(), and sSetEvenParity().&n;&n;Warnings: Before enabling parity odd or even parity should be chosen using&n;          functions sSetOddParity() or sSetEvenParity().&n;*/
 DECL|macro|sEnParity
 mdefine_line|#define sEnParity(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;TxControl[2] |= PARITY_EN; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;TxControl[0]); &bslash;&n;}
@@ -701,6 +707,9 @@ mdefine_line|#define sEnRxStatusMode(ChP) sOutW((ChP)-&gt;ChanStat,STATMODE)
 multiline_comment|/***************************************************************************&n;Function: sEnTransmit&n;Purpose:  Enable transmit&n;Call:     sEnTransmit(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;*/
 DECL|macro|sEnTransmit
 mdefine_line|#define sEnTransmit(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;TxControl[3] |= TX_ENABLE; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;TxControl[0]); &bslash;&n;}
+multiline_comment|/***************************************************************************&n;Function: sEnTxSoftFlowCtl&n;Purpose:  Enable Tx Software Flow Control&n;Call:     sEnTxSoftFlowCtl(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;*/
+DECL|macro|sEnTxSoftFlowCtl
+mdefine_line|#define sEnTxSoftFlowCtl(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;R[0x06] = 0xc5; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;R[0x04]); &bslash;&n;}
 multiline_comment|/***************************************************************************&n;Function: sGetAiopIntStatus&n;Purpose:  Get the AIOP interrupt status&n;Call:     sGetAiopIntStatus(CtlP,AiopNum)&n;          CONTROLLER_T *CtlP; Ptr to controller structure&n;          int AiopNum; AIOP number&n;Return:   Byte_t: The AIOP interrupt status.  Bits 0 through 7&n;                         represent channels 0 through 7 respectively.  If a&n;                         bit is set that channel is interrupting.&n;*/
 DECL|macro|sGetAiopIntStatus
 mdefine_line|#define sGetAiopIntStatus(CTLP,AIOPNUM) sInB((CTLP)-&gt;AiopIntChanIO[AIOPNUM])
@@ -773,6 +782,12 @@ mdefine_line|#define sSetStop1(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;TxContr
 multiline_comment|/***************************************************************************&n;Function: sSetStop2&n;Purpose:  Set stop bits to 2&n;Call:     sSetStop2(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;*/
 DECL|macro|sSetStop2
 mdefine_line|#define sSetStop2(ChP) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;TxControl[2] |= STOP2; &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;TxControl[0]); &bslash;&n;}
+multiline_comment|/***************************************************************************&n;Function: sSetTxXOFFChar&n;Purpose:  Set the Tx XOFF flow control character&n;Call:     sSetTxXOFFChar(ChP,Ch)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;          Byte_t Ch; The value to set the Tx XOFF character to&n;*/
+DECL|macro|sSetTxXOFFChar
+mdefine_line|#define sSetTxXOFFChar(ChP,CH) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;R[0x07] = (CH); &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;R[0x04]); &bslash;&n;}
+multiline_comment|/***************************************************************************&n;Function: sSetTxXONChar&n;Purpose:  Set the Tx XON flow control character&n;Call:     sSetTxXONChar(ChP,Ch)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;          Byte_t Ch; The value to set the Tx XON character to&n;*/
+DECL|macro|sSetTxXONChar
+mdefine_line|#define sSetTxXONChar(ChP,CH) &bslash;&n;{ &bslash;&n;   (ChP)-&gt;R[0x0b] = (CH); &bslash;&n;   sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;R[0x08]); &bslash;&n;}
 multiline_comment|/***************************************************************************&n;Function: sStartRxProcessor&n;Purpose:  Start a channel&squot;s receive processor&n;Call:     sStartRxProcessor(ChP)&n;          CHANNEL_T *ChP; Ptr to channel structure&n;Comments: This function is used to start a Rx processor after it was&n;          stopped with sStopRxProcessor() or sStopSWInFlowCtl().  It&n;          will restart both the Rx processor and software input flow control.&n;&n;*/
 DECL|macro|sStartRxProcessor
 mdefine_line|#define sStartRxProcessor(ChP) sOutDW((ChP)-&gt;IndexAddr,*(DWord_t *)&amp;(ChP)-&gt;R[0])
@@ -1188,21 +1203,33 @@ DECL|macro|PCI_DEVICE_ID_RP32INTF
 macro_line|#undef PCI_DEVICE_ID_RP32INTF
 macro_line|#endif
 DECL|macro|PCI_VENDOR_ID_RP
-mdefine_line|#define PCI_VENDOR_ID_RP               0x11fe
+mdefine_line|#define PCI_VENDOR_ID_RP&t;&t;0x11fe
 DECL|macro|PCI_DEVICE_ID_RP32INTF
-mdefine_line|#define PCI_DEVICE_ID_RP32INTF         0x0001
+mdefine_line|#define PCI_DEVICE_ID_RP32INTF&t;&t;0x0001
 DECL|macro|PCI_DEVICE_ID_RP8INTF
-mdefine_line|#define PCI_DEVICE_ID_RP8INTF          0x0002
+mdefine_line|#define PCI_DEVICE_ID_RP8INTF&t;&t;0x0002
 DECL|macro|PCI_DEVICE_ID_RP16INTF
-mdefine_line|#define PCI_DEVICE_ID_RP16INTF         0x0003
+mdefine_line|#define PCI_DEVICE_ID_RP16INTF&t;&t;0x0003
 DECL|macro|PCI_DEVICE_ID_RP8OCTA
-mdefine_line|#define PCI_DEVICE_ID_RP8OCTA          0x0005
-macro_line|#ifndef RP4QUAD
+mdefine_line|#define PCI_DEVICE_ID_RP8OCTA&t;&t;0x0005
+macro_line|#ifndef PCI_DEVICE_ID_RP4QUAD
 DECL|macro|PCI_DEVICE_ID_RP4QUAD
-mdefine_line|#define PCI_DEVICE_ID_RP4QUAD&t;       0x0004
+mdefine_line|#define PCI_DEVICE_ID_RP4QUAD&t;&t;0x0004
 macro_line|#endif
-macro_line|#ifndef RP8J
+macro_line|#ifndef PCI_DEVICE_ID_RP8J
 DECL|macro|PCI_DEVICE_ID_RP8J
-mdefine_line|#define PCI_DEVICE_ID_RP8J&t;       0x0006
+mdefine_line|#define PCI_DEVICE_ID_RP8J&t;&t;0x0006
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_RPP4
+DECL|macro|PCI_DEVICE_ID_RPP4
+mdefine_line|#define PCI_DEVICE_ID_RPP4&t;&t;0x000A
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_RPP8
+DECL|macro|PCI_DEVICE_ID_RPP8
+mdefine_line|#define PCI_DEVICE_ID_RPP8&t;&t;0x000B
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_RP8M
+DECL|macro|PCI_DEVICE_ID_RP8M
+mdefine_line|#define PCI_DEVICE_ID_RP8M&t;&t;0x000C
+macro_line|#endif&t;
 eof

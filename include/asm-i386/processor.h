@@ -116,6 +116,71 @@ DECL|macro|X86_VENDOR_CENTAUR
 mdefine_line|#define X86_VENDOR_CENTAUR 5
 DECL|macro|X86_VENDOR_UNKNOWN
 mdefine_line|#define X86_VENDOR_UNKNOWN 0xff
+multiline_comment|/*&n; * capabilities of CPUs&n; */
+DECL|macro|X86_FEATURE_FPU
+mdefine_line|#define X86_FEATURE_FPU&t;&t;0x00000001&t;/* onboard FPU */
+DECL|macro|X86_FEATURE_VME
+mdefine_line|#define X86_FEATURE_VME&t;&t;0x00000002&t;/* Virtual Mode Extensions */
+DECL|macro|X86_FEATURE_DE
+mdefine_line|#define X86_FEATURE_DE&t;&t;0x00000004&t;/* Debugging Extensions */
+DECL|macro|X86_FEATURE_PSE
+mdefine_line|#define X86_FEATURE_PSE&t;&t;0x00000008&t;/* Page Size Extensions */
+DECL|macro|X86_FEATURE_TSC
+mdefine_line|#define X86_FEATURE_TSC&t;&t;0x00000010&t;/* Time Stamp Counter */
+DECL|macro|X86_FEATURE_MSR
+mdefine_line|#define X86_FEATURE_MSR&t;&t;0x00000020&t;/* Model-Specific Registers, RDMSR, WRMSR */
+DECL|macro|X86_FEATURE_PAE
+mdefine_line|#define X86_FEATURE_PAE&t;&t;0x00000040&t;/* Physical Address Extensions */
+DECL|macro|X86_FEATURE_MCE
+mdefine_line|#define X86_FEATURE_MCE&t;&t;0x00000080&t;/* Machine Check Exceptions */
+DECL|macro|X86_FEATURE_CX8
+mdefine_line|#define X86_FEATURE_CX8&t;&t;0x00000100&t;/* CMPXCHG8 instruction */
+DECL|macro|X86_FEATURE_APIC
+mdefine_line|#define X86_FEATURE_APIC&t;0x00000200&t;/* onboard APIC */
+DECL|macro|X86_FEATURE_10
+mdefine_line|#define X86_FEATURE_10&t;&t;0x00000400
+DECL|macro|X86_FEATURE_SEP
+mdefine_line|#define X86_FEATURE_SEP&t;&t;0x00000800&t;/* Fast System Call */ 
+DECL|macro|X86_FEATURE_MTRR
+mdefine_line|#define X86_FEATURE_MTRR&t;0x00001000&t;/* Memory Type Range Registers */
+DECL|macro|X86_FEATURE_PGE
+mdefine_line|#define X86_FEATURE_PGE&t;&t;0x00002000&t;/* Page Global Enable */
+DECL|macro|X86_FEATURE_MCA
+mdefine_line|#define X86_FEATURE_MCA&t;&t;0x00004000&t;/* Machine Check Architecture */
+DECL|macro|X86_FEATURE_CMOV
+mdefine_line|#define X86_FEATURE_CMOV&t;0x00008000&t;/* CMOV instruction (FCMOVCC and FCOMI too if FPU present) */
+DECL|macro|X86_FEATURE_PAT
+mdefine_line|#define X86_FEATURE_PAT&t;0x00010000&t;/* Page Attribute Table */
+DECL|macro|X86_FEATURE_PSE36
+mdefine_line|#define X86_FEATURE_PSE36&t;0x00020000&t;/* 36-bit PSEs */
+DECL|macro|X86_FEATURE_18
+mdefine_line|#define X86_FEATURE_18&t;&t;0x00040000
+DECL|macro|X86_FEATURE_19
+mdefine_line|#define X86_FEATURE_19&t;&t;0x00080000
+DECL|macro|X86_FEATURE_20
+mdefine_line|#define X86_FEATURE_20&t;&t;0x00100000
+DECL|macro|X86_FEATURE_21
+mdefine_line|#define X86_FEATURE_21&t;&t;0x00200000
+DECL|macro|X86_FEATURE_22
+mdefine_line|#define X86_FEATURE_22&t;&t;0x00400000
+DECL|macro|X86_FEATURE_MMX
+mdefine_line|#define X86_FEATURE_MMX&t;&t;0x00800000&t;/* multimedia extensions */
+DECL|macro|X86_FEATURE_FXSR
+mdefine_line|#define X86_FEATURE_FXSR&t;0x01000000&t;/* FXSAVE and FXRSTOR instructions (fast save and restore of FPU context), and CR4.OSFXSR (OS uses these instructions) available */
+DECL|macro|X86_FEATURE_25
+mdefine_line|#define X86_FEATURE_25&t;&t;0x02000000
+DECL|macro|X86_FEATURE_26
+mdefine_line|#define X86_FEATURE_26&t;&t;0x04000000
+DECL|macro|X86_FEATURE_27
+mdefine_line|#define X86_FEATURE_27&t;&t;0x08000000
+DECL|macro|X86_FEATURE_28
+mdefine_line|#define X86_FEATURE_28&t;&t;0x10000000
+DECL|macro|X86_FEATURE_29
+mdefine_line|#define X86_FEATURE_29&t;&t;0x20000000
+DECL|macro|X86_FEATURE_30
+mdefine_line|#define X86_FEATURE_30&t;&t;0x40000000
+DECL|macro|X86_FEATURE_AMD3D
+mdefine_line|#define X86_FEATURE_AMD3D&t;0x80000000
 r_extern
 r_struct
 id|cpuinfo_x86

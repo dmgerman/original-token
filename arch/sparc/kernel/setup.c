@@ -304,11 +304,6 @@ mdefine_line|#define BOOTME_KGDBB  0x8
 DECL|macro|BOOTME_KGDB
 mdefine_line|#define BOOTME_KGDB   0xc
 macro_line|#ifdef CONFIG_SUN_CONSOLE
-r_extern
-r_char
-op_star
-id|console_fb_path
-suffix:semicolon
 DECL|variable|console_fb
 r_static
 r_int
@@ -733,10 +728,6 @@ r_else
 id|console_fb
 op_assign
 l_int|1
-suffix:semicolon
-id|console_fb_path
-op_assign
-id|commands
 suffix:semicolon
 )brace
 )brace
@@ -1993,6 +1984,27 @@ op_assign
 op_amp
 id|fake_swapper_regs
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial_console
+)paren
+(brace
+macro_line|#ifdef CONFIG_PROM_CONSOLE
+id|conswitchp
+op_assign
+op_amp
+id|prom_con
+suffix:semicolon
+macro_line|#elif defined(CONFIG_DUMMY_CONSOLE)
+id|conswitchp
+op_assign
+op_amp
+id|dummy_con
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage

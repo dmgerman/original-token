@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd_pinnacle.c - Support for Turtle Beach Pinnacle and Fiji&n; *&n; * Turtle Beach MultiSound Soundcard Driver for Linux&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.2 1998/06/09 20:37:39 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd_pinnacle.c - Support for Turtle Beach Pinnacle and Fiji&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.2 1998/06/09 20:37:39 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -5707,13 +5707,11 @@ id|__initdata
 op_assign
 id|DEFFIFOSIZE
 suffix:semicolon
+DECL|variable|__initdata
 r_static
 r_int
-DECL|variable|__initdata
 id|calibrate_signal
 id|__initdata
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|init_module
 r_int
@@ -5722,6 +5720,51 @@ c_func
 (paren
 r_void
 )paren
+macro_line|#else
+r_static
+r_int
+id|io
+id|__initdata
+op_assign
+id|CONFIG_MSNDPIN_IO
+suffix:semicolon
+r_static
+r_int
+id|irq
+id|__initdata
+op_assign
+id|CONFIG_MSNDPIN_IRQ
+suffix:semicolon
+r_static
+r_int
+id|mem
+id|__initdata
+op_assign
+id|CONFIG_MSNDPIN_MEM
+suffix:semicolon
+r_static
+r_int
+id|fifosize
+id|__initdata
+op_assign
+id|DEFFIFOSIZE
+suffix:semicolon
+r_static
+r_int
+id|calibrate_signal
+id|__initdata
+suffix:semicolon
+id|__initfunc
+c_func
+(paren
+r_int
+id|msnd_pinnacle_init
+c_func
+(paren
+r_void
+)paren
+)paren
+macro_line|#endif
 (brace
 r_int
 id|err
@@ -6195,6 +6238,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
@@ -1243,7 +1244,7 @@ op_logical_neg
 (paren
 id|boot_cpu_data.x86_capability
 op_amp
-l_int|16
+id|X86_FEATURE_TSC
 )paren
 )paren
 (brace

@@ -5489,7 +5489,7 @@ c_func
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
-macro_line|#if ((~0UL) == 0xffffffff)
+macro_line|#if (BITS_PER_LONG == 32)
 r_if
 c_cond
 (paren
@@ -5907,7 +5907,7 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
-macro_line|#if ((~0UL) == 0xffffffff)
+macro_line|#if (BITS_PER_LONG == 32)
 id|printk
 c_func
 (paren

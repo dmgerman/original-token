@@ -116,7 +116,7 @@ id|coda_hard
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* introduces a timeout on upcalls */
+multiline_comment|/* allows signals during upcalls */
 DECL|variable|coda_timeout
 r_int
 r_int
@@ -1588,10 +1588,51 @@ multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-r_extern
+DECL|variable|proc_sys_root
 r_struct
 id|proc_dir_entry
 id|proc_sys_root
+op_assign
+(brace
+id|PROC_SYS
+comma
+l_int|3
+comma
+l_string|&quot;sys&quot;
+comma
+multiline_comment|/* inode, name */
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* mode, nlink, uid, gid */
+l_int|0
+comma
+op_amp
+id|proc_dir_inode_operations
+comma
+multiline_comment|/* size, ops */
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* get_info, fill_inode */
+l_int|NULL
+comma
+multiline_comment|/* next */
+l_int|NULL
+comma
+l_int|NULL
+multiline_comment|/* parent, subdir */
+)brace
 suffix:semicolon
 DECL|variable|proc_sys_coda
 r_struct
@@ -1633,47 +1674,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|variable|proc_fs
-r_struct
-id|proc_dir_entry
-id|proc_fs
-op_assign
-(brace
-id|PROC_FS
-comma
-l_int|2
-comma
-l_string|&quot;fs&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_dir_inode_operations
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * target directory structure:&n;   /proc/fs/&n;   /proc/fs/coda&n;   /proc/fs/coda/{vfs_stats,&n;&n;*/
+multiline_comment|/*&n; target directory structure:&n;   /proc/fs  (see linux/fs/proc/root.c)&n;   /proc/fs/coda&n;   /proc/fs/coda/{vfs_stats,&n;&n;*/
 DECL|variable|proc_fs_coda
 r_struct
 id|proc_dir_entry
@@ -1955,6 +1956,77 @@ id|coda_cache_inv_stats_get_info
 )brace
 suffix:semicolon
 macro_line|#endif
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|init_coda
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Coda Kernel/Venus communications, v4.6.0, braam@cs.cmu.edu&bslash;n&quot;
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|init_coda_psdev
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Problem (%d) in init_coda_psdev&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
+r_return
+id|status
+suffix:semicolon
+)brace
+id|status
+op_assign
+id|init_coda_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;coda: failed in init_coda_fs!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_return
+id|status
+suffix:semicolon
+)brace
 DECL|function|init_coda_psdev
 r_int
 id|init_coda_psdev
@@ -2057,17 +2129,7 @@ id|proc_register
 c_func
 (paren
 op_amp
-id|proc_root
-comma
-op_amp
-id|proc_fs
-)paren
-suffix:semicolon
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_fs
+id|proc_root_fs
 comma
 op_amp
 id|proc_fs_coda
@@ -2113,6 +2175,8 @@ op_amp
 id|proc_coda_cache_inv
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SYSCTL
 id|proc_register
 c_func
 (paren
@@ -2197,7 +2261,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Coda Kernel/User communications module 2.0&bslash;n&quot;
+l_string|&quot;Coda Kernel/Venus communications (module), v4.6.0, braam@cs.cmu.edu&bslash;n&quot;
 )paren
 suffix:semicolon
 id|status
@@ -2345,6 +2409,8 @@ comma
 id|proc_sys_coda.low_ino
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SYSCTL
 id|proc_unregister
 c_func
 (paren
@@ -2385,18 +2451,9 @@ id|proc_unregister
 c_func
 (paren
 op_amp
-id|proc_fs
+id|proc_root_fs
 comma
 id|proc_fs_coda.low_ino
-)paren
-suffix:semicolon
-id|proc_unregister
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-id|proc_fs.low_ino
 )paren
 suffix:semicolon
 macro_line|#endif 

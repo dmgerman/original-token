@@ -8,8 +8,7 @@ macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* With kmod, drivers can now load the 8390 module themselves! */
-macro_line|#ifdef CONFIG_KMOD
-DECL|macro|LOAD_8390_BY_KMOD
+macro_line|#if 0 /* def CONFIG_KMOD */
 mdefine_line|#define LOAD_8390_BY_KMOD
 macro_line|#endif
 DECL|macro|TX_2X_PAGES

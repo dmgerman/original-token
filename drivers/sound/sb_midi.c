@@ -550,7 +550,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;sb_midi: Too many midi devices detected&bslash;n&quot;
+l_string|&quot;sb_midi: too many MIDI devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -607,7 +607,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;soundblaster: Failed to allocate MIDI memory.&bslash;n&quot;
+l_string|&quot;Sound Blaster:  failed to allocate MIDI memory.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sound_unload_mididev
@@ -695,7 +695,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;soundblaster: Failed to allocate MIDI memory.&bslash;n&quot;
+l_string|&quot;Sound Blaster:  failed to allocate MIDI memory.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree

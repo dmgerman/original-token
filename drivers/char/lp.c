@@ -1020,7 +1020,7 @@ id|minor
 dot
 id|irq_detected
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|lp_table
 (braket

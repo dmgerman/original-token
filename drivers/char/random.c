@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1710,7 +1711,7 @@ c_cond
 (paren
 id|boot_cpu_data.x86_capability
 op_amp
-l_int|16
+id|X86_FEATURE_TSC
 )paren
 (brace
 id|__u32

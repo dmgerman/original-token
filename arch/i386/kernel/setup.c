@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU detection and feature setting code by Mike Jagdis&n; *  and Martin Mares, November 1997, and partially recoded and moved&n; *  form head.S by Willy Tarreau, July 1998.&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,6 +21,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -603,7 +604,7 @@ suffix:semicolon
 id|boot_cpu_data.x86_capability
 op_and_assign
 op_complement
-l_int|8
+id|X86_FEATURE_PSE
 suffix:semicolon
 )brace
 r_else
@@ -835,17 +836,17 @@ l_string|&quot;fpu&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_VT
-macro_line|#ifdef CONFIG_FB
-id|conswitchp
-op_assign
-op_amp
-id|fb_con
-suffix:semicolon
-macro_line|#else
+macro_line|#if defined(CONFIG_VGA_CONSOLE)
 id|conswitchp
 op_assign
 op_amp
 id|vga_con
+suffix:semicolon
+macro_line|#elif defined(CONFIG_DUMMY_CONSOLE)
+id|conswitchp
+op_assign
+op_amp
+id|dummy_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
@@ -916,6 +917,765 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Try to enable ID flag in EFLAGS, in order to allow CPUID instruction.&n; *&t;Return 0 if not possible, anything else if it succeeded.&n; *&t;&n; */
+DECL|function|enable_cpuid
+r_extern
+id|__u32
+id|enable_cpuid
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__u32
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;pushfl&bslash;n&bslash;t&quot;
+l_string|&quot;popl %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%eax,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;xorl $0x200000,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;pushl %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;popfl&bslash;n&bslash;t&quot;
+l_string|&quot;pushfl&bslash;n&bslash;t&quot;
+l_string|&quot;popl %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;xorl %%ecx,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;andl $0x200000,%%eax&bslash;n&bslash;t&quot;
+multiline_comment|/* get only the ID flag */
+l_string|&quot;orl  %%eax,%%ecx&bslash;n&bslash;t&quot;
+multiline_comment|/* and force it into EFLAGS */
+l_string|&quot;pushl %%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;popfl&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+suffix:colon
+l_string|&quot;cc&quot;
+comma
+l_string|&quot;%ecx&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Returns 1 only if the DIV instruction keeps flags. This is the case on&n; *&t;all Cyrix, and on Intel&squot;s PPro/PII, but they can be distinguished from&n; *&t;a Cyrix. In other cases, it returns 0.&n; */
+DECL|function|div_keeps_flags
+r_extern
+r_inline
+id|__u32
+id|div_keeps_flags
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__u32
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;sahf&bslash;n&bslash;t&quot;
+l_string|&quot;movb $5,%%al&bslash;n&bslash;t&quot;
+l_string|&quot;movb $2,%%bl&bslash;n&bslash;t&quot;
+l_string|&quot;divb %%bl&bslash;n&bslash;t&quot;
+l_string|&quot;lahf&bslash;n&bslash;t&quot;
+l_string|&quot;cmpb $2,%%ah&bslash;n&bslash;t&quot;
+l_string|&quot;setzb %%al&bslash;n&bslash;t&quot;
+l_string|&quot;movzbl %%al, %%eax&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+suffix:colon
+l_string|&quot;cc&quot;
+comma
+l_string|&quot;%ebx&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Functions for getting/setting Cyrix&squot;s control registers (CCR).&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_inline
+r_void
+id|setCx86
+c_func
+(paren
+id|__u8
+id|reg
+comma
+id|__u8
+id|val
+)paren
+)paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;outb %%al,$0x22&bslash;n&bslash;t&quot;
+l_string|&quot;mov %1,%%al&bslash;n&bslash;t&quot;
+l_string|&quot;outb %%al,$0x23&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|reg
+)paren
+comma
+l_string|&quot;q&quot;
+(paren
+id|val
+)paren
+suffix:colon
+l_string|&quot;eax&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_inline
+id|__u8
+id|getCx86
+c_func
+(paren
+id|__u8
+id|reg
+)paren
+)paren
+(brace
+id|__u8
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;outb %%al,$0x22&bslash;n&bslash;t&quot;
+l_string|&quot;inb $0x23,%%al&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|reg
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|refine_cyrix_detection
+c_func
+(paren
+r_struct
+id|cpuinfo_x86
+op_star
+id|c
+)paren
+)paren
+(brace
+id|__u8
+id|ccr3
+suffix:semicolon
+id|ccr3
+op_assign
+id|getCx86
+c_func
+(paren
+l_int|0xc3
+)paren
+suffix:semicolon
+id|setCx86
+c_func
+(paren
+l_int|0xc3
+comma
+id|ccr3
+op_or
+l_int|0x80
+)paren
+suffix:semicolon
+id|getCx86
+c_func
+(paren
+l_int|0xc0
+)paren
+suffix:semicolon
+multiline_comment|/* dummy read to change the bus */
+r_if
+c_cond
+(paren
+id|getCx86
+c_func
+(paren
+l_int|0xc3
+)paren
+op_eq
+id|ccr3
+)paren
+multiline_comment|/* ccr3 unchanged : DEVID not supported */
+r_return
+suffix:semicolon
+multiline_comment|/* let&squot;s end here. */
+id|setCx86
+c_func
+(paren
+l_int|0xc3
+comma
+id|ccr3
+)paren
+suffix:semicolon
+multiline_comment|/* restore ccr3 */
+multiline_comment|/*&n;&t; * Now, fill x86_mask/model with DEVID.&n;&t; */
+id|c-&gt;x86_model
+op_assign
+id|getCx86
+c_func
+(paren
+l_int|0xfe
+)paren
+suffix:semicolon
+multiline_comment|/* DIR0 to model */
+id|c-&gt;x86_mask
+op_assign
+id|getCx86
+c_func
+(paren
+l_int|0xff
+)paren
+suffix:semicolon
+multiline_comment|/* DIR1 to mask */
+r_if
+c_cond
+(paren
+(paren
+id|c-&gt;x86_model
+op_amp
+l_int|0xF0
+)paren
+op_eq
+l_int|0x30
+)paren
+(brace
+multiline_comment|/* 6x86(L)! we got it !*/
+multiline_comment|/*&n;&t;&t; * we&squot;ll do here a few optimizations.&n;&t;&t; */
+multiline_comment|/* since 6x86(L) doesn&squot;t support SMP, we&squot;ll deactivate all LOCK# cycles&n;&t;&t; * so that even if the kernel has been compiled with the -D__SMP__ option&n;&t;&t; * as this is often the case, lock instructions won&squot;t hurt performance.&n;&t;&t; */
+id|setCx86
+c_func
+(paren
+l_int|0xc1
+comma
+id|getCx86
+c_func
+(paren
+l_int|0xc1
+)paren
+op_or
+l_int|0x10
+)paren
+suffix:semicolon
+multiline_comment|/* assert NO_LOCK */
+id|setCx86
+c_func
+(paren
+l_int|0xc3
+comma
+(paren
+id|getCx86
+c_func
+(paren
+l_int|0xc3
+)paren
+op_or
+l_int|0x10
+)paren
+op_amp
+l_int|0x1F
+)paren
+suffix:semicolon
+multiline_comment|/* enables high registers */
+id|setCx86
+c_func
+(paren
+l_int|0xe8
+comma
+id|getCx86
+c_func
+(paren
+l_int|0xe8
+)paren
+op_or
+l_int|0x10
+)paren
+suffix:semicolon
+multiline_comment|/* enable Directory Table Entry Cache */
+id|setCx86
+c_func
+(paren
+l_int|0xe9
+comma
+id|getCx86
+c_func
+(paren
+l_int|0xe9
+)paren
+op_or
+l_int|0x01
+)paren
+suffix:semicolon
+multiline_comment|/* enable cache Write-Through Allocate */
+id|setCx86
+c_func
+(paren
+l_int|0xc3
+comma
+id|getCx86
+c_func
+(paren
+l_int|0xc3
+)paren
+op_amp
+l_int|0x0F
+)paren
+suffix:semicolon
+multiline_comment|/* disable high registers */
+)brace
+macro_line|#ifdef CONFIG_CYRIX_SUSP
+multiline_comment|/*&n;&t; * This option enables the low power feature of the 6x86: it can&n;&t; * suspend on halt without any performance hurt, as Cyrix claims.&n;&t; *&n;&t; * This option is not exported yet, as I wonder about the cycle&n;&t; * counter..&t;&t;&t;Linus&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|c-&gt;x86_model
+op_amp
+l_int|0xF0
+)paren
+op_eq
+l_int|0x30
+)paren
+op_logical_or
+multiline_comment|/* 6x86(L) */
+(paren
+(paren
+id|c-&gt;x86_model
+op_amp
+l_int|0xF0
+)paren
+op_eq
+l_int|0x50
+)paren
+)paren
+(brace
+multiline_comment|/* 6x86MX */
+multiline_comment|/*&n;&t;&t; * suspend on halt : this amazingly reduces power consumption&n;&t;&t; * and cpu overheat.&n;&t;&t; */
+id|setCx86
+c_func
+(paren
+l_int|0xc2
+comma
+id|getCx86
+c_func
+(paren
+l_int|0xc2
+)paren
+op_or
+l_int|0x08
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+)brace
+multiline_comment|/*&n; *&t;This function uses CPUID to get some precisions about the current&n; *&t;cpu. It&squot;s called directly from head.S, just before branching to&n; *&t;start_kernel. It could have been called from other points, but in&n; *&t;any case, it must be called before setup_arch() because this function&n; *&t;uses (and changes) x86_capability which, of course, must have been set.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|refine_cpu_detection
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+r_int
+id|dummy
+comma
+id|r
+suffix:semicolon
+r_struct
+id|cpuinfo_x86
+op_star
+id|c
+op_assign
+op_amp
+id|boot_cpu_data
+suffix:semicolon
+id|c-&gt;cpuid_level
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|enable_cpuid
+c_func
+(paren
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t; * CPUID is supported by this cpu. It&squot;s a recent one.&n;&t; * All Pentium, PentiumPro, PentiumII, AmdK5, AmdK6, 6x86MX and some&n;&t; * latests 486 will go directly here.&n;&t; */
+multiline_comment|/* get vendor_id string */
+id|cpuid
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|c-&gt;cpuid_level
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+(braket
+l_int|0
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+(braket
+l_int|8
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* get model and mask */
+id|cpuid
+c_func
+(paren
+l_int|1
+comma
+op_amp
+id|r
+comma
+op_amp
+id|dummy
+comma
+op_amp
+id|dummy
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_capability
+)paren
+suffix:semicolon
+id|c-&gt;x86
+op_assign
+(paren
+id|r
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xF
+suffix:semicolon
+id|c-&gt;x86_model
+op_assign
+(paren
+id|r
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0xF
+suffix:semicolon
+id|c-&gt;x86_mask
+op_assign
+id|r
+op_amp
+l_int|0xF
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t; * CPUID doesn&squot;t seem to be supported. But if the cpu is a Cyrix, we&n;&t;&t; * can try to activate it. If not, it&squot;s simply an old 386 or 486 from&n;&t;&t; * which we won&squot;t get anything more.&n;&t;&t; */
+id|__u8
+id|ccr3
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;x86
+op_le
+l_int|3
+)paren
+multiline_comment|/* nothing more can be done, it&squot;s a 386. */
+r_return
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The following test can distinguish a Cyrix from an other 486 cpu.&n;&t;&t; * As Intel&squot;s PPro and PII behaves like cyrix, we must use this code&n;&t;&t; * only when we are certain that the cpu *is not* a PPro/PII.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|div_keeps_flags
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* just a simple 486. let&squot;s forget CPUID. */
+multiline_comment|/*&n;&t;&t; * now we know we have a Cyrix. let&squot;s activate its CPUID if it has one.&n;&t;&t; */
+id|setCx86
+c_func
+(paren
+l_int|0xC3
+comma
+(paren
+(paren
+id|ccr3
+op_assign
+id|getCx86
+c_func
+(paren
+l_int|0xC3
+)paren
+)paren
+op_amp
+l_int|0x0F
+)paren
+op_or
+l_int|0x10
+)paren
+suffix:semicolon
+multiline_comment|/* enable all CCRs */
+id|setCx86
+c_func
+(paren
+l_int|0xE8
+comma
+id|getCx86
+c_func
+(paren
+l_int|0xE8
+)paren
+op_or
+l_int|0x80
+)paren
+suffix:semicolon
+id|setCx86
+c_func
+(paren
+l_int|0xC3
+comma
+id|ccr3
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * first we assume it&squot;s a cx486 because it doesn&squot;t have cpuid.&n;&t;&t; */
+op_star
+(paren
+r_int
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+op_assign
+l_int|0x7869727943ULL
+suffix:semicolon
+multiline_comment|/* &quot;Cyrix&bslash;0&bslash;0&bslash;0&quot; */
+id|c-&gt;x86_model
+op_assign
+l_int|0xFE
+suffix:semicolon
+multiline_comment|/* Cx486 */
+id|c-&gt;x86_mask
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * if CPUID is supported now, we&squot;ll use it, but won&squot;t trust it.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|enable_cpuid
+c_func
+(paren
+)paren
+)paren
+(brace
+id|cpuid
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|c-&gt;cpuid_level
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+(braket
+l_int|0
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+(braket
+l_int|8
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
+id|cpuid
+c_func
+(paren
+l_int|1
+comma
+op_amp
+id|r
+comma
+op_amp
+id|dummy
+comma
+op_amp
+id|dummy
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_capability
+)paren
+suffix:semicolon
+id|c-&gt;x86
+op_assign
+(paren
+id|r
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xF
+suffix:semicolon
+multiline_comment|/* cpu family */
+id|c-&gt;x86_model
+op_assign
+(paren
+id|r
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0xF
+suffix:semicolon
+id|c-&gt;x86_mask
+op_assign
+id|r
+op_amp
+l_int|0xF
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * If we have any Cyrix, even the latest one, we&squot;ll read DEVID.&n;&t; * As it was assumed in head.S, we suppose that Cyrix&squot;s DEVID is&n;&t; * more accurate than its CPUID. So if available, we read it.&n;&t; */
+r_if
+c_cond
+(paren
+op_star
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|c-&gt;x86_vendor_id
+op_eq
+l_int|0x69727943
+)paren
+(brace
+multiline_comment|/* &quot;Cyri&quot;... */
+id|refine_cyrix_detection
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+)brace
+id|c-&gt;x86_vendor_id
+(braket
+l_int|12
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* terminates the vendor id string. */
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -947,7 +1707,7 @@ multiline_comment|/* Cyrix claims they have a TSC, but it is broken */
 id|c-&gt;x86_capability
 op_and_assign
 op_complement
-l_int|16
+id|X86_FEATURE_TSC
 suffix:semicolon
 multiline_comment|/* Note that some of the possibilities this decoding allows&n;&t; * have never actually been manufactured - but those that&n;&t; * do actually exist are correctly decoded.&n;&t; */
 r_if
@@ -1141,11 +1901,7 @@ op_logical_and
 (paren
 id|c-&gt;x86_capability
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
+id|X86_FEATURE_CX8
 )paren
 )paren
 id|s
@@ -2682,7 +3438,7 @@ id|x86_cap_flags
 l_int|17
 )braket
 op_assign
-l_string|&quot;pse&quot;
+l_string|&quot;pse36&quot;
 suffix:semicolon
 id|x86_cap_flags
 (braket
@@ -2710,7 +3466,7 @@ op_logical_and
 (paren
 id|c-&gt;x86_capability
 op_amp
-l_int|0x800
+id|X86_FEATURE_SEP
 )paren
 op_logical_and
 id|c-&gt;x86_model

@@ -211,7 +211,7 @@ l_int|0x0000
 comma
 l_int|0xaaaa
 comma
-l_int|0xaaaa
+l_int|0x5555
 comma
 l_int|0x0000
 comma
@@ -302,7 +302,7 @@ l_int|0x0000
 comma
 l_int|0xaaaa
 comma
-l_int|0xaaaa
+l_int|0x5555
 comma
 l_int|0x0000
 comma

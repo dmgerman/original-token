@@ -120,7 +120,8 @@ op_star
 id|p
 comma
 r_const
-r_char
+r_int
+r_int
 op_star
 id|s
 comma
