@@ -4364,6 +4364,12 @@ comma
 id|pp-&gt;base
 )paren
 suffix:semicolon
+id|parport_release
+c_func
+(paren
+id|bc-&gt;pdev
+)paren
+suffix:semicolon
 id|parport_unregister_device
 c_func
 (paren

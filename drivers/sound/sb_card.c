@@ -367,11 +367,9 @@ id|sb_be_quiet
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|esstype
+r_extern
 r_int
 id|esstype
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* ESS chip type */
 macro_line|#ifdef MODULE

@@ -75,18 +75,6 @@ DECL|macro|MDL_ES1868MIDI
 mdefine_line|#define MDL_ES1868MIDI&t;14&t;/* MIDI port of ESS1868 */
 DECL|macro|MDL_AEDSP
 mdefine_line|#define MDL_AEDSP&t;15&t;/* Audio Excel DSP 16 */
-DECL|macro|SUBMDL_ES1788
-mdefine_line|#define SUBMDL_ES1788&t;0x10&t;/* Subtype ES1788 for specific handling */
-DECL|macro|SUBMDL_ES1868
-mdefine_line|#define SUBMDL_ES1868&t;0x11&t;/* Subtype ES1868 for specific handling */
-DECL|macro|SUBMDL_ES1869
-mdefine_line|#define SUBMDL_ES1869&t;0x12&t;/* Subtype ES1869 for specific handling */
-DECL|macro|SUBMDL_ES1878
-mdefine_line|#define SUBMDL_ES1878&t;0x13&t;/* Subtype ES1878 for specific handling */
-DECL|macro|SUBMDL_ES1887
-mdefine_line|#define SUBMDL_ES1887&t;0x14&t;/* Subtype ES1887 for specific handling */
-DECL|macro|SUBMDL_ES1888
-mdefine_line|#define SUBMDL_ES1888&t;0x14&t;/* Subtype ES1888 for specific handling */
 DECL|macro|SUBMDL_ALS007
 mdefine_line|#define SUBMDL_ALS007&t;42&t;/* ALS-007 differs from SB16 only in mixer */
 multiline_comment|/* register assignment */

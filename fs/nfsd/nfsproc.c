@@ -2235,7 +2235,7 @@ id|readdirres
 comma
 id|none
 comma
-id|RC_REPLSTAT
+id|RC_REPLBUFF
 )paren
 comma
 id|PROC

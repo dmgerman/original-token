@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/sys_timer.c&n; *&n; * The default timer for the Level 2 sequencer interface&n; * Uses the (1/HZ sec) timer of kernel.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Andrew Veliath  : adapted tmr2ticks from level 1 sequencer (avoid overflow)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_SEQUENCER
@@ -101,29 +101,51 @@ r_int
 id|tmr_value
 )paren
 (brace
-multiline_comment|/*&n;&t; *    Convert system timer ticks (HZ) to MIDI ticks&n;&t; *    (divide # of MIDI ticks/minute by # of system ticks/minute).&n;&t; */
-r_return
-(paren
-(paren
+multiline_comment|/*&n;&t; *    Convert timer ticks to MIDI ticks&n;&t; */
+r_int
+r_int
+id|tmp
+suffix:semicolon
+r_int
+r_int
+id|scale
+suffix:semicolon
+multiline_comment|/* tmr_value (ticks per sec) *&n;&t;   1000000 (usecs per sec) / HZ (ticks per sec) -=&gt; usecs */
+id|tmp
+op_assign
 id|tmr_value
 op_star
+(paren
+l_int|1000000
+op_div
+id|HZ
+)paren
+suffix:semicolon
+id|scale
+op_assign
+(paren
+l_int|60
+op_star
+l_int|1000000
+)paren
+op_div
+(paren
 id|curr_tempo
 op_star
 id|curr_timebase
 )paren
-op_plus
+suffix:semicolon
+multiline_comment|/* usecs per MIDI tick */
+r_return
 (paren
-l_int|30
-op_star
-l_int|100
-)paren
+id|tmp
+op_plus
+id|scale
+op_div
+l_int|2
 )paren
 op_div
-(paren
-l_int|60
-op_star
-id|HZ
-)paren
+id|scale
 suffix:semicolon
 )brace
 r_static

@@ -1,17 +1,39 @@
-multiline_comment|/*&n; * Created: 9-Jan-1999&n; *&n; * TODO: &t;consistency speed calculations!!&n; * ????:&t;Did I break MIDI support?&n; *&n; * This files contains ESS chip specifics. It&squot;s based on the existing ESS&n; * handling as it resided in sb_common.c, sb_mixer.c and sb_audio.c. This&n; * file adds features like:&n; * - Chip Identification (as shown in /proc/sound)&n; * - RECLEV support for ES1688 and later&n; * - 6 bits playback level support chips later than ES1688&n; * - Recording level support on a per-device basis for ES1887&n; * - Full-Duplex for ES1887 (under development)&n; *&n; * Full duplex is enabled by specifying dma16. While the normal dma must&n; * be one of 0, 1 or 3, dma16 can be one of 0, 1, 3 or 5. DMA 5 is a 16 bit&n; * DMA channel, while the others are 8 bit..&n; *&n; * ESS detection isn&squot;t full proof (yet). If it fails an additional module&n; * parameter esstype can be specified to be one of the following:&n; * 688, 1688, 1868, 1869, 1788, 1887, 1888&n; *&n; * History:&n; *&n; * Rolf Fokkens&t;(Dec 20 1998):&t;ES188x recording level support on a per&n; *&t;&t;&t;&t;&t;&t;&t;&t;input basis.&n; *&t;&t;&t;&t;(Dec 24 1998):&t;Recognition of ES1788, ES1887, ES1888,&n; *&t;&t;&t;&t;&t;&t;&t;&t;ES1868, ES1869 and ES1878. Could be used for&n; *&t;&t;&t;&t;&t;&t;&t;&t;specific handling in the future. All except&n; *&t;&t;&t;&t;&t;&t;&t;&t;ES1887 and ES1888 and ES688 are handled like&n; *&t;&t;&t;&t;&t;&t;&t;&t;ES1688.&n; *&t;&t;&t;&t;(Dec 27 1998):&t;RECLEV for all (?) ES1688+ chips. ES188x now&n; *&t;&t;&t;&t;&t;&t;&t;&t;have the &quot;Dec 20&quot; support + RECLEV&n; *&t;&t;&t;&t;(jan  2 1999):&t;Preparation for Full Duplex. This means&n; *&t;&t;&t;&t;&t;&t;&t;&t;Audio 2 is now used for playback when dma16&n; *&t;&t;&t;&t;&t;&t;&t;&t;is specified. The next step would be to use&n; *&t;&t;&t;&t;&t;&t;&t;&t;Audio 1 and Audio 2 at the same time.&n; */
 DECL|macro|FKS_LOGGING
 macro_line|#undef FKS_LOGGING
+DECL|macro|FKS_TEST
+macro_line|#undef FKS_TEST
+multiline_comment|/*&n; * tabs should be 4 spaces, in vi(m): set tabstop=4&n; *&n; * TODO: &t;consistency speed calculations!!&n; *&t;&t;&t;cleanup!&n; * ????:&t;Did I break MIDI support?&n; *&n; * History:&n; *&n; * Rolf Fokkens&t;(Dec 20 1998):&t;ES188x recording level support on a per&n; *&t;&t;&t;&t;&t;&t;&t;&t;input basis.&n; *&t;&t;&t;&t;(Dec 24 1998):&t;Recognition of ES1788, ES1887, ES1888,&n; *&t;&t;&t;&t;&t;&t;&t;&t;ES1868, ES1869 and ES1878. Could be used for&n; *&t;&t;&t;&t;&t;&t;&t;&t;specific handling in the future. All except&n; *&t;&t;&t;&t;&t;&t;&t;&t;ES1887 and ES1888 and ES688 are handled like&n; *&t;&t;&t;&t;&t;&t;&t;&t;ES1688.&n; *&t;&t;&t;&t;(Dec 27 1998):&t;RECLEV for all (?) ES1688+ chips. ES188x now&n; *&t;&t;&t;&t;&t;&t;&t;&t;have the &quot;Dec 20&quot; support + RECLEV&n; *&t;&t;&t;&t;(Jan  2 1999):&t;Preparation for Full Duplex. This means&n; *&t;&t;&t;&t;&t;&t;&t;&t;Audio 2 is now used for playback when dma16&n; *&t;&t;&t;&t;&t;&t;&t;&t;is specified. The next step would be to use&n; *&t;&t;&t;&t;&t;&t;&t;&t;Audio 1 and Audio 2 at the same time.&n; *&t;&t;&t;&t;(Jan  9 1999):&t;Put all ESS stuff into sb_ess.[ch], this&n; *&t;&t;&t;&t;&t;&t;&t;&t;includes both the ESS stuff that has been in&n; *&t;&t;&t;&t;&t;&t;&t;&t;sb_*[ch] before I touched it and the ESS suppor&n; *&t;&t;&t;&t;&t;&t;&t;&t;I added later&n; *&t;&t;&t;&t;(Jan 23 1998):&t;Full Duplex seems to work. I wrote a small&n; *&t;&t;&t;&t;&t;&t;&t;&t;test proggy which works OK. Haven&squot;t found&n; *&t;&t;&t;&t;&t;&t;&t;&t;any applications to test it though. So why did&n; *&t;&t;&t;&t;&t;&t;&t;&t;I bother to create it anyway?? :) Just for&n; *&t;&t;&t;&t;&t;&t;&t;&t;fun.&n; *&n; * This files contains ESS chip specifics. It&squot;s based on the existing ESS&n; * handling as it resided in sb_common.c, sb_mixer.c and sb_audio.c. This&n; * file adds features like:&n; * - Chip Identification (as shown in /proc/sound)&n; * - RECLEV support for ES1688 and later&n; * - 6 bits playback level support chips later than ES1688&n; * - Recording level support on a per-device basis for ES1887&n; * - Full-Duplex for ES1887 (under development)&n; *&n; * Full duplex is enabled by specifying dma16. While the normal dma must&n; * be one of 0, 1 or 3, dma16 can be one of 0, 1, 3 or 5. DMA 5 is a 16 bit&n; * DMA channel, while the others are 8 bit..&n; *&n; * ESS detection isn&squot;t full proof (yet). If it fails an additional module&n; * parameter esstype can be specified to be one of the following:&n; * -1, 0, 688, 1688, 1868, 1869, 1788, 1887, 1888&n; * -1 means: mimic 2.0 behaviour, &n; *  0 means: auto detect.&n; *   others: explicitly specify chip&n; * -1 is default, cause auto detect still doesn&squot;t work.&n; */
 multiline_comment|/*&n; * About the documentation&n; *&n; * I don&squot;t know if the chips all are OK, but the documentation is buggy. &squot;cause&n; * I don&squot;t have all the cips myself, there&squot;s a lot I cannot verify. I&squot;ll try to&n; * keep track of my latest insights about his here. If you have additional info,&n; * please enlighten me (fokkensr@vertis.nl)!&n; *&n; * I had the impression that ES1688 also has 6 bit master volume control. The&n; * documentation about ES1888 (rev C, october &squot;95) claims that ES1888 has&n; * the following features ES1688 doesn&squot;t have:&n; * - 6 bit master volume&n; * - Full Duplex&n; * So ES1688 apparently doesn&squot;t have 6 bit master volume control, but the&n; * ES1688 does have RECLEV control. Makes me wonder: does ES688 have it too?&n; * Without RECLEV ES688 won&squot;t be much fun I guess.&n; *&n; * From the ES1888 (rev C, october &squot;95) documentation I got the impression&n; * that registers 0x68 to 0x6e don&squot;t exist which means: no recording volume&n; * controls. To my surprise the ES888 documentation (1/14/96) claims that&n; * ES888 does have these record mixer registers, but that ES1888 doesn&squot;t have&n; * 0x69 and 0x6b. So the rest should be there.&n; *&n; * I&squot;m trying to get ES1887 Full Duplex. Audio 2 is playback only, while Audio 2&n; * is both record and playback. I think I should use Audio 2 for all playback.&n; *&n; * The documentation is an adventure: it&squot;s close but not fully accurate. I&n; * found out that after a reset some registers are *NOT* reset, though the&n; * docs say the would be. Interresting ones are 0x7f, 0x7d and 0x7a. They are&n; * related to the Audio 2 channel. I also was suprised about the consequenses&n; * of writing 0x00 to 0x7f (which should be done by reset): The ES1887 moves&n; * into ES1888 mode. This means that it claims IRQ 11, which happens to be my&n; * ISDN adapter. Needless to say it no longer worked. I now understand why&n; * after rebooting 0x7f already was 0x05, the value of my choise: the BIOS&n; * did it.&n; *&n; * Oh, and this is another trap: in ES1887 docs mixer register 0x70 is decribed&n; * as if it&squot;s exactly the same as register 0xa1. This is *NOT* true. The&n; * description of 0x70 in ES1869 docs is accurate however.&n; * Well, the assumption about ES1869 was wrong: register 0x70 is very much&n; * like register 0xa1, except that bit 7 is allways 1, whatever you want&n; * it to be.&n; *&n; * When using audio 2 mixer register 0x72 seems te be meaningless. Only 0xa2&n; * has effect.&n; *&n; * Software reset not being able to reset all registers is great! Especially&n; * the fact that register 0x78 isn&squot;t reset is great when you wanna change back&n; * to single dma operation (simplex): audio 2 is still operation, and uses the&n; * same dma as audio 1: your ess changes into a funny echo machine.&n; *&n; * Received the new that ES1688 is detected as a ES1788. Did some thinking:&n; * the ES1887 detection scheme suggests in step 2 to try if bit 3 of register&n; * 0x64 can be changed. This is inaccurate, first I inverted the * check: &quot;If&n; * can be modified, it&squot;s a 1688&quot;, which lead to a correct detection&n; * of my ES1887. It resulted however in bad detection of 1688 (reported by mail)&n; * and 1868 (if no PnP detection first): they result in a 1788 being detected.&n; * I don&squot;t have docs on 1688, but I do have docs on 1868: The documentation is&n; * probably inaccurate in the fact that I should check bit 2, not bit 3. This&n; * is what I do now.&n; */
 multiline_comment|/*&n; * About recognition of ESS chips&n; *&n; * The distinction of ES688, ES1688, ES1788, ES1887 and ES1888 is described in&n; * a (preliminary ??) datasheet on ES1887. It&squot;s aim is to identify ES1887, but&n; * during detection the text claims that &quot;this chip may be ...&quot; when a step&n; * fails. This scheme is used to distinct between the above chips.&n; * It appears however that some PnP chips like ES1868 are recognized as ES1788&n; * by the ES1887 detection scheme. These PnP chips can be detected in another&n; * way however: ES1868, ES1869 and ES1878 can be recognized (full proof I think)&n; * by repeatedly reading mixer register 0x40. This is done by ess_identify in&n; * sb_common.c.&n; * This results in the following detection steps:&n; * - distinct between ES688 and ES1688+ (as always done in this driver)&n; *   if ES688 we&squot;re ready&n; * - try to detect ES1868, ES1869 or ES1878&n; *   if successful we&squot;re ready&n; * - try to detect ES1888, ES1887 or ES1788&n; *   if successful we&squot;re ready&n; * - Dunno. Must be 1688. Will do in general&n; *&n; * About RECLEV support:&n; *&n; * The existing ES1688 support didn&squot;t take care of the ES1688+ recording&n; * levels very well. Whenever a device was selected (recmask) for recording&n; * it&squot;s recording level was loud, and it couldn&squot;t be changed. The fact that&n; * internal register 0xb4 could take care of RECLEV, didn&squot;t work meaning until&n; * it&squot;s value was restored every time the chip was reset; this reset the&n; * value of 0xb4 too. I guess that&squot;s what 4front also had (have?) trouble with.&n; *&n; * About ES1887 support:&n; *&n; * The ES1887 has separate registers to control the recording levels, for all&n; * inputs. The ES1887 specific software makes these levels the same as their&n; * corresponding playback levels, unless recmask says they aren&squot;t recorded. In&n; * the latter case the recording volumes are 0.&n; * Now recording levels of inputs can be controlled, by changing the playback&n; * levels. Futhermore several devices can be recorded together (which is not&n; * possible with the ES1688.&n; * Besides the separate recording level control for each input, the common&n; * recordig level can also be controlled by RECLEV as described above.&n; *&n; * Not only ES1887 have this recording mixer. I know the following from the&n; * documentation:&n; * ES688&t;no&n; * ES1688&t;no&n; * ES1868&t;no&n; * ES1869&t;yes&n; * ES1878&t;no&n; * ES1879&t;yes&n; * ES1888&t;no/yes&t;Contradicting documentation; most recent: yes&n; * ES1946&t;yes&t;&t;This is a PCI chip; not handled by this driver&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sb_ess.h&quot;
-r_extern
+DECL|macro|ESSTYPE_LIKE20
+mdefine_line|#define ESSTYPE_LIKE20&t;-1&t;&t;/* Mimic 2.0 behaviour&t;&t;&t;&t;&t;*/
+DECL|macro|ESSTYPE_DETECT
+mdefine_line|#define ESSTYPE_DETECT&t;0&t;&t;/* Mimic 2.0 behaviour&t;&t;&t;&t;&t;*/
+DECL|variable|esstype
 r_int
 id|esstype
+op_assign
+id|ESSTYPE_LIKE20
 suffix:semicolon
 multiline_comment|/* module parameter in sb_card.c */
+DECL|macro|SUBMDL_ES1788
+mdefine_line|#define SUBMDL_ES1788&t;0x10&t;/* Subtype ES1788 for specific handling */
+DECL|macro|SUBMDL_ES1868
+mdefine_line|#define SUBMDL_ES1868&t;0x11&t;/* Subtype ES1868 for specific handling */
+DECL|macro|SUBMDL_ES1869
+mdefine_line|#define SUBMDL_ES1869&t;0x12&t;/* Subtype ES1869 for specific handling */
+DECL|macro|SUBMDL_ES1878
+mdefine_line|#define SUBMDL_ES1878&t;0x13&t;/* Subtype ES1878 for specific handling */
+DECL|macro|SUBMDL_ES1887
+mdefine_line|#define SUBMDL_ES1887&t;0x14&t;/* Subtype ES1887 for specific handling */
+DECL|macro|SUBMDL_ES1888
+mdefine_line|#define SUBMDL_ES1888&t;0x15&t;/* Subtype ES1888 for specific handling */
 macro_line|#ifdef FKS_LOGGING
 r_static
 r_void
@@ -1106,152 +1128,6 @@ id|div2
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0
-r_static
-r_void
-id|ess_speed
-c_func
-(paren
-id|sb_devc
-op_star
-id|devc
-)paren
-(brace
-r_int
-id|divider
-suffix:semicolon
-r_int
-r_char
-id|bits
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|speed
-op_assign
-id|devc-&gt;speed
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|speed
-OL
-l_int|4000
-)paren
-id|speed
-op_assign
-l_int|4000
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|speed
-OG
-l_int|48000
-)paren
-id|speed
-op_assign
-l_int|48000
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|speed
-OG
-l_int|22000
-)paren
-(brace
-id|bits
-op_assign
-l_int|0x80
-suffix:semicolon
-id|divider
-op_assign
-l_int|256
-op_minus
-(paren
-l_int|795500
-op_plus
-id|speed
-op_div
-l_int|2
-)paren
-op_div
-id|speed
-suffix:semicolon
-)brace
-r_else
-(brace
-id|divider
-op_assign
-l_int|128
-op_minus
-(paren
-l_int|397700
-op_plus
-id|speed
-op_div
-l_int|2
-)paren
-op_div
-id|speed
-suffix:semicolon
-)brace
-id|bits
-op_or_assign
-(paren
-r_int
-r_char
-)paren
-id|divider
-suffix:semicolon
-id|ess_write
-(paren
-id|devc
-comma
-l_int|0xa1
-comma
-id|bits
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;* Set filter divider register&n;&t;*/
-id|speed
-op_assign
-(paren
-id|speed
-op_star
-l_int|9
-)paren
-op_div
-l_int|20
-suffix:semicolon
-multiline_comment|/* Set filter roll-off to 90% of speed/2 */
-id|divider
-op_assign
-l_int|256
-op_minus
-l_int|7160000
-op_div
-(paren
-id|speed
-op_star
-l_int|82
-)paren
-suffix:semicolon
-id|ess_write
-(paren
-id|devc
-comma
-l_int|0xa2
-comma
-id|divider
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|ess_audio_prepare_for_input
 r_static
 r_int
@@ -3390,6 +3266,93 @@ id|devc
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef FKS_TEST
+multiline_comment|/*&n; * FKS_test:&n; *&t;for ES1887: 00, 18, non wr bits: 0001 1000&n; *&t;for ES1868: 00, b8, non wr bits: 1011 1000&n; *&t;for ES1888: 00, f8, non wr bits: 1111 1000&n; *&t;for ES1688: 00, f8, non wr bits: 1111 1000&n; *&t;+   ES968&n; */
+DECL|function|FKS_test
+r_static
+r_void
+id|FKS_test
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+(brace
+r_int
+id|val1
+comma
+id|val2
+suffix:semicolon
+id|val1
+op_assign
+id|ess_getmixer
+(paren
+id|devc
+comma
+l_int|0x64
+)paren
+suffix:semicolon
+id|ess_setmixer
+(paren
+id|devc
+comma
+l_int|0x64
+comma
+op_complement
+id|val1
+)paren
+suffix:semicolon
+id|val2
+op_assign
+id|ess_getmixer
+(paren
+id|devc
+comma
+l_int|0x64
+)paren
+op_xor
+op_complement
+id|val1
+suffix:semicolon
+id|ess_setmixer
+(paren
+id|devc
+comma
+l_int|0x64
+comma
+id|val1
+)paren
+suffix:semicolon
+id|val1
+op_xor_assign
+id|ess_getmixer
+(paren
+id|devc
+comma
+l_int|0x64
+)paren
+suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;FKS: FKS_test %02x, %02x&bslash;n&quot;
+comma
+(paren
+id|val1
+op_amp
+l_int|0x0ff
+)paren
+comma
+(paren
+id|val2
+op_amp
+l_int|0x0ff
+)paren
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|ess_identify
 r_static
 r_int
@@ -3751,12 +3714,6 @@ id|chip
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|esstype
-)paren
-(brace
 r_int
 id|submodel
 op_assign
@@ -3769,6 +3726,14 @@ c_cond
 id|esstype
 )paren
 (brace
+r_case
+id|ESSTYPE_DETECT
+suffix:colon
+r_case
+id|ESSTYPE_LIKE20
+suffix:colon
+r_break
+suffix:semicolon
 r_case
 l_int|688
 suffix:colon
@@ -3832,6 +3797,19 @@ id|SUBMDL_ES1888
 suffix:semicolon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;Invalid esstype=%d specified&bslash;n&quot;
+comma
+id|esstype
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 suffix:semicolon
 r_if
@@ -3862,8 +3840,6 @@ id|modelname
 suffix:semicolon
 )brace
 suffix:semicolon
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3883,6 +3859,32 @@ l_int|8
 id|chip
 op_assign
 l_string|&quot;ES688&quot;
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#ifdef FKS_TEST
+id|FKS_test
+(paren
+id|devc
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t;&t; * If Nothing detected yet, and we want 2.0 behaviour...&n;&t;&t; * Then let&squot;s assume it&squot;s ES1688.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+l_int|NULL
+op_logical_and
+id|esstype
+op_eq
+id|ESSTYPE_LIKE20
+)paren
+(brace
+id|chip
+op_assign
+l_string|&quot;ES1688&quot;
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -3949,6 +3951,38 @@ id|SUBMDL_ES1878
 suffix:semicolon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|type
+op_amp
+l_int|0x00ff
+)paren
+op_ne
+(paren
+(paren
+id|type
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0x00ff
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ess_init: Unrecognized %04x&bslash;n&quot;
+comma
+id|type
+)paren
+suffix:semicolon
+)brace
 )brace
 suffix:semicolon
 )brace

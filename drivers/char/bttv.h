@@ -581,7 +581,9 @@ mdefine_line|#define BTTV_ADSTECH_TV    0x0c
 DECL|macro|BTTV_AVERMEDIA98
 mdefine_line|#define BTTV_AVERMEDIA98   0x0d
 DECL|macro|BTTV_VHX
-mdefine_line|#define BTTV_VHX   &t;   0x0e
+mdefine_line|#define BTTV_VHX           0x0e
+DECL|macro|BTTV_ZOLTRIX
+mdefine_line|#define BTTV_ZOLTRIX       0x0f
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

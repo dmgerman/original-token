@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/midi_synth.c&n; *&n; * High level midi sequencer manager for dumb MIDI interfaces.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Andrew Veliath  : fixed running status in MIDI input state machine&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -747,23 +747,35 @@ id|inc-&gt;m_prev_status
 op_amp
 l_int|0x80
 )paren
-multiline_comment|/* Ignore if no previous status (yet) */
 (brace
 multiline_comment|/* Data byte (use running status) */
-id|inc-&gt;m_state
-op_assign
-id|MST_DATA
-suffix:semicolon
 id|inc-&gt;m_ptr
 op_assign
 l_int|2
+suffix:semicolon
+id|inc-&gt;m_buf
+(braket
+l_int|1
+)braket
+op_assign
+id|data
+suffix:semicolon
+id|inc-&gt;m_buf
+(braket
+l_int|0
+)braket
+op_assign
+id|inc-&gt;m_prev_status
 suffix:semicolon
 id|inc-&gt;m_left
 op_assign
 id|len_tab
 (braket
 (paren
-id|data
+id|inc-&gt;m_buf
+(braket
+l_int|0
+)braket
 op_rshift
 l_int|4
 )paren
@@ -773,20 +785,39 @@ l_int|8
 op_minus
 l_int|1
 suffix:semicolon
-id|inc-&gt;m_buf
-(braket
+r_if
+c_cond
+(paren
+id|inc-&gt;m_left
+OG
 l_int|0
-)braket
+)paren
+id|inc-&gt;m_state
 op_assign
-id|inc-&gt;m_prev_status
+id|MST_DATA
 suffix:semicolon
+multiline_comment|/* Not done yet */
+r_else
+(brace
+id|inc-&gt;m_state
+op_assign
+id|MST_INIT
+suffix:semicolon
+id|do_midi_msg
+c_func
+(paren
+id|dev
+comma
 id|inc-&gt;m_buf
-(braket
-l_int|1
-)braket
-op_assign
-id|data
+comma
+id|inc-&gt;m_ptr
+)paren
 suffix:semicolon
+id|inc-&gt;m_ptr
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 r_break
 suffix:semicolon

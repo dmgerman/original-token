@@ -345,6 +345,11 @@ macro_line|#endif
 multiline_comment|/*&n; * IA s/w dev Vol 3, Section 7.4&n; */
 DECL|macro|APIC_DEFAULT_PHYS_BASE
 mdefine_line|#define APIC_DEFAULT_PHYS_BASE 0xfee00000
+multiline_comment|/*&n; * Reads and clears the Pentium Timestamp-Counter&n; */
+DECL|macro|READ_TSC
+mdefine_line|#define READ_TSC(x)&t;__asm__ __volatile__ (  &quot;rdtsc&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;(x))[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;(x))[1]))
+DECL|macro|CLEAR_TSC
+mdefine_line|#define CLEAR_TSC &bslash;&n;&t;__asm__ __volatile__ (&quot;&bslash;t.byte 0x0f, 0x30;&bslash;n&quot;::&bslash;&n;&t;&t;&quot;a&quot;(0x00001000), &quot;d&quot;(0x00001000), &quot;c&quot;(0x10):&quot;memory&quot;)
 multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
 DECL|function|smp_setup
 r_void
@@ -2214,6 +2219,7 @@ comma
 id|value
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Set Task Priority to &squot;accept all&squot;&n;&t; */
 id|value
 op_assign
 id|apic_read
@@ -2227,7 +2233,6 @@ op_and_assign
 op_complement
 id|APIC_TPRI_MASK
 suffix:semicolon
-multiline_comment|/* Set Task Priority to &squot;accept all&squot; */
 id|apic_write
 c_func
 (paren
@@ -2236,29 +2241,7 @@ comma
 id|value
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set arbitrarion priority to 0&n;&t; */
-id|value
-op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_ARBPRI
-)paren
-suffix:semicolon
-id|value
-op_and_assign
-op_complement
-id|APIC_ARBPRI_MASK
-suffix:semicolon
-id|apic_write
-c_func
-(paren
-id|APIC_ARBPRI
-comma
-id|value
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set the logical destination ID to &squot;all&squot;, just to be safe.&n;&t; * also, put the APIC into flat delivery mode.&n;&t; */
+multiline_comment|/*&n;&t; * Clear the logical destination ID, just to be safe.&n;&t; * also, put the APIC into flat delivery mode.&n;&t; */
 id|value
 op_assign
 id|apic_read
@@ -2271,14 +2254,6 @@ id|value
 op_and_assign
 op_complement
 id|APIC_LDR_MASK
-suffix:semicolon
-id|value
-op_or_assign
-id|SET_APIC_LOGICAL_ID
-c_func
-(paren
-l_int|0xff
-)paren
 suffix:semicolon
 id|apic_write
 c_func
@@ -2319,17 +2294,6 @@ l_int|100
 )paren
 suffix:semicolon
 multiline_comment|/* B safe */
-id|ack_APIC_irq
-c_func
-(paren
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|100
-)paren
-suffix:semicolon
 )brace
 DECL|function|init_smp_mappings
 r_int
@@ -5497,8 +5461,6 @@ l_string|&quot;spurious APIC interrupt, ayiee, should never happen.&bslash;n&quo
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This part sets up the APIC 32 bit clock in LVTT1, with HZ interrupts&n; * per second. We assume that the caller has already set up the local&n; * APIC.&n; *&n; * The APIC timer is not exactly sync with the external timer chip, it&n; * closely follows bus clocks.&n; */
-DECL|macro|RDTSC
-mdefine_line|#define RDTSC(x)&t;__asm__ __volatile__ (  &quot;rdtsc&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;x)[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;x)[1]))
 multiline_comment|/*&n; * The timer chip is already set up at HZ interrupts per second here,&n; * but we do not accept timer interrupts yet. We only allow the BP&n; * to calibrate.&n; */
 DECL|function|get_8254_timer_count
 r_static
@@ -5737,7 +5699,7 @@ id|wait_8254_wraparound
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We wrapped around just now. Let&squot;s start:&n;&t; */
-id|RDTSC
+id|READ_TSC
 c_func
 (paren
 id|t1
@@ -5780,7 +5742,7 @@ c_func
 id|APIC_TMCCT
 )paren
 suffix:semicolon
-id|RDTSC
+id|READ_TSC
 c_func
 (paren
 id|t2

@@ -1,7 +1,4 @@
 multiline_comment|/*&n; * tkparse.h&n; */
-multiline_comment|/*&n; * Define this symbol to generate exactly the same output, byte for byte,&n; * as the previous version of xconfig.  I need to do this to make sure I&n; * I don&squot;t break anything in my moby edit. -- mec&n; */
-DECL|macro|BUG_COMPATIBLE
-mdefine_line|#define BUG_COMPATIBLE
 multiline_comment|/*&n; * Token types (mostly statement types).&n; */
 DECL|enum|e_token
 r_enum

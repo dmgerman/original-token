@@ -2242,11 +2242,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* unmask IRQ now */
+multiline_comment|/*&n;&t; * Careful with this one. We do not use &squot;true&squot; logical&n;&t; * delivery, as we set local APICs to LDR == 0. But&n;&t; * 0xff logical destination is special (broadcast).&n;&t; * Any other combination will cause problems.&n;&t; */
 id|entry.dest.logical.logical_dest
 op_assign
-l_int|0x01
+l_int|0xff
 suffix:semicolon
-multiline_comment|/* logical CPU #0 */
 id|entry.vector
 op_assign
 l_int|0

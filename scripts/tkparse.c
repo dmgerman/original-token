@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * tkparse.c&n; *&n; * Eric Youngdale was the original author of xconfig.&n; * Michael Elizabeth Chastain (mec@shout.net) is the current maintainer.&n; *&n; * Parse a config.in file and translate it to a wish script.&n; * This task has three parts:&n; *&n; *   tkparse.c&t;tokenize the input&n; *   tkcond.c   transform &squot;if ...&squot; statements&n; *   tkgen.c    generate output&n; *&n; * Change History&n; *&n; * 7 January 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Teach dep_tristate about a few literals, such as:&n; *     dep_tristate &squot;foo&squot; CONFIG_FOO m&n; *   Also have it print an error message and exit on some parse failures.&n; *&n; * 14 January 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Don&squot;t fclose stdin.  Thanks to Tony Hoyle for nailing this one.&n; *&n; * 14 January 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Steam-clean this file.  I tested this by generating kconfig.tk for&n; *   every architecture and comparing it character-for-character against&n; *   the output of the old tkparse.&n; *&n; * TO DO:&n; * - xconfig is at the end of its life cycle.  Contact &lt;mec@shout.net&gt; if&n; *   you are interested in working on the replacement.&n; */
+multiline_comment|/*&n; * tkparse.c&n; *&n; * Eric Youngdale was the original author of xconfig.&n; * Michael Elizabeth Chastain (mec@shout.net) is the current maintainer.&n; *&n; * Parse a config.in file and translate it to a wish script.&n; * This task has three parts:&n; *&n; *   tkparse.c&t;tokenize the input&n; *   tkcond.c   transform &squot;if ...&squot; statements&n; *   tkgen.c    generate output&n; *&n; * Change History&n; *&n; * 7 January 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Teach dep_tristate about a few literals, such as:&n; *     dep_tristate &squot;foo&squot; CONFIG_FOO m&n; *   Also have it print an error message and exit on some parse failures.&n; *&n; * 14 January 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Don&squot;t fclose stdin.  Thanks to Tony Hoyle for nailing this one.&n; *&n; * 14 January 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Steam-clean this file.  I tested this by generating kconfig.tk for&n; *   every architecture and comparing it character-for-character against&n; *   the output of the old tkparse.&n; *&n; * 23 January 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Remove bug-compatible code.&n; *&n; * TO DO:&n; * - xconfig is at the end of its life cycle.  Contact &lt;mec@shout.net&gt; if&n; *   you are interested in working on the replacement.&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;string.h&gt;
@@ -1657,7 +1657,6 @@ op_amp
 id|cfg-&gt;optionname
 )paren
 suffix:semicolon
-macro_line|#if ! defined(BUG_COMPATIBLE)
 r_while
 c_loop
 (paren
@@ -1674,7 +1673,6 @@ l_char|&squot;&bslash;t&squot;
 id|pnt
 op_increment
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1730,20 +1728,12 @@ l_string|&quot;2&quot;
 suffix:semicolon
 r_else
 (brace
-macro_line|#if ! defined(BUG_COMPATIBLE)
 id|syntax_error
 c_func
 (paren
 l_string|&quot;unknown define_bool value&quot;
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/*&n;&t;     * This ought to give the same output as printf&squot;ing&n;&t;     * through the null pointer ... I don&squot;t want to be&n;&t;     * SIGSEGV compatible!&n;&t;     */
-id|cfg-&gt;value
-op_assign
-l_string|&quot;(null)&quot;
-suffix:semicolon
-macro_line|#endif
 )brace
 r_break
 suffix:semicolon
@@ -2219,27 +2209,12 @@ comma
 id|filename
 )paren
 suffix:semicolon
-macro_line|#if defined(BUG_COMPATIBLE)
-id|fprintf
-c_func
-(paren
-id|stderr
-comma
-l_string|&quot;%s&bslash;n&quot;
-comma
-id|buffer
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#else
 id|syntax_error
 c_func
 (paren
 id|buffer
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* push the new file name and line number */
 id|old_file
