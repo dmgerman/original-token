@@ -549,12 +549,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
+l_string|&quot;%s&quot;
+comma
 id|version
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: Parallel port at %#3lx, using IRQ %d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2008,7 +2012,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_ERR
 l_string|&quot;%s: Memory squeeze.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2625,7 +2629,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-id|KERN_ERR
+id|KERN_DEBUG
 l_string|&quot;%s: send skb lost&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3357,7 +3361,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-id|KERN_ERR
+id|KERN_DEBUG
 l_string|&quot;plip_interrupt: irq %d for unknown device.&bslash;n&quot;
 comma
 id|irq
@@ -3543,7 +3547,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_ERR
 l_string|&quot;%s: receive interrupt in error state&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4440,9 +4444,9 @@ r_return
 id|r
 suffix:semicolon
 )brace
-DECL|function|plip_config
 r_static
 r_int
+DECL|function|plip_config
 id|plip_config
 c_func
 (paren
@@ -4490,14 +4494,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_WARNING
 l_string|&quot;plip: Warning, changing irq with ifconfig will be obsoleted.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_WARNING
 l_string|&quot;plip: Next time, please set with /proc/parport/*/irq instead.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4951,7 +4955,7 @@ r_else
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_WARNINGING
 l_string|&quot;warning: &squot;plip=0x%x&squot; ignored&bslash;n&quot;
 comma
 id|ints

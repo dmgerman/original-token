@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.5 1998/04/28 06:21:57 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.6 1998/08/26 12:03:30 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -27,10 +27,6 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip_fib.h&gt;
 DECL|macro|FRprintk
 mdefine_line|#define FRprintk(a...)
-macro_line|#ifndef CONFIG_RTNL_OLD_IFINFO
-DECL|macro|RTA_IFNAME
-mdefine_line|#define RTA_IFNAME RTA_IIF
-macro_line|#endif
 DECL|struct|fib_rule
 r_struct
 id|fib_rule
@@ -370,7 +366,7 @@ op_logical_and
 op_logical_neg
 id|rta
 (braket
-id|RTA_IFNAME
+id|RTA_IIF
 op_minus
 l_int|1
 )braket
@@ -383,7 +379,7 @@ c_func
 (paren
 id|rta
 (braket
-id|RTA_IFNAME
+id|RTA_IIF
 op_minus
 l_int|1
 )braket
@@ -580,7 +576,7 @@ c_cond
 (paren
 id|rta
 (braket
-id|RTA_IFNAME
+id|RTA_IIF
 op_minus
 l_int|1
 )braket
@@ -590,7 +586,7 @@ c_func
 (paren
 id|rta
 (braket
-id|RTA_IFNAME
+id|RTA_IIF
 op_minus
 l_int|1
 )braket
@@ -858,7 +854,7 @@ c_cond
 (paren
 id|rta
 (braket
-id|RTA_IFNAME
+id|RTA_IIF
 op_minus
 l_int|1
 )braket
@@ -879,7 +875,7 @@ c_func
 (paren
 id|rta
 (braket
-id|RTA_IFNAME
+id|RTA_IIF
 op_minus
 l_int|1
 )braket
@@ -1720,16 +1716,6 @@ id|rtm-&gt;rtm_scope
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-id|rtm-&gt;rtm_nhs
-op_assign
-l_int|0
-suffix:semicolon
-id|rtm-&gt;rtm_optlen
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|rtm-&gt;rtm_type
 op_assign
 id|r-&gt;r_action
@@ -1787,7 +1773,7 @@ c_func
 (paren
 id|skb
 comma
-id|RTA_IFNAME
+id|RTA_IIF
 comma
 id|IFNAMSIZ
 comma

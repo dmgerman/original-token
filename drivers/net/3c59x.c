@@ -6,13 +6,14 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c59x.c:v0.99E 5/12/98 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
+l_string|&quot;3c59x.c:v0.99F 8/7/98 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* &quot;Knobs&quot; that adjust features and parameters. */
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-frames scheme.&n;   Setting to &gt; 1512 effectively disables this feature. */
 DECL|variable|rx_copybreak
 r_static
 r_const
+r_int
 id|rx_copybreak
 op_assign
 l_int|200
@@ -21,6 +22,7 @@ multiline_comment|/* Allow setting MTU to a larger size, bypassing the normal et
 DECL|variable|mtu
 r_static
 r_const
+r_int
 id|mtu
 op_assign
 l_int|1500
@@ -72,9 +74,6 @@ l_int|0
 comma
 id|rx_csumhits
 suffix:semicolon
-multiline_comment|/* Enable the automatic media selection code -- usually set. */
-DECL|macro|AUTOMEDIA
-mdefine_line|#define AUTOMEDIA 1
 multiline_comment|/* Allow the use of fragment bus master transfers instead of only&n;   programmed-I/O for Vortex cards.  Full-bus-master transfers are always&n;   enabled by default on Boomerang cards.  If VORTEX_BUS_MASTER is defined,&n;   the feature may be turned on using &squot;options&squot;. */
 DECL|macro|VORTEX_BUS_MASTER
 mdefine_line|#define VORTEX_BUS_MASTER
@@ -112,7 +111,9 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20155  ||  defined(CARDBUS)
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;&t;&t;&t;/* For NR_IRQS only. */
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -144,13 +145,6 @@ mdefine_line|#define RUN_AT(x) (jiffies + (x))
 DECL|macro|DEV_ALLOC_SKB
 mdefine_line|#define DEV_ALLOC_SKB(len) dev_alloc_skb(len)
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20159
-DECL|macro|DEV_FREE_SKB
-mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb (skb, FREE_WRITE);
-macro_line|#else  /* Grrr, unneeded incompatible change. */
-DECL|macro|DEV_FREE_SKB
-mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb);
-macro_line|#endif
 macro_line|#ifdef SA_SHIRQ
 DECL|macro|FREE_IRQ
 mdefine_line|#define FREE_IRQ(irqnum, dev) free_irq(irqnum, dev)
@@ -174,9 +168,33 @@ macro_line|#else
 DECL|macro|udelay
 mdefine_line|#define udelay(microsec)&t;do { int _i = 4*microsec; while (--_i &gt; 0) { __SLOW_DOWN_IO; }} while (0)
 macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt;= 0x20139
+DECL|macro|net_device_stats
+mdefine_line|#define&t;net_device_stats enet_statistics
+DECL|macro|NETSTATS_VER2
+mdefine_line|#define NETSTATS_VER2
+macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20138
 DECL|macro|test_and_set_bit
 mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
+DECL|macro|le32_to_cpu
+mdefine_line|#define le32_to_cpu(val) (val)
+DECL|macro|cpu_to_le32
+mdefine_line|#define cpu_to_le32(val) (val)
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20155
+DECL|macro|PCI_SUPPORT_VER1
+mdefine_line|#define PCI_SUPPORT_VER1
+macro_line|#else
+DECL|macro|PCI_SUPPORT_VER2
+mdefine_line|#define PCI_SUPPORT_VER2
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20159
+DECL|macro|DEV_FREE_SKB
+mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb (skb, FREE_WRITE);
+macro_line|#else  /* Grrr, unneeded incompatible change. */
+DECL|macro|DEV_FREE_SKB
+mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb);
 macro_line|#endif
 macro_line|#if defined(MODULE) &amp;&amp; (LINUX_VERSION_CODE &gt;= 0x20115)
 id|MODULE_AUTHOR
@@ -262,7 +280,7 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|compaq_prod_id
+id|compaq_device_id
 comma
 l_string|&quot;i&quot;
 )paren
@@ -333,6 +351,8 @@ l_int|0x9055
 comma
 l_int|0x5057
 comma
+l_int|0x5175
+comma
 l_int|0
 )brace
 suffix:semicolon
@@ -371,9 +391,12 @@ comma
 l_string|&quot;3c575&quot;
 comma
 multiline_comment|/* Cardbus Boomerang */
+l_string|&quot;3CCFE575&quot;
+comma
+multiline_comment|/* Cardbus ?Cyclone? */
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the 3Com FastEtherLink and FastEtherLink&n;XL, 3Com&squot;s PCI to 10/100baseT adapters.  It also works with the 10Mbs&n;versions of the FastEtherLink cards.  The supported product IDs are&n;  3c590, 3c592, 3c595, 3c597, 3c900, 3c905&n;&n;The ISA 3c515 is supported with a seperate driver, 3c515.c, included with&n;the kernel source or available from&n;    cesdis.gsfc.nasa.gov:/pub/linux/drivers/3c515.html&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS should be set to assign the&n;PCI INTA signal to an otherwise unused system IRQ line.  While it&squot;s&n;physically possible to shared PCI interrupt lines, the 1.2.0 kernel doesn&squot;t&n;support it.&n;&n;III. Driver operation&n;&n;The 3c59x series use an interface that&squot;s very similar to the previous 3c5x9&n;series.  The primary interface is two programmed-I/O FIFOs, with an&n;alternate single-contiguous-region bus-master transfer (see next).&n;&n;The 3c900 &quot;Boomerang&quot; series uses a full-bus-master interface with seperate&n;lists of transmit and receive descriptors, similar to the AMD LANCE/PCnet,&n;DEC Tulip and Intel Speedo3.  The first chip version retains a compatible&n;programmed-I/O interface that will be removed in the &squot;B&squot; and subsequent&n;revisions.&n;&n;One extension that is advertised in a very large font is that the adapters&n;are capable of being bus masters.  On the Vortex chip this capability was&n;only for a single contiguous region making it far less useful than the full&n;bus master capability.  There is a significant performance impact of taking&n;an extra interrupt or polling for the completion of each transfer, as well&n;as difficulty sharing the single transfer engine between the transmit and&n;receive threads.  Using DMA transfers is a win only with large blocks or&n;with the flawed versions of the Intel Orion motherboard PCI controller.&n;&n;The Boomerang chip&squot;s full-bus-master interface is useful, and has the&n;currently-unused advantages over other similar chips that queued transmit&n;packets may be reordered and receive buffer groups are associated with a&n;single frame.&n;&n;With full-bus-master support, this driver uses a &quot;RX_COPYBREAK&quot; scheme.&n;Tather than a fixed intermediate receive buffer, this scheme allocates&n;full-sized skbuffs as receive buffers.  The value RX_COPYBREAK is used as&n;the copying breakpoint: it is chosen to trade-off the memory wasted by&n;passing the full-sized skbuff to the queue layer for all frames vs. the&n;copying cost of copying a frame to a correctly-sized skbuff.&n;&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;IV. Notes&n;&n;Thanks to Cameron Spitzer and Terry Murphy of 3Com for providing development&n;3c590, 3c595, and 3c900 boards.&n;The name &quot;Vortex&quot; is the internal 3Com project name for the PCI ASIC, and&n;the EISA version is called &quot;Demon&quot;.  According to Terry these names come&n;from rides at the local amusement park.&n;&n;The new chips support both ethernet (1.5K) and FDDI (4.5K) packet sizes!&n;This driver only supports ethernet packets because of the skbuff allocation&n;limit of 4K.&n;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the 3Com FastEtherLink and FastEtherLink&n;XL, 3Com&squot;s PCI to 10/100baseT adapters.  It also works with the 10Mbs&n;versions of the FastEtherLink cards.  The supported product IDs are&n;  3c590, 3c592, 3c595, 3c597, 3c900, 3c905&n;&n;The related ISA 3c515 is supported with a separate driver, 3c515.c, included&n;with the kernel source or available from&n;    cesdis.gsfc.nasa.gov:/pub/linux/drivers/3c515.html&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS should be set to assign the&n;PCI INTA signal to an otherwise unused system IRQ line.  Note: The 1.2.*&n;kernels did not support PCI interrupt sharing.&n;&n;III. Driver operation&n;&n;The 3c59x series use an interface that&squot;s very similar to the previous 3c5x9&n;series.  The primary interface is two programmed-I/O FIFOs, with an&n;alternate single-contiguous-region bus-master transfer (see next).&n;&n;The 3c900 &quot;Boomerang&quot; series uses a full-bus-master interface with separate&n;lists of transmit and receive descriptors, similar to the AMD LANCE/PCnet,&n;DEC Tulip and Intel Speedo3.  The first chip version retains a compatible&n;programmed-I/O interface that has been removed in &squot;B&squot; and subsequent board&n;revisions.&n;&n;One extension that is advertised in a very large font is that the adapters&n;are capable of being bus masters.  On the Vortex chip this capability was&n;only for a single contiguous region making it far less useful than the full&n;bus master capability.  There is a significant performance impact of taking&n;an extra interrupt or polling for the completion of each transfer, as well&n;as difficulty sharing the single transfer engine between the transmit and&n;receive threads.  Using DMA transfers is a win only with large blocks or&n;with the flawed versions of the Intel Orion motherboard PCI controller.&n;&n;The Boomerang chip&squot;s full-bus-master interface is useful, and has the&n;currently-unused advantages over other similar chips that queued transmit&n;packets may be reordered and receive buffer groups are associated with a&n;single frame.&n;&n;With full-bus-master support, this driver uses a &quot;RX_COPYBREAK&quot; scheme.&n;Rather than a fixed intermediate receive buffer, this scheme allocates&n;full-sized skbuffs as receive buffers.  The value RX_COPYBREAK is used as&n;the copying breakpoint: it is chosen to trade-off the memory wasted by&n;passing the full-sized skbuff to the queue layer for all frames vs. the&n;copying cost of copying a frame to a correctly-sized skbuff.&n;&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;IV. Notes&n;&n;Thanks to Cameron Spitzer and Terry Murphy of 3Com for providing development&n;3c590, 3c595, and 3c900 boards.&n;The name &quot;Vortex&quot; is the internal 3Com project name for the PCI ASIC, and&n;the EISA version is called &quot;Demon&quot;.  According to Terry these names come&n;from rides at the local amusement park.&n;&n;The new chips support both ethernet (1.5K) and FDDI (4.5K) packet sizes!&n;This driver only supports ethernet packets because of the skbuff allocation&n;limit of 4K.&n;*/
 DECL|macro|TCOM_VENDOR_ID
 mdefine_line|#define TCOM_VENDOR_ID&t;0x10B7&t;&t;/* 3Com&squot;s manufacturer&squot;s ID. */
 multiline_comment|/* Operational definitions.&n;   These are not used by other compilation units and thus are not&n;   exported in a &quot;.h&quot; file.&n;&n;   First the windows.  There are eight register windows, with the command&n;   and status registers available in each.&n;   */
@@ -1328,7 +1351,7 @@ suffix:semicolon
 multiline_comment|/* The ring entries to be free()ed. */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|tx_skb
@@ -1354,6 +1377,7 @@ suffix:semicolon
 multiline_comment|/* The remainder are related to chip state, mostly media selection. */
 DECL|member|in_interrupt
 r_int
+r_int
 id|in_interrupt
 suffix:semicolon
 DECL|member|timer
@@ -1367,9 +1391,9 @@ r_int
 id|options
 suffix:semicolon
 multiline_comment|/* User-settable misc. driver options. */
-r_int
-r_int
 DECL|member|media_override
+r_int
+r_int
 id|media_override
 suffix:colon
 l_int|3
@@ -1378,12 +1402,17 @@ multiline_comment|/* Passed-in media type. */
 DECL|member|default_media
 id|default_media
 suffix:colon
-l_int|3
+l_int|4
 comma
 multiline_comment|/* Read from the EEPROM/Wn3_Config. */
 DECL|member|full_duplex
+DECL|member|force_fd
 DECL|member|autoselect
 id|full_duplex
+suffix:colon
+l_int|1
+comma
+id|force_fd
 suffix:colon
 l_int|1
 comma
@@ -1922,7 +1951,7 @@ id|update_stats
 c_func
 (paren
 r_int
-id|addr
+id|ioaddr
 comma
 r_struct
 id|device
@@ -1932,7 +1961,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|vortex_get_stats
 c_func
@@ -2795,6 +2824,95 @@ id|TCOM_VENDOR_ID
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* Power-up the card. */
+id|pcibios_read_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+l_int|0xe0
+comma
+op_amp
+id|pci_command
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_command
+op_amp
+l_int|0x3
+)paren
+(brace
+multiline_comment|/* Save the ioaddr and IRQ info! */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;  A 3Com network adapter is powered down!&quot;
+l_string|&quot;  Setting the power state %4.4x-&gt;%4.4x.&bslash;n&quot;
+comma
+id|pci_command
+comma
+id|pci_command
+op_amp
+op_complement
+l_int|3
+)paren
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+l_int|0xe0
+comma
+id|pci_command
+op_amp
+op_complement
+l_int|3
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;  Setting the IRQ to %d, IOADDR to %#lx.&bslash;n&quot;
+comma
+id|irq
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_INTERRUPT_LINE
+comma
+id|irq
+)paren
+suffix:semicolon
+id|pcibios_write_config_dword
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3726,6 +3844,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|vp-&gt;force_fd
+op_assign
+id|vp-&gt;full_duplex
+suffix:semicolon
 id|vortex_probe1
 c_func
 (paren
@@ -3795,7 +3917,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: 3Com %s at %#3x,&quot;
+l_string|&quot;%s: 3Com %s at %#3lx,&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4063,6 +4185,20 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|printk
+c_func
+(paren
+l_string|&quot;, IRQ %s&bslash;n&quot;
+comma
+id|__irq_itoa
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -4096,6 +4232,7 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Extract our information from the EEPROM data. */
 id|vp-&gt;info1
 op_assign
@@ -4247,9 +4384,11 @@ suffix:colon
 l_string|&quot;&quot;
 comma
 id|config.u.xcvr
+OG
+id|XCVR_ExtMII
 ques
 c_cond
-l_string|&quot;NWay Autonegotiation&quot;
+l_string|&quot;&lt;invalid transceiver&gt;&quot;
 suffix:colon
 id|media_tbl
 (braket
@@ -4308,6 +4447,10 @@ c_cond
 id|dev-&gt;if_port
 op_eq
 id|XCVR_MII
+op_logical_or
+id|dev-&gt;if_port
+op_eq
+id|XCVR_NWAY
 )paren
 (brace
 r_int
@@ -4730,6 +4873,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|vp-&gt;phys
+(braket
+l_int|0
+)braket
+)paren
+id|dev-&gt;if_port
+op_assign
+id|XCVR_NWAY
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|vortex_debug
 OG
 l_int|1
@@ -4797,6 +4952,10 @@ id|dev-&gt;if_port
 op_assign
 id|vp-&gt;default_media
 suffix:semicolon
+id|vp-&gt;full_duplex
+op_assign
+id|vp-&gt;force_fd
+suffix:semicolon
 id|config.u.xcvr
 op_assign
 id|dev-&gt;if_port
@@ -4817,6 +4976,10 @@ c_cond
 id|dev-&gt;if_port
 op_eq
 id|XCVR_MII
+op_logical_or
+id|dev-&gt;if_port
+op_eq
+id|XCVR_NWAY
 )paren
 (brace
 r_int
@@ -5491,6 +5654,9 @@ id|i
 dot
 id|next
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5501,6 +5667,7 @@ id|i
 op_plus
 l_int|1
 )braket
+)paren
 )paren
 suffix:semicolon
 id|vp-&gt;rx_ring
@@ -5520,9 +5687,13 @@ id|i
 dot
 id|length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|PKT_BUF_SZ
 op_or
 id|LAST_FRAG
+)paren
 suffix:semicolon
 id|skb
 op_assign
@@ -5571,10 +5742,14 @@ id|i
 dot
 id|addr
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;tail
+)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -5593,6 +5768,7 @@ id|skb-&gt;data
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/* Wrap the ring. */
 id|vp-&gt;rx_ring
 (braket
 id|i
@@ -5602,6 +5778,9 @@ l_int|1
 dot
 id|next
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5611,8 +5790,8 @@ id|vp-&gt;rx_ring
 l_int|0
 )braket
 )paren
+)paren
 suffix:semicolon
-multiline_comment|/* Wrap the ring. */
 id|outl
 c_func
 (paren
@@ -5873,7 +6052,6 @@ r_int
 id|data
 )paren
 (brace
-macro_line|#ifdef AUTOMEDIA
 r_struct
 id|device
 op_star
@@ -5908,9 +6086,19 @@ r_int
 id|flags
 suffix:semicolon
 r_int
+id|next_tick
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|ok
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|media_status
+comma
+id|old_window
 suffix:semicolon
 r_if
 c_cond
@@ -5946,8 +6134,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-(brace
-r_int
 id|old_window
 op_assign
 id|inw
@@ -5959,9 +6145,6 @@ id|EL3_CMD
 )paren
 op_rshift
 l_int|13
-suffix:semicolon
-r_int
-id|media_status
 suffix:semicolon
 id|EL3WINDOW
 c_func
@@ -6063,10 +6246,12 @@ suffix:semicolon
 r_case
 id|XCVR_MII
 suffix:colon
-(brace
-r_int
-id|mii_reg1
-op_assign
+r_case
+id|XCVR_NWAY
+suffix:colon
+r_if
+c_cond
+(paren
 id|mdio_read
 c_func
 (paren
@@ -6079,7 +6264,10 @@ l_int|0
 comma
 l_int|1
 )paren
-suffix:semicolon
+op_amp
+l_int|0x0004
+)paren
+(brace
 r_int
 id|mii_reg5
 op_assign
@@ -6096,43 +6284,111 @@ comma
 l_int|5
 )paren
 suffix:semicolon
+id|ok
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|vortex_debug
-OG
-l_int|1
+op_logical_neg
+id|vp-&gt;force_fd
+op_logical_and
+id|mii_reg5
+op_ne
+l_int|0xffff
 )paren
+(brace
+r_int
+id|duplex
+op_assign
+(paren
+id|mii_reg5
+op_amp
+l_int|0x0100
+)paren
+op_logical_or
+(paren
+id|mii_reg5
+op_amp
+l_int|0x01C0
+)paren
+op_eq
+l_int|0x0040
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vp-&gt;full_duplex
+op_ne
+id|duplex
+)paren
+(brace
+id|vp-&gt;full_duplex
+op_assign
+id|duplex
+suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;%s: MII #%d status register is %4.4x, &quot;
-l_string|&quot;link partner capability %4.4x.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;%s: Setting %s-duplex based on MII &quot;
+l_string|&quot;#%d link partner capability of %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|vp-&gt;full_duplex
+ques
+c_cond
+l_string|&quot;full&quot;
+suffix:colon
+l_string|&quot;half&quot;
 comma
 id|vp-&gt;phys
 (braket
 l_int|0
 )braket
 comma
-id|mii_reg1
-comma
 id|mii_reg5
 )paren
 suffix:semicolon
-r_if
-c_cond
+multiline_comment|/* Set the full-duplex bit. */
+id|outb
+c_func
 (paren
-id|mii_reg1
-op_amp
-l_int|0x0004
+(paren
+id|vp-&gt;full_duplex
+ques
+c_cond
+l_int|0x20
+suffix:colon
+l_int|0
 )paren
-id|ok
-op_assign
-l_int|1
+op_or
+(paren
+id|dev-&gt;mtu
+OG
+l_int|1500
+ques
+c_cond
+l_int|0x40
+suffix:colon
+l_int|0
+)paren
+comma
+id|ioaddr
+op_plus
+id|Wn3_MAC_Ctrl
+)paren
 suffix:semicolon
+)brace
+id|next_tick
+op_assign
+l_int|60
+op_star
+id|HZ
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -6274,7 +6530,7 @@ dot
 id|name
 )paren
 suffix:semicolon
-id|vp-&gt;timer.expires
+id|next_tick
 op_assign
 id|RUN_AT
 c_func
@@ -6285,13 +6541,6 @@ id|dev-&gt;if_port
 )braket
 dot
 id|wait
-)paren
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|vp-&gt;timer
 )paren
 suffix:semicolon
 )brace
@@ -6375,7 +6624,6 @@ c_func
 id|old_window
 )paren
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -6405,7 +6653,28 @@ dot
 id|name
 )paren
 suffix:semicolon
-macro_line|#endif /* AUTOMEDIA*/
+r_if
+c_cond
+(paren
+id|next_tick
+)paren
+(brace
+id|vp-&gt;timer.expires
+op_assign
+id|RUN_AT
+c_func
+(paren
+id|next_tick
+)paren
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|vp-&gt;timer
+)paren
+suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
@@ -6651,19 +6920,27 @@ id|vp-&gt;tx_ring
 id|i
 )braket
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|vp-&gt;tx_ring
 (braket
 id|i
 )braket
 dot
 id|length
+)paren
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|vp-&gt;tx_ring
 (braket
 id|i
 )braket
 dot
 id|status
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -6817,7 +7094,7 @@ l_int|7
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Handle uncommon interrupt sources.  This is a seperate routine to minimize&n; * the cache impact.&n; */
+multiline_comment|/*&n; * Handle uncommon interrupt sources.  This is a separate routine to minimize&n; * the cache impact.&n; */
 r_static
 r_void
 DECL|function|vortex_error
@@ -8017,10 +8294,14 @@ id|entry
 dot
 id|addr
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;data
+)paren
 )paren
 suffix:semicolon
 id|vp-&gt;tx_ring
@@ -8030,9 +8311,13 @@ id|entry
 dot
 id|length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|skb-&gt;len
 op_or
 id|LAST_FRAG
+)paren
 suffix:semicolon
 id|vp-&gt;tx_ring
 (braket
@@ -8041,9 +8326,13 @@ id|entry
 dot
 id|status
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|skb-&gt;len
 op_or
 id|TxIntrUploaded
+)paren
 suffix:semicolon
 id|save_flags
 c_func
@@ -8102,6 +8391,9 @@ r_break
 suffix:semicolon
 id|prev_entry-&gt;next
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -8110,6 +8402,7 @@ id|vp-&gt;tx_ring
 (braket
 id|entry
 )braket
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -8187,8 +8480,12 @@ r_else
 multiline_comment|/* Clear previous interrupt enable. */
 id|prev_entry-&gt;status
 op_and_assign
+id|cpu_to_le32
+c_func
+(paren
 op_complement
 id|TxIntrUploaded
+)paren
 suffix:semicolon
 id|clear_bit
 c_func
@@ -8268,11 +8565,11 @@ id|vp
 suffix:semicolon
 r_int
 id|ioaddr
-comma
-id|status
 suffix:semicolon
 r_int
 id|latency
+comma
+id|status
 suffix:semicolon
 r_int
 id|work_done
@@ -9403,16 +9700,11 @@ r_while
 c_loop
 (paren
 (paren
-op_decrement
-id|rx_work_limit
-op_ge
-l_int|0
-)paren
-op_logical_and
-(paren
-(paren
 id|rx_status
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|vp-&gt;rx_ring
 (braket
 id|entry
@@ -9420,9 +9712,9 @@ id|entry
 dot
 id|status
 )paren
+)paren
 op_amp
 id|RxDComplete
-)paren
 )paren
 (brace
 r_if
@@ -9597,12 +9889,16 @@ comma
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|vp-&gt;rx_ring
 (braket
 id|entry
 )braket
 dot
 id|addr
+)paren
 )paren
 comma
 id|pkt_len
@@ -9651,26 +9947,6 @@ id|vp-&gt;rx_skbuff
 id|entry
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: in boomerang_rx -- attempt to use NULL skb caught&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|vp-&gt;rx_skbuff
 (braket
 id|entry
@@ -9702,12 +9978,16 @@ c_cond
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|vp-&gt;rx_ring
 (braket
 id|entry
 )braket
 dot
 id|addr
+)paren
 )paren
 op_ne
 id|temp
@@ -9724,12 +10004,16 @@ comma
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|vp-&gt;rx_ring
 (braket
 id|entry
 )braket
 dot
 id|addr
+)paren
 )paren
 comma
 id|temp
@@ -9821,6 +10105,16 @@ id|vp-&gt;cur_rx
 op_mod
 id|RX_RING_SIZE
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|rx_work_limit
+OL
+l_int|0
+)paren
+r_break
+suffix:semicolon
 )brace
 multiline_comment|/* Refill the Rx ring buffers. */
 r_for
@@ -9872,20 +10166,9 @@ id|skb
 op_eq
 l_int|NULL
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: in boomerang_rx -- could not allocate skbuff&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 multiline_comment|/* Bad news!  */
-)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -9908,10 +10191,14 @@ id|entry
 dot
 id|addr
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;tail
+)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -9956,23 +10243,6 @@ id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|vp-&gt;dirty_rx
-op_ge
-id|RX_RING_SIZE
-)paren
-(brace
-id|vp-&gt;cur_rx
-op_sub_assign
-id|RX_RING_SIZE
-suffix:semicolon
-id|vp-&gt;dirty_rx
-op_sub_assign
-id|RX_RING_SIZE
 suffix:semicolon
 )brace
 r_return
@@ -10305,11 +10575,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|vortex_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
-DECL|function|vortex_get_stats
 id|vortex_get_stats
 c_func
 (paren
@@ -11435,5 +11705,5 @@ suffix:semicolon
 )brace
 macro_line|#endif  /* MODULE */
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c&quot;&n; *  compile-command-alt1: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c -o 3c59x_cb.o&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c -o 3c575_cb.o -I/usr/src/pcmcia-cs-3.0.5/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

@@ -282,6 +282,8 @@ DECL|macro|NETDEV_CHANGEADDR
 mdefine_line|#define NETDEV_CHANGEADDR&t;0x0008
 DECL|macro|NETDEV_GOING_DOWN
 mdefine_line|#define NETDEV_GOING_DOWN&t;0x0009
+DECL|macro|NETDEV_CHANGENAME
+mdefine_line|#define NETDEV_CHANGENAME&t;0x000A
 DECL|macro|SYS_DOWN
 mdefine_line|#define SYS_DOWN&t;0x0001&t;/* Notify of system down */
 DECL|macro|SYS_RESTART

@@ -1625,10 +1625,6 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1683,15 +1679,10 @@ op_amp
 id|sock-&gt;fasync_list
 )paren
 suffix:semicolon
-id|save_flags
+id|lock_sock
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
+id|sock-&gt;sk
 )paren
 suffix:semicolon
 r_for
@@ -1755,10 +1746,10 @@ id|fasync_struct
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|release_sock
 c_func
 (paren
-id|flags
+id|sock-&gt;sk
 )paren
 suffix:semicolon
 r_return
@@ -1815,10 +1806,10 @@ id|fasync_struct
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
+id|release_sock
 c_func
 (paren
-id|flags
+id|sock-&gt;sk
 )paren
 suffix:semicolon
 r_return
@@ -4935,7 +4926,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Perform a file control on a socket file descriptor.&n; *&n; *&t;FIXME: does this need an fd lock ?&n; */
+multiline_comment|/*&n; *&t;Perform a file control on a socket file descriptor.&n; *&n; *&t;Doesn&squot;t aquire a fd lock, because no network fcntl&n; *&t;function sleeps currently.&n; */
 DECL|function|sock_fcntl
 r_int
 id|sock_fcntl

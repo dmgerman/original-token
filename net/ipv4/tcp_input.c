@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.121 1998/07/15 04:39:12 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
-multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.127 1998/08/26 12:04:20 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -477,7 +477,7 @@ id|tcphdr
 op_star
 id|th
 comma
-id|__u16
+r_int
 id|len
 )paren
 (brace
@@ -1111,7 +1111,8 @@ op_logical_and
 id|th-&gt;syn
 )paren
 (brace
-id|tp-&gt;in_mss
+id|u16
+id|in_mss
 op_assign
 id|ntohs
 c_func
@@ -1127,13 +1128,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tp-&gt;in_mss
+id|in_mss
 op_eq
 l_int|0
 )paren
-id|tp-&gt;in_mss
+id|in_mss
 op_assign
 l_int|536
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tp-&gt;mss_clamp
+OG
+id|in_mss
+)paren
+id|tp-&gt;mss_clamp
+op_assign
+id|in_mss
 suffix:semicolon
 )brace
 r_break
@@ -3134,11 +3146,7 @@ id|tcphdr
 op_star
 id|th
 comma
-r_void
-op_star
-id|opt
-comma
-id|__u16
+r_int
 id|len
 )paren
 (brace
@@ -3267,8 +3275,6 @@ c_func
 id|sk
 comma
 id|skb
-comma
-id|opt
 comma
 id|isn
 )paren
@@ -5020,7 +5026,7 @@ op_logical_and
 id|skb-&gt;len
 OL
 (paren
-id|sk-&gt;mss
+id|tp-&gt;mss_cache
 op_rshift
 l_int|1
 )paren
@@ -5606,7 +5612,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* We no longer have anyone receiving data on this connection. */
 id|tcp_data_queue
 c_func
 (paren
@@ -5774,6 +5779,87 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* &n; * Adapt the MSS value used to make delayed ack decision to the &n; * real world. &n; */
+DECL|function|tcp_measure_rcv_mss
+r_static
+id|__inline__
+r_void
+id|tcp_measure_rcv_mss
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+(paren
+id|sk-&gt;tp_pinfo.af_tcp
+)paren
+suffix:semicolon
+r_int
+r_int
+id|len
+op_assign
+id|skb-&gt;len
+comma
+id|lss
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|tp-&gt;rcv_mss
+)paren
+id|tp-&gt;rcv_mss
+op_assign
+id|len
+suffix:semicolon
+id|lss
+op_assign
+id|tp-&gt;last_seg_size
+suffix:semicolon
+id|tp-&gt;last_seg_size
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_ge
+l_int|536
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+op_eq
+id|lss
+)paren
+id|tp-&gt;rcv_mss
+op_assign
+id|len
+suffix:semicolon
+id|tp-&gt;last_seg_size
+op_assign
+id|len
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n; * Check if sending an ack is needed.&n; */
 DECL|function|__tcp_ack_snd_check
 r_static
@@ -5810,7 +5896,7 @@ op_minus
 id|tp-&gt;rcv_wup
 )paren
 op_ge
-id|sk-&gt;mss
+id|tp-&gt;rcv_mss
 op_star
 id|MAX_DELAY_ACK
 )paren
@@ -6207,6 +6293,9 @@ comma
 id|tp-&gt;copied_seq
 )paren
 suffix:semicolon
+id|net_statistics.PruneCalled
+op_increment
+suffix:semicolon
 multiline_comment|/* First Clean the out_of_order queue. */
 multiline_comment|/* Start with the end because there are probably the least&n;&t; * useful packets (crossing fingers).&n;&t; */
 r_while
@@ -6224,6 +6313,10 @@ id|tp-&gt;out_of_order_queue
 )paren
 )paren
 (brace
+id|net_statistics.OfoPruned
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -6318,6 +6411,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|net_statistics.RcvPruned
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|__skb_unlink
 c_func
 (paren
@@ -6407,7 +6504,7 @@ id|tcphdr
 op_star
 id|th
 comma
-id|__u16
+r_int
 id|len
 )paren
 (brace
@@ -6677,7 +6774,7 @@ r_goto
 id|discard
 suffix:semicolon
 )brace
-id|skb_pull
+id|__skb_pull
 c_func
 (paren
 id|skb
@@ -6685,6 +6782,14 @@ comma
 id|th-&gt;doff
 op_star
 l_int|4
+)paren
+suffix:semicolon
+id|tcp_measure_rcv_mss
+c_func
+(paren
+id|sk
+comma
+id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* DO NOT notify forward progress here.&n;&t;&t;&t; * It saves dozen of CPU instructions in fast path. --ANK&n;&t;&t;&t; */
@@ -6734,7 +6839,7 @@ op_logical_and
 id|skb-&gt;len
 OL
 (paren
-id|sk-&gt;mss
+id|tp-&gt;mss_cache
 op_rshift
 l_int|1
 )paren
@@ -6967,6 +7072,15 @@ comma
 id|sk
 comma
 id|len
+)paren
+suffix:semicolon
+multiline_comment|/* This must be after tcp_data() does the skb_pull() to&n;&t; * remove the header size from skb-&gt;len.&n;&t; *&n;&t; * Dave!!! Phrase above (and all about rcv_mss) has &n;&t; * nothing to do with reality. rcv_mss must measure TOTAL&n;&t; * size, including sacks, IP options etc. Hence, measure_rcv_mss&n;&t; * must occure before pulling etc, otherwise it will flap&n;&t; * like hell. Even putting it before tcp_data is wrong,&n;&t; * it should use skb-&gt;tail - skb-&gt;nh.raw instead.&n;&t; *&t;&t;&t;&t;&t;--ANK (980805)&n;&t; * &n;&t; * BTW I broke it. Now all TCP options are handled equally&n;&t; * in mss_clamp calculations (i.e. ignored, rfc1122),&n;&t; * and mss_cache does include all of them (i.e. tstamps)&n;&t; * except for sacks, to calulate effective mss faster.&n;&t; * &t;&t;&t;&t;&t;--ANK (980805)&n;&t; */
+id|tcp_measure_rcv_mss
+c_func
+(paren
+id|sk
+comma
+id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Be careful, tcp_data() may have put this into TIME_WAIT. */
@@ -7284,11 +7398,7 @@ id|tcphdr
 op_star
 id|th
 comma
-r_void
-op_star
-id|opt
-comma
-id|__u16
+r_int
 id|len
 )paren
 (brace
@@ -7345,8 +7455,6 @@ c_func
 id|sk
 comma
 id|skb
-comma
-id|opt
 comma
 l_int|0
 )paren
@@ -7641,59 +7749,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* Check for the case where we tried to advertise&n;&t;&t;&t; * a window including timestamp options, but did not&n;&t;&t;&t; * end up using them for this connection.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|tp-&gt;tstamp_ok
-op_eq
-l_int|0
-)paren
-op_logical_and
-id|sysctl_tcp_timestamps
-)paren
-(brace
-id|sk-&gt;mss
-op_add_assign
-id|TCPOLEN_TSTAMP_ALIGNED
-suffix:semicolon
-)brace
-multiline_comment|/* Now limit it if the other end negotiated a smaller&n;&t;&t;&t; * value.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|tp-&gt;in_mss
-)paren
-(brace
-r_int
-id|real_mss
-op_assign
-id|tp-&gt;in_mss
-suffix:semicolon
-multiline_comment|/* We store MSS locally with the timestamp bytes&n;&t;&t;&t;&t; * subtracted, TCP&squot;s advertise it with them&n;&t;&t;&t;&t; * included.  Account for this fact.&n;&t;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|tp-&gt;tstamp_ok
-)paren
-(brace
-id|real_mss
-op_sub_assign
-id|TCPOLEN_TSTAMP_ALIGNED
-suffix:semicolon
-)brace
-id|sk-&gt;mss
-op_assign
-id|min
-c_func
-(paren
-id|sk-&gt;mss
-comma
-id|real_mss
-)paren
-suffix:semicolon
-)brace
 id|sk-&gt;dport
 op_assign
 id|th-&gt;source
@@ -7726,10 +7781,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Drop through step 6 */
-r_goto
-id|step6
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -7827,12 +7878,36 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+)brace
+r_else
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* tp-&gt;tcp_header_len and tp-&gt;mss_clamp&n;&t;&t;   probably changed, synchronize mss.&n;&t;&t;   */
+id|tcp_sync_mss
+c_func
+(paren
+id|sk
+comma
+id|tp-&gt;pmtu_cookie
+)paren
+suffix:semicolon
+id|tp-&gt;rcv_mss
+op_assign
+id|tp-&gt;mss_cache
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_SYN_RECV
+)paren
 r_goto
 id|discard
 suffix:semicolon
-)brace
-)brace
-r_break
+r_goto
+id|step6
 suffix:semicolon
 )brace
 multiline_comment|/*   Parse the tcp_options present on this header.&n;&t; *   By this point we really only expect timestamps.&n;&t; *   Note that this really has to be here and not later for PAWS&n;&t; *   (RFC1323) to work.&n;&t; */
@@ -8384,6 +8459,15 @@ comma
 id|sk
 comma
 id|len
+)paren
+suffix:semicolon
+multiline_comment|/* This must be after tcp_data() does the skb_pull() to&n;&t;&t; * remove the header size from skb-&gt;len.&n;&t;&t; */
+id|tcp_measure_rcv_mss
+c_func
+(paren
+id|sk
+comma
+id|skb
 )paren
 suffix:semicolon
 r_break

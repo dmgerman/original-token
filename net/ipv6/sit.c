@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.27 1998/03/08 05:56:57 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.28 1998/08/26 12:05:22 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -1897,7 +1897,7 @@ c_cond
 (paren
 id|mtu
 op_ge
-l_int|576
+id|IPV6_MIN_MTU
 )paren
 (brace
 r_if
@@ -2110,6 +2110,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+)paren
+id|skb_set_owner_w
+c_func
+(paren
+id|new_skb
+comma
+id|skb-&gt;sk
+)paren
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -2198,7 +2211,7 @@ c_cond
 (paren
 id|mtu
 OG
-l_int|576
+id|IPV6_MIN_MTU
 )paren
 id|iph-&gt;frag_off
 op_assign
@@ -3053,11 +3066,11 @@ c_cond
 (paren
 id|dev-&gt;mtu
 OL
-l_int|576
+id|IPV6_MIN_MTU
 )paren
 id|dev-&gt;mtu
 op_assign
-l_int|576
+id|IPV6_MIN_MTU
 suffix:semicolon
 )brace
 id|dev-&gt;iflink

@@ -14,39 +14,6 @@ mdefine_line|#define IP6_RT_FLOW_MASK&t;0x00ff
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;net/flow.h&gt;
 macro_line|#include &lt;net/ip6_fib.h&gt;
-multiline_comment|/*&n; *&t;Structure for assync processing of operations on the routing&n; *&t;table&n; */
-DECL|struct|rt6_req
-r_struct
-id|rt6_req
-(brace
-DECL|member|operation
-r_int
-id|operation
-suffix:semicolon
-DECL|member|ptr
-r_struct
-id|rt6_info
-op_star
-id|ptr
-suffix:semicolon
-DECL|member|next
-r_struct
-id|rt6_req
-op_star
-id|next
-suffix:semicolon
-DECL|member|prev
-r_struct
-id|rt6_req
-op_star
-id|prev
-suffix:semicolon
-DECL|macro|RT_OPER_ADD
-mdefine_line|#define RT_OPER_ADD&t;&t;1
-DECL|macro|RT_OPER_DEL
-mdefine_line|#define RT_OPER_DEL&t;&t;2
-)brace
-suffix:semicolon
 DECL|struct|pol_chain
 r_struct
 id|pol_chain
@@ -154,9 +121,7 @@ id|arg
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|rt6_info
-op_star
+r_int
 id|ip6_route_add
 c_func
 (paren
@@ -164,10 +129,6 @@ r_struct
 id|in6_rtmsg
 op_star
 id|rtmsg
-comma
-r_int
-op_star
-id|err
 )paren
 suffix:semicolon
 r_extern
@@ -324,9 +285,7 @@ id|lst_resort
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|rt6_info
-op_star
+r_void
 id|rt6_redirect
 c_func
 (paren
@@ -341,14 +300,9 @@ op_star
 id|saddr
 comma
 r_struct
-id|in6_addr
+id|neighbour
 op_star
-id|target
-comma
-r_struct
-id|device
-op_star
-id|dev
+id|neigh
 comma
 r_int
 id|on_link
@@ -362,14 +316,19 @@ c_func
 r_struct
 id|in6_addr
 op_star
-id|addr
+id|daddr
+comma
+r_struct
+id|in6_addr
+op_star
+id|saddr
 comma
 r_struct
 id|device
 op_star
 id|dev
 comma
-r_int
+id|u32
 id|pmtu
 )paren
 suffix:semicolon
@@ -466,6 +425,20 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|rt6_mtu_change
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|mtu
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;Store a destination cache entry in a socket&n; *&t;For UDP/RAW sockets this is done on udp_connect.&n; */
 DECL|function|ip6_dst_store
 r_extern
@@ -483,6 +456,11 @@ r_struct
 id|dst_entry
 op_star
 id|dst
+comma
+r_struct
+id|in6_addr
+op_star
+id|daddr
 )paren
 (brace
 r_struct
@@ -521,6 +499,10 @@ id|rt6_info
 op_star
 )paren
 id|dst
+suffix:semicolon
+id|np-&gt;daddr_cache
+op_assign
+id|daddr
 suffix:semicolon
 id|np-&gt;dst_cookie
 op_assign

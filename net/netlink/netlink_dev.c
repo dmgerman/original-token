@@ -559,6 +559,8 @@ op_lshift
 id|minor
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon

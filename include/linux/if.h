@@ -199,6 +199,13 @@ id|IFNAMSIZ
 )braket
 suffix:semicolon
 multiline_comment|/* Just fits the size */
+DECL|member|ifru_newname
+r_char
+id|ifru_newname
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
 DECL|member|ifru_data
 id|__kernel_caddr_t
 id|ifru_data
@@ -239,6 +246,8 @@ DECL|macro|ifr_bandwidth
 mdefine_line|#define ifr_bandwidth&t;ifr_ifru.ifru_ivalue    /* link bandwidth&t;*/
 DECL|macro|ifr_qlen
 mdefine_line|#define ifr_qlen&t;ifr_ifru.ifru_ivalue&t;/* Queue length &t;*/
+DECL|macro|ifr_newname
+mdefine_line|#define ifr_newname&t;ifr_ifru.ifru_newname&t;/* New name&t;&t;*/
 multiline_comment|/*&n; * Structure used in SIOCGIFCONF request.&n; * Used to retrieve interface configuration&n; * for machine (useful for programs which&n; * must know all networks accessible).&n; */
 DECL|struct|ifconf
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.36 1998/07/15 05:05:06 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.37 1998/08/26 12:03:57 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
+macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
@@ -18,6 +19,9 @@ macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/route.h&gt;
+macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+macro_line|#include &lt;net/transp_v6.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|MAX
 mdefine_line|#define MAX(a,b) ((a)&gt;(b)?(a):(b))
@@ -529,6 +533,39 @@ id|cmsg
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|cmsg
+op_minus
+(paren
+r_char
+op_star
+)paren
+id|msg-&gt;msg_control
+)paren
+op_plus
+id|cmsg-&gt;cmsg_len
+)paren
+OG
+id|msg-&gt;msg_controllen
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1066,11 +1103,6 @@ id|opt
 op_assign
 l_int|NULL
 suffix:semicolon
-r_struct
-id|ip_options
-op_star
-id|old_opt
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1109,21 +1141,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * ANK: I&squot;m afraid that receive handler may change&n;&t;&t;&t; * options from under us.&n;&t;&t;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|old_opt
-op_assign
-id|sk-&gt;opt
-suffix:semicolon
-id|sk-&gt;opt
-op_assign
-id|opt
-suffix:semicolon
-id|sti
+id|start_bh_atomic
 c_func
 (paren
 )paren
@@ -1131,12 +1149,93 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|old_opt
+id|sk-&gt;type
+op_eq
+id|SOCK_STREAM
+)paren
+(brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+id|sk-&gt;tp_pinfo.af_tcp
+suffix:semicolon
+macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+r_if
+c_cond
+(paren
+id|sk-&gt;family
+op_eq
+id|PF_INET
+op_logical_or
+(paren
+(paren
+id|tcp_connected
+c_func
+(paren
+id|sk-&gt;state
+)paren
+op_logical_or
+id|sk-&gt;state
+op_eq
+id|TCP_SYN_SENT
+)paren
+op_logical_and
+id|sk-&gt;daddr
+op_ne
+id|LOOPBACK4_IPV6
+)paren
+)paren
+(brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|opt
+)paren
+id|tp-&gt;ext_header_len
+op_assign
+id|opt-&gt;optlen
+suffix:semicolon
+id|tcp_sync_mss
+c_func
+(paren
+id|sk
+comma
+id|tp-&gt;pmtu_cookie
+)paren
+suffix:semicolon
+macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+)brace
+macro_line|#endif
+)brace
+id|opt
+op_assign
+id|xchg
+c_func
+(paren
+op_amp
+id|sk-&gt;opt
+comma
+id|opt
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|opt
 )paren
 id|kfree_s
 c_func
 (paren
-id|old_opt
+id|opt
 comma
 r_sizeof
 (paren
@@ -1144,7 +1243,7 @@ r_struct
 id|ip_options
 )paren
 op_plus
-id|old_opt-&gt;optlen
+id|opt-&gt;optlen
 )paren
 suffix:semicolon
 r_return
@@ -2245,7 +2344,7 @@ op_star
 )paren
 id|optbuf
 suffix:semicolon
-id|cli
+id|start_bh_atomic
 c_func
 (paren
 )paren
@@ -2275,7 +2374,7 @@ op_plus
 id|sk-&gt;opt-&gt;optlen
 )paren
 suffix:semicolon
-id|sti
+id|end_bh_atomic
 c_func
 (paren
 )paren

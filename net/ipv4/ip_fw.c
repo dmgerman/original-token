@@ -5939,13 +5939,13 @@ l_string|&quot;%08lX/%08lX-&gt;%08lX/%08lX &quot;
 multiline_comment|/* Source &amp; Destination IPs */
 l_string|&quot;%.16s &quot;
 multiline_comment|/* Interface */
-l_string|&quot;%hX %hX &quot;
+l_string|&quot;%X %X &quot;
 multiline_comment|/* fw_flg and fw_invflg fields */
-l_string|&quot;%hu &quot;
+l_string|&quot;%u &quot;
 multiline_comment|/* Protocol */
 l_string|&quot;%-9u %-9u %-9u %-9u &quot;
 multiline_comment|/* Packet &amp; byte counters */
-l_string|&quot;%hu-%hu %hu-%hu &quot;
+l_string|&quot;%u-%u %u-%u &quot;
 multiline_comment|/* Source &amp; Dest port ranges */
 l_string|&quot;A%02X X%02X &quot;
 multiline_comment|/* TOS and and xor masks */
@@ -5953,7 +5953,7 @@ l_string|&quot;%08X &quot;
 multiline_comment|/* Redirection port */
 l_string|&quot;%u &quot;
 multiline_comment|/* fw_mark field */
-l_string|&quot;%hu &quot;
+l_string|&quot;%u &quot;
 multiline_comment|/* output size */
 l_string|&quot;%9s&bslash;n&quot;
 comma

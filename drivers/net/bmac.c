@@ -20,6 +20,9 @@ mdefine_line|#define round_page(x)&t;trunc_page(((unsigned long)(x)) + ((unsigne
 multiline_comment|/*&n; * CRC polynomial - used in working out multicast filter bits.&n; */
 DECL|macro|ENET_CRCPOLY
 mdefine_line|#define ENET_CRCPOLY 0x04c11db7
+multiline_comment|/* switch to use multicast code lifted from sunhme driver */
+DECL|macro|SUNHME_MULTICAST
+mdefine_line|#define SUNHME_MULTICAST
 multiline_comment|/* a bunch of constants for the &quot;Heathrow&quot; interrupt controller.&n;   These really should be in an include file somewhere */
 DECL|macro|IoBaseHeathrow
 mdefine_line|#define IoBaseHeathrow ((unsigned *)0xf3000000)
@@ -58,7 +61,7 @@ DECL|struct|bmac_data
 r_struct
 id|bmac_data
 (brace
-multiline_comment|/*     volatile struct bmac *bmac; */
+multiline_comment|/* volatile struct bmac *bmac; */
 DECL|member|queue
 r_struct
 id|sk_buff_head
@@ -215,7 +218,7 @@ DECL|typedef|bmac_reg_entry_t
 id|bmac_reg_entry_t
 suffix:semicolon
 DECL|macro|N_REG_ENTRIES
-mdefine_line|#define N_REG_ENTRIES 30
+mdefine_line|#define N_REG_ENTRIES 31
 DECL|variable|reg_entries
 id|bmac_reg_entry_t
 id|reg_entries
@@ -300,6 +303,12 @@ comma
 l_string|&quot;JAM&quot;
 comma
 id|JAM
+)brace
+comma
+(brace
+l_string|&quot;TXCFG&quot;
+comma
+id|TXCFG
 )brace
 comma
 (brace
@@ -426,7 +435,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Number of bytes of private data per BMAC: allow enough for&n; * the rx and tx dma commands plus a branch dma command each,&n; * and another 16 bytes to allow us to align the dma command&n; * buffers on a 16 byte boundary.&n; */
 DECL|macro|PRIV_BYTES
-mdefine_line|#define PRIV_BYTES&t;(sizeof(struct bmac_data) &bslash;&n;&t;&t;&t; + (N_RX_RING + N_TX_RING + 4) * sizeof(struct dbdma_cmd) &bslash;&n;&t;&t;&t; + sizeof(struct sk_buff_head))
+mdefine_line|#define PRIV_BYTES&t;(sizeof(struct bmac_data) &bslash;&n;&t;+ (N_RX_RING + N_TX_RING + 4) * sizeof(struct dbdma_cmd) &bslash;&n;&t;+ sizeof(struct sk_buff_head))
 r_static
 r_int
 r_char
@@ -1309,6 +1318,12 @@ c_func
 id|heathrowFCR
 comma
 id|fcrValue
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|50000
 )paren
 suffix:semicolon
 )brace
@@ -2444,6 +2459,16 @@ comma
 id|GFP_DMA
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+op_eq
+l_int|NULL
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2628,6 +2653,19 @@ id|RX_BUFLEN
 op_plus
 l_int|2
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bp-&gt;rx_bufs
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+r_return
+l_int|0
 suffix:semicolon
 id|skb_reserve
 c_func
@@ -3565,8 +3603,9 @@ op_amp
 id|p-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#ifndef SUNHME_MULTICAST
 multiline_comment|/* Real fast bit-reversal algorithm, 6-bit values */
+DECL|variable|reverse6
 r_static
 r_int
 id|reverse6
@@ -3707,6 +3746,7 @@ suffix:semicolon
 r_static
 r_int
 r_int
+DECL|function|crc416
 id|crc416
 c_func
 (paren
@@ -3848,6 +3888,7 @@ suffix:semicolon
 r_static
 r_int
 r_int
+DECL|function|bmac_crc
 id|bmac_crc
 c_func
 (paren
@@ -3929,6 +3970,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Add requested mcast addr to BMac&squot;s hash table filter.  &n; *  &n; */
 r_static
 r_void
+DECL|function|bmac_addhash
 id|bmac_addhash
 c_func
 (paren
@@ -3958,6 +4000,10 @@ op_logical_neg
 (paren
 op_star
 id|addr
+)paren
+)paren
+r_return
+suffix:semicolon
 id|crc
 op_assign
 id|bmac_crc
@@ -4022,6 +4068,7 @@ suffix:semicolon
 )brace
 r_static
 r_void
+DECL|function|bmac_removehash
 id|bmac_removehash
 c_func
 (paren
@@ -4128,6 +4175,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Sync the adapter with the software copy of the multicast mask&n; *  (logical address filter).&n; */
 r_static
 r_void
+DECL|function|bmac_rx_off
 id|bmac_rx_off
 c_func
 (paren
@@ -4190,6 +4238,7 @@ suffix:semicolon
 )brace
 r_int
 r_int
+DECL|function|bmac_rx_on
 id|bmac_rx_on
 c_func
 (paren
@@ -4300,6 +4349,7 @@ suffix:semicolon
 )brace
 r_static
 r_void
+DECL|function|bmac_update_hash_table_mask
 id|bmac_update_hash_table_mask
 c_func
 (paren
@@ -4502,6 +4552,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;    num_addrs == -1&t;Promiscuous mode, receive all packets&n;    num_addrs == 0&t;Normal mode, clear multicast list&n;    num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+DECL|function|bmac_set_multicast
 r_static
 r_void
 id|bmac_set_multicast
@@ -4619,8 +4670,6 @@ l_string|&quot;bmac: all multi, rx_cfg=%#08x&bslash;n&quot;
 suffix:semicolon
 )brace
 r_else
-r_if
-c_cond
 r_if
 c_cond
 (paren
@@ -4818,7 +4867,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* XXDEBUG((&quot;bmac: exit bmac_set_multicast&bslash;n&quot;)); */
 )brace
-macro_line|#endif
+macro_line|#else /* ifdef SUNHME_MULTICAST */
 multiline_comment|/* The version of set_multicast below was lifted from sunhme.c */
 DECL|macro|CRC_POLYNOMIAL_BE
 mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL  /* Ethernet CRC, big endian */
@@ -4969,6 +5018,31 @@ id|hash_table
 (braket
 l_int|4
 )braket
+suffix:semicolon
+id|rx_cfg
+op_assign
+id|bmread
+c_func
+(paren
+id|dev
+comma
+id|RXCFG
+)paren
+suffix:semicolon
+id|rx_cfg
+op_and_assign
+op_complement
+id|RxPromiscEnable
+suffix:semicolon
+id|bmwrite
+c_func
+(paren
+id|dev
+comma
+id|RXCFG
+comma
+id|rx_cfg
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -5185,6 +5259,7 @@ suffix:semicolon
 multiline_comment|/* Let us get going again. */
 multiline_comment|/*     dev-&gt;tbusy = 0; */
 )brace
+macro_line|#endif /* SUNHME_MULTICAST */
 DECL|variable|miscintcount
 r_static
 r_int
@@ -6053,13 +6128,37 @@ r_char
 op_star
 id|addr
 suffix:semicolon
-id|bmacs
+r_static
+r_struct
+id|device_node
+op_star
+id|all_bmacs
+op_assign
+l_int|NULL
+comma
+op_star
+id|next_bmac
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|all_bmacs
+op_eq
+l_int|NULL
+)paren
+id|all_bmacs
+op_assign
+id|next_bmac
 op_assign
 id|find_devices
 c_func
 (paren
 l_string|&quot;bmac&quot;
 )paren
+suffix:semicolon
+id|bmacs
+op_assign
+id|next_bmac
 suffix:semicolon
 r_if
 c_cond
@@ -6069,7 +6168,12 @@ op_eq
 l_int|NULL
 )paren
 r_return
+op_minus
 id|ENODEV
+suffix:semicolon
+id|next_bmac
+op_assign
+id|bmacs-&gt;next
 suffix:semicolon
 id|bmac_devs
 op_assign
@@ -6098,6 +6202,7 @@ id|bmacs-&gt;full_name
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EINVAL
 suffix:semicolon
 )brace
@@ -6178,122 +6283,6 @@ comma
 id|DisableAll
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|bmac_misc_intr
-comma
-l_int|0
-comma
-l_string|&quot;BMAC-misc&quot;
-comma
-id|dev
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BMAC: can&squot;t get irq %d&bslash;n&quot;
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|bmacs-&gt;intrs
-(braket
-l_int|1
-)braket
-dot
-id|line
-comma
-id|bmac_txdma_intr
-comma
-l_int|0
-comma
-l_string|&quot;BMAC-txdma&quot;
-comma
-id|dev
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BMAC: can&squot;t get irq %d&bslash;n&quot;
-comma
-id|bmacs-&gt;intrs
-(braket
-l_int|1
-)braket
-dot
-id|line
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|bmacs-&gt;intrs
-(braket
-l_int|2
-)braket
-dot
-id|line
-comma
-id|bmac_rxdma_intr
-comma
-l_int|0
-comma
-l_string|&quot;BMAC-rxdma&quot;
-comma
-id|dev
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BMAC: can&squot;t get irq %d&bslash;n&quot;
-comma
-id|bmacs-&gt;intrs
-(braket
-l_int|2
-)braket
-dot
-id|line
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
 id|addr
 op_assign
 id|get_property
@@ -6492,6 +6481,7 @@ op_ne
 l_int|0
 )paren
 r_return
+op_minus
 id|EINVAL
 suffix:semicolon
 id|ether_setup
@@ -6661,6 +6651,122 @@ multiline_comment|/*     bp-&gt;timeout_active = 0; */
 r_if
 c_cond
 (paren
+id|request_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|bmac_misc_intr
+comma
+l_int|0
+comma
+l_string|&quot;BMAC-misc&quot;
+comma
+id|dev
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;BMAC: can&squot;t get irq %d&bslash;n&quot;
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|bmacs-&gt;intrs
+(braket
+l_int|1
+)braket
+dot
+id|line
+comma
+id|bmac_txdma_intr
+comma
+l_int|0
+comma
+l_string|&quot;BMAC-txdma&quot;
+comma
+id|dev
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;BMAC: can&squot;t get irq %d&bslash;n&quot;
+comma
+id|bmacs-&gt;intrs
+(braket
+l_int|1
+)braket
+dot
+id|line
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|bmacs-&gt;intrs
+(braket
+l_int|2
+)braket
+dot
+id|line
+comma
+id|bmac_rxdma_intr
+comma
+l_int|0
+comma
+l_string|&quot;BMAC-rxdma&quot;
+comma
+id|dev
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;BMAC: can&squot;t get irq %d&bslash;n&quot;
+comma
+id|bmacs-&gt;intrs
+(braket
+l_int|2
+)braket
+dot
+id|line
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|bmac_reset_and_enable
 c_func
@@ -6671,7 +6777,8 @@ l_int|0
 )paren
 )paren
 r_return
-id|EINVAL
+op_minus
+id|ENOMEM
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
@@ -7304,7 +7411,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* update various counters */
-multiline_comment|/*     bmac_handle_misc_intrs(bp, 0); */
+multiline_comment|/*     &t;bmac_handle_misc_intrs(bp, 0); */
 id|cp
 op_assign
 op_amp
@@ -7313,7 +7420,7 @@ id|bp-&gt;tx_cmds
 id|bp-&gt;tx_empty
 )braket
 suffix:semicolon
-multiline_comment|/*     XXDEBUG((KERN_DEBUG &quot;bmac: tx dmastat=%x %x runt=%d pr=%x fs=%x fc=%x&bslash;n&quot;, */
+multiline_comment|/*&t;XXDEBUG((KERN_DEBUG &quot;bmac: tx dmastat=%x %x runt=%d pr=%x fs=%x fc=%x&bslash;n&quot;, */
 multiline_comment|/* &t;   ld_le32(&amp;td-&gt;status), ld_le16(&amp;cp-&gt;xfer_status), bp-&gt;tx_bad_runt, */
 multiline_comment|/* &t;   mb-&gt;pr, mb-&gt;xmtfs, mb-&gt;fifofc)); */
 multiline_comment|/* turn off both tx and rx and reset the chip */
@@ -7783,6 +7890,7 @@ r_static
 r_int
 DECL|function|bmac_proc_info
 id|bmac_proc_info
+c_func
 (paren
 r_char
 op_star

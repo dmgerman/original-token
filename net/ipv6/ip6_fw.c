@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Firewall&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fw.c,v 1.9 1998/02/12 07:43:42 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Firewall&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fw.c,v 1.10 1998/08/26 12:04:57 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1099,25 +1099,19 @@ id|RTF_NONEXTHOP
 op_or
 id|RTF_POLICY
 suffix:semicolon
-id|rt
+id|err
 op_assign
 id|ip6_route_add
 c_func
 (paren
 op_amp
 id|rtmsg
-comma
-op_amp
-id|err
 )paren
 suffix:semicolon
-multiline_comment|/* BUGGGG! rt can point to nowhere. */
 r_if
 c_cond
 (paren
-id|rt
-op_eq
-l_int|NULL
+id|err
 )paren
 (brace
 id|ip6_fwrule_free
@@ -1127,10 +1121,22 @@ id|rl
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ENOMEM
+id|err
 suffix:semicolon
 )brace
+multiline_comment|/* The rest will not work for now. --ABK (989725) */
+macro_line|#ifndef notdef
+id|ip6_fwrule_free
+c_func
+(paren
+id|rl
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+macro_line|#else
 id|rt-&gt;u.dst.error
 op_assign
 op_minus
@@ -1187,6 +1193,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|ip6_fw_msgrcv
 r_static

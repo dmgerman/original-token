@@ -603,15 +603,14 @@ id|psched_time_base
 suffix:semicolon
 macro_line|#if PSCHED_CLOCK_SOURCE == PSCHED_JIFFIES
 DECL|macro|PSCHED_WATCHER
-mdefine_line|#define PSCHED_WATCHER
+mdefine_line|#define PSCHED_WATCHER unsigned long
 r_extern
-r_int
-r_int
+id|PSCHED_WATCHER
 id|psched_time_mark
 suffix:semicolon
 macro_line|#if HZ == 100
 DECL|macro|PSCHED_JSCALE
-mdefine_line|#define PSCHED_JSCALE 7
+mdefine_line|#define PSCHED_JSCALE 13
 macro_line|#elif HZ == 1024
 DECL|macro|PSCHED_JSCALE
 mdefine_line|#define PSCHED_JSCALE 10
@@ -639,9 +638,9 @@ DECL|macro|PSCHED_GET_TIME
 mdefine_line|#define PSCHED_GET_TIME(stamp) &bslash;&n;({ u32 hi, lo; &bslash;&n;   __asm__ __volatile__ (&quot;.byte 0x0f,0x31&quot; :&quot;=a&quot; (lo), &quot;=d&quot; (hi)); &bslash;&n;   (stamp) = ((((u64)hi)&lt;&lt;32) + lo)&gt;&gt;psched_clock_scale; &bslash;&n;})
 macro_line|#elif defined (__alpha__)
 DECL|macro|PSCHED_WATCHER
-mdefine_line|#define PSCHED_WATCHER
+mdefine_line|#define PSCHED_WATCHER u32
 r_extern
-id|u32
+id|PSCHED_WATCHER
 id|psched_time_mark
 suffix:semicolon
 DECL|macro|PSCHED_GET_TIME

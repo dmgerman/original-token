@@ -4735,11 +4735,6 @@ id|mtrr_init
 )paren
 suffix:semicolon
 macro_line|#endif
-id|sock_init
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL
 id|sysctl_init
 c_func
@@ -4943,6 +4938,12 @@ r_int
 id|real_root_mountflags
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Networking initialization needs a process context */
+id|sock_init
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Launch bdflush from here, instead of the old syscall way. */
 id|kernel_thread
 c_func

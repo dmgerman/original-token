@@ -323,8 +323,8 @@ comma
 DECL|enumerator|PROC_NET_RT6
 id|PROC_NET_RT6
 comma
-DECL|enumerator|PROC_NET_RT6_TREE
-id|PROC_NET_RT6_TREE
+DECL|enumerator|PROC_NET_SNMP6
+id|PROC_NET_SNMP6
 comma
 DECL|enumerator|PROC_NET_RT6_STATS
 id|PROC_NET_RT6_STATS

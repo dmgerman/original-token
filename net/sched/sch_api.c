@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * net/sched/sch_api.c&t;Packet scheduler API.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; */
+multiline_comment|/*&n; * net/sched/sch_api.c&t;Packet scheduler API.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; * Fixes:&n; *&n; * Rani Assaf &lt;rani@magic.metawire.com&gt; :980802: JIFFIES and CPU clock sources are repaired.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1838,7 +1838,7 @@ id|Qdisc
 op_star
 id|q
 comma
-id|pid_t
+id|u32
 id|pid
 comma
 id|u32
@@ -2037,7 +2037,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|pid_t
+id|u32
 id|pid
 op_assign
 id|oskb
@@ -2863,7 +2863,7 @@ r_int
 r_int
 id|cl
 comma
-id|pid_t
+id|u32
 id|pid
 comma
 id|u32
@@ -3048,7 +3048,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|pid_t
+id|u32
 id|pid
 op_assign
 id|oskb
@@ -3591,7 +3591,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef PSCHED_WATCHER
 DECL|variable|psched_time_mark
-id|u32
+id|PSCHED_WATCHER
 id|psched_time_mark
 suffix:semicolon
 r_static
@@ -3653,9 +3653,9 @@ suffix:semicolon
 macro_line|#else
 r_int
 r_int
-id|jiffies
-op_assign
 id|now
+op_assign
+id|jiffies
 suffix:semicolon
 id|psched_time_base
 op_assign
@@ -3674,7 +3674,7 @@ id|now
 suffix:semicolon
 id|psched_timer.expires
 op_assign
-id|jiffies
+id|now
 op_plus
 l_int|60
 op_star
@@ -3736,6 +3736,7 @@ id|boot_cpu_data.x86_capability
 op_amp
 id|X86_FEATURE_TSC
 )paren
+)paren
 r_return
 op_minus
 l_int|1
@@ -3782,7 +3783,7 @@ id|jiffies
 OL
 id|stop
 )paren
-id|boundary
+id|barrier
 c_func
 (paren
 )paren
@@ -3873,7 +3874,7 @@ suffix:semicolon
 id|psched_clock_per_hz
 op_assign
 (paren
-id|delay
+id|psched_tick_per_us
 op_star
 (paren
 l_int|1000000

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.22 1998/05/08 21:06:26 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.23 1998/08/26 12:03:21 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -2359,18 +2359,6 @@ id|ifa-&gt;ifa_anycast
 op_assign
 l_int|0
 suffix:semicolon
-id|ifa-&gt;ifa_prefixlen
-op_assign
-l_int|32
-suffix:semicolon
-id|ifa-&gt;ifa_mask
-op_assign
-id|inet_make_mask
-c_func
-(paren
-l_int|32
-)paren
-suffix:semicolon
 )brace
 id|ifa-&gt;ifa_address
 op_assign
@@ -2424,6 +2412,21 @@ id|ifa-&gt;ifa_address
 op_or
 op_complement
 id|ifa-&gt;ifa_mask
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ifa-&gt;ifa_prefixlen
+op_assign
+l_int|32
+suffix:semicolon
+id|ifa-&gt;ifa_mask
+op_assign
+id|inet_make_mask
+c_func
+(paren
+l_int|32
+)paren
 suffix:semicolon
 )brace
 id|ret
@@ -3156,6 +3159,47 @@ id|in_dev
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|NETDEV_CHANGENAME
+suffix:colon
+r_if
+c_cond
+(paren
+id|in_dev-&gt;ifa_list
+)paren
+(brace
+r_struct
+id|in_ifaddr
+op_star
+id|ifa
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|ifa
+op_assign
+id|in_dev-&gt;ifa_list
+suffix:semicolon
+id|ifa
+suffix:semicolon
+id|ifa
+op_assign
+id|ifa-&gt;ifa_next
+)paren
+id|memcpy
+c_func
+(paren
+id|ifa-&gt;ifa_label
+comma
+id|dev-&gt;name
+comma
+id|IFNAMSIZ
+)paren
+suffix:semicolon
+multiline_comment|/* Do not notify about label change, this event is&n;&t;&t;&t;   not interesting to applications using netlink.&n;&t;&t;&t; */
+)brace
+r_break
+suffix:semicolon
 )brace
 r_return
 id|NOTIFY_DONE
@@ -3185,7 +3229,7 @@ id|in_ifaddr
 op_star
 id|ifa
 comma
-id|pid_t
+id|u32
 id|pid
 comma
 id|u32
@@ -3265,7 +3309,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ifa-&gt;ifa_prefixlen
+id|ifa-&gt;ifa_address
 )paren
 id|RTA_PUT
 c_func

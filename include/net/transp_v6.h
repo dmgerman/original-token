@@ -104,7 +104,7 @@ op_star
 id|src_addr
 comma
 r_struct
-id|ipv6_options
+id|ipv6_txoptions
 op_star
 id|opt
 comma
@@ -120,6 +120,17 @@ r_extern
 r_struct
 id|tcp_func
 id|ipv4_specific
+suffix:semicolon
+r_extern
+r_int
+id|inet6_destroy_sock
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif

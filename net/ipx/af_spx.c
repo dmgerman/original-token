@@ -322,10 +322,6 @@ id|sk-&gt;destruct
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;mtu
-op_assign
-id|IPX_MTU
-suffix:semicolon
 id|sk-&gt;no_check
 op_assign
 l_int|1

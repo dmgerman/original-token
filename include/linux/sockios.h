@@ -49,6 +49,8 @@ DECL|macro|SIOCGIFMTU
 mdefine_line|#define SIOCGIFMTU&t;0x8921&t;&t;/* get MTU size&t;&t;&t;*/
 DECL|macro|SIOCSIFMTU
 mdefine_line|#define SIOCSIFMTU&t;0x8922&t;&t;/* set MTU size&t;&t;&t;*/
+DECL|macro|SIOCSIFNAME
+mdefine_line|#define SIOCSIFNAME&t;0x8923&t;&t;/* set interface name */
 DECL|macro|SIOCSIFHWADDR
 mdefine_line|#define&t;SIOCSIFHWADDR&t;0x8924&t;&t;/* set hardware address &t;*/
 DECL|macro|SIOCGIFENCAP

@@ -703,10 +703,8 @@ r_if
 c_cond
 (paren
 id|len
-op_minus
-id|copy
 OG
-l_int|0
+id|copy
 )paren
 (brace
 id|partial_cnt

@@ -53,6 +53,8 @@ DECL|macro|TCPB_FLAG_LOCKED
 mdefine_line|#define TCPB_FLAG_LOCKED&t;0x0001
 DECL|macro|TCPB_FLAG_FASTREUSE
 mdefine_line|#define TCPB_FLAG_FASTREUSE&t;0x0002
+DECL|macro|TCPB_FLAG_GOODSOCKNUM
+mdefine_line|#define TCPB_FLAG_GOODSOCKNUM&t;0x0004
 DECL|member|next
 r_struct
 id|tcp_bind_bucket
@@ -561,13 +563,9 @@ id|sk-&gt;num
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+multiline_comment|/* Note, that it is &gt; than ipv6 header */
 DECL|macro|NETHDR_SIZE
-mdefine_line|#define NETHDR_SIZE&t;sizeof(struct ipv6hdr)
-macro_line|#else
-DECL|macro|NETHDR_SIZE
-mdefine_line|#define NETHDR_SIZE&t;sizeof(struct iphdr) + 40
-macro_line|#endif
+mdefine_line|#define NETHDR_SIZE&t;(sizeof(struct iphdr) + 40)
 multiline_comment|/*&n; * 40 is maximal IP options size&n; * 20 is the maximum TCP options size we can currently construct on a SYN.&n; * 40 is the maximum possible TCP options size.&n; */
 DECL|macro|MAX_SYN_SIZE
 mdefine_line|#define MAX_SYN_SIZE&t;(NETHDR_SIZE + sizeof(struct tcphdr) + 20 + MAX_HEADER + 15)
@@ -590,8 +588,6 @@ DECL|macro|MAX_ACK_BACKLOG
 mdefine_line|#define MAX_ACK_BACKLOG&t;2
 DECL|macro|MAX_DELAY_ACK
 mdefine_line|#define MAX_DELAY_ACK&t;2
-DECL|macro|MIN_WRITE_SPACE
-mdefine_line|#define MIN_WRITE_SPACE&t;2048
 DECL|macro|TCP_WINDOW_DIFF
 mdefine_line|#define TCP_WINDOW_DIFF&t;2048
 multiline_comment|/* urg_data states */
@@ -765,11 +761,11 @@ r_struct
 id|in6_addr
 id|rmt_addr
 suffix:semicolon
-DECL|member|opt
+DECL|member|pktopts
 r_struct
-id|ipv6_options
+id|sk_buff
 op_star
-id|opt
+id|pktopts
 suffix:semicolon
 DECL|member|iif
 r_int
@@ -909,7 +905,7 @@ DECL|macro|tcp_openreq_alloc
 mdefine_line|#define tcp_openreq_alloc()&t;kmem_cache_alloc(tcp_openreq_cachep, SLAB_ATOMIC)
 DECL|macro|tcp_openreq_free
 mdefine_line|#define tcp_openreq_free(req)&t;kmem_cache_free(tcp_openreq_cachep, req)
-multiline_comment|/*&n; *&t;Pointers to address related TCP functions&n; *&t;(i.e. things that depend on the address family)&n; */
+multiline_comment|/*&n; *&t;Pointers to address related TCP functions&n; *&t;(i.e. things that depend on the address family)&n; *&n; * &t;BUGGG_FUTURE: all the idea behind this struct is wrong.&n; *&t;It mixes socket frontend with transport function.&n; *&t;With port sharing between IPv6/v4 it gives the only advantage,&n; *&t;only poor IPv6 needs to permanently recheck, that it&n; *&t;is still IPv6 8)8) It must be cleaned up as soon as possible.&n; *&t;&t;&t;&t;&t;&t;--ANK (980802)&n; */
 DECL|struct|tcp_func
 r_struct
 id|tcp_func
@@ -983,10 +979,6 @@ id|sk_buff
 op_star
 id|skb
 comma
-r_void
-op_star
-id|opt
-comma
 id|__u32
 id|isn
 )paren
@@ -1040,6 +1032,10 @@ id|tcphdr
 op_star
 id|th
 )paren
+suffix:semicolon
+DECL|member|net_header_len
+id|__u16
+id|net_header_len
 suffix:semicolon
 DECL|member|setsockopt
 r_int
@@ -1324,11 +1320,7 @@ id|tcphdr
 op_star
 id|th
 comma
-r_void
-op_star
-id|opt
-comma
-id|__u16
+r_int
 id|len
 )paren
 suffix:semicolon
@@ -1352,7 +1344,7 @@ id|tcphdr
 op_star
 id|th
 comma
-id|__u16
+r_int
 id|len
 )paren
 suffix:semicolon
@@ -1376,11 +1368,7 @@ id|tcphdr
 op_star
 id|th
 comma
-r_void
-op_star
-id|opt
-comma
-id|__u16
+r_int
 id|len
 )paren
 suffix:semicolon
@@ -1435,6 +1423,17 @@ r_struct
 id|poll_table_struct
 op_star
 id|wait
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|tcp_write_space
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
 )paren
 suffix:semicolon
 r_extern
@@ -1620,10 +1619,6 @@ id|sk_buff
 op_star
 id|skb
 comma
-r_void
-op_star
-id|ptr
-comma
 id|__u32
 id|isn
 )paren
@@ -1649,9 +1644,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-id|mss
 )paren
 suffix:semicolon
 r_extern
@@ -2153,6 +2145,20 @@ id|tcp_slt_array
 id|TCP_SLT_MAX
 )braket
 suffix:semicolon
+r_extern
+r_int
+id|tcp_sync_mss
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+id|u32
+id|pmtu
+)paren
+suffix:semicolon
 multiline_comment|/* Compute the current effective MSS, taking SACKs and IP options,&n; * and even PMTU discovery events into account.&n; */
 DECL|function|tcp_current_mss
 r_static
@@ -2184,47 +2190,29 @@ op_assign
 id|sk-&gt;dst_cache
 suffix:semicolon
 r_int
-r_int
 id|mss_now
 op_assign
-id|sk-&gt;mss
+id|tp-&gt;mss_cache
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|dst
 op_logical_and
-(paren
-id|sk-&gt;mtu
-OL
 id|dst-&gt;pmtu
+op_ne
+id|tp-&gt;pmtu_cookie
 )paren
-)paren
-(brace
-r_int
-r_int
-id|mss_distance
-op_assign
-(paren
-id|sk-&gt;mtu
-op_minus
-id|sk-&gt;mss
-)paren
-suffix:semicolon
-multiline_comment|/* PMTU discovery event has occurred. */
-id|sk-&gt;mtu
-op_assign
-id|dst-&gt;pmtu
-suffix:semicolon
 id|mss_now
 op_assign
-id|sk-&gt;mss
-op_assign
-id|sk-&gt;mtu
-op_minus
-id|mss_distance
+id|tcp_sync_mss
+c_func
+(paren
+id|sk
+comma
+id|dst-&gt;pmtu
+)paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2246,19 +2234,15 @@ id|TCPOLEN_SACK_PERBLOCK
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;opt
-)paren
-(brace
-id|mss_now
-op_sub_assign
-id|sk-&gt;opt-&gt;optlen
-suffix:semicolon
-)brace
 r_return
 id|mss_now
+OG
+l_int|8
+ques
+c_cond
+id|mss_now
+suffix:colon
+l_int|8
 suffix:semicolon
 )brace
 multiline_comment|/* Compute the actual receive window we are currently advertising.&n; * Rcv_nxt can be after the window if our peer push more data&n; * than the offered window.&n; */
@@ -2455,9 +2439,22 @@ DECL|struct|tcp_skb_cb
 r_struct
 id|tcp_skb_cb
 (brace
-DECL|member|header
+r_union
+(brace
+DECL|member|h4
 r_struct
 id|inet_skb_parm
+id|h4
+suffix:semicolon
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+DECL|member|h6
+r_struct
+id|inet6_skb_parm
+id|h6
+suffix:semicolon
+macro_line|#endif
+DECL|member|header
+)brace
 id|header
 suffix:semicolon
 multiline_comment|/* For incoming frames&t;&t;*/
@@ -2587,7 +2584,7 @@ op_logical_and
 id|skb-&gt;len
 OL
 (paren
-id|sk-&gt;mss
+id|tp-&gt;mss_cache
 op_rshift
 l_int|1
 )paren
@@ -3079,17 +3076,6 @@ id|tstamp
 )paren
 (brace
 multiline_comment|/* We always get an MSS option.&n;&t; * The option bytes which will be seen in normal data&n;&t; * packets should timestamps be used, must be in the MSS&n;&t; * advertised.  But we subtract them from sk-&gt;mss so&n;&t; * that calculations in tcp_sendmsg are simpler etc.&n;&t; * So account for this fact here if necessary.  If we&n;&t; * don&squot;t do this correctly, as a receiver we won&squot;t&n;&t; * recognize data packets as being full sized when we&n;&t; * should, and thus we won&squot;t abide by the delayed ACK&n;&t; * rules correctly.&n;&t; * SACKs don&squot;t matter, we never delay an ACK when we&n;&t; * have any of those going out.&n;&t; */
-r_if
-c_cond
-(paren
-id|ts
-)paren
-(brace
-id|mss
-op_add_assign
-id|TCPOLEN_TSTAMP_ALIGNED
-suffix:semicolon
-)brace
 op_star
 id|ptr
 op_increment

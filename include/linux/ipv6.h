@@ -3,6 +3,9 @@ DECL|macro|_IPV6_H
 mdefine_line|#define _IPV6_H
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+multiline_comment|/* The latest drafts declared increase in minimal mtu up to 1280. */
+DECL|macro|IPV6_MIN_MTU
+mdefine_line|#define IPV6_MIN_MTU&t;1280
 multiline_comment|/*&n; *&t;Advanced API&n; *&t;source interface/address selection, source routing, etc...&n; *&t;*under construction*&n; */
 DECL|struct|in6_pktinfo
 r_struct
@@ -116,8 +119,7 @@ DECL|macro|rt0_type
 mdefine_line|#define rt0_type&t;&t;rt_hdr.type;
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; *&t;IPv6 fixed header&n; */
+multiline_comment|/*&n; *&t;IPv6 fixed header&n; *&n; *&t;BEWARE, it is incorrect. The first 4 bits of flow_lbl&n; *&t;are glued to priority now, forming &quot;class&quot;.&n; */
 DECL|struct|ipv6hdr
 r_struct
 id|ipv6hdr
@@ -146,7 +148,7 @@ l_int|4
 suffix:semicolon
 macro_line|#else
 macro_line|#error&t;&quot;Please fix &lt;asm/byteorder.h&gt;&quot;
-macro_line|#endif&t;&t;&t;&t;&t;&t;
+macro_line|#endif
 DECL|member|flow_lbl
 id|__u8
 id|flow_lbl
@@ -178,30 +180,40 @@ id|daddr
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;The length of this struct cannot be greater than the length of&n; *&t;the proto_priv field in a sk_buff which is currently&n; *&t;defined to be 16 bytes.&n; *&t;Pointers take upto 8 bytes (sizeof(void *) is 8 on the alpha).&n; */
-DECL|struct|ipv6_options
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* &n;   This structure contains results of exthdrs parsing&n;   as offsets from skb-&gt;nh.&n; */
+DECL|struct|inet6_skb_parm
 r_struct
-id|ipv6_options
+id|inet6_skb_parm
 (brace
-multiline_comment|/* length of extension headers   */
-DECL|member|opt_flen
-id|__u16
-id|opt_flen
+DECL|member|iif
+r_int
+id|iif
 suffix:semicolon
-multiline_comment|/* after fragment hdr */
-DECL|member|opt_nflen
+DECL|member|ra
 id|__u16
-id|opt_nflen
+id|ra
 suffix:semicolon
-multiline_comment|/* before fragment hdr */
-multiline_comment|/* &n;&t; * protocol options &n;&t; * usually carried in IPv6 extension headers&n;&t; */
+DECL|member|hop
+id|__u16
+id|hop
+suffix:semicolon
+DECL|member|auth
+id|__u16
+id|auth
+suffix:semicolon
+DECL|member|dst0
+id|__u16
+id|dst0
+suffix:semicolon
 DECL|member|srcrt
-r_struct
-id|ipv6_rt_hdr
-op_star
+id|__u16
 id|srcrt
 suffix:semicolon
-multiline_comment|/* Routing Header */
+DECL|member|dst1
+id|__u16
+id|dst1
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -2710,8 +2710,7 @@ id|dst
 comma
 r_sizeof
 (paren
-op_star
-id|dst
+id|s-&gt;dst
 )paren
 )paren
 suffix:semicolon
@@ -2989,13 +2988,6 @@ op_star
 id|t
 )paren
 (brace
-r_struct
-id|rsvp_head
-op_star
-id|head
-op_assign
-id|tp-&gt;root
-suffix:semicolon
 r_struct
 id|rsvp_filter
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.43 1998/07/15 05:05:32 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.45 1998/08/26 12:04:41 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; *&t;Andi Kleen&t;&t;&t;:&t;kill doube kfree on module&n; *&t;&t;&t;&t;&t;&t;unload.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_SYSCTL
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
@@ -28,7 +29,6 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;linux/if_tunnel.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 multiline_comment|/* Set to 3 to get tracing... */
 DECL|macro|ACONF_DEBUG
 mdefine_line|#define ACONF_DEBUG 2
@@ -209,7 +209,7 @@ multiline_comment|/* forwarding&t;&t;*/
 id|IPV6_DEFAULT_HOPLIMIT
 comma
 multiline_comment|/* hop limit&t;&t;*/
-l_int|576
+id|IPV6_MIN_MTU
 comma
 multiline_comment|/* mtu&t;&t;&t;*/
 l_int|1
@@ -248,7 +248,7 @@ multiline_comment|/* forwarding&t;&t;*/
 id|IPV6_DEFAULT_HOPLIMIT
 comma
 multiline_comment|/* hop limit&t;&t;*/
-l_int|576
+id|IPV6_MIN_MTU
 comma
 multiline_comment|/* mtu&t;&t;&t;*/
 l_int|1
@@ -597,7 +597,7 @@ c_cond
 (paren
 id|dev-&gt;mtu
 OL
-l_int|576
+id|IPV6_MIN_MTU
 )paren
 r_return
 l_int|NULL
@@ -2148,9 +2148,6 @@ r_struct
 id|in6_rtmsg
 id|rtmsg
 suffix:semicolon
-r_int
-id|err
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -2229,9 +2226,6 @@ c_func
 (paren
 op_amp
 id|rtmsg
-comma
-op_amp
-id|err
 )paren
 suffix:semicolon
 )brace
@@ -2251,9 +2245,6 @@ id|dev
 r_struct
 id|in6_rtmsg
 id|rtmsg
-suffix:semicolon
-r_int
-id|err
 suffix:semicolon
 id|memset
 c_func
@@ -2315,9 +2306,6 @@ c_func
 (paren
 op_amp
 id|rtmsg
-comma
-op_amp
-id|err
 )paren
 suffix:semicolon
 )brace
@@ -2336,9 +2324,6 @@ id|dev
 r_struct
 id|in6_rtmsg
 id|rtmsg
-suffix:semicolon
-r_int
-id|err
 suffix:semicolon
 id|memset
 c_func
@@ -2382,9 +2367,6 @@ c_func
 (paren
 op_amp
 id|rtmsg
-comma
-op_amp
-id|err
 )paren
 suffix:semicolon
 )brace
@@ -2698,7 +2680,7 @@ l_int|NULL
 comma
 id|dev-&gt;ifindex
 comma
-id|RTF_LINKRT
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -2747,10 +2729,6 @@ c_func
 id|rt
 )paren
 suffix:semicolon
-id|rt
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2788,6 +2766,18 @@ id|RTF_EXPIRES
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|rt
+)paren
+id|dst_release
+c_func
+(paren
+op_amp
+id|rt-&gt;u.dst
+)paren
+suffix:semicolon
 multiline_comment|/* Try to figure out our local address for this prefix */
 r_if
 c_cond
@@ -4606,17 +4596,52 @@ suffix:semicolon
 r_case
 id|NETDEV_CHANGEMTU
 suffix:colon
-multiline_comment|/* BUGGG... Should scan FIB to change pmtu on routes. --ANK */
 r_if
 c_cond
 (paren
 id|dev-&gt;mtu
 op_ge
-l_int|576
+id|IPV6_MIN_MTU
+)paren
+(brace
+r_struct
+id|inet6_dev
+op_star
+id|idev
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|idev
+op_assign
+id|ipv6_find_idev
+c_func
+(paren
+id|dev
+)paren
+)paren
+op_eq
+l_int|NULL
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* MTU falled under 576. Stop IPv6 on this interface. */
+id|idev-&gt;cnf.mtu6
+op_assign
+id|dev-&gt;mtu
+suffix:semicolon
+id|rt6_mtu_change
+c_func
+(paren
+id|dev
+comma
+id|dev-&gt;mtu
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* MTU falled under IPV6_MIN_MTU. Stop IPv6 on this interface. */
 r_case
 id|NETDEV_DOWN
 suffix:colon
@@ -5058,9 +5083,6 @@ r_struct
 id|in6_rtmsg
 id|rtmsg
 suffix:semicolon
-r_int
-id|err
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -5114,9 +5136,6 @@ c_func
 (paren
 op_amp
 id|rtmsg
-comma
-op_amp
-id|err
 )paren
 suffix:semicolon
 )brace
@@ -6240,7 +6259,7 @@ id|inet6_ifaddr
 op_star
 id|ifa
 comma
-id|pid_t
+id|u32
 id|pid
 comma
 id|u32
@@ -7129,12 +7148,24 @@ c_cond
 op_star
 id|valp
 )paren
+(brace
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rt6_purge_dflt_routers
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 r_return
 id|ret

@@ -508,14 +508,7 @@ r_int
 r_int
 id|gflags
 suffix:semicolon
-DECL|member|metric
-r_int
-r_int
-id|metric
-suffix:semicolon
-multiline_comment|/* routing metric (not used)&t;*/
 DECL|member|mtu
-r_int
 r_int
 id|mtu
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    in2000.h -  Linux device driver definitions for the&n; *                Always IN2000 ISA SCSI card.&n; *&n; *    IMPORTANT: This file is for version 1.32 - 28/Mar/1998&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
+multiline_comment|/*&n; *    in2000.h -  Linux device driver definitions for the&n; *                Always IN2000 ISA SCSI card.&n; *&n; *    IMPORTANT: This file is for version 1.33 - 26/Aug/1998&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
 macro_line|#ifndef IN2000_H
 DECL|macro|IN2000_H
 mdefine_line|#define IN2000_H
@@ -641,6 +641,32 @@ DECL|macro|PR_TEST
 mdefine_line|#define PR_TEST      1&lt;&lt;6
 DECL|macro|PR_STOP
 mdefine_line|#define PR_STOP      1&lt;&lt;7
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020100   /* 2.0.xx */
+DECL|macro|in2000__INITFUNC
+macro_line|# define in2000__INITFUNC(function) function
+DECL|macro|in2000__INIT
+macro_line|# define in2000__INIT
+DECL|macro|in2000__INITDATA
+macro_line|# define in2000__INITDATA
+DECL|macro|CLISPIN_LOCK
+macro_line|# define CLISPIN_LOCK(flags)   do { save_flags(flags); cli(); } while(0)
+DECL|macro|CLISPIN_UNLOCK
+macro_line|# define CLISPIN_UNLOCK(flags) restore_flags(flags)
+macro_line|#else                               /* 2.1.xxx */
+macro_line|# include &lt;linux/init.h&gt;
+macro_line|# include &lt;asm/spinlock.h&gt;
+DECL|macro|in2000__INITFUNC
+macro_line|# define in2000__INITFUNC(function) __initfunc(function)
+DECL|macro|in2000__INIT
+macro_line|# define in2000__INIT __init
+DECL|macro|in2000__INITDATA
+macro_line|# define in2000__INITDATA __initdata
+DECL|macro|CLISPIN_LOCK
+macro_line|# define CLISPIN_LOCK(flags)   spin_lock_irqsave(&amp;io_request_lock, flags)
+DECL|macro|CLISPIN_UNLOCK
+macro_line|# define CLISPIN_UNLOCK(flags) spin_unlock_irqrestore(&amp;io_request_lock, flags)
+macro_line|#endif
 r_int
 id|in2000_detect
 c_func
@@ -648,6 +674,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 )paren
+id|in2000__INIT
 suffix:semicolon
 r_int
 id|in2000_queuecommand
@@ -685,6 +712,7 @@ comma
 r_int
 op_star
 )paren
+id|in2000__INIT
 suffix:semicolon
 r_int
 id|in2000_proc_info
@@ -744,7 +772,12 @@ DECL|macro|IN2000_CPL
 mdefine_line|#define IN2000_CPL      2
 DECL|macro|IN2000_HOST_ID
 mdefine_line|#define IN2000_HOST_ID  7
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020100   /* 2.0.xx */
+DECL|macro|IN2000
+mdefine_line|#define IN2000 {  NULL,                /* link pointer for modules */ &bslash;&n;                  NULL,                /* usage_count for modules */ &bslash;&n;                  &amp;proc_scsi_in2000,   /* pointer to /proc/scsi directory entry */ &bslash;&n;                  in2000_proc_info,    /* pointer to proc info function */ &bslash;&n;                  &quot;Always IN2000&quot;,     /* device name */ &bslash;&n;                  in2000_detect,       /* returns number of in2000&squot;s found */ &bslash;&n;                  NULL,                /* optional unload function for modules */ &bslash;&n;                  NULL,                /* optional misc info function */ &bslash;&n;                  NULL,                /* send scsi command, wait for completion */ &bslash;&n;                  in2000_queuecommand, /* queue scsi command, don&squot;t wait */ &bslash;&n;                  in2000_abort,        /* abort current command */ &bslash;&n;                  in2000_reset,        /* reset scsi bus */ &bslash;&n;                  NULL,                /* slave_attach - unused */ &bslash;&n;                  in2000_biosparam,    /* figures out BIOS parameters for lilo, etc */ &bslash;&n;                  IN2000_CAN_Q,        /* max commands we can queue up */ &bslash;&n;                  IN2000_HOST_ID,      /* host-adapter scsi id */ &bslash;&n;                  IN2000_SG,           /* scatter-gather table size */ &bslash;&n;                  IN2000_CPL,          /* commands per lun */ &bslash;&n;                  0,                   /* board counter */ &bslash;&n;                  0,                   /* unchecked dma */ &bslash;&n;                  DISABLE_CLUSTERING &bslash;&n;               }
+macro_line|#else       /* 2.1.xxx */
 DECL|macro|IN2000
 mdefine_line|#define IN2000 {  proc_dir:        &amp;proc_scsi_in2000,   /* pointer to /proc/scsi directory entry */ &bslash;&n;                  proc_info:       in2000_proc_info,    /* pointer to proc info function */ &bslash;&n;                  name:            &quot;Always IN2000&quot;,     /* device name */ &bslash;&n;                  detect:          in2000_detect,       /* returns number of in2000&squot;s found */ &bslash;&n;                  queuecommand:    in2000_queuecommand, /* queue scsi command, don&squot;t wait */ &bslash;&n;                  abort:           in2000_abort,        /* abort current command */ &bslash;&n;                  reset:           in2000_reset,        /* reset scsi bus */ &bslash;&n;                  bios_param:      in2000_biosparam,    /* figures out BIOS parameters for lilo, etc */ &bslash;&n;                  can_queue:       IN2000_CAN_Q,        /* max commands we can queue up */ &bslash;&n;                  this_id:         IN2000_HOST_ID,      /* host-adapter scsi id */ &bslash;&n;                  sg_tablesize:    IN2000_SG,           /* scatter-gather table size */ &bslash;&n;                  cmd_per_lun:     IN2000_CPL,          /* commands per lun */ &bslash;&n;                  use_clustering:  DISABLE_CLUSTERING,  /* ENABLE_CLUSTERING may speed things up */ &bslash;&n;                  use_new_eh_code: 0                    /* new error code - not using it yet */ &bslash;&n;                }
+macro_line|#endif
 macro_line|#endif /* IN2000_H */
 eof

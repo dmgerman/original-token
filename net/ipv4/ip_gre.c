@@ -2825,7 +2825,7 @@ id|rt6-&gt;u.dst.pmtu
 op_logical_and
 id|mtu
 op_ge
-l_int|576
+id|IPV6_MIN_MTU
 )paren
 (brace
 r_if
@@ -2862,7 +2862,7 @@ c_cond
 (paren
 id|mtu
 op_ge
-l_int|576
+id|IPV6_MIN_MTU
 op_logical_and
 id|mtu
 OL
@@ -3018,6 +3018,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+)paren
+id|skb_set_owner_w
+c_func
+(paren
+id|new_skb
+comma
+id|skb-&gt;sk
+)paren
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren

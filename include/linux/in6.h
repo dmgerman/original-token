@@ -32,6 +32,8 @@ l_int|4
 )braket
 suffix:semicolon
 macro_line|#if (~0UL) &gt; 0xffffffff
+macro_line|#ifndef __RELAX_IN6_ADDR_ALIGNMENT
+multiline_comment|/* Alas, protocols do not respect 64bit alignmnet.&n;&t;&t;   rsvp/pim/... are broken. However, it is good&n;&t;&t;   idea to force correct alignment always, when&n;&t;&t;   it is possible.&n;&t;&t; */
 DECL|member|u6_addr64
 id|__u64
 id|u6_addr64
@@ -39,6 +41,7 @@ id|u6_addr64
 l_int|2
 )braket
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|member|in6_u
 )brace
@@ -154,27 +157,42 @@ DECL|macro|IPPROTO_NONE
 mdefine_line|#define IPPROTO_NONE&t;&t;59&t;/* IPv6 no next header&t;&t;*/
 DECL|macro|IPPROTO_DSTOPTS
 mdefine_line|#define IPPROTO_DSTOPTS&t;&t;60&t;/* IPv6 destination options&t;*/
+multiline_comment|/*&n; *&t;IPv6 TLV options.&n; */
+DECL|macro|IPV6_TLV_PAD0
+mdefine_line|#define IPV6_TLV_PAD0&t;&t;0
+DECL|macro|IPV6_TLV_PADN
+mdefine_line|#define IPV6_TLV_PADN&t;&t;1
+DECL|macro|IPV6_TLV_ROUTERALERT
+mdefine_line|#define IPV6_TLV_ROUTERALERT&t;20
+DECL|macro|IPV6_TLV_JUMBO
+mdefine_line|#define IPV6_TLV_JUMBO&t;&t;194
 multiline_comment|/*&n; *&t;IPV6 socket options&n; */
 DECL|macro|IPV6_ADDRFORM
 mdefine_line|#define IPV6_ADDRFORM&t;&t;1
 DECL|macro|IPV6_PKTINFO
 mdefine_line|#define IPV6_PKTINFO&t;&t;2
-DECL|macro|IPV6_RXHOPOPTS
-mdefine_line|#define IPV6_RXHOPOPTS&t;&t;3 /* obsolete name */
-DECL|macro|IPV6_RXDSTOPTS
-mdefine_line|#define IPV6_RXDSTOPTS&t;&t;4 /* obsolete name */
 DECL|macro|IPV6_HOPOPTS
-mdefine_line|#define IPV6_HOPOPTS&t;&t;IPV6_RXHOPOPTS  /* new name */
+mdefine_line|#define IPV6_HOPOPTS&t;&t;3
 DECL|macro|IPV6_DSTOPTS
-mdefine_line|#define IPV6_DSTOPTS&t;&t;IPV6_RXDSTOPTS  /* new name */
-DECL|macro|IPV6_RXSRCRT
-mdefine_line|#define IPV6_RXSRCRT&t;&t;5
+mdefine_line|#define IPV6_DSTOPTS&t;&t;4
+DECL|macro|IPV6_RTHDR
+mdefine_line|#define IPV6_RTHDR&t;&t;5
 DECL|macro|IPV6_PKTOPTIONS
 mdefine_line|#define IPV6_PKTOPTIONS&t;&t;6
 DECL|macro|IPV6_CHECKSUM
 mdefine_line|#define IPV6_CHECKSUM&t;&t;7
 DECL|macro|IPV6_HOPLIMIT
 mdefine_line|#define IPV6_HOPLIMIT&t;&t;8
+DECL|macro|IPV6_NEXTHOP
+mdefine_line|#define IPV6_NEXTHOP&t;&t;9
+DECL|macro|IPV6_AUTHHDR
+mdefine_line|#define IPV6_AUTHHDR&t;&t;10
+macro_line|#if 0
+multiline_comment|/* Aliases for obsolete names */
+mdefine_line|#define IPV6_RXHOPOPTS&t;&t;IPV6_HOPOPTS
+mdefine_line|#define IPV6_RXDSTOPTS&t;&t;IPV6_DSTOPTS
+mdefine_line|#define IPV6_RXSRCRT&t;&t;IPV6_RTHDR
+macro_line|#endif
 multiline_comment|/*&n; *&t;Alternative names&n; */
 DECL|macro|SCM_SRCRT
 mdefine_line|#define SCM_SRCRT&t;&t;IPV6_RXSRCRT

@@ -2866,11 +2866,6 @@ id|sk-&gt;protocol
 op_assign
 id|protocol
 suffix:semicolon
-id|sk-&gt;mtu
-op_assign
-id|AX25_MTU
-suffix:semicolon
-multiline_comment|/* 256 */
 id|ax25-&gt;sk
 op_assign
 id|sk
@@ -3034,10 +3029,6 @@ suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
-suffix:semicolon
-id|sk-&gt;mtu
-op_assign
-id|osk-&gt;mtu
 suffix:semicolon
 id|sk-&gt;sleep
 op_assign

@@ -49,6 +49,14 @@ DECL|member|nl_u
 )brace
 id|nl_u
 suffix:semicolon
+DECL|macro|fl6_dst
+mdefine_line|#define fl6_dst&t;&t;nl_u.ip6_u.daddr
+DECL|macro|fl6_src
+mdefine_line|#define fl6_src&t;&t;nl_u.ip6_u.saddr
+DECL|macro|fl4_dst
+mdefine_line|#define fl4_dst&t;&t;nl_u.ip4_u.daddr
+DECL|macro|fl4_src
+mdefine_line|#define fl4_src&t;&t;nl_u.ip4_u.saddr
 DECL|member|oif
 r_int
 id|oif

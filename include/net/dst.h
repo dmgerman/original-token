@@ -51,10 +51,6 @@ DECL|member|obsolete
 r_int
 id|obsolete
 suffix:semicolon
-DECL|member|priority
-id|__u32
-id|priority
-suffix:semicolon
 DECL|member|lastuse
 r_int
 r_int

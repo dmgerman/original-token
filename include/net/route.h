@@ -6,12 +6,15 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;linux/in_route.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
+macro_line|#include &lt;linux/route.h&gt;
+macro_line|#ifndef __KERNEL__
+macro_line|#warning This file is not supposed to be used outside of kernel.
+macro_line|#endif
 DECL|macro|RT_HASH_DIVISOR
 mdefine_line|#define RT_HASH_DIVISOR&t;    &t;256
 multiline_comment|/*&n; * Prevents LRU trashing, entries considered equivalent,&n; * if the difference between last use times is less then this number.&n; */
 DECL|macro|RT_CACHE_BUBBLE_THRESHOLD
 mdefine_line|#define RT_CACHE_BUBBLE_THRESHOLD&t;(5*HZ)
-macro_line|#include &lt;linux/route.h&gt;
 DECL|macro|RTO_ONLINK
 mdefine_line|#define RTO_ONLINK&t;0x01
 DECL|macro|RTO_TPROXY
@@ -125,7 +128,15 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
+r_extern
+r_struct
+id|rtable
+op_star
+id|rt_hash_table
+(braket
+id|RT_HASH_DIVISOR
+)braket
+suffix:semicolon
 r_extern
 r_void
 id|ip_rt_init
@@ -484,6 +495,5 @@ id|oif
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif&t;/* _ROUTE_H */
 eof

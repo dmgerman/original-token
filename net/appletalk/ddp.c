@@ -3825,10 +3825,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Checksums on by default */
-id|sk-&gt;mtu
-op_assign
-id|DDP_MAXSZ
-suffix:semicolon
 id|sk-&gt;zapped
 op_assign
 l_int|1

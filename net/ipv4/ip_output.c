@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.59 1998/07/15 05:05:15 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;&t;Andi Kleen&t;: &t;Replace ip_reply with ip_send_reply.&n; *&t;&t;Andi Kleen&t;:&t;Split fast and slow ip_build_xmit path &n; *&t;&t;&t;&t;&t;for decreased register pressure on x86 &n; *&t;&t;&t;&t;&t;and more readibility. &n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.61 1998/08/26 12:03:54 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;&t;Andi Kleen&t;: &t;Replace ip_reply with ip_send_reply.&n; *&t;&t;Andi Kleen&t;:&t;Split fast and slow ip_build_xmit path &n; *&t;&t;&t;&t;&t;for decreased register pressure on x86 &n; *&t;&t;&t;&t;&t;and more readibility. &n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -441,35 +441,7 @@ id|sk-&gt;ip_mc_loop
 )paren
 )paren
 (brace
-macro_line|#ifndef CONFIG_IP_MROUTE
-macro_line|#if 1
-multiline_comment|/* It should never occur. Delete it eventually. --ANK */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTCF_LOCAL
-)paren
-op_logical_or
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_LOOPBACK
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;ip_mc_output (mc): it should never occur&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif
-macro_line|#else
+macro_line|#ifdef CONFIG_IP_MROUTE
 multiline_comment|/* Small optimization: do not loopback not local frames,&n;&t;&t;   which returned after forwarding; they will be  dropped&n;&t;&t;   by ip_mr_input in any case.&n;&t;&t;   Note, that local frames are looped back to be delivered&n;&t;&t;   to local recipients.&n;&n;&t;&t;   This check is duplicated in ip_mr_input at the moment.&n;&t;&t; */
 r_if
 c_cond
@@ -527,41 +499,12 @@ id|rt-&gt;rt_flags
 op_amp
 id|RTCF_BROADCAST
 )paren
-(brace
-macro_line|#if 1
-multiline_comment|/* It should never occur. Delete it eventually. --ANK */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTCF_LOCAL
-)paren
-op_logical_or
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_LOOPBACK
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;ip_mc_output (brd): it should never occur!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif
 id|dev_loopback_xmit
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 id|ip_finish_output
 c_func
@@ -825,34 +768,6 @@ id|iph-&gt;frag_off
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;ip_pmtudisc
-op_eq
-id|IP_PMTUDISC_WANT
-op_logical_and
-op_logical_neg
-(paren
-id|rt-&gt;u.dst.mxlock
-op_amp
-(paren
-l_int|1
-op_lshift
-id|RTAX_MTU
-)paren
-)paren
-)paren
-(brace
-id|iph-&gt;frag_off
-op_or_assign
-id|__constant_htons
-c_func
-(paren
-id|IP_DF
-)paren
-suffix:semicolon
-)brace
 id|iph-&gt;ttl
 op_assign
 id|sk-&gt;ip_ttl
@@ -1003,6 +918,19 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk
+)paren
+id|skb_set_owner_w
+c_func
+(paren
+id|skb
+comma
+id|sk
+)paren
+suffix:semicolon
 id|skb
 op_assign
 id|skb2
@@ -1022,6 +950,32 @@ id|rt-&gt;u.dst.pmtu
 )paren
 r_goto
 id|fragment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;ip_pmtudisc
+op_eq
+id|IP_PMTUDISC_WANT
+op_logical_and
+op_logical_neg
+(paren
+id|rt-&gt;u.dst.mxlock
+op_amp
+(paren
+l_int|1
+op_lshift
+id|RTAX_MTU
+)paren
+)paren
+)paren
+id|iph-&gt;frag_off
+op_or_assign
+id|__constant_htons
+c_func
+(paren
+id|IP_DF
+)paren
 suffix:semicolon
 multiline_comment|/* Add an IP checksum. */
 id|ip_send_check
@@ -1049,19 +1003,47 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|sk-&gt;ip_pmtudisc
+op_eq
+id|IP_PMTUDISC_WANT
+op_logical_and
+op_logical_neg
 (paren
-id|iph-&gt;frag_off
+id|rt-&gt;u.dst.mxlock
 op_amp
-id|htons
+(paren
+l_int|1
+op_lshift
+id|RTAX_MTU
+)paren
+)paren
+op_logical_and
+id|tot_len
+OG
+(paren
+id|iph-&gt;ihl
+op_lshift
+l_int|2
+)paren
+op_plus
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+op_plus
+l_int|16
+)paren
+(brace
+multiline_comment|/* Reject packet ONLY if TCP might fragment&n;&t;&t;   it itself, if were careful enough.&n;&t;&t;   Test is not precise (f.e. it does not take sacks&n;&t;&t;   into account). Actually, tcp should make it. --ANK (980801)&n;&t;&t; */
+id|iph-&gt;frag_off
+op_or_assign
+id|__constant_htons
 c_func
 (paren
 id|IP_DF
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2369,9 +2351,6 @@ suffix:semicolon
 r_int
 id|not_last_frag
 suffix:semicolon
-id|u16
-id|dont_fragment
-suffix:semicolon
 r_struct
 id|rtable
 op_star
@@ -2434,7 +2413,8 @@ op_plus
 id|hlen
 suffix:semicolon
 multiline_comment|/* Where to start from */
-multiline_comment|/*&n;&t; *&t;The protocol doesn&squot;t seem to say what to do in the case that the&n;&t; *&t;frame + options doesn&squot;t fit the mtu. As it used to fall down dead&n;&t; *&t;in this case we were fortunate it didn&squot;t happen&n;&t; */
+multiline_comment|/*&n;&t; *&t;The protocol doesn&squot;t seem to say what to do in the case that the&n;&t; *&t;frame + options doesn&squot;t fit the mtu. As it used to fall down dead&n;&t; *&t;in this case we were fortunate it didn&squot;t happen&n;&t; *&n;&t; *&t;It is impossible, because mtu&gt;=68. --ANK (980801)&n;&t; */
+macro_line|#ifdef CONFIG_NET_PARANOIA
 r_if
 c_cond
 (paren
@@ -2445,6 +2425,7 @@ l_int|8
 r_goto
 id|fail
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Fragment the datagram.&n;&t; */
 id|offset
 op_assign
@@ -2468,17 +2449,6 @@ id|htons
 c_func
 (paren
 id|IP_MF
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Nice moment: if DF is set and we are here,&n;&t; *&t;it means that packet should be fragmented and&n;&t; *&t;DF is set on fragments. If it works,&n;&t; *&t;path MTU discovery can be done by ONE segment(!). --ANK&n;&t; */
-id|dont_fragment
-op_assign
-id|iph-&gt;frag_off
-op_amp
-id|htons
-c_func
-(paren
-id|IP_DF
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Keep copying data until we run out.&n;&t; */
@@ -2669,8 +2639,6 @@ op_rshift
 l_int|3
 )paren
 )paren
-op_or
-id|dont_fragment
 suffix:semicolon
 multiline_comment|/* ANK: dirty, but effective trick. Upgrade options only if&n;&t;&t; * the segment to be fragmented was THE FIRST (otherwise,&n;&t;&t; * options are already fixed) and make it ONCE&n;&t;&t; * on the initial skb, so that all the following fragments&n;&t;&t; * will inherit fixed options.&n;&t;&t; */
 r_if
@@ -2822,32 +2790,6 @@ id|hdrflag
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;ip_reply_glue_bits: offset=%u,flen=%u iov[0].l=%u,iov[1].len=%u&bslash;n&quot;
-comma
-id|offset
-comma
-id|fraglen
-comma
-id|dp-&gt;iov
-(braket
-l_int|0
-)braket
-dot
-id|iov_len
-comma
-id|dp-&gt;iov
-(braket
-l_int|1
-)braket
-dot
-id|iov_len
-)paren
-suffix:semicolon
-macro_line|#endif
 id|iov
 op_assign
 op_amp
@@ -2891,35 +2833,6 @@ id|len
 )paren
 (brace
 multiline_comment|/* overlapping. */
-macro_line|#if 1
-r_if
-c_cond
-(paren
-id|iov
-OG
-op_amp
-id|dp-&gt;iov
-(braket
-l_int|0
-)braket
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;frag too long! (o=%u,fl=%u)&bslash;n&quot;
-comma
-id|offset
-comma
-id|fraglen
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
 id|dp-&gt;csum
 op_assign
 id|csum_partial_copy_nocheck

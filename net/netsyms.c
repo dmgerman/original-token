@@ -1113,6 +1113,13 @@ c_func
 id|tcp_read_wakeup
 )paren
 suffix:semicolon
+DECL|variable|tcp_write_space
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_write_space
+)paren
+suffix:semicolon
 DECL|variable|tcp_poll
 id|EXPORT_SYMBOL
 c_func

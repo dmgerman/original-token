@@ -47,6 +47,8 @@ macro_line|#ifdef CONFIG_FILTER
 macro_line|#include &lt;linux/filter.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/atomic.h&gt;
+DECL|macro|MIN_WRITE_SPACE
+mdefine_line|#define MIN_WRITE_SPACE&t;2048
 multiline_comment|/* The AF_UNIX specific socket options */
 DECL|struct|unix_opt
 r_struct
@@ -218,6 +220,12 @@ r_struct
 id|in6_addr
 id|daddr
 suffix:semicolon
+DECL|member|daddr_cache
+r_struct
+id|in6_addr
+op_star
+id|daddr_cache
+suffix:semicolon
 DECL|member|flow_lbl
 id|__u32
 id|flow_lbl
@@ -238,12 +246,16 @@ DECL|member|priority
 id|__u8
 id|priority
 suffix:semicolon
-multiline_comment|/* sockopt flags */
-DECL|member|recvsrcrt
+multiline_comment|/* pktoption flags */
+r_union
+(brace
+r_struct
+(brace
+DECL|member|srcrt
 id|__u8
-id|recvsrcrt
+id|srcrt
 suffix:colon
-l_int|1
+l_int|2
 comma
 DECL|member|rxinfo
 id|rxinfo
@@ -265,15 +277,34 @@ id|dstopts
 suffix:colon
 l_int|1
 comma
-DECL|member|mc_loop
-id|mc_loop
+DECL|member|authhdr
+id|authhdr
 suffix:colon
 l_int|1
 comma
 DECL|member|unused
 id|unused
 suffix:colon
-l_int|2
+l_int|1
+suffix:semicolon
+DECL|member|bits
+)brace
+id|bits
+suffix:semicolon
+DECL|member|all
+id|__u8
+id|all
+suffix:semicolon
+DECL|member|rxopt
+)brace
+id|rxopt
+suffix:semicolon
+multiline_comment|/* sockopt flags */
+DECL|member|mc_loop
+id|__u8
+id|mc_loop
+suffix:colon
+l_int|1
 suffix:semicolon
 DECL|member|ipv6_mc_list
 r_struct
@@ -287,9 +318,15 @@ id|dst_cookie
 suffix:semicolon
 DECL|member|opt
 r_struct
-id|ipv6_options
+id|ipv6_txoptions
 op_star
 id|opt
+suffix:semicolon
+DECL|member|pktoptions
+r_struct
+id|sk_buff
+op_star
+id|pktoptions
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -412,6 +449,26 @@ DECL|member|max_window
 id|__u32
 id|max_window
 suffix:semicolon
+DECL|member|pmtu_cookie
+id|__u32
+id|pmtu_cookie
+suffix:semicolon
+multiline_comment|/* Last pmtu seen by socket&t;&t;*/
+DECL|member|mss_cache
+id|__u16
+id|mss_cache
+suffix:semicolon
+multiline_comment|/* Cached effective mss, not including SACKS */
+DECL|member|mss_clamp
+id|__u16
+id|mss_clamp
+suffix:semicolon
+multiline_comment|/* Maximal mss, negotiated at connection setup */
+DECL|member|ext_header_len
+id|__u16
+id|ext_header_len
+suffix:semicolon
+multiline_comment|/* Dave, do you allow mw to use this hole? 8) --ANK */
 DECL|member|pending
 id|__u8
 id|pending
@@ -481,6 +538,11 @@ DECL|member|delayed_acks
 id|__u8
 id|delayed_acks
 suffix:semicolon
+DECL|member|user_mss
+id|__u16
+id|user_mss
+suffix:semicolon
+multiline_comment|/* mss requested by user in ioctl */
 multiline_comment|/* Two commonly used timers in both sender and receiver paths. */
 DECL|member|retransmit_timer
 r_struct
@@ -558,11 +620,6 @@ r_char
 id|saw_tstamp
 suffix:semicolon
 multiline_comment|/* Saw TIMESTAMP on last packet&t;&t;*/
-DECL|member|in_mss
-id|__u16
-id|in_mss
-suffix:semicolon
-multiline_comment|/* MSS option received from sender&t;*/
 DECL|member|snd_wscale
 id|__u8
 id|snd_wscale
@@ -639,6 +696,16 @@ DECL|member|urg_data
 id|__u32
 id|urg_data
 suffix:semicolon
+DECL|member|last_seg_size
+id|__u32
+id|last_seg_size
+suffix:semicolon
+multiline_comment|/* Size of last incoming segment */
+DECL|member|rcv_mss
+id|__u32
+id|rcv_mss
+suffix:semicolon
+multiline_comment|/* MSS used for delayed ACK decisions */
 DECL|member|syn_wait_queue
 r_struct
 id|open_request
@@ -918,25 +985,6 @@ id|proto
 op_star
 id|prot
 suffix:semicolon
-multiline_comment|/* mss is min(mtu, max_window)&n;&t; * XXX Fix this, mtu only used in one TCP place and that is it -DaveM&n;&t; */
-DECL|member|mtu
-r_int
-r_int
-id|mtu
-suffix:semicolon
-multiline_comment|/* mss negotiated in the syn&squot;s */
-DECL|member|mss
-r_int
-r_int
-id|mss
-suffix:semicolon
-multiline_comment|/* current eff. mss - can change */
-DECL|member|user_mss
-r_int
-r_int
-id|user_mss
-suffix:semicolon
-multiline_comment|/* mss requested by user in ioctl */
 DECL|member|shutdown
 r_int
 r_int
@@ -3123,6 +3171,87 @@ suffix:semicolon
 r_return
 op_minus
 id|err
+suffix:semicolon
+)brace
+DECL|function|sock_wspace
+r_extern
+id|__inline__
+r_int
+r_int
+id|sock_wspace
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_int
+id|amt
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sk-&gt;shutdown
+op_amp
+id|SEND_SHUTDOWN
+)paren
+)paren
+(brace
+id|amt
+op_assign
+id|sk-&gt;sndbuf
+op_minus
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sk-&gt;wmem_alloc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|amt
+OL
+l_int|0
+)paren
+id|amt
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_return
+id|amt
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Default write policy as shown to user space via poll/select/SIGIO&n; *&t;Kernel internally doesn&squot;t use the MIN_WRITE_SPACE threshold.&n; */
+DECL|function|sock_writeable
+r_extern
+id|__inline__
+r_int
+id|sock_writeable
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_return
+id|sock_wspace
+c_func
+(paren
+id|sk
+)paren
+op_ge
+id|MIN_WRITE_SPACE
 suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;Declarations from timer.c &n; */

@@ -2092,11 +2092,6 @@ id|sk-&gt;protocol
 op_assign
 id|protocol
 suffix:semicolon
-id|sk-&gt;mtu
-op_assign
-id|ROSE_MTU
-suffix:semicolon
-multiline_comment|/* 253 */
 id|init_timer
 c_func
 (paren
@@ -2239,10 +2234,6 @@ suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
-suffix:semicolon
-id|sk-&gt;mtu
-op_assign
-id|osk-&gt;mtu
 suffix:semicolon
 id|sk-&gt;sleep
 op_assign

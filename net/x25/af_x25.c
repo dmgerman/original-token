@@ -1806,11 +1806,6 @@ id|sk-&gt;protocol
 op_assign
 id|protocol
 suffix:semicolon
-id|sk-&gt;mtu
-op_assign
-id|X25_DEFAULT_PACKET_SIZE
-suffix:semicolon
-multiline_comment|/* X25_PS128 */
 id|x25-&gt;t21
 op_assign
 id|sysctl_x25_call_request_timeout
@@ -1944,10 +1939,6 @@ suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
-suffix:semicolon
-id|sk-&gt;mtu
-op_assign
-id|osk-&gt;mtu
 suffix:semicolon
 id|sk-&gt;sleep
 op_assign

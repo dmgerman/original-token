@@ -78,11 +78,12 @@ mdefine_line|#define PACKET_MULTICAST&t;2&t;&t;/* To group&t;&t;*/
 DECL|macro|PACKET_OTHERHOST
 mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;/* To someone else &t;*/
 DECL|macro|PACKET_OUTGOING
-mdefine_line|#define PACKET_OUTGOING&t;&t;4&t;&t;/* Originated by us&t;*/
+mdefine_line|#define PACKET_OUTGOING&t;&t;4&t;&t;/* Outgoing of any type */
+multiline_comment|/* These ones are invisible by user level */
 DECL|macro|PACKET_LOOPBACK
-mdefine_line|#define PACKET_LOOPBACK&t;&t;5
+mdefine_line|#define PACKET_LOOPBACK&t;&t;5&t;&t;/* MC/BRD frame looped back */
 DECL|macro|PACKET_FASTROUTE
-mdefine_line|#define PACKET_FASTROUTE&t;6
+mdefine_line|#define PACKET_FASTROUTE&t;6&t;&t;/* Fastrouted frame&t;*/
 multiline_comment|/* Packet socket options */
 DECL|macro|PACKET_ADD_MEMBERSHIP
 mdefine_line|#define PACKET_ADD_MEMBERSHIP&t;&t;1

@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
 DECL|macro|RTNL_DEBUG
 mdefine_line|#define RTNL_DEBUG 1
-multiline_comment|/* #define CONFIG_RTNL_OLD_IFINFO 1 */
 multiline_comment|/****&n; *&t;&t;Routing/neighbour discovery messages.&n; ****/
 multiline_comment|/* Types of messages */
 DECL|macro|RTM_BASE
@@ -83,7 +82,7 @@ mdefine_line|#define RTA_ALIGNTO&t;4
 DECL|macro|RTA_ALIGN
 mdefine_line|#define RTA_ALIGN(len) ( ((len)+RTA_ALIGNTO-1) &amp; ~(RTA_ALIGNTO-1) )
 DECL|macro|RTA_OK
-mdefine_line|#define RTA_OK(rta,len) ((rta)-&gt;rta_len &gt;= sizeof(struct rtattr) &amp;&amp; &bslash;&n;&t;&t;&t; (rta)-&gt;rta_len &lt;= (len))
+mdefine_line|#define RTA_OK(rta,len) ((len) &gt; 0 &amp;&amp; (rta)-&gt;rta_len &gt;= sizeof(struct rtattr) &amp;&amp; &bslash;&n;&t;&t;&t; (rta)-&gt;rta_len &lt;= (len))
 DECL|macro|RTA_NEXT
 mdefine_line|#define RTA_NEXT(rta,attrlen)&t;((attrlen) -= RTA_ALIGN((rta)-&gt;rta_len), &bslash;&n;&t;&t;&t;&t; (struct rtattr*)(((char*)(rta)) + RTA_ALIGN((rta)-&gt;rta_len)))
 DECL|macro|RTA_LENGTH
@@ -93,7 +92,7 @@ mdefine_line|#define RTA_SPACE(len)&t;RTA_ALIGN(RTA_LENGTH(len))
 DECL|macro|RTA_DATA
 mdefine_line|#define RTA_DATA(rta)   ((void*)(((char*)(rta)) + RTA_LENGTH(0)))
 DECL|macro|RTA_PAYLOAD
-mdefine_line|#define RTA_PAYLOAD(rta) ((rta)-&gt;rta_len - RTA_LENGTH(0))
+mdefine_line|#define RTA_PAYLOAD(rta) ((int)((rta)-&gt;rta_len) - RTA_LENGTH(0))
 multiline_comment|/******************************************************************************&n; *&t;&t;Definitions used in routing table administation.&n; ****/
 DECL|struct|rtmsg
 r_struct
@@ -131,47 +130,18 @@ r_char
 id|rtm_protocol
 suffix:semicolon
 multiline_comment|/* Routing protocol; see below&t;*/
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-DECL|member|rtm_nhs
-r_int
-r_char
-id|rtm_nhs
-suffix:semicolon
-multiline_comment|/* Number of nexthops */
-macro_line|#else
 DECL|member|rtm_scope
 r_int
 r_char
 id|rtm_scope
 suffix:semicolon
 multiline_comment|/* See below */
-macro_line|#endif
 DECL|member|rtm_type
 r_int
 r_char
 id|rtm_type
 suffix:semicolon
 multiline_comment|/* See below&t;*/
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-DECL|member|rtm_optlen
-r_int
-r_int
-id|rtm_optlen
-suffix:semicolon
-multiline_comment|/* Byte length of rtm_opt */
-DECL|member|rtm_scope
-r_int
-r_char
-id|rtm_scope
-suffix:semicolon
-multiline_comment|/* See below */
-DECL|member|rtm_whatsit
-r_int
-r_char
-id|rtm_whatsit
-suffix:semicolon
-multiline_comment|/* Unused byte */
-macro_line|#endif
 DECL|member|rtm_flags
 r_int
 id|rtm_flags
@@ -291,10 +261,6 @@ DECL|macro|RTM_F_CLONED
 mdefine_line|#define RTM_F_CLONED&t;&t;0x200&t;/* This route is cloned&t;&t;*/
 DECL|macro|RTM_F_EQUALIZE
 mdefine_line|#define RTM_F_EQUALIZE&t;&t;0x400&t;/* Multipath equalizer: NI&t;*/
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-DECL|macro|RTM_F_NOPMTUDISC
-mdefine_line|#define RTM_F_NOPMTUDISC&t;0x800&t;/* Do not make PMTU discovery&t;*/
-macro_line|#endif
 multiline_comment|/* Reserved table identifiers */
 DECL|enum|rt_class_t
 r_enum
@@ -353,7 +319,6 @@ comma
 DECL|enumerator|RTA_PREFSRC
 id|RTA_PREFSRC
 comma
-macro_line|#ifndef CONFIG_RTNL_OLD_IFINFO
 DECL|enumerator|RTA_METRICS
 id|RTA_METRICS
 comma
@@ -366,16 +331,6 @@ comma
 DECL|enumerator|RTA_FLOW
 id|RTA_FLOW
 comma
-macro_line|#else
-id|RTA_WINDOW
-comma
-id|RTA_RTT
-comma
-id|RTA_MTU
-comma
-id|RTA_IFNAME
-comma
-macro_line|#endif
 DECL|enumerator|RTA_CACHEINFO
 id|RTA_CACHEINFO
 )brace
@@ -425,7 +380,7 @@ mdefine_line|#define RTNH_ALIGNTO&t;4
 DECL|macro|RTNH_ALIGN
 mdefine_line|#define RTNH_ALIGN(len) ( ((len)+RTNH_ALIGNTO-1) &amp; ~(RTNH_ALIGNTO-1) )
 DECL|macro|RTNH_OK
-mdefine_line|#define RTNH_OK(rtnh,len) ((rtnh)-&gt;rtnh_len &gt;= sizeof(struct rtnexthop) &amp;&amp; &bslash;&n;&t;&t;&t;   (rtnh)-&gt;rtnh_len &lt;= (len))
+mdefine_line|#define RTNH_OK(rtnh,len) ((rtnh)-&gt;rtnh_len &gt;= sizeof(struct rtnexthop) &amp;&amp; &bslash;&n;&t;&t;&t;   ((int)(rtnh)-&gt;rtnh_len) &lt;= (len))
 DECL|macro|RTNH_NEXT
 mdefine_line|#define RTNH_NEXT(rtnh)&t;((struct rtnexthop*)(((char*)(rtnh)) + RTNH_ALIGN((rtnh)-&gt;rtnh_len)))
 DECL|macro|RTNH_LENGTH
@@ -434,12 +389,6 @@ DECL|macro|RTNH_SPACE
 mdefine_line|#define RTNH_SPACE(len)&t;RTNH_ALIGN(RTNH_LENGTH(len))
 DECL|macro|RTNH_DATA
 mdefine_line|#define RTNH_DATA(rtnh)   ((struct rtattr*)(((char*)(rtnh)) + RTNH_LENGTH(0)))
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-DECL|macro|RTM_RTNH
-mdefine_line|#define RTM_RTNH(r) ((struct rtnexthop*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct rtmsg)) &bslash;&n;&t;&t;&t;&t;&t;   + NLMSG_ALIGN((r)-&gt;rtm_optlen)))
-DECL|macro|RTM_NHLEN
-mdefine_line|#define RTM_NHLEN(nlh,r) ((nlh)-&gt;nlmsg_len - NLMSG_SPACE(sizeof(struct rtmsg)) - NLMSG_ALIGN((r)-&gt;rtm_optlen))
-macro_line|#endif
 multiline_comment|/* RTM_CACHEINFO */
 DECL|struct|rta_cacheinfo
 r_struct
@@ -708,104 +657,6 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*****************************************************************&n; *&t;&t;Link layer specific messages.&n; ****/
 multiline_comment|/* struct ifinfomsg&n; * passes link level specific information, not dependent&n; * on network protocol.&n; */
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-DECL|struct|ifinfomsg
-r_struct
-id|ifinfomsg
-(brace
-DECL|member|ifi_family
-r_int
-r_char
-id|ifi_family
-suffix:semicolon
-multiline_comment|/* Dummy&t;*/
-DECL|member|ifi_addrlen
-r_int
-r_char
-id|ifi_addrlen
-suffix:semicolon
-multiline_comment|/* Length of HW address */
-DECL|member|ifi_pad__
-r_int
-r_int
-id|ifi_pad__
-suffix:semicolon
-DECL|member|ifi_index
-r_int
-id|ifi_index
-suffix:semicolon
-multiline_comment|/* Link index&t;*/
-DECL|member|ifi_link
-r_int
-id|ifi_link
-suffix:semicolon
-multiline_comment|/* Physical device */
-DECL|member|ifi_name
-r_char
-id|ifi_name
-(braket
-id|IFNAMSIZ
-)braket
-suffix:semicolon
-DECL|member|ifi_address
-r_struct
-id|sockaddr
-id|ifi_address
-suffix:semicolon
-multiline_comment|/* HW address&t;*/
-DECL|member|ifi_broadcast
-r_struct
-id|sockaddr
-id|ifi_broadcast
-suffix:semicolon
-multiline_comment|/* HW broadcast&t;*/
-DECL|member|ifi_flags
-r_int
-id|ifi_flags
-suffix:semicolon
-multiline_comment|/* IFF_* flags&t;*/
-DECL|member|ifi_mtu
-r_int
-id|ifi_mtu
-suffix:semicolon
-multiline_comment|/* Link mtu&t;*/
-DECL|member|ifi_qdiscname
-r_char
-id|ifi_qdiscname
-(braket
-id|IFNAMSIZ
-)braket
-suffix:semicolon
-multiline_comment|/* Id of packet scheduler */
-DECL|member|ifi_qdisc
-r_int
-id|ifi_qdisc
-suffix:semicolon
-multiline_comment|/* Packet scheduler handle */
-)brace
-suffix:semicolon
-r_enum
-(brace
-DECL|enumerator|IFLA_UNSPEC
-id|IFLA_UNSPEC
-comma
-DECL|enumerator|IFLA_ADDRESS
-id|IFLA_ADDRESS
-comma
-DECL|enumerator|IFLA_BROADCAST
-id|IFLA_BROADCAST
-comma
-DECL|enumerator|IFLA_IFNAME
-id|IFLA_IFNAME
-comma
-DECL|enumerator|IFLA_QDISC
-id|IFLA_QDISC
-comma
-DECL|enumerator|IFLA_STATS
-id|IFLA_STATS
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|struct|ifinfomsg
 r_struct
 id|ifinfomsg
@@ -870,7 +721,6 @@ DECL|enumerator|IFLA_STATS
 id|IFLA_STATS
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|macro|IFLA_MAX
 mdefine_line|#define IFLA_MAX IFLA_STATS
 DECL|macro|IFLA_RTA
@@ -1141,7 +991,7 @@ comma
 id|u32
 id|pid
 comma
-r_int
+id|u32
 id|group
 comma
 r_int

@@ -20,8 +20,6 @@ DECL|macro|RTF_ALLONLINK
 mdefine_line|#define RTF_ALLONLINK&t;0x00020000&t;/* fallback, no routers on link&t;*/
 DECL|macro|RTF_ADDRCONF
 mdefine_line|#define RTF_ADDRCONF&t;0x00040000&t;/* addrconf route - RA&t;&t;*/
-DECL|macro|RTF_LINKRT
-mdefine_line|#define RTF_LINKRT&t;0x00100000&t;/* link specific - device match&t;*/
 DECL|macro|RTF_NONEXTHOP
 mdefine_line|#define RTF_NONEXTHOP&t;0x00200000&t;/* route with no nexthop&t;*/
 DECL|macro|RTF_EXPIRES

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.92 1998/06/19 13:22:44 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.93 1998/08/26 12:04:32 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -408,7 +408,7 @@ op_plus
 l_int|1
 )paren
 comma
-id|sk-&gt;mss
+id|tp-&gt;mss_clamp
 comma
 id|sysctl_tcp_timestamps
 comma
@@ -1008,6 +1008,98 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* This function synchronize snd mss to current pmtu/exthdr set.&n;&n;   tp-&gt;user_mss is mss set by user by TCP_MAXSEG. It does NOT counts&n;   for TCP options, but includes only bare TCP header.&n;&n;   tp-&gt;mss_clamp is mss negotiated at connection setup.&n;   It is minumum of user_mss and mss received with SYN.&n;   It also does not include TCP options.&n;&n;   tp-&gt;pmtu_cookie is last pmtu, seen by this function.&n;&n;   tp-&gt;mss_cache is current effective sending mss, including&n;   all tcp options except for SACKs. It is evaluated,&n;   taking into account current pmtu, but never exceeds&n;   tp-&gt;mss_clamp.&n;&n;   NOTE1. rfc1122 clearly states that advertised MSS&n;   DOES NOT include either tcp or ip options.&n;&n;   NOTE2. tp-&gt;pmtu_cookie and tp-&gt;mss_cache are READ ONLY outside&n;   this function.&t;&t;&t;--ANK (980731)&n; */
+DECL|function|tcp_sync_mss
+r_int
+id|tcp_sync_mss
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+id|u32
+id|pmtu
+)paren
+(brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+id|sk-&gt;tp_pinfo.af_tcp
+suffix:semicolon
+r_int
+id|mss_now
+suffix:semicolon
+multiline_comment|/* Calculate base mss without TCP options:&n;&t;   It is MMS_S - sizeof(tcphdr) of rfc1122&n;&t;*/
+id|mss_now
+op_assign
+id|pmtu
+op_minus
+id|tp-&gt;af_specific-&gt;net_header_len
+op_minus
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+suffix:semicolon
+multiline_comment|/* Clamp it (mss_clamp does not include tcp options) */
+r_if
+c_cond
+(paren
+id|mss_now
+OG
+id|tp-&gt;mss_clamp
+)paren
+id|mss_now
+op_assign
+id|tp-&gt;mss_clamp
+suffix:semicolon
+multiline_comment|/* Now subtract TCP options size, not including SACKs */
+id|mss_now
+op_sub_assign
+id|tp-&gt;tcp_header_len
+op_minus
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+suffix:semicolon
+multiline_comment|/* Now subtract optional transport overhead */
+id|mss_now
+op_sub_assign
+id|tp-&gt;ext_header_len
+suffix:semicolon
+multiline_comment|/* It we got too small (or even negative) value,&n;&t;   clamp it by 8 from below. Why 8 ?&n;&t;   Well, it could be 1 with the same success,&n;&t;   but if IP accepted segment of length 1,&n;&t;   it would love 8 even more 8)&t;&t;--ANK (980731)&n;&t; */
+r_if
+c_cond
+(paren
+id|mss_now
+OL
+l_int|8
+)paren
+id|mss_now
+op_assign
+l_int|8
+suffix:semicolon
+multiline_comment|/* And store cached results */
+id|tp-&gt;pmtu_cookie
+op_assign
+id|pmtu
+suffix:semicolon
+id|tp-&gt;mss_cache
+op_assign
+id|mss_now
+suffix:semicolon
+r_return
+id|mss_now
+suffix:semicolon
+)brace
 multiline_comment|/* This routine writes packets to the network.  It advances the&n; * send_head.  This happens as incoming acks open up the remote&n; * window for us.&n; */
 DECL|function|tcp_write_xmit
 r_void
@@ -1207,7 +1299,7 @@ r_int
 r_int
 id|mss
 op_assign
-id|sk-&gt;mss
+id|tp-&gt;mss_cache
 suffix:semicolon
 r_int
 id|free_space
@@ -2430,7 +2522,7 @@ op_logical_and
 id|skb-&gt;len
 OL
 (paren
-id|sk-&gt;mss
+id|tp-&gt;mss_cache
 op_rshift
 l_int|1
 )paren
@@ -3049,30 +3141,6 @@ c_func
 id|dst
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;user_mss
-)paren
-id|mss
-op_assign
-id|min
-c_func
-(paren
-id|mss
-comma
-id|sk-&gt;user_mss
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|req-&gt;tstamp_ok
-)paren
-id|mss
-op_sub_assign
-id|TCPOLEN_TSTAMP_ALIGNED
-suffix:semicolon
 multiline_comment|/* Don&squot;t offer more than they did.&n;&t; * This way we don&squot;t have to memorize who said what.&n;&t; * FIXME: maybe this should be changed for better performance&n;&t; * with syncookies.&n;&t; */
 id|req-&gt;mss
 op_assign
@@ -3089,19 +3157,19 @@ c_cond
 (paren
 id|req-&gt;mss
 OL
-l_int|1
+l_int|8
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;initial req-&gt;mss below 1&bslash;n&quot;
+l_string|&quot;initial req-&gt;mss below 8&bslash;n&quot;
 )paren
 suffix:semicolon
 id|req-&gt;mss
 op_assign
-l_int|1
+l_int|8
 suffix:semicolon
 )brace
 id|tcp_header_size
@@ -3381,7 +3449,7 @@ op_star
 id|buff
 comma
 r_int
-id|mss
+id|mtu
 )paren
 (brace
 r_struct
@@ -3411,17 +3479,6 @@ id|MAX_HEADER
 op_plus
 id|sk-&gt;prot-&gt;max_header
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;priority
-op_eq
-l_int|0
-)paren
-id|sk-&gt;priority
-op_assign
-id|dst-&gt;priority
 suffix:semicolon
 id|tp-&gt;snd_wnd
 op_assign
@@ -3465,49 +3522,51 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-id|mss
-op_sub_assign
-id|tp-&gt;tcp_header_len
-suffix:semicolon
+multiline_comment|/* If user gave his TCP_MAXSEG, record it to clamp */
 r_if
 c_cond
 (paren
-id|sk-&gt;user_mss
+id|tp-&gt;user_mss
 )paren
-id|mss
+id|tp-&gt;mss_clamp
 op_assign
-id|min
+id|tp-&gt;user_mss
+suffix:semicolon
+id|tcp_sync_mss
 c_func
 (paren
-id|mss
+id|sk
 comma
-id|sk-&gt;user_mss
+id|mtu
 )paren
 suffix:semicolon
+multiline_comment|/* Now unpleasant action: if initial pmtu is too low&n;&t;   set lower clamp. I am not sure that it is good.&n;&t;   To be more exact, I do not think that clamping at value, which&n;&t;   is apparently transient and may improve in future is good idea.&n;&t;   It would be better to wait until peer will returns its MSS&n;&t;   (probably 65535 too) and now advertise something sort of 65535&n;&t;   or at least first hop device mtu. Is it clear, what I mean?&n;&t;   We should tell peer what maximal mss we expect to RECEIVE,&n;&t;   it has nothing to do with pmtu.&n;&t;   I am afraid someone will be confused by such huge value.&n;&t;                                                   --ANK (980731)&n;&t; */
 r_if
 c_cond
 (paren
-id|mss
-OL
-l_int|1
-)paren
-(brace
-id|printk
-c_func
+id|tp-&gt;mss_cache
+op_plus
+id|tp-&gt;tcp_header_len
+op_minus
+r_sizeof
 (paren
-id|KERN_DEBUG
-l_string|&quot;initial sk-&gt;mss below 1&bslash;n&quot;
+r_struct
+id|tcphdr
 )paren
-suffix:semicolon
-id|mss
+OL
+id|tp-&gt;mss_clamp
+)paren
+id|tp-&gt;mss_clamp
 op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Sanity limit */
-)brace
-id|sk-&gt;mss
-op_assign
-id|mss
+id|tp-&gt;mss_cache
+op_plus
+id|tp-&gt;tcp_header_len
+op_minus
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
 suffix:semicolon
 id|TCP_SKB_CB
 c_func
@@ -3589,7 +3648,7 @@ id|sk
 op_div
 l_int|2
 comma
-id|sk-&gt;mss
+id|tp-&gt;mss_clamp
 comma
 op_amp
 id|tp-&gt;rcv_wnd

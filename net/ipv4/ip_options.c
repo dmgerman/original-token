@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The options processing module for ip.c&n; *&n; * Version:&t;$Id: ip_options.c,v 1.13 1998/02/12 07:43:12 davem Exp $&n; *&n; * Authors:&t;A.N.Kuznetsov&n; *&t;&t;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The options processing module for ip.c&n; *&n; * Version:&t;$Id: ip_options.c,v 1.14 1998/08/26 12:03:51 davem Exp $&n; *&n; * Authors:&t;A.N.Kuznetsov&n; *&t;&t;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -2281,9 +2281,17 @@ id|ICMP_PARAMETERPROB
 comma
 l_int|0
 comma
+id|htonl
+c_func
+(paren
+(paren
 id|pp_ptr
 op_minus
 id|iph
+)paren
+op_lshift
+l_int|24
+)paren
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -3078,7 +3086,13 @@ id|ICMP_PARAMETERPROB
 comma
 l_int|0
 comma
+id|htonl
+c_func
+(paren
 l_int|16
+op_lshift
+l_int|24
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3142,9 +3156,17 @@ id|ICMP_PARAMETERPROB
 comma
 l_int|0
 comma
+id|htonl
+c_func
+(paren
+(paren
 id|opt-&gt;srr
 op_plus
 l_int|2
+)paren
+op_lshift
+l_int|24
+)paren
 )paren
 suffix:semicolon
 r_return

@@ -946,7 +946,7 @@ id|sk_buff
 op_star
 id|skb
 comma
-id|pid_t
+id|u32
 id|pid
 comma
 id|u32

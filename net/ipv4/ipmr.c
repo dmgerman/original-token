@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6/3.8&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Version: $Id: ipmr.c,v 1.35 1998/05/13 06:23:24 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&t;Mike McLagan&t;&t;:&t;Routing by source&n; *&t;Malcolm Beattie&t;&t;:&t;Buffer handling fixes.&n; *&t;Alexey Kuznetsov&t;:&t;Double buffer free and other fixes.&n; *&t;SVR Anand&t;&t;:&t;Fixed several multicast bugs and problems.&n; *&t;Alexey Kuznetsov&t;:&t;Status, optimisations and more.&n; *&t;Brad Parker&t;&t;:&t;Better behaviour on mrouted upcall&n; *&t;&t;&t;&t;&t;overflow.&n; *      Carlos Picoto           :       PIMv1 Support&n; *&n; */
+multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6/3.8&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Version: $Id: ipmr.c,v 1.36 1998/08/26 12:04:03 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&t;Mike McLagan&t;&t;:&t;Routing by source&n; *&t;Malcolm Beattie&t;&t;:&t;Buffer handling fixes.&n; *&t;Alexey Kuznetsov&t;:&t;Double buffer free and other fixes.&n; *&t;SVR Anand&t;&t;:&t;Fixed several multicast bugs and problems.&n; *&t;Alexey Kuznetsov&t;:&t;Status, optimisations and more.&n; *&t;Brad Parker&t;&t;:&t;Better behaviour on mrouted upcall&n; *&t;&t;&t;&t;&t;overflow.&n; *      Carlos Picoto           :       PIMv1 Support&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -28,6 +28,8 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;net/ipip.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#if defined(CONFIG_IP_PIMSM_V1) || defined(CONFIG_IP_PIMSM_V2)
@@ -4203,19 +4205,11 @@ id|skb-&gt;len
 op_plus
 id|encap
 OG
-id|dev-&gt;mtu
-op_logical_and
-(paren
-id|ntohs
-c_func
-(paren
-id|iph-&gt;frag_off
-)paren
-op_amp
-id|IP_DF
-)paren
+id|rt-&gt;u.dst.pmtu
+multiline_comment|/* &amp;&amp; (ntohs(iph-&gt;frag_off) &amp; IP_DF) */
 )paren
 (brace
+multiline_comment|/* Do not fragment multicasts. Alas, IPv4 does not&n;&t;&t;   allow to send ICMP, so that packets will disappear&n;&t;&t;   to blackhole.&n;&t;&t; */
 id|ip_statistics.IpFragFails
 op_increment
 suffix:semicolon
@@ -4232,25 +4226,6 @@ id|encap
 op_add_assign
 id|dev-&gt;hard_header_len
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_plus
-id|encap
-OG
-l_int|65534
-)paren
-(brace
-id|ip_rt_put
-c_func
-(paren
-id|rt
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4370,6 +4345,68 @@ c_func
 id|iph
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|call_fw_firewall
+c_func
+(paren
+id|PF_INET
+comma
+id|vif-&gt;dev
+comma
+id|skb2-&gt;nh.iph
+comma
+l_int|NULL
+comma
+op_amp
+id|skb2
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb2
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|call_out_firewall
+c_func
+(paren
+id|PF_INET
+comma
+id|vif-&gt;dev
+comma
+id|skb2-&gt;nh.iph
+comma
+l_int|NULL
+comma
+op_amp
+id|skb2
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb2
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4388,6 +4425,39 @@ comma
 id|vif-&gt;remote
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+multiline_comment|/* Double output firewalling on tunnels: one is on tunnel&n;&t;&t;   another one is on real device.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|call_out_firewall
+c_func
+(paren
+id|PF_INET
+comma
+id|dev
+comma
+id|skb2-&gt;nh.iph
+comma
+l_int|NULL
+comma
+op_amp
+id|skb2
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb2
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 (paren
 (paren
 r_struct
@@ -5568,40 +5638,6 @@ id|b
 op_assign
 id|skb-&gt;tail
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-r_if
-c_cond
-(paren
-id|dev
-)paren
-(brace
-id|u8
-op_star
-id|o
-op_assign
-id|skb-&gt;tail
-suffix:semicolon
-id|RTA_PUT
-c_func
-(paren
-id|skb
-comma
-id|RTA_IIF
-comma
-l_int|4
-comma
-op_amp
-id|dev-&gt;ifindex
-)paren
-suffix:semicolon
-id|rtm-&gt;rtm_optlen
-op_add_assign
-id|skb-&gt;tail
-op_minus
-id|o
-suffix:semicolon
-)brace
-macro_line|#else
 r_struct
 id|rtattr
 op_star
@@ -5644,7 +5680,6 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -5750,14 +5785,8 @@ op_star
 id|nhp
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-id|rtm-&gt;rtm_nhs
-op_increment
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
-macro_line|#ifndef CONFIG_RTNL_OLD_IFINFO
 id|mp_head-&gt;rta_type
 op_assign
 id|RTA_MULTIPATH
@@ -5772,7 +5801,6 @@ op_star
 )paren
 id|mp_head
 suffix:semicolon
-macro_line|#endif
 id|rtm-&gt;rtm_type
 op_assign
 id|RTN_MULTICAST

@@ -1380,7 +1380,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|pid_t
+id|u32
 id|pid
 op_assign
 id|oskb

@@ -10,15 +10,13 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 DECL|macro|IN2000_VERSION
-mdefine_line|#define IN2000_VERSION    &quot;1.32&quot;
+mdefine_line|#define IN2000_VERSION    &quot;1.33&quot;
 DECL|macro|IN2000_DATE
-mdefine_line|#define IN2000_DATE       &quot;28/March/1998&quot;
-multiline_comment|/*&n; * Note - the following defines have been moved to &squot;in2000.h&squot;:&n; *&n; *    PROC_INTERFACE&n; *    PROC_STATISTICS&n; *    SYNC_DEBUG&n; *    DEBUGGING_ON&n; *    DEBUG_DEFAULTS&n; *    FAST_READ_IO&n; *    FAST_WRITE_IO&n; *&n; */
+mdefine_line|#define IN2000_DATE       &quot;26/August/1998&quot;
 macro_line|#include &quot;in2000.h&quot;
 multiline_comment|/*&n; * &squot;setup_strings&squot; is a single string used to pass operating parameters and&n; * settings from the kernel/module command-line to the driver. &squot;setup_args[]&squot;&n; * is an array of strings that define the compile-time default values for&n; * these settings. If Linux boots with a LILO or insmod command-line, those&n; * settings are combined with &squot;setup_args[]&squot;. Note that LILO command-lines&n; * are prefixed with &quot;in2000=&quot; while insmod uses a &quot;setup_strings=&quot; prefix.&n; * The driver recognizes the following keywords (lower case required) and&n; * arguments:&n; *&n; * -  ioport:addr    -Where addr is IO address of a (usually ROM-less) card.&n; * -  noreset        -No optional args. Prevents SCSI bus reset at boot time.&n; * -  nosync:x       -x is a bitmask where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices (bit 0 for device #0, etc).&n; *                    Set a bit to PREVENT sync negotiation on that device.&n; *                    The driver default is sync DISABLED on all devices.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bitmask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in in2000.h&n; * -  proc:x         -If &squot;PROC_INTERFACE&squot; is defined, x is a bitmask that&n; *                    determines how the /proc interface works and what it&n; *                    does - see the PR_xxx defines in in2000.h&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_args[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_args[] element.&n; *&n; * A few LILO examples (for insmod, use &squot;setup_strings&squot; instead of &squot;in2000&squot;):&n; * -  in2000=ioport:0x220,noreset&n; * -  in2000=period:250,disconnect:2,nosync:0x03&n; * -  in2000=debug:0x1e&n; * -  in2000=proc:3&n; */
 multiline_comment|/* Normally, no defaults are specified... */
@@ -843,6 +841,7 @@ id|cmd-&gt;SCp.Status
 op_assign
 id|ILLEGAL_STATUS_BYTE
 suffix:semicolon
+multiline_comment|/* We need to disable interrupts before messing with the input&n; * queue and calling in2000_execute().&n; */
 id|save_flags
 c_func
 (paren
@@ -950,7 +949,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine attempts to start a scsi command. If the host_card is&n; * already connected, we give up immediately. Otherwise, look through&n; * the input_Q, using the first command we find that&squot;s intended&n; * for a currently non-busy target/lun.&n; */
+multiline_comment|/*&n; * This routine attempts to start a scsi command. If the host_card is&n; * already connected, we give up immediately. Otherwise, look through&n; * the input_Q, using the first command we find that&squot;s intended&n; * for a currently non-busy target/lun.&n; * Note that this function is always called with interrupts already&n; * disabled (either from in2000_queuecommand() or in2000_intr()).&n; */
 DECL|function|in2000_execute
 r_static
 r_void
@@ -975,10 +974,6 @@ op_star
 id|prev
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|i
 suffix:semicolon
 r_int
@@ -996,17 +991,6 @@ id|flushbuf
 (braket
 l_int|16
 )braket
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|hostdata
 op_assign
@@ -1047,12 +1031,6 @@ c_func
 l_string|&quot;)EX-0 &quot;
 )paren
 )paren
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1126,12 +1104,6 @@ c_func
 l_string|&quot;)EX-1 &quot;
 )paren
 )paren
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1784,12 +1756,6 @@ comma
 id|cmd-&gt;pid
 )paren
 )paren
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|transfer_pio
 r_static
@@ -2269,7 +2235,7 @@ id|IO_FIFO
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* It appears that the Linux interrupt dispatcher calls this&n; * function in a non-reentrant fashion. What that means to us&n; * is that we can use an SA_INTERRUPT type of interrupt (which&n; * is faster), and do an sti() right away to let timer, serial,&n; * etc. ints happen.&n; *&n; * WHOA! Wait a minute, pardner! Does this hold when more than&n; * one card has been detected?? I doubt it. Maybe better&n; * re-think the multiple card capability....&n; */
+multiline_comment|/* We need to use spin_lock_irqsave() &amp; spin_unlock_irqrestore() in this&n; * function in order to work in an SMP environment. (I&squot;d be surprised&n; * if the driver is ever used by anyone on a real multi-CPU motherboard,&n; * but it _does_ need to be able to compile and run in an SMP kernel.)&n; */
 DECL|function|in2000_intr
 r_static
 r_void
@@ -2339,6 +2305,10 @@ r_int
 r_int
 id|f
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2387,6 +2357,13 @@ id|IN2000_hostdata
 op_star
 )paren
 id|instance-&gt;hostdata
+suffix:semicolon
+multiline_comment|/* Get the spin_lock and disable further ints, for SMP */
+id|CLISPIN_LOCK
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 macro_line|#ifdef PROC_STATISTICS
 id|hostdata-&gt;int_cnt
@@ -2715,6 +2692,13 @@ comma
 id|IO_LED_OFF
 )paren
 suffix:semicolon
+multiline_comment|/* release the SMP spin_lock and restore irq state */
+id|CLISPIN_UNLOCK
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2782,6 +2766,13 @@ c_func
 l_int|0
 comma
 id|IO_LED_OFF
+)paren
+suffix:semicolon
+multiline_comment|/* release the SMP spin_lock and restore irq state */
+id|CLISPIN_UNLOCK
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -2971,10 +2962,6 @@ c_cond
 id|sr
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_case
 id|CSR_TIMEOUT
 suffix:colon
@@ -2989,17 +2976,6 @@ c_func
 l_string|&quot;TIMEOUT&quot;
 )paren
 )paren
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3065,12 +3041,6 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are not connected to a target - check to see if there&n; * are commands waiting to be executed.&n; */
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|in2000_execute
 c_func
 (paren
@@ -3083,11 +3053,6 @@ multiline_comment|/* Note: this interrupt should not occur in a LEVEL2 command *
 r_case
 id|CSR_SELECT
 suffix:colon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|DB
 c_func
 (paren
@@ -3504,11 +3469,6 @@ c_func
 l_string|&quot;MSG_IN=&quot;
 )paren
 )paren
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|msg
 op_assign
 id|read_1_byte
@@ -4163,17 +4123,6 @@ multiline_comment|/* Note: this interrupt will occur only after a LEVEL2 command
 r_case
 id|CSR_SEL_XFER_DONE
 suffix:colon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
 id|write_3393
 c_func
@@ -4314,12 +4263,6 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|in2000_execute
 c_func
 (paren
@@ -4474,17 +4417,6 @@ r_case
 id|CSR_UNEXP_DISC
 suffix:colon
 multiline_comment|/* I think I&squot;ve seen this after a request-sense that was in response&n; * to an error condition, but not sure. We certainly need to do&n; * something when we get this interrupt - the question is &squot;what?&squot;.&n; * Let&squot;s think positively, and assume some command has finished&n; * in a legal manner (like a command that provokes a request-sense),&n; * so we treat it as a normal command-complete-disconnect.&n; */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
 id|write_3393
 c_func
@@ -4513,6 +4445,13 @@ suffix:semicolon
 id|hostdata-&gt;state
 op_assign
 id|S_UNCONNECTED
+suffix:semicolon
+multiline_comment|/* release the SMP spin_lock and restore irq state */
+id|CLISPIN_UNLOCK
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4598,12 +4537,6 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|in2000_execute
 c_func
 (paren
@@ -4615,17 +4548,6 @@ suffix:semicolon
 r_case
 id|CSR_DISC
 suffix:colon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
 id|write_3393
 c_func
@@ -4810,12 +4732,6 @@ id|S_UNCONNECTED
 suffix:semicolon
 )brace
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|in2000_execute
 c_func
 (paren
@@ -4838,11 +4754,6 @@ c_func
 l_string|&quot;RESEL&quot;
 )paren
 )paren
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* First we have to make sure this reselection didn&squot;t */
 multiline_comment|/* happen during Arbitration/Selection of some other device. */
 multiline_comment|/* If yes, put losing command back on top of input_Q. */
@@ -5228,55 +5139,10 @@ c_func
 l_string|&quot;} &quot;
 )paren
 )paren
-)brace
-DECL|function|do_in2000_intr
-r_static
-r_void
-id|do_in2000_intr
+multiline_comment|/* release the SMP spin_lock and restore irq state */
+id|CLISPIN_UNLOCK
 c_func
 (paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|in2000_intr
-c_func
-(paren
-id|irq
-comma
-id|dev_id
-comma
-id|regs
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
 id|flags
 )paren
 suffix:semicolon
@@ -6147,7 +6013,6 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-multiline_comment|/*      sti();*/
 id|in2000_execute
 (paren
 id|instance
@@ -6210,7 +6075,6 @@ id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Case 4 : If we reached this point, the command was not found in any of&n; *     the queues.&n; *&n; * We probably reached this point because of an unlikely race condition&n; * between the command completing successfully and the abortion code,&n; * so we won&squot;t panic, but we will notify the user in case something really&n; * broke.&n; */
-multiline_comment|/*   sti();*/
 id|in2000_execute
 (paren
 id|instance
@@ -6264,7 +6128,10 @@ id|done_setup
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|in2000_setup
+DECL|function|in2000__INITFUNC
+id|in2000__INITFUNC
+c_func
+(paren
 r_void
 id|in2000_setup
 (paren
@@ -6275,6 +6142,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int
@@ -6412,7 +6280,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* check_setup_args() returns index if key found, 0 if not&n; */
-DECL|function|check_setup_args
+DECL|function|in2000__INITFUNC
+id|in2000__INITFUNC
+c_func
+(paren
 r_static
 r_int
 id|check_setup_args
@@ -6433,6 +6304,7 @@ comma
 r_char
 op_star
 id|buf
+)paren
 )paren
 (brace
 r_int
@@ -6580,7 +6452,7 @@ id|x
 suffix:semicolon
 )brace
 multiline_comment|/* The &quot;correct&quot; (ie portable) way to access memory-mapped hardware&n; * such as the IN2000 EPROM and dip switch is through the use of&n; * special macros declared in &squot;asm/io.h&squot;. We use readb() and readl()&n; * when reading from the card&squot;s BIOS area in in2000_detect().&n; */
-DECL|variable|bios_tab
+DECL|variable|in2000__INITDATA
 r_static
 r_const
 r_int
@@ -6589,6 +6461,7 @@ op_star
 id|bios_tab
 (braket
 )braket
+id|in2000__INITDATA
 op_assign
 (brace
 (paren
@@ -6615,7 +6488,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|base_tab
+DECL|variable|in2000__INITDATA
 r_static
 r_const
 r_int
@@ -6623,6 +6496,7 @@ r_int
 id|base_tab
 (braket
 )braket
+id|in2000__INITDATA
 op_assign
 (brace
 l_int|0x220
@@ -6635,13 +6509,14 @@ l_int|0x100
 comma
 )brace
 suffix:semicolon
-DECL|variable|int_tab
+DECL|variable|in2000__INITDATA
 r_static
 r_const
 r_int
 id|int_tab
 (braket
 )braket
+id|in2000__INITDATA
 op_assign
 (brace
 l_int|15
@@ -6653,7 +6528,10 @@ comma
 l_int|10
 )brace
 suffix:semicolon
-DECL|function|in2000_detect
+DECL|function|in2000__INITFUNC
+id|in2000__INITFUNC
+c_func
+(paren
 r_int
 id|in2000_detect
 c_func
@@ -6661,6 +6539,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_struct
@@ -7090,7 +6969,7 @@ c_func
 (paren
 id|x
 comma
-id|do_in2000_intr
+id|in2000_intr
 comma
 id|SA_INTERRUPT
 comma
