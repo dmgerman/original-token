@@ -949,8 +949,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
-op_minus
-l_int|1
+id|best_guess
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * EISA Edge/Level control register, ELCR&n; */

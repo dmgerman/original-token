@@ -7226,7 +7226,7 @@ id|var
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -7239,7 +7239,7 @@ id|var
 op_assign
 id|default_var
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,1)
 r_if
 c_cond
@@ -7271,7 +7271,7 @@ op_assign
 id|default_var
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 )brace
 r_else
 (brace
@@ -7293,7 +7293,7 @@ id|var
 op_assign
 id|default_var
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 macro_line|#endif /* MODULE */
 r_if
 c_cond

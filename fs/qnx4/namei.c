@@ -542,7 +542,11 @@ suffix:semicolon
 id|ino
 op_assign
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|lnk-&gt;dl_inode_blk
+)paren
 op_minus
 l_int|1
 )paren

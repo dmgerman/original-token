@@ -20524,7 +20524,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_else
 r_if
 c_cond
@@ -21226,7 +21226,7 @@ suffix:semicolon
 id|u8
 id|gen_cntl
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -21325,7 +21325,7 @@ comma
 id|info
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren

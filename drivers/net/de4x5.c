@@ -29,6 +29,9 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_PPC
+macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#endif /* CONFIG_PPC */
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -18861,10 +18864,17 @@ comma
 id|broken
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 multiline_comment|/* &n;    ** If the address starts with 00 a0, we have to bit-reverse&n;    ** each byte of the address.&n;    */
 r_if
 c_cond
+(paren
+(paren
+id|ppc_md.ppc_machine
+op_amp
+id|_MACH_Pmac
+)paren
+op_logical_and
 (paren
 id|dev-&gt;dev_addr
 (braket
@@ -18872,13 +18882,16 @@ l_int|0
 )braket
 op_eq
 l_int|0
+)paren
 op_logical_and
+(paren
 id|dev-&gt;dev_addr
 (braket
 l_int|1
 )braket
 op_eq
 l_int|0xa0
+)paren
 )paren
 (brace
 r_for
@@ -18975,7 +18988,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 multiline_comment|/* Test for a bad enet address */
 id|status
 op_assign
