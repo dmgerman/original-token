@@ -282,6 +282,17 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
+multiline_comment|/* this is a hack for non-kernel-mapped video buffers and similar */
+r_if
+c_cond
+(paren
+id|page
+op_ge
+id|high_memory
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|page
 op_and_assign
 id|PAGE_MASK
@@ -460,6 +471,16 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
+multiline_comment|/* this is a hack for non-kernel-mapped video buffers and similar */
+r_if
+c_cond
+(paren
+id|page
+op_ge
+id|high_memory
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
 op_star
 (paren

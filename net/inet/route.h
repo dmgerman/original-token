@@ -19,6 +19,11 @@ r_int
 r_int
 id|rt_dst
 suffix:semicolon
+DECL|member|rt_mask
+r_int
+r_int
+id|rt_mask
+suffix:semicolon
 DECL|member|rt_gateway
 r_int
 r_int

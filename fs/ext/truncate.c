@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ext/truncate.c&n; *&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -1,3 +1,6 @@
+macro_line|#ifndef _LINUX_SYS_H
+DECL|macro|_LINUX_SYS_H
+mdefine_line|#define _LINUX_SYS_H
 multiline_comment|/*&n; * system call entry points&n; */
 DECL|macro|sys_clone
 mdefine_line|#define sys_clone sys_fork
@@ -993,5 +996,6 @@ id|fn_ptr
 suffix:semicolon
 macro_line|#ifdef __cplusplus
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

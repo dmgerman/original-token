@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  linux/fs/xiafs/truncate.c&n; *&n; *  Copyright (C) Q.
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/xia_fs.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &quot;xiafs_mac.h&quot;

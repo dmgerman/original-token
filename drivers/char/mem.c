@@ -970,10 +970,7 @@ l_int|NULL
 suffix:semicolon
 id|mpnt-&gt;vm_inode
 op_assign
-id|inode
-suffix:semicolon
-id|inode-&gt;i_count
-op_increment
+l_int|NULL
 suffix:semicolon
 id|mpnt-&gt;vm_offset
 op_assign
