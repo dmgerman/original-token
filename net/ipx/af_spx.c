@@ -240,9 +240,14 @@ op_or
 id|POLLWRBAND
 suffix:semicolon
 r_else
+id|set_bit
+c_func
+(paren
+id|SOCK_ASYNC_NOSPACE
+comma
+op_amp
 id|sk-&gt;socket-&gt;flags
-op_or_assign
-id|SO_NOSPACE
+)paren
 suffix:semicolon
 r_return
 id|mask
@@ -865,7 +870,7 @@ suffix:semicolon
 )brace
 id|sk-&gt;socket-&gt;flags
 op_or_assign
-id|SO_ACCEPTCON
+id|__SO_ACCEPTCON
 suffix:semicolon
 r_return
 (paren
@@ -944,7 +949,7 @@ op_logical_neg
 (paren
 id|sock-&gt;flags
 op_amp
-id|SO_ACCEPTCON
+id|__SO_ACCEPTCON
 )paren
 )paren
 (brace

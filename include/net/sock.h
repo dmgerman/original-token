@@ -598,7 +598,7 @@ DECL|member|dup_acks
 id|__u8
 id|dup_acks
 suffix:semicolon
-multiline_comment|/* Consequetive duplicate acks seen from other end */
+multiline_comment|/* Consecutive duplicate acks seen from other end */
 DECL|member|retransmits
 id|__u8
 id|retransmits

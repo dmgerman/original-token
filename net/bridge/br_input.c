@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Handle incoming frames&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_input.c,v 1.4 2000/03/21 21:08:47 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Handle incoming frames&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_input.c,v 1.5 2000/03/30 01:22:23 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -385,6 +385,13 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_else
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -419,6 +426,13 @@ c_func
 (paren
 id|br
 comma
+id|skb
+)paren
+suffix:semicolon
+r_else
+id|kfree_skb
+c_func
+(paren
 id|skb
 )paren
 suffix:semicolon

@@ -451,8 +451,8 @@ DECL|macro|PG_referenced
 mdefine_line|#define PG_referenced&t;&t; 2
 DECL|macro|PG_uptodate
 mdefine_line|#define PG_uptodate&t;&t; 3
-DECL|macro|PG__unused_00
-mdefine_line|#define PG__unused_00&t;&t; 4
+DECL|macro|PG_dirty
+mdefine_line|#define PG_dirty&t;&t; 4
 DECL|macro|PG_decr_after
 mdefine_line|#define PG_decr_after&t;&t; 5
 DECL|macro|PG_unused_01
@@ -479,6 +479,10 @@ DECL|macro|SetPageUptodate
 mdefine_line|#define SetPageUptodate(page)&t;set_bit(PG_uptodate, &amp;(page)-&gt;flags)
 DECL|macro|ClearPageUptodate
 mdefine_line|#define ClearPageUptodate(page)&t;clear_bit(PG_uptodate, &amp;(page)-&gt;flags)
+DECL|macro|Page_Dirty
+mdefine_line|#define Page_Dirty(page)&t;test_bit(PG_dirty, &amp;(page)-&gt;flags)
+DECL|macro|SetPageDirty
+mdefine_line|#define SetPageDirty(page)&t;set_bit(PG_dirty, &amp;(page)-&gt;flags)
 DECL|macro|PageLocked
 mdefine_line|#define PageLocked(page)&t;test_bit(PG_locked, &amp;(page)-&gt;flags)
 DECL|macro|LockPage
@@ -490,7 +494,7 @@ mdefine_line|#define UnlockPage(page)&t;do { &bslash;&n;&t;&t;&t;&t;&t;clear_bit
 DECL|macro|PageError
 mdefine_line|#define PageError(page)&t;&t;test_bit(PG_error, &amp;(page)-&gt;flags)
 DECL|macro|SetPageError
-mdefine_line|#define SetPageError(page)&t;test_and_set_bit(PG_error, &amp;(page)-&gt;flags)
+mdefine_line|#define SetPageError(page)&t;set_bit(PG_error, &amp;(page)-&gt;flags)
 DECL|macro|ClearPageError
 mdefine_line|#define ClearPageError(page)&t;clear_bit(PG_error, &amp;(page)-&gt;flags)
 DECL|macro|PageReferenced

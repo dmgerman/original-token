@@ -805,6 +805,24 @@ op_assign
 op_amp
 id|young
 suffix:semicolon
+multiline_comment|/* avoid unscalable SMP locking */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page-&gt;buffers
+op_logical_and
+id|page_count
+c_func
+(paren
+id|page
+)paren
+OG
+l_int|1
+)paren
+r_goto
+id|dispose_continue
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -825,32 +843,6 @@ op_amp
 id|pagemap_lru_lock
 )paren
 suffix:semicolon
-multiline_comment|/* avoid unscalable SMP locking */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|page-&gt;buffers
-op_logical_and
-id|page_count
-c_func
-(paren
-id|page
-)paren
-OG
-l_int|1
-)paren
-r_goto
-id|unlock_noput_continue
-suffix:semicolon
-multiline_comment|/* Take the pagecache_lock spinlock held to avoid&n;&t;&t;   other tasks to notice the page while we are looking at its&n;&t;&t;   page count. If it&squot;s a pagecache-page we&squot;ll free it&n;&t;&t;   in one atomic transaction after checking its page count. */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|pagecache_lock
-)paren
-suffix:semicolon
 multiline_comment|/* avoid freeing the page while it&squot;s locked */
 id|get_page
 c_func
@@ -865,13 +857,6 @@ c_cond
 id|page-&gt;buffers
 )paren
 (brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|pagecache_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -904,6 +889,8 @@ r_goto
 id|made_buffer_progress
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* Take the pagecache_lock spinlock held to avoid&n;&t;&t;   other tasks to notice the page while we are looking at its&n;&t;&t;   page count. If it&squot;s a pagecache-page we&squot;ll free it&n;&t;&t;   in one atomic transaction after checking its page count. */
 id|spin_lock
 c_func
 (paren
@@ -911,7 +898,6 @@ op_amp
 id|pagecache_lock
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; * We can&squot;t free pages unless there&squot;s just one user&n;&t;&t; * (count == 2 because we added one ourselves above).&n;&t;&t; */
 r_if
 c_cond
@@ -923,19 +909,6 @@ id|page
 )paren
 op_ne
 l_int|2
-)paren
-r_goto
-id|cache_unlock_continue
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We did the page aging part.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|nr_lru_pages
-OL
-id|freepages.min
-op_star
-id|priority
 )paren
 r_goto
 id|cache_unlock_continue
@@ -978,6 +951,13 @@ id|page-&gt;mapping
 r_if
 c_cond
 (paren
+op_logical_neg
+id|Page_Dirty
+c_func
+(paren
+id|page
+)paren
+op_logical_and
 op_logical_neg
 id|pgcache_under_min
 c_func
@@ -1039,6 +1019,13 @@ id|pagecache_lock
 suffix:semicolon
 id|unlock_continue
 suffix:colon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|pagemap_lru_lock
+)paren
+suffix:semicolon
 id|UnlockPage
 c_func
 (paren
@@ -1051,16 +1038,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|dispose_relock_continue
-suffix:colon
-multiline_comment|/* even if the dispose list is local, a truncate_inode_page()&n;&t;&t;   may remove a page from its queue so always&n;&t;&t;   synchronize with the lru lock while accesing the&n;&t;&t;   page-&gt;lru field */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|pagemap_lru_lock
-)paren
-suffix:semicolon
 id|list_add
 c_func
 (paren
@@ -1070,17 +1047,6 @@ id|dispose
 )paren
 suffix:semicolon
 r_continue
-suffix:semicolon
-id|unlock_noput_continue
-suffix:colon
-id|UnlockPage
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-r_goto
-id|dispose_relock_continue
 suffix:semicolon
 id|dispose_continue
 suffix:colon
@@ -6435,14 +6401,6 @@ c_cond
 (paren
 id|file
 )paren
-(brace
-r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
 id|error
 op_assign
 id|file_fsync
@@ -6450,10 +6408,9 @@ c_func
 (paren
 id|file
 comma
-id|dentry
+id|file-&gt;f_dentry
 )paren
 suffix:semicolon
-)brace
 )brace
 r_return
 id|error
@@ -8464,7 +8421,7 @@ c_cond
 id|start
 op_amp
 op_complement
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 )paren
 r_goto
 id|out
@@ -8475,10 +8432,10 @@ op_assign
 id|len
 op_plus
 op_complement
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 )paren
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 suffix:semicolon
 id|end
 op_assign
@@ -9104,7 +9061,7 @@ id|inode
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Write to a file through the page cache. This is mainly for the&n; * benefit of NFS and possibly other network-based file systems.&n; *&n; * We currently put everything into the page cache prior to writing it.&n; * This is not a problem when writing full pages. With partial pages,&n; * however, we first have to read the data into the cache, then&n; * dirty the page, and finally schedule it for writing. Alternatively, we&n; * could write-through just the portion of data that would go into that&n; * page, but that would kill performance for applications that write data&n; * line by line, and it&squot;s prone to race conditions.&n; *&n; * Note that this routine doesn&squot;t try to keep track of dirty pages. Each&n; * file system has to do this all by itself, unfortunately.&n; *&t;&t;&t;&t;&t;&t;&t;okir@monad.swb.de&n; */
+multiline_comment|/*&n; * Write to a file through the page cache. &n; *&n; * We currently put everything into the page cache prior to writing it.&n; * This is not a problem when writing full pages. With partial pages,&n; * however, we first have to read the data into the cache, then&n; * dirty the page, and finally schedule it for writing. Alternatively, we&n; * could write-through just the portion of data that would go into that&n; * page, but that would kill performance for applications that write data&n; * line by line, and it&squot;s prone to race conditions.&n; *&n; * Note that this routine doesn&squot;t try to keep track of dirty pages. Each&n; * file system has to do this all by itself, unfortunately.&n; *&t;&t;&t;&t;&t;&t;&t;okir@monad.swb.de&n; */
 id|ssize_t
 DECL|function|generic_file_write
 id|generic_file_write
@@ -9129,18 +9086,11 @@ id|ppos
 )paren
 (brace
 r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
-r_struct
 id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
 id|address_space

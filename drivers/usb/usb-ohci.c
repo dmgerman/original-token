@@ -7040,7 +7040,7 @@ multiline_comment|/*------------------------------------------------------------
 multiline_comment|/* reset the HC not the BUS */
 DECL|function|hc_reset
 r_static
-r_void
+r_int
 id|hc_reset
 (paren
 id|ohci_t
@@ -7119,7 +7119,9 @@ c_func
 l_string|&quot;USB HC TakeOver failed!&quot;
 )paren
 suffix:semicolon
-r_break
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -7201,6 +7203,8 @@ l_string|&quot;USB HC reset timed out!&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|udelay
@@ -7211,6 +7215,9 @@ suffix:semicolon
 )brace
 id|ohci-&gt;disabled
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace
@@ -8108,11 +8115,27 @@ op_amp
 id|ohci_hcd_list
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|hc_reset
 (paren
 id|ohci
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|hc_release_ohci
+(paren
+id|ohci
+)paren
 suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 id|writel
 (paren
 id|ohci-&gt;hc_control

@@ -521,10 +521,10 @@ DECL|macro|AOFF_thread_fault_code
 mdefine_line|#define AOFF_thread_fault_code&t;0x0000000e
 DECL|macro|ASIZ_thread_fault_code
 mdefine_line|#define ASIZ_thread_fault_code&t;0x00000001
-DECL|macro|AOFF_thread___pad1
-mdefine_line|#define AOFF_thread___pad1&t;0x0000000f
-DECL|macro|ASIZ_thread___pad1
-mdefine_line|#define ASIZ_thread___pad1&t;0x00000001
+DECL|macro|AOFF_thread_use_blkcommit
+mdefine_line|#define AOFF_thread_use_blkcommit&t;0x0000000f
+DECL|macro|ASIZ_thread_use_blkcommit
+mdefine_line|#define ASIZ_thread_use_blkcommit&t;0x00000001
 DECL|macro|AOFF_thread_fault_address
 mdefine_line|#define AOFF_thread_fault_address&t;0x00000010
 DECL|macro|ASIZ_thread_fault_address
@@ -1101,10 +1101,10 @@ DECL|macro|AOFF_thread_fault_code
 mdefine_line|#define AOFF_thread_fault_code&t;0x0000000e
 DECL|macro|ASIZ_thread_fault_code
 mdefine_line|#define ASIZ_thread_fault_code&t;0x00000001
-DECL|macro|AOFF_thread___pad1
-mdefine_line|#define AOFF_thread___pad1&t;0x0000000f
-DECL|macro|ASIZ_thread___pad1
-mdefine_line|#define ASIZ_thread___pad1&t;0x00000001
+DECL|macro|AOFF_thread_use_blkcommit
+mdefine_line|#define AOFF_thread_use_blkcommit&t;0x0000000f
+DECL|macro|ASIZ_thread_use_blkcommit
+mdefine_line|#define ASIZ_thread_use_blkcommit&t;0x00000001
 DECL|macro|AOFF_thread_fault_address
 mdefine_line|#define AOFF_thread_fault_address&t;0x00000010
 DECL|macro|ASIZ_thread_fault_address
@@ -1680,10 +1680,10 @@ DECL|macro|AOFF_thread_fault_code
 mdefine_line|#define AOFF_thread_fault_code&t;0x0000000e
 DECL|macro|ASIZ_thread_fault_code
 mdefine_line|#define ASIZ_thread_fault_code&t;0x00000001
-DECL|macro|AOFF_thread___pad1
-mdefine_line|#define AOFF_thread___pad1&t;0x0000000f
-DECL|macro|ASIZ_thread___pad1
-mdefine_line|#define ASIZ_thread___pad1&t;0x00000001
+DECL|macro|AOFF_thread_use_blkcommit
+mdefine_line|#define AOFF_thread_use_blkcommit&t;0x0000000f
+DECL|macro|ASIZ_thread_use_blkcommit
+mdefine_line|#define ASIZ_thread_use_blkcommit&t;0x00000001
 DECL|macro|AOFF_thread_fault_address
 mdefine_line|#define AOFF_thread_fault_address&t;0x00000010
 DECL|macro|ASIZ_thread_fault_address

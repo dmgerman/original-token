@@ -8,7 +8,7 @@ op_star
 id|version
 op_assign
 l_string|&quot;eepro100.c:v1.09j-t 9/29/99 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/eepro100.html&bslash;n&quot;
-l_string|&quot;eepro100.c: $Revision: 1.28 $ 2000/03/28 Modified by Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt; and others&bslash;n&quot;
+l_string|&quot;eepro100.c: $Revision: 1.29 $ 2000/03/30 Modified by Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt; and others&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values that apply to all boards.&n;   First set is undocumented and spelled per Intel recommendations. */
 DECL|variable|congenb
@@ -179,6 +179,7 @@ macro_line|#warning  You must compile this file with the correct options!
 macro_line|#warning  See the last lines of the source file.
 macro_line|#error You must compile this driver with &quot;-O&quot;.
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#if defined(MODVERSIONS)
@@ -648,6 +649,19 @@ comma
 )brace
 suffix:semicolon
 macro_line|#ifndef USE_IO
+multiline_comment|/* Currently alpha headers define in/out macros.&n;   Undefine them.  2000/03/30  SAW */
+DECL|macro|inb
+macro_line|#undef inb
+DECL|macro|inw
+macro_line|#undef inw
+DECL|macro|inl
+macro_line|#undef inl
+DECL|macro|outb
+macro_line|#undef outb
+DECL|macro|outw
+macro_line|#undef outw
+DECL|macro|outl
+macro_line|#undef outl
 DECL|macro|inb
 mdefine_line|#define inb readb
 DECL|macro|inw
@@ -1144,41 +1158,20 @@ r_int
 r_int
 id|len
 suffix:semicolon
-DECL|member|fill
-r_char
-id|fill
-(braket
-l_int|16
-op_minus
-r_sizeof
-(paren
-r_struct
-id|speedo_mc_block
-op_star
-)paren
-op_minus
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-op_minus
-r_sizeof
-(paren
-id|dma_addr_t
-)paren
-op_minus
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)braket
-suffix:semicolon
 DECL|member|frame
 r_struct
 id|descriptor
 id|frame
+id|__attribute__
+(paren
+(paren
+id|__aligned__
+c_func
+(paren
+l_int|16
+)paren
+)paren
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon

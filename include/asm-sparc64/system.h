@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.56 2000/03/06 22:33:45 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.57 2000/03/27 10:38:57 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -199,63 +199,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|flushw_user
 r_extern
-id|__inline__
 r_void
-id|flushw_user
-c_func
-(paren
-r_void
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-"&quot;"
-id|rdpr
-op_mod
-op_mod
-id|otherwin
-comma
-op_mod
-op_mod
-id|g1
-id|brz
-comma
-id|pt
-op_mod
-op_mod
-id|g1
-comma
-l_float|1f
-id|mov
-op_mod
-op_mod
-id|o7
-comma
-op_mod
-op_mod
-id|g3
-id|call
 id|__flushw_user
-id|clr
-op_mod
-op_mod
-id|g2
-l_int|1
-suffix:colon
-l_string|&quot;&t;: : : &quot;
-id|g1
-l_string|&quot;, &quot;
-id|g2
-l_string|&quot;, &quot;
-id|g3
-"&quot;"
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
-)brace
+DECL|macro|flushw_user
+mdefine_line|#define flushw_user() __flushw_user()
 DECL|macro|flush_user_windows
 mdefine_line|#define flush_user_windows flushw_user
 DECL|macro|flush_register_windows

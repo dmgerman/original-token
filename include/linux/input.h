@@ -617,6 +617,7 @@ mdefine_line|#define SND_MAX&t;&t;&t;0x07
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * In-kernel definitions.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 DECL|macro|NBITS
 mdefine_line|#define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
 DECL|macro|BIT
@@ -942,6 +943,16 @@ op_star
 id|handle
 )paren
 suffix:semicolon
+DECL|member|fops
+r_struct
+id|file_operations
+op_star
+id|fops
+suffix:semicolon
+DECL|member|minor
+r_int
+id|minor
+suffix:semicolon
 DECL|member|handle
 r_struct
 id|input_handle
@@ -1043,6 +1054,29 @@ c_func
 r_struct
 id|input_handle
 op_star
+)paren
+suffix:semicolon
+id|devfs_handle_t
+id|input_register_minor
+c_func
+(paren
+r_char
+op_star
+id|name
+comma
+r_int
+id|minor
+comma
+r_int
+id|minor_base
+)paren
+suffix:semicolon
+r_void
+id|input_unregister_minor
+c_func
+(paren
+id|devfs_handle_t
+id|handle
 )paren
 suffix:semicolon
 r_void

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.116 2000/03/15 23:26:22 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.117 2000/03/27 12:14:54 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -38,6 +38,8 @@ macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;
+DECL|macro|PROM_DEBUG_CONSOLE
+macro_line|#undef PROM_DEBUG_CONSOLE
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -1003,6 +1005,7 @@ comma
 )brace
 )brace
 suffix:semicolon
+macro_line|#ifdef PROM_DEBUG_CONSOLE
 DECL|function|prom_cons_write
 r_static
 r_void
@@ -1070,6 +1073,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|paging_init
@@ -1376,6 +1380,15 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef PROM_DEBUG_CONSOLE
+id|register_console
+c_func
+(paren
+op_amp
+id|prom_console
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 id|conswitchp
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.44 2000/03/26 09:13:51 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.45 2000/03/27 10:38:51 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1157,6 +1157,25 @@ id|VM_WRITE
 r_goto
 id|bad_area
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_EXEC
+)paren
+op_ne
+l_int|0
+op_logical_and
+id|vma-&gt;vm_file
+op_ne
+l_int|NULL
+)paren
+id|current-&gt;thread.use_blkcommit
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1330,6 +1349,10 @@ id|fault_done
 suffix:colon
 multiline_comment|/* These values are no longer needed, clear them. */
 id|current-&gt;thread.fault_code
+op_assign
+l_int|0
+suffix:semicolon
+id|current-&gt;thread.use_blkcommit
 op_assign
 l_int|0
 suffix:semicolon

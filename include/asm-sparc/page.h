@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.51 2000/03/15 07:19:25 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.52 2000/03/28 06:07:25 anton Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
@@ -27,10 +27,16 @@ multiline_comment|/* This is always 2048*sizeof(long), doesn&squot;t change with
 DECL|macro|TASK_UNION_SIZE
 mdefine_line|#define TASK_UNION_SIZE&t;&t;8192
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
+multiline_comment|/* We need the mb()&squot;s so we don&squot;t trigger a compiler bug - Anton */
 DECL|macro|BUG
-mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
+mdefine_line|#define BUG() do { &bslash;&n;&t;mb(); &bslash;&n;&t;__builtin_trap(); &bslash;&n;&t;mb(); &bslash;&n;} while(0)
+macro_line|#else
+DECL|macro|BUG
+mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; &bslash;&n;} while (0)
+macro_line|#endif
 DECL|macro|PAGE_BUG
-mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
+mdefine_line|#define PAGE_BUG(page)&t;BUG()
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page)&t; memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page

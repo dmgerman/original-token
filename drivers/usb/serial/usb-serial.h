@@ -2,6 +2,7 @@ multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;(C) Copyright 
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SERIAL_TTY_MAJOR
 mdefine_line|#define SERIAL_TTY_MAJOR&t;188&t;/* Nice legal number now */
 DECL|macro|SERIAL_TTY_MINORS

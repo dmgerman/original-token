@@ -5632,6 +5632,19 @@ l_int|0
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * Nobody is using this device any more.&n;&t;&t;&t; * Free all of the command structures.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|HBA_ptr-&gt;hostt-&gt;revoke
+)paren
+id|HBA_ptr-&gt;hostt
+op_member_access_from_pointer
+id|revoke
+c_func
+(paren
+id|scd
+)paren
+suffix:semicolon
 id|devfs_unregister
 (paren
 id|scd-&gt;de
