@@ -3,6 +3,7 @@ DECL|macro|_LINUX_HDREG_H
 mdefine_line|#define _LINUX_HDREG_H
 multiline_comment|/*&n; * This file contains some defines for the AT-hd-controller.&n; * Various sources. Check out some definitions (see comments with&n; * a ques).&n; */
 multiline_comment|/* Hd controller regs. Ref: IBM AT Bios-listing */
+multiline_comment|/* For a second IDE interface, xor all addresses with 0x80 */
 DECL|macro|HD_DATA
 mdefine_line|#define HD_DATA&t;&t;0x1f0&t;/* _CTL when writing */
 DECL|macro|HD_ERROR
@@ -19,12 +20,16 @@ DECL|macro|HD_CURRENT
 mdefine_line|#define HD_CURRENT&t;0x1f6&t;/* 101dhhhh , d=drive, hhhh=head */
 DECL|macro|HD_STATUS
 mdefine_line|#define HD_STATUS&t;0x1f7&t;/* see status-bits */
+DECL|macro|HD_FEATURE
+mdefine_line|#define HD_FEATURE HD_ERROR&t;/* same io address, read=error, write=feature */
 DECL|macro|HD_PRECOMP
-mdefine_line|#define HD_PRECOMP HD_ERROR&t;/* same io address, read=error, write=precomp */
+mdefine_line|#define HD_PRECOMP HD_FEATURE&t;/* obsolete use of this port - predates IDE */
 DECL|macro|HD_COMMAND
 mdefine_line|#define HD_COMMAND HD_STATUS&t;/* same io address, read=status, write=cmd */
 DECL|macro|HD_CMD
-mdefine_line|#define HD_CMD&t;&t;0x3f6
+mdefine_line|#define HD_CMD&t;&t;0x3f6&t;/* used for resets */
+DECL|macro|HD_ALTSTATUS
+mdefine_line|#define HD_ALTSTATUS&t;0x3f6&t;/* same as HD_STATUS but doesn&squot;t clear irq */
 multiline_comment|/* Bits of HD_STATUS */
 DECL|macro|ERR_STAT
 mdefine_line|#define ERR_STAT&t;0x01
@@ -61,6 +66,10 @@ DECL|macro|WIN_DIAGNOSE
 mdefine_line|#define WIN_DIAGNOSE&t;&t;0x90
 DECL|macro|WIN_SPECIFY
 mdefine_line|#define WIN_SPECIFY&t;&t;0x91
+DECL|macro|WIN_SETIDLE
+mdefine_line|#define WIN_SETIDLE&t;&t;0x97
+DECL|macro|WIN_PIDENTIFY
+mdefine_line|#define WIN_PIDENTIFY&t;&t;0xA1&t;/* identify ATA-PI device&t;*/
 DECL|macro|WIN_MULTREAD
 mdefine_line|#define WIN_MULTREAD&t;&t;0xC4&t;/* read multiple sectors&t;*/
 DECL|macro|WIN_MULTWRITE
@@ -84,11 +93,6 @@ DECL|macro|ECC_ERR
 mdefine_line|#define ECC_ERR&t;&t;0x40&t;/* Uncorrectable ECC error */
 DECL|macro|BBD_ERR
 mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* block marked bad */
-multiline_comment|/* HDIO_GETGEO is the preferred choice - HDIO_REQ will be removed at some&n;   later date */
-DECL|macro|HDIO_REQ
-mdefine_line|#define HDIO_REQ 0x301
-DECL|macro|HDIO_GETGEO
-mdefine_line|#define HDIO_GETGEO 0x301
 DECL|struct|hd_geometry
 r_struct
 id|hd_geometry
@@ -115,18 +119,31 @@ id|start
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|HDIO_GETUNMASKINTR
-mdefine_line|#define HDIO_GETUNMASKINTR&t;0x302
+multiline_comment|/* hd/ide ctl&squot;s that pass (arg) ptrs to user space are numbered 0x30n/0x31n */
+DECL|macro|HDIO_GETGEO
+mdefine_line|#define HDIO_GETGEO&t;&t;0x301&t;/* get device geometry */
+DECL|macro|HDIO_REQ
+mdefine_line|#define HDIO_REQ&t;&t;HDIO_GETGEO&t;/* obsolete, use HDIO_GETGEO */
+DECL|macro|HDIO_GET_UNMASKINTR
+mdefine_line|#define HDIO_GET_UNMASKINTR&t;0x302&t;/* get current unmask setting */
 DECL|macro|HDIO_SETUNMASKINTR
-mdefine_line|#define HDIO_SETUNMASKINTR&t;0x303
-DECL|macro|HDIO_GETMULTCOUNT
-mdefine_line|#define HDIO_GETMULTCOUNT&t;0x304
+mdefine_line|#define HDIO_SETUNMASKINTR&t;0x303&t;/* obsolete */
+DECL|macro|HDIO_GET_MULTCOUNT
+mdefine_line|#define HDIO_GET_MULTCOUNT&t;0x304&t;/* get current IDE blockmode setting */
 DECL|macro|HDIO_SETMULTCOUNT
-mdefine_line|#define HDIO_SETMULTCOUNT&t;0x305
-DECL|macro|HDIO_GETIDENTITY
-mdefine_line|#define HDIO_GETIDENTITY &t;0x307
-macro_line|#endif
-multiline_comment|/* structure returned by HDIO_GETIDENTITY, as per ASC X3T9.2 rev 4a */
+mdefine_line|#define HDIO_SETMULTCOUNT&t;0x305&t;/* obsolete */
+DECL|macro|HDIO_GET_IDENTITY
+mdefine_line|#define HDIO_GET_IDENTITY &t;0x307&t;/* get IDE identification info */
+multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x32n/0x33n */
+DECL|macro|HDIO_SET_MULTCOUNT
+mdefine_line|#define HDIO_SET_MULTCOUNT&t;0x321&t;/* set IDE blockmode */
+DECL|macro|HDIO_SET_UNMASKINTR
+mdefine_line|#define HDIO_SET_UNMASKINTR&t;0x322&t;/* permit other irqs during I/O */
+DECL|macro|HDIO_SET_KEEPSETTINGS
+mdefine_line|#define HDIO_SET_KEEPSETTINGS&t;0x323&t;/* keep ioctl settings on reset */
+DECL|macro|HDIO_SET_XFERMODE
+mdefine_line|#define HDIO_SET_XFERMODE&t;0x324&t;/* set IDE transfer mode */
+multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct
 id|hd_driveid
@@ -411,4 +428,5 @@ multiline_comment|/* unsigned short reservedyy[96];*/
 multiline_comment|/* reserved (words 160-255) */
 )brace
 suffix:semicolon
+macro_line|#endif
 eof

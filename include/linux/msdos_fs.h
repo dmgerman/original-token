@@ -915,13 +915,13 @@ r_int
 id|msdos_notify_change
 c_func
 (paren
-r_int
-id|flags
-comma
 r_struct
 id|inode
 op_star
-id|inode
+comma
+r_struct
+id|iattr
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* dir.c */

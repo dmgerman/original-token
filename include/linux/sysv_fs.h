@@ -1592,10 +1592,12 @@ r_int
 id|sysv_notify_change
 c_func
 (paren
-r_int
-comma
 r_struct
 id|inode
+op_star
+comma
+r_struct
+id|iattr
 op_star
 )paren
 suffix:semicolon

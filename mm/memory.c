@@ -891,7 +891,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;copy_page_tables: bad page table: &quot;
-l_string|&quot;probable memory corruption&quot;
+l_string|&quot;probable memory corruption&bslash;n&quot;
 )paren
 suffix:semicolon
 op_star

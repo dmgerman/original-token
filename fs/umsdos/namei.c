@@ -1997,6 +1997,8 @@ id|UMSDOS_notify_change
 (paren
 l_int|0
 comma
+l_int|NULL
+comma
 id|oldinode
 )paren
 suffix:semicolon
@@ -2946,6 +2948,8 @@ op_assign
 id|UMSDOS_notify_change
 (paren
 l_int|0
+comma
+l_int|NULL
 comma
 id|inode
 )paren

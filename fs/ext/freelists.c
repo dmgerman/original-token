@@ -7,8 +7,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-DECL|macro|clear_block
-mdefine_line|#define clear_block(addr) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;        &quot;rep&bslash;n&bslash;t&quot; &bslash;&n;        &quot;stosl&quot; &bslash;&n;        : &bslash;&n;        :&quot;a&quot; (0),&quot;c&quot; (BLOCK_SIZE/4),&quot;D&quot; ((long) (addr)):&quot;cx&quot;,&quot;di&quot;)
 DECL|function|ext_free_block
 r_void
 id|ext_free_block
@@ -436,10 +434,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|clear_block
+id|memset
 c_func
 (paren
 id|bh-&gt;b_data
+comma
+l_int|0
+comma
+id|BLOCK_SIZE
 )paren
 suffix:semicolon
 id|bh-&gt;b_uptodate

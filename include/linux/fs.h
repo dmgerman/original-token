@@ -184,15 +184,6 @@ DECL|macro|FIBMAP
 mdefine_line|#define FIBMAP&t;   1&t;/* bmap access */
 DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   2&t;/* get the block size used for bmap */
-multiline_comment|/* these flags tell notify_change what is being changed */
-DECL|macro|NOTIFY_SIZE
-mdefine_line|#define NOTIFY_SIZE&t;1
-DECL|macro|NOTIFY_MODE
-mdefine_line|#define NOTIFY_MODE&t;2
-DECL|macro|NOTIFY_TIME
-mdefine_line|#define NOTIFY_TIME&t;4
-DECL|macro|NOTIFY_UIDGID
-mdefine_line|#define NOTIFY_UIDGID&t;8
 DECL|typedef|buffer_block
 r_typedef
 r_char
@@ -341,6 +332,61 @@ macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 macro_line|#include &lt;linux/xia_fs_i.h&gt;
 macro_line|#include &lt;linux/sysv_fs_i.h&gt;
 macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
+DECL|macro|ATTR_MODE
+mdefine_line|#define ATTR_MODE&t;1
+DECL|macro|ATTR_UID
+mdefine_line|#define ATTR_UID&t;2
+DECL|macro|ATTR_GID
+mdefine_line|#define ATTR_GID&t;4
+DECL|macro|ATTR_SIZE
+mdefine_line|#define ATTR_SIZE&t;8
+DECL|macro|ATTR_ATIME
+mdefine_line|#define ATTR_ATIME&t;16
+DECL|macro|ATTR_MTIME
+mdefine_line|#define ATTR_MTIME&t;32
+DECL|macro|ATTR_CTIME
+mdefine_line|#define ATTR_CTIME&t;64
+multiline_comment|/*&n; * This is the Inode Attributes structure, used for notify_change().  It&n; * uses the above definitions as flags, to know which values have changed.&n; * Also, in this manner, a Filesystem can look at only the values it cares&n; * about.  Basically, these are the attributes that the VFS layer can&n; * request to change from the FS layer.&n; *&n; * Derek Atkins &lt;warlord@MIT.EDU&gt; 94-10-20&n; */
+DECL|struct|iattr
+r_struct
+id|iattr
+(brace
+DECL|member|ia_valid
+r_int
+r_int
+id|ia_valid
+suffix:semicolon
+DECL|member|ia_mode
+id|umode_t
+id|ia_mode
+suffix:semicolon
+DECL|member|ia_uid
+id|uid_t
+id|ia_uid
+suffix:semicolon
+DECL|member|ia_gid
+id|gid_t
+id|ia_gid
+suffix:semicolon
+DECL|member|ia_size
+id|off_t
+id|ia_size
+suffix:semicolon
+DECL|member|ia_atime
+id|time_t
+id|ia_atime
+suffix:semicolon
+DECL|member|ia_mtime
+id|time_t
+id|ia_mtime
+suffix:semicolon
+DECL|member|ia_ctime
+id|time_t
+id|ia_ctime
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|inode
 r_struct
 id|inode
@@ -1433,11 +1479,12 @@ op_star
 id|notify_change
 )paren
 (paren
-r_int
-id|flags
-comma
 r_struct
 id|inode
+op_star
+comma
+r_struct
+id|iattr
 op_star
 )paren
 suffix:semicolon
@@ -2133,13 +2180,13 @@ r_int
 id|notify_change
 c_func
 (paren
-r_int
-id|flags
-comma
 r_struct
 id|inode
 op_star
-id|inode
+comma
+r_struct
+id|iattr
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -2720,6 +2767,34 @@ r_int
 comma
 r_int
 r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|inode_change_ok
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|iattr
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|inode_setattr
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|iattr
 op_star
 )paren
 suffix:semicolon

@@ -6,9 +6,8 @@ macro_line|#include &lt;linux/xia_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;xiafs_mac.h&quot;
-DECL|macro|clear_bit
-mdefine_line|#define clear_bit(nr,addr) ({&bslash;&n;char res; &bslash;&n;__asm__ __volatile__(&quot;btrl %1,%2&bslash;n&bslash;tsetnb %0&quot;: &bslash;&n;&quot;=q&quot; (res):&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
 DECL|variable|internal_error_message
 r_char
 id|internal_error_message
@@ -193,34 +192,18 @@ id|j
 )paren
 r_break
 suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;btsl %1,%2&bslash;n&bslash;tsetb %0&quot;
-suffix:colon
-"&bslash;"
-l_string|&quot;=q&quot;
-(paren
-id|res
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|j
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-id|bmap
-(braket
-id|i
-)braket
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|res
+id|set_bit
+c_func
+(paren
+id|j
+comma
+id|bmap
+op_plus
+id|i
+)paren
 )paren
 (brace
 id|start_bit
@@ -1145,6 +1128,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -1458,6 +1442,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 c_func
 (paren

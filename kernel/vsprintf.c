@@ -1188,7 +1188,13 @@ l_int|1
 (brace
 id|field_width
 op_assign
-l_int|8
+l_int|2
+op_star
+r_sizeof
+(paren
+r_void
+op_star
+)paren
 suffix:semicolon
 id|flags
 op_or_assign

@@ -340,6 +340,10 @@ c_cond
 id|de-&gt;inode
 )paren
 (brace
+id|version
+op_assign
+id|inode-&gt;i_version
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -387,10 +391,6 @@ c_cond
 id|i
 )paren
 (brace
-id|version
-op_assign
-id|inode-&gt;i_version
-suffix:semicolon
 id|put_fs_long
 c_func
 (paren

@@ -6,10 +6,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-DECL|macro|clear_block
-mdefine_line|#define clear_block(addr) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stosl&quot; &bslash;&n;&t;: &bslash;&n;&t;:&quot;a&quot; (0),&quot;c&quot; (BLOCK_SIZE/4),&quot;D&quot; ((long) (addr)):&quot;cx&quot;,&quot;di&quot;)
-DECL|macro|find_first_zero
-mdefine_line|#define find_first_zero(addr) ({ &bslash;&n;int __res; &bslash;&n;__asm__(&quot;cld&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tlodsl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;notl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bsfl %%eax,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $32,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl $8192,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jl 1b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xorl %%edx,%%edx&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;taddl %%edx,%%ecx&quot; &bslash;&n;&t;:&quot;=c&quot; (__res):&quot;0&quot; (0),&quot;S&quot; (addr):&quot;ax&quot;,&quot;dx&quot;,&quot;si&quot;); &bslash;&n;__res;})
 DECL|variable|nibblemap
 r_static
 r_int
@@ -489,10 +485,12 @@ c_cond
 (paren
 id|j
 op_assign
-id|find_first_zero
+id|find_first_zero_bit
 c_func
 (paren
 id|bh-&gt;b_data
+comma
+l_int|8192
 )paren
 )paren
 OL
@@ -600,10 +598,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|clear_block
+id|memset
 c_func
 (paren
 id|bh-&gt;b_data
+comma
+l_int|0
+comma
+id|BLOCK_SIZE
 )paren
 suffix:semicolon
 id|bh-&gt;b_uptodate
@@ -944,10 +946,12 @@ c_cond
 (paren
 id|j
 op_assign
-id|find_first_zero
+id|find_first_zero_bit
 c_func
 (paren
 id|bh-&gt;b_data
+comma
+l_int|8192
 )paren
 )paren
 OL

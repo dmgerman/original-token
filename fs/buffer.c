@@ -5420,8 +5420,6 @@ id|size
 )paren
 suffix:semicolon
 )brace
-DECL|macro|COPYBLK
-mdefine_line|#define COPYBLK(size,from,to) &bslash;&n;__asm__ __volatile__(&quot;rep ; movsl&quot;: &bslash;&n;&t;:&quot;c&quot; (((unsigned long) size) &gt;&gt; 2),&quot;S&quot; (from),&quot;D&quot; (to) &bslash;&n;&t;:&quot;cx&quot;,&quot;di&quot;,&quot;si&quot;)
 multiline_comment|/*&n; * bread_page reads four buffers into memory at the desired address. It&squot;s&n; * a function of its own, as there is some speed to be got by reading them&n; * all at the same time, not waiting for one to be read, and then another&n; * etc. This also allows us to optimize memory usage by sharing code pages&n; * and filesystem buffers..&n; */
 DECL|function|bread_page
 r_int
@@ -5613,15 +5611,15 @@ id|i
 op_member_access_from_pointer
 id|b_uptodate
 )paren
-id|COPYBLK
+id|memcpy
 c_func
 (paren
-id|size
-comma
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
+id|where
+comma
 id|bh
 (braket
 id|i
@@ -5629,7 +5627,7 @@ id|i
 op_member_access_from_pointer
 id|b_data
 comma
-id|where
+id|size
 )paren
 suffix:semicolon
 id|brelse

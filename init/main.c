@@ -1308,6 +1308,21 @@ op_lshift_assign
 l_int|1
 )paren
 (brace
+multiline_comment|/* wait for &quot;start of&quot; clock tick */
+id|ticks
+op_assign
+id|jiffies
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|ticks
+op_eq
+id|jiffies
+)paren
+multiline_comment|/* nothing */
+suffix:semicolon
+multiline_comment|/* Go .. */
 id|ticks
 op_assign
 id|jiffies
