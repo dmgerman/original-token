@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.139 2000/03/16 20:37:57 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.140 2000/03/22 02:44:35 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20279,9 +20279,10 @@ id|cr32_getfh
 id|NFS_FHSIZE
 )braket
 suffix:semicolon
-DECL|member|cr32_debug
-id|u32
-id|cr32_debug
+DECL|member|cr32_getfs
+r_struct
+id|knfsd_fh
+id|cr32_getfs
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -21070,6 +21071,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/* This really doesn&squot;t need translations, we are only passing&n; * back a union which contains opaque nfs file handle data.&n; */
 DECL|function|nfs_getfh32_res_trans
 r_static
 r_int
@@ -21087,39 +21089,20 @@ op_star
 id|res32
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
-id|err
-op_assign
+r_return
 id|copy_to_user
 c_func
 (paren
-op_amp
-id|res32-&gt;cr32_getfh
+id|res32
 comma
-op_amp
-id|kres-&gt;cr_getfh
+id|kres
 comma
 r_sizeof
 (paren
-id|res32-&gt;cr32_getfh
+op_star
+id|res32
 )paren
 )paren
-suffix:semicolon
-id|err
-op_or_assign
-id|__put_user
-c_func
-(paren
-id|kres-&gt;cr_debug
-comma
-op_amp
-id|res32-&gt;cr32_debug
-)paren
-suffix:semicolon
-r_return
-id|err
 suffix:semicolon
 )brace
 r_extern

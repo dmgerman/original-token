@@ -56,12 +56,5 @@ op_star
 id|vcc
 )paren
 suffix:semicolon
-r_void
-id|signaling_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif
 eof

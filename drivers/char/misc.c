@@ -811,13 +811,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BUSMOUSE
-id|bus_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#if defined CONFIG_82C710_MOUSE
 id|qpmouse_init
 c_func

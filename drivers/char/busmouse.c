@@ -17,14 +17,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;busmouse.h&quot;
 multiline_comment|/* Uncomment this if your mouse drivers expect the kernel to&n; * return with EAGAIN if the mouse does not have any events&n; * available, even if the mouse is opened in nonblocking mode.&n; *&n; * Should this be on a per-mouse basis?  If so, add an entry to&n; * the struct busmouse structure and add the relevent flag to&n; * the drivers.&n; */
 multiline_comment|/*#define BROKEN_MOUSE*/
-r_extern
-r_int
-id|sun_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|struct|busmouse_data
 r_struct
 id|busmouse_data
@@ -1630,26 +1622,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-DECL|function|bus_mouse_init
-r_int
-id|__init
-id|bus_mouse_init
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_SUN_MOUSE
-id|sun_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|variable|busmouse_add_movementbuttons
 id|EXPORT_SYMBOL
 c_func
@@ -1685,30 +1657,4 @@ c_func
 id|unregister_busmouse
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|bus_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
-macro_line|#endif
 eof

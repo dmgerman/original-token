@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Handle incoming frames&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_input.c,v 1.3 2000/02/24 19:48:06 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Handle incoming frames&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_input.c,v 1.4 2000/03/21 21:08:47 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -9,7 +9,7 @@ r_int
 r_char
 id|bridge_ula
 (braket
-l_int|5
+l_int|6
 )braket
 op_assign
 (brace
@@ -18,6 +18,8 @@ comma
 l_int|0x80
 comma
 l_int|0xc2
+comma
+l_int|0x00
 comma
 l_int|0x00
 comma
@@ -160,6 +162,16 @@ id|BR_STATE_DISABLED
 )paren
 r_goto
 id|freeandout
+suffix:semicolon
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|skb-&gt;data
+op_minus
+id|skb-&gt;mac.raw
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -304,16 +316,6 @@ l_int|0xF0
 )paren
 r_goto
 id|handle_special_frame
-suffix:semicolon
-id|skb_push
-c_func
-(paren
-id|skb
-comma
-id|skb-&gt;data
-op_minus
-id|skb-&gt;mac.raw
-)paren
 suffix:semicolon
 r_if
 c_cond

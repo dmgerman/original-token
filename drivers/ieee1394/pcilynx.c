@@ -28,6 +28,17 @@ mdefine_line|#define PRINT_G(level, fmt, args...) printk(level &quot;pcilynx: &q
 multiline_comment|/* print card specific information */
 DECL|macro|PRINT
 mdefine_line|#define PRINT(level, card, fmt, args...) printk(level &quot;pcilynx%d: &quot; fmt &quot;&bslash;n&quot; , card , ## args)
+macro_line|#ifdef CONFIG_IEEE1394_VERBOSEDEBUG
+DECL|macro|PRINT_GD
+mdefine_line|#define PRINT_GD(level, fmt, args...) printk(level &quot;pcilynx: &quot; fmt &quot;&bslash;n&quot; , ## args)
+DECL|macro|PRINTD
+mdefine_line|#define PRINTD(level, card, fmt, args...) printk(level &quot;pcilynx%d: &quot; fmt &quot;&bslash;n&quot; , card , ## args)
+macro_line|#else
+DECL|macro|PRINT_GD
+mdefine_line|#define PRINT_GD(level, fmt, args...)
+DECL|macro|PRINTD
+mdefine_line|#define PRINTD(level, card, fmt, args...)
+macro_line|#endif
 DECL|variable|cards
 r_static
 r_struct
@@ -1297,12 +1308,21 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
-id|printk
+id|cpu_to_be32s
 c_func
 (paren
-l_string|&quot;-%d- generated own selfid 0x%x&bslash;n&quot;
+op_amp
+id|lsid
+)paren
+suffix:semicolon
+id|PRINT
+c_func
+(paren
+id|KERN_DEBUG
 comma
 id|lynx-&gt;id
+comma
+l_string|&quot;generated own selfid 0x%x&quot;
 comma
 id|lsid
 )paren
@@ -1347,6 +1367,48 @@ id|lsid
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|i
+op_assign
+(paren
+id|size
+OG
+l_int|16
+ques
+c_cond
+l_int|16
+suffix:colon
+id|size
+)paren
+op_div
+l_int|4
+op_minus
+l_int|1
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+op_ge
+l_int|0
+)paren
+(brace
+id|cpu_to_be32s
+c_func
+(paren
+op_amp
+id|q
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|i
+op_decrement
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1453,29 +1515,35 @@ OG
 l_int|0
 )paren
 (brace
+r_struct
+id|selfid
+op_star
+id|sid
+op_assign
+(paren
+r_struct
+id|selfid
+op_star
+)paren
+id|q
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|lynx-&gt;phyic.reg_1394a
 op_logical_and
+op_logical_neg
+id|sid-&gt;extended
+op_logical_and
 (paren
-id|q
-(braket
-l_int|0
-)braket
-op_amp
-l_int|0x3f800000
-)paren
+id|sid-&gt;phy_id
 op_eq
-(paren
 (paren
 id|phyid
 op_plus
 l_int|1
 )paren
-op_lshift
-l_int|24
 )paren
 )paren
 (brace
@@ -1503,12 +1571,14 @@ l_int|1
 )braket
 )paren
 (brace
-id|printk
+id|PRINT
 c_func
 (paren
-l_string|&quot;-%d- selfid packet 0x%x rcvd&bslash;n&quot;
+id|KERN_DEBUG
 comma
 id|lynx-&gt;id
+comma
+l_string|&quot;selfid packet 0x%x rcvd&quot;
 comma
 id|q
 (braket
@@ -1530,12 +1600,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|PRINT
 c_func
 (paren
-l_string|&quot;-%d- inconsistent selfid 0x%x/0x%x&bslash;n&quot;
+id|KERN_INFO
 comma
 id|lynx-&gt;id
+comma
+l_string|&quot;inconsistent selfid 0x%x/0x%x&quot;
 comma
 id|q
 (braket
@@ -1906,7 +1978,7 @@ id|control
 op_assign
 id|PCL_CMD_RCV
 op_or
-l_int|2048
+l_int|16
 suffix:semicolon
 id|pcl.buffer
 (braket
@@ -1917,7 +1989,7 @@ id|control
 op_assign
 id|PCL_LAST_BUFF
 op_or
-l_int|2048
+l_int|4080
 suffix:semicolon
 macro_line|#else
 id|pcl.buffer
@@ -1931,7 +2003,7 @@ id|PCL_CMD_RCV
 op_or
 id|PCL_BIGENDIAN
 op_or
-l_int|2048
+l_int|16
 suffix:semicolon
 id|pcl.buffer
 (braket
@@ -1942,9 +2014,7 @@ id|control
 op_assign
 id|PCL_LAST_BUFF
 op_or
-id|PCL_BIGENDIAN
-op_or
-l_int|2048
+l_int|4080
 suffix:semicolon
 macro_line|#endif
 id|pcl.buffer
@@ -1973,7 +2043,7 @@ c_func
 id|lynx-&gt;rcv_page
 )paren
 op_plus
-l_int|2048
+l_int|16
 suffix:semicolon
 id|put_pcl
 c_func
@@ -2034,9 +2104,7 @@ id|control
 op_assign
 id|PCL_CMD_RCV
 op_or
-id|PCL_LAST_BUFF
-op_or
-l_int|2048
+l_int|4
 suffix:semicolon
 macro_line|#ifndef __BIG_ENDIAN
 id|pcl.buffer
@@ -2049,6 +2117,17 @@ op_or_assign
 id|PCL_BIGENDIAN
 suffix:semicolon
 macro_line|#endif
+id|pcl.buffer
+(braket
+l_int|1
+)braket
+dot
+id|control
+op_assign
+id|PCL_LAST_BUFF
+op_or
+l_int|2044
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2097,6 +2176,22 @@ op_plus
 id|sec
 op_star
 id|MAX_ISORCV_SIZE
+suffix:semicolon
+id|pcl.buffer
+(braket
+l_int|1
+)braket
+dot
+id|pointer
+op_assign
+id|pcl.buffer
+(braket
+l_int|0
+)braket
+dot
+id|pointer
+op_plus
+l_int|4
 suffix:semicolon
 id|put_pcl
 c_func
@@ -2533,6 +2628,29 @@ id|packet-&gt;xnext
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|packet-&gt;tcode
+op_eq
+id|TCODE_WRITEQ
+op_logical_or
+id|packet-&gt;tcode
+op_eq
+id|TCODE_READQ_RESPONSE
+)paren
+(brace
+id|cpu_to_be32s
+c_func
+(paren
+op_amp
+id|packet-&gt;header
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+)brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -5064,12 +5182,14 @@ op_logical_neg
 id|host-&gt;in_bus_reset
 )paren
 (brace
-id|printk
+id|PRINT
 c_func
 (paren
-l_string|&quot;-%d- phy reg received without reset&bslash;n&quot;
+id|KERN_INFO
 comma
 id|lynx-&gt;id
+comma
+l_string|&quot;phy reg received without reset&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5220,10 +5340,10 @@ id|CHANNEL_ISO_RCV
 )paren
 )paren
 (brace
-id|PRINT
+id|PRINTD
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 comma
 id|lynx-&gt;id
 comma
@@ -5280,10 +5400,14 @@ op_logical_neg
 id|lynx-&gt;iso_rcv.chan_count
 )paren
 (brace
-id|printk
+id|PRINTD
 c_func
 (paren
-l_string|&quot;stopped&bslash;n&quot;
+id|KERN_DEBUG
+comma
+id|lynx-&gt;id
+comma
+l_string|&quot;stopped&quot;
 )paren
 suffix:semicolon
 id|reg_write
@@ -5409,13 +5533,8 @@ op_amp
 id|DMA_CHAN_STAT_SPECIALACK
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;-%d- special ack %d&bslash;n&quot;
-comma
-id|lynx-&gt;id
-comma
+id|ack
+op_assign
 (paren
 id|ack
 op_rshift
@@ -5423,11 +5542,31 @@ l_int|15
 )paren
 op_amp
 l_int|0xf
+suffix:semicolon
+id|PRINTD
+c_func
+(paren
+id|KERN_INFO
+comma
+id|lynx-&gt;id
+comma
+l_string|&quot;special ack %d&quot;
+comma
+id|ack
 )paren
 suffix:semicolon
 id|ack
 op_assign
+(paren
+id|ack
+op_eq
+l_int|1
+ques
+c_cond
+id|ACKX_TIMEOUT
+suffix:colon
 id|ACKX_SEND_ERROR
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -5478,12 +5617,14 @@ comma
 id|DMA1_CHAN_STAT
 )paren
 suffix:semicolon
-id|printk
+id|PRINTD
 c_func
 (paren
-l_string|&quot;-%d- received packet size %d&bslash;n&quot;
+id|KERN_DEBUG
 comma
 id|lynx-&gt;id
+comma
+l_string|&quot;received packet size %d&quot;
 comma
 id|stat
 op_amp
@@ -5527,12 +5668,53 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|quadlet_t
+op_star
+id|q_data
+op_assign
+id|lynx-&gt;rcv_page
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|q_data
+op_rshift
+l_int|4
+op_amp
+l_int|0xf
+)paren
+op_eq
+id|TCODE_READQ_RESPONSE
+op_logical_or
+(paren
+op_star
+id|q_data
+op_rshift
+l_int|4
+op_amp
+l_int|0xf
+)paren
+op_eq
+id|TCODE_WRITEQ
+)paren
+(brace
+id|cpu_to_be32s
+c_func
+(paren
+id|q_data
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+)brace
 id|hpsb_packet_received
 c_func
 (paren
 id|host
 comma
-id|lynx-&gt;rcv_page
+id|q_data
 comma
 id|stat
 op_amp
@@ -6747,7 +6929,7 @@ c_func
 (paren
 id|KERN_ERR
 comma
-l_string|&quot;allocation of char major number %d failed&bslash;n&quot;
+l_string|&quot;allocation of char major number %d failed&quot;
 comma
 id|PCILYNX_MAJOR
 )paren
@@ -6885,7 +7067,7 @@ id|KERN_INFO
 comma
 l_string|&quot;removed &quot;
 id|PCILYNX_DRIVER_NAME
-l_string|&quot; module&bslash;n&quot;
+l_string|&quot; module&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6915,7 +7097,7 @@ c_func
 (paren
 id|KERN_ERR
 comma
-l_string|&quot;registering failed&bslash;n&quot;
+l_string|&quot;registering failed&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1762,6 +1762,13 @@ id|dev-&gt;queue_lock
 suffix:semicolon
 r_return
 id|ret
+op_eq
+id|NET_XMIT_BYPASS
+ques
+c_cond
+id|NET_XMIT_SUCCESS
+suffix:colon
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* The device has no queue. Common case for software devices:&n;&t;   loopback, all the sorts of tunnels...&n;&n;&t;   Really, it is unlikely that xmit_lock protection is necessary here.&n;&t;   (f.e. loopback and IP tunnels are clean ignoring statistics counters.)&n;&t;   However, it is possible, that they rely on protection&n;&t;   made by us here.&n;&n;&t;   Check this and shot the lock. It is not prone from deadlocks.&n;&t;   Either shot noqueue qdisc, it is even simpler 8)&n;&t; */

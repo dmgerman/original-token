@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/ipcommon.h - Common items for all ways of doing IP over ATM */
-multiline_comment|/* Written 1996-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1996-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef NET_ATM_IPCOMMON_H
 DECL|macro|NET_ATM_IPCOMMON_H
 mdefine_line|#define NET_ATM_IPCOMMON_H
@@ -13,6 +13,7 @@ id|net_device
 op_star
 id|clip_devs
 suffix:semicolon
+multiline_comment|/*&n; * Moves all skbs from &quot;from&quot; to &quot;to&quot;. The operation is atomic for &quot;from&quot;, but&n; * not for &quot;to&quot;. &quot;to&quot; may only be accessed after skb_migrate finishes.&n; */
 r_void
 id|skb_migrate
 c_func

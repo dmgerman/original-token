@@ -1,11 +1,12 @@
 multiline_comment|/* net/atm/resources.c - Staticly allocated resources */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt; /* for barrier */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;net/sock.h&gt;&t; /* for struct sock */
 macro_line|#include &lt;asm/segment.h&gt; /* for get_fs_long and put_fs_long */
 macro_line|#include &quot;common.h&quot;
@@ -250,8 +251,8 @@ comma
 r_int
 id|number
 comma
-r_int
-r_int
+id|atm_dev_flags_t
+op_star
 id|flags
 )paren
 (brace
@@ -360,9 +361,30 @@ id|dev-&gt;ops
 op_assign
 id|ops
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+)paren
 id|dev-&gt;flags
 op_assign
+op_star
 id|flags
+suffix:semicolon
+r_else
+id|memset
+c_func
+(paren
+op_amp
+id|dev-&gt;flags
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|dev-&gt;flags
+)paren
+)paren
 suffix:semicolon
 id|memset
 c_func
@@ -378,8 +400,7 @@ l_int|0
 comma
 r_sizeof
 (paren
-r_struct
-id|atm_dev_stats
+id|dev-&gt;stats
 )paren
 )paren
 suffix:semicolon
@@ -474,9 +495,14 @@ c_cond
 id|dev-&gt;vccs
 )paren
 (brace
-id|dev-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_DF_CLOSE
+comma
+op_amp
+id|dev-&gt;flags
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -723,10 +749,13 @@ op_logical_and
 op_logical_neg
 id|vcc-&gt;dev-&gt;vccs
 op_logical_and
+id|test_bit
+c_func
 (paren
-id|vcc-&gt;dev-&gt;flags
-op_amp
 id|ATM_DF_CLOSE
+comma
+op_amp
+id|vcc-&gt;dev-&gt;flags
 )paren
 )paren
 id|shutdown_atm_dev

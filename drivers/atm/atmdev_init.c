@@ -99,13 +99,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_ATM_ENI
-id|devs
-op_add_assign
-id|eni_detect
-c_func
-(paren
-)paren
-suffix:semicolon
+singleline_comment|//&t;devs += eni_detect();
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATM_ZATM
 id|devs

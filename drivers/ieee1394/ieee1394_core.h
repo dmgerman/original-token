@@ -100,7 +100,7 @@ id|no_waiter
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Data big endianness flag - may vary from request to request.  The&n;         * header is always in machine byte order.  */
+multiline_comment|/* Data big endianness flag - may vary from request to request.  The&n;         * header is always in machine byte order.&n;         * Not really used currently.  */
 DECL|member|data_be
 r_int
 id|data_be
@@ -114,8 +114,7 @@ id|speed_code
 suffix:colon
 l_int|2
 suffix:semicolon
-multiline_comment|/* --- 16 bytes (one cacheline) --- */
-multiline_comment|/* *header and *data are guaranteed to be 32-bit DMAable and may be&n;         * overwritten to allow in-place byte swapping.  Neither of these is&n;         * CRCed (the sizes also don&squot;t include CRC), but contain space for at&n;         * least one additional quadlet to allow in-place CRCing.  The memory is&n;         * also guaranteed to have physical mapping (virt_to_bus() is meaningful&n;         * on these pointers).&n;         * NOTE: The 32-bit DMA guarantee is currently not enforced.&n;         *       That&squot;s a Linux 2.3 issue.  &n;         */
+multiline_comment|/*&n;         * *header and *data are guaranteed to be 32-bit DMAable and may be&n;         * overwritten to allow in-place byte swapping.  Neither of these is&n;         * CRCed (the sizes also don&squot;t include CRC), but contain space for at&n;         * least one additional quadlet to allow in-place CRCing.  The memory is&n;         * also guaranteed to have physical mapping (virt_to_bus() is meaningful&n;         * on these pointers).&n;         */
 DECL|member|header
 id|quadlet_t
 op_star
@@ -134,7 +133,6 @@ DECL|member|data_size
 r_int
 id|data_size
 suffix:semicolon
-multiline_comment|/* --- 32 bytes --- */
 DECL|member|host
 r_struct
 id|hpsb_host
@@ -331,7 +329,7 @@ r_int
 id|ackcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Hand over received packet to the core.  The contents of data are expected to&n; * be the full packet but with the CRCs left out (data block follows header&n; * immediately) and in machine byte order.  *data can be safely overwritten&n; * after this call.&n; */
+multiline_comment|/*&n; * Hand over received packet to the core.  The contents of data are expected to&n; * be the full packet but with the CRCs left out (data block follows header&n; * immediately), with the header (i.e. the first four quadlets) in machine byte&n; * order and the data block in big endian.  *data can be safely overwritten&n; * after this call.&n; */
 r_void
 id|hpsb_packet_received
 c_func

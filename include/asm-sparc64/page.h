@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.32 2000/03/15 07:19:28 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.33 2000/03/22 02:48:04 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -276,15 +276,13 @@ multiline_comment|/* Do prdele, look what happens to be in %g4... */
 r_register
 r_int
 r_int
-id|page_offset
+id|PAGE_OFFSET
 id|asm
 c_func
 (paren
 l_string|&quot;g4&quot;
 )paren
 suffix:semicolon
-DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;page_offset
 macro_line|#else
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFF80000000000

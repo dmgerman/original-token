@@ -21,6 +21,8 @@ DECL|macro|NET_XMIT_CN
 mdefine_line|#define NET_XMIT_CN&t;&t;2&t;/* congestion notification&t;*/
 DECL|macro|NET_XMIT_POLICED
 mdefine_line|#define NET_XMIT_POLICED&t;3&t;/* skb is shot by police&t;*/
+DECL|macro|NET_XMIT_BYPASS
+mdefine_line|#define NET_XMIT_BYPASS&t;&t;4&t;/* packet does not leave via dequeue;&n;&t;&t;&t;&t;&t;   (TC use only - dev_queue_xmit&n;&t;&t;&t;&t;&t;   returns this as NET_XMIT_SUCCESS) */
 DECL|macro|net_xmit_errno
 mdefine_line|#define net_xmit_errno(e)&t;((e) != NET_XMIT_CN ? -ENOBUFS : 0)
 macro_line|#endif

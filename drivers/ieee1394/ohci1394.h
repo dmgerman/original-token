@@ -2,17 +2,19 @@ macro_line|#ifndef _OHCI1394_H
 DECL|macro|_OHCI1394_H
 mdefine_line|#define _OHCI1394_H
 macro_line|#include &quot;ieee1394_types.h&quot;
-DECL|macro|OHCI1394_DEBUG
-mdefine_line|#define OHCI1394_DEBUG 1
 DECL|macro|OHCI1394_DRIVER_NAME
 mdefine_line|#define OHCI1394_DRIVER_NAME      &quot;ohci1394&quot;
-macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394
-DECL|macro|PCI_DEVICE_ID_TI_OHCI1394
-mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394 0x8009
-macro_line|#endif 
-macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_2
-DECL|macro|PCI_DEVICE_ID_TI_OHCI1394_2
-mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394_2 0x8019
+macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_LV22
+DECL|macro|PCI_DEVICE_ID_TI_OHCI1394_LV22
+mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394_LV22 0x8009
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_LV23
+DECL|macro|PCI_DEVICE_ID_TI_OHCI1394_LV23
+mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394_LV23 0x8019
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_LV26
+DECL|macro|PCI_DEVICE_ID_TI_OHCI1394_LV26
+mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394_LV26 0x8020
 macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_VIA_OHCI1394
 DECL|macro|PCI_DEVICE_ID_VIA_OHCI1394
@@ -25,6 +27,22 @@ macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_SONY_CXD3222
 DECL|macro|PCI_DEVICE_ID_SONY_CXD3222
 mdefine_line|#define PCI_DEVICE_ID_SONY_CXD3222 0x8039
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_NEC_1394
+DECL|macro|PCI_DEVICE_ID_NEC_1394
+mdefine_line|#define PCI_DEVICE_ID_NEC_1394 0x00cd
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_NEC_UPD72862
+DECL|macro|PCI_DEVICE_ID_NEC_UPD72862
+mdefine_line|#define PCI_DEVICE_ID_NEC_UPD72862      0x0063
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_NEC_UPD72870
+DECL|macro|PCI_DEVICE_ID_NEC_UPD72870
+mdefine_line|#define PCI_DEVICE_ID_NEC_UPD72870      0x00cd
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_NEC_UPD72871
+DECL|macro|PCI_DEVICE_ID_NEC_UPD72871
+mdefine_line|#define PCI_DEVICE_ID_NEC_UPD72871      0x00ce
 macro_line|#endif
 DECL|macro|MAX_OHCI1394_CARDS
 mdefine_line|#define MAX_OHCI1394_CARDS        4
@@ -297,6 +315,11 @@ op_star
 id|csr_config_rom
 suffix:semicolon
 multiline_comment|/* buffer for csr config rom */
+DECL|member|max_packet_size
+r_int
+r_int
+id|max_packet_size
+suffix:semicolon
 multiline_comment|/* async receive */
 DECL|member|ar_resp_context
 r_struct
@@ -337,6 +360,10 @@ suffix:semicolon
 DECL|member|IR_channel_lock
 id|spinlock_t
 id|IR_channel_lock
+suffix:semicolon
+DECL|member|nb_iso_ctx
+r_int
+id|nb_iso_ctx
 suffix:semicolon
 multiline_comment|/* IEEE-1394 part follows */
 DECL|member|host

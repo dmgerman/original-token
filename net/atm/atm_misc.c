@@ -1,9 +1,11 @@
 multiline_comment|/* net/atm/atm_misc.c - Various functions for use by ATM drivers */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL ICA */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/sonet.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 DECL|function|atm_charge
@@ -51,8 +53,12 @@ comma
 id|truesize
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;rx_drop
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -150,8 +156,12 @@ comma
 id|guess
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;rx_drop
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -196,10 +206,13 @@ id|walk-&gt;next
 r_if
 c_cond
 (paren
+id|test_bit
+c_func
 (paren
-id|walk-&gt;flags
-op_amp
 id|ATM_VF_ADDR
+comma
+op_amp
+id|walk-&gt;flags
 )paren
 op_logical_and
 id|walk-&gt;vpi
@@ -535,6 +548,50 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sonet_copy_stats
+r_void
+id|sonet_copy_stats
+c_func
+(paren
+r_struct
+id|k_sonet_stats
+op_star
+id|from
+comma
+r_struct
+id|sonet_stats
+op_star
+id|to
+)paren
+(brace
+DECL|macro|__HANDLE_ITEM
+mdefine_line|#define __HANDLE_ITEM(i) to-&gt;i = atomic_read(&amp;from-&gt;i)
+id|__SONET_ITEMS
+DECL|macro|__HANDLE_ITEM
+macro_line|#undef __HANDLE_ITEM
+)brace
+DECL|function|sonet_subtract_stats
+r_void
+id|sonet_subtract_stats
+c_func
+(paren
+r_struct
+id|k_sonet_stats
+op_star
+id|from
+comma
+r_struct
+id|sonet_stats
+op_star
+id|to
+)paren
+(brace
+DECL|macro|__HANDLE_ITEM
+mdefine_line|#define __HANDLE_ITEM(i) atomic_sub(to-&gt;i,&amp;from-&gt;i)
+id|__SONET_ITEMS
+DECL|macro|__HANDLE_ITEM
+macro_line|#undef __HANDLE_ITEM
+)brace
 DECL|variable|atm_charge
 id|EXPORT_SYMBOL
 c_func
@@ -561,6 +618,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|atm_pcr_goal
+)paren
+suffix:semicolon
+DECL|variable|sonet_copy_stats
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sonet_copy_stats
+)paren
+suffix:semicolon
+DECL|variable|sonet_subtract_stats
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sonet_subtract_stats
 )paren
 suffix:semicolon
 eof

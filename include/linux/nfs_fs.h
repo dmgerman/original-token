@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/include/linux/nfs_fs.h&n; *&n; *  Copyright (C)
 macro_line|#ifndef _LINUX_NFS_FS_H
 DECL|macro|_LINUX_NFS_FS_H
 mdefine_line|#define _LINUX_NFS_FS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;

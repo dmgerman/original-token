@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.83 2000/03/14 07:31:25 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.84 2000/03/21 21:19:18 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -12261,6 +12261,10 @@ DECL|macro|ATM_GETSTAT32
 mdefine_line|#define ATM_GETSTAT32     _IOW(&squot;a&squot;, ATMIOC_SARCOM+0, struct atmif_sioc32)
 DECL|macro|ATM_GETSTATZ32
 mdefine_line|#define ATM_GETSTATZ32    _IOW(&squot;a&squot;, ATMIOC_SARCOM+1, struct atmif_sioc32)
+DECL|macro|ATM_GETLOOP32
+mdefine_line|#define ATM_GETLOOP32&t;  _IOW(&squot;a&squot;, ATMIOC_SARCOM+2, struct atmif_sioc32)
+DECL|macro|ATM_SETLOOP32
+mdefine_line|#define ATM_SETLOOP32&t;  _IOW(&squot;a&squot;, ATMIOC_SARCOM+3, struct atmif_sioc32)
 r_static
 r_struct
 (brace
@@ -12363,6 +12367,18 @@ comma
 id|ATM_GETSTATZ32
 comma
 id|ATM_GETSTATZ
+)brace
+comma
+(brace
+id|ATM_GETLOOP32
+comma
+id|ATM_GETLOOP
+)brace
+comma
+(brace
+id|ATM_SETLOOP32
+comma
+id|ATM_SETLOOP
 )brace
 )brace
 suffix:semicolon
@@ -12995,12 +13011,6 @@ id|cmd32
 )paren
 (brace
 r_case
-id|SUNI_GETLOOP
-suffix:colon
-r_case
-id|SUNI_SETLOOP
-suffix:colon
-r_case
 id|SONET_GETSTAT
 suffix:colon
 r_case
@@ -13036,14 +13046,6 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|cmd
-op_eq
-l_int|0
-)paren
-(brace
 r_for
 c_loop
 (paren
@@ -13097,7 +13099,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 )brace
 r_switch
 c_cond
@@ -13157,6 +13158,12 @@ id|ATM_GETSTAT
 suffix:colon
 r_case
 id|ATM_GETSTATZ
+suffix:colon
+r_case
+id|ATM_GETLOOP
+suffix:colon
+r_case
+id|ATM_SETLOOP
 suffix:colon
 r_return
 id|do_atmif_sioc
@@ -19260,14 +19267,14 @@ id|do_atm_ioctl
 id|HANDLE_IOCTL
 c_func
 (paren
-id|SUNI_GETLOOP
+id|ATM_GETLOOP32
 comma
 id|do_atm_ioctl
 )paren
 id|HANDLE_IOCTL
 c_func
 (paren
-id|SUNI_SETLOOP
+id|ATM_SETLOOP32
 comma
 id|do_atm_ioctl
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthreefb.c,v 1.8 1999/11/19 09:57:08 davem Exp $&n; * cgthreefb.c: CGthree frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgthreefb.c,v 1.9 2000/03/19 04:20:44 anton Exp $&n; * cgthreefb.c: CGthree frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -372,7 +372,7 @@ id|flags
 suffix:semicolon
 id|tmp
 op_assign
-id|sbus_readl
+id|sbus_readb
 c_func
 (paren
 op_amp
@@ -384,7 +384,7 @@ op_and_assign
 op_complement
 id|CG3_CR_ENABLE_VIDEO
 suffix:semicolon
-id|sbus_writel
+id|sbus_writeb
 c_func
 (paren
 id|tmp
@@ -432,7 +432,7 @@ id|flags
 suffix:semicolon
 id|tmp
 op_assign
-id|sbus_readl
+id|sbus_readb
 c_func
 (paren
 op_amp
@@ -443,7 +443,7 @@ id|tmp
 op_or_assign
 id|CG3_CR_ENABLE_VIDEO
 suffix:semicolon
-id|sbus_writel
+id|sbus_writeb
 c_func
 (paren
 id|tmp

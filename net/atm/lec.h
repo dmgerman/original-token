@@ -5,6 +5,46 @@ mdefine_line|#define _LEC_H_
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/atmlec.h&gt;
+macro_line|#if defined (CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
+macro_line|#include &lt;linux/if_bridge.h&gt;
+r_extern
+id|rwlock_t
+id|lane_bridge_hook_lock
+suffix:semicolon
+DECL|variable|br_fdb_get_hook
+r_struct
+id|net_bridge_fdb_entry
+op_star
+(paren
+op_star
+id|br_fdb_get_hook
+)paren
+(paren
+r_struct
+id|net_bridge
+op_star
+id|br
+comma
+r_int
+r_char
+op_star
+id|addr
+)paren
+suffix:semicolon
+DECL|variable|br_fdb_put_hook
+r_void
+(paren
+op_star
+id|br_fdb_put_hook
+)paren
+(paren
+r_struct
+id|net_bridge_fdb_entry
+op_star
+id|ent
+)paren
+suffix:semicolon
+macro_line|#endif /* defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE) */
 DECL|macro|LEC_HEADER_LEN
 mdefine_line|#define LEC_HEADER_LEN 16
 DECL|struct|lecdatahdr_8023

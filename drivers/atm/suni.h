@@ -1,5 +1,5 @@
-multiline_comment|/* drivers/atm/suni.h - PMC SUNI (PHY) declarations */
-multiline_comment|/* Written 1995,1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* drivers/atm/suni.h - PMC PM5346 SUNI (PHY) declarations */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef DRIVER_ATM_SUNI_H
 DECL|macro|DRIVER_ATM_SUNI_H
 mdefine_line|#define DRIVER_ATM_SUNI_H

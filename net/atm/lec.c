@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * lec.c: Lan Emulation driver &n; * Marko Kiiskila carnil@cs.tut.fi&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 multiline_comment|/* We are ethernet device */
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -20,9 +21,29 @@ macro_line|#endif
 multiline_comment|/* And atm device */
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/atmlec.h&gt;
-multiline_comment|/* Bridge */
-macro_line|#ifdef CONFIG_BRIDGE
-macro_line|#include &lt;net/br.h&gt;
+multiline_comment|/* Proxy LEC knows about bridging */
+macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
+macro_line|#include &lt;linux/if_bridge.h&gt;
+macro_line|#include &quot;../bridge/br_private.h&quot;
+DECL|variable|bridge_ula
+r_int
+r_char
+id|bridge_ula
+(braket
+)braket
+op_assign
+(brace
+l_int|0x01
+comma
+l_int|0x80
+comma
+l_int|0xc2
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Modular too */
 macro_line|#include &lt;linux/module.h&gt;
@@ -278,7 +299,7 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_BRIDGE
+macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
 DECL|function|handle_bridge
 r_static
 r_void
@@ -310,28 +331,7 @@ id|lec_priv
 op_star
 id|priv
 suffix:semicolon
-r_int
-r_char
-id|bridge_ula
-(braket
-id|ETH_ALEN
-)braket
-op_assign
-(brace
-l_int|0x01
-comma
-l_int|0x80
-comma
-l_int|0xc2
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
-suffix:semicolon
-multiline_comment|/* Check if this is a BPDU. If so, ask zeppelin to send&n;         * LE_TOPOLOGY_REQUEST with the value of Topology Change bit&n;         * in the Config BPDU*/
+multiline_comment|/* Check if this is a BPDU. If so, ask zeppelin to send&n;         * LE_TOPOLOGY_REQUEST with the same value of Topology Change bit&n;         * as the Config BPDU has */
 id|eth
 op_assign
 (paren
@@ -350,37 +350,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|memcmp
-c_func
-(paren
-id|eth-&gt;h_dest
-comma
-id|bridge_ula
-comma
-id|ETH_ALEN
-)paren
+op_star
+id|buff
+op_increment
 op_eq
-l_int|0
-)paren
+l_int|0x42
 op_logical_and
 op_star
 id|buff
 op_increment
 op_eq
-id|BRIDGE_LLC1_DSAP
+l_int|0x42
 op_logical_and
 op_star
 id|buff
 op_increment
 op_eq
-id|BRIDGE_LLC1_SSAP
-op_logical_and
-op_star
-id|buff
-op_increment
-op_eq
-id|BRIDGE_LLC1_CTRL
+l_int|0x03
 )paren
 (brace
 r_struct
@@ -437,17 +423,18 @@ id|mesg-&gt;type
 op_assign
 id|l_topology_change
 suffix:semicolon
+id|buff
+op_add_assign
+l_int|4
+suffix:semicolon
 id|mesg-&gt;content.normal.flag
 op_assign
 op_star
-(paren
-id|skb-&gt;nh.raw
-op_plus
-id|BRIDGE_BPDU_8021_CONFIG_FLAG_OFFSET
-)paren
+id|buff
 op_amp
-id|TOPOLOGY_CHANGE
+l_int|0x01
 suffix:semicolon
+multiline_comment|/* 0x01 is topology change */
 id|priv
 op_assign
 (paren
@@ -485,7 +472,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BRIDGE */
+macro_line|#endif /* defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE) */
 multiline_comment|/*&n; * Modelled after tr_type_trans&n; * All multicast and ARE or STE frames go to BUS.&n; * Non source routed frames go by destination address.&n; * Last hop source routed frames go by destination address.&n; * Not last hop source routed frames go by _next_ route descriptor.&n; * Returns pointer to destination MAC address or fills in rdesc&n; * and returns NULL.&n; */
 macro_line|#ifdef CONFIG_TR
 DECL|function|get_tr_dst
@@ -914,13 +901,24 @@ r_int
 id|skb-&gt;end
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BRIDGE
+macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
 r_if
 c_cond
 (paren
-id|skb-&gt;pkt_bridged
+id|memcmp
+c_func
+(paren
+id|skb-&gt;data
+comma
+id|bridge_ula
+comma
+r_sizeof
+(paren
+id|bridge_ula
+)paren
+)paren
 op_eq
-id|IS_BRIDGED
+l_int|0
 )paren
 id|handle_bridge
 c_func
@@ -930,7 +928,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BRIDGE */
+macro_line|#endif
 multiline_comment|/* Make sure we have room for lec_id */
 r_if
 c_cond
@@ -1353,10 +1351,13 @@ op_logical_neg
 id|send_vcc
 op_logical_or
 op_logical_neg
+id|test_bit
+c_func
 (paren
-id|send_vcc-&gt;flags
-op_amp
 id|ATM_VF_READY
+comma
+op_amp
+id|send_vcc-&gt;flags
 )paren
 )paren
 (brace
@@ -1617,7 +1618,7 @@ id|priv-&gt;stats.tx_bytes
 op_add_assign
 id|skb2-&gt;len
 suffix:semicolon
-id|send_vcc-&gt;dev-&gt;ops
+id|send_vcc
 op_member_access_from_pointer
 id|send
 c_func
@@ -1674,7 +1675,7 @@ id|priv-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-id|send_vcc-&gt;dev-&gt;ops
+id|send_vcc
 op_member_access_from_pointer
 id|send
 c_func
@@ -2180,17 +2181,11 @@ r_case
 id|l_should_bridge
 suffix:colon
 (brace
-macro_line|#ifdef CONFIG_BRIDGE
+macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
 r_struct
-id|fdb
+id|net_bridge_fdb_entry
 op_star
 id|f
-suffix:semicolon
-r_extern
-id|Port_data
-id|port_info
-(braket
-)braket
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -2230,15 +2225,45 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-id|f
-op_assign
-id|br_avl_find_addr
+id|read_lock
 c_func
 (paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|br_fdb_get_hook
+op_eq
+l_int|NULL
+op_logical_or
+id|dev-&gt;br_port
+op_eq
+l_int|NULL
+)paren
+(brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|f
+op_assign
+id|br_fdb_get_hook
+c_func
+(paren
+id|dev-&gt;br_port-&gt;br
+comma
 id|mesg-&gt;content.proxy.mac_addr
 )paren
 suffix:semicolon
-multiline_comment|/* bridge/br.c */
 r_if
 c_cond
 (paren
@@ -2246,23 +2271,13 @@ id|f
 op_ne
 l_int|NULL
 op_logical_and
-id|port_info
-(braket
-id|f-&gt;port
-)braket
-dot
-id|dev
+id|f-&gt;dst-&gt;dev
 op_ne
 id|dev
 op_logical_and
-id|port_info
-(braket
-id|f-&gt;port
-)braket
-dot
-id|state
+id|f-&gt;dst-&gt;state
 op_eq
-id|Forwarding
+id|BR_STATE_FORWARDING
 )paren
 (brace
 multiline_comment|/* hit from bridge table, send LE_ARP_RESPONSE */
@@ -2300,8 +2315,23 @@ id|skb2
 op_eq
 l_int|NULL
 )paren
+(brace
+id|br_fdb_put_hook
+c_func
+(paren
+id|f
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 id|skb2-&gt;len
 op_assign
 r_sizeof
@@ -2349,7 +2379,27 @@ id|priv-&gt;lecd-&gt;sleep
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BRIDGE */
+r_if
+c_cond
+(paren
+id|f
+op_ne
+l_int|NULL
+)paren
+id|br_fdb_put_hook
+c_func
+(paren
+id|f
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
+macro_line|#endif /* defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE) */
 )brace
 r_break
 suffix:semicolon
@@ -2548,7 +2598,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/*no data*/
+(brace
 l_int|0
+)brace
 comma
 multiline_comment|/*no flags*/
 l_int|NULL
@@ -3300,6 +3352,10 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb-&gt;rx_dev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|skb-&gt;data
 op_add_assign
 l_int|2
@@ -3770,11 +3826,23 @@ id|dev_lec
 id|i
 )braket
 suffix:semicolon
-id|vcc-&gt;flags
-op_or_assign
-id|ATM_VF_READY
-op_or
+id|set_bit
+c_func
+(paren
 id|ATM_VF_META
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 multiline_comment|/* Set default values to these variables */
 id|priv-&gt;maximum_unknown_frame_count
@@ -4832,14 +4900,23 @@ op_assign
 id|entry-&gt;old_push
 suffix:semicolon
 macro_line|#if 0 /* August 6, 1998 */
-id|entry-&gt;vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_RELEASED
-suffix:semicolon
+comma
+op_amp
 id|entry-&gt;vcc-&gt;flags
-op_and_assign
-op_complement
+)paren
+suffix:semicolon
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|entry-&gt;vcc-&gt;flags
+)paren
 suffix:semicolon
 id|entry-&gt;vcc
 op_member_access_from_pointer
@@ -4877,14 +4954,23 @@ op_assign
 id|entry-&gt;old_recv_push
 suffix:semicolon
 macro_line|#if 0
-id|entry-&gt;recv_vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_RELEASED
+comma
+op_amp
+id|entry-&gt;vcc-&gt;flags
+)paren
 suffix:semicolon
-id|entry-&gt;recv_vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|entry-&gt;vcc-&gt;flags
+)paren
 suffix:semicolon
 id|entry-&gt;recv_vcc
 op_member_access_from_pointer

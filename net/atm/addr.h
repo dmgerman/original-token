@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/addr.h - Local ATM address registry */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef NET_ATM_ADDR_H
 DECL|macro|NET_ATM_ADDR_H
 mdefine_line|#define NET_ATM_ADDR_H
@@ -61,13 +61,6 @@ id|u_buf
 comma
 r_int
 id|size
-)paren
-suffix:semicolon
-r_void
-id|init_addr
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 macro_line|#endif

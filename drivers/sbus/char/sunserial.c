@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.74 1999/12/15 22:30:23 davem Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.75 2000/03/22 02:45:36 davem Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -185,6 +185,13 @@ r_return
 id|err
 suffix:semicolon
 )brace
+DECL|variable|rs_init
+id|__initcall
+c_func
+(paren
+id|rs_init
+)paren
+suffix:semicolon
 DECL|function|rs_kgdb_hook
 r_void
 id|__init

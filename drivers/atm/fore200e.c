@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  $Id: fore200e.c,v 1.1 2000/02/21 16:04:31 davem Exp $&n;&n;  A FORE Systems 200E-series driver for ATM on Linux.&n;  Christophe Lizzi (lizzi@cnam.fr), October 1999-February 2000.&n;&n;  Based on the PCA-200E driver from Uwe Dannowski (Uwe.Dannowski@inf.tu-dresden.de).&n;&n;  This driver simultaneously supports PCA-200E and SBA-200E adapters&n;  on i386, alpha (untested), powerpc, sparc and sparc64 architectures.&n;&n;  This program is free software; you can redistribute it and/or modify&n;  it under the terms of the GNU General Public License as published by&n;  the Free Software Foundation; either version 2 of the License, or&n;  (at your option) any later version.&n;&n;  This program is distributed in the hope that it will be useful,&n;  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;  GNU General Public License for more details.&n;&n;  You should have received a copy of the GNU General Public License&n;  along with this program; if not, write to the Free Software&n;  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n;*/
+multiline_comment|/*&n;  $Id: fore200e.c,v 1.2 2000/03/21 21:19:24 davem Exp $&n;&n;  A FORE Systems 200E-series driver for ATM on Linux.&n;  Christophe Lizzi (lizzi@cnam.fr), October 1999-February 2000.&n;&n;  Based on the PCA-200E driver from Uwe Dannowski (Uwe.Dannowski@inf.tu-dresden.de).&n;&n;  This driver simultaneously supports PCA-200E and SBA-200E adapters&n;  on i386, alpha (untested), powerpc, sparc and sparc64 architectures.&n;&n;  This program is free software; you can redistribute it and/or modify&n;  it under the terms of the GNU General Public License as published by&n;  the Free Software Foundation; either version 2 of the License, or&n;  (at your option) any later version.&n;&n;  This program is distributed in the hope that it will be useful,&n;  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;  GNU General Public License for more details.&n;&n;  You should have received a copy of the GNU General Public License&n;  along with this program; if not, write to the Free Software&n;  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n;*/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/sonet.h&gt;
 macro_line|#include &lt;linux/atm_suni.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -17,6 +18,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#ifdef CONFIG_ATM_FORE200E_PCA
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#endif
@@ -37,7 +39,7 @@ DECL|macro|FORE200E_52BYTE_AAL0_SDU
 mdefine_line|#define FORE200E_52BYTE_AAL0_SDU
 macro_line|#endif
 DECL|macro|FORE200E_VERSION
-mdefine_line|#define FORE200E_VERSION &quot;0.2a&quot;
+mdefine_line|#define FORE200E_VERSION &quot;0.2b&quot;
 DECL|macro|FORE200E
 mdefine_line|#define FORE200E         &quot;fore200e: &quot;
 macro_line|#if defined(CONFIG_ATM_FORE200E_DEBUG) &amp;&amp; (CONFIG_ATM_FORE200E_DEBUG &gt; 0)
@@ -384,7 +386,7 @@ id|chunk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* allocate and align a chunk of memory intended to hold the data behing exchanged&n;   between the driver and the adapter (using streaming DVMA on SBUS hosts) */
+multiline_comment|/* allocate and align a chunk of memory intended to hold the data behing exchanged&n;   between the driver and the adapter (using streaming DVMA) */
 r_static
 r_int
 DECL|function|fore200e_chunk_alloc
@@ -406,6 +408,9 @@ id|size
 comma
 r_int
 id|alignment
+comma
+r_int
+id|direction
 )paren
 (brace
 r_int
@@ -437,6 +442,10 @@ suffix:semicolon
 id|chunk-&gt;align_size
 op_assign
 id|size
+suffix:semicolon
+id|chunk-&gt;direction
+op_assign
+id|direction
 suffix:semicolon
 id|chunk-&gt;alloc_addr
 op_assign
@@ -496,6 +505,8 @@ comma
 id|chunk-&gt;align_addr
 comma
 id|chunk-&gt;align_size
+comma
+id|direction
 )paren
 suffix:semicolon
 r_return
@@ -530,6 +541,8 @@ comma
 id|chunk-&gt;dma_addr
 comma
 id|chunk-&gt;dma_size
+comma
+id|chunk-&gt;direction
 )paren
 suffix:semicolon
 id|fore200e_kfree
@@ -1490,6 +1503,9 @@ id|virt_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|u32
@@ -1509,7 +1525,7 @@ id|virt_addr
 comma
 id|size
 comma
-id|PCI_DMA_BIDIRECTIONAL
+id|direction
 )paren
 suffix:semicolon
 id|DPRINTK
@@ -1517,11 +1533,13 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;PCI DVMA mapping: virt_addr = 0x%p, size = %d --&gt; dma_addr = 0x%08x&bslash;n&quot;
+l_string|&quot;PCI DVMA mapping: virt_addr = 0x%p, size = %d, direction = %d,  --&gt; dma_addr = 0x%08x&bslash;n&quot;
 comma
 id|virt_addr
 comma
 id|size
+comma
+id|direction
 comma
 id|dma_addr
 )paren
@@ -1546,6 +1564,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|DPRINTK
@@ -1553,11 +1574,13 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;PCI DVMA unmapping: dma_addr = 0x%08x, size = %d&bslash;n&quot;
+l_string|&quot;PCI DVMA unmapping: dma_addr = 0x%08x, size = %d, direction = %d&bslash;n&quot;
 comma
 id|dma_addr
 comma
 id|size
+comma
+id|direction
 )paren
 suffix:semicolon
 id|pci_unmap_single
@@ -1574,7 +1597,7 @@ id|dma_addr
 comma
 id|size
 comma
-id|PCI_DMA_BIDIRECTIONAL
+id|direction
 )paren
 suffix:semicolon
 )brace
@@ -1594,6 +1617,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|DPRINTK
@@ -1601,11 +1627,13 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;PCI DVMA sync: dma_addr = 0x%08x, size = %d&bslash;n&quot;
+l_string|&quot;PCI DVMA sync: dma_addr = 0x%08x, size = %d, direction = %d&bslash;n&quot;
 comma
 id|dma_addr
 comma
 id|size
+comma
+id|direction
 )paren
 suffix:semicolon
 id|pci_dma_sync_single
@@ -1622,7 +1650,7 @@ id|dma_addr
 comma
 id|size
 comma
-id|PCI_DMA_BIDIRECTIONAL
+id|direction
 )paren
 suffix:semicolon
 )brace
@@ -1708,6 +1736,8 @@ op_star
 id|nbr
 comma
 id|alignment
+comma
+id|FORE200E_DMA_BIDIRECTIONAL
 )paren
 OL
 l_int|0
@@ -1715,18 +1745,6 @@ l_int|0
 r_return
 op_minus
 id|ENOMEM
-suffix:semicolon
-id|chunk-&gt;dma_addr
-op_assign
-id|fore200e_pca_dma_map
-c_func
-(paren
-id|fore200e
-comma
-id|chunk-&gt;align_addr
-comma
-id|chunk-&gt;align_size
-)paren
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -1770,16 +1788,6 @@ id|chunk-&gt;dma_addr
 )paren
 suffix:semicolon
 macro_line|#else
-id|fore200e_pca_dma_unmap
-c_func
-(paren
-id|fore200e
-comma
-id|chunk-&gt;dma_addr
-comma
-id|chunk-&gt;dma_size
-)paren
-suffix:semicolon
 id|fore200e_chunk_free
 c_func
 (paren
@@ -2376,6 +2384,8 @@ r_sizeof
 r_struct
 id|prom_data
 )paren
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|fore200e-&gt;bus
@@ -2448,6 +2458,8 @@ r_sizeof
 r_struct
 id|prom_data
 )paren
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 r_if
@@ -2616,6 +2628,9 @@ id|virt_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|u32
@@ -2634,6 +2649,8 @@ comma
 id|virt_addr
 comma
 id|size
+comma
+id|direction
 )paren
 suffix:semicolon
 id|DPRINTK
@@ -2641,11 +2658,13 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;SBUS DVMA mapping: virt_addr = 0x%p, size = %d --&gt; dma_addr = 0x%08x&bslash;n&quot;
+l_string|&quot;SBUS DVMA mapping: virt_addr = 0x%p, size = %d, direction = %d --&gt; dma_addr = 0x%08x&bslash;n&quot;
 comma
 id|virt_addr
 comma
 id|size
+comma
+id|direction
 comma
 id|dma_addr
 )paren
@@ -2670,6 +2689,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|DPRINTK
@@ -2677,11 +2699,13 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;SBUS DVMA unmapping: dma_addr = 0x%08x, size = %d&bslash;n&quot;
+l_string|&quot;SBUS DVMA unmapping: dma_addr = 0x%08x, size = %d, direction = %d,&bslash;n&quot;
 comma
 id|dma_addr
 comma
 id|size
+comma
+id|direction
 )paren
 suffix:semicolon
 id|sbus_unmap_single
@@ -2697,6 +2721,8 @@ comma
 id|dma_addr
 comma
 id|size
+comma
+id|direction
 )paren
 suffix:semicolon
 )brace
@@ -2716,6 +2742,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|DPRINTK
@@ -2723,11 +2752,13 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;SBUS DVMA sync: dma_addr = 0x%08x, size = %d&bslash;n&quot;
+l_string|&quot;SBUS DVMA sync: dma_addr = 0x%08x, size = %d, direction = %d&bslash;n&quot;
 comma
 id|dma_addr
 comma
 id|size
+comma
+id|direction
 )paren
 suffix:semicolon
 id|sbus_dma_sync_single
@@ -2743,6 +2774,8 @@ comma
 id|dma_addr
 comma
 id|size
+comma
+id|direction
 )paren
 suffix:semicolon
 )brace
@@ -3784,6 +3817,8 @@ l_int|0
 )braket
 dot
 id|length
+comma
+id|FORE200E_DMA_TODEVICE
 )paren
 suffix:semicolon
 multiline_comment|/* notify tx completion */
@@ -3818,12 +3853,20 @@ id|entry-&gt;status
 op_amp
 id|STATUS_ERROR
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|entry-&gt;vcc-&gt;stats-&gt;tx_err
-op_increment
+)paren
 suffix:semicolon
 r_else
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|entry-&gt;vcc-&gt;stats-&gt;tx
-op_increment
+)paren
 suffix:semicolon
 op_star
 id|entry-&gt;status
@@ -4296,8 +4339,12 @@ comma
 id|pdu_len
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;rx_drop
-op_increment
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4380,6 +4427,8 @@ id|i
 )braket
 dot
 id|length
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|memcpy
@@ -4491,8 +4540,12 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;rx
-op_increment
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -5501,9 +5554,14 @@ id|ATM_VPI_UNSPEC
 r_return
 l_int|0
 suffix:semicolon
-id|vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 id|vcc-&gt;itf
 op_assign
@@ -5784,9 +5842,14 @@ id|fore200e_vcc-&gt;rx_max_pdu
 op_assign
 l_int|0
 suffix:semicolon
-id|vcc-&gt;flags
-op_or_assign
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -6125,8 +6188,12 @@ r_goto
 id|retry_here
 suffix:semicolon
 )brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;tx_err
-op_increment
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -6137,6 +6204,28 @@ comma
 id|fore200e-&gt;name
 comma
 id|fore200e-&gt;cp_queues-&gt;heartbeat
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vcc-&gt;pop
+)paren
+id|vcc
+op_member_access_from_pointer
+id|pop
+c_func
+(paren
+id|vcc
+comma
+id|skb
+)paren
+suffix:semicolon
+r_else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_return
@@ -6263,6 +6352,28 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vcc-&gt;pop
+)paren
+id|vcc
+op_member_access_from_pointer
+id|pop
+c_func
+(paren
+id|vcc
+comma
+id|skb
+)paren
+suffix:semicolon
+r_else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -6316,6 +6427,8 @@ comma
 id|entry-&gt;data
 comma
 id|tx_len
+comma
+id|FORE200E_DMA_TODEVICE
 )paren
 suffix:semicolon
 )brace
@@ -6342,6 +6455,8 @@ comma
 id|skb_data
 comma
 id|tx_len
+comma
+id|FORE200E_DMA_TODEVICE
 )paren
 suffix:semicolon
 )brace
@@ -6395,6 +6510,8 @@ l_int|0
 )braket
 dot
 id|length
+comma
+id|FORE200E_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|DPRINTK
@@ -6661,52 +6778,8 @@ l_int|0
 )braket
 dot
 id|length
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ok
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|FORE200E
-l_string|&quot;synchronous tx on %d:%d:%d failed&bslash;n&quot;
 comma
-id|vcc-&gt;itf
-comma
-id|vcc-&gt;vpi
-comma
-id|vcc-&gt;vci
-)paren
-suffix:semicolon
-id|entry-&gt;vcc-&gt;stats-&gt;tx_err
-op_increment
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-id|entry-&gt;vcc-&gt;stats-&gt;tx
-op_increment
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_int|3
-comma
-l_string|&quot;synchronous tx on %d:%d:%d succeeded&bslash;n&quot;
-comma
-id|vcc-&gt;itf
-comma
-id|vcc-&gt;vpi
-comma
-id|vcc-&gt;vci
+id|FORE200E_DMA_TODEVICE
 )paren
 suffix:semicolon
 multiline_comment|/* free tmp copy of misaligned data */
@@ -6742,6 +6815,60 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ok
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|FORE200E
+l_string|&quot;synchronous tx on %d:%d:%d failed&bslash;n&quot;
+comma
+id|vcc-&gt;itf
+comma
+id|vcc-&gt;vpi
+comma
+id|vcc-&gt;vci
+)paren
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|entry-&gt;vcc-&gt;stats-&gt;tx_err
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|entry-&gt;vcc-&gt;stats-&gt;tx
+)paren
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_int|3
+comma
+l_string|&quot;synchronous tx on %d:%d:%d succeeded&bslash;n&quot;
+comma
+id|vcc-&gt;itf
+comma
+id|vcc-&gt;vpi
+comma
+id|vcc-&gt;vci
 )paren
 suffix:semicolon
 )brace
@@ -6843,6 +6970,8 @@ r_sizeof
 r_struct
 id|stats
 )paren
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|FORE200E_NEXT_ENTRY
@@ -6931,6 +7060,8 @@ r_sizeof
 r_struct
 id|stats
 )paren
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 r_if
@@ -7126,6 +7257,8 @@ r_sizeof
 r_struct
 id|oc3_regs
 )paren
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|FORE200E_NEXT_ENTRY
@@ -7208,9 +7341,9 @@ id|entry-&gt;status
 op_assign
 id|STATUS_FREE
 suffix:semicolon
-id|fore200e
+id|fore200e-&gt;bus
 op_member_access_from_pointer
-id|bus_dma_unmap
+id|dma_unmap
 c_func
 (paren
 id|fore200e
@@ -7222,6 +7355,8 @@ r_sizeof
 r_struct
 id|oc3_regs
 )paren
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 r_if
@@ -7450,7 +7585,7 @@ id|loop_mode
 )paren
 (brace
 r_case
-id|SUNI_LM_NONE
+id|ATM_LM_NONE
 suffix:colon
 id|mct_value
 op_assign
@@ -7465,7 +7600,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|SUNI_LM_DIAG
+id|ATM_LM_LOC_PHY
 suffix:colon
 id|mct_value
 op_assign
@@ -7476,7 +7611,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|SUNI_LM_LOOP
+id|ATM_LM_RMT_PHY
 suffix:colon
 id|mct_value
 op_assign
@@ -7809,7 +7944,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 r_case
-id|SUNI_SETLOOP
+id|ATM_SETLOOP
 suffix:colon
 r_return
 id|fore200e_setloop
@@ -7828,13 +7963,37 @@ id|arg
 )paren
 suffix:semicolon
 r_case
-id|SUNI_GETLOOP
+id|ATM_GETLOOP
 suffix:colon
 r_return
 id|put_user
 c_func
 (paren
 id|fore200e-&gt;loop_mode
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
+suffix:semicolon
+r_case
+id|ATM_QUERYLOOP
+suffix:colon
+r_return
+id|put_user
+c_func
+(paren
+id|ATM_LM_LOC_PHY
+op_or
+id|ATM_LM_RMT_PHY
 comma
 (paren
 r_int
@@ -8030,9 +8189,14 @@ op_amp
 id|fore200e_vcc-&gt;rate
 )paren
 suffix:semicolon
-id|vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_HASQOS
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -8464,6 +8628,8 @@ comma
 id|size
 comma
 id|fore200e-&gt;bus-&gt;buffer_alignment
+comma
+id|FORE200E_DMA_FROMDEVICE
 )paren
 OL
 l_int|0
@@ -10483,7 +10649,7 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -11338,6 +11504,8 @@ comma
 l_string|&quot;diagnostic loopback&quot;
 comma
 l_string|&quot;line loopback&quot;
+comma
+l_string|&quot;unknown&quot;
 )brace
 suffix:semicolon
 id|u32
@@ -11392,6 +11560,9 @@ id|fore200e-&gt;cp_queues-&gt;media_type
 )paren
 )paren
 suffix:semicolon
+id|u32
+id|oc3_index
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11403,6 +11574,46 @@ id|media_index
 op_assign
 l_int|5
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|fore200e-&gt;loop_mode
+)paren
+(brace
+r_case
+id|ATM_LM_NONE
+suffix:colon
+id|oc3_index
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ATM_LM_LOC_PHY
+suffix:colon
+id|oc3_index
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ATM_LM_RMT_PHY
+suffix:colon
+id|oc3_index
+op_assign
+l_int|2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|oc3_index
+op_assign
+l_int|3
+suffix:semicolon
+)brace
 r_return
 id|sprintf
 c_func
@@ -11450,7 +11661,7 @@ id|oc3_revision
 comma
 id|oc3_mode
 (braket
-id|fore200e-&gt;loop_mode
+id|oc3_index
 )braket
 )paren
 suffix:semicolon

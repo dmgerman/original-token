@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/pvc.c - ATM PVC sockets */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/net.h&gt;&t;&t;/* struct socket, struct net_proto,&n;&t;&t;&t;&t;   struct proto_ops */
 macro_line|#include &lt;linux/atm.h&gt;&t;&t;/* ATM stuff */
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;&t;/* error codes */
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;net/sock.h&gt;&t;&t;/* for sock_no_* */
 macro_line|#ifdef CONFIG_ATM_CLIP
 macro_line|#include &lt;net/atmclip.h&gt;
@@ -115,10 +116,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|test_bit
+c_func
 (paren
-id|vcc-&gt;flags
-op_amp
 id|ATM_VF_HASQOS
+comma
+op_amp
+id|vcc-&gt;flags
 )paren
 )paren
 r_return
@@ -128,9 +132,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vcc-&gt;flags
-op_amp
+id|test_bit
+c_func
+(paren
 id|ATM_VF_PARTIAL
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 )paren
 (brace
 r_if
@@ -252,10 +261,13 @@ op_logical_neg
 id|vcc-&gt;dev
 op_logical_or
 op_logical_neg
+id|test_bit
+c_func
 (paren
-id|vcc-&gt;flags
-op_amp
 id|ATM_VF_ADDR
+comma
+op_amp
+id|vcc-&gt;flags
 )paren
 )paren
 r_return

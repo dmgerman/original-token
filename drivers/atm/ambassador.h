@@ -255,8 +255,6 @@ DECL|macro|FP_155_RATE
 mdefine_line|#define FP_155_RATE&t;0x24b1
 DECL|macro|FP_25_RATE
 mdefine_line|#define FP_25_RATE&t;0x1f9d
-DECL|macro|AMB_RESET
-mdefine_line|#define AMB_RESET       0x40
 multiline_comment|/* #define VERSION_NUMBER 0x01000000 // initial release */
 multiline_comment|/* #define VERSION_NUMBER 0x01010000 // fixed startup probs PLX MB0 not cleared */
 multiline_comment|/* #define VERSION_NUMBER 0x01020000 // changed SUNI reset timings; allowed r/w onchip */
@@ -460,11 +458,13 @@ DECL|typedef|amb_mem
 )brace
 id|amb_mem
 suffix:semicolon
-multiline_comment|/* IRQ (card to host) and doorbell (host to card) enable bits */
+multiline_comment|/* RESET bit, IRQ (card to host) and doorbell (host to card) enable bits */
+DECL|macro|AMB_RESET_BITS
+mdefine_line|#define AMB_RESET_BITS&t;   0x40000000
 DECL|macro|AMB_INTERRUPT_BITS
-mdefine_line|#define AMB_INTERRUPT_BITS 0x00030000
+mdefine_line|#define AMB_INTERRUPT_BITS 0x00000300
 DECL|macro|AMB_DOORBELL_BITS
-mdefine_line|#define AMB_DOORBELL_BITS  0x00000300
+mdefine_line|#define AMB_DOORBELL_BITS  0x00030000
 multiline_comment|/* loader commands */
 DECL|macro|MAX_COMMAND_DATA
 mdefine_line|#define MAX_COMMAND_DATA 13
@@ -1010,26 +1010,6 @@ mdefine_line|#define NEXTQ(current,start,limit) &bslash;&n;  ( (current)+1 &lt; 
 r_typedef
 r_struct
 (brace
-DECL|member|lock
-id|spinlock_t
-id|lock
-suffix:semicolon
-DECL|member|pending
-r_int
-r_int
-id|pending
-suffix:semicolon
-DECL|member|high
-r_int
-r_int
-id|high
-suffix:semicolon
-DECL|member|maximum
-r_int
-r_int
-id|maximum
-suffix:semicolon
-singleline_comment|// size - 1 (q implementation)
 DECL|member|start
 id|command
 op_star
@@ -1049,6 +1029,42 @@ DECL|member|limit
 id|command
 op_star
 id|limit
+suffix:semicolon
+DECL|typedef|amb_cq_ptrs
+)brace
+id|amb_cq_ptrs
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|pending
+r_int
+r_int
+id|pending
+suffix:semicolon
+DECL|member|high
+r_int
+r_int
+id|high
+suffix:semicolon
+DECL|member|filled
+r_int
+r_int
+id|filled
+suffix:semicolon
+DECL|member|maximum
+r_int
+r_int
+id|maximum
+suffix:semicolon
+singleline_comment|// size - 1 (q implementation)
+DECL|member|ptrs
+id|amb_cq_ptrs
+id|ptrs
 suffix:semicolon
 DECL|typedef|amb_cq
 )brace

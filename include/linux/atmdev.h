@@ -1,5 +1,5 @@
 multiline_comment|/* atmdev.h - ATM device driver declarations and various related items */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef LINUX_ATMDEV_H
 DECL|macro|LINUX_ATMDEV_H
 mdefine_line|#define LINUX_ATMDEV_H
@@ -12,35 +12,24 @@ mdefine_line|#define ESI_LEN&t;&t;6
 DECL|macro|ATM_OC3_PCR
 mdefine_line|#define ATM_OC3_PCR&t;(155520000/270*260/8/53)
 multiline_comment|/* OC3 link rate:  155520000 bps&n;&t;&t;&t;   SONET overhead: /270*260 (9 section, 1 path)&n;&t;&t;&t;   bits per cell:  /8/53&n;&t;&t;&t;   max cell rate:  353207.547 cells/sec */
+DECL|macro|ATM_25_PCR
+mdefine_line|#define ATM_25_PCR&t;((25600000/8-8000)/54)
+multiline_comment|/* 25 Mbps ATM cell rate (59111) */
 DECL|macro|ATM_PDU_OVHD
 mdefine_line|#define ATM_PDU_OVHD&t;0&t;/* number of bytes to charge against buffer&n;&t;&t;&t;&t;   quota per PDU */
 DECL|macro|ATM_SD
 mdefine_line|#define ATM_SD(s)&t;((s)-&gt;sk-&gt;protinfo.af_atm)
+DECL|macro|__AAL_STAT_ITEMS
+mdefine_line|#define __AAL_STAT_ITEMS &bslash;&n;    __HANDLE_ITEM(tx);&t;&t;&t;/* TX okay */ &bslash;&n;    __HANDLE_ITEM(tx_err);&t;&t;/* TX errors */ &bslash;&n;    __HANDLE_ITEM(rx);&t;&t;&t;/* RX okay */ &bslash;&n;    __HANDLE_ITEM(rx_err);&t;&t;/* RX errors */ &bslash;&n;    __HANDLE_ITEM(rx_drop);&t;&t;/* RX out of memory */
 DECL|struct|atm_aal_stats
 r_struct
 id|atm_aal_stats
 (brace
-DECL|member|tx
-DECL|member|tx_err
-r_int
-id|tx
-comma
-id|tx_err
-suffix:semicolon
-multiline_comment|/* TX okay and errors */
-DECL|member|rx
-DECL|member|rx_err
-r_int
-id|rx
-comma
-id|rx_err
-suffix:semicolon
-multiline_comment|/* RX okay and errors */
-DECL|member|rx_drop
-r_int
-id|rx_drop
-suffix:semicolon
-multiline_comment|/* RX out of memory */
+DECL|macro|__HANDLE_ITEM
+mdefine_line|#define __HANDLE_ITEM(i) int i
+id|__AAL_STAT_ITEMS
+DECL|macro|__HANDLE_ITEM
+macro_line|#undef __HANDLE_ITEM
 )brace
 suffix:semicolon
 DECL|struct|atm_dev_stats
@@ -108,12 +97,62 @@ multiline_comment|/* get AAL layer statistics */
 DECL|macro|ATM_GETSTATZ
 mdefine_line|#define ATM_GETSTATZ&t;_IOW(&squot;a&squot;,ATMIOC_SARCOM+1,struct atmif_sioc)
 multiline_comment|/* get AAL layer statistics and zero */
+DECL|macro|ATM_GETLOOP
+mdefine_line|#define ATM_GETLOOP&t;_IOW(&squot;a&squot;,ATMIOC_SARCOM+2,struct atmif_sioc)
+multiline_comment|/* get loopback mode */
+DECL|macro|ATM_SETLOOP
+mdefine_line|#define ATM_SETLOOP&t;_IOW(&squot;a&squot;,ATMIOC_SARCOM+3,struct atmif_sioc)
+multiline_comment|/* set loopback mode */
+DECL|macro|ATM_QUERYLOOP
+mdefine_line|#define ATM_QUERYLOOP&t;_IOW(&squot;a&squot;,ATMIOC_SARCOM+4,struct atmif_sioc)
+multiline_comment|/* query supported loopback modes */
 DECL|macro|ATM_SETSC
 mdefine_line|#define ATM_SETSC&t;_IOW(&squot;a&squot;,ATMIOC_SPECIAL+1,int)
 multiline_comment|/* enable or disable single-copy */
 multiline_comment|/* for ATM_GETTYPE */
 DECL|macro|ATM_ITFTYP_LEN
 mdefine_line|#define ATM_ITFTYP_LEN&t;8&t;/* maximum length of interface type name */
+multiline_comment|/*&n; * Loopback modes for ATM_{PHY,SAR}_{GET,SET}LOOP&n; */
+multiline_comment|/* Point of loopback&t;&t;&t;&t;CPU--&gt;SAR--&gt;PHY--&gt;line--&gt; ... */
+DECL|macro|__ATM_LM_NONE
+mdefine_line|#define __ATM_LM_NONE&t;0&t;/* no loop back     ^     ^     ^      ^      */
+DECL|macro|__ATM_LM_AAL
+mdefine_line|#define __ATM_LM_AAL&t;1&t;/* loop back PDUs --&squot;     |     |      |      */
+DECL|macro|__ATM_LM_ATM
+mdefine_line|#define __ATM_LM_ATM&t;2&t;/* loop back ATM cells ---&squot;     |      |      */
+multiline_comment|/* RESERVED&t;&t;4&t;loop back on PHY side  ---&squot;&t;&t;      */
+DECL|macro|__ATM_LM_PHY
+mdefine_line|#define __ATM_LM_PHY&t;8&t;/* loop back bits (digital) ----&squot;      |      */
+DECL|macro|__ATM_LM_ANALOG
+mdefine_line|#define __ATM_LM_ANALOG 16&t;/* loop back the analog signal --------&squot;      */
+multiline_comment|/* Direction of loopback */
+DECL|macro|__ATM_LM_MKLOC
+mdefine_line|#define __ATM_LM_MKLOC(n)&t;((n))&t;    /* Local (i.e. loop TX to RX) */
+DECL|macro|__ATM_LM_MKRMT
+mdefine_line|#define __ATM_LM_MKRMT(n)&t;((n) &lt;&lt; 8)  /* Remote (i.e. loop RX to TX) */
+DECL|macro|__ATM_LM_XTLOC
+mdefine_line|#define __ATM_LM_XTLOC(n)&t;((n) &amp; 0xff)
+DECL|macro|__ATM_LM_XTRMT
+mdefine_line|#define __ATM_LM_XTRMT(n)&t;(((n) &gt;&gt; 8) &amp; 0xff)
+DECL|macro|ATM_LM_NONE
+mdefine_line|#define ATM_LM_NONE&t;0&t;/* no loopback */
+DECL|macro|ATM_LM_LOC_AAL
+mdefine_line|#define ATM_LM_LOC_AAL&t;__ATM_LM_MKLOC(__ATM_LM_AAL)
+DECL|macro|ATM_LM_LOC_ATM
+mdefine_line|#define ATM_LM_LOC_ATM&t;__ATM_LM_MKLOC(__ATM_LM_ATM)
+DECL|macro|ATM_LM_LOC_PHY
+mdefine_line|#define ATM_LM_LOC_PHY&t;__ATM_LM_MKLOC(__ATM_LM_PHY)
+DECL|macro|ATM_LM_LOC_ANALOG
+mdefine_line|#define ATM_LM_LOC_ANALOG __ATM_LM_MKLOC(__ATM_LM_ANALOG)
+DECL|macro|ATM_LM_RMT_AAL
+mdefine_line|#define ATM_LM_RMT_AAL&t;__ATM_LM_MKRMT(__ATM_LM_AAL)
+DECL|macro|ATM_LM_RMT_ATM
+mdefine_line|#define ATM_LM_RMT_ATM&t;__ATM_LM_MKRMT(__ATM_LM_ATM)
+DECL|macro|ATM_LM_RMT_PHY
+mdefine_line|#define ATM_LM_RMT_PHY&t;__ATM_LM_MKRMT(__ATM_LM_PHY)
+DECL|macro|ATM_LM_RMT_ANALOG
+mdefine_line|#define ATM_LM_RMT_ANALOG __ATM_LM_MKRMT(__ATM_LM_ANALOG)
+multiline_comment|/*&n; * Note: ATM_LM_LOC_* and ATM_LM_RMT_* can be combined, provided that&n; * __ATM_LM_XTLOC(x) &lt;= __ATM_LM_XTRMT(x)&n; */
 DECL|struct|atm_iobuf
 r_struct
 id|atm_iobuf
@@ -187,7 +226,10 @@ DECL|macro|ATM_VS2TXT_MAP
 mdefine_line|#define ATM_VS2TXT_MAP &bslash;&n;    &quot;IDLE&quot;, &quot;CONNECTED&quot;, &quot;CLOSING&quot;, &quot;LISTEN&quot;, &quot;INUSE&quot;, &quot;BOUND&quot;
 DECL|macro|ATM_VF2TXT_MAP
 mdefine_line|#define ATM_VF2TXT_MAP &bslash;&n;    &quot;ADDR&quot;,&t;&quot;READY&quot;,&t;&quot;PARTIAL&quot;,&t;&quot;REGIS&quot;, &bslash;&n;    &quot;RELEASED&quot;, &quot;HASQOS&quot;,&t;&quot;LISTEN&quot;,&t;&quot;META&quot;, &bslash;&n;    &quot;256&quot;,&t;&quot;512&quot;,&t;&t;&quot;1024&quot;,&t;&t;&quot;2048&quot;, &bslash;&n;    &quot;SESSION&quot;,&t;&quot;HASSAP&quot;,&t;&quot;BOUND&quot;,&t;&quot;CLOSE&quot;
-macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __KERNEL__
+DECL|macro|__AAL_STAT_ITEMS
+macro_line|#undef __AAL_STAT_ITEMS
+macro_line|#else
 macro_line|#include &lt;linux/sched.h&gt; /* wait_queue_head_t */
 macro_line|#include &lt;linux/time.h&gt; /* struct timeval */
 macro_line|#include &lt;linux/net.h&gt;
@@ -198,38 +240,100 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
-DECL|macro|ATM_VF_ADDR
-mdefine_line|#define ATM_VF_ADDR&t;1&t;/* Address is in use. Set by anybody, cleared&n;&t;&t;&t;&t;   by device driver. */
-DECL|macro|ATM_VF_READY
-mdefine_line|#define ATM_VF_READY&t;2&t;/* VC is ready to transfer data. Set by device&n;&t;&t;&t;&t;   driver, cleared by anybody. */
-DECL|macro|ATM_VF_PARTIAL
-mdefine_line|#define ATM_VF_PARTIAL&t;4&t;/* resources are bound to PVC (partial PVC&n;&t;&t;&t;&t;   setup), controlled by socket layer */
-DECL|macro|ATM_VF_BOUND
-mdefine_line|#define ATM_VF_BOUND&t;16384&t;/* local SAP is set, controlled by SVC socket&n;&t;&t;&t;&t;   layer */
-DECL|macro|ATM_VF_REGIS
-mdefine_line|#define ATM_VF_REGIS&t;8&t;/* registered with demon, controlled by SVC&n;&t;&t;&t;&t;   socket layer */
-DECL|macro|ATM_VF_RELEASED
-mdefine_line|#define ATM_VF_RELEASED 16&t;/* demon has indicated/requested release,&n;&t;&t;&t;&t;   controlled by SVC socket layer */
-DECL|macro|ATM_VF_HASQOS
-mdefine_line|#define ATM_VF_HASQOS&t;32&t;/* QOS parameters have been set */
-DECL|macro|ATM_VF_LISTEN
-mdefine_line|#define ATM_VF_LISTEN&t;64&t;/* socket is used for listening */
-DECL|macro|ATM_VF_META
-mdefine_line|#define ATM_VF_META&t;128&t;/* SVC socket isn&squot;t used for normal data&n;&t;&t;&t;&t;   traffic and doesn&squot;t depend on signaling&n;&t;&t;&t;&t;   to be available */
-multiline_comment|/*  256; unused */
-multiline_comment|/*  512; unused */
-multiline_comment|/* 1024; unused */
-multiline_comment|/* 2048; unused */
-DECL|macro|ATM_VF_SESSION
-mdefine_line|#define ATM_VF_SESSION&t;4096&t;/* VCC is p2mp session control descriptor */
-DECL|macro|ATM_VF_HASSAP
-mdefine_line|#define ATM_VF_HASSAP&t;8192&t;/* SAP has been set */
-DECL|macro|ATM_VF_CLOSE
-mdefine_line|#define ATM_VF_CLOSE&t;32768&t;/* asynchronous close - treat like VF_RELEASED*/
+DECL|struct|k_atm_aal_stats
+r_struct
+id|k_atm_aal_stats
+(brace
+DECL|macro|__HANDLE_ITEM
+mdefine_line|#define __HANDLE_ITEM(i) atomic_t i
+id|__AAL_STAT_ITEMS
+DECL|macro|__HANDLE_ITEM
+macro_line|#undef __HANDLE_ITEM
+)brace
+suffix:semicolon
+DECL|struct|k_atm_dev_stats
+r_struct
+id|k_atm_dev_stats
+(brace
+DECL|member|aal0
+r_struct
+id|k_atm_aal_stats
+id|aal0
+suffix:semicolon
+DECL|member|aal34
+r_struct
+id|k_atm_aal_stats
+id|aal34
+suffix:semicolon
+DECL|member|aal5
+r_struct
+id|k_atm_aal_stats
+id|aal5
+suffix:semicolon
+)brace
+suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|ATM_VF_ADDR
+id|ATM_VF_ADDR
+comma
+multiline_comment|/* Address is in use. Set by anybody, cleared&n;&t;&t;&t;&t;   by device driver. */
+DECL|enumerator|ATM_VF_READY
+id|ATM_VF_READY
+comma
+multiline_comment|/* VC is ready to transfer data. Set by device&n;&t;&t;&t;&t;   driver, cleared by anybody. */
+DECL|enumerator|ATM_VF_PARTIAL
+id|ATM_VF_PARTIAL
+comma
+multiline_comment|/* resources are bound to PVC (partial PVC&n;&t;&t;&t;&t;   setup), controlled by socket layer */
+DECL|enumerator|ATM_VF_REGIS
+id|ATM_VF_REGIS
+comma
+multiline_comment|/* registered with demon, controlled by SVC&n;&t;&t;&t;&t;   socket layer */
+DECL|enumerator|ATM_VF_BOUND
+id|ATM_VF_BOUND
+comma
+multiline_comment|/* local SAP is set, controlled by SVC socket&n;&t;&t;&t;&t;   layer */
+DECL|enumerator|ATM_VF_RELEASED
+id|ATM_VF_RELEASED
+comma
+multiline_comment|/* demon has indicated/requested release,&n;&t;&t;&t;&t;   controlled by SVC socket layer */
+DECL|enumerator|ATM_VF_HASQOS
+id|ATM_VF_HASQOS
+comma
+multiline_comment|/* QOS parameters have been set */
+DECL|enumerator|ATM_VF_LISTEN
+id|ATM_VF_LISTEN
+comma
+multiline_comment|/* socket is used for listening */
+DECL|enumerator|ATM_VF_META
+id|ATM_VF_META
+comma
+multiline_comment|/* SVC socket isn&squot;t used for normal data&n;&t;&t;&t;&t;   traffic and doesn&squot;t depend on signaling&n;&t;&t;&t;&t;   to be available */
+DECL|enumerator|ATM_VF_SESSION
+id|ATM_VF_SESSION
+comma
+multiline_comment|/* VCC is p2mp session control descriptor */
+DECL|enumerator|ATM_VF_HASSAP
+id|ATM_VF_HASSAP
+comma
+multiline_comment|/* SAP has been set */
+DECL|enumerator|ATM_VF_CLOSE
+id|ATM_VF_CLOSE
+comma
+multiline_comment|/* asynchronous close - treat like VF_RELEASED*/
+)brace
+suffix:semicolon
 DECL|macro|ATM_VF2VS
-mdefine_line|#define ATM_VF2VS(flags) &bslash;&n;    ((flags) &amp; ATM_VF_READY ? ATM_VS_CONNECTED : &bslash;&n;     (flags) &amp; ATM_VF_RELEASED ? ATM_VS_CLOSING : &bslash;&n;     (flags) &amp; ATM_VF_LISTEN ? ATM_VS_LISTEN : &bslash;&n;     (flags) &amp; ATM_VF_REGIS ? ATM_VS_INUSE : &bslash;&n;     (flags) &amp; ATM_VF_BOUND ? ATM_VS_BOUND : ATM_VS_IDLE)
-DECL|macro|ATM_DF_CLOSE
-mdefine_line|#define ATM_DF_CLOSE&t;1&t;/* close device when last VCC is closed */
+mdefine_line|#define ATM_VF2VS(flags) &bslash;&n;    (test_bit(ATM_VF_READY,&amp;(flags)) ? ATM_VS_CONNECTED : &bslash;&n;     test_bit(ATM_VF_RELEASED,&amp;(flags)) ? ATM_VS_CLOSING : &bslash;&n;     test_bit(ATM_VF_LISTEN,&amp;(flags)) ? ATM_VS_LISTEN : &bslash;&n;     test_bit(ATM_VF_REGIS,&amp;(flags)) ? ATM_VS_INUSE : &bslash;&n;     test_bit(ATM_VF_BOUND,&amp;(flags)) ? ATM_VS_BOUND : ATM_VS_IDLE)
+r_enum
+(brace
+DECL|enumerator|ATM_DF_CLOSE
+id|ATM_DF_CLOSE
+comma
+multiline_comment|/* close device when last VCC is closed */
+)brace
+suffix:semicolon
 DECL|macro|ATM_PHY_SIG_LOST
 mdefine_line|#define ATM_PHY_SIG_LOST    0&t;/* no carrier/light */
 DECL|macro|ATM_PHY_SIG_UNKNOWN
@@ -238,13 +342,24 @@ DECL|macro|ATM_PHY_SIG_FOUND
 mdefine_line|#define ATM_PHY_SIG_FOUND   2&t;/* carrier/light okay */
 DECL|macro|ATM_ATMOPT_CLP
 mdefine_line|#define ATM_ATMOPT_CLP&t;1&t;/* set CLP bit */
+DECL|member|bits
+DECL|typedef|atm_vcc_flags_t
+r_typedef
+r_struct
+(brace
+r_int
+r_int
+id|bits
+suffix:semicolon
+)brace
+id|atm_vcc_flags_t
+suffix:semicolon
 DECL|struct|atm_vcc
 r_struct
 id|atm_vcc
 (brace
 DECL|member|flags
-r_int
-r_int
+id|atm_vcc_flags_t
 id|flags
 suffix:semicolon
 multiline_comment|/* VCC flags (ATM_VF_*) */
@@ -379,6 +494,24 @@ op_star
 id|cell
 )paren
 suffix:semicolon
+DECL|member|send
+r_int
+(paren
+op_star
+id|send
+)paren
+(paren
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
 DECL|member|dev_data
 r_void
 op_star
@@ -405,7 +538,7 @@ suffix:semicolon
 multiline_comment|/* receive queue */
 DECL|member|stats
 r_struct
-id|atm_aal_stats
+id|k_atm_aal_stats
 op_star
 id|stats
 suffix:semicolon
@@ -520,6 +653,18 @@ suffix:semicolon
 multiline_comment|/* next address */
 )brace
 suffix:semicolon
+DECL|member|bits
+DECL|typedef|atm_dev_flags_t
+r_typedef
+r_struct
+(brace
+r_int
+r_int
+id|bits
+suffix:semicolon
+)brace
+id|atm_dev_flags_t
+suffix:semicolon
 DECL|struct|atm_dev
 r_struct
 id|atm_dev
@@ -580,8 +725,7 @@ id|phy_data
 suffix:semicolon
 multiline_comment|/* private PHY date */
 DECL|member|flags
-r_int
-r_int
+id|atm_dev_flags_t
 id|flags
 suffix:semicolon
 multiline_comment|/* device flags (ATM_DF_*) */
@@ -609,7 +753,7 @@ suffix:semicolon
 multiline_comment|/* VPI/VCI range */
 DECL|member|stats
 r_struct
-id|atm_dev_stats
+id|k_atm_dev_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* statistics */
@@ -1063,6 +1207,19 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+DECL|member|stop
+r_int
+(paren
+op_star
+id|stop
+)paren
+(paren
+r_struct
+id|atm_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|atm_skb_data
@@ -1111,8 +1268,8 @@ comma
 r_int
 id|number
 comma
-r_int
-r_int
+id|atm_dev_flags_t
+op_star
 id|flags
 )paren
 suffix:semicolon

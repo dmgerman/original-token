@@ -126,13 +126,5 @@ r_int
 id|mousedev
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|bus_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif
 eof

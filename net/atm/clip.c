@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ip.h&gt; /* for net/route.h */
 macro_line|#include &lt;linux/in.h&gt; /* for struct sockaddr_in */
 macro_line|#include &lt;linux/if.h&gt; /* for IFF_UP */
 macro_line|#include &lt;linux/inetdevice.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;net/route.h&gt; /* for struct rtable and routing */
 macro_line|#include &lt;net/icmp.h&gt; /* icmp_send */
 macro_line|#include &lt;asm/param.h&gt; /* for HZ */
@@ -867,6 +868,10 @@ suffix:colon
 id|clip_devs
 suffix:semicolon
 multiline_comment|/* clip_vcc-&gt;entry == NULL if we don&squot;t have an IP address yet */
+id|skb-&gt;rx_dev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2037,7 +2042,7 @@ suffix:semicolon
 (paren
 r_void
 )paren
-id|vcc-&gt;dev-&gt;ops
+id|vcc
 op_member_access_from_pointer
 id|send
 c_func
@@ -2171,10 +2176,6 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2257,17 +2258,6 @@ id|clip_vcc-&gt;old_pop
 op_assign
 id|vcc-&gt;pop
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|vcc-&gt;push
 op_assign
 id|clip_push
@@ -2284,12 +2274,6 @@ id|vcc-&gt;recvq
 comma
 op_amp
 id|copy
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* re-process everything received between connection setup and MKIP */
@@ -3394,7 +3378,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* no data */
+(brace
 l_int|0
+)brace
 comma
 multiline_comment|/* no flags */
 l_int|NULL
@@ -3472,11 +3458,23 @@ id|atmarpd
 op_assign
 id|vcc
 suffix:semicolon
-id|vcc-&gt;flags
-op_or_assign
-id|ATM_VF_READY
-op_or
+id|set_bit
+c_func
+(paren
 id|ATM_VF_META
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 multiline_comment|/* allow replies and avoid getting closed if signaling dies */
 id|bind_vcc

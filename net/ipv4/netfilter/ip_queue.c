@@ -1993,7 +1993,7 @@ id|skb
 comma
 id|nlq-&gt;peer.pid
 comma
-l_int|0
+id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 )brace

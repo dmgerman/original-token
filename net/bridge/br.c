@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Generic parts&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br.c,v 1.39 2000/02/18 16:47:11 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Generic parts&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br.c,v 1.40 2000/03/21 21:08:47 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
@@ -8,6 +8,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;br_private.h&quot;
+macro_line|#if defined(CONFIG_ATM_LANE) || defined(CONFIG_ATM_LANE_MODULE)
+macro_line|#include &quot;../atm/lec.h&quot;
+macro_line|#endif
 DECL|function|br_dec_use_count
 r_void
 id|br_dec_use_count
@@ -53,6 +56,30 @@ id|br_ioctl_hook
 op_assign
 id|br_ioctl_deviceless_stub
 suffix:semicolon
+macro_line|#if defined(CONFIG_ATM_LANE) || defined(CONFIG_ATM_LANE_MODULE)
+id|write_lock
+c_func
+(paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
+id|br_fdb_get_hook
+op_assign
+id|br_fdb_get
+suffix:semicolon
+id|br_fdb_put_hook
+op_assign
+id|br_fdb_put
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
+macro_line|#endif
 id|register_netdevice_notifier
 c_func
 (paren
@@ -121,6 +148,30 @@ c_func
 id|__br_clear_frame_hook
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_ATM_LANE) || defined(CONFIG_ATM_LANE_MODULE)
+id|write_lock
+c_func
+(paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
+id|br_fdb_get_hook
+op_assign
+l_int|NULL
+suffix:semicolon
+id|br_fdb_put_hook
+op_assign
+l_int|NULL
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|lane_bridge_hook_lock
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon

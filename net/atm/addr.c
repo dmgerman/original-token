@@ -1,8 +1,8 @@
 multiline_comment|/* net/atm/addr.c - Local ATM address registry */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
-macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;signaling.h&quot;
 macro_line|#include &quot;addr.h&quot;
@@ -156,66 +156,13 @@ id|b-&gt;sas_addr.pub
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Avoid modification of any list of local interfaces while reading it&n; * (which may involve page faults and therefore rescheduling)&n; */
-DECL|variable|local_lock
 r_static
-r_volatile
-r_int
-id|local_lock
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|local_wait
-r_static
-id|wait_queue_head_t
-id|local_wait
-suffix:semicolon
-DECL|function|lock_local
-r_static
-r_void
-id|lock_local
+id|DECLARE_MUTEX
 c_func
-(paren
-r_void
-)paren
-(brace
-r_while
-c_loop
 (paren
 id|local_lock
 )paren
-id|sleep_on
-c_func
-(paren
-op_amp
-id|local_wait
-)paren
 suffix:semicolon
-id|local_lock
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-DECL|function|unlock_local
-r_static
-r_void
-id|unlock_local
-c_func
-(paren
-r_void
-)paren
-(brace
-id|local_lock
-op_assign
-l_int|0
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|local_wait
-)paren
-suffix:semicolon
-)brace
 DECL|function|notify_sigd
 r_static
 r_void
@@ -268,9 +215,11 @@ id|atm_dev_addr
 op_star
 id|this
 suffix:semicolon
-id|lock_local
+id|down
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_while
@@ -294,9 +243,11 @@ id|this
 )paren
 suffix:semicolon
 )brace
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 id|notify_sigd
@@ -347,9 +298,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|lock_local
+id|down
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_for
@@ -391,9 +344,11 @@ id|addr
 )paren
 )paren
 (brace
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_return
@@ -424,9 +379,11 @@ op_star
 id|walk
 )paren
 (brace
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_return
@@ -453,9 +410,11 @@ id|next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 id|notify_sigd
@@ -512,9 +471,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|lock_local
+id|down
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_for
@@ -565,9 +526,11 @@ op_star
 id|walk
 )paren
 (brace
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_return
@@ -591,9 +554,11 @@ c_func
 id|this
 )paren
 suffix:semicolon
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 id|notify_sigd
@@ -633,9 +598,11 @@ suffix:semicolon
 r_int
 id|total
 suffix:semicolon
-id|lock_local
+id|down
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 id|total
@@ -672,9 +639,11 @@ OG
 id|size
 )paren
 (brace
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_return
@@ -701,9 +670,11 @@ id|sockaddr_atmsvc
 )paren
 )paren
 (brace
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_return
@@ -715,29 +686,15 @@ id|u_buf
 op_increment
 suffix:semicolon
 )brace
-id|unlock_local
+id|up
 c_func
 (paren
+op_amp
+id|local_lock
 )paren
 suffix:semicolon
 r_return
 id|total
-suffix:semicolon
-)brace
-DECL|function|init_addr
-r_void
-id|init_addr
-c_func
-(paren
-r_void
-)paren
-(brace
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|local_wait
-)paren
 suffix:semicolon
 )brace
 eof

@@ -84,8 +84,6 @@ mdefine_line|#define NICSTAR_EPROM_MAC_ADDR_OFFSET 0x6C
 multiline_comment|/* #defines *******************************************************************/
 DECL|macro|NS_IOREMAP_SIZE
 mdefine_line|#define NS_IOREMAP_SIZE 4096
-DECL|macro|IDT_25_PCR
-mdefine_line|#define IDT_25_PCR ((25600000 / 8 - 8000) / 54)
 DECL|macro|BUF_SM
 mdefine_line|#define BUF_SM 0x00000000&t;/* These two are used for push_rxbufs() */
 DECL|macro|BUF_LG

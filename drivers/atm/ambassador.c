@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;ambassador.h&quot;
@@ -17,7 +18,7 @@ mdefine_line|#define maintainer_string &quot;Giuliano Procida at Madge Networks 
 DECL|macro|description_string
 mdefine_line|#define description_string &quot;Madge ATM Ambassador driver&quot;
 DECL|macro|version_string
-mdefine_line|#define version_string &quot;1.2&quot;
+mdefine_line|#define version_string &quot;1.2.4&quot;
 DECL|function|show_version
 r_static
 r_inline
@@ -38,7 +39,7 @@ id|version_string
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  &n;  Theory of Operation&n;  &n;  I Hardware, detection, initialisation and shutdown.&n;  &n;  1. Supported Hardware&n;  &n;  This driver is for the PCI ATMizer-based Ambassador card (except&n;  very early versions). It is not suitable for the similar EISA &quot;TR7&quot;&n;  card. Commercially, both cards are known as Collage Server ATM&n;  adapters.&n;  &n;  The loader supports image transfer to the card, image start and few&n;  other miscellaneous commands.&n;  &n;  Only AAL5 is supported with vpi = 0 and vci in the range 0 to 1023.&n;  &n;  The cards are big-endian.&n;  &n;  2. Detection&n;  &n;  Standard PCI stuff, the early cards are detected and rejected.&n;  &n;  3. Initialisation&n;  &n;  The cards are reset and the self-test results are checked. The&n;  microcode image is then transferred and started. This waits for a&n;  pointer to a descriptor containing details of the host-based queues&n;  and buffers and various parameters etc. Once they are processed&n;  normal operations may begin. The BIA is read using a microcode&n;  command.&n;  &n;  4. Shutdown&n;  &n;  This may be accomplished either by a card reset or via the microcode&n;  shutdown command. Further investigation required.&n;  &n;  5. Persistent state&n;  &n;  The card reset does not affect PCI configuration (good) or the&n;  contents of several other &quot;shared run-time registers&quot; (bad) which&n;  include doorbell and interrupt control as well as EEPROM and PCI&n;  control. The driver must be careful when modifying these registers&n;  not to touch bits it does not use and to undo any changes at exit.&n;  &n;  II Driver software&n;  &n;  0. Generalities&n;  &n;  The adapter is quite intelligent (fast) and has a simple interface&n;  (few features). VPI is always zero, 1024 VCIs are supported. There&n;  is limited cell rate support. UBR channels can be kept and ABR&n;  (explicit rate, bu not EFCI) is supported. There is no CBR or VBR&n;  support.&n;  &n;  1. Driver &lt;-&gt; Adapter Communication&n;  &n;  Apart from the basic loader commands, the driver communicates&n;  through three entities: the command queue (CQ), the transmit queue&n;  pair (TXQ) and the receive queue pairs (RXQ). These three entities&n;  are set up by the host and passed to the microcode just after it has&n;  been started.&n;  &n;  All queues are host-based circular queues. They are contiguous and&n;  (due to hardware limitations) have some restrictions as to their&n;  locations in (bus) memory. They are of the &quot;full means the same as&n;  empty so don&squot;t do that&quot; variety since the adapter uses pointers&n;  internally.&n;  &n;  The queue pairs work as follows: one queue is for supply to the&n;  adapter, items in it are pending and are owned by the adapter; the&n;  other is the queue for return from the adapter, items in it have&n;  been dealt with by the adapter. The host adds items to the supply&n;  (TX descriptors and free RX buffer descriptors) and removes items&n;  from the return (TX and RX completions). The adapter deals with out&n;  of order completions.&n;  &n;  Interrupts (card to host) and the doorbell (host to card) are used&n;  for signalling.&n;  &n;  1. CQ&n;  &n;  This is to communicate &quot;open VC&quot;, &quot;close VC&quot;, &quot;get stats&quot; etc. to&n;  the adapter. At most one command is retired every millisecond by the&n;  card. There is no out of order completion or notification. The&n;  driver needs to check the return code of the command, waiting as&n;  appropriate.&n;  &n;  2. TXQ&n;  &n;  TX supply items are of variable length (scatter gather support) and&n;  so the queue items are (more or less) pointers to the real thing.&n;  Each TX supply item contains a unique, host-supplied handle (the skb&n;  bus address seems most sensible as this works for Alphas as well,&n;  there is no need to do any endian conversions on the handles).&n;  &n;  TX return items consist of just the handles above.&n;  &n;  3. RXQ (up to 4 of these with different lengths and buffer sizes)&n;  &n;  RX supply items consist of a unique, host-supplied handle (the skb&n;  bus address again) and a pointer to the buffer data area.&n;  &n;  RX return items consist of the handle above, the VC, length and a&n;  status word. This just screams &quot;oh so easy&quot; doesn&squot;t it?&n;&n;  Note on RX pool sizes:&n;   &n;  Each pool should have enough buffers to handle a back-to-back stream&n;  of minimum sized frames on a single VC. For example:&n;  &n;    frame spacing = 3us (about right)&n;    &n;    delay = IRQ lat + RX handling + RX buffer replenish = 20 (us)  (a guess)&n;    &n;    min number of buffers for one VC = 1 + delay/spacing (buffers)&n;&n;    delay/spacing = latency = (20+2)/3 = 7 (buffers)  (rounding up)&n;    &n;  The 20us delay assumes that there is no need to sleep; if we need to&n;  sleep to get buffers we are going to drop frames anyway.&n;  &n;  In fact, each pool should have enough buffers to support the&n;  simultaneous reassembly of a separate frame on each VC and cope with&n;  the case in which frames complete in round robin cell fashion on&n;  each VC.&n;  &n;  Only one frame can complete at each cell arrival, so if &quot;n&quot; VCs are&n;  open, the worst case is to have them all complete frames together&n;  followed by all starting new frames together.&n;  &n;    desired number of buffers = n + delay/spacing&n;    &n;  These are the extreme requirements, however, they are &quot;n+k&quot; for some&n;  &quot;k&quot; so we have only the constant to choose. This is the argument&n;  rx_lats which current defaults to 7.&n;  &n;  Actually, &quot;n ? n+k : 0&quot; is better and this is what is implemented,&n;  subject to the limit given by the pool size.&n;  &n;  4. Driver locking&n;  &n;  Simple spinlocks are used around the TX and RX queue mechanisms.&n;  Anyone with a faster, working method is welcome to implement it.&n;  &n;  The adapter command queue is protected with a spinlock. We always&n;  wait for commands to complete.&n;  &n;  A more complex form of locking is used around parts of the VC open&n;  and close functions. There are three reasons for a lock: 1. we need&n;  to do atomic rate reservation and release (not used yet), 2. Opening&n;  sometimes involves two adapter commands which must not be separated&n;  by another command on the same VC, 3. the changes to RX pool size&n;  must be atomic. The lock needs to work over context switches, so we&n;  use a semaphore.&n;  &n;  III Hardware Features and Microcode Bugs&n;  &n;  1. Byte Ordering&n;  &n;  *%^&quot;$&amp;%^$*&amp;^&quot;$(%^$#&amp;^%$(&amp;#%$*(&amp;^#%!&quot;!&quot;!*!&n;  &n;  2. Memory access&n;  &n;  All structures that are not accessed using DMA must be 4-byte&n;  aligned (not a problem) and must not cross 4MB boundaries.&n;  &n;  There is a DMA memory hole at E0000000-E00000FF (groan).&n;  &n;  TX fragments (DMA read) must not cross 4MB boundaries (would be 16MB&n;  but for a hardware bug).&n;  &n;  RX buffers (DMA write) must not cross 16MB boundaries and must&n;  include spare trailing bytes up to the next 4-byte boundary; they&n;  will be written with rubbish.&n;  &n;  The PLX likes to prefetch; if reading up to 4 u32 past the end of&n;  each TX fragment is not a problem, then TX can be made to go a&n;  little faster by passing a flag at init that disables a prefetch&n;  workaround. We do not pass this flag. (new microcode only)&n;  &n;  Now we:&n;  . Note that alloc_skb rounds up size to a 16byte boundary.  &n;  . Ensure all areas do not traverse 4MB boundaries.&n;  . Ensure all areas do not start at a E00000xx bus address.&n;  (I cannot be certain, but this may always hold with Linux)&n;  . Make all failures cause a loud message.&n;  . Discard non-conforming SKBs (causes TX failure or RX fill delay).&n;  . Discard non-conforming TX fragment descriptors (the TX fails).&n;  In the future we could:&n;  . Allow RX areas that traverse 4MB (but not 16MB) boundaries.&n;  . Segment TX areas into some/more fragments, when necessary.&n;  . Relax checks for non-DMA items (ignore hole).&n;  . Give scatter-gather (iovec) requirements using ???. (?)&n;  &n;  3. VC close is broken (only for new microcode)&n;  &n;  The VC close adapter microcode command fails to do anything if any&n;  frames have been received on the VC but none have been transmitted.&n;  Frames continue to be reassembled and passed (with IRQ) to the&n;  driver.&n;  &n;  IV To Do List&n;  &n;  . Fix bugs!&n;  &n;  . Timer code may be broken.&n;  &n;  . Deal with buggy VC close (somehow) in microcode 12.&n;  &n;  . Handle interrupted and/or non-blocking writes - is this a job for&n;    the protocol layer?&n;  &n;  . Add code to break up TX fragments when they span 4MB boundaries.&n;  &n;  . Add SUNI phy layer (need to know where SUNI lives on card).&n;  &n;  . Implement a tx_alloc fn to (a) satisfy TX alignment etc. and (b)&n;    leave extra headroom space for Ambassador TX descriptors.&n;  &n;  . Understand these elements of struct atm_vcc: recvq (proto?),&n;    sleep, callback, listenq, backlog_quota, reply and user_back.&n;  &n;  . Adjust TX/RX skb allocation to favour IP with LANE/CLIP (configurable).&n;  &n;  . Impose a TX-pending limit (2?) on each VC, help avoid TX q overflow.&n;  &n;  . Decide whether RX buffer recycling is or can be made completely safe;&n;    turn it back on. It looks like Werner is going to axe this.&n;  &n;  . Implement QoS changes on open VCs (involves extracting parts of VC open&n;    and close into separate functions and using them to make changes).&n;  &n;  . Hack on command queue so that someone can issue multiple commands and wait&n;    on the last one (OR only &quot;no-op&quot; or &quot;wait&quot; commands are waited for).&n;  &n;  . Eliminate need for while-schedule around do_command.&n;  &n;*/
+multiline_comment|/*&n;  &n;  Theory of Operation&n;  &n;  I Hardware, detection, initialisation and shutdown.&n;  &n;  1. Supported Hardware&n;  &n;  This driver is for the PCI ATMizer-based Ambassador card (except&n;  very early versions). It is not suitable for the similar EISA &quot;TR7&quot;&n;  card. Commercially, both cards are known as Collage Server ATM&n;  adapters.&n;  &n;  The loader supports image transfer to the card, image start and few&n;  other miscellaneous commands.&n;  &n;  Only AAL5 is supported with vpi = 0 and vci in the range 0 to 1023.&n;  &n;  The cards are big-endian.&n;  &n;  2. Detection&n;  &n;  Standard PCI stuff, the early cards are detected and rejected.&n;  &n;  3. Initialisation&n;  &n;  The cards are reset and the self-test results are checked. The&n;  microcode image is then transferred and started. This waits for a&n;  pointer to a descriptor containing details of the host-based queues&n;  and buffers and various parameters etc. Once they are processed&n;  normal operations may begin. The BIA is read using a microcode&n;  command.&n;  &n;  4. Shutdown&n;  &n;  This may be accomplished either by a card reset or via the microcode&n;  shutdown command. Further investigation required.&n;  &n;  5. Persistent state&n;  &n;  The card reset does not affect PCI configuration (good) or the&n;  contents of several other &quot;shared run-time registers&quot; (bad) which&n;  include doorbell and interrupt control as well as EEPROM and PCI&n;  control. The driver must be careful when modifying these registers&n;  not to touch bits it does not use and to undo any changes at exit.&n;  &n;  II Driver software&n;  &n;  0. Generalities&n;  &n;  The adapter is quite intelligent (fast) and has a simple interface&n;  (few features). VPI is always zero, 1024 VCIs are supported. There&n;  is limited cell rate support. UBR channels can be capped and ABR&n;  (explicit rate, but not EFCI) is supported. There is no CBR or VBR&n;  support.&n;  &n;  1. Driver &lt;-&gt; Adapter Communication&n;  &n;  Apart from the basic loader commands, the driver communicates&n;  through three entities: the command queue (CQ), the transmit queue&n;  pair (TXQ) and the receive queue pairs (RXQ). These three entities&n;  are set up by the host and passed to the microcode just after it has&n;  been started.&n;  &n;  All queues are host-based circular queues. They are contiguous and&n;  (due to hardware limitations) have some restrictions as to their&n;  locations in (bus) memory. They are of the &quot;full means the same as&n;  empty so don&squot;t do that&quot; variety since the adapter uses pointers&n;  internally.&n;  &n;  The queue pairs work as follows: one queue is for supply to the&n;  adapter, items in it are pending and are owned by the adapter; the&n;  other is the queue for return from the adapter, items in it have&n;  been dealt with by the adapter. The host adds items to the supply&n;  (TX descriptors and free RX buffer descriptors) and removes items&n;  from the return (TX and RX completions). The adapter deals with out&n;  of order completions.&n;  &n;  Interrupts (card to host) and the doorbell (host to card) are used&n;  for signalling.&n;  &n;  1. CQ&n;  &n;  This is to communicate &quot;open VC&quot;, &quot;close VC&quot;, &quot;get stats&quot; etc. to&n;  the adapter. At most one command is retired every millisecond by the&n;  card. There is no out of order completion or notification. The&n;  driver needs to check the return code of the command, waiting as&n;  appropriate.&n;  &n;  2. TXQ&n;  &n;  TX supply items are of variable length (scatter gather support) and&n;  so the queue items are (more or less) pointers to the real thing.&n;  Each TX supply item contains a unique, host-supplied handle (the skb&n;  bus address seems most sensible as this works for Alphas as well,&n;  there is no need to do any endian conversions on the handles).&n;  &n;  TX return items consist of just the handles above.&n;  &n;  3. RXQ (up to 4 of these with different lengths and buffer sizes)&n;  &n;  RX supply items consist of a unique, host-supplied handle (the skb&n;  bus address again) and a pointer to the buffer data area.&n;  &n;  RX return items consist of the handle above, the VC, length and a&n;  status word. This just screams &quot;oh so easy&quot; doesn&squot;t it?&n;&n;  Note on RX pool sizes:&n;   &n;  Each pool should have enough buffers to handle a back-to-back stream&n;  of minimum sized frames on a single VC. For example:&n;  &n;    frame spacing = 3us (about right)&n;    &n;    delay = IRQ lat + RX handling + RX buffer replenish = 20 (us)  (a guess)&n;    &n;    min number of buffers for one VC = 1 + delay/spacing (buffers)&n;&n;    delay/spacing = latency = (20+2)/3 = 7 (buffers)  (rounding up)&n;    &n;  The 20us delay assumes that there is no need to sleep; if we need to&n;  sleep to get buffers we are going to drop frames anyway.&n;  &n;  In fact, each pool should have enough buffers to support the&n;  simultaneous reassembly of a separate frame on each VC and cope with&n;  the case in which frames complete in round robin cell fashion on&n;  each VC.&n;  &n;  Only one frame can complete at each cell arrival, so if &quot;n&quot; VCs are&n;  open, the worst case is to have them all complete frames together&n;  followed by all starting new frames together.&n;  &n;    desired number of buffers = n + delay/spacing&n;    &n;  These are the extreme requirements, however, they are &quot;n+k&quot; for some&n;  &quot;k&quot; so we have only the constant to choose. This is the argument&n;  rx_lats which current defaults to 7.&n;  &n;  Actually, &quot;n ? n+k : 0&quot; is better and this is what is implemented,&n;  subject to the limit given by the pool size.&n;  &n;  4. Driver locking&n;  &n;  Simple spinlocks are used around the TX and RX queue mechanisms.&n;  Anyone with a faster, working method is welcome to implement it.&n;  &n;  The adapter command queue is protected with a spinlock. We always&n;  wait for commands to complete.&n;  &n;  A more complex form of locking is used around parts of the VC open&n;  and close functions. There are three reasons for a lock: 1. we need&n;  to do atomic rate reservation and release (not used yet), 2. Opening&n;  sometimes involves two adapter commands which must not be separated&n;  by another command on the same VC, 3. the changes to RX pool size&n;  must be atomic. The lock needs to work over context switches, so we&n;  use a semaphore.&n;  &n;  III Hardware Features and Microcode Bugs&n;  &n;  1. Byte Ordering&n;  &n;  *%^&quot;$&amp;%^$*&amp;^&quot;$(%^$#&amp;^%$(&amp;#%$*(&amp;^#%!&quot;!&quot;!*!&n;  &n;  2. Memory access&n;  &n;  All structures that are not accessed using DMA must be 4-byte&n;  aligned (not a problem) and must not cross 4MB boundaries.&n;  &n;  There is a DMA memory hole at E0000000-E00000FF (groan).&n;  &n;  TX fragments (DMA read) must not cross 4MB boundaries (would be 16MB&n;  but for a hardware bug).&n;  &n;  RX buffers (DMA write) must not cross 16MB boundaries and must&n;  include spare trailing bytes up to the next 4-byte boundary; they&n;  will be written with rubbish.&n;  &n;  The PLX likes to prefetch; if reading up to 4 u32 past the end of&n;  each TX fragment is not a problem, then TX can be made to go a&n;  little faster by passing a flag at init that disables a prefetch&n;  workaround. We do not pass this flag. (new microcode only)&n;  &n;  Now we:&n;  . Note that alloc_skb rounds up size to a 16byte boundary.  &n;  . Ensure all areas do not traverse 4MB boundaries.&n;  . Ensure all areas do not start at a E00000xx bus address.&n;  (I cannot be certain, but this may always hold with Linux)&n;  . Make all failures cause a loud message.&n;  . Discard non-conforming SKBs (causes TX failure or RX fill delay).&n;  . Discard non-conforming TX fragment descriptors (the TX fails).&n;  In the future we could:&n;  . Allow RX areas that traverse 4MB (but not 16MB) boundaries.&n;  . Segment TX areas into some/more fragments, when necessary.&n;  . Relax checks for non-DMA items (ignore hole).&n;  . Give scatter-gather (iovec) requirements using ???. (?)&n;  &n;  3. VC close is broken (only for new microcode)&n;  &n;  The VC close adapter microcode command fails to do anything if any&n;  frames have been received on the VC but none have been transmitted.&n;  Frames continue to be reassembled and passed (with IRQ) to the&n;  driver.&n;  &n;  IV To Do List&n;  &n;  . Fix bugs!&n;  &n;  . Timer code may be broken.&n;  &n;  . Deal with buggy VC close (somehow) in microcode 12.&n;  &n;  . Handle interrupted and/or non-blocking writes - is this a job for&n;    the protocol layer?&n;  &n;  . Add code to break up TX fragments when they span 4MB boundaries.&n;  &n;  . Add SUNI phy layer (need to know where SUNI lives on card).&n;  &n;  . Implement a tx_alloc fn to (a) satisfy TX alignment etc. and (b)&n;    leave extra headroom space for Ambassador TX descriptors.&n;  &n;  . Understand these elements of struct atm_vcc: recvq (proto?),&n;    sleep, callback, listenq, backlog_quota, reply and user_back.&n;  &n;  . Adjust TX/RX skb allocation to favour IP with LANE/CLIP (configurable).&n;  &n;  . Impose a TX-pending limit (2?) on each VC, help avoid TX q overflow.&n;  &n;  . Decide whether RX buffer recycling is or can be made completely safe;&n;    turn it back on. It looks like Werner is going to axe this.&n;  &n;  . Implement QoS changes on open VCs (involves extracting parts of VC open&n;    and close into separate functions and using them to make changes).&n;  &n;  . Hack on command queue so that someone can issue multiple commands and wait&n;    on the last one (OR only &quot;no-op&quot; or &quot;wait&quot; commands are waited for).&n;  &n;  . Eliminate need for while-schedule around do_command.&n;  &n;*/
 multiline_comment|/********** microcode **********/
 macro_line|#ifdef AMB_NEW_MICROCODE
 DECL|macro|UCODE
@@ -181,7 +182,165 @@ id|pci_lat
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|onegigmask
+r_static
+r_const
+r_int
+r_int
+id|onegigmask
+op_assign
+op_minus
+l_int|1
+op_lshift
+l_int|30
+suffix:semicolon
 multiline_comment|/********** access to adapter **********/
+DECL|function|wr_plain
+r_static
+r_inline
+r_void
+id|wr_plain
+(paren
+r_const
+id|amb_dev
+op_star
+id|dev
+comma
+r_const
+id|u32
+op_star
+id|addr
+comma
+id|u32
+id|data
+)paren
+(brace
+id|PRINTD
+(paren
+id|DBG_FLOW
+op_or
+id|DBG_REGS
+comma
+l_string|&quot;wr: %p &lt;- %08x&quot;
+comma
+id|addr
+comma
+id|data
+)paren
+suffix:semicolon
+macro_line|#ifdef AMB_MMIO
+id|dev-&gt;membase
+(braket
+id|addr
+op_minus
+(paren
+id|u32
+op_star
+)paren
+l_int|0
+)braket
+op_assign
+id|data
+suffix:semicolon
+macro_line|#else
+id|outl
+(paren
+id|data
+comma
+id|dev-&gt;iobase
+op_plus
+(paren
+id|addr
+op_minus
+(paren
+id|u32
+op_star
+)paren
+l_int|0
+)paren
+op_star
+r_sizeof
+(paren
+id|u32
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|rd_plain
+r_static
+r_inline
+id|u32
+id|rd_plain
+(paren
+r_const
+id|amb_dev
+op_star
+id|dev
+comma
+r_const
+id|u32
+op_star
+id|addr
+)paren
+(brace
+macro_line|#ifdef AMB_MMIO
+id|u32
+id|data
+op_assign
+id|dev-&gt;membase
+(braket
+id|addr
+op_minus
+(paren
+id|u32
+op_star
+)paren
+l_int|0
+)braket
+suffix:semicolon
+macro_line|#else
+id|u32
+id|data
+op_assign
+id|inl
+(paren
+id|dev-&gt;iobase
+op_plus
+(paren
+id|addr
+op_minus
+(paren
+id|u32
+op_star
+)paren
+l_int|0
+)paren
+op_star
+r_sizeof
+(paren
+id|u32
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|PRINTD
+(paren
+id|DBG_FLOW
+op_or
+id|DBG_REGS
+comma
+l_string|&quot;rd: %p -&gt; %08x&quot;
+comma
+id|addr
+comma
+id|data
+)paren
+suffix:semicolon
+r_return
+id|data
+suffix:semicolon
+)brace
 DECL|variable|mem
 r_static
 r_const
@@ -372,82 +531,127 @@ id|dev
 )paren
 (brace
 macro_line|#ifdef DEBUG_AMBASSADOR
-singleline_comment|// u32 * i;
-singleline_comment|// PRINTD (DBG_REGS, &quot;mailboxes: &quot;);
-singleline_comment|// for (i = (u32 *) 0x40; i &lt; (u32 *) 0x60; ++i)
-singleline_comment|// PRINTD (DBG_REGS, &quot;%08x &quot;, rd_mem (dev, i));
+r_if
+c_cond
+(paren
+id|debug
+op_amp
+id|DBG_REGS
+)paren
+(brace
+id|u32
+op_star
+id|i
+suffix:semicolon
 id|PRINTD
 (paren
 id|DBG_REGS
 comma
-l_string|&quot;doorb %08x&quot;
-comma
+l_string|&quot;reading PLX control: &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+(paren
+id|u32
+op_star
+)paren
+l_int|0x00
+suffix:semicolon
+id|i
+OL
+(paren
+id|u32
+op_star
+)paren
+l_int|0x30
+suffix:semicolon
+op_increment
+id|i
+)paren
 id|rd_mem
 (paren
 id|dev
 comma
+id|i
+)paren
+suffix:semicolon
+id|PRINTD
+(paren
+id|DBG_REGS
+comma
+l_string|&quot;reading mailboxes: &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+(paren
+id|u32
+op_star
+)paren
+l_int|0x40
+suffix:semicolon
+id|i
+OL
 (paren
 id|u32
 op_star
 )paren
 l_int|0x60
+suffix:semicolon
+op_increment
+id|i
 )paren
+id|rd_mem
+(paren
+id|dev
+comma
+id|i
 )paren
 suffix:semicolon
 id|PRINTD
 (paren
 id|DBG_REGS
 comma
-l_string|&quot;irqev %08x&quot;
-comma
-id|rd_mem
+l_string|&quot;reading doorb irqev irqen reset:&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
 (paren
-id|dev
-comma
+id|i
+op_assign
 (paren
 id|u32
 op_star
 )paren
-l_int|0x64
-)paren
-)paren
+l_int|0x60
 suffix:semicolon
-id|PRINTD
-(paren
-id|DBG_REGS
-comma
-l_string|&quot;irqen %08x&quot;
-comma
-id|rd_mem
-(paren
-id|dev
-comma
+id|i
+OL
 (paren
 id|u32
 op_star
 )paren
-l_int|0x68
-)paren
-)paren
+l_int|0x70
 suffix:semicolon
-id|PRINTD
-(paren
-id|DBG_REGS
-comma
-l_string|&quot;reset %08x&quot;
-comma
+op_increment
+id|i
+)paren
 id|rd_mem
 (paren
 id|dev
 comma
-(paren
-id|u32
-op_star
-)paren
-l_int|0x6c
-)paren
+id|i
 )paren
 suffix:semicolon
+)brace
 macro_line|#else
 (paren
 r_void
@@ -742,10 +946,8 @@ r_const
 id|u32
 id|fourmegmask
 op_assign
-(paren
 op_minus
 l_int|1
-)paren
 op_lshift
 l_int|22
 suffix:semicolon
@@ -753,10 +955,8 @@ r_const
 id|u32
 id|twofivesixmask
 op_assign
-(paren
 op_minus
 l_int|1
-)paren
 op_lshift
 l_int|8
 suffix:semicolon
@@ -873,7 +1073,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 (paren
 id|skb
 )paren
@@ -926,6 +1126,10 @@ id|tx
 )paren
 suffix:semicolon
 singleline_comment|// VC layer stats
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|ATM_SKB
 c_func
 (paren
@@ -933,7 +1137,7 @@ id|skb
 )paren
 op_member_access_from_pointer
 id|vcc-&gt;stats-&gt;tx
-op_increment
+)paren
 suffix:semicolon
 singleline_comment|// free the descriptor
 id|kfree
@@ -1092,8 +1296,12 @@ id|skb
 )paren
 suffix:semicolon
 singleline_comment|// VC layer stats
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|atm_vcc-&gt;stats-&gt;rx
-op_increment
+)paren
 suffix:semicolon
 id|skb-&gt;stamp
 op_assign
@@ -1139,8 +1347,12 @@ l_string|&quot;dropped over-size frame&quot;
 )paren
 suffix:semicolon
 singleline_comment|// should we count this?
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|atm_vcc-&gt;stats-&gt;rx_drop
-op_increment
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -1206,7 +1418,7 @@ id|dev-&gt;stats.rx.unused
 op_increment
 suffix:semicolon
 )brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 (paren
 id|skb
 )paren
@@ -1233,13 +1445,20 @@ op_star
 id|cmd
 )paren
 (brace
-r_volatile
 id|amb_cq
 op_star
 id|cq
 op_assign
 op_amp
 id|dev-&gt;cq
+suffix:semicolon
+r_volatile
+id|amb_cq_ptrs
+op_star
+id|ptrs
+op_assign
+op_amp
+id|cq-&gt;ptrs
 suffix:semicolon
 id|command
 op_star
@@ -1292,7 +1511,7 @@ id|cq-&gt;maximum
 singleline_comment|// remember my slot for later
 id|my_slot
 op_assign
-id|cq-&gt;in
+id|ptrs-&gt;in
 suffix:semicolon
 id|PRINTD
 (paren
@@ -1310,7 +1529,7 @@ id|cmd
 suffix:semicolon
 singleline_comment|// copy command in
 op_star
-id|cq-&gt;in
+id|ptrs-&gt;in
 op_assign
 op_star
 id|cmd
@@ -1318,15 +1537,15 @@ suffix:semicolon
 id|cq-&gt;pending
 op_increment
 suffix:semicolon
-id|cq-&gt;in
+id|ptrs-&gt;in
 op_assign
 id|NEXTQ
 (paren
-id|cq-&gt;in
+id|ptrs-&gt;in
 comma
-id|cq-&gt;start
+id|ptrs-&gt;start
 comma
-id|cq-&gt;limit
+id|ptrs-&gt;limit
 )paren
 suffix:semicolon
 singleline_comment|// mail the command
@@ -1339,7 +1558,7 @@ id|mem-&gt;mb.adapter.cmd_address
 comma
 id|virt_to_bus
 (paren
-id|cq-&gt;in
+id|ptrs-&gt;in
 )paren
 )paren
 suffix:semicolon
@@ -1395,7 +1614,7 @@ singleline_comment|// wait for my slot to be reached (all waiters are here or ab
 r_while
 c_loop
 (paren
-id|cq-&gt;out
+id|ptrs-&gt;out
 op_ne
 id|my_slot
 )paren
@@ -1406,7 +1625,7 @@ id|DBG_CMD
 comma
 l_string|&quot;wait: command slot (now at %p)&quot;
 comma
-id|cq-&gt;out
+id|ptrs-&gt;out
 )paren
 suffix:semicolon
 id|schedule
@@ -1419,7 +1638,7 @@ singleline_comment|// wait on my slot (... one gets to its slot, and... )
 r_while
 c_loop
 (paren
-id|cq-&gt;out-&gt;request
+id|ptrs-&gt;out-&gt;request
 op_ne
 id|cpu_to_be32
 (paren
@@ -1462,17 +1681,17 @@ op_star
 id|cmd
 op_assign
 op_star
-id|cq-&gt;out
+id|ptrs-&gt;out
 suffix:semicolon
-id|cq-&gt;out
+id|ptrs-&gt;out
 op_assign
 id|NEXTQ
 (paren
-id|cq-&gt;out
+id|ptrs-&gt;out
 comma
-id|cq-&gt;start
+id|ptrs-&gt;start
 comma
-id|cq-&gt;limit
+id|ptrs-&gt;limit
 )paren
 suffix:semicolon
 id|spin_unlock
@@ -1487,6 +1706,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|cq-&gt;filled
+op_increment
+suffix:semicolon
 id|spin_unlock
 (paren
 op_amp
@@ -2340,7 +2562,7 @@ id|skb-&gt;truesize
 )paren
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 (paren
 id|skb
 )paren
@@ -2399,7 +2621,7 @@ comma
 id|pool
 )paren
 )paren
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 (paren
 id|skb
 )paren
@@ -2408,7 +2630,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-singleline_comment|// top up all RX pools (also called as a bottom half)
+singleline_comment|// top up all RX pools (can also be called as a bottom half)
 DECL|function|fill_rx_pools
 r_static
 r_void
@@ -2472,14 +2694,14 @@ op_star
 id|dev
 )paren
 (brace
-id|wr_mem
+id|wr_plain
 (paren
 id|dev
 comma
 op_amp
 id|mem-&gt;interrupt_control
 comma
-id|rd_mem
+id|rd_plain
 (paren
 id|dev
 comma
@@ -2503,14 +2725,14 @@ op_star
 id|dev
 )paren
 (brace
-id|wr_mem
+id|wr_plain
 (paren
 id|dev
 comma
 op_amp
 id|mem-&gt;interrupt_control
 comma
-id|rd_mem
+id|rd_plain
 (paren
 id|dev
 comma
@@ -2547,14 +2769,6 @@ op_star
 id|dev
 op_assign
 id|amb_devs
-suffix:semicolon
-r_int
-r_int
-id|irq_ok
-suffix:semicolon
-r_int
-r_int
-id|irq_ok_old
 suffix:semicolon
 (paren
 r_void
@@ -2614,6 +2828,9 @@ op_assign
 id|dev-&gt;prev
 suffix:semicolon
 )brace
+singleline_comment|// impossible - unless we add the device to our list after both
+singleline_comment|// registering the IRQ handler for it and enabling interrupts, AND
+singleline_comment|// the card generates an IRQ at startup - should not happen again
 r_if
 c_cond
 (paren
@@ -2625,7 +2842,7 @@ id|PRINTD
 (paren
 id|DBG_IRQ
 comma
-l_string|&quot;irq not for me: %d&quot;
+l_string|&quot;irq for unknown device: %d&quot;
 comma
 id|irq
 )paren
@@ -2633,6 +2850,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+singleline_comment|// impossible - unless we have memory corruption of dev or kernel
 r_if
 c_cond
 (paren
@@ -2655,52 +2873,49 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-singleline_comment|// definitely for us
-id|irq_ok
+(brace
+id|u32
+id|interrupt
 op_assign
-l_int|0
-suffix:semicolon
-id|irq_ok_old
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-singleline_comment|// perhaps disable interrupts? (disabled at PIC by Linux)
-singleline_comment|// interrupts_off (dev);
-r_while
-c_loop
+id|rd_plain
 (paren
-id|irq_ok_old
-op_ne
-id|irq_ok
-op_logical_and
-id|irq_ok
-OL
-l_int|100
+id|dev
+comma
+op_amp
+id|mem-&gt;interrupt
+)paren
+suffix:semicolon
+singleline_comment|// for us or someone else sharing the same interrupt
+r_if
+c_cond
+(paren
+op_logical_neg
+id|interrupt
 )paren
 (brace
-r_int
-r_char
-id|pool
-suffix:semicolon
 id|PRINTD
 (paren
 id|DBG_IRQ
 comma
-l_string|&quot;FYI: interrupt was %08x, work %u&quot;
+l_string|&quot;irq not for me: %d&quot;
 comma
-id|rd_mem
-(paren
-id|dev
-comma
-op_amp
-id|mem-&gt;interrupt
-)paren
-comma
-id|irq_ok
+id|irq
 )paren
 suffix:semicolon
-id|wr_mem
+r_return
+suffix:semicolon
+)brace
+singleline_comment|// definitely for us
+id|PRINTD
+(paren
+id|DBG_IRQ
+comma
+l_string|&quot;FYI: interrupt was %08x&quot;
+comma
+id|interrupt
+)paren
+suffix:semicolon
+id|wr_plain
 (paren
 id|dev
 comma
@@ -2711,9 +2926,17 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|irq_ok_old
+)brace
+(brace
+r_int
+r_int
+id|irq_work
 op_assign
-id|irq_ok
+l_int|0
+suffix:semicolon
+r_int
+r_char
+id|pool
 suffix:semicolon
 r_for
 c_loop
@@ -2741,7 +2964,7 @@ id|pool
 )paren
 )paren
 op_increment
-id|irq_ok
+id|irq_work
 suffix:semicolon
 r_while
 c_loop
@@ -2753,16 +2976,15 @@ id|dev
 )paren
 )paren
 op_increment
-id|irq_ok
+id|irq_work
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|irq_ok
+id|irq_work
 )paren
 (brace
-macro_line|#if 0
+macro_line|#ifdef FILL_RX_POOLS_IN_BH
 id|queue_task
 (paren
 op_amp
@@ -2790,7 +3012,7 @@ id|DBG_IRQ
 comma
 l_string|&quot;work done: %u&quot;
 comma
-id|irq_ok
+id|irq_work
 )paren
 suffix:semicolon
 )brace
@@ -2806,8 +3028,7 @@ l_string|&quot;no work done&quot;
 )paren
 suffix:semicolon
 )brace
-singleline_comment|// perhaps re-enable interrupts? (re-enabled at PIC by Linux)
-singleline_comment|// interrupts_on (dev);
+)brace
 id|PRINTD
 (paren
 id|DBG_IRQ
@@ -2840,6 +3061,14 @@ id|cq
 op_assign
 op_amp
 id|dev-&gt;cq
+suffix:semicolon
+r_volatile
+id|amb_cq_ptrs
+op_star
+id|ptrs
+op_assign
+op_amp
+id|cq-&gt;ptrs
 suffix:semicolon
 id|amb_txq
 op_star
@@ -2890,14 +3119,14 @@ comma
 l_string|&quot;don&squot;t panic - putting adapter into reset&quot;
 )paren
 suffix:semicolon
-id|wr_mem
+id|wr_plain
 (paren
 id|dev
 comma
 op_amp
 id|mem-&gt;reset_control
 comma
-id|rd_mem
+id|rd_plain
 (paren
 id|dev
 comma
@@ -2905,7 +3134,7 @@ op_amp
 id|mem-&gt;reset_control
 )paren
 op_or
-id|AMB_RESET
+id|AMB_RESET_BITS
 )paren
 suffix:semicolon
 id|PRINTK
@@ -2920,11 +3149,11 @@ c_loop
 (paren
 id|cmd
 op_assign
-id|cq-&gt;start
+id|ptrs-&gt;start
 suffix:semicolon
 id|cmd
 OL
-id|cq-&gt;limit
+id|ptrs-&gt;limit
 suffix:semicolon
 op_increment
 id|cmd
@@ -3049,7 +3278,7 @@ suffix:semicolon
 op_decrement
 id|rx
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 (paren
 id|bus_to_virt
 (paren
@@ -3134,17 +3363,18 @@ comma
 id|rate
 )paren
 suffix:semicolon
-singleline_comment|// rates in cells per second, ITU format (nasty 16bit fp)
+singleline_comment|// rates in cells per second, ITU format (nasty 16-bit floating-point)
 singleline_comment|// given 5-bit e and 9-bit m:
 singleline_comment|// rate = EITHER (1+m/2^9)*2^e    OR 0
 singleline_comment|// bits = EITHER 1&lt;&lt;14 | e&lt;&lt;9 | m OR 0
 singleline_comment|// (bit 15 is &quot;reserved&quot;, bit 14 &quot;non-zero&quot;)
 singleline_comment|// smallest rate is 0 (special representation)
 singleline_comment|// largest rate is (1+511/512)*2^31 = 4290772992 (&lt; 2^32-1)
+singleline_comment|// smallest non-zero rate is (1+0/512)*2^0 = 1 (&gt; 0)
 singleline_comment|// simple algorithm:
 singleline_comment|// find position of top bit, this gives e
 singleline_comment|// remove top bit and shift (rounding if feeling clever) by 9-e
-singleline_comment|// ucode bug: please don&squot;t set bit 14! 0 not representable
+singleline_comment|// ucode bug: please don&squot;t set bit 14! so 0 rate not representable
 r_if
 c_cond
 (paren
@@ -4161,9 +4391,14 @@ suffix:semicolon
 singleline_comment|// no failures beyond this point
 singleline_comment|// we are not really &quot;immediately before allocating the connection
 singleline_comment|// identifier in hardware&quot;, but it will just have to do!
-id|atm_vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4552,9 +4787,14 @@ op_assign
 id|vci
 suffix:semicolon
 singleline_comment|// indicate readiness
-id|atm_vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -4607,10 +4847,14 @@ l_string|&quot;amb_close&quot;
 )paren
 suffix:semicolon
 singleline_comment|// indicate unreadiness
-id|atm_vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 singleline_comment|// disable TXing
 r_if
@@ -4905,10 +5149,14 @@ id|vcc
 )paren
 suffix:semicolon
 singleline_comment|// say the VPI/VCI is free again
-id|atm_vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -4945,6 +5193,20 @@ op_eq
 id|AMB_SETDEBUG
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4988,6 +5250,20 @@ op_eq
 id|AMB_DONTPANIC
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|dont_panic
 (paren
 id|dev
@@ -5182,8 +5458,12 @@ id|skb-&gt;len
 )paren
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|atm_vcc-&gt;stats-&gt;tx_err
-op_increment
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -5731,7 +6011,7 @@ r_return
 suffix:semicolon
 )brace
 singleline_comment|// just do what the ATM layer would have done
-id|kfree_skb
+id|dev_kfree_skb_any
 (paren
 id|skb
 )paren
@@ -6403,19 +6683,19 @@ id|cmds
 op_minus
 l_int|1
 suffix:semicolon
-id|cq-&gt;start
+id|cq-&gt;ptrs.start
 op_assign
 id|cmd
 suffix:semicolon
-id|cq-&gt;in
+id|cq-&gt;ptrs.in
 op_assign
 id|cmd
 suffix:semicolon
-id|cq-&gt;out
+id|cq-&gt;ptrs.out
 op_assign
 id|cmd
 suffix:semicolon
-id|cq-&gt;limit
+id|cq-&gt;ptrs.limit
 op_assign
 id|cmd
 op_plus
@@ -6423,7 +6703,7 @@ id|cmds
 suffix:semicolon
 id|memory
 op_assign
-id|cq-&gt;limit
+id|cq-&gt;ptrs.limit
 suffix:semicolon
 )brace
 id|PRINTD
@@ -6694,7 +6974,7 @@ r_void
 op_star
 id|memory
 op_assign
-id|dev-&gt;cq.start
+id|dev-&gt;cq.ptrs.start
 suffix:semicolon
 singleline_comment|// includes txq.in, txq.out, rxq[].in and rxq[].out
 id|PRINTD
@@ -6730,6 +7010,11 @@ r_int
 id|__init
 id|do_loader_command
 (paren
+r_volatile
+id|loader_block
+op_star
+id|lb
+comma
 r_const
 id|amb_dev
 op_star
@@ -6737,11 +7022,6 @@ id|dev
 comma
 id|loader_command
 id|cmd
-comma
-r_volatile
-id|loader_block
-op_star
-id|lb
 )paren
 (brace
 singleline_comment|// centisecond timeouts - guessing away here
@@ -7166,6 +7446,7 @@ id|cpu_to_be32
 id|DMA_VALID
 )paren
 suffix:semicolon
+singleline_comment|// dump_registers (dev);
 singleline_comment|// dump_loader_block (lb);
 id|wr_mem
 (paren
@@ -7178,6 +7459,9 @@ id|virt_to_bus
 (paren
 id|lb
 )paren
+op_amp
+op_complement
+id|onegigmask
 )paren
 suffix:semicolon
 id|timeout
@@ -7264,7 +7548,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|rd_mem
+id|rd_plain
 (paren
 id|dev
 comma
@@ -7338,6 +7622,10 @@ r_int
 id|__init
 id|get_loader_version
 (paren
+id|loader_block
+op_star
+id|lb
+comma
 r_const
 id|amb_dev
 op_star
@@ -7348,9 +7636,6 @@ op_star
 id|version
 )paren
 (brace
-id|loader_block
-id|lb
-suffix:semicolon
 r_int
 id|res
 suffix:semicolon
@@ -7367,12 +7652,11 @@ id|res
 op_assign
 id|do_loader_command
 (paren
+id|lb
+comma
 id|dev
 comma
 id|get_version_number
-comma
-op_amp
-id|lb
 )paren
 suffix:semicolon
 r_if
@@ -7393,20 +7677,24 @@ id|version
 op_assign
 id|be32_to_cpu
 (paren
-id|lb.payload.version
+id|lb-&gt;payload.version
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* loader: read or verify memory data blocks */
+multiline_comment|/* loader: write memory data blocks */
 DECL|function|loader_write
 r_static
 r_int
 id|__init
 id|loader_write
 (paren
+id|loader_block
+op_star
+id|lb
+comma
 r_const
 id|amb_dev
 op_star
@@ -7429,15 +7717,12 @@ r_int
 r_int
 id|i
 suffix:semicolon
-id|loader_block
-id|lb
-suffix:semicolon
 id|transfer_block
 op_star
 id|tb
 op_assign
 op_amp
-id|lb.payload.transfer
+id|lb-&gt;payload.transfer
 suffix:semicolon
 id|PRINTD
 (paren
@@ -7503,21 +7788,25 @@ suffix:semicolon
 r_return
 id|do_loader_command
 (paren
+id|lb
+comma
 id|dev
 comma
 id|write_adapter_memory
-comma
-op_amp
-id|lb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* loader: verify memory data blocks */
 DECL|function|loader_verify
 r_static
 r_int
 id|__init
 id|loader_verify
 (paren
+id|loader_block
+op_star
+id|lb
+comma
 r_const
 id|amb_dev
 op_star
@@ -7540,15 +7829,12 @@ r_int
 r_int
 id|i
 suffix:semicolon
-id|loader_block
-id|lb
-suffix:semicolon
 id|transfer_block
 op_star
 id|tb
 op_assign
 op_amp
-id|lb.payload.transfer
+id|lb-&gt;payload.transfer
 suffix:semicolon
 r_int
 id|res
@@ -7591,12 +7877,11 @@ id|res
 op_assign
 id|do_loader_command
 (paren
+id|lb
+comma
 id|dev
 comma
 id|read_adapter_memory
-comma
-op_amp
-id|lb
 )paren
 suffix:semicolon
 r_if
@@ -7648,12 +7933,17 @@ r_return
 id|res
 suffix:semicolon
 )brace
+multiline_comment|/* loader: start microcode */
 DECL|function|loader_start
 r_static
 r_int
 id|__init
 id|loader_start
 (paren
+id|loader_block
+op_star
+id|lb
+comma
 r_const
 id|amb_dev
 op_star
@@ -7663,9 +7953,6 @@ id|u32
 id|address
 )paren
 (brace
-id|loader_block
-id|lb
-suffix:semicolon
 id|PRINTD
 (paren
 id|DBG_FLOW
@@ -7675,7 +7962,7 @@ comma
 l_string|&quot;loader_start&quot;
 )paren
 suffix:semicolon
-id|lb.payload.start
+id|lb-&gt;payload.start
 op_assign
 id|cpu_to_be32
 (paren
@@ -7685,12 +7972,11 @@ suffix:semicolon
 r_return
 id|do_loader_command
 (paren
+id|lb
+comma
 id|dev
 comma
 id|adapter_start
-comma
-op_amp
-id|lb
 )paren
 suffix:semicolon
 )brace
@@ -7722,7 +8008,7 @@ l_string|&quot;amb_reset&quot;
 suffix:semicolon
 id|word
 op_assign
-id|rd_mem
+id|rd_plain
 (paren
 id|dev
 comma
@@ -7730,9 +8016,39 @@ op_amp
 id|mem-&gt;reset_control
 )paren
 suffix:semicolon
-macro_line|#if 0
+singleline_comment|// put card into reset state
+id|wr_plain
+(paren
+id|dev
+comma
+op_amp
+id|mem-&gt;reset_control
+comma
+id|word
+op_or
+id|AMB_RESET_BITS
+)paren
+suffix:semicolon
+singleline_comment|// wait a short while
+id|udelay
+(paren
+l_int|10
+)paren
+suffix:semicolon
+macro_line|#if 1
+singleline_comment|// put card into known good state
+id|wr_plain
+(paren
+id|dev
+comma
+op_amp
+id|mem-&gt;interrupt_control
+comma
+id|AMB_DOORBELL_BITS
+)paren
+suffix:semicolon
 singleline_comment|// clear all interrupts just in case
-id|wr_mem
+id|wr_plain
 (paren
 id|dev
 comma
@@ -7744,27 +8060,8 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
-singleline_comment|// put card into reset state
-id|wr_mem
-(paren
-id|dev
-comma
-op_amp
-id|mem-&gt;reset_control
-comma
-id|word
-op_or
-id|AMB_RESET
-)paren
-suffix:semicolon
-singleline_comment|// wait a short while
-id|udelay
-(paren
-l_int|10
-)paren
-suffix:semicolon
 singleline_comment|// clear self-test done flag
-id|wr_mem
+id|wr_plain
 (paren
 id|dev
 comma
@@ -7775,7 +8072,7 @@ l_int|0
 )paren
 suffix:semicolon
 singleline_comment|// take card out of reset state
-id|wr_mem
+id|wr_plain
 (paren
 id|dev
 comma
@@ -7785,7 +8082,7 @@ comma
 id|word
 op_amp
 op_complement
-id|AMB_RESET
+id|AMB_RESET_BITS
 )paren
 suffix:semicolon
 r_if
@@ -7830,7 +8127,7 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|rd_mem
+id|rd_plain
 (paren
 id|dev
 comma
@@ -7869,6 +8166,7 @@ id|ETIMEDOUT
 suffix:semicolon
 )brace
 singleline_comment|// get results of self-test
+singleline_comment|// XXX double check byte-order
 id|word
 op_assign
 id|rd_mem
@@ -7996,6 +8294,10 @@ r_int
 id|__init
 id|ucode_init
 (paren
+id|loader_block
+op_star
+id|lb
+comma
 id|amb_dev
 op_star
 id|dev
@@ -8106,6 +8408,8 @@ id|res
 op_assign
 id|loader_write
 (paren
+id|lb
+comma
 id|dev
 comma
 id|pointer
@@ -8127,6 +8431,8 @@ id|res
 op_assign
 id|loader_verify
 (paren
+id|lb
+comma
 id|dev
 comma
 id|pointer
@@ -8179,6 +8485,8 @@ l_int|0xdeadbeef
 r_return
 id|loader_start
 (paren
+id|lb
+comma
 id|dev
 comma
 id|ucode_start
@@ -8249,8 +8557,6 @@ r_int
 r_int
 id|timeout
 suffix:semicolon
-r_static
-r_inline
 id|u32
 id|x
 (paren
@@ -8282,14 +8588,14 @@ id|a.command_start
 op_assign
 id|x
 (paren
-id|dev-&gt;cq.start
+id|dev-&gt;cq.ptrs.start
 )paren
 suffix:semicolon
 id|a.command_end
 op_assign
 id|x
 (paren
-id|dev-&gt;cq.limit
+id|dev-&gt;cq.ptrs.limit
 )paren
 suffix:semicolon
 id|a.tx_start
@@ -8475,7 +8781,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|rd_mem
+id|rd_plain
 (paren
 id|dev
 comma
@@ -8841,27 +9147,74 @@ op_star
 id|dev
 )paren
 (brace
+id|loader_block
+id|lb
+suffix:semicolon
+r_void
+id|fixup_plx_window
+(paren
+r_void
+)paren
+(brace
+singleline_comment|// fix up the PLX-mapped window base address to match the block
+r_int
+r_int
+id|blb
+suffix:semicolon
+id|u32
+id|mapreg
+suffix:semicolon
+id|blb
+op_assign
+id|virt_to_bus
+(paren
+op_amp
+id|lb
+)paren
+suffix:semicolon
+singleline_comment|// the kernel stack had better not ever cross a 1Gb boundary!
+id|mapreg
+op_assign
+id|rd_plain
+(paren
+id|dev
+comma
+op_amp
+id|mem-&gt;stuff
+(braket
+l_int|10
+)braket
+)paren
+suffix:semicolon
+id|mapreg
+op_and_assign
+op_complement
+id|onegigmask
+suffix:semicolon
+id|mapreg
+op_or_assign
+id|blb
+op_amp
+id|onegigmask
+suffix:semicolon
+id|wr_plain
+(paren
+id|dev
+comma
+op_amp
+id|mem-&gt;stuff
+(braket
+l_int|10
+)braket
+comma
+id|mapreg
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|u32
 id|version
-suffix:semicolon
-multiline_comment|/* enable adapter doorbell */
-id|wr_mem
-(paren
-id|dev
-comma
-op_amp
-id|mem-&gt;interrupt_control
-comma
-id|rd_mem
-(paren
-id|dev
-comma
-op_amp
-id|mem-&gt;interrupt_control
-)paren
-op_or
-id|AMB_DOORBELL_BITS
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8883,11 +9236,19 @@ l_string|&quot;card reset failed!&quot;
 suffix:semicolon
 )brace
 r_else
+(brace
+id|fixup_plx_window
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|get_loader_version
 (paren
+op_amp
+id|lb
+comma
 id|dev
 comma
 op_amp
@@ -8919,6 +9280,9 @@ c_cond
 (paren
 id|ucode_init
 (paren
+op_amp
+id|lb
+comma
 id|dev
 )paren
 )paren
@@ -8995,8 +9359,17 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/* create_queues, ucode_init */
+id|amb_reset
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/* get_loader_version, amb_reset */
+multiline_comment|/* get_loader_version */
+)brace
+multiline_comment|/* amb_reset */
 r_return
 op_minus
 l_int|1
@@ -9030,6 +9403,11 @@ op_star
 id|dev
 suffix:semicolon
 singleline_comment|// read resources from PCI configuration space
+id|u8
+id|irq
+op_assign
+id|pci_dev-&gt;irq
+suffix:semicolon
 id|u32
 op_star
 id|membase
@@ -9054,63 +9432,16 @@ l_int|1
 dot
 id|start
 suffix:semicolon
-id|u8
-id|irq
-op_assign
-id|pci_dev-&gt;irq
-suffix:semicolon
-singleline_comment|// check IO region
-r_if
-c_cond
+r_void
+id|setup_dev
 (paren
-id|check_region
-(paren
-id|iobase
-comma
-id|AMB_EXTENT
-)paren
+r_void
 )paren
 (brace
-id|PRINTK
-(paren
-id|KERN_ERR
-comma
-l_string|&quot;IO range already in use!&quot;
-)paren
+r_int
+r_char
+id|pool
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev
-op_assign
-id|kmalloc
-(paren
-r_sizeof
-(paren
-id|amb_dev
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev
-)paren
-(brace
-singleline_comment|// perhaps we should be nice: deregister all adapters and abort?
-id|PRINTK
-(paren
-id|KERN_ERR
-comma
-l_string|&quot;out of memory!&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|memset
 (paren
 id|dev
@@ -9156,7 +9487,7 @@ id|dev-&gt;rx_avail
 op_assign
 id|ATM_OC3_PCR
 suffix:semicolon
-macro_line|#if 0
+macro_line|#ifdef FILL_RX_POOLS_IN_BH
 singleline_comment|// initialise bottom half
 id|dev-&gt;bh.next
 op_assign
@@ -9209,11 +9540,6 @@ op_amp
 id|dev-&gt;txq.lock
 )paren
 suffix:semicolon
-(brace
-r_int
-r_char
-id|pool
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -9240,61 +9566,15 @@ id|lock
 )paren
 suffix:semicolon
 )brace
-singleline_comment|// grab (but share) IRQ and install handler
-r_if
-c_cond
+r_void
+id|setup_pci_dev
 (paren
-id|request_irq
-(paren
-id|irq
-comma
-id|interrupt_handler
-comma
-id|SA_SHIRQ
-comma
-id|DEV_LABEL
-comma
-id|dev
+r_void
 )paren
-)paren
-(brace
-id|PRINTK
-(paren
-id|KERN_ERR
-comma
-l_string|&quot;request IRQ failed!&quot;
-)paren
-suffix:semicolon
-singleline_comment|// free_irq is at &quot;endif&quot;
-)brace
-r_else
 (brace
 r_int
 r_char
 id|lat
-suffix:semicolon
-singleline_comment|// reserve IO region
-id|request_region
-(paren
-id|iobase
-comma
-id|AMB_EXTENT
-comma
-id|DEV_LABEL
-)paren
-suffix:semicolon
-id|PRINTD
-(paren
-id|DBG_INFO
-comma
-l_string|&quot;found Madge ATM adapter (amb) at IO %x, IRQ %u, MEM %p&quot;
-comma
-id|iobase
-comma
-id|irq
-comma
-id|membase
-)paren
 suffix:semicolon
 singleline_comment|// enable bus master accesses
 id|pci_set_master
@@ -9374,6 +9654,78 @@ id|MIN_PCI_LATENCY
 )paren
 suffix:semicolon
 )brace
+)brace
+id|PRINTD
+(paren
+id|DBG_INFO
+comma
+l_string|&quot;found Madge ATM adapter (amb) at&quot;
+l_string|&quot; IO %x, IRQ %u, MEM %p&quot;
+comma
+id|iobase
+comma
+id|irq
+comma
+id|membase
+)paren
+suffix:semicolon
+singleline_comment|// check IO region
+r_if
+c_cond
+(paren
+id|check_region
+(paren
+id|iobase
+comma
+id|AMB_EXTENT
+)paren
+)paren
+(brace
+id|PRINTK
+(paren
+id|KERN_ERR
+comma
+l_string|&quot;IO range already in use!&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|dev
+op_assign
+id|kmalloc
+(paren
+r_sizeof
+(paren
+id|amb_dev
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+singleline_comment|// perhaps we should be nice: deregister all adapters and abort?
+id|PRINTK
+(paren
+id|KERN_ERR
+comma
+l_string|&quot;out of memory!&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|setup_dev
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9392,11 +9744,51 @@ l_string|&quot;adapter initialisation failure&quot;
 suffix:semicolon
 )brace
 r_else
+(brace
+id|setup_pci_dev
+c_func
+(paren
+)paren
+suffix:semicolon
+singleline_comment|// grab (but share) IRQ and install handler
 r_if
 c_cond
 (paren
-op_logical_neg
+id|request_irq
 (paren
+id|irq
+comma
+id|interrupt_handler
+comma
+id|SA_SHIRQ
+comma
+id|DEV_LABEL
+comma
+id|dev
+)paren
+)paren
+(brace
+id|PRINTK
+(paren
+id|KERN_ERR
+comma
+l_string|&quot;request IRQ failed!&quot;
+)paren
+suffix:semicolon
+singleline_comment|// free_irq is at &quot;endif&quot;
+)brace
+r_else
+(brace
+singleline_comment|// reserve IO region
+id|request_region
+(paren
+id|iobase
+comma
+id|AMB_EXTENT
+comma
+id|DEV_LABEL
+)paren
+suffix:semicolon
 id|dev-&gt;atm_dev
 op_assign
 id|atm_dev_register
@@ -9409,9 +9801,14 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+l_int|NULL
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;atm_dev
 )paren
 (brace
 id|PRINTD
@@ -9462,17 +9859,6 @@ id|dev-&gt;atm_dev-&gt;ci_range.vci_bits
 op_assign
 id|NUM_VCI_BITS
 suffix:semicolon
-id|fill_rx_pools
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* enable host interrupts */
-id|interrupts_on
-(paren
-id|dev
-)paren
-suffix:semicolon
 singleline_comment|// update count and linked list
 op_increment
 id|devs
@@ -9485,6 +9871,12 @@ id|amb_devs
 op_assign
 id|dev
 suffix:semicolon
+singleline_comment|// enable host interrupts
+id|interrupts_on
+(paren
+id|dev
+)paren
+suffix:semicolon
 singleline_comment|// success
 r_return
 suffix:semicolon
@@ -9495,7 +9887,7 @@ id|dev-&gt;atm_dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* atm_dev_register, amb_init */
+multiline_comment|/* atm_dev_register */
 id|release_region
 (paren
 id|iobase
@@ -9512,6 +9904,15 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/* request_region, request_irq */
+id|amb_reset
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* amb_init */
 id|kfree
 (paren
 id|dev
@@ -10005,7 +10406,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-singleline_comment|// check arguments
 id|amb_check_args
 c_func
 (paren
@@ -10134,16 +10534,16 @@ id|drain_rx_pools
 id|dev
 )paren
 suffix:semicolon
+id|interrupts_off
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|amb_reset
 (paren
 id|dev
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|interrupts_off
-(paren
-id|dev
 )paren
 suffix:semicolon
 id|destroy_queues
@@ -10235,7 +10635,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-singleline_comment|// check arguments
 id|amb_check_args
 c_func
 (paren

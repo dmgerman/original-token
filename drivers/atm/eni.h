@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/sonet.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;midway.h&quot;
 DECL|macro|KERNEL_OFFSET
 mdefine_line|#define KERNEL_OFFSET&t;0xC0000000&t;/* kernel 0x0 is at phys 0xC0000000 */
@@ -192,6 +193,12 @@ DECL|struct|eni_dev
 r_struct
 id|eni_dev
 (brace
+multiline_comment|/*-------------------------------- spinlock */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* sync with interrupt */
 multiline_comment|/*-------------------------------- base pointers into Midway address&n;&t;&t;&t;&t;&t;   space */
 DECL|member|phy
 r_int

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -25,7 +26,7 @@ mdefine_line|#define maintainer_string &quot;Giuliano Procida at Madge Networks 
 DECL|macro|description_string
 mdefine_line|#define description_string &quot;Madge ATM Horizon [Ultra] driver&quot;
 DECL|macro|version_string
-mdefine_line|#define version_string &quot;1.2&quot;
+mdefine_line|#define version_string &quot;1.2.1&quot;
 DECL|function|show_version
 r_static
 r_inline
@@ -46,7 +47,7 @@ id|version_string
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  &n;  CREDITS&n;  &n;  Driver and documentation by:&n;  &n;  Chris Aston        Madge Networks&n;  Giuliano Procida   Madge Networks&n;  Simon Benham       Madge Networks&n;  Simon Johnson      Madge Networks&n;  Various Others     Madge Networks&n;  &n;  Some inspiration taken from other drivers by:&n;  &n;  Alexandru Cucos    UTBv&n;  Kari Mettinen      University of Helsinki&n;  Werner Almesberger EPFL LRC&n;  &n;  Theory of Operation&n;  &n;  I Hardware, detection, initialisation and shutdown.&n;  &n;  1. Supported Hardware&n;  &n;  This driver should handle all variants of the PCI Madge ATM adapters&n;  with the Horizon chipset. These are all PCI cards supporting PIO, BM&n;  DMA and a form of MMIO (registers only, not internal RAM).&n;  &n;  The driver is only known to work with SONET and UTP Horizon Ultra&n;  cards at 155Mb/s. However, code is in place to deal with both the&n;  original Horizon and 25Mb/s operation.&n;  &n;  There are two revisions of the Horizon ASIC: the original and the&n;  Ultra. Details of hardware bugs are in section III.&n;  &n;  The ASIC version can be distinguished by chip markings but is NOT&n;  indicated by the PCI revision (all adapters seem to have PCI rev 1).&n;  &n;  I believe that:&n;  &n;  Horizon       =&gt; Collage  25 PCI Adapter (UTP and STP)&n;  Horizon Ultra =&gt; Collage 155 PCI Client (UTP or SONET)&n;  Ambassador x  =&gt; Collage 155 PCI Server (completely different)&n;  &n;  Horizon (25Mb/s) is fitted with UTP and STP connectors. It seems to&n;  have a Madge B154 plus glue logic serializer. I have also found a&n;  really ancient version of this with slightly different glue. It&n;  comes with the revision 0 (140-025-01) ASIC.&n;  &n;  Horizon Ultra (155Mb/s) is fitted with either a Pulse Medialink&n;  output (UTP) or an HP HFBR 5205 output (SONET). It has either&n;  Madge&squot;s SAMBA framer or a SUNI-lite device (early versions). It&n;  comes with the revision 1 (140-027-01) ASIC.&n;  &n;  2. Detection&n;  &n;  All Horizon-based cards present with the same PCI Vendor and Device&n;  IDs. The standard Linux 2.2 PCI API is used to locate any cards and&n;  to enable bus-mastering (with appropriate latency).&n;  &n;  ATM_LAYER_STATUS in the control register distinguishes between the&n;  two possible physical layers (25 and 155). It is not clear whether&n;  the 155 cards can also operate at 25Mbps. We rely on the fact that a&n;  card operates at 155 if and only if it has the newer Horizon Ultra&n;  ASIC.&n;  &n;  For 155 cards the two possible framers are probed for and then set&n;  up for loop-timing.&n;  &n;  3. Initialisation&n;  &n;  The card is reset and then put into a known state. The physical&n;  layer is configured for normal operation at the appropriate speed;&n;  in the case of the 155 cards, the framer is initialised with&n;  line-based timing; the internal RAM is zeroed and the allocation of&n;  buffers for RX and TX is made; the Burnt In Address is read and&n;  copied to the ATM ESI; various policy settings for RX (VPI bits,&n;  unknown VCs, oam cells) are made. Ideally all policy items should be&n;  configurable at module load (if not actually on-demand), however,&n;  only the vpi vs vci bit allocation can be specified at insmod.&n;  &n;  4. Shutdown&n;  &n;  This is in response to module_cleaup. No VCs are in use and the card&n;  should be idle; it is reset.&n;  &n;  II Driver software (as it should be)&n;  &n;  0. Traffic Parameters&n;  &n;  The traffic classes (not an enumeration) are currently: ATM_NONE (no&n;  traffic), ATM_UBR, ATM_CBR, ATM_VBR and ATM_ABR, ATM_ANYCLASS&n;  (compatible with everything). Together with (perhaps only some of)&n;  the following items they make up the traffic specification.&n;  &n;  struct atm_trafprm {&n;    unsigned char traffic_class; traffic class (ATM_UBR, ...)&n;    int           max_pcr;       maximum PCR in cells per second&n;    int           pcr;           desired PCR in cells per second&n;    int           min_pcr;       minimum PCR in cells per second&n;    int           max_cdv;       maximum CDV in microseconds&n;    int           max_sdu;       maximum SDU in bytes&n;  };&n;  &n;  Note that these denote bandwidth available not bandwidth used; the&n;  possibilities according to ATMF are:&n;  &n;  Real Time (cdv and max CDT given)&n;  &n;  CBR(pcr)             pcr bandwidth always available&n;  rtVBR(pcr,scr,mbs)   scr bandwidth always available, upto pcr at mbs too&n;  &n;  Non Real Time&n;  &n;  nrtVBR(pcr,scr,mbs)  scr bandwidth always available, upto pcr at mbs too&n;  UBR()&n;  ABR(mcr,pcr)         mcr bandwidth always available, upto pcr (depending) too&n;  &n;  mbs is max burst size (bucket)&n;  pcr and scr have associated cdvt values&n;  mcr is like scr but has no cdtv&n;  cdtv may differ at each hop&n;  &n;  Some of the above items are qos items (as opposed to traffic&n;  parameters). We have nothing to do with qos. All except ABR can have&n;  their traffic parameters converted to GCRA parameters. The GCRA may&n;  be implemented as a (real-number) leaky bucket. The GCRA can be used&n;  in complicated ways by switches and in simpler ways by end-stations.&n;  It can be used both to filter incoming cells and shape out-going&n;  cells.&n;  &n;  ATM Linux actually supports:&n;  &n;  ATM_NONE() (no traffic in this direction)&n;  ATM_UBR(max_frame_size)&n;  ATM_CBR(max/min_pcr, max_cdv, max_frame_size)&n;  &n;  0 or ATM_MAX_PCR are used to indicate maximum available PCR&n;  &n;  A traffic specification consists of the AAL type and separate&n;  traffic specifications for either direction. In ATM Linux it is:&n;  &n;  struct atm_qos {&n;  struct atm_trafprm txtp;&n;  struct atm_trafprm rxtp;&n;  unsigned char aal;&n;  };&n;  &n;  AAL types are:&n;  &n;  ATM_NO_AAL    AAL not specified&n;  ATM_AAL0      &quot;raw&quot; ATM cells&n;  ATM_AAL1      AAL1 (CBR)&n;  ATM_AAL2      AAL2 (VBR)&n;  ATM_AAL34     AAL3/4 (data)&n;  ATM_AAL5      AAL5 (data)&n;  ATM_SAAL      signaling AAL&n;  &n;  The Horizon has support for AAL frame types: 0, 3/4 and 5. However,&n;  it does not implement AAL 3/4 SAR and it has a different notion of&n;  &quot;raw cell&quot; to ATM Linux&squot;s (48 bytes vs. 52 bytes) so neither are&n;  supported by this driver.&n;  &n;  The Horizon has limited support for ABR (including UBR), VBR and&n;  CBR. Each TX channel has a bucket (containing up to 31 cell units)&n;  and two timers (PCR and SCR) associated with it that can be used to&n;  govern cell emissions and host notification (in the case of ABR this&n;  is presumably so that RM cells may be emitted at appropriate times).&n;  The timers may either be disabled or may be set to any of 240 values&n;  (determined by the clock crystal, a fixed (?) per-device divider, a&n;  configurable divider and a configurable timer preload value).&n;  &n;  At the moment only UBR and CBR are supported by the driver. VBR will&n;  be supported as soon as ATM for Linux supports it. ABR support is&n;  very unlikely as RM cell handling is completely up to the driver.&n;  &n;  1. TX (TX channel setup and TX transfer)&n;  &n;  The TX half of the driver owns the TX Horizon registers. The TX&n;  component in the IRQ handler is the BM completion handler. This can&n;  only be entered when tx_busy is true (enforced by hardware). The&n;  other TX component can only be entered when tx_busy is false&n;  (enforced by driver). So TX is single-threaded.&n;  &n;  Apart from a minor optimisation to not re-select the last channel,&n;  the TX send component works as follows:&n;  &n;  Atomic test and set tx_busy until we succeed; we should implement&n;  some sort of timeout so that tx_busy will never be stuck at true.&n;  &n;  If no TX channel is setup for this VC we wait for an idle one (if&n;  necessary) and set it up.&n;  &n;  At this point we have a TX channel ready for use. We wait for enough&n;  buffers to become available then start a TX transmit (set the TX&n;  descriptor, schedule transfer, exit).&n;  &n;  The IRQ component handles TX completion (stats, free buffer, tx_busy&n;  unset, exit). We also re-schedule further transfers for the same&n;  frame if needed.&n;  &n;  TX setup in more detail:&n;  &n;  TX open is a nop, the relevant information is held in the hrz_vcc&n;  (vcc-&gt;dev_data) structure and is &quot;cached&quot; on the card.&n;  &n;  TX close gets the TX lock and clears the channel from the &quot;cache&quot;.&n;  &n;  2. RX (Data Available and RX transfer)&n;  &n;  The RX half of the driver owns the RX registers. There are two RX&n;  components in the IRQ handler: the data available handler deals with&n;  fresh data that has arrived on the card, the BM completion handler&n;  is very similar to the TX completion handler. The data available&n;  handler grabs the rx_lock and it is only released once the data has&n;  been discarded or completely transferred to the host. The BM&n;  completion handler only runs when the lock is held; the data&n;  available handler is locked out over the same period.&n;  &n;  Data available on the card triggers an interrupt. If the data is not&n;  suitable for out existing RX channels or we cannot allocate a buffer&n;  it is flushed. Otherwise an RX receive is scheduled. Multiple RX&n;  transfers may be scheduled for the same frame.&n;  &n;  RX setup in more detail:&n;  &n;  RX open...&n;  RX close...&n;  &n;  III Hardware Bugs&n;  &n;  0. Byte vs Word addressing of adapter RAM.&n;  &n;  A design feature; see the .h file (especially the memory map).&n;  &n;  1. Bus Master Data Transfers (original Horizon only, fixed in Ultra)&n;  &n;  The host must not start a transmit direction transfer at a&n;  non-four-byte boundary in host memory. Instead the host should&n;  perform a byte, or a two byte, or one byte followed by two byte&n;  transfer in order to start the rest of the transfer on a four byte&n;  boundary. RX is OK.&n;  &n;  Simultaneous transmit and receive direction bus master transfers are&n;  not allowed.&n;  &n;  The simplest solution to these two is to always do PIO (never DMA)&n;  in the TX direction on the original Horizon. More complicated&n;  solutions are likely to hurt my brain.&n;  &n;  2. Loss of buffer on close VC&n;  &n;  When a VC is being closed, the buffer associated with it is not&n;  returned to the pool. The host must store the reference to this&n;  buffer and when opening a new VC then give it to that new VC.&n;  &n;  The host intervention currently consists of stacking such a buffer&n;  pointer at VC close and checking the stack at VC open.&n;  &n;  3. Failure to close a VC&n;  &n;  If a VC is currently receiving a frame then closing the VC may fail&n;  and the frame continues to be received.&n;  &n;  The solution is to make sure any received frames are flushed when&n;  ready. This is currently done just before the solution to 3.&n;  &n;  4. PCI bus (original Horizon only, fixed in Ultra)&n;  &n;  Reading from the data port prior to initialisation will hang the PCI&n;  bus. Just don&squot;t do that then! We don&squot;t.&n;  &n;  IV To Do List&n;  &n;  . Timer code may be broken.&n;  &n;  . Allow users to specify buffer allocation split for TX and RX.&n;  &n;  . Deal once and for all with buggy VC close.&n;  &n;  . Handle interrupted and/or non-blocking operations.&n;  &n;  . Change some macros to functions and move from .h to .c.&n;  &n;  . Try to limit the number of TX frames each VC may have queued, in&n;    order to reduce the chances of TX buffer exhaustion.&n;  &n;  . Implement VBR (bucket and timers not understood) and ABR (need to&n;    do RM cells manually); also no Linux support for either.&n;  &n;  . Implement QoS changes on open VCs (involves extracting parts of VC open&n;    and close into separate functions and using them to make changes).&n;  &n;*/
+multiline_comment|/*&n;  &n;  CREDITS&n;  &n;  Driver and documentation by:&n;  &n;  Chris Aston        Madge Networks&n;  Giuliano Procida   Madge Networks&n;  Simon Benham       Madge Networks&n;  Simon Johnson      Madge Networks&n;  Various Others     Madge Networks&n;  &n;  Some inspiration taken from other drivers by:&n;  &n;  Alexandru Cucos    UTBv&n;  Kari Mettinen      University of Helsinki&n;  Werner Almesberger EPFL LRC&n;  &n;  Theory of Operation&n;  &n;  I Hardware, detection, initialisation and shutdown.&n;  &n;  1. Supported Hardware&n;  &n;  This driver should handle all variants of the PCI Madge ATM adapters&n;  with the Horizon chipset. These are all PCI cards supporting PIO, BM&n;  DMA and a form of MMIO (registers only, not internal RAM).&n;  &n;  The driver is only known to work with SONET and UTP Horizon Ultra&n;  cards at 155Mb/s. However, code is in place to deal with both the&n;  original Horizon and 25Mb/s operation.&n;  &n;  There are two revisions of the Horizon ASIC: the original and the&n;  Ultra. Details of hardware bugs are in section III.&n;  &n;  The ASIC version can be distinguished by chip markings but is NOT&n;  indicated by the PCI revision (all adapters seem to have PCI rev 1).&n;  &n;  I believe that:&n;  &n;  Horizon       =&gt; Collage  25 PCI Adapter (UTP and STP)&n;  Horizon Ultra =&gt; Collage 155 PCI Client (UTP or SONET)&n;  Ambassador x  =&gt; Collage 155 PCI Server (completely different)&n;  &n;  Horizon (25Mb/s) is fitted with UTP and STP connectors. It seems to&n;  have a Madge B154 plus glue logic serializer. I have also found a&n;  really ancient version of this with slightly different glue. It&n;  comes with the revision 0 (140-025-01) ASIC.&n;  &n;  Horizon Ultra (155Mb/s) is fitted with either a Pulse Medialink&n;  output (UTP) or an HP HFBR 5205 output (SONET). It has either&n;  Madge&squot;s SAMBA framer or a SUNI-lite device (early versions). It&n;  comes with the revision 1 (140-027-01) ASIC.&n;  &n;  2. Detection&n;  &n;  All Horizon-based cards present with the same PCI Vendor and Device&n;  IDs. The standard Linux 2.2 PCI API is used to locate any cards and&n;  to enable bus-mastering (with appropriate latency).&n;  &n;  ATM_LAYER_STATUS in the control register distinguishes between the&n;  two possible physical layers (25 and 155). It is not clear whether&n;  the 155 cards can also operate at 25Mbps. We rely on the fact that a&n;  card operates at 155 if and only if it has the newer Horizon Ultra&n;  ASIC.&n;  &n;  For 155 cards the two possible framers are probed for and then set&n;  up for loop-timing.&n;  &n;  3. Initialisation&n;  &n;  The card is reset and then put into a known state. The physical&n;  layer is configured for normal operation at the appropriate speed;&n;  in the case of the 155 cards, the framer is initialised with&n;  line-based timing; the internal RAM is zeroed and the allocation of&n;  buffers for RX and TX is made; the Burnt In Address is read and&n;  copied to the ATM ESI; various policy settings for RX (VPI bits,&n;  unknown VCs, oam cells) are made. Ideally all policy items should be&n;  configurable at module load (if not actually on-demand), however,&n;  only the vpi vs vci bit allocation can be specified at insmod.&n;  &n;  4. Shutdown&n;  &n;  This is in response to module_cleaup. No VCs are in use and the card&n;  should be idle; it is reset.&n;  &n;  II Driver software (as it should be)&n;  &n;  0. Traffic Parameters&n;  &n;  The traffic classes (not an enumeration) are currently: ATM_NONE (no&n;  traffic), ATM_UBR, ATM_CBR, ATM_VBR and ATM_ABR, ATM_ANYCLASS&n;  (compatible with everything). Together with (perhaps only some of)&n;  the following items they make up the traffic specification.&n;  &n;  struct atm_trafprm {&n;    unsigned char traffic_class; traffic class (ATM_UBR, ...)&n;    int           max_pcr;       maximum PCR in cells per second&n;    int           pcr;           desired PCR in cells per second&n;    int           min_pcr;       minimum PCR in cells per second&n;    int           max_cdv;       maximum CDV in microseconds&n;    int           max_sdu;       maximum SDU in bytes&n;  };&n;  &n;  Note that these denote bandwidth available not bandwidth used; the&n;  possibilities according to ATMF are:&n;  &n;  Real Time (cdv and max CDT given)&n;  &n;  CBR(pcr)             pcr bandwidth always available&n;  rtVBR(pcr,scr,mbs)   scr bandwidth always available, upto pcr at mbs too&n;  &n;  Non Real Time&n;  &n;  nrtVBR(pcr,scr,mbs)  scr bandwidth always available, upto pcr at mbs too&n;  UBR()&n;  ABR(mcr,pcr)         mcr bandwidth always available, upto pcr (depending) too&n;  &n;  mbs is max burst size (bucket)&n;  pcr and scr have associated cdvt values&n;  mcr is like scr but has no cdtv&n;  cdtv may differ at each hop&n;  &n;  Some of the above items are qos items (as opposed to traffic&n;  parameters). We have nothing to do with qos. All except ABR can have&n;  their traffic parameters converted to GCRA parameters. The GCRA may&n;  be implemented as a (real-number) leaky bucket. The GCRA can be used&n;  in complicated ways by switches and in simpler ways by end-stations.&n;  It can be used both to filter incoming cells and shape out-going&n;  cells.&n;  &n;  ATM Linux actually supports:&n;  &n;  ATM_NONE() (no traffic in this direction)&n;  ATM_UBR(max_frame_size)&n;  ATM_CBR(max/min_pcr, max_cdv, max_frame_size)&n;  &n;  0 or ATM_MAX_PCR are used to indicate maximum available PCR&n;  &n;  A traffic specification consists of the AAL type and separate&n;  traffic specifications for either direction. In ATM Linux it is:&n;  &n;  struct atm_qos {&n;  struct atm_trafprm txtp;&n;  struct atm_trafprm rxtp;&n;  unsigned char aal;&n;  };&n;  &n;  AAL types are:&n;  &n;  ATM_NO_AAL    AAL not specified&n;  ATM_AAL0      &quot;raw&quot; ATM cells&n;  ATM_AAL1      AAL1 (CBR)&n;  ATM_AAL2      AAL2 (VBR)&n;  ATM_AAL34     AAL3/4 (data)&n;  ATM_AAL5      AAL5 (data)&n;  ATM_SAAL      signaling AAL&n;  &n;  The Horizon has support for AAL frame types: 0, 3/4 and 5. However,&n;  it does not implement AAL 3/4 SAR and it has a different notion of&n;  &quot;raw cell&quot; to ATM Linux&squot;s (48 bytes vs. 52 bytes) so neither are&n;  supported by this driver.&n;  &n;  The Horizon has limited support for ABR (including UBR), VBR and&n;  CBR. Each TX channel has a bucket (containing up to 31 cell units)&n;  and two timers (PCR and SCR) associated with it that can be used to&n;  govern cell emissions and host notification (in the case of ABR this&n;  is presumably so that RM cells may be emitted at appropriate times).&n;  The timers may either be disabled or may be set to any of 240 values&n;  (determined by the clock crystal, a fixed (?) per-device divider, a&n;  configurable divider and a configurable timer preload value).&n;  &n;  At the moment only UBR and CBR are supported by the driver. VBR will&n;  be supported as soon as ATM for Linux supports it. ABR support is&n;  very unlikely as RM cell handling is completely up to the driver.&n;  &n;  1. TX (TX channel setup and TX transfer)&n;  &n;  The TX half of the driver owns the TX Horizon registers. The TX&n;  component in the IRQ handler is the BM completion handler. This can&n;  only be entered when tx_busy is true (enforced by hardware). The&n;  other TX component can only be entered when tx_busy is false&n;  (enforced by driver). So TX is single-threaded.&n;  &n;  Apart from a minor optimisation to not re-select the last channel,&n;  the TX send component works as follows:&n;  &n;  Atomic test and set tx_busy until we succeed; we should implement&n;  some sort of timeout so that tx_busy will never be stuck at true.&n;  &n;  If no TX channel is set up for this VC we wait for an idle one (if&n;  necessary) and set it up.&n;  &n;  At this point we have a TX channel ready for use. We wait for enough&n;  buffers to become available then start a TX transmit (set the TX&n;  descriptor, schedule transfer, exit).&n;  &n;  The IRQ component handles TX completion (stats, free buffer, tx_busy&n;  unset, exit). We also re-schedule further transfers for the same&n;  frame if needed.&n;  &n;  TX setup in more detail:&n;  &n;  TX open is a nop, the relevant information is held in the hrz_vcc&n;  (vcc-&gt;dev_data) structure and is &quot;cached&quot; on the card.&n;  &n;  TX close gets the TX lock and clears the channel from the &quot;cache&quot;.&n;  &n;  2. RX (Data Available and RX transfer)&n;  &n;  The RX half of the driver owns the RX registers. There are two RX&n;  components in the IRQ handler: the data available handler deals with&n;  fresh data that has arrived on the card, the BM completion handler&n;  is very similar to the TX completion handler. The data available&n;  handler grabs the rx_lock and it is only released once the data has&n;  been discarded or completely transferred to the host. The BM&n;  completion handler only runs when the lock is held; the data&n;  available handler is locked out over the same period.&n;  &n;  Data available on the card triggers an interrupt. If the data is not&n;  suitable for our existing RX channels or we cannot allocate a buffer&n;  it is flushed. Otherwise an RX receive is scheduled. Multiple RX&n;  transfers may be scheduled for the same frame.&n;  &n;  RX setup in more detail:&n;  &n;  RX open...&n;  RX close...&n;  &n;  III Hardware Bugs&n;  &n;  0. Byte vs Word addressing of adapter RAM.&n;  &n;  A design feature; see the .h file (especially the memory map).&n;  &n;  1. Bus Master Data Transfers (original Horizon only, fixed in Ultra)&n;  &n;  The host must not start a transmit direction transfer at a&n;  non-four-byte boundary in host memory. Instead the host should&n;  perform a byte, or a two byte, or one byte followed by two byte&n;  transfer in order to start the rest of the transfer on a four byte&n;  boundary. RX is OK.&n;  &n;  Simultaneous transmit and receive direction bus master transfers are&n;  not allowed.&n;  &n;  The simplest solution to these two is to always do PIO (never DMA)&n;  in the TX direction on the original Horizon. More complicated&n;  solutions are likely to hurt my brain.&n;  &n;  2. Loss of buffer on close VC&n;  &n;  When a VC is being closed, the buffer associated with it is not&n;  returned to the pool. The host must store the reference to this&n;  buffer and when opening a new VC then give it to that new VC.&n;  &n;  The host intervention currently consists of stacking such a buffer&n;  pointer at VC close and checking the stack at VC open.&n;  &n;  3. Failure to close a VC&n;  &n;  If a VC is currently receiving a frame then closing the VC may fail&n;  and the frame continues to be received.&n;  &n;  The solution is to make sure any received frames are flushed when&n;  ready. This is currently done just before the solution to 2.&n;  &n;  4. PCI bus (original Horizon only, fixed in Ultra)&n;  &n;  Reading from the data port prior to initialisation will hang the PCI&n;  bus. Just don&squot;t do that then! We don&squot;t.&n;  &n;  IV To Do List&n;  &n;  . Timer code may be broken.&n;  &n;  . Allow users to specify buffer allocation split for TX and RX.&n;  &n;  . Deal once and for all with buggy VC close.&n;  &n;  . Handle interrupted and/or non-blocking operations.&n;  &n;  . Change some macros to functions and move from .h to .c.&n;  &n;  . Try to limit the number of TX frames each VC may have queued, in&n;    order to reduce the chances of TX buffer exhaustion.&n;  &n;  . Implement VBR (bucket and timers not understood) and ABR (need to&n;    do RM cells manually); also no Linux support for either.&n;  &n;  . Implement QoS changes on open VCs (involves extracting parts of VC open&n;    and close into separate functions and using them to make changes).&n;  &n;*/
 multiline_comment|/********** globals **********/
 DECL|variable|hrz_devs
 r_static
@@ -1231,7 +1232,6 @@ id|u32
 id|pre
 suffix:semicolon
 singleline_comment|// local fn to build the timer bits
-r_inline
 r_int
 id|set_cr
 (paren
@@ -2195,7 +2195,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 (paren
 id|skb
 )paren
@@ -2673,15 +2673,21 @@ id|rx_bytes
 suffix:semicolon
 r_int
 id|pio_instead
-suffix:semicolon
-macro_line|#ifndef TAILRECURSIONWORKS
-r_do
-(brace
-macro_line|#endif
-id|pio_instead
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef TAILRECURSIONWORKS
+id|pio_instead
+op_assign
+l_int|1
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|pio_instead
+)paren
+(brace
+macro_line|#endif
 singleline_comment|// bytes waiting for RX transfer
 id|rx_bytes
 op_assign
@@ -3002,8 +3008,12 @@ op_member_access_from_pointer
 id|vcc
 suffix:semicolon
 singleline_comment|// VC layer stats
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;rx
-op_increment
+)paren
 suffix:semicolon
 id|skb-&gt;stamp
 op_assign
@@ -3136,6 +3146,7 @@ c_cond
 (paren
 id|pio_instead
 )paren
+r_return
 id|rx_schedule
 (paren
 id|dev
@@ -3152,12 +3163,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|pio_instead
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 macro_line|#endif
@@ -3359,15 +3364,21 @@ l_int|0
 suffix:semicolon
 r_int
 id|pio_instead
-suffix:semicolon
-macro_line|#ifndef TAILRECURSIONWORKS
-r_do
-(brace
-macro_line|#endif
-id|pio_instead
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef TAILRECURSIONWORKS
+id|pio_instead
+op_assign
+l_int|1
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|pio_instead
+)paren
+(brace
+macro_line|#endif
 singleline_comment|// bytes in current region waiting for TX transfer
 id|tx_bytes
 op_assign
@@ -3662,6 +3673,10 @@ op_assign
 l_int|0
 suffix:semicolon
 singleline_comment|// VC layer stats
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|ATM_SKB
 c_func
 (paren
@@ -3669,7 +3684,7 @@ id|skb
 )paren
 op_member_access_from_pointer
 id|vcc-&gt;stats-&gt;tx
-op_increment
+)paren
 suffix:semicolon
 singleline_comment|// free the skb
 id|hrz_kfree_skb
@@ -3823,6 +3838,7 @@ c_cond
 (paren
 id|pio_instead
 )paren
+r_return
 id|tx_schedule
 (paren
 id|dev
@@ -3839,12 +3855,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|pio_instead
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 macro_line|#endif
@@ -4241,7 +4251,6 @@ op_star
 id|skb
 op_assign
 id|atm_alloc_charge
-c_func
 (paren
 id|atm_vcc
 comma
@@ -4250,9 +4259,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-singleline_comment|// If everyone has to call atm_pdu2... why isn&squot;t it part of
-singleline_comment|// atm_charge? B&squot;cos some people already have skb-&gt;truesize!
-singleline_comment|// WA: well. even if they think they do, they might not ... :-)
 r_if
 c_cond
 (paren
@@ -4324,7 +4330,9 @@ r_else
 (brace
 id|PRINTD
 (paren
-id|DBG_INFO
+id|DBG_SKB
+op_or
+id|DBG_WARN
 comma
 l_string|&quot;failed to get skb&quot;
 )paren
@@ -5424,6 +5432,11 @@ comma
 l_string|&quot;attempt to transmit on zero (rx_)channel&quot;
 )paren
 suffix:semicolon
+id|hrz_kfree_skb
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -5614,10 +5627,17 @@ id|tx_hold
 id|dev
 )paren
 )paren
+(brace
+id|hrz_kfree_skb
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
+)brace
 singleline_comment|// Wait for enough space to be available in transmit buffer memory.
 singleline_comment|// should be number of cells needed + 2 (according to hardware docs)
 singleline_comment|// = ((framelen+8)+47) / 48 + 2
@@ -5704,6 +5724,11 @@ suffix:semicolon
 id|tx_release
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|hrz_kfree_skb
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_return
@@ -6094,7 +6119,6 @@ comma
 id|CONTROL_0_REG
 )paren
 suffix:semicolon
-r_inline
 r_void
 id|WRITE_IT_WAIT
 (paren
@@ -6116,7 +6140,6 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
-r_inline
 r_void
 id|CLOCK_IT
 (paren
@@ -8850,9 +8873,14 @@ suffix:semicolon
 )brace
 singleline_comment|// this is &quot;immediately before allocating the connection identifier
 singleline_comment|// in hardware&quot; - so long as the next call does not fail :)
-id|atm_vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 singleline_comment|// any errors here are very serious and should never occur
 r_if
@@ -8937,9 +8965,14 @@ op_star
 id|vccp
 suffix:semicolon
 singleline_comment|// indicate readiness
-id|atm_vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -8994,10 +9027,14 @@ l_string|&quot;hrz_close&quot;
 )paren
 suffix:semicolon
 singleline_comment|// indicate unreadiness
-id|atm_vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9169,10 +9206,14 @@ id|vcc
 )paren
 suffix:semicolon
 singleline_comment|// say the VPI/VCI is free again
-id|atm_vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|atm_vcc-&gt;flags
+)paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -9864,7 +9905,6 @@ op_star
 id|membase
 op_assign
 id|bus_to_virt
-c_func
 (paren
 id|pci_dev-&gt;resource
 (braket
@@ -9999,7 +10039,7 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

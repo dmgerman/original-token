@@ -118,13 +118,6 @@ id|speed_map
 l_int|1024
 )braket
 suffix:semicolon
-DECL|member|fcp_data
-id|quadlet_t
-id|fcp_data
-(braket
-l_int|1024
-)braket
-suffix:semicolon
 )brace
 suffix:semicolon
 r_void

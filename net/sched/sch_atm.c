@@ -1332,7 +1332,7 @@ r_goto
 id|err_out
 suffix:semicolon
 )brace
-multiline_comment|/* @@@ should check if the socket is really operational or we&squot;ll crash&n;&t;   on vcc-&gt;dev-&gt;ops-&gt;send */
+multiline_comment|/* @@@ should check if the socket is really operational or we&squot;ll crash&n;&t;   on vcc-&gt;send */
 r_if
 c_cond
 (paren
@@ -2309,11 +2309,32 @@ suffix:semicolon
 id|flow-&gt;stats.packets
 op_increment
 suffix:semicolon
+multiline_comment|/*&n;&t; * Okay, this may seem weird. We pretend we&squot;ve dropped the packet if&n;&t; * it goes via ATM. The reason for this is that the outer qdisc&n;&t; * expects to be able to q-&gt;dequeue the packet later on if we return&n;&t; * success at this place. Also, sch-&gt;q.qdisc needs to reflect whether&n;&t; * there is a packet egligible for dequeuing or not. Note that the&n;&t; * statistics of the outer qdisc are necessarily wrong because of all&n;&t; * this. There&squot;s currently no correct solution for this.&n;&t; */
+r_if
+c_cond
+(paren
+id|flow
+op_eq
+op_amp
+id|p-&gt;link
+)paren
+(brace
 id|sch-&gt;q.qlen
 op_increment
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+id|tasklet_schedule
+c_func
+(paren
+op_amp
+id|p-&gt;task
+)paren
+suffix:semicolon
+r_return
+id|NET_XMIT_BYPASS
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Dequeue packets and send them over ATM. Note that we quite deliberately&n; * avoid checking net_device&squot;s flow control here, simply because sch_atm&n; * uses its own channels, which have nothing to do with any CLIP/LANE/or&n; * non-ATM interfaces.&n; */
@@ -2414,9 +2435,9 @@ id|skb-&gt;truesize
 )paren
 )paren
 (brace
-r_if
-c_cond
 (paren
+r_void
+)paren
 id|flow-&gt;q-&gt;ops
 op_member_access_from_pointer
 id|requeue
@@ -2426,16 +2447,10 @@ id|skb
 comma
 id|flow-&gt;q
 )paren
-)paren
-id|sch-&gt;q.qlen
-op_decrement
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|sch-&gt;q.qlen
-op_decrement
-suffix:semicolon
 id|D2PRINTK
 c_func
 (paren
@@ -2568,7 +2583,7 @@ multiline_comment|/* atm.atm_options are already set by atm_tc_enqueue */
 (paren
 r_void
 )paren
-id|flow-&gt;vcc-&gt;dev-&gt;ops
+id|flow-&gt;vcc
 op_member_access_from_pointer
 id|send
 c_func

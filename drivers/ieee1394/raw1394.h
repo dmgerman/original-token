@@ -6,7 +6,7 @@ mdefine_line|#define RAW1394_DEVICE_MAJOR      171
 DECL|macro|RAW1394_DEVICE_NAME
 mdefine_line|#define RAW1394_DEVICE_NAME       &quot;raw1394&quot;
 DECL|macro|RAW1394_KERNELAPI_VERSION
-mdefine_line|#define RAW1394_KERNELAPI_VERSION 1
+mdefine_line|#define RAW1394_KERNELAPI_VERSION 2
 multiline_comment|/* state: opened */
 DECL|macro|RAW1394_REQ_INITIALIZE
 mdefine_line|#define RAW1394_REQ_INITIALIZE    1
@@ -26,11 +26,15 @@ DECL|macro|RAW1394_REQ_LOCK64
 mdefine_line|#define RAW1394_REQ_LOCK64        103
 DECL|macro|RAW1394_REQ_ISO_LISTEN
 mdefine_line|#define RAW1394_REQ_ISO_LISTEN    200
+DECL|macro|RAW1394_REQ_FCP_LISTEN
+mdefine_line|#define RAW1394_REQ_FCP_LISTEN    201
 multiline_comment|/* kernel to user */
 DECL|macro|RAW1394_REQ_BUS_RESET
 mdefine_line|#define RAW1394_REQ_BUS_RESET     10000
 DECL|macro|RAW1394_REQ_ISO_RECEIVE
 mdefine_line|#define RAW1394_REQ_ISO_RECEIVE   10001
+DECL|macro|RAW1394_REQ_FCP_REQUEST
+mdefine_line|#define RAW1394_REQ_FCP_REQUEST   10002
 multiline_comment|/* error codes */
 DECL|macro|RAW1394_ERROR_NONE
 mdefine_line|#define RAW1394_ERROR_NONE        0
@@ -128,6 +132,10 @@ DECL|member|refcount
 id|atomic_t
 id|refcount
 suffix:semicolon
+DECL|member|data_size
+r_int
+id|data_size
+suffix:semicolon
 DECL|member|data
 id|quadlet_t
 id|data
@@ -188,6 +196,11 @@ suffix:semicolon
 DECL|member|poll_wait_complete
 id|wait_queue_head_t
 id|poll_wait_complete
+suffix:semicolon
+DECL|member|fcp_buffer
+id|u8
+op_star
+id|fcp_buffer
 suffix:semicolon
 DECL|member|listen_channels
 id|u64

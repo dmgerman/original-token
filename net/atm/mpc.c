@@ -2,6 +2,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 multiline_comment|/* We are an ethernet device */
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -2319,7 +2320,7 @@ id|atm_options
 op_assign
 id|entry-&gt;shortcut-&gt;atm_options
 suffix:semicolon
-id|entry-&gt;shortcut-&gt;dev-&gt;ops
+id|entry-&gt;shortcut
 op_member_access_from_pointer
 id|send
 c_func
@@ -3412,7 +3413,9 @@ multiline_comment|/* per-device data      */
 l_int|NULL
 comma
 multiline_comment|/* private PHY data     */
+(brace
 l_int|0
+)brace
 comma
 multiline_comment|/* device flags         */
 l_int|NULL
@@ -3587,11 +3590,23 @@ op_amp
 id|mpc_dev
 )paren
 suffix:semicolon
-id|vcc-&gt;flags
-op_or_assign
-id|ATM_VF_READY
-op_or
+id|set_bit
+c_func
+(paren
 id|ATM_VF_META
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 r_if
 c_cond

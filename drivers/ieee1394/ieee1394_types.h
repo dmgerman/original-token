@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
 DECL|macro|DECLARE_WAITQUEUE
 mdefine_line|#define DECLARE_WAITQUEUE(name, task) struct wait_queue name = { task, NULL }
@@ -62,6 +63,8 @@ id|head
 )paren
 suffix:semicolon
 )brace
+DECL|macro|__constant_cpu_to_be32
+mdefine_line|#define __constant_cpu_to_be32(x) __constant_htonl((x))
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,18)
 macro_line|#include &lt;asm/spinlock.h&gt;

@@ -1601,6 +1601,11 @@ id|u32
 id|dma_addr
 suffix:semicolon
 multiline_comment|/* DMA address of aligned chunk    */
+DECL|member|direction
+r_int
+id|direction
+suffix:semicolon
+multiline_comment|/* direction of DMA mapping        */
 DECL|member|alloc_size
 id|u32
 id|alloc_size
@@ -2463,6 +2468,8 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|dma_unmap
@@ -2479,6 +2486,8 @@ comma
 id|u32
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|dma_sync
@@ -2493,6 +2502,8 @@ id|fore200e
 op_star
 comma
 id|u32
+comma
+r_int
 comma
 r_int
 )paren
@@ -2671,6 +2682,35 @@ DECL|typedef|fore200e_bus_t
 )brace
 id|fore200e_bus_t
 suffix:semicolon
+macro_line|#if defined(CONFIG_ATM_FORE200E_SBA)
+macro_line|#  if defined(CONFIG_ATM_FORE200E_PCA)
+macro_line|#    if (PCI_DMA_BIDIRECTIONAL == SBUS_DMA_BIDIRECTIONAL) &amp;&amp; &bslash;&n;        (PCI_DMA_TODEVICE      == SBUS_DMA_TODEVICE)      &amp;&amp; &bslash;&n;        (PCI_DMA_FROMDEVICE    == SBUS_DMA_FROMDEVICE)
+DECL|macro|FORE200E_DMA_BIDIRECTIONAL
+macro_line|#      define FORE200E_DMA_BIDIRECTIONAL PCI_DMA_BIDIRECTIONAL
+DECL|macro|FORE200E_DMA_TODEVICE
+macro_line|#      define FORE200E_DMA_TODEVICE      PCI_DMA_TODEVICE
+DECL|macro|FORE200E_DMA_FROMDEVICE
+macro_line|#      define FORE200E_DMA_FROMDEVICE    PCI_DMA_FROMDEVICE
+macro_line|#    else
+multiline_comment|/* in that case, we&squot;ll need to add an extra indirection, e.g.&n;&t;  fore200e-&gt;bus-&gt;dma_direction[ fore200e_dma_direction ] */
+macro_line|#      error PCI and SBUS DMA direction flags differ!
+macro_line|#    endif
+macro_line|#  else
+DECL|macro|FORE200E_DMA_BIDIRECTIONAL
+macro_line|#    define FORE200E_DMA_BIDIRECTIONAL SBA_DMA_BIDIRECTIONAL
+DECL|macro|FORE200E_DMA_TODEVICE
+macro_line|#    define FORE200E_DMA_TODEVICE      SBA_DMA_TODEVICE
+DECL|macro|FORE200E_DMA_FROMDEVICE
+macro_line|#    define FORE200E_DMA_FROMDEVICE    SBA_DMA_FROMDEVICE
+macro_line|#  endif
+macro_line|#else
+DECL|macro|FORE200E_DMA_BIDIRECTIONAL
+macro_line|#  define FORE200E_DMA_BIDIRECTIONAL PCI_DMA_BIDIRECTIONAL
+DECL|macro|FORE200E_DMA_TODEVICE
+macro_line|#  define FORE200E_DMA_TODEVICE      PCI_DMA_TODEVICE
+DECL|macro|FORE200E_DMA_FROMDEVICE
+macro_line|#  define FORE200E_DMA_FROMDEVICE    PCI_DMA_FROMDEVICE
+macro_line|#endif
 multiline_comment|/* per-device data */
 DECL|struct|fore200e
 r_typedef

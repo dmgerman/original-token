@@ -1295,14 +1295,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|PIPE_FREE
+id|PIPE_EMPTY
 c_func
 (paren
 op_star
 id|inode
 )paren
-op_ge
-id|PIPE_BUF
 )paren
 id|mask
 op_assign

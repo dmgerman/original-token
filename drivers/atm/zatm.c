@@ -18,10 +18,12 @@ macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/atm_zatm.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;uPD98401.h&quot;
 macro_line|#include &quot;uPD98402.h&quot;
@@ -3135,8 +3137,12 @@ c_cond
 (paren
 id|vcc
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;rx_err
-op_increment
+)paren
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -3187,8 +3193,12 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;rx
-op_increment
+)paren
 suffix:semicolon
 )brace
 id|zout
@@ -4877,8 +4887,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|vcc-&gt;stats-&gt;tx
-op_increment
+)paren
 suffix:semicolon
 id|wake_up
 c_func
@@ -8890,10 +8904,14 @@ id|vcc
 )paren
 r_return
 suffix:semicolon
-id|vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 id|close_rx
 c_func
@@ -8942,10 +8960,14 @@ id|vcc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 )brace
 DECL|function|zatm_open
@@ -8997,10 +9019,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|test_bit
+c_func
 (paren
-id|vcc-&gt;flags
-op_amp
 id|ATM_VF_PARTIAL
+comma
+op_amp
+id|vcc-&gt;flags
 )paren
 )paren
 id|ZATM_VCC
@@ -9052,9 +9077,14 @@ id|vpi
 op_ne
 id|ATM_VCI_UNSPEC
 )paren
-id|vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9085,10 +9115,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|test_bit
+c_func
 (paren
-id|vcc-&gt;flags
-op_amp
 id|ATM_VF_PARTIAL
+comma
+op_amp
+id|vcc-&gt;flags
 )paren
 )paren
 (brace
@@ -9113,10 +9146,14 @@ op_logical_neg
 id|zatm_vcc
 )paren
 (brace
-id|vcc-&gt;flags
-op_and_assign
-op_complement
+id|clear_bit
+c_func
+(paren
 id|ATM_VF_ADDR
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -9253,9 +9290,14 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|vcc-&gt;flags
-op_or_assign
+id|set_bit
+c_func
+(paren
 id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -9951,10 +9993,13 @@ op_member_access_from_pointer
 id|tx_chan
 op_logical_or
 op_logical_neg
+id|test_bit
+c_func
 (paren
-id|vcc-&gt;flags
-op_amp
 id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
 )paren
 )paren
 (brace
@@ -10360,7 +10405,7 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

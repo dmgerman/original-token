@@ -1,57 +1,19 @@
 multiline_comment|/* sonet.h - SONET/SHD physical layer control */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef LINUX_SONET_H
 DECL|macro|LINUX_SONET_H
 mdefine_line|#define LINUX_SONET_H
+DECL|macro|__SONET_ITEMS
+mdefine_line|#define __SONET_ITEMS &bslash;&n;    __HANDLE_ITEM(section_bip); &t;/* section parity errors (B1) */ &bslash;&n;    __HANDLE_ITEM(line_bip);&t;&t;/* line parity errors (B2) */ &bslash;&n;    __HANDLE_ITEM(path_bip);&t;&t;/* path parity errors (B3) */ &bslash;&n;    __HANDLE_ITEM(line_febe);&t;&t;/* line parity errors at remote */ &bslash;&n;    __HANDLE_ITEM(path_febe);&t;&t;/* path parity errors at remote */ &bslash;&n;    __HANDLE_ITEM(corr_hcs);&t;&t;/* correctable header errors */ &bslash;&n;    __HANDLE_ITEM(uncorr_hcs);&t;&t;/* uncorrectable header errors */ &bslash;&n;    __HANDLE_ITEM(tx_cells);&t;&t;/* cells sent */ &bslash;&n;    __HANDLE_ITEM(rx_cells);&t;&t;/* cells received */
 DECL|struct|sonet_stats
 r_struct
 id|sonet_stats
 (brace
-DECL|member|section_bip
-r_int
-id|section_bip
-suffix:semicolon
-multiline_comment|/* section parity errors (B1) */
-DECL|member|line_bip
-r_int
-id|line_bip
-suffix:semicolon
-multiline_comment|/* line parity errors (B2) */
-DECL|member|path_bip
-r_int
-id|path_bip
-suffix:semicolon
-multiline_comment|/* path parity errors (B3) */
-DECL|member|line_febe
-r_int
-id|line_febe
-suffix:semicolon
-multiline_comment|/* line parity errors at remote */
-DECL|member|path_febe
-r_int
-id|path_febe
-suffix:semicolon
-multiline_comment|/* path parity errors at remote */
-DECL|member|corr_hcs
-r_int
-id|corr_hcs
-suffix:semicolon
-multiline_comment|/* correctable header errors */
-DECL|member|uncorr_hcs
-r_int
-id|uncorr_hcs
-suffix:semicolon
-multiline_comment|/* uncorrectable header errors */
-DECL|member|tx_cells
-r_int
-id|tx_cells
-suffix:semicolon
-multiline_comment|/* cells sent */
-DECL|member|rx_cells
-r_int
-id|rx_cells
-suffix:semicolon
-multiline_comment|/* cells received */
+DECL|macro|__HANDLE_ITEM
+mdefine_line|#define __HANDLE_ITEM(i) int i
+id|__SONET_ITEMS
+DECL|macro|__HANDLE_ITEM
+macro_line|#undef __HANDLE_ITEM
 )brace
 id|__attribute__
 (paren
@@ -105,5 +67,54 @@ DECL|macro|SONET_FRAME_SDH
 mdefine_line|#define SONET_FRAME_SDH   1&t;&t;/* SDH STM-1 framing */
 DECL|macro|SONET_FRSENSE_SIZE
 mdefine_line|#define SONET_FRSENSE_SIZE 6&t;&t;/* C1[3],H1[3] (0xff for unknown) */
+macro_line|#ifndef __KERNEL__
+DECL|macro|__SONET_ITEMS
+macro_line|#undef __SONET_ITEMS
+macro_line|#else
+macro_line|#include &lt;asm/atomic.h&gt;
+DECL|struct|k_sonet_stats
+r_struct
+id|k_sonet_stats
+(brace
+DECL|macro|__HANDLE_ITEM
+mdefine_line|#define __HANDLE_ITEM(i) atomic_t i
+id|__SONET_ITEMS
+DECL|macro|__HANDLE_ITEM
+macro_line|#undef __HANDLE_ITEM
+)brace
+suffix:semicolon
+r_extern
+r_void
+id|sonet_copy_stats
+c_func
+(paren
+r_struct
+id|k_sonet_stats
+op_star
+id|from
+comma
+r_struct
+id|sonet_stats
+op_star
+id|to
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sonet_subtract_stats
+c_func
+(paren
+r_struct
+id|k_sonet_stats
+op_star
+id|from
+comma
+r_struct
+id|sonet_stats
+op_star
+id|to
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

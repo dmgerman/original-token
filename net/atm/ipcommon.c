@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/ipcommon.c - Common items for all ways of doing IP over ATM */
-multiline_comment|/* Written 1996,1997 by Werner Almesberger, EPFL LRC */
+multiline_comment|/* Written 1996-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -40,7 +40,7 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * skb_migrate moves the list at FROM to TO, emptying FROM in the process.&n; * This function should live in skbuff.c or skbuff.h. Note that skb_migrate&n; * is not atomic, so turn off interrupts when using it.&n; */
+multiline_comment|/*&n; * skb_migrate moves the list at FROM to TO, emptying FROM in the process.&n; * This function should live in skbuff.c or skbuff.h.&n; */
 DECL|function|skb_migrate
 r_void
 id|skb_migrate
@@ -61,9 +61,63 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|from-&gt;lock
 comma
+id|flags
+)paren
+suffix:semicolon
 op_star
-id|prev
+id|to
+op_assign
+op_star
+id|from
+suffix:semicolon
+id|from-&gt;prev
+op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|from
+suffix:semicolon
+id|from-&gt;next
+op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|from
+suffix:semicolon
+id|from-&gt;qlen
+op_assign
+l_int|0
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|from-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|to-&gt;lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -76,7 +130,7 @@ r_struct
 id|sk_buff
 op_star
 )paren
-id|from
+id|to
 )paren
 op_member_access_from_pointer
 id|next
@@ -98,11 +152,19 @@ id|skb-&gt;list
 op_assign
 id|to
 suffix:semicolon
-id|prev
-op_assign
-id|from-&gt;prev
-suffix:semicolon
-id|from-&gt;next-&gt;prev
+r_if
+c_cond
+(paren
+id|to-&gt;next
+op_eq
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|from
+)paren
+id|to-&gt;next
 op_assign
 (paren
 r_struct
@@ -111,7 +173,7 @@ op_star
 )paren
 id|to
 suffix:semicolon
-id|prev-&gt;next
+id|to-&gt;next-&gt;prev
 op_assign
 (paren
 r_struct
@@ -120,17 +182,14 @@ op_star
 )paren
 id|to
 suffix:semicolon
-op_star
-id|to
+id|to-&gt;prev-&gt;next
 op_assign
-op_star
-id|from
-suffix:semicolon
-id|skb_queue_head_init
-c_func
 (paren
-id|from
+r_struct
+id|sk_buff
+op_star
 )paren
+id|to
 suffix:semicolon
 )brace
 eof

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/atmarp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/init.h&gt; /* for __init */
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/param.h&gt; /* for HZ */
 macro_line|#include &quot;resources.h&quot;
 macro_line|#include &quot;common.h&quot; /* atm_proc_init prototype */
@@ -139,7 +140,7 @@ id|aal
 comma
 r_const
 r_struct
-id|atm_aal_stats
+id|k_atm_aal_stats
 op_star
 id|stats
 )paren
@@ -159,15 +160,40 @@ l_string|&quot;%s ( %d %d %d %d %d )&quot;
 comma
 id|aal
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|stats-&gt;tx
+)paren
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|stats-&gt;tx_err
+)paren
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|stats-&gt;rx
+)paren
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|stats-&gt;rx_err
+)paren
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|stats-&gt;rx_drop
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1176,7 +1202,7 @@ id|here
 comma
 l_string|&quot; %04x  %5d %7d/%7d %7d/%7d&bslash;n&quot;
 comma
-id|vcc-&gt;flags
+id|vcc-&gt;flags.bits
 comma
 id|vcc-&gt;reply
 comma
@@ -3265,10 +3291,9 @@ op_assign
 id|proc_mkdir
 c_func
 (paren
-l_string|&quot;atm&quot;
+l_string|&quot;net/atm&quot;
 comma
-op_amp
-id|proc_root
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -3407,10 +3432,9 @@ suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren
-l_string|&quot;atm&quot;
+l_string|&quot;net/atm&quot;
 comma
-op_amp
-id|proc_root
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

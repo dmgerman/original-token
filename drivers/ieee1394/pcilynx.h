@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|PCILYNX_DRIVER_NAME
 mdefine_line|#define PCILYNX_DRIVER_NAME      &quot;pcilynx&quot;
 DECL|macro|PCILYNX_MAJOR
@@ -1394,6 +1393,8 @@ DECL|macro|PCL_WAITSTAT
 mdefine_line|#define PCL_WAITSTAT           (1&lt;&lt;17)
 DECL|macro|PCL_BIGENDIAN
 mdefine_line|#define PCL_BIGENDIAN          (1&lt;&lt;16)
+DECL|macro|_
+mdefine_line|#define _(x) (__constant_cpu_to_be32(x))
 DECL|variable|lynx_csr_rom
 id|quadlet_t
 id|lynx_csr_rom
@@ -1402,161 +1403,391 @@ id|lynx_csr_rom
 op_assign
 (brace
 multiline_comment|/* bus info block */
+id|_
+c_func
+(paren
 l_int|0x04040000
+)paren
 comma
 multiline_comment|/* info/CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x31333934
+)paren
 comma
 multiline_comment|/* 1394 magic number */
+id|_
+c_func
+(paren
 l_int|0xf064a000
+)paren
 comma
 multiline_comment|/* misc. settings */
+id|_
+c_func
+(paren
 l_int|0x08002850
+)paren
 comma
 multiline_comment|/* vendor ID, chip ID high */
+id|_
+c_func
+(paren
 l_int|0x0000ffff
+)paren
 comma
 multiline_comment|/* chip ID low */
 multiline_comment|/* root directory */
+id|_
+c_func
+(paren
 l_int|0x00090000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x03080028
+)paren
 comma
 multiline_comment|/* vendor ID (Texas Instr.) */
+id|_
+c_func
+(paren
 l_int|0x81000009
+)paren
 comma
 multiline_comment|/* offset to textual ID */
+id|_
+c_func
+(paren
 l_int|0x0c000200
+)paren
 comma
 multiline_comment|/* node capabilities */
+id|_
+c_func
+(paren
 l_int|0x8d00000e
+)paren
 comma
 multiline_comment|/* offset to unique ID */
+id|_
+c_func
+(paren
 l_int|0xc7000010
+)paren
 comma
 multiline_comment|/* offset to module independent info */
+id|_
+c_func
+(paren
 l_int|0x04000000
+)paren
 comma
 multiline_comment|/* module hardware version */
+id|_
+c_func
+(paren
 l_int|0x81000026
+)paren
 comma
 multiline_comment|/* offset to textual ID */
+id|_
+c_func
+(paren
 l_int|0x09000000
+)paren
 comma
 multiline_comment|/* node hardware version */
+id|_
+c_func
+(paren
 l_int|0x81000026
+)paren
 comma
 multiline_comment|/* offset to textual ID */
 multiline_comment|/* module vendor ID textual */
+id|_
+c_func
+(paren
 l_int|0x00080000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x54455841
+)paren
 comma
 multiline_comment|/* &quot;Texas Instruments&quot; */
+id|_
+c_func
+(paren
 l_int|0x5320494e
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x53545255
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x4d454e54
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x53000000
+)paren
 comma
 multiline_comment|/* node unique ID leaf */
+id|_
+c_func
+(paren
 l_int|0x00020000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x08002850
+)paren
 comma
 multiline_comment|/* vendor ID, chip ID high */
+id|_
+c_func
+(paren
 l_int|0x0000ffff
+)paren
 comma
 multiline_comment|/* chip ID low */
 multiline_comment|/* module dependent info */
+id|_
+c_func
+(paren
 l_int|0x00060000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0xb8000006
+)paren
 comma
 multiline_comment|/* offset to module textual ID */
+id|_
+c_func
+(paren
 l_int|0x81000004
+)paren
 comma
 multiline_comment|/* ??? textual descriptor */
+id|_
+c_func
+(paren
 l_int|0x39010000
+)paren
 comma
 multiline_comment|/* SRAM size */
+id|_
+c_func
+(paren
 l_int|0x3a010000
+)paren
 comma
 multiline_comment|/* AUXRAM size */
+id|_
+c_func
+(paren
 l_int|0x3b000000
+)paren
 comma
 multiline_comment|/* AUX device */
 multiline_comment|/* module textual ID */
+id|_
+c_func
+(paren
 l_int|0x00050000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x54534231
+)paren
 comma
 multiline_comment|/* &quot;TSB12LV21&quot; */
+id|_
+c_func
+(paren
 l_int|0x324c5632
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x31000000
+)paren
 comma
 multiline_comment|/* part number */
+id|_
+c_func
+(paren
 l_int|0x00060000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x39383036
+)paren
 comma
 multiline_comment|/* &quot;9806000-0001&quot; */
+id|_
+c_func
+(paren
 l_int|0x3030342d
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x30303431
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x20000001
+)paren
 comma
 multiline_comment|/* module hardware version textual */
+id|_
+c_func
+(paren
 l_int|0x00050000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x5453424b
+)paren
 comma
 multiline_comment|/* &quot;TSBKPCITST&quot; */
+id|_
+c_func
+(paren
 l_int|0x50434954
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x53540000
+)paren
 comma
 multiline_comment|/* node hardware version textual */
+id|_
+c_func
+(paren
 l_int|0x00050000
+)paren
 comma
 multiline_comment|/* CRC length, CRC */
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x00000000
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x54534232
+)paren
 comma
 multiline_comment|/* &quot;TSB21LV03&quot; */
+id|_
+c_func
+(paren
 l_int|0x313c5630
+)paren
 comma
+id|_
+c_func
+(paren
 l_int|0x33000000
+)paren
 )brace
 suffix:semicolon
+DECL|macro|_
+macro_line|#undef _
 eof
