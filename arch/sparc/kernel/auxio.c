@@ -1,6 +1,7 @@
 multiline_comment|/* auxio.c: Probing for the Sparc AUXIO register at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
@@ -118,6 +119,15 @@ op_logical_neg
 id|auxio_nd
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/* There may be auxio on Ebus */
+id|auxio_register
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -149,6 +159,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 id|prom_getproperty

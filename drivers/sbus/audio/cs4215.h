@@ -94,7 +94,11 @@ op_assign
 (brace
 l_int|8000
 comma
+(paren
 l_int|1
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|0
@@ -106,7 +110,11 @@ comma
 (brace
 l_int|16000
 comma
+(paren
 l_int|1
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|1
@@ -118,7 +126,11 @@ comma
 (brace
 l_int|27429
 comma
+(paren
 l_int|1
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|2
@@ -131,7 +143,11 @@ multiline_comment|/* Actually 24428.57 */
 (brace
 l_int|32000
 comma
+(paren
 l_int|1
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|3
@@ -140,12 +156,16 @@ l_int|3
 )paren
 )brace
 comma
-multiline_comment|/* {&t; NA,&t;1,&t;(4&lt;&lt;3)&t;}, */
-multiline_comment|/* {&t; NA,&t;1,&t;(5&lt;&lt;3)&t;}, */
+multiline_comment|/* {&t; NA,&t;(1&lt;&lt;4),&t;(4&lt;&lt;3)&t;}, */
+multiline_comment|/* {&t; NA,&t;(1&lt;&lt;4),&t;(5&lt;&lt;3)&t;}, */
 (brace
 l_int|48000
 comma
+(paren
 l_int|1
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|6
@@ -157,7 +177,11 @@ comma
 (brace
 l_int|9600
 comma
+(paren
 l_int|1
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|7
@@ -169,7 +193,11 @@ comma
 (brace
 l_int|5513
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|0
@@ -182,7 +210,11 @@ multiline_comment|/* Actually 5512.5 */
 (brace
 l_int|11025
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|1
@@ -194,7 +226,11 @@ comma
 (brace
 l_int|18900
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|2
@@ -206,7 +242,11 @@ comma
 (brace
 l_int|22050
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|3
@@ -218,7 +258,11 @@ comma
 (brace
 l_int|37800
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|4
@@ -230,7 +274,11 @@ comma
 (brace
 l_int|44100
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|5
@@ -242,7 +290,11 @@ comma
 (brace
 l_int|33075
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|6
@@ -254,7 +306,11 @@ comma
 (brace
 l_int|6615
 comma
+(paren
 l_int|2
+op_lshift
+l_int|4
+)paren
 comma
 (paren
 l_int|7

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bwtwofb.c,v 1.5 1998/08/23 14:20:40 mj Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
+multiline_comment|/* $Id: bwtwofb.c,v 1.6 1998/09/15 15:45:35 jj Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -592,11 +592,9 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|bwtwofb_init
 r_char
+id|__init
 op_star
 id|bwtwofb_init
 c_func
@@ -605,7 +603,6 @@ r_struct
 id|fb_info_sbusfb
 op_star
 id|fb
-)paren
 )paren
 (brace
 r_struct
@@ -696,6 +693,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+op_logical_neg
+id|ARCH_SUN4
+)paren
+op_logical_and
+(paren
 op_logical_neg
 id|prom_getbool
 c_func
@@ -703,6 +706,7 @@ c_func
 id|fb-&gt;prom_node
 comma
 l_string|&quot;width&quot;
+)paren
 )paren
 )paren
 (brace
@@ -892,6 +896,10 @@ id|disp-&gt;scrollmode
 op_assign
 id|SCROLL_YREDRAW
 suffix:semicolon
+id|disp-&gt;inverse
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -940,6 +948,7 @@ id|fix-&gt;visual
 op_assign
 id|FB_VISUAL_MONO01
 suffix:semicolon
+macro_line|#ifndef CONFIG_SUN4
 id|fb-&gt;blank
 op_assign
 id|bw2_blank
@@ -948,6 +957,7 @@ id|fb-&gt;unblank
 op_assign
 id|bw2_unblank
 suffix:semicolon
+macro_line|#endif
 id|fb-&gt;margins
 op_assign
 id|bw2_margins

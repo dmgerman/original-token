@@ -185,6 +185,10 @@ DECL|macro|TIOCSERGETMULTI
 mdefine_line|#define TIOCSERGETMULTI 0x545A /* Get multiport config  */
 DECL|macro|TIOCSERSETMULTI
 mdefine_line|#define TIOCSERSETMULTI 0x545B /* Set multiport config */
+DECL|macro|TIOCMIWAIT
+mdefine_line|#define TIOCMIWAIT&t;0x545C /* Wait input */
+DECL|macro|TIOCGICOUNT
+mdefine_line|#define TIOCGICOUNT&t;0x545D /* Read serial port inline interrupt counts */
 multiline_comment|/* Kernel definitions */
 macro_line|#ifdef __KERNEL__
 DECL|macro|TIOCGETC

@@ -92,6 +92,7 @@ id|vc_cons
 id|MAX_NR_CONSOLES
 )braket
 suffix:semicolon
+macro_line|#ifndef VT_SINGLE_DRIVER
 DECL|variable|con_driver_map
 r_static
 r_struct
@@ -102,6 +103,7 @@ id|con_driver_map
 id|MAX_NR_CONSOLES
 )braket
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|con_open
@@ -323,6 +325,13 @@ DECL|macro|IS_FG
 mdefine_line|#define IS_FG (currcons == fg_console)
 DECL|macro|IS_VISIBLE
 mdefine_line|#define IS_VISIBLE CON_IS_VISIBLE(vc_cons[currcons].d)
+macro_line|#ifdef VT_BUF_VRAM_ONLY
+DECL|macro|DO_UPDATE
+mdefine_line|#define DO_UPDATE 0
+macro_line|#else
+DECL|macro|DO_UPDATE
+mdefine_line|#define DO_UPDATE IS_VISIBLE
+macro_line|#endif
 DECL|function|screenpos
 r_static
 r_inline
@@ -713,6 +722,7 @@ r_int
 id|count
 )paren
 (brace
+macro_line|#ifndef VT_BUF_VRAM_ONLY
 r_int
 r_int
 id|xx
@@ -943,6 +953,7 @@ id|yy
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|update_region
 r_void
@@ -963,7 +974,7 @@ id|count
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 (brace
 id|hide_cursor
@@ -1045,6 +1056,7 @@ comma
 id|_reverse
 )paren
 suffix:semicolon
+macro_line|#ifndef VT_BUF_VRAM_ONLY
 multiline_comment|/*&n; * ++roman: I completely changed the attribute format for monochrome&n; * mode (!can_do_color). The formerly used MDA (monochrome display&n; * adapter) format didn&squot;t allow the combination of certain effects.&n; * Now the attribute is just a bit vector:&n; *  Bit 0..1: intensity (0..2)&n; *  Bit 2   : underline&n; *  Bit 3   : reverse&n; *  Bit 7   : blink&n; */
 (brace
 id|u8
@@ -1193,6 +1205,11 @@ r_return
 id|a
 suffix:semicolon
 )brace
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|update_attr
 r_static
@@ -1311,6 +1328,7 @@ comma
 id|count
 )paren
 suffix:semicolon
+macro_line|#ifndef VT_BUF_VRAM_ONLY
 r_else
 (brace
 id|u16
@@ -1466,10 +1484,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|do_update_region
 c_func
@@ -1542,7 +1561,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -1619,7 +1638,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 (brace
 id|oldx
@@ -1744,7 +1763,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 (brace
 r_int
@@ -1903,7 +1922,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 (brace
 r_int
@@ -2138,7 +2157,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -2206,7 +2225,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -2737,6 +2756,7 @@ id|sw
 op_assign
 id|conswitchp
 suffix:semicolon
+macro_line|#ifndef VT_SINGLE_DRIVER
 r_if
 c_cond
 (paren
@@ -2752,6 +2772,7 @@ id|con_driver_map
 id|currcons
 )braket
 suffix:semicolon
+macro_line|#endif
 id|cons_num
 op_assign
 id|currcons
@@ -4398,7 +4419,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 (brace
 multiline_comment|/* do in two stages */
@@ -4485,7 +4506,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 (brace
 multiline_comment|/* do in two stages */
@@ -4558,7 +4579,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -4655,7 +4676,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -4712,7 +4733,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -4767,7 +4788,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -4880,7 +4901,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 )paren
 id|sw
 op_member_access_from_pointer
@@ -8809,8 +8830,12 @@ r_int
 id|count
 )paren
 (brace
+macro_line|#ifdef VT_BUF_VRAM_ONLY
 DECL|macro|FLUSH
+mdefine_line|#define FLUSH do { } while(0);
+macro_line|#else
 mdefine_line|#define FLUSH if (draw_x &gt;= 0) { &bslash;&n;&t;sw-&gt;con_putcs(vc_cons[currcons].d, (u16 *)draw_from, (u16 *)draw_to-(u16 *)draw_from, y, draw_x); &bslash;&n;&t;draw_x = -1; &bslash;&n;&t;}
+macro_line|#endif
 r_int
 id|c
 comma
@@ -9485,7 +9510,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_VISIBLE
+id|DO_UPDATE
 op_logical_and
 id|draw_x
 OL
@@ -9795,6 +9820,15 @@ r_goto
 id|quit
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|vcmode
+op_ne
+id|KD_TEXT
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/* undraw cursor first */
 r_if
 c_cond
@@ -11503,6 +11537,7 @@ r_return
 id|kmem_start
 suffix:semicolon
 )brace
+macro_line|#ifndef VT_SINGLE_DRIVER
 DECL|function|clear_buffer_attributes
 r_static
 r_void
@@ -11896,6 +11931,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Screen blanking&n; */
 DECL|function|set_vesa_blanking
 r_static
@@ -13691,6 +13727,7 @@ c_func
 id|vc_resize
 )paren
 suffix:semicolon
+macro_line|#ifndef VT_SINGLE_DRIVER
 DECL|variable|take_over_console
 id|EXPORT_SYMBOL
 c_func
@@ -13705,4 +13742,5 @@ c_func
 id|give_up_console
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

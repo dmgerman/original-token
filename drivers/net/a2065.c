@@ -2195,6 +2195,10 @@ r_static
 r_int
 id|outs
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* Transmitter timeout, serious problems */
 r_if
 c_cond
@@ -2245,12 +2249,6 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* Block a timer-based transmit from overlapping. */
-macro_line|#ifdef OLD_METHOD
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -2279,10 +2277,20 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
 id|skblen
 op_assign
 id|skb-&gt;len
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2290,10 +2298,18 @@ c_cond
 op_logical_neg
 id|TX_BUFFS_AVAIL
 )paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG_DRIVER
 multiline_comment|/* dump the packet */
 (brace
@@ -2487,6 +2503,12 @@ id|TX_BUFFS_AVAIL
 id|dev-&gt;tbusy
 op_assign
 l_int|0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_return
 id|status

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.20 1998/08/03 20:03:26 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.22 1998/09/25 01:09:27 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -767,6 +767,15 @@ id|out_putf
 suffix:semicolon
 )brace
 )brace
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_mmap
@@ -1056,6 +1065,12 @@ op_star
 id|regs
 )paren
 (brace
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -1069,11 +1084,21 @@ id|regs-&gt;tnpc
 op_add_assign
 l_int|4
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|count
+op_le
+l_int|20
+)paren
+(brace
 id|printk
 (paren
 l_string|&quot;For Solaris binary emulation you need solaris module loaded&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 id|show_regs
 (paren
 id|regs
@@ -1095,7 +1120,8 @@ c_func
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_utrap_install

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * $Id: residual.c,v 1.12 1998/08/27 23:15:56 paulus Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;IBM Power Personal Systems Architecture&n; *&t;Residual Data&n; * &t;Document Number: PPS-AR-FW0001&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/pnp.h&gt;

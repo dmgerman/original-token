@@ -36,6 +36,8 @@ id|inet_family_ops
 suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/icmpv6.h&gt;
+macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
@@ -899,6 +901,22 @@ c_func
 id|ip_statistics
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IPV6
+DECL|variable|ipv6_addr_type
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ipv6_addr_type
+)paren
+suffix:semicolon
+DECL|variable|icmpv6_send
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|icmpv6_send
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_IPV6_MODULE
 multiline_comment|/* inet functions common to v4 and v6 */
 DECL|variable|inet_stream_ops

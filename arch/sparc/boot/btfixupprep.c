@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: btfixupprep.c,v 1.3 1998/03/09 14:03:10 jj Exp $&n;   Simple utility to prepare vmlinux image for sparc.&n;   Resolves all BTFIXUP uses and settings and creates&n;   a special .s object to link to the image.&n;   &n;   Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+multiline_comment|/* $Id: btfixupprep.c,v 1.5 1998/09/16 12:24:55 jj Exp $&n;   Simple utility to prepare vmlinux image for sparc.&n;   Resolves all BTFIXUP uses and settings and creates&n;   a special .s object to link to the image.&n;   &n;   Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;ctype.h&gt;
@@ -8,6 +8,14 @@ macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;malloc.h&gt;
 DECL|macro|MAXSYMS
 mdefine_line|#define MAXSYMS 1024
+DECL|variable|symtab
+r_static
+r_char
+op_star
+id|symtab
+op_assign
+l_string|&quot;SYMBOL TABLE:&quot;
+suffix:semicolon
 DECL|variable|relrec
 r_static
 r_char
@@ -20,6 +28,15 @@ DECL|variable|rellen
 r_static
 r_int
 id|rellen
+suffix:semicolon
+DECL|variable|symlen
+r_static
+r_int
+id|symlen
+suffix:semicolon
+DECL|variable|mode
+r_int
+id|mode
 suffix:semicolon
 r_struct
 id|_btfixup
@@ -386,6 +403,116 @@ r_char
 op_star
 id|initvalstr
 suffix:semicolon
+id|symlen
+op_assign
+id|strlen
+c_func
+(paren
+id|symtab
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|fgets
+(paren
+id|buffer
+comma
+l_int|1024
+comma
+id|stdin
+)paren
+op_ne
+l_int|NULL
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+(paren
+id|buffer
+comma
+id|symtab
+comma
+id|symlen
+)paren
+)paren
+r_goto
+id|main0
+suffix:semicolon
+id|fatal
+c_func
+(paren
+)paren
+suffix:semicolon
+id|main0
+suffix:colon
+r_if
+c_cond
+(paren
+id|fgets
+(paren
+id|buffer
+comma
+l_int|1024
+comma
+id|stdin
+)paren
+op_eq
+l_int|NULL
+op_logical_or
+id|buffer
+(braket
+l_int|0
+)braket
+template_param
+l_char|&squot;9&squot;
+)paren
+id|fatal
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|mode
+op_assign
+l_int|0
+suffix:semicolon
+suffix:semicolon
+id|mode
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|buffer
+(braket
+id|mode
+)braket
+template_param
+l_char|&squot;9&squot;
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mode
+op_ne
+l_int|8
+op_logical_and
+id|mode
+op_ne
+l_int|16
+)paren
+id|fatal
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rellen
 op_assign
 id|strlen
@@ -525,6 +652,9 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_int
+id|nbase
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -568,7 +698,9 @@ id|strlen
 id|buffer
 )paren
 OL
-l_int|30
+l_int|22
+op_plus
+id|mode
 )paren
 r_continue
 suffix:semicolon
@@ -579,7 +711,7 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|8
+id|mode
 comma
 l_string|&quot; R_SPARC_&quot;
 comma
@@ -588,26 +720,38 @@ l_int|9
 )paren
 r_continue
 suffix:semicolon
+id|nbase
+op_assign
+l_int|27
+op_minus
+l_int|8
+op_plus
+id|mode
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|buffer
 (braket
-l_int|27
+id|nbase
 )braket
 op_ne
 l_char|&squot;_&squot;
 op_logical_or
 id|buffer
 (braket
-l_int|28
+id|nbase
+op_plus
+l_int|1
 )braket
 op_ne
 l_char|&squot;_&squot;
 op_logical_or
 id|buffer
 (braket
-l_int|29
+id|nbase
+op_plus
+l_int|2
 )braket
 op_ne
 l_char|&squot;_&squot;
@@ -619,7 +763,9 @@ c_cond
 (paren
 id|buffer
 (braket
-l_int|30
+id|nbase
+op_plus
+l_int|3
 )braket
 )paren
 (brace
@@ -660,7 +806,9 @@ id|strchr
 (paren
 id|buffer
 op_plus
-l_int|32
+id|nbase
+op_plus
+l_int|5
 comma
 l_char|&squot;+&squot;
 )paren
@@ -677,21 +825,27 @@ l_int|0
 suffix:semicolon
 id|shift
 op_assign
-l_int|32
+id|nbase
+op_plus
+l_int|5
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|buffer
 (braket
-l_int|31
+id|nbase
+op_plus
+l_int|4
 )braket
 op_eq
 l_char|&squot;s&squot;
 op_logical_and
 id|buffer
 (braket
-l_int|32
+id|nbase
+op_plus
+l_int|5
 )braket
 op_eq
 l_char|&squot;_&squot;
@@ -699,7 +853,9 @@ l_char|&squot;_&squot;
 (brace
 id|shift
 op_assign
-l_int|33
+id|nbase
+op_plus
+l_int|6
 suffix:semicolon
 r_if
 c_cond
@@ -737,7 +893,9 @@ c_cond
 (paren
 id|buffer
 (braket
-l_int|31
+id|nbase
+op_plus
+l_int|4
 )braket
 op_ne
 l_char|&squot;_&squot;
@@ -761,6 +919,13 @@ comma
 l_string|&quot;.text.init&quot;
 )paren
 op_logical_and
+id|strcmp
+(paren
+id|sect
+comma
+l_string|&quot;.fixup&quot;
+)paren
+op_logical_and
 (paren
 id|strcmp
 (paren
@@ -771,7 +936,9 @@ l_string|&quot;__ksymtab&quot;
 op_logical_or
 id|buffer
 (braket
-l_int|30
+id|nbase
+op_plus
+l_int|3
 )braket
 op_ne
 l_char|&squot;f&squot;
@@ -783,7 +950,9 @@ c_cond
 (paren
 id|buffer
 (braket
-l_int|30
+id|nbase
+op_plus
+l_int|3
 )braket
 op_eq
 l_char|&squot;f&squot;
@@ -793,7 +962,7 @@ c_func
 (paren
 id|stderr
 comma
-l_string|&quot;Wrong use of &squot;%s&squot; in &squot;%s&squot; section. It can be only used in .text, .text.init and __ksymtab&bslash;n&quot;
+l_string|&quot;Wrong use of &squot;%s&squot; in &squot;%s&squot; section. It can be only used in .text, .text.init, .fixup and __ksymtab&bslash;n&quot;
 comma
 id|buffer
 op_plus
@@ -808,7 +977,7 @@ c_func
 (paren
 id|stderr
 comma
-l_string|&quot;Wrong use of &squot;%s&squot; in &squot;%s&squot; section. It can be only used in .text and .text.init&bslash;n&quot;
+l_string|&quot;Wrong use of &squot;%s&squot; in &squot;%s&squot; section. It can be only used in .text, .fixup and .text.init&bslash;n&quot;
 comma
 id|buffer
 op_plus
@@ -841,7 +1010,9 @@ id|p
 op_logical_and
 id|buffer
 (braket
-l_int|31
+id|nbase
+op_plus
+l_int|4
 )braket
 op_eq
 l_char|&squot;s&squot;
@@ -971,7 +1142,9 @@ c_func
 (paren
 id|buffer
 (braket
-l_int|30
+id|nbase
+op_plus
+l_int|3
 )braket
 comma
 id|buffer
@@ -984,7 +1157,9 @@ c_cond
 (paren
 id|buffer
 (braket
-l_int|31
+id|nbase
+op_plus
+l_int|4
 )braket
 op_eq
 l_char|&squot;s&squot;
@@ -996,7 +1171,9 @@ c_cond
 (paren
 id|buffer
 (braket
-l_int|30
+id|nbase
+op_plus
+l_int|3
 )braket
 )paren
 (brace
@@ -1044,7 +1221,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;32        &quot;
 comma
@@ -1077,7 +1256,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;WDISP30   &quot;
 comma
@@ -1088,7 +1269,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;HI22      &quot;
 comma
@@ -1099,7 +1282,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;LO10      &quot;
 comma
@@ -1157,7 +1342,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;HI22      &quot;
 comma
@@ -1219,7 +1406,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;13        &quot;
 comma
@@ -1287,7 +1476,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;13        &quot;
 comma
@@ -1347,7 +1538,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;HI22      &quot;
 comma
@@ -1405,7 +1598,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;HI22      &quot;
 comma
@@ -1416,7 +1611,9 @@ id|strncmp
 (paren
 id|buffer
 op_plus
-l_int|17
+id|mode
+op_plus
+l_int|9
 comma
 l_string|&quot;LO10      &quot;
 comma
@@ -1574,12 +1771,18 @@ id|q
 op_ne
 id|buffer
 op_plus
-l_int|8
+id|mode
 op_logical_or
 (paren
 op_logical_neg
 id|offset
 op_logical_and
+(paren
+id|mode
+op_eq
+l_int|8
+ques
+c_cond
 id|strncmp
 (paren
 id|buffer
@@ -1587,6 +1790,16 @@ comma
 l_string|&quot;00000000 &quot;
 comma
 l_int|9
+)paren
+suffix:colon
+id|strncmp
+(paren
+id|buffer
+comma
+l_string|&quot;0000000000000000 &quot;
+comma
+l_int|17
+)paren
 )paren
 )paren
 )paren
@@ -1715,7 +1928,9 @@ c_cond
 (paren
 id|buffer
 (braket
-l_int|30
+id|nbase
+op_plus
+l_int|3
 )braket
 op_eq
 l_char|&squot;f&squot;
@@ -1948,7 +2163,7 @@ l_string|&quot;.text&quot;
 )paren
 id|printf
 (paren
-l_string|&quot;_stext+0x%08x&quot;
+l_string|&quot;_stext+0x%08lx&quot;
 comma
 id|r-&gt;offset
 )paren
@@ -1967,7 +2182,7 @@ l_string|&quot;.text.init&quot;
 )paren
 id|printf
 (paren
-l_string|&quot;__init_begin+0x%08x&quot;
+l_string|&quot;__init_begin+0x%08lx&quot;
 comma
 id|r-&gt;offset
 )paren
@@ -1986,7 +2201,26 @@ l_string|&quot;__ksymtab&quot;
 )paren
 id|printf
 (paren
-l_string|&quot;__start___ksymtab+0x%08x&quot;
+l_string|&quot;__start___ksymtab+0x%08lx&quot;
+comma
+id|r-&gt;offset
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+(paren
+id|r-&gt;sect
+comma
+l_string|&quot;.fixup&quot;
+)paren
+)paren
+id|printf
+(paren
+l_string|&quot;__start___fixup+0x%08lx&quot;
 comma
 id|r-&gt;offset
 )paren

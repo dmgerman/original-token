@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: sun4d_irq.c,v 1.14 1998/06/04 09:54:47 jj Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
+multiline_comment|/*  $Id: sun4d_irq.c,v 1.15 1998/09/29 09:46:12 davem Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -1428,6 +1428,7 @@ id|irqflags
 op_amp
 id|SA_STATIC_ALLOC
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1455,6 +1456,7 @@ comma
 id|devname
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

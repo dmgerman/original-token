@@ -2378,6 +2378,11 @@ id|mtrr_init_secondary_cpu
 )paren
 suffix:semicolon
 macro_line|#endif
+id|stts
+c_func
+(paren
+)paren
+suffix:semicolon
 id|smp_callin
 c_func
 (paren
@@ -5371,13 +5376,13 @@ r_volatile
 r_int
 id|calibration_lock
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -5457,7 +5462,7 @@ id|ack_APIC_irq
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.33 1998/07/28 16:52:48 jj Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.39 1998/09/29 09:46:15 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/timer.h&gt;
@@ -48,6 +49,17 @@ c_func
 (paren
 r_int
 r_int
+)paren
+suffix:semicolon
+r_static
+r_void
+id|sbus_do_settimeofday
+c_func
+(paren
+r_struct
+id|timeval
+op_star
+id|tv
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SUN4
@@ -109,6 +121,30 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_SUN4
+r_if
+c_cond
+(paren
+(paren
+id|idprom-&gt;id_machtype
+op_eq
+(paren
+id|SM_SUN4
+op_or
+id|SM_4_260
+)paren
+)paren
+op_logical_or
+(paren
+id|idprom-&gt;id_machtype
+op_eq
+(paren
+id|SM_SUN4
+op_or
+id|SM_4_110
+)paren
+)paren
+)paren
+(brace
 r_int
 id|temp
 suffix:semicolon
@@ -127,6 +163,7 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|clear_clock_irq
 c_func
@@ -173,6 +210,7 @@ op_rshift
 l_int|1
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -196,6 +234,7 @@ op_minus
 l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
+)brace
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
@@ -1329,7 +1368,7 @@ id|__initfunc
 c_func
 (paren
 r_void
-id|time_init
+id|sbus_time_init
 c_func
 (paren
 r_void
@@ -1368,6 +1407,21 @@ macro_line|#endif
 id|do_get_fast_time
 op_assign
 id|do_gettimeofday
+suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|bus_do_settimeofday
+comma
+id|sbus_do_settimeofday
+comma
+id|BTFIXUPCALL_NORM
+)paren
+suffix:semicolon
+id|btfixup
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#if CONFIG_AP1000
 id|init_timers
@@ -1688,8 +1742,53 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|time_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+macro_line|#ifdef CONFIG_PCI
+r_extern
+r_void
+id|pci_time_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_present
+c_func
+(paren
+)paren
+)paren
+(brace
+id|pci_time_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
+id|sbus_time_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|do_gettimeoffset
-r_static
+r_extern
 id|__inline__
 r_int
 r_int
@@ -2078,6 +2177,25 @@ macro_line|#endif
 DECL|function|do_settimeofday
 r_void
 id|do_settimeofday
+c_func
+(paren
+r_struct
+id|timeval
+op_star
+id|tv
+)paren
+(brace
+id|bus_do_settimeofday
+c_func
+(paren
+id|tv
+)paren
+suffix:semicolon
+)brace
+DECL|function|sbus_do_settimeofday
+r_static
+r_void
+id|sbus_do_settimeofday
 c_func
 (paren
 r_struct

@@ -88,6 +88,8 @@ DECL|macro|FB_ACCEL_SUN_CGSIX
 mdefine_line|#define FB_ACCEL_SUN_CGSIX&t;12&t;/* Sun cg6&t;&t;&t;*/
 DECL|macro|FB_ACCEL_SUN_LEO
 mdefine_line|#define FB_ACCEL_SUN_LEO&t;13&t;/* Sun leo/zx&t;&t;&t;*/
+DECL|macro|FB_ACCEL_IMS_TWINTURBO
+mdefine_line|#define FB_ACCEL_IMS_TWINTURBO&t;14&t;/* IMS Twin Turbo&t;&t;*/
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo
@@ -939,6 +941,12 @@ DECL|member|node
 r_int
 id|node
 suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|macro|FBINFO_FLAG_MODULE
+mdefine_line|#define FBINFO_FLAG_MODULE&t;1&t;/* Low-level driver is a module */
 DECL|member|fbops
 r_struct
 id|fb_ops
@@ -1033,6 +1041,13 @@ multiline_comment|/* arg &gt; 0: VESA level (arg-1) */
 multiline_comment|/* From here on everything is device dependent */
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|macro|FBINFO_FLAG_DEFAULT
+mdefine_line|#define FBINFO_FLAG_DEFAULT&t;FBINFO_FLAG_MODULE
+macro_line|#else
+DECL|macro|FBINFO_FLAG_DEFAULT
+mdefine_line|#define FBINFO_FLAG_DEFAULT&t;0
+macro_line|#endif
 multiline_comment|/*&n;     *  This structure abstracts from the underlying hardware. It is not&n;     *  mandatory but used by the `generic&squot; frame buffer operations.&n;     *  Read drivers/video/skeletonfb.c for more information.&n;     */
 DECL|struct|fbgen_hwswitch
 r_struct

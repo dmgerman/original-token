@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * framebuffer driver for VBE 2.0 compliant graphic boards&n; *&n; * switching to graphics mode happens at boot time (while&n; * running in real mode, see arch/i386/video.S).&n; *&n; * (c) 1998 Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt;&n; *&n; */
+multiline_comment|/*&n; * framebuffer driver for VBE 2.0 compliant graphic boards&n; *&n; * switching to graphics mode happens at boot time (while&n; * running in real mode, see arch/i386/video.S).&n; *&n; * (c) 1998 Gerd Knorr &lt;kraxel@goldbach.in-berlin.de&gt;&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
+macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 macro_line|#include &lt;video/fbcon-cfb32.h&gt;
 DECL|macro|dac_reg
 mdefine_line|#define dac_reg&t;(0x3c8)
@@ -230,6 +231,15 @@ l_int|16
 )braket
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB24
+DECL|member|cfb24
+id|u32
+id|cfb24
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
 DECL|member|cfb32
 id|u32
@@ -262,7 +272,7 @@ r_static
 r_int
 id|pmi_setpal
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/* pmi for palette changes ??? */
 DECL|variable|ypan
@@ -270,7 +280,7 @@ r_static
 r_int
 id|ypan
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 DECL|variable|ywrap
 r_static
@@ -854,6 +864,22 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB24
+r_case
+l_int|24
+suffix:colon
+id|sw
+op_assign
+op_amp
+id|fbcon_cfb24
+suffix:semicolon
+id|display-&gt;dispsw_data
+op_assign
+id|fbcon_cmap.cfb24
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
 r_case
 l_int|32
@@ -1380,7 +1406,41 @@ macro_line|#ifdef FBCON_HAS_CFB24
 r_case
 l_int|24
 suffix:colon
-multiline_comment|/* FIXME: todo */
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|fbcon_cmap.cfb24
+(braket
+id|regno
+)braket
+op_assign
+(paren
+id|red
+op_lshift
+id|vesafb_defined.red.offset
+)paren
+op_or
+(paren
+id|green
+op_lshift
+id|vesafb_defined.green.offset
+)paren
+op_or
+(paren
+id|blue
+op_lshift
+id|vesafb_defined.blue.offset
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -1940,12 +2000,29 @@ c_func
 (paren
 id|this_opt
 comma
-l_string|&quot;nopal&quot;
+l_string|&quot;vgapal&quot;
 )paren
 )paren
 id|pmi_setpal
 op_assign
 l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_opt
+comma
+l_string|&quot;pmipal&quot;
+)paren
+)paren
+id|pmi_setpal
+op_assign
+l_int|1
 suffix:semicolon
 r_else
 r_if
@@ -2657,6 +2734,10 @@ id|fb_info.blank
 op_assign
 op_amp
 id|vesafb_blank
+suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 id|vesafb_set_disp
 c_func

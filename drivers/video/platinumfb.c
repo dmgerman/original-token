@@ -3144,6 +3144,10 @@ op_assign
 op_amp
 id|platinum_blank
 suffix:semicolon
+id|info-&gt;fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 r_for
 c_loop
 (paren

@@ -242,7 +242,7 @@ mdefine_line|#define smp_send_reschedule(cpu) do {} while (0)
 macro_line|#endif /* !(__ASSEMBLY__) */
 DECL|macro|PROC_CHANGE_PENALTY
 mdefine_line|#define PROC_CHANGE_PENALTY&t;20
-macro_line|#else /* !(__SMP__) */
+macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;&t;0xFF
 macro_line|#endif /* !(_SPARC64_SMP_H) */

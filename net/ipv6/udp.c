@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.35 1998/09/07 00:13:57 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.36 1998/10/03 09:38:54 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1307,7 +1307,6 @@ id|copied
 comma
 id|err
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Check any passed addresses&n;&t; */
 r_if
 c_cond
 (paren
@@ -1322,7 +1321,24 @@ r_struct
 id|sockaddr_in6
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;From here the generic datagram does a lot of the work. Come&n;&t; *&t;the finished NET3, it will do _ALL_ the work!&n;&t; */
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|MSG_ERRQUEUE
+)paren
+r_return
+id|ipv6_recv_error
+c_func
+(paren
+id|sk
+comma
+id|msg
+comma
+id|len
+)paren
+suffix:semicolon
 id|skb
 op_assign
 id|skb_recv_datagram
@@ -1374,7 +1390,6 @@ op_or_assign
 id|MSG_TRUNC
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  &t; *&t;FIXME : should use udp header size info value &n;  &t; */
 macro_line|#ifndef CONFIG_UDP_DELAY_CSUM
 id|err
 op_assign
@@ -1864,28 +1879,12 @@ id|sk
 op_eq
 l_int|NULL
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|net_ratelimit
-c_func
-(paren
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;icmp for unknown sock&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
+op_logical_neg
 id|icmpv6_err_convert
 c_func
 (paren
@@ -1896,8 +1895,12 @@ comma
 op_amp
 id|err
 )paren
+op_logical_and
+op_logical_neg
+id|sk-&gt;net_pinfo.af_inet6.recverr
 )paren
-(brace
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1907,10 +1910,41 @@ id|sk-&gt;state
 op_ne
 id|TCP_ESTABLISHED
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|sk-&gt;net_pinfo.af_inet6.recverr
+)paren
+id|ipv6_icmp_error
+c_func
+(paren
+id|sk
+comma
+id|skb
+comma
+id|err
+comma
+id|uh-&gt;dest
+comma
+id|ntohl
+c_func
+(paren
+id|info
+)paren
+comma
+(paren
+id|u8
+op_star
+)paren
+(paren
+id|uh
+op_plus
+l_int|1
+)paren
+)paren
+suffix:semicolon
 id|sk-&gt;err
 op_assign
 id|err
@@ -1923,14 +1957,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|sk-&gt;err_soft
-op_assign
-id|err
-suffix:semicolon
-)brace
 )brace
 DECL|function|udpv6_queue_rcv_skb
 r_static
@@ -3344,6 +3370,29 @@ op_assign
 op_amp
 id|sin6-&gt;sin6_addr
 suffix:semicolon
+multiline_comment|/* Otherwise it will be difficult to maintain sk-&gt;dst_cache. */
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_ESTABLISHED
+op_logical_and
+op_logical_neg
+id|ipv6_addr_cmp
+c_func
+(paren
+id|daddr
+comma
+op_amp
+id|sk-&gt;net_pinfo.af_inet6.daddr
+)paren
+)paren
+id|daddr
+op_assign
+op_amp
+id|sk-&gt;net_pinfo.af_inet6.daddr
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -3412,6 +3461,13 @@ op_star
 )paren
 (paren
 op_amp
+id|sin
+)paren
+suffix:semicolon
+id|msg-&gt;msg_namelen
+op_assign
+r_sizeof
+(paren
 id|sin
 )paren
 suffix:semicolon
@@ -3527,7 +3583,7 @@ id|udh.uh.len
 op_assign
 id|len
 OL
-l_int|0x1000
+l_int|0x10000
 ques
 c_cond
 id|htons

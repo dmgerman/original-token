@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal32.c,v 1.41 1998/07/30 11:29:32 davem Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997,1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal32.c,v 1.44 1998/09/25 01:09:17 davem Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997,1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -66,6 +66,7 @@ multiline_comment|/* This turned off for production... */
 multiline_comment|/* #define DEBUG_SIGNALS 1 */
 multiline_comment|/* #define DEBUG_SIGNALS_TRACE 1 */
 multiline_comment|/* #define DEBUG_SIGNALS_MAPS 1 */
+multiline_comment|/* #define DEBUG_SIGNALS_TLB 1 */
 multiline_comment|/* Signal frames: the original one (compatible with SunOS):&n; *&n; * Set up a signal frame... Make the stack look the way SunOS&n; * expects it to look which is basically:&n; *&n; * ---------------------------------- &lt;-- %sp at signal time&n; * Struct sigcontext&n; * Signal address&n; * Ptr to sigcontext area above&n; * Signal code&n; * The signal number itself&n; * One register window&n; * ---------------------------------- &lt;-- New %sp&n; */
 DECL|struct|signal_sframe32
 r_struct
@@ -1441,14 +1442,15 @@ r_return
 suffix:semicolon
 id|segv
 suffix:colon
-id|send_sig
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
 c_func
 (paren
 id|SIGSEGV
-comma
-id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1881,14 +1883,15 @@ r_return
 suffix:semicolon
 id|segv
 suffix:colon
-id|send_sig
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
 c_func
 (paren
 id|SIGSEGV
-comma
-id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2579,14 +2582,15 @@ r_return
 suffix:semicolon
 id|segv
 suffix:colon
-id|send_sig
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
 c_func
 (paren
 id|SIGSEGV
-comma
-id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2777,6 +2781,11 @@ id|seta
 id|_NSIG_WORDS32
 )braket
 suffix:semicolon
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#if 0&t;
 r_int
 id|window
@@ -2871,6 +2880,8 @@ op_amp
 id|sframep-&gt;sig_context
 suffix:semicolon
 multiline_comment|/* We&squot;ve already made sure frame pointer isn&squot;t in kernel space... */
+id|err
+op_assign
 id|__put_user
 c_func
 (paren
@@ -3006,6 +3017,8 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3018,6 +3031,8 @@ op_amp
 id|sc-&gt;sigc_mask
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -3039,6 +3054,8 @@ r_int
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3051,6 +3068,8 @@ op_amp
 id|sc-&gt;sigc_sp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3060,6 +3079,8 @@ op_amp
 id|sc-&gt;sigc_pc
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3092,6 +3113,8 @@ op_or_assign
 id|PSR_EF
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3101,6 +3124,8 @@ op_amp
 id|sc-&gt;sigc_psr
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3113,6 +3138,8 @@ op_amp
 id|sc-&gt;sigc_g1
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3125,6 +3152,8 @@ op_amp
 id|sc-&gt;sigc_o0
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3170,6 +3199,8 @@ id|current-&gt;tss.rwbuf_stkptrs
 id|window
 )braket
 suffix:semicolon
+id|err
+op_or_assign
 id|copy_to_user
 c_func
 (paren
@@ -3195,6 +3226,8 @@ suffix:semicolon
 )brace
 r_else
 macro_line|#endif&t;
+id|err
+op_or_assign
 id|copy_in_user
 c_func
 (paren
@@ -3227,6 +3260,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* So process is allowed to execute. */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3260,6 +3295,8 @@ op_eq
 id|SIGEMT
 )paren
 (brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3269,6 +3306,8 @@ op_amp
 id|sframep-&gt;sig_code
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3281,6 +3320,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3290,6 +3331,8 @@ op_amp
 id|sframep-&gt;sig_code
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3300,6 +3343,8 @@ id|sframep-&gt;sig_address
 )paren
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3311,6 +3356,14 @@ comma
 op_amp
 id|sframep-&gt;sig_scptr
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|sigsegv
 suffix:semicolon
 id|regs-&gt;u_regs
 (braket
@@ -3339,11 +3392,26 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+id|sigsegv
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
 )brace
 DECL|function|save_fpu_state32
 r_static
 r_inline
-r_void
+r_int
 id|save_fpu_state32
 c_func
 (paren
@@ -3383,6 +3451,11 @@ r_int
 r_int
 id|fprs
 suffix:semicolon
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
 id|fprs
 op_assign
 id|current-&gt;tss.fpsaved
@@ -3397,6 +3470,8 @@ id|fprs
 op_amp
 id|FPRS_DL
 )paren
+id|err
+op_or_assign
 id|copy_to_user
 c_func
 (paren
@@ -3426,6 +3501,8 @@ id|fprs
 op_amp
 id|FPRS_DU
 )paren
+id|err
+op_or_assign
 id|copy_to_user
 c_func
 (paren
@@ -3450,6 +3527,8 @@ l_int|32
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3462,6 +3541,8 @@ op_amp
 id|fpu-&gt;si_fsr
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3474,6 +3555,8 @@ op_amp
 id|fpu-&gt;si_gsr
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3482,6 +3565,9 @@ comma
 op_amp
 id|fpu-&gt;si_fprs
 )paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 DECL|function|new_setup_frame32
@@ -3522,6 +3608,8 @@ id|psr
 suffix:semicolon
 r_int
 id|i
+comma
+id|err
 suffix:semicolon
 r_int
 id|seta
@@ -3638,6 +3726,8 @@ id|sigill
 suffix:semicolon
 )brace
 multiline_comment|/* 2. Save the current process state */
+id|err
+op_assign
 id|put_user
 c_func
 (paren
@@ -3647,6 +3737,8 @@ op_amp
 id|sf-&gt;info.si_regs.pc
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3656,6 +3748,8 @@ op_amp
 id|sf-&gt;info.si_regs.npc
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3688,6 +3782,8 @@ op_or_assign
 id|PSR_EF
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3711,6 +3807,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3734,6 +3832,8 @@ op_amp
 id|PSR_EF
 )paren
 (brace
+id|err
+op_or_assign
 id|save_fpu_state32
 c_func
 (paren
@@ -3743,6 +3843,8 @@ op_amp
 id|sf-&gt;fpu_state
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3759,6 +3861,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3884,6 +3988,8 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3896,6 +4002,8 @@ op_amp
 id|sf-&gt;info.si_mask
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -3917,6 +4025,8 @@ r_int
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|copy_in_user
 c_func
 (paren
@@ -3943,6 +4053,14 @@ r_struct
 id|reg_window32
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|sigsegv
 suffix:semicolon
 multiline_comment|/* 3. signal handler back-trampoline and parameters */
 id|regs-&gt;u_regs
@@ -4087,6 +4205,8 @@ op_minus
 l_int|2
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|__put_user
 c_func
 (paren
@@ -4099,7 +4219,9 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* mov __NR_sigreturn, %g1 */
+multiline_comment|/*mov __NR_sigreturn, %g1*/
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4112,7 +4234,17 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* t 0x10 */
+multiline_comment|/*t 0x10*/
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_goto
+id|sigsegv
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4185,6 +4317,19 @@ id|do_exit
 c_func
 (paren
 id|SIGILL
+)paren
+suffix:semicolon
+id|sigsegv
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
@@ -4261,6 +4406,8 @@ id|psr
 suffix:semicolon
 r_int
 id|i
+comma
+id|err
 suffix:semicolon
 id|synchronize_user_stack
 c_func
@@ -4331,6 +4478,8 @@ id|SIGILL
 suffix:semicolon
 )brace
 multiline_comment|/* Start with a clean frame pointer and fill it */
+id|err
+op_assign
 id|clear_user
 c_func
 (paren
@@ -4426,6 +4575,8 @@ op_rshift
 l_int|32
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -4443,6 +4594,8 @@ id|svr4_sigset_t
 suffix:semicolon
 )brace
 r_else
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -4461,6 +4614,8 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Store registers */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4478,6 +4633,8 @@ id|SVR4_PC
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4518,6 +4675,8 @@ op_or_assign
 id|PSR_EF
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4535,6 +4694,8 @@ id|SVR4_PSR
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4567,6 +4728,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4605,6 +4768,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4630,6 +4795,8 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* Setup sigaltstack */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4639,6 +4806,8 @@ op_amp
 id|uc-&gt;stack.sp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4655,6 +4824,8 @@ op_amp
 id|uc-&gt;stack.flags
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4666,6 +4837,8 @@ id|uc-&gt;stack.size
 suffix:semicolon
 multiline_comment|/* Save the currently window file: */
 multiline_comment|/* 1. Link sfp-&gt;uc-&gt;gwins to our windows */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4682,6 +4855,8 @@ id|mc-&gt;gwin
 )paren
 suffix:semicolon
 multiline_comment|/* 2. Number of windows to restore at setcontext (): */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4708,6 +4883,8 @@ id|window
 op_increment
 )paren
 (brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4733,6 +4910,8 @@ op_plus
 id|window
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|copy_to_user
 c_func
 (paren
@@ -4754,6 +4933,8 @@ id|svr4_rwindow_t
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4777,6 +4958,8 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* So process is allowed to execute. */
 multiline_comment|/* Setup the signal information.  Solaris expects a bunch of&n;&t; * information to be passed to the signal handler, we don&squot;t provide&n;&t; * that much currently, should use those that David already&n;&t; * is providing with tss.sig_desc&n;&t; */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4786,6 +4969,8 @@ op_amp
 id|si-&gt;siginfo.signo
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4794,6 +4979,14 @@ comma
 op_amp
 id|si-&gt;siginfo.code
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|sigsegv
 suffix:semicolon
 id|regs-&gt;u_regs
 (braket
@@ -4868,6 +5061,8 @@ op_amp
 l_int|0x00000000ffffffffUL
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4880,6 +5075,8 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4895,6 +5092,8 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4910,6 +5109,8 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -4926,6 +5127,14 @@ l_int|6
 )paren
 suffix:semicolon
 multiline_comment|/* frame pointer */
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|sigsegv
+suffix:semicolon
 id|regs-&gt;u_regs
 (braket
 id|UREG_I0
@@ -4960,6 +5169,21 @@ id|u64
 id|uc
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
+id|sigsegv
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
 )brace
 id|asmlinkage
 r_int
@@ -4990,6 +5214,8 @@ id|setv
 suffix:semicolon
 r_int
 id|i
+comma
+id|err
 suffix:semicolon
 id|synchronize_user_stack
 c_func
@@ -5028,9 +5254,8 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|clear_user
 c_func
 (paren
@@ -5042,13 +5267,7 @@ op_star
 id|uc
 )paren
 )paren
-)paren
-(brace
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
-)brace
 multiline_comment|/* Setup convenience variables */
 id|mc
 op_assign
@@ -5116,6 +5335,8 @@ op_rshift
 l_int|32
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -5133,6 +5354,8 @@ id|svr4_sigset_t
 suffix:semicolon
 )brace
 r_else
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -5151,6 +5374,8 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Store registers */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5163,6 +5388,8 @@ id|SVR4_PC
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5176,6 +5403,8 @@ id|SVR4_NPC
 )paren
 suffix:semicolon
 macro_line|#if 1
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5214,6 +5443,8 @@ id|i
 op_or_assign
 id|PSR_EF
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5227,6 +5458,8 @@ id|SVR4_PSR
 )paren
 suffix:semicolon
 macro_line|#endif
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5254,6 +5487,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5292,6 +5527,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5317,6 +5554,8 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* Setup sigaltstack */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5326,6 +5565,8 @@ op_amp
 id|uc-&gt;stack.sp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5342,6 +5583,8 @@ op_amp
 id|uc-&gt;stack.flags
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -5353,7 +5596,15 @@ id|uc-&gt;stack.size
 suffix:semicolon
 multiline_comment|/* The register file is not saved&n;&t; * we have already stuffed all of it with sync_user_stack&n;&t; */
 r_return
+(paren
+id|err
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Set the context for a svr4 application, this is Solaris way to sigreturn */
@@ -5722,6 +5973,8 @@ id|npc
 op_or
 l_int|1
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -5739,6 +5992,8 @@ id|SVR4_Y
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -5801,6 +6056,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -5839,6 +6096,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -5863,6 +6122,16 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_goto
+id|sigsegv
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|EINTR
@@ -5924,6 +6193,8 @@ id|psr
 suffix:semicolon
 r_int
 id|i
+comma
+id|err
 suffix:semicolon
 id|sigset_t32
 id|seta
@@ -6037,6 +6308,8 @@ id|sigill
 suffix:semicolon
 )brace
 multiline_comment|/* 2. Save the current process state */
+id|err
+op_assign
 id|put_user
 c_func
 (paren
@@ -6046,6 +6319,8 @@ op_amp
 id|sf-&gt;regs.pc
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6055,6 +6330,8 @@ op_amp
 id|sf-&gt;regs.npc
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6087,6 +6364,8 @@ op_or_assign
 id|PSR_EF
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6110,6 +6389,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6133,6 +6414,8 @@ op_amp
 id|PSR_EF
 )paren
 (brace
+id|err
+op_or_assign
 id|save_fpu_state32
 c_func
 (paren
@@ -6142,6 +6425,8 @@ op_amp
 id|sf-&gt;fpu_state
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6158,6 +6443,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6169,6 +6456,8 @@ id|sf-&gt;fpu_save
 suffix:semicolon
 )brace
 multiline_comment|/* Setup sigaltstack */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6178,6 +6467,8 @@ op_amp
 id|sf-&gt;stack.ss_sp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6194,6 +6485,8 @@ op_amp
 id|sf-&gt;stack.ss_flags
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6318,6 +6611,8 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -6333,6 +6628,8 @@ id|sigset_t
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|copy_in_user
 c_func
 (paren
@@ -6359,6 +6656,14 @@ r_struct
 id|reg_window32
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|sigsegv
 suffix:semicolon
 multiline_comment|/* 3. signal handler back-trampoline and parameters */
 id|regs-&gt;u_regs
@@ -6503,10 +6808,13 @@ op_minus
 l_int|2
 )paren
 suffix:semicolon
+multiline_comment|/* mov __NR_rt_sigreturn, %g1 */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
-l_int|0x821020d8
+l_int|0x82102065
 comma
 op_amp
 id|sf-&gt;insns
@@ -6515,7 +6823,9 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* mov __NR_sigreturn, %g1 */
+multiline_comment|/* t 0x10 */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -6528,7 +6838,14 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* t 0x10 */
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|sigsegv
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6601,6 +6918,19 @@ id|do_exit
 c_func
 (paren
 id|SIGILL
+)paren
+suffix:semicolon
+id|sigsegv
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
@@ -7577,6 +7907,45 @@ id|show_regs
 id|regs
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG_SIGNALS_TLB
+r_do
+(brace
+r_extern
+r_void
+id|sparc_ultra_dump_itlb
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sparc_ultra_dump_dtlb
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|sparc_ultra_dump_dtlb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sparc_ultra_dump_itlb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+l_int|0
+)paren
+(brace
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef DEBUG_SIGNALS_TRACE
 (brace
 r_struct

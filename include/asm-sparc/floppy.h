@@ -174,11 +174,6 @@ mdefine_line|#define fd_dma_mem_free(addr,size) (vfree((void *)(addr)))
 macro_line|#endif
 DECL|macro|FLOPPY_MOTOR_MASK
 mdefine_line|#define FLOPPY_MOTOR_MASK         0x10
-multiline_comment|/* It&squot;s all the same... */
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus(x)            (x)
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt(x)            (x)
 multiline_comment|/* XXX This isn&squot;t really correct. XXX */
 DECL|macro|get_dma_residue
 mdefine_line|#define get_dma_residue(x)        (0)
@@ -1118,6 +1113,42 @@ dot
 id|which_io
 comma
 l_int|0x0
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+(paren
+r_int
+)paren
+id|sun_fdc
+op_amp
+id|PAGE_MASK
+comma
+(paren
+(paren
+(paren
+r_int
+)paren
+id|sun_fdc
+op_amp
+op_complement
+id|PAGE_MASK
+)paren
+op_plus
+id|fd_regs
+(braket
+l_int|0
+)braket
+dot
+id|reg_size
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+id|PAGE_MASK
 )paren
 suffix:semicolon
 multiline_comment|/* Last minute sanity check... */

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.30 1998/07/24 09:50:08 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.32 1998/09/24 03:21:37 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -74,14 +74,6 @@ multiline_comment|/* orig-video-isVGA */
 l_int|16
 multiline_comment|/* orig-video-points */
 )brace
-suffix:semicolon
-DECL|variable|phys_bytes_of_ram
-DECL|variable|end_of_phys_memory
-r_int
-r_int
-id|phys_bytes_of_ram
-comma
-id|end_of_phys_memory
 suffix:semicolon
 multiline_comment|/* Typing sync at the prom prompt calls the function pointed to by&n; * the sync callback which I set to the following function.&n; * This should sync all filesystems and return, for now it just&n; * prints out pretty messages and returns.&n; */
 r_extern
@@ -849,9 +841,11 @@ id|ram_flags
 suffix:semicolon
 r_extern
 r_int
+r_int
 id|ramdisk_image
 suffix:semicolon
 r_extern
+r_int
 r_int
 id|ramdisk_size
 suffix:semicolon
@@ -1005,6 +999,10 @@ multiline_comment|/* in console.c, of course */
 r_int
 r_int
 id|lowest_paddr
+comma
+id|end_of_phys_memory
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|total
@@ -1758,6 +1756,13 @@ r_char
 op_star
 )paren
 suffix:semicolon
+DECL|variable|dcache_aliases_found
+r_int
+r_int
+id|dcache_aliases_found
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|get_cpuinfo
 r_int
 id|get_cpuinfo
@@ -1793,6 +1798,7 @@ l_string|&quot;prom&bslash;t&bslash;t: %d.%d.%d&bslash;n&quot;
 l_string|&quot;type&bslash;t&bslash;t: sun4u&bslash;n&quot;
 l_string|&quot;ncpus probed&bslash;t: %d&bslash;n&quot;
 l_string|&quot;ncpus active&bslash;t: %d&bslash;n&quot;
+l_string|&quot;d-aliases&bslash;t: %lu&bslash;n&quot;
 macro_line|#ifndef __SMP__
 l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
 macro_line|#endif
@@ -1828,6 +1834,8 @@ comma
 id|linux_num_cpus
 comma
 id|smp_num_cpus
+comma
+id|dcache_aliases_found
 macro_line|#ifndef __SMP__
 comma
 id|loops_per_sec

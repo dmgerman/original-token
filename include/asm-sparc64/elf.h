@@ -1,10 +1,18 @@
-multiline_comment|/* $Id: elf.h,v 1.17 1998/03/23 10:07:06 jj Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.18 1998/09/09 05:36:08 davem Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
+macro_line|#ifndef ELF_ARCH
+DECL|macro|ELF_ARCH
+mdefine_line|#define ELF_ARCH&t;&t;EM_SPARCV9
+DECL|macro|ELF_CLASS
+mdefine_line|#define ELF_CLASS&t;&t;ELFCLASS64
+DECL|macro|ELF_DATA
+mdefine_line|#define ELF_DATA&t;&t;ELFDATA2MSB
 DECL|typedef|elf_greg_t
 r_typedef
 r_int
@@ -21,20 +29,36 @@ id|elf_gregset_t
 id|ELF_NGREG
 )braket
 suffix:semicolon
-DECL|typedef|elf_fpregset_t
 r_typedef
+r_struct
+(brace
+DECL|member|pr_regs
 r_int
 r_int
+id|pr_regs
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|member|pr_fsr
+r_int
+r_int
+id|pr_fsr
+suffix:semicolon
+DECL|member|pr_gsr
+r_int
+r_int
+id|pr_gsr
+suffix:semicolon
+DECL|member|pr_fprs
+r_int
+r_int
+id|pr_fprs
+suffix:semicolon
+DECL|typedef|elf_fpregset_t
+)brace
 id|elf_fpregset_t
 suffix:semicolon
-multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
-macro_line|#ifndef ELF_ARCH
-DECL|macro|ELF_ARCH
-mdefine_line|#define ELF_ARCH&t;&t;EM_SPARCV9
-DECL|macro|ELF_CLASS
-mdefine_line|#define ELF_CLASS&t;&t;ELFCLASS64
-DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA&t;&t;ELFDATA2MSB
 macro_line|#endif
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 macro_line|#ifndef elf_check_arch

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.15 1998/05/12 22:38:29 ecd Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: time.c,v 1.16 1998/09/05 17:25:28 jj Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,6 +28,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|mstk48t08_regs
+r_static
 r_struct
 id|mostek48t08
 op_star
@@ -36,6 +37,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|mstk48t59_regs
+r_static
 r_struct
 id|mostek48t59
 op_star
@@ -427,6 +429,7 @@ multiline_comment|/* Kick start a stopped clock (procedure from the Sun NVRAM/ho
 DECL|function|kick_start_clock
 r_static
 r_void
+id|__init
 id|kick_start_clock
 c_func
 (paren
@@ -657,6 +660,7 @@ multiline_comment|/* Return nonzero if the clock chip battery is low. */
 DECL|function|has_low_battery
 r_static
 r_int
+id|__init
 id|has_low_battery
 c_func
 (paren
@@ -720,17 +724,14 @@ suffix:semicolon
 multiline_comment|/* Was the write blocked? */
 )brace
 multiline_comment|/* Probe for the real time clock chip. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|set_system_time
 r_static
 r_void
+id|__init
 id|set_system_time
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -863,16 +864,13 @@ op_complement
 id|MSTK_CREG_READ
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|clock_probe
 r_void
+id|__init
 id|clock_probe
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -898,6 +896,10 @@ l_int|1
 comma
 id|err
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
 r_struct
 id|linux_ebus
@@ -907,6 +909,12 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1521,6 +1529,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifndef BCD_TO_BIN
 DECL|macro|BCD_TO_BIN
@@ -1530,20 +1544,6 @@ macro_line|#ifndef BIN_TO_BCD
 DECL|macro|BIN_TO_BCD
 mdefine_line|#define BIN_TO_BCD(val) ((((val)/10)&lt;&lt;4) + (val)%10)
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
-id|time_init
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-multiline_comment|/* clock_probe() is now done at end of sbus_init on sparc64&n;&t; * so that both sbus and fhc bus information is probed and&n;&t; * available.&n;&t; */
-)brace
 r_extern
 r_void
 id|init_timers
@@ -1570,18 +1570,16 @@ r_int
 op_star
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|time_init
+r_void
+id|__init
+id|time_init
 c_func
 (paren
 r_void
-id|sun4u_start_timers
-c_func
-(paren
-r_void
-)paren
 )paren
 (brace
+multiline_comment|/* clock_probe() is now done at end of [se]bus_init on sparc64&n;&t; * so that sbus, fhc and ebus bus information is probed and&n;&t; * available.&n;&t; */
 r_int
 r_int
 id|clock

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.166 1998/08/04 20:49:05 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.171 1998/09/21 05:05:41 jj Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1922,11 +1922,13 @@ c_func
 id|_unused
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SUN_AUXIO
 id|_unused
 op_assign
 op_star
 id|AUXREG
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Bootup utility functions. */
 DECL|function|sun4c_init_clean_segmap
@@ -2856,20 +2858,10 @@ op_or
 id|SM_4_470
 )paren
 suffix:colon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;No support for 4400 yet&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* should be 1024 segmaps. when it get fixed */
 id|num_segmaps
 op_assign
-l_int|1024
+l_int|256
 suffix:semicolon
 id|num_contexts
 op_assign
@@ -3526,7 +3518,6 @@ id|bits_off
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* the 4/260 dies real hard on the prom_putsegment line.&n;    not sure why, but it seems to work without it cgd */
 DECL|function|sun4c_init_map_kernelprom
 r_static
 r_inline
@@ -3549,7 +3540,33 @@ id|pseg
 comma
 id|ctx
 suffix:semicolon
-macro_line|#ifndef CONFIG_SUN4
+macro_line|#ifdef CONFIG_SUN4
+multiline_comment|/* sun4/110 and 260 have no kadb. */
+r_if
+c_cond
+(paren
+(paren
+id|idprom-&gt;id_machtype
+op_ne
+(paren
+id|SM_SUN4
+op_or
+id|SM_4_260
+)paren
+)paren
+op_logical_and
+(paren
+id|idprom-&gt;id_machtype
+op_ne
+(paren
+id|SM_SUN4
+op_or
+id|SM_4_110
+)paren
+)paren
+)paren
+(brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -3628,6 +3645,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#ifdef CONFIG_SUN4
 )brace
 macro_line|#endif
 r_for
@@ -10098,7 +10117,12 @@ id|mm-&gt;context
 op_ne
 id|NO_CONTEXT
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mm-&gt;count
+)paren
 op_eq
 l_int|1
 )paren
@@ -10383,7 +10407,12 @@ id|mm-&gt;context
 op_ne
 id|NO_CONTEXT
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mm-&gt;count
+)paren
 op_eq
 l_int|1
 )paren

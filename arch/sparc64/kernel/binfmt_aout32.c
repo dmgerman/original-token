@@ -235,7 +235,12 @@ c_cond
 op_logical_neg
 id|current-&gt;dumpable
 op_logical_or
+id|atomic_read
+c_func
+(paren
+op_amp
 id|current-&gt;mm-&gt;count
+)paren
 op_ne
 l_int|1
 )paren
@@ -762,7 +767,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * create_aout32_tables() parses the env- and arg-strings in new user&n; * memory and creates the pointer tables from them, and puts their&n; * addresses on the &quot;stack&quot;, returning the new stack pointer value.&n; */
 DECL|macro|A
-mdefine_line|#define A(x) ((unsigned long)x)
+mdefine_line|#define A(__x) ((unsigned long)(__x))
 DECL|function|create_aout32_tables
 r_static
 id|u32

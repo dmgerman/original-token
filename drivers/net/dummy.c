@@ -217,11 +217,7 @@ suffix:semicolon
 id|dev-&gt;flags
 op_and_assign
 op_complement
-(paren
-id|IFF_BROADCAST
-op_or
 id|IFF_MULTICAST
-)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
 id|dev-&gt;accept_fastpath

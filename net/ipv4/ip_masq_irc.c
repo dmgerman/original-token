@@ -33,6 +33,7 @@ id|MAX_MASQ_APP_PORTS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Debug level&n; */
+macro_line|#ifdef CONFIG_IP_MASQ_DEBUG
 DECL|variable|debug
 r_static
 r_int
@@ -40,6 +41,15 @@ id|debug
 op_assign
 l_int|0
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren
@@ -51,14 +61,6 @@ c_func
 (paren
 id|MAX_MASQ_APP_PORTS
 )paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|debug
-comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.11 1998/06/12 14:54:35 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: string.h,v 1.12 1998/10/04 08:44:27 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_STRING_H__
 DECL|macro|__SPARC64_STRING_H__
 mdefine_line|#define __SPARC64_STRING_H__
@@ -437,6 +437,21 @@ mdefine_line|#define __HAVE_ARCH_MEMCMP
 multiline_comment|/* Now the str*() stuff... */
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
+multiline_comment|/* Ugly but it works around a bug in our original sparc64-linux-gcc.  */
+r_extern
+id|__kernel_size_t
+id|__strlen
+c_func
+(paren
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+DECL|macro|strlen
+macro_line|#undef strlen
+DECL|macro|strlen
+mdefine_line|#define strlen(__arg0)&t;&t;&t;&t;&t;&bslash;&n;({&t;int __strlen_res = __strlen(__arg0) + 1;&t;&bslash;&n;&t;__strlen_res -= 1;&t;&t;&t;&t;&bslash;&n;&t;__strlen_res;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__HAVE_ARCH_STRNCMP
 mdefine_line|#define __HAVE_ARCH_STRNCMP
 r_extern

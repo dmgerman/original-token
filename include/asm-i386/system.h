@@ -118,8 +118,12 @@ mdefine_line|#define loadsegment(seg,value)&t;&t;&t;&bslash;&n;&t;asm volatile(&
 multiline_comment|/*&n; * Clear and set &squot;TS&squot; bit respectively&n; */
 DECL|macro|clts
 mdefine_line|#define clts() __asm__ __volatile__ (&quot;clts&quot;)
+DECL|macro|read_cr0
+mdefine_line|#define read_cr0() ({ &bslash;&n;&t;unsigned int __dummy; &bslash;&n;&t;__asm__( &bslash;&n;&t;&t;&quot;movl %%cr0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__dummy)); &bslash;&n;&t;__dummy; &bslash;&n;})
+DECL|macro|write_cr0
+mdefine_line|#define write_cr0(x) &bslash;&n;&t;__asm__(&quot;movl %0,%%cr0&quot;: :&quot;r&quot; (x));
 DECL|macro|stts
-mdefine_line|#define stts() &bslash;&n;__asm__ __volatile__ ( &bslash;&n;&t;&quot;movl %%cr0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orl $8,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%%cr0&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: /* no inputs */ &bslash;&n;&t;:&quot;ax&quot;)
+mdefine_line|#define stts() write_cr0(8 | read_cr0())
 macro_line|#endif&t;/* __KERNEL__ */
 DECL|function|get_limit
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_APP application masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_app.c  0.04      96/06/17&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;JJC&t;&t;&t;: Implemented also input pkt hook&n; *&t;Miquel van Smoorenburg&t;: Copy more stuff when resizing skb&n; *&n; *&n; * FIXME:&n; *&t;- ip_masq_skb_replace(): use same skb if space available.&n; *&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_APP application masquerading module&n; *&n; *&n; * &t;$Id: ip_masq_app.c,v 1.16 1998/08/29 23:51:14 davem Exp $&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;JJC&t;&t;&t;: Implemented also input pkt hook&n; *&t;Miquel van Smoorenburg&t;: Copy more stuff when resizing skb&n; *&n; *&n; * FIXME:&n; *&t;- ip_masq_skb_replace(): use same skb if space available.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1598,9 +1598,9 @@ op_assign
 (brace
 id|PROC_NET_IP_MASQ_APP
 comma
-l_int|11
+l_int|3
 comma
-l_string|&quot;ip_masq_app&quot;
+l_string|&quot;app&quot;
 comma
 id|S_IFREG
 op_or
@@ -1635,7 +1635,7 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|ip_masq_proc_register
 c_func
 (paren
 op_amp

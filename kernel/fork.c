@@ -1979,7 +1979,11 @@ suffix:semicolon
 id|new_flags
 op_and_assign
 op_complement
+(paren
 id|PF_SUPERPRIV
+op_or
+id|PF_USEDFPU
+)paren
 suffix:semicolon
 id|new_flags
 op_or_assign

@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;&t;/* io_remap_page_range() */
 macro_line|#include &lt;video/sbusfb.h&gt;
 DECL|macro|DEFAULT_CURSOR_BLINK_RATE
 mdefine_line|#define DEFAULT_CURSOR_BLINK_RATE       (2*HZ/5)
@@ -430,30 +431,6 @@ id|p
 comma
 r_int
 id|s
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|io_remap_page_range
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-r_int
-id|size
-comma
-id|pgprot_t
-id|prot
-comma
-r_int
-id|space
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
@@ -2327,10 +2304,11 @@ l_int|32
 (brace
 id|u
 op_assign
-op_complement
-(paren
 l_int|0xffffffff
-op_rshift
+op_lshift
+(paren
+l_int|32
+op_minus
 id|f.size.fbx
 )paren
 suffix:semicolon
@@ -2383,15 +2361,12 @@ r_else
 (brace
 id|u
 op_assign
-op_complement
-(paren
 l_int|0xffffffff
-op_rshift
+op_lshift
 (paren
-id|f.size.fbx
+l_int|64
 op_minus
-l_int|32
-)paren
+id|f.size.fbx
 )paren
 suffix:semicolon
 r_for
@@ -6420,6 +6395,10 @@ id|fb-&gt;info.blank
 op_assign
 op_amp
 id|sbusfbcon_blank
+suffix:semicolon
+id|fb-&gt;info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 id|fb-&gt;cursor.hwsize.fbx
 op_assign

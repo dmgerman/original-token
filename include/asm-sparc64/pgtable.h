@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.85 1998/08/04 20:51:33 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.90 1998/09/24 03:21:56 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -212,11 +212,33 @@ DECL|macro|flush_cache_range
 mdefine_line|#define flush_cache_range(mm, start, end)&t;flushw_user()
 DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, page)&t;&t;flushw_user()
+r_extern
+r_void
+id|flush_page_to_ram
+c_func
+(paren
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
 multiline_comment|/* This operation in unnecessary on the SpitFire since D-CACHE is write-through. */
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
+r_extern
+r_void
+id|__flush_dcache_range
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|__flush_cache_all
@@ -1741,9 +1763,9 @@ id|pgdir
 op_ne
 id|swapper_pg_dir
 op_logical_and
-id|tsk
+id|tsk-&gt;mm
 op_eq
-id|current
+id|current-&gt;mm
 )paren
 (brace
 r_register
@@ -1789,11 +1811,30 @@ op_mod
 id|pstate
 id|mov
 op_mod
+l_int|3
+comma
+op_mod
+op_mod
+id|g4
+id|mov
+op_mod
 l_int|0
 comma
 op_mod
 op_mod
 id|g7
+id|stxa
+op_mod
+op_mod
+id|g0
+comma
+(braket
+op_mod
+op_mod
+id|g4
+)braket
+op_mod
+l_int|2
 id|wrpr
 op_mod
 op_mod
@@ -1819,8 +1860,24 @@ id|PSTATE_MG
 op_or
 id|PSTATE_IE
 )paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|TSB_REG
+)paren
 suffix:colon
 l_string|&quot;o4&quot;
+)paren
+suffix:semicolon
+id|flush_tlb_mm
+c_func
+(paren
+id|current-&gt;mm
 )paren
 suffix:semicolon
 )brace
@@ -2175,6 +2232,30 @@ suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(test_bit(PG_skip, &amp;(page)-&gt;flags))
+r_extern
+r_int
+id|io_remap_page_range
+c_func
+(paren
+r_int
+r_int
+id|from
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|size
+comma
+id|pgprot_t
+id|prot
+comma
+r_int
+id|space
+)paren
+suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC64_PGTABLE_H) */
 eof

@@ -795,6 +795,7 @@ suffix:semicolon
 )brace
 DECL|function|die_if_kernel
 r_static
+r_inline
 r_void
 id|die_if_kernel
 c_func
@@ -1811,7 +1812,9 @@ r_void
 id|math_state_restore
 c_func
 (paren
-r_void
+r_struct
+id|pt_regs
+id|regs
 )paren
 (brace
 id|__asm__

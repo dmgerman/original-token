@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.6 1998/08/26 12:03:30 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.7 1998/10/03 09:37:09 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; * &t;&t;Rani Assaf&t;:&t;local_rule cannot be deleted&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -405,6 +405,18 @@ id|r-&gt;r_table
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|r
+op_eq
+op_amp
+id|local_rule
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 op_star
 id|rp
 op_assign
@@ -422,11 +434,6 @@ id|r
 op_ne
 op_amp
 id|main_rule
-op_logical_and
-id|r
-op_ne
-op_amp
-id|local_rule
 )paren
 id|kfree
 c_func

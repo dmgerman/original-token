@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.86 1998/06/04 09:54:49 jj Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.89 1998/09/21 05:05:12 jj Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -28,6 +28,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/pcic.h&gt;
 multiline_comment|/*&n; * Dave Redman (djhr@tadpole.co.uk)&n; *&n; * IRQ numbers.. These are no longer restricted to 15..&n; *&n; * this is done to enable SBUS cards and onboard IO to be masked&n; * correctly. using the interrupt level isn&squot;t good enough.&n; *&n; * For example:&n; *   A device interrupting at sbus level6 and the Floppy both come in&n; *   at IRQ11, but enabling and disabling them requires writing to&n; *   different bits in the SLAVIO/SEC.&n; *&n; * As a result of these changes sun4m machines could now support&n; * directed CPU interrupts using the existing enable/disable irq code&n; * with tweaks.&n; *&n; */
 DECL|function|irq_panic
 r_static
@@ -2606,6 +2607,30 @@ suffix:semicolon
 r_case
 id|sun4m
 suffix:colon
+macro_line|#ifdef CONFIG_PCI
+id|pcic_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_present
+c_func
+(paren
+)paren
+)paren
+(brace
+id|sun4m_pci_init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+macro_line|#endif
 id|sun4m_init_IRQ
 c_func
 (paren

@@ -210,5 +210,18 @@ DECL|macro|IPV6_DROP_MEMBERSHIP
 mdefine_line|#define IPV6_DROP_MEMBERSHIP&t;21
 DECL|macro|IPV6_ROUTER_ALERT
 mdefine_line|#define IPV6_ROUTER_ALERT&t;22
+DECL|macro|IPV6_MTU_DISCOVER
+mdefine_line|#define IPV6_MTU_DISCOVER&t;23
+DECL|macro|IPV6_MTU
+mdefine_line|#define IPV6_MTU&t;&t;24
+DECL|macro|IPV6_RECVERR
+mdefine_line|#define IPV6_RECVERR&t;&t;25
+multiline_comment|/* IPV6_MTU_DISCOVER values */
+DECL|macro|IPV6_PMTUDISC_DONT
+mdefine_line|#define IPV6_PMTUDISC_DONT&t;&t;0
+DECL|macro|IPV6_PMTUDISC_WANT
+mdefine_line|#define IPV6_PMTUDISC_WANT&t;&t;1
+DECL|macro|IPV6_PMTUDISC_DO
+mdefine_line|#define IPV6_PMTUDISC_DO&t;&t;2
 macro_line|#endif
 eof

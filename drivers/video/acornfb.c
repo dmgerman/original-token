@@ -821,7 +821,8 @@ r_default
 suffix:colon
 id|display-&gt;dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1608,6 +1609,10 @@ suffix:semicolon
 id|fb_info.blank
 op_assign
 id|acornfb_blank
+suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 id|acornfb_set_disp
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * net/sched/sch_red.c&t;Random Early Detection queue.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; */
+multiline_comment|/*&n; * net/sched/sch_red.c&t;Random Early Detection queue.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; * Changes:&n; * J Hadi Salim &lt;hadi@nortel.com&gt; 980914:&t;computation fixes&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -144,12 +144,6 @@ id|q-&gt;qidlestart
 r_int
 id|us_idle
 suffix:semicolon
-id|PSCHED_SET_PASTPERFECT
-c_func
-(paren
-id|q-&gt;qidlestart
-)paren
-suffix:semicolon
 id|PSCHED_GET_TIME
 c_func
 (paren
@@ -170,6 +164,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|PSCHED_SET_PASTPERFECT
+c_func
+(paren
+id|q-&gt;qidlestart
+)paren
+suffix:semicolon
 multiline_comment|/*&n;   The problem: ideally, average length queue recalcultion should&n;   be done over constant clock intervals. This is too expensive, so that&n;   the calculation is driven by outgoing packets.&n;   When the queue is idle we have to model this clock by hand.&n;&n;   SF+VJ proposed to &quot;generate&quot; m = idletime/(average_pkt_size/bandwidth)&n;   dummy packets as a burst after idle time, i.e.&n;&n;          q-&gt;qave *= (1-W)^m&n;&n;   This is an apparently overcomplicated solution (f.e. we have to precompute&n;   a table to make this calculation in reasonable time)&n;   I believe that a simpler model may be used here,&n;   but it is field for experiments.&n;*/
 id|q-&gt;qave
 op_rshift_assign
@@ -185,6 +185,8 @@ l_int|0xFF
 )braket
 suffix:semicolon
 )brace
+r_else
+(brace
 id|q-&gt;qave
 op_add_assign
 id|sch-&gt;stats.backlog
@@ -195,6 +197,8 @@ op_rshift
 id|q-&gt;Wlog
 )paren
 suffix:semicolon
+multiline_comment|/* NOTE:&n;&t;&t;   q-&gt;qave is fixed point number with point at Wlog.&n;&t;&t;   The formulae above is equvalent to floating point&n;&t;&t;   version:&n;&n;&t;&t;   qave = qave*(1-W) + sch-&gt;stats.backlog*W;&n;&t;&t;                                           --ANK (980924)&n;&t;&t; */
+)brace
 r_if
 c_cond
 (paren
@@ -284,6 +288,7 @@ op_increment
 id|q-&gt;qcount
 )paren
 (brace
+multiline_comment|/* The formula used below causes questions.&n;&n;&t;&t;   OK. qR is random number in the interval 0..Rmask&n;&t;&t;   i.e. 0..(2^Plog). If we used floating point&n;&t;&t;   arithmetics, it would be: (2^Plog)*rnd_num,&n;&t;&t;   where rnd_num is less 1.&n;&n;&t;&t;   Taking into account, that qave have fixed&n;&t;&t;   point at Wlog, and Plog is related to max_P by&n;&t;&t;   max_P = (qth_max-qth_min)/2^Plog; two lines&n;&t;&t;   below have the following floating point equivalent:&n;&t;&t;   &n;&t;&t;   max_P*(qave - qth_min)/(qth_max-qth_min) &lt; rnd/qcount&n;&n;&t;&t;   Any questions? --ANK (980924)&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -766,12 +771,10 @@ suffix:semicolon
 id|q-&gt;Scell_max
 op_assign
 (paren
-l_int|256
+l_int|255
 op_lshift
 id|q-&gt;Scell_log
 )paren
-op_minus
-l_int|1
 suffix:semicolon
 id|q-&gt;qth_min
 op_assign

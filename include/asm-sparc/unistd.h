@@ -1,10 +1,8 @@
-multiline_comment|/* $Id: unistd.h,v 1.42 1998/07/28 13:08:35 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.47 1998/09/21 05:07:22 jj Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
 multiline_comment|/*&n; * System calls under the Sparc.&n; *&n; * Don&squot;t be scared by the ugly clobbers, it is the only way I can&n; * think of right now to force the arguments into fixed registers&n; * before the trap into the system call with gcc &squot;asm&squot; statements.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * SunOS compatibility based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
-DECL|macro|__NR_setup
-mdefine_line|#define __NR_setup                0 /* Used only by init, to get system going.     */
 DECL|macro|__NR_exit
 mdefine_line|#define __NR_exit                 1 /* Common                                      */
 DECL|macro|__NR_fork
@@ -29,13 +27,14 @@ DECL|macro|__NR_execv
 mdefine_line|#define __NR_execv               11 /* SunOS Specific                              */
 DECL|macro|__NR_chdir
 mdefine_line|#define __NR_chdir               12 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       13    ENOSYS under SunOS                          */
+DECL|macro|__NR_chown
+mdefine_line|#define __NR_chown               13 /* Common                                      */
 DECL|macro|__NR_mknod
 mdefine_line|#define __NR_mknod               14 /* Common                                      */
 DECL|macro|__NR_chmod
 mdefine_line|#define __NR_chmod               15 /* Common                                      */
-DECL|macro|__NR_chown
-mdefine_line|#define __NR_chown               16 /* Common                                      */
+DECL|macro|__NR_lchown
+mdefine_line|#define __NR_lchown              16 /* Common                                      */
 DECL|macro|__NR_brk
 mdefine_line|#define __NR_brk                 17 /* Common                                      */
 multiline_comment|/* #define __NR_ni_syscall       18    ENOSYS under SunOS                          */
@@ -286,8 +285,10 @@ DECL|macro|__NR_killpg
 mdefine_line|#define __NR_killpg             146 /* SunOS Specific                              */
 DECL|macro|__NR_prctl
 mdefine_line|#define __NR_prctl&t;&t;147 /* ENOSYS under SunOS                          */
-multiline_comment|/* #define __NR_ni_syscall      148    ENOSYS under SunOS                          */
-multiline_comment|/* #define __NR_ni_syscall      149    ENOSYS under SunOS                          */
+DECL|macro|__NR_pciconfig_read
+mdefine_line|#define __NR_pciconfig_read     148 /* ENOSYS under SunOS                          */
+DECL|macro|__NR_pciconfig_write
+mdefine_line|#define __NR_pciconfig_write    149 /* ENOSYS under SunOS                          */
 DECL|macro|__NR_getsockname
 mdefine_line|#define __NR_getsockname        150 /* Common                                      */
 DECL|macro|__NR_getmsg
@@ -531,19 +532,6 @@ c_func
 r_int
 comma
 id|pause
-)paren
-r_static
-id|__inline__
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|setup
-comma
-r_int
-comma
-id|magic
 )paren
 r_static
 id|__inline__

@@ -5239,7 +5239,8 @@ r_default
 suffix:colon
 id|display-&gt;dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 )brace
 r_if
@@ -7002,6 +7003,10 @@ id|fb_info.blank
 op_assign
 op_amp
 id|amifbcon_blank
+suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 id|chipptr
 op_assign

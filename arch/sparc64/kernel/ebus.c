@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.29 1998/07/01 15:39:44 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.33 1998/09/21 05:06:03 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -48,14 +48,6 @@ c_func
 r_struct
 id|linux_ebus
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|pci_console_init
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SUN_OPENPROMIO
@@ -1291,14 +1283,6 @@ suffix:semicolon
 )brace
 r_extern
 r_void
-id|sun4u_start_timers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|clock_probe
 c_func
 (paren
@@ -1999,13 +1983,6 @@ op_increment
 id|num_ebus
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_FB
-id|pci_console_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_OPENPROMIO
 id|openprom_init
 c_func
@@ -2048,11 +2025,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|sun4u_start_timers
-c_func
-(paren
-)paren
-suffix:semicolon
 id|clock_probe
 c_func
 (paren

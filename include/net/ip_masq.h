@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * &t;IP masquerading functionality definitions&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_IP_MASQ_NDEBUG */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_IP_MASQ_DEBUG */
 macro_line|#ifndef _IP_MASQ_H
 DECL|macro|_IP_MASQ_H
 mdefine_line|#define _IP_MASQ_H
@@ -26,23 +26,33 @@ mdefine_line|#define MASQUERADE_EXPIRE_UDP      5*60*HZ
 multiline_comment|/* &n; * ICMP can no longer be modified on the fly using an ioctl - this&n; * define is the only way to change the timeouts &n; */
 DECL|macro|MASQUERADE_EXPIRE_ICMP
 mdefine_line|#define MASQUERADE_EXPIRE_ICMP      125*HZ
-DECL|macro|IP_MASQ_F_OUT_SEQ
-mdefine_line|#define IP_MASQ_F_OUT_SEQ              &t;0x01&t;/* must do output seq adjust */
-DECL|macro|IP_MASQ_F_IN_SEQ
-mdefine_line|#define IP_MASQ_F_IN_SEQ              &t;0x02&t;/* must do input seq adjust */
-DECL|macro|IP_MASQ_F_NO_DPORT
-mdefine_line|#define IP_MASQ_F_NO_DPORT     &t;        0x04&t;/* no dport set yet */
+DECL|macro|IP_MASQ_MOD_CTL
+mdefine_line|#define IP_MASQ_MOD_CTL&t;&t;&t;0x00
+DECL|macro|IP_MASQ_USER_CTL
+mdefine_line|#define IP_MASQ_USER_CTL&t;&t;0x01
+macro_line|#ifdef __KERNEL__
+DECL|macro|IP_MASQ_TAB_SIZE
+mdefine_line|#define IP_MASQ_TAB_SIZE&t;256
 DECL|macro|IP_MASQ_F_NO_DADDR
-mdefine_line|#define IP_MASQ_F_NO_DADDR&t;        0x08 &t;/* no daddr yet */
-DECL|macro|IP_MASQ_F_HASHED
-mdefine_line|#define IP_MASQ_F_HASHED&t;        0x10 &t;/* hashed entry */
+mdefine_line|#define IP_MASQ_F_NO_DADDR&t;      0x0001 &t;/* no daddr yet */
+DECL|macro|IP_MASQ_F_NO_DPORT
+mdefine_line|#define IP_MASQ_F_NO_DPORT     &t;      0x0002&t;/* no dport set yet */
+DECL|macro|IP_MASQ_F_NO_SADDR
+mdefine_line|#define IP_MASQ_F_NO_SADDR&t;      0x0004&t;/* no sport set yet */
 DECL|macro|IP_MASQ_F_NO_SPORT
-mdefine_line|#define IP_MASQ_F_NO_SPORT&t;       0x200&t;/* no sport set yet */
+mdefine_line|#define IP_MASQ_F_NO_SPORT&t;      0x0008&t;/* no sport set yet */
 DECL|macro|IP_MASQ_F_NO_REPLY
-mdefine_line|#define IP_MASQ_F_NO_REPLY&t;       0x800&t;/* no reply yet from outside */
+mdefine_line|#define IP_MASQ_F_NO_REPLY&t;      0x0010&t;/* no reply yet from outside */
+DECL|macro|IP_MASQ_F_HASHED
+mdefine_line|#define IP_MASQ_F_HASHED&t;      0x0100 &t;/* hashed entry */
+DECL|macro|IP_MASQ_F_OUT_SEQ
+mdefine_line|#define IP_MASQ_F_OUT_SEQ             0x0200&t;/* must do output seq adjust */
+DECL|macro|IP_MASQ_F_IN_SEQ
+mdefine_line|#define IP_MASQ_F_IN_SEQ              0x0400&t;/* must do input seq adjust */
 DECL|macro|IP_MASQ_F_MPORT
 mdefine_line|#define IP_MASQ_F_MPORT&t;&t;      0x1000 &t;/* own mport specified */
-macro_line|#ifdef __KERNEL__
+DECL|macro|IP_MASQ_F_USER
+mdefine_line|#define IP_MASQ_F_USER&t;&t;      0x2000&t;/* from uspace */
 multiline_comment|/*&n; *&t;Delta seq. info structure&n; *&t;Each MASQ struct has 2 (output AND input seq. changes).&n; */
 DECL|struct|ip_masq_seq
 r_struct
@@ -175,7 +185,7 @@ id|timeout_table
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;timeout values&n; */
+multiline_comment|/*&n; *&t;Timeout values&n; *&t;ipchains holds a copy of this definition&n; */
 DECL|struct|ip_fw_masq
 r_struct
 id|ip_fw_masq
@@ -194,11 +204,40 @@ id|udp_timeout
 suffix:semicolon
 )brace
 suffix:semicolon
-r_extern
-r_struct
-id|ip_fw_masq
+DECL|union|ip_masq_tphdr
+r_union
+id|ip_masq_tphdr
+(brace
+DECL|member|raw
+r_int
+r_char
 op_star
-id|ip_masq_expire
+id|raw
+suffix:semicolon
+DECL|member|uh
+r_struct
+id|udphdr
+op_star
+id|uh
+suffix:semicolon
+DECL|member|th
+r_struct
+id|tcphdr
+op_star
+id|th
+suffix:semicolon
+DECL|member|icmph
+r_struct
+id|icmphdr
+op_star
+id|icmph
+suffix:semicolon
+DECL|member|portp
+id|__u16
+op_star
+id|portp
+suffix:semicolon
+)brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;[0]: UDP free_ports&n; *&t;[1]: TCP free_ports&n; *&t;[2]: ICMP free_ports&n; */
 r_extern
@@ -328,6 +367,104 @@ r_struct
 id|ip_masq
 op_star
 id|ms
+)paren
+suffix:semicolon
+r_struct
+id|ip_masq_ctl
+suffix:semicolon
+DECL|struct|ip_masq_hook
+r_struct
+id|ip_masq_hook
+(brace
+DECL|member|ctl
+r_int
+(paren
+op_star
+id|ctl
+)paren
+(paren
+r_int
+comma
+r_struct
+id|ip_masq_ctl
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|info
+r_int
+(paren
+op_star
+id|info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ip_masq
+op_star
+id|ip_masq_m_tab
+(braket
+id|IP_MASQ_TAB_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|ip_masq
+op_star
+id|ip_masq_s_tab
+(braket
+id|IP_MASQ_TAB_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_const
+r_char
+op_star
+id|ip_masq_state_name
+c_func
+(paren
+r_int
+id|state
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|ip_masq_hook
+op_star
+id|ip_masq_user_hook
+suffix:semicolon
+r_extern
+id|u32
+id|ip_masq_select_addr
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+id|u32
+id|dst
+comma
+r_int
+id|scope
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * &t;&n; *&t;IP_MASQ_APP: IP application masquerading definitions &n; *&n; */
@@ -753,194 +890,30 @@ op_star
 id|ms
 )paren
 suffix:semicolon
-multiline_comment|/* &n; *&t;Locking stuff&n; */
-DECL|function|ip_masq_lock
-r_static
-id|__inline__
-r_void
-id|ip_masq_lock
-c_func
-(paren
-id|atomic_t
-op_star
-id|lock
-comma
-r_int
-id|rw
-)paren
-(brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|rw
-)paren
-macro_line|#endif
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-id|lock
-)paren
-suffix:semicolon
-)brace
-DECL|function|ip_masq_unlock
-r_static
-id|__inline__
-r_void
-id|ip_masq_unlock
-c_func
-(paren
-id|atomic_t
-op_star
-id|lock
-comma
-r_int
-id|rw
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-id|lock
-)paren
-suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|rw
-)paren
-macro_line|#endif
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Sleep-able lockzzz...&n; */
-DECL|function|ip_masq_lockz
-r_static
-id|__inline__
-r_void
-id|ip_masq_lockz
-c_func
-(paren
-id|atomic_t
-op_star
-id|lock
-comma
-r_struct
-id|wait_queue
-op_star
-op_star
-id|waitq
-comma
-r_int
-id|rw
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|rw
-)paren
-r_while
-c_loop
-(paren
-id|atomic_read
-c_func
-(paren
-id|lock
-)paren
-)paren
-(brace
-id|sleep_on
-c_func
-(paren
-id|waitq
-)paren
-suffix:semicolon
-)brace
-id|ip_masq_lock
-c_func
-(paren
-id|lock
-comma
-id|rw
-)paren
-suffix:semicolon
-)brace
-DECL|function|ip_masq_unlockz
-r_static
-id|__inline__
-r_void
-id|ip_masq_unlockz
-c_func
-(paren
-id|atomic_t
-op_star
-id|lock
-comma
-r_struct
-id|wait_queue
-op_star
-op_star
-id|waitq
-comma
-r_int
-id|rw
-)paren
-(brace
-id|ip_masq_unlock
-c_func
-(paren
-id|lock
-comma
-id|rw
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rw
-)paren
-id|wake_up
-c_func
-(paren
-id|waitq
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Perfect for winning races ... ;)&n; */
-DECL|function|ip_masq_nlocks
-r_static
-id|__inline__
-r_int
-id|ip_masq_nlocks
-c_func
-(paren
-id|atomic_t
-op_star
-id|lock
-)paren
-(brace
-r_return
-id|atomic_read
-c_func
-(paren
-id|lock
-)paren
-suffix:semicolon
-)brace
 r_extern
-id|atomic_t
+id|rwlock_t
 id|__ip_masq_lock
 suffix:semicolon
+macro_line|#ifdef __SMP__
+DECL|macro|read_lock_bh
+mdefine_line|#define read_lock_bh(lock) &t;do { start_bh_atomic(); read_lock(lock); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
+DECL|macro|read_unlock_bh
+mdefine_line|#define read_unlock_bh(lock)&t;do { read_unlock(lock); end_bh_atomic(); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
+DECL|macro|write_lock_bh
+mdefine_line|#define write_lock_bh(lock)&t;do { start_bh_atomic(); write_lock(lock); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
+DECL|macro|write_unlock_bh
+mdefine_line|#define write_unlock_bh(lock)&t;do { write_unlock(lock); end_bh_atomic(); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
+macro_line|#else
+DECL|macro|read_lock_bh
+mdefine_line|#define read_lock_bh(lock)&t;start_bh_atomic()
+DECL|macro|read_unlock_bh
+mdefine_line|#define read_unlock_bh(lock)&t;end_bh_atomic()
+DECL|macro|write_lock_bh
+mdefine_line|#define write_lock_bh(lock)&t;start_bh_atomic()
+DECL|macro|write_unlock_bh
+mdefine_line|#define write_unlock_bh(lock)&t;end_bh_atomic()
+macro_line|#endif 
+multiline_comment|/*&n; *&n; */
 multiline_comment|/*&n; *&t;Debugging stuff&n; */
 r_extern
 r_int
@@ -950,7 +923,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_IP_MASQ_NDEBUG
+macro_line|#ifdef CONFIG_IP_MASQ_DEBUG
 DECL|macro|IP_MASQ_DEBUG
 mdefine_line|#define IP_MASQ_DEBUG(level, msg...) do { &bslash;&n;&t;if (level &lt;= ip_masq_get_debug_level()) &bslash;&n;&t;&t;printk(KERN_DEBUG &quot;IP_MASQ:&quot; ## msg); &bslash;&n;&t;} while (0)
 macro_line|#else&t;/* NO DEBUGGING at ALL */
@@ -964,6 +937,26 @@ mdefine_line|#define IP_MASQ_ERR(msg...) &bslash;&n;&t;printk(KERN_ERR &quot;IP_
 DECL|macro|IP_MASQ_WARNING
 mdefine_line|#define IP_MASQ_WARNING(msg...) &bslash;&n;&t;printk(KERN_WARNING &quot;IP_MASQ:&quot; ## msg)
 multiline_comment|/*&n; *&t;/proc/net entry&n; */
+r_extern
+r_int
+id|ip_masq_proc_register
+c_func
+(paren
+r_struct
+id|proc_dir_entry
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_masq_proc_unregister
+c_func
+(paren
+r_struct
+id|proc_dir_entry
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|ip_masq_app_getinfo

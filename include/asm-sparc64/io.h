@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.18 1998/07/12 12:07:43 ecd Exp $ */
+multiline_comment|/* $Id: io.h,v 1.19 1998/08/23 05:41:46 ecd Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -559,7 +559,7 @@ DECL|macro|writew
 mdefine_line|#define writew(w, addr)&t;&t;outw((w), (unsigned long)(addr))
 DECL|macro|writel
 mdefine_line|#define writel(l, addr)&t;&t;outl((l), (unsigned long)(addr))
-multiline_comment|/* Memcpy to/from I/O space is just a regular memory operation on Ultra as well. */
+multiline_comment|/*&n; * Memcpy to/from I/O space is just a regular memory operation on&n; * Ultra as well.&n; */
 multiline_comment|/*&n; * FIXME: Write faster routines using ASL_*L for this.&n; */
 r_static
 r_inline
@@ -707,7 +707,7 @@ id|dst
 suffix:semicolon
 )brace
 macro_line|#if 0 /* XXX Not exactly, we need to use ASI_*L from/to the I/O end,&n;       * XXX so these are disabled until we code that stuff.&n;       */
-mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),((char *)(b)),(c),(d))
+mdefine_line|#define eth_io_copy_and_sum(a,b,c,d) eth_copy_and_sum((a),((char *)(b)),(c),(d))
 macro_line|#endif
 DECL|function|check_signature
 r_static
@@ -772,9 +772,49 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * On the sparc we have the whole physical IO address space mapped at all&n; * times, so ioremap() and iounmap() do not need to do anything.&n; */
+DECL|function|ioremap
+r_extern
+id|__inline__
+r_void
+op_star
+id|ioremap
+c_func
+(paren
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_return
+id|__va
+c_func
+(paren
+id|offset
+)paren
+suffix:semicolon
+)brace
+DECL|function|iounmap
+r_extern
+id|__inline__
+r_void
+id|iounmap
+c_func
+(paren
+r_void
+op_star
+id|addr
+)paren
+(brace
+)brace
 r_extern
 r_void
 id|sparc_ultra_mapioaddr
+c_func
 (paren
 r_int
 r_int
@@ -794,6 +834,7 @@ suffix:semicolon
 r_extern
 r_void
 id|sparc_ultra_unmapioaddr
+c_func
 (paren
 r_int
 r_int
@@ -805,6 +846,7 @@ r_extern
 id|__inline__
 r_void
 id|mapioaddr
+c_func
 (paren
 r_int
 r_int
@@ -822,6 +864,7 @@ id|rdonly
 )paren
 (brace
 id|sparc_ultra_mapioaddr
+c_func
 (paren
 id|physaddr
 comma
@@ -846,6 +889,7 @@ id|virt_addr
 )paren
 (brace
 id|sparc_ultra_unmapioaddr
+c_func
 (paren
 id|virt_addr
 )paren
@@ -855,6 +899,7 @@ r_extern
 r_void
 op_star
 id|sparc_alloc_io
+c_func
 (paren
 id|u32
 id|pa

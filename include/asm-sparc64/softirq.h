@@ -19,7 +19,7 @@ mdefine_line|#define softirq_endlock(cpu)&t;(__sparc64_bh_counter = 0)
 DECL|macro|clear_active_bhs
 mdefine_line|#define clear_active_bhs(x)&t;(bh_active &amp;= ~(x))
 DECL|macro|synchronize_bh
-mdefine_line|#define synchronize_bh()&t;do { } while (0) /* XXX implement SMP version -DaveM */
+mdefine_line|#define synchronize_bh()&t;barrier() /* XXX implement SMP version -DaveM */
 DECL|macro|init_bh
 mdefine_line|#define init_bh(nr, routine)&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&bslash;&n;&t;bh_base[ent] = routine;&t;&bslash;&n;&t;bh_mask_count[ent] = 0;&t;&bslash;&n;&t;bh_mask |= 1 &lt;&lt; ent;&t;&bslash;&n;} while(0)
 DECL|macro|remove_bh

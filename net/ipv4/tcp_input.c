@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.128 1998/09/15 02:11:18 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.130 1998/10/04 07:06:47 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -40,10 +40,6 @@ r_int
 id|sysctl_tcp_hoe_retransmits
 op_assign
 l_int|1
-suffix:semicolon
-DECL|variable|sysctl_tcp_cong_avoidance
-r_int
-id|sysctl_tcp_cong_avoidance
 suffix:semicolon
 DECL|variable|sysctl_tcp_syncookies
 r_int
@@ -179,6 +175,58 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+)brace
+)brace
+multiline_comment|/* &n; * Remember to send an ACK later.&n; */
+DECL|function|tcp_remember_ack
+r_static
+id|__inline__
+r_void
+id|tcp_remember_ack
+c_func
+(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+comma
+r_struct
+id|tcphdr
+op_star
+id|th
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+id|tp-&gt;delayed_acks
+op_increment
+suffix:semicolon
+multiline_comment|/* Tiny-grams with PSH set make us ACK quickly. */
+r_if
+c_cond
+(paren
+id|th-&gt;psh
+op_logical_and
+(paren
+id|skb-&gt;len
+OL
+(paren
+id|tp-&gt;mss_cache
+op_rshift
+l_int|1
+)paren
+)paren
+)paren
+(brace
+id|tp-&gt;ato
+op_assign
+id|HZ
+op_div
+l_int|50
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Called to compute a smoothed rtt estimate. The data fed to this&n; * routine either comes from timestamps, or from segments that were&n; * known _not_ to have been retransmitted [see Karn/Partridge&n; * Proceedings SIGCOMM 87]. The algorithm is from the SIGCOMM 88&n; * piece by Van Jacobson.&n; * NOTE: the next three routines used to be one big routine.&n; * To save cycles in the RFC 1323 implementation it was better to break&n; * it up into three procedures. -- erics&n; */
@@ -2401,6 +2449,7 @@ suffix:semicolon
 )brace
 DECL|function|tcp_ack_packets_out
 r_static
+id|__inline__
 r_void
 id|tcp_ack_packets_out
 c_func
@@ -4110,6 +4159,20 @@ id|tp-&gt;selective_acks
 l_int|0
 )braket
 suffix:semicolon
+r_int
+id|cur_sacks
+op_assign
+id|tp-&gt;num_sacks
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cur_sacks
+)paren
+r_goto
+id|new_sack
+suffix:semicolon
 multiline_comment|/* Optimize for the common case, new ofo frames arrive&n;&t; * &quot;in order&quot;. ;-)  This also satisfies the requirements&n;&t; * of RFC2018 about ordering of SACKs.&n;&t; */
 r_if
 c_cond
@@ -4181,12 +4244,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_int
-id|cur_sacks
+r_struct
+id|tcp_sack_block
+op_star
+id|swap
 op_assign
-id|tp-&gt;num_sacks
+id|sp
+op_plus
+l_int|1
 suffix:semicolon
 r_int
+id|this_sack
+comma
 id|max_sacks
 op_assign
 (paren
@@ -4199,26 +4268,6 @@ l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Oh well, we have to move things around.&n;&t;&t; * Try to find a SACK we can tack this onto.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|cur_sacks
-OG
-l_int|1
-)paren
-(brace
-r_struct
-id|tcp_sack_block
-op_star
-id|swap
-op_assign
-id|sp
-op_plus
-l_int|1
-suffix:semicolon
-r_int
-id|this_sack
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4321,8 +4370,22 @@ r_return
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Could not find an adjacent existing SACK, build a new one,&n;&t;&t; * put it at the front, and shift everyone else down.  We&n;&t;&t; * always know there is at least one SACK present already here.&n;&t;&t; *&n;&t;&t; * If the sack array is full, forget about the last one.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|cur_sacks
+op_ge
+id|max_sacks
+)paren
+(brace
+id|cur_sacks
+op_decrement
+suffix:semicolon
+id|tp-&gt;num_sacks
+op_decrement
+suffix:semicolon
 )brace
-multiline_comment|/* Could not find an adjacent existing SACK, build a new one,&n;&t;&t; * put it at the front, and shift everyone else down.  We&n;&t;&t; * always know there is at least one SACK present already here.&n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -4365,7 +4428,9 @@ id|cur_sacks
 op_decrement
 suffix:semicolon
 )brace
-multiline_comment|/* Build head SACK, and we&squot;re done. */
+id|new_sack
+suffix:colon
+multiline_comment|/* Build the new head SACK, and we&squot;re done. */
 id|sp-&gt;start_seq
 op_assign
 id|TCP_SKB_CB
@@ -4386,18 +4451,9 @@ id|skb
 op_member_access_from_pointer
 id|end_seq
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|tp-&gt;num_sacks
-OL
-id|max_sacks
-)paren
-(brace
 id|tp-&gt;num_sacks
 op_increment
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|tcp_sack_remove_skb
@@ -4958,33 +5014,16 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|tp-&gt;delayed_acks
-op_increment
+id|tcp_remember_ack
+c_func
+(paren
+id|tp
+comma
+id|skb-&gt;h.th
+comma
+id|skb
+)paren
 suffix:semicolon
-multiline_comment|/* Tiny-grams with PSH set make us ACK quickly. */
-r_if
-c_cond
-(paren
-id|skb-&gt;h.th-&gt;psh
-op_logical_and
-(paren
-id|skb-&gt;len
-OL
-(paren
-id|tp-&gt;mss_cache
-op_rshift
-l_int|1
-)paren
-)paren
-)paren
-(brace
-id|tp-&gt;ato
-op_assign
-id|HZ
-op_div
-l_int|50
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* This may have eaten into a SACK block. */
 r_if
@@ -5010,6 +5049,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+multiline_comment|/* Turn on fast path. */
 r_if
 c_cond
 (paren
@@ -5620,16 +5660,21 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|tcp_data_snd_check
+DECL|function|__tcp_data_snd_check
 r_static
 r_void
-id|tcp_data_snd_check
+id|__tcp_data_snd_check
 c_func
 (paren
 r_struct
 id|sock
 op_star
 id|sk
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 (brace
 r_struct
@@ -5642,21 +5687,6 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|skb
-op_assign
-id|tp-&gt;send_head
-)paren
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -5719,6 +5749,41 @@ id|tp-&gt;rto
 suffix:semicolon
 )brace
 )brace
+DECL|function|tcp_data_snd_check
+r_static
+id|__inline__
+r_void
+id|tcp_data_snd_check
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+id|sk-&gt;tp_pinfo.af_tcp.send_head
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_ne
+l_int|NULL
+)paren
+id|__tcp_data_snd_check
+c_func
+(paren
+id|sk
+comma
+id|skb
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* &n; * Adapt the MSS value used to make delayed ack decision to the &n; * real world. &n; */
 DECL|function|tcp_measure_rcv_mss
@@ -6425,6 +6490,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;TCP receive function for the ESTABLISHED state. &n; *&n; *&t;It is split into a fast path and a slow path. The fast path is &n; * &t;disabled when:&n; *&t;- A zero window was announced from us - zero window probing&n; *        is only handled properly in the slow path. &n; *      - Out of order segments arrived.&n; *&t;- Urgent data is expected.&n; *&t;- There is no buffer space left&n; *&t;- Unexpected TCP flags/window values/header lengths are received&n; *&t;  (detected by checking the TCP header against pred_flags) &n; *&t;- Data is sent in both directions. Fast path only supports pure senders&n; *&t;  or pure receivers (this means either the sequence number or the ack&n; *&t;  value must stay constant)&n; *&n; *&t;When these conditions are not satisfied it drops into a standard &n; *&t;receive procedure patterned after RFC793 to handle all cases.&n; *&t;The first three cases are guaranteed by proper pred_flags setting,&n; *&t;the rest is checked inline. Fast processing is turned on in &n; *&t;tcp_data_queue when everything is OK.&n; */
 DECL|function|tcp_rcv_established
 r_int
 id|tcp_rcv_established
@@ -6461,8 +6527,6 @@ id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
 r_int
 id|queued
-op_assign
-l_int|0
 suffix:semicolon
 id|u32
 id|flg
@@ -6562,7 +6626,7 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-multiline_comment|/*&t;pred_flags is 0xS?10 &lt;&lt; 16 + snd_wnd&n;&t; *&t;if header_predition is to be made&n;&t; *&t;&squot;S&squot; will always be tp-&gt;tcp_header_len &gt;&gt; 2&n;&t; *&t;&squot;?&squot; will be 0 else it will be !0&n;&t; *&t;(when there are holes in the receive &n;&t; *&t; space for instance)&n;&t; */
+multiline_comment|/*&t;pred_flags is 0xS?10 &lt;&lt; 16 + snd_wnd&n;&t; *&t;if header_predition is to be made&n;&t; *&t;&squot;S&squot; will always be tp-&gt;tcp_header_len &gt;&gt; 2&n;&t; *&t;&squot;?&squot; will be 0 else it will be !0&n;&t; *&t;(when there are holes in the receive &n;&t; *&t; space for instance)&n;         */
 r_if
 c_cond
 (paren
@@ -6668,47 +6732,18 @@ op_member_access_from_pointer
 id|ack_seq
 op_eq
 id|tp-&gt;snd_una
-)paren
-(brace
-multiline_comment|/* Bulk data transfer: receiver&n;&t;&t;&t; *&n;&t;&t;&t; * Check if the segment is out-of-window.&n;&t;&t;&t; * It may be a zero window probe.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|before
-c_func
-(paren
-id|TCP_SKB_CB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
-id|seq
-comma
-id|tp-&gt;rcv_wup
-op_plus
-id|tp-&gt;rcv_wnd
-)paren
-)paren
-r_goto
-id|unacceptable_packet
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_and
 id|atomic_read
 c_func
 (paren
 op_amp
 id|sk-&gt;rmem_alloc
 )paren
-OG
+op_le
 id|sk-&gt;rcvbuf
 )paren
-r_goto
-id|discard
-suffix:semicolon
+(brace
+multiline_comment|/* Bulk data transfer: receiver */
 id|__skb_pull
 c_func
 (paren
@@ -6764,32 +6799,15 @@ c_func
 id|tp
 )paren
 suffix:semicolon
-multiline_comment|/* Tiny-grams with PSH set make us ACK quickly. */
-r_if
-c_cond
+id|tcp_remember_ack
+c_func
 (paren
-id|th-&gt;psh
-op_logical_and
-(paren
-id|skb-&gt;len
-OL
-(paren
-id|tp-&gt;mss_cache
-op_rshift
-l_int|1
+id|tp
+comma
+id|th
+comma
+id|skb
 )paren
-)paren
-)paren
-(brace
-id|tp-&gt;ato
-op_assign
-id|HZ
-op_div
-l_int|50
-suffix:semicolon
-)brace
-id|tp-&gt;delayed_acks
-op_increment
 suffix:semicolon
 id|__tcp_ack_snd_check
 c_func
@@ -6802,6 +6820,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;Standard slow path.&n;&t; */
 r_if
 c_cond
 (paren
@@ -6885,8 +6904,6 @@ id|tp-&gt;rcv_wnd
 )paren
 suffix:semicolon
 )brace
-id|unacceptable_packet
-suffix:colon
 id|tcp_send_ack
 c_func
 (paren
@@ -7062,7 +7079,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Process an incoming SYN or SYN-ACK.&n; */
+multiline_comment|/* &n; *&t;Process an incoming SYN or SYN-ACK for SYN_RECV sockets represented&n; *&t;as an open_request. &n; */
 DECL|function|tcp_check_req
 r_struct
 id|sock
@@ -7314,7 +7331,7 @@ r_return
 id|sk
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This function implements the receiving procedure of RFC 793.&n; *&t;It&squot;s called from both tcp_v4_rcv and tcp_v6_rcv and should be&n; *&t;address independent.&n; */
+multiline_comment|/*&n; *&t;This function implements the receiving procedure of RFC 793 for&n; *&t;all states except ESTABLISHED and TIME_WAIT. &n; *&t;It&squot;s called from both tcp_v4_rcv and tcp_v6_rcv and should be&n; *&t;address independent.&n; */
 DECL|function|tcp_rcv_state_process
 r_int
 id|tcp_rcv_state_process

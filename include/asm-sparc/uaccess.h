@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.15 1998/02/05 14:19:54 jj Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.17 1998/09/16 12:25:29 jj Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -211,7 +211,7 @@ mdefine_line|#define __copy_to_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((v
 DECL|macro|__copy_to_user_ret
 mdefine_line|#define __copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;void *__copy_to = (void *) (to); &bslash;&n;void *__copy_from = (void *) (from); &bslash;&n;__kernel_size_t __copy_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok((unsigned long)__copy_from, __copy_size)) { &bslash;&n;__copy_res = __copy_user(__copy_to, __copy_from, __copy_size); &bslash;&n;if(__copy_res) &bslash;&n;memset((char *)__copy_to + __copy_size - __copy_res, 0, __copy_res); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
+mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;void *__copy_to = (void *) (to); &bslash;&n;void *__copy_from = (void *) (from); &bslash;&n;__kernel_size_t __copy_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok((unsigned long)__copy_from, __copy_size)) { &bslash;&n;__copy_res = __copy_user(__copy_to, __copy_from, __copy_size); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
 DECL|macro|copy_from_user_ret
 mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_from_user

@@ -141,7 +141,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|sbus_init
 c_func
 (paren
@@ -149,15 +149,11 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|powermac_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern

@@ -2505,6 +2505,10 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|p-&gt;info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren

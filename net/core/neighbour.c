@@ -2545,7 +2545,7 @@ id|neigh-&gt;ha
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Generic update routine.&n;   -- lladdr is new lladdr or NULL, if it is not supplied.&n;   -- new    is new state.&n;   -- override==1 allows to override existing lladdr, if it is different.&n;   -- arp==0 means that that the change is administrative.&n; */
+multiline_comment|/* Generic update routine.&n;   -- lladdr is new lladdr or NULL, if it is not supplied.&n;   -- new    is new state.&n;   -- override==1 allows to override existing lladdr, if it is different.&n;   -- arp==0 means that the change is administrative.&n; */
 DECL|function|neigh_update
 r_int
 id|neigh_update

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.19 1998/01/30 10:59:53 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.20 1998/09/17 11:05:25 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -735,6 +735,17 @@ comma
 r_char
 op_star
 id|buffer
+)paren
+suffix:semicolon
+multiline_comment|/* Returns phandle of the path specified */
+r_extern
+r_int
+id|prom_finddevice
+c_func
+(paren
+r_char
+op_star
+id|name
 )paren
 suffix:semicolon
 multiline_comment|/* Returns 1 if the specified node has given property. */

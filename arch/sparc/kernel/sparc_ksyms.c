@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.65 1998/06/04 09:54:50 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.70 1998/09/17 11:04:55 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -282,29 +282,6 @@ c_func
 id|sparc_cpu_model
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-DECL|variable|klock_info
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|klock_info
-)paren
-suffix:semicolon
-macro_line|#endif
-DECL|variable|_lock_kernel
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_lock_kernel
-)paren
-suffix:semicolon
-DECL|variable|_unlock_kernel
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_unlock_kernel
-)paren
-suffix:semicolon
 DECL|variable|_spinlock_waitfor
 id|EXPORT_SYMBOL_PRIVATE
 c_func
@@ -478,20 +455,6 @@ id|__sparc_bh_counter
 suffix:semicolon
 macro_line|#ifdef __SMP__
 macro_line|#ifdef DEBUG_IRQLOCK
-DECL|variable|irq_enter
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|irq_enter
-)paren
-suffix:semicolon
-DECL|variable|irq_exit
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|irq_exit
-)paren
-suffix:semicolon
 DECL|variable|__global_restore_flags
 id|EXPORT_SYMBOL
 c_func
@@ -514,20 +477,6 @@ id|__global_cli
 )paren
 suffix:semicolon
 macro_line|#else
-DECL|variable|_irq_enter
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_irq_enter
-)paren
-suffix:semicolon
-DECL|variable|_irq_exit
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_irq_exit
-)paren
-suffix:semicolon
 DECL|variable|_global_restore_flags
 id|EXPORT_SYMBOL_PRIVATE
 c_func
@@ -558,6 +507,7 @@ c_func
 id|page_offset
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SUN4
 DECL|variable|stack_top
 id|EXPORT_SYMBOL
 c_func
@@ -565,6 +515,7 @@ c_func
 id|stack_top
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Atomic operations. */
 DECL|variable|_atomic_add
 id|EXPORT_SYMBOL_PRIVATE
@@ -1074,7 +1025,7 @@ id|bcopy
 )paren
 suffix:semicolon
 DECL|variable|memscan
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|memscan
@@ -1130,7 +1081,7 @@ id|strcmp
 )paren
 suffix:semicolon
 DECL|variable|strncmp
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|strncmp

@@ -7925,6 +7925,7 @@ id|txbase
 id|elem
 )braket
 suffix:semicolon
+macro_line|#ifdef  __sparc_v9__
 id|__asm__
 id|__volatile__
 c_func
@@ -7948,6 +7949,21 @@ id|ASI_PL
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|flip_dword
+c_func
+(paren
+id|this-&gt;tx_flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8579,9 +8595,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-op_complement
 (paren
 id|csum
+op_xor
+l_int|0xffff
 )paren
 )paren
 (brace
@@ -8746,6 +8763,7 @@ id|rxbase
 id|elem
 )braket
 suffix:semicolon
+macro_line|#ifdef  __sparc_v9__
 id|__asm__
 id|__volatile__
 c_func
@@ -8769,6 +8787,22 @@ id|ASI_PL
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|flip_dword
+c_func
+(paren
+id|this-&gt;rx_flags
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME */
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -9224,6 +9258,7 @@ id|rxbase
 id|elem
 )braket
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__ 
 id|__asm__
 id|__volatile__
 c_func
@@ -9247,6 +9282,22 @@ id|ASI_PL
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|flip_dword
+c_func
+(paren
+id|this-&gt;rx_flags
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME */
+macro_line|#endif
 )brace
 id|hp-&gt;rx_new
 op_assign
@@ -10476,7 +10527,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
-macro_line|#else
+macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
@@ -10532,7 +10583,6 @@ suffix:semicolon
 )brace
 )brace
 r_else
-macro_line|#endif
 macro_line|#endif
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: atyfb.c,v 1.75 1998/09/03 20:13:21 geert Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*  $Id: atyfb.c,v 1.77 1998/09/14 08:01:46 jj Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/******************************************************************************&n;&n;  TODO:&n;&n;    - cursor support on all cards and all ramdacs.&n;    - cursor parameters controlable via ioctl()s.&n;&n;&t;&t;&t;&t;&t;&t;(Anyone to help with this?)&n;&n;******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -10165,21 +10165,6 @@ r_int
 id|accel
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -10305,12 +10290,6 @@ op_assign
 id|atyfb_set_font
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Set the User Defined Part of the Display&n;     */
 DECL|function|atyfb_set_var
@@ -13090,6 +13069,10 @@ id|info-&gt;fb_info.blank
 op_assign
 op_amp
 id|atyfbcon_blank
+suffix:semicolon
+id|info-&gt;fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 r_for
 c_loop

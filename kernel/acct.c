@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/acct.c&n; *&n; *  BSD Process Accounting for Linux&n; *&n; *  Author: Marco van Wieringen &lt;mvw@planets.elm.net&gt;&n; *&n; *  Some code based on ideas and code from:&n; *  Thomas K. Dyas &lt;tdyas@eden.rutgers.edu&gt;&n; *&n; *  This file implements BSD-style process accounting. Whenever any&n; *  process exits, an accounting record of type &quot;struct acct&quot; is&n; *  written to the file specified with the acct() system call. It is&n; *  up to user-level programs to do useful things with the accounting&n; *  log. The kernel just provides the raw accounting information.&n; *&n; * (C) Copyright 1995 - 1997 Marco van Wieringen - ELM Consultancy B.V.&n; *&n; */
+multiline_comment|/*&n; *  linux/kernel/acct.c&n; *&n; *  BSD Process Accounting for Linux&n; *&n; *  Author: Marco van Wieringen &lt;mvw@planets.elm.net&gt;&n; *&n; *  Some code based on ideas and code from:&n; *  Thomas K. Dyas &lt;tdyas@eden.rutgers.edu&gt;&n; *&n; *  This file implements BSD-style process accounting. Whenever any&n; *  process exits, an accounting record of type &quot;struct acct&quot; is&n; *  written to the file specified with the acct() system call. It is&n; *  up to user-level programs to do useful things with the accounting&n; *  log. The kernel just provides the raw accounting information.&n; *&n; * (C) Copyright 1995 - 1997 Marco van Wieringen - ELM Consultancy B.V.&n; *&n; *  Plugged two leaks. 1) It didn&squot;t return acct_file into the free_filps if&n; *  the file happened to be read-only. 2) If the accounting was suspended&n; *  due to the lack of space it happily allowed to reopen it and completely&n; *  lost the old acct_file. 3/10/98, Al Viro.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -317,9 +317,22 @@ l_int|NULL
 r_if
 c_cond
 (paren
-id|acct_active
+id|acct_file
 )paren
 (brace
+multiline_comment|/* fput() may block, so just in case... */
+r_struct
+id|file
+op_star
+id|tmp
+op_assign
+id|acct_file
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|acct_active
+)paren
 id|acct_process
 c_func
 (paren
@@ -341,10 +354,14 @@ id|acct_needcheck
 op_assign
 l_int|0
 suffix:semicolon
+id|acct_file
+op_assign
+l_int|NULL
+suffix:semicolon
 id|fput
 c_func
 (paren
-id|acct_file
+id|tmp
 )paren
 suffix:semicolon
 )brace
@@ -358,11 +375,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t; * We can&squot;t rely on acct_active - it might be disabled&n;&t;&t; * due to the lack of space.&n;&t;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|acct_active
+id|acct_file
 )paren
 (brace
 id|tmp
@@ -618,8 +636,16 @@ id|acct_file-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 )brace
-id|acct_file-&gt;f_count
-op_decrement
+multiline_comment|/* decrementing f_count is _not_ enough */
+id|put_filp
+c_func
+(paren
+id|acct_file
+)paren
+suffix:semicolon
+id|acct_file
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 r_else
@@ -636,6 +662,7 @@ id|dentry
 suffix:semicolon
 )brace
 r_else
+multiline_comment|/*&n;&t;&t;&t; * NB: in this case FreeBSD just closes acct_file&n;&t;&t;&t; * and opens new one. Maybe it&squot;s better behavior...&n;&t;&t;&t; */
 id|error
 op_assign
 op_minus

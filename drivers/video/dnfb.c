@@ -1262,6 +1262,10 @@ op_assign
 op_amp
 id|dnfb_ops
 suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 id|outb
 c_func
 (paren

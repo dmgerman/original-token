@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.61 1998/07/28 13:59:52 jj Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.66 1998/09/21 05:48:48 jj Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -207,14 +207,21 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_void
+r_int
 id|serial_console_init
 c_func
 (paren
-r_void
+r_int
+id|kmem_start
+comma
+r_int
+id|kmem_end
 )paren
 )paren
 (brace
+r_return
+id|kmem_start
+suffix:semicolon
 )brace
 DECL|function|rs_change_mouse_baud
 r_void
@@ -1608,6 +1615,16 @@ suffix:semicolon
 macro_line|#endif
 r_extern
 r_int
+id|su_probe
+c_func
+(paren
+r_int
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|zs_probe
 c_func
 (paren
@@ -1639,16 +1656,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|su_probe
-c_func
-(paren
-r_int
-r_int
-op_star
-)paren
-suffix:semicolon
 macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
@@ -1668,13 +1675,17 @@ id|memory_start
 r_int
 id|ret
 op_assign
-op_minus
-id|ENODEV
+l_int|1
 suffix:semicolon
-multiline_comment|/* Probe for controllers. */
-id|ret
-op_assign
-id|zs_probe
+macro_line|#if defined(CONFIG_PCI) &amp;&amp; !defined(__sparc_v9__)
+multiline_comment|/*&n;&t; * Probing sequence on sparc differs from sparc64.&n;&t; * Keyboard is probed ahead of su because we want su function&n;&t; * when keyboard is active. su is probed ahead of zs in order to&n;&t; * get console on MrCoffee with fine but disconnected zs.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial_console
+)paren
+id|ps2kbd_probe
 c_func
 (paren
 op_amp
@@ -1684,8 +1695,30 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|ret
+id|su_probe
+c_func
+(paren
+op_amp
+id|memory_start
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+id|memory_start
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|zs_probe
+c_func
+(paren
+op_amp
+id|memory_start
+)paren
+op_eq
+l_int|0
 )paren
 r_return
 id|memory_start
@@ -1701,7 +1734,7 @@ id|memory_start
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PCI
+macro_line|#if defined(CONFIG_PCI) &amp;&amp; defined(__sparc_v9__)
 multiline_comment|/*&n;&t; * Keyboard serial devices.&n;&t; *&n;&t; * Well done, Sun, prom_devopen(&quot;/pci@1f,4000/ebus@1/su@14,3083f8&quot;)&n;&t; * hangs the machine if no keyboard is connected to the device...&n;&t; * All PCI PROMs seem to do this, I have seen this on the Ultra 450&n;&t; * with version 3.5 PROM, and on the Ultra/AX with 3.1.5 PROM.&n;&t; *&n;&t; * So be very careful not to probe for keyboards if we are on a&n;&t; * serial console.&n;&t; */
 r_if
 c_cond

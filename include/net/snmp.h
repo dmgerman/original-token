@@ -643,6 +643,16 @@ r_int
 r_int
 id|OfoPruned
 suffix:semicolon
+DECL|member|OutOfWindowIcmps
+r_int
+r_int
+id|OutOfWindowIcmps
+suffix:semicolon
+DECL|member|LockDroppedIcmps
+r_int
+r_int
+id|LockDroppedIcmps
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.28 1998/08/26 12:05:22 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.29 1998/10/03 09:38:47 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -1896,10 +1896,13 @@ r_if
 c_cond
 (paren
 id|mtu
-op_ge
+OL
 id|IPV6_MIN_MTU
 )paren
-(brace
+id|mtu
+op_assign
+id|IPV6_MIN_MTU
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1982,7 +1985,6 @@ suffix:semicolon
 r_goto
 id|tx_error
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -2484,6 +2486,24 @@ suffix:colon
 id|err
 op_assign
 op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_goto
+id|done
+suffix:semicolon
+id|err
+op_assign
+op_minus
 id|EFAULT
 suffix:semicolon
 r_if
@@ -2637,6 +2657,24 @@ suffix:semicolon
 r_case
 id|SIOCDELTUNNEL
 suffix:colon
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_goto
+id|done
+suffix:semicolon
 r_if
 c_cond
 (paren

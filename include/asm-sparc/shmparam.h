@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: shmparam.h,v 1.3 1995/11/25 02:32:42 davem Exp $ */
+multiline_comment|/* $Id: shmparam.h,v 1.4 1998/09/28 07:15:01 jj Exp $ */
 macro_line|#ifndef _ASMSPARC_SHMPARAM_H
 DECL|macro|_ASMSPARC_SHMPARAM_H
 mdefine_line|#define _ASMSPARC_SHMPARAM_H
@@ -21,7 +21,7 @@ DECL|macro|SHM_IDX_MASK
 mdefine_line|#define SHM_IDX_MASK&t;((1&lt;&lt;_SHM_IDX_BITS)-1)
 multiline_comment|/*&n; * _SHM_ID_BITS + _SHM_IDX_BITS must be &lt;= 24 on the i386 and&n; * SHMMAX &lt;= (PAGE_SIZE &lt;&lt; _SHM_IDX_BITS).&n; */
 DECL|macro|SHMMAX
-mdefine_line|#define SHMMAX (1024 * 1024)&t;&t;/* max shared seg size (bytes) */
+mdefine_line|#define SHMMAX 0x1000000&t;&t;/* max shared seg size (bytes) */
 DECL|macro|SHMMIN
 mdefine_line|#define SHMMIN 1 /* really PAGE_SIZE */&t;/* min shared seg size (bytes) */
 DECL|macro|SHMMNI

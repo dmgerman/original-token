@@ -3894,6 +3894,10 @@ op_assign
 op_amp
 id|tgafbcon_blank
 suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 id|tgafb_set_var
 c_func
 (paren

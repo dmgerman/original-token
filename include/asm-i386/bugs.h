@@ -51,16 +51,15 @@ id|boot_cpu_data.hard_math
 op_assign
 l_int|0
 suffix:semicolon
-id|__asm__
+id|write_cr0
 c_func
 (paren
-l_string|&quot;movl %%cr0,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;orl $0xE,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%eax,%%cr0&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-suffix:colon
-l_string|&quot;ax&quot;
+l_int|0xE
+op_or
+id|read_cr0
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 )brace

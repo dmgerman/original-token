@@ -5701,6 +5701,9 @@ r_static
 r_int
 id|kbd_fasync
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -5717,6 +5720,8 @@ id|retval
 op_assign
 id|fasync_helper
 (paren
+id|fd
+comma
 id|filp
 comma
 id|on
@@ -6468,6 +6473,9 @@ l_int|0
 suffix:semicolon
 id|kbd_fasync
 (paren
+op_minus
+l_int|1
+comma
 id|f
 comma
 l_int|0

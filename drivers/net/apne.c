@@ -2514,13 +2514,6 @@ c_func
 r_void
 )paren
 (brace
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|apne_dev
-)paren
-suffix:semicolon
 id|pcmcia_disable_irq
 c_func
 (paren
@@ -2538,6 +2531,13 @@ suffix:semicolon
 id|pcmcia_reset
 c_func
 (paren
+)paren
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|apne_dev
 )paren
 suffix:semicolon
 id|unlock_8390_module

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.93 1998/08/04 20:49:25 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.98 1998/09/28 06:18:39 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -51,12 +51,15 @@ r_int
 r_int
 id|phys_base
 suffix:semicolon
+multiline_comment|/* get_new_mmu_context() uses &quot;cache + 1&quot;.  */
 DECL|variable|tlb_context_cache
 r_int
 r_int
 id|tlb_context_cache
 op_assign
 id|CTX_FIRST_VERSION
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* References to section boundaries */
 r_extern
@@ -2836,9 +2839,9 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
+l_string|&quot;flushw&bslash;n&bslash;t&quot;
 l_string|&quot;rdpr&t;%%pstate, %0&bslash;n&bslash;t&quot;
-l_string|&quot;wrpr&t;%0, %1, %%pstate&bslash;n&bslash;t&quot;
-l_string|&quot;flushw&quot;
+l_string|&quot;wrpr&t;%0, %1, %%pstate&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -3585,6 +3588,67 @@ l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|function|__flush_dcache_range
+r_void
+id|__flush_dcache_range
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+r_int
+r_int
+id|va
+suffix:semicolon
+r_int
+id|n
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|va
+op_assign
+id|start
+suffix:semicolon
+id|va
+OL
+id|end
+suffix:semicolon
+id|va
+op_add_assign
+l_int|32
+)paren
+(brace
+id|spitfire_put_dcache_tag
+c_func
+(paren
+id|va
+op_amp
+l_int|0x3fe0
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|n
+op_ge
+l_int|512
+)paren
+r_break
+suffix:semicolon
+)brace
+)brace
 DECL|function|__flush_cache_all
 r_void
 id|__flush_cache_all
@@ -3652,9 +3716,9 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
+l_string|&quot;flushw&bslash;n&bslash;t&quot;
 l_string|&quot;rdpr&t;%%pstate, %0&bslash;n&bslash;t&quot;
-l_string|&quot;wrpr&t;%0, %1, %%pstate&bslash;n&bslash;t&quot;
-l_string|&quot;flushw&quot;
+l_string|&quot;wrpr&t;%0, %1, %%pstate&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -4535,7 +4599,6 @@ id|ptep
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef NOTUSED
 DECL|function|sparc_ultra_dump_itlb
 r_void
 id|sparc_ultra_dump_itlb
@@ -4678,7 +4741,7 @@ r_void
 r_int
 id|slot
 suffix:semicolon
-id|prom_printf
+id|printk
 (paren
 l_string|&quot;Contents of dtlb: &quot;
 )paren
@@ -4702,7 +4765,7 @@ id|printk
 l_string|&quot;    &quot;
 )paren
 suffix:semicolon
-id|prom_printf
+id|printk
 (paren
 l_string|&quot;%2x:%016lx,%016lx&bslash;n&quot;
 comma
@@ -4737,7 +4800,7 @@ op_add_assign
 l_int|3
 )paren
 (brace
-id|prom_printf
+id|printk
 (paren
 l_string|&quot;%2x:%016lx,%016lx %2x:%016lx,%016lx %2x:%016lx,%016lx&bslash;n&quot;
 comma
@@ -4798,7 +4861,6 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 multiline_comment|/* paging_init() sets up the page tables */
 r_extern
 r_int

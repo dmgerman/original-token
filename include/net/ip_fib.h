@@ -42,29 +42,6 @@ r_void
 op_star
 id|rta_prefsrc
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-DECL|member|rta_window
-r_int
-op_star
-id|rta_window
-suffix:semicolon
-DECL|member|rta_rtt
-r_int
-op_star
-id|rta_rtt
-suffix:semicolon
-DECL|member|rta_mtu
-r_int
-op_star
-id|rta_mtu
-suffix:semicolon
-DECL|member|rta_ifname
-r_int
-r_char
-op_star
-id|rta_ifname
-suffix:semicolon
-macro_line|#else
 DECL|member|rta_mx
 r_struct
 id|rtattr
@@ -89,7 +66,6 @@ r_char
 op_star
 id|rta_flow
 suffix:semicolon
-macro_line|#endif
 DECL|member|rta_ci
 r_struct
 id|rta_cacheinfo
@@ -176,20 +152,10 @@ DECL|member|fib_prefsrc
 id|u32
 id|fib_prefsrc
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
-DECL|member|fib_mtu
-r_int
-id|fib_mtu
+DECL|member|fib_priority
+id|u32
+id|fib_priority
 suffix:semicolon
-DECL|member|fib_rtt
-r_int
-id|fib_rtt
-suffix:semicolon
-DECL|member|fib_window
-r_int
-id|fib_window
-suffix:semicolon
-macro_line|#else
 DECL|macro|FIB_MAX_METRICS
 mdefine_line|#define FIB_MAX_METRICS RTAX_RTT
 DECL|member|fib_metrics
@@ -205,7 +171,6 @@ DECL|macro|fib_window
 mdefine_line|#define fib_window fib_metrics[RTAX_WINDOW-1]
 DECL|macro|fib_rtt
 mdefine_line|#define fib_rtt fib_metrics[RTAX_RTT-1]
-macro_line|#endif
 DECL|member|fib_nhs
 r_int
 id|fib_nhs

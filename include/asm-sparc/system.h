@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.69 1998/04/24 12:30:19 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.70 1998/09/29 09:46:32 davem Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
@@ -250,6 +250,7 @@ id|nop
 suffix:semicolon
 id|nop
 suffix:semicolon
+multiline_comment|/* Sun4m + Cypress + SMP bug */
 op_logical_or
 op_mod
 l_int|0
@@ -322,6 +323,7 @@ id|nop
 suffix:semicolon
 id|nop
 suffix:semicolon
+multiline_comment|/* Sun4m + Cypress + SMP bug */
 id|andn
 op_mod
 l_int|0
@@ -428,6 +430,7 @@ id|nop
 suffix:semicolon
 id|nop
 suffix:semicolon
+multiline_comment|/* Sun4m + Cypress + SMP bug */
 op_logical_and
 op_mod
 l_int|0
@@ -545,6 +548,7 @@ id|nop
 suffix:semicolon
 id|nop
 suffix:semicolon
+multiline_comment|/* Sun4m + Cypress + SMP bug */
 op_logical_or
 op_mod
 l_int|0

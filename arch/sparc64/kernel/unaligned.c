@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unaligned.c,v 1.10 1998/06/19 13:00:32 jj Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: unaligned.c,v 1.11 1998/09/22 03:24:52 davem Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -334,6 +334,9 @@ comma
 r_int
 r_int
 id|rd
+comma
+r_int
+id|from_kernel
 )paren
 (brace
 r_if
@@ -352,6 +355,23 @@ op_ge
 l_int|16
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|from_kernel
+op_ne
+l_int|0
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;flushw&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
 id|flushw_user
 c_func
 (paren
@@ -756,6 +776,17 @@ id|insn
 op_amp
 l_int|0x1f
 suffix:semicolon
+r_int
+id|from_kernel
+op_assign
+(paren
+id|regs-&gt;tstate
+op_amp
+id|TSTATE_PRIV
+)paren
+op_ne
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -772,6 +803,8 @@ comma
 l_int|0
 comma
 id|rd
+comma
+id|from_kernel
 )paren
 suffix:semicolon
 r_return
@@ -802,6 +835,8 @@ comma
 id|rs2
 comma
 id|rd
+comma
+id|from_kernel
 )paren
 suffix:semicolon
 r_return
@@ -1494,6 +1529,17 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
+r_int
+id|from_kernel
+op_assign
+(paren
+id|regs-&gt;tstate
+op_amp
+id|TSTATE_PRIV
+)paren
+op_ne
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1510,6 +1556,8 @@ comma
 l_int|0
 comma
 id|rd
+comma
+id|from_kernel
 )paren
 suffix:semicolon
 id|value
@@ -1533,6 +1581,8 @@ op_amp
 l_int|0x1f
 comma
 id|rd
+comma
+id|from_kernel
 )paren
 suffix:semicolon
 id|value
@@ -2537,9 +2587,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|asi
 OG
 id|ASI_SNFL
+)paren
+op_logical_or
+(paren
+id|asi
+OL
+id|ASI_P
+)paren
 )paren
 r_goto
 id|daex
@@ -2950,9 +3008,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|asi
 OG
 id|ASI_SNFL
+)paren
+op_logical_or
+(paren
+id|asi
+OL
+id|ASI_P
+)paren
 )paren
 r_goto
 id|daex

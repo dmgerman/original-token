@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.19 1998/08/26 12:04:52 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.20 1998/10/03 09:38:31 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; *&t;Andi Kleen&t;&t;&t;add rate limits. never reply to a icmp.&n; *&t;&t;&t;&t;&t;add more length checks and other fixes.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -1026,7 +1026,7 @@ op_minus
 r_sizeof
 (paren
 r_struct
-id|icmp6hdr
+id|ipv6hdr
 )paren
 )paren
 suffix:semicolon
@@ -1315,6 +1315,9 @@ comma
 r_int
 id|code
 comma
+id|u32
+id|info
+comma
 r_int
 r_char
 op_star
@@ -1365,11 +1368,6 @@ suffix:semicolon
 id|u8
 op_star
 id|pb
-suffix:semicolon
-id|__u32
-id|info
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|hash
@@ -1503,10 +1501,7 @@ comma
 id|info
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/* delivery to upper layer protocols failed. try raw sockets */
 id|sk
 op_assign
 id|raw_v6_htable
@@ -1633,6 +1628,20 @@ id|type
 suffix:semicolon
 id|icmpv6_statistics.Icmp6InMsgs
 op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+r_sizeof
+(paren
+r_struct
+id|icmp6hdr
+)paren
+)paren
+r_goto
+id|discard_it
 suffix:semicolon
 multiline_comment|/* Perform checksum. */
 r_switch
@@ -1996,6 +2005,8 @@ id|type
 comma
 id|hdr-&gt;icmp6_code
 comma
+id|hdr-&gt;icmp6_mtu
+comma
 (paren
 r_char
 op_star
@@ -2110,6 +2121,8 @@ id|type
 comma
 id|hdr-&gt;icmp6_code
 comma
+id|hdr-&gt;icmp6_mtu
+comma
 (paren
 r_char
 op_star
@@ -2149,11 +2162,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|icmpv6_init
 r_int
+id|__init
 id|icmpv6_init
 c_func
 (paren
@@ -2161,7 +2172,6 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
-)paren
 )paren
 (brace
 r_struct
@@ -2341,7 +2351,7 @@ l_int|1
 comma
 multiline_comment|/* ADM_PROHIBITED&t;*/
 (brace
-l_int|0
+id|EHOSTUNREACH
 comma
 l_int|0
 )brace
@@ -2387,7 +2397,7 @@ suffix:semicolon
 op_star
 id|err
 op_assign
-l_int|0
+id|EPROTO
 suffix:semicolon
 r_switch
 c_cond
@@ -2398,6 +2408,10 @@ id|type
 r_case
 id|ICMPV6_DEST_UNREACH
 suffix:colon
+id|fatal
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2449,6 +2463,16 @@ suffix:semicolon
 id|fatal
 op_assign
 l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMPV6_TIME_EXCEED
+suffix:colon
+op_star
+id|err
+op_assign
+id|EHOSTUNREACH
 suffix:semicolon
 r_break
 suffix:semicolon

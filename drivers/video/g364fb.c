@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: g364fb.c,v 1.3 1998/08/28 22:43:00 tsbogend Exp $&n; *&n; * linux/drivers/video/g364fb.c -- Mips Magnum frame buffer device&n; *&n; * (C) 1998 Thomas Bogendoerfer&n; *&n; *  This driver is based on tgafb.c&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven &n; *&t;Copyright (C) 1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1859,6 +1858,10 @@ id|fb_info.blank
 op_assign
 op_amp
 id|g364fbcon_blank
+suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 id|g364fb_set_var
 c_func

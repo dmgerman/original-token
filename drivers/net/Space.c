@@ -530,6 +530,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|ariadne2_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|hydra_probe
 c_func
 (paren
@@ -1464,6 +1474,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ARIADNE&t;&t;/* Village Tronic Ariadne Ethernet Board */
 (brace
 id|ariadne_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARIADNE2&t;&t;/* Village Tronic Ariadne II Ethernet Board */
+(brace
+id|ariadne2_probe
 comma
 l_int|0
 )brace

@@ -252,8 +252,6 @@ DECL|macro|D_TEST
 mdefine_line|#define D_TEST&t;&t;0xd&t;/* No comment */
 DECL|macro|D_CDM
 mdefine_line|#define D_CDM&t;&t;0xe&t;/* CHI Data mode command */
-DECL|macro|DBRI_CMD
-mdefine_line|#define DBRI_CMD(cmd, intr, value) ((cmd &lt;&lt; 28) | (intr &lt;&lt; 27) | value)
 multiline_comment|/* Special bits for some commands */
 DECL|macro|D_PIPE
 mdefine_line|#define D_PIPE(v)&t;(v&lt;&lt;0)&t;/* Pipe Nr: 0-15 long, 16-21 short */
@@ -528,7 +526,7 @@ multiline_comment|/* Transmit descriptor defines */
 DECL|macro|DBRI_TD_F
 mdefine_line|#define DBRI_TD_F&t;(1&lt;&lt;31)&t;/* End of Frame */
 DECL|macro|DBRI_TD_D
-mdefine_line|#define DBRI_TD_D&t;(1&lt;&lt;31)&t;/* Do not append CRC */
+mdefine_line|#define DBRI_TD_D&t;(1&lt;&lt;30)&t;/* Do not append CRC */
 DECL|macro|DBRI_TD_CNT
 mdefine_line|#define DBRI_TD_CNT(v)&t;(v&lt;&lt;16)&t;/* Number of valid bytes in the buffer */
 DECL|macro|DBRI_TD_B

@@ -4533,6 +4533,10 @@ op_assign
 op_amp
 id|Cyberfb_blank
 suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 id|fbhw
 op_member_access_from_pointer
 id|init

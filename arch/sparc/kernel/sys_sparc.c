@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.46 1998/08/03 23:58:01 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.48 1998/09/07 09:19:34 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -927,6 +927,15 @@ id|out_putf
 suffix:semicolon
 )brace
 )brace
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_mmap
@@ -1346,6 +1355,11 @@ id|sigset_t
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+multiline_comment|/* All tasks which use RT signals (effectively) use&n;&t; * new style signals.&n;&t; */
+id|current-&gt;tss.new_signal
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond

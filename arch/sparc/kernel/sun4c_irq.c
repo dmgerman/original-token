@@ -342,16 +342,16 @@ c_cond
 (paren
 id|idprom-&gt;id_machtype
 op_eq
+(paren
 id|SM_SUN4
 op_or
 id|SM_4_260
 )paren
-(brace
+)paren
 id|clear_intr
 op_assign
 id|sun4_timer.timer_limit10
 suffix:semicolon
-)brace
 r_else
 macro_line|#endif
 id|clear_intr
@@ -424,9 +424,11 @@ c_cond
 (paren
 id|idprom-&gt;id_machtype
 op_eq
+(paren
 id|SM_SUN4
 op_or
 id|SM_4_260
+)paren
 )paren
 id|sun4c_timers
 op_assign
@@ -523,12 +525,15 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
+multiline_comment|/* This does not work on 4/330 */
 id|sun4c_enable_irq
 c_func
 (paren
 l_int|10
 )paren
 suffix:semicolon
+macro_line|#endif
 id|claim_ticker14
 c_func
 (paren

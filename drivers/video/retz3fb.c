@@ -7056,6 +7056,10 @@ op_assign
 op_amp
 id|z3fb_blank
 suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren

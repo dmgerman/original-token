@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: sbus.c,v 1.69 1998/07/28 16:53:11 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.72 1998/09/05 17:25:51 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -1297,7 +1298,7 @@ suffix:semicolon
 multiline_comment|/* How many did we find? */
 macro_line|#ifdef CONFIG_SUN4
 r_return
-id|sun4_init
+id|sun4_dvma_init
 c_func
 (paren
 )paren
@@ -1343,7 +1344,28 @@ l_int|0
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI
-multiline_comment|/* printk(&quot;SBUS: No SBUS&squot;s found.&bslash;n&quot;); */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Neither SBUS nor PCI found.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 macro_line|#else
@@ -2226,23 +2248,10 @@ id|sun4u
 (brace
 r_extern
 r_void
-id|sun4u_start_timers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|clock_probe
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-id|sun4u_start_timers
-c_func
-(paren
 )paren
 suffix:semicolon
 id|clock_probe
@@ -2253,32 +2262,4 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#ifdef CONFIG_SUN4
-r_extern
-r_void
-id|sun4_dvma_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
-id|sun4_init
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-id|sun4_dvma_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

@@ -1866,6 +1866,10 @@ op_assign
 op_amp
 id|vfbcon_blank
 suffix:semicolon
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 id|vfb_set_var
 c_func
 (paren

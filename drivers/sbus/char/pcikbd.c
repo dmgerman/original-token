@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.18 1998/05/29 06:00:23 ecd Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.22 1998/09/21 05:06:45 jj Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -18,18 +18,32 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef __sparc_v9__
+DECL|macro|PCI_KB_NAME
+mdefine_line|#define&t;PCI_KB_NAME&t;&quot;kb_ps2&quot;
+DECL|macro|PCI_MS_NAME
+mdefine_line|#define PCI_MS_NAME&t;&quot;kdmouse&quot;
+macro_line|#else
+DECL|macro|PCI_KB_NAME
+mdefine_line|#define PCI_KB_NAME&t;&quot;keyboard&quot;
+DECL|macro|PCI_MS_NAME
+mdefine_line|#define PCI_MS_NAME&t;&quot;mouse&quot;
+multiline_comment|/*&n; * XXX.&n; * Gleb defines check_region and request_region here.&n; * This looks suspicios because he neglects to call&n; * sparc_alloc_io, but the conflict with sparc_alloc_io is what&n; * causes problems.&n; */
+macro_line|#endif
 macro_line|#include &quot;pcikbd.h&quot;
 macro_line|#include &quot;sunserial.h&quot;
-DECL|variable|kbd_node
+macro_line|#ifndef __sparc_v9__
+DECL|variable|pcikbd_mrcoffee
 r_static
 r_int
-id|kbd_node
+id|pcikbd_mrcoffee
+op_assign
+l_int|0
 suffix:semicolon
-DECL|variable|beep_node
-r_static
-r_int
-id|beep_node
-suffix:semicolon
+macro_line|#else
+DECL|macro|pcikbd_mrcoffee
+mdefine_line|#define pcikbd_mrcoffee 0
+macro_line|#endif
 DECL|variable|pcikbd_iobase
 r_static
 r_int
@@ -38,19 +52,13 @@ id|pcikbd_iobase
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|pcibeep_iobase
-r_static
-r_int
-r_int
-id|pcibeep_iobase
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|pcikbd_irq
 r_static
 r_int
 r_int
 id|pcikbd_irq
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* used only by send_data - set by keyboard_interrupt */
 DECL|variable|reply_expected
@@ -146,6 +154,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
 DECL|function|pcikbd_inb
 r_static
 id|__inline__
@@ -192,6 +201,60 @@ id|port
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|pcikbd_inb
+r_static
+id|__inline__
+r_int
+r_char
+id|pcikbd_inb
+c_func
+(paren
+r_int
+r_int
+id|port
+)paren
+(brace
+r_return
+op_star
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|port
+suffix:semicolon
+)brace
+DECL|function|pcikbd_outb
+r_static
+id|__inline__
+r_void
+id|pcikbd_outb
+c_func
+(paren
+r_int
+r_char
+id|val
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+op_star
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|port
+op_assign
+id|val
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|kb_wait
 r_static
 r_inline
@@ -1605,6 +1668,15 @@ id|address
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __sparc_v9__
+DECL|variable|pcibeep_iobase
+r_static
+r_int
+r_int
+id|pcibeep_iobase
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Timer routine to turn off the beep after the interval expires. */
 DECL|function|pcikbd_kd_nosound
 r_static
@@ -1732,6 +1804,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|nop_kd_mksound
 r_static
 r_void
@@ -2036,6 +2109,107 @@ r_char
 op_star
 id|msg
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcikbd_mrcoffee
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|pcikbd_iobase
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sparc_alloc_io
+c_func
+(paren
+l_int|0x71300060
+comma
+l_int|0
+comma
+l_int|8
+comma
+l_string|&quot;ps2kbd-regs&quot;
+comma
+l_int|0x0
+comma
+l_int|0
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;pcikbd_init_hw: cannot map&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|pcikbd_irq
+op_assign
+l_int|13
+op_or
+l_int|0x20
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|pcikbd_irq
+comma
+op_amp
+id|pcikbd_interrupt
+comma
+id|SA_SHIRQ
+comma
+l_string|&quot;keyboard&quot;
+comma
+(paren
+r_void
+op_star
+)paren
+id|pcikbd_iobase
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;8042: cannot register IRQ %x&bslash;n&quot;
+comma
+id|pcikbd_irq
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;8042(kbd): iobase[%08x] irq[%x]&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|pcikbd_iobase
+comma
+id|pcikbd_irq
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|for_each_ebus
 c_func
 (paren
@@ -2093,7 +2267,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;pcikbd_probe: no 8042 found&bslash;n&quot;
+l_string|&quot;pcikbd_init_hw: no 8042 found&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2216,10 +2390,12 @@ id|pcikbd_irq
 )paren
 )paren
 suffix:semicolon
+)brace
 id|kd_mksound
 op_assign
 id|nop_kd_mksound
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
 id|edev
 op_assign
 l_int|0
@@ -2259,7 +2435,7 @@ suffix:semicolon
 )brace
 id|ebus_done
 suffix:colon
-multiline_comment|/*&n;&t; * XXX: my 3.1.3 PROM does not give me the beeper node for the audio&n;&t; *      auxio register, though I know it is there... (ecd)&n;&t; */
+multiline_comment|/*&n;&t; * XXX: my 3.1.3 PROM does not give me the beeper node for the audio&n;&t; *      auxio register, though I know it is there... (ecd)&n;&t; *&n;&t; * Both JE1 &amp; MrCoffe have no beeper. How about Krups? --zaitcev&n;&t; */
 r_if
 c_cond
 (paren
@@ -2357,6 +2533,7 @@ l_string|&quot; (forced)&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|disable_irq
 c_func
 (paren
@@ -2393,11 +2570,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Here begins the Mouse Driver.&n; */
-DECL|variable|ms_node
-r_static
-r_int
-id|ms_node
-suffix:semicolon
 DECL|variable|pcimouse_iobase
 r_static
 r_int
@@ -2478,6 +2650,7 @@ id|aux_present
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
 DECL|function|pcimouse_inb
 r_static
 id|__inline__
@@ -2524,6 +2697,60 @@ id|port
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|pcimouse_inb
+r_static
+id|__inline__
+r_int
+r_char
+id|pcimouse_inb
+c_func
+(paren
+r_int
+r_int
+id|port
+)paren
+(brace
+r_return
+op_star
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|port
+suffix:semicolon
+)brace
+DECL|function|pcimouse_outb
+r_static
+id|__inline__
+r_void
+id|pcimouse_outb
+c_func
+(paren
+r_int
+r_char
+id|val
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+op_star
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|port
+op_assign
+id|val
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Shared subroutines&n; */
 DECL|function|get_from_queue
 r_static
@@ -2607,6 +2834,9 @@ r_int
 id|aux_fasync
 c_func
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -2624,6 +2854,8 @@ op_assign
 id|fasync_helper
 c_func
 (paren
+id|fd
+comma
 id|filp
 comma
 id|on
@@ -3101,6 +3333,9 @@ id|file
 id|aux_fasync
 c_func
 (paren
+op_minus
+l_int|1
+comma
 id|file
 comma
 l_int|0
@@ -3750,6 +3985,42 @@ id|linux_ebus_child
 op_star
 id|child
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcikbd_mrcoffee
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|pcimouse_iobase
+op_assign
+id|pcikbd_iobase
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;pcimouse_init: no 8042 given&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+id|pcimouse_irq
+op_assign
+id|pcikbd_irq
+suffix:semicolon
+)brace
+r_else
+(brace
 id|for_each_ebus
 c_func
 (paren
@@ -3794,7 +4065,7 @@ c_func
 (paren
 id|child-&gt;prom_name
 comma
-l_string|&quot;kdmouse&quot;
+id|PCI_MS_NAME
 )paren
 )paren
 r_goto
@@ -3823,7 +4094,7 @@ id|child-&gt;base_address
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t; * Just in case the iobases for kbd/mouse ever differ...&n;&t; */
+multiline_comment|/*&n;&t;&t; * Just in case the iobases for kbd/mouse ever differ...&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3860,6 +4131,50 @@ id|child-&gt;irqs
 (braket
 l_int|0
 )braket
+suffix:semicolon
+)brace
+id|queue
+op_assign
+(paren
+r_struct
+id|aux_queue
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+op_star
+id|queue
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|queue
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|queue
+)paren
+)paren
+suffix:semicolon
+id|queue-&gt;head
+op_assign
+id|queue-&gt;tail
+op_assign
+l_int|0
+suffix:semicolon
+id|queue-&gt;proc_list
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -3935,49 +4250,6 @@ c_func
 op_amp
 id|psaux_mouse
 )paren
-suffix:semicolon
-id|queue
-op_assign
-(paren
-r_struct
-id|aux_queue
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-op_star
-id|queue
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|queue
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-op_star
-id|queue
-)paren
-)paren
-suffix:semicolon
-id|queue-&gt;head
-op_assign
-id|queue-&gt;tail
-op_assign
-l_int|0
-suffix:semicolon
-id|queue-&gt;proc_list
-op_assign
-l_int|NULL
 suffix:semicolon
 id|aux_start_atomic
 c_func
@@ -4140,7 +4412,71 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get the nodes for keyboard and mouse from &squot;aliases&squot;...&n;&t; */
+macro_line|#ifndef __sparc_v9__
+multiline_comment|/*&n;&t; * MrCoffee has hardware but has no PROM nodes whatsoever.&n;&t; */
+id|len
+op_assign
+id|prom_getproperty
+c_func
+(paren
+id|prom_root_node
+comma
+l_string|&quot;name&quot;
+comma
+id|prop
+comma
+r_sizeof
+(paren
+id|prop
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ps2kbd_probe: no name of root node&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|prop
+comma
+l_string|&quot;SUNW,JavaStation-1&quot;
+comma
+id|len
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|pcikbd_mrcoffee
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Brain damage detected */
+r_goto
+id|found
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n;&t; * Get the nodes for keyboard and mouse from aliases on normal systems.&n;&t; */
 id|node
 op_assign
 id|prom_getchild
@@ -4439,7 +4775,7 @@ c_func
 (paren
 id|dnode
 comma
-l_string|&quot;kb_ps2&quot;
+id|PCI_KB_NAME
 )paren
 suffix:semicolon
 r_if
@@ -4450,14 +4786,6 @@ op_eq
 id|kbnode
 )paren
 (brace
-id|kbd_node
-op_assign
-id|kbnode
-suffix:semicolon
-id|beep_node
-op_assign
-id|bnode
-suffix:semicolon
 op_increment
 id|devices
 suffix:semicolon
@@ -4477,7 +4805,7 @@ c_func
 (paren
 id|dnode
 comma
-l_string|&quot;kdmouse&quot;
+id|PCI_MS_NAME
 )paren
 suffix:semicolon
 r_if
@@ -4488,10 +4816,6 @@ op_eq
 id|msnode
 )paren
 (brace
-id|ms_node
-op_assign
-id|msnode
-suffix:semicolon
 op_increment
 id|devices
 suffix:semicolon

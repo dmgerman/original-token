@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.99 1998/07/28 16:52:45 jj Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.103 1998/09/21 05:05:23 jj Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1341,15 +1341,6 @@ c_func
 l_string|&quot;SUN4&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SUN4_FORCECONSOLE
-id|register_console
-c_func
-(paren
-op_amp
-id|prom_console
-)paren
-suffix:semicolon
-macro_line|#endif
 id|packed
 op_assign
 l_int|0
@@ -1883,11 +1874,59 @@ l_int|2
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|idev
+op_eq
+id|PROMDEV_I_UNK
+op_logical_and
+id|odev
+op_eq
+id|PROMDEV_OTTYA
+)paren
 (brace
 id|prom_printf
 c_func
 (paren
-l_string|&quot;Inconsistent console&bslash;n&quot;
+l_string|&quot;MrCoffee ttya&bslash;n&quot;
+)paren
+suffix:semicolon
+id|serial_console
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|idev
+op_eq
+id|PROMDEV_I_UNK
+op_logical_and
+id|odev
+op_eq
+id|PROMDEV_OSCREEN
+)paren
+(brace
+id|serial_console
+op_assign
+l_int|0
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;MrCoffee keyboard&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Inconsistent or unknown console&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_halt

@@ -3941,6 +3941,7 @@ suffix:semicolon
 DECL|function|valkyrie_init_info
 r_static
 r_void
+id|__init
 id|valkyrie_init_info
 c_func
 (paren
@@ -4005,6 +4006,10 @@ id|info-&gt;blank
 op_assign
 op_amp
 id|valkyriefb_blank
+suffix:semicolon
+id|info-&gt;flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Parse user speficied options (`video=valkyriefb:&squot;)&n; */

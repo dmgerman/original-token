@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.17 1998/03/09 14:04:21 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: console.c,v 1.20 1998/09/21 05:05:50 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Pete Zaitcev &lt;zaitcev@metabyte.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -16,6 +16,18 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|con_name_jmc
+r_static
+r_char
+id|con_name_jmc
+(braket
+)braket
+op_assign
+l_string|&quot;/obio/su@&quot;
+suffix:semicolon
+multiline_comment|/* &quot;/obio/su@0,3002f8&quot;; */
+DECL|macro|CON_SIZE_JMC
+mdefine_line|#define CON_SIZE_JMC&t;(sizeof(con_name_jmc))
 multiline_comment|/* Non blocking get character from console input device, returns -1&n; * if no input was taken.  This can be used for polling.&n; */
 r_int
 DECL|function|prom_nbgetchar
@@ -506,6 +518,55 @@ r_return
 id|PROMDEV_IKBD
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|prom_getproperty
+c_func
+(paren
+id|st_p
+comma
+l_string|&quot;name&quot;
+comma
+id|propb
+comma
+r_sizeof
+(paren
+id|propb
+)paren
+)paren
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|propb
+comma
+l_string|&quot;keyboard&quot;
+comma
+r_sizeof
+(paren
+l_string|&quot;serial&quot;
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+id|PROMDEV_IKBD
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
 id|prom_getproperty
 c_func
 (paren
@@ -520,7 +581,11 @@ r_sizeof
 id|propb
 )paren
 )paren
-suffix:semicolon
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -541,6 +606,7 @@ l_string|&quot;serial&quot;
 r_return
 id|PROMDEV_I_UNK
 suffix:semicolon
+)brace
 )brace
 id|prom_getproperty
 c_func
@@ -629,7 +695,6 @@ r_return
 id|PROMDEV_I_UNK
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 multiline_comment|/* Query for output device type */
 r_enum
@@ -802,6 +867,10 @@ id|PROM_V3
 r_if
 c_cond
 (paren
+id|propl
+op_ge
+l_int|0
+op_logical_and
 id|strncmp
 c_func
 (paren
@@ -814,6 +883,8 @@ r_sizeof
 l_string|&quot;serial&quot;
 )paren
 )paren
+op_ne
+l_int|0
 )paren
 (brace
 r_return
@@ -835,6 +906,26 @@ id|propb
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|propb
+comma
+id|con_name_jmc
+comma
+id|CON_SIZE_JMC
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+id|PROMDEV_OTTYA
+suffix:semicolon
+)brace
 id|p
 op_assign
 id|propb
@@ -897,13 +988,9 @@ id|PROMDEV_OTTYB
 suffix:semicolon
 )brace
 )brace
-r_return
-id|PROMDEV_O_UNK
-suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* This works on SS-2 (an early OpenFirmware) still. */
 r_switch
 c_cond
 (paren
@@ -933,11 +1020,9 @@ id|PROM_AP1000
 suffix:colon
 r_default
 suffix:colon
-r_return
-id|PROMDEV_I_UNK
-suffix:semicolon
+(brace
 )brace
-suffix:semicolon
+)brace
 r_return
 id|PROMDEV_O_UNK
 suffix:semicolon

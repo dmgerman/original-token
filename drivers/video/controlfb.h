@@ -656,12 +656,12 @@ comma
 l_int|768
 )brace
 suffix:semicolon
-multiline_comment|/* Register values for 1024x768, 72Hz mode (15) */
-DECL|variable|control_reg_init_15
+multiline_comment|/* Register values for 1024x768, 72Hz mode (16 (15?)) */
+DECL|variable|control_reg_init_16
 r_static
 r_struct
 id|control_regvals
-id|control_reg_init_15
+id|control_reg_init_16
 op_assign
 (brace
 (brace
@@ -1502,9 +1502,10 @@ op_amp
 id|control_reg_init_14
 comma
 op_amp
-id|control_reg_init_15
+id|control_reg_init_16
 comma
-l_int|NULL
+op_amp
+id|control_reg_init_16
 comma
 op_amp
 id|control_reg_init_17

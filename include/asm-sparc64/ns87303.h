@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ns87303.h,v 1.1 1997/10/14 13:30:37 ecd Exp $&n; * ns87303.h: Configuration Register Description for the&n; *            National Semiconductor PC87303 (SuperIO).&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ns87303.h,v 1.2 1998/09/13 15:38:50 ecd Exp $&n; * ns87303.h: Configuration Register Description for the&n; *            National Semiconductor PC87303 (SuperIO).&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_NS87303_H
 DECL|macro|_SPARC_NS87303_H
 mdefine_line|#define _SPARC_NS87303_H 1
@@ -31,6 +31,9 @@ DECL|macro|CS1CF0
 mdefine_line|#define CS1CF0&t;0x0c
 DECL|macro|CS1CF1
 mdefine_line|#define CS1CF1&t;0x0d
+multiline_comment|/* Function Enable Register (FER) bits */
+DECL|macro|FER_EDM
+mdefine_line|#define FER_EDM&t;&t;0x10&t;/* Encoded Drive and Motor pin information   */
 multiline_comment|/* Function Address Register (FAR) bits */
 DECL|macro|FAR_LPT_MASK
 mdefine_line|#define FAR_LPT_MASK&t;0x03
@@ -49,6 +52,8 @@ DECL|macro|PTR_LPT_REG_DIR
 mdefine_line|#define PTR_LPT_REG_DIR&t;0x80&t;/* When ECP/EPP: LPT CTR controlls direction */
 multiline_comment|/*               of the parallel port&t;     */
 multiline_comment|/* Function Control Register (FCR) bits */
+DECL|macro|FCR_LDE
+mdefine_line|#define FCR_LDE&t;&t;0x10&t;/* Logical Drive Exchange                    */
 DECL|macro|FCR_ZWS_ENA
 mdefine_line|#define FCR_ZWS_ENA&t;0x20&t;/* Enable short host read/write in ECP/EPP   */
 multiline_comment|/* Printer Controll Register (PCR) bits */
@@ -71,6 +76,8 @@ mdefine_line|#define TUP_EPP_TIMO&t;0x02&t;/* Enable EPP timeout IRQ            
 multiline_comment|/* Advanced SuperIO Config Register (ASC) bits */
 DECL|macro|ASC_LPT_IRQ7
 mdefine_line|#define ASC_LPT_IRQ7&t;0x01&t;/* Allways use IRQ7 for LPT                  */
+DECL|macro|ASC_DRV2_SEL
+mdefine_line|#define ASC_DRV2_SEL&t;0x02&t;/* Logical Drive Exchange controlled by TDR  */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;$Id: route.c,v 1.57 1998/08/26 12:04:09 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&t;&t;Alan Cox&t;:&t;Use __u32 properly&n; *&t;&t;Alan Cox&t;:&t;Aligned routing errors more closely with BSD&n; *&t;&t;&t;&t;&t;our system is still very different.&n; *&t;&t;Alan Cox&t;:&t;Faster /proc handling&n; *&t;Alexey Kuznetsov&t;:&t;Massive rework to support tree based routing,&n; *&t;&t;&t;&t;&t;routing caches and better behaviour.&n; *&t;&t;&n; *&t;&t;Olaf Erb&t;:&t;irtt wasn&squot;t being copied right.&n; *&t;&t;Bjorn Ekwall&t;:&t;Kerneld route support.&n; *&t;&t;Alan Cox&t;:&t;Multicast fixed (I hope)&n; * &t;&t;Pavel Krauz&t;:&t;Limited broadcast fixed&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Alexey Kuznetsov&t;:&t;End of old history. Splitted to fib.c and&n; *&t;&t;&t;&t;&t;route.c and rewritten from scratch.&n; *&t;&t;Andi Kleen&t;:&t;Load-limit warning messages.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Vitaly E. Lavrov&t;:&t;Race condition in ip_route_input_slow.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;$Id: route.c,v 1.58 1998/10/03 09:37:50 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&t;&t;Alan Cox&t;:&t;Use __u32 properly&n; *&t;&t;Alan Cox&t;:&t;Aligned routing errors more closely with BSD&n; *&t;&t;&t;&t;&t;our system is still very different.&n; *&t;&t;Alan Cox&t;:&t;Faster /proc handling&n; *&t;Alexey Kuznetsov&t;:&t;Massive rework to support tree based routing,&n; *&t;&t;&t;&t;&t;routing caches and better behaviour.&n; *&t;&t;&n; *&t;&t;Olaf Erb&t;:&t;irtt wasn&squot;t being copied right.&n; *&t;&t;Bjorn Ekwall&t;:&t;Kerneld route support.&n; *&t;&t;Alan Cox&t;:&t;Multicast fixed (I hope)&n; * &t;&t;Pavel Krauz&t;:&t;Limited broadcast fixed&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Alexey Kuznetsov&t;:&t;End of old history. Splitted to fib.c and&n; *&t;&t;&t;&t;&t;route.c and rewritten from scratch.&n; *&t;&t;Andi Kleen&t;:&t;Load-limit warning messages.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Vitaly E. Lavrov&t;:&t;Race condition in ip_route_input_slow.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1116,14 +1116,7 @@ c_cond
 (paren
 id|user_mode
 op_logical_and
-(paren
-r_int
-)paren
-(paren
-id|rt_deadline
-op_minus
-id|now
-)paren
+id|tmo
 OL
 id|ip_rt_max_delay
 op_minus
@@ -1574,7 +1567,7 @@ op_amp
 id|rth-&gt;u.rt_next
 suffix:semicolon
 )brace
-multiline_comment|/* Try to bind route ro arp only if it is output&n;&t;   route or unicast forwarding path.&n;&t; */
+multiline_comment|/* Try to bind route to arp only if it is output&n;&t;   route or unicast forwarding path.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2272,12 +2265,51 @@ r_if
 c_cond
 (paren
 id|dst-&gt;obsolete
-op_logical_or
+)paren
+(brace
+id|ip_rt_put
+c_func
+(paren
+id|rt
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|rt-&gt;rt_flags
 op_amp
 id|RTCF_REDIRECTED
 )paren
 (brace
+r_int
+id|hash
+op_assign
+id|rt_hash_code
+c_func
+(paren
+id|rt-&gt;key.dst
+comma
+id|rt-&gt;key.src
+op_xor
+(paren
+id|rt-&gt;key.oif
+op_lshift
+l_int|5
+)paren
+comma
+id|rt-&gt;key.tos
+)paren
+suffix:semicolon
+r_struct
+id|rtable
+op_star
+op_star
+id|rthp
+suffix:semicolon
 macro_line|#if RT_CACHE_DEBUG &gt;= 1
 id|printk
 c_func
@@ -2301,10 +2333,63 @@ c_func
 id|rt
 )paren
 suffix:semicolon
-id|rt_cache_flush
+id|start_bh_atomic
 c_func
 (paren
-l_int|0
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|rthp
+op_assign
+op_amp
+id|rt_hash_table
+(braket
+id|hash
+)braket
+suffix:semicolon
+op_star
+id|rthp
+suffix:semicolon
+id|rthp
+op_assign
+op_amp
+(paren
+op_star
+id|rthp
+)paren
+op_member_access_from_pointer
+id|u.rt_next
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|rthp
+op_eq
+id|rt
+)paren
+(brace
+op_star
+id|rthp
+op_assign
+id|rt-&gt;u.rt_next
+suffix:semicolon
+id|rt_free
+c_func
+(paren
+id|rt
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+id|end_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2537,9 +2622,11 @@ c_cond
 (paren
 id|rt-&gt;u.dst.rate_tokens
 op_add_assign
+(paren
 id|now
 op_minus
 id|rt-&gt;u.dst.rate_last
+)paren
 )paren
 OG
 id|ip_rt_error_burst
@@ -2547,6 +2634,10 @@ id|ip_rt_error_burst
 id|rt-&gt;u.dst.rate_tokens
 op_assign
 id|ip_rt_error_burst
+suffix:semicolon
+id|rt-&gt;u.dst.rate_last
+op_assign
+id|now
 suffix:semicolon
 r_if
 c_cond
@@ -2571,10 +2662,6 @@ id|code
 comma
 l_int|0
 )paren
-suffix:semicolon
-id|rt-&gt;u.dst.rate_last
-op_assign
-id|now
 suffix:semicolon
 )brace
 id|kfree_skb
@@ -4187,7 +4274,7 @@ id|ETH_P_IP
 )paren
 )paren
 (brace
-multiline_comment|/* Not IP (i.e. ARP). Do not make route for invalid&n;&t;&t; * destination AND it is not translated destination.&n;&t;&t; */
+multiline_comment|/* Not IP (i.e. ARP). Do not create route, if it is&n;&t;&t; * invalid for proxy arp. DNAT routes are always valid.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4486,6 +4573,10 @@ suffix:semicolon
 id|flags
 op_or_assign
 id|RTCF_BROADCAST
+suffix:semicolon
+id|res.type
+op_assign
+id|RTN_BROADCAST
 suffix:semicolon
 id|local_input
 suffix:colon
@@ -5182,6 +5273,14 @@ c_cond
 id|nochecksrc
 op_eq
 l_int|0
+op_logical_or
+id|inet_addr_type
+c_func
+(paren
+id|saddr
+)paren
+op_ne
+id|RTN_UNICAST
 )paren
 r_return
 op_minus
@@ -5230,7 +5329,7 @@ l_int|0xFFFFFFFF
 )paren
 )paren
 (brace
-multiline_comment|/* Special hack: user can direct multicasts&n;&t;&t;&t;   and limited broadcast via necessary interface&n;&t;&t;&t;   without fiddling with IP_MULTICAST_IF or IP_TXINFO.&n;&t;&t;&t;   This hack is not just for fun, it allows&n;&t;&t;&t;   vic,vat and friends to work.&n;&t;&t;&t;   They bind socket to loopback, set ttl to zero&n;&t;&t;&t;   and expect that it will work.&n;&t;&t;&t;   From the viewpoint of routing cache they are broken,&n;&t;&t;&t;   because we are not allowed to build multicast path&n;&t;&t;&t;   with loopback source addr (look, routing cache&n;&t;&t;&t;   cannot know, that ttl is zero, so that packet&n;&t;&t;&t;   will not leave this host and route is valid).&n;&t;&t;&t;   Luckily, this hack is good workaround.&n;&t;&t;&t; */
+multiline_comment|/* Special hack: user can direct multicasts&n;&t;&t;&t;   and limited broadcast via necessary interface&n;&t;&t;&t;   without fiddling with IP_MULTICAST_IF or IP_PKTINFO.&n;&t;&t;&t;   This hack is not just for fun, it allows&n;&t;&t;&t;   vic,vat and friends to work.&n;&t;&t;&t;   They bind socket to loopback, set ttl to zero&n;&t;&t;&t;   and expect that it will work.&n;&t;&t;&t;   From the viewpoint of routing cache they are broken,&n;&t;&t;&t;   because we are not allowed to build multicast path&n;&t;&t;&t;   with loopback source addr (look, routing cache&n;&t;&t;&t;   cannot know, that ttl is zero, so that packet&n;&t;&t;&t;   will not leave this host and route is valid).&n;&t;&t;&t;   Luckily, this hack is good workaround.&n;&t;&t;&t; */
 id|key.oif
 op_assign
 id|dev_out-&gt;ifindex
@@ -5320,7 +5419,6 @@ c_func
 id|daddr
 )paren
 )paren
-(brace
 id|key.src
 op_assign
 id|inet_select_addr
@@ -5333,10 +5431,7 @@ comma
 id|key.scope
 )paren
 suffix:semicolon
-r_goto
-id|make_route
-suffix:semicolon
-)brace
+r_else
 r_if
 c_cond
 (paren
@@ -5661,17 +5756,12 @@ id|RTN_BROADCAST
 id|flags
 op_or_assign
 id|RTCF_BROADCAST
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_out-&gt;flags
-op_amp
-id|IFF_BROADCAST
-)paren
-id|flags
-op_or_assign
+op_or
 id|RTCF_LOCAL
+suffix:semicolon
+id|res.fi
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 r_else
@@ -5705,6 +5795,20 @@ id|flags
 op_and_assign
 op_complement
 id|RTCF_LOCAL
+suffix:semicolon
+multiline_comment|/* If multicast route do not exist use&n;&t;&t;   default one, but do not gateway in this case.&n;&t;&t;   Yes, it is hack.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|res.fi
+op_logical_and
+id|res.prefixlen
+OL
+l_int|4
+)paren
+id|res.fi
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 id|rth

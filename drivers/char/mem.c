@@ -75,6 +75,26 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PROM_CONSOLE
+r_extern
+r_void
+id|prom_con_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MDA_CONSOLE
+r_extern
+r_void
+id|mda_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|do_write_mem
 r_static
 id|ssize_t
@@ -2200,6 +2220,20 @@ c_func
 suffix:semicolon
 macro_line|#if defined (CONFIG_FB)
 id|fbmem_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined (CONFIG_PROM_CONSOLE)
+id|prom_con_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined (CONFIG_MDA_CONSOLE)
+id|mda_console_init
 c_func
 (paren
 )paren

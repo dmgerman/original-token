@@ -2967,7 +2967,8 @@ suffix:semicolon
 macro_line|#else
 id|disp.dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 macro_line|#endif
 id|disp.scrollmode
@@ -3139,6 +3140,10 @@ id|fb_info
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC) */
+id|fb_info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -312,25 +312,34 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|7
+id|inb
+c_func
+(paren
+id|hwif-&gt;dma_base
+)paren
+op_amp
+op_complement
+l_int|1
 comma
 id|hwif-&gt;dma_base
 )paren
 suffix:semicolon
-multiline_comment|/* from errata: stop DMA, clear INTR &amp; ERROR */
+multiline_comment|/* stop DMA */
 id|outb
 c_func
 (paren
-id|dma_stat
+id|inb
+c_func
+(paren
+id|hwif-&gt;dma_base
+)paren
 op_or
 l_int|6
 comma
 id|hwif-&gt;dma_base
-op_plus
-l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* clear the INTR &amp; ERROR bits */
+multiline_comment|/* from ERRATA: clear the INTR &amp; ERROR bits */
 r_return
 (paren
 id|dma_stat

@@ -768,6 +768,12 @@ op_star
 id|reg_offset
 suffix:semicolon
 multiline_comment|/* Register mapping table */
+DECL|member|priv
+r_int
+r_int
+id|priv
+suffix:semicolon
+multiline_comment|/* Private field to store bus IDs etc. */
 )brace
 suffix:semicolon
 multiline_comment|/* The maximum number of 8390 interrupt service routines called per IRQ. */
@@ -810,12 +816,12 @@ DECL|macro|E8390_PAGE1
 mdefine_line|#define E8390_PAGE1&t;0x40&t;/* using the two high-order bits */
 DECL|macro|E8390_PAGE2
 mdefine_line|#define E8390_PAGE2&t;0x80&t;/* Page 3 is invalid. */
-macro_line|#ifndef CONFIG_MAC
-DECL|macro|EI_SHIFT
-mdefine_line|#define EI_SHIFT(x)&t;(x)
-macro_line|#else
+macro_line|#if defined(CONFIG_MAC) || defined(CONFIG_AMIGA_PCMCIA) || &bslash;&n;    defined(CONFIG_ARIADNE2) || defined(CONFIG_ARIADNE2_MODULE)
 DECL|macro|EI_SHIFT
 mdefine_line|#define EI_SHIFT(x)&t;(ei_local-&gt;reg_offset[x])
+macro_line|#else
+DECL|macro|EI_SHIFT
+mdefine_line|#define EI_SHIFT(x)&t;(x)
 macro_line|#endif
 DECL|macro|E8390_CMD
 mdefine_line|#define E8390_CMD&t;EI_SHIFT(0x00)  /* The command register (for all pages) */

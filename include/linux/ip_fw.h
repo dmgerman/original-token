@@ -3,11 +3,13 @@ multiline_comment|/*&n; * &t;Format of an IP firewall descriptor&n; *&n; * &t;sr
 macro_line|#ifndef _IP_FWCHAINS_H
 DECL|macro|_IP_FWCHAINS_H
 mdefine_line|#define _IP_FWCHAINS_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/icmp.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
+macro_line|#endif /* __KERNEL__ */
 DECL|macro|IP_FW_MAX_LABEL_LENGTH
 mdefine_line|#define IP_FW_MAX_LABEL_LENGTH 8
 DECL|typedef|ip_chainlabel
@@ -180,15 +182,9 @@ DECL|macro|IP_FW_DELETECHAIN
 mdefine_line|#define IP_FW_DELETECHAIN&t;(IP_FW_BASE_CTL+10) /* Takes ip_chainlabel */
 DECL|macro|IP_FW_POLICY
 mdefine_line|#define IP_FW_POLICY&t;&t;(IP_FW_BASE_CTL+11) /* Takes ip_fwpolicy */
-multiline_comment|/* Masquerade controls */
-DECL|macro|IP_FW_MASQ_INSERT
-mdefine_line|#define IP_FW_MASQ_INSERT&t;(IP_FW_BASE_CTL+12)
-DECL|macro|IP_FW_MASQ_ADD
-mdefine_line|#define IP_FW_MASQ_ADD&t;&t;(IP_FW_BASE_CTL+13)
-DECL|macro|IP_FW_MASQ_DEL
-mdefine_line|#define IP_FW_MASQ_DEL&t;&t;(IP_FW_BASE_CTL+14)
-DECL|macro|IP_FW_MASQ_FLUSH
-mdefine_line|#define IP_FW_MASQ_FLUSH  &t;(IP_FW_BASE_CTL+15)
+multiline_comment|/* Masquerade control, only 1 optname */
+DECL|macro|IP_FW_MASQ_CTL
+mdefine_line|#define IP_FW_MASQ_CTL  &t;(IP_FW_BASE_CTL+12) /* General ip_masq ctl */
 multiline_comment|/* Builtin chain labels */
 DECL|macro|IP_FW_LABEL_FORWARD
 mdefine_line|#define IP_FW_LABEL_FORWARD&t;&quot;forward&quot;
@@ -351,49 +347,16 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*      &n; * timeouts for ip masquerading&n; */
-r_struct
-id|ip_fw_masq
-suffix:semicolon
-multiline_comment|/* Masquerading stuff */
-DECL|macro|IP_FW_MASQCTL_MAX
-mdefine_line|#define IP_FW_MASQCTL_MAX 256
-DECL|macro|IP_MASQ_MOD_NMAX
-mdefine_line|#define IP_MASQ_MOD_NMAX  32
-DECL|struct|ip_fw_masqctl
-r_struct
-id|ip_fw_masqctl
-(brace
-DECL|member|mctl_action
+r_extern
 r_int
-id|mctl_action
-suffix:semicolon
-r_union
-(brace
-r_struct
-(brace
-DECL|member|name
-r_char
-id|name
-(braket
-id|IP_MASQ_MOD_NMAX
-)braket
-suffix:semicolon
-DECL|member|data
-r_char
-id|data
-(braket
-l_int|1
-)braket
-suffix:semicolon
-DECL|member|mod
-)brace
-id|mod
-suffix:semicolon
-DECL|member|u
-)brace
-id|u
-suffix:semicolon
-)brace
+id|ip_fw_masq_timeouts
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
@@ -436,12 +399,12 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MASQUERADE
 r_extern
 r_int
-id|ip_masq_ctl
+id|ip_masq_uctl
 c_func
 (paren
 r_int
 comma
-r_void
+r_char
 op_star
 comma
 r_int

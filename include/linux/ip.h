@@ -81,78 +81,7 @@ DECL|macro|MAXTTL
 mdefine_line|#define MAXTTL&t;&t;255
 DECL|macro|IPDEFTTL
 mdefine_line|#define IPDEFTTL&t;64
-DECL|struct|timestamp
-r_struct
-id|timestamp
-(brace
-DECL|member|len
-id|__u8
-id|len
-suffix:semicolon
-DECL|member|ptr
-id|__u8
-id|ptr
-suffix:semicolon
-macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
-DECL|member|flags
-id|__u8
-id|flags
-suffix:colon
-l_int|4
-comma
-DECL|member|overflow
-id|overflow
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
-DECL|member|overflow
-id|__u8
-id|overflow
-suffix:colon
-l_int|4
-comma
-DECL|member|flags
-id|flags
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#else
-macro_line|#error&t;&quot;Please fix &lt;asm/byteorder.h&gt;&quot;
-macro_line|#endif&t;&t;&t;&t;&t;&t;
-DECL|member|data
-id|__u32
-id|data
-(braket
-l_int|9
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|MAX_ROUTE
-mdefine_line|#define MAX_ROUTE&t;16
-DECL|struct|route
-r_struct
-id|route
-(brace
-DECL|member|route_size
-r_char
-id|route_size
-suffix:semicolon
-DECL|member|pointer
-r_char
-id|pointer
-suffix:semicolon
-DECL|member|route
-r_int
-r_int
-id|route
-(braket
-id|MAX_ROUTE
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
+multiline_comment|/* struct timestamp, struct route and MAX_ROUTES are removed.&n;&n;   REASONS: it is clear that nobody used them because:&n;   - MAX_ROUTES value was wrong.&n;   - &quot;struct route&quot; was wrong.&n;   - &quot;struct timestamp&quot; had fatally misaligned bitfields and was completely unusable.&n; */
 DECL|macro|IPOPT_OPTVAL
 mdefine_line|#define IPOPT_OPTVAL 0
 DECL|macro|IPOPT_OLEN
@@ -174,7 +103,7 @@ mdefine_line|#define&t;IPOPT_TS_TSONLY&t;&t;0&t;&t;/* timestamps only */
 DECL|macro|IPOPT_TS_TSANDADDR
 mdefine_line|#define&t;IPOPT_TS_TSANDADDR&t;1&t;&t;/* timestamps and addresses */
 DECL|macro|IPOPT_TS_PRESPEC
-mdefine_line|#define&t;IPOPT_TS_PRESPEC&t;2&t;&t;/* specified modules only */
+mdefine_line|#define&t;IPOPT_TS_PRESPEC&t;3&t;&t;/* specified modules only */
 DECL|struct|ip_options
 r_struct
 id|ip_options

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.33 1998/08/26 12:05:18 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.34 1998/10/03 09:38:43 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3941,6 +3941,10 @@ comma
 id|saddr
 )paren
 suffix:semicolon
+id|nrt-&gt;u.dst.pmtu
+op_assign
+id|pmtu
+suffix:semicolon
 id|nrt-&gt;rt6i_flags
 op_or_assign
 id|RTF_DYNAMIC
@@ -4001,6 +4005,10 @@ id|RTF_DYNAMIC
 op_or
 id|RTF_CACHE
 )paren
+suffix:semicolon
+id|nrt-&gt;u.dst.pmtu
+op_assign
+id|pmtu
 suffix:semicolon
 id|rt6_ins
 c_func
@@ -4098,7 +4106,7 @@ id|ort-&gt;rt6i_hoplimit
 suffix:semicolon
 id|rt-&gt;rt6i_expires
 op_assign
-id|ort-&gt;rt6i_expires
+l_int|0
 suffix:semicolon
 id|ipv6_addr_copy
 c_func
@@ -4113,6 +4121,9 @@ suffix:semicolon
 id|rt-&gt;rt6i_flags
 op_assign
 id|ort-&gt;rt6i_flags
+op_amp
+op_complement
+id|RTF_EXPIRES
 suffix:semicolon
 id|rt-&gt;rt6i_metric
 op_assign

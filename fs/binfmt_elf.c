@@ -75,23 +75,6 @@ id|user
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc__
-r_extern
-r_int
-r_int
-id|get_unmapped_area
-c_func
-(paren
-r_int
-r_int
-id|addr
-comma
-r_int
-r_int
-id|len
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifndef elf_addr_t
 DECL|macro|elf_addr_t
 mdefine_line|#define elf_addr_t unsigned long

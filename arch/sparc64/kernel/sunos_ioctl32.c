@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl32.c,v 1.9 1998/03/29 10:10:53 davem Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl32.c,v 1.10 1998/08/15 20:42:46 davem Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -16,8 +16,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
+multiline_comment|/* Use this to get at 32-bit user passed pointers. */
 DECL|macro|A
-mdefine_line|#define A(x) ((unsigned long)x)
+mdefine_line|#define A(__x)&t;&t;&t;&t;&bslash;&n;({&t;unsigned long __ret;&t;&t;&bslash;&n;&t;__asm__ (&quot;srl&t;%0, 0, %0&quot;&t;&bslash;&n;&t;&t; : &quot;=r&quot; (__ret)&t;&t;&bslash;&n;&t;&t; : &quot;0&quot; (__x));&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|SUNOS_NR_OPEN
 mdefine_line|#define SUNOS_NR_OPEN&t;256
 DECL|struct|rtentry32

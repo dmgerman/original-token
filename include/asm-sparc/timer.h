@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: timer.h,v 1.17 1998/04/24 12:30:19 davem Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.20 1998/09/21 05:07:37 jj Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _SPARC_TIMER_H
 DECL|macro|_SPARC_TIMER_H
 mdefine_line|#define _SPARC_TIMER_H
 macro_line|#include &lt;asm/system.h&gt;  /* For NCPUS */
 macro_line|#include &lt;asm/sun4paddr.h&gt;
+macro_line|#include &lt;asm/btfixup.h&gt;
 multiline_comment|/* Timer structures. The interrupt timer has two properties which&n; * are the counter (which is handled in do_timer in sched.c) and the limit.&n; * This limit is where the timer&squot;s counter &squot;wraps&squot; around. Oddly enough,&n; * the sun4c timer when it hits the limit wraps back to 1 and not zero&n; * thus when calculating the value at which it will fire a microsecond you&n; * must adjust by one.  Thanks SUN for designing such great hardware ;(&n; */
 multiline_comment|/* Note that I am only going to use the timer that interrupts at&n; * Sparc IRQ 10.  There is another one available that can fire at&n; * IRQ 14. Currently it is left untouched, we keep the PROM&squot;s limit&n; * register value and let the prom take these interrupts.  This allows&n; * L1-A to work.&n; */
 DECL|struct|sun4c_timer_info
@@ -210,5 +211,20 @@ r_int
 op_star
 id|master_l10_limit
 suffix:semicolon
+multiline_comment|/* FIXME: Make do_[gs]ettimeofday btfixup calls */
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|bus_do_settimeofday
+comma
+r_struct
+id|timeval
+op_star
+id|tv
+)paren
+DECL|macro|bus_do_settimeofday
+mdefine_line|#define bus_do_settimeofday(tv) BTFIXUP_CALL(bus_do_settimeofday)(tv)
 macro_line|#endif /* !(_SPARC_TIMER_H) */
 eof

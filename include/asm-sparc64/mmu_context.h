@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.26 1998/07/31 10:42:38 jj Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.31 1998/09/24 03:22:01 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -44,14 +44,16 @@ id|mm
 suffix:semicolon
 multiline_comment|/* Initialize/destroy the context related info for a new mm_struct&n; * instance.&n; */
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)
+mdefine_line|#define init_new_context(__mm)&t;((__mm)-&gt;context = NO_CONTEXT)
+multiline_comment|/* Kernel threads like rpciod and nfsd drop their mm, and then use&n; * init_mm, when this happens we must make sure the tsk-&gt;tss.ctx is&n; * updated as well.  Otherwise we have disasters relating to&n; * set_fs/get_fs usage later on.&n; *&n; * Also we can only clear the mmu_context_bmap bit when this is&n; * the final reference to the address space.&n; */
 DECL|macro|destroy_context
-mdefine_line|#define destroy_context(mm)&t;do { &t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((mm)-&gt;context != NO_CONTEXT) { &t;&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&t;&bslash;&n;&t;&t;&t;clear_bit((mm)-&gt;context &amp; ~(CTX_VERSION_MASK),&t;&t;&bslash;&n;&t;&t;&t;&t;  mmu_context_bmap);&t;&t;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;(mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
-DECL|function|get_mmu_context
+mdefine_line|#define destroy_context(__mm)&t;do { &t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__mm)-&gt;context != NO_CONTEXT &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;    atomic_read(&amp;(__mm)-&gt;count) == 1) { &t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((__mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&bslash;&n;&t;&t;&t;clear_bit((__mm)-&gt;context &amp; ~(CTX_VERSION_MASK),&t;&bslash;&n;&t;&t;&t;&t;  mmu_context_bmap);&t;&t;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;(__mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if(current-&gt;mm == (__mm)) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;spitfire_set_secondary_context(0);&t;&t;&t;&bslash;&n;&t;&t;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+multiline_comment|/* This routine must called with interrupts off,&n; * this is necessary to guarentee that the current-&gt;tss.ctx&n; * to CPU secontary context register relationship is maintained&n; * when traps can happen.&n; *&n; * Also the caller must flush the current set of user windows&n; * to the stack (if necessary) before we get here.&n; */
+DECL|function|__get_mmu_context
 r_extern
 id|__inline__
 r_void
-id|get_mmu_context
+id|__get_mmu_context
 c_func
 (paren
 r_struct
@@ -86,11 +88,6 @@ op_star
 id|mm
 op_assign
 id|tsk-&gt;mm
-suffix:semicolon
-id|flushw_user
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -233,9 +230,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|tsk-&gt;tss.flags
 op_amp
+(paren
 id|SPARC_FLAG_32BIT
+op_or
+id|SPARC_FLAG_KTHREAD
+)paren
+)paren
+op_eq
+(paren
+id|SPARC_FLAG_32BIT
+)paren
 )paren
 (brace
 id|pgd_cache
@@ -267,6 +274,17 @@ id|pstate
 comma
 op_mod
 op_mod
+id|o2
+id|andn
+op_mod
+op_mod
+id|o2
+comma
+op_mod
+l_int|2
+comma
+op_mod
+op_mod
 id|o3
 id|wrpr
 op_mod
@@ -274,7 +292,7 @@ op_mod
 id|o3
 comma
 op_mod
-l_int|2
+l_int|5
 comma
 op_mod
 op_mod
@@ -307,7 +325,7 @@ l_int|3
 id|wrpr
 op_mod
 op_mod
-id|o3
+id|o2
 comma
 l_int|0x0
 comma
@@ -330,8 +348,6 @@ id|pgd_cache
 comma
 l_string|&quot;i&quot;
 (paren
-id|PSTATE_MG
-op_or
 id|PSTATE_IE
 )paren
 comma
@@ -344,14 +360,24 @@ l_string|&quot;i&quot;
 (paren
 id|TSB_REG
 )paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|PSTATE_MG
+)paren
 suffix:colon
+l_string|&quot;o2&quot;
+comma
 l_string|&quot;o3&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Now we define this as a do nothing macro, because the only&n; * generic user right now is the scheduler, and we handle all&n; * the atomicity issues by having switch_to() call the above&n; * function itself.&n; */
+DECL|macro|get_mmu_context
+mdefine_line|#define get_mmu_context(x)&t;do { } while(0)
 multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
 DECL|macro|activate_context
-mdefine_line|#define activate_context(tsk)&t;get_mmu_context(tsk)
+mdefine_line|#define activate_context(__tsk)&t;&t;&bslash;&n;do {&t;unsigned long __flags;&t;&t;&bslash;&n;&t;__save_and_cli(__flags);&t;&bslash;&n;&t;flushw_user();&t;&t;&t;&bslash;&n;&t;__get_mmu_context(__tsk);&t;&bslash;&n;&t;__restore_flags(__flags);&t;&bslash;&n;} while(0)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_MMU_CONTEXT_H) */
 eof

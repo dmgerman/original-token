@@ -123,22 +123,24 @@ DECL|macro|IP_PKTINFO
 mdefine_line|#define IP_PKTINFO&t;8
 DECL|macro|IP_PKTOPTIONS
 mdefine_line|#define IP_PKTOPTIONS&t;9
-DECL|macro|IP_PMTUDISC
-mdefine_line|#define IP_PMTUDISC&t;10
+DECL|macro|IP_MTU_DISCOVER
+mdefine_line|#define IP_MTU_DISCOVER&t;10
 DECL|macro|IP_RECVERR
 mdefine_line|#define IP_RECVERR&t;11
 DECL|macro|IP_RECVTTL
 mdefine_line|#define IP_RECVTTL&t;12
 DECL|macro|IP_RECVTOS
 mdefine_line|#define&t;IP_RECVTOS&t;13
+DECL|macro|IP_MTU
+mdefine_line|#define IP_MTU&t;&t;14
 multiline_comment|/* BSD compatibility */
 DECL|macro|IP_RECVRETOPTS
 mdefine_line|#define IP_RECVRETOPTS&t;IP_RETOPTS
-multiline_comment|/* IP_PMTUDISC values */
-DECL|macro|IP_PMTUDISC_WANT
-mdefine_line|#define IP_PMTUDISC_WANT&t;&t;0&t;/* Use per route hints&t;*/
+multiline_comment|/* IP_MTU_DISCOVER values */
 DECL|macro|IP_PMTUDISC_DONT
-mdefine_line|#define IP_PMTUDISC_DONT&t;&t;1&t;/* Never send DF frames */
+mdefine_line|#define IP_PMTUDISC_DONT&t;&t;0&t;/* Never send DF frames */
+DECL|macro|IP_PMTUDISC_WANT
+mdefine_line|#define IP_PMTUDISC_WANT&t;&t;1&t;/* Use per route hints&t;*/
 DECL|macro|IP_PMTUDISC_DO
 mdefine_line|#define IP_PMTUDISC_DO&t;&t;&t;2&t;/* Always DF&t;&t;*/
 DECL|macro|IP_MULTICAST_IF

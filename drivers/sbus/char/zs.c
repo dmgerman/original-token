@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.26 1998/08/03 23:58:14 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.29 1998/09/21 05:06:53 jj Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -27,9 +27,9 @@ macro_line|#include &lt;asm/kdebug.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#ifdef __sparc_v9__
 macro_line|#include &lt;asm/fhc.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#endif
 macro_line|#endif
 macro_line|#include &quot;sunserial.h&quot;
 macro_line|#include &quot;zs.h&quot;
@@ -320,6 +320,7 @@ id|tq_serial
 suffix:semicolon
 DECL|variable|serial_driver
 DECL|variable|callout_driver
+r_static
 r_struct
 id|tty_driver
 id|serial_driver
@@ -7624,7 +7625,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.26 $&quot;
+l_string|&quot;$Revision: 1.29 $&quot;
 suffix:semicolon
 r_char
 op_star

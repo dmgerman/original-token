@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Extension Header handling for IPv6&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Andi Kleen&t;&t;&lt;ak@muc.de&gt;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: exthdrs.c,v 1.7 1998/08/26 12:04:49 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Extension Header handling for IPv6&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Andi Kleen&t;&t;&lt;ak@muc.de&gt;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: exthdrs.c,v 1.8 1998/10/03 09:38:27 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1226,7 +1226,7 @@ id|opt
 suffix:semicolon
 )brace
 multiline_comment|/********************************&n;  AUTH header.&n; ********************************/
-multiline_comment|/*&n;   rfc1826 said, that if a host does not implement AUTH header&n;   it MAY ignore it. We use this hole 8)&n;&n;   Actually, now we can implement OSPFv6 without kernel IPsec.&n;   Authentication for poors may be done in user space with the same success.&n;&n;   Yes, it means, that we allow application to send/receive&n;   raw authentication header. Apparently, we suppose, that it knows&n;   what it does and calculates authentication data correctly.&n;   Certainly, it is possible only for udp and raw sockets, but not for tcp.&n;&n;   BTW I beg pardon, it is not good place for flames, but&n;   I cannot be silent 8) It is very sad, but fools prevail 8)&n;   AUTH header has 4byte granular length, what kills all the idea&n;   behind AUTOMATIC 64bit alignment of IPv6. Now we will loose&n;   cpu ticks, checking that sender did not something stupid&n;   and opt-&gt;hdrlen is even. Shit!&t;&t;--ANK (980730)&n; */
+multiline_comment|/*&n;   rfc1826 said, that if a host does not implement AUTH header&n;   it MAY ignore it. We use this hole 8)&n;&n;   Actually, now we can implement OSPFv6 without kernel IPsec.&n;   Authentication for poors may be done in user space with the same success.&n;&n;   Yes, it means, that we allow application to send/receive&n;   raw authentication header. Apparently, we suppose, that it knows&n;   what it does and calculates authentication data correctly.&n;   Certainly, it is possible only for udp and raw sockets, but not for tcp.&n;&n;   AUTH header has 4byte granular length, which kills all the idea&n;   behind AUTOMATIC 64bit alignment of IPv6. Now we will loose&n;   cpu ticks, checking that sender did not something stupid&n;   and opt-&gt;hdrlen is even. Shit!&t;&t;--ANK (980730)&n; */
 DECL|function|ipv6_auth_hdr
 r_static
 id|u8
@@ -1287,6 +1287,16 @@ l_int|2
 )paren
 op_lshift
 l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_amp
+l_int|7
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 id|opt-&gt;auth
 op_assign

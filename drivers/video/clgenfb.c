@@ -7048,7 +7048,8 @@ l_string|&quot;unsupported color depth&bslash;n&quot;
 suffix:semicolon
 id|disp-&gt;dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -7882,6 +7883,10 @@ id|fb_info-&gt;gen.info.blank
 op_assign
 op_amp
 id|fbgen_blank
+suffix:semicolon
+id|fb_info-&gt;gen.info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 multiline_comment|/* mark this board as &quot;autoconfigured&quot; */
 id|zorro_config_board

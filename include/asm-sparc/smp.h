@@ -153,6 +153,24 @@ c_func
 r_int
 )paren
 suffix:semicolon
+r_int
+id|smp_bogo_info
+c_func
+(paren
+r_char
+op_star
+id|buf
+)paren
+suffix:semicolon
+r_int
+id|smp_info
+c_func
+(paren
+r_char
+op_star
+id|buf
+)paren
+suffix:semicolon
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -216,30 +234,6 @@ DECL|macro|smp_cross_call
 mdefine_line|#define smp_cross_call(func,arg1,arg2,arg3,arg4,arg5) BTFIXUP_CALL(smp_cross_call)(func,arg1,arg2,arg3,arg4,arg5)
 DECL|macro|smp_message_pass
 mdefine_line|#define smp_message_pass(target,msg,data,wait) BTFIXUP_CALL(smp_message_pass)(target,msg,data,wait)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_int
-comma
-id|smp_bogo_info
-comma
-r_char
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_int
-comma
-id|smp_info
-comma
-r_char
-op_star
-)paren
-DECL|macro|smp_bogo_info
-mdefine_line|#define smp_bogo_info(buf) BTFIXUP_CALL(smp_bogo_info)(buf)
-DECL|macro|smp_info
-mdefine_line|#define smp_info(buf) BTFIXUP_CALL(smp_info)(buf)
 DECL|function|xc0
 r_extern
 id|__inline__
@@ -672,7 +666,7 @@ DECL|macro|SMP_FROM_INT
 mdefine_line|#define SMP_FROM_INT&t;&t;1
 DECL|macro|SMP_FROM_SYSCALL
 mdefine_line|#define SMP_FROM_SYSCALL&t;2
-macro_line|#else /* !(__SMP__) */
+macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID            0xFF
 macro_line|#endif /* !(_SPARC_SMP_H) */

@@ -824,6 +824,10 @@ op_assign
 op_amp
 id|xxxfb_blank
 suffix:semicolon
+id|fb_info.gen.info.flags
+op_assign
+id|FBINFO_FLAG_DEFAULT
+suffix:semicolon
 multiline_comment|/* This should give a reasonable default video mode */
 id|fbgen_get_var
 c_func

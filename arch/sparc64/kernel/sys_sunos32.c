@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos32.c,v 1.16 1998/06/16 04:37:06 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/* $Id: sys_sunos32.c,v 1.18 1998/08/31 03:41:01 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -38,8 +38,9 @@ macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/* for sunos_select */
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
+multiline_comment|/* Use this to get at 32-bit user passed pointers. */
 DECL|macro|A
-mdefine_line|#define A(x) ((unsigned long)x)
+mdefine_line|#define A(__x)&t;&t;&t;&t;&bslash;&n;({&t;unsigned long __ret;&t;&t;&bslash;&n;&t;__asm__ (&quot;srl&t;%0, 0, %0&quot;&t;&bslash;&n;&t;&t; : &quot;=r&quot; (__ret)&t;&t;&bslash;&n;&t;&t; : &quot;0&quot; (__x));&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|SUNOS_NR_OPEN
 mdefine_line|#define SUNOS_NR_OPEN&t;256
 DECL|function|sunos_mmap
@@ -290,6 +291,15 @@ id|flags
 op_and_assign
 op_complement
 id|_MAP_NEW
+suffix:semicolon
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
 suffix:semicolon
 id|retval
 op_assign

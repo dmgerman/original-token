@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.c,v 1.63 1998/08/02 05:55:42 ecd Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: psycho.c,v 1.64 1998/09/01 07:24:24 jj Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -149,13 +149,6 @@ op_star
 id|psycho_root
 op_assign
 l_int|NULL
-suffix:semicolon
-DECL|variable|psycho_index_map
-r_struct
-id|linux_psycho
-op_star
-op_star
-id|psycho_index_map
 suffix:semicolon
 DECL|variable|linux_num_psycho
 r_int
@@ -2409,68 +2402,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Last minute sanity check. */
-r_if
-c_cond
-(paren
-id|psycho_root
-op_eq
-l_int|NULL
-op_logical_and
-id|SBus_chain
-op_eq
-l_int|NULL
-)paren
-(brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;Fatal error, neither SBUS nor PCI bus found.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-id|psycho_index_map
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|linux_psycho
-op_star
-)paren
-op_star
-id|linux_num_psycho
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|psycho
-op_assign
-id|psycho_root
-suffix:semicolon
-id|psycho
-suffix:semicolon
-id|psycho
-op_assign
-id|psycho-&gt;next
-)paren
-id|psycho_index_map
-(braket
-id|psycho-&gt;index
-)braket
-op_assign
-id|psycho
-suffix:semicolon
 )brace
 DECL|function|pcibios_present
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.94 1998/05/01 16:00:27 jj Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.95 1998/09/18 19:50:32 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -524,12 +524,22 @@ r_int
 id|tsk-&gt;mm-&gt;pgd
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|die_if_kernel
 c_func
 (paren
 l_string|&quot;Oops&quot;
 comma
 id|regs
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -785,18 +795,6 @@ op_amp
 id|PSR_PS
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|mm-&gt;mmap_sem
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -808,6 +806,13 @@ op_assign
 id|regs-&gt;pc
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 multiline_comment|/* The kernel referencing a bad kernel pointer can lock up&n;&t; * a sun4c machine completely, so we must attempt recovery.&n;&t; */
 r_if
 c_cond
@@ -955,8 +960,7 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * Something tried to access memory that isn&squot;t in our memory map..&n;&t; * Fix it, but check if it&squot;s kernel or user first..&n;&t; */
 id|bad_area
@@ -1128,8 +1132,7 @@ id|regs-&gt;pc
 op_plus
 l_int|4
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 )brace
@@ -1171,8 +1174,7 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 id|unhandled_fault
@@ -1182,13 +1184,6 @@ comma
 id|tsk
 comma
 id|regs
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.25 1998/04/28 08:23:34 davem Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.27 1998/09/23 02:04:57 davem Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -32,7 +32,7 @@ id|spinlock_t
 id|scheduler_lock
 suffix:semicolon
 DECL|macro|set_fs
-mdefine_line|#define set_fs(val)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (current-&gt;tss.current_ds.seg != val.seg) {&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.current_ds = (val);&t;&t;&t;&t;&bslash;&n;&t;&t;if (segment_eq((val), KERNEL_DS)) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;flushw_user ();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;} else {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = (current-&gt;mm-&gt;context &amp; 0x3ff);&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;spitfire_set_secondary_context(current-&gt;tss.ctx); &t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&t;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock);&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
+mdefine_line|#define set_fs(val)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long flags;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (current-&gt;tss.current_ds.seg != val.seg) {&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__save_and_cli(flags);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.current_ds = (val);&t;&t;&t;&t;&bslash;&n;&t;&t;if (segment_eq((val), KERNEL_DS)) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;flushw_user ();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;} else {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = (current-&gt;mm-&gt;context &amp; 0x3ff);&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;spitfire_set_secondary_context(current-&gt;tss.ctx); &t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&t;&t;&t;&bslash;&n;&t;&t;__restore_flags(flags);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock);&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) 1
 DECL|macro|__kernel_ok
