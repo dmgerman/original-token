@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;ufs_swab.h&quot;
-multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; * stolen from ext2fs&n; * NOTE2: flags *is* used, through this is hidden by macros like SWAB16.&n; */
+multiline_comment|/*&n; * NOTE1: unlike strncmp, ufs_match returns 1 for success, 0 for failure&n; * (stolen from ext2fs.)&n; * NOTE2: flags *is* used, though this is hidden by macros like NAMLEN.&n; */
 DECL|function|ufs_match
 r_static
 r_int

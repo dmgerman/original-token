@@ -10281,6 +10281,14 @@ id|new_inode-&gt;i_ctime
 op_assign
 id|old_inode-&gt;i_ctime
 suffix:semicolon
+id|new_inode-&gt;i_nlink
+op_assign
+id|old_inode-&gt;i_nlink
+suffix:semicolon
+id|new_inode-&gt;i_op
+op_assign
+id|old_inode-&gt;i_op
+suffix:semicolon
 id|MSDOS_I
 c_func
 (paren
@@ -10344,6 +10352,12 @@ id|old_inode
 )paren
 op_member_access_from_pointer
 id|i_attrs
+suffix:semicolon
+id|fat_cache_inval_inode
+c_func
+(paren
+id|old_inode
+)paren
 suffix:semicolon
 id|mark_inode_dirty
 c_func

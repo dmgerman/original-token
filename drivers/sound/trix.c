@@ -13,7 +13,7 @@ DECL|macro|DO_MIDI
 mdefine_line|#define DO_MIDI
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef TRIX_HAVE_BOOT
+macro_line|#ifdef CONFIG_TRIX_HAVE_BOOT
 macro_line|#include &quot;trix_boot.h&quot;
 macro_line|#else
 DECL|variable|trix_boot
@@ -1974,7 +1974,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;SB_IRQ and SB_DMA must be specified if SB_IO is set.&bslash;n&quot;
+l_string|&quot;CONFIG_SB_IRQ and CONFIG_SB_DMA must be specified if SB_IO is set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2000,7 +2000,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;MPU_IRQ must be specified if MPU_IO is set.&bslash;n&quot;
+l_string|&quot;CONFIG_MPU_IRQ must be specified if MPU_IO is set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

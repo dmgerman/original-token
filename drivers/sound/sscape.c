@@ -3833,7 +3833,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;MPU_IRQ must be specified if MPU_IO is set.&bslash;n&quot;
+l_string|&quot;CONFIG_MPU_IRQ must be specified if CONFIG_MPU_IO is set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

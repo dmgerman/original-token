@@ -3926,7 +3926,7 @@ ques
 c_cond
 l_string|&quot;entered&quot;
 suffix:colon
-l_string|&quot;leaved&quot;
+l_string|&quot;left&quot;
 )paren
 suffix:semicolon
 )brace

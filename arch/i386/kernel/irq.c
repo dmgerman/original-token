@@ -2478,13 +2478,6 @@ id|flags
 suffix:semicolon
 )brace
 r_else
-(brace
-id|enable_IO_APIC_irq
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -2494,7 +2487,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 DECL|function|enable_irq

@@ -85,7 +85,7 @@ r_static
 r_int
 id|can_use_virtual_dma
 op_assign
-l_int|2
+l_int|0
 suffix:semicolon
 multiline_comment|/* =======&n; * can use virtual DMA:&n; * 0 = use of virtual DMA disallowed by config&n; * 1 = use of virtual DMA prescribed by config&n; * 2 = no virtual DMA preference configured.  By default try hard DMA,&n; * but fall back on virtual DMA when not enough memory available&n; */
 DECL|variable|use_virtual_dma

@@ -2415,7 +2415,7 @@ macro_line|#ifdef CONFIG_PSS
 id|SNDCARD_PSS
 comma
 (brace
-id|PSS_BASE
+id|CONFIG_PSS_BASE
 comma
 l_int|0
 comma
@@ -2429,14 +2429,14 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#ifdef PSS_MPU_BASE
+macro_line|#ifdef CONFIG_PSS_MPU_BASE
 (brace
 id|SNDCARD_PSS_MPU
 comma
 (brace
-id|PSS_MPU_BASE
+id|CONFIG_PSS_MPU_BASE
 comma
-id|PSS_MPU_IRQ
+id|CONFIG_PSS_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2448,16 +2448,16 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef PSS_MSS_BASE
+macro_line|#ifdef CONFIG_PSS_MSS_BASE
 (brace
 id|SNDCARD_PSS_MSS
 comma
 (brace
-id|PSS_MSS_BASE
+id|CONFIG_PSS_MSS_BASE
 comma
-id|PSS_MSS_IRQ
+id|CONFIG_PSS_MSS_IRQ
 comma
-id|PSS_MSS_DMA
+id|CONFIG_PSS_MSS_DMA
 comma
 op_minus
 l_int|1
@@ -2469,36 +2469,36 @@ comma
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_TRIX
-macro_line|#ifndef TRIX_DMA2
-DECL|macro|TRIX_DMA2
-mdefine_line|#define TRIX_DMA2 TRIX_DMA
+macro_line|#ifndef CONFIG_TRIX_DMA2
+DECL|macro|CONFIG_TRIX_DMA2
+mdefine_line|#define CONFIG_TRIX_DMA2 CONFIG_TRIX_DMA
 macro_line|#endif
 (brace
 id|SNDCARD_TRXPRO
 comma
 (brace
-id|TRIX_BASE
+id|CONFIG_TRIX_BASE
 comma
-id|TRIX_IRQ
+id|CONFIG_TRIX_IRQ
 comma
-id|TRIX_DMA
+id|CONFIG_TRIX_DMA
 comma
-id|TRIX_DMA2
+id|CONFIG_TRIX_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#ifdef TRIX_SB_BASE
+macro_line|#ifdef CONFIG_TRIX_SB_BASE
 (brace
 id|SNDCARD_TRXPRO_SB
 comma
 (brace
-id|TRIX_SB_BASE
+id|CONFIG_TRIX_SB_BASE
 comma
-id|TRIX_SB_IRQ
+id|CONFIG_TRIX_SB_IRQ
 comma
-id|TRIX_SB_DMA
+id|CONFIG_TRIX_SB_DMA
 comma
 op_minus
 l_int|1
@@ -2508,14 +2508,14 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef TRIX_MPU_BASE
+macro_line|#ifdef CONFIG_TRIX_MPU_BASE
 (brace
 id|SNDCARD_TRXPRO_MPU
 comma
 (brace
-id|TRIX_MPU_BASE
+id|CONFIG_TRIX_MPU_BASE
 comma
-id|TRIX_MPU_IRQ
+id|CONFIG_TRIX_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2533,26 +2533,26 @@ macro_line|#ifdef CONFIG_OPL3SA1
 id|SNDCARD_OPL3SA1
 comma
 (brace
-id|OPL3SA1_BASE
+id|CONFIG_OPL3SA1_BASE
 comma
-id|OPL3SA1_IRQ
+id|CONFIG_OPL3SA1_IRQ
 comma
-id|OPL3SA1_DMA
+id|CONFIG_OPL3SA1_DMA
 comma
-id|OPL3SA1_DMA2
+id|CONFIG_OPL3SA1_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#ifdef OPL3SA1_MPU_BASE
+macro_line|#ifdef CONFIG_OPL3SA1_MPU_BASE
 (brace
 id|SNDCARD_OPL3SA1_MPU
 comma
 (brace
-id|OPL3SA1_MPU_BASE
+id|CONFIG_OPL3SA1_MPU_BASE
 comma
-id|OPL3SA1_MPU_IRQ
+id|CONFIG_OPL3SA1_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2590,11 +2590,11 @@ macro_line|#ifdef CONFIG_SSCAPE
 id|SNDCARD_SSCAPE
 comma
 (brace
-id|SSCAPE_BASE
+id|CONFIG_SSCAPE_BASE
 comma
-id|SSCAPE_IRQ
+id|CONFIG_SSCAPE_IRQ
 comma
-id|SSCAPE_DMA
+id|CONFIG_SSCAPE_DMA
 comma
 op_minus
 l_int|1
@@ -2607,11 +2607,11 @@ comma
 id|SNDCARD_SSCAPE_MSS
 comma
 (brace
-id|SSCAPE_MSS_BASE
+id|CONFIG_SSCAPE_MSS_BASE
 comma
-id|SSCAPE_MSS_IRQ
+id|CONFIG_SSCAPE_MSS_IRQ
 comma
-id|SSCAPE_DMA
+id|CONFIG_SSCAPE_DMA
 comma
 op_minus
 l_int|1
@@ -2622,34 +2622,34 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MAD16
-macro_line|#ifndef MAD16_DMA2
-DECL|macro|MAD16_DMA2
-mdefine_line|#define MAD16_DMA2 MAD16_DMA
+macro_line|#ifndef CONFIG_MAD16_DMA2
+DECL|macro|CONFIG_MAD16_DMA2
+mdefine_line|#define CONFIG_MAD16_DMA2 CONFIG_MAD16_DMA
 macro_line|#endif
 (brace
 id|SNDCARD_MAD16
 comma
 (brace
-id|MAD16_BASE
+id|CONFIG_MAD16_BASE
 comma
-id|MAD16_IRQ
+id|CONFIG_MAD16_IRQ
 comma
-id|MAD16_DMA
+id|CONFIG_MAD16_DMA
 comma
-id|MAD16_DMA2
+id|CONFIG_MAD16_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#ifdef MAD16_MPU_BASE
+macro_line|#ifdef CONFIG_MAD16_MPU_BASE
 (brace
 id|SNDCARD_MAD16_MPU
 comma
 (brace
-id|MAD16_MPU_BASE
+id|CONFIG_MAD16_MPU_BASE
 comma
-id|MAD16_MPU_IRQ
+id|CONFIG_MAD16_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2663,18 +2663,18 @@ comma
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_CS4232
-macro_line|#ifndef CS4232_DMA2
-DECL|macro|CS4232_DMA2
-mdefine_line|#define CS4232_DMA2 CS4232_DMA
+macro_line|#ifndef CONFIG_CS4232_DMA2
+DECL|macro|CONFIG_CS4232_DMA2
+mdefine_line|#define CONFIG_CS4232_DMA2 CONFIG_CS4232_DMA
 macro_line|#endif
-macro_line|#ifdef CS4232_MPU_BASE
+macro_line|#ifdef CONFIG_CS4232_MPU_BASE
 (brace
 id|SNDCARD_CS4232_MPU
 comma
 (brace
-id|CS4232_MPU_BASE
+id|CONFIG_CS4232_MPU_BASE
 comma
-id|CS4232_MPU_IRQ
+id|CONFIG_CS4232_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2690,13 +2690,13 @@ macro_line|#endif
 id|SNDCARD_CS4232
 comma
 (brace
-id|CS4232_BASE
+id|CONFIG_CS4232_BASE
 comma
-id|CS4232_IRQ
+id|CONFIG_CS4232_IRQ
 comma
-id|CS4232_DMA
+id|CONFIG_CS4232_DMA
 comma
-id|CS4232_DMA2
+id|CONFIG_CS4232_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2704,22 +2704,22 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MSS
-macro_line|#ifndef MSS_DMA2
-DECL|macro|MSS_DMA2
-mdefine_line|#define MSS_DMA2 -1
+macro_line|#ifndef CONFIG_MSS_DMA2
+DECL|macro|CONFIG_MSS_DMA2
+mdefine_line|#define CONFIG_MSS_DMA2 -1
 macro_line|#endif
 macro_line|#ifdef DESKPROXL
 (brace
 id|SNDCARD_DESKPROXL
 comma
 (brace
-id|MSS_BASE
+id|CONFIG_MSS_BASE
 comma
-id|MSS_IRQ
+id|CONFIG_MSS_IRQ
 comma
-id|MSS_DMA
+id|CONFIG_MSS_DMA
 comma
-id|MSS_DMA2
+id|CONFIG_MSS_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2730,13 +2730,13 @@ macro_line|#else
 id|SNDCARD_MSS
 comma
 (brace
-id|MSS_BASE
+id|CONFIG_MSS_BASE
 comma
-id|MSS_IRQ
+id|CONFIG_MSS_IRQ
 comma
-id|MSS_DMA
+id|CONFIG_MSS_DMA
 comma
-id|MSS_DMA2
+id|CONFIG_MSS_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2767,11 +2767,11 @@ macro_line|#ifdef CONFIG_PAS
 id|SNDCARD_PAS
 comma
 (brace
-id|PAS_BASE
+id|CONFIG_PAS_BASE
 comma
-id|PAS_IRQ
+id|CONFIG_PAS_IRQ
 comma
-id|PAS_DMA
+id|CONFIG_PAS_DMA
 comma
 op_minus
 l_int|1
@@ -2782,25 +2782,25 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SB
-macro_line|#ifndef SBC_DMA
-DECL|macro|SBC_DMA
-mdefine_line|#define SBC_DMA&t;&t;1
+macro_line|#ifndef CONFIG_SB_DMA
+DECL|macro|CONFIG_SB_DMA
+mdefine_line|#define CONFIG_SB_DMA&t;&t;1
 macro_line|#endif
-macro_line|#ifndef SB_DMA2
-DECL|macro|SB_DMA2
-mdefine_line|#define SB_DMA2&t;&t;-1
+macro_line|#ifndef CONFIG_SB_DMA2
+DECL|macro|CONFIG_SB_DMA2
+mdefine_line|#define CONFIG_SB_DMA2&t;&t;-1
 macro_line|#endif
 (brace
 id|SNDCARD_SB
 comma
 (brace
-id|SBC_BASE
+id|CONFIG_SB_BASE
 comma
-id|SBC_IRQ
+id|CONFIG_SB_IRQ
 comma
-id|SBC_DMA
+id|CONFIG_SB_DMA
 comma
-id|SB_DMA2
+id|CONFIG_SB_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2830,9 +2830,9 @@ macro_line|#if defined(CONFIG_MAUI)
 id|SNDCARD_MAUI
 comma
 (brace
-id|MAUI_BASE
+id|CONFIG_MAUI_BASE
 comma
-id|MAUI_IRQ
+id|CONFIG_MAUI_IRQ
 comma
 l_int|0
 comma
@@ -2849,9 +2849,9 @@ macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
 id|SNDCARD_MPU401
 comma
 (brace
-id|MPU_BASE
+id|CONFIG_MPU_BASE
 comma
-id|MPU_IRQ
+id|CONFIG_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2888,7 +2888,7 @@ comma
 (brace
 id|MPU3_BASE
 comma
-id|MPU2_IRQ
+id|MPU3_IRQ
 comma
 l_int|0
 comma
@@ -2906,9 +2906,9 @@ macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
 id|SNDCARD_UART6850
 comma
 (brace
-id|U6850_BASE
+id|CONFIG_U6850_BASE
 comma
-id|U6850_IRQ
+id|CONFIG_U6850_IRQ
 comma
 l_int|0
 comma
@@ -2921,14 +2921,14 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#if defined(CONFIG_SB) 
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(SB_MPU_BASE)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_SB_MPU_BASE)
 (brace
 id|SNDCARD_SB16MIDI
 comma
 (brace
-id|SB_MPU_BASE
+id|CONFIG_SB_MPU_BASE
 comma
-id|SB_MPU_IRQ
+id|CONFIG_SB_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2942,20 +2942,20 @@ comma
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_GUS
-macro_line|#ifndef GUS_DMA2
-DECL|macro|GUS_DMA2
-mdefine_line|#define GUS_DMA2 GUS_DMA
+macro_line|#ifndef CONFIG_GUS_DMA2
+DECL|macro|CONFIG_GUS_DMA2
+mdefine_line|#define CONFIG_GUS_DMA2 CONFIG_GUS_DMA
 macro_line|#endif
 macro_line|#ifdef CONFIG_GUS16
 (brace
 id|SNDCARD_GUS16
 comma
 (brace
-id|GUS16_BASE
+id|CONFIG_GUS16_BASE
 comma
-id|GUS16_IRQ
+id|CONFIG_GUS16_IRQ
 comma
-id|GUS16_DMA
+id|CONFIG_GUS16_DMA
 comma
 op_minus
 l_int|1
@@ -2969,13 +2969,13 @@ macro_line|#endif
 id|SNDCARD_GUS
 comma
 (brace
-id|GUS_BASE
+id|CONFIG_GUS_BASE
 comma
-id|GUS_IRQ
+id|CONFIG_GUS_IRQ
 comma
-id|GUS_DMA
+id|CONFIG_GUS_DMA
 comma
-id|GUS_DMA2
+id|CONFIG_GUS_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE

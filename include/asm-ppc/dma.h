@@ -78,9 +78,9 @@ mdefine_line|#define SND_DMA2 ppc_cs4232_dma2
 macro_line|#else
 macro_line|#ifdef CONFIG_MSS
 DECL|macro|SND_DMA1
-mdefine_line|#define SND_DMA1 MSS_DMA
+mdefine_line|#define SND_DMA1 CONFIG_MSS_DMA
 DECL|macro|SND_DMA2
-mdefine_line|#define SND_DMA2 MSS_DMA2
+mdefine_line|#define SND_DMA2 CONFIG_MSS_DMA2
 macro_line|#else
 DECL|macro|SND_DMA1
 mdefine_line|#define SND_DMA1 -1

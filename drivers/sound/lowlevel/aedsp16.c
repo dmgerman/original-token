@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;../sound_config.h&quot;
 macro_line|#include &quot;../soundmodule.h&quot;
 multiline_comment|/*&n; * Sanity checks&n; */
-macro_line|#if !defined(AEDSP16_BASE)
+macro_line|#if !defined(CONFIG_AEDSP16_BASE)
 DECL|macro|CONFIG_AEDSP16
 macro_line|# undef CONFIG_AEDSP16
 macro_line|#else
@@ -3507,7 +3507,7 @@ id|INIT_MSS
 r_return
 id|FALSE
 suffix:semicolon
-multiline_comment|/*&n; * We must check the AEDSP16_BASE region too because these are the I/O ports&n; * to access card&squot;s control registers.&n; */
+multiline_comment|/*&n; * We must check the CONFIG_AEDSP16_BASE region too because these are the I/O &n; * ports to access card&squot;s control registers.&n; */
 r_if
 c_cond
 (paren
@@ -3542,7 +3542,7 @@ id|FALSE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * We must allocate the AEDSP16_BASE region too because these are the I/O ports&n; * to access card&squot;s control registers.&n; */
+multiline_comment|/*&n; * We must allocate the CONFIG_AEDSP16_BASE region too because these are the &n; * I/O ports to access card&squot;s control registers.&n; */
 r_if
 c_cond
 (paren
@@ -3673,7 +3673,7 @@ id|INIT_MPU401
 r_return
 id|FALSE
 suffix:semicolon
-multiline_comment|/*&n; * We must check the AEDSP16_BASE region too because these are the I/O ports&n; * to access card&squot;s control registers.&n; */
+multiline_comment|/*&n; * We must check the CONFIG_AEDSP16_BASE region too because these are the I/O &n; * ports to access card&squot;s control registers.&n; */
 r_if
 c_cond
 (paren
@@ -3839,40 +3839,40 @@ suffix:semicolon
 macro_line|#if !defined(MODULE)
 id|ae_config.base_io
 op_assign
-id|AEDSP16_BASE
+id|CONFIG_AEDSP16_BASE
 suffix:semicolon
 macro_line|#if defined(CONFIG_AEDSP16_SBPRO)
 id|ae_config.irq
 op_assign
-id|AEDSP16_SBC_IRQ
+id|CONFIG_AEDSP16_SB_IRQ
 suffix:semicolon
 id|ae_config.dma
 op_assign
-id|AEDSP16_SBC_DMA
+id|CONFIG_AEDSP16_SB_DMA
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_AEDSP16_MSS)
 id|ae_config.mss_base
 op_assign
-id|MSS_BASE
+id|CONFIG_MSS_BASE
 suffix:semicolon
 id|ae_config.irq
 op_assign
-id|AEDSP16_MSS_IRQ
+id|CONFIG_AEDSP16_MSS_IRQ
 suffix:semicolon
 id|ae_config.dma
 op_assign
-id|AEDSP16_MSS_DMA
+id|CONFIG_AEDSP16_MSS_DMA
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_AEDSP16_MPU401)
 id|ae_config.mpu_base
 op_assign
-id|MPU_BASE
+id|CONFIG_MPU_BASE
 suffix:semicolon
 id|ae_config.mpu_irq
 op_assign
-id|AEDSP16_MPU_IRQ
+id|CONFIG_AEDSP16_MPU_IRQ
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif /* !MODULE */

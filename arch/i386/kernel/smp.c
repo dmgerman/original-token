@@ -4634,8 +4634,22 @@ id|regs
 )paren
 (brace
 multiline_comment|/*&n;&t; * NOTE! We&squot;d better ACK the irq immediately,&n;&t; * because timer handling can be slow, and we&n;&t; * want to be able to accept NMI tlb invalidates&n;&t; * during this time.&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|irq_controller_lock
+)paren
+suffix:semicolon
 id|ack_APIC_irq
 (paren
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|irq_controller_lock
 )paren
 suffix:semicolon
 id|smp_local_timer_interrupt

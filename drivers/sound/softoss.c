@@ -6568,10 +6568,10 @@ id|devc-&gt;max_playahead
 op_assign
 l_int|32
 suffix:semicolon
-macro_line|#ifdef SOFTOSS_RATE
+macro_line|#ifdef CONFIG_SOFTOSS_RATE
 id|devc-&gt;speed
 op_assign
-id|SOFTOSS_RATE
+id|CONFIG_SOFTOSS_RATE
 suffix:semicolon
 macro_line|#else
 id|devc-&gt;speed
@@ -6579,10 +6579,10 @@ op_assign
 l_int|32000
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef SOFTOSS_VOICES
+macro_line|#ifdef CONFIG_SOFTOSS_VOICES
 id|devc-&gt;default_max_voices
 op_assign
-id|SOFTOSS_VOICES
+id|CONFIG_SOFTOSS_VOICES
 suffix:semicolon
 macro_line|#else
 id|devc-&gt;default_max_voices

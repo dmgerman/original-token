@@ -1,6 +1,7 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &quot;local.h.master&quot;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
 macro_line|#ifndef SND_DEFAULT_ENABLE
@@ -24,21 +25,21 @@ DECL|macro|DMA_AUTOINIT
 mdefine_line|#define DMA_AUTOINIT&t;&t;0x10
 DECL|macro|FM_MONO
 mdefine_line|#define FM_MONO&t;&t;0x388&t;/* This is the I/O address used by AdLib */
-macro_line|#ifndef PAS_BASE
-DECL|macro|PAS_BASE
-mdefine_line|#define PAS_BASE&t;0x388
+macro_line|#ifndef CONFIG_PAS_BASE
+DECL|macro|CONFIG_PAS_BASE
+mdefine_line|#define CONFIG_PAS_BASE&t;0x388
 macro_line|#endif
-macro_line|#if defined(SB16_DMA) &amp;&amp; !defined(SB_DMA2)
-DECL|macro|SB_DMA2
-macro_line|#  define SB_DMA2 SB16_DMA
+macro_line|#if defined(CONFIG_SB16_DMA) &amp;&amp; !defined(CONFIG_SB_DMA2)
+DECL|macro|CONFIG_SB_DMA2
+macro_line|#  define CONFIG_SB_DMA2 CONFIG_SB16_DMA
 macro_line|#endif
-macro_line|#if defined(SB16MIDI_BASE) &amp;&amp; !defined(SB_MPU_BASE)
-DECL|macro|SB_MPU_BASE
-macro_line|#   define SB_MPU_BASE SB16MIDI_BASE
+macro_line|#if defined(SB16MIDI_BASE) &amp;&amp; !defined(CONFIG_SB_MPU_BASE)
+DECL|macro|CONFIG_SB_MPU_BASE
+macro_line|#   define CONFIG_SB_MPU_BASE SB16MIDI_BASE
 macro_line|#endif
-macro_line|#ifndef SB_MPU_IRQ
-DECL|macro|SB_MPU_IRQ
-macro_line|#  define SB_MPU_IRQ SBC_IRQ
+macro_line|#ifndef CONFIG_SB_MPU_IRQ
+DECL|macro|CONFIG_SB_MPU_IRQ
+macro_line|#  define CONFIG_SB_MPU_IRQ CONFIG_SB_IRQ
 macro_line|#endif
 multiline_comment|/* SEQ_MAX_QUEUE is the maximum number of sequencer events buffered by the&n;   driver. (There is no need to alter this) */
 DECL|macro|SEQ_MAX_QUEUE

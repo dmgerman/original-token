@@ -383,8 +383,10 @@ mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 multiline_comment|/*&n; * The 4MB page is guessing..  Detailed in the infamous &quot;Chapter H&quot;&n; * of the Pentium details, but assuming intel did the straightforward&n; * thing, this bit set in the page directory entry just means that&n; * the page directory entry points directly to a 4MB-aligned block of&n; * memory. &n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001
+DECL|macro|_PAGE_PROTNONE
+mdefine_line|#define _PAGE_PROTNONE&t;0x002&t;&t;/* If not present */
 DECL|macro|_PAGE_RW
-mdefine_line|#define _PAGE_RW&t;0x002
+mdefine_line|#define _PAGE_RW&t;0x002&t;&t;/* If present */
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x004
 DECL|macro|_PAGE_WT
@@ -406,7 +408,7 @@ mdefine_line|#define _KERNPG_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED 
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PROTNONE | _PAGE_ACCESSED)
 DECL|macro|PAGE_SHARED
 mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED)
 DECL|macro|PAGE_COPY
@@ -512,7 +514,7 @@ mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;unsig
 DECL|macro|pte_none
 mdefine_line|#define pte_none(x)&t;(!pte_val(x))
 DECL|macro|pte_present
-mdefine_line|#define pte_present(x)&t;(pte_val(x) &amp; _PAGE_PRESENT)
+mdefine_line|#define pte_present(x)&t;(pte_val(x) &amp; (_PAGE_PRESENT | _PAGE_PROTNONE))
 DECL|macro|pte_clear
 mdefine_line|#define pte_clear(xp)&t;do { pte_val(*(xp)) = 0; } while (0)
 DECL|macro|pmd_none
@@ -1621,11 +1623,11 @@ id|pte
 (brace
 )brace
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 2) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; 8))
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

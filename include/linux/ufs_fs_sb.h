@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs_sb.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs_sb.h,v 1.6 1996/06/01 15:31:08 ecd Exp $&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs_sb.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
 macro_line|#ifndef __LINUX_UFS_FS_SB_H
 DECL|macro|__LINUX_UFS_FS_SB_H
 mdefine_line|#define __LINUX_UFS_FS_SB_H

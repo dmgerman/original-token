@@ -80,7 +80,7 @@ id|pmgr_flag
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MAUI_HAVE_BOOT
+macro_line|#ifdef CONFIG_MAUI_HAVE_BOOT
 macro_line|#include &quot;maui_boot.h&quot;
 macro_line|#else
 DECL|variable|maui_os
