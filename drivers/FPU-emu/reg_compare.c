@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_compare.c                                                            |&n; |                                                                           |&n; | Compare two floating point registers                                      |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_compare.c                                                            |&n; |                                                                           |&n; | Compare two floating point registers                                      |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | compare() is the core FPU_REG comparison function                         |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
@@ -1228,7 +1228,7 @@ op_ne
 l_int|1
 )paren
 (brace
-id|Un_impl
+id|FPU_illegal
 c_func
 (paren
 )paren
@@ -1356,7 +1356,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
-id|Un_impl
+id|FPU_illegal
 c_func
 (paren
 )paren

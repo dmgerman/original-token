@@ -2484,8 +2484,6 @@ id|skb
 suffix:semicolon
 id|sk-&gt;partial_timer.expires
 op_assign
-l_int|5
-op_star
 id|HZ
 suffix:semicolon
 id|sk-&gt;partial_timer.function
@@ -9414,11 +9412,6 @@ id|skb
 suffix:semicolon
 id|sk-&gt;wfront
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
 id|skb-&gt;next
 suffix:semicolon
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_aux.c                                                                |&n; |                                                                           |&n; | Code to implement some of the FPU auxiliary instructions.                 |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_aux.c                                                                |&n; |                                                                           |&n; | Code to implement some of the FPU auxiliary instructions.                 |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -133,11 +133,11 @@ id|finit
 comma
 id|Un_impl
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 )brace
 suffix:semicolon
 DECL|function|finit_
@@ -193,19 +193,19 @@ op_assign
 (brace
 id|fstsw_ax
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 )brace
 suffix:semicolon
 DECL|function|fstsw_
@@ -246,19 +246,19 @@ op_assign
 (brace
 id|fnop
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 comma
-id|Un_impl
+id|FPU_illegal
 )brace
 suffix:semicolon
 DECL|function|fp_nop

@@ -730,11 +730,11 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|last_task_used_math-&gt;tss.trap_no
 op_assign
 l_int|16
 suffix:semicolon
-id|current-&gt;tss.error_code
+id|last_task_used_math-&gt;tss.error_code
 op_assign
 l_int|0
 suffix:semicolon
@@ -780,7 +780,7 @@ id|env-&gt;twd
 suffix:semicolon
 id|env-&gt;swd
 op_and_assign
-l_int|0xffff0000
+l_int|0xffff3800
 suffix:semicolon
 id|env-&gt;twd
 op_assign

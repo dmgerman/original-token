@@ -62,6 +62,30 @@ macro_line|#  define RE_ENTRANT_CHECK_OFF
 DECL|macro|RE_ENTRANT_CHECK_ON
 macro_line|#  define RE_ENTRANT_CHECK_ON
 macro_line|#endif PARANOID
+DECL|macro|FWAIT_OPCODE
+mdefine_line|#define FWAIT_OPCODE 0x9b
+DECL|macro|OP_SIZE_PREFIX
+mdefine_line|#define OP_SIZE_PREFIX 0x66
+DECL|macro|ADDR_SIZE_PREFIX
+mdefine_line|#define ADDR_SIZE_PREFIX 0x67
+DECL|macro|PREFIX_CS
+mdefine_line|#define PREFIX_CS 0x2e
+DECL|macro|PREFIX_DS
+mdefine_line|#define PREFIX_DS 0x3e
+DECL|macro|PREFIX_ES
+mdefine_line|#define PREFIX_ES 0x26
+DECL|macro|PREFIX_SS
+mdefine_line|#define PREFIX_SS 0x36
+DECL|macro|PREFIX_FS
+mdefine_line|#define PREFIX_FS 0x64
+DECL|macro|PREFIX_GS
+mdefine_line|#define PREFIX_GS 0x65
+DECL|macro|PREFIX_REPE
+mdefine_line|#define PREFIX_REPE 0xf3
+DECL|macro|PREFIX_REPNE
+mdefine_line|#define PREFIX_REPNE 0xf2
+DECL|macro|PREFIX_LOCK
+mdefine_line|#define PREFIX_LOCK 0xf0
 multiline_comment|/* These are to defeat the default action, giving the instruction&n;   no net effect: */
 DECL|macro|NO_NET_DATA_EFFECT
 mdefine_line|#define NO_NET_DATA_EFFECT &bslash;&n;      { FPU_data_address = (void *)data_operand_offset; &bslash;&n;&t;FPU_data_selector = operand_selector; }
@@ -83,6 +107,21 @@ r_typedef
 r_struct
 id|fpu_reg
 id|FPU_REG
+suffix:semicolon
+DECL|member|address_size
+DECL|member|segment
+DECL|typedef|overrides
+r_typedef
+r_struct
+(brace
+r_int
+r_char
+id|address_size
+comma
+id|segment
+suffix:semicolon
+)brace
+id|overrides
 suffix:semicolon
 DECL|macro|st
 mdefine_line|#define&t;st(x)&t;( regs[((top+x) &amp;7 )] )

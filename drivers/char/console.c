@@ -2312,6 +2312,7 @@ id|video_erase_char
 op_assign
 (paren
 (paren
+(paren
 id|color
 op_amp
 l_int|0x88
@@ -2333,6 +2334,7 @@ l_int|4
 )paren
 op_amp
 l_int|0x77
+)paren
 )paren
 op_lshift
 l_int|8

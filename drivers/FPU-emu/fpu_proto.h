@@ -9,6 +9,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|FPU_illegal
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|emu_printall
 c_func
 (paren
@@ -463,6 +471,9 @@ c_func
 r_int
 r_char
 id|FPU_modrm
+comma
+id|overrides
+id|override
 )paren
 suffix:semicolon
 multiline_comment|/* load_store.c */
@@ -473,6 +484,9 @@ c_func
 (paren
 r_char
 id|type
+comma
+id|overrides
+id|override
 )paren
 suffix:semicolon
 multiline_comment|/* poly_2xm1.c */
@@ -708,7 +722,8 @@ r_int
 id|reg_load_extended
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -716,7 +731,8 @@ r_int
 id|reg_load_double
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -724,7 +740,8 @@ r_int
 id|reg_load_single
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -732,7 +749,8 @@ r_void
 id|reg_load_int64
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -740,7 +758,8 @@ r_void
 id|reg_load_int32
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -748,7 +767,8 @@ r_void
 id|reg_load_int16
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -756,7 +776,8 @@ r_void
 id|reg_load_bcd
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -764,7 +785,8 @@ r_int
 id|reg_store_extended
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -772,7 +794,8 @@ r_int
 id|reg_store_double
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -780,7 +803,8 @@ r_int
 id|reg_store_single
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -788,7 +812,8 @@ r_int
 id|reg_store_int64
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -796,7 +821,8 @@ r_int
 id|reg_store_int32
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -804,7 +830,8 @@ r_int
 id|reg_store_int16
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern
@@ -812,7 +839,8 @@ r_int
 id|reg_store_bcd
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 suffix:semicolon
 r_extern

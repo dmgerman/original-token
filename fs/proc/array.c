@@ -391,10 +391,10 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;cpu  %u,%u,%u,%lu&bslash;n&quot;
-l_string|&quot;disk %u,%u,%u,%u&bslash;n&quot;
-l_string|&quot;page %u,%u&bslash;n&quot;
-l_string|&quot;swap %u,%u&bslash;n&quot;
+l_string|&quot;cpu  %u %u %u %lu&bslash;n&quot;
+l_string|&quot;disk %u %u %u %u&bslash;n&quot;
+l_string|&quot;page %u %u&bslash;n&quot;
+l_string|&quot;swap %u %u&bslash;n&quot;
 l_string|&quot;intr %u&bslash;n&quot;
 l_string|&quot;ctxt %u&bslash;n&quot;
 l_string|&quot;btime %lu&bslash;n&quot;

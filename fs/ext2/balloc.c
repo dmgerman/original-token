@@ -1059,7 +1059,12 @@ id|sb
 comma
 l_string|&quot;ext2_free_blocks&quot;
 comma
-l_string|&quot;Freeing blocks not in datazone&quot;
+l_string|&quot;Freeing blocks not in datazone&bslash;n&quot;
+l_string|&quot;block = %lu, count = %lu&quot;
+comma
+id|block
+comma
+id|count
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1265,18 +1270,19 @@ comma
 id|block
 )paren
 suffix:semicolon
-)brace
+r_else
+(brace
 id|gdp-&gt;bg_free_blocks_count
-op_add_assign
-id|count
+op_increment
 suffix:semicolon
+id|es-&gt;s_free_blocks_count
+op_increment
+suffix:semicolon
+)brace
+)brace
 id|bh2-&gt;b_dirt
 op_assign
 l_int|1
-suffix:semicolon
-id|es-&gt;s_free_blocks_count
-op_add_assign
-id|count
 suffix:semicolon
 id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_dirt
 op_assign
@@ -1457,6 +1463,34 @@ comma
 id|goal
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|goal
+OL
+id|es-&gt;s_first_data_block
+op_logical_or
+id|goal
+op_ge
+id|es-&gt;s_blocks_count
+)paren
+(brace
+id|ext2_warning
+(paren
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;Goal out of bounds: %lu&quot;
+comma
+id|goal
+)paren
+suffix:semicolon
+id|goal
+op_assign
+id|es-&gt;s_first_data_block
+suffix:semicolon
+)brace
 id|repeat
 suffix:colon
 multiline_comment|/*&n;&t; * First, test whether the goal block is free.&n;&t; */

@@ -47,7 +47,8 @@ r_int
 id|reg_load_extended
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_int
@@ -366,7 +367,8 @@ r_int
 id|reg_load_double
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_float
@@ -689,7 +691,8 @@ r_int
 id|reg_load_single
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_float
@@ -950,7 +953,8 @@ r_void
 id|reg_load_int64
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_int
@@ -1117,7 +1121,8 @@ r_void
 id|reg_load_int32
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_int
@@ -1246,7 +1251,8 @@ r_void
 id|reg_load_int16
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_int
@@ -1377,7 +1383,8 @@ r_void
 id|reg_load_bcd
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_char
@@ -1574,7 +1581,8 @@ r_int
 id|reg_store_extended
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 multiline_comment|/*&n;    The only exception raised by an attempt to store to an&n;    extended format is the Invalid Stack exception, i.e.&n;    attempting to store from an empty register.&n;   */
@@ -1716,7 +1724,8 @@ r_int
 id|reg_store_double
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_float
@@ -2517,7 +2526,8 @@ r_int
 id|reg_store_single
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_float
@@ -3215,7 +3225,8 @@ r_int
 id|reg_store_int64
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_int
@@ -3499,7 +3510,8 @@ r_int
 id|reg_store_int32
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_int
@@ -3703,7 +3715,8 @@ r_int
 id|reg_store_int16
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_int
@@ -3906,7 +3919,8 @@ r_int
 id|reg_store_bcd
 c_func
 (paren
-r_void
+id|overrides
+id|override
 )paren
 (brace
 r_char
@@ -4945,6 +4959,14 @@ suffix:semicolon
 id|reg_load_extended
 c_func
 (paren
+(paren
+id|overrides
+)paren
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 )paren
 suffix:semicolon
 id|stnr

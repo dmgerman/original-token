@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | math_emulate() is the sole entry point for wm-FPU-emu                     |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/signal.h&gt;
@@ -9,26 +9,8 @@ macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;control_w.h&quot;
 macro_line|#include &quot;status_w.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
-DECL|macro|FWAIT_OPCODE
-mdefine_line|#define FWAIT_OPCODE 0x9b
-DECL|macro|OP_SIZE_PREFIX
-mdefine_line|#define OP_SIZE_PREFIX 0x66
-DECL|macro|ADDR_SIZE_PREFIX
-mdefine_line|#define ADDR_SIZE_PREFIX 0x67
-DECL|macro|PREFIX_CS
-mdefine_line|#define PREFIX_CS 0x2e
-DECL|macro|PREFIX_DS
-mdefine_line|#define PREFIX_DS 0x3e
-DECL|macro|PREFIX_ES
-mdefine_line|#define PREFIX_ES 0x26
-DECL|macro|PREFIX_SS
-mdefine_line|#define PREFIX_SS 0x36
-DECL|macro|PREFIX_FS
-mdefine_line|#define PREFIX_FS 0x64
-DECL|macro|PREFIX_GS
-mdefine_line|#define PREFIX_GS 0x65
 DECL|macro|__BAD__
-mdefine_line|#define __BAD__ Un_impl   /* Not implemented */
+mdefine_line|#define __BAD__ FPU_illegal   /* Illegal on an 80486, causes SIGILL */
 macro_line|#ifndef NO_UNDOC_CODE    /* Un-documented FPU op-codes supported by default. */
 multiline_comment|/* WARNING: These codes are not documented by Intel in their 80486 manual&n;   and may not work on FPU clones or later Intel FPUs. */
 multiline_comment|/* Changes to support the un-doc codes provided by Linus Torvalds. */
@@ -670,8 +652,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif PARANOID
-DECL|macro|bswapw
-mdefine_line|#define bswapw(x) __asm__(&quot;xchgb %%al,%%ah&quot;:&quot;=a&quot; (x):&quot;0&quot; ((short)x))
 r_static
 r_int
 id|valid_prefix
@@ -679,7 +659,12 @@ c_func
 (paren
 r_int
 r_char
+op_star
 id|byte
+comma
+id|overrides
+op_star
+id|override
 )paren
 suffix:semicolon
 DECL|function|math_emulate
@@ -695,10 +680,11 @@ id|arg
 r_int
 r_char
 id|FPU_modrm
+comma
+id|byte1
 suffix:semicolon
-r_int
-r_int
-id|code
+id|overrides
+id|override
 suffix:semicolon
 r_int
 id|unmasked
@@ -781,6 +767,10 @@ c_func
 id|arg
 )paren
 suffix:semicolon
+id|FPU_ORIG_EIP
+op_assign
+id|FPU_EIP
+suffix:semicolon
 multiline_comment|/* We cannot handle emulation in v86-mode */
 r_if
 c_cond
@@ -790,10 +780,6 @@ op_amp
 l_int|0x00020000
 )paren
 (brace
-id|FPU_ORIG_EIP
-op_assign
-id|FPU_EIP
-suffix:semicolon
 id|math_abort
 c_func
 (paren
@@ -842,10 +828,6 @@ op_ne
 id|USER_DS
 )paren
 (brace
-id|FPU_ORIG_EIP
-op_assign
-id|FPU_EIP
-suffix:semicolon
 id|math_abort
 c_func
 (paren
@@ -870,31 +852,56 @@ id|FPU_lookahead
 op_assign
 l_int|0
 suffix:semicolon
-id|do_another_FPU_instruction
-suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|valid_prefix
+c_func
+(paren
+op_amp
+id|byte1
+comma
+op_amp
+id|override
+)paren
+)paren
+(brace
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
-id|FPU_code_verify_area
+id|printk
 c_func
 (paren
-l_int|1
-)paren
-suffix:semicolon
-id|code
-op_assign
-id|get_fs_word
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|FPU_EIP
+l_string|&quot;FPU emulator: Unknown prefix byte 0x%02x&bslash;n&quot;
+comma
+id|byte1
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
+id|EXCEPTION
+c_func
+(paren
+id|EX_INTERNAL
+op_or
+l_int|0x126
+)paren
+suffix:semicolon
+id|math_abort
+c_func
+(paren
+id|FPU_info
+comma
+id|SIGILL
+)paren
+suffix:semicolon
+)brace
+id|do_another_FPU_instruction
+suffix:colon
+id|FPU_EIP
+op_increment
+suffix:semicolon
+multiline_comment|/* We have fetched the prefix and first code bytes. */
 macro_line|#ifdef PECULIAR_486
 multiline_comment|/* It would be more logical to do this only in get_address(),&n;     but although it is supposed to be undefined for many fpu&n;     instructions, an 80486 behaves as if this were done here: */
 id|FPU_data_selector
@@ -906,7 +913,7 @@ r_if
 c_cond
 (paren
 (paren
-id|code
+id|byte1
 op_amp
 l_int|0xf8
 )paren
@@ -917,11 +924,7 @@ l_int|0xd8
 r_if
 c_cond
 (paren
-(paren
-id|code
-op_amp
-l_int|0xff
-)paren
+id|byte1
 op_eq
 id|FWAIT_OPCODE
 )paren
@@ -937,63 +940,55 @@ r_goto
 id|do_the_FPU_interrupt
 suffix:semicolon
 r_else
-(brace
-id|FPU_EIP
-op_increment
-suffix:semicolon
 r_goto
 id|FPU_fwait_done
 suffix:semicolon
 )brace
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|valid_prefix
-c_func
-(paren
-id|code
-op_amp
-l_int|0xff
-)paren
-)paren
-(brace
-r_goto
-id|do_another_FPU_instruction
-suffix:semicolon
-)brace
 macro_line|#ifdef PARANOID
-id|RE_ENTRANT_CHECK_OFF
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;FPU emulator: Unknown prefix byte 0x%02x&bslash;n&quot;
-comma
-id|code
-op_amp
-l_int|0xff
-)paren
-suffix:semicolon
-id|RE_ENTRANT_CHECK_ON
-suffix:semicolon
 id|EXCEPTION
 c_func
 (paren
 id|EX_INTERNAL
 op_or
-l_int|0x126
+l_int|0x128
 )paren
+suffix:semicolon
+id|math_abort
+c_func
+(paren
+id|FPU_info
+comma
+id|SIGILL
+)paren
+suffix:semicolon
+macro_line|#endif PARANOID
+)brace
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|FPU_modrm
+op_assign
+id|get_fs_byte
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|FPU_EIP
+)paren
+suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 id|FPU_EIP
 op_increment
 suffix:semicolon
-r_goto
-id|do_the_FPU_interrupt
-suffix:semicolon
-macro_line|#endif PARANOID
-)brace
 r_if
 c_cond
 (paren
@@ -1003,7 +998,19 @@ id|SW_Summary
 )paren
 (brace
 multiline_comment|/* Ignore the error for now if the current instruction is a no-wait&n;&t; control instruction */
-multiline_comment|/* The 80486 manual contradicts itself on this topic,&n;&t; so I use the following list of such instructions until&n;&t; I can check on a real 80486:&n;&t; fninit, fnstenv, fnsave, fnstsw, fnstenv, fnclex.&n;       */
+multiline_comment|/* The 80486 manual contradicts itself on this topic,&n;&t; but a real 80486 uses the following instructions:&n;&t; fninit, fnstenv, fnsave, fnstsw, fnstenv, fnclex.&n;       */
+r_int
+r_int
+id|code
+op_assign
+(paren
+id|FPU_modrm
+op_lshift
+l_int|8
+)paren
+op_or
+id|byte1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1133,26 +1140,17 @@ suffix:semicolon
 id|FPU_entry_eip
 op_assign
 id|FPU_ORIG_EIP
-op_assign
-id|FPU_EIP
-suffix:semicolon
-(brace
-r_int
-r_int
-id|swapped_code
-op_assign
-id|code
-suffix:semicolon
-id|bswapw
-c_func
-(paren
-id|swapped_code
-)paren
 suffix:semicolon
 id|FPU_entry_op_cs
 op_assign
 (paren
-id|swapped_code
+id|byte1
+op_lshift
+l_int|24
+)paren
+op_or
+(paren
+id|FPU_modrm
 op_lshift
 l_int|16
 )paren
@@ -1162,56 +1160,6 @@ id|FPU_CS
 op_amp
 l_int|0xffff
 )paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|code
-op_amp
-l_int|0xff
-)paren
-op_eq
-id|OP_SIZE_PREFIX
-)paren
-(brace
-id|FPU_EIP
-op_increment
-suffix:semicolon
-id|RE_ENTRANT_CHECK_OFF
-suffix:semicolon
-id|FPU_code_verify_area
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-id|code
-op_assign
-id|get_fs_word
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|FPU_EIP
-)paren
-suffix:semicolon
-id|RE_ENTRANT_CHECK_ON
-suffix:semicolon
-)brace
-id|FPU_EIP
-op_add_assign
-l_int|2
-suffix:semicolon
-id|FPU_modrm
-op_assign
-id|code
-op_rshift
-l_int|8
 suffix:semicolon
 id|FPU_rm
 op_assign
@@ -1232,6 +1180,8 @@ id|get_address
 c_func
 (paren
 id|FPU_modrm
+comma
+id|override
 )paren
 suffix:semicolon
 r_if
@@ -1239,7 +1189,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|code
+id|byte1
 op_amp
 l_int|1
 )paren
@@ -1280,7 +1230,7 @@ r_switch
 c_cond
 (paren
 (paren
-id|code
+id|byte1
 op_rshift
 l_int|1
 )paren
@@ -1296,6 +1246,7 @@ op_assign
 id|reg_load_single
 c_func
 (paren
+id|override
 )paren
 suffix:semicolon
 r_break
@@ -1306,6 +1257,7 @@ suffix:colon
 id|reg_load_int32
 c_func
 (paren
+id|override
 )paren
 suffix:semicolon
 r_break
@@ -1318,6 +1270,7 @@ op_assign
 id|reg_load_double
 c_func
 (paren
+id|override
 )paren
 suffix:semicolon
 r_break
@@ -1328,6 +1281,7 @@ suffix:colon
 id|reg_load_int16
 c_func
 (paren
+id|override
 )paren
 suffix:semicolon
 r_break
@@ -1824,13 +1778,15 @@ l_int|0x38
 )paren
 op_or
 (paren
-id|code
+id|byte1
 op_amp
 l_int|6
 )paren
 )paren
 op_rshift
 l_int|1
+comma
+id|override
 )paren
 suffix:semicolon
 )brace
@@ -1865,7 +1821,7 @@ l_int|0x38
 )paren
 op_or
 (paren
-id|code
+id|byte1
 op_amp
 l_int|7
 )paren
@@ -2024,7 +1980,7 @@ suffix:semicolon
 r_case
 id|_null_
 suffix:colon
-id|Un_impl
+id|FPU_illegal
 c_func
 (paren
 )paren
@@ -2062,41 +2018,6 @@ suffix:semicolon
 )brace
 id|FPU_instruction_done
 suffix:colon
-macro_line|#ifdef DEBUG
-(brace
-multiline_comment|/* !!!!!!!!!!! */
-r_static
-r_int
-r_int
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-op_increment
-id|count
-op_mod
-l_int|10000
-)paren
-op_eq
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%d FP instr., current=0x%04x&bslash;n&quot;
-comma
-id|count
-comma
-id|code
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* !!!!!!!!!!! */
-macro_line|#endif DEBUG
 id|ip_offset
 op_assign
 id|FPU_entry_eip
@@ -2148,10 +2069,70 @@ op_logical_neg
 id|need_resched
 )paren
 (brace
+id|FPU_ORIG_EIP
+op_assign
+id|FPU_EIP
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|valid_prefix
+c_func
+(paren
+op_amp
+id|byte1
+comma
+op_amp
+id|override
+)paren
+)paren
+r_goto
+id|do_another_FPU_instruction
+suffix:semicolon
+)brace
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+)brace
+multiline_comment|/* Support for prefix bytes is not yet complete. To properly handle&n;   all prefix bytes, further changes are needed in the emulator code&n;   which accesses user address space. Access to separate segments is&n;   important for msdos emulation. */
+DECL|function|valid_prefix
+r_static
+r_int
+id|valid_prefix
+c_func
+(paren
 r_int
 r_char
-id|next
+op_star
+id|Byte
+comma
+id|overrides
+op_star
+id|override
+)paren
+(brace
+r_int
+r_char
+id|byte
 suffix:semicolon
+r_int
+r_int
+id|ip
+op_assign
+id|FPU_EIP
+suffix:semicolon
+op_star
+id|override
+op_assign
+(paren
+id|overrides
+)paren
+(brace
+l_int|0
+comma
+id|PREFIX_DS
+)brace
+suffix:semicolon
+multiline_comment|/* defaults */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 id|FPU_code_verify_area
@@ -2160,7 +2141,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|next
+id|byte
 op_assign
 id|get_fs_byte
 c_func
@@ -2174,40 +2155,6 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|valid_prefix
-c_func
-(paren
-id|next
-)paren
-)paren
-r_goto
-id|do_another_FPU_instruction
-suffix:semicolon
-)brace
-id|RE_ENTRANT_CHECK_OFF
-suffix:semicolon
-)brace
-multiline_comment|/* This function is not yet complete. To properly handle all prefix&n;   bytes, it will be necessary to change all emulator code which&n;   accesses user address space. Access to separate segments is&n;   important for msdos emulation. */
-DECL|function|valid_prefix
-r_static
-r_int
-id|valid_prefix
-c_func
-(paren
-r_int
-r_char
-id|byte
-)paren
-(brace
-r_int
-r_int
-id|ip
-op_assign
-id|FPU_EIP
 suffix:semicolon
 r_while
 c_loop
@@ -2224,29 +2171,87 @@ id|byte
 r_case
 id|ADDR_SIZE_PREFIX
 suffix:colon
-r_case
-id|PREFIX_DS
-suffix:colon
-multiline_comment|/* Redundant */
+id|override-&gt;address_size
+op_assign
+id|ADDR_SIZE_PREFIX
+suffix:semicolon
+r_goto
+id|do_next_byte
+suffix:semicolon
 r_case
 id|PREFIX_CS
 suffix:colon
+id|override-&gt;segment
+op_assign
+id|PREFIX_CS
+suffix:semicolon
+r_goto
+id|do_next_byte
+suffix:semicolon
 r_case
 id|PREFIX_ES
 suffix:colon
+id|override-&gt;segment
+op_assign
+id|PREFIX_ES
+suffix:semicolon
+r_goto
+id|do_next_byte
+suffix:semicolon
 r_case
 id|PREFIX_SS
 suffix:colon
+id|override-&gt;segment
+op_assign
+id|PREFIX_SS
+suffix:semicolon
+r_goto
+id|do_next_byte
+suffix:semicolon
 r_case
 id|PREFIX_FS
 suffix:colon
+id|override-&gt;segment
+op_assign
+id|PREFIX_FS
+suffix:semicolon
+r_goto
+id|do_next_byte
+suffix:semicolon
 r_case
 id|PREFIX_GS
+suffix:colon
+id|override-&gt;segment
+op_assign
+id|PREFIX_GS
+suffix:semicolon
+r_goto
+id|do_next_byte
+suffix:semicolon
+r_case
+id|PREFIX_DS
+suffix:colon
+multiline_comment|/* Redundant unless preceded by another override. */
+id|override-&gt;segment
+op_assign
+id|PREFIX_DS
+suffix:semicolon
+multiline_comment|/* rep.. prefixes have no meaning for FPU instructions */
+r_case
+id|PREFIX_LOCK
+suffix:colon
+r_case
+id|PREFIX_REPE
+suffix:colon
+r_case
+id|PREFIX_REPNE
 suffix:colon
 r_case
 id|OP_SIZE_PREFIX
 suffix:colon
 multiline_comment|/* Used often by gcc, but has no effect. */
+id|do_next_byte
+suffix:colon
 id|FPU_EIP
 op_increment
 suffix:semicolon
@@ -2280,6 +2285,11 @@ suffix:semicolon
 r_case
 id|FWAIT_OPCODE
 suffix:colon
+op_star
+id|Byte
+op_assign
+id|byte
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -2298,9 +2308,16 @@ l_int|0xf8
 op_eq
 l_int|0xd8
 )paren
+(brace
+op_star
+id|Byte
+op_assign
+id|byte
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 r_else
 (brace
 id|FPU_EIP
