@@ -5568,7 +5568,7 @@ suffix:semicolon
 r_else
 id|tmout
 op_assign
-l_int|2
+l_int|10
 op_star
 id|HZ
 suffix:semicolon

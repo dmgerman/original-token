@@ -4156,6 +4156,7 @@ id|net_alias_dev_notifier
 suffix:semicolon
 multiline_comment|/*&n;   * register /proc/net entries&n;   */
 macro_line|#ifndef ALIAS_USER_LAND_DEBUG
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -4224,6 +4225,7 @@ id|net_alias_getinfo
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * net_alias type object registering func.&n; */

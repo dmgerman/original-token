@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: card.c,v 1.12 1996/06/24 17:16:52 fritz Exp $&n; *&n; * card.c     low level stuff for the Teles S0 isdn card&n; * &n; * Author     Jan den Ouden&n; * &n; * Beat Doebeli         log all D channel traffic&n; * &n; * $Log: card.c,v $&n; * Revision 1.12  1996/06/24 17:16:52  fritz&n; * Added check for misconfigured membase.&n; *&n; * Revision 1.11  1996/06/14 03:30:37  fritz&n; * Added recovery from EXIR 40 interrupt.&n; * Some cleanup.&n; *&n; * Revision 1.10  1996/06/11 14:57:20  hipp&n; * minor changes to ensure, that SKBs are sent in the right order&n; *&n; * Revision 1.9  1996/06/06 14:42:09  fritz&n; * Bugfix: forgot hsp-&gt; in last change.&n; *&n; * Revision 1.7  1996/05/31 01:02:21  fritz&n; * Cosmetic changes.&n; *&n; * Revision 1.6  1996/05/26 14:58:10  fritz&n; * Bugfix: Did not show port correctly, when no card found.&n; *&n; * Revision 1.5  1996/05/17 03:45:02  fritz&n; * Made error messages more clearly.&n; * Bugfix: Only 31 bytes of 32-byte audio frames&n; *         have been transfered to upper layers.&n; *&n; * Revision 1.4  1996/05/06 10:17:57  fritz&n; * Added voice-send stuff&n; *  (Not reporting EXIR when in voice-mode, since it&squot;s normal).&n; *&n; * Revision 1.3  1996/04/30 22:02:40  isdn4dev&n; * Bugfixes for 16.3&n; *     -improved IO allocation&n; *     -fix second B channel problem&n; *     -correct ph_command patch&n; *&n; * Revision 1.2  1996/04/30 10:00:59  fritz&n; * Bugfix: Added ph_command(8) for 16.3.&n; * Bugfix: Ports did not get registered correctly&n; *         when using a 16.3.&n; *         Started voice support.&n; *         Some experimental changes of waitforXFW().&n; *&n; * Revision 1.1  1996/04/13 10:22:42  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: card.c,v 1.13 1996/07/18 11:21:24 jdenoud Exp $&n; *&n; * card.c     low level stuff for the Teles S0 isdn card&n; * &n; * Author     Jan den Ouden&n; * &n; * Beat Doebeli         log all D channel traffic&n; * &n; * $Log: card.c,v $&n; * Revision 1.13  1996/07/18 11:21:24  jdenoud&n; * Use small buffers for incoming audio data&n; *&n; * Revision 1.12  1996/06/24 17:16:52  fritz&n; * Added check for misconfigured membase.&n; *&n; * Revision 1.11  1996/06/14 03:30:37  fritz&n; * Added recovery from EXIR 40 interrupt.&n; * Some cleanup.&n; *&n; * Revision 1.10  1996/06/11 14:57:20  hipp&n; * minor changes to ensure, that SKBs are sent in the right order&n; *&n; * Revision 1.9  1996/06/06 14:42:09  fritz&n; * Bugfix: forgot hsp-&gt; in last change.&n; *&n; * Revision 1.7  1996/05/31 01:02:21  fritz&n; * Cosmetic changes.&n; *&n; * Revision 1.6  1996/05/26 14:58:10  fritz&n; * Bugfix: Did not show port correctly, when no card found.&n; *&n; * Revision 1.5  1996/05/17 03:45:02  fritz&n; * Made error messages more clearly.&n; * Bugfix: Only 31 bytes of 32-byte audio frames&n; *         have been transfered to upper layers.&n; *&n; * Revision 1.4  1996/05/06 10:17:57  fritz&n; * Added voice-send stuff&n; *  (Not reporting EXIR when in voice-mode, since it&squot;s normal).&n; *&n; * Revision 1.3  1996/04/30 22:02:40  isdn4dev&n; * Bugfixes for 16.3&n; *     -improved IO allocation&n; *     -fix second B channel problem&n; *     -correct ph_command patch&n; *&n; * Revision 1.2  1996/04/30 10:00:59  fritz&n; * Bugfix: Added ph_command(8) for 16.3.&n; * Bugfix: Ports did not get registered correctly&n; *         when using a 16.3.&n; *         Started voice support.&n; *         Some experimental changes of waitforXFW().&n; *&n; * Revision 1.1  1996/04/13 10:22:42  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
@@ -1776,6 +1776,8 @@ id|hscx
 suffix:semicolon
 r_int
 id|count
+comma
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2041,9 +2043,39 @@ c_cond
 op_logical_neg
 id|hsp-&gt;rcvibh
 )paren
+(brace
 r_if
 c_cond
 (paren
+id|hsp-&gt;mode
+op_eq
+l_int|1
+)paren
+id|err
+op_assign
+id|BufPoolGet
+c_func
+(paren
+op_amp
+id|hsp-&gt;rcvibh
+comma
+op_amp
+id|hsp-&gt;smallpool
+comma
+id|GFP_ATOMIC
+comma
+(paren
+r_void
+op_star
+)paren
+l_int|1
+comma
+l_int|2
+)paren
+suffix:semicolon
+r_else
+id|err
+op_assign
 id|BufPoolGet
 c_func
 (paren
@@ -2063,6 +2095,11 @@ l_int|1
 comma
 l_int|2
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|printk
@@ -2095,6 +2132,7 @@ id|hsp-&gt;rcvptr
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|hscx_empty_fifo
 c_func
 (paren

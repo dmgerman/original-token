@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;21 July 1996, version 1.12b&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;30 August 1996, version 1.12c&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&t;&t;53C860&t;&t;(not yet tested)&n;**&t;&t;53C875&t;&t;(not yet tested)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG
 mdefine_line|#define SCSI_NCR_DEBUG
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
@@ -2112,6 +2112,9 @@ id|ncr_getclock
 (paren
 id|ncb_p
 id|np
+comma
+id|u_char
+id|scntl3
 )paren
 suffix:semicolon
 r_static
@@ -7893,6 +7896,12 @@ multiline_comment|/*&n;&t;**&t;Get the value of the chip&squot;s clock.&n;&t;**&
 id|ncr_getclock
 (paren
 id|np
+comma
+id|INB
+c_func
+(paren
+id|nc_scntl3
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Reset chip.&n;&t;*/
@@ -11839,6 +11848,7 @@ l_int|0xc0
 )paren
 suffix:semicolon
 multiline_comment|/* Set 16-transfer burst */
+macro_line|#if 0
 id|OUTB
 c_func
 (paren
@@ -11848,7 +11858,6 @@ l_int|0x04
 )paren
 suffix:semicolon
 multiline_comment|/* Set DMA FIFO to 88 */
-macro_line|#if 0
 id|OUTB
 c_func
 (paren
@@ -16932,6 +16941,14 @@ id|tp-&gt;maxoffs
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;**&t;Check against controller limits.&n;&t;&t;*/
+r_if
+c_cond
+(paren
+id|ofs
+op_ne
+l_int|0
+)paren
+(brace
 id|fak
 op_assign
 (paren
@@ -16949,13 +16966,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ofs
-op_logical_and
-(paren
 id|fak
 OG
 l_int|7
-)paren
 )paren
 (brace
 id|chg
@@ -16967,16 +16980,28 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
 r_if
 c_cond
 (paren
-op_logical_neg
 id|ofs
+op_eq
+l_int|0
 )paren
+(brace
 id|fak
 op_assign
 l_int|7
 suffix:semicolon
+id|per
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;minsync
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -20279,8 +20304,12 @@ id|ncr_getclock
 (paren
 id|ncb_p
 id|np
+comma
+id|u_char
+id|scntl3
 )paren
 (brace
+macro_line|#if 0
 id|u_char
 id|tbl
 (braket
@@ -20447,6 +20476,88 @@ comma
 id|np-&gt;rv_scntl3
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/*&n;&t; *&t;For now just preserve the BIOS setting ...&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|scntl3
+op_amp
+l_int|7
+)paren
+OL
+l_int|3
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;%s: assuming 40MHz clock&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+)paren
+suffix:semicolon
+id|scntl3
+op_assign
+l_int|3
+suffix:semicolon
+multiline_comment|/* assume 40MHz if no value supplied by BIOS */
+)brace
+id|np-&gt;ns_sync
+op_assign
+l_int|25
+suffix:semicolon
+id|np-&gt;ns_async
+op_assign
+l_int|50
+suffix:semicolon
+id|np-&gt;rv_scntl3
+op_assign
+(paren
+(paren
+id|scntl3
+op_amp
+l_int|0x7
+)paren
+op_lshift
+l_int|4
+)paren
+op_minus
+l_int|0x20
+op_plus
+(paren
+id|scntl3
+op_amp
+l_int|0x7
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bootverbose
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;%s: initial value of SCNTL3 = %02x, final = %02x&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+comma
+id|scntl3
+comma
+id|np-&gt;rv_scntl3
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 multiline_comment|/*===================== LINUX ENTRY POINTS SECTION ==========================*/
 macro_line|#ifndef uchar

@@ -509,6 +509,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|wd7000_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|ppa_setup
 c_func
 (paren
@@ -1613,6 +1627,14 @@ macro_line|#ifdef CONFIG_SCSI_IN2000
 l_string|&quot;in2000=&quot;
 comma
 id|in2000_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_7000FASST
+(brace
+l_string|&quot;wd7000=&quot;
+comma
+id|wd7000_setup
 )brace
 comma
 macro_line|#endif

@@ -209,6 +209,15 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|isdn_ppp_wakeup_daemon
+c_func
+(paren
+id|isdn_net_local
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|ippp_struct
 op_star

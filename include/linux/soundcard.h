@@ -1258,15 +1258,13 @@ mdefine_line|#define SOUND_ONOFF_MIN&t;&t;28
 DECL|macro|SOUND_ONOFF_MAX
 mdefine_line|#define SOUND_ONOFF_MAX&t;&t;30
 multiline_comment|/* Note!&t;Number 31 cannot be used since the sign bit is reserved */
-macro_line|#ifdef NO_LONGER_AVAILABLE
-multiline_comment|/*&n; * The following unsupported macros will be removed from the API in near&n; * future.&n; */
+multiline_comment|/*&n; * The following unsupported macros are no longer functional.&n; * Use SOUND_MIXER_PRIVATE# macros in future.&n; */
 DECL|macro|SOUND_MIXER_ENHANCE
-mdefine_line|#define SOUND_MIXER_ENHANCE&t;29&t;/* Enhanced stereo (0, 40, 60 or 80) */
+mdefine_line|#define SOUND_MIXER_ENHANCE&t;31
 DECL|macro|SOUND_MIXER_MUTE
-mdefine_line|#define SOUND_MIXER_MUTE&t;28&t;/* 0 or 1 */
+mdefine_line|#define SOUND_MIXER_MUTE&t;31
 DECL|macro|SOUND_MIXER_LOUD
-mdefine_line|#define SOUND_MIXER_LOUD&t;30&t;/* 0 or 1 */
-macro_line|#endif
+mdefine_line|#define SOUND_MIXER_LOUD&t;31
 DECL|macro|SOUND_DEVICE_LABELS
 mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;Rec  &quot;, &quot;IGain&quot;, &quot;OGain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;Line1&quot;, &quot;Line2&quot;, &quot;Line3&quot;}
 DECL|macro|SOUND_DEVICE_NAMES
@@ -1319,14 +1317,13 @@ DECL|macro|SOUND_MASK_LINE2
 mdefine_line|#define SOUND_MASK_LINE2&t;(1 &lt;&lt; SOUND_MIXER_LINE2)
 DECL|macro|SOUND_MASK_LINE3
 mdefine_line|#define SOUND_MASK_LINE3&t;(1 &lt;&lt; SOUND_MIXER_LINE3)
-macro_line|#ifdef NO_LONGER_AVAILABLE
+multiline_comment|/* Obsolete macros */
 DECL|macro|SOUND_MASK_MUTE
 mdefine_line|#define SOUND_MASK_MUTE&t;&t;(1 &lt;&lt; SOUND_MIXER_MUTE)
 DECL|macro|SOUND_MASK_ENHANCE
 mdefine_line|#define SOUND_MASK_ENHANCE&t;(1 &lt;&lt; SOUND_MIXER_ENHANCE)
 DECL|macro|SOUND_MASK_LOUD
 mdefine_line|#define SOUND_MASK_LOUD&t;&t;(1 &lt;&lt; SOUND_MIXER_LOUD)
-macro_line|#endif
 DECL|macro|MIXER_READ
 mdefine_line|#define MIXER_READ(dev)&t;&t;_IOR(&squot;M&squot;, dev, int)
 DECL|macro|SOUND_MIXER_READ_VOLUME
@@ -1363,14 +1360,13 @@ DECL|macro|SOUND_MIXER_READ_LINE2
 mdefine_line|#define SOUND_MIXER_READ_LINE2&t;&t;MIXER_READ(SOUND_MIXER_LINE2)
 DECL|macro|SOUND_MIXER_READ_LINE3
 mdefine_line|#define SOUND_MIXER_READ_LINE3&t;&t;MIXER_READ(SOUND_MIXER_LINE3)
-macro_line|#ifdef NO_LONGER_AVAILABLE
+multiline_comment|/* Obsolete macros */
 DECL|macro|SOUND_MIXER_READ_MUTE
 mdefine_line|#define SOUND_MIXER_READ_MUTE&t;&t;MIXER_READ(SOUND_MIXER_MUTE)
 DECL|macro|SOUND_MIXER_READ_ENHANCE
 mdefine_line|#define SOUND_MIXER_READ_ENHANCE&t;MIXER_READ(SOUND_MIXER_ENHANCE)
 DECL|macro|SOUND_MIXER_READ_LOUD
 mdefine_line|#define SOUND_MIXER_READ_LOUD&t;&t;MIXER_READ(SOUND_MIXER_LOUD)
-macro_line|#endif
 DECL|macro|SOUND_MIXER_READ_RECSRC
 mdefine_line|#define SOUND_MIXER_READ_RECSRC&t;&t;MIXER_READ(SOUND_MIXER_RECSRC)
 DECL|macro|SOUND_MIXER_READ_DEVMASK
@@ -1417,14 +1413,13 @@ DECL|macro|SOUND_MIXER_WRITE_LINE2
 mdefine_line|#define SOUND_MIXER_WRITE_LINE2&t;&t;MIXER_WRITE(SOUND_MIXER_LINE2)
 DECL|macro|SOUND_MIXER_WRITE_LINE3
 mdefine_line|#define SOUND_MIXER_WRITE_LINE3&t;&t;MIXER_WRITE(SOUND_MIXER_LINE3)
-macro_line|#ifdef NO_LONGER_AVAILABLE
+multiline_comment|/* Obsolete macros */
 DECL|macro|SOUND_MIXER_WRITE_MUTE
 mdefine_line|#define SOUND_MIXER_WRITE_MUTE&t;&t;MIXER_WRITE(SOUND_MIXER_MUTE)
 DECL|macro|SOUND_MIXER_WRITE_ENHANCE
 mdefine_line|#define SOUND_MIXER_WRITE_ENHANCE&t;MIXER_WRITE(SOUND_MIXER_ENHANCE)
 DECL|macro|SOUND_MIXER_WRITE_LOUD
 mdefine_line|#define SOUND_MIXER_WRITE_LOUD&t;&t;MIXER_WRITE(SOUND_MIXER_LOUD)
-macro_line|#endif
 DECL|macro|SOUND_MIXER_WRITE_RECSRC
 mdefine_line|#define SOUND_MIXER_WRITE_RECSRC&t;MIXER_WRITE(SOUND_MIXER_RECSRC)
 DECL|struct|mixer_info

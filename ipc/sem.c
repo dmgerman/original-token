@@ -381,11 +381,6 @@ id|used_sems
 op_sub_assign
 id|nsems
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sem_lock
-)paren
 id|wake_up
 (paren
 op_amp
@@ -488,11 +483,6 @@ id|id
 op_assign
 id|sma
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sem_lock
-)paren
 id|wake_up
 (paren
 op_amp

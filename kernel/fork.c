@@ -1092,6 +1092,13 @@ id|p-&gt;p_cptr
 op_assign
 l_int|NULL
 suffix:semicolon
+id|init_waitqueue
+c_func
+(paren
+op_amp
+id|p-&gt;wait_chldexit
+)paren
+suffix:semicolon
 id|p-&gt;signal
 op_assign
 l_int|0

@@ -2997,6 +2997,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if 0&t;/* why does this result in problems? */
 macro_line|#ifndef CONFIG_NO_PATH_MTU_DISCOVERY
 id|buff-&gt;ip_hdr-&gt;frag_off
 op_or_assign
@@ -3006,6 +3007,7 @@ c_func
 id|IP_DF
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|t1
 op_assign

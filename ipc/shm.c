@@ -468,11 +468,6 @@ op_star
 )paren
 id|IPC_UNUSED
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|shm_lock
-)paren
 id|wake_up
 (paren
 op_amp
@@ -521,11 +516,6 @@ op_star
 )paren
 id|IPC_UNUSED
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|shm_lock
-)paren
 id|wake_up
 (paren
 op_amp
@@ -648,11 +638,6 @@ suffix:semicolon
 id|used_segs
 op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|shm_lock
-)paren
 id|wake_up
 (paren
 op_amp
