@@ -57,7 +57,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|memory_head
-mdefine_line|#define memory_head(x) ((struct page *)x)
+mdefine_line|#define memory_head(x) ((struct page *)(x))
 DECL|variable|free_area
 r_static
 r_struct

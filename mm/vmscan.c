@@ -1737,10 +1737,6 @@ id|need_resched
 op_assign
 l_int|1
 suffix:semicolon
-id|kswapd_awake
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 id|next_swap_jiffies
 op_assign

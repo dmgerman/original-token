@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -660,6 +661,12 @@ l_int|0x64
 )paren
 suffix:semicolon
 multiline_comment|/* pulse reset low */
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
 )brace
 id|__asm__
 id|__volatile__

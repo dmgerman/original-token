@@ -1027,7 +1027,7 @@ multiline_comment|/* for SCSI devices, call request_fn unconditionally */
 r_if
 c_cond
 (paren
-id|scsi_major
+id|scsi_blk_major
 c_func
 (paren
 id|MAJOR

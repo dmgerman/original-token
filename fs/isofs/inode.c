@@ -13,8 +13,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-DECL|macro|MULTI_VOLUME
-mdefine_line|#define MULTI_VOLUME
+multiline_comment|/*&n; * We have no support for &quot;multi volume&quot; CDs, but more and more disks carry&n; * wrong information within the volume descriptors.&n; */
+DECL|macro|IGNORE_WRONG_MULTI_VOLUME_SPECS
+mdefine_line|#define IGNORE_WRONG_MULTI_VOLUME_SPECS
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static
@@ -802,7 +803,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * look if the driver can tell the multi session redirection value&n; */
+multiline_comment|/*&n; * look if the driver can tell the multi session redirection value&n; *&n; * don&squot;t change this if you don&squot;t know what you do, please!&n; * Multisession is legal only with XA disks.&n; * A non-XA disk with more than one volume descriptor may do it right, but&n; * usually is written in a nowhere standardized &quot;multi-partition&quot; manner.&n; * Multisession uses absolute addressing (solely the first frame of the whole&n; * track is #0), multi-partition uses relative addressing (each first frame of&n; * each track is #0), and a track is not a session.&n; *&n; * A broken CDwriter software or drive firmware does not set new standards,&n; * at least not if conflicting with the existing ones.&n; * &n; * emoenke@gwdg.de&n; */
+DECL|macro|WE_OBEY_THE_WRITTEN_STANDARDS
+mdefine_line|#define WE_OBEY_THE_WRITTEN_STANDARDS 1
 DECL|function|isofs_get_last_session
 r_static
 r_int
@@ -955,16 +958,18 @@ macro_line|#endif 0
 r_if
 c_cond
 (paren
-(paren
 id|i
 op_eq
 l_int|0
 )paren
-op_logical_and
+macro_line|#if WE_OBEY_THE_WRITTEN_STANDARDS
+r_if
+c_cond
 (paren
 id|ms_info.xa_flag
 )paren
-)paren
+multiline_comment|/* necessary for a valid ms_info.addr */
+macro_line|#endif WE_OBEY_THE_WRITTEN_STANDARDS
 id|vol_desc_start
 op_assign
 id|ms_info.addr.lba
@@ -1496,6 +1501,7 @@ op_star
 )paren
 id|h_pri-&gt;root_directory_record
 suffix:semicolon
+macro_line|#ifndef IGNORE_WRONG_MULTI_VOLUME_SPECS
 r_if
 c_cond
 (paren
@@ -1507,18 +1513,17 @@ op_ne
 l_int|1
 )paren
 (brace
-macro_line|#ifndef  MULTI_VOLUME 
 id|printk
 c_func
 (paren
-l_string|&quot;Multi-volume disks not (yet) supported.&bslash;n&quot;
+l_string|&quot;Multi-volume disks not supported.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-macro_line|#endif
 )brace
+macro_line|#endif IGNORE_WRONG_MULTI_VOLUME_SPECS
 id|s-&gt;u.isofs_sb.s_nzones
 op_assign
 id|isonum_733
@@ -1553,6 +1558,7 @@ op_star
 )paren
 id|pri-&gt;root_directory_record
 suffix:semicolon
+macro_line|#ifndef IGNORE_WRONG_MULTI_VOLUME_SPECS
 r_if
 c_cond
 (paren
@@ -1564,18 +1570,17 @@ op_ne
 l_int|1
 )paren
 (brace
-macro_line|#ifndef MULTI_VOLUME
 id|printk
 c_func
 (paren
-l_string|&quot;Multi-volume disks not (yet) supported.&bslash;n&quot;
+l_string|&quot;Multi-volume disks not supported.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-macro_line|#endif
 )brace
+macro_line|#endif IGNORE_WRONG_MULTI_VOLUME_SPECS
 id|s-&gt;u.isofs_sb.s_nzones
 op_assign
 id|isonum_733
@@ -2889,7 +2894,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: defective cdrom.  Enabling &bslash;&quot;cruft&bslash;&quot; mount option.&bslash;n&quot;
+l_string|&quot;Warning: defective cdrom (volume sequence number). Enabling &bslash;&quot;cruft&bslash;&quot; mount option.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|inode-&gt;i_sb-&gt;u.isofs_sb.s_cruft
@@ -2897,7 +2902,7 @@ op_assign
 l_char|&squot;y&squot;
 suffix:semicolon
 )brace
-macro_line|#ifndef MULTI_VOLUME
+macro_line|#ifndef IGNORE_WRONG_MULTI_VOLUME_SPECS
 r_if
 c_cond
 (paren
@@ -2926,7 +2931,7 @@ l_string|&quot;Multi volume CD somehow got mounted.&bslash;n&quot;
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif&t;
+macro_line|#endif IGNORE_WRONG_MULTI_VOLUME_SPECS
 (brace
 r_if
 c_cond

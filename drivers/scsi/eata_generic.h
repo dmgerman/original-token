@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 96/05/16                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 96/08/14                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_GENERIC_H
 DECL|macro|_EATA_GENERIC_H
 mdefine_line|#define _EATA_GENERIC_H
@@ -69,6 +69,8 @@ DECL|macro|SG_SIZE
 mdefine_line|#define SG_SIZE&t;&t; 64 
 DECL|macro|SG_SIZE_BIG
 mdefine_line|#define SG_SIZE_BIG&t; 252&t;       /* max. 8096 elements, 64k */
+DECL|macro|UPPER_DEVICE_QUEUE_LIMIT
+mdefine_line|#define UPPER_DEVICE_QUEUE_LIMIT 24    /* The limit we have to set for the &n;&t;&t;&t;&t;&t;* device queue to keep the broken &n;&t;&t;&t;&t;&t;* midlevel SCSI code from producing&n;&t;&t;&t;&t;&t;* bogus timeouts&n;&t;&t;&t;&t;&t;*/
 DECL|macro|TYPE_DISK_QUEUE
 mdefine_line|#define TYPE_DISK_QUEUE  16
 DECL|macro|TYPE_TAPE_QUEUE

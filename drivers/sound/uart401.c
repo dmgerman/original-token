@@ -1503,6 +1503,11 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+id|reset_uart401
+(paren
+id|devc
+)paren
+suffix:semicolon
 id|release_region
 (paren
 id|hw_config-&gt;io_base

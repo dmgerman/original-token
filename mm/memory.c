@@ -2662,19 +2662,6 @@ id|page_table
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;put_page: page already exists %08lx&bslash;n&quot;
-comma
-id|pte_val
-c_func
-(paren
-op_star
-id|page_table
-)paren
-)paren
-suffix:semicolon
 id|free_page
 c_func
 (paren

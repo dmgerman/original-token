@@ -4302,6 +4302,10 @@ op_logical_or
 id|limit
 OL
 id|PAGE_SIZE
+op_logical_or
+id|current-&gt;mm-&gt;count
+op_ne
+l_int|1
 )paren
 r_return
 l_int|0

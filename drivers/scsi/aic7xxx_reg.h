@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx register and scratch ram definitions.&n; *&n; * Copyright (c) 1994, 1995, 1996 Justin T. Gibbs.&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: aic7xxx_reg.h,v 3.0 1996/04/16 08:52:23 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx register and scratch ram definitions.&n; *&n; * Copyright (c) 1994, 1995, 1996 Justin T. Gibbs.&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * This version corresponds to version 1.12 of FreeBSDs aic7xxx_reg.h&n; *&n; * $Id: aic7xxx_reg.h,v 3.1 1996/07/23 03:37:26 deang Exp $&n; *-M*************************************************************************/
 multiline_comment|/*&n; * This header is shared by the sequencer code and the kernel level driver.&n; *&n; * All page numbers refer to the Adaptec AIC-7770 Data Book available from&n; * Adaptec&squot;s Technical Documents Department 1-800-934-2766&n; */
 multiline_comment|/*&n; * SCSI Sequence Control (p. 3-11).&n; * Each bit, when set starts a specific SCSI sequence on the bus&n; */
 DECL|macro|SCSISEQ
@@ -366,8 +366,6 @@ DECL|macro|BOFF
 mdefine_line|#define&t;&t;BOFF&t;&t;0xf0
 DECL|macro|BON
 mdefine_line|#define&t;&t;BON&t;&t;0x0f
-DECL|macro|BOFF_60BCLKS
-mdefine_line|#define&t;&t;BOFF_60BCLKS&t;0xf0
 multiline_comment|/*&n; * Bus Speed (p. 3-45)&n; */
 DECL|macro|BUSSPD
 mdefine_line|#define&t;BUSSPD&t;&t;&t;0x086
@@ -396,6 +394,8 @@ DECL|macro|INTEN
 mdefine_line|#define&t;&t;INTEN&t;&t;0x02
 DECL|macro|CHIPRST
 mdefine_line|#define&t;&t;CHIPRST&t;&t;0x01
+DECL|macro|CHIPRSTACK
+mdefine_line|#define&t;&t;CHIPRSTACK&t;0x01
 multiline_comment|/*&n; * Interrupt Status (p. 3-50)&n; * Status for system interrupts&n; */
 DECL|macro|INTSTAT
 mdefine_line|#define INTSTAT&t;&t;&t;0x091
@@ -429,6 +429,8 @@ DECL|macro|MSG_BUFFER_BUSY
 mdefine_line|#define&t;&t;&t;MSG_BUFFER_BUSY&t;0xc1&t;/*&n;&t;&t;&t;&t;&t;&t; * Sequencer wants to use the&n;&t;&t;&t;&t;&t;&t; * message buffer, but it&n;&t;&t;&t;&t;&t;&t; * already contains a message&n;&t;&t;&t;&t;&t;&t; */
 DECL|macro|MSGIN_PHASEMIS
 mdefine_line|#define&t;&t;&t;MSGIN_PHASEMIS&t;0xd1&t;/*&n;&t;&t;&t;&t;&t;&t; * Target changed phase on us&n;&t;&t;&t;&t;&t;&t; * when we were expecting&n;&t;&t;&t;&t;&t;&t; * another msgin byte.&n;&t;&t;&t;&t;&t;&t; */
+DECL|macro|DATA_OVERRUN
+mdefine_line|#define&t;&t;&t;DATA_OVERRUN&t;0xe1&t;/*&n;&t;&t;&t;&t;&t;&t; * Target attempted to write&n;&t;&t;&t;&t;&t;&t; * beyond the bounds of its&n;&t;&t;&t;&t;&t;&t; * command.&n;&t;&t;&t;&t;&t;&t; */
 DECL|macro|BRKADRINT
 mdefine_line|#define &t;BRKADRINT 0x08
 DECL|macro|SCSIINT
@@ -583,8 +585,12 @@ DECL|macro|SCB_CMDPTR3
 mdefine_line|#define&t;&t;SCB_CMDPTR3&t;0x0b7
 DECL|macro|SCB_CMDLEN
 mdefine_line|#define&t;SCB_CMDLEN&t;&t;0x0b8
-DECL|macro|SCB_NEXT_WAITING
-mdefine_line|#define&t;SCB_NEXT_WAITING&t;0x0b9
+DECL|macro|SCB_TAG
+mdefine_line|#define SCB_TAG&t;&t;&t;0x0b9
+DECL|macro|SCB_NEXT
+mdefine_line|#define&t;SCB_NEXT&t;&t;0x0ba
+DECL|macro|SCB_PREV
+mdefine_line|#define&t;SCB_PREV&t;&t;0x0bb
 macro_line|#ifdef linux
 DECL|macro|SG_SIZEOF
 mdefine_line|#define&t;SG_SIZEOF&t;&t;0x0c&t;&t;/* sizeof(struct scatterlist) */
@@ -639,9 +645,11 @@ multiline_comment|/* These offsets are either to values that are initialized by 
 multiline_comment|/*&n; * 1 byte per target starting at this address for configuration values&n; */
 DECL|macro|TARG_SCRATCH
 mdefine_line|#define TARG_SCRATCH&t;&t;0x020
-multiline_comment|/*&n; * The sequencer will stick the first byte of any rejected message here so&n; * we can see what is getting thrown away.&n; */
+multiline_comment|/*&n; * The sequencer will stick the frist byte of any rejected message here so&n; * we can see what is getting thrown away.  Extended messages put the&n; * extended message type in REJBYTE_EXT.&n; */
 DECL|macro|REJBYTE
-mdefine_line|#define REJBYTE&t;&t;&t;0x031
+mdefine_line|#define REJBYTE&t;&t;&t;0x030
+DECL|macro|REJBYTE_EXT
+mdefine_line|#define REJBYTE_EXT&t;&t;0x031
 multiline_comment|/*&n; * Bit vector of targets that have disconnection disabled.&n; */
 DECL|macro|DISC_DSB
 mdefine_line|#define&t;DISC_DSB&t;&t;0x032
@@ -652,6 +660,7 @@ mdefine_line|#define&t;&t;DISC_DSB_B&t;0x033
 multiline_comment|/*&n; * Length of pending message&n; */
 DECL|macro|MSG_LEN
 mdefine_line|#define MSG_LEN&t;&t;&t;0x034
+multiline_comment|/* We reserve 8bytes to store outgoing messages */
 DECL|macro|MSG0
 mdefine_line|#define MSG0&t;&t;&t;0x035
 DECL|macro|COMP_MSG0
@@ -666,71 +675,93 @@ DECL|macro|MSG4
 mdefine_line|#define MSG4&t;&t;&t;0x039
 DECL|macro|MSG5
 mdefine_line|#define MSG5&t;&t;&t;0x03a
+DECL|macro|MSG6
+mdefine_line|#define MSG6&t;&t;&t;0x03b
+DECL|macro|MSG7
+mdefine_line|#define MSG7&t;&t;&t;0x03c
 multiline_comment|/*&n; * These are offsets into the card&squot;s scratch ram.  Some of the values are&n; * specified in the AHA2742 technical reference manual and are initialized&n; * by the BIOS at boot time.&n; */
 DECL|macro|LASTPHASE
-mdefine_line|#define LASTPHASE&t;&t;0x049
+mdefine_line|#define LASTPHASE&t;&t;0x03d
 DECL|macro|ARG_1
-mdefine_line|#define ARG_1&t;&t;&t;0x04a
+mdefine_line|#define ARG_1&t;&t;&t;0x03e
+DECL|macro|MAXOFFSET
+mdefine_line|#define&t;&t;MAXOFFSET&t;0x01
 DECL|macro|RETURN_1
-mdefine_line|#define RETURN_1&t;&t;0x04a
-DECL|macro|SEND_SENSE
-mdefine_line|#define&t;&t;SEND_SENSE&t;0x80
+mdefine_line|#define RETURN_1&t;&t;0x03f
 DECL|macro|SEND_WDTR
 mdefine_line|#define&t;&t;SEND_WDTR&t;0x80
 DECL|macro|SEND_SDTR
-mdefine_line|#define&t;&t;SEND_SDTR&t;0x80
+mdefine_line|#define&t;&t;SEND_SDTR&t;0x60
+DECL|macro|SEND_SENSE
+mdefine_line|#define&t;&t;SEND_SENSE&t;0x40
 DECL|macro|SEND_REJ
-mdefine_line|#define&t;&t;SEND_REJ&t;0x40
+mdefine_line|#define&t;&t;SEND_REJ&t;0x20
+DECL|macro|SCB_PAGEDIN
+mdefine_line|#define&t;&t;SCB_PAGEDIN&t;0x10
 DECL|macro|SIGSTATE
-mdefine_line|#define SIGSTATE&t;&t;0x04b
+mdefine_line|#define SIGSTATE&t;&t;0x040
 DECL|macro|DMAPARAMS
-mdefine_line|#define DMAPARAMS&t;&t;0x04c&t;/* Parameters for DMA Logic */
+mdefine_line|#define DMAPARAMS&t;&t;0x041&t;/* Parameters for DMA Logic */
 DECL|macro|SG_COUNT
-mdefine_line|#define&t;SG_COUNT&t;&t;0x04d
+mdefine_line|#define&t;SG_COUNT&t;&t;0x042
 DECL|macro|SG_NEXT
-mdefine_line|#define&t;SG_NEXT&t;&t;&t;0x04e&t;/* working value of SG pointer */
+mdefine_line|#define&t;SG_NEXT&t;&t;&t;0x043&t;/* working value of SG pointer */
 DECL|macro|SG_NEXT0
-mdefine_line|#define&t;&t;SG_NEXT0&t;0x04e
+mdefine_line|#define&t;&t;SG_NEXT0&t;0x043
 DECL|macro|SG_NEXT1
-mdefine_line|#define&t;&t;SG_NEXT1&t;0x04f
+mdefine_line|#define&t;&t;SG_NEXT1&t;0x044
 DECL|macro|SG_NEXT2
-mdefine_line|#define&t;&t;SG_NEXT2&t;0x050
+mdefine_line|#define&t;&t;SG_NEXT2&t;0x045
 DECL|macro|SG_NEXT3
-mdefine_line|#define&t;&t;SG_NEXT3&t;0x051
+mdefine_line|#define&t;&t;SG_NEXT3&t;0x046
 DECL|macro|SCBCOUNT
-mdefine_line|#define&t;SCBCOUNT&t;&t;0x052&t;/*&n;&t;&t;&t;&t;&t; * Number of SCBs supported by&n;&t;&t;&t;&t;&t; * this card.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define&t;SCBCOUNT&t;&t;0x047&t;/*&n;&t;&t;&t;&t;&t; * Number of SCBs supported by&n;&t;&t;&t;&t;&t; * this card.&n;&t;&t;&t;&t;&t; */
+DECL|macro|COMP_SCBCOUNT
+mdefine_line|#define&t;COMP_SCBCOUNT&t;&t;0x048&t;/*&n;&t;&t;&t;&t;&t; * Two&squot;s compliment of SCBCOUNT&n;&t;&t;&t;&t;&t; */
+DECL|macro|QCNTMASK
+mdefine_line|#define QCNTMASK&t;&t;0x049&t;/*&n;&t;&t;&t;&t;&t; * Mask of bits to test against&n;&t;&t;&t;&t;&t; * when looking at the Queue Count&n;&t;&t;&t;&t;&t; * registers.  Works around a bug&n;&t;&t;&t;&t;&t; * on aic7850 chips. &n;&t;&t;&t;&t;&t; */
 DECL|macro|FLAGS
-mdefine_line|#define FLAGS&t;&t;&t;0x053
+mdefine_line|#define FLAGS&t;&t;&t;0x04a
 DECL|macro|SINGLE_BUS
 mdefine_line|#define&t;&t;SINGLE_BUS&t;0x00
 DECL|macro|TWIN_BUS
 mdefine_line|#define&t;&t;TWIN_BUS&t;0x01
 DECL|macro|WIDE_BUS
 mdefine_line|#define&t;&t;WIDE_BUS&t;0x02
+DECL|macro|PAGESCBS
+mdefine_line|#define&t;&t;PAGESCBS&t;0x04
 DECL|macro|DPHASE
-mdefine_line|#define&t;&t;DPHASE&t;&t;0x04
-DECL|macro|MAXOFFSET
-mdefine_line|#define&t;&t;MAXOFFSET&t;0x08
+mdefine_line|#define&t;&t;DPHASE&t;&t;0x10
+DECL|macro|SELECTED
+mdefine_line|#define&t;&t;SELECTED&t;0x20
 DECL|macro|IDENTIFY_SEEN
 mdefine_line|#define&t;&t;IDENTIFY_SEEN&t;0x40
 DECL|macro|RESELECTED
 mdefine_line|#define&t;&t;RESELECTED&t;0x80
-DECL|macro|ACTIVE_A
-mdefine_line|#define&t;ACTIVE_A&t;&t;0x054
-DECL|macro|ACTIVE_B
-mdefine_line|#define&t;ACTIVE_B&t;&t;0x055
 DECL|macro|SAVED_TCL
-mdefine_line|#define&t;SAVED_TCL&t;&t;0x056&t;/*&n;&t;&t;&t;&t;&t; * Temporary storage for the&n;&t;&t;&t;&t;&t; * target/channel/lun of a&n;&t;&t;&t;&t;&t; * reconnecting target&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define&t;SAVED_TCL&t;&t;0x04b&t;/*&n;&t;&t;&t;&t;&t; * Temporary storage for the&n;&t;&t;&t;&t;&t; * target/channel/lun of a&n;&t;&t;&t;&t;&t; * reconnecting target&n;&t;&t;&t;&t;&t; */
+DECL|macro|ACTIVE_A
+mdefine_line|#define&t;ACTIVE_A&t;&t;0x04c
+DECL|macro|ACTIVE_B
+mdefine_line|#define&t;ACTIVE_B&t;&t;0x04d
 DECL|macro|WAITING_SCBH
-mdefine_line|#define WAITING_SCBH&t;&t;0x057&t;/*&n;&t;&t;&t;&t;&t; * head of list of SCBs awaiting&n;&t;&t;&t;&t;&t; * selection&n;&t;&t;&t;&t;&t; */
-DECL|macro|QCNTMASK
-mdefine_line|#define QCNTMASK&t;&t;0x058&t;/*&n;&t;&t;&t;&t;&t; * Mask of bits to test against&n;&t;&t;&t;&t;&t; * when looking at the Queue Count&n;&t;&t;&t;&t;&t; * registers.  Works around a bug&n;&t;&t;&t;&t;&t; * on aic7850 chips. &n;&t;&t;&t;&t;&t; */
-DECL|macro|COMP_SCBCOUNT
-mdefine_line|#define&t;COMP_SCBCOUNT&t;&t;0x059
+mdefine_line|#define WAITING_SCBH&t;&t;0x04e&t;/*&n;&t;&t;&t;&t;&t; * head of list of SCBs awaiting&n;&t;&t;&t;&t;&t; * selection&n;&t;&t;&t;&t;&t; */
+DECL|macro|DISCONNECTED_SCBH
+mdefine_line|#define DISCONNECTED_SCBH&t;0x04f&t;/*&n;&t;&t;&t;&t;&t; * head of list of SCBs that are&n;&t;&t;&t;&t;&t; * disconnected.  Used for SCB&n;&t;&t;&t;&t;&t; * paging.&n;&t;&t;&t;&t;&t; */
 DECL|macro|SCB_LIST_NULL
 mdefine_line|#define&t;&t;SCB_LIST_NULL&t;0xff
+DECL|macro|SAVED_LINKPTR
+mdefine_line|#define SAVED_LINKPTR&t;&t;0x050
+DECL|macro|SAVED_SCBPTR
+mdefine_line|#define SAVED_SCBPTR&t;&t;0x051
+DECL|macro|ULTRA_ENB
+mdefine_line|#define ULTRA_ENB&t;&t;0x052
+DECL|macro|ULTRA_ENB_B
+mdefine_line|#define ULTRA_ENB_B&t;&t;0x053
 DECL|macro|SCSICONF
 mdefine_line|#define SCSICONF&t;&t;0x05a
+DECL|macro|RESET_SCSI
+mdefine_line|#define&t;&t;RESET_SCSI&t;0x40
 DECL|macro|HOSTCONF
 mdefine_line|#define HOSTCONF&t;&t;0x05d
 DECL|macro|HA_274_BIOSCTRL
@@ -739,6 +770,8 @@ DECL|macro|BIOSMODE
 mdefine_line|#define BIOSMODE&t;&t;0x30
 DECL|macro|BIOSDISABLED
 mdefine_line|#define BIOSDISABLED&t;&t;0x30
+DECL|macro|CHANNEL_B_PRIMARY
+mdefine_line|#define CHANNEL_B_PRIMARY&t;0x08
 multiline_comment|/* Message codes */
 DECL|macro|MSG_EXTENDED
 mdefine_line|#define MSG_EXTENDED&t;&t;0x01
@@ -764,6 +797,8 @@ DECL|macro|MSG_MSG_PARITY_ERROR
 mdefine_line|#define MSG_MSG_PARITY_ERROR&t;0x09
 DECL|macro|MSG_BUS_DEVICE_RESET
 mdefine_line|#define MSG_BUS_DEVICE_RESET&t;0x0c
+DECL|macro|MSG_ABORT_TAG
+mdefine_line|#define MSG_ABORT_TAG&t;&t;0x0d
 DECL|macro|MSG_SIMPLE_TAG
 mdefine_line|#define MSG_SIMPLE_TAG&t;&t;0x20
 DECL|macro|MSG_IDENTIFY

@@ -2034,12 +2034,12 @@ l_int|1
 id|tmp
 op_and_assign
 op_complement
-l_int|0x20
+l_int|0x02
 suffix:semicolon
 r_else
 id|tmp
 op_or_assign
-l_int|0x20
+l_int|0x02
 suffix:semicolon
 id|sb_setmixer
 (paren

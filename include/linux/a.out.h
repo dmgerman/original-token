@@ -130,15 +130,15 @@ mdefine_line|#define N_TRELOFF(x) (N_DATOFF(x) + (x).a_data)
 macro_line|#endif
 macro_line|#if !defined (N_DRELOFF)
 DECL|macro|N_DRELOFF
-mdefine_line|#define N_DRELOFF(x) (N_TRELOFF(x) + (x).a_trsize)
+mdefine_line|#define N_DRELOFF(x) (N_TRELOFF(x) + N_TRSIZE(x))
 macro_line|#endif
 macro_line|#if !defined (N_SYMOFF)
 DECL|macro|N_SYMOFF
-mdefine_line|#define N_SYMOFF(x) (N_DRELOFF(x) + (x).a_drsize)
+mdefine_line|#define N_SYMOFF(x) (N_DRELOFF(x) + N_DRSIZE(x))
 macro_line|#endif
 macro_line|#if !defined (N_STROFF)
 DECL|macro|N_STROFF
-mdefine_line|#define N_STROFF(x) (N_SYMOFF(x) + (x).a_syms)
+mdefine_line|#define N_STROFF(x) (N_SYMOFF(x) + N_SYMSIZE(x))
 macro_line|#endif
 multiline_comment|/* Address of text segment in memory after it is loaded.  */
 macro_line|#if !defined (N_TXTADDR)

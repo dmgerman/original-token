@@ -241,6 +241,10 @@ c_cond
 (paren
 op_logical_neg
 id|current-&gt;dumpable
+op_logical_or
+id|current-&gt;mm-&gt;count
+op_ne
+l_int|1
 )paren
 r_return
 l_int|0

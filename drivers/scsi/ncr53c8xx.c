@@ -23940,7 +23940,7 @@ r_int
 id|np-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#ifndef SCSI_NCR_IOMAPPED
+macro_line|#ifndef NCR_IOMAPPED
 r_if
 c_cond
 (paren

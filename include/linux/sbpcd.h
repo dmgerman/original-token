@@ -45,28 +45,31 @@ multiline_comment|/*&n; * some more or less user dependent definitions - service
 multiline_comment|/* Set this to 0 once you have configured your interface definitions right. */
 DECL|macro|DISTRIBUTION
 mdefine_line|#define DISTRIBUTION 1
-macro_line|#if DISTRIBUTION
-DECL|macro|READ_AUDIO
-mdefine_line|#define READ_AUDIO 0
+multiline_comment|/*&n; * Time to wait after giving a message.&n; * This gets important if you enable non-standard DBG_xxx flags.&n; * You will see what happens if you omit the pause or make it&n; * too short. Be warned!&n; */
 DECL|macro|KLOGD_PAUSE
-mdefine_line|#define KLOGD_PAUSE 55
+mdefine_line|#define KLOGD_PAUSE 1
+multiline_comment|/* tray control: eject tray if no disk is in */
+macro_line|#if DISTRIBUTION
+DECL|macro|JUKEBOX
+mdefine_line|#define JUKEBOX 0
 macro_line|#else
+DECL|macro|JUKEBOX
+mdefine_line|#define JUKEBOX 1
+macro_line|#endif DISTRIBUTION
+multiline_comment|/* tray control: eject tray after last use */
+macro_line|#if DISTRIBUTION
+DECL|macro|EJECT
+mdefine_line|#define EJECT 0
+macro_line|#else
+DECL|macro|EJECT
+mdefine_line|#define EJECT 1
+macro_line|#endif DISTRIBUTION
 multiline_comment|/* max. number of audio frames to read with one     */
 multiline_comment|/* request (allocates n* 2352 bytes kernel memory!) */
 multiline_comment|/* may be freely adjusted, f.e. 75 (= 1 sec.), at   */
 multiline_comment|/* runtime by use of the CDROMAUDIOBUFSIZ ioctl.    */
 DECL|macro|READ_AUDIO
-mdefine_line|#define READ_AUDIO 75
-multiline_comment|/*&n; * Time to wait after giving a message.&n; * This gets important if you enable non-standard DBG_xxx flags.&n; * You will see what happens if you omit the pause or make it&n; * too short. Be warned!&n; */
-DECL|macro|KLOGD_PAUSE
-mdefine_line|#define KLOGD_PAUSE 1
-multiline_comment|/* tray control: eject tray if no disk is in (0 or 1) */
-DECL|macro|JUKEBOX
-mdefine_line|#define JUKEBOX 1
-multiline_comment|/* tray control: eject tray after last use (0 or 1) */
-DECL|macro|EJECT
-mdefine_line|#define EJECT 1
-macro_line|#endif DISTRIBUTION
+mdefine_line|#define READ_AUDIO 0
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * nothing to change below here if you are not experimenting&n; */
@@ -489,6 +492,8 @@ mdefine_line|#define MIXER_CD_Volume&t;0x28&t;/* internal SB Pro register addres
 multiline_comment|/*==========================================================================*/
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS&t;99
+DECL|macro|ERR_DISKCHANGE
+mdefine_line|#define ERR_DISKCHANGE 615
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * To make conversions easier (machine dependent!)&n; */
 DECL|union|_msf

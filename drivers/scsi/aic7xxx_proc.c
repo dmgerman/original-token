@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver proc support for Linux.&n; *&n; * Copyright (c) 1995, 1996 Dean W. Gehnert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * ----------------------------------------------------------------&n; *  o Modified from the EATA-DMA /proc support.&n; *  o Additional support for device block statistics provided by&n; *    Matthew Jacob.&n; *&n; *  Dean W. Gehnert, deang@teleport.com, 05/01/96&n; *&n; *  $Id: aic7xxx_proc.c,v 3.1 1996/05/12 17:25:56 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver proc support for Linux.&n; *&n; * Copyright (c) 1995, 1996 Dean W. Gehnert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * ----------------------------------------------------------------&n; *  o Modified from the EATA-DMA /proc support.&n; *  o Additional support for device block statistics provided by&n; *    Matthew Jacob.&n; *&n; *  Dean W. Gehnert, deang@teleport.com, 05/01/96&n; *&n; *  $Id: aic7xxx_proc.c,v 3.2 1996/07/23 03:37:26 deang Exp $&n; *-M*************************************************************************/
 DECL|macro|BLS
 mdefine_line|#define BLS buffer + len + size
 DECL|macro|HDRB
@@ -570,7 +570,7 @@ l_string|&quot;  AIC7XXX_TAGGED_QUEUEING: Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AIC7XXX_SHARE_IRQS
+macro_line|#ifdef AIC7XXX_PAGE_ENABLE
 id|size
 op_add_assign
 id|sprintf
@@ -578,7 +578,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  AIC7XXX_SHARE_IRQS     : Enabled&bslash;n&quot;
+l_string|&quot;  AIC7XXX_PAGE_ENABLE    : Enabled&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -589,7 +589,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  AIC7XXX_SHARE_IRQS     : Disabled&bslash;n&quot;
+l_string|&quot;  AIC7XXX_PAGE_ENABLE    : Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -726,11 +726,13 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;                   SCB: %d (%d)&bslash;n&quot;
+l_string|&quot;                  SCBs: Used %d, HW %d, Page %d&bslash;n&quot;
 comma
-id|p-&gt;numscb
+id|p-&gt;numscbs
 comma
-id|p-&gt;maxscb
+id|p-&gt;maxhscbs
+comma
+id|p-&gt;maxscbs
 )paren
 suffix:semicolon
 id|size
@@ -797,7 +799,11 @@ id|BLS
 comma
 l_string|&quot;         Serial EEPROM: %s&bslash;n&quot;
 comma
-id|p-&gt;have_seeprom
+(paren
+id|p-&gt;flags
+op_amp
+id|HAVE_SEEPROM
+)paren
 ques
 c_cond
 l_string|&quot;True&quot;
@@ -814,7 +820,11 @@ id|BLS
 comma
 l_string|&quot;  Extended Translation: %sabled&bslash;n&quot;
 comma
-id|p-&gt;extended
+(paren
+id|p-&gt;flags
+op_amp
+id|EXTENDED_TRANSLATION
+)paren
 ques
 c_cond
 l_string|&quot;En&quot;
@@ -848,7 +858,11 @@ id|BLS
 comma
 l_string|&quot;            Ultra SCSI: %sabled&bslash;n&quot;
 comma
-id|p-&gt;ultra_enabled
+(paren
+id|p-&gt;flags
+op_amp
+id|ULTRA_ENABLED
+)paren
 ques
 c_cond
 l_string|&quot;En&quot;

@@ -1953,7 +1953,7 @@ macro_line|#endif
 r_return
 suffix:semicolon
 )brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -1987,7 +1987,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_static
 r_int
 id|mpu_attached

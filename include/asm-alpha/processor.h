@@ -67,12 +67,17 @@ id|res1
 comma
 id|res2
 suffix:semicolon
+DECL|member|segment
+r_int
+r_int
+id|segment
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, KERNEL_DS, &bslash;&n;}
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack
@@ -122,9 +127,7 @@ id|fp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
-DECL|function|start_thread
-r_static
-r_inline
+r_extern
 r_void
 id|start_thread
 c_func
@@ -132,31 +135,13 @@ c_func
 r_struct
 id|pt_regs
 op_star
-id|regs
 comma
 r_int
 r_int
-id|pc
 comma
 r_int
 r_int
-id|sp
-)paren
-(brace
-id|regs-&gt;pc
-op_assign
-id|pc
-suffix:semicolon
-id|regs-&gt;ps
-op_assign
-l_int|8
-suffix:semicolon
-id|wrusp
-c_func
-(paren
-id|sp
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif /* __ASM_ALPHA_PROCESSOR_H */
 eof

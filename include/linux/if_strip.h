@@ -3,24 +3,13 @@ macro_line|#ifndef __LINUX_STRIP_H
 DECL|macro|__LINUX_STRIP_H
 mdefine_line|#define __LINUX_STRIP_H
 r_typedef
-r_union
+r_struct
 (brace
-DECL|member|l
-id|__u32
-id|l
-suffix:semicolon
-DECL|member|s
-id|__u16
-id|s
-(braket
-l_int|2
-)braket
-suffix:semicolon
 DECL|member|c
 id|__u8
 id|c
 (braket
-l_int|4
+l_int|6
 )braket
 suffix:semicolon
 DECL|typedef|MetricomAddress

@@ -1977,6 +1977,16 @@ c_func
 (paren
 id|ADAPTEC
 comma
+id|ADAPTEC_7860
+comma
+l_string|&quot;AIC-7860&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ADAPTEC
+comma
 id|ADAPTEC_7870
 comma
 l_string|&quot;AIC-7870&quot;

@@ -2130,6 +2130,10 @@ op_star
 id|buf
 )paren
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|0
 suffix:semicolon
 op_star
@@ -2144,21 +2148,33 @@ op_plus
 l_int|1
 )paren
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|4
 suffix:semicolon
-multiline_comment|/* we receive 4 bytes from the drive */
+multiline_comment|/* receive 4 bytes */
 id|cmd
 (braket
 l_int|0
 )braket
 op_assign
-l_int|0xc7
+(paren
+r_int
+r_char
+)paren
+l_int|0x00c7
 suffix:semicolon
 id|cmd
 (braket
 l_int|1
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 l_int|3
 suffix:semicolon
 id|rc
@@ -2396,6 +2412,10 @@ op_star
 id|buf
 )paren
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|0
 suffix:semicolon
 op_star
@@ -2410,6 +2430,10 @@ op_plus
 l_int|1
 )paren
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|12
 suffix:semicolon
 id|cmd
@@ -2417,6 +2441,10 @@ id|cmd
 l_int|0
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 id|MODE_SENSE
 suffix:semicolon
 id|cmd
@@ -2424,6 +2452,10 @@ id|cmd
 l_int|2
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 l_int|1
 suffix:semicolon
 id|cmd
@@ -2431,6 +2463,10 @@ id|cmd
 l_int|4
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 l_int|12
 suffix:semicolon
 id|rc
@@ -2545,9 +2581,13 @@ op_star
 id|buf
 )paren
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|12
 suffix:semicolon
-multiline_comment|/* sending 12 bytes... */
+multiline_comment|/* send 12 bytes */
 op_star
 (paren
 (paren
@@ -2560,6 +2600,10 @@ op_plus
 l_int|1
 )paren
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|0
 suffix:semicolon
 id|cmd
@@ -2567,6 +2611,10 @@ id|cmd
 l_int|0
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 id|MODE_SELECT
 suffix:semicolon
 id|cmd
@@ -2574,6 +2622,10 @@ id|cmd
 l_int|1
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 (paren
 l_int|1
 op_lshift
@@ -2585,6 +2637,10 @@ id|cmd
 l_int|4
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 l_int|12
 suffix:semicolon
 id|send
@@ -2601,9 +2657,14 @@ id|send
 l_int|3
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 l_int|0x08
 suffix:semicolon
-multiline_comment|/* the data for the command    */
+multiline_comment|/* data for cmd */
+multiline_comment|/* density 0x81 for XA, 0 else */
 id|send
 (braket
 l_int|4
@@ -2614,16 +2675,27 @@ id|is_xa
 )paren
 ques
 c_cond
+(paren
+r_int
+r_char
+)paren
 l_int|0x81
 suffix:colon
+(paren
+r_int
+r_char
+)paren
 l_int|0
 suffix:semicolon
-multiline_comment|/* density 0x81 for XA, 0 else */
 id|send
 (braket
 l_int|10
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 l_int|0x08
 suffix:semicolon
 id|rc

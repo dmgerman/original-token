@@ -337,21 +337,10 @@ DECL|macro|KERNEL_DS
 mdefine_line|#define KERNEL_DS 0
 DECL|macro|USER_DS
 mdefine_line|#define USER_DS 1
-DECL|function|get_fs
-r_static
-r_inline
-r_int
-r_int
-id|get_fs
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
+DECL|macro|get_fs
+mdefine_line|#define get_fs()&t;(current-&gt;tss.segment)
+DECL|macro|set_fs
+mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment=(x))
 DECL|function|get_ds
 r_static
 r_inline
@@ -366,19 +355,6 @@ r_void
 r_return
 l_int|0
 suffix:semicolon
-)brace
-DECL|function|set_fs
-r_static
-r_inline
-r_void
-id|set_fs
-c_func
-(paren
-r_int
-r_int
-id|val
-)paren
-(brace
 )brace
 macro_line|#endif /* _ASM_SEGMENT_H */
 eof

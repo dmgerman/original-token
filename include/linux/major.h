@@ -122,13 +122,13 @@ mdefine_line|#define APBLOCK_MAJOR   60   /* AP1000 Block device */
 DECL|macro|DDV_MAJOR
 mdefine_line|#define DDV_MAJOR       61   /* AP1000 DDV block device */
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
-DECL|macro|SCSI_MAJOR
-mdefine_line|#define SCSI_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_TAPE_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR&t;&bslash;&n;   || (M) == SCSI_GENERIC_MAJOR)
-DECL|function|scsi_major
+DECL|macro|SCSI_BLK_MAJOR
+mdefine_line|#define SCSI_BLK_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR)
+DECL|function|scsi_blk_major
 r_static
 r_inline
 r_int
-id|scsi_major
+id|scsi_blk_major
 c_func
 (paren
 r_int
@@ -136,7 +136,7 @@ id|m
 )paren
 (brace
 r_return
-id|SCSI_MAJOR
+id|SCSI_BLK_MAJOR
 c_func
 (paren
 id|m

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.99  Aug  6, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Original author:&t;abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  Maintained by:&t;mlord@pobox.com (Mark Lord)&n; *&t;&t;&t;with fanatical support from a legion of hackers!&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  These chips are basically fucked by design, and getting this driver&n; *  to work on every motherboard design that uses this screwed chip seems&n; *  bloody well impossible.  However, we&squot;re still trying.&n; *&n; *  Version 0.96 worked for just about everybody.&n; *  Version 0.97 should work for everyone&n; *&n; *  User feedback is essential.  Many thanks to the beta test team:&n; *&n; *  A.Hartgers@stud.tue.nl, JZDQC@CUNYVM.CUNY.edu, abramov@cecmow.enet.dec.com,&n; *  bardj@utopia.ppp.sn.no, bart@gaga.tue.nl, bbol001@cs.auckland.ac.nz,&n; *  chrisc@dbass.demon.co.uk, dalecki@namu26.Num.Math.Uni-Goettingen.de,&n; *  derekn@vw.ece.cmu.edu, florian@btp2x3.phy.uni-bayreuth.de,&n; *  flynn@dei.unipd.it, gadio@netvision.net.il, godzilla@futuris.net,&n; *  j@pobox.com, jkemp1@mises.uni-paderborn.de, jtoppe@hiwaay.net,&n; *  kerouac@ssnet.com, meskes@informatik.rwth-aachen.de, hzoli@cs.elte.hu,&n; *  peter@udgaard.isgtec.com, phil@tazenda.demon.co.uk, roadcapw@cfw.com,&n; *  s0033las@sun10.vsz.bme.hu, schaffer@tam.cornell.edu, sjd@slip.net,&n; *  steve@ei.org, ulrpeg@bigcomm.gun.de, ism@tardis.ed.ac.uk, mack@cray.com&n; *  liug@mama.indstate.edu, and others.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable prefetch&n; *&t;&t;&t;for versions &squot;B&squot; and &squot;C&squot; of chip by default,&n; *&t;&t;&t;some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with prefetch mode. Separate function for setting&n; *&t;&t;&t;prefetch is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *&n; *  Version 0.04&t;Now configs/compiles separate from ide.c&n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Prefetch is enabled only for&n; *&t;&t;&t;detected hard drives, not included in prefetch&n; *&t;&t;&t;black list.&n; *&n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to&n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.&n; *  Version 0.11&t;Try to handle more wierd situations.&n; *&n; *  Version 0.12&t;Lots of bug fixes from Laszlo Peter&n; *&t;&t;&t;irq unmasking disabled for reliability.&n; *&t;&t;&t;try to be even smarter about the second port.&n; *&t;&t;&t;tidy up source code formatting.&n; *  Version 0.13&t;permit irq unmasking again.&n; *  Version 0.90&t;massive code cleanup, some bugs fixed.&n; *&t;&t;&t;defaults all drives to PIO mode0, prefetch off.&n; *&t;&t;&t;autotune is OFF by default, with compile time flag.&n; *&t;&t;&t;prefetch can be turned OFF/ON using &quot;hdparm -p8/-p9&quot;&n; *&t;&t;&t; (requires hdparm-3.1 or newer)&n; *  Version 0.91&t;first release to linux-kernel list.&n; *  Version 0.92&t;move initial reg dump to separate callable function&n; *&t;&t;&t;change &quot;readahead&quot; to &quot;prefetch&quot; to avoid confusion&n; *  Version 0.95&t;respect original BIOS timings unless autotuning.&n; *&t;&t;&t;tons of code cleanup and rearrangement.&n; *&t;&t;&t;added CONFIG_BLK_DEV_CMD640_ENHANCED option&n; *&t;&t;&t;prevent use of unmask when prefetch is on&n; *  Version 0.96&t;prevent use of io_32bit when prefetch is off&n; *  Version 0.97&t;fix VLB secondary interface for sjd@slip.net&n; *&t;&t;&t;other minor tune-ups:  0.96 was very good.&n; *  Version 0.98&t;ignore PCI version when disabled by BIOS&n; *  Version 0.99&t;display setup/active/recovery clocks with PIO mode&n; */
+multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 1.01  Aug 12, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Original author:&t;abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  Maintained by:&t;mlord@pobox.com (Mark Lord)&n; *&t;&t;&t;with fanatical support from a legion of hackers!&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  These chips are basically fucked by design, and getting this driver&n; *  to work on every motherboard design that uses this screwed chip seems&n; *  bloody well impossible.  However, we&squot;re still trying.&n; *&n; *  Version 0.97 worked for everybody.&n; *&n; *  User feedback is essential.  Many thanks to the beta test team:&n; *&n; *  A.Hartgers@stud.tue.nl, JZDQC@CUNYVM.CUNY.edu, abramov@cecmow.enet.dec.com,&n; *  bardj@utopia.ppp.sn.no, bart@gaga.tue.nl, bbol001@cs.auckland.ac.nz,&n; *  chrisc@dbass.demon.co.uk, dalecki@namu26.Num.Math.Uni-Goettingen.de,&n; *  derekn@vw.ece.cmu.edu, florian@btp2x3.phy.uni-bayreuth.de,&n; *  flynn@dei.unipd.it, gadio@netvision.net.il, godzilla@futuris.net,&n; *  j@pobox.com, jkemp1@mises.uni-paderborn.de, jtoppe@hiwaay.net,&n; *  kerouac@ssnet.com, meskes@informatik.rwth-aachen.de, hzoli@cs.elte.hu,&n; *  peter@udgaard.isgtec.com, phil@tazenda.demon.co.uk, roadcapw@cfw.com,&n; *  s0033las@sun10.vsz.bme.hu, schaffer@tam.cornell.edu, sjd@slip.net,&n; *  steve@ei.org, ulrpeg@bigcomm.gun.de, ism@tardis.ed.ac.uk, mack@cray.com&n; *  liug@mama.indstate.edu, and others.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable prefetch&n; *&t;&t;&t;for versions &squot;B&squot; and &squot;C&squot; of chip by default,&n; *&t;&t;&t;some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with prefetch mode. Separate function for setting&n; *&t;&t;&t;prefetch is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *&n; *  Version 0.04&t;Now configs/compiles separate from ide.c&n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Prefetch is enabled only for&n; *&t;&t;&t;detected hard drives, not included in prefetch&n; *&t;&t;&t;black list.&n; *&n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to&n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.&n; *  Version 0.11&t;Try to handle more wierd situations.&n; *&n; *  Version 0.12&t;Lots of bug fixes from Laszlo Peter&n; *&t;&t;&t;irq unmasking disabled for reliability.&n; *&t;&t;&t;try to be even smarter about the second port.&n; *&t;&t;&t;tidy up source code formatting.&n; *  Version 0.13&t;permit irq unmasking again.&n; *  Version 0.90&t;massive code cleanup, some bugs fixed.&n; *&t;&t;&t;defaults all drives to PIO mode0, prefetch off.&n; *&t;&t;&t;autotune is OFF by default, with compile time flag.&n; *&t;&t;&t;prefetch can be turned OFF/ON using &quot;hdparm -p8/-p9&quot;&n; *&t;&t;&t; (requires hdparm-3.1 or newer)&n; *  Version 0.91&t;first release to linux-kernel list.&n; *  Version 0.92&t;move initial reg dump to separate callable function&n; *&t;&t;&t;change &quot;readahead&quot; to &quot;prefetch&quot; to avoid confusion&n; *  Version 0.95&t;respect original BIOS timings unless autotuning.&n; *&t;&t;&t;tons of code cleanup and rearrangement.&n; *&t;&t;&t;added CONFIG_BLK_DEV_CMD640_ENHANCED option&n; *&t;&t;&t;prevent use of unmask when prefetch is on&n; *  Version 0.96&t;prevent use of io_32bit when prefetch is off&n; *  Version 0.97&t;fix VLB secondary interface for sjd@slip.net&n; *&t;&t;&t;other minor tune-ups:  0.96 was very good.&n; *  Version 0.98&t;ignore PCI version when disabled by BIOS&n; *  Version 0.99&t;display setup/active/recovery clocks with PIO mode&n; *  Version 1.00&t;Mmm.. cannot depend on PCMD_ENA in all systems&n; *  Version 1.01&t;slow/fast devsel can be selected with &quot;hdparm -p6/-p7&quot;&n; *&t;&t;&t; (&quot;fast&quot; is necessary for 32bit I/O in some systems)&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -719,6 +719,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef STUPIDLY_TRUST_BROKEN_PCMD_ENA_BIT
 r_if
 c_cond
 (paren
@@ -745,6 +746,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* STUPIDLY_TRUST_BROKEN_PCMD_ENA_BIT */
 r_return
 l_int|1
 suffix:semicolon
@@ -2212,6 +2214,9 @@ id|byte
 id|mode_wanted
 )paren
 (brace
+id|byte
+id|b
+suffix:semicolon
 id|ide_pio_data_t
 id|d
 suffix:semicolon
@@ -2253,20 +2258,77 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * If the user asks for pio_mode 9 (no such mode),&n;&t; * we take it to mean &quot;turn ON prefetch&quot; for this drive.&n;&t; *&n;&t; * If the user asks for pio_mode 8 (no such mode),&n;&t; * we take it to mean &quot;turn OFF prefetch&quot; for this drive.&n;&t; */
+r_switch
+c_cond
+(paren
+id|mode_wanted
+)paren
+(brace
+r_case
+l_int|6
+suffix:colon
+multiline_comment|/* set fast-devsel off */
+r_case
+l_int|7
+suffix:colon
+multiline_comment|/* set fast-devsel on */
+id|mode_wanted
+op_and_assign
+l_int|1
+suffix:semicolon
+id|b
+op_assign
+id|get_cmd640_reg
+c_func
+(paren
+id|CNTRL
+)paren
+op_amp
+op_complement
+l_int|0x27
+suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|mode_wanted
-op_amp
-l_int|0xfe
 )paren
-op_eq
-l_int|0x08
+id|b
+op_or_assign
+l_int|0x27
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
+id|CNTRL
+comma
+id|b
 )paren
-(brace
-multiline_comment|/* program prefetch? */
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: %sabled cmd640 fast host timing (devsel)&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|mode_wanted
+ques
+c_cond
+l_string|&quot;en&quot;
+suffix:colon
+l_string|&quot;dis&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+r_case
+l_int|8
+suffix:colon
+multiline_comment|/* set prefetch off */
+r_case
+l_int|9
+suffix:colon
+multiline_comment|/* set prefetch on */
 id|mode_wanted
 op_and_assign
 l_int|1

@@ -538,7 +538,8 @@ mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 macro_line|#endif /* MAJOR_NR == whatever */
-macro_line|#if ((MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER))
+macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
+macro_line|#if !defined(IDE_DRIVER)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
@@ -589,10 +590,10 @@ mdefine_line|#define CLEAR_INTR
 macro_line|#endif
 DECL|macro|INIT_REQUEST
 mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!buffer_locked(CURRENT-&gt;bh)) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
-macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER) */
+macro_line|#endif /* !defined(IDE_DRIVER) */
 multiline_comment|/* end_request() - SCSI devices have their own version */
 multiline_comment|/*               - IDE drivers have their own copy too */
-macro_line|#if ! SCSI_MAJOR(MAJOR_NR)
+macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR)
 macro_line|#if defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) /* shared copy for IDE modules */
 r_void
 id|ide_end_request
@@ -845,7 +846,8 @@ id|wait_for_request
 suffix:semicolon
 )brace
 macro_line|#endif /* defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) */
-macro_line|#endif /* ! SCSI_MAJOR(MAJOR_NR) */
+macro_line|#endif /* ! SCSI_BLK_MAJOR(MAJOR_NR) */
+macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) */
 macro_line|#endif /* defined(MAJOR_NR) || defined(IDE_DRIVER) */
 macro_line|#endif /* _BLK_H */
 eof

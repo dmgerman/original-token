@@ -540,6 +540,10 @@ id|init_task.tss.flags
 op_assign
 l_int|1
 suffix:semicolon
+id|init_task.tss.segment
+op_assign
+id|KERNEL_DS
+suffix:semicolon
 id|init_task.kernel_stack_page
 op_assign
 id|INIT_STACK

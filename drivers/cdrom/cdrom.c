@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/ucdrom.h&gt;
 DECL|macro|FM_WRITE
 mdefine_line|#define FM_WRITE&t;0x2                 /* file mode write bit */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;$Id: cdrom.c,v 0.4 1996/04/17 20:47:50 david Exp david $&quot;
+mdefine_line|#define VERSION &quot;$Id: cdrom.c,v 0.8 1996/08/10 10:52:11 david Exp $&quot;
 multiline_comment|/* Not-exported routines. */
 r_int
 id|cdrom_open
@@ -1428,15 +1428,8 @@ op_le
 id|arg
 op_logical_and
 id|arg
-OL
-(paren
-r_int
-)paren
-(paren
+op_le
 id|cdo-&gt;speed
-op_plus
-l_float|0.5
-)paren
 op_logical_and
 id|cdo-&gt;capability
 op_amp

@@ -148,7 +148,7 @@ id|bh_active
 (brace
 id|missing_time
 op_assign
-l_int|997670
+l_int|1000020
 op_div
 id|HZ
 suffix:semicolon
@@ -235,7 +235,7 @@ id|edx
 suffix:semicolon
 id|edx
 op_assign
-l_int|997670
+l_int|1000020
 op_div
 id|HZ
 suffix:semicolon
@@ -313,7 +313,7 @@ id|eax
 op_sub_assign
 id|low_timer
 suffix:semicolon
-multiline_comment|/*&n;&t; * Time offset = (997670/HZ * time_low) / quotient.&n;&t; */
+multiline_comment|/*&n;&t; * Time offset = (1000020/HZ * time_low) / quotient.&n;&t; */
 id|__asm__
 c_func
 (paren
@@ -351,13 +351,13 @@ c_cond
 (paren
 id|edx
 op_ge
-l_int|997670
+l_int|1000020
 op_div
 id|HZ
 )paren
 id|edx
 op_assign
-l_int|997670
+l_int|1000020
 op_div
 id|HZ
 op_minus
