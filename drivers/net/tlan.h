@@ -1,7 +1,14 @@
+macro_line|#ifndef TLAN_H
+DECL|macro|TLAN_H
+mdefine_line|#define TLAN_H
 multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.h&n; *  by James Banks, james.banks@caldera.com&n; *&n; *  (C) 1997 Caldera, Inc.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with tabstop=4, colums&gt;=132&n; *&n; ********************************************************************/
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt;= 0x20100
+DECL|macro|net_device_stats
+mdefine_line|#define net_device_stats&t;enet_statistics
+macro_line|#endif
 multiline_comment|/*****************************************************************&n;&t; * TLan Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|FALSE
 mdefine_line|#define FALSE&t;&t;&t;&t;0
@@ -20,15 +27,33 @@ mdefine_line|#define TLAN_IGNORE&t;0
 DECL|macro|TLAN_RECORD
 mdefine_line|#define TLAN_RECORD&t;1
 DECL|macro|TLAN_DBG
-mdefine_line|#define TLAN_DBG(lvl, format, args...)&t;if ( debug &gt;= lvl ) printk( format, ##args );
+mdefine_line|#define TLAN_DBG(lvl, format, args...)&t;if ( debug &amp; lvl ) printk( format, ##args );
+DECL|macro|TLAN_DEBUG_GNRL
+mdefine_line|#define TLAN_DEBUG_GNRL&t;0x0001
+DECL|macro|TLAN_DEBUG_TX
+mdefine_line|#define TLAN_DEBUG_TX&t;0x0002
+DECL|macro|TLAN_DEBUG_RX
+mdefine_line|#define TLAN_DEBUG_RX&t;0x0004 
+DECL|macro|TLAN_DEBUG_LIST
+mdefine_line|#define TLAN_DEBUG_LIST&t;0x0008
 multiline_comment|/*****************************************************************&n;&t; * Device Identification Definitions&n;&t; *&n;&t; ****************************************************************/
 multiline_comment|/* NOTE: These should be moved to pci.h someday */
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10
 mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10 0xAE34
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100
 mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100 0xAE32
-DECL|macro|PCI_DEVICE_ID_NETFLEX_3_INTEGRATED
-mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3_INTEGRATED 0xAE35
+DECL|macro|PCI_DEVICE_ID_NETFLEX_3P_INTEGRATED
+mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P_INTEGRATED 0xAE35
+DECL|macro|PCI_DEVICE_ID_NETFLEX_3P
+mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P 0xF130
+DECL|macro|PCI_DEVICE_ID_NETFLEX_3P_BNC
+mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P_BNC 0xF150
+DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100_PROLIANT
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100_PROLIANT 0xAE43
+DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100_DUAL
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100_DUAL 0xAE40
+DECL|macro|PCI_DEVICE_ID_DESKPRO_4000_5233MMX
+mdefine_line|#define PCI_DEVICE_ID_DESKPRO_4000_5233MMX 0xB011
 DECL|struct|tlan_pci_id
 r_typedef
 r_struct
@@ -286,7 +311,7 @@ id|timer
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|pciEntry
@@ -304,6 +329,10 @@ suffix:semicolon
 DECL|member|pciDeviceFn
 id|u8
 id|pciDeviceFn
+suffix:semicolon
+DECL|member|tlanRev
+id|u8
+id|tlanRev
 suffix:semicolon
 DECL|member|devName
 r_char
@@ -1473,4 +1502,5 @@ r_return
 id|hash
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

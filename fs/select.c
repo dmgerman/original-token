@@ -1849,8 +1849,13 @@ id|nfds
 comma
 id|fds
 comma
+id|timeout
+ques
+c_cond
 op_amp
 id|wait_table
+suffix:colon
+l_int|NULL
 )paren
 suffix:semicolon
 id|current-&gt;timeout

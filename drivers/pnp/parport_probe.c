@@ -194,6 +194,7 @@ op_assign
 id|buf
 suffix:semicolon
 r_int
+r_int
 id|count
 op_assign
 l_int|0

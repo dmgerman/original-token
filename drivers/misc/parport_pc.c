@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_pc.c,v 1.1.2.3 1997/04/18 15:00:52 phil Exp $ &n; * Parallel-port routines for PC architecture&n; * &n; * Authors: Phil Blundell &lt;pjb27@cam.ac.uk&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* Parallel-port routines for PC architecture&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -635,7 +635,7 @@ l_int|0
 comma
 id|p-&gt;name
 comma
-l_int|NULL
+id|p
 )paren
 suffix:semicolon
 id|request_region
@@ -688,7 +688,22 @@ op_star
 id|s
 )paren
 (brace
-multiline_comment|/* FIXME */
+id|s-&gt;u.pc.ctr
+op_assign
+id|pc_read_control
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|s-&gt;u.pc.ecr
+op_assign
+id|pc_read_econtrol
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
 )brace
 DECL|function|pc_restore_state
 r_static
@@ -707,7 +722,22 @@ op_star
 id|s
 )paren
 (brace
-multiline_comment|/* FIXME */
+id|pc_write_control
+c_func
+(paren
+id|p
+comma
+id|s-&gt;u.pc.ctr
+)paren
+suffix:semicolon
+id|pc_write_econtrol
+c_func
+(paren
+id|p
+comma
+id|s-&gt;u.pc.ecr
+)paren
+suffix:semicolon
 )brace
 DECL|function|pc_epp_read_block
 r_static
@@ -872,6 +902,34 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
+DECL|function|pc_inc_use_count
+r_static
+r_void
+id|pc_inc_use_count
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|pc_dec_use_count
+r_static
+r_void
+id|pc_dec_use_count
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|variable|pc_ops
 r_static
 r_struct
@@ -926,6 +984,10 @@ comma
 id|pc_disable_irq
 comma
 id|pc_examine_irq
+comma
+id|pc_inc_use_count
+comma
+id|pc_dec_use_count
 )brace
 suffix:semicolon
 multiline_comment|/******************************************************&n; *  DMA detection section:&n; */
@@ -1302,8 +1364,8 @@ r_return
 id|dma
 suffix:semicolon
 )brace
-macro_line|#if 0
 multiline_comment|/* Only called if port supports ECP mode.&n; *&n; * The only restriction on DMA channels is that it has to be&n; * between 0 to 7 (inclusive). Used only in an ECP mode, DMAs are&n; * considered a shared resource and hence they should be registered&n; * when needed and then immediately unregistered.&n; *&n; * DMA autoprobes for ECP mode are known not to work for some&n; * main board BIOS configs. I had to remove everything from the&n; * port, set the mode to SPP, reboot to DOS, set the mode to ECP,&n; * and reboot again, then I got IRQ probes and DMA probes to work.&n; * [Is the BIOS doing a device detection?]&n; *&n; * A value of PARPORT_DMA_NONE is allowed indicating no DMA support.&n; *&n; * if( 0 &lt; DMA &lt; 4 )&n; *    1Byte DMA transfer&n; * else // 4 &lt; DMA &lt; 8&n; *    2Byte DMA transfer&n; *&n; */
+DECL|function|parport_dma_probe
 r_static
 r_int
 id|parport_dma_probe
@@ -1551,7 +1613,6 @@ r_return
 id|retv
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/******************************************************&n; *  MODE detection section:&n; */
 multiline_comment|/*&n; * Clear TIMEOUT BIT in EPP MODE&n; */
 DECL|function|epp_clear_timeout
@@ -1761,13 +1822,13 @@ c_func
 id|pb
 )paren
 op_amp
-l_int|0x03
+l_int|0x3
 )paren
 op_eq
 (paren
 id|r
 op_amp
-l_int|0x03
+l_int|0x3
 )paren
 )paren
 (brace
@@ -1778,10 +1839,10 @@ id|pb
 comma
 id|r
 op_xor
-l_int|0x03
+l_int|0x2
 )paren
 suffix:semicolon
-multiline_comment|/* Toggle bits 0-1 */
+multiline_comment|/* Toggle bit 1 */
 id|r
 op_assign
 id|pc_read_control
@@ -1800,19 +1861,29 @@ c_func
 id|pb
 )paren
 op_amp
-l_int|0x03
+l_int|0x2
 )paren
 op_eq
 (paren
 id|r
 op_amp
-l_int|0x03
+l_int|0x2
 )paren
 )paren
+(brace
+id|pc_write_control
+c_func
+(paren
+id|pb
+comma
+id|octr
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Sure that no ECR register exists */
+)brace
 )brace
 r_if
 c_cond
@@ -1824,10 +1895,10 @@ c_func
 id|pb
 )paren
 op_amp
-l_int|0x03
+l_int|0x3
 )paren
 op_ne
-l_int|0x01
+l_int|0x1
 )paren
 r_return
 l_int|0
@@ -3528,6 +3599,27 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|p-&gt;flags
+op_or_assign
+id|PARPORT_FLAG_COMA
+suffix:semicolon
+multiline_comment|/* Done probing.  Now put the port into a sensible start-up state. */
+id|pc_write_control
+c_func
+(paren
+id|p
+comma
+l_int|0xc
+)paren
+suffix:semicolon
+id|pc_write_data
+c_func
+(paren
+id|p
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3626,7 +3718,6 @@ comma
 id|PARPORT_DMA_AUTO
 )paren
 suffix:semicolon
-macro_line|#if defined(__i386__)
 id|count
 op_add_assign
 id|probe_one_port
@@ -3651,7 +3742,6 @@ comma
 id|PARPORT_DMA_AUTO
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 id|count
@@ -3742,7 +3832,6 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 DECL|function|init_module
-r_static
 r_int
 id|init_module
 c_func
@@ -3770,7 +3859,6 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|cleanup_module
-r_static
 r_void
 id|cleanup_module
 c_func
@@ -3787,6 +3875,9 @@ id|parport_enumerate
 c_func
 (paren
 )paren
+comma
+op_star
+id|tmp
 suffix:semicolon
 r_while
 c_loop
@@ -3794,6 +3885,10 @@ c_loop
 id|p
 )paren
 (brace
+id|tmp
+op_assign
+id|p-&gt;next
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3833,7 +3928,7 @@ suffix:semicolon
 )brace
 id|p
 op_assign
-id|p-&gt;next
+id|tmp
 suffix:semicolon
 )brace
 )brace

@@ -6917,9 +6917,11 @@ op_assign
 id|Tcn_bpdu
 op_star
 )paren
+(paren
 id|skb-&gt;data
 op_plus
 id|ETH_HLEN
+)paren
 suffix:semicolon
 r_switch
 c_cond

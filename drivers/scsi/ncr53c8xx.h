@@ -4,7 +4,7 @@ DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 2.4&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 2.5a&quot;
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
 macro_line|#include &lt;linux/version.h&gt;
@@ -84,8 +84,11 @@ macro_line|#else
 DECL|macro|SCSI_NCR_SETUP_DEFAULT_TAGS
 mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_TAGS&t;(0)
 macro_line|#endif
-multiline_comment|/*&n; * Use normal IO if configured. Forced for alpha.&n; */
-macro_line|#if defined(CONFIG_SCSI_NCR53C8XX_IOMAPPED) || defined(__alpha__)
+multiline_comment|/*&n; * Use normal IO if configured. Forced for alpha and ppc.&n; */
+macro_line|#if defined(CONFIG_SCSI_NCR53C8XX_IOMAPPED)
+DECL|macro|SCSI_NCR_IOMAPPED
+mdefine_line|#define&t;SCSI_NCR_IOMAPPED
+macro_line|#elif defined(__alpha__) || defined(__powerpc__)
 DECL|macro|SCSI_NCR_IOMAPPED
 mdefine_line|#define&t;SCSI_NCR_IOMAPPED
 macro_line|#endif
@@ -273,6 +276,44 @@ mdefine_line|#define NCR53C8XX {NULL, NULL, SCSI_NCR_DRIVER_NAME, ncr53c8xx_dete
 macro_line|#endif /* LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0) */
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
+multiline_comment|/*&n;**&t;IO functions definition for big/little endian support.&n;**&t;For now, the NCR is only supported in little endian addressing mode, &n;**&t;and big endian byte ordering is only supported for the PPC.&n;**&t;MMIO is not used on PPC.&n;*/
+macro_line|#ifdef&t;__BIG_ENDIAN
+macro_line|#if&t;LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,0)
+macro_line|#error&t;&quot;BIG ENDIAN byte ordering needs kernel version &gt;= 2.1.0&quot;
+macro_line|#endif
+macro_line|#ifdef&t;__powerpc__
+DECL|macro|inw_l2b
+mdefine_line|#define&t;inw_l2b&t;&t;inw
+DECL|macro|inl_l2b
+mdefine_line|#define&t;inl_l2b&t;&t;inl
+DECL|macro|outw_b2l
+mdefine_line|#define&t;outw_b2l&t;outw
+DECL|macro|outl_b2l
+mdefine_line|#define&t;outl_b2l&t;outl
+macro_line|#else
+macro_line|#error&t;&quot;Support for BIG ENDIAN is only available for the PowerPC&quot;
+macro_line|#endif
+macro_line|#else&t;/* Assumed x86 or alpha */
+DECL|macro|inw_raw
+mdefine_line|#define&t;inw_raw&t;&t;inw
+DECL|macro|inl_raw
+mdefine_line|#define&t;inl_raw&t;&t;inl
+DECL|macro|outw_raw
+mdefine_line|#define&t;outw_raw&t;outw
+DECL|macro|outl_raw
+mdefine_line|#define&t;outl_raw&t;outl
+DECL|macro|readw_raw
+mdefine_line|#define&t;readw_raw&t;readw
+DECL|macro|readl_raw
+mdefine_line|#define&t;readl_raw&t;readl
+DECL|macro|writew_raw
+mdefine_line|#define&t;writew_raw&t;writew
+DECL|macro|writel_raw
+mdefine_line|#define&t;writel_raw&t;writel
+macro_line|#endif
+macro_line|#ifdef&t;SCSI_NCR_BIG_ENDIAN
+macro_line|#error&t;&quot;The NCR in BIG ENDIAN adressing mode is not (yet) supported&quot;
+macro_line|#endif
 multiline_comment|/*&n;**&t;NCR53C8XX Device Ids&n;*/
 macro_line|#ifndef PCI_DEVICE_ID_NCR_53C810
 DECL|macro|PCI_DEVICE_ID_NCR_53C810
@@ -400,7 +441,7 @@ DECL|typedef|ncr_chip
 id|ncr_chip
 suffix:semicolon
 DECL|macro|SCSI_NCR_CHIP_TABLE
-mdefine_line|#define SCSI_NCR_CHIP_TABLE&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0x0f, &quot;810&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_ERL}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0xff, &quot;810a&quot;, 4,  8, 4,&t;&t;&t;&bslash;&n; FE_CACHE_SET|FE_LDSTR|FE_PFEN|FE_BOF}&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C815, 0xff, &quot;815&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_ERL|FE_BOF}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C820, 0xff, &quot;820&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ERL}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0x0f, &quot;825&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ERL|FE_BOF}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0xff, &quot;825a&quot;, 7,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C860, 0xff, &quot;860&quot;,  4,  8, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_CLK80|FE_CACHE_SET|FE_BOF|FE_LDSTR|FE_PFEN|FE_RAM}&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0x01, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_CLK80|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0xff, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875J, 0xff, &quot;875J&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C885, 0xff, &quot;885&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C895, 0xff, &quot;895&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA2|FE_QUAD|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C896, 0xff, &quot;896&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA2|FE_QUAD|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n;}
+mdefine_line|#define SCSI_NCR_CHIP_TABLE&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0x0f, &quot;810&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_ERL}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C810, 0xff, &quot;810a&quot;, 4,  8, 4,&t;&t;&t;&bslash;&n; FE_CACHE_SET|FE_LDSTR|FE_PFEN|FE_BOF}&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C815, 0xff, &quot;815&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_ERL|FE_BOF}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C820, 0xff, &quot;820&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ERL}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0x0f, &quot;825&quot;,  4,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ERL|FE_BOF}&t;&t;&t;&t;&t;&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C825, 0xff, &quot;825a&quot;, 7,  8, 4,&t;&t;&t;&bslash;&n; FE_WIDE|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C860, 0xff, &quot;860&quot;,  4,  8, 5,&t;&t;&t;&bslash;&n; FE_ULTRA|FE_CLK80|FE_CACHE_SET|FE_BOF|FE_LDSTR|FE_PFEN}&t;&t;&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0x01, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_CLK80|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875, 0xff, &quot;875&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C875J, 0xff, &quot;875J&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C885, 0xff, &quot;885&quot;,  7, 16, 5,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA|FE_DBLR|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C895, 0xff, &quot;895&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA2|FE_QUAD|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n; ,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; {PCI_DEVICE_ID_NCR_53C896, 0xff, &quot;896&quot;,  7, 31, 7,&t;&t;&t;&bslash;&n; FE_WIDE|FE_ULTRA2|FE_QUAD|FE_CACHE_SET|FE_BOF|FE_DFS|FE_LDSTR|FE_PFEN|FE_RAM}&bslash;&n;}
 multiline_comment|/*&n; * List of supported NCR chip ids&n; */
 DECL|macro|SCSI_NCR_CHIP_IDS
 mdefine_line|#define SCSI_NCR_CHIP_IDS&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C810,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C815,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C820,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C825,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C860,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C875,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C875J,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C885,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C895,&t;&bslash;&n;&t;PCI_DEVICE_ID_NCR_53C896&t;&bslash;&n;}

@@ -3075,7 +3075,13 @@ id|file.f_reada
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * WSH: could vm_area struct (and inode) be released while writing?&n;&t; */
+multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and dentry could be released ... increment the count to be safe.&n;&t; */
+id|dget
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -3108,6 +3114,12 @@ c_func
 (paren
 op_amp
 id|inode-&gt;i_sem
+)paren
+suffix:semicolon
+id|dput
+c_func
+(paren
+id|dentry
 )paren
 suffix:semicolon
 r_return

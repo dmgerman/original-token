@@ -28,7 +28,7 @@ mdefine_line|#define OPEN_WRITE&t;1
 multiline_comment|/* Hack until we have a macro check for mandatory locks. */
 macro_line|#ifndef IS_ISMNDLK
 DECL|macro|IS_ISMNDLK
-mdefine_line|#define IS_ISMNDLK(i)&t;(((i)-&gt;i_mode &amp; (S_ISGID|S_ISVTX)) == S_ISGID)
+mdefine_line|#define IS_ISMNDLK(i)&t;(((i)-&gt;i_mode &amp; (S_ISGID|S_IXGRP)) == S_ISGID)
 macro_line|#endif
 multiline_comment|/* Check for dir entries &squot;.&squot; and &squot;..&squot; */
 DECL|macro|isdotent
@@ -152,7 +152,7 @@ id|exp-&gt;ex_dentry
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look up one component of a pathname.&n; */
+multiline_comment|/*&n; * Look up one component of a pathname.&n; * N.B. After this call _both_ fhp and resfh need an fh_put&n; */
 r_int
 DECL|function|nfsd_lookup
 id|nfsd_lookup
@@ -379,7 +379,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set various file attributes.&n; */
+multiline_comment|/*&n; * Set various file attributes.&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_setattr
 id|nfsd_setattr
@@ -754,7 +754,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Open an existing file or directory.&n; * The wflag argument indicates write access.&n; */
+multiline_comment|/*&n; * Open an existing file or directory.&n; * The wflag argument indicates write access.&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_open
 id|nfsd_open
@@ -1247,7 +1247,7 @@ r_return
 id|ra
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read data from a file. count must contain the requested read count&n; * on entry. On return, *count contains the number of bytes actually read.&n; */
+multiline_comment|/*&n; * Read data from a file. count must contain the requested read count&n; * on entry. On return, *count contains the number of bytes actually read.&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_read
 id|nfsd_read
@@ -1515,7 +1515,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write data to a file.&n; * The stable flag requests synchronous writes.&n; */
+multiline_comment|/*&n; * Write data to a file.&n; * The stable flag requests synchronous writes.&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_write
 id|nfsd_write
@@ -1959,7 +1959,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Create a file (regular, directory, device, fifo).&n; * UNIX sockets not yet implemented.&n; */
+multiline_comment|/*&n; * Create a file (regular, directory, device, fifo).&n; * UNIX sockets not yet implemented.&n; * N.B. Every call to nfsd_create needs an fh_put for _both_ fhp and resfhp&n; */
 r_int
 DECL|function|nfsd_create
 id|nfsd_create
@@ -2401,7 +2401,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Truncate a file.&n; * The calling routines must make sure to update the ctime&n; * field and call notify_change.&n; *&n; * XXX Nobody calls this thing? -DaveM&n; */
+multiline_comment|/*&n; * Truncate a file.&n; * The calling routines must make sure to update the ctime&n; * field and call notify_change.&n; *&n; * XXX Nobody calls this thing? -DaveM&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_truncate
 id|nfsd_truncate
@@ -2580,7 +2580,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read a symlink. On entry, *lenp must contain the maximum path length that&n; * fits into the buffer. On return, it contains the true length.&n; */
+multiline_comment|/*&n; * Read a symlink. On entry, *lenp must contain the maximum path length that&n; * fits into the buffer. On return, it contains the true length.&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_readlink
 id|nfsd_readlink
@@ -2730,7 +2730,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Create a symlink and look up its inode&n; */
+multiline_comment|/*&n; * Create a symlink and look up its inode&n; * N.B. After this call _both_ fhp and resfhp need an fh_put&n; */
 r_int
 DECL|function|nfsd_symlink
 id|nfsd_symlink
@@ -2976,7 +2976,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Create a hardlink&n; */
+multiline_comment|/*&n; * Create a hardlink&n; * N.B. After this call _both_ ffhp and tfhp need an fh_put&n; */
 r_int
 DECL|function|nfsd_link
 id|nfsd_link
@@ -3283,6 +3283,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* More &quot;hidden treasure&quot; from the generic VFS. -DaveM */
+multiline_comment|/* N.B. VFS double_down was modified to fix a bug ... should use VFS one */
 DECL|function|nfsd_double_down
 r_static
 r_inline
@@ -3369,7 +3370,7 @@ id|s1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Rename a file&n; */
+multiline_comment|/*&n; * Rename a file&n; * N.B. After this call _both_ ffhp and tfhp need an fh_put&n; */
 r_int
 DECL|function|nfsd_rename
 id|nfsd_rename
@@ -3760,7 +3761,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Unlink a file or directory&n; */
+multiline_comment|/*&n; * Unlink a file or directory&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_unlink
 id|nfsd_unlink
@@ -4323,7 +4324,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get file system stats&n; */
+multiline_comment|/*&n; * Get file system stats&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_statfs
 id|nfsd_statfs

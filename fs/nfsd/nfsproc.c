@@ -101,7 +101,7 @@ id|nfs_ok
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get a file&squot;s attributes&n; */
+multiline_comment|/*&n; * Get a file&squot;s attributes&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_getattr
@@ -165,7 +165,7 @@ id|MAY_NOP
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set a file&squot;s attributes&n; */
+multiline_comment|/*&n; * Set a file&squot;s attributes&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_setattr
@@ -228,7 +228,7 @@ id|argp-&gt;attrs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look up a path name component&n; */
+multiline_comment|/*&n; * Look up a path name component&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_lookup
@@ -401,7 +401,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read a portion of a file.&n; */
+multiline_comment|/*&n; * Read a portion of a file.&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_read
@@ -544,7 +544,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write data to a file&n; */
+multiline_comment|/*&n; * Write data to a file&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_write
@@ -620,7 +620,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * CREATE processing is complicated. The keyword here is `overloaded.&squot;&n; * There&squot;s a small race condition here between the check for existence&n; * and the actual create() call, but one could even consider this a&n; * feature because this only happens if someone else creates the file&n; * at the same time.&n; */
+multiline_comment|/*&n; * CREATE processing is complicated. The keyword here is `overloaded.&squot;&n; * There&squot;s a small race condition here between the check for existence&n; * and the actual create() call, but one could even consider this a&n; * feature because this only happens if someone else creates the file&n; * at the same time.&n; * N.B. After this call _both_ argp-&gt;fh and resp-&gt;fh need an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_create
@@ -664,8 +664,6 @@ id|dirfhp
 comma
 op_star
 id|newfhp
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 id|nfserr
@@ -736,12 +734,10 @@ c_cond
 (paren
 id|nfserr
 )paren
-id|RETURN
-c_func
-(paren
-id|nfserr
-)paren
+r_goto
+id|done
 suffix:semicolon
+multiline_comment|/* must fh_put dirfhp even on error */
 id|dirp
 op_assign
 id|dirfhp-&gt;fh_handle.fh_dentry-&gt;d_inode
@@ -779,20 +775,9 @@ c_cond
 (paren
 id|nfserr
 )paren
-(brace
-id|fh_put
-c_func
-(paren
-id|dirfhp
-)paren
+r_goto
+id|done
 suffix:semicolon
-id|RETURN
-c_func
-(paren
-id|nfserr
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* First, check if the file already exists.  */
 id|exists
 op_assign
@@ -1522,7 +1507,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Make directory. This operation is not idempotent.&n; */
+multiline_comment|/*&n; * Make directory. This operation is not idempotent.&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_mkdir
@@ -1563,6 +1548,7 @@ comma
 id|argp-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/* N.B. what about the dentry count?? */
 id|resp-&gt;fh.fh_dverified
 op_assign
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sock.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  sock.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -388,11 +388,10 @@ comma
 id|MSG_DONTWAIT
 )paren
 suffix:semicolon
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
-l_string|&quot;smb_data_callback:&quot;
-l_string|&quot; got SESSION KEEP ALIVE&bslash;n&quot;
+l_string|&quot;smb_data_callback: got SESSION KEEPALIVE&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -458,7 +457,7 @@ id|smb_catch_keepalive
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 )paren
@@ -522,7 +521,7 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|printk
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_catch_keepalive: did not get valid server!&bslash;n&quot;
@@ -552,7 +551,7 @@ op_ne
 id|SOCK_STREAM
 )paren
 (brace
-id|printk
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_catch_keepalive: did not get SOCK_STREAM&bslash;n&quot;
@@ -579,7 +578,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_catch_keepalive: sk == NULL&quot;
@@ -594,7 +593,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_catch_keepalive.: sk-&gt;d_r = %x, server-&gt;d_r = %x&bslash;n&quot;
@@ -627,6 +626,7 @@ id|smb_data_callback
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_catch_keepalive: already done&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -653,7 +653,7 @@ id|smb_dont_catch_keepalive
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 )paren
@@ -818,7 +818,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_dont_catch_keepalive: sk-&gt;d_r = %x, server-&gt;d_r = %x&bslash;n&quot;
@@ -931,7 +931,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_send_raw: sendto error = %d&bslash;n&quot;
@@ -1034,7 +1034,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive_raw: recvfrom error = %d&bslash;n&quot;
@@ -1131,7 +1131,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_get_length: recv error = %d&bslash;n&quot;
@@ -1164,7 +1164,7 @@ suffix:semicolon
 r_case
 l_int|0x85
 suffix:colon
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_get_length: Got SESSION KEEP ALIVE&bslash;n&quot;
@@ -1175,7 +1175,7 @@ id|re_recv
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_get_length: Invalid NBT packet&bslash;n&quot;
@@ -1223,7 +1223,7 @@ id|server_sock
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 )paren
@@ -1291,7 +1291,7 @@ id|smb_receive
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 )paren
@@ -1353,7 +1353,7 @@ id|server-&gt;packet_size
 )paren
 (brace
 multiline_comment|/* Some servers do not care about our max_xmit. They&n;&t;&t;   send larger packets */
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive: Increase packet size from %d to %d&bslash;n&quot;
@@ -1437,7 +1437,7 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive: receive error: %d&bslash;n&quot;
@@ -1451,11 +1451,10 @@ suffix:semicolon
 )brace
 id|server-&gt;rcls
 op_assign
-id|BVAL
-c_func
+op_star
 (paren
 id|server-&gt;packet
-comma
+op_plus
 l_int|9
 )paren
 suffix:semicolon
@@ -1477,7 +1476,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive: rcls=%d, err=%d&bslash;n&quot;
@@ -1499,7 +1498,7 @@ id|smb_receive_trans2
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 comma
@@ -1623,7 +1622,7 @@ comma
 id|smb_tprcnt
 )paren
 suffix:semicolon
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive_trans2: td=%d,tp=%d&bslash;n&quot;
@@ -1649,7 +1648,7 @@ id|TRANS2_MAX_TRANSFER
 )paren
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive_trans2: data/param too long&bslash;n&quot;
@@ -1695,7 +1694,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive_trans2: could not alloc data area&bslash;n&quot;
@@ -1753,7 +1752,7 @@ OG
 id|total_param
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive_trans2: invalid parameters&bslash;n&quot;
@@ -1837,7 +1836,7 @@ OG
 id|total_data
 )paren
 (brace
-id|DPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive_trans2: invalid data block&bslash;n&quot;
@@ -1852,44 +1851,7 @@ r_goto
 id|fail
 suffix:semicolon
 )brace
-id|DDPRINTK
-c_func
-(paren
-l_string|&quot;target: %X&bslash;n&quot;
-comma
-op_star
-id|data
-op_plus
-id|WVAL
-c_func
-(paren
-id|inbuf
-comma
-id|smb_drdisp
-)paren
-)paren
-suffix:semicolon
-id|DDPRINTK
-c_func
-(paren
-l_string|&quot;source: %X&bslash;n&quot;
-comma
-id|smb_base
-c_func
-(paren
-id|inbuf
-)paren
-op_plus
-id|WVAL
-c_func
-(paren
-id|inbuf
-comma
-id|smb_droff
-)paren
-)paren
-suffix:semicolon
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;disp: %d, off: %d, cnt: %d&bslash;n&quot;
@@ -1994,7 +1956,7 @@ id|total_param
 )paren
 )paren
 (brace
-id|printk
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_receive_trans2: data/params grew!&bslash;n&quot;
@@ -2126,185 +2088,13 @@ r_return
 id|result
 suffix:semicolon
 )brace
-r_extern
-r_struct
-id|net_proto_family
-id|inet_family_ops
-suffix:semicolon
-r_int
-DECL|function|smb_release
-id|smb_release
-c_func
-(paren
-r_struct
-id|smb_server
-op_star
-id|server
-)paren
-(brace
-r_struct
-id|socket
-op_star
-id|sock
-op_assign
-id|server_sock
-c_func
-(paren
-id|server
-)paren
-suffix:semicolon
-r_int
-id|result
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sock
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|result
-op_assign
-id|sock-&gt;ops
-op_member_access_from_pointer
-id|release
-c_func
-(paren
-id|sock
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;smb_release: sock-&gt;ops-&gt;release = %d&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-multiline_comment|/* inet_release does not set sock-&gt;state.  Maybe someone is&n;&t;   confused about sock-&gt;state being SS_CONNECTED while there&n;&t;   is nothing behind it, so I set it to SS_UNCONNECTED. */
-id|sock-&gt;state
-op_assign
-id|SS_UNCONNECTED
-suffix:semicolon
-id|result
-op_assign
-id|inet_family_ops
-dot
-id|create
-c_func
-(paren
-id|sock
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;smb_release: inet_create = %d&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-r_return
-id|result
-suffix:semicolon
-)brace
-r_int
-DECL|function|smb_connect
-id|smb_connect
-c_func
-(paren
-r_struct
-id|smb_server
-op_star
-id|server
-)paren
-(brace
-r_struct
-id|socket
-op_star
-id|sock
-op_assign
-id|server_sock
-c_func
-(paren
-id|server
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sock
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|sock-&gt;state
-op_ne
-id|SS_UNCONNECTED
-)paren
-(brace
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;smb_connect: socket is not unconnected: %d&bslash;n&quot;
-comma
-id|sock-&gt;state
-)paren
-suffix:semicolon
-)brace
-r_return
-id|sock-&gt;ops
-op_member_access_from_pointer
-id|connect
-c_func
-(paren
-id|sock
-comma
-(paren
-r_struct
-id|sockaddr
-op_star
-)paren
-op_amp
-(paren
-id|server-&gt;m.addr
-)paren
-comma
-r_sizeof
-(paren
-r_struct
-id|sockaddr_in
-)paren
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
 r_int
 DECL|function|smb_request
 id|smb_request
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 )paren
@@ -2346,7 +2136,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_request: Bad server!&bslash;n&quot;
@@ -2390,7 +2180,7 @@ id|server-&gt;state
 op_assign
 id|CONN_INVALID
 suffix:semicolon
-id|smb_invalidate_all_inodes
+id|smb_invalidate_inodes
 c_func
 (paren
 id|server
@@ -2410,7 +2200,7 @@ id|buffer
 op_plus
 l_int|4
 suffix:semicolon
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_request: len = %d cmd = 0x%X&bslash;n&quot;
@@ -2560,14 +2350,14 @@ id|server-&gt;state
 op_assign
 id|CONN_INVALID
 suffix:semicolon
-id|smb_invalidate_all_inodes
+id|smb_invalidate_inodes
 c_func
 (paren
 id|server
 )paren
 suffix:semicolon
 )brace
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_request: result = %d&bslash;n&quot;
@@ -2588,7 +2378,7 @@ id|smb_send_trans2
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 comma
@@ -2735,7 +2525,7 @@ op_plus
 id|oparam
 )paren
 OG
-id|server-&gt;max_xmit
+id|server-&gt;opt.max_xmit
 )paren
 (brace
 r_return
@@ -3097,7 +2887,7 @@ id|smb_trans2_request
 c_func
 (paren
 r_struct
-id|smb_server
+id|smb_sb_info
 op_star
 id|server
 comma
@@ -3152,7 +2942,7 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_trans2_request: com=%d, ld=%d, lp=%d&bslash;n&quot;
@@ -3197,7 +2987,7 @@ id|server-&gt;state
 op_assign
 id|CONN_INVALID
 suffix:semicolon
-id|smb_invalidate_all_inodes
+id|smb_invalidate_inodes
 c_func
 (paren
 id|server
@@ -3350,14 +3140,14 @@ id|server-&gt;state
 op_assign
 id|CONN_INVALID
 suffix:semicolon
-id|smb_invalidate_all_inodes
+id|smb_invalidate_inodes
 c_func
 (paren
 id|server
 )paren
 suffix:semicolon
 )brace
-id|DDPRINTK
+id|pr_debug
 c_func
 (paren
 l_string|&quot;smb_trans2_request: result = %d&bslash;n&quot;

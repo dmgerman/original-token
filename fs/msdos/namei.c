@@ -1274,8 +1274,17 @@ id|res
 op_eq
 l_int|NULL
 )paren
+(brace
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|sb-&gt;s_root-&gt;d_op
 op_assign
 op_amp

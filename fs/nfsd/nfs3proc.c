@@ -96,7 +96,7 @@ r_return
 id|nfs_ok
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get a file&squot;s attributes&n; */
+multiline_comment|/*&n; * Get a file&squot;s attributes&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd3_proc_getattr
@@ -168,7 +168,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set a file&squot;s attributes&n; */
+multiline_comment|/*&n; * Set a file&squot;s attributes&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd3_proc_setattr
@@ -239,7 +239,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look up a path name component&n; */
+multiline_comment|/*&n; * Look up a path name component&n; * N.B. After this call _both_ resp-&gt;dirfh and resp-&gt;fh need an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd3_proc_lookup
@@ -445,6 +445,13 @@ op_amp
 id|resp-&gt;len
 )paren
 suffix:semicolon
+id|fh_put
+c_func
+(paren
+op_amp
+id|argp-&gt;fh
+)paren
+suffix:semicolon
 id|RETURN
 c_func
 (paren
@@ -452,7 +459,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read a portion of a file.&n; */
+multiline_comment|/*&n; * Read a portion of a file.&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd3_proc_read
@@ -607,7 +614,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write data to a file&n; */
+multiline_comment|/*&n; * Write data to a file&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd3_proc_write
@@ -695,7 +702,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * With NFSv3, CREATE processing is a lot easier than with NFSv2.&n; * At least in theory; we&squot;ll see how it fares in practice when the&n; * first reports about SunOS compatibility problems start to pour in...&n; */
+multiline_comment|/*&n; * With NFSv3, CREATE processing is a lot easier than with NFSv2.&n; * At least in theory; we&squot;ll see how it fares in practice when the&n; * first reports about SunOS compatibility problems start to pour in...&n; * N.B. After this call _both_ resp-&gt;dirfh and resp-&gt;fh need an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd3_proc_create
@@ -875,6 +882,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* N.B. Is nfsd3_attrstat * correct for resp?? table says &quot;void&quot; */
 r_static
 r_int
 DECL|function|nfsd3_proc_remove
@@ -922,6 +930,7 @@ comma
 id|argp-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/* Is this correct?? */
 id|fh_copy
 c_func
 (paren
@@ -949,6 +958,14 @@ comma
 id|argp-&gt;name
 comma
 id|argp-&gt;len
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * N.B. Should be an fh_put here ... nfsd3_proc_rmdir has one,&n;&t; * or else as an xdr release function&n;&t; */
+id|fh_put
+c_func
+(paren
+op_amp
+id|resp-&gt;fh
 )paren
 suffix:semicolon
 id|RETURN
@@ -1291,7 +1308,7 @@ id|nfserr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Make directory. This operation is not idempotent.&n; */
+multiline_comment|/*&n; * Make directory. This operation is not idempotent.&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd3_proc_mkdir
@@ -1755,7 +1772,7 @@ id|diropargs
 comma
 id|diropres
 comma
-id|fhandle
+id|fhandle2
 comma
 id|RC_NOCACHE
 )paren
@@ -1825,7 +1842,7 @@ id|createargs
 comma
 id|diropres
 comma
-id|fhandle
+id|fhandle2
 comma
 id|RC_REPLBUFF
 )paren
@@ -1839,6 +1856,7 @@ id|diropargs
 comma
 r_void
 comma
+multiline_comment|/* ??*/
 r_void
 comma
 id|RC_REPLSTAT

@@ -1,5 +1,5 @@
-multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**                     Brief history&n;**&n;**  December 10 1995 by Gerard Roudier:&n;**     Initial port to Linux.&n;**&n;**  June 23 1996 by Gerard Roudier:&n;**     Support for 64 bits architectures (Alpha).&n;**&n;**  November 30 1996 by Gerard Roudier:&n;**     Support for Fast-20 scsi.&n;**     Support for large DMA fifo and 128 dwords bursting.&n;**&n;**  February 27 1997 by Gerard Roudier:&n;**     Support for Fast-40 scsi.&n;**     Support for on-Board RAM.&n;**&n;**  May 3 1997 by Gerard Roudier:&n;**     Full support for scsi scripts instructions pre-fetching.&n;**&n;**  May 19 1997 by Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;:&n;**     Support for NvRAM detection and reading.&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;26 July 1997, version 2.4&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**                     Brief history&n;**&n;**  December 10 1995 by Gerard Roudier:&n;**     Initial port to Linux.&n;**&n;**  June 23 1996 by Gerard Roudier:&n;**     Support for 64 bits architectures (Alpha).&n;**&n;**  November 30 1996 by Gerard Roudier:&n;**     Support for Fast-20 scsi.&n;**     Support for large DMA fifo and 128 dwords bursting.&n;**&n;**  February 27 1997 by Gerard Roudier:&n;**     Support for Fast-40 scsi.&n;**     Support for on-Board RAM.&n;**&n;**  May 3 1997 by Gerard Roudier:&n;**     Full support for scsi scripts instructions pre-fetching.&n;**&n;**  May 19 1997 by Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;:&n;**     Support for NvRAM detection and reading.&n;**&n;**  August 18 1997 by Cort &lt;cort@cs.nmt.edu&gt;:&n;**     Support for Power/PC (Big Endian).&n;**&n;*******************************************************************************&n;*/
+multiline_comment|/*&n;**&t;23 August 1997, version 2.5a&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
 mdefine_line|#define SCSI_NCR_DEBUG_FLAGS&t;(0)&t;&t;
 DECL|macro|NCR_GETCC_WITHMSG
@@ -142,6 +142,7 @@ macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
 DECL|macro|vtophys
 mdefine_line|#define vtophys(p)&t;virt_to_bus(p)
 multiline_comment|/*&n;**&t;Memory mapped IO&n;**&n;**&t;Since linux-2.1, we must use ioremap() to map the io memory space.&n;**&t;iounmap() to unmap it. That allows portability.&n;**&t;Linux 1.3.X and 2.0.X allow to remap physical pages addresses greater &n;**&t;than the highest physical memory address to kernel virtual pages with &n;**&t;vremap() / vfree(). That was not portable but worked with i386 &n;**&t;architecture.&n;*/
+macro_line|#ifndef NCR_IOMAPPED
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -290,6 +291,7 @@ id|PAGE_MASK
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif&t;/* !NCR_IOMAPPED */
 macro_line|#else /* linux-1.2.13 */
 multiline_comment|/*&n;**&t;Linux 1.2.X assumes that addresses (virtual, physical, bus)&n;**&t;are the same.&n;**&n;**&t;I have not found how to do MMIO. It seems that only processes can&n;**&t;map high physical pages to virtual (Xservers can do MMIO).&n;*/
 DECL|macro|vtophys
@@ -1218,6 +1220,10 @@ DECL|member|base
 id|u_int
 id|base
 suffix:semicolon
+DECL|member|base_2
+id|u_int
+id|base_2
+suffix:semicolon
 DECL|member|io_port
 id|u_int
 id|io_port
@@ -1336,86 +1342,119 @@ macro_line|#endif
 multiline_comment|/*==========================================================&n;**&n;**&t;assert ()&n;**&n;**==========================================================&n;**&n;**&t;modified copy from 386bsd:/usr/include/sys/assert.h&n;**&n;**----------------------------------------------------------&n;*/
 DECL|macro|assert
 mdefine_line|#define&t;assert(expression) { &bslash;&n;&t;if (!(expression)) { &bslash;&n;&t;&t;(void)printf(&bslash;&n;&t;&t;&t;&quot;assertion &bslash;&quot;%s&bslash;&quot; failed: file &bslash;&quot;%s&bslash;&quot;, line %d&bslash;n&quot;, &bslash;&n;&t;&t;&t;#expression, &bslash;&n;&t;&t;&t;__FILE__, __LINE__); &bslash;&n;&t;} &bslash;&n;}
-multiline_comment|/*==========================================================&n;**&n;**&t;Access to the controller chip.&n;**&n;**&t;If NCR_IOMAPPED is defined, only IO are used by the driver.&n;**&n;**==========================================================&n;*/
-multiline_comment|/*&n;**&t;IO mapped only input / ouput&n;*/
-DECL|macro|IOM_INB
-mdefine_line|#define&t;IOM_INB(r)&t;&t;inb (np-&gt;port + offsetof(struct ncr_reg, r))
-DECL|macro|IOM_INB_OFF
-mdefine_line|#define&t;IOM_INB_OFF(o)&t;&t;inb (np-&gt;port + (o))
-DECL|macro|IOM_INW
-mdefine_line|#define&t;IOM_INW(r)&t;&t;inw (np-&gt;port + offsetof(struct ncr_reg, r))
-DECL|macro|IOM_INL
-mdefine_line|#define&t;IOM_INL(r)&t;&t;inl (np-&gt;port + offsetof(struct ncr_reg, r))
-DECL|macro|IOM_INL_OFF
-mdefine_line|#define&t;IOM_INL_OFF(o)&t;&t;inl (np-&gt;port + (o))
-DECL|macro|IOM_OUTB
-mdefine_line|#define&t;IOM_OUTB(r, val)&t;outb ((val), np-&gt;port+offsetof(struct ncr_reg,r))
-DECL|macro|IOM_OUTW
-mdefine_line|#define&t;IOM_OUTW(r, val)&t;outw ((val), np-&gt;port+offsetof(struct ncr_reg,r))
-DECL|macro|IOM_OUTL
-mdefine_line|#define&t;IOM_OUTL(r, val)&t;outl ((val), np-&gt;port+offsetof(struct ncr_reg,r))
-DECL|macro|IOM_OUTL_OFF
-mdefine_line|#define&t;IOM_OUTL_OFF(o, val)&t;outl ((val), np-&gt;port + (o))
-multiline_comment|/*&n;**&t;MEMORY mapped IO input / output&n;*/
-DECL|macro|MMIO_INB
-mdefine_line|#define MMIO_INB(r)&t;&t;readb(&amp;np-&gt;reg-&gt;r)
-DECL|macro|MMIO_INB_OFF
-mdefine_line|#define MMIO_INB_OFF(o)&t;&t;readb((char *)np-&gt;reg + (o))
-DECL|macro|MMIO_INW
-mdefine_line|#define MMIO_INW(r)&t;&t;readw(&amp;np-&gt;reg-&gt;r)
-DECL|macro|MMIO_INL
-mdefine_line|#define MMIO_INL(r)&t;&t;readl(&amp;np-&gt;reg-&gt;r)
-DECL|macro|MMIO_INL_OFF
-mdefine_line|#define MMIO_INL_OFF(o)&t;&t;readl((char *)np-&gt;reg + (o))
-DECL|macro|MMIO_OUTB
-mdefine_line|#define MMIO_OUTB(r, val)&t;writeb((val), &amp;np-&gt;reg-&gt;r)
-DECL|macro|MMIO_OUTW
-mdefine_line|#define MMIO_OUTW(r, val)&t;writew((val), &amp;np-&gt;reg-&gt;r)
-DECL|macro|MMIO_OUTL
-mdefine_line|#define MMIO_OUTL(r, val)&t;writel((val), &amp;np-&gt;reg-&gt;r)
-DECL|macro|MMIO_OUTL_OFF
-mdefine_line|#define MMIO_OUTL_OFF(o, val)&t;writel((val), (char *)np-&gt;reg + (o))
-multiline_comment|/*&n;**&t;IO mapped input / output&n;*/
-macro_line|#if defined(NCR_IOMAPPED)
-DECL|macro|INB
-mdefine_line|#define INB(r)             IOM_INB(r)
-DECL|macro|INB_OFF
-mdefine_line|#define INB_OFF(o)         IOM_INB_OFF(o)
-DECL|macro|INW
-mdefine_line|#define INW(r)             IOM_INW(r)
-DECL|macro|INL
-mdefine_line|#define INL(r)             IOM_INL(r)
-DECL|macro|INL_OFF
-mdefine_line|#define INL_OFF(o)         IOM_INL_OFF(o)
-DECL|macro|OUTB
-mdefine_line|#define OUTB(r, val)       IOM_OUTB(r, val)
-DECL|macro|OUTW
-mdefine_line|#define OUTW(r, val)       IOM_OUTW(r, val)
-DECL|macro|OUTL
-mdefine_line|#define OUTL(r, val)       IOM_OUTL(r, val)
-DECL|macro|OUTL_OFF
-mdefine_line|#define OUTL_OFF(o, val)   IOM_OUTL_OFF(o, val)
-multiline_comment|/*&n;**&t;MEMORY mapped only input / output&n;*/
+multiline_comment|/*==========================================================&n;**&n;**&t;Big/Little endian support.&n;**&n;**==========================================================&n;*/
+multiline_comment|/*&n;**&t;If the NCR uses big endian addressing mode over the &n;**&t;PCI, actual io register addresses for byte and word &n;**&t;accesses must be changed according to lane routing.&n;**&t;Btw, ncr_offb() and ncr_offw() macros only apply to &n;**&t;constants and so donnot generate bloated code.&n;*/
+macro_line|#if&t;defined(SCSI_NCR_BIG_ENDIAN)
+DECL|macro|ncr_offb
+mdefine_line|#define ncr_offb(o)&t;(((o)&amp;~3)+((~((o)&amp;3))&amp;3))
+DECL|macro|ncr_offw
+mdefine_line|#define ncr_offw(o)&t;(((o)&amp;~3)+((~((o)&amp;3))&amp;2))
 macro_line|#else
-DECL|macro|INB
-mdefine_line|#define INB(r)             MMIO_INB(r)
-DECL|macro|INB_OFF
-mdefine_line|#define INB_OFF(o)         MMIO_INB_OFF(o)
-DECL|macro|INW
-mdefine_line|#define INW(r)             MMIO_INW(r)
-DECL|macro|INL
-mdefine_line|#define INL(r)             MMIO_INL(r)
-DECL|macro|INL_OFF
-mdefine_line|#define INL_OFF(o)         MMIO_INL_OFF(o)
-DECL|macro|OUTB
-mdefine_line|#define OUTB(r, val)       MMIO_OUTB(r, val)
-DECL|macro|OUTW
-mdefine_line|#define OUTW(r, val)       MMIO_OUTW(r, val)
-DECL|macro|OUTL
-mdefine_line|#define OUTL(r, val)       MMIO_OUTL(r, val)
-DECL|macro|OUTL_OFF
-mdefine_line|#define OUTL_OFF(o, val)   MMIO_OUTL_OFF(o, val)
+DECL|macro|ncr_offb
+mdefine_line|#define ncr_offb(o)&t;(o)
+DECL|macro|ncr_offw
+mdefine_line|#define ncr_offw(o)&t;(o)
 macro_line|#endif
+multiline_comment|/*&n;**&t;If the CPU and the NCR use same endian-ness adressing,&n;**&t;no byte reordering is needed for script patching.&n;**&t;Macro cpu_to_scr() is to be used for script patching.&n;**&t;Macro scr_to_cpu() is to be used for getting a DWORD &n;**&t;from the script.&n;*/
+macro_line|#if&t;defined(__BIG_ENDIAN) &amp;&amp; !defined(SCSI_NCR_BIG_ENDIAN)
+DECL|macro|cpu_to_scr
+mdefine_line|#define cpu_to_scr(dw)&t;cpu_to_le32(dw)
+DECL|macro|scr_to_cpu
+mdefine_line|#define scr_to_cpu(dw)&t;le32_to_cpu(dw)
+macro_line|#elif&t;defined(__LITTLE_ENDIAN) &amp;&amp; defined(SCSI_NCR_BIG_ENDIAN)
+DECL|macro|cpu_to_scr
+mdefine_line|#define cpu_to_scr(dw)&t;cpu_to_be32(dw)
+DECL|macro|scr_to_cpu
+mdefine_line|#define scr_to_cpu(dw)&t;be32_to_cpu(dw)
+macro_line|#else
+DECL|macro|cpu_to_scr
+mdefine_line|#define cpu_to_scr(dw)&t;(dw)
+DECL|macro|scr_to_cpu
+mdefine_line|#define scr_to_cpu(dw)&t;(dw)
+macro_line|#endif
+multiline_comment|/*==========================================================&n;**&n;**&t;Access to the controller chip.&n;**&n;**&t;If NCR_IOMAPPED is defined, only IO are used by the driver.&n;**&n;**==========================================================&n;*/
+multiline_comment|/*&n;**&t;If the CPU and the NCR use same endian-ness adressing,&n;**&t;no byte reordering is needed for accessing chip io &n;**&t;registers. Functions suffixed by &squot;_raw&squot; are assumed &n;**&t;to access the chip over the PCI without doing byte &n;**&t;reordering. Functions suffixed by &squot;_l2b&squot; are &n;**&t;assumed to perform little-endian to big-endian byte &n;**&t;reordering, those suffixed by &squot;_b2l&squot; blah, blah,&n;**&t;blah, ...&n;*/
+macro_line|#if defined(NCR_IOMAPPED)
+multiline_comment|/*&n;**&t;IO mapped only input / ouput&n;*/
+DECL|macro|INB_OFF
+mdefine_line|#define&t;INB_OFF(o)&t;&t;inb (np-&gt;port + ncr_offb(o))
+DECL|macro|OUTB_OFF
+mdefine_line|#define&t;OUTB_OFF(o, val)&t;outb ((val), np-&gt;port + ncr_offb(o))
+macro_line|#if&t;defined(__BIG_ENDIAN) &amp;&amp; !defined(SCSI_NCR_BIG_ENDIAN)
+DECL|macro|INW_OFF
+mdefine_line|#define&t;INW_OFF(o)&t;&t;inw_l2b (np-&gt;port + ncr_offw(o))
+DECL|macro|INL_OFF
+mdefine_line|#define&t;INL_OFF(o)&t;&t;inl_l2b (np-&gt;port + (o))
+DECL|macro|OUTW_OFF
+mdefine_line|#define&t;OUTW_OFF(o, val)&t;outw_b2l ((val), np-&gt;port + ncr_offw(o))
+DECL|macro|OUTL_OFF
+mdefine_line|#define&t;OUTL_OFF(o, val)&t;outl_b2l ((val), np-&gt;port + (o))
+macro_line|#elif&t;defined(__LITTLE_ENDIAN) &amp;&amp; defined(SCSI_NCR_BIG_ENDIAN)
+DECL|macro|INW_OFF
+mdefine_line|#define&t;INW_OFF(o)&t;&t;inw_b2l (np-&gt;port + ncr_offw(o))
+DECL|macro|INL_OFF
+mdefine_line|#define&t;INL_OFF(o)&t;&t;inl_b2l (np-&gt;port + (o))
+DECL|macro|OUTW_OFF
+mdefine_line|#define&t;OUTW_OFF(o, val)&t;outw_l2b ((val), np-&gt;port + ncr_offw(o))
+DECL|macro|OUTL_OFF
+mdefine_line|#define&t;OUTL_OFF(o, val)&t;outl_l2b ((val), np-&gt;port + (o))
+macro_line|#else
+DECL|macro|INW_OFF
+mdefine_line|#define&t;INW_OFF(o)&t;&t;inw_raw (np-&gt;port + ncr_offw(o))
+DECL|macro|INL_OFF
+mdefine_line|#define&t;INL_OFF(o)&t;&t;inl_raw (np-&gt;port + (o))
+DECL|macro|OUTW_OFF
+mdefine_line|#define&t;OUTW_OFF(o, val)&t;outw_raw ((val), np-&gt;port + ncr_offw(o))
+DECL|macro|OUTL_OFF
+mdefine_line|#define&t;OUTL_OFF(o, val)&t;outl_raw ((val), np-&gt;port + (o))
+macro_line|#endif&t;/* ENDIANs */
+macro_line|#else&t;/* defined NCR_IOMAPPED */
+multiline_comment|/*&n;**&t;MEMORY mapped IO input / output&n;*/
+DECL|macro|INB_OFF
+mdefine_line|#define INB_OFF(o)&t;&t;readb((char *)np-&gt;reg + ncr_offb(o))
+DECL|macro|OUTB_OFF
+mdefine_line|#define OUTB_OFF(o, val)&t;writeb((val), (char *)np-&gt;reg + ncr_offb(o))
+macro_line|#if&t;defined(__BIG_ENDIAN) &amp;&amp; !defined(SCSI_NCR_BIG_ENDIAN)
+DECL|macro|INW_OFF
+mdefine_line|#define INW_OFF(o)&t;&t;readw_l2b((char *)np-&gt;reg + ncr_offw(o))
+DECL|macro|INL_OFF
+mdefine_line|#define INL_OFF(o)&t;&t;readl_l2b((char *)np-&gt;reg + (o))
+DECL|macro|OUTW_OFF
+mdefine_line|#define OUTW_OFF(o, val)&t;writew_b2l((val), (char *)np-&gt;reg + ncr_offw(o))
+DECL|macro|OUTL_OFF
+mdefine_line|#define OUTL_OFF(o, val)&t;writel_b2l((val), (char *)np-&gt;reg + (o))
+macro_line|#elif&t;defined(__LITTLE_ENDIAN) &amp;&amp; defined(SCSI_NCR_BIG_ENDIAN)
+DECL|macro|INW_OFF
+mdefine_line|#define INW_OFF(o)&t;&t;readw_b2l((char *)np-&gt;reg + ncr_offw(o))
+DECL|macro|INL_OFF
+mdefine_line|#define INL_OFF(o)&t;&t;readl_b2l((char *)np-&gt;reg + (o))
+DECL|macro|OUTW_OFF
+mdefine_line|#define OUTW_OFF(o, val)&t;writew_l2b((val), (char *)np-&gt;reg + ncr_offw(o))
+DECL|macro|OUTL_OFF
+mdefine_line|#define OUTL_OFF(o, val)&t;writel_l2b((val), (char *)np-&gt;reg + (o))
+macro_line|#else
+DECL|macro|INW_OFF
+mdefine_line|#define INW_OFF(o)&t;&t;readw_raw((char *)np-&gt;reg + ncr_offw(o))
+DECL|macro|INL_OFF
+mdefine_line|#define INL_OFF(o)&t;&t;readl_raw((char *)np-&gt;reg + (o))
+DECL|macro|OUTW_OFF
+mdefine_line|#define OUTW_OFF(o, val)&t;writew_raw((val), (char *)np-&gt;reg + ncr_offw(o))
+DECL|macro|OUTL_OFF
+mdefine_line|#define OUTL_OFF(o, val)&t;writel_raw((val), (char *)np-&gt;reg + (o))
+macro_line|#endif
+macro_line|#endif&t;/* defined NCR_IOMAPPED */
+DECL|macro|INB
+mdefine_line|#define INB(r)&t;&t;INB_OFF (offsetof(struct ncr_reg,r))
+DECL|macro|INW
+mdefine_line|#define INW(r)&t;&t;INW_OFF (offsetof(struct ncr_reg,r))
+DECL|macro|INL
+mdefine_line|#define INL(r)&t;&t;INL_OFF (offsetof(struct ncr_reg,r))
+DECL|macro|OUTB
+mdefine_line|#define OUTB(r, val)&t;OUTB_OFF (offsetof(struct ncr_reg,r), (val))
+DECL|macro|OUTW
+mdefine_line|#define OUTW(r, val)&t;OUTW_OFF (offsetof(struct ncr_reg,r), (val))
+DECL|macro|OUTL
+mdefine_line|#define OUTL(r, val)&t;OUTL_OFF (offsetof(struct ncr_reg,r), (val))
 multiline_comment|/*&n;**&t;Set bit field ON, OFF &n;*/
 DECL|macro|OUTONB
 mdefine_line|#define OUTONB(r, m)&t;OUTB(r, INB(r) | (m))
@@ -1950,17 +1989,27 @@ id|tstamp
 id|stamp
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;status fields.&n;&t;*/
+DECL|member|scr_st
+id|u_char
+id|scr_st
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* script status */
 DECL|member|status
 id|u_char
 id|status
 (braket
-l_int|8
+l_int|4
 )braket
 suffix:semicolon
+multiline_comment|/* host status. Must be the last */
+multiline_comment|/* DWORD of the CCB header */
 )brace
 suffix:semicolon
-multiline_comment|/*&n;**&t;The status bytes are used by the host and the script processor.&n;**&n;**&t;The first four byte are copied to the scratchb register&n;**&t;(declared as scr0..scr3 in ncr_reg.h) just after the select/reselect,&n;**&t;and copied back just after disconnecting.&n;**&t;Inside the script the XX_REG are used.&n;**&n;**&t;The last four bytes are used inside the script by &quot;COPY&quot; commands.&n;**&t;Because source and destination must have the same alignment&n;**&t;in a longword, the fields HAVE to be at the choosen offsets.&n;**&t;&t;xerr_st&t;(4)&t;0&t;(0x34)&t;scratcha&n;**&t;&t;sync_st&t;(5)&t;1&t;(0x05)&t;sxfer&n;**&t;&t;wide_st&t;(7)&t;3&t;(0x03)&t;scntl3&n;*/
-multiline_comment|/*&n;**&t;First four bytes (script)&n;*/
+multiline_comment|/*&n;**&t;The status bytes are used by the host and the script processor.&n;**&n;**&t;The byte corresponding to the host_status must be stored in the &n;**&t;last DWORD of the CCB header since it is used for command &n;**&t;completion (ncr_wakeup()). Doing so, we are sure that the header &n;**&t;has been entirely copied back to the CCB when the host_status is &n;**&t;seen complete by the CPU.&n;**&n;**&t;The last four bytes (status[4]) are copied to the scratchb register&n;**&t;(declared as scr0..scr3 in ncr_reg.h) just after the select/reselect,&n;**&t;and copied back just after disconnecting.&n;**&t;Inside the script the XX_REG are used.&n;**&n;**&t;The first four bytes (scr_st[4]) are used inside the script by &n;**&t;&quot;COPY&quot; commands.&n;**&t;Because source and destination must have the same alignment&n;**&t;in a DWORD, the fields HAVE to be at the choosen offsets.&n;**&t;&t;xerr_st&t;&t;0&t;(0x34)&t;scratcha&n;**&t;&t;sync_st&t;&t;1&t;(0x05)&t;sxfer&n;**&t;&t;wide_st&t;&t;3&t;(0x03)&t;scntl3&n;*/
+multiline_comment|/*&n;**&t;Last four bytes (script)&n;*/
 DECL|macro|QU_REG
 mdefine_line|#define  QU_REG&t;scr0
 DECL|macro|HS_REG
@@ -1971,7 +2020,7 @@ DECL|macro|SS_REG
 mdefine_line|#define  SS_REG&t;scr2
 DECL|macro|PS_REG
 mdefine_line|#define  PS_REG&t;scr3
-multiline_comment|/*&n;**&t;First four bytes (host)&n;*/
+multiline_comment|/*&n;**&t;Last four bytes (host)&n;*/
 DECL|macro|actualquirks
 mdefine_line|#define  actualquirks  phys.header.status[0]
 DECL|macro|host_status
@@ -1980,16 +2029,16 @@ DECL|macro|scsi_status
 mdefine_line|#define  scsi_status   phys.header.status[2]
 DECL|macro|parity_status
 mdefine_line|#define  parity_status phys.header.status[3]
-multiline_comment|/*&n;**&t;Last four bytes (script)&n;*/
+multiline_comment|/*&n;**&t;First four bytes (script)&n;*/
 DECL|macro|xerr_st
-mdefine_line|#define  xerr_st       header.status[4]&t;/* MUST be ==0 mod 4 */
+mdefine_line|#define  xerr_st       header.scr_st[0]
 DECL|macro|sync_st
-mdefine_line|#define  sync_st       header.status[5]&t;/* MUST be ==1 mod 4 */
+mdefine_line|#define  sync_st       header.scr_st[1]
 DECL|macro|nego_st
-mdefine_line|#define  nego_st       header.status[6]
+mdefine_line|#define  nego_st       header.scr_st[2]
 DECL|macro|wide_st
-mdefine_line|#define  wide_st       header.status[7]&t;/* MUST be ==3 mod 4 */
-multiline_comment|/*&n;**&t;Last four bytes (host)&n;*/
+mdefine_line|#define  wide_st       header.scr_st[3]
+multiline_comment|/*&n;**&t;First four bytes (host)&n;*/
 DECL|macro|xerr_status
 mdefine_line|#define  xerr_status   phys.xerr_st
 DECL|macro|sync_status
@@ -2478,18 +2527,17 @@ id|u_short
 id|actccbs
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Timeout handler&n;&t;*/
-DECL|member|heartbeat
+macro_line|#if 0
 id|u_long
 id|heartbeat
 suffix:semicolon
-DECL|member|ticks
 id|u_short
 id|ticks
 suffix:semicolon
-DECL|member|latetime
 id|u_short
 id|latetime
 suffix:semicolon
+macro_line|#endif
 DECL|member|lasttime
 id|u_long
 id|lasttime
@@ -2585,7 +2633,7 @@ DECL|member|start
 id|ncrcmd
 id|start
 (braket
-l_int|7
+l_int|4
 )braket
 suffix:semicolon
 DECL|member|start0
@@ -3584,6 +3632,7 @@ op_assign
 (brace
 multiline_comment|/*--------------------------&lt; START &gt;-----------------------*/
 (brace
+macro_line|#if 0
 multiline_comment|/*&n;&t;**&t;Claim to be still alive ...&n;&t;*/
 id|SCR_COPY
 (paren
@@ -3613,6 +3662,7 @@ id|NADDR
 id|heartbeat
 )paren
 comma
+macro_line|#endif
 multiline_comment|/*&n;&t;**      Make data structure address invalid.&n;&t;**      clear SIGP.&n;&t;*/
 id|SCR_LOAD_REG
 (paren
@@ -7883,15 +7933,21 @@ OL
 id|end
 )paren
 (brace
-op_star
-id|dst
-op_increment
-op_assign
 id|opcode
 op_assign
 op_star
 id|src
 op_increment
+suffix:semicolon
+op_star
+id|dst
+op_increment
+op_assign
+id|cpu_to_scr
+c_func
+(paren
+id|opcode
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;**&t;If we forget to change the length&n;&t;&t;**&t;in struct script, a field will be&n;&t;&t;**&t;padded with 0. This is an illegal&n;&t;&t;**&t;command.&n;&t;&t;*/
 r_if
@@ -8079,6 +8135,8 @@ op_minus
 l_int|1
 )braket
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|opcode
 op_amp
@@ -8334,7 +8392,11 @@ op_star
 id|dst
 op_increment
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 r_new
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -8343,9 +8405,13 @@ op_star
 id|dst
 op_increment
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 op_star
 id|src
 op_increment
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -9246,40 +9312,6 @@ id|period
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/*&n;&t;**&t;Get on-board RAM bus address when supported&n;&t;*/
-r_if
-c_cond
-(paren
-id|np-&gt;features
-op_amp
-id|FE_RAM
-)paren
-(brace
-id|OUTONB
-c_func
-(paren
-id|nc_ctest2
-comma
-l_int|0x8
-)paren
-suffix:semicolon
-id|np-&gt;paddr2
-op_assign
-id|INL
-c_func
-(paren
-id|nc_scr0
-)paren
-suffix:semicolon
-id|OUTOFFB
-c_func
-(paren
-id|nc_ctest2
-comma
-l_int|0x8
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;**&t;Prepare initial value of other IO registers&n;&t;*/
 macro_line|#if defined SCSI_NCR_TRUST_BIOS_SETTING
 id|np-&gt;rv_scntl0
@@ -10824,6 +10856,19 @@ id|np-&gt;paddr
 op_assign
 id|device-&gt;slot.base
 suffix:semicolon
+id|np-&gt;paddr2
+op_assign
+(paren
+id|np-&gt;features
+op_amp
+id|FE_RAM
+)paren
+ques
+c_cond
+id|device-&gt;slot.base_2
+suffix:colon
+l_int|0
+suffix:semicolon
 macro_line|#ifndef NCR_IOMAPPED
 id|np-&gt;vaddr
 op_assign
@@ -11250,6 +11295,9 @@ id|np-&gt;script0-&gt;reselect
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_REG_REG
 c_func
 (paren
@@ -11259,12 +11307,16 @@ id|SCR_OR
 comma
 l_int|0x01
 )paren
+)paren
 suffix:semicolon
 id|np-&gt;script0-&gt;reselect1
 (braket
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_REG_REG
 c_func
 (paren
@@ -11273,6 +11325,7 @@ comma
 id|SCR_AND
 comma
 l_int|0xfe
+)paren
 )paren
 suffix:semicolon
 id|np-&gt;script0-&gt;reselect2
@@ -11280,6 +11333,9 @@ id|np-&gt;script0-&gt;reselect2
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_REG_REG
 c_func
 (paren
@@ -11289,20 +11345,29 @@ id|SCR_AND
 comma
 l_int|0xfe
 )paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;**&t;init data structure&n;&t;*/
 id|np-&gt;jump_tcb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_JUMP
+)paren
 suffix:semicolon
 id|np-&gt;jump_tcb.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPTH_PHYS
 (paren
 id|np
 comma
 m_abort
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Reset chip.&n;&t;*/
@@ -12772,11 +12837,15 @@ id|XferBoth
 suffix:colon
 id|cp-&gt;phys.header.savep
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|data_io
+)paren
 )paren
 suffix:semicolon
 id|cp-&gt;phys.header.goalp
@@ -12803,17 +12872,25 @@ l_int|16
 suffix:semicolon
 id|cp-&gt;phys.header.goalp
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_plus
 l_int|8
+)paren
 suffix:semicolon
 id|cp-&gt;phys.header.savep
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_minus
 id|segments
 op_star
 l_int|16
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -12835,17 +12912,25 @@ l_int|16
 suffix:semicolon
 id|cp-&gt;phys.header.goalp
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_plus
 l_int|8
+)paren
 suffix:semicolon
 id|cp-&gt;phys.header.savep
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_minus
 id|segments
 op_star
 l_int|16
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -12854,11 +12939,15 @@ id|XferNone
 suffix:colon
 id|cp-&gt;phys.header.savep
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|no_data
+)paren
 )paren
 suffix:semicolon
 id|cp-&gt;phys.header.goalp
@@ -12880,16 +12969,24 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Startqueue&n;&t;*/
 id|cp-&gt;phys.header.launch.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|select
 )paren
+)paren
 suffix:semicolon
 id|cp-&gt;phys.header.launch.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_JUMP
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;select&n;&t;*/
 id|cp-&gt;phys.select.sel_id
@@ -12907,33 +13004,52 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;message&n;&t;*/
 id|cp-&gt;phys.smsg.addr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|CCB_PHYS
 (paren
 id|cp
 comma
 id|scsi_smsg
 )paren
+)paren
 suffix:semicolon
 id|cp-&gt;phys.smsg.size
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|msglen
+)paren
 suffix:semicolon
 id|cp-&gt;phys.smsg2.addr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|CCB_PHYS
 (paren
 id|cp
 comma
 id|scsi_smsg2
 )paren
+)paren
 suffix:semicolon
 id|cp-&gt;phys.smsg2.size
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|msglen2
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;command&n;&t;*/
 id|cp-&gt;phys.cmd.addr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 (paren
 op_amp
@@ -12942,24 +13058,37 @@ id|cmd-&gt;cmnd
 l_int|0
 )braket
 )paren
+)paren
 suffix:semicolon
 id|cp-&gt;phys.cmd.size
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|cmd-&gt;cmd_len
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;sense command&n;&t;*/
 id|cp-&gt;phys.scmd.addr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|CCB_PHYS
 (paren
 id|cp
 comma
 id|sensecmd
 )paren
+)paren
 suffix:semicolon
 id|cp-&gt;phys.scmd.size
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 l_int|6
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;patch requested size into sense command&n;&t;*/
 id|cp-&gt;sensecmd
@@ -12991,6 +13120,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;sense data&n;&t;*/
 id|cp-&gt;phys.sense.addr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 (paren
 op_amp
@@ -12999,12 +13131,17 @@ id|cmd-&gt;sense_buffer
 l_int|0
 )braket
 )paren
+)paren
 suffix:semicolon
 id|cp-&gt;phys.sense.size
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 r_sizeof
 (paren
 id|cmd-&gt;sense_buffer
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;status&n;&t;*/
@@ -13049,6 +13186,9 @@ multiline_comment|/*----------------------------------------------------&n;&t;**
 multiline_comment|/*&n;&t;**&t;reselect pattern and activate this job.&n;&t;*/
 id|cp-&gt;jump_ccb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 (paren
 id|SCR_JUMP
 op_xor
@@ -13060,8 +13200,9 @@ id|cp-&gt;tag
 )paren
 )paren
 )paren
+)paren
 suffix:semicolon
-multiline_comment|/* Compute a time limit bigger than the middle-level driver one */
+multiline_comment|/* Compute a time limit greater than the middle-level driver one */
 r_if
 c_cond
 (paren
@@ -13114,11 +13255,15 @@ id|np-&gt;squeue
 id|qidx
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|idle
+)paren
 )paren
 suffix:semicolon
 id|np-&gt;squeue
@@ -13126,11 +13271,15 @@ id|np-&gt;squeue
 id|np-&gt;squeueput
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|CCB_PHYS
 (paren
 id|cp
 comma
 id|phys
+)paren
 )paren
 suffix:semicolon
 id|np-&gt;squeueput
@@ -13160,10 +13309,14 @@ comma
 r_int
 )paren
 (paren
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;script-&gt;startpos
 (braket
 l_int|0
 )braket
+)paren
 op_minus
 (paren
 id|NCB_SCRIPTH_PHYS
@@ -13736,6 +13889,8 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Disable reselect.&n;&t;**      Remove it from startqueue.&n;&t;**&t;Set cp-&gt;tlimit to 0. The ncr_timeout() handler will use &n;&t;**&t;this condition in order to complete the canceled command &n;&t;**&t;after the script skipped the ccb, if necessary.&n;&t;*/
 id|cp-&gt;jump_ccb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|SCR_JUMP
 )paren
@@ -13745,11 +13900,15 @@ c_cond
 (paren
 id|cp-&gt;phys.header.launch.l_paddr
 op_eq
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|select
+)paren
 )paren
 )paren
 (brace
@@ -13767,11 +13926,15 @@ id|cp
 suffix:semicolon
 id|cp-&gt;phys.header.launch.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|skip
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -14415,6 +14578,8 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;No Reselect anymore.&n;&t;*/
 id|cp-&gt;jump_ccb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|SCR_JUMP
 )paren
@@ -14422,11 +14587,15 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;No starting.&n;&t;*/
 id|cp-&gt;phys.header.launch.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|idle
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;timestamp&n;&t;**&t;Optional, spare some CPU time&n;&t;*/
@@ -15504,11 +15673,15 @@ id|squeue
 id|i
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|idle
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Start at first entry.&n;&t;*/
@@ -15521,11 +15694,15 @@ id|np-&gt;script0-&gt;startpos
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPTH_PHYS
 (paren
 id|np
 comma
 id|tryloop
+)paren
 )paren
 suffix:semicolon
 id|np-&gt;script0-&gt;start0
@@ -15533,11 +15710,15 @@ id|np-&gt;script0-&gt;start0
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_INT
 op_xor
 id|IFFALSE
 (paren
 l_int|0
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Wakeup all pending jobs.&n;&t;*/
@@ -15725,12 +15906,13 @@ id|np
 )paren
 )paren
 suffix:semicolon
-id|bcopy
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,0,0)
+id|memcpy_toio
 c_func
 (paren
-id|np-&gt;script0
-comma
 id|np-&gt;script
+comma
+id|np-&gt;script0
 comma
 r_sizeof
 (paren
@@ -15739,6 +15921,22 @@ id|script
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|memcpy
+c_func
+(paren
+id|np-&gt;script
+comma
+id|np-&gt;script0
+comma
+r_sizeof
+(paren
+r_struct
+id|script
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n;&t;**      enable ints&n;&t;*/
 id|OUTW
@@ -17827,10 +18025,6 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
-id|t
-suffix:semicolon
 id|ccb_p
 id|cp
 suffix:semicolon
@@ -18006,22 +18200,17 @@ id|np-&gt;profile
 )paren
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------&n;&t;&t;**&n;&t;&t;**&t;handle ncr chip timeouts&n;&t;&t;**&n;&t;&t;**&t;Assumption:&n;&t;&t;**&t;We have a chance to arbitrate for the&n;&t;&t;**&t;SCSI bus at least every 10 seconds.&n;&t;&t;**&n;&t;&t;**----------------------------------------------------&n;&t;&t;*/
-id|t
-op_assign
-(paren
-id|thistime
-op_minus
-id|np-&gt;heartbeat
-)paren
-op_div
-id|HZ
-suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
-id|t
+id|thistime
 OL
-l_int|2
+id|np-&gt;heartbeat
+op_plus
+id|HZ
+op_plus
+id|HZ
 )paren
 id|np-&gt;latetime
 op_assign
@@ -18031,6 +18220,7 @@ r_else
 id|np-&gt;latetime
 op_increment
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*----------------------------------------------------&n;&t;&t;**&n;&t;&t;**&t;handle ccb timeouts&n;&t;&t;**&n;&t;&t;**----------------------------------------------------&n;&t;&t;*/
 r_for
 c_loop
@@ -18131,11 +18321,15 @@ c_cond
 (paren
 id|cp-&gt;phys.header.launch.l_paddr
 op_eq
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|skip
+)paren
 )paren
 )paren
 r_continue
@@ -18560,49 +18754,24 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t;**&t;interrupt on the fly ?&n;&t;*/
-r_while
-c_loop
-(paren
-(paren
+multiline_comment|/*&n;&t;**&t;interrupt on the fly ?&n;&t;**&t;Since the global header may be copied back to a CCB &n;&t;**&t;using a posted PCI memory write, the last operation on &n;&t;**&t;the istat register is a READ in order to flush posted &n;&t;**&t;PCI commands (Btw, the &squot;do&squot; loop is probably useless).&n;&t;*/
 id|istat
 op_assign
 id|INB
 (paren
 id|nc_istat
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|istat
 op_amp
 id|INTF
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|DEBUG_FLAGS
-op_amp
-id|DEBUG_TINY
-)paren
-id|printf
-(paren
-l_string|&quot;F &quot;
-)paren
-suffix:semicolon
-macro_line|#ifdef&t;SCSI_NCR_DEBUG_ERROR_RECOVERY_SUPPORT
-r_if
-c_cond
-(paren
-id|np-&gt;stalling
-)paren
-id|OUTB
-(paren
-id|nc_istat
-comma
-id|INTF
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif
+r_do
+(brace
 id|OUTB
 (paren
 id|nc_istat
@@ -18614,6 +18783,34 @@ id|SIGP
 )paren
 op_or
 id|INTF
+)paren
+suffix:semicolon
+id|istat
+op_assign
+id|INB
+(paren
+id|nc_istat
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|istat
+op_amp
+id|INTF
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DEBUG_FLAGS
+op_amp
+id|DEBUG_TINY
+)paren
+id|printf
+(paren
+l_string|&quot;F &quot;
 )paren
 suffix:semicolon
 id|np-&gt;profile.num_fly
@@ -19322,7 +19519,11 @@ id|np-&gt;script-&gt;startpos
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|scratcha
+)paren
 suffix:semicolon
 id|OUTL
 (paren
@@ -20046,10 +20247,14 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;get old startaddress and old length.&n;&t;*/
 id|oadr
 op_assign
+id|scr_to_cpu
+c_func
+(paren
 id|vdsp
 (braket
 l_int|1
 )braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -20079,17 +20284,25 @@ id|oadr
 suffix:semicolon
 id|olen
 op_assign
+id|scr_to_cpu
+c_func
+(paren
 id|tblp
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 id|oadr
 op_assign
+id|scr_to_cpu
+c_func
+(paren
 id|tblp
 (braket
 l_int|1
 )braket
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -20104,10 +20317,14 @@ l_int|0
 suffix:semicolon
 id|olen
 op_assign
+id|scr_to_cpu
+c_func
+(paren
 id|vdsp
 (braket
 l_int|0
 )braket
+)paren
 op_amp
 l_int|0xffffff
 suffix:semicolon
@@ -20129,10 +20346,14 @@ comma
 r_int
 )paren
 (paren
+id|scr_to_cpu
+c_func
+(paren
 id|vdsp
 (braket
 l_int|0
 )braket
+)paren
 op_rshift
 l_int|24
 )paren
@@ -20159,10 +20380,14 @@ c_cond
 id|cmd
 op_ne
 (paren
+id|scr_to_cpu
+c_func
+(paren
 id|vdsp
 (braket
 l_int|0
 )braket
+)paren
 op_rshift
 l_int|24
 )paren
@@ -20186,10 +20411,14 @@ comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|vdsp
 (braket
 l_int|0
 )braket
+)paren
 op_rshift
 l_int|24
 )paren
@@ -20294,9 +20523,13 @@ c_cond
 (paren
 id|cp-&gt;phys.header.savep
 op_eq
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 (paren
 id|newcmd
+)paren
 )paren
 )paren
 id|newcmd
@@ -20309,6 +20542,9 @@ id|newcmd
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 (paren
 (paren
 id|cmd
@@ -20320,31 +20556,44 @@ l_int|24
 )paren
 op_or
 id|rest
+)paren
 suffix:semicolon
 id|newcmd
 (braket
 l_int|1
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|oadr
 op_plus
 id|olen
 op_minus
 id|rest
+)paren
 suffix:semicolon
 id|newcmd
 (braket
 l_int|2
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_JUMP
+)paren
 suffix:semicolon
 id|newcmd
 (braket
 l_int|3
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|nxtdsp
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -20376,34 +20625,50 @@ comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|newcmd
 (braket
 l_int|0
 )braket
+)paren
 comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|newcmd
 (braket
 l_int|1
 )braket
+)paren
 comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|newcmd
 (braket
 l_int|2
 )braket
+)paren
 comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|newcmd
 (braket
 l_int|3
 )braket
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -20775,17 +21040,25 @@ l_int|16
 suffix:semicolon
 id|cp-&gt;phys.header.goalp
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_plus
 l_int|8
+)paren
 suffix:semicolon
 id|cp-&gt;phys.header.savep
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_minus
 id|cp-&gt;segments
 op_star
 l_int|16
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -20805,17 +21078,25 @@ l_int|16
 suffix:semicolon
 id|cp-&gt;phys.header.goalp
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_plus
 l_int|8
+)paren
 suffix:semicolon
 id|cp-&gt;phys.header.savep
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|endp
 op_minus
 id|cp-&gt;segments
 op_star
 l_int|16
+)paren
 suffix:semicolon
 )brace
 id|cp-&gt;phys.header.lastp
@@ -20838,14 +21119,22 @@ id|OUTL
 (paren
 id|nc_temp
 comma
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;header.savep
+)paren
 )paren
 suffix:semicolon
 id|OUTL
 (paren
 id|nc_dsp
 comma
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;header.savep
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -21059,11 +21348,15 @@ id|np-&gt;script-&gt;start0
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_INT
 op_xor
 id|IFFALSE
 (paren
 l_int|0
+)paren
 )paren
 suffix:semicolon
 r_break
@@ -21127,7 +21420,11 @@ id|np-&gt;script-&gt;start0
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_INT
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -22087,7 +22384,11 @@ comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;lastmsg
+)paren
 comma
 id|np-&gt;msgout
 (braket
@@ -22171,12 +22472,20 @@ comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;header.savep
+)paren
 comma
 (paren
 r_int
 )paren
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;header.goalp
+)paren
 )paren
 suffix:semicolon
 r_break
@@ -22203,7 +22512,11 @@ id|np-&gt;script-&gt;start1
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_INT
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;**&t;Try to disable tagged transfers.&n;&t;&t;*/
 id|ncr_setmaxtags
@@ -22283,11 +22596,15 @@ id|np-&gt;script-&gt;start1
 l_int|0
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_INT
 op_xor
 id|IFFALSE
 (paren
 l_int|0
+)paren
 )paren
 suffix:semicolon
 r_break
@@ -22647,6 +22964,9 @@ id|tp-&gt;jump_tcb.l_cmd
 multiline_comment|/*&n;&t;&t;**&t;initialize it.&n;&t;&t;*/
 id|tp-&gt;jump_tcb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 (paren
 id|SCR_JUMP
 op_xor
@@ -22657,6 +22977,7 @@ id|DATA
 l_int|0x80
 op_plus
 id|target
+)paren
 )paren
 )paren
 )paren
@@ -22677,16 +22998,24 @@ id|FE_PFEN
 )paren
 ques
 c_cond
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_COPY
 c_func
 (paren
 l_int|1
 )paren
+)paren
 suffix:colon
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_COPY_F
 c_func
 (paren
 l_int|1
+)paren
 )paren
 suffix:semicolon
 id|tp-&gt;getscr
@@ -22694,10 +23023,14 @@ id|tp-&gt;getscr
 l_int|1
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 (paren
 op_amp
 id|tp-&gt;sval
+)paren
 )paren
 suffix:semicolon
 id|tp-&gt;getscr
@@ -22705,6 +23038,9 @@ id|tp-&gt;getscr
 l_int|2
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|np-&gt;paddr
 op_plus
 m_offsetof
@@ -22713,6 +23049,7 @@ r_struct
 id|ncr_reg
 comma
 id|nc_sxfer
+)paren
 )paren
 suffix:semicolon
 id|tp-&gt;getscr
@@ -22727,16 +23064,24 @@ id|FE_PFEN
 )paren
 ques
 c_cond
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_COPY
 c_func
 (paren
 l_int|1
 )paren
+)paren
 suffix:colon
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_COPY_F
 c_func
 (paren
 l_int|1
+)paren
 )paren
 suffix:semicolon
 id|tp-&gt;getscr
@@ -22744,10 +23089,14 @@ id|tp-&gt;getscr
 l_int|4
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 (paren
 op_amp
 id|tp-&gt;wval
+)paren
 )paren
 suffix:semicolon
 id|tp-&gt;getscr
@@ -22755,6 +23104,9 @@ id|tp-&gt;getscr
 l_int|5
 )braket
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|np-&gt;paddr
 op_plus
 m_offsetof
@@ -22763,6 +23115,7 @@ r_struct
 id|ncr_reg
 comma
 id|nc_scntl3
+)paren
 )paren
 suffix:semicolon
 m_assert
@@ -22821,40 +23174,56 @@ l_int|0
 suffix:semicolon
 id|tp-&gt;call_lun.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|SCR_CALL
 )paren
 suffix:semicolon
 id|tp-&gt;call_lun.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|resel_lun
 )paren
+)paren
 suffix:semicolon
 id|tp-&gt;jump_lcb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|SCR_JUMP
 )paren
 suffix:semicolon
 id|tp-&gt;jump_lcb.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPTH_PHYS
 (paren
 id|np
 comma
 m_abort
 )paren
+)paren
 suffix:semicolon
 id|np-&gt;jump_tcb.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 (paren
 op_amp
 id|tp-&gt;jump_tcb
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -22938,6 +23307,8 @@ id|lp
 suffix:semicolon
 id|lp-&gt;jump_lcb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|SCR_JUMP
 op_xor
@@ -22956,32 +23327,44 @@ id|tp-&gt;jump_lcb.l_paddr
 suffix:semicolon
 id|lp-&gt;call_tag.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|SCR_CALL
 )paren
 suffix:semicolon
 id|lp-&gt;call_tag.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|resel_tag
 )paren
+)paren
 suffix:semicolon
 id|lp-&gt;jump_ccb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
 (paren
 id|SCR_JUMP
 )paren
 suffix:semicolon
 id|lp-&gt;jump_ccb.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPTH_PHYS
 (paren
 id|np
 comma
 id|aborttag
+)paren
 )paren
 suffix:semicolon
 id|lp-&gt;actlink
@@ -22995,10 +23378,14 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;**   Chain into LUN list&n;&t;&t;*/
 id|tp-&gt;jump_lcb.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 (paren
 op_amp
 id|lp-&gt;jump_lcb
+)paren
 )paren
 suffix:semicolon
 id|tp-&gt;lp
@@ -23125,7 +23512,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Chain into reselect list&n;&t;*/
 id|cp-&gt;jump_ccb.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_JUMP
+)paren
 suffix:semicolon
 id|cp-&gt;jump_ccb.l_paddr
 op_assign
@@ -23133,24 +23524,36 @@ id|lp-&gt;jump_ccb.l_paddr
 suffix:semicolon
 id|lp-&gt;jump_ccb.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|CCB_PHYS
 (paren
 id|cp
 comma
 id|jump_ccb
 )paren
+)paren
 suffix:semicolon
 id|cp-&gt;call_tmp.l_cmd
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|SCR_CALL
+)paren
 suffix:semicolon
 id|cp-&gt;call_tmp.l_paddr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|NCB_SCRIPT_PHYS
 (paren
 id|np
 comma
 id|resel_tmp
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Chain into wakeup list&n;&t;*/
@@ -23406,10 +23809,14 @@ l_int|0
 dot
 id|addr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 c_func
 (paren
 id|cmd-&gt;request_buffer
+)paren
 )paren
 suffix:semicolon
 id|data
@@ -23419,16 +23826,15 @@ l_int|0
 dot
 id|size
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|cmd-&gt;request_bufflen
+)paren
 suffix:semicolon
 id|cp-&gt;data_len
 op_assign
-id|data
-(braket
-l_int|0
-)braket
-dot
-id|size
+id|cmd-&gt;request_bufflen
 suffix:semicolon
 id|segment
 op_assign
@@ -23482,6 +23888,9 @@ id|segment
 dot
 id|addr
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|vtophys
 c_func
 (paren
@@ -23492,6 +23901,7 @@ id|segment
 dot
 id|address
 )paren
+)paren
 suffix:semicolon
 id|data
 (braket
@@ -23500,21 +23910,25 @@ id|segment
 dot
 id|size
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|scatter
 (braket
 id|segment
 )braket
 dot
 id|length
+)paren
 suffix:semicolon
 id|cp-&gt;data_len
 op_add_assign
-id|data
+id|scatter
 (braket
 id|segment
 )braket
 dot
-id|size
+id|length
 suffix:semicolon
 op_increment
 id|segment
@@ -23716,7 +24130,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Set memory and register.&n;&t;*/
 id|np-&gt;ncr_cache
 op_assign
+id|cpu_to_scr
+c_func
+(paren
 id|host_wr
+)paren
 suffix:semicolon
 id|OUTL
 (paren
@@ -23778,7 +24196,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Read memory and register.&n;&t;*/
 id|host_rd
 op_assign
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;ncr_cache
+)paren
 suffix:semicolon
 id|ncr_rd
 op_assign
@@ -25740,11 +26162,16 @@ c_func
 (paren
 l_string|&quot;ncr53c8xx_setup: unexpected boot option &squot;%.*s&squot; ignored&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
+(paren
 id|pc
 op_minus
 id|cur
 op_plus
 l_int|1
+)paren
 comma
 id|cur
 )paren
@@ -26836,19 +27263,19 @@ macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
 id|uint
 id|base
 comma
+id|base_2
+comma
 id|io_port
 suffix:semicolon
 macro_line|#else
 id|ulong
 id|base
 comma
-id|io_port
+id|base_2
 suffix:semicolon
 macro_line|#endif
 r_int
 id|i
-comma
-id|error
 suffix:semicolon
 macro_line|#ifdef SCSI_NCR_NVRAM_SUPPORT
 id|ncr_nvram
@@ -26889,13 +27316,10 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Read info from the PCI config space&n;&t; */
-r_if
-c_cond
+multiline_comment|/*&n;&t; * Read info from the PCI config space.&n;&t; * pcibios_read_config_xxx() functions are assumed to be used for &n;&t; * successfully detected PCI devices.&n;&t; * Expecting error conditions from them is just paranoia,&n;&t; * thus void cast.&n;&t; */
 (paren
-(paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_word
 c_func
 (paren
@@ -26908,11 +27332,10 @@ comma
 op_amp
 id|vendor_id
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_word
 c_func
 (paren
@@ -26925,11 +27348,10 @@ comma
 op_amp
 id|device_id
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_word
 c_func
 (paren
@@ -26942,11 +27364,10 @@ comma
 op_amp
 id|command
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_dword
 c_func
 (paren
@@ -26959,11 +27380,10 @@ comma
 op_amp
 id|io_port
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_dword
 c_func
 (paren
@@ -26976,11 +27396,26 @@ comma
 op_amp
 id|base
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
+id|pcibios_read_config_dword
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_BASE_ADDRESS_2
+comma
+op_amp
+id|base_2
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -26993,11 +27428,10 @@ comma
 op_amp
 id|revision
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -27010,11 +27444,10 @@ comma
 op_amp
 id|irq
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -27027,11 +27460,10 @@ comma
 op_amp
 id|cache_line_size
 )paren
-)paren
-op_logical_or
+suffix:semicolon
 (paren
-id|error
-op_assign
+r_void
+)paren
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -27044,10 +27476,6 @@ comma
 op_amp
 id|latency_timer
 )paren
-)paren
-)paren
-r_goto
-id|err_pcibios
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Check if the chip is supported&n;&t; */
 id|chip
@@ -27269,6 +27697,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|base_2
+op_and_assign
+id|PCI_BASE_ADDRESS_MEM_MASK
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -27445,8 +27877,9 @@ c_cond
 (paren
 id|cache_line_size
 )paren
-id|error
-op_assign
+(paren
+r_void
+)paren
 id|pcibios_write_config_byte
 c_func
 (paren
@@ -27458,14 +27891,6 @@ id|PCI_CACHE_LINE_SIZE
 comma
 id|cache_line_size
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_goto
-id|err_pcibios
 suffix:semicolon
 r_if
 c_cond
@@ -27510,8 +27935,9 @@ id|command
 op_or_assign
 id|PCI_COMMAND_INVALIDATE
 suffix:semicolon
-id|error
-op_assign
+(paren
+r_void
+)paren
 id|pcibios_write_config_word
 c_func
 (paren
@@ -27523,14 +27949,6 @@ id|PCI_COMMAND
 comma
 id|command
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_goto
-id|err_pcibios
 suffix:semicolon
 r_if
 c_cond
@@ -27675,8 +28093,9 @@ comma
 id|latency_timer
 )paren
 suffix:semicolon
-id|error
-op_assign
+(paren
+r_void
+)paren
 id|pcibios_write_config_byte
 c_func
 (paren
@@ -27688,14 +28107,6 @@ id|PCI_LATENCY_TIMER
 comma
 id|latency_timer
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_goto
-id|err_pcibios
 suffix:semicolon
 )brace
 )brace
@@ -27768,6 +28179,10 @@ suffix:semicolon
 id|device-&gt;slot.base
 op_assign
 id|base
+suffix:semicolon
+id|device-&gt;slot.base_2
+op_assign
+id|base_2
 suffix:semicolon
 id|device-&gt;slot.io_port
 op_assign
@@ -27910,24 +28325,6 @@ macro_line|#endif
 macro_line|#endif&t;/* SCSI_NCR_NVRAM_SUPPORT */
 r_return
 l_int|0
-suffix:semicolon
-id|err_pcibios
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;ncr53c8xx: error %s reading configuration space&bslash;n&quot;
-comma
-id|pcibios_strerror
-c_func
-(paren
-id|error
-)paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,0,0)

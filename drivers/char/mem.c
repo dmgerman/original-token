@@ -2184,7 +2184,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_BUSMOUSE) || defined(CONFIG_UMISC) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG) || &bslash;&n;    defined (CONFIG_AMIGAMOUSE) || defined (CONFIG_ATARIMOUSE) || &bslash;&n;    defined (CONFIG_PCWATCHDOG) || &bslash;&n;    defined (CONFIG_APM) || defined (CONFIG_RTC) || defined (CONFIG_SUN_MOUSE)
+macro_line|#if defined (CONFIG_BUSMOUSE) || defined(CONFIG_UMISC) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG) || &bslash;&n;    defined (CONFIG_AMIGAMOUSE) || defined (CONFIG_ATARIMOUSE) || &bslash;&n;    defined (CONFIG_PCWATCHDOG) || &bslash;&n;    defined (CONFIG_APM) || defined (CONFIG_RTC) || &bslash;&n;    defined (CONFIG_SUN_MOUSE) || defined (CONFIG_NVRAM)
 id|misc_init
 c_func
 (paren

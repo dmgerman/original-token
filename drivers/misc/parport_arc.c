@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; * Parallel-port routines for ARC onboard hardware.&n; *&n; * Author: Phil Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
+multiline_comment|/* Parallel-port routines for ARC onboard hardware.&n; *&n; * Author: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -66,6 +66,34 @@ r_return
 id|data_copy
 suffix:semicolon
 )brace
+DECL|function|arc_inc_use_count
+r_static
+r_void
+id|arc_inc_use_count
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|arc_dec_use_count
+r_static
+r_void
+id|arc_dec_use_count
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|variable|arc_ops
 r_static
 r_struct
@@ -130,6 +158,10 @@ comma
 id|arc_disable_irq
 comma
 id|arc_examine_irq
+comma
+id|arc_inc_use_count
+comma
+id|arc_dec_use_count
 )brace
 suffix:semicolon
 eof

@@ -408,7 +408,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function frees up all page tables of a process when it exits. It&n; * is the same as &quot;clear_page_tables()&quot;, except it also changes the process&squot;&n; * page table directory to the kernel page tables and then frees the old&n; * page table directory.&n; */
+multiline_comment|/*&n; * This function frees up all page tables of a process when it exits. It&n; * is the same as &quot;clear_page_tables()&quot;, except it also frees the old&n; * page table directory.&n; */
 DECL|function|free_page_tables
 r_void
 id|free_page_tables
@@ -434,9 +434,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|page_dir
-op_logical_or
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|page_dir
 op_eq
 id|swapper_pg_dir
@@ -445,7 +448,7 @@ id|swapper_pg_dir
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to free kernel page-directory: not good&bslash;n&quot;
+l_string|&quot;free_page_tables: Trying to free kernel pgd&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -479,6 +482,7 @@ c_func
 id|page_dir
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|new_page_tables
 r_int

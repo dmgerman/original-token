@@ -2012,34 +2012,6 @@ id|dentry
 op_star
 id|dentry
 suffix:semicolon
-multiline_comment|/* Note: 2.1.46+ calls this for our strange directories...&n;&t; * What I do is not really right, but I like it better for now,&n;&t; * than a separate i_op table.  Anyway, our directories won&squot;t&n;&t; * have multiple &quot;real&quot; links to them, so it maybe loses nothing.  */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISLNK
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-(brace
-id|dentry
-op_assign
-id|dget
-c_func
-(paren
-id|i_dentry
-c_func
-(paren
-id|inode
-)paren
-)paren
-suffix:semicolon
-r_goto
-id|outnobuf
-suffix:semicolon
-)brace
 id|len
 op_assign
 id|inode-&gt;i_size
@@ -2322,11 +2294,11 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* Merged dir/symlink op table.  readdir/lookup/readlink/follow_link&n; * will protect from type mismatch.&n; */
-DECL|variable|romfs_dirlink_inode_operations
+DECL|variable|romfs_dir_inode_operations
 r_static
 r_struct
 id|inode_operations
-id|romfs_dirlink_inode_operations
+id|romfs_dir_inode_operations
 op_assign
 (brace
 op_amp
@@ -2336,6 +2308,69 @@ l_int|NULL
 comma
 multiline_comment|/* create */
 id|romfs_lookup
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+)brace
+suffix:semicolon
+DECL|variable|romfs_link_inode_operations
+r_static
+r_struct
+id|inode_operations
+id|romfs_link_inode_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* no file operations on symlinks */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
 comma
 multiline_comment|/* lookup */
 l_int|NULL
@@ -2426,13 +2461,13 @@ l_int|NULL
 comma
 multiline_comment|/* hardlink, handled elsewhere */
 op_amp
-id|romfs_dirlink_inode_operations
+id|romfs_dir_inode_operations
 comma
 op_amp
 id|romfs_file_inode_operations
 comma
 op_amp
-id|romfs_dirlink_inode_operations
+id|romfs_link_inode_operations
 comma
 op_amp
 id|blkdev_inode_operations

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,7 +22,7 @@ mdefine_line|#define MAX_RETRIES 5
 DECL|macro|MAX_TIMEOUT
 mdefine_line|#define MAX_TIMEOUT (9 * HZ)
 DECL|macro|MAX_BUF
-mdefine_line|#define MAX_BUF 4096
+mdefine_line|#define MAX_BUF PAGE_SIZE
 DECL|macro|max
 mdefine_line|#define max(a,b) (((a) &gt; (b)) ? (a) : (b))
 multiline_comment|/*&n; * If we are told to probe a host, we will return 0 if  the host is not&n; * present, 1 if the host is present, and will return an identifying&n; * string at *arg, if arg is non null, filling to the length stored at&n; * (int *) arg&n; */
@@ -189,7 +190,7 @@ r_return
 id|temp
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &n; * The SCSI_IOCTL_SEND_COMMAND ioctl sends a command out to the SCSI host.&n; * The MAX_TIMEOUT and MAX_RETRIES  variables are used.  &n; * &n; * dev is the SCSI device struct ptr, *(int *) arg is the length of the&n; * input data, if any, not including the command string &amp; counts, &n; * *((int *)arg + 1) is the output buffer size in bytes.&n; * &n; * *(char *) ((int *) arg)[2] the actual command byte.   &n; * &n; * Note that no more than MAX_BUF data bytes will be transfered.  Since&n; * SCSI block device size is 512 bytes, I figured 1K was good.&n; * but (WDE) changed it to 8192 to handle large bad track buffers.&n; * ERY: I changed this to a dynamic allocation using scsi_malloc - we were&n; * getting a kernel stack overflow which was crashing the system when we&n; * were using 8192 bytes.&n; * &n; * This size *does not* include the initial lengths that were passed.&n; * &n; * The SCSI command is read from the memory location immediately after the&n; * length words, and the input data is right after the command.  The SCSI&n; * routines know the command size based on the opcode decode.  &n; * &n; * The output area is then filled in starting from the command byte. &n; */
+multiline_comment|/*&n; * &n; * The SCSI_IOCTL_SEND_COMMAND ioctl sends a command out to the SCSI host.&n; * The MAX_TIMEOUT and MAX_RETRIES  variables are used.  &n; * &n; * dev is the SCSI device struct ptr, *(int *) arg is the length of the&n; * input data, if any, not including the command string &amp; counts, &n; * *((int *)arg + 1) is the output buffer size in bytes.&n; * &n; * *(char *) ((int *) arg)[2] the actual command byte.   &n; * &n; * Note that if more than MAX_BUF bytes are requested to be transfered,&n; * the ioctl will fail with error EINVAL.  MAX_BUF can be increased in&n; * the future by increasing the size that scsi_malloc will accept.&n; * &n; * This size *does not* include the initial lengths that were passed.&n; * &n; * The SCSI command is read from the memory location immediately after the&n; * length words, and the input data is right after the command.  The SCSI&n; * routines know the command size based on the opcode decode.  &n; * &n; * The output area is then filled in starting from the command byte. &n; */
 DECL|function|scsi_ioctl_done
 r_static
 r_void
@@ -607,9 +608,9 @@ OG
 id|MAX_BUF
 )paren
 (brace
-id|inlen
-op_assign
-id|MAX_BUF
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 r_if
@@ -620,9 +621,9 @@ OG
 id|MAX_BUF
 )paren
 (brace
-id|outlen
-op_assign
-id|MAX_BUF
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|cmd_in

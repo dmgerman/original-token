@@ -5,6 +5,13 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+multiline_comment|/* For managing the dcache */
+r_extern
+r_int
+id|nr_free_pages
+comma
+id|free_pages_low
+suffix:semicolon
 multiline_comment|/*&n; * This is the single most critical data structure when it comes&n; * to the dcache: the hashtable for lookups. Somebody should try&n; * to make this good - I&squot;ve just made it work.&n; *&n; * This hash-function tries to avoid losing too many bits of hash&n; * information, yet avoid using a prime hash-size or similar.&n; */
 DECL|macro|D_HASHBITS
 mdefine_line|#define D_HASHBITS     10
@@ -134,6 +141,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dentry-&gt;d_op
+op_logical_and
+id|dentry-&gt;d_op-&gt;d_delete
+)paren
+id|dentry-&gt;d_op
+op_member_access_from_pointer
+id|d_delete
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|list_empty
 c_func
 (paren
@@ -159,21 +181,12 @@ c_cond
 (paren
 id|inode
 )paren
-(brace
-id|list_del
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_alias
-)paren
-suffix:semicolon
 id|iput
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
-)brace
 id|parent
 op_assign
 id|dentry-&gt;d_parent
@@ -343,13 +356,6 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-id|list_del
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_alias
-)paren
-suffix:semicolon
 id|dentry-&gt;d_inode
 op_assign
 l_int|NULL
@@ -409,6 +415,19 @@ r_struct
 id|dentry
 op_star
 id|dentry
+suffix:semicolon
+multiline_comment|/*&n;&t; * Check whether to shrink the dcache ... this greatly reduces&n;&t; * the likelyhood that kmalloc() will need additional memory.&n;&t; */
+r_if
+c_cond
+(paren
+id|nr_free_pages
+OL
+id|free_pages_low
+)paren
+id|shrink_dcache
+c_func
+(paren
+)paren
 suffix:semicolon
 id|dentry
 op_assign
@@ -520,13 +539,6 @@ id|INIT_LIST_HEAD
 c_func
 (paren
 op_amp
-id|dentry-&gt;d_alias
-)paren
-suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
 id|dentry-&gt;d_lru
 )paren
 suffix:semicolon
@@ -567,21 +579,6 @@ op_star
 id|inode
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|inode
-)paren
-id|list_add
-c_func
-(paren
-op_amp
-id|entry-&gt;d_alias
-comma
-op_amp
-id|inode-&gt;i_dentry
-)paren
-suffix:semicolon
 id|entry-&gt;d_inode
 op_assign
 id|inode
@@ -1087,16 +1084,15 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+)paren
+(brace
 id|dentry-&gt;d_inode
 op_assign
 l_int|NULL
-suffix:semicolon
-id|list_del
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_alias
-)paren
 suffix:semicolon
 id|iput
 c_func
@@ -1104,6 +1100,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace

@@ -192,6 +192,11 @@ r_int
 r_int
 id|waittime
 suffix:semicolon
+DECL|member|should_relinquish
+r_int
+r_int
+id|should_relinquish
+suffix:semicolon
 DECL|member|stats
 r_struct
 id|lp_stats

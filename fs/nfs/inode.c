@@ -187,7 +187,6 @@ id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This should do any silly-rename cleanups once we&n; * get silly-renaming working again..&n; */
 r_static
 r_void
 DECL|function|nfs_delete_inode
@@ -1773,6 +1772,16 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS
+id|rpc_register_sysctl
+c_func
+(paren
+)paren
+suffix:semicolon
+id|rpc_proc_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rpc_proc_register
 c_func
 (paren

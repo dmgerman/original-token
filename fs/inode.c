@@ -303,13 +303,6 @@ id|INIT_LIST_HEAD
 c_func
 (paren
 op_amp
-id|inode-&gt;i_dentry
-)paren
-suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
 id|inode-&gt;i_hash
 )paren
 suffix:semicolon

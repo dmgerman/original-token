@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifdef MODULE
 DECL|variable|TLanDevices
 r_static
@@ -27,6 +28,13 @@ DECL|variable|debug
 r_static
 r_int
 id|debug
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|aui
+r_static
+r_int
+id|aui
 op_assign
 l_int|0
 suffix:semicolon
@@ -57,7 +65,7 @@ r_static
 r_int
 id|TLanVersionMinor
 op_assign
-l_int|27
+l_int|32
 suffix:semicolon
 DECL|variable|TLanDeviceList
 r_static
@@ -86,9 +94,49 @@ comma
 (brace
 id|PCI_VENDOR_ID_COMPAQ
 comma
-id|PCI_DEVICE_ID_NETFLEX_3_INTEGRATED
+id|PCI_DEVICE_ID_NETFLEX_3P_INTEGRATED
 comma
-l_string|&quot;Compaq Integrated NetFlex-3&quot;
+l_string|&quot;Compaq Integrated NetFlex-3/P&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_COMPAQ
+comma
+id|PCI_DEVICE_ID_NETFLEX_3P
+comma
+l_string|&quot;Compaq NetFlex-3/P&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_COMPAQ
+comma
+id|PCI_DEVICE_ID_NETFLEX_3P_BNC
+comma
+l_string|&quot;Compaq NetFlex-3/P w/ BNC&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_COMPAQ
+comma
+id|PCI_DEVICE_ID_NETELLIGENT_10_100_PROLIANT
+comma
+l_string|&quot;Compaq ProLiant Netelligent 10/100&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_COMPAQ
+comma
+id|PCI_DEVICE_ID_NETELLIGENT_10_100_DUAL
+comma
+l_string|&quot;Compaq Dual Port Netelligent 10/100&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_COMPAQ
+comma
+id|PCI_DEVICE_ID_DESKPRO_4000_5233MMX
+comma
+l_string|&quot;Compaq Deskpro 4000 5233MMX&quot;
 )brace
 comma
 (brace
@@ -185,6 +233,9 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+r_int
+id|minten
+suffix:semicolon
 id|err
 op_assign
 id|FALSE
@@ -218,6 +269,21 @@ c_func
 id|base_port
 )paren
 suffix:semicolon
+id|minten
+op_assign
+id|TLan_GetBit
+c_func
+(paren
+id|TLAN_NET_SIO_MINTEN
+comma
+id|sio
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|minten
+)paren
 id|TLan_ClearBit
 c_func
 (paren
@@ -226,7 +292,6 @@ comma
 id|sio
 )paren
 suffix:semicolon
-multiline_comment|/* Disable PHY ints */
 id|TLan_MiiSendData
 c_func
 (paren
@@ -445,6 +510,11 @@ comma
 id|sio
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|minten
+)paren
 id|TLan_SetBit
 c_func
 (paren
@@ -453,7 +523,6 @@ comma
 id|sio
 )paren
 suffix:semicolon
-multiline_comment|/* Enable PHY ints */
 op_star
 id|val
 op_assign
@@ -705,6 +774,9 @@ id|val
 id|u16
 id|sio
 suffix:semicolon
+r_int
+id|minten
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -734,6 +806,21 @@ c_func
 id|base_port
 )paren
 suffix:semicolon
+id|minten
+op_assign
+id|TLan_GetBit
+c_func
+(paren
+id|TLAN_NET_SIO_MINTEN
+comma
+id|sio
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|minten
+)paren
 id|TLan_ClearBit
 c_func
 (paren
@@ -825,6 +912,11 @@ comma
 id|sio
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|minten
+)paren
 id|TLan_SetBit
 c_func
 (paren
@@ -1405,9 +1497,6 @@ id|dev
 id|u16
 id|gen_ctl
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 id|u32
 id|io
 suffix:semicolon
@@ -1426,6 +1515,9 @@ id|dev-&gt;priv
 suffix:semicolon
 id|u16
 id|value
+suffix:semicolon
+id|u8
+id|sio
 suffix:semicolon
 id|io
 op_assign
@@ -1490,21 +1582,11 @@ comma
 id|MII_GC_LOOPBK
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|500000
-suffix:semicolon
-id|i
-op_increment
+l_int|50000
 )paren
-id|SLOW_DOWN_IO
 suffix:semicolon
 id|TLan_MiiWriteReg
 c_func
@@ -1574,21 +1656,51 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
 l_int|500000
-suffix:semicolon
-id|i
-op_increment
 )paren
-id|SLOW_DOWN_IO
+suffix:semicolon
+id|TLan_MiiReadReg
+c_func
+(paren
+id|io
+comma
+id|phy
+comma
+id|TLAN_TLPHY_CTL
+comma
+op_amp
+id|value
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|aui
+)paren
+id|value
+op_or_assign
+id|TLAN_TC_AUISEL
+suffix:semicolon
+r_else
+id|value
+op_and_assign
+op_complement
+id|TLAN_TC_AUISEL
+suffix:semicolon
+id|TLan_MiiWriteReg
+c_func
+(paren
+id|io
+comma
+id|phy
+comma
+id|TLAN_TLPHY_CTL
+comma
+id|value
+)paren
 suffix:semicolon
 singleline_comment|// Read Possible Latched Link Status
 id|TLan_MiiReadReg
@@ -1621,9 +1733,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|value
 op_amp
 id|MII_GS_LINK
+)paren
+op_logical_or
+id|aui
 )paren
 (brace
 id|priv-&gt;phyOnline
@@ -1686,6 +1802,30 @@ comma
 id|TLAN_TLPHY_CTL
 comma
 id|value
+)paren
+suffix:semicolon
+id|sio
+op_assign
+id|TLan_DioRead8
+c_func
+(paren
+id|io
+comma
+id|TLAN_NET_SIO
+)paren
+suffix:semicolon
+id|sio
+op_or_assign
+id|TLAN_NET_SIO_MINTEN
+suffix:semicolon
+id|TLan_DioWrite8
+c_func
+(paren
+id|io
+comma
+id|TLAN_NET_SIO
+comma
+id|sio
 )paren
 suffix:semicolon
 r_return
@@ -1780,9 +1920,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|gen_sts
 op_amp
 id|MII_GS_LINK
+)paren
+op_logical_or
+id|aui
 )paren
 (brace
 id|priv-&gt;phyOnline
@@ -1859,6 +2003,9 @@ id|dev-&gt;priv
 suffix:semicolon
 id|u16
 id|value
+suffix:semicolon
+id|u8
+id|sio
 suffix:semicolon
 id|io
 op_assign
@@ -2048,6 +2195,31 @@ op_increment
 id|SLOW_DOWN_IO
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;// Read Possible Latched Link Status&n;            TLan_MiiReadReg( io, phy, MII_GEN_STS, &amp;value ); &n;&t;&t;&t;// Read Real Link Status&n;            TLan_MiiReadReg( io, phy, MII_GEN_STS, &amp;value ); &n;&t;&t;&t;if ( value &amp; MII_GS_LINK ) {&n;&t;&t;&t;&t;priv-&gt;phyOnline = 1;&n;&t;&t;&t;&t;TLan_DioWrite8( io, TLAN_LED_REG, TLAN_LED_LINK );&n;&t;&t;&t;} else {&n;&t;&t;&t;&t;priv-&gt;phyOnline = 0;&n;&t;&t;&t;&t;TLan_DioWrite8( io, TLAN_LED_REG, 0 );&n;&t;&t;&t;}&n;&n;&t;&t;&t;// Enable Interrupts&n;            TLan_MiiReadReg( io, phy, TLAN_TLPHY_CTL, &amp;value );&n;            value |= TLAN_TC_INTEN;&n;            TLan_MiiWriteReg( io, phy, TLAN_TLPHY_CTL, value );&n;*/
+id|sio
+op_assign
+id|TLan_DioRead8
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|TLAN_NET_SIO
+)paren
+suffix:semicolon
+id|sio
+op_and_assign
+op_complement
+id|TLAN_NET_SIO_MINTEN
+suffix:semicolon
+id|TLan_DioWrite8
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|TLAN_NET_SIO
+comma
+id|sio
+)paren
+suffix:semicolon
 id|priv-&gt;phyOnline
 op_assign
 l_int|1
@@ -2488,6 +2660,7 @@ comma
 id|list-&gt;frameSize
 )paren
 suffix:semicolon
+singleline_comment|// for ( i = 0; i &lt; 10; i++ ) {
 r_for
 c_loop
 (paren
@@ -2497,7 +2670,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|10
+l_int|2
 suffix:semicolon
 id|i
 op_increment
@@ -3118,6 +3291,13 @@ id|TLAN_NET_SIO
 suffix:semicolon
 singleline_comment|//&t;10a. Other.
 singleline_comment|//&t;12. Setup the NetMask register.
+r_if
+c_cond
+(paren
+id|priv-&gt;tlanRev
+op_ge
+l_int|0x30
+)paren
 id|TLan_DioWrite8
 c_func
 (paren
@@ -3154,19 +3334,6 @@ suffix:semicolon
 op_star
 id|priv-&gt;phyCheck
 )paren
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|debug
-op_ge
-l_int|1
-)paren
-id|TLan_PhyPrint
-c_func
 (paren
 id|dev
 )paren
@@ -4110,7 +4277,18 @@ id|ack
 op_assign
 l_int|1
 suffix:semicolon
-singleline_comment|// printk( &quot;TLAN:  Handling Tx EOF&bslash;n&quot; );
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_TX
+comma
+l_string|&quot;TLAN TRANSMIT:  Handling TX EOF (Head=%d Tail=%d)&bslash;n&quot;
+comma
+id|priv-&gt;txHead
+comma
+id|priv-&gt;txTail
+)paren
+suffix:semicolon
 id|host_int
 op_assign
 l_int|0
@@ -4149,6 +4327,12 @@ l_string|&quot;TLAN:  Received interrupt for uncompleted TX frame.&bslash;n&quot
 suffix:semicolon
 )brace
 singleline_comment|// printk( &quot;Ack %d CSTAT=%hx&bslash;n&quot;, priv-&gt;txHead, head_list-&gt;cStat );
+macro_line|#if LINUX_KERNEL_VERSION &gt; 0x20100
+id|priv-&gt;stats-&gt;tx_bytes
+op_add_assign
+id|head_list-&gt;frameSize
+suffix:semicolon
+macro_line|#endif
 id|head_list-&gt;cStat
 op_assign
 id|TLAN_CSTAT_UNUSED
@@ -4177,7 +4361,18 @@ c_cond
 id|eoc
 )paren
 (brace
-singleline_comment|// printk( &quot;TLAN:  Handling Tx EOC&bslash;n&quot; );
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_TX
+comma
+l_string|&quot;TLAN TRANSMIT:  Handling TX EOC (Head=%d Tail=%d)&bslash;n&quot;
+comma
+id|priv-&gt;txHead
+comma
+id|priv-&gt;txTail
+)paren
+suffix:semicolon
 id|head_list
 op_assign
 id|priv-&gt;txList
@@ -4383,7 +4578,18 @@ r_void
 op_star
 id|t
 suffix:semicolon
-singleline_comment|// printk( &quot;TLAN:  Handling Rx EOF Head=%d Tail=%d&bslash;n&quot;, priv-&gt;rxHead, priv-&gt;rxTail );
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_RX
+comma
+l_string|&quot;TLAN RECEIVE:  Handling RX EOF (Head=%d Tail=%d)&bslash;n&quot;
+comma
+id|priv-&gt;rxHead
+comma
+id|priv-&gt;rxTail
+)paren
+suffix:semicolon
 id|host_int
 op_assign
 l_int|0
@@ -4493,6 +4699,12 @@ id|head_list-&gt;frameSize
 )paren
 suffix:semicolon
 singleline_comment|// printk( &quot; %hd %p %p&bslash;n&quot;, head_list-&gt;frameSize, skb-&gt;data, t );
+macro_line|#if LINUX_KERNEL_VERSION &gt; 0x20100
+id|priv-&gt;stats-&gt;rx_bytes
+op_add_assign
+id|head_list-&gt;frameSize
+suffix:semicolon
+macro_line|#endif
 id|memcpy
 c_func
 (paren
@@ -4582,7 +4794,18 @@ c_cond
 id|eoc
 )paren
 (brace
-singleline_comment|// printk( &quot;TLAN:  Handling Rx EOC Head=%d Tail=%d&bslash;n&quot;, priv-&gt;rxHead, priv-&gt;rxTail );
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_RX
+comma
+l_string|&quot;TLAN RECEIVE:  Handling RX EOC (Head=%d Tail=%d)&bslash;n&quot;
+comma
+id|priv-&gt;rxHead
+comma
+id|priv-&gt;rxTail
+)paren
+suffix:semicolon
 id|head_list
 op_assign
 id|priv-&gt;rxList
@@ -4721,7 +4944,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* TLan_HandleDummy */
-multiline_comment|/*************************************************************************&n;&t; *&t;TLan_HandleTxEOC&n;&t; *&n;&t; *&t;Returns:&t;1&n;&t; *&t;Parms:&t;&t;dev&t;&t;&t;Device assigned the IRQ that was raised.&n;&t; *&t;&t;&t;&t;host_int&t;The contents of the HOST_INT port.&n;&t; *&n;&t; *&t;This driver is structured to determine EOC occurances by reading the&n;&t; *&t;CSTAT member of the list structure.  Tx EOC interrupts are disabled&n;&t; *&t;via the DIO INTDIS register.&n;&t; *&n;&t; ************************************************************************/
+multiline_comment|/*************************************************************************&n;&t; *&t;TLan_HandleTxEOC&n;&t; *&n;&t; *&t;Returns:&t;1&n;&t; *&t;Parms:&t;&t;dev&t;&t;&t;Device assigned the IRQ that was raised.&n;&t; *&t;&t;&t;&t;host_int&t;The contents of the HOST_INT port.&n;&t; *&n;&t; *&t;This driver is structured to determine EOC occurances by reading the&n;&t; *&t;CSTAT member of the list structure.  Tx EOC interrupts are disabled&n;&t; *&t;via the DIO INTDIS register.  However, TLAN chips before revision 3.0&n;&t; *&t;didn&squot;t have this functionality, so process EOC events if this is the&n;&t; *&t;case.&n;&t; *&n;&t; ************************************************************************/
 DECL|function|TLan_HandleTxEOC
 id|u32
 id|TLan_HandleTxEOC
@@ -4736,20 +4959,96 @@ id|u16
 id|host_int
 )paren
 (brace
+id|TLanPrivateInfo
+op_star
+id|priv
+op_assign
+(paren
+id|TLanPrivateInfo
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|TLanList
+op_star
+id|head_list
+suffix:semicolon
+id|u32
+id|ack
+op_assign
+l_int|1
+suffix:semicolon
 id|host_int
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
+r_if
+c_cond
+(paren
+id|priv-&gt;tlanRev
+OL
+l_int|0x30
+)paren
+(brace
+id|TLAN_DBG
 c_func
 (paren
-l_string|&quot;TLAN:  Tx EOC interrupt on %s.&bslash;n&quot;
+id|TLAN_DEBUG_TX
 comma
-id|dev-&gt;name
+l_string|&quot;TLAN TRANSMIT:  Handling TX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
+comma
+id|priv-&gt;txHead
+comma
+id|priv-&gt;txTail
 )paren
 suffix:semicolon
+id|head_list
+op_assign
+id|priv-&gt;txList
+op_plus
+id|priv-&gt;txHead
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|head_list-&gt;cStat
+op_amp
+id|TLAN_CSTAT_READY
+)paren
+op_eq
+id|TLAN_CSTAT_READY
+)paren
+(brace
+id|outl
+c_func
+(paren
+id|virt_to_bus
+c_func
+(paren
+id|head_list
+)paren
+comma
+id|dev-&gt;base_addr
+op_plus
+id|TLAN_CH_PARM
+)paren
+suffix:semicolon
+id|ack
+op_or_assign
+id|TLAN_HC_GO
+suffix:semicolon
+)brace
+r_else
+(brace
+id|priv-&gt;txInProgress
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 r_return
-l_int|1
+id|ack
 suffix:semicolon
 )brace
 multiline_comment|/* TLan_HandleTxEOC */
@@ -4971,6 +5270,7 @@ id|net_sts
 op_amp
 id|TLAN_NET_STS_MIRQ
 )paren
+(brace
 (paren
 op_star
 id|priv-&gt;phyService
@@ -4979,12 +5279,26 @@ id|priv-&gt;phyService
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|debug
+)paren
+(brace
+id|TLan_PhyPrint
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+)brace
 id|TLAN_DBG
 c_func
 (paren
-l_int|1
+id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN: Status Check! %s Net_Sts=%x&bslash;n&quot;
+l_string|&quot;TLAN:  Status Check! %s Net_Sts=%x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -5000,7 +5314,7 @@ id|ack
 suffix:semicolon
 )brace
 multiline_comment|/* TLan_HandleStatusCheck */
-multiline_comment|/*************************************************************************&n;&t; *&t;TLan_HandleRxEOC&n;&t; *&n;&t; *&t;Returns:&t;1&n;&t; *&t;Parms:&t;&t;dev&t;&t;&t;Device assigned the IRQ that was raised.&n;&t; *&t;&t;&t;&t;host_int&t;The contents of the HOST_INT port.&n;&t; *&n;&t; *&t;This driver is structured to determine EOC occurances by reading the&n;&t; *&t;CSTAT member of the list structure.  Rx EOC interrupts are disabled&n;&t; *&t;via the DIO INTDIS register.&n;&t; *&n;&t; ************************************************************************/
+multiline_comment|/*************************************************************************&n;&t; *&t;TLan_HandleRxEOC&n;&t; *&n;&t; *&t;Returns:&t;1&n;&t; *&t;Parms:&t;&t;dev&t;&t;&t;Device assigned the IRQ that was raised.&n;&t; *&t;&t;&t;&t;host_int&t;The contents of the HOST_INT port.&n;&t; *&n;&t; *&t;This driver is structured to determine EOC occurances by reading the&n;&t; *&t;CSTAT member of the list structure.  Rx EOC interrupts are disabled&n;&t; *&t;via the DIO INTDIS register.  However, TLAN chips before revision 3.0&n;&t; *  didn&squot;t have this CSTAT member or a INTDIS register, so if this chip&n;&t; *&t;is pre-3.0, process EOC interrupts normally.&n;&t; *&n;&t; ************************************************************************/
 DECL|function|TLan_HandleRxEOC
 id|u32
 id|TLan_HandleRxEOC
@@ -5015,20 +5329,81 @@ id|u16
 id|host_int
 )paren
 (brace
+id|TLanPrivateInfo
+op_star
+id|priv
+op_assign
+(paren
+id|TLanPrivateInfo
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|TLanList
+op_star
+id|head_list
+suffix:semicolon
+id|u32
+id|ack
+op_assign
+l_int|1
+suffix:semicolon
 id|host_int
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
+r_if
+c_cond
+(paren
+id|priv-&gt;tlanRev
+OL
+l_int|0x30
+)paren
+(brace
+id|TLAN_DBG
 c_func
 (paren
-l_string|&quot;TLAN:  Rx EOC interrupt on %s.&bslash;n&quot;
+id|TLAN_DEBUG_RX
 comma
-id|dev-&gt;name
+l_string|&quot;TLAN RECEIVE:  Handling RX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
+comma
+id|priv-&gt;rxHead
+comma
+id|priv-&gt;rxTail
 )paren
 suffix:semicolon
+id|head_list
+op_assign
+id|priv-&gt;rxList
+op_plus
+id|priv-&gt;rxHead
+suffix:semicolon
+id|outl
+c_func
+(paren
+id|virt_to_bus
+c_func
+(paren
+id|head_list
+)paren
+comma
+id|dev-&gt;base_addr
+op_plus
+id|TLAN_CH_PARM
+)paren
+suffix:semicolon
+id|ack
+op_or_assign
+id|TLAN_HC_GO
+op_or
+id|TLAN_HC_RT
+suffix:semicolon
+id|priv-&gt;rxEocCount
+op_increment
+suffix:semicolon
+)brace
 r_return
-l_int|1
+id|ack
 suffix:semicolon
 )brace
 multiline_comment|/* TLan_HandleRxEOC */
@@ -5341,7 +5716,7 @@ op_star
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|TLan_GetStats
 c_func
@@ -5838,14 +6213,6 @@ op_amp
 id|dl_ix
 )paren
 suffix:semicolon
-id|TLAN_DBG
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;TLAN:  Probing...&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6180,9 +6547,9 @@ id|not_found
 id|TLAN_DBG
 c_func
 (paren
-l_int|1
+id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:   found: Vendor Id = 0x%hx, Device Id = 0x%hx&bslash;n&quot;
+l_string|&quot;TLAN:  found: Vendor Id = 0x%hx, Device Id = 0x%hx&bslash;n&quot;
 comma
 id|TLanDeviceList
 (braket
@@ -6292,9 +6659,9 @@ suffix:semicolon
 id|TLAN_DBG
 c_func
 (paren
-l_int|1
+id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:      Setting latency timer to max.&bslash;n&quot;
+l_string|&quot;TLAN:    Setting latency timer to max.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6323,9 +6690,9 @@ suffix:semicolon
 id|TLAN_DBG
 c_func
 (paren
-l_int|1
+id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:      IO mapping is available at %x.&bslash;n&quot;
+l_string|&quot;TLAN:    IO mapping is available at %x.&bslash;n&quot;
 comma
 op_star
 id|pci_io_base
@@ -6342,7 +6709,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN:      IO mapping not available, ignoring device.&bslash;n&quot;
+l_string|&quot;TLAN:    IO mapping not available, ignoring device.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6357,9 +6724,9 @@ id|PCI_COMMAND_MASTER
 id|TLAN_DBG
 c_func
 (paren
-l_int|1
+id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:      Bus mastering is active.&bslash;n&quot;
+l_string|&quot;TLAN:    Bus mastering is active.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6698,6 +7065,16 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|priv-&gt;tlanRev
+op_assign
+id|TLan_DioRead8
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|TLAN_DEF_REVISION
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|request_irq
@@ -6723,7 +7100,7 @@ id|err
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN:  %s: IRQ %d already in use.&bslash;n&quot;
+l_string|&quot;TLAN:  Cannot open %s because IRQ %d is already in use.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -6762,6 +7139,12 @@ c_func
 id|dev
 comma
 id|TLAN_IGNORE
+)paren
+suffix:semicolon
+id|TLan_Reset
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 id|TLan_Reset
@@ -6871,14 +7254,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|TLAN_DBG
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;TLAN:  RX GO&bslash;n&quot;
-)paren
-suffix:semicolon
 id|outl
 c_func
 (paren
@@ -6909,11 +7284,13 @@ suffix:semicolon
 id|TLAN_DBG
 c_func
 (paren
-l_int|1
+id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  Device %s opened.&bslash;n&quot;
+l_string|&quot;TLAN:  Device %s opened.  Revision = %x&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|priv-&gt;tlanRev
 )paren
 suffix:semicolon
 r_return
@@ -6959,7 +7336,6 @@ suffix:semicolon
 r_int
 id|pad
 suffix:semicolon
-singleline_comment|// printk( &quot;Entering StartTx&bslash;n&quot; );
 r_if
 c_cond
 (paren
@@ -6967,6 +7343,16 @@ op_logical_neg
 id|priv-&gt;phyOnline
 )paren
 (brace
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_TX
+comma
+l_string|&quot;TLAN TRANSMIT:  %s PHY is not ready&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -6993,12 +7379,24 @@ op_ne
 id|TLAN_CSTAT_UNUSED
 )paren
 (brace
-singleline_comment|// printk( &quot;TLAN:  %s TX is busy, Head=%d Tail=%d&bslash;n&quot;, dev-&gt;name, priv-&gt;txHead, priv-&gt;txTail );
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_TX
+comma
+l_string|&quot;TLAN TRANSMIT:  %s is busy (Head=%d Tail=%d)&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|priv-&gt;txHead
+comma
+id|priv-&gt;txTail
+)paren
+suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
-singleline_comment|// printk( &quot;TLAN:   Tx is busy.&bslash;n&quot;);
 id|priv-&gt;txBusyCount
 op_increment
 suffix:semicolon
@@ -7166,7 +7564,16 @@ op_plus
 id|TLAN_HOST_INT
 )paren
 suffix:semicolon
-singleline_comment|// printk(&quot;TLAN: Sending GO for 0%d&bslash;n&quot;, priv-&gt;txTail );
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_TX
+comma
+l_string|&quot;TLAN TRANSMIT:  Starting TX on buffer %d&bslash;n&quot;
+comma
+id|priv-&gt;txTail
+)paren
+suffix:semicolon
 id|outl
 c_func
 (paren
@@ -7196,10 +7603,16 @@ suffix:semicolon
 )brace
 r_else
 (brace
-singleline_comment|// printk(&quot;TLAN: Adding 0%d&bslash;n&quot;, priv-&gt;txTail );
-singleline_comment|// Assign previous list to point to this one.  If previous has
-singleline_comment|// already been read, the EOC check in the TX EOF interrupt handler
-singleline_comment|// will start another transfer.
+id|TLAN_DBG
+c_func
+(paren
+id|TLAN_DEBUG_TX
+comma
+l_string|&quot;TLAN TRANSMIT:  Adding buffer %d to TX channel&bslash;n&quot;
+comma
+id|priv-&gt;txTail
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7276,7 +7689,6 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-singleline_comment|// printk( &quot;Leaving StartTx&bslash;n&quot; );
 r_return
 l_int|0
 suffix:semicolon
@@ -7332,11 +7744,9 @@ c_cond
 (paren
 id|dev-&gt;interrupt
 )paren
-id|TLAN_DBG
+id|printk
 c_func
 (paren
-l_int|1
-comma
 l_string|&quot;TLAN:   Re-entering interrupt handler for %s: %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -7507,7 +7917,7 @@ suffix:semicolon
 id|TLAN_DBG
 c_func
 (paren
-l_int|1
+id|TLAN_DEBUG_GNRL
 comma
 l_string|&quot;TLAN:   Device %s closed.&bslash;n&quot;
 comma
@@ -7524,7 +7934,7 @@ multiline_comment|/* TLan_Close */
 multiline_comment|/*************************************************************************&n;&t; *&t;TLan_GetStats&n;&t; *  &n;&t; *  Returns:&t;A pointer to the device&squot;s statistics structure.&n;&t; *&t;Parms:&t;&t;dev&t;&t;The device structure to return the stats for.&n;&t; *&n;&t; *&t;This function updates the devices statistics by reading the TLAN&n;&t; *&t;chip&squot;s onboard registers.  Then it returns the address of the&n;&t; *&t;statistics structure.&n;&t; *&n;&t; ************************************************************************/
 DECL|function|TLan_GetStats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|TLan_GetStats
 c_func
@@ -7557,27 +7967,38 @@ comma
 id|TLAN_RECORD
 )paren
 suffix:semicolon
-id|printk
+id|TLAN_DBG
 c_func
 (paren
-l_string|&quot;TLAN:  %s Rx EOC Count: %d&bslash;n&quot;
+id|TLAN_DEBUG_RX
+comma
+l_string|&quot;TLAN RECEIVE:  %s EOC count = %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|priv-&gt;rxEocCount
 )paren
 suffix:semicolon
-id|printk
+id|TLAN_DBG
 c_func
 (paren
-l_string|&quot;TLAN:  %s Tx Busy Count: %d&bslash;n&quot;
+id|TLAN_DEBUG_TX
+comma
+l_string|&quot;TLAN TRANSMIT:  %s Busy count = %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|priv-&gt;txBusyCount
 )paren
 suffix:semicolon
-singleline_comment|// printk( &quot;TLAN:   Got stats for %s.&bslash;n&quot;, dev-&gt;name );
+r_if
+c_cond
+(paren
+id|debug
+op_amp
+id|TLAN_DEBUG_GNRL
+)paren
+(brace
 id|TLan_PrintDio
 c_func
 (paren
@@ -7590,6 +8011,15 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|debug
+op_amp
+id|TLAN_DEBUG_LIST
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -7642,6 +8072,7 @@ comma
 id|i
 )paren
 suffix:semicolon
+)brace
 r_return
 (paren
 op_amp

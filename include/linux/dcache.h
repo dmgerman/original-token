@@ -172,12 +172,6 @@ id|list_head
 id|d_hash
 suffix:semicolon
 multiline_comment|/* lookup hash list */
-DECL|member|d_alias
-r_struct
-id|list_head
-id|d_alias
-suffix:semicolon
-multiline_comment|/* inode alias list */
 DECL|member|d_lru
 r_struct
 id|list_head
@@ -255,12 +249,26 @@ id|qstr
 op_star
 )paren
 suffix:semicolon
+DECL|member|d_delete
+r_void
+(paren
+op_star
+id|d_delete
+)paren
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* the dentry parameter passed to d_hash and d_compare is the parent&n; * directory of the entries to be compared. It is used in case these&n; * functions need any directory specific information for determining&n; * equivalency classes.  Using the dentry itself might not work, as it&n; * might be a negative dentry which has no information associated with&n; * it */
 multiline_comment|/* d_flags entries */
 DECL|macro|DCACHE_AUTOFS_PENDING
 mdefine_line|#define DCACHE_AUTOFS_PENDING 0x0001    /* autofs: &quot;under construction&quot; */
+DECL|macro|DCACHE_NFSFS_RENAMED
+mdefine_line|#define DCACHE_NFSFS_RENAMED  0x0002    /* this dentry has been &quot;silly&n;&t;&t;&t;&t;&t; * renamed&quot; and has to be&n;&t;&t;&t;&t;&t; * deleted on the last dput()&n;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n; * d_drop() unhashes the entry from the parent&n; * dentry hashes, so that it won&squot;t be found through&n; * a VFS lookup any more. Note that this is different&n; * from deleting the dentry - d_delete will try to&n; * mark the dentry negative if possible, giving a&n; * successful _negative_ lookup, while d_drop will&n; * just make the cache lookup fail.&n; *&n; * d_drop() is used mainly for stuff that wants&n; * to invalidate a dentry for some reason (NFS&n; * timeouts or autofs deletes).&n; */
 DECL|function|d_drop
 r_static
@@ -508,8 +516,5 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is ugly. The inode:dentry relationship is a 1:n&n; * relationship, so we have to return one (random) dentry&n; * from the alias list. We select the first one..&n; */
-DECL|macro|i_dentry
-mdefine_line|#define i_dentry(inode) &bslash;&n;&t;list_entry((inode)-&gt;i_dentry.next, struct dentry, d_alias)
 macro_line|#endif&t;/* __LINUX_DCACHE_H */
 eof

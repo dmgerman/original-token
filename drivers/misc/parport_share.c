@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_share.c,v 1.1.2.2 1997/04/18 15:00:52 phil Exp $&n; * Parallel-port resource manager code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* Parallel-port resource manager code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -7,6 +7,9 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 DECL|macro|PARPORT_PARANOID
 macro_line|#undef PARPORT_PARANOID
 DECL|variable|portlist
@@ -42,6 +45,21 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_KERNELD
+r_if
+c_cond
+(paren
+id|portlist
+op_eq
+l_int|NULL
+)paren
+id|request_module
+c_func
+(paren
+l_string|&quot;parport_lowlevel&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|portlist
 suffix:semicolon
@@ -317,9 +335,20 @@ op_eq
 id|port
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
 id|portlist
 op_assign
 id|port-&gt;next
+)paren
+op_eq
+l_int|NULL
+)paren
+id|portlist_tail
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 r_else
@@ -766,6 +795,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|port-&gt;ops
+op_member_access_from_pointer
+id|inc_use_count
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|tmp
 suffix:semicolon
@@ -877,6 +913,13 @@ id|dev
 )paren
 suffix:semicolon
 id|dec_parport_count
+c_func
+(paren
+)paren
+suffix:semicolon
+id|port-&gt;ops
+op_member_access_from_pointer
+id|dec_use_count
 c_func
 (paren
 )paren

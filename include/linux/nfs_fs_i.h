@@ -42,13 +42,6 @@ r_int
 r_int
 id|attrtimeo
 suffix:semicolon
-multiline_comment|/*&n;&t; * This is to support the clandestine rename on unlink.&n;&t; * Instead of the directory inode, we might as well keep&n;&t; * its NFS FH, but that requires a kmalloc.&n;&t; */
-DECL|member|silly_inode
-r_struct
-id|inode
-op_star
-id|silly_inode
-suffix:semicolon
 multiline_comment|/*&n;&t; * This is the list of dirty unwritten pages.&n;&t; * NFSv3 will want to add a list for written but uncommitted&n;&t; * pages.&n;&t; */
 DECL|member|writeback
 r_struct

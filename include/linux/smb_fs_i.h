@@ -1,67 +1,35 @@
-multiline_comment|/*&n; *  smb_fs_i.h&n; *&n; *  Copyright (C) 1995 by Paal-Kr. Engstad and Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  smb_fs_i.h&n; *&n; *  Copyright (C) 1995 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
 macro_line|#ifndef _LINUX_SMB_FS_I
 DECL|macro|_LINUX_SMB_FS_I
 mdefine_line|#define _LINUX_SMB_FS_I
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/smb.h&gt;
-DECL|enum|smb_inode_state
-r_enum
-id|smb_inode_state
-(brace
-DECL|enumerator|SMB_INODE_VALID
-id|SMB_INODE_VALID
-op_assign
-l_int|19
-comma
-multiline_comment|/* Inode currently in use */
-DECL|enumerator|SMB_INODE_LOOKED_UP
-id|SMB_INODE_LOOKED_UP
-comma
-multiline_comment|/* directly before iget */
-DECL|enumerator|SMB_INODE_CACHED
-id|SMB_INODE_CACHED
-comma
-multiline_comment|/* in a path to an inode which is in use */
-DECL|enumerator|SMB_INODE_INVALID
-id|SMB_INODE_INVALID
-)brace
-suffix:semicolon
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/*&n; * smb fs inode data (in memory only)&n; */
 DECL|struct|smb_inode_info
 r_struct
 id|smb_inode_info
 (brace
-DECL|member|state
-r_enum
-id|smb_inode_state
-id|state
-suffix:semicolon
-DECL|member|nused
+multiline_comment|/*&n;&t; * file handles are local to a connection. A file is open if&n;&t; * (open == generation).&n;&t; */
+DECL|member|open
 r_int
-id|nused
+r_int
+id|open
 suffix:semicolon
-multiline_comment|/* for directories:&n;                                   number of references in memory */
-DECL|member|dir
-r_struct
-id|smb_inode_info
-op_star
-id|dir
+DECL|member|fileid
+id|__u16
+id|fileid
 suffix:semicolon
-DECL|member|next
-DECL|member|prev
-r_struct
-id|smb_inode_info
-op_star
-id|next
-comma
-op_star
-id|prev
+multiline_comment|/* What id to handle a file with? */
+DECL|member|attr
+id|__u16
+id|attr
 suffix:semicolon
-DECL|member|finfo
-r_struct
-id|smb_dirent
-id|finfo
+multiline_comment|/* Attribute fields, DOS value */
+DECL|member|access
+id|__u16
+id|access
 suffix:semicolon
+multiline_comment|/* Access bits. */
 )brace
 suffix:semicolon
 macro_line|#endif

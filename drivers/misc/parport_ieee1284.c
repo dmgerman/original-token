@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$ &n; * IEEE-1284 implementation for parport.&n; *&n; * Authors: Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *          Carsten Gross &lt;carsten@sol.wohnheim.uni-ulm.de&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; */
+multiline_comment|/* IEEE-1284 implementation for parport.&n; *&n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Carsten Gross &lt;carsten@sol.wohnheim.uni-ulm.de&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
