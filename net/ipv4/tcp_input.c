@@ -2632,7 +2632,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Maybe we can take some stuff off of the write queue,&n;&t; * and put it onto the xmit queue.&n;&t; * FIXME: (?) There is bizarre case being tested here, to check if&n;&t; * the data at the head of the queue ends before the start of&n;&t; * the sequence we already ACKed. This does not appear to be&n;&t; * a case that can actually occur. Why are we testing it?&n;&t; */
+multiline_comment|/*&n;&t; * Maybe we can take some stuff off of the write queue,&n;&t; * and put it onto the xmit queue.&n;&t; * There is bizarre case being tested here, to check if&n;&t; * the data at the head of the queue ends before the start of&n;&t; * the sequence we already ACKed. This is not an error,&n;&t; * it can occur when we send a packet directly off of the write_queue&n;&t; * in a zero window probe.&n;&t; */
 r_if
 c_cond
 (paren

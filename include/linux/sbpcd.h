@@ -70,14 +70,20 @@ multiline_comment|/* may be freely adjusted, f.e. 75 (= 1 sec.), at   */
 multiline_comment|/* runtime by use of the CDROMAUDIOBUFSIZ ioctl.    */
 DECL|macro|READ_AUDIO
 mdefine_line|#define READ_AUDIO 0
+multiline_comment|/* Optimizations for the Teac CD-55A drive read performance.&n; * SBP_TEAC_SPEED can be changed here, or one can set the &n; * variable &quot;teac&quot; when loading as a module.&n; * Valid settings are:&n; *   0 - very slow - the recommended &quot;DISTRIBUTION 1&quot; setup.&n; *   1 - 2x performance with little overhead. No busy waiting.&n; *   2 - 4x performance with 5ms overhead per read. Busy wait.&n; *&n; * Setting SBP_TEAC_SPEED or the variable &squot;teac&squot; to anything&n; * other than 0 may cause problems. If you run into them, first&n; * change SBP_TEAC_SPEED back to 0 and see if your drive responds&n; * normally. If yes, you are &quot;allowed&quot; to report your case - to help&n; * me with the driver, not to solve your hassle. Don&#xfffd;t mail if you&n; * simply are stuck into your own &quot;tuning&quot; experiments, you know?&n; */
+DECL|macro|SBP_TEAC_SPEED
+mdefine_line|#define SBP_TEAC_SPEED 1
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
-multiline_comment|/*&n; * nothing to change below here if you are not experimenting&n; */
+multiline_comment|/*&n; * nothing to change below here if you are not fully aware what you&squot;re doing&n; */
 macro_line|#ifndef _LINUX_SBPCD_H
 DECL|macro|_LINUX_SBPCD_H
 mdefine_line|#define _LINUX_SBPCD_H
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
+multiline_comment|/*&n; * driver&squot;s own read_ahead, data mode&n; */
+DECL|macro|SBP_BUFFER_FRAMES
+mdefine_line|#define SBP_BUFFER_FRAMES 8 
 DECL|macro|LONG_TIMING
 mdefine_line|#define LONG_TIMING 0 /* test against timeouts with &quot;gold&quot; CDs on CR-521 */
 DECL|macro|FUTURE
@@ -90,11 +96,19 @@ DECL|macro|SPEA_TEST
 mdefine_line|#define SPEA_TEST 0
 DECL|macro|TEST_STI
 mdefine_line|#define TEST_STI 0
+DECL|macro|OLD_BUSY
+mdefine_line|#define OLD_BUSY 0
 DECL|macro|PATH_CHECK
 macro_line|#undef PATH_CHECK
 macro_line|#ifndef SOUND_BASE
 DECL|macro|SOUND_BASE
 mdefine_line|#define SOUND_BASE 0
+macro_line|#endif
+macro_line|#if DISTRIBUTION
+DECL|macro|SBP_TEAC_SPEED
+macro_line|#undef SBP_TEAC_SPEED
+DECL|macro|SBP_TEAC_SPEED
+mdefine_line|#define SBP_TEAC_SPEED 0
 macro_line|#endif
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * DDI interface definitions&n; * &quot;invented&quot; by Fred N. van Kempen..&n; */

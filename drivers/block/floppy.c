@@ -18415,6 +18415,11 @@ comma
 id|FLOPPY_IRQ
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+id|usage_count
+op_decrement
+suffix:semicolon
 r_return
 op_minus
 l_int|1
@@ -18441,6 +18446,11 @@ id|fd_free_irq
 c_func
 (paren
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+id|usage_count
+op_decrement
 suffix:semicolon
 r_return
 op_minus
@@ -18530,8 +18540,6 @@ r_return
 suffix:semicolon
 )brace
 id|INT_ON
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|fd_disable_dma
 c_func
@@ -18699,6 +18707,8 @@ l_string|&quot;task queue still active&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 r_extern

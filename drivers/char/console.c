@@ -6523,10 +6523,9 @@ id|c
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/* If the original code was &lt; 32 we only allow a&n;&t;&t; * glyph to be displayed if the code is not normally&n;&t;&t; * used (such as for cursor movement) or if the&n;&t;&t; * disp_ctrl mode has been explicitly enabled.&n;&t;&t; * Note: ESC is *never* allowed to be displayed as&n;&t;&t; * that would disable all escape sequences!&n;&t;&t; * To display font position 0x1B, go into UTF mode&n;&t;&t; * and display character U+F01B, or change the mapping.&n;&t;&t; */
+multiline_comment|/* If the original code was a control character we&n;                 * only allow a glyph to be displayed if the code is&n;                 * not normally used (such as for cursor movement) or&n;                 * if the disp_ctrl mode has been explicitly enabled.&n;                 * Certain characters (as given by the CTRL_ALWAYS&n;                 * bitmap) are always displayed as control characters,&n;                 * as the console would be pretty useless without&n;                 * them; to display an arbitrary font position use the&n;                 * direct-to-font zone in UTF-8 mode.&n;                 */
 id|ok
 op_assign
-(paren
 id|tc
 op_logical_and
 (paren
@@ -6557,6 +6556,13 @@ l_int|1
 )paren
 )paren
 )paren
+op_logical_and
+(paren
+id|c
+op_ne
+l_int|127
+op_logical_or
+id|disp_ctrl
 )paren
 suffix:semicolon
 r_if
@@ -6587,7 +6593,7 @@ op_minus
 l_int|4
 )paren
 (brace
-multiline_comment|/* If we got -4 (not found) then see if we have&n;&t;&t;&t;       defined a replacement character (U+FFFD) */
+multiline_comment|/* If we got -4 (not found) then see if we have&n;                                   defined a replacement character (U+FFFD) */
 id|tc
 op_assign
 id|conv_uni_to_pc

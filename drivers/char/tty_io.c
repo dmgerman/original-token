@@ -5684,7 +5684,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|tty-&gt;read_wait
+)paren
 )paren
 id|tty-&gt;minimum_to_wake
 op_assign
@@ -5724,7 +5729,12 @@ op_logical_neg
 id|tty-&gt;fasync
 op_logical_and
 op_logical_neg
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|tty-&gt;read_wait
+)paren
 )paren
 id|tty-&gt;minimum_to_wake
 op_assign

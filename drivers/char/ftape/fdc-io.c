@@ -1190,7 +1190,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|wait_intr
+)paren
 )paren
 (brace
 id|TRACE

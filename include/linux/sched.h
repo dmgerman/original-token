@@ -743,9 +743,9 @@ mdefine_line|#define PF_DUMPCORE&t;0x00000200&t;/* dumped core */
 DECL|macro|PF_SIGNALED
 mdefine_line|#define PF_SIGNALED&t;0x00000400&t;/* killed by a signal */
 DECL|macro|PF_STARTING
-mdefine_line|#define PF_STARTING&t;0x00000100&t;/* being created */
+mdefine_line|#define PF_STARTING&t;0x00000002&t;/* being created */
 DECL|macro|PF_EXITING
-mdefine_line|#define PF_EXITING&t;0x00000200&t;/* getting shut down */
+mdefine_line|#define PF_EXITING&t;0x00000004&t;/* getting shut down */
 DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* Process used the FPU this quantum (SMP only) */
 DECL|macro|PF_DTRACE

@@ -3314,7 +3314,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|wait_intr
+)paren
 )paren
 (brace
 r_if

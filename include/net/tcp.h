@@ -584,6 +584,22 @@ id|sock
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|tcp_shrink_skb
+c_func
+(paren
+r_struct
+id|sock
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+comma
+id|u32
+)paren
+suffix:semicolon
 multiline_comment|/* tcp_input.c */
 r_extern
 r_void
