@@ -369,9 +369,11 @@ id|Printk
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;umsdos_rlookup_x: setting up setup_dir_inode %lu...&bslash;n&quot;
+l_string|&quot;umsdos_rlookup_x: patch_dentry_inode %s/%s&bslash;n&quot;
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 )paren
 )paren
 suffix:semicolon

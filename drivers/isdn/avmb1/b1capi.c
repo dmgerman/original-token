@@ -4861,24 +4861,19 @@ op_ne
 id|CARD_RUNNING
 )paren
 (brace
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|HZ
-op_div
-l_int|10
-suffix:semicolon
-multiline_comment|/* 0.1 sec */
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|HZ
+op_div
+l_int|10
 )paren
 suffix:semicolon
+multiline_comment|/* 0.1 sec */
 r_if
 c_cond
 (paren

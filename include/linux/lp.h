@@ -28,7 +28,8 @@ DECL|macro|LP_ERR
 mdefine_line|#define LP_ERR   0x0020
 DECL|macro|LP_ABORT
 mdefine_line|#define LP_ABORT 0x0040
-macro_line|#if 0
+macro_line|#ifdef LP_NEED_CAREFUL
+DECL|macro|LP_CAREFUL
 mdefine_line|#define LP_CAREFUL 0x0080
 macro_line|#endif
 DECL|macro|LP_ABORTOPEN
@@ -36,9 +37,9 @@ mdefine_line|#define LP_ABORTOPEN 0x0100
 multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command as well.&n; */
 DECL|macro|LP_INIT_CHAR
 mdefine_line|#define LP_INIT_CHAR 1000
-multiline_comment|/* The parallel port specs apparently say that there needs to be&n; * a .5usec wait before and after the strobe.&n; */
+multiline_comment|/* The parallel port specs apparently say that there needs to be&n; * a .5usec wait before and after the strobe.  Since there are wildly&n; * different computers running linux, I can&squot;t come up with a perfect&n; * value so if 20 is not good for you use `tunelp /dev/lp? -w ?`.&n; * You can also set it to 0 if your printer handle that.&n; */
 DECL|macro|LP_INIT_WAIT
-mdefine_line|#define LP_INIT_WAIT 1
+mdefine_line|#define LP_INIT_WAIT 20
 multiline_comment|/* This is the amount of time that the driver waits for the printer to&n; * catch up when the printer&squot;s buffer appears to be filled.  If you&n; * want to tune this and have a fast printer (i.e. HPIIIP), decrease&n; * this number, and if you have a slow printer, increase this number.&n; * This is in hundredths of a second, the default 2 being .05 second.&n; * Or use the tunelp(8) command, which is especially nice if you want&n; * change back and forth between character and graphics printing, which&n; * are wildly different...&n; */
 DECL|macro|LP_INIT_TIME
 mdefine_line|#define LP_INIT_TIME 2
@@ -211,13 +212,6 @@ id|irq_missed
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|polled
-r_int
-r_int
-id|polled
-suffix:colon
-l_int|1
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The following constants describe the various signals of the printer port&n; * hardware.  Note that the hardware inverts some signals and that some&n; * signals are active low.  An example is LP_STROBE, which must be programmed&n; * with 1 for being active and 0 for being inactive, because the strobe signal&n; * gets inverted, but it is also active low.&n; */
@@ -250,7 +244,7 @@ multiline_comment|/*&n; * This is the port delay time, in microseconds.&n; * It 
 DECL|macro|LP_DELAY
 mdefine_line|#define LP_DELAY &t;50
 DECL|macro|LP_POLLED
-mdefine_line|#define LP_POLLED(minor) (lp_table[(minor)].polled)
+mdefine_line|#define LP_POLLED(minor) (lp_table[(minor)].dev-&gt;port-&gt;irq == PARPORT_IRQ_NONE)
 DECL|macro|LP_PREEMPTED
 mdefine_line|#define LP_PREEMPTED(minor) (lp_table[(minor)].dev-&gt;port-&gt;waithead != NULL)
 multiline_comment|/*&n; * function prototypes&n; */

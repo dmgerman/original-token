@@ -2952,10 +2952,9 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
+id|schedule_timeout
+c_func
+(paren
 (paren
 l_int|5
 op_star
@@ -2965,10 +2964,6 @@ l_int|99
 )paren
 op_div
 l_int|100
-suffix:semicolon
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
 id|retries

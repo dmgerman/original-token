@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.53 1998/09/15 02:11:39 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.55 1998/11/07 11:55:42 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 DECL|variable|sysctl_tcp_syn_retries
 r_int
@@ -719,7 +719,7 @@ id|sk-&gt;sock_readers
 )paren
 )paren
 (brace
-multiline_comment|/* Try again in second. */
+multiline_comment|/* Try again later. */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -728,6 +728,8 @@ comma
 id|TIME_PROBE0
 comma
 id|HZ
+op_div
+l_int|5
 )paren
 suffix:semicolon
 r_return
@@ -905,6 +907,24 @@ c_func
 id|sk
 comma
 id|TCP_CLOSE
+)paren
+suffix:semicolon
+id|sk-&gt;shutdown
+op_assign
+id|SHUTDOWN_MASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;dead
+)paren
+id|sk
+op_member_access_from_pointer
+id|state_change
+c_func
+(paren
+id|sk
 )paren
 suffix:semicolon
 )brace
@@ -1660,7 +1680,7 @@ id|sk-&gt;sock_readers
 )paren
 )paren
 (brace
-multiline_comment|/* Try again in a second. */
+multiline_comment|/* Try again later */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -1669,6 +1689,8 @@ comma
 id|TIME_RETRANS
 comma
 id|HZ
+op_div
+l_int|20
 )paren
 suffix:semicolon
 r_return
@@ -1778,13 +1800,19 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* remember window where we lost&n;&t;&t; * &quot;one half of the current window but at least 2 segments&quot;&n;&t;&t; */
+multiline_comment|/* Remember window where we lost:&n;&t;&t; * &quot;one half of the current window but at least 2 segments&quot;&n;&t;&t; *&n;&t;&t; * Here &quot;current window&quot; means the effective one, which&n;&t;&t; * means it must be an accurate representation of our current&n;&t;&t; * sending rate _and_ the snd_wnd.&n;&t;&t; */
 id|tp-&gt;snd_ssthresh
 op_assign
 id|max
 c_func
 (paren
+id|min
+c_func
+(paren
+id|tp-&gt;snd_wnd
+comma
 id|tp-&gt;snd_cwnd
+)paren
 op_rshift
 l_int|1
 comma

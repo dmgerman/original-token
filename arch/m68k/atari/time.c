@@ -1345,15 +1345,10 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|HWCLK_POLL_INTERVAL
-suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|HWCLK_POLL_INTERVAL
 )paren
 suffix:semicolon
 )brace

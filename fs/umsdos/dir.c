@@ -77,7 +77,6 @@ suffix:semicolon
 )brace
 )brace
 DECL|variable|umsdos_dentry_operations
-r_static
 r_struct
 id|dentry_operations
 id|umsdos_dentry_operations
@@ -318,15 +317,16 @@ op_logical_neg
 id|internal_read
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * We don&squot;t need to simulate this pseudo directory&n;&t;&t; * when umsdos_readdir_x is called for internal operation&n;&t;&t; * of umsdos. This is why dirent_in_fs is tested&n;&t;&t; */
+multiline_comment|/* #Specification: pseudo root / directory /DOS&n;&t;&t; * When umsdos operates in pseudo root mode (C:&bslash;linux is the&n;&t;&t; * linux root), it simulate a directory /DOS which points to&n;&t;&t; * the real root of the file system.&n;&t;&t; */
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_readdir_x: what UMSDOS_SPECIAL_DIRFPOS /mn/?&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;umsdos_readdir_x: pseudo_root thing UMSDOS_SPECIAL_DIRFPOS&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We don&squot;t need to simulate this pseudo directory&n;&t;&t; * when umsdos_readdir_x is called for internal operation&n;&t;&t; * of umsdos. This is why dirent_in_fs is tested&n;&t;&t; */
-multiline_comment|/* #Specification: pseudo root / directory /DOS&n;&t;&t; * When umsdos operates in pseudo root mode (C:&bslash;linux is the&n;&t;&t; * linux root), it simulate a directory /DOS which points to&n;&t;&t; * the real root of the file system.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1401,6 +1401,14 @@ id|dentry
 )paren
 (brace
 multiline_comment|/* #Specification: pseudo root / lookup(DOS)&n;&t;&t; * A lookup of DOS in the pseudo root will always succeed&n;&t;&t; * and return the inode of the real root.&n;&t;&t; */
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;umsdos_lookup_x: following /DOS&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|inode
 op_assign
 id|saved_root-&gt;d_inode
@@ -1675,8 +1683,7 @@ multiline_comment|/*&n;&t;&t; * This has to be allowed for resolving hard links&
 id|printk
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;umsdos_lookup_x: untested, inode == Pseudo_root&bslash;n&quot;
+l_string|&quot;umsdos_lookup_x: skipping DOS/linux&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -1715,6 +1722,8 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|dret
+op_logical_and
 id|dret
 op_ne
 id|dentry

@@ -37,8 +37,8 @@ DECL|macro|IFF_PORTSEL
 mdefine_line|#define IFF_PORTSEL&t;0x2000          /* can set media type&t;&t;*/
 DECL|macro|IFF_AUTOMEDIA
 mdefine_line|#define IFF_AUTOMEDIA&t;0x4000&t;&t;/* auto media select active&t;*/
-DECL|macro|IFF_NODYNARP
-mdefine_line|#define IFF_NODYNARP&t;0x8000&t;&t;/* use static ARP only (HIPPI)&t;*/
+DECL|macro|IFF_DYNAMIC
+mdefine_line|#define IFF_DYNAMIC&t;0x8000&t;&t;/* dialup device with changing addresses*/
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The ifaddr structure contains information about one address&n; * of an interface.  They are maintained by the different address&n; * families, are allocated and attached when an address is set,&n; * and are linked together so all addresses for an interface can&n; * be located.&n; */
 DECL|struct|ifaddr

@@ -4110,11 +4110,11 @@ id|IFF_RUNNING
 op_or
 id|IFF_NOARP
 op_or
-id|IFF_NODYNARP
-op_or
 id|IFF_SLAVE
 op_or
 id|IFF_MASTER
+op_or
+id|IFF_DYNAMIC
 op_or
 id|IFF_MULTICAST
 op_or

@@ -2046,21 +2046,17 @@ id|inode-&gt;i_dev
 )paren
 (brace
 macro_line|#if 0
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
+id|interruptible_sleep_on_timeout
+c_func
+(paren
+op_amp
+id|inode-&gt;i_wait
+comma
 l_int|10
 op_star
 id|HZ
 op_div
 l_int|1000
-suffix:semicolon
-id|interruptible_sleep_on
-c_func
-(paren
-op_amp
-id|inode-&gt;i_wait
 )paren
 suffix:semicolon
 macro_line|#else

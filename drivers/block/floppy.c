@@ -7246,6 +7246,11 @@ op_eq
 l_int|0
 )paren
 (brace
+r_int
+id|max_sensei
+op_assign
+l_int|4
+suffix:semicolon
 r_do
 (brace
 id|output_byte
@@ -7276,6 +7281,9 @@ id|inr
 )paren
 suffix:semicolon
 )brace
+id|max_sensei
+op_decrement
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -7295,6 +7303,8 @@ op_logical_and
 id|inr
 op_eq
 l_int|2
+op_logical_and
+id|max_sensei
 )paren
 suffix:semicolon
 )brace

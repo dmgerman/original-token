@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.133 1998/10/21 05:38:53 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.136 1998/11/07 14:36:18 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1952,7 +1952,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* This is Jacobson&squot;s slow start and congestion avoidance. &n; * SIGCOMM &squot;88, p. 328.&n; *&n; * FIXME: What happens when the congestion window gets larger&n; * than the maximum receiver window by some large factor&n; * Suppose the pipeline never looses packets for a long&n; * period of time, then traffic increases causing packet loss.&n; * The congestion window should be reduced, but what it should&n; * be reduced to is not clear, since 1/2 the old window may&n; * still be larger than the maximum sending rate we ever achieved.&n; */
+multiline_comment|/* This is Jacobson&squot;s slow start and congestion avoidance. &n; * SIGCOMM &squot;88, p. 328.&n; */
 DECL|function|tcp_cong_avoid
 r_static
 r_void
@@ -5886,7 +5886,7 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
-multiline_comment|/* This also takes care of updating the window.&n;&t; * This if statement needs to be simplified.&n;&t; *&n;&t; * Rules for delaying an ack:&n;&t; *      - delay time &lt;= 0.5 HZ&n;&t; *      - we don&squot;t have a window update to send&n;&t; *      - must send at least every 2 full sized packets&n;&t; *&t;- must send an ACK if we have any SACKs&n;&t; *&n;&t; * With an extra heuristic to handle loss of packet&n;&t; * situations and also helping the sender leave slow&n;&t; * start in an expediant manner.&n;&t; */
+multiline_comment|/* This also takes care of updating the window.&n;&t; * This if statement needs to be simplified.&n;&t; *&n;&t; * Rules for delaying an ack:&n;&t; *      - delay time &lt;= 0.5 HZ&n;&t; *      - we don&squot;t have a window update to send&n;&t; *      - must send at least every 2 full sized packets&n;&t; *&t;- must send an ACK if we have any out of order data&n;&t; *&n;&t; * With an extra heuristic to handle loss of packet&n;&t; * situations and also helping the sender leave slow&n;&t; * start in an expediant manner.&n;&t; */
 multiline_comment|/* Two full frames received or... */
 r_if
 c_cond
@@ -5917,11 +5917,16 @@ c_func
 id|tp
 )paren
 op_logical_or
-multiline_comment|/* We have pending SACKs */
+multiline_comment|/* We have out of order data */
 (paren
-id|tp-&gt;sack_ok
-op_logical_and
-id|tp-&gt;num_sacks
+id|skb_peek
+c_func
+(paren
+op_amp
+id|tp-&gt;out_of_order_queue
+)paren
+op_ne
+l_int|NULL
 )paren
 )paren
 (brace
@@ -6341,10 +6346,25 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Now continue with the receive queue if it wasn&squot;t enough */
+multiline_comment|/* Now continue with the receive queue if it wasn&squot;t enough.&n;&t; * But only do this if we are really being abused.&n;&t; */
 r_while
 c_loop
 (paren
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sk-&gt;rmem_alloc
+)paren
+op_ge
+(paren
+id|sk-&gt;rcvbuf
+op_star
+l_int|2
+)paren
+)paren
+op_logical_and
 (paren
 id|skb
 op_assign
@@ -6466,20 +6486,6 @@ c_func
 (paren
 id|skb
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;rmem_alloc
-)paren
-op_le
-id|sk-&gt;rcvbuf
-)paren
-r_break
 suffix:semicolon
 )brace
 r_return

@@ -189,6 +189,9 @@ suffix:semicolon
 r_else
 (brace
 r_int
+id|timeout
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -220,10 +223,8 @@ comma
 id|ticks
 )paren
 suffix:semicolon
-id|current-&gt;timeout
+id|timeout
 op_assign
-id|jiffies
-op_plus
 id|ticks
 suffix:semicolon
 id|current-&gt;state
@@ -251,9 +252,12 @@ op_ne
 id|TASK_RUNNING
 )paren
 (brace
-id|schedule
+id|timeout
+op_assign
+id|schedule_timeout
 c_func
 (paren
+id|timeout
 )paren
 suffix:semicolon
 )brace
@@ -284,9 +288,7 @@ multiline_comment|/* exit on signal */
 r_while
 c_loop
 (paren
-id|current-&gt;timeout
-OG
-l_int|0
+id|timeout
 )paren
 suffix:semicolon
 id|restore_flags

@@ -2295,9 +2295,6 @@ r_struct
 id|sock
 op_star
 id|sk
-comma
-id|u32
-id|cur_win
 )paren
 suffix:semicolon
 multiline_comment|/* Chose a new window to advertise, update state in tcp_opt for the&n; * socket, and return result with RFC1323 scaling applied.  The return&n; * value can be stuffed directly into th-&gt;window for an outgoing&n; * frame.&n; */
@@ -2340,8 +2337,6 @@ id|__tcp_select_window
 c_func
 (paren
 id|sk
-comma
-id|cur_win
 )paren
 suffix:semicolon
 multiline_comment|/* Never shrink the offered window */
@@ -2353,11 +2348,14 @@ OL
 id|cur_win
 )paren
 (brace
+multiline_comment|/* Danger Will Robinson!&n;&t;&t; * Don&squot;t update rcv_wup/rcv_wnd here or else&n;&t;&t; * we will not be able to advertise a zero&n;&t;&t; * window in time.  --DaveM&n;&t;&t; */
 id|new_win
 op_assign
 id|cur_win
 suffix:semicolon
 )brace
+r_else
+(brace
 id|tp-&gt;rcv_wnd
 op_assign
 id|new_win
@@ -2366,6 +2364,7 @@ id|tp-&gt;rcv_wup
 op_assign
 id|tp-&gt;rcv_nxt
 suffix:semicolon
+)brace
 multiline_comment|/* RFC1323 scaling applied */
 r_return
 id|new_win
@@ -2413,8 +2412,6 @@ id|__tcp_select_window
 c_func
 (paren
 id|sk
-comma
-id|cur_win
 )paren
 suffix:semicolon
 r_return
@@ -2574,6 +2571,19 @@ multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queu
 r_if
 c_cond
 (paren
+(paren
+id|sk-&gt;nonagle
+op_eq
+l_int|2
+op_logical_and
+(paren
+id|skb-&gt;len
+OL
+id|tp-&gt;mss_cache
+)paren
+)paren
+op_logical_or
+(paren
 op_logical_neg
 id|sk-&gt;nonagle
 op_logical_and
@@ -2598,6 +2608,7 @@ op_member_access_from_pointer
 id|flags
 op_amp
 id|TCPCB_FLAG_URG
+)paren
 )paren
 )paren
 id|nagle_check

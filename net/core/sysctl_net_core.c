@@ -242,7 +242,7 @@ op_amp
 id|proc_dointvec
 )brace
 comma
-macro_line|#endif
+macro_line|#endif /* CONFIG_NET */
 (brace
 l_int|0
 )brace

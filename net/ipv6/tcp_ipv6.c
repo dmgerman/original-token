@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.93 1998/10/03 09:38:50 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.94 1998/11/07 11:50:33 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -5784,6 +5784,20 @@ multiline_comment|/*&n;&t; *&t;Count it even if it&squot;s bad.&n;&t; */
 id|tcp_statistics.TcpInSegs
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+)paren
+r_goto
+id|bad_packet
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Try to use the device checksum if provided.&n;&t; */
 r_switch
 c_cond
@@ -5838,6 +5852,8 @@ id|KERN_DEBUG
 l_string|&quot;tcp csum failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|bad_packet
+suffix:colon
 id|tcp_statistics.TcpInErrs
 op_increment
 suffix:semicolon

@@ -1159,23 +1159,16 @@ id|atif-&gt;address
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Defer 1/10th&n;&t;&t;&t;&t;&t;&t; */
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-(paren
-id|HZ
-op_div
-l_int|10
-)paren
-suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|HZ
+op_div
+l_int|10
 )paren
 suffix:semicolon
 r_if

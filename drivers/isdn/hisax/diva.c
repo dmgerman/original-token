@@ -875,10 +875,9 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
+id|schedule_timeout
+c_func
+(paren
 (paren
 l_int|10
 op_star
@@ -886,13 +885,9 @@ id|HZ
 )paren
 op_div
 l_int|1000
-suffix:semicolon
-multiline_comment|/* Timeout 10ms */
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
+multiline_comment|/* Timeout 10ms */
 id|cs-&gt;hw.diva.ctrl_reg
 op_or_assign
 id|DIVA_RESET
@@ -910,10 +905,9 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
+id|schedule_timeout
+c_func
+(paren
 (paren
 l_int|10
 op_star
@@ -921,13 +915,9 @@ id|HZ
 )paren
 op_div
 l_int|1000
-suffix:semicolon
-multiline_comment|/* Timeout 10ms */
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
+multiline_comment|/* Timeout 10ms */
 r_if
 c_cond
 (paren

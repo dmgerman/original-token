@@ -3159,6 +3159,8 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/*&n;&t; * Don&squot;t bother with the BIOS flag: even if we don&squot;t have&n;&t; * a mouse connected at bootup we may still want to connect&n;&t; * one later, and we don&squot;t want to just let the BIOS tell&n;&t; * us that it has no mouse..&n;&t; */
 r_if
 c_cond
 (paren
@@ -3177,6 +3179,7 @@ id|KERN_INFO
 l_string|&quot;PS/2 auxiliary pointing device detected -- driver installed.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|misc_register
 c_func
 (paren

@@ -366,8 +366,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|count
 op_increment
+id|count
 op_eq
 id|length
 )paren
@@ -502,13 +502,19 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
+multiline_comment|/* HACK: wait 10ms because printer seems to ack wrong */
 id|schedule_timeout
 c_func
 (paren
-l_int|1
+(paren
+id|HZ
+op_plus
+l_int|99
+)paren
+op_div
+l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* HACK: wait 10ms because printer seems to&n;&t;&t;&t;&t;&t; * ack wrong */
 id|result
 op_assign
 id|read_polled

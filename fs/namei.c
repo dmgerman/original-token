@@ -4782,7 +4782,7 @@ op_logical_neg
 id|old_dentry-&gt;d_inode
 )paren
 r_goto
-m_exit
+id|exit_old
 suffix:semicolon
 (brace
 r_int

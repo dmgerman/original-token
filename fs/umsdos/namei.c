@@ -3379,15 +3379,6 @@ id|dentry
 op_star
 id|demd
 suffix:semicolon
-id|Printk
-(paren
-(paren
-l_string|&quot;UMSDOS_rmdir: unlinking empty EMD err=%d&quot;
-comma
-id|err
-)paren
-)paren
-suffix:semicolon
 id|demd
 op_assign
 id|umsdos_get_emd_dentry
@@ -3424,6 +3415,15 @@ id|msdos_unlink
 id|dentry-&gt;d_inode
 comma
 id|demd
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS_rmdir: unlinking empty EMD err=%d&quot;
+comma
+id|err
+)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef UMSDOS_PARANOIA

@@ -15,17 +15,9 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-multiline_comment|/* &n; * How often do we do a pageout scan during normal conditions?&n; * Default is four times a second.&n; */
-DECL|variable|swapout_interval
-r_int
-id|swapout_interval
-op_assign
-id|HZ
-op_div
-l_int|4
-suffix:semicolon
 multiline_comment|/* &n; * The wait queue for waking up the pageout daemon:&n; */
 DECL|variable|kswapd_task
+r_static
 r_struct
 id|task_struct
 op_star

@@ -487,6 +487,8 @@ DECL|macro|TCP_NODELAY
 mdefine_line|#define TCP_NODELAY&t;1
 DECL|macro|TCP_MAXSEG
 mdefine_line|#define TCP_MAXSEG&t;2
+DECL|macro|TCP_CORK
+mdefine_line|#define TCP_CORK&t;3&t;/* Linux specific (for use with sendfile) */
 macro_line|#ifdef __KERNEL__
 r_extern
 r_int

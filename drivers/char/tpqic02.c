@@ -1788,27 +1788,22 @@ id|spin_t
 )paren
 (brace
 multiline_comment|/* be `nice` to other processes on long operations... */
-id|current-&gt;timeout
+id|current-&gt;state
 op_assign
-id|jiffies
-op_plus
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+multiline_comment|/* nap 0.30 sec between checks, */
+multiline_comment|/* but could be woken up earlier by signals... */
+id|schedule_timeout
+c_func
+(paren
 l_int|3
 op_star
 id|HZ
 op_div
 l_int|10
-suffix:semicolon
-multiline_comment|/* nap 0.30 sec between checks, */
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
-multiline_comment|/* but could be woken up earlier by signals... */
 )brace
 multiline_comment|/* don&squot;t use jiffies for this test because it may have changed by now */
 r_if

@@ -1697,7 +1697,6 @@ id|failure
 (brace
 id|sk-&gt;err
 op_assign
-op_minus
 id|ENOBUFS
 suffix:semicolon
 id|sk
@@ -1774,7 +1773,6 @@ l_int|NULL
 (brace
 id|sk-&gt;err
 op_assign
-op_minus
 id|ENOBUFS
 suffix:semicolon
 id|sk
@@ -1806,7 +1804,6 @@ id|skb2
 (brace
 id|sk-&gt;err
 op_assign
-op_minus
 id|ENOBUFS
 suffix:semicolon
 id|sk

@@ -416,7 +416,7 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 l_string|&quot;umsdos_patch_dentry_inode: inode=%lu&bslash;n&quot;
@@ -426,14 +426,12 @@ id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Classify the inode based on EMD/non-EMD status.&n;&t; */
-id|Printk
+id|PRINTK
 (paren
 (paren
-l_string|&quot;umsdos_patch_inode: call x_set_dirinfo(%p,%p,%lu)&bslash;n&quot;
+l_string|&quot;umsdos_patch_inode: call umsdos_set_dirinfo_new(%p,%lu)&bslash;n&quot;
 comma
-id|inode
-comma
-id|dir
+id|dentry
 comma
 id|f_pos
 )paren
@@ -900,12 +898,15 @@ id|Printk
 c_func
 (paren
 (paren
-l_string|&quot;UMSDOS_notify_change: %s/%s reading at %u&bslash;n&quot;
+l_string|&quot;UMSDOS_notify_change: %s/%s reading at %d&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
+(paren
+r_int
+)paren
 id|filp.f_pos
 )paren
 )paren
@@ -1331,10 +1332,6 @@ c_cond
 id|new_root
 )paren
 (brace
-id|pseudo_root
-op_assign
-id|new_root-&gt;d_inode
-suffix:semicolon
 multiline_comment|/* sanity check */
 r_if
 c_cond
@@ -1349,6 +1346,10 @@ c_func
 (paren
 l_string|&quot;umsdos_read_super: pseudo-root wrong ops!&bslash;n&quot;
 )paren
+suffix:semicolon
+id|pseudo_root
+op_assign
+id|new_root-&gt;d_inode
 suffix:semicolon
 id|saved_root
 op_assign
@@ -1381,6 +1382,24 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;s_root-&gt;d_count
+OG
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;UMSDOS: root count %d &gt; 1 !&quot;
+comma
+id|sb-&gt;s_root-&gt;d_count
+)paren
+suffix:semicolon
+)brace
 )brace
 r_return
 id|sb

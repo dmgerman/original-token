@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef CHECK_PAGE_TABLES
 DECL|function|check_one_table
@@ -232,6 +233,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * check an inode&n; */
+r_extern
+r_struct
+id|inode_operations
+id|umsdos_rdir_inode_operations
+suffix:semicolon
 DECL|function|check_inode
 r_void
 id|check_inode

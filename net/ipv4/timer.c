@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers for IP.&n; *&n; * Version:&t;$Id: timer.c,v 1.12 1998/08/28 01:15:29 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesn&squot;t write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if net_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up unused code.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers for IP.&n; *&n; * Version:&t;$Id: timer.c,v 1.14 1998/11/07 11:55:43 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesn&squot;t write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if net_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up unused code.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -116,11 +116,14 @@ id|sk-&gt;sock_readers
 )paren
 )paren
 (brace
+multiline_comment|/* Try again later. */
 id|sk-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
 id|HZ
+op_div
+l_int|20
 suffix:semicolon
 id|add_timer
 c_func
@@ -235,14 +238,17 @@ r_case
 id|TIME_CLOSE
 suffix:colon
 multiline_comment|/* We&squot;ve waited long enough, close the socket. */
-id|sk-&gt;state
-op_assign
-id|TCP_CLOSE
-suffix:semicolon
-id|net_delete_timer
+id|tcp_set_state
+c_func
 (paren
 id|sk
+comma
+id|TCP_CLOSE
 )paren
+suffix:semicolon
+id|sk-&gt;shutdown
+op_assign
+id|SHUTDOWN_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -257,10 +263,6 @@ c_func
 (paren
 id|sk
 )paren
-suffix:semicolon
-id|sk-&gt;shutdown
-op_assign
-id|SHUTDOWN_MASK
 suffix:semicolon
 id|net_reset_timer
 (paren

@@ -247,17 +247,12 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
+id|schedule_timeout
+c_func
+(paren
 id|HZ
 op_div
 l_int|7
-suffix:semicolon
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* ignore signals, we really should restore volume */
@@ -333,17 +328,12 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
+id|schedule_timeout
+c_func
+(paren
 id|HZ
 op_div
 l_int|7
-suffix:semicolon
-id|schedule
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* do not do it..., 140ms is very looong time to get signal in real program &n;&t;if (signal_pending(current))&n;&t;    return -EINTR;&n;&t;*/

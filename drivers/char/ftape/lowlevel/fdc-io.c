@@ -1363,6 +1363,9 @@ c_func
 id|ft_t_fdc_dma
 )paren
 suffix:semicolon
+r_int
+id|timeout
+suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,0,16)
 r_if
 c_cond
@@ -1408,10 +1411,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* timeout time will be up to USPT microseconds too long ! */
-id|current-&gt;timeout
+id|timeout
 op_assign
-id|jiffies
-op_plus
 (paren
 l_int|1000
 op_star
@@ -1423,10 +1424,6 @@ l_int|1
 )paren
 op_div
 id|FT_USPT
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|spin_lock_irq
 c_func
@@ -1459,6 +1456,10 @@ op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -1475,17 +1476,21 @@ c_loop
 op_logical_neg
 id|ft_interrupt_seen
 op_logical_and
+(paren
 id|current-&gt;state
-op_ne
-id|TASK_RUNNING
+op_eq
+id|TASK_INTERRUPTIBLE
+)paren
 )paren
 (brace
-id|schedule
+id|timeout
+op_assign
+id|schedule_timeout
 c_func
 (paren
+id|timeout
 )paren
 suffix:semicolon
-multiline_comment|/* sets TASK_RUNNING on timeout */
 )brace
 id|spin_lock_irq
 c_func
@@ -1533,11 +1538,6 @@ id|ft_interrupt_seen
 )paren
 (brace
 multiline_comment|/* woken up by interrupt */
-id|current-&gt;timeout
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* interrupt hasn&squot;t cleared this */
 id|ft_interrupt_seen
 op_assign
 l_int|0

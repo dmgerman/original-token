@@ -5357,11 +5357,11 @@ l_int|NULL
 (brace
 id|current-&gt;fs-&gt;root
 op_assign
-id|pseudo_root
+id|pseudo_root-&gt;i_sb-&gt;s_root
 suffix:semicolon
 id|current-&gt;fs-&gt;pwd
 op_assign
-id|pseudo_root
+id|pseudo_root-&gt;i_sb-&gt;s_root
 suffix:semicolon
 )brace
 )brace
