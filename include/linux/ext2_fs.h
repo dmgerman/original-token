@@ -975,6 +975,15 @@ suffix:semicolon
 multiline_comment|/* balloc.c */
 r_extern
 r_int
+id|ext2_group_sparse
+c_func
+(paren
+r_int
+id|group
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|ext2_new_block
 (paren
 r_const

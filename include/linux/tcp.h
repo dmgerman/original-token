@@ -181,7 +181,7 @@ suffix:semicolon
 DECL|macro|TCP_STATE_MASK
 mdefine_line|#define TCP_STATE_MASK&t;0xF
 DECL|macro|TCP_ACTION_FIN
-mdefine_line|#define TCP_ACTION_FIN&t;1 &lt;&lt; 7
+mdefine_line|#define TCP_ACTION_FIN&t;(1 &lt;&lt; 7)
 r_enum
 (brace
 DECL|enumerator|TCPF_ESTABLISHED

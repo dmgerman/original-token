@@ -10,6 +10,12 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_struct
+id|dentry
+op_star
+id|saved_root
+suffix:semicolon
+r_extern
+r_struct
 id|inode
 op_star
 id|pseudo_root
@@ -223,13 +229,11 @@ id|bufk.real_root
 op_assign
 id|pseudo_root
 op_logical_and
-id|dir-&gt;i_ino
+(paren
+id|dir
 op_eq
-id|UMSDOS_ROOT_INO
-op_logical_and
-id|dir-&gt;i_sb
-op_eq
-id|pseudo_root-&gt;i_sb
+id|saved_root-&gt;d_inode
+)paren
 suffix:semicolon
 r_return
 id|fat_readdir
@@ -263,27 +267,11 @@ r_int
 id|nopseudo
 )paren
 (brace
-multiline_comment|/* so locating &quot;linux&quot; will work */
-r_const
-r_char
-op_star
-id|name
-op_assign
-id|dentry-&gt;d_name.name
-suffix:semicolon
-r_int
-id|len
-op_assign
-id|dentry-&gt;d_name.len
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
+multiline_comment|/* N.B. this won&squot;t work ... lookups of `..&squot; are done by VFS */
+macro_line|#ifdef BROKEN_TO_BITS
 r_if
 c_cond
 (paren
@@ -307,13 +295,9 @@ l_int|1
 op_eq
 l_char|&squot;.&squot;
 op_logical_and
-id|dir-&gt;i_ino
+id|dir
 op_eq
-id|UMSDOS_ROOT_INO
-op_logical_and
-id|dir-&gt;i_sb
-op_eq
-id|pseudo_root-&gt;i_sb
+id|saved_root-&gt;d_inode
 )paren
 (brace
 id|printk
@@ -341,6 +325,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+macro_line|#endif
 id|ret
 op_assign
 id|msdos_lookup
@@ -360,7 +345,11 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;umsdos_rlookup_x: lookup failed, ret=%d&bslash;n&quot;
+l_string|&quot;umsdos_rlookup_x: %s/%s failed, ret=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 comma
 id|ret
 )paren
@@ -369,20 +358,37 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode
+id|dentry-&gt;d_inode
 )paren
 (brace
+multiline_comment|/* We must install the proper function table&n;&t;&t; * depending on whether this is an MS-DOS or &n;&t;&t; * a UMSDOS directory&n;&t;&t; */
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;umsdos_rlookup_x: setting up setup_dir_inode %lu...&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
+id|umsdos_patch_dentry_inode
+c_func
+(paren
+id|dentry
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* N.B. Won&squot;t work -- /linux dentry will already have&n;&t;&t; * an inode, so we&squot;ll never get called here.&n;&t;&t; */
+macro_line|#ifdef BROKEN_TO_BITS
 r_if
 c_cond
 (paren
-id|inode
+id|dentry-&gt;d_inode
 op_eq
 id|pseudo_root
 op_logical_and
@@ -406,34 +412,7 @@ id|dentry
 )paren
 suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|S_ISDIR
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-(brace
-multiline_comment|/* We must place the proper function table&n;&t;&t;&t; * depending on whether this is an MS-DOS or &n;&t;&t;&t; * a UMSDOS directory&n;&t;&t;&t; */
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_rlookup_x: setting up setup_dir_inode %lu...&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-)paren
-)paren
-suffix:semicolon
-id|umsdos_setup_dir
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
-)brace
+macro_line|#endif
 )brace
 id|out
 suffix:colon
@@ -442,16 +421,6 @@ id|dentry-&gt;d_op
 op_assign
 op_amp
 id|umsdos_dentry_operations
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_rlookup_x: returning %d&bslash;n&quot;
-comma
-id|ret
-)paren
-)paren
 suffix:semicolon
 r_return
 id|ret
@@ -524,11 +493,6 @@ id|dentry
 r_goto
 id|out
 suffix:semicolon
-id|umsdos_lockcreate
-(paren
-id|dir
-)paren
-suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -556,7 +520,7 @@ OG
 l_int|1
 )paren
 r_goto
-id|out_unlock
+id|out
 suffix:semicolon
 )brace
 id|ret
@@ -577,7 +541,14 @@ op_minus
 id|ENOTEMPTY
 )paren
 r_goto
-id|out_unlock
+id|out
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_inode-&gt;i_sem
+)paren
 suffix:semicolon
 id|empty
 op_assign
@@ -652,15 +623,22 @@ id|demd
 )paren
 suffix:semicolon
 )brace
+)brace
+id|up
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_inode-&gt;i_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|ret
 )paren
 r_goto
-id|out_unlock
+id|out
 suffix:semicolon
-)brace
 multiline_comment|/* now retry the original ... */
 id|ret
 op_assign
@@ -669,13 +647,6 @@ id|msdos_rmdir
 id|dir
 comma
 id|dentry
-)paren
-suffix:semicolon
-id|out_unlock
-suffix:colon
-id|umsdos_unlockcreate
-(paren
-id|dir
 )paren
 suffix:semicolon
 id|out

@@ -3725,13 +3725,14 @@ r_int
 r_int
 id|overhead
 suffix:semicolon
-r_int
-r_int
-id|overhead_per_group
-suffix:semicolon
 r_struct
 id|statfs
 id|tmp
+suffix:semicolon
+r_int
+id|ngroups
+comma
+id|i
 suffix:semicolon
 r_if
 c_cond
@@ -3750,23 +3751,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t; * Compute the overhead (FS structures)&n;&t;&t; */
-id|overhead_per_group
-op_assign
-l_int|1
-multiline_comment|/* super block */
-op_plus
-id|sb-&gt;u.ext2_sb.s_db_per_group
-multiline_comment|/* descriptors */
-op_plus
-l_int|1
-multiline_comment|/* block bitmap */
-op_plus
-l_int|1
-multiline_comment|/* inode bitmap */
-op_plus
-id|sb-&gt;u.ext2_sb.s_itb_per_group
-multiline_comment|/* inode table */
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; * All of the blocks before first_data_block are&n;&t;&t; * overhead&n;&t;&t; */
 id|overhead
 op_assign
 id|le32_to_cpu
@@ -3774,10 +3759,78 @@ c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_es-&gt;s_first_data_block
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Add the overhead attributed to the superblock and&n;&t;&t; * block group descriptors.  If this is sparse&n;&t;&t; * superblocks is turned on, then not all groups have&n;&t;&t; * this.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|le32_to_cpu
+c_func
+(paren
+id|sb-&gt;u.ext2_sb.s_feature_ro_compat
+)paren
+op_amp
+id|EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
+)paren
+(brace
+id|ngroups
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|sb-&gt;u.ext2_sb.s_groups_count
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|ext2_group_sparse
+c_func
+(paren
+id|i
+)paren
+)paren
+id|ngroups
+op_increment
+suffix:semicolon
+)brace
+r_else
+id|ngroups
+op_assign
+id|sb-&gt;u.ext2_sb.s_groups_count
+suffix:semicolon
+id|overhead
+op_add_assign
+id|ngroups
+op_star
+(paren
+l_int|1
 op_plus
+id|sb-&gt;u.ext2_sb.s_db_per_group
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Every block group has an inode bitmap, a block&n;&t;&t; * bitmap, and an inode table.&n;&t;&t; */
+id|overhead
+op_add_assign
+(paren
 id|sb-&gt;u.ext2_sb.s_groups_count
 op_star
-id|overhead_per_group
+(paren
+l_int|2
+op_plus
+id|sb-&gt;u.ext2_sb.s_itb_per_group
+)paren
+)paren
 suffix:semicolon
 )brace
 id|tmp.f_type

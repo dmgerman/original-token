@@ -196,58 +196,6 @@ DECL|struct|dquot
 r_struct
 id|dquot
 (brace
-DECL|member|dq_id
-r_int
-r_int
-id|dq_id
-suffix:semicolon
-multiline_comment|/* ID this applies to (uid, gid) */
-DECL|member|dq_type
-r_int
-id|dq_type
-suffix:semicolon
-multiline_comment|/* Type of quota */
-DECL|member|dq_dev
-id|kdev_t
-id|dq_dev
-suffix:semicolon
-multiline_comment|/* Device this applies to */
-DECL|member|dq_flags
-r_int
-id|dq_flags
-suffix:semicolon
-multiline_comment|/* See DQ_* */
-DECL|member|dq_count
-r_int
-id|dq_count
-suffix:semicolon
-multiline_comment|/* Reference count */
-DECL|member|dq_referenced
-r_int
-r_int
-id|dq_referenced
-suffix:semicolon
-multiline_comment|/* Number of times this dquot was referenced during its lifetime */
-DECL|member|dq_mnt
-r_struct
-id|vfsmount
-op_star
-id|dq_mnt
-suffix:semicolon
-multiline_comment|/* VFS_mount_point this applies to */
-DECL|member|dq_dqb
-r_struct
-id|dqblk
-id|dq_dqb
-suffix:semicolon
-multiline_comment|/* Diskquota usage */
-DECL|member|dq_wait
-r_struct
-id|wait_queue
-op_star
-id|dq_wait
-suffix:semicolon
-multiline_comment|/* Pointer to waitqueue */
 DECL|member|dq_next
 r_struct
 id|dquot
@@ -255,6 +203,19 @@ op_star
 id|dq_next
 suffix:semicolon
 multiline_comment|/* Pointer to next dquot */
+DECL|member|dq_pprev
+r_struct
+id|dquot
+op_star
+op_star
+id|dq_pprev
+suffix:semicolon
+DECL|member|dq_free
+r_struct
+id|list_head
+id|dq_free
+suffix:semicolon
+multiline_comment|/* free list element */
 DECL|member|dq_hash_next
 r_struct
 id|dquot
@@ -270,13 +231,59 @@ op_star
 id|dq_hash_pprev
 suffix:semicolon
 multiline_comment|/* Pointer to previous in dquot_hash */
-DECL|member|dq_pprev
+DECL|member|dq_wait
 r_struct
-id|dquot
+id|wait_queue
 op_star
-op_star
-id|dq_pprev
+id|dq_wait
 suffix:semicolon
+multiline_comment|/* Pointer to waitqueue */
+DECL|member|dq_count
+r_int
+id|dq_count
+suffix:semicolon
+multiline_comment|/* Reference count */
+multiline_comment|/* fields after this point are cleared when invalidating */
+DECL|member|dq_mnt
+r_struct
+id|vfsmount
+op_star
+id|dq_mnt
+suffix:semicolon
+multiline_comment|/* VFS_mount_point this applies to */
+DECL|member|dq_id
+r_int
+r_int
+id|dq_id
+suffix:semicolon
+multiline_comment|/* ID this applies to (uid, gid) */
+DECL|member|dq_dev
+id|kdev_t
+id|dq_dev
+suffix:semicolon
+multiline_comment|/* Device this applies to */
+DECL|member|dq_type
+r_int
+id|dq_type
+suffix:semicolon
+multiline_comment|/* Type of quota */
+DECL|member|dq_flags
+r_int
+id|dq_flags
+suffix:semicolon
+multiline_comment|/* See DQ_* */
+DECL|member|dq_referenced
+r_int
+r_int
+id|dq_referenced
+suffix:semicolon
+multiline_comment|/* Number of times this dquot was &n;&t;&t;&t;&t;&t;   referenced during its lifetime */
+DECL|member|dq_dqb
+r_struct
+id|dqblk
+id|dq_dqb
+suffix:semicolon
+multiline_comment|/* Diskquota usage */
 )brace
 suffix:semicolon
 DECL|macro|NODQUOT

@@ -155,6 +155,18 @@ id|rpc_wait_queue
 id|cl_bindwait
 suffix:semicolon
 multiline_comment|/* waiting on getport() */
+DECL|member|cl_nodelen
+r_int
+id|cl_nodelen
+suffix:semicolon
+multiline_comment|/* nodename length */
+DECL|member|cl_nodename
+r_char
+id|cl_nodename
+(braket
+id|UNX_MAXNODENAME
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|cl_timeout

@@ -62,31 +62,41 @@ DECL|member|u
 )brace
 id|u
 suffix:semicolon
-multiline_comment|/* Simply a filler, never referenced by fs/umsdos/... */
-DECL|member|i_dir_owner
+DECL|member|i_patched
 r_int
-r_int
-id|i_dir_owner
+id|i_patched
 suffix:semicolon
-multiline_comment|/* Inode of the dir which hold this entry */
+multiline_comment|/* Inode has been patched */
+DECL|member|i_is_hlink
+r_int
+id|i_is_hlink
+suffix:semicolon
+multiline_comment|/* Resolved hardlink inode? */
 DECL|member|i_emd_owner
 r_int
 r_int
 id|i_emd_owner
 suffix:semicolon
-multiline_comment|/* Inode of the EMD file of i_dir_owner */
+multiline_comment|/* Is this the EMD file inode? */
 DECL|member|pos
 id|off_t
 id|pos
 suffix:semicolon
 multiline_comment|/* Entry offset in the emd_owner file */
-multiline_comment|/* The rest is used only if this inode describe a directory */
+multiline_comment|/* The rest is used only if this inode describes a directory */
+DECL|member|i_emd_dentry
+r_struct
+id|dentry
+op_star
+id|i_emd_dentry
+suffix:semicolon
+multiline_comment|/* EMD dentry for this directory */
 DECL|member|i_emd_dir
 r_int
 r_int
 id|i_emd_dir
 suffix:semicolon
-multiline_comment|/* Inode of the EMD file of this inode */
+multiline_comment|/* Inode of the EMD file */
 )brace
 suffix:semicolon
 macro_line|#endif

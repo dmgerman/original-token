@@ -20,7 +20,7 @@ mdefine_line|#define CHECK_CE&t;       &t;&t;&t;&bslash;&n;      {cont_extent = 
 DECL|macro|SETUP_ROCK_RIDGE
 mdefine_line|#define SETUP_ROCK_RIDGE(DE,CHR,LEN)&t;      &t;&t;      &t;&bslash;&n;  {LEN= sizeof(struct iso_directory_record) + DE-&gt;name_len[0];&t;&bslash;&n;  if(LEN &amp; 1) LEN++;&t;&t;&t;&t;&t;&t;&bslash;&n;  CHR = ((unsigned char *) DE) + LEN;&t;&t;&t;&t;&bslash;&n;  LEN = *((unsigned char *) DE) - LEN;}
 DECL|macro|MAYBE_CONTINUE
-mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset, offset1; &bslash;&n;    struct buffer_head * bh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    if (!buffer) goto out; &bslash;&n;    block = cont_extent; &bslash;&n;    offset = cont_offset; &bslash;&n;    offset1 = 0; &bslash;&n;    if(buffer) { &bslash;&n;      bh = bread(DEV-&gt;i_dev, block, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;      if(bh){       &bslash;&n;        memcpy(buffer + offset1, bh-&gt;b_data + offset, cont_size - offset1); &bslash;&n;        brelse(bh); &bslash;&n;        chr = (unsigned char *) buffer; &bslash;&n;        len = cont_size; &bslash;&n;        cont_extent = 0; &bslash;&n;        cont_size = 0; &bslash;&n;        cont_offset = 0; &bslash;&n;        goto LABEL; &bslash;&n;      };    &bslash;&n;    } &bslash;&n;    printk(&quot;Unable to read rock-ridge attributes&bslash;n&quot;);    &bslash;&n;  }}
+mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset, offset1; &bslash;&n;    struct buffer_head * pbh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    if (!buffer) goto out; &bslash;&n;    block = cont_extent; &bslash;&n;    offset = cont_offset; &bslash;&n;    offset1 = 0; &bslash;&n;    pbh = bread(DEV-&gt;i_dev, block, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;    if(pbh){       &bslash;&n;      memcpy(buffer + offset1, pbh-&gt;b_data + offset, cont_size - offset1); &bslash;&n;      brelse(pbh); &bslash;&n;      chr = (unsigned char *) buffer; &bslash;&n;      len = cont_size; &bslash;&n;      cont_extent = 0; &bslash;&n;      cont_size = 0; &bslash;&n;      cont_offset = 0; &bslash;&n;      goto LABEL; &bslash;&n;    };    &bslash;&n;    printk(&quot;Unable to read rock-ridge attributes&bslash;n&quot;);    &bslash;&n;  }}
 multiline_comment|/* This is the inner layer of the get filename routine, and is called&n;   for each system area and continuation record related to the file */
 DECL|function|find_rock_ridge_relocation
 r_int
@@ -429,10 +429,6 @@ l_int|0
 suffix:semicolon
 op_star
 id|retname
-op_assign
-l_int|0
-suffix:semicolon
-id|retnamlen
 op_assign
 l_int|0
 suffix:semicolon
@@ -1519,6 +1515,15 @@ comma
 id|inode-&gt;u.isofs_i.i_first_extent
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|reloc
+)paren
+r_goto
+id|out
+suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|reloc-&gt;i_mode
@@ -1640,14 +1645,16 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
+r_char
+op_star
+id|rpnt
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
 r_char
 op_star
 id|pnt
-suffix:semicolon
-r_char
-op_star
-id|rpnt
 suffix:semicolon
 r_struct
 id|iso_directory_record
@@ -1690,21 +1697,12 @@ c_func
 l_string|&quot;Cannot have symlink with high sierra variant of iso filesystem&bslash;n&quot;
 )paren
 suffix:semicolon
-id|rpnt
-op_assign
-l_int|0
-suffix:semicolon
 id|block
 op_assign
 id|inode-&gt;i_ino
 op_rshift
 id|bufbits
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|bh
 op_assign
 id|bread
@@ -1716,19 +1714,15 @@ id|block
 comma
 id|bufsize
 )paren
-)paren
-)paren
-(brace
-id|printk
-c_func
+suffix:semicolon
+r_if
+c_cond
 (paren
-l_string|&quot;unable to read i-node block&quot;
+op_logical_neg
+id|bh
 )paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
+r_goto
+id|out_noread
 suffix:semicolon
 id|pnt
 op_assign
@@ -1781,17 +1775,8 @@ id|pnt
 OG
 id|bufsize
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;symlink spans iso9660 blocks&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
+r_goto
+id|out_bad_span
 suffix:semicolon
 multiline_comment|/* Now test for possible Rock Ridge extensions which will override some of&n;     these numbers in the inode structure. */
 id|SETUP_ROCK_RIDGE
@@ -2216,6 +2201,8 @@ comma
 id|inode
 )paren
 suffix:semicolon
+id|out_freebh
+suffix:colon
 id|brelse
 c_func
 (paren
@@ -2225,6 +2212,7 @@ suffix:semicolon
 r_return
 id|rpnt
 suffix:semicolon
+multiline_comment|/* error exit from macro */
 id|out
 suffix:colon
 r_if
@@ -2240,8 +2228,47 @@ id|buffer
 )paren
 suffix:semicolon
 )brace
-r_return
-l_int|0
+r_if
+c_cond
+(paren
+id|rpnt
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|rpnt
+)paren
+suffix:semicolon
+)brace
+id|rpnt
+op_assign
+l_int|NULL
+suffix:semicolon
+r_goto
+id|out_freebh
+suffix:semicolon
+id|out_noread
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;unable to read i-node block&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out_freebh
+suffix:semicolon
+id|out_bad_span
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;symlink spans iso9660 blocks&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out_freebh
 suffix:semicolon
 )brace
 eof

@@ -250,7 +250,7 @@ r_char
 op_star
 id|serial_version
 op_assign
-l_string|&quot;2.1&quot;
+l_string|&quot;2.2&quot;
 suffix:semicolon
 r_static
 id|DECLARE_TASK_QUEUE
@@ -11440,6 +11440,15 @@ id|esp_struct
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* rx_trigger, tx_trigger are needed by autoconfig */
+id|info-&gt;config.rx_trigger
+op_assign
+id|rx_trigger
+suffix:semicolon
+id|info-&gt;config.tx_trigger
+op_assign
+id|tx_trigger
+suffix:semicolon
 id|i
 op_assign
 l_int|0
@@ -11579,14 +11588,6 @@ suffix:semicolon
 id|info-&gt;config.rx_timeout
 op_assign
 id|rx_timeout
-suffix:semicolon
-id|info-&gt;config.rx_trigger
-op_assign
-id|rx_trigger
-suffix:semicolon
-id|info-&gt;config.tx_trigger
-op_assign
-id|tx_trigger
 suffix:semicolon
 id|info-&gt;config.flow_on
 op_assign
@@ -11735,6 +11736,15 @@ r_struct
 id|esp_struct
 )paren
 )paren
+suffix:semicolon
+multiline_comment|/* rx_trigger, tx_trigger are needed by autoconfig */
+id|info-&gt;config.rx_trigger
+op_assign
+id|rx_trigger
+suffix:semicolon
+id|info-&gt;config.tx_trigger
+op_assign
+id|tx_trigger
 suffix:semicolon
 r_if
 c_cond

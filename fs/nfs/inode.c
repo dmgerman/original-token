@@ -1256,6 +1256,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;NFS: couldn&squot;t start rpciod!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1268,13 +1269,14 @@ id|server-&gt;client
 )paren
 suffix:semicolon
 r_goto
-id|out_unlock
+id|out_free_host
 suffix:semicolon
 id|out_no_client
 suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;NFS: cannot create RPC client.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1285,16 +1287,19 @@ id|xprt
 )paren
 suffix:semicolon
 r_goto
-id|out_unlock
+id|out_free_host
 suffix:semicolon
 id|out_no_xprt
 suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;NFS: cannot create RPC transport.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|out_free_host
+suffix:colon
 id|kfree
 c_func
 (paren
@@ -1523,6 +1528,26 @@ comma
 id|d_alias
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_free_dentries: found %s/%s, d_count=%d, hashed=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_count
+comma
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1530,18 +1555,6 @@ op_logical_neg
 id|dentry-&gt;d_count
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_free_dentries: freeing %s/%s, i_count=%d&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-comma
-id|inode-&gt;i_count
-)paren
-suffix:semicolon
 id|dget
 c_func
 (paren

@@ -5,6 +5,9 @@ mdefine_line|#define _LINUX_SUNRPC_AUTH_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sunrpc/sched.h&gt;
+multiline_comment|/* size of the nodename buffer */
+DECL|macro|UNX_MAXNODENAME
+mdefine_line|#define UNX_MAXNODENAME&t;32
 multiline_comment|/*&n; * Client user credentials&n; */
 DECL|struct|rpc_cred
 r_struct

@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/auth.h&gt;
 DECL|macro|NFS_NGROUPS
@@ -47,16 +46,8 @@ DECL|macro|uc_expire
 mdefine_line|#define uc_expire&t;&t;uc_base.cr_expire
 DECL|macro|UNX_CRED_EXPIRE
 mdefine_line|#define UNX_CRED_EXPIRE&t;&t;(60 * HZ)
-macro_line|#ifndef DONT_FILLIN_HOSTNAME
-multiline_comment|/* # define UNX_MAXNODENAME&t;(sizeof(system_utsname.nodename)-1) */
-DECL|macro|UNX_MAXNODENAME
-macro_line|# define UNX_MAXNODENAME&t;32
 DECL|macro|UNX_WRITESLACK
-macro_line|# define UNX_WRITESLACK&t;&t;(21 + (UNX_MAXNODENAME &gt;&gt; 2))
-macro_line|#else
-DECL|macro|UNX_WRITESLACK
-macro_line|# define UNX_WRITESLACK&t;&t;20
-macro_line|#endif
+mdefine_line|#define UNX_WRITESLACK&t;&t;(21 + (UNX_MAXNODENAME &gt;&gt; 2))
 macro_line|#ifdef RPC_DEBUG
 DECL|macro|RPCDBG_FACILITY
 macro_line|# define RPCDBG_FACILITY&t;RPCDBG_AUTH
@@ -661,6 +652,13 @@ id|ruid
 )paren
 (brace
 r_struct
+id|rpc_clnt
+op_star
+id|clnt
+op_assign
+id|task-&gt;tk_client
+suffix:semicolon
+r_struct
 id|unx_cred
 op_star
 id|cred
@@ -711,30 +709,10 @@ op_div
 id|HZ
 )paren
 suffix:semicolon
-macro_line|#ifndef DONT_FILLIN_HOSTNAME
-multiline_comment|/*&n;&t; *&t;Problem: The UTS name could change under us. We can&squot;t lock&n;&t; *&t;here to handle this. On the other hand we can&squot;t really&n;&t; *&t;go building a bad RPC!&n;&t; */
-r_if
-c_cond
-(paren
-(paren
+multiline_comment|/*&n;&t; * Copy the UTS nodename captured when the client was created.&n;&t; */
 id|n
 op_assign
-id|strlen
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-id|system_utsname.nodename
-)paren
-)paren
-OG
-id|UNX_MAXNODENAME
-)paren
-id|n
-op_assign
-id|UNX_MAXNODENAME
+id|clnt-&gt;cl_nodelen
 suffix:semicolon
 op_star
 id|p
@@ -751,7 +729,7 @@ c_func
 (paren
 id|p
 comma
-id|system_utsname.nodename
+id|clnt-&gt;cl_nodename
 comma
 id|n
 )paren
@@ -766,14 +744,6 @@ l_int|3
 op_rshift
 l_int|2
 suffix:semicolon
-macro_line|#else
-op_star
-id|p
-op_increment
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -578,7 +578,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Create the EMD dentry for a directory.&n; */
+multiline_comment|/*&n; * Lookup the EMD dentry for a directory.&n; *&n; * Note: the caller must hold a lock on the parent directory.&n; */
 DECL|function|umsdos_get_emd_dentry
 r_struct
 id|dentry
@@ -615,7 +615,7 @@ r_return
 id|demd
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check whether a directory has an EMD file.&n; */
+multiline_comment|/*&n; * Check whether a directory has an EMD file.&n; *&n; * Note: the caller must hold a lock on the parent directory.&n; */
 DECL|function|umsdos_have_emd
 r_int
 id|umsdos_have_emd
@@ -673,7 +673,7 @@ r_return
 id|found
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Create the EMD file for a directory if it doesn&squot;t&n; * already exist. Returns 0 or an error code.&n; */
+multiline_comment|/*&n; * Create the EMD file for a directory if it doesn&squot;t&n; * already exist. Returns 0 or an error code.&n; *&n; * Note: the caller must hold a lock on the parent directory.&n; */
 DECL|function|umsdos_make_emd
 r_int
 id|umsdos_make_emd
@@ -695,11 +695,6 @@ c_func
 (paren
 id|parent
 )paren
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
 suffix:semicolon
 r_int
 id|err
@@ -739,14 +734,10 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-id|inode
-op_assign
-id|demd-&gt;d_inode
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode
+id|demd-&gt;d_inode
 )paren
 r_goto
 id|out_set
@@ -786,7 +777,7 @@ id|err
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;UMSDOS: create %s/%s failed, err=%d&bslash;n&quot;
+l_string|&quot;umsdos_make_emd: create %s/%s failed, err=%d&bslash;n&quot;
 comma
 id|parent-&gt;d_name.name
 comma
@@ -799,20 +790,11 @@ r_goto
 id|out_dput
 suffix:semicolon
 )brace
-id|inode
-op_assign
-id|demd-&gt;d_inode
-suffix:semicolon
 id|out_set
 suffix:colon
 id|parent-&gt;d_inode-&gt;u.umsdos_i.i_emd_dir
 op_assign
-id|inode-&gt;i_ino
-suffix:semicolon
-multiline_comment|/* Disable UMSDOS_notify_change() for EMD file */
-id|inode-&gt;u.umsdos_i.i_emd_owner
-op_assign
-l_int|0xffffffff
+id|demd-&gt;d_inode-&gt;i_ino
 suffix:semicolon
 id|out_dput
 suffix:colon
@@ -826,372 +808,6 @@ id|out
 suffix:colon
 r_return
 id|err
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Locate the EMD file in a directory.&n; * &n; * Return NULL if error, dir-&gt;u.umsdos_i.emd_inode if OK. &n; * Caller must iput() returned inode when finished with it!&n; * Note: deprecated; get rid of this soon!&n; */
-DECL|function|umsdos_emd_dir_lookup
-r_struct
-id|inode
-op_star
-id|umsdos_emd_dir_lookup
-(paren
-r_struct
-id|inode
-op_star
-id|dir
-comma
-r_int
-id|creat
-)paren
-(brace
-r_struct
-id|inode
-op_star
-id|ret
-op_assign
-l_int|NULL
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|d_dir
-op_assign
-l_int|NULL
-comma
-op_star
-id|dlook
-op_assign
-l_int|NULL
-suffix:semicolon
-r_int
-id|rv
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;Entering umsdos_emd_dir_lookup&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dir
-)paren
-(brace
-id|printk
-(paren
-id|KERN_CRIT
-l_string|&quot;umsdos_emd_dir_lookup: FATAL, dir=NULL!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|check_inode
-(paren
-id|dir
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dir-&gt;u.umsdos_i.i_emd_dir
-op_ne
-l_int|0
-)paren
-(brace
-id|ret
-op_assign
-id|iget
-(paren
-id|dir-&gt;i_sb
-comma
-id|dir-&gt;u.umsdos_i.i_emd_dir
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-l_string|&quot;umsdos_emd_dir_lookup: deja trouve %ld %p&bslash;n&quot;
-comma
-id|dir-&gt;u.umsdos_i.i_emd_dir
-comma
-id|ret
-)paren
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos /mn/: Looking for %.*s -&quot;
-comma
-id|UMSDOS_EMD_NAMELEN
-comma
-id|UMSDOS_EMD_FILE
-)paren
-)paren
-suffix:semicolon
-id|d_dir
-op_assign
-id|geti_dentry
-(paren
-id|dir
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|d_dir
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;UMSDOS: flaky i_dentry hack failed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|dlook
-op_assign
-id|creat_dentry
-(paren
-id|UMSDOS_EMD_FILE
-comma
-id|UMSDOS_EMD_NAMELEN
-comma
-l_int|NULL
-comma
-id|d_dir
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dlook
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|rv
-op_assign
-id|msdos_lookup
-(paren
-id|dir
-comma
-id|dlook
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;-returned %d&bslash;n&quot;
-comma
-id|rv
-)paren
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_INFO
-l_string|&quot;emd_dir_lookup &quot;
-)paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
-id|dlook-&gt;d_inode
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-id|Printk
-(paren
-(paren
-l_string|&quot;Found --linux &quot;
-)paren
-)paren
-suffix:semicolon
-id|dir-&gt;u.umsdos_i.i_emd_dir
-op_assign
-id|ret-&gt;i_ino
-suffix:semicolon
-id|ret-&gt;i_count
-op_increment
-suffix:semicolon
-multiline_comment|/* we&squot;ll need the inode */
-id|check_inode
-(paren
-id|ret
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|creat
-)paren
-(brace
-r_int
-id|code
-suffix:semicolon
-id|Printk
-(paren
-(paren
-l_string|&quot; * ERROR * /mn/: creat not yet implemented? not fixed? &quot;
-)paren
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-l_string|&quot;avant create &quot;
-)paren
-)paren
-suffix:semicolon
-id|check_inode
-(paren
-id|ret
-)paren
-suffix:semicolon
-id|code
-op_assign
-id|compat_msdos_create
-(paren
-id|dir
-comma
-id|UMSDOS_EMD_FILE
-comma
-id|UMSDOS_EMD_NAMELEN
-comma
-id|S_IFREG
-op_or
-l_int|0777
-comma
-op_amp
-id|ret
-)paren
-suffix:semicolon
-id|check_inode
-(paren
-id|ret
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-l_string|&quot;Creat EMD code %d ret %p &quot;
-comma
-id|code
-comma
-id|ret
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-op_ne
-l_int|NULL
-)paren
-(brace
-id|Printk
-(paren
-(paren
-l_string|&quot; ino=%lu&quot;
-comma
-id|ret-&gt;i_ino
-)paren
-)paren
-suffix:semicolon
-id|dir-&gt;u.umsdos_i.i_emd_dir
-op_assign
-id|ret-&gt;i_ino
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;UMSDOS: Can&squot;t create EMD file&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-id|dput
-c_func
-(paren
-id|dlook
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* Disable UMSDOS_notify_change() for EMD file */
-id|ret-&gt;u.umsdos_i.i_emd_owner
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-)brace
-id|out
-suffix:colon
-macro_line|#if UMS_DEBUG
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_emd_dir_lookup returning %p /mn/&bslash;n&quot;
-comma
-id|ret
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-op_ne
-l_int|NULL
-)paren
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot; returning ino=%lu&bslash;n&quot;
-comma
-id|ret-&gt;i_ino
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read an entry from the EMD file.&n; * Support variable length record.&n; * Return -EIO if error, 0 if OK.&n; *&n; * does not change {d,i}_count&n; */
@@ -1340,7 +956,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write an entry in the EMD file.&n; * Return 0 if OK, -EIO if some error.&n; */
+multiline_comment|/*&n; * Write an entry in the EMD file.&n; * Return 0 if OK, -EIO if some error.&n; *&n; * Note: the caller must hold a lock on the parent directory.&n; */
 DECL|function|umsdos_writeentry
 r_static
 r_int
@@ -1435,6 +1051,7 @@ id|emd_dentry-&gt;d_inode
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;umsdos_writeentry: no EMD file in %s/%s&bslash;n&quot;
 comma
 id|parent-&gt;d_parent-&gt;d_name.name
@@ -1627,7 +1244,7 @@ id|filp
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Fill the read buffer and take care of the bytes remaining inside.&n; * Unread bytes are simply moved to the beginning.&n; * &n; * Return -ENOENT if EOF, 0 if OK, a negative error code if any problem.&n; */
+multiline_comment|/*&n; * Fill the read buffer and take care of the bytes remaining inside.&n; * Unread bytes are simply moved to the beginning.&n; * &n; * Return -ENOENT if EOF, 0 if OK, a negative error code if any problem.&n; *&n; * Note: the caller must hold a lock on the parent directory.&n; */
 DECL|function|umsdos_fillbuf
 r_static
 r_int
@@ -1767,7 +1384,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * General search, locate a name in the EMD file or an empty slot to&n; * store it. if info-&gt;entry.name_len == 0, search the first empty&n; * slot (of the proper size).&n; * &n; * Return 0 if found, -ENOENT if not found, another error code if&n; * other problem.&n; * &n; * So this routine is used to either find an existing entry or to&n; * create a new one, while making sure it is a new one. After you&n; * get -ENOENT, you make sure the entry is stuffed correctly and&n; * call umsdos_writeentry().&n; * &n; * To delete an entry, you find it, zero out the entry (memset)&n; * and call umsdos_writeentry().&n; * &n; * All this to say that umsdos_writeentry must be called after this&n; * function since it relies on the f_pos field of info.&n; *&n; */
+multiline_comment|/*&n; * General search, locate a name in the EMD file or an empty slot to&n; * store it. if info-&gt;entry.name_len == 0, search the first empty&n; * slot (of the proper size).&n; * &n; * Return 0 if found, -ENOENT if not found, another error code if&n; * other problem.&n; * &n; * So this routine is used to either find an existing entry or to&n; * create a new one, while making sure it is a new one. After you&n; * get -ENOENT, you make sure the entry is stuffed correctly and&n; * call umsdos_writeentry().&n; * &n; * To delete an entry, you find it, zero out the entry (memset)&n; * and call umsdos_writeentry().&n; * &n; * All this to say that umsdos_writeentry must be called after this&n; * function since it relies on the f_pos field of info.&n; *&n; * Note: the caller must hold a lock on the parent directory.&n; */
 multiline_comment|/* #Specification: EMD file structure&n; * The EMD file uses a fairly simple layout.  It is made of records&n; * (UMSDOS_REC_SIZE == 64).  When a name can&squot;t be written in a single&n; * record, multiple contiguous records are allocated.&n; */
 DECL|function|umsdos_find
 r_static

@@ -5086,6 +5086,10 @@ id|temp_i
 op_assign
 id|PPP_MRU
 suffix:semicolon
+id|ppp-&gt;mru
+op_assign
+id|temp_i
+suffix:semicolon
 r_if
 c_cond
 (paren

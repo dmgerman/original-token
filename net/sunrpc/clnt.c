@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 DECL|macro|RPC_SLACK_SPACE
 mdefine_line|#define RPC_SLACK_SPACE&t;&t;1024&t;/* total overkill */
@@ -384,6 +385,36 @@ id|clnt
 )paren
 r_goto
 id|out_no_auth
+suffix:semicolon
+multiline_comment|/* save the nodename */
+id|clnt-&gt;cl_nodelen
+op_assign
+id|strlen
+c_func
+(paren
+id|system_utsname.nodename
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|clnt-&gt;cl_nodelen
+OG
+id|UNX_MAXNODENAME
+)paren
+id|clnt-&gt;cl_nodelen
+op_assign
+id|UNX_MAXNODENAME
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|clnt-&gt;cl_nodename
+comma
+id|system_utsname.nodename
+comma
+id|clnt-&gt;cl_nodelen
+)paren
 suffix:semicolon
 id|out
 suffix:colon

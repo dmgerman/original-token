@@ -851,13 +851,15 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The bitmask for a follow event: normal&n; * follow, and follow requires a directory&n; * entry due to a slash (&squot;/&squot;) after the&n; * name, and whether to continue to parse&n; * the name..&n; */
-DECL|macro|FOLLOW_LINK
-mdefine_line|#define FOLLOW_LINK&t;&t;(1)
-DECL|macro|FOLLOW_DIRECTORY
-mdefine_line|#define FOLLOW_DIRECTORY&t;(2)
-DECL|macro|FOLLOW_CONTINUE
-mdefine_line|#define FOLLOW_CONTINUE&t;&t;(4)
+multiline_comment|/*&n; * The bitmask for a lookup event:&n; *  - follow links at the end&n; *  - require a directory&n; *  - ending slashes ok even for nonexistent files&n; *  - internal &quot;there are more path compnents&quot; flag&n; */
+DECL|macro|LOOKUP_FOLLOW
+mdefine_line|#define LOOKUP_FOLLOW&t;&t;(1)
+DECL|macro|LOOKUP_DIRECTORY
+mdefine_line|#define LOOKUP_DIRECTORY&t;(2)
+DECL|macro|LOOKUP_SLASHOK
+mdefine_line|#define LOOKUP_SLASHOK&t;&t;(4)
+DECL|macro|LOOKUP_CONTINUE
+mdefine_line|#define LOOKUP_CONTINUE&t;&t;(8)
 DECL|function|do_follow_link
 r_static
 r_struct
@@ -1039,7 +1041,7 @@ id|base
 comma
 r_int
 r_int
-id|follow_link
+id|lookup_flags
 )paren
 (brace
 r_struct
@@ -1127,11 +1129,13 @@ id|inode
 op_assign
 id|base-&gt;d_inode
 suffix:semicolon
-id|follow_link
+id|lookup_flags
 op_and_assign
-id|FOLLOW_LINK
+id|LOOKUP_FOLLOW
 op_or
-id|FOLLOW_DIRECTORY
+id|LOOKUP_DIRECTORY
+op_or
+id|LOOKUP_SLASHOK
 suffix:semicolon
 multiline_comment|/* At this point we know we have a real path component. */
 r_for
@@ -1154,7 +1158,7 @@ id|this
 suffix:semicolon
 r_int
 r_int
-id|follow
+id|flags
 suffix:semicolon
 r_int
 r_int
@@ -1266,9 +1270,9 @@ id|hash
 )paren
 suffix:semicolon
 multiline_comment|/* remove trailing slashes? */
-id|follow
+id|flags
 op_assign
-id|follow_link
+id|lookup_flags
 suffix:semicolon
 r_if
 c_cond
@@ -1279,9 +1283,11 @@ id|c
 r_char
 id|tmp
 suffix:semicolon
-id|follow
+id|flags
 op_or_assign
-id|FOLLOW_DIRECTORY
+id|LOOKUP_FOLLOW
+op_or
+id|LOOKUP_DIRECTORY
 suffix:semicolon
 r_do
 (brace
@@ -1305,9 +1311,9 @@ c_cond
 (paren
 id|tmp
 )paren
-id|follow
+id|flags
 op_or_assign
-id|FOLLOW_CONTINUE
+id|LOOKUP_CONTINUE
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * See if the low-level filesystem might want&n;&t;&t; * to use its own hash..&n;&t;&t; */
@@ -1429,7 +1435,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|follow
+(paren
+id|flags
+op_amp
+id|LOOKUP_FOLLOW
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -1442,7 +1452,7 @@ id|base
 comma
 id|dentry
 comma
-id|follow
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1457,15 +1467,6 @@ id|base
 r_goto
 id|return_base
 suffix:semicolon
-id|dentry
-op_assign
-id|ERR_PTR
-c_func
-(paren
-op_minus
-id|ENOENT
-)paren
-suffix:semicolon
 id|inode
 op_assign
 id|base-&gt;d_inode
@@ -1473,9 +1474,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|follow
+id|flags
 op_amp
-id|FOLLOW_DIRECTORY
+id|LOOKUP_DIRECTORY
 )paren
 (brace
 r_if
@@ -1484,7 +1485,8 @@ c_cond
 op_logical_neg
 id|inode
 )paren
-r_break
+r_goto
+id|no_inode
 suffix:semicolon
 id|dentry
 op_assign
@@ -1509,9 +1511,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|follow
+id|flags
 op_amp
-id|FOLLOW_CONTINUE
+id|LOOKUP_CONTINUE
 )paren
 r_continue
 suffix:semicolon
@@ -1520,6 +1522,48 @@ id|return_base
 suffix:colon
 r_return
 id|base
+suffix:semicolon
+multiline_comment|/*&n; * The case of a nonexisting file is special.&n; *&n; * In the middle of a pathname lookup (ie when&n; * LOOKUP_CONTINUE is set), it&squot;s an obvious&n; * error and returns ENOENT.&n; *&n; * At the end of a pathname lookup it&squot;s legal,&n; * and we return a negative dentry. However, we&n; * get here only if there were trailing slashes,&n; * which is legal only if we know it&squot;s supposed&n; * to be a directory (ie &quot;mkdir&quot;). Thus the&n; * LOOKUP_SLASHOK flag.&n; */
+id|no_inode
+suffix:colon
+id|dentry
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOENT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|LOOKUP_CONTINUE
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|LOOKUP_SLASHOK
+)paren
+r_goto
+id|return_base
+suffix:semicolon
+id|dentry
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOTDIR
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 id|dput
@@ -1547,7 +1591,7 @@ id|pathname
 comma
 r_int
 r_int
-id|follow_link
+id|lookup_flags
 )paren
 (brace
 r_char
@@ -1596,7 +1640,7 @@ id|name
 comma
 l_int|NULL
 comma
-id|follow_link
+id|lookup_flags
 )paren
 suffix:semicolon
 id|putname
@@ -2396,7 +2440,7 @@ id|filename
 comma
 l_int|NULL
 comma
-l_int|1
+id|LOOKUP_FOLLOW
 )paren
 suffix:semicolon
 r_if
@@ -2823,7 +2867,7 @@ id|pathname
 comma
 l_int|NULL
 comma
-l_int|0
+id|LOOKUP_SLASHOK
 )paren
 suffix:semicolon
 id|error
@@ -4657,6 +4701,40 @@ id|old_dentry
 r_goto
 m_exit
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ENOENT
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|old_dentry-&gt;d_inode
+)paren
+r_goto
+m_exit
+suffix:semicolon
+(brace
+r_int
+r_int
+id|flags
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|S_ISDIR
+c_func
+(paren
+id|old_dentry-&gt;d_inode-&gt;i_mode
+)paren
+)paren
+id|flags
+op_assign
+id|LOOKUP_SLASHOK
+suffix:semicolon
 id|new_dentry
 op_assign
 id|lookup_dentry
@@ -4666,9 +4744,10 @@ id|newname
 comma
 l_int|NULL
 comma
-l_int|0
+id|flags
 )paren
 suffix:semicolon
+)brace
 id|error
 op_assign
 id|PTR_ERR
@@ -4712,20 +4791,6 @@ id|new_dir
 comma
 id|old_dir
 )paren
-suffix:semicolon
-id|error
-op_assign
-op_minus
-id|ENOENT
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|old_dentry-&gt;d_inode
-)paren
-r_goto
-id|exit_lock
 suffix:semicolon
 id|error
 op_assign

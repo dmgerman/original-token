@@ -3637,13 +3637,6 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|mount_sem
-)paren
-suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -3670,7 +3663,7 @@ id|dev
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/*flags |= MS_RDONLY;*/
+multiline_comment|/*&n;&t; * Do the lookup first to force automounting.&n;&t; */
 id|dir_d
 op_assign
 id|namei
@@ -3698,6 +3691,13 @@ id|dir_d
 )paren
 r_goto
 id|out
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|mount_sem
+)paren
 suffix:semicolon
 id|error
 op_assign
@@ -3802,16 +3802,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|vfsmnt
 )paren
-r_goto
-id|dput_and_out
-suffix:semicolon
+(brace
 id|d_mount
 c_func
 (paren
+id|dget
+c_func
+(paren
 id|dir_d
+)paren
 comma
 id|sb-&gt;s_root
 )paren
@@ -3820,19 +3821,7 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* we don&squot;t dput(dir_d) - see umount */
-id|out
-suffix:colon
-id|up
-c_func
-(paren
-op_amp
-id|mount_sem
-)paren
-suffix:semicolon
-r_return
-id|error
-suffix:semicolon
+)brace
 id|dput_and_out
 suffix:colon
 id|dput
@@ -3841,8 +3830,17 @@ c_func
 id|dir_d
 )paren
 suffix:semicolon
-r_goto
+id|up
+c_func
+(paren
+op_amp
+id|mount_sem
+)paren
+suffix:semicolon
 id|out
+suffix:colon
+r_return
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Alters the mount flags of a mounted file system. Only the mount point&n; * is used as a reference - file system type and the device are ignored.&n; * FS-specific mount options can&squot;t be altered by remounting.&n; */

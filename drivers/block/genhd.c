@@ -1668,14 +1668,6 @@ c_cond
 (paren
 id|heads
 op_eq
-l_int|15
-op_logical_or
-id|heads
-op_eq
-l_int|16
-op_logical_or
-id|heads
-op_eq
 l_int|32
 op_logical_or
 id|heads

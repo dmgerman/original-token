@@ -136,9 +136,9 @@ id|IMM_EMPTY
 suffix:semicolon
 DECL|macro|IMM_BASE
 mdefine_line|#define IMM_BASE(x)&t;imm_hosts[(x)].base
-DECL|variable|base
+DECL|variable|parbus_base
 r_int
-id|base
+id|parbus_base
 (braket
 id|NO_HOSTS
 )braket

@@ -1671,19 +1671,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_lookup_revalidate: error=%d&bslash;n&quot;
-comma
-id|error
-)paren
-suffix:semicolon
 r_goto
 id|out_bad
 suffix:semicolon
-)brace
 multiline_comment|/* Inode number matches? */
 r_if
 c_cond
@@ -1692,25 +1682,9 @@ id|fattr.fileid
 op_ne
 id|inode-&gt;i_ino
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_lookup_revalidate: %s/%s inode mismatch, old=%ld, new=%u&bslash;n&quot;
-comma
-id|parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-comma
-id|inode-&gt;i_ino
-comma
-id|fattr.fileid
-)paren
-suffix:semicolon
 r_goto
 id|out_bad
 suffix:semicolon
-)brace
 multiline_comment|/* Filehandle matches? */
 r_if
 c_cond
@@ -1730,21 +1704,9 @@ id|nfs_fh
 )paren
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_lookup_revalidate: %s/%s fh changed&bslash;n&quot;
-comma
-id|parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
 r_goto
 id|out_bad
 suffix:semicolon
-)brace
 id|out_valid
 suffix:colon
 r_return

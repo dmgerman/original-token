@@ -2042,6 +2042,12 @@ c_func
 r_void
 )paren
 (brace
+id|disable_irq
+c_func
+(paren
+id|KEYBOARD_IRQ
+)paren
+suffix:semicolon
 multiline_comment|/* Flush any pending input. */
 id|kbd_clear_input
 c_func
@@ -2068,6 +2074,7 @@ c_cond
 (paren
 id|msg
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -2077,6 +2084,13 @@ comma
 id|msg
 )paren
 suffix:semicolon
+id|aux_device_present
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 id|request_irq
 c_func
