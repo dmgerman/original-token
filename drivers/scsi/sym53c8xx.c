@@ -1035,6 +1035,11 @@ DECL|macro|pcivtobus
 macro_line|#  define pcivtobus(p)&t;&t;&t;((p) &amp; 0xfffffffful)
 DECL|macro|memcpy_to_pci
 macro_line|#  define memcpy_to_pci(a, b, c)&t;memcpy_toio((a), (b), (c))
+macro_line|#elif defined(CONFIG_PPC)
+DECL|macro|pcivtobus
+macro_line|#  define pcivtobus(p)&t;&t;&t;phys_to_bus(p)
+DECL|macro|memcpy_to_pci
+macro_line|#  define memcpy_to_pci(a, b, c)&t;memcpy_toio((a), (b), (c))
 macro_line|#else&t;/* others */
 DECL|macro|pcivtobus
 macro_line|#  define pcivtobus(p)&t;&t;&t;(p)

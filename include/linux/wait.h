@@ -325,7 +325,7 @@ id|q-&gt;task_list
 suffix:semicolon
 )brace
 DECL|function|__add_wait_queue
-r_extern
+r_static
 r_inline
 r_void
 id|__add_wait_queue
@@ -399,7 +399,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Used for wake-one threads:&n; */
 DECL|function|__add_wait_queue_tail
-r_extern
+r_static
 r_inline
 r_void
 id|__add_wait_queue_tail
@@ -472,7 +472,7 @@ id|head-&gt;task_list
 suffix:semicolon
 )brace
 DECL|function|__remove_wait_queue
-r_extern
+r_static
 r_inline
 r_void
 id|__remove_wait_queue

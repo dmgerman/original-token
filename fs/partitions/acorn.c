@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/arch/arm/drivers/block/adfspart.c&n; *&n; * Copyright (c) 1996-2000 Russell King.&n; *&n; * Scan ADFS partitions on hard disk drives.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

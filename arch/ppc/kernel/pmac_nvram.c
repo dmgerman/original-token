@@ -1539,10 +1539,6 @@ r_int
 id|addr
 )paren
 (brace
-r_struct
-id|adb_request
-id|req
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1554,6 +1550,11 @@ r_case
 op_minus
 l_int|1
 suffix:colon
+(brace
+r_struct
+id|adb_request
+id|req
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1601,6 +1602,7 @@ id|req.reply
 l_int|1
 )braket
 suffix:semicolon
+)brace
 macro_line|#endif
 r_case
 l_int|1
@@ -1678,10 +1680,6 @@ r_int
 id|addr
 )paren
 (brace
-r_struct
-id|adb_request
-id|req
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1693,6 +1691,11 @@ r_case
 op_minus
 l_int|1
 suffix:colon
+(brace
+r_struct
+id|adb_request
+id|req
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1738,6 +1741,7 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 macro_line|#endif
 r_case
 l_int|1

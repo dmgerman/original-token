@@ -6128,6 +6128,13 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 multiline_comment|/* Copy the IDPROM ethernet address to the device structure, later we&n;&t; * will copy the address in the device structure to the lance&n;&t; * initialization block.&n;&t; */
 r_for
 c_loop

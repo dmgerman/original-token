@@ -802,13 +802,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-r_void
-id|com20020pci_probe_all
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#endif&t;&t;&t;&t;/* _LINUX_ARCDEVICE_H */
 eof

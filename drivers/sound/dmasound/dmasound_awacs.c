@@ -8,8 +8,12 @@ macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#ifdef CONFIG_ADB_CUDA
 macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_PMU
 macro_line|#include &lt;linux/pmu.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
@@ -86,6 +90,24 @@ r_static
 r_int
 id|awacs_revision
 suffix:semicolon
+DECL|variable|awacs_is_screamer
+r_int
+id|awacs_is_screamer
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|awacs_device_id
+r_int
+id|awacs_device_id
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|awacs_has_iic
+r_int
+id|awacs_has_iic
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|AWACS_BURGUNDY
 mdefine_line|#define AWACS_BURGUNDY&t;100&t;&t;/* fake revision # for burgundy */
 multiline_comment|/*&n; * Space for the DBDMA command blocks.&n; */
@@ -122,7 +144,7 @@ DECL|variable|awacs_reg
 r_int
 id|awacs_reg
 (braket
-l_int|5
+l_int|8
 )braket
 suffix:semicolon
 DECL|macro|HAS_16BIT_TABLES
@@ -7177,6 +7199,46 @@ op_or
 id|MASK_ADDR4
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|awacs_is_screamer
+)paren
+(brace
+id|awacs_write
+c_func
+(paren
+id|awacs_reg
+(braket
+l_int|5
+)braket
+op_plus
+id|MASK_ADDR5
+)paren
+suffix:semicolon
+id|awacs_write
+c_func
+(paren
+id|awacs_reg
+(braket
+l_int|6
+)braket
+op_plus
+id|MASK_ADDR6
+)paren
+suffix:semicolon
+id|awacs_write
+c_func
+(paren
+id|awacs_reg
+(braket
+l_int|7
+)braket
+op_plus
+id|MASK_ADDR7
+)paren
+suffix:semicolon
+)brace
 id|out_le32
 c_func
 (paren
@@ -8307,6 +8369,7 @@ id|SYS_CTRLER_CUDA
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_ADB_CUDA
 multiline_comment|/* turn on headphones */
 id|cuda_request
 c_func
@@ -8497,6 +8560,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
 )brace
 multiline_comment|/*** Mid level stuff *********************************************************/
 multiline_comment|/*&n; * /dev/mixer abstraction&n; */
@@ -10832,6 +10896,63 @@ id|awacs_revision
 op_assign
 id|AWACS_BURGUNDY
 suffix:semicolon
+multiline_comment|/* This should be verified on older screamers */
+r_if
+c_cond
+(paren
+id|device_is_compatible
+c_func
+(paren
+id|sound
+comma
+l_string|&quot;screamer&quot;
+)paren
+)paren
+id|awacs_is_screamer
+op_assign
+l_int|1
+suffix:semicolon
+id|prop
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|get_property
+c_func
+(paren
+id|sound
+comma
+l_string|&quot;device-id&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prop
+op_ne
+l_int|0
+)paren
+id|awacs_device_id
+op_assign
+op_star
+id|prop
+suffix:semicolon
+id|awacs_has_iic
+op_assign
+(paren
+id|find_devices
+c_func
+(paren
+l_string|&quot;perch&quot;
+)paren
+op_ne
+l_int|NULL
+)paren
+suffix:semicolon
 multiline_comment|/* look for a property saying what sample rates&n;&t;&t;&t;   are available */
 r_for
 c_loop
@@ -11167,6 +11288,11 @@ l_string|&quot;AAPL,PowerBook1998&quot;
 )paren
 )paren
 (brace
+id|pmu_suspend
+c_func
+(paren
+)paren
+suffix:semicolon
 id|feature_set
 c_func
 (paren
@@ -11188,6 +11314,11 @@ id|mdelay
 c_func
 (paren
 l_int|1000
+)paren
+suffix:semicolon
+id|pmu_resume
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -11262,13 +11393,33 @@ l_int|0
 op_assign
 id|MASK_MUX_CD
 suffix:semicolon
+multiline_comment|/* FIXME: Only machines with external SRS module need MASK_PAROUT */
 id|awacs_reg
 (braket
 l_int|1
 )braket
 op_assign
 id|MASK_LOOPTHRU
-op_or
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|awacs_has_iic
+op_logical_or
+id|awacs_device_id
+op_eq
+l_int|0x5
+op_logical_or
+multiline_comment|/*awacs_device_id == 0x8&n;&t;&t;&t;|| */
+id|awacs_device_id
+op_eq
+l_int|0xb
+)paren
+id|awacs_reg
+(braket
+l_int|1
+)braket
+op_or_assign
 id|MASK_PAROUT
 suffix:semicolon
 multiline_comment|/* get default volume from nvram */
@@ -11312,6 +11463,27 @@ id|vol
 op_lshift
 l_int|6
 )paren
+suffix:semicolon
+id|awacs_reg
+(braket
+l_int|5
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|awacs_reg
+(braket
+l_int|6
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|awacs_reg
+(braket
+l_int|7
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 id|out_le32
 c_func
@@ -11366,6 +11538,46 @@ op_plus
 id|MASK_ADDR4
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|awacs_is_screamer
+)paren
+(brace
+id|awacs_write
+c_func
+(paren
+id|awacs_reg
+(braket
+l_int|5
+)braket
+op_plus
+id|MASK_ADDR5
+)paren
+suffix:semicolon
+id|awacs_write
+c_func
+(paren
+id|awacs_reg
+(braket
+l_int|6
+)braket
+op_plus
+id|MASK_ADDR6
+)paren
+suffix:semicolon
+id|awacs_write
+c_func
+(paren
+id|awacs_reg
+(braket
+l_int|7
+)braket
+op_plus
+id|MASK_ADDR7
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Initialize recent versions of the awacs */
 r_if
 c_cond
@@ -11638,7 +11850,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* enable CD sound input */
+multiline_comment|/*&n;&t;&t;&t; * Enable CD sound input.&n;&t;&t;&t; * The relevant bits for writing to this byte are 0x8f.&n;&t;&t;&t; * I haven&squot;t found out what the 0x80 bit does.&n;&t;&t;&t; * For the 0xf bits, writing 3 or 7 enables the CD&n;&t;&t;&t; * input, any other value disables it.  Values&n;&t;&t;&t; * 1, 3, 5, 7 enable the microphone.  Values 0, 2,&n;&t;&t;&t; * 4, 6, 8 - f enable the input from the modem.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren

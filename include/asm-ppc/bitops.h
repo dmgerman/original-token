@@ -1245,6 +1245,21 @@ l_int|0UL
 op_lshift
 id|size
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+op_complement
+l_int|0UL
+)paren
+multiline_comment|/* Are any bits zero? */
+r_return
+id|result
+op_plus
+id|size
+suffix:semicolon
+multiline_comment|/* Nope. */
 id|found_middle
 suffix:colon
 r_return
@@ -1658,6 +1673,21 @@ l_int|0U
 op_lshift
 id|size
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+op_complement
+l_int|0UL
+)paren
+multiline_comment|/* Are any bits zero? */
+r_return
+id|result
+op_plus
+id|size
+suffix:semicolon
+multiline_comment|/* Nope. */
 id|found_middle
 suffix:colon
 r_return

@@ -1960,6 +1960,12 @@ id|bay-&gt;cd_index
 OL
 l_int|0
 )paren
+(brace
+id|pmu_suspend
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bay-&gt;cd_index
 op_assign
 id|ide_register
@@ -1972,6 +1978,12 @@ comma
 id|bay-&gt;cd_irq
 )paren
 suffix:semicolon
+id|pmu_resume
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2488,10 +2500,19 @@ id|i
 )braket
 suffix:semicolon
 multiline_comment|/* We re-enable the bay using it&squot;s previous content&n;&t;&t;&t;   only if it did not change. Note those bozo timings,&n;&t;&t;&t;   they seem to help the 3400 get it right.&n;&t;&t;&t; */
+multiline_comment|/* Force MB power to 0 */
+id|set_mb_power
+c_func
+(paren
+id|i
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|mdelay
 c_func
 (paren
-id|MB_STABLE_DELAY
+id|MB_POWER_DELAY
 )paren
 suffix:semicolon
 r_if
@@ -2556,10 +2577,12 @@ c_func
 id|MB_POWER_DELAY
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|bay-&gt;cd_retry
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_do
 (brace
 id|mdelay

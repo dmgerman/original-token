@@ -828,10 +828,6 @@ id|prev
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_ALTIVEC */&t;
-id|prev-&gt;last_processor
-op_assign
-id|prev-&gt;processor
-suffix:semicolon
 id|current_set
 (braket
 id|smp_processor_id
@@ -1013,11 +1009,9 @@ macro_line|#ifdef CONFIG_SMP
 id|printk
 c_func
 (paren
-l_string|&quot; CPU: %d last CPU: %d&quot;
+l_string|&quot; CPU: %d&quot;
 comma
 id|current-&gt;processor
-comma
-id|current-&gt;last_processor
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SMP */
@@ -1538,12 +1532,6 @@ op_complement
 id|MSR_VEC
 suffix:semicolon
 macro_line|#endif /* CONFIG_ALTIVEC */
-macro_line|#ifdef CONFIG_SMP
-id|p-&gt;last_processor
-op_assign
-id|NO_PROC_ID
-suffix:semicolon
-macro_line|#endif /* CONFIG_SMP */
 r_return
 l_int|0
 suffix:semicolon
@@ -1850,7 +1838,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_clone
-id|asmlinkage
 r_int
 id|sys_clone
 c_func
@@ -1943,7 +1930,6 @@ id|res
 suffix:semicolon
 )brace
 DECL|function|sys_fork
-id|asmlinkage
 r_int
 id|sys_fork
 c_func
@@ -2020,7 +2006,6 @@ id|res
 suffix:semicolon
 )brace
 DECL|function|sys_vfork
-id|asmlinkage
 r_int
 id|sys_vfork
 c_func
@@ -2071,7 +2056,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_execve
-id|asmlinkage
 r_int
 id|sys_execve
 c_func

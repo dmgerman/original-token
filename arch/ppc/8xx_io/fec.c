@@ -2071,13 +2071,15 @@ suffix:semicolon
 )brace
 multiline_comment|/* If it wasn&squot;t filtered - copy it to an sk buffer. */
 macro_line|#endif
-multiline_comment|/* This does 16 byte alignment, exactly what we need.&n;&t; */
+multiline_comment|/* This does 16 byte alignment, exactly what we need.&n;&t; * The packet length includes FCS, but we don&squot;t want to&n;&t; * include that when passing upstream as it messes up&n;&t; * bridging applications.&n;&t; */
 id|skb
 op_assign
 id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 r_if
@@ -2112,6 +2114,8 @@ c_func
 id|skb
 comma
 id|pkt_len
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Make room */
@@ -2132,6 +2136,8 @@ id|bdp-&gt;cbd_bufaddr
 )paren
 comma
 id|pkt_len
+op_minus
+l_int|4
 comma
 l_int|0
 )paren

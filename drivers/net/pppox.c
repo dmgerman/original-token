@@ -425,6 +425,13 @@ comma
 id|pppox_create
 )brace
 suffix:semicolon
+r_extern
+r_int
+id|pppoe_init
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -474,13 +481,11 @@ id|KERN_INFO
 l_string|&quot;Registered PPPoX v0.5&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPPOE
 id|pppoe_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|err
 suffix:semicolon

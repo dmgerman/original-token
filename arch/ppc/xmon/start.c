@@ -6,6 +6,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;linux/pmu.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/bootx.h&gt;
@@ -251,6 +252,28 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_CUDA
+r_if
+c_cond
+(paren
+op_logical_neg
+id|via_modem
+op_logical_and
+id|disp_bi
+)paren
+(brace
+id|prom_drawstring
+c_func
+(paren
+l_string|&quot;xmon uses screen and keyboard&bslash;n&quot;
+)paren
+suffix:semicolon
+id|use_screen
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CHRP_ESCC
 id|addr
@@ -413,6 +436,21 @@ op_plus
 l_int|0x3f8
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|xmon_use_sccb
+)paren
+(brace
+id|sccc
+op_sub_assign
+l_int|0x100
+suffix:semicolon
+id|sccd
+op_sub_assign
+l_int|0x100
+suffix:semicolon
+)brace
 id|TXRDY
 op_assign
 l_int|0x20
@@ -445,6 +483,53 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|cuda_poll
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|function|do_poll_adb
+r_static
+r_inline
+r_void
+id|do_poll_adb
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_ADB_PMU
+r_if
+c_cond
+(paren
+id|sys_ctrler
+op_eq
+id|SYS_CTRLER_PMU
+)paren
+id|pmu_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_PMU */
+macro_line|#ifdef CONFIG_ADB_CUDA
+r_if
+c_cond
+(paren
+id|sys_ctrler
+op_eq
+id|SYS_CTRLER_CUDA
+)paren
+id|cuda_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
+)brace
 r_int
 DECL|function|xmon_write
 id|xmon_write
@@ -552,22 +637,11 @@ id|TXRDY
 op_eq
 l_int|0
 )paren
-(brace
-macro_line|#ifdef CONFIG_ADB_PMU
-r_if
-c_cond
-(paren
-id|sys_ctrler
-op_eq
-id|SYS_CTRLER_PMU
-)paren
-id|pmu_poll
+id|do_poll_adb
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ADB_PMU */
-)brace
 id|c
 op_assign
 id|p
@@ -770,13 +844,11 @@ op_assign
 l_int|200000
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ADB_PMU
-id|pmu_poll
+id|do_poll_adb
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ADB_PMU */
 )brace
 r_while
 c_loop
@@ -978,22 +1050,11 @@ id|RXRDY
 op_eq
 l_int|0
 )paren
-macro_line|#ifdef CONFIG_ADB_PMU
-r_if
-c_cond
-(paren
-id|sys_ctrler
-op_eq
-id|SYS_CTRLER_PMU
-)paren
-id|pmu_poll
+id|do_poll_adb
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#else
-suffix:semicolon
-macro_line|#endif /* CONFIG_ADB_PMU */
 id|buf_access
 c_func
 (paren
@@ -1032,20 +1093,11 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#ifdef CONFIG_ADB_PMU
-r_if
-c_cond
-(paren
-id|sys_ctrler
-op_eq
-id|SYS_CTRLER_PMU
-)paren
-id|pmu_poll
+id|do_poll_adb
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ADB_PMU */
 r_return
 op_minus
 l_int|1
@@ -2226,5 +2278,37 @@ suffix:semicolon
 r_return
 id|str
 suffix:semicolon
+)brace
+r_void
+DECL|function|xmon_enter
+id|xmon_enter
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_ADB_PMU
+id|pmu_suspend
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_void
+DECL|function|xmon_leave
+id|xmon_leave
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_ADB_PMU
+id|pmu_resume
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

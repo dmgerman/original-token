@@ -513,7 +513,6 @@ l_int|3
 suffix:semicolon
 )brace
 )brace
-id|asmlinkage
 r_int
 DECL|function|sys_sigaltstack
 id|sys_sigaltstack
@@ -831,7 +830,6 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; *  When we have rt signals to deliver, we set up on the&n; *  user stack, going down from the original stack pointer:&n; *&t;   a sigregs struct&n; *&t;   one rt_sigframe struct (siginfo + ucontext)&n; *&t;   a gap of __SIGNAL_FRAMESIZE bytes&n; *&n; *  Each of these things must be a multiple of 16 bytes in size.&n; *&n; */
 DECL|function|sys_rt_sigreturn
-id|asmlinkage
 r_int
 id|sys_rt_sigreturn
 c_func
@@ -1258,11 +1256,6 @@ id|ret
 suffix:semicolon
 id|badframe
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -1547,11 +1540,6 @@ id|newsp
 )paren
 suffix:semicolon
 macro_line|#endif
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -1922,11 +1910,6 @@ id|ret
 suffix:semicolon
 id|badframe
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -2175,11 +2158,6 @@ id|newsp
 )paren
 suffix:semicolon
 macro_line|#endif
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -2687,11 +2665,6 @@ id|oldset
 )paren
 suffix:semicolon
 macro_line|#endif
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -3116,11 +3089,6 @@ suffix:semicolon
 multiline_comment|/* FALLTHRU */
 r_default
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sigaddset
 c_func
 (paren
@@ -3218,6 +3186,8 @@ id|newsp
 comma
 id|frame
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_if

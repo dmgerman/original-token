@@ -744,9 +744,11 @@ mdefine_line|#define MII_ANLPA_PAUS 0x0400
 multiline_comment|/*&n; * Model-specific PHY registers&n; *&n; * Note: Only the BCM5201 is described here for now. I&squot;ll add the 5400 once&n; *       I see a machine using it in real world.&n; */
 multiline_comment|/* Supported PHYs (phy_type field ) */
 DECL|macro|PHY_B5400
-mdefine_line|#define PHY_B5400&t;5400
+mdefine_line|#define PHY_B5400&t;0x5400
 DECL|macro|PHY_B5201
-mdefine_line|#define PHY_B5201&t;5201
+mdefine_line|#define PHY_B5201&t;0x5201
+DECL|macro|PHY_LXT971
+mdefine_line|#define PHY_LXT971&t;0x0971
 DECL|macro|PHY_UNKNOWN
 mdefine_line|#define PHY_UNKNOWN&t;0
 multiline_comment|/* Identification (for multi-PHY) */
@@ -770,6 +772,16 @@ DECL|macro|MII_BCM5400_ID
 mdefine_line|#define MII_BCM5400_ID                          ((MII_BCM5400_OUI &lt;&lt; 10) | (MII_BCM5400_MODEL &lt;&lt; 4))
 DECL|macro|MII_BCM5400_MASK
 mdefine_line|#define MII_BCM5400_MASK                        0xfffffff0
+DECL|macro|MII_LXT971_OUI
+mdefine_line|#define MII_LXT971_OUI                          0x0004de
+DECL|macro|MII_LXT971_MODEL
+mdefine_line|#define MII_LXT971_MODEL                        0x0e
+DECL|macro|MII_LXT971_REV
+mdefine_line|#define MII_LXT971_REV                          0x00
+DECL|macro|MII_LXT971_ID
+mdefine_line|#define MII_LXT971_ID                           ((MII_LXT971_OUI &lt;&lt; 10) | (MII_LXT971_MODEL &lt;&lt; 4))
+DECL|macro|MII_LXT971_MASK
+mdefine_line|#define MII_LXT971_MASK                         0xfffffff0
 multiline_comment|/* BCM5201 AUX STATUS register */
 DECL|macro|MII_BCM5201_AUXCTLSTATUS
 mdefine_line|#define MII_BCM5201_AUXCTLSTATUS&t;&t;0x18
@@ -793,6 +805,34 @@ DECL|macro|MII_BCM5201_MULTIPHY_SERIALMODE
 mdefine_line|#define MII_BCM5201_MULTIPHY_SERIALMODE         0x0002
 DECL|macro|MII_BCM5201_MULTIPHY_SUPERISOLATE
 mdefine_line|#define MII_BCM5201_MULTIPHY_SUPERISOLATE       0x0008
+multiline_comment|/* MII BCM5400 1000-BASET Control register */
+DECL|macro|MII_BCM5400_GB_CONTROL
+mdefine_line|#define MII_BCM5400_GB_CONTROL&t;&t;&t;0x09
+DECL|macro|MII_BCM5400_GB_CONTROL_FULLDUPLEXCAP
+mdefine_line|#define MII_BCM5400_GB_CONTROL_FULLDUPLEXCAP&t;0x0200
+multiline_comment|/* MII BCM5400 AUXCONTROL register */
+DECL|macro|MII_BCM5400_AUXCONTROL
+mdefine_line|#define MII_BCM5400_AUXCONTROL                  0x18
+DECL|macro|MII_BCM5400_AUXCONTROL_PWR10BASET
+mdefine_line|#define MII_BCM5400_AUXCONTROL_PWR10BASET       0x0004
+multiline_comment|/* MII BCM5400 AUXSTATUS register */
+DECL|macro|MII_BCM5400_AUXSTATUS
+mdefine_line|#define MII_BCM5400_AUXSTATUS                   0x19
+DECL|macro|MII_BCM5400_AUXSTATUS_LINKMODE_MASK
+mdefine_line|#define MII_BCM5400_AUXSTATUS_LINKMODE_MASK     0x0700
+DECL|macro|MII_BCM5400_AUXSTATUS_LINKMODE_SHIFT
+mdefine_line|#define MII_BCM5400_AUXSTATUS_LINKMODE_SHIFT    8  
+multiline_comment|/* MII LXT971 STATUS2 register */
+DECL|macro|MII_LXT971_STATUS2
+mdefine_line|#define MII_LXT971_STATUS2&t;&t;&t;0x11
+DECL|macro|MII_LXT971_STATUS2_SPEED
+mdefine_line|#define MII_LXT971_STATUS2_SPEED&t;&t;0x4000
+DECL|macro|MII_LXT971_STATUS2_LINK
+mdefine_line|#define MII_LXT971_STATUS2_LINK&t;&t;&t;0x0400
+DECL|macro|MII_LXT971_STATUS2_FULLDUPLEX
+mdefine_line|#define MII_LXT971_STATUS2_FULLDUPLEX&t;&t;0x0200
+DECL|macro|MII_LXT971_STATUS2_AUTONEG_COMPLETE
+mdefine_line|#define MII_LXT971_STATUS2_AUTONEG_COMPLETE&t;0x0080
 multiline_comment|/*&n;&t; * DMA descriptors&n;&t; */
 multiline_comment|/* &n; * Descriptor counts and buffer sizes&n; */
 DECL|macro|NTX
@@ -979,6 +1019,11 @@ r_int
 id|full_duplex
 suffix:semicolon
 multiline_comment|/* Current set to full duplex */
+DECL|member|gigabit
+r_int
+id|gigabit
+suffix:semicolon
+multiline_comment|/* Current set to 1000BT */
 DECL|member|stats
 r_struct
 id|net_device_stats

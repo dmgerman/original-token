@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/ohare.h&gt;
 macro_line|#include &lt;asm/heathrow.h&gt;
+macro_line|#include &lt;asm/keylargo.h&gt;
+macro_line|#include &lt;asm/uninorth.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
@@ -20,6 +22,28 @@ DECL|macro|MAX_FEATURE_OFFSET
 mdefine_line|#define MAX_FEATURE_OFFSET&t;&t;0x100
 DECL|macro|FREG
 mdefine_line|#define FREG(c,r)&t;&t;&t;(&amp;(((c)-&gt;reg)[(r)&gt;&gt;2]))
+multiline_comment|/* Keylargo reg. access. */
+DECL|macro|KL_FCR
+mdefine_line|#define KL_FCR(r)&t;(keylargo_base + ((r) &gt;&gt; 2))
+DECL|macro|KL_IN
+mdefine_line|#define KL_IN(r)&t;(in_le32(KL_FCR(r)))
+DECL|macro|KL_OUT
+mdefine_line|#define KL_OUT(r,v)&t;(out_le32(KL_FCR(r), (v)))
+DECL|macro|KL_BIS
+mdefine_line|#define KL_BIS(r,v)&t;(KL_OUT((r), KL_IN(r) | (v)))
+DECL|macro|KL_BIC
+mdefine_line|#define KL_BIC(r,v)&t;(KL_OUT((r), KL_IN(r) &amp; ~(v)))
+multiline_comment|/* Uni-N reg. access. Note that Uni-N regs are big endian */
+DECL|macro|UN_REG
+mdefine_line|#define UN_REG(r)&t;(uninorth_base + ((r) &gt;&gt; 2))
+DECL|macro|UN_IN
+mdefine_line|#define UN_IN(r)&t;(in_be32(UN_REG(r)))
+DECL|macro|UN_OUT
+mdefine_line|#define UN_OUT(r,v)&t;(out_be32(UN_REG(r), (v)))
+DECL|macro|UN_BIS
+mdefine_line|#define UN_BIS(r,v)&t;(UN_OUT((r), UN_IN(r) | (v)))
+DECL|macro|UN_BIC
+mdefine_line|#define UN_BIC(r,v)&t;(UN_OUT((r), UN_IN(r) &amp; ~(v)))
 DECL|struct|feature_bit
 r_typedef
 r_struct
@@ -300,11 +324,265 @@ comma
 multiline_comment|/* FEATURE_Airport_reset */
 )brace
 suffix:semicolon
-multiline_comment|/* Those bits are from a PowerBook. It&squot;s possible that desktop machines&n; * based on heathrow need a different definition or some bits removed&n; */
+multiline_comment|/* Those bits concern heathrow-based desktop machines (Beige G3s). We have removed&n; * the SCC related bits and init them once. They have proven to occasionally cause&n; * problems with the desktop units.&n; */
 DECL|variable|feature_bits_heathrow
 r_static
 id|fbit
 id|feature_bits_heathrow
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_null */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_IO_A */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_IO_B */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SWIM_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_SWIM3_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_MESH_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_MESH_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_IDE0_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_IDE0_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_IOBUS_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IOBUS_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_reset */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_PCI_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BAY_IDE_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IDE1_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_IDE1_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_IDE1_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_floppy_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BMAC_RESET
+)brace
+comma
+multiline_comment|/* FEATURE_BMac_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BMAC_IO_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_BMac_IO_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Modem_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SLOW_SCC_PCLK
+)brace
+comma
+multiline_comment|/* FEATURE_Slow_SCC_PCLK */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_Power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_CLK_Enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_switch */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_content */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Airport_reset */
+)brace
+suffix:semicolon
+multiline_comment|/* Those bits concern heathrow-based PowerBooks (wallstreet/mainstreet).&n; * Heathrow-based desktop macs (Beige G3s) are _not_ handled here&n; */
+DECL|variable|feature_bits_wallstreet
+r_static
+id|fbit
+id|feature_bits_wallstreet
 (braket
 )braket
 op_assign
@@ -831,7 +1109,7 @@ l_int|0x38
 comma
 l_int|0
 comma
-l_int|0
+id|KL0_SCC_RESET
 )brace
 comma
 multiline_comment|/* FEATURE_Serial_reset */
@@ -840,7 +1118,7 @@ l_int|0x38
 comma
 l_int|0
 comma
-l_int|0x00000054
+id|KL0_SERIAL_ENABLE
 )brace
 comma
 multiline_comment|/* FEATURE_Serial_enable */
@@ -849,7 +1127,7 @@ l_int|0x38
 comma
 l_int|0
 comma
-l_int|0
+id|KL0_SCC_A_INTF_ENABLE
 )brace
 comma
 multiline_comment|/* FEATURE_Serial_IO_A */
@@ -858,7 +1136,7 @@ l_int|0x38
 comma
 l_int|0
 comma
-l_int|0
+id|KL0_SCC_B_INTF_ENABLE
 )brace
 comma
 multiline_comment|/* FEATURE_Serial_IO_B */
@@ -894,7 +1172,7 @@ l_int|0x3c
 comma
 l_int|1
 comma
-l_int|0x01000000
+id|KL1_EIDE0_RESET_N
 )brace
 comma
 multiline_comment|/* FEATURE_IDE0_reset */
@@ -948,7 +1226,7 @@ l_int|0x3c
 comma
 l_int|1
 comma
-l_int|0x08000000
+id|KL1_EIDE1_RESET_N
 )brace
 comma
 multiline_comment|/* FEATURE_IDE1_reset */
@@ -984,7 +1262,7 @@ l_int|0x40
 comma
 l_int|1
 comma
-l_int|0x02000000
+id|KL2_MODEM_POWER_N
 )brace
 comma
 multiline_comment|/* FEATURE_Modem_power */
@@ -1029,7 +1307,7 @@ l_int|0x3c
 comma
 l_int|1
 comma
-l_int|0x40000000
+id|KL1_UIDE_RESET_N
 )brace
 comma
 multiline_comment|/* FEATURE_IDE2_reset */
@@ -1038,7 +1316,7 @@ l_int|0x34
 comma
 l_int|0
 comma
-l_int|0x00001000
+id|KL_MBCR_MBDEV_ENABLE
 )brace
 comma
 multiline_comment|/* FEATURE_Mediabay_IDE_switch */
@@ -1056,7 +1334,7 @@ l_int|0x40
 comma
 l_int|1
 comma
-l_int|0x08000000
+id|KL2_AIRPORT_RESET_N
 )brace
 comma
 multiline_comment|/* FEATURE_Airport_reset */
@@ -1141,6 +1419,22 @@ r_struct
 id|feature_controller
 op_star
 id|ctrler
+)paren
+suffix:semicolon
+r_static
+r_void
+id|keylargo_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|uninorth_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_static
@@ -1340,13 +1634,69 @@ id|feature_bits_paddington
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|machine_is_compatible
+c_func
+(paren
+l_string|&quot;AAPL,PowerBook1998&quot;
+)paren
+)paren
 (brace
 id|feature_add_controller
 c_func
 (paren
 id|np
 comma
+id|feature_bits_wallstreet
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_struct
+id|feature_controller
+op_star
+id|ctrler
+op_assign
+id|feature_add_controller
+c_func
+(paren
+id|np
+comma
 id|feature_bits_heathrow
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ctrler
+)paren
+id|out_le32
+c_func
+(paren
+id|FREG
+c_func
+(paren
+id|ctrler
+comma
+id|HEATHROW_FEATURE_REG
+)paren
+comma
+id|in_le32
+c_func
+(paren
+id|FREG
+c_func
+(paren
+id|ctrler
+comma
+id|HEATHROW_FEATURE_REG
+)paren
+)paren
+op_or
+id|HRW_DEFAULTS
 )paren
 suffix:semicolon
 )brace
@@ -1442,31 +1792,17 @@ comma
 l_int|0x1000
 )paren
 suffix:semicolon
-id|rev
-op_assign
-(paren
-id|u32
-op_star
-)paren
-id|get_property
-c_func
-(paren
-id|np
-comma
-l_string|&quot;device-rev&quot;
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rev
-)paren
 id|uninorth_rev
 op_assign
-op_star
-id|rev
+id|in_be32
+c_func
+(paren
+id|UN_REG
+c_func
+(paren
+id|UNI_N_VERSION
+)paren
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -1484,6 +1820,26 @@ comma
 id|uninorth_rev
 comma
 id|keylargo_rev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|uninorth_base
+)paren
+id|uninorth_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|keylargo_base
+)paren
+id|keylargo_init
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -2307,56 +2663,85 @@ c_cond
 (paren
 id|power
 )paren
-id|out_le32
+id|UN_BIS
 c_func
 (paren
-id|uninorth_base
-op_plus
-l_int|0x20
-op_div
-l_int|4
+id|UNI_N_CLOCK_CNTL
 comma
-id|in_le32
-c_func
-(paren
-id|uninorth_base
-op_plus
-l_int|0x20
-op_div
-l_int|4
-)paren
-op_or
-l_int|0x02000000
+id|UNI_N_CLOCK_CNTL_GMAC
 )paren
 suffix:semicolon
 r_else
-id|out_le32
+id|UN_BIC
 c_func
 (paren
-id|uninorth_base
-op_plus
-l_int|0x20
-op_div
-l_int|4
+id|UNI_N_CLOCK_CNTL
 comma
-id|in_le32
-c_func
-(paren
-id|uninorth_base
-op_plus
-l_int|0x20
-op_div
-l_int|4
-)paren
-op_amp
-op_complement
-l_int|0x02000000
+id|UNI_N_CLOCK_CNTL_GMAC
 )paren
 suffix:semicolon
 id|udelay
 c_func
 (paren
 l_int|20
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|feature_set_gmac_phy_reset
+id|feature_set_gmac_phy_reset
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|device
+comma
+r_int
+id|reset
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|keylargo_base
+)paren
+r_return
+suffix:semicolon
+id|out_8
+c_func
+(paren
+(paren
+r_volatile
+id|u8
+op_star
+)paren
+id|KL_FCR
+c_func
+(paren
+id|KL_GPIO_ETH_PHY_RESET
+)paren
+comma
+id|reset
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|in_8
+c_func
+(paren
+(paren
+r_volatile
+id|u8
+op_star
+)paren
+id|KL_FCR
+c_func
+(paren
+id|KL_GPIO_ETH_PHY_RESET
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2392,6 +2777,133 @@ id|power
 )paren
 (brace
 )brace
+multiline_comment|/* Initialize the Core99 UniNorth host bridge and memory controller&n; */
+r_static
+r_void
+DECL|function|uninorth_init
+id|uninorth_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|device_node
+op_star
+id|gmac
+suffix:semicolon
+r_int
+r_int
+id|actrl
+suffix:semicolon
+multiline_comment|/* Set the arbitrer QAck delay according to what Apple does&n;&t; */
+id|actrl
+op_assign
+id|in_be32
+c_func
+(paren
+id|UN_REG
+c_func
+(paren
+id|UNI_N_ARB_CTRL
+)paren
+)paren
+op_amp
+op_complement
+id|UNI_N_ARB_CTRL_QACK_DELAY_MASK
+suffix:semicolon
+id|actrl
+op_or_assign
+(paren
+(paren
+id|uninorth_rev
+OL
+l_int|3
+)paren
+ques
+c_cond
+id|UNI_N_ARB_CTRL_QACK_DELAY105
+suffix:colon
+id|UNI_N_ARB_CTRL_QACK_DELAY
+)paren
+op_lshift
+id|UNI_N_ARB_CTRL_QACK_DELAY_SHIFT
+suffix:semicolon
+id|UN_OUT
+c_func
+(paren
+id|UNI_N_ARB_CTRL
+comma
+id|actrl
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Turns OFF the gmac clock. The gmac driver will turn&n;&t; * it back ON when the interface is enabled. This save&n;&t; * power on portables.&n;&t; * &n;&t; * Note: We could also try to turn OFF the PHY. Since this&n;&t; * has to be done by both the gmac driver and this code,&n;&t; * I&squot;ll probably end-up moving some of this out of the&n;&t; * modular gmac driver into a non-modular stub containing&n;&t; * some basic PHY management and power management stuffs&n;&t; */
+id|gmac
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;ethernet&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|gmac
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|device_is_compatible
+c_func
+(paren
+id|gmac
+comma
+l_string|&quot;gmac&quot;
+)paren
+)paren
+r_break
+suffix:semicolon
+id|gmac
+op_assign
+id|gmac-&gt;next
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|gmac
+)paren
+id|feature_set_gmac_power
+c_func
+(paren
+id|gmac
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Initialize the Core99 KeyLargo ASIC. Currently, we just make sure&n; * OpenPIC is enabled&n; */
+r_static
+r_void
+DECL|function|keylargo_init
+id|keylargo_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|KL_BIS
+c_func
+(paren
+id|KEYLARGO_FCR2
+comma
+id|KL2_MPIC_ENABLE
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_PMAC_PBOOK
 r_void
 DECL|function|feature_prepare_for_sleep
 id|feature_prepare_for_sleep
@@ -2571,13 +3083,14 @@ r_return
 suffix:semicolon
 )brace
 )brace
-DECL|variable|save_fcr0
+DECL|variable|save_fcr
 r_static
 id|u32
-id|save_fcr0
+id|save_fcr
+(braket
+l_int|5
+)braket
 suffix:semicolon
-singleline_comment|//static u32 save_fcr1;
-singleline_comment|//static u32 save_fcr2;
 DECL|variable|save_mbcr
 r_static
 id|u32
@@ -2609,7 +3122,10 @@ l_int|0x34
 )paren
 )paren
 suffix:semicolon
-id|save_fcr0
+id|save_fcr
+(braket
+l_int|0
+)braket
 op_assign
 id|in_le32
 c_func
@@ -2620,6 +3136,23 @@ c_func
 id|ctrler
 comma
 l_int|0x38
+)paren
+)paren
+suffix:semicolon
+id|save_fcr
+(braket
+l_int|1
+)braket
+op_assign
+id|in_le32
+c_func
+(paren
+id|FREG
+c_func
+(paren
+id|ctrler
+comma
+l_int|0x3c
 )paren
 )paren
 suffix:semicolon
@@ -2634,7 +3167,10 @@ comma
 l_int|0x38
 )paren
 comma
-id|save_fcr0
+id|save_fcr
+(braket
+l_int|0
+)braket
 op_amp
 op_complement
 id|HRW_IOBUS_ENABLE
@@ -2664,7 +3200,27 @@ comma
 l_int|0x38
 )paren
 comma
-id|save_fcr0
+id|save_fcr
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|out_le32
+c_func
+(paren
+id|FREG
+c_func
+(paren
+id|ctrler
+comma
+l_int|0x3c
+)paren
+comma
+id|save_fcr
+(braket
+l_int|1
+)braket
 )paren
 suffix:semicolon
 id|out_le32
@@ -2681,6 +3237,12 @@ comma
 id|save_mbcr
 )paren
 suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|out_le32
 c_func
 (paren
@@ -2692,9 +3254,18 @@ comma
 l_int|0x38
 )paren
 comma
-id|save_fcr0
+id|save_fcr
+(braket
+l_int|0
+)braket
 op_or
 id|HRW_IOBUS_ENABLE
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2726,4 +3297,5 @@ id|ctrler
 (brace
 multiline_comment|/* Not yet implemented */
 )brace
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
 eof

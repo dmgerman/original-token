@@ -10545,7 +10545,7 @@ r_if
 c_cond
 (paren
 id|ch-&gt;n_addrs
-op_eq
+op_ge
 l_int|3
 op_logical_and
 id|ch-&gt;n_intrs
@@ -12168,9 +12168,6 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * ------------------------------------------------------------&n; * Serial console driver&n; * ------------------------------------------------------------&n; */
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
-macro_line|#ifdef CONFIG_SERIAL
-macro_line|#error Cannot build serial console with macserial and serial drivers
-macro_line|#endif
 multiline_comment|/*&n; *&t;Print a string to the serial port trying not to disturb&n; *&t;any possible real use of the port...&n; */
 DECL|function|serial_console_write
 r_static
@@ -12517,10 +12514,6 @@ r_struct
 id|mac_serial
 op_star
 id|info
-op_assign
-id|zs_soft
-op_plus
-id|co-&gt;index
 suffix:semicolon
 r_int
 id|baud
@@ -12579,6 +12572,24 @@ l_int|0
 r_return
 op_minus
 l_int|1
+suffix:semicolon
+multiline_comment|/* Do we have the device asked for? */
+r_if
+c_cond
+(paren
+id|co-&gt;index
+op_ge
+id|zs_channels_found
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|info
+op_assign
+id|zs_soft
+op_plus
+id|co-&gt;index
 suffix:semicolon
 id|set_scc_power
 c_func
@@ -13342,10 +13353,10 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|serial_console_init
+DECL|function|mac_scc_console_init
 r_void
 id|__init
-id|serial_console_init
+id|mac_scc_console_init
 c_func
 (paren
 r_void

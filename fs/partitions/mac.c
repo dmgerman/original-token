@@ -21,6 +21,9 @@ id|dev
 comma
 r_int
 id|part
+comma
+r_int
+id|goodness
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -269,7 +272,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: error reading partition table&bslash;n&quot;
+l_string|&quot;%s: error reading Mac partition table&bslash;n&quot;
 comma
 id|kdevname
 c_func
@@ -322,6 +325,12 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* not a MacOS disk */
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot; [mac]&quot;
+)paren
+suffix:semicolon
 id|blocks_in_map
 op_assign
 id|be32_to_cpu
@@ -559,15 +568,29 @@ l_string|&quot;Apple_UNIX_SVR2&quot;
 op_eq
 l_int|0
 op_logical_or
+(paren
+id|strnicmp
+c_func
+(paren
+id|part-&gt;type
+comma
+l_string|&quot;Linux&quot;
+comma
+l_int|5
+)paren
+op_eq
+l_int|0
+op_logical_and
 id|strcasecmp
 c_func
 (paren
 id|part-&gt;type
 comma
-l_string|&quot;Linux_PPC&quot;
+l_string|&quot;Linux_swap&quot;
 )paren
-op_eq
+op_ne
 l_int|0
+)paren
 )paren
 (brace
 r_int
@@ -699,6 +722,8 @@ c_func
 id|dev
 comma
 id|found_root
+comma
+id|found_root_goodness
 )paren
 suffix:semicolon
 macro_line|#endif

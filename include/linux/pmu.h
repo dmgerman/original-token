@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * Definitions for talking to the PMU.  The PMU is a microcontroller&n; * which controls battery charging and system power on PowerBook 3400&n; * and 2400 models as well as the RTC and various other things.&n; *&n; * Copyright (C) 1998 Paul Mackerras.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * PMU commands&n; */
+DECL|macro|PMU_POWER_CTRL0
+mdefine_line|#define PMU_POWER_CTRL0&t;&t;0x10&t;/* control power of some devices */
 DECL|macro|PMU_POWER_CTRL
 mdefine_line|#define PMU_POWER_CTRL&t;&t;0x11&t;/* control power of some devices */
 DECL|macro|PMU_ADB_CMD
@@ -33,12 +35,23 @@ DECL|macro|PMU_SHUTDOWN
 mdefine_line|#define PMU_SHUTDOWN&t;&t;0x7e&t;/* turn power off */
 DECL|macro|PMU_SLEEP
 mdefine_line|#define PMU_SLEEP&t;&t;0x7f&t;/* put CPU to sleep */
+DECL|macro|PMU_POWER_EVENTS
+mdefine_line|#define PMU_POWER_EVENTS&t;0x8f&t;/* Send power-event commands to PMU */
 DECL|macro|PMU_RESET
 mdefine_line|#define PMU_RESET&t;&t;0xd0&t;/* reset CPU */
 DECL|macro|PMU_GET_BRIGHTBUTTON
 mdefine_line|#define PMU_GET_BRIGHTBUTTON&t;0xd9&t;/* report brightness up/down pos */
 DECL|macro|PMU_GET_COVER
 mdefine_line|#define PMU_GET_COVER&t;&t;0xdc&t;/* report cover open/closed */
+DECL|macro|PMU_SYSTEM_READY
+mdefine_line|#define PMU_SYSTEM_READY&t;0xdf&t;/* tell PMU we are awake */
+multiline_comment|/* Bits to use with the PMU_POWER_CTRL0 command */
+DECL|macro|PMU_POW0_ON
+mdefine_line|#define PMU_POW0_ON&t;&t;0x80&t;/* OR this to power ON the device */
+DECL|macro|PMU_POW0_OFF
+mdefine_line|#define PMU_POW0_OFF&t;&t;0x00&t;/* leave bit 7 to 0 to power it OFF */
+DECL|macro|PMU_POW0_HARD_DRIVE
+mdefine_line|#define PMU_POW0_HARD_DRIVE&t;0x04&t;/* Hard drive power (on wallstreet/lombard ?) */
 multiline_comment|/* Bits to use with the PMU_POWER_CTRL command */
 DECL|macro|PMU_POW_ON
 mdefine_line|#define PMU_POW_ON&t;&t;0x80&t;/* OR this to power ON the device */
@@ -46,8 +59,12 @@ DECL|macro|PMU_POW_OFF
 mdefine_line|#define PMU_POW_OFF&t;&t;0x00&t;/* leave bit 7 to 0 to power it OFF */
 DECL|macro|PMU_POW_BACKLIGHT
 mdefine_line|#define PMU_POW_BACKLIGHT&t;0x01&t;/* backlight power */
+DECL|macro|PMU_POW_CHARGER
+mdefine_line|#define PMU_POW_CHARGER&t;&t;0x02&t;/* battery charger power */
 DECL|macro|PMU_POW_IRLED
 mdefine_line|#define PMU_POW_IRLED&t;&t;0x04&t;/* IR led power (on wallstreet) */
+DECL|macro|PMU_POW_MEDIABAY
+mdefine_line|#define PMU_POW_MEDIABAY&t;0x08&t;/* media bay power (wallstreet/lombard ?) */
 multiline_comment|/* Bits in PMU interrupt and interrupt mask bytes */
 DECL|macro|PMU_INT_ADB_AUTO
 mdefine_line|#define PMU_INT_ADB_AUTO&t;0x04&t;/* ADB autopoll, when PMU_INT_ADB */
@@ -87,24 +104,92 @@ comma
 multiline_comment|/* Core99 motherboard (PMU99) */
 )brace
 suffix:semicolon
+multiline_comment|/* PMU PMU_POWER_EVENTS commands */
+r_enum
+(brace
+DECL|enumerator|PMU_PWR_GET_POWERUP_EVENTS
+id|PMU_PWR_GET_POWERUP_EVENTS
+op_assign
+l_int|0x00
+comma
+DECL|enumerator|PMU_PWR_SET_POWERUP_EVENTS
+id|PMU_PWR_SET_POWERUP_EVENTS
+op_assign
+l_int|0x01
+comma
+DECL|enumerator|PMU_PWR_CLR_POWERUP_EVENTS
+id|PMU_PWR_CLR_POWERUP_EVENTS
+op_assign
+l_int|0x02
+comma
+DECL|enumerator|PMU_PWR_GET_WAKEUP_EVENTS
+id|PMU_PWR_GET_WAKEUP_EVENTS
+op_assign
+l_int|0x03
+comma
+DECL|enumerator|PMU_PWR_SET_WAKEUP_EVENTS
+id|PMU_PWR_SET_WAKEUP_EVENTS
+op_assign
+l_int|0x04
+comma
+DECL|enumerator|PMU_PWR_CLR_WAKEUP_EVENTS
+id|PMU_PWR_CLR_WAKEUP_EVENTS
+op_assign
+l_int|0x05
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* Power events wakeup bits */
+r_enum
+(brace
+DECL|enumerator|PMU_PWR_WAKEUP_KEY
+id|PMU_PWR_WAKEUP_KEY
+op_assign
+l_int|0x01
+comma
+multiline_comment|/* Wake on key press */
+DECL|enumerator|PMU_PWR_WAKEUP_AC_INSERT
+id|PMU_PWR_WAKEUP_AC_INSERT
+op_assign
+l_int|0x02
+comma
+multiline_comment|/* Wake on AC adapter plug */
+DECL|enumerator|PMU_PWR_WAKEUP_AC_CHANGE
+id|PMU_PWR_WAKEUP_AC_CHANGE
+op_assign
+l_int|0x04
+comma
+DECL|enumerator|PMU_PWR_WAKEUP_LID_OPEN
+id|PMU_PWR_WAKEUP_LID_OPEN
+op_assign
+l_int|0x08
+comma
+DECL|enumerator|PMU_PWR_WAKEUP_RING
+id|PMU_PWR_WAKEUP_RING
+op_assign
+l_int|0x10
+comma
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Ioctl commands for the /dev/pmu device&n; */
 macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/* no param */
 DECL|macro|PMU_IOC_SLEEP
 mdefine_line|#define PMU_IOC_SLEEP&t;&t;_IO(&squot;B&squot;, 0)
-multiline_comment|/* out param: u32*&t;backlight value: 0 to 31 */
+multiline_comment|/* out param: u32*&t;backlight value: 0 to 15 */
 DECL|macro|PMU_IOC_GET_BACKLIGHT
 mdefine_line|#define PMU_IOC_GET_BACKLIGHT&t;_IOR(&squot;B&squot;, 1, sizeof(__u32*))
-multiline_comment|/* in param: u32&t;backlight value: 0 to 31 */
+multiline_comment|/* in param: u32&t;backlight value: 0 to 15 */
 DECL|macro|PMU_IOC_SET_BACKLIGHT
 mdefine_line|#define PMU_IOC_SET_BACKLIGHT&t;_IOW(&squot;B&squot;, 2, sizeof(__u32))
-multiline_comment|/* out param: u32*&t;backlight value: 0 to 31 */
+multiline_comment|/* out param: u32*&t;PMU model */
 DECL|macro|PMU_IOC_GET_MODEL
 mdefine_line|#define PMU_IOC_GET_MODEL&t;_IOR(&squot;B&squot;, 3, sizeof(__u32*))
 multiline_comment|/* out param: u32*&t;has_adb: 0 or 1 */
 DECL|macro|PMU_IOC_HAS_ADB
 mdefine_line|#define PMU_IOC_HAS_ADB&t;&t;_IOR(&squot;B&squot;, 4, sizeof(__u32*)) 
 macro_line|#ifdef __KERNEL__
+r_extern
 r_int
 id|find_via_pmu
 c_func
@@ -112,13 +197,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_int
-id|via_pmu_init
+id|via_pmu_start
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|pmu_request
 c_func
@@ -147,6 +234,7 @@ dot
 dot
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|pmu_poll
 c_func
@@ -154,22 +242,24 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* For use before switching interrupts off for a long time;&n; * warning: not stackable&n; */
+r_extern
 r_void
-id|pmu_enable_backlight
+id|pmu_suspend
 c_func
 (paren
-r_int
-id|on
+r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
-id|pmu_set_brightness
+id|pmu_resume
 c_func
 (paren
-r_int
-id|level
+r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|pmu_enable_irled
 c_func
@@ -178,6 +268,7 @@ r_int
 id|on
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|pmu_restart
 c_func
@@ -185,6 +276,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|pmu_shutdown
 c_func
@@ -192,6 +284,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|pmu_present
 c_func
@@ -199,6 +292,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|pmu_get_model
 c_func
@@ -293,5 +387,5 @@ id|notifier
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
-macro_line|#endif&t;/* __KERNEL */
+macro_line|#endif&t;/* __KERNEL__ */
 eof

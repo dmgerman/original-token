@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: io.h,v 1.27 2000/04/13 04:45:59 davem Exp $&n; */
+multiline_comment|/*&n; * $Id: io.h,v 1.28 2000/09/17 05:12:00 davem Exp $&n; */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
@@ -795,6 +795,7 @@ op_star
 id|dst
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Bus number may be embedded in the higher bits of the physical address.&n; * This is why we have no bus number argument to ioremap().&n; */
 r_extern
 r_void
@@ -881,5 +882,6 @@ DECL|macro|dma_cache_wback
 mdefine_line|#define dma_cache_wback(_start,_size)&t;&t;do { } while (0)
 DECL|macro|dma_cache_wback_inv
 mdefine_line|#define dma_cache_wback_inv(_start,_size)&t;do { } while (0)
+macro_line|#endif
 macro_line|#endif /* !(__SPARC_IO_H) */
 eof

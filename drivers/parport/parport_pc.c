@@ -9887,6 +9887,7 @@ l_int|0x0F
 )paren
 suffix:semicolon
 multiline_comment|/* filter bogus IRQs */
+multiline_comment|/* 255 means NONE, and is bogus as well */
 r_switch
 c_cond
 (paren
@@ -9905,6 +9906,9 @@ suffix:colon
 r_case
 l_int|13
 suffix:colon
+r_case
+l_int|255
+suffix:colon
 id|irq
 op_assign
 id|PARPORT_IRQ_NONE
@@ -9918,11 +9922,16 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* if ECP not enabled, DMA is not enabled, assumed bogus &squot;dma&squot; value */
+multiline_comment|/* 255 means NONE. Looks like some BIOS don&squot;t set the DMA correctly&n;&t; * even on ECP mode */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|have_eppecp
+op_logical_or
+id|dma
+op_eq
+l_int|255
 )paren
 id|dma
 op_assign

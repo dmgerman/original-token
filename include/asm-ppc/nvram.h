@@ -51,6 +51,7 @@ id|pmac_nvram_NR
 multiline_comment|/* MacOS Name Registry partition */
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* Return partition offset in nvram */
 r_extern
 r_int
@@ -83,6 +84,7 @@ id|u8
 id|data
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* Some offsets in XPRAM */
 DECL|macro|PMAC_XPRAM_MACHINE_LOC
 mdefine_line|#define PMAC_XPRAM_MACHINE_LOC&t;0xe4
@@ -94,21 +96,27 @@ r_struct
 id|pmac_machine_location
 (brace
 DECL|member|latitude
-id|u32
+r_int
+r_int
 id|latitude
 suffix:semicolon
 multiline_comment|/* 2+30 bit Fractional number */
 DECL|member|longitude
-id|u32
+r_int
+r_int
 id|longitude
 suffix:semicolon
 multiline_comment|/* 2+30 bit Fractional number */
 DECL|member|delta
-id|u32
+r_int
+r_int
 id|delta
 suffix:semicolon
 multiline_comment|/* mix of GMT delta and DLS */
 )brace
 suffix:semicolon
+multiline_comment|/* /dev/nvram ioctls */
+DECL|macro|PMAC_NVRAM_GET_OFFSET
+mdefine_line|#define PMAC_NVRAM_GET_OFFSET&t;_IOWR(&squot;p&squot;, 0x40, int) /* Get NVRAM partition offset */
 macro_line|#endif
 eof

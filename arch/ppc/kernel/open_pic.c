@@ -168,6 +168,8 @@ c_func
 id|cpl
 op_minus
 id|OPENPIC_VEC_IPI
+comma
+id|regs
 )paren
 suffix:semicolon
 )brace

@@ -544,6 +544,8 @@ id|smp_message_recv
 c_func
 (paren
 id|MSG_RESCHEDULE
+comma
+id|regs
 )paren
 suffix:semicolon
 )brace

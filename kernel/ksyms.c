@@ -1878,20 +1878,6 @@ c_func
 id|probe_irq_off
 )paren
 suffix:semicolon
-DECL|variable|autoirq_setup
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|autoirq_setup
-)paren
-suffix:semicolon
-DECL|variable|autoirq_report
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|autoirq_report
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SMP
 DECL|variable|del_timer_sync

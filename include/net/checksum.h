@@ -286,8 +286,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifndef _HAVE_ARCH_COPY_AND_CSUM_FROM_USER
-r_extern
-id|__inline__
+r_static
+r_inline
 DECL|function|csum_and_copy_from_user
 r_int
 r_int

@@ -870,6 +870,15 @@ r_int
 suffix:semicolon
 r_extern
 r_void
+id|__scsi_release_command
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|scsi_release_command
 c_func
 (paren

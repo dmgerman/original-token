@@ -796,7 +796,7 @@ r_case
 l_int|5
 suffix:colon
 multiline_comment|/* CKP value */
-id|lp-&gt;clock
+id|lp-&gt;clockp
 op_assign
 id|ints
 (braket

@@ -102,6 +102,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|fec_enet_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|dlci_setup
 c_func
 (paren
@@ -258,6 +266,14 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_SCC_ENET)
 (brace
 id|scc_enet_init
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#if defined(CONFIG_FEC_ENET)
+(brace
+id|fec_enet_init
 comma
 l_int|0
 )brace

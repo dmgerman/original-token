@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-22-03&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; *&t;2000-27-08&t;Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-22-03&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; *&t;2000-27-08&t;Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; *&t;2000-04-09&t;Henner Eisen&t;Set sock-&gt;state in x25_accept(). &n; *&t;&t;&t;&t;&t;Fixed x25_output() related skb leakage.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -2782,6 +2782,10 @@ id|newsock-&gt;sk
 op_assign
 id|newsk
 suffix:semicolon
+id|newsock-&gt;state
+op_assign
+id|SS_CONNECTED
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3837,6 +3841,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|err
+op_assign
 id|x25_output
 c_func
 (paren
@@ -3845,6 +3851,23 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+id|len
+op_assign
+id|err
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 id|x25_kick
 c_func

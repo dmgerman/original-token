@@ -20,6 +20,9 @@ macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#ifdef CONFIG_PMAC_BACKLIGHT
+macro_line|#include &lt;asm/backlight.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
@@ -1090,12 +1093,14 @@ c_cond
 id|blank
 )paren
 (brace
-id|pmu_enable_backlight
+macro_line|#ifdef CONFIG_PMAC_BACKLIGHT
+id|set_backlight_enable
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC_BACKLIGHT */
 multiline_comment|/* get the palette from the chip */
 r_for
 c_loop
@@ -1239,12 +1244,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|pmu_enable_backlight
+macro_line|#ifdef CONFIG_PMAC_BACKLIGHT
+id|set_backlight_enable
 c_func
 (paren
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC_BACKLIGHT */
 r_for
 c_loop
 (paren
@@ -3577,13 +3584,15 @@ comma
 l_int|0x100000
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC_BACKLIGHT
 multiline_comment|/* turn on the backlight */
-id|pmu_enable_backlight
+id|set_backlight_enable
 c_func
 (paren
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC_BACKLIGHT */
 id|init_chips
 c_func
 (paren

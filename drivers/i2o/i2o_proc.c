@@ -19284,6 +19284,7 @@ suffix:semicolon
 DECL|function|destroy_i2o_procfs
 r_static
 r_int
+id|__exit
 id|destroy_i2o_procfs
 c_func
 (paren
@@ -19370,10 +19371,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|macro|i2o_proc_init
-mdefine_line|#define i2o_proc_init init_module
-macro_line|#endif
 DECL|function|i2o_proc_init
 r_int
 id|__init
@@ -19425,7 +19422,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -19438,9 +19434,11 @@ c_func
 l_string|&quot;I2O procfs Handler&quot;
 )paren
 suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|i2o_proc_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|i2o_proc_exit
 c_func
 (paren
 r_void
@@ -19459,5 +19457,20 @@ id|i2o_proc_handler
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|i2o_proc_init
+id|module_init
+c_func
+(paren
+id|i2o_proc_init
+)paren
+suffix:semicolon
 macro_line|#endif
+DECL|variable|i2o_proc_exit
+id|module_exit
+c_func
+(paren
+id|i2o_proc_exit
+)paren
+suffix:semicolon
 eof

@@ -701,7 +701,8 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-r_break
+r_goto
+id|busy
 suffix:semicolon
 )brace
 )brace
@@ -741,6 +742,8 @@ id|SCpnt
 r_break
 suffix:semicolon
 )brace
+id|busy
+suffix:colon
 multiline_comment|/*&n;&t;&t; * If we have been asked to wait for a free block, then&n;&t;&t; * wait here.&n;&t;&t; */
 r_if
 c_cond
@@ -1006,10 +1009,10 @@ r_return
 id|SCpnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_release_command&n; *&n; * Purpose:     Release a command block.&n; *&n; * Arguments:   SCpnt - command block we are releasing.&n; *&n; * Notes:       The command block can no longer be used by the caller once&n; *              this funciton is called.  This is in effect the inverse&n; *              of scsi_allocate_device.  Note that we also must perform&n; *              a couple of additional tasks.  We must first wake up any&n; *              processes that might have blocked waiting for a command&n; *              block, and secondly we must hit the queue handler function&n; *              to make sure that the device is busy.&n; *&n; *              The idea is that a lot of the mid-level internals gunk&n; *              gets hidden in this function.  Upper level drivers don&squot;t&n; *              have any chickens to wave in the air to get things to&n; *              work reliably.&n; *&n; *              This function is deprecated, and drivers should be&n; *              rewritten to use Scsi_Request instead of Scsi_Cmnd.&n; */
-DECL|function|scsi_release_command
+DECL|function|__scsi_release_command
+r_inline
 r_void
-id|scsi_release_command
+id|__scsi_release_command
 c_func
 (paren
 id|Scsi_Cmnd
@@ -1169,12 +1172,37 @@ op_amp
 id|SDpnt-&gt;scpnt_wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;         * Finally, hit the queue request function to make sure that&n;         * the device is actually busy if there are requests present.&n;         * This won&squot;t block - if the device cannot take any more, life&n;         * will go on.  &n;         */
+)brace
+multiline_comment|/*&n; * Function:    scsi_release_command&n; *&n; * Purpose:     Release a command block.&n; *&n; * Arguments:   SCpnt - command block we are releasing.&n; *&n; * Notes:       The command block can no longer be used by the caller once&n; *              this funciton is called.  This is in effect the inverse&n; *              of scsi_allocate_device.  Note that we also must perform&n; *              a couple of additional tasks.  We must first wake up any&n; *              processes that might have blocked waiting for a command&n; *              block, and secondly we must hit the queue handler function&n; *              to make sure that the device is busy.  Note - there is an&n; *              option to not do this - there were instances where we could&n; *              recurse too deeply and blow the stack if this happened&n; *              when we were indirectly called from the request function&n; *              itself.&n; *&n; *              The idea is that a lot of the mid-level internals gunk&n; *              gets hidden in this function.  Upper level drivers don&squot;t&n; *              have any chickens to wave in the air to get things to&n; *              work reliably.&n; *&n; *              This function is deprecated, and drivers should be&n; *              rewritten to use Scsi_Request instead of Scsi_Cmnd.&n; */
+DECL|function|scsi_release_command
+r_void
+id|scsi_release_command
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
 (brace
 id|request_queue_t
 op_star
 id|q
 suffix:semicolon
+id|Scsi_Device
+op_star
+id|SDpnt
+suffix:semicolon
+id|SDpnt
+op_assign
+id|SCpnt-&gt;device
+suffix:semicolon
+id|__scsi_release_command
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+multiline_comment|/*&n;         * Finally, hit the queue request function to make sure that&n;         * the device is actually busy if there are requests present.&n;         * This won&squot;t block - if the device cannot take any more, life&n;         * will go on.  &n;         */
 id|q
 op_assign
 op_amp
@@ -1188,7 +1216,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function:    scsi_dispatch_command&n; *&n; * Purpose:     Dispatch a command to the low-level driver.&n; *&n; * Arguments:   SCpnt - command block we are dispatching.&n; *&n; * Notes:&n; */
 DECL|function|scsi_dispatch_cmd

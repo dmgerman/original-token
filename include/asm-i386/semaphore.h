@@ -50,7 +50,7 @@ mdefine_line|#define DECLARE_MUTEX(name) __DECLARE_SEMAPHORE_GENERIC(name,1)
 DECL|macro|DECLARE_MUTEX_LOCKED
 mdefine_line|#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
 DECL|function|sema_init
-r_extern
+r_static
 r_inline
 r_void
 id|sema_init
@@ -220,7 +220,7 @@ id|sem
 suffix:semicolon
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;__down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/kernel/semaphore.c&n; */
 DECL|function|down
-r_extern
+r_static
 r_inline
 r_void
 id|down
@@ -267,7 +267,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|function|down_interruptible
-r_extern
+r_static
 r_inline
 r_int
 id|down_interruptible
@@ -324,7 +324,7 @@ id|result
 suffix:semicolon
 )brace
 DECL|function|down_trylock
-r_extern
+r_static
 r_inline
 r_int
 id|down_trylock
@@ -382,7 +382,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note! This is subtle. We jump to wake people up only if&n; * the semaphore was negative (== somebody was waiting on it).&n; * The default case (no contention) will result in NO&n; * jumps for both down() and up().&n; */
 DECL|function|up
-r_extern
+r_static
 r_inline
 r_void
 id|up
@@ -503,7 +503,7 @@ mdefine_line|#define DECLARE_RWSEM_READ_LOCKED(name) __DECLARE_RWSEM_GENERIC(nam
 DECL|macro|DECLARE_RWSEM_WRITE_LOCKED
 mdefine_line|#define DECLARE_RWSEM_WRITE_LOCKED(name) __DECLARE_RWSEM_GENERIC(name,0)
 DECL|function|init_rwsem
-r_extern
+r_static
 r_inline
 r_void
 id|init_rwsem
@@ -628,7 +628,7 @@ id|sem
 )paren
 suffix:semicolon
 DECL|function|down_read
-r_extern
+r_static
 r_inline
 r_void
 id|down_read
@@ -702,7 +702,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|down_write
-r_extern
+r_static
 r_inline
 r_void
 id|down_write
@@ -802,7 +802,7 @@ macro_line|#endif
 )brace
 multiline_comment|/* When a reader does a release, the only significant&n; * case is when there was a writer waiting, and we&squot;ve&n; * bumped the count to 0: we must wake the writer up.&n; */
 DECL|function|__up_read
-r_extern
+r_static
 r_inline
 r_void
 id|__up_read
@@ -840,7 +840,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* releasing the writer is easy -- just release it and&n; * wake up any sleepers.&n; */
 DECL|function|__up_write
-r_extern
+r_static
 r_inline
 r_void
 id|__up_write
@@ -879,7 +879,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|function|up_read
-r_extern
+r_static
 r_inline
 r_void
 id|up_read
@@ -933,7 +933,7 @@ id|sem
 suffix:semicolon
 )brace
 DECL|function|up_write
-r_extern
+r_static
 r_inline
 r_void
 id|up_write

@@ -26,6 +26,12 @@ r_int
 r_int
 id|prom_num_displays
 suffix:semicolon
+macro_line|#ifndef CONFIG_MACH_SPECIFIC
+r_extern
+r_int
+id|have_of
+suffix:semicolon
+macro_line|#endif
 DECL|struct|address_range
 r_struct
 id|address_range

@@ -1395,7 +1395,7 @@ DECL|macro|gemini_rtc_write
 mdefine_line|#define gemini_rtc_write(val,x)  (writeb((val),(GEMINI_RTC+(x))))
 multiline_comment|/* ensure that the RTC is up and running */
 DECL|function|gemini_time_init
-r_void
+r_int
 id|__init
 id|gemini_time_init
 c_func
@@ -1458,6 +1458,9 @@ id|M48T35_RTC_CONTROL
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|macro|DEBUG_RTC
 macro_line|#undef DEBUG_RTC

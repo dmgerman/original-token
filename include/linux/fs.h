@@ -112,7 +112,7 @@ DECL|macro|FS_LITTER
 mdefine_line|#define FS_LITTER&t;32 /* Keeps the tree in dcache */
 DECL|macro|FS_ODD_RENAME
 mdefine_line|#define FS_ODD_RENAME&t;32768&t;/* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
-multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
+multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 32 flags are supported&n; */
 DECL|macro|MS_RDONLY
 mdefine_line|#define MS_RDONLY&t; 1&t;/* Mount read-only */
 DECL|macro|MS_NOSUID
@@ -131,6 +131,8 @@ DECL|macro|MS_NOATIME
 mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
 DECL|macro|MS_NODIRATIME
 mdefine_line|#define MS_NODIRATIME&t;2048&t;/* Do not update directory access times */
+DECL|macro|MS_BIND
+mdefine_line|#define MS_BIND&t;&t;4096
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK&t;(MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|&bslash;&n;&t;&t;&t;MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)

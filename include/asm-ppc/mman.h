@@ -36,9 +36,9 @@ mdefine_line|#define MS_INVALIDATE&t;2&t;&t;/* invalidate the caches */
 DECL|macro|MS_SYNC
 mdefine_line|#define MS_SYNC&t;&t;4&t;&t;/* synchronous memory sync */
 DECL|macro|MCL_CURRENT
-mdefine_line|#define MCL_CURRENT&t;1&t;&t;/* lock all current mappings */
+mdefine_line|#define MCL_CURRENT     0x2000          /* lock all currently mapped pages */
 DECL|macro|MCL_FUTURE
-mdefine_line|#define MCL_FUTURE&t;2&t;&t;/* lock all future mappings */
+mdefine_line|#define MCL_FUTURE      0x4000          /* lock all additions to address space */
 DECL|macro|MADV_NORMAL
 mdefine_line|#define MADV_NORMAL&t;0x0&t;&t;/* default page-in behavior */
 DECL|macro|MADV_RANDOM

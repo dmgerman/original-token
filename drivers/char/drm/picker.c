@@ -1,4 +1,4 @@
-macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifndef CONFIG_SMP
 DECL|macro|CONFIG_SMP

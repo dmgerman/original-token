@@ -537,6 +537,8 @@ DECL|macro|SPRN_UPMC4
 mdefine_line|#define&t;SPRN_UPMC4&t;0x3AE&t;/* User Performance Counter Register 4 */
 DECL|macro|SPRN_USIA
 mdefine_line|#define&t;SPRN_USIA&t;0x3AB&t;/* User Sampled Instruction Address Register */
+DECL|macro|SPRN_VRSAVE
+mdefine_line|#define SPRN_VRSAVE&t;0x100&t;/* Vector Register Save Register */
 DECL|macro|SPRN_XER
 mdefine_line|#define&t;SPRN_XER&t;0x001&t;/* Fixed Point Exception Register */
 DECL|macro|SPRN_ZPR

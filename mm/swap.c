@@ -267,8 +267,8 @@ c_func
 (paren
 id|page
 )paren
-op_eq
-l_int|1
+op_le
+l_int|2
 op_logical_or
 id|page-&gt;buffers
 )paren
@@ -281,11 +281,19 @@ id|page
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * We can move the page to the inactive_dirty list&n;&t;&t; * if we know there is backing store available.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * We can move the page to the inactive_dirty list&n;&t;&t; * if we know there is backing store available.&n;&t;&t; *&n;&t;&t; * We also move pages here that we cannot free yet,&n;&t;&t; * but may be able to free later - because most likely&n;&t;&t; * we&squot;re holding an extra reference on the page which&n;&t;&t; * will be dropped right after deactivate_page().&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|page-&gt;buffers
+op_logical_or
+id|page_count
+c_func
+(paren
+id|page
+)paren
+op_eq
+l_int|2
 )paren
 (brace
 id|del_page_from_active_list
@@ -336,7 +344,7 @@ id|page
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * ELSE: no backing store available, leave it on&n;&t;&t; * the active list.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * OK, we cannot free the page. Leave it alone.&n;&t;&t; */
 )brace
 )brace
 DECL|function|deactivate_page

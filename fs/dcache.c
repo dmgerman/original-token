@@ -4017,7 +4017,9 @@ c_func
 (paren
 l_string|&quot;names_cache&quot;
 comma
-id|PAGE_SIZE
+id|PATH_MAX
+op_plus
+l_int|1
 comma
 l_int|0
 comma

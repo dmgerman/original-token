@@ -398,8 +398,8 @@ r_int
 id|len
 )paren
 suffix:semicolon
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|inet6_dev
 op_star
@@ -426,8 +426,8 @@ r_extern
 id|rwlock_t
 id|addrconf_lock
 suffix:semicolon
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|inet6_dev
 op_star
@@ -493,8 +493,8 @@ op_star
 id|idev
 )paren
 suffix:semicolon
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|in6_dev_put
 id|in6_dev_put
@@ -539,8 +539,8 @@ id|ifp
 )paren
 suffix:semicolon
 DECL|function|in6_ifa_put
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|in6_ifa_put
 c_func
@@ -644,8 +644,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;compute link-local solicited-node multicast address&n; */
 DECL|function|addrconf_addr_solict_mult_old
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|addrconf_addr_solict_mult_old
 c_func
@@ -688,8 +688,8 @@ l_int|3
 suffix:semicolon
 )brace
 DECL|function|addrconf_addr_solict_mult_new
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|addrconf_addr_solict_mult_new
 c_func
@@ -738,8 +738,8 @@ l_int|3
 suffix:semicolon
 )brace
 DECL|function|ipv6_addr_all_nodes
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ipv6_addr_all_nodes
 c_func
@@ -774,8 +774,8 @@ l_int|0x1
 suffix:semicolon
 )brace
 DECL|function|ipv6_addr_all_routers
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ipv6_addr_all_routers
 c_func
@@ -810,8 +810,8 @@ l_int|0x2
 suffix:semicolon
 )brace
 DECL|function|ipv6_addr_is_multicast
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|ipv6_addr_is_multicast
 c_func

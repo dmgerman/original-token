@@ -427,7 +427,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Document me.&n; */
-r_void
+r_int
 id|__init
 DECL|function|walnut_time_init
 id|walnut_time_init
@@ -437,6 +437,9 @@ r_void
 )paren
 (brace
 multiline_comment|/* XXX - Implement me */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Document me.&n; */
 r_int

@@ -469,13 +469,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ARCNET_COM20020_PCI
-id|com20020pci_probe_all
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 )brace
 macro_line|#ifdef MODULE

@@ -115,6 +115,8 @@ DECL|macro|CPM_DATAONLY_SIZE
 mdefine_line|#define CPM_DATAONLY_SIZE&t;((uint)(16 * 1024) - CPM_DATAONLY_BASE)
 DECL|macro|CPM_DP_NOSPACE
 mdefine_line|#define CPM_DP_NOSPACE&t;&t;((uint)0x7fffffff)
+DECL|macro|CPM_FCC_SPECIAL_BASE
+mdefine_line|#define CPM_FCC_SPECIAL_BASE&t;((uint)0x0000b000)
 multiline_comment|/* The number of pages of host memory we allocate for CPM.  This is&n; * done early in kernel initialization to get physically contiguous&n; * pages.&n; */
 DECL|macro|NUM_CPM_HOST_PAGES
 mdefine_line|#define NUM_CPM_HOST_PAGES&t;2
@@ -131,6 +133,9 @@ c_func
 (paren
 id|uint
 id|size
+comma
+id|uint
+id|align
 )paren
 suffix:semicolon
 id|uint
@@ -139,6 +144,9 @@ c_func
 (paren
 id|uint
 id|size
+comma
+id|uint
+id|align
 )paren
 suffix:semicolon
 r_void
@@ -268,7 +276,7 @@ mdefine_line|#define PROFF_RAND&t;&t;((uint)0x8af8)
 DECL|macro|PROFF_I2C_BASE
 mdefine_line|#define PROFF_I2C_BASE&t;&t;((uint)0x8afc)
 DECL|macro|PROFF_IDMA4_BASE
-mdefine_line|#define PROFF_IDMA4_BASE&t;((uint)0x89fe)
+mdefine_line|#define PROFF_IDMA4_BASE&t;((uint)0x8afe)
 multiline_comment|/* The SMCs are relocated to any of the first eight DPRAM pages.&n; * We will fix these at the first locations of DPRAM, until we&n; * get some microcode patches :-).&n; * The parameter ram space for the SMCs is fifty-some bytes, and&n; * they are required to start on a 64 byte boundary.&n; */
 DECL|macro|PROFF_SMC1
 mdefine_line|#define PROFF_SMC1&t;(0)
@@ -956,34 +964,34 @@ DECL|macro|SCCE_ENET_TXB
 mdefine_line|#define SCCE_ENET_TXB&t;((ushort)0x0002)&t;/* A buffer was transmitted */
 DECL|macro|SCCE_ENET_RXB
 mdefine_line|#define SCCE_ENET_RXB&t;((ushort)0x0001)&t;/* A buffer was received */
-multiline_comment|/* SCC Mode Register (PMSR) as used by Ethernet.&n;*/
-DECL|macro|SCC_PMSR_HBC
-mdefine_line|#define SCC_PMSR_HBC&t;((ushort)0x8000)&t;/* Enable heartbeat */
-DECL|macro|SCC_PMSR_FC
-mdefine_line|#define SCC_PMSR_FC&t;((ushort)0x4000)&t;/* Force collision */
-DECL|macro|SCC_PMSR_RSH
-mdefine_line|#define SCC_PMSR_RSH&t;((ushort)0x2000)&t;/* Receive short frames */
-DECL|macro|SCC_PMSR_IAM
-mdefine_line|#define SCC_PMSR_IAM&t;((ushort)0x1000)&t;/* Check individual hash */
-DECL|macro|SCC_PMSR_ENCRC
-mdefine_line|#define SCC_PMSR_ENCRC&t;((ushort)0x0800)&t;/* Ethernet CRC mode */
-DECL|macro|SCC_PMSR_PRO
-mdefine_line|#define SCC_PMSR_PRO&t;((ushort)0x0200)&t;/* Promiscuous mode */
-DECL|macro|SCC_PMSR_BRO
-mdefine_line|#define SCC_PMSR_BRO&t;((ushort)0x0100)&t;/* Catch broadcast pkts */
-DECL|macro|SCC_PMSR_SBT
-mdefine_line|#define SCC_PMSR_SBT&t;((ushort)0x0080)&t;/* Special backoff timer */
-DECL|macro|SCC_PMSR_LPB
-mdefine_line|#define SCC_PMSR_LPB&t;((ushort)0x0040)&t;/* Set Loopback mode */
-DECL|macro|SCC_PMSR_SIP
-mdefine_line|#define SCC_PMSR_SIP&t;((ushort)0x0020)&t;/* Sample Input Pins */
-DECL|macro|SCC_PMSR_LCW
-mdefine_line|#define SCC_PMSR_LCW&t;((ushort)0x0010)&t;/* Late collision window */
-DECL|macro|SCC_PMSR_NIB22
-mdefine_line|#define SCC_PMSR_NIB22&t;((ushort)0x000a)&t;/* Start frame search */
-DECL|macro|SCC_PMSR_FDE
-mdefine_line|#define SCC_PMSR_FDE&t;((ushort)0x0001)&t;/* Full duplex enable */
-multiline_comment|/* Buffer descriptor control/status used by Ethernet receive.&n;*/
+multiline_comment|/* SCC Mode Register (PSMR) as used by Ethernet.&n;*/
+DECL|macro|SCC_PSMR_HBC
+mdefine_line|#define SCC_PSMR_HBC&t;((ushort)0x8000)&t;/* Enable heartbeat */
+DECL|macro|SCC_PSMR_FC
+mdefine_line|#define SCC_PSMR_FC&t;((ushort)0x4000)&t;/* Force collision */
+DECL|macro|SCC_PSMR_RSH
+mdefine_line|#define SCC_PSMR_RSH&t;((ushort)0x2000)&t;/* Receive short frames */
+DECL|macro|SCC_PSMR_IAM
+mdefine_line|#define SCC_PSMR_IAM&t;((ushort)0x1000)&t;/* Check individual hash */
+DECL|macro|SCC_PSMR_ENCRC
+mdefine_line|#define SCC_PSMR_ENCRC&t;((ushort)0x0800)&t;/* Ethernet CRC mode */
+DECL|macro|SCC_PSMR_PRO
+mdefine_line|#define SCC_PSMR_PRO&t;((ushort)0x0200)&t;/* Promiscuous mode */
+DECL|macro|SCC_PSMR_BRO
+mdefine_line|#define SCC_PSMR_BRO&t;((ushort)0x0100)&t;/* Catch broadcast pkts */
+DECL|macro|SCC_PSMR_SBT
+mdefine_line|#define SCC_PSMR_SBT&t;((ushort)0x0080)&t;/* Special backoff timer */
+DECL|macro|SCC_PSMR_LPB
+mdefine_line|#define SCC_PSMR_LPB&t;((ushort)0x0040)&t;/* Set Loopback mode */
+DECL|macro|SCC_PSMR_SIP
+mdefine_line|#define SCC_PSMR_SIP&t;((ushort)0x0020)&t;/* Sample Input Pins */
+DECL|macro|SCC_PSMR_LCW
+mdefine_line|#define SCC_PSMR_LCW&t;((ushort)0x0010)&t;/* Late collision window */
+DECL|macro|SCC_PSMR_NIB22
+mdefine_line|#define SCC_PSMR_NIB22&t;((ushort)0x000a)&t;/* Start frame search */
+DECL|macro|SCC_PSMR_FDE
+mdefine_line|#define SCC_PSMR_FDE&t;((ushort)0x0001)&t;/* Full duplex enable */
+multiline_comment|/* Buffer descriptor control/status used by Ethernet receive.&n; * Common to SCC and FCC.&n; */
 DECL|macro|BD_ENET_RX_EMPTY
 mdefine_line|#define BD_ENET_RX_EMPTY&t;((ushort)0x8000)
 DECL|macro|BD_ENET_RX_WRAP
@@ -996,6 +1004,10 @@ DECL|macro|BD_ENET_RX_FIRST
 mdefine_line|#define BD_ENET_RX_FIRST&t;((ushort)0x0400)
 DECL|macro|BD_ENET_RX_MISS
 mdefine_line|#define BD_ENET_RX_MISS&t;&t;((ushort)0x0100)
+DECL|macro|BD_ENET_RX_BC
+mdefine_line|#define BD_ENET_RX_BC&t;&t;((ushort)0x0080)&t;/* FCC Only */
+DECL|macro|BD_ENET_RX_MC
+mdefine_line|#define BD_ENET_RX_MC&t;&t;((ushort)0x0040)&t;/* FCC Only */
 DECL|macro|BD_ENET_RX_LG
 mdefine_line|#define BD_ENET_RX_LG&t;&t;((ushort)0x0020)
 DECL|macro|BD_ENET_RX_NO
@@ -1009,8 +1021,8 @@ mdefine_line|#define BD_ENET_RX_OV&t;&t;((ushort)0x0002)
 DECL|macro|BD_ENET_RX_CL
 mdefine_line|#define BD_ENET_RX_CL&t;&t;((ushort)0x0001)
 DECL|macro|BD_ENET_RX_STATS
-mdefine_line|#define BD_ENET_RX_STATS&t;((ushort)0x013f)&t;/* All status bits */
-multiline_comment|/* Buffer descriptor control/status used by Ethernet transmit.&n;*/
+mdefine_line|#define BD_ENET_RX_STATS&t;((ushort)0x01ff)&t;/* All status bits */
+multiline_comment|/* Buffer descriptor control/status used by Ethernet transmit.&n; * Common to SCC and FCC.&n; */
 DECL|macro|BD_ENET_TX_READY
 mdefine_line|#define BD_ENET_TX_READY&t;((ushort)0x8000)
 DECL|macro|BD_ENET_TX_PAD
@@ -1254,6 +1266,502 @@ id|scc_trans_t
 suffix:semicolon
 DECL|macro|BD_SCC_TX_LAST
 mdefine_line|#define BD_SCC_TX_LAST&t;&t;((ushort)0x0800)
+multiline_comment|/* How about some FCCs.....&n;*/
+DECL|macro|FCC_GFMR_DIAG_NORM
+mdefine_line|#define FCC_GFMR_DIAG_NORM&t;((uint)0x00000000)
+DECL|macro|FCC_GFMR_DIAG_LE
+mdefine_line|#define FCC_GFMR_DIAG_LE&t;((uint)0x40000000)
+DECL|macro|FCC_GFMR_DIAG_AE
+mdefine_line|#define FCC_GFMR_DIAG_AE&t;((uint)0x80000000)
+DECL|macro|FCC_GFMR_DIAG_ALE
+mdefine_line|#define FCC_GFMR_DIAG_ALE&t;((uint)0xc0000000)
+DECL|macro|FCC_GFMR_TCI
+mdefine_line|#define FCC_GFMR_TCI&t;&t;((uint)0x20000000)
+DECL|macro|FCC_GFMR_TRX
+mdefine_line|#define FCC_GFMR_TRX&t;&t;((uint)0x10000000)
+DECL|macro|FCC_GFMR_TTX
+mdefine_line|#define FCC_GFMR_TTX&t;&t;((uint)0x08000000)
+DECL|macro|FCC_GFMR_TTX
+mdefine_line|#define FCC_GFMR_TTX&t;&t;((uint)0x08000000)
+DECL|macro|FCC_GFMR_CDP
+mdefine_line|#define FCC_GFMR_CDP&t;&t;((uint)0x04000000)
+DECL|macro|FCC_GFMR_CTSP
+mdefine_line|#define FCC_GFMR_CTSP&t;&t;((uint)0x02000000)
+DECL|macro|FCC_GFMR_CDS
+mdefine_line|#define FCC_GFMR_CDS&t;&t;((uint)0x01000000)
+DECL|macro|FCC_GFMR_CTSS
+mdefine_line|#define FCC_GFMR_CTSS&t;&t;((uint)0x00800000)
+DECL|macro|FCC_GFMR_SYNL_NONE
+mdefine_line|#define FCC_GFMR_SYNL_NONE&t;((uint)0x00000000)
+DECL|macro|FCC_GFMR_SYNL_AUTO
+mdefine_line|#define FCC_GFMR_SYNL_AUTO&t;((uint)0x00004000)
+DECL|macro|FCC_GFMR_SYNL_8
+mdefine_line|#define FCC_GFMR_SYNL_8&t;&t;((uint)0x00008000)
+DECL|macro|FCC_GFMR_SYNL_16
+mdefine_line|#define FCC_GFMR_SYNL_16&t;((uint)0x0000c000)
+DECL|macro|FCC_GFMR_RTSM
+mdefine_line|#define FCC_GFMR_RTSM&t;&t;((uint)0x00002000)
+DECL|macro|FCC_GFMR_RENC_NRZ
+mdefine_line|#define FCC_GFMR_RENC_NRZ&t;((uint)0x00000000)
+DECL|macro|FCC_GFMR_RENC_NRZI
+mdefine_line|#define FCC_GFMR_RENC_NRZI&t;((uint)0x00000800)
+DECL|macro|FCC_GFMR_REVD
+mdefine_line|#define FCC_GFMR_REVD&t;&t;((uint)0x00000400)
+DECL|macro|FCC_GFMR_TENC_NRZ
+mdefine_line|#define FCC_GFMR_TENC_NRZ&t;((uint)0x00000000)
+DECL|macro|FCC_GFMR_TENC_NRZI
+mdefine_line|#define FCC_GFMR_TENC_NRZI&t;((uint)0x00000100)
+DECL|macro|FCC_GFMR_TCRC_16
+mdefine_line|#define FCC_GFMR_TCRC_16&t;((uint)0x00000000)
+DECL|macro|FCC_GFMR_TCRC_32
+mdefine_line|#define FCC_GFMR_TCRC_32&t;((uint)0x00000080)
+DECL|macro|FCC_GFMR_ENR
+mdefine_line|#define FCC_GFMR_ENR&t;&t;((uint)0x00000020)
+DECL|macro|FCC_GFMR_ENT
+mdefine_line|#define FCC_GFMR_ENT&t;&t;((uint)0x00000010)
+DECL|macro|FCC_GFMR_MODE_ENET
+mdefine_line|#define FCC_GFMR_MODE_ENET&t;((uint)0x0000000c)
+DECL|macro|FCC_GFMR_MODE_ATM
+mdefine_line|#define FCC_GFMR_MODE_ATM&t;((uint)0x0000000a)
+DECL|macro|FCC_GFMR_MODE_HDLC
+mdefine_line|#define FCC_GFMR_MODE_HDLC&t;((uint)0x00000000)
+multiline_comment|/* Generic FCC parameter ram.&n;*/
+DECL|struct|fcc_param
+r_typedef
+r_struct
+id|fcc_param
+(brace
+DECL|member|fcc_riptr
+id|ushort
+id|fcc_riptr
+suffix:semicolon
+multiline_comment|/* Rx Internal temp pointer */
+DECL|member|fcc_tiptr
+id|ushort
+id|fcc_tiptr
+suffix:semicolon
+multiline_comment|/* Tx Internal temp pointer */
+DECL|member|fcc_res1
+id|ushort
+id|fcc_res1
+suffix:semicolon
+DECL|member|fcc_mrblr
+id|ushort
+id|fcc_mrblr
+suffix:semicolon
+multiline_comment|/* Max receive buffer length, mod 32 bytes */
+DECL|member|fcc_rstate
+id|uint
+id|fcc_rstate
+suffix:semicolon
+multiline_comment|/* Upper byte is Func code, must be set */
+DECL|member|fcc_rbase
+id|uint
+id|fcc_rbase
+suffix:semicolon
+multiline_comment|/* Receive BD base */
+DECL|member|fcc_rbdstat
+id|ushort
+id|fcc_rbdstat
+suffix:semicolon
+multiline_comment|/* RxBD status */
+DECL|member|fcc_rbdlen
+id|ushort
+id|fcc_rbdlen
+suffix:semicolon
+multiline_comment|/* RxBD down counter */
+DECL|member|fcc_rdptr
+id|uint
+id|fcc_rdptr
+suffix:semicolon
+multiline_comment|/* RxBD internal data pointer */
+DECL|member|fcc_tstate
+id|uint
+id|fcc_tstate
+suffix:semicolon
+multiline_comment|/* Upper byte is Func code, must be set */
+DECL|member|fcc_tbase
+id|uint
+id|fcc_tbase
+suffix:semicolon
+multiline_comment|/* Transmit BD base */
+DECL|member|fcc_tbdstat
+id|ushort
+id|fcc_tbdstat
+suffix:semicolon
+multiline_comment|/* TxBD status */
+DECL|member|fcc_tbdlen
+id|ushort
+id|fcc_tbdlen
+suffix:semicolon
+multiline_comment|/* TxBD down counter */
+DECL|member|fcc_tdptr
+id|uint
+id|fcc_tdptr
+suffix:semicolon
+multiline_comment|/* TxBD internal data pointer */
+DECL|member|fcc_rbptr
+id|uint
+id|fcc_rbptr
+suffix:semicolon
+multiline_comment|/* Rx BD Internal buf pointer */
+DECL|member|fcc_tbptr
+id|uint
+id|fcc_tbptr
+suffix:semicolon
+multiline_comment|/* Tx BD Internal buf pointer */
+DECL|member|fcc_rcrc
+id|uint
+id|fcc_rcrc
+suffix:semicolon
+multiline_comment|/* Rx temp CRC */
+DECL|member|fcc_res2
+id|uint
+id|fcc_res2
+suffix:semicolon
+DECL|member|fcc_tcrc
+id|uint
+id|fcc_tcrc
+suffix:semicolon
+multiline_comment|/* Tx temp CRC */
+DECL|typedef|fccp_t
+)brace
+id|fccp_t
+suffix:semicolon
+multiline_comment|/* Ethernet controller through FCC.&n;*/
+DECL|struct|fcc_enet
+r_typedef
+r_struct
+id|fcc_enet
+(brace
+DECL|member|fen_genfcc
+id|fccp_t
+id|fen_genfcc
+suffix:semicolon
+DECL|member|fen_statbuf
+id|uint
+id|fen_statbuf
+suffix:semicolon
+multiline_comment|/* Internal status buffer */
+DECL|member|fen_camptr
+id|uint
+id|fen_camptr
+suffix:semicolon
+multiline_comment|/* CAM address */
+DECL|member|fen_cmask
+id|uint
+id|fen_cmask
+suffix:semicolon
+multiline_comment|/* Constant mask for CRC */
+DECL|member|fen_cpres
+id|uint
+id|fen_cpres
+suffix:semicolon
+multiline_comment|/* Preset CRC */
+DECL|member|fen_crcec
+id|uint
+id|fen_crcec
+suffix:semicolon
+multiline_comment|/* CRC Error counter */
+DECL|member|fen_alec
+id|uint
+id|fen_alec
+suffix:semicolon
+multiline_comment|/* alignment error counter */
+DECL|member|fen_disfc
+id|uint
+id|fen_disfc
+suffix:semicolon
+multiline_comment|/* discard frame counter */
+DECL|member|fen_retlim
+id|ushort
+id|fen_retlim
+suffix:semicolon
+multiline_comment|/* Retry limit */
+DECL|member|fen_retcnt
+id|ushort
+id|fen_retcnt
+suffix:semicolon
+multiline_comment|/* Retry counter */
+DECL|member|fen_pper
+id|ushort
+id|fen_pper
+suffix:semicolon
+multiline_comment|/* Persistence */
+DECL|member|fen_boffcnt
+id|ushort
+id|fen_boffcnt
+suffix:semicolon
+multiline_comment|/* backoff counter */
+DECL|member|fen_gaddrh
+id|uint
+id|fen_gaddrh
+suffix:semicolon
+multiline_comment|/* Group address filter, high 32-bits */
+DECL|member|fen_gaddrl
+id|uint
+id|fen_gaddrl
+suffix:semicolon
+multiline_comment|/* Group address filter, low 32-bits */
+DECL|member|fen_tfcstat
+id|ushort
+id|fen_tfcstat
+suffix:semicolon
+multiline_comment|/* out of sequence TxBD */
+DECL|member|fen_tfclen
+id|ushort
+id|fen_tfclen
+suffix:semicolon
+DECL|member|fen_tfcptr
+id|uint
+id|fen_tfcptr
+suffix:semicolon
+DECL|member|fen_mflr
+id|ushort
+id|fen_mflr
+suffix:semicolon
+multiline_comment|/* Maximum frame length (1518) */
+DECL|member|fen_paddrh
+id|ushort
+id|fen_paddrh
+suffix:semicolon
+multiline_comment|/* MAC address */
+DECL|member|fen_paddrm
+id|ushort
+id|fen_paddrm
+suffix:semicolon
+DECL|member|fen_paddrl
+id|ushort
+id|fen_paddrl
+suffix:semicolon
+DECL|member|fen_ibdcount
+id|ushort
+id|fen_ibdcount
+suffix:semicolon
+multiline_comment|/* Internal BD counter */
+DECL|member|fen_idbstart
+id|ushort
+id|fen_idbstart
+suffix:semicolon
+multiline_comment|/* Internal BD start pointer */
+DECL|member|fen_ibdend
+id|ushort
+id|fen_ibdend
+suffix:semicolon
+multiline_comment|/* Internal BD end pointer */
+DECL|member|fen_txlen
+id|ushort
+id|fen_txlen
+suffix:semicolon
+multiline_comment|/* Internal Tx frame length counter */
+DECL|member|fen_ibdbase
+id|uint
+id|fen_ibdbase
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Internal use */
+DECL|member|fen_iaddrh
+id|uint
+id|fen_iaddrh
+suffix:semicolon
+multiline_comment|/* Individual address filter */
+DECL|member|fen_iaddrl
+id|uint
+id|fen_iaddrl
+suffix:semicolon
+DECL|member|fen_minflr
+id|ushort
+id|fen_minflr
+suffix:semicolon
+multiline_comment|/* Minimum frame length (64) */
+DECL|member|fen_taddrh
+id|ushort
+id|fen_taddrh
+suffix:semicolon
+multiline_comment|/* Filter transfer MAC address */
+DECL|member|fen_taddrm
+id|ushort
+id|fen_taddrm
+suffix:semicolon
+DECL|member|fen_taddrl
+id|ushort
+id|fen_taddrl
+suffix:semicolon
+DECL|member|fen_padptr
+id|ushort
+id|fen_padptr
+suffix:semicolon
+multiline_comment|/* Pointer to pad byte buffer */
+DECL|member|fen_cftype
+id|ushort
+id|fen_cftype
+suffix:semicolon
+multiline_comment|/* control frame type */
+DECL|member|fen_cfrange
+id|ushort
+id|fen_cfrange
+suffix:semicolon
+multiline_comment|/* control frame range */
+DECL|member|fen_maxb
+id|ushort
+id|fen_maxb
+suffix:semicolon
+multiline_comment|/* maximum BD count */
+DECL|member|fen_maxd1
+id|ushort
+id|fen_maxd1
+suffix:semicolon
+multiline_comment|/* Max DMA1 length (1520) */
+DECL|member|fen_maxd2
+id|ushort
+id|fen_maxd2
+suffix:semicolon
+multiline_comment|/* Max DMA2 length (1520) */
+DECL|member|fen_maxd
+id|ushort
+id|fen_maxd
+suffix:semicolon
+multiline_comment|/* internal max DMA count */
+DECL|member|fen_dmacnt
+id|ushort
+id|fen_dmacnt
+suffix:semicolon
+multiline_comment|/* internal DMA counter */
+DECL|member|fen_octc
+id|uint
+id|fen_octc
+suffix:semicolon
+multiline_comment|/* Total octect counter */
+DECL|member|fen_colc
+id|uint
+id|fen_colc
+suffix:semicolon
+multiline_comment|/* Total collision counter */
+DECL|member|fen_broc
+id|uint
+id|fen_broc
+suffix:semicolon
+multiline_comment|/* Total broadcast packet counter */
+DECL|member|fen_mulc
+id|uint
+id|fen_mulc
+suffix:semicolon
+multiline_comment|/* Total multicast packet count */
+DECL|member|fen_uspc
+id|uint
+id|fen_uspc
+suffix:semicolon
+multiline_comment|/* Total packets &lt; 64 bytes */
+DECL|member|fen_frgc
+id|uint
+id|fen_frgc
+suffix:semicolon
+multiline_comment|/* Total packets &lt; 64 bytes with errors */
+DECL|member|fen_ospc
+id|uint
+id|fen_ospc
+suffix:semicolon
+multiline_comment|/* Total packets &gt; 1518 */
+DECL|member|fen_jbrc
+id|uint
+id|fen_jbrc
+suffix:semicolon
+multiline_comment|/* Total packets &gt; 1518 with errors */
+DECL|member|fen_p64c
+id|uint
+id|fen_p64c
+suffix:semicolon
+multiline_comment|/* Total packets == 64 bytes */
+DECL|member|fen_p65c
+id|uint
+id|fen_p65c
+suffix:semicolon
+multiline_comment|/* Total packets 64 &lt; bytes &lt;= 127 */
+DECL|member|fen_p128c
+id|uint
+id|fen_p128c
+suffix:semicolon
+multiline_comment|/* Total packets 127 &lt; bytes &lt;= 255 */
+DECL|member|fen_p256c
+id|uint
+id|fen_p256c
+suffix:semicolon
+multiline_comment|/* Total packets 256 &lt; bytes &lt;= 511 */
+DECL|member|fen_p512c
+id|uint
+id|fen_p512c
+suffix:semicolon
+multiline_comment|/* Total packets 512 &lt; bytes &lt;= 1023 */
+DECL|member|fen_p1024c
+id|uint
+id|fen_p1024c
+suffix:semicolon
+multiline_comment|/* Total packets 1024 &lt; bytes &lt;= 1518 */
+DECL|member|fen_cambuf
+id|uint
+id|fen_cambuf
+suffix:semicolon
+multiline_comment|/* Internal CAM buffer poiner */
+DECL|member|fen_rfthr
+id|ushort
+id|fen_rfthr
+suffix:semicolon
+multiline_comment|/* Received frames threshold */
+DECL|member|fen_rfcnt
+id|ushort
+id|fen_rfcnt
+suffix:semicolon
+multiline_comment|/* Received frames count */
+DECL|typedef|fcc_enet_t
+)brace
+id|fcc_enet_t
+suffix:semicolon
+multiline_comment|/* FCC Event/Mask register as used by Ethernet.&n;*/
+DECL|macro|FCC_ENET_GRA
+mdefine_line|#define FCC_ENET_GRA&t;((ushort)0x0080)&t;/* Graceful stop complete */
+DECL|macro|FCC_ENET_RXC
+mdefine_line|#define FCC_ENET_RXC&t;((ushort)0x0040)&t;/* Control Frame Received */
+DECL|macro|FCC_ENET_TXC
+mdefine_line|#define FCC_ENET_TXC&t;((ushort)0x0020)&t;/* Out of seq. Tx sent */
+DECL|macro|FCC_ENET_TXE
+mdefine_line|#define FCC_ENET_TXE&t;((ushort)0x0010)&t;/* Transmit Error */
+DECL|macro|FCC_ENET_RXF
+mdefine_line|#define FCC_ENET_RXF&t;((ushort)0x0008)&t;/* Full frame received */
+DECL|macro|FCC_ENET_BSY
+mdefine_line|#define FCC_ENET_BSY&t;((ushort)0x0004)&t;/* Busy.  Rx Frame dropped */
+DECL|macro|FCC_ENET_TXB
+mdefine_line|#define FCC_ENET_TXB&t;((ushort)0x0002)&t;/* A buffer was transmitted */
+DECL|macro|FCC_ENET_RXB
+mdefine_line|#define FCC_ENET_RXB&t;((ushort)0x0001)&t;/* A buffer was received */
+multiline_comment|/* FCC Mode Register (FPSMR) as used by Ethernet.&n;*/
+DECL|macro|FCC_PSMR_HBC
+mdefine_line|#define FCC_PSMR_HBC&t;((uint)0x80000000)&t;/* Enable heartbeat */
+DECL|macro|FCC_PSMR_FC
+mdefine_line|#define FCC_PSMR_FC&t;((uint)0x40000000)&t;/* Force Collision */
+DECL|macro|FCC_PSMR_SBT
+mdefine_line|#define FCC_PSMR_SBT&t;((uint)0x20000000)&t;/* Stop backoff timer */
+DECL|macro|FCC_PSMR_LPB
+mdefine_line|#define FCC_PSMR_LPB&t;((uint)0x10000000)&t;/* Local protect. 1 = FDX */
+DECL|macro|FCC_PSMR_LCW
+mdefine_line|#define FCC_PSMR_LCW&t;((uint)0x08000000)&t;/* Late collision select */
+DECL|macro|FCC_PSMR_FDE
+mdefine_line|#define FCC_PSMR_FDE&t;((uint)0x04000000)&t;/* Full Duplex Enable */
+DECL|macro|FCC_PSMR_MON
+mdefine_line|#define FCC_PSMR_MON&t;((uint)0x02000000)&t;/* RMON Enable */
+DECL|macro|FCC_PSMR_PRO
+mdefine_line|#define FCC_PSMR_PRO&t;((uint)0x00400000)&t;/* Promiscuous Enable */
+DECL|macro|FCC_PSMR_FCE
+mdefine_line|#define FCC_PSMR_FCE&t;((uint)0x00200000)&t;/* Flow Control Enable */
+DECL|macro|FCC_PSMR_RSH
+mdefine_line|#define FCC_PSMR_RSH&t;((uint)0x00100000)&t;/* Receive Short Frames */
+DECL|macro|FCC_PSMR_CAM
+mdefine_line|#define FCC_PSMR_CAM&t;((uint)0x00000400)&t;/* CAM enable */
+DECL|macro|FCC_PSMR_BRO
+mdefine_line|#define FCC_PSMR_BRO&t;((uint)0x00000200)&t;/* Broadcast pkt discard */
+DECL|macro|FCC_PSMR_ENCRC
+mdefine_line|#define FCC_PSMR_ENCRC&t;((uint)0x00000080)&t;/* Use 32-bit CRC */
 multiline_comment|/* IIC parameter RAM.&n;*/
 DECL|struct|iic
 r_typedef

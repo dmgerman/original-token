@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.50 2000/08/11 03:00:13 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.51 2000/09/14 06:22:32 anton Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -622,9 +622,14 @@ id|TSTATE_PRIV
 r_if
 c_cond
 (paren
+op_logical_neg
+id|regs-&gt;tpc
+op_logical_or
+(paren
 id|regs-&gt;tpc
 op_amp
 l_int|0x3
+)paren
 )paren
 r_goto
 id|cannot_handle

@@ -1147,13 +1147,15 @@ id|cep-&gt;stats.rx_bytes
 op_add_assign
 id|pkt_len
 suffix:semicolon
-multiline_comment|/* This does 16 byte alignment, much more than we need.&n;&t;&t;*/
+multiline_comment|/* This does 16 byte alignment, much more than we need.&n;&t;&t; * The packet length includes FCS, but we don&squot;t want to&n;&t;&t; * include that when passing upstream as it messes up&n;&t;&t; * bridging applications.&n;&t;&t; */
 id|skb
 op_assign
 id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 r_if
@@ -1188,6 +1190,8 @@ c_func
 id|skb
 comma
 id|pkt_len
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Make room */
@@ -1208,6 +1212,8 @@ id|bdp-&gt;cbd_bufaddr
 )paren
 comma
 id|pkt_len
+op_minus
+l_int|4
 comma
 l_int|0
 )paren

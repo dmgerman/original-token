@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  acpi.c - Linux ACPI driver&n; *&n; *  Copyright (C) 1999-2000 Andrew Henroid&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-multiline_comment|/*&n; * See http://www.geocities.com/SiliconValley/Hardware/3165/&n; * for the user-level ACPI stuff&n; */
+multiline_comment|/*&n; * See http://www.geocities.com/SiliconValley/Hardware/3165/&n; * for the user-level ACPI stuff&n; *&n; * Changes:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 2000/08/31&n; * - check copy*user return&n; * - get rid of check_region&n; * - get rid of verify_area&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -423,6 +423,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -432,8 +433,11 @@ id|str
 comma
 id|size
 )paren
-suffix:semicolon
-r_return
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -5638,22 +5642,10 @@ id|start
 op_logical_and
 id|size
 )paren
-(brace
 r_if
 c_cond
 (paren
-id|check_region
-c_func
-(paren
-id|start
-comma
-id|size
-)paren
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
+op_logical_neg
 id|request_region
 c_func
 (paren
@@ -5663,8 +5655,11 @@ id|size
 comma
 l_string|&quot;acpi&quot;
 )paren
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -6080,6 +6075,9 @@ op_ge
 id|size
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -6089,6 +6087,10 @@ id|str
 comma
 id|size
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 op_star
 id|len
@@ -6140,6 +6142,9 @@ op_assign
 op_star
 id|len
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -6149,6 +6154,10 @@ id|buffer
 comma
 id|size
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|str
 (braket
@@ -6221,6 +6230,13 @@ op_star
 id|info
 )paren
 (brace
+r_struct
+id|acpi_table
+id|hdr
+suffix:semicolon
+r_int
+id|table_size
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6236,33 +6252,9 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|buffer
-comma
-id|size
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_else
-(brace
-r_struct
-id|acpi_table
-id|hdr
-suffix:semicolon
-r_int
-id|table_size
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -6276,6 +6268,10 @@ r_sizeof
 id|hdr
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|table_size
 op_assign
@@ -6307,7 +6303,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -6578,6 +6573,9 @@ id|error
 r_return
 id|error
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -6591,6 +6589,10 @@ r_sizeof
 id|hdr
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|table_size
 op_assign
@@ -6702,6 +6704,9 @@ c_cond
 (paren
 id|data
 )paren
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -6711,6 +6716,11 @@ id|buffer
 comma
 id|size
 )paren
+)paren
+id|error
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 id|write_unlock
 c_func
@@ -6894,6 +6904,9 @@ op_ge
 id|size
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -6903,6 +6916,10 @@ id|str
 comma
 id|size
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 op_star
 id|len
@@ -6955,6 +6972,9 @@ op_assign
 op_star
 id|len
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -6964,6 +6984,10 @@ id|buffer
 comma
 id|size
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|str
 (braket
@@ -7391,6 +7415,9 @@ comma
 id|event_state
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -7400,6 +7427,10 @@ id|str
 comma
 id|size
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 op_star
 id|len

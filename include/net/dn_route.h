@@ -248,8 +248,8 @@ suffix:semicolon
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 DECL|function|dn_rt_send
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dn_rt_send
 c_func
@@ -268,8 +268,8 @@ id|skb
 suffix:semicolon
 )brace
 DECL|function|dn_rt_finish_output
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dn_rt_finish_output
 c_func
@@ -353,8 +353,8 @@ id|skb
 suffix:semicolon
 )brace
 DECL|function|dn_nsp_send
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dn_nsp_send
 c_func

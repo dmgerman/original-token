@@ -540,7 +540,7 @@ op_star
 id|lvm_get_inode
 c_func
 (paren
-r_int
+id|kdev_t
 )paren
 suffix:semicolon
 r_void
@@ -1407,10 +1407,10 @@ id|UNLOCK_PE
 suffix:semicolon
 id|pe_lock_req.data.lv_dev
 op_assign
-"&bslash;"
 id|pe_lock_req.data.pv_dev
 op_assign
-"&bslash;"
+l_int|0
+suffix:semicolon
 id|pe_lock_req.data.pv_offset
 op_assign
 l_int|0
@@ -6043,10 +6043,10 @@ id|UNLOCK_PE
 suffix:semicolon
 id|pe_lock_req.data.lv_dev
 op_assign
-"&bslash;"
 id|pe_lock_req.data.pv_dev
 op_assign
-"&bslash;"
+l_int|0
+suffix:semicolon
 id|pe_lock_req.data.pv_offset
 op_assign
 l_int|0
@@ -10605,7 +10605,7 @@ op_star
 id|lvm_get_inode
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace

@@ -1942,7 +1942,7 @@ macro_line|#include &lt;asm/pci.h&gt;
 multiline_comment|/*&n; *  If the system does not have PCI, clearly these return errors.  Define&n; *  these as simple inline functions to avoid hair in drivers.&n; */
 macro_line|#ifndef CONFIG_PCI
 DECL|function|pcibios_present
-r_extern
+r_static
 r_inline
 r_int
 id|pcibios_present
@@ -1956,7 +1956,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|pcibios_find_class
-r_extern
+r_static
 r_inline
 r_int
 id|pcibios_find_class
@@ -1985,7 +1985,7 @@ id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
 )brace
 DECL|macro|_PCI_NOP
-mdefine_line|#define _PCI_NOP(o,s,t) &bslash;&n;&t;extern inline int pcibios_##o##_config_##s## (u8 bus, u8 dfn, u8 where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; } &bslash;&n;&t;extern inline int pci_##o##_config_##s## (struct pci_dev *dev, int where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; }
+mdefine_line|#define _PCI_NOP(o,s,t) &bslash;&n;&t;static inline int pcibios_##o##_config_##s## (u8 bus, u8 dfn, u8 where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; } &bslash;&n;&t;static inline int pci_##o##_config_##s## (struct pci_dev *dev, int where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; }
 DECL|macro|_PCI_NOP_ALL
 mdefine_line|#define _PCI_NOP_ALL(o,x)&t;_PCI_NOP(o,byte,u8 x) &bslash;&n;&t;&t;&t;&t;_PCI_NOP(o,word,u16 x) &bslash;&n;&t;&t;&t;&t;_PCI_NOP(o,dword,u32 x)
 id|_PCI_NOP_ALL
@@ -2002,7 +2002,7 @@ id|write
 comma
 )paren
 DECL|function|pci_find_device
-r_extern
+r_static
 r_inline
 r_struct
 id|pci_dev
@@ -2030,7 +2030,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|pci_find_class
-r_extern
+r_static
 r_inline
 r_struct
 id|pci_dev
@@ -2054,7 +2054,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|pci_find_slot
-r_extern
+r_static
 r_inline
 r_struct
 id|pci_dev
@@ -2076,7 +2076,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|pci_find_subsys
-r_extern
+r_static
 r_inline
 r_struct
 id|pci_dev
@@ -2112,7 +2112,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|pci_set_master
-r_extern
+r_static
 r_inline
 r_void
 id|pci_set_master
@@ -2126,7 +2126,7 @@ id|dev
 (brace
 )brace
 DECL|function|pci_enable_device
-r_extern
+r_static
 r_inline
 r_int
 id|pci_enable_device
@@ -2144,7 +2144,7 @@ id|EIO
 suffix:semicolon
 )brace
 DECL|function|pci_module_init
-r_extern
+r_static
 r_inline
 r_int
 id|pci_module_init
@@ -2162,7 +2162,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|pci_assign_resource
-r_extern
+r_static
 r_inline
 r_int
 id|pci_assign_resource
@@ -2183,7 +2183,7 @@ id|EBUSY
 suffix:semicolon
 )brace
 DECL|function|pci_register_driver
-r_extern
+r_static
 r_inline
 r_int
 id|pci_register_driver
@@ -2200,7 +2200,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|pci_unregister_driver
-r_extern
+r_static
 r_inline
 r_void
 id|pci_unregister_driver
@@ -2214,7 +2214,7 @@ id|drv
 (brace
 )brace
 DECL|function|scsi_to_pci_dma_dir
-r_extern
+r_static
 r_inline
 r_int
 id|scsi_to_pci_dma_dir
@@ -2230,7 +2230,7 @@ id|scsi_dir
 suffix:semicolon
 )brace
 DECL|function|pci_find_capability
-r_extern
+r_static
 r_inline
 r_int
 id|pci_find_capability
@@ -2251,7 +2251,7 @@ suffix:semicolon
 macro_line|#else
 multiline_comment|/*&n; * a helper function which helps ensure correct pci_driver&n; * setup and cleanup for commonly-encountered hotplug/modular cases&n; *&n; * This MUST stay in a header, as it checks for -DMODULE&n; */
 DECL|function|pci_module_init
-r_extern
+r_static
 r_inline
 r_int
 id|pci_module_init
@@ -2315,6 +2315,45 @@ DECL|macro|pci_resource_flags
 mdefine_line|#define pci_resource_flags(dev,bar)   ((dev)-&gt;resource[(bar)].flags)
 DECL|macro|pci_resource_len
 mdefine_line|#define pci_resource_len(dev,bar) &bslash;&n;&t;((pci_resource_start((dev),(bar)) == 0 &amp;&amp;&t;&bslash;&n;&t;  pci_resource_end((dev),(bar)) ==&t;&t;&bslash;&n;&t;  pci_resource_start((dev),(bar))) ? 0 :&t;&bslash;&n;&t;  &t;&t;&t;&t;&t;&t;&bslash;&n;&t; (pci_resource_end((dev),(bar)) -&t;&t;&bslash;&n;&t;  pci_resource_start((dev),(bar)) + 1))
+multiline_comment|/* Similar to the helpers above, these manipulate per-pci_dev&n; * driver-specific data.  Currently stored as pci_dev::driver_data,&n; * a void pointer, but it is not present on older kernels.&n; */
+DECL|function|pci_get_drvdata
+r_static
+r_inline
+r_void
+op_star
+id|pci_get_drvdata
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+)paren
+(brace
+r_return
+id|pdev-&gt;driver_data
+suffix:semicolon
+)brace
+DECL|function|pci_set_drvdata
+r_static
+r_inline
+r_void
+id|pci_set_drvdata
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+id|pdev-&gt;driver_data
+op_assign
+id|data
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *  The world is not perfect and supplies us with broken PCI devices.&n; *  For at least a part of these bugs we need a work-around, so both&n; *  generic (drivers/pci/quirks.c) and per-architecture code can define&n; *  fixup hooks to be called for particular buggy devices.&n; */
 DECL|struct|pci_fixup
 r_struct

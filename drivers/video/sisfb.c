@@ -2164,7 +2164,6 @@ comma
 l_int|0x10
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_SIS_LINUXBIOS
 DECL|macro|Monitor1Sense
 mdefine_line|#define Monitor1Sense 0x20
 DECL|variable|SRegsInit
@@ -2304,6 +2303,7 @@ comma
 l_int|0xff
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_SIS_LINUXBIOS
 DECL|variable|SRegs
 r_int
 r_char
@@ -7620,10 +7620,6 @@ id|u16
 id|ModeNo
 )paren
 (brace
-r_int
-r_char
-id|ModeID
-suffix:semicolon
 id|u16
 id|modeidlength
 suffix:semicolon

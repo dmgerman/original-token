@@ -11,6 +11,7 @@ op_assign
 l_string|&quot;auto_irq.c:v1.11 Donald Becker (becker@cesdis.gsfc.nasa.gov)&quot;
 suffix:semicolon
 macro_line|#endif
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -72,6 +73,20 @@ id|irqs
 )paren
 suffix:semicolon
 )brace
+DECL|variable|autoirq_setup
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|autoirq_setup
+)paren
+suffix:semicolon
+DECL|variable|autoirq_report
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|autoirq_report
+)paren
+suffix:semicolon
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DKERNEL -Wall -O6 -fomit-frame-pointer -I/usr/src/linux/net/tcp -c auto_irq.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

@@ -15,6 +15,9 @@ macro_line|#include &lt;linux/cuda.h&gt;
 macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
+macro_line|#ifdef CONFIG_PMAC_BACKLIGHT
+macro_line|#include &lt;asm/backlight.h&gt;
+macro_line|#endif
 DECL|macro|KEYB_KEYREG
 mdefine_line|#define KEYB_KEYREG&t;0&t;/* register # for key up/down data */
 DECL|macro|KEYB_LEDREG
@@ -3688,11 +3691,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* CONFIG_ADBMOUSE */
-multiline_comment|/* XXX Needs to get rid of this, see comments in pmu.c */
-r_extern
-r_int
-id|backlight_level
-suffix:semicolon
 r_static
 r_void
 DECL|function|buttons_input
@@ -3716,35 +3714,17 @@ r_int
 id|autopoll
 )paren
 (brace
-macro_line|#ifdef CONFIG_ADB_PMU
+macro_line|#ifdef CONFIG_PMAC_BACKLIGHT
+r_int
+id|backlight
+op_assign
+id|get_backlight_level
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * XXX: Where is the contrast control for the passive?&n;&t; *  -- Cort&n;&t; */
 multiline_comment|/* Ignore data from register other than 0 */
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-id|adb_hardware
-op_ne
-id|ADB_VIAPMU
-)paren
-op_logical_or
-(paren
-id|data
-(braket
-l_int|0
-)braket
-op_amp
-l_int|0x3
-)paren
-op_logical_or
-(paren
-id|nb
-OL
-l_int|2
-)paren
-)paren
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -3763,7 +3743,6 @@ OL
 l_int|2
 )paren
 )paren
-macro_line|#endif
 r_return
 suffix:semicolon
 r_switch
@@ -3773,186 +3752,102 @@ id|data
 (braket
 l_int|1
 )braket
-op_amp
-l_int|0xf
 )paren
 (brace
-multiline_comment|/* mute */
 r_case
 l_int|0x8
 suffix:colon
-multiline_comment|/* down event */
-r_if
-c_cond
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_eq
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_amp
-l_int|0xf
-)paren
-)paren
-(brace
-)brace
+multiline_comment|/* mute */
 r_break
 suffix:semicolon
-multiline_comment|/* contrast decrease */
 r_case
 l_int|0x7
 suffix:colon
-multiline_comment|/* down event */
-r_if
-c_cond
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_eq
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_amp
-l_int|0xf
-)paren
-)paren
-(brace
-)brace
+multiline_comment|/* contrast decrease */
 r_break
 suffix:semicolon
-multiline_comment|/* contrast increase */
 r_case
 l_int|0x6
 suffix:colon
-multiline_comment|/* down event */
-r_if
-c_cond
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_eq
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_amp
-l_int|0xf
-)paren
-)paren
-(brace
-)brace
+multiline_comment|/* contrast increase */
 r_break
 suffix:semicolon
-multiline_comment|/* brightness decrease */
 r_case
 l_int|0xa
 suffix:colon
-multiline_comment|/* down event */
+multiline_comment|/* brightness decrease */
 r_if
 c_cond
 (paren
-id|data
-(braket
-l_int|1
-)braket
-op_eq
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_amp
-l_int|0xf
+id|backlight
+OL
+l_int|0
 )paren
-)paren
-(brace
+r_break
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|backlight_level
+id|backlight
 OG
-l_int|2
+id|BACKLIGHT_OFF
 )paren
-id|pmu_set_brightness
+id|set_backlight_level
 c_func
 (paren
-id|backlight_level
+id|backlight
 op_minus
-l_int|2
+l_int|1
 )paren
 suffix:semicolon
 r_else
-id|pmu_set_brightness
+id|set_backlight_level
 c_func
 (paren
-l_int|0
+id|BACKLIGHT_OFF
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
-multiline_comment|/* brightness increase */
 r_case
 l_int|0x9
 suffix:colon
-multiline_comment|/* down event */
+multiline_comment|/* brightness increase */
 r_if
 c_cond
 (paren
-id|data
-(braket
-l_int|1
-)braket
-op_eq
-(paren
-id|data
-(braket
-l_int|1
-)braket
-op_amp
-l_int|0xf
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|backlight_level
+id|backlight
 OL
-l_int|0x1e
+l_int|0
 )paren
-id|pmu_set_brightness
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|backlight
+OL
+id|BACKLIGHT_MAX
+)paren
+id|set_backlight_level
 c_func
 (paren
-id|backlight_level
+id|backlight
 op_plus
-l_int|2
+l_int|1
 )paren
 suffix:semicolon
 r_else
-id|pmu_set_brightness
+id|set_backlight_level
 c_func
 (paren
-l_int|0x1f
+id|BACKLIGHT_MAX
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_ADB_PMU */
+macro_line|#endif /* CONFIG_PMAC_BACKLIGHT */
 )brace
 multiline_comment|/* Map led flags as defined in kbd_kern.h to bits for Apple keyboard. */
 DECL|variable|mac_ledmap

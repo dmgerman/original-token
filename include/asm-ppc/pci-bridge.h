@@ -19,7 +19,7 @@ r_int
 id|bus
 )paren
 suffix:semicolon
-multiline_comment|/* This version handles the new Uni-N host bridge, the iobase is now&n; * a per-device thing. I also added the memory base so PReP can&n; * be fixed to return 0xc0000000 (I didn&squot;t actually implement it)&n; */
+multiline_comment|/* This version handles the new Uni-N host bridge, the iobase is now&n; * a per-device thing. I also added the memory base so PReP can&n; * be fixed to return 0xc0000000 (I didn&squot;t actually implement it)&n; *&n; * pci_dev_io_base() returns either a virtual (ioremap&squot;ed) address or&n; * a physical address. In-kernel clients will use logical while the&n; * sys_pciconfig_iobase syscall returns a physical one to userland.&n; */
 r_void
 op_star
 id|pci_dev_io_base
@@ -32,6 +32,9 @@ comma
 r_int
 r_char
 id|devfn
+comma
+r_int
+id|physical
 )paren
 suffix:semicolon
 r_void
@@ -105,6 +108,12 @@ DECL|member|io_base
 r_void
 op_star
 id|io_base
+suffix:semicolon
+multiline_comment|/* virtual */
+DECL|member|io_base_phys
+r_int
+r_int
+id|io_base_phys
 suffix:semicolon
 DECL|member|bus_number
 r_int

@@ -70,6 +70,8 @@ DECL|macro|OVR_WID_LEFT_RIGHT
 mdefine_line|#define OVR_WID_LEFT_RIGHT&t;&t;&t;0x0234
 DECL|macro|OVR_WID_TOP_BOTTOM
 mdefine_line|#define OVR_WID_TOP_BOTTOM&t;&t;&t;0x0238
+DECL|macro|LVDS_GEN_CNTL
+mdefine_line|#define LVDS_GEN_CNTL&t;&t;&t;&t;0x02d0
 DECL|macro|DDA_CONFIG
 mdefine_line|#define DDA_CONFIG&t;&t;&t;&t;0x02e0
 DECL|macro|DDA_ON_OFF
@@ -488,8 +490,10 @@ DECL|macro|DAC_RANGE_CNTL
 mdefine_line|#define DAC_RANGE_CNTL&t;&t;&t;&t;0x00000003
 DECL|macro|DAC_RANGE_CNTL
 mdefine_line|#define DAC_RANGE_CNTL&t;&t;&t;&t;0x00000003
-DECL|macro|PALETTE_ACCESS_CNTL
-mdefine_line|#define PALETTE_ACCESS_CNTL&t;&t;&t;0x00000020
+DECL|macro|DAC_PALETTE_ACCESS_CNTL
+mdefine_line|#define DAC_PALETTE_ACCESS_CNTL&t;&t;&t;0x00000020
+DECL|macro|DAC_PDWN
+mdefine_line|#define DAC_PDWN&t;&t;&t;&t;0x00008000
 multiline_comment|/* GEN_RESET_CNTL bit constants */
 DECL|macro|SOFT_RESET_GUI
 mdefine_line|#define SOFT_RESET_GUI&t;&t;&t;&t;0x00000001
@@ -605,5 +609,16 @@ DECL|macro|DP_SRC_HOST
 mdefine_line|#define DP_SRC_HOST&t;&t;&t;&t;0x00000300
 DECL|macro|DP_SRC_HOST_BYTEALIGN
 mdefine_line|#define DP_SRC_HOST_BYTEALIGN&t;&t;&t;0x00000400
+multiline_comment|/* LVDS_GEN_CNTL constants */
+DECL|macro|LVDS_BL_MOD_LEVEL_MASK
+mdefine_line|#define LVDS_BL_MOD_LEVEL_MASK&t;&t;&t;0x0000ff00
+DECL|macro|LVDS_BL_MOD_LEVEL_SHIFT
+mdefine_line|#define LVDS_BL_MOD_LEVEL_SHIFT&t;&t;&t;8
+DECL|macro|LVDS_BL_MOD_EN
+mdefine_line|#define LVDS_BL_MOD_EN&t;&t;&t;&t;0x00010000
+DECL|macro|LVDS_DIGION
+mdefine_line|#define LVDS_DIGION&t;&t;&t;&t;0x00040000
+DECL|macro|LVDS_BLON
+mdefine_line|#define LVDS_BLON&t;&t;&t;&t;0x00080000
 macro_line|#endif /* REG_RAGE128_H */
 eof

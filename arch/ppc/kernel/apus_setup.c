@@ -1269,9 +1269,8 @@ r_void
 (brace
 macro_line|#ifdef CONFIG_APUS
 r_int
+r_int
 id|freq
-comma
-id|divisor
 suffix:semicolon
 multiline_comment|/* This algorithm for determining the bus speed was&n;           contributed by Ralph Schmidt. */
 r_int
@@ -1430,11 +1429,11 @@ l_int|69
 (brace
 id|bus_speed
 op_assign
-l_int|66
+l_int|67
 suffix:semicolon
 id|freq
 op_assign
-l_int|16500000
+l_int|16666667
 suffix:semicolon
 )brace
 r_else
@@ -1600,42 +1599,35 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|freq
-op_mul_assign
-l_int|60
-suffix:semicolon
-multiline_comment|/* try to make freq/1e6 an integer */
-id|divisor
-op_assign
-l_int|60
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;time_init: decrementer frequency = %d/%d&bslash;n&quot;
+l_string|&quot;time_init: decrementer frequency = %lu.%.6lu MHz&bslash;n&quot;
 comma
 id|freq
+op_div
+l_int|1000000
 comma
-id|divisor
+id|freq
+op_mod
+l_int|1000000
 )paren
 suffix:semicolon
-id|decrementer_count
+id|tb_ticks_per_jiffy
 op_assign
 id|freq
 op_div
 id|HZ
-op_div
-id|divisor
 suffix:semicolon
-id|count_period_num
+id|tb_to_us
 op_assign
-id|divisor
-suffix:semicolon
-id|count_period_den
-op_assign
+id|mulhwu_scale_factor
+c_func
+(paren
 id|freq
-op_div
+comma
 l_int|1000000
+)paren
 suffix:semicolon
 id|__bus_speed
 op_assign

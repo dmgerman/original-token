@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Definitions for accessing the Feature Control Register (FCR)&n; * on Power Macintoshes and similar machines.  The FCR lets us&n; * enable/disable, reset, and power up/down various peripherals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 Paul Mackerras.&n; * &n; */
+multiline_comment|/*&n; * Definitions for accessing the Feature Control Register (FCR)&n; * on Power Macintoshes and similar machines.  The FCR lets us&n; * enable/disable, reset, and power up/down various peripherals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 Paul Mackerras &amp;&n; *                    Ben. Herrenschmidt.&n; *&n; * &n; */
 macro_line|#ifndef __ASM_PPC_FEATURE_H
 DECL|macro|__ASM_PPC_FEATURE_H
 mdefine_line|#define __ASM_PPC_FEATURE_H
@@ -172,6 +172,21 @@ id|device
 comma
 r_int
 id|power
+)paren
+suffix:semicolon
+multiline_comment|/* use constants in KeyLargo.h for the reset parameter */
+r_extern
+r_void
+id|feature_set_gmac_phy_reset
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|device
+comma
+r_int
+id|reset
 )paren
 suffix:semicolon
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.163 2000/08/22 10:09:10 jj Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.164 2000/09/14 10:42:47 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9013,15 +9013,13 @@ id|raw_data
 (brace
 r_struct
 id|ncp_mount_data
+id|news
+comma
 op_star
 id|n
 op_assign
-(paren
-r_struct
-id|ncp_mount_data
-op_star
-)paren
-id|raw_data
+op_amp
+id|news
 suffix:semicolon
 r_struct
 id|ncp_mount_data32
@@ -9093,6 +9091,20 @@ c_func
 id|n32-&gt;mounted_uid
 )paren
 suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|raw_data
+comma
+id|n
+comma
+r_sizeof
+(paren
+r_struct
+id|ncp_mount_data
+)paren
+)paren
+suffix:semicolon
 r_return
 id|raw_data
 suffix:semicolon
@@ -9141,15 +9153,13 @@ id|raw_data
 (brace
 r_struct
 id|smb_mount_data
+id|news
+comma
 op_star
 id|s
 op_assign
-(paren
-r_struct
-id|smb_mount_data
-op_star
-)paren
-id|raw_data
+op_amp
+id|news
 suffix:semicolon
 r_struct
 id|smb_mount_data32
@@ -9198,6 +9208,20 @@ suffix:semicolon
 id|s-&gt;dir_mode
 op_assign
 id|s32-&gt;dir_mode
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|raw_data
+comma
+id|s
+comma
+r_sizeof
+(paren
+r_struct
+id|smb_mount_data
+)paren
+)paren
 suffix:semicolon
 r_return
 id|raw_data

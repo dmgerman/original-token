@@ -508,7 +508,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_FDDI */
 macro_line|#ifdef CONFIG_HIPPI
 DECL|function|hippi_change_mtu
 r_static
@@ -700,7 +700,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_HIPPI */
 DECL|function|ether_setup
 r_void
 id|ether_setup
@@ -863,7 +863,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_FDDI */
 macro_line|#ifdef CONFIG_HIPPI
 DECL|function|hippi_setup
 r_void
@@ -956,7 +956,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_HIPPI */
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 DECL|function|ltalk_change_mtu
 r_static
@@ -1077,7 +1077,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_ATALK || CONFIG_ATALK_MODULE */
 DECL|function|ether_config
 r_int
 id|ether_config
@@ -1538,7 +1538,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_TR */
 macro_line|#ifdef CONFIG_NET_FC
 DECL|function|fc_setup
 r_void
@@ -1711,5 +1711,4 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_NET_FC */
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c net_init.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

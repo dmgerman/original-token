@@ -127,7 +127,7 @@ multiline_comment|/*&n;&t;&t; * Protect against race conditions.  If the device 
 r_if
 c_cond
 (paren
-id|cmd-&gt;device-&gt;device_blocked
+id|cmd-&gt;device-&gt;device_busy
 op_eq
 l_int|0
 )paren

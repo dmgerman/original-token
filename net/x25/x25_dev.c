@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *      2000-09-04&t;Henner Eisen&t;Prevent freeing a dangling skb.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -167,12 +167,15 @@ comma
 id|lci
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Its not a Call Request, nor is it a control frame, throw it awa&n;&t; */
+multiline_comment|/*&n;&t; *&t;Its not a Call Request, nor is it a control frame.&n;&t; *      Let caller throw it away.&n;&t; */
 multiline_comment|/*&n;&t;x25_transmit_clear_request(neigh, lci, 0x0D);&n;*/
-id|kfree_skb
+id|printk
 c_func
 (paren
-id|skb
+id|KERN_DEBUG
+l_string|&quot;x25_receive_data(): unknown frame type %2x&bslash;n&quot;
+comma
+id|frametype
 )paren
 suffix:semicolon
 r_return

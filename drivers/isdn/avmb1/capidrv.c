@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;linux/kernelcapi.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capicmd.h&quot;
@@ -11133,6 +11134,7 @@ suffix:semicolon
 DECL|function|proc_init
 r_static
 r_void
+id|__init
 id|proc_init
 c_func
 (paren
@@ -11208,6 +11210,7 @@ suffix:semicolon
 DECL|function|proc_exit
 r_static
 r_void
+id|__exit
 id|proc_exit
 c_func
 (paren
@@ -11292,12 +11295,9 @@ comma
 id|lower_callback
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|macro|capidrv_init
-mdefine_line|#define capidrv_init init_module
-macro_line|#endif
 DECL|function|capidrv_init
 r_int
+id|__init
 id|capidrv_init
 c_func
 (paren
@@ -11588,10 +11588,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|capidrv_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|capidrv_exit
 c_func
 (paren
 r_void
@@ -11695,5 +11696,20 @@ id|rev
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|capidrv_init
+id|module_init
+c_func
+(paren
+id|capidrv_init
+)paren
+suffix:semicolon
 macro_line|#endif
+DECL|variable|capidrv_exit
+id|module_exit
+c_func
+(paren
+id|capidrv_exit
+)paren
+suffix:semicolon
 eof

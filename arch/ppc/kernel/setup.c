@@ -30,6 +30,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_OAK
 macro_line|#include &quot;oak_setup.h&quot;
 macro_line|#endif /* CONFIG_OAK */
@@ -2769,17 +2770,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* Checks &quot;l2cr=xxxx&quot; command-line option */
 DECL|function|ppc_setup_l2cr
-r_void
+r_int
 id|ppc_setup_l2cr
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_if
@@ -2841,14 +2838,27 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* force invalidate by disable cache */
 id|_set_L2CR
 c_func
 (paren
 id|val
 )paren
 suffix:semicolon
+multiline_comment|/* and enable it */
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;l2cr=&quot;
+comma
+id|ppc_setup_l2cr
+)paren
+suffix:semicolon
 DECL|function|ppc_init
 r_void
 id|__init
@@ -2929,6 +2939,11 @@ c_func
 (paren
 r_void
 )paren
+suffix:semicolon
+multiline_comment|/* so udelay does something sensible, assume &lt;= 1000 bogomips */
+id|loops_per_sec
+op_assign
+l_int|500000000
 suffix:semicolon
 macro_line|#ifdef CONFIG_ALL_PPC
 id|feature_init
@@ -3133,6 +3148,11 @@ l_int|0x3eab
 )paren
 suffix:semicolon
 id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sort_exception_table
 c_func
 (paren
 )paren

@@ -97,10 +97,8 @@ l_string|&quot;backlight&quot;
 suffix:semicolon
 macro_line|#ifdef CONFIG_ADB_PMU
 multiline_comment|/* Special case for the old PowerBook since I can&squot;t test on it */
-r_if
-c_cond
-(paren
-(paren
+id|backlight_autosave
+op_assign
 id|machine_is_compatible
 c_func
 (paren
@@ -112,6 +110,12 @@ c_func
 (paren
 l_string|&quot;AAPL,3500&quot;
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|backlight_autosave
 op_logical_or
 id|machine_is_compatible
 c_func
@@ -122,7 +126,7 @@ op_logical_or
 id|machine_is_compatible
 c_func
 (paren
-l_string|&quot;AAPL,PowerBook1999&quot;
+l_string|&quot;PowerBook1,1&quot;
 )paren
 )paren
 op_logical_and
@@ -139,14 +143,13 @@ id|valid
 op_assign
 l_int|1
 suffix:semicolon
-r_else
 macro_line|#endif
-(brace
 r_if
 c_cond
 (paren
 id|bk_node
 )paren
+(brace
 id|prop
 op_assign
 id|get_property
@@ -257,20 +260,6 @@ id|BACKLIGHT_MAX
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ADB_PMU
-id|backlight_autosave
-op_assign
-id|machine_is_compatible
-c_func
-(paren
-l_string|&quot;AAPL,3400/2400&quot;
-)paren
-op_logical_or
-id|machine_is_compatible
-c_func
-(paren
-l_string|&quot;AAPL,3500&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -124,6 +124,13 @@ DECL|macro|MASK_ADDR_VOLC
 mdefine_line|#define MASK_ADDR_VOLC&t;MASK_ADDR4&t;/* Volume Control C -- Speaker */
 DECL|macro|MASK_ADDR_VOLSPK
 mdefine_line|#define MASK_ADDR_VOLSPK MASK_ADDR4
+multiline_comment|/* additional registers of screamer */
+DECL|macro|MASK_ADDR5
+mdefine_line|#define MASK_ADDR5&t;(0x5 &lt;&lt; 12)&t;/* Expanded Data Mode Address 5 */
+DECL|macro|MASK_ADDR6
+mdefine_line|#define MASK_ADDR6&t;(0x6 &lt;&lt; 12)&t;/* Expanded Data Mode Address 6 */
+DECL|macro|MASK_ADDR7
+mdefine_line|#define MASK_ADDR7&t;(0x7 &lt;&lt; 12)&t;/* Expanded Data Mode Address 7 */
 multiline_comment|/* Address 0 Bit Masks &amp; Macros */
 multiline_comment|/* ------- - --- ----- - ------ */
 DECL|macro|MASK_GAINRIGHT

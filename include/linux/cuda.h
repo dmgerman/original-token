@@ -39,8 +39,17 @@ mdefine_line|#define CUDA_GET_DEVICE_LIST&t;0x1a
 DECL|macro|CUDA_GET_SET_IIC
 mdefine_line|#define CUDA_GET_SET_IIC&t;0x22
 macro_line|#ifdef __KERNEL__
-r_void
+r_extern
+r_int
 id|find_via_cuda
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|via_cuda_start
 c_func
 (paren
 r_void

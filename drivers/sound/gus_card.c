@@ -830,6 +830,7 @@ l_int|3
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_GUS16
 DECL|variable|gus16
 r_static
 r_int
@@ -837,6 +838,7 @@ id|gus16
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_GUSMAX
 DECL|variable|no_wave_dma
 r_static
@@ -940,14 +942,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|gus16
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SOUND_GUSMAX
 id|MODULE_PARM
 c_func
@@ -963,6 +957,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|db16
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|gus16
 comma
 l_string|&quot;i&quot;
 )paren

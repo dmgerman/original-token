@@ -22,6 +22,8 @@ id|N_DESCR
 )braket
 op_assign
 (brace
+macro_line|#if 1
+multiline_comment|/* values for IBM RS/6000 machines */
 l_int|0xffffffff
 comma
 multiline_comment|/* real-mode = true */
@@ -40,6 +42,27 @@ multiline_comment|/* virt-size */
 l_int|0x4000
 comma
 multiline_comment|/* load-base */
+macro_line|#else
+multiline_comment|/* values for longtrail CHRP */
+l_int|0
+comma
+multiline_comment|/* real-mode = false */
+l_int|0xffffffff
+comma
+multiline_comment|/* real-base */
+l_int|0xffffffff
+comma
+multiline_comment|/* real-size */
+l_int|0xffffffff
+comma
+multiline_comment|/* virt-base */
+l_int|0xffffffff
+comma
+multiline_comment|/* virt-size */
+l_int|0x00600000
+comma
+multiline_comment|/* load-base */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|buf
@@ -108,6 +131,7 @@ l_char|&squot;F&squot;
 )brace
 suffix:semicolon
 DECL|function|main
+r_int
 id|main
 c_func
 (paren

@@ -128,27 +128,7 @@ suffix:semicolon
 multiline_comment|/* 011 */
 DECL|macro|md_signal_pending
 mdefine_line|#define md_signal_pending signal_pending
-multiline_comment|/* 012 */
-DECL|function|md_set_global_readahead
-r_extern
-r_inline
-r_void
-id|md_set_global_readahead
-c_func
-(paren
-r_int
-op_star
-id|table
-)paren
-(brace
-id|max_readahead
-(braket
-id|MD_MAJOR
-)braket
-op_assign
-id|table
-suffix:semicolon
-)brace
+multiline_comment|/* 012 - md_set_global_readahead - nowhere used */
 multiline_comment|/* 013 */
 DECL|macro|md_mdelay
 mdefine_line|#define md_mdelay(x) mdelay(x)

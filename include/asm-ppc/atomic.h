@@ -75,6 +75,7 @@ c_func
 r_int
 id|a
 comma
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -133,6 +134,7 @@ c_func
 r_int
 id|a
 comma
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -188,6 +190,7 @@ r_int
 id|atomic_inc_return
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -238,6 +241,7 @@ r_int
 id|atomic_dec_return
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v

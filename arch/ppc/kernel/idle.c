@@ -877,6 +877,10 @@ r_case
 l_int|8
 suffix:colon
 multiline_comment|/* 750 */
+r_case
+l_int|12
+suffix:colon
+multiline_comment|/* 7400 */
 id|save_flags
 c_func
 (paren

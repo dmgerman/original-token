@@ -3152,8 +3152,6 @@ id|from_user
 r_if
 c_cond
 (paren
-id|c
-op_ne
 id|copy_from_user
 c_func
 (paren
@@ -8702,21 +8700,21 @@ suffix:semicolon
 macro_line|#if USE_SMC2
 id|io-&gt;iop_ppara
 op_or_assign
-l_int|0x01800000
+l_int|0x00c00000
 suffix:semicolon
 id|io-&gt;iop_pdira
 op_or_assign
-l_int|0x00800000
+l_int|0x00400000
 suffix:semicolon
 id|io-&gt;iop_pdira
 op_and_assign
 op_complement
-l_int|0x01000000
+l_int|0x00800000
 suffix:semicolon
 id|io-&gt;iop_psora
 op_and_assign
 op_complement
-l_int|0x01800000
+l_int|0x00c00000
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Configure SCC2 and SCC3.  Be careful about the fine print.&n;&t; * Secondary options are only available when you take away&n;&t; * the primary option.  Unless the pins are used for something&n;&t; * else, SCC2 and SCC3 are on Port B.&n;&t; *&t;Port B,  8 - SCC3 TxD&n;&t; *&t;Port B, 12 - SCC2 TxD&n;&t; *&t;Port B, 14 - SCC3 RxD&n;&t; *&t;Port B, 15 - SCC2 RxD&n;&t; */
@@ -8981,6 +8979,8 @@ id|cbd_t
 )paren
 op_star
 id|RX_NUM_FIFO
+comma
+l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Allocate space for FIFOs in the host memory.&n;&t;&t;&t;*/
@@ -8992,6 +8992,8 @@ c_func
 id|RX_NUM_FIFO
 op_star
 id|RX_BUF_SIZE
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Set the physical address of the host memory&n;&t;&t;&t; * buffers in the buffer descriptors, and the&n;&t;&t;&t; * virtual address for us to work with.&n;&t;&t;&t; */
@@ -9151,6 +9153,8 @@ id|cbd_t
 )paren
 op_star
 id|TX_NUM_FIFO
+comma
+l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Allocate space for FIFOs in the host memory.&n;&t;&t;&t;*/
@@ -9162,6 +9166,8 @@ c_func
 id|TX_NUM_FIFO
 op_star
 id|TX_BUF_SIZE
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Set the physical address of the host memory&n;&t;&t;&t; * buffers in the buffer descriptors, and the&n;&t;&t;&t; * virtual address for us to work with.&n;&t;&t;&t; */
@@ -9821,6 +9827,8 @@ id|cbd_t
 )paren
 op_star
 l_int|2
+comma
+l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Allocate space for two 2 byte FIFOs in the host memory.&n;&t;*/
@@ -9830,6 +9838,8 @@ id|m8260_cpm_hostalloc
 c_func
 (paren
 l_int|4
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Set the physical address of the host memory buffers in&n;&t; * the buffer descriptors.&n;&t; */

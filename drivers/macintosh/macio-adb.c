@@ -526,6 +526,12 @@ op_or
 id|TAG
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;adb: mac-io driver 1.0 for unified ADB&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

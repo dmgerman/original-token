@@ -412,12 +412,14 @@ c_func
 id|lv_snap-&gt;lv_dev
 )paren
 suffix:semicolon
+id|last_dev
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
 id|i
-op_assign
-id|last_dev
 op_assign
 l_int|0
 suffix:semicolon
@@ -757,8 +759,6 @@ id|org_start
 comma
 id|snap_start
 comma
-id|snap_phys_dev
-comma
 id|virt_start
 comma
 id|pe_off
@@ -771,6 +771,9 @@ comma
 id|chunk_size
 op_assign
 id|lv_snap-&gt;lv_chunk_size
+suffix:semicolon
+id|kdev_t
+id|snap_phys_dev
 suffix:semicolon
 r_struct
 id|kiobuf

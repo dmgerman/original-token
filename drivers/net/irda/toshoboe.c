@@ -3079,13 +3079,6 @@ op_star
 id|self
 )paren
 (brace
-r_struct
-id|net_device
-op_star
-id|dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
 r_int
 r_int
 id|flags

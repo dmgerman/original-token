@@ -68,6 +68,12 @@ r_int
 id|bi_dlun
 suffix:semicolon
 multiline_comment|/* Boot device logical dev */
+DECL|member|bi_baudrate
+r_int
+r_int
+id|bi_baudrate
+suffix:semicolon
+multiline_comment|/* ...to be like everyone else */
 DECL|typedef|bd_t
 )brace
 id|bd_t

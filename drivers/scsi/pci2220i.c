@@ -10706,7 +10706,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nPCI-%sI EIDE CONTROLLER: at I/O = %lX/%lX  IRQ = %ld&bslash;n&quot;
+l_string|&quot;&bslash;nPCI-%sI EIDE CONTROLLER: at I/O = %lX/%lX  IRQ = %d&bslash;n&quot;
 comma
 id|str
 comma

@@ -758,7 +758,9 @@ id|com20020pci_remove
 )brace
 suffix:semicolon
 DECL|function|com20020pci_init
+r_static
 r_int
+id|__init
 id|com20020pci_init
 c_func
 (paren
@@ -793,7 +795,9 @@ id|com20020pci_driver
 suffix:semicolon
 )brace
 DECL|function|com20020pci_cleanup
+r_static
 r_void
+id|__exit
 id|com20020pci_cleanup
 c_func
 (paren

@@ -28,7 +28,7 @@ mdefine_line|#define VT_BUF_HAVE_MEMCPYF
 macro_line|#endif
 macro_line|#ifndef VT_BUF_HAVE_MEMSETW
 DECL|function|scr_memsetw
-r_extern
+r_static
 r_inline
 r_void
 id|scr_memsetw
@@ -69,7 +69,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef VT_BUF_HAVE_MEMCPYW
 DECL|function|scr_memcpyw
-r_extern
+r_static
 r_inline
 r_void
 id|scr_memcpyw
@@ -117,7 +117,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef VT_BUF_HAVE_MEMMOVEW
 DECL|function|scr_memmovew
-r_extern
+r_static
 r_inline
 r_void
 id|scr_memmovew
@@ -193,7 +193,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef VT_BUF_HAVE_MEMCPYF
 DECL|function|scr_memcpyw_from
-r_extern
+r_static
 r_inline
 r_void
 id|scr_memcpyw_from
@@ -236,7 +236,7 @@ op_increment
 suffix:semicolon
 )brace
 DECL|function|scr_memcpyw_to
-r_extern
+r_static
 r_inline
 r_void
 id|scr_memcpyw_to

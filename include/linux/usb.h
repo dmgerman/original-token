@@ -2384,7 +2384,7 @@ r_void
 suffix:semicolon
 macro_line|#else /* CONFIG_USB_DEVICEFS */
 DECL|function|usbdevfs_add_bus
-r_extern
+r_static
 r_inline
 r_void
 id|usbdevfs_add_bus
@@ -2398,7 +2398,7 @@ id|bus
 (brace
 )brace
 DECL|function|usbdevfs_remove_bus
-r_extern
+r_static
 r_inline
 r_void
 id|usbdevfs_remove_bus
@@ -2412,7 +2412,7 @@ id|bus
 (brace
 )brace
 DECL|function|usbdevfs_add_device
-r_extern
+r_static
 r_inline
 r_void
 id|usbdevfs_add_device
@@ -2426,7 +2426,7 @@ id|dev
 (brace
 )brace
 DECL|function|usbdevfs_remove_device
-r_extern
+r_static
 r_inline
 r_void
 id|usbdevfs_remove_device
@@ -2440,7 +2440,7 @@ id|dev
 (brace
 )brace
 DECL|function|usbdevfs_init
-r_extern
+r_static
 r_inline
 r_int
 id|usbdevfs_init
@@ -2454,7 +2454,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|usbdevfs_cleanup
-r_extern
+r_static
 r_inline
 r_void
 id|usbdevfs_cleanup

@@ -751,6 +751,9 @@ r_void
 (brace
 r_int
 id|st
+op_assign
+op_minus
+l_int|1
 comma
 id|retry
 suffix:semicolon
@@ -822,6 +825,9 @@ r_int
 id|retry
 comma
 id|st
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 r_for
 c_loop

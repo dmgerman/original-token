@@ -687,7 +687,7 @@ macro_line|#elif (MAJOR_NR == I2O_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;I2O block&quot;
 DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_i2ob_request
+mdefine_line|#define DEVICE_REQUEST i2ob_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device)&gt;&gt;4)
 macro_line|#elif (MAJOR_NR == COMPAQ_SMART2_MAJOR)

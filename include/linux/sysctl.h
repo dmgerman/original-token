@@ -1879,6 +1879,11 @@ DECL|enumerator|DEV_RAID
 id|DEV_RAID
 op_assign
 l_int|4
+comma
+DECL|enumerator|DEV_MAC_HID
+id|DEV_MAC_HID
+op_assign
+l_int|5
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/dev/cdrom */
@@ -2011,6 +2016,40 @@ id|DEV_PARPORT_DEVICE_TIMESLICE
 op_assign
 l_int|1
 comma
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/mac_hid */
+r_enum
+(brace
+DECL|enumerator|DEV_MAC_HID_KEYBOARD_SENDS_LINUX_KEYCODES
+id|DEV_MAC_HID_KEYBOARD_SENDS_LINUX_KEYCODES
+op_assign
+l_int|1
+comma
+DECL|enumerator|DEV_MAC_HID_KEYBOARD_LOCK_KEYCODES
+id|DEV_MAC_HID_KEYBOARD_LOCK_KEYCODES
+op_assign
+l_int|2
+comma
+DECL|enumerator|DEV_MAC_HID_MOUSE_BUTTON_EMULATION
+id|DEV_MAC_HID_MOUSE_BUTTON_EMULATION
+op_assign
+l_int|3
+comma
+DECL|enumerator|DEV_MAC_HID_MOUSE_BUTTON2_KEYCODE
+id|DEV_MAC_HID_MOUSE_BUTTON2_KEYCODE
+op_assign
+l_int|4
+comma
+DECL|enumerator|DEV_MAC_HID_MOUSE_BUTTON3_KEYCODE
+id|DEV_MAC_HID_MOUSE_BUTTON3_KEYCODE
+op_assign
+l_int|5
+comma
+DECL|enumerator|DEV_MAC_HID_ADB_MOUSE_SENDS_KEYCODES
+id|DEV_MAC_HID_ADB_MOUSE_SENDS_KEYCODES
+op_assign
+l_int|6
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

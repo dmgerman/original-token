@@ -63,6 +63,12 @@ DECL|macro|HRW_BMAC_IO_ENABLE
 mdefine_line|#define HRW_BMAC_IO_ENABLE&t;0x60000000&t;/* two bits, not documented in OF */
 DECL|macro|HRW_BMAC_RESET
 mdefine_line|#define HRW_BMAC_RESET&t;&t;0x80000000&t;/* not documented in OF */
+multiline_comment|/* We OR those features at boot on desktop G3s */
+DECL|macro|HRW_DEFAULTS
+mdefine_line|#define HRW_DEFAULTS&t;&t;(HRW_SCCA_IO | HRW_SCCB_IO | HRW_SCC_ENABLE)
+multiline_comment|/* Those seem to be different on paddington */
 DECL|macro|PADD_MODEM_POWER_N
 mdefine_line|#define PADD_MODEM_POWER_N&t;0x00000001&t;/* modem power on paddington */
+DECL|macro|PADD_RESET_SCC
+mdefine_line|#define PADD_RESET_SCC&t;&t;0x02000000&t;/* check this please */
 eof

@@ -1161,13 +1161,15 @@ id|cep-&gt;stats.rx_bytes
 op_add_assign
 id|pkt_len
 suffix:semicolon
-multiline_comment|/* This does 16 byte alignment, much more than we need.&n;&t;&t;*/
+multiline_comment|/* This does 16 byte alignment, much more than we need.&n;&t;&t; * The packet length includes FCS, but we don&squot;t want to&n;&t;&t; * include that when passing upstream as it messes up&n;&t;&t; * bridging applications.&n;&t;&t; */
 id|skb
 op_assign
 id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 r_if
@@ -1202,6 +1204,8 @@ c_func
 id|skb
 comma
 id|pkt_len
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Make room */
@@ -1222,6 +1226,8 @@ id|bdp-&gt;cbd_bufaddr
 )paren
 comma
 id|pkt_len
+op_minus
+l_int|4
 comma
 l_int|0
 )paren
@@ -1415,7 +1421,7 @@ id|dev-&gt;name
 suffix:semicolon
 id|cep-&gt;sccp-&gt;scc_pmsr
 op_or_assign
-id|SCC_PMSR_PRO
+id|SCC_PSMR_PRO
 suffix:semicolon
 )brace
 r_else
@@ -1423,7 +1429,7 @@ r_else
 id|cep-&gt;sccp-&gt;scc_pmsr
 op_and_assign
 op_complement
-id|SCC_PMSR_PRO
+id|SCC_PSMR_PRO
 suffix:semicolon
 r_if
 c_cond
@@ -1877,6 +1883,8 @@ id|cbd_t
 )paren
 op_star
 id|RX_RING_SIZE
+comma
+l_int|8
 )paren
 suffix:semicolon
 id|ep-&gt;sen_genscc.scc_rbase
@@ -1906,6 +1914,8 @@ id|cbd_t
 )paren
 op_star
 id|TX_RING_SIZE
+comma
+l_int|8
 )paren
 suffix:semicolon
 id|ep-&gt;sen_genscc.scc_tbase
@@ -2302,9 +2312,9 @@ multiline_comment|/* Set processing mode.  Use Ethernet CRC, catch broadcast, an
 id|sccp-&gt;scc_pmsr
 op_assign
 (paren
-id|SCC_PMSR_ENCRC
+id|SCC_PSMR_ENCRC
 op_or
-id|SCC_PMSR_NIB22
+id|SCC_PSMR_NIB22
 )paren
 suffix:semicolon
 multiline_comment|/* It is now OK to enable the Ethernet transmitter.&n;&t; * Unfortunately, there are board implementation differences here.&n;&t; */

@@ -1100,6 +1100,11 @@ op_minus
 l_int|0x10000
 )paren
 suffix:semicolon
+multiline_comment|/* To be like everyone else, we need one too, although this&n;&t; * board information is passed from the boot rom.&n;&t; */
+id|bp-&gt;bi_baudrate
+op_assign
+l_int|9600
+suffix:semicolon
 macro_line|#else
 id|cmd_line
 op_assign

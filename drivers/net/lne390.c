@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;lne390.c&n;&n;&t;Linux driver for Mylex LNE390 EISA Network Adapter&n;&n;&t;Copyright (C) 1996-1998, Paul Gortmaker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Information and Code Sources:&n;&n;&t;1) Based upon framework of es3210 driver.&n;&t;2) The existing myriad of other Linux 8390 drivers by Donald Becker.&n;&t;3) Russ Nelson&squot;s asm packet driver provided additional info.&n;&t;4) Info for getting IRQ and sh-mem gleaned from the EISA cfg files.&n;&n;&t;The LNE390 is an EISA shared memory NS8390 implementation. Note&n;&t;that all memory copies to/from the board must be 32bit transfers.&n;&t;There are two versions of the card: the lne390a and the lne390b.&n;&t;Going by the EISA cfg files, the &quot;a&quot; has jumpers to select between&n;&t;BNC/AUI, but the &quot;b&quot; also has RJ-45 and selection is via the SCU.&n;&t;The shared memory address selection is also slightly different.&n;&t;Note that shared memory address &gt; 1MB are supported with this driver.&n;&n;&t;You can try &lt;http://www.mylex.com&gt; if you want more info, as I&squot;ve&n;&t;never even seen one of these cards.  :)&n;&n;*/
+multiline_comment|/*&n;&t;lne390.c&n;&n;&t;Linux driver for Mylex LNE390 EISA Network Adapter&n;&n;&t;Copyright (C) 1996-1998, Paul Gortmaker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Information and Code Sources:&n;&n;&t;1) Based upon framework of es3210 driver.&n;&t;2) The existing myriad of other Linux 8390 drivers by Donald Becker.&n;&t;3) Russ Nelson&squot;s asm packet driver provided additional info.&n;&t;4) Info for getting IRQ and sh-mem gleaned from the EISA cfg files.&n;&n;&t;The LNE390 is an EISA shared memory NS8390 implementation. Note&n;&t;that all memory copies to/from the board must be 32bit transfers.&n;&t;There are two versions of the card: the lne390a and the lne390b.&n;&t;Going by the EISA cfg files, the &quot;a&quot; has jumpers to select between&n;&t;BNC/AUI, but the &quot;b&quot; also has RJ-45 and selection is via the SCU.&n;&t;The shared memory address selection is also slightly different.&n;&t;Note that shared memory address &gt; 1MB are supported with this driver.&n;&n;&t;You can try &lt;http://www.mylex.com&gt; if you want more info, as I&squot;ve&n;&t;never even seen one of these cards.  :)&n;&n;&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 2000/09/01&n;&t;- get rid of check_region&n;&t;- no need to check if dev == NULL in lne390_probe1&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lne390.c: Driver revision v0.99, 12/05/98&bslash;n&quot;
+l_string|&quot;lne390.c: Driver revision v0.99.1, 01/09/2000&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -280,6 +280,9 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -287,8 +290,28 @@ id|ioaddr
 OG
 l_int|0x1ff
 )paren
+(brace
 multiline_comment|/* Check a single specified location. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|LNE390_IO_EXTENT
+comma
+l_string|&quot;lne390&quot;
+)paren
+)paren
 r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|ret
+op_assign
 id|lne390_probe1
 c_func
 (paren
@@ -297,6 +320,23 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|LNE390_IO_EXTENT
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -350,12 +390,15 @@ l_int|0x1000
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|ioaddr
 comma
 id|LNE390_IO_EXTENT
+comma
+l_string|&quot;lne390&quot;
 )paren
 )paren
 r_continue
@@ -375,6 +418,14 @@ l_int|0
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|LNE390_IO_EXTENT
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -401,6 +452,8 @@ r_int
 id|i
 comma
 id|revision
+comma
+id|ret
 suffix:semicolon
 r_int
 r_int
@@ -598,32 +651,6 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;lne390.c: Passed a NULL device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
 r_if
 c_cond
@@ -952,27 +979,13 @@ id|KERN_CRIT
 l_string|&quot;lne390.c: Driver NOT installed.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|dev
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|dev-&gt;priv
+id|ret
 op_assign
-l_int|NULL
-suffix:semicolon
-r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+r_goto
+id|cleanup
 suffix:semicolon
 )brace
 id|dev-&gt;mem_start
@@ -1020,27 +1033,13 @@ id|KERN_ERR
 l_string|&quot;lne390.c: Driver NOT installed.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|dev
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|dev-&gt;priv
+id|ret
 op_assign
-l_int|NULL
-suffix:semicolon
-r_return
 op_minus
 id|EAGAIN
+suffix:semicolon
+r_goto
+id|cleanup
 suffix:semicolon
 )brace
 id|ei_status.reg0
@@ -1087,16 +1086,6 @@ multiline_comment|/* The 8390 offset is zero for the LNE390 */
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
-suffix:semicolon
-id|request_region
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|LNE390_IO_EXTENT
-comma
-l_string|&quot;lne390&quot;
-)paren
 suffix:semicolon
 id|ei_status.name
 op_assign
@@ -1173,6 +1162,29 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|cleanup
+suffix:colon
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Reset as per the packet driver method. Judging by the EISA cfg&n; *&t;file, this just toggles the &quot;Board Enable&quot; bits (bit 2 and 0).&n; */

@@ -46,7 +46,9 @@ r_int
 r_int
 id|len
 op_assign
-id|PAGE_SIZE
+id|PATH_MAX
+op_plus
+l_int|1
 suffix:semicolon
 r_if
 c_cond

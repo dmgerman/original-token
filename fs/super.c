@@ -5719,7 +5719,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Flags is a 16-bit value that allows up to 16 non-fs dependent flags to&n; * be given to the mount() call (ie: read-only, no-dev, no-suid etc).&n; *&n; * data is a (void *) that can point to any structure up to&n; * PAGE_SIZE-1 bytes, which can contain arbitrary fs-dependent&n; * information (or be NULL).&n; *&n; * NOTE! As pre-0.97 versions of mount() didn&squot;t use this setup, the&n; * flags have to have a special 16-bit magic number in the high word:&n; * 0xC0ED. If this magic word isn&squot;t present, the flags and data info&n; * aren&squot;t used, as the syscall assumes we are talking to an older&n; * version that didn&squot;t understand them.&n; */
+multiline_comment|/*&n; * Flags is a 16-bit value that allows up to 16 non-fs dependent flags to&n; * be given to the mount() call (ie: read-only, no-dev, no-suid etc).&n; *&n; * data is a (void *) that can point to any structure up to&n; * PAGE_SIZE-1 bytes, which can contain arbitrary fs-dependent&n; * information (or be NULL).&n; *&n; * NOTE! As pre-0.97 versions of mount() didn&squot;t use this setup, the&n; * flags used to have a special 16-bit magic number in the high word:&n; * 0xC0ED. If this magic number is present, the high word is discarded.&n; */
 DECL|function|do_mount
 r_int
 id|do_mount
@@ -5739,7 +5739,7 @@ id|type_page
 comma
 r_int
 r_int
-id|new_flags
+id|flags
 comma
 r_void
 op_star
@@ -5772,11 +5772,22 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
+multiline_comment|/* Discard magic */
+r_if
+c_cond
+(paren
+(paren
 id|flags
-op_assign
-l_int|0
+op_amp
+id|MS_MGC_MSK
+)paren
+op_eq
+id|MS_MGC_VAL
+)paren
+id|flags
+op_and_assign
+op_complement
+id|MS_MGC_MSK
 suffix:semicolon
 multiline_comment|/* Basic sanity checks */
 r_if
@@ -5829,21 +5840,9 @@ multiline_comment|/* just change the flags? - capabilities are checked in do_rem
 r_if
 c_cond
 (paren
-(paren
-id|new_flags
+id|flags
 op_amp
-(paren
-id|MS_MGC_MSK
-op_or
 id|MS_REMOUNT
-)paren
-)paren
-op_eq
-(paren
-id|MS_MGC_VAL
-op_or
-id|MS_REMOUNT
-)paren
 )paren
 r_return
 id|do_remount
@@ -5851,14 +5850,10 @@ c_func
 (paren
 id|dir_name
 comma
-id|new_flags
+id|flags
 op_amp
 op_complement
-(paren
-id|MS_MGC_MSK
-op_or
 id|MS_REMOUNT
-)paren
 comma
 (paren
 r_char
@@ -5867,23 +5862,23 @@ op_star
 id|data_page
 )paren
 suffix:semicolon
+multiline_comment|/* &quot;mount --bind&quot;? Equivalent to older &quot;mount -t bind&quot; */
+multiline_comment|/* No capabilities? What if users do thousands of these? */
 r_if
 c_cond
 (paren
-(paren
-id|new_flags
-op_amp
-id|MS_MGC_MSK
-)paren
-op_eq
-id|MS_MGC_VAL
-)paren
 id|flags
-op_assign
-id|new_flags
 op_amp
-op_complement
-id|MS_MGC_MSK
+id|MS_BIND
+)paren
+r_return
+id|do_loopback
+c_func
+(paren
+id|dev_name
+comma
+id|dir_name
+)paren
 suffix:semicolon
 multiline_comment|/* For the rest we need the type */
 r_if
@@ -5907,6 +5902,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#if 0&t;/* Can be deleted again. Introduced in patch-2.3.99-pre6 */
 multiline_comment|/* loopback mount? This is special - requires fewer capabilities */
 r_if
 c_cond
@@ -5930,6 +5926,7 @@ comma
 id|dir_name
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* for the rest we _really_ need capabilities... */
 r_if
 c_cond
@@ -6117,6 +6114,28 @@ id|nd.dentry
 (brace
 suffix:semicolon
 )brace
+multiline_comment|/* Refuse the same filesystem on the same mount point */
+id|retval
+op_assign
+op_minus
+id|EBUSY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nd.mnt
+op_logical_and
+id|nd.mnt-&gt;mnt_sb
+op_eq
+id|sb
+op_logical_and
+id|nd.mnt-&gt;mnt_root
+op_eq
+id|nd.dentry
+)paren
+r_goto
+id|fail
+suffix:semicolon
 id|retval
 op_assign
 op_minus
@@ -6261,7 +6280,7 @@ id|type
 comma
 r_int
 r_int
-id|new_flags
+id|flags
 comma
 r_void
 op_star
@@ -6369,10 +6388,12 @@ r_if
 c_cond
 (paren
 id|retval
-op_ge
+OL
 l_int|0
 )paren
-(brace
+r_goto
+id|out3
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -6397,7 +6418,7 @@ op_star
 )paren
 id|type_page
 comma
-id|new_flags
+id|flags
 comma
 (paren
 r_void
@@ -6417,7 +6438,8 @@ c_func
 id|data_page
 )paren
 suffix:semicolon
-)brace
+id|out3
+suffix:colon
 id|free_page
 c_func
 (paren

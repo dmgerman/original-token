@@ -193,9 +193,7 @@ macro_line|#else
 r_int
 id|is_write
 op_assign
-id|error_code
-op_amp
-l_int|0x02000000
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Fortunately the bit assignments in SRR1 for an instruction&n;&t; * fault and DSISR for a data fault are mostly the same for the&n;&t; * bits we are interested in.  But there are some bits which&n;&t; * indicate errors in DSISR but can validly be set in SRR1.&n;&t; */
 r_if
@@ -208,6 +206,13 @@ l_int|0x400
 id|error_code
 op_and_assign
 l_int|0x48200000
+suffix:semicolon
+r_else
+id|is_write
+op_assign
+id|error_code
+op_amp
+l_int|0x02000000
 suffix:semicolon
 macro_line|#endif /* CONFIG_4xx */
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)

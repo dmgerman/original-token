@@ -2875,7 +2875,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|PCI_SET_DRIVER_DATA
+id|pci_set_drvdata
 c_func
 (paren
 id|pci_dev
@@ -3320,7 +3320,7 @@ id|emu10k1_card
 op_star
 id|card
 op_assign
-id|PCI_GET_DRIVER_DATA
+id|pci_get_drvdata
 c_func
 (paren
 id|pci_dev
@@ -3391,7 +3391,13 @@ c_func
 id|card
 )paren
 suffix:semicolon
-r_return
+id|pci_set_drvdata
+c_func
+(paren
+id|pci_dev
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 )brace
 id|MODULE_AUTHOR

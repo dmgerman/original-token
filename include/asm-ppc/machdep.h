@@ -145,7 +145,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|member|time_init
-r_void
+r_int
 (paren
 op_star
 id|time_init
@@ -525,6 +525,9 @@ comma
 r_int
 r_char
 id|devfn
+comma
+r_int
+id|physical
 )paren
 suffix:semicolon
 DECL|member|pci_dev_mem_base

@@ -1871,7 +1871,7 @@ op_increment
 r_int
 id|active
 op_assign
-id|kstat.dk_drive_rio
+id|kstat.dk_drive
 (braket
 id|major
 )braket
@@ -1880,14 +1880,6 @@ id|disk
 )braket
 op_plus
 id|kstat.dk_drive_rblk
-(braket
-id|major
-)braket
-(braket
-id|disk
-)braket
-op_plus
-id|kstat.dk_drive_wio
 (braket
 id|major
 )braket
@@ -1917,11 +1909,19 @@ id|page
 op_plus
 id|len
 comma
-l_string|&quot;(%u,%u):(%u,%u,%u,%u) &quot;
+l_string|&quot;(%u,%u):(%u,%u,%u,%u,%u) &quot;
 comma
 id|major
 comma
 id|disk
+comma
+id|kstat.dk_drive
+(braket
+id|major
+)braket
+(braket
+id|disk
+)braket
 comma
 id|kstat.dk_drive_rio
 (braket

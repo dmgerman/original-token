@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;New timer architecture.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;New timer architecture.&n; *      2000-09-04&t;Henner Eisen    Prevented x25_output() skb leakage.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -65,7 +65,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This is where all X.25 information frames pass;&n; */
 DECL|function|x25_output
-r_void
+r_int
 id|x25_output
 c_func
 (paren
@@ -193,8 +193,30 @@ id|err
 op_eq
 l_int|NULL
 )paren
-r_return
+(brace
+r_int
+id|unsent
+op_assign
+id|skb-&gt;len
+op_minus
+id|header_len
 suffix:semicolon
+id|SOCK_DEBUG
+c_func
+(paren
+id|sk
+comma
+l_string|&quot;x25_output: framgent allocation failed, err=%d, %d bytes unsent&bslash;n&quot;
+comma
+id|err
+comma
+id|unsent
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
 id|skb_reserve
 c_func
 (paren
@@ -318,6 +340,9 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;This procedure is passed a buffer descriptor for an iframe. It builds&n; *&t;the rest of the control part of the frame and then writes it out.&n; */
 DECL|function|x25_send_iframe

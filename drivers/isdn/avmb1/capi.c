@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;linux/kernelcapi.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#ifdef CONFIG_ISDN_CAPI_MIDDLEWARE
@@ -8182,6 +8183,7 @@ suffix:semicolon
 DECL|function|proc_init
 r_static
 r_void
+id|__init
 id|proc_init
 c_func
 (paren
@@ -8257,6 +8259,7 @@ suffix:semicolon
 DECL|function|proc_exit
 r_static
 r_void
+id|__exit
 id|proc_exit
 c_func
 (paren
@@ -8425,6 +8428,7 @@ macro_line|#endif /* CONFIG_ISDN_CAPI_MIDDLEWARE */
 DECL|function|alloc_init
 r_static
 r_int
+id|__init
 id|alloc_init
 c_func
 (paren
@@ -8741,10 +8745,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
-DECL|macro|capi_init
-mdefine_line|#define&t; capi_init&t;init_module
-macro_line|#endif
 DECL|variable|cuser
 r_static
 r_struct
@@ -8768,6 +8768,7 @@ l_int|10
 suffix:semicolon
 DECL|function|capi_init
 r_int
+id|__init
 id|capi_init
 c_func
 (paren
@@ -9226,10 +9227,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|capi_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|capi_exit
 c_func
 (paren
 r_void
@@ -9369,5 +9371,20 @@ id|rev
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|capi_init
+id|module_init
+c_func
+(paren
+id|capi_init
+)paren
+suffix:semicolon
 macro_line|#endif
+DECL|variable|capi_exit
+id|module_exit
+c_func
+(paren
+id|capi_exit
+)paren
+suffix:semicolon
 eof

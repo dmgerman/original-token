@@ -2050,6 +2050,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_ADB_CUDA
 r_for
 c_loop
 (paren
@@ -2103,6 +2104,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|init_valkyrie
 r_static

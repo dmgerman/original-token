@@ -330,6 +330,12 @@ DECL|macro|SIU_INT_SMC1
 mdefine_line|#define&t;SIU_INT_SMC1&t;&t;((uint)0x04)
 DECL|macro|SIU_INT_SMC2
 mdefine_line|#define&t;SIU_INT_SMC2&t;&t;((uint)0x05)
+DECL|macro|SIU_INT_FCC1
+mdefine_line|#define&t;SIU_INT_FCC1&t;&t;((uint)0x20)
+DECL|macro|SIU_INT_FCC2
+mdefine_line|#define&t;SIU_INT_FCC2&t;&t;((uint)0x21)
+DECL|macro|SIU_INT_FCC3
+mdefine_line|#define&t;SIU_INT_FCC3&t;&t;((uint)0x22)
 DECL|macro|SIU_INT_SCC1
 mdefine_line|#define&t;SIU_INT_SCC1&t;&t;((uint)0x28)
 DECL|macro|SIU_INT_SCC2

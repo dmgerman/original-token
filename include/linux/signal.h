@@ -47,7 +47,7 @@ macro_line|#ifndef __HAVE_ARCH_SIG_BITOPS
 macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/* We don&squot;t use &lt;asm/bitops.h&gt; for these because there is no need to&n;   be atomic.  */
 DECL|function|sigaddset
-r_extern
+r_static
 r_inline
 r_void
 id|sigaddset
@@ -103,7 +103,7 @@ id|_NSIG_BPW
 suffix:semicolon
 )brace
 DECL|function|sigdelset
-r_extern
+r_static
 r_inline
 r_void
 id|sigdelset
@@ -165,7 +165,7 @@ id|_NSIG_BPW
 suffix:semicolon
 )brace
 DECL|function|sigismember
-r_extern
+r_static
 r_inline
 r_int
 id|sigismember
@@ -227,7 +227,7 @@ id|_NSIG_BPW
 suffix:semicolon
 )brace
 DECL|function|sigfindinword
-r_extern
+r_static
 r_inline
 r_int
 id|sigfindinword
@@ -253,7 +253,7 @@ macro_line|#endif /* __HAVE_ARCH_SIG_BITOPS */
 macro_line|#ifndef __HAVE_ARCH_SIG_SETOPS
 macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|_SIG_SET_BINOP
-mdefine_line|#define _SIG_SET_BINOP(name, op)&t;&t;&t;&t;&t;&bslash;&n;extern inline void name(sigset_t *r, const sigset_t *a, const sigset_t *b) &bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long a0, a1, a2, a3, b0, b1, b2, b3;&t;&t;&t;&bslash;&n;&t;unsigned long i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (i = 0; i &lt; _NSIG_WORDS/4; ++i) {&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; a1 = a-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;a2 = a-&gt;sig[4*i+2]; a3 = a-&gt;sig[4*i+3];&t;&t;&t;&bslash;&n;&t;&t;b0 = b-&gt;sig[4*i+0]; b1 = b-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;b2 = b-&gt;sig[4*i+2]; b3 = b-&gt;sig[4*i+3];&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+1] = op(a1, b1);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+2] = op(a2, b2);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+3] = op(a3, b3);&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (_NSIG_WORDS % 4) {&t;&t;&t;&t;&t;&bslash;&n;&t;    case 3:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; a1 = a-&gt;sig[4*i+1]; a2 = a-&gt;sig[4*i+2]; &bslash;&n;&t;&t;b0 = b-&gt;sig[4*i+0]; b1 = b-&gt;sig[4*i+1]; b2 = b-&gt;sig[4*i+2]; &bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+1] = op(a1, b1);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+2] = op(a2, b2);&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    case 2:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; a1 = a-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;b0 = b-&gt;sig[4*i+0]; b1 = b-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+1] = op(a1, b1);&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    case 1:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; b0 = b-&gt;sig[4*i+0];&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define _SIG_SET_BINOP(name, op)&t;&t;&t;&t;&t;&bslash;&n;static inline void name(sigset_t *r, const sigset_t *a, const sigset_t *b) &bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long a0, a1, a2, a3, b0, b1, b2, b3;&t;&t;&t;&bslash;&n;&t;unsigned long i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (i = 0; i &lt; _NSIG_WORDS/4; ++i) {&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; a1 = a-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;a2 = a-&gt;sig[4*i+2]; a3 = a-&gt;sig[4*i+3];&t;&t;&t;&bslash;&n;&t;&t;b0 = b-&gt;sig[4*i+0]; b1 = b-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;b2 = b-&gt;sig[4*i+2]; b3 = b-&gt;sig[4*i+3];&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+1] = op(a1, b1);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+2] = op(a2, b2);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+3] = op(a3, b3);&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (_NSIG_WORDS % 4) {&t;&t;&t;&t;&t;&bslash;&n;&t;    case 3:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; a1 = a-&gt;sig[4*i+1]; a2 = a-&gt;sig[4*i+2]; &bslash;&n;&t;&t;b0 = b-&gt;sig[4*i+0]; b1 = b-&gt;sig[4*i+1]; b2 = b-&gt;sig[4*i+2]; &bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+1] = op(a1, b1);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+2] = op(a2, b2);&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    case 2:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; a1 = a-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;b0 = b-&gt;sig[4*i+0]; b1 = b-&gt;sig[4*i+1];&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+1] = op(a1, b1);&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    case 1:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;a0 = a-&gt;sig[4*i+0]; b0 = b-&gt;sig[4*i+0];&t;&t;&t;&bslash;&n;&t;&t;r-&gt;sig[4*i+0] = op(a0, b0);&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|_sig_or
 mdefine_line|#define _sig_or(x,y)&t;((x) | (y))
 id|_SIG_SET_BINOP
@@ -290,7 +290,7 @@ macro_line|#undef _sig_and
 DECL|macro|_sig_nand
 macro_line|#undef _sig_nand
 DECL|macro|_SIG_SET_OP
-mdefine_line|#define _SIG_SET_OP(name, op)&t;&t;&t;&t;&t;&t;&bslash;&n;extern inline void name(sigset_t *set)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (i = 0; i &lt; _NSIG_WORDS/4; ++i) {&t;&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+0] = op(set-&gt;sig[4*i+0]);&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+1] = op(set-&gt;sig[4*i+1]);&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+2] = op(set-&gt;sig[4*i+2]);&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+3] = op(set-&gt;sig[4*i+3]);&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (_NSIG_WORDS % 4) {&t;&t;&t;&t;&t;&bslash;&n;&t;    case 3: set-&gt;sig[4*i+2] = op(set-&gt;sig[4*i+2]);&t;&t;&bslash;&n;&t;    case 2: set-&gt;sig[4*i+1] = op(set-&gt;sig[4*i+1]);&t;&t;&bslash;&n;&t;    case 1: set-&gt;sig[4*i+0] = op(set-&gt;sig[4*i+0]);&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define _SIG_SET_OP(name, op)&t;&t;&t;&t;&t;&t;&bslash;&n;static inline void name(sigset_t *set)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (i = 0; i &lt; _NSIG_WORDS/4; ++i) {&t;&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+0] = op(set-&gt;sig[4*i+0]);&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+1] = op(set-&gt;sig[4*i+1]);&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+2] = op(set-&gt;sig[4*i+2]);&t;&t;&t;&bslash;&n;&t;&t;set-&gt;sig[4*i+3] = op(set-&gt;sig[4*i+3]);&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (_NSIG_WORDS % 4) {&t;&t;&t;&t;&t;&bslash;&n;&t;    case 3: set-&gt;sig[4*i+2] = op(set-&gt;sig[4*i+2]);&t;&t;&bslash;&n;&t;    case 2: set-&gt;sig[4*i+1] = op(set-&gt;sig[4*i+1]);&t;&t;&bslash;&n;&t;    case 1: set-&gt;sig[4*i+0] = op(set-&gt;sig[4*i+0]);&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|_sig_not
 mdefine_line|#define _sig_not(x)&t;(~(x))
 id|_SIG_SET_OP
@@ -305,7 +305,7 @@ macro_line|#undef _SIG_SET_OP
 DECL|macro|_sig_not
 macro_line|#undef _sig_not
 DECL|function|sigemptyset
-r_extern
+r_static
 r_inline
 r_void
 id|sigemptyset
@@ -364,7 +364,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|sigfillset
-r_extern
+r_static
 r_inline
 r_void
 id|sigfillset
@@ -442,7 +442,7 @@ id|buffer
 suffix:semicolon
 multiline_comment|/* Some extensions for manipulating the low 32 signals in particular.  */
 DECL|function|sigaddsetmask
-r_extern
+r_static
 r_inline
 r_void
 id|sigaddsetmask
@@ -466,7 +466,7 @@ id|mask
 suffix:semicolon
 )brace
 DECL|function|sigdelsetmask
-r_extern
+r_static
 r_inline
 r_void
 id|sigdelsetmask
@@ -491,7 +491,7 @@ id|mask
 suffix:semicolon
 )brace
 DECL|function|sigtestsetmask
-r_extern
+r_static
 r_inline
 r_int
 id|sigtestsetmask
@@ -520,7 +520,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|siginitset
-r_extern
+r_static
 r_inline
 r_void
 id|siginitset
@@ -591,7 +591,7 @@ suffix:colon
 )brace
 )brace
 DECL|function|siginitsetinv
-r_extern
+r_static
 r_inline
 r_void
 id|siginitsetinv

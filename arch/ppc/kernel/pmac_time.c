@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/time.h&gt;
 macro_line|#include &lt;asm/nvram.h&gt;
 r_extern
@@ -58,7 +59,7 @@ id|sys_tz
 suffix:semicolon
 id|__init
 DECL|function|pmac_time_init
-r_void
+r_int
 id|pmac_time_init
 c_func
 (paren
@@ -164,17 +165,12 @@ suffix:colon
 l_string|&quot;off&quot;
 )paren
 suffix:semicolon
-id|sys_tz.tz_minuteswest
-op_assign
-op_minus
+r_return
 id|delta
-op_div
-l_int|60
 suffix:semicolon
-multiline_comment|/* I _suppose_ this is 0:off, 1:on */
-id|sys_tz.tz_dsttime
-op_assign
-id|dst
+macro_line|#else
+r_return
+l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -188,10 +184,14 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_ADB
+macro_line|#if defined(CONFIG_ADB_CUDA) || defined(CONFIG_ADB_PMU)
 r_struct
 id|adb_request
 id|req
+suffix:semicolon
+r_int
+r_int
+id|now
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Get the time from the RTC */
@@ -255,7 +255,8 @@ comma
 id|req.reply_len
 )paren
 suffix:semicolon
-r_return
+id|now
+op_assign
 (paren
 id|req.reply
 (braket
@@ -287,6 +288,9 @@ id|req.reply
 (braket
 l_int|6
 )braket
+suffix:semicolon
+r_return
+id|now
 op_minus
 id|RTC_OFFSET
 suffix:semicolon
@@ -343,7 +347,8 @@ comma
 id|req.reply_len
 )paren
 suffix:semicolon
-r_return
+id|now
+op_assign
 (paren
 id|req.reply
 (braket
@@ -375,16 +380,21 @@ id|req.reply
 (braket
 l_int|4
 )braket
+suffix:semicolon
+r_return
+id|now
 op_minus
 id|RTC_OFFSET
 suffix:semicolon
 macro_line|#endif /* CONFIG_ADB_PMU */
 r_default
 suffix:colon
+(brace
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 DECL|function|pmac_set_rtc_time
 r_int
@@ -396,17 +406,15 @@ r_int
 id|nowtime
 )paren
 (brace
+macro_line|#if defined(CONFIG_ADB_CUDA) || defined(CONFIG_ADB_PMU)
 r_struct
 id|adb_request
 id|req
 suffix:semicolon
+macro_line|#endif
 id|nowtime
 op_add_assign
 id|RTC_OFFSET
-op_minus
-id|sys_tz.tz_minuteswest
-op_star
-l_int|60
 suffix:semicolon
 r_switch
 c_cond
@@ -414,6 +422,7 @@ c_cond
 id|sys_ctrler
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_CUDA
 r_case
 id|SYS_CTRLER_CUDA
 suffix:colon
@@ -478,6 +487,8 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
+macro_line|#ifdef CONFIG_ADB_PMU
 r_case
 id|SYS_CTRLER_PMU
 suffix:colon
@@ -532,7 +543,7 @@ c_cond
 (paren
 id|req.reply_len
 op_ne
-l_int|5
+l_int|0
 )paren
 id|printk
 c_func
@@ -546,6 +557,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_PMU */
 r_default
 suffix:colon
 r_return
@@ -794,7 +806,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|decrementer_count
+id|tb_ticks_per_jiffy
 op_assign
 (paren
 id|dstart
@@ -804,27 +816,25 @@ id|dend
 op_div
 l_int|6
 suffix:semicolon
-id|count_period_num
+id|tb_to_us
 op_assign
-l_int|60
-suffix:semicolon
-id|count_period_den
-op_assign
-id|decrementer_count
-op_star
-l_int|6
-op_star
-id|HZ
-op_div
-l_int|100000
+id|mulhwu_scale_factor
+c_func
+(paren
+id|dstart
+op_minus
+id|dend
+comma
+l_int|60000
+)paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;via_calibrate_decr: decrementer_count = %u (%u ticks)&bslash;n&quot;
+l_string|&quot;via_calibrate_decr: ticks per jiffy = %u (%u ticks)&bslash;n&quot;
 comma
-id|decrementer_count
+id|tb_ticks_per_jiffy
 comma
 id|dstart
 op_minus
@@ -920,15 +930,29 @@ c_func
 op_plus
 id|time_diff
 suffix:semicolon
-id|xtime.tv_usec
-op_assign
-l_int|0
-suffix:semicolon
 id|set_dec
 c_func
 (paren
-id|decrementer_count
+id|tb_ticks_per_jiffy
 )paren
+suffix:semicolon
+multiline_comment|/* No currently-supported powerbook has a 601,&n;&t;&t;   so use get_tbl, not native  */
+id|last_jiffy_stamp
+c_func
+(paren
+l_int|0
+)paren
+op_assign
+id|tb_last_stamp
+op_assign
+id|get_tbl
+c_func
+(paren
+)paren
+suffix:semicolon
+id|xtime.tv_usec
+op_assign
+l_int|0
 suffix:semicolon
 id|last_rtc_update
 op_assign
@@ -980,12 +1004,11 @@ op_star
 id|cpu
 suffix:semicolon
 r_int
+r_int
 id|freq
 comma
 op_star
 id|fp
-comma
-id|divisor
 suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 id|pmu_register_sleep_notifier
@@ -1032,6 +1055,7 @@ id|fp
 op_assign
 (paren
 r_int
+r_int
 op_star
 )paren
 id|get_property
@@ -1061,41 +1085,36 @@ id|freq
 op_assign
 op_star
 id|fp
-op_star
-l_int|60
-suffix:semicolon
-multiline_comment|/* try to make freq/1e6 an integer */
-id|divisor
-op_assign
-l_int|60
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;time_init: decrementer frequency = %d/%d&bslash;n&quot;
+l_string|&quot;time_init: decrementer frequency = %u.%.6u MHz&bslash;n&quot;
 comma
 id|freq
+op_div
+l_int|1000000
 comma
-id|divisor
+id|freq
+op_mod
+l_int|1000000
 )paren
 suffix:semicolon
-id|decrementer_count
+id|tb_ticks_per_jiffy
 op_assign
 id|freq
 op_div
 id|HZ
-op_div
-id|divisor
 suffix:semicolon
-id|count_period_num
+id|tb_to_us
 op_assign
-id|divisor
-suffix:semicolon
-id|count_period_den
-op_assign
+id|mulhwu_scale_factor
+c_func
+(paren
 id|freq
-op_div
+comma
 l_int|1000000
+)paren
 suffix:semicolon
 )brace
 eof

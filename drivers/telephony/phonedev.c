@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/phonedev.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
@@ -461,17 +462,11 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Board init functions&n; */
-r_extern
-r_int
-id|ixj_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *    Initialise Telephony for linux&n; */
 DECL|function|telephony_init
+r_static
 r_int
+id|__init
 id|telephony_init
 c_func
 (paren
@@ -513,37 +508,15 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *    Init kernel installed drivers&n;&t; */
-macro_line|#ifdef CONFIG_PHONE_IXJ
-id|ixj_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|telephony_exit
+r_static
 r_void
-)paren
-(brace
-r_return
-id|telephony_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|telephony_exit
 c_func
 (paren
 r_void
@@ -558,7 +531,20 @@ l_string|&quot;telephony&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|telephony_init
+id|module_init
+c_func
+(paren
+id|telephony_init
+)paren
+suffix:semicolon
+DECL|variable|telephony_exit
+id|module_exit
+c_func
+(paren
+id|telephony_exit
+)paren
+suffix:semicolon
 DECL|variable|phone_register_device
 id|EXPORT_SYMBOL
 c_func

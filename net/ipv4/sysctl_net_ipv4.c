@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.45 2000/09/06 23:30:29 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
+multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.46 2000/09/16 09:38:30 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -6,27 +6,6 @@ macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
-multiline_comment|/*&n; *&t;TCP configuration parameters&n; */
-DECL|macro|TCP_PMTU_DISC
-mdefine_line|#define TCP_PMTU_DISC&t;0x00000001&t;/* perform PMTU discovery&t;  */
-DECL|macro|TCP_CONG_AVOID
-mdefine_line|#define TCP_CONG_AVOID&t;0x00000002&t;/* congestion avoidance algorithm */
-DECL|macro|TCP_DELAY_ACKS
-mdefine_line|#define TCP_DELAY_ACKS&t;0x00000003&t;/* delayed ack stategy&t;&t;  */
-macro_line|#if 0
-r_static
-r_int
-id|boolean_min
-op_assign
-l_int|0
-suffix:semicolon
-r_static
-r_int
-id|boolean_max
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* From icmp.c */
 r_extern
 r_int
@@ -102,10 +81,37 @@ r_int
 id|inet_peer_gc_maxtime
 suffix:semicolon
 DECL|variable|tcp_retr1_max
+r_static
 r_int
 id|tcp_retr1_max
 op_assign
 l_int|255
+suffix:semicolon
+DECL|variable|ip_local_port_range_min
+r_static
+r_int
+id|ip_local_port_range_min
+(braket
+)braket
+op_assign
+(brace
+l_int|1
+comma
+l_int|1
+)brace
+suffix:semicolon
+DECL|variable|ip_local_port_range_max
+r_static
+r_int
+id|ip_local_port_range_max
+(braket
+)braket
+op_assign
+(brace
+l_int|65535
+comma
+l_int|65535
+)brace
 suffix:semicolon
 DECL|variable|ipv4_config
 r_struct
@@ -919,7 +925,16 @@ comma
 l_int|NULL
 comma
 op_amp
-id|proc_dointvec
+id|proc_dointvec_minmax
+comma
+op_amp
+id|sysctl_intvec
+comma
+l_int|NULL
+comma
+id|ip_local_port_range_min
+comma
+id|ip_local_port_range_max
 )brace
 comma
 (brace

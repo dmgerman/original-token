@@ -32,7 +32,7 @@ macro_line|#elif defined(CONFIG_8xx)
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#elif defined(CONFIG_8260)
 macro_line|#include &lt;asm/mpc8260.h&gt;
-macro_line|#else
+macro_line|#else /* 4xx/8xx/8260 */
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|_IO_BASE
 mdefine_line|#define _IO_BASE 0
@@ -40,7 +40,7 @@ DECL|macro|_ISA_MEM_BASE
 mdefine_line|#define _ISA_MEM_BASE 0
 DECL|macro|PCI_DRAM_OFFSET
 mdefine_line|#define PCI_DRAM_OFFSET 0
-macro_line|#else
+macro_line|#else /* CONFIG_APUS */
 r_extern
 r_int
 r_int
@@ -87,6 +87,18 @@ mdefine_line|#define writew(b,addr) out_le16((volatile u16 *)(addr),(b))
 DECL|macro|writel
 mdefine_line|#define writel(b,addr) out_le32((volatile u32 *)(addr),(b))
 macro_line|#endif
+DECL|macro|__raw_readb
+mdefine_line|#define __raw_readb(addr)&t;(*(volatile unsigned char *)(addr))
+DECL|macro|__raw_readw
+mdefine_line|#define __raw_readw(addr)&t;(*(volatile unsigned short *)(addr))
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl(addr)&t;(*(volatile unsigned int *)(addr))
+DECL|macro|__raw_writeb
+mdefine_line|#define __raw_writeb(v, addr)&t;(*(volatile unsigned char *)(addr) = (v))
+DECL|macro|__raw_writew
+mdefine_line|#define __raw_writew(v, addr)&t;(*(volatile unsigned short *)(addr) = (v))
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel(v, addr)&t;(*(volatile unsigned int *)(addr) = (v))
 multiline_comment|/*&n; * The insw/outsw/insl/outsl macros don&squot;t do byte-swapping.&n; * They are only used in practice for transferring buffers which&n; * are arrays of bytes, and byte-swapping is not appropriate in&n; * that case.  - paulus&n; */
 DECL|macro|insb
 mdefine_line|#define insb(port, buf, ns)&t;_insb((u8 *)((port)+_IO_BASE), (buf), (ns))
@@ -100,41 +112,81 @@ DECL|macro|insl
 mdefine_line|#define insl(port, buf, nl)&t;_insl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
 DECL|macro|outsl
 mdefine_line|#define outsl(port, buf, nl)&t;_outsl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
-DECL|macro|inb
+macro_line|#ifdef CONFIG_ALL_PPC
+multiline_comment|/*&n; * We have to handle possible machine checks here on powermacs&n; * and potentially some CHRPs -- paulus.&n; */
+DECL|macro|__do_in_asm
+mdefine_line|#define __do_in_asm(name, op)&t;&t;&t;&t;&bslash;&n;extern __inline__ unsigned int name(unsigned int port)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int x;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&t;op &quot; %0,0,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&t;sync&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;3:&t;li&t;%0,-1&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;&t;b&t;2b&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;.previous&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section __ex_table,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;&t;.align&t;2&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;.long&t;1b,3b&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;.previous&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (x)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;r&quot; (port + _IO_BASE));&t;&t;&bslash;&n;&t;return x;&t;&t;&t;&t;&t;&bslash;&n;}
+DECL|macro|__do_out_asm
+mdefine_line|#define __do_out_asm(name, op)&t;&t;&t;&t;&bslash;&n;extern __inline__ void name(unsigned int val, unsigned int port) &bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&t;op &quot; %0,0,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&t;sync&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section __ex_table,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;&t;.align&t;2&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;.long&t;1b,2b&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;.previous&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;: : &quot;r&quot; (val), &quot;r&quot; (port + _IO_BASE));&t;&bslash;&n;}
+id|__do_in_asm
+c_func
+(paren
+id|inb
+comma
+l_string|&quot;lbzx&quot;
+)paren
+id|__do_in_asm
+c_func
+(paren
+id|inw
+comma
+l_string|&quot;lhbrx&quot;
+)paren
+id|__do_in_asm
+c_func
+(paren
+id|inl
+comma
+l_string|&quot;lwbrx&quot;
+)paren
+id|__do_out_asm
+c_func
+(paren
+id|outb
+comma
+l_string|&quot;stbx&quot;
+)paren
+id|__do_out_asm
+c_func
+(paren
+id|outw
+comma
+l_string|&quot;sthbrx&quot;
+)paren
+id|__do_out_asm
+c_func
+(paren
+id|outl
+comma
+l_string|&quot;stwbrx&quot;
+)paren
+macro_line|#elif defined(CONFIG_APUS)
 mdefine_line|#define inb(port)&t;&t;in_8((u8 *)((port)+_IO_BASE))
-DECL|macro|outb
 mdefine_line|#define outb(val, port)&t;&t;out_8((u8 *)((port)+_IO_BASE), (val))
-macro_line|#if defined(CONFIG_APUS)
-DECL|macro|inw
 mdefine_line|#define inw(port)&t;&t;in_be16((u16 *)((port)+_IO_BASE))
-DECL|macro|outw
 mdefine_line|#define outw(val, port)&t;&t;out_be16((u16 *)((port)+_IO_BASE), (val))
-DECL|macro|inl
 mdefine_line|#define inl(port)&t;&t;in_be32((u32 *)((port)+_IO_BASE))
-DECL|macro|outl
 mdefine_line|#define outl(val, port)&t;&t;out_be32((u32 *)((port)+_IO_BASE), (val))
-macro_line|#else
-DECL|macro|inw
+macro_line|#else /* not APUS or ALL_PPC */
+mdefine_line|#define inb(port)&t;&t;in_8((u8 *)((port)+_IO_BASE))
+mdefine_line|#define outb(val, port)&t;&t;out_8((u8 *)((port)+_IO_BASE), (val))
 mdefine_line|#define inw(port)&t;&t;in_le16((u16 *)((port)+_IO_BASE))
-DECL|macro|outw
 mdefine_line|#define outw(val, port)&t;&t;out_le16((u16 *)((port)+_IO_BASE), (val))
-DECL|macro|inl
 mdefine_line|#define inl(port)&t;&t;in_le32((u32 *)((port)+_IO_BASE))
-DECL|macro|outl
 mdefine_line|#define outl(val, port)&t;&t;out_le32((u32 *)((port)+_IO_BASE), (val))
 macro_line|#endif
 DECL|macro|inb_p
-mdefine_line|#define inb_p(port)&t;&t;in_8((u8 *)((port)+_IO_BASE))
+mdefine_line|#define inb_p(port)&t;&t;inb((port))
 DECL|macro|outb_p
-mdefine_line|#define outb_p(val, port)&t;out_8((u8 *)((port)+_IO_BASE), (val))
+mdefine_line|#define outb_p(val, port)&t;outb((val), (port))
 DECL|macro|inw_p
-mdefine_line|#define inw_p(port)&t;&t;in_le16((u16 *)((port)+_IO_BASE))
+mdefine_line|#define inw_p(port)&t;&t;inw((port))
 DECL|macro|outw_p
-mdefine_line|#define outw_p(val, port)&t;out_le16((u16 *)((port)+_IO_BASE), (val))
+mdefine_line|#define outw_p(val, port)&t;outw((val), (port))
 DECL|macro|inl_p
-mdefine_line|#define inl_p(port)&t;&t;in_le32((u32 *)((port)+_IO_BASE))
+mdefine_line|#define inl_p(port)&t;&t;inl((port))
 DECL|macro|outl_p
-mdefine_line|#define outl_p(val, port)&t;out_le32((u32 *)((port)+_IO_BASE), (val))
+mdefine_line|#define outl_p(val, port)&t;outl((val), (port))
 r_extern
 r_void
 id|_insb
@@ -348,6 +400,25 @@ c_func
 r_int
 r_int
 id|address
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
+r_extern
+r_void
+op_star
+id|__ioremap_at
+c_func
+(paren
+r_int
+r_int
+id|phys
 comma
 r_int
 r_int

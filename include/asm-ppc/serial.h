@@ -13,12 +13,6 @@ macro_line|#else
 DECL|macro|RS_TABLE_SIZE
 mdefine_line|#define RS_TABLE_SIZE  4
 macro_line|#endif
-macro_line|#ifdef CONFIG_PMAC
-multiline_comment|/*&n; * Auto-probing will cause machine checks on powermacs.&n; */
-DECL|macro|SERIAL_PORT_DFNS
-mdefine_line|#define SERIAL_PORT_DFNS
-macro_line|#else
-multiline_comment|/*&n; * PReP, CHRP, etc.&n; */
 multiline_comment|/* Standard COM flags (except for COM4, because of the 8514 problem) */
 macro_line|#ifdef CONFIG_SERIAL_DETECT_IRQ
 DECL|macro|STD_COM_FLAGS
@@ -65,6 +59,5 @@ DECL|macro|MCA_SERIAL_PORT_DFNS
 mdefine_line|#define MCA_SERIAL_PORT_DFNS
 DECL|macro|SERIAL_PORT_DFNS
 mdefine_line|#define SERIAL_PORT_DFNS&t;&t;&bslash;&n;&t;STD_SERIAL_PORT_DEFNS&t;&t;&bslash;&n;&t;EXTRA_SERIAL_PORT_DEFNS&t;&t;&bslash;&n;&t;HUB6_SERIAL_PORT_DFNS&t;&t;&bslash;&n;&t;MCA_SERIAL_PORT_DFNS
-macro_line|#endif /* CONFIG_PMAC */
 macro_line|#endif /* CONFIG_GEMINI */
 eof

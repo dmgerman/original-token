@@ -4595,6 +4595,13 @@ id|net_local
 )paren
 )paren
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

@@ -43,7 +43,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|function|zft_div_blksz
-r_extern
+r_static
 r_inline
 id|__s64
 id|zft_div_blksz
@@ -104,7 +104,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|zft_mul_blksz
-r_extern
+r_static
 r_inline
 id|__s64
 id|zft_mul_blksz

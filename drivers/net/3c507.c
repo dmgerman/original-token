@@ -691,6 +691,11 @@ id|irq
 comma
 id|irqval
 suffix:semicolon
+r_struct
+id|net_local
+op_star
+id|lp
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -827,11 +832,7 @@ c_func
 (paren
 l_int|0
 comma
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1167,6 +1168,8 @@ id|version
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the device structure. */
+id|lp
+op_assign
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -1204,6 +1207,13 @@ r_sizeof
 r_struct
 id|net_local
 )paren
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
 )paren
 suffix:semicolon
 id|dev-&gt;open

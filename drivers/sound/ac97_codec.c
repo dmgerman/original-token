@@ -120,6 +120,17 @@ op_star
 id|codec
 )paren
 suffix:semicolon
+r_static
+r_int
+id|enable_eapd
+c_func
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
+)paren
+suffix:semicolon
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)   (sizeof(x)/sizeof((x)[0]))
 r_static
@@ -172,6 +183,14 @@ l_int|NULL
 )brace
 comma
 (brace
+l_int|0x41445360
+comma
+l_string|&quot;Analog Devices AD1885&quot;
+comma
+id|enable_eapd
+)brace
+comma
+(brace
 l_int|0x43525900
 comma
 l_string|&quot;Cirrus Logic CS4297&quot;
@@ -204,7 +223,23 @@ l_int|NULL
 )brace
 comma
 (brace
+l_int|0x4352592B
+comma
+l_string|&quot;Cirrus Logic CS4294&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
 l_int|0x43525931
+comma
+l_string|&quot;Cirrus Logic CS4299&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|0x43525934
 comma
 l_string|&quot;Cirrus Logic CS4299&quot;
 comma
@@ -2998,12 +3033,18 @@ id|codec
 )paren
 suffix:semicolon
 r_else
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_UNINTERRUPTIBLE
+suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
 l_int|5
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3139,6 +3180,15 @@ id|id2
 )paren
 )paren
 (brace
+id|codec-&gt;id
+op_assign
+id|ac97_codec_ids
+(braket
+id|i
+)braket
+dot
+id|id
+suffix:semicolon
 id|codec-&gt;name
 op_assign
 id|ac97_codec_ids
@@ -3489,6 +3539,45 @@ l_int|0x3802
 suffix:semicolon
 r_return
 l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Bring up an AD1885&n; */
+DECL|function|enable_eapd
+r_static
+r_int
+id|enable_eapd
+c_func
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
+)paren
+(brace
+id|codec
+op_member_access_from_pointer
+id|codec_write
+c_func
+(paren
+id|codec
+comma
+id|AC97_POWER_CONTROL
+comma
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_POWER_CONTROL
+)paren
+op_or
+l_int|0x8000
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|ac97_read_proc

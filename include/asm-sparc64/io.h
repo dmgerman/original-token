@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.35 2000/04/13 04:45:59 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.36 2000/09/17 05:12:00 davem Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -1510,6 +1510,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* On sparc64 we have the whole physical IO address space accessible&n; * using physically addressed loads and stores, so this does nothing.&n; */
 DECL|macro|ioremap
 mdefine_line|#define ioremap(__offset, __size)&t;((void *)(__offset))
@@ -1529,5 +1530,6 @@ DECL|macro|dma_cache_wback
 mdefine_line|#define dma_cache_wback(_start,_size)&t;&t;do { } while (0)
 DECL|macro|dma_cache_wback_inv
 mdefine_line|#define dma_cache_wback_inv(_start,_size)&t;do { } while (0)
+macro_line|#endif
 macro_line|#endif /* !(__SPARC64_IO_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.51 2000/08/09 11:59:04 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.52 2000/09/09 08:26:04 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1619,6 +1619,62 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|optname
+op_eq
+id|IP_PKTINFO
+op_logical_or
+id|optname
+op_eq
+id|IP_RECVTTL
+op_logical_or
+id|optname
+op_eq
+id|IP_RECVTOS
+op_logical_or
+id|optname
+op_eq
+id|IP_RECVOPTS
+op_logical_or
+id|optname
+op_eq
+id|IP_RETOPTS
+op_logical_or
+id|optname
+op_eq
+id|IP_TOS
+op_logical_or
+id|optname
+op_eq
+id|IP_TTL
+op_logical_or
+id|optname
+op_eq
+id|IP_HDRINCL
+op_logical_or
+id|optname
+op_eq
+id|IP_MTU_DISCOVER
+op_logical_or
+id|optname
+op_eq
+id|IP_RECVERR
+op_logical_or
+id|optname
+op_eq
+id|IP_MULTICAST_TTL
+op_logical_or
+id|optname
+op_eq
+id|IP_MULTICAST_LOOP
+op_logical_or
+id|optname
+op_eq
+id|IP_ROUTER_ALERT
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|optlen
 op_ge
 r_sizeof
@@ -1642,12 +1698,10 @@ op_star
 id|optval
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 )brace
 r_else
 r_if
@@ -1681,12 +1735,10 @@ op_star
 id|optval
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 id|val
 op_assign
 (paren
@@ -1694,6 +1746,7 @@ r_int
 )paren
 id|ucval
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* If optlen==0, it is equivalent to val == 0 */
 r_if
@@ -1703,12 +1756,10 @@ id|level
 op_ne
 id|SOL_IP
 )paren
-(brace
 r_return
 op_minus
 id|ENOPROTOOPT
 suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_IP_MROUTE
 r_if
 c_cond
@@ -1719,11 +1770,12 @@ id|MRT_BASE
 op_logical_and
 id|optname
 op_le
+(paren
 id|MRT_BASE
 op_plus
 l_int|10
 )paren
-(brace
+)paren
 r_return
 id|ip_mroute_setsockopt
 c_func
@@ -1737,7 +1789,6 @@ comma
 id|optlen
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|err
 op_assign

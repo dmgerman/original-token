@@ -16419,7 +16419,7 @@ multiline_comment|/*&n; *&t;Scan for a Bt848 card, request the irq and map the i
 DECL|function|bttv_remove
 r_static
 r_void
-id|__devinit
+id|__devexit
 id|bttv_remove
 c_func
 (paren
@@ -16440,7 +16440,7 @@ id|bttv
 op_star
 id|btv
 op_assign
-id|PCI_GET_DRIVER_DATA
+id|pci_get_drvdata
 c_func
 (paren
 id|pci_dev
@@ -16772,6 +16772,14 @@ c_func
 (paren
 op_amp
 id|btv-&gt;gpioq
+)paren
+suffix:semicolon
+id|pci_set_drvdata
+c_func
+(paren
+id|pci_dev
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -17275,7 +17283,7 @@ id|fail
 suffix:semicolon
 )brace
 )brace
-id|PCI_SET_DRIVER_DATA
+id|pci_set_drvdata
 c_func
 (paren
 id|dev

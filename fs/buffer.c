@@ -1547,9 +1547,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* After several hours of tedious analysis, the following hash&n; * function won.  Do not mess with it... -DaveM&n; */
 DECL|macro|_hashfn
-mdefine_line|#define _hashfn(dev,block)&t;&bslash;&n;&t;((((dev)&lt;&lt;(bh_hash_shift - 6)) ^ ((dev)&lt;&lt;(bh_hash_shift - 9))) ^ &bslash;&n;&t; (((block)&lt;&lt;(bh_hash_shift - 6)) ^ ((block) &gt;&gt; 13) ^ ((block) &lt;&lt; (bh_hash_shift - 12))))
+mdefine_line|#define _hashfn(dev,block)&t;&bslash;&n;&t;((((dev)&lt;&lt;(bh_hash_shift - 6)) ^ ((dev)&lt;&lt;(bh_hash_shift - 9))) ^ &bslash;&n;&t; (((block)&lt;&lt;(bh_hash_shift - 6)) ^ ((block) &gt;&gt; 13) ^ &bslash;&n;&t;  ((block) &lt;&lt; (bh_hash_shift - 12))))
 DECL|macro|hash
-mdefine_line|#define hash(dev,block) hash_table[(_hashfn(dev,block) &amp; bh_hash_mask)]
+mdefine_line|#define hash(dev,block) hash_table[(_hashfn(HASHDEV(dev),block) &amp; bh_hash_mask)]
 DECL|function|__hash_link
 r_static
 id|__inline__
@@ -2965,7 +2965,6 @@ id|size
 )paren
 )paren
 (brace
-singleline_comment|//wakeup_bdflush(1);
 id|balance_dirty
 c_func
 (paren
@@ -2975,7 +2974,13 @@ suffix:semicolon
 id|wakeup_kswapd
 c_func
 (paren
-l_int|1
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* We can&squot;t wait because of __GFP_IO */
+id|schedule
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -3511,7 +3516,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-singleline_comment|//&t;tot -= size_buffers_type[BUF_PROTECTED] &gt;&gt; PAGE_SHIFT;
 id|dirty
 op_mul_assign
 l_int|200
@@ -3535,11 +3539,6 @@ c_cond
 id|dirty
 OG
 id|soft_dirty_limit
-op_logical_or
-id|inactive_shortage
-c_func
-(paren
-)paren
 )paren
 (brace
 r_if
@@ -3548,6 +3547,11 @@ c_cond
 id|dirty
 OG
 id|hard_dirty_limit
+op_logical_or
+id|inactive_shortage
+c_func
+(paren
+)paren
 )paren
 r_return
 l_int|1
@@ -9554,6 +9558,13 @@ c_func
 id|bh-&gt;b_size
 )paren
 suffix:semicolon
+r_int
+id|loop
+op_assign
+l_int|0
+suffix:semicolon
+id|cleaned_buffers_try_again
+suffix:colon
 id|spin_lock
 c_func
 (paren
@@ -9769,6 +9780,7 @@ c_cond
 (paren
 id|wait
 )paren
+(brace
 id|sync_page_buffers
 c_func
 (paren
@@ -9777,6 +9789,27 @@ comma
 id|wait
 )paren
 suffix:semicolon
+multiline_comment|/* We waited synchronously, so we can free the buffers. */
+r_if
+c_cond
+(paren
+id|wait
+OG
+l_int|1
+op_logical_and
+op_logical_neg
+id|loop
+)paren
+(brace
+id|loop
+op_assign
+l_int|1
+suffix:semicolon
+r_goto
+id|cleaned_buffers_try_again
+suffix:semicolon
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon

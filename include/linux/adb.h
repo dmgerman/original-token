@@ -178,7 +178,6 @@ r_int
 id|sync
 )paren
 suffix:semicolon
-multiline_comment|/*int (*write)(struct adb_request *req);*/
 DECL|member|autopoll
 r_int
 (paren
@@ -313,6 +312,14 @@ op_star
 comma
 r_int
 )paren
+)paren
+suffix:semicolon
+r_int
+id|adb_unregister
+c_func
+(paren
+r_int
+id|index
 )paren
 suffix:semicolon
 r_void

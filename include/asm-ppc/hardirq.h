@@ -4,6 +4,7 @@ mdefine_line|#define __ASM_HARDIRQ_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/* entry.S is sensitive to the offsets of these fields */
+multiline_comment|/* The __last_jiffy_stamp field is needed to ensure that no decrementer &n; * interrupt is lost on SMP machines. Since on most CPUs it is in the same &n; * cache line as local_irq_count, it is cheap to access and is also used on UP &n; * for uniformity.&n; */
 r_typedef
 r_struct
 (brace
@@ -32,12 +33,19 @@ r_int
 r_int
 id|__syscall_count
 suffix:semicolon
+DECL|member|__last_jiffy_stamp
+r_int
+r_int
+id|__last_jiffy_stamp
+suffix:semicolon
 DECL|typedef|irq_cpustat_t
 )brace
 id|____cacheline_aligned
 id|irq_cpustat_t
 suffix:semicolon
 macro_line|#include &lt;linux/irq_cpustat.h&gt;&t;/* Standard mappings for irq_cpustat_t above */
+DECL|macro|last_jiffy_stamp
+mdefine_line|#define last_jiffy_stamp(cpu) __IRQ_STAT((cpu), __last_jiffy_stamp)
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu) != 0); })

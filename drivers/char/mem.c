@@ -111,16 +111,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PHONE
-r_extern
-r_void
-id|telephony_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|do_write_mem
 r_static
 id|ssize_t
@@ -2788,13 +2778,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PHONE
-id|telephony_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 r_return
 l_int|0
 suffix:semicolon

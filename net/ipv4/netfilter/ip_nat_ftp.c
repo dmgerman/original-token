@@ -1966,7 +1966,7 @@ c_func
 id|newseq
 )paren
 suffix:semicolon
-multiline_comment|/* Ack adjust */
+multiline_comment|/* Ack adjust: other dir sees offset seq numbers */
 r_if
 c_cond
 (paren
@@ -1978,6 +1978,14 @@ c_func
 (paren
 id|tcph-&gt;ack_seq
 )paren
+op_minus
+id|ftp
+(braket
+op_logical_neg
+id|dir
+)braket
+dot
+id|syn_offset_before
 comma
 id|ftp
 (braket

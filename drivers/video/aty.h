@@ -725,6 +725,8 @@ DECL|macro|VERTEX_2_SECONDARY_T
 mdefine_line|#define VERTEX_2_SECONDARY_T&t;0x0738&t;/* Dword offset 1_CE */
 DECL|macro|VERTEX_2_SECONDARY_W
 mdefine_line|#define VERTEX_2_SECONDARY_W&t;0x073C&t;/* Dword offset 1_CF */
+DECL|macro|GTC_3D_RESET_DELAY
+mdefine_line|#define GTC_3D_RESET_DELAY&t;3&t;/* 3D engine reset delay in ms */
 multiline_comment|/* CRTC control values (mostly CRTC_GEN_CNTL) */
 DECL|macro|CRTC_H_SYNC_NEG
 mdefine_line|#define CRTC_H_SYNC_NEG&t;&t;0x00200000
@@ -1186,8 +1188,10 @@ DECL|macro|GP_CHIP_ID
 mdefine_line|#define GP_CHIP_ID&t;0x4750&t;/* RAGE PRO, PQFP, PCI33, full 3D */
 DECL|macro|GQ_CHIP_ID
 mdefine_line|#define GQ_CHIP_ID&t;0x4751&t;/* RAGE PRO, PQFP, PCI33, limited 3D */
+DECL|macro|LM_CHIP_ID
+mdefine_line|#define LM_CHIP_ID&t;0x4c4d&t;/* RAGE Mobility PCI */
 DECL|macro|LN_CHIP_ID
-mdefine_line|#define LN_CHIP_ID&t;0x4c4d&t;/* RAGE Mobility AGP */
+mdefine_line|#define LN_CHIP_ID&t;0x4c4e&t;/* RAGE Mobility AGP */
 multiline_comment|/* Mach64 major ASIC revisions */
 DECL|macro|MACH64_ASIC_NEC_VT_A3
 mdefine_line|#define MACH64_ASIC_NEC_VT_A3&t;&t;0x08
@@ -1605,5 +1609,16 @@ DECL|macro|LCD_POWER_MANAGEMENT
 mdefine_line|#define LCD_POWER_MANAGEMENT&t;0x08
 DECL|macro|LCD_ZVGPIO
 mdefine_line|#define LCD_ZVGPIO&t;&t;0x09
+DECL|macro|LCD_MISC_CNTL
+mdefine_line|#define LCD_MISC_CNTL&t;&t;0x14
+multiline_comment|/* Values in LCD_MISC_CNTL */
+DECL|macro|BIAS_MOD_LEVEL_MASK
+mdefine_line|#define BIAS_MOD_LEVEL_MASK&t;0x0000ff00
+DECL|macro|BIAS_MOD_LEVEL_SHIFT
+mdefine_line|#define BIAS_MOD_LEVEL_SHIFT&t;8
+DECL|macro|BLMOD_EN
+mdefine_line|#define BLMOD_EN&t;&t;0x00010000
+DECL|macro|BIASMOD_EN
+mdefine_line|#define BIASMOD_EN&t;&t;0x00020000
 macro_line|#endif /* REGMACH64_H */
 eof

@@ -307,8 +307,17 @@ r_int
 id|page_va
 )paren
 suffix:semicolon
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page)&t;__flush_page_to_ram((unsigned long) page_address(page))
+r_extern
+r_void
+id|flush_page_to_ram
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
 DECL|macro|flush_dcache_page
 mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 r_extern

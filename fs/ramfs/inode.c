@@ -421,7 +421,11 @@ l_int|0
 suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|dev
+)paren
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign

@@ -36,6 +36,7 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &lt;asm/nvram.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/backlight.h&gt;
 macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/smplock.h&gt;
 macro_line|#endif /* CONFIG_SMP */
@@ -796,6 +797,22 @@ c_func
 id|xchg_u32
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALTIVEC
+DECL|variable|last_task_used_altivec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|last_task_used_altivec
+)paren
+suffix:semicolon
+DECL|variable|giveup_altivec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|giveup_altivec
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ALTIVEC */
 macro_line|#ifdef CONFIG_SMP
 DECL|variable|__global_cli
 id|EXPORT_SYMBOL
@@ -892,7 +909,6 @@ id|ppc_md
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_ADB
-multiline_comment|/*&n; * This could be more fine-grained, but for now assume if we have&n; * ADB we have it all -- Cort&n; */
 DECL|variable|adb_request
 id|EXPORT_SYMBOL
 c_func
@@ -907,6 +923,29 @@ c_func
 id|adb_register
 )paren
 suffix:semicolon
+DECL|variable|adb_unregister
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adb_unregister
+)paren
+suffix:semicolon
+DECL|variable|adb_poll
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adb_poll
+)paren
+suffix:semicolon
+DECL|variable|adb_try_handler_change
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adb_try_handler_change
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ADB */
+macro_line|#ifdef CONFIG_ADB_CUDA
 DECL|variable|cuda_request
 id|EXPORT_SYMBOL
 c_func
@@ -921,6 +960,7 @@ c_func
 id|cuda_poll
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
 macro_line|#ifdef CONFIG_ADB_PMU
 DECL|variable|pmu_request
 id|EXPORT_SYMBOL
@@ -937,7 +977,6 @@ id|pmu_poll
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_ADB_PMU */
-macro_line|#endif /* CONFIG_ADB */
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 DECL|variable|pmu_register_sleep_notifier
 id|EXPORT_SYMBOL
@@ -960,7 +999,23 @@ c_func
 id|pmu_enable_irled
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_PMAC_PBOOK
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
+macro_line|#ifdef CONFIG_PMAC_BACKLIGHT
+DECL|variable|get_backlight_level
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_backlight_level
+)paren
+suffix:semicolon
+DECL|variable|set_backlight_level
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_backlight_level
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC_BACKLIGHT */
 macro_line|#if defined(CONFIG_ALL_PPC)
 DECL|variable|sys_ctrler
 id|EXPORT_SYMBOL_NOVERS
@@ -969,6 +1024,15 @@ c_func
 id|sys_ctrler
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_MACH_SPECIFIC
+DECL|variable|have_of
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|have_of
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 DECL|variable|find_devices
 id|EXPORT_SYMBOL
 c_func
@@ -1142,7 +1206,6 @@ id|pmac_xpram_write
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_NVRAM */
-macro_line|#ifdef CONFIG_PPC_RTC
 DECL|variable|to_tm
 id|EXPORT_SYMBOL
 c_func
@@ -1150,7 +1213,6 @@ c_func
 id|to_tm
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|__ashrdi3
 id|EXPORT_SYMBOL_NOVERS
 c_func
@@ -1276,11 +1338,11 @@ c_func
 id|ppc_irq_dispatch_handler
 )paren
 suffix:semicolon
-DECL|variable|decrementer_count
+DECL|variable|tb_ticks_per_jiffy
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|decrementer_count
+id|tb_ticks_per_jiffy
 )paren
 suffix:semicolon
 DECL|variable|get_wchan
@@ -1477,4 +1539,80 @@ c_func
 id|mmu_context_overflow
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MOL
+r_extern
+id|ulong
+id|mol_interface
+(braket
+)braket
+suffix:semicolon
+r_extern
+id|PTE
+op_star
+id|Hash
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|Hash_mask
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|ret_from_except
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|task_struct
+op_star
+id|last_task_used_altivec
+suffix:semicolon
+DECL|variable|mol_interface
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|mol_interface
+)paren
+suffix:semicolon
+DECL|variable|Hash
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|Hash
+)paren
+suffix:semicolon
+DECL|variable|Hash_mask
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|Hash_mask
+)paren
+suffix:semicolon
+DECL|variable|handle_mm_fault
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|handle_mm_fault
+)paren
+suffix:semicolon
+DECL|variable|last_task_used_math
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|last_task_used_math
+)paren
+suffix:semicolon
+DECL|variable|ret_from_except
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ret_from_except
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_MOL */
 eof

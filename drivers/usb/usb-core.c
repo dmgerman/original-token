@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * driver/usb/usb-core.c&n; *&n; * (C) Copyright David Waite 1999&n; * based on code from usb.c, by Linus Torvalds&n; *&n; * The purpose of this file is to pull any and all generic modular code from&n; * usb.c and put it in a separate file. This way usb.c is kept as a generic&n; * library, while this file handles starting drivers, etc.&n; *&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/*&n; * USB core&n; */

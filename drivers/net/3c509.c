@@ -825,6 +825,11 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|el3_private
+op_star
+id|lp
+suffix:semicolon
 r_int
 id|lrs_state
 op_assign
@@ -864,7 +869,7 @@ id|pnp_cards
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* __ISAPNP__ */
 multiline_comment|/* First check all slots of the EISA bus.  The next slot address to&n;&t;   probe is kept in &squot;eisa_addr&squot; to support multiple probe() calls. */
 r_if
 c_cond
@@ -1281,7 +1286,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_MCA */
 macro_line|#ifdef __ISAPNP__
 r_if
 c_cond
@@ -1530,7 +1535,7 @@ suffix:semicolon
 )brace
 id|no_pnp
 suffix:colon
-macro_line|#endif
+macro_line|#endif /* __ISAPNP__ */
 multiline_comment|/* Select an open I/O location at 0x1*0 to do contention select. */
 r_for
 c_loop
@@ -1882,7 +1887,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif
+macro_line|#endif /* __ISAPNP__ */
 (brace
 r_int
 r_int
@@ -2273,47 +2278,24 @@ id|el3_private
 )paren
 )paren
 suffix:semicolon
-(paren
-(paren
-r_struct
-id|el3_private
-op_star
-)paren
+id|lp
+op_assign
 id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|mca_slot
+suffix:semicolon
+id|lp-&gt;mca_slot
 op_assign
 id|mca_slot
 suffix:semicolon
-(paren
-(paren
-r_struct
-id|el3_private
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|next_dev
+id|lp-&gt;next_dev
 op_assign
 id|el3_root_dev
 suffix:semicolon
+id|spin_lock_init
+c_func
 (paren
-(paren
-r_struct
-id|el3_private
-op_star
+op_amp
+id|lp-&gt;lock
 )paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|lock
-op_assign
-(paren
-id|spinlock_t
-)paren
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 id|el3_root_dev
 op_assign

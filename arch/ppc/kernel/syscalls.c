@@ -27,7 +27,6 @@ r_void
 (brace
 )brace
 DECL|function|sys_ioperm
-id|asmlinkage
 r_int
 id|sys_ioperm
 c_func
@@ -177,7 +176,6 @@ id|ENOSYS
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_ipc() is the de-multiplexer for the SysV IPC calls..&n; *&n; * This is really horribly ugly.&n; */
-id|asmlinkage
 r_int
 DECL|function|sys_ipc
 id|sys_ipc
@@ -705,7 +703,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
 DECL|function|sys_pipe
-id|asmlinkage
 r_int
 id|sys_pipe
 c_func
@@ -768,7 +765,6 @@ id|error
 suffix:semicolon
 )brace
 DECL|function|sys_mmap
-id|asmlinkage
 r_int
 r_int
 id|sys_mmap
@@ -810,6 +806,15 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -839,15 +844,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|flags
-op_and_assign
-op_complement
-(paren
-id|MAP_EXECUTABLE
-op_or
-id|MAP_DENYWRITE
-)paren
-suffix:semicolon
 id|down
 c_func
 (paren
@@ -898,7 +894,6 @@ id|ret
 suffix:semicolon
 )brace
 r_extern
-id|asmlinkage
 r_int
 id|sys_select
 c_func
@@ -920,7 +915,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Due to some executables calling the wrong select we sometimes&n; * get wrong args.  This determines how the args are being passed&n; * (a single ptr to them all args passed) then calls&n; * sys_select() with the appropriate args. -- Cort&n; */
-id|asmlinkage
 r_int
 DECL|function|ppc_select
 id|ppc_select
@@ -1097,7 +1091,6 @@ id|tvp
 suffix:semicolon
 )brace
 DECL|function|sys_pause
-id|asmlinkage
 r_int
 id|sys_pause
 c_func
@@ -1120,7 +1113,6 @@ id|ERESTARTNOHAND
 suffix:semicolon
 )brace
 DECL|function|sys_uname
-id|asmlinkage
 r_int
 id|sys_uname
 c_func
@@ -1181,7 +1173,6 @@ id|err
 suffix:semicolon
 )brace
 DECL|function|sys_olduname
-id|asmlinkage
 r_int
 id|sys_olduname
 c_func

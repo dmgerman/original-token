@@ -707,7 +707,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_end_request()&n; *&n; * Purpose:     Post-processing of completed commands called from interrupt&n; *              handler or a bottom-half handler.&n; *&n; * Arguments:   SCpnt    - command that is complete.&n; *              uptodate - 1 if I/O indicates success, 0 for I/O error.&n; *              sectors  - number of sectors we want to mark.&n; *&t;&t;requeue  - indicates whether we should requeue leftovers.&n; *&n; * Lock status: Assumed that lock is not held upon entry.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       This is called for block device requests in order to&n; *              mark some number of sectors as complete.&n; * &n; *&t;&t;We are guaranteeing that the request queue will be goosed&n; *&t;&t;at some point during this call.&n; */
+multiline_comment|/*&n; * Function:    scsi_end_request()&n; *&n; * Purpose:     Post-processing of completed commands called from interrupt&n; *              handler or a bottom-half handler.&n; *&n; * Arguments:   SCpnt    - command that is complete.&n; *              uptodate - 1 if I/O indicates success, 0 for I/O error.&n; *              sectors  - number of sectors we want to mark.&n; *&t;&t;requeue  - indicates whether we should requeue leftovers.&n; *&t;&t;frequeue - indicates that if we release the command block&n; *&t;&t;&t;   that the queue request function should be called.&n; *&n; * Lock status: Assumed that lock is not held upon entry.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       This is called for block device requests in order to&n; *              mark some number of sectors as complete.&n; * &n; *&t;&t;We are guaranteeing that the request queue will be goosed&n; *&t;&t;at some point during this call.&n; */
 DECL|function|__scsi_end_request
 r_static
 id|Scsi_Cmnd
@@ -727,6 +727,9 @@ id|sectors
 comma
 r_int
 id|requeue
+comma
+r_int
+id|frequeue
 )paren
 (brace
 r_struct
@@ -738,6 +741,10 @@ r_struct
 id|buffer_head
 op_star
 id|bh
+suffix:semicolon
+id|Scsi_Device
+op_star
+id|SDpnt
 suffix:semicolon
 id|ASSERT_LOCK
 c_func
@@ -947,13 +954,41 @@ id|req-&gt;rq_dev
 )paren
 )paren
 suffix:semicolon
+id|SDpnt
+op_assign
+id|SCpnt-&gt;device
+suffix:semicolon
 multiline_comment|/*&n;&t; * This will goose the queue request function at the end, so we don&squot;t&n;&t; * need to worry about launching another command.&n;&t; */
-id|scsi_release_command
+id|__scsi_release_command
 c_func
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|frequeue
+)paren
+(brace
+id|request_queue_t
+op_star
+id|q
+suffix:semicolon
+id|q
+op_assign
+op_amp
+id|SDpnt-&gt;request_queue
+suffix:semicolon
+id|scsi_queue_next_request
+c_func
+(paren
+id|q
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|NULL
 suffix:semicolon
@@ -985,6 +1020,8 @@ comma
 id|uptodate
 comma
 id|sectors
+comma
+l_int|1
 comma
 l_int|1
 )paren
@@ -1401,6 +1438,8 @@ comma
 id|result
 op_eq
 l_int|0
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * If the command completed without error, then either finish off the&n;&t;&t; * rest of the command, or start a new one.&n;&t;&t; */
@@ -1590,9 +1629,13 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Device %x not ready.&bslash;n&quot;
+l_string|&quot;Device %s not ready.&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|SCpnt-&gt;request.rq_dev
+)paren
 )paren
 suffix:semicolon
 id|SCpnt
@@ -2167,6 +2210,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|SRpnt
+op_assign
+l_int|NULL
+suffix:semicolon
 id|STpnt
 op_assign
 id|scsi_get_request_dev
@@ -2262,6 +2309,11 @@ id|req
 op_ne
 op_amp
 id|SCpnt-&gt;request
+op_logical_and
+id|req
+op_ne
+op_amp
+id|SRpnt-&gt;sr_request
 )paren
 (brace
 id|memcpy
@@ -2339,7 +2391,9 @@ id|SCpnt
 )paren
 )paren
 (brace
-id|scsi_end_request
+id|SCpnt
+op_assign
+id|__scsi_end_request
 c_func
 (paren
 id|SCpnt
@@ -2347,8 +2401,27 @@ comma
 l_int|0
 comma
 id|SCpnt-&gt;request.nr_sectors
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt
+op_ne
+l_int|NULL
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;Should not have leftover blocks&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|spin_lock_irq
 c_func
 (paren
@@ -2385,7 +2458,9 @@ c_func
 id|SCpnt
 )paren
 suffix:semicolon
-id|scsi_end_request
+id|SCpnt
+op_assign
+id|__scsi_end_request
 c_func
 (paren
 id|SCpnt
@@ -2393,8 +2468,27 @@ comma
 l_int|0
 comma
 id|SCpnt-&gt;request.nr_sectors
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt
+op_ne
+l_int|NULL
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;Should not have leftover blocks&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|spin_lock_irq
 c_func
 (paren

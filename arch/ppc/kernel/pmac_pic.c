@@ -880,7 +880,9 @@ r_void
 id|pmac_smp_message_recv
 c_func
 (paren
-r_void
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* IPI&squot;s are a hack on the powersurge -- Cort */
@@ -895,26 +897,10 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef CONFIG_XMON
-r_static
-r_int
-id|xmon_2nd
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|xmon_2nd
-)paren
-id|xmon
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|pmac_smp_message_recv
 c_func
 (paren
+id|regs
 )paren
 suffix:semicolon
 r_return

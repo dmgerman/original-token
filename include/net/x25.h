@@ -781,7 +781,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* x25_out.c */
 r_extern
-r_void
+r_int
 id|x25_output
 c_func
 (paren

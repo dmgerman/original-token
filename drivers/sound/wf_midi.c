@@ -2573,7 +2573,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|detect_wf_mpu
-r_static
 r_int
 id|__init
 id|detect_wf_mpu
