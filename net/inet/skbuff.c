@@ -1289,7 +1289,21 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;kfree_skb: skb = NULL&bslash;n&quot;
+l_string|&quot;kfree_skb: skb = NULL (from %08lx)&bslash;n&quot;
+comma
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|skb
+)paren
+(braket
+op_minus
+l_int|1
+)braket
 )paren
 suffix:semicolon
 r_return
@@ -1325,7 +1339,21 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: kfree_skb passed an skb that nobody set the free flag on!&bslash;n&quot;
+l_string|&quot;Warning: kfree_skb passed an skb that nobody set the free flag on! (from %08lx)&bslash;n&quot;
+comma
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|skb
+)paren
+(braket
+op_minus
+l_int|1
+)braket
 )paren
 suffix:semicolon
 r_if
@@ -1336,7 +1364,21 @@ id|skb-&gt;next
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: kfree_skb passed an skb still on a list.&bslash;n&quot;
+l_string|&quot;Warning: kfree_skb passed an skb still on a list (from %08lx).&bslash;n&quot;
+comma
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|skb
+)paren
+(braket
+op_minus
+l_int|1
+)braket
 )paren
 suffix:semicolon
 r_if

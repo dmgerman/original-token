@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_mixer.c&n; * &n; * The low level mixer driver for the SoundBlaster Pro and SB16 cards.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the SoundBlaster Pro and SB16 cards.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added code to support the Sound Galaxy NX Pro mixer.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SBPRO)
 DECL|macro|__SB_MIXER_C__
@@ -69,7 +69,6 @@ r_int
 id|flags
 suffix:semicolon
 id|DISABLE_INTR
-c_func
 (paren
 id|flags
 )paren
@@ -114,7 +113,6 @@ id|tenmicrosec
 )paren
 suffix:semicolon
 id|RESTORE_INTR
-c_func
 (paren
 id|flags
 )paren
@@ -137,7 +135,6 @@ r_int
 id|flags
 suffix:semicolon
 id|DISABLE_INTR
-c_func
 (paren
 id|flags
 )paren
@@ -174,7 +171,6 @@ id|tenmicrosec
 )paren
 suffix:semicolon
 id|RESTORE_INTR
-c_func
 (paren
 id|flags
 )paren
@@ -186,7 +182,6 @@ suffix:semicolon
 r_void
 DECL|function|sb_mixer_set_stereo
 id|sb_mixer_set_stereo
-c_func
 (paren
 r_int
 id|mode
@@ -227,6 +222,7 @@ id|MONO_DAC
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Returns:&n; *&t;0&t;No mixer detected.&n; *&t;1&t;Only a plain Sound Blaster Pro style mixer detected.&n; *&t;2&t;The Sound Galaxy NX Pro mixer detected.&n; */
 r_static
 r_int
 DECL|function|detect_mixer
@@ -235,6 +231,18 @@ id|detect_mixer
 r_void
 )paren
 (brace
+macro_line|#ifdef __SGNXPRO__
+r_int
+id|oldbass
+comma
+id|oldtreble
+suffix:semicolon
+macro_line|#endif
+r_int
+id|retcode
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;   * Detect the mixer by changing parameters of two volume channels. If the&n;   * values read back match with the values written, the mixer is there (is&n;   * it?)&n;   */
 id|sb_setmixer
 (paren
@@ -277,15 +285,94 @@ l_int|0x33
 r_return
 l_int|0
 suffix:semicolon
-r_return
+macro_line|#ifdef __SGNXPRO__
+multiline_comment|/* Attempt to detect the SG NX Pro by check for valid bass/treble&n; * registers.&n; */
+id|oldbass
+op_assign
+id|sb_getmixer
+(paren
+id|BASS_LVL
+)paren
+suffix:semicolon
+id|oldtreble
+op_assign
+id|sb_getmixer
+(paren
+id|TREBLE_LVL
+)paren
+suffix:semicolon
+id|sb_setmixer
+(paren
+id|BASS_LVL
+comma
+l_int|0xaa
+)paren
+suffix:semicolon
+id|sb_setmixer
+(paren
+id|TREBLE_LVL
+comma
+l_int|0x55
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|sb_getmixer
+(paren
+id|BASS_LVL
+)paren
+op_ne
+l_int|0xaa
+)paren
+op_logical_or
+(paren
+id|sb_getmixer
+(paren
+id|TREBLE_LVL
+)paren
+op_ne
+l_int|0x55
+)paren
+)paren
+(brace
+id|retcode
+op_assign
 l_int|1
+suffix:semicolon
+multiline_comment|/* 1 == Only SB Pro detected */
+)brace
+r_else
+id|retcode
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* 2 == SG NX Pro detected */
+multiline_comment|/* Restore register in either case since SG NX Pro has EEPROM with&n;   * &squot;preferred&squot; values stored.&n;   */
+id|sb_setmixer
+(paren
+id|BASS_LVL
+comma
+id|oldbass
+)paren
+suffix:semicolon
+id|sb_setmixer
+(paren
+id|TREBLE_LVL
+comma
+id|oldtreble
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+id|retcode
 suffix:semicolon
 )brace
 r_static
 r_void
 DECL|function|change_bits
 id|change_bits
-c_func
 (paren
 r_int
 r_char
@@ -403,7 +490,6 @@ r_static
 r_int
 DECL|function|sb_mixer_get
 id|sb_mixer_get
-c_func
 (paren
 r_int
 id|dev
@@ -425,7 +511,6 @@ id|supported_devices
 )paren
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -505,7 +590,6 @@ l_int|31
 )paren
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -527,7 +611,6 @@ id|dev
 multiline_comment|/* Not supported */
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -556,7 +639,6 @@ l_int|0
 )paren
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -564,13 +646,11 @@ suffix:semicolon
 id|val
 op_assign
 id|sb_getmixer
-c_func
 (paren
 id|regoffs
 )paren
 suffix:semicolon
 id|change_bits
-c_func
 (paren
 op_amp
 id|val
@@ -616,7 +696,6 @@ id|regoffs
 multiline_comment|/* Change register */
 (brace
 id|sb_setmixer
-c_func
 (paren
 id|regoffs
 comma
@@ -659,7 +738,6 @@ multiline_comment|/* Just left channel present */
 id|val
 op_assign
 id|sb_getmixer
-c_func
 (paren
 id|regoffs
 )paren
@@ -667,7 +745,6 @@ suffix:semicolon
 multiline_comment|/* Read the new one */
 )brace
 id|change_bits
-c_func
 (paren
 op_amp
 id|val
@@ -680,7 +757,6 @@ id|right
 )paren
 suffix:semicolon
 id|sb_setmixer
-c_func
 (paren
 id|regoffs
 comma
@@ -714,20 +790,17 @@ r_static
 r_void
 DECL|function|set_recsrc
 id|set_recsrc
-c_func
 (paren
 r_int
 id|src
 )paren
 (brace
 id|sb_setmixer
-c_func
 (paren
 id|RECORD_SRC
 comma
 (paren
 id|sb_getmixer
-c_func
 (paren
 id|RECORD_SRC
 )paren
@@ -748,7 +821,6 @@ r_static
 r_int
 DECL|function|set_recmask
 id|set_recmask
-c_func
 (paren
 r_int
 id|mask
@@ -942,7 +1014,6 @@ id|i
 suffix:semicolon
 )brace
 id|sb_setmixer
-c_func
 (paren
 id|SB16_IMASK_L
 comma
@@ -950,7 +1021,6 @@ id|regimageL
 )paren
 suffix:semicolon
 id|sb_setmixer
-c_func
 (paren
 id|SB16_IMASK_R
 comma
@@ -1021,15 +1091,12 @@ id|SOUND_MIXER_RECSRC
 suffix:colon
 r_return
 id|IOCTL_OUT
-c_func
 (paren
 id|arg
 comma
 id|set_recmask
-c_func
 (paren
 id|IOCTL_IN
-c_func
 (paren
 id|arg
 )paren
@@ -1180,7 +1247,6 @@ r_static
 r_void
 DECL|function|sb_mixer_reset
 id|sb_mixer_reset
-c_func
 (paren
 r_void
 )paren
@@ -1213,23 +1279,24 @@ id|i
 )paren
 suffix:semicolon
 id|set_recmask
-c_func
 (paren
 id|SOUND_MASK_MIC
 )paren
 suffix:semicolon
 )brace
-r_void
+multiline_comment|/*&n; * Returns a code depending on whether a SG NX Pro was detected.&n; * 0 == Plain SB 16 or SB Pro&n; * 1 == SG NX Pro detected.&n; *&n; * Used to update message.&n; */
+r_int
 DECL|function|sb_mixer_init
 id|sb_mixer_init
-c_func
 (paren
 r_int
 id|major_model
 )paren
 (brace
+r_int
+id|mixerstat
+suffix:semicolon
 id|sb_setmixer
-c_func
 (paren
 l_int|0x00
 comma
@@ -1237,16 +1304,20 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Reset mixer */
+id|mixerstat
+op_assign
+id|detect_mixer
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|detect_mixer
-c_func
-(paren
-)paren
+id|mixerstat
 )paren
 r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* No mixer. Why? */
 id|mixer_initialized
@@ -1270,6 +1341,34 @@ id|mixer_caps
 op_assign
 id|SOUND_CAP_EXCL_INPUT
 suffix:semicolon
+macro_line|#ifdef __SGNXPRO__
+r_if
+c_cond
+(paren
+id|mixerstat
+op_eq
+l_int|2
+)paren
+(brace
+multiline_comment|/* A SGNXPRO was detected */
+id|supported_devices
+op_assign
+id|SGNXPRO_MIXER_DEVICES
+suffix:semicolon
+id|supported_rec_devices
+op_assign
+id|SGNXPRO_RECORDING_DEVICES
+suffix:semicolon
+id|iomap
+op_assign
+op_amp
+id|sgnxpro_mix
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
+(brace
+multiline_comment|/* Otherwise plain SB Pro */
 id|supported_devices
 op_assign
 id|SBPRO_MIXER_DEVICES
@@ -1283,6 +1382,7 @@ op_assign
 op_amp
 id|sbpro_mix
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -1310,12 +1410,12 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
-c_func
 (paren
 l_string|&quot;SB Warning: Unsupported mixer type&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|mixer_devs
@@ -1328,8 +1428,14 @@ op_amp
 id|sb_mixer_operations
 suffix:semicolon
 id|sb_mixer_reset
-c_func
 (paren
+)paren
+suffix:semicolon
+r_return
+(paren
+id|mixerstat
+op_eq
+l_int|2
 )paren
 suffix:semicolon
 )brace

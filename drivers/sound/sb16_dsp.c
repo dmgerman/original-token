@@ -1,9 +1,9 @@
-multiline_comment|/*&n; * sound/sb16_dsp.c&n; * &n; * The low level driver for the SoundBlaster DSP chip.&n; * &n; * (C) 1993 J. Schubert (jsb@sth.ruhr-uni-bochum.de)&n; *&n; * based on SB-driver by (C) Hannu Savolainen&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/sb16_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip.&n; *&n; * (C) 1993 J. Schubert (jsb@sth.ruhr-uni-bochum.de)&n; *&n; * based on SB-driver by (C) Hannu Savolainen&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 DECL|macro|DEB
 mdefine_line|#define DEB(x)
 DECL|macro|DEB1
 mdefine_line|#define DEB1(x)
-multiline_comment|/*&n;#define DEB_DMARES&n;*/
+multiline_comment|/*&n;   #define DEB_DMARES&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sb_mixer.h&quot;
@@ -11,6 +11,10 @@ macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB16) &a
 r_extern
 r_int
 id|sbc_base
+comma
+id|sbc_minor
+comma
+id|sbc_major
 suffix:semicolon
 DECL|variable|sb16_dsp_ok
 r_static
@@ -41,7 +45,7 @@ id|dsp_current_speed
 op_assign
 l_int|8000
 suffix:semicolon
-multiline_comment|/*DSP_DEFAULT_SPEED;*/
+multiline_comment|/*DSP_DEFAULT_SPEED; */
 DECL|variable|dsp_busy
 r_static
 r_int
@@ -72,7 +76,7 @@ id|irq_mode
 op_assign
 id|IMODE_NONE
 suffix:semicolon
-multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT or&n;&t;&t;&t;&t;&t;   IMODE_NONE */
+multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT or&n;&n;&t;&t;&t;&t;&t;   IMODE_NONE */
 DECL|variable|my_dev
 r_static
 r_int
@@ -248,6 +252,8 @@ op_assign
 (brace
 l_string|&quot;SoundBlaster 16&quot;
 comma
+id|NOTHING_SPECIAL
+comma
 id|sb16_dsp_open
 comma
 id|sb16_dsp_close
@@ -271,9 +277,9 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|sb_dsp_command01
 r_static
 r_int
+DECL|function|sb_dsp_command01
 id|sb_dsp_command01
 (paren
 r_int
@@ -304,37 +310,31 @@ op_amp
 l_int|0x80
 )paren
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|i
 )paren
-(brace
 id|printk
-c_func
 (paren
 l_string|&quot;SB16 sb_dsp_command01 Timeout&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 id|sb_dsp_command
-c_func
 (paren
 id|val
 )paren
 suffix:semicolon
 )brace
-DECL|function|wait_data_avail
 r_static
 r_int
+DECL|function|wait_data_avail
 id|wait_data_avail
-c_func
 (paren
+r_int
 r_int
 id|t
 )paren
@@ -347,7 +347,6 @@ suffix:semicolon
 id|t
 op_add_assign
 id|GET_TIME
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -357,18 +356,15 @@ r_if
 c_cond
 (paren
 id|INB
-c_func
 (paren
 id|DSP_DATA_AVAIL
 )paren
 op_amp
 l_int|0x80
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_while
 c_loop
@@ -377,17 +373,13 @@ op_decrement
 id|loopc
 op_logical_and
 id|GET_TIME
-c_func
 (paren
 )paren
 OL
 id|t
 )paren
-(brace
 suffix:semicolon
-)brace
 id|printk
-c_func
 (paren
 l_string|&quot;!data_avail l=%d&bslash;n&quot;
 comma
@@ -398,11 +390,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|read_dsp
 r_static
 r_int
+DECL|function|read_dsp
 id|read_dsp
-c_func
 (paren
 r_int
 id|t
@@ -413,77 +404,69 @@ c_cond
 (paren
 op_logical_neg
 id|wait_data_avail
-c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|t
 )paren
 )paren
-(brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_else
 r_return
 id|INB
-c_func
 (paren
 id|DSP_READ
 )paren
 suffix:semicolon
 )brace
-DECL|function|dsp_ini2
 r_static
 r_int
+DECL|function|dsp_ini2
 id|dsp_ini2
-c_func
 (paren
 r_void
 )paren
 (brace
 macro_line|#if 0
-multiline_comment|/* sb_setmixer(0x83, sb_getmixer(0x83) | 0x03);&t;*/
+multiline_comment|/* sb_setmixer(0x83, sb_getmixer(0x83) | 0x03);       */
 id|sb_dsp_command
-c_func
 (paren
 l_int|0xe2
 )paren
 suffix:semicolon
 id|sb_dsp_command
-c_func
 (paren
 l_int|0x76
 )paren
 suffix:semicolon
 multiline_comment|/* E0 ??? */
 id|sb_dsp_command
-c_func
 (paren
 l_int|0xe2
 )paren
 suffix:semicolon
 id|sb_dsp_command
-c_func
 (paren
 l_int|0x30
 )paren
 suffix:semicolon
 multiline_comment|/* A0 ??? */
 id|sb_dsp_command
-c_func
 (paren
 l_int|0xe4
 )paren
 suffix:semicolon
 id|sb_dsp_command
-c_func
 (paren
 l_int|0xaa
 )paren
 suffix:semicolon
 id|sb_dsp_command
-c_func
 (paren
 l_int|0xe8
 )paren
@@ -492,42 +475,35 @@ r_if
 c_cond
 (paren
 id|read_dsp
-c_func
 (paren
 l_int|100
 )paren
 op_ne
 l_int|0xaa
 )paren
-(brace
 id|printk
-c_func
 (paren
 l_string|&quot;Error dsp_ini2&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;static char *dsp_getmessage(unsigned char command,int maxn)&n;{&n;  static char buff[100];&n;  int n=0;&n;&n;  sb_dsp_command(command);&n;  while(n&lt;maxn &amp;&amp; wait_data_avail(2)) {&n;    buff[++n]=INB(DSP_READ);&n;    if(!buff[n])&n;      break;&n;  }&n;  buff[0]=n;&n;  return buff;&n;}&n;&n;static void dsp_showmessage(unsigned char command,int len)&n;{&n;  int n;&n;  unsigned char *c;&n;  c=dsp_getmessage(command,len);&n;  printk(&quot;DSP C=%x l=%d,lr=%d b=&quot;,command,len,c[0]);&n;  for(n=1;n&lt;=c[0];n++)&n;    if(c[n]&gt;=&squot; &squot; &amp; c[n]&lt;=&squot;z&squot;)&n;      printk(&quot;%c&quot;,c[n]);&n;    else&n;      printk(&quot;|%x|&quot;,c[n]);&n;  printk(&quot;&bslash;n&quot;);&n;}&n;*/
-DECL|function|dsp_set_speed
+multiline_comment|/*&n;   static char *dsp_getmessage(unsigned char command,int maxn)&n;   {&n;   static char buff[100];&n;   int n=0;&n;&n;   sb_dsp_command(command);&n;   while(n&lt;maxn &amp;&amp; wait_data_avail(2L)) {&n;   buff[++n]=INB(DSP_READ);&n;   if(!buff[n])&n;   break;&n;   }&n;   buff[0]=n;&n;   return buff;&n;   }&n;&n;   static void dsp_showmessage(unsigned char command,int len)&n;   {&n;   int n;&n;   unsigned char *c;&n;   c=dsp_getmessage(command,len);&n;   printk(&quot;DSP C=%x l=%d,lr=%d b=&quot;,command,len,c[0]);&n;   for(n=1;n&lt;=c[0];n++)&n;   if(c[n]&gt;=&squot; &squot; &amp; c[n]&lt;=&squot;z&squot;)&n;   printk(&quot;%c&quot;,c[n]);&n;   else&n;   printk(&quot;|%x|&quot;,c[n]);&n;   printk(&quot;&bslash;n&quot;);&n;   }&n; */
 r_static
 r_int
+DECL|function|dsp_set_speed
 id|dsp_set_speed
-c_func
 (paren
 r_int
 id|mode
 )paren
 (brace
 id|DEB
-c_func
 (paren
 id|printk
-c_func
 (paren
 l_string|&quot;dsp_set_speed(%d)&bslash;n&quot;
 comma
@@ -572,21 +548,18 @@ r_return
 id|mode
 suffix:semicolon
 )brace
-DECL|function|dsp_set_stereo
 r_static
 r_int
+DECL|function|dsp_set_stereo
 id|dsp_set_stereo
-c_func
 (paren
 r_int
 id|mode
 )paren
 (brace
 id|DEB
-c_func
 (paren
 id|printk
-c_func
 (paren
 l_string|&quot;dsp_set_stereo(%d)&bslash;n&quot;
 comma
@@ -602,21 +575,18 @@ r_return
 id|mode
 suffix:semicolon
 )brace
-DECL|function|dsp_set_bits
 r_static
 r_int
+DECL|function|dsp_set_bits
 id|dsp_set_bits
-c_func
 (paren
 r_int
 id|arg
 )paren
 (brace
 id|DEB
-c_func
 (paren
 id|printk
-c_func
 (paren
 l_string|&quot;dsp_set_bits(%d)&bslash;n&quot;
 comma
@@ -657,7 +627,6 @@ r_default
 suffix:colon
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -706,15 +675,12 @@ c_cond
 (paren
 id|local
 )paren
-(brace
 r_return
 id|dsp_set_speed
-c_func
 (paren
 id|arg
 )paren
 suffix:semicolon
-)brace
 r_return
 id|IOCTL_OUT
 (paren
@@ -737,11 +703,9 @@ c_cond
 (paren
 id|local
 )paren
-(brace
 r_return
 id|dsp_current_speed
 suffix:semicolon
-)brace
 r_return
 id|IOCTL_OUT
 (paren
@@ -760,7 +724,6 @@ id|local
 )paren
 r_return
 id|dsp_set_stereo
-c_func
 (paren
 id|arg
 )paren
@@ -771,10 +734,8 @@ id|IOCTL_OUT
 id|arg
 comma
 id|dsp_set_stereo
-c_func
 (paren
 id|IOCTL_IN
-c_func
 (paren
 id|arg
 )paren
@@ -791,7 +752,6 @@ id|local
 )paren
 r_return
 id|dsp_set_stereo
-c_func
 (paren
 id|arg
 op_minus
@@ -955,10 +915,8 @@ r_int
 id|retval
 suffix:semicolon
 id|DEB
-c_func
 (paren
 id|printk
-c_func
 (paren
 l_string|&quot;sb16_dsp_open()&bslash;n&quot;
 )paren
@@ -978,7 +936,6 @@ l_string|&quot;SB16 Error: SoundBlaster board not installed&bslash;n&quot;
 suffix:semicolon
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|ENXIO
 )paren
@@ -991,7 +948,6 @@ id|intr_active
 )paren
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EBUSY
 )paren
@@ -1029,13 +985,11 @@ id|dma8
 )paren
 suffix:semicolon
 id|sb_free_irq
-c_func
 (paren
 )paren
 suffix:semicolon
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EBUSY
 )paren
@@ -1065,7 +1019,6 @@ id|dma16
 )paren
 suffix:semicolon
 id|sb_free_irq
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -1076,14 +1029,12 @@ id|dma8
 suffix:semicolon
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EBUSY
 )paren
 suffix:semicolon
 )brace
 id|dsp_ini2
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -1113,23 +1064,19 @@ r_int
 id|flags
 suffix:semicolon
 id|DEB
-c_func
 (paren
 id|printk
-c_func
 (paren
 l_string|&quot;sb16_dsp_close()&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|sb_dsp_command01
-c_func
 (paren
 l_int|0xd9
 )paren
 suffix:semicolon
 id|sb_dsp_command01
-c_func
 (paren
 l_int|0xd5
 )paren
@@ -1220,7 +1167,6 @@ op_decrement
 suffix:semicolon
 macro_line|#ifdef DEB_DMARES
 id|printk
-c_func
 (paren
 l_string|&quot;output_block: %x %d %d&bslash;n&quot;
 comma
@@ -1253,13 +1199,11 @@ id|flags
 )paren
 suffix:semicolon
 id|clear_dma_ff
-c_func
 (paren
 id|chan
 )paren
 suffix:semicolon
 id|disable_dma
-c_func
 (paren
 id|chan
 )paren
@@ -1267,13 +1211,11 @@ suffix:semicolon
 id|pos
 op_assign
 id|get_dma_residue
-c_func
 (paren
 id|chan
 )paren
 suffix:semicolon
 id|enable_dma
-c_func
 (paren
 id|chan
 )paren
@@ -1284,7 +1226,6 @@ id|flags
 )paren
 suffix:semicolon
 id|printk
-c_func
 (paren
 l_string|&quot;dmapos=%d %x&bslash;n&quot;
 comma
@@ -1334,7 +1275,6 @@ id|dma_restart
 )paren
 (brace
 id|sb16_dsp_halt
-c_func
 (paren
 id|dev
 )paren
@@ -1455,7 +1395,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* sb_dsp_command (0);&n;  sb_dsp_command (0); */
+multiline_comment|/* sb_dsp_command (0);&n;     sb_dsp_command (0); */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -1520,7 +1460,6 @@ op_decrement
 suffix:semicolon
 macro_line|#ifdef DEB_DMARES
 id|printk
-c_func
 (paren
 l_string|&quot;start_input: %x %d %d&bslash;n&quot;
 comma
@@ -1553,13 +1492,11 @@ id|flags
 )paren
 suffix:semicolon
 id|clear_dma_ff
-c_func
 (paren
 id|chan
 )paren
 suffix:semicolon
 id|disable_dma
-c_func
 (paren
 id|chan
 )paren
@@ -1567,13 +1504,11 @@ suffix:semicolon
 id|pos
 op_assign
 id|get_dma_residue
-c_func
 (paren
 id|chan
 )paren
 suffix:semicolon
 id|enable_dma
-c_func
 (paren
 id|chan
 )paren
@@ -1584,7 +1519,6 @@ id|flags
 )paren
 suffix:semicolon
 id|printk
-c_func
 (paren
 l_string|&quot;dmapos=%d %x&bslash;n&quot;
 comma
@@ -1634,7 +1568,6 @@ id|dma_restart
 )paren
 (brace
 id|sb16_dsp_halt
-c_func
 (paren
 id|dev
 )paren
@@ -1755,7 +1688,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* sb_dsp_command (0);&n;  sb_dsp_command (0); */
+multiline_comment|/* sb_dsp_command (0);&n;     sb_dsp_command (0); */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -1917,13 +1850,11 @@ id|dsp_16bit
 )paren
 (brace
 id|sb_dsp_command01
-c_func
 (paren
 l_int|0xd9
 )paren
 suffix:semicolon
 id|sb_dsp_command01
-c_func
 (paren
 l_int|0xd5
 )paren
@@ -1932,13 +1863,11 @@ suffix:semicolon
 r_else
 (brace
 id|sb_dsp_command01
-c_func
 (paren
 l_int|0xda
 )paren
 suffix:semicolon
 id|sb_dsp_command01
-c_func
 (paren
 l_int|0xd0
 )paren
@@ -1949,7 +1878,6 @@ r_static
 r_void
 DECL|function|set_irq_hw
 id|set_irq_hw
-c_func
 (paren
 r_int
 id|level
@@ -1994,7 +1922,6 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
-c_func
 (paren
 l_string|&quot;SB16_IRQ_LEVEL %d does not exist&bslash;n&quot;
 comma
@@ -2005,7 +1932,6 @@ r_return
 suffix:semicolon
 )brace
 id|sb_setmixer
-c_func
 (paren
 id|IRQ_NR
 comma
@@ -2026,88 +1952,26 @@ op_star
 id|hw_config
 )paren
 (brace
-r_int
-id|i
-comma
-id|major
-comma
-id|minor
-suffix:semicolon
-id|major
-op_assign
-id|minor
-op_assign
-l_int|0
-suffix:semicolon
-id|sb_dsp_command
-(paren
-l_int|0xe1
-)paren
-suffix:semicolon
-multiline_comment|/* Get version */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|1000
-suffix:semicolon
-id|i
-suffix:semicolon
-id|i
-op_decrement
-)paren
-(brace
 r_if
 c_cond
 (paren
-id|INB
-(paren
-id|DSP_DATA_AVAIL
+id|sbc_major
+OL
+l_int|4
 )paren
-op_amp
-l_int|0x80
-)paren
-(brace
-multiline_comment|/* wait for Data Ready */
-r_if
-c_cond
-(paren
-id|major
-op_eq
-l_int|0
-)paren
-id|major
-op_assign
-id|INB
-(paren
-id|DSP_READ
-)paren
+r_return
+id|mem_start
 suffix:semicolon
-r_else
-(brace
-id|minor
-op_assign
-id|INB
-(paren
-id|DSP_READ
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-)brace
-macro_line|#ifndef SCO 
+macro_line|#ifndef SCO
 id|sprintf
 (paren
 id|sb16_dsp_operations.name
 comma
 l_string|&quot;SoundBlaster 16 %d.%d&quot;
 comma
-id|major
+id|sbc_major
 comma
-id|minor
+id|sbc_minor
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2212,7 +2076,6 @@ op_logical_neg
 id|sb_config
 op_assign
 id|sound_getconf
-c_func
 (paren
 id|SNDCARD_SB
 )paren
@@ -2220,7 +2083,6 @@ id|SNDCARD_SB
 )paren
 (brace
 id|printk
-c_func
 (paren
 l_string|&quot;SB16 Error: Plain SB not configured&bslash;n&quot;
 )paren
@@ -2229,20 +2091,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sbc_base
-op_ne
-id|hw_config-&gt;io_base
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Warning! SB16 I/O != SB I/O&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* sb_setmixer(OPSW,0xf);&n;  if(sb_getmixer(OPSW)!=0xf)&n;    return 0; */
+multiline_comment|/* sb_setmixer(OPSW,0xf);&n;     if(sb_getmixer(OPSW)!=0xf)&n;     return 0; */
 r_if
 c_cond
 (paren
@@ -2254,28 +2103,6 @@ id|sb_reset_dsp
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|hw_config-&gt;irq
-op_ne
-id|sb_config-&gt;irq
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;SB16 Error: Invalid IRQ number %d/%d&bslash;n&quot;
-comma
-id|sb_config-&gt;irq
-comma
-id|hw_config-&gt;irq
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2292,7 +2119,6 @@ id|sb_config-&gt;dma
 )paren
 (brace
 id|printk
-c_func
 (paren
 l_string|&quot;SB16 Error: Invalid DMA channel %d/%d&bslash;n&quot;
 comma
@@ -2314,13 +2140,11 @@ op_assign
 id|sb_config-&gt;dma
 suffix:semicolon
 id|set_irq_hw
-c_func
 (paren
-id|hw_config-&gt;irq
+id|sb_config-&gt;irq
 )paren
 suffix:semicolon
 id|sb_setmixer
-c_func
 (paren
 id|DMA_NR
 comma
@@ -2338,19 +2162,18 @@ id|sb_config-&gt;dma
 )paren
 suffix:semicolon
 id|DEB
-c_func
 (paren
 id|printk
 (paren
 l_string|&quot;SoundBlaster 16: IRQ %d DMA %d OK&bslash;n&quot;
 comma
-id|hw_config-&gt;irq
+id|sb_config-&gt;irq
 comma
 id|hw_config-&gt;dma
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;  dsp_showmessage(0xe3,99);&n;*/
+multiline_comment|/*&n;   dsp_showmessage(0xe3,99);&n; */
 id|sb16_dsp_ok
 op_assign
 l_int|1

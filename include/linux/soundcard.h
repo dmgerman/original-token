@@ -2,7 +2,7 @@ macro_line|#ifndef SOUNDCARD_H
 DECL|macro|SOUNDCARD_H
 mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * &n; */
-multiline_comment|/* &n;  * If you make modifications to this file, please contact me before&n;  * distributing the modified version. There is already enough &n;  * divercity in the world.&n;  *&n;  * Regards,&n;  * Hannu Savolainen&n;  * hsavolai@cs.helsinki.fi&n;  */
+multiline_comment|/* &n;  * If you make modifications to this file, please contact me before&n;  * distributing the modified version. There is already enough &n;  * divercity in the world.&n;  *&n;  * Regards,&n;  * Hannu Savolainen&n;  * hannu@voxware.pp.fi, Hannu.Savolainen@helsinki.fi&n;  */
 DECL|macro|SOUND_VERSION
 mdefine_line|#define SOUND_VERSION&t;203
 DECL|macro|VOXWARE
@@ -424,6 +424,13 @@ DECL|macro|CTRL_MAIN_VOLUME
 mdefine_line|#define    CTRL_MAIN_VOLUME&t;&t;252
 DECL|macro|SEQ_BALANCE
 mdefine_line|#define SEQ_BALANCE&t;&t;11
+DECL|macro|SEQ_VOLMODE
+mdefine_line|#define SEQ_VOLMODE             12
+multiline_comment|/*&n; * Volume mode decides how volumes are used&n; */
+DECL|macro|VOL_METHOD_ADAGIO
+mdefine_line|#define VOL_METHOD_ADAGIO&t;1
+DECL|macro|VOL_METHOD_LINEAR
+mdefine_line|#define VOL_METHOD_LINEAR&t;2
 multiline_comment|/*&n; * Note! SEQ_WAIT, SEQ_MIDIPUTC and SEQ_ECHO are used also as&n; *&t; input events.&n; */
 multiline_comment|/*&n; * Event codes 0xf0 to 0xfc are reserved for future extensions.&n; */
 DECL|macro|SEQ_FULLSIZE
@@ -921,7 +928,9 @@ suffix:semicolon
 multiline_comment|/* This function must be provided by programs */
 multiline_comment|/* Sample seqbuf_dump() implementation:&n; *&n; *&t;SEQ_DEFINEBUF (2048);&t;-- Defines a buffer for 2048 bytes&n; *&n; *&t;int seqfd;&t;&t;-- The file descriptor for /dev/sequencer.&n; *&n; *&t;void&n; *&t;seqbuf_dump ()&n; *&t;{&n; *&t;  if (_seqbufptr)&n; *&t;    if (write (seqfd, _seqbuf, _seqbufptr) == -1)&n; *&t;      {&n; *&t;&t;perror (&quot;write /dev/sequencer&quot;);&n; *&t;&t;exit (-1);&n; *&t;      }&n; *&t;  _seqbufptr = 0;&n; *&t;}&n; */
 DECL|macro|SEQ_DEFINEBUF
-mdefine_line|#define SEQ_DEFINEBUF(len)&t;&t;unsigned char _seqbuf[len]; int _seqbuflen = len, _seqbufptr = 0
+mdefine_line|#define SEQ_DEFINEBUF(len)&t;&t;unsigned char _seqbuf[len]; int _seqbuflen = len; int _seqbufptr = 0
+DECL|macro|SEQ_DECLAREBUF
+mdefine_line|#define SEQ_DECLAREBUF()&t;&t;extern unsigned char _seqbuf[]; extern int _seqbuflen;extern int _seqbufptr
 DECL|macro|SEQ_PM_DEFINES
 mdefine_line|#define SEQ_PM_DEFINES&t;&t;&t;struct patmgr_info _pm_info
 DECL|macro|_SEQ_NEEDBUF
@@ -934,6 +943,8 @@ DECL|macro|PM_LOAD_PATCH
 mdefine_line|#define PM_LOAD_PATCH(dev, bank, pgm)&t;(SEQ_DUMPBUF(), _pm_info.command = _PM_LOAD_PATCH, &bslash;&n;&t;&t;&t;&t;&t;_pm_info.device=dev, _pm_info.data.data8[0]=pgm, &bslash;&n;&t;&t;&t;&t;&t;_pm_info.parm1 = bank, _pm_info.parm2 = 1, &bslash;&n;&t;&t;&t;&t;&t;ioctl(seqfd, SNDCTL_PMGR_ACCESS, &amp;_pm_info))
 DECL|macro|PM_LOAD_PATCHES
 mdefine_line|#define PM_LOAD_PATCHES(dev, bank, pgm) (SEQ_DUMPBUF(), _pm_info.command = _PM_LOAD_PATCH, &bslash;&n;&t;&t;&t;&t;&t;_pm_info.device=dev, memcpy(_pm_info.data.data8, pgm, 128), &bslash;&n;&t;&t;&t;&t;&t;_pm_info.parm1 = bank, _pm_info.parm2 = 128, &bslash;&n;&t;&t;&t;&t;&t;ioctl(seqfd, SNDCTL_PMGR_ACCESS, &amp;_pm_info))
+DECL|macro|SEQ_VOLUME_MODE
+mdefine_line|#define SEQ_VOLUME_MODE(dev, mode)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_VOLMODE;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (mode);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+4] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+6] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 DECL|macro|SEQ_START_NOTE
 mdefine_line|#define SEQ_START_NOTE(dev, voice, note, vol)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_NOTEON;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (voice);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+4] = (note);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = (vol);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+6] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 DECL|macro|SEQ_STOP_NOTE
@@ -963,7 +974,7 @@ mdefine_line|#define SEQ_ECHO_BACK(key)&t;&t;{_SEQ_NEEDBUF(4);&bslash;&n;&t;&t;&
 DECL|macro|SEQ_MIDIOUT
 mdefine_line|#define SEQ_MIDIOUT(device, byte)&t;{_SEQ_NEEDBUF(4);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_MIDIPUTC;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = (byte);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (device);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(4);}
 DECL|macro|SEQ_WRPATCH
-mdefine_line|#define SEQ_WRPATCH(patch, len)&t;&t;{if (_seqbufptr) seqbuf_dump();&bslash;&n;&t;&t;&t;&t;&t;if (write(seqfd, (char*)(patch), len)==-1) &bslash;&n;&t;&t;&t;&t;&t;   perror(&quot;Write patch: /dev/sequencer&quot;);}
+mdefine_line|#define SEQ_WRPATCH(patchx, len)&t;{if (_seqbufptr) seqbuf_dump();&bslash;&n;&t;&t;&t;&t;&t;if (write(seqfd, (char*)(patchx), len)==-1) &bslash;&n;&t;&t;&t;&t;&t;   perror(&quot;Write patch: /dev/sequencer&quot;);}
 macro_line|#endif
 r_int
 id|soundcard_init

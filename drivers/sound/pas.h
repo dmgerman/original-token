@@ -333,7 +333,7 @@ l_int|6
 comma
 l_int|0
 comma
-l_int|0
+l_int|1
 comma
 l_int|7
 comma
@@ -374,7 +374,7 @@ l_int|0x04
 comma
 l_int|0x00
 comma
-l_int|0x00
+l_int|0x01
 comma
 l_int|0x05
 comma
@@ -409,7 +409,7 @@ l_int|0x20
 comma
 l_int|0x00
 comma
-l_int|0x00
+l_int|0x08
 comma
 l_int|0x28
 comma

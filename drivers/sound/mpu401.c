@@ -1,9 +1,9 @@
-multiline_comment|/*&n; * sound/mpu401.c&n; * &n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; * &n; * This version supports just the DUMB UART mode.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/mpu401.c&n; *&n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; *&n; * This version supports just the DUMB UART mode.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#if !defined(EXCLUDE_MPU401) &amp;&amp; !defined(EXCLUDE_MIDI)
 DECL|macro|DATAPORT
-mdefine_line|#define&t;DATAPORT   (mpu401_base)&t;/* MPU-401 Data I/O Port on IBM */
+mdefine_line|#define&t;DATAPORT   (mpu401_base)/* MPU-401 Data I/O Port on IBM */
 DECL|macro|COMDPORT
 mdefine_line|#define&t;COMDPORT   (mpu401_base+1)&t;/* MPU-401 Command Port on IBM */
 DECL|macro|STATPORT
@@ -84,29 +84,16 @@ r_char
 id|data
 )paren
 suffix:semicolon
-r_static
 r_void
-DECL|function|mpu401_input_loop
-id|mpu401_input_loop
+DECL|function|mpuintr
+id|mpuintr
 (paren
-r_void
+r_int
+id|unit
 )paren
 (brace
-r_int
-id|count
-suffix:semicolon
-id|count
-op_assign
-l_int|10
-suffix:semicolon
 r_while
 c_loop
-(paren
-id|count
-)paren
-multiline_comment|/* Not timed out */
-r_if
-c_cond
 (paren
 id|input_avail
 (paren
@@ -120,10 +107,6 @@ op_assign
 id|mpu401_read
 (paren
 )paren
-suffix:semicolon
-id|count
-op_assign
-l_int|100
 suffix:semicolon
 r_if
 c_cond
@@ -140,109 +123,6 @@ id|c
 )paren
 suffix:semicolon
 )brace
-r_else
-r_while
-c_loop
-(paren
-op_logical_neg
-id|input_avail
-(paren
-)paren
-op_logical_and
-id|count
-)paren
-id|count
-op_decrement
-suffix:semicolon
-)brace
-r_void
-DECL|function|mpuintr
-id|mpuintr
-(paren
-r_int
-id|unit
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|input_avail
-(paren
-)paren
-)paren
-id|mpu401_input_loop
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * It looks like there is no input interrupts in the UART mode. Let&squot;s try&n; * polling.&n; */
-r_static
-r_void
-DECL|function|poll_mpu401
-id|poll_mpu401
-(paren
-r_int
-r_int
-id|dummy
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|DEFINE_TIMER
-c_func
-(paren
-id|mpu401_timer
-comma
-id|poll_mpu401
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|mpu401_opened
-op_amp
-id|OPEN_READ
-)paren
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* No longer required */
-id|DISABLE_INTR
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|input_avail
-(paren
-)paren
-)paren
-id|mpu401_input_loop
-(paren
-)paren
-suffix:semicolon
-id|ACTIVATE_TIMER
-c_func
-(paren
-id|mpu401_timer
-comma
-id|poll_mpu401
-comma
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* Come back later */
-id|RESTORE_INTR
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 r_static
 r_int
@@ -298,8 +178,9 @@ id|EBUSY
 )paren
 suffix:semicolon
 )brace
-id|mpu401_input_loop
+id|mpuintr
 (paren
+l_int|0
 )paren
 suffix:semicolon
 id|midi_input_intr
@@ -310,12 +191,6 @@ id|mpu401_opened
 op_assign
 id|mode
 suffix:semicolon
-id|poll_mpu401
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Enable input polling */
 r_return
 l_int|0
 suffix:semicolon
@@ -367,8 +242,9 @@ id|input_avail
 (paren
 )paren
 )paren
-id|mpu401_input_loop
+id|mpuintr
 (paren
+l_int|0
 )paren
 suffix:semicolon
 id|RESTORE_INTR
@@ -817,8 +693,9 @@ c_cond
 (paren
 id|ok
 )paren
-id|mpu401_input_loop
+id|mpuintr
 (paren
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Flush input before enabling interrupts */

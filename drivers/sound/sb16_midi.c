@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb16_midi.c&n; * &n; * The low level driver for the MPU-401 UART emulation of the SB16.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/sb16_midi.c&n; *&n; * The low level driver for the MPU-401 UART emulation of the SB16.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_MIDI)
@@ -79,6 +79,10 @@ r_char
 id|data
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sbc_major
+suffix:semicolon
 r_static
 r_void
 DECL|function|sb16midi_input_loop
@@ -87,21 +91,8 @@ id|sb16midi_input_loop
 r_void
 )paren
 (brace
-r_int
-id|count
-suffix:semicolon
-id|count
-op_assign
-l_int|10
-suffix:semicolon
 r_while
 c_loop
-(paren
-id|count
-)paren
-multiline_comment|/* Not timed out */
-r_if
-c_cond
 (paren
 id|input_avail
 (paren
@@ -115,10 +106,6 @@ op_assign
 id|sb16midi_read
 (paren
 )paren
-suffix:semicolon
-id|count
-op_assign
-l_int|100
 suffix:semicolon
 r_if
 c_cond
@@ -135,20 +122,6 @@ id|c
 )paren
 suffix:semicolon
 )brace
-r_else
-r_while
-c_loop
-(paren
-op_logical_neg
-id|input_avail
-(paren
-)paren
-op_logical_and
-id|count
-)paren
-id|count
-op_decrement
-suffix:semicolon
 )brace
 r_void
 DECL|function|sb16midiintr
@@ -167,75 +140,6 @@ id|input_avail
 )paren
 id|sb16midi_input_loop
 (paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * It looks like there is no input interrupts in the UART mode. Let&squot;s try&n; * polling.&n; */
-r_static
-r_void
-DECL|function|poll_sb16midi
-id|poll_sb16midi
-(paren
-r_int
-r_int
-id|dummy
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|DEFINE_TIMER
-c_func
-(paren
-id|sb16midi_timer
-comma
-id|poll_sb16midi
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|sb16midi_opened
-op_amp
-id|OPEN_READ
-)paren
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* No longer required */
-id|DISABLE_INTR
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|input_avail
-(paren
-)paren
-)paren
-id|sb16midi_input_loop
-(paren
-)paren
-suffix:semicolon
-id|ACTIVATE_TIMER
-c_func
-(paren
-id|sb16midi_timer
-comma
-id|poll_sb16midi
-comma
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* Come back later */
-id|RESTORE_INTR
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -300,12 +204,6 @@ id|sb16midi_opened
 op_assign
 id|mode
 suffix:semicolon
-id|poll_sb16midi
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Enable input polling */
 r_return
 l_int|0
 suffix:semicolon
@@ -832,6 +730,17 @@ id|sb16midi_base
 op_assign
 id|hw_config-&gt;io_base
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sbc_major
+OL
+l_int|4
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* SB16 not detected */
 r_if
 c_cond
 (paren

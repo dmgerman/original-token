@@ -2,7 +2,7 @@ DECL|macro|_PAS2_CARD_C_
 mdefine_line|#define _PAS2_CARD_C_
 DECL|macro|SND_SA_INTERRUPT
 mdefine_line|#define SND_SA_INTERRUPT
-multiline_comment|/*&n; * sound/pas2_card.c&n; * &n; * Detection routine for the Pro Audio Spectrum cards.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/pas2_card.c&n; *&n; * Detection routine for the Pro Audio Spectrum cards.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_PAS)
 DECL|macro|DEFINE_TRANSLATIONS
@@ -529,7 +529,6 @@ suffix:semicolon
 multiline_comment|/*&n; * This fixes the timing problems of the PAS due to the Symphony chipset&n; * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n; */
 macro_line|#ifdef SYMPHONY_PAS
 id|OUTB
-c_func
 (paren
 l_int|0x05
 comma
@@ -537,7 +536,6 @@ l_int|0xa8
 )paren
 suffix:semicolon
 id|OUTB
-c_func
 (paren
 l_int|0x60
 comma
@@ -647,7 +645,6 @@ c_cond
 id|sb_config
 op_assign
 id|sound_getconf
-c_func
 (paren
 id|SNDCARD_SB
 )paren
@@ -668,7 +665,7 @@ comma
 id|COMPATIBILITY_ENABLE
 )paren
 suffix:semicolon
-multiline_comment|/* &quot;Emulation address&quot;&t; */
+multiline_comment|/* &quot;Emulation address&quot;         */
 id|pas_write
 (paren
 (paren
@@ -692,7 +689,6 @@ id|sb_config-&gt;dma
 )braket
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB DMA %d&bslash;n&bslash;n&quot;
 comma
@@ -709,7 +705,6 @@ id|sb_config-&gt;irq
 )braket
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB IRQ %d&bslash;n&bslash;n&quot;
 comma
@@ -729,7 +724,6 @@ id|sb_config-&gt;irq
 )braket
 suffix:semicolon
 id|pas_write
-c_func
 (paren
 id|irq_dma
 comma
@@ -958,13 +952,13 @@ id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|# if !defined(EXCLUDE_SB_EMULATION) &amp;&amp; !defined(EXCLUDE_SB)
+macro_line|#if !defined(EXCLUDE_SB_EMULATION) &amp;&amp; !defined(EXCLUDE_SB)
 id|sb_dsp_disable_midi
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* The SB emulation don&squot;t support&n;&t;&t;&t;&t;&t; * midi */
-macro_line|# endif
+macro_line|#endif
 macro_line|#ifndef EXCLUDE_YM3812
 id|enable_opl3_mode
 (paren

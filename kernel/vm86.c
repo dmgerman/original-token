@@ -14,13 +14,15 @@ DECL|macro|SP
 mdefine_line|#define SP(regs)&t;(*(unsigned short *)&amp;((regs)-&gt;esp))
 multiline_comment|/*&n; * virtual flags (16 and 32-bit versions)&n; */
 DECL|macro|VFLAGS
-mdefine_line|#define VFLAGS(regs)&t;(*(unsigned short *)&amp;(current-&gt;v86flags))
+mdefine_line|#define VFLAGS&t;(*(unsigned short *)&amp;(current-&gt;v86flags))
 DECL|macro|VEFLAGS
-mdefine_line|#define VEFLAGS(regs)&t;(current-&gt;v86flags)
+mdefine_line|#define VEFLAGS&t;(current-&gt;v86flags)
 DECL|macro|set_flags
 mdefine_line|#define set_flags(X,new,mask) &bslash;&n;((X) = ((X) &amp; ~(mask)) | ((new) &amp; (mask)))
 DECL|macro|SAFE_MASK
 mdefine_line|#define SAFE_MASK&t;(0xDD5)
+DECL|macro|RETURN_MASK
+mdefine_line|#define RETURN_MASK&t;(0xDFF)
 DECL|function|save_v86_state
 id|asmlinkage
 r_struct
@@ -59,6 +61,18 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
+id|set_flags
+c_func
+(paren
+id|regs-&gt;eflags
+comma
+id|VEFLAGS
+comma
+id|VIF_MASK
+op_or
+id|current-&gt;v86mask
+)paren
+suffix:semicolon
 id|memcpy_tofs
 c_func
 (paren
@@ -304,7 +318,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * The eflags register is also special: we cannot trust that the user&n; * has set it up safely, so this makes sure interrupt etc flags are&n; * inherited from protected mode.&n; */
-id|current-&gt;v86flags
+id|VEFLAGS
 op_assign
 id|info.regs.eflags
 suffix:semicolon
@@ -314,10 +328,10 @@ id|SAFE_MASK
 suffix:semicolon
 id|info.regs.eflags
 op_or_assign
+id|pt_regs-&gt;eflags
+op_amp
 op_complement
 id|SAFE_MASK
-op_amp
-id|pt_regs-&gt;eflags
 suffix:semicolon
 id|info.regs.eflags
 op_or_assign
@@ -496,14 +510,14 @@ op_star
 id|regs
 )paren
 (brace
-id|current-&gt;v86flags
+id|VEFLAGS
 op_or_assign
 id|VIF_MASK
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;v86flags
+id|VEFLAGS
 op_amp
 id|VIP_MASK
 )paren
@@ -529,7 +543,7 @@ op_star
 id|regs
 )paren
 (brace
-id|current-&gt;v86flags
+id|VEFLAGS
 op_and_assign
 op_complement
 id|VIF_MASK
@@ -575,10 +589,6 @@ id|set_flags
 c_func
 (paren
 id|VEFLAGS
-c_func
-(paren
-id|regs
-)paren
 comma
 id|eflags
 comma
@@ -630,10 +640,6 @@ id|set_flags
 c_func
 (paren
 id|VFLAGS
-c_func
-(paren
-id|regs
-)paren
 comma
 id|flags
 comma
@@ -684,12 +690,12 @@ id|flags
 op_assign
 id|regs-&gt;eflags
 op_amp
-id|SAFE_MASK
+id|RETURN_MASK
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;v86flags
+id|VEFLAGS
 op_amp
 id|VIF_MASK
 )paren
@@ -702,13 +708,52 @@ id|flags
 op_or
 (paren
 id|VEFLAGS
-c_func
-(paren
-id|regs
-)paren
 op_amp
 id|current-&gt;v86mask
 )paren
+suffix:semicolon
+)brace
+DECL|function|is_revectored
+r_static
+r_inline
+r_int
+id|is_revectored
+c_func
+(paren
+r_int
+id|nr
+comma
+r_struct
+id|revectored_struct
+op_star
+id|bitmap
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;btl %2,%%fs:%1&bslash;n&bslash;tsbbl %0,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|nr
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+id|bitmap
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|nr
+)paren
+)paren
+suffix:semicolon
+r_return
+id|nr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Boy are these ugly, but we need to do the correct 16-bit arithmetic.&n; * Gcc makes a mess of it, so we do it inline and use non-obvious calling&n; * conventions..&n; */

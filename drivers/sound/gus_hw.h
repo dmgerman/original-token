@@ -41,6 +41,10 @@ DECL|macro|u_DataLo
 mdefine_line|#define u_DataLo&t;&t;(gus_base + 0x104)
 DECL|macro|u_DataHi
 mdefine_line|#define u_DataHi&t;&t;(gus_base + 0x105)
+DECL|macro|u_MixData
+mdefine_line|#define u_MixData               (gus_base + 0x106)   /* Rev. 3.7+ mixing */
+DECL|macro|u_MixSelect
+mdefine_line|#define u_MixSelect             (gus_base + 0x506)   /* registers.       */
 DECL|macro|u_IrqStatus
 mdefine_line|#define u_IrqStatus&t;&t;u_Status
 DECL|macro|MIDI_TX_IRQ
@@ -57,6 +61,28 @@ DECL|macro|ENVELOPE_IRQ
 macro_line|#&t;define ENVELOPE_IRQ&t;&t;0x40&t;/* pending volume envelope IRQ */
 DECL|macro|DMA_TC_IRQ
 macro_line|#&t;define DMA_TC_IRQ&t;&t;0x80&t;/* pending dma tc IRQ */
+DECL|macro|ICS2101
+mdefine_line|#define ICS2101&t;&t;1
+DECL|macro|ICS_MIXDEVS
+macro_line|#&t;define ICS_MIXDEVS&t;6
+DECL|macro|DEV_MIC
+macro_line|#&t;define DEV_MIC&t;&t;0
+DECL|macro|DEV_LINE
+macro_line|#&t;define DEV_LINE&t;&t;1
+DECL|macro|DEV_CD
+macro_line|#&t;define DEV_CD&t;&t;2
+DECL|macro|DEV_GF1
+macro_line|#&t;define DEV_GF1&t;&t;3
+DECL|macro|DEV_UNUSED
+macro_line|#&t;define DEV_UNUSED&t;4
+DECL|macro|DEV_VOL
+macro_line|#&t;define DEV_VOL&t;&t;5
+DECL|macro|CHN_LEFT
+macro_line|#&t;define CHN_LEFT&t;&t;0
+DECL|macro|CHN_RIGHT
+macro_line|#&t;define CHN_RIGHT&t;1
+DECL|macro|CS4231
+mdefine_line|#define CS4231&t;&t;2
 DECL|macro|u_DRAMIO
 mdefine_line|#define u_DRAMIO&t;&t;(gus_base + 0x107)
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/opl3.c&n; * &n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 multiline_comment|/* Major improvements to the FM handling 30AUG92 by Rob Hooft, */
 multiline_comment|/* hooft@chem.ruu.nl */
 macro_line|#include &quot;sound_config.h&quot;
@@ -7,7 +7,7 @@ macro_line|#include &quot;opl3.h&quot;
 DECL|macro|MAX_VOICE
 mdefine_line|#define MAX_VOICE&t;18
 DECL|macro|OFFS_4OP
-mdefine_line|#define OFFS_4OP&t;11&t;/* Definitions for the operators OP3 and OP4&n;&t;&t;&t;&t; * begin here */
+mdefine_line|#define OFFS_4OP&t;11&t;/* Definitions for the operators OP3 and OP4&n;&t;&t;&t;&t;   * begin here */
 DECL|variable|opl3_enabled
 r_static
 r_int
@@ -202,7 +202,7 @@ id|fm_model
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* 0=no fm, 1=mono, 2=SB Pro 1, 3=SB Pro 2&t; */
+multiline_comment|/* 0=no fm, 1=mono, 2=SB Pro 1, 3=SB Pro 2       */
 r_static
 r_int
 id|store_instr
@@ -284,6 +284,13 @@ r_int
 id|both
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|opl3_enabled
+)paren
+r_return
+suffix:semicolon
 id|opl3_enabled
 op_assign
 l_int|1
@@ -678,7 +685,7 @@ r_int
 id|ioaddr
 )paren
 (brace
-multiline_comment|/*&n;   * This function returns 1 if the FM chicp is present at the given I/O port&n;   * The detection algorithm plays with the timer built in the FM chip and&n;   * looks for a change in the status register.&n;   * &n;   * Note! The timers of the FM chip are not connected to AdLib (and compatible)&n;   * boards.&n;   * &n;   * Note2! The chip is initialized if detected.&n;   */
+multiline_comment|/*&n;   * This function returns 1 if the FM chicp is present at the given I/O port&n;   * The detection algorithm plays with the timer built in the FM chip and&n;   * looks for a change in the status register.&n;   *&n;   * Note! The timers of the FM chip are not connected to AdLib (and compatible)&n;   * boards.&n;   *&n;   * Note2! The chip is initialized if detected.&n;   */
 r_int
 r_char
 id|stat1
@@ -753,7 +760,7 @@ l_int|0x00
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Should be 0x00&t; */
+multiline_comment|/* Should be 0x00        */
 )brace
 id|opl3_command
 (paren
@@ -1739,7 +1746,7 @@ l_int|0x01
 )paren
 )paren
 (brace
-multiline_comment|/* Additive synthesis&t; */
+multiline_comment|/* Additive synthesis    */
 id|calc_vol
 (paren
 op_amp
@@ -3037,7 +3044,7 @@ comma
 id|io_addr
 )paren
 suffix:semicolon
-multiline_comment|/* Select register&t; */
+multiline_comment|/* Select register       */
 r_if
 c_cond
 (paren
@@ -3085,7 +3092,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Write to register&t; */
+multiline_comment|/* Write to register  */
 r_if
 c_cond
 (paren
@@ -3614,6 +3621,19 @@ id|pressure
 )paren
 (brace
 )brace
+r_static
+r_void
+DECL|function|opl3_volume_method
+id|opl3_volume_method
+(paren
+r_int
+id|dev
+comma
+r_int
+id|mode
+)paren
+(brace
+)brace
 DECL|macro|SET_VIBRATO
 mdefine_line|#define SET_VIBRATO(cell) { &bslash;&n;      tmp = instr-&gt;operators[(cell-1)+(((cell-1)/2)*OFFS_4OP)]; &bslash;&n;      if (pressure &gt; 110) &bslash;&n;&t;tmp |= 0x40;&t;&t;/* Vibrato on */ &bslash;&n;      opl3_command (map-&gt;ioaddr, AM_VIB + map-&gt;op[cell-1], tmp);}
 r_static
@@ -4046,7 +4066,7 @@ op_amp
 l_int|0x3
 )paren
 suffix:semicolon
-multiline_comment|/* KEYON|OCTAVE|MS bits&n;&t;&t;&t;&t;&t;&t;&t;&t; * of f-num */
+multiline_comment|/* KEYON|OCTAVE|MS bits&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * of f-num */
 id|voices
 (braket
 id|voice
@@ -4144,6 +4164,8 @@ id|opl3_controller
 comma
 id|opl3_panning
 comma
+id|opl3_volume_method
+comma
 id|opl3_patchmgr
 )brace
 suffix:semicolon
@@ -4159,7 +4181,6 @@ r_int
 id|i
 suffix:semicolon
 id|PERMANENT_MALLOC
-c_func
 (paren
 r_struct
 id|sbi_instrument

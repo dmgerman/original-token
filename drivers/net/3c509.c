@@ -269,6 +269,7 @@ op_add_assign
 l_int|0x1000
 )paren
 (brace
+multiline_comment|/* Check the standard EISA ID register for an encoded &squot;3Com&squot;. */
 r_if
 c_cond
 (paren
@@ -276,11 +277,26 @@ id|inw
 c_func
 (paren
 id|ioaddr
+op_plus
+l_int|0xC80
 )paren
 op_ne
 l_int|0x6d50
 )paren
 r_continue
+suffix:semicolon
+multiline_comment|/* Change the register set to the configuration window 0. */
+id|outw
+c_func
+(paren
+l_int|0x0800
+comma
+id|ioaddr
+op_plus
+l_int|0xC80
+op_plus
+id|EL3_CMD
+)paren
 suffix:semicolon
 id|irq
 op_assign
@@ -337,14 +353,13 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Restore the &quot;Manufacturer ID&quot; to the EEPROM read register. */
-multiline_comment|/* The manual says to restore &quot;Product ID&quot; (reg. 3). !???! */
+multiline_comment|/* Restore the &quot;Product ID&quot; to the EEPROM read register. */
 id|read_eeprom
 c_func
 (paren
 id|ioaddr
 comma
-l_int|7
+l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* Was the EISA code an add-on hack?  Nahhhhh... */

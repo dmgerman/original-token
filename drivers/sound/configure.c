@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/configure.c&t;- Configuration program for the Linux Sound Driver&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &lt;stdio.h&gt;
 DECL|macro|B
 mdefine_line|#define B(x)&t;(1 &lt;&lt; (x))
@@ -28,13 +28,13 @@ mdefine_line|#define OPT_MIDI_AUTO&t;8
 DECL|macro|OPT_MIDI
 mdefine_line|#define OPT_MIDI&t;9
 DECL|macro|OPT_YM3812_AUTO
-mdefine_line|#define OPT_YM3812_AUTO&t;10&t;/* Select this automaticly if user selects&n;&t;&t;&t;&t; * MIDI or AdLib driver */
+mdefine_line|#define OPT_YM3812_AUTO&t;10&t;/* Select this automaticly if user selects&n;&t;&t;&t;&t;   * MIDI or AdLib driver */
 DECL|macro|OPT_YM3812
-mdefine_line|#define OPT_YM3812&t;11&t;/* Select this if the previous one was not&n;&t;&t;&t;&t; * selected */
+mdefine_line|#define OPT_YM3812&t;11&t;/* Select this if the previous one was not&n;&t;&t;&t;&t;   * selected */
 DECL|macro|OPT_SEQUENCER
 mdefine_line|#define OPT_SEQUENCER&t;12
 DECL|macro|OPT_CHIP_MIDI
-mdefine_line|#define OPT_CHIP_MIDI   13&t;/* New support added at UW - Milwauklee UW -&n;&t;&t;&t;&t; * Milwauklee */
+mdefine_line|#define OPT_CHIP_MIDI   13&t;/* New support added at UW - Milwauklee UW -&n;&t;&t;&t;&t;   * Milwauklee */
 DECL|macro|OPT_LAST
 mdefine_line|#define OPT_LAST&t;12
 DECL|macro|ANY_DEVS
@@ -75,7 +75,7 @@ suffix:semicolon
 DECL|typedef|hw_entry
 id|hw_entry
 suffix:semicolon
-multiline_comment|/*&n; * The rule table for the driver options. The first field defines a set of&n; * options which must be selected before this entry can be selected. The&n; * second field is a set of options which are not allowed with this one. If&n; * the fourth field is zero, the option is selected without asking&n; * confirmation from the user.&n; * &n; * With this version of the rule table it is possible to select just one type of&n; * hardware.&n; * &n; * NOTE!&t;Keep the following table and the questions array in sync with the&n; * option numbering!&n; */
+multiline_comment|/*&n; * The rule table for the driver options. The first field defines a set of&n; * options which must be selected before this entry can be selected. The&n; * second field is a set of options which are not allowed with this one. If&n; * the fourth field is zero, the option is selected without asking&n; * confirmation from the user.&n; *&n; * With this version of the rule table it is possible to select just one type of&n; * hardware.&n; *&n; * NOTE!        Keep the following table and the questions array in sync with the&n; * option numbering!&n; */
 DECL|variable|hw_table
 id|hw_entry
 id|hw_table
@@ -1103,7 +1103,6 @@ c_cond
 id|selected_options
 op_amp
 id|B
-c_func
 (paren
 id|OPT_SB16
 )paren
@@ -1111,7 +1110,6 @@ id|OPT_SB16
 id|selected_options
 op_or_assign
 id|B
-c_func
 (paren
 id|OPT_SBPRO
 )paren
@@ -1263,8 +1261,9 @@ id|fprintf
 id|stderr
 comma
 l_string|&quot;&bslash;nIRQ number for SoundBlaster?&bslash;n&quot;
-l_string|&quot;The IRQ adress is defined by the jumpers on your card and&bslash;n&quot;
-l_string|&quot;7 is the factory default. Valid values are 9, 5, 7 and 10.&bslash;n&quot;
+l_string|&quot;The IRQ address is defined by the jumpers on your card.&bslash;n&quot;
+l_string|&quot;The factory default is either 5 or 7 (depending on the model).&bslash;n&quot;
+l_string|&quot;Valid values are 9, 5, 7 and 10.&bslash;n&quot;
 l_string|&quot;Enter the value: &quot;
 )paren
 suffix:semicolon
@@ -1320,6 +1319,11 @@ id|num
 suffix:semicolon
 id|printf
 (paren
+l_string|&quot;#define SBC_BASE 0x220&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
 l_string|&quot;#define SBC_IRQ %d&bslash;n&quot;
 comma
 id|num
@@ -1330,9 +1334,16 @@ c_cond
 (paren
 id|selected_options
 op_amp
+(paren
 id|B
 (paren
 id|OPT_SBPRO
+)paren
+op_or
+id|B
+(paren
+id|OPT_PAS
+)paren
 )paren
 )paren
 (brace
@@ -1693,7 +1704,7 @@ id|fprintf
 id|stderr
 comma
 l_string|&quot;&bslash;nI/O base for Gravis Ultrasound?&bslash;n&quot;
-l_string|&quot;Valid choises are 210, 220, 230, 240, 250 or 260&bslash;n&quot;
+l_string|&quot;Valid choices are 210, 220, 230, 240, 250 or 260&bslash;n&quot;
 l_string|&quot;The factory default is 220&bslash;n&quot;
 l_string|&quot;Enter the GUS I/O base: &quot;
 )paren
@@ -2075,7 +2086,6 @@ id|OPT_PAS
 )paren
 op_or
 id|B
-c_func
 (paren
 id|OPT_SB16
 )paren
@@ -2203,11 +2213,10 @@ l_string|&quot;The sound driver is now configured.&bslash;n&quot;
 suffix:semicolon
 macro_line|#if defined(SCO) || defined(ISC) || defined(SYSV)
 id|fprintf
-c_func
 (paren
 id|stderr
 comma
-l_string|&quot;Rember to update the System file&bslash;n&quot;
+l_string|&quot;Remember to update the System file&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

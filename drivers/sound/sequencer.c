@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sequencer.c&n; * &n; * The sequencer personality manager.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/sequencer.c&n; *&n; * The sequencer personality manager.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
@@ -49,6 +49,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|seq_time
+r_int
 r_int
 id|seq_time
 op_assign
@@ -216,6 +217,10 @@ id|p
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|dev
 op_assign
 id|dev
@@ -250,6 +255,11 @@ OG
 l_int|3
 )paren
 (brace
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -257,6 +267,27 @@ op_logical_neg
 id|iqlen
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|c
+op_ne
+id|count
+)paren
+multiline_comment|/* Some data has been received */
+(brace
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|count
+op_minus
+id|c
+suffix:semicolon
+multiline_comment|/* Return what we have */
+)brace
 id|DO_SLEEP
 (paren
 id|midi_sleeper
@@ -272,11 +303,18 @@ c_cond
 op_logical_neg
 id|iqlen
 )paren
+(brace
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 id|count
 op_minus
 id|c
 suffix:semicolon
+)brace
 )brace
 id|COPY_TO_USER
 (paren
@@ -315,6 +353,11 @@ id|SEQ_MAX_QUEUE
 suffix:semicolon
 id|iqlen
 op_decrement
+suffix:semicolon
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -363,6 +406,11 @@ l_int|1
 r_return
 suffix:semicolon
 multiline_comment|/* Overflow */
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|memcpy
 (paren
 op_amp
@@ -390,11 +438,6 @@ l_int|1
 )paren
 op_mod
 id|SEQ_MAX_QUEUE
-suffix:semicolon
-id|DISABLE_INTR
-(paren
-id|flags
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1331,6 +1374,26 @@ op_amp
 id|q
 (braket
 l_int|5
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SEQ_VOLMODE
+suffix:colon
+id|synth_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|volume_method
+(paren
+id|dev
+comma
+id|q
+(braket
+l_int|3
 )braket
 )paren
 suffix:semicolon
@@ -2443,7 +2506,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Wait until the queue is empty&n;     */
+multiline_comment|/*&n;     * Wait until the queue is empty&n;   */
 r_while
 c_loop
 (paren
@@ -4377,7 +4440,7 @@ op_minus
 id|BASE_OCTAVE
 )paren
 suffix:semicolon
-multiline_comment|/* note_freq &gt;&gt;= 1;&t; */
+multiline_comment|/* note_freq &gt;&gt;= 1;    */
 r_return
 id|note_freq
 suffix:semicolon
@@ -4408,6 +4471,10 @@ comma
 id|semitones
 comma
 id|cents
+comma
+id|multiplier
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -4498,17 +4565,24 @@ id|bend
 op_assign
 id|range
 suffix:semicolon
-r_if
-c_cond
+multiline_comment|/*&n;     if (bend &gt; 2399)&n;     bend = 2399;&n;   */
+r_while
+c_loop
 (paren
 id|bend
 OG
 l_int|2399
 )paren
-id|bend
-op_assign
-l_int|2399
+(brace
+id|multiplier
+op_mul_assign
+l_int|4
 suffix:semicolon
+id|bend
+op_sub_assign
+l_int|2400
+suffix:semicolon
+)brace
 id|semitones
 op_assign
 id|bend
@@ -4527,6 +4601,8 @@ id|semitone_tuning
 (braket
 id|semitones
 )braket
+op_star
+id|multiplier
 op_star
 id|cent_tuning
 (braket
@@ -4575,7 +4651,6 @@ op_assign
 l_int|1
 suffix:semicolon
 id|PERMANENT_MALLOC
-c_func
 (paren
 r_int
 r_char
@@ -4591,7 +4666,6 @@ id|mem_start
 )paren
 suffix:semicolon
 id|PERMANENT_MALLOC
-c_func
 (paren
 r_int
 r_char

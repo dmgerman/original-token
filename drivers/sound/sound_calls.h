@@ -991,6 +991,14 @@ r_int
 id|model
 )paren
 suffix:semicolon
+r_void
+id|sb_midi_interrupt
+c_func
+(paren
+r_int
+id|dummy
+)paren
+suffix:semicolon
 multiline_comment|/*&t;From sb_mixer.c&t;*/
 r_void
 id|sb_setmixer
@@ -1020,7 +1028,7 @@ r_int
 id|mode
 )paren
 suffix:semicolon
-r_void
+r_int
 id|sb_mixer_init
 c_func
 (paren
@@ -1306,6 +1314,21 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|gus_default_mixer_ioctl
+(paren
+r_int
+id|dev
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
 multiline_comment|/*&t;From gus_midi.c */
 r_int
 id|gus_midi_init
@@ -1455,6 +1478,15 @@ comma
 r_int
 r_int
 id|parm4
+)paren
+suffix:semicolon
+multiline_comment|/* &t;From ics2101.c */
+r_int
+id|ics2101_mixer_init
+c_func
+(paren
+r_int
+id|mem_start
 )paren
 suffix:semicolon
 eof

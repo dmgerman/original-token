@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/dev_table.c&n; * &n; * Device call tables.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/dev_table.c&n; *&n; * Device call tables.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 DECL|macro|_DEV_TABLE_C_
 mdefine_line|#define _DEV_TABLE_C_
 macro_line|#include &quot;sound_config.h&quot;
@@ -444,10 +444,9 @@ id|num_midis
 suffix:semicolon
 )brace
 macro_line|#ifdef linux
-DECL|function|sound_setup
 r_void
+DECL|function|sound_setup
 id|sound_setup
-c_func
 (paren
 r_char
 op_star
@@ -582,7 +581,7 @@ OG
 l_int|127
 )paren
 (brace
-multiline_comment|/* Add any future extensions here*/
+multiline_comment|/* Add any future extensions here */
 r_return
 suffix:semicolon
 )brace
@@ -663,7 +662,6 @@ op_minus
 l_int|1
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;Sound: Invalid setup parameter 0x%08x&bslash;n&quot;
 comma
@@ -712,10 +710,9 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
-DECL|function|sound_chconf
 r_void
+DECL|function|sound_chconf
 id|sound_chconf
-c_func
 (paren
 r_int
 id|card_type
@@ -854,12 +851,11 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-DECL|function|sound_getconf
 r_struct
 id|address_info
 op_star
+DECL|function|sound_getconf
 id|sound_getconf
-c_func
 (paren
 r_int
 id|card_type

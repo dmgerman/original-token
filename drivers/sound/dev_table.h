@@ -92,6 +92,14 @@ id|name
 l_int|32
 )braket
 suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|macro|NOTHING_SPECIAL
+mdefine_line|#define NOTHING_SPECIAL &t;0
+DECL|macro|NEEDS_RESTART
+mdefine_line|#define NEEDS_RESTART&t;&t;1
 DECL|member|open
 r_int
 (paren
@@ -531,6 +539,20 @@ id|voice
 comma
 r_int
 id|value
+)paren
+suffix:semicolon
+DECL|member|volume_method
+r_void
+(paren
+op_star
+id|volume_method
+)paren
+(paren
+r_int
+id|dev
+comma
+r_int
+id|mode
 )paren
 suffix:semicolon
 DECL|member|pmgr_interface
@@ -991,7 +1013,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16)
+macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_SBPRO)
 macro_line|#ifndef EXCLUDE_AUDIO
 (brace
 id|SNDCARD_SB16

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_dsp.c&n; * &n; * The low level driver for the SoundBlaster DS chips.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DS chips.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_MIDI)
 macro_line|#include &quot;sb.h&quot;
@@ -32,12 +32,7 @@ r_volatile
 r_int
 id|sb_irq_mode
 suffix:semicolon
-multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT&n;&t;&t;&t;&t;&t; * or IMODE_NONE */
-r_extern
-r_int
-id|sb_dsp_model
-suffix:semicolon
-multiline_comment|/* 1=SB, 2=SB Pro */
+multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT&n;&n;&t;&t;&t;&t;&t; * or IMODE_NONE */
 r_extern
 r_int
 id|sb_duplex_midi
@@ -45,6 +40,40 @@ suffix:semicolon
 r_extern
 r_int
 id|sb_intr_active
+suffix:semicolon
+r_extern
+r_int
+id|sbc_base
+suffix:semicolon
+DECL|variable|input_opened
+r_static
+r_int
+id|input_opened
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|midi_input_intr
+r_static
+r_void
+(paren
+op_star
+id|midi_input_intr
+)paren
+(paren
+r_int
+id|dev
+comma
+r_int
+r_char
+id|data
+)paren
+suffix:semicolon
+DECL|variable|my_dev
+r_static
+r_int
+id|my_dev
+op_assign
+l_int|0
 suffix:semicolon
 r_static
 r_int
@@ -124,7 +153,7 @@ l_int|1
 )paren
 id|printk
 (paren
-l_string|&quot;SoundBlaster: Midi input not currently supported&bslash;n&quot;
+l_string|&quot;SoundBlaster: MIDI input not supported with plain SB&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -204,6 +233,23 @@ c_cond
 op_logical_neg
 id|sb_dsp_command
 (paren
+l_int|0xf2
+)paren
+)paren
+multiline_comment|/* This is undodumented, isn&squot;t it */
+r_return
+id|RET_ERROR
+(paren
+id|EIO
+)paren
+suffix:semicolon
+multiline_comment|/* be nice to DSP */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb_dsp_command
+(paren
 l_int|0x35
 )paren
 )paren
@@ -241,6 +287,18 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* IRQ not free */
 )brace
+id|input_opened
+op_assign
+l_int|1
+suffix:semicolon
+id|my_dev
+op_assign
+id|dev
+suffix:semicolon
+id|midi_input_intr
+op_assign
+id|input
+suffix:semicolon
 )brace
 id|sb_midi_busy
 op_assign
@@ -282,6 +340,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|sb_midi_busy
+op_assign
+l_int|0
+suffix:semicolon
+id|input_opened
 op_assign
 l_int|0
 suffix:semicolon
@@ -442,6 +504,52 @@ id|EPERM
 )paren
 suffix:semicolon
 )brace
+r_void
+DECL|function|sb_midi_interrupt
+id|sb_midi_interrupt
+(paren
+r_int
+id|dummy
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+r_char
+id|data
+suffix:semicolon
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|data
+op_assign
+id|INB
+(paren
+id|DSP_READ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|input_opened
+)paren
+id|midi_input_intr
+(paren
+id|my_dev
+comma
+id|data
+)paren
+suffix:semicolon
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|variable|sb_midi_operations
 r_static
 r_struct
@@ -484,7 +592,6 @@ suffix:semicolon
 r_void
 DECL|function|sb_midi_init
 id|sb_midi_init
-c_func
 (paren
 r_int
 id|model

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_dsp.c&n; * &n; * The low level driver for the SoundBlaster DSP chip.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added code to support Sound Galaxy NX Pro&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB)
 macro_line|#include &quot;sb.h&quot;
@@ -15,6 +15,13 @@ DECL|variable|sbc_irq
 r_static
 r_int
 id|sbc_irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|open_mode
+r_static
+r_int
+id|open_mode
 op_assign
 l_int|0
 suffix:semicolon
@@ -39,15 +46,15 @@ id|sb_dsp_highspeed
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|major
-DECL|variable|minor
-r_static
+DECL|variable|sbc_major
 r_int
-id|major
+id|sbc_major
 op_assign
 l_int|1
-comma
-id|minor
+suffix:semicolon
+DECL|variable|sbc_minor
+r_int
+id|sbc_minor
 op_assign
 l_int|0
 suffix:semicolon
@@ -106,7 +113,7 @@ id|sb_irq_mode
 op_assign
 id|IMODE_NONE
 suffix:semicolon
-multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT&n;&t;&t;&t;&t;&t;&t; * or IMODE_NONE */
+multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT&n;&n;&t;&t;&t;&t;&t;&t; * or IMODE_NONE */
 DECL|variable|irq_ok
 r_static
 r_volatile
@@ -115,13 +122,6 @@ id|irq_ok
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|sb_dsp_model
-r_int
-id|sb_dsp_model
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* 1=SB, 2=SB Pro */
 DECL|variable|sb_duplex_midi
 r_int
 id|sb_duplex_midi
@@ -178,7 +178,9 @@ id|val
 (brace
 r_int
 id|i
-comma
+suffix:semicolon
+r_int
+r_int
 id|limit
 suffix:semicolon
 id|limit
@@ -187,6 +189,8 @@ id|GET_TIME
 (paren
 )paren
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 multiline_comment|/* The timeout is 0.1 secods */
@@ -265,8 +269,6 @@ id|unit
 (brace
 r_int
 id|status
-comma
-id|data
 suffix:semicolon
 macro_line|#ifndef EXCLUDE_SBPRO
 r_if
@@ -294,7 +296,6 @@ op_amp
 l_int|3
 )paren
 id|sb16_dsp_interrupt
-c_func
 (paren
 id|unit
 )paren
@@ -396,23 +397,9 @@ suffix:semicolon
 r_case
 id|IMODE_MIDI
 suffix:colon
-id|printk
+id|sb_midi_interrupt
 (paren
-l_string|&quot;+&quot;
-)paren
-suffix:semicolon
-id|data
-op_assign
-id|INB
-(paren
-id|DSP_READ
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;%x&quot;
-comma
-id|data
+id|unit
 )paren
 suffix:semicolon
 r_break
@@ -436,7 +423,6 @@ suffix:semicolon
 r_int
 DECL|function|sb_get_irq
 id|sb_get_irq
-c_func
 (paren
 r_void
 )paren
@@ -457,7 +443,6 @@ c_cond
 id|ok
 op_assign
 id|snd_set_irq_handler
-c_func
 (paren
 id|sbc_irq
 comma
@@ -480,7 +465,6 @@ suffix:semicolon
 r_void
 DECL|function|sb_free_irq
 id|sb_free_irq
-c_func
 (paren
 r_void
 )paren
@@ -503,7 +487,6 @@ op_logical_neg
 id|sb_irq_usecount
 )paren
 id|snd_release_irq
-c_func
 (paren
 id|sbc_irq
 )paren
@@ -638,6 +621,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|max_speed
+op_assign
+l_int|44100
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -649,34 +637,77 @@ id|speed
 op_assign
 l_int|4000
 suffix:semicolon
+multiline_comment|/*&n; * Older SB models don&squot;t support higher speeds than 22050.&n; */
+r_if
+c_cond
+(paren
+id|sbc_major
+OL
+l_int|2
+op_logical_or
+(paren
+id|sbc_major
+op_eq
+l_int|2
+op_logical_and
+id|sbc_minor
+op_eq
+l_int|0
+)paren
+)paren
+id|max_speed
+op_assign
+l_int|22050
+suffix:semicolon
+multiline_comment|/*&n; * SB models earlier than SB Pro have low limit for the input speed.&n; */
+r_if
+c_cond
+(paren
+id|open_mode
+op_ne
+id|OPEN_WRITE
+)paren
+multiline_comment|/* Recording is possible */
+r_if
+c_cond
+(paren
+id|sbc_major
+OL
+l_int|3
+)paren
+multiline_comment|/* Limited input speed with these cards */
+r_if
+c_cond
+(paren
+id|sbc_major
+op_eq
+l_int|2
+op_logical_and
+id|sbc_minor
+OG
+l_int|0
+)paren
+id|max_speed
+op_assign
+l_int|15000
+suffix:semicolon
+r_else
+id|max_speed
+op_assign
+l_int|13000
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|speed
 OG
-l_int|44100
+id|max_speed
 )paren
 id|speed
 op_assign
-l_int|44100
+id|max_speed
 suffix:semicolon
 multiline_comment|/* Invalid speed */
-r_if
-c_cond
-(paren
-id|sb_dsp_model
-op_eq
-l_int|1
-op_logical_and
-id|speed
-OG
-l_int|22050
-)paren
-id|speed
-op_assign
-l_int|22050
-suffix:semicolon
-multiline_comment|/* SB Classic doesn&squot;t support higher speed */
 r_if
 c_cond
 (paren
@@ -921,9 +952,9 @@ macro_line|#else
 r_if
 c_cond
 (paren
-id|sb_dsp_model
-op_eq
-l_int|1
+id|sbc_major
+OL
+l_int|3
 op_logical_or
 id|sb16
 )paren
@@ -1408,7 +1439,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 op_eq
 l_int|3
 )paren
@@ -1420,14 +1451,12 @@ c_cond
 id|dsp_stereo
 )paren
 id|sb_dsp_command
-c_func
 (paren
 l_int|0xa8
 )paren
 suffix:semicolon
 r_else
 id|sb_dsp_command
-c_func
 (paren
 l_int|0xa0
 )paren
@@ -1437,7 +1466,7 @@ id|dsp_speed
 id|dsp_current_speed
 )paren
 suffix:semicolon
-multiline_comment|/* Speed must be recalculated if #channels&n;&t;&t;&t;&t;   * changes */
+multiline_comment|/* Speed must be recalculated if #channels&n;&t;&t;&t;&t;&t;   * changes */
 )brace
 r_return
 l_int|0
@@ -1471,14 +1500,13 @@ macro_line|#ifndef EXCLUDE_SBPRO
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 op_eq
 l_int|3
 )paren
 multiline_comment|/* SB Pro */
 (brace
 id|sb_mixer_set_stereo
-c_func
 (paren
 id|dsp_stereo
 )paren
@@ -1488,7 +1516,7 @@ id|dsp_speed
 id|dsp_current_speed
 )paren
 suffix:semicolon
-multiline_comment|/* Speed must be recalculated if #channels&n;&t;&t;&t;&t;   * changes */
+multiline_comment|/* Speed must be recalculated if #channels&n;&t;&t;&t;&t;&t;   * changes */
 )brace
 macro_line|#endif
 r_return
@@ -1515,7 +1543,6 @@ r_void
 (brace
 macro_line|#if 0
 id|DEFINE_WAIT_QUEUE
-c_func
 (paren
 id|testq
 comma
@@ -1559,7 +1586,6 @@ l_int|0xf2
 suffix:semicolon
 multiline_comment|/* This should cause immediate interrupt */
 id|DO_SLEEP
-c_func
 (paren
 id|testq
 comma
@@ -1571,7 +1597,6 @@ l_int|5
 )paren
 suffix:semicolon
 id|sb_free_irq
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -1672,7 +1697,6 @@ id|irq_verified
 )paren
 (brace
 id|verify_irq
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -1689,7 +1713,6 @@ op_logical_neg
 id|irq_ok
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;SB Warning: Incorrect IRQ setting %d&bslash;n&quot;
 comma
@@ -1744,6 +1767,10 @@ id|sb_dsp_busy
 op_assign
 l_int|1
 suffix:semicolon
+id|open_mode
+op_assign
+id|mode
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1780,6 +1807,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|sb_dsp_highspeed
+op_assign
+l_int|0
+suffix:semicolon
+id|open_mode
 op_assign
 l_int|0
 suffix:semicolon
@@ -2031,6 +2062,11 @@ id|sb_reset_dsp
 (paren
 )paren
 suffix:semicolon
+id|dsp_speed
+(paren
+id|dsp_current_speed
+)paren
+suffix:semicolon
 id|dsp_cleanup
 (paren
 )paren
@@ -2095,6 +2131,8 @@ op_assign
 (brace
 l_string|&quot;SoundBlaster&quot;
 comma
+id|NOTHING_SPECIAL
+comma
 id|sb_dsp_open
 comma
 id|sb_dsp_close
@@ -2137,9 +2175,14 @@ id|hw_config
 r_int
 id|i
 suffix:semicolon
-id|major
+r_int
+id|prostat
 op_assign
-id|minor
+l_int|0
+suffix:semicolon
+id|sbc_major
+op_assign
+id|sbc_minor
 op_assign
 l_int|0
 suffix:semicolon
@@ -2177,11 +2220,11 @@ multiline_comment|/* wait for Data Ready */
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 op_eq
 l_int|0
 )paren
-id|major
+id|sbc_major
 op_assign
 id|INB
 (paren
@@ -2190,7 +2233,7 @@ id|DSP_READ
 suffix:semicolon
 r_else
 (brace
-id|minor
+id|sbc_minor
 op_assign
 id|INB
 (paren
@@ -2205,14 +2248,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 op_eq
 l_int|2
 op_logical_or
-id|major
+id|sbc_major
 op_eq
 l_int|3
 )paren
+multiline_comment|/* SB 2.0 or SB Pro */
 id|sb_duplex_midi
 op_assign
 l_int|1
@@ -2220,7 +2264,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 op_eq
 l_int|4
 )paren
@@ -2228,29 +2272,30 @@ id|sb16
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|major
-op_ge
-l_int|3
-)paren
-id|sb_dsp_model
-op_assign
-l_int|2
-suffix:semicolon
 macro_line|#ifndef EXCLUDE_SBPRO
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 op_ge
 l_int|3
-)paren
-id|sb_mixer_init
-c_func
+op_logical_or
 (paren
-id|major
+id|sbc_major
+op_eq
+l_int|2
+op_logical_and
+id|sbc_minor
+op_eq
+l_int|1
+)paren
+)paren
+multiline_comment|/* Sound Galaxy ??? */
+id|prostat
+op_assign
+id|sb_mixer_init
+(paren
+id|sbc_major
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2258,22 +2303,24 @@ macro_line|#ifndef EXCLUDE_YM3812
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 OG
 l_int|3
 op_logical_or
 (paren
-id|major
+id|sbc_major
 op_eq
 l_int|3
 op_logical_and
-id|minor
-OG
-l_int|0
+id|INB
+(paren
+l_int|0x388
+)paren
+op_eq
+l_int|0x00
 )paren
 )paren
-multiline_comment|/* SB Pro2 or later */
-(brace
+multiline_comment|/* Non OPL-3 should return 0x06 */
 id|enable_opl3_mode
 (paren
 id|OPL3_LEFT
@@ -2283,28 +2330,48 @@ comma
 id|OPL3_BOTH
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
 (paren
-id|major
+id|sbc_major
 op_ge
 l_int|3
 )paren
 (brace
 macro_line|#ifndef SCO
+r_if
+c_cond
+(paren
+id|prostat
+)paren
+(brace
+id|sprintf
+(paren
+id|sb_dsp_operations.name
+comma
+l_string|&quot;Sound Galaxy NX Pro %d.%d&quot;
+comma
+id|sbc_major
+comma
+id|sbc_minor
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|sprintf
 (paren
 id|sb_dsp_operations.name
 comma
 l_string|&quot;SoundBlaster Pro %d.%d&quot;
 comma
-id|major
+id|sbc_major
 comma
-id|minor
+id|sbc_minor
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 r_else
@@ -2316,9 +2383,9 @@ id|sb_dsp_operations.name
 comma
 l_string|&quot;SoundBlaster %d.%d&quot;
 comma
-id|major
+id|sbc_major
 comma
-id|minor
+id|sbc_minor
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2331,15 +2398,15 @@ id|sb_dsp_operations.name
 )paren
 suffix:semicolon
 macro_line|#ifndef EXCLUDE_AUDIO
-macro_line|#  if !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_SBPRO)
+macro_line|#if !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_SBPRO)
 r_if
 c_cond
 (paren
 op_logical_neg
 id|sb16
 )paren
-multiline_comment|/* There is a better driver for SB16&t;*/
-macro_line|#  endif
+multiline_comment|/* There is a better driver for SB16    */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2407,9 +2474,8 @@ id|sb16
 )paren
 multiline_comment|/* Midi don&squot;t work in the SB emulation mode&n;&t;&t;&t;&t; * of PAS, SB16 has better midi interface */
 id|sb_midi_init
-c_func
 (paren
-id|major
+id|sbc_major
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/dmabuf.c&n; * &n; * The DMA buffer manager for digitized voice applications&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/dmabuf.c&n; *&n; * The DMA buffer manager for digitized voice applications&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &quot;sound_calls.h&quot;
@@ -181,7 +181,7 @@ id|dev_nbufs
 id|MAX_DSP_DEV
 )braket
 suffix:semicolon
-multiline_comment|/* # of logical buffers ( &gt;=&n;&t;&t;&t;&t;&t; * sound_buffcounts[dev] */
+multiline_comment|/* # of logical buffers ( &gt;=&n;&n;&t;&t;&t;&t;&t;&t;   * sound_buffcounts[dev] */
 DECL|variable|dev_counts
 r_static
 r_int
@@ -620,7 +620,6 @@ r_static
 r_void
 DECL|function|dma_init_buffers
 id|dma_init_buffers
-c_func
 (paren
 r_int
 id|dev
@@ -778,7 +777,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef USE_RUNTIME_DMAMEM
 id|sound_dma_malloc
-c_func
 (paren
 id|dev
 )paren
@@ -843,7 +841,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|dma_init_buffers
-c_func
 (paren
 id|dev
 )paren
@@ -917,7 +914,6 @@ r_int
 id|flags
 suffix:semicolon
 id|DISABLE_INTR
-c_func
 (paren
 id|flags
 )paren
@@ -967,25 +963,21 @@ OL
 l_int|0
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;Sound: Reset failed - Can&squot;t reopen device&bslash;n&quot;
 )paren
 suffix:semicolon
 id|RESTORE_INTR
-c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|dma_init_buffers
-c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 id|reorganize_buffers
-c_func
 (paren
 id|dev
 )paren
@@ -1004,13 +996,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_int
-r_int
-id|time
-suffix:semicolon
-r_int
-id|timed_out
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1025,16 +1010,6 @@ id|DMODE_OUTPUT
 id|DISABLE_INTR
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|timed_out
-op_assign
-l_int|0
-suffix:semicolon
-id|time
-op_assign
-id|GET_TIME
-(paren
 )paren
 suffix:semicolon
 r_while
@@ -1061,9 +1036,6 @@ id|dmabuf_interrupted
 id|dev
 )braket
 )paren
-op_logical_and
-op_logical_neg
-id|timed_out
 )paren
 op_logical_and
 id|dev_qlen
@@ -1092,23 +1064,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|TIMED_OUT
 (paren
-id|GET_TIME
-(paren
-)paren
-op_minus
-id|time
-)paren
-OG
-(paren
-l_int|10
-op_star
-id|HZ
+id|dev_sleeper
+(braket
+id|dev
+)braket
+comma
+id|dev_sleep_flag
+(braket
+id|dev
+)braket
 )paren
 )paren
-id|timed_out
-op_assign
-l_int|1
+r_return
+id|dev_qlen
+(braket
+id|dev
+)braket
 suffix:semicolon
 )brace
 id|RESTORE_INTR
@@ -1255,7 +1228,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef USE_RUNTIME_DMAMEM
 id|sound_dma_free
-c_func
 (paren
 id|dev
 )paren
@@ -1350,7 +1322,6 @@ id|dev
 )paren
 (brace
 id|dma_reset
-c_func
 (paren
 id|dev
 )paren
@@ -1376,13 +1347,11 @@ id|DMODE_OUTPUT
 multiline_comment|/* Was output -&gt; direction change */
 (brace
 id|dma_sync
-c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 id|dma_reset
-c_func
 (paren
 id|dev
 )paren
@@ -1961,7 +1930,6 @@ r_int
 id|fact
 op_assign
 id|IOCTL_IN
-c_func
 (paren
 id|arg
 )paren
@@ -1994,7 +1962,6 @@ l_int|1
 suffix:semicolon
 r_return
 id|IOCTL_OUT
-c_func
 (paren
 id|arg
 comma
@@ -2015,7 +1982,6 @@ l_int|0
 multiline_comment|/* Too late to change */
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -2029,7 +1995,6 @@ id|MAX_REALTIME_FACTOR
 )paren
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -2059,7 +2024,6 @@ l_int|16
 )paren
 r_return
 id|RET_ERROR
-c_func
 (paren
 id|EINVAL
 )paren
@@ -2073,7 +2037,6 @@ id|fact
 suffix:semicolon
 r_return
 id|IOCTL_OUT
-c_func
 (paren
 id|arg
 comma
@@ -2103,6 +2066,7 @@ id|local
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* NOTREACHED */
 r_return
 id|RET_ERROR
 (paren
@@ -2149,7 +2113,6 @@ id|DMODE_INPUT
 multiline_comment|/* Was input -&gt; Direction change */
 (brace
 id|dma_reset
-c_func
 (paren
 id|dev
 )paren
@@ -2174,13 +2137,11 @@ id|dev
 multiline_comment|/* Restart buffering */
 (brace
 id|dma_sync
-c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 id|dma_reset
-c_func
 (paren
 id|dev
 )paren
@@ -2539,6 +2500,22 @@ id|dev_buffsize
 id|dev
 )braket
 )paren
+op_logical_and
+(paren
+id|sound_dma_automode
+(braket
+id|dev
+)braket
+op_logical_or
+id|dsp_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|flags
+op_amp
+id|NEEDS_RESTART
+)paren
 suffix:semicolon
 id|dev_qtail
 (braket
@@ -2734,7 +2711,7 @@ id|RESTORE_INTR
 id|flags
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#else /* linux */
 macro_line|#ifdef __386BSD__
 id|printk
 (paren
@@ -2772,8 +2749,8 @@ comma
 id|chan
 )paren
 suffix:semicolon
-macro_line|#else
-macro_line|#if defined(ISC) || defined(SCO)
+macro_line|#else /* __386BSD__ */
+macro_line|#if defined(ISC) || defined(SCO) || defined(SVR42)
 macro_line|#ifndef DMAMODE_AUTO
 id|printk
 (paren
@@ -2782,7 +2759,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* DMAMODE_AUTO */
 id|dma_param
 (paren
 id|chan
@@ -2802,7 +2779,7 @@ id|DMA_Wrmode
 macro_line|#ifdef DMAMODE_AUTO
 op_or
 id|DMAMODE_AUTO
-macro_line|#endif
+macro_line|#endif /* DMAMODE_AUTO */
 comma
 id|snd_raw_buf_phys
 (braket
@@ -2820,11 +2797,11 @@ id|dma_enable
 id|chan
 )paren
 suffix:semicolon
-macro_line|#else
-macro_line|#  error This routine is not valid for this OS.
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
+macro_line|#else /* SYSV */
+macro_line|#error This routine is not valid for this OS.
+macro_line|#endif /* SYSV */
+macro_line|#endif /* __386BSD__ */
+macro_line|#endif /* linux */
 )brace
 r_else
 (brace
@@ -2875,7 +2852,7 @@ id|RESTORE_INTR
 id|flags
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#else /* linux */
 macro_line|#ifdef __386BSD__
 id|isa_dmastart
 (paren
@@ -2897,8 +2874,8 @@ comma
 id|chan
 )paren
 suffix:semicolon
-macro_line|#else
-macro_line|#if defined(ISC) || defined(SCO)
+macro_line|#else /* __386BSD__ */
+macro_line|#if defined(ISC) || defined(SCO) || defined(SVR42)
 id|dma_param
 (paren
 id|chan
@@ -2926,11 +2903,11 @@ id|dma_enable
 id|chan
 )paren
 suffix:semicolon
-macro_line|#else
-macro_line|#  error This routine is not valid for this OS.
-macro_line|#endif /* !ISC */
-macro_line|#endif
-macro_line|#endif
+macro_line|#else /* SYSV */
+macro_line|#error This routine is not valid for this OS.
+macro_line|#endif /* SYSV */
+macro_line|#endif /* __386BSD__ */
+macro_line|#endif /* linux */
 )brace
 r_return
 id|count
@@ -3142,7 +3119,21 @@ id|dev_needs_restart
 id|dev
 )braket
 op_assign
-l_int|1
+(paren
+id|sound_dma_automode
+(braket
+id|dev
+)braket
+op_logical_or
+id|dsp_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|flags
+op_amp
+id|NEEDS_RESTART
+)paren
 suffix:semicolon
 )brace
 id|DISABLE_INTR
@@ -3240,7 +3231,6 @@ l_int|1
 )paren
 (brace
 id|printk
-c_func
 (paren
 l_string|&quot;Sound: Recording overrun&bslash;n&quot;
 )paren
@@ -3273,7 +3263,10 @@ id|dev_needs_restart
 id|dev
 )braket
 op_assign
-l_int|1
+id|sound_dma_automode
+(braket
+id|dev
+)braket
 suffix:semicolon
 )brace
 r_else
@@ -3489,9 +3482,9 @@ id|chan
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * The sound_mem_init() is called by mem_init() immediately after mem_map is&n; * initialized and before free_page_list is created.&n; * &n; * This routine allocates DMA buffers at the end of available physical memory (&n; * &lt;16M) and marks pages reserved at mem_map.&n; */
+multiline_comment|/*&n; * The sound_mem_init() is called by mem_init() immediately after mem_map is&n; * initialized and before free_page_list is created.&n; *&n; * This routine allocates DMA buffers at the end of available physical memory (&n; * &lt;16M) and marks pages reserved at mem_map.&n; */
 macro_line|#else
-multiline_comment|/* Stub versions if audio services not included&t; */
+multiline_comment|/* Stub versions if audio services not included  */
 r_int
 DECL|function|DMAbuf_open
 id|DMAbuf_open

@@ -46,7 +46,7 @@ mdefine_line|#define VM86_UNKNOWN&t;1&t;/* unhandled GP fault - IO-instruction o
 DECL|macro|VM86_INTx
 mdefine_line|#define VM86_INTx&t;2&t;/* int3/int x instruction (ARG = x) */
 DECL|macro|VM86_STI
-mdefine_line|#define VM86_STI&t;3&t;/* sti/popfl instruction enabled virtual interrupts */
+mdefine_line|#define VM86_STI&t;3&t;/* sti/popf/iret instruction enabled virtual interrupts */
 multiline_comment|/*&n; * This is the stack-layout when we have done a &quot;SAVE_ALL&quot; from vm86&n; * mode - the main change is that the old segment descriptors aren&squot;t&n; * useful any more and are forced to be zero by the kernel (and the&n; * hardware when a trap occurs), and the real segment descriptors are&n; * at the end of the structure. Look at ptrace.h to see the &quot;normal&quot;&n; * setup.&n; */
 DECL|struct|vm86_regs
 r_struct
@@ -230,49 +230,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|function|is_revectored
-r_extern
-r_inline
-r_int
-id|is_revectored
-c_func
-(paren
-r_int
-id|nr
-comma
-r_struct
-id|revectored_struct
-op_star
-id|bitmap
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;btl %2,%%fs:%1&bslash;n&bslash;tsbbl %0,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|nr
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
-id|bitmap
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|nr
-)paren
-)paren
-suffix:semicolon
-r_return
-id|nr
-suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#endif
 eof
