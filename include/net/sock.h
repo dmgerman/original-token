@@ -3017,6 +3017,13 @@ op_star
 id|skb
 )paren
 (brace
+macro_line|#ifdef CONFIG_FILTER
+r_struct
+id|sk_filter
+op_star
+id|filter
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Cast skb-&gt;rcvbuf to unsigned... It&squot;s pointless, but reduces&n;&t;   number of warnings when compiling with -W --ANK&n;&t; */
 r_if
 c_cond
@@ -3043,14 +3050,20 @@ macro_line|#ifdef CONFIG_FILTER
 r_if
 c_cond
 (paren
+(paren
+id|filter
+op_assign
 id|sk-&gt;filter
+)paren
+op_ne
+l_int|NULL
 op_logical_and
 id|sk_filter
 c_func
 (paren
 id|skb
 comma
-id|sk-&gt;filter
+id|filter
 )paren
 )paren
 r_return

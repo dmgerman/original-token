@@ -41,6 +41,7 @@ comma
 id|edx
 suffix:semicolon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;rdtsc&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.124 1999/02/08 07:01:42 ecd Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.125 1999/03/28 08:39:33 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -564,7 +564,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%ld pages in page table cache&bslash;n&quot;
+l_string|&quot;%d pages in page table cache&bslash;n&quot;
 comma
 id|pgtable_cache_size
 )paren
@@ -573,7 +573,7 @@ macro_line|#ifndef __SMP__
 id|printk
 c_func
 (paren
-l_string|&quot;%ld entries in page dir cache&bslash;n&quot;
+l_string|&quot;%d entries in page dir cache&bslash;n&quot;
 comma
 id|pgd_cache_size
 )paren

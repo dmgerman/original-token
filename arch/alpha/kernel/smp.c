@@ -1927,6 +1927,11 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 id|DBGS
 c_func
@@ -2125,6 +2130,11 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_goto
 id|timeout
@@ -2163,6 +2173,11 @@ id|udelay
 c_func
 (paren
 l_int|100
+)paren
+suffix:semicolon
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

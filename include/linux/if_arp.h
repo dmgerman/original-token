@@ -89,7 +89,7 @@ mdefine_line|#define ARPHRD_FCAL&t;785&t;&t;/* Fibrechannel arbitrated loop */
 DECL|macro|ARPHRD_FCPL
 mdefine_line|#define ARPHRD_FCPL&t;786&t;&t;/* Fibrechannel public loop&t;*/
 DECL|macro|ARPHRD_FCFABRIC
-mdefine_line|#define ARPHRD_FCFABRIC&t;786&t;&t;/* Fibrechannel fabric&t;&t;*/
+mdefine_line|#define ARPHRD_FCFABRIC&t;787&t;&t;/* Fibrechannel fabric&t;&t;*/
 multiline_comment|/* 787-&gt;799 reserved for fibrechannel media types */
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST

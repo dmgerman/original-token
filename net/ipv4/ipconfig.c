@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.19 1999/01/15 06:54:00 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.20 1999/03/28 10:18:28 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -3444,16 +3444,18 @@ op_eq
 id|INADDR_NONE
 op_logical_or
 macro_line|#ifdef CONFIG_ROOT_NFS
+(paren
 id|root_server_addr
 op_eq
 id|INADDR_NONE
+op_logical_and
+id|ic_servaddr
+op_eq
+id|INADDR_NONE
+)paren
 op_logical_or
 macro_line|#endif
-(paren
-id|ic_first_dev
-op_logical_and
 id|ic_first_dev-&gt;next
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_IP_PNP_DYNAMIC

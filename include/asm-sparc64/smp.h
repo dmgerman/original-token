@@ -266,7 +266,7 @@ suffix:semicolon
 )brace
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() (current-&gt;processor)
-multiline_comment|/* This needn&squot;t do anything as we do not sleep the cpu&n; * inside of the idler task, so an interrupt is not needed&n; * to get a clean fast response.&n; */
+multiline_comment|/* This needn&squot;t do anything as we do not sleep the cpu&n; * inside of the idler task, so an interrupt is not needed&n; * to get a clean fast response.&n; *&n; * Addendum: We do want it to do something for the signal&n; *           delivery case, we detect that by just seeing&n; *           if we are trying to send this to an idler or not.&n; */
 DECL|function|smp_send_reschedule
 r_extern
 id|__inline__
@@ -278,6 +278,34 @@ r_int
 id|cpu
 )paren
 (brace
+r_extern
+r_void
+id|smp_receive_signal
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cpu_data
+(braket
+id|cpu
+)braket
+dot
+id|idle_volume
+op_eq
+l_int|0
+)paren
+(brace
+id|smp_receive_signal
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* This is a nop as well because we capture all other cpus&n; * anyways when making the PROM active.&n; */
 DECL|function|smp_send_stop

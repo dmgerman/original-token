@@ -8511,7 +8511,9 @@ OG
 l_int|5
 )paren
 id|softback_end
-op_add_assign
+op_assign
+id|softback_buf
+op_plus
 id|l
 op_star
 id|conp-&gt;vc_size_row

@@ -119,6 +119,7 @@ id|u32
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef HAVE_SOCAL_UCODE
 DECL|function|socal_bzero
 r_static
 r_void
@@ -164,6 +165,7 @@ id|u32
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|socal_disable
 r_static
 r_inline

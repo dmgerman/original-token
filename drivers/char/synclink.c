@@ -12974,7 +12974,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,0)
+macro_line|#if 0 &amp;&amp; LINUX_VERSION_CODE &gt;= VERSION(2,1,0)
 id|ret
 op_add_assign
 id|sprintf
