@@ -771,11 +771,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev_nit
-op_logical_and
+multiline_comment|/*dev_nit &amp;&amp; */
 op_logical_neg
 id|where
 )paren
+multiline_comment|/* Always keep order. It helps other hosts&n;&t;&t;&t;&t;&t;   far more than it costs us */
 (brace
 id|skb_queue_tail
 c_func
@@ -900,6 +900,10 @@ op_assign
 id|skb2-&gt;data
 op_plus
 id|dev-&gt;hard_header_len
+suffix:semicolon
+id|skb2-&gt;mac.raw
+op_assign
+id|skb2-&gt;data
 suffix:semicolon
 id|ptype
 op_member_access_from_pointer

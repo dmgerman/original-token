@@ -101,6 +101,7 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Please do not change the default core dump format to ELF when most people&n; * do not have a gdb capable of interpreting ELF core files.  Once a gdb has&n; * been released that understands ELF, *THEN* switch the core dump format.&n; */
 DECL|variable|elf_format
 r_struct
 id|linux_binfmt
@@ -116,7 +117,7 @@ id|load_elf_binary
 comma
 id|load_elf_library
 comma
-id|elf_core_dump
+id|aout_core_dump
 macro_line|#else
 l_int|NULL
 comma
@@ -127,7 +128,7 @@ id|load_elf_binary
 comma
 id|load_elf_library
 comma
-id|elf_core_dump
+id|aout_core_dump
 macro_line|#endif
 )brace
 suffix:semicolon

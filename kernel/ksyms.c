@@ -590,6 +590,12 @@ c_func
 id|dcache_add
 )paren
 comma
+id|X
+c_func
+(paren
+id|aout_core_dump
+)paren
+comma
 multiline_comment|/* device registration */
 id|X
 c_func

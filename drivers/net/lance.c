@@ -4526,15 +4526,6 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* 16 byte align */
-id|skb_put
-c_func
-(paren
-id|skb
-comma
-id|pkt_len
-)paren
-suffix:semicolon
-multiline_comment|/* Make room */
 id|eth_copy_and_sum
 c_func
 (paren

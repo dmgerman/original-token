@@ -5719,8 +5719,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|offset
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Are we at urgent data? Stop if we have read anything.&n;&t;&t; */
@@ -6006,8 +6005,7 @@ c_cond
 id|sk-&gt;urg_data
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|urg_offset
 op_assign
 id|sk-&gt;urg_seq
@@ -11810,8 +11808,7 @@ op_star
 id|th
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|ptr
 op_assign
 id|ntohs
@@ -11942,8 +11939,7 @@ r_int
 id|len
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|ptr
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Check if we get a new urgent pointer - normally not &n;&t; */

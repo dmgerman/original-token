@@ -2209,6 +2209,12 @@ id|skb-&gt;h.raw
 op_plus
 id|offset
 suffix:semicolon
+id|n-&gt;mac.raw
+op_assign
+id|skb-&gt;mac.raw
+op_plus
+id|offset
+suffix:semicolon
 id|n-&gt;ip_hdr
 op_assign
 (paren
@@ -2459,6 +2465,8 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+suffix:semicolon
+id|skb
 op_assign
 id|alloc_skb
 c_func
@@ -2470,6 +2478,11 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
 id|skb_reserve
 c_func
 (paren

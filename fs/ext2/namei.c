@@ -3751,8 +3751,7 @@ id|EXT2_N_BLOCKS
 op_star
 r_sizeof
 (paren
-r_int
-r_int
+id|__u32
 )paren
 )paren
 (brace

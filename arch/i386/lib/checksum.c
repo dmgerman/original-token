@@ -1109,7 +1109,7 @@ l_int|16
 comma
 op_mod
 op_mod
-id|edx
+id|ecx
 l_int|5
 suffix:colon
 id|movb
@@ -1779,7 +1779,7 @@ l_int|16
 comma
 op_mod
 op_mod
-id|edx
+id|ecx
 l_int|5
 suffix:colon
 id|movb

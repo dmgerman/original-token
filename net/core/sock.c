@@ -107,11 +107,10 @@ suffix:semicolon
 )brace
 id|val
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
-r_int
 r_int
 op_star
 )paren

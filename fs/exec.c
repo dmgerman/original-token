@@ -63,20 +63,6 @@ r_int
 id|fd
 )paren
 suffix:semicolon
-r_static
-r_int
-id|aout_core_dump
-c_func
-(paren
-r_int
-id|signr
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|dump_thread
@@ -466,7 +452,6 @@ DECL|macro|DUMP_SEEK
 mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;lseek) { &bslash;&n;&t;if (file.f_op-&gt;lseek(inode,&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)&t;&t;
 multiline_comment|/*&n; * Routine writes a core dump image in the current directory.&n; * Currently only a stub-function.&n; *&n; * Note that setuid/setgid files won&squot;t make a core-dump if the uid/gid&n; * changed due to the set[u|g]id. It&squot;s enforced by the &quot;current-&gt;dumpable&quot;&n; * field, which also makes sure the core-dumps won&squot;t be recursive if the&n; * dumping of the process results in another error..&n; */
 DECL|function|aout_core_dump
-r_static
 r_int
 id|aout_core_dump
 c_func

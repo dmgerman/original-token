@@ -4681,6 +4681,8 @@ c_func
 id|len
 op_plus
 id|dev-&gt;hard_header_len
+op_plus
+l_int|15
 )paren
 suffix:semicolon
 r_if

@@ -4785,7 +4785,7 @@ r_int
 id|err
 suffix:semicolon
 r_int
-id|tmp
+id|pid
 suffix:semicolon
 r_switch
 c_cond
@@ -4828,9 +4828,9 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|tmp
+id|pid
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
@@ -4846,12 +4846,12 @@ c_cond
 (paren
 id|current-&gt;pid
 op_ne
-id|tmp
+id|pid
 op_logical_and
 id|current-&gt;pgrp
 op_ne
 op_minus
-id|tmp
+id|pid
 op_logical_and
 op_logical_neg
 id|suser
@@ -4865,7 +4865,7 @@ id|EPERM
 suffix:semicolon
 id|sk-&gt;proc
 op_assign
-id|tmp
+id|pid
 suffix:semicolon
 r_return
 l_int|0
