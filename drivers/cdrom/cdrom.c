@@ -1091,8 +1091,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Requests to the low-level drivers will /always/ be done in the&n;   following format convention: &n;&n;   CDROM_LBA: all data-related requests.&n;   CDROM_MSF: all audio-related requests. &n;&n;   However, a low-level implementation is allowed to refuse this&n;   request, and return information in its own favorite format.  &n;&n;   It doesn&squot;t make sense /at all/ to ask for a play_audio in LBA&n;   format, or ask for multi-session info in MSF format. However, for&n;   backward compatibility these format requests will be satisfied, but&n;   the requests to the low-level drivers will be sanitized in the more&n;   meaningful format indicated above.&n; */
-DECL|macro|current
-macro_line|#undef current                          /* set in sched.h */
 r_static
 DECL|function|sanitize_format
 r_void
@@ -1106,7 +1104,7 @@ id|addr
 comma
 id|u_char
 op_star
-id|current
+id|curr
 comma
 id|u_char
 id|requested
@@ -1116,7 +1114,7 @@ r_if
 c_cond
 (paren
 op_star
-id|current
+id|curr
 op_eq
 id|requested
 )paren
@@ -1187,7 +1185,7 @@ l_int|60
 suffix:semicolon
 )brace
 op_star
-id|current
+id|curr
 op_assign
 id|requested
 suffix:semicolon

@@ -1855,30 +1855,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Fetch the caller&squot;s info block. &n;&t; */
 id|err
 op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|ifconf
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
 id|copy_from_user
 c_func
 (paren
@@ -1894,6 +1870,15 @@ id|ifconf
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
 id|len
 op_assign
 id|ifc.ifc_len
@@ -1903,28 +1888,6 @@ op_assign
 id|ifc.ifc_buf
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We now walk the device list filling each active device&n;&t; *&t;into the array.&n;&t; */
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|pos
-comma
-id|len
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Loop over the interfaces, and write an info block for each. &n;&t; */
 r_for
 c_loop
@@ -2015,6 +1978,8 @@ op_assign
 id|dev-&gt;pa_addr
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Write this block to the caller&squot;s space. &n;&t;&t; */
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -2029,6 +1994,15 @@ r_struct
 id|ifreq
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|pos
 op_add_assign
@@ -2065,6 +2039,8 @@ op_star
 )paren
 id|ifc.ifc_buf
 suffix:semicolon
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -2079,6 +2055,15 @@ r_struct
 id|ifconf
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Report how much was filled in&n;&t; */
 r_return
@@ -2459,15 +2444,17 @@ id|dev
 suffix:semicolon
 r_int
 id|ret
+comma
+id|err
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Fetch the caller&squot;s info block into kernel space&n;&t; */
-r_int
 id|err
 op_assign
-id|verify_area
+id|copy_from_user
 c_func
 (paren
-id|VERIFY_WRITE
+op_amp
+id|ifr
 comma
 id|arg
 comma
@@ -2483,25 +2470,9 @@ c_cond
 (paren
 id|err
 )paren
-(brace
 r_return
-id|err
-suffix:semicolon
-)brace
-id|copy_from_user
-c_func
-(paren
-op_amp
-id|ifr
-comma
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
-)paren
+op_minus
+id|EFAULT
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See which interface the caller is talking about. &n;&t; */
 multiline_comment|/*&n;&t; *&n;&t; *&t;net_alias_dev_get(): dev_get() with added alias naming magic.&n;&t; *&t;only allow alias creation/deletion if (getset==SIOCSIFADDR)&n;&t; *&n;&t; */
@@ -3530,6 +3501,15 @@ comma
 id|getset
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+(brace
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -3545,6 +3525,17 @@ id|ifreq
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -3560,6 +3551,8 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;The load of calls that return an ifreq and ok (saves memory).&n; */
 id|rarok
 suffix:colon
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -3575,8 +3568,18 @@ id|ifreq
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This function handles all &quot;interface&quot;-type I/O control requests. The actual&n; *&t;&squot;doing&squot; part of this is dev_ifsioc above.&n; */

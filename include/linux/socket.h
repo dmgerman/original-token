@@ -364,7 +364,7 @@ DECL|macro|SOPRI_BACKGROUND
 mdefine_line|#define SOPRI_BACKGROUND&t;2
 macro_line|#ifdef __KERNEL__
 r_extern
-r_void
+r_int
 id|memcpy_fromiovec
 c_func
 (paren
@@ -383,7 +383,7 @@ id|len
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|memcpy_fromiovecend
 c_func
 (paren
@@ -454,7 +454,7 @@ id|mode
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|memcpy_toiovec
 c_func
 (paren

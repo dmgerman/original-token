@@ -1868,7 +1868,7 @@ id|wait
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|skb_copy_datagram
 c_func
 (paren
@@ -1889,7 +1889,7 @@ id|size
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|skb_copy_datagram_iovec
 c_func
 (paren

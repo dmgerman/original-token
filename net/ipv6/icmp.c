@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -147,7 +148,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;getfrag callback&n; *&t;not static because it&squot;s needed in ndisc.c&n; */
 DECL|function|icmpv6_getfrag
 r_static
-r_void
+r_int
 id|icmpv6_getfrag
 c_func
 (paren
@@ -232,6 +233,7 @@ op_assign
 id|csum
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|csum
@@ -311,6 +313,9 @@ id|IPPROTO_ICMPV6
 comma
 id|csum
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;an inline helper for the &quot;simple&quot; if statement bellow&n; *&t;checks if parameter problem report is caused by an&n; *&t;unrecognized IPv6 option that has the Option Type &n; *&t;highest-order two bits set to 10&n; */

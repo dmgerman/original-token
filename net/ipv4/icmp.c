@@ -773,7 +773,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Checksum each fragment, and on the first include the headers and final checksum.&n; */
 DECL|function|icmp_glue_bits
 r_static
-r_void
+r_int
 id|icmp_glue_bits
 c_func
 (paren
@@ -848,6 +848,7 @@ id|icmp_param-&gt;csum
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;First fragment includes header. Note that we&squot;ve done&n;&t; *&t;the other fragments first, so that we get the checksum&n;&t; *&t;for the whole packet here.&n;&t; */
@@ -916,6 +917,9 @@ c_func
 (paren
 id|csum
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Driving logic for building and sending ICMP messages.&n; */

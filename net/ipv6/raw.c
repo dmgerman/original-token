@@ -338,6 +338,8 @@ op_minus
 id|skb-&gt;h.raw
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|skb_copy_datagram_iovec
 c_func
 (paren
@@ -353,6 +355,14 @@ suffix:semicolon
 id|sk-&gt;stamp
 op_assign
 id|skb-&gt;stamp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 multiline_comment|/* Copy the address. */
 r_if
@@ -479,7 +489,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|function|rawv6_getfrag
 r_static
-r_void
+r_int
 id|rawv6_getfrag
 c_func
 (paren
@@ -518,6 +528,7 @@ op_star
 )paren
 id|data
 suffix:semicolon
+r_return
 id|memcpy_fromiovecend
 c_func
 (paren
@@ -533,7 +544,7 @@ suffix:semicolon
 )brace
 DECL|function|rawv6_frag_cksum
 r_static
-r_void
+r_int
 id|rawv6_frag_cksum
 c_func
 (paren
@@ -698,6 +709,9 @@ l_string|&quot;icmp: cksum offset too big&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|rawv6_sendmsg
 r_static
@@ -1209,6 +1223,8 @@ id|optname
 r_case
 id|ICMPV6_FILTER
 suffix:colon
+id|err
+op_assign
 id|copy_from_user
 c_func
 (paren
@@ -1223,6 +1239,16 @@ r_struct
 id|icmp6_filter
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|err
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_DISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -2409,10 +2410,9 @@ id|contiguous
 op_logical_and
 id|SCpnt-&gt;request.bh
 op_logical_and
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-)paren
 id|SCpnt-&gt;request.bh-&gt;b_data
 )paren
 op_plus
@@ -2432,10 +2432,9 @@ id|SCpnt-&gt;host-&gt;unchecked_isa_dma
 r_if
 c_cond
 (paren
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-)paren
 id|SCpnt-&gt;request.bh-&gt;b_data
 )paren
 OG
@@ -2704,11 +2703,9 @@ op_logical_or
 (paren
 id|SCpnt-&gt;host-&gt;unchecked_isa_dma
 op_logical_and
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|bh-&gt;b_data
 op_minus
 l_int|1
@@ -2755,11 +2752,9 @@ c_cond
 (paren
 id|SCpnt-&gt;host-&gt;unchecked_isa_dma
 op_logical_and
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|SCpnt-&gt;request.bh-&gt;b_data
 op_minus
 l_int|1
@@ -2961,10 +2956,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-)paren
 id|sgpnt
 (braket
 id|count
@@ -3194,10 +3188,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-)paren
 id|sgpnt
 (braket
 id|count
@@ -3539,10 +3532,9 @@ l_int|0
 r_if
 c_cond
 (paren
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-)paren
 id|buff
 )paren
 op_plus

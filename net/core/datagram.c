@@ -440,7 +440,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Copy a datagram to a linear buffer.&n; */
 DECL|function|skb_copy_datagram
-r_void
+r_int
 id|skb_copy_datagram
 c_func
 (paren
@@ -460,6 +460,11 @@ r_int
 id|size
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -472,10 +477,25 @@ comma
 id|size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_return
+id|err
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Copy a datagram to an iovec.&n; */
 DECL|function|skb_copy_datagram_iovec
-r_void
+r_int
 id|skb_copy_datagram_iovec
 c_func
 (paren
@@ -496,6 +516,11 @@ r_int
 id|size
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
+id|err
+op_assign
 id|memcpy_toiovec
 c_func
 (paren
@@ -507,6 +532,21 @@ id|offset
 comma
 id|size
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Datagram select: Again totally generic. Moved from udp.c&n; *&t;Now does seqpacket.&n; */

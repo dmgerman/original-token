@@ -11,12 +11,31 @@ DECL|macro|htons
 macro_line|#undef htons
 macro_line|#ifndef __LITTLE_ENDIAN
 DECL|macro|__LITTLE_ENDIAN
-mdefine_line|#define __LITTLE_ENDIAN
+mdefine_line|#define __LITTLE_ENDIAN 1234
 macro_line|#endif
 macro_line|#ifndef __LITTLE_ENDIAN_BITFIELD
 DECL|macro|__LITTLE_ENDIAN_BITFIELD
 mdefine_line|#define __LITTLE_ENDIAN_BITFIELD
 macro_line|#endif
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * In-kernel byte order macros to handle stuff like&n; * byte-order-dependent filesystems etc.&n; */
+DECL|macro|cpu_to_le32
+mdefine_line|#define cpu_to_le32(x) (x)
+DECL|macro|le32_to_cpu
+mdefine_line|#define le32_to_cpu(x) (x)
+DECL|macro|cpu_to_le16
+mdefine_line|#define cpu_to_le16(x) (x)
+DECL|macro|le16_to_cpu
+mdefine_line|#define le16_to_cpu(x) (x)
+DECL|macro|cpu_to_be32
+mdefine_line|#define cpu_to_be32(x) htonl((x))
+DECL|macro|be32_to_cpu
+mdefine_line|#define be32_to_cpu(x) ntohl((x))
+DECL|macro|cpu_to_be16
+mdefine_line|#define cpu_to_be16(x) htons((x))
+DECL|macro|be16_to_cpu
+mdefine_line|#define be16_to_cpu(x) ntohs((x))
+macro_line|#endif /* __KERNEL__ */
 r_extern
 r_int
 r_int

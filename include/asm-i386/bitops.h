@@ -478,5 +478,17 @@ r_return
 id|word
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
+DECL|macro|ext2_set_bit
+mdefine_line|#define ext2_set_bit                 set_bit
+DECL|macro|ext2_clear_bit
+mdefine_line|#define ext2_clear_bit               clear_bit
+DECL|macro|ext2_test_bit
+mdefine_line|#define ext2_test_bit                test_bit
+DECL|macro|ext2_find_first_zero_bit
+mdefine_line|#define ext2_find_first_zero_bit     find_first_zero_bit
+DECL|macro|ext2_find_next_zero_bit
+mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_bit
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _I386_BITOPS_H */
 eof

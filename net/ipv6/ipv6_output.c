@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;IPv6 output functions&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_output.c&n; *&n; *&t;$Id: ipv6_output.c,v 1.19 1996/10/16 18:34:16 roque Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1373,6 +1374,9 @@ id|rt_flags
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|error
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1727,9 +1731,6 @@ op_le
 id|pmtu
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -1951,6 +1952,8 @@ comma
 id|length
 )paren
 suffix:semicolon
+id|error
+op_assign
 id|getfrag
 c_func
 (paren
@@ -1978,6 +1981,13 @@ comma
 id|length
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
 id|ipv6_statistics.Ip6OutRequests
 op_increment
 suffix:semicolon
@@ -1996,13 +2006,30 @@ op_star
 id|dc
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|error
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+)brace
 id|dev_unlock_list
 c_func
 (paren
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|error
 suffix:semicolon
 )brace
 r_else
@@ -2410,6 +2437,8 @@ id|fhdr
 op_minus
 id|last_skb-&gt;data
 suffix:semicolon
+id|error
+op_assign
 id|getfrag
 c_func
 (paren
@@ -2427,6 +2456,13 @@ comma
 id|last_len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -2489,7 +2525,9 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* if (nfrags == 0)&n;&t;&t;&t;   put rest of headers&n;&t;&t;&t;   */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;FIXME:&n;&t;&t;&t;&t; *&t;if (nfrags == 0)&n;&t;&t;&t;&t; *&t;put rest of headers&n;&t;&t;&t;&t; */
+id|error
+op_assign
 id|getfrag
 c_func
 (paren
@@ -2513,6 +2551,23 @@ comma
 id|frag_len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|ipv6_statistics.Ip6OutRequests
 op_increment
 suffix:semicolon
@@ -2530,6 +2585,31 @@ op_star
 )paren
 id|dc
 )paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|last_skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|dev_unlock_list
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 id|printk

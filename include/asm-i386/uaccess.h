@@ -473,5 +473,83 @@ r_return
 id|res
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Return the size of a string (including the ending 0)&n; *&n; * Return 0 for error&n; */
+DECL|function|strlen_user
+r_extern
+r_inline
+r_int
+id|strlen_user
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+(brace
+r_int
+id|res
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+l_string|&quot;0:&bslash;trepne ; scasb&bslash;n&bslash;t&quot;
+l_string|&quot;notl %0&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;2:&bslash;txorl %0,%0&bslash;n&bslash;t&quot;
+l_string|&quot;jmp 1b&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;.align 4&bslash;n&bslash;t&quot;
+l_string|&quot;.long 0b,2b&bslash;n&quot;
+l_string|&quot;.text&quot;
+suffix:colon
+l_string|&quot;=c&quot;
+(paren
+id|res
+)paren
+suffix:colon
+l_string|&quot;D&quot;
+(paren
+id|s
+)paren
+comma
+l_string|&quot;a&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0xffffffff
+)paren
+suffix:colon
+l_string|&quot;di&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|access_ok
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|s
+comma
+id|res
+)paren
+)paren
+id|res
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
+)brace
 macro_line|#endif /* __i386_UACCESS_H */
 eof

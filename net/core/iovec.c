@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;iovec manipulation routines.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&t;Andrew Lunn&t;:&t;Errors in iovec copying.&n; *&t;&t;Pedro Roque&t;:&t;Added memcpy_fromiovecend and&n; *&t;&t;&t;&t;&t;csum_..._fromiovecend.&n; */
+multiline_comment|/*&n; *&t;iovec manipulation routines.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&t;Andrew Lunn&t;:&t;Errors in iovec copying.&n; *&t;&t;Pedro Roque&t;:&t;Added memcpy_fromiovecend and&n; *&t;&t;&t;&t;&t;csum_..._fromiovecend.&n; *      Andi Kleen  :   fixed error handling for 2.1&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -33,6 +33,7 @@ suffix:colon
 id|x
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Verify iovec&n; *&t;verify area does a simple check for completly bogus addresses&n; */
 DECL|function|verify_iovec
 r_int
 id|verify_iovec
@@ -99,6 +100,7 @@ id|address
 suffix:semicolon
 )brace
 r_else
+(brace
 id|err
 op_assign
 id|verify_area
@@ -111,6 +113,7 @@ comma
 id|m-&gt;msg_namelen
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -176,34 +179,6 @@ op_increment
 (brace
 id|err
 op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-op_amp
-id|m-&gt;msg_iov
-(braket
-id|ct
-)braket
-comma
-r_sizeof
-(paren
-r_struct
-id|iovec
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
 id|copy_from_user
 c_func
 (paren
@@ -225,6 +200,14 @@ r_struct
 id|iovec
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 id|err
 op_assign
@@ -282,7 +265,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Copy kernel to iovec.&n; */
 DECL|function|memcpy_toiovec
-r_void
+r_int
 id|memcpy_toiovec
 c_func
 (paren
@@ -300,6 +283,9 @@ r_int
 id|len
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -325,6 +311,8 @@ comma
 id|len
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -335,6 +323,16 @@ comma
 id|copy
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 id|kdata
 op_add_assign
 id|copy
@@ -356,10 +354,13 @@ id|iov
 op_increment
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Copy iovec to kernel.&n; */
 DECL|function|memcpy_fromiovec
-r_void
+r_int
 id|memcpy_fromiovec
 c_func
 (paren
@@ -377,6 +378,9 @@ r_int
 id|len
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -402,6 +406,8 @@ comma
 id|iov-&gt;iov_len
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
 c_func
 (paren
@@ -412,6 +418,16 @@ comma
 id|copy
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 id|len
 op_sub_assign
 id|copy
@@ -433,10 +449,13 @@ id|iov
 op_increment
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;For use with ip_build_xmit&n; */
 DECL|function|memcpy_fromiovecend
-r_void
+r_int
 id|memcpy_fromiovecend
 c_func
 (paren
@@ -457,6 +476,9 @@ r_int
 id|len
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -509,6 +531,8 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
 c_func
 (paren
@@ -519,6 +543,16 @@ comma
 id|copy
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 id|len
 op_sub_assign
 id|copy
@@ -551,6 +585,8 @@ comma
 id|iov-&gt;iov_len
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
 c_func
 (paren
@@ -561,6 +597,16 @@ comma
 id|copy
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 id|len
 op_sub_assign
 id|copy
@@ -573,8 +619,11 @@ id|iov
 op_increment
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;And now for the all-in-one: copy and checksum from a user iovec&n; *&t;directly to a datagram&n; *&t;Calls to csum_partial but the last must be in 32 bit chunks&n; *&n; *&t;ip_build_xmit must ensure that when fragmenting only the last&n; *&t;call to this function will be unaligned also.&n; */
+multiline_comment|/*&n; *&t;And now for the all-in-one: copy and checksum from a user iovec&n; *&t;directly to a datagram&n; *&t;Calls to csum_partial but the last must be in 32 bit chunks&n; *&n; *&t;ip_build_xmit must ensure that when fragmenting only the last&n; *&t;call to this function will be unaligned also.&n; *&n; *&t;FIXME: add an error handling path when a copy/checksum from&n; *&t;user space failed because of a invalid pointer.&n; */
 DECL|function|csum_partial_copy_fromiovecend
 r_int
 r_int
@@ -691,6 +740,7 @@ id|partial_cnt
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&t;&n;&t;&t;&t; *&t;FIXME: add exception handling to the&n;&t;&t;&t; *&t;csum functions and set *err when an&n;&t;&t;&t; *&t;exception occurs.&n;&t;&t;&t; */
 id|csum
 op_assign
 id|csum_partial_copy_fromuser

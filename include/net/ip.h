@@ -421,7 +421,7 @@ id|sock
 op_star
 id|sk
 comma
-r_void
+r_int
 id|getfrag
 (paren
 r_const

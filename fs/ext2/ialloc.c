@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/ialloc.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  BSD ufs-inspired inode and directory allocation by &n; *  Stephen Tweedie (sct@dcs.ed.ac.uk), 1993&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/ialloc.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  BSD ufs-inspired inode and directory allocation by &n; *  Stephen Tweedie (sct@dcs.ed.ac.uk), 1993&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
 multiline_comment|/*&n; * ialloc.c contains the inodes allocation and deallocation routines&n; */
 multiline_comment|/*&n; * The free inodes are managed by bitmaps.  A file system contains several&n; * blocks groups.  Each group contains 1 bitmap block for blocks, 1 bitmap&n; * block for inodes, N blocks for the inode table and data blocks.&n; *&n; * The file system contains group descriptors which are located after the&n; * super block.  Each descriptor contains the number of the bitmap block and&n; * the free blocks count in the block.  The descriptors are loaded in memory&n; * when a file system is mounted (see ext2_read_super).&n; */
 macro_line|#include &lt;linux/fs.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|function|get_group_desc
 r_static
 r_struct
@@ -189,7 +190,11 @@ id|bread
 (paren
 id|sb-&gt;s_dev
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_inode_bitmap
+)paren
 comma
 id|sb-&gt;s_blocksize
 )paren
@@ -215,7 +220,11 @@ comma
 r_int
 r_int
 )paren
+id|le32_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_inode_bitmap
+)paren
 )paren
 suffix:semicolon
 id|sb-&gt;u.ext2_sb.s_inode_bitmap_number
@@ -683,7 +692,11 @@ c_cond
 (paren
 id|inode-&gt;i_ino
 template_param
+id|le32_to_cpu
+c_func
+(paren
 id|sb-&gt;u.ext2_sb.s_es-&gt;s_inodes_count
+)paren
 )paren
 (brace
 id|ext2_error
@@ -755,7 +768,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|ext2_clear_bit
 (paren
 id|bit
 comma
@@ -788,7 +801,18 @@ id|bh2
 )paren
 suffix:semicolon
 id|gdp-&gt;bg_free_inodes_count
-op_increment
+op_assign
+id|cpu_to_le16
+c_func
+(paren
+id|le16_to_cpu
+c_func
+(paren
+id|gdp-&gt;bg_free_inodes_count
+)paren
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -800,7 +824,18 @@ id|inode-&gt;i_mode
 )paren
 )paren
 id|gdp-&gt;bg_used_dirs_count
-op_decrement
+op_assign
+id|cpu_to_le16
+c_func
+(paren
+id|le16_to_cpu
+c_func
+(paren
+id|gdp-&gt;bg_used_dirs_count
+)paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
@@ -811,7 +846,18 @@ l_int|1
 )paren
 suffix:semicolon
 id|es-&gt;s_free_inodes_count
-op_increment
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|le32_to_cpu
+c_func
+(paren
+id|es-&gt;s_free_inodes_count
+)paren
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
@@ -1048,11 +1094,15 @@ id|mode
 (brace
 id|avefreei
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|es-&gt;s_free_inodes_count
+)paren
 op_div
 id|sb-&gt;u.ext2_sb.s_groups_count
 suffix:semicolon
-multiline_comment|/* I am not yet convinced that this next bit is necessary.&n;&t;&t;i = dir-&gt;u.ext2_i.i_block_group;&n;&t;&t;for (j = 0; j &lt; sb-&gt;u.ext2_sb.s_groups_count; j++) {&n;&t;&t;&t;tmp = get_group_desc (sb, i, &amp;bh2);&n;&t;&t;&t;if ((tmp-&gt;bg_used_dirs_count &lt;&lt; 8) &lt; &n;&t;&t;&t;    tmp-&gt;bg_free_inodes_count) {&n;&t;&t;&t;&t;gdp = tmp;&n;&t;&t;&t;&t;break;&n;&t;&t;&t;}&n;&t;&t;&t;else&n;&t;&t;&t;i = ++i % sb-&gt;u.ext2_sb.s_groups_count;&n;&t;&t;}&n;*/
+multiline_comment|/* I am not yet convinced that this next bit is necessary.&n;&t;&t;i = dir-&gt;u.ext2_i.i_block_group;&n;&t;&t;for (j = 0; j &lt; sb-&gt;u.ext2_sb.s_groups_count; j++) {&n;&t;&t;&t;tmp = get_group_desc (sb, i, &amp;bh2);&n;&t;&t;&t;if ((le16_to_cpu(tmp-&gt;bg_used_dirs_count) &lt;&lt; 8) &lt; &n;&t;&t;&t;    le16_to_cpu(tmp-&gt;bg_free_inodes_count)) {&n;&t;&t;&t;&t;gdp = tmp;&n;&t;&t;&t;&t;break;&n;&t;&t;&t;}&n;&t;&t;&t;else&n;&t;&t;&t;i = ++i % sb-&gt;u.ext2_sb.s_groups_count;&n;&t;&t;}&n;*/
 r_if
 c_cond
 (paren
@@ -1090,9 +1140,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|tmp-&gt;bg_free_inodes_count
+)paren
 op_logical_and
+id|le16_to_cpu
+c_func
+(paren
 id|tmp-&gt;bg_free_inodes_count
+)paren
 op_ge
 id|avefreei
 )paren
@@ -1104,9 +1162,17 @@ op_logical_neg
 id|gdp
 op_logical_or
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|tmp-&gt;bg_free_blocks_count
+)paren
 OG
+id|le16_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_free_blocks_count
+)paren
 )paren
 )paren
 (brace
@@ -1145,7 +1211,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|tmp-&gt;bg_free_inodes_count
+)paren
 )paren
 id|gdp
 op_assign
@@ -1200,7 +1270,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|tmp-&gt;bg_free_inodes_count
+)paren
 )paren
 (brace
 id|gdp
@@ -1268,7 +1342,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|tmp-&gt;bg_free_inodes_count
+)paren
 )paren
 (brace
 id|gdp
@@ -1325,7 +1403,7 @@ c_cond
 (paren
 id|j
 op_assign
-id|find_first_zero_bit
+id|ext2_find_first_zero_bit
 (paren
 (paren
 r_int
@@ -1352,7 +1430,7 @@ id|sb
 r_if
 c_cond
 (paren
-id|set_bit
+id|ext2_set_bit
 (paren
 id|j
 comma
@@ -1413,7 +1491,11 @@ r_else
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_free_inodes_count
+)paren
 op_ne
 l_int|0
 )paren
@@ -1464,7 +1546,11 @@ c_cond
 (paren
 id|j
 template_param
+id|le32_to_cpu
+c_func
+(paren
 id|es-&gt;s_inodes_count
+)paren
 )paren
 (brace
 id|ext2_error
@@ -1496,7 +1582,18 @@ l_int|NULL
 suffix:semicolon
 )brace
 id|gdp-&gt;bg_free_inodes_count
-op_decrement
+op_assign
+id|cpu_to_le16
+c_func
+(paren
+id|le16_to_cpu
+c_func
+(paren
+id|gdp-&gt;bg_free_inodes_count
+)paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1508,7 +1605,18 @@ id|mode
 )paren
 )paren
 id|gdp-&gt;bg_used_dirs_count
-op_increment
+op_assign
+id|cpu_to_le16
+c_func
+(paren
+id|le16_to_cpu
+c_func
+(paren
+id|gdp-&gt;bg_used_dirs_count
+)paren
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
@@ -1519,7 +1627,18 @@ l_int|1
 )paren
 suffix:semicolon
 id|es-&gt;s_free_inodes_count
-op_decrement
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|le32_to_cpu
+c_func
+(paren
+id|es-&gt;s_free_inodes_count
+)paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
@@ -1872,7 +1991,11 @@ l_int|NULL
 suffix:semicolon
 id|desc_count
 op_add_assign
+id|le16_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_free_inodes_count
+)paren
 suffix:semicolon
 id|bitmap_nr
 op_assign
@@ -1907,7 +2030,11 @@ l_string|&quot;group %d: stored = %d, counted = %lu&bslash;n&quot;
 comma
 id|i
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_free_inodes_count
+)paren
 comma
 id|x
 )paren
@@ -1922,7 +2049,11 @@ c_func
 (paren
 l_string|&quot;ext2_count_free_inodes: stored = %lu, computed = %lu, %lu&bslash;n&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|es-&gt;s_free_inodes_count
+)paren
 comma
 id|desc_count
 comma
@@ -1939,7 +2070,11 @@ id|desc_count
 suffix:semicolon
 macro_line|#else
 r_return
+id|le32_to_cpu
+c_func
+(paren
 id|sb-&gt;u.ext2_sb.s_es-&gt;s_free_inodes_count
+)paren
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -2026,7 +2161,11 @@ l_int|NULL
 suffix:semicolon
 id|desc_count
 op_add_assign
+id|le16_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_free_inodes_count
+)paren
 suffix:semicolon
 id|bitmap_nr
 op_assign
@@ -2058,7 +2197,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_free_inodes_count
+)paren
 op_ne
 id|x
 )paren
@@ -2073,7 +2216,11 @@ l_string|&quot;stored = %d, counted = %lu&quot;
 comma
 id|i
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|gdp-&gt;bg_free_inodes_count
+)paren
 comma
 id|x
 )paren
@@ -2086,7 +2233,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|es-&gt;s_free_inodes_count
+)paren
 op_ne
 id|bitmap_count
 )paren
@@ -2103,7 +2254,11 @@ comma
 r_int
 r_int
 )paren
+id|le32_to_cpu
+c_func
+(paren
 id|es-&gt;s_free_inodes_count
+)paren
 comma
 id|bitmap_count
 )paren

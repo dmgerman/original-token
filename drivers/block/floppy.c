@@ -4352,9 +4352,12 @@ r_if
 c_cond
 (paren
 (paren
+(paren
+r_int
 r_int
 )paren
 id|raw_cmd-&gt;kernel_data
+)paren
 op_mod
 l_int|512
 )paren
@@ -10996,6 +10999,7 @@ id|K_64
 op_minus
 (paren
 (paren
+r_int
 r_int
 )paren
 id|CURRENT-&gt;buffer

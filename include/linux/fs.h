@@ -141,6 +141,7 @@ DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   _IO(0x00,2)&t;/* get the block size used for bmap */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/semaphore.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 r_extern
 r_void
@@ -3514,6 +3515,23 @@ suffix:semicolon
 r_int
 r_int
 id|generate_cluster
+c_func
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+id|b
+(braket
+)braket
+comma
+r_int
+id|size
+)paren
+suffix:semicolon
+r_int
+r_int
+id|generate_cluster_swab32
 c_func
 (paren
 id|kdev_t

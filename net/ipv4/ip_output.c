@@ -1545,7 +1545,7 @@ id|sock
 op_star
 id|sk
 comma
-r_void
+r_int
 id|getfrag
 (paren
 r_const
@@ -1651,6 +1651,9 @@ id|__u32
 id|true_daddr
 op_assign
 id|daddr
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2212,6 +2215,8 @@ comma
 id|iph-&gt;ihl
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|getfrag
 c_func
 (paren
@@ -2242,6 +2247,8 @@ l_int|4
 suffix:semicolon
 )brace
 r_else
+id|err
+op_assign
 id|getfrag
 c_func
 (paren
@@ -2265,10 +2272,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
+op_logical_neg
+id|err
+op_logical_and
 id|call_out_firewall
 c_func
 (paren
@@ -2284,6 +2306,19 @@ OL
 id|FW_ACCEPT
 )paren
 (brace
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
 id|kfree_skb
 c_func
 (paren
@@ -2293,11 +2328,9 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EPERM
+id|err
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ACCT
 id|ip_fw_chk
 c_func
@@ -2429,7 +2462,7 @@ op_add_assign
 l_int|20
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;Fragheaderlen is the size of &squot;overhead&squot; on each buffer. Now work&n;&t;&t; *&t;out the size of the frames to send.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Fragheaderlen is the size of &squot;overhead&squot; on each buffer.&n;&t;&t; *&t;Now work out the size of the frames to send.&n;&t;&t; */
 id|maxfraglen
 op_assign
 (paren
@@ -2711,7 +2744,7 @@ comma
 id|rt-&gt;rt_gateway
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;
+macro_line|#endif
 )brace
 )brace
 r_else
@@ -2916,6 +2949,8 @@ id|IP_MF
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;User data callback&n;&t;&t; */
+id|err
+op_assign
 id|getfrag
 c_func
 (paren
@@ -2932,11 +2967,26 @@ op_minus
 id|fragheaderlen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; *&t;Account for the fragment.&n;&t;&t; */
 macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
+op_logical_neg
+id|err
+op_logical_and
 op_logical_neg
 id|offset
 op_logical_and
@@ -2955,6 +3005,19 @@ OL
 id|FW_ACCEPT
 )paren
 (brace
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
 id|kfree_skb
 c_func
 (paren
@@ -2969,11 +3032,9 @@ c_func
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EPERM
+id|err
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;
 macro_line|#ifdef CONFIG_IP_ACCT
 r_if
 c_cond

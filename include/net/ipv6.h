@@ -244,7 +244,7 @@ mdefine_line|#define IPV6_FRAG_TIMEOUT&t;(60*HZ)&t;&t;/* 60 seconds */
 multiline_comment|/*&n; *&t;Function prototype for build_xmit&n; */
 DECL|typedef|inet_getfrag_t
 r_typedef
-r_void
+r_int
 (paren
 op_star
 id|inet_getfrag_t

@@ -74,6 +74,12 @@ c_func
 id|ioremap
 )paren
 comma
+id|X
+c_func
+(paren
+id|iounmap
+)paren
+comma
 id|XNOVERS
 c_func
 (paren

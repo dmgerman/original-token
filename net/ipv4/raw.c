@@ -350,7 +350,7 @@ multiline_comment|/*&n; *&t;Send a RAW IP packet.&n; */
 multiline_comment|/*&n; *&t;Callback support is trivial for SOCK_RAW&n; */
 DECL|function|raw_getfrag
 r_static
-r_void
+r_int
 id|raw_getfrag
 c_func
 (paren
@@ -375,6 +375,7 @@ r_int
 id|fraglen
 )paren
 (brace
+r_return
 id|copy_from_user
 c_func
 (paren
@@ -397,7 +398,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;IPPROTO_RAW needs extra work.&n; */
 DECL|function|raw_getrawfrag
 r_static
-r_void
+r_int
 id|raw_getrawfrag
 c_func
 (paren
@@ -422,6 +423,11 @@ r_int
 id|fraglen
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
 c_func
 (paren
@@ -439,6 +445,14 @@ id|offset
 comma
 id|fraglen
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -517,6 +531,9 @@ id|iph-&gt;ihl
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|raw_sendto
 r_static
@@ -932,6 +949,8 @@ op_minus
 id|ENOBUFS
 suffix:semicolon
 )brace
+id|err
+op_assign
 id|memcpy_fromiovec
 c_func
 (paren
@@ -942,6 +961,13 @@ comma
 id|len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|err
+)paren
+(brace
 id|fs
 op_assign
 id|get_fs
@@ -983,6 +1009,13 @@ c_func
 (paren
 id|fs
 )paren
+suffix:semicolon
+)brace
+r_else
+id|err
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 id|kfree_s
 c_func
@@ -1188,6 +1221,8 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|skb_copy_datagram_iovec
 c_func
 (paren
@@ -1229,6 +1264,11 @@ id|skb
 )paren
 suffix:semicolon
 r_return
+id|err
+ques
+c_cond
+id|err
+suffix:colon
 (paren
 id|copied
 )paren

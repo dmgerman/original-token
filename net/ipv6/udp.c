@@ -498,7 +498,7 @@ op_star
 id|skb
 suffix:semicolon
 r_int
-id|er
+id|err
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Check any passed addresses&n;&t; */
 r_if
@@ -528,7 +528,7 @@ comma
 id|noblock
 comma
 op_amp
-id|er
+id|err
 )paren
 suffix:semicolon
 r_if
@@ -540,7 +540,7 @@ l_int|NULL
 )paren
 (brace
 r_return
-id|er
+id|err
 suffix:semicolon
 )brace
 id|truesize
@@ -566,6 +566,8 @@ id|truesize
 )paren
 suffix:semicolon
 multiline_comment|/*&n;  &t; *&t;FIXME : should use udp header size info value &n;  &t; */
+id|err
+op_assign
 id|skb_copy_datagram_iovec
 c_func
 (paren
@@ -581,6 +583,14 @@ id|msg-&gt;msg_iov
 comma
 id|copied
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 id|sk-&gt;stamp
 op_assign
@@ -1424,7 +1434,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;with checksum&n; */
 DECL|function|udpv6_getfrag
 r_static
-r_void
+r_int
 id|udpv6_getfrag
 c_func
 (paren
@@ -1630,6 +1640,9 @@ id|udphdr
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|udpv6_sendmsg
 r_static

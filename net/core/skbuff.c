@@ -2271,8 +2271,6 @@ id|skb
 suffix:semicolon
 r_int
 id|len
-op_assign
-id|size
 suffix:semicolon
 r_int
 r_char
@@ -2335,6 +2333,10 @@ op_complement
 l_int|15
 suffix:semicolon
 multiline_comment|/* Allow for alignments. Make a multiple of 16 bytes */
+id|len
+op_assign
+id|size
+suffix:semicolon
 id|size
 op_add_assign
 r_sizeof
@@ -2685,6 +2687,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|skb-&gt;inclone
+op_logical_and
 id|skb_tailroom
 c_func
 (paren

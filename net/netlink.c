@@ -238,6 +238,9 @@ id|count
 )paren
 (brace
 r_int
+id|err
+suffix:semicolon
+r_int
 r_int
 id|minor
 op_assign
@@ -266,6 +269,8 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
 c_func
 (paren
@@ -283,6 +288,12 @@ id|count
 )paren
 suffix:semicolon
 r_return
+id|err
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
 (paren
 id|netlink_handler
 (braket
@@ -320,6 +331,9 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_int
 r_int
 id|minor
@@ -433,6 +447,8 @@ op_assign
 id|skb-&gt;len
 suffix:semicolon
 )brace
+id|err
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -452,6 +468,12 @@ id|FREE_READ
 )paren
 suffix:semicolon
 r_return
+id|err
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
 id|count
 suffix:semicolon
 )brace

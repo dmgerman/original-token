@@ -2563,7 +2563,7 @@ suffix:semicolon
 )brace
 DECL|function|addrconf_ifdown
 r_static
-r_void
+r_int
 id|addrconf_ifdown
 c_func
 (paren
@@ -2655,7 +2655,14 @@ id|KERN_DEBUG
 l_string|&quot;addrconf_ifdown: device not found&bslash;n&quot;
 )paren
 suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;FIXME: clear multicast group membership&n;&t; */
@@ -2745,6 +2752,9 @@ id|end_bh_atomic
 c_func
 (paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Set destination address.&n; *&t;Special case for SIT interfaces where we create a new &quot;virtual&quot;&n; *&t;device.&n; */
@@ -3401,12 +3411,18 @@ r_case
 id|NETDEV_DOWN
 suffix:colon
 multiline_comment|/*&n;&t;&t; *&t;Remove all addresses from this interface&n;&t;&t; *&t;and take the interface out of the list.&n;&t;&t; */
+r_if
+c_cond
+(paren
 id|addrconf_ifdown
 c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
+op_eq
+l_int|0
+)paren
+(brace
 id|rt6_ifdown
 c_func
 (paren
@@ -3431,6 +3447,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
