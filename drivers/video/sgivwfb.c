@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/sgivwfb.c -- SGI DBE frame buffer device&n; *&n; *&t;Copyright (C) 1999 Silicon Graphics, Inc.&n; *      Jeffrey Newquist, newquist@engr.sgi.som&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

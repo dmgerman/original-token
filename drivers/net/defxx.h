@@ -3875,6 +3875,11 @@ id|xmt_drv_descr_blk
 id|PI_XMT_DATA_K_NUM_ENTRIES
 )braket
 suffix:semicolon
+multiline_comment|/* Transmit spinlocks */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 multiline_comment|/* Store device, bus-specific, and parameter information for this adapter */
 DECL|member|dev
 r_struct

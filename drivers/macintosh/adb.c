@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * Device driver for the Apple Desktop Bus&n; * and the /dev/adb device on macintoshes.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

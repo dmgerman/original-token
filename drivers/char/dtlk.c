@@ -14,7 +14,6 @@ mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 DECL|macro|KERNEL
 mdefine_line|#define KERNEL
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;&t;&t;/* for verify_area */

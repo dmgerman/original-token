@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * drivers/sbus/audio/dummy.c&n; *&n; * Copyright 1998 Derrick J Brashear (shadow@andrew.cmu.edu)&n; *&n; * This is a dummy lowlevel driver. Consider it a distant cousin of &n; * /proc/audio; It pretends to be a piece of audio hardware, and writes&n; * to a file instead. (or will shortly)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

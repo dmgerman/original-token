@@ -305,6 +305,21 @@ r_struct
 id|iattr
 id|newattrs
 suffix:semicolon
+multiline_comment|/* Not pretty: &quot;inode-&gt;i_size&quot; shouldn&squot;t really be &quot;off_t&quot;. But it is. */
+r_if
+c_cond
+(paren
+(paren
+id|off_t
+)paren
+id|length
+OL
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|down
 c_func
 (paren

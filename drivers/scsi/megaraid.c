@@ -43,7 +43,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;&t;/* for kmalloc() */
-macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#else
@@ -3114,7 +3113,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if !MULTI_IO
+macro_line|#ifndef CONFIG_MEGARAID_MULTI_IO
 r_if
 c_cond
 (paren

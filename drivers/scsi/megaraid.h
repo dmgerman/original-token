@@ -4,9 +4,6 @@ mdefine_line|#define __MEGARAID_H__
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
-DECL|macro|MULTI_IO
-mdefine_line|#define MULTI_IO 0    /* change to 1 for fully parallel I/O to adapter */
-multiline_comment|/* works on some systems, not on others yet */
 DECL|macro|IN_ISR
 mdefine_line|#define IN_ISR                  0x80000000L
 DECL|macro|NO_INTR

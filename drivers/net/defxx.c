@@ -3765,6 +3765,13 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|bp-&gt;lock
+)paren
+suffix:semicolon
 multiline_comment|/* See if we&squot;re already servicing an interrupt */
 r_if
 c_cond
@@ -3903,6 +3910,13 @@ suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 id|DFX_UNMASK_INTERRUPTS
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|bp-&gt;lock
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -6904,6 +6918,10 @@ op_star
 id|p_xmt_drv_descr
 suffix:semicolon
 multiline_comment|/* ptr to transmit driver descriptor */
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/*&n;&t; * Verify that incoming transmit request is OK&n;&t; *&n;&t; * Note: The packet size check is consistent with other&n;&t; *&t;&t; Linux device drivers, although the correct packet&n;&t; *&t;&t; size should be verified before calling the&n;&t; *&t;&t; transmit routine.&n;&t; */
 r_if
 c_cond
@@ -6996,6 +7014,15 @@ suffix:semicolon
 multiline_comment|/* return &quot;success&quot; */
 )brace
 )brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|bp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Get the current producer and the next free xmt data descriptor */
 id|prod
 op_assign
@@ -7025,44 +7052,34 @@ op_increment
 suffix:semicolon
 multiline_comment|/* also bump producer index */
 multiline_comment|/* Write the three PRH bytes immediately before the FC byte */
-op_star
+id|skb_push
+c_func
 (paren
-(paren
-r_char
-op_star
-)paren
-id|skb-&gt;data
-op_minus
+id|skb
+comma
 l_int|3
 )paren
+suffix:semicolon
+id|skb-&gt;data
+(braket
+l_int|0
+)braket
 op_assign
 id|DFX_PRH0_BYTE
 suffix:semicolon
 multiline_comment|/* these byte values are defined */
-op_star
-(paren
-(paren
-r_char
-op_star
-)paren
 id|skb-&gt;data
-op_minus
-l_int|2
-)paren
+(braket
+l_int|1
+)braket
 op_assign
 id|DFX_PRH1_BYTE
 suffix:semicolon
 multiline_comment|/* in the Motorola FDDI MAC chip */
-op_star
-(paren
-(paren
-r_char
-op_star
-)paren
 id|skb-&gt;data
-op_minus
-l_int|1
-)paren
+(braket
+l_int|2
+)braket
 op_assign
 id|DFX_PRH2_BYTE
 suffix:semicolon
@@ -7098,8 +7115,6 @@ id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;data
-op_minus
-l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Verify that descriptor is actually available&n;&t; *&n;&t; * Note: If descriptor isn&squot;t available, return 1 which tells&n;&t; *&t; the upper layer to requeue the packet for later&n;&t; *&t; transmission.&n;&t; *&n;&t; *       We need to ensure that the producer never reaches the&n;&t; *&t; completion, except to indicate that the queue is empty.&n;&t; */
@@ -7110,10 +7125,29 @@ id|prod
 op_eq
 id|bp-&gt;rcv_xmt_reg.index.xmt_comp
 )paren
+(brace
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+l_int|3
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|bp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* requeue packet for later */
+)brace
 multiline_comment|/*&n;&t; * Save info for this packet for xmt done indication routine&n;&t; *&n;&t; * Normally, we&squot;d save the producer index in the p_xmt_drv_descr&n;&t; * structure so that we&squot;d have it handy when we complete this&n;&t; * packet later (in dfx_xmt_done).  However, since the current&n;&t; * transmit architecture guarantees a single fragment for the&n;&t; * entire packet, we can simply bump the completion index by&n;&t; * one (1) for each completed packet.&n;&t; *&n;&t; * Note: If this assumption changes and we&squot;re presented with&n;&t; *&t; an inconsistent number of transmit fragments for packet&n;&t; *&t; data, we&squot;ll need to modify this code to save the current&n;&t; *&t; transmit producer index.&n;&t; */
 id|p_xmt_drv_descr-&gt;p_skb
 op_assign
@@ -7132,6 +7166,15 @@ comma
 id|PI_PDQ_K_REG_TYPE_2_PROD
 comma
 id|bp-&gt;rcv_xmt_reg.lword
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|bp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_return

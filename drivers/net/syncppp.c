@@ -169,6 +169,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|CISCO_PACKET_LEN
 mdefine_line|#define CISCO_PACKET_LEN 18
+DECL|macro|CISCO_BIG_PACKET_LEN
+mdefine_line|#define CISCO_BIG_PACKET_LEN 20
 DECL|variable|spppq
 r_static
 r_struct
@@ -2604,6 +2606,10 @@ c_cond
 id|skb-&gt;len
 op_ne
 id|CISCO_PACKET_LEN
+op_logical_and
+id|skb-&gt;len
+op_ne
+id|CISCO_BIG_PACKET_LEN
 )paren
 (brace
 r_if
