@@ -840,16 +840,16 @@ id|Scsi_Host
 op_star
 id|shpnt
 comma
-id|unchar
+id|uint
 id|hardcoded
 comma
-id|unchar
+id|uint
 id|hchannel
 comma
-id|unchar
+id|uint
 id|hid
 comma
-id|unchar
+id|uint
 id|hlun
 )paren
 suffix:semicolon
@@ -902,36 +902,36 @@ id|scsi_type
 suffix:semicolon
 DECL|member|major
 r_int
-r_char
+r_int
 id|major
 suffix:semicolon
 DECL|member|min_major
 r_int
-r_char
+r_int
 id|min_major
 suffix:semicolon
 multiline_comment|/* Minimum major in range. */
 DECL|member|max_major
 r_int
-r_char
+r_int
 id|max_major
 suffix:semicolon
 multiline_comment|/* Maximum major in range. */
 DECL|member|nr_dev
 r_int
-r_char
+r_int
 id|nr_dev
 suffix:semicolon
 multiline_comment|/* Number currently attached */
 DECL|member|dev_noticed
 r_int
-r_char
+r_int
 id|dev_noticed
 suffix:semicolon
 multiline_comment|/* Number of devices detected. */
 DECL|member|dev_max
 r_int
-r_char
+r_int
 id|dev_max
 suffix:semicolon
 multiline_comment|/* Current size of arrays */
@@ -1089,14 +1089,10 @@ DECL|macro|MODULE_SCSI_IOCTL
 mdefine_line|#define MODULE_SCSI_IOCTL 3
 DECL|macro|MODULE_SCSI_DEV
 mdefine_line|#define MODULE_SCSI_DEV 4
-multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time,&n; * we need to leave extra room in some of the data structures.&t;Doing a&n; * realloc to enlarge the structures would be riddled with race conditions,&n; * so until a better solution is discovered, we use this crude approach&n; *&n; * Even bigger hack for SparcSTORAGE arrays. Those are at least 6 disks, but&n; * usually up to 30 disks, so everyone would need to change this. -jj&n; *&n; * Note: These things are all evil and all need to go away.  My plan is to&n; * tackle the character devices first, as there aren&squot;t any locking implications&n; * in the block device layer.   The block devices will require more work.&n; */
+multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time,&n; * we need to leave extra room in some of the data structures.&t;Doing a&n; * realloc to enlarge the structures would be riddled with race conditions,&n; * so until a better solution is discovered, we use this crude approach&n; *&n; * Even bigger hack for SparcSTORAGE arrays. Those are at least 6 disks, but&n; * usually up to 30 disks, so everyone would need to change this. -jj&n; *&n; * Note: These things are all evil and all need to go away.  My plan is to&n; * tackle the character devices first, as there aren&squot;t any locking implications&n; * in the block device layer.   The block devices will require more work.&n; *&n; * The generics driver has been updated to resize as required.  So as the tape&n; * driver. Two down, two more to go.&n; */
 macro_line|#ifndef CONFIG_SD_EXTRA_DEVS
 DECL|macro|CONFIG_SD_EXTRA_DEVS
 mdefine_line|#define CONFIG_SD_EXTRA_DEVS 2
-macro_line|#endif
-macro_line|#ifndef CONFIG_ST_EXTRA_DEVS
-DECL|macro|CONFIG_ST_EXTRA_DEVS
-mdefine_line|#define CONFIG_ST_EXTRA_DEVS 2
 macro_line|#endif
 macro_line|#ifndef CONFIG_SR_EXTRA_DEVS
 DECL|macro|CONFIG_SR_EXTRA_DEVS
@@ -1104,12 +1100,8 @@ mdefine_line|#define CONFIG_SR_EXTRA_DEVS 2
 macro_line|#endif
 DECL|macro|SD_EXTRA_DEVS
 mdefine_line|#define SD_EXTRA_DEVS CONFIG_SD_EXTRA_DEVS
-DECL|macro|ST_EXTRA_DEVS
-mdefine_line|#define ST_EXTRA_DEVS CONFIG_ST_EXTRA_DEVS
 DECL|macro|SR_EXTRA_DEVS
 mdefine_line|#define SR_EXTRA_DEVS CONFIG_SR_EXTRA_DEVS
-DECL|macro|SG_EXTRA_DEVS
-mdefine_line|#define SG_EXTRA_DEVS (SD_EXTRA_DEVS + SR_EXTRA_DEVS + ST_EXTRA_DEVS)
 macro_line|#endif
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

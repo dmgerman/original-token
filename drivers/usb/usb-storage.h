@@ -2,10 +2,6 @@ multiline_comment|/* Driver for USB mass storage - include file&n; *&n; * (c) 19
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USB_STORAGE
 mdefine_line|#define USB_STORAGE &quot;usb-storage: &quot;
-r_extern
-r_int
-id|usb_stor_debug
-suffix:semicolon
 macro_line|#ifdef CONFIG_USB_STORAGE_DEBUG
 r_void
 id|us_show_command
@@ -17,11 +13,11 @@ id|srb
 )paren
 suffix:semicolon
 DECL|macro|US_DEBUGP
-mdefine_line|#define US_DEBUGP(x...) { if(usb_stor_debug) printk( KERN_DEBUG USB_STORAGE ## x ); }
+mdefine_line|#define US_DEBUGP(x...) printk( KERN_DEBUG USB_STORAGE ## x )
 DECL|macro|US_DEBUGPX
-mdefine_line|#define US_DEBUGPX(x...) { if(usb_stor_debug) printk( ## x ); }
+mdefine_line|#define US_DEBUGPX(x...) printk( ## x )
 DECL|macro|US_DEBUG
-mdefine_line|#define US_DEBUG(x)  { if(usb_stor_debug) x; }
+mdefine_line|#define US_DEBUG(x) x 
 macro_line|#else
 DECL|macro|US_DEBUGP
 mdefine_line|#define US_DEBUGP(x...)
@@ -171,14 +167,21 @@ DECL|macro|US_BULK_RESET_SOFT
 mdefine_line|#define US_BULK_RESET_SOFT&t;1
 DECL|macro|US_BULK_RESET_HARD
 mdefine_line|#define US_BULK_RESET_HARD&t;0
+multiline_comment|/*&n; * us_bulk_transfer() return codes&n; */
+DECL|macro|US_BULK_TRANSFER_GOOD
+mdefine_line|#define US_BULK_TRANSFER_GOOD   0
+DECL|macro|US_BULK_TRANSFER_SHORT
+mdefine_line|#define US_BULK_TRANSFER_SHORT  1
+DECL|macro|US_BULK_TRANSFER_FAILED
+mdefine_line|#define US_BULK_TRANSFER_FAILED 2
 multiline_comment|/*&n; * Transport return codes&n; */
 DECL|macro|USB_STOR_TRANSPORT_GOOD
-mdefine_line|#define USB_STOR_TRANSPORT_GOOD    0    /* Transport good, command good    */
+mdefine_line|#define USB_STOR_TRANSPORT_GOOD    0   /* Transport good, command good     */
 DECL|macro|USB_STOR_TRANSPORT_FAILED
-mdefine_line|#define USB_STOR_TRANSPORT_FAILED  1    /* Transport good, command failed  */
+mdefine_line|#define USB_STOR_TRANSPORT_FAILED  1   /* Transport good, command failed   */
 DECL|macro|USB_STOR_TRANSPORT_ERROR
-mdefine_line|#define USB_STOR_TRANSPORT_ERROR   2    /* Transport bad (i.e. device dead */
-multiline_comment|/*&n; * CBI style&n; */
+mdefine_line|#define USB_STOR_TRANSPORT_ERROR   2   /* Transport bad (i.e. device dead) */
+multiline_comment|/*&n; * CBI accept device specific command&n; */
 DECL|macro|US_CBI_ADSC
 mdefine_line|#define US_CBI_ADSC&t;&t;0
 multiline_comment|/* &n; * GUID definitions&n; */

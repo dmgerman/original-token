@@ -353,7 +353,7 @@ id|Scsi_Host
 op_star
 id|HBA_ptr
 suffix:semicolon
-id|Scsi_Cmnd
+id|Scsi_Request
 op_star
 id|scmd
 suffix:semicolon
@@ -926,14 +926,10 @@ id|HBA_ptr
 suffix:semicolon
 id|scmd
 op_assign
-id|scsi_allocate_device
+id|scsi_allocate_request
 c_func
 (paren
 id|SDev
-comma
-l_int|1
-comma
-id|FALSE
 )paren
 suffix:semicolon
 id|cmnd
@@ -1012,16 +1008,16 @@ l_int|9
 op_assign
 l_int|0
 suffix:semicolon
-id|scmd-&gt;cmd_len
+id|scmd-&gt;sr_cmd_len
 op_assign
 l_int|10
 suffix:semicolon
-id|scmd-&gt;sc_data_direction
+id|scmd-&gt;sr_data_direction
 op_assign
 id|SCSI_DATA_READ
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do the command and wait for it to finish.&n;&t; */
-id|scsi_wait_cmd
+id|scsi_wait_req
 (paren
 id|scmd
 comma
@@ -1954,16 +1950,16 @@ l_int|9
 op_assign
 l_int|0
 suffix:semicolon
-id|scmd-&gt;cmd_len
+id|scmd-&gt;sr_cmd_len
 op_assign
 l_int|10
 suffix:semicolon
-id|scmd-&gt;sc_data_direction
+id|scmd-&gt;sr_data_direction
 op_assign
 id|SCSI_DATA_READ
 suffix:semicolon
 multiline_comment|/*&n;&t;     * Do the command and wait for it to finish.&n;&t;     */
-id|scsi_wait_cmd
+id|scsi_wait_req
 (paren
 id|scmd
 comma
@@ -2266,7 +2262,7 @@ op_plus
 id|len
 suffix:semicolon
 )brace
-id|scsi_release_command
+id|scsi_release_request
 c_func
 (paren
 id|scmd

@@ -4351,12 +4351,4 @@ c_func
 id|ppp_async_cleanup
 )paren
 suffix:semicolon
-DECL|variable|ppp_async_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ppp_async_init
-)paren
-suffix:semicolon
-multiline_comment|/* for debugging */
 eof

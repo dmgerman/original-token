@@ -538,6 +538,10 @@ id|n-&gt;vm_flags
 op_assign
 id|newflags
 suffix:semicolon
+id|n-&gt;vm_raend
+op_assign
+l_int|0
+suffix:semicolon
 id|n-&gt;vm_page_prot
 op_assign
 id|prot
@@ -677,6 +681,10 @@ suffix:semicolon
 id|n-&gt;vm_flags
 op_assign
 id|newflags
+suffix:semicolon
+id|n-&gt;vm_raend
+op_assign
+l_int|0
 suffix:semicolon
 id|n-&gt;vm_page_prot
 op_assign
@@ -851,6 +859,14 @@ id|left-&gt;vm_start
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
+id|left-&gt;vm_raend
+op_assign
+l_int|0
+suffix:semicolon
+id|right-&gt;vm_raend
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -917,6 +933,10 @@ suffix:semicolon
 id|vma-&gt;vm_flags
 op_assign
 id|newflags
+suffix:semicolon
+id|vma-&gt;vm_raend
+op_assign
+l_int|0
 suffix:semicolon
 id|vma-&gt;vm_page_prot
 op_assign

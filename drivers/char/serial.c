@@ -19263,7 +19263,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * register_serial and unregister_serial allows for serial ports to be&n; * configured at run-time, to support PCMCIA modems.&n; */
+multiline_comment|/*&n; * register_serial and unregister_serial allows for 16x50 serial ports to be&n; * configured at run-time, to support PCMCIA modems.&n; */
+multiline_comment|/**&n; *&t;register_serial - configure a 16x50 serial port at runtime&n; *&t;@req: request structure&n; *&n; *&t;Configure the serial port specified by the request. If the&n; *&t;port exists and is in use an error is returned. If the port&n; *&t;is not currently in the table it is added.&n; *&n; *&t;The port is then probed and if neccessary the IRQ is autodetected&n; *&t;If this fails an error is returned.&n; *&n; *&t;On success the port is ready to use and the line number is returned.&t;&n; */
 DECL|function|register_serial
 r_int
 id|register_serial
@@ -19658,6 +19659,7 @@ op_plus
 id|SERIAL_DEV_OFFSET
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;unregister_serial - deconfigure a 16x50 serial port&n; *&t;@line: line to deconfigure&n; *&n; *&t;The port specified is deconfigured and its resources are freed. Any&n; *&t;user of the port is disconnected as if carrier was dropped. Line is&n; *&t;the port number returned by register_serial.&n; */
 DECL|function|unregister_serial
 r_void
 id|unregister_serial

@@ -1395,6 +1395,7 @@ id|haddr
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_INET
 DECL|function|shaper_neigh_setup
 r_static
 r_int
@@ -1471,6 +1472,29 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else /* !(CONFIG_INET) */
+DECL|function|shaper_neigh_setup_dev
+r_static
+r_int
+id|shaper_neigh_setup_dev
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_struct
+id|neigh_parms
+op_star
+id|p
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|shaper_attach
 r_static
 r_int

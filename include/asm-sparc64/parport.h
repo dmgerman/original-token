@@ -5,17 +5,6 @@ mdefine_line|#define _ASM_SPARC64_PARPORT_H 1
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/ns87303.h&gt;
-macro_line|#ifdef CONFIG_PARPORT_PC_PCMCIA
-DECL|macro|__maybe_init
-mdefine_line|#define __maybe_init
-DECL|macro|__maybe_initdata
-mdefine_line|#define __maybe_initdata
-macro_line|#else
-DECL|macro|__maybe_init
-mdefine_line|#define __maybe_init __init
-DECL|macro|__maybe_initdata
-mdefine_line|#define __maybe_initdata __initdata
-macro_line|#endif
 DECL|macro|PARPORT_PC_MAX_PORTS
 mdefine_line|#define PARPORT_PC_MAX_PORTS&t;PARPORT_MAX
 DECL|variable|sparc_ebus_dmas
@@ -450,48 +439,16 @@ r_return
 id|res
 suffix:semicolon
 )brace
+DECL|function|parport_pc_find_nonpci_ports
 r_static
 r_int
-id|__maybe_init
-id|parport_pc_init_pci
-c_func
+id|parport_pc_find_nonpci_ports
 (paren
 r_int
-id|irq
+id|autoirq
 comma
 r_int
-id|dma
-)paren
-suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_int
-id|user_specified
-id|__initdata
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|__init
-DECL|function|parport_pc_init
-id|parport_pc_init
-c_func
-(paren
-r_int
-op_star
-id|io
-comma
-r_int
-op_star
-id|io_hi
-comma
-r_int
-op_star
-id|irq
-comma
-r_int
-op_star
-id|dma
+id|autodma
 )paren
 (brace
 r_struct
@@ -664,16 +621,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|count
-op_add_assign
-id|parport_pc_init_pci
-c_func
-(paren
-id|PARPORT_IRQ_AUTO
-comma
-id|PARPORT_DMA_NONE
-)paren
-suffix:semicolon
 r_return
 id|count
 suffix:semicolon

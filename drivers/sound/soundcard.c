@@ -3675,8 +3675,9 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
+DECL|function|conf_printf2
 r_void
 id|conf_printf2
 c_func
@@ -3780,10 +3781,11 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
 multiline_comment|/*&n; *&t;Module and lock management&n; */
 multiline_comment|/*&n; *&t;When a sound module is registered we need to bring it to the current&n; *&t;lock level...&n; */
+DECL|function|sound_notifier_chain_register
 r_void
 id|sound_notifier_chain_register
 c_func

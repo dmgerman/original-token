@@ -640,10 +640,6 @@ op_plus
 id|new_len
 suffix:semicolon
 id|new_vma-&gt;vm_pgoff
-op_assign
-id|vma-&gt;vm_pgoff
-suffix:semicolon
-id|new_vma-&gt;vm_pgoff
 op_add_assign
 (paren
 id|addr
@@ -652,6 +648,10 @@ id|vma-&gt;vm_start
 )paren
 op_rshift
 id|PAGE_SHIFT
+suffix:semicolon
+id|new_vma-&gt;vm_raend
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -118,6 +118,11 @@ id|file
 op_star
 id|vm_file
 suffix:semicolon
+DECL|member|vm_raend
+r_int
+r_int
+id|vm_raend
+suffix:semicolon
 DECL|member|vm_private_data
 r_void
 op_star
@@ -156,9 +161,23 @@ mdefine_line|#define VM_EXECUTABLE&t;0x00001000
 DECL|macro|VM_LOCKED
 mdefine_line|#define VM_LOCKED&t;0x00002000
 DECL|macro|VM_IO
-mdefine_line|#define VM_IO           0x00004000  /* Memory mapped I/O or similar */
+mdefine_line|#define VM_IO           0x00004000&t;/* Memory mapped I/O or similar */
+DECL|macro|VM_SEQ_READ
+mdefine_line|#define VM_SEQ_READ&t;0x00008000&t;/* App will access data sequentially */
+DECL|macro|VM_RAND_READ
+mdefine_line|#define VM_RAND_READ&t;0x00010000&t;/* App will not benefit from clustered reads */
 DECL|macro|VM_STACK_FLAGS
 mdefine_line|#define VM_STACK_FLAGS&t;0x00000177
+DECL|macro|VM_READHINTMASK
+mdefine_line|#define VM_READHINTMASK&t;&t;&t;(VM_SEQ_READ | VM_RAND_READ)
+DECL|macro|VM_ClearReadHint
+mdefine_line|#define VM_ClearReadHint(v)&t;&t;(v)-&gt;vm_flags &amp;= ~VM_READHINTMASK
+DECL|macro|VM_NormalReadHint
+mdefine_line|#define VM_NormalReadHint(v)&t;&t;(!((v)-&gt;vm_flags &amp; VM_READHINTMASK))
+DECL|macro|VM_SequentialReadHint
+mdefine_line|#define VM_SequentialReadHint(v)&t;((v)-&gt;vm_flags &amp; VM_SEQ_READ)
+DECL|macro|VM_RandomReadHint
+mdefine_line|#define VM_RandomReadHint(v)&t;&t;((v)-&gt;vm_flags &amp; VM_RAND_READ)
 multiline_comment|/*&n; * mapping from the currently active vm_flags protection bits (the&n; * low four bits) to a page protection mask..&n; */
 r_extern
 id|pgprot_t
@@ -258,28 +277,6 @@ comma
 r_int
 r_int
 id|flags
-)paren
-suffix:semicolon
-DECL|member|advise
-r_void
-(paren
-op_star
-id|advise
-)paren
-(paren
-r_struct
-id|vm_area_struct
-op_star
-id|area
-comma
-r_int
-r_int
-comma
-r_int
-comma
-r_int
-r_int
-id|advise
 )paren
 suffix:semicolon
 DECL|member|nopage

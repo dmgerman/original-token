@@ -643,6 +643,14 @@ DECL|member|fsbr
 r_int
 id|fsbr
 suffix:semicolon
+multiline_comment|/* Did this URB turn on FSBR? */
+DECL|member|short_control_packet
+r_char
+id|short_control_packet
+suffix:semicolon
+multiline_comment|/* If we get a short packet during */
+multiline_comment|/*  a control transfer, retrigger */
+multiline_comment|/*  the status phase */
 DECL|member|inserttime
 r_int
 r_int

@@ -2300,6 +2300,11 @@ id|fb
 op_assign
 id|info-&gt;fbops
 suffix:semicolon
+r_int
+r_int
+id|off
+suffix:semicolon
+macro_line|#if !defined(__sparc__) || defined(__sparc_v9__)
 r_struct
 id|fb_fix_screeninfo
 id|fix
@@ -2311,12 +2316,11 @@ suffix:semicolon
 r_int
 r_int
 id|start
-comma
-id|off
 suffix:semicolon
 id|u32
 id|len
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

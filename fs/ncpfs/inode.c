@@ -3009,9 +3009,11 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 r_return
-id|init_ncp_fs
+id|register_filesystem
 c_func
 (paren
+op_amp
+id|ncp_fs_type
 )paren
 suffix:semicolon
 )brace

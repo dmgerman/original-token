@@ -3725,9 +3725,11 @@ id|size
 op_assign
 id|generic_get_free_region
 suffix:semicolon
+multiline_comment|/**&n; *&t;mtrr_add - Add a memory type region&n; *&t;@base: Physical base address of region&n; *&t;@size: Physical size of region&n; *&t;@type: Type of MTRR desired&n; *&t;@increment: If this is true do usage counting on the region&n; *&n; *&t;Memory type region registers control the caching on newer Intel and&n; *&t;non Intel processors. This function allows drivers to request an&n; *&t;MTRR is added. The details and hardware specifics of each processors&n; *&t;implementation are hidden from the caller, but nevertheless the &n; *&t;caller should expect to need to provide a power of two size on an&n; *&t;equivalent power of two boundary.&n; *&n; *&t;If the region cannot be added either because all regions are in use&n; *&t;or the CPU cannot support it a negative value is returned. On success&n; *&t;the register number for this entry is returned, but should be treated&n; *&t;as a cookie only.&n; *&n; *&t;On a multiprocessor machine the changes are made to all processors.&n; *&t;This is required on x86 by the Intel processors.&n; *&n; *&t;The available types are&n; *&n; *&t;MTRR_TYPE_UNCACHEABLE&t;-&t;No caching&n; *&n; *&t;MTRR_TYPE_WRITEBACK&t;-&t;Write data back in bursts whenever&n; *&n; *&t;MTRR_TYPE_WRCOMB&t;-&t;Write data back soon but allow bursts&n; *&n; *&t;MTRR_TYPE_WRTHROUGH&t;-&t;Cache reads but not writes&n; *&n; *&t;BUGS: Needs a quiet flag for the cases where drivers do not mind&n; *&t;failures and do not wish system log messages to be sent.&n; */
 DECL|function|mtrr_add
 r_int
 id|mtrr_add
+c_func
 (paren
 r_int
 r_int
@@ -3744,8 +3746,8 @@ comma
 r_char
 id|increment
 )paren
-multiline_comment|/*  [SUMMARY] Add an MTRR entry.&n;    &lt;base&gt; The starting (base) address of the region.&n;    &lt;size&gt; The size (in bytes) of the region.&n;    &lt;type&gt; The type of the new region.&n;    &lt;increment&gt; If true and the region already exists, the usage count will be&n;    incremented.&n;    [RETURNS] The MTRR register on success, else a negative number indicating&n;    the error code.&n;    [NOTE] This routine uses a spinlock.&n;*/
 (brace
+multiline_comment|/*  [SUMMARY] Add an MTRR entry.&n;    &lt;base&gt; The starting (base) address of the region.&n;    &lt;size&gt; The size (in bytes) of the region.&n;    &lt;type&gt; The type of the new region.&n;    &lt;increment&gt; If true and the region already exists, the usage count will be&n;    incremented.&n;    [RETURNS] The MTRR register on success, else a negative number indicating&n;    the error code.&n;    [NOTE] This routine uses a spinlock.&n;*/
 r_int
 id|i
 comma
@@ -3892,6 +3894,7 @@ l_int|1
 (brace
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;mtrr: base(0x%lx) is not 4 MiB aligned&bslash;n&quot;
 comma
 id|base
@@ -3963,6 +3966,7 @@ id|MTRR_TYPE_WRCOMB
 (brace
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;mtrr: only write-combining is supported&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3985,6 +3989,7 @@ l_int|0x100000
 (brace
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;mtrr: cannot set region below 1 MiB (0x%lx,0x%lx)&bslash;n&quot;
 comma
 id|base
@@ -4049,6 +4054,7 @@ id|last
 (brace
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;mtrr: base(0x%lx) is not aligned on a size(0x%lx) boundary&bslash;n&quot;
 comma
 id|base
@@ -4109,6 +4115,7 @@ id|have_wrcomb
 (brace
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;mtrr: your processor doesn&squot;t support write-combining&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4232,6 +4239,7 @@ id|main_lock
 suffix:semicolon
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;mtrr: 0x%lx,0x%lx overlaps existing 0x%lx,0x%lx&bslash;n&quot;
 comma
 id|base
@@ -4394,6 +4402,7 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_add  */
+multiline_comment|/**&n; *&t;mtrr_del&n; *&t;@reg: Register returned by mtrr_add&n; *&t;@base: Physical base address&n; *&t;@size: Size of region&n; *&n; *&t;If register is supplied then base and size are ignored. This is&n; *&t;how drivers should call it.&n; *&n; *&t;Releases an MTRR region. If the usage count drops to zero the &n; *&t;register is freed and the region returns to default state.&n; *&t;On success the register is returned, on failure a negative error&n; *&t;code.&n; */
 DECL|function|mtrr_del
 r_int
 id|mtrr_del

@@ -628,6 +628,7 @@ id|chains
 l_int|16
 )braket
 suffix:semicolon
+multiline_comment|/**&n; *&t;register_sound_special&n; *&t;@fops: File operations for the driver&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Allocate a special sound device by minor number from the sound&n; *&t;subsystem. The allocated number is returned on succes. On failure&n; *&t;a negative error code is returned.&n; */
 DECL|function|register_sound_special
 r_int
 id|register_sound_special
@@ -835,6 +836,7 @@ c_func
 id|register_sound_special
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;register_sound_mixer&n; *&t;@fops: File operations for the driver&n; *&t;@dev: Unit number to allocate&n; *&n; *&t;Allocate a mixer device. Unit is the number of the mixer requested.&n; *&t;Pass -1 to request the next free mixer unit. On success the allocated&n; *&t;number is returned, on failure a negative error code is returned.&n; */
 DECL|function|register_sound_mixer
 r_int
 id|register_sound_mixer
@@ -882,6 +884,7 @@ c_func
 id|register_sound_mixer
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;register_sound_midi&n; *&t;@fops: File operations for the driver&n; *&t;@dev: Unit number to allocate&n; *&n; *&t;Allocate a midi device. Unit is the number of the midi device requested.&n; *&t;Pass -1 to request the next free midi unit. On success the allocated&n; *&t;number is returned, on failure a negative error code is returned.&n; */
 DECL|function|register_sound_midi
 r_int
 id|register_sound_midi
@@ -930,6 +933,7 @@ id|register_sound_midi
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;DSP&squot;s are registered as a triple. Register only one and cheat&n; *&t;in open - see below.&n; */
+multiline_comment|/**&n; *&t;register_sound_dsp&n; *&t;@fops: File operations for the driver&n; *&t;@dev: Unit number to allocate&n; *&n; *&t;Allocate a DSP device. Unit is the number of the DSP requested.&n; *&t;Pass -1 to request the next free DSP unit. On success the allocated&n; *&t;number is returned, on failure a negative error code is returned.&n; *&n; *&t;This function allocates both the audio and dsp device entries together&n; *&t;and will always allocate them as a matching pair - eg dsp3/audio3&n; */
 DECL|function|register_sound_dsp
 r_int
 id|register_sound_dsp
@@ -977,6 +981,7 @@ c_func
 id|register_sound_dsp
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;register_sound_synth&n; *&t;@fops: File operations for the driver&n; *&t;@dev: Unit number to allocate&n; *&n; *&t;Allocate a synth device. Unit is the number of the synth device requested.&n; *&t;Pass -1 to request the next free synth unit. On success the allocated&n; *&t;number is returned, on failure a negative error code is returned.&n; */
 DECL|function|register_sound_synth
 r_int
 id|register_sound_synth
@@ -1024,6 +1029,7 @@ c_func
 id|register_sound_synth
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;unregister_sound_special&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_special.&n; *&t;The unit passed is the return value from the register function.&n; */
 DECL|function|unregister_sound_special
 r_void
 id|unregister_sound_special
@@ -1055,6 +1061,7 @@ c_func
 id|unregister_sound_special
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;unregister_sound_mixer&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_mixer.&n; *&t;The unit passed is the return value from the register function.&n; */
 DECL|function|unregister_sound_mixer
 r_void
 id|unregister_sound_mixer
@@ -1084,6 +1091,7 @@ c_func
 id|unregister_sound_mixer
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;unregister_sound_midi&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_midi.&n; *&t;The unit passed is the return value from the register function.&n; */
 DECL|function|unregister_sound_midi
 r_void
 id|unregister_sound_midi
@@ -1114,6 +1122,7 @@ c_func
 id|unregister_sound_midi
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;unregister_sound_dsp&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_dsp.&n; *&t;The unit passed is the return value from the register function.&n; *&n; *&t;Both of the allocated units are released together automatically.&n; */
 DECL|function|unregister_sound_dsp
 r_void
 id|unregister_sound_dsp
@@ -1144,6 +1153,7 @@ c_func
 id|unregister_sound_dsp
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;unregister_sound_synth&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_synth.&n; *&t;The unit passed is the return value from the register function.&n; */
 DECL|function|unregister_sound_synth
 r_void
 id|unregister_sound_synth

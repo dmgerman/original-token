@@ -2024,7 +2024,7 @@ c_cond
 id|SDpnt-&gt;was_reset
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * We need to relock the door, but we might&n;&t;&t;&t; * be in an interrupt handler.  Only do this&n;&t;&t;&t; * from user space, since we do not want to&n;&t;&t;&t; * sleep from an interrupt.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * We need to relock the door, but we might&n;&t;&t;&t; * be in an interrupt handler.  Only do this&n;&t;&t;&t; * from user space, since we do not want to&n;&t;&t;&t; * sleep from an interrupt.&n;&t;&t;&t; *&n;&t;&t;&t; * FIXME(eric) - have the error handler thread do&n;&t;&t;&t; * this work.&n;&t;&t;&t; */
 id|SDpnt-&gt;was_reset
 op_assign
 l_int|0
@@ -2141,6 +2141,16 @@ comma
 id|FALSE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|SCpnt
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 id|scsi_init_cmd_from_req
 c_func
 (paren

@@ -28,7 +28,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;uhci_show_qh %p (%08lX):&quot;
+l_string|&quot;QH @ %p/%08lX:&quot;
 comma
 id|qh
 comma
@@ -48,35 +48,25 @@ id|UHCI_PTR_TERM
 id|dbg
 c_func
 (paren
-l_string|&quot;Head Terminate&quot;
+l_string|&quot;    Head Terminate&quot;
 )paren
 suffix:semicolon
 r_else
-(brace
-r_if
-c_cond
+id|dbg
+c_func
+(paren
+l_string|&quot;    Head: %s @ %08X&quot;
+comma
 (paren
 id|qh-&gt;hw.qh.head
 op_amp
 id|UHCI_PTR_QH
+ques
+c_cond
+l_string|&quot;QH&quot;
+suffix:colon
+l_string|&quot;TD&quot;
 )paren
-id|dbg
-c_func
-(paren
-l_string|&quot;Head points to QH&quot;
-)paren
-suffix:semicolon
-r_else
-id|dbg
-c_func
-(paren
-l_string|&quot;Head points to TD&quot;
-)paren
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;head: %08X&quot;
 comma
 id|qh-&gt;hw.qh.head
 op_amp
@@ -84,7 +74,6 @@ op_complement
 id|UHCI_PTR_BITS
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -95,35 +84,25 @@ id|UHCI_PTR_TERM
 id|dbg
 c_func
 (paren
-l_string|&quot;Element Terminate&quot;
+l_string|&quot;    Element Terminate&quot;
 )paren
 suffix:semicolon
 r_else
-(brace
-r_if
-c_cond
+id|dbg
+c_func
+(paren
+l_string|&quot;    Element: %s @ %08X&quot;
+comma
 (paren
 id|qh-&gt;hw.qh.element
 op_amp
 id|UHCI_PTR_QH
+ques
+c_cond
+l_string|&quot;QH&quot;
+suffix:colon
+l_string|&quot;TD&quot;
 )paren
-id|dbg
-c_func
-(paren
-l_string|&quot;Element points to QH&quot;
-)paren
-suffix:semicolon
-r_else
-id|dbg
-c_func
-(paren
-l_string|&quot;Element points to TD&quot;
-)paren
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;element: %08X&quot;
 comma
 id|qh-&gt;hw.qh.element
 op_amp
@@ -131,7 +110,6 @@ op_complement
 id|UHCI_PTR_BITS
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 DECL|function|uhci_show_td
@@ -146,19 +124,6 @@ id|td
 r_char
 op_star
 id|spid
-suffix:semicolon
-id|warn
-c_func
-(paren
-l_string|&quot;uhci_show_td %p (%08lX) &quot;
-comma
-id|td
-comma
-id|virt_to_bus
-(paren
-id|td
-)paren
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -207,7 +172,14 @@ suffix:semicolon
 id|warn
 c_func
 (paren
-l_string|&quot;MaxLen=%02x DT%d EndPt=%x Dev=%x, PID=%x(%s) (buf=%08x)&quot;
+l_string|&quot;  TD @ %p/%08lX, MaxLen=%02x DT%d EP=%x Dev=%x PID=(%s) buf=%08x&quot;
+comma
+id|td
+comma
+id|virt_to_bus
+(paren
+id|td
+)paren
 comma
 id|td-&gt;hw.td.info
 op_rshift
@@ -239,12 +211,6 @@ l_int|8
 op_amp
 l_int|127
 comma
-(paren
-id|td-&gt;hw.td.info
-op_amp
-l_int|0xff
-)paren
-comma
 id|spid
 comma
 id|td-&gt;hw.td.buffer
@@ -253,7 +219,7 @@ suffix:semicolon
 id|warn
 c_func
 (paren
-l_string|&quot;Len=%02x e%d %s%s%s%s%s%s%s%s%s%s&quot;
+l_string|&quot;    Len=%02x e%d %s%s%s%s%s%s%s%s%s%s&quot;
 comma
 id|td-&gt;hw.td.status
 op_amp
@@ -380,7 +346,6 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
-macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -391,22 +356,30 @@ id|UHCI_PTR_TERM
 id|warn
 c_func
 (paren
-l_string|&quot;Link Terminate&quot;
+l_string|&quot;   TD Link Terminate&quot;
 )paren
 suffix:semicolon
 r_else
-(brace
-r_if
-c_cond
+id|warn
+c_func
+(paren
+l_string|&quot;    Link points to %s @ %08x, %s&quot;
+comma
 (paren
 id|td-&gt;hw.td.link
 op_amp
 id|UHCI_PTR_QH
+ques
+c_cond
+l_string|&quot;QH&quot;
+suffix:colon
+l_string|&quot;TD&quot;
 )paren
-id|warn
-c_func
-(paren
-l_string|&quot;%s, link points to QH @ %08x&quot;
+comma
+id|td-&gt;hw.td.link
+op_amp
+op_complement
+id|UHCI_PTR_BITS
 comma
 (paren
 id|td-&gt;hw.td.link
@@ -416,40 +389,10 @@ ques
 c_cond
 l_string|&quot;Depth first&quot;
 suffix:colon
-l_string|&quot; Breadth first&quot;
+l_string|&quot;Breadth first&quot;
 )paren
-comma
-id|td-&gt;hw.td.link
-op_amp
-op_complement
-id|UHCI_PTR_BITS
 )paren
 suffix:semicolon
-r_else
-id|warn
-c_func
-(paren
-l_string|&quot;%s, link points to TD @ %08x&quot;
-comma
-(paren
-id|td-&gt;hw.td.link
-op_amp
-id|UHCI_PTR_DEPTH
-ques
-c_cond
-l_string|&quot;Depth first&quot;
-suffix:colon
-l_string|&quot; Breadth first&quot;
-)paren
-comma
-id|td-&gt;hw.td.link
-op_amp
-op_complement
-id|UHCI_PTR_BITS
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 macro_line|#ifdef DEBUG
 DECL|function|uhci_show_td_queue
@@ -461,19 +404,7 @@ id|puhci_desc_t
 id|td
 )paren
 (brace
-id|dbg
-c_func
-(paren
-l_string|&quot;uhci_show_td_queue %p (%08lX):&quot;
-comma
-id|td
-comma
-id|virt_to_bus
-(paren
-id|td
-)paren
-)paren
-suffix:semicolon
+singleline_comment|//dbg(&quot;uhci_show_td_queue %p (%08lX):&quot;, td, virt_to_bus (td));
 r_while
 c_loop
 (paren
@@ -494,8 +425,6 @@ id|UHCI_PTR_TERM
 )paren
 r_break
 suffix:semicolon
-singleline_comment|//if(!(td-&gt;hw.td.link&amp;UHCI_PTR_DEPTH))
-singleline_comment|//      break;
 r_if
 c_cond
 (paren
@@ -530,7 +459,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-singleline_comment|//              schedule();
 )brace
 )brace
 DECL|function|uhci_show_queue
@@ -542,6 +470,12 @@ id|puhci_desc_t
 id|qh
 )paren
 (brace
+id|uhci_desc_t
+op_star
+id|start_qh
+op_assign
+id|qh
+suffix:semicolon
 id|dbg
 c_func
 (paren
@@ -561,20 +495,6 @@ id|uhci_show_qh
 id|qh
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|qh-&gt;hw.qh.element
-op_amp
-id|UHCI_PTR_QH
-)paren
-id|dbg
-c_func
-(paren
-l_string|&quot;Warning: qh-&gt;element points to qh!&quot;
-)paren
-suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -634,6 +554,24 @@ id|dbg
 c_func
 (paren
 l_string|&quot;qh points to itself!&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|qh
+op_eq
+id|start_qh
+)paren
+(brace
+singleline_comment|// avoid loop
+id|dbg
+c_func
+(paren
+l_string|&quot;Loop detect&quot;
 )paren
 suffix:semicolon
 r_break

@@ -482,6 +482,10 @@ DECL|macro|DAC_8BIT_EN
 mdefine_line|#define DAC_8BIT_EN&t;&t;&t;&t;0x00000100
 DECL|macro|DAC_MASK
 mdefine_line|#define DAC_MASK&t;&t;&t;&t;0xFF000000
+DECL|macro|DAC_BLANKING
+mdefine_line|#define DAC_BLANKING&t;&t;&t;&t;0x00000004
+DECL|macro|DAC_RANGE_CNTL
+mdefine_line|#define DAC_RANGE_CNTL&t;&t;&t;&t;0x00000003
 multiline_comment|/* GEN_RESET_CNTL bit constants */
 DECL|macro|SOFT_RESET_GUI
 mdefine_line|#define SOFT_RESET_GUI&t;&t;&t;&t;0x00000001

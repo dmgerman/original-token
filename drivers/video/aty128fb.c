@@ -19,13 +19,13 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PPC
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#include &lt;video/macmodes.h&gt;
 macro_line|#ifdef CONFIG_NVRAM
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#endif
-macro_line|#include &lt;video/macmodes.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
@@ -37,7 +37,7 @@ macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 macro_line|#include &lt;video/fbcon-cfb32.h&gt;
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#include &lt;asm/mtrr.h&gt;
-macro_line|#endif /* CONFIG_MTRR */
+macro_line|#endif
 macro_line|#include &quot;aty128.h&quot;
 multiline_comment|/* Debug flag */
 DECL|macro|DEBUG
@@ -392,6 +392,12 @@ DECL|member|Rloop
 id|u8
 id|Rloop
 suffix:semicolon
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* various memory configurations */
@@ -421,6 +427,8 @@ comma
 l_int|30
 comma
 l_int|16
+comma
+l_string|&quot;128-bit SDR SGRAM (1:1)&quot;
 )brace
 suffix:semicolon
 DECL|variable|sdr_64
@@ -449,6 +457,8 @@ comma
 l_int|46
 comma
 l_int|17
+comma
+l_string|&quot;64-bit SDR SGRAM (1:1)&quot;
 )brace
 suffix:semicolon
 DECL|variable|sdr_sgram
@@ -477,6 +487,8 @@ comma
 l_int|24
 comma
 l_int|16
+comma
+l_string|&quot;64-bit SDR SGRAM (2:1)&quot;
 )brace
 suffix:semicolon
 DECL|variable|ddr_sgram
@@ -505,6 +517,8 @@ comma
 l_int|31
 comma
 l_int|16
+comma
+l_string|&quot;64-bit DDR SGRAM&quot;
 )brace
 suffix:semicolon
 DECL|variable|currcon
@@ -564,8 +578,35 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef CONFIG_PPC
+DECL|variable|bios_seg
+r_static
+r_void
+op_star
+id|bios_seg
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PPC
 macro_line|#ifdef CONFIG_NVRAM_NOT_DEFINED
+DECL|variable|__initdata
+r_static
+r_int
+id|default_vmode
+id|__initdata
+op_assign
+id|VMODE_640_480_60
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_int
+id|default_cmode
+id|__initdata
+op_assign
+id|CMODE_8
+suffix:semicolon
+macro_line|#else
 DECL|variable|__initdata
 r_static
 r_int
@@ -582,23 +623,6 @@ id|__initdata
 op_assign
 id|CMODE_NVRAM
 suffix:semicolon
-macro_line|#else
-DECL|variable|__initdata
-r_static
-r_int
-id|default_vmode
-id|__initdata
-op_assign
-id|VMODE_CHOOSE
-suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_int
-id|default_cmode
-id|__initdata
-op_assign
-id|CMODE_8
-suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_MTRR
@@ -609,7 +633,7 @@ id|mtrr
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif /* CONFIG_MTRR */
+macro_line|#endif
 multiline_comment|/* PLL constants */
 DECL|struct|aty128_constants
 r_struct
@@ -780,29 +804,31 @@ r_struct
 id|aty128_constants
 id|constants
 suffix:semicolon
+multiline_comment|/* PLL and others      */
 DECL|member|regbase_phys
 r_int
 r_int
 id|regbase_phys
 suffix:semicolon
-multiline_comment|/* mmio                */
+multiline_comment|/* physical mmio       */
+DECL|member|regbase
+r_void
+op_star
+id|regbase
+suffix:semicolon
+multiline_comment|/* remapped mmio       */
 DECL|member|frame_buffer_phys
 r_int
 r_int
 id|frame_buffer_phys
 suffix:semicolon
-multiline_comment|/* framebuffer memory  */
+multiline_comment|/* physical fb memory  */
 DECL|member|frame_buffer
 r_int
 r_int
 id|frame_buffer
 suffix:semicolon
 multiline_comment|/* remaped framebuffer */
-DECL|member|regbase
-r_void
-op_star
-id|regbase
-suffix:semicolon
 DECL|member|mem
 r_const
 r_struct
@@ -816,20 +842,6 @@ id|u32
 id|vram_size
 suffix:semicolon
 multiline_comment|/* onboard video ram   */
-macro_line|#ifndef CONFIG_PPC
-DECL|member|bios_seg
-r_void
-op_star
-id|bios_seg
-suffix:semicolon
-multiline_comment|/* video BIOS segment  */
-macro_line|#endif
-DECL|member|card_revision
-r_int
-r_int
-id|card_revision
-suffix:semicolon
-multiline_comment|/* video card revision */
 DECL|member|default_par
 DECL|member|current_par
 r_struct
@@ -931,7 +943,7 @@ suffix:semicolon
 )brace
 id|mtrr
 suffix:semicolon
-macro_line|#endif /* CONFIG_MTRR */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|board_list
@@ -1286,6 +1298,51 @@ id|info
 suffix:semicolon
 r_static
 r_int
+id|aty128_encode_var
+c_func
+(paren
+r_struct
+id|fb_var_screeninfo
+op_star
+id|var
+comma
+r_const
+r_struct
+id|aty128fb_par
+op_star
+id|par
+comma
+r_const
+r_struct
+id|fb_info_aty128
+op_star
+id|info
+)paren
+suffix:semicolon
+r_static
+r_int
+id|aty128_decode_var
+c_func
+(paren
+r_struct
+id|fb_var_screeninfo
+op_star
+id|var
+comma
+r_struct
+id|aty128fb_par
+op_star
+id|par
+comma
+r_const
+r_struct
+id|fb_info_aty128
+op_star
+id|info
+)paren
+suffix:semicolon
+r_static
+r_int
 id|aty128_pci_register
 c_func
 (paren
@@ -1319,7 +1376,6 @@ op_star
 id|new_node
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_PPC
 r_static
 r_int
 id|aty128find_ROM
@@ -1331,6 +1387,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_PPC
 r_static
 r_void
 id|aty128_get_pllinfo
@@ -2196,7 +2253,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* write to the scratch register to test r/w functionality */
 r_static
-id|u32
+r_int
+id|__init
 DECL|function|register_test
 id|register_test
 c_func
@@ -3025,6 +3083,24 @@ comma
 id|crtc-&gt;offset_cntl
 )paren
 suffix:semicolon
+multiline_comment|/* Disable ATOMIC updating.  Is this the right place? */
+id|aty_st_le32
+c_func
+(paren
+id|PPLL_CNTL
+comma
+id|aty_ld_le32
+c_func
+(paren
+id|PPLL_CNTL
+)paren
+op_amp
+op_complement
+(paren
+l_int|0x00030000
+)paren
+)paren
+suffix:semicolon
 )brace
 r_static
 r_int
@@ -3555,7 +3631,7 @@ l_int|0
 suffix:semicolon
 id|crtc-&gt;gen_cntl
 op_assign
-l_int|0x03000000L
+l_int|0x3000000L
 op_or
 id|c_sync
 op_or
@@ -3864,7 +3940,7 @@ l_string|&quot;Invalid pixel width&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EINVAL
 suffix:semicolon
 )brace
 r_return
@@ -4056,8 +4132,8 @@ id|h_disp
 op_plus
 l_int|1
 )paren
-op_star
-l_int|8
+op_lshift
+l_int|3
 suffix:semicolon
 id|yres
 op_assign
@@ -4982,6 +5058,23 @@ id|info
 id|u32
 id|config
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
+macro_line|#if 0 /* enable this when macmodes gets updated */
+r_struct
+id|vc_mode
+id|disp_info
+suffix:semicolon
+macro_line|#endif
+r_struct
+id|fb_var_screeninfo
+id|var
+suffix:semicolon
+r_int
+id|cmode
+comma
+id|vmode
+suffix:semicolon
+macro_line|#endif
 id|info-&gt;current_par
 op_assign
 op_star
@@ -5207,6 +5300,257 @@ comma
 id|info
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
+macro_line|#if 0 /* use this when macmodes gets updated */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|console_fb_info
+op_logical_or
+id|console_fb_info
+op_eq
+op_amp
+id|info-&gt;fb_info
+)paren
+(brace
+id|disp_info.width
+op_assign
+(paren
+(paren
+id|par-&gt;crtc.v_total
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0x7ff
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+id|disp_info.height
+op_assign
+(paren
+(paren
+(paren
+id|par-&gt;crtc.h_total
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+)paren
+op_plus
+l_int|1
+)paren
+op_lshift
+l_int|3
+suffix:semicolon
+id|disp_info.depth
+op_assign
+id|par-&gt;crtc.bpp
+suffix:semicolon
+id|disp_info.pitch
+op_assign
+id|par-&gt;crtc.vxres
+op_star
+id|par-&gt;crtc.bpp
+op_rshift
+l_int|3
+suffix:semicolon
+id|aty128_encode_var
+c_func
+(paren
+op_amp
+id|var
+comma
+id|par
+comma
+id|info
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mac_var_to_vmode
+c_func
+(paren
+op_amp
+id|var
+comma
+op_amp
+id|vmode
+comma
+op_amp
+id|cmode
+)paren
+)paren
+id|disp_info.mode
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|disp_info.mode
+op_assign
+id|vmode
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|disp_info.name
+comma
+id|aty128fb_name
+)paren
+suffix:semicolon
+id|disp_info.fb_address
+op_assign
+id|info-&gt;frame_buffer_phys
+suffix:semicolon
+id|disp_info.cmap_adr_address
+op_assign
+l_int|0
+suffix:semicolon
+id|disp_info.cmap_data_address
+op_assign
+l_int|0
+suffix:semicolon
+id|disp_info.disp_reg_address
+op_assign
+id|info-&gt;regbase_phys
+suffix:semicolon
+id|register_compat_xpmac
+c_func
+(paren
+id|disp_info
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|console_fb_info
+op_logical_or
+id|console_fb_info
+op_eq
+op_amp
+id|info-&gt;fb_info
+)paren
+(brace
+id|display_info.width
+op_assign
+(paren
+(paren
+id|par-&gt;crtc.v_total
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0x7ff
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+id|display_info.height
+op_assign
+(paren
+(paren
+(paren
+id|par-&gt;crtc.h_total
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+)paren
+op_plus
+l_int|1
+)paren
+op_lshift
+l_int|3
+suffix:semicolon
+id|display_info.depth
+op_assign
+id|par-&gt;crtc.bpp
+suffix:semicolon
+id|display_info.pitch
+op_assign
+id|par-&gt;crtc.vxres
+op_star
+id|par-&gt;crtc.bpp
+op_rshift
+l_int|3
+suffix:semicolon
+id|aty128_encode_var
+c_func
+(paren
+op_amp
+id|var
+comma
+id|par
+comma
+id|info
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mac_var_to_vmode
+c_func
+(paren
+op_amp
+id|var
+comma
+op_amp
+id|vmode
+comma
+op_amp
+id|cmode
+)paren
+)paren
+id|display_info.mode
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|display_info.mode
+op_assign
+id|vmode
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|display_info.name
+comma
+id|aty128fb_name
+)paren
+suffix:semicolon
+id|display_info.fb_address
+op_assign
+id|info-&gt;frame_buffer_phys
+suffix:semicolon
+id|display_info.cmap_adr_address
+op_assign
+l_int|0
+suffix:semicolon
+id|display_info.cmap_data_address
+op_assign
+l_int|0
+suffix:semicolon
+id|display_info.disp_reg_address
+op_assign
+id|info-&gt;regbase_phys
+suffix:semicolon
+id|register_compat_xpmac
+c_func
+(paren
+id|display_info
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
 multiline_comment|/*&n;     *  Open/Release the frame buffer device&n;     */
 DECL|function|aty128fb_open
@@ -5661,58 +6005,71 @@ id|var-&gt;yres_virtual
 op_assign
 id|var-&gt;yres
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|var-&gt;bits_per_pixel
-op_le
+)paren
+(brace
+r_case
+l_int|0
+dot
+dot
+dot
 l_int|8
-)paren
+suffix:colon
 id|var-&gt;bits_per_pixel
 op_assign
 l_int|8
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|var-&gt;bits_per_pixel
-op_le
+r_break
+suffix:semicolon
+r_case
+l_int|9
+dot
+dot
+dot
 l_int|16
-)paren
+suffix:colon
 id|var-&gt;bits_per_pixel
 op_assign
 l_int|16
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|var-&gt;bits_per_pixel
-op_le
+r_break
+suffix:semicolon
+r_case
+l_int|17
+dot
+dot
+dot
 l_int|24
-)paren
+suffix:colon
 id|var-&gt;bits_per_pixel
 op_assign
 l_int|24
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|var-&gt;bits_per_pixel
-op_le
+r_break
+suffix:semicolon
+r_case
+l_int|25
+dot
+dot
+dot
 l_int|32
-)paren
+suffix:colon
 id|var-&gt;bits_per_pixel
 op_assign
 l_int|32
 suffix:semicolon
-r_else
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5976,98 +6333,6 @@ id|info-&gt;fb_info
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
-r_if
-c_cond
-(paren
-op_logical_neg
-id|console_fb_info
-op_logical_or
-id|console_fb_info
-op_eq
-op_amp
-id|info-&gt;fb_info
-)paren
-(brace
-r_int
-id|vmode
-comma
-id|cmode
-suffix:semicolon
-id|display_info.width
-op_assign
-id|var-&gt;xres
-suffix:semicolon
-id|display_info.height
-op_assign
-id|var-&gt;yres
-suffix:semicolon
-id|display_info.depth
-op_assign
-id|var-&gt;bits_per_pixel
-suffix:semicolon
-id|display_info.pitch
-op_assign
-(paren
-id|var-&gt;xres_virtual
-)paren
-op_star
-(paren
-id|var-&gt;bits_per_pixel
-)paren
-op_div
-l_int|8
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|mac_var_to_vmode
-c_func
-(paren
-id|var
-comma
-op_amp
-id|vmode
-comma
-op_amp
-id|cmode
-)paren
-)paren
-id|display_info.mode
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-id|display_info.mode
-op_assign
-id|vmode
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|info-&gt;fb_info.modename
-comma
-id|aty128fb_name
-)paren
-suffix:semicolon
-id|display_info.fb_address
-op_assign
-id|info-&gt;frame_buffer_phys
-suffix:semicolon
-id|display_info.cmap_adr_address
-op_assign
-l_int|0
-suffix:semicolon
-id|display_info.cmap_data_address
-op_assign
-l_int|0
-suffix:semicolon
-id|display_info.disp_reg_address
-op_assign
-id|info-&gt;regbase_phys
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -7145,7 +7410,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_MTRR */
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PPC
 multiline_comment|/* vmode and cmode depreciated */
 r_else
 r_if
@@ -7339,28 +7604,6 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|register_test
-c_func
-(paren
-id|info
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;aty128fb: Can&squot;t write to video registers&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
 id|info-&gt;vram_size
 )paren
 multiline_comment|/* may have already been probed */
@@ -7374,6 +7617,7 @@ id|CONFIG_MEMSIZE
 op_amp
 l_int|0x03FFFFFF
 suffix:semicolon
+multiline_comment|/* Get the chip revision */
 id|chip_rev
 op_assign
 (paren
@@ -7415,13 +7659,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;aty128fb: %s [chip rev 0x%x] [card rev %x] &quot;
+l_string|&quot;aty128fb: %s [chip rev 0x%x] &quot;
 comma
 id|video_card
 comma
 id|chip_rev
-comma
-id|info-&gt;card_revision
 )paren
 suffix:semicolon
 r_if
@@ -7440,7 +7682,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%dM&bslash;n&quot;
+l_string|&quot;%dM %s&bslash;n&quot;
 comma
 id|info-&gt;vram_size
 op_div
@@ -7449,17 +7691,21 @@ l_int|1024
 op_star
 l_int|1024
 )paren
+comma
+id|info-&gt;mem-&gt;name
 )paren
 suffix:semicolon
 r_else
 id|printk
 c_func
 (paren
-l_string|&quot;%dk&bslash;n&quot;
+l_string|&quot;%dk %s&bslash;n&quot;
 comma
 id|info-&gt;vram_size
 op_div
 l_int|1024
+comma
+id|info-&gt;mem-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* fill in info */
@@ -7532,6 +7778,46 @@ id|var
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC       /* CONFIG_PPC implied */
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mode_option
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mac_find_mode
+c_func
+(paren
+op_amp
+id|var
+comma
+op_amp
+id|info-&gt;fb_info
+comma
+id|mode_option
+comma
+l_int|8
+)paren
+)paren
+id|var
+op_assign
+id|default_var
+suffix:semicolon
+)brace
+r_else
+(brace
 macro_line|#ifdef CONFIG_NVRAM
 r_if
 c_cond
@@ -7540,7 +7826,6 @@ id|default_vmode
 op_eq
 id|VMODE_NVRAM
 )paren
-(brace
 id|default_vmode
 op_assign
 id|nvram_read_byte
@@ -7549,6 +7834,22 @@ c_func
 id|NV_VMODE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|default_cmode
+op_eq
+id|CMODE_NVRAM
+)paren
+id|default_cmode
+op_assign
+id|nvram_read_byte
+c_func
+(paren
+id|NV_CMODE
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7562,28 +7863,43 @@ id|VMODE_MAX
 )paren
 id|default_vmode
 op_assign
-id|VMODE_CHOOSE
+id|VMODE_640_480_60
 suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
-id|default_vmode
-op_eq
-id|VMODE_CHOOSE
+id|default_cmode
+template_param
+id|CMODE_32
 )paren
-(brace
+id|default_cmode
+op_assign
+id|CMODE_8
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mac_vmode_to_var
+c_func
+(paren
+id|default_vmode
+comma
+id|default_cmode
+comma
+op_amp
+id|var
+)paren
+)paren
 id|var
 op_assign
 id|default_var
 suffix:semicolon
-macro_line|#endif /* CONFIG_PPC */
+)brace
+)brace
+macro_line|#else
 r_if
 c_cond
 (paren
-op_logical_neg
 id|fb_find_mode
 c_func
 (paren
@@ -7604,57 +7920,14 @@ id|defaultmode
 comma
 id|initdepth
 )paren
+op_eq
+l_int|0
 )paren
 id|var
 op_assign
 id|default_var
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC
-macro_line|#ifdef CONFIG_NVRAM
-r_if
-c_cond
-(paren
-id|default_cmode
-op_eq
-id|CMODE_NVRAM
-)paren
-id|default_cmode
-op_assign
-id|nvram_read_byte
-c_func
-(paren
-id|NV_CMODE
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|_machine
-op_eq
-id|_MACH_Pmac
-)paren
-r_if
-c_cond
-(paren
-id|mac_vmode_to_var
-c_func
-(paren
-id|default_vmode
-comma
-id|default_cmode
-comma
-op_amp
-id|var
-)paren
-)paren
-id|var
-op_assign
-id|default_var
-suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 macro_line|#endif /* MODULE */
 r_if
 c_cond
@@ -7765,15 +8038,17 @@ c_func
 (paren
 id|DAC_CNTL
 )paren
-op_amp
-l_int|15
 suffix:semicolon
-multiline_comment|/* preserve lower three bits */
 id|dac
 op_or_assign
+(paren
 id|DAC_8BIT_EN
+op_or
+id|DAC_RANGE_CNTL
+op_or
+id|DAC_BLANKING
+)paren
 suffix:semicolon
-multiline_comment|/* set 8 bit dac             */
 id|dac
 op_or_assign
 id|DAC_MASK
@@ -8224,10 +8499,12 @@ id|fb_info_aty128
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Copy PCI device info into info-&gt;pdev */
 id|info-&gt;pdev
 op_assign
 id|pdev
 suffix:semicolon
+multiline_comment|/* Virtualize mmio region */
 id|info-&gt;regbase_phys
 op_assign
 id|reg_addr
@@ -8251,21 +8528,6 @@ id|info-&gt;regbase
 r_goto
 id|err_out
 suffix:semicolon
-id|pci_read_config_word
-c_func
-(paren
-id|pdev
-comma
-l_int|0x08
-comma
-op_amp
-id|tmp
-)paren
-suffix:semicolon
-id|info-&gt;card_revision
-op_assign
-id|tmp
-suffix:semicolon
 id|info-&gt;vram_size
 op_assign
 id|aty_ld_le32
@@ -8275,33 +8537,6 @@ id|CONFIG_MEMSIZE
 )paren
 op_amp
 l_int|0x03FFFFFF
-suffix:semicolon
-id|info-&gt;frame_buffer_phys
-op_assign
-id|fb_addr
-suffix:semicolon
-id|info-&gt;frame_buffer
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|ioremap
-c_func
-(paren
-id|fb_addr
-comma
-id|info-&gt;vram_size
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info-&gt;frame_buffer
-)paren
-r_goto
-id|err_out
 suffix:semicolon
 id|pci_read_config_word
 c_func
@@ -8340,14 +8575,57 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_PPC)
-id|aty128_timings
+multiline_comment|/* Virtualize the framebuffer */
+id|info-&gt;frame_buffer_phys
+op_assign
+id|fb_addr
+suffix:semicolon
+id|info-&gt;frame_buffer
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+id|fb_addr
+comma
+id|info-&gt;vram_size
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|info-&gt;frame_buffer
+)paren
+r_goto
+id|err_out
+suffix:semicolon
+multiline_comment|/* If we can&squot;t test scratch registers, something is seriously wrong */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|register_test
 c_func
 (paren
 id|info
 )paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;aty128fb: Can&squot;t write to video register!&bslash;n&quot;
+)paren
 suffix:semicolon
-macro_line|#else
+r_goto
+id|err_out
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8363,7 +8641,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Rage128 BIOS not located.  Guessing...&bslash;n&quot;
+l_string|&quot;aty128fb: Rage128 BIOS not located. Guessing...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|aty128_timings
@@ -8373,11 +8651,24 @@ id|info
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_PPC
 r_else
 id|aty128_get_pllinfo
 c_func
 (paren
 id|info
+)paren
+suffix:semicolon
+multiline_comment|/* free up to-be unused resources. bios_seg is mapped by&n;         * aty128find_ROM() and used by aty128_get_pllinfo()&n;         *&n;         * TODO: make more elegant. doesn&squot;t need to be global */
+r_if
+c_cond
+(paren
+id|bios_seg
+)paren
+id|iounmap
+c_func
+(paren
+id|bios_seg
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -8504,7 +8795,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PCI */
-macro_line|#ifndef CONFIG_PPC
+multiline_comment|/* PPC cannot read video ROM, so we fail by default */
 r_static
 r_int
 id|__init
@@ -8518,16 +8809,18 @@ op_star
 id|info
 )paren
 (brace
+r_int
+id|flag
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifndef CONFIG_PPC
 id|u32
 id|segstart
 suffix:semicolon
 r_char
 op_star
 id|rom_base
-suffix:semicolon
-r_char
-op_star
-id|rom_base1
 suffix:semicolon
 r_char
 op_star
@@ -8555,11 +8848,6 @@ op_assign
 l_string|&quot;R128&quot;
 suffix:semicolon
 multiline_comment|/* Rage128 ROM identifier */
-r_int
-id|flag
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -8594,18 +8882,6 @@ comma
 l_int|0x1000
 )paren
 suffix:semicolon
-id|rom_base1
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|rom_base
-op_plus
-l_int|1
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8620,7 +8896,11 @@ op_logical_and
 (paren
 (paren
 op_star
-id|rom_base1
+(paren
+id|rom_base
+op_plus
+l_int|1
+)paren
 )paren
 op_amp
 l_int|0xff
@@ -8829,6 +9109,10 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|bios_seg
+op_assign
+id|rom_base
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -8836,14 +9120,11 @@ id|KERN_INFO
 l_string|&quot;aty128fb: Rage128 BIOS located at segment %4.4X&bslash;n&quot;
 comma
 (paren
-id|u32
+r_int
+r_int
 )paren
 id|rom_base
 )paren
-suffix:semicolon
-id|info-&gt;bios_seg
-op_assign
-id|rom_base
 suffix:semicolon
 id|flag
 op_assign
@@ -8852,12 +9133,14 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif /* !CONFIG_PPC */
 r_return
 (paren
 id|flag
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_PPC
 r_static
 r_void
 id|__init
@@ -8889,7 +9172,7 @@ id|pll
 suffix:semicolon
 id|bios_header
 op_assign
-id|info-&gt;bios_seg
+id|bios_seg
 op_plus
 l_int|0x48L
 suffix:semicolon
@@ -8907,7 +9190,7 @@ id|header_ptr
 suffix:semicolon
 id|bios_header
 op_assign
-id|info-&gt;bios_seg
+id|bios_seg
 op_plus
 id|bios_header_offset
 suffix:semicolon
@@ -8929,7 +9212,7 @@ id|header_ptr
 suffix:semicolon
 id|header_ptr
 op_assign
-id|info-&gt;bios_seg
+id|bios_seg
 op_plus
 id|pll_info_offset
 suffix:semicolon
@@ -9065,18 +9348,6 @@ op_amp
 id|sdr_sgram
 suffix:semicolon
 )brace
-multiline_comment|/* free up to-be unused resources */
-r_if
-c_cond
-(paren
-id|info-&gt;bios_seg
-)paren
-id|iounmap
-c_func
-(paren
-id|info-&gt;bios_seg
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -9129,7 +9400,7 @@ l_int|25000
 suffix:semicolon
 multiline_comment|/* 23000 on some cards? */
 macro_line|#if 1
-multiline_comment|/* XXX TODO. Calculuate properly. Fix OF&squot;s pll ideas. */
+multiline_comment|/* XXX TODO. Calculuate properly. */
 r_if
 c_cond
 (paren
@@ -11273,18 +11544,17 @@ l_int|16
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(MODULE)
+macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;(c)1999-2000 Brad Douglas &lt;brad@neruo.com&gt;, Anthony Tong &quot;
-l_string|&quot;&lt;atong@uiuc.edu&gt;&quot;
+l_string|&quot;(c)1999-2000 Brad Douglas &lt;brad@neruo.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;FBDev driver for ATI Rage128 cards&quot;
+l_string|&quot;FBDev driver for ATI Rage128 / Pro cards&quot;
 )paren
 suffix:semicolon
 r_int

@@ -438,6 +438,10 @@ DECL|macro|__NR_pivot_root
 mdefine_line|#define __NR_pivot_root&t;&t;217
 DECL|macro|__NR_mincore
 mdefine_line|#define __NR_mincore&t;&t;218
+DECL|macro|__NR_madvise
+mdefine_line|#define __NR_madvise&t;&t;219
+DECL|macro|__NR_madvise1
+mdefine_line|#define __NR_madvise1&t;&t;219&t;/* delete when C lib stub is removed */
 multiline_comment|/* user-visible error numbers are in the range -1 - -124: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

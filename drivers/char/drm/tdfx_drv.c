@@ -1,21 +1,6 @@
-multiline_comment|/* tdfx.c -- tdfx driver -*- linux-c -*-&n; * Created: Thu Oct  7 10:38:32 1999 by faith@precisioninsight.com&n; * Revised: Tue Oct 12 08:51:35 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI$&n; * $XFree86$&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* tdfx.c -- tdfx driver -*- linux-c -*-&n; * Created: Thu Oct  7 10:38:32 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999, 2000 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@precisioninsight.com&gt;&n; *    Daryll Strauss &lt;daryll@precisioninsight.com&gt;&n; *&n; */
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;tdfx_drv.h&quot;
-DECL|variable|tdfx_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tdfx_init
-)paren
-suffix:semicolon
-DECL|variable|tdfx_cleanup
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tdfx_cleanup
-)paren
-suffix:semicolon
 DECL|macro|TDFX_NAME
 mdefine_line|#define TDFX_NAME&t; &quot;tdfx&quot;
 DECL|macro|TDFX_DESC
@@ -71,6 +56,10 @@ comma
 id|fasync
 suffix:colon
 id|drm_fasync
+comma
+id|poll
+suffix:colon
+id|drm_poll
 comma
 )brace
 suffix:semicolon
@@ -2444,6 +2433,25 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|lock.context
+op_ne
+id|tdfx_res_ctx.handle
+)paren
+(brace
+id|current-&gt;counter
+op_assign
+l_int|5
+suffix:semicolon
+id|current-&gt;priority
+op_assign
+id|DEF_PRIORITY
+op_div
+l_int|4
+suffix:semicolon
+)brace
 id|DRM_DEBUG
 c_func
 (paren
@@ -2645,6 +2653,23 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|lock.context
+op_ne
+id|tdfx_res_ctx.handle
+)paren
+(brace
+id|current-&gt;counter
+op_assign
+l_int|5
+suffix:semicolon
+id|current-&gt;priority
+op_assign
+id|DEF_PRIORITY
+suffix:semicolon
 )brace
 r_return
 l_int|0

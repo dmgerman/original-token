@@ -2668,7 +2668,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-id|Scsi_Cmnd
+id|Scsi_Request
 op_star
 id|scp
 suffix:semicolon
@@ -2700,14 +2700,10 @@ id|sdev
 suffix:semicolon
 id|scp
 op_assign
-id|scsi_allocate_device
+id|scsi_allocate_request
 c_func
 (paren
 id|sdev
-comma
-l_int|1
-comma
-id|FALSE
 )paren
 suffix:semicolon
 id|printk
@@ -2718,11 +2714,11 @@ comma
 id|scp
 )paren
 suffix:semicolon
-id|scp-&gt;cmd_len
+id|scp-&gt;sr_cmd_len
 op_assign
 l_int|6
 suffix:semicolon
-id|scp-&gt;use_sg
+id|scp-&gt;sr_use_sg
 op_assign
 l_int|0
 suffix:semicolon
@@ -2732,7 +2728,7 @@ c_func
 l_string|&quot;Sending command&bslash;n&quot;
 )paren
 suffix:semicolon
-id|scsi_wait_cmd
+id|scsi_wait_req
 (paren
 id|scp
 comma
@@ -2761,7 +2757,7 @@ c_func
 l_string|&quot;Releasing command&bslash;n&quot;
 )paren
 suffix:semicolon
-id|scsi_release_command
+id|scsi_release_request
 c_func
 (paren
 id|scp

@@ -1,11 +1,13 @@
 macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
-multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.41 2000/02/13 21:37:38 acher Exp $&n; */
+multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.50 2000/03/13 21:18:04 fliegl Exp $&n; */
 DECL|macro|MODNAME
 mdefine_line|#define MODNAME &quot;usb-uhci&quot;
 DECL|macro|VERSTR
-mdefine_line|#define VERSTR &quot;version v1.184 time &quot; __TIME__ &quot; &quot; __DATE__
+mdefine_line|#define VERSTR &quot;$Revision: 1.50 $ time &quot; __TIME__ &quot; &quot; __DATE__
+DECL|macro|UHCI_LATENCY_TIMER
+mdefine_line|#define UHCI_LATENCY_TIMER 0
 DECL|function|uhci_wait_ms
 r_static
 id|__inline__
@@ -324,18 +326,40 @@ id|list_head
 id|desc_list
 suffix:semicolon
 singleline_comment|// list pointer to all corresponding TDs/QHs associated with this request
-DECL|member|short_control_packet
-r_int
-id|short_control_packet
-suffix:semicolon
 DECL|member|started
 r_int
 r_int
 id|started
 suffix:semicolon
+DECL|member|next_queued_urb
+id|urb_t
+op_star
+id|next_queued_urb
+suffix:semicolon
+singleline_comment|// next queued urb for this EP
+DECL|member|prev_queued_urb
+id|urb_t
+op_star
+id|prev_queued_urb
+suffix:semicolon
+DECL|member|bottom_qh
+id|uhci_desc_t
+op_star
+id|bottom_qh
+suffix:semicolon
+DECL|member|next_qh
+id|uhci_desc_t
+op_star
+id|next_qh
+suffix:semicolon
+singleline_comment|// next helper QH
 DECL|member|use_loop
-r_int
+r_char
 id|use_loop
+suffix:semicolon
+DECL|member|short_control_packet
+r_char
+id|short_control_packet
 suffix:semicolon
 DECL|typedef|urb_priv_t
 DECL|typedef|purb_priv_t
@@ -444,6 +468,10 @@ DECL|member|unlink_urb_done
 r_int
 id|unlink_urb_done
 suffix:semicolon
+DECL|member|avoid_bulk
+id|atomic_t
+id|avoid_bulk
+suffix:semicolon
 DECL|member|bus
 r_struct
 id|usb_bus
@@ -469,6 +497,11 @@ id|int_chain
 (braket
 l_int|8
 )braket
+suffix:semicolon
+DECL|member|ls_control_chain
+id|uhci_desc_t
+op_star
+id|ls_control_chain
 suffix:semicolon
 DECL|member|control_chain
 id|uhci_desc_t
@@ -509,6 +542,16 @@ r_int
 id|loop_usage
 suffix:semicolon
 singleline_comment|// URBs using bandwidth reclamation
+DECL|member|urb_unlinked
+r_struct
+id|list_head
+id|urb_unlinked
+suffix:semicolon
+singleline_comment|// list of all unlinked  urbs
+DECL|member|frame_counter
+r_int
+id|frame_counter
+suffix:semicolon
 DECL|typedef|uhci_t
 DECL|typedef|puhci_t
 )brace

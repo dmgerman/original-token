@@ -54,6 +54,8 @@ mdefine_line|#define LOCKIT    save_flags (flags);cli ()
 DECL|macro|RELEASEIT
 mdefine_line|#define RELEASEIT restore_flags (flags)
 macro_line|#endif
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;1
 macro_line|#ifdef DEBUG
 DECL|function|my_hd
 r_static

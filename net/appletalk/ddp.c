@@ -5097,6 +5097,7 @@ id|n
 suffix:semicolon
 )brace
 r_else
+(brace
 id|sk-&gt;protinfo.af_at.src_port
 op_assign
 id|addr-&gt;sat_port
@@ -5118,6 +5119,7 @@ r_return
 op_minus
 id|EADDRINUSE
 suffix:semicolon
+)brace
 id|sk-&gt;zapped
 op_assign
 l_int|0

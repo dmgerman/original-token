@@ -1923,7 +1923,7 @@ op_star
 )paren
 id|buffer
 comma
-l_int|512
+l_int|8
 comma
 id|SR_TIMEOUT
 comma
@@ -2977,7 +2977,7 @@ id|SRpnt-&gt;sr_request.rq_dev
 op_assign
 id|cdi-&gt;dev
 suffix:semicolon
-multiline_comment|/* scsi_wait_cmd sets the command length */
+multiline_comment|/* scsi_wait_req sets the command length */
 id|SRpnt-&gt;sr_cmd_len
 op_assign
 l_int|0

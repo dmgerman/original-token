@@ -4833,30 +4833,21 @@ r_if
 c_cond
 (paren
 id|capacity
-op_ne
+OL
 id|lba_capacity
 )paren
 (brace
 id|printk
 (paren
 id|KERN_NOTICE
-l_string|&quot;%s: The drive reports both %d and %d bytes as its capacity&bslash;n&quot;
+l_string|&quot;%s: The disk reports a capacity of %d bytes, &quot;
+l_string|&quot;but the drive only handles %d&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
-id|capacity
-comma
 id|lba_capacity
-)paren
-suffix:semicolon
-id|capacity
-op_assign
-id|IDEFLOPPY_MIN
-c_func
-(paren
-id|capacity
 comma
-id|lba_capacity
+id|capacity
 )paren
 suffix:semicolon
 id|floppy-&gt;blocks

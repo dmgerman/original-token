@@ -216,11 +216,6 @@ r_int
 id|nr_lru_pages
 suffix:semicolon
 r_extern
-r_struct
-id|list_head
-id|lru_cache
-suffix:semicolon
-r_extern
 id|atomic_t
 id|nr_async_pages
 suffix:semicolon
@@ -668,7 +663,7 @@ id|pagemap_lru_lock
 suffix:semicolon
 multiline_comment|/*&n; * Helper macros for lru_pages handling.&n; */
 DECL|macro|lru_cache_add
-mdefine_line|#define&t;lru_cache_add(page)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;&t;list_add(&amp;(page)-&gt;lru, &amp;lru_cache);&t;&bslash;&n;&t;nr_lru_pages++;&t;&t;&t;&t;&bslash;&n;&t;spin_unlock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define&t;lru_cache_add(page)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;&t;list_add(&amp;(page)-&gt;lru, &amp;page-&gt;zone-&gt;lru_cache);&t;&bslash;&n;&t;nr_lru_pages++;&t;&t;&t;&t;&bslash;&n;&t;spin_unlock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;} while (0)
 DECL|macro|lru_cache_del
 mdefine_line|#define&t;lru_cache_del(page)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;&t;list_del(&amp;(page)-&gt;lru);&t;&t;&t;&bslash;&n;&t;nr_lru_pages--;&t;&t;&t;&t;&bslash;&n;&t;spin_unlock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;} while (0)
 r_extern

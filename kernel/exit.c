@@ -136,7 +136,7 @@ r_if
 c_cond
 (paren
 id|current-&gt;counter
-OG
+op_ge
 id|current-&gt;priority
 op_star
 l_int|2
@@ -146,6 +146,8 @@ op_assign
 id|current-&gt;priority
 op_star
 l_int|2
+op_minus
+l_int|1
 suffix:semicolon
 id|free_task_struct
 c_func

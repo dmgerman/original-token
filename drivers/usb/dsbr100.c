@@ -1,5 +1,10 @@
-multiline_comment|/* A driver for the D-Link DSB-R100 USB radio.  The R100 plugs&n; into both the USB and an analog audio input, so this thing&n; only deals with initialisation and frequency setting, the&n; audio data has to be handled by a sound driver.&n;&n; Major issue: I can&squot;t find out where the device reports the signal&n; strength, and indeed the windows software appearantly just looks&n; at the stereo indicator as well.  So, scanning will only find&n; stereo stations.  Sad, but I can&squot;t help it.&n;&n; Also, the windows program sends oodles of messages over to the&n; device, and I couldn&squot;t figure out their meaning.  My suspicion&n; is that they don&squot;t have any:-)&n;&n; Copyright (c) 2000 Markus Demleitner&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2 of the License, or&n; (at your option) any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; if not, write to the Free Software&n; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n;&n; History:&n;&n; Version 0.3: &n; &t;Brad Hards &lt;bradh@dynamite.com.au&gt;: Trivial fix for usb.h, more GPL&n;&t;&n; Version 0.2: &n; &t;Brad Hards &lt;bradh@dynamite.com.au&gt;: Fixes to make it work as non-module&n;&t;Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;: Copyright clarification&n;&n; Version 0.01: Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;&n; &t;initial release&n;&n;*/
+multiline_comment|/* A driver for the D-Link DSB-R100 USB radio.  The R100 plugs&n; into both the USB and an analog audio input, so this thing&n; only deals with initialisation and frequency setting, the&n; audio data has to be handled by a sound driver.&n;&n; Major issue: I can&squot;t find out where the device reports the signal&n; strength, and indeed the windows software appearantly just looks&n; at the stereo indicator as well.  So, scanning will only find&n; stereo stations.  Sad, but I can&squot;t help it.&n;&n; Also, the windows program sends oodles of messages over to the&n; device, and I couldn&squot;t figure out their meaning.  My suspicion&n; is that they don&squot;t have any:-)&n;&n; You might find some interesting stuff about this module at&n; http://unimut.fsk.uni-heidelberg.de/unimut/demi/dsbr&n;&n; Copyright (c) 2000 Markus Demleitner&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2 of the License, or&n; (at your option) any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; if not, write to the Free Software&n; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n;&n; History:&n;&n; Version 0.21:&n; &t;Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;:&n;&t;Minor cleanup, warnings if something goes wrong, lame attempt&n;&t;to adhere to Documentation/CodingStyle&n;&n; Version 0.2: &n; &t;Brad Hards &lt;bradh@dynamite.com.au&gt;: Fixes to make it work as non-module&n;&t;Markus: Copyright clarification&n;&n; Version 0.01: Markus: initial release&n;&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#if CONFIG_MODVERSIONS==1
+DECL|macro|MODVERSIONS
+mdefine_line|#define MODVERSIONS
+macro_line|#include &lt;linux/modversions.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -214,6 +219,9 @@ op_star
 id|radio
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|usb_control_msg
 c_func
 (paren
@@ -241,7 +249,9 @@ l_int|8
 comma
 l_int|300
 )paren
-suffix:semicolon
+OL
+l_int|0
+op_logical_or
 id|usb_control_msg
 c_func
 (paren
@@ -269,6 +279,12 @@ l_int|8
 comma
 l_int|300
 )paren
+OL
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 r_return
 (paren
@@ -290,6 +306,9 @@ op_star
 id|radio
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|usb_control_msg
 c_func
 (paren
@@ -317,7 +336,9 @@ l_int|8
 comma
 l_int|300
 )paren
-suffix:semicolon
+OL
+l_int|0
+op_logical_or
 id|usb_control_msg
 c_func
 (paren
@@ -345,6 +366,12 @@ l_int|8
 comma
 l_int|300
 )paren
+OL
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 r_return
 (paren
@@ -381,6 +408,9 @@ l_int|16
 op_plus
 l_int|856
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|usb_control_msg
 c_func
 (paren
@@ -416,7 +446,9 @@ l_int|8
 comma
 l_int|300
 )paren
-suffix:semicolon
+OL
+l_int|0
+op_logical_or
 id|usb_control_msg
 c_func
 (paren
@@ -444,7 +476,9 @@ l_int|8
 comma
 l_int|300
 )paren
-suffix:semicolon
+OL
+l_int|0
+op_logical_or
 id|usb_control_msg
 c_func
 (paren
@@ -472,7 +506,20 @@ l_int|8
 comma
 l_int|300
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|radio-&gt;stereo
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|radio-&gt;stereo
 op_assign
 op_logical_neg
@@ -507,6 +554,9 @@ op_star
 id|radio
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|usb_control_msg
 c_func
 (paren
@@ -534,7 +584,15 @@ l_int|8
 comma
 l_int|300
 )paren
+OL
+l_int|0
+)paren
+id|radio-&gt;stereo
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
+r_else
 id|radio-&gt;stereo
 op_assign
 op_logical_neg
@@ -953,6 +1011,18 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|radio-&gt;curfreq
+op_eq
+op_minus
+l_int|1
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -1006,12 +1076,24 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|dsbr100_setfreq
 c_func
 (paren
 id|radio
 comma
 id|radio-&gt;curfreq
+)paren
+op_eq
+op_minus
+l_int|1
+)paren
+id|warn
+c_func
+(paren
+l_string|&quot;set frequency failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1140,18 +1222,42 @@ op_amp
 id|VIDEO_AUDIO_MUTE
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|dsbr100_stop
 c_func
 (paren
 id|radio
 )paren
+op_eq
+op_minus
+l_int|1
+)paren
+id|warn
+c_func
+(paren
+l_string|&quot;radio did not respond properly&quot;
+)paren
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
 id|dsbr100_start
 c_func
 (paren
 id|radio
+)paren
+op_eq
+op_minus
+l_int|1
+)paren
+id|warn
+c_func
+(paren
+l_string|&quot;radio did not respond properly&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1193,16 +1299,30 @@ c_cond
 op_logical_neg
 id|radio
 )paren
+(brace
+id|warn
+c_func
+(paren
+l_string|&quot;radio not initialised&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
-id|EINVAL
+id|EAGAIN
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|users
 )paren
 (brace
+id|warn
+c_func
+(paren
+l_string|&quot;radio in use&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -1213,10 +1333,21 @@ op_increment
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|dsbr100_start
 c_func
 (paren
 id|radio
+)paren
+OL
+l_int|0
+)paren
+id|warn
+c_func
+(paren
+l_string|&quot;radio did not start up properly&quot;
 )paren
 suffix:semicolon
 id|dsbr100_setfreq
@@ -1305,6 +1436,12 @@ op_minus
 l_int|1
 )paren
 (brace
+id|warn
+c_func
+(paren
+l_string|&quot;couldn&squot;t register video device&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -1338,6 +1475,23 @@ c_func
 r_void
 )paren
 (brace
+id|usb_dsbr100
+op_star
+id|radio
+op_assign
+id|usb_dsbr100_radio.priv
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|radio
+)paren
+id|dsbr100_stop
+c_func
+(paren
+id|radio
+)paren
+suffix:semicolon
 id|video_unregister_device
 c_func
 (paren
@@ -1353,4 +1507,5 @@ id|usb_dsbr100_driver
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;vi: ts=8&n;Sigh.  Of course, I am one of the ts=2 heretics, but Linus&squot; wish is&n;my command.&n;*/
 eof

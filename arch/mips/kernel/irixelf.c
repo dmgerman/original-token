@@ -22,7 +22,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/prctl.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|DLINFO_ITEMS
 mdefine_line|#define DLINFO_ITEMS 12
 macro_line|#include &lt;linux/elf.h&gt;

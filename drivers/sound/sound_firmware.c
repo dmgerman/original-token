@@ -220,6 +220,7 @@ r_int
 id|l
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mod_firmware_load - load sound driver firmware&n; *&t;@fn: filename&n; *&t;@fp: return for the buffer.&n; *&n; *&t;Load the firmware for a sound module (up to 128K) into a buffer.&n; *&t;The buffer is returned in *fp. It is allocated with vmalloc so is&n; *&t;virtually linear and not DMAable. The caller should free it with&n; *&t;vfree when finished.&n; *&n; *&t;The length of the buffer is returned on a successful load, the&n; *&t;value zero on a failure.&n; *&n; *&t;Caution: This API is not recommended. Firmware should be loaded via&n; *&t;an ioctl call and a setup application. This function may disappear&n; *&t;in future.&n; */
 DECL|function|mod_firmware_load
 r_int
 id|mod_firmware_load

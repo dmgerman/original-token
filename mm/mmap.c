@@ -890,6 +890,16 @@ c_cond
 id|file
 )paren
 (brace
+id|VM_ClearReadHint
+c_func
+(paren
+id|vma
+)paren
+suffix:semicolon
+id|vma-&gt;vm_raend
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2089,6 +2099,10 @@ suffix:semicolon
 id|mpnt-&gt;vm_flags
 op_assign
 id|area-&gt;vm_flags
+suffix:semicolon
+id|mpnt-&gt;vm_raend
+op_assign
+l_int|0
 suffix:semicolon
 id|mpnt-&gt;vm_ops
 op_assign
