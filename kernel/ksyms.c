@@ -92,20 +92,6 @@ r_void
 op_star
 id|sys_call_table
 suffix:semicolon
-r_extern
-r_int
-id|aout_core_dump
-c_func
-(paren
-r_int
-id|signr
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_FTAPE
 r_extern
 r_char
@@ -115,8 +101,10 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 macro_line|#include &quot;../drivers/scsi/scsi.h&quot;
+macro_line|#include &quot;../drivers/scsi/scsi_ioctl.h&quot;
 macro_line|#include &quot;../drivers/scsi/hosts.h&quot;
 macro_line|#include &quot;../drivers/scsi/constants.h&quot;
+macro_line|#include &lt;linux/scsicam.h&gt;
 r_extern
 r_int
 id|generic_proc_info
@@ -445,6 +433,12 @@ id|X
 c_func
 (paren
 id|vmalloc
+)paren
+comma
+id|X
+c_func
+(paren
+id|vremap
 )paren
 comma
 id|X

@@ -1,6 +1,9 @@
 macro_line|#ifndef _I386_PGTABLE_H
 DECL|macro|_I386_PGTABLE_H
 mdefine_line|#define _I386_PGTABLE_H
+multiline_comment|/*&n; * Define CONFIG_PENTIUM_MM if you want the 4MB page table optimizations.&n; * This works only on a intel Pentium.&n; */
+DECL|macro|CONFIG_PENTIUM_MM
+mdefine_line|#define CONFIG_PENTIUM_MM 1
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
@@ -30,6 +33,7 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START ((high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) (TASK_SIZE + (unsigned long)(x))
+multiline_comment|/*&n; * The 4MB page is guessing..  Detailed in the infamous &quot;Chapter H&quot;&n; * of the Pentium details, but assuming intel did the straigtforward&n; * thing, this bit set in the page directory entry just means that&n; * the page directory entry points directly to a 4MB-aligned block of&n; * memory. &n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001
 DECL|macro|_PAGE_RW
@@ -42,6 +46,8 @@ DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED&t;0x020
 DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x040
+DECL|macro|_PAGE_4M
+mdefine_line|#define _PAGE_4M&t;0x080&t;/* 4 MB page, Pentium+.. */
 DECL|macro|_PAGE_COW
 mdefine_line|#define _PAGE_COW&t;0x200&t;/* implemented in software (one of the AVL bits) */
 DECL|macro|_PAGE_TABLE
@@ -152,11 +158,6 @@ mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&
 multiline_comment|/* to set the page-dir */
 DECL|macro|SET_PAGE_DIR
 mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.cr3 = (unsigned long) (pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;a&quot; ((tsk)-&gt;tss.cr3)); &bslash;&n;} while (0)
-r_extern
-r_int
-r_int
-id|high_memory
-suffix:semicolon
 DECL|function|pte_none
 r_extern
 r_inline
@@ -360,6 +361,35 @@ op_amp
 id|_PAGE_PRESENT
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PENTIUM_MM
+DECL|function|pmd_inuse
+r_extern
+r_inline
+r_int
+id|pmd_inuse
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmdp
+)paren
+(brace
+r_return
+(paren
+id|pmd_val
+c_func
+(paren
+op_star
+id|pmdp
+)paren
+op_amp
+id|_PAGE_4M
+)paren
+op_ne
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|function|pmd_inuse
 r_extern
 r_inline
@@ -376,6 +406,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|pmd_clear
 r_extern
 r_inline
@@ -1410,6 +1441,15 @@ op_star
 id|pmd
 )paren
 (brace
+id|pmd_val
+c_func
+(paren
+op_star
+id|pmd
+)paren
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|pmd_alloc_kernel
 r_extern
@@ -1654,6 +1694,15 @@ op_star
 id|pmd
 )paren
 (brace
+id|pmd_val
+c_func
+(paren
+op_star
+id|pmd
+)paren
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|pmd_alloc
 r_extern

@@ -2992,6 +2992,10 @@ id|it_new
 comma
 id|it_old
 suffix:semicolon
+r_int
+r_int
+id|oldalarm
+suffix:semicolon
 id|it_new.it_interval.tv_sec
 op_assign
 id|it_new.it_interval.tv_usec
@@ -3018,14 +3022,22 @@ op_amp
 id|it_old
 )paren
 suffix:semicolon
-r_return
+id|oldalarm
+op_assign
 id|it_old.it_value.tv_sec
-op_plus
+suffix:semicolon
+multiline_comment|/* ehhh.. We can&squot;t return 0 if we have an alarm pending.. */
+multiline_comment|/* And we&squot;d better return too much than too little anyway */
+r_if
+c_cond
 (paren
 id|it_old.it_value.tv_usec
-op_div
-l_int|1000000
 )paren
+id|oldalarm
+op_increment
+suffix:semicolon
+r_return
+id|oldalarm
 suffix:semicolon
 )brace
 DECL|function|sys_getpid

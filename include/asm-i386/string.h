@@ -952,11 +952,6 @@ r_return
 id|__res
 suffix:semicolon
 )brace
-r_extern
-r_char
-op_star
-id|___strtok
-suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRTOK
 mdefine_line|#define __HAVE_ARCH_STRTOK
 DECL|function|strtok

@@ -616,6 +616,7 @@ r_static
 r_void
 id|dump_status
 (paren
+r_const
 r_char
 op_star
 id|msg

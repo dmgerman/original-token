@@ -32,19 +32,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;stdlib.h&gt;
-macro_line|#include &lt;stdio.h&gt;
-macro_line|#include &lt;ctype.h&gt;
-macro_line|#include &lt;time.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-r_int
-id|scc_init
-c_func
-(paren
-r_int
-id|kmem_start
-)paren
-suffix:semicolon
 r_int
 id|scc_open
 c_func

@@ -198,7 +198,7 @@ DECL|macro|buslogic_printk
 mdefine_line|#define buslogic_printk buslogic_prefix(__PRETTY_FUNCTION__),printk
 macro_line|#if defined(MODULE) &amp;&amp; !defined(GFP_DMA)
 DECL|macro|CHECK_DMA_ADDR
-macro_line|# define CHECK_DMA_ADDR(isa, addr, badstmt) &bslash;&n;    do { if ((isa) &amp;&amp; (addr) &gt; (void *)ISA_DMA_THRESHOLD) badstmt; } while (0)
+macro_line|# define CHECK_DMA_ADDR(isa, addr, badstmt) &bslash;&n;    do { if ((isa) &amp;&amp; ((const void *)addr) &gt; (const void *)ISA_DMA_THRESHOLD) badstmt; } while (0)
 macro_line|#else
 DECL|macro|CHECK_DMA_ADDR
 macro_line|# define CHECK_DMA_ADDR(isa, addr, badstmt)

@@ -785,7 +785,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Found PCnet/PCI at %#lx, irq %d (mem_start is %#lx).&bslash;n&quot;
+l_string|&quot;Found PCnet/PCI at %#x, irq %d (mem_start is %#lx).&bslash;n&quot;
 comma
 id|pci_ioaddr
 comma

@@ -286,6 +286,11 @@ c_func
 (paren
 id|VERIFY_READ
 comma
+(paren
+r_const
+r_void
+op_star
+)paren
 id|arg
 comma
 r_sizeof

@@ -284,7 +284,7 @@ op_star
 id|iph
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See if we need to look up the device.&n;&t; */
-macro_line|#ifdef CONFIG_INET_MULTICAST&t;
+macro_line|#ifdef CONFIG_IP_MULTICAST&t;
 r_if
 c_cond
 (paren
@@ -2303,6 +2303,7 @@ id|raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
+macro_line|#if 0
 id|iph
 op_assign
 (paren
@@ -2320,6 +2321,12 @@ id|skb-&gt;ip_hdr
 op_assign
 id|iph
 suffix:semicolon
+macro_line|#else
+id|iph
+op_assign
+id|skb-&gt;ip_hdr
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Setup starting values.&n;&t; */
 id|hlen
 op_assign
@@ -4957,11 +4964,7 @@ id|iphdr
 op_star
 id|iph
 suffix:semicolon
-r_int
-r_char
-op_star
-id|ptr
-suffix:semicolon
+multiline_comment|/*&t;unsigned char *ptr;*/
 multiline_comment|/* Sanity check */
 r_if
 c_cond
@@ -5000,6 +5003,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find the IP header and set the length. This is bad&n;&t; *&t;but once we get the skb data handling code in the&n;&t; *&t;hardware will push its header sensibly and we will&n;&t; *&t;set skb-&gt;ip_hdr to avoid this mess and the fixed&n;&t; *&t;header length problem&n;&t; */
+macro_line|#if 0
 id|ptr
 op_assign
 id|skb-&gt;data
@@ -5021,6 +5025,12 @@ id|skb-&gt;ip_hdr
 op_assign
 id|iph
 suffix:semicolon
+macro_line|#else
+id|iph
+op_assign
+id|skb-&gt;ip_hdr
+suffix:semicolon
+macro_line|#endif
 id|iph-&gt;tot_len
 op_assign
 id|ntohs
@@ -5028,7 +5038,18 @@ c_func
 (paren
 id|skb-&gt;len
 op_minus
-id|dev-&gt;hard_header_len
+(paren
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|iph
+)paren
+op_minus
+id|skb-&gt;data
+)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_IP_FIREWALL
@@ -5101,11 +5122,13 @@ multiline_comment|/*&n;&t; *&t;Do we need to fragment. Again this is inefficient
 r_if
 c_cond
 (paren
-id|skb-&gt;len
+id|ntohs
+c_func
+(paren
+id|iph-&gt;tot_len
+)paren
 OG
 id|dev-&gt;mtu
-op_plus
-id|dev-&gt;hard_header_len
 )paren
 (brace
 id|ip_fragment
@@ -7024,7 +7047,7 @@ suffix:semicolon
 id|ip_statistics.IpOutRequests
 op_increment
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET_MULTICAST&t;
+macro_line|#ifdef CONFIG_IP_MULTICAST&t;
 r_if
 c_cond
 (paren
@@ -7045,7 +7068,7 @@ op_assign
 id|dev_get
 c_func
 (paren
-id|skb-&gt;ip_mc_name
+id|sk-&gt;ip_mc_name
 )paren
 suffix:semicolon
 r_if
@@ -7063,6 +7086,35 @@ suffix:semicolon
 id|rt
 op_assign
 l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;saddr
+op_logical_and
+(paren
+op_logical_neg
+id|LOOPBACK
+c_func
+(paren
+id|sk-&gt;saddr
+)paren
+op_logical_or
+id|LOOPBACK
+c_func
+(paren
+id|daddr
+)paren
+)paren
+)paren
+id|saddr
+op_assign
+id|sk-&gt;saddr
+suffix:semicolon
+r_else
+id|saddr
+op_assign
+id|dev-&gt;pa_addr
 suffix:semicolon
 )brace
 r_else
@@ -7279,7 +7331,7 @@ id|dev
 op_assign
 id|rt-&gt;rt_dev
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET_MULTICAST
+macro_line|#ifdef CONFIG_IP_MULTICAST
 )brace
 macro_line|#endif&t;&t;
 multiline_comment|/*&n;&t; *&t;Now compute the buffer space we require&n;&t; */
@@ -8202,7 +8254,12 @@ id|IGMP_ALL_HOSTS
 id|ip_loopback
 c_func
 (paren
+id|rt
+ques
+c_cond
 id|rt-&gt;rt_dev
+suffix:colon
+id|dev
 comma
 id|skb
 )paren
@@ -8215,7 +8272,12 @@ id|ip_mc_list
 op_star
 id|imc
 op_assign
+id|rt
+ques
+c_cond
 id|rt-&gt;rt_dev-&gt;ip_mc_list
+suffix:colon
+id|dev-&gt;ip_mc_list
 suffix:semicolon
 r_while
 c_loop
@@ -8236,7 +8298,12 @@ id|daddr
 id|ip_loopback
 c_func
 (paren
+id|rt
+ques
+c_cond
 id|rt-&gt;rt_dev
+suffix:colon
+id|dev
 comma
 id|skb
 )paren

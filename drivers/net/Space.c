@@ -1108,9 +1108,10 @@ DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;plip0_dev)
 macro_line|#endif  /* PLIP */
 macro_line|#if defined(SLIP) || defined(CONFIG_SLIP)
+multiline_comment|/* To be exact, this node just hooks the initialization&n;&t;   routines to the device structures.&t;&t;&t;*/
 r_extern
 r_int
-id|slip_init
+id|slip_init_ctrl_dev
 c_func
 (paren
 r_struct
@@ -1118,283 +1119,43 @@ id|device
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef SL_SLIP_LOTS
-DECL|variable|slip15_dev
+DECL|variable|slip_bootstrap
 r_static
 r_struct
 id|device
-id|slip15_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip14_dev
-r_static
-r_struct
-id|device
-id|slip14_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip13_dev
-r_static
-r_struct
-id|device
-id|slip13_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip12_dev
-r_static
-r_struct
-id|device
-id|slip12_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip11_dev
-r_static
-r_struct
-id|device
-id|slip11_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip10_dev
-r_static
-r_struct
-id|device
-id|slip10_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip9_dev
-r_static
-r_struct
-id|device
-id|slip9_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip8_dev
-r_static
-r_struct
-id|device
-id|slip8_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip7_dev
-r_static
-r_struct
-id|device
-id|slip7_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip6_dev
-r_static
-r_struct
-id|device
-id|slip6_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip5_dev
-r_static
-r_struct
-id|device
-id|slip5_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|slip4_dev
-r_static
-r_struct
-id|device
-id|slip4_dev
-op_assign
-initialization_block
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef&t;NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define&t;NEXT_DEV&t;(&amp;slip4_dev)
-macro_line|#endif&t;/* SL_SLIP_LOTS */
-DECL|variable|slip3_dev
-r_static
-r_struct
-id|device
-id|slip3_dev
+id|slip_bootstrap
 op_assign
 (brace
-l_string|&quot;sl3&quot;
+l_string|&quot;slip_proto&quot;
 comma
-multiline_comment|/* Internal SLIP driver, channel 3&t;*/
 l_int|0x0
 comma
-multiline_comment|/* recv memory end&t;&t;&t;*/
 l_int|0x0
 comma
-multiline_comment|/* recv memory start&t;&t;&t;*/
 l_int|0x0
 comma
-multiline_comment|/* memory end&t;&t;&t;&t;*/
 l_int|0x0
 comma
-multiline_comment|/* memory start&t;&t;&t;&t;*/
-l_int|0x3
-comma
-multiline_comment|/* base I/O address&t;&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
 l_int|0
 comma
 l_int|0
 comma
 l_int|0
 comma
-multiline_comment|/* flags&t;&t;&t;&t;*/
+l_int|0
+comma
+l_int|0
+comma
 id|NEXT_DEV
 comma
-multiline_comment|/* next device&t;&t;&t;&t;*/
-id|slip_init
-multiline_comment|/* slip_init should set up the rest&t;*/
-)brace
-suffix:semicolon
-DECL|variable|slip2_dev
-r_static
-r_struct
-id|device
-id|slip2_dev
-op_assign
-(brace
-l_string|&quot;sl2&quot;
+id|slip_init_ctrl_dev
 comma
-multiline_comment|/* Internal SLIP driver, channel 2&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory end&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory start&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory end&t;&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory start&t;&t;&t;&t;*/
-l_int|0x2
-comma
-multiline_comment|/* base I/O address&t;&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* flags&t;&t;&t;&t;*/
-op_amp
-id|slip3_dev
-comma
-multiline_comment|/* next device&t;&t;&t;&t;*/
-id|slip_init
-multiline_comment|/* slip_init should set up the rest&t;*/
-)brace
-suffix:semicolon
-DECL|variable|slip1_dev
-r_static
-r_struct
-id|device
-id|slip1_dev
-op_assign
-(brace
-l_string|&quot;sl1&quot;
-comma
-multiline_comment|/* Internal SLIP driver, channel 1&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory end&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory start&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory end&t;&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory start&t;&t;&t;&t;*/
-l_int|0x1
-comma
-multiline_comment|/* base I/O address&t;&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* flags&t;&t;&t;&t;*/
-op_amp
-id|slip2_dev
-comma
-multiline_comment|/* next device&t;&t;&t;&t;*/
-id|slip_init
-multiline_comment|/* slip_init should set up the rest&t;*/
-)brace
-suffix:semicolon
-DECL|variable|slip0_dev
-r_static
-r_struct
-id|device
-id|slip0_dev
-op_assign
-(brace
-l_string|&quot;sl0&quot;
-comma
-multiline_comment|/* Internal SLIP driver, channel 0&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory end&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory start&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory end&t;&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory start&t;&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* base I/O address&t;&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* flags&t;&t;&t;&t;*/
-op_amp
-id|slip1_dev
-comma
-multiline_comment|/* next device&t;&t;&t;&t;*/
-id|slip_init
-multiline_comment|/* slip_init should set up the rest&t;*/
 )brace
 suffix:semicolon
 DECL|macro|NEXT_DEV
-macro_line|#   undef&t;NEXT_DEV
+macro_line|#undef NEXT_DEV
 DECL|macro|NEXT_DEV
-macro_line|#   define&t;NEXT_DEV&t;(&amp;slip0_dev)
+mdefine_line|#define NEXT_DEV (&amp;slip_bootstrap)
 macro_line|#endif&t;/* SLIP */
 macro_line|#if defined(CONFIG_PPP)
 r_extern
@@ -1812,17 +1573,6 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef&t;NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;ibmtr_dev1)
-r_extern
-r_int
-id|tok_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
 DECL|variable|ibmtr_dev0
 r_static
 r_struct

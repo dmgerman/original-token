@@ -1086,7 +1086,6 @@ DECL|macro|FDA
 mdefine_line|#define FDA&t;0x40&t;&t;/* FIFO Data Available Status */
 DECL|macro|FOY
 mdefine_line|#define FOY&t;0x80&t;&t;/* FIFO Overflow Status */
-macro_line|#endif&t;/* _SCC_H */
 multiline_comment|/* global functions */
 r_extern
 r_int
@@ -1097,4 +1096,5 @@ r_int
 id|kmem_start
 )paren
 suffix:semicolon
+macro_line|#endif&t;/* _SCC_H */
 eof

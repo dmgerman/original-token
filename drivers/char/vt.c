@@ -22,10 +22,6 @@ r_struct
 id|tty_driver
 id|console_driver
 suffix:semicolon
-r_extern
-r_int
-id|sel_cons
-suffix:semicolon
 DECL|macro|VT_IS_IN_USE
 mdefine_line|#define VT_IS_IN_USE(i)&t;(console_driver.table[i] &amp;&amp; console_driver.table[i]-&gt;count)
 DECL|macro|VT_BUSY
@@ -124,14 +120,6 @@ c_func
 (paren
 r_int
 id|nopowersave
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|do_unblank_screen
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_extern

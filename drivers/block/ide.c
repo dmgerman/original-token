@@ -7790,12 +7790,28 @@ l_int|1
 op_eq
 l_char|&squot;X&squot;
 )paren
+op_logical_or
+(paren
+id|id-&gt;model
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;P&squot;
+op_logical_and
+id|id-&gt;model
+(braket
+l_int|1
+)braket
+op_eq
+l_char|&squot;i&squot;
+)paren
 )paren
 id|bswap
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* NEC and *some* Mitsumi units */
+multiline_comment|/* NEC, Pioneer and *some* Mitsumi units */
 )brace
 multiline_comment|/* Vertos drives may still be weird */
 id|fixstring

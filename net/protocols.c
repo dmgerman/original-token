@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/net.h&gt;
 DECL|macro|CONFIG_UNIX
 mdefine_line|#define CONFIG_UNIX&t;&t;/* always present...&t;*/
 macro_line|#ifdef&t;CONFIG_UNIX
-macro_line|#include &lt;net/unix.h&gt;
+macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#endif
 macro_line|#ifdef&t;CONFIG_INET
 macro_line|#include &lt;linux/inet.h&gt;

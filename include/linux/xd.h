@@ -201,16 +201,6 @@ DECL|typedef|XD_SIGNATURE
 )brace
 id|XD_SIGNATURE
 suffix:semicolon
-id|u_long
-id|xd_init
-(paren
-id|u_long
-id|mem_start
-comma
-id|u_long
-id|mem_end
-)paren
-suffix:semicolon
 r_void
 id|xd_setup
 (paren

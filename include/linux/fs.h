@@ -251,12 +251,12 @@ r_char
 id|b_list
 suffix:semicolon
 multiline_comment|/* List that this buffer appears */
-DECL|member|b_retain
+DECL|member|b_reuse
 r_int
 r_char
-id|b_retain
+id|b_reuse
 suffix:semicolon
-multiline_comment|/* Expected number of times this will&n;&t;&t;&t;&t;&t;   be used.  Put on freelist when 0 */
+multiline_comment|/* 0 - normal, 1 - better reused for something else */
 DECL|member|b_flushtime
 r_int
 r_int

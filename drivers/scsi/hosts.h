@@ -529,19 +529,6 @@ op_star
 id|i
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|scsicam_bios_param
-(paren
-id|Disk
-op_star
-comma
-r_int
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
 DECL|macro|BLANK_HOST
 mdefine_line|#define BLANK_HOST {&quot;&quot;, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 DECL|struct|Scsi_Device_Template

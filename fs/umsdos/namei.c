@@ -228,13 +228,6 @@ id|dir-&gt;u.umsdos_i.u.dir_info.looking
 op_increment
 suffix:semicolon
 )brace
-r_void
-id|check_page_tables
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;Unlock the directory.&n;*/
 DECL|function|umsdos_unlockcreate
 r_void

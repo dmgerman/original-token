@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -980,6 +980,11 @@ id|atif-&gt;address.s_net
 )paren
 suffix:semicolon
 r_int
+id|probe_node
+op_assign
+id|atif-&gt;address.s_node
+suffix:semicolon
+r_int
 id|netct
 suffix:semicolon
 r_int
@@ -1026,6 +1031,21 @@ id|netrange
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|probe_node
+op_eq
+id|ATADDR_ANYNODE
+)paren
+(brace
+id|probe_node
+op_assign
+id|jiffies
+op_amp
+l_int|0xFF
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Scan the networks.&n;&t; */
 r_for
 c_loop
@@ -1042,14 +1062,7 @@ id|netct
 op_increment
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Sweep the available nodes from a random start.&n;&t;&t; */
-r_int
-id|nodeoff
-op_assign
-id|jiffies
-op_amp
-l_int|255
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Sweep the available nodes from a given start.&n;&t;&t; */
 id|atif-&gt;address.s_net
 op_assign
 id|htons
@@ -1079,7 +1092,7 @@ op_assign
 (paren
 id|nodect
 op_plus
-id|nodeoff
+id|probe_node
 )paren
 op_amp
 l_int|0xFF

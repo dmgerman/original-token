@@ -5664,7 +5664,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Set or clear the multicast filter for this adaptor.&n;** num_addrs == -1&t;Promiscuous mode, receive all packets - not supported.&n;**                      Use the ioctls.&n;** num_addrs == 0&t;Normal mode, clear multicast list&n;** num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;** &t;&t;&t;best-effort filtering.&n;** num_addrs == HASH_TABLE_LEN&n;**&t;                Set all multicast bits (pass all multicasts).&n;*/
+multiline_comment|/*&n;** Set or clear the multicast filter for this adaptor.&n;** num_addrs == -1&t;Promiscuous mode, receive all packets - now supported.&n;**                      Can also use the ioctls.&n;** num_addrs == 0&t;Normal mode, clear multicast list&n;** num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;** &t;&t;&t;best-effort filtering.&n;** num_addrs == HASH_TABLE_LEN&n;**&t;                Set all multicast bits (pass all multicasts).&n;*/
 r_static
 r_void
 DECL|function|set_multicast_list
@@ -5804,6 +5804,33 @@ multiline_comment|/* Start the TX */
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* set promiscuous mode */
+id|u32
+id|omr
+suffix:semicolon
+id|omr
+op_assign
+id|inl
+c_func
+(paren
+id|DE4X5_OMR
+)paren
+suffix:semicolon
+id|omr
+op_or_assign
+id|OMR_PR
+suffix:semicolon
+id|outl
+c_func
+(paren
+id|omr
+comma
+id|DE4X5_OMR
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -6154,6 +6181,18 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|num_addrs
+op_eq
+l_int|0
+)paren
+id|omr
+op_and_assign
+op_complement
+id|OMR_PR
+suffix:semicolon
 id|outl
 c_func
 (paren

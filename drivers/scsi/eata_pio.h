@@ -13,7 +13,7 @@ mdefine_line|#define VER_MAJOR 0
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 0
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB&t;  &quot;1a&quot;
+mdefine_line|#define VER_SUB&t;  &quot;1b&quot;
 multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of&t;&t;&t;*&n; ************************************************************************/
 DECL|macro|VERBOSE_SETUP
 mdefine_line|#define VERBOSE_SETUP&t;&t;&t;/* show startup screen of 2001 */
@@ -158,5 +158,5 @@ macro_line|#endif
 DECL|macro|EATA_PIO
 mdefine_line|#define EATA_PIO {&t;&t;     &bslash;&n;    NULL, NULL,&t;&t;&t; &bslash;&n;    eata_pio_proc_info,/* procinfo&t; */  &bslash;&n;    &quot;eata_pio&quot;,&t;       /* proc dir entry */  &bslash;&n;    PROC_SCSI_EATA_PIO,/* proc dir inode */  &bslash;&n;     &quot;EATA (Extended Attachment) PIO driver&quot;,&bslash;&n;    eata_pio_detect,&t;&t; &bslash;&n;    eata_pio_release,&t;&t; &bslash;&n;    NULL, NULL,&t;&t;&t; &bslash;&n;    eata_pio_queue,&t;&t; &bslash;&n;    eata_pio_abort,&t;&t; &bslash;&n;    eata_pio_reset,&t;&t; &bslash;&n;    NULL,   /* Slave attach */&t; &bslash;&n;    scsicam_bios_param,&t;&t; &bslash;&n;    0,&t;    /* Canqueue&t;    */&t; &bslash;&n;    0,&t;    /* this_id&t;    */&t; &bslash;&n;    0,&t;    /* sg_tablesize */&t; &bslash;&n;    0,&t;    /* cmd_per_lun  */&t; &bslash;&n;    0,&t;    /* present&t;    */&t; &bslash;&n;    1,&t;    /* True if ISA  */&t; &bslash;&n;    ENABLE_CLUSTERING }
 macro_line|#endif /* _EATA_PIO_H */
-multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * tab-width: 8&n; * End:&n; */
 eof

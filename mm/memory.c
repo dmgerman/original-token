@@ -332,9 +332,6 @@ op_star
 id|dir
 )paren
 (brace
-r_int
-id|j
-suffix:semicolon
 id|pmd_t
 op_star
 id|pmd
@@ -403,6 +400,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|pmd_inuse
 c_func
 (paren
@@ -410,15 +408,9 @@ id|pmd
 )paren
 )paren
 (brace
-id|pmd_free
-c_func
-(paren
-id|pmd
-)paren
+r_int
+id|j
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -441,6 +433,7 @@ op_plus
 id|j
 )paren
 suffix:semicolon
+)brace
 id|pmd_free
 c_func
 (paren
@@ -1038,7 +1031,14 @@ id|old_pmd
 id|printk
 c_func
 (paren
-l_string|&quot;copy_one_pmd: bad page table: probable memory corruption&bslash;n&quot;
+l_string|&quot;copy_one_pmd: bad page table (%08lx): probable memory corruption&bslash;n&quot;
+comma
+id|pmd_val
+c_func
+(paren
+op_star
+id|old_pmd
+)paren
 )paren
 suffix:semicolon
 id|pmd_clear

@@ -213,14 +213,6 @@ op_star
 id|addrs
 )paren
 suffix:semicolon
-r_extern
-r_void
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|struct|priv
 r_struct
 id|priv
@@ -725,7 +717,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s found at %#3x, IRQ %d DMA %d.&bslash;n&quot;
+l_string|&quot;%s: %s found at %#3lx, IRQ %d DMA %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

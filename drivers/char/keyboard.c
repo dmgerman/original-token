@@ -93,15 +93,6 @@ c_func
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|vc_cons_allocated
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 macro_line|#ifdef __i386__
 DECL|macro|fake_keyboard_interrupt
 mdefine_line|#define fake_keyboard_interrupt() __asm__ __volatile__(&quot;int $0x21&quot;)

@@ -3,6 +3,7 @@ DECL|macro|_LINUX_SOCKET_H
 mdefine_line|#define _LINUX_SOCKET_H
 macro_line|#include &lt;asm/socket.h&gt;&t;&t;&t;/* arch-dependent defines&t;*/
 macro_line|#include &lt;linux/sockios.h&gt;&t;&t;/* the SIOCxxx I/O controls&t;*/
+macro_line|#include &lt;linux/uio.h&gt;&t;&t;&t;/* iovec support&t;&t;*/
 DECL|struct|sockaddr
 r_struct
 id|sockaddr
@@ -37,6 +38,46 @@ r_int
 id|l_linger
 suffix:semicolon
 multiline_comment|/* How long to linger for&t;*/
+)brace
+suffix:semicolon
+DECL|struct|msghdr
+r_struct
+id|msghdr
+(brace
+DECL|member|msg_name
+r_void
+op_star
+id|msg_name
+suffix:semicolon
+multiline_comment|/* Socket name&t;&t;&t;*/
+DECL|member|msg_namelen
+r_int
+id|msg_namelen
+suffix:semicolon
+multiline_comment|/* Length of name&t;&t;*/
+DECL|member|msg_iov
+r_struct
+id|iovec
+op_star
+id|msg_iov
+suffix:semicolon
+multiline_comment|/* Data blocks&t;&t;&t;*/
+DECL|member|msg_iovlen
+r_int
+id|msg_iovlen
+suffix:semicolon
+multiline_comment|/* Number of blocks&t;&t;*/
+DECL|member|msg_accrights
+r_void
+op_star
+id|msg_accrights
+suffix:semicolon
+multiline_comment|/* Per protocol magic (eg BSD file descriptor passing) */
+DECL|member|msg_accrightslen
+r_int
+id|msg_accrightslen
+suffix:semicolon
+multiline_comment|/* Length of rights list */
 )brace
 suffix:semicolon
 multiline_comment|/* Socket types. */
@@ -173,5 +214,106 @@ DECL|macro|SOPRI_NORMAL
 mdefine_line|#define SOPRI_NORMAL&t;&t;1
 DECL|macro|SOPRI_BACKGROUND
 mdefine_line|#define SOPRI_BACKGROUND&t;2
+macro_line|#ifdef __KERNEL__
+r_extern
+r_void
+id|memcpy_fromiovec
+c_func
+(paren
+r_int
+r_char
+op_star
+id|kdata
+comma
+r_struct
+id|iovec
+op_star
+id|iov
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|verify_iovec
+c_func
+(paren
+r_struct
+id|msghdr
+op_star
+id|m
+comma
+r_struct
+id|iovec
+op_star
+id|iov
+comma
+r_char
+op_star
+id|address
+comma
+r_int
+id|mode
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|memcpy_toiovec
+c_func
+(paren
+r_struct
+id|iovec
+op_star
+id|v
+comma
+r_int
+r_char
+op_star
+id|kdata
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|move_addr_to_user
+c_func
+(paren
+r_void
+op_star
+id|kaddr
+comma
+r_int
+id|klen
+comma
+r_void
+op_star
+id|uaddr
+comma
+r_int
+op_star
+id|ulen
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|move_addr_to_kernel
+c_func
+(paren
+r_void
+op_star
+id|uaddr
+comma
+r_int
+id|ulen
+comma
+r_void
+op_star
+id|kaddr
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* _LINUX_SOCKET_H */
 eof

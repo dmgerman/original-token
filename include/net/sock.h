@@ -24,6 +24,43 @@ macro_line|#endif
 macro_line|#include &lt;linux/igmp.h&gt;
 DECL|macro|SOCK_ARRAY_SIZE
 mdefine_line|#define SOCK_ARRAY_SIZE&t;256&t;&t;/* Think big (also on some systems a byte is faster */
+multiline_comment|/*&n; *&t;The AF_UNIX specific socket options&n; */
+DECL|struct|unix_opt
+r_struct
+id|unix_opt
+(brace
+DECL|member|family
+r_int
+id|family
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|locks
+r_int
+id|locks
+suffix:semicolon
+DECL|member|inode
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+DECL|member|readsem
+r_struct
+id|semaphore
+id|readsem
+suffix:semicolon
+DECL|member|other
+r_struct
+id|sock
+op_star
+id|other
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
 DECL|struct|sock
 r_struct
@@ -435,6 +472,18 @@ id|atalk_sock
 id|at
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; *&t;This is where all the private (optional) areas that dont overlap will eventually live&n; *&t;for now just AF_UNIX is here.&n; */
+r_union
+(brace
+DECL|member|af_unix
+r_struct
+id|unix_opt
+id|af_unix
+suffix:semicolon
+DECL|member|protinfo
+)brace
+id|protinfo
+suffix:semicolon
 multiline_comment|/* IP &squot;private area&squot; or will be eventually */
 DECL|member|ip_ttl
 r_int

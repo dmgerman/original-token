@@ -1377,21 +1377,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#ifdef AIC7XXX_DEBUG
-r_extern
-r_int
-id|vsprintf
-c_func
-(paren
-r_char
-op_star
-comma
-r_const
-r_char
-op_star
-comma
-id|va_list
-)paren
-suffix:semicolon
 r_static
 r_void
 DECL|function|debug

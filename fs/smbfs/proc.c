@@ -45,15 +45,6 @@ r_int
 id|num
 )paren
 suffix:semicolon
-r_int
-id|smb_request
-c_func
-(paren
-r_struct
-id|smb_server
-op_star
-)paren
-suffix:semicolon
 r_static
 r_int
 id|smb_request_ok

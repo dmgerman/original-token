@@ -643,7 +643,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Pocket adapter found at %#3x, IRQ %d, SAPROM &quot;
+l_string|&quot;%s: Pocket adapter found at %#3lx, IRQ %d, SAPROM &quot;
 l_string|&quot;%02X:%02X:%02X:%02X:%02X:%02X.&bslash;n&quot;
 comma
 id|dev-&gt;name

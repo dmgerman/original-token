@@ -50,32 +50,6 @@ mdefine_line|#define DELAY_16(); { __delay( (loops_per_sec&gt;&gt;16)+1 ); }
 multiline_comment|/* wait for command with timeout: */
 DECL|macro|WAIT_4_SCB_CMD
 mdefine_line|#define WAIT_4_SCB_CMD() { int i; &bslash;&n;  for(i=0;i&lt;1024;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd) break; &bslash;&n;    DELAY_16(); &bslash;&n;    if(i == 1023) { &bslash;&n;      printk(&quot;%s: scb_cmd timed out .. resetting i82586&bslash;n&quot;,dev-&gt;name); &bslash;&n;      ni_reset586(); } } }
-r_extern
-r_void
-id|autoirq_setup
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|autoirq_report
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_void
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|macro|NI52_TOTAL_SIZE
 mdefine_line|#define NI52_TOTAL_SIZE 16
 DECL|macro|NI52_ADDR0
@@ -1247,7 +1221,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Ni52 found at %#3x, &quot;
+l_string|&quot;%s: Ni52 found at %#3lx, &quot;
 comma
 id|dev-&gt;name
 comma

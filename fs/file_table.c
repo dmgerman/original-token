@@ -2,11 +2,14 @@ multiline_comment|/*&n; *  linux/fs/file_table.c&n; *&n; *  Copyright (C) 1991, 
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+multiline_comment|/*&n; * first_file points to a doubly linked list of all file structures in&n; *            the system.&n; * nr_files   holds the length of this list.&n; */
 DECL|variable|first_file
 r_struct
 id|file
 op_star
 id|first_file
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|nr_files
 r_int
@@ -14,6 +17,7 @@ id|nr_files
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n; * Insert a new file structure at the head of the list of available ones.&n; */
 DECL|function|insert_file_free
 r_static
 r_void
@@ -26,6 +30,10 @@ op_star
 id|file
 )paren
 (brace
+id|file-&gt;f_count
+op_assign
+l_int|0
+suffix:semicolon
 id|file-&gt;f_next
 op_assign
 id|first_file
@@ -47,6 +55,7 @@ op_assign
 id|file
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Remove a file structure from the list of available ones.&n; */
 DECL|function|remove_file_free
 r_static
 r_void
@@ -70,20 +79,10 @@ id|first_file
 op_assign
 id|first_file-&gt;f_next
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|file-&gt;f_next
-)paren
 id|file-&gt;f_next-&gt;f_prev
 op_assign
 id|file-&gt;f_prev
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|file-&gt;f_prev
-)paren
 id|file-&gt;f_prev-&gt;f_next
 op_assign
 id|file-&gt;f_next
@@ -95,6 +94,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Insert a file structure at the end of the list of available ones.&n; */
 DECL|function|put_last_free
 r_static
 r_void
@@ -107,12 +107,6 @@ op_star
 id|file
 )paren
 (brace
-id|remove_file_free
-c_func
-(paren
-id|file
-)paren
-suffix:semicolon
 id|file-&gt;f_prev
 op_assign
 id|first_file-&gt;f_prev
@@ -130,8 +124,10 @@ op_assign
 id|file
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Allocate a new memory page for file structures and&n; * insert the new structures into the global list.&n; * Returns 0, if there is no more memory, 1 otherwise.&n; */
 DECL|function|grow_files
-r_void
+r_static
+r_int
 id|grow_files
 c_func
 (paren
@@ -146,6 +142,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/*&n;&t; * We don&squot;t have to clear the page because we only look into&n;&t; * f_count, f_prev and f_next and they get initialized in&n;&t; * insert_file_free.  The rest of the file structure is cleared&n;&t; * by get_empty_filp before it is returned.&n;&t; */
 id|file
 op_assign
 (paren
@@ -153,7 +150,7 @@ r_struct
 id|file
 op_star
 )paren
-id|get_free_page
+id|__get_free_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -166,6 +163,7 @@ op_logical_neg
 id|file
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|nr_files
 op_add_assign
@@ -185,6 +183,10 @@ c_cond
 op_logical_neg
 id|first_file
 )paren
+id|file-&gt;f_count
+op_assign
+l_int|0
+comma
 id|file-&gt;f_next
 op_assign
 id|file-&gt;f_prev
@@ -213,6 +215,9 @@ id|file
 op_increment
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 DECL|function|file_table_init
 r_int
@@ -229,14 +234,11 @@ r_int
 id|end
 )paren
 (brace
-id|first_file
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 id|start
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Find an unused file structure and return a pointer to it.&n; * Returns NULL, if there are no more free file structures or&n; * we run out of memory.&n; */
 DECL|function|get_empty_filp
 r_struct
 id|file
@@ -255,19 +257,24 @@ id|file
 op_star
 id|f
 suffix:semicolon
+multiline_comment|/* if the return is taken, we are in deep trouble */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|first_file
-)paren
+op_logical_and
+op_logical_neg
 id|grow_files
 c_func
 (paren
 )paren
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
-id|repeat
-suffix:colon
+r_do
+(brace
 r_for
 c_loop
 (paren
@@ -336,23 +343,20 @@ r_return
 id|f
 suffix:semicolon
 )brace
-r_if
-c_cond
+)brace
+r_while
+c_loop
 (paren
 id|nr_files
 OL
 id|NR_FILE
-)paren
-(brace
+op_logical_and
 id|grow_files
 c_func
 (paren
 )paren
+)paren
 suffix:semicolon
-r_goto
-id|repeat
-suffix:semicolon
-)brace
 r_return
 l_int|NULL
 suffix:semicolon

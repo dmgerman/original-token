@@ -32,6 +32,10 @@ DECL|macro|PCI_COMMAND_FAST_BACK
 mdefine_line|#define  PCI_COMMAND_FAST_BACK&t;0x200&t;/* Enable back-to-back writes */
 DECL|macro|PCI_STATUS
 mdefine_line|#define PCI_STATUS&t;&t;0x06&t;/* 16 bits */
+DECL|macro|PCI_STATUS_66MHZ
+mdefine_line|#define  PCI_STATUS_66MHZ&t;0x20&t;/* Support 66 Mhz PCI 2.1 bus */
+DECL|macro|PCI_STATUS_UDF
+mdefine_line|#define  PCI_STATUS_UDF&t;&t;0x40&t;/* Support User Definable Features */
 DECL|macro|PCI_STATUS_FAST_BACK
 mdefine_line|#define  PCI_STATUS_FAST_BACK&t;0x80&t;/* Accept fast-back to back */
 DECL|macro|PCI_STATUS_PARITY
@@ -110,7 +114,12 @@ mdefine_line|#define  PCI_BASE_ADDRESS_MEM_MASK&t;(~0x0f)
 DECL|macro|PCI_BASE_ADDRESS_IO_MASK
 mdefine_line|#define  PCI_BASE_ADDRESS_IO_MASK&t;(~0x03)
 multiline_comment|/* bit 1 is reserved if address_space = 1 */
-multiline_comment|/* 0x28-0x2f are reserved */
+DECL|macro|PCI_CARDBUS_CIS
+mdefine_line|#define PCI_CARDBUS_CIS&t;&t;0x28
+DECL|macro|PCI_SUBSYSTEM_ID
+mdefine_line|#define PCI_SUBSYSTEM_ID&t;0x2c
+DECL|macro|PCI_SUBSYSTEM_VENDOR_ID
+mdefine_line|#define PCI_SUBSYSTEM_VENDOR_ID&t;0x2e  
 DECL|macro|PCI_ROM_ADDRESS
 mdefine_line|#define PCI_ROM_ADDRESS&t;&t;0x30&t;/* 32 bits */
 DECL|macro|PCI_ROM_ADDRESS_ENABLE
@@ -138,6 +147,8 @@ DECL|macro|PCI_CLASS_STORAGE_FLOPPY
 mdefine_line|#define PCI_CLASS_STORAGE_FLOPPY&t;0x0102
 DECL|macro|PCI_CLASS_STORAGE_IPI
 mdefine_line|#define PCI_CLASS_STORAGE_IPI&t;&t;0x0103
+DECL|macro|PCI_CLASS_STORAGE_RAID
+mdefine_line|#define PCI_CLASS_STORAGE_RAID&t;&t;0x0104 
 DECL|macro|PCI_CLASS_STORAGE_OTHER
 mdefine_line|#define PCI_CLASS_STORAGE_OTHER&t;&t;0x0180
 DECL|macro|PCI_BASE_CLASS_NETWORK
@@ -148,6 +159,8 @@ DECL|macro|PCI_CLASS_NETWORK_TOKEN_RING
 mdefine_line|#define PCI_CLASS_NETWORK_TOKEN_RING&t;0x0201
 DECL|macro|PCI_CLASS_NETWORK_FDDI
 mdefine_line|#define PCI_CLASS_NETWORK_FDDI&t;&t;0x0202
+DECL|macro|PCI_CLASS_NETWORK_ATM
+mdefine_line|#define PCI_CLASS_NETWORK_ATM&t;&t;0x0203
 DECL|macro|PCI_CLASS_NETWORK_OTHER
 mdefine_line|#define PCI_CLASS_NETWORK_OTHER&t;&t;0x0280
 DECL|macro|PCI_BASE_CLASS_DISPLAY
@@ -188,8 +201,74 @@ DECL|macro|PCI_CLASS_BRIDGE_PCI
 mdefine_line|#define  PCI_CLASS_BRIDGE_PCI&t;&t;0x0604
 DECL|macro|PCI_CLASS_BRIDGE_PCMCIA
 mdefine_line|#define  PCI_CLASS_BRIDGE_PCMCIA&t;0x0605
+DECL|macro|PCI_CLASS_BRIDGE_NUBUS
+mdefine_line|#define  PCI_CLASS_BRIDGE_NUBUS&t;&t;0x0606
+DECL|macro|PCI_CLASS_BRIDGE_CARDBUS
+mdefine_line|#define  PCI_CLASS_BRIDGE_CARDBUS&t;0x0607
 DECL|macro|PCI_CLASS_BRIDGE_OTHER
 mdefine_line|#define  PCI_CLASS_BRIDGE_OTHER&t;&t;0x0680
+DECL|macro|PCI_BASE_CLASS_COMMUNICATION
+mdefine_line|#define PCI_BASE_CLASS_COMMUNICATION&t;0x07
+DECL|macro|PCI_CLASS_COMMUNICATION_SERIAL
+mdefine_line|#define PCI_CLASS_COMMUNICATION_SERIAL&t;0x0700
+DECL|macro|PCI_CLASS_COMMUNICATION_PARALLEL
+mdefine_line|#define PCI_CLASS_COMMUNICATION_PARALLEL 0x0701
+DECL|macro|PCI_CLASS_COMMUNICATION_OTHER
+mdefine_line|#define PCI_CLASS_COMMUNICATION_OTHER&t;0x0780
+DECL|macro|PCI_BASE_CLASS_SYSTEM
+mdefine_line|#define PCI_BASE_CLASS_SYSTEM&t;&t;0x08
+DECL|macro|PCI_CLASS_SYSTEM_PIC
+mdefine_line|#define PCI_CLASS_SYSTEM_PIC&t;&t;0x0800
+DECL|macro|PCI_CLASS_SYSTEM_DMA
+mdefine_line|#define PCI_CLASS_SYSTEM_DMA&t;&t;0x0801
+DECL|macro|PCI_CLASS_SYSTEM_TIMER
+mdefine_line|#define PCI_CLASS_SYSTEM_TIMER&t;&t;0x0802
+DECL|macro|PCI_CLASS_SYSTEM_RTC
+mdefine_line|#define PCI_CLASS_SYSTEM_RTC&t;&t;0x0803
+DECL|macro|PCI_CLASS_SYSTEM_OTHER
+mdefine_line|#define PCI_CLASS_SYSTEM_OTHER&t;&t;0x0880
+DECL|macro|PCI_BASE_CLASS_INPUT
+mdefine_line|#define PCI_BASE_CLASS_INPUT&t;&t;0x09
+DECL|macro|PCI_CLASS_INPUT_KEYBOARD
+mdefine_line|#define PCI_CLASS_INPUT_KEYBOARD&t;0x0900
+DECL|macro|PCI_CLASS_INPUT_PEN
+mdefine_line|#define PCI_CLASS_INPUT_PEN&t;&t;0x0901
+DECL|macro|PCI_CLASS_INPUT_MOUSE
+mdefine_line|#define PCI_CLASS_INPUT_MOUSE&t;&t;0x0902
+DECL|macro|PCI_CLASS_INPUT_OTHER
+mdefine_line|#define PCI_CLASS_INPUT_OTHER&t;&t;0x0980
+DECL|macro|PCI_BASE_CLASS_DOCKING
+mdefine_line|#define PCI_BASE_CLASS_DOCKING&t;&t;0x0a
+DECL|macro|PCI_CLASS_DOCKING_GENERIC
+mdefine_line|#define PCI_CLASS_DOCKING_GENERIC&t;0x0a00
+DECL|macro|PCI_CLASS_DOCKING_OTHER
+mdefine_line|#define PCI_CLASS_DOCKING_OTHER&t;&t;0x0a01
+DECL|macro|PCI_BASE_CLASS_PROCESSOR
+mdefine_line|#define PCI_BASE_CLASS_PROCESSOR&t;0x0b
+DECL|macro|PCI_CLASS_PROCESSOR_386
+mdefine_line|#define PCI_CLASS_PROCESSOR_386&t;&t;0x0b00
+DECL|macro|PCI_CLASS_PROCESSOR_486
+mdefine_line|#define PCI_CLASS_PROCESSOR_486&t;&t;0x0b01
+DECL|macro|PCI_CLASS_PROCESSOR_PENTIUM
+mdefine_line|#define PCI_CLASS_PROCESSOR_PENTIUM&t;0x0b02
+DECL|macro|PCI_CLASS_PROCESSOR_ALPHA
+mdefine_line|#define PCI_CLASS_PROCESSOR_ALPHA&t;0x0b10
+DECL|macro|PCI_CLASS_PROCESSOR_POWERPC
+mdefine_line|#define PCI_CLASS_PROCESSOR_POWERPC&t;0x0b20
+DECL|macro|PCI_CLASS_PROCESSOR_CO
+mdefine_line|#define PCI_CLASS_PROCESSOR_CO&t;&t;0x0b40
+DECL|macro|PCI_BASE_CLASS_SERIAL
+mdefine_line|#define PCI_BASE_CLASS_SERIAL&t;&t;0x0c
+DECL|macro|PCI_CLASS_SERIAL_FIREWIRE
+mdefine_line|#define PCI_CLASS_SERIAL_FIREWIRE&t;0x0c00
+DECL|macro|PCI_CLASS_SERIAL_ACCESS
+mdefine_line|#define PCI_CLASS_SERIAL_ACCESS&t;&t;0x0c01
+DECL|macro|PCI_CLASS_SERIAL_SSA
+mdefine_line|#define PCI_CLASS_SERIAL_SSA&t;&t;0x0c02
+DECL|macro|PCI_CLASS_SERIAL_USB
+mdefine_line|#define PCI_CLASS_SERIAL_USB&t;&t;0x0c03
+DECL|macro|PCI_CLASS_SERIAL_FIBER
+mdefine_line|#define PCI_CLASS_SERIAL_FIBER&t;&t;0x0c04
 DECL|macro|PCI_CLASS_OTHERS
 mdefine_line|#define PCI_CLASS_OTHERS&t;&t;0xff
 DECL|macro|PCI_VENDOR_ID_NCR
@@ -294,6 +373,8 @@ DECL|macro|PCI_DEVICE_ID_INTEL_82438
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82438&t;0x1230
 DECL|macro|PCI_DEVICE_ID_INTEL_7116
 mdefine_line|#define PCI_DEVICE_ID_INTEL_7116&t;0x1223
+DECL|macro|PCI_DEVICE_ID_INTEL_82865
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82865&t;0x1227
 DECL|macro|PCI_VENDOR_ID_SMC
 mdefine_line|#define PCI_VENDOR_ID_SMC&t;&t;0x1042
 DECL|macro|PCI_DEVICE_ID_SMC_37C665
@@ -344,6 +425,8 @@ DECL|macro|PCI_DEVICE_ID_AL_M1449
 mdefine_line|#define PCI_DEVICE_ID_AL_M1449&t;&t;0x1449
 DECL|macro|PCI_DEVICE_ID_AL_M1451
 mdefine_line|#define PCI_DEVICE_ID_AL_M1451&t;&t;0x1451
+DECL|macro|PCI_DEVICE_ID_AL_M1461
+mdefine_line|#define PCI_DEVICE_ID_AL_M1461&t;&t;0x1461
 DECL|macro|PCI_DEVICE_ID_AL_M4803
 mdefine_line|#define PCI_DEVICE_ID_AL_M4803&t;&t;0x5215
 DECL|macro|PCI_VENDOR_ID_TSENG

@@ -260,27 +260,6 @@ r_int
 id|inout
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|proc_print_scsidevice
-c_func
-(paren
-id|Scsi_Device
-op_star
-id|scd
-comma
-r_char
-op_star
-id|buffer
-comma
-r_int
-op_star
-id|size
-comma
-r_int
-id|len
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *  As the scsi do command functions are intelligent, and may need to&n; *  redo a command, we need to keep track of the last command&n; *  executed on each one.&n; */
 DECL|macro|WAS_RESET
 mdefine_line|#define WAS_RESET       0x01

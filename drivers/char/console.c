@@ -274,15 +274,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|conv_uni_to_pc
-c_func
-(paren
-r_int
-id|ucs
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|reset_palette
 (paren

@@ -1800,14 +1800,6 @@ suffix:semicolon
 )brace
 r_extern
 r_void
-id|check_bugs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|setup_arch
 c_func
 (paren

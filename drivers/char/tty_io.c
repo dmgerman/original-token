@@ -44,14 +44,6 @@ id|nopowersave
 suffix:semicolon
 r_extern
 r_void
-id|do_unblank_screen
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|set_vesa_blanking
 c_func
 (paren

@@ -21,22 +21,6 @@ multiline_comment|/* The CDROM is fairly slow, so we need a little extra time */
 multiline_comment|/* In fact, it is very slow if it has to spin up first */
 DECL|macro|IOCTL_TIMEOUT
 mdefine_line|#define IOCTL_TIMEOUT 3000
-r_extern
-r_int
-id|scsi_ioctl
-(paren
-id|Scsi_Device
-op_star
-id|dev
-comma
-r_int
-id|cmd
-comma
-r_void
-op_star
-id|arg
-)paren
-suffix:semicolon
 DECL|function|sr_ioctl_done
 r_static
 r_void

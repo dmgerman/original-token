@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&n; *&t;All the real work was done by .....&n; *&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&n; *&t;All the real work was done by .....&n; *&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -301,6 +301,27 @@ op_plus
 id|ip-&gt;ihl
 )paren
 suffix:semicolon
+r_struct
+id|icmphdr
+op_star
+id|icmp
+op_assign
+(paren
+r_struct
+id|icmphdr
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|ip
+op_plus
+id|ip-&gt;ihl
+)paren
+suffix:semicolon
 id|__u32
 id|src
 comma
@@ -314,6 +335,10 @@ comma
 id|dst_port
 op_assign
 l_int|0
+comma
+id|icmp_type
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -325,6 +350,10 @@ id|prt
 suffix:semicolon
 r_char
 id|notcpsyn
+op_assign
+l_int|1
+comma
+id|notcpack
 op_assign
 l_int|1
 comma
@@ -443,10 +472,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|tcp-&gt;ack
+)paren
+(brace
+multiline_comment|/* We *DO* have ACK, value FALSE */
+id|notcpack
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|tcp-&gt;syn
 op_logical_and
-op_logical_neg
-id|tcp-&gt;ack
+id|notcpack
 )paren
 (brace
 multiline_comment|/* We *DO* have SYN, value FALSE */
@@ -504,23 +544,21 @@ suffix:semicolon
 r_case
 id|IPPROTO_ICMP
 suffix:colon
+id|icmp_type
+op_assign
+(paren
+id|__u16
+)paren
+(paren
+id|icmp-&gt;type
+)paren
+suffix:semicolon
 id|dprintf2
 c_func
 (paren
 l_string|&quot;ICMP:%d &quot;
 comma
-(paren
-(paren
-r_char
-op_star
-)paren
-id|portptr
-)paren
-(braket
-l_int|0
-)braket
-op_amp
-l_int|0xff
+id|icmp_type
 )paren
 suffix:semicolon
 id|prt
@@ -744,6 +782,41 @@ id|notcpsyn
 r_continue
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; * When a bidirectional rule is used we only check&n;&t;&t;&t; * for ack bits on reverse matches. This way it&squot;s&n;&t;&t;&t; * easy to set up rules which only allow connections&n;&t;&t;&t; * initiated from &quot;normal&quot; match adresses.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_TCPACK
+)paren
+op_logical_and
+id|notcpack
+)paren
+r_if
+c_cond
+(paren
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_BIDIR
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|match
+op_amp
+l_int|0x02
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+)brace
+r_else
+r_continue
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Specific firewall - packet&squot;s protocol&n;&t;&t;&t; *&t;must match firewall&squot;s.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -759,6 +832,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|prt
+op_eq
+id|IP_FW_F_ICMP
+op_logical_and
+op_logical_neg
+id|port_match
+c_func
+(paren
+op_amp
+id|f-&gt;fw_pts
+(braket
+l_int|0
+)braket
+comma
+id|f-&gt;fw_nsp
+comma
+id|icmp_type
+comma
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_SRNG
+)paren
+)paren
+op_logical_or
 op_logical_neg
 (paren
 id|prt
@@ -2036,6 +2134,8 @@ op_assign
 id|alloc_skb
 c_func
 (paren
+id|MAX_HEADER
+op_plus
 id|skb-&gt;len
 op_plus
 id|ftp-&gt;delta
@@ -2064,6 +2164,14 @@ suffix:semicolon
 id|skb2-&gt;free
 op_assign
 id|skb-&gt;free
+suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb2
+comma
+id|MAX_HEADER
+)paren
 suffix:semicolon
 id|skb_put
 c_func
@@ -4759,7 +4867,7 @@ id|ip_fwpkt
 )paren
 (brace
 macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
-id|printf
+id|printk
 c_func
 (paren
 l_string|&quot;ip_fw_ctl: length=%d, expected %d&bslash;n&quot;

@@ -21,13 +21,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
-r_extern
-r_int
-op_star
-id|blksize_size
-(braket
-)braket
-suffix:semicolon
 DECL|function|msdos_put_inode
 r_void
 id|msdos_put_inode

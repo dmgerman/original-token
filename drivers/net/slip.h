@@ -15,13 +15,8 @@ DECL|macro|SL_MODE_DEFAULT
 macro_line|# define SL_MODE_DEFAULT SL_MODE_SLIP
 macro_line|#endif
 multiline_comment|/* SLIP configuration. */
-macro_line|#ifndef SL_SLIP_LOTS
 DECL|macro|SL_NRUNIT
-mdefine_line|#define SL_NRUNIT&t;4&t;&t;/* number of SLIP channels&t;*/
-macro_line|#else
-DECL|macro|SL_NRUNIT
-mdefine_line|#define SL_NRUNIT&t;16
-macro_line|#endif
+mdefine_line|#define SL_NRUNIT&t;256&t;&t;/* MAX number of SLIP channels;&n;&t;&t;&t;&t;&t;   This can be overridden with&n;&t;&t;&t;&t;&t;   insmod -oslip_maxdev=nnn&t;*/
 DECL|macro|SL_MTU
 mdefine_line|#define SL_MTU&t;&t;296&t;&t;/* 296; I am used to 600- FvK&t;*/
 multiline_comment|/* SLIP protocol characters. */

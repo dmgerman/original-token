@@ -106,8 +106,10 @@ DECL|macro|IP_FW_F_ICMPRPL
 mdefine_line|#define IP_FW_F_ICMPRPL 0x100&t;/* Send back icmp unreachable packet  */
 DECL|macro|IP_FW_F_MASQ
 mdefine_line|#define IP_FW_F_MASQ&t;0x200&t;/* Masquerading&t;&t;&t;      */
+DECL|macro|IP_FW_F_TCPACK
+mdefine_line|#define IP_FW_F_TCPACK&t;0x400&t;/* For tcp-packets match if ACK is set*/
 DECL|macro|IP_FW_F_MASK
-mdefine_line|#define IP_FW_F_MASK&t;0x3FF&t;/* All possible flag bits mask        */
+mdefine_line|#define IP_FW_F_MASK&t;0x7FF&t;/* All possible flag bits mask        */
 multiline_comment|/*    &n; *&t;New IP firewall options for [gs]etsockopt at the RAW IP level.&n; *&t;Unlike BSD Linux inherits IP options so you don&squot;t have to use&n; *&t;a raw socket for this. Instead we check rights in the calls.&n; */
 DECL|macro|IP_FW_BASE_CTL
 mdefine_line|#define IP_FW_BASE_CTL   64

@@ -441,10 +441,6 @@ comma
 id|minor
 op_assign
 id|current_minor
-comma
-id|tested_for_dm6
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -467,8 +463,15 @@ id|hd-&gt;minor_shift
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+r_int
+id|tested_for_dm6
+op_assign
+l_int|0
+suffix:semicolon
 id|read_mbr
 suffix:colon
+macro_line|#endif
 r_if
 c_cond
 (paren

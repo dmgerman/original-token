@@ -394,6 +394,12 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
+id|wp_works_ok
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|start_mem
 op_assign
 id|PAGE_ALIGN
@@ -418,6 +424,103 @@ OL
 id|end_mem
 )paren
 (brace
+macro_line|#ifdef CONFIG_PENTIUM_MM
+r_if
+c_cond
+(paren
+id|address
+op_le
+id|end_mem
+op_plus
+l_int|4
+op_star
+l_int|1024
+op_star
+l_int|1024
+op_logical_and
+(paren
+id|x86_capability
+op_amp
+l_int|8
+)paren
+)paren
+(brace
+macro_line|#ifdef GAS_KNOWS_CR4
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr4,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;orl $16,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%eax,%%cr4&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|__asm__
+c_func
+(paren
+l_string|&quot;.byte 0x0f,0x20,0xe0&bslash;n&bslash;t&quot;
+l_string|&quot;orl $16,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;.byte 0x0f,0x22,0xe0&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|wp_works_ok
+op_assign
+l_int|1
+suffix:semicolon
+id|pgd_val
+c_func
+(paren
+id|pg_dir
+(braket
+l_int|0
+)braket
+)paren
+op_assign
+id|_PAGE_TABLE
+op_or
+id|_PAGE_4M
+op_or
+id|address
+suffix:semicolon
+id|pgd_val
+c_func
+(paren
+id|pg_dir
+(braket
+l_int|768
+)braket
+)paren
+op_assign
+id|_PAGE_TABLE
+op_or
+id|_PAGE_4M
+op_or
+id|address
+suffix:semicolon
+id|pg_dir
+op_increment
+suffix:semicolon
+id|address
+op_add_assign
+l_int|4
+op_star
+l_int|1024
+op_star
+l_int|1024
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* map the memory at virtual addr 0xC0000000 */
 id|pg_table
 op_assign
@@ -832,11 +935,14 @@ l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* test if the WP bit is honoured in supervisor mode */
+r_if
+c_cond
+(paren
 id|wp_works_ok
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
+OL
+l_int|0
+)paren
+(brace
 id|pg0
 (braket
 l_int|0
@@ -895,12 +1001,7 @@ id|wp_works_ok
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
-id|wp_works_ok
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
+)brace
 r_return
 suffix:semicolon
 )brace

@@ -20,8 +20,10 @@ macro_line|#include &quot;aha152x.h&quot;
 multiline_comment|/* DEFINES */
 multiline_comment|/* For PCMCIA cards, always use AUTOCONF */
 macro_line|#if defined(PCMCIA) || defined(MODULE)
+macro_line|#if !defined(AUTOCONF)
 DECL|macro|AUTOCONF
 mdefine_line|#define AUTOCONF
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* If auto configuration is disabled, IRQ, SCSI_ID and RECONNECT have to&n;   be predefined */
 macro_line|#if !defined(AUTOCONF)

@@ -453,6 +453,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|INTEL
+comma
+id|INTEL_82865
+comma
+l_string|&quot;82865&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|SMC
 comma
 id|SMC_37C665
@@ -618,6 +628,16 @@ comma
 id|AL_M1451
 comma
 l_string|&quot;M1451&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M1461
+comma
+l_string|&quot;M1461&quot;
 )paren
 comma
 id|DEVICE
@@ -1497,6 +1517,12 @@ r_return
 l_string|&quot;IPI bus controller&quot;
 suffix:semicolon
 r_case
+id|PCI_CLASS_STORAGE_RAID
+suffix:colon
+r_return
+l_string|&quot;RAID bus controller&quot;
+suffix:semicolon
+r_case
 id|PCI_CLASS_STORAGE_OTHER
 suffix:colon
 r_return
@@ -1519,6 +1545,12 @@ id|PCI_CLASS_NETWORK_FDDI
 suffix:colon
 r_return
 l_string|&quot;FDDI network controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_NETWORK_ATM
+suffix:colon
+r_return
+l_string|&quot;ATM network controller&quot;
 suffix:semicolon
 r_case
 id|PCI_CLASS_NETWORK_OTHER
@@ -1617,10 +1649,166 @@ r_return
 l_string|&quot;PCMCIA bridge&quot;
 suffix:semicolon
 r_case
+id|PCI_CLASS_BRIDGE_NUBUS
+suffix:colon
+r_return
+l_string|&quot;NuBus bridge&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_BRIDGE_CARDBUS
+suffix:colon
+r_return
+l_string|&quot;CardBus bridge&quot;
+suffix:semicolon
+r_case
 id|PCI_CLASS_BRIDGE_OTHER
 suffix:colon
 r_return
 l_string|&quot;Bridge&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_COMMUNICATION_SERIAL
+suffix:colon
+r_return
+l_string|&quot;Serial controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_COMMUNICATION_PARALLEL
+suffix:colon
+r_return
+l_string|&quot;Parallel controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_COMMUNICATION_OTHER
+suffix:colon
+r_return
+l_string|&quot;Communication controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SYSTEM_PIC
+suffix:colon
+r_return
+l_string|&quot;PIC&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SYSTEM_DMA
+suffix:colon
+r_return
+l_string|&quot;DMA controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SYSTEM_TIMER
+suffix:colon
+r_return
+l_string|&quot;Timer&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SYSTEM_RTC
+suffix:colon
+r_return
+l_string|&quot;RTC&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SYSTEM_OTHER
+suffix:colon
+r_return
+l_string|&quot;System peripheral&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_INPUT_KEYBOARD
+suffix:colon
+r_return
+l_string|&quot;Keyboard controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_INPUT_PEN
+suffix:colon
+r_return
+l_string|&quot;Digitizer Pen&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_INPUT_MOUSE
+suffix:colon
+r_return
+l_string|&quot;Mouse controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_INPUT_OTHER
+suffix:colon
+r_return
+l_string|&quot;Input device controller&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_DOCKING_GENERIC
+suffix:colon
+r_return
+l_string|&quot;Generic Docking Station&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_DOCKING_OTHER
+suffix:colon
+r_return
+l_string|&quot;Docking Station&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_PROCESSOR_386
+suffix:colon
+r_return
+l_string|&quot;386&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_PROCESSOR_486
+suffix:colon
+r_return
+l_string|&quot;486&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_PROCESSOR_PENTIUM
+suffix:colon
+r_return
+l_string|&quot;Pentium&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_PROCESSOR_ALPHA
+suffix:colon
+r_return
+l_string|&quot;Alpha&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_PROCESSOR_POWERPC
+suffix:colon
+r_return
+l_string|&quot;Power PC&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_PROCESSOR_CO
+suffix:colon
+r_return
+l_string|&quot;Co-processor&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SERIAL_FIREWIRE
+suffix:colon
+r_return
+l_string|&quot;FireWire (IEEE 1394)&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SERIAL_ACCESS
+suffix:colon
+r_return
+l_string|&quot;ACCESS Bus&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SERIAL_SSA
+suffix:colon
+r_return
+l_string|&quot;SSA&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SERIAL_FIBER
+suffix:colon
+r_return
+l_string|&quot;Fiber Channel&quot;
 suffix:semicolon
 r_default
 suffix:colon

@@ -1550,10 +1550,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef ENABLE_PAGING
 r_int
 r_char
 id|pg_size
 suffix:semicolon
+macro_line|#endif
 id|DPRINTK
 c_func
 (paren

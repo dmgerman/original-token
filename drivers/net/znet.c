@@ -608,7 +608,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: ZNET at %#3x,&quot;
+l_string|&quot;%s: ZNET at %#3lx,&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1050,7 +1050,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: ZNet_send_packet(%d).&bslash;n&quot;
+l_string|&quot;%s: ZNet_send_packet(%ld).&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

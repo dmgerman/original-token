@@ -1336,13 +1336,11 @@ id|dev-&gt;start
 id|printk
 c_func
 (paren
-l_string|&quot;&squot;%s&squot; busy&bslash;n&quot;
+l_string|&quot;ERROR &squot;%s&squot; busy and not MOD_IN_USE.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_else
-(brace
 r_if
 c_cond
 (paren
@@ -1414,7 +1412,6 @@ id|flags
 suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 )brace
 r_for
 c_loop

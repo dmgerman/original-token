@@ -358,14 +358,8 @@ multiline_comment|/* Device driver statistics */
 suffix:semicolon
 multiline_comment|/* global variable declaration */
 multiline_comment|/* IRQ map used to reserve a IRQ (see SK_open()) */
-r_extern
-r_void
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
+multiline_comment|/* extern void *irq2dev_map[16]; */
+multiline_comment|/* Declared in &lt;linux/ioport.h&gt; */
 multiline_comment|/* static variables */
 DECL|variable|board
 r_static
@@ -4431,7 +4425,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;## Device Name: %s Base Address: %#06x IRQ: %d&bslash;n&quot;
+l_string|&quot;## Device Name: %s Base Address: %#06lx IRQ: %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4443,7 +4437,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;##   FLAGS: start: %d tbusy: %d int: %d&bslash;n&quot;
+l_string|&quot;##   FLAGS: start: %d tbusy: %ld int: %d&bslash;n&quot;
 comma
 id|dev-&gt;start
 comma

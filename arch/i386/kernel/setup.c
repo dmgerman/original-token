@@ -79,7 +79,8 @@ DECL|variable|wp_works_ok
 r_char
 id|wp_works_ok
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* set if paging hardware honours WP */
 DECL|variable|hlt_works_ok
