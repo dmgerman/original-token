@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|variable|nr_tasks
 r_int
@@ -483,6 +484,12 @@ op_assign
 op_star
 id|current-&gt;mm
 suffix:semicolon
+id|init_new_context
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|mm-&gt;count
 op_assign
 l_int|1
@@ -551,6 +558,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|current-&gt;mm-&gt;count
+op_increment
+suffix:semicolon
 id|SET_PAGE_DIR
 c_func
 (paren
@@ -558,9 +568,6 @@ id|tsk
 comma
 id|current-&gt;mm-&gt;pgd
 )paren
-suffix:semicolon
-id|current-&gt;mm-&gt;count
-op_increment
 suffix:semicolon
 r_return
 l_int|0

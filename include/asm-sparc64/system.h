@@ -1,7 +1,9 @@
-multiline_comment|/* $Id: system.h,v 1.2 1996/12/02 00:01:07 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.4 1996/12/28 18:39:56 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|setipl
 mdefine_line|#define setipl(__new_ipl) &bslash;&n;&t;__asm__ __volatile__(&quot;wrpr&t;%0, %%pil&quot;  : : &quot;r&quot; (__new_ipl) : &quot;memory&quot;)
 DECL|macro|cli
@@ -26,6 +28,111 @@ DECL|macro|nop
 mdefine_line|#define nop() &t;&t;__asm__ __volatile__ (&quot;nop&quot;)
 DECL|macro|membar
 mdefine_line|#define membar(type)&t;__asm__ __volatile__ (&quot;membar &quot; type : : : &quot;memory&quot;);
+DECL|macro|flushi
+mdefine_line|#define flushi(addr)&t;__asm__ __volatile__ (&quot;flush %0&quot; : : &quot;r&quot; (addr))
+DECL|macro|flushw_all
+mdefine_line|#define flushw_all()&t;__asm__ __volatile__(&quot;flushw&quot;)
+macro_line|#ifndef __ASSEMBLY__
+DECL|function|flushw_user
+r_extern
+id|__inline__
+r_void
+id|flushw_user
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+"&quot;"
+id|rdpr
+op_mod
+op_mod
+id|otherwin
+comma
+op_mod
+op_mod
+id|g1
+l_int|1
+suffix:colon
+id|rdpr
+op_mod
+op_mod
+id|otherwin
+comma
+op_mod
+op_mod
+id|g2
+id|brnz
+comma
+id|pn
+op_mod
+op_mod
+id|g2
+comma
+l_int|1
+id|b
+id|save
+op_mod
+op_mod
+id|sp
+comma
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|sp
+l_int|1
+suffix:colon
+id|subcc
+op_mod
+op_mod
+id|g1
+comma
+l_int|1
+comma
+op_mod
+op_mod
+id|g1
+id|bne
+comma
+id|pn
+op_mod
+op_mod
+id|xcc
+comma
+l_int|1
+id|b
+id|restore
+op_mod
+op_mod
+id|g0
+comma
+op_mod
+op_mod
+id|g0
+comma
+op_mod
+op_mod
+id|g0
+l_string|&quot; : : &quot;
+id|i
+"&quot;"
+(paren
+op_minus
+id|REGWIN_SZ
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Unlike the hybrid v7/v8 kernel, we can assume swap exists under V9. */
 DECL|function|xchg_u32
 r_extern
@@ -249,5 +356,6 @@ r_return
 id|x
 suffix:semicolon
 )brace
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_SYSTEM_H) */
 eof

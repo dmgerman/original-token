@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.1 1996/11/20 15:27:38 davem Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.2 1996/12/26 13:25:25 davem Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
@@ -31,9 +31,9 @@ DECL|macro|elf_check_arch
 mdefine_line|#define elf_check_arch(x) ((x) == EM_SPARC)
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 DECL|macro|ELF_ARCH
-mdefine_line|#define ELF_ARCH&t;EM_SPARC
+mdefine_line|#define ELF_ARCH&t;EM_SPARC64
 DECL|macro|ELF_CLASS
-mdefine_line|#define ELF_CLASS&t;ELFCLASS32
+mdefine_line|#define ELF_CLASS&t;ELFCLASS64
 DECL|macro|ELF_DATA
 mdefine_line|#define ELF_DATA&t;ELFDATA2MSB;
 DECL|macro|USE_ELF_CORE_DUMP

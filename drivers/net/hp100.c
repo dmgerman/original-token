@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * hp100.c: Hewlett Packard HP10/100VG ANY LAN ethernet driver for Linux.&n; *&n; * Author:  Jaroslav Kysela, &lt;perex@pf.jcu.cz&gt;&n; *&n; * Supports only the following Hewlett Packard cards:&n; *&n; *  &t;HP J2577&t;10/100 EISA card with REVA Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with REVA Cascade chip&n; *&t;HP 27248B&t;10 only EISA card with Cascade chip&n; *&t;HP J2577&t;10/100 EISA card with Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with Cascade chip&n; *&t;HP J2585&t;10/100 PCI card&n; *&n; * Other ATT2MD01 Chip based boards might be supported in the future&n; * (there are some minor changes needed).&n; *&n; * This driver is based on the &squot;hpfepkt&squot; crynwr packet driver.&n; *&n; * This source/code is public free; you can distribute it and/or modify &n; * it under terms of the GNU General Public License (published by the&n; * Free Software Foundation) either version two of this License, or any &n; * later version.&n; * ----------------------------------------------------------------------------&n; *&n; * Note: Some routines (interrupt handling, transmit) assumes that  &n; *       there is the PERFORMANCE page selected...&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * If you are going to use the module version of this driver, you may&n; * change this values at the &quot;insert time&quot; :&n; *&n; *   Variable                   Description&n; *&n; *   hp100_rx_ratio&t;&t;Range 1-99 - onboard memory used for RX&n; *                              packets in %.&n; *   hp100_priority_tx&t;&t;If this variable is nonzero - all outgoing&n; *                              packets will be transmitted as priority.&n; *   hp100_port&t;&t;&t;Adapter port (for example 0x380).&n; *&n; * ----------------------------------------------------------------------------&n; * MY BEST REGARDS GOING TO:&n; *&n; * IPEX s.r.o which lend me two HP J2573 cards and&n; * the HP AdvanceStack 100VG Hub-15 for debugging.&n; *&n; * Russel Nellson &lt;nelson@crynwr.com&gt; for help with obtaining sources&n; * of the &squot;hpfepkt&squot; packet driver.&n; *&n; * Also thanks to Abacus Electric s.r.o which let me to use their &n; * motherboard for my second computer.&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * TO DO:&n; * ======&n; *       - ioctl handling - some runtime setup things&n; *       - 100Mb/s Voice Grade AnyLAN network adapter/hub services support&n; *&t;&t;- 802.5 frames&n; *&t;&t;- promiscuous mode&n; *&t;&t;- bridge mode&n; *&t;&t;- cascaded repeater mode&n; *&t;&t;- 100Mbit MAC&n; *&n; * Revision history:&n; * =================&n; * &n; *    Version   Date&t;    Description&n; *&n; *&t;0.1&t;14-May-95   Initial writing. ALPHA code was released.&n; *                          Only HP J2573 on 10Mb/s (two machines) tested.&n; *      0.11    14-Jun-95   Reset interface bug fixed?&n; *&t;&t;&t;    Little bug in hp100_close function fixed.&n; *                          100Mb/s connection debugged.&n; *      0.12    14-Jul-95   Link down is now handled better.&n; *      0.20    01-Aug-95   Added PCI support for HP J2585A card.&n; *                          Statistics bug fixed.&n; *      0.21    04-Aug-95   Memory mapped access support for PCI card.&n; *                          Added priority transmit support for 100Mb/s&n; *                          Voice Grade AnyLAN network.&n; *&n; */
+multiline_comment|/*&n; * hp100.c: Hewlett Packard HP10/100VG ANY LAN ethernet driver for Linux.&n; *&n; * Author:  Jaroslav Kysela, &lt;perex@pf.jcu.cz&gt;&n; *&n; * Supports only the following Hewlett Packard cards:&n; *&n; *  &t;HP J2577&t;10/100 EISA card with REVA Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with REVA Cascade chip&n; *&t;HP 27248B&t;10 only EISA card with Cascade chip&n; *&t;HP J2577&t;10/100 EISA card with Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with Cascade chip&n; *&t;HP J2585&t;10/100 PCI card&n; *&n; * Other ATT2MD01 Chip based boards might be supported in the future&n; * (there are some minor changes needed).&n; *&n; * This driver is based on the &squot;hpfepkt&squot; crynwr packet driver.&n; *&n; * This source/code is public free; you can distribute it and/or modify&n; * it under terms of the GNU General Public License (published by the&n; * Free Software Foundation) either version two of this License, or any&n; * later version.&n; * ----------------------------------------------------------------------------&n; *&n; * Note: Some routines (interrupt handling, transmit) assumes that&n; *       there is the PERFORMANCE page selected...&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * If you are going to use the module version of this driver, you may&n; * change this values at the &quot;insert time&quot; :&n; *&n; *   Variable                   Description&n; *&n; *   hp100_rx_ratio&t;&t;Range 1-99 - onboard memory used for RX&n; *                              packets in %.&n; *   hp100_priority_tx&t;&t;If this variable is nonzero - all outgoing&n; *                              packets will be transmitted as priority.&n; *   hp100_port&t;&t;&t;Adapter port (for example 0x380).&n; *&n; * ----------------------------------------------------------------------------&n; * MY BEST REGARDS GOING TO:&n; *&n; * IPEX s.r.o which lend me two HP J2573 cards and&n; * the HP AdvanceStack 100VG Hub-15 for debugging.&n; *&n; * Russel Nellson &lt;nelson@crynwr.com&gt; for help with obtaining sources&n; * of the &squot;hpfepkt&squot; packet driver.&n; *&n; * Also thanks to Abacus Electric s.r.o which let me to use their&n; * motherboard for my second computer.&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * TO DO:&n; * ======&n; *       - ioctl handling - some runtime setup things&n; *       - 100Mb/s Voice Grade AnyLAN network adapter/hub services support&n; *&t;&t;- 802.5 frames&n; *&t;&t;- promiscuous mode&n; *&t;&t;- bridge mode&n; *&t;&t;- cascaded repeater mode&n; *&t;&t;- 100Mbit MAC&n; *&n; * Revision history:&n; * =================&n; *&n; *    Version   Date&t;    Description&n; *&n; *&t;0.1&t;14-May-95   Initial writing. ALPHA code was released.&n; *                          Only HP J2573 on 10Mb/s (two machines) tested.&n; *      0.11    14-Jun-95   Reset interface bug fixed?&n; *&t;&t;&t;    Little bug in hp100_close function fixed.&n; *                          100Mb/s connection debugged.&n; *      0.12    14-Jul-95   Link down is now handled better.&n; *      0.20    01-Aug-95   Added PCI support for HP J2585A card.&n; *                          Statistics bug fixed.&n; *      0.21    04-Aug-95   Memory mapped access support for PCI card.&n; *                          Added priority transmit support for 100Mb/s&n; *                          Voice Grade AnyLAN network.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2393,7 +2393,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *  transmit&n; */
+multiline_comment|/*&n; *  transmit&n; */
 DECL|function|hp100_start_xmit
 r_static
 r_int
@@ -2826,7 +2826,7 @@ c_func
 l_string|&quot;hp100_start_xmit: busy&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif    
+macro_line|#endif
 )brace
 id|hp100_ints_off
 c_func
@@ -3272,7 +3272,7 @@ comma
 id|packets
 )paren
 suffix:semicolon
-macro_line|#endif    
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -5231,6 +5231,14 @@ id|hp100_port
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|hp100_port
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|variable|devicename
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.25 1996/12/18 06:56:10 tridge Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.26 1996/12/29 20:49:14 davem Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -344,7 +344,8 @@ DECL|macro|__NR_aiocancel
 mdefine_line|#define __NR_aiocancel          182 /* SunOS Specific                              */
 DECL|macro|__NR_sigpending
 mdefine_line|#define __NR_sigpending         183 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall      184    ENOSYS under SunOS                          */
+DECL|macro|__NR_query_module
+mdefine_line|#define __NR_query_module       184 /* Linux Specific                              */
 DECL|macro|__NR_setpgid
 mdefine_line|#define __NR_setpgid            185 /* Common                                      */
 DECL|macro|__NR_pathconf

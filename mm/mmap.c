@@ -1136,9 +1136,7 @@ id|addr
 )paren
 id|addr
 op_assign
-id|TASK_SIZE
-op_div
-l_int|3
+id|TASK_UNMAPPED_BASE
 suffix:semicolon
 id|addr
 op_assign

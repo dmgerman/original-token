@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.135 1996/12/23 05:27:50 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.137 1996/12/30 06:16:36 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 r_extern
 r_int
 id|num_segmaps
@@ -7836,73 +7837,56 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|sun4c_flush_hook
+DECL|function|sun4c_init_new_context
 r_static
 r_void
-id|sun4c_flush_hook
+id|sun4c_init_new_context
 c_func
 (paren
-r_void
+r_struct
+id|mm_struct
+op_star
+id|mm
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|current-&gt;tss.flags
-op_amp
-id|SPARC_FLAG_KTHREAD
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|sun4c_alloc_context
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mm
+op_eq
+id|current-&gt;mm
+)paren
+(brace
 id|sun4c_set_context
 c_func
 (paren
-id|current-&gt;mm-&gt;context
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
+id|mm-&gt;context
 )paren
 suffix:semicolon
 )brace
 )brace
-DECL|function|sun4c_exit_hook
+DECL|function|sun4c_destroy_context
 r_static
 r_void
-id|sun4c_exit_hook
+id|sun4c_destroy_context
 c_func
 (paren
-r_void
+r_struct
+id|mm_struct
+op_star
+id|mm
 )paren
 (brace
 r_struct
 id|ctx_list
 op_star
 id|ctx_old
-suffix:semicolon
-r_struct
-id|mm_struct
-op_star
-id|mm
-op_assign
-id|current-&gt;mm
 suffix:semicolon
 r_if
 c_cond
@@ -9991,18 +9975,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|sun4c_pgd_flush
-r_static
-r_void
-id|sun4c_pgd_flush
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgdp
-)paren
-(brace
-)brace
 r_extern
 r_int
 r_int
@@ -10665,10 +10637,6 @@ id|pgd_alloc
 op_assign
 id|sun4c_pgd_alloc
 suffix:semicolon
-id|pgd_flush
-op_assign
-id|sun4c_pgd_flush
-suffix:semicolon
 id|pte_write
 op_assign
 id|sun4c_pte_write
@@ -10709,13 +10677,13 @@ id|update_mmu_cache
 op_assign
 id|sun4c_update_mmu_cache
 suffix:semicolon
-id|mmu_exit_hook
+id|destroy_context
 op_assign
-id|sun4c_exit_hook
+id|sun4c_destroy_context
 suffix:semicolon
-id|mmu_flush_hook
+id|init_new_context
 op_assign
-id|sun4c_flush_hook
+id|sun4c_init_new_context
 suffix:semicolon
 id|mmu_lockarea
 op_assign

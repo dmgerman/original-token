@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.44 1996/12/18 06:56:08 tridge Exp $ */
+multiline_comment|/* $Id: system.h,v 1.47 1996/12/30 00:31:12 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
@@ -102,6 +102,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|kill_user_windows
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|synchronize_user_stack
 c_func
 (paren
@@ -150,7 +158,7 @@ mdefine_line|#define SWITCH_DO_LAZY_FPU if(last_task_used_math != next) next-&gt
 macro_line|#endif
 multiline_comment|/* Much care has gone into this code, do not touch it. */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev, next) do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ here;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_ENTER&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_DO_LAZY_FPU&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.globl&bslash;tflush_patch_switch&bslash;nflush_patch_switch:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;restore; restore; restore; restore; restore; restore; restore&quot;);&t;&t;&bslash;&n;&t;if(!(next-&gt;tss.flags &amp; SPARC_FLAG_KTHREAD) &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;   !(next-&gt;flags &amp; PF_EXITING))&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;switch_to_context(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;here) - 0x8;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&bslash;t%%psr, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&bslash;t%%sp, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&bslash;t%%wim, %%g5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&bslash;t%%g4, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&bslash;t%1, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%g6 + %2], %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&bslash;t%1, [%0]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%g6 + %3], %%sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g5, 0x0, %%wim&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x00], %%l0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x08], %%l2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x10], %%l4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x18], %%l6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x20], %%i0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x28], %%i2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x30], %%i4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&bslash;t[%%sp + 0x38], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&bslash;t%%g4, 0x0, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&bslash;t%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; nop&bslash;n&bslash;t&quot; : : &quot;r&quot; (&amp;(current_set[smp_processor_id()])), &quot;r&quot; (next),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpsr)),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;&quot;r&quot; (task_pc) : &quot;g4&quot;, &quot;g5&quot;);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;here: SWITCH_EXIT } while(0)
+mdefine_line|#define switch_to(prev, next) do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ here;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_ENTER&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_DO_LAZY_FPU&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.globl&bslash;tflush_patch_switch&bslash;nflush_patch_switch:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;restore; restore; restore; restore; restore; restore; restore&quot;);&t;&t;&bslash;&n;&t;if(!(next-&gt;tss.flags &amp; SPARC_FLAG_KTHREAD) &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;   !(next-&gt;flags &amp; PF_EXITING))&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;switch_to_context(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;here) - 0x8;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%psr, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&t;%%sp, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%wim, %%g5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&t;%%g4, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%1 + %2], %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%1, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%1, [%0]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%g6 + %3], %%sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g5, 0x0, %%wim&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%sp + 0x00], %%l0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%sp + 0x38], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x0, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; nop&bslash;n&bslash;t&quot; : : &quot;r&quot; (&amp;(current_set[smp_processor_id()])), &quot;r&quot; (next),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpsr)),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;&quot;r&quot; (task_pc) : &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;l2&quot;, &quot;l3&quot;,&t;&t;&t;&bslash;&n;&t;&quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;, &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;, &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;,&t;&bslash;&n;&t;&quot;o3&quot;);&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;here: SWITCH_EXIT } while(0)
 multiline_comment|/* Changing the IRQ level on the Sparc.   We now avoid writing the psr&n; * whenever possible.&n; */
 DECL|function|setipl
 r_extern
@@ -220,9 +228,6 @@ id|psr
 comma
 op_mod
 l_int|0
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 l_int|0
@@ -294,9 +299,6 @@ id|psr
 comma
 op_mod
 l_int|0
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 l_int|0
@@ -361,21 +363,9 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-"&quot;"
-id|rd
-op_mod
-op_mod
-id|psr
-comma
-op_mod
-l_int|0
-id|nop
-id|nop
-id|nop
-l_string|&quot;&t;: &quot;
-op_assign
-id|r
-"&quot;"
+l_string|&quot;rd&t;%%psr, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
 id|retval
 )paren
@@ -418,9 +408,6 @@ id|psr
 comma
 op_mod
 l_int|0
-id|nop
-id|nop
-id|nop
 op_logical_and
 op_mod
 l_int|0
@@ -525,9 +512,6 @@ id|psr
 comma
 op_mod
 l_int|0
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 l_int|0
@@ -626,9 +610,6 @@ comma
 op_mod
 op_mod
 id|g3
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 op_mod

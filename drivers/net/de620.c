@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;de620.c $Revision: 1.40 $ BETA&n; *&n; *&n; *&t;Linux driver for the D-Link DE-620 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; *&n; *&t;Based on adapter information gathered from DOS packetdriver&n; *&t;sources from D-Link Inc:  (Special thanks to Henry Ngai of D-Link.)&n; *&t;&t;Portions (C) Copyright D-Link SYSTEM Inc. 1991, 1992&n; *&t;&t;Copyright, 1988, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;&t;(Now at &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&n; *&t;Valuable assistance from:&n; *&t;&t;J. Joshua Kopper &lt;kopper@rtsg.mot.com&gt;&n; *&t;&t;Olav Kvittem &lt;Olav.Kvittem@uninett.no&gt;&n; *&t;&t;Germano Caronni &lt;caronni@nessie.cs.id.ethz.ch&gt;&n; *&t;&t;Jeremy Fitzhardinge &lt;jeremy@suite.sw.oz.au&gt;&n; *&n; *****************************************************************************/
-multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; *****************************************************************************/
+multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *****************************************************************************/
 DECL|variable|version
 r_static
 r_const
@@ -127,6 +127,54 @@ r_int
 id|de620_debug
 op_assign
 id|DE620_DEBUG
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|bnc
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|utp
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|clone
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|de620_debug
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 multiline_comment|/***********************************************&n; *                                             *&n; * Index to functions, as function prototypes. *&n; *                                             *&n; ***********************************************/
 multiline_comment|/*&n; * Routines used internally. (See also &quot;convenience macros.. below&quot;)&n; */

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: bwtwo.c,v 1.8 1996/11/23 19:54:05 ecd Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: bwtwo.c,v 1.9 1996/12/23 10:15:57 ecd Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;

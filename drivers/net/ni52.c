@@ -1,5 +1,5 @@
-multiline_comment|/* &n; * net-3-driver for the NI5210 card (i82586 Ethernet chip)&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers that work.&n; * &n; * Alphacode 0.82 (96/09/29) for Linux 2.0.0 (or later)&n; * Copyrights (c) 1994,1995,1996 by M.Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *    [feel free to mail ....]&n; *&n; * when using as module: (no autoprobing!)&n; *   compile with:&n; *       gcc -O2 -fomit-frame-pointer -m486 -D__KERNEL__ -DMODULE -c ni52.c&n; *   run with e.g:&n; *       insmod ni52.o io=0x360 irq=9 memstart=0xd0000 memend=0xd4000&n; *&n; * CAN YOU PLEASE REPORT ME YOUR PERFORMANCE EXPERIENCES !!.&n; * &n; * If you find a bug, please report me:&n; *   The kernel panic output and any kmsg from the ni52 driver&n; *   the ni5210-driver-version and the linux-kernel version &n; *   how many shared memory (memsize) on the netcard, &n; *   bootprom: yes/no, base_addr, mem_start&n; *   maybe the ni5210-card revision and the i82586 version&n; *&n; * autoprobe for: base_addr: 0x300,0x280,0x360,0x320,0x340&n; *                mem_start: 0xd0000,0xd2000,0xc8000,0xca000,0xd4000,0xd6000,&n; *                           0xd8000,0xcc000,0xce000,0xda000,0xdc000&n; *&n; * sources:&n; *   skeleton.c from Donald Becker&n; *&n; * I have also done a look in the following sources: (mail me if you need them)&n; *   crynwr-packet-driver by Russ Nelson&n; *   Garret A. Wollman&squot;s (fourth) i82586-driver for BSD&n; *   (before getting an i82596 (yes 596 not 586) manual, the existing drivers helped&n; *    me a lot to understand this tricky chip.)&n; *&n; * Known Problems:&n; *   The internal sysbus seems to be slow. So we often lose packets because of&n; *   overruns while receiving from a fast remote host. &n; *   This can slow down TCP connections. Maybe the newer ni5210 cards are better.&n; *   my experience is, that if a machine sends with more then about 500-600K/s&n; *   the fifo/sysbus overflows.&n; * &n; * IMPORTANT NOTE:&n; *   On fast networks, it&squot;s a (very) good idea to have 16K shared memory. With&n; *   8K, we can store only 4 receive frames, so it can (easily) happen that a remote &n; *   machine &squot;overruns&squot; our system.&n; *&n; * Known i82586/card problems (I&squot;m sure, there are many more!):&n; *   Running the NOP-mode, the i82586 sometimes seems to forget to report&n; *   every xmit-interrupt until we restart the CU.&n; *   Another MAJOR bug is, that the RU sometimes seems to ignore the EL-Bit &n; *   in the RBD-Struct which indicates an end of the RBD queue. &n; *   Instead, the RU fetches another (randomly selected and &n; *   usually used) RBD and begins to fill it. (Maybe, this happens only if &n; *   the last buffer from the previous RFD fits exact into the queue and&n; *   the next RFD can&squot;t fetch an initial RBD. Anyone knows more? )&n; *&n; * results from ftp performance tests with Linux 1.2.5 &n; *   send and receive about 350-400 KByte/s (peak up to 460 kbytes/s)&n; *   sending in NOP-mode: peak performance up to 530K/s (but better don&squot;t run this mode)&n; */
-multiline_comment|/*&n; * 29.Sept.96: virt_to_bus changes for new memory scheme &n; * 19.Feb.96: more Mcast changes, module support (MH)&n; *&n; * 18.Nov.95: Mcast changes (AC).&n; *&n; * 23.April.95: fixed(?) receiving problems by configuring a RFD more&n; *              than the number of RBD&squot;s. Can maybe cause other problems. &n; * 18.April.95: Added MODULE support (MH)&n; * 17.April.95: MC related changes in init586() and set_multicast_list().&n; *              removed use of &squot;jiffies&squot; in init586() (MH)&n; *&n; * 19.Sep.94: Added Multicast support (not tested yet) (MH)&n; * &n; * 18.Sep.94: Workaround for &squot;EL-Bug&squot;. Removed flexible RBD-handling. &n; *            Now, every RFD has exact one RBD. (MH)&n; *&n; * 14.Sep.94: added promiscuous mode, a few cleanups (MH)&n; *&n; * 19.Aug.94: changed request_irq() parameter (MH)&n; * &n; * 20.July.94: removed cleanup bugs, removed a 16K-mem-probe-bug (MH)&n; *&n; * 19.July.94: lotsa cleanups .. (MH)&n; *&n; * 17.July.94: some patches ... verified to run with 1.1.29 (MH)&n; *&n; * 4.July.94: patches for Linux 1.1.24  (MH)&n; *&n; * 26.March.94: patches for Linux 1.0 and iomem-auto-probe (MH)&n; *&n; * 30.Sep.93: Added nop-chain .. driver now runs with only one Xmit-Buff, too (MH)&n; *&n; * &lt; 30.Sep.93: first versions &n; */
+multiline_comment|/*&n; * net-3-driver for the NI5210 card (i82586 Ethernet chip)&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers that work.&n; *&n; * Alphacode 0.82 (96/09/29) for Linux 2.0.0 (or later)&n; * Copyrights (c) 1994,1995,1996 by M.Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *    [feel free to mail ....]&n; *&n; * when using as module: (no autoprobing!)&n; *   compile with:&n; *       gcc -O2 -fomit-frame-pointer -m486 -D__KERNEL__ -DMODULE -c ni52.c&n; *   run with e.g:&n; *       insmod ni52.o io=0x360 irq=9 memstart=0xd0000 memend=0xd4000&n; *&n; * CAN YOU PLEASE REPORT ME YOUR PERFORMANCE EXPERIENCES !!.&n; *&n; * If you find a bug, please report me:&n; *   The kernel panic output and any kmsg from the ni52 driver&n; *   the ni5210-driver-version and the linux-kernel version&n; *   how many shared memory (memsize) on the netcard,&n; *   bootprom: yes/no, base_addr, mem_start&n; *   maybe the ni5210-card revision and the i82586 version&n; *&n; * autoprobe for: base_addr: 0x300,0x280,0x360,0x320,0x340&n; *                mem_start: 0xd0000,0xd2000,0xc8000,0xca000,0xd4000,0xd6000,&n; *                           0xd8000,0xcc000,0xce000,0xda000,0xdc000&n; *&n; * sources:&n; *   skeleton.c from Donald Becker&n; *&n; * I have also done a look in the following sources: (mail me if you need them)&n; *   crynwr-packet-driver by Russ Nelson&n; *   Garret A. Wollman&squot;s (fourth) i82586-driver for BSD&n; *   (before getting an i82596 (yes 596 not 586) manual, the existing drivers helped&n; *    me a lot to understand this tricky chip.)&n; *&n; * Known Problems:&n; *   The internal sysbus seems to be slow. So we often lose packets because of&n; *   overruns while receiving from a fast remote host.&n; *   This can slow down TCP connections. Maybe the newer ni5210 cards are better.&n; *   my experience is, that if a machine sends with more then about 500-600K/s&n; *   the fifo/sysbus overflows.&n; *&n; * IMPORTANT NOTE:&n; *   On fast networks, it&squot;s a (very) good idea to have 16K shared memory. With&n; *   8K, we can store only 4 receive frames, so it can (easily) happen that a remote&n; *   machine &squot;overruns&squot; our system.&n; *&n; * Known i82586/card problems (I&squot;m sure, there are many more!):&n; *   Running the NOP-mode, the i82586 sometimes seems to forget to report&n; *   every xmit-interrupt until we restart the CU.&n; *   Another MAJOR bug is, that the RU sometimes seems to ignore the EL-Bit&n; *   in the RBD-Struct which indicates an end of the RBD queue.&n; *   Instead, the RU fetches another (randomly selected and&n; *   usually used) RBD and begins to fill it. (Maybe, this happens only if&n; *   the last buffer from the previous RFD fits exact into the queue and&n; *   the next RFD can&squot;t fetch an initial RBD. Anyone knows more? )&n; *&n; * results from ftp performance tests with Linux 1.2.5&n; *   send and receive about 350-400 KByte/s (peak up to 460 kbytes/s)&n; *   sending in NOP-mode: peak performance up to 530K/s (but better don&squot;t run this mode)&n; */
+multiline_comment|/*&n; * 29.Sept.96: virt_to_bus changes for new memory scheme&n; * 19.Feb.96: more Mcast changes, module support (MH)&n; *&n; * 18.Nov.95: Mcast changes (AC).&n; *&n; * 23.April.95: fixed(?) receiving problems by configuring a RFD more&n; *              than the number of RBD&squot;s. Can maybe cause other problems.&n; * 18.April.95: Added MODULE support (MH)&n; * 17.April.95: MC related changes in init586() and set_multicast_list().&n; *              removed use of &squot;jiffies&squot; in init586() (MH)&n; *&n; * 19.Sep.94: Added Multicast support (not tested yet) (MH)&n; *&n; * 18.Sep.94: Workaround for &squot;EL-Bug&squot;. Removed flexible RBD-handling.&n; *            Now, every RFD has exact one RBD. (MH)&n; *&n; * 14.Sep.94: added promiscuous mode, a few cleanups (MH)&n; *&n; * 19.Aug.94: changed request_irq() parameter (MH)&n; *&n; * 20.July.94: removed cleanup bugs, removed a 16K-mem-probe-bug (MH)&n; *&n; * 19.July.94: lotsa cleanups .. (MH)&n; *&n; * 17.July.94: some patches ... verified to run with 1.1.29 (MH)&n; *&n; * 4.July.94: patches for Linux 1.1.24  (MH)&n; *&n; * 26.March.94: patches for Linux 1.0 and iomem-auto-probe (MH)&n; *&n; * 30.Sep.93: Added nop-chain .. driver now runs with only one Xmit-Buff, too (MH)&n; *&n; * &lt; 30.Sep.93: first versions&n; */
 DECL|variable|debuglevel
 r_static
 r_int
@@ -65,7 +65,7 @@ DECL|macro|make24
 mdefine_line|#define make24(ptr32) ( ((char *) (ptr32)) - p-&gt;base)
 DECL|macro|make16
 mdefine_line|#define make16(ptr32) ((unsigned short) ((unsigned long)(ptr32) - (unsigned long) p-&gt;memtop ))
-multiline_comment|/******************* how to calculate the buffers *****************************&n;&n;  * IMPORTANT NOTE: if you configure only one NUM_XMIT_BUFFS, the driver works&n;  * --------------- in a different (more stable?) mode. Only in this mode it&squot;s&n;  *                 possible to configure the driver with &squot;NO_NOPCOMMANDS&squot;&n;&n;sizeof(scp)=12; sizeof(scb)=16; sizeof(iscp)=8;&n;sizeof(scp)+sizeof(iscp)+sizeof(scb) = 36 = INIT&n;sizeof(rfd) = 24; sizeof(rbd) = 12; &n;sizeof(tbd) = 8; sizeof(transmit_cmd) = 16;&n;sizeof(nop_cmd) = 8; &n;&n;  * if you don&squot;t know the driver, better do not change these values: */
+multiline_comment|/******************* how to calculate the buffers *****************************&n;&n;  * IMPORTANT NOTE: if you configure only one NUM_XMIT_BUFFS, the driver works&n;  * --------------- in a different (more stable?) mode. Only in this mode it&squot;s&n;  *                 possible to configure the driver with &squot;NO_NOPCOMMANDS&squot;&n;&n;sizeof(scp)=12; sizeof(scb)=16; sizeof(iscp)=8;&n;sizeof(scp)+sizeof(iscp)+sizeof(scb) = 36 = INIT&n;sizeof(rfd) = 24; sizeof(rbd) = 12;&n;sizeof(tbd) = 8; sizeof(transmit_cmd) = 16;&n;sizeof(nop_cmd) = 8;&n;&n;  * if you don&squot;t know the driver, better do not change these values: */
 DECL|macro|RECV_BUFF_SIZE
 mdefine_line|#define RECV_BUFF_SIZE 1524 /* slightly oversized */
 DECL|macro|XMIT_BUFF_SIZE
@@ -81,7 +81,7 @@ mdefine_line|#define NO_NOPCOMMANDS      /* only possible with NUM_XMIT_BUFFS=1 
 multiline_comment|/**************************************************************************/
 multiline_comment|/* different DELAYs */
 DECL|macro|DELAY
-mdefine_line|#define DELAY(x) __delay((loops_per_sec&gt;&gt;5)*(x)); 
+mdefine_line|#define DELAY(x) __delay((loops_per_sec&gt;&gt;5)*(x));
 DECL|macro|DELAY_16
 mdefine_line|#define DELAY_16(); { __delay( (loops_per_sec&gt;&gt;16)+1 ); }
 DECL|macro|DELAY_18
@@ -444,7 +444,7 @@ id|xmit_last
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/**********************************************&n; * close device &n; */
+multiline_comment|/**********************************************&n; * close device&n; */
 DECL|function|ni52_close
 r_static
 r_int
@@ -492,7 +492,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**********************************************&n; * open device &n; */
+multiline_comment|/**********************************************&n; * open device&n; */
 DECL|function|ni52_open
 r_static
 r_int
@@ -588,7 +588,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* most done by init */
 )brace
-multiline_comment|/**********************************************&n; * Check to see if there&squot;s an 82586 out there. &n; */
+multiline_comment|/**********************************************&n; * Check to see if there&squot;s an 82586 out there.&n; */
 DECL|function|check586
 r_static
 r_int
@@ -873,7 +873,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************&n; * set iscp at the right place, called by ni52_probe1 and open586. &n; */
+multiline_comment|/******************************************************************&n; * set iscp at the right place, called by ni52_probe1 and open586.&n; */
 DECL|function|alloc586
 r_void
 id|alloc586
@@ -1460,7 +1460,7 @@ comma
 l_string|&quot;ni5210&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* &n;   * check (or search) IO-Memory, 8K and 16K&n;   */
+multiline_comment|/*&n;   * check (or search) IO-Memory, 8K and 16K&n;   */
 macro_line|#ifdef MODULE
 id|size
 op_assign
@@ -2028,7 +2028,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/********************************************** &n; * init the chip (ni52-interrupt should be disabled?!)&n; * needs a correct &squot;allocated&squot; memory&n; */
+multiline_comment|/**********************************************&n; * init the chip (ni52-interrupt should be disabled?!)&n; * needs a correct &squot;allocated&squot; memory&n; */
 DECL|function|init586
 r_static
 r_int
@@ -2419,7 +2419,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* &n;    * TDR, wire check .. e.g. no resistor e.t.c &n;    */
+multiline_comment|/*&n;    * TDR, wire check .. e.g. no resistor e.t.c&n;    */
 id|tdr_cmd
 op_assign
 (paren
@@ -3267,7 +3267,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************&n; * This is a helper routine for ni52_rnr_int() and init586(). &n; * It sets up the Receive Frame Area (RFA).&n; */
+multiline_comment|/******************************************************&n; * This is a helper routine for ni52_rnr_int() and init586().&n; * It sets up the Receive Frame Area (RFA).&n; */
 DECL|function|alloc_rfa
 r_static
 r_void
@@ -4905,7 +4905,7 @@ c_func
 suffix:semicolon
 multiline_comment|/* wait for accept cmd. (no timeout!!) */
 )brace
-multiline_comment|/******************************************************&n; * send frame &n; */
+multiline_comment|/******************************************************&n; * send frame&n; */
 DECL|function|ni52_send_packet
 r_static
 r_int
@@ -5733,7 +5733,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************&n; * Someone wanna have the statistics &n; */
+multiline_comment|/*******************************************&n; * Someone wanna have the statistics&n; */
 DECL|function|ni52_get_stats
 r_static
 r_struct
@@ -5824,7 +5824,7 @@ op_amp
 id|p-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/********************************************************&n; * Set MC list ..  &n; */
+multiline_comment|/********************************************************&n; * Set MC list ..&n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -5954,6 +5954,38 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* e.g 0xd4000 */
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|memstart
+comma
+l_string|&quot;l&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|memend
+comma
+l_string|&quot;l&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -6268,5 +6300,5 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * END: linux/drivers/net/ni52.c &n; */
+multiline_comment|/*&n; * END: linux/drivers/net/ni52.c&n; */
 eof

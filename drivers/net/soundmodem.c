@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;soundmodem.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; * &n; *  hardware hardware type; 0=sbc, 1=wss, any other value invalid&n; *  mode     mode type; 0=1200 baud AFSK, 1=9600 baud FSK, any other&n; *           value invalid&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; * &n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; */
+multiline_comment|/*&n; *&t;soundmodem.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  hardware hardware type; 0=sbc, 1=wss, any other value invalid&n; *  mode     mode type; 0=1200 baud AFSK, 1=9600 baud FSK, any other&n; *           value invalid&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; *&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -199,7 +199,7 @@ mdefine_line|#define SP_PAR  2
 DECL|macro|SP_MIDI
 mdefine_line|#define SP_MIDI 4
 multiline_comment|/* ---------------------------------------------------------------------- */
-multiline_comment|/*&n; * Information that need to be kept for each board. &n; */
+multiline_comment|/*&n; * Information that need to be kept for each board.&n; */
 DECL|struct|sm_state
 r_struct
 id|sm_state
@@ -653,7 +653,7 @@ id|cur_jiffies
 op_assign
 id|jiffies
 suffix:semicolon
-multiline_comment|/* &n;&t; * measure the interrupt frequency&n;&t; */
+multiline_comment|/*&n;&t; * measure the interrupt frequency&n;&t; */
 id|sm-&gt;debug_vals.cur_intcnt
 op_increment
 suffix:semicolon
@@ -4399,6 +4399,70 @@ r_int
 id|midiio
 op_assign
 l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mode
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|iobase
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma2
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|serio
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|pario
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|midiio
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int

@@ -1,8 +1,8 @@
 multiline_comment|/* $Id: plip.c,v 1.16 1996-04-06 15:36:57+09 gniibe Exp $ */
 multiline_comment|/* PLIP: A parallel port &quot;network&quot; driver for Linux. */
 multiline_comment|/* This driver is for parallel port with 5-bit cable (LapLink (R) cable). */
-multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *&n; * Fixes:&n; *&t;&t;9-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&t;&t;  - only claim 3 bytes of I/O space for port at 0x3bc&n; *&t;&t;  - treat NULL return from register_netdev() as success in&n; *&t;&t;    init_module()&n; *&t;&t;  - added message if driver loaded as a module but no&n; *&t;&t;    interfaces present.&n; *&t;&t;  - release claimed I/O ports if malloc() fails during init.&n; *&t;&t;&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.  You can specify I/O addr and IRQ:&n; *&t;&t;&t;# insmod plip.o io=0x3bc irq=7&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/*&n; * Original version and the name &squot;PLIP&squot; from Donald Becker &lt;becker@super.org&gt;&n; * inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&n; * NOTE:&n; *     Tanabe Hiroyasu had changed the protocol, and it was in Linux v1.0.&n; *     Because of the necessity to communicate to DOS machines with the&n; *     Crynwr packet driver, Peter Bauer changed the protocol again&n; *     back to original protocol.&n; *&n; *     This version follows original PLIP protocol. &n; *     So, this PLIP can&squot;t communicate the PLIP of Linux v1.0.&n; */
+multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *&n; * Fixes:&n; *&t;&t;9-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&t;&t;  - only claim 3 bytes of I/O space for port at 0x3bc&n; *&t;&t;  - treat NULL return from register_netdev() as success in&n; *&t;&t;    init_module()&n; *&t;&t;  - added message if driver loaded as a module but no&n; *&t;&t;    interfaces present.&n; *&t;&t;  - release claimed I/O ports if malloc() fails during init.&n; *&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.  You can specify I/O addr and IRQ:&n; *&t;&t;&t;# insmod plip.o io=0x3bc irq=7&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Original version and the name &squot;PLIP&squot; from Donald Becker &lt;becker@super.org&gt;&n; * inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&n; * NOTE:&n; *     Tanabe Hiroyasu had changed the protocol, and it was in Linux v1.0.&n; *     Because of the necessity to communicate to DOS machines with the&n; *     Crynwr packet driver, Peter Bauer changed the protocol again&n; *     back to original protocol.&n; *&n; *     This version follows original PLIP protocol.&n; *     So, this PLIP can&squot;t communicate the PLIP of Linux v1.0.&n; */
 multiline_comment|/*&n; *     To use with DOS box, please do (Turn on ARP switch):&n; *&t;# ifconfig plip[0-2] arp&n; */
 DECL|variable|version
 r_static
@@ -314,7 +314,7 @@ id|lsb
 suffix:semicolon
 macro_line|#else
 macro_line|#error&t;&quot;Please fix the endianness defines in &lt;asm/byteorder.h&gt;&quot;
-macro_line|#endif&t;&t;&t;&t;&t;&t;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -2388,7 +2388,7 @@ r_return
 id|OK
 suffix:semicolon
 )brace
-multiline_comment|/* PLIP_SEND --- send a byte (two nibbles) &n;   Returns OK on success, TIMEOUT when timeout    */
+multiline_comment|/* PLIP_SEND --- send a byte (two nibbles)&n;   Returns OK on success, TIMEOUT when timeout    */
 r_inline
 r_static
 r_int
@@ -4549,6 +4549,22 @@ l_int|0
 comma
 l_int|0
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-3i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-3i&quot;
+)paren
 suffix:semicolon
 DECL|variable|dev_plip
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.85 1996/12/18 06:33:42 tridge Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.87 1996/12/30 06:16:21 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1287,7 +1287,7 @@ c_func
 r_void
 )paren
 (brace
-id|flush_user_windows
+id|kill_user_windows
 c_func
 (paren
 )paren
@@ -1358,11 +1358,6 @@ id|PF_USEDFPU
 suffix:semicolon
 macro_line|#endif
 )brace
-id|mmu_exit_hook
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|flush_thread
 r_void
@@ -1373,18 +1368,10 @@ r_void
 )paren
 (brace
 multiline_comment|/* Make sure old user windows don&squot;t get in the way. */
-id|flush_user_windows
+id|kill_user_windows
 c_func
 (paren
 )paren
-suffix:semicolon
-id|current-&gt;tss.w_saved
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;tss.uwinmask
-op_assign
-l_int|0
 suffix:semicolon
 id|current-&gt;tss.sstk_info.cur_status
 op_assign
@@ -1465,11 +1452,6 @@ id|PF_USEDFPU
 suffix:semicolon
 macro_line|#endif
 )brace
-id|mmu_flush_hook
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Now, this task is no longer a kernel thread. */
 id|current-&gt;tss.flags
 op_and_assign

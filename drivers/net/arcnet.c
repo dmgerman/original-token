@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c:&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;v2.60 ALPHA (96/11/23)&n;&t;  - Added patch from Vojtech Pavlik &lt;vojtech@atrey.karlin.mff.cuni.cz&gt;&n;&t;    and Martin Mares &lt;mj@k332.feld.cvut.cz&gt; to make the driver work&n;&t;    with the new Linux 2.1.x memory management.  I modified their&n;&t;    patch quite a bit though; bugs are my fault.  More changes should&n;&t;    be made to get eliminate any remaining phys_to_virt calls.&n;&t;  - Quietly ignore protocol id&squot;s 0, 1, 8, and 243.  Thanks to Jake&n;&t;    Messinger &lt;jake@ams.com&gt; for reporting these codes and their&n;&t;    meanings.&n;&t;  - Smarter shmem probe for cards with 4k mirrors. (does it work?)&n;&t;  - Initial support for RIM I type cards which use no I/O ports at&n;&t;    all.  To use this option, you need to compile with RIM_I_MODE&n;&t;    enabled.  Thanks to Kolja Waschk &lt;kawk@yo.com&gt; for explaining&n;&t;    RIM I programming to me.  Now, does my RIM I code actually&n;&t;    work?&n;&n;&t;v2.56 (96/10/18)&n;&t;  - Turned arc0e/arc0s startup messages back on by default, as most&n;&t;    people will probably not notice the additional devices&n;&t;    otherwise.  This causes undue confusion.&n;&t;  - Fixed a tiny but noticeable bug in the packet debugging routines&n;&t;    (thanks Tomasz)&n;&n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package at&n;&t;&t;http://www.foxnet.net/~apenwarr/arcnet&n;&t;&t;&n;&t;v2.50 (96/02/24)&n;&t;  - Massively improved autoprobe routines; they now work even as a&n;&t;    module.  Thanks to Vojtech Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;&n;&t;    for his ideas and help in this area.&n;&t;  - Changed printk&squot;s around quite a lot.&n;&t;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;&t;&n;&t;TO DO: (semi-prioritized)&n;&t;&n;         - Use cleaner &quot;architecture-independent&quot; shared memory access.&n;           This is half-done in ARCnet 2.60, but still uses some&n;           undocumented i386 stuff.  (We shouldn&squot;t call phys_to_virt,&n;           for example.)&n;         - Support &quot;arpless&quot; mode like NetBSD does, and as recommended&n;           by the (obsoleted) RFC1051.&n;         - Some way to make RIM_I_MODE runtime switchable?  Yuck...&n;         - Smarter recovery from RECON-during-transmit conditions. (ie.&n;           retransmit immediately)&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;         - Probe for multiple devices in one shot (trying to decide whether&n;           to do it the &quot;ugly&quot; way or not).&n;         - Add support for the new 1.3.x IP header cache, and other features.&n;         - Debug level should be changed with a system call, not a hack to&n;           the &quot;metric&quot; flag.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - Try to implement promiscuous (receive-all-packets) mode available&n;           on some newer cards with COM20020 and similar chips.  I don&squot;t have&n;           one, but SMC sent me the specs.&n;         - ATA protocol support?? &n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
+multiline_comment|/* arcnet.c:&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;v2.60 ALPHA (96/11/23)&n;&t;  - Added patch from Vojtech Pavlik &lt;vojtech@atrey.karlin.mff.cuni.cz&gt;&n;&t;    and Martin Mares &lt;mj@k332.feld.cvut.cz&gt; to make the driver work&n;&t;    with the new Linux 2.1.x memory management.  I modified their&n;&t;    patch quite a bit though; bugs are my fault.  More changes should&n;&t;    be made to get eliminate any remaining phys_to_virt calls.&n;&t;  - Quietly ignore protocol id&squot;s 0, 1, 8, and 243.  Thanks to Jake&n;&t;    Messinger &lt;jake@ams.com&gt; for reporting these codes and their&n;&t;    meanings.&n;&t;  - Smarter shmem probe for cards with 4k mirrors. (does it work?)&n;&t;  - Initial support for RIM I type cards which use no I/O ports at&n;&t;    all.  To use this option, you need to compile with RIM_I_MODE&n;&t;    enabled.  Thanks to Kolja Waschk &lt;kawk@yo.com&gt; for explaining&n;&t;    RIM I programming to me.  Now, does my RIM I code actually&n;&t;    work?&n;&n;&t;v2.56 (96/10/18)&n;&t;  - Turned arc0e/arc0s startup messages back on by default, as most&n;&t;    people will probably not notice the additional devices&n;&t;    otherwise.  This causes undue confusion.&n;&t;  - Fixed a tiny but noticeable bug in the packet debugging routines&n;&t;    (thanks Tomasz)&n;&n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package at&n;&t;&t;http://www.foxnet.net/~apenwarr/arcnet&n;&n;&t;v2.50 (96/02/24)&n;&t;  - Massively improved autoprobe routines; they now work even as a&n;&t;    module.  Thanks to Vojtech Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;&n;&t;    for his ideas and help in this area.&n;&t;  - Changed printk&squot;s around quite a lot.&n;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;&n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&n;&n;&t;TO DO: (semi-prioritized)&n;&n;         - Use cleaner &quot;architecture-independent&quot; shared memory access.&n;           This is half-done in ARCnet 2.60, but still uses some&n;           undocumented i386 stuff.  (We shouldn&squot;t call phys_to_virt,&n;           for example.)&n;         - Support &quot;arpless&quot; mode like NetBSD does, and as recommended&n;           by the (obsoleted) RFC1051.&n;         - Some way to make RIM_I_MODE runtime switchable?  Yuck...&n;         - Smarter recovery from RECON-during-transmit conditions. (ie.&n;           retransmit immediately)&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;         - Probe for multiple devices in one shot (trying to decide whether&n;           to do it the &quot;ugly&quot; way or not).&n;         - Add support for the new 1.3.x IP header cache, and other features.&n;         - Debug level should be changed with a system call, not a hack to&n;           the &quot;metric&quot; flag.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - Try to implement promiscuous (receive-all-packets) mode available&n;           on some newer cards with COM20020 and similar chips.  I don&squot;t have&n;           one, but SMC sent me the specs.&n;         - ATA protocol support??&n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;&n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -37,13 +37,13 @@ multiline_comment|/*************************************************************
 multiline_comment|/* Define this if you have a really ancient &quot;RIM I&quot; ARCnet card with no I/O&n; * port at all and _only_ shared memory; this option MAY work for you.  It&squot;s&n; * untested, though, so good luck and write to me with any results!&n; */
 DECL|macro|RIM_I_MODE
 macro_line|#undef RIM_I_MODE
-multiline_comment|/* Normally, the ARCnet device needs to be assigned a name (default arc0). &n; * Ethernet devices have a function to automatically try eth0, eth1, etc&n; * until a free name is found.  To name the ARCnet device using an &quot;eth?&quot;&n; * device name, define this option.&n; */
+multiline_comment|/* Normally, the ARCnet device needs to be assigned a name (default arc0).&n; * Ethernet devices have a function to automatically try eth0, eth1, etc&n; * until a free name is found.  To name the ARCnet device using an &quot;eth?&quot;&n; * device name, define this option.&n; */
 DECL|macro|CONFIG_ARCNET_ETHNAME
 macro_line|#undef CONFIG_ARCNET_ETHNAME
 multiline_comment|/* On a fast computer, the buffer copy from memory to the ARCnet card during&n; * a transmit can hog the bus just a little too long.  SLOW_XMIT_COPY&n; * replaces the fast memcpy() with a slower for() loop that seems to solve&n; * my problems with ftape.&n; *&n; * Probably a better solution would be to use memcpy_toio (more portable&n; * anyway) and modify that routine to support REALLY_SLOW_IO-style&n; * defines; ARCnet probably is not the only driver that can screw up an&n; * ftape DMA transfer.&n; *&n; * Turn this on if you have timing-sensitive DMA (ie. a tape drive) and&n; * would like to sacrifice a little bit of network speed to reduce tape&n; * write retries or some related problem.&n; */
 DECL|macro|SLOW_XMIT_COPY
 macro_line|#undef SLOW_XMIT_COPY
-multiline_comment|/* The card sends the reconfiguration signal when it loses the connection to&n; * the rest of its network. It is a &squot;Hello, is anybody there?&squot; cry.  This&n; * usually happens when a new computer on the network is powered on or when&n; * the cable is broken.&n; *&n; * Define DETECT_RECONFIGS if you want to detect network reconfigurations. &n; * Recons may be a real nuisance on a larger ARCnet network; if you are a&n; * network administrator you probably would like to count them. &n; * Reconfigurations will be recorded in stats.tx_carrier_errors (the last&n; * field of the /proc/net/dev file).&n; *&n; * Define SHOW_RECONFIGS if you really want to see a log message whenever&n; * a RECON occurs.&n; */
+multiline_comment|/* The card sends the reconfiguration signal when it loses the connection to&n; * the rest of its network. It is a &squot;Hello, is anybody there?&squot; cry.  This&n; * usually happens when a new computer on the network is powered on or when&n; * the cable is broken.&n; *&n; * Define DETECT_RECONFIGS if you want to detect network reconfigurations.&n; * Recons may be a real nuisance on a larger ARCnet network; if you are a&n; * network administrator you probably would like to count them.&n; * Reconfigurations will be recorded in stats.tx_carrier_errors (the last&n; * field of the /proc/net/dev file).&n; *&n; * Define SHOW_RECONFIGS if you really want to see a log message whenever&n; * a RECON occurs.&n; */
 DECL|macro|DETECT_RECONFIGS
 mdefine_line|#define DETECT_RECONFIGS
 DECL|macro|SHOW_RECONFIGS
@@ -1378,7 +1378,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif 
+macro_line|#endif
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 macro_line|#ifdef RIM_I_MODE
 multiline_comment|/* We cannot probe for a RIM I card; one reason is I don&squot;t know how to reset&n; * them.  In fact, we can&squot;t even get their node ID automatically.  So, we&n; * need to be passed a specific shmem address, IRQ, and node ID (stored in&n; * dev-&gt;base_addr)&n; */
@@ -4034,7 +4034,7 @@ comma
 l_string|&quot;ARCnet RFC1201 protocol initialized.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCNET_ETH&t;
+macro_line|#ifdef CONFIG_ARCNET_ETH
 multiline_comment|/* Initialize the ethernet-encap protocol driver */
 id|lp-&gt;edev
 op_assign
@@ -8620,7 +8620,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Try to get ARP to resolve the header.&n;&t; */
-macro_line|#ifdef CONFIG_INET&t; 
+macro_line|#ifdef CONFIG_INET
 id|BUGMSG
 c_func
 (paren
@@ -8674,7 +8674,7 @@ macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 )brace
 multiline_comment|/* Determine a packet&squot;s protocol ID.&n; *&n; * With ARCnet we have to convert everything to Ethernet-style stuff.&n; */
 DECL|function|arcnetA_type_trans
@@ -9867,7 +9867,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Packet receiver for RFC1051 packets; &n; */
+multiline_comment|/* Packet receiver for RFC1051 packets;&n; */
 r_static
 r_void
 DECL|function|arcnetS_rx
@@ -10367,7 +10367,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Try to get ARP to resolve the header.&n;&t; */
-macro_line|#ifdef CONFIG_INET&t; 
+macro_line|#ifdef CONFIG_INET
 r_return
 id|arp_find
 c_func
@@ -10389,7 +10389,7 @@ macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 )brace
 multiline_comment|/* Determine a packet&squot;s protocol ID.&n; *&n; * With ARCnet we have to convert everything to Ethernet-style stuff.&n; */
 DECL|function|arcnetS_type_trans
@@ -10630,6 +10630,30 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* use eg. device=&quot;arc1&quot; to change name */
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irqnum
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|shmem
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#ifdef RIM_I_MODE
 DECL|variable|node
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.29 1996/10/27 08:55:45 davem Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.30 1996/12/24 08:59:36 davem Exp $ */
 macro_line|#ifndef _ASMSPARC_SIGNAL_H
 DECL|macro|_ASMSPARC_SIGNAL_H
 mdefine_line|#define _ASMSPARC_SIGNAL_H
@@ -258,11 +258,6 @@ suffix:semicolon
 multiline_comment|/* not used by Linux/SPARC yet */
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
-multiline_comment|/* use the following macro to get the size of a sigaction struct&n;   when copying to/from userland */
-DECL|macro|SIGACTION_SIZE
-mdefine_line|#define SIGACTION_SIZE(personality) (((personality) &amp; PER_BSD)?&bslash;&n;&t;&t;&t;&t;     sizeof(struct sigaction)-sizeof(void *):&bslash;&n;&t;&t;&t;&t;     sizeof(struct sigaction))
-macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMSPARC_SIGNAL_H) */
 eof

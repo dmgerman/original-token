@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: leo.c,v 1.9 1996/11/27 20:09:59 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leo.c,v 1.10 1996/12/23 10:16:09 ecd Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;

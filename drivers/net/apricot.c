@@ -1,5 +1,5 @@
 multiline_comment|/* apricot.c: An Apricot 82596 ethernet driver for linux. */
-multiline_comment|/*&n;    Apricot&n;    &t;Written 1994 by Mark Evans.&n;&t;This driver is for the Apricot 82596 bus-master interface&n;&n;        Modularised 12/94 Mark Evans&n;    &n;    Driver skeleton &n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;    &n;&n;*/
+multiline_comment|/*&n;    Apricot&n;    &t;Written 1994 by Mark Evans.&n;&t;This driver is for the Apricot 82596 bus-master interface&n;&n;        Modularised 12/94 Mark Evans&n;&n;    Driver skeleton&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -4568,6 +4568,14 @@ r_int
 id|irq
 op_assign
 l_int|10
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 r_int
 DECL|function|init_module

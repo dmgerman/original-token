@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.5 1996/12/21 06:09:28 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.6 1996/12/26 15:36:49 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -1371,7 +1371,7 @@ id|result
 suffix:semicolon
 id|offset
 op_and_assign
-l_int|31UL
+l_int|63UL
 suffix:semicolon
 r_if
 c_cond
@@ -1392,6 +1392,7 @@ op_or_assign
 id|__swab64
 c_func
 (paren
+(paren
 op_complement
 l_int|0UL
 op_rshift
@@ -1399,6 +1400,7 @@ op_rshift
 l_int|64
 op_minus
 id|offset
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1495,7 +1497,7 @@ op_plus
 id|ffz
 c_func
 (paren
-id|__swab32
+id|__swab64
 c_func
 (paren
 id|tmp
@@ -1517,7 +1519,7 @@ op_plus
 id|ffz
 c_func
 (paren
-id|__swab32
+id|__swab64
 c_func
 (paren
 id|tmp

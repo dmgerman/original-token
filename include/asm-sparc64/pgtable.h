@@ -1,11 +1,13 @@
-multiline_comment|/* $Id: pgtable.h,v 1.1 1996/12/02 00:01:17 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.8 1996/12/28 18:39:52 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
 multiline_comment|/* This file contains the functions and defines necessary to modify and use&n; * the SpitFire page tables.&n; */
+macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
@@ -37,6 +39,7 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;&t;0xFFFFFE0000000000UL
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x)&t;((unsigned long)(x))
+macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* SpitFire TTE bits. */
 DECL|macro|_PAGE_VALID
 mdefine_line|#define _PAGE_VALID&t;0x8000000000000000UL&t;/* Valid TTE                          */
@@ -95,8 +98,6 @@ DECL|macro|__ACCESS_BITS
 mdefine_line|#define __ACCESS_BITS&t;(_PAGE_ACCESSED | _PAGE_READ | _PAGE_R)
 DECL|macro|_PFN_MASK
 mdefine_line|#define _PFN_MASK&t;_PAGE_PADDR
-DECL|macro|_PAGE_TABLE
-mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | __DIRTY_BITS | __ACCESS_BITS)
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(_PFN_MASK | _PAGE_MODIFIED | _PAGE_ACCESSED)
 DECL|macro|PAGE_NONE
@@ -141,6 +142,7 @@ DECL|macro|__S110
 mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
+macro_line|#ifndef __ASSEMBLY__
 r_extern
 id|pte_t
 id|__bad_page
@@ -172,90 +174,8 @@ mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE&t;__zero_page()
+mdefine_line|#define ZERO_PAGE&t;PAGE_OFFSET
 multiline_comment|/* Cache and TLB flush operations. */
-DECL|function|spitfire_put_dcache_tag
-r_extern
-id|__inline__
-r_void
-id|spitfire_put_dcache_tag
-c_func
-(paren
-r_int
-r_int
-id|addr
-comma
-r_int
-r_int
-id|tag
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;stxa&t;%0, [%1] %2&quot;
-suffix:colon
-multiline_comment|/* No outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|tag
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|addr
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_DCACHE_TAG
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|spitfire_put_icache_tag
-r_extern
-id|__inline__
-r_void
-id|spitfire_put_icache_tag
-c_func
-(paren
-r_int
-r_int
-id|addr
-comma
-r_int
-r_int
-id|tag
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;stxa&t;%0, [%1] %2&quot;
-suffix:colon
-multiline_comment|/* No outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|tag
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|addr
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_IC_TAG
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* This is a bit tricky to do most efficiently.  The I-CACHE on the&n; * SpitFire will snoop stores from _other_ processors and changes done&n; * by DMA, but it does _not_ snoop stores on the local processor.&n; * Also, even if the I-CACHE snoops the store from someone else correctly,&n; * you can still lose if the instructions are in the pipeline already.&n; * A big issue is that this cache is only 16K in size, using a pseudo&n; * 2-set associative scheme.  A full flush of the cache is far too much&n; * for me to accept, especially since most of the time when we get to&n; * running this code the icache data we want to flush is not even in&n; * the cache.  Thus the following seems to be the best method.&n; */
 DECL|function|spitfire_flush_icache_page
 r_extern
@@ -340,6 +260,7 @@ id|bge
 comma
 id|pt
 op_mod
+op_mod
 id|icc
 comma
 l_int|1
@@ -365,7 +286,6 @@ id|r
 (paren
 id|temp
 )paren
-comma
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -452,6 +372,13 @@ l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Kill the pipeline. */
+id|flushi
+c_func
+(paren
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
 )brace
 DECL|function|flush_cache_mm
 r_extern
@@ -527,6 +454,13 @@ l_string|&quot;#Sync&quot;
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Kill the pipeline. */
+id|flushi
+c_func
+(paren
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
 )brace
 DECL|function|flush_cache_range
 r_extern
@@ -601,6 +535,13 @@ l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Kill the pipeline. */
+id|flushi
+c_func
+(paren
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
 )brace
 )brace
 DECL|function|flush_cache_page
@@ -718,7 +659,7 @@ id|itag
 suffix:semicolon
 id|dtag
 op_assign
-id|spitfire_get_dtlb_tag
+id|spitfire_get_dtlb_data
 c_func
 (paren
 id|entry
@@ -726,7 +667,7 @@ id|entry
 suffix:semicolon
 id|itag
 op_assign
-id|spitfire_get_itlb_tag
+id|spitfire_get_itlb_data
 c_func
 (paren
 id|entry
@@ -743,7 +684,7 @@ id|_PAGE_L
 )paren
 )paren
 (brace
-id|spitfire_put_dtlb_tag
+id|spitfire_put_dtlb_data
 c_func
 (paren
 id|entry
@@ -763,7 +704,7 @@ id|_PAGE_L
 )paren
 )paren
 (brace
-id|spitfire_put_itlb_tag
+id|spitfire_put_itlb_data
 c_func
 (paren
 id|entry
@@ -911,6 +852,10 @@ op_ne
 id|NO_CONTEXT
 )paren
 (brace
+id|page
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
 id|spitfire_set_secondary_context
 c_func
 (paren
@@ -1065,8 +1010,6 @@ op_star
 id|pmdp
 )paren
 op_assign
-id|_PAGE_TABLE
-op_or
 (paren
 (paren
 r_int
@@ -1074,6 +1017,8 @@ r_int
 )paren
 id|ptep
 )paren
+op_minus
+id|PAGE_OFFSET
 suffix:semicolon
 )brace
 DECL|function|pgd_set
@@ -1099,8 +1044,6 @@ op_star
 id|pgdp
 )paren
 op_assign
-id|_PAGE_TABLE
-op_or
 (paren
 (paren
 r_int
@@ -1108,6 +1051,8 @@ r_int
 )paren
 id|pmdp
 )paren
+op_minus
+id|PAGE_OFFSET
 suffix:semicolon
 )brace
 DECL|function|pte_page
@@ -1155,8 +1100,8 @@ c_func
 (paren
 id|pmd
 )paren
-op_amp
-id|PAGE_MASK
+op_plus
+id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
@@ -1179,8 +1124,8 @@ c_func
 (paren
 id|pgd
 )paren
-op_amp
-id|PAGE_MASK
+op_plus
+id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
@@ -1225,11 +1170,11 @@ op_amp
 id|_PAGE_PRESENT
 suffix:semicolon
 )brace
-DECL|function|pte_cleat
+DECL|function|pte_clear
 r_extern
 r_inline
 r_void
-id|pte_cleat
+id|pte_clear
 c_func
 (paren
 id|pte_t
@@ -1289,8 +1234,6 @@ op_amp
 op_complement
 id|PAGE_MASK
 )paren
-op_ne
-id|_PAGE_TABLE
 suffix:semicolon
 )brace
 DECL|function|pmd_present
@@ -1310,8 +1253,6 @@ c_func
 (paren
 id|pmd
 )paren
-op_amp
-id|_PAGE_PRESENT
 suffix:semicolon
 )brace
 DECL|function|pmd_clear
@@ -1378,8 +1319,6 @@ op_amp
 op_complement
 id|PAGE_MASK
 )paren
-op_ne
-id|_PAGE_TABLE
 suffix:semicolon
 )brace
 DECL|function|pgd_present
@@ -1399,8 +1338,6 @@ c_func
 (paren
 id|pgd
 )paren
-op_amp
-id|_PAGE_PRESENT
 suffix:semicolon
 )brace
 DECL|function|pgd_clear
@@ -1583,6 +1520,7 @@ id|pte
 (brace
 r_return
 id|__pte
+c_func
 (paren
 id|pte_val
 c_func
@@ -1595,6 +1533,7 @@ op_complement
 id|_PAGE_MODIFIED
 op_or
 id|_PAGE_W
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1815,7 +1754,105 @@ op_star
 id|pgdir
 )paren
 (brace
-multiline_comment|/* XXX */
+r_register
+r_int
+r_int
+id|paddr
+id|asm
+c_func
+(paren
+l_string|&quot;%o5&quot;
+)paren
+suffix:semicolon
+id|paddr
+op_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+id|pgdir
+)paren
+op_minus
+id|PAGE_OFFSET
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tsk-&gt;mm
+op_eq
+id|current-&gt;mm
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+"&quot;"
+id|rdpr
+op_mod
+op_mod
+id|pstate
+comma
+op_mod
+op_mod
+id|g1
+op_logical_or
+op_mod
+op_mod
+id|g1
+comma
+op_mod
+l_int|1
+comma
+op_mod
+op_mod
+id|g2
+id|wrpr
+op_mod
+op_mod
+id|g2
+comma
+op_mod
+l_int|2
+comma
+op_mod
+op_mod
+id|pstate
+id|mov
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|g7
+id|wrpr
+op_mod
+op_mod
+id|g1
+comma
+l_int|0x0
+comma
+op_mod
+op_mod
+id|pstate
+l_string|&quot; : : &quot;
+id|r
+l_string|&quot; (paddr), &quot;
+id|i
+l_string|&quot; (PSTATE_MG), &quot;
+id|i
+"&quot;"
+(paren
+id|PSTATE_IE
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* to find an entry in a page-table-directory. */
 DECL|function|pgd_offset
@@ -1854,6 +1891,9 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* to find an entry in a kernel page-table-directory */
+DECL|macro|pgd_offset_k
+mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
 multiline_comment|/* Find an entry in the second-level page table.. */
 DECL|function|pmd_offset
 r_extern
@@ -2743,8 +2783,6 @@ id|GFP_KERNEL
 )paren
 suffix:semicolon
 )brace
-DECL|macro|pgd_flush
-mdefine_line|#define pgd_flush(pgd)&t;do { } while (0)
 r_extern
 id|pgd_t
 id|swapper_pg_dir
@@ -2752,7 +2790,6 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
-multiline_comment|/* XXX */
 DECL|function|update_mmu_cache
 r_extern
 r_inline
@@ -2773,7 +2810,344 @@ id|pte_t
 id|pte
 )paren
 (brace
-multiline_comment|/* XXX */
+multiline_comment|/* Find and fix bad virutal cache aliases. */
+r_if
+c_cond
+(paren
+(paren
+id|vma-&gt;vm_flags
+op_amp
+(paren
+id|VM_WRITE
+op_or
+id|VM_SHARED
+)paren
+)paren
+op_eq
+(paren
+id|VM_WRITE
+op_or
+id|VM_SHARED
+)paren
+)paren
+(brace
+r_struct
+id|vm_area_struct
+op_star
+id|vmaring
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+r_int
+r_int
+id|vaddr
+comma
+id|offset
+comma
+id|start
+suffix:semicolon
+id|pgd_t
+op_star
+id|pgdp
+suffix:semicolon
+id|pmd_t
+op_star
+id|pmdp
+suffix:semicolon
+id|pte_t
+op_star
+id|ptep
+suffix:semicolon
+r_int
+id|alias_found
+op_assign
+l_int|0
+suffix:semicolon
+id|inode
+op_assign
+id|vma-&gt;vm_inode
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|offset
+op_assign
+(paren
+id|address
+op_amp
+id|PAGE_MASK
+)paren
+op_minus
+id|vma-&gt;vm_start
+suffix:semicolon
+id|vmaring
+op_assign
+id|inode-&gt;i_mmap
+suffix:semicolon
+r_do
+(brace
+id|vaddr
+op_assign
+id|vmaring-&gt;vm_start
+op_plus
+id|offset
+suffix:semicolon
+multiline_comment|/* This conditional is misleading... */
+r_if
+c_cond
+(paren
+(paren
+id|vaddr
+op_xor
+id|address
+)paren
+op_amp
+id|PAGE_SIZE
+)paren
+(brace
+id|alias_found
+op_increment
+suffix:semicolon
+id|start
+op_assign
+id|vmaring-&gt;vm_start
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|start
+OL
+id|vmaring-&gt;vm_end
+)paren
+(brace
+id|pgdp
+op_assign
+id|pgd_offset
+c_func
+(paren
+id|vmaring-&gt;vm_mm
+comma
+id|start
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pgdp
+)paren
+(brace
+r_goto
+id|next
+suffix:semicolon
+)brace
+id|pmdp
+op_assign
+id|pmd_offset
+c_func
+(paren
+id|pgdp
+comma
+id|start
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pmdp
+)paren
+(brace
+r_goto
+id|next
+suffix:semicolon
+)brace
+id|ptep
+op_assign
+id|pte_offset
+c_func
+(paren
+id|pmdp
+comma
+id|start
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ptep
+)paren
+(brace
+r_goto
+id|next
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_amp
+id|_PAGE_PRESENT
+)paren
+(brace
+id|flush_cache_page
+c_func
+(paren
+id|vmaring
+comma
+id|start
+)paren
+suffix:semicolon
+op_star
+id|ptep
+op_assign
+id|__pte
+c_func
+(paren
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_amp
+op_complement
+(paren
+id|_PAGE_CV
+)paren
+)paren
+suffix:semicolon
+id|flush_tlb_page
+c_func
+(paren
+id|vmaring
+comma
+id|start
+)paren
+suffix:semicolon
+)brace
+id|next
+suffix:colon
+id|start
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+)brace
+)brace
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|vmaring
+op_assign
+id|vmaring-&gt;vm_next_share
+)paren
+op_ne
+id|inode-&gt;i_mmap
+)paren
+(brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|alias_found
+op_logical_and
+(paren
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_CV
+)paren
+)paren
+(brace
+id|pgdp
+op_assign
+id|pgd_offset
+c_func
+(paren
+id|vma-&gt;vm_mm
+comma
+id|address
+)paren
+suffix:semicolon
+id|pmdp
+op_assign
+id|pmd_offset
+c_func
+(paren
+id|pgdp
+comma
+id|address
+)paren
+suffix:semicolon
+id|ptep
+op_assign
+id|pte_offset
+c_func
+(paren
+id|pmdp
+comma
+id|address
+)paren
+suffix:semicolon
+id|flush_cache_page
+c_func
+(paren
+id|vma
+comma
+id|address
+)paren
+suffix:semicolon
+op_star
+id|ptep
+op_assign
+id|__pte
+c_func
+(paren
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_amp
+op_complement
+(paren
+id|_PAGE_CV
+)paren
+)paren
+suffix:semicolon
+id|flush_tlb_page
+c_func
+(paren
+id|vma
+comma
+id|address
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 multiline_comment|/* Make a non-present pseudo-TTE. */
 DECL|function|mk_swap_pte
@@ -2821,5 +3195,6 @@ DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry)&t;((entry) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset)&t;pte_val(mk_swap_pte((type),(offset)))
-macro_line|#endif /* _SPARC64_PGTABLE_H */
+macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#endif /* !(_SPARC64_PGTABLE_H) */
 eof

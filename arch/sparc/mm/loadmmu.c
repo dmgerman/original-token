@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.43 1996/12/18 06:43:24 tridge Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: loadmmu.c,v 1.45 1996/12/30 06:16:28 davem Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/a.out.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 DECL|variable|page_offset
 r_int
 r_int
@@ -101,24 +102,30 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|variable|mmu_exit_hook
+DECL|variable|init_new_context
 r_void
 (paren
 op_star
-id|mmu_exit_hook
+id|init_new_context
 )paren
 (paren
-r_void
+r_struct
+id|mm_struct
+op_star
+id|mm
 )paren
 suffix:semicolon
-DECL|variable|mmu_flush_hook
+DECL|variable|destroy_context
 r_void
 (paren
 op_star
-id|mmu_flush_hook
+id|destroy_context
 )paren
 (paren
-r_void
+r_struct
+id|mm_struct
+op_star
+id|mm
 )paren
 suffix:semicolon
 multiline_comment|/* translate between physical and virtual addresses */
@@ -1097,17 +1104,6 @@ id|pgd_alloc
 )paren
 (paren
 r_void
-)paren
-suffix:semicolon
-DECL|variable|pgd_flush
-r_void
-(paren
-op_star
-id|pgd_flush
-)paren
-(paren
-id|pgd_t
-op_star
 )paren
 suffix:semicolon
 DECL|variable|pte_write

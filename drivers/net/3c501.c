@@ -1,5 +1,5 @@
 multiline_comment|/* 3c501.c: A 3Com 3c501 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;       &n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;&t;&t;    19950208 (invid@msen.com)&n;&n;    Added traps for interrupts hitting the window as we clear and TX load&n;    the board. Now getting 150K/second FTP with a 3c501 card. Still playing&n;    with a TX-TX optimisation to see if we can touch 180-200K/second as seems&n;    theoretically maximum.&n;    &t;&t;19950402 Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;    &n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;    &t;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;    &t;&n;    3]&t;If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the &n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;    &t;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;    &t;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;    &t;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most &n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;    &n;    &t;The driver is less efficient than it could be. It switches through&n;    receive mode even if more transmits are queued. If this worries you buy&n;    a real ethernet card.&n;    &n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. That&squot;s down to the board, &n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that ethernet and you can give up.&n;    &n;*/
+multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;&t;&t;    19950208 (invid@msen.com)&n;&n;    Added traps for interrupts hitting the window as we clear and TX load&n;    the board. Now getting 150K/second FTP with a 3c501 card. Still playing&n;    with a TX-TX optimisation to see if we can touch 180-200K/second as seems&n;    theoretically maximum.&n;    &t;&t;19950402 Alan Cox &lt;Alan.Cox@linux.org&gt;&n;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;&n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;&n;    3]&t;If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the&n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most&n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;&n;    &t;The driver is less efficient than it could be. It switches through&n;    receive mode even if more transmits are queued. If this worries you buy&n;    a real ethernet card.&n;&n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. That&squot;s down to the board,&n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that ethernet and you can give up.&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -46,7 +46,7 @@ l_int|0
 )brace
 suffix:semicolon
 "&f;"
-multiline_comment|/*&n; *&t;Index to functions. &n; */
+multiline_comment|/*&n; *&t;Index to functions.&n; */
 r_int
 id|el1_probe
 c_func
@@ -186,7 +186,7 @@ id|el_debug
 op_assign
 id|EL_DEBUG
 suffix:semicolon
-multiline_comment|/* &n; *&t;Board-specific info in dev-&gt;priv. &n; */
+multiline_comment|/*&n; *&t;Board-specific info in dev-&gt;priv.&n; */
 DECL|struct|net_local
 r_struct
 id|net_local
@@ -272,7 +272,7 @@ DECL|macro|RX_MULT
 mdefine_line|#define RX_MULT 0xE8&t;&t;/* Accept multicast packets. */
 DECL|macro|TX_NORM
 mdefine_line|#define TX_NORM 0x0A&t;&t;/* Interrupt on everything that might hang the chip */
-multiline_comment|/*&n; *&t;TX_STATUS register. &n; */
+multiline_comment|/*&n; *&t;TX_STATUS register.&n; */
 DECL|macro|TX_COLLISION
 mdefine_line|#define TX_COLLISION 0x02
 DECL|macro|TX_16COLLISIONS
@@ -416,7 +416,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; *&t;The actual probe. &n; */
+multiline_comment|/*&n; *&t;The actual probe.&n; */
 DECL|function|el1_probe1
 r_static
 r_int
@@ -453,7 +453,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Read the station address PROM data from the special port.  &n;&t; */
+multiline_comment|/*&n;&t; *&t;Read the station address PROM data from the special port.&n;&t; */
 r_for
 c_loop
 (paren
@@ -493,7 +493,7 @@ id|EL1_SAPROM
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Check the first three octets of the S.A. for 3Com&squot;s prefix, or&n;&t; *&t;for the Sager NP943 prefix. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Check the first three octets of the S.A. for 3Com&squot;s prefix, or&n;&t; *&t;for the Sager NP943 prefix.&n;&t; */
 r_if
 c_cond
 (paren
@@ -559,7 +559,7 @@ r_else
 r_return
 id|ENODEV
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Grab the region so we can find the another board if autoIRQ fails. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Grab the region so we can find the another board if autoIRQ fails.&n;&t; */
 id|request_region
 c_func
 (paren
@@ -570,7 +570,7 @@ comma
 l_string|&quot;3c501&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&n;&t; *&t;We auto-IRQ by shutting off the interrupt line and letting it float&n;&t; *&t;high.&n;&t; */
+multiline_comment|/*&n;&t; *&t;We auto-IRQ by shutting off the interrupt line and letting it float&n;&t; *&t;high.&n;&t; */
 r_if
 c_cond
 (paren
@@ -722,7 +722,7 @@ c_func
 l_string|&quot;WARNING: Use of the 3c501 in a multicast kernel is NOT recommended.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif    
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -736,7 +736,7 @@ comma
 id|version
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Initialize the device structure. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Initialize the device structure.&n;&t; */
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -776,7 +776,7 @@ id|net_local
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The EL1-specific entries in the device structure. &n;&t; */
+multiline_comment|/*&n;&t; *&t;The EL1-specific entries in the device structure.&n;&t; */
 id|dev-&gt;open
 op_assign
 op_amp
@@ -802,7 +802,7 @@ op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Setup the generic properties &n;&t; */
+multiline_comment|/*&n;&t; *&t;Setup the generic properties&n;&t; */
 id|ether_setup
 c_func
 (paren
@@ -813,7 +813,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Open/initialize the board. &n; */
+multiline_comment|/*&n; *&t;Open/initialize the board.&n; */
 DECL|function|el_open
 r_static
 r_int
@@ -1089,7 +1089,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Avoid timer-based retransmission conflicts. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Avoid timer-based retransmission conflicts.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1167,7 +1167,7 @@ c_func
 id|dev-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|outb_p
 c_func
 (paren
@@ -1192,7 +1192,7 @@ id|lp-&gt;loading
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; *&t;Turn interrupts back on while we spend a pleasant afternoon&n;&t;&t; *&t;loading bytes into the board &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Turn interrupts back on while we spend a pleasant afternoon&n;&t;&t; *&t;loading bytes into the board&n;&t;&t; */
 id|restore_flags
 c_func
 (paren
@@ -1237,7 +1237,7 @@ id|GP_LOW
 )paren
 suffix:semicolon
 multiline_comment|/* the board reuses the same register */
-macro_line|#ifndef BLOCKOUT_1&t;&t;
+macro_line|#ifndef BLOCKOUT_1
 r_if
 c_cond
 (paren
@@ -1283,14 +1283,14 @@ id|lp-&gt;loading
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef BLOCKOUT_1&t;&t;
+macro_line|#ifdef BLOCKOUT_1
 id|enable_irq
 c_func
 (paren
 id|dev-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -1321,7 +1321,7 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; *&t;The typical workload of the driver:&n; *&t;Handle the ether interface interrupts. &n; */
+multiline_comment|/*&n; *&t;The typical workload of the driver:&n; *&t;Handle the ether interface interrupts.&n; */
 DECL|function|el_interrupt
 r_static
 r_void
@@ -1449,7 +1449,7 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifndef BLOCKOUT_1    
+macro_line|#ifndef BLOCKOUT_1
 r_if
 c_cond
 (paren
@@ -1470,7 +1470,7 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif        &t;&t;
+macro_line|#endif
 macro_line|#ifdef BLOCKOUT_3
 id|lp-&gt;loading
 op_assign
@@ -1494,7 +1494,7 @@ c_func
 id|TX_STATUS
 )paren
 suffix:semicolon
-macro_line|#ifdef BLOCKOUT_2&t;&t;
+macro_line|#ifdef BLOCKOUT_2
 r_if
 c_cond
 (paren
@@ -1692,7 +1692,7 @@ op_amp
 id|TX_COLLISION
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Retrigger xmit. &n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Retrigger xmit.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1824,7 +1824,7 @@ id|RX_LOW
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Just reading rx_status fixes most errors. &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Just reading rx_status fixes most errors.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1920,7 +1920,7 @@ l_string|&quot;.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Move into receive mode &n;&t; */
+multiline_comment|/*&n;&t; *&t;Move into receive mode&n;&t; */
 id|outb
 c_func
 (paren
@@ -1957,7 +1957,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;We have a good packet. Well, not really &quot;good&quot;, just mostly not broken.&n; *&t;We must check everything to see if it is good. &n; */
+multiline_comment|/*&n; *&t;We have a good packet. Well, not really &quot;good&quot;, just mostly not broken.&n; *&t;We must check everything to see if it is good.&n; */
 DECL|function|el_receive
 r_static
 r_void
@@ -2120,7 +2120,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;The read increments through the bytes. The interrupt&n;&t;&t; *&t;handler will fix the pointer when it returns to &n;&t;&t; *&t;receive mode.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;The read increments through the bytes. The interrupt&n;&t;&t; *&t;handler will fix the pointer when it returns to&n;&t;&t; *&t;receive mode.&n;&t;&t; */
 id|insb
 c_func
 (paren
@@ -2343,7 +2343,7 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Free and disable the IRQ. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Free and disable the IRQ.&n;&t; */
 id|free_irq
 c_func
 (paren
@@ -2553,6 +2553,22 @@ id|irq
 op_assign
 l_int|5
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -2605,7 +2621,7 @@ op_amp
 id|dev_3c501
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Free up the private structure, or leak memory :-) &n;&t; */
+multiline_comment|/*&n;&t; *&t;Free up the private structure, or leak memory :-)&n;&t; */
 id|kfree
 c_func
 (paren
@@ -2617,7 +2633,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* gets re-allocated by el1_probe1 */
-multiline_comment|/*&n;&t; *&t;If we don&squot;t do this, we can&squot;t re-insmod it later. &n;&t; */
+multiline_comment|/*&n;&t; *&t;If we don&squot;t do this, we can&squot;t re-insmod it later.&n;&t; */
 id|release_region
 c_func
 (paren

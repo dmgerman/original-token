@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *&n; */
 macro_line|#ifndef _NCPLIB_H
 DECL|macro|_NCPLIB_H
 mdefine_line|#define _NCPLIB_H
@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
 r_int

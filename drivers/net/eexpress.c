@@ -1,9 +1,9 @@
 multiline_comment|/* Intel EtherExpress 16 device driver for Linux&n; *&n; * Written by John Sullivan, 1995&n; *  based on original code by Donald Becker, with changes by&n; *  Alan Cox and Pauline Middelink.&n; *&n; * Many modifications, and currently maintained, by&n; *  Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
-multiline_comment|/* The EtherExpress 16 is a fairly simple card, based on a shared-memory&n; * design using the i82586 Ethernet coprocessor.  It bears no relationship,&n; * as far as I know, to the similarly-named &quot;EtherExpress Pro&quot; range.&n; *&n; * Historically, Linux support for these cards has been very bad.  However,&n; * things seem to be getting better slowly. &n; */
-multiline_comment|/* It would be nice to seperate out all the 82586-specific code, so that it &n; * could be shared between drivers (as with 8390.c).  But this would be quite&n; * a messy job.  The main motivation for doing this would be to bring 3c507&n; * support back up to scratch.&n; */
+multiline_comment|/* The EtherExpress 16 is a fairly simple card, based on a shared-memory&n; * design using the i82586 Ethernet coprocessor.  It bears no relationship,&n; * as far as I know, to the similarly-named &quot;EtherExpress Pro&quot; range.&n; *&n; * Historically, Linux support for these cards has been very bad.  However,&n; * things seem to be getting better slowly.&n; */
+multiline_comment|/* It would be nice to seperate out all the 82586-specific code, so that it&n; * could be shared between drivers (as with 8390.c).  But this would be quite&n; * a messy job.  The main motivation for doing this would be to bring 3c507&n; * support back up to scratch.&n; */
 multiline_comment|/* If your card is confused about what sort of interface it has (eg it&n; * persistently reports &quot;10baseT&quot; when none is fitted), running &squot;SOFTSET /BART&squot;&n; * or &squot;SOFTSET /LISA&squot; from DOS seems to help.&n; */
-multiline_comment|/* Here&squot;s the scoop on memory mapping.&n; *&n; * There are three ways to access EtherExpress card memory: either using the&n; * shared-memory mapping, or using PIO through the dataport, or using PIO&n; * through the &quot;shadow memory&quot; ports.&n; *&n; * The shadow memory system works by having the card map some of its memory&n; * as follows:&n; *&n; * (the low five bits of the SMPTR are ignored)&n; * &n; *  base+0x4000..400f      memory at SMPTR+0..15&n; *  base+0x8000..800f      memory at SMPTR+16..31&n; *  base+0xc000..c007      dubious stuff (memory at SMPTR+16..23 apparently)&n; *  base+0xc008..c00f      memory at 0x0008..0x000f&n; *&n; * This last set (the one at c008) is particularly handy because the SCB &n; * lives at 0x0008.  So that set of ports gives us easy random access to data &n; * in the SCB without having to mess around setting up pointers and the like.&n; * We always use this method to access the SCB (via the scb_xx() functions).&n; *&n; * Dataport access works by aiming the appropriate (read or write) pointer&n; * at the first address you&squot;re interested in, and then reading or writing from&n; * the dataport.  The pointers auto-increment after each transfer.  We use&n; * this for data transfer.&n; *&n; * We don&squot;t use the shared-memory system because it allegedly doesn&squot;t work on&n; * all cards, and because it&squot;s a bit more prone to go wrong (it&squot;s one more&n; * thing to configure...).&n; */
-multiline_comment|/* Known bugs:&n; *&n; * - 8-bit mode is not supported, and makes things go wrong.&n; * - Multicast and promiscuous modes are not supported.&n; * - The card seems to want to give us two interrupts every time something&n; *   happens, where just one would be better. &n; * - The statistics may not be getting reported properly.&n; */
+multiline_comment|/* Here&squot;s the scoop on memory mapping.&n; *&n; * There are three ways to access EtherExpress card memory: either using the&n; * shared-memory mapping, or using PIO through the dataport, or using PIO&n; * through the &quot;shadow memory&quot; ports.&n; *&n; * The shadow memory system works by having the card map some of its memory&n; * as follows:&n; *&n; * (the low five bits of the SMPTR are ignored)&n; *&n; *  base+0x4000..400f      memory at SMPTR+0..15&n; *  base+0x8000..800f      memory at SMPTR+16..31&n; *  base+0xc000..c007      dubious stuff (memory at SMPTR+16..23 apparently)&n; *  base+0xc008..c00f      memory at 0x0008..0x000f&n; *&n; * This last set (the one at c008) is particularly handy because the SCB&n; * lives at 0x0008.  So that set of ports gives us easy random access to data&n; * in the SCB without having to mess around setting up pointers and the like.&n; * We always use this method to access the SCB (via the scb_xx() functions).&n; *&n; * Dataport access works by aiming the appropriate (read or write) pointer&n; * at the first address you&squot;re interested in, and then reading or writing from&n; * the dataport.  The pointers auto-increment after each transfer.  We use&n; * this for data transfer.&n; *&n; * We don&squot;t use the shared-memory system because it allegedly doesn&squot;t work on&n; * all cards, and because it&squot;s a bit more prone to go wrong (it&squot;s one more&n; * thing to configure...).&n; */
+multiline_comment|/* Known bugs:&n; *&n; * - 8-bit mode is not supported, and makes things go wrong.&n; * - Multicast and promiscuous modes are not supported.&n; * - The card seems to want to give us two interrupts every time something&n; *   happens, where just one would be better.&n; * - The statistics may not be getting reported properly.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -25,7 +25,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
-mdefine_line|#define NET_DEBUG 4 
+mdefine_line|#define NET_DEBUG 4
 macro_line|#endif
 macro_line|#include &quot;eexpress.h&quot;
 DECL|macro|EEXP_IO_EXTENT
@@ -163,7 +163,7 @@ l_int|0x0000
 comma
 l_int|0x0000
 comma
-multiline_comment|/* links to first command block, &n;&t;&t;&t;&t;   first receive descriptor */
+multiline_comment|/* links to first command block,&n;&t;&t;&t;&t;   first receive descriptor */
 l_int|0x0000
 comma
 l_int|0x0000
@@ -204,10 +204,10 @@ comma
 multiline_comment|/* default backoff method &amp; priority&n;&t;&t;&t;&t; * interframe spacing = 0x60 */
 l_int|0xf200
 comma
-multiline_comment|/* slot time=0x200 &n;&t;&t;&t;&t; * max collision retry = 0xf */
+multiline_comment|/* slot time=0x200&n;&t;&t;&t;&t; * max collision retry = 0xf */
 l_int|0x0000
 comma
-multiline_comment|/* no HDLC : normal CRC : enable broadcast &n;&t;&t;&t;&t; * disable promiscuous/multicast modes */
+multiline_comment|/* no HDLC : normal CRC : enable broadcast&n;&t;&t;&t;&t; * disable promiscuous/multicast modes */
 l_int|0x003c
 comma
 multiline_comment|/* minimum frame length = 60 octets) */
@@ -1183,7 +1183,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * This gets called when a higher level thinks we are broken.  Check that&n; * nothing has become jammed in the CU.&n; */
+multiline_comment|/*&n; * This gets called when a higher level thinks we are broken.  Check that&n; * nothing has become jammed in the CU.&n; */
 DECL|function|unstick_cu
 r_static
 r_void
@@ -3182,7 +3182,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Calculate the EEPROM checksum.  Carry on anyway if it&squot;s bad,&n;&t; * though. &n;&t; */
+multiline_comment|/* Calculate the EEPROM checksum.  Carry on anyway if it&squot;s bad,&n;&t; * though.&n;&t; */
 r_for
 c_loop
 (paren
@@ -4098,7 +4098,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * This should never happen. It is called when some higher routine detects&n; * that the CU has stopped, to try to restart it from the last packet we knew&n; * we were working on, or the idle loop if we had finished for the time.&n; */
+multiline_comment|/*&n; * This should never happen. It is called when some higher routine detects&n; * that the CU has stopped, to try to restart it from the last packet we knew&n; * we were working on, or the idle loop if we had finished for the time.&n; */
 DECL|function|eexp_hw_txrestart
 r_static
 r_void
@@ -4282,7 +4282,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Writes down the list of transmit buffers into card memory.  Each&n; * entry consists of an 82586 transmit command, followed by a jump&n; * pointing to itself.  When we want to transmit a packet, we write &n; * the data into the appropriate transmit buffer and then modify the&n; * preceding jump to point at the new transmit command.  This means that&n; * the 586 command unit is continuously active. &n; */
+multiline_comment|/*&n; * Writes down the list of transmit buffers into card memory.  Each&n; * entry consists of an 82586 transmit command, followed by a jump&n; * pointing to itself.  When we want to transmit a packet, we write&n; * the data into the appropriate transmit buffer and then modify the&n; * preceding jump to point at the new transmit command.  This means that&n; * the 586 command unit is continuously active.&n; */
 DECL|function|eexp_hw_txinit
 r_static
 r_void
@@ -4499,7 +4499,7 @@ op_assign
 id|tx_block
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write the circular list of receive buffer descriptors to card memory.&n; * The end of the list isn&squot;t marked, which means that the 82586 receive&n; * unit will loop until buffers become available (this avoids it giving us&n; * &quot;out of resources&quot; messages). &n; */
+multiline_comment|/*&n; * Write the circular list of receive buffer descriptors to card memory.&n; * The end of the list isn&squot;t marked, which means that the 82586 receive&n; * unit will loop until buffers become available (this avoids it giving us&n; * &quot;out of resources&quot; messages).&n; */
 DECL|function|eexp_hw_rxinit
 r_static
 r_void
@@ -5502,6 +5502,34 @@ op_assign
 l_int|0
 comma
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|EEXP_MAX_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|EEXP_MAX_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 multiline_comment|/* Ideally the user would give us io=, irq= for every card.  If any parameters&n; * are specified, we verify and then use them.  If no parameters are given, we&n; * autoprobe for one card only.&n; */
 DECL|function|init_module

@@ -12,11 +12,11 @@ macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Many architectures don&squot;t like unaligned accesses, which is&n; * frequently the case with the nr_sects and start_sect partition&n; * table entries.&n; */
 macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|SYS_IND
-mdefine_line|#define SYS_IND(p)&t;get_unaligned(&amp;p-&gt;sys_ind)
+mdefine_line|#define SYS_IND(p)&t;(get_unaligned(&amp;p-&gt;sys_ind))
 DECL|macro|NR_SECTS
-mdefine_line|#define NR_SECTS(p)&t;get_unaligned(&amp;p-&gt;nr_sects)
+mdefine_line|#define NR_SECTS(p)&t;({ __typeof__(p-&gt;nr_sects) __a =&t;&bslash;&n;&t;&t;&t;&t;get_unaligned(&amp;p-&gt;nr_sects);&t;&bslash;&n;&t;&t;&t;&t;le32_to_cpu(__a); &bslash;&n;&t;&t;&t;})
 DECL|macro|START_SECT
-mdefine_line|#define START_SECT(p)&t;get_unaligned(&amp;p-&gt;start_sect)
+mdefine_line|#define START_SECT(p)&t;({ __typeof__(p-&gt;start_sect) __a =&t;&bslash;&n;&t;&t;&t;&t;get_unaligned(&amp;p-&gt;start_sect);&t;&bslash;&n;&t;&t;&t;&t;le32_to_cpu(__a); &bslash;&n;&t;&t;&t;})
 DECL|variable|gendisk_head
 r_struct
 id|gendisk
@@ -310,6 +310,8 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_MSDOS_PARTITION
 multiline_comment|/*&n; * Create devices for each logical partition in an extended partition.&n; * The logical partitions form a linked list, with each entry being&n; * a partition table with two entries.  The first entry&n; * is the real data partition (with a start relative to the partition&n; * table start).  The second is a pointer to the next logical partition&n; * (with a start relative to the entire extended partition).&n; * We do not create a Linux partition for the partition tables, but&n; * only for the actual data partitions.&n; */
+DECL|macro|MSDOS_LABEL_MAGIC
+mdefine_line|#define MSDOS_LABEL_MAGIC&t;&t;0xAA55
 DECL|function|extended_partition
 r_static
 r_void
@@ -436,6 +438,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 op_star
 (paren
 r_int
@@ -447,8 +452,9 @@ id|bh-&gt;b_data
 op_plus
 l_int|510
 )paren
+)paren
 op_ne
-l_int|0xAA55
+id|MSDOS_LABEL_MAGIC
 )paren
 r_goto
 id|done
@@ -992,6 +998,9 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 op_star
 (paren
 r_int
@@ -1003,8 +1012,9 @@ l_int|0x1fe
 op_plus
 id|data
 )paren
+)paren
 op_ne
-l_int|0xAA55
+id|MSDOS_LABEL_MAGIC
 )paren
 (brace
 id|brelse
@@ -1059,6 +1069,9 @@ r_int
 r_int
 id|sig
 op_assign
+id|le16_to_cpu
+c_func
+(paren
 op_star
 (paren
 r_int
@@ -1069,6 +1082,7 @@ op_star
 id|data
 op_plus
 l_int|2
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1156,6 +1170,9 @@ id|sig
 op_le
 l_int|0x1ae
 op_logical_and
+id|le16_to_cpu
+c_func
+(paren
 op_star
 (paren
 r_int
@@ -1166,6 +1183,7 @@ op_star
 id|data
 op_plus
 id|sig
+)paren
 )paren
 op_eq
 l_int|0x55AA
@@ -1189,7 +1207,7 @@ l_int|2
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * DM6 signature in MBR, courtesy of OnTrack&n;&t;&t;&t; */
+multiline_comment|/* DM6 signature in MBR, courtesy of OnTrack */
 (paren
 r_void
 )paren
@@ -1523,6 +1541,9 @@ multiline_comment|/*&n;&t; *  Check for old-style Disk Manager partition table&n
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 op_star
 (paren
 r_int
@@ -1534,8 +1555,9 @@ id|data
 op_plus
 l_int|0xfc
 )paren
+)paren
 op_eq
-l_int|0x55AA
+id|MSDOS_LABEL_MAGIC
 )paren
 (brace
 id|p
@@ -2129,21 +2151,11 @@ op_star
 id|p
 suffix:semicolon
 r_int
-id|other_endian
-suffix:semicolon
-r_int
 r_int
 id|spc
 suffix:semicolon
 DECL|macro|SUN_LABEL_MAGIC
 mdefine_line|#define SUN_LABEL_MAGIC          0xDABE
-DECL|macro|SUN_LABEL_MAGIC_SWAPPED
-mdefine_line|#define SUN_LABEL_MAGIC_SWAPPED  0xBEDA
-multiline_comment|/* No need to optimize these macros since they are called only when reading&n; * the partition table. This occurs only at each disk change. */
-DECL|macro|SWAP16
-mdefine_line|#define SWAP16(x)  (other_endian ? (((__u16)(x) &amp; 0xFF) &lt;&lt; 8) &bslash;&n;&t;&t;&t;&t; | (((__u16)(x) &amp; 0xFF00) &gt;&gt; 8) &bslash;&n;&t;&t;&t;&t; : (__u16)(x))
-DECL|macro|SWAP32
-mdefine_line|#define SWAP32(x)  (other_endian ? (((__u32)(x) &amp; 0xFF) &lt;&lt; 24) &bslash;&n;&t;&t;&t;&t; | (((__u32)(x) &amp; 0xFF00) &lt;&lt; 8) &bslash;&n;&t;&t;&t;&t; | (((__u32)(x) &amp; 0xFF0000) &gt;&gt; 8) &bslash;&n;&t;&t;&t;&t; | (((__u32)(x) &amp; 0xFF000000) &gt;&gt; 24) &bslash;&n;&t;&t;&t;&t; : (__u32)(x))
 r_if
 c_cond
 (paren
@@ -2196,13 +2208,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|be16_to_cpu
+c_func
+(paren
 id|label-&gt;magic
+)paren
 op_ne
 id|SUN_LABEL_MAGIC
-op_logical_and
-id|label-&gt;magic
-op_ne
-id|SUN_LABEL_MAGIC_SWAPPED
 )paren
 (brace
 id|printk
@@ -2216,7 +2228,11 @@ c_func
 id|dev
 )paren
 comma
+id|be16_to_cpu
+c_func
+(paren
 id|label-&gt;magic
+)paren
 )paren
 suffix:semicolon
 id|brelse
@@ -2229,14 +2245,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|other_endian
-op_assign
-(paren
-id|label-&gt;magic
-op_eq
-id|SUN_LABEL_MAGIC_SWAPPED
-)paren
-suffix:semicolon
 multiline_comment|/* Look at the checksum */
 id|ush
 op_assign
@@ -2313,13 +2321,13 @@ suffix:semicolon
 multiline_comment|/* All Sun disks have 8 partition entries */
 id|spc
 op_assign
-id|SWAP16
+id|be16_to_cpu
 c_func
 (paren
 id|label-&gt;ntrks
 )paren
 op_star
-id|SWAP16
+id|be16_to_cpu
 c_func
 (paren
 id|label-&gt;nsect
@@ -2352,7 +2360,7 @@ id|st_sector
 op_assign
 id|first_sector
 op_plus
-id|SWAP32
+id|be32_to_cpu
 c_func
 (paren
 id|p-&gt;start_cylinder
@@ -2369,7 +2377,7 @@ id|current_minor
 comma
 id|st_sector
 comma
-id|SWAP32
+id|be32_to_cpu
 c_func
 (paren
 id|p-&gt;num_sectors
@@ -2395,10 +2403,6 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-DECL|macro|SWAP16
-macro_line|#undef SWAP16
-DECL|macro|SWAP32
-macro_line|#undef SWAP32
 )brace
 macro_line|#endif /* CONFIG_SUN_PARTITION */
 macro_line|#ifdef CONFIG_AMIGA_PARTITION

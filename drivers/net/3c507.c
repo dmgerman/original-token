@@ -194,7 +194,7 @@ DECL|macro|iSCB_CBL
 mdefine_line|#define iSCB_CBL&t;&t;0xC&t;/* Command BLock offset. */
 DECL|macro|iSCB_RFA
 mdefine_line|#define iSCB_RFA&t;&t;0xE&t;/* Rx Frame Area offset. */
-multiline_comment|/*  Since the 3c507 maps the shared memory window so that the last byte is&n;&t;at 82586 address FFFF, the first byte is at 82586 address 0, 16K, 32K, or&n;&t;48K corresponding to window sizes of 64K, 48K, 32K and 16K respectively. &n;&t;We can account for this be setting the &squot;SBC Base&squot; entry in the ISCP table&n;&t;below for all the 16 bit offset addresses, and also adding the &squot;SCB Base&squot;&n;&t;value to all 24 bit physical addresses (in the SCP table and the TX and RX&n;&t;Buffer Descriptors).&n;&t;&t;&t;&t;&t;-Mark&t;&n;&t;*/
+multiline_comment|/*  Since the 3c507 maps the shared memory window so that the last byte is&n;&t;at 82586 address FFFF, the first byte is at 82586 address 0, 16K, 32K, or&n;&t;48K corresponding to window sizes of 64K, 48K, 32K and 16K respectively.&n;&t;We can account for this be setting the &squot;SBC Base&squot; entry in the ISCP table&n;&t;below for all the 16 bit offset addresses, and also adding the &squot;SCB Base&squot;&n;&t;value to all 24 bit physical addresses (in the SCP table and the TX and RX&n;&t;Buffer Descriptors).&n;&t;&t;&t;&t;&t;-Mark&n;&t;*/
 DECL|macro|SCB_BASE
 mdefine_line|#define SCB_BASE&t;&t;((unsigned)64*1024 - (dev-&gt;mem_end - dev-&gt;mem_start))
 multiline_comment|/*&n;  What follows in &squot;init_words[]&squot; is the &quot;program&quot; that is downloaded to the&n;  82586 memory.&t; It&squot;s mostly tables and command blocks, and starts at the&n;  reset address 0xfffff6.  This is designed to be similar to the EtherExpress,&n;  thus the unusual location of the SCB at 0x0008.&n;&n;  Even with the additional &quot;don&squot;t care&quot; values, doing it this way takes less&n;  program space than initializing the individual tables, and I feel it&squot;s much&n;  cleaner.&n;&n;  The databook is particularly useless for the first two structures, I had&n;  to use the Crynwr driver as an example.&n;&n;   The memory setup is as follows:&n;   */
@@ -230,7 +230,7 @@ DECL|macro|RX_BUF_SIZE
 mdefine_line|#define RX_BUF_SIZE &t;(1518+14+18)&t;/* packet+header+RBD */
 DECL|macro|RX_BUF_END
 mdefine_line|#define RX_BUF_END&t;&t;(dev-&gt;mem_end - dev-&gt;mem_start)
-multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command. &n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;&t;chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
+multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command.&n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;&t;chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
 DECL|variable|init_words
 r_int
 r_int
@@ -3350,6 +3350,22 @@ r_int
 id|irq
 op_assign
 l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int

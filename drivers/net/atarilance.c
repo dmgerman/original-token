@@ -47,6 +47,14 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+id|MODULE_PARM
+c_func
+(paren
+id|lance_debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Print debug messages on probing? */
 DECL|macro|LANCE_DEBUG_PROBE
 macro_line|#undef LANCE_DEBUG_PROBE
@@ -57,7 +65,7 @@ DECL|macro|PROBE_PRINT
 macro_line|# define PROBE_PRINT(a)&t;printk a
 macro_line|#else
 DECL|macro|PROBE_PRINT
-macro_line|# define PROBE_PRINT(a)&t;
+macro_line|# define PROBE_PRINT(a)
 macro_line|#endif
 multiline_comment|/* These define the number of Rx and Tx buffers as log2. (Only powers&n; * of two are valid)&n; * Much more rx buffers (32) are reserved than tx buffers (8), since receiving&n; * is more time critical then sending and packets may have to remain in the&n; * board&squot;s memory when main memory is low.&n; */
 DECL|macro|TX_LOG_RING_SIZE

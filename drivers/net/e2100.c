@@ -51,7 +51,7 @@ mdefine_line|#define  E21_MEM_ON&t;&t;0x05&t;/* Enable memory in 16 bit mode. */
 DECL|macro|E21_MEM_ON_8
 mdefine_line|#define  E21_MEM_ON_8&t;0x07&t;/* Enable memory in  8 bit mode. */
 DECL|macro|E21_MEM_BASE
-mdefine_line|#define E21_MEM_BASE&t;0x11&t;
+mdefine_line|#define E21_MEM_BASE&t;0x11
 DECL|macro|E21_IRQ_LOW
 mdefine_line|#define E21_IRQ_LOW&t;&t;0x12&t;/* The low three bits of the IRQ number. */
 DECL|macro|E21_IRQ_HIGH
@@ -1643,6 +1643,62 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* choose int. or ext. xcvr */
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_E21_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_E21_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mem
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_E21_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|xcvr
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_E21_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* This is set up so that only a single autoprobe takes place per call.&n;ISA device autoprobes on a running machine are not recommended. */
 r_int
 DECL|function|init_module

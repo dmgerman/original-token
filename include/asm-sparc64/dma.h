@@ -1,9 +1,8 @@
-multiline_comment|/* $Id: dma.h,v 1.1 1996/11/20 15:27:38 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.2 1996/12/26 13:25:24 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/vac-ops.h&gt;  /* for invalidate&squot;s, etc. */
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -11,7 +10,7 @@ multiline_comment|/* These are irrelevant for Sparc DMA, but we leave it in so t
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS 8
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS  (~0UL)
+mdefine_line|#define MAX_DMA_ADDRESS  ((0x100000000) + PAGE_OFFSET)
 DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ    1
 DECL|macro|DMA_MODE_WRITE
@@ -321,76 +320,6 @@ DECL|macro|DMA_IRQ_ENTRY
 mdefine_line|#define DMA_IRQ_ENTRY(dma, dregs) do { &bslash;&n;        if(DMA_ISBROKEN(dma)) DMA_INTSOFF(dregs); &bslash;&n;   } while (0)
 DECL|macro|DMA_IRQ_EXIT
 mdefine_line|#define DMA_IRQ_EXIT(dma, dregs) do { &bslash;&n;&t;if(DMA_ISBROKEN(dma)) DMA_INTSON(dregs); &bslash;&n;   } while(0)
-multiline_comment|/* Pause until counter runs out or BIT isn&squot;t set in the DMA condition&n; * register.&n; */
-DECL|function|sparc_dma_pause
-r_extern
-id|__inline__
-r_void
-id|sparc_dma_pause
-c_func
-(paren
-r_struct
-id|sparc_dma_registers
-op_star
-id|regs
-comma
-r_int
-r_int
-id|bit
-)paren
-(brace
-r_int
-id|ctr
-op_assign
-l_int|50000
-suffix:semicolon
-multiline_comment|/* Let&squot;s find some bugs ;) */
-multiline_comment|/* Busy wait until the bit is not set any more */
-r_while
-c_loop
-(paren
-(paren
-id|regs-&gt;cond_reg
-op_amp
-id|bit
-)paren
-op_logical_and
-(paren
-id|ctr
-OG
-l_int|0
-)paren
-)paren
-(brace
-id|ctr
-op_decrement
-suffix:semicolon
-id|__delay
-c_func
-(paren
-l_int|5
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Check for bogus outcome. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ctr
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;DMA timeout&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* Reset the friggin&squot; thing... */
-DECL|macro|DMA_RESET
-mdefine_line|#define DMA_RESET(dma) do { &bslash;&n;&t;struct sparc_dma_registers *regs = dma-&gt;regs;                      &bslash;&n;&t;/* Let the current FIFO drain itself */                            &bslash;&n;&t;sparc_dma_pause(regs, (DMA_FIFO_ISDRAIN));                         &bslash;&n;&t;/* Reset the logic */                                              &bslash;&n;&t;regs-&gt;cond_reg |= (DMA_RST_SCSI);     /* assert */                 &bslash;&n;&t;__delay(400);                         /* let the bits set ;) */    &bslash;&n;&t;regs-&gt;cond_reg &amp;= ~(DMA_RST_SCSI);    /* de-assert */              &bslash;&n;&t;sparc_dma_enable_interrupts(regs);    /* Re-enable interrupts */   &bslash;&n;&t;/* Enable FAST transfers if available */                           &bslash;&n;&t;if(dma-&gt;revision&gt;dvmarev1) regs-&gt;cond_reg |= DMA_3CLKS;            &bslash;&n;&t;dma-&gt;running = 0;                                                  &bslash;&n;} while(0)
 DECL|macro|for_each_dvma
 mdefine_line|#define for_each_dvma(dma) &bslash;&n;        for((dma) = dma_chain; (dma); (dma) = (dma)-&gt;next)
 r_extern

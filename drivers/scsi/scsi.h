@@ -401,36 +401,7 @@ id|scsi_dev_init
 r_void
 )paren
 suffix:semicolon
-DECL|struct|scatterlist
-r_struct
-id|scatterlist
-(brace
-DECL|member|address
-r_char
-op_star
-id|address
-suffix:semicolon
-multiline_comment|/* Location data is to be transferred to */
-DECL|member|alt_address
-r_char
-op_star
-id|alt_address
-suffix:semicolon
-multiline_comment|/* Location of actual if address is a &n;&t;&t;&t; * dma indirect buffer.  NULL otherwise */
-DECL|member|length
-r_int
-r_int
-id|length
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#ifdef __alpha__
-DECL|macro|ISA_DMA_THRESHOLD
-macro_line|# define ISA_DMA_THRESHOLD (~0UL)
-macro_line|#else
-DECL|macro|ISA_DMA_THRESHOLD
-macro_line|# define ISA_DMA_THRESHOLD (0x00ffffff)
-macro_line|#endif
+macro_line|#include &lt;asm/scatterlist.h&gt;
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
 multiline_comment|/*&n; * These are the return codes for the abort and reset functions.  The mid-level&n; * code uses these to decide what to do next.  Each of the low level abort&n; * and reset functions must correctly indicate what it has done.&n; * The descriptions are written from the point of view of the mid-level code,&n; * so that the return code is telling the mid-level drivers exactly what&n; * the low level driver has already done, and what remains to be done.&n; */

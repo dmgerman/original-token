@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunfb.c,v 1.18 1996/11/22 11:57:07 ecd Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
+multiline_comment|/* $Id: sunfb.c,v 1.19 1996/12/23 10:16:15 ecd Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/page.h&gt;

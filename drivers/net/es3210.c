@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;es3210.c&n;&n;&t;Linux driver for Racal-Interlan ES3210 EISA Network Adapter&n;&n;&t;Copyright (C) 1996, Paul Gortmaker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Information and Code Sources:&n;&n;&t;1) The existing myriad of Linux 8390 drivers written by Donald Becker.&n;&n;&t;2) Once again Russ Nelson&squot;s asm packet driver provided additional info.&n;&n;&t;3) Info for getting IRQ and sh-mem gleaned from the EISA cfg files.&n;&t;   Too bad it doesn&squot;t work -- see below.&n;&n;&t;The ES3210 is an EISA shared memory NS8390 implementation. Note &n;&t;that all memory copies to/from the board must be 32bit transfers. &n;&t;Which rules out using eth_io_copy_and_sum() in this driver.&n;&n;&t;Apparently there are two slightly different revisions of the&n;&t;card, since there are two distinct EISA cfg files (!rii0101.cfg&n;&t;and !rii0102.cfg) One has media select in the cfg file and the&n;&t;other doesn&squot;t. Hopefully this will work with either.&n;&n;&t;That is about all I can tell you about it, having never actually &n;&t;even seen one of these cards. :)  Try http://www.interlan.com&n;&t;if you want more info.&n;&n;&t;Thanks go to Mark Salazar for testing v0.02 of this driver.&n;&n;&t;Bugs, to-fix, etc:&n;&n;&t;1) The EISA cfg ports that are *supposed* to have the IRQ and shared&n;&t;   mem values just read 0xff all the time. Hrrmpf. Apparently the&n;&t;   same happens with the packet driver as the code for reading&n;&t;   these registers is disabled there. In the meantime, boot with:&n;&t;   ether=&lt;IRQ&gt;,0,0x&lt;shared_mem_addr&gt;,eth0 to override the IRQ and&n;&t;   shared memory detection. (The i/o port detection is okay.)&n;&n;&t;2) Module support currently untested. Probably works though.&n;&n;*/
+multiline_comment|/*&n;&t;es3210.c&n;&n;&t;Linux driver for Racal-Interlan ES3210 EISA Network Adapter&n;&n;&t;Copyright (C) 1996, Paul Gortmaker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Information and Code Sources:&n;&n;&t;1) The existing myriad of Linux 8390 drivers written by Donald Becker.&n;&n;&t;2) Once again Russ Nelson&squot;s asm packet driver provided additional info.&n;&n;&t;3) Info for getting IRQ and sh-mem gleaned from the EISA cfg files.&n;&t;   Too bad it doesn&squot;t work -- see below.&n;&n;&t;The ES3210 is an EISA shared memory NS8390 implementation. Note&n;&t;that all memory copies to/from the board must be 32bit transfers.&n;&t;Which rules out using eth_io_copy_and_sum() in this driver.&n;&n;&t;Apparently there are two slightly different revisions of the&n;&t;card, since there are two distinct EISA cfg files (!rii0101.cfg&n;&t;and !rii0102.cfg) One has media select in the cfg file and the&n;&t;other doesn&squot;t. Hopefully this will work with either.&n;&n;&t;That is about all I can tell you about it, having never actually&n;&t;even seen one of these cards. :)  Try http://www.interlan.com&n;&t;if you want more info.&n;&n;&t;Thanks go to Mark Salazar for testing v0.02 of this driver.&n;&n;&t;Bugs, to-fix, etc:&n;&n;&t;1) The EISA cfg ports that are *supposed* to have the IRQ and shared&n;&t;   mem values just read 0xff all the time. Hrrmpf. Apparently the&n;&t;   same happens with the packet driver as the code for reading&n;&t;   these registers is disabled there. In the meantime, boot with:&n;&t;   ether=&lt;IRQ&gt;,0,0x&lt;shared_mem_addr&gt;,eth0 to override the IRQ and&n;&t;   shared memory detection. (The i/o port detection is okay.)&n;&n;&t;2) Module support currently untested. Probably works though.&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -158,7 +158,7 @@ DECL|macro|ES_ADDR1
 mdefine_line|#define ES_ADDR1&t;0x07
 DECL|macro|ES_ADDR2
 mdefine_line|#define ES_ADDR2&t;0x01
-multiline_comment|/*&n; * Two card revisions. EISA ID&squot;s are always rev. minor, rev. major,, and &n; * then the three vendor letters stored in 5 bits each, with an &quot;a&quot; = 1.&n; * For eg: &quot;rii&quot; = 10010 01001 01001 = 0x4929, which is how the EISA&n; * config utility determines automagically what config file(s) to use.&n; */
+multiline_comment|/*&n; * Two card revisions. EISA ID&squot;s are always rev. minor, rev. major,, and&n; * then the three vendor letters stored in 5 bits each, with an &quot;a&quot; = 1.&n; * For eg: &quot;rii&quot; = 10010 01001 01001 = 0x4929, which is how the EISA&n; * config utility determines automagically what config file(s) to use.&n; */
 DECL|macro|ES_EISA_ID1
 mdefine_line|#define ES_EISA_ID1&t;0x01012949&t;/* !rii0101.cfg &t;&t;*/
 DECL|macro|ES_EISA_ID2
@@ -236,7 +236,7 @@ comma
 l_int|15
 )brace
 suffix:semicolon
-multiline_comment|/* &n; *&t;Probe for the card. The best way is to read the EISA ID if it&n; *&t;is known. Then we check the prefix of the station address&n; *&t;PROM for a match against the Racal-Interlan assigned value.&n; */
+multiline_comment|/*&n; *&t;Probe for the card. The best way is to read the EISA ID if it&n; *&t;is known. Then we check the prefix of the station address&n; *&t;PROM for a match against the Racal-Interlan assigned value.&n; */
 DECL|function|es_probe
 r_int
 id|es_probe
@@ -1173,7 +1173,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Note: In the following three functions is the implicit assumption&n; *&t;that the associated memcpy will only use &quot;rep; movsl&quot; as long as&n; *&t;we keep the counts as some multiple of doublewords. This is a&n; *&t;requirement of the hardware, and also prevents us from using&n; *&t;eth_io_copy_and_sum() since we can&squot;t guarantee it will limit &n; *&t;itself to doubleword access.&n; */
+multiline_comment|/*&n; *&t;Note: In the following three functions is the implicit assumption&n; *&t;that the associated memcpy will only use &quot;rep; movsl&quot; as long as&n; *&t;we keep the counts as some multiple of doublewords. This is a&n; *&t;requirement of the hardware, and also prevents us from using&n; *&t;eth_io_copy_and_sum() since we can&squot;t guarantee it will limit&n; *&t;itself to doubleword access.&n; */
 multiline_comment|/*&n; *&t;Grab the 8390 specific header. Similar to the block_input routine, but&n; *&t;we don&squot;t need to be concerned with ring wrap as the header will be at&n; *&t;the start of a page, so we optimize accordingly. (A single doubleword.)&n; */
 r_static
 r_void
@@ -1238,7 +1238,7 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* Round up allocation. */
 )brace
-multiline_comment|/*&t;&n; *&t;Block input and output are easy on shared memory ethercards, the only&n; *&t;complication is when the ring buffer wraps. The count will already&n; *&t;be rounded up to a doubleword value via es_get_8390_hdr() above.&n; */
+multiline_comment|/*&n; *&t;Block input and output are easy on shared memory ethercards, the only&n; *&t;complication is when the ring buffer wraps. The count will already&n; *&t;be rounded up to a doubleword value via es_get_8390_hdr() above.&n; */
 DECL|function|es_block_input
 r_static
 r_void
@@ -1559,6 +1559,48 @@ op_assign
 l_int|0
 comma
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ES_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ES_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mem
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ES_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 r_int
 DECL|function|init_module

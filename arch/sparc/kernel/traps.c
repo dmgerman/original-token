@@ -1,8 +1,7 @@
-multiline_comment|/* $Id: traps.c,v 1.49 1996/12/18 06:33:49 tridge Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.c,v 1.50 1996/12/29 20:46:05 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

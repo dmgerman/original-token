@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: cgthree.c,v 1.9 1996/11/13 05:10:21 davem Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
+multiline_comment|/* $Id: cgthree.c,v 1.10 1996/12/23 10:16:07 ecd Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;

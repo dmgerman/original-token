@@ -1,14 +1,19 @@
-multiline_comment|/* $Id: page.h,v 1.2 1996/12/02 00:01:06 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.4 1996/12/28 18:39:51 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT   13
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE    (1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
+DECL|macro|clear_page
+mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
+DECL|macro|copy_page
+mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
 macro_line|#ifdef STRICT_MM_TYPECHECKS
@@ -197,7 +202,8 @@ DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 DECL|macro|__iopgprot
 mdefine_line|#define __iopgprot(x)&t;(x)
-macro_line|#endif
+macro_line|#endif /* (STRICT_MM_TYPECHECKS) */
+macro_line|#endif /* !(__ASSEMBLY__) */
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;0x0000000070000000UL
 multiline_comment|/* to align the pointer to the (next) page boundary */
@@ -211,6 +217,7 @@ DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long) (x) + PAGE_OFFSET))
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* The following structure is used to hold the physical&n; * memory configuration of the machine.  This is filled in&n; * probe_memory() and is later used by mem_init() to set up&n; * mem_map[].  We statically allocate SPARC_PHYS_BANKS of&n; * these structs, this is arbitrary.  The entry after the&n; * last valid one has num_bytes==0.&n; */
 DECL|struct|sparc_phys_banks
 r_struct
@@ -238,6 +245,7 @@ id|sp_banks
 id|SPARC_PHYS_BANKS
 )braket
 suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* _SPARC64_PAGE_H */
+macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#endif /* !(__KERNEL__) */
+macro_line|#endif /* !(_SPARC64_PAGE_H) */
 eof

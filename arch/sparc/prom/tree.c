@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.13 1996/12/18 06:46:56 tridge Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: tree.c,v 1.14 1996/12/29 20:46:12 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

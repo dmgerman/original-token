@@ -75,6 +75,14 @@ op_assign
 id|SL_NRUNIT
 suffix:semicolon
 multiline_comment|/* Can be overridden with insmod! */
+id|MODULE_PARM
+c_func
+(paren
+id|slip_maxdev
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|sl_ldisc
 r_static
 r_struct
@@ -2040,7 +2048,7 @@ id|SLF_INUSE
 )paren
 suffix:semicolon
 multiline_comment|/* Clear ESCAPE &amp; ERROR flags */
-macro_line|#ifdef CONFIG_SLIP_SMART&t;
+macro_line|#ifdef CONFIG_SLIP_SMART
 id|sl-&gt;keepalive
 op_assign
 l_int|0
@@ -4019,7 +4027,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* VSV changes end */
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/* Allow stty to read, but not set, the serial port */
 r_case
 id|TCGETS
@@ -4168,7 +4176,7 @@ id|KERN_INFO
 l_string|&quot;SLIP linefill/keepalive option.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|slip_ctrls
 op_assign
 (paren

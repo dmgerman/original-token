@@ -87,6 +87,9 @@ suffix:semicolon
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xC0000000UL)
+multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
+DECL|macro|TASK_UNMAPPED_BASE
+mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32

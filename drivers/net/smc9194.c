@@ -1,4 +1,4 @@
-multiline_comment|/*------------------------------------------------------------------------&n; . smc9194.c&n; . This is a driver for SMC&squot;s 9000 series of Ethernet cards. &n; .&n; . Copyright (C) 1996 by Erik Stahlman&n; . This software may be used and distributed according to the terms&n; . of the GNU Public License, incorporated herein by reference.&n; .&n; . &quot;Features&quot; of the SMC chip:  &n; .   4608 byte packet memory. ( for the 91C92.  Others have more ) &n; .   EEPROM for configuration&n; .   AUI/TP selection  ( mine has 10Base2/10BaseT select )&n; .&n; . Arguments:&n; . &t;io&t;&t; = for the base address&n; .&t;irq&t; = for the IRQ &n; .&t;ifport = 0 for autodetect, 1 for TP, 2 for AUI ( or 10base2 )   &n; .&n; . author:  &n; . &t;Erik Stahlman&t;&t;&t;&t;( erik@vt.edu )&n; .   &n; . Hardware multicast code from Peter Cammaert ( pc@denkart.be )&n; .&n; . Sources:&n; .    o   SMC databook&n; .    o   skeleton.c by Donald Becker ( becker@cesdis.gsfc.nasa.gov )&n; .    o   ( a LOT of advice from Becker as well )&n; .&n; . History:&n; .&t;12/07/95  Erik Stahlman  written, got receive/xmit handled &n; . &t;01/03/96  Erik Stahlman  worked out some bugs, actually usable!!! :-)&n; .&t;01/06/96  Erik Stahlman&t; cleaned up some, better testing, etc &n; .&t;01/29/96  Erik Stahlman&t; fixed autoirq, added multicast&n; . &t;02/01/96  Erik Stahlman&t; 1. disabled all interrupts in smc_reset&n; .&t;&t;   &t;&t; 2. got rid of post-decrementing bug -- UGH.  &n; .&t;02/13/96  Erik Stahlman  Tried to fix autoirq failure.  Added more&n; .&t;&t;&t;&t; descriptive error messages.&n; .&t;02/15/96  Erik Stahlman  Fixed typo that caused detection failure&n; . &t;02/23/96  Erik Stahlman&t; Modified it to fit into kernel tree  &n; .&t;&t;&t;&t; Added support to change hardware address&n; .&t;&t;&t;&t; Cleared stats on opens&n; .&t;02/26/96  Erik Stahlman&t; Trial support for Kernel 1.2.13&n; .&t;&t;&t;&t; Kludge for automatic IRQ detection&n; .&t;03/04/96  Erik Stahlman&t; Fixed kernel 1.3.70 + &n; .&t;&t;&t;&t; Fixed bug reported by Gardner Buchanan in &n; .&t;&t;&t;&t;   smc_enable, with outw instead of outb&n; .&t;03/06/96  Erik Stahlman  Added hardware multicast from Peter Cammaert&n; ----------------------------------------------------------------------------*/
+multiline_comment|/*------------------------------------------------------------------------&n; . smc9194.c&n; . This is a driver for SMC&squot;s 9000 series of Ethernet cards.&n; .&n; . Copyright (C) 1996 by Erik Stahlman&n; . This software may be used and distributed according to the terms&n; . of the GNU Public License, incorporated herein by reference.&n; .&n; . &quot;Features&quot; of the SMC chip:&n; .   4608 byte packet memory. ( for the 91C92.  Others have more )&n; .   EEPROM for configuration&n; .   AUI/TP selection  ( mine has 10Base2/10BaseT select )&n; .&n; . Arguments:&n; . &t;io&t;&t; = for the base address&n; .&t;irq&t; = for the IRQ&n; .&t;ifport = 0 for autodetect, 1 for TP, 2 for AUI ( or 10base2 )&n; .&n; . author:&n; . &t;Erik Stahlman&t;&t;&t;&t;( erik@vt.edu )&n; .&n; . Hardware multicast code from Peter Cammaert ( pc@denkart.be )&n; .&n; . Sources:&n; .    o   SMC databook&n; .    o   skeleton.c by Donald Becker ( becker@cesdis.gsfc.nasa.gov )&n; .    o   ( a LOT of advice from Becker as well )&n; .&n; . History:&n; .&t;12/07/95  Erik Stahlman  written, got receive/xmit handled&n; . &t;01/03/96  Erik Stahlman  worked out some bugs, actually usable!!! :-)&n; .&t;01/06/96  Erik Stahlman&t; cleaned up some, better testing, etc&n; .&t;01/29/96  Erik Stahlman&t; fixed autoirq, added multicast&n; . &t;02/01/96  Erik Stahlman&t; 1. disabled all interrupts in smc_reset&n; .&t;&t;   &t;&t; 2. got rid of post-decrementing bug -- UGH.&n; .&t;02/13/96  Erik Stahlman  Tried to fix autoirq failure.  Added more&n; .&t;&t;&t;&t; descriptive error messages.&n; .&t;02/15/96  Erik Stahlman  Fixed typo that caused detection failure&n; . &t;02/23/96  Erik Stahlman&t; Modified it to fit into kernel tree&n; .&t;&t;&t;&t; Added support to change hardware address&n; .&t;&t;&t;&t; Cleared stats on opens&n; .&t;02/26/96  Erik Stahlman&t; Trial support for Kernel 1.2.13&n; .&t;&t;&t;&t; Kludge for automatic IRQ detection&n; .&t;03/04/96  Erik Stahlman&t; Fixed kernel 1.3.70 +&n; .&t;&t;&t;&t; Fixed bug reported by Gardner Buchanan in&n; .&t;&t;&t;&t;   smc_enable, with outw instead of outb&n; .&t;03/06/96  Erik Stahlman  Added hardware multicast from Peter Cammaert&n; ----------------------------------------------------------------------------*/
 DECL|variable|version
 r_static
 r_const
@@ -11,7 +11,7 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif 
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -30,21 +30,21 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;smc9194.h&quot;
-multiline_comment|/*------------------------------------------------------------------------&n; .  &n; . Configuration options, for the experienced user to change. &n; .&n; -------------------------------------------------------------------------*/
-multiline_comment|/* &n; . this is for kernels &gt; 1.2.70 &n;*/
+multiline_comment|/*------------------------------------------------------------------------&n; .&n; . Configuration options, for the experienced user to change.&n; .&n; -------------------------------------------------------------------------*/
+multiline_comment|/*&n; . this is for kernels &gt; 1.2.70&n;*/
 DECL|macro|REALLY_NEW_KERNEL
-mdefine_line|#define REALLY_NEW_KERNEL 
+mdefine_line|#define REALLY_NEW_KERNEL
 macro_line|#ifndef REALLY_NEW_KERNEL
 DECL|macro|free_irq
 mdefine_line|#define free_irq( x, y ) free_irq( x )
 DECL|macro|request_irq
 mdefine_line|#define request_irq( x, y, z, u, v ) request_irq( x, y, z, u )
 macro_line|#endif
-multiline_comment|/*&n; . Do you want to use this with old kernels.  &n; . WARNING: this is not well tested.  &n;#define SUPPORT_OLD_KERNEL&n;*/
-multiline_comment|/*&n; . Do you want to use 32 bit xfers?  This should work on all chips, as&n; . the chipset is designed to accommodate them.   &n;*/
+multiline_comment|/*&n; . Do you want to use this with old kernels.&n; . WARNING: this is not well tested.&n;#define SUPPORT_OLD_KERNEL&n;*/
+multiline_comment|/*&n; . Do you want to use 32 bit xfers?  This should work on all chips, as&n; . the chipset is designed to accommodate them.&n;*/
 DECL|macro|USE_32_BIT
 mdefine_line|#define USE_32_BIT 1
-multiline_comment|/* &n; .the SMC9194 can be at any of the following port addresses.  To change,&n; .for a slightly different card, you can add it to the array.  Keep in &n; .mind that the array must end in zero.&n;*/
+multiline_comment|/*&n; .the SMC9194 can be at any of the following port addresses.  To change,&n; .for a slightly different card, you can add it to the array.  Keep in&n; .mind that the array must end in zero.&n;*/
 DECL|variable|smc_portlist
 r_static
 r_int
@@ -89,22 +89,22 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* &n; . Wait time for memory to be free.  This probably shouldn&squot;t be &n; . tuned that much, as waiting for this means nothing else happens &n; . in the system &n;*/
+multiline_comment|/*&n; . Wait time for memory to be free.  This probably shouldn&squot;t be&n; . tuned that much, as waiting for this means nothing else happens&n; . in the system&n;*/
 DECL|macro|MEMORY_WAIT_TIME
 mdefine_line|#define MEMORY_WAIT_TIME 16
-multiline_comment|/*&n; . DEBUGGING LEVELS&n; . &n; . 0 for normal operation&n; . 1 for slightly more details&n; . &gt;2 for various levels of increasingly useless information&n; .    2 for interrupt tracking, status flags&n; .    3 for packet dumps, etc.&n;*/
+multiline_comment|/*&n; . DEBUGGING LEVELS&n; .&n; . 0 for normal operation&n; . 1 for slightly more details&n; . &gt;2 for various levels of increasingly useless information&n; .    2 for interrupt tracking, status flags&n; .    3 for packet dumps, etc.&n;*/
 DECL|macro|SMC_DEBUG
 mdefine_line|#define SMC_DEBUG 0
 macro_line|#if (SMC_DEBUG &gt; 2 )
 DECL|macro|PRINTK3
-mdefine_line|#define PRINTK3(x) printk x 
-macro_line|#else 
+mdefine_line|#define PRINTK3(x) printk x
+macro_line|#else
 DECL|macro|PRINTK3
-mdefine_line|#define PRINTK3(x) 
+mdefine_line|#define PRINTK3(x)
 macro_line|#endif
-macro_line|#if SMC_DEBUG &gt; 1 
+macro_line|#if SMC_DEBUG &gt; 1
 DECL|macro|PRINTK2
-mdefine_line|#define PRINTK2(x) printk x 
+mdefine_line|#define PRINTK2(x) printk x
 macro_line|#else
 DECL|macro|PRINTK2
 mdefine_line|#define PRINTK2(x)
@@ -115,13 +115,13 @@ mdefine_line|#define PRINTK(x) printk x
 macro_line|#else
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
-macro_line|#endif 
+macro_line|#endif
 multiline_comment|/* the older versions of the kernel cannot support autoprobing */
 macro_line|#ifdef SUPPORT_OLD_KERNEL
 DECL|macro|NO_AUTOPROBE
 mdefine_line|#define NO_AUTOPROBE
 macro_line|#endif
-multiline_comment|/*------------------------------------------------------------------------&n; .&n; . The internal workings of the driver.  If you are changing anything &n; . here with the SMC stuff, you should have the datasheet and known &n; . what you are doing.  &n; .  &n; -------------------------------------------------------------------------*/
+multiline_comment|/*------------------------------------------------------------------------&n; .&n; . The internal workings of the driver.  If you are changing anything&n; . here with the SMC stuff, you should have the datasheet and known&n; . what you are doing.&n; .&n; -------------------------------------------------------------------------*/
 DECL|macro|CARDNAME
 mdefine_line|#define CARDNAME &quot;SMC9194&quot;
 macro_line|#ifdef SUPPORT_OLD_KERNEL
@@ -133,19 +133,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 multiline_comment|/* store this information for the driver.. */
 DECL|struct|smc_local
 r_struct
 id|smc_local
 (brace
-multiline_comment|/*&n; &t;   these are things that the kernel wants me to keep, so users&n;&t;   can find out semi-useless statistics of how well the card is&n;&t;   performing &n; &t;*/
+multiline_comment|/*&n; &t;   these are things that the kernel wants me to keep, so users&n;&t;   can find out semi-useless statistics of how well the card is&n;&t;   performing&n; &t;*/
 DECL|member|stats
 r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
-multiline_comment|/* &n;&t;   If I have to wait until memory is available to send&n;&t;   a packet, I will store the skbuff here, until I get the&n;&t;   desired memory.  Then, I&squot;ll send it out and free it.    &n;&t;*/
+multiline_comment|/*&n;&t;   If I have to wait until memory is available to send&n;&t;   a packet, I will store the skbuff here, until I get the&n;&t;   desired memory.  Then, I&squot;ll send it out and free it.&n;&t;*/
 DECL|member|saved_skb
 r_struct
 id|sk_buff
@@ -159,8 +159,8 @@ id|packets_waiting
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*-----------------------------------------------------------------&n; .&n; .  The driver can be entered at any of the following entry points.&n; . &n; .------------------------------------------------------------------  */
-multiline_comment|/*&n; . This is called by  register_netdev().  It is responsible for &n; . checking the portlist for the SMC9000 series chipset.  If it finds &n; . one, then it will initialize the device, find the hardware information,&n; . and sets up the appropriate device parameters.   &n; . NOTE: Interrupts are *OFF* when this procedure is called.&n; .&n; . NB:This shouldn&squot;t be static since it is referred to externally.&n;*/
+multiline_comment|/*-----------------------------------------------------------------&n; .&n; .  The driver can be entered at any of the following entry points.&n; .&n; .------------------------------------------------------------------  */
+multiline_comment|/*&n; . This is called by  register_netdev().  It is responsible for&n; . checking the portlist for the SMC9000 series chipset.  If it finds&n; . one, then it will initialize the device, find the hardware information,&n; . and sets up the appropriate device parameters.&n; . NOTE: Interrupts are *OFF* when this procedure is called.&n; .&n; . NB:This shouldn&squot;t be static since it is referred to externally.&n;*/
 r_int
 id|smc_init
 c_func
@@ -171,7 +171,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; . The kernel calls this function when someone wants to use the device,&n; . typically &squot;ifconfig ethX up&squot;.   &n;*/
+multiline_comment|/*&n; . The kernel calls this function when someone wants to use the device,&n; . typically &squot;ifconfig ethX up&squot;.&n;*/
 r_static
 r_int
 id|smc_open
@@ -183,7 +183,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; . This is called by the kernel to send a packet out into the net.  it&squot;s&n; . responsible for doing a best-effort send, but if it&squot;s simply not possible&n; . to send it, the packet gets dropped. &n;*/
+multiline_comment|/*&n; . This is called by the kernel to send a packet out into the net.  it&squot;s&n; . responsible for doing a best-effort send, but if it&squot;s simply not possible&n; . to send it, the packet gets dropped.&n;*/
 r_static
 r_int
 id|smc_send_packet
@@ -200,7 +200,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* &n; . This is called by the kernel in response to &squot;ifconfig ethX down&squot;.  It&n; . is responsible for cleaning up everything that the open routine &n; . does, and maybe putting the card into a powerdown state. &n;*/
+multiline_comment|/*&n; . This is called by the kernel in response to &squot;ifconfig ethX down&squot;.  It&n; . is responsible for cleaning up everything that the open routine&n; . does, and maybe putting the card into a powerdown state.&n;*/
 r_static
 r_int
 id|smc_close
@@ -212,7 +212,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; . This routine allows the proc file system to query the driver&squot;s &n; . statistics.  &n;*/
+multiline_comment|/*&n; . This routine allows the proc file system to query the driver&squot;s&n; . statistics.&n;*/
 r_static
 r_struct
 id|enet_statistics
@@ -226,7 +226,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; . Finally, a call to set promiscuous mode ( for TCPDUMP and related &n; . programs ) and multicast modes.&n;*/
+multiline_comment|/*&n; . Finally, a call to set promiscuous mode ( for TCPDUMP and related&n; . programs ) and multicast modes.&n;*/
 macro_line|#ifdef SUPPORT_OLD_KERNEL
 r_static
 r_void
@@ -258,9 +258,9 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif 
-multiline_comment|/*---------------------------------------------------------------&n; . &n; . Interrupt level calls.. &n; .&n; ----------------------------------------------------------------*/
-multiline_comment|/*&n; . Handles the actual interrupt &n;*/
+macro_line|#endif
+multiline_comment|/*---------------------------------------------------------------&n; .&n; . Interrupt level calls..&n; .&n; ----------------------------------------------------------------*/
+multiline_comment|/*&n; . Handles the actual interrupt&n;*/
 macro_line|#ifdef REALLY_NEW_KERNEL
 r_static
 r_void
@@ -294,8 +294,8 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#endif 
-multiline_comment|/*&n; . This is a separate procedure to handle the receipt of a packet, to&n; . leave the interrupt code looking slightly cleaner &n;*/
+macro_line|#endif
+multiline_comment|/*&n; . This is a separate procedure to handle the receipt of a packet, to&n; . leave the interrupt code looking slightly cleaner&n;*/
 r_inline
 r_static
 r_void
@@ -308,7 +308,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; . This handles a TX interrupt, which is only called when an error&n; . relating to a packet is sent.  &n;*/
+multiline_comment|/*&n; . This handles a TX interrupt, which is only called when an error&n; . relating to a packet is sent.&n;*/
 r_inline
 r_static
 r_void
@@ -321,8 +321,8 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; ------------------------------------------------------------&n; . &n; . Internal routines&n; .&n; ------------------------------------------------------------&n;*/
-multiline_comment|/*&n; . Test if a given location contains a chip, trying to cause as &n; . little damage as possible if it&squot;s not a SMC chip.&n;*/
+multiline_comment|/*&n; ------------------------------------------------------------&n; .&n; . Internal routines&n; .&n; ------------------------------------------------------------&n;*/
+multiline_comment|/*&n; . Test if a given location contains a chip, trying to cause as&n; . little damage as possible if it&squot;s not a SMC chip.&n;*/
 r_static
 r_int
 id|smc_probe
@@ -332,7 +332,7 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/*&n; . this routine initializes the cards hardware, prints out the configuration&n; . to the system log as well as the vanity message, and handles the setup&n; . of a device parameter. &n; . It will give an error if it can&squot;t initialize the card.&n;*/
+multiline_comment|/*&n; . this routine initializes the cards hardware, prints out the configuration&n; . to the system log as well as the vanity message, and handles the setup&n; . of a device parameter.&n; . It will give an error if it can&squot;t initialize the card.&n;*/
 r_static
 r_int
 id|smc_initcard
@@ -347,7 +347,7 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/*&n; . A rather simple routine to print out a packet for debugging purposes.&n;*/
-macro_line|#if SMC_DEBUG &gt; 2 
+macro_line|#if SMC_DEBUG &gt; 2
 r_static
 r_void
 id|print_packet
@@ -359,7 +359,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif  
+macro_line|#endif
 DECL|macro|tx_done
 mdefine_line|#define tx_done(dev) 1
 multiline_comment|/* this is called to actually send the packet to the chip */
@@ -374,7 +374,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Since I am not sure if I will have enough room in the chip&squot;s ram&n; . to store the packet, I call this routine, which either sends it &n; . now, or generates an interrupt when the card is ready for the &n; . packet */
+multiline_comment|/* Since I am not sure if I will have enough room in the chip&squot;s ram&n; . to store the packet, I call this routine, which either sends it&n; . now, or generates an interrupt when the card is ready for the&n; . packet */
 r_static
 r_int
 id|smc_wait_to_send_packet
@@ -433,7 +433,7 @@ id|ioaddr
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;  this routine will set the hardware multicast table to the specified &n;  values given it by the higher level routines&n;*/
+multiline_comment|/*&n;  this routine will set the hardware multicast table to the specified&n;  values given it by the higher level routines&n;*/
 macro_line|#ifndef SUPPORT_OLD_KERNEL
 r_static
 r_void
@@ -485,8 +485,8 @@ op_star
 id|mem_startp
 )paren
 suffix:semicolon
-macro_line|#endif 
-multiline_comment|/*&n; . Function: smc_reset( int ioaddr )&n; . Purpose:&n; .  &t;This sets the SMC91xx chip to its normal state, hopefully from whatever&n; . &t;mess that any other DOS driver has put it in.   &n; . &n; . Maybe I should reset more registers to defaults in here?  SOFTRESET  should&n; . do that for me.  &n; . &n; . Method:&n; .&t;1.  send a SOFT RESET &n; .&t;2.  wait for it to finish&n; .&t;3.  enable autorelease mode&n; .&t;4.  reset the memory management unit&n; .&t;5.  clear all interrupts&n; .&n;*/
+macro_line|#endif
+multiline_comment|/*&n; . Function: smc_reset( int ioaddr )&n; . Purpose:&n; .  &t;This sets the SMC91xx chip to its normal state, hopefully from whatever&n; . &t;mess that any other DOS driver has put it in.&n; .&n; . Maybe I should reset more registers to defaults in here?  SOFTRESET  should&n; . do that for me.&n; .&n; . Method:&n; .&t;1.  send a SOFT RESET&n; .&t;2.  wait for it to finish&n; .&t;3.  enable autorelease mode&n; .&t;4.  reset the memory management unit&n; .&t;5.  clear all interrupts&n; .&n;*/
 DECL|function|smc_reset
 r_static
 r_void
@@ -520,7 +520,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Set the transmit and receive configuration registers to &n;&t;   default values */
+multiline_comment|/* Set the transmit and receive configuration registers to&n;&t;   default values */
 id|outw
 c_func
 (paren
@@ -541,7 +541,7 @@ op_plus
 id|TCR
 )paren
 suffix:semicolon
-multiline_comment|/* set the control register to automatically&n;&t;   release successfully transmitted packets, to make the best &n;&t;   use out of our limited memory */
+multiline_comment|/* set the control register to automatically&n;&t;   release successfully transmitted packets, to make the best&n;&t;   use out of our limited memory */
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -583,7 +583,7 @@ op_plus
 id|MMU_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Note:  It doesn&squot;t seem that waiting for the MMU busy is needed here, &n;&t;   but this is a place where future chipsets _COULD_ break.  Be wary&n; &t;   of issuing another MMU command right after this */
+multiline_comment|/* Note:  It doesn&squot;t seem that waiting for the MMU busy is needed here,&n;&t;   but this is a place where future chipsets _COULD_ break.  Be wary&n; &t;   of issuing another MMU command right after this */
 id|outb
 c_func
 (paren
@@ -595,7 +595,7 @@ id|INT_MASK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; . Function: smc_enable&n; . Purpose: let the chip talk to the outside work&n; . Method: &n; .&t;1.  Enable the transmitter&n; .&t;2.  Enable the receiver&n; .&t;3.  Enable interrupts&n;*/
+multiline_comment|/*&n; . Function: smc_enable&n; . Purpose: let the chip talk to the outside work&n; . Method:&n; .&t;1.  Enable the transmitter&n; .&t;2.  Enable the receiver&n; .&t;3.  Enable interrupts&n;*/
 DECL|function|smc_enable
 r_static
 r_void
@@ -651,7 +651,7 @@ id|INT_MASK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; . Function: smc_shutdown&n; . Purpose:  closes down the SMC91xxx chip.&n; . Method:   &n; .&t;1. zero the interrupt mask&n; .&t;2. clear the enable receive flag&n; .&t;3. clear the enable xmit flags&n; .&n; . TODO: &n; .   (1) maybe utilize power down mode.&n; .&t;Why not yet?  Because while the chip will go into power down mode,&n; .&t;the manual says that it will wake up in response to any I/O requests&n; .&t;in the register space.   Empirical results do not show this working.&n;*/
+multiline_comment|/*&n; . Function: smc_shutdown&n; . Purpose:  closes down the SMC91xxx chip.&n; . Method:&n; .&t;1. zero the interrupt mask&n; .&t;2. clear the enable receive flag&n; .&t;3. clear the enable xmit flags&n; .&n; . TODO:&n; .   (1) maybe utilize power down mode.&n; .&t;Why not yet?  Because while the chip will go into power down mode,&n; .&t;the manual says that it will wake up in response to any I/O requests&n; .&t;in the register space.   Empirical results do not show this working.&n;*/
 DECL|function|smc_shutdown
 r_static
 r_void
@@ -706,7 +706,7 @@ op_plus
 id|TCR
 )paren
 suffix:semicolon
-macro_line|#if 0 
+macro_line|#if 0
 multiline_comment|/* finally, shut the chip down */
 id|SMC_SELECT_BANK
 c_func
@@ -732,10 +732,10 @@ op_plus
 id|CONTROL
 )paren
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 )brace
-macro_line|#ifndef SUPPORT_OLD_KERNEL 
-multiline_comment|/* &n; . Function: smc_setmulticast( int ioaddr, int count, dev_mc_list * adds )&n; . Purpose:&n; .    This sets the internal hardware table to filter out unwanted multicast&n; .    packets before they take up memory.  &n; .    &n; .    The SMC chip uses a hash table where the high 6 bits of the CRC of&n; .    address are the offset into the table.  If that bit is 1, then the &n; .    multicast packet is accepted.  Otherwise, it&squot;s dropped silently.&n; .  &n; .    To use the 6 bits as an offset into the table, the high 3 bits are the&n; .    number of the 8 bit register, while the low 3 bits are the bit within&n; .    that register.&n; .&n; . This routine is based very heavily on the one provided by Peter Cammaert. &n;*/
+macro_line|#ifndef SUPPORT_OLD_KERNEL
+multiline_comment|/*&n; . Function: smc_setmulticast( int ioaddr, int count, dev_mc_list * adds )&n; . Purpose:&n; .    This sets the internal hardware table to filter out unwanted multicast&n; .    packets before they take up memory.&n; .&n; .    The SMC chip uses a hash table where the high 6 bits of the CRC of&n; .    address are the offset into the table.  If that bit is 1, then the&n; .    multicast packet is accepted.  Otherwise, it&squot;s dropped silently.&n; .&n; .    To use the 6 bits as an offset into the table, the high 3 bits are the&n; .    number of the 8 bit register, while the low 3 bits are the bit within&n; .    that register.&n; .&n; . This routine is based very heavily on the one provided by Peter Cammaert.&n;*/
 DECL|function|smc_setmulticast
 r_static
 r_void
@@ -936,7 +936,7 @@ id|i
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;  Finds the CRC32 of a set of bytes.&n;  Again, from Peter Cammaert&squot;s code. &n;*/
+multiline_comment|/*&n;  Finds the CRC32 of a set of bytes.&n;  Again, from Peter Cammaert&squot;s code.&n;*/
 DECL|function|crc32
 r_static
 r_int
@@ -1050,8 +1050,8 @@ r_return
 id|crc_value
 suffix:semicolon
 )brace
-macro_line|#endif 
-multiline_comment|/* &n; . Function: smc_wait_to_send_packet( struct sk_buff * skb, struct device * ) &n; . Purpose: &n; .    Attempt to allocate memory for a packet, if chip-memory is not&n; .    available, then tell the card to generate an interrupt when it &n; .    is available.&n; .&n; . Algorithm:&n; .&n; . o&t;if the saved_skb is not currently null, then drop this packet&n; .&t;on the floor.  This should never happen, because of TBUSY.&n; . o&t;if the saved_skb is null, then replace it with the current packet,&n; . o&t;See if I can sending it now. &n; . o &t;(NO): Enable interrupts and let the interrupt handler deal with it.&n; . o&t;(YES):Send it now.&n;*/
+macro_line|#endif
+multiline_comment|/*&n; . Function: smc_wait_to_send_packet( struct sk_buff * skb, struct device * )&n; . Purpose:&n; .    Attempt to allocate memory for a packet, if chip-memory is not&n; .    available, then tell the card to generate an interrupt when it&n; .    is available.&n; .&n; . Algorithm:&n; .&n; . o&t;if the saved_skb is not currently null, then drop this packet&n; .&t;on the floor.  This should never happen, because of TBUSY.&n; . o&t;if the saved_skb is null, then replace it with the current packet,&n; . o&t;See if I can sending it now.&n; . o &t;(NO): Enable interrupts and let the interrupt handler deal with it.&n; . o&t;(YES):Send it now.&n;*/
 DECL|function|smc_wait_to_send_packet
 r_static
 r_int
@@ -1133,7 +1133,7 @@ id|skb-&gt;len
 suffix:colon
 id|ETH_ZLEN
 suffix:semicolon
-multiline_comment|/*&n;&t;. the MMU wants the number of pages to be the number of 256 bytes &n;    &t;. &squot;pages&squot;, minus 1 ( since a packet can&squot;t ever have 0 pages :) ) &n;&t;*/
+multiline_comment|/*&n;&t;. the MMU wants the number of pages to be the number of 256 bytes&n;    &t;. &squot;pages&squot;, minus 1 ( since a packet can&squot;t ever have 0 pages :) )&n;&t;*/
 id|numPages
 op_assign
 id|length
@@ -1155,7 +1155,7 @@ id|CARDNAME
 l_string|&quot;: Far too big packet error. &bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* freeing the packet is a good thing here... but should &t;&t;&n;&t;&t; . any packets of this size get down here?   */
+multiline_comment|/* freeing the packet is a good thing here... but should&n;&t;&t; . any packets of this size get down here?   */
 id|dev_kfree_skb
 (paren
 id|skb
@@ -1195,7 +1195,7 @@ op_plus
 id|MMU_CMD
 )paren
 suffix:semicolon
-multiline_comment|/*&n; &t;. Performance Hack&n;&t;.  &n; &t;. wait a short amount of time.. if I can send a packet now, I send&n;&t;. it now.  Otherwise, I enable an interrupt and wait for one to be&n;&t;. available. &n;&t;.&n;&t;. I could have handled this a slightly different way, by checking to&n;&t;. see if any memory was available in the FREE MEMORY register.  However,&n;&t;. either way, I need to generate an allocation, and the allocation works&n;&t;. no matter what, so I saw no point in checking free memory.   &n;&t;*/
+multiline_comment|/*&n; &t;. Performance Hack&n;&t;.&n; &t;. wait a short amount of time.. if I can send a packet now, I send&n;&t;. it now.  Otherwise, I enable an interrupt and wait for one to be&n;&t;. available.&n;&t;.&n;&t;. I could have handled this a slightly different way, by checking to&n;&t;. see if any memory was available in the FREE MEMORY register.  However,&n;&t;. either way, I need to generate an allocation, and the allocation works&n;&t;. no matter what, so I saw no point in checking free memory.&n;&t;*/
 id|time_out
 op_assign
 id|MEMORY_WAIT_TIME
@@ -1284,7 +1284,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; . Function:  smc_hardware_send_packet(struct device * )&n; . Purpose:&t;&n; .&t;This sends the actual packet to the SMC9xxx chip.   &n; . &n; . Algorithm:&n; . &t;First, see if a saved_skb is available.    &n; .&t;&t;( this should NOT be called if there is no &squot;saved_skb&squot;&n; .&t;Now, find the packet number that the chip allocated&n; .&t;Point the data pointers at it in memory &n; .&t;Set the length word in the chip&squot;s memory&n; .&t;Dump the packet to chip memory&n; .&t;Check if a last byte is needed ( odd length packet )&n; .&t;&t;if so, set the control flag right &n; . &t;Tell the card to send it &n; .&t;Enable the transmit interrupt, so I know if it failed&n; . &t;Free the kernel data if I actually sent it.&n;*/
+multiline_comment|/*&n; . Function:  smc_hardware_send_packet(struct device * )&n; . Purpose:&n; .&t;This sends the actual packet to the SMC9xxx chip.&n; .&n; . Algorithm:&n; . &t;First, see if a saved_skb is available.&n; .&t;&t;( this should NOT be called if there is no &squot;saved_skb&squot;&n; .&t;Now, find the packet number that the chip allocated&n; .&t;Point the data pointers at it in memory&n; .&t;Set the length word in the chip&squot;s memory&n; .&t;Dump the packet to chip memory&n; .&t;Check if a last byte is needed ( odd length packet )&n; .&t;&t;if so, set the control flag right&n; . &t;Tell the card to send it&n; .&t;Enable the transmit interrupt, so I know if it failed&n; . &t;Free the kernel data if I actually sent it.&n;*/
 DECL|function|smc_hardware_send_packet
 r_static
 r_void
@@ -1458,7 +1458,7 @@ id|length
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* send the packet length ( +6 for status, length and ctl byte ) &n; &t;   and the status word ( set to zeros ) */
+multiline_comment|/* send the packet length ( +6 for status, length and ctl byte )&n; &t;   and the status word ( set to zeros ) */
 macro_line|#ifdef USE_32_BIT
 id|outl
 c_func
@@ -1520,9 +1520,9 @@ op_plus
 id|DATA_1
 )paren
 suffix:semicolon
-macro_line|#endif 
-multiline_comment|/* send the actual data &n;&t; . I _think_ it&squot;s faster to send the longs first, and then &n;&t; . mop up by sending the last word.  It depends heavily &n; &t; . on alignment, at least on the 486.  Maybe it would be &n; &t; . a good idea to check which is optimal?  But that could take&n;&t; . almost as much time as is saved? &n;&t;*/
-macro_line|#ifdef USE_32_BIT 
+macro_line|#endif
+multiline_comment|/* send the actual data&n;&t; . I _think_ it&squot;s faster to send the longs first, and then&n;&t; . mop up by sending the last word.  It depends heavily&n; &t; . on alignment, at least on the 486.  Maybe it would be&n; &t; . a good idea to check which is optimal?  But that could take&n;&t; . almost as much time as is saved?&n;&t;*/
+macro_line|#ifdef USE_32_BIT
 r_if
 c_cond
 (paren
@@ -1712,7 +1712,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*-------------------------------------------------------------------------&n; |&n; | smc_init( struct device * dev )  &n; |   Input parameters: &n; |&t;dev-&gt;base_addr == 0, try to find all possible locations&n; |&t;dev-&gt;base_addr == 1, return failure code&n; |&t;dev-&gt;base_addr == 2, always allocate space,  and return success&n; |&t;dev-&gt;base_addr == &lt;anything else&gt;   this is the address to check &n; |&n; |   Output: &n; |&t;0 --&gt; there is a device&n; |&t;anything else, error &n; | &n; ---------------------------------------------------------------------------&n;*/
+multiline_comment|/*-------------------------------------------------------------------------&n; |&n; | smc_init( struct device * dev )&n; |   Input parameters:&n; |&t;dev-&gt;base_addr == 0, try to find all possible locations&n; |&t;dev-&gt;base_addr == 1, return failure code&n; |&t;dev-&gt;base_addr == 2, always allocate space,  and return success&n; |&t;dev-&gt;base_addr == &lt;anything else&gt;   this is the address to check&n; |&n; |   Output:&n; |&t;0 --&gt; there is a device&n; |&t;anything else, error&n; |&n; ---------------------------------------------------------------------------&n;*/
 DECL|function|smc_init
 r_int
 id|smc_init
@@ -1865,7 +1865,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#ifndef NO_AUTOPROBE
-multiline_comment|/*----------------------------------------------------------------------&n; . smc_findirq &n; . &n; . This routine has a simple purpose -- make the SMC chip generate an &n; . interrupt, so an auto-detect routine can detect it, and find the IRQ,&n; ------------------------------------------------------------------------&n;*/
+multiline_comment|/*----------------------------------------------------------------------&n; . smc_findirq&n; .&n; . This routine has a simple purpose -- make the SMC chip generate an&n; . interrupt, so an auto-detect routine can detect it, and find the IRQ,&n; ------------------------------------------------------------------------&n;*/
 DECL|function|smc_findirq
 r_int
 id|smc_findirq
@@ -1880,7 +1880,7 @@ id|timeout
 op_assign
 l_int|20
 suffix:semicolon
-multiline_comment|/* I have to do a STI() here, because this is called from&n;&t;   a routine that does an CLI during this process, making it &n;&t;   rather difficult to get interrupts for auto detection */
+multiline_comment|/* I have to do a STI() here, because this is called from&n;&t;   a routine that does an CLI during this process, making it&n;&t;   rather difficult to get interrupts for auto detection */
 id|sti
 c_func
 (paren
@@ -1910,7 +1910,7 @@ op_plus
 id|INT_MASK
 )paren
 suffix:semicolon
-multiline_comment|/*&n; &t; . Allocate 512 bytes of memory.  Note that the chip was just &n;&t; . reset so all the memory is available&n;&t;*/
+multiline_comment|/*&n; &t; . Allocate 512 bytes of memory.  Note that the chip was just&n;&t; . reset so all the memory is available&n;&t;*/
 id|outw
 c_func
 (paren
@@ -1958,7 +1958,7 @@ op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/* there is really nothing that I can do here if timeout fails,&n;&t;   as autoirq_report will return a 0 anyway, which is what I&n;&t;   want in this case.   Plus, the clean up is needed in both&n;&t;   cases.  */
-multiline_comment|/* DELAY HERE!&n;&t;   On a fast machine, the status might change before the interrupt&n;&t;   is given to the processor.  This means that the interrupt was &n;&t;   never detected, and autoirq_report fails to report anything.  &n;&t;   This should fix autoirq_* problems. &n;&t;*/
+multiline_comment|/* DELAY HERE!&n;&t;   On a fast machine, the status might change before the interrupt&n;&t;   is given to the processor.  This means that the interrupt was&n;&t;   never detected, and autoirq_report fails to report anything.&n;&t;   This should fix autoirq_* problems.&n;&t;*/
 id|SMC_DELAY
 c_func
 (paren
@@ -1996,7 +1996,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*----------------------------------------------------------------------&n; . Function: smc_probe( int ioaddr )&n; . &n; . Purpose:  &n; .&t;Tests to see if a given ioaddr points to an SMC9xxx chip.&n; .&t;Returns a 0 on success &t;&n; . &n; . Algorithm:&n; .&t;(1) see if the high byte of BANK_SELECT is 0x33&n; . &t;(2) compare the ioaddr with the base register&squot;s address&n; .&t;(3) see if I recognize the chip ID in the appropriate register&n; . &n; .---------------------------------------------------------------------&n; */
+multiline_comment|/*----------------------------------------------------------------------&n; . Function: smc_probe( int ioaddr )&n; .&n; . Purpose:&n; .&t;Tests to see if a given ioaddr points to an SMC9xxx chip.&n; .&t;Returns a 0 on success&n; .&n; . Algorithm:&n; .&t;(1) see if the high byte of BANK_SELECT is 0x33&n; . &t;(2) compare the ioaddr with the base register&squot;s address&n; .&t;(3) see if I recognize the chip ID in the appropriate register&n; .&n; .---------------------------------------------------------------------&n; */
 DECL|function|smc_probe
 r_static
 r_int
@@ -2083,7 +2083,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* well, we&squot;ve already written once, so hopefully another time won&squot;t&n; &t;   hurt.  This time, I need to switch the bank register to bank 1, &n;&t;   so I can access the base address register */
+multiline_comment|/* well, we&squot;ve already written once, so hopefully another time won&squot;t&n; &t;   hurt.  This time, I need to switch the bank register to bank 1,&n;&t;   so I can access the base address register */
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -2136,7 +2136,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*  check if the revision register is something that I recognize.  &n;&t;    These might need to be added to later, as future revisions &n;&t;    could be added.  */
+multiline_comment|/*  check if the revision register is something that I recognize.&n;&t;    These might need to be added to later, as future revisions&n;&t;    could be added.  */
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -2187,12 +2187,12 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* at this point I&squot;ll assume that the chip is an SMC9xxx.   &n;&t;   It might be prudent to check a listing of MAC addresses &n;&t;   against the hardware address, or do some other tests. */
+multiline_comment|/* at this point I&squot;ll assume that the chip is an SMC9xxx.&n;&t;   It might be prudent to check a listing of MAC addresses&n;&t;   against the hardware address, or do some other tests. */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*---------------------------------------------------------------&n; . Here I do typical initialization tasks. &n; . &n; . o  Initialize the structure if needed&n; . o  print out my vanity message if not done so already&n; . o  print out what type of hardware is detected&n; . o  print out the ethernet address&n; . o  find the IRQ &n; . o  set up my private data &n; . o  configure the dev structure with my subroutines&n; . o  actually GRAB the irq.&n; . o  GRAB the region &n; .-----------------------------------------------------------------&n;*/
+multiline_comment|/*---------------------------------------------------------------&n; . Here I do typical initialization tasks.&n; .&n; . o  Initialize the structure if needed&n; . o  print out my vanity message if not done so already&n; . o  print out what type of hardware is detected&n; . o  print out the ethernet address&n; . o  find the IRQ&n; . o  set up my private data&n; . o  configure the dev structure with my subroutines&n; . o  actually GRAB the irq.&n; . o  GRAB the region&n; .-----------------------------------------------------------------&n;*/
 DECL|function|smc_initcard
 r_static
 r_int
@@ -2274,7 +2274,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 macro_line|#else
 id|dev
 op_assign
@@ -2286,7 +2286,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2427,7 +2427,7 @@ op_amp
 l_int|0xFF
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; Now, I want to find out more about the chip.  This is sort of&n; &t; redundant, but it&squot;s cleaner to have it in both, rather than having&n; &t; one VERY long probe procedure.&n;&t;*/
+multiline_comment|/*&n;&t; Now, I want to find out more about the chip.  This is sort of&n; &t; redundant, but it&squot;s cleaner to have it in both, rather than having&n; &t; one VERY long probe procedure.&n;&t;*/
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -2528,7 +2528,7 @@ c_func
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; . If dev-&gt;irq is 0, then the device has to be banged on to see&n;&t; . what the IRQ is. &n; &t; . &n;&t; . This banging doesn&squot;t always detect the IRQ, for unknown reasons.&n;&t; . a workaround is to reset the chip and try again.  &n;&t; .    &n;&t; . Interestingly, the DOS packet driver *SETS* the IRQ on the card to&n;&t; . be what is requested on the command line.   I don&squot;t do that, mostly&n;&t; . because the card that I have uses a non-standard method of accessing&n;&t; . the IRQs, and because this _should_ work in most configurations.&n;&t; .&n;&t; . Specifying an IRQ is done with the assumption that the user knows &n;&t; . what (s)he is doing.  No checking is done!!!!&n; &t; .&n;&t;*/
+multiline_comment|/*&n;&t; . If dev-&gt;irq is 0, then the device has to be banged on to see&n;&t; . what the IRQ is.&n; &t; .&n;&t; . This banging doesn&squot;t always detect the IRQ, for unknown reasons.&n;&t; . a workaround is to reset the chip and try again.&n;&t; .&n;&t; . Interestingly, the DOS packet driver *SETS* the IRQ on the card to&n;&t; . be what is requested on the command line.   I don&squot;t do that, mostly&n;&t; . because the card that I have uses a non-standard method of accessing&n;&t; . the IRQs, and because this _should_ work in most configurations.&n;&t; .&n;&t; . Specifying an IRQ is done with the assumption that the user knows&n;&t; . what (s)he is doing.  No checking is done!!!!&n; &t; .&n;&t;*/
 macro_line|#ifndef NO_AUTOPROBE
 r_if
 c_cond
@@ -2654,7 +2654,7 @@ comma
 id|memory
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; . Print the Ethernet address &n;&t;*/
+multiline_comment|/*&n;&t; . Print the Ethernet address&n;&t;*/
 id|printk
 c_func
 (paren
@@ -3013,8 +3013,8 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif&t;
-multiline_comment|/*&n; * Open and Initialize the board&n; * &n; * Set up everything, reset the card, etc ..&n; *&n; */
+macro_line|#endif
+multiline_comment|/*&n; * Open and Initialize the board&n; *&n; * Set up everything, reset the card, etc ..&n; *&n; */
 DECL|function|smc_open
 r_static
 r_int
@@ -3143,7 +3143,7 @@ id|CONFIG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  &t;&t;According to Becker, I have to set the hardware address&n;&t;&t;at this point, because the (l)user can set it with an&n;&t;&t;ioctl.  Easily done... &n;&t;*/
+multiline_comment|/*&n;  &t;&t;According to Becker, I have to set the hardware address&n;&t;&t;at this point, because the (l)user can set it with an&n;&t;&t;ioctl.  Easily done...&n;&t;*/
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -3204,7 +3204,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------&n; . Called by the kernel to send a packet out into the void&n; . of the net.  This routine is largely based on &n; . skeleton.c, from Becker.   &n; .--------------------------------------------------------&n;*/
+multiline_comment|/*--------------------------------------------------------&n; . Called by the kernel to send a packet out into the void&n; . of the net.  This routine is largely based on&n; . skeleton.c, from Becker.&n; .--------------------------------------------------------&n;*/
 DECL|function|smc_send_packet
 r_static
 r_int
@@ -3358,7 +3358,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Well, I want to send the packet.. but I don&squot;t know &n;&t;&t;   if I can send it right now...  */
+multiline_comment|/* Well, I want to send the packet.. but I don&squot;t know&n;&t;&t;   if I can send it right now...  */
 r_return
 id|smc_wait_to_send_packet
 c_func
@@ -3373,7 +3373,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------&n; .&n; . This is the main routine of the driver, to handle the device when&n; . it needs some attention.&n; .&n; . So:&n; .   first, save state of the chipset&n; .   branch off into routines to handle each case, and acknowledge &n; .&t;    each to the interrupt register&n; .   and finally restore state. &n; .  &n; ---------------------------------------------------------------------*/
+multiline_comment|/*--------------------------------------------------------------------&n; .&n; . This is the main routine of the driver, to handle the device when&n; . it needs some attention.&n; .&n; . So:&n; .   first, save state of the chipset&n; .   branch off into routines to handle each case, and acknowledge&n; .&t;    each to the interrupt register&n; .   and finally restore state.&n; .&n; ---------------------------------------------------------------------*/
 macro_line|#ifdef REALLY_NEW_KERNEL
 DECL|function|smc_interrupt
 r_static
@@ -3393,7 +3393,7 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else 
+macro_line|#else
 r_static
 r_void
 id|smc_interrupt
@@ -3407,7 +3407,7 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#endif 
+macro_line|#endif
 (brace
 r_struct
 id|device
@@ -3720,7 +3720,7 @@ op_amp
 l_int|0xF
 suffix:semicolon
 multiline_comment|/* these are for when linux supports these statistics */
-macro_line|#if 0 
+macro_line|#if 0
 id|card_stats
 op_rshift_assign
 l_int|4
@@ -3731,7 +3731,7 @@ op_rshift_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* excess deferred */
-macro_line|#endif 
+macro_line|#endif
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -3972,7 +3972,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*-------------------------------------------------------------&n; .&n; . smc_rcv -  receive a packet from the card&n; .&n; . There is ( at least ) a packet waiting to be read from&n; . chip-memory.&n; . &n; . o Read the status &n; . o If an error, record it  &n; . o otherwise, read in the packet &n; --------------------------------------------------------------&n;*/
+multiline_comment|/*-------------------------------------------------------------&n; .&n; . smc_rcv -  receive a packet from the card&n; .&n; . There is ( at least ) a packet waiting to be read from&n; . chip-memory.&n; .&n; . o Read the status&n; . o If an error, record it&n; . o otherwise, read in the packet&n; --------------------------------------------------------------&n;*/
 DECL|function|smc_rcv
 r_static
 r_void
@@ -4097,7 +4097,7 @@ id|packet_length
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; . the packet length contains 3 extra words : &n;&t; . status, length, and an extra word with an odd byte .&n;&t;*/
+multiline_comment|/*&n;&t; . the packet length contains 3 extra words :&n;&t; . status, length, and an extra word with an odd byte .&n;&t;*/
 id|packet_length
 op_sub_assign
 l_int|6
@@ -4158,7 +4158,7 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-macro_line|#else&t;
+macro_line|#else
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -4190,7 +4190,7 @@ id|lp-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t;&t; ! This should work without alignment, but it could be&n;&t;&t; ! in the worse case &n;&t;&t;*/
+multiline_comment|/*&n;&t;&t; ! This should work without alignment, but it could be&n;&t;&t; ! in the worse case&n;&t;&t;*/
 macro_line|#ifndef SUPPORT_OLD_KERNEL
 multiline_comment|/* TODO: Should I use 32bit alignment here ? */
 id|skb_reserve
@@ -4229,7 +4229,7 @@ id|packet_length
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef USE_32_BIT
-multiline_comment|/* QUESTION:  Like in the TX routine, do I want &t;&t;&n;&t;&t;   to send the DWORDs or the bytes first, or some&n;&t;&t;   mixture.  A mixture might improve already slow PIO&n;&t;&t;   performance  */
+multiline_comment|/* QUESTION:  Like in the TX routine, do I want&n;&t;&t;   to send the DWORDs or the bytes first, or some&n;&t;&t;   mixture.  A mixture might improve already slow PIO&n;&t;&t;   performance  */
 id|PRINTK3
 c_func
 (paren
@@ -4368,8 +4368,8 @@ id|DATA_1
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif &t;&t;
-macro_line|#if&t;SMC_DEBUG &gt; 2 &t;
+macro_line|#endif
+macro_line|#if&t;SMC_DEBUG &gt; 2
 id|print_packet
 c_func
 (paren
@@ -4456,7 +4456,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/************************************************************************* &n; . smc_tx&n; . &n; . Purpose:  Handle a transmit error message.   This will only be called&n; .   when an error, because of the AUTO_RELEASE mode. &n; . &n; . Algorithm:&n; .&t;Save pointer and packet no&n; .&t;Get the packet no from the top of the queue&n; .&t;check if it&squot;s valid ( if not, is this an error??? )&n; .&t;read the status word &n; .&t;record the error&n; .&t;( resend?  Not really, since we don&squot;t want old packets around )&n; .&t;Restore saved values &n; ************************************************************************/
+multiline_comment|/*************************************************************************&n; . smc_tx&n; .&n; . Purpose:  Handle a transmit error message.   This will only be called&n; .   when an error, because of the AUTO_RELEASE mode.&n; .&n; . Algorithm:&n; .&t;Save pointer and packet no&n; .&t;Get the packet no from the top of the queue&n; .&t;check if it&squot;s valid ( if not, is this an error??? )&n; .&t;read the status word&n; .&t;record the error&n; .&t;( resend?  Not really, since we don&squot;t want old packets around )&n; .&t;Restore saved values&n; ************************************************************************/
 DECL|function|smc_tx
 r_static
 r_void
@@ -4611,7 +4611,7 @@ dot
 dot
 dot
 )brace
-macro_line|#endif 
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4687,7 +4687,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*----------------------------------------------------&n; . smc_close&n; . &n; . this makes the board clean up everything that it can&n; . and not talk to the outside world.   Caused by&n; . an &squot;ifconfig ethX down&squot;&n; .&n; -----------------------------------------------------*/
+multiline_comment|/*----------------------------------------------------&n; . smc_close&n; .&n; . this makes the board clean up everything that it can&n; . and not talk to the outside world.   Caused by&n; . an &squot;ifconfig ethX down&squot;&n; .&n; -----------------------------------------------------*/
 DECL|function|smc_close
 r_static
 r_int
@@ -4724,7 +4724,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*------------------------------------------------------------&n; . Get the current statistics.&t;&n; . This may be called with the card open or closed. &n; .-------------------------------------------------------------*/
+multiline_comment|/*------------------------------------------------------------&n; . Get the current statistics.&n; . This may be called with the card open or closed.&n; .-------------------------------------------------------------*/
 DECL|function|smc_query_statistics
 r_static
 r_struct
@@ -4756,7 +4756,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/*-----------------------------------------------------------&n; . smc_set_multicast_list&n; .  &n; . This routine will, depending on the values passed to it,&n; . either make it accept multicast packets, go into &n; . promiscuous mode ( for TCPDUMP and cousins ) or accept&n; . a select set of multicast packets  &n;*/
+multiline_comment|/*-----------------------------------------------------------&n; . smc_set_multicast_list&n; .&n; . This routine will, depending on the values passed to it,&n; . either make it accept multicast packets, go into&n; . promiscuous mode ( for TCPDUMP and cousins ) or accept&n; . a select set of multicast packets&n;*/
 macro_line|#ifdef SUPPORT_OLD_KERNEL
 DECL|function|smc_set_multicast_list
 r_static
@@ -4787,7 +4787,7 @@ id|device
 op_star
 id|dev
 )paren
-macro_line|#endif 
+macro_line|#endif
 (brace
 r_int
 id|ioaddr
@@ -4816,7 +4816,7 @@ id|dev-&gt;flags
 op_amp
 id|IFF_PROMISC
 )paren
-macro_line|#endif 
+macro_line|#endif
 id|outw
 c_func
 (paren
@@ -4835,9 +4835,9 @@ op_plus
 id|RCR
 )paren
 suffix:semicolon
-multiline_comment|/* BUG?  I never disable promiscuous mode if multicasting was turned on. &n;   Now, I turn off promiscuous mode, but I don&squot;t do anything to multicasting&n;   when promiscuous mode is turned on. &n;*/
-multiline_comment|/* Here, I am setting this to accept all multicast packets.  &n;&t;   I don&squot;t need to zero the multicast table, because the flag is&n;&t;   checked before the table is &n;&t;*/
-macro_line|#ifdef  SUPPORT_OLD_KERNEL 
+multiline_comment|/* BUG?  I never disable promiscuous mode if multicasting was turned on.&n;   Now, I turn off promiscuous mode, but I don&squot;t do anything to multicasting&n;   when promiscuous mode is turned on.&n;*/
+multiline_comment|/* Here, I am setting this to accept all multicast packets.&n;&t;   I don&squot;t need to zero the multicast table, because the flag is&n;&t;   checked before the table is&n;&t;*/
+macro_line|#ifdef  SUPPORT_OLD_KERNEL
 r_else
 r_if
 c_cond
@@ -4856,7 +4856,7 @@ id|dev-&gt;flags
 op_amp
 id|IFF_ALLMULTI
 )paren
-macro_line|#endif 
+macro_line|#endif
 id|outw
 c_func
 (paren
@@ -4886,7 +4886,7 @@ OG
 l_int|0
 )paren
 (brace
-multiline_comment|/* the old kernel support will not have hardware multicast support. It would&n;   involve more kludges, and make the multicast setting code even worse.  &n;   Instead, just use the ALMUL method.   This is reasonable, considering that&n;   it is seldom used&n;*/
+multiline_comment|/* the old kernel support will not have hardware multicast support. It would&n;   involve more kludges, and make the multicast setting code even worse.&n;   Instead, just use the ALMUL method.   This is reasonable, considering that&n;   it is seldom used&n;*/
 id|outw
 c_func
 (paren
@@ -4996,7 +4996,7 @@ op_plus
 id|RCR
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;  since I&squot;m disabling all multicast entirely, I need to &n;&t;&t;  clear the multicast list &n;&t;&t;*/
+multiline_comment|/*&n;&t;&t;  since I&squot;m disabling all multicast entirely, I need to&n;&t;&t;  clear the multicast list&n;&t;&t;*/
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -5110,6 +5110,30 @@ r_int
 id|ifport
 op_assign
 l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|ifport
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* eth16i.c An ICL EtherTeam 16i and 32 EISA ethernet driver for Linux&n;&n;   Written 1994-95 by Mika Kuoppala&n;&n;   Copyright (C) 1994, 1995 by Mika Kuoppala&n;   Based on skeleton.c and at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@elt.icl.fi&n;&n;   This driver supports following cards :&n;&t;- ICL EtherTeam 16i&n;&t;- ICL EtherTeam 32 EISA&n;&n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written &n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;   &n;   Valuable assistance from:&n;&t;Markku Viima (ICL) &n;&t;Ari Valve (ICL)&n;   &n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;   &n;   0.01&t;&t;15.12-94&t;Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;&t;&t;&t;&t;Made a few changes to signature checking&n;&t;&t;&t;&t;to make it a bit reliable.&n;&t;&t;&t;&t;- fixed bug in tx_buf mapping&n;&t;&t;&t;&t;- fixed bug in initialization (DLC_EN&n;&t;&t;&t;&t;  wasn&squot;t enabled when initialization&n;&t;&t;&t;&t;  was done.)&n;   0.05&t;&t;08.02-95&t;If there were more than one packet to send,&n;&t;&t;&t;&t;transmit was jammed due to invalid&n;&t;&t;&t;&t;register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling        &n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;&t;&t;&t;&t;data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95&t;Added module support&n;   &n;   0.10         04.09-95&t;Fixed receive packet allocation to work&t;&t;&n;        &t;&t;&t;with kernels &gt; 1.3.x&n;   &n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&t;&n;&n;   0.21         17.10-95        Removed the unnecessary extern &n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   Bugs:&n;&t;In some cases the interface autoprobing code doesn&squot;t find &n;&t;the correct interface type. In this case you can &n;&t;manually choose the interface type in DOS with E16IC.EXE which is &n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&t;&n;   To do:&n;&t;- Real multicast support&n;*/
+multiline_comment|/* eth16i.c An ICL EtherTeam 16i and 32 EISA ethernet driver for Linux&n;&n;   Written 1994-95 by Mika Kuoppala&n;&n;   Copyright (C) 1994, 1995 by Mika Kuoppala&n;   Based on skeleton.c and at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@elt.icl.fi&n;&n;   This driver supports following cards :&n;&t;- ICL EtherTeam 16i&n;&t;- ICL EtherTeam 32 EISA&n;&n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written&n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;&n;   Valuable assistance from:&n;&t;Markku Viima (ICL)&n;&t;Ari Valve (ICL)&n;&n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;&n;   0.01&t;&t;15.12-94&t;Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;&t;&t;&t;&t;Made a few changes to signature checking&n;&t;&t;&t;&t;to make it a bit reliable.&n;&t;&t;&t;&t;- fixed bug in tx_buf mapping&n;&t;&t;&t;&t;- fixed bug in initialization (DLC_EN&n;&t;&t;&t;&t;  wasn&squot;t enabled when initialization&n;&t;&t;&t;&t;  was done.)&n;   0.05&t;&t;08.02-95&t;If there were more than one packet to send,&n;&t;&t;&t;&t;transmit was jammed due to invalid&n;&t;&t;&t;&t;register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling&n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;&t;&t;&t;&t;data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95&t;Added module support&n;&n;   0.10         04.09-95&t;Fixed receive packet allocation to work&n;        &t;&t;&t;with kernels &gt; 1.3.x&n;&n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&n;&n;   0.21         17.10-95        Removed the unnecessary extern&n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   Bugs:&n;&t;In some cases the interface autoprobing code doesn&squot;t find&n;&t;the correct interface type. In this case you can&n;&t;manually choose the interface type in DOS with E16IC.EXE which is&n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&n;   To do:&n;&t;- Real multicast support&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -10,27 +10,27 @@ suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;&t;&t;  
-macro_line|#include &lt;linux/fcntl.h&gt;&t;&t;  
-macro_line|#include &lt;linux/interrupt.h&gt;&t;&t;  
-macro_line|#include &lt;linux/ptrace.h&gt;&t;&t;  
-macro_line|#include &lt;linux/ioport.h&gt;&t;&t;  
-macro_line|#include &lt;linux/in.h&gt;&t;&t;  
-macro_line|#include &lt;linux/malloc.h&gt;&t;&t;  
-macro_line|#include &lt;linux/string.h&gt;&t;&t;  
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;asm/system.h&gt;&t;&t;  
-macro_line|#include &lt;asm/bitops.h&gt;&t;&t;  
-macro_line|#include &lt;asm/io.h&gt;&t;&t;  
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/* Few macros */
 DECL|macro|BIT
-mdefine_line|#define BIT(a)&t;&t;        ( (1 &lt;&lt; (a)) )  
+mdefine_line|#define BIT(a)&t;&t;        ( (1 &lt;&lt; (a)) )
 DECL|macro|BITSET
-mdefine_line|#define BITSET(ioaddr, bnum)   ((outb(((inb(ioaddr)) | (bnum)), ioaddr))) 
+mdefine_line|#define BITSET(ioaddr, bnum)   ((outb(((inb(ioaddr)) | (bnum)), ioaddr)))
 DECL|macro|BITCLR
 mdefine_line|#define BITCLR(ioaddr, bnum)   ((outb(((inb(ioaddr)) &amp; (~(bnum))), ioaddr)))
 multiline_comment|/* This is the I/O address space for Etherteam 16i adapter. */
@@ -152,17 +152,17 @@ mdefine_line|#define SYSTEM_BUS_WIDTH_8     BIT(5)       /* 1 = 8bit, 0 = 16bit 
 DECL|macro|BUFFER_WIDTH_8
 mdefine_line|#define BUFFER_WIDTH_8         BIT(4)       /* 1 = 8bit, 0 = 16bit */
 DECL|macro|TBS1
-mdefine_line|#define TBS1                   BIT(3)       
+mdefine_line|#define TBS1                   BIT(3)
 DECL|macro|TBS0
 mdefine_line|#define TBS0                   BIT(2)
 DECL|macro|MBS1
 mdefine_line|#define MBS1                   BIT(1)       /* 00=8kb,  01=16kb  */
 DECL|macro|MBS0
 mdefine_line|#define MBS0                   BIT(0)       /* 10=32kb, 11=64kb  */
-macro_line|#ifndef ETH16I_TX_BUF_SIZE                   /* 0 = 2kb, 1 = 4kb  */ 
+macro_line|#ifndef ETH16I_TX_BUF_SIZE                   /* 0 = 2kb, 1 = 4kb  */
 DECL|macro|ETH16I_TX_BUF_SIZE
 mdefine_line|#define ETH16I_TX_BUF_SIZE     2             /* 2 = 8kb, 3 = 16kb */
-macro_line|#endif                                      
+macro_line|#endif
 DECL|macro|TX_BUF_1x2048
 mdefine_line|#define TX_BUF_1x2048            0
 DECL|macro|TX_BUF_2x2048
@@ -212,7 +212,7 @@ multiline_comment|/* DMA Burst and Transceiver Mode Register (BMPR13) */
 DECL|macro|TRANSCEIVER_MODE_REG
 mdefine_line|#define TRANSCEIVER_MODE_REG   13
 DECL|macro|TRANSCEIVER_MODE_RB
-mdefine_line|#define TRANSCEIVER_MODE_RB    2         
+mdefine_line|#define TRANSCEIVER_MODE_RB    2
 DECL|macro|IO_BASE_UNLOCK
 mdefine_line|#define IO_BASE_UNLOCK&t;       BIT(7)
 DECL|macro|LOWER_SQUELCH_TRESH
@@ -731,7 +731,7 @@ id|cardname
 op_assign
 l_string|&quot;ICL EtherTeam 16i/32&quot;
 suffix:semicolon
-macro_line|#ifdef HAVE_DEVLIST 
+macro_line|#ifdef HAVE_DEVLIST
 multiline_comment|/* Support for alternate probe manager */
 DECL|variable|eth16i_drv
 op_div
@@ -974,7 +974,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* To inform initialization that we are in boot probe */
-multiline_comment|/*&n;     The MB86985 chip has on register which holds information in which &n;     io address the chip lies. First read this register and compare&n;     it to our current io address and if match then this could&n;     be our chip.&n;  */
+multiline_comment|/*&n;     The MB86985 chip has on register which holds information in which&n;     io address the chip lies. First read this register and compare&n;     it to our current io address and if match then this could&n;     be our chip.&n;  */
 r_if
 c_cond
 (paren
@@ -1029,7 +1029,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* &n;     Now it seems that we have found an ethernet chip in this particular&n;     ioaddr. The MB86985 chip has this feature, that when you read a &n;     certain register it will increase its io base address to next&n;     configurable slot. Now when we have found the chip, first thing is&n;     to make sure that the chip&squot;s ioaddr will hold still here.&n;  */
+multiline_comment|/*&n;     Now it seems that we have found an ethernet chip in this particular&n;     ioaddr. The MB86985 chip has this feature, that when you read a&n;     certain register it will increase its io base address to next&n;     configurable slot. Now when we have found the chip, first thing is&n;     to make sure that the chip&squot;s ioaddr will hold still here.&n;  */
 id|eth16i_select_regbank
 c_func
 (paren
@@ -1164,7 +1164,7 @@ op_mod
 id|s
 id|at
 op_mod
-macro_line|#3x, but is unusable due 
+macro_line|#3x, but is unusable due
 id|conflict
 id|on
 id|IRQ
@@ -1524,7 +1524,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     Now let&squot;s disable the transmitter and receiver, set the buffer ram &n;     cycle time, bus width and buffer data path width. Also we shall&n;     set transmit buffer size and total buffer size.&n;  */
+multiline_comment|/*&n;     Now let&squot;s disable the transmitter and receiver, set the buffer ram&n;     cycle time, bus width and buffer data path width. Also we shall&n;     set transmit buffer size and total buffer size.&n;  */
 id|eth16i_select_regbank
 c_func
 (paren
@@ -2615,7 +2615,7 @@ l_int|0x7F
 suffix:semicolon
 multiline_comment|/* Mask DCLEN bit */
 macro_line|#ifdef 0
-multiline_comment|/* &n;&t;This was removed because the card was sometimes left to state&n;  &t;from which it couldn&squot;t be find anymore. If there is need&n;&t;to more strict chech still this have to be fixed.&n;*/
+multiline_comment|/*&n;&t;This was removed because the card was sometimes left to state&n;  &t;from which it couldn&squot;t be find anymore. If there is need&n;&t;to more strict chech still this have to be fixed.&n;*/
 r_if
 c_cond
 (paren
@@ -3369,7 +3369,7 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/* &n;       If we get here, some higher level has decided that we are broken. &n;       There should really be a &quot;kick me&quot; function call instead. &n;    */
+multiline_comment|/*&n;       If we get here, some higher level has decided that we are broken.&n;       There should really be a &quot;kick me&quot; function call instead.&n;    */
 r_int
 id|tickssofar
 op_assign
@@ -3611,7 +3611,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* &n;     If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;     we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;     itself &n;  */
+multiline_comment|/*&n;     If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;     we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;     itself&n;  */
 r_if
 c_cond
 (paren
@@ -4178,7 +4178,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;   Now let&squot;s get the packet out of buffer.&n;&t;   size is (pkt_len + 1) &gt;&gt; 1, cause we are now reading words&n;&t;   and it have to be even aligned.&n;&t;*/
+multiline_comment|/*&n;&t;   Now let&squot;s get the packet out of buffer.&n;&t;   size is (pkt_len + 1) &gt;&gt; 1, cause we are now reading words&n;&t;   and it have to be even aligned.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -4968,6 +4968,22 @@ r_int
 id|irq
 op_assign
 l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int

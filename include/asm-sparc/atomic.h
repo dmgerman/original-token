@@ -41,9 +41,6 @@ comma
 op_mod
 op_mod
 id|g2
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 op_mod
@@ -189,9 +186,6 @@ comma
 op_mod
 op_mod
 id|g2
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 op_mod
@@ -337,9 +331,6 @@ comma
 op_mod
 op_mod
 id|g2
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 op_mod
@@ -491,9 +482,6 @@ comma
 op_mod
 op_mod
 id|g2
-id|nop
-id|nop
-id|nop
 id|andcc
 op_mod
 op_mod

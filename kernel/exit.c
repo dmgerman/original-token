@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 r_extern
 r_void
 id|sem_exit
@@ -2267,6 +2268,12 @@ id|mm
 )paren
 suffix:semicolon
 id|flush_tlb_mm
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
+id|destroy_context
 c_func
 (paren
 id|mm

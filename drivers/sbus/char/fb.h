@@ -1,8 +1,7 @@
-multiline_comment|/* $Id: fb.h,v 1.19 1996/11/13 05:10:23 davem Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fb.h,v 1.20 1996/12/23 10:16:08 ecd Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_FB_H_
 DECL|macro|__SPARC_FB_H_
 mdefine_line|#define __SPARC_FB_H_
-macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|FRAME_BUFFERS
 mdefine_line|#define FRAME_BUFFERS    8

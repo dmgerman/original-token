@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: a.out.h,v 1.1 1996/11/20 12:05:19 davem Exp $ */
+multiline_comment|/* $Id: a.out.h,v 1.2 1996/12/28 18:39:49 davem Exp $ */
 macro_line|#ifndef __SPARC64_A_OUT_H__
 DECL|macro|__SPARC64_A_OUT_H__
 mdefine_line|#define __SPARC64_A_OUT_H__
@@ -6,6 +6,7 @@ DECL|macro|SPARC_PGSIZE
 mdefine_line|#define SPARC_PGSIZE    0x2000        /* Thanks to the sun4 architecture... */
 DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE    SPARC_PGSIZE  /* whee... */
+macro_line|#ifndef __ASSEMBLY__
 DECL|struct|exec
 r_struct
 id|exec
@@ -77,6 +78,7 @@ id|a_drsize
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif __ASSEMBLY__
 multiline_comment|/* Where in the file does the text information begin? */
 DECL|macro|N_TXTOFF
 mdefine_line|#define N_TXTOFF(x)     (N_MAGIC(x) == ZMAGIC ? 0 : sizeof (struct exec))
@@ -95,6 +97,7 @@ DECL|macro|N_DRSIZE
 mdefine_line|#define N_DRSIZE(a)&t;((a).a_drsize)
 DECL|macro|N_SYMSIZE
 mdefine_line|#define N_SYMSIZE(a)&t;((a).a_syms)
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Sparc relocation types&n; */
 DECL|enum|reloc_type
 r_enum
@@ -240,5 +243,6 @@ macro_line|#ifdef __KERNEL__
 DECL|macro|STACK_TOP
 mdefine_line|#define STACK_TOP&t;TASK_SIZE
 macro_line|#endif
-macro_line|#endif /* __SPARC64_A_OUT_H__ */
+macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#endif /* !(__SPARC64_A_OUT_H__) */
 eof

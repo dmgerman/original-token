@@ -407,6 +407,22 @@ id|max_dev
 op_assign
 id|PPP_MAX_DEV
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|flag_time
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|max_dev
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The &quot;main&quot; procedure to the ppp device&n; */
 r_int
 id|ppp_init

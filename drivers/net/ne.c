@@ -488,7 +488,7 @@ id|netcard_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-multiline_comment|/* &n; * Note that at boot, this probe only picks up one card at a time, even for &n; * multiple PCI ne2k cards. Use &quot;ether=0,0,eth1&quot; if you have a second PCI &n; * ne2k card.  This keeps things consistent regardless of the bus type of &n; * the card.&n; */
+multiline_comment|/*&n; * Note that at boot, this probe only picks up one card at a time, even for&n; * multiple PCI ne2k cards. Use &quot;ether=0,0,eth1&quot; if you have a second PCI&n; * ne2k card.  This keeps things consistent regardless of the bus type of&n; * the card.&n; */
 DECL|function|ne_probe
 r_int
 id|ne_probe
@@ -1093,7 +1093,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* A user with a poor card that fails to ack the reset, or that&n;       does not have a valid 0x57,0x57 signature can still use this&n;       without having to recompile. Specifying an i/o address along&n;       with an otherwise unused dev-&gt;mem_end value of &quot;0xBAD&quot; will &n;       cause the driver to skip these parts of the probe. */
+multiline_comment|/* A user with a poor card that fails to ack the reset, or that&n;       does not have a valid 0x57,0x57 signature can still use this&n;       without having to recompile. Specifying an i/o address along&n;       with an otherwise unused dev-&gt;mem_end value of &quot;0xBAD&quot; will&n;       cause the driver to skip these parts of the probe. */
 id|bad_card
 op_assign
 (paren
@@ -1426,7 +1426,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&t;At this point, wordlength *only* tells us if the SA_prom is doubled&n;&t;up or not because some broken PCI cards don&squot;t respect the byte-wide&n;&t;request in program_seq above, and hence don&squot;t have doubled up values. &n;&t;These broken cards would otherwise be detected as an ne1000.  */
+multiline_comment|/*&t;At this point, wordlength *only* tells us if the SA_prom is doubled&n;&t;up or not because some broken PCI cards don&squot;t respect the byte-wide&n;&t;request in program_seq above, and hence don&squot;t have doubled up values.&n;&t;These broken cards would otherwise be detected as an ne1000.  */
 r_if
 c_cond
 (paren
@@ -3365,6 +3365,48 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* 0xbad = bad sig or no reset ack */
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_NE_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_NE_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|bad
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_NE_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* This is set up so that no ISA autoprobe takes place. We can&squot;t guarantee&n;that the ne2k probe is the last 8390 based probe to take place (as it&n;is at boot) and so the probe will get confused by any other 8390 cards.&n;ISA device autoprobes on a running machine are not recommended anyway. */
 r_int
 DECL|function|init_module

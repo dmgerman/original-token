@@ -1818,7 +1818,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;[me=0x%x,cs=%d,#f=%d,fs=%d,fl=%d,ds=%d,de=%d,data=%d,&quot;
-l_string|&quot;se=%d,ts=%ld,ls=%d]&bslash;n&quot;
+l_string|&quot;se=%d,ts=%d,ls=%d]&bslash;n&quot;
 comma
 id|b-&gt;media
 comma
@@ -1881,7 +1881,9 @@ comma
 id|CF_LE_W
 c_func
 (paren
-op_star
+id|get_unaligned
+c_func
+(paren
 (paren
 r_int
 r_int
@@ -1890,12 +1892,13 @@ op_star
 op_amp
 id|b-&gt;sectors
 )paren
-comma
-(paren
-r_int
-r_int
 )paren
+comma
+id|CF_LE_L
+c_func
+(paren
 id|b-&gt;total_sect
+)paren
 comma
 id|logical_sector_size
 )paren

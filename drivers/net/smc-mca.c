@@ -1,5 +1,5 @@
 multiline_comment|/* smc-ultra.c: A SMC Ultra ethernet driver for linux. */
-multiline_comment|/*&n;    Most of this driver, except for ultramca_probe is nearly&n;    verbatim from smc-ultra.c by Donald Becker. The rest is &n;    written and copyright 1996 by David Weis, weisd3458@uni.edu&n;&n;    This is a driver for the SMC Ultra and SMC EtherEZ ethercards.&n;&n;    This driver uses the cards in the 8390-compatible, shared memory mode.&n;    Most of the run-time complexity is handled by the generic code in&n;    8390.c.  The code in this file is responsible for&n;&n;    This driver enables the shared memory only when doing the actual data&n;    transfers to avoid a bug in early version of the card that corrupted&n;    data transferred by a AHA1542.&n;&n;    This driver does not support the programmed-I/O data transfer mode of&n;    the EtherEZ.  That support (if available) is smc-ez.c.  Nor does it&n;    use the non-8390-compatible &quot;Altego&quot; mode. (No support currently planned.)&n;&n;    Changelog:&n;&n;    Paul Gortmaker  : multiple card support for module users.&n;    David Weis      : Micro Channel-ized it.&n;&n;*/
+multiline_comment|/*&n;    Most of this driver, except for ultramca_probe is nearly&n;    verbatim from smc-ultra.c by Donald Becker. The rest is&n;    written and copyright 1996 by David Weis, weisd3458@uni.edu&n;&n;    This is a driver for the SMC Ultra and SMC EtherEZ ethercards.&n;&n;    This driver uses the cards in the 8390-compatible, shared memory mode.&n;    Most of the run-time complexity is handled by the generic code in&n;    8390.c.  The code in this file is responsible for&n;&n;    This driver enables the shared memory only when doing the actual data&n;    transfers to avoid a bug in early version of the card that corrupted&n;    data transferred by a AHA1542.&n;&n;    This driver does not support the programmed-I/O data transfer mode of&n;    the EtherEZ.  That support (if available) is smc-ez.c.  Nor does it&n;    use the non-8390-compatible &quot;Altego&quot; mode. (No support currently planned.)&n;&n;    Changelog:&n;&n;    Paul Gortmaker  : multiple card support for module users.&n;    David Weis      : Micro Channel-ized it.&n;&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -447,7 +447,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Switch from the station address to the alternate register set and&n;&t; *&t;read the useful registers there. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Switch from the station address to the alternate register set and&n;&t; *&t;read the useful registers there.&n;&t; */
 id|outb
 c_func
 (paren
@@ -460,7 +460,7 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Enable FINE16 mode to avoid BIOS ROM width mismatches @ reboot. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Enable FINE16 mode to avoid BIOS ROM width mismatches @ reboot.&n;&t; */
 id|outb
 c_func
 (paren
@@ -479,7 +479,7 @@ op_plus
 l_int|0x0c
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Switch back to the station address register set so that the MS-DOS driver&n;&t; *&t;can find the card after a warm boot. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Switch back to the station address register set so that the MS-DOS driver&n;&t; *&t;can find the card after a warm boot.&n;&t; */
 id|outb
 c_func
 (paren
@@ -490,7 +490,7 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Allocate dev-&gt;priv and fill in 8390 specific dev fields. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Allocate dev-&gt;priv and fill in 8390 specific dev fields.&n;&t; */
 r_if
 c_cond
 (paren
@@ -511,7 +511,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;OK, we are certain this is going to work.  Setup the device. &n;&t; */
+multiline_comment|/*&n;&t; *&t;OK, we are certain this is going to work.  Setup the device.&n;&t; */
 id|request_region
 c_func
 (paren
@@ -522,7 +522,7 @@ comma
 l_string|&quot;smc-mca&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The 8390 isn&squot;t at the base address, so fake the offset &n;&t; */
+multiline_comment|/*&n;&t; *&t;The 8390 isn&squot;t at the base address, so fake the offset&n;&t; */
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -712,7 +712,7 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* ??? */
-multiline_comment|/*&n;&t; *&t;Set the early receive warning level in window 0 high enough not&n;&t; *&t;to receive ERW interrupts. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Set the early receive warning level in window 0 high enough not&n;&t; *&t;to receive ERW interrupts.&n;&t; */
 multiline_comment|/*&n;&t; *&t;outb_p(E8390_NODMA+E8390_PAGE0, dev-&gt;base_addr);&n;&t; *&t;outb(0xff, dev-&gt;base_addr + EN0_ERWCNT);&n;&t; */
 id|ei_open
 c_func
@@ -1206,6 +1206,34 @@ op_assign
 l_int|0
 comma
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ULTRA_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ULTRA_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 multiline_comment|/* This is set up so that only a single autoprobe takes place per call.&n;ISA device autoprobes on a running machine are not recommended. */
 DECL|function|init_module

@@ -2889,7 +2889,7 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;skb len is %ld&bslash;n&quot;
+l_string|&quot;skb len is %d&bslash;n&quot;
 comma
 id|skb-&gt;len
 )paren

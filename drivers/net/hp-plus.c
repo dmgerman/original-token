@@ -51,7 +51,7 @@ multiline_comment|/*&n;   The HP EtherTwist chip implementation is a fairly rout
 DECL|macro|HP_ID
 mdefine_line|#define HP_ID&t;&t;&t;0x00&t;/* ID register, always 0x4850. */
 DECL|macro|HP_PAGING
-mdefine_line|#define HP_PAGING&t;&t;0x02&t;/* Registers visible @ 8-f, see PageName. */ 
+mdefine_line|#define HP_PAGING&t;&t;0x02&t;/* Registers visible @ 8-f, see PageName. */
 DECL|macro|HPP_OPTION
 mdefine_line|#define HPP_OPTION&t;&t;0x04&t;/* Bitmapped options, see HP_Option.&t;*/
 DECL|macro|HPP_OUT_ADDR
@@ -1974,6 +1974,34 @@ op_assign
 l_int|0
 comma
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_HPP_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_HPP_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 multiline_comment|/* This is set up so that only a single autoprobe takes place per call.&n;ISA device autoprobes on a running machine are not recommended. */
 r_int

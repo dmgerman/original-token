@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncplib_kernel.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ncplib_kernel.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *&n; */
 macro_line|#include &quot;ncplib_kernel.h&quot;
 DECL|typedef|byte
 r_typedef
@@ -134,7 +134,11 @@ c_func
 id|server
 )paren
 suffix:semicolon
-op_star
+id|put_unaligned
+c_func
+(paren
+id|x
+comma
 (paren
 id|word
 op_star
@@ -148,8 +152,7 @@ id|server-&gt;current_size
 )braket
 )paren
 )paren
-op_assign
-id|x
+)paren
 suffix:semicolon
 id|server-&gt;current_size
 op_add_assign
@@ -179,7 +182,11 @@ c_func
 id|server
 )paren
 suffix:semicolon
-op_star
+id|put_unaligned
+c_func
+(paren
+id|x
+comma
 (paren
 id|dword
 op_star
@@ -193,8 +200,7 @@ id|server-&gt;current_size
 )braket
 )paren
 )paren
-op_assign
-id|x
+)paren
 suffix:semicolon
 id|server-&gt;current_size
 op_add_assign
@@ -1230,7 +1236,11 @@ c_func
 (paren
 id|server
 comma
-l_int|0xff
+id|htons
+c_func
+(paren
+l_int|0xff00
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* get all */
@@ -1799,7 +1809,11 @@ c_func
 (paren
 id|server
 comma
-l_int|0x8006
+id|htons
+c_func
+(paren
+l_int|0x0680
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* search attribs: all */
@@ -1922,7 +1936,11 @@ c_func
 (paren
 id|server
 comma
-l_int|0x8006
+id|ntohs
+c_func
+(paren
+l_int|0x0680
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* search attribs: all */
@@ -1987,15 +2005,10 @@ op_star
 id|ret
 suffix:semicolon
 id|memcpy
-c_func
 (paren
-op_amp
-(paren
-id|dest
-(braket
-l_int|1
-)braket
-)paren
+id|ret
+op_plus
+l_int|2
 comma
 op_amp
 id|sfd
@@ -2008,12 +2021,26 @@ id|dest
 l_int|0
 )braket
 op_assign
+id|cpu_to_le16
+c_func
+(paren
+(paren
+id|le16_to_cpu
+c_func
+(paren
 id|dest
 (braket
 l_int|1
 )braket
+)paren
 op_plus
+id|le16_to_cpu
+c_func
+(paren
 l_int|1
+)paren
+)paren
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2059,7 +2086,11 @@ suffix:semicolon
 id|__u16
 id|search_attribs
 op_assign
-l_int|0x0006
+id|ntohs
+c_func
+(paren
+l_int|0x0600
+)paren
 suffix:semicolon
 id|__u8
 id|volume
@@ -2089,7 +2120,11 @@ l_int|0
 (brace
 id|search_attribs
 op_or_assign
-l_int|0x8000
+id|ntohs
+c_func
+(paren
+l_int|0x0080
+)paren
 suffix:semicolon
 )brace
 id|ncp_init_request
@@ -2716,7 +2751,10 @@ c_func
 (paren
 id|server
 comma
-l_int|0x8006
+id|ntohs
+(paren
+l_int|0x0680
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* search attributes */

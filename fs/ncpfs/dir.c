@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
@@ -2615,6 +2616,46 @@ op_amp
 (paren
 id|i-&gt;lastAccessDate
 )paren
+)paren
+suffix:semicolon
+id|i-&gt;creationTime
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|i-&gt;creationTime
+)paren
+suffix:semicolon
+id|i-&gt;creationDate
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|i-&gt;creationDate
+)paren
+suffix:semicolon
+id|i-&gt;modifyTime
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|i-&gt;modifyTime
+)paren
+suffix:semicolon
+id|i-&gt;modifyDate
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|i-&gt;modifyDate
+)paren
+suffix:semicolon
+id|i-&gt;lastAccessDate
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|i-&gt;lastAccessDate
 )paren
 suffix:semicolon
 id|i-&gt;nameLen

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.78 1996/12/19 08:06:30 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.79 1996/12/23 10:57:02 ecd Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -843,6 +843,7 @@ op_star
 id|proc
 )paren
 (paren
+r_const
 r_char
 op_star
 )paren
@@ -1206,6 +1207,17 @@ suffix:colon
 id|register_console
 c_func
 (paren
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_const
+r_char
+op_star
+)paren
+)paren
 id|prom_printf
 )paren
 suffix:semicolon

@@ -104,6 +104,14 @@ op_assign
 id|AX25_MAXDEV
 suffix:semicolon
 multiline_comment|/* Can be overridden with insmod! */
+id|MODULE_PARM
+c_func
+(paren
+id|ax25_maxdev
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|ax_ldisc
 r_static
 r_struct

@@ -795,18 +795,7 @@ id|task_struct
 op_star
 id|last_task_used_math
 suffix:semicolon
-r_extern
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-multiline_comment|/*&n; *&t;On a single processor system this comes out as current_set[0] when cpp&n; *&t;has finished with it, which gcc will optimise away.&n; */
-DECL|macro|current
-mdefine_line|#define current (current_set[smp_processor_id()])&t;/* Current on this processor */
+macro_line|#include &lt;asm/current.h&gt;
 r_extern
 r_int
 r_int

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|macro|MSDOS_ROOT_INO
 mdefine_line|#define MSDOS_ROOT_INO  1 /* == MINIX_ROOT_INO */
 DECL|macro|SECTOR_SIZE
@@ -108,13 +109,13 @@ DECL|macro|VFAT_IOCTL_READDIR_SHORT
 mdefine_line|#define&t;VFAT_IOCTL_READDIR_SHORT&t;_IOW(&squot;r&squot;, 2, long)
 multiline_comment|/*&n; * Conversion from and to little-endian byte order. (no-op on i386/i486)&n; *&n; * Naming: Ca_b_c, where a: F = from, T = to, b: LE = little-endian,&n; * BE = big-endian, c: W = word (16 bits), L = longword (32 bits)&n; */
 DECL|macro|CF_LE_W
-mdefine_line|#define CF_LE_W(v) (v)
+mdefine_line|#define CF_LE_W(v) le16_to_cpu(v)
 DECL|macro|CF_LE_L
-mdefine_line|#define CF_LE_L(v) (v)
+mdefine_line|#define CF_LE_L(v) le32_to_cpu(v)
 DECL|macro|CT_LE_W
-mdefine_line|#define CT_LE_W(v) (v)
+mdefine_line|#define CT_LE_W(v) cpu_to_le16(v)
 DECL|macro|CT_LE_L
-mdefine_line|#define CT_LE_L(v) (v)
+mdefine_line|#define CT_LE_L(v) cpu_to_le32(v)
 DECL|struct|msdos_boot_sector
 r_struct
 id|msdos_boot_sector

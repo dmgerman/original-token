@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
@@ -1424,6 +1425,12 @@ id|mm
 op_assign
 op_star
 id|current-&gt;mm
+suffix:semicolon
+id|init_new_context
+c_func
+(paren
+id|mm
+)paren
 suffix:semicolon
 id|mm-&gt;def_flags
 op_assign

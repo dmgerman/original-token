@@ -1,5 +1,5 @@
 multiline_comment|/* 3c503.c: A shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with the 3c503 and 3c503/16.  It should be used&n;    in shared memory mode for best performance, although it may also work&n;    in programmed-I/O mode.&n;&n;    Sources:&n;    EtherLink II Technical Reference Manual,&n;    EtherLink II/16 Technical Reference Manual Supplement,&n;    3Com Corporation, 5400 Bayfront Plaza, Santa Clara CA 95052-8145&n;    &n;    The Crynwr 3c503 packet driver.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: add support for the 2nd 8kB of RAM on 16 bit cards.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    rjohnson@analogic.com : Fix up PIO interface for efficient operation.&n;&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with the 3c503 and 3c503/16.  It should be used&n;    in shared memory mode for best performance, although it may also work&n;    in programmed-I/O mode.&n;&n;    Sources:&n;    EtherLink II Technical Reference Manual,&n;    EtherLink II/16 Technical Reference Manual Supplement,&n;    3Com Corporation, 5400 Bayfront Plaza, Santa Clara CA 95052-8145&n;&n;    The Crynwr 3c503 packet driver.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: add support for the 2nd 8kB of RAM on 16 bit cards.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    rjohnson@analogic.com : Fix up PIO interface for efficient operation.&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -23,7 +23,7 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;8390.h&quot;
 macro_line|#include &quot;3c503.h&quot;
 DECL|macro|WRD_COUNT
-mdefine_line|#define WRD_COUNT 4 
+mdefine_line|#define WRD_COUNT 4
 r_int
 id|el2_probe
 c_func
@@ -1177,7 +1177,7 @@ l_string|&quot;3c503&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;Divide up the memory on the card. This is the same regardless of&n;&t;whether shared-mem or PIO is used. For 16 bit cards (16kB RAM),&n;&t;we use the entire 8k of bank1 for an Rx ring. We only use 3k &n;&t;of the bank0 for 2 full size Tx packet slots. For 8 bit cards,&n;&t;(8kB RAM) we use 3kB of bank1 for two Tx slots, and the remaining &n;&t;5kB for an Rx ring.  */
+multiline_comment|/*&n;&t;Divide up the memory on the card. This is the same regardless of&n;&t;whether shared-mem or PIO is used. For 16 bit cards (16kB RAM),&n;&t;we use the entire 8k of bank1 for an Rx ring. We only use 3k&n;&t;of the bank0 for 2 full size Tx packet slots. For 8 bit cards,&n;&t;(8kB RAM) we use 3kB of bank1 for two Tx slots, and the remaining&n;&t;5kB for an Rx ring.  */
 r_if
 c_cond
 (paren
@@ -2597,7 +2597,7 @@ comma
 id|E33G_CNTRL
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *  Here I also try to get data as fast as possible. I am betting that I&n; *  can read one extra byte without clobbering anything in the kernel because&n; *  this would only occur on an odd byte-count and allocation of skb-&gt;data&n; *  is word-aligned. Variable &squot;count&squot; is NOT checked. Caller must check&n; *  for a valid count. &n; *  [This is currently quite safe.... but if one day the 3c503 explodes&n; *   you know where to come looking ;)]&n; */
+multiline_comment|/*&n; *  Here I also try to get data as fast as possible. I am betting that I&n; *  can read one extra byte without clobbering anything in the kernel because&n; *  this would only occur on an odd byte-count and allocation of skb-&gt;data&n; *  is word-aligned. Variable &squot;count&squot; is NOT checked. Caller must check&n; *  for a valid count.&n; *  [This is currently quite safe.... but if one day the 3c503 explodes&n; *   you know where to come looking ;)]&n; */
 id|buf
 op_assign
 (paren
@@ -2835,6 +2835,48 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* choose int. or ext. xcvr */
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_EL2_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_EL2_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|xcvr
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_EL2_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* This is set up so that only a single autoprobe takes place per call.&n;ISA device autoprobes on a running machine are not recommended. */
 r_int
 DECL|function|init_module

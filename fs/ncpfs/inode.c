@@ -1,8 +1,9 @@
-multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -227,6 +228,9 @@ id|m.file_mode
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|NCP_ISTRUCT
 c_func
 (paren
@@ -234,6 +238,7 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|dataStreamSize
+)paren
 suffix:semicolon
 )brace
 id|DDPRINTK
@@ -317,6 +322,9 @@ op_assign
 id|ncp_date_dos2unix
 c_func
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|NCP_ISTRUCT
 c_func
 (paren
@@ -324,7 +332,11 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|modifyTime
+)paren
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|NCP_ISTRUCT
 c_func
 (paren
@@ -333,10 +345,14 @@ id|inode
 op_member_access_from_pointer
 id|modifyDate
 )paren
+)paren
 suffix:semicolon
 id|inode-&gt;i_ctime
 op_assign
 id|ncp_date_dos2unix
+c_func
+(paren
+id|le16_to_cpu
 c_func
 (paren
 id|NCP_ISTRUCT
@@ -346,7 +362,11 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|creationTime
+)paren
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|NCP_ISTRUCT
 c_func
 (paren
@@ -354,6 +374,7 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|creationDate
+)paren
 )paren
 suffix:semicolon
 id|inode-&gt;i_atime
@@ -363,6 +384,9 @@ c_func
 (paren
 l_int|0
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|NCP_ISTRUCT
 c_func
 (paren
@@ -370,6 +394,7 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|lastAccessDate
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1838,6 +1863,22 @@ id|info.creationDate
 )paren
 )paren
 suffix:semicolon
+id|info.creationTime
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|info.creationTime
+)paren
+suffix:semicolon
+id|info.creationDate
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|info.creationDate
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1873,6 +1914,22 @@ op_amp
 (paren
 id|info.modifyDate
 )paren
+)paren
+suffix:semicolon
+id|info.modifyTime
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|info.modifyTime
+)paren
+suffix:semicolon
+id|info.modifyDate
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|info.modifyDate
 )paren
 suffix:semicolon
 )brace
@@ -1911,6 +1968,14 @@ op_amp
 (paren
 id|info.lastAccessDate
 )paren
+)paren
+suffix:semicolon
+id|info.lastAccessDate
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|info.lastAccessDate
 )paren
 suffix:semicolon
 )brace

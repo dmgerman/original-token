@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ni6510 (am7990 &squot;lance&squot; chip) driver for Linux-net-3&n; * BETAcode v0.71 (96/09/29) for 2.0.0 (or later)&n; * copyrights (c) 1994,1995,1996 by M.Hipp&n; * &n; * This driver can handle the old ni6510 board and the newer ni6510 &n; * EtherBlaster. (probably it also works with every full NE2100 &n; * compatible card)&n; *&n; * To compile as module, type:&n; *     gcc -O2 -fomit-frame-pointer -m486 -D__KERNEL__ -DMODULE -c ni65.c&n; * driver probes: io: 0x360,0x300,0x320,0x340 / dma: 3,5,6,7&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers the Linux-kernel.&n; *&n; * comments/bugs/suggestions can be sent to:&n; *   Michael Hipp&n; *   email: Michael.Hipp@student.uni-tuebingen.de&n; *&n; * sources:&n; *   some things are from the &squot;ni6510-packet-driver for dos by Russ Nelson&squot;&n; *   and from the original drivers by D.Becker&n; *&n; * known problems:&n; *   - on some PCI boards (including my own) the card/board/ISA-bridge has&n; *     problems with bus master DMA. This results in lotsa overruns.&n; *     It may help to &squot;#define RCV_PARANOIA_CHECK&squot; or try to #undef&n; *     the XMT and RCV_VIA_SKB option .. this reduces driver performance.&n; *     Or just play with your BIOS options to optimize ISA-DMA access.&n; *     Maybe you also wanna play with the LOW_PERFORAMCE and MID_PERFORMANCE&n; *     defines -&gt; please report me your experience then&n; *   - Harald reported for ASUS SP3G mainboards, that you should use&n; *     the &squot;optimal settings&squot; from the user&squot;s manual on page 3-12!&n; *&n; * credits:&n; *   thanx to Jason Sullivan for sending me a ni6510 card!&n; *   lot of debug runs with ASUS SP3G Boards (Intel Saturn) by Harald Koenig&n; *&n; * simple performance test: (486DX-33/Ni6510-EB receives from 486DX4-100/Ni6510-EB)&n; *    average: FTP -&gt; 8384421 bytes received in 8.5 seconds&n; *           (no RCV_VIA_SKB,no XMT_VIA_SKB,PARANOIA_CHECK,4 XMIT BUFS, 8 RCV_BUFFS)&n; *    peak: FTP -&gt; 8384421 bytes received in 7.5 seconds &n; *           (RCV_VIA_SKB,XMT_VIA_SKB,no PARANOIA_CHECK,1(!) XMIT BUF, 16 RCV BUFFS)&n; */
+multiline_comment|/*&n; * ni6510 (am7990 &squot;lance&squot; chip) driver for Linux-net-3&n; * BETAcode v0.71 (96/09/29) for 2.0.0 (or later)&n; * copyrights (c) 1994,1995,1996 by M.Hipp&n; *&n; * This driver can handle the old ni6510 board and the newer ni6510&n; * EtherBlaster. (probably it also works with every full NE2100&n; * compatible card)&n; *&n; * To compile as module, type:&n; *     gcc -O2 -fomit-frame-pointer -m486 -D__KERNEL__ -DMODULE -c ni65.c&n; * driver probes: io: 0x360,0x300,0x320,0x340 / dma: 3,5,6,7&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers the Linux-kernel.&n; *&n; * comments/bugs/suggestions can be sent to:&n; *   Michael Hipp&n; *   email: Michael.Hipp@student.uni-tuebingen.de&n; *&n; * sources:&n; *   some things are from the &squot;ni6510-packet-driver for dos by Russ Nelson&squot;&n; *   and from the original drivers by D.Becker&n; *&n; * known problems:&n; *   - on some PCI boards (including my own) the card/board/ISA-bridge has&n; *     problems with bus master DMA. This results in lotsa overruns.&n; *     It may help to &squot;#define RCV_PARANOIA_CHECK&squot; or try to #undef&n; *     the XMT and RCV_VIA_SKB option .. this reduces driver performance.&n; *     Or just play with your BIOS options to optimize ISA-DMA access.&n; *     Maybe you also wanna play with the LOW_PERFORAMCE and MID_PERFORMANCE&n; *     defines -&gt; please report me your experience then&n; *   - Harald reported for ASUS SP3G mainboards, that you should use&n; *     the &squot;optimal settings&squot; from the user&squot;s manual on page 3-12!&n; *&n; * credits:&n; *   thanx to Jason Sullivan for sending me a ni6510 card!&n; *   lot of debug runs with ASUS SP3G Boards (Intel Saturn) by Harald Koenig&n; *&n; * simple performance test: (486DX-33/Ni6510-EB receives from 486DX4-100/Ni6510-EB)&n; *    average: FTP -&gt; 8384421 bytes received in 8.5 seconds&n; *           (no RCV_VIA_SKB,no XMT_VIA_SKB,PARANOIA_CHECK,4 XMIT BUFS, 8 RCV_BUFFS)&n; *    peak: FTP -&gt; 8384421 bytes received in 7.5 seconds&n; *           (RCV_VIA_SKB,XMT_VIA_SKB,no PARANOIA_CHECK,1(!) XMIT BUF, 16 RCV BUFFS)&n; */
 multiline_comment|/*&n; * 96.Sept.29: virt_to_bus stuff added for new memory modell&n; * 96.April.29: Added Harald Koenig&squot;s Patches (MH)&n; * 96.April.13: enhanced error handling .. more tests (MH)&n; * 96.April.5/6: a lot of performance tests. Got it stable now (hopefully) (MH)&n; * 96.April.1: (no joke ;) .. added EtherBlaster and Module support (MH)&n; * 96.Feb.19: fixed a few bugs .. cleanups .. tested for 1.3.66 (MH)&n; *            hopefully no more 16MB limit&n; *&n; * 95.Nov.18: multicast tweaked (AC).&n; *&n; * 94.Aug.22: changes in xmit_intr (ack more than one xmitted-packet), ni65_send_packet (p-&gt;lock) (MH)&n; *&n; * 94.July.16: fixed bugs in recv_skb and skb-alloc stuff  (MH)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;ni65.h&quot;
-multiline_comment|/*&n; * the current setting allows an acceptable performance&n; * for &squot;RCV_PARANOIA_CHECK&squot; read the &squot;known problems&squot; part in &n; * the header of this file&n; * &squot;invert&squot; the defines for max. performance. This may cause DMA problems&n; * on some boards (e.g on my ASUS SP3G)&n; */
+multiline_comment|/*&n; * the current setting allows an acceptable performance&n; * for &squot;RCV_PARANOIA_CHECK&squot; read the &squot;known problems&squot; part in&n; * the header of this file&n; * &squot;invert&squot; the defines for max. performance. This may cause DMA problems&n; * on some boards (e.g on my ASUS SP3G)&n; */
 DECL|macro|XMT_VIA_SKB
 macro_line|#undef XMT_VIA_SKB
 DECL|macro|RCV_VIA_SKB
@@ -102,7 +102,7 @@ macro_line|#if 1
 DECL|macro|RMDNUM
 mdefine_line|#define RMDNUM 16
 DECL|macro|RMDNUMMASK
-mdefine_line|#define RMDNUMMASK 0x80000000 
+mdefine_line|#define RMDNUMMASK 0x80000000
 macro_line|#else
 DECL|macro|RMDNUM
 mdefine_line|#define RMDNUM 8
@@ -134,7 +134,7 @@ DECL|macro|L_CONFIG
 mdefine_line|#define L_CONFIG  0x05
 DECL|macro|L_BUSIF
 mdefine_line|#define L_BUSIF   0x06
-multiline_comment|/* &n; * to access the lance/am7990-regs, you have to write&n; * reg-number into L_ADDRREG, then you can access it using L_DATAREG&n; */
+multiline_comment|/*&n; * to access the lance/am7990-regs, you have to write&n; * reg-number into L_ADDRREG, then you can access it using L_DATAREG&n; */
 DECL|macro|CSR0
 mdefine_line|#define CSR0  0x00
 DECL|macro|CSR1
@@ -1016,7 +1016,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Probe The Card (not the lance-chip) &n; */
+multiline_comment|/*&n; * Probe The Card (not the lance-chip)&n; */
 macro_line|#ifdef MODULE
 r_static
 macro_line|#endif
@@ -1120,7 +1120,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * this is the real card probe .. &n; */
+multiline_comment|/*&n; * this is the real card probe ..&n; */
 DECL|function|ni65_probe1
 r_static
 r_int
@@ -1948,7 +1948,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* &n;   * Grab the region so we can find another board. &n;   */
+multiline_comment|/*&n;   * Grab the region so we can find another board.&n;   */
 id|request_region
 c_func
 (paren
@@ -2016,7 +2016,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* everything is OK */
 )brace
-multiline_comment|/*&n; * set lance register and trigger init &n; */
+multiline_comment|/*&n; * set lance register and trigger init&n; */
 DECL|function|ni65_init_lance
 r_static
 r_void
@@ -2464,7 +2464,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* &n;   * we need 8-aligned memory ..&n;   */
+multiline_comment|/*&n;   * we need 8-aligned memory ..&n;   */
 id|ptr
 op_assign
 id|ni65_alloc_mem
@@ -2706,7 +2706,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* everything is OK */
 )brace
-multiline_comment|/*&n; * free buffers and private struct &n; */
+multiline_comment|/*&n; * free buffers and private struct&n; */
 DECL|function|ni65_free_buffer
 r_static
 r_void
@@ -3267,7 +3267,7 @@ id|csr0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * init lance (write init-values .. init-buffers) (open-helper)&n; */
+multiline_comment|/*&n; * init lance (write init-values .. init-buffers) (open-helper)&n; */
 DECL|function|ni65_lance_reinit
 r_static
 r_int
@@ -3602,7 +3602,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * ni65_set_lance_mem() sets L_ADDRREG to CSR0&n;   * NOW, WE WILL NEVER CHANGE THE L_ADDRREG, CSR0 IS ALWAYS SELECTED &n;   */
+multiline_comment|/*&n;   * ni65_set_lance_mem() sets L_ADDRREG to CSR0&n;   * NOW, WE WILL NEVER CHANGE THE L_ADDRREG, CSR0 IS ALWAYS SELECTED&n;   */
 r_if
 c_cond
 (paren
@@ -3670,7 +3670,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* -&gt;Error */
 )brace
-multiline_comment|/* &n; * interrupt handler  &n; */
+multiline_comment|/*&n; * interrupt handler&n; */
 DECL|function|ni65_interrupt
 r_static
 r_void
@@ -5821,6 +5821,30 @@ id|dma
 op_assign
 l_int|0
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -5974,5 +5998,5 @@ id|dev_ni65
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n; * END of ni65.c &n; */
+multiline_comment|/*&n; * END of ni65.c&n; */
 eof

@@ -1,5 +1,5 @@
 multiline_comment|/* wd.c: A WD80x3 ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for WD8003 and WD8013 &quot;compatible&quot; ethercards.&n;&n;&t;Thanks to Russ Nelson (nelson@crnwyr.com) for loaning me a WD8013.&n;&n;&t;Changelog:&n;&n;&t;Paul Gortmaker&t;: multiple card support for module users, support&n;&t;&t;&t;  for non-standard memory sizes.&n;&t;&t;&t; &n;&n;*/
+multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for WD8003 and WD8013 &quot;compatible&quot; ethercards.&n;&n;&t;Thanks to Russ Nelson (nelson@crnwyr.com) for loaning me a WD8013.&n;&n;&t;Changelog:&n;&n;&t;Paul Gortmaker&t;: multiple card support for module users, support&n;&t;&t;&t;  for non-standard memory sizes.&n;&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -2207,6 +2207,62 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* for non std. mem size */
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_WD_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_WD_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mem
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_WD_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mem_end
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_WD_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* This is set up so that only a single autoprobe takes place per call.&n;ISA device autoprobes on a running machine are not recommended. */
 r_int
 DECL|function|init_module

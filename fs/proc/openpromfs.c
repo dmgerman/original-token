@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openpromfs.c,v 1.8 1996/12/02 16:04:42 ecd Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: openpromfs.c,v 1.9 1996/12/23 05:54:21 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

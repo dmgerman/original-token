@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: cgfourteen.c,v 1.16 1996/11/22 11:57:06 ecd Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
+multiline_comment|/* $Id: cgfourteen.c,v 1.17 1996/12/23 10:16:00 ecd Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;

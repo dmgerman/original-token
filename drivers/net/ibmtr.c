@@ -1,6 +1,6 @@
 multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux */
 multiline_comment|/*&n;  Written 1993 by Mark Swanson and Peter De Schrijver.&n;  This software may be used and distributed according to the terms&n;  of the GNU Public License, incorporated herein by reference.&n;&n;  This device driver should work with Any IBM Token Ring Card that does&n;  not use DMA.&n;&n;  I used Donald Becker&squot;s (becker@super.org) device driver work&n;  as a base for most of my initial work.&n;*/
-multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n;   and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n;        - multi ring support clean up&n;        - RFC1042 compliance enhanced&n;&n;   Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n;        - bug correction in tr_tx&n;        - removed redundant information display&n;        - some code reworking&n;&n;   Changes by Michel Lespinasse (walken@via.ecp.fr), &n;     Yann Doussot (doussot@via.ecp.fr) and Pascal Andre (andre@via.ecp.fr)&n;     (February 18, 1996) :&n;&t;- modified shared memory and mmio access port the driver to &n;          alpha platform (structure access -&gt; readb/writeb)&n;&n;   Changes by Steve Kipisz (bungy@ibm.net or kipisz@vnet.ibm.com)&n;                           (January 18 1996):&n;        - swapped WWOR and WWCR in ibmtr.h&n;        - moved some init code from tok_probe into trdev_init.  The&n;          PCMCIA code can call trdev_init to complete initializing&n;          the driver.&n;&t;- added -DPCMCIA to support PCMCIA&n;&t;- detecting PCMCIA Card Removal in interrupt handler.  if&n;&t;  ISRP is FF, then a PCMCIA card has been removed&n;&n;   Changes by Paul Norton (pnorton@cts.com) :&n; &t;- restructured the READ.LOG logic to prevent the transmit SRB&n;&t;  from being rudely overwritten before the transmit cycle is&n;&t;  complete. (August 15 1996)&n;        - completed multiple adapter support. (November 20 1996)&n;*/
+multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n;   and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n;        - multi ring support clean up&n;        - RFC1042 compliance enhanced&n;&n;   Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n;        - bug correction in tr_tx&n;        - removed redundant information display&n;        - some code reworking&n;&n;   Changes by Michel Lespinasse (walken@via.ecp.fr),&n;     Yann Doussot (doussot@via.ecp.fr) and Pascal Andre (andre@via.ecp.fr)&n;     (February 18, 1996) :&n;&t;- modified shared memory and mmio access port the driver to&n;          alpha platform (structure access -&gt; readb/writeb)&n;&n;   Changes by Steve Kipisz (bungy@ibm.net or kipisz@vnet.ibm.com)&n;                           (January 18 1996):&n;        - swapped WWOR and WWCR in ibmtr.h&n;        - moved some init code from tok_probe into trdev_init.  The&n;          PCMCIA code can call trdev_init to complete initializing&n;          the driver.&n;&t;- added -DPCMCIA to support PCMCIA&n;&t;- detecting PCMCIA Card Removal in interrupt handler.  if&n;&t;  ISRP is FF, then a PCMCIA card has been removed&n;&n;   Changes by Paul Norton (pnorton@cts.com) :&n; &t;- restructured the READ.LOG logic to prevent the transmit SRB&n;&t;  from being rudely overwritten before the transmit cycle is&n;&t;  complete. (August 15 1996)&n;        - completed multiple adapter support. (November 20 1996)&n;*/
 macro_line|#ifdef PCMCIA
 DECL|macro|MODULE
 mdefine_line|#define MODULE
@@ -774,7 +774,7 @@ id|tchanid
 comma
 id|ctemp
 suffix:semicolon
-macro_line|#ifndef MODULE &t;&t;
+macro_line|#ifndef MODULE
 id|dev
 op_assign
 id|init_trdev
@@ -786,7 +786,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Query the adapter PIO base port which will return&n;&t;indication of where MMIO was placed. We also have a &n;&t;coded interrupt number. */
+multiline_comment|/* Query the adapter PIO base port which will return&n;&t;indication of where MMIO was placed. We also have a&n;&t;coded interrupt number. */
 id|segment
 op_assign
 id|inb
@@ -1467,7 +1467,7 @@ l_string|&quot;.&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/* Get hw address of token ring card */
-macro_line|#if !TR_NEWFORMAT 
+macro_line|#if !TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -2424,7 +2424,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4814,7 +4814,7 @@ id|encoded_address
 )paren
 )paren
 suffix:semicolon
-macro_line|#if !TR_NEWFORMAT&t;&t;
+macro_line|#if !TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -4874,7 +4874,7 @@ comma
 id|ti-&gt;sram
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|ti-&gt;auto_ringspeedsave
 op_assign
 id|readb
@@ -6651,7 +6651,7 @@ op_ne
 id|UI_CMD
 )paren
 (brace
-macro_line|#if !TR_FILTERNONUI&t;&t;
+macro_line|#if !TR_FILTERNONUI
 id|DPRINTK
 (paren
 l_string|&quot;non-UI frame arrived. dropped. llc= %02X&bslash;n&quot;
@@ -7260,7 +7260,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7965,6 +7965,48 @@ l_int|0
 comma
 l_int|0
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|IBMTR_MAX_ADAPTERS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|IBMTR_MAX_ADAPTERS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mem
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|IBMTR_MAX_ADAPTERS
+)paren
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int

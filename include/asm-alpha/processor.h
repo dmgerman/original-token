@@ -5,6 +5,9 @@ mdefine_line|#define __ASM_ALPHA_PROCESSOR_H
 multiline_comment|/*&n; * We have a 42-bit user address space: 4TB user VM...&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE (0x40000000000UL)
+multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
+DECL|macro|TASK_UNMAPPED_BASE
+mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 1

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pstate.h,v 1.1 1996/12/12 11:57:14 davem Exp $ */
+multiline_comment|/* $Id: pstate.h,v 1.2 1996/12/26 09:56:16 davem Exp $ */
 macro_line|#ifndef _SPARC64_PSTATE_H
 DECL|macro|_SPARC64_PSTATE_H
 mdefine_line|#define _SPARC64_PSTATE_H
@@ -28,6 +28,8 @@ mdefine_line|#define PSTATE_AG&t;0x0000000000000001&t;/* Alternate Globals.&t;&t
 multiline_comment|/* The V9 TSTATE Register (with SpitFire extensions).&n; *&n; * ---------------------------------------------------------------&n; * |  Resv  |  CCR  |  ASI  |  Resv  |  PSTATE  |  Resv  |  CWP  |&n; * ---------------------------------------------------------------&n; *  63    40 39   32 31   24 23    20 19       8 7      5 4     0&n; */
 DECL|macro|TSTATE_CCR
 mdefine_line|#define TSTATE_CCR&t;0x000000ff00000000&t;/* Condition Codes.&t;&t;*/
+DECL|macro|TSTATE_XCC
+mdefine_line|#define TSTATE_XCC&t;0x000000f000000000&t;/* Condition Codes.&t;&t;*/
 DECL|macro|TSTATE_XNEG
 mdefine_line|#define TSTATE_XNEG&t;0x0000008000000000&t;/* %xcc Negative.&t;&t;*/
 DECL|macro|TSTATE_XZERO
@@ -36,6 +38,8 @@ DECL|macro|TSTATE_XOVFL
 mdefine_line|#define TSTATE_XOVFL&t;0x0000002000000000&t;/* %xcc Overflow.&t;&t;*/
 DECL|macro|TSTATE_XCARRY
 mdefine_line|#define TSTATE_XCARRY&t;0x0000001000000000&t;/* %xcc Carry.&t;&t;&t;*/
+DECL|macro|TSTATE_ICC
+mdefine_line|#define TSTATE_ICC&t;0x0000000f00000000&t;/* Condition Codes.&t;&t;*/
 DECL|macro|TSTATE_INEG
 mdefine_line|#define TSTATE_INEG&t;0x0000000800000000&t;/* %icc Negative.&t;&t;*/
 DECL|macro|TSTATE_IZERO

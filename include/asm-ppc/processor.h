@@ -123,6 +123,9 @@ mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/*&n; * User space process size: 2GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; *&n; * &quot;this is gonna have to change to 1gig for the sparc&quot; - David S. Miller&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
+multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
+DECL|macro|TASK_UNMAPPED_BASE
+mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
 DECL|struct|thread_struct
 r_struct
 id|thread_struct

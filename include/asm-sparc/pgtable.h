@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.56 1996/12/23 05:28:50 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.58 1996/12/30 06:17:03 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -68,27 +68,6 @@ comma
 r_int
 r_int
 id|size
-)paren
-suffix:semicolon
-multiline_comment|/* mmu-specific process creation/cloning/etc hooks. */
-r_extern
-r_void
-(paren
-op_star
-id|mmu_exit_hook
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|mmu_flush_hook
-)paren
-(paren
-r_void
 )paren
 suffix:semicolon
 multiline_comment|/* translate between physical and virtual addresses */
@@ -1034,17 +1013,6 @@ id|pgd_alloc
 )paren
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|pgd_flush
-)paren
-(paren
-id|pgd_t
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Fine grained cache/tlb flushing. */
