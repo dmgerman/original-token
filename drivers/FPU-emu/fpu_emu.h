@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_emu.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_emu.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#ifndef _FPU_EMU_H_
 DECL|macro|_FPU_EMU_H_
 mdefine_line|#define _FPU_EMU_H_
@@ -53,9 +53,9 @@ r_char
 id|emulating
 suffix:semicolon
 DECL|macro|RE_ENTRANT_CHECK_OFF
-macro_line|#  define RE_ENTRANT_CHECK_OFF emulating = 0;
+macro_line|#  define RE_ENTRANT_CHECK_OFF emulating = 0
 DECL|macro|RE_ENTRANT_CHECK_ON
-macro_line|#  define RE_ENTRANT_CHECK_ON emulating = 1;
+macro_line|#  define RE_ENTRANT_CHECK_ON emulating = 1
 macro_line|#else
 DECL|macro|RE_ENTRANT_CHECK_OFF
 macro_line|#  define RE_ENTRANT_CHECK_OFF

@@ -95,6 +95,8 @@ mdefine_line|#define TIOCGLCKTRMIOS&t;0x5456
 DECL|macro|TIOCSLCKTRMIOS
 mdefine_line|#define TIOCSLCKTRMIOS&t;0x5457
 multiline_comment|/* Used for packet mode */
+DECL|macro|TIOCPKT_DATA
+mdefine_line|#define TIOCPKT_DATA&t;&t; 0
 DECL|macro|TIOCPKT_FLUSHREAD
 mdefine_line|#define TIOCPKT_FLUSHREAD&t; 1
 DECL|macro|TIOCPKT_FLUSHWRITE

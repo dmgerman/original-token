@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  get_address.c                                                            |&n; |                                                                           |&n; | Get the effective address from an FPU instruction.                        |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  get_address.c                                                            |&n; |                                                                           |&n; | Get the effective address from an FPU instruction.                        |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -104,6 +104,13 @@ r_int
 id|offset
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|base
 op_assign
 id|get_fs_byte
@@ -118,6 +125,7 @@ id|FPU_EIP
 suffix:semicolon
 multiline_comment|/* The SIB byte */
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|FPU_EIP
 op_increment
 suffix:semicolon
@@ -217,6 +225,13 @@ l_int|1
 (brace
 multiline_comment|/* 8 bit signed displacement */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|offset
 op_add_assign
 (paren
@@ -234,6 +249,7 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|FPU_EIP
 op_increment
 suffix:semicolon
@@ -254,6 +270,13 @@ multiline_comment|/* The second condition also has mod==0 */
 (brace
 multiline_comment|/* 32 bit displacment */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
 id|offset
 op_add_assign
 (paren
@@ -271,6 +294,7 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|FPU_EIP
 op_add_assign
 l_int|4
@@ -377,6 +401,13 @@ l_int|5
 (brace
 multiline_comment|/* Special case: disp32 */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
 id|offset
 op_assign
 id|get_fs_long
@@ -391,6 +422,7 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|FPU_EIP
 op_add_assign
 l_int|4
@@ -426,6 +458,13 @@ l_int|1
 suffix:colon
 multiline_comment|/* 8 bit signed displacement */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|offset
 op_assign
 (paren
@@ -443,6 +482,7 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|FPU_EIP
 op_increment
 suffix:semicolon
@@ -453,6 +493,13 @@ l_int|2
 suffix:colon
 multiline_comment|/* 32 bit displacement */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
 id|offset
 op_assign
 (paren
@@ -470,6 +517,7 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|FPU_EIP
 op_add_assign
 l_int|4

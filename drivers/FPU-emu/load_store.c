@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  load_store.c                                                             |&n; |                                                                           |&n; | This file contains most of the code to interpret the FPU instructions     |&n; | which load and store from user memory.                                    |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  load_store.c                                                             |&n; |                                                                           |&n; | This file contains most of the code to interpret the FPU instructions     |&n; | which load and store from user memory.                                    |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
@@ -595,6 +595,16 @@ suffix:colon
 multiline_comment|/* fldcw */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|FPU_data_address
+comma
+l_int|2
+)paren
+suffix:semicolon
 id|control_word
 op_assign
 id|get_fs_word
@@ -758,7 +768,7 @@ suffix:colon
 multiline_comment|/* fstcw m16int */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
-id|verify_area
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -819,7 +829,7 @@ suffix:colon
 multiline_comment|/* fstsw m2byte */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
-id|verify_area
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE

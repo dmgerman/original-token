@@ -2,7 +2,6 @@ multiline_comment|/*&n; * Microsoft busmouse driver based on Logitech driver (se
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/busmouse.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

@@ -2,8 +2,106 @@ macro_line|#ifndef _LINUX_MM_H
 DECL|macro|_LINUX_MM_H
 mdefine_line|#define _LINUX_MM_H
 macro_line|#include &lt;linux/page.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+DECL|macro|VERIFY_READ
+mdefine_line|#define VERIFY_READ 0
+DECL|macro|VERIFY_WRITE
+mdefine_line|#define VERIFY_WRITE 1
+r_int
+id|__verify_write
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+DECL|function|verify_area
+r_extern
+r_inline
+r_int
+id|verify_area
+c_func
+(paren
+r_int
+id|type
+comma
+r_void
+op_star
+id|addr
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|TASK_SIZE
+op_le
+(paren
+r_int
+r_int
+)paren
+id|addr
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OG
+id|TASK_SIZE
+op_minus
+(paren
+r_int
+r_int
+)paren
+id|addr
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|wp_works_ok
+op_logical_or
+id|type
+op_eq
+id|VERIFY_READ
+op_logical_or
+op_logical_neg
+id|size
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+id|__verify_write
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|addr
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Linux kernel virtual memory manager primitives.&n; * The idea being to have a &quot;virtual&quot; mm in the same way&n; * we have a virtual fs - giving a cleaner interface to the&n; * mm details, and allowing different kinds of memory mappings&n; * (from shared memory to executable loading to arbitrary&n; * mmap() functions).&n; */
 multiline_comment|/*&n; * This struct defines a memory VMM memory area. There is one of these&n; * per VM-area/task.  A VM area is any part of the process virtual memory&n; * space that has a special rule for the page-fault handlers (ie a shared&n; * library, the executable area etc).&n; */
 DECL|struct|vm_area_struct

@@ -18,8 +18,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_AUTO_IRQ&n; *&t;&t;Enables automatic IRQ detection.  I&squot;ve put in some&n; * &t;&t;fixes to this which should make this work much more&n; * &t;&t;cleanly than it used to in 0.98pl2-6.  It should be&n; * &t;&t;much less vulnerable to false IRQs now.&n; * &n; * CONFIG_AST_FOURPORT&n; *&t;&t;Enables support for the AST Fourport serial port.&n; * &n; * CONFIG_ACCENT_ASYNC&n; *&t;&t;Enables support for the Accent Async 4 port serial&n; * &t;&t;port.&n; *&n; * CONFIG_HUB6&n; *&t;&t;Enables support for the venerable Bell Technologies&n; *&t;&t;HUB6 card.&n; */
 DECL|macro|ISR_HACK
 macro_line|#undef ISR_HACK
-DECL|macro|WAKEUP_CHARS
-mdefine_line|#define WAKEUP_CHARS (3*TTY_BUF_SIZE/4)
 multiline_comment|/*&n; * rs_event&t;&t;- Bitfield of serial lines that events pending&n; * &t;&t;&t;&t;to be processed at the next clock tick.&n; * IRQ_timeout&t;&t;- How long the timeout should be for each IRQ&n; * &t;&t;&t;&t;should be after the IRQ has been active.&n; * IRQ_timer&t;&t;- Array of timeout values for each interrupt IRQ.&n; * &t;&t;&t;&t;This is based on jiffies; not offsets.&n; * &n; * We assume here that int&squot;s are 32 bits, so an array of two gives us&n; * 64 lines, which is the maximum we can support.&n; */
 DECL|variable|rs_event
 r_static
@@ -1682,7 +1680,7 @@ id|UART_MSR_DDCD
 )paren
 op_logical_and
 op_logical_neg
-id|C_LOCAL
+id|C_CLOCAL
 c_func
 (paren
 id|info-&gt;tty
@@ -1766,7 +1764,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|C_RTSCTS
+id|C_CRTSCTS
 c_func
 (paren
 id|info-&gt;tty
@@ -2333,6 +2331,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|I_IGNBRK
+c_func
+(paren
+id|info-&gt;tty
+)paren
+op_logical_and
 id|I_BRKINT
 c_func
 (paren
@@ -4483,9 +4488,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tty-&gt;termios-&gt;c_iflag
-op_amp
-id|IXOFF
+id|I_IXOFF
+c_func
+(paren
+id|tty
+)paren
 )paren
 (brace
 id|info-&gt;x_char
@@ -4543,9 +4550,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tty-&gt;termios-&gt;c_iflag
-op_amp
-id|IXOFF
+id|I_IXOFF
+c_func
+(paren
+id|tty
+)paren
 )paren
 (brace
 r_if
@@ -6036,7 +6045,7 @@ suffix:semicolon
 id|put_fs_long
 c_func
 (paren
-id|C_LOCAL
+id|C_CLOCAL
 c_func
 (paren
 id|tty
@@ -6959,7 +6968,7 @@ suffix:semicolon
 r_int
 id|do_clocal
 op_assign
-id|C_LOCAL
+id|C_CLOCAL
 c_func
 (paren
 id|tty

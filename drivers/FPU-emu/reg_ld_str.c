@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_ld_str.c                                                             |&n; |                                                                           |&n; | All of the functions which transfer data between user memory and FPU_REGs.|&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_ld_str.c                                                             |&n; |                                                                           |&n; | All of the functions which transfer data between user memory and FPU_REGs.|&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
@@ -71,6 +71,17 @@ comma
 id|exp
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|s
+comma
+l_int|10
+)paren
+suffix:semicolon
 multiline_comment|/* Use temporary variables here because FPU_loaded data is&n;     static and hence re-entrancy problems can arise */
 id|sigl
 op_assign
@@ -116,6 +127,7 @@ id|s
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|FPU_loaded_data.tag
 op_assign
 id|TW_Valid
@@ -376,6 +388,17 @@ comma
 id|l64
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|dfloat
+comma
+l_int|8
+)paren
+suffix:semicolon
 id|m64
 op_assign
 id|get_fs_long
@@ -405,6 +428,7 @@ id|dfloat
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -685,6 +709,17 @@ r_int
 id|exp
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|single
+comma
+l_int|4
+)paren
+suffix:semicolon
 id|m32
 op_assign
 id|get_fs_long
@@ -699,6 +734,7 @@ id|single
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -937,6 +973,17 @@ r_int
 id|s
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|_s
+comma
+l_int|8
+)paren
+suffix:semicolon
 (paren
 (paren
 r_int
@@ -988,6 +1035,7 @@ id|_s
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1089,6 +1137,17 @@ r_int
 id|e
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|_s
+comma
+l_int|4
+)paren
+suffix:semicolon
 id|s
 op_assign
 (paren
@@ -1106,6 +1165,7 @@ id|_s
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1205,6 +1265,17 @@ comma
 id|e
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|_s
+comma
+l_int|2
+)paren
+suffix:semicolon
 multiline_comment|/* Cast as short to get the sign extended. */
 id|s
 op_assign
@@ -1223,6 +1294,7 @@ id|_s
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1331,6 +1403,20 @@ id|l
 op_assign
 l_int|0
 suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|s
+comma
+l_int|10
+)paren
+suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1351,6 +1437,7 @@ op_mul_assign
 l_int|10
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|bcd
 op_assign
 (paren
@@ -1371,6 +1458,7 @@ id|pos
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|l
 op_add_assign
 id|bcd
@@ -1390,6 +1478,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Finish all access to user memory before putting stuff into&n;     the static FPU_loaded_data */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|FPU_loaded_data.sign
 op_assign
 (paren
@@ -1419,6 +1508,7 @@ suffix:colon
 id|SIGN_POS
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1508,7 +1598,9 @@ op_ne
 id|TW_Empty
 )paren
 (brace
-id|verify_area
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -1517,6 +1609,8 @@ id|d
 comma
 l_int|10
 )paren
+suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 id|write_to_extended
 c_func
@@ -1553,7 +1647,7 @@ multiline_comment|/* The masked response */
 multiline_comment|/* Put out the QNaN indefinite */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
-id|verify_area
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -2295,7 +2389,8 @@ id|CW_Invalid
 multiline_comment|/* The masked response */
 multiline_comment|/* Put out the QNaN indefinite */
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -2338,6 +2433,7 @@ id|dfloat
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -2360,7 +2456,8 @@ op_or_assign
 l_int|0x80000000
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -2409,6 +2506,7 @@ id|dfloat
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3012,7 +3110,8 @@ id|EX_Invalid
 multiline_comment|/* The masked response */
 multiline_comment|/* Put out the QNaN indefinite */
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -3040,6 +3139,7 @@ id|single
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3075,7 +3175,8 @@ op_or_assign
 l_int|0x80000000
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -3103,6 +3204,7 @@ id|single
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3322,7 +3424,8 @@ id|tll
 suffix:semicolon
 )brace
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -3385,6 +3488,7 @@ id|d
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3563,7 +3667,8 @@ id|t.sigl
 suffix:semicolon
 )brace
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -3587,6 +3692,7 @@ id|d
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3762,7 +3868,8 @@ id|t.sigl
 suffix:semicolon
 )brace
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -3788,6 +3895,7 @@ id|d
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -3933,7 +4041,8 @@ id|CW_Invalid
 (brace
 multiline_comment|/* Produce the QNaN &quot;indefinite&quot; */
 id|RE_ENTRANT_CHECK_OFF
-id|verify_area
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -4020,6 +4129,7 @@ l_int|9
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -4044,7 +4154,9 @@ id|precision_loss
 )paren
 suffix:semicolon
 )brace
-id|verify_area
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -4053,6 +4165,8 @@ id|d
 comma
 l_int|10
 )paren
+suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 r_for
 c_loop
@@ -4096,6 +4210,7 @@ op_lshift
 l_int|4
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|put_fs_byte
 c_func
 (paren
@@ -4112,8 +4227,10 @@ id|i
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 )brace
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|put_fs_byte
 c_func
 (paren
@@ -4130,6 +4247,7 @@ l_int|9
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -4403,6 +4521,17 @@ r_int
 id|i
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|s
+comma
+l_int|0x1c
+)paren
+suffix:semicolon
 id|control_word
 op_assign
 id|get_fs_word
@@ -4519,6 +4648,7 @@ l_int|0x18
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|top
 op_assign
 (paren
@@ -5002,7 +5132,9 @@ op_star
 )paren
 id|FPU_data_address
 suffix:semicolon
-id|verify_area
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -5012,7 +5144,6 @@ comma
 l_int|28
 )paren
 suffix:semicolon
-id|RE_ENTRANT_CHECK_OFF
 macro_line|#ifdef PECULIAR_486
 multiline_comment|/* An 80486 sets all the reserved bits to 1. */
 id|put_fs_long
@@ -5229,6 +5360,7 @@ l_int|0x18
 suffix:semicolon
 macro_line|#endif PECULIAR_486
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|control_word
 op_or_assign
 id|CW_Exceptions
@@ -5270,7 +5402,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|verify_area
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_verify_area
 c_func
 (paren
 id|VERIFY_WRITE
@@ -5279,6 +5413,8 @@ id|d
 comma
 l_int|80
 )paren
+suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 r_for
 c_loop
@@ -5323,7 +5459,7 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
-multiline_comment|/*&n;  A call to this function must be preceeded by a call to&n;  verify_area() to verify access to the 10 bytes at d&n;  */
+multiline_comment|/*&n;  A call to this function must be preceeded by a call to&n;  FPU_verify_area() to verify access to the 10 bytes at d&n;  */
 DECL|function|write_to_extended
 r_static
 r_void

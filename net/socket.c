@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/ddi.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

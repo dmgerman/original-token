@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * ATI XL Bus Mouse Driver for Linux&n; * by Bob Harris (rth@sparta.com)&n; *&n; * Uses VFS interface for linux 0.98 (01OCT92)&n; *&n; * Modified by Chris Colohan (colohan@eecg.toronto.edu)&n; *&n; * version 0.3&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

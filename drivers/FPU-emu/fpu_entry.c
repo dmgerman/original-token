@@ -874,6 +874,12 @@ id|do_another_FPU_instruction
 suffix:colon
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|code
 op_assign
 id|get_fs_word
@@ -1174,6 +1180,12 @@ id|FPU_EIP
 op_increment
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
 suffix:semicolon
 id|code
 op_assign
@@ -2142,6 +2154,12 @@ id|next
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|next
 op_assign
 id|get_fs_byte
@@ -2229,7 +2247,16 @@ r_case
 id|OP_SIZE_PREFIX
 suffix:colon
 multiline_comment|/* Used often by gcc, but has no effect. */
+id|FPU_EIP
+op_increment
+suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|FPU_code_verify_area
+c_func
+(paren
+l_int|1
+)paren
 suffix:semicolon
 id|byte
 op_assign
@@ -2242,7 +2269,6 @@ r_char
 op_star
 )paren
 (paren
-op_increment
 id|FPU_EIP
 )paren
 )paren

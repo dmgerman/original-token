@@ -12,26 +12,6 @@ DECL|macro|LONG_MAX
 mdefine_line|#define LONG_MAX&t;((long)(~0UL&gt;&gt;1))
 DECL|macro|ULONG_MAX
 mdefine_line|#define ULONG_MAX&t;(~0UL)
-DECL|macro|VERIFY_READ
-mdefine_line|#define VERIFY_READ 0
-DECL|macro|VERIFY_WRITE
-mdefine_line|#define VERIFY_WRITE 1
-r_int
-id|verify_area
-c_func
-(paren
-r_int
-id|type
-comma
-r_void
-op_star
-id|addr
-comma
-r_int
-r_int
-id|count
-)paren
-suffix:semicolon
 DECL|macro|KERN_EMERG
 mdefine_line|#define&t;KERN_EMERG&t;&quot;&lt;0&gt;&quot;&t;/* system is unusable&t;&t;&t;*/
 DECL|macro|KERN_ALERT

@@ -109,11 +109,6 @@ DECL|struct|tty_queue
 r_struct
 id|tty_queue
 (brace
-DECL|member|data
-r_int
-r_int
-id|data
-suffix:semicolon
 DECL|member|head
 r_int
 r_int
@@ -291,6 +286,7 @@ r_void
 id|put_tty_queue
 c_func
 (paren
+r_int
 r_char
 id|c
 comma
@@ -319,44 +315,40 @@ DECL|macro|ERASE_CHAR
 mdefine_line|#define ERASE_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VERASE])
 DECL|macro|KILL_CHAR
 mdefine_line|#define KILL_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VKILL])
-DECL|macro|WERASE_CHAR
-mdefine_line|#define WERASE_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VWERASE])
 DECL|macro|EOF_CHAR
 mdefine_line|#define EOF_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VEOF])
+DECL|macro|TIME_CHAR
+mdefine_line|#define TIME_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VTIME])
+DECL|macro|MIN_CHAR
+mdefine_line|#define MIN_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VMIN])
+DECL|macro|SWTC_CHAR
+mdefine_line|#define SWTC_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSWTC])
 DECL|macro|START_CHAR
 mdefine_line|#define START_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSTART])
 DECL|macro|STOP_CHAR
 mdefine_line|#define STOP_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSTOP])
-DECL|macro|SUSPEND_CHAR
-mdefine_line|#define SUSPEND_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSUSP])
+DECL|macro|SUSP_CHAR
+mdefine_line|#define SUSP_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSUSP])
+DECL|macro|EOL_CHAR
+mdefine_line|#define EOL_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VEOL])
+DECL|macro|REPRINT_CHAR
+mdefine_line|#define REPRINT_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VREPRINT])
+DECL|macro|DISCARD_CHAR
+mdefine_line|#define DISCARD_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VDISCARD])
+DECL|macro|WERASE_CHAR
+mdefine_line|#define WERASE_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VWERASE])
 DECL|macro|LNEXT_CHAR
 mdefine_line|#define LNEXT_CHAR(tty)&t;((tty)-&gt;termios-&gt;c_cc[VLNEXT])
-DECL|macro|_L_FLAG
-mdefine_line|#define _L_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_lflag &amp; f)
+DECL|macro|EOL2_CHAR
+mdefine_line|#define EOL2_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VEOL2])
 DECL|macro|_I_FLAG
-mdefine_line|#define _I_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_iflag &amp; f)
+mdefine_line|#define _I_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_iflag &amp; (f))
 DECL|macro|_O_FLAG
-mdefine_line|#define _O_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_oflag &amp; f)
+mdefine_line|#define _O_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_oflag &amp; (f))
 DECL|macro|_C_FLAG
-mdefine_line|#define _C_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_cflag &amp; f)
-DECL|macro|L_CANON
-mdefine_line|#define L_CANON(tty)&t;_L_FLAG((tty),ICANON)
-DECL|macro|L_ISIG
-mdefine_line|#define L_ISIG(tty)&t;_L_FLAG((tty),ISIG)
-DECL|macro|L_ECHO
-mdefine_line|#define L_ECHO(tty)&t;_L_FLAG((tty),ECHO)
-DECL|macro|L_ECHOE
-mdefine_line|#define L_ECHOE(tty)&t;_L_FLAG((tty),ECHOE)
-DECL|macro|L_ECHOK
-mdefine_line|#define L_ECHOK(tty)&t;_L_FLAG((tty),ECHOK)
-DECL|macro|L_ECHONL
-mdefine_line|#define L_ECHONL(tty)&t;_L_FLAG((tty),ECHONL)
-DECL|macro|L_ECHOCTL
-mdefine_line|#define L_ECHOCTL(tty)&t;_L_FLAG((tty),ECHOCTL)
-DECL|macro|L_ECHOKE
-mdefine_line|#define L_ECHOKE(tty)&t;_L_FLAG((tty),ECHOKE)
-DECL|macro|L_TOSTOP
-mdefine_line|#define L_TOSTOP(tty)&t;_L_FLAG((tty),TOSTOP)
+mdefine_line|#define _C_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_cflag &amp; (f))
+DECL|macro|_L_FLAG
+mdefine_line|#define _L_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_lflag &amp; (f))
 DECL|macro|I_IGNBRK
 mdefine_line|#define I_IGNBRK(tty)&t;_I_FLAG((tty),IGNBRK)
 DECL|macro|I_BRKINT
@@ -367,42 +359,102 @@ DECL|macro|I_PARMRK
 mdefine_line|#define I_PARMRK(tty)&t;_I_FLAG((tty),PARMRK)
 DECL|macro|I_INPCK
 mdefine_line|#define I_INPCK(tty)&t;_I_FLAG((tty),INPCK)
-DECL|macro|I_UCLC
-mdefine_line|#define I_UCLC(tty)&t;_I_FLAG((tty),IUCLC)
-DECL|macro|I_NLCR
-mdefine_line|#define I_NLCR(tty)&t;_I_FLAG((tty),INLCR)
-DECL|macro|I_CRNL
-mdefine_line|#define I_CRNL(tty)&t;_I_FLAG((tty),ICRNL)
-DECL|macro|I_NOCR
-mdefine_line|#define I_NOCR(tty)&t;_I_FLAG((tty),IGNCR)
+DECL|macro|I_ISTRIP
+mdefine_line|#define I_ISTRIP(tty)&t;_I_FLAG((tty),ISTRIP)
+DECL|macro|I_INLCR
+mdefine_line|#define I_INLCR(tty)&t;_I_FLAG((tty),INLCR)
+DECL|macro|I_IGNCR
+mdefine_line|#define I_IGNCR(tty)&t;_I_FLAG((tty),IGNCR)
+DECL|macro|I_ICRNL
+mdefine_line|#define I_ICRNL(tty)&t;_I_FLAG((tty),ICRNL)
+DECL|macro|I_IUCLC
+mdefine_line|#define I_IUCLC(tty)&t;_I_FLAG((tty),IUCLC)
 DECL|macro|I_IXON
 mdefine_line|#define I_IXON(tty)&t;_I_FLAG((tty),IXON)
 DECL|macro|I_IXANY
 mdefine_line|#define I_IXANY(tty)&t;_I_FLAG((tty),IXANY)
-DECL|macro|I_STRP
-mdefine_line|#define I_STRP(tty)&t;_I_FLAG((tty),ISTRIP)
-DECL|macro|O_POST
-mdefine_line|#define O_POST(tty)&t;_O_FLAG((tty),OPOST)
-DECL|macro|O_LCUC
-mdefine_line|#define O_LCUC(tty)&t;_O_FLAG((tty),OLCUC)
-DECL|macro|O_NLCR
-mdefine_line|#define O_NLCR(tty)&t;_O_FLAG((tty),ONLCR)
-DECL|macro|O_CRNL
-mdefine_line|#define O_CRNL(tty)&t;_O_FLAG((tty),OCRNL)
-DECL|macro|O_NOCR
-mdefine_line|#define O_NOCR(tty)&t;_O_FLAG((tty),ONOCR)
-DECL|macro|O_NLRET
-mdefine_line|#define O_NLRET(tty)&t;_O_FLAG((tty),ONLRET)
+DECL|macro|I_IXOFF
+mdefine_line|#define I_IXOFF(tty)&t;_I_FLAG((tty),IXOFF)
+DECL|macro|I_IMAXBEL
+mdefine_line|#define I_IMAXBEL(tty)&t;_I_FLAG((tty),IMAXBEL)
+DECL|macro|O_OPOST
+mdefine_line|#define O_OPOST(tty)&t;_O_FLAG((tty),OPOST)
+DECL|macro|O_OLCUC
+mdefine_line|#define O_OLCUC(tty)&t;_O_FLAG((tty),OLCUC)
+DECL|macro|O_ONLCR
+mdefine_line|#define O_ONLCR(tty)&t;_O_FLAG((tty),ONLCR)
+DECL|macro|O_OCRNL
+mdefine_line|#define O_OCRNL(tty)&t;_O_FLAG((tty),OCRNL)
+DECL|macro|O_ONOCR
+mdefine_line|#define O_ONOCR(tty)&t;_O_FLAG((tty),ONOCR)
+DECL|macro|O_ONLRET
+mdefine_line|#define O_ONLRET(tty)&t;_O_FLAG((tty),ONLRET)
+DECL|macro|O_OFILL
+mdefine_line|#define O_OFILL(tty)&t;_O_FLAG((tty),OFILL)
+DECL|macro|O_OFDEL
+mdefine_line|#define O_OFDEL(tty)&t;_O_FLAG((tty),OFDEL)
+DECL|macro|O_NLDLY
+mdefine_line|#define O_NLDLY(tty)&t;_O_FLAG((tty),NLDLY)
+DECL|macro|O_CRDLY
+mdefine_line|#define O_CRDLY(tty)&t;_O_FLAG((tty),CRDLY)
 DECL|macro|O_TABDLY
 mdefine_line|#define O_TABDLY(tty)&t;_O_FLAG((tty),TABDLY)
-DECL|macro|C_LOCAL
-mdefine_line|#define C_LOCAL(tty)&t;_C_FLAG((tty),CLOCAL)
-DECL|macro|C_RTSCTS
-mdefine_line|#define C_RTSCTS(tty)&t;_C_FLAG((tty),CRTSCTS)
-DECL|macro|C_SPEED
-mdefine_line|#define C_SPEED(tty)&t;((tty)-&gt;termios-&gt;c_cflag &amp; CBAUD)
-DECL|macro|C_HUP
-mdefine_line|#define C_HUP(tty)&t;(C_SPEED((tty)) == B0)
+DECL|macro|O_BSDLY
+mdefine_line|#define O_BSDLY(tty)&t;_O_FLAG((tty),BSDLY)
+DECL|macro|O_VTDLY
+mdefine_line|#define O_VTDLY(tty)&t;_O_FLAG((tty),VTDLY)
+DECL|macro|O_FFDLY
+mdefine_line|#define O_FFDLY(tty)&t;_O_FLAG((tty),FFDLY)
+DECL|macro|C_BAUD
+mdefine_line|#define C_BAUD(tty)&t;_C_FLAG((tty),CBAUD)
+DECL|macro|C_CSIZE
+mdefine_line|#define C_CSIZE(tty)&t;_C_FLAG((tty),CSIZE)
+DECL|macro|C_CSTOPB
+mdefine_line|#define C_CSTOPB(tty)&t;_C_FLAG((tty),CSTOPB)
+DECL|macro|C_CREAD
+mdefine_line|#define C_CREAD(tty)&t;_C_FLAG((tty),CREAD)
+DECL|macro|C_PARENB
+mdefine_line|#define C_PARENB(tty)&t;_C_FLAG((tty),PARENB)
+DECL|macro|C_PARODD
+mdefine_line|#define C_PARODD(tty)&t;_C_FLAG((tty),PARODD)
+DECL|macro|C_HUPCL
+mdefine_line|#define C_HUPCL(tty)&t;_C_FLAG((tty),HUPCL)
+DECL|macro|C_CLOCAL
+mdefine_line|#define C_CLOCAL(tty)&t;_C_FLAG((tty),CLOCAL)
+DECL|macro|C_CIBAUD
+mdefine_line|#define C_CIBAUD(tty)&t;_C_FLAG((tty),CIBAUD)
+DECL|macro|C_CRTSCTS
+mdefine_line|#define C_CRTSCTS(tty)&t;_C_FLAG((tty),CRTSCTS)
+DECL|macro|L_ISIG
+mdefine_line|#define L_ISIG(tty)&t;_L_FLAG((tty),ISIG)
+DECL|macro|L_ICANON
+mdefine_line|#define L_ICANON(tty)&t;_L_FLAG((tty),ICANON)
+DECL|macro|L_XCASE
+mdefine_line|#define L_XCASE(tty)&t;_L_FLAG((tty),XCASE)
+DECL|macro|L_ECHO
+mdefine_line|#define L_ECHO(tty)&t;_L_FLAG((tty),ECHO)
+DECL|macro|L_ECHOE
+mdefine_line|#define L_ECHOE(tty)&t;_L_FLAG((tty),ECHOE)
+DECL|macro|L_ECHOK
+mdefine_line|#define L_ECHOK(tty)&t;_L_FLAG((tty),ECHOK)
+DECL|macro|L_ECHONL
+mdefine_line|#define L_ECHONL(tty)&t;_L_FLAG((tty),ECHONL)
+DECL|macro|L_NOFLSH
+mdefine_line|#define L_NOFLSH(tty)&t;_L_FLAG((tty),NOFLSH)
+DECL|macro|L_TOSTOP
+mdefine_line|#define L_TOSTOP(tty)&t;_L_FLAG((tty),TOSTOP)
+DECL|macro|L_ECHOCTL
+mdefine_line|#define L_ECHOCTL(tty)&t;_L_FLAG((tty),ECHOCTL)
+DECL|macro|L_ECHOPRT
+mdefine_line|#define L_ECHOPRT(tty)&t;_L_FLAG((tty),ECHOPRT)
+DECL|macro|L_ECHOKE
+mdefine_line|#define L_ECHOKE(tty)&t;_L_FLAG((tty),ECHOKE)
+DECL|macro|L_FLUSHO
+mdefine_line|#define L_FLUSHO(tty)&t;_L_FLAG((tty),FLUSHO)
+DECL|macro|L_PENDIN
+mdefine_line|#define L_PENDIN(tty)&t;_L_FLAG((tty),PENDIN)
+DECL|macro|L_IEXTEN
+mdefine_line|#define L_IEXTEN(tty)&t;_L_FLAG((tty),IEXTEN)
 multiline_comment|/*&n; * Where all of the state associated with a tty is kept while the tty&n; * is open.  Since the termios state should be kept even if the tty&n; * has been closed --- for things like the baud rate, etc --- it is&n; * not stored here, but rather a pointer to the real state is stored&n; * here.  Possible the winsize structure should have the same&n; * treatment, but (1) the default 80x24 is usually right and (2) it&squot;s&n; * most often used by a windowing system, which will set the correct&n; * size each time the window is created or resized anyway.&n; * IMPORTANT: since this structure is dynamically allocated, it must&n; * be no larger than 4096 bytes.  Changing TTY_BUF_SIZE will change&n; * the size of this structure, and it needs to be done with care.&n; * &t;&t;&t;&t;&t;&t;- TYT, 9/14/92&n; */
 DECL|struct|tty_struct
 r_struct
@@ -451,6 +503,13 @@ id|char_error
 suffix:colon
 l_int|3
 suffix:semicolon
+DECL|member|erasing
+r_int
+r_char
+id|erasing
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|ctrl_status
 r_int
 r_char
@@ -473,6 +532,7 @@ r_int
 id|count
 suffix:semicolon
 DECL|member|column
+r_int
 r_int
 id|column
 suffix:semicolon
@@ -671,6 +731,29 @@ op_div
 l_int|32
 )braket
 suffix:semicolon
+DECL|member|secondary_flags
+r_int
+id|secondary_flags
+(braket
+id|TTY_BUF_SIZE
+op_div
+l_int|32
+)braket
+suffix:semicolon
+DECL|member|canon_data
+r_int
+id|canon_data
+suffix:semicolon
+DECL|member|canon_head
+r_int
+r_int
+id|canon_head
+suffix:semicolon
+DECL|member|canon_column
+r_int
+r_int
+id|canon_column
+suffix:semicolon
 DECL|member|read_q
 r_struct
 id|tty_queue
@@ -685,12 +768,6 @@ DECL|member|secondary
 r_struct
 id|tty_queue
 id|secondary
-suffix:semicolon
-DECL|member|except_q
-r_struct
-id|wait_queue
-op_star
-id|except_q
 suffix:semicolon
 DECL|member|disc_data
 r_void
@@ -749,10 +826,12 @@ id|file
 op_star
 id|file
 comma
+r_int
 r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|nr
 )paren
@@ -774,10 +853,12 @@ id|file
 op_star
 id|file
 comma
+r_int
 r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|nr
 )paren
@@ -878,18 +959,16 @@ DECL|macro|TTY_WRITE_BUSY
 mdefine_line|#define TTY_WRITE_BUSY 0
 DECL|macro|TTY_READ_BUSY
 mdefine_line|#define TTY_READ_BUSY 1
-DECL|macro|TTY_CR_PENDING
-mdefine_line|#define TTY_CR_PENDING 2
 DECL|macro|TTY_SQ_THROTTLED
-mdefine_line|#define TTY_SQ_THROTTLED 3
+mdefine_line|#define TTY_SQ_THROTTLED 2
 DECL|macro|TTY_RQ_THROTTLED
-mdefine_line|#define TTY_RQ_THROTTLED 4
+mdefine_line|#define TTY_RQ_THROTTLED 3
 DECL|macro|TTY_IO_ERROR
-mdefine_line|#define TTY_IO_ERROR 5
-DECL|macro|TTY_SLAVE_OPENED
-mdefine_line|#define TTY_SLAVE_OPENED 6
+mdefine_line|#define TTY_IO_ERROR 4
+DECL|macro|TTY_SLAVE_CLOSED
+mdefine_line|#define TTY_SLAVE_CLOSED 5
 DECL|macro|TTY_EXCLUSIVE
-mdefine_line|#define TTY_EXCLUSIVE 7
+mdefine_line|#define TTY_EXCLUSIVE 6
 multiline_comment|/*&n; * When a break, frame error, or parity error happens, these codes are&n; * stuffed into the read queue, and the relevant bit in readq_flag bit&n; * array is set.&n; */
 DECL|macro|TTY_BREAK
 mdefine_line|#define TTY_BREAK&t;1
@@ -923,6 +1002,9 @@ id|tty_struct
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* Number of chars that must be available in a write queue before&n;   the queue is awakened. */
+DECL|macro|WAKEUP_CHARS
+mdefine_line|#define WAKEUP_CHARS (3*TTY_BUF_SIZE/4)
 r_extern
 r_struct
 id|tty_struct
@@ -1059,8 +1141,33 @@ id|tty
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|check_change
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_int
+id|channel
+)paren
+suffix:semicolon
+r_extern
 r_void
-id|copy_to_cooked
+id|stop_tty
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|start_tty
 c_func
 (paren
 r_struct

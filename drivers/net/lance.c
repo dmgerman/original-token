@@ -2313,6 +2313,23 @@ id|FREE_WRITE
 suffix:semicolon
 )brace
 r_else
+(brace
+multiline_comment|/* Gimme!!! */
+r_if
+c_cond
+(paren
+id|skb-&gt;free
+op_eq
+l_int|0
+)paren
+(brace
+id|skb_kept_by_device
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 id|lp-&gt;tx_ring
 (braket
 id|entry
@@ -2331,6 +2348,7 @@ l_int|1
 op_or
 l_int|0x83000000
 suffix:semicolon
+)brace
 id|lp-&gt;cur_tx
 op_increment
 suffix:semicolon
@@ -2774,6 +2792,16 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
+r_else
+id|skb_device_release
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+multiline_comment|/* Warning: skb may well vanish at the point you call device_release! */
 )brace
 id|dirty_tx
 op_increment

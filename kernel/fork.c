@@ -167,6 +167,15 @@ op_member_access_from_pointer
 id|pgrp
 op_eq
 id|last_pid
+op_logical_or
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|session
+op_eq
+id|last_pid
 )paren
 r_goto
 id|repeat

@@ -6,6 +6,30 @@ mdefine_line|#define NEW_SWAP
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 DECL|macro|HZ
 mdefine_line|#define HZ 100
+multiline_comment|/*&n; * System setup flags..&n; */
+r_extern
+r_int
+id|hard_math
+suffix:semicolon
+r_extern
+r_int
+id|x86
+suffix:semicolon
+r_extern
+r_int
+id|ignore_irq13
+suffix:semicolon
+r_extern
+r_int
+id|wp_works_ok
+suffix:semicolon
+multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; */
+r_extern
+r_int
+id|EISA_bus
+suffix:semicolon
+DECL|macro|MCA_bus
+mdefine_line|#define MCA_bus 0
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
@@ -903,30 +927,6 @@ r_extern
 r_int
 id|need_resched
 suffix:semicolon
-multiline_comment|/*&n; * System setup flags..&n; */
-r_extern
-r_int
-id|hard_math
-suffix:semicolon
-r_extern
-r_int
-id|x86
-suffix:semicolon
-r_extern
-r_int
-id|ignore_irq13
-suffix:semicolon
-r_extern
-r_int
-id|wp_works_ok
-suffix:semicolon
-multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; */
-r_extern
-r_int
-id|EISA_bus
-suffix:semicolon
-DECL|macro|MCA_bus
-mdefine_line|#define MCA_bus 0
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (xtime.tv_sec)
 r_extern

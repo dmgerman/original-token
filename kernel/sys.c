@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  linux/kernel/sys.c&n; *&n; *  Copyright (C) 1991, 199
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/times.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
@@ -1981,12 +1980,6 @@ r_if
 c_cond
 (paren
 id|current-&gt;leader
-op_logical_and
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
 )paren
 r_return
 op_minus

@@ -28,6 +28,8 @@ comma
 id|FPU_modrm
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+multiline_comment|/* No need to verify_area(), we have previously fetched these bytes. */
 id|byte1
 op_assign
 id|get_fs_byte
@@ -109,6 +111,7 @@ l_int|7
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 id|EXCEPTION
 c_func
 (paren
@@ -158,6 +161,8 @@ comma
 id|FPU_modrm
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+multiline_comment|/* No need to verify_area(), we have previously fetched these bytes. */
 id|byte1
 op_assign
 id|get_fs_byte
@@ -907,6 +912,7 @@ id|FPU_loaded_data.tag
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 )brace
 r_static
 r_struct
@@ -1103,6 +1109,7 @@ suffix:semicolon
 )brace
 )brace
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1245,6 +1252,7 @@ multiline_comment|/*&n;       * The 80486 generates an interrupt on the next non
 multiline_comment|/*      regs[0].tag |= TW_FPU_Interrupt; */
 )brace
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 macro_line|#ifdef __DEBUG__
 id|math_abort
 c_func

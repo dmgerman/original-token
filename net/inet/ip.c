@@ -6061,6 +6061,13 @@ r_if
 c_cond
 (paren
 id|sk
+op_logical_and
+op_logical_neg
+id|skb_device_locked
+c_func
+(paren
+id|skb
+)paren
 )paren
 id|dev
 op_member_access_from_pointer

@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_sin.c                                                               |&n; |                                                                           |&n; |  Computation of an approximation of the sin function by a polynomial      |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_sin.c                                                               |&n; |                                                                           |&n; |  Computation of an approximation of the sin function by a polynomial      |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -590,6 +590,7 @@ multiline_comment|/* Much &gt; 1.0 */
 (brace
 macro_line|#ifdef DEBUGGING
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -603,6 +604,7 @@ id|result-&gt;sigl
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 macro_line|#endif DEBUGGING
 id|EXCEPTION
 c_func
@@ -615,6 +617,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef DEBUGGING
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -634,6 +637,7 @@ id|result-&gt;sigl
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 macro_line|#endif DEBUGGING
 id|result-&gt;sigl
 op_assign
