@@ -1,10 +1,19 @@
 multiline_comment|/*&n; * Definitions for a Mitsumi CD-ROM interface&n; *&n; *&t;Copyright (C) 1992  Martin Harriss&n; *&n; *&t;martin@bdsi.com&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 multiline_comment|/* *** change this to set the I/O port address */
-DECL|macro|MCDPORT
-mdefine_line|#define MCDPORT(x)&t;&t;(0x320 + (x))
+DECL|macro|MCD_BASE_ADDR
+mdefine_line|#define MCD_BASE_ADDR&t;        0x300
 multiline_comment|/* *** change this to set the interrupt number */
 DECL|macro|MCD_INTR_NR
 mdefine_line|#define MCD_INTR_NR&t;&t;11
+multiline_comment|/* Increase this if you get lots of timeouts */
+DECL|macro|MCD_STATUS_DELAY
+mdefine_line|#define MCD_STATUS_DELAY&t;100
+multiline_comment|/* number of times to retry a command before giving up */
+DECL|macro|MCD_RETRY_ATTEMPTS
+mdefine_line|#define MCD_RETRY_ATTEMPTS      3
+multiline_comment|/* port access macro */
+DECL|macro|MCDPORT
+mdefine_line|#define MCDPORT(x)&t;&t;(mcd_port + (x))
 multiline_comment|/* status bits */
 DECL|macro|MST_CMD_CHECK
 mdefine_line|#define MST_CMD_CHECK&t;&t;0x01&t;&t;/* command error */

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/ddi.h&gt;
 DECL|macro|NET16
 mdefine_line|#define NET16(x)&t;((((x) &gt;&gt; 8) &amp; 0x00FF) | (((x) &lt;&lt; 8) &amp; 0xFF00))
 DECL|macro|INET_DEBUG
-mdefine_line|#define&t;INET_DEBUG
+macro_line|#undef&t;INET_DEBUG
 macro_line|#ifdef&t;INET_DEBUG
 DECL|macro|DPRINTF
 macro_line|#  define&t;DPRINTF(x)&t;dprintf x 

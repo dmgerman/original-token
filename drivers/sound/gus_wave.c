@@ -251,7 +251,7 @@ id|dram_sleep_flag
 suffix:semicolon
 multiline_comment|/*&n; * Variables and buffers for PCM output&n; */
 DECL|macro|MAX_PCM_BUFFERS
-mdefine_line|#define MAX_PCM_BUFFERS&t;&t;32&t;/* Don&squot;t change */
+mdefine_line|#define MAX_PCM_BUFFERS&t;&t;(32*MAX_REALTIME_FACTOR) /* Don&squot;t change */
 DECL|variable|pcm_bsize
 r_static
 r_int
@@ -2711,7 +2711,7 @@ op_plus
 l_int|0x0f
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Now set up the DMA and IRQ interface&n;   * &n;   * The GUS supports two IRQs and two DMAs.&n;   * &n;   * If GUS_MIDI_IRQ is defined and if it&squot;s != GUS_IRQ, separate Midi IRQ is set&n;   * up. Otherwise the same IRQ is shared by the both devices.&n;   * &n;   * Just one DMA channel is used. This prevents simultaneous ADC and DAC.&n;   * Adding this support requires significant changes to the dmabuf.c, dsp.c&n;   * and audio.c also.&n;   */
+multiline_comment|/*&n;   * Now set up the DMA and IRQ interface&n;   * &n;   * The GUS supports two IRQs and two DMAs.&n;   * &n;   * Just one DMA channel is used. This prevents simultaneous ADC and DAC.&n;   * Adding this support requires significant changes to the dmabuf.c, dsp.c&n;   * and audio.c also.&n;   */
 id|irq_image
 op_assign
 l_int|0
@@ -2738,49 +2738,6 @@ id|irq_image
 op_or_assign
 id|tmp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|GUS_MIDI_IRQ
-op_ne
-id|gus_irq
-)paren
-(brace
-multiline_comment|/* The midi irq was defined and != wave irq */
-id|tmp
-op_assign
-id|gus_irq_map
-(braket
-id|GUS_MIDI_IRQ
-)braket
-suffix:semicolon
-id|tmp
-op_lshift_assign
-l_int|3
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|tmp
-)paren
-id|printk
-(paren
-l_string|&quot;Warning! GUS Midi IRQ not selected&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|gus_set_midi_irq
-(paren
-id|GUS_MIDI_IRQ
-)paren
-suffix:semicolon
-id|irq_image
-op_or_assign
-id|tmp
-suffix:semicolon
-)brace
-r_else
 id|irq_image
 op_or_assign
 l_int|0x40
@@ -5498,7 +5455,7 @@ id|patch.len
 (brace
 id|printk
 (paren
-l_string|&quot;GUS Warning: Patch record too short (%d&lt;%d)&bslash;n&quot;
+l_string|&quot;GUS Warning: Patch record too short (%d&lt;%lu)&bslash;n&quot;
 comma
 id|count
 comma
@@ -5524,7 +5481,7 @@ id|gus_mem_size
 (brace
 id|printk
 (paren
-l_string|&quot;GUS: Invalid sample length %d&bslash;n&quot;
+l_string|&quot;GUS: Invalid sample length %lu&bslash;n&quot;
 comma
 id|patch.len
 )paren
@@ -5622,7 +5579,7 @@ id|GUS_BANK_SIZE
 (brace
 id|printk
 (paren
-l_string|&quot;GUS: Sample (16 bit) too long %d&bslash;n&quot;
+l_string|&quot;GUS: Sample (16 bit) too long %lu&bslash;n&quot;
 comma
 id|patch.len
 )paren
@@ -5850,7 +5807,7 @@ op_minus
 id|target
 suffix:semicolon
 )brace
-macro_line|#ifdef GUS_NO_DMA
+macro_line|#if defined(GUS_NO_DMA) || defined(GUS_PATCH_NO_DMA)
 multiline_comment|/*&n;       * For some reason the DMA is not possible. We have to use PIO.&n;       */
 (brace
 r_int
@@ -5886,6 +5843,34 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|patch.mode
+op_amp
+id|WAVE_UNSIGNED
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|patch.mode
+op_amp
+id|WAVE_16_BITS
+)paren
+op_logical_or
+(paren
+id|i
+op_amp
+l_int|0x01
+)paren
+)paren
+id|data
+op_xor_assign
+l_int|0x80
+suffix:semicolon
+multiline_comment|/* Convert to signed */
 id|gus_poke
 (paren
 id|target
@@ -6963,6 +6948,18 @@ suffix:semicolon
 r_case
 id|SOUND_PCM_WRITE_CHANNELS
 suffix:colon
+r_if
+c_cond
+(paren
+id|local
+)paren
+r_return
+id|gus_sampling_set_channels
+c_func
+(paren
+id|arg
+)paren
+suffix:semicolon
 r_return
 id|IOCTL_OUT
 (paren
@@ -7163,21 +7160,6 @@ suffix:semicolon
 id|gus_select_max_voices
 (paren
 l_int|14
-)paren
-suffix:semicolon
-id|gus_sampling_set_bits
-(paren
-l_int|8
-)paren
-suffix:semicolon
-id|gus_sampling_set_channels
-(paren
-l_int|1
-)paren
-suffix:semicolon
-id|gus_sampling_set_speed
-(paren
-id|DSP_DEFAULT_SPEED
 )paren
 suffix:semicolon
 id|pcm_active
@@ -8009,6 +7991,9 @@ id|total_count
 comma
 r_int
 id|intrflag
+comma
+r_int
+id|restart_dma
 )paren
 (brace
 id|pcm_current_buf
@@ -8058,6 +8043,9 @@ id|count
 comma
 r_int
 id|intrflag
+comma
+r_int
+id|restart_dma
 )paren
 (brace
 r_int
@@ -9405,7 +9393,7 @@ id|dma
 (brace
 id|printk
 (paren
-l_string|&quot; &lt;Gravis UltraSound %dk&gt;&quot;
+l_string|&quot; &lt;Gravis UltraSound %luk&gt;&quot;
 comma
 id|gus_mem_size
 op_div
@@ -9769,6 +9757,8 @@ id|pcm_nblk
 id|DMAbuf_outputintr
 (paren
 id|gus_devnum
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -10137,6 +10127,10 @@ id|pcm_nblk
 id|DMAbuf_outputintr
 (paren
 id|gus_devnum
+comma
+id|pcm_qlen
+op_eq
+l_int|0
 )paren
 suffix:semicolon
 )brace

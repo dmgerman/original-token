@@ -4673,6 +4673,15 @@ id|dev2
 op_assign
 id|rt-&gt;rt_dev
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+id|dev2
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/*&n;   * We now allocate a new buffer, and copy the datagram into it.&n;   * If the indicated interface is up and running, kick it.&n;   */
 id|DPRINTF
 c_func

@@ -568,6 +568,10 @@ op_assign
 l_string|&quot;Gravis UltraSound&quot;
 comma
 l_int|0
+comma
+l_int|0
+comma
+id|SNDCARD_GUS
 )brace
 comma
 id|gus_midi_open

@@ -48,6 +48,8 @@ comma
 l_string|&quot;CDPC&quot;
 comma
 l_string|&quot;Pro AudioSpectrum 16&quot;
+comma
+l_string|&quot;Pro AudioSpectrum 16D&quot;
 )brace
 suffix:semicolon
 multiline_comment|/* pas_read() and pas_write() are equivalents of INB() and OUTB() */
@@ -183,87 +185,6 @@ id|I_S_MIDI_IRQ
 suffix:semicolon
 )brace
 )brace
-r_static
-r_int
-DECL|function|set_pas_irq
-id|set_pas_irq
-(paren
-r_int
-id|interrupt_level
-)paren
-(brace
-macro_line|#ifdef linux
-r_int
-id|retcode
-suffix:semicolon
-r_struct
-id|sigaction
-id|sa
-suffix:semicolon
-id|pas_write
-(paren
-l_int|0xff
-comma
-id|INTERRUPT_STATUS
-)paren
-suffix:semicolon
-multiline_comment|/* Reset pending interrupts */
-id|sa.sa_handler
-op_assign
-id|pasintr
-suffix:semicolon
-macro_line|#ifdef SND_SA_INTERRUPT
-id|sa.sa_flags
-op_assign
-id|SA_INTERRUPT
-suffix:semicolon
-macro_line|#else
-id|sa.sa_flags
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-id|sa.sa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|sa.sa_restorer
-op_assign
-l_int|NULL
-suffix:semicolon
-id|retcode
-op_assign
-id|irqaction
-(paren
-id|interrupt_level
-comma
-op_amp
-id|sa
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retcode
-OL
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;ProAudioSpectrum: IRQ%d already in use&bslash;n&quot;
-comma
-id|interrupt_level
-)paren
-suffix:semicolon
-)brace
-r_return
-id|retcode
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* #  error This routine does not work with this OS&t; */
-macro_line|#endif
-)brace
 r_int
 DECL|function|pas_set_intr
 id|pas_set_intr
@@ -297,9 +218,11 @@ c_cond
 (paren
 id|err
 op_assign
-id|set_pas_irq
+id|snd_set_irq_handler
 (paren
 id|pas_irq
+comma
+id|pasintr
 )paren
 )paren
 OL
@@ -360,7 +283,7 @@ op_logical_neg
 id|pas_intr_mask
 )paren
 (brace
-id|RELEASE_IRQ
+id|snd_release_irq
 (paren
 id|pas_irq
 )paren
@@ -603,6 +526,25 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * This fixes the timing problems of the PAS due to the Symphony chipset&n; * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n; */
+macro_line|#ifdef SYMPHONY_PAS
+id|OUTB
+c_func
+(paren
+l_int|0x05
+comma
+l_int|0xa8
+)paren
+suffix:semicolon
+id|OUTB
+c_func
+(paren
+l_int|0x60
+comma
+l_int|0xa9
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef BROKEN_BUS_CLOCK
 id|pas_write
 (paren
@@ -631,7 +573,6 @@ id|SYSTEM_CONFIGURATION_1
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* pas_write(S_C_2_PCM_16_BIT, SYSTEM_CONFIGURATION_2);&t;Don&squot;t do this&t; */
 id|pas_write
 (paren
 l_int|0x18
@@ -689,6 +630,30 @@ id|PARALLEL_MIXER
 )paren
 suffix:semicolon
 macro_line|#if !defined(EXCLUDE_SB_EMULATION) || !defined(EXCLUDE_SB)
+(brace
+r_struct
+id|address_info
+op_star
+id|sb_config
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|sb_config
+op_assign
+id|sound_getconf
+c_func
+(paren
+id|SNDCARD_SB
+)paren
+)paren
+)paren
+(brace
+r_int
+r_char
+id|irq_dma
+suffix:semicolon
 multiline_comment|/* Turn on Sound Blaster compatibility */
 multiline_comment|/* bit 1 = SB emulation */
 multiline_comment|/* bit 0 = MPU401 emulation (CDPC only :-( ) */
@@ -703,7 +668,7 @@ multiline_comment|/* &quot;Emulation address&quot;&t; */
 id|pas_write
 (paren
 (paren
-id|SBC_BASE
+id|sb_config-&gt;io_base
 op_rshift
 l_int|4
 )paren
@@ -713,6 +678,62 @@ comma
 id|EMULATION_ADDRESS
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|E_C_SB_DMA_translate
+(braket
+id|sb_config-&gt;dma
+)braket
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB DMA %d&bslash;n&bslash;n&quot;
+comma
+id|sb_config-&gt;dma
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|E_C_SB_IRQ_translate
+(braket
+id|sb_config-&gt;irq
+)braket
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB IRQ %d&bslash;n&bslash;n&quot;
+comma
+id|sb_config-&gt;irq
+)paren
+suffix:semicolon
+id|irq_dma
+op_assign
+id|E_C_SB_DMA_translate
+(braket
+id|sb_config-&gt;dma
+)braket
+op_or
+id|E_C_SB_IRQ_translate
+(braket
+id|sb_config-&gt;irq
+)braket
+suffix:semicolon
+id|pas_write
+c_func
+(paren
+id|irq_dma
+comma
+id|EMULATION_CONFIGURATION
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#endif
 r_if
 c_cond
@@ -834,10 +855,6 @@ multiline_comment|/* Not a PAS2 */
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|pas_model
 op_assign
 id|O_M_1_to_card
@@ -849,8 +866,6 @@ id|OPERATION_MODE_1
 op_amp
 l_int|0x0f
 )braket
-)paren
-)paren
 suffix:semicolon
 r_return
 id|pas_model
@@ -974,11 +989,6 @@ id|pas_init_mixer
 suffix:semicolon
 )brace
 )brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon

@@ -3,7 +3,7 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#if !defined(EXCLUDE_MPU401) &amp;&amp; !defined(EXCLUDE_MIDI)
 DECL|macro|DATAPORT
-mdefine_line|#define&t;DATAPORT   (mpu401_base)/* MPU-401 Data I/O Port on IBM */
+mdefine_line|#define&t;DATAPORT   (mpu401_base)&t;/* MPU-401 Data I/O Port on IBM */
 DECL|macro|COMDPORT
 mdefine_line|#define&t;COMDPORT   (mpu401_base+1)&t;/* MPU-401 Command Port on IBM */
 DECL|macro|STATPORT
@@ -190,20 +190,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_static
-r_struct
-id|timer_list
+id|DEFINE_TIMER
+c_func
+(paren
 id|mpu401_timer
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
 comma
 id|poll_mpu401
-)brace
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -234,14 +227,14 @@ id|mpu401_input_loop
 (paren
 )paren
 suffix:semicolon
-id|mpu401_timer.expires
-op_assign
-l_int|1
-suffix:semicolon
-id|add_timer
+id|ACTIVATE_TIMER
+c_func
 (paren
-op_amp
 id|mpu401_timer
+comma
+id|poll_mpu401
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Come back later */
@@ -249,79 +242,6 @@ id|RESTORE_INTR
 (paren
 id|flags
 )paren
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|set_mpu401_irq
-id|set_mpu401_irq
-(paren
-r_int
-id|interrupt_level
-)paren
-(brace
-r_int
-id|retcode
-suffix:semicolon
-macro_line|#ifdef linux
-r_struct
-id|sigaction
-id|sa
-suffix:semicolon
-id|sa.sa_handler
-op_assign
-id|mpuintr
-suffix:semicolon
-macro_line|#ifdef SND_SA_INTERRUPT
-id|sa.sa_flags
-op_assign
-id|SA_INTERRUPT
-suffix:semicolon
-macro_line|#else
-id|sa.sa_flags
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-id|sa.sa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|sa.sa_restorer
-op_assign
-l_int|NULL
-suffix:semicolon
-id|retcode
-op_assign
-id|irqaction
-(paren
-id|interrupt_level
-comma
-op_amp
-id|sa
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retcode
-OL
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;MPU-401: IRQ%d already in use&bslash;n&quot;
-comma
-id|interrupt_level
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-multiline_comment|/* #  error Unimplemented for this OS&t; */
-macro_line|#endif
-r_return
-id|retcode
 suffix:semicolon
 )brace
 r_static
@@ -605,6 +525,10 @@ op_assign
 l_string|&quot;MPU-401&quot;
 comma
 l_int|0
+comma
+l_int|0
+comma
+id|SNDCARD_MPU401
 )brace
 comma
 id|mpu401_open
@@ -790,7 +714,7 @@ id|timeout
 comma
 id|n
 suffix:semicolon
-multiline_comment|/*&n;   * Send the RESET command. Try twice if no success at the first time.&n;   */
+multiline_comment|/*&n;   * Send the RESET command. Try again if no success at the first time.&n;   */
 id|ok
 op_assign
 l_int|0
@@ -933,9 +857,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_mpu401_irq
+id|snd_set_irq_handler
 (paren
 id|mpu401_irq
+comma
+id|mpuintr
 )paren
 OL
 l_int|0

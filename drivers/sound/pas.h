@@ -414,6 +414,10 @@ comma
 l_int|0x30
 comma
 l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 DECL|variable|E_C_SB_DMA_translate
@@ -431,6 +435,14 @@ comma
 l_int|0x80
 comma
 l_int|0xC0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 DECL|variable|O_M_1_to_card
@@ -465,7 +477,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|3
+l_int|4
 comma
 l_int|0
 comma

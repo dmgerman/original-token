@@ -550,6 +550,10 @@ op_assign
 l_string|&quot;Pro Audio Spectrum&quot;
 comma
 l_int|0
+comma
+l_int|0
+comma
+id|SNDCARD_PAS
 )brace
 comma
 id|pas_midi_open

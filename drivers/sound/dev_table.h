@@ -51,6 +51,10 @@ r_struct
 id|address_info
 id|config
 suffix:semicolon
+DECL|member|enabled
+r_int
+id|enabled
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/** UWM -- new  MIDI structure here.. **/
@@ -132,6 +136,9 @@ id|count
 comma
 r_int
 id|intrflag
+comma
+r_int
+id|dma_restart
 )paren
 suffix:semicolon
 DECL|member|start_input
@@ -153,6 +160,9 @@ id|count
 comma
 r_int
 id|intrflag
+comma
+r_int
+id|dma_restart
 )paren
 suffix:semicolon
 DECL|member|ioctl
@@ -915,7 +925,7 @@ id|supported_drivers
 )braket
 op_assign
 (brace
-macro_line|#ifndef EXCLUDE_MPU401
+macro_line|#if !defined(EXCLUDE_MPU401) &amp;&amp; !defined(EXCLUDE_MIDI)
 (brace
 id|SNDCARD_MPU401
 comma
@@ -932,6 +942,8 @@ id|MPU_IRQ
 comma
 l_int|0
 )brace
+comma
+id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
@@ -952,6 +964,8 @@ id|GUS_IRQ
 comma
 id|GUS_DMA
 )brace
+comma
+id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
@@ -972,6 +986,8 @@ id|PAS_IRQ
 comma
 id|PAS_DMA
 )brace
+comma
+id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
@@ -992,6 +1008,30 @@ id|SBC_IRQ
 comma
 id|SBC_DMA
 )brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
+macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_AUDIO)
+(brace
+id|SNDCARD_SB16
+comma
+l_string|&quot;SoundBlaster16&quot;
+comma
+id|sb16_dsp_init
+comma
+id|sb16_dsp_detect
+comma
+(brace
+id|SBC_BASE
+comma
+id|SBC_IRQ
+comma
+id|SB16_DMA
+)brace
+comma
+id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
@@ -1012,6 +1052,8 @@ l_int|0
 comma
 l_int|0
 )brace
+comma
+id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
@@ -1021,6 +1063,8 @@ comma
 l_string|&quot;*?*&quot;
 comma
 l_int|NULL
+comma
+l_int|0
 )brace
 )brace
 suffix:semicolon
@@ -1209,6 +1253,16 @@ id|mem_start
 )paren
 suffix:semicolon
 multiline_comment|/* */
+r_struct
+id|address_info
+op_star
+id|sound_getconf
+c_func
+(paren
+r_int
+id|card_type
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/* If external to me.... :) */

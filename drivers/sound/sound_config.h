@@ -20,6 +20,10 @@ mdefine_line|#define EXCLUDE_YM3812
 DECL|macro|EXCLUDE_OPL3
 mdefine_line|#define EXCLUDE_OPL3
 macro_line|#endif
+macro_line|#ifndef SND_DEFAULT_ENABLE
+DECL|macro|SND_DEFAULT_ENABLE
+mdefine_line|#define SND_DEFAULT_ENABLE&t;1
+macro_line|#endif
 multiline_comment|/** UWM - new MIDI stuff **/
 macro_line|#ifdef EXCLUDE_CHIP_MIDI
 DECL|macro|EXCLUDE_PRO_MIDI
@@ -43,6 +47,10 @@ macro_line|#endif
 macro_line|#ifndef SBC_DMA
 DECL|macro|SBC_DMA
 mdefine_line|#define SBC_DMA&t;&t;1
+macro_line|#endif
+macro_line|#ifndef SB16_DMA
+DECL|macro|SB16_DMA
+mdefine_line|#define SB16_DMA&t;6
 macro_line|#endif
 macro_line|#ifndef PAS_BASE
 DECL|macro|PAS_BASE
@@ -79,6 +87,10 @@ macro_line|#endif
 macro_line|#ifndef MPU_IRQ
 DECL|macro|MPU_IRQ
 mdefine_line|#define MPU_IRQ&t;&t;6
+macro_line|#endif
+macro_line|#ifndef MAX_REALTIME_FACTOR
+DECL|macro|MAX_REALTIME_FACTOR
+mdefine_line|#define MAX_REALTIME_FACTOR&t;4
 macro_line|#endif
 multiline_comment|/************* PCM DMA buffer sizes *******************/
 multiline_comment|/* If you are using high playback or recording speeds, the default buffersize&n;   is too small. DSP_BUFFSIZE must be 64k or less.&n;&n;   A rule of thumb is 64k for PAS16, 32k for PAS+, 16k for SB Pro and&n;   4k for SB.&n;&n;   If you change the DSP_BUFFSIZE, don&squot;t modify this file.&n;   Use the make config command instead. */
@@ -127,13 +139,13 @@ mdefine_line|#define ON&t;&t;1
 DECL|macro|OFF
 mdefine_line|#define OFF&t;&t;0
 DECL|macro|MAX_DSP_DEV
-mdefine_line|#define MAX_DSP_DEV&t;3
+mdefine_line|#define MAX_DSP_DEV&t;4
 DECL|macro|MAX_MIXER_DEV
 mdefine_line|#define MAX_MIXER_DEV&t;1
 DECL|macro|MAX_SYNTH_DEV
 mdefine_line|#define MAX_SYNTH_DEV&t;3
 DECL|macro|MAX_MIDI_DEV
-mdefine_line|#define MAX_MIDI_DEV&t;3
+mdefine_line|#define MAX_MIDI_DEV&t;4
 DECL|struct|fileinfo
 r_struct
 id|fileinfo

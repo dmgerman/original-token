@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v0.03 11/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v0.04 11/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -259,6 +259,7 @@ l_int|0xF0
 )paren
 op_eq
 l_int|0x20
+multiline_comment|/* Check chip ID nibble. */
 op_logical_and
 id|ultraprobe1
 c_func
@@ -321,36 +322,9 @@ id|num_pages
 suffix:semicolon
 r_int
 r_char
-id|reg1
-comma
 id|eeprom_irq
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Second probe check: at most one bit can be set in register 1. */
-id|reg1
-op_assign
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reg1
-op_amp
-(paren
-id|reg1
-op_minus
-l_int|1
-)paren
-)paren
-r_return
-id|ENODEV
 suffix:semicolon
 multiline_comment|/* Select the station address register set. */
 id|outb

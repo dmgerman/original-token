@@ -19,22 +19,24 @@ DECL|macro|OPT_HIGHLEVEL
 mdefine_line|#define OPT_HIGHLEVEL   5
 DECL|macro|OPT_SBPRO
 mdefine_line|#define OPT_SBPRO&t;5
+DECL|macro|OPT_SB16
+mdefine_line|#define OPT_SB16&t;6
 DECL|macro|OPT_AUDIO
-mdefine_line|#define OPT_AUDIO&t;6
+mdefine_line|#define OPT_AUDIO&t;7
 DECL|macro|OPT_MIDI_AUTO
-mdefine_line|#define OPT_MIDI_AUTO&t;7
+mdefine_line|#define OPT_MIDI_AUTO&t;8
 DECL|macro|OPT_MIDI
-mdefine_line|#define OPT_MIDI&t;8
+mdefine_line|#define OPT_MIDI&t;9
 DECL|macro|OPT_YM3812_AUTO
-mdefine_line|#define OPT_YM3812_AUTO&t;9&t;/* Select this automaticly if user selects&n;&t;&t;&t;&t; * MIDI or AdLib driver */
+mdefine_line|#define OPT_YM3812_AUTO&t;10&t;/* Select this automaticly if user selects&n;&t;&t;&t;&t; * MIDI or AdLib driver */
 DECL|macro|OPT_YM3812
-mdefine_line|#define OPT_YM3812&t;10&t;/* Select this if the previous one was not&n;&t;&t;&t;&t; * selected */
+mdefine_line|#define OPT_YM3812&t;11&t;/* Select this if the previous one was not&n;&t;&t;&t;&t; * selected */
 DECL|macro|OPT_SEQUENCER
-mdefine_line|#define OPT_SEQUENCER&t;11
+mdefine_line|#define OPT_SEQUENCER&t;12
 DECL|macro|OPT_CHIP_MIDI
-mdefine_line|#define OPT_CHIP_MIDI   12&t;/* New support added at UW - Milwauklee UW -&n;&t;&t;&t;&t; * Milwauklee */
+mdefine_line|#define OPT_CHIP_MIDI   13&t;/* New support added at UW - Milwauklee UW -&n;&t;&t;&t;&t; * Milwauklee */
 DECL|macro|OPT_LAST
-mdefine_line|#define OPT_LAST&t;11
+mdefine_line|#define OPT_LAST&t;12
 DECL|macro|ANY_DEVS
 mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_SEQUENCER)|B(OPT_GUS)|B(OPT_MPU401))
 r_typedef
@@ -159,6 +161,29 @@ id|OPT_PAS
 )paren
 comma
 l_string|&quot;SBPRO&quot;
+comma
+l_int|1
+comma
+l_int|0
+)brace
+comma
+(brace
+id|B
+(paren
+id|OPT_SB
+)paren
+op_or
+id|B
+(paren
+id|OPT_SBPRO
+)paren
+comma
+id|B
+(paren
+id|OPT_PAS
+)paren
+comma
+l_string|&quot;SB16&quot;
 comma
 l_int|1
 comma
@@ -340,7 +365,9 @@ l_string|&quot;Gravis Ultrasound support&quot;
 comma
 l_string|&quot;MPU-401 support&quot;
 comma
-l_string|&quot;SoundBlaster Pro support (mixer)&quot;
+l_string|&quot;SoundBlaster Pro support (required for SB16 also)&quot;
+comma
+l_string|&quot;SoundBlaster 16 support&quot;
 comma
 l_string|&quot;digitized voice support&quot;
 comma
@@ -1240,6 +1267,7 @@ comma
 l_string|&quot;&bslash;nDMA channel for SoundBlaster?&bslash;n&quot;
 l_string|&quot;For SB 1.0, 1.5 and 2.0 this MUST be 1&bslash;n&quot;
 l_string|&quot;SB Pro supports DMA channels 0, 1 and 3 (jumper)&bslash;n&quot;
+l_string|&quot;For SB16 give the 8 bit DMA# here&bslash;n&quot;
 l_string|&quot;The default value is 1&bslash;n&quot;
 l_string|&quot;Enter the value: &quot;
 )paren
@@ -1258,11 +1286,7 @@ c_cond
 (paren
 id|num
 template_param
-l_int|7
-op_logical_or
-id|num
-op_eq
-l_int|4
+l_int|3
 )paren
 (brace
 id|fprintf
@@ -1289,6 +1313,73 @@ suffix:semicolon
 id|printf
 (paren
 l_string|&quot;#define SBC_DMA %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|selected_options
+op_amp
+id|B
+(paren
+id|OPT_SB16
+)paren
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;n16 bit DMA channel for SoundBlaster 16?&bslash;n&quot;
+l_string|&quot;Possible values are 5, 6 or 7&bslash;n&quot;
+l_string|&quot;The default value is 6&bslash;n&quot;
+l_string|&quot;Enter the value: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%d&quot;
+comma
+l_int|6
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+template_param
+l_int|7
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;*** Illegal input! ***&bslash;n&quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+l_int|6
+suffix:semicolon
+)brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;SoundBlaster DMA set to %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define SB16_DMA %d&bslash;n&quot;
 comma
 id|num
 )paren

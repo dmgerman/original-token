@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioclts and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;*/
+multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioclts and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;*/
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 multiline_comment|/* #define REALLY_SLOW_IO  */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -49,6 +50,20 @@ id|mcd_bn
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+DECL|variable|mcd_port
+r_static
+r_int
+id|mcd_port
+op_assign
+id|MCD_BASE_ADDR
+suffix:semicolon
+DECL|variable|mcd_irq
+r_static
+r_int
+id|mcd_irq
+op_assign
+id|MCD_INTR_NR
 suffix:semicolon
 DECL|variable|McdTimeout
 DECL|variable|McdTries
@@ -268,6 +283,55 @@ op_star
 id|result
 )paren
 suffix:semicolon
+DECL|function|mcd_setup
+r_void
+id|mcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|0
+)braket
+OG
+l_int|0
+)paren
+id|mcd_port
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|0
+)braket
+OG
+l_int|1
+)paren
+id|mcd_irq
+op_assign
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+)brace
 r_int
 DECL|function|check_mcd_media_change
 id|check_mcd_media_change
@@ -285,6 +349,11 @@ id|retval
 comma
 id|target
 suffix:semicolon
+macro_line|#if 1&t; /* the below is not reliable */
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif  
 id|target
 op_assign
 id|MINOR
@@ -304,7 +373,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Mitsumi CD-ROM request error: invalid device.&bslash;n&quot;
+l_string|&quot;mcd: Mitsumi CD-ROM request error: invalid device.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -355,7 +424,7 @@ l_int|0
 suffix:semicolon
 id|retry
 OL
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|retry
 op_increment
@@ -379,7 +448,7 @@ op_assign
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 suffix:semicolon
 r_if
@@ -424,7 +493,7 @@ l_int|0
 suffix:semicolon
 id|retry
 OL
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|retry
 op_increment
@@ -443,7 +512,9 @@ op_assign
 id|getMcdStatus
 c_func
 (paren
-l_int|200
+l_int|2
+op_star
+id|MCD_STATUS_DELAY
 )paren
 suffix:semicolon
 r_if
@@ -658,7 +729,7 @@ op_assign
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 suffix:semicolon
 multiline_comment|/* should we do anything if it fails? */
@@ -701,7 +772,7 @@ op_assign
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 suffix:semicolon
 r_if
@@ -964,7 +1035,7 @@ op_assign
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 suffix:semicolon
 id|audioStatus
@@ -1703,7 +1774,7 @@ op_assign
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 suffix:semicolon
 r_if
@@ -1787,7 +1858,7 @@ op_assign
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 suffix:semicolon
 id|printk
@@ -2084,7 +2155,7 @@ suffix:semicolon
 )brace
 id|McdTries
 op_assign
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|mcd_start
 c_func
@@ -2112,7 +2183,9 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;mcd: read failed after 3 tries&bslash;n&quot;
+l_string|&quot;mcd: read failed after %d tries&bslash;n&quot;
+comma
+id|MCD_RETRY_ATTEMPTS
 )paren
 suffix:semicolon
 id|end_request
@@ -2151,7 +2224,7 @@ suffix:semicolon
 multiline_comment|/* get status */
 id|McdTimeout
 op_assign
-l_int|100
+id|MCD_STATUS_DELAY
 suffix:semicolon
 id|SET_TIMER
 c_func
@@ -2889,9 +2962,33 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get major %d for Mitsumi CD-ROM&bslash;n&quot;
+l_string|&quot;mcd: Unable to get major %d for Mitsumi CD-ROM&bslash;n&quot;
 comma
 id|MAJOR_NR
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|mcd_port
+comma
+l_int|4
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;mcd: Init failed, I/O port (%X) already in use&bslash;n&quot;
+comma
+id|mcd_port
 )paren
 suffix:semicolon
 r_return
@@ -3014,7 +3111,11 @@ l_int|1000000
 id|printk
 c_func
 (paren
-l_string|&quot;mitsumi init failed...&bslash;n&quot;
+l_string|&quot;mcd: Init failed. No mcd device at 0x%x irq %d&bslash;n&quot;
+comma
+id|mcd_port
+comma
+id|mcd_irq
 )paren
 suffix:semicolon
 r_return
@@ -3075,7 +3176,9 @@ id|count
 id|printk
 c_func
 (paren
-l_string|&quot;mitsumi get version failed...&bslash;n&quot;
+l_string|&quot;mcd: mitsumi get version failed at 0x%d&bslash;n&quot;
+comma
+id|mcd_port
 )paren
 suffix:semicolon
 r_return
@@ -3085,7 +3188,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Mitsumi version : %02X %c %x&bslash;n&quot;
+l_string|&quot;mcd: Mitsumi version : %02X %c %x&bslash;n&quot;
 comma
 id|result
 (braket
@@ -3147,7 +3250,7 @@ id|mcd_sigaction
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get IRQ%d for Mitsumi CD-ROM&bslash;n&quot;
+l_string|&quot;mcd: Unable to get IRQ%d for Mitsumi CD-ROM&bslash;n&quot;
 comma
 id|MCD_INTR_NR
 )paren
@@ -3156,6 +3259,14 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+id|snarf_region
+c_func
+(paren
+id|mcd_port
+comma
+l_int|4
+)paren
+suffix:semicolon
 id|mcdPresent
 op_assign
 l_int|1
@@ -3163,7 +3274,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Mitsumi CD-ROM Drive present&bslash;n&quot;
+l_string|&quot;mcd: Mitsumi CD-ROM Drive present at addr %x, irq %d&bslash;n&quot;
+comma
+id|mcd_port
+comma
+id|mcd_irq
 )paren
 suffix:semicolon
 r_return
@@ -3800,7 +3915,7 @@ l_int|0
 suffix:semicolon
 id|retry
 OL
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|retry
 op_increment
@@ -3824,7 +3939,7 @@ c_cond
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 op_ne
 op_minus
@@ -3838,7 +3953,7 @@ c_cond
 (paren
 id|retry
 op_ge
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 )paren
 r_return
 op_minus
@@ -4100,7 +4215,7 @@ l_int|0
 suffix:semicolon
 id|retry
 OL
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|retry
 op_increment
@@ -4124,7 +4239,7 @@ c_cond
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 op_ne
 op_minus
@@ -4138,7 +4253,7 @@ c_cond
 (paren
 id|retry
 op_ge
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 )paren
 r_return
 op_minus
@@ -4378,7 +4493,7 @@ l_int|0
 suffix:semicolon
 id|retry
 OL
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|retry
 op_increment
@@ -4402,7 +4517,7 @@ c_cond
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 op_ne
 op_minus
@@ -4416,7 +4531,7 @@ c_cond
 (paren
 id|retry
 op_ge
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 )paren
 r_return
 op_minus
@@ -4431,7 +4546,7 @@ l_int|0
 suffix:semicolon
 id|retry
 OL
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|retry
 op_increment
@@ -4468,7 +4583,7 @@ c_cond
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 op_ne
 op_minus
@@ -4482,7 +4597,7 @@ c_cond
 (paren
 id|retry
 op_ge
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 )paren
 r_return
 op_minus
@@ -4594,7 +4709,7 @@ l_int|0
 suffix:semicolon
 id|retry
 OL
-l_int|3
+id|MCD_RETRY_ATTEMPTS
 suffix:semicolon
 id|retry
 op_increment
@@ -4630,7 +4745,7 @@ c_cond
 id|getMcdStatus
 c_func
 (paren
-l_int|100
+id|MCD_STATUS_DELAY
 )paren
 op_ne
 op_minus

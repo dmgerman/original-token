@@ -75,7 +75,7 @@ mdefine_line|#define SET_ABORT_FLAG(q, f) f.aborting = 1
 DECL|macro|TIMED_OUT
 mdefine_line|#define TIMED_OUT(q, f) (f.mode &amp; WK_TIMEOUT)
 DECL|macro|DO_SLEEP
-mdefine_line|#define DO_SLEEP(q, f, time_limit)&t;&bslash;&n;&t;{ unsigned long tl;&bslash;&n;&t;  if (time_limit) tl = current-&gt;timeout = jiffies + (time_limit); &bslash;&n;&t;     else tl = 0; &bslash;&n;&t;  f.mode = WK_SLEEP;interruptible_sleep_on(&amp;q); &bslash;&n;&t;  if (!(f.mode &amp; WK_WAKEUP)) &bslash;&n;&t;   { &bslash;&n;&t;     if (current-&gt;signal &amp; ~current-&gt;blocked) &bslash;&n;&t;        f.aborting = 1; &bslash;&n;&t;     else &bslash;&n;&t;        if (jiffies &gt;= tl) f.mode |= WK_TIMEOUT; &bslash;&n;&t;   } &bslash;&n;&t;  f.mode &amp;= ~WK_SLEEP; &bslash;&n;&t;}
+mdefine_line|#define DO_SLEEP(q, f, time_limit)&t;&bslash;&n;&t;{ unsigned long tl;&bslash;&n;&t;  if (time_limit) tl = current-&gt;timeout = jiffies + (time_limit); &bslash;&n;&t;     else tl = 0xffffffff; &bslash;&n;&t;  f.mode = WK_SLEEP;interruptible_sleep_on(&amp;q); &bslash;&n;&t;  if (!(f.mode &amp; WK_WAKEUP)) &bslash;&n;&t;   { &bslash;&n;&t;     if (current-&gt;signal &amp; ~current-&gt;blocked) &bslash;&n;&t;        f.aborting = 1; &bslash;&n;&t;     else &bslash;&n;&t;        if (jiffies &gt;= tl) f.mode |= WK_TIMEOUT; &bslash;&n;&t;   } &bslash;&n;&t;  f.mode &amp;= ~WK_SLEEP; &bslash;&n;&t;}
 DECL|macro|SOMEONE_WAITING
 mdefine_line|#define SOMEONE_WAITING(f) (f.mode &amp; WK_SLEEP)
 DECL|macro|WAKE_UP
@@ -100,6 +100,12 @@ DECL|macro|KERNEL_MALLOC
 mdefine_line|#define KERNEL_MALLOC(nbytes)&t;kmalloc(nbytes, GFP_KERNEL)
 DECL|macro|KERNEL_FREE
 mdefine_line|#define KERNEL_FREE(addr)&t;kfree(addr)
+multiline_comment|/*&n; * The macro DEFINE_TIMER defines variables for the ACTIVATE_TIMER if&n; * required. The name is the variable/name to be used and the proc is&n; * the procedure to be called when the timer expires.&n; */
+DECL|macro|DEFINE_TIMER
+mdefine_line|#define DEFINE_TIMER(name, proc) &bslash;&n;  static struct timer_list name = &bslash;&n;  {NULL, 0, 0, proc}
+multiline_comment|/*&n; * The ACTIVATE_TIMER requests system to call &squot;proc&squot; after &squot;time&squot; ticks.&n; */
+DECL|macro|ACTIVATE_TIMER
+mdefine_line|#define ACTIVATE_TIMER(name, proc, time) &bslash;&n;  {name.expires = time; &bslash;&n;  add_timer (&amp;name);}
 DECL|macro|INB
 mdefine_line|#define INB&t;inb
 DECL|macro|OUTB

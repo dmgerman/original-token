@@ -2021,7 +2021,7 @@ op_ne
 l_int|1
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;Multi volume CD somehow got mounted.&bslash;n&quot;
