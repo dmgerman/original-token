@@ -5496,7 +5496,7 @@ id|x25_accept
 comma
 id|x25_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|x25_ioctl
 comma

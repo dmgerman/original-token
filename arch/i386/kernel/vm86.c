@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -54,9 +56,19 @@ op_star
 id|regs
 )paren
 (brace
+r_struct
+id|pt_regs
+op_star
+id|ret
+suffix:semicolon
 r_int
 r_int
 id|tmp
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -155,8 +167,17 @@ id|current-&gt;saved_kernel_stack
 op_assign
 l_int|0
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|KVM86-&gt;regs32
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|mark_screen_rdonly
@@ -406,20 +427,31 @@ r_struct
 id|task_struct
 op_star
 id|tsk
-op_assign
-id|current
 suffix:semicolon
 r_int
 id|tmp
+comma
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|tsk
+op_assign
+id|current
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|tsk-&gt;saved_kernel_stack
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 id|tmp
 op_assign
@@ -458,14 +490,18 @@ op_amp
 id|info.regs.VM86_REGS_PART2
 )paren
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|tmp
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 id|memset
 c_func
@@ -511,10 +547,21 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* we never return here */
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|sys_vm86
 id|asmlinkage
@@ -541,11 +588,20 @@ r_struct
 id|task_struct
 op_star
 id|tsk
-op_assign
-id|current
 suffix:semicolon
 r_int
 id|tmp
+comma
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|tsk
+op_assign
+id|current
 suffix:semicolon
 r_switch
 c_cond
@@ -565,7 +621,8 @@ suffix:colon
 r_case
 id|VM86_GET_AND_RESET_IRQ
 suffix:colon
-r_return
+id|ret
+op_assign
 id|do_vm86_irq_handling
 c_func
 (paren
@@ -577,23 +634,34 @@ r_int
 id|v86
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 r_case
 id|VM86_PLUS_INSTALL_CHECK
 suffix:colon
 multiline_comment|/* NOTE: on old vm86 stuff this will return the error&n;&t;&t;&t;   from verify_area(), because the subfunction is&n;&t;&t;&t;   interpreted as (invalid) address to vm86_struct.&n;&t;&t;&t;   So the installation check works.&n;&t;&t;&t; */
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* we come here only for functions VM86_ENTER, VM86_ENTER_NO_BYPASS */
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|tsk-&gt;saved_kernel_stack
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 id|tmp
 op_assign
@@ -632,14 +700,18 @@ op_amp
 id|info.regs.VM86_REGS_PART2
 )paren
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|tmp
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 id|info.regs32
 op_assign
@@ -673,10 +745,21 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* we never return here */
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|do_sys_vm86
 r_static
@@ -814,6 +897,11 @@ c_func
 id|tsk
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -872,6 +960,11 @@ suffix:semicolon
 id|regs32-&gt;eax
 op_assign
 id|retval
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -1395,6 +1488,14 @@ r_int
 id|trapno
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1455,10 +1556,18 @@ id|regs
 )paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|1
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1466,8 +1575,8 @@ id|trapno
 op_ne
 l_int|1
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* we let this handle by the calling routine */
 r_if
@@ -1508,8 +1617,15 @@ id|current-&gt;tss.error_code
 op_assign
 id|error_code
 suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 DECL|function|handle_vm86_fault
@@ -1543,7 +1659,12 @@ suffix:semicolon
 DECL|macro|CHECK_IF_IN_TRAP
 mdefine_line|#define CHECK_IF_IN_TRAP &bslash;&n;&t;if (VMPI.vm86dbg_active &amp;&amp; VMPI.vm86dbg_TFpendig) &bslash;&n;&t;&t;pushw(ssp,sp,popw(ssp,sp) | TF_MASK);
 DECL|macro|VM86_FAULT_RETURN
-mdefine_line|#define VM86_FAULT_RETURN &bslash;&n;&t;if (VMPI.force_return_for_pic  &amp;&amp; (VEFLAGS &amp; IF_MASK)) &bslash;&n;&t;&t;return_to_32bit(regs, VM86_PICRETURN); &bslash;&n;&t;return;
+mdefine_line|#define VM86_FAULT_RETURN &bslash;&n;&t;if (VMPI.force_return_for_pic  &amp;&amp; (VEFLAGS &amp; IF_MASK)) &bslash;&n;&t;&t;return_to_32bit(regs, VM86_PICRETURN); &bslash;&n;&t;goto out;
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|csp
 op_assign
 (paren
@@ -1908,7 +2029,8 @@ comma
 id|sp
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* iret */
@@ -2014,6 +2136,13 @@ id|VM86_UNKNOWN
 )paren
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* ---------------- vm86 special IRQ passing stuff ----------------- */
 DECL|macro|VM86_IRQNAME
@@ -2082,6 +2211,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -2116,16 +2250,9 @@ id|intno
 dot
 id|tsk
 )paren
-(brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
+r_goto
+id|out
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|irqbits
 op_or_assign
 id|irq_bit
@@ -2161,10 +2288,17 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* else user will poll for IRQs */
+id|out
+suffix:colon
 id|restore_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

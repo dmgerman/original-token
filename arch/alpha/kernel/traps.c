@@ -36,6 +36,8 @@ suffix:semicolon
 r_int
 r_int
 id|sp
+comma
+id|ra
 suffix:semicolon
 r_int
 r_int
@@ -77,6 +79,19 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+id|__get_user
+c_func
+(paren
+id|ra
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|sp
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -90,11 +105,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rp = [&lt;%016lx&gt;] sp = %016lx&bslash;n&quot;
+l_string|&quot;rp = [&lt;%016lx&gt;] ra = [&lt;%016lx&gt;]&bslash;n&quot;
 comma
 id|regs-&gt;r26
 comma
-id|sp
+id|ra
 )paren
 suffix:semicolon
 id|printk
@@ -269,21 +284,21 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;r26= %016lx  r27= %016lx&bslash;n&quot;
-comma
-id|regs-&gt;r26
+l_string|&quot;r27= %016lx  r28= %016lx&bslash;n&quot;
 comma
 id|regs-&gt;r27
+comma
+id|regs-&gt;r28
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;r28= %016lx  r29= %016lx&bslash;n&quot;
-comma
-id|regs-&gt;r28
+l_string|&quot;gp = %016lx  sp = %016lx&bslash;n&quot;
 comma
 id|regs-&gt;gp
+comma
+id|sp
 )paren
 suffix:semicolon
 id|printk
@@ -316,6 +331,26 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_int
+r_int
+id|insn
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|__get_user
+c_func
+(paren
+id|insn
+comma
+id|pc
+op_plus
+id|i
+)paren
+)paren
+r_break
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -328,10 +363,7 @@ l_char|&squot; &squot;
 suffix:colon
 l_char|&squot;&lt;&squot;
 comma
-id|pc
-(braket
-id|i
-)braket
+id|insn
 comma
 id|i
 ques
@@ -341,6 +373,7 @@ suffix:colon
 l_char|&squot;&gt;&squot;
 )paren
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

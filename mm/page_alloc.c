@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/mm/page_alloc.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Swap reorganised 29.12.95, Stephen Tweedie&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -29,8 +30,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Free area management&n; *&n; * The free_area_list arrays point to the queue heads of the free areas&n; * of different sizes&n; */
+macro_line|#if CONFIG_AP1000
+multiline_comment|/* the AP+ needs to allocate 8MB contiguous, aligned chunks of ram&n;   for the ring buffers */
+DECL|macro|NR_MEM_LISTS
+mdefine_line|#define NR_MEM_LISTS 12
+macro_line|#else
 DECL|macro|NR_MEM_LISTS
 mdefine_line|#define NR_MEM_LISTS 6
+macro_line|#endif
 multiline_comment|/* The start of this MUST match the start of &quot;struct page&quot; */
 DECL|struct|free_area_struct
 r_struct
@@ -769,12 +776,18 @@ comma
 id|nr
 comma
 (paren
+r_int
+r_int
+)paren
+(paren
+(paren
 id|PAGE_SIZE
 op_rshift
 l_int|10
 )paren
 op_lshift
 id|order
+)paren
 )paren
 suffix:semicolon
 )brace

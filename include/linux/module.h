@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Dynamic loading of modules into the kernel.&n; *&n; * 
 macro_line|#ifndef _LINUX_MODULE_H
 DECL|macro|_LINUX_MODULE_H
 mdefine_line|#define _LINUX_MODULE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef __GENKSYMS__
 DECL|macro|_set_ver
 macro_line|#  define _set_ver(sym) sym
@@ -20,7 +21,7 @@ multiline_comment|/* Don&squot;t need to bring in all of uaccess.h just for this
 r_struct
 id|exception_table_entry
 suffix:semicolon
-multiline_comment|/* Used by get_kernel_syms, which is depreciated.  */
+multiline_comment|/* Used by get_kernel_syms, which is obsolete.  */
 DECL|struct|kernel_sym
 r_struct
 id|kernel_sym
@@ -206,6 +207,16 @@ id|module_persist
 op_star
 id|persist_end
 suffix:semicolon
+DECL|member|can_unload
+r_int
+(paren
+op_star
+id|can_unload
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|module_info
@@ -226,6 +237,10 @@ DECL|member|flags
 r_int
 r_int
 id|flags
+suffix:semicolon
+DECL|member|usecount
+r_int
+id|usecount
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -253,12 +268,19 @@ DECL|macro|QM_SYMBOLS
 mdefine_line|#define QM_SYMBOLS&t;4
 DECL|macro|QM_INFO
 mdefine_line|#define QM_INFO&t;&t;5
+multiline_comment|/* When struct module is extended, we must test whether the new member&n;   is present in the header received from insmod before we can use it.  &n;   This function returns true if the member is present.  */
+DECL|macro|mod_member_present
+mdefine_line|#define mod_member_present(mod,member) &t;&t;&t;&t;&t;&bslash;&n;&t;((unsigned long)(&amp;((struct module *)0L)-&gt;member + 1)&t;&t;&bslash;&n;&t; &lt;= (mod)-&gt;size_of_struct)
 multiline_comment|/* Backwards compatibility definition.  */
 DECL|macro|GET_USE_COUNT
 mdefine_line|#define GET_USE_COUNT(module)&t;((module)-&gt;usecount)
-multiline_comment|/* When the struct module is extended, new values must be examined using&n;   this macro.  It returns a pointer to the member if available, NULL&n;   otherwise. */
-DECL|macro|mod_opt_member
-mdefine_line|#define mod_opt_member(mod,member) &t;&t;&t;&t;&t;&bslash;&n;&t;({ struct module *_mod = (mod);&t;&t;&t;&t;&t;&bslash;&n;&t;   __typeof__(_mod-&gt;member) *_mem = &amp;_mod-&gt;member;&t;&t;&bslash;&n;&t;   ((char *)(_mem+1) &gt; (char *)_mod + _mod-&gt;size_of_struct&t;&bslash;&n;&t;    ? (__typeof__(_mod-&gt;member) *)NULL : _mem);&t;&t;&t;&bslash;&n;&t;})
+multiline_comment|/* Poke the use count of a module.  */
+DECL|macro|__MOD_INC_USE_COUNT
+mdefine_line|#define __MOD_INC_USE_COUNT(mod)&t;&t;&t;&t;&t;&bslash;&n;&t;((mod)-&gt;usecount++, (mod)-&gt;flags |= MOD_VISITED|MOD_USED_ONCE)
+DECL|macro|__MOD_DEC_USE_COUNT
+mdefine_line|#define __MOD_DEC_USE_COUNT(mod)&t;&t;&t;&t;&t;&bslash;&n;&t;((mod)-&gt;usecount--, (mod)-&gt;flags |= MOD_VISITED)
+DECL|macro|__MOD_IN_USE
+mdefine_line|#define __MOD_IN_USE(mod)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(mod_member_present((mod), can_unload) &amp;&amp; (mod)-&gt;can_unload&t;&bslash;&n;&t; ? (mod)-&gt;can_unload() : (mod)-&gt;usecount)
 multiline_comment|/* Indirect stringification.  */
 DECL|macro|__MODULE_STRING_1
 mdefine_line|#define __MODULE_STRING_1(x)&t;#x
@@ -293,11 +315,11 @@ id|module
 id|__this_module
 suffix:semicolon
 DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT &t;&t;&t;&t;&t;&bslash;&n;&t;(__this_module.usecount++,&t;&t;&t;&t;&bslash;&n;&t; __this_module.flags |= MOD_VISITED|MOD_USED_ONCE)
+mdefine_line|#define MOD_INC_USE_COUNT&t;__MOD_INC_USE_COUNT(&amp;__this_module)
 DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT&t;&t;&t;&t;&t;&bslash;&n;&t;(__this_module.usecount--, __this_module.flags |= MOD_VISITED)
+mdefine_line|#define MOD_DEC_USE_COUNT&t;__MOD_DEC_USE_COUNT(&amp;__this_module)
 DECL|macro|MOD_IN_USE
-mdefine_line|#define MOD_IN_USE&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(__this_module.usecount != 0)
+mdefine_line|#define MOD_IN_USE&t;&t;__MOD_IN_USE(&amp;__this_module)
 macro_line|#ifndef __NO_VERSION__
 macro_line|#include &lt;linux/version.h&gt;
 DECL|variable|__module_kernel_version
@@ -373,13 +395,6 @@ macro_line|#endif /* MODULE */
 multiline_comment|/* Export a symbol either from the kernel or a module.&n;&n;   In the kernel, the symbol is added to the kernel&squot;s global symbol table.&n;&n;   In a module, it controls which variables are exported.  If no&n;   variables are explicitly exported, the action is controled by the&n;   insmod -[xX] flags.  Otherwise, only the variables listed are exported.&n;   This obviates the need for the old register_symtab() function.  */
 macro_line|#if defined(__GENKSYMS__)
 multiline_comment|/* We want the EXPORT_SYMBOL tag left intact for recognition.  */
-macro_line|#elif !defined(EXPORT_SYMTAB) &amp;&amp; defined(CONFIG_MODULES)
-DECL|macro|__EXPORT_SYMBOL
-mdefine_line|#define __EXPORT_SYMBOL(sym,str)   error EXPORT_SYMTAB_not_defined
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(var)&t;   error EXPORT_SYMTAB_not_defined
-DECL|macro|EXPORT_SYMBOL_NOVERS
-mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)  error EXPORT_SYMTAB_not_defined
 macro_line|#elif !defined(AUTOCONF_INCLUDED)
 DECL|macro|__EXPORT_SYMBOL
 mdefine_line|#define __EXPORT_SYMBOL(sym,str)   error config_must_be_included_before_module
@@ -394,6 +409,14 @@ DECL|macro|EXPORT_SYMBOL
 mdefine_line|#define EXPORT_SYMBOL(var)
 DECL|macro|EXPORT_SYMBOL_NOVERS
 mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)
+macro_line|#elif !defined(EXPORT_SYMTAB)
+multiline_comment|/* If things weren&squot;t set up in the Makefiles to get EXPORT_SYMTAB defined,&n;   then they weren&squot;t set up to run genksyms properly so MODVERSIONS breaks.  */
+DECL|macro|__EXPORT_SYMBOL
+mdefine_line|#define __EXPORT_SYMBOL(sym,str)   error EXPORT_SYMTAB_not_defined
+DECL|macro|EXPORT_SYMBOL
+mdefine_line|#define EXPORT_SYMBOL(var)&t;   error EXPORT_SYMTAB_not_defined
+DECL|macro|EXPORT_SYMBOL_NOVERS
+mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)  error EXPORT_SYMTAB_not_defined
 macro_line|#else
 DECL|macro|__EXPORT_SYMBOL
 mdefine_line|#define __EXPORT_SYMBOL(sym, str)&t;&t;&t;&bslash;&n;const char __kstrtab_##sym[]&t;&t;&t;&t;&bslash;&n;__attribute__((section(&quot;.kstrtab&quot;))) = str;&t;&t;&bslash;&n;const struct module_symbol __ksymtab_##sym &t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&bslash;&n;{ (unsigned long)&amp;sym, __kstrtab_##sym }

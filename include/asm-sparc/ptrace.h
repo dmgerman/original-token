@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.23 1996/11/25 03:30:24 ecd Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.24 1997/01/06 06:53:23 davem Exp $ */
 macro_line|#ifndef _SPARC_PTRACE_H
 DECL|macro|_SPARC_PTRACE_H
 mdefine_line|#define _SPARC_PTRACE_H
@@ -189,7 +189,7 @@ mdefine_line|#define STACKFRAME_SZ     0x60
 DECL|macro|REGWIN_SZ
 mdefine_line|#define REGWIN_SZ         0x40
 macro_line|#endif
-multiline_comment|/* First generic task_struct offsets. sizeof(task_struct)=1552 */
+multiline_comment|/* First generic task_struct offsets. sizeof(task_struct)=1568 */
 DECL|macro|TASK_STATE
 mdefine_line|#define TASK_STATE        0x000
 DECL|macro|TASK_PRIORITY
@@ -204,6 +204,8 @@ DECL|macro|TASK_SAVED_KSTACK
 mdefine_line|#define TASK_SAVED_KSTACK 0x054
 DECL|macro|TASK_KSTACK_PG
 mdefine_line|#define TASK_KSTACK_PG    0x058
+DECL|macro|TASK_LOCK_DEPTH
+mdefine_line|#define TASK_LOCK_DEPTH   0x618
 multiline_comment|/* Thread stuff. */
 DECL|macro|THREAD_UMASK
 mdefine_line|#define THREAD_UMASK      0x1e0
@@ -237,14 +239,6 @@ DECL|macro|THREAD_SIGSTK
 mdefine_line|#define THREAD_SIGSTK     0x5b8
 DECL|macro|THREAD_FLAGS
 mdefine_line|#define THREAD_FLAGS      0x5c0
-DECL|macro|THREAD_EX_COUNT
-mdefine_line|#define THREAD_EX_COUNT   0x5c8
-DECL|macro|THREAD_EX_PC
-mdefine_line|#define THREAD_EX_PC      0x5cc
-DECL|macro|THREAD_EX_EXPC
-mdefine_line|#define THREAD_EX_EXPC    0x5d0
-DECL|macro|THREAD_EX_ADDR
-mdefine_line|#define THREAD_EX_ADDR    0x5d4
 DECL|macro|THREAD_DS
 mdefine_line|#define THREAD_DS         0x5d8
 DECL|macro|THREAD_MM

@@ -332,6 +332,17 @@ op_assign
 id|sp
 suffix:semicolon
 )brace
+multiline_comment|/* Free all resources held by a thread. */
+r_extern
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
 id|asmlinkage

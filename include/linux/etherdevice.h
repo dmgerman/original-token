@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_ETHERDEVICE_H
 DECL|macro|_LINUX_ETHERDEVICE_H
 mdefine_line|#define _LINUX_ETHERDEVICE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#ifdef __KERNEL__
 r_extern
@@ -106,6 +107,55 @@ id|hh
 )paren
 suffix:semicolon
 r_extern
+r_struct
+id|device
+op_star
+id|init_etherdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_IP_ROUTER
+DECL|function|eth_copy_and_sum
+r_static
+r_void
+r_inline
+id|eth_copy_and_sum
+(paren
+r_struct
+id|sk_buff
+op_star
+id|dest
+comma
+r_int
+r_char
+op_star
+id|src
+comma
+r_int
+id|len
+comma
+r_int
+id|base
+)paren
+(brace
+id|memcpy
+(paren
+id|dest-&gt;data
+comma
+id|src
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+r_extern
 r_void
 id|eth_copy_and_sum
 c_func
@@ -127,20 +177,7 @@ r_int
 id|base
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif&t;/* _LINUX_ETHERDEVICE_H */
 eof

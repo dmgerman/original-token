@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD systemcall interface as&n; * the means of communication with the user level. Currently only the&n; * ext2-filesystem has support for diskquotas. Other filesystems may&n; * be added in future time. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derived systems. The internal implementation is &n; * based on the LINUX inode-subsystem with added complexity of the&n; * diskquota system. This implementation is not based on any BSD&n; * kernel sourcecode.&n; * &n; * Version: $Id: dquot.c,v 5.6 1995/11/15 20:30:27 mvw Exp mvw $&n; * &n; * Author:  Marco van Wieringen &lt;mvw@mcs.ow.nl&gt; &lt;mvw@tnix.net&gt;&n; * &n; * Fixes:   Dmitry Gorodchanin &lt;begemot@bgm.rosprint.net&gt;, 11 Feb 96&n; *&t;    removed race conditions in dqput(), dqget() and iput(). &n; *          Andi Kleen removed all verify_area() calls, 31 Dec 96  &n; *&n; * (C) Copyright 1994, 1995 Marco van Wieringen &n; *&n; */
+multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD systemcall interface as&n; * the means of communication with the user level. Currently only the&n; * ext2-filesystem has support for diskquotas. Other filesystems may&n; * be added in future time. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derived systems. The internal implementation is &n; * based on the LINUX inode-subsystem with added complexity of the&n; * diskquota system. This implementation is not based on any BSD&n; * kernel sourcecode.&n; * &n; * Version: $Id: dquot.c,v 1.11 1997/01/06 06:53:02 davem Exp $&n; * &n; * Author:  Marco van Wieringen &lt;mvw@mcs.ow.nl&gt; &lt;mvw@tnix.net&gt;&n; * &n; * Fixes:   Dmitry Gorodchanin &lt;begemot@bgm.rosprint.net&gt;, 11 Feb 96&n; *&t;    removed race conditions in dqput(), dqget() and iput(). &n; *          Andi Kleen removed all verify_area() calls, 31 Dec 96  &n; *&n; * (C) Copyright 1994, 1995 Marco van Wieringen &n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|__DQUOT_VERSION__
 mdefine_line|#define __DQUOT_VERSION__&t;&quot;dquot_5.6.0&quot;
@@ -5151,6 +5153,17 @@ suffix:semicolon
 id|kdev_t
 id|dev
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|cmds
 op_assign
 id|cmd
@@ -5173,9 +5186,13 @@ id|type
 op_ge
 id|MAXQUOTAS
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EINVAL
+id|EPERM
 suffix:semicolon
 r_switch
 c_cond
@@ -5225,9 +5242,8 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5244,11 +5260,15 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5288,13 +5308,17 @@ op_amp
 id|ino
 )paren
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|dev
 op_assign
 id|ino-&gt;i_rdev
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|ENOTBLK
 suffix:semicolon
 r_if
 c_cond
@@ -5313,9 +5337,8 @@ c_func
 id|ino
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOTBLK
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|iput
@@ -5325,6 +5348,11 @@ id|ino
 )paren
 suffix:semicolon
 )brace
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -5334,7 +5362,8 @@ id|cmds
 r_case
 id|Q_QUOTAON
 suffix:colon
-r_return
+id|ret
+op_assign
 id|quota_on
 c_func
 (paren
@@ -5349,10 +5378,14 @@ op_star
 id|addr
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 r_case
 id|Q_QUOTAOFF
 suffix:colon
-r_return
+id|ret
+op_assign
 id|quota_off
 c_func
 (paren
@@ -5361,10 +5394,14 @@ comma
 id|type
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 r_case
 id|Q_GETQUOTA
 suffix:colon
-r_return
+id|ret
+op_assign
 id|get_quota
 c_func
 (paren
@@ -5381,6 +5418,9 @@ op_star
 )paren
 id|addr
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|Q_SETQUOTA
@@ -5412,7 +5452,8 @@ suffix:semicolon
 r_case
 id|Q_SYNC
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sync_dquots
 c_func
 (paren
@@ -5421,10 +5462,14 @@ comma
 id|type
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 r_case
 id|Q_GETSTATS
 suffix:colon
-r_return
+id|ret
+op_assign
 id|get_stats
 c_func
 (paren
@@ -5433,9 +5478,8 @@ id|addr
 suffix:semicolon
 r_default
 suffix:colon
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|flags
@@ -5453,7 +5497,8 @@ comma
 id|type
 )paren
 )paren
-r_return
+id|ret
+op_assign
 id|set_dqblk
 c_func
 (paren
@@ -5473,9 +5518,21 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-r_return
+r_else
+id|ret
+op_assign
 op_minus
 id|ESRCH
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

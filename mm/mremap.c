@@ -3,11 +3,13 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -576,21 +578,12 @@ id|new_vma
 suffix:semicolon
 id|new_vma
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -715,9 +708,11 @@ r_return
 id|new_addr
 suffix:semicolon
 )brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|new_vma
 )paren
 suffix:semicolon
@@ -757,6 +752,18 @@ id|vm_area_struct
 op_star
 id|vma
 suffix:semicolon
+r_int
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -765,9 +772,8 @@ op_amp
 op_complement
 id|PAGE_MASK
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|old_len
 op_assign
@@ -786,6 +792,10 @@ id|new_len
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Always allow a shrinking remap: that just unmaps&n;&t; * the unnecessary pages..&n;&t; */
+id|ret
+op_assign
+id|addr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -806,11 +816,16 @@ op_minus
 id|new_len
 )paren
 suffix:semicolon
-r_return
-id|addr
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Ok, we need to grow..&n;&t; */
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 id|vma
 op_assign
 id|find_vma
@@ -831,9 +846,8 @@ id|vma-&gt;vm_start
 OG
 id|addr
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* We can&squot;t remap across vm area boundaries */
 r_if
@@ -845,9 +859,8 @@ id|vma-&gt;vm_end
 op_minus
 id|addr
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -871,6 +884,11 @@ id|new_len
 op_minus
 id|old_len
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EAGAIN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -883,11 +901,15 @@ id|RLIMIT_MEMLOCK
 dot
 id|rlim_cur
 )paren
-r_return
-op_minus
-id|EAGAIN
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|ret
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -910,9 +932,8 @@ id|RLIMIT_AS
 dot
 id|rlim_cur
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* old_len exactly to the end of the area.. */
 r_if
@@ -996,8 +1017,12 @@ id|current-&gt;mm-&gt;locked_vm
 op_add_assign
 id|pages
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|addr
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -1009,7 +1034,8 @@ id|flags
 op_amp
 id|MREMAP_MAYMOVE
 )paren
-r_return
+id|ret
+op_assign
 id|move_vma
 c_func
 (paren
@@ -1022,9 +1048,21 @@ comma
 id|new_len
 )paren
 suffix:semicolon
-r_return
+r_else
+id|ret
+op_assign
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

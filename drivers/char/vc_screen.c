@@ -294,6 +294,8 @@ r_int
 r_int
 op_star
 id|org
+op_assign
+l_int|NULL
 suffix:semicolon
 id|attr
 op_assign
@@ -713,6 +715,8 @@ r_int
 r_int
 op_star
 id|org
+op_assign
+l_int|NULL
 suffix:semicolon
 id|attr
 op_assign

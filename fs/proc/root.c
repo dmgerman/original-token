@@ -89,7 +89,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select - default */
+multiline_comment|/* poll - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -188,7 +188,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select - default */
+multiline_comment|/* poll - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -966,7 +966,7 @@ multiline_comment|/* readdir */
 macro_line|#endif&t;
 l_int|NULL
 comma
-multiline_comment|/* select - default */
+multiline_comment|/* poll - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -2232,6 +2232,31 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+DECL|variable|proc_root_slab
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_root_slab
+op_assign
+(brace
+id|PROC_SLABINFO
+comma
+l_int|8
+comma
+l_string|&quot;slabinfo&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|function|proc_root_init
 r_void
 id|proc_root_init
@@ -2574,6 +2599,16 @@ id|proc_openprom
 )paren
 suffix:semicolon
 macro_line|#endif
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|proc_root_slab
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -738,6 +738,8 @@ suffix:semicolon
 r_int
 r_char
 id|ucval
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#if defined(CONFIG_IP_FIREWALL) || defined(CONFIG_IP_ACCT)
 r_struct

@@ -117,6 +117,15 @@ DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr) &bslash;&n;  __get_user_nocheck((x),(ptr),sizeof(*(ptr)))
 DECL|macro|__put_user
 mdefine_line|#define __put_user(x,ptr) &bslash;&n;  __put_user_nocheck((__typeof__(*(ptr)))(x),(ptr),sizeof(*(ptr)))
+multiline_comment|/*&n; * The &quot;xxx_ret&quot; versions return constant specified in third argument, if&n; * something bad happens. These macros can be optimized for the&n; * case of just returning from the function xxx_ret is used.&n; */
+DECL|macro|put_user_ret
+mdefine_line|#define put_user_ret(x,ptr,ret) ({ &bslash;&n;if (put_user(x,ptr)) return ret; })
+DECL|macro|get_user_ret
+mdefine_line|#define get_user_ret(x,ptr,ret) ({ &bslash;&n;if (get_user(x,ptr)) return ret; })
+DECL|macro|__put_user_ret
+mdefine_line|#define __put_user_ret(x,ptr,ret) ({ &bslash;&n;if (__put_user(x,ptr)) return ret; })
+DECL|macro|__get_user_ret
+mdefine_line|#define __get_user_ret(x,ptr,ret) ({ &bslash;&n;if (__get_user(x,ptr)) return ret; })
 r_extern
 r_int
 id|__put_user_bad
@@ -517,6 +526,10 @@ DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to,from,n)&t;&t;&t;&t;&bslash;&n;&t;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n;&t; __constant_copy_to_user((to),(from),(n)) :&t;&bslash;&n;&t; __generic_copy_to_user((to),(from),(n)))
 DECL|macro|copy_from_user
 mdefine_line|#define copy_from_user(to,from,n)&t;&t;&t;&bslash;&n;&t;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n;&t; __constant_copy_from_user((to),(from),(n)) :&t;&bslash;&n;&t; __generic_copy_from_user((to),(from),(n)))
+DECL|macro|copy_to_user_ret
+mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
+DECL|macro|copy_from_user_ret
+mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_to_user
 mdefine_line|#define __copy_to_user(to,from,n)&t;&t;&t;&bslash;&n;&t;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n;&t; __constant_copy_to_user_nocheck((to),(from),(n)) :&t;&bslash;&n;&t; __generic_copy_to_user_nocheck((to),(from),(n)))
 DECL|macro|__copy_from_user

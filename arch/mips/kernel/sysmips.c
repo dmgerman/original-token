@@ -2,6 +2,8 @@ multiline_comment|/*&n; * MIPS specific syscalls&n; *&n; * This file is subject 
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
@@ -158,6 +160,11 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -167,6 +174,11 @@ id|cmd
 r_case
 id|SETNAME
 suffix:colon
+id|retval
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -176,9 +188,8 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 id|name
 op_assign
@@ -200,15 +211,19 @@ r_int
 id|name
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|len
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|retval
+id|len
 OL
 l_int|0
 )paren
-r_return
-id|len
+r_goto
+id|out
 suffix:semicolon
 id|len
 op_assign
@@ -219,6 +234,11 @@ id|name
 comma
 id|retval
 )paren
+suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -231,9 +251,8 @@ id|len
 OG
 id|__NEW_UTS_LEN
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|memcpy_fromfs
 c_func
@@ -252,8 +271,12 @@ id|len
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-r_return
+id|retval
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|MIPS_ATOMIC_SET
@@ -268,6 +291,12 @@ id|arg1
 suffix:semicolon
 id|retval
 op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|verify_area
 c_func
 (paren
@@ -281,16 +310,10 @@ op_star
 id|p
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
 )paren
 (brace
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|save_flags
@@ -320,8 +343,8 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-r_return
-id|retval
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|MIPS_FIXADE
@@ -344,7 +367,8 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
-r_break
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|FLUSH_CACHE
@@ -360,9 +384,21 @@ comma
 id|BCACHE
 )paren
 suffix:semicolon
-r_break
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

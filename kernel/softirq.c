@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -79,6 +81,15 @@ id|bh
 (paren
 r_void
 )paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|intr_count
+op_assign
+l_int|1
 suffix:semicolon
 id|sti
 c_func
@@ -166,7 +177,8 @@ c_func
 suffix:semicolon
 )brace
 )brace
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|bad_bh
 suffix:colon
@@ -176,6 +188,19 @@ l_string|&quot;irq.c:bad bottom half entry %08lx&bslash;n&quot;
 comma
 id|mask
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|intr_count
+op_assign
+l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 eof

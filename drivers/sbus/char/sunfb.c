@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunfb.c,v 1.19 1996/12/23 10:16:15 ecd Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
+multiline_comment|/* $Id: sunfb.c,v 1.20 1997/01/26 07:13:40 davem Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -1750,7 +1750,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|fb_ioctl
 comma
 id|fb_mmap

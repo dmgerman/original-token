@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.22 1996/12/19 08:06:32 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.23 1997/01/26 04:28:34 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1097,6 +1097,10 @@ r_struct
 id|mostek48t02
 op_star
 id|mregs
+suffix:semicolon
+id|do_get_fast_time
+op_assign
+id|do_gettimeofday
 suffix:semicolon
 macro_line|#if CONFIG_AP1000
 id|init_timers

@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Traditional linux readdir() handling..&n; *&n; * &quot;count=1&quot; is a special case, meaning that the buffer is one&n; * dirent-structure in size and that the code can&squot;t handle more&n; * anyway. Thus the special &quot;fillonedir()&quot; function for that&n; * case (the low-level handlers don&squot;t need to care about this).&n; */
 DECL|macro|NAME_OFFSET
@@ -185,6 +187,9 @@ id|count
 (brace
 r_int
 id|error
+op_assign
+op_minus
+id|EBADF
 suffix:semicolon
 r_struct
 id|file
@@ -194,6 +199,11 @@ suffix:semicolon
 r_struct
 id|readdir_callback
 id|buf
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -212,9 +222,13 @@ id|fd
 )braket
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
 op_minus
-id|EBADF
+id|ENOTDIR
 suffix:semicolon
 r_if
 c_cond
@@ -225,9 +239,8 @@ op_logical_or
 op_logical_neg
 id|file-&gt;f_op-&gt;readdir
 )paren
-r_return
-op_minus
-id|ENOTDIR
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -250,8 +263,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|buf.count
 op_assign
@@ -285,11 +298,22 @@ id|error
 OL
 l_int|0
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
 id|error
+op_assign
+id|buf.count
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
-id|buf.count
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * New, all-improved, singing, dancing, iBCS2-compliant getdents()&n; * interface. &n; */
@@ -544,6 +568,14 @@ id|buf
 suffix:semicolon
 r_int
 id|error
+op_assign
+op_minus
+id|EBADF
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -562,9 +594,13 @@ id|fd
 )braket
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
 op_minus
-id|EBADF
+id|ENOTDIR
 suffix:semicolon
 r_if
 c_cond
@@ -575,9 +611,8 @@ op_logical_or
 op_logical_neg
 id|file-&gt;f_op-&gt;readdir
 )paren
-r_return
-op_minus
-id|ENOTDIR
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -596,8 +631,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|buf.current_dir
 op_assign
@@ -644,8 +679,8 @@ id|error
 OL
 l_int|0
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|lastdirent
 op_assign
@@ -657,9 +692,14 @@ c_cond
 op_logical_neg
 id|lastdirent
 )paren
-r_return
+(brace
+id|error
+op_assign
 id|buf.error
 suffix:semicolon
+)brace
+r_else
+(brace
 id|put_user
 c_func
 (paren
@@ -669,10 +709,22 @@ op_amp
 id|lastdirent-&gt;d_off
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|count
 op_minus
 id|buf.count
+suffix:semicolon
+)brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 eof

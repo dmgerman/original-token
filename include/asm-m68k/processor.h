@@ -95,10 +95,6 @@ DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, __pgprot(_PAGE_PRESENT|_PAGE_ACCESSED), VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) init_kernel_stack, 0, &bslash;&n;&t;PS_S, KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
-DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
-DECL|macro|free_kernel_stack
-mdefine_line|#define free_kernel_stack(page) free_page((page))
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|function|start_thread
 r_static
@@ -166,6 +162,17 @@ id|usp
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Free all resources held by a thread. */
+r_extern
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern
@@ -247,5 +254,14 @@ r_return
 id|sw-&gt;retpc
 suffix:semicolon
 )brace
+multiline_comment|/* Allocation and freeing of basic task resources. */
+DECL|macro|alloc_task_struct
+mdefine_line|#define alloc_task_struct()&t;kmalloc(sizeof(struct task_struct), GFP_KERNEL)
+DECL|macro|alloc_kernel_stack
+mdefine_line|#define alloc_kernel_stack(p)&t;__get_free_page(GFP_KERNEL)
+DECL|macro|free_task_struct
+mdefine_line|#define free_task_struct(p)&t;kfree(p)
+DECL|macro|free_kernel_stack
+mdefine_line|#define free_kernel_stack(page) free_page((page))
 macro_line|#endif
 eof

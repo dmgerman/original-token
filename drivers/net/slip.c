@@ -197,6 +197,8 @@ r_void
 id|slip_ctrl_t
 op_star
 id|slp
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|i
@@ -4299,7 +4301,7 @@ r_int
 )paren
 id|slip_ioctl
 suffix:semicolon
-id|sl_ldisc.select
+id|sl_ldisc.poll
 op_assign
 l_int|NULL
 suffix:semicolon

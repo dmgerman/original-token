@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;net/neighbour.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -20,6 +21,7 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#include &lt;linux/mroute.h&gt;
 r_extern
 r_struct
 id|net_proto_family
@@ -264,6 +266,77 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|datagram_poll
+)paren
+suffix:semicolon
+DECL|variable|sock_init_data
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_init_data
+)paren
+suffix:semicolon
+DECL|variable|put_cmsg
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|put_cmsg
+)paren
+suffix:semicolon
+DECL|variable|neigh_table_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|neigh_table_init
+)paren
+suffix:semicolon
+multiline_comment|/* Declared in &lt;net/neighbour.h&gt; but not defined?&n;   EXPORT_SYMBOL(neigh_table_destroy);&n;   EXPORT_SYMBOL(neigh_table_run_bh);&n;*/
+DECL|variable|neigh_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|neigh_alloc
+)paren
+suffix:semicolon
+DECL|variable|neigh_table_ins
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|neigh_table_ins
+)paren
+suffix:semicolon
+DECL|variable|neigh_queue_ins
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|neigh_queue_ins
+)paren
+suffix:semicolon
+DECL|variable|neigh_unlink
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|neigh_unlink
+)paren
+suffix:semicolon
+DECL|variable|neigh_lookup
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|neigh_lookup
+)paren
+suffix:semicolon
+DECL|variable|ntbl_walk_table
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ntbl_walk_table
+)paren
+suffix:semicolon
+DECL|variable|neigh_tbl_run_bh
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|neigh_tbl_run_bh
 )paren
 suffix:semicolon
 multiline_comment|/* Needed by smbfs.o */
@@ -518,13 +591,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|inet_getsockopt
-)paren
-suffix:semicolon
-DECL|variable|inet_fcntl
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|inet_fcntl
 )paren
 suffix:semicolon
 DECL|variable|inet_sendmsg
@@ -992,6 +1058,23 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif
+multiline_comment|/* Used by at least ipip.c.  */
+DECL|variable|ipv4_config
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ipv4_config
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MROUTE
+DECL|variable|ip_mr_find_tunnel
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ip_mr_find_tunnel
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif  /* CONFIG_INET */
 multiline_comment|/* Device callback registration */
 DECL|variable|register_netdevice_notifier
@@ -1045,6 +1128,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|ether_setup
+)paren
+suffix:semicolon
+DECL|variable|dev_new_index
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_new_index
 )paren
 suffix:semicolon
 DECL|variable|eth_type_trans
@@ -1152,6 +1242,15 @@ c_func
 id|dev_queue_xmit
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_ACCT
+DECL|variable|ip_acct_output
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ip_acct_output
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|dev_base
 id|EXPORT_SYMBOL
 c_func
@@ -1178,6 +1277,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|arp_find
+)paren
+suffix:semicolon
+DECL|variable|arp_find_1
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|arp_find_1
 )paren
 suffix:semicolon
 DECL|variable|n_tty_ioctl

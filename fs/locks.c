@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|OFFSET_MAX
 mdefine_line|#define OFFSET_MAX&t;((off_t)0x7fffffff)&t;/* FIXME: move elsewhere? */
@@ -596,6 +598,14 @@ id|file
 op_star
 id|filp
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -615,12 +625,12 @@ id|fd
 )braket
 )paren
 )paren
-r_return
-(paren
+id|err
+op_assign
 op_minus
 id|EBADF
-)paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -636,12 +646,12 @@ comma
 id|cmd
 )paren
 )paren
-r_return
-(paren
+id|err
+op_assign
 op_minus
 id|EINVAL
-)paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -658,14 +668,14 @@ op_amp
 l_int|3
 )paren
 )paren
-r_return
-(paren
+id|err
+op_assign
 op_minus
 id|EBADF
-)paren
 suffix:semicolon
-r_return
-(paren
+r_else
+id|err
+op_assign
 id|flock_lock_file
 c_func
 (paren
@@ -689,7 +699,14 @@ l_int|0
 suffix:colon
 l_int|1
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/* Report the first existing lock that would conflict with l.&n; * This implements the F_GETLK command of fcntl().&n; */
@@ -1181,24 +1198,63 @@ suffix:colon
 r_case
 id|F_EXLCK
 suffix:colon
+macro_line|#ifdef __sparc__
+multiline_comment|/* warn a bit for now, but don&squot;t overdo it */
+(brace
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|count
+)paren
+(brace
+id|count
+op_assign
+l_int|1
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;fcntl_setlk(): process %d (%s) requested broken flock() emulation&bslash;n&quot;
+l_string|&quot;fcntl_setlk() called by process %d (%s) with broken flock() emulation&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
 id|current-&gt;comm
 )paren
 suffix:semicolon
-r_default
-suffix:colon
+)brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|filp-&gt;f_mode
+op_amp
+l_int|3
+)paren
+)paren
 r_return
 (paren
 op_minus
-id|EINVAL
+id|EBADF
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 r_return

@@ -7,8 +7,11 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
+macro_line|#include &lt;asm/namei.h&gt;
 DECL|macro|ACC_MODE
 mdefine_line|#define ACC_MODE(x) (&quot;&bslash;000&bslash;004&bslash;002&bslash;006&quot;[(x)&amp;O_ACCMODE])
 multiline_comment|/*&n; * In order to reduce some races, while at the same time doing additional&n; * checking and hopefully speeding things up, we copy filenames to the&n; * kernel data space before using them..&n; *&n; * POSIX.1 2.4: an empty pathname is invalid (ENOENT).&n; */
@@ -1161,6 +1164,18 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+id|translate_namei
+c_func
+(paren
+id|pathname
+comma
+id|base
+comma
+id|follow_links
+comma
+id|res_inode
+)paren
+suffix:semicolon
 op_star
 id|res_inode
 op_assign
@@ -1412,8 +1427,8 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;open_namei()&n; *&n; * namei for open - this is in fact almost the whole open-routine.&n; *&n; * Note that the low bits of &quot;flag&quot; aren&squot;t the same as in the open&n; * system call - they are 00 - no permissions needed&n; *&t;&t;&t;  01 - read permission needed&n; *&t;&t;&t;  10 - write permission needed&n; *&t;&t;&t;  11 - read/write permissions needed&n; * which is a lot more logical, and also allows the &quot;no perm&quot; needed&n; * for symlinks (where the permissions are checked later).&n; */
-DECL|function|open_namei
 r_int
+DECL|function|open_namei
 id|open_namei
 c_func
 (paren
@@ -1457,6 +1472,20 @@ id|dir
 comma
 op_star
 id|inode
+suffix:semicolon
+id|translate_open_namei
+c_func
+(paren
+id|pathname
+comma
+id|flag
+comma
+id|mode
+comma
+id|res_inode
+comma
+id|base
+)paren
 suffix:semicolon
 id|mode
 op_and_assign
@@ -2381,6 +2410,16 @@ r_char
 op_star
 id|tmp
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2405,9 +2444,13 @@ c_func
 )paren
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
 op_minus
-id|EPERM
+id|EINVAL
 suffix:semicolon
 r_switch
 c_cond
@@ -2445,9 +2488,8 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|error
@@ -2487,6 +2529,13 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -2833,6 +2882,11 @@ r_char
 op_star
 id|tmp
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -2874,6 +2928,11 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -3095,6 +3154,11 @@ r_char
 op_star
 id|tmp
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -3134,6 +3198,11 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -3355,6 +3424,11 @@ r_char
 op_star
 id|tmp
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -3388,6 +3462,11 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -3629,6 +3708,11 @@ comma
 op_star
 id|to
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -3689,6 +3773,11 @@ id|from
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -4023,6 +4112,11 @@ id|inode
 op_star
 id|oldinode
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|lnamei
@@ -4039,8 +4133,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -4065,8 +4159,8 @@ c_func
 id|oldinode
 )paren
 suffix:semicolon
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|error
@@ -4083,6 +4177,13 @@ id|putname
 c_func
 (paren
 id|to
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -4565,6 +4666,11 @@ comma
 op_star
 id|to
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -4637,6 +4743,11 @@ id|from
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

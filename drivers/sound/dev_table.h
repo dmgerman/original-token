@@ -2735,14 +2735,24 @@ id|trace_init
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#   else
+macro_line|#else
 DECL|variable|trace_init
 r_int
 id|trace_init
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#   endif
+macro_line|#endif
+macro_line|#ifdef MODULE_PARM
+id|MODULE_PARM
+c_func
+(paren
+id|trace_init
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#else
 r_extern
 r_struct

@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* &n; * The timezone where the local system is located.  Used as a default by some&n; * programs who obtain this value by using gettimeofday.&n; */
 DECL|variable|sys_tz
@@ -87,6 +89,11 @@ id|tloc
 r_int
 id|i
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|i
 op_assign
 id|CURRENT_TIME
@@ -114,6 +121,11 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
@@ -132,6 +144,14 @@ id|tptr
 (brace
 r_int
 id|value
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -142,9 +162,13 @@ c_func
 (paren
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|value
+op_assign
 op_minus
-id|EPERM
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -157,9 +181,8 @@ comma
 id|tptr
 )paren
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 id|cli
 c_func
@@ -191,8 +214,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|value
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|value
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -213,6 +247,17 @@ op_star
 id|tz
 )paren
 (brace
+r_int
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -247,9 +292,8 @@ id|ktv
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -275,13 +319,23 @@ id|sys_tz
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 )brace
-r_return
+id|err
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Adjust the time obtained from the CMOS to be UTC time instead of&n; * local time.&n; * &n; * This is ugly, but preferable to the alternatives.  Otherwise we&n; * would either need to write a program to do it in /etc/rc (and risk&n; * confusion if the program gets run more than once; it would also be &n; * hard to make the program warp the clock precisely n hours)  or&n; * compile in the timezone information into the kernel.  Bad, bad....&n; *&n; *              &t;&t;&t;&t;- TYT, 1992-01-01&n; *&n; * The best thing to do is to keep the CMOS clock in universal time (UTC)&n; * as real UNIX machines always do it. This avoids all headaches about&n; * daylight saving times and warping kernel clocks.&n; */
@@ -344,6 +398,17 @@ r_struct
 id|timezone
 id|new_tz
 suffix:semicolon
+r_int
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -353,9 +418,13 @@ c_func
 (paren
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|err
+op_assign
 op_minus
-id|EPERM
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -381,9 +450,8 @@ id|tv
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -410,9 +478,8 @@ id|tz
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 id|sys_tz
 op_assign
@@ -453,8 +520,19 @@ op_amp
 id|new_tv
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 DECL|variable|pps_offset
@@ -575,15 +653,24 @@ id|save_adjust
 suffix:semicolon
 r_int
 id|error
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
-multiline_comment|/* Local copy of parameter */
 r_struct
 id|timex
 id|txc
 suffix:semicolon
+multiline_comment|/* Local copy of parameter */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Copy the user data space into the kernel copy&n;&t; * structure. But bear in mind that the structures&n;&t; * may change&n;&t; */
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -598,17 +685,18 @@ r_struct
 id|timex
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
-r_return
-op_minus
-id|EFAULT
+(brace
+r_goto
+id|out
 suffix:semicolon
+)brace
 multiline_comment|/* In order to modify anything, you gotta be super-user! */
+id|error
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -620,11 +708,15 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
-multiline_comment|/* Now we validate the data before disabling interrupts&n;&t; */
+multiline_comment|/* Now we validate the data before disabling interrupts */
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -651,9 +743,8 @@ id|txc.offset
 op_ge
 id|MAXPHASE
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* if the quartz is off by more than 10% something is VERY wrong ! */
 r_if
@@ -672,9 +763,8 @@ l_int|1100000
 op_div
 id|HZ
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|cli
 c_func
@@ -1111,7 +1201,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -1132,6 +1223,16 @@ op_minus
 id|EFAULT
 suffix:colon
 id|time_state
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 eof

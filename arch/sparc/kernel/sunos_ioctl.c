@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl.c,v 1.26 1996/10/31 00:59:06 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl.c,v 1.27 1997/01/06 06:52:33 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#if 0
 r_extern
@@ -72,6 +74,14 @@ id|filp
 suffix:semicolon
 r_int
 id|ret
+op_assign
+op_minus
+id|EBADF
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -90,9 +100,8 @@ id|fd
 )braket
 )paren
 )paren
-r_return
-op_minus
-id|EBADF
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* First handle an easy compat. case for tty ldisc. */
 r_if
@@ -124,6 +133,11 @@ op_star
 )paren
 id|arg
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -136,9 +150,8 @@ id|p
 )paren
 )paren
 (brace
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -184,7 +197,8 @@ c_func
 id|oldfs
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 (paren
 id|ret
 op_eq
@@ -198,6 +212,9 @@ suffix:colon
 id|ret
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Binary compatibility is good American knowhow fuckin&squot; up. */
@@ -209,11 +226,15 @@ op_eq
 id|TIOCNOTTY
 )paren
 (brace
-r_return
+id|ret
+op_assign
 id|sys_setsid
 c_func
 (paren
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* SunOS networking ioctls. */
@@ -235,7 +256,8 @@ r_struct
 id|rtentry
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -245,6 +267,9 @@ id|SIOCADDRT
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -258,7 +283,8 @@ r_struct
 id|rtentry
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -268,6 +294,9 @@ id|SIOCDELRT
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -281,7 +310,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -291,6 +321,9 @@ id|SIOCSIFADDR
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -304,7 +337,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -314,6 +348,9 @@ id|SIOCGIFADDR
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -327,7 +364,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -337,6 +375,9 @@ id|SIOCSIFDSTADDR
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -350,7 +391,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -360,6 +402,9 @@ id|SIOCGIFDSTADDR
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -373,7 +418,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -383,6 +429,9 @@ id|SIOCSIFFLAGS
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -396,7 +445,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -406,6 +456,9 @@ id|SIOCGIFFLAGS
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -419,7 +472,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -429,6 +483,9 @@ id|SIOCSIFMEM
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -442,7 +499,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -452,6 +510,9 @@ id|SIOCGIFMEM
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -465,7 +526,8 @@ r_struct
 id|ifconf
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -475,6 +537,9 @@ id|SIOCGIFCONF
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -489,7 +554,8 @@ id|ifreq
 )paren
 suffix:colon
 multiline_comment|/* SIOCSIFMTU */
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -499,6 +565,9 @@ id|SIOCSIFMTU
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -513,7 +582,8 @@ id|ifreq
 )paren
 suffix:colon
 multiline_comment|/* SIOCGIFMTU */
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -523,6 +593,9 @@ id|SIOCGIFMTU
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -536,7 +609,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -546,6 +620,9 @@ id|SIOCGIFBRDADDR
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -559,7 +636,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -569,6 +647,9 @@ id|SIOCGIFBRDADDR
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -582,7 +663,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -592,6 +674,9 @@ id|SIOCGIFNETMASK
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -605,7 +690,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -615,6 +701,9 @@ id|SIOCSIFNETMASK
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -628,7 +717,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -638,6 +728,9 @@ id|SIOCGIFMETRIC
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -651,7 +744,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -661,6 +755,9 @@ id|SIOCSIFMETRIC
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -674,7 +771,8 @@ r_struct
 id|arpreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -684,6 +782,9 @@ id|SIOCSARP
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOWR
@@ -697,7 +798,8 @@ r_struct
 id|arpreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -707,6 +809,9 @@ id|SIOCGARP
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -720,7 +825,8 @@ r_struct
 id|arpreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -730,6 +836,9 @@ id|SIOCDARP
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -822,9 +931,13 @@ id|ifreq
 )paren
 suffix:colon
 multiline_comment|/* SIOCSPROMISC */
-r_return
+id|ret
+op_assign
 op_minus
 id|EOPNOTSUPP
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -838,7 +951,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -848,6 +962,9 @@ id|SIOCADDMULTI
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -861,7 +978,8 @@ r_struct
 id|ifreq
 )paren
 suffix:colon
-r_return
+id|ret
+op_assign
 id|sys_ioctl
 c_func
 (paren
@@ -871,6 +989,9 @@ id|SIOCDELMULTI
 comma
 id|arg
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* FDDI interface ioctls, unsupported. */
 r_case
@@ -996,9 +1117,13 @@ c_func
 l_string|&quot;FDDI ioctl, returning EOPNOTSUPP&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|EOPNOTSUPP
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|_IOW
@@ -1012,8 +1137,12 @@ r_int
 )paren
 suffix:colon
 multiline_comment|/* More stupid tty sunos ioctls, just&n;&t;&t; * say it worked.&n;&t;&t; */
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Non posix grp */
 r_case
@@ -1048,6 +1177,11 @@ op_star
 )paren
 id|arg
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1060,9 +1194,8 @@ id|ptr
 )paren
 )paren
 (brace
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|ret
@@ -1123,8 +1256,8 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -1159,6 +1292,11 @@ op_star
 )paren
 id|arg
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1171,9 +1309,8 @@ id|ptr
 )paren
 )paren
 (brace
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|ret
@@ -1234,8 +1371,8 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -1280,7 +1417,8 @@ id|arg
 )paren
 suffix:semicolon
 multiline_comment|/* so stupid... */
-r_return
+id|ret
+op_assign
 (paren
 id|ret
 op_eq
@@ -1293,6 +1431,16 @@ id|EOPNOTSUPP
 suffix:colon
 id|ret
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

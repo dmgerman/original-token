@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * MIPS specific syscall handling functions and syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -86,6 +88,11 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|do_pipe
@@ -99,8 +106,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|regs-&gt;reg2
 op_assign
@@ -116,8 +123,15 @@ id|fd
 l_int|1
 )braket
 suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|error
 suffix:semicolon
 )brace
 DECL|function|sys_mmap
@@ -154,6 +168,17 @@ id|file
 op_assign
 l_int|NULL
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EBADF
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -179,9 +204,8 @@ id|fd
 )braket
 )paren
 )paren
-r_return
-op_minus
-id|EBADF
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|flags
@@ -193,7 +217,8 @@ op_or
 id|MAP_DENYWRITE
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|do_mmap
 c_func
 (paren
@@ -210,6 +235,16 @@ comma
 id|offset
 )paren
 suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|sys_idle
 id|asmlinkage
@@ -220,6 +255,17 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -227,9 +273,8 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
@@ -267,6 +312,20 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|sys_fork
 id|asmlinkage
@@ -280,7 +339,16 @@ op_star
 id|regs
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|do_fork
 c_func
 (paren
@@ -290,6 +358,14 @@ id|regs-&gt;reg29
 comma
 id|regs
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|sys_clone
@@ -312,6 +388,14 @@ r_int
 r_int
 id|newsp
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|clone_flags
 op_assign
 id|regs-&gt;reg4
@@ -330,7 +414,8 @@ id|newsp
 op_assign
 id|regs-&gt;reg29
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|do_fork
 c_func
 (paren
@@ -340,6 +425,14 @@ id|newsp
 comma
 id|regs
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; */
@@ -362,6 +455,11 @@ r_char
 op_star
 id|filename
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -382,8 +480,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -413,6 +511,13 @@ id|putname
 c_func
 (paren
 id|filename
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

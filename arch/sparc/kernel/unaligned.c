@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unaligned.c,v 1.13 1996/11/26 14:01:57 jj Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: unaligned.c,v 1.15 1997/01/16 14:14:42 davem Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -6,6 +6,8 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* #define DEBUG_MNA */
 r_extern
 r_void
@@ -851,6 +853,11 @@ c_func
 id|insn
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -926,8 +933,6 @@ l_string|&quot;g5&quot;
 comma
 l_string|&quot;g7&quot;
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -1101,6 +1106,11 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|ok_for_user
 r_static
@@ -1415,6 +1425,11 @@ r_enum
 id|direction
 id|dir
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1685,7 +1700,8 @@ comma
 l_string|&quot;g7&quot;
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|advance
@@ -1694,7 +1710,8 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|kill_user
@@ -1715,6 +1732,13 @@ comma
 id|current
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

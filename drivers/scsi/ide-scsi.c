@@ -1077,7 +1077,7 @@ id|KERN_INFO
 l_string|&quot;ide-scsi: Reached idescsi_pc_intr interrupt handler&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDESCSI_DEBUG_LOG */&t;
+macro_line|#endif /* IDESCSI_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -3161,10 +3161,10 @@ id|idescsi_init
 (paren
 )paren
 suffix:semicolon
-id|idescsi_template.usage_count
+id|idescsi_template.module
 op_assign
 op_amp
-id|__this_module.usecount
+id|__this_module
 suffix:semicolon
 id|scsi_register_module
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; */
+multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com),&n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *&n; *  Borrows code from st driver.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -642,32 +643,30 @@ id|scsi_generics
 id|dev
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
 id|scsi_generics
 (braket
 id|dev
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
-op_increment
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sg_template.usage_count
+id|sg_template.module
 )paren
-(brace
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|sg_template.usage_count
+id|sg_template.module
 )paren
-op_increment
 suffix:semicolon
-)brace
 id|scsi_generics
 (braket
 id|dev
@@ -722,30 +721,30 @@ id|scsi_generics
 id|dev
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
 id|scsi_generics
 (braket
 id|dev
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sg_template.usage_count
+id|sg_template.module
 )paren
 (brace
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|sg_template.usage_count
+id|sg_template.module
 )paren
-op_decrement
 suffix:semicolon
 )brace
 id|scsi_generics
@@ -841,7 +840,7 @@ r_return
 id|big_buff
 suffix:semicolon
 )brace
-macro_line|#endif   
+macro_line|#endif
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1440,7 +1439,7 @@ id|count
 r_return
 id|i
 suffix:semicolon
-multiline_comment|/*&n;     * The minimum scsi command length is 6 bytes.  If we get anything&n;     * less than this, it is clearly bogus.  &n;     */
+multiline_comment|/*&n;     * The minimum scsi command length is 6 bytes.  If we get anything&n;     * less than this, it is clearly bogus.&n;     */
 r_if
 c_cond
 (paren
@@ -1485,7 +1484,7 @@ c_func
 l_string|&quot;sg_write: sleeping on pending request&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif     
+macro_line|#endif
 id|interruptible_sleep_on
 c_func
 (paren
@@ -1774,7 +1773,7 @@ c_func
 l_string|&quot;device allocated&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif    
+macro_line|#endif
 id|SCpnt-&gt;request.rq_dev
 op_assign
 id|devt
@@ -1889,31 +1888,24 @@ c_func
 l_string|&quot;done cmd&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif               
+macro_line|#endif
 r_return
 id|count
 suffix:semicolon
 )brace
-DECL|function|sg_select
+DECL|function|sg_poll
 r_static
 r_int
-id|sg_select
+r_int
+id|sg_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -1924,13 +1916,8 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_inode-&gt;i_rdev
 )paren
-suffix:semicolon
-r_int
-id|r
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|scsi_generic
@@ -1943,30 +1930,13 @@ id|scsi_generics
 id|dev
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sel_type
-op_eq
-id|SEL_IN
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|device-&gt;pending
-op_logical_and
-id|device-&gt;complete
-)paren
-(brace
-id|r
+r_int
+r_int
+id|mask
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
-)brace
-r_else
-(brace
-id|select_wait
+id|poll_wait
 c_func
 (paren
 op_amp
@@ -1980,31 +1950,7 @@ comma
 id|wait
 )paren
 suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|sel_type
-op_eq
-id|SEL_OUT
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|device-&gt;pending
-)paren
-(brace
-id|r
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-id|select_wait
+id|poll_wait
 c_func
 (paren
 op_amp
@@ -2018,10 +1964,37 @@ comma
 id|wait
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|device-&gt;pending
+op_logical_and
+id|device-&gt;complete
+)paren
+(brace
+id|mask
+op_or_assign
+id|POLLIN
+op_or
+id|POLLRDNORM
+suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|device-&gt;pending
+)paren
+(brace
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
+suffix:semicolon
 )brace
 r_return
-id|r
+id|mask
 suffix:semicolon
 )brace
 DECL|variable|sg_fops
@@ -2043,9 +2016,9 @@ multiline_comment|/* write */
 l_int|NULL
 comma
 multiline_comment|/* readdir */
-id|sg_select
+id|sg_poll
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|sg_ioctl
 comma
 multiline_comment|/* ioctl */
@@ -2507,7 +2480,7 @@ suffix:semicolon
 id|sg_template.nr_dev
 op_decrement
 suffix:semicolon
-multiline_comment|/* &n;             * avoid associated device /dev/sg? bying incremented &n;             * each time module is inserted/removed , &lt;dan@lectra.fr&gt;&n;             */
+multiline_comment|/*&n;             * avoid associated device /dev/sg? bying incremented&n;             * each time module is inserted/removed , &lt;dan@lectra.fr&gt;&n;             */
 id|sg_template.dev_noticed
 op_decrement
 suffix:semicolon
@@ -2526,10 +2499,10 @@ c_func
 r_void
 )paren
 (brace
-id|sg_template.usage_count
+id|sg_template.module
 op_assign
 op_amp
-id|__this_module.usecount
+id|__this_module
 suffix:semicolon
 r_return
 id|scsi_register_module

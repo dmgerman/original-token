@@ -91,10 +91,11 @@ id|linux_binfmt
 op_star
 id|next
 suffix:semicolon
-DECL|member|use_count
-r_int
+DECL|member|module
+r_struct
+id|module
 op_star
-id|use_count
+id|module
 suffix:semicolon
 DECL|member|load_binary
 r_int

@@ -1,7 +1,7 @@
 macro_line|#ifndef _SPARC_SEMAPHORE_H
 DECL|macro|_SPARC_SEMAPHORE_H
 mdefine_line|#define _SPARC_SEMAPHORE_H
-multiline_comment|/* Dinky, good for nothing, just barely irq safe, Sparc semaphores.&n; *&n; * I&squot;ll write better ones later.&n; */
+multiline_comment|/* Dinky, good for nothing, just barely irq safe, Sparc semaphores. */
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|struct|semaphore
 r_struct
@@ -11,9 +11,9 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|waiting
+DECL|member|waking
 id|atomic_t
-id|waiting
+id|waking
 suffix:semicolon
 DECL|member|wait
 r_struct
@@ -39,6 +39,17 @@ id|sem
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|__down_interruptible
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|__up
 c_func
@@ -49,7 +60,7 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This isn&squot;t quite as clever as the x86 side, but the gp register&n; * makes things a bit more complicated on the alpha..&n; */
+multiline_comment|/* This isn&squot;t quite as clever as the x86 side, I&squot;ll be fixing this&n; * soon enough.&n; */
 DECL|function|down
 r_extern
 r_inline
@@ -63,13 +74,6 @@ op_star
 id|sem
 )paren
 (brace
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -79,11 +83,9 @@ c_func
 op_amp
 id|sem-&gt;count
 )paren
-op_ge
+OL
 l_int|0
 )paren
-r_break
-suffix:semicolon
 id|__down
 c_func
 (paren
@@ -91,6 +93,49 @@ id|sem
 )paren
 suffix:semicolon
 )brace
+DECL|function|down_interruptible
+r_extern
+r_inline
+r_int
+id|down_interruptible
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_dec_return
+c_func
+(paren
+op_amp
+id|sem-&gt;count
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|ret
+op_assign
+id|__down_interruptible
+c_func
+(paren
+id|sem
+)paren
+suffix:semicolon
+)brace
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|up
 r_extern

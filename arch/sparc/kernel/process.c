@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.87 1996/12/30 06:16:21 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.89 1997/01/06 06:52:23 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -14,6 +14,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -59,6 +61,17 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -66,9 +79,8 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
@@ -237,8 +249,19 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 macro_line|#else
@@ -252,6 +275,17 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -259,9 +293,8 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
@@ -274,8 +307,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* This is being executed in task 0 &squot;user space&squot;. */
@@ -1287,11 +1331,6 @@ c_func
 r_void
 )paren
 (brace
-id|kill_user_windows
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifndef __SMP__
 r_if
 c_cond
@@ -1367,11 +1406,9 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Make sure old user windows don&squot;t get in the way. */
-id|kill_user_windows
-c_func
-(paren
-)paren
+id|current-&gt;tss.w_saved
+op_assign
+l_int|0
 suffix:semicolon
 id|current-&gt;tss.sstk_info.cur_status
 op_assign
@@ -1697,6 +1734,16 @@ id|sp
 suffix:semicolon
 )brace
 multiline_comment|/* Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a separate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|ret_from_smpfork
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#else
 r_extern
 r_void
 id|ret_from_syscall
@@ -1705,6 +1752,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|copy_thread
 r_int
 id|copy_thread
@@ -1899,6 +1947,28 @@ r_int
 )paren
 id|new_stack
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|p-&gt;tss.kpc
+op_assign
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ret_from_smpfork
+)paren
+op_minus
+l_int|0x8
+)paren
+suffix:semicolon
+id|p-&gt;tss.kpsr
+op_assign
+id|current-&gt;tss.fork_kpsr
+op_or
+id|PSR_PIL
+suffix:semicolon
+macro_line|#else
 id|p-&gt;tss.kpc
 op_assign
 (paren
@@ -1917,6 +1987,7 @@ id|p-&gt;tss.kpsr
 op_assign
 id|current-&gt;tss.fork_kpsr
 suffix:semicolon
+macro_line|#endif
 id|p-&gt;tss.kwim
 op_assign
 id|current-&gt;tss.fork_kwim
@@ -2414,6 +2485,11 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -2440,8 +2516,8 @@ c_cond
 id|error
 )paren
 (brace
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|error
@@ -2482,6 +2558,13 @@ id|putname
 c_func
 (paren
 id|filename
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

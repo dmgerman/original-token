@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -29,6 +30,14 @@ c_func
 (paren
 id|elf_fpregset_t
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__lock_kernel
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* platform dependent support */
@@ -118,25 +127,11 @@ c_func
 id|cpu_data
 )paren
 suffix:semicolon
-DECL|variable|syscall_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|syscall_count
-)paren
-suffix:semicolon
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|kernel_flag
-)paren
-suffix:semicolon
-DECL|variable|kernel_counter
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|kernel_counter
 )paren
 suffix:semicolon
 DECL|variable|active_kernel_processor
@@ -151,6 +146,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|smp_invalidate_needed
+)paren
+suffix:semicolon
+DECL|variable|__lock_kernel
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__lock_kernel
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -9943,7 +9943,7 @@ id|ax25_accept
 comma
 id|ax25_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|ax25_ioctl
 comma

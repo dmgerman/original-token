@@ -2613,7 +2613,7 @@ comma
 multiline_comment|/* openprom_readdir */
 l_int|NULL
 comma
-multiline_comment|/* openprom_select */
+multiline_comment|/* openprom_poll */
 id|openprom_ioctl
 comma
 l_int|NULL
@@ -2624,11 +2624,11 @@ comma
 id|openprom_release
 )brace
 suffix:semicolon
-DECL|variable|misc_openprom
+DECL|variable|openprom_dev
 r_static
 r_struct
 id|miscdevice
-id|misc_openprom
+id|openprom_dev
 op_assign
 (brace
 id|SUN_OPENPROM_MINOR
@@ -2639,7 +2639,17 @@ op_amp
 id|openprom_fops
 )brace
 suffix:semicolon
-DECL|function|__initfunc
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#else
 id|__initfunc
 c_func
 (paren
@@ -2650,6 +2660,7 @@ c_func
 r_void
 )paren
 )paren
+macro_line|#endif
 (brace
 r_int
 r_int
@@ -2664,7 +2675,7 @@ id|misc_register
 c_func
 (paren
 op_amp
-id|misc_openprom
+id|openprom_dev
 )paren
 suffix:semicolon
 r_if
@@ -2738,7 +2749,7 @@ id|misc_deregister
 c_func
 (paren
 op_amp
-id|misc_openprom
+id|openprom_dev
 )paren
 suffix:semicolon
 r_return
@@ -2751,27 +2762,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|openprom_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -2784,7 +2774,7 @@ id|misc_deregister
 c_func
 (paren
 op_amp
-id|misc_openprom
+id|openprom_dev
 )paren
 suffix:semicolon
 )brace

@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCOUTQ/INQ */
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
@@ -2688,10 +2689,10 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-DECL|function|netbeui_select
+DECL|function|netbeui_poll
 r_static
 r_int
-id|netbeui_select
+id|netbeui_poll
 c_func
 (paren
 r_struct
@@ -2699,10 +2700,7 @@ id|socket
 op_star
 id|sock
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -2718,12 +2716,10 @@ op_star
 id|sock-&gt;data
 suffix:semicolon
 r_return
-id|datagram_select
+id|datagram_poll
 c_func
 (paren
 id|sk
-comma
-id|sel_type
 comma
 id|wait
 )paren
@@ -3063,7 +3059,7 @@ id|netbeui_accept
 comma
 id|netbeui_getname
 comma
-id|netbeui_select
+id|netbeui_poll
 comma
 id|netbeui_ioctl
 comma

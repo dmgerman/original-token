@@ -3,11 +3,13 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -62,21 +64,12 @@ id|n
 suffix:semicolon
 id|n
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -175,21 +168,12 @@ id|n
 suffix:semicolon
 id|n
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -295,21 +279,12 @@ id|right
 suffix:semicolon
 id|left
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -324,21 +299,12 @@ id|EAGAIN
 suffix:semicolon
 id|right
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -348,9 +314,11 @@ op_logical_neg
 id|right
 )paren
 (brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|left
 )paren
 suffix:semicolon
@@ -923,6 +891,17 @@ r_int
 r_int
 id|lock_limit
 suffix:semicolon
+r_int
+id|error
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|len
 op_assign
 (paren
@@ -976,9 +955,8 @@ id|locked
 OG
 id|lock_limit
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* we may lock at most half of physical memory... */
 multiline_comment|/* (this check is pretty bogus, but doesn&squot;t hurt) */
@@ -991,11 +969,11 @@ id|num_physpages
 op_div
 l_int|2
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|do_mlock
 c_func
 (paren
@@ -1005,6 +983,16 @@ id|len
 comma
 l_int|1
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 DECL|function|sys_munlock
@@ -1021,6 +1009,14 @@ r_int
 id|len
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|len
 op_assign
 (paren
@@ -1043,7 +1039,8 @@ id|start
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|do_mlock
 c_func
 (paren
@@ -1053,6 +1050,14 @@ id|len
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|do_mlockall
@@ -1202,6 +1207,17 @@ r_int
 r_int
 id|lock_limit
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1219,9 +1235,8 @@ id|MCL_FUTURE
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|lock_limit
 op_assign
@@ -1236,6 +1251,11 @@ id|lock_limit
 op_rshift_assign
 id|PAGE_SHIFT
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1243,9 +1263,8 @@ id|current-&gt;mm-&gt;total_vm
 OG
 id|lock_limit
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* we may lock at most half of physical memory... */
 multiline_comment|/* (this check is pretty bogus, but doesn&squot;t hurt) */
@@ -1258,16 +1277,26 @@ id|num_physpages
 op_div
 l_int|2
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|do_mlockall
 c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|sys_munlockall
@@ -1279,12 +1308,29 @@ c_func
 r_void
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|do_mlockall
 c_func
 (paren
 l_int|0
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

@@ -1,5 +1,4 @@
-multiline_comment|/* lance.c: Linux/Sparc/Lance driver */
-multiline_comment|/*&n;&t; Written 1995, 1996 by Miguel de Icaza&n;  Sources:&n;&t; The Linux  depca driver&n;&t; The Linux  lance driver.&n;&t; The Linux  skeleton driver.&n;         The NetBSD Sparc/Lance driver.&n;&t; Theo de Raadt (deraadt@openbsd.org)&n;&t; NCR92C990 Lan Controller manual&n;&n;1.4:&n;&t; Added support to run with a ledma on the Sun4m&n;1.5:&n;         Added multiple card detection.&n;&n;&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;&n;&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;&n;         5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n;&t;&t;  (davem@caip.rutgers.edu)&n;&n;&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n;&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;1.7:&n;&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n;1.8:&n;         Stole multicast code from depca.c, fixed lance_tx.&n;1.9:&n;         Fixed the multicast code (Pedro Roque)&n;&n;&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n;&t;&t;  so we can detect the carrier loss condition in time.&n;&t;&t;  Eddie C. Dost (ecd@skynet.be)&n;&n;&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n;&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n;&n;&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n;&n;&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n;&t;&t;  This was the sun4c killer. Shit, stupid bug.&n;&t;&t;  (ecd@skynet.be)&n;*/
+multiline_comment|/* $Id: sunlance.c,v 1.52 1997/01/25 23:29:56 ecd Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; */
 DECL|macro|DEBUG_DRIVER
 macro_line|#undef DEBUG_DRIVER
 DECL|variable|version
@@ -8,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;sunlance.c:v1.9 21/Aug/96 Miguel de Icaza (miguel@nuclecu.unam.mx)&bslash;n&quot;
+l_string|&quot;sunlance.c:v1.10 26/Jan/97 Miguel de Icaza (miguel@nuclecu.unam.mx)&bslash;n&quot;
 suffix:semicolon
 DECL|variable|lancestr
 r_static
@@ -26,6 +25,7 @@ id|lancedma
 op_assign
 l_string|&quot;LANCE DMA&quot;
 suffix:semicolon
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -395,29 +395,45 @@ id|Linux_SBus_DMA
 op_star
 id|ledma
 suffix:semicolon
-multiline_comment|/* if set this points to ledma and arch=4m */
+multiline_comment|/* If set this points to ledma    */
+multiline_comment|/* and arch = sun4m&t;&t;*/
 DECL|member|tpe
 r_int
 id|tpe
 suffix:semicolon
-multiline_comment|/* cable-selection is TPE */
+multiline_comment|/* cable-selection is TPE&t;&t;*/
 DECL|member|auto_select
 r_int
 id|auto_select
 suffix:semicolon
-multiline_comment|/* cable-selection by carrier */
+multiline_comment|/* cable-selection by carrier&t;*/
 DECL|member|burst_sizes
 r_int
 id|burst_sizes
 suffix:semicolon
-multiline_comment|/* ledma SBus burst sizes */
+multiline_comment|/* ledma SBus burst sizes&t;&t;*/
 DECL|member|busmaster_regval
-DECL|member|pio_buffer
 r_int
 r_int
 id|busmaster_regval
-comma
+suffix:semicolon
+DECL|member|pio_buffer
+r_int
+r_int
 id|pio_buffer
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* Backpointer&t;*/
+DECL|member|next_module
+r_struct
+id|lance_private
+op_star
+id|next_module
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -454,6 +470,17 @@ multiline_comment|/* On the Sun4m we have to instruct the ledma to provide them 
 multiline_comment|/* Even worse, on scsi/ether SBUS cards, the init block and the&n; * transmit/receive buffers are addresses as offsets from absolute&n; * zero on the lebuffer PIO area. -davem&n; */
 DECL|macro|LANCE_ADDR
 mdefine_line|#define LANCE_ADDR(x) ((int)(x) &amp; ~0xff000000)
+macro_line|#ifdef MODULE
+DECL|variable|root_lance_dev
+r_static
+r_struct
+id|lance_private
+op_star
+id|root_lance_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Load the CSR registers */
 DECL|function|load_csrs
 r_static
@@ -2543,6 +2570,14 @@ op_assign
 id|ll-&gt;rdp
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|status
+)paren
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 id|status
 suffix:semicolon
@@ -2605,6 +2640,8 @@ op_star
 )paren
 id|dev
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3593,6 +3630,8 @@ r_sizeof
 r_struct
 id|lance_private
 )paren
+op_plus
+l_int|8
 )paren
 suffix:semicolon
 )brace
@@ -3607,6 +3646,8 @@ r_sizeof
 r_struct
 id|lance_private
 )paren
+op_plus
+l_int|8
 comma
 id|GFP_KERNEL
 )paren
@@ -3621,6 +3662,22 @@ l_int|NULL
 r_return
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|dev-&gt;priv
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|lance_private
+)paren
+op_plus
+l_int|8
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -3772,23 +3829,6 @@ id|lance_private
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-id|memset
-(paren
-(paren
-r_char
-op_star
-)paren
-id|dev-&gt;priv
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|lance_private
-)paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4203,6 +4243,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
+id|lp-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
 id|dev-&gt;open
 op_assign
 op_amp
@@ -4250,6 +4294,23 @@ id|ether_setup
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|dev-&gt;ifindex
+op_assign
+id|dev_new_index
+c_func
+(paren
+)paren
+suffix:semicolon
+id|lp-&gt;next_module
+op_assign
+id|root_lance_dev
+suffix:semicolon
+id|root_lance_dev
+op_assign
+id|lp
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4273,18 +4334,10 @@ id|Linux_SBus_DMA
 op_star
 id|p
 suffix:semicolon
-r_for
-c_loop
+id|for_each_dvma
+c_func
 (paren
 id|p
-op_assign
-id|dma_chain
-suffix:semicolon
-id|p
-suffix:semicolon
-id|p
-op_assign
-id|p-&gt;next
 )paren
 r_if
 c_cond
@@ -4524,5 +4577,67 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
+macro_line|#ifdef MODULE
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|root_lance_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+id|sparc_lance_probe
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|lance_private
+op_star
+id|lp
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|root_lance_dev
+)paren
+(brace
+id|lp
+op_assign
+id|root_lance_dev-&gt;next_module
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|root_lance_dev-&gt;dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|root_lance_dev-&gt;dev
+)paren
+suffix:semicolon
+id|root_lance_dev
+op_assign
+id|lp
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 eof

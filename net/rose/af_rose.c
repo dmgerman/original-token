@@ -5793,7 +5793,7 @@ id|rose_accept
 comma
 id|rose_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|rose_ioctl
 comma

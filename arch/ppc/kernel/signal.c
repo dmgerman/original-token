@@ -1,6 +1,8 @@
 multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Adapted for PowerPC by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu) &n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -65,6 +67,17 @@ r_int
 r_int
 id|mask
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EINTR
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mask
 op_assign
 id|current-&gt;blocked
@@ -125,11 +138,20 @@ comma
 id|regs
 )paren
 )paren
-r_return
-op_minus
-id|EINTR
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|sys_sigreturn
 id|asmlinkage
@@ -155,6 +177,13 @@ id|int_regs
 suffix:semicolon
 r_int
 id|signo
+comma
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#if 1 &t;
 r_if
@@ -333,7 +362,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_return
+id|ret
+op_assign
 (paren
 id|regs-&gt;result
 )paren
@@ -385,12 +415,14 @@ id|regs-&gt;nip
 op_assign
 id|sc-&gt;handler
 suffix:semicolon
-r_return
-(paren
+id|ret
+op_assign
 id|sc-&gt;signal
-)paren
 suffix:semicolon
 )brace
+r_goto
+id|out
+suffix:semicolon
 id|badframe
 suffix:colon
 multiline_comment|/*printk(&quot;sys_sigreturn(): badstack regs %x cur %s/%d&bslash;n&quot;,&n;&t; regs,current-&gt;comm,current-&gt;pid);*/
@@ -399,6 +431,16 @@ c_func
 (paren
 id|SIGSEGV
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note that &squot;init&squot; is a special process: it doesn&squot;t get signals it doesn&squot;t&n; * want to handle. Thus you cannot kill init even with a SIGKILL even by&n; * mistake.&n; *&n; * Note that we go through the signals twice: once to check the signals that&n; * the kernel can handle, and then we build all the user-level signal handling&n; * stack-frames in one go after that.&n; */
@@ -421,9 +463,6 @@ id|regs
 r_int
 r_int
 id|mask
-op_assign
-op_complement
-id|current-&gt;blocked
 suffix:semicolon
 r_int
 r_int
@@ -442,9 +481,7 @@ r_int
 r_int
 op_star
 id|trampoline
-suffix:semicolon
-r_int
-r_int
+comma
 op_star
 id|regs_ptr
 suffix:semicolon
@@ -458,9 +495,6 @@ r_int
 r_int
 id|signr
 suffix:semicolon
-r_int
-id|bitno
-suffix:semicolon
 r_struct
 id|sigcontext_struct
 op_star
@@ -472,7 +506,21 @@ op_star
 id|sa
 suffix:semicolon
 r_int
+id|bitno
+comma
 id|s
+comma
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|mask
+op_assign
+op_complement
+id|current-&gt;blocked
 suffix:semicolon
 r_while
 c_loop
@@ -500,7 +548,6 @@ suffix:semicolon
 id|bitno
 op_increment
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -514,7 +561,6 @@ id|bitno
 )paren
 r_break
 suffix:semicolon
-)brace
 id|signr
 op_assign
 id|bitno
@@ -890,6 +936,10 @@ op_complement
 id|sa-&gt;sa_mask
 suffix:semicolon
 )brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -897,11 +947,9 @@ op_logical_neg
 id|handler_signal
 )paren
 multiline_comment|/* no handler will be called - return 0 */
-(brace
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
-)brace
 id|nip
 op_assign
 id|regs-&gt;nip
@@ -1213,29 +1261,54 @@ r_int
 )paren
 id|sc
 suffix:semicolon
-multiline_comment|/* The DATA cache must be flushed here to insure coherency */
-multiline_comment|/* between the DATA &amp; INSTRUCTION caches.  Since we just */
-multiline_comment|/* created an instruction stream using the DATA [cache] space */
-multiline_comment|/* and since the instruction cache will not look in the DATA */
-multiline_comment|/* cache for new data, we have to force the data to go on to */
-multiline_comment|/* memory and flush the instruction cache to force it to look */
-multiline_comment|/* there.  The following function performs this magic */
+multiline_comment|/* The DATA cache must be flushed here to insure coherency&n;&t; * between the DATA &amp; INSTRUCTION caches.  Since we just&n;&t; * created an instruction stream using the DATA [cache] space&n;&t; * and since the instruction cache will not look in the DATA&n;&t; * cache for new data, we have to force the data to go on to&n;&t; * memory and flush the instruction cache to force it to look&n;&t; * there.  The following function performs this magic&n;&t; */
 id|flush_instruction_cache
 c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|1
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 id|badframe
 suffix:colon
-multiline_comment|/*  printk(&quot;do_signal(): badstack signr %d frame %x regs %x cur %s/%d&bslash;n&quot;,&n;&t; signr,frame,regs,current-&gt;comm,current-&gt;pid);*/
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;do_signal(): badstack signr %d frame %x regs %x cur %s/%d&bslash;n&quot;
+comma
+id|signr
+comma
+id|frame
+comma
+id|regs
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+)paren
+suffix:semicolon
+macro_line|#endif
 id|do_exit
 c_func
 (paren
 id|SIGSEGV
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

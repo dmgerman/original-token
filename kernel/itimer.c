@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * change timeval to jiffies, trying to avoid the &n; * most obvious overflows..&n; *&n; * The tv_*sec values are signed, but nothing seems to &n; * indicate whether we really should use them as signed values&n; * when doing itimers. POSIX doesn&squot;t mention this (but if&n; * alarm() uses itimers without checking, we have to use unsigned&n; * arithmetic).&n; */
 DECL|function|tvtojiffies
@@ -274,10 +276,18 @@ id|value
 (brace
 r_int
 id|error
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 r_struct
 id|itimerval
 id|get_buffer
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -285,9 +295,8 @@ c_cond
 op_logical_neg
 id|value
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -305,10 +314,11 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -328,6 +338,16 @@ op_minus
 id|EFAULT
 suffix:colon
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 DECL|function|it_real_fn
@@ -623,6 +643,11 @@ id|set_buffer
 comma
 id|get_buffer
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -650,8 +675,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -674,10 +699,16 @@ c_cond
 (paren
 id|error
 )paren
-r_return
+(brace
+id|error
+op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 )brace
 r_else
 id|memset
@@ -725,8 +756,8 @@ op_logical_or
 op_logical_neg
 id|ovalue
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -749,6 +780,13 @@ id|error
 op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|error

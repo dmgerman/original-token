@@ -3,6 +3,8 @@ macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
@@ -1660,10 +1662,21 @@ r_struct
 id|user
 op_star
 id|dummy
-suffix:semicolon
-id|dummy
 op_assign
 l_int|NULL
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -1681,17 +1694,20 @@ id|current-&gt;flags
 op_amp
 id|PF_PTRACED
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* set the ptrace bit in the process flags. */
 id|current-&gt;flags
 op_or_assign
 id|PF_PTRACED
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1702,9 +1718,13 @@ op_eq
 l_int|1
 )paren
 multiline_comment|/* you may not mess with init */
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EPERM
+id|ESRCH
 suffix:semicolon
 r_if
 c_cond
@@ -1720,9 +1740,13 @@ id|pid
 )paren
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|ESRCH
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -1739,9 +1763,8 @@ id|child
 op_eq
 id|current
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1793,9 +1816,8 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* the same process cannot be attached many times */
 r_if
@@ -1805,9 +1827,8 @@ id|child-&gt;flags
 op_amp
 id|PF_PTRACED
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 id|child-&gt;flags
 op_or_assign
@@ -1848,10 +1869,19 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
+id|ret
+op_assign
+op_minus
+id|ESRCH
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1862,9 +1892,8 @@ op_amp
 id|PF_PTRACED
 )paren
 )paren
-r_return
-op_minus
-id|ESRCH
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1881,9 +1910,8 @@ id|request
 op_ne
 id|PTRACE_KILL
 )paren
-r_return
-op_minus
-id|ESRCH
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1893,9 +1921,8 @@ id|child-&gt;p_pptr
 op_ne
 id|current
 )paren
-r_return
-op_minus
-id|ESRCH
+r_goto
+id|out
 suffix:semicolon
 r_switch
 c_cond
@@ -1916,10 +1943,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-r_int
-id|res
-suffix:semicolon
-id|res
+id|ret
 op_assign
 id|read_long
 c_func
@@ -1935,14 +1959,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|res
-OL
+id|ret
+op_ge
 l_int|0
 )paren
-r_return
-id|res
-suffix:semicolon
-r_return
+id|ret
+op_assign
 id|put_user
 c_func
 (paren
@@ -1956,6 +1978,9 @@ op_star
 id|data
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
 multiline_comment|/* read the word at location addr in the USER area. */
 r_case
@@ -1965,6 +1990,11 @@ suffix:colon
 r_int
 r_int
 id|tmp
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -1987,9 +2017,8 @@ r_struct
 id|user
 )paren
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 id|tmp
 op_assign
@@ -2003,6 +2032,11 @@ op_rshift
 l_int|2
 suffix:semicolon
 multiline_comment|/* temporary hack. */
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2055,11 +2089,11 @@ l_int|21
 )braket
 suffix:semicolon
 r_else
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|put_user
 c_func
 (paren
@@ -2073,6 +2107,9 @@ op_star
 id|data
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
 multiline_comment|/* when I and D space are separate, this will have to be fixed. */
 r_case
@@ -2082,7 +2119,8 @@ multiline_comment|/* write the word at location addr. */
 r_case
 id|PTRACE_POKEDATA
 suffix:colon
-r_return
+id|ret
+op_assign
 id|write_long
 c_func
 (paren
@@ -2093,10 +2131,18 @@ comma
 id|data
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 r_case
 id|PTRACE_POKEUSR
 suffix:colon
 multiline_comment|/* write the word at location addr in the USER area */
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2118,9 +2164,8 @@ r_struct
 id|user
 )paren
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 id|addr
 op_assign
@@ -2136,9 +2181,8 @@ id|addr
 op_eq
 id|PT_ORIG_D0
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2195,12 +2239,15 @@ comma
 id|data
 )paren
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2224,13 +2271,13 @@ l_int|21
 op_assign
 id|data
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|PTRACE_SYSCALL
@@ -2244,6 +2291,11 @@ multiline_comment|/* restart after signal. */
 r_int
 id|tmp
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2255,9 +2307,8 @@ id|data
 op_ge
 id|NSIG
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2314,8 +2365,12 @@ comma
 id|tmp
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * make the child exit.  Best I can do is send it a sigkill. &n; * perhaps it should be put in the status that it wants to &n; * exit.&n; */
@@ -2326,6 +2381,10 @@ suffix:colon
 r_int
 id|tmp
 suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2334,8 +2393,8 @@ op_eq
 id|TASK_ZOMBIE
 )paren
 multiline_comment|/* already dead */
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|wake_up_process
 c_func
@@ -2375,8 +2434,8 @@ comma
 id|tmp
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -2386,6 +2445,11 @@ suffix:colon
 multiline_comment|/* set the trap flag. */
 r_int
 id|tmp
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -2398,9 +2462,8 @@ id|data
 op_ge
 id|NSIG
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 id|child-&gt;flags
 op_and_assign
@@ -2444,8 +2507,12 @@ op_assign
 id|data
 suffix:semicolon
 multiline_comment|/* give it a chance to run. */
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -2455,6 +2522,11 @@ suffix:colon
 multiline_comment|/* detach a process that was attached. */
 r_int
 id|tmp
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -2467,9 +2539,8 @@ id|data
 op_ge
 id|NSIG
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 id|child-&gt;flags
 op_and_assign
@@ -2534,17 +2605,35 @@ comma
 id|tmp
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_default
 suffix:colon
-r_return
+id|ret
+op_assign
 op_minus
 id|EIO
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|syscall_trace
 id|asmlinkage
@@ -2555,6 +2644,11 @@ c_func
 r_void
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2574,7 +2668,8 @@ op_or
 id|PF_TRACESYS
 )paren
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|current-&gt;exit_code
 op_assign
@@ -2617,7 +2712,12 @@ id|current-&gt;exit_code
 op_assign
 l_int|0
 suffix:semicolon
-r_return
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 eof

@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1227,10 +1229,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Returning from ptrace is a bit tricky because the syscall return&n; * low level code assumes any value returned which is negative and&n; * is a valid errno will mean setting the condition codes to indicate&n; * an error return.  This doesn&squot;t work, so we have this hook.&n; */
+DECL|function|pt_error_return
 r_static
 r_inline
 r_void
-DECL|function|pt_error_return
 id|pt_error_return
 c_func
 (paren
@@ -1264,10 +1266,10 @@ op_add_assign
 l_int|4
 suffix:semicolon
 )brace
+DECL|function|pt_succ_return
 r_static
 r_inline
 r_void
-DECL|function|pt_succ_return
 id|pt_succ_return
 c_func
 (paren
@@ -2331,6 +2333,11 @@ id|task_struct
 op_star
 id|child
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG_PTRACE
 (brace
 r_char
@@ -2440,7 +2447,8 @@ comma
 id|EPERM
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* set the ptrace bit in the process flags. */
@@ -2456,7 +2464,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 macro_line|#ifndef ALLOW_INIT_TRACING
@@ -2477,7 +2486,8 @@ comma
 id|EPERM
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -2504,19 +2514,41 @@ comma
 id|ESRCH
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
+(paren
+(paren
+id|current-&gt;personality
+op_amp
+id|PER_BSD
+)paren
+op_logical_and
+(paren
 id|request
 op_eq
 id|PTRACE_SUNATTACH
+)paren
+)paren
 op_logical_or
+(paren
+op_logical_neg
+(paren
+id|current-&gt;personality
+op_amp
+id|PER_BSD
+)paren
+op_logical_and
+(paren
 id|request
 op_eq
 id|PTRACE_ATTACH
+)paren
+)paren
 )paren
 (brace
 r_if
@@ -2536,7 +2568,8 @@ comma
 id|EPERM
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2586,7 +2619,8 @@ comma
 id|EPERM
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* the same process cannot be attached many times */
@@ -2606,7 +2640,8 @@ comma
 id|EPERM
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|child-&gt;flags
@@ -2656,7 +2691,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2670,15 +2706,32 @@ id|PF_PTRACED
 )paren
 op_logical_and
 (paren
+(paren
+id|current-&gt;personality
+op_amp
+id|PER_BSD
+)paren
+op_logical_and
+(paren
 id|request
 op_ne
 id|PTRACE_SUNATTACH
+)paren
+)paren
+op_logical_and
+(paren
+op_logical_neg
+(paren
+id|current-&gt;personality
+op_amp
+id|PER_BSD
 )paren
 op_logical_and
 (paren
 id|request
 op_ne
 id|PTRACE_ATTACH
+)paren
 )paren
 )paren
 (brace
@@ -2690,7 +2743,8 @@ comma
 id|ESRCH
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2717,7 +2771,8 @@ comma
 id|ESRCH
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -2737,7 +2792,8 @@ comma
 id|ESRCH
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_switch
@@ -2786,7 +2842,8 @@ comma
 id|EINVAL
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|res
@@ -2819,7 +2876,8 @@ op_minus
 id|res
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|pt_os_succ_return
@@ -2836,7 +2894,8 @@ op_star
 id|data
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -2858,7 +2917,8 @@ op_star
 id|data
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|PTRACE_POKEUSR
@@ -2873,7 +2933,8 @@ comma
 id|child
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|PTRACE_POKETEXT
@@ -2916,7 +2977,8 @@ comma
 id|EINVAL
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|vma
@@ -2968,7 +3030,8 @@ comma
 id|res
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3019,7 +3082,6 @@ c_cond
 id|rval
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -3028,6 +3090,9 @@ comma
 op_minus
 id|rval
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|__put_user
@@ -3133,7 +3198,8 @@ l_int|15
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3195,7 +3261,6 @@ c_cond
 id|i
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -3204,6 +3269,9 @@ comma
 op_minus
 id|i
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|__get_user
@@ -3334,7 +3402,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3421,7 +3490,6 @@ c_cond
 id|i
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -3430,6 +3498,9 @@ comma
 op_minus
 id|i
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_for
@@ -3575,7 +3646,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3662,7 +3734,6 @@ c_cond
 id|i
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -3671,6 +3742,9 @@ comma
 op_minus
 id|i
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|copy_from_user
@@ -3783,7 +3857,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3840,7 +3915,6 @@ c_cond
 id|res
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -3849,6 +3923,9 @@ comma
 op_minus
 id|res
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_while
@@ -3878,7 +3955,6 @@ OL
 l_int|0
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -3887,6 +3963,9 @@ comma
 op_minus
 id|res
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|__put_user
@@ -3915,7 +3994,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3968,7 +4048,6 @@ c_cond
 id|res
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -3977,6 +4056,9 @@ comma
 op_minus
 id|res
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_while
@@ -4017,7 +4099,6 @@ OL
 l_int|0
 )paren
 (brace
-r_return
 id|pt_error_return
 c_func
 (paren
@@ -4026,6 +4107,9 @@ comma
 op_minus
 id|res
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|src
@@ -4046,7 +4130,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -4082,7 +4167,8 @@ comma
 id|EIO
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -4109,7 +4195,8 @@ comma
 id|EINVAL
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_PTRACE
@@ -4198,7 +4285,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * make the child exit.  Best I can do is send it a sigkill. &n; * perhaps it should be put in the status that it wants to &n; * exit.&n; */
@@ -4223,7 +4311,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|wake_up_process
@@ -4244,7 +4333,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -4272,7 +4362,8 @@ comma
 id|EIO
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|child-&gt;flags
@@ -4318,7 +4409,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* PTRACE_DUMPCORE unsupported... */
@@ -4332,9 +4424,17 @@ comma
 id|EIO
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|syscall_trace
 id|asmlinkage
@@ -4345,6 +4445,11 @@ c_func
 r_void
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG_PTRACE
 id|printk
 c_func
@@ -4376,7 +4481,8 @@ op_or
 id|PF_TRACESYS
 )paren
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|current-&gt;exit_code
 op_assign
@@ -4438,6 +4544,13 @@ suffix:semicolon
 id|current-&gt;exit_code
 op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 eof

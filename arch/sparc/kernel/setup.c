@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.79 1996/12/23 10:57:02 ecd Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.80 1997/01/25 02:39:54 miguel Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -578,7 +578,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|printk
+id|prom_printf
 c_func
 (paren
 l_string|&quot;KGDB: Using serial line /dev/ttya.&bslash;n&quot;
@@ -595,7 +595,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|printk
+id|prom_printf
 c_func
 (paren
 l_string|&quot;KGDB: Using serial line /dev/ttyb.&bslash;n&quot;
@@ -1313,6 +1313,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|prom_printf
+(paren
+l_string|&quot;Breakpoint!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|breakpoint
 c_func
 (paren
@@ -1885,10 +1890,6 @@ c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-r_extern
-r_int
-id|linux_num_cpus
 suffix:semicolon
 DECL|function|get_cpuinfo
 r_int

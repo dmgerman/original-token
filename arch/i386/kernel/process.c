@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -24,6 +26,21 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ldt.h&gt;
+macro_line|#ifdef __SMP__
+id|asmlinkage
+r_void
+id|ret_from_smpfork
+c_func
+(paren
+r_void
+)paren
+id|__asm__
+c_func
+(paren
+l_string|&quot;ret_from_smpfork&quot;
+)paren
+suffix:semicolon
+macro_line|#else
 id|asmlinkage
 r_void
 id|ret_from_sys_call
@@ -37,6 +54,7 @@ c_func
 l_string|&quot;ret_from_sys_call&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 r_extern
 r_int
@@ -190,6 +208,17 @@ id|start_idle
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -197,9 +226,8 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
@@ -276,6 +304,20 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/*&n; *&t;In the SMP world we hlt outside of kernel syscall rather than within&n; *&t;so as to get the right locking semantics.&n; */
@@ -288,6 +330,17 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -296,9 +349,8 @@ op_ne
 l_int|0
 )paren
 (brace
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP_PROF__
@@ -329,8 +381,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This is being executed in task 0 &squot;user space&squot;.&n; */
@@ -383,9 +446,12 @@ c_cond
 l_int|0
 op_eq
 (paren
-l_int|0x7fffffff
+id|read_smp_counter
+c_func
+(paren
 op_amp
 id|smp_process_available
+)paren
 )paren
 )paren
 (brace
@@ -462,9 +528,12 @@ c_cond
 l_int|0
 op_eq
 (paren
-l_int|0x7fffffff
+id|read_smp_counter
+c_func
+(paren
 op_amp
 id|smp_process_available
+)paren
 )paren
 )paren
 (brace
@@ -1578,6 +1647,23 @@ r_int
 )paren
 id|childregs
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|p-&gt;tss.eip
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ret_from_smpfork
+suffix:semicolon
+id|p-&gt;tss.eflags
+op_assign
+id|regs-&gt;eflags
+op_amp
+l_int|0xffffcdff
+suffix:semicolon
+multiline_comment|/* iopl always 0 for a new process */
+macro_line|#else
 id|p-&gt;tss.eip
 op_assign
 (paren
@@ -1586,6 +1672,14 @@ r_int
 )paren
 id|ret_from_sys_call
 suffix:semicolon
+id|p-&gt;tss.eflags
+op_assign
+id|regs-&gt;eflags
+op_amp
+l_int|0xffffcfff
+suffix:semicolon
+multiline_comment|/* iopl always 0 for a new process */
+macro_line|#endif
 id|p-&gt;tss.ebx
 op_assign
 (paren
@@ -1612,13 +1706,6 @@ id|p-&gt;tss.back_link
 op_assign
 l_int|0
 suffix:semicolon
-id|p-&gt;tss.eflags
-op_assign
-id|regs-&gt;eflags
-op_amp
-l_int|0xffffcfff
-suffix:semicolon
-multiline_comment|/* iopl is always 0 for a new process */
 id|p-&gt;tss.ldt
 op_assign
 id|_LDT
@@ -2106,7 +2193,16 @@ id|pt_regs
 id|regs
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|do_fork
 c_func
 (paren
@@ -2117,6 +2213,14 @@ comma
 op_amp
 id|regs
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|sys_clone
@@ -2138,6 +2242,14 @@ r_int
 r_int
 id|newsp
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|clone_flags
 op_assign
 id|regs.ebx
@@ -2156,7 +2268,8 @@ id|newsp
 op_assign
 id|regs.esp
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|do_fork
 c_func
 (paren
@@ -2167,6 +2280,14 @@ comma
 op_amp
 id|regs
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; */
@@ -2188,6 +2309,11 @@ r_char
 op_star
 id|filename
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -2208,8 +2334,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -2240,6 +2366,13 @@ id|putname
 c_func
 (paren
 id|filename
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

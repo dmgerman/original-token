@@ -2,7 +2,6 @@ multiline_comment|/*&n; * Herein lies all the functions/variables that are &quot
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
@@ -39,6 +38,13 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_HD)
+r_extern
+r_struct
+id|drive_info_struct
+id|drive_info
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 r_char
@@ -46,13 +52,6 @@ id|aux_device_present
 comma
 id|kbd_read_mask
 suffix:semicolon
-macro_line|#ifdef __i386__
-r_extern
-r_struct
-id|drive_info_struct
-id|drive_info
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -825,7 +824,7 @@ c_func
 id|unplug_device
 )paren
 suffix:semicolon
-macro_line|#ifdef __i386__
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_HD)
 DECL|variable|drive_info
 id|EXPORT_SYMBOL
 c_func

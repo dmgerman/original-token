@@ -333,7 +333,7 @@ comma
 multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|bp_ioctl
 comma
 multiline_comment|/* ioctl */

@@ -171,7 +171,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|ftape_ioctl
 comma
 multiline_comment|/* ioctl */
@@ -341,13 +341,12 @@ l_string|&quot; (c) 1995-1996 Kai Harrekilde-Petersen (khp@dolphinics.no)&bslash
 id|KERN_INFO
 l_string|&quot; QIC-117 driver for QIC-40/80/3010/3020 tape drives&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot; Compiled for kernel version %s&quot;
+l_string|&quot; Compiled for kernel version &quot;
+id|UTS_RELEASE
 macro_line|#ifdef MODVERSIONS
 l_string|&quot; with versioned symbols&quot;
 macro_line|#endif
 l_string|&quot;&bslash;n&quot;
-comma
-id|kernel_version
 )paren
 suffix:semicolon
 macro_line|#else /* !MODULE */
@@ -358,7 +357,7 @@ c_func
 l_string|&quot;ftape-2.08 960314 for Linux 1.3.70&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;/* MODULE */
+macro_line|#endif /* MODULE */
 id|TRACE
 c_func
 (paren

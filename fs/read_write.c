@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|default_llseek
 r_static
@@ -214,6 +216,11 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_minus
@@ -277,6 +284,11 @@ id|origin
 suffix:semicolon
 id|bad
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -324,6 +336,11 @@ suffix:semicolon
 r_int
 r_int
 id|offset
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|retval
 op_assign
@@ -440,6 +457,11 @@ suffix:semicolon
 )brace
 id|bad
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -495,6 +517,11 @@ op_star
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|error
@@ -621,6 +648,11 @@ id|inode
 suffix:semicolon
 id|bad_file
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -678,6 +710,11 @@ op_star
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|error
@@ -813,6 +850,11 @@ id|inode
 suffix:semicolon
 id|bad_file
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -1285,6 +1327,17 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+r_int
+id|err
+op_assign
+op_minus
+id|EBADF
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1309,9 +1362,8 @@ op_assign
 id|file-&gt;f_inode
 )paren
 )paren
-r_return
-op_minus
-id|EBADF
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1323,11 +1375,11 @@ op_amp
 l_int|1
 )paren
 )paren
-r_return
-op_minus
-id|EBADF
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|err
+op_assign
 id|do_readv_writev
 c_func
 (paren
@@ -1341,6 +1393,16 @@ id|vector
 comma
 id|count
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 DECL|function|sys_writev
@@ -1366,6 +1428,9 @@ id|count
 (brace
 r_int
 id|error
+op_assign
+op_minus
+id|EBADF
 suffix:semicolon
 r_struct
 id|file
@@ -1376,6 +1441,11 @@ r_struct
 id|inode
 op_star
 id|inode
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1401,9 +1471,8 @@ op_assign
 id|file-&gt;f_inode
 )paren
 )paren
-r_return
-op_minus
-id|EBADF
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1415,9 +1484,8 @@ op_amp
 l_int|2
 )paren
 )paren
-r_return
-op_minus
-id|EBADF
+r_goto
+id|out
 suffix:semicolon
 id|down
 c_func
@@ -1447,6 +1515,13 @@ c_func
 (paren
 op_amp
 id|inode-&gt;i_sem
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

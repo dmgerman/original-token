@@ -215,18 +215,17 @@ DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack,&bslash;&n;&t;(long *)swapper_pg_dir, {0}, &bslash;&n;&t;0, 0, {0}, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;KERNEL_DS, 0, 0 &bslash;&n;}
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
-macro_line|#ifdef KERNEL_STACK_BUFFER
-multiline_comment|/* give a 1 page buffer below the stack - if change then change ppc_machine.h */
-DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack()  &bslash;&n;          (memset((void *)__get_free_pages(GFP_KERNEL,1,0),0,KERNEL_STACK_SIZE+PAGE_SIZE)+PAGE_SIZE)
-DECL|macro|free_kernel_stack
-mdefine_line|#define free_kernel_stack(page) free_pages((page)-PAGE_SIZE,1)
-macro_line|#else
-DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
-DECL|macro|free_kernel_stack
-mdefine_line|#define free_kernel_stack(page) free_page((page))
-macro_line|#endif
+multiline_comment|/* Free all resources held by a thread. */
+r_extern
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Return saved PC of a blocked thread. For now, this is the &quot;user&quot; PC&n; */
 DECL|function|thread_saved_pc
 r_static
@@ -258,6 +257,23 @@ DECL|variable|_Processor
 r_int
 id|_Processor
 suffix:semicolon
+multiline_comment|/* Allocation and freeing of basic task resources. */
+DECL|macro|alloc_task_struct
+mdefine_line|#define alloc_task_struct()&t;kmalloc(sizeof(struct task_struct), GFP_KERNEL)
+DECL|macro|free_task_struct
+mdefine_line|#define free_task_struct(p)&t;kfree(p)
+macro_line|#ifdef KERNEL_STACK_BUFFER
+multiline_comment|/* give a 1 page buffer below the stack - if change then change ppc_machine.h */
+DECL|macro|alloc_kernel_stack
+mdefine_line|#define alloc_kernel_stack()  &bslash;&n;          (memset((void *)__get_free_pages(GFP_KERNEL,1,0),0,KERNEL_STACK_SIZE+PAGE_SIZE)+PAGE_SIZE)
+DECL|macro|free_kernel_stack
+mdefine_line|#define free_kernel_stack(page) free_pages((page)-PAGE_SIZE,1)
+macro_line|#else
+DECL|macro|alloc_kernel_stack
+mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
+DECL|macro|free_kernel_stack
+mdefine_line|#define free_kernel_stack(page) free_page((page))
+macro_line|#endif
 macro_line|#endif /* ASSEMBLY*/
 macro_line|#endif
 eof

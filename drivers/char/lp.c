@@ -2920,7 +2920,7 @@ comma
 multiline_comment|/* lp_readdir */
 l_int|NULL
 comma
-multiline_comment|/* lp_select */
+multiline_comment|/* lp_poll */
 id|lp_ioctl
 comma
 l_int|NULL

@@ -77,10 +77,11 @@ r_int
 op_star
 id|signal_invmap
 suffix:semicolon
-DECL|member|use_count
-r_int
+DECL|member|module
+r_struct
+id|module
 op_star
-id|use_count
+id|module
 suffix:semicolon
 DECL|member|next
 r_struct

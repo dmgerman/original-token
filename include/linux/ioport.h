@@ -75,6 +75,36 @@ r_char
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+r_extern
+r_int
+r_int
+id|occupy_region
+c_func
+(paren
+r_int
+r_int
+id|base
+comma
+r_int
+r_int
+id|end
+comma
+r_int
+r_int
+id|num
+comma
+r_int
+r_int
+id|align
+comma
+r_const
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|HAVE_AUTOIRQ
 mdefine_line|#define HAVE_AUTOIRQ
 r_extern

@@ -447,12 +447,19 @@ DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xC0000000, 0xFFFFF000, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, KERNEL_DS, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0 /* vm86_info */, &bslash;&n;}
-DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
-DECL|macro|free_kernel_stack
-mdefine_line|#define free_kernel_stack(page) free_page((page))
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;unsigned long seg = USER_DS; &bslash;&n;&t;__asm__(&quot;mov %w0,%%fs ; mov %w0,%%gs&quot;:&quot;=r&quot; (seg) :&quot;0&quot; (seg)); &bslash;&n;&t;set_fs(seg); &bslash;&n;&t;regs-&gt;xds = seg; &bslash;&n;&t;regs-&gt;xes = seg; &bslash;&n;&t;regs-&gt;xss = seg; &bslash;&n;&t;regs-&gt;xcs = USER_CS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
+multiline_comment|/* Free all resources held by a thread. */
+r_extern
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern
@@ -482,5 +489,14 @@ l_int|3
 )braket
 suffix:semicolon
 )brace
+multiline_comment|/* Allocation and freeing of basic task resources. */
+DECL|macro|alloc_task_struct
+mdefine_line|#define alloc_task_struct()&t;kmalloc(sizeof(struct task_struct), GFP_KERNEL)
+DECL|macro|alloc_kernel_stack
+mdefine_line|#define alloc_kernel_stack(p)&t;__get_free_page(GFP_KERNEL)
+DECL|macro|free_task_struct
+mdefine_line|#define free_task_struct(p)&t;kfree(p)
+DECL|macro|free_kernel_stack
+mdefine_line|#define free_kernel_stack(page) free_page((page))
 macro_line|#endif /* __ASM_I386_PROCESSOR_H */
 eof

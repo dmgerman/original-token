@@ -991,7 +991,7 @@ mdefine_line|#define LPA_100HALF             0x0080  /* Can do 100mbps half-dupl
 DECL|macro|LPA_100FULL
 mdefine_line|#define LPA_100FULL             0x0100  /* Can do 100mbps full-duplex  */
 DECL|macro|LPA_100BASE4
-mdefine_line|#define LPA_100BASE4            0x0100  /* Can do 100mbps 4k packets   */
+mdefine_line|#define LPA_100BASE4            0x0200  /* Can do 100mbps 4k packets   */
 DECL|macro|LPA_RESV
 mdefine_line|#define LPA_RESV                0x1c00  /* Unused...                   */
 DECL|macro|LPA_RFAULT

@@ -614,7 +614,7 @@ comma
 multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|ps2esdi_ioctl
 comma
 multiline_comment|/* ioctl */

@@ -8,10 +8,10 @@ c_func
 r_void
 )paren
 (brace
-id|driver_template.usage_count
+id|driver_template.module
 op_assign
 op_amp
-id|__this_module.usecount
+id|__this_module
 suffix:semicolon
 id|scsi_register_module
 c_func

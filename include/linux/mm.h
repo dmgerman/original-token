@@ -149,6 +149,8 @@ DECL|macro|VM_EXECUTABLE
 mdefine_line|#define VM_EXECUTABLE&t;0x1000
 DECL|macro|VM_LOCKED
 mdefine_line|#define VM_LOCKED&t;0x2000
+DECL|macro|VM_IO
+mdefine_line|#define VM_IO           0x4000  /* Memory mapped I/O or similar */
 DECL|macro|VM_STACK_FLAGS
 mdefine_line|#define VM_STACK_FLAGS&t;0x0177
 multiline_comment|/*&n; * mapping from the currently active vm_flags protection bits (the&n; * low four bits) to a page protection mask..&n; */
@@ -867,6 +869,14 @@ id|val
 )paren
 suffix:semicolon
 multiline_comment|/* mmap.c */
+r_extern
+r_void
+id|vma_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_int
 r_int

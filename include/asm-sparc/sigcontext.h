@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.10 1996/11/27 01:46:51 miguel Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.11 1997/01/19 22:32:07 ecd Exp $ */
 macro_line|#ifndef _ASMsparc_SIGCONTEXT_H
 DECL|macro|_ASMsparc_SIGCONTEXT_H
 mdefine_line|#define _ASMsparc_SIGCONTEXT_H
@@ -101,6 +101,17 @@ r_struct
 id|pt_regs
 id|si_regs
 suffix:semicolon
+DECL|member|si_mask
+r_int
+id|si_mask
+suffix:semicolon
+DECL|typedef|__siginfo_t
+)brace
+id|__siginfo_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
 DECL|member|si_float_regs
 r_int
 r_int
@@ -139,13 +150,9 @@ id|si_fpqueue
 l_int|16
 )braket
 suffix:semicolon
-DECL|member|si_mask
-r_int
-id|si_mask
-suffix:semicolon
-DECL|typedef|__siginfo_t
+DECL|typedef|__siginfo_fpu_t
 )brace
-id|__siginfo_t
+id|__siginfo_fpu_t
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMsparc_SIGCONTEXT_H) */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging &n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
+multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
 multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
 DECL|macro|_SCSI_SYMS_VER_
 mdefine_line|#define _SCSI_SYMS_VER_
@@ -25,7 +25,7 @@ macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.34 1996/11/19 11:25:50 davem Exp $&quot;;&n;*/
+multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.38 1997/01/19 23:07:18 davem Exp $&quot;;&n;*/
 multiline_comment|/* Command groups 3 and 4 are reserved and should never be used.  */
 DECL|variable|scsi_command_size
 r_const
@@ -329,8 +329,8 @@ id|last_cmnd
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* This is the pointer to the /proc/scsi code. &n; * It is only initialized to !=0 if the scsi code is present &n; */
-macro_line|#if CONFIG_PROC_FS 
+multiline_comment|/* This is the pointer to the /proc/scsi code.&n; * It is only initialized to !=0 if the scsi code is present&n; */
+macro_line|#if CONFIG_PROC_FS
 r_extern
 r_int
 (paren
@@ -465,7 +465,7 @@ mdefine_line|#define MIN_RESET_DELAY (2*HZ)
 multiline_comment|/* Do not call reset on error if we just did a reset within 15 sec. */
 DECL|macro|MIN_RESET_PERIOD
 mdefine_line|#define MIN_RESET_PERIOD (15*HZ)
-multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n; * one reason or another.  Some will respond to all luns, others will&n; * lock up. &n; */
+multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n; * one reason or another.  Some will respond to all luns, others will&n; * lock up.&n; */
 DECL|macro|BLIST_NOLUN
 mdefine_line|#define BLIST_NOLUN     0x01
 DECL|macro|BLIST_FORCELUN
@@ -694,7 +694,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;SEAGATE&quot;
 comma
@@ -705,7 +705,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;SEAGATE&quot;
 comma
@@ -779,7 +779,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;TEXEL&quot;
 comma
@@ -790,7 +790,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;QUANTUM&quot;
 comma
@@ -3390,7 +3390,7 @@ op_or
 id|IN_RESET
 )paren
 suffix:colon
-multiline_comment|/* This might be controversial, but if there is a bus hang,&n;&t; * you might conceivably want the machine up and running&n;&t; * esp if you have an ide disk. &n;&t; */
+multiline_comment|/* This might be controversial, but if there is a bus hang,&n;&t; * you might conceivably want the machine up and running&n;&t; * esp if you have an ide disk.&n;&t; */
 id|printk
 c_func
 (paren
@@ -3490,7 +3490,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* This function takes a quick look at a request, and decides if it&n; * can be queued now, or if there would be a stall while waiting for&n; * something else to finish.  This routine assumes that interrupts are&n; * turned off when entering the routine.  It is the responsibility&n; * of the calling code to ensure that this is the case. &n; */
+multiline_comment|/* This function takes a quick look at a request, and decides if it&n; * can be queued now, or if there would be a stall while waiting for&n; * something else to finish.  This routine assumes that interrupts are&n; * turned off when entering the routine.  It is the responsibility&n; * of the calling code to ensure that this is the case.&n; */
 DECL|function|request_queueable
 id|Scsi_Cmnd
 op_star
@@ -3555,7 +3555,7 @@ c_func
 l_string|&quot;Inactive in request_queueable&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Look for a free command block.  If we have been instructed not to queue&n;     * multiple commands to multi-lun devices, then check to see what else is &n;     * going for this device first.&n;     */
+multiline_comment|/*&n;     * Look for a free command block.  If we have been instructed not to queue&n;     * multiple commands to multi-lun devices, then check to see what else is&n;     * going for this device first.&n;     */
 r_if
 c_cond
 (paren
@@ -3648,7 +3648,7 @@ op_ne
 id|RQ_INACTIVE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;     * I think that we should really limit things to one&n;&t;&t;     * outstanding command per device - this is what tends &n;                     * to trip up buggy firmware.&n;&t;&t;     */
+multiline_comment|/*&n;&t;&t;     * I think that we should really limit things to one&n;&t;&t;     * outstanding command per device - this is what tends&n;                     * to trip up buggy firmware.&n;&t;&t;     */
 r_return
 l_int|NULL
 suffix:semicolon
@@ -3728,7 +3728,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* Take a quick look through the table to see how big it is.  &n;&t; * We already have our copy of req, so we can mess with that &n;&t; * if we want to. &n;&t; */
+multiline_comment|/* Take a quick look through the table to see how big it is.&n;&t; * We already have our copy of req, so we can mess with that&n;&t; * if we want to.&n;&t; */
 r_while
 c_loop
 (paren
@@ -3863,7 +3863,7 @@ id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* And no one is waiting for the device &n;&t;&t;&t;&t;      * either */
+multiline_comment|/* And no one is waiting for the device&n;&t;&t;&t;&t;      * either */
 )brace
 id|SCpnt-&gt;use_sg
 op_assign
@@ -3903,7 +3903,7 @@ r_return
 id|SCpnt
 suffix:semicolon
 )brace
-multiline_comment|/* This function returns a structure pointer that will be valid for&n; * the device.  The wait parameter tells us whether we should wait for&n; * the unit to become free or not.  We are also able to tell this routine&n; * not to return a descriptor if the host is unable to accept any more&n; * commands for the time being.  We need to keep in mind that there is no&n; * guarantee that the host remain not busy.  Keep in mind the&n; * request_queueable function also knows the internal allocation scheme&n; * of the packets for each device &n; */
+multiline_comment|/* This function returns a structure pointer that will be valid for&n; * the device.  The wait parameter tells us whether we should wait for&n; * the unit to become free or not.  We are also able to tell this routine&n; * not to return a descriptor if the host is unable to accept any more&n; * commands for the time being.  We need to keep in mind that there is no&n; * guarantee that the host remain not busy.  Keep in mind the&n; * request_queueable function also knows the internal allocation scheme&n; * of the packets for each device&n; */
 DECL|function|allocate_device
 id|Scsi_Cmnd
 op_star
@@ -4394,7 +4394,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* Take a quick look through the table to see how big it is.  &n;&t;&t; * We already have our copy of req, so we can mess with that &n;&t;&t; * if we want to.  &n;&t;&t; */
+multiline_comment|/* Take a quick look through the table to see how big it is.&n;&t;&t; * We already have our copy of req, so we can mess with that&n;&t;&t; * if we want to.&n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -4533,7 +4533,7 @@ id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* And no one is waiting for this &n;&t;&t;&t;&t;&t;      * to complete */
+multiline_comment|/* And no one is waiting for this&n;&t;&t;&t;&t;&t;      * to complete */
 )brace
 id|restore_flags
 c_func
@@ -4781,7 +4781,7 @@ id|host-&gt;hostt-&gt;queuecommand
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* This locking tries to prevent all sorts of races between&n;&t; * queuecommand and the interrupt code.  In effect,&n;&t; * we are only allowed to be in queuecommand once at&n;&t; * any given time, and we can only be in the interrupt&n;&t; * handler and the queuecommand function at the same time&n;&t; * when queuecommand is called while servicing the&n;&t; * interrupt. &n;&t; */
+multiline_comment|/* This locking tries to prevent all sorts of races between&n;&t; * queuecommand and the interrupt code.  In effect,&n;&t; * we are only allowed to be in queuecommand once at&n;&t; * any given time, and we can only be in the interrupt&n;&t; * handler and the queuecommand function at the same time&n;&t; * when queuecommand is called while servicing the&n;&t; * interrupt.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5318,7 +5318,7 @@ comma
 l_int|12
 )paren
 suffix:semicolon
-multiline_comment|/* Zero the sense buffer.  Some host adapters automatically request&n;     * sense on error.  0 is not a valid sense code.  &n;     */
+multiline_comment|/* Zero the sense buffer.  Some host adapters automatically request&n;     * sense on error.  0 is not a valid sense code.&n;     */
 id|memset
 (paren
 (paren
@@ -5399,7 +5399,7 @@ op_star
 id|SCpnt
 )paren
 (brace
-multiline_comment|/* If there is no sense information, request it.  If we have already&n;     * requested it, there is no point in asking again - the firmware must&n;     * be confused. &n;     */
+multiline_comment|/* If there is no sense information, request it.  If we have already&n;     * requested it, there is no point in asking again - the firmware must&n;     * be confused.&n;     */
 r_if
 c_cond
 (paren
@@ -5645,7 +5645,7 @@ id|SCpnt-&gt;lun
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* If we requested an abort, (and we got it) then fix up the return&n;     *  status to say why &n;     */
+multiline_comment|/* If we requested an abort, (and we got it) then fix up the return&n;     *  status to say why&n;     */
 r_if
 c_cond
 (paren
@@ -6811,7 +6811,7 @@ macro_line|#undef MAYREDO
 DECL|macro|PENDING
 macro_line|#undef PENDING
 )brace
-multiline_comment|/*&n; * The scsi_abort function interfaces with the abort() function of the host&n; * we are aborting, and causes the current command to not complete.  The&n; * caller should deal with any error messages or status returned on the&n; * next call.&n; * &n; * This will not be called reentrantly for a given host.&n; */
+multiline_comment|/*&n; * The scsi_abort function interfaces with the abort() function of the host&n; * we are aborting, and causes the current command to not complete.  The&n; * caller should deal with any error messages or status returned on the&n; * next call.&n; *&n; * This will not be called reentrantly for a given host.&n; */
 multiline_comment|/*&n; * Since we&squot;re nice guys and specified that abort() and reset()&n; * can be non-reentrant.  The internal_timeout flags are used for&n; * this.&n; */
 DECL|function|scsi_abort
 r_int
@@ -6930,7 +6930,7 @@ op_logical_and
 id|SCpnt-&gt;device-&gt;soft_reset
 )paren
 (brace
-multiline_comment|/* OK, this command must have died when we did the&n;&t;&t; *  reset.  The device itself must have lied. &n;&t;&t; */
+multiline_comment|/* OK, this command must have died when we did the&n;&t;&t; *  reset.  The device itself must have lied.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -7035,7 +7035,7 @@ multiline_comment|/* We do not know how to abort.  Try waiting another&n;&t;&t; 
 r_case
 id|SCSI_ABORT_BUSY
 suffix:colon
-multiline_comment|/* Tough call - returning 1 from&n;&t;&t;&t;&t;   * this is too severe &n;&t;&t;&t;&t;   */
+multiline_comment|/* Tough call - returning 1 from&n;&t;&t;&t;&t;   * this is too severe&n;&t;&t;&t;&t;   */
 r_case
 id|SCSI_ABORT_SNOOZE
 suffix:colon
@@ -7080,7 +7080,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* Indicate we cannot handle this.&n;&t;&t;&t;&t;   * We drop down into the reset handler&n;&t;&t;&t;&t;   * and try again &n;&t;&t;&t;&t;   */
+multiline_comment|/* Indicate we cannot handle this.&n;&t;&t;&t;&t;   * We drop down into the reset handler&n;&t;&t;&t;&t;   * and try again&n;&t;&t;&t;&t;   */
 )brace
 r_else
 (brace
@@ -7154,7 +7154,7 @@ suffix:semicolon
 r_case
 id|SCSI_ABORT_SUCCESS
 suffix:colon
-multiline_comment|/* We should have already aborted this one.  No&n;&t;&t; * need to adjust timeout &n;&t;&t; */
+multiline_comment|/* We should have already aborted this one.  No&n;&t;&t; * need to adjust timeout&n;&t;&t; */
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
@@ -7986,7 +7986,7 @@ suffix:semicolon
 r_case
 id|SCSI_RESET_SNOOZE
 suffix:colon
-multiline_comment|/* In this case, we set the timeout field to 0&n;&t;&t; * so that this command does not time out any more,&n;&t;&t; * and we return 1 so that we get a message on the&n;&t;&t; * screen. &n;&t;&t; */
+multiline_comment|/* In this case, we set the timeout field to 0&n;&t;&t; * so that this command does not time out any more,&n;&t;&t; * and we return 1 so that we get a message on the&n;&t;&t; * screen.&n;&t;&t; */
 id|save_flags
 c_func
 (paren
@@ -9378,7 +9378,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * scsi_dev_init() is our initialization routine, which in turn calls host&n; * initialization, bus scanning, and sd/st initialization routines. &n; */
+multiline_comment|/*&n; * scsi_dev_init() is our initialization routine, which in turn calls host&n; * initialization, bus scanning, and sd/st initialization routines.&n; */
 DECL|function|scsi_dev_init
 r_int
 id|scsi_dev_init
@@ -9406,7 +9406,7 @@ r_return
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Yes we&squot;re here... */
-macro_line|#if CONFIG_PROC_FS 
+macro_line|#if CONFIG_PROC_FS
 id|dispatch_scsi_info_ptr
 op_assign
 id|dispatch_scsi_info
@@ -9436,7 +9436,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Register the /proc/scsi/scsi entry */
-macro_line|#if CONFIG_PROC_FS 
+macro_line|#if CONFIG_PROC_FS
 id|proc_scsi_register
 c_func
 (paren
@@ -9655,7 +9655,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * OK, now we finish the initialization by doing spin-up, read&n;     * capacity, etc, etc &n;     */
+multiline_comment|/*&n;     * OK, now we finish the initialization by doing spin-up, read&n;     * capacity, etc, etc&n;     */
 r_for
 c_loop
 (paren
@@ -10285,7 +10285,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Usage: echo &quot;scsi add-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     * Consider this feature BETA.&n;     *     CAUTION: This is not for hotplugging your peripherals. As&n;     *     SCSI was not designed for this you could damage your&n;     *     hardware !  &n;     * However perhaps it is legal to switch on an&n;     * already connected device. It is perhaps not &n;     * guaranteed this device doesn&squot;t corrupt an ongoing data transfer.&n;     */
+multiline_comment|/*&n;     * Usage: echo &quot;scsi add-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     * Consider this feature BETA.&n;     *     CAUTION: This is not for hotplugging your peripherals. As&n;     *     SCSI was not designed for this you could damage your&n;     *     hardware !&n;     * However perhaps it is legal to switch on an&n;     * already connected device. It is perhaps not&n;     * guaranteed this device doesn&squot;t corrupt an ongoing data transfer.&n;     */
 r_if
 c_cond
 (paren
@@ -10466,7 +10466,7 @@ r_return
 id|length
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Usage: echo &quot;scsi remove-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     *&n;     * Consider this feature pre-BETA.&n;     *&n;     *     CAUTION: This is not for hotplugging your peripherals. As&n;     *     SCSI was not designed for this you could damage your&n;     *     hardware and thoroughly confuse the SCSI subsystem.  &n;     *&n;     */
+multiline_comment|/*&n;     * Usage: echo &quot;scsi remove-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     *&n;     * Consider this feature pre-BETA.&n;     *&n;     *     CAUTION: This is not for hotplugging your peripherals. As&n;     *     SCSI was not designed for this you could damage your&n;     *     hardware and thoroughly confuse the SCSI subsystem.&n;     *&n;     */
 r_else
 r_if
 c_cond
@@ -11061,7 +11061,7 @@ id|host
 op_assign
 id|SDpnt-&gt;host
 suffix:semicolon
-multiline_comment|/*&n;&t; * sd and sr drivers allocate scatterlists.&n;&t; * sr drivers may allocate for each command 1x2048 or 2x1024 extra &n;&t; * buffers for 2k sector size and 1k fs.&n;&t; * sg driver allocates buffers &lt; 4k.&n;&t; * st driver does not need buffers from the dma pool.&n;&t; * estimate 4k buffer/command for devices of unknown type (should panic).&n;&t; */
+multiline_comment|/*&n;&t; * sd and sr drivers allocate scatterlists.&n;&t; * sr drivers may allocate for each command 1x2048 or 2x1024 extra&n;&t; * buffers for 2k sector size and 1k fs.&n;&t; * sg driver allocates buffers &lt; 4k.&n;&t; * st driver does not need buffers from the dma pool.&n;&t; * estimate 4k buffer/command for devices of unknown type (should panic).&n;&t; */
 r_if
 c_cond
 (paren
@@ -11376,7 +11376,7 @@ id|GFP_DMA
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* When we dick with the actual DMA list, we need to &n;     * protect things &n;     */
+multiline_comment|/* When we dick with the actual DMA list, we need to&n;     * protect things&n;     */
 id|save_flags
 c_func
 (paren
@@ -11574,7 +11574,7 @@ id|tpnt-&gt;detect
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* Must be already loaded, or&n;&t;&t;&t;&t;&t;       * no detect routine available &n;&t;&t;&t;&t;&t;       */
+multiline_comment|/* Must be already loaded, or&n;&t;&t;&t;&t;&t;       * no detect routine available&n;&t;&t;&t;&t;&t;       */
 id|pcount
 op_assign
 id|next_scsi_host
@@ -11627,7 +11627,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* The low-level driver failed to register a driver.  We&n;&t;     *  can do this now. &n;&t;     */
+multiline_comment|/* The low-level driver failed to register a driver.  We&n;&t;     *  can do this now.&n;&t;     */
 id|scsi_register
 c_func
 (paren
@@ -11647,7 +11647,7 @@ op_assign
 id|tpnt
 suffix:semicolon
 multiline_comment|/* Add the new driver to /proc/scsi */
-macro_line|#if CONFIG_PROC_FS 
+macro_line|#if CONFIG_PROC_FS
 id|build_proc_dir_entries
 c_func
 (paren
@@ -11732,7 +11732,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* The next step is to call scan_scsis here.  This generates the&n;&t; * Scsi_Devices entries &n;&t; */
+multiline_comment|/* The next step is to call scan_scsis here.  This generates the&n;&t; * Scsi_Devices entries&n;&t; */
 r_for
 c_loop
 (paren
@@ -12026,10 +12026,9 @@ id|sdpnt-&gt;host-&gt;hostt
 op_eq
 id|tpnt
 op_logical_and
-id|sdpnt-&gt;host-&gt;hostt-&gt;usage_count
+id|sdpnt-&gt;host-&gt;hostt-&gt;module
 op_logical_and
-op_star
-id|sdpnt-&gt;host-&gt;hostt-&gt;usage_count
+id|sdpnt-&gt;host-&gt;hostt-&gt;module-&gt;usecount
 )paren
 (brace
 r_return
@@ -12379,7 +12378,7 @@ op_assign
 id|next_scsi_host
 suffix:semicolon
 multiline_comment|/* Remove the /proc/scsi directory entry */
-macro_line|#if CONFIG_PROC_FS 
+macro_line|#if CONFIG_PROC_FS
 id|proc_scsi_unregister
 c_func
 (paren
@@ -12390,7 +12389,7 @@ op_plus
 id|PROC_SCSI_FILE
 )paren
 suffix:semicolon
-macro_line|#endif   
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -12408,7 +12407,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* This is the default case for the release function.  &n;&t;&t;     * It should do the right thing for most correctly &n;&t;&t;     * written host adapters. &n;&t;&t;     */
+multiline_comment|/* This is the default case for the release function.&n;&t;&t;     * It should do the right thing for most correctly&n;&t;&t;     * written host adapters.&n;&t;&t;     */
 r_if
 c_cond
 (paren
@@ -12606,7 +12605,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Rebuild the /proc/scsi directory entries */
-macro_line|#if CONFIG_PROC_FS 
+macro_line|#if CONFIG_PROC_FS
 id|proc_scsi_unregister
 c_func
 (paren
@@ -12751,7 +12750,7 @@ id|SDpnt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;     * This does any final handling that is required. &n;     */
+multiline_comment|/*&n;     * This does any final handling that is required.&n;     */
 r_if
 c_cond
 (paren
@@ -12808,8 +12807,7 @@ multiline_comment|/*&n;     * If we are busy, this is not going to fly.&n;     *
 r_if
 c_cond
 (paren
-op_star
-id|tpnt-&gt;usage_count
+id|tpnt-&gt;module-&gt;usecount
 op_ne
 l_int|0
 )paren
@@ -12988,7 +12986,7 @@ id|spnt-&gt;next
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-multiline_comment|/*&n;     * Final cleanup for the driver is done in the driver sources in the &n;     * cleanup function.&n;     */
+multiline_comment|/*&n;     * Final cleanup for the driver is done in the driver sources in the&n;     * cleanup function.&n;     */
 r_return
 l_int|0
 suffix:semicolon
@@ -13062,7 +13060,7 @@ multiline_comment|/* Load constants.o */
 r_case
 id|MODULE_SCSI_CONST
 suffix:colon
-multiline_comment|/* Load specialized ioctl handler for some device.  Intended for &n;&t; * cdroms that have non-SCSI2 audio command sets. */
+multiline_comment|/* Load specialized ioctl handler for some device.  Intended for&n;&t; * cdroms that have non-SCSI2 audio command sets. */
 r_case
 id|MODULE_SCSI_IOCTL
 suffix:colon

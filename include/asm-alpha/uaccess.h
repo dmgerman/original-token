@@ -73,6 +73,15 @@ DECL|macro|__put_user
 mdefine_line|#define __put_user(x,ptr) &bslash;&n;  __put_user_nocheck((__typeof__(*(ptr)))(x),(ptr),sizeof(*(ptr)))
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr) &bslash;&n;  __get_user_nocheck((x),(ptr),sizeof(*(ptr)))
+multiline_comment|/*&n; * The &quot;xxx_ret&quot; versions return constant specified in third argument, if&n; * something bad happens. These macros can be optimized for the&n; * case of just returning from the function xxx_ret is used.&n; */
+DECL|macro|put_user_ret
+mdefine_line|#define put_user_ret(x,ptr,ret) ({ &bslash;&n;if (put_user(x,ptr)) return ret; })
+DECL|macro|get_user_ret
+mdefine_line|#define get_user_ret(x,ptr,ret) ({ &bslash;&n;if (get_user(x,ptr)) return ret; })
+DECL|macro|__put_user_ret
+mdefine_line|#define __put_user_ret(x,ptr,ret) ({ &bslash;&n;if (__put_user(x,ptr)) return ret; })
+DECL|macro|__get_user_ret
+mdefine_line|#define __get_user_ret(x,ptr,ret) ({ &bslash;&n;if (__get_user(x,ptr)) return ret; })
 multiline_comment|/*&n; * The &quot;lda %1, 2b-1b(%0)&quot; bits are magic to get the assembler to&n; * encode the bits we need for resolving the exception.  See the&n; * more extensive comments with fixup_inline_exception below for&n; * more information.&n; */
 r_extern
 r_void
@@ -164,6 +173,10 @@ r_void
 suffix:semicolon
 DECL|macro|__copy_tofrom_user
 mdefine_line|#define __copy_tofrom_user(to,from,n,v)&t;&t;&t;&t;&t;    &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;&t;register void * __cu_to __asm__(&quot;$6&quot;) = (to);&t;&t;&t;    &bslash;&n;&t;register const void * __cu_from __asm__(&quot;$7&quot;) = (from);&t;&t;    &bslash;&n;&t;register long __cu_len __asm__(&quot;$0&quot;) = (n);&t;&t;&t;    &bslash;&n;&t;if (__access_ok(((long)(v)),__cu_len,__access_mask)) {&t;&t;    &bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;    &bslash;&n;&t;&t;&t;&quot;jsr $28,(%3),__copy_user&quot;&t;&t;&t;    &bslash;&n;&t;&t;&t;: &quot;=r&quot; (__cu_len), &quot;=r&quot; (__cu_from), &quot;=r&quot; (__cu_to) &bslash;&n;&t;&t;&t;: &quot;r&quot; (__copy_user), &quot;0&quot; (__cu_len),&t;&t;    &bslash;&n;&t;&t;&t;  &quot;1&quot; (__cu_from), &quot;2&quot; (__cu_to)   &t;&t;    &bslash;&n;&t;&t;&t;: &quot;$1&quot;,&quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$28&quot;,&quot;memory&quot;);&t;    &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;&t;__cu_len;&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;})
+DECL|macro|copy_to_user_ret
+mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
+DECL|macro|copy_from_user_ret
+mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 r_extern
 r_void
 id|__clear_user

@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 id|asmlinkage
 r_int
 DECL|function|do_solaris_syscall
@@ -17,6 +19,14 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|current-&gt;personality
 op_assign
 id|PER_SVR4
@@ -42,17 +52,18 @@ id|current-&gt;exec_domain-&gt;handler
 id|regs
 )paren
 suffix:semicolon
-id|current-&gt;exec_domain-&gt;use_count
+multiline_comment|/* What is going on here?  Why do we do this? */
+multiline_comment|/* XXX current-&gt;exec_domain-&gt;use_count = 0; XXX */
+id|ret
 op_assign
-l_int|0
-suffix:semicolon
-r_return
 id|regs-&gt;u_regs
 (braket
 id|UREG_I0
 )braket
 suffix:semicolon
 )brace
+r_else
+(brace
 id|printk
 (paren
 l_string|&quot;No solaris handler&bslash;n&quot;
@@ -67,8 +78,18 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+)brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

@@ -2,6 +2,8 @@ multiline_comment|/*&n; *  linux/arch/i386/kernel/signal.c&n; *&n; *  Copyright 
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -72,6 +74,19 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+suffix:semicolon
+r_int
+id|res
+op_assign
+op_minus
+id|EINTR
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|regs
 op_assign
 (paren
 r_struct
@@ -122,11 +137,20 @@ comma
 id|regs
 )paren
 )paren
-r_return
-op_minus
-id|EINTR
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
 )brace
 DECL|function|restore_i387_hard
 r_static
@@ -273,6 +297,14 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+suffix:semicolon
+r_int
+id|res
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|regs
 op_assign
@@ -460,8 +492,17 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-r_return
+id|res
+op_assign
 id|context-&gt;eax
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|res
 suffix:semicolon
 id|badframe
 suffix:colon
@@ -1300,9 +1341,6 @@ id|regs
 r_int
 r_int
 id|mask
-op_assign
-op_complement
-id|current-&gt;blocked
 suffix:semicolon
 r_int
 r_int
@@ -1312,6 +1350,19 @@ r_struct
 id|sigaction
 op_star
 id|sa
+suffix:semicolon
+r_int
+id|res
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|mask
+op_assign
+op_complement
+id|current-&gt;blocked
 suffix:semicolon
 r_while
 c_loop
@@ -1683,8 +1734,12 @@ comma
 id|regs
 )paren
 suffix:semicolon
-r_return
+id|res
+op_assign
 l_int|1
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* Did we come from a system call? */
@@ -1726,8 +1781,19 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
-r_return
+id|res
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|res
 suffix:semicolon
 )brace
 eof

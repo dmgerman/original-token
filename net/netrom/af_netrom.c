@@ -5483,7 +5483,7 @@ id|nr_accept
 comma
 id|nr_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|nr_ioctl
 comma

@@ -15,5 +15,8 @@ DECL|macro|MAX_TASKS_PER_USER
 mdefine_line|#define MAX_TASKS_PER_USER (NR_TASKS/2)
 DECL|macro|MIN_TASKS_LEFT_FOR_ROOT
 mdefine_line|#define MIN_TASKS_LEFT_FOR_ROOT 4
+multiline_comment|/*&n; * This controls the maximum pid allocated to a process&n; */
+DECL|macro|PID_MAX
+mdefine_line|#define PID_MAX 0x8000
 macro_line|#endif
 eof

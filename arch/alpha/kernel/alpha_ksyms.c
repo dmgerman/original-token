@@ -4,9 +4,14 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;linux/socket.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/checksum.h&gt;
 r_extern
 r_void
 id|bcopy
@@ -311,6 +316,13 @@ c_func
 id|strnlen
 )paren
 suffix:semicolon
+DECL|variable|strncat
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strncat
+)paren
+suffix:semicolon
 DECL|variable|strstr
 id|EXPORT_SYMBOL
 c_func
@@ -400,6 +412,34 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__kernel_thread
+)paren
+suffix:semicolon
+DECL|variable|start_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|start_thread
+)paren
+suffix:semicolon
+DECL|variable|csum_tcpudp_magic
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|csum_tcpudp_magic
+)paren
+suffix:semicolon
+DECL|variable|ip_fast_csum
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ip_fast_csum
+)paren
+suffix:semicolon
+DECL|variable|ip_compute_csum
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ip_compute_csum
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The following are specially called from the uaccess assembly stubs.&n; */

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/kernel/exit.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 DECL|macro|DEBUG_PROC_TREE
 macro_line|#undef DEBUG_PROC_TREE
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -11,6 +12,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
@@ -663,7 +667,7 @@ id|p-&gt;nswap
 op_plus
 id|p-&gt;cnswap
 suffix:semicolon
-id|kfree
+id|free_task_struct
 c_func
 (paren
 id|p
@@ -735,7 +739,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine scans the pid tree and makes sure the rep invariant still&n; * holds.  Used for debugging only, since it&squot;s very slow....&n; *&n; * It looks a lot scarier than it really is.... we&squot;re doing nothing more&n; * than verifying the doubly-linked list found in p_ysptr and p_osptr, &n; * and checking it corresponds with the process tree defined by p_cptr and &n; * p_pptr;&n; */
+multiline_comment|/*&n; * This routine scans the pid tree and makes sure the rep invariant still&n; * holds.  Used for debugging only, since it&squot;s very slow....&n; *&n; * It looks a lot scarier than it really is.... we&squot;re doing nothing more&n; * than verifying the doubly-linked list found in p_ysptr and p_osptr,&n; * and checking it corresponds with the process tree defined by p_cptr and&n; * p_pptr;&n; */
 DECL|function|audit_ptree
 r_void
 id|audit_ptree
@@ -1608,13 +1612,20 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|pid
 )paren
-r_return
+(brace
+id|err
+op_assign
 id|kill_pg
 c_func
 (paren
@@ -1625,6 +1636,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1686,7 +1701,8 @@ id|err
 suffix:semicolon
 )brace
 )brace
-r_return
+id|err
+op_assign
 id|count
 ques
 c_cond
@@ -1694,6 +1710,9 @@ id|retval
 suffix:colon
 op_minus
 id|ESRCH
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1703,7 +1722,9 @@ id|pid
 OL
 l_int|0
 )paren
-r_return
+(brace
+id|err
+op_assign
 id|kill_pg
 c_func
 (paren
@@ -1715,8 +1736,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 multiline_comment|/* Normal kill */
-r_return
+id|err
+op_assign
 id|kill_proc
 c_func
 (paren
@@ -1727,8 +1753,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * Determine if a process group is &quot;orphaned&quot;, according to the POSIX&n; * definition in 2.2.2.52.  Orphaned process groups are not to be affected&n; * by terminal-generated stop signals.  Newly orphaned process groups are &n; * to receive a SIGHUP and a SIGCONT.&n; * &n; * &quot;I ask you, have you ever known what it is to be an orphan?&quot;&n; */
+multiline_comment|/*&n; * Determine if a process group is &quot;orphaned&quot;, according to the POSIX&n; * definition in 2.2.2.52.  Orphaned process groups are not to be affected&n; * by terminal-generated stop signals.  Newly orphaned process groups are&n; * to receive a SIGHUP and a SIGCONT.&n; *&n; * &quot;I ask you, have you ever known what it is to be an orphan?&quot;&n; */
 DECL|function|will_become_orphaned_pgrp
 r_static
 r_int
@@ -2344,7 +2380,7 @@ id|tsk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Send signals to all our closest relatives so that they know&n; * to properly mourn us..&n; */
+multiline_comment|/*&n; * Send signals to all our closest relatives so that they know&n; * to properly mourn us..&n; */
 DECL|function|exit_notify
 r_static
 r_void
@@ -2365,7 +2401,7 @@ c_func
 id|current
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * Check to see if any process groups have become orphaned&n;&t; * as a result of our exiting, and if they have any stopped&n;&t; * jobs, send them a SIGHUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; *&n;&t; * Case i: Our father is in a different pgrp than we are&n;&t; * and we were the only connection outside, so our pgrp&n;&t; * is about to become orphaned.&n;&t; */
+multiline_comment|/*&n;&t; * Check to see if any process groups have become orphaned&n;&t; * as a result of our exiting, and if they have any stopped&n;&t; * jobs, send them a SIGHUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; *&n;&t; * Case i: Our father is in a different pgrp than we are&n;&t; * and we were the only connection outside, so our pgrp&n;&t; * is about to become orphaned.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2424,7 +2460,7 @@ c_func
 id|current
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * This loop does two things:&n;&t; * &n;  &t; * A.  Make init inherit all the child processes&n;&t; * B.  Check to see if any process groups have become orphaned&n;&t; *&t;as a result of our exiting, and if they have any stopped&n;&t; *&t;jobs, send them a SIGHUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; */
+multiline_comment|/*&n;&t; * This loop does two things:&n;&t; *&n;  &t; * A.  Make init inherit all the child processes&n;&t; * B.  Check to see if any process groups have become orphaned&n;&t; *&t;as a result of our exiting, and if they have any stopped&n;&t; *&t;jobs, send them a SIGHUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; */
 r_while
 c_loop
 (paren
@@ -2510,7 +2546,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * process group orphan check&n;&t;&t; * Case ii: Our child is in a different pgrp &n;&t;&t; * than we are, and it was the only connection&n;&t;&t; * outside, so the child pgrp is now orphaned.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * process group orphan check&n;&t;&t; * Case ii: Our child is in a different pgrp&n;&t;&t; * than we are, and it was the only connection&n;&t;&t; * outside, so the child pgrp is now orphaned.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2635,6 +2671,14 @@ c_func
 id|current
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|exit_msc
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__exit_files
 c_func
 (paren
@@ -2683,26 +2727,26 @@ c_cond
 (paren
 id|current-&gt;exec_domain
 op_logical_and
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|current-&gt;binfmt
 op_logical_and
-id|current-&gt;binfmt-&gt;use_count
+id|current-&gt;binfmt-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;binfmt-&gt;use_count
+id|current-&gt;binfmt-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 id|schedule
 c_func
@@ -2724,6 +2768,11 @@ r_int
 id|error_code
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -2734,6 +2783,11 @@ l_int|0xff
 )paren
 op_lshift
 l_int|8
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -2780,13 +2834,18 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|stat_addr
 )paren
 (brace
-id|flag
+id|retval
 op_assign
 id|verify_area
 c_func
@@ -2805,10 +2864,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|flag
+id|retval
 )paren
-r_return
-id|flag
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2817,7 +2876,7 @@ c_cond
 id|ru
 )paren
 (brace
-id|flag
+id|retval
 op_assign
 id|verify_area
 c_func
@@ -2836,12 +2895,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|flag
+id|retval
 )paren
-r_return
-id|flag
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|retval
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2856,9 +2920,8 @@ op_or
 id|__WCLONE
 )paren
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|add_wait_queue
 c_func
@@ -3225,6 +3288,13 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -3249,7 +3319,16 @@ r_int
 id|options
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|sys_wait4
 c_func
 (paren
@@ -3261,6 +3340,14 @@ id|options
 comma
 l_int|NULL
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 macro_line|#endif

@@ -10,13 +10,14 @@ macro_line|#ifndef PPP_MAX_DEV
 DECL|macro|PPP_MAX_DEV
 mdefine_line|#define PPP_MAX_DEV&t;256
 macro_line|#endif
-multiline_comment|/* $Id: ppp.c,v 1.5 1995/06/12 11:36:53 paulus Exp $&n; * Added dynamic allocation of channels to eliminate&n; *   compiled-in limits on the number of channels.&n; *&n; * Dynamic channel allocation code Copyright 1995 Caldera, Inc.,&n; *   released under the GNU General Public License Version 2.&n; */
+multiline_comment|/* $Id: ppp.c,v 1.27 1997/01/26 07:13:29 davem Exp $&n; * Added dynamic allocation of channels to eliminate&n; *   compiled-in limits on the number of channels.&n; *&n; * Dynamic channel allocation code Copyright 1995 Caldera, Inc.,&n; *   released under the GNU General Public License Version 2.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -554,7 +555,8 @@ r_int
 suffix:semicolon
 r_static
 r_int
-id|ppp_tty_select
+r_int
+id|ppp_tty_poll
 (paren
 r_struct
 id|tty_struct
@@ -562,19 +564,11 @@ op_star
 id|tty
 comma
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -1560,9 +1554,9 @@ id|ppp_ldisc.ioctl
 op_assign
 id|ppp_tty_ioctl
 suffix:semicolon
-id|ppp_ldisc.select
+id|ppp_ldisc.poll
 op_assign
-id|ppp_tty_select
+id|ppp_tty_poll
 suffix:semicolon
 id|ppp_ldisc.receive_room
 op_assign
@@ -2570,7 +2564,7 @@ id|ppp_ccp_closed
 id|ppp
 )paren
 suffix:semicolon
-multiline_comment|/* Ensure that the pppd process is not hanging on select() */
+multiline_comment|/* Ensure that the pppd process is not hanging on poll() */
 id|wake_up_interruptible
 (paren
 op_amp
@@ -7410,6 +7404,23 @@ comma
 id|nb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|copy_from_user
+(paren
+id|ccp_option
+comma
+id|ptr
+comma
+id|nb
+)paren
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -7420,15 +7431,6 @@ l_int|0
 )paren
 r_return
 id|error
-suffix:semicolon
-id|copy_from_user
-(paren
-id|ccp_option
-comma
-id|ptr
-comma
-id|nb
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9229,11 +9231,12 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * TTY callback.&n; *&n; * Process the select() statement for the PPP device.&n; */
+multiline_comment|/*&n; * TTY callback.&n; *&n; * Process the poll() statement for the PPP device.&n; */
 r_static
 r_int
-DECL|function|ppp_tty_select
-id|ppp_tty_select
+r_int
+DECL|function|ppp_tty_poll
+id|ppp_tty_poll
 (paren
 r_struct
 id|tty_struct
@@ -9241,19 +9244,11 @@ op_star
 id|tty
 comma
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -9269,51 +9264,50 @@ id|tty
 )paren
 suffix:semicolon
 r_int
-id|result
+r_int
+id|mask
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Verify the status of the PPP device.&n; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|ppp
-)paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_and
 id|ppp-&gt;magic
-op_ne
+op_eq
 id|PPP_MAGIC
 )paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
+(brace
 id|CHECK_PPP
 (paren
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Branch on the type of select mode. A read request must lock the user&n; * buffer area.&n; */
-r_switch
-c_cond
+id|poll_wait
+c_func
 (paren
-id|sel_type
+op_amp
+id|ppp-&gt;read_wait
+comma
+id|wait
 )paren
-(brace
-r_case
-id|SEL_IN
-suffix:colon
+suffix:semicolon
+id|poll_wait
+c_func
+(paren
+op_amp
+id|ppp-&gt;write_wait
+comma
+id|wait
+)paren
+suffix:semicolon
+multiline_comment|/* Must lock the user buffer area while checking. */
 r_if
 c_cond
 (paren
 id|set_bit
+c_func
 (paren
 l_int|0
 comma
@@ -9324,7 +9318,6 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* Test for the presence of data in the queue */
 r_if
 c_cond
 (paren
@@ -9333,18 +9326,15 @@ op_ne
 id|ppp-&gt;ubuf-&gt;tail
 )paren
 (brace
-id|clear_bit
-(paren
-l_int|0
-comma
-op_amp
-id|ppp-&gt;ubuf-&gt;locked
-)paren
-suffix:semicolon
-r_break
+id|mask
+op_or_assign
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
 )brace
 id|clear_bit
+c_func
 (paren
 l_int|0
 comma
@@ -9353,12 +9343,6 @@ id|ppp-&gt;ubuf-&gt;locked
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* fall through */
-multiline_comment|/*&n; * Exceptions or read errors.&n; */
-r_case
-id|SEL_EX
-suffix:colon
-multiline_comment|/* Is this a pty link and the remote disconnected? */
 r_if
 c_cond
 (paren
@@ -9370,63 +9354,45 @@ op_lshift
 id|TTY_OTHER_CLOSED
 )paren
 )paren
-r_break
+(brace
+id|mask
+op_or_assign
+id|POLLHUP
 suffix:semicolon
-multiline_comment|/* Is this a local link and the modem disconnected? */
+)brace
 r_if
 c_cond
 (paren
 id|tty_hung_up_p
+c_func
 (paren
 id|filp
 )paren
 )paren
-r_break
+(brace
+id|mask
+op_or_assign
+id|POLLHUP
 suffix:semicolon
-id|select_wait
-(paren
-op_amp
-id|ppp-&gt;read_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-id|result
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/*&n; * Write mode. A write is allowed if there is no current transmission.&n; */
-r_case
-id|SEL_OUT
-suffix:colon
+)brace
 r_if
 c_cond
 (paren
 id|ppp-&gt;tbuf-&gt;locked
-op_ne
+op_eq
 l_int|0
 )paren
 (brace
-id|select_wait
-(paren
-op_amp
-id|ppp-&gt;write_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-id|result
-op_assign
-l_int|0
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
 suffix:semicolon
 )brace
-r_break
-suffix:semicolon
 )brace
 r_return
-id|result
+id|mask
 suffix:semicolon
 )brace
 multiline_comment|/*************************************************************&n; * NETWORK OUTPUT&n; *    This routine accepts requests from the network layer&n; *    and attempts to deliver the packets.&n; *    It also includes various routines we are compelled to&n; *    have to make the network layer work (arp, etc...).&n; *************************************************************/

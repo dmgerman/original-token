@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -316,6 +318,11 @@ suffix:semicolon
 r_int
 id|write
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* get the address */
 id|__asm__
 c_func
@@ -562,7 +569,8 @@ op_lshift
 id|bit
 suffix:semicolon
 )brace
-r_return
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/*&n; * Something tried to access memory that isn&squot;t in our memory map..&n; * Fix it, but check if it&squot;s kernel or user first..&n; */
 id|bad_area
@@ -606,7 +614,8 @@ id|regs-&gt;eip
 op_assign
 id|fixup
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -637,7 +646,8 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n; * terminate things with extreme prejudice.&n; *&n; * First we check if it was the bootup rw-test, though..&n; */
@@ -690,7 +700,8 @@ c_func
 l_string|&quot;This processor honours the WP bit even when in supervisor mode. Good.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -853,6 +864,13 @@ id|do_exit
 c_func
 (paren
 id|SIGKILL
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

@@ -13,6 +13,8 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -4411,6 +4413,14 @@ r_int
 id|unmapped_error
 comma
 id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4420,9 +4430,8 @@ op_amp
 op_complement
 id|PAGE_MASK
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|len
 op_assign
@@ -4448,9 +4457,8 @@ id|end
 OL
 id|start
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -4466,9 +4474,12 @@ op_or
 id|MS_SYNC
 )paren
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -4477,8 +4488,8 @@ id|end
 op_eq
 id|start
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * If the interval [start,end) covers some unmapped address ranges,&n;&t; * just ignore them, but return -EFAULT at the end.&n;&t; */
 id|vma
@@ -4503,15 +4514,19 @@ suffix:semicolon
 )paren
 (brace
 multiline_comment|/* Still start &lt; end. */
+id|error
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|vma
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Here start &lt; vma-&gt;vm_end. */
 r_if
@@ -4568,12 +4583,16 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 )brace
-r_return
+id|error
+op_assign
 id|unmapped_error
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* Here vma-&gt;vm_start &lt;= start &lt; vma-&gt;vm_end &lt; end. */
@@ -4596,8 +4615,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|start
 op_assign
@@ -4608,5 +4627,15 @@ op_assign
 id|vma-&gt;vm_next
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
+suffix:semicolon
 )brace
 eof

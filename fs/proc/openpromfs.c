@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: openpromfs.c,v 1.9 1996/12/23 05:54:21 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: openpromfs.c,v 1.12 1997/01/26 07:14:18 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -2788,7 +2789,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select - default */
+multiline_comment|/* poll - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -2886,7 +2887,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select - default */
+multiline_comment|/* poll - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -2984,7 +2985,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select - default */
+multiline_comment|/* poll - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -5204,7 +5205,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* {{{ init section */
-DECL|function|check_space
+macro_line|#ifndef MODULE
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|check_space
@@ -5212,6 +5217,16 @@ id|check_space
 id|u16
 id|n
 )paren
+)paren
+macro_line|#else
+r_static
+r_int
+id|check_space
+(paren
+id|u16
+id|n
+)paren
+macro_line|#endif
 (brace
 r_int
 r_int
@@ -5320,7 +5335,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|get_nodes
+macro_line|#ifndef MODULE
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|u16
 id|get_nodes
@@ -5331,6 +5350,19 @@ comma
 id|u32
 id|node
 )paren
+)paren
+macro_line|#else
+r_static
+id|u16
+id|get_nodes
+(paren
+id|u16
+id|parent
+comma
+id|u32
+id|node
+)paren
+macro_line|#endif
 (brace
 r_char
 op_star
@@ -5924,13 +5956,19 @@ macro_line|#endif
 macro_line|#ifndef MODULE
 DECL|macro|RET
 mdefine_line|#define RET(x)
-DECL|function|openpromfs_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|openpromfs_init
 (paren
 r_void
 )paren
+)paren
 macro_line|#else
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 mdefine_line|#define RET(x) -x
 r_int
 id|init_module

@@ -10,6 +10,8 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* External variables not in a header file. */
@@ -1185,6 +1187,11 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|verify_area
@@ -1206,8 +1213,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|copy_from_user
 c_func
@@ -1223,7 +1230,8 @@ id|tmp
 )paren
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|do_sysctl
 c_func
 (paren
@@ -1239,6 +1247,16 @@ id|tmp.newval
 comma
 id|tmp.newlen
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/* Like in_group_p, but testing against egid, not fsgid */

@@ -101,7 +101,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|cdrom_ioctl
 comma
 multiline_comment|/* ioctl */

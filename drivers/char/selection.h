@@ -315,7 +315,7 @@ id|p
 suffix:semicolon
 multiline_comment|/* how to access screen memory */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_TGA_CONSOLE
+macro_line|#if defined(CONFIG_TGA_CONSOLE)
 r_extern
 r_int
 id|tga_blitc
@@ -333,7 +333,7 @@ r_int
 r_int
 id|video_mem_term
 suffix:semicolon
-multiline_comment|/*&n; * TGA console screen memory access&n; * &n; * TGA is *not* a character/attribute cell device; font bitmaps must be rendered&n; * to the screen pixels.&n; *&n; * The &quot;unsigned short * addr&quot; is *ALWAYS* a kernel virtual address, either&n; * of the VC&squot;s backing store, or the &quot;shadow screen&quot; memory where the screen&n; * contents are kept, as the TGA frame buffer is *not* char/attr cells.&n; *&n; * We must test for an Alpha kernel virtual address that falls within&n; *  the &quot;shadow screen&quot; memory. This condition indicates we really want &n; *  to write to the screen, so, we do... :-)&n; *&n; * NOTE also: there&squot;s only *TWO* operations: to put/get a character/attribute.&n; *  All the others needed by VGA support go away, as Not Applicable for TGA.&n; */
+multiline_comment|/*&n; * TGA console screen memory access&n; * &n; * TGA is *not* a character/attribute cell device; font bitmaps must be rendered&n; * to the screen pixels.&n; *&n; * We must test for an Alpha kernel virtual address that falls within&n; *  the &quot;shadow screen&quot; memory. This condition indicates we really want &n; *  to write to the screen, so, we do... :-)&n; *&n; * NOTE also: there&squot;s only *TWO* operations: to put/get a character/attribute.&n; *  All the others needed by VGA support go away, as Not Applicable for TGA.&n; */
 DECL|function|scr_writew
 r_static
 r_inline
@@ -351,7 +351,7 @@ op_star
 id|addr
 )paren
 (brace
-multiline_comment|/*&n;&t; * always deposit the char/attr, then see if it was to &quot;screen&quot; mem.&n;&t; * if so, then render the char/attr onto the real screen.&n;&t; */
+multiline_comment|/*&n;         * always deposit the char/attr, then see if it was to &quot;screen&quot; mem.&n;&t; * if so, then render the char/attr onto the real screen.&n;         */
 op_star
 id|addr
 op_assign
@@ -410,7 +410,159 @@ op_star
 id|addr
 suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_TGA_CONSOLE */
+macro_line|#elif defined(CONFIG_SUN_CONSOLE)
+macro_line|#include &quot;vt_kern.h&quot;
+macro_line|#include &lt;linux/kd.h&gt;
+r_extern
+r_int
+id|sun_blitc
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|memsetw
+c_func
+(paren
+r_void
+op_star
+id|s
+comma
+r_int
+r_int
+id|c
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|memcpyw
+c_func
+(paren
+r_int
+r_int
+op_star
+id|to
+comma
+r_int
+r_int
+op_star
+id|from
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|video_mem_term
+suffix:semicolon
+multiline_comment|/* Basically the same as the TGA stuff. */
+DECL|function|scr_writew
+r_static
+r_inline
+r_void
+id|scr_writew
+c_func
+(paren
+r_int
+r_int
+id|val
+comma
+r_int
+r_int
+op_star
+id|addr
+)paren
+(brace
+multiline_comment|/*&n;         * always deposit the char/attr, then see if it was to &quot;screen&quot; mem.&n;&t; * if so, then render the char/attr onto the real screen.&n;         */
+r_if
+c_cond
+(paren
+op_star
+id|addr
+op_ne
+id|val
+)paren
+(brace
+op_star
+id|addr
+op_assign
+id|val
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|addr
+OL
+id|video_mem_term
+op_logical_and
+(paren
+r_int
+r_int
+)paren
+id|addr
+op_ge
+id|video_mem_base
+op_logical_and
+id|vt_cons
+(braket
+id|fg_console
+)braket
+op_member_access_from_pointer
+id|vc_mode
+op_eq
+id|KD_TEXT
+)paren
+id|sun_blitc
+c_func
+(paren
+id|val
+comma
+(paren
+r_int
+r_int
+)paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|scr_readw
+r_static
+r_inline
+r_int
+r_int
+id|scr_readw
+c_func
+(paren
+r_int
+r_int
+op_star
+id|addr
+)paren
+(brace
+r_return
+op_star
+id|addr
+suffix:semicolon
+)brace
+macro_line|#else /* CONFIG_TGA_CONSOLE  || CONFIG_SUN_CONSOLE */
 multiline_comment|/*&n; * normal VGA console access&n; *&n; */
 macro_line|#include &lt;asm/io.h&gt; 
 multiline_comment|/*&n; * NOTE: &quot;(long) addr &lt; 0&quot; tests for an Alpha kernel virtual address; this&n; *  indicates a VC&squot;s backing store; otherwise, it&squot;s a bus memory address, for&n; *  the VGA&squot;s screen memory, so we do the Alpha &quot;swizzle&quot;... :-)&n; */
@@ -587,6 +739,7 @@ id|addr
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_TGA_CONSOLE */
+macro_line|#ifndef CONFIG_SUN_CONSOLE
 DECL|function|memsetw
 r_static
 r_inline
@@ -694,4 +847,5 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* CONFIG_SUN_CONSOLE */
 eof

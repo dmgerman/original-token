@@ -4,10 +4,13 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
@@ -291,21 +294,12 @@ id|mpnt-&gt;vm_next
 (brace
 id|tmp
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -956,23 +950,16 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
-id|p
-op_assign
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-id|kmalloc
+id|lock_kernel
 c_func
 (paren
-r_sizeof
-(paren
-op_star
-id|p
 )paren
-comma
-id|GFP_KERNEL
+suffix:semicolon
+id|p
+op_assign
+id|alloc_task_struct
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -989,6 +976,7 @@ op_assign
 id|alloc_kernel_stack
 c_func
 (paren
+id|p
 )paren
 suffix:semicolon
 r_if
@@ -1033,26 +1021,26 @@ c_cond
 (paren
 id|p-&gt;exec_domain
 op_logical_and
-id|p-&gt;exec_domain-&gt;use_count
+id|p-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|p-&gt;exec_domain-&gt;use_count
+id|p-&gt;exec_domain-&gt;module
 )paren
-op_increment
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|p-&gt;binfmt
 op_logical_and
-id|p-&gt;binfmt-&gt;use_count
+id|p-&gt;binfmt-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|p-&gt;binfmt-&gt;use_count
+id|p-&gt;binfmt-&gt;module
 )paren
-op_increment
 suffix:semicolon
 id|p-&gt;did_exec
 op_assign
@@ -1189,11 +1177,11 @@ id|p-&gt;processor
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
+macro_line|#endif
 id|p-&gt;lock_depth
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
-macro_line|#endif
 id|p-&gt;start_time
 op_assign
 id|jiffies
@@ -1321,6 +1309,12 @@ id|current-&gt;counter
 op_rshift
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;pid
+)paren
+(brace
 id|wake_up_process
 c_func
 (paren
@@ -1328,11 +1322,29 @@ id|p
 )paren
 suffix:semicolon
 multiline_comment|/* do this last, just in case */
+)brace
+r_else
+(brace
+id|p-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
+id|p-&gt;next_run
+op_assign
+id|p-&gt;prev_run
+op_assign
+id|p
+suffix:semicolon
+)brace
 op_increment
 id|total_forks
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|p-&gt;pid
+suffix:semicolon
+r_goto
+id|fork_out
 suffix:semicolon
 id|bad_fork_cleanup_sighand
 suffix:colon
@@ -1365,26 +1377,26 @@ c_cond
 (paren
 id|p-&gt;exec_domain
 op_logical_and
-id|p-&gt;exec_domain-&gt;use_count
+id|p-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|p-&gt;exec_domain-&gt;use_count
+id|p-&gt;exec_domain-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|p-&gt;binfmt
 op_logical_and
-id|p-&gt;binfmt-&gt;use_count
+id|p-&gt;binfmt-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|p-&gt;binfmt-&gt;use_count
+id|p-&gt;binfmt-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 id|task
 (braket
@@ -1412,7 +1424,7 @@ id|new_stack
 suffix:semicolon
 id|bad_fork_free_p
 suffix:colon
-id|kfree
+id|free_task_struct
 c_func
 (paren
 id|p
@@ -1420,6 +1432,13 @@ id|p
 suffix:semicolon
 id|bad_fork
 suffix:colon
+id|fork_out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

@@ -1058,6 +1058,13 @@ macro_line|#ifndef ETH0_IRQ
 DECL|macro|ETH0_IRQ
 macro_line|# define ETH0_IRQ 0
 macro_line|#endif
+macro_line|#ifndef __sparc__
+DECL|macro|ETH_NOPROBE_ADDR
+mdefine_line|#define ETH_NOPROBE_ADDR 0xffe0
+macro_line|#else
+DECL|macro|ETH_NOPROBE_ADDR
+mdefine_line|#define ETH_NOPROBE_ADDR 0
+macro_line|#endif
 multiline_comment|/* &quot;eth0&quot; defaults to autoprobe (== 0), other use a base of 0xffe0 (== -0x20),&n;   which means &quot;don&squot;t probe&quot;.  These entries exist to only to provide empty&n;   slots which may be enabled at boot-time. */
 DECL|variable|eth7_dev
 r_static
@@ -1076,7 +1083,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0xffe0
+id|ETH_NOPROBE_ADDR
 multiline_comment|/* I/O base*/
 comma
 l_int|0
@@ -1109,7 +1116,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0xffe0
+id|ETH_NOPROBE_ADDR
 multiline_comment|/* I/O base*/
 comma
 l_int|0
@@ -1143,7 +1150,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0xffe0
+id|ETH_NOPROBE_ADDR
 multiline_comment|/* I/O base*/
 comma
 l_int|0
@@ -1177,7 +1184,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0xffe0
+id|ETH_NOPROBE_ADDR
 multiline_comment|/* I/O base*/
 comma
 l_int|0
@@ -1211,7 +1218,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0xffe0
+id|ETH_NOPROBE_ADDR
 multiline_comment|/* I/O base*/
 comma
 l_int|0
@@ -1245,7 +1252,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0xffe0
+id|ETH_NOPROBE_ADDR
 multiline_comment|/* I/O base*/
 comma
 l_int|0
@@ -1279,7 +1286,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0xffe0
+id|ETH_NOPROBE_ADDR
 multiline_comment|/* I/O base*/
 comma
 l_int|0
@@ -2171,7 +2178,7 @@ macro_line|#   undef&t;NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;tunnel_dev0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_AP1000
+macro_line|#ifdef CONFIG_APFDDI
 r_extern
 r_int
 id|apfddi_init
@@ -2219,6 +2226,8 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef       NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define      NEXT_DEV        (&amp;fddi_dev)
+macro_line|#endif
+macro_line|#ifdef CONFIG_APBIF
 r_extern
 r_int
 id|bif_init

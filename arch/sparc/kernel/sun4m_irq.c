@@ -27,10 +27,6 @@ r_int
 r_int
 id|dummy
 suffix:semicolon
-r_extern
-r_int
-id|linux_num_cpus
-suffix:semicolon
 DECL|variable|sun4m_interrupts
 r_struct
 id|sun4m_intregs

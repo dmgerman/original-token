@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.33 1996/12/29 20:46:01 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.43 1997/01/26 07:12:30 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -20,6 +20,7 @@ macro_line|#include &lt;asm/user.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_SBUS
 macro_line|#include &lt;asm/sbus.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/a.out.h&gt;
 DECL|struct|poll
@@ -62,23 +63,6 @@ comma
 r_struct
 id|pt_regs
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|sunos_poll
-c_func
-(paren
-r_struct
-id|poll
-op_star
-id|ufds
-comma
-r_int
-id|nfds
-comma
-r_int
-id|timeout
 )paren
 suffix:semicolon
 r_extern
@@ -133,8 +117,22 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-op_star
 id|__memcpy
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__memmove
 c_func
 (paren
 r_void
@@ -329,6 +327,8 @@ suffix:semicolon
 multiline_comment|/* One thing to note is that the way the symbols of the mul/div&n; * support routines are named is a mess, they all start with&n; * a &squot;.&squot; which makes it a bitch to export, here is the trick:&n; */
 DECL|macro|EXPORT_SYMBOL_DOT
 mdefine_line|#define EXPORT_SYMBOL_DOT(sym)&t;&t;&t;&t;&t;&bslash;&n;extern int __sparc_dot_ ## sym (int) __asm__(&quot;.&quot; #sym);&t;&t;&bslash;&n;__EXPORT_SYMBOL(__sparc_dot_ ## sym, &quot;.&quot; #sym)
+DECL|macro|EXPORT_SYMBOL_PRIVATE
+mdefine_line|#define EXPORT_SYMBOL_PRIVATE(sym)&t;&t;&t;&t;&bslash;&n;extern int __sparc_priv_ ## sym (int) __asm__(&quot;__&quot; ## #sym);&t;&bslash;&n;const struct module_symbol __export_priv_##sym&t;&t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&t;&bslash;&n;{ (unsigned long) &amp;__sparc_priv_ ## sym, &quot;__&quot; ## #sym }
 multiline_comment|/* used by various drivers */
 DECL|variable|sparc_cpu_model
 id|EXPORT_SYMBOL
@@ -338,35 +338,28 @@ id|sparc_cpu_model
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
-DECL|variable|kernel_flag
+DECL|variable|klock_info
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|kernel_flag
-)paren
-suffix:semicolon
-DECL|variable|kernel_counter
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|kernel_counter
-)paren
-suffix:semicolon
-DECL|variable|active_kernel_processor
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|active_kernel_processor
-)paren
-suffix:semicolon
-DECL|variable|syscall_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|syscall_count
+id|klock_info
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|_lock_kernel
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_lock_kernel
+)paren
+suffix:semicolon
+DECL|variable|_unlock_kernel
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_unlock_kernel
+)paren
+suffix:semicolon
 DECL|variable|page_offset
 id|EXPORT_SYMBOL
 c_func
@@ -379,6 +372,64 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|stack_top
+)paren
+suffix:semicolon
+multiline_comment|/* Atomic operations. */
+DECL|variable|_xchg32
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_xchg32
+)paren
+suffix:semicolon
+DECL|variable|_atomic_add
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_atomic_add
+)paren
+suffix:semicolon
+DECL|variable|_atomic_sub
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_atomic_sub
+)paren
+suffix:semicolon
+multiline_comment|/* Bit operations. */
+DECL|variable|_set_bit
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_set_bit
+)paren
+suffix:semicolon
+DECL|variable|_clear_bit
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_clear_bit
+)paren
+suffix:semicolon
+DECL|variable|_change_bit
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_change_bit
+)paren
+suffix:semicolon
+DECL|variable|_set_le_bit
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_set_le_bit
+)paren
+suffix:semicolon
+DECL|variable|_clear_le_bit
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_clear_le_bit
 )paren
 suffix:semicolon
 DECL|variable|udelay
@@ -423,6 +474,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sparc_free_io
+)paren
+suffix:semicolon
+DECL|variable|io_remap_page_range
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|io_remap_page_range
 )paren
 suffix:semicolon
 DECL|variable|mmu_v2p
@@ -503,6 +561,13 @@ c_func
 id|SBus_chain
 )paren
 suffix:semicolon
+DECL|variable|dma_chain
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dma_chain
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Solaris/SunOS binary compatibility */
 DECL|variable|svr4_setcontext
@@ -531,13 +596,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sunos_mmap
-)paren
-suffix:semicolon
-DECL|variable|sunos_poll
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sunos_poll
 )paren
 suffix:semicolon
 multiline_comment|/* Should really be in linux/kernel/ksyms.c */
@@ -612,8 +670,15 @@ c_func
 id|prom_getproperty
 )paren
 suffix:semicolon
+DECL|variable|prom_node_has_property
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|prom_node_has_property
+)paren
+suffix:semicolon
 DECL|variable|prom_setprop
-id|EXPORT_SYMOBL
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|prom_setprop
@@ -695,13 +760,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|bcopy
-)paren
-suffix:semicolon
-DECL|variable|memmove
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memmove
 )paren
 suffix:semicolon
 DECL|variable|memscan
@@ -873,6 +931,13 @@ c_func
 id|__strncmp
 )paren
 suffix:semicolon
+DECL|variable|__memmove
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__memmove
+)paren
+suffix:semicolon
 multiline_comment|/* Moving data to/from userspace. */
 DECL|variable|__copy_user
 id|EXPORT_SYMBOL
@@ -897,7 +962,7 @@ id|__strncpy_from_user
 suffix:semicolon
 multiline_comment|/* No version information on this, heavily used in inline asm,&n; * and will always be &squot;void __ret_efault(void)&squot;.&n; */
 DECL|variable|__ret_efault
-id|EXPORT_SYMBOLNOVERS
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__ret_efault
@@ -923,6 +988,13 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|memset
+)paren
+suffix:semicolon
+DECL|variable|memmove
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memmove
 )paren
 suffix:semicolon
 DECL|variable|__ashrdi3

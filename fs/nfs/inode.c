@@ -1304,16 +1304,11 @@ id|dummy
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|lock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
-id|syscall_count
-op_increment
-suffix:semicolon
-macro_line|#endif
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|exit_mm
@@ -1346,6 +1341,11 @@ c_func
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|ret

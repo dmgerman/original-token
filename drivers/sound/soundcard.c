@@ -1539,15 +1539,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MOD_IN_USE
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|chrdev_registered
 )paren
 id|unregister_chrdev
@@ -2178,6 +2169,16 @@ id|dma_buffsize
 op_assign
 id|DSP_BUFFSIZE
 suffix:semicolon
+macro_line|#ifdef MODULE_PARM
+id|MODULE_PARM
+c_func
+(paren
+id|dma_buffsize
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_int
 DECL|function|sound_alloc_dmap
 id|sound_alloc_dmap

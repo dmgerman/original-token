@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.27 1996/10/27 08:55:50 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: string.h,v 1.28 1997/01/15 16:01:54 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_STRING_H__
 DECL|macro|__SPARC_STRING_H__
 mdefine_line|#define __SPARC_STRING_H__
@@ -9,11 +9,29 @@ DECL|macro|__HAVE_ARCH_BCOPY
 mdefine_line|#define __HAVE_ARCH_BCOPY
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
+r_extern
+r_void
+id|__memmove
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
+DECL|macro|memmove
+macro_line|#undef memmove
+DECL|macro|memmove
+mdefine_line|#define memmove(_to, _from, _n) &bslash;&n;({ &bslash;&n;&t;__memmove(_to, _from, _n); &bslash;&n;&t;_to; &bslash;&n;})
 DECL|macro|__HAVE_ARCH_MEMCPY
 mdefine_line|#define __HAVE_ARCH_MEMCPY
 r_extern
 r_void
-op_star
 id|__memcpy
 c_func
 (paren

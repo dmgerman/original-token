@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *&t; provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; */
+multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt&n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *&t; provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -204,10 +204,11 @@ id|cdi-&gt;dev
 )paren
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
 id|scsi_CDs
 (braket
 id|MINOR
@@ -217,21 +218,20 @@ id|cdi-&gt;dev
 )paren
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sr_template.usage_count
+id|sr_template.module
 )paren
 (brace
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|sr_template.usage_count
+id|sr_template.module
 )paren
-op_decrement
 suffix:semicolon
 )brace
 )brace
@@ -441,7 +441,7 @@ id|retval
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/*&n; * rw_intr is the interrupt routine for the device driver.  It will be notified on the &n; * end of a SCSI read / write, and will take on of several actions based on success or failure.&n; */
+multiline_comment|/*&n; * rw_intr is the interrupt routine for the device driver.  It will be notified on the&n; * end of a SCSI read / write, and will take on of several actions based on success or failure.&n; */
 DECL|function|rw_intr
 r_static
 r_void
@@ -1187,7 +1187,7 @@ op_eq
 id|UNIT_ATTENTION
 )paren
 (brace
-multiline_comment|/* detected disc change.  set a bit and quietly refuse &n;&t;&t;&t;&t; * further access.&t;*/
+multiline_comment|/* detected disc change.  set a bit and quietly refuse&n;&t;&t;&t;&t; * further access.&t;*/
 id|scsi_CDs
 (braket
 id|DEVICE_NR
@@ -1639,10 +1639,11 @@ id|cdi-&gt;dev
 )paren
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
 id|scsi_CDs
 (braket
 id|MINOR
@@ -1652,21 +1653,20 @@ id|cdi-&gt;dev
 )paren
 )braket
 dot
-id|device-&gt;host-&gt;hostt-&gt;usage_count
+id|device-&gt;host-&gt;hostt-&gt;module
 )paren
-op_increment
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sr_template.usage_count
+id|sr_template.module
 )paren
 (brace
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|sr_template.usage_count
+id|sr_template.module
 )paren
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* If this device did not have media in the drive at boot time, then&n;     * we would have been unable to get the sector size.  Check to see if&n;     * this is the case, and try again.&n;     */
@@ -1700,7 +1700,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * do_sr_request() is the request handler function for the sr driver.&n; * Its function in life is to take block device requests, and&n; * translate them to SCSI commands.  &n; */
+multiline_comment|/*&n; * do_sr_request() is the request handler function for the sr driver.&n; * Its function in life is to take block device requests, and&n; * translate them to SCSI commands.&n; */
 DECL|function|do_sr_request
 r_static
 r_void
@@ -2162,7 +2162,7 @@ dot
 id|device-&gt;changed
 )paren
 (brace
-multiline_comment|/* &n;&t; * quietly refuse to do anything to a changed disc &n;&t; * until the changed bit has been reset&n;&t; */
+multiline_comment|/*&n;&t; * quietly refuse to do anything to a changed disc&n;&t; * until the changed bit has been reset&n;&t; */
 multiline_comment|/* printk(&quot;CD-ROM has been changed.  Prohibiting further I/O.&bslash;n&quot;);&t;*/
 id|SCpnt
 op_assign
@@ -2245,7 +2245,7 @@ l_int|5
 op_amp
 l_int|0xe0
 suffix:semicolon
-multiline_comment|/*&n;     * Now do the grungy work of figuring out which sectors we need, and&n;     * where in memory we are going to put them.&n;     * &n;     * The variables we need are:&n;     * &n;     * this_count= number of 512 byte sectors being read &n;     * block     = starting cdrom sector to read.&n;     * realcount = # of cdrom sectors to read&n;     * &n;     * The major difference between a scsi disk and a scsi cdrom&n;     * is that we will always use scatter-gather if we can, because we can&n;     * work around the fact that the buffer cache has a block size of 1024,&n;     * and we have 2048 byte sectors.  This code should work for buffers that&n;     * are any multiple of 512 bytes long.&n;     */
+multiline_comment|/*&n;     * Now do the grungy work of figuring out which sectors we need, and&n;     * where in memory we are going to put them.&n;     *&n;     * The variables we need are:&n;     *&n;     * this_count= number of 512 byte sectors being read&n;     * block     = starting cdrom sector to read.&n;     * realcount = # of cdrom sectors to read&n;     *&n;     * The major difference between a scsi disk and a scsi cdrom&n;     * is that we will always use scatter-gather if we can, because we can&n;     * work around the fact that the buffer cache has a block size of 1024,&n;     * and we have 2048 byte sectors.  This code should work for buffers that&n;     * are any multiple of 512 bytes long.&n;     */
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -4867,10 +4867,10 @@ c_func
 r_void
 )paren
 (brace
-id|sr_template.usage_count
+id|sr_template.module
 op_assign
 op_amp
-id|__this_module.usecount
+id|__this_module
 suffix:semicolon
 r_return
 id|scsi_register_module

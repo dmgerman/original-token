@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -898,6 +899,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
+DECL|variable|sk_cachep
+r_static
+id|kmem_cache_t
+op_star
+id|sk_cachep
+suffix:semicolon
 multiline_comment|/*&n; *&t;All socket objects are allocated here. This is for future&n; *&t;usage.&n; */
 DECL|function|sk_alloc
 r_struct
@@ -915,19 +922,10 @@ id|sock
 op_star
 id|sk
 op_assign
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-op_star
-id|sk
-)paren
+id|sk_cachep
 comma
 id|priority
 )paren
@@ -935,14 +933,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|sk
 )paren
 (brace
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -952,11 +945,12 @@ l_int|0
 comma
 r_sizeof
 (paren
-op_star
-id|sk
+r_struct
+id|sock
 )paren
 )paren
 suffix:semicolon
+)brace
 r_return
 id|sk
 suffix:semicolon
@@ -972,16 +966,43 @@ op_star
 id|sk
 )paren
 (brace
-id|kfree_s
+id|kmem_cache_free
 c_func
 (paren
+id|sk_cachep
+comma
 id|sk
+)paren
+suffix:semicolon
+)brace
+DECL|function|sk_init
+r_void
+id|sk_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sk_cachep
+op_assign
+id|kmem_cache_create
+c_func
+(paren
+l_string|&quot;sock&quot;
 comma
 r_sizeof
 (paren
-op_star
-id|sk
+r_struct
+id|sock
 )paren
+comma
+l_int|0
+comma
+id|SLAB_HWCACHE_ALIGN
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

@@ -4,6 +4,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -33,6 +35,17 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -40,9 +53,8 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
@@ -60,6 +72,20 @@ id|schedule
 c_func
 (paren
 )paren
+suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|hard_reset_now
@@ -212,7 +238,16 @@ op_star
 id|regs
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|do_fork
 c_func
 (paren
@@ -225,6 +260,14 @@ c_func
 comma
 id|regs
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|m68k_clone
@@ -246,6 +289,14 @@ suffix:semicolon
 r_int
 r_int
 id|newsp
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* syscall2 puts clone_flags in d1 and usp in d2 */
 id|clone_flags
@@ -269,7 +320,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|do_fork
 c_func
 (paren
@@ -279,6 +331,14 @@ id|newsp
 comma
 id|regs
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|release_thread
@@ -918,6 +978,11 @@ op_star
 op_amp
 id|name
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|getname
@@ -934,8 +999,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -955,6 +1020,13 @@ id|putname
 c_func
 (paren
 id|filename
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

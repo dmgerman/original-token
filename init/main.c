@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
@@ -133,6 +134,16 @@ suffix:semicolon
 r_extern
 r_int
 id|mca_init
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sbus_init
 c_func
 (paren
 r_int
@@ -1185,6 +1196,12 @@ c_func
 (paren
 r_void
 )paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef __sparc__
+r_extern
+r_int
+id|serial_console
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Boot command-line arguments&n; */
@@ -2809,6 +2826,26 @@ comma
 l_int|0x2900
 )brace
 comma
+macro_line|#if CONFIG_APBLOCK
+(brace
+l_string|&quot;apblock&quot;
+comma
+id|APBLOCK_MAJOR
+op_lshift
+l_int|8
+)brace
+comma
+macro_line|#endif
+macro_line|#if CONFIG_DDV
+(brace
+l_string|&quot;ddv&quot;
+comma
+id|DDV_MAJOR
+op_lshift
+l_int|8
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|NULL
 comma
@@ -3476,7 +3513,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Called by CPU#0 to activate the rest.&n; */
+multiline_comment|/* Called by boot processor to activate the rest. */
 DECL|function|smp_init
 r_static
 r_void
@@ -3491,12 +3528,13 @@ id|i
 comma
 id|j
 suffix:semicolon
+multiline_comment|/* Get other processors into their bootup holding patterns. */
 id|smp_boot_cpus
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Create the slave init tasks as sharing pid 0.&n;&t; *&n;&t; *&t;This should only happen if we have virtual CPU numbers&n;&t; *&t;higher than 0.&n;&t; */
+multiline_comment|/* Create the slave init tasks as sharing pid 0.  This should only&n;&t; * happen if we have virtual CPU numbers higher than 0.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3512,22 +3550,7 @@ id|i
 op_increment
 )paren
 (brace
-r_struct
-id|task_struct
-op_star
-id|n
-comma
-op_star
-id|p
-suffix:semicolon
-id|j
-op_assign
-id|cpu_logical_map
-(braket
-id|i
-)braket
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;We use kernel_thread for the idlers which are&n;&t;&t; *&t;unlocked tasks running in kernel space.&n;&t;&t; */
+multiline_comment|/* We use kernel_thread for the idlers which are&n;&t;&t; * unlocked tasks running in kernel space.&n;&t;&t; */
 id|kernel_thread
 c_func
 (paren
@@ -3538,7 +3561,14 @@ comma
 id|CLONE_PID
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Don&squot;t assume linear processor numbering&n;&t;&t; */
+multiline_comment|/* Don&squot;t assume linear processor numbering */
+id|j
+op_assign
+id|cpu_logical_map
+(braket
+id|i
+)braket
+suffix:semicolon
 id|current_set
 (braket
 id|j
@@ -3557,64 +3587,6 @@ op_member_access_from_pointer
 id|processor
 op_assign
 id|j
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|n
-op_assign
-id|task
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|next_run
-suffix:semicolon
-id|p
-op_assign
-id|task
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|prev_run
-suffix:semicolon
-id|nr_running
-op_decrement
-suffix:semicolon
-id|n-&gt;prev_run
-op_assign
-id|p
-suffix:semicolon
-id|p-&gt;next_run
-op_assign
-id|n
-suffix:semicolon
-id|task
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|next_run
-op_assign
-id|task
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|prev_run
-op_assign
-id|task
-(braket
-id|i
-)braket
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -3818,6 +3790,18 @@ r_int
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SBUS
+id|memory_start
+op_assign
+id|sbus_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 id|console_init
@@ -3855,6 +3839,16 @@ macro_line|#endif
 id|memory_start
 op_assign
 id|kmalloc_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
+id|memory_start
+op_assign
+id|kmem_cache_init
 c_func
 (paren
 id|memory_start
@@ -3908,6 +3902,9 @@ c_cond
 (paren
 id|initrd_start
 op_logical_and
+op_logical_neg
+id|initrd_below_start_ok
+op_logical_and
 id|initrd_start
 OL
 id|memory_start
@@ -3937,6 +3934,16 @@ c_func
 id|memory_start
 comma
 id|memory_end
+)paren
+suffix:semicolon
+id|kmem_cache_sizes_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|vma_init
+c_func
+(paren
 )paren
 suffix:semicolon
 id|buffer_init
@@ -4165,6 +4172,30 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+multiline_comment|/* Start the async paging daemon. */
+(brace
+r_extern
+r_int
+id|asyncd
+c_func
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+id|kernel_thread
+c_func
+(paren
+id|asyncd
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 id|real_root_dev
 op_assign
@@ -4262,9 +4293,9 @@ r_int
 id|error
 suffix:semicolon
 r_int
-id|pid
-comma
 id|i
+comma
+id|pid
 suffix:semicolon
 id|pid
 op_assign
@@ -4340,11 +4371,58 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t; *&t;This keeps serial console MUCH cleaner, but does assume&n;&t; *&t;the console driver checks there really is a video device&n;&t; *&t;attached (Sparc effectively does).&n;&t; */
+macro_line|#ifdef __sparc__
 r_if
 c_cond
 (paren
+id|serial_console
+op_eq
+l_int|1
+)paren
+(brace
 (paren
+r_void
+)paren
+id|open
+c_func
+(paren
+l_string|&quot;/dev/cua0&quot;
+comma
+id|O_RDWR
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|serial_console
+op_eq
+l_int|2
+)paren
+(brace
+(paren
+r_void
+)paren
+id|open
+c_func
+(paren
+l_string|&quot;/dev/cua1&quot;
+comma
+id|O_RDWR
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+macro_line|#endif
+(paren
+r_void
+)paren
 id|open
 c_func
 (paren
@@ -4354,30 +4432,10 @@ id|O_RDWR
 comma
 l_int|0
 )paren
-OL
-l_int|0
-)paren
-op_logical_and
-(paren
-id|open
-c_func
-(paren
-l_string|&quot;/dev/ttyS0&quot;
-comma
-id|O_RDWR
-comma
-l_int|0
-)paren
-OL
-l_int|0
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to open an initial console.&bslash;n&quot;
-)paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+)brace
+macro_line|#endif
 (paren
 r_void
 )paren
@@ -4402,6 +4460,7 @@ c_cond
 (paren
 id|execute_command
 )paren
+(brace
 id|execve
 c_func
 (paren
@@ -4412,6 +4471,7 @@ comma
 id|envp_init
 )paren
 suffix:semicolon
+)brace
 id|execve
 c_func
 (paren

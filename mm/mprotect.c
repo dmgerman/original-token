@@ -3,11 +3,13 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -472,21 +474,12 @@ id|n
 suffix:semicolon
 id|n
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -592,19 +585,10 @@ id|n
 suffix:semicolon
 id|n
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
 id|GFP_KERNEL
 )paren
@@ -719,21 +703,12 @@ id|right
 suffix:semicolon
 id|left
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -748,21 +723,12 @@ id|ENOMEM
 suffix:semicolon
 id|right
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -772,9 +738,11 @@ op_logical_neg
 id|right
 )paren
 (brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|left
 )paren
 suffix:semicolon
@@ -1072,6 +1040,14 @@ id|next
 suffix:semicolon
 r_int
 id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1081,9 +1057,8 @@ op_amp
 op_complement
 id|PAGE_MASK
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|len
 op_assign
@@ -1109,9 +1084,8 @@ id|end
 OL
 id|start
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1127,9 +1101,12 @@ op_or
 id|PROT_EXEC
 )paren
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1138,8 +1115,8 @@ id|end
 op_eq
 id|start
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|vma
 op_assign
@@ -1151,6 +1128,11 @@ comma
 id|start
 )paren
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1161,9 +1143,8 @@ id|vma-&gt;vm_start
 OG
 id|start
 )paren
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 r_for
 c_loop
@@ -1312,6 +1293,13 @@ comma
 id|start
 comma
 id|end
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

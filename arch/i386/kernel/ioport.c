@@ -4,6 +4,9 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* Set EXTENT bits starting at BASE in BITMAP to value TURN_ON. */
 DECL|function|set_bitmap
 r_static
@@ -204,8 +207,20 @@ r_int
 id|turn_on
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
+(paren
 (paren
 id|from
 op_plus
@@ -213,12 +228,7 @@ id|num
 op_le
 id|from
 )paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
+op_logical_or
 (paren
 id|from
 op_plus
@@ -228,9 +238,14 @@ id|IO_BITMAP_SIZE
 op_star
 l_int|32
 )paren
-r_return
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EINVAL
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -241,9 +256,8 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 id|set_bitmap
 c_func
@@ -263,8 +277,19 @@ op_logical_neg
 id|turn_on
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|variable|stack
@@ -332,6 +357,17 @@ id|level
 op_assign
 id|ebx
 suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -339,9 +375,13 @@ id|level
 OG
 l_int|3
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EINVAL
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -352,9 +392,8 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 op_star
 (paren
@@ -374,8 +413,19 @@ op_lshift
 l_int|12
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

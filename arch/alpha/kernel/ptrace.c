@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
@@ -2640,14 +2642,13 @@ id|task_struct
 op_star
 id|child
 suffix:semicolon
-r_struct
-id|user
-op_star
-id|dummy
+r_int
+id|ret
 suffix:semicolon
-id|dummy
-op_assign
-l_int|NULL
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|DBG
 c_func
@@ -2667,6 +2668,11 @@ id|data
 )paren
 )paren
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2683,17 +2689,20 @@ id|current-&gt;flags
 op_amp
 id|PF_PTRACED
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* set the ptrace bit in the process flags. */
 id|current-&gt;flags
 op_or_assign
 id|PF_PTRACED
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2704,9 +2713,13 @@ op_eq
 l_int|1
 )paren
 multiline_comment|/* you may not mess with init */
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EPERM
+id|ESRCH
 suffix:semicolon
 r_if
 c_cond
@@ -2722,9 +2735,8 @@ id|pid
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|ESRCH
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2734,6 +2746,11 @@ op_eq
 id|PTRACE_ATTACH
 )paren
 (brace
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2741,9 +2758,8 @@ id|child
 op_eq
 id|current
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2795,9 +2811,8 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* the same process cannot be attached many times */
 r_if
@@ -2807,9 +2822,8 @@ id|child-&gt;flags
 op_amp
 id|PF_PTRACED
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 id|child-&gt;flags
 op_or_assign
@@ -2850,10 +2864,19 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
+id|ret
+op_assign
+op_minus
+id|ESRCH
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2875,9 +2898,8 @@ l_string|&quot;child not traced&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ESRCH
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2905,9 +2927,8 @@ id|request
 op_ne
 id|PTRACE_KILL
 )paren
-r_return
-op_minus
-id|ESRCH
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2928,9 +2949,8 @@ l_string|&quot;child not parent of this process&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ESRCH
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_switch
@@ -2952,10 +2972,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-r_int
-id|res
-suffix:semicolon
-id|res
+id|ret
 op_assign
 id|read_long
 c_func
@@ -2985,20 +3002,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|res
+id|ret
 OL
 l_int|0
 )paren
-r_return
-id|res
+r_goto
+id|out
 suffix:semicolon
 id|regs.r0
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* special return: no errors */
-r_return
+id|ret
+op_assign
 id|tmp
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* read register number ADDR. */
@@ -3024,7 +3045,8 @@ id|regs.r0
 )paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|get_reg
 c_func
 (paren
@@ -3032,6 +3054,9 @@ id|child
 comma
 id|addr
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* when I and D space are separate, this will have to be fixed. */
 r_case
@@ -3055,7 +3080,8 @@ id|data
 )paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|write_long
 c_func
 (paren
@@ -3065,6 +3091,9 @@ id|addr
 comma
 id|data
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 r_case
 id|PTRACE_POKEUSR
@@ -3084,7 +3113,8 @@ id|data
 )paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|put_reg
 c_func
 (paren
@@ -3095,6 +3125,9 @@ comma
 id|data
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 r_case
 id|PTRACE_SYSCALL
 suffix:colon
@@ -3104,6 +3137,11 @@ id|PTRACE_CONT
 suffix:colon
 (brace
 multiline_comment|/* restart after signal. */
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3115,9 +3153,8 @@ id|data
 OG
 id|NSIG
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -3153,8 +3190,12 @@ c_func
 id|child
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|data
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * make the child exit.  Best I can do is send it a sigkill.&n; * perhaps it should be put in the status that it wants to&n; * exit.&n; */
@@ -3188,8 +3229,12 @@ c_func
 id|child
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3197,6 +3242,11 @@ id|PTRACE_SINGLESTEP
 suffix:colon
 (brace
 multiline_comment|/* execute single instruction. */
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3208,9 +3258,8 @@ id|data
 OG
 id|NSIG
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 id|child-&gt;debugreg
 (braket
@@ -3237,8 +3286,12 @@ op_assign
 id|data
 suffix:semicolon
 multiline_comment|/* give it a chance to run. */
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_case
@@ -3246,6 +3299,11 @@ id|PTRACE_DETACH
 suffix:colon
 (brace
 multiline_comment|/* detach a process that was attached. */
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3257,9 +3315,8 @@ id|data
 OG
 id|NSIG
 )paren
-r_return
-op_minus
-id|EIO
+r_goto
+id|out
 suffix:semicolon
 id|child-&gt;flags
 op_and_assign
@@ -3303,17 +3360,35 @@ c_func
 id|child
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_default
 suffix:colon
-r_return
+id|ret
+op_assign
 op_minus
 id|EIO
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|syscall_trace
 id|asmlinkage
@@ -3324,6 +3399,11 @@ c_func
 r_void
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3343,7 +3423,8 @@ op_or
 id|PF_TRACESYS
 )paren
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|current-&gt;exit_code
 op_assign
@@ -3385,6 +3466,13 @@ suffix:semicolon
 id|current-&gt;exit_code
 op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 eof

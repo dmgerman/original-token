@@ -1,10 +1,10 @@
-multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt &n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to low-level SCSI driver interface header&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; * &n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; */
+multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to low-level SCSI driver interface header&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; *&n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; */
 macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
-multiline_comment|/*&n;    $Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.h,v 1.3 1993/09/24 12:21:00 drew Exp drew $&n;*/
+multiline_comment|/*&n;    $Header: /vger/u4/cvs/linux/drivers/scsi/hosts.h,v 1.6 1997/01/19 23:07:13 davem Exp $&n;*/
 macro_line|#include &lt;linux/proc_fs.h&gt;
-multiline_comment|/* It is senseless to set SG_ALL any higher than this - the performance&n; *  does not get any better, and it wastes memory &n; */
+multiline_comment|/* It is senseless to set SG_ALL any higher than this - the performance&n; *  does not get any better, and it wastes memory&n; */
 DECL|macro|SG_NONE
 mdefine_line|#define SG_NONE 0
 DECL|macro|SG_ALL
@@ -34,10 +34,11 @@ op_star
 id|next
 suffix:semicolon
 multiline_comment|/* Used with loadable modules so that we know when it is safe to unload */
-DECL|member|usage_count
-r_int
+DECL|member|module
+r_struct
+id|module
 op_star
-id|usage_count
+id|module
 suffix:semicolon
 multiline_comment|/* The pointer to the /proc/scsi directory entry */
 DECL|member|proc_dir
@@ -46,7 +47,7 @@ id|proc_dir_entry
 op_star
 id|proc_dir
 suffix:semicolon
-multiline_comment|/* proc-fs info function.&n;     * Can be used to export driver statistics and other infos to the world &n;     * outside the kernel ie. userspace and it also provides an interface&n;     * to feed the driver with information. Check eata_dma_proc.c for reference&n;     */
+multiline_comment|/* proc-fs info function.&n;     * Can be used to export driver statistics and other infos to the world&n;     * outside the kernel ie. userspace and it also provides an interface&n;     * to feed the driver with information. Check eata_dma_proc.c for reference&n;     */
 DECL|member|proc_info
 r_int
 (paren
@@ -77,7 +78,7 @@ r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/*&n;     * The detect function shall return non zero on detection,&n;     * indicating the number of host adapters of this particular&n;     * type were found.&t; It should also&n;     * initialize all data necessary for this particular&n;     * SCSI driver.  It is passed the host number, so this host&n;     * knows where the first entry is in the scsi_hosts[] array.&n;     * &n;     * Note that the detect routine MUST not call any of the mid level&n;     * functions to queue commands because things are not guaranteed&n;     * to be set up yet.  The detect routine can send commands to&n;     * the host adapter as long as the program control will not be&n;     * passed to scsi.c in the processing of the command.  Note&n;     * especially that scsi_malloc/scsi_free must not be called.&n;     */
+multiline_comment|/*&n;     * The detect function shall return non zero on detection,&n;     * indicating the number of host adapters of this particular&n;     * type were found.&t; It should also&n;     * initialize all data necessary for this particular&n;     * SCSI driver.  It is passed the host number, so this host&n;     * knows where the first entry is in the scsi_hosts[] array.&n;     *&n;     * Note that the detect routine MUST not call any of the mid level&n;     * functions to queue commands because things are not guaranteed&n;     * to be set up yet.  The detect routine can send commands to&n;     * the host adapter as long as the program control will not be&n;     * passed to scsi.c in the processing of the command.  Note&n;     * especially that scsi_malloc/scsi_free must not be called.&n;     */
 DECL|member|detect
 r_int
 (paren
@@ -90,7 +91,7 @@ id|SHT
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Used with loadable modules to unload the host structures.  Note:&n;     * there is a default action built into the modules code which may&n;     * be sufficient for most host adapters.  Thus you may not have to supply&n;     * this at all. &n;     */
+multiline_comment|/* Used with loadable modules to unload the host structures.  Note:&n;     * there is a default action built into the modules code which may&n;     * be sufficient for most host adapters.  Thus you may not have to supply&n;     * this at all.&n;     */
 DECL|member|release
 r_int
 (paren
@@ -118,7 +119,7 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * The command function takes a target, a command (this is a SCSI &n;     * command formatted as per the SCSI spec, nothing strange), a &n;     * data buffer pointer, and data buffer length pointer.  The return&n;     * is a status int, bit fielded as follows : &n;     * Byte What&n;     * 0    SCSI status code&n;     * 1    SCSI 1 byte message&n;     * 2    host error return.&n;     * 3    mid level error return&n;     */
+multiline_comment|/*&n;     * The command function takes a target, a command (this is a SCSI&n;     * command formatted as per the SCSI spec, nothing strange), a&n;     * data buffer pointer, and data buffer length pointer.  The return&n;     * is a status int, bit fielded as follows :&n;     * Byte What&n;     * 0    SCSI status code&n;     * 1    SCSI 1 byte message&n;     * 2    host error return.&n;     * 3    mid level error return&n;     */
 DECL|member|command
 r_int
 (paren
@@ -130,7 +131,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * The QueueCommand function works in a similar manner&n;     * to the command function.&t; It takes an additional parameter,&n;     * void (* done)(int host, int code) which is passed the host &n;     * # and exit result when the command is complete.&t;&n;     * Host number is the POSITION IN THE hosts array of THIS&n;     * host adapter.&n;     */
+multiline_comment|/*&n;     * The QueueCommand function works in a similar manner&n;     * to the command function.&t; It takes an additional parameter,&n;     * void (* done)(int host, int code) which is passed the host&n;     * # and exit result when the command is complete.&n;     * Host number is the POSITION IN THE hosts array of THIS&n;     * host adapter.&n;     */
 DECL|member|queuecommand
 r_int
 (paren
@@ -152,7 +153,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Since the mid level driver handles time outs, etc, we want to &n;     * be able to abort the current command.  Abort returns 0 if the &n;     * abortion was successful.&t; The field SCpnt-&gt;abort reason&n;     * can be filled in with the appropriate reason why we wanted&n;     * the abort in the first place, and this will be used&n;     * in the mid-level code instead of the host_byte().&n;     * If non-zero, the code passed to it &n;     * will be used as the return code, otherwise &n;     * DID_ABORT  should be returned.&n;     * &n;     * Note that the scsi driver should &quot;clean up&quot; after itself, &n;     * resetting the bus, etc.&t;if necessary. &n;     */
+multiline_comment|/*&n;     * Since the mid level driver handles time outs, etc, we want to&n;     * be able to abort the current command.  Abort returns 0 if the&n;     * abortion was successful.&t; The field SCpnt-&gt;abort reason&n;     * can be filled in with the appropriate reason why we wanted&n;     * the abort in the first place, and this will be used&n;     * in the mid-level code instead of the host_byte().&n;     * If non-zero, the code passed to it&n;     * will be used as the return code, otherwise&n;     * DID_ABORT  should be returned.&n;     *&n;     * Note that the scsi driver should &quot;clean up&quot; after itself,&n;     * resetting the bus, etc.&t;if necessary.&n;     */
 DECL|member|abort
 r_int
 (paren
@@ -164,7 +165,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * The reset function will reset the SCSI bus.  Any executing &n;     * commands should fail with a DID_RESET in the host byte.&n;     * The Scsi_Cmnd  is passed so that the reset routine can figure&n;     * out which host adapter should be reset, and also which command&n;     * within the command block was responsible for the reset in&n;     * the first place.&t; Some hosts do not implement a reset function,&n;     * and these hosts must call scsi_request_sense(SCpnt) to keep&n;     * the command alive.&n;     */
+multiline_comment|/*&n;     * The reset function will reset the SCSI bus.  Any executing&n;     * commands should fail with a DID_RESET in the host byte.&n;     * The Scsi_Cmnd  is passed so that the reset routine can figure&n;     * out which host adapter should be reset, and also which command&n;     * within the command block was responsible for the reset in&n;     * the first place.&t; Some hosts do not implement a reset function,&n;     * and these hosts must call scsi_request_sense(SCpnt) to keep&n;     * the command alive.&n;     */
 DECL|member|reset
 r_int
 (paren
@@ -215,7 +216,7 @@ DECL|member|can_queue
 r_int
 id|can_queue
 suffix:semicolon
-multiline_comment|/*&n;     * In many instances, especially where disconnect / reconnect are &n;     * supported, our host also has an ID on the SCSI bus.  If this is &n;     * the case, then it must be reserved.  Please set this_id to -1 if&n;     * your setup is in single initiator mode, and the host lacks an &n;     * ID.&n;     */
+multiline_comment|/*&n;     * In many instances, especially where disconnect / reconnect are&n;     * supported, our host also has an ID on the SCSI bus.  If this is&n;     * the case, then it must be reserved.  Please set this_id to -1 if&n;     * your setup is in single initiator mode, and the host lacks an&n;     * ID.&n;     */
 DECL|member|this_id
 r_int
 id|this_id
@@ -256,7 +257,7 @@ DECL|typedef|Scsi_Host_Template
 )brace
 id|Scsi_Host_Template
 suffix:semicolon
-multiline_comment|/*&n; * The scsi_hosts array is the array containing the data for all &n; * possible &lt;supported&gt; scsi hosts.   This is similar to the&n; * Scsi_Host_Template, except that we have one entry for each&n; * actual physical host adapter on the system, stored as a linked&n; * list.  Note that if there are 2 aha1542 boards, then there will&n; * be two Scsi_Host entries, but only 1 Scsi_Host_Template entry.&n; */
+multiline_comment|/*&n; * The scsi_hosts array is the array containing the data for all&n; * possible &lt;supported&gt; scsi hosts.   This is similar to the&n; * Scsi_Host_Template, except that we have one entry for each&n; * actual physical host adapter on the system, stored as a linked&n; * list.  Note that if there are 2 aha1542 boards, then there will&n; * be two Scsi_Host entries, but only 1 Scsi_Host_Template entry.&n; */
 DECL|struct|Scsi_Host
 r_struct
 id|Scsi_Host
@@ -304,7 +305,7 @@ id|Scsi_Host_Template
 op_star
 id|hostt
 suffix:semicolon
-multiline_comment|/*&n;     *&t;These three parameters can be used to allow for wide scsi,&n;     *&t;and for host adapters that support multiple busses &n;     *&t;The first two should be set to 1 more than the actual max id&n;     *&t;or lun (i.e. 8 for normal systems).&n;     */
+multiline_comment|/*&n;     *&t;These three parameters can be used to allow for wide scsi,&n;     *&t;and for host adapters that support multiple busses&n;     *&t;The first two should be set to 1 more than the actual max id&n;     *&t;or lun (i.e. 8 for normal systems).&n;     */
 DECL|member|max_id
 r_int
 r_int
@@ -320,7 +321,7 @@ r_int
 r_int
 id|max_channel
 suffix:semicolon
-multiline_comment|/*&n;     * Pointer to a circularly linked list - this indicates the hosts&n;     * that should be locked out of performing I/O while we have an active&n;     * command on this host. &n;     */
+multiline_comment|/*&n;     * Pointer to a circularly linked list - this indicates the hosts&n;     * that should be locked out of performing I/O while we have an active&n;     * command on this host.&n;     */
 DECL|member|block
 r_struct
 id|Scsi_Host
@@ -457,7 +458,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  scsi_init initializes the scsi hosts.&n; */
-multiline_comment|/* &n; * We use these goofy things because the MM is not set up when we init&n; * the scsi subsystem.&t;By using these functions we can write code that&n; * looks normal.  Also, it makes it possible to use the same code for a&n; * loadable module. &n; */
+multiline_comment|/*&n; * We use these goofy things because the MM is not set up when we init&n; * the scsi subsystem.&t;By using these functions we can write code that&n; * looks normal.  Also, it makes it possible to use the same code for a&n; * loadable module.&n; */
 r_extern
 r_void
 op_star
@@ -551,10 +552,11 @@ r_char
 op_star
 id|tag
 suffix:semicolon
-DECL|member|usage_count
-r_int
+DECL|member|module
+r_struct
+id|module
 op_star
-id|usage_count
+id|module
 suffix:semicolon
 multiline_comment|/* Used for loadable modules */
 DECL|member|scsi_type
@@ -713,7 +715,7 @@ DECL|macro|MODULE_SCSI_IOCTL
 mdefine_line|#define MODULE_SCSI_IOCTL 3
 DECL|macro|MODULE_SCSI_DEV
 mdefine_line|#define MODULE_SCSI_DEV 4
-multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time,&n; * we need to leave extra room in some of the data structures.&t;Doing a &n; * realloc to enlarge the structures would be riddled with race conditions, &n; * so until a better solution is discovered, we use this crude approach&n; */
+multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time,&n; * we need to leave extra room in some of the data structures.&t;Doing a&n; * realloc to enlarge the structures would be riddled with race conditions,&n; * so until a better solution is discovered, we use this crude approach&n; */
 DECL|macro|SD_EXTRA_DEVS
 mdefine_line|#define SD_EXTRA_DEVS 2
 DECL|macro|ST_EXTRA_DEVS

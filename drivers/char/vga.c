@@ -771,6 +771,15 @@ id|kmem_start
 suffix:semicolon
 )brace
 r_void
+DECL|function|con_type_init_finish
+id|con_type_init_finish
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+r_void
 DECL|function|get_scrmem
 id|get_scrmem
 c_func

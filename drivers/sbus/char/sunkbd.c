@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
@@ -94,6 +95,14 @@ op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* modified by psaux.c */
+DECL|variable|aux_device_present
+r_int
+r_char
+id|aux_device_present
+op_assign
+l_int|0x00
+suffix:semicolon
+multiline_comment|/* To make kernel/ksyms.c happy */
 multiline_comment|/*&n; * global state includes the following, and various static variables&n; * in this module: prev_scancode, shift_state, diacr, npadch, dead_key_next.&n; * (last_console is now a global variable)&n; */
 multiline_comment|/* shift state counters.. */
 DECL|variable|k_down
@@ -5451,38 +5460,30 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|kbd_poll
 r_static
 r_int
-DECL|function|kbd_select
-id|kbd_select
+r_int
+id|kbd_poll
 (paren
-r_struct
-id|inode
-op_star
-id|i
-comma
 r_struct
 id|file
 op_star
 id|f
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
-r_if
-c_cond
+id|poll_wait
+c_func
 (paren
-id|sel_type
-op_ne
-id|SEL_IN
+op_amp
+id|kbd_wait
+comma
+id|wait
 )paren
-r_return
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -5492,15 +5493,9 @@ op_ne
 id|kbd_tail
 )paren
 r_return
-l_int|1
-suffix:semicolon
-id|select_wait
-(paren
-op_amp
-id|kbd_wait
-comma
-id|wait
-)paren
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
 r_return
 l_int|0
@@ -6062,9 +6057,9 @@ multiline_comment|/* write */
 l_int|NULL
 comma
 multiline_comment|/* readdir */
-id|kbd_select
+id|kbd_poll
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|kbd_ioctl
 comma
 multiline_comment|/* ioctl */

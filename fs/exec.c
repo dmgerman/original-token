@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -17,6 +18,8 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -423,6 +426,11 @@ id|linux_binfmt
 op_star
 id|fmt
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|fd
 op_assign
 id|sys_open
@@ -435,6 +443,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|fd
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -442,8 +454,8 @@ id|fd
 OL
 l_int|0
 )paren
-r_return
-id|fd
+r_goto
+id|out
 suffix:semicolon
 id|file
 op_assign
@@ -526,6 +538,13 @@ id|sys_close
 c_func
 (paren
 id|fd
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -976,21 +995,12 @@ id|stack_base
 suffix:semicolon
 id|mpnt
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-op_star
-id|mpnt
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -2518,16 +2528,20 @@ c_func
 (paren
 id|modname
 comma
-l_string|&quot;binfmt-%hd&quot;
+l_string|&quot;binfmt-%04x&quot;
 comma
 op_star
 (paren
+r_int
 r_int
 op_star
 )paren
 (paren
 op_amp
 id|bprm-&gt;buf
+(braket
+l_int|2
+)braket
 )paren
 )paren
 suffix:semicolon

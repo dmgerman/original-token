@@ -4,6 +4,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -543,6 +545,11 @@ r_int
 id|r3
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -563,6 +570,14 @@ comma
 id|r3
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|sys_idle
 id|asmlinkage
@@ -573,6 +588,17 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -580,9 +606,8 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
@@ -603,6 +628,20 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 DECL|function|show_regs
 r_void
@@ -992,7 +1031,16 @@ op_star
 id|regs
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|do_fork
 c_func
 (paren
@@ -1005,6 +1053,14 @@ l_int|1
 comma
 id|regs
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|sys_execve
@@ -1049,6 +1105,11 @@ suffix:semicolon
 r_char
 op_star
 id|filename
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* getname does it&squot;s own verification of the address&n;&t;   when it calls get_max_filename() but&n;&t;   it will assume it&squot;s valid if get_fs() == KERNEL_DS&n;&t;   which is always true on the ppc so we check&n;&t;   it here&n;&t;   &n;&t;   this doesn&squot;t completely check any of these data structures,&n;&t;   it just makes sure that the 1st long is in a good area&n;&t;   and from there we assume that it&squot;s safe then&n;&t;   -- Cort&n;&t;   */
 multiline_comment|/* works now since get_fs/set_fs work properly */
@@ -1125,11 +1186,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
-)brace
 id|flush_instruction_cache
 c_func
 (paren
@@ -1184,6 +1243,13 @@ c_func
 id|filename
 )paren
 suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -1227,6 +1293,11 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|res
 op_assign
 id|do_fork
@@ -1240,6 +1311,11 @@ l_int|1
 )braket
 comma
 id|regs
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

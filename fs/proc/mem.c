@@ -1584,7 +1584,7 @@ comma
 multiline_comment|/* mem_readdir */
 l_int|NULL
 comma
-multiline_comment|/* mem_select */
+multiline_comment|/* mem_poll */
 l_int|NULL
 comma
 multiline_comment|/* mem_ioctl */

@@ -3,13 +3,15 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -54,6 +56,12 @@ id|__S110
 comma
 id|__S111
 )brace
+suffix:semicolon
+multiline_comment|/* SLAB cache for vm_area_struct&squot;s. */
+DECL|variable|vm_area_cachep
+id|kmem_cache_t
+op_star
+id|vm_area_cachep
 suffix:semicolon
 multiline_comment|/*&n; * Check that a process has enough memory to allocate a&n; * new virtual mapping.&n; */
 DECL|function|vm_enough_memory
@@ -120,6 +128,8 @@ id|brk
 r_int
 r_int
 id|rlim
+comma
+id|retval
 suffix:semicolon
 r_int
 r_int
@@ -134,6 +144,15 @@ id|mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|retval
+op_assign
+id|mm-&gt;brk
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -141,8 +160,8 @@ id|brk
 OL
 id|mm-&gt;end_code
 )paren
-r_return
-id|mm-&gt;brk
+r_goto
+id|out
 suffix:semicolon
 id|newbrk
 op_assign
@@ -167,11 +186,17 @@ id|oldbrk
 op_eq
 id|newbrk
 )paren
-r_return
+(brace
+id|retval
+op_assign
 id|mm-&gt;brk
 op_assign
 id|brk
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Always allow shrinking brk&n;&t; */
 r_if
 c_cond
@@ -181,6 +206,8 @@ op_le
 id|mm-&gt;brk
 )paren
 (brace
+id|retval
+op_assign
 id|mm-&gt;brk
 op_assign
 id|brk
@@ -195,11 +222,15 @@ op_minus
 id|newbrk
 )paren
 suffix:semicolon
-r_return
-id|brk
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Check against rlimit and stack..&n;&t; */
+id|retval
+op_assign
+id|mm-&gt;brk
+suffix:semicolon
 id|rlim
 op_assign
 id|current-&gt;rlim
@@ -230,8 +261,8 @@ id|mm-&gt;end_code
 OG
 id|rlim
 )paren
-r_return
-id|mm-&gt;brk
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check against existing mmap mappings.&n;&t; */
 r_if
@@ -249,8 +280,8 @@ op_plus
 id|PAGE_SIZE
 )paren
 )paren
-r_return
-id|mm-&gt;brk
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check if we have enough memory..&n;&t; */
 r_if
@@ -269,8 +300,8 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 )paren
-r_return
-id|mm-&gt;brk
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, looks good - let it rip.&n;&t; */
 r_if
@@ -299,18 +330,28 @@ id|MAP_PRIVATE
 comma
 l_int|0
 )paren
-op_ne
+op_eq
 id|oldbrk
 )paren
 (brace
-r_return
-id|mm-&gt;brk
-suffix:semicolon
-)brace
-r_return
 id|mm-&gt;brk
 op_assign
 id|brk
+suffix:semicolon
+)brace
+id|retval
+op_assign
+id|mm-&gt;brk
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Combine the mmap &quot;prot&quot; and &quot;flags&quot; argument into one &quot;vm_flags&quot; used&n; * internally. Essentially, translate the &quot;PROT_xxx&quot; and &quot;MAP_xxx&quot; bits&n; * into &quot;VM_xxx&quot;.&n; */
@@ -725,21 +766,12 @@ id|ENODEV
 suffix:semicolon
 id|vma
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|vm_area_struct
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -898,9 +930,11 @@ dot
 id|rlim_cur
 )paren
 (brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|vma
 )paren
 suffix:semicolon
@@ -946,9 +980,11 @@ id|PAGE_SHIFT
 )paren
 )paren
 (brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|vma
 )paren
 suffix:semicolon
@@ -985,9 +1021,11 @@ c_cond
 id|error
 )paren
 (brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|vma
 )paren
 suffix:semicolon
@@ -1028,9 +1066,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|flags
 op_amp
 id|VM_LOCKED
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|VM_IO
+)paren
 )paren
 (brace
 r_int
@@ -3015,21 +3062,12 @@ multiline_comment|/* Unmapping a hole: area-&gt;vm_start &lt; addr &lt;= end &lt
 multiline_comment|/* Add end mapping -- leave beginning for below */
 id|mpnt
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-op_star
-id|mpnt
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -3098,21 +3136,12 @@ suffix:semicolon
 multiline_comment|/* construct whatever mapping is needed */
 id|mpnt
 op_assign
-(paren
-r_struct
-id|vm_area_struct
-op_star
-)paren
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-op_star
-id|mpnt
-)paren
+id|vm_area_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -3188,7 +3217,16 @@ r_int
 id|len
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|do_munmap
 c_func
 (paren
@@ -3196,6 +3234,14 @@ id|addr
 comma
 id|len
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Munmap is split into 2 main parts -- this part which finds&n; * what needs doing, and the areas themselves, which do the&n; * work.  This now handles partial unmappings.&n; * Jeremy Fitzhardine &lt;jeremy@sw.oz.au&gt;&n; */
@@ -3494,9 +3540,11 @@ comma
 id|size
 )paren
 suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|mpnt
 )paren
 suffix:semicolon
@@ -3694,9 +3742,11 @@ c_func
 id|mpnt-&gt;vm_inode
 )paren
 suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|vm_area_cachep
+comma
 id|mpnt
 )paren
 suffix:semicolon
@@ -4247,16 +4297,12 @@ id|mpnt-&gt;vm_inode
 id|mpnt-&gt;vm_inode-&gt;i_count
 op_decrement
 suffix:semicolon
-id|kfree_s
+id|kmem_cache_free
 c_func
 (paren
-id|mpnt
+id|vm_area_cachep
 comma
-r_sizeof
-(paren
-op_star
 id|mpnt
-)paren
 )paren
 suffix:semicolon
 id|mpnt
@@ -4273,5 +4319,55 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+)brace
+DECL|function|vma_init
+r_void
+id|vma_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|vm_area_cachep
+op_assign
+id|kmem_cache_create
+c_func
+(paren
+l_string|&quot;vm_area_struct&quot;
+comma
+r_sizeof
+(paren
+r_struct
+id|vm_area_struct
+)paren
+comma
+r_sizeof
+(paren
+r_int
+)paren
+op_star
+l_int|8
+comma
+id|SLAB_HWCACHE_ALIGN
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vm_area_cachep
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;vma_init: Cannot alloc vm_area_struct cache.&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 eof

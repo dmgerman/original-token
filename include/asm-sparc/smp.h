@@ -18,6 +18,11 @@ id|mid
 suffix:semicolon
 )brace
 suffix:semicolon
+r_extern
+r_int
+id|linux_num_cpus
+suffix:semicolon
+multiline_comment|/* number of CPUs probed  */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#ifdef __SMP__
 macro_line|#ifndef __ASSEMBLY__
@@ -50,16 +55,31 @@ id|cpu_data
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|typedef|klock_t
-r_typedef
-id|__volatile__
+DECL|struct|klock_info
+r_struct
+id|klock_info
+(brace
+DECL|member|kernel_flag
 r_int
 r_char
-id|klock_t
+id|kernel_flag
+suffix:semicolon
+DECL|member|akp
+r_int
+r_char
+id|akp
+suffix:semicolon
+DECL|member|irq_udt
+r_int
+r_char
+id|irq_udt
+suffix:semicolon
+)brace
 suffix:semicolon
 r_extern
-id|klock_t
-id|kernel_flag
+r_struct
+id|klock_info
+id|klock_info
 suffix:semicolon
 DECL|macro|KLOCK_HELD
 mdefine_line|#define KLOCK_HELD       0xff
@@ -90,18 +110,6 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 r_extern
-id|__volatile__
-r_int
-r_int
-id|kernel_counter
-suffix:semicolon
-r_extern
-id|__volatile__
-r_int
-r_char
-id|active_kernel_processor
-suffix:semicolon
-r_extern
 r_void
 id|smp_message_irq
 c_func
@@ -113,18 +121,6 @@ r_extern
 r_int
 r_int
 id|ipi_count
-suffix:semicolon
-r_extern
-id|__volatile__
-r_int
-r_int
-id|kernel_counter
-suffix:semicolon
-r_extern
-id|__volatile__
-r_int
-r_int
-id|syscall_count
 suffix:semicolon
 r_extern
 r_void
@@ -737,6 +733,11 @@ DECL|macro|SMP_FROM_INT
 mdefine_line|#define SMP_FROM_INT&t;&t;1
 DECL|macro|SMP_FROM_SYSCALL
 mdefine_line|#define SMP_FROM_SYSCALL&t;2
+macro_line|#else /* !(__SMP__) */
+DECL|macro|smp_capture
+mdefine_line|#define smp_capture()&t;&t;do { } while(0)
+DECL|macro|smp_release
+mdefine_line|#define smp_release()&t;&t;do { } while(0)
 macro_line|#endif /* !(__SMP__) */
 macro_line|#endif /* !(_SPARC_SMP_H) */
 eof

@@ -16515,7 +16515,7 @@ comma
 multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|fd_ioctl
 comma
 multiline_comment|/* ioctl */
@@ -18472,6 +18472,14 @@ op_star
 id|floppy
 op_assign
 l_int|NULL
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|floppy
+comma
+l_string|&quot;s&quot;
+)paren
 suffix:semicolon
 DECL|function|parse_floppy_cfg_string
 r_static

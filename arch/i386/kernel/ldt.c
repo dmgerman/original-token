@@ -3,6 +3,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -623,6 +625,14 @@ r_int
 id|bytecount
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -630,7 +640,8 @@ id|func
 op_eq
 l_int|0
 )paren
-r_return
+id|ret
+op_assign
 id|read_ldt
 c_func
 (paren
@@ -639,6 +650,7 @@ comma
 id|bytecount
 )paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -646,7 +658,8 @@ id|func
 op_eq
 l_int|1
 )paren
-r_return
+id|ret
+op_assign
 id|write_ldt
 c_func
 (paren
@@ -657,6 +670,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -664,7 +678,8 @@ id|func
 op_eq
 l_int|0x11
 )paren
-r_return
+id|ret
+op_assign
 id|write_ldt
 c_func
 (paren
@@ -675,9 +690,19 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_else
+id|ret
+op_assign
 op_minus
 id|ENOSYS
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

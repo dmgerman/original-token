@@ -10387,7 +10387,7 @@ id|strip_ldisc.ioctl
 op_assign
 id|strip_ioctl
 suffix:semicolon
-id|strip_ldisc.select
+id|strip_ldisc.poll
 op_assign
 l_int|NULL
 suffix:semicolon

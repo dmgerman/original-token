@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michael Chastain&t;:&t;Change trampoline.S to gnu as.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -432,7 +434,6 @@ suffix:semicolon
 multiline_comment|/* for computing process time */
 DECL|variable|smp_process_available
 r_volatile
-r_int
 r_int
 id|smp_process_available
 op_assign
@@ -1746,15 +1747,19 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Trampoline 80x86 program as an array.&n; */
-DECL|variable|trampoline_data
-r_static
+r_extern
 r_int
 r_char
 id|trampoline_data
 (braket
 )braket
-op_assign
-initialization_block
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|trampoline_end
+(braket
+)braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Currently trivial. Write the real-&gt;protected mode&n; *&t;bootstrap into the page concerned. The caller&n; *&t;has made sure it&squot;s suitably aligned.&n; */
 DECL|function|install_trampoline
@@ -1776,10 +1781,9 @@ id|mp
 comma
 id|trampoline_data
 comma
-r_sizeof
-(paren
+id|trampoline_end
+op_minus
 id|trampoline_data
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2137,7 +2141,6 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&t;printk(&quot;Testing faulting...&bslash;n&quot;);&n;&t;*(long *)0=1;&t;&t; OOPS... */
 id|local_flush_tlb
 c_func
 (paren
@@ -2147,16 +2150,28 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|smp_commenced
+id|task
+(braket
+id|cpuid
+)braket
+op_logical_or
+id|current_set
+(braket
+id|cpuid
+)braket
+op_ne
+id|task
+(braket
+id|cpuid
+)braket
 )paren
 (brace
-suffix:semicolon
-)brace
-id|local_flush_tlb
+id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2176,6 +2191,38 @@ l_int|1
 (brace
 suffix:semicolon
 )brace
+id|local_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|load_TR
+c_func
+(paren
+id|cpu_number_map
+(braket
+id|cpuid
+)braket
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|smp_commenced
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|local_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|SMP_PRINTK
 c_func
 (paren
@@ -2189,13 +2236,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|load_TR
+id|sti
 c_func
 (paren
-id|cpu_number_map
-(braket
-id|cpuid
-)braket
 )paren
 suffix:semicolon
 )brace
@@ -4129,45 +4172,14 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/*#define DEBUGGING_SMP_RESCHED*/
-macro_line|#ifdef DEBUGGING_SMP_RESCHED
-r_static
-r_int
-id|ct
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ct
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Beginning scheduling on CPU#%d&bslash;n&quot;
-comma
-id|smp_processor_id
+id|lock_kernel
 c_func
 (paren
 )paren
-)paren
 suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|1000000
-)paren
+id|intr_count
+op_increment
 suffix:semicolon
-id|ct
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif&t;
 r_if
 c_cond
 (paren
@@ -4197,7 +4209,7 @@ id|need_resched
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Clear the IPI&n;&t; */
+multiline_comment|/* Clear the IPI */
 id|apic_read
 c_func
 (paren
@@ -4214,6 +4226,14 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Docs say use 0 for future compatibility */
+id|intr_count
+op_decrement
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Message call back.&n; */
 DECL|function|smp_message_irq

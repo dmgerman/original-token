@@ -3,6 +3,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* Do save&squot;s until all user register windows are out of the cpu. */
 DECL|function|flush_user_windows
@@ -415,6 +417,11 @@ suffix:semicolon
 r_int
 id|window
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|flush_user_windows
 c_func
 (paren
@@ -488,6 +495,11 @@ suffix:semicolon
 id|tp-&gt;w_saved
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 eof

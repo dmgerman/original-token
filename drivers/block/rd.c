@@ -568,7 +568,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */
@@ -703,7 +703,7 @@ comma
 multiline_comment|/* readdir - not here! */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|rd_ioctl
 comma
 multiline_comment|/* ioctl */

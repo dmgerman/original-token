@@ -1,5 +1,7 @@
 multiline_comment|/*&n; *  linux/mm/swapfile.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Swap reorganised 29.12.95, Stephen Tweedie&n; */
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1496,6 +1498,8 @@ r_struct
 id|swap_info_struct
 op_star
 id|p
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|inode
@@ -1515,6 +1519,14 @@ id|prev
 suffix:semicolon
 r_int
 id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1525,9 +1537,8 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 id|err
 op_assign
@@ -1545,8 +1556,8 @@ c_cond
 (paren
 id|err
 )paren
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 id|prev
 op_assign
@@ -1634,6 +1645,11 @@ op_assign
 id|type
 suffix:semicolon
 )brace
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1648,9 +1664,8 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1795,8 +1810,8 @@ id|p-&gt;flags
 op_assign
 id|SWP_WRITEOK
 suffix:semicolon
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1922,8 +1937,19 @@ id|p-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
-r_return
+id|err
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Written 01/25/92 by Simmule Turner, heavily changed by Linus.&n; *&n; * The swapon system call&n; */
@@ -1965,6 +1991,9 @@ id|prev
 suffix:semicolon
 r_int
 id|error
+op_assign
+op_minus
+id|EPERM
 suffix:semicolon
 r_struct
 id|file
@@ -1975,6 +2004,23 @@ r_int
 id|least_priority
 op_assign
 l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|memset
 c_func
@@ -1989,19 +2035,6 @@ r_sizeof
 id|filp
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|EPERM
 suffix:semicolon
 id|p
 op_assign
@@ -2043,9 +2076,8 @@ id|type
 op_ge
 id|MAX_SWAPFILES
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2722,8 +2754,12 @@ op_minus
 id|swap_info
 suffix:semicolon
 )brace
-r_return
+id|error
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 id|bad_swap
 suffix:colon
@@ -2789,6 +2825,13 @@ suffix:semicolon
 id|p-&gt;flags
 op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|error

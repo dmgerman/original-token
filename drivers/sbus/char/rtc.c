@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: rtc.c,v 1.6 1996/11/21 16:57:50 jj Exp $&n; *&n; * Linux/SPARC Real Time Clock Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This is a little driver that lets a user-level program access&n; * the SPARC Mostek real time clock chip. It is no use unless you&n; * use the modified clock utility.&n; *&n; * Get the modified clock utility from:&n; *   ftp://vger.rutgers.edu/pub/linux/Sparc/userland/clock.c&n; */
+multiline_comment|/* $Id: rtc.c,v 1.9 1997/01/26 07:13:40 davem Exp $&n; *&n; * Linux/SPARC Real Time Clock Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This is a little driver that lets a user-level program access&n; * the SPARC Mostek real time clock chip. It is no use unless you&n; * use the modified clock utility.&n; *&n; * Get the modified clock utility from:&n; *   ftp://vger.rutgers.edu/pub/linux/Sparc/userland/clock.c&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/mostek.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -475,7 +476,7 @@ comma
 multiline_comment|/* rtc_readdir */
 l_int|NULL
 comma
-multiline_comment|/* rtc_select */
+multiline_comment|/* rtc_poll */
 id|rtc_ioctl
 comma
 l_int|NULL
@@ -501,6 +502,8 @@ op_amp
 id|rtc_fops
 )brace
 suffix:semicolon
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -522,14 +525,11 @@ r_void
 )paren
 macro_line|#endif
 (brace
-macro_line|#ifdef MODULE
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
+r_int
+id|error
 suffix:semicolon
-macro_line|#endif
+id|error
+op_assign
 id|misc_register
 c_func
 (paren
@@ -537,6 +537,23 @@ op_amp
 id|rtc_dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;rtc: unable to get misc minor&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|error
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

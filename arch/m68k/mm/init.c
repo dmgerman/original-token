@@ -1707,6 +1707,16 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
+DECL|function|free_initmem
+r_void
+id|free_initmem
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* To be written */
+)brace
 DECL|function|si_meminfo
 r_void
 id|si_meminfo

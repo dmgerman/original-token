@@ -92,7 +92,7 @@ macro_line|#else
 l_int|NULL
 comma
 op_amp
-id|__this_module.usecount
+id|__this_module
 comma
 id|load_aout_binary
 comma
@@ -171,7 +171,7 @@ multiline_comment|/*&n; * These are the only things you should do on a core-file
 DECL|macro|DUMP_WRITE
 mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file.f_op-&gt;write(inode,&amp;file,(char *)(addr),(nr)) != (nr)) goto close_coredump
 DECL|macro|DUMP_SEEK
-mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;llseek) { &bslash;&n;&t;if (file.f_op-&gt;llseek(inode,&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)&t;&t;
+mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;llseek) { &bslash;&n;&t;if (file.f_op-&gt;llseek(inode,&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)
 multiline_comment|/*&n; * Routine writes a core dump image in the current directory.&n; * Currently only a stub-function.&n; *&n; * Note that setuid/setgid files won&squot;t make a core-dump if the uid/gid&n; * changed due to the set[u|g]id. It&squot;s enforced by the &quot;current-&gt;dumpable&quot;&n; * field, which also makes sure the core-dumps won&squot;t be recursive if the&n; * dumping of the process results in another error..&n; */
 r_static
 r_inline
@@ -230,11 +230,19 @@ r_struct
 id|user
 id|dump
 suffix:semicolon
-macro_line|#ifdef __alpha__
+macro_line|#if defined(__alpha__)
 DECL|macro|START_DATA
 macro_line|#       define START_DATA(u)&t;(u.start_data)
-macro_line|#else
+macro_line|#elif defined(__sparc__)
+macro_line|#       define START_DATA(u)    (u.u_tsize)
+macro_line|#elif defined(__i386__)
 macro_line|#       define START_DATA(u)&t;(u.u_tsize &lt;&lt; PAGE_SHIFT)
+macro_line|#endif
+macro_line|#ifdef __sparc__
+DECL|macro|START_STACK
+macro_line|#       define START_STACK(u)   ((regs-&gt;u_regs[UREG_FP]) &amp; ~(PAGE_SIZE - 1))
+macro_line|#else
+macro_line|#       define START_STACK(u)   (u.start_stack)
 macro_line|#endif
 r_if
 c_cond
@@ -465,6 +473,7 @@ id|current-&gt;comm
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifndef __sparc__
 id|dump.u_ar0
 op_assign
 (paren
@@ -495,6 +504,7 @@ id|dump
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|dump.signal
 op_assign
 id|signr
@@ -509,6 +519,28 @@ id|dump
 )paren
 suffix:semicolon
 multiline_comment|/* If the size of the dump file exceeds the rlimit, then see what would happen&n;   if we wrote the stack, but not the data area.  */
+macro_line|#ifdef __sparc__
+r_if
+c_cond
+(paren
+(paren
+id|dump.u_dsize
+op_plus
+id|dump.u_ssize
+)paren
+OG
+id|current-&gt;rlim
+(braket
+id|RLIMIT_CORE
+)braket
+dot
+id|rlim_cur
+)paren
+id|dump.u_dsize
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -533,7 +565,28 @@ id|dump.u_dsize
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Make sure we have enough room to write the stack and data areas. */
+macro_line|#ifdef __sparc__
+r_if
+c_cond
+(paren
+(paren
+id|dump.u_ssize
+)paren
+OG
+id|current-&gt;rlim
+(braket
+id|RLIMIT_CORE
+)braket
+dot
+id|rlim_cur
+)paren
+id|dump.u_ssize
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -556,6 +609,7 @@ id|dump.u_ssize
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* make sure we actually have a data and stack area to dump */
 id|set_fs
 c_func
@@ -563,6 +617,58 @@ c_func
 id|USER_DS
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|START_DATA
+c_func
+(paren
+id|dump
+)paren
+comma
+id|dump.u_dsize
+)paren
+)paren
+id|dump.u_dsize
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|START_STACK
+c_func
+(paren
+id|dump
+)paren
+comma
+id|dump.u_ssize
+)paren
+)paren
+id|dump.u_ssize
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -602,7 +708,11 @@ comma
 r_void
 op_star
 )paren
-id|dump.start_stack
+id|START_STACK
+c_func
+(paren
+id|dump
+)paren
 comma
 id|dump.u_ssize
 op_lshift
@@ -613,6 +723,7 @@ id|dump.u_ssize
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|set_fs
 c_func
 (paren
@@ -633,12 +744,14 @@ id|dump
 )paren
 suffix:semicolon
 multiline_comment|/* Now dump all of the user data.  Include malloced stuff as well */
+macro_line|#ifndef __sparc__
 id|DUMP_SEEK
 c_func
 (paren
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* now we start writing out the user space info */
 id|set_fs
 c_func
@@ -663,12 +776,19 @@ c_func
 id|dump
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|dump_size
+op_assign
+id|dump.u_dsize
+suffix:semicolon
+macro_line|#else
 id|dump_size
 op_assign
 id|dump.u_dsize
 op_lshift
 id|PAGE_SHIFT
 suffix:semicolon
+macro_line|#endif
 id|DUMP_WRITE
 c_func
 (paren
@@ -689,14 +809,25 @@ l_int|0
 (brace
 id|dump_start
 op_assign
-id|dump.start_stack
+id|START_STACK
+c_func
+(paren
+id|dump
+)paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|dump_size
+op_assign
+id|dump.u_ssize
+suffix:semicolon
+macro_line|#else
 id|dump_size
 op_assign
 id|dump.u_ssize
 op_lshift
 id|PAGE_SHIFT
 suffix:semicolon
+macro_line|#endif
 id|DUMP_WRITE
 c_func
 (paren
@@ -876,6 +1007,45 @@ r_int
 id|p
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+multiline_comment|/* This imposes the proper stack alignment for a new process. */
+id|sp
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sp
+)paren
+op_amp
+op_complement
+l_int|7
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|envc
+op_plus
+id|argc
+op_plus
+l_int|3
+)paren
+op_amp
+l_int|1
+)paren
+op_decrement
+id|sp
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __alpha__
 multiline_comment|/* whee.. test-programs are so much fun. */
 id|put_user
@@ -1152,10 +1322,10 @@ id|sp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are the functions used to load a.out style executables and shared&n; * libraries.  There is no binary dependent code anywhere else.&n; */
+DECL|function|do_load_aout_binary
 r_static
 r_inline
 r_int
-DECL|function|do_load_aout_binary
 id|do_load_aout_binary
 c_func
 (paren
@@ -1240,6 +1410,14 @@ id|ex
 )paren
 op_ne
 id|QMAGIC
+op_logical_and
+id|N_MAGIC
+c_func
+(paren
+id|ex
+)paren
+op_ne
+id|NMAGIC
 )paren
 op_logical_or
 id|N_TRSIZE
@@ -1394,6 +1572,24 @@ c_func
 id|bprm
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|memcpy
+c_func
+(paren
+op_amp
+id|current-&gt;tss.core_exec
+comma
+op_amp
+id|ex
+comma
+r_sizeof
+(paren
+r_struct
+id|exec
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|current-&gt;mm-&gt;end_code
 op_assign
 id|ex.a_text
@@ -1465,6 +1661,127 @@ op_and_assign
 op_complement
 id|PF_FORKNOEXEC
 suffix:semicolon
+macro_line|#ifdef __sparc__
+r_if
+c_cond
+(paren
+id|N_MAGIC
+c_func
+(paren
+id|ex
+)paren
+op_eq
+id|NMAGIC
+)paren
+(brace
+multiline_comment|/* Fuck me plenty... */
+id|error
+op_assign
+id|do_mmap
+c_func
+(paren
+l_int|NULL
+comma
+id|N_TXTADDR
+c_func
+(paren
+id|ex
+)paren
+comma
+id|ex.a_text
+comma
+id|PROT_READ
+op_or
+id|PROT_WRITE
+op_or
+id|PROT_EXEC
+comma
+id|MAP_FIXED
+op_or
+id|MAP_PRIVATE
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|read_exec
+c_func
+(paren
+id|bprm-&gt;inode
+comma
+id|fd_offset
+comma
+(paren
+r_char
+op_star
+)paren
+id|N_TXTADDR
+c_func
+(paren
+id|ex
+)paren
+comma
+id|ex.a_text
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|error
+op_assign
+id|do_mmap
+c_func
+(paren
+l_int|NULL
+comma
+id|N_DATADDR
+c_func
+(paren
+id|ex
+)paren
+comma
+id|ex.a_data
+comma
+id|PROT_READ
+op_or
+id|PROT_WRITE
+op_or
+id|PROT_EXEC
+comma
+id|MAP_FIXED
+op_or
+id|MAP_PRIVATE
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|read_exec
+c_func
+(paren
+id|bprm-&gt;inode
+comma
+id|fd_offset
+op_plus
+id|ex.a_text
+comma
+(paren
+r_char
+op_star
+)paren
+id|N_DATADDR
+c_func
+(paren
+id|ex
+)paren
+comma
+id|ex.a_data
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_goto
+id|beyond_if
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1477,7 +1794,7 @@ op_eq
 id|OMAGIC
 )paren
 (brace
-macro_line|#ifdef __alpha__
+macro_line|#if defined(__alpha__) || defined(__sparc__)
 id|do_mmap
 c_func
 (paren
@@ -1588,6 +1905,7 @@ r_else
 r_if
 c_cond
 (paren
+(paren
 id|ex.a_text
 op_amp
 l_int|0xfff
@@ -1595,6 +1913,17 @@ op_logical_or
 id|ex.a_data
 op_amp
 l_int|0xfff
+)paren
+op_logical_and
+(paren
+id|N_MAGIC
+c_func
+(paren
+id|ex
+)paren
+op_ne
+id|NMAGIC
+)paren
 )paren
 id|printk
 c_func
@@ -1834,26 +2163,26 @@ c_cond
 (paren
 id|current-&gt;exec_domain
 op_logical_and
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|current-&gt;binfmt
 op_logical_and
-id|current-&gt;binfmt-&gt;use_count
+id|current-&gt;binfmt-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;binfmt-&gt;use_count
+id|current-&gt;binfmt-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 id|current-&gt;exec_domain
 op_assign
@@ -1873,26 +2202,26 @@ c_cond
 (paren
 id|current-&gt;exec_domain
 op_logical_and
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
-op_increment
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|current-&gt;binfmt
 op_logical_and
-id|current-&gt;binfmt-&gt;use_count
+id|current-&gt;binfmt-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;binfmt-&gt;use_count
+id|current-&gt;binfmt-&gt;module
 )paren
-op_increment
 suffix:semicolon
 id|set_brk
 c_func

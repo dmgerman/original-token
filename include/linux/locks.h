@@ -7,13 +7,6 @@ macro_line|#endif
 macro_line|#ifndef _LINUX_PAGEMAP_H
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * Unlocked, temporary IO buffer_heads gets moved to the reuse_list&n; * once their page becomes unlocked.  &n; */
-r_extern
-r_struct
-id|buffer_head
-op_star
-id|reuse_list
-suffix:semicolon
 multiline_comment|/*&n; * Buffer cache locking - note that interrupts may only unlock, not&n; * lock buffers.&n; */
 r_extern
 r_void

@@ -2,6 +2,9 @@ macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 r_static
 id|asmlinkage
 r_void
@@ -148,13 +151,13 @@ c_cond
 (paren
 id|current-&gt;exec_domain
 op_logical_and
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 id|current-&gt;personality
 op_assign
@@ -173,13 +176,13 @@ c_cond
 (paren
 id|current-&gt;exec_domain
 op_logical_and
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
-op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -439,6 +442,18 @@ r_int
 r_int
 id|old_personality
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|current-&gt;personality
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -446,8 +461,13 @@ id|personality
 op_eq
 l_int|0xffffffff
 )paren
-r_return
-id|current-&gt;personality
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 id|it
 op_assign
@@ -463,9 +483,8 @@ c_cond
 op_logical_neg
 id|it
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|old_personality
 op_assign
@@ -476,13 +495,13 @@ c_cond
 (paren
 id|current-&gt;exec_domain
 op_logical_and
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_DEC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
-op_decrement
 suffix:semicolon
 id|current-&gt;personality
 op_assign
@@ -495,16 +514,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
+id|__MOD_INC_USE_COUNT
+c_func
 (paren
-op_star
-id|current-&gt;exec_domain-&gt;use_count
+id|current-&gt;exec_domain-&gt;module
 )paren
-op_increment
+suffix:semicolon
+id|ret
+op_assign
+id|old_personality
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
-id|old_personality
+id|ret
 suffix:semicolon
 )brace
 eof

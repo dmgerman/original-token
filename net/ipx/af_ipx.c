@@ -9434,7 +9434,7 @@ id|ipx_accept
 comma
 id|ipx_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|ipx_ioctl
 comma

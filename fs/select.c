@@ -11,6 +11,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/poll.h&gt;
@@ -999,6 +1001,9 @@ id|tvp
 (brace
 r_int
 id|error
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 id|fd_set_buffer
 id|fds
@@ -1007,10 +1012,10 @@ r_int
 r_int
 id|timeout
 suffix:semicolon
-id|error
-op_assign
-op_minus
-id|EINVAL
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1366,6 +1371,11 @@ id|fds.res_ex
 suffix:semicolon
 id|out
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -1598,6 +1608,11 @@ comma
 id|count
 comma
 id|fdcount
+comma
+id|err
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_struct
 id|pollfd
@@ -1615,6 +1630,11 @@ id|poll_table_entry
 op_star
 id|entry
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1622,9 +1642,13 @@ id|nfds
 OG
 id|NR_OPEN
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|err
+op_assign
 op_minus
-id|EINVAL
+id|ENOMEM
 suffix:semicolon
 id|entry
 op_assign
@@ -1645,9 +1669,8 @@ c_cond
 op_logical_neg
 id|entry
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 id|fds
 op_assign
@@ -1687,11 +1710,15 @@ r_int
 id|entry
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1728,9 +1755,8 @@ c_func
 id|fds
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1878,13 +1904,25 @@ op_complement
 id|current-&gt;blocked
 )paren
 )paren
-id|fdcount
+id|err
 op_assign
 op_minus
 id|EINTR
 suffix:semicolon
-r_return
+r_else
+id|err
+op_assign
 id|fdcount
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 eof

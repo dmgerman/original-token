@@ -16,6 +16,8 @@ macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 r_extern
 r_void
 id|device_setup
@@ -27,6 +29,14 @@ suffix:semicolon
 r_extern
 r_void
 id|binfmt_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_initmem
 c_func
 (paren
 r_void
@@ -48,15 +58,25 @@ id|callable
 op_assign
 l_int|1
 suffix:semicolon
+r_int
+id|err
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|callable
 )paren
-r_return
-op_minus
-l_int|1
+r_goto
+id|out
 suffix:semicolon
 id|callable
 op_assign
@@ -189,8 +209,24 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|free_initmem
+c_func
+(paren
+)paren
+suffix:semicolon
+id|err
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 eof

@@ -1663,7 +1663,7 @@ comma
 multiline_comment|/* readdir &t;*/
 l_int|NULL
 comma
-multiline_comment|/* select &t;*/
+multiline_comment|/* poll &t;*/
 id|fb_ioctl
 comma
 multiline_comment|/* ioctl &t;*/

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.85 1996/12/18 06:43:23 tridge Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: fault.c,v 1.86 1997/01/06 06:52:52 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8,6 +8,8 @@ macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -497,6 +499,11 @@ r_int
 id|last_one
 suffix:semicolon
 macro_line|#endif
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -746,7 +753,8 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * Something tried to access memory that isn&squot;t in our memory map..&n;&t; * Fix it, but check if it&squot;s kernel or user first..&n;&t; */
 id|bad_area
@@ -824,7 +832,8 @@ id|UREG_G2
 op_assign
 id|g2
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* Did we have an exception handler installed? */
@@ -917,7 +926,8 @@ id|UREG_G3
 op_assign
 id|current-&gt;tss.ex.pc
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -961,7 +971,8 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1030,6 +1041,13 @@ c_func
 l_string|&quot;Oops&quot;
 comma
 id|regs
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1628,6 +1646,11 @@ r_int
 r_int
 id|sp
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sp
 op_assign
 id|current-&gt;tss.rwbuf_stkptrs
@@ -1674,6 +1697,11 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|window_underflow_fault
 r_void
@@ -1685,6 +1713,11 @@ r_int
 id|sp
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1724,6 +1757,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|window_ret_fault
 r_void
@@ -1739,6 +1777,11 @@ id|regs
 r_int
 r_int
 id|sp
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|sp
 op_assign
@@ -1784,6 +1827,11 @@ c_func
 id|sp
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

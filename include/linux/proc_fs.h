@@ -108,6 +108,9 @@ id|PROC_LOCKS
 comma
 DECL|enumerator|PROC_ZORRO
 id|PROC_ZORRO
+comma
+DECL|enumerator|PROC_SLABINFO
+id|PROC_SLABINFO
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

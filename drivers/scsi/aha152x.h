@@ -1,7 +1,7 @@
 macro_line|#ifndef _AHA152X_H
 DECL|macro|_AHA152X_H
 mdefine_line|#define _AHA152X_H
-multiline_comment|/*&n; * $Id: aha152x.h,v 1.18 1996/09/07 20:10:26 fischer Exp $&n; */
+multiline_comment|/*&n; * $Id: aha152x.h,v 1.7 1997/01/19 23:07:11 davem Exp $&n; */
 macro_line|#if defined(__KERNEL__)
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -102,7 +102,7 @@ multiline_comment|/* number of queueable commands&n;   (unless we support more t
 DECL|macro|AHA152X_MAXQUEUE
 mdefine_line|#define AHA152X_MAXQUEUE 7
 DECL|macro|AHA152X_REVID
-mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.18 $&quot;
+mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.7 $&quot;
 r_extern
 r_struct
 id|proc_dir_entry
@@ -110,7 +110,7 @@ id|proc_scsi_aha152x
 suffix:semicolon
 multiline_comment|/* Initial value of Scsi_Host entry */
 DECL|macro|AHA152X
-mdefine_line|#define AHA152X { /* next */               0, &bslash;&n;                  /* usage_count */        0, &bslash;&n;                  /* proc_dir */           &amp;proc_scsi_aha152x, &bslash;&n;                  /* proc_info */          aha152x_proc_info, &bslash;&n;                  /* name */               AHA152X_REVID, &bslash;&n;                  /* detect */             aha152x_detect, &bslash;&n;                  /* release */            0, &bslash;&n;                  /* info */               0, &bslash;&n;                  /* command */&t;&t;       aha152x_command, &bslash;&n;                  /* queuecommand */       aha152x_queue, &bslash;&n;                  /* abort */              aha152x_abort, &bslash;&n;                  /* reset */              aha152x_reset, &bslash;&n;                  /* slave_attach */       0, &bslash;&n;                  /* bios_param */         aha152x_biosparam, &bslash;&n;                  /* can_queue */          1, &bslash;&n;                  /* this_id */            7, &bslash;&n;                  /* sg_tablesize */       SG_ALL, &bslash;&n;                  /* cmd_per_lun */        1, &bslash;&n;                  /* present */            0, &bslash;&n;                  /* unchecked_isa_dma */  0, &bslash;&n;                  /* use_clustering */     DISABLE_CLUSTERING }
+mdefine_line|#define AHA152X { /* next */               0, &bslash;&n;                  /* module */             0, &bslash;&n;                  /* proc_dir */           &amp;proc_scsi_aha152x, &bslash;&n;                  /* proc_info */          aha152x_proc_info, &bslash;&n;                  /* name */               AHA152X_REVID, &bslash;&n;                  /* detect */             aha152x_detect, &bslash;&n;                  /* release */            0, &bslash;&n;                  /* info */               0, &bslash;&n;                  /* command */&t;&t;       aha152x_command, &bslash;&n;                  /* queuecommand */       aha152x_queue, &bslash;&n;                  /* abort */              aha152x_abort, &bslash;&n;                  /* reset */              aha152x_reset, &bslash;&n;                  /* slave_attach */       0, &bslash;&n;                  /* bios_param */         aha152x_biosparam, &bslash;&n;                  /* can_queue */          1, &bslash;&n;                  /* this_id */            7, &bslash;&n;                  /* sg_tablesize */       SG_ALL, &bslash;&n;                  /* cmd_per_lun */        1, &bslash;&n;                  /* present */            0, &bslash;&n;                  /* unchecked_isa_dma */  0, &bslash;&n;                  /* use_clustering */     DISABLE_CLUSTERING }
 macro_line|#endif
 multiline_comment|/* port addresses */
 DECL|macro|SCSISEQ

@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_driver.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|LOG_BUF_LEN
 mdefine_line|#define LOG_BUF_LEN&t;8192
@@ -132,6 +134,14 @@ id|c
 suffix:semicolon
 r_int
 id|error
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -148,9 +158,12 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EPERM
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_switch
 c_cond
@@ -162,20 +175,23 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* Close log */
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 l_int|1
 suffix:colon
 multiline_comment|/* Open log */
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 l_int|2
 suffix:colon
 multiline_comment|/* Read from log */
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -186,9 +202,12 @@ id|len
 OL
 l_int|0
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -196,8 +215,8 @@ c_cond
 op_logical_neg
 id|len
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -216,13 +235,18 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ERESTARTSYS
 suffix:semicolon
 r_while
 c_loop
@@ -245,9 +269,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ERESTARTSYS
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|interruptible_sleep_on
@@ -327,8 +350,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|i
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 l_int|4
@@ -343,6 +369,11 @@ r_case
 l_int|3
 suffix:colon
 multiline_comment|/* Read last kernel messages */
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -353,9 +384,12 @@ id|len
 OL
 l_int|0
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -363,8 +397,8 @@ c_cond
 op_logical_neg
 id|len
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -383,8 +417,8 @@ c_cond
 (paren
 id|error
 )paren
-r_return
-id|error
+r_goto
+id|out
 suffix:semicolon
 id|count
 op_assign
@@ -476,8 +510,11 @@ id|logged_chars
 op_assign
 l_int|0
 suffix:semicolon
-r_return
+id|error
+op_assign
 id|i
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 l_int|5
@@ -487,8 +524,7 @@ id|logged_chars
 op_assign
 l_int|0
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 l_int|6
@@ -498,8 +534,7 @@ id|console_loglevel
 op_assign
 id|MINIMUM_CONSOLE_LOGLEVEL
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 l_int|7
@@ -509,12 +544,16 @@ id|console_loglevel
 op_assign
 id|DEFAULT_CONSOLE_LOGLEVEL
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 l_int|8
 suffix:colon
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -522,9 +561,8 @@ id|len
 template_param
 l_int|8
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -541,13 +579,31 @@ id|console_loglevel
 op_assign
 id|len
 suffix:semicolon
-r_return
+id|error
+op_assign
 l_int|0
 suffix:semicolon
-)brace
-r_return
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|error
+op_assign
 op_minus
 id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 DECL|function|printk

@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt; /* for f_flags values */
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|file_ioctl
@@ -218,6 +220,14 @@ r_int
 id|on
 comma
 id|error
+op_assign
+op_minus
+id|EBADF
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -236,9 +246,12 @@ id|fd
 )braket
 )paren
 )paren
-r_return
-op_minus
-id|EBADF
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_switch
 c_cond
@@ -258,8 +271,7 @@ op_amp
 id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 id|FIONCLEX
@@ -273,8 +285,7 @@ op_amp
 id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 id|FIONBIO
@@ -300,8 +311,7 @@ id|arg
 op_ne
 l_int|0
 )paren
-r_return
-id|error
+r_break
 suffix:semicolon
 id|flag
 op_assign
@@ -338,8 +348,7 @@ op_and_assign
 op_complement
 id|flag
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_case
 id|FIOASYNC
@@ -366,8 +375,7 @@ id|arg
 op_ne
 l_int|0
 )paren
-r_return
-id|error
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -384,8 +392,7 @@ op_and_assign
 op_complement
 id|O_SYNC
 suffix:semicolon
-r_return
-l_int|0
+r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -402,7 +409,8 @@ c_func
 id|filp-&gt;f_inode-&gt;i_mode
 )paren
 )paren
-r_return
+id|error
+op_assign
 id|file_ioctl
 c_func
 (paren
@@ -413,6 +421,7 @@ comma
 id|arg
 )paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -420,7 +429,8 @@ id|filp-&gt;f_op
 op_logical_and
 id|filp-&gt;f_op-&gt;ioctl
 )paren
-r_return
+id|error
+op_assign
 id|filp-&gt;f_op
 op_member_access_from_pointer
 id|ioctl
@@ -435,10 +445,22 @@ comma
 id|arg
 )paren
 suffix:semicolon
-r_return
+r_else
+id|error
+op_assign
 op_minus
 id|ENOTTY
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|error
+suffix:semicolon
 )brace
 eof

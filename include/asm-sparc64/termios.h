@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: termios.h,v 1.2 1996/12/30 03:31:12 davem Exp $ */
+multiline_comment|/* $Id: termios.h,v 1.3 1996/12/31 22:35:49 davem Exp $ */
 macro_line|#ifndef _SPARC64_TERMIOS_H
 DECL|macro|_SPARC64_TERMIOS_H
 mdefine_line|#define _SPARC64_TERMIOS_H

@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|_S
@@ -81,7 +83,7 @@ op_star
 id|child
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The OSF/1 sigprocmask calling sequence is different from the&n; * C sigprocmask() sequence..&n; *&n; * how:&n; * 1 - SIG_BLOCK&n; * 2 - SIG_UNBLOCK&n; * 3 - SIG_SETMASK&n; *&n; * We change the range to -1 .. 1 in order to let gcc easily&n; * use the conditional move instructions.&n; */
+multiline_comment|/*&n; * The OSF/1 sigprocmask calling sequence is different from the&n; * C sigprocmask() sequence..&n; *&n; * how:&n; * 1 - SIG_BLOCK&n; * 2 - SIG_UNBLOCK&n; * 3 - SIG_SETMASK&n; *&n; * We change the range to -1 .. 1 in order to let gcc easily&n; * use the conditional move instructions.&n; *&n; * Note that we don&squot;t need to aquire the kernel lock for SMP&n; * operation, as all of this is local to this thread.&n; */
 DECL|function|osf_sigprocmask
 id|asmlinkage
 r_int
@@ -249,6 +251,13 @@ id|sw
 r_int
 r_int
 id|oldmask
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|oldmask
 op_assign
 id|current-&gt;blocked
 suffix:semicolon
@@ -290,11 +299,21 @@ comma
 l_int|0
 )paren
 )paren
+r_goto
+id|out
+suffix:semicolon
+)brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINTR
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Do a signal return; undo the signal stack.&n; */
 DECL|function|do_sigreturn
@@ -331,6 +350,11 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* verify that it&squot;s a good sigcontext before using it */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -781,6 +805,11 @@ comma
 id|current
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1502,9 +1531,6 @@ id|r19
 r_int
 r_int
 id|mask
-op_assign
-op_complement
-id|current-&gt;blocked
 suffix:semicolon
 r_int
 r_int
@@ -1516,6 +1542,19 @@ r_struct
 id|sigaction
 op_star
 id|sa
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|mask
+op_assign
+op_complement
+id|current-&gt;blocked
 suffix:semicolon
 id|single_stepping
 op_assign
@@ -1931,8 +1970,12 @@ id|current
 suffix:semicolon
 multiline_comment|/* re-set breakpoint */
 )brace
-r_return
+id|ret
+op_assign
 l_int|1
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1983,8 +2026,19 @@ id|current
 suffix:semicolon
 multiline_comment|/* re-set breakpoint */
 )brace
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

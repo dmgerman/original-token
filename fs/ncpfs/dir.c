@@ -493,7 +493,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select - default */
+multiline_comment|/* poll - default */
 id|ncp_ioctl
 comma
 multiline_comment|/* ioctl */

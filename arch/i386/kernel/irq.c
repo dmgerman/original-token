@@ -10,6 +10,8 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -1535,6 +1537,14 @@ id|do_random
 op_assign
 l_int|0
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|intr_count
+op_increment
+suffix:semicolon
 macro_line|#ifdef __SMP__
 r_if
 c_cond
@@ -1626,6 +1636,14 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+id|intr_count
+op_decrement
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * do_fast_IRQ handles IRQ&squot;s that don&squot;t need the fancy interrupt return&n; * stuff - the handler is also running with interrupts disabled unless&n; * it explicitly enables them later.&n; */
 DECL|function|do_fast_IRQ
@@ -1654,6 +1672,14 @@ r_int
 id|do_random
 op_assign
 l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|intr_count
+op_increment
 suffix:semicolon
 macro_line|#ifdef __SMP__
 multiline_comment|/* IRQ 13 is allowed - that&squot;s a flush tlb */
@@ -1749,6 +1775,14 @@ id|add_interrupt_randomness
 c_func
 (paren
 id|irq
+)paren
+suffix:semicolon
+id|intr_count
+op_decrement
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

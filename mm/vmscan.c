@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Version: $Id: vmscan.c,v 1.4.2.2 1996/01/20 18:22:47 linux Exp $&n; */
+multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Version: $Id: vmscan.c,v 1.21 1997/01/06 06:54:03 davem Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
@@ -1417,6 +1418,29 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|kmem_cache_reap
+c_func
+(paren
+id|i
+comma
+id|dma
+comma
+id|wait
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+id|state
+op_assign
+l_int|2
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+r_if
+c_cond
+(paren
 id|shm_swap
 c_func
 (paren
@@ -1430,7 +1454,7 @@ l_int|1
 suffix:semicolon
 id|state
 op_assign
-l_int|2
+l_int|3
 suffix:semicolon
 r_default
 suffix:colon
@@ -1495,7 +1519,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.4.2.2 $&quot;
+l_string|&quot;$Revision: 1.21 $&quot;
 comma
 op_star
 id|s
@@ -1525,16 +1549,11 @@ op_complement
 l_int|0UL
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;As a kernel thread we want to tamper with system buffers&n;&t; *&t;and other internals and thus be subject to the SMP locking&n;&t; *&t;rules. (On a uniprocessor box this does nothing).&n;&t; */
-macro_line|#ifdef __SMP__
 id|lock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
-id|syscall_count
-op_increment
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Give kswapd a realtime priority. */
 id|current-&gt;policy
 op_assign

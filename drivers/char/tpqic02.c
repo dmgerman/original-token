@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tpqic02.c,v 0.7.1.5 1996/12/14 22:58:52 root Exp root $&n; *&n; * Driver for tape drive support for Linux-i386&n; *&n; * Copyright (c) 1992--1996 by H. H. Bergman. All rights reserved.&n; * Current e-mail address: hennus@cybercomm.nl&n; *&n; * Distribution of this program in executable form is only allowed if&n; * all of the corresponding source files are made available through the same&n; * medium at no extra cost.&n; *&n; * I will not accept any responsibility for damage caused directly or&n; * indirectly by this program, or code derived from this program.&n; *&n; * Use this code at your own risk. Don&squot;t blame me if it destroys your data!&n; * Make sure you have a backup before you try this code.&n; *&n; * If you make changes to my code and redistribute it in source or binary&n; * form you must make it clear to even casual users of your code that you&n; * have modified my code, clearly point out what the changes exactly are&n; * (preferably in the form of a context diff file), how to undo your changes,&n; * where the original can be obtained, and that complaints/requests about the&n; * modified code should be directed to you instead of me.&n; *&n; * This driver was partially inspired by the &squot;wt&squot; driver in the 386BSD&n; * source distribution, which carries the following copyright notice:&n; *&n; *  Copyright (c) 1991 The Regents of the University of California.&n; *  All rights reserved.&n; *&n; * You are not allowed to change this line nor the text above.&n; *&n; * 1996/10/10   Emerald changes&n; *&n; * 1996/05/21&t;Misc changes+merges+cleanups + I/O reservations&n; *&n; * 1996/05/20&t;Module support patches submitted by Brian McCauley.&n; *&n; * 1994/05/03&t;Initial attempt at Mountain support for the Mountain 7150.&n; * Based on patches provided by Erik Jacobson. Still incomplete, I suppose.&n; *&n; * 1994/02/07&t;Archive changes &amp; some cleanups by Eddy Olk.&n; *&n; * 1994/01/19&t;Speed measuring stuff moved from aperf.h to delay.h.&n; *&t;&t;BogoMips (tm) introduced by Linus.&n; *&n; * 1993/01/25&t;Kernel udelay. Eof fixups.&n; * &n; * 1992/09/19&t;Some changes based on patches by Eddy Olk to support&n; * &t;&t;Archive SC402/SC499R controller cards.&n; *&n; * 1992/05/27&t;First release.&n; *&n; * 1992/05/26&t;Initial version. Copyright H. H. Bergman 1992&n; */
+multiline_comment|/* $Id: tpqic02.c,v 1.10 1997/01/26 07:13:20 davem Exp $&n; *&n; * Driver for tape drive support for Linux-i386&n; *&n; * Copyright (c) 1992--1996 by H. H. Bergman. All rights reserved.&n; * Current e-mail address: hennus@cybercomm.nl&n; *&n; * Distribution of this program in executable form is only allowed if&n; * all of the corresponding source files are made available through the same&n; * medium at no extra cost.&n; *&n; * I will not accept any responsibility for damage caused directly or&n; * indirectly by this program, or code derived from this program.&n; *&n; * Use this code at your own risk. Don&squot;t blame me if it destroys your data!&n; * Make sure you have a backup before you try this code.&n; *&n; * If you make changes to my code and redistribute it in source or binary&n; * form you must make it clear to even casual users of your code that you&n; * have modified my code, clearly point out what the changes exactly are&n; * (preferably in the form of a context diff file), how to undo your changes,&n; * where the original can be obtained, and that complaints/requests about the&n; * modified code should be directed to you instead of me.&n; *&n; * This driver was partially inspired by the &squot;wt&squot; driver in the 386BSD&n; * source distribution, which carries the following copyright notice:&n; *&n; *  Copyright (c) 1991 The Regents of the University of California.&n; *  All rights reserved.&n; *&n; * You are not allowed to change this line nor the text above.&n; *&n; * 1996/10/10   Emerald changes&n; *&n; * 1996/05/21&t;Misc changes+merges+cleanups + I/O reservations&n; *&n; * 1996/05/20&t;Module support patches submitted by Brian McCauley.&n; *&n; * 1994/05/03&t;Initial attempt at Mountain support for the Mountain 7150.&n; * Based on patches provided by Erik Jacobson. Still incomplete, I suppose.&n; *&n; * 1994/02/07&t;Archive changes &amp; some cleanups by Eddy Olk.&n; *&n; * 1994/01/19&t;Speed measuring stuff moved from aperf.h to delay.h.&n; *&t;&t;BogoMips (tm) introduced by Linus.&n; *&n; * 1993/01/25&t;Kernel udelay. Eof fixups.&n; * &n; * 1992/09/19&t;Some changes based on patches by Eddy Olk to support&n; * &t;&t;Archive SC402/SC499R controller cards.&n; *&n; * 1992/05/27&t;First release.&n; *&n; * 1992/05/26&t;Initial version. Copyright H. H. Bergman 1992&n; */
 multiline_comment|/* After the legalese, now the important bits:&n; * &n; * This is a driver for the Wangtek 5150 tape drive with &n; * a QIC-02 controller for ISA-PC type computers.&n; * Hopefully it will work with other QIC-02 tape drives as well.&n; *&n; * Make sure your setup matches the configuration parameters.&n; * Also, be careful to avoid IO conflicts with other devices!&n; */
 multiline_comment|/*&n;#define TDEBUG&n;*/
 DECL|macro|REALLY_SLOW_IO
@@ -120,7 +120,7 @@ id|rcs_revision
 (braket
 )braket
 op_assign
-l_string|&quot;$Revision: 0.7.1.5 $&quot;
+l_string|&quot;$Revision: 1.10 $&quot;
 suffix:semicolon
 DECL|variable|rcs_date
 r_static
@@ -129,7 +129,7 @@ id|rcs_date
 (braket
 )braket
 op_assign
-l_string|&quot;$Date: 1996/12/14 22:58:52 $&quot;
+l_string|&quot;$Date: 1997/01/26 07:13:20 $&quot;
 suffix:semicolon
 multiline_comment|/* Flag bits for status and outstanding requests.&n; * (Could all be put in one bit-field-struct.)&n; * Some variables need `volatile&squot; because they may be modified&n; * by an interrupt.&n; */
 DECL|variable|status_dead
@@ -9260,7 +9260,7 @@ comma
 multiline_comment|/* readdir not allowed */
 l_int|NULL
 comma
-multiline_comment|/* select ??? */
+multiline_comment|/* poll ??? */
 id|qic02_tape_ioctl
 comma
 multiline_comment|/* ioctl */

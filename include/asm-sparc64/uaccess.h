@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.2 1996/12/26 15:36:53 davem Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.3 1997/01/16 14:19:08 davem Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H

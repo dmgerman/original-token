@@ -1,6 +1,8 @@
 multiline_comment|/*&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -73,6 +75,19 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+id|EINTR
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|regs
 op_assign
 (paren
 r_struct
@@ -123,11 +138,20 @@ comma
 id|regs
 )paren
 )paren
-r_return
-op_minus
-id|EINTR
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This sets regs-&gt;reg29 even though we don&squot;t actually use sigstacks yet..&n; */
 DECL|function|sys_sigreturn
@@ -146,6 +170,14 @@ r_struct
 id|sigcontext_struct
 op_star
 id|context
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We don&squot;t support fixing ADEL/ADES exceptions for signal stack frames.&n;&t; * No big loss - who doesn&squot;t care about the alignment of this stack&n;&t; * really deserves to loose.&n;&t; */
 id|context
@@ -320,8 +352,8 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-r_return
-id|context-&gt;sc_v0
+r_goto
+id|out
 suffix:semicolon
 id|badframe
 suffix:colon
@@ -330,6 +362,20 @@ c_func
 (paren
 id|SIGSEGV
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|ret
+op_assign
+id|context-&gt;sc_v0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set up a signal frame...&n; *&n; * This routine is somewhat complicated by the fact that if the kernel may be&n; * entered by an exception other than a system call; e.g. a bus error or other&n; * &quot;bad&quot; exception.  If this is the case, then *all* the context on the kernel&n; * stack frame must be saved.&n; *&n; * For a large number of exceptions, the stack frame format is the same&n; * as that which will be created when the process traps back to the kernel&n; * when finished executing the signal handler.&t;In this case, nothing&n; * must be done. This information is saved on the user stack and restored&n; * when the signal handler is returned.&n; *&n; * The signal handler will be called with ra pointing to code1 (see below) and&n; * one parameters in a0 (signum).&n; *&n; *     usp -&gt;  [unused]                         ; first free word on stack&n; *             arg save space                   ; 16 bytes argument save space&n; *&t;       code1   (addiu sp,#1-offset)&t;; syscall number&n; *&t;       code2   (li v0,__NR_sigreturn)&t;; syscall number&n; *&t;       code3   (syscall)&t;&t;; do sigreturn(2)&n; *     #1|     at, v0, v1, a0, a1, a2, a3       ; All integer registers&n; *       |     t0, t1, t2, t3, t4, t5, t6, t7   ; except zero, k0 and k1&n; *       |     s0, s1, s2, s3, s4, s5, s6, s7&n; *       |     t8, t9, gp, sp, fp, ra;&n; *       |     epc                              ; old program counter&n; *       |     cause                            ; CP0 cause register&n; *       |     oldmask&n; */
@@ -655,9 +701,6 @@ id|regs
 r_int
 r_int
 id|mask
-op_assign
-op_complement
-id|current-&gt;blocked
 suffix:semicolon
 r_int
 r_int
@@ -686,6 +729,19 @@ r_struct
 id|sigaction
 op_star
 id|sa
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|mask
+op_assign
+op_complement
+id|current-&gt;blocked
 suffix:semicolon
 r_while
 c_loop
@@ -1108,6 +1164,10 @@ op_sub_assign
 l_int|8
 suffix:semicolon
 )brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1115,8 +1175,8 @@ op_logical_neg
 id|handler_signal
 )paren
 multiline_comment|/* no handler will be called - return 0 */
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|pc
 op_assign
@@ -1248,8 +1308,19 @@ op_assign
 id|pc
 suffix:semicolon
 multiline_comment|/* &quot;return&quot; to the first handler */
-r_return
+id|ret
+op_assign
 l_int|1
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

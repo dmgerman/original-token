@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -4771,6 +4772,16 @@ id|page
 )paren
 suffix:semicolon
 r_case
+id|PROC_SLABINFO
+suffix:colon
+r_return
+id|get_slabinfo
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_case
 id|PROC_DEVICES
 suffix:colon
 r_return
@@ -5353,7 +5364,7 @@ comma
 multiline_comment|/* array_readdir */
 l_int|NULL
 comma
-multiline_comment|/* array_select */
+multiline_comment|/* array_poll */
 l_int|NULL
 comma
 multiline_comment|/* array_ioctl */
@@ -5518,7 +5529,7 @@ comma
 multiline_comment|/* array_readdir */
 l_int|NULL
 comma
-multiline_comment|/* array_select */
+multiline_comment|/* array_poll */
 l_int|NULL
 comma
 multiline_comment|/* array_ioctl */

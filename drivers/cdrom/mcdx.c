@@ -7,7 +7,7 @@ r_char
 op_star
 id|mcdx_c_version
 op_assign
-l_string|&quot;$Id: mcdx.c,v 1.12 1996/06/05 01:38:38 heiko Exp $&quot;
+l_string|&quot;$Id: mcdx.c,v 1.21 1997/01/26 07:12:59 davem Exp $&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
@@ -1116,7 +1116,7 @@ comma
 multiline_comment|/* no readdir */
 l_int|NULL
 comma
-multiline_comment|/* no select */
+multiline_comment|/* no poll */
 id|mcdx_ioctl
 comma
 multiline_comment|/* ioctl() */
@@ -4965,7 +4965,7 @@ macro_line|#endif
 id|xwarn
 c_func
 (paren
-l_string|&quot;$Id: mcdx.c,v 1.12 1996/06/05 01:38:38 heiko Exp $&bslash;n&quot;
+l_string|&quot;$Id: mcdx.c,v 1.21 1997/01/26 07:12:59 davem Exp $&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* zero the pointer array */

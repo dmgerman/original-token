@@ -280,10 +280,12 @@ id|dev-&gt;next
 r_if
 c_cond
 (paren
+macro_line|#if !CONFIG_AP1000
 id|dev-&gt;type
 OL
 id|ARPHRD_SLIP
 op_logical_and
+macro_line|#endif
 id|dev-&gt;family
 op_eq
 id|AF_INET
@@ -5025,6 +5027,14 @@ id|rarp_serv
 op_assign
 id|server
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|ap_nfs_hook
+c_func
+(paren
+id|server.sin_addr.s_addr
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;
 )brace
 DECL|function|root_nfs_add_default_route
 r_static

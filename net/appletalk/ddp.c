@@ -6720,7 +6720,7 @@ id|atalk_accept
 comma
 id|atalk_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|atalk_ioctl
 comma

@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|sys_sysinfo
 id|asmlinkage
@@ -22,6 +24,14 @@ id|info
 r_struct
 id|sysinfo
 id|val
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|memset
 c_func
@@ -134,12 +144,23 @@ id|sysinfo
 )paren
 )paren
 )paren
-r_return
+id|err
+op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
-r_return
+r_else
+id|err
+op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 eof
