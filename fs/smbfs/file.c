@@ -1535,9 +1535,6 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
-l_int|NULL
-comma
-multiline_comment|/* updatepage */
 id|smb_revalidate_inode
 comma
 multiline_comment|/* revalidate */

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 r_static
 r_int
 id|ext2_update_inode
@@ -379,6 +380,8 @@ id|block
 (brace
 r_int
 id|i
+comma
+id|ret
 suffix:semicolon
 r_int
 id|addr_per_block
@@ -398,6 +401,15 @@ c_func
 id|inode-&gt;i_sb
 )paren
 suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -415,8 +427,8 @@ comma
 l_string|&quot;block &lt; 0&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -462,8 +474,8 @@ comma
 l_string|&quot;block &gt; big&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -473,7 +485,9 @@ id|block
 OL
 id|EXT2_NDIR_BLOCKS
 )paren
-r_return
+(brace
+id|ret
+op_assign
 id|inode_bmap
 (paren
 id|inode
@@ -481,6 +495,10 @@ comma
 id|block
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 id|block
 op_sub_assign
 id|EXT2_NDIR_BLOCKS
@@ -508,10 +526,11 @@ c_cond
 op_logical_neg
 id|i
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|block_bmap
 (paren
 id|bread
@@ -525,6 +544,9 @@ id|inode-&gt;i_sb-&gt;s_blocksize
 comma
 id|block
 )paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|block
@@ -562,8 +584,8 @@ c_cond
 op_logical_neg
 id|i
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|i
 op_assign
@@ -589,10 +611,11 @@ c_cond
 op_logical_neg
 id|i
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|block_bmap
 (paren
 id|bread
@@ -641,8 +664,8 @@ c_cond
 op_logical_neg
 id|i
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|i
 op_assign
@@ -672,8 +695,8 @@ c_cond
 op_logical_neg
 id|i
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|i
 op_assign
@@ -707,10 +730,11 @@ c_cond
 op_logical_neg
 id|i
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|block_bmap
 (paren
 id|bread
@@ -730,6 +754,16 @@ op_minus
 l_int|1
 )paren
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|ext2_bmap_create
@@ -2258,6 +2292,17 @@ id|inode-&gt;i_sb
 suffix:semicolon
 r_int
 id|phys_block
+comma
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+l_int|0
 suffix:semicolon
 op_star
 id|err
@@ -2282,8 +2327,8 @@ comma
 l_string|&quot;block &lt; 0&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+m_abort
 suffix:semicolon
 )brace
 r_if
@@ -2329,8 +2374,8 @@ comma
 l_string|&quot;block &gt; big&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+m_abort
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If this is a sequential block allocation, set the next_alloc_block&n;&t; * to this block now so that all the indblock and data block&n;&t; * allocations use the same goal zone&n;&t; */
@@ -2718,24 +2763,31 @@ c_cond
 op_logical_neg
 id|phys_block
 )paren
-(brace
-r_return
-l_int|0
+r_goto
+m_abort
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_star
 id|err
 )paren
-(brace
-r_return
-l_int|0
+r_goto
+m_abort
 suffix:semicolon
-)brace
-r_return
+id|ret
+op_assign
 id|phys_block
+suffix:semicolon
+m_abort
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|ext2_getblk

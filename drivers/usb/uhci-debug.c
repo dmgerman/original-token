@@ -867,7 +867,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|qh-&gt;element
+op_amp
+op_complement
+l_int|0xF
+)paren
 )paren
 (brace
 id|printk

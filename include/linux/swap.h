@@ -398,6 +398,17 @@ suffix:semicolon
 multiline_comment|/*&n; * Make these inline later once they are working properly.&n; */
 r_extern
 r_void
+id|__delete_from_swap_cache
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|delete_from_swap_cache
 c_func
 (paren

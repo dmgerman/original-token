@@ -363,7 +363,7 @@ id|buf
 )paren
 (brace
 r_return
-id|block_write_one_page
+id|block_write_partial_page
 c_func
 (paren
 id|file
@@ -405,7 +405,9 @@ op_star
 id|ppos
 )paren
 (brace
-r_return
+id|ssize_t
+id|retval
+op_assign
 id|generic_file_write
 c_func
 (paren
@@ -419,6 +421,43 @@ id|ppos
 comma
 id|ext2_write_one_page
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+OG
+l_int|0
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
+id|remove_suid
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|inode-&gt;i_mtime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called when an inode is released. Note that this is different&n; * from ext2_file_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
@@ -591,15 +630,18 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|generic_readpage
+id|ext2_bmap
+comma
+multiline_comment|/* bmap */
+id|block_read_full_page
 comma
 multiline_comment|/* readpage */
 id|ext2_writepage
 comma
 multiline_comment|/* writepage */
-id|ext2_bmap
+id|block_flushpage
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|ext2_truncate
 comma
 multiline_comment|/* truncate */
@@ -611,13 +653,7 @@ comma
 multiline_comment|/* smap */
 l_int|NULL
 comma
-multiline_comment|/* updatepage */
-l_int|NULL
-comma
 multiline_comment|/* revalidate */
-id|generic_block_flushpage
-comma
-multiline_comment|/* flushpage */
 )brace
 suffix:semicolon
 eof

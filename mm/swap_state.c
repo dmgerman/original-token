@@ -52,13 +52,16 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-l_int|NULL
+id|block_flushpage
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
@@ -69,14 +72,7 @@ l_int|NULL
 comma
 multiline_comment|/* smap */
 l_int|NULL
-comma
-multiline_comment|/* updatepage */
-l_int|NULL
-comma
 multiline_comment|/* revalidate */
-id|generic_block_flushpage
-comma
-multiline_comment|/* flushpage */
 )brace
 suffix:semicolon
 DECL|variable|swapper_inode
@@ -782,9 +778,9 @@ id|page
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This must be called only on pages that have&n; * been verified to be in the swap cache.&n; */
-DECL|function|delete_from_swap_cache
+DECL|function|__delete_from_swap_cache
 r_void
-id|delete_from_swap_cache
+id|__delete_from_swap_cache
 c_func
 (paren
 r_struct
@@ -797,12 +793,6 @@ r_int
 id|entry
 op_assign
 id|page-&gt;offset
-suffix:semicolon
-id|lock_page
-c_func
-(paren
-id|page
-)paren
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_del_total
@@ -837,6 +827,36 @@ id|remove_from_swap_cache
 id|page
 )paren
 suffix:semicolon
+id|swap_free
+(paren
+id|entry
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This must be called only on pages that have&n; * been verified to be in the swap cache.&n; */
+DECL|function|delete_from_swap_cache
+r_void
+id|delete_from_swap_cache
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+id|lock_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|__delete_from_swap_cache
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|UnlockPage
 c_func
 (paren
@@ -847,11 +867,6 @@ id|page_cache_release
 c_func
 (paren
 id|page
-)paren
-suffix:semicolon
-id|swap_free
-(paren
-id|entry
 )paren
 suffix:semicolon
 )brace
@@ -896,14 +911,12 @@ c_func
 id|page
 )paren
 )paren
-(brace
 id|delete_from_swap_cache
 c_func
 (paren
 id|page
 )paren
 suffix:semicolon
-)brace
 id|__free_page
 c_func
 (paren

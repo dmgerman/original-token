@@ -376,12 +376,7 @@ comma
 id|status
 )paren
 suffix:semicolon
-id|show_status
-c_func
-(paren
-id|dev-&gt;uhci
-)paren
-suffix:semicolon
+singleline_comment|//show_status(dev-&gt;uhci);
 r_do
 (brace
 id|show_td
@@ -1623,6 +1618,8 @@ id|USB_ST_REMOVED
 comma
 l_int|NULL
 comma
+l_int|0
+comma
 id|td-&gt;dev_id
 )paren
 suffix:semicolon
@@ -2763,6 +2760,9 @@ r_void
 op_star
 id|buffer
 comma
+r_int
+id|len
+comma
 r_void
 op_star
 id|dev_id
@@ -2955,8 +2955,8 @@ id|schedule_timeout
 c_func
 (paren
 id|HZ
-op_div
-l_int|10
+op_star
+l_int|5
 )paren
 suffix:semicolon
 singleline_comment|//&t;control should be empty here...&t;
@@ -3035,7 +3035,7 @@ r_int
 r_int
 id|pipe
 comma
-id|devrequest
+r_void
 op_star
 id|cmd
 comma
@@ -3337,7 +3337,7 @@ id|td
 suffix:semicolon
 multiline_comment|/* Update previous TD */
 )brace
-multiline_comment|/*&n;&t; * Build the final TD for control status&n;&t; */
+multiline_comment|/*&n;&t; * Build the final TD for control status &n;&t; */
 id|destination
 op_xor_assign
 (paren
@@ -3354,14 +3354,17 @@ op_lshift
 l_int|19
 suffix:semicolon
 multiline_comment|/* End in Data1 */
-id|td-&gt;link
+id|td-&gt;backptr
 op_assign
-l_int|1
+op_amp
+id|prevtd-&gt;link
 suffix:semicolon
-multiline_comment|/* Terminate */
 id|td-&gt;status
 op_assign
+(paren
 id|status
+multiline_comment|/* &amp; ~(3 &lt;&lt; 27) */
+)paren
 op_or
 (paren
 l_int|1
@@ -3369,7 +3372,7 @@ op_lshift
 l_int|24
 )paren
 suffix:semicolon
-multiline_comment|/* IOC */
+multiline_comment|/* no limit on final packet */
 id|td-&gt;info
 op_assign
 id|destination
@@ -3389,11 +3392,11 @@ id|td-&gt;first
 op_assign
 id|first
 suffix:semicolon
-id|td-&gt;backptr
+id|td-&gt;link
 op_assign
-op_amp
-id|prevtd-&gt;link
+l_int|1
 suffix:semicolon
+multiline_comment|/* Terminate */
 multiline_comment|/* Start it up.. */
 id|ret
 op_assign
@@ -3500,10 +3503,6 @@ id|__u8
 op_star
 id|p
 op_assign
-(paren
-id|__u8
-op_star
-)paren
 id|cmd
 suffix:semicolon
 id|printk
@@ -3577,6 +3576,9 @@ comma
 r_void
 op_star
 id|buffer
+comma
+r_int
+id|len
 comma
 r_void
 op_star
@@ -3775,12 +3777,13 @@ id|schedule_timeout
 c_func
 (paren
 id|HZ
-op_div
-l_int|10
+op_star
+l_int|5
 )paren
 suffix:semicolon
 singleline_comment|//&t;show_status(dev-&gt;uhci);
 singleline_comment|//&t;show_queues(dev-&gt;uhci);
+singleline_comment|//show_queue(first-&gt;qh);
 id|remove_wait_queue
 c_func
 (paren
@@ -5114,6 +5117,9 @@ id|list_head
 op_star
 id|tmp
 suffix:semicolon
+r_int
+id|status
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -5163,7 +5169,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+(paren
+id|status
+op_assign
 id|td-&gt;status
+)paren
 op_amp
 (paren
 l_int|1
@@ -5171,9 +5181,46 @@ op_lshift
 l_int|23
 )paren
 )paren
+op_logical_or
+multiline_comment|/* No longer active? */
+(paren
+(paren
+id|td-&gt;qh-&gt;element
+op_amp
+op_complement
+l_int|15
+)paren
+op_logical_and
+op_logical_neg
+(paren
+(paren
+id|status
+op_assign
+id|uhci_link_to_td
+c_func
+(paren
+id|td-&gt;qh-&gt;element
+)paren
+op_member_access_from_pointer
+id|status
+)paren
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|23
+)paren
+)paren
+op_logical_and
+(paren
+id|status
+op_amp
+l_int|0x760000
+)paren
+multiline_comment|/* is in error state (Stall, db, babble, timeout, bitstuff) */
+)paren
 )paren
 (brace
-multiline_comment|/* No longer active? */
 multiline_comment|/* remove from IRQ list */
 id|__list_del
 c_func
@@ -5200,13 +5247,7 @@ c_func
 id|uhci_map_status
 c_func
 (paren
-(paren
-id|td-&gt;status
-op_amp
-l_int|0xff
-)paren
-op_rshift
-l_int|16
+id|status
 comma
 l_int|0
 )paren
@@ -5216,6 +5257,9 @@ c_func
 (paren
 id|td-&gt;buffer
 )paren
+comma
+op_minus
+l_int|1
 comma
 id|td-&gt;dev_id
 )paren

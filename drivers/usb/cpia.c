@@ -2139,6 +2139,9 @@ r_void
 op_star
 id|__buffer
 comma
+r_int
+id|len
+comma
 r_void
 op_star
 id|dev_id

@@ -123,18 +123,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 id|proc_permission
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * NOTE! Normally we&squot;d indicate that a file does not&n; * exist by creating a negative dentry and returning&n; * a successful return code. However, for this case&n; * we do not want to create negative dentries, because&n; * the state of the world can change behind our backs.&n; *&n; * Thus just return -ENOENT instead.&n; */

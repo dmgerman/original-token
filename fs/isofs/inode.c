@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * We have no support for &quot;multi volume&quot; CDs, but more and more disks carry&n; * wrong information within the volume descriptors.&n; */
@@ -3826,9 +3827,10 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|isofs_bmap
+DECL|function|do_isofs_bmap
+r_static
 r_int
-id|isofs_bmap
+id|do_isofs_bmap
 c_func
 (paren
 r_struct
@@ -4149,6 +4151,47 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+)brace
+DECL|function|isofs_bmap
+r_int
+id|isofs_bmap
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|block
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|retval
+op_assign
+id|do_isofs_bmap
+c_func
+(paren
+id|inode
+comma
+id|block
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 DECL|function|test_and_set_uid

@@ -2291,9 +2291,6 @@ comma
 multiline_comment|/* smap */
 l_int|NULL
 comma
-multiline_comment|/* updatepage */
-l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
@@ -3137,9 +3134,6 @@ comma
 multiline_comment|/* smap */
 l_int|NULL
 comma
-multiline_comment|/* updatepage */
-l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
@@ -3268,9 +3262,6 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
-l_int|NULL
-comma
-multiline_comment|/* updatepage */
 l_int|NULL
 comma
 multiline_comment|/* revalidate */

@@ -3489,9 +3489,6 @@ comma
 multiline_comment|/* smap */
 l_int|NULL
 comma
-multiline_comment|/* updatepage */
-l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon

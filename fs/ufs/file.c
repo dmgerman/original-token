@@ -582,11 +582,8 @@ comma
 multiline_comment|/* smap */
 l_int|NULL
 comma
-multiline_comment|/* updatepage */
-l_int|NULL
-comma
 multiline_comment|/* revalidate */
-id|generic_block_flushpage
+id|block_flushpage
 comma
 multiline_comment|/* flushpage */
 )brace

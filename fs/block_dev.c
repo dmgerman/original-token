@@ -762,6 +762,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|balance_dirty
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -161,51 +161,60 @@ comma
 multiline_comment|/* default scsi directory file-ops */
 l_int|NULL
 comma
-multiline_comment|/* create&t;   */
+multiline_comment|/* create */
 id|proc_lookup
 comma
-multiline_comment|/* lookup&t;   */
+multiline_comment|/* lookup */
 l_int|NULL
 comma
-multiline_comment|/* link&t;   */
+multiline_comment|/* link */
 l_int|NULL
 comma
-multiline_comment|/* unlink&t;   */
+multiline_comment|/* unlink */
 l_int|NULL
 comma
-multiline_comment|/* symlink&t;   */
+multiline_comment|/* symlink */
 l_int|NULL
 comma
-multiline_comment|/* mkdir&t;   */
+multiline_comment|/* mkdir */
 l_int|NULL
 comma
-multiline_comment|/* rmdir&t;   */
+multiline_comment|/* rmdir */
 l_int|NULL
 comma
-multiline_comment|/* mknod&t;   */
+multiline_comment|/* mknod */
 l_int|NULL
 comma
-multiline_comment|/* rename&t;   */
+multiline_comment|/* rename */
 l_int|NULL
 comma
-multiline_comment|/* readlink&t;   */
+multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* readpage&t;   */
+multiline_comment|/* bmap */
 l_int|NULL
 comma
-multiline_comment|/* writepage   */
+multiline_comment|/* readpage */
 l_int|NULL
 comma
-multiline_comment|/* bmap&t;   */
+multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* truncate&t;   */
+multiline_comment|/* flushpage */
 l_int|NULL
-multiline_comment|/* permission  */
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|get_not_present_info

@@ -263,6 +263,8 @@ l_int|0xf
 comma
 id|data
 comma
+id|data_len
+comma
 id|dev_id
 )paren
 suffix:semicolon

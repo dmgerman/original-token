@@ -164,18 +164,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * /proc dynamic directories now support unlinking&n; */
@@ -224,18 +233,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The root /proc directory is special, as it has the&n; * &lt;pid&gt; directories. Thus we don&squot;t use the generic&n; * directory handling functions for that..&n; */
@@ -327,18 +345,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is the root &quot;inode&quot; in the /proc tree..&n; */
@@ -1010,18 +1037,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|proc_openprom
@@ -1882,18 +1918,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|proc_link_inode_operations
@@ -1941,18 +1986,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|proc_root_loadavg

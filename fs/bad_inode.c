@@ -151,13 +151,16 @@ comma
 multiline_comment|/* follow_link */
 id|EIO_ERROR
 comma
+multiline_comment|/* bmap */
+id|EIO_ERROR
+comma
 multiline_comment|/* readpage */
 id|EIO_ERROR
 comma
 multiline_comment|/* writepage */
 id|EIO_ERROR
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|EIO_ERROR
 comma
 multiline_comment|/* truncate */
@@ -167,9 +170,6 @@ multiline_comment|/* permission */
 id|EIO_ERROR
 comma
 multiline_comment|/* smap */
-id|EIO_ERROR
-comma
-multiline_comment|/* update_page */
 id|EIO_ERROR
 multiline_comment|/* revalidate */
 )brace

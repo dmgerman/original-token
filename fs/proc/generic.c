@@ -196,33 +196,42 @@ comma
 multiline_comment|/* mkdir&t;*/
 l_int|NULL
 comma
-multiline_comment|/* rmdir&t;   */
+multiline_comment|/* rmdir&t;*/
 l_int|NULL
 comma
-multiline_comment|/* mknod&t;   */
+multiline_comment|/* mknod&t;*/
 l_int|NULL
 comma
-multiline_comment|/* rename&t;   */
+multiline_comment|/* rename&t;*/
 l_int|NULL
 comma
-multiline_comment|/* readlink&t;   */
+multiline_comment|/* readlink&t;*/
 l_int|NULL
 comma
-multiline_comment|/* follow_link */
+multiline_comment|/* follow_link &t;*/
 l_int|NULL
 comma
-multiline_comment|/* readpage&t;   */
+multiline_comment|/* bmap &t;*/
 l_int|NULL
 comma
-multiline_comment|/* writepage   */
+multiline_comment|/* readpage &t;*/
 l_int|NULL
 comma
-multiline_comment|/* bmap&t;   */
+multiline_comment|/* writepage &t;*/
 l_int|NULL
 comma
-multiline_comment|/* truncate&t;   */
+multiline_comment|/* flushpage &t;*/
 l_int|NULL
-multiline_comment|/* permission  */
+comma
+multiline_comment|/* truncate &t;*/
+l_int|NULL
+comma
+multiline_comment|/* permission &t;*/
+l_int|NULL
+comma
+multiline_comment|/* smap &t;*/
+l_int|NULL
+multiline_comment|/* revalidate &t;*/
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * compatibility to replace fs/proc/net.c&n; */
@@ -271,18 +280,27 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 macro_line|#ifndef MIN

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|NFS_PARANOIA
 mdefine_line|#define NFS_PARANOIA 1
 DECL|macro|NFSDBG_FACILITY
@@ -135,6 +136,11 @@ suffix:semicolon
 r_struct
 id|nfs_fattr
 id|fattr
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|dprintk
 c_func
@@ -373,6 +379,11 @@ id|fattr.fileid
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|written
 ques

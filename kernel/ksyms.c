@@ -775,13 +775,6 @@ c_func
 id|generic_file_mmap
 )paren
 suffix:semicolon
-DECL|variable|generic_readpage
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|generic_readpage
-)paren
-suffix:semicolon
 DECL|variable|file_lock_table
 id|EXPORT_SYMBOL
 c_func

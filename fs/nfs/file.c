@@ -188,6 +188,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
 id|nfs_readpage
 comma
 multiline_comment|/* readpage */
@@ -196,7 +199,7 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
@@ -206,15 +209,9 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
-l_int|NULL
-comma
-multiline_comment|/* updatepage */
 id|nfs_revalidate
 comma
 multiline_comment|/* revalidate */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
 )brace
 suffix:semicolon
 multiline_comment|/* Hack for future NFS swap support */

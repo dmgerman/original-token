@@ -2664,6 +2664,9 @@ r_void
 op_star
 id|buffer
 comma
+r_int
+id|len
+comma
 r_void
 op_star
 id|dev_id
@@ -5087,6 +5090,10 @@ c_func
 id|cc
 comma
 id|td-&gt;data
+comma
+op_minus
+l_int|1
+multiline_comment|/* XXX */
 comma
 id|td-&gt;dev_id
 )paren

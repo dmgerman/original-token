@@ -617,10 +617,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|what
-op_assign
-l_string|&quot;??&quot;
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
