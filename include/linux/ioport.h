@@ -2,26 +2,6 @@ multiline_comment|/*&n; * ioport.h&t;Definitions of routines for detecting, rese
 macro_line|#ifndef _LINUX_IOPORT_H
 DECL|macro|_LINUX_IOPORT_H
 mdefine_line|#define _LINUX_IOPORT_H
-DECL|macro|DEVICE_IO_NOTSET
-mdefine_line|#define DEVICE_IO_NOTSET&t;(~0)
-DECL|macro|DEVICE_IO_AUTO
-mdefine_line|#define DEVICE_IO_AUTO&t;&t;((~0)-1)
-DECL|macro|DEVICE_IO_FLAG_WRITEABLE
-mdefine_line|#define DEVICE_IO_FLAG_WRITEABLE&t;(1&lt;&lt;0)
-DECL|macro|DEVICE_IO_FLAG_CACHEABLE
-mdefine_line|#define DEVICE_IO_FLAG_CACHEABLE&t;(1&lt;&lt;1)
-DECL|macro|DEVICE_IO_FLAG_RANGELENGTH
-mdefine_line|#define DEVICE_IO_FLAG_RANGELENGTH&t;(1&lt;&lt;2)
-DECL|macro|DEVICE_IO_FLAG_SHADOWABLE
-mdefine_line|#define DEVICE_IO_FLAG_SHADOWABLE&t;(1&lt;&lt;4)
-DECL|macro|DEVICE_IO_FLAG_EXPANSIONROM
-mdefine_line|#define DEVICE_IO_FLAG_EXPANSIONROM&t;(1&lt;&lt;5)
-DECL|macro|DEVICE_IO_TYPE_8BIT
-mdefine_line|#define DEVICE_IO_TYPE_8BIT&t;&t;0
-DECL|macro|DEVICE_IO_TYPE_16BIT
-mdefine_line|#define DEVICE_IO_TYPE_16BIT&t;&t;1
-DECL|macro|DEVICE_IO_TYPE_8AND16BIT
-mdefine_line|#define DEVICE_IO_TYPE_8AND16BIT&t;2
 multiline_comment|/*&n; * Resources are tree-like, allowing&n; * nesting etc..&n; */
 DECL|struct|resource
 r_struct
@@ -46,30 +26,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-DECL|member|bits
-r_int
-r_char
-id|bits
-suffix:semicolon
-multiline_comment|/* decoded bits */
-DECL|member|fixed
-r_int
-r_char
-id|fixed
-suffix:semicolon
-multiline_comment|/* fixed range */
-DECL|member|hw_flags
-r_int
-r_int
-id|hw_flags
-suffix:semicolon
-multiline_comment|/* hardware flags */
-DECL|member|type
-r_int
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* region type */
 DECL|member|parent
 DECL|member|sibling
 DECL|member|child
@@ -86,15 +42,33 @@ id|child
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * PCI-like IO resources have these defined flags.&n; * The low four bits come directly from the PCI specs,&n; * the rest are extended sw flags..&n; */
-DECL|macro|IORESOURCE_IOPORT
-mdefine_line|#define IORESOURCE_IOPORT&t;0x01&t;/* 0 - memory mapped, 1 - IO ports */
-DECL|macro|IORESOURCE_MEMTYPE_MASK
-mdefine_line|#define IORESOURCE_MEMTYPE_MASK&t;0x06&t;/* PCI-specific mapping info */
+multiline_comment|/*&n; * IO resources have these defined flags.&n; */
+DECL|macro|IORESOURCE_BITS
+mdefine_line|#define IORESOURCE_BITS&t;&t;0x000000ff&t;/* Bus-specific bits */
+DECL|macro|IORESOURCE_IO
+mdefine_line|#define IORESOURCE_IO&t;&t;0x00000100&t;/* Resource type */
+DECL|macro|IORESOURCE_MEM
+mdefine_line|#define IORESOURCE_MEM&t;&t;0x00000200
+DECL|macro|IORESOURCE_IRQ
+mdefine_line|#define IORESOURCE_IRQ&t;&t;0x00000400
+DECL|macro|IORESOURCE_DMA
+mdefine_line|#define IORESOURCE_DMA&t;&t;0x00000800
 DECL|macro|IORESOURCE_PREFETCH
-mdefine_line|#define IORESOURCE_PREFETCH&t;0x08&t;/* No side effects */
+mdefine_line|#define IORESOURCE_PREFETCH&t;0x00001000&t;/* No side effects */
+DECL|macro|IORESOURCE_READONLY
+mdefine_line|#define IORESOURCE_READONLY&t;0x00002000
+DECL|macro|IORESOURCE_CACHEABLE
+mdefine_line|#define IORESOURCE_CACHEABLE&t;0x00004000
+DECL|macro|IORESOURCE_RANGELENGTH
+mdefine_line|#define IORESOURCE_RANGELENGTH&t;0x00008000
+DECL|macro|IORESOURCE_SHADOWABLE
+mdefine_line|#define IORESOURCE_SHADOWABLE&t;0x00010000
+DECL|macro|IORESOURCE_UNSET
+mdefine_line|#define IORESOURCE_UNSET&t;0x00020000
+DECL|macro|IORESOURCE_AUTO
+mdefine_line|#define IORESOURCE_AUTO&t;&t;0x00040000
 DECL|macro|IORESOURCE_BUSY
-mdefine_line|#define IORESOURCE_BUSY&t;&t;0x10&t;/* Driver uses this resource */
+mdefine_line|#define IORESOURCE_BUSY&t;&t;0x80000000&t;/* Driver has marked this resource busy */
 multiline_comment|/* PC/ISA/whatever - the normal PC address spaces: IO and memory */
 r_extern
 r_struct

@@ -10094,7 +10094,6 @@ op_assign
 id|info-&gt;ati_regbase_phys
 op_minus
 l_int|0x400
-)paren
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign
@@ -10112,7 +10111,6 @@ op_assign
 id|info-&gt;ati_regbase_phys
 op_minus
 l_int|0x400
-)paren
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign

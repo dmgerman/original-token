@@ -3,6 +3,26 @@ macro_line|#ifndef LINUX_ISAPNP_H
 DECL|macro|LINUX_ISAPNP_H
 mdefine_line|#define LINUX_ISAPNP_H
 macro_line|#include &lt;linux/config.h&gt;
+DECL|macro|ISAPNP_NOTSET
+mdefine_line|#define ISAPNP_NOTSET&t;(~0)
+DECL|macro|ISAPNP_AUTO
+mdefine_line|#define ISAPNP_AUTO&t;&t;((~0)-1)
+DECL|macro|ISAPNP_FLAG_WRITEABLE
+mdefine_line|#define ISAPNP_FLAG_WRITEABLE&t;(1&lt;&lt;0)
+DECL|macro|ISAPNP_FLAG_CACHEABLE
+mdefine_line|#define ISAPNP_FLAG_CACHEABLE&t;(1&lt;&lt;1)
+DECL|macro|ISAPNP_FLAG_RANGELENGTH
+mdefine_line|#define ISAPNP_FLAG_RANGELENGTH&t;(1&lt;&lt;2)
+DECL|macro|ISAPNP_FLAG_SHADOWABLE
+mdefine_line|#define ISAPNP_FLAG_SHADOWABLE&t;(1&lt;&lt;4)
+DECL|macro|ISAPNP_FLAG_EXPANSIONROM
+mdefine_line|#define ISAPNP_FLAG_EXPANSIONROM&t;(1&lt;&lt;5)
+DECL|macro|ISAPNP_TYPE_8BIT
+mdefine_line|#define ISAPNP_TYPE_8BIT&t;&t;0
+DECL|macro|ISAPNP_TYPE_16BIT
+mdefine_line|#define ISAPNP_TYPE_16BIT&t;&t;1
+DECL|macro|ISAPNP_TYPE_8AND16BIT
+mdefine_line|#define ISAPNP_TYPE_8AND16BIT&t;2
 multiline_comment|/*&n; *  Configuration registers (TODO: change by specification)&n; */
 DECL|macro|ISAPNP_CFG_ACTIVATE
 mdefine_line|#define ISAPNP_CFG_ACTIVATE&t;&t;0x30&t;/* byte */
