@@ -295,6 +295,11 @@ c_func
 l_string|&quot;PCI: Probing PCI hardware&bslash;n&quot;
 )paren
 suffix:semicolon
+id|ioport_resource.end
+op_assign
+op_complement
+l_int|0L
+suffix:semicolon
 id|pci_scan_bus
 c_func
 (paren

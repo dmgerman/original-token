@@ -10221,7 +10221,6 @@ suffix:semicolon
 macro_line|#endif /* MODULE */
 DECL|function|ide_cdrom_init
 r_int
-id|__init
 id|ide_cdrom_init
 (paren
 r_void

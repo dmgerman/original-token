@@ -95,6 +95,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ieee1394_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|device_init
 r_void
 id|__init
@@ -151,6 +159,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 id|scsi_dev_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_IEEE1394
+id|ieee1394_init
 c_func
 (paren
 )paren

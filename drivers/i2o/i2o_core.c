@@ -10138,7 +10138,7 @@ c_cond
 id|i2o_num_controllers
 )paren
 (brace
-id|i2o_init
+id|i2o_sys_init
 c_func
 (paren
 )paren

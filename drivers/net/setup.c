@@ -166,6 +166,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|oaknet_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|dlci_setup
 c_func
 (paren
@@ -561,6 +569,15 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_NCR885E
 (brace
 id|ncr885e_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+multiline_comment|/*&n; *&t;IBM &quot;Oak&quot; Evaluation board&n; */
+macro_line|#ifdef&t;CONFIG_OAKNET
+(brace
+id|oaknet_init
 comma
 l_int|0
 )brace

@@ -2151,7 +2151,7 @@ id|regs
 suffix:semicolon
 r_extern
 r_char
-id|ret_from_int
+id|ret_from_intercept
 comma
 id|ret_from_syscall_1
 comma
@@ -2265,7 +2265,7 @@ op_eq
 r_int
 )paren
 op_amp
-id|ret_from_int
+id|ret_from_intercept
 op_logical_or
 id|stack
 (braket

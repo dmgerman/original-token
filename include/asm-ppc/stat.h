@@ -151,7 +151,7 @@ id|__unused5
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* This matches struct stat64 in glibc2.1, hence the absolutely&n; * insane amounts of padding around dev_t&squot;s.&n; */
+multiline_comment|/* This matches struct stat64 in glibc2.1.&n; */
 DECL|struct|stat64
 r_struct
 id|stat64
@@ -159,116 +159,120 @@ id|stat64
 DECL|member|st_dev
 r_int
 r_int
+r_int
 id|st_dev
 suffix:semicolon
-DECL|member|__pad0
+multiline_comment|/* Device.  */
+DECL|member|__pad1
 r_int
-r_char
-id|__pad0
-(braket
-l_int|10
-)braket
+r_int
+r_int
+id|__pad1
 suffix:semicolon
 DECL|member|st_ino
 r_int
 r_int
 id|st_ino
 suffix:semicolon
+multiline_comment|/* File serial number.  */
 DECL|member|st_mode
 r_int
 r_int
 id|st_mode
 suffix:semicolon
+multiline_comment|/* File mode.  */
 DECL|member|st_nlink
 r_int
 r_int
 id|st_nlink
 suffix:semicolon
+multiline_comment|/* Link count.  */
 DECL|member|st_uid
 r_int
 r_int
 id|st_uid
 suffix:semicolon
+multiline_comment|/* User ID of the file&squot;s owner.  */
 DECL|member|st_gid
 r_int
 r_int
 id|st_gid
 suffix:semicolon
+multiline_comment|/* Group ID of the file&squot;s group. */
 DECL|member|st_rdev
+r_int
 r_int
 r_int
 id|st_rdev
 suffix:semicolon
-DECL|member|__pad3
+multiline_comment|/* Device number, if device.  */
+DECL|member|__pad2
 r_int
-r_char
-id|__pad3
-(braket
-l_int|10
-)braket
+r_int
+r_int
+id|__pad2
 suffix:semicolon
 DECL|member|st_size
 r_int
 r_int
 id|st_size
 suffix:semicolon
+multiline_comment|/* Size of file, in bytes.  */
 DECL|member|st_blksize
-r_int
 r_int
 id|st_blksize
 suffix:semicolon
+multiline_comment|/* Optimal block size for I/O.  */
 DECL|member|st_blocks
 r_int
 r_int
 id|st_blocks
 suffix:semicolon
 multiline_comment|/* Number 512-byte blocks allocated. */
-DECL|member|__pad4
-r_int
-r_int
-id|__pad4
-suffix:semicolon
-multiline_comment|/* future possible st_blocks high bits */
 DECL|member|st_atime
-r_int
 r_int
 id|st_atime
 suffix:semicolon
-DECL|member|__pad5
-r_int
-r_int
-id|__pad5
-suffix:semicolon
-DECL|member|st_mtime
-r_int
-r_int
-id|st_mtime
-suffix:semicolon
-DECL|member|__pad6
-r_int
-r_int
-id|__pad6
-suffix:semicolon
-DECL|member|st_ctime
-r_int
-r_int
-id|st_ctime
-suffix:semicolon
-DECL|member|__pad7
-r_int
-r_int
-id|__pad7
-suffix:semicolon
-multiline_comment|/* will be high 32 bits of ctime someday */
+multiline_comment|/* Time of last access.  */
 DECL|member|__unused1
+r_int
 r_int
 r_int
 id|__unused1
 suffix:semicolon
+DECL|member|st_mtime
+r_int
+id|st_mtime
+suffix:semicolon
+multiline_comment|/* Time of last modification.  */
 DECL|member|__unused2
 r_int
 r_int
+r_int
 id|__unused2
+suffix:semicolon
+DECL|member|st_ctime
+r_int
+id|st_ctime
+suffix:semicolon
+multiline_comment|/* Time of last status change.  */
+DECL|member|__unused3
+r_int
+r_int
+r_int
+id|__unused3
+suffix:semicolon
+DECL|member|__unused4
+r_int
+r_int
+r_int
+id|__unused4
+suffix:semicolon
+DECL|member|__unused5
+r_int
+r_int
+r_int
+id|__unused5
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -1125,7 +1125,7 @@ suffix:semicolon
 macro_line|#else
 r_extern
 r_void
-id|ret_from_syscall
+id|ret_from_except
 c_func
 (paren
 r_void
@@ -1250,7 +1250,7 @@ op_assign
 r_int
 r_int
 )paren
-id|ret_from_syscall
+id|ret_from_except
 suffix:semicolon
 macro_line|#endif&t;
 id|asm

@@ -1194,7 +1194,6 @@ c_func
 id|int_control
 )paren
 suffix:semicolon
-macro_line|#if !defined(CONFIG_4xx)
 DECL|variable|timer_interrupt_intercept
 id|EXPORT_SYMBOL
 c_func
@@ -1209,7 +1208,6 @@ c_func
 id|timer_interrupt
 )paren
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 r_int

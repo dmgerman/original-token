@@ -161,14 +161,14 @@ DECL|macro|DBCR_IDM
 mdefine_line|#define&t;  DBCR_IDM&t;0x40000000
 DECL|macro|DBCR_RST
 mdefine_line|#define&t;  DBCR_RST(x)&t;(((x) &amp; 0x3) &lt;&lt; 28)
-DECL|macro|NONE
-mdefine_line|#define&t;    NONE       &t;0
-DECL|macro|CORE
-mdefine_line|#define&t;    CORE       &t;1
-DECL|macro|CHIP
-mdefine_line|#define&t;    CHIP       &t;2
-DECL|macro|SYSTEM
-mdefine_line|#define&t;    SYSTEM&t;3
+DECL|macro|DBCR_RST_NONE
+mdefine_line|#define&t;    DBCR_RST_NONE       &t;0
+DECL|macro|DBCR_RST_CORE
+mdefine_line|#define&t;    DBCR_RST_CORE       &t;1
+DECL|macro|DBCR_RST_CHIP
+mdefine_line|#define&t;    DBCR_RST_CHIP       &t;2
+DECL|macro|DBCR_RST_SYSTEM
+mdefine_line|#define&t;    DBCR_RST_SYSTEM&t;&t;3
 DECL|macro|DBCR_IC
 mdefine_line|#define&t;  DBCR_IC&t;0x08000000&t;/* Instruction Completion Debug Evnt */
 DECL|macro|DBCR_BT

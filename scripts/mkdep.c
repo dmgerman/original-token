@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Originally by Linus Torvalds.&n; * Smart CONFIG_* processing by Werner Almesberger, Michael Chastain.&n; *&n; * Usage: mkdep file ...&n; * &n; * Read source files and output makefile dependency lines for them.&n; * I make simple dependency lines for #include &lt;*.h&gt; and #include &quot;*.h&quot;.&n; * I also find instances of CONFIG_FOO and generate dependencies&n; *    like include/config/foo.h.&n; *&n; * 1 August 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Keith Owens reported a bug in smart config processing.  There used&n; *   to be an optimization for &quot;#define CONFIG_FOO ... #ifdef CONFIG_FOO&quot;,&n; *   so that the file would not depend on CONFIG_FOO because the file defines&n; *   this symbol itself.  But this optimization is bogus!  Consider this code:&n; *   &quot;#if 0 &bslash;n #define CONFIG_FOO &bslash;n #endif ... #ifdef CONFIG_FOO&quot;.  Here&n; *   the definition is inactivated, but I still used it.  It turns out this&n; *   actually happens a few times in the kernel source.  The simple way to&n; *   fix this problem is to remove this particular optimization.&n; */
 macro_line|#include &lt;ctype.h&gt;
+macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;string.h&gt;

@@ -19178,6 +19178,7 @@ id|tp
 suffix:semicolon
 )brace
 DECL|variable|tulip_ops
+r_static
 r_struct
 id|pci_driver
 id|tulip_ops
@@ -19209,6 +19210,7 @@ id|tulip_resume
 )brace
 suffix:semicolon
 DECL|function|tulip_init
+r_static
 r_int
 id|tulip_init
 c_func
@@ -19228,6 +19230,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|tulip_exit
+r_static
 r_void
 id|tulip_exit
 c_func
