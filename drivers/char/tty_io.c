@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -181,20 +182,15 @@ r_int
 suffix:semicolon
 r_static
 r_int
-id|tty_select
+r_int
+id|tty_poll
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
 comma
-r_int
-comma
-id|select_table
+id|poll_table
 op_star
 )paren
 suffix:semicolon
@@ -1195,32 +1191,35 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-DECL|function|hung_up_tty_select
+DECL|function|hung_up_tty_poll
 r_static
 r_int
-id|hung_up_tty_select
+r_int
+id|hung_up_tty_poll
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
 id|filp
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
 r_return
-l_int|1
+id|POLLIN
+op_or
+id|POLLOUT
+op_or
+id|POLLERR
+op_or
+id|POLLHUP
+op_or
+id|POLLRDNORM
+op_or
+id|POLLWRNORM
 suffix:semicolon
 )brace
 DECL|function|hung_up_tty_ioctl
@@ -1307,7 +1306,7 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* tty_readdir */
-id|tty_select
+id|tty_poll
 comma
 id|tty_ioctl
 comma
@@ -1340,7 +1339,7 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* hung_up_tty_readdir */
-id|hung_up_tty_select
+id|hung_up_tty_poll
 comma
 id|hung_up_tty_ioctl
 comma
@@ -5332,26 +5331,19 @@ id|filp
 )paren
 suffix:semicolon
 )brace
-DECL|function|tty_select
+DECL|function|tty_poll
 r_static
 r_int
-id|tty_select
+r_int
+id|tty_poll
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
 id|filp
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -5378,9 +5370,9 @@ c_func
 (paren
 id|tty
 comma
-id|inode-&gt;i_rdev
+id|filp-&gt;f_inode-&gt;i_rdev
 comma
-l_string|&quot;tty_select&quot;
+l_string|&quot;tty_poll&quot;
 )paren
 )paren
 r_return
@@ -5389,20 +5381,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tty-&gt;ldisc.select
+id|tty-&gt;ldisc.poll
 )paren
 r_return
 (paren
-id|tty-&gt;ldisc.select
+id|tty-&gt;ldisc.poll
 )paren
 (paren
 id|tty
 comma
-id|inode
-comma
 id|filp
-comma
-id|sel_type
 comma
 id|wait
 )paren

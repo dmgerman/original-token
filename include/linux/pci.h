@@ -410,6 +410,8 @@ DECL|macro|PCI_DEVICE_ID_CT_65545
 mdefine_line|#define PCI_DEVICE_ID_CT_65545&t;&t;0x00d8
 DECL|macro|PCI_DEVICE_ID_CT_65548
 mdefine_line|#define PCI_DEVICE_ID_CT_65548&t;&t;0x00dc
+DECL|macro|PCI_DEVICE_ID_CT_65550
+mdefine_line|#define PCI_DEVICE_ID_CT_65550&t;&t;0x00e0
 DECL|macro|PCI_VENDOR_ID_MIRO
 mdefine_line|#define PCI_VENDOR_ID_MIRO&t;&t;0x1031
 DECL|macro|PCI_DEVICE_ID_MIRO_36050

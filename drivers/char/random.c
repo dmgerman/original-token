@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -308,23 +309,16 @@ id|nbytes
 suffix:semicolon
 r_static
 r_int
-id|random_select
+r_int
+id|random_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -6152,37 +6146,38 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|random_select
-id|random_select
+r_int
+DECL|function|random_poll
+id|random_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
-r_switch
-c_cond
+r_int
+r_int
+id|mask
+suffix:semicolon
+id|poll_wait
+c_func
 (paren
-id|sel_type
+op_amp
+id|random_wait
+comma
+id|wait
 )paren
-(brace
-r_case
-id|SEL_IN
-suffix:colon
+suffix:semicolon
+id|mask
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6190,23 +6185,12 @@ id|random_state.entropy_count
 op_ge
 l_int|8
 )paren
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
-id|select_wait
-c_func
-(paren
-op_amp
-id|random_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|SEL_OUT
-suffix:colon
 r_if
 c_cond
 (paren
@@ -6214,23 +6198,14 @@ id|random_state.entropy_count
 OL
 id|WAIT_OUTPUT_BITS
 )paren
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
+suffix:semicolon
 r_return
-l_int|1
-suffix:semicolon
-id|select_wait
-c_func
-(paren
-op_amp
-id|random_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_return
-l_int|0
+id|mask
 suffix:semicolon
 )brace
 r_static
@@ -7098,9 +7073,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* random_readdir */
-id|random_select
+id|random_poll
 comma
-multiline_comment|/* random_select */
+multiline_comment|/* random_poll */
 id|random_ioctl
 comma
 l_int|NULL
@@ -7131,7 +7106,7 @@ comma
 multiline_comment|/* urandom_readdir */
 l_int|NULL
 comma
-multiline_comment|/* urandom_select */
+multiline_comment|/* urandom_poll */
 id|random_ioctl
 comma
 l_int|NULL

@@ -1542,7 +1542,7 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-id|datagram_select
+id|datagram_poll
 comma
 macro_line|#ifdef CONFIG_IP_MROUTE&t;
 id|ipmr_ioctl

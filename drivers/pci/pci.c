@@ -559,6 +559,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|CT
+comma
+id|CT_65550
+comma
+l_string|&quot;65550&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|MIRO
 comma
 id|MIRO_36050

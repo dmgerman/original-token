@@ -298,8 +298,7 @@ op_star
 )paren
 (paren
 (paren
-r_int
-r_int
+id|__u32
 op_star
 )paren
 id|ip
@@ -319,8 +318,7 @@ op_star
 )paren
 (paren
 (paren
-r_int
-r_int
+id|__u32
 op_star
 )paren
 id|ip
@@ -340,8 +338,7 @@ op_star
 )paren
 (paren
 (paren
-r_int
-r_int
+id|__u32
 op_star
 )paren
 id|ip

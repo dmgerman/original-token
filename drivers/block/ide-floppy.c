@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.3 - ALPHA&t;Dec   2, 1996&n; *&n; * Copyright (C) 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
-multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.4 - ALPHA&t;Jan  26, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; * Ver 0.4   Jan 26 97   Add support for the HDIO_GETGEO ioctl.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -4161,6 +4161,18 @@ id|floppy-&gt;flexible_disk_page
 op_assign
 op_star
 id|page
+suffix:semicolon
+id|drive-&gt;bios_cyl
+op_assign
+id|page-&gt;cyls
+suffix:semicolon
+id|drive-&gt;bios_head
+op_assign
+id|page-&gt;heads
+suffix:semicolon
+id|drive-&gt;bios_sect
+op_assign
+id|page-&gt;sectors
 suffix:semicolon
 r_if
 c_cond

@@ -109,9 +109,6 @@ suffix:semicolon
 DECL|macro|SEAGATE_ST0X
 mdefine_line|#define SEAGATE_ST0X  {  NULL, NULL, NULL, seagate_st0x_proc_info, &bslash;&n;&t;&t;&t; NULL, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; NULL, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif
-multiline_comment|/*&n;&t;defining PARITY causes parity data to be checked&n;*/
-DECL|macro|PARITY
-mdefine_line|#define PARITY
 multiline_comment|/*&n;&t;Thanks to Brian Antoine for the example code in his Messy-Loss ST-01&n;&t;&t;driver, and Mitsugu Suzuki for information on the ST-01&n;&t;&t;SCSI host.&n;*/
 multiline_comment|/*&n;&t;CONTROL defines&n;*/
 DECL|macro|CMD_RST
@@ -131,14 +128,21 @@ mdefine_line|#define CMD_INTR&t;&t;0x40
 DECL|macro|CMD_DRVR_ENABLE
 mdefine_line|#define CMD_DRVR_ENABLE&t;&t;0x80
 multiline_comment|/*&n;&t;STATUS&n;*/
-DECL|macro|STAT_BSY
-mdefine_line|#define STAT_BSY&t;&t;0x01
+macro_line|#ifdef SWAPSTAT
+DECL|macro|STAT_MSG
+mdefine_line|#define STAT_MSG&t;&t;0x08
+DECL|macro|STAT_CD
+mdefine_line|#define STAT_CD&t;&t;&t;0x02
+macro_line|#else
 DECL|macro|STAT_MSG
 mdefine_line|#define STAT_MSG&t;&t;0x02
-DECL|macro|STAT_IO
-mdefine_line|#define STAT_IO&t;&t;&t;0x04
 DECL|macro|STAT_CD
 mdefine_line|#define STAT_CD&t;&t;&t;0x08
+macro_line|#endif
+DECL|macro|STAT_BSY
+mdefine_line|#define STAT_BSY&t;&t;0x01
+DECL|macro|STAT_IO
+mdefine_line|#define STAT_IO&t;&t;&t;0x04
 DECL|macro|STAT_REQ
 mdefine_line|#define STAT_REQ&t;&t;0x10
 DECL|macro|STAT_SEL

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -5028,10 +5029,11 @@ suffix:colon
 id|retval
 suffix:semicolon
 )brace
-DECL|function|normal_select
+DECL|function|normal_poll
 r_static
 r_int
-id|normal_select
+r_int
+id|normal_poll
 c_func
 (paren
 r_struct
@@ -5040,32 +5042,39 @@ op_star
 id|tty
 comma
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
-r_switch
-c_cond
+r_int
+r_int
+id|mask
+op_assign
+l_int|0
+suffix:semicolon
+id|poll_wait
+c_func
 (paren
-id|sel_type
+op_amp
+id|tty-&gt;read_wait
+comma
+id|wait
 )paren
-(brace
-r_case
-id|SEL_IN
-suffix:colon
+suffix:semicolon
+id|poll_wait
+c_func
+(paren
+op_amp
+id|tty-&gt;write_wait
+comma
+id|wait
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5090,13 +5099,12 @@ id|tty
 )paren
 )paren
 )paren
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
-multiline_comment|/* fall through */
-r_case
-id|SEL_EX
-suffix:colon
 r_if
 c_cond
 (paren
@@ -5104,8 +5112,13 @@ id|tty-&gt;packet
 op_logical_and
 id|tty-&gt;link-&gt;ctrl_status
 )paren
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLPRI
+op_or
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
 r_if
 c_cond
@@ -5118,8 +5131,9 @@ op_lshift
 id|TTY_OTHER_CLOSED
 )paren
 )paren
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLHUP
 suffix:semicolon
 r_if
 c_cond
@@ -5130,18 +5144,24 @@ c_func
 id|file
 )paren
 )paren
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLHUP
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|waitqueue_active
-c_func
 (paren
+id|mask
 op_amp
-id|tty-&gt;read_wait
+(paren
+id|POLLHUP
+op_or
+id|POLLIN
+op_or
+id|POLLRDNORM
+)paren
 )paren
 )paren
 (brace
@@ -5175,21 +5195,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|select_wait
-c_func
-(paren
-op_amp
-id|tty-&gt;read_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-r_case
-id|SEL_OUT
-suffix:colon
 r_if
 c_cond
 (paren
@@ -5203,24 +5208,14 @@ id|tty
 OL
 id|WAKEUP_CHARS
 )paren
-r_return
-l_int|1
-suffix:semicolon
-id|select_wait
-c_func
-(paren
-op_amp
-id|tty-&gt;write_wait
-comma
-id|wait
-)paren
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
 suffix:semicolon
 r_return
-l_int|0
-suffix:semicolon
-)brace
-r_return
-l_int|0
+id|mask
 suffix:semicolon
 )brace
 DECL|variable|tty_ldisc_N_TTY
@@ -5262,9 +5257,9 @@ multiline_comment|/* ioctl */
 id|n_tty_set_termios
 comma
 multiline_comment|/* set_termios */
-id|normal_select
+id|normal_poll
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|n_tty_receive_buf
 comma
 multiline_comment|/* receive_buf */

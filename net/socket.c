@@ -121,25 +121,18 @@ id|file
 suffix:semicolon
 r_static
 r_int
-id|sock_select
+r_int
+id|sock_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|which
-comma
-id|select_table
+id|poll_table
 op_star
-id|seltable
+id|wait
 )paren
 suffix:semicolon
 r_static
@@ -202,7 +195,7 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* readdir */
-id|sock_select
+id|sock_poll
 comma
 id|sock_ioctl
 comma
@@ -1474,26 +1467,19 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-DECL|function|sock_select
+DECL|function|sock_poll
 r_static
 r_int
-id|sock_select
+r_int
+id|sock_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -1508,24 +1494,22 @@ op_assign
 id|socki_lookup
 c_func
 (paren
-id|inode
+id|file-&gt;f_inode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to select, so it&squot;s either yes or no. &n;&t; */
+multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to poll, so it&squot;s either yes or no. &n;&t; */
 r_if
 c_cond
 (paren
-id|sock-&gt;ops-&gt;select
+id|sock-&gt;ops-&gt;poll
 )paren
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
-id|select
+id|poll
 c_func
 (paren
 id|sock
-comma
-id|sel_type
 comma
 id|wait
 )paren
@@ -4864,7 +4848,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; *&t;we have this level of indirection. Not a lot of overhead, since more of&n; *&t;the work is done via read/write/select directly.&n; *&n; *&t;I&squot;m now expanding this up to a higher level to separate the assorted&n; *&t;kernel/user space manipulations and global assumptions from the protocol&n; *&t;layers proper - AC.&n; *&n; *&t;Argument checking cleaned up. Saved 20% in size.&n; */
+multiline_comment|/*&n; *&t;System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; *&t;we have this level of indirection. Not a lot of overhead, since more of&n; *&t;the work is done via read/write/poll directly.&n; *&n; *&t;I&squot;m now expanding this up to a higher level to separate the assorted&n; *&t;kernel/user space manipulations and global assumptions from the protocol&n; *&t;layers proper - AC.&n; *&n; *&t;Argument checking cleaned up. Saved 20% in size.&n; */
 DECL|function|sys_socketcall
 id|asmlinkage
 r_int

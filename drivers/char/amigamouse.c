@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Amiga Mouse Driver for Linux 68k by Michael Rausch&n; * based upon:&n; *&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Modified for use in the 1.3 kernels by Jes Sorensen.&n; *&n; * Moved the isr-allocation to the mouse_{open,close} calls, as there&n; *   is no reason to service the mouse in the vertical blank isr if&n; *   the mouse is not in use.             Jes Sorensen&n; */
+multiline_comment|/*&n; * Amiga Mouse Driver for Linux 68k by Michael Rausch&n; * based upon:&n; *&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_poll&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching poll code.&n; *&n; * Modified the poll() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Modified for use in the 1.3 kernels by Jes Sorensen.&n; *&n; * Moved the isr-allocation to the mouse_{open,close} calls, as there&n; *   is no reason to service the mouse in the vertical blank isr if&n; *   the mouse is not in use.             Jes Sorensen&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -933,48 +934,25 @@ r_return
 id|r
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * select for mouse input&n; */
-DECL|function|mouse_select
+multiline_comment|/*&n; * poll for mouse input&n; */
+DECL|function|mouse_poll
 r_static
 r_int
-id|mouse_select
+r_int
+id|mouse_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sel_type
-op_eq
-id|SEL_IN
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|mouse.ready
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|select_wait
+id|poll_wait
 c_func
 (paren
 op_amp
@@ -983,7 +961,16 @@ comma
 id|wait
 )paren
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|mouse.ready
+)paren
+r_return
+id|POLLIN
+op_or
+id|POLLRDNORM
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1004,9 +991,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* mouse_readdir */
-id|mouse_select
+id|mouse_poll
 comma
-multiline_comment|/* mouse_select */
+multiline_comment|/* mouse_poll */
 l_int|NULL
 comma
 multiline_comment|/* mouse_ioctl */

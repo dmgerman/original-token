@@ -2149,7 +2149,8 @@ id|err
 suffix:semicolon
 r_extern
 r_int
-id|datagram_select
+r_int
+id|datagram_poll
 c_func
 (paren
 r_struct
@@ -2157,10 +2158,7 @@ id|socket
 op_star
 id|sock
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren

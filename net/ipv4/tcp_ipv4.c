@@ -4524,7 +4524,7 @@ id|tcp_write_wakeup
 comma
 id|tcp_read_wakeup
 comma
-id|tcp_select
+id|tcp_poll
 comma
 id|tcp_ioctl
 comma

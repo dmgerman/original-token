@@ -1492,7 +1492,7 @@ comma
 multiline_comment|/* mem_readdir */
 l_int|NULL
 comma
-multiline_comment|/* mem_select */
+multiline_comment|/* mem_poll */
 l_int|NULL
 comma
 multiline_comment|/* mem_ioctl */
@@ -1526,7 +1526,7 @@ comma
 multiline_comment|/* kmem_readdir */
 l_int|NULL
 comma
-multiline_comment|/* kmem_select */
+multiline_comment|/* kmem_poll */
 l_int|NULL
 comma
 multiline_comment|/* kmem_ioctl */
@@ -1560,7 +1560,7 @@ comma
 multiline_comment|/* null_readdir */
 l_int|NULL
 comma
-multiline_comment|/* null_select */
+multiline_comment|/* null_poll */
 l_int|NULL
 comma
 multiline_comment|/* null_ioctl */
@@ -1595,7 +1595,7 @@ comma
 multiline_comment|/* port_readdir */
 l_int|NULL
 comma
-multiline_comment|/* port_select */
+multiline_comment|/* port_poll */
 l_int|NULL
 comma
 multiline_comment|/* port_ioctl */
@@ -1630,7 +1630,7 @@ comma
 multiline_comment|/* zero_readdir */
 l_int|NULL
 comma
-multiline_comment|/* zero_select */
+multiline_comment|/* zero_poll */
 l_int|NULL
 comma
 multiline_comment|/* zero_ioctl */
@@ -1661,7 +1661,7 @@ comma
 multiline_comment|/* full_readdir */
 l_int|NULL
 comma
-multiline_comment|/* full_select */
+multiline_comment|/* full_poll */
 l_int|NULL
 comma
 multiline_comment|/* full_ioctl */
@@ -1832,7 +1832,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */

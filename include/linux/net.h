@@ -300,11 +300,12 @@ r_int
 id|peer
 )paren
 suffix:semicolon
-DECL|member|select
+DECL|member|poll
+r_int
 r_int
 (paren
 op_star
-id|select
+id|poll
 )paren
 (paren
 r_struct
@@ -312,10 +313,7 @@ id|socket
 op_star
 id|sock
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren

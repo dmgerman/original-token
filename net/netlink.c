@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
+macro_line|#include &lt;asm/poll.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -133,30 +134,27 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-DECL|function|netlink_select
+DECL|function|netlink_poll
 r_static
 r_int
-id|netlink_select
+r_int
+id|netlink_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
+r_int
+r_int
+id|mask
+suffix:semicolon
 r_int
 r_int
 id|minor
@@ -164,18 +162,27 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_inode-&gt;i_rdev
 )paren
 suffix:semicolon
-r_switch
-c_cond
+id|poll_wait
+c_func
 (paren
-id|sel_type
+op_amp
+id|read_space_wait
+(braket
+id|minor
+)braket
+comma
+id|wait
 )paren
-(brace
-r_case
-id|SEL_IN
-suffix:colon
+suffix:semicolon
+id|mask
+op_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -188,35 +195,15 @@ id|skb_queue_rd
 id|minor
 )braket
 )paren
-op_ne
-l_int|NULL
 )paren
+id|mask
+op_or_assign
+id|POLLIN
+op_or
+id|POLLRDNORM
+suffix:semicolon
 r_return
-l_int|1
-suffix:semicolon
-id|select_wait
-c_func
-(paren
-op_amp
-id|read_space_wait
-(braket
-id|minor
-)braket
-comma
-id|wait
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|SEL_OUT
-suffix:colon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_return
-l_int|0
+id|mask
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Write a message to the kernel side of a communication link&n; */
@@ -738,7 +725,7 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* netlink_readdir */
-id|netlink_select
+id|netlink_poll
 comma
 id|netlink_ioctl
 comma

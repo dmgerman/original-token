@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
@@ -129,49 +130,24 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|kmsg_select
+DECL|function|kmsg_poll
 r_static
 r_int
-id|kmsg_select
+r_int
+id|kmsg_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sel_type
-op_ne
-id|SEL_IN
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|log_size
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|select_wait
+id|poll_wait
 c_func
 (paren
 op_amp
@@ -179,6 +155,16 @@ id|log_wait
 comma
 id|wait
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|log_size
+)paren
+r_return
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
 r_return
 l_int|0
@@ -202,9 +188,9 @@ multiline_comment|/* kmsg_write */
 l_int|NULL
 comma
 multiline_comment|/* kmsg_readdir */
-id|kmsg_select
+id|kmsg_poll
 comma
-multiline_comment|/* kmsg_select */
+multiline_comment|/* kmsg_poll */
 l_int|NULL
 comma
 multiline_comment|/* kmsg_ioctl */

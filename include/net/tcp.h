@@ -788,7 +788,8 @@ id|flags
 suffix:semicolon
 r_extern
 r_int
-id|tcp_select
+r_int
+id|tcp_poll
 c_func
 (paren
 r_struct
@@ -796,10 +797,7 @@ id|socket
 op_star
 id|sock
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren

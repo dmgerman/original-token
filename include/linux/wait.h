@@ -87,9 +87,9 @@ id|q
 )paren
 suffix:semicolon
 )brace
-DECL|struct|select_table_entry
+DECL|struct|poll_table_entry
 r_struct
-id|select_table_entry
+id|poll_table_entry
 (brace
 DECL|member|wait
 r_struct
@@ -105,10 +105,10 @@ id|wait_address
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|select_table_struct
+DECL|struct|poll_table_struct
 r_typedef
 r_struct
-id|select_table_struct
+id|poll_table_struct
 (brace
 DECL|member|nr
 r_int
@@ -117,16 +117,16 @@ id|nr
 suffix:semicolon
 DECL|member|entry
 r_struct
-id|select_table_entry
+id|poll_table_entry
 op_star
 id|entry
 suffix:semicolon
-DECL|typedef|select_table
+DECL|typedef|poll_table
 )brace
-id|select_table
+id|poll_table
 suffix:semicolon
-DECL|macro|__MAX_SELECT_TABLE_ENTRIES
-mdefine_line|#define __MAX_SELECT_TABLE_ENTRIES (PAGE_SIZE / sizeof (struct select_table_entry))
+DECL|macro|__MAX_POLL_TABLE_ENTRIES
+mdefine_line|#define __MAX_POLL_TABLE_ENTRIES (PAGE_SIZE / sizeof (struct poll_table_entry))
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

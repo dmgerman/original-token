@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET, DDP, IPX, AX.25 and NetROM layer all have identical select code and mostly&n; *&t;identical recvmsg() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;alan@cymru.net&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_SEQPACKET.&n; *&t;&t;Linus Torvalds&t;:&t;BSD semantic fixes.&n; *&t;&t;Alan Cox&t;:&t;Datagram iovec handling&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_STREAM.&n; *&t;&t;Alan Cox&t;:&t;POSIXisms&n; *&n; */
+multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET, DDP, IPX, AX.25 and NetROM layer all have identical poll code and mostly&n; *&t;identical recvmsg() code. So we share it here. The poll was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;alan@cymru.net&gt;. (datagram_poll() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write poll of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_SEQPACKET.&n; *&t;&t;Linus Torvalds&t;:&t;BSD semantic fixes.&n; *&t;&t;Alan Cox&t;:&t;Datagram iovec handling&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_STREAM.&n; *&t;&t;Alan Cox&t;:&t;POSIXisms&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/route.h&gt;
@@ -504,10 +505,11 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Datagram select: Again totally generic. This also handles&n; *&t;sequenced packet sockets providing the socket receive queue&n; *&t;is only ever holding data ready to receive.&n; */
-DECL|function|datagram_select
+multiline_comment|/*&n; *&t;Datagram poll: Again totally generic. This also handles&n; *&t;sequenced packet sockets providing the socket receive queue&n; *&t;is only ever holding data ready to receive.&n; */
+DECL|function|datagram_poll
 r_int
-id|datagram_select
+r_int
+id|datagram_poll
 c_func
 (paren
 r_struct
@@ -515,10 +517,7 @@ id|socket
 op_star
 id|sock
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -530,23 +529,32 @@ id|sk
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
+r_int
+r_int
+id|mask
+suffix:semicolon
+id|poll_wait
+c_func
+(paren
+id|sk-&gt;sleep
+comma
+id|wait
+)paren
+suffix:semicolon
+id|mask
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* exceptional events? */
 r_if
 c_cond
 (paren
 id|sk-&gt;err
 )paren
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLERR
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|sel_type
-)paren
-(brace
-r_case
-id|SEL_IN
-suffix:colon
 r_if
 c_cond
 (paren
@@ -554,28 +562,11 @@ id|sk-&gt;shutdown
 op_amp
 id|RCV_SHUTDOWN
 )paren
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLHUP
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|connection_based
-c_func
-(paren
-id|sk
-)paren
-op_logical_and
-id|sk-&gt;state
-op_eq
-id|TCP_CLOSE
-)paren
-(brace
-multiline_comment|/* Connection closed: Wake up */
-r_return
-l_int|1
-suffix:semicolon
-)brace
+multiline_comment|/* readable? */
 r_if
 c_cond
 (paren
@@ -587,27 +578,13 @@ op_amp
 id|sk-&gt;receive_queue
 )paren
 )paren
-(brace
-multiline_comment|/* This appears to be consistent&n;&t;&t;&t;&t;   with other stacks */
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-r_case
-id|SEL_OUT
-suffix:colon
-r_if
-c_cond
-(paren
-id|sk-&gt;shutdown
-op_amp
-id|SEND_SHUTDOWN
-)paren
-r_return
-l_int|1
-suffix:semicolon
+multiline_comment|/* Connection-based need to check for termination and startup */
 r_if
 c_cond
 (paren
@@ -616,21 +593,52 @@ c_func
 (paren
 id|sk
 )paren
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_CLOSE
+)paren
+id|mask
+op_or_assign
+id|POLLHUP
+suffix:semicolon
+multiline_comment|/* connection hasn&squot;t started yet? */
+r_if
+c_cond
+(paren
 id|sk-&gt;state
 op_eq
 id|TCP_SYN_SENT
 )paren
-(brace
-multiline_comment|/* Connection still in progress */
-r_break
+r_return
+id|mask
 suffix:semicolon
 )brace
+multiline_comment|/* writable? */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sk-&gt;shutdown
+op_amp
+id|SEND_SHUTDOWN
+)paren
+)paren
+(brace
 r_if
 c_cond
 (paren
 id|sk-&gt;prot
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|sock_wspace
 c_func
 (paren
@@ -639,48 +647,38 @@ id|sk
 op_ge
 id|MIN_WRITE_SPACE
 )paren
-(brace
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
+op_or
+id|POLLWRBAND
 suffix:semicolon
 )brace
+r_else
+(brace
 r_if
 c_cond
 (paren
-id|sk-&gt;prot
-op_eq
-l_int|NULL
-op_logical_and
 id|sk-&gt;sndbuf
 op_minus
 id|sk-&gt;wmem_alloc
 op_ge
 id|MIN_WRITE_SPACE
 )paren
-(brace
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
+op_or
+id|POLLWRBAND
 suffix:semicolon
 )brace
-r_break
-suffix:semicolon
-r_case
-id|SEL_EX
-suffix:colon
-r_break
-suffix:semicolon
 )brace
-multiline_comment|/* select failed.. */
-id|select_wait
-c_func
-(paren
-id|sk-&gt;sleep
-comma
-id|wait
-)paren
-suffix:semicolon
 r_return
-l_int|0
+id|mask
 suffix:semicolon
 )brace
 eof

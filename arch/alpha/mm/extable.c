@@ -128,6 +128,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_register
+r_int
+r_int
+id|gp
+id|__asm__
+c_func
+(paren
+l_string|&quot;$29&quot;
+)paren
+suffix:semicolon
 r_int
 DECL|function|search_exception_table
 id|search_exception_table
@@ -143,16 +153,6 @@ id|ret
 suffix:semicolon
 macro_line|#ifndef CONFIG_MODULE
 multiline_comment|/* There is only the kernel to search.  */
-r_register
-r_int
-r_int
-id|gp
-id|__asm__
-c_func
-(paren
-l_string|&quot;$29&quot;
-)paren
-suffix:semicolon
 id|ret
 op_assign
 id|search_one_table

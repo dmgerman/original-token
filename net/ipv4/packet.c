@@ -1108,7 +1108,7 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-id|datagram_select
+id|datagram_poll
 comma
 l_int|NULL
 comma

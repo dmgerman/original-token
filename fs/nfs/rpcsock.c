@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/rpcsock.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -424,7 +425,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This code is slightly complicated. Since the networking code does not&n; * honor the current-&gt;timeout value, we have to select on the socket.&n; */
+multiline_comment|/*&n; * This code is slightly complicated. Since the networking code does not&n; * honor the current-&gt;timeout value, we have to poll on the socket.&n; */
 r_static
 r_inline
 r_int
@@ -439,7 +440,7 @@ id|rsock
 )paren
 (brace
 r_struct
-id|select_table_entry
+id|poll_table_entry
 id|entry
 suffix:semicolon
 r_struct
@@ -449,13 +450,13 @@ id|file
 op_assign
 id|rsock-&gt;file
 suffix:semicolon
-id|select_table
+id|poll_table
 id|wait_table
 suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;RPC: selecting on socket...&bslash;n&quot;
+l_string|&quot;RPC: polling socket...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|wait_table.nr
@@ -475,34 +476,19 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|file-&gt;f_op
 op_member_access_from_pointer
-id|select
+id|poll
 c_func
 (paren
-id|file-&gt;f_inode
-comma
 id|file
-comma
-id|SEL_IN
 comma
 op_amp
 id|wait_table
 )paren
-op_logical_and
-op_logical_neg
-id|file-&gt;f_op
-op_member_access_from_pointer
-id|select
-c_func
-(paren
-id|file-&gt;f_inode
-comma
-id|file
-comma
-id|SEL_IN
-comma
-l_int|NULL
+op_amp
+id|POLLIN
 )paren
 )paren
 (brace

@@ -5837,7 +5837,7 @@ id|unix_accept
 comma
 id|unix_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|unix_ioctl
 comma
@@ -5878,7 +5878,7 @@ l_int|NULL
 comma
 id|unix_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|unix_ioctl
 comma

@@ -259,11 +259,11 @@ c_func
 id|skb_realloc_headroom
 )paren
 suffix:semicolon
-DECL|variable|datagram_select
+DECL|variable|datagram_poll
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|datagram_select
+id|datagram_poll
 )paren
 suffix:semicolon
 multiline_comment|/* Needed by smbfs.o */
@@ -485,11 +485,11 @@ c_func
 id|inet_accept
 )paren
 suffix:semicolon
-DECL|variable|inet_select
+DECL|variable|inet_poll
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|inet_select
+id|inet_poll
 )paren
 suffix:semicolon
 DECL|variable|inet_listen
@@ -689,11 +689,11 @@ c_func
 id|tcp_read_wakeup
 )paren
 suffix:semicolon
-DECL|variable|tcp_select
+DECL|variable|tcp_poll
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|tcp_select
+id|tcp_poll
 )paren
 suffix:semicolon
 DECL|variable|tcp_ioctl

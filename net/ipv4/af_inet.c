@@ -3799,9 +3799,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|inet_select
+DECL|function|inet_poll
 r_int
-id|inet_select
+r_int
+id|inet_poll
 c_func
 (paren
 r_struct
@@ -3809,10 +3810,7 @@ id|socket
 op_star
 id|sock
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -3827,7 +3825,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;prot-&gt;select
+id|sk-&gt;prot-&gt;poll
 op_eq
 l_int|NULL
 )paren
@@ -3837,12 +3835,10 @@ suffix:semicolon
 r_return
 id|sk-&gt;prot
 op_member_access_from_pointer
-id|select
+id|poll
 c_func
 (paren
 id|sock
-comma
-id|sel_type
 comma
 id|wait
 )paren
@@ -5343,7 +5339,7 @@ id|inet_accept
 comma
 id|inet_getname
 comma
-id|inet_select
+id|inet_poll
 comma
 id|inet_ioctl
 comma
@@ -5384,7 +5380,7 @@ l_int|NULL
 comma
 id|inet_getname
 comma
-id|datagram_select
+id|datagram_poll
 comma
 id|inet_ioctl
 comma

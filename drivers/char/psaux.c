@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1752,49 +1753,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|aux_select
+DECL|function|aux_poll
 r_static
 r_int
-id|aux_select
+r_int
+id|aux_poll
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sel_type
-op_ne
-id|SEL_IN
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|aux_ready
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|select_wait
+id|poll_wait
 c_func
 (paren
 op_amp
@@ -1802,6 +1778,16 @@ id|queue-&gt;proc_list
 comma
 id|wait
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|aux_ready
+)paren
+r_return
+id|POLLIN
+op_or
+id|POLLRDNORM
 suffix:semicolon
 r_return
 l_int|0
@@ -1823,7 +1809,7 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* readdir */
-id|aux_select
+id|aux_poll
 comma
 l_int|NULL
 comma

@@ -1,6 +1,8 @@
 macro_line|#ifndef _ALPHA_UNISTD_H
 DECL|macro|_ALPHA_UNISTD_H
 mdefine_line|#define _ALPHA_UNISTD_H
+DECL|macro|__NR_osf_syscall
+mdefine_line|#define __NR_osf_syscall&t;  0&t;/* not implemented */
 DECL|macro|__NR_exit
 mdefine_line|#define __NR_exit&t;&t;  1
 DECL|macro|__NR_fork
@@ -9,14 +11,20 @@ DECL|macro|__NR_read
 mdefine_line|#define __NR_read&t;&t;  3
 DECL|macro|__NR_write
 mdefine_line|#define __NR_write&t;&t;  4
+DECL|macro|__NR_osf_old_open
+mdefine_line|#define __NR_osf_old_open&t;  5&t;/* not implemented */
 DECL|macro|__NR_close
 mdefine_line|#define __NR_close&t;&t;  6
 DECL|macro|__NR_wait4
 mdefine_line|#define __NR_wait4&t;&t;  7
+DECL|macro|__NR_osf_old_creat
+mdefine_line|#define __NR_osf_old_creat&t;  8&t;/* not implemented */
 DECL|macro|__NR_link
 mdefine_line|#define __NR_link&t;&t;  9
 DECL|macro|__NR_unlink
 mdefine_line|#define __NR_unlink&t;&t; 10
+DECL|macro|__NR_osf_execve
+mdefine_line|#define __NR_osf_execve&t;&t; 11&t;/* not implemented */
 DECL|macro|__NR_chdir
 mdefine_line|#define __NR_chdir&t;&t; 12
 DECL|macro|__NR_fchdir
@@ -29,38 +37,82 @@ DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown&t;&t; 16
 DECL|macro|__NR_brk
 mdefine_line|#define __NR_brk&t;&t; 17
+DECL|macro|__NR_osf_getfsstat
+mdefine_line|#define __NR_osf_getfsstat&t; 18&t;/* not implemented */
 DECL|macro|__NR_lseek
 mdefine_line|#define __NR_lseek&t;&t; 19
 DECL|macro|__NR_getxpid
 mdefine_line|#define __NR_getxpid&t;&t; 20
+DECL|macro|__NR_osf_mount
+mdefine_line|#define __NR_osf_mount&t;&t; 21
+DECL|macro|__NR_osf_umount
+mdefine_line|#define __NR_osf_umount&t;&t; 22
 DECL|macro|__NR_setuid
 mdefine_line|#define __NR_setuid&t;&t; 23
 DECL|macro|__NR_getxuid
 mdefine_line|#define __NR_getxuid&t;&t; 24
+DECL|macro|__NR_exec_with_loader
+mdefine_line|#define __NR_exec_with_loader&t; 25&t;/* not implemented */
 DECL|macro|__NR_ptrace
 mdefine_line|#define __NR_ptrace&t;&t; 26
+DECL|macro|__NR_osf_nrecvmsg
+mdefine_line|#define __NR_osf_nrecvmsg&t; 27&t;/* not implemented */
+DECL|macro|__NR_osf_nsendmsg
+mdefine_line|#define __NR_osf_nsendmsg&t; 28&t;/* not implemented */
+DECL|macro|__NR_osf_nrecvfrom
+mdefine_line|#define __NR_osf_nrecvfrom&t; 29&t;/* not implemented */
+DECL|macro|__NR_osf_naccept
+mdefine_line|#define __NR_osf_naccept&t; 30&t;/* not implemented */
+DECL|macro|__NR_osf_ngetpeername
+mdefine_line|#define __NR_osf_ngetpeername&t; 31&t;/* not implemented */
+DECL|macro|__NR_osf_ngetsockname
+mdefine_line|#define __NR_osf_ngetsockname&t; 32&t;/* not implemented */
 DECL|macro|__NR_access
 mdefine_line|#define __NR_access&t;&t; 33
+DECL|macro|__NR_osf_chflags
+mdefine_line|#define __NR_osf_chflags&t; 34&t;/* not implemented */
+DECL|macro|__NR_osf_fchflags
+mdefine_line|#define __NR_osf_fchflags&t; 35&t;/* not implemented */
 DECL|macro|__NR_sync
 mdefine_line|#define __NR_sync&t;&t; 36
 DECL|macro|__NR_kill
 mdefine_line|#define __NR_kill&t;&t; 37
+DECL|macro|__NR_osf_old_stat
+mdefine_line|#define __NR_osf_old_stat&t; 38&t;/* not implemented */
 DECL|macro|__NR_setpgid
 mdefine_line|#define __NR_setpgid&t;&t; 39
+DECL|macro|__NR_osf_old_lstat
+mdefine_line|#define __NR_osf_old_lstat&t; 40&t;/* not implemented */
 DECL|macro|__NR_dup
 mdefine_line|#define __NR_dup&t;&t; 41
 DECL|macro|__NR_pipe
 mdefine_line|#define __NR_pipe&t;&t; 42
+DECL|macro|__NR_osf_set_program_attributes
+mdefine_line|#define __NR_osf_set_program_attributes&t;43
+DECL|macro|__NR_osf_profil
+mdefine_line|#define __NR_osf_profil&t;&t; 44&t;/* not implemented */
 DECL|macro|__NR_open
 mdefine_line|#define __NR_open&t;&t; 45
+DECL|macro|__NR_osf_old_sigaction
+mdefine_line|#define __NR_osf_old_sigaction&t; 46&t;/* not implemented */
 DECL|macro|__NR_getxgid
 mdefine_line|#define __NR_getxgid&t;&t; 47
+DECL|macro|__NR_osf_sigprocmask
+mdefine_line|#define __NR_osf_sigprocmask&t; 48
+DECL|macro|__NR_osf_getlogin
+mdefine_line|#define __NR_osf_getlogin&t; 49&t;/* not implemented */
+DECL|macro|__NR_osf_setlogin
+mdefine_line|#define __NR_osf_setlogin&t; 50&t;/* not implemented */
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct&t;&t; 51
 DECL|macro|__NR_sigpending
 mdefine_line|#define __NR_sigpending&t;&t; 52
 DECL|macro|__NR_ioctl
 mdefine_line|#define __NR_ioctl&t;&t; 54
+DECL|macro|__NR_osf_reboot
+mdefine_line|#define __NR_osf_reboot&t;&t; 55&t;/* not implemented */
+DECL|macro|__NR_osf_revoke
+mdefine_line|#define __NR_osf_revoke&t;&t; 56&t;/* not implemented */
 DECL|macro|__NR_symlink
 mdefine_line|#define __NR_symlink&t;&t; 57
 DECL|macro|__NR_readlink
@@ -71,16 +123,28 @@ DECL|macro|__NR_umask
 mdefine_line|#define __NR_umask&t;&t; 60
 DECL|macro|__NR_chroot
 mdefine_line|#define __NR_chroot&t;&t; 61
+DECL|macro|__NR_osf_old_fstat
+mdefine_line|#define __NR_osf_old_fstat&t; 62&t;/* not implemented */
 DECL|macro|__NR_getpgrp
 mdefine_line|#define __NR_getpgrp&t;&t; 63
 DECL|macro|__NR_getpagesize
 mdefine_line|#define __NR_getpagesize&t; 64
+DECL|macro|__NR_osf_mremap
+mdefine_line|#define __NR_osf_mremap&t;&t; 65&t;/* not implemented */
+DECL|macro|__NR_osf_vfork
+mdefine_line|#define __NR_osf_vfork&t;&t; 66
 DECL|macro|__NR_stat
 mdefine_line|#define __NR_stat&t;&t; 67
 DECL|macro|__NR_lstat
 mdefine_line|#define __NR_lstat&t;&t; 68
+DECL|macro|__NR_osf_sbrk
+mdefine_line|#define __NR_osf_sbrk&t;&t; 69&t;/* not implemented */
+DECL|macro|__NR_osf_sstk
+mdefine_line|#define __NR_osf_sstk&t;&t; 70&t;/* not implemented */
 DECL|macro|__NR_mmap
 mdefine_line|#define __NR_mmap&t;&t; 71&t;/* OSF/1 mmap is superset of Linux */
+DECL|macro|__NR_osf_old_vadvise
+mdefine_line|#define __NR_osf_old_vadvise&t; 72&t;/* not implemented */
 DECL|macro|__NR_munmap
 mdefine_line|#define __NR_munmap&t;&t; 73
 DECL|macro|__NR_mprotect
@@ -89,14 +153,24 @@ DECL|macro|__NR_madvise
 mdefine_line|#define __NR_madvise&t;&t; 75
 DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup&t;&t; 76
+DECL|macro|__NR_osf_kmodcall
+mdefine_line|#define __NR_osf_kmodcall&t; 77&t;/* not implemented */
+DECL|macro|__NR_osf_mincore
+mdefine_line|#define __NR_osf_mincore&t; 78&t;/* not implemented */
 DECL|macro|__NR_getgroups
 mdefine_line|#define __NR_getgroups&t;&t; 79
 DECL|macro|__NR_setgroups
 mdefine_line|#define __NR_setgroups&t;&t; 80
+DECL|macro|__NR_osf_old_getpgrp
+mdefine_line|#define __NR_osf_old_getpgrp&t; 81&t;/* not implemented */
 DECL|macro|__NR_setpgrp
 mdefine_line|#define __NR_setpgrp&t;&t; 82&t;/* BSD alias for setpgid */
 DECL|macro|__NR_setitimer
 mdefine_line|#define __NR_setitimer&t;&t; 83
+DECL|macro|__NR_osf_old_wait
+mdefine_line|#define __NR_osf_old_wait&t; 84&t;/* not implemented */
+DECL|macro|__NR_osf_table
+mdefine_line|#define __NR_osf_table&t;&t; 85&t;/* not implemented */
 DECL|macro|__NR_getitimer
 mdefine_line|#define __NR_getitimer&t;&t; 86
 DECL|macro|__NR_gethostname
@@ -113,6 +187,8 @@ DECL|macro|__NR_fcntl
 mdefine_line|#define __NR_fcntl&t;&t; 92
 DECL|macro|__NR_select
 mdefine_line|#define __NR_select&t;&t; 93
+DECL|macro|__NR_poll
+mdefine_line|#define __NR_poll&t;&t; 94
 DECL|macro|__NR_fsync
 mdefine_line|#define __NR_fsync&t;&t; 95
 DECL|macro|__NR_setpriority
@@ -137,12 +213,24 @@ DECL|macro|__NR_setsockopt
 mdefine_line|#define __NR_setsockopt&t;&t;105
 DECL|macro|__NR_listen
 mdefine_line|#define __NR_listen&t;&t;106
+DECL|macro|__NR_osf_plock
+mdefine_line|#define __NR_osf_plock&t;&t;107&t;/* not implemented */
+DECL|macro|__NR_osf_old_sigvec
+mdefine_line|#define __NR_osf_old_sigvec&t;108&t;/* not implemented */
+DECL|macro|__NR_osf_old_sigblock
+mdefine_line|#define __NR_osf_old_sigblock&t;109&t;/* not implemented */
+DECL|macro|__NR_osf_old_sigsetmask
+mdefine_line|#define __NR_osf_old_sigsetmask&t;110&t;/* not implemented */
 DECL|macro|__NR_sigsuspend
 mdefine_line|#define __NR_sigsuspend&t;&t;111
+DECL|macro|__NR_osf_sigstack
+mdefine_line|#define __NR_osf_sigstack&t;112&t;/* not implemented */
 DECL|macro|__NR_recvmsg
 mdefine_line|#define __NR_recvmsg&t;&t;113
 DECL|macro|__NR_sendmsg
 mdefine_line|#define __NR_sendmsg&t;&t;114
+DECL|macro|__NR_osf_old_vtrace
+mdefine_line|#define __NR_osf_old_vtrace&t;115&t;/* not implemented */
 DECL|macro|__NR_gettimeofday
 mdefine_line|#define __NR_gettimeofday&t;116
 DECL|macro|__NR_getrusage
@@ -187,22 +275,66 @@ DECL|macro|__NR_rmdir
 mdefine_line|#define __NR_rmdir&t;&t;137
 DECL|macro|__NR_utimes
 mdefine_line|#define __NR_utimes&t;&t;138
+DECL|macro|__NR_osf_old_sigreturn
+mdefine_line|#define __NR_osf_old_sigreturn&t;139&t;/* not implemented */
+DECL|macro|__NR_osf_adjtime
+mdefine_line|#define __NR_osf_adjtime&t;140&t;/* not implemented */
 DECL|macro|__NR_getpeername
 mdefine_line|#define __NR_getpeername&t;141
+DECL|macro|__NR_osf_gethostid
+mdefine_line|#define __NR_osf_gethostid&t;142&t;/* not implemented */
+DECL|macro|__NR_osf_sethostid
+mdefine_line|#define __NR_osf_sethostid&t;143&t;/* not implemented */
 DECL|macro|__NR_getrlimit
 mdefine_line|#define __NR_getrlimit&t;&t;144
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit&t;&t;145
+DECL|macro|__NR_osf_old_killpg
+mdefine_line|#define __NR_osf_old_killpg&t;146&t;/* not implemented */
 DECL|macro|__NR_setsid
 mdefine_line|#define __NR_setsid&t;&t;147
 DECL|macro|__NR_quotactl
 mdefine_line|#define __NR_quotactl&t;&t;148
+DECL|macro|__NR_osf_oldquota
+mdefine_line|#define __NR_osf_oldquota&t;149&t;/* not implemented */
 DECL|macro|__NR_getsockname
 mdefine_line|#define __NR_getsockname&t;150
+DECL|macro|__NR_osf_pid_block
+mdefine_line|#define __NR_osf_pid_block&t;153&t;/* not implemented */
+DECL|macro|__NR_osf_pid_unblock
+mdefine_line|#define __NR_osf_pid_unblock&t;154&t;/* not implemented */
 DECL|macro|__NR_sigaction
 mdefine_line|#define __NR_sigaction&t;&t;156
+DECL|macro|__NR_osf_sigwaitprim
+mdefine_line|#define __NR_osf_sigwaitprim&t;157&t;/* not implemented */
+DECL|macro|__NR_osf_nfssvc
+mdefine_line|#define __NR_osf_nfssvc&t;&t;158&t;/* not implemented */
+DECL|macro|__NR_osf_getdirentries
+mdefine_line|#define __NR_osf_getdirentries&t;159
+DECL|macro|__NR_osf_statfs
+mdefine_line|#define __NR_osf_statfs&t;&t;160
+DECL|macro|__NR_osf_fstatfs
+mdefine_line|#define __NR_osf_fstatfs&t;161
+DECL|macro|__NR_osf_asynch_daemon
+mdefine_line|#define __NR_osf_asynch_daemon&t;163&t;/* not implemented */
+DECL|macro|__NR_osf_getfh
+mdefine_line|#define __NR_osf_getfh&t;&t;164&t;/* not implemented */&t;
+DECL|macro|__NR_osf_getdomainname
+mdefine_line|#define __NR_osf_getdomainname&t;165
 DECL|macro|__NR_setdomainname
 mdefine_line|#define __NR_setdomainname&t;166
+DECL|macro|__NR_osf_exportfs
+mdefine_line|#define __NR_osf_exportfs&t;169&t;/* not implemented */
+DECL|macro|__NR_osf_alt_plock
+mdefine_line|#define __NR_osf_alt_plock&t;181&t;/* not implemented */
+DECL|macro|__NR_osf_getmnt
+mdefine_line|#define __NR_osf_getmnt&t;&t;184&t;/* not implemented */
+DECL|macro|__NR_osf_alt_sigpending
+mdefine_line|#define __NR_osf_alt_sigpending&t;187&t;/* not implemented */
+DECL|macro|__NR_osf_alt_setsid
+mdefine_line|#define __NR_osf_alt_setsid&t;188&t;/* not implemented */
+DECL|macro|__NR_osf_swapon
+mdefine_line|#define __NR_osf_swapon&t;&t;199
 DECL|macro|__NR_msgctl
 mdefine_line|#define __NR_msgctl&t;&t;200
 DECL|macro|__NR_msgget
@@ -217,20 +349,94 @@ DECL|macro|__NR_semget
 mdefine_line|#define __NR_semget&t;&t;205
 DECL|macro|__NR_semop
 mdefine_line|#define __NR_semop&t;&t;206
+DECL|macro|__NR_osf_utsname
+mdefine_line|#define __NR_osf_utsname&t;207
+DECL|macro|__NR_osf_lchown
+mdefine_line|#define __NR_osf_lchown&t;&t;208&t;/* not implemented */
+DECL|macro|__NR_osf_shmat
+mdefine_line|#define __NR_osf_shmat&t;&t;209
 DECL|macro|__NR_shmctl
 mdefine_line|#define __NR_shmctl&t;&t;210
 DECL|macro|__NR_shmdt
 mdefine_line|#define __NR_shmdt&t;&t;211
 DECL|macro|__NR_shmget
 mdefine_line|#define __NR_shmget&t;&t;212
+DECL|macro|__NR_osf_mvalid
+mdefine_line|#define __NR_osf_mvalid&t;&t;213&t;/* not implemented */
+DECL|macro|__NR_osf_getaddressconf
+mdefine_line|#define __NR_osf_getaddressconf&t;214&t;/* not implemented */
+DECL|macro|__NR_osf_msleep
+mdefine_line|#define __NR_osf_msleep&t;&t;215&t;/* not implemented */
+DECL|macro|__NR_osf_mwakeup
+mdefine_line|#define __NR_osf_mwakeup&t;216&t;/* not implemented */
 DECL|macro|__NR_msync
 mdefine_line|#define __NR_msync&t;&t;217
+DECL|macro|__NR_osf_signal
+mdefine_line|#define __NR_osf_signal&t;&t;218&t;/* not implemented */
+DECL|macro|__NR_osf_utc_gettime
+mdefine_line|#define __NR_osf_utc_gettime&t;219&t;/* not implemented */
+DECL|macro|__NR_osf_utc_adjtime
+mdefine_line|#define __NR_osf_utc_adjtime&t;220&t;/* not implemented */
+DECL|macro|__NR_osf_security
+mdefine_line|#define __NR_osf_security&t;222&t;/* not implemented */
+DECL|macro|__NR_osf_kloadcall
+mdefine_line|#define __NR_osf_kloadcall&t;223&t;/* not implemented */
 DECL|macro|__NR_getpgid
 mdefine_line|#define __NR_getpgid&t;&t;233
 DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid&t;&t;234
+DECL|macro|__NR_osf_sigaltstack
+mdefine_line|#define __NR_osf_sigaltstack&t;235&t;/* not implemented */
+DECL|macro|__NR_osf_waitid
+mdefine_line|#define __NR_osf_waitid&t;&t;236&t;/* not implemented */
+DECL|macro|__NR_osf_priocntlset
+mdefine_line|#define __NR_osf_priocntlset&t;237&t;/* not implemented */
+DECL|macro|__NR_osf_sigsendset
+mdefine_line|#define __NR_osf_sigsendset&t;238&t;/* not implemented */
+DECL|macro|__NR_osf_set_speculative
+mdefine_line|#define __NR_osf_set_speculative&t;239&t;/* not implemented */
+DECL|macro|__NR_osf_msfs_syscall
+mdefine_line|#define __NR_osf_msfs_syscall&t;240&t;/* not implemented */
+DECL|macro|__NR_osf_sysinfo
+mdefine_line|#define __NR_osf_sysinfo&t;241
+DECL|macro|__NR_osf_uadmin
+mdefine_line|#define __NR_osf_uadmin&t;&t;242&t;/* not implemented */
+DECL|macro|__NR_osf_fuser
+mdefine_line|#define __NR_osf_fuser&t;&t;243&t;/* not implemented */
+DECL|macro|__NR_osf_proplist_syscall
+mdefine_line|#define __NR_osf_proplist_syscall    244
+DECL|macro|__NR_osf_ntp_adjtime
+mdefine_line|#define __NR_osf_ntp_adjtime&t;245&t;/* not implemented */
+DECL|macro|__NR_osf_ntp_gettime
+mdefine_line|#define __NR_osf_ntp_gettime&t;246&t;/* not implemented */
+DECL|macro|__NR_osf_pathconf
+mdefine_line|#define __NR_osf_pathconf&t;247&t;/* not implemented */
+DECL|macro|__NR_osf_fpathconf
+mdefine_line|#define __NR_osf_fpathconf&t;248&t;/* not implemented */
+DECL|macro|__NR_osf_uswitch
+mdefine_line|#define __NR_osf_uswitch&t;250&t;/* not implemented */
+DECL|macro|__NR_osf_usleep_thread
+mdefine_line|#define __NR_osf_usleep_thread&t;251
+DECL|macro|__NR_osf_audcntl
+mdefine_line|#define __NR_osf_audcntl&t;252&t;/* not implemented */
+DECL|macro|__NR_osf_audgen
+mdefine_line|#define __NR_osf_audgen&t;&t;253&t;/* not implemented */
 DECL|macro|__NR_sysfs
 mdefine_line|#define __NR_sysfs&t;&t;254
+DECL|macro|__NR_osf_subsys_info
+mdefine_line|#define __NR_osf_subsys_info&t;255&t;/* not implemented */
+DECL|macro|__NR_osf_getsysinfo
+mdefine_line|#define __NR_osf_getsysinfo&t;256
+DECL|macro|__NR_osf_setsysinfo
+mdefine_line|#define __NR_osf_setsysinfo&t;257
+DECL|macro|__NR_osf_afs_syscall
+mdefine_line|#define __NR_osf_afs_syscall&t;258&t;/* not implemented */
+DECL|macro|__NR_osf_swapctl
+mdefine_line|#define __NR_osf_swapctl&t;259&t;/* not implemented */
+DECL|macro|__NR_osf_memcntl
+mdefine_line|#define __NR_osf_memcntl&t;260&t;/* not implemented */
+DECL|macro|__NR_osf_fdatasync
+mdefine_line|#define __NR_osf_fdatasync&t;261&t;/* not implemented */
 multiline_comment|/*&n; * Linux-specific system calls begin at 300&n; */
 DECL|macro|__NR_bdflush
 mdefine_line|#define __NR_bdflush&t;&t;300
