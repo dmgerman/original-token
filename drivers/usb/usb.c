@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
 macro_line|#include &lt;linux/kmod.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_USB_DEBUG
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
@@ -38,6 +39,22 @@ macro_line|#else
 l_int|0
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_int
+id|usb_hub_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_hub_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Prototypes for the device driver probing/loading functions&n; */
 r_static
 r_void
@@ -8631,6 +8648,77 @@ id|usb_bus_list
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Init&n; */
+DECL|function|usb_init
+r_static
+r_int
+id|__init
+id|usb_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|usb_major_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|usbdevfs_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|usb_hub_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Cleanup&n; */
+DECL|function|usb_exit
+r_static
+r_void
+id|__exit
+id|usb_exit
+c_func
+(paren
+r_void
+)paren
+(brace
+id|usb_major_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|usbdevfs_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|usb_hub_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|variable|usb_init
+id|module_init
+c_func
+(paren
+id|usb_init
+)paren
+suffix:semicolon
+DECL|variable|usb_exit
+id|module_exit
+c_func
+(paren
+id|usb_exit
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * USB may be built into the kernel or be built as modules.&n; * If the USB core [and maybe a host controller driver] is built&n; * into the kernel, and other device drivers are built as modules,&n; * then these symbols need to be exported for the modules to use.&n; */
 DECL|variable|usb_ifnum_to_if
 id|EXPORT_SYMBOL

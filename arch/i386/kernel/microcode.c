@@ -626,7 +626,7 @@ op_ne
 id|X86_VENDOR_INTEL
 op_logical_or
 id|c-&gt;x86
-OL
+op_ne
 l_int|6
 )paren
 (brace

@@ -346,12 +346,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|test_mda_b
 r_static

@@ -378,6 +378,28 @@ id|page
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* Neither can we invalidate something in use.. */
+r_if
+c_cond
+(paren
+id|page_count
+c_func
+(paren
+id|page
+)paren
+op_ne
+l_int|1
+)paren
+(brace
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|__lru_cache_del
 c_func
 (paren
@@ -473,6 +495,7 @@ op_star
 id|page
 )paren
 (brace
+multiline_comment|/* Leave it on the LRU if it gets converted into anonymous buffers */
 r_if
 c_cond
 (paren
@@ -495,6 +518,12 @@ id|page
 suffix:semicolon
 multiline_comment|/*&n;&t; * We remove the page from the page cache _after_ we have&n;&t; * destroyed all buffer-cache references to it. Otherwise some&n;&t; * other process might think this inode page is not in the&n;&t; * page cache and creates a buffer-cache alias to it causing&n;&t; * all sorts of fun problems ...  &n;&t; */
 id|ClearPageDirty
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|ClearPageUptodate
 c_func
 (paren
 id|page

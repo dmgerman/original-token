@@ -6,6 +6,14 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/sigcontext.h&gt;
 macro_line|#include &lt;asm/user.h&gt;
+r_extern
+r_void
+id|init_fpu
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * FPU lazy state save handling...&n; */
 r_extern
 r_void

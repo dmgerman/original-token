@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.98 2000/08/16 12:33:00 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.99 2000/10/17 16:20:33 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20348,18 +20348,49 @@ id|RTCSET
 id|COMPATIBLE_IOCTL
 c_func
 (paren
-id|I2CIOCSADR
+id|ENVCTRL_RD_WARNING_TEMPERATURE
 )paren
 id|COMPATIBLE_IOCTL
 c_func
 (paren
-id|I2CIOCGADR
+id|ENVCTRL_RD_SHUTDOWN_TEMPERATURE
 )paren
 id|COMPATIBLE_IOCTL
 c_func
 (paren
-id|D7SIOCRD
+id|ENVCTRL_RD_CPU_TEMPERATURE
 )paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ENVCTRL_RD_FAN_STATUS
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ENVCTRL_RD_VOLTAGE_STATUS
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ENVCTRL_RD_SCSI_TEMPERATURE
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ENVCTRL_RD_ETHERNET_TEMPERATURE
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ENVCTRL_RD_MTHRBD_TEMPERATURE
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ENVCTRL_RD_CPU_VOLTAGE
+)paren
+multiline_comment|/* COMPATIBLE_IOCTL(D7SIOCRD) same value as ENVCTRL_RD_VOLTAGE_STATUS */
 id|COMPATIBLE_IOCTL
 c_func
 (paren

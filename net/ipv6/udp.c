@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.57 2000/09/18 05:59:48 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.58 2000/10/18 18:04:23 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -4489,7 +4489,7 @@ r_if
 c_cond
 (paren
 id|pos
-OL
+op_le
 id|offset
 )paren
 r_continue

@@ -234,12 +234,6 @@ c_func
 l_string|&quot;done.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|load_mxcsr
-c_func
-(paren
-l_int|0x1f80
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Test for the divl bug.. */
@@ -442,6 +436,10 @@ c_cond
 id|boot_cpu_data.x86_vendor
 op_eq
 id|X86_VENDOR_AMD
+op_logical_and
+id|boot_cpu_data.x86
+op_eq
+l_int|5
 op_logical_and
 id|boot_cpu_data.x86_model
 op_eq

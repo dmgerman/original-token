@@ -185,5 +185,7 @@ id|old_pte
 )paren
 suffix:semicolon
 )brace
+DECL|macro|pte_same
+mdefine_line|#define pte_same(A,B)&t;(pte_val(A) == pte_val(B))
 macro_line|#endif /* _ASM_GENERIC_PGTABLE_H */
 eof

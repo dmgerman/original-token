@@ -6494,8 +6494,7 @@ c_func
 id|c
 )paren
 suffix:semicolon
-r_goto
-id|name_decoded
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Names for the Pentium II/Celeron processors &n;&t;&t;&t;   detectable only by also checking the cache size.&n;&t;&t;&t;   Dixon is NOT a Celeron. */
@@ -7066,7 +7065,7 @@ id|p
 comma
 l_string|&quot;processor&bslash;t: %d&bslash;n&quot;
 l_string|&quot;vendor_id&bslash;t: %s&bslash;n&quot;
-l_string|&quot;cpu family&bslash;t: %c&bslash;n&quot;
+l_string|&quot;cpu family&bslash;t: %d&bslash;n&quot;
 l_string|&quot;model&bslash;t&bslash;t: %d&bslash;n&quot;
 l_string|&quot;model name&bslash;t: %s&bslash;n&quot;
 comma
@@ -7083,8 +7082,6 @@ suffix:colon
 l_string|&quot;unknown&quot;
 comma
 id|c-&gt;x86
-op_plus
-l_char|&squot;0&squot;
 comma
 id|c-&gt;x86_model
 comma

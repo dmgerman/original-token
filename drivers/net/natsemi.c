@@ -1,5 +1,5 @@
 multiline_comment|/* natsemi.c: A Linux PCI Ethernet driver for the NatSemi DP83810 series. */
-multiline_comment|/*&n;&t;Written/copyright 1999-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.  License for under other terms may be&n;&t;available.  Contact the original author for details.&n;&n;&t;The original author may be reached as becker@scyld.com, or at&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Support information and updates available at&n;&t;http://www.scyld.com/network/netsemi.html&n;&n;&n;&t;Linux kernel modifications:&n;&n;&t;Version 1.0.1:&n;&t;&t;- Spinlock fixes&n;&t;&t;- Bug fixes and better intr performance (Tjeerd)&n;&n;*/
+multiline_comment|/*&n;&t;Written/copyright 1999-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.  License for under other terms may be&n;&t;available.  Contact the original author for details.&n;&n;&t;The original author may be reached as becker@scyld.com, or at&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Support information and updates available at&n;&t;http://www.scyld.com/network/netsemi.html&n;&n;&n;&t;Linux kernel modifications:&n;&n;&t;Version 1.0.1:&n;&t;&t;- Spinlock fixes&n;&t;&t;- Bug fixes and better intr performance (Tjeerd)&n;&t;Version 1.0.2:&n;&t;&t;- Now reads correct MAC address from eeprom&n;&n;*/
 multiline_comment|/* These identify the driver base version and may not be removed. */
 DECL|variable|version1
 r_static
@@ -29,7 +29,7 @@ id|version3
 (braket
 )braket
 op_assign
-l_string|&quot;  (unofficial 2.4.x kernel port, version 1.0.1, September 5, 2000 Jeff Garzik, Tjeerd Mulder)&bslash;n&quot;
+l_string|&quot;  (unofficial 2.4.x kernel port, version 1.0.2, October 6, 2000 Jeff Garzik, Tjeerd Mulder)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* Updated to recommendations in pci-skeleton v2.03. */
 multiline_comment|/* Automatically extracted configuration info:&n;probe-func: natsemi_probe&n;config-in: tristate &squot;National Semiconductor DP83810 series PCI Ethernet support&squot; CONFIG_NATSEMI&n;&n;c-help-name: National Semiconductor DP83810 series PCI Ethernet support&n;c-help-symbol: CONFIG_NATSEMI&n;c-help: This driver is for the National Semiconductor DP83810 series,&n;c-help: including the 83815 chip.&n;c-help: More specific information and updates are available from &n;c-help: http://www.scyld.com/network/natsemi.html&n;*/
@@ -1445,18 +1445,34 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(paren
-(paren
-id|u16
-op_star
-)paren
-id|dev-&gt;dev_addr
-)paren
-(braket
-id|i
-)braket
+(brace
+multiline_comment|/* weird organization */
+r_int
+r_int
+id|a
+suffix:semicolon
+id|a
 op_assign
-id|be16_to_cpu
+(paren
+id|le16_to_cpu
+c_func
+(paren
+id|eeprom_read
+c_func
+(paren
+id|ioaddr
+comma
+id|i
+op_plus
+l_int|6
+)paren
+)paren
+op_rshift
+l_int|15
+)paren
+op_plus
+(paren
+id|le16_to_cpu
 c_func
 (paren
 id|eeprom_read
@@ -1469,7 +1485,24 @@ op_plus
 l_int|7
 )paren
 )paren
+op_lshift
+l_int|1
+)paren
 suffix:semicolon
+(paren
+(paren
+id|u16
+op_star
+)paren
+id|dev-&gt;dev_addr
+)paren
+(braket
+id|i
+)braket
+op_assign
+id|a
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -1966,11 +1999,12 @@ c_func
 id|ee_addr
 )paren
 suffix:semicolon
+multiline_comment|/* data bits are LSB first */
 id|retval
 op_assign
 (paren
 id|retval
-op_lshift
+op_rshift
 l_int|1
 )paren
 op_or
@@ -1986,7 +2020,7 @@ id|EE_DataOut
 )paren
 ques
 c_cond
-l_int|1
+l_int|0x8000
 suffix:colon
 l_int|0
 )paren

@@ -205,6 +205,15 @@ id|page
 r_goto
 id|out_failed
 suffix:semicolon
+multiline_comment|/* From this point on, the odds are that we&squot;re going to&n;&t; * nuke this pte, so read and clear the pte.  This hook&n;&t; * is needed on CPUs which update the accessed and dirty&n;&t; * bits in hardware.&n;&t; */
+id|pte
+op_assign
+id|ptep_get_and_clear
+c_func
+(paren
+id|page_table
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Is the page already in the swap cache? If so, then&n;&t; * we can just drop our reference to it without doing&n;&t; * any IO - it&squot;s already up-to-date on disk.&n;&t; *&n;&t; * Return 0, as we didn&squot;t actually free any real&n;&t; * memory, and we should just continue our scan.&n;&t; */
 r_if
 c_cond
@@ -224,34 +233,6 @@ id|swap_duplicate
 c_func
 (paren
 id|entry
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte_dirty
-c_func
-(paren
-id|pte
-)paren
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte_write
-c_func
-(paren
-id|pte
-)paren
-)paren
-id|BUG
-c_func
-(paren
 )paren
 suffix:semicolon
 id|set_pte
@@ -301,15 +282,6 @@ r_goto
 id|out_failed
 suffix:semicolon
 )brace
-multiline_comment|/* From this point on, the odds are that we&squot;re going to&n;&t; * nuke this pte, so read and clear the pte.  This hook&n;&t; * is needed on CPUs which update the accessed and dirty&n;&t; * bits in hardware.&n;&t; */
-id|pte
-op_assign
-id|ptep_get_and_clear
-c_func
-(paren
-id|page_table
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Is it a clean page? Then it must be recoverable&n;&t; * by just paging it in again, and we can just drop&n;&t; * it..&n;&t; *&n;&t; * However, this won&squot;t actually free any real&n;&t; * memory, as the page will just be in the page cache&n;&t; * somewhere, and as such we should just continue&n;&t; * our scan.&n;&t; *&n;&t; * Basically, this just makes it possible for us to do&n;&t; * some real work in the future in &quot;refill_inactive()&quot;.&n;&t; */
 r_if
 c_cond
@@ -1033,7 +1005,11 @@ c_cond
 (paren
 id|vma-&gt;vm_flags
 op_amp
+(paren
 id|VM_LOCKED
+op_or
+id|VM_RESERVED
+)paren
 )paren
 r_return
 l_int|0

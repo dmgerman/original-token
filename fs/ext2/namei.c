@@ -1994,8 +1994,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EIO
+id|err
 suffix:semicolon
 )brace
 id|de

@@ -975,6 +975,11 @@ id|NET_TCP_ADV_WIN_SCALE
 op_assign
 l_int|87
 comma
+DECL|enumerator|NET_IPV4_NONLOCAL_BIND
+id|NET_IPV4_NONLOCAL_BIND
+op_assign
+l_int|88
+comma
 )brace
 suffix:semicolon
 r_enum

@@ -2725,16 +2725,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Our first FPU usage, clean the chip.&n;&t;&t; */
-id|__asm__
+id|init_fpu
 c_func
 (paren
-l_string|&quot;fninit&quot;
 )paren
-suffix:semicolon
-id|current-&gt;used_math
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 id|current-&gt;flags

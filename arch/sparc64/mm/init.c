@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.156 2000/09/21 06:34:48 anton Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.157 2000/10/19 00:49:52 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

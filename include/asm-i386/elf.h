@@ -61,7 +61,7 @@ DECL|macro|ELF_HWCAP
 mdefine_line|#define ELF_HWCAP&t;(boot_cpu_data.x86_capability)
 multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo.&n;&n;   For the moment, we have only optimizations for the Intel generations,&n;   but that could change... */
 DECL|macro|ELF_PLATFORM
-mdefine_line|#define ELF_PLATFORM  (&quot;i386&bslash;0i486&bslash;0i586&bslash;0i686&quot;+((boot_cpu_data.x86-3)*5))
+mdefine_line|#define ELF_PLATFORM  (&quot;i386&bslash;0i486&bslash;0i586&bslash;0i686&quot;+(((boot_cpu_data.x86&gt;6?6:boot_cpu_data.x86)-3)*5))
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
 mdefine_line|#define SET_PERSONALITY(ex, ibcs2) set_personality((ibcs2)?PER_SVR4:PER_LINUX)
