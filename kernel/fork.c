@@ -675,7 +675,7 @@ id|KERNEL_DS
 suffix:semicolon
 id|p-&gt;tss.fs
 op_assign
-id|KERNEL_DS
+id|USER_DS
 suffix:semicolon
 id|p-&gt;tss.gs
 op_assign
