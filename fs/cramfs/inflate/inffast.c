@@ -27,9 +27,9 @@ mdefine_line|#define GRABBITS(j) {while(k&lt;(j)){b|=((uLong)NEXTBYTE)&lt;&lt;k;
 DECL|macro|UNGRAB
 mdefine_line|#define UNGRAB {c=z-&gt;avail_in-n;c=(k&gt;&gt;3)&lt;c?k&gt;&gt;3:c;n+=c;p-=c;k-=c&lt;&lt;3;}
 multiline_comment|/* Called with number of bytes left to write in window at least 258&n;   (the maximum string length) and number of input bytes available&n;   at least ten.  The ten bytes are six bytes for the longest length/&n;   distance pair plus four bytes for overloading the bit buffer. */
-DECL|function|inflate_fast
+DECL|function|cramfs_inflate_fast
 r_int
-id|inflate_fast
+id|cramfs_inflate_fast
 c_func
 (paren
 id|bl
@@ -127,14 +127,14 @@ id|LOAD
 multiline_comment|/* initialize masks */
 id|ml
 op_assign
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|bl
 )braket
 suffix:semicolon
 id|md
 op_assign
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|bd
 )braket
@@ -227,7 +227,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|e
 )braket
@@ -301,7 +301,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|e
 )braket
@@ -478,7 +478,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|e
 )braket
@@ -545,7 +545,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|e
 )braket

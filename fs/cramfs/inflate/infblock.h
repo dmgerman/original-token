@@ -13,7 +13,7 @@ suffix:semicolon
 r_extern
 id|inflate_blocks_statef
 op_star
-id|inflate_blocks_new
+id|cramfs_inflate_blocks_new
 id|OF
 c_func
 (paren
@@ -33,7 +33,7 @@ suffix:semicolon
 multiline_comment|/* window size */
 r_extern
 r_int
-id|inflate_blocks
+id|cramfs_inflate_blocks
 id|OF
 c_func
 (paren
@@ -50,7 +50,7 @@ suffix:semicolon
 multiline_comment|/* initial return code */
 r_extern
 r_void
-id|inflate_blocks_reset
+id|cramfs_inflate_blocks_reset
 id|OF
 c_func
 (paren
@@ -68,7 +68,7 @@ suffix:semicolon
 multiline_comment|/* check value on output */
 r_extern
 r_int
-id|inflate_blocks_free
+id|cramfs_inflate_blocks_free
 id|OF
 c_func
 (paren
@@ -82,7 +82,7 @@ id|z_streamp
 suffix:semicolon
 r_extern
 r_void
-id|inflate_set_dictionary
+id|cramfs_inflate_set_dictionary
 id|OF
 c_func
 (paren

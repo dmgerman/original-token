@@ -119,14 +119,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; *&t;I2O must come before block and char as the I2O layer may&n;&t; *&t;in future claim devices that block/char most not touch.&n;&t; */
-macro_line|#ifdef CONFIG_I2O
-id|i2o_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|chr_dev_init
 c_func
 (paren
@@ -142,6 +134,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_I2O
+id|i2o_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_DAC960
 id|DAC960_Initialize
 c_func

@@ -497,6 +497,20 @@ id|SECTOR_SIZE
 op_star
 id|sbi-&gt;cluster_size
 suffix:semicolon
+multiline_comment|/* &n;&t; * This protects against truncating a file bigger than it was then&n;&t; * trying to write into the hole.&n;&t; */
+r_if
+c_cond
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|mmu_private
+OG
+id|inode-&gt;i_size
+)paren
 id|MSDOS_I
 c_func
 (paren

@@ -1101,7 +1101,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* mca_handle_nmi */
 multiline_comment|/*--------------------------------------------------------------------*/
-multiline_comment|/**&n; *&t;mca_find_adapter - scan for adapters&n; *&t;@id:&t;MCA identification to search for&n; *&t;@start:&t;Starting slot&n; *&n; *&t;Search the MCA configuration for adapters matching the 16bit&n; *&t;ID given. The first time it should be called with start as zero&n; *&t;and then further calls made passing the return value of the&n; *&t;previous call until MCA_NOTFOUND is returned.&n; *&n; *&t;Disabled adapters are not reported.&n; */
+multiline_comment|/**&n; *&t;mca_find_adapter - scan for adapters&n; *&t;@id:&t;MCA identification to search for&n; *&t;@start:&t;starting slot&n; *&n; *&t;Search the MCA configuration for adapters matching the 16bit&n; *&t;ID given. The first time it should be called with start as zero&n; *&t;and then further calls made passing the return value of the&n; *&t;previous call until %MCA_NOTFOUND is returned.&n; *&n; *&t;Disabled adapters are not reported.&n; */
 DECL|function|mca_find_adapter
 r_int
 id|mca_find_adapter
@@ -1194,7 +1194,7 @@ id|mca_find_adapter
 )paren
 suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
-multiline_comment|/**&n; *&t;mca_find_unused_adapter - scan for unused adapters&n; *&t;@id:&t;MCA identification to search for&n; *&t;@start:&t;Starting slot&n; *&n; *&t;Search the MCA configuration for adapters matching the 16bit&n; *&t;ID given. The first time it should be called with start as zero&n; *&t;and then further calls made passing the return value of the&n; *&t;previous call until MCA_NOTFOUND is returned.&n; *&n; *&t;Adapters that have been claimed by drivers and those that&n; *&t;are disabled are not reported. This function thus allows a driver&n; *&t;to scan for further cards when some may already be driven.&n; */
+multiline_comment|/**&n; *&t;mca_find_unused_adapter - scan for unused adapters&n; *&t;@id:&t;MCA identification to search for&n; *&t;@start:&t;starting slot&n; *&n; *&t;Search the MCA configuration for adapters matching the 16bit&n; *&t;ID given. The first time it should be called with start as zero&n; *&t;and then further calls made passing the return value of the&n; *&t;previous call until %MCA_NOTFOUND is returned.&n; *&n; *&t;Adapters that have been claimed by drivers and those that&n; *&t;are disabled are not reported. This function thus allows a driver&n; *&t;to scan for further cards when some may already be driven.&n; */
 DECL|function|mca_find_unused_adapter
 r_int
 id|mca_find_unused_adapter
@@ -1890,7 +1890,7 @@ c_func
 id|mca_set_adapter_name
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;mca_set_adapter_procfn - Set the /proc callback&n; *&t;@slot: slot to configure&n; *&t;@procfn: callback function to call for /proc &n; *&t;@dev: device information passed to the callback&n; *&n; *&t;This sets up an information callback for /proc/mca/slot?.  The&n; *&t;function is called with the buffer, slot, and device pointer (or&n; *&t;some equally informative context information, or nothing, if you&n; *&t;prefer), and is expected to put useful information into the&n; *&t;buffer.  The adapter name, id, and POS registers get printed&n; * &t;before this is called though, so don&squot;t do it again.&n; *&n; *&t;This should be called with a NULL procfn when a module&n; *&t;unregisters, thus preventing kernel crashes and other such&n; *&t;nastiness.&n; */
+multiline_comment|/**&n; *&t;mca_set_adapter_procfn - Set the /proc callback&n; *&t;@slot: slot to configure&n; *&t;@procfn: callback function to call for /proc &n; *&t;@dev: device information passed to the callback&n; *&n; *&t;This sets up an information callback for /proc/mca/slot?.  The&n; *&t;function is called with the buffer, slot, and device pointer (or&n; *&t;some equally informative context information, or nothing, if you&n; *&t;prefer), and is expected to put useful information into the&n; *&t;buffer.  The adapter name, ID, and POS registers get printed&n; * &t;before this is called though, so don&squot;t do it again.&n; *&n; *&t;This should be called with a %NULL @procfn when a module&n; *&t;unregisters, thus preventing kernel crashes and other such&n; *&t;nastiness.&n; */
 DECL|function|mca_set_adapter_procfn
 r_void
 id|mca_set_adapter_procfn

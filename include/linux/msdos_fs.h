@@ -1506,14 +1506,6 @@ id|fat_esc2uni
 suffix:semicolon
 multiline_comment|/* fatfs_syms.c */
 r_extern
-r_int
-id|init_fat_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|cleanup_fat_fs
 c_func

@@ -316,6 +316,21 @@ comma
 id|__kernel_size_t
 )paren
 suffix:semicolon
+r_extern
+r_void
+op_star
+id|memchr
+c_func
+(paren
+r_const
+r_void
+op_star
+comma
+r_int
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Include machine specific inline routines&n; */
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#ifdef __cplusplus

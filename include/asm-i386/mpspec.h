@@ -5,6 +5,9 @@ multiline_comment|/*&n; * Structure definitions for SMP machines following the&n
 multiline_comment|/*&n; * This tag identifies where the SMP configuration&n; * information is. &n; */
 DECL|macro|SMP_MAGIC_IDENT
 mdefine_line|#define SMP_MAGIC_IDENT&t;((&squot;_&squot;&lt;&lt;24)|(&squot;P&squot;&lt;&lt;16)|(&squot;M&squot;&lt;&lt;8)|&squot;_&squot;)
+multiline_comment|/*&n; * a maximum of 16 APICs with the current APIC ID architecture.&n; */
+DECL|macro|MAX_APICS
+mdefine_line|#define MAX_APICS 16
 DECL|struct|intel_mp_floating
 r_struct
 id|intel_mp_floating
@@ -422,6 +425,9 @@ id|MP_BUS_EISA
 comma
 DECL|enumerator|MP_BUS_PCI
 id|MP_BUS_PCI
+comma
+DECL|enumerator|MP_BUS_MCA
+id|MP_BUS_MCA
 )brace
 suffix:semicolon
 r_extern
@@ -474,7 +480,7 @@ r_extern
 r_int
 id|apic_version
 (braket
-id|NR_CPUS
+id|MAX_APICS
 )braket
 suffix:semicolon
 r_extern

@@ -445,7 +445,7 @@ l_int|4
 comma
 l_int|0
 comma
-l_string|&quot;Texas Instruments, Inc. - SuperSparc 50&quot;
+l_string|&quot;Texas Instruments, Inc. - SuperSparc-(II)&quot;
 )brace
 comma
 multiline_comment|/* SparcClassic  --  borned STP1010TAB-50*/

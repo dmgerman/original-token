@@ -11261,7 +11261,6 @@ op_star
 )paren
 id|bp-&gt;next
 )paren
-suffix:semicolon
 (brace
 id|sprintf
 (paren

@@ -40,6 +40,28 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_LVM_MODULE
+r_extern
+r_void
+(paren
+op_star
+id|lvm_hd_name_ptr
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|variable|lvm_hd_name_ptr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|lvm_hd_name_ptr
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|console_loglevel
@@ -1178,6 +1200,13 @@ c_func
 id|page_symlink_inode_operations
 )paren
 suffix:semicolon
+DECL|variable|block_fsync
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|block_fsync
+)paren
+suffix:semicolon
 DECL|variable|block_symlink
 id|EXPORT_SYMBOL
 c_func
@@ -1192,12 +1221,19 @@ c_func
 id|vfs_readdir
 )paren
 suffix:semicolon
-multiline_comment|/* for stackable file systems (lofs, wrapfs, etc.) */
-DECL|variable|add_to_page_cache
+multiline_comment|/* for stackable file systems (lofs, wrapfs, cryptfs, etc.) */
+DECL|variable|default_llseek
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|add_to_page_cache
+id|default_llseek
+)paren
+suffix:semicolon
+DECL|variable|dentry_open
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dentry_open
 )paren
 suffix:semicolon
 DECL|variable|filemap_nopage
@@ -1221,11 +1257,11 @@ c_func
 id|filemap_sync
 )paren
 suffix:semicolon
-DECL|variable|remove_inode_page
+DECL|variable|lock_page
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|remove_inode_page
+id|lock_page
 )paren
 suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
@@ -1377,6 +1413,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|blkdev_open
+)paren
+suffix:semicolon
+DECL|variable|blkdev_close
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|blkdev_close
 )paren
 suffix:semicolon
 DECL|variable|blkdev_get
@@ -2002,6 +2045,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__wake_up
+)paren
+suffix:semicolon
+DECL|variable|wake_up_process
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|wake_up_process
 )paren
 suffix:semicolon
 DECL|variable|sleep_on

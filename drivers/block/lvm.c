@@ -701,7 +701,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|lvm_name
-r_static
 r_const
 r_char
 op_star

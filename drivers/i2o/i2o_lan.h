@@ -1,12 +1,20 @@
-multiline_comment|/*&n; *   &t;i2o_lan.h&t;&t;LAN Class specific definitions&n; *&n; *      I2O LAN CLASS OSM       Prototyping, May 17th 1999&n; *&n; *      (C) Copyright 1999      University of Helsinki,&n; *                              Department of Computer Science&n; *&n; *      This code is still under development / test.&n; *&n; *      Author:         Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;    &n; */
+multiline_comment|/*&n; *   &t;i2o_lan.h&t;&t;&t;I2O LAN Class definitions&n; *&n; *      I2O LAN CLASS OSM       &t;April 3rd 2000&n; *&n; *      (C) Copyright 1999, 2000&t;University of Helsinki,&n; *&t;&t;&t;&t;&t;Department of Computer Science&n; *&n; *      This code is still under development / test.&n; *&n; *&t;Author:&t;&t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Taneli V&#xfffd;h&#xfffd;kangas &lt;Taneli.Vahakangas@cs.Helsinki.FI&gt;&n; */
 macro_line|#ifndef _I2O_LAN_H
 DECL|macro|_I2O_LAN_H
 mdefine_line|#define _I2O_LAN_H
-multiline_comment|/* Tunable parameters first */
-DECL|macro|I2O_BUCKET_COUNT
-mdefine_line|#define I2O_BUCKET_COUNT &t;256
-DECL|macro|I2O_BUCKET_THRESH
-mdefine_line|#define I2O_BUCKET_THRESH&t;18 /* 9 buckets in one message */
+multiline_comment|/* Default values for tunable parameters first */
+DECL|macro|I2O_LAN_MAX_BUCKETS_OUT
+mdefine_line|#define I2O_LAN_MAX_BUCKETS_OUT 256
+DECL|macro|I2O_LAN_BUCKET_THRESH
+mdefine_line|#define I2O_LAN_BUCKET_THRESH&t;18&t;/* 9 buckets in one message */
+DECL|macro|I2O_LAN_RX_COPYBREAK
+mdefine_line|#define I2O_LAN_RX_COPYBREAK&t;200
+DECL|macro|I2O_LAN_TX_TIMEOUT
+mdefine_line|#define I2O_LAN_TX_TIMEOUT &t;(1*HZ)
+DECL|macro|I2O_LAN_TX_BATCH_MODE
+mdefine_line|#define I2O_LAN_TX_BATCH_MODE&t;1&t;/* 1=on, 0=off */
+DECL|macro|I2O_LAN_EVENT_MASK
+mdefine_line|#define I2O_LAN_EVENT_MASK&t;0&t;/* 0=None, 0xFFC00002=All */
 multiline_comment|/* LAN types */
 DECL|macro|I2O_LAN_ETHERNET
 mdefine_line|#define I2O_LAN_ETHERNET&t;0x0030
@@ -186,5 +194,130 @@ DECL|macro|I2O_LAN_EVT_LINK_UP
 mdefine_line|#define I2O_LAN_EVT_LINK_UP&t;&t;0x02
 DECL|macro|I2O_LAN_EVT_MEDIA_CHANGE
 mdefine_line|#define I2O_LAN_EVT_MEDIA_CHANGE &t;0x04
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/fddidevice.h&gt;
+DECL|struct|i2o_lan_local
+r_struct
+id|i2o_lan_local
+(brace
+DECL|member|unit
+id|u8
+id|unit
+suffix:semicolon
+DECL|member|i2o_dev
+r_struct
+id|i2o_device
+op_star
+id|i2o_dev
+suffix:semicolon
+DECL|member|stats
+r_struct
+id|fddi_statistics
+id|stats
+suffix:semicolon
+multiline_comment|/* see also struct net_device_stats */
+DECL|member|type_trans
+r_int
+r_int
+(paren
+op_star
+id|type_trans
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+comma
+r_struct
+id|net_device
+op_star
+)paren
+suffix:semicolon
+DECL|member|buckets_out
+id|atomic_t
+id|buckets_out
+suffix:semicolon
+multiline_comment|/* nbr of unused buckets on DDM */
+DECL|member|tx_out
+id|atomic_t
+id|tx_out
+suffix:semicolon
+multiline_comment|/* outstanding TXes */
+DECL|member|tx_count
+id|u8
+id|tx_count
+suffix:semicolon
+multiline_comment|/* packets in one TX message frame */
+DECL|member|tx_max_out
+id|u16
+id|tx_max_out
+suffix:semicolon
+multiline_comment|/* DDM&squot;s Tx queue len */
+DECL|member|sgl_max
+id|u8
+id|sgl_max
+suffix:semicolon
+multiline_comment|/* max SGLs in one message frame */
+DECL|member|m
+id|u32
+id|m
+suffix:semicolon
+multiline_comment|/* IOP address of msg frame */
+DECL|member|i2o_batch_send_task
+r_struct
+id|tq_struct
+id|i2o_batch_send_task
+suffix:semicolon
+DECL|member|send_active
+r_int
+id|send_active
+suffix:semicolon
+DECL|member|i2o_fbl
+r_struct
+id|sk_buff
+op_star
+op_star
+id|i2o_fbl
+suffix:semicolon
+multiline_comment|/* Free bucket list (to reuse skbs) */
+DECL|member|i2o_fbl_tail
+r_int
+id|i2o_fbl_tail
+suffix:semicolon
+DECL|member|fbl_lock
+id|spinlock_t
+id|fbl_lock
+suffix:semicolon
+DECL|member|tx_lock
+id|spinlock_t
+id|tx_lock
+suffix:semicolon
+multiline_comment|/* LAN OSM configurable parameters are here: */
+DECL|member|max_buckets_out
+id|u16
+id|max_buckets_out
+suffix:semicolon
+multiline_comment|/* max nbr of buckets to send to DDM */
+DECL|member|bucket_thresh
+id|u16
+id|bucket_thresh
+suffix:semicolon
+multiline_comment|/* send more when this many used */
+DECL|member|rx_copybreak
+id|u16
+id|rx_copybreak
+suffix:semicolon
+DECL|member|tx_batch_mode
+id|u8
+id|tx_batch_mode
+suffix:semicolon
+multiline_comment|/* Set when using batch mode sends */
+DECL|member|i2o_event_mask
+id|u32
+id|i2o_event_mask
+suffix:semicolon
+multiline_comment|/* To turn on interesting event flags */
+)brace
+suffix:semicolon
 macro_line|#endif /* _I2O_LAN_H */
 eof

@@ -3759,7 +3759,7 @@ c_func
 (paren
 l_string|&quot;smp_affinity&quot;
 comma
-l_int|0700
+l_int|0600
 comma
 id|irq_dir
 (braket
@@ -3840,7 +3840,7 @@ c_func
 (paren
 l_string|&quot;prof_cpu_mask&quot;
 comma
-l_int|0700
+l_int|0600
 comma
 id|root_irq_dir
 )paren

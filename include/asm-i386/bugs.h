@@ -3,8 +3,6 @@ multiline_comment|/*&n; * This is included by init/main.c to check for architect
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
-DECL|macro|CONFIG_BUGi386
-mdefine_line|#define CONFIG_BUGi386
 DECL|function|no_halt
 r_static
 r_int
@@ -1226,7 +1224,7 @@ r_void
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * Check wether we are able to run this kernel safely on SMP.&n; *&n; * - In order to run on a i386, we need to be compiled for i386&n; *   (for due to lack of &quot;invlpg&quot; and working WP on a i386)&n; * - In order to run on anything without a TSC, we need to be&n; *   compiled for a i486.&n; * - In order to work on a Pentium/SMP machine, we need to be&n; *   compiled for a Pentium or lower, as a PPro config implies&n; *   a properly working local APIC without the need to do extra&n; *   reads from the APIC.&n;*/
+multiline_comment|/*&n; * Check whether we are able to run this kernel safely on SMP.&n; *&n; * - In order to run on a i386, we need to be compiled for i386&n; *   (for due to lack of &quot;invlpg&quot; and working WP on a i386)&n; * - In order to run on anything without a TSC, we need to be&n; *   compiled for a i486.&n; * - In order to support the local APIC on a buggy Pentium machine,&n; *   we need to be compiled with CONFIG_X86_GOOD_APIC disabled,&n; *   which happens implicitly if compiled for a Pentium or lower&n; *   (unless an advanced selection of CPU features is used) as an&n; *   otherwise config implies a properly working local APIC without&n; *   the need to do extra reads from the APIC.&n;*/
 DECL|function|check_config
 r_static
 r_void
@@ -1283,21 +1281,41 @@ l_string|&quot;Kernel compiled for PPro+, requires PGE feature!&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * If we were told we had a good APIC for SMP, we&squot;d better be a PPro&n; */
-macro_line|#if defined(CONFIG_X86_GOOD_APIC) &amp;&amp; defined(CONFIG_SMP)
+multiline_comment|/*&n; * If we were told we had a good local APIC, check for buggy Pentia,&n; * i.e. all B steppings and the C2 stepping of P54C when using their&n; * integrated APIC (see 11AP erratum in &quot;Pentium Processor&n; * Specification Update&quot;).&n; */
+macro_line|#if defined(CONFIG_X86_LOCAL_APIC) &amp;&amp; defined(CONFIG_X86_GOOD_APIC)
 r_if
 c_cond
 (paren
-id|smp_found_config
+id|boot_cpu_data.x86_vendor
+op_eq
+id|X86_VENDOR_INTEL
+op_logical_and
+id|boot_cpu_data.x86_capability
+op_amp
+id|X86_FEATURE_APIC
 op_logical_and
 id|boot_cpu_data.x86
-op_le
+op_eq
 l_int|5
+op_logical_and
+id|boot_cpu_data.x86_model
+op_eq
+l_int|2
+op_logical_and
+(paren
+id|boot_cpu_data.x86_mask
+OL
+l_int|6
+op_logical_or
+id|boot_cpu_data.x86_mask
+op_eq
+l_int|11
+)paren
 )paren
 id|panic
 c_func
 (paren
-l_string|&quot;Kernel compiled for PPro+, assumes local APIC without read-before-write bug&quot;
+l_string|&quot;Kernel compiled for PPro+, assumes a local APIC without the read-before-write bug!&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -207,7 +207,7 @@ id|inode
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * dput&n; *&n; * This is complicated by the fact that we do not want to put&n; * dentries that are no longer on any hash chain on the unused&n; * list: we&squot;d much rather just get rid of them immediately.&n; *&n; * However, that implies that we have to traverse the dentry&n; * tree upwards to the parents which might _also_ now be&n; * scheduled for deletion (it may have been only waiting for&n; * its last child to go away).&n; *&n; * This tail recursion is done by hand as we don&squot;t want to depend&n; * on the compiler to always get this right (gcc generally doesn&squot;t).&n; * Real recursion would eat up our stack space.&n; */
+multiline_comment|/* &n; * This is dput&n; *&n; * This is complicated by the fact that we do not want to put&n; * dentries that are no longer on any hash chain on the unused&n; * list: we&squot;d much rather just get rid of them immediately.&n; *&n; * However, that implies that we have to traverse the dentry&n; * tree upwards to the parents which might _also_ now be&n; * scheduled for deletion (it may have been only waiting for&n; * its last child to go away).&n; *&n; * This tail recursion is done by hand as we don&squot;t want to depend&n; * on the compiler to always get this right (gcc generally doesn&squot;t).&n; * Real recursion would eat up our stack space.&n; */
 multiline_comment|/*&n; * dput - release a dentry&n; * @dentry: dentry to release &n; *&n; * Release a dentry. This will drop the usage count and if appropriate&n; * call the dentry unlink method as well as removing it from the queues and&n; * releasing its resources. If the parent dentries were scheduled for release&n; * they too may now get deleted.&n; */
 DECL|function|dput
 r_void
@@ -1408,7 +1408,7 @@ suffix:semicolon
 )brace
 DECL|macro|NAME_ALLOC_LEN
 mdefine_line|#define NAME_ALLOC_LEN(len)&t;((len+16) &amp; ~15)
-multiline_comment|/**&n; * d_alloc&t;-&t;allocate a dcache entry&n; * @parent: parent of entry to allocate&n; * @name: qstr of the name&n; *&n; * Allocates a dentry. It returns NULL if there is insufficient memory&n; * available. On a success the dentry is returned. The name passed in is&n; * copied and the copy passed in may be reused after this call.&n; */
+multiline_comment|/**&n; * d_alloc&t;-&t;allocate a dcache entry&n; * @parent: parent of entry to allocate&n; * @name: qstr of the name&n; *&n; * Allocates a dentry. It returns %NULL if there is insufficient memory&n; * available. On a success the dentry is returned. The name passed in is&n; * copied and the copy passed in may be reused after this call.&n; */
 DECL|function|d_alloc
 r_struct
 id|dentry
@@ -1639,7 +1639,7 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * d_instantiate - fill in inode information for a dentry&n; * @entry: dentry to complete&n; * @inode: inode to attacheto this dentry&n; *&n; * Fill in inode information in the entry.&n; *&n; * This turns negative dentries into productive full members&n; * of society.&n; *&n; * NOTE! This assumes that the inode count has been incremented&n; * (or otherwise set) by the caller to indicate that it is now&n; * in use by the dcache..&n; */
+multiline_comment|/**&n; * d_instantiate - fill in inode information for a dentry&n; * @entry: dentry to complete&n; * @inode: inode to attach to this dentry&n; *&n; * Fill in inode information in the entry.&n; *&n; * This turns negative dentries into productive full members&n; * of society.&n; *&n; * NOTE! This assumes that the inode count has been incremented&n; * (or otherwise set) by the caller to indicate that it is now&n; * in use by the dcache.&n; */
 DECL|function|d_instantiate
 r_void
 id|d_instantiate
@@ -1676,7 +1676,7 @@ op_assign
 id|inode
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * d_alloc_root - allocate root dentry&n; * @root_inode: inode to allocate the root for&n; *&n; * Allocate a root (&squot;/&squot;) dentry for the inode given. The inode is&n; * instantiated and returned. NULL is returned if there is insufficient&n; * memory or the inode passed is NULL.&n; */
+multiline_comment|/**&n; * d_alloc_root - allocate root dentry&n; * @root_inode: inode to allocate the root for&n; *&n; * Allocate a root (&quot;/&quot;) dentry for the inode given. The inode is&n; * instantiated and returned. %NULL is returned if there is insufficient&n; * memory or the inode passed is %NULL.&n; */
 DECL|function|d_alloc_root
 r_struct
 id|dentry
@@ -1808,7 +1808,7 @@ id|D_HASHMASK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * d_lookup - search for a dentry&n; * @parent: parent dentry&n; * @name: qstr of name we wish to find&n; *&n; * Searches the children of the parent dentry for the name in question. If&n; * the dentry is found its reference count is incremented and the dentry&n; * is returned. The caller must use d_put to free the entry when it has&n; * finished using it. NULL is returned on failure.&n; */
+multiline_comment|/**&n; * d_lookup - search for a dentry&n; * @parent: parent dentry&n; * @name: qstr of name we wish to find&n; *&n; * Searches the children of the parent dentry for the name in question. If&n; * the dentry is found its reference count is incremented and the dentry&n; * is returned. The caller must use d_put to free the entry when it has&n; * finished using it. %NULL is returned on failure.&n; */
 DECL|function|d_lookup
 r_struct
 id|dentry
@@ -2200,7 +2200,7 @@ id|dentry
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * d_rehash&t;- add an entry back to the hash&n; * @entry: dentry to add to the hash&n; *&n; * Adds a dentry to the hash according to its name&n; */
+multiline_comment|/**&n; * d_rehash&t;- add an entry back to the hash&n; * @entry: dentry to add to the hash&n; *&n; * Adds a dentry to the hash according to its name.&n; */
 DECL|function|d_rehash
 r_void
 id|d_rehash
@@ -2457,7 +2457,7 @@ id|dentry-&gt;d_parent-&gt;d_subdirs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * d_path - return the path of a dentry&n; * @dentry: dentry to report&n; * @buffer: buffer to return value in&n; * @buflen: buffer length&n; *&n; * Convert a dentry into an ascii path name. If the entry has been deleted&n; * the string &squot; (deleted)&squot; is appended. Note that this is ambiguous. Returns&n; * the buffer.&n; *&n; * &quot;buflen&quot; should be PAGE_SIZE or more.&n; */
+multiline_comment|/**&n; * d_path - return the path of a dentry&n; * @dentry: dentry to report&n; * @buffer: buffer to return value in&n; * @buflen: buffer length&n; *&n; * Convert a dentry into an ASCII path name. If the entry has been deleted&n; * the string &quot; (deleted)&quot; is appended. Note that this is ambiguous. Returns&n; * the buffer.&n; *&n; * &quot;buflen&quot; should be %PAGE_SIZE or more.&n; */
 DECL|function|__d_path
 r_char
 op_star

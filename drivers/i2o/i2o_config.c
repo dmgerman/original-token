@@ -556,6 +556,12 @@ op_assign
 (brace
 id|i2o_cfg_reply
 comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
 l_string|&quot;Configuration&quot;
 comma
 l_int|0
@@ -1663,9 +1669,9 @@ id|res
 )paren
 suffix:semicolon
 r_return
-id|len
+op_minus
+id|EAGAIN
 suffix:semicolon
-multiline_comment|/* -DetailedStatus */
 )brace
 id|put_user
 c_func
@@ -3572,7 +3578,7 @@ id|d-&gt;next
 r_if
 c_cond
 (paren
-id|d-&gt;lct_data-&gt;tid
+id|d-&gt;lct_data.tid
 op_eq
 id|kdesc.tid
 )paren
@@ -4289,7 +4295,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  (C) Copyright 1999 Red Hat Software&quot;
+l_string|&quot;  (C) Copyright 1999 Red Hat Software&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

@@ -71,9 +71,9 @@ l_int|15
 )brace
 suffix:semicolon
 multiline_comment|/*&n;   Notes beyond the 1.93a appnote.txt:&n;&n;   1. Distance pointers never point before the beginning of the output&n;      stream.&n;   2. Distance pointers can point back across blocks, up to 32k away.&n;   3. There is an implied maximum of 7 bits for the bit length table and&n;      15 bits for the actual data.&n;   4. If only one code exists, then it is encoded using one bit.  (Zero&n;      would be more efficient, but perhaps a little confusing.)  If two&n;      codes exist, they are coded using one bit each (0 and 1).&n;   5. There is no way of sending zero distance codes--a dummy must be&n;      sent if there are none.  (History: a pre 2.0 version of PKZIP would&n;      store blocks with no distance codes, but this was discovered to be&n;      too harsh a criterion.)  Valid only for 1.93a.  2.04c does allow&n;      zero distance codes, which is sent as one code of zero bits in&n;      length.&n;   6. There are up to 286 literal/length codes.  Code 256 represents the&n;      end-of-block.  Note however that the static length tree defines&n;      288 codes just to fill out the Huffman codes.  Codes 286 and 287&n;      cannot be used though, since there is no length base or extra bits&n;      defined for them.  Similarily, there are up to 30 distance codes.&n;      However, static trees define 32 codes (all 5 bits) to fill out the&n;      Huffman codes, but the last two had better not show up in the data.&n;   7. Unzip can check dynamic Huffman blocks for complete code sets.&n;      The exception is that a single code would not be complete (see #4).&n;   8. The five bits following the block type is really the number of&n;      literal codes sent minus 257.&n;   9. Length codes 8,16,16 are interpreted as 13 length codes of 8 bits&n;      (1+6+6).  Therefore, to output three times the length, you output&n;      three codes (1+1+1), whereas to output four times the same length,&n;      you only need two codes (1+3).  Hmm.&n;  10. In the tree reconstruction algorithm, Code = Code + Increment&n;      only if BitLength(i) is not zero.  (Pretty obvious.)&n;  11. Correction: 4 Bits: # of Bit Length codes - 4     (4 - 19)&n;  12. Note: length code 284 can represent 227-258, but length code 285&n;      really is 258.  The last length deserves its own, short code&n;      since it gets used a lot in very redundant files.  The length&n;      258 is special since 258 - 3 (the min match length) is 255.&n;  13. The literal/length and distance code bit lengths are read as a&n;      single stream of lengths.  It is possible (and advantageous) for&n;      a repeat code (16, 17, or 18) to go across the boundary between&n;      the two sets of lengths.&n; */
-DECL|function|inflate_blocks_reset
+DECL|function|cramfs_inflate_blocks_reset
 r_void
-id|inflate_blocks_reset
+id|cramfs_inflate_blocks_reset
 c_func
 (paren
 id|s
@@ -113,7 +113,7 @@ id|s-&gt;mode
 op_eq
 id|CODES
 )paren
-id|inflate_codes_free
+id|cramfs_inflate_codes_free
 c_func
 (paren
 id|s-&gt;sub.decode.codes
@@ -168,10 +168,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|inflate_blocks_new
+DECL|function|cramfs_inflate_blocks_new
 id|inflate_blocks_statef
 op_star
-id|inflate_blocks_new
+id|cramfs_inflate_blocks_new
 c_func
 (paren
 id|z
@@ -243,7 +243,7 @@ id|s-&gt;mode
 op_assign
 id|TYPE
 suffix:semicolon
-id|inflate_blocks_reset
+id|cramfs_inflate_blocks_reset
 c_func
 (paren
 id|s
@@ -257,9 +257,9 @@ r_return
 id|s
 suffix:semicolon
 )brace
-DECL|function|inflate_blocks
+DECL|function|cramfs_inflate_blocks
 r_int
-id|inflate_blocks
+id|cramfs_inflate_blocks
 c_func
 (paren
 id|s
@@ -399,7 +399,7 @@ comma
 op_star
 id|td
 suffix:semicolon
-id|inflate_trees_fixed
+id|cramfs_inflate_trees_fixed
 c_func
 (paren
 op_amp
@@ -419,7 +419,7 @@ id|z
 suffix:semicolon
 id|s-&gt;sub.decode.codes
 op_assign
-id|inflate_codes_new
+id|cramfs_inflate_codes_new
 c_func
 (paren
 id|bl
@@ -836,7 +836,7 @@ l_int|7
 suffix:semicolon
 id|t
 op_assign
-id|inflate_trees_bits
+id|cramfs_inflate_trees_bits
 c_func
 (paren
 id|s-&gt;sub.trees.blens
@@ -946,7 +946,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|t
 )braket
@@ -1028,7 +1028,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|i
 )braket
@@ -1177,7 +1177,7 @@ id|s-&gt;sub.trees.table
 suffix:semicolon
 id|t
 op_assign
-id|inflate_trees_dynamic
+id|cramfs_inflate_trees_dynamic
 c_func
 (paren
 l_int|257
@@ -1253,7 +1253,7 @@ c_cond
 (paren
 id|c
 op_assign
-id|inflate_codes_new
+id|cramfs_inflate_codes_new
 c_func
 (paren
 id|bl
@@ -1296,7 +1296,7 @@ c_cond
 (paren
 id|r
 op_assign
-id|inflate_codes
+id|cramfs_inflate_codes
 c_func
 (paren
 id|s
@@ -1310,7 +1310,7 @@ op_ne
 id|Z_STREAM_END
 )paren
 r_return
-id|inflate_flush
+id|cramfs_inflate_flush
 c_func
 (paren
 id|s
@@ -1324,7 +1324,7 @@ id|r
 op_assign
 id|Z_OK
 suffix:semicolon
-id|inflate_codes_free
+id|cramfs_inflate_codes_free
 c_func
 (paren
 id|s-&gt;sub.decode.codes
@@ -1392,9 +1392,9 @@ suffix:semicolon
 id|LEAVE
 )brace
 )brace
-DECL|function|inflate_blocks_free
+DECL|function|cramfs_inflate_blocks_free
 r_int
-id|inflate_blocks_free
+id|cramfs_inflate_blocks_free
 c_func
 (paren
 id|s
@@ -1409,7 +1409,7 @@ id|z_streamp
 id|z
 suffix:semicolon
 (brace
-id|inflate_blocks_reset
+id|cramfs_inflate_blocks_reset
 c_func
 (paren
 id|s
@@ -1423,9 +1423,9 @@ r_return
 id|Z_OK
 suffix:semicolon
 )brace
-DECL|function|inflate_set_dictionary
+DECL|function|cramfs_inflate_set_dictionary
 r_void
-id|inflate_set_dictionary
+id|cramfs_inflate_set_dictionary
 c_func
 (paren
 id|s

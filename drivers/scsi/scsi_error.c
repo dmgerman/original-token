@@ -873,6 +873,10 @@ id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
 suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
+suffix:semicolon
 id|scsi_send_eh_cmnd
 c_func
 (paren
@@ -1072,6 +1076,10 @@ id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCSI_DATA_READ
 suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
 id|scsi_send_eh_cmnd
 c_func
 (paren
@@ -1170,6 +1178,10 @@ suffix:semicolon
 id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
+suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
 suffix:semicolon
 multiline_comment|/*&n;&t; * Hey, we are done.  Let&squot;s look to see what happened.&n;&t; */
 r_return
@@ -1349,6 +1361,14 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_NONE
+suffix:semicolon
 id|scsi_send_eh_cmnd
 c_func
 (paren
@@ -1356,10 +1376,6 @@ id|SCpnt
 comma
 id|SENSE_TIMEOUT
 )paren
-suffix:semicolon
-id|SCpnt-&gt;sc_data_direction
-op_assign
-id|SCSI_DATA_NONE
 suffix:semicolon
 multiline_comment|/* Last chance to have valid sense data */
 r_if
@@ -1451,6 +1467,10 @@ suffix:semicolon
 id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
+suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
 suffix:semicolon
 multiline_comment|/*&n;&t; * Hey, we are done.  Let&squot;s look to see what happened.&n;&t; */
 r_return
@@ -1989,6 +2009,10 @@ suffix:semicolon
 id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
+suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
 suffix:semicolon
 op_star
 id|SClist

@@ -1328,6 +1328,13 @@ comma
 op_star
 id|init
 suffix:semicolon
+r_struct
+id|vfsmount
+op_star
+id|vfsmnt
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n;&t; * Check whether we&squot;re mounted as the root device.&n;&t; * must check like this, because we can be used with initrd&n;&t; */
 r_if
 c_cond
@@ -1339,9 +1346,43 @@ id|ROOT_DEV
 r_goto
 id|out_noroot
 suffix:semicolon
+multiline_comment|/* &n;&t; * lookup_dentry needs a (so far non-existent) root. &n;&t; */
+id|current-&gt;fs-&gt;root
+op_assign
+id|dget
+c_func
+(paren
+id|sb-&gt;s_root
+)paren
+suffix:semicolon
+id|current-&gt;fs-&gt;rootmnt
+op_assign
+id|mntget
+c_func
+(paren
+id|vfsmnt
+)paren
+suffix:semicolon
+id|current-&gt;fs-&gt;pwd
+op_assign
+id|dget
+c_func
+(paren
+id|sb-&gt;s_root
+)paren
+suffix:semicolon
+id|current-&gt;fs-&gt;pwdmnt
+op_assign
+id|mntget
+c_func
+(paren
+id|vfsmnt
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;check_pseudo_root: mounted as root&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1351,12 +1392,6 @@ id|lookup_dentry
 c_func
 (paren
 id|UMSDOS_PSDROOT_NAME
-comma
-id|dget
-c_func
-(paren
-id|sb-&gt;s_root
-)paren
 comma
 l_int|0
 )paren
@@ -1385,6 +1420,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;check_pseudo_root: found %s/%s&bslash;n&quot;
 comma
 id|root-&gt;d_parent-&gt;d_name.name
@@ -1399,12 +1435,6 @@ id|lookup_dentry
 c_func
 (paren
 l_string|&quot;sbin/init&quot;
-comma
-id|dget
-c_func
-(paren
-id|root
-)paren
 comma
 l_int|0
 )paren
@@ -1444,6 +1474,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;check_pseudo_root: found %s/%s, enabling pseudo-root&bslash;n&quot;
 comma
 id|init-&gt;d_parent-&gt;d_name.name

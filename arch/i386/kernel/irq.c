@@ -1498,7 +1498,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Generic enable/disable code: this just calls&n; * down into the PIC-specific version for the actual&n; * hardware disable after having gotten the irq&n; * controller lock. &n; */
-multiline_comment|/**&n; *&t;disable_irq_nosync - disable an irq without waiting&n; *&t;@irq: Interrupt to disable&n; *&n; *&t;Disable the selected interrupt line. Disables of an interrupt&n; *&t;stack. Unlike disable_irq, this function does not ensure existing&n; *&t;instances of the irq handler have completed before returning.&n; *&n; *&t;This function may be called from IRQ context.&n; */
+multiline_comment|/**&n; *&t;disable_irq_nosync - disable an irq without waiting&n; *&t;@irq: Interrupt to disable&n; *&n; *&t;Disable the selected interrupt line. Disables of an interrupt&n; *&t;stack. Unlike disable_irq(), this function does not ensure existing&n; *&t;instances of the IRQ handler have completed before returning.&n; *&n; *&t;This function may be called from IRQ context.&n; */
 DECL|function|disable_irq_nosync
 r_void
 r_inline
@@ -3742,7 +3742,7 @@ c_func
 (paren
 l_string|&quot;smp_affinity&quot;
 comma
-l_int|0700
+l_int|0600
 comma
 id|irq_dir
 (braket
@@ -3823,7 +3823,7 @@ c_func
 (paren
 l_string|&quot;prof_cpu_mask&quot;
 comma
-l_int|0700
+l_int|0600
 comma
 id|root_irq_dir
 )paren

@@ -872,6 +872,10 @@ id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
 suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
+suffix:semicolon
 )brace
 r_switch
 c_cond
@@ -1850,6 +1854,10 @@ id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
 suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
+suffix:semicolon
 id|SCpnt-&gt;result
 op_assign
 l_int|0
@@ -1938,6 +1946,10 @@ suffix:semicolon
 id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
+suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
 suffix:semicolon
 multiline_comment|/*&n;                 * The upper layers assume the lock isn&squot;t held.  We mustn&squot;t&n;                 * disappoint them.  When the new error handling code is in&n;                 * use, the upper code is run from a bottom half handler, so&n;                 * it isn&squot;t an issue.&n;                 */
 id|spin_unlock_irq

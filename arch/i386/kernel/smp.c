@@ -45,162 +45,6 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * the following functions deal with sending IPIs between CPUs.&n; *&n; * We use &squot;broadcast&squot;, CPU-&gt;CPU IPIs and self-IPIs too.&n; */
-DECL|variable|cached_APIC_ICR
-r_static
-r_int
-r_int
-id|cached_APIC_ICR
-suffix:semicolon
-DECL|variable|cached_APIC_ICR2
-r_static
-r_int
-r_int
-id|cached_APIC_ICR2
-suffix:semicolon
-multiline_comment|/*&n; * Caches reserved bits, APIC reads are (mildly) expensive&n; * and force otherwise unnecessary CPU synchronization.&n; *&n; * (We could cache other APIC registers too, but these are the&n; * main ones used in RL.)&n; */
-DECL|macro|slow_ICR
-mdefine_line|#define slow_ICR (apic_read(APIC_ICR) &amp; ~0xFDFFF)
-DECL|macro|slow_ICR2
-mdefine_line|#define slow_ICR2 (apic_read(APIC_ICR2) &amp; 0x00FFFFFF)
-DECL|function|cache_APIC_registers
-r_void
-id|cache_APIC_registers
-(paren
-r_void
-)paren
-(brace
-id|cached_APIC_ICR
-op_assign
-id|slow_ICR
-suffix:semicolon
-id|cached_APIC_ICR2
-op_assign
-id|slow_ICR2
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|__get_ICR
-r_static
-r_inline
-r_int
-r_int
-id|__get_ICR
-(paren
-r_void
-)paren
-(brace
-macro_line|#if FORCE_READ_AROUND_WRITE
-multiline_comment|/*&n;&t; * Wait for the APIC to become ready - this should never occur. It&squot;s&n;&t; * a debugging check really.&n;&t; */
-r_int
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
-id|cfg
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|count
-OL
-l_int|1000
-)paren
-(brace
-id|cfg
-op_assign
-id|slow_ICR
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|cfg
-op_amp
-(paren
-l_int|1
-op_lshift
-l_int|12
-)paren
-)paren
-)paren
-r_return
-id|cfg
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;CPU #%d: ICR still busy [%08x]&bslash;n&quot;
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-id|cfg
-)paren
-suffix:semicolon
-id|irq_err_count
-op_increment
-suffix:semicolon
-id|count
-op_increment
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|10
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;CPU #%d: previous IPI still not cleared after 10mS&bslash;n&quot;
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|cfg
-suffix:semicolon
-macro_line|#else
-r_return
-id|cached_APIC_ICR
-suffix:semicolon
-macro_line|#endif
-)brace
-DECL|function|__get_ICR2
-r_static
-r_inline
-r_int
-r_int
-id|__get_ICR2
-(paren
-r_void
-)paren
-(brace
-macro_line|#if FORCE_READ_AROUND_WRITE
-r_return
-id|slow_ICR2
-suffix:semicolon
-macro_line|#else
-r_return
-id|cached_APIC_ICR2
-suffix:semicolon
-macro_line|#endif
-)brace
-DECL|macro|LOGICAL_DELIVERY
-mdefine_line|#define LOGICAL_DELIVERY 1
 DECL|function|__prepare_ICR
 r_static
 r_inline
@@ -215,31 +59,14 @@ r_int
 id|vector
 )paren
 (brace
-r_int
-r_int
-id|cfg
-suffix:semicolon
-id|cfg
-op_assign
-id|__get_ICR
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cfg
-op_or_assign
-id|APIC_DEST_DM_FIXED
+r_return
+id|APIC_DM_FIXED
 op_or
 id|shortcut
 op_or
 id|vector
-macro_line|#if LOGICAL_DELIVERY
 op_or
 id|APIC_DEST_LOGICAL
-macro_line|#endif
-suffix:semicolon
-r_return
-id|cfg
 suffix:semicolon
 )brace
 DECL|function|__prepare_ICR2
@@ -253,38 +80,12 @@ r_int
 id|mask
 )paren
 (brace
-r_int
-r_int
-id|cfg
-suffix:semicolon
-id|cfg
-op_assign
-id|__get_ICR2
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#if LOGICAL_DELIVERY
-id|cfg
-op_or_assign
-id|SET_APIC_DEST_FIELD
-c_func
-(paren
-id|mask
-)paren
-suffix:semicolon
-macro_line|#else
-id|cfg
-op_or_assign
-id|SET_APIC_DEST_FIELD
-c_func
-(paren
-id|mask
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
-id|cfg
+id|SET_APIC_DEST_FIELD
+c_func
+(paren
+id|mask
+)paren
 suffix:semicolon
 )brace
 DECL|function|__send_IPI_shortcut
@@ -302,28 +103,11 @@ r_int
 id|vector
 )paren
 (brace
+multiline_comment|/*&n;&t; * Subtle. In the case of the &squot;never do double writes&squot; workaround&n;&t; * we have to lock out interrupts to be safe.  As we don&squot;t care&n;&t; * of the value read we use an atomic rmw access to avoid costly&n;&t; * cli/sti.  Otherwise we use an even cheaper single atomic write&n;&t; * to the APIC.&n;&t; */
 r_int
 r_int
 id|cfg
 suffix:semicolon
-multiline_comment|/*&n; * Subtle. In the case of the &squot;never do double writes&squot; workaround we&n; * have to lock out interrupts to be safe. Otherwise it&squot;s just one&n; * single atomic write to the APIC, no need for cli/sti.&n; */
-macro_line|#if FORCE_READ_AROUND_WRITE
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|__save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * No need to touch the target chip field&n;&t; */
 id|cfg
 op_assign
@@ -336,7 +120,7 @@ id|vector
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Send the IPI. The write to APIC_ICR fires this off.&n;&t; */
-id|apic_write
+id|apic_write_around
 c_func
 (paren
 id|APIC_ICR
@@ -344,14 +128,6 @@ comma
 id|cfg
 )paren
 suffix:semicolon
-macro_line|#if FORCE_READ_AROUND_WRITE
-id|__restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|send_IPI_allbutself
 r_static
@@ -437,7 +213,6 @@ r_int
 r_int
 id|cfg
 suffix:semicolon
-macro_line|#if FORCE_READ_AROUND_WRITE
 r_int
 r_int
 id|flags
@@ -453,7 +228,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * prepare target chip field&n;&t; */
 id|cfg
 op_assign
@@ -463,7 +237,7 @@ c_func
 id|mask
 )paren
 suffix:semicolon
-id|apic_write
+id|apic_write_around
 c_func
 (paren
 id|APIC_ICR2
@@ -483,7 +257,7 @@ id|vector
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Send the IPI. The write to APIC_ICR fires this off.&n;&t; */
-id|apic_write
+id|apic_write_around
 c_func
 (paren
 id|APIC_ICR
@@ -491,14 +265,12 @@ comma
 id|cfg
 )paren
 suffix:semicolon
-macro_line|#if FORCE_READ_AROUND_WRITE
 id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Smarter SMP flushing macros. &n; *&t;&t;c/o Linus Torvalds.&n; *&n; *&t;These mean you can really definitely utterly forget about&n; *&t;writing to user space from interrupts. (Its not allowed anyway).&n; *&n; *&t;Optimizations Manfred Spraul &lt;manfreds@colorfullife.com&gt;&n; */
 DECL|variable|flush_cpumask

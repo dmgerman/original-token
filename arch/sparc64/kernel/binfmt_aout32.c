@@ -972,7 +972,7 @@ suffix:semicolon
 multiline_comment|/* OK, This is the point of no return */
 id|current-&gt;personality
 op_assign
-id|PER_LINUX
+id|PER_SUNOS
 suffix:semicolon
 id|current-&gt;mm-&gt;end_code
 op_assign

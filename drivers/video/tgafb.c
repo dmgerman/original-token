@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/video/tgafb.c -- DEC 21030 TGA frame buffer device&n; *&n; *&t;Copyright (C) 1999 Martin Lucina, Tom Zerucha&n; *  &n; *  $Id: tgafb.c,v 1.12 1999/07/01 13:39:23 mato Exp $&n; *&n; *  This driver is partly based on the original TGA framebuffer device, which &n; *  was partly based on the original TGA console driver, which are&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&t;Copyright (C) 1995 Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*&n; *  linux/drivers/video/tgafb.c -- DEC 21030 TGA frame buffer device&n; *&n; *&t;Copyright (C) 1999,2000 Martin Lucina, Tom Zerucha&n; *  &n; *  $Id: tgafb.c,v 1.12.2.3 2000/04/04 06:44:56 mato Exp $&n; *&n; *  This driver is partly based on the original TGA framebuffer device, which &n; *  was partly based on the original TGA console driver, which are&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&t;Copyright (C) 1995 Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register on 24-plane cards?&n; *&n; *&t;- Hardware cursor/other text acceleration methods&n; *&n; *&t;- Some redraws can stall kernel for several seconds&n; *&t;  [This should now be solved by the fast memmove() patch in 2.3.6]&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
@@ -49,7 +50,6 @@ suffix:semicolon
 DECL|variable|default_fontname
 r_static
 r_char
-id|__initdata
 id|default_fontname
 (braket
 l_int|40
@@ -208,25 +208,6 @@ comma
 l_int|0xffffffff
 comma
 l_int|0x00000001
-)brace
-suffix:semicolon
-DECL|variable|bt463_cursor_source
-r_const
-r_int
-r_int
-id|bt463_cursor_source
-(braket
-l_int|4
-)braket
-op_assign
-(brace
-l_int|0xffff0000
-comma
-l_int|0x00000000
-comma
-l_int|0x00000000
-comma
-l_int|0x00000000
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Predefined video modes&n;     *  This is a subset of the standard VESA modes, recalculated from XFree86.&n;     *&n;     *  XXX Should we store these in terms of the encoded par structs? Even better,&n;     *      fbcon should provide a general mechanism for doing something like this.&n;     */
@@ -2149,19 +2130,21 @@ c_cond
 (paren
 id|fb_info.tga_type
 op_eq
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
-multiline_comment|/* 8-plane */
+(brace
 id|fix-&gt;visual
 op_assign
 id|FB_VISUAL_PSEUDOCOLOR
 suffix:semicolon
+)brace
 r_else
-multiline_comment|/* 24-plane or 24plusZ */
+(brace
 id|fix-&gt;visual
 op_assign
 id|FB_VISUAL_TRUECOLOR
 suffix:semicolon
+)brace
 id|fix-&gt;line_length
 op_assign
 id|par-&gt;xres
@@ -2247,7 +2230,7 @@ c_cond
 (paren
 id|fb_info.tga_type
 op_eq
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
 (brace
 r_if
@@ -2470,7 +2453,26 @@ id|par-&gt;vtimings
 op_or_assign
 id|TGA_VERT_POLARITY
 suffix:semicolon
-multiline_comment|/* what about sync on green? */
+r_if
+c_cond
+(paren
+id|var-&gt;sync
+op_amp
+id|FB_SYNC_ON_GREEN
+)paren
+(brace
+id|par-&gt;sync_on_green
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|par-&gt;sync_on_green
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* store other useful values in par */
 id|par-&gt;xres
 op_assign
@@ -2659,6 +2661,17 @@ id|var-&gt;sync
 op_or_assign
 id|FB_SYNC_VERT_HIGH_ACT
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|par-&gt;sync_on_green
+op_eq
+l_int|1
+)paren
+id|var-&gt;sync
+op_or_assign
+id|FB_SYNC_ON_GREEN
+suffix:semicolon
 id|var-&gt;xres_virtual
 op_assign
 id|var-&gt;xres
@@ -2679,7 +2692,7 @@ c_cond
 (paren
 id|fb_info.tga_type
 op_eq
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
 (brace
 id|var-&gt;red.offset
@@ -2697,7 +2710,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* XXX: is this correct? */
 id|var-&gt;red.offset
 op_assign
 l_int|16
@@ -2824,7 +2836,7 @@ c_cond
 (paren
 id|fb_info.tga_type
 op_eq
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
 id|default_var.bits_per_pixel
 op_assign
@@ -2869,8 +2881,6 @@ r_int
 id|i
 comma
 id|j
-comma
-id|temp
 suffix:semicolon
 r_struct
 id|tgafb_par
@@ -2924,16 +2934,17 @@ id|current_par_valid
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* first, disable video timing */
+multiline_comment|/* first, disable video */
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x03
+id|TGA_VALID_VIDEO
+op_or
+id|TGA_VALID_BLANK
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* SCANNING and BLANK */
 multiline_comment|/* write the DEEP register */
 r_while
 c_loop
@@ -3081,15 +3092,23 @@ c_cond
 (paren
 id|fb_info.tga_type
 op_eq
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
 (brace
-multiline_comment|/* 8-plane */
 multiline_comment|/* init BT485 RAMDAC registers */
 id|BT485_WRITE
 c_func
 (paren
 l_int|0xa2
+op_or
+(paren
+id|par-&gt;sync_on_green
+ques
+c_cond
+l_int|0x8
+suffix:colon
+l_int|0x0
+)paren
 comma
 id|BT485_CMD_0
 )paren
@@ -3338,333 +3357,11 @@ id|TGA_RAMDAC_REG
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* initialize RAMDAC cursor colors */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0
-comma
-id|BT485_ADDR_CUR_WRITE
-)paren
-suffix:semicolon
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* overscan WHITE */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* overscan WHITE */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* overscan WHITE */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 1 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 1 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 1 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 2 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 2 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 2 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 3 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 3 BLACK */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_DATA_CUR
-)paren
-suffix:semicolon
-multiline_comment|/* color 3 BLACK */
-multiline_comment|/* initialize RAMDAC cursor RAM */
-id|BT485_WRITE
-c_func
-(paren
-l_int|0x00
-comma
-id|BT485_ADDR_PAL_WRITE
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|tga_font_height_padded
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_for
-c_loop
-(paren
-id|j
-op_assign
-l_int|7
-suffix:semicolon
-id|j
-op_ge
-l_int|0
-suffix:semicolon
-id|j
-op_decrement
-)paren
-(brace
-macro_line|#if 0
-multiline_comment|/* note that this is for a top-right alignment&n;&t;&t; * - top left is commented out */
-r_if
-c_cond
-(paren
-id|j
-OG
-multiline_comment|/*&lt;*/
-(paren
-(paren
-id|tga_font_width
-op_minus
-l_int|1
-)paren
-op_rshift
-l_int|3
-)paren
-)paren
-(brace
-id|BT485_WRITE
-c_func
-(paren
-l_int|0
-comma
-id|BT485_CUR_RAM
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|j
-op_eq
-(paren
-(paren
-id|tga_font_width
-op_minus
-l_int|1
-)paren
-op_rshift
-l_int|3
-)paren
-)paren
-(brace
-id|BT485_WRITE
-c_func
-(paren
-(paren
-l_int|0xff
-op_rshift
-multiline_comment|/*&lt;&lt;*/
-(paren
-l_int|7
-op_minus
-(paren
-(paren
-id|tga_font_width
-op_minus
-l_int|1
-)paren
-op_amp
-l_int|7
-)paren
-)paren
-)paren
-comma
-id|BT485_CUR_RAM
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|BT485_WRITE
-c_func
-(paren
-l_int|0xff
-comma
-id|BT485_CUR_RAM
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-id|BT485_WRITE
-c_func
-(paren
-l_int|0
-comma
-id|BT485_CUR_RAM
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-id|tga_font_height_padded
-suffix:semicolon
-id|i
-OL
-l_int|64
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_for
-c_loop
-(paren
-id|j
-op_assign
-l_int|0
-suffix:semicolon
-id|j
-OL
-l_int|8
-suffix:semicolon
-id|j
-op_increment
-)paren
-(brace
-id|BT485_WRITE
-c_func
-(paren
-l_int|0
-comma
-id|BT485_CUR_RAM
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* mask? */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|512
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|BT485_WRITE
-c_func
-(paren
-l_int|0xff
-comma
-id|BT485_CUR_RAM
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_else
 (brace
 multiline_comment|/* 24-plane or 24plusZ */
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x01
-comma
-id|TGA_VALID_REG
-)paren
-suffix:semicolon
-multiline_comment|/* SCANNING */
-multiline_comment|/*&n;&t; * init some registers&n;&t; */
+multiline_comment|/* init BT463 registers */
 id|BT463_WRITE
 c_func
 (paren
@@ -3692,7 +3389,14 @@ id|BT463_REG_ACC
 comma
 id|BT463_CMD_REG_2
 comma
+(paren
+id|par-&gt;sync_on_green
+ques
+c_cond
+l_int|0x80
+suffix:colon
 l_int|0x40
+)paren
 )paren
 suffix:semicolon
 id|BT463_WRITE
@@ -3775,7 +3479,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * fill the palette&n;&t; */
+multiline_comment|/* fill the palette */
 id|BT463_LOAD_ADDR
 c_func
 (paren
@@ -3943,7 +3647,7 @@ id|TGA_RAMDAC_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * fill window type table after start of vertical retrace&n;&t; */
+multiline_comment|/* fill window type table after start of vertical retrace */
 r_while
 c_loop
 (paren
@@ -4073,279 +3777,16 @@ id|TGA_RAMDAC_REG
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*&n;&t; * init cursor colors&n;&t; */
-id|BT463_LOAD_ADDR
-c_func
-(paren
-id|BT463_CUR_CLR_0
-)paren
-suffix:semicolon
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-multiline_comment|/* background */
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-multiline_comment|/* background */
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-multiline_comment|/* background */
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0xff
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-multiline_comment|/* foreground */
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0xff
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-multiline_comment|/* foreground */
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0xff
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-multiline_comment|/* foreground */
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-id|TGA_WRITE_REG
-c_func
-(paren
-l_int|0x00
-op_or
-(paren
-id|BT463_REG_ACC
-op_lshift
-l_int|10
-)paren
-comma
-id|TGA_RAMDAC_REG
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * finally, init the cursor shape&n;&t; */
-id|temp
-op_assign
-id|tga_fb_base
-op_minus
-l_int|1024
-suffix:semicolon
-multiline_comment|/* this assumes video starts at base&n;&t;&t;&t;&t;     and base is beyond memory start*/
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|tga_font_height_padded
-op_star
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|writel
-c_func
-(paren
-id|bt463_cursor_source
-(braket
-id|i
-op_amp
-l_int|3
-)braket
-comma
-id|temp
-op_plus
-id|i
-op_star
-l_int|4
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-id|tga_font_height_padded
-op_star
-l_int|4
-suffix:semicolon
-id|i
-OL
-l_int|256
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|writel
-c_func
-(paren
-l_int|0
-comma
-id|temp
-op_plus
-id|i
-op_star
-l_int|4
-)paren
-suffix:semicolon
-id|TGA_WRITE_REG
-c_func
-(paren
-id|temp
-op_amp
-l_int|0x000fffff
-comma
-id|TGA_CURSOR_BASE_REG
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* finally, enable video scan&n;&t;(and pray for the monitor... :-) */
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x01
+id|TGA_VALID_VIDEO
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* SCANNING */
 )brace
 DECL|macro|DIFFCHECK
 mdefine_line|#define DIFFCHECK(x) { if( m &lt;= 0x3f ) { &bslash;&n;      int delta = f - (TGA_PLL_BASE_FREQ * (x)) / (r &lt;&lt; shift); &bslash;&n;      if (delta &lt; 0) delta = -delta; &bslash;&n;      if (delta &lt; min_diff) min_diff = delta, vm = m, va = a, vr = r; } }
@@ -5085,7 +4526,7 @@ l_int|16
 op_logical_and
 id|fb_info.tga_type
 op_ne
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
 id|fbcon_cfb32_cmap
 (braket
@@ -5112,10 +4553,9 @@ c_cond
 (paren
 id|fb_info.tga_type
 op_eq
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
 (brace
-multiline_comment|/* 8-plane */
 id|BT485_WRITE
 c_func
 (paren
@@ -5277,7 +4717,7 @@ c_cond
 (paren
 id|fb_info.tga_type
 op_ne
-l_int|0
+id|TGA_TYPE_8PLANE
 )paren
 id|tgafb_update_palette
 c_func
@@ -5479,6 +4919,8 @@ id|u32
 id|vhcr
 comma
 id|vvcr
+comma
+id|vvvr
 suffix:semicolon
 r_int
 r_int
@@ -5509,6 +4951,21 @@ id|TGA_READ_REG
 c_func
 (paren
 id|TGA_VERT_REG
+)paren
+suffix:semicolon
+id|vvvr
+op_assign
+id|TGA_READ_REG
+c_func
+(paren
+id|TGA_VALID_REG
+)paren
+op_amp
+op_complement
+(paren
+id|TGA_VALID_VIDEO
+op_or
+id|TGA_VALID_BLANK
 )paren
 suffix:semicolon
 r_switch
@@ -5555,12 +5012,13 @@ suffix:semicolon
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x01
+id|vvvr
+op_or
+id|TGA_VALID_VIDEO
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* SCANNING */
 r_break
 suffix:semicolon
 r_case
@@ -5570,12 +5028,15 @@ multiline_comment|/* Normal blanking */
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x03
+id|vvvr
+op_or
+id|TGA_VALID_VIDEO
+op_or
+id|TGA_VALID_BLANK
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* SCANNING and BLANK */
 r_break
 suffix:semicolon
 r_case
@@ -5595,12 +5056,13 @@ suffix:semicolon
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x02
+id|vvvr
+op_or
+id|TGA_VALID_BLANK
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* BLANK */
 id|tga_vesa_blanked
 op_assign
 l_int|1
@@ -5624,12 +5086,13 @@ suffix:semicolon
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x02
+id|vvvr
+op_or
+id|TGA_VALID_BLANK
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* BLANK */
 id|tga_vesa_blanked
 op_assign
 l_int|1
@@ -5663,12 +5126,13 @@ suffix:semicolon
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x02
+id|vvvr
+op_or
+id|TGA_VALID_BLANK
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* BLANK */
 id|tga_vesa_blanked
 op_assign
 l_int|1
@@ -5710,6 +5174,10 @@ id|info
 (brace
 id|disp-&gt;screen_base
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|fb_info.tga_fb_base
 suffix:semicolon
 r_switch
@@ -5720,9 +5188,8 @@ id|fb_info.tga_type
 (brace
 macro_line|#ifdef FBCON_HAS_CFB8
 r_case
-l_int|0
+id|TGA_TYPE_8PLANE
 suffix:colon
-multiline_comment|/* 8-plane */
 id|disp-&gt;dispsw
 op_assign
 op_amp
@@ -5733,13 +5200,11 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
 r_case
-l_int|1
+id|TGA_TYPE_24PLANE
 suffix:colon
-multiline_comment|/* 24-plane */
 r_case
-l_int|3
+id|TGA_TYPE_24PLUSZ
 suffix:colon
-multiline_comment|/* 24plusZ */
 id|disp-&gt;dispsw
 op_assign
 op_amp
@@ -5892,6 +5357,7 @@ op_logical_and
 op_star
 id|options
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -5925,8 +5391,10 @@ op_logical_neg
 op_star
 id|this_opt
 )paren
+(brace
 r_continue
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5941,6 +5409,7 @@ comma
 l_int|5
 )paren
 )paren
+(brace
 id|strncpy
 c_func
 (paren
@@ -5954,6 +5423,7 @@ r_sizeof
 id|default_fontname
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -6032,6 +5502,7 @@ id|this_opt
 suffix:semicolon
 )brace
 )brace
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -6073,8 +5544,13 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+multiline_comment|/* divine board type */
 id|fb_info.tga_mem_base
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|ioremap
 c_func
 (paren
@@ -6088,17 +5564,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;tgafb_init: mem_base 0x%x&bslash;n&quot;
-comma
-id|fb_info.tga_mem_base
-)paren
-suffix:semicolon
-macro_line|#endif /* DEBUG */
 id|fb_info.tga_type
 op_assign
 (paren
@@ -6130,58 +5595,18 @@ id|fb_info.tga_type
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* XXX Why the fuck is it called modename if it identifies the board? */
-id|strcpy
+id|pci_read_config_byte
+c_func
 (paren
-id|fb_info.gen.info.modename
+id|pdev
 comma
-l_string|&quot;DEC 21030 TGA &quot;
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|fb_info.tga_type
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-multiline_comment|/* 8-plane */
-id|strcat
-(paren
-id|fb_info.gen.info.modename
+id|PCI_REVISION_ID
 comma
-l_string|&quot;8-plane&quot;
+op_amp
+id|fb_info.tga_chip_rev
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-id|strcat
-(paren
-id|fb_info.gen.info.modename
-comma
-l_string|&quot;24-plane&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|strcat
-(paren
-id|fb_info.gen.info.modename
-comma
-l_string|&quot;24plusZ&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
+multiline_comment|/* setup framebuffer */
 id|fb_info.gen.info.node
 op_assign
 op_minus
@@ -6248,6 +5673,77 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;tgafb: DC21030 [TGA] detected, rev=0x%02x&bslash;n&quot;
+comma
+id|fb_info.tga_chip_rev
+)paren
+suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;tgafb: at PCI bus %d, device %d, function %d&bslash;n&quot;
+comma
+id|pdev-&gt;bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|pdev-&gt;devfn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|pdev-&gt;devfn
+)paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|fb_info.tga_type
+)paren
+(brace
+r_case
+id|TGA_TYPE_8PLANE
+suffix:colon
+id|strcpy
+(paren
+id|fb_info.gen.info.modename
+comma
+l_string|&quot;Digital ZLXp-E1&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|TGA_TYPE_24PLANE
+suffix:colon
+id|strcpy
+(paren
+id|fb_info.gen.info.modename
+comma
+l_string|&quot;Digital ZLXp-E2&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|TGA_TYPE_24PLUSZ
+suffix:colon
+id|strcpy
+(paren
+id|fb_info.gen.info.modename
+comma
+l_string|&quot;Digital ZLXp-E3&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* This should give a reasonable default video mode */
 r_if
 c_cond
@@ -6255,6 +5751,7 @@ c_cond
 op_logical_neg
 id|default_var_valid
 )paren
+(brace
 id|default_var
 op_assign
 id|tgafb_predefined
@@ -6264,6 +5761,7 @@ l_int|0
 dot
 id|var
 suffix:semicolon
+)brace
 id|fbgen_get_var
 c_func
 (paren
@@ -6332,7 +5830,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;fb%d: %s frame buffer device&bslash;n&quot;
+l_string|&quot;fb%d: %s frame buffer device at 0x%lx&bslash;n&quot;
 comma
 id|GET_FB_IDX
 c_func
@@ -6341,6 +5839,13 @@ id|fb_info.gen.info.node
 )paren
 comma
 id|fb_info.gen.info.modename
+comma
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
 )paren
 suffix:semicolon
 r_return

@@ -2467,6 +2467,8 @@ id|dev_alloc_skb
 c_func
 (paren
 id|rcv-&gt;length.h
+op_plus
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -2490,6 +2492,15 @@ r_return
 id|ERROR
 suffix:semicolon
 )brace
+id|skb_reserve
+c_func
+(paren
+id|rcv-&gt;skb
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* Align IP on 16 byte boundaries */
 id|skb_put
 c_func
 (paren
@@ -3857,7 +3868,7 @@ id|nl-&gt;connection
 r_case
 id|PLIP_CN_CLOSING
 suffix:colon
-id|netif_start_queue
+id|netif_wake_queue
 (paren
 id|dev
 )paren
@@ -4041,7 +4052,7 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -4121,11 +4132,6 @@ c_func
 (paren
 op_amp
 id|nl-&gt;lock
-)paren
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
 )paren
 suffix:semicolon
 r_return

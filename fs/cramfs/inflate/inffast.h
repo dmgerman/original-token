@@ -2,7 +2,7 @@ multiline_comment|/* inffast.h -- header to use inffast.c&n; * Copyright (C) 199
 multiline_comment|/* WARNING: this file should *not* be used by applications. It is&n;   part of the implementation of the compression library and is&n;   subject to change. Applications should only use zlib.h.&n; */
 r_extern
 r_int
-id|inflate_fast
+id|cramfs_inflate_fast
 id|OF
 c_func
 (paren

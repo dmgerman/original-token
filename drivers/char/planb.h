@@ -1,4 +1,4 @@
-multiline_comment|/* &n;    planb - PlanB frame grabber driver&n;&n;    PlanB is used in the 7x00/8x00 series of PowerMacintosh&n;    Computers as video input DMA controller.&n;&n;    Copyright (C) 1998 Michel Lanners (mlan@cpu.lu)&n;&n;    Based largely on the bttv driver by Ralph Metzler (rjkm@thp.uni-koeln.de)&n;&n;    Additional debugging and coding by Takashi Oe (toe@unlinfo.unl.edu)&n;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
+multiline_comment|/* &n;    planb - PlanB frame grabber driver&n;&n;    PlanB is used in the 7x00/8x00 series of PowerMacintosh&n;    Computers as video input DMA controller.&n;&n;    Copyright (C) 1998 Michel Lanners (mlan@cpu.lu)&n;&n;    Based largely on the bttv driver by Ralph Metzler (rjkm@thp.uni-koeln.de)&n;&n;    Additional debugging and coding by Takashi Oe (toe@unlserve.unl.edu)&n;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 multiline_comment|/* $Id: planb.h,v 1.13 1999/05/03 19:28:56 mlan Exp $ */
 macro_line|#ifndef _PLANB_H_
 DECL|macro|_PLANB_H_
@@ -49,6 +49,7 @@ mdefine_line|#define ODD_FIELD&t;0x4&t;/* odd field is detected if set */
 multiline_comment|/* for capture operations */
 DECL|macro|MAX_GBUFFERS
 mdefine_line|#define MAX_GBUFFERS&t;2
+multiline_comment|/* note PLANB_MAX_FBUF must be divisible by PAGE_SIZE */
 macro_line|#ifdef PLANB_GSCANLINE
 DECL|macro|PLANB_MAX_FBUF
 mdefine_line|#define PLANB_MAX_FBUF&t;0x240000&t;/* 576 * 1024 * 4 */
@@ -228,9 +229,7 @@ mdefine_line|#define PLANB_CLR_IRQ&t;&t;0x00&t;&t;/* clear Plan B interrupt */
 DECL|macro|PLANB_GEN_IRQ
 mdefine_line|#define PLANB_GEN_IRQ&t;&t;0x01&t;&t;/* assert Plan B interrupt */
 DECL|macro|PLANB_FRM_IRQ
-mdefine_line|#define PLANB_FRM_IRQ&t;&t;0x02&t;&t;/* end of frame */
-DECL|macro|PLANB_IRQ_CMD_MASK
-mdefine_line|#define PLANB_IRQ_CMD_MASK&t;0x00000003U&t;/* reserve 2 lsbs for command */
+mdefine_line|#define PLANB_FRM_IRQ&t;&t;0x0100&t;&t;/* end of frame */
 DECL|member|pad3
 r_int
 r_int
@@ -552,17 +551,20 @@ DECL|member|prev_last_fr
 r_int
 id|prev_last_fr
 suffix:semicolon
-DECL|member|fbuffer
+DECL|member|rawbuf
 r_int
 r_char
 op_star
-id|fbuffer
+op_star
+id|rawbuf
 suffix:semicolon
-DECL|member|gbuffer
+DECL|member|rawbuf_size
 r_int
-r_char
-op_star
-id|gbuffer
+id|rawbuf_size
+suffix:semicolon
+DECL|member|gbuf_idx
+r_int
+id|gbuf_idx
 (braket
 id|MAX_GBUFFERS
 )braket
@@ -656,11 +658,9 @@ macro_line|#else
 DECL|macro|MAX_LNUM
 mdefine_line|#define MAX_LNUM 431&t;/* change this if PLANB_MAXLINES or */
 multiline_comment|/* PLANB_MAXPIXELS changes */
-DECL|member|l_fr_addr
+DECL|member|l_fr_addr_idx
 r_int
-r_char
-op_star
-id|l_fr_addr
+id|l_fr_addr_idx
 (braket
 id|MAX_GBUFFERS
 )braket
@@ -670,6 +670,26 @@ r_int
 r_char
 op_star
 id|l_to_addr
+(braket
+id|MAX_GBUFFERS
+)braket
+(braket
+id|MAX_LNUM
+)braket
+suffix:semicolon
+DECL|member|l_to_next_idx
+r_int
+id|l_to_next_idx
+(braket
+id|MAX_GBUFFERS
+)braket
+(braket
+id|MAX_LNUM
+)braket
+suffix:semicolon
+DECL|member|l_to_next_size
+r_int
+id|l_to_next_size
 (braket
 id|MAX_GBUFFERS
 )braket

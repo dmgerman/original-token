@@ -3,6 +3,7 @@ DECL|macro|__ASM_APIC_H
 mdefine_line|#define __ASM_APIC_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/apicdef.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|APIC_DEBUG
 mdefine_line|#define APIC_DEBUG 1
 macro_line|#ifdef CONFIG_X86_LOCAL_APIC
@@ -48,6 +49,41 @@ op_assign
 id|v
 suffix:semicolon
 )brace
+DECL|function|apic_write_atomic
+r_extern
+id|__inline
+r_void
+id|apic_write_atomic
+c_func
+(paren
+r_int
+r_int
+id|reg
+comma
+r_int
+r_int
+id|v
+)paren
+(brace
+id|xchg
+c_func
+(paren
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+id|APIC_BASE
+op_plus
+id|reg
+)paren
+comma
+id|v
+)paren
+suffix:semicolon
+)brace
 DECL|function|apic_read
 r_extern
 id|__inline
@@ -89,16 +125,18 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_X86_GOOD_APIC
 DECL|macro|FORCE_READ_AROUND_WRITE
 macro_line|# define FORCE_READ_AROUND_WRITE 0
-DECL|macro|apic_readaround
-macro_line|# define apic_readaround(x)
+DECL|macro|apic_read_around
+macro_line|# define apic_read_around(x)
+DECL|macro|apic_write_around
+macro_line|# define apic_write_around(x,y) apic_write((x),(y))
 macro_line|#else
 DECL|macro|FORCE_READ_AROUND_WRITE
 macro_line|# define FORCE_READ_AROUND_WRITE 1
-DECL|macro|apic_readaround
-macro_line|# define apic_readaround(x) apic_read(x)
-macro_line|#endif
+DECL|macro|apic_read_around
+macro_line|# define apic_read_around(x) apic_read(x)
 DECL|macro|apic_write_around
-mdefine_line|#define apic_write_around(x,y) &bslash;&n;&t;&t;do { apic_readaround(x); apic_write(x,y); } while (0)
+macro_line|# define apic_write_around(x,y) apic_write_atomic((x),(y))
+macro_line|#endif
 DECL|function|ack_APIC_irq
 r_extern
 r_inline
@@ -109,15 +147,9 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Clear the IPI */
-id|apic_readaround
-c_func
-(paren
-id|APIC_EOI
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * on P6+ cores (CONFIG_X86_GOOD_APIC) ack_APIC_irq() actually&n;&t; * gets compiled as a single instruction ... yummie.&n;&t; */
-id|apic_write
+multiline_comment|/*&n;&t; * ack_APIC_irq() actually gets compiled as a single instruction:&n;&t; * - a single rmw on Pentium/82489DX&n;&t; * - a single write on P6+ cores (CONFIG_X86_GOOD_APIC)&n;&t; * ... yummie.&n;&t; */
+multiline_comment|/* Docs say use 0 for future compatibility */
+id|apic_write_around
 c_func
 (paren
 id|APIC_EOI
@@ -125,12 +157,25 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Docs say use 0 for future compatibility */
 )brace
 r_extern
 r_int
 id|get_maxlvt
 c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|connect_bsp_APIC
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|disconnect_bsp_APIC
 (paren
 r_void
 )paren
@@ -145,6 +190,14 @@ suffix:semicolon
 r_extern
 r_void
 id|cache_APIC_registers
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sync_Arb_IDs
+c_func
 (paren
 r_void
 )paren

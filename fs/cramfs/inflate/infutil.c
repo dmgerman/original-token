@@ -16,9 +16,9 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* for buggy compilers */
 multiline_comment|/* And&squot;ing with mask[n] masks the lower n bits */
-DECL|variable|inflate_mask
+DECL|variable|cramfs_inflate_mask
 id|uInt
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 l_int|17
 )braket
@@ -60,9 +60,9 @@ l_int|0xffff
 )brace
 suffix:semicolon
 multiline_comment|/* copy as much as possible from the sliding window to the output area */
-DECL|function|inflate_flush
+DECL|function|cramfs_inflate_flush
 r_int
-id|inflate_flush
+id|cramfs_inflate_flush
 c_func
 (paren
 id|s

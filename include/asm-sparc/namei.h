@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.14 1999/06/10 05:23:12 davem Exp $&n; * linux/include/asm-sparc/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/* $Id: namei.h,v 1.15 2000/04/08 02:15:14 davem Exp $&n; * linux/include/asm-sparc/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __SPARC_NAMEI_H
 DECL|macro|__SPARC_NAMEI_H
 mdefine_line|#define __SPARC_NAMEI_H
@@ -24,7 +24,7 @@ id|current-&gt;personality
 )paren
 (brace
 r_case
-id|PER_BSD
+id|PER_SUNOS
 suffix:colon
 r_return
 id|SPARC_BSD_EMUL

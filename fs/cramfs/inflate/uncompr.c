@@ -95,7 +95,7 @@ id|Z_BUF_ERROR
 suffix:semicolon
 id|err
 op_assign
-id|inflateInit
+id|cramfs_inflateInit
 c_func
 (paren
 op_amp
@@ -114,7 +114,7 @@ id|err
 suffix:semicolon
 id|err
 op_assign
-id|inflate
+id|cramfs_inflate
 c_func
 (paren
 op_amp
@@ -131,7 +131,7 @@ op_ne
 id|Z_STREAM_END
 )paren
 (brace
-id|inflateEnd
+id|cramfs_inflateEnd
 c_func
 (paren
 op_amp
@@ -156,7 +156,7 @@ id|stream.total_out
 suffix:semicolon
 id|err
 op_assign
-id|inflateEnd
+id|cramfs_inflateEnd
 c_func
 (paren
 op_amp

@@ -1,5 +1,5 @@
 multiline_comment|/* via-rhine.c: A Linux Ethernet device driver for VIA Rhine family chips. */
-multiline_comment|/*&n;&t;Written 1998-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License (GPL), incorporated herein by reference.&n;&t;Drivers derived from this code also fall under the GPL and must retain&n;&t;this authorship and copyright notice.&n;&n;&t;This driver is designed for the VIA VT86c100A Rhine-II PCI Fast Ethernet&n;&t;controller.  It also works with the older 3043 Rhine-I chip.&n;&n;&t;The author may be reached as becker@cesdis.edu, or&n;&t;Donald Becker&n;&t;312 Severn Ave. #W302&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/via-rhine.html&n;&n;&n;&t;Linux kernel version history:&n;&t;&n;&t;LK1.1.0:&n;&t;- Jeff Garzik: softnet &squot;n stuff&n;&t;&n;&t;LK1.1.1:&n;&t;- Justin Guyett: softnet and locking fixes&n;&t;- Jeff Garzik: use PCI interface&n;&n;&t;LK1.1.2:&n;&t;- Urban Widmark: minor cleanups, merges from Becker 1.03a/1.04 versions&n;&n;&t;LK1.1.3:&n;&t;- Urban Widmark: use PCI DMA interface (with thanks to the eepro100.c code)&n;&t;                 update &quot;Theory of Operation&quot; with softnet/locking changes&n;&t;- Dave Miller: PCI DMA and endian fixups&n;&t;- Jeff Garzik: MOD_xxx race fixes, updated PCI resource allocation&n;*/
+multiline_comment|/*&n;&t;Written 1998-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License (GPL), incorporated herein by reference.&n;&t;Drivers derived from this code also fall under the GPL and must retain&n;&t;this authorship and copyright notice.&n;&n;&t;This driver is designed for the VIA VT86c100A Rhine-II PCI Fast Ethernet&n;&t;controller.  It also works with the older 3043 Rhine-I chip.&n;&n;&t;The author may be reached as becker@cesdis.edu, or&n;&t;Donald Becker&n;&t;312 Severn Ave. #W302&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/via-rhine.html&n;&n;&n;&t;Linux kernel version history:&n;&t;&n;&t;LK1.1.0:&n;&t;- Jeff Garzik: softnet &squot;n stuff&n;&t;&n;&t;LK1.1.1:&n;&t;- Justin Guyett: softnet and locking fixes&n;&t;- Jeff Garzik: use PCI interface&n;&n;&t;LK1.1.2:&n;&t;- Urban Widmark: minor cleanups, merges from Becker 1.03a/1.04 versions&n;&n;&t;LK1.1.3:&n;&t;- Urban Widmark: use PCI DMA interface (with thanks to the eepro100.c&n;&t;&t;&t; code) update &quot;Theory of Operation&quot; with&n;&t;&t;&t; softnet/locking changes&n;&t;- Dave Miller: PCI DMA and endian fixups&n;&t;- Jeff Garzik: MOD_xxx race fixes, updated PCI resource allocation&n;&n;&t;LK1.1.4:&n;&t;- Urban Widmark: fix gcc 2.95.2 problem and&n;&t;                 remove writel&squot;s to fixed address 0x7c&n;*/
 multiline_comment|/* A few user-configurable values.   These may be modified when a driver&n;   module is loaded. */
 DECL|variable|debug
 r_static
@@ -145,7 +145,7 @@ op_star
 id|versionA
 id|__devinitdata
 op_assign
-l_string|&quot;via-rhine.c:v1.03a-LK1.1.3  3/23/2000  Written by Donald Becker&bslash;n&quot;
+l_string|&quot;via-rhine.c:v1.03a-LK1.1.4  3/28/2000  Written by Donald Becker&bslash;n&quot;
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
@@ -3110,6 +3110,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|dma_addr_t
+id|next
+op_assign
+id|np-&gt;rx_ring_dma
+suffix:semicolon
 id|np-&gt;cur_rx
 op_assign
 id|np-&gt;cur_tx
@@ -3182,6 +3187,14 @@ c_func
 id|np-&gt;rx_buf_sz
 )paren
 suffix:semicolon
+id|next
+op_add_assign
+r_sizeof
+(paren
+r_struct
+id|rx_desc
+)paren
+suffix:semicolon
 id|np-&gt;rx_ring
 (braket
 id|i
@@ -3192,19 +3205,7 @@ op_assign
 id|cpu_to_le32
 c_func
 (paren
-id|np-&gt;rx_ring_dma
-op_plus
-r_sizeof
-(paren
-r_struct
-id|rx_desc
-)paren
-op_star
-(paren
-id|i
-op_plus
-l_int|1
-)paren
+id|next
 )paren
 suffix:semicolon
 id|np-&gt;rx_skbuff
@@ -3326,6 +3327,22 @@ id|DescOwn
 )paren
 suffix:semicolon
 )brace
+id|np-&gt;dirty_rx
+op_assign
+(paren
+r_int
+r_int
+)paren
+(paren
+id|i
+op_minus
+id|RX_RING_SIZE
+)paren
+suffix:semicolon
+id|next
+op_assign
+id|np-&gt;tx_ring_dma
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3370,6 +3387,14 @@ c_func
 l_int|0x00e08000
 )paren
 suffix:semicolon
+id|next
+op_add_assign
+r_sizeof
+(paren
+r_struct
+id|tx_desc
+)paren
+suffix:semicolon
 id|np-&gt;tx_ring
 (braket
 id|i
@@ -3380,19 +3405,7 @@ op_assign
 id|cpu_to_le32
 c_func
 (paren
-id|np-&gt;tx_ring_dma
-op_plus
-r_sizeof
-(paren
-r_struct
-id|tx_desc
-)paren
-op_star
-(paren
-id|i
-op_plus
-l_int|1
-)paren
+id|next
 )paren
 suffix:semicolon
 id|np-&gt;tx_buf
@@ -4981,14 +4994,6 @@ op_plus
 id|RxMissed
 )paren
 suffix:semicolon
-id|writel
-c_func
-(paren
-l_int|0
-comma
-id|RxMissed
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -5157,14 +5162,6 @@ c_func
 (paren
 id|ioaddr
 op_plus
-id|RxMissed
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
-l_int|0
-comma
 id|RxMissed
 )paren
 suffix:semicolon

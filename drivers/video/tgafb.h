@@ -1,8 +1,14 @@
-multiline_comment|/*&n; *  linux/drivers/video/tgafb.h -- DEC 21030 TGA frame buffer device&n; *&n; *  &t;Copyright (C) 1999 Martin Lucina, Tom Zerucha&n; *  &n; *  $Id: tgafb.h,v 1.4 1999/05/15 08:44:31 mato Exp $&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*&n; *  linux/drivers/video/tgafb.h -- DEC 21030 TGA frame buffer device&n; *&n; *  &t;Copyright (C) 1999,2000 Martin Lucina, Tom Zerucha&n; *  &n; *  $Id: tgafb.h,v 1.4.2.3 2000/04/04 06:44:56 mato Exp $&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 macro_line|#ifndef TGAFB_H
 DECL|macro|TGAFB_H
 mdefine_line|#define TGAFB_H
 multiline_comment|/*&n;     * TGA hardware description (minimal)&n;     */
+DECL|macro|TGA_TYPE_8PLANE
+mdefine_line|#define TGA_TYPE_8PLANE&t;&t;&t;0
+DECL|macro|TGA_TYPE_24PLANE
+mdefine_line|#define TGA_TYPE_24PLANE&t;&t;1
+DECL|macro|TGA_TYPE_24PLUSZ
+mdefine_line|#define TGA_TYPE_24PLUSZ&t;&t;3
 multiline_comment|/*&n;     * Offsets within Memory Space&n;     */
 DECL|macro|TGA_ROM_OFFSET
 mdefine_line|#define&t;TGA_ROM_OFFSET&t;&t;&t;0x0000000
@@ -52,7 +58,7 @@ DECL|macro|TGA_RAMDAC_REG
 mdefine_line|#define&t;TGA_RAMDAC_REG&t;&t;&t;0x01f0
 DECL|macro|TGA_CMD_STAT_REG
 mdefine_line|#define&t;TGA_CMD_STAT_REG&t;&t;0x01f8
-multiline_comment|/* &n;     * useful defines for managing the video timing registers&n;     */
+multiline_comment|/* &n;     * useful defines for managing the registers&n;     */
 DECL|macro|TGA_HORIZ_ODD
 mdefine_line|#define TGA_HORIZ_ODD&t;&t;&t;0x80000000
 DECL|macro|TGA_HORIZ_POLARITY
@@ -81,6 +87,12 @@ DECL|macro|TGA_VERT_FP
 mdefine_line|#define TGA_VERT_FP&t;&t;&t;0x0000f800
 DECL|macro|TGA_VERT_ACTIVE
 mdefine_line|#define TGA_VERT_ACTIVE&t;&t;&t;0x000007ff
+DECL|macro|TGA_VALID_VIDEO
+mdefine_line|#define TGA_VALID_VIDEO&t;&t;&t;0x01
+DECL|macro|TGA_VALID_BLANK
+mdefine_line|#define TGA_VALID_BLANK&t;&t;&t;0x02
+DECL|macro|TGA_VALID_CURSOR
+mdefine_line|#define TGA_VALID_CURSOR&t;&t;0x04
 multiline_comment|/*&n;     * useful defines for managing the ICS1562 PLL clock&n;     */
 DECL|macro|TGA_PLL_BASE_FREQ
 mdefine_line|#define TGA_PLL_BASE_FREQ &t;&t;14318&t;&t;/* .18 */
@@ -186,23 +198,25 @@ id|gen
 suffix:semicolon
 multiline_comment|/* Device dependent information */
 DECL|member|tga_type
-r_int
+id|u8
 id|tga_type
 suffix:semicolon
-multiline_comment|/* TGA type: {8plane, 24plane, 24plusZ} */
+multiline_comment|/* TGA_TYPE_XXX */
+DECL|member|tga_chip_rev
+id|u8
+id|tga_chip_rev
+suffix:semicolon
+multiline_comment|/* dc21030 revision */
 DECL|member|tga_mem_base
-r_int
-r_int
+id|u64
 id|tga_mem_base
 suffix:semicolon
 DECL|member|tga_fb_base
-r_int
-r_int
+id|u64
 id|tga_fb_base
 suffix:semicolon
 DECL|member|tga_regs_base
-r_int
-r_int
+id|u64
 id|tga_regs_base
 suffix:semicolon
 DECL|member|default_var
@@ -220,36 +234,37 @@ id|tgafb_par
 (brace
 DECL|member|xres
 DECL|member|yres
-r_int
+id|u32
 id|xres
 comma
 id|yres
 suffix:semicolon
 multiline_comment|/* resolution in pixels */
 DECL|member|htimings
-r_int
-r_int
+id|u32
 id|htimings
 suffix:semicolon
 multiline_comment|/* horizontal timing register */
 DECL|member|vtimings
-r_int
-r_int
+id|u32
 id|vtimings
 suffix:semicolon
 multiline_comment|/* vertical timing register */
 DECL|member|pll_freq
-r_int
-r_int
+id|u32
 id|pll_freq
 suffix:semicolon
 multiline_comment|/* pixclock in mhz */
 DECL|member|bits_per_pixel
-r_int
-r_int
+id|u32
 id|bits_per_pixel
 suffix:semicolon
 multiline_comment|/* bits per pixel */
+DECL|member|sync_on_green
+id|u32
+id|sync_on_green
+suffix:semicolon
+multiline_comment|/* set if sync is on green */
 )brace
 suffix:semicolon
 macro_line|#endif /* TGAFB_H */

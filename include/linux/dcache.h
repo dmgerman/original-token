@@ -626,7 +626,7 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/**&n; * d_add - add dentry to hash queues&n; * @entry: dentry to add&n; * @inode: The inode to attach to this dentry&n; *&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
+multiline_comment|/**&n; * d_add - add dentry to hash queues&n; * @entry: dentry to add&n; * @inode: The inode to attach to this dentry&n; *&n; * This adds the entry to the hash queues and initializes @inode.&n; * The entry was actually filled in earlier during d_alloc().&n; */
 DECL|function|d_add
 r_static
 id|__inline__
@@ -745,7 +745,7 @@ multiline_comment|/* write full pathname into buffer and return start of pathnam
 DECL|macro|d_path
 mdefine_line|#define d_path(dentry, vfsmnt, buffer, buflen) &bslash;&n;&t;__d_path(dentry, vfsmnt, current-&gt;fs-&gt;root, current-&gt;fs-&gt;rootmnt, &bslash;&n;&t;buffer, buflen)
 multiline_comment|/* Allocation counts.. */
-multiline_comment|/**&n; *&t;dget&t;-&t;get a reference to a dentry&n; *&t;@dentry: dentry to get a reference too&n; *&n; *&t;Given a dentry or NULL pointer increment the reference count&n; *&t;if appropriate and return the dentry. A dentry will not be &n; *&t;destroyed when it has references.&n; */
+multiline_comment|/**&n; *&t;dget&t;-&t;get a reference to a dentry&n; *&t;@dentry: dentry to get a reference to&n; *&n; *&t;Given a dentry or %NULL pointer increment the reference count&n; *&t;if appropriate and return the dentry. A dentry will not be &n; *&t;destroyed when it has references.&n; */
 DECL|function|dget
 r_static
 id|__inline__
@@ -773,7 +773,7 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;d_unhashed -&t;is dentry hashed&n; *&t;@dentry: entry to check&n; *&n; *&t;Returns true if the dentry passed is not currently hashed&n; */
+multiline_comment|/**&n; *&t;d_unhashed -&t;is dentry hashed&n; *&t;@dentry: entry to check&n; *&n; *&t;Returns true if the dentry passed is not currently hashed.&n; */
 DECL|function|d_unhashed
 r_static
 id|__inline__

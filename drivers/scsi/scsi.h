@@ -1831,6 +1831,11 @@ r_int
 id|underflow
 suffix:semicolon
 multiline_comment|/* Return error if less than&n;&t;&t;&t;&t;   this amount is transfered */
+DECL|member|old_underflow
+r_int
+id|old_underflow
+suffix:semicolon
+multiline_comment|/* save underflow here when reusing the&n;&t;&t;&t;&t; * command for error handling */
 DECL|member|transfersize
 r_int
 id|transfersize

@@ -188,7 +188,7 @@ mdefine_line|#define UPDOUT {s-&gt;write=q;}
 DECL|macro|UPDATE
 mdefine_line|#define UPDATE {UPDBITS UPDIN UPDOUT}
 DECL|macro|LEAVE
-mdefine_line|#define LEAVE {UPDATE return inflate_flush(s,z,r);}
+mdefine_line|#define LEAVE {UPDATE return cramfs_inflate_flush(s,z,r);}
 multiline_comment|/*   get bytes and bits */
 DECL|macro|LOADIN
 mdefine_line|#define LOADIN {p=z-&gt;next_in;n=z-&gt;avail_in;b=s-&gt;bitb;k=s-&gt;bitk;}
@@ -208,7 +208,7 @@ mdefine_line|#define LOADOUT {q=s-&gt;write;m=(uInt)WAVAIL;}
 DECL|macro|WRAP
 mdefine_line|#define WRAP {if(q==s-&gt;end&amp;&amp;s-&gt;read!=s-&gt;window){q=s-&gt;window;m=(uInt)WAVAIL;}}
 DECL|macro|FLUSH
-mdefine_line|#define FLUSH {UPDOUT r=inflate_flush(s,z,r); LOADOUT}
+mdefine_line|#define FLUSH {UPDOUT r=cramfs_inflate_flush(s,z,r); LOADOUT}
 DECL|macro|NEEDOUT
 mdefine_line|#define NEEDOUT {if(m==0){WRAP if(m==0){FLUSH WRAP if(m==0) LEAVE}}r=Z_OK;}
 DECL|macro|OUTBYTE
@@ -219,7 +219,7 @@ mdefine_line|#define LOAD {LOADIN LOADOUT}
 multiline_comment|/* masks for lower bits (size given to avoid silly warnings with Visual C++) */
 r_extern
 id|uInt
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 l_int|17
 )braket
@@ -227,7 +227,7 @@ suffix:semicolon
 multiline_comment|/* copy as much as possible from the sliding window to the output area */
 r_extern
 r_int
-id|inflate_flush
+id|cramfs_inflate_flush
 id|OF
 c_func
 (paren

@@ -4905,6 +4905,13 @@ c_func
 id|pci_unregister_driver
 )paren
 suffix:semicolon
+DECL|variable|pci_dev_driver
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dev_driver
+)paren
+suffix:semicolon
 DECL|variable|pci_match_device
 id|EXPORT_SYMBOL
 c_func

@@ -4102,7 +4102,7 @@ op_increment
 suffix:semicolon
 )brace
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|nfsaddrs_config_setup

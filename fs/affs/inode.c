@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/affs/inode.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0
+macro_line|#include &lt;asm/div64.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -136,6 +137,9 @@ suffix:semicolon
 r_int
 r_int
 id|id
+suffix:semicolon
+id|loff_t
+id|tmp
 suffix:semicolon
 id|pr_debug
 c_func
@@ -627,21 +631,27 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|inode-&gt;u.affs_i.i_lastblock
+id|tmp
 op_assign
-(paren
-(paren
 id|inode-&gt;i_size
 op_plus
 id|block
 op_minus
 l_int|1
-)paren
-op_div
+suffix:semicolon
+id|do_div
+(paren
+id|tmp
+comma
 id|block
 )paren
-op_minus
-l_int|1
+suffix:semicolon
+id|tmp
+op_decrement
+suffix:semicolon
+id|inode-&gt;u.affs_i.i_lastblock
+op_assign
+id|tmp
 suffix:semicolon
 r_break
 suffix:semicolon

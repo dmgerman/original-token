@@ -428,6 +428,13 @@ c_func
 id|xdr_one
 )paren
 suffix:semicolon
+DECL|variable|xdr_two
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|xdr_two
+)paren
+suffix:semicolon
 DECL|variable|xdr_shift_iovec
 id|EXPORT_SYMBOL
 c_func

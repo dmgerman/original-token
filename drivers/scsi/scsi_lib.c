@@ -359,6 +359,10 @@ id|SCpnt-&gt;sc_old_data_direction
 op_assign
 id|SCpnt-&gt;sc_data_direction
 suffix:semicolon
+id|SCpnt-&gt;old_underflow
+op_assign
+id|SCpnt-&gt;underflow
+suffix:semicolon
 id|memcpy
 c_func
 (paren

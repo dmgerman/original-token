@@ -9870,6 +9870,9 @@ comma
 DECL|enumerator|afavlab_tk9902
 id|afavlab_tk9902
 comma
+DECL|enumerator|timedia_1889
+id|timedia_1889
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* each element directly indexed from enum list, above &n; * (but offset by last_sio) */
@@ -10294,6 +10297,21 @@ comma
 (brace
 l_int|0
 comma
+l_int|1
+)brace
+comma
+)brace
+)brace
+comma
+multiline_comment|/* timedia_1889 */
+(brace
+l_int|1
+comma
+(brace
+(brace
+l_int|2
+comma
+op_minus
 l_int|1
 )brace
 comma
@@ -10728,6 +10746,22 @@ comma
 l_int|0
 comma
 id|afavlab_tk9902
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_TIMEDIA
+comma
+id|PCI_DEVICE_ID_TIMEDIA_1889
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|timedia_1889
 )brace
 comma
 (brace

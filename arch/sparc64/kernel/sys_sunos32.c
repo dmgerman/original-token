@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos32.c,v 1.43 2000/03/26 11:28:53 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/* $Id: sys_sunos32.c,v 1.44 2000/04/08 02:11:50 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -33,6 +33,7 @@ multiline_comment|/* For the nfs mount emulation */
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
+macro_line|#include &lt;linux/nfs2.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/* for sunos_select */
 macro_line|#include &lt;linux/time.h&gt;
@@ -91,10 +92,6 @@ id|lock_kernel
 c_func
 (paren
 )paren
-suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|PER_BSD
 suffix:semicolon
 r_if
 c_cond
@@ -2400,10 +2397,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|STICKY_TIMEOUTS
-suffix:semicolon
 id|ret
 op_assign
 id|sys32_select
@@ -3016,6 +3009,7 @@ r_sizeof
 id|sunos_mount
 )paren
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
@@ -3526,6 +3520,7 @@ id|data
 suffix:semicolon
 r_goto
 id|out2
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -3555,6 +3550,7 @@ id|ENODEV
 suffix:semicolon
 r_goto
 id|out2
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -3576,6 +3572,7 @@ id|ENODEV
 suffix:semicolon
 r_goto
 id|out2
+suffix:semicolon
 )brace
 id|ret
 op_assign
@@ -5930,10 +5927,6 @@ r_int
 )paren
 id|fname
 suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|PER_BSD
-suffix:semicolon
 r_return
 id|sparc32_open
 c_func
@@ -6742,10 +6735,6 @@ id|old_ka
 suffix:semicolon
 r_int
 id|ret
-suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|PER_BSD
 suffix:semicolon
 r_if
 c_cond

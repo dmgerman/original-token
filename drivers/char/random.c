@@ -1766,6 +1766,26 @@ r_char
 id|scancode
 )paren
 (brace
+r_static
+r_int
+r_char
+id|last_scancode
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ignore autorepeat (multiple key down w/o key up) */
+r_if
+c_cond
+(paren
+id|scancode
+op_ne
+id|last_scancode
+)paren
+(brace
+id|last_scancode
+op_assign
+id|scancode
+suffix:semicolon
 id|add_timer_randomness
 c_func
 (paren
@@ -1775,6 +1795,7 @@ comma
 id|scancode
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|add_mouse_randomness
 r_void

@@ -186,7 +186,7 @@ r_return
 id|p
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;register_filesystem - register a new filesystem&n; *&t;@fs: the file system structure&n; *&n; *&t;Adds the file system passed to the list of file systems the kernel&n; *&t;is aware of for by mount and other syscalls. Returns 0 on success,&n; *&t;or a negative errno code on an error.&n; *&n; *&t;The file_system_type that is passed is linked into the kernel &n; *&t;structures and must not be freed until the file system has been&n; *&t;unregistered.&n; */
+multiline_comment|/**&n; *&t;register_filesystem - register a new filesystem&n; *&t;@fs: the file system structure&n; *&n; *&t;Adds the file system passed to the list of file systems the kernel&n; *&t;is aware of for mount and other syscalls. Returns 0 on success,&n; *&t;or a negative errno code on an error.&n; *&n; *&t;The &amp;struct file_system_type that is passed is linked into the kernel &n; *&t;structures and must not be freed until the file system has been&n; *&t;unregistered.&n; */
 DECL|function|register_filesystem
 r_int
 id|register_filesystem
@@ -271,7 +271,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;unregister_filesystem - unregister a file system&n; *&t;@fs: filesystem to unregister&n; *&n; *&t;Remove a file system that was previously successfully registered&n; *&t;with the kernel. An error is returned if the file system is not found.&n; *&t;Zero is returned on a success.&n; *&t;&n; *&t;Once this function has returned the file_system_type structure may be&n; *&t;freed or reused.&n; */
+multiline_comment|/**&n; *&t;unregister_filesystem - unregister a file system&n; *&t;@fs: filesystem to unregister&n; *&n; *&t;Remove a file system that was previously successfully registered&n; *&t;with the kernel. An error is returned if the file system is not found.&n; *&t;Zero is returned on a success.&n; *&t;&n; *&t;Once this function has returned the &amp;struct file_system_type structure&n; *&t;may be freed or reused.&n; */
 DECL|function|unregister_filesystem
 r_int
 id|unregister_filesystem
@@ -2005,7 +2005,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;__wait_on_super&t;- wait on a superblock&n; *&t;@sb: superblock to wait on&n; *&n; *&t;Waits for a superblock to become unlocked and then returns. It does&n; *&t;not take the lock. This is an internal function. See wait_on_super.&n; */
+multiline_comment|/**&n; *&t;__wait_on_super&t;- wait on a superblock&n; *&t;@sb: superblock to wait on&n; *&n; *&t;Waits for a superblock to become unlocked and then returns. It does&n; *&t;not take the lock. This is an internal function. See wait_on_super().&n; */
 DECL|function|__wait_on_super
 r_void
 id|__wait_on_super
@@ -2192,7 +2192,7 @@ id|sb
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;get_super&t;-&t;get the superblock of a device&n; *&t;@dev: device to get the super block for&n; *&t;&n; *&t;Scans the superblock list and finds the superblock of the file system&n; *&t;mounted on the device given. NULL is returned if no match is found.&n; */
+multiline_comment|/**&n; *&t;get_super&t;-&t;get the superblock of a device&n; *&t;@dev: device to get the superblock for&n; *&t;&n; *&t;Scans the superblock list and finds the superblock of the file system&n; *&t;mounted on the device given. %NULL is returned if no match is found.&n; */
 DECL|function|get_super
 r_struct
 id|super_block
@@ -2418,7 +2418,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;get_empty_super&t;-&t;find empty superblocks&n; *&n; *&t;Find a super_block with no device assigned. A free superblock is &n; *&t;found and returned. If neccessary new superblocks are allocated.&n; *&t;NULL is returned if there are insufficient resources to complete&n; *&t;the request&n; */
+multiline_comment|/**&n; *&t;get_empty_super&t;-&t;find empty superblocks&n; *&n; *&t;Find a superblock with no device assigned. A free superblock is &n; *&t;found and returned. If neccessary new superblocks are allocated.&n; *&t;%NULL is returned if there are insufficient resources to complete&n; *&t;the request.&n; */
 DECL|function|get_empty_super
 r_struct
 id|super_block

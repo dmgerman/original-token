@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n; *&n; *      ESS Maestro/Maestro-2/Maestro-2E driver for Linux 2.[23].x&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;(c) Copyright 1999&t; Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *&t;Based heavily on SonicVibes.c:&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;Heavily modified by Zach Brown &lt;zab@redhat.com&gt; based on lunch&n; *&t;with ESS engineers.  Many thanks to Howard Kim for providing &n; *&t;contacts and hardware.  Honorable mention goes to Eric &n; *&t;Brombaugh for all sorts of things.  Best regards to the &n; *&t;proprietors of Hack Central for fine lodging.&n; *&n; *  Supported devices:&n; *  /dev/dsp0-3    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *&n; *  Hardware Description&n; *&n; *&t;A working Maestro setup contains the Maestro chip wired to a &n; *&t;codec or 2.  In the Maestro we have the APUs, the ASSP, and the&n; *&t;Wavecache.  The APUs can be though of as virtual audio routing&n; *&t;channels.  They can take data from a number of sources and perform&n; *&t;basic encodings of the data.  The wavecache is a storehouse for&n; *&t;PCM data.  Typically it deals with PCI and interracts with the&n; *&t;APUs.  The ASSP is a wacky DSP like device that ESS is loth&n; *&t;to release docs on.  Thankfully it isn&squot;t required on the Maestro&n; *&t;until you start doing insane things like FM emulation and surround&n; *&t;encoding.  The codecs are almost always AC-97 compliant codecs, &n; *&t;but it appears that early Maestros may have had PT101 (an ESS&n; *&t;part?) wired to them.  The only real difference in the Maestro&n; *&t;families is external goop like docking capability, memory for&n; *&t;the ASSP, and initialization differences.&n; *&n; *  Driver Operation&n; *&n; *&t;We only drive the APU/Wavecache as typical DACs and drive the&n; *&t;mixers in the codecs.  There are 64 APUs.  We assign 6 to each&n; *&t;/dev/dsp? device.  2 channels for output, and 4 channels for&n; *&t;input.&n; *&n; *&t;Each APU can do a number of things, but we only really use&n; *&t;3 basic functions.  For playback we use them to convert PCM&n; *&t;data fetched over PCI by the wavecahche into analog data that&n; *&t;is handed to the codec.  One APU for mono, and a pair for stereo.&n; *&t;When in stereo, the combination of smarts in the APU and Wavecache&n; *&t;decide which wavecache gets the left or right channel.&n; *&n; *&t;For record we still use the old overly mono system.  For each in&n; *&t;coming channel the data comes in from the codec, through a &squot;input&squot;&n; *&t;APU, through another rate converter APU, and then into memory via&n; *&t;the wavecache and PCI.  If its stereo, we mash it back into LRLR in&n; *&t;software.  The pass between the 2 APUs is supposedly what requires us&n; *&t;to have a 512 byte buffer sitting around in wavecache/memory.&n; *&n; *&t;The wavecache makes our life even more fun.  First off, it can&n; *&t;only address the first 28 bits of PCI address space, making it&n; *&t;useless on quite a few architectures.  Secondly, its insane.&n; *&t;It claims to fetch from 4 regions of PCI space, each 4 meg in length.&n; *&t;But that doesn&squot;t really work.  You can only use 1 region.  So all our&n; *&t;allocations have to be in 4meg of each other.  Booo.  Hiss.&n; *&t;So we have a module parameter, dsps_order, that is the order of&n; *&t;the number of dsps to provide.  All their buffer space is allocated&n; *&t;on open time.  The sonicvibes OSS routines we inherited really want&n; *&t;power of 2 buffers, so we have all those next to each other, then&n; *&t;512 byte regions for the recording wavecaches.  This ends up&n; *&t;wasting quite a bit of memory.  The only fixes I can see would be &n; *&t;getting a kernel allocator that could work in zones, or figuring out&n; *&t;just how to coerce the WP into doing what we want.&n; *&n; *&t;The indirection of the various registers means we have to spinlock&n; *&t;nearly all register accesses.  We have the main register indirection&n; *&t;like the wave cache, maestro registers, etc.  Then we have beasts&n; *&t;like the APU interface that is indirect registers gotten at through&n; *&t;the main maestro indirection.  Ouch.  We spinlock around the actual&n; *&t;ports on a per card basis.  This means spinlock activity at each IO&n; *&t;operation, but the only IO operation clusters are in non critical &n; *&t;paths and it makes the code far easier to follow.  Interrupts are&n; *&t;blocked while holding the locks because the int handler has to&n; *&t;get at some of them :(.  The mixer interface doesn&squot;t, however.&n; *&t;We also have an OSS state lock that is thrown around in a few&n; *&t;places.&n; *&n; *&t;This driver has brute force APM suspend support.  We catch suspend&n; *&t;notifications and stop all work being done on the chip.  Any people&n; *&t;that try between this shutdown and the real suspend operation will&n; *&t;be put to sleep.  When we resume we restore our software state on&n; *&t;the chip and wake up the people that were using it.  The code thats&n; *&t;being used now is quite dirty and assumes we&squot;re on a uni-processor&n; *&t;machine.  Much of it will need to be cleaned up for SMP ACPI or &n; *&t;similar.&n; *&t;&n; * History&n; *  v0.13 - Nov 18 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;fix nec Versas?  man would that be cool.&n; *  v0.12 - Nov 12 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;brown bag volume max fix..&n; *  v0.11 - Nov 11 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;use proper stereo apu decoding, mmap/write should work.&n; *&t;make volume sliders more useful, tweak rate calculation.&n; *&t;fix lame 8bit format reporting bug.  duh. apm apu saving buglet also&n; *&t;fix maestro 1 clock freq &quot;bug&quot;, remove pt101 support&n; *  v0.10 - Oct 28 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;aha, so, sometimes the WP writes a status word to offset 0&n; *&t;  from one of the PCMBARs.  rearrange allocation accordingly..&n; *&t;  cheers again to Eric for being a good hacker in investigating this.&n; *&t;Jeroen Hoogervorst submits 7500 fix out of nowhere.  yay.  :)&n; *  v0.09 - Oct 23 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;added APM support.&n; *&t;re-order something such that some 2Es now work.  Magic!&n; *&t;new codec reset routine.  made some codecs come to life.&n; *&t;fix clear_advance, sync some control with ESS.&n; *&t;now write to all base regs to be paranoid.&n; *  v0.08 - Oct 20 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;Fix initial buflen bug.  I am so smart.  also smp compiling..&n; *&t;I owe Eric yet another beer: fixed recmask, igain, &n; *&t;  muting, and adc sync consistency.  Go Team.&n; *  v0.07 - Oct 4 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;tweak adc/dac, formating, and stuff to allow full duplex&n; *&t;allocate dsps memory at open() so we can fit in the wavecache window&n; *&t;fix wavecache braindamage.  again.  no more scribbling?&n; *&t;fix ess 1921 codec bug on some laptops.&n; *&t;fix dumb pci scanning bug&n; *&t;started 2.3 cleanup, redid spinlocks, little cleanups&n; *  v0.06 - Sep 20 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;fix wavecache thinkos.  limit to 1 /dev/dsp.&n; *&t;eric is wearing his thinking toque this week.&n; *&t;&t;spotted apu mode bugs and gain ramping problem&n; *&t;don&squot;t touch weird mixer regs, make recmask optional&n; *&t;fixed igain inversion, defaults for mixers, clean up rec_start&n; *&t;make mono recording work.&n; *&t;report subsystem stuff, please send reports.&n; *&t;littles: parallel out, amp now&n; *  v0.05 - Sep 17 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;merged and fixed up Eric&squot;s initial recording code&n; *&t;munged format handling to catch misuse, needs rewrite.&n; *&t;revert ring bus init, fixup shared int, add pci busmaster setting&n; *&t;fix mixer oss interface, fix mic mute and recmask&n; *&t;mask off unsupported mixers, reset with all 1s, modularize defaults&n; *&t;make sure bob is running while we need it&n; *&t;got rid of device limit, initial minimal apm hooks&n; *&t;pull out dead code/includes, only allow multimedia/audio maestros&n; *  v0.04 - Sep 01 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;copied memory leak fix from sonicvibes driver&n; *&t;different ac97 reset, play with 2.0 ac97, simplify ring bus setup&n; *&t;bob freq code, region sanity, jitter sync fix; all from Eric &n; *&n; * TODO&n; *&t;some people get indir reg timeouts?&n; *&t;fix bob frequency&n; *&t;endianness&n; *&t;do smart things with ac97 2.0 bits.&n; *&t;docking and dual codecs and 978?&n; *&t;leave 54-&gt;61 open&n; *&t;resolve 2.3/2.2 stuff&n; *&n; *&t;it also would be fun to have a mode that would not use pci dma at all&n; *&t;but would copy into the wavecache on board memory and use that &n; *&t;on architectures that don&squot;t like the maestro&squot;s pci dma ickiness.&n; */
+multiline_comment|/*****************************************************************************&n; *&n; *      ESS Maestro/Maestro-2/Maestro-2E driver for Linux 2.[23].x&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;(c) Copyright 1999&t; Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *&t;Based heavily on SonicVibes.c:&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;Heavily modified by Zach Brown &lt;zab@zabbo.net&gt; based on lunch&n; *&t;with ESS engineers.  Many thanks to Howard Kim for providing &n; *&t;contacts and hardware.  Honorable mention goes to Eric &n; *&t;Brombaugh for all sorts of things.  Best regards to the &n; *&t;proprietors of Hack Central for fine lodging.&n; *&n; *  Supported devices:&n; *  /dev/dsp0-3    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *&n; *  Hardware Description&n; *&n; *&t;A working Maestro setup contains the Maestro chip wired to a &n; *&t;codec or 2.  In the Maestro we have the APUs, the ASSP, and the&n; *&t;Wavecache.  The APUs can be though of as virtual audio routing&n; *&t;channels.  They can take data from a number of sources and perform&n; *&t;basic encodings of the data.  The wavecache is a storehouse for&n; *&t;PCM data.  Typically it deals with PCI and interracts with the&n; *&t;APUs.  The ASSP is a wacky DSP like device that ESS is loth&n; *&t;to release docs on.  Thankfully it isn&squot;t required on the Maestro&n; *&t;until you start doing insane things like FM emulation and surround&n; *&t;encoding.  The codecs are almost always AC-97 compliant codecs, &n; *&t;but it appears that early Maestros may have had PT101 (an ESS&n; *&t;part?) wired to them.  The only real difference in the Maestro&n; *&t;families is external goop like docking capability, memory for&n; *&t;the ASSP, and initialization differences.&n; *&n; *  Driver Operation&n; *&n; *&t;We only drive the APU/Wavecache as typical DACs and drive the&n; *&t;mixers in the codecs.  There are 64 APUs.  We assign 6 to each&n; *&t;/dev/dsp? device.  2 channels for output, and 4 channels for&n; *&t;input.&n; *&n; *&t;Each APU can do a number of things, but we only really use&n; *&t;3 basic functions.  For playback we use them to convert PCM&n; *&t;data fetched over PCI by the wavecahche into analog data that&n; *&t;is handed to the codec.  One APU for mono, and a pair for stereo.&n; *&t;When in stereo, the combination of smarts in the APU and Wavecache&n; *&t;decide which wavecache gets the left or right channel.&n; *&n; *&t;For record we still use the old overly mono system.  For each in&n; *&t;coming channel the data comes in from the codec, through a &squot;input&squot;&n; *&t;APU, through another rate converter APU, and then into memory via&n; *&t;the wavecache and PCI.  If its stereo, we mash it back into LRLR in&n; *&t;software.  The pass between the 2 APUs is supposedly what requires us&n; *&t;to have a 512 byte buffer sitting around in wavecache/memory.&n; *&n; *&t;The wavecache makes our life even more fun.  First off, it can&n; *&t;only address the first 28 bits of PCI address space, making it&n; *&t;useless on quite a few architectures.  Secondly, its insane.&n; *&t;It claims to fetch from 4 regions of PCI space, each 4 meg in length.&n; *&t;But that doesn&squot;t really work.  You can only use 1 region.  So all our&n; *&t;allocations have to be in 4meg of each other.  Booo.  Hiss.&n; *&t;So we have a module parameter, dsps_order, that is the order of&n; *&t;the number of dsps to provide.  All their buffer space is allocated&n; *&t;on open time.  The sonicvibes OSS routines we inherited really want&n; *&t;power of 2 buffers, so we have all those next to each other, then&n; *&t;512 byte regions for the recording wavecaches.  This ends up&n; *&t;wasting quite a bit of memory.  The only fixes I can see would be &n; *&t;getting a kernel allocator that could work in zones, or figuring out&n; *&t;just how to coerce the WP into doing what we want.&n; *&n; *&t;The indirection of the various registers means we have to spinlock&n; *&t;nearly all register accesses.  We have the main register indirection&n; *&t;like the wave cache, maestro registers, etc.  Then we have beasts&n; *&t;like the APU interface that is indirect registers gotten at through&n; *&t;the main maestro indirection.  Ouch.  We spinlock around the actual&n; *&t;ports on a per card basis.  This means spinlock activity at each IO&n; *&t;operation, but the only IO operation clusters are in non critical &n; *&t;paths and it makes the code far easier to follow.  Interrupts are&n; *&t;blocked while holding the locks because the int handler has to&n; *&t;get at some of them :(.  The mixer interface doesn&squot;t, however.&n; *&t;We also have an OSS state lock that is thrown around in a few&n; *&t;places.&n; *&n; *&t;This driver has brute force APM suspend support.  We catch suspend&n; *&t;notifications and stop all work being done on the chip.  Any people&n; *&t;that try between this shutdown and the real suspend operation will&n; *&t;be put to sleep.  When we resume we restore our software state on&n; *&t;the chip and wake up the people that were using it.  The code thats&n; *&t;being used now is quite dirty and assumes we&squot;re on a uni-processor&n; *&t;machine.  Much of it will need to be cleaned up for SMP ACPI or &n; *&t;similar.&n; *&n; *&t;We also pay attention to PCI power management now.  The driver&n; *&t;will power down units of the chip that it knows aren&squot;t needed.&n; *&t;The WaveProcessor and company are only powered on when people&n; *&t;have /dev/dsp*s open.  On removal the driver will&n; *&t;power down the maestro entirely.  There could still be&n; *&t;trouble with BIOSen that magically change power states &n; *&t;themselves, but we&squot;ll see.  &n; *&t;&n; * History&n; *  (still based on v0.14) Mar 29 2000 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;move to 2.3 power management interface, which&n; *&t;&t;required hacking some suspend/resume/check paths &n; *&t;make static compilation work&n; *  v0.14 - Jan 28 2000 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;add PCI power management through ACPI regs.&n; *&t;we now shut down on machine reboot/halt&n; *&t;leave scary PCI config items alone (isa stuff, mostly)&n; *&t;enable 1921s, it seems only mine was broke.&n; *&t;fix swapped left/right pcm dac.  har har.&n; *&t;up bob freq, increase buffers, fix pointers at underflow&n; *&t;silly compilation problems&n; *  v0.13 - Nov 18 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;fix nec Versas?  man would that be cool.&n; *  v0.12 - Nov 12 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;brown bag volume max fix..&n; *  v0.11 - Nov 11 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;use proper stereo apu decoding, mmap/write should work.&n; *&t;make volume sliders more useful, tweak rate calculation.&n; *&t;fix lame 8bit format reporting bug.  duh. apm apu saving buglet also&n; *&t;fix maestro 1 clock freq &quot;bug&quot;, remove pt101 support&n; *  v0.10 - Oct 28 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;aha, so, sometimes the WP writes a status word to offset 0&n; *&t;  from one of the PCMBARs.  rearrange allocation accordingly..&n; *&t;  cheers again to Eric for being a good hacker in investigating this.&n; *&t;Jeroen Hoogervorst submits 7500 fix out of nowhere.  yay.  :)&n; *  v0.09 - Oct 23 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;added APM support.&n; *&t;re-order something such that some 2Es now work.  Magic!&n; *&t;new codec reset routine.  made some codecs come to life.&n; *&t;fix clear_advance, sync some control with ESS.&n; *&t;now write to all base regs to be paranoid.&n; *  v0.08 - Oct 20 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;Fix initial buflen bug.  I am so smart.  also smp compiling..&n; *&t;I owe Eric yet another beer: fixed recmask, igain, &n; *&t;  muting, and adc sync consistency.  Go Team.&n; *  v0.07 - Oct 4 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;tweak adc/dac, formating, and stuff to allow full duplex&n; *&t;allocate dsps memory at open() so we can fit in the wavecache window&n; *&t;fix wavecache braindamage.  again.  no more scribbling?&n; *&t;fix ess 1921 codec bug on some laptops.&n; *&t;fix dumb pci scanning bug&n; *&t;started 2.3 cleanup, redid spinlocks, little cleanups&n; *  v0.06 - Sep 20 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;fix wavecache thinkos.  limit to 1 /dev/dsp.&n; *&t;eric is wearing his thinking toque this week.&n; *&t;&t;spotted apu mode bugs and gain ramping problem&n; *&t;don&squot;t touch weird mixer regs, make recmask optional&n; *&t;fixed igain inversion, defaults for mixers, clean up rec_start&n; *&t;make mono recording work.&n; *&t;report subsystem stuff, please send reports.&n; *&t;littles: parallel out, amp now&n; *  v0.05 - Sep 17 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;merged and fixed up Eric&squot;s initial recording code&n; *&t;munged format handling to catch misuse, needs rewrite.&n; *&t;revert ring bus init, fixup shared int, add pci busmaster setting&n; *&t;fix mixer oss interface, fix mic mute and recmask&n; *&t;mask off unsupported mixers, reset with all 1s, modularize defaults&n; *&t;make sure bob is running while we need it&n; *&t;got rid of device limit, initial minimal apm hooks&n; *&t;pull out dead code/includes, only allow multimedia/audio maestros&n; *  v0.04 - Sep 01 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;copied memory leak fix from sonicvibes driver&n; *&t;different ac97 reset, play with 2.0 ac97, simplify ring bus setup&n; *&t;bob freq code, region sanity, jitter sync fix; all from Eric &n; *&n; * TODO&n; *&t;fix bob frequency&n; *&t;endianness&n; *&t;do smart things with ac97 2.0 bits.&n; *&t;docking and dual codecs and 978?&n; *&t;leave 54-&gt;61 open&n; *&n; *&t;it also would be fun to have a mode that would not use pci dma at all&n; *&t;but would copy into the wavecache on board memory and use that &n; *&t;on architectures that don&squot;t like the maestro&squot;s pci dma ickiness.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -41,6 +41,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;
@@ -62,27 +63,6 @@ op_star
 id|d
 )paren
 suffix:semicolon
-DECL|variable|in_suspend
-r_static
-r_int
-id|in_suspend
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|suspend_queue
-id|wait_queue_head_t
-id|suspend_queue
-suffix:semicolon
-r_static
-r_void
-id|check_suspend
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|macro|CHECK_SUSPEND
-mdefine_line|#define CHECK_SUSPEND check_suspend();
 macro_line|#include &quot;maestro.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|M_DEBUG
@@ -95,6 +75,13 @@ id|debug
 op_assign
 l_int|0
 suffix:semicolon
+DECL|macro|M_printk
+mdefine_line|#define M_printk(args...) {if (debug) printk(args);}
+macro_line|#else
+DECL|macro|M_printk
+mdefine_line|#define M_printk(x)
+macro_line|#endif
+multiline_comment|/* we try to setup 2^(dsps_order) /dev/dsp devices */
 DECL|variable|dsps_order
 r_static
 r_int
@@ -102,15 +89,18 @@ id|dsps_order
 op_assign
 l_int|0
 suffix:semicolon
-DECL|macro|M_printk
-mdefine_line|#define M_printk(args...) {if (debug) printk(args);}
-macro_line|#else
-DECL|macro|M_printk
-mdefine_line|#define M_printk(x)
-macro_line|#endif
+multiline_comment|/* wether or not we mess around with power management */
+DECL|variable|use_pm
+r_static
+r_int
+id|use_pm
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* set to 1 for force */
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|DRIVER_VERSION
-mdefine_line|#define DRIVER_VERSION &quot;0.13&quot;
+mdefine_line|#define DRIVER_VERSION &quot;0.14&quot;
 macro_line|#ifndef PCI_VENDOR_ESS
 DECL|macro|PCI_VENDOR_ESS
 mdefine_line|#define PCI_VENDOR_ESS&t;&t;&t;0x125D
@@ -163,6 +153,96 @@ DECL|macro|NR_APUS
 mdefine_line|#define NR_APUS&t;&t;64
 DECL|macro|NR_APU_REGS
 mdefine_line|#define NR_APU_REGS&t;16
+multiline_comment|/* acpi states */
+r_enum
+(brace
+DECL|enumerator|ACPI_D0
+id|ACPI_D0
+op_assign
+l_int|0
+comma
+DECL|enumerator|ACPI_D1
+id|ACPI_D1
+comma
+DECL|enumerator|ACPI_D2
+id|ACPI_D2
+comma
+DECL|enumerator|ACPI_D3
+id|ACPI_D3
+)brace
+suffix:semicolon
+multiline_comment|/* bits in the acpi masks */
+DECL|macro|ACPI_12MHZ
+mdefine_line|#define ACPI_12MHZ&t;( 1 &lt;&lt; 15)
+DECL|macro|ACPI_24MHZ
+mdefine_line|#define ACPI_24MHZ&t;( 1 &lt;&lt; 14)
+DECL|macro|ACPI_978
+mdefine_line|#define ACPI_978&t;( 1 &lt;&lt; 13)
+DECL|macro|ACPI_SPDIF
+mdefine_line|#define ACPI_SPDIF&t;( 1 &lt;&lt; 12)
+DECL|macro|ACPI_GLUE
+mdefine_line|#define ACPI_GLUE&t;( 1 &lt;&lt; 11)
+DECL|macro|ACPI__10
+mdefine_line|#define ACPI__10&t;( 1 &lt;&lt; 10) /* reserved */
+DECL|macro|ACPI_PCIINT
+mdefine_line|#define ACPI_PCIINT&t;( 1 &lt;&lt; 9)
+DECL|macro|ACPI_HV
+mdefine_line|#define ACPI_HV&t;&t;( 1 &lt;&lt; 8) /* hardware volume */
+DECL|macro|ACPI_GPIO
+mdefine_line|#define ACPI_GPIO&t;( 1 &lt;&lt; 7)
+DECL|macro|ACPI_ASSP
+mdefine_line|#define ACPI_ASSP&t;( 1 &lt;&lt; 6)
+DECL|macro|ACPI_SB
+mdefine_line|#define ACPI_SB&t;&t;( 1 &lt;&lt; 5) /* sb emul */
+DECL|macro|ACPI_FM
+mdefine_line|#define ACPI_FM&t;&t;( 1 &lt;&lt; 4) /* fm emul */
+DECL|macro|ACPI_RB
+mdefine_line|#define ACPI_RB&t;&t;( 1 &lt;&lt; 3) /* ringbus / aclink */
+DECL|macro|ACPI_MIDI
+mdefine_line|#define ACPI_MIDI&t;( 1 &lt;&lt; 2) 
+DECL|macro|ACPI_GP
+mdefine_line|#define ACPI_GP&t;&t;( 1 &lt;&lt; 1) /* game port */
+DECL|macro|ACPI_WP
+mdefine_line|#define ACPI_WP&t;&t;( 1 &lt;&lt; 0) /* wave processor */
+DECL|macro|ACPI_ALL
+mdefine_line|#define ACPI_ALL&t;(0xffff)
+DECL|macro|ACPI_SLEEP
+mdefine_line|#define ACPI_SLEEP&t;(~(ACPI_SPDIF|ACPI_ASSP|ACPI_SB|ACPI_FM| &bslash;&n;&t;&t;&t;ACPI_MIDI|ACPI_GP|ACPI_WP))
+DECL|macro|ACPI_NONE
+mdefine_line|#define ACPI_NONE&t;(ACPI__10)
+multiline_comment|/* these masks indicate which units we care about at&n;&t;which states */
+DECL|variable|acpi_state_mask
+id|u16
+id|acpi_state_mask
+(braket
+)braket
+op_assign
+(brace
+(braket
+id|ACPI_D0
+)braket
+op_assign
+id|ACPI_ALL
+comma
+(braket
+id|ACPI_D1
+)braket
+op_assign
+id|ACPI_SLEEP
+comma
+(braket
+id|ACPI_D2
+)braket
+op_assign
+id|ACPI_SLEEP
+comma
+(braket
+id|ACPI_D3
+)braket
+op_assign
+id|ACPI_NONE
+)brace
+suffix:semicolon
 DECL|variable|sample_size
 r_static
 r_const
@@ -232,6 +312,39 @@ id|clock_freq
 )braket
 op_assign
 initialization_block
+suffix:semicolon
+r_static
+r_int
+id|maestro_notifier
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+id|nb
+comma
+r_int
+r_int
+id|event
+comma
+r_void
+op_star
+id|buf
+)paren
+suffix:semicolon
+DECL|variable|maestro_nb
+r_static
+r_struct
+id|notifier_block
+id|maestro_nb
+op_assign
+(brace
+id|maestro_notifier
+comma
+l_int|NULL
+comma
+l_int|0
+)brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|struct|ess_state
@@ -541,6 +654,18 @@ DECL|member|mix
 )brace
 id|mix
 suffix:semicolon
+DECL|member|power_regs
+r_int
+id|power_regs
+suffix:semicolon
+DECL|member|in_suspend
+r_int
+id|in_suspend
+suffix:semicolon
+DECL|member|suspend_queue
+id|wait_queue_head_t
+id|suspend_queue
+suffix:semicolon
 DECL|member|channels
 r_struct
 id|ess_state
@@ -588,9 +713,9 @@ multiline_comment|/* hardware resources */
 DECL|member|pcidev
 r_struct
 id|pci_dev
+op_star
 id|pcidev
 suffix:semicolon
-multiline_comment|/* uck.. */
 DECL|member|iobase
 id|u32
 id|iobase
@@ -708,6 +833,17 @@ id|r
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
+r_static
+r_void
+id|check_suspend
+c_func
+(paren
+r_struct
+id|ess_card
+op_star
+id|card
+)paren
+suffix:semicolon
 DECL|variable|devs
 r_static
 r_struct
@@ -725,8 +861,10 @@ r_void
 id|maestro_ac97_set
 c_func
 (paren
-r_int
-id|io
+r_struct
+id|ess_card
+op_star
+id|card
 comma
 id|u8
 id|cmd
@@ -736,10 +874,19 @@ id|val
 )paren
 (brace
 r_int
+id|io
+op_assign
+id|card-&gt;iobase
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Wait for the codec bus to be free &n;&t; */
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|card
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -817,13 +964,20 @@ id|u16
 id|maestro_ac97_get
 c_func
 (paren
-r_int
-id|io
+r_struct
+id|ess_card
+op_star
+id|card
 comma
 id|u8
 id|cmd
 )paren
 (brace
+r_int
+id|io
+op_assign
+id|card-&gt;iobase
+suffix:semicolon
 r_int
 id|sanity
 op_assign
@@ -835,7 +989,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|card
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Wait for the codec bus to be free &n;&t; */
 r_for
@@ -1210,7 +1368,7 @@ op_assign
 id|maestro_ac97_get
 c_func
 (paren
-id|card-&gt;iobase
+id|card
 comma
 id|mh-&gt;offset
 )paren
@@ -1462,6 +1620,7 @@ macro_line|#endif
 multiline_comment|/* write the OSS encoded volume to the given OSS encoded mixer,&n;&t;again caller&squot;s job to make sure all is well in arg land,&n;&t;call with spinlock held */
 multiline_comment|/* linear scale -&gt; log */
 DECL|variable|lin2log
+r_static
 r_int
 r_char
 id|lin2log
@@ -1900,7 +2059,7 @@ op_assign
 id|maestro_ac97_get
 c_func
 (paren
-id|card-&gt;iobase
+id|card
 comma
 id|mh-&gt;offset
 )paren
@@ -1940,7 +2099,7 @@ op_assign
 id|maestro_ac97_get
 c_func
 (paren
-id|card-&gt;iobase
+id|card
 comma
 id|mh-&gt;offset
 )paren
@@ -1985,7 +2144,7 @@ op_assign
 id|maestro_ac97_get
 c_func
 (paren
-id|card-&gt;iobase
+id|card
 comma
 id|mh-&gt;offset
 )paren
@@ -2015,7 +2174,7 @@ suffix:semicolon
 id|maestro_ac97_set
 c_func
 (paren
-id|card-&gt;iobase
+id|card
 comma
 id|mh-&gt;offset
 comma
@@ -2186,7 +2345,7 @@ id|ac97_oss_mask
 id|maestro_ac97_get
 c_func
 (paren
-id|card-&gt;iobase
+id|card
 comma
 l_int|0x1a
 )paren
@@ -2250,7 +2409,7 @@ suffix:semicolon
 id|maestro_ac97_set
 c_func
 (paren
-id|card-&gt;iobase
+id|card
 comma
 l_int|0x1a
 comma
@@ -2273,9 +2432,6 @@ r_struct
 id|ess_card
 op_star
 id|card
-comma
-r_int
-id|iobase
 )paren
 (brace
 id|u16
@@ -2311,7 +2467,7 @@ op_assign
 id|maestro_ac97_get
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x7c
 )paren
@@ -2321,7 +2477,7 @@ op_assign
 id|maestro_ac97_get
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x7e
 )paren
@@ -2331,7 +2487,7 @@ op_assign
 id|maestro_ac97_get
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x00
 )paren
@@ -2351,7 +2507,7 @@ comma
 id|maestro_ac97_get
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x26
 )paren
@@ -2406,7 +2562,7 @@ multiline_comment|/* no idea what this does */
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x2a
 comma
@@ -2416,7 +2572,7 @@ suffix:semicolon
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x2c
 comma
@@ -2426,7 +2582,7 @@ suffix:semicolon
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x2c
 comma
@@ -2435,6 +2591,7 @@ l_int|0xffff
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if 0&t;/* i thought the problems I was seeing were with&n;&t;the 1921, but apparently they were with the pci board&n;&t;it was on, so this code is commented out.&n;&t; lets see if this holds true. */
 r_case
 l_int|0x83847609
 suffix:colon
@@ -2459,7 +2616,7 @@ macro_line|#if 0&t;/* don&squot;t ask.  I have yet to see what these actually do
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x76
 comma
@@ -2476,7 +2633,7 @@ suffix:semicolon
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x78
 comma
@@ -2492,7 +2649,7 @@ suffix:semicolon
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x78
 comma
@@ -2508,6 +2665,7 @@ suffix:semicolon
 macro_line|#endif
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 r_break
@@ -2516,7 +2674,7 @@ suffix:semicolon
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x1E
 comma
@@ -2527,7 +2685,7 @@ multiline_comment|/* null misc stuff */
 id|maestro_ac97_set
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x20
 comma
@@ -3519,7 +3677,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|s-&gt;card
+)paren
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -3626,7 +3788,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|s-&gt;card
+)paren
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -3835,7 +4001,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|s-&gt;card
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3959,7 +4129,11 @@ suffix:semicolon
 id|u16
 id|v
 suffix:semicolon
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|s-&gt;card
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4059,7 +4233,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|s-&gt;card
+)paren
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -4127,7 +4305,11 @@ suffix:semicolon
 id|u16
 id|value
 suffix:semicolon
-id|CHECK_SUSPEND
+id|check_suspend
+c_func
+(paren
+id|s-&gt;card
+)paren
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -4983,8 +5165,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* stop output apus */
 DECL|function|stop_dac
-r_extern
-r_inline
+r_static
 r_void
 id|stop_dac
 c_func
@@ -5603,7 +5784,7 @@ comma
 id|pa
 )paren
 suffix:semicolon
-multiline_comment|/* Load the buffer into the wave engine */
+multiline_comment|/* start of sample */
 id|apu_set_register
 c_func
 (paren
@@ -5640,6 +5821,7 @@ op_amp
 l_int|0xFFFF
 )paren
 suffix:semicolon
+multiline_comment|/* sample end */
 id|apu_set_register
 c_func
 (paren
@@ -5658,7 +5840,7 @@ op_amp
 l_int|0xFFFF
 )paren
 suffix:semicolon
-multiline_comment|/* setting loop == sample len */
+multiline_comment|/* setting loop len == sample len */
 id|apu_set_register
 c_func
 (paren
@@ -5771,9 +5953,9 @@ op_or
 id|channel
 ques
 c_cond
-l_int|0x10
-suffix:colon
 l_int|0
+suffix:colon
+l_int|0x10
 )paren
 )paren
 suffix:semicolon
@@ -6640,9 +6822,8 @@ multiline_comment|/* XXX make freq selector much smarter, see calc_bob_rate */
 r_int
 id|freq
 op_assign
-l_int|150
+l_int|200
 suffix:semicolon
-multiline_comment|/* requested frequency - calculate what we want here. */
 multiline_comment|/* compute ideal interrupt frequency for buffer size &amp; play rate */
 multiline_comment|/* first, find best prescaler value to match freq */
 r_for
@@ -7141,6 +7322,7 @@ id|db-&gt;endcleared
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* this algorithm is a little nuts.. where did /1000 come from? */
 id|bytepersec
 op_assign
 id|rate
@@ -7327,7 +7509,6 @@ c_cond
 (paren
 id|rec
 )paren
-(brace
 id|ess_rec_setup
 c_func
 (paren
@@ -7339,14 +7520,10 @@ id|s-&gt;rateadc
 comma
 id|db-&gt;rawbuf
 comma
-id|db-&gt;numfrag
-op_lshift
-id|db-&gt;fragshift
+id|db-&gt;dmasize
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|ess_play_setup
 c_func
 (paren
@@ -7358,12 +7535,9 @@ id|s-&gt;ratedac
 comma
 id|db-&gt;rawbuf
 comma
-id|db-&gt;numfrag
-op_lshift
-id|db-&gt;fragshift
+id|db-&gt;dmasize
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -7513,7 +7687,7 @@ c_cond
 id|s-&gt;dma_adc.ready
 )paren
 (brace
-multiline_comment|/* oh boy should this all be re-written.  everything in the current code paths think&n;&t;&t;that the various counters/pointers are expressed in bytes to the user but we have&n;&t;&t;two apus doing stereo stuff so we fix it up here.. it propogates to all the various&n;&t;&t;counters from here.  Notice that this means that mono recording is very very&n;&t;&t;broken right now.  */
+multiline_comment|/* oh boy should this all be re-written.  everything in the current code paths think&n;&t;&t;that the various counters/pointers are expressed in bytes to the user but we have&n;&t;&t;two apus doing stereo stuff so we fix it up here.. it propogates to all the various&n;&t;&t;counters from here.  */
 r_if
 c_cond
 (paren
@@ -7668,7 +7842,7 @@ id|s
 op_mod
 id|s-&gt;dma_dac.dmasize
 suffix:semicolon
-multiline_comment|/* the apu only reports the length it has seen, not the&n;&t;&t;&t;length of the memory that has been used (the WP&n;&t;&t;&t;knows that */
+multiline_comment|/* the apu only reports the length it has seen, not the&n;&t;&t;&t;length of the memory that has been used (the WP&n;&t;&t;&t;knows that) */
 r_if
 c_cond
 (paren
@@ -7758,6 +7932,20 @@ op_le
 l_int|0
 )paren
 (brace
+id|M_printk
+c_func
+(paren
+l_string|&quot;underflow! diff: %d count: %d hw: %d sw: %d&bslash;n&quot;
+comma
+id|diff
+comma
+id|s-&gt;dma_dac.count
+comma
+id|hwptr
+comma
+id|s-&gt;dma_dac.swptr
+)paren
+suffix:semicolon
 multiline_comment|/* FILL ME &n;&t;&t;&t;&t;wrindir(s, SV_CIENABLE, s-&gt;enable); */
 multiline_comment|/* XXX how on earth can calling this with the lock held work.. */
 id|stop_dac
@@ -7773,11 +7961,7 @@ l_int|0
 suffix:semicolon
 id|s-&gt;dma_dac.swptr
 op_assign
-l_int|0
-suffix:semicolon
-id|s-&gt;dma_dac.hwptr
-op_assign
-l_int|0
+id|hwptr
 suffix:semicolon
 id|s-&gt;dma_dac.error
 op_increment
@@ -7832,6 +8016,7 @@ op_amp
 id|s-&gt;dma_dac.wait
 )paren
 suffix:semicolon
+multiline_comment|/*&t;&t;&t;&t;printk(&quot;waking up DAC count: %d sw: %d hw: %d&bslash;n&quot;,s-&gt;dma_dac.count, s-&gt;dma_dac.swptr, &n;&t;&t;&t;&t;&t;hwptr);*/
 )brace
 )brace
 )brace
@@ -9617,7 +9802,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|in_suspend
+id|s-&gt;card-&gt;in_suspend
 )paren
 (brace
 id|printk
@@ -10143,7 +10328,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|in_suspend
+id|s-&gt;card-&gt;in_suspend
 )paren
 (brace
 id|printk
@@ -10275,6 +10460,7 @@ r_goto
 id|return_free
 suffix:semicolon
 )brace
+multiline_comment|/*&t;&t;printk(&quot;wrote %d bytes at sw: %d cnt: %d while hw: %d&bslash;n&quot;,cnt, swptr, s-&gt;dma_dac.count, s-&gt;dma_dac.hwptr);*/
 id|swptr
 op_assign
 (paren
@@ -12289,6 +12475,14 @@ op_minus
 id|EFAULT
 )paren
 suffix:semicolon
+id|M_printk
+c_func
+(paren
+l_string|&quot;maestro: SETFRAGMENT: %0x&bslash;n&quot;
+comma
+id|val
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12694,6 +12888,131 @@ id|packed_phys
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * this guy makes sure we&squot;re in the right power&n; * state for what we want to be doing &n; */
+DECL|function|maestro_power
+r_static
+r_void
+id|maestro_power
+c_func
+(paren
+r_struct
+id|ess_card
+op_star
+id|card
+comma
+r_int
+id|tostate
+)paren
+(brace
+id|u16
+id|active_mask
+op_assign
+id|acpi_state_mask
+(braket
+id|tostate
+)braket
+suffix:semicolon
+id|u8
+id|state
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|use_pm
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|pci_read_config_byte
+c_func
+(paren
+id|card-&gt;pcidev
+comma
+id|card-&gt;power_regs
+op_plus
+l_int|0x4
+comma
+op_amp
+id|state
+)paren
+suffix:semicolon
+id|state
+op_and_assign
+l_int|3
+suffix:semicolon
+multiline_comment|/* make sure we&squot;re in the right state */
+r_if
+c_cond
+(paren
+id|state
+op_ne
+id|tostate
+)paren
+(brace
+id|M_printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;maestro: dev %02x:%02x.%x switching from D%d to D%d&bslash;n&quot;
+comma
+id|card-&gt;pcidev-&gt;bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|card-&gt;pcidev-&gt;devfn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|card-&gt;pcidev-&gt;devfn
+)paren
+comma
+id|state
+comma
+id|tostate
+)paren
+suffix:semicolon
+id|pci_write_config_byte
+c_func
+(paren
+id|card-&gt;pcidev
+comma
+id|card-&gt;power_regs
+op_plus
+l_int|0x4
+comma
+id|tostate
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* and make sure the units we care about are on &n;&t;&t;XXX we might want to do this before state flipping? */
+id|pci_write_config_word
+c_func
+(paren
+id|card-&gt;pcidev
+comma
+l_int|0x54
+comma
+op_complement
+id|active_mask
+)paren
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|card-&gt;pcidev
+comma
+l_int|0x56
+comma
+op_complement
+id|active_mask
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* we allocate a large power of two for all our memory.&n;&t;this is cut up into (not to scale :):&n;&t;|silly fifo word&t;| 512byte mixbuf per adc&t;| dac/adc * channels |&n;*/
 r_static
 r_int
@@ -12734,7 +13053,7 @@ op_assign
 id|dsps_order
 op_plus
 (paren
-l_int|15
+l_int|16
 op_minus
 id|PAGE_SHIFT
 )paren
@@ -12869,41 +13188,6 @@ id|s-&gt;card-&gt;dmaorder
 op_assign
 id|order
 suffix:semicolon
-multiline_comment|/* play bufs are in the same first region as record bufs */
-id|set_base_registers
-c_func
-(paren
-id|s
-comma
-id|rawbuf
-)paren
-suffix:semicolon
-id|M_printk
-c_func
-(paren
-l_string|&quot;maestro: writing %lx (%lx) to the wp&bslash;n&quot;
-comma
-id|virt_to_bus
-c_func
-(paren
-id|rawbuf
-)paren
-comma
-(paren
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|rawbuf
-)paren
-)paren
-op_amp
-l_int|0xFFE00000
-)paren
-op_rshift
-l_int|12
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -13023,7 +13307,7 @@ suffix:semicolon
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: setup apu %d: %p %p %p&bslash;n&quot;
+l_string|&quot;maestro: setup apu %d: dac: %p adc: %p mix: %p&bslash;n&quot;
 comma
 id|i
 comma
@@ -13446,6 +13730,75 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+multiline_comment|/* we&squot;re covered by the open_sem */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;card-&gt;dsps_open
+)paren
+(brace
+id|maestro_power
+c_func
+(paren
+id|s-&gt;card
+comma
+id|ACPI_D0
+)paren
+suffix:semicolon
+id|start_bob
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+)brace
+id|s-&gt;card-&gt;dsps_open
+op_increment
+suffix:semicolon
+id|M_printk
+c_func
+(paren
+l_string|&quot;maestro: open, %d bobs now&bslash;n&quot;
+comma
+id|s-&gt;card-&gt;dsps_open
+)paren
+suffix:semicolon
+multiline_comment|/* ok, lets write WC base regs now that we&squot;ve &n;&t;&t;powered up the chip */
+id|M_printk
+c_func
+(paren
+l_string|&quot;maestro: writing 0x%lx (bus 0x%lx) to the wp&bslash;n&quot;
+comma
+id|virt_to_bus
+c_func
+(paren
+id|s-&gt;card-&gt;dmapages
+)paren
+comma
+(paren
+(paren
+id|virt_to_bus
+c_func
+(paren
+id|s-&gt;card-&gt;dmapages
+)paren
+)paren
+op_amp
+l_int|0xFFE00000
+)paren
+op_rshift
+l_int|12
+)paren
+suffix:semicolon
+id|set_base_registers
+c_func
+(paren
+id|s
+comma
+id|s-&gt;card-&gt;dmapages
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -13568,32 +13921,6 @@ op_amp
 id|FMODE_READ
 op_or
 id|FMODE_WRITE
-)paren
-suffix:semicolon
-multiline_comment|/* we&squot;re covered by the open_sem */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|s-&gt;card-&gt;dsps_open
-)paren
-(brace
-id|start_bob
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-)brace
-id|s-&gt;card-&gt;dsps_open
-op_increment
-suffix:semicolon
-id|M_printk
-c_func
-(paren
-l_string|&quot;maestro: open, %d bobs now&bslash;n&quot;
-comma
-id|s-&gt;card-&gt;dsps_open
 )paren
 suffix:semicolon
 id|up
@@ -13731,6 +14058,10 @@ op_le
 l_int|0
 )paren
 (brace
+id|s-&gt;card-&gt;dsps_open
+op_assign
+l_int|0
+suffix:semicolon
 id|stop_bob
 c_func
 (paren
@@ -13741,6 +14072,14 @@ id|free_buffers
 c_func
 (paren
 id|s
+)paren
+suffix:semicolon
+id|maestro_power
+c_func
+(paren
+id|s-&gt;card
+comma
+id|ACPI_D2
 )paren
 suffix:semicolon
 )brace
@@ -13822,7 +14161,6 @@ id|pci_dev
 op_star
 id|pcidev
 op_assign
-op_amp
 id|card-&gt;pcidev
 suffix:semicolon
 r_struct
@@ -13849,28 +14187,16 @@ suffix:semicolon
 id|u32
 id|n
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Disable ACPI&n;&t; */
-id|pci_write_config_dword
+multiline_comment|/* We used to muck around with pci config space that&n;&t; * we had no business messing with.  We don&squot;t know enough&n;&t; * about the machine to know which DMA mode is appropriate, &n;&t; * etc.  We were guessing wrong on some machines and making&n;&t; * them unhappy.  We now trust in the BIOS to do things right,&n;&t; * which almost certainly means a new host of problems will&n;&t; * arise with broken BIOS implementations.  screw &squot;em. &n;&t; * We&squot;re already intolerant of machines that don&squot;t assign&n;&t; * IRQs.&n;&t; */
+multiline_comment|/* do config work at full power */
+id|maestro_power
 c_func
 (paren
-id|pcidev
+id|card
 comma
-l_int|0x54
-comma
-l_int|0x00000000
+id|ACPI_D0
 )paren
 suffix:semicolon
-id|pci_write_config_dword
-c_func
-(paren
-id|pcidev
-comma
-l_int|0x56
-comma
-l_int|0x00000000
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Use TDMA for now. TDMA works on all boards, so while its&n;&t; *&t;not the most efficient its the simplest.&n;&t; */
 id|pci_read_config_word
 c_func
 (paren
@@ -13882,79 +14208,6 @@ op_amp
 id|w
 )paren
 suffix:semicolon
-multiline_comment|/* Clear DMA bits */
-id|w
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|10
-op_or
-l_int|1
-op_lshift
-l_int|9
-op_or
-l_int|1
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/* TDMA on */
-id|w
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Some of these are undocumented bits&n;&t; */
-id|w
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|13
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|14
-)paren
-suffix:semicolon
-multiline_comment|/* PIC Snoop mode bits */
-id|w
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|11
-)paren
-suffix:semicolon
-multiline_comment|/* Safeguard off */
-id|w
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|7
-)paren
-suffix:semicolon
-multiline_comment|/* Posted write */
-id|w
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|6
-)paren
-suffix:semicolon
-multiline_comment|/* ISA timing on */
-multiline_comment|/* XXX huh?  claims to be reserved.. */
 id|w
 op_and_assign
 op_complement
@@ -13964,17 +14217,7 @@ op_lshift
 l_int|5
 )paren
 suffix:semicolon
-multiline_comment|/* Don&squot;t swap left/right */
-id|w
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* Subtractive decode off */
+multiline_comment|/* Don&squot;t swap left/right (undoc)*/
 id|pci_write_config_word
 c_func
 (paren
@@ -14062,16 +14305,6 @@ op_complement
 (paren
 l_int|1
 op_lshift
-l_int|3
-)paren
-suffix:semicolon
-multiline_comment|/* IDMA off (undocumented) */
-id|w
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
 l_int|2
 )paren
 suffix:semicolon
@@ -14086,53 +14319,12 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* reserved, always write 0 */
-id|w
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* IRQ to ISA off (undoc) */
 id|pci_write_config_word
 c_func
 (paren
 id|pcidev
 comma
 l_int|0x52
-comma
-id|w
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;DDMA off&n;&t; */
-id|pci_read_config_word
-c_func
-(paren
-id|pcidev
-comma
-l_int|0x60
-comma
-op_amp
-id|w
-)paren
-suffix:semicolon
-id|w
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|0
-)paren
-suffix:semicolon
-id|pci_write_config_word
-c_func
-(paren
-id|pcidev
-comma
-l_int|0x60
 comma
 id|w
 )paren
@@ -14184,20 +14376,6 @@ comma
 l_int|0x40
 comma
 id|w
-)paren
-suffix:semicolon
-multiline_comment|/* stake our claim on the iospace */
-id|request_region
-c_func
-(paren
-id|iobase
-comma
-l_int|256
-comma
-id|card_names
-(braket
-id|card-&gt;card_type
-)braket
 )paren
 suffix:semicolon
 id|sound_reset
@@ -15197,6 +15375,143 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* this guy tries to find the pci power management&n; * register bank.  this should really be in core&n; * code somewhere.  1 on success. */
+r_int
+DECL|function|parse_power
+id|parse_power
+c_func
+(paren
+r_struct
+id|ess_card
+op_star
+id|card
+comma
+r_struct
+id|pci_dev
+op_star
+id|pcidev
+)paren
+(brace
+id|u32
+id|n
+suffix:semicolon
+id|u16
+id|w
+suffix:semicolon
+id|u8
+id|next
+suffix:semicolon
+r_int
+id|max
+op_assign
+l_int|64
+suffix:semicolon
+multiline_comment|/* an a 8bit guy pointing to 32bit guys&n;&t;&t;&t;&t;can only express so much. */
+id|card-&gt;power_regs
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* check to see if we have a capabilities list in&n;&t;&t;the config register */
+id|pci_read_config_word
+c_func
+(paren
+id|pcidev
+comma
+id|PCI_STATUS
+comma
+op_amp
+id|w
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|w
+op_amp
+id|PCI_STATUS_CAP_LIST
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* walk the list, starting at the head. */
+id|pci_read_config_byte
+c_func
+(paren
+id|pcidev
+comma
+id|PCI_CAPABILITY_LIST
+comma
+op_amp
+id|next
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|next
+op_logical_and
+id|max
+op_decrement
+)paren
+(brace
+id|pci_read_config_dword
+c_func
+(paren
+id|pcidev
+comma
+id|next
+op_amp
+op_complement
+l_int|3
+comma
+op_amp
+id|n
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|n
+op_amp
+l_int|0xff
+)paren
+op_eq
+id|PCI_CAP_ID_PM
+)paren
+(brace
+id|card-&gt;power_regs
+op_assign
+id|next
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|next
+op_assign
+(paren
+(paren
+id|n
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+)brace
+r_return
+id|card-&gt;power_regs
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
 r_static
 r_int
 DECL|function|maestro_install
@@ -15272,16 +15587,24 @@ c_func
 id|pcidev
 )paren
 suffix:semicolon
+multiline_comment|/* stake our claim on the iospace */
 r_if
 c_cond
 (paren
-id|check_region
+id|request_region
 c_func
 (paren
 id|iobase
 comma
 l_int|256
+comma
+id|card_names
+(braket
+id|card_type
+)braket
 )paren
+op_eq
+l_int|NULL
 )paren
 (brace
 id|printk
@@ -15368,19 +15691,9 @@ id|card
 )paren
 )paren
 suffix:semicolon
-id|memcpy
-c_func
-(paren
-op_amp
 id|card-&gt;pcidev
-comma
+op_assign
 id|pcidev
-comma
-r_sizeof
-(paren
-id|card-&gt;pcidev
-)paren
-)paren
 suffix:semicolon
 id|pmdev
 op_assign
@@ -15407,6 +15720,25 @@ id|pmdev-&gt;data
 op_assign
 id|card
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|register_reboot_notifier
+c_func
+(paren
+op_amp
+id|maestro_nb
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;maestro: reboot notifier registration failed; may not reboot properly.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|card-&gt;iobase
 op_assign
 id|iobase
@@ -15432,6 +15764,13 @@ c_func
 (paren
 op_amp
 id|card-&gt;lock
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|card-&gt;suspend_queue
 )paren
 suffix:semicolon
 id|devs
@@ -15704,6 +16043,106 @@ comma
 id|n
 )paren
 suffix:semicolon
+multiline_comment|/* turn off power management unless:&n;&t; *&t;- the user explicitly asks for it&n;&t; * &t;&t;or&n;&t; *&t;&t;- we&squot;re not a 2e, lesser chipps seem to have problems.&n;&t; *&t;&t;- we&squot;re not on our _very_ small whitelist.  some implemenetations&n;&t; *&t;&t;&t;really dont&squot; like the pm code, others require it.&n;&t; *&t;&t;&t;feel free to expand this as required.&n;&t; */
+DECL|macro|SUBSYSTEM_VENDOR
+mdefine_line|#define SUBSYSTEM_VENDOR(x) (x&amp;0xffff)
+r_if
+c_cond
+(paren
+(paren
+id|use_pm
+op_ne
+l_int|1
+)paren
+op_logical_and
+(paren
+(paren
+id|card_type
+op_ne
+id|TYPE_MAESTRO2E
+)paren
+op_logical_or
+(paren
+id|SUBSYSTEM_VENDOR
+c_func
+(paren
+id|n
+)paren
+op_ne
+l_int|0x1028
+)paren
+)paren
+)paren
+(brace
+id|use_pm
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|use_pm
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;maestro: not attempting power management.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|parse_power
+c_func
+(paren
+id|card
+comma
+id|pcidev
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;maestro: no PCI power managment interface found.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|pci_read_config_dword
+c_func
+(paren
+id|pcidev
+comma
+id|card-&gt;power_regs
+comma
+op_amp
+id|n
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;maestro: PCI power managment capability: 0x%x&bslash;n&quot;
+comma
+id|n
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
+)brace
+)brace
 id|maestro_config
 c_func
 (paren
@@ -15716,7 +16155,7 @@ c_cond
 id|maestro_ac97_get
 c_func
 (paren
-id|iobase
+id|card
 comma
 l_int|0x00
 )paren
@@ -15739,8 +16178,6 @@ id|maestro_ac97_init
 c_func
 (paren
 id|card
-comma
-id|iobase
 )paren
 suffix:semicolon
 )brace
@@ -15880,6 +16317,13 @@ comma
 l_int|256
 )paren
 suffix:semicolon
+id|unregister_reboot_notifier
+c_func
+(paren
+op_amp
+id|maestro_nb
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -15890,6 +16334,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* now go to sleep &squot;till something interesting happens */
+id|maestro_power
+c_func
+(paren
+id|card
+comma
+id|ACPI_D2
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -16012,13 +16465,6 @@ id|dsps_order
 )paren
 suffix:semicolon
 )brace
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|suspend_queue
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find the ESS Maestro 2.&n;&t; */
 r_while
 c_loop
@@ -16152,12 +16598,180 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|nuke_maestros
+r_static
+r_void
+id|nuke_maestros
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|ess_card
+op_star
+id|card
+suffix:semicolon
+multiline_comment|/* we do these unconditionally, which is probably wrong */
+id|pm_unregister_all
+c_func
+(paren
+id|maestro_pm_callback
+)paren
+suffix:semicolon
+id|unregister_reboot_notifier
+c_func
+(paren
+op_amp
+id|maestro_nb
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|card
+op_assign
+id|devs
+)paren
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|devs
+op_assign
+id|devs-&gt;next
+suffix:semicolon
+multiline_comment|/* XXX maybe should force stop bob, but should be all &n;&t;&t;&t;stopped by _release by now */
+id|free_irq
+c_func
+(paren
+id|card-&gt;irq
+comma
+id|card
+)paren
+suffix:semicolon
+id|unregister_sound_mixer
+c_func
+(paren
+id|card-&gt;dev_mixer
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_DSPS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_struct
+id|ess_state
+op_star
+id|ess
+op_assign
+op_amp
+id|card-&gt;channels
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ess-&gt;dev_audio
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|unregister_sound_dsp
+c_func
+(paren
+id|ess-&gt;dev_audio
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Goodbye, Mr. Bond. */
+id|maestro_power
+c_func
+(paren
+id|card
+comma
+id|ACPI_D3
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|card-&gt;iobase
+comma
+l_int|256
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
+)brace
+id|devs
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|maestro_notifier
+r_static
+r_int
+id|maestro_notifier
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+id|nb
+comma
+r_int
+r_int
+id|event
+comma
+r_void
+op_star
+id|buf
+)paren
+(brace
+multiline_comment|/* this notifier is called when the kernel is really shut down. */
+id|M_printk
+c_func
+(paren
+l_string|&quot;maestro: shutting down&bslash;n&quot;
+)paren
+suffix:semicolon
+id|nuke_maestros
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|NOTIFY_OK
+suffix:semicolon
+)brace
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Zach Brown &lt;zab@redhat.com&gt;, Alan Cox &lt;alan@redhat.com&gt;&quot;
+l_string|&quot;Zach Brown &lt;zab@zabbo.net&gt;, Alan Cox &lt;alan@redhat.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -16184,6 +16798,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|use_pm
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -16192,121 +16814,37 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|ess_card
-op_star
-id|s
-suffix:semicolon
-id|pm_unregister_all
-c_func
-(paren
-id|maestro_pm_callback
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|s
-op_assign
-id|devs
-)paren
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|devs
-op_assign
-id|devs-&gt;next
-suffix:semicolon
-multiline_comment|/* XXX maybe should force stop bob, but should be all &n;&t;&t;&t;stopped by _release by now */
-id|free_irq
-c_func
-(paren
-id|s-&gt;irq
-comma
-id|s
-)paren
-suffix:semicolon
-id|unregister_sound_mixer
-c_func
-(paren
-id|s-&gt;dev_mixer
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NR_DSPS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_struct
-id|ess_state
-op_star
-id|ess
-op_assign
-op_amp
-id|s-&gt;channels
-(braket
-id|i
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ess-&gt;dev_audio
-op_ne
-op_minus
-l_int|1
-)paren
-(brace
-id|unregister_sound_dsp
-c_func
-(paren
-id|ess-&gt;dev_audio
-)paren
-suffix:semicolon
-)brace
-)brace
-id|release_region
-c_func
-(paren
-id|s-&gt;iobase
-comma
-l_int|256
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-)brace
 id|M_printk
 c_func
 (paren
 l_string|&quot;maestro: unloading&bslash;n&quot;
 )paren
 suffix:semicolon
+id|nuke_maestros
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#else /* MODULE */
+DECL|variable|init_maestro
+id|__initcall
+c_func
+(paren
+id|init_maestro
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* --------------------------------------------------------------------- */
 r_void
 DECL|function|check_suspend
 id|check_suspend
 c_func
 (paren
-r_void
+r_struct
+id|ess_card
+op_star
+id|card
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -16321,20 +16859,22 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|in_suspend
+id|card-&gt;in_suspend
 )paren
 (brace
 r_return
 suffix:semicolon
 )brace
-id|in_suspend
+id|card-&gt;in_suspend
 op_increment
 suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
 op_amp
-id|suspend_queue
+(paren
+id|card-&gt;suspend_queue
+)paren
 comma
 op_amp
 id|wait
@@ -16353,7 +16893,9 @@ id|remove_wait_queue
 c_func
 (paren
 op_amp
-id|suspend_queue
+(paren
+id|card-&gt;suspend_queue
+)paren
 comma
 op_amp
 id|wait
@@ -16396,12 +16938,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* over-kill */
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: pm in dev %p&bslash;n&quot;
+l_string|&quot;maestro: apm in dev %p&bslash;n&quot;
 comma
 id|card
+)paren
+suffix:semicolon
+multiline_comment|/* we have to read from the apu regs, need&n;&t;&t;to power it up */
+id|maestro_power
+c_func
+(paren
+id|card
+comma
+id|ACPI_D0
 )paren
 suffix:semicolon
 r_for
@@ -16520,9 +17072,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|in_suspend
-op_assign
-l_int|1
+id|card-&gt;in_suspend
+op_increment
 suffix:semicolon
 id|restore_flags
 c_func
@@ -16530,7 +17081,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* we&squot;ll let the bios do the rest of the power down.. */
+multiline_comment|/* we trust in the bios to power down the chip on suspend.&n;&t; * XXX I&squot;m also not sure that in_suspend will protect&n;&t; * against all reg accesses from here on out. &n;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -16565,25 +17116,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|in_suspend
+multiline_comment|/* over-kill */
+id|card-&gt;in_suspend
 op_assign
 l_int|0
 suffix:semicolon
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: resuming&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* first lets just bring everything back. .*/
-id|M_printk
-c_func
-(paren
-l_string|&quot;maestro: pm in dev %p&bslash;n&quot;
+l_string|&quot;maestro: resuming card at %p&bslash;n&quot;
 comma
 id|card
 )paren
 suffix:semicolon
+multiline_comment|/* restore all our config */
 id|maestro_config
 c_func
 (paren
@@ -16616,6 +17162,7 @@ c_func
 id|card
 )paren
 suffix:semicolon
+multiline_comment|/* set each channels&squot; apu control registers before&n;&t; * restoring audio &n;&t; */
 r_for
 c_loop
 (paren
@@ -16771,12 +17318,43 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* now we flip on the music */
-id|M_printk
+r_if
+c_cond
+(paren
+id|card-&gt;dsps_open
+op_le
+l_int|0
+)paren
+(brace
+multiline_comment|/* this card&squot;s idle */
+id|maestro_power
 c_func
 (paren
-l_string|&quot;maestro: pm in dev %p&bslash;n&quot;
-comma
 id|card
+comma
+id|ACPI_D2
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* ok, we&squot;re actually playing things on&n;&t;&t;&t;this card */
+id|maestro_power
+c_func
+(paren
+id|card
+comma
+id|ACPI_D0
+)paren
+suffix:semicolon
+id|start_bob
+c_func
+(paren
+op_amp
+id|card-&gt;channels
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 r_for
@@ -16805,7 +17383,7 @@ id|card-&gt;channels
 id|i
 )braket
 suffix:semicolon
-multiline_comment|/* these use the apu_mode, and can handle&n;                   spurious calls */
+multiline_comment|/* these use the apu_mode, and can handle&n;&t;&t;&t;&t;spurious calls */
 id|start_dac
 c_func
 (paren
@@ -16819,24 +17397,6 @@ id|s
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|card-&gt;dsps_open
-OG
-l_int|0
-)paren
-(brace
-id|start_bob
-c_func
-(paren
-op_amp
-id|card-&gt;channels
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
 )brace
 id|restore_flags
 c_func
@@ -16844,11 +17404,14 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* all right, we think things are ready, &n;&t;&t;wake up people who were using the device&n;&t;&t;when we suspended */
 id|wake_up
 c_func
 (paren
 op_amp
-id|suspend_queue
+(paren
+id|card-&gt;suspend_queue
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -16888,15 +17451,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|card
 )paren
-(brace
+r_goto
+id|out
+suffix:semicolon
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: pm event received: 0x%x&bslash;n&quot;
+l_string|&quot;maestro: pm event 0x%x received for card %p&bslash;n&quot;
 comma
 id|rqst
+comma
+id|card
 )paren
 suffix:semicolon
 r_switch
@@ -16927,8 +17495,10 @@ id|card
 suffix:semicolon
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * we&squot;d also like to find out about&n;&t;&t; * power level changes because some biosen&n;&t;&t; * do mean things to the maestro when they&n;&t;&t; * change their power state.&n;&t;&t; */
 )brace
-)brace
+id|out
+suffix:colon
 r_return
 l_int|0
 suffix:semicolon

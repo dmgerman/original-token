@@ -55,7 +55,7 @@ id|dstlen
 suffix:semicolon
 id|err
 op_assign
-id|inflateReset
+id|cramfs_inflateReset
 c_func
 (paren
 op_amp
@@ -73,19 +73,19 @@ id|Z_OK
 id|printk
 c_func
 (paren
-l_string|&quot;inflateReset error %d&bslash;n&quot;
+l_string|&quot;cramfs_inflateReset error %d&bslash;n&quot;
 comma
 id|err
 )paren
 suffix:semicolon
-id|inflateEnd
+id|cramfs_inflateEnd
 c_func
 (paren
 op_amp
 id|stream
 )paren
 suffix:semicolon
-id|inflateInit
+id|cramfs_inflateInit
 c_func
 (paren
 op_amp
@@ -95,7 +95,7 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|inflate
+id|cramfs_inflate
 c_func
 (paren
 op_amp
@@ -169,7 +169,7 @@ id|stream.avail_in
 op_assign
 l_int|0
 suffix:semicolon
-id|inflateInit
+id|cramfs_inflateInit
 c_func
 (paren
 op_amp
@@ -196,7 +196,7 @@ op_logical_neg
 op_decrement
 id|initialized
 )paren
-id|inflateEnd
+id|cramfs_inflateEnd
 c_func
 (paren
 op_amp

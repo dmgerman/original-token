@@ -215,7 +215,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Put the inode on the super block&squot;s dirty list.&n; *&n; * CAREFUL! We mark it dirty unconditionally, but&n; * move it onto the dirty list only if it is hashed.&n; * If it was not hashed, it will never be added to&n; * the dirty list even if it is later hashed, as it&n; * will have been marked dirty already.&n; *&n; * In short, make sure you hash any inodes _before_&n; * you start marking them dirty..&n; */
-multiline_comment|/**&n; *&t;__mark_inode_dirty -&t;internal function&n; *&t;@inode: inode to mark&n; *&n; *&t;Mark an inode as dirty. Callers should use mark_inode_dirty&n; */
+multiline_comment|/**&n; *&t;__mark_inode_dirty -&t;internal function&n; *&t;@inode: inode to mark&n; *&n; *&t;Mark an inode as dirty. Callers should use mark_inode_dirty.&n; */
 DECL|function|__mark_inode_dirty
 r_void
 id|__mark_inode_dirty
@@ -1789,7 +1789,7 @@ op_amp
 id|inode-&gt;i_data
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * get_empty_inode &t;- obtain an inode&n; *&n; * This is called by things like the networking layer&n; * etc that want to get an inode without any inode&n; * number, or filesystems that allocate new inodes with&n; * no pre-existing information.&n; *&n; * On a successful return the inode pointer is returned. On a failure&n; * a NULL pointer is returned. The returned inode is not on any superblock&n; * lists.&n; */
+multiline_comment|/**&n; * get_empty_inode &t;- obtain an inode&n; *&n; * This is called by things like the networking layer&n; * etc that want to get an inode without any inode&n; * number, or filesystems that allocate new inodes with&n; * no pre-existing information.&n; *&n; * On a successful return the inode pointer is returned. On a failure&n; * a %NULL pointer is returned. The returned inode is not on any superblock&n; * lists.&n; */
 DECL|function|get_empty_inode
 r_struct
 id|inode
@@ -2439,7 +2439,7 @@ id|opaque
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;insert_inode_hash - hash an inode&n; *&t;@inode: unhashed inode&n; *&n; *&t;Add an inode to the inode hash for this superblock. If the inode&n; *&t;has no superblock it is added to a seperate anonymous chain&n; */
+multiline_comment|/**&n; *&t;insert_inode_hash - hash an inode&n; *&t;@inode: unhashed inode&n; *&n; *&t;Add an inode to the inode hash for this superblock. If the inode&n; *&t;has no superblock it is added to a separate anonymous chain.&n; */
 DECL|function|insert_inode_hash
 r_void
 id|insert_inode_hash
@@ -2500,7 +2500,7 @@ id|inode_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;remove_inode_hash - remove an inode from the hash&n; *&t;@inode: inode to unhash&n; *&n; *&t;Remove an inode from the superblock or anonymous hash&n; */
+multiline_comment|/**&n; *&t;remove_inode_hash - remove an inode from the hash&n; *&t;@inode: inode to unhash&n; *&n; *&t;Remove an inode from the superblock or anonymous hash.&n; */
 DECL|function|remove_inode_hash
 r_void
 id|remove_inode_hash
@@ -2978,7 +2978,7 @@ id|inode
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;bmap&t;- find a block number in a file&n; *&t;@inode: inode of file&n; *&t;@block: block to find&n; *&n; *&t;Returns the block number on the device holding the inode that&n; *&t;is the disk block number for the block of the file requested.&n; *&t;That is asked for block 4 of inode 1 the function will return the&n; *&t;disk block relative to the disk start that holds that block of the &n; *&t;file&n; */
+multiline_comment|/**&n; *&t;bmap&t;- find a block number in a file&n; *&t;@inode: inode of file&n; *&t;@block: block to find&n; *&n; *&t;Returns the block number on the device holding the inode that&n; *&t;is the disk block number for the block of the file requested.&n; *&t;That is, asked for block 4 of inode 1 the function will return the&n; *&t;disk block relative to the disk start that holds that block of the &n; *&t;file.&n; */
 DECL|function|bmap
 r_int
 id|bmap
@@ -3100,7 +3100,7 @@ l_string|&quot;cannot create inode slab cache&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;update_atime&t;-&t;update the access time&n; *&t;@inode: inode accessed&n; *&n; *&t;Update the accessed time on an inode and mark it for  writeback.&n; *&t;This function automatically handles read only file systems and media,&n; *&t;as well as the noatime flag and inode specific noatime markers&n; */
+multiline_comment|/**&n; *&t;update_atime&t;-&t;update the access time&n; *&t;@inode: inode accessed&n; *&n; *&t;Update the accessed time on an inode and mark it for writeback.&n; *&t;This function automatically handles read only file systems and media,&n; *&t;as well as the &quot;noatime&quot; flag and inode specific &quot;noatime&quot; markers.&n; */
 DECL|function|update_atime
 r_void
 id|update_atime

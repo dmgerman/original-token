@@ -145,10 +145,10 @@ suffix:semicolon
 multiline_comment|/* distance tree */
 )brace
 suffix:semicolon
-DECL|function|inflate_codes_new
+DECL|function|cramfs_inflate_codes_new
 id|inflate_codes_statef
 op_star
-id|inflate_codes_new
+id|cramfs_inflate_codes_new
 c_func
 (paren
 id|bl
@@ -224,9 +224,9 @@ r_return
 id|c
 suffix:semicolon
 )brace
-DECL|function|inflate_codes
+DECL|function|cramfs_inflate_codes
 r_int
-id|inflate_codes
+id|cramfs_inflate_codes
 c_func
 (paren
 id|s
@@ -332,7 +332,7 @@ l_int|10
 id|UPDATE
 id|r
 op_assign
-id|inflate_fast
+id|cramfs_inflate_fast
 c_func
 (paren
 id|c-&gt;lbits
@@ -408,7 +408,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|j
 )braket
@@ -554,7 +554,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|j
 )braket
@@ -599,7 +599,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|j
 )braket
@@ -709,7 +709,7 @@ id|uInt
 )paren
 id|b
 op_amp
-id|inflate_mask
+id|cramfs_inflate_mask
 (braket
 id|j
 )braket
@@ -918,9 +918,9 @@ suffix:semicolon
 multiline_comment|/* Some dumb compilers complain without this */
 macro_line|#endif
 )brace
-DECL|function|inflate_codes_free
+DECL|function|cramfs_inflate_codes_free
 r_void
-id|inflate_codes_free
+id|cramfs_inflate_codes_free
 c_func
 (paren
 id|c

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/video/mdacon.c -- Low level MDA based console driver&n; *&n; *&t;(c) 1998 Andrew Apted &lt;ajapted@netspace.net.au&gt;&n; *&n; *      including portions (c) 1995-1998 Patrick Caulfield.&n; *&n; *  This file is based on the VGA console driver (vgacon.c):&n; *&t;&n; *&t;Created 28 Sep 1997 by Geert Uytterhoeven&n; *&n; *&t;Rewritten by Martin Mares &lt;mj@ucw.cz&gt;, July 1998&n; *&n; *  and on the old console.c, vga.c and vesa_blank.c drivers:&n; *&n; *&t;Copyright (C) 1991, 1992  Linus Torvalds&n; *&t;&t;&t;    1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*&n; *  linux/drivers/video/mdacon.c -- Low level MDA based console driver&n; *&n; *&t;(c) 1998 Andrew Apted &lt;ajapted@netspace.net.au&gt;&n; *&n; *      including portions (c) 1995-1998 Patrick Caulfield.&n; *&n; *      slight improvements (c) 2000 Edward Betts &lt;edward@debian.org&gt;&n; *&n; *  This file is based on the VGA console driver (vgacon.c):&n; *&t;&n; *&t;Created 28 Sep 1997 by Geert Uytterhoeven&n; *&n; *&t;Rewritten by Martin Mares &lt;mj@ucw.cz&gt;, July 1998&n; *&n; *  and on the old console.c, vga.c and vesa_blank.c drivers:&n; *&n; *&t;Copyright (C) 1991, 1992  Linus Torvalds&n; *&t;&t;&t;    1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -854,42 +854,11 @@ l_int|0x02000
 suffix:semicolon
 )brace
 multiline_comment|/* Ok, there is definitely a card registering at the correct&n;&t; * memory location, so now we do an I/O port test.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|test_mda_b
-c_func
-(paren
-l_int|0x66
-comma
-l_int|0x0f
-)paren
-)paren
-(brace
+multiline_comment|/* Edward: These two mess `tests&squot; mess up my cursor on bootup */
 multiline_comment|/* cursor low register */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|test_mda_b
-c_func
-(paren
-l_int|0x99
-comma
-l_int|0x0f
-)paren
-)paren
-(brace
+multiline_comment|/* if (! test_mda_b(0x66, 0x0f)) {&n;&t;&t;return 0;&n;&t;} */
 multiline_comment|/* cursor low register */
-r_return
-l_int|0
-suffix:semicolon
-)brace
+multiline_comment|/* if (! test_mda_b(0x99, 0x0f)) {&n;&t;&t;return 0;&n;&t;} */
 multiline_comment|/* See if the card is a Hercules, by checking whether the vsync&n;&t; * bit of the status register is changing.  This test lasts for&n;&t; * approximately 1/10th of a second.&n;&t; */
 id|p_save
 op_assign
@@ -1282,6 +1251,15 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* cursor looks ugly during boot-up, so turn it off */
+id|mda_set_cursor
+c_func
+(paren
+id|mda_vram_len
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2094,9 +2072,46 @@ id|blank
 r_if
 c_cond
 (paren
-id|blank
+id|mda_type
+op_eq
+id|TYPE_MDA
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|blank
+)paren
+id|scr_memsetw
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|mda_vram_base
+comma
+id|mda_convert_attr
+c_func
+(paren
+id|c-&gt;vc_video_erase_char
+)paren
+comma
+id|c-&gt;vc_screenbuf_size
+)paren
+suffix:semicolon
+multiline_comment|/* Tell console.c that it has to restore the screen itself */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|blank
+)paren
 id|outb_p
 c_func
 (paren
@@ -2106,9 +2121,7 @@ id|mda_mode_port
 )paren
 suffix:semicolon
 multiline_comment|/* disable video */
-)brace
 r_else
-(brace
 id|outb_p
 c_func
 (paren
@@ -2119,10 +2132,10 @@ comma
 id|mda_mode_port
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 DECL|function|mdacon_font_op
 r_static

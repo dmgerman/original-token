@@ -4924,10 +4924,10 @@ id|KERN_ERR
 l_string|&quot;ltpc: usage: ltpc=auto|iobase[,irq[,dma]]&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -4956,9 +4956,6 @@ id|ints
 l_int|2
 )braket
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -4977,9 +4974,6 @@ id|ints
 (braket
 l_int|3
 )braket
-suffix:semicolon
-r_return
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* ignore any other paramters */

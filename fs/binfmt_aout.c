@@ -1252,7 +1252,12 @@ id|current-&gt;personality
 op_assign
 id|PER_LINUX
 suffix:semicolon
-macro_line|#if defined(__sparc__) &amp;&amp; !defined(__sparc_v9__)
+macro_line|#if defined(__sparc__)
+id|current-&gt;personality
+op_assign
+id|PER_SUNOS
+suffix:semicolon
+macro_line|#if !defined(__sparc_v9__)
 id|memcpy
 c_func
 (paren
@@ -1269,6 +1274,7 @@ id|exec
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|current-&gt;mm-&gt;end_code
 op_assign

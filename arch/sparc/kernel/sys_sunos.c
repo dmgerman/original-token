@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.118 2000/03/26 11:28:56 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.120 2000/04/08 08:32:14 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -36,6 +36,7 @@ multiline_comment|/* For the nfs mount emulation */
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
+macro_line|#include &lt;linux/nfs2.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/* for sunos_select */
 macro_line|#include &lt;linux/time.h&gt;
@@ -100,10 +101,6 @@ id|lock_kernel
 c_func
 (paren
 )paren
-suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|PER_BSD
 suffix:semicolon
 r_if
 c_cond
@@ -2399,10 +2396,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|STICKY_TIMEOUTS
-suffix:semicolon
 id|ret
 op_assign
 id|sys_select
@@ -2959,6 +2952,7 @@ r_sizeof
 id|sunos_mount
 )paren
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
@@ -3468,6 +3462,7 @@ id|data
 suffix:semicolon
 r_goto
 id|out2
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -3497,6 +3492,7 @@ id|ENODEV
 suffix:semicolon
 r_goto
 id|out2
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -3518,6 +3514,7 @@ id|ENODEV
 suffix:semicolon
 r_goto
 id|out2
+suffix:semicolon
 )brace
 id|ret
 op_assign
@@ -4643,56 +4640,6 @@ r_return
 id|rval
 suffix:semicolon
 )brace
-DECL|function|sunos_open
-id|asmlinkage
-r_int
-id|sunos_open
-c_func
-(paren
-r_const
-r_char
-op_star
-id|filename
-comma
-r_int
-id|flags
-comma
-r_int
-id|mode
-)paren
-(brace
-r_int
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|PER_BSD
-suffix:semicolon
-id|ret
-op_assign
-id|sys_open
-(paren
-id|filename
-comma
-id|flags
-comma
-id|mode
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret
-suffix:semicolon
-)brace
 DECL|macro|SUNOS_EWOULDBLOCK
 mdefine_line|#define SUNOS_EWOULDBLOCK 35
 multiline_comment|/* see the sunos man page read(2v) for an explanation&n;   of this garbage. We use O_NDELAY to mark&n;   file descriptors that have been set non-blocking &n;   using 4.2BSD style calls. (tridge) */
@@ -5467,10 +5414,6 @@ id|old_ka
 suffix:semicolon
 r_int
 id|ret
-suffix:semicolon
-id|current-&gt;personality
-op_or_assign
-id|PER_BSD
 suffix:semicolon
 r_if
 c_cond

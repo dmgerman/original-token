@@ -48,6 +48,27 @@ r_extern
 id|spinlock_t
 id|rtc_lock
 suffix:semicolon
+macro_line|#if defined(CONFIG_APM)
+r_extern
+r_void
+id|machine_real_restart
+c_func
+(paren
+r_int
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|variable|machine_real_restart
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|machine_real_restart
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
@@ -285,13 +306,6 @@ id|__rwsem_wake
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */
-DECL|variable|csum_partial_copy
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|csum_partial_copy
-)paren
-suffix:semicolon
 DECL|variable|csum_partial_copy_generic
 id|EXPORT_SYMBOL
 c_func
@@ -375,13 +389,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strpbrk
-)paren
-suffix:semicolon
-DECL|variable|strstr
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|strstr
 )paren
 suffix:semicolon
 DECL|variable|strncpy_from_user

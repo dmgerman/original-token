@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * linux/drivers/video/rivafb.c - nVidia RIVA 128/TNT/TNT2 fb driver&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Contributors:&n; *&n; *&t;Ani Joshi:  Lots of debugging and cleanup work, really helped&n; *&t;get the driver going&n; *&n; *&t;Ferenc Bakonyi:  Bug fixes, cleanup, modularization&n; *&n; * Initial template from skeletonfb.c, created 28 Dec 1997 by Geert Uytterhoeven&n; * Includes riva_hw.c from nVidia, see copyright below.&n; * KGI code provided the basis for state storage, init, and mode switching.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/* version number of this driver */
 DECL|macro|RIVAFB_VERSION
-mdefine_line|#define RIVAFB_VERSION &quot;0.7.0&quot;
+mdefine_line|#define RIVAFB_VERSION &quot;0.7.1&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -90,6 +90,10 @@ DECL|enumerator|CH_RIVA_VTNT2
 id|CH_RIVA_VTNT2
 comma
 multiline_comment|/* VTNT2 */
+DECL|enumerator|CH_RIVA_UVTNT2
+id|CH_RIVA_UVTNT2
+comma
+multiline_comment|/* VTNT2 */
 DECL|enumerator|CH_RIVA_ITNT2
 id|CH_RIVA_ITNT2
 comma
@@ -146,6 +150,12 @@ l_int|5
 comma
 (brace
 l_string|&quot;RIVA-VTNT2&quot;
+comma
+l_int|5
+)brace
+comma
+(brace
+l_string|&quot;RIVA-UVTNT2&quot;
 comma
 l_int|5
 )brace
@@ -236,6 +246,22 @@ comma
 id|PCI_VENDOR_ID_NVIDIA
 comma
 id|PCI_DEVICE_ID_NVIDIA_VTNT2
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|CH_RIVA_VTNT2
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_NVIDIA
+comma
+id|PCI_DEVICE_ID_NVIDIA_UVTNT2
 comma
 id|PCI_ANY_ID
 comma

@@ -16,7 +16,6 @@ macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 r_struct
@@ -188,6 +187,7 @@ mdefine_line|#define FIBMAP&t;   _IO(0x00,1)&t;/* bmap access */
 DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   _IO(0x00,2)&t;/* get the block size used for bmap */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 r_extern
@@ -3514,6 +3514,22 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|blkdev_close
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|file_operations
 id|def_blk_fops
@@ -4298,6 +4314,24 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* needed for stackable file system support */
+r_extern
+id|loff_t
+id|default_llseek
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+id|loff_t
+id|offset
+comma
+r_int
+id|origin
+)paren
+suffix:semicolon
 r_extern
 r_struct
 id|dentry
@@ -4832,6 +4866,22 @@ op_star
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|block_fsync
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
 )paren
 suffix:semicolon
 r_extern

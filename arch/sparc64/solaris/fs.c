@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fs.c,v 1.17 2000/03/10 04:43:30 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * 1999-08-19 Implemented solaris F_FREESP (truncate)&n; *            fcntl, by Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
+multiline_comment|/* $Id: fs.c,v 1.18 2000/04/08 02:11:54 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * 1999-08-19 Implemented solaris F_FREESP (truncate)&n; *            fcntl, by Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -3061,8 +3061,6 @@ id|file
 )paren
 suffix:semicolon
 )brace
-id|out
-suffix:colon
 r_return
 id|error
 suffix:semicolon

@@ -299,7 +299,6 @@ r_void
 r_static
 r_int
 id|arcnet_inited
-id|__initdata
 op_assign
 l_int|0
 suffix:semicolon

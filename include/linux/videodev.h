@@ -1092,6 +1092,8 @@ DECL|macro|VID_HARDWARE_ZR36067
 mdefine_line|#define VID_HARDWARE_ZR36067&t;26&t;/* Zoran ZR36067/36060 */
 DECL|macro|VID_HARDWARE_OV511
 mdefine_line|#define VID_HARDWARE_OV511&t;27&t;
+DECL|macro|VID_HARDWARE_ZR356700
+mdefine_line|#define VID_HARDWARE_ZR356700&t;28&t;/* Zoran 36700 series */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

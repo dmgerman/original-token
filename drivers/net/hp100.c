@@ -6995,14 +6995,14 @@ id|donecount
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef LINUX_2_1
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|lp-&gt;txrhead-&gt;skb
 )paren
 suffix:semicolon
 macro_line|#else
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|lp-&gt;txrhead-&gt;skb
@@ -7761,14 +7761,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef LINUX_2_1
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
 macro_line|#else
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -8663,7 +8663,7 @@ l_int|NULL
 )paren
 (brace
 macro_line|#ifdef LINUX_2_1
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|ptr-&gt;skb
@@ -8671,7 +8671,7 @@ id|ptr-&gt;skb
 suffix:semicolon
 )brace
 macro_line|#else
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|ptr-&gt;skb

@@ -921,7 +921,7 @@ multiline_comment|/* We have dumped enough */
 r_break
 suffix:semicolon
 )brace
-id|spin_lock_bh
+id|spin_unlock_bh
 c_func
 (paren
 op_amp

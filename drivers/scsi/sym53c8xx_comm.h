@@ -6832,7 +6832,7 @@ suffix:semicolon
 )brace
 macro_line|#endif /* SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT */
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*===================================================================&n;**&n;**&t;Get device queue depth from boot command line.&n;**&n;**===================================================================&n;*/

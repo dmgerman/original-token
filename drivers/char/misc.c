@@ -467,7 +467,7 @@ id|misc_open
 comma
 )brace
 suffix:semicolon
-multiline_comment|/**&n; *&t;misc_register&t;-&t;register a miscellaneous device&n; *&t;@misc: device structure&n; *&t;&n; *&t;Register a miscellaneous device with the kernel. If the minor&n; *&t;number is set to MISC_DYNAMIC_MINOR a minor number is assigned&n; *&t;and placed in the minor field of the structure. For other cases&n; *&t;the minor number requested is used.&n; *&n; *&t;The structure passed is linked into the kernel and may not be&n; *&t;destroyed until it has been unregistered&n; *&n; *&t;A zero is returned on success and a negative errno code for&n; *&t;failure.&n; */
+multiline_comment|/**&n; *&t;misc_register&t;-&t;register a miscellaneous device&n; *&t;@misc: device structure&n; *&t;&n; *&t;Register a miscellaneous device with the kernel. If the minor&n; *&t;number is set to %MISC_DYNAMIC_MINOR a minor number is assigned&n; *&t;and placed in the minor field of the structure. For other cases&n; *&t;the minor number requested is used.&n; *&n; *&t;The structure passed is linked into the kernel and may not be&n; *&t;destroyed until it has been unregistered.&n; *&n; *&t;A zero is returned on success and a negative errno code for&n; *&t;failure.&n; */
 DECL|function|misc_register
 r_int
 id|misc_register
@@ -678,7 +678,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;misc_deregister - unregister a miscellaneous device&n; *&t;@misc: device to unregister&n; *&n; *&t;Unregister a miscellaneous device that was previously&n; *&t;successfully registered with misc_register. Success&n; *&t;is indicated by a zero return, a negative errno code&n; *&t;indicates an error.&n; */
+multiline_comment|/**&n; *&t;misc_deregister - unregister a miscellaneous device&n; *&t;@misc: device to unregister&n; *&n; *&t;Unregister a miscellaneous device that was previously&n; *&t;successfully registered with misc_register()F. Success&n; *&t;is indicated by a zero return, a negative errno code&n; *&t;indicates an error.&n; */
 DECL|function|misc_deregister
 r_int
 id|misc_deregister

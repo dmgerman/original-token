@@ -66,6 +66,17 @@ r_int
 id|data
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PSMOUSE
+r_static
+r_void
+id|aux_write_ack
+c_func
+(paren
+r_int
+id|val
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|kbd_controller_lock
 id|spinlock_t
 id|kbd_controller_lock
@@ -120,6 +131,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|macro|AUX_RECONNECT
+mdefine_line|#define AUX_RECONNECT 170 /* scancode when ps2 device is plugged (back) in */
 DECL|variable|queue
 r_static
 r_struct
@@ -1222,6 +1235,32 @@ suffix:semicolon
 id|mouse_reply_expected
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|scancode
+op_eq
+id|AUX_RECONNECT
+)paren
+(brace
+id|queue-&gt;head
+op_assign
+id|queue-&gt;tail
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Flush input queue */
+id|aux_write_ack
+c_func
+(paren
+id|AUX_ENABLE_DEV
+)paren
+suffix:semicolon
+multiline_comment|/* ping the mouse :) */
+r_return
 suffix:semicolon
 )brace
 id|add_mouse_randomness

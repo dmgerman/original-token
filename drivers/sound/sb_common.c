@@ -5130,6 +5130,17 @@ id|hw_config-&gt;name
 op_assign
 l_string|&quot;Sound Blaster 16&quot;
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hw_config-&gt;irq
+OL
+l_int|3
+op_logical_or
+id|hw_config-&gt;irq
+op_eq
+id|devc-&gt;irq
+)paren
 id|hw_config-&gt;irq
 op_assign
 op_minus

@@ -46,6 +46,7 @@ mdefine_line|#define PCI_DEVICE_ID_AVM_C4&t;0x0800
 macro_line|#endif
 multiline_comment|/* ------------------------------------------------------------- */
 DECL|variable|suppress_pollack
+r_static
 r_int
 id|suppress_pollack
 op_assign

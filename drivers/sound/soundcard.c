@@ -2843,7 +2843,7 @@ r_void
 id|unregister_sound_special
 c_func
 (paren
-l_int|6
+l_int|1
 )paren
 suffix:semicolon
 id|unregister_sound_special

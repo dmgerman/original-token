@@ -19103,8 +19103,8 @@ suffix:semicolon
 )brace
 DECL|function|tulip_exit
 r_static
-id|__exit
 r_void
+id|__exit
 id|tulip_exit
 c_func
 (paren

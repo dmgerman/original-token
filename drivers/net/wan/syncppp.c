@@ -522,7 +522,7 @@ id|PP_TIMO
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;sppp_input -&t;receive and process a WAN PPP frame&n; *&t;@skb:&t;The buffer to process&n; *&t;@dev:&t;The device it arrived on&n; *&n; *&t;This can be called directly by cards that do not have&n; *&t;timing constraints but is normally called from the network layer&n; *&t;after interrupt servicing to process frames queued via netif_rx.&n; *&n; *&t;We process the options in the card. If the frame is destined for&n; *&t;the protocol stacks then it requeues the frame for the upper level&n; *&t;protocol. If it is a control from it is processed and discarded&n; *&t;here.&n; */
+multiline_comment|/**&n; *&t;sppp_input -&t;receive and process a WAN PPP frame&n; *&t;@skb:&t;The buffer to process&n; *&t;@dev:&t;The device it arrived on&n; *&n; *&t;This can be called directly by cards that do not have&n; *&t;timing constraints but is normally called from the network layer&n; *&t;after interrupt servicing to process frames queued via netif_rx().&n; *&n; *&t;We process the options in the card. If the frame is destined for&n; *&t;the protocol stacks then it requeues the frame for the upper level&n; *&t;protocol. If it is a control from it is processed and discarded&n; *&t;here.&n; */
 DECL|function|sppp_input
 r_void
 id|sppp_input

@@ -13,7 +13,7 @@ suffix:semicolon
 r_extern
 id|inflate_codes_statef
 op_star
-id|inflate_codes_new
+id|cramfs_inflate_codes_new
 id|OF
 c_func
 (paren
@@ -34,7 +34,7 @@ id|z_streamp
 suffix:semicolon
 r_extern
 r_int
-id|inflate_codes
+id|cramfs_inflate_codes
 id|OF
 c_func
 (paren
@@ -50,7 +50,7 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|inflate_codes_free
+id|cramfs_inflate_codes_free
 id|OF
 c_func
 (paren

@@ -23,7 +23,7 @@ c_func
 id|pm_devs
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;pm_register - register a device with power management&n; *&t;@type: The device type &n; *&t;@id: Device ID&n; *&t;@callback: Callback function&n; *&n; *&t;Add a device to the list of devices that wish to be notified about&n; *&t;power management events. A pm_dev structure is returnd on success,&n; *&t;on failure the return is NULL&n; */
+multiline_comment|/**&n; *&t;pm_register - register a device with power management&n; *&t;@type: device type &n; *&t;@id: device ID&n; *&t;@callback: callback function&n; *&n; *&t;Add a device to the list of devices that wish to be notified about&n; *&t;power management events. A &amp;pm_dev structure is returned on success,&n; *&t;on failure the return is %NULL.&n; */
 DECL|function|pm_register
 r_struct
 id|pm_dev
@@ -254,7 +254,7 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;pm_send - send request to a single device&n; *&t;@dev: device to send to&n; *&t;@rqst: power management request&n; *&t;@data: data for the callback&n; *&n; *&t;Issue a power management request to a given device. The &n; *&t;PM_SUSPEND and PM_RESUME events are handled specially. The&n; *&t;data field must hold the intented next state. No call is made&n; *&t;if the state matches.&n; *&n; *&t;BUGS: what stops two power management requests occuring in parallel&n; *&t;and conflicting.&n; */
+multiline_comment|/**&n; *&t;pm_send - send request to a single device&n; *&t;@dev: device to send to&n; *&t;@rqst: power management request&n; *&t;@data: data for the callback&n; *&n; *&t;Issue a power management request to a given device. The &n; *&t;%PM_SUSPEND and %PM_RESUME events are handled specially. The&n; *&t;data field must hold the intended next state. No call is made&n; *&t;if the state matches.&n; *&n; *&t;BUGS: what stops two power management requests occuring in parallel&n; *&t;and conflicting.&n; */
 DECL|function|pm_send
 r_int
 id|pm_send
@@ -476,7 +476,7 @@ id|entry-&gt;prev
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;pm_send - send request to all managed device&n; *&t;@rqst: power management request&n; *&t;@data: data for the callback&n; *&n; *&t;Issue a power management request to a all devices. The &n; *&t;PM_SUSPEND events are handled specially. Any device is &n; *&t;permitted to fail a suspend by returning a non zero (error)&n; *&t;value from its callback function. If any device vetoes a &n; *&t;suspend request then all other devices that have suspended &n; *&t;during the processing of this request are restored to their&n; *&t;previous state.&n; *&n; *&t;Zero is returned on success. If a suspend fails then the status&n; *&t;from the device that vetoes the suspend is returned.&n; *&n; *&t;BUGS: what stops two power management requests occuring in parallel&n; *&t;and conflicting.&n; */
+multiline_comment|/**&n; *&t;pm_send_all - send request to all managed devices&n; *&t;@rqst: power management request&n; *&t;@data: data for the callback&n; *&n; *&t;Issue a power management request to a all devices. The &n; *&t;%PM_SUSPEND events are handled specially. Any device is &n; *&t;permitted to fail a suspend by returning a non zero (error)&n; *&t;value from its callback function. If any device vetoes a &n; *&t;suspend request then all other devices that have suspended &n; *&t;during the processing of this request are restored to their&n; *&t;previous state.&n; *&n; *&t;Zero is returned on success. If a suspend fails then the status&n; *&t;from the device that vetoes the suspend is returned.&n; *&n; *&t;BUGS: what stops two power management requests occuring in parallel&n; *&t;and conflicting.&n; */
 DECL|function|pm_send_all
 r_int
 id|pm_send_all
@@ -575,7 +575,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;pm_find  - find a device&n; *&t;@type: type of device&n; *&t;@from: Where to start looking&n; *&n; *&t;Scan the power management list for devices of a specific type. The&n; *&t;return value for a matching device may be passed to further calls&n; *&t;to this function to find further matches. A NULL indicates the end&n; *&t;of the list. &n; *&n; *&t;To search from the beginning pass NULL as the from value.&n; */
+multiline_comment|/**&n; *&t;pm_find  - find a device&n; *&t;@type: type of device&n; *&t;@from: where to start looking&n; *&n; *&t;Scan the power management list for devices of a specific type. The&n; *&t;return value for a matching device may be passed to further calls&n; *&t;to this function to find further matches. A %NULL indicates the end&n; *&t;of the list. &n; *&n; *&t;To search from the beginning pass %NULL as the @from value.&n; */
 DECL|function|pm_find
 r_struct
 id|pm_dev

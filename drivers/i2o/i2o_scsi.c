@@ -1087,6 +1087,12 @@ op_assign
 (brace
 id|i2o_scsi_reply
 comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
 l_string|&quot;I2O SCSI OSM&quot;
 comma
 l_int|0
@@ -1133,7 +1139,7 @@ c_func
 (paren
 id|c
 comma
-id|d-&gt;lct_data-&gt;tid
+id|d-&gt;lct_data.tid
 comma
 l_int|0
 comma
@@ -1168,7 +1174,7 @@ c_func
 (paren
 id|c
 comma
-id|d-&gt;lct_data-&gt;tid
+id|d-&gt;lct_data.tid
 comma
 l_int|0
 comma
@@ -1263,7 +1269,7 @@ id|c
 suffix:semicolon
 id|h-&gt;bus_task
 op_assign
-id|d-&gt;lct_data-&gt;tid
+id|d-&gt;lct_data.tid
 suffix:semicolon
 r_for
 c_loop
@@ -1328,11 +1334,11 @@ c_func
 (paren
 l_string|&quot;Class %03X, parent %d, want %d.&bslash;n&quot;
 comma
-id|unit-&gt;lct_data-&gt;class_id
+id|unit-&gt;lct_data.class_id
 comma
-id|unit-&gt;lct_data-&gt;parent_tid
+id|unit-&gt;lct_data.parent_tid
 comma
-id|d-&gt;lct_data-&gt;tid
+id|d-&gt;lct_data.tid
 )paren
 )paren
 suffix:semicolon
@@ -1341,13 +1347,13 @@ r_if
 c_cond
 (paren
 (paren
-id|unit-&gt;lct_data-&gt;class_id
+id|unit-&gt;lct_data.class_id
 op_ne
 id|I2O_CLASS_SCSI_PERIPHERAL
 )paren
 op_logical_and
 (paren
-id|unit-&gt;lct_data-&gt;class_id
+id|unit-&gt;lct_data.class_id
 op_ne
 id|I2O_CLASS_FIBRE_CHANNEL_PERIPHERAL
 )paren
@@ -1361,7 +1367,7 @@ c_func
 (paren
 l_string|&quot;Found a disk (%d).&bslash;n&quot;
 comma
-id|unit-&gt;lct_data-&gt;tid
+id|unit-&gt;lct_data.tid
 )paren
 )paren
 suffix:semicolon
@@ -1369,15 +1375,15 @@ r_if
 c_cond
 (paren
 (paren
-id|unit-&gt;lct_data-&gt;parent_tid
+id|unit-&gt;lct_data.parent_tid
 op_eq
-id|d-&gt;lct_data-&gt;tid
+id|d-&gt;lct_data.tid
 )paren
 op_logical_or
 (paren
-id|unit-&gt;lct_data-&gt;parent_tid
+id|unit-&gt;lct_data.parent_tid
 op_eq
-id|d-&gt;lct_data-&gt;parent_tid
+id|d-&gt;lct_data.parent_tid
 )paren
 )paren
 (brace
@@ -1419,7 +1425,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;i2o_scsi: Unable to get lun for tid %d.&bslash;n&quot;
 comma
-id|unit-&gt;lct_data-&gt;tid
+id|unit-&gt;lct_data.tid
 )paren
 suffix:semicolon
 r_continue
@@ -1445,7 +1451,7 @@ id|target
 id|lun
 )braket
 op_assign
-id|unit-&gt;lct_data-&gt;tid
+id|unit-&gt;lct_data.tid
 suffix:semicolon
 id|h-&gt;tagclock
 (braket
@@ -1463,7 +1469,7 @@ c_func
 (paren
 id|c
 comma
-id|d-&gt;lct_data-&gt;tid
+id|d-&gt;lct_data.tid
 comma
 l_int|0xF103
 comma
@@ -1728,12 +1734,12 @@ r_if
 c_cond
 (paren
 (paren
-id|d-&gt;lct_data-&gt;class_id
+id|d-&gt;lct_data.class_id
 op_ne
 id|I2O_CLASS_BUS_ADAPTER_PORT
 )paren
 singleline_comment|// bus_adapter
-singleline_comment|//&t;&t;&t;    &amp;&amp; (d-&gt;lct_data-&gt;class_id!=I2O_CLASS_FIBRE_CHANNEL_PORT)&t;// FC_PORT
+singleline_comment|//&t;&t;&t;    &amp;&amp; (d-&gt;lct_data.class_id!=I2O_CLASS_FIBRE_CHANNEL_PORT)&t;// FC_PORT
 )paren
 (brace
 r_continue

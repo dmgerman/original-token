@@ -258,11 +258,11 @@ id|strm
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     All dynamically allocated data structures for this stream are freed.&n;   This function discards any unprocessed input and does not flush any&n;   pending output.&n;&n;     deflateEnd returns Z_OK if success, Z_STREAM_ERROR if the&n;   stream state was inconsistent, Z_DATA_ERROR if the stream was freed&n;   prematurely (some input or output was discarded). In the error case,&n;   msg may be set but then points to a static string (which must not be&n;   deallocated).&n;*/
-multiline_comment|/* &n;ZEXTERN int ZEXPORT inflateInit OF((z_streamp strm));&n;&n;     Initializes the internal stream state for decompression. The fields&n;   next_in, avail_in, zalloc, zfree and opaque must be initialized before by&n;   the caller. If next_in is not Z_NULL and avail_in is large enough (the exact&n;   value depends on the compression method), inflateInit determines the&n;   compression method from the zlib header and allocates all data structures&n;   accordingly; otherwise the allocation will be deferred to the first call of&n;   inflate.  If zalloc and zfree are set to Z_NULL, inflateInit updates them to&n;   use default allocation functions.&n;&n;     inflateInit returns Z_OK if success, Z_MEM_ERROR if there was not enough&n;   memory, Z_VERSION_ERROR if the zlib library version is incompatible with the&n;   version assumed by the caller.  msg is set to null if there is no error&n;   message. inflateInit does not perform any decompression apart from reading&n;   the zlib header if present: this will be done by inflate().  (So next_in and&n;   avail_in may be modified, but next_out and avail_out are unchanged.)&n;*/
+multiline_comment|/* &n;ZEXTERN int ZEXPORT cramfs_inflateInit OF((z_streamp strm));&n;&n;     Initializes the internal stream state for decompression. The fields&n;   next_in, avail_in, zalloc, zfree and opaque must be initialized before by&n;   the caller. If next_in is not Z_NULL and avail_in is large enough (the exact&n;   value depends on the compression method), inflateInit determines the&n;   compression method from the zlib header and allocates all data structures&n;   accordingly; otherwise the allocation will be deferred to the first call of&n;   inflate.  If zalloc and zfree are set to Z_NULL, inflateInit updates them to&n;   use default allocation functions.&n;&n;     inflateInit returns Z_OK if success, Z_MEM_ERROR if there was not enough&n;   memory, Z_VERSION_ERROR if the zlib library version is incompatible with the&n;   version assumed by the caller.  msg is set to null if there is no error&n;   message. inflateInit does not perform any decompression apart from reading&n;   the zlib header if present: this will be done by inflate().  (So next_in and&n;   avail_in may be modified, but next_out and avail_out are unchanged.)&n;*/
 id|ZEXTERN
 r_int
 id|ZEXPORT
-id|inflate
+id|cramfs_inflate
 id|OF
 c_func
 (paren
@@ -279,7 +279,7 @@ multiline_comment|/*&n;    inflate decompresses as much data as possible, and st
 id|ZEXTERN
 r_int
 id|ZEXPORT
-id|inflateEnd
+id|cramfs_inflateEnd
 id|OF
 c_func
 (paren
@@ -392,7 +392,7 @@ multiline_comment|/*&n;     Initializes the decompression dictionary from the gi
 id|ZEXTERN
 r_int
 id|ZEXPORT
-id|inflateSync
+id|cramfs_inflateSync
 id|OF
 c_func
 (paren
@@ -406,7 +406,7 @@ multiline_comment|/* &n;    Skips invalid compressed data until a full flush poi
 id|ZEXTERN
 r_int
 id|ZEXPORT
-id|inflateReset
+id|cramfs_inflateReset
 id|OF
 c_func
 (paren
@@ -822,7 +822,7 @@ multiline_comment|/*&n;     These functions are not related to compression but a
 id|ZEXTERN
 id|uLong
 id|ZEXPORT
-id|adler32
+id|cramfs_adler32
 id|OF
 c_func
 (paren
@@ -892,7 +892,7 @@ suffix:semicolon
 id|ZEXTERN
 r_int
 id|ZEXPORT
-id|inflateInit_
+id|cramfs_inflateInit_
 id|OF
 c_func
 (paren
@@ -949,7 +949,7 @@ suffix:semicolon
 id|ZEXTERN
 r_int
 id|ZEXPORT
-id|inflateInit2_
+id|cramfs_inflateInit2_
 id|OF
 c_func
 (paren
@@ -972,12 +972,12 @@ id|stream_size
 suffix:semicolon
 DECL|macro|deflateInit
 mdefine_line|#define deflateInit(strm, level) &bslash;&n;        deflateInit_((strm), (level),       ZLIB_VERSION, sizeof(z_stream))
-DECL|macro|inflateInit
-mdefine_line|#define inflateInit(strm) &bslash;&n;        inflateInit_((strm),                ZLIB_VERSION, sizeof(z_stream))
+DECL|macro|cramfs_inflateInit
+mdefine_line|#define cramfs_inflateInit(strm) &bslash;&n;        cramfs_inflateInit_((strm),                ZLIB_VERSION, sizeof(z_stream))
 DECL|macro|deflateInit2
 mdefine_line|#define deflateInit2(strm, level, method, windowBits, memLevel, strategy) &bslash;&n;        deflateInit2_((strm),(level),(method),(windowBits),(memLevel),&bslash;&n;                      (strategy),           ZLIB_VERSION, sizeof(z_stream))
 DECL|macro|inflateInit2
-mdefine_line|#define inflateInit2(strm, windowBits) &bslash;&n;        inflateInit2_((strm), (windowBits), ZLIB_VERSION, sizeof(z_stream))
+mdefine_line|#define inflateInit2(strm, windowBits) &bslash;&n;        cramfs_inflateInit2_((strm), (windowBits), ZLIB_VERSION, sizeof(z_stream))
 macro_line|#if !defined(_Z_UTIL_H) &amp;&amp; !defined(NO_DUMMY_DECL)
 DECL|struct|internal_state
 DECL|member|dummy
@@ -1009,7 +1009,7 @@ suffix:semicolon
 id|ZEXTERN
 r_int
 id|ZEXPORT
-id|inflateSyncPoint
+id|cramfs_inflateSyncPoint
 id|OF
 c_func
 (paren

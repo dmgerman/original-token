@@ -1222,15 +1222,12 @@ id|init_module
 r_void
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|wanpipe_init
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#endif
 (brace

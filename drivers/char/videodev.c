@@ -702,7 +702,7 @@ r_struct
 id|file_operations
 id|video_fops
 suffix:semicolon
-multiline_comment|/**&n; *&t;video_register_device - register video4linux devices&n; *&t;@vfd: Video device structure we want to register&n; *&t;@type: type of device to register&n; *&t;FIXME: needs a semaphore on 2.3.x&n; *&t;&n; *&t;The registration code assigns minor numbers based on the type&n; *&t;requested. -ENFILE is returned in all the device slots for this&n; *&t;catetory are full. If not then the minor field is set and the&n; *&t;driver initialize function is called (if non NULL).&n; *&n; *&t;Zero is returned on success.&n; *&n; *&t;Valid types are&n; *&n; *&t;VFL_TYPE_GRABBER - A frame grabber&n; *&n; *&t;VFL_TYPE_VTX - A teletext device&n; *&n; *&t;VFL_TYPE_VBI - Vertical blank data (undecoded)&n; *&n; *&t;VFL_TYPE_RADIO - A radio card&t;&n; */
+multiline_comment|/**&n; *&t;video_register_device - register video4linux devices&n; *&t;@vfd: video device structure we want to register&n; *&t;@type: type of device to register&n; *&t;FIXME: needs a semaphore on 2.3.x&n; *&t;&n; *&t;The registration code assigns minor numbers based on the type&n; *&t;requested. -ENFILE is returned in all the device slots for this&n; *&t;catetory are full. If not then the minor field is set and the&n; *&t;driver initialize function is called (if non %NULL).&n; *&n; *&t;Zero is returned on success.&n; *&n; *&t;Valid types are&n; *&n; *&t;%VFL_TYPE_GRABBER - A frame grabber&n; *&n; *&t;%VFL_TYPE_VTX - A teletext device&n; *&n; *&t;%VFL_TYPE_VBI - Vertical blank data (undecoded)&n; *&n; *&t;%VFL_TYPE_RADIO - A radio card&t;&n; */
 DECL|function|video_register_device
 r_int
 id|video_register_device

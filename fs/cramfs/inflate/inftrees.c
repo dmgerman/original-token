@@ -2,6 +2,7 @@ multiline_comment|/* inftrees.c -- generate Huffman trees for efficient decoding
 macro_line|#include &quot;zutil.h&quot;
 macro_line|#include &quot;inftrees.h&quot;
 DECL|variable|inflate_copyright
+r_static
 r_const
 r_char
 id|inflate_copyright
@@ -1431,9 +1432,9 @@ suffix:colon
 id|Z_OK
 suffix:semicolon
 )brace
-DECL|function|inflate_trees_bits
+DECL|function|cramfs_inflate_trees_bits
 r_int
-id|inflate_trees_bits
+id|cramfs_inflate_trees_bits
 c_func
 (paren
 id|c
@@ -1580,9 +1581,9 @@ r_return
 id|r
 suffix:semicolon
 )brace
-DECL|function|inflate_trees_dynamic
+DECL|function|cramfs_inflate_trees_dynamic
 r_int
-id|inflate_trees_dynamic
+id|cramfs_inflate_trees_dynamic
 c_func
 (paren
 id|nl
@@ -1886,9 +1887,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* build fixed tables only once--keep them here */
 macro_line|#include &quot;inffixed.h&quot;
-DECL|function|inflate_trees_fixed
+DECL|function|cramfs_inflate_trees_fixed
 r_int
-id|inflate_trees_fixed
+id|cramfs_inflate_trees_fixed
 c_func
 (paren
 id|bl

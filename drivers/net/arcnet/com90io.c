@@ -1668,7 +1668,7 @@ l_int|0
 )braket
 )paren
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 id|dev
 op_assign

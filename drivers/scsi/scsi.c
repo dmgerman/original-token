@@ -939,6 +939,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do not flag underflow conditions */
+id|SCpnt-&gt;old_underflow
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;resid
 op_assign
 l_int|0
@@ -2276,6 +2280,10 @@ id|SCpnt-&gt;sc_old_data_direction
 op_assign
 id|SCpnt-&gt;sc_data_direction
 suffix:semicolon
+id|SCpnt-&gt;old_underflow
+op_assign
+id|SCpnt-&gt;underflow
+suffix:semicolon
 multiline_comment|/* Start the timer ticking.  */
 id|SCpnt-&gt;internal_timeout
 op_assign
@@ -2593,6 +2601,10 @@ suffix:semicolon
 id|SCpnt-&gt;sc_old_data_direction
 op_assign
 id|SCpnt-&gt;sc_data_direction
+suffix:semicolon
+id|SCpnt-&gt;old_underflow
+op_assign
+id|SCpnt-&gt;underflow
 suffix:semicolon
 multiline_comment|/* Start the timer ticking.  */
 id|SCpnt-&gt;internal_timeout
@@ -3144,6 +3156,10 @@ id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCpnt-&gt;sc_old_data_direction
 suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|SCpnt-&gt;old_underflow
+suffix:semicolon
 multiline_comment|/*&n;         * Zero the sense information from the last time we tried&n;         * this command.&n;         */
 id|memset
 c_func
@@ -3620,6 +3636,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;old_underflow
 op_assign
 l_int|0
 suffix:semicolon

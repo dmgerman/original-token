@@ -136,7 +136,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Add a protocol ID to the list. Now that the input handler is&n; *&t;smarter we can dispense with all the messy stuff that used to be&n; *&t;here.&n; *&n; *&t;BEWARE!!! Protocol handlers, mangling input packets,&n; *&t;MUST BE last in hash buckets and checking protocol handlers&n; *&t;MUST start from promiscous ptype_all chain in net_bh.&n; *&t;It is true now, do not change it.&n; *&t;Explantion follows: if protocol handler, mangling packet, will&n; *&t;be the first on list, it is not able to sense, that packet&n; *&t;is cloned and should be copied-on-write, so that it will&n; *&t;change it and subsequent readers will get broken packet.&n; *&t;&t;&t;&t;&t;&t;&t;--ANK (980803)&n; */
-multiline_comment|/**&n; *&t;dev_add_pack - add packet handler&n; *&t;@pt: packet type declaration&n; * &n; *&t;Add a protocol handler to the networking stack. The passed packet_type&n; *&t;is linked into kernel lists and may not be freed until it has been&n; *&t;removed from the kernel lists.&n; */
+multiline_comment|/**&n; *&t;dev_add_pack - add packet handler&n; *&t;@pt: packet type declaration&n; * &n; *&t;Add a protocol handler to the networking stack. The passed &amp;packet_type&n; *&t;is linked into kernel lists and may not be freed until it has been&n; *&t;removed from the kernel lists.&n; */
 DECL|function|dev_add_pack
 r_void
 id|dev_add_pack
@@ -234,7 +234,7 @@ id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;dev_remove_pack&t; - remove packet handler&n; *&t;@pt: packet type declaration&n; * &n; *&t;Remove a protocol handler that was previously added to the kernel&n; *&t;protocol handlers by dev_add_pack. The passed packet_type is removed&n; *&t;from the kernel lists and can be freed or reused once this function&n; *&t;returns.&n; */
+multiline_comment|/**&n; *&t;dev_remove_pack&t; - remove packet handler&n; *&t;@pt: packet type declaration&n; * &n; *&t;Remove a protocol handler that was previously added to the kernel&n; *&t;protocol handlers by dev_add_pack(). The passed &amp;packet_type is removed&n; *&t;from the kernel lists and can be freed or reused once this function&n; *&t;returns.&n; */
 DECL|function|dev_remove_pack
 r_void
 id|dev_remove_pack
@@ -373,7 +373,7 @@ id|pt
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************************&n;&n;&t;&t;&t;    Device Interface Subroutines&n;&n;******************************************************************************************/
-multiline_comment|/**&n; *&t;__dev_get_by_name&t;- find a device by its name &n; *&t;@name: name to find&n; *&n; *&t;Find an interface by name. Must be called under rtnl semaphore&n; *&t;or dev_base_lock. If the name is found a pointer to the device&n; *&t;is returned. If the name is not found then NULL is returned. The&n; *&t;reference counters are not incremented so the caller must be&n; *&t;careful with locks.&n; */
+multiline_comment|/**&n; *&t;__dev_get_by_name&t;- find a device by its name &n; *&t;@name: name to find&n; *&n; *&t;Find an interface by name. Must be called under RTNL semaphore&n; *&t;or @dev_base_lock. If the name is found a pointer to the device&n; *&t;is returned. If the name is not found then %NULL is returned. The&n; *&t;reference counters are not incremented so the caller must be&n; *&t;careful with locks.&n; */
 DECL|function|__dev_get_by_name
 r_struct
 id|net_device
@@ -429,7 +429,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;dev_get_by_name&t;&t;- find a device by its name&n; *&t;@name: name to find&n; *&n; *&t;Find an interface by name. This can be called from any &n; *&t;context and does its own locking. The returned handle has&n; *&t;the usage count incremented and the caller must use dev_put() to&n; *&t;release it when it is no longer needed. NULL is returned if no&n; *&t;matching device is found.&n; */
+multiline_comment|/**&n; *&t;dev_get_by_name&t;&t;- find a device by its name&n; *&t;@name: name to find&n; *&n; *&t;Find an interface by name. This can be called from any &n; *&t;context and does its own locking. The returned handle has&n; *&t;the usage count incremented and the caller must use dev_put() to&n; *&t;release it when it is no longer needed. %NULL is returned if no&n; *&t;matching device is found.&n; */
 DECL|function|dev_get_by_name
 r_struct
 id|net_device
@@ -531,7 +531,7 @@ op_ne
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;__dev_get_by_index - find a device by its ifindex&n; *&t;@ifindex: index of device&n; *&n; *&t;Search for an interface by index. Returns NULL if the device&n; *&t;is not found or a pointer to the device. The device has not&n; *&t;had its reference counter increased so the caller must be careful&n; *&t;about locking. The caller must hold either the rtnl semaphore&n; *&t;or dev_base_lock.&n; */
+multiline_comment|/**&n; *&t;__dev_get_by_index - find a device by its ifindex&n; *&t;@ifindex: index of device&n; *&n; *&t;Search for an interface by index. Returns %NULL if the device&n; *&t;is not found or a pointer to the device. The device has not&n; *&t;had its reference counter increased so the caller must be careful&n; *&t;about locking. The caller must hold either the RTNL semaphore&n; *&t;or @dev_base_lock.&n; */
 DECL|function|__dev_get_by_index
 r_struct
 id|net_device
@@ -786,7 +786,7 @@ id|ENFILE
 suffix:semicolon
 multiline_comment|/* Over 100 of the things .. bail out! */
 )brace
-multiline_comment|/**&n; *&t;dev_alloc - allocate a network device and name&n; *&t;@name: name format string&n; *&t;@err: error return pointer&n; *&n; *&t;Passed a format string - eg &quot;lt%d&quot; it will allocate a network device&n; *&t;and space for the name. NULL is returned if no memory is available.&n; *&t;If the allocation succeeds then the name is assigned and the &n; *&t;device pointer returned. NULL is returned if the name allocation failed.&n; *&t;The cause of an error is returned as a negative errno code in the &n; *&t;variable err points to.&n; *&n; *&t;The claler must hold the dev_base or rtnl locks when doing this in order&n; *&t;to avoid duplicate name allocations.&n; */
+multiline_comment|/**&n; *&t;dev_alloc - allocate a network device and name&n; *&t;@name: name format string&n; *&t;@err: error return pointer&n; *&n; *&t;Passed a format string, eg. &quot;lt%d&quot;, it will allocate a network device&n; *&t;and space for the name. %NULL is returned if no memory is available.&n; *&t;If the allocation succeeds then the name is assigned and the &n; *&t;device pointer returned. %NULL is returned if the name allocation&n; *&t;failed. The cause of an error is returned as a negative errno code&n; *&t;in the variable @err points to.&n; *&n; *&t;The caller must hold the @dev_base or RTNL locks when doing this in&n; *&t;order to avoid duplicate name allocations.&n; */
 DECL|function|dev_alloc
 r_struct
 id|net_device
@@ -1036,7 +1036,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;dev_open&t;- prepare an interface for use. &n; *&t;@dev:&t;device to open&n; *&n; *&t;Takes a device from down to up state. The devices private open&n; *&t;function is invoked and then the multicast lists are loaded. Finally&n; *&t;the device is moved into the up state and a NETDEV_UP message is&n; *&t;sent to the netdev notifier chain.&n; *&n; *&t;Calling this function on an active interface is a nop. On a failure&n; *&t;a negative errno code is returned.&n; */
+multiline_comment|/**&n; *&t;dev_open&t;- prepare an interface for use. &n; *&t;@dev:&t;device to open&n; *&n; *&t;Takes a device from down to up state. The device&squot;s private open&n; *&t;function is invoked and then the multicast lists are loaded. Finally&n; *&t;the device is moved into the up state and a %NETDEV_UP message is&n; *&t;sent to the netdev notifier chain.&n; *&n; *&t;Calling this function on an active interface is a nop. On a failure&n; *&t;a negative errno code is returned.&n; */
 DECL|function|dev_open
 r_int
 id|dev_open
@@ -1290,7 +1290,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/**&n; *&t;dev_close - shutdown an interface.&n; *&t;@dev: device to shutdown&n; *&n; *&t;This function moves an active device into down state. A &n; *&t;NETDEV_GOING_DOWN is sent to the netev notifier chain. The device&n; *&t;is then deactivated and finally a NETDEV_DOWN is sent to the notifier&n; *&t;chain.&n; */
+multiline_comment|/**&n; *&t;dev_close - shutdown an interface.&n; *&t;@dev: device to shutdown&n; *&n; *&t;This function moves an active device into down state. A &n; *&t;%NETDEV_GOING_DOWN is sent to the netdev notifier chain. The device&n; *&t;is then deactivated and finally a %NETDEV_DOWN is sent to the notifier&n; *&t;chain.&n; */
 DECL|function|dev_close
 r_int
 id|dev_close
@@ -1410,7 +1410,7 @@ id|nb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;unregister_netdevice_notifier - unregister a network notifier block&n; *&t;@nb: notifier&n; *&n; *&t;Unregister a notifier previously registered by register_netdevice_notifier&n; *&t;The notifier is unlinked into the kernel structures and may&n; *&t;then be reused. A negative errno code is returned on a failure.&n; */
+multiline_comment|/**&n; *&t;unregister_netdevice_notifier - unregister a network notifier block&n; *&t;@nb: notifier&n; *&n; *&t;Unregister a notifier previously registered by&n; *&t;register_netdevice_notifier(). The notifier is unlinked into the&n; *&t;kernel structures and may then be reused. A negative errno code&n; *&t;is returned on a failure.&n; */
 DECL|function|unregister_netdevice_notifier
 r_int
 id|unregister_netdevice_notifier
@@ -2880,7 +2880,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/**&n; *&t;net_call_rx_atomic&n; *&t;@fn: function to call&n; *&n; *&t;Make a function call that is atomic with respect to the protocol&n; *&t;layers&n; */
+multiline_comment|/**&n; *&t;net_call_rx_atomic&n; *&t;@fn: function to call&n; *&n; *&t;Make a function call that is atomic with respect to the protocol&n; *&t;layers.&n; */
 DECL|function|net_call_rx_atomic
 r_void
 id|net_call_rx_atomic
@@ -4688,7 +4688,7 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 macro_line|#endif&t;/* WIRELESS_EXT */
-multiline_comment|/**&n; *&t;netdev_set_master&t;-&t;set up master/slave pair&n; *&t;@slave: slave device&n; *&t;@master: new master device&n; *&n; *&t;Changes the master device of the slave. Pass NULL to break the&n; *&t;bonding. The caller must hold the RTNL semaphore. On a failure&n; *&t;a negative errno code is returned. On success the reference counts&n; *&t;are adjusted, RTM_NEWLINK is sent to the routing socket and the&n; *&t;function returns zero.&n; */
+multiline_comment|/**&n; *&t;netdev_set_master&t;-&t;set up master/slave pair&n; *&t;@slave: slave device&n; *&t;@master: new master device&n; *&n; *&t;Changes the master device of the slave. Pass %NULL to break the&n; *&t;bonding. The caller must hold the RTNL semaphore. On a failure&n; *&t;a negative errno code is returned. On success the reference counts&n; *&t;are adjusted, %RTM_NEWLINK is sent to the routing socket and the&n; *&t;function returns zero.&n; */
 DECL|function|netdev_set_master
 r_int
 id|netdev_set_master
@@ -4896,7 +4896,7 @@ l_string|&quot;left&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;dev_set_allmulti&t;- update allmulti count on a device&n; *&t;@dev: device&n; *&t;@inc: modifier&n; *&n; *&t;Add or remove reception of all multicast frames to a device. While the&n; *&t;count in the device remains above zero the interface remains listening&n; *&t;to all interfaces. Once it hits zero the device reverts back to normal&n; *&t;filtering operation. A negative inc value is used to drop the counter&n; *&t;when releasing a resource needing all multicasts.&n; */
+multiline_comment|/**&n; *&t;dev_set_allmulti&t;- update allmulti count on a device&n; *&t;@dev: device&n; *&t;@inc: modifier&n; *&n; *&t;Add or remove reception of all multicast frames to a device. While the&n; *&t;count in the device remains above zero the interface remains listening&n; *&t;to all interfaces. Once it hits zero the device reverts back to normal&n; *&t;filtering operation. A negative @inc value is used to drop the counter&n; *&t;when releasing a resource needing all multicasts.&n; */
 DECL|function|dev_set_allmulti
 r_void
 id|dev_set_allmulti
@@ -6367,6 +6367,7 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#ifdef WIRELESS_EXT
+multiline_comment|/* Take care of Wireless Extensions */
 r_if
 c_cond
 (paren
@@ -6379,12 +6380,7 @@ op_le
 id|SIOCIWLAST
 )paren
 (brace
-id|dev_load
-c_func
-(paren
-id|ifr.ifr_name
-)paren
-suffix:semicolon
+multiline_comment|/* If command is `set a parameter&squot;, or&n;&t;&t;&t;&t; * `get the encoding parameters&squot;, check if&n;&t;&t;&t;&t; * the user has the right to do it */
 r_if
 c_cond
 (paren
@@ -6393,22 +6389,37 @@ c_func
 (paren
 id|cmd
 )paren
+op_logical_or
+(paren
+id|cmd
+op_eq
+id|SIOCGIWENCODE
+)paren
 )paren
 (brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
+(brace
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
 )brace
+)brace
+id|dev_load
+c_func
+(paren
+id|ifr.ifr_name
+)paren
+suffix:semicolon
 id|rtnl_lock
 c_func
 (paren
@@ -6527,7 +6538,7 @@ id|dev_boot_phase
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/**&n; *&t;register_netdevice&t;- register a network device&n; *&t;@dev: device to register&n; *&t;&n; *&t;Take a completed network device structure and add it to the kernel&n; *&t;interfaces. A NETDEV_REGISTER message is sent to the netdev notifier&n; *&t;chain. 0 is returned on success. A negative errno code is returned&n; *&t;on a failure to set up the device, or if the name is a duplicate.&n; *&n; *&t;BUGS:&n; *&t;The locking appears insufficient to guarantee two parallel registers&n; *&t;will not get the same name.&n; */
+multiline_comment|/**&n; *&t;register_netdevice&t;- register a network device&n; *&t;@dev: device to register&n; *&t;&n; *&t;Take a completed network device structure and add it to the kernel&n; *&t;interfaces. A %NETDEV_REGISTER message is sent to the netdev notifier&n; *&t;chain. 0 is returned on success. A negative errno code is returned&n; *&t;on a failure to set up the device, or if the name is a duplicate.&n; *&n; *&t;BUGS:&n; *&t;The locking appears insufficient to guarantee two parallel registers&n; *&t;will not get the same name.&n; */
 DECL|function|register_netdevice
 r_int
 id|register_netdevice

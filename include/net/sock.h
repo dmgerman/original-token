@@ -1429,11 +1429,6 @@ DECL|member|protinfo
 id|protinfo
 suffix:semicolon
 multiline_comment|/* This part is used for the timeout functions. */
-DECL|member|timer_lock
-id|spinlock_t
-id|timer_lock
-suffix:semicolon
-multiline_comment|/* Required until timer in core is repaired */
 DECL|member|timer
 r_struct
 id|timer_list

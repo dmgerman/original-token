@@ -29,6 +29,8 @@ DECL|macro|PER_ISCR4
 mdefine_line|#define PER_ISCR4&t;&t;(0x0005 | STICKY_TIMEOUTS)
 DECL|macro|PER_BSD
 mdefine_line|#define PER_BSD&t;&t;&t;(0x0006)
+DECL|macro|PER_SUNOS
+mdefine_line|#define PER_SUNOS&t;&t;(PER_BSD | STICKY_TIMEOUTS)
 DECL|macro|PER_XENIX
 mdefine_line|#define PER_XENIX&t;&t;(0x0007 | STICKY_TIMEOUTS)
 DECL|macro|PER_LINUX32

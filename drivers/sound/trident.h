@@ -11,6 +11,10 @@ macro_line|#ifndef PCI_VENDOR_ID_SI
 DECL|macro|PCI_VENDOR_ID_SI
 mdefine_line|#define PCI_VENDOR_ID_SI&t;&t;&t;0x0139
 macro_line|#endif
+macro_line|#ifndef PCI_VENDOR_ID_ALI
+DECL|macro|PCI_VENDOR_ID_ALI
+mdefine_line|#define PCI_VENDOR_ID_ALI&t;&t;&t;0x10b9
+macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_TRIDENT_4DWAVE_DX
 DECL|macro|PCI_DEVICE_ID_TRIDENT_4DWAVE_DX
 mdefine_line|#define PCI_DEVICE_ID_TRIDENT_4DWAVE_DX&t;0x2000
@@ -22,6 +26,10 @@ macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_SI_7018
 DECL|macro|PCI_DEVICE_ID_SI_7018
 mdefine_line|#define PCI_DEVICE_ID_SI_7018&t;&t;0x7018
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ALI_5451
+DECL|macro|PCI_DEVICE_ID_ALI_5451
+mdefine_line|#define PCI_DEVICE_ID_ALI_5451&t;&t;0x5451
 macro_line|#endif
 macro_line|#ifndef FALSE
 DECL|macro|FALSE
@@ -172,6 +180,66 @@ op_assign
 l_int|0xdc
 )brace
 suffix:semicolon
+DECL|enum|ali_op_registers
+r_enum
+id|ali_op_registers
+(brace
+DECL|enumerator|ALI_GLOBAL_CONTROL
+id|ALI_GLOBAL_CONTROL
+op_assign
+l_int|0xd4
+comma
+DECL|enumerator|ALI_STIMER
+id|ALI_STIMER
+op_assign
+l_int|0xc8
+)brace
+suffix:semicolon
+DECL|enum|ali_global_control_bit
+r_enum
+id|ali_global_control_bit
+(brace
+DECL|enumerator|ALI_PCM_IN_ENABLE
+id|ALI_PCM_IN_ENABLE
+op_assign
+l_int|0x80000000
+comma
+DECL|enumerator|ALI_PCM_IN_DISABLE
+id|ALI_PCM_IN_DISABLE
+op_assign
+l_int|0x7fffffff
+)brace
+suffix:semicolon
+DECL|enum|ali_pcm_in_channel_num
+r_enum
+id|ali_pcm_in_channel_num
+(brace
+DECL|enumerator|ALI_PCM_IN_CHANNEL
+id|ALI_PCM_IN_CHANNEL
+op_assign
+l_int|31
+)brace
+suffix:semicolon
+DECL|enum|ali_ac97_power_control_bit
+r_enum
+id|ali_ac97_power_control_bit
+(brace
+DECL|enumerator|ALI_EAPD_POWER_DOWN
+id|ALI_EAPD_POWER_DOWN
+op_assign
+l_int|0x8000
+)brace
+suffix:semicolon
+DECL|enum|ali_update_ptr_flags
+r_enum
+id|ali_update_ptr_flags
+(brace
+DECL|enumerator|ALI_ADDRESS_INT_UPDATE
+id|ALI_ADDRESS_INT_UPDATE
+op_assign
+l_int|0x01
+)brace
+suffix:semicolon
 multiline_comment|/* S/PDIF Operational Registers for 4D-NX */
 DECL|enum|nx_spdif_registers
 r_enum
@@ -315,9 +383,69 @@ op_assign
 l_int|0x4c
 )brace
 suffix:semicolon
+DECL|enum|ali_ac97_registers
+r_enum
+id|ali_ac97_registers
+(brace
+DECL|enumerator|ALI_AC97_WRITE
+DECL|enumerator|ALI_AC97_READ
+id|ALI_AC97_WRITE
+op_assign
+l_int|0x40
+comma
+id|ALI_AC97_READ
+op_assign
+l_int|0x44
+)brace
+suffix:semicolon
 multiline_comment|/* Bit mask for operational registers */
 DECL|macro|AC97_REG_ADDR
 mdefine_line|#define AC97_REG_ADDR      0x000000ff
+DECL|enum|ali_ac97_bits
+r_enum
+id|ali_ac97_bits
+(brace
+DECL|enumerator|ALI_AC97_BUSY_WRITE
+DECL|enumerator|ALI_AC97_BUSY_READ
+id|ALI_AC97_BUSY_WRITE
+op_assign
+l_int|0x8000
+comma
+id|ALI_AC97_BUSY_READ
+op_assign
+l_int|0x8000
+comma
+DECL|enumerator|ALI_AC97_WRITE_ACTION
+DECL|enumerator|ALI_AC97_READ_ACTION
+id|ALI_AC97_WRITE_ACTION
+op_assign
+l_int|0x8000
+comma
+id|ALI_AC97_READ_ACTION
+op_assign
+l_int|0x8000
+comma
+DECL|enumerator|ALI_AC97_AUDIO_BUSY
+DECL|enumerator|ALI_AC97_SECONDARY
+id|ALI_AC97_AUDIO_BUSY
+op_assign
+l_int|0x4000
+comma
+id|ALI_AC97_SECONDARY
+op_assign
+l_int|0x0080
+comma
+DECL|enumerator|ALI_AC97_READ_MIXER_REGISTER
+id|ALI_AC97_READ_MIXER_REGISTER
+op_assign
+l_int|0xfeff
+comma
+DECL|enumerator|ALI_AC97_WRITE_MIXER_REGISTER
+id|ALI_AC97_WRITE_MIXER_REGISTER
+op_assign
+l_int|0x0100
+)brace
+suffix:semicolon
 DECL|enum|sis7018_ac97_bits
 r_enum
 id|sis7018_ac97_bits

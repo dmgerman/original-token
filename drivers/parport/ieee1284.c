@@ -67,7 +67,7 @@ id|PARPORT_MAX
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for a parport_ieee1284_wakeup.&n; * 0:      success&n; * &lt;0:     error (exit as soon as possible)&n; * &gt;0:     timed out&n; */
+multiline_comment|/**&n; *&t;parport_wait_event - wait for an event on a parallel port&n; *&t;@port: port to wait on&n; *&t;@timeout: time to wait (in jiffies)&n; *&n; *&t;This function waits for up to @timeout jiffies for an&n; *&t;interrupt to occur on a parallel port.  If the port timeout is&n; *&t;set to zero, it returns immediately.&n; *&n; *&t;If an interrupt occurs before the timeout period elapses, this&n; *&t;function returns one immediately.  If it times out, it returns&n; *&t;a value greater than zero.  An error code less than zero&n; *&t;indicates an error (most likely a pending signal), and the&n; *&t;calling code should finish what it&squot;s doing as soon as it can.&n; */
 DECL|function|parport_wait_event
 r_int
 id|parport_wait_event
@@ -164,7 +164,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for Status line(s) to change in 35 ms - see IEEE1284-1994 page 24 to&n; * 25 for this. After this time we can create a timeout because the&n; * peripheral doesn&squot;t conform to IEEE1284.  We want to save CPU time: we are&n; * waiting a maximum time of 500 us busy (this is for speed).  If there is&n; * not the right answer in this time, we call schedule and other processes&n; * are able to eat the time up to 40ms.&n; */
+multiline_comment|/**&n; *&t;parport_poll_peripheral - poll status lines&n; *&t;@port: port to watch&n; *&t;@mask: status lines to watch&n; *&t;@result: desired values of chosen status lines&n; *&t;@usec: timeout&n; *&n; *&t;This function busy-waits until the masked status lines have&n; *&t;the desired values, or until the timeout period elapses.  The&n; *&t;@mask and @result parameters are bitmasks, with the bits&n; *&t;defined by the constants in parport.h: %PARPORT_STATUS_BUSY,&n; *&t;and so on.&n; *&n; *&t;This function does not call schedule(); instead it busy-waits&n; *&t;using udelay().  It currently has a resolution of 5usec.&n; *&n; *&t;If the status lines take on the desired values before the&n; *&t;timeout period elapses, parport_poll_peripheral() returns zero&n; *&t;immediately.  A zero return value greater than zero indicates&n; *&t;a timeout.  An error code (less than zero) indicates an error,&n; *&t;most likely a signal that arrived, and the caller should&n; *&t;finish what it is doing as soon as possible.&n;*/
 DECL|function|parport_poll_peripheral
 r_int
 id|parport_poll_peripheral
@@ -261,6 +261,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;parport_wait_peripheral - wait for status lines to change in 35ms&n; *&t;@port: port to watch&n; *&t;@mask: status lines to watch&n; *&t;@result: desired values of chosen status lines&n; *&n; *&t;This function waits until the masked status lines have the&n; *&t;desired values, or until 35ms have elapsed (see IEEE 1284-1994&n; *&t;page 24 to 25 for why this value in particular is hardcoded).&n; *&t;The @mask and @result parameters are bitmasks, with the bits&n; *&t;defined by the constants in parport.h: %PARPORT_STATUS_BUSY,&n; *&t;and so on.&n; *&n; *&t;The port is polled quickly to start off with, in anticipation&n; *&t;of a fast response from the peripheral.  This fast polling&n; *&t;time is configurable (using /proc), and defaults to 500usec.&n; *&t;If the timeout for this port (see parport_set_timeout()) is&n; *&t;zero, the fast polling time is 35ms, and this function does&n; *&t;not call schedule().&n; *&n; *&t;If the timeout for this port is non-zero, after the fast&n; *&t;polling fails it uses parport_wait_event() to wait for up to&n; *&t;10ms, waking up if an interrupt occurs.&n; */
 DECL|function|parport_wait_peripheral
 r_int
 id|parport_wait_peripheral
@@ -707,7 +708,7 @@ id|port-&gt;name
 suffix:semicolon
 )brace
 macro_line|#endif /* IEEE1284 support */
-multiline_comment|/* Negotiate an IEEE 1284 mode.&n; * return values are:&n; *   0 - handshake OK; IEEE1284 peripheral and mode available&n; *  -1 - handshake failed; peripheral is not compliant (or none present)&n; *   1 - handshake OK; IEEE1284 peripheral present but mode not available&n; */
+multiline_comment|/**&n; *&t;parport_negotiate - negotiate an IEEE 1284 mode&n; *&t;@port: port to use&n; *&t;@mode: mode to negotiate to&n; *&n; *&t;Use this to negotiate to a particular IEEE 1284 transfer mode.&n; *&t;The @mode parameter should be one of the constants in&n; *&t;parport.h starting %IEEE1284_MODE_xxx.&n; *&n; *&t;The return value is 0 if the peripheral has accepted the&n; *&t;negotiation to the mode specified, -1 if the peripheral is not&n; *&t;IEEE 1284 compliant (or not present), or 1 if the peripheral&n; *&t;has rejected the negotiation.&n; */
 DECL|function|parport_negotiate
 r_int
 id|parport_negotiate
@@ -1469,7 +1470,7 @@ suffix:semicolon
 )brace
 macro_line|#endif /* IEEE1284 support */
 )brace
-multiline_comment|/* Write a block of data. */
+multiline_comment|/**&n; *&t;parport_write - write a block of data to a parallel port&n; *&t;@port: port to write to&n; *&t;@buffer: data buffer (in kernel space)&n; *&t;@len: number of bytes of data to transfer&n; *&n; *&t;This will write up to @len bytes of @buffer to the port&n; *&t;specified, using the IEEE 1284 transfer mode most recently&n; *&t;negotiated to (using parport_negotiate()), as long as that&n; *&t;mode supports forward transfers (host to peripheral).&n; *&n; *&t;It is the caller&squot;s responsibility to ensure that the first&n; *&t;@len bytes of @buffer are valid.&n; *&n; *&t;This function returns the number of bytes transferred (if zero&n; *&t;or positive), or else an error code.&n; */
 DECL|function|parport_write
 id|ssize_t
 id|parport_write
@@ -1715,7 +1716,7 @@ id|retval
 suffix:semicolon
 macro_line|#endif /* IEEE1284 support */
 )brace
-multiline_comment|/* Read a block of data. */
+multiline_comment|/**&n; *&t;parport_read - read a block of data from a parallel port&n; *&t;@port: port to read from&n; *&t;@buffer: data buffer (in kernel space)&n; *&t;@len: number of bytes of data to transfer&n; *&n; *&t;This will read up to @len bytes of @buffer to the port&n; *&t;specified, using the IEEE 1284 transfer mode most recently&n; *&t;negotiated to (using parport_negotiate()), as long as that&n; *&t;mode supports reverse transfers (peripheral to host).&n; *&n; *&t;It is the caller&squot;s responsibility to ensure that the first&n; *&t;@len bytes of @buffer are available to write to.&n; *&n; *&t;This function returns the number of bytes transferred (if zero&n; *&t;or positive), or else an error code.&n; */
 DECL|function|parport_read
 id|ssize_t
 id|parport_read
@@ -1941,7 +1942,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif /* IEEE1284 support */
 )brace
-multiline_comment|/* Set the amount of time we wait while nothing&squot;s happening. */
+multiline_comment|/**&n; *&t;parport_set_timeout - set the inactivity timeout for a device&n; *&t;                      on a port&n; *&t;@dev: device on a port&n; *&t;@inactivity: inactivity timeout (in jiffies)&n; *&n; *&t;This sets the inactivity timeout for a particular device on a&n; *&t;port.  This affects functions like parport_wait_peripheral().&n; *&t;The special value 0 means not to call schedule() while dealing&n; *&t;with this device.&n; *&n; *&t;The return value is the previous inactivity timeout.&n; *&n; *&t;Any callers of parport_wait_event() for this device are woken&n; *&t;up.&n; */
 DECL|function|parport_set_timeout
 r_int
 id|parport_set_timeout

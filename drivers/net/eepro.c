@@ -6790,6 +6790,9 @@ l_int|0
 id|n_eepro
 op_increment
 suffix:semicolon
+r_else
+r_break
+suffix:semicolon
 )brace
 r_return
 id|n_eepro

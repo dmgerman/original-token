@@ -378,7 +378,7 @@ id|MCA_DMA_REG_EXE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;mca_set_dma_mode -&t;set the DMA mode&n; *&t;@dmanr: DMA channel&n; *&t;@mode: The mode to set&n; *&n; *&t;The DMA controller supports several modes. The mode values you can&n; *&t;set are &n; *&n; *&t;MCA_DMA_MODE_READ when reading from the DMA device.&n; *&n; *&t;MCA_DMA_MODE_WRITE to writing to the DMA device.&n; *&n; *&t;MCA_DMA_MODE_IO to do DMA to or from an I/O port.&n; *&n; *&t;MCA_DMA_MODE_16 to do 16bit transfers.&n; *&n; */
+multiline_comment|/**&n; *&t;mca_set_dma_mode -&t;set the DMA mode&n; *&t;@dmanr: DMA channel&n; *&t;@mode: mode to set&n; *&n; *&t;The DMA controller supports several modes. The mode values you can&n; *&t;set are :&n; *&n; *&t;%MCA_DMA_MODE_READ when reading from the DMA device.&n; *&n; *&t;%MCA_DMA_MODE_WRITE to writing to the DMA device.&n; *&n; *&t;%MCA_DMA_MODE_IO to do DMA to or from an I/O port.&n; *&n; *&t;%MCA_DMA_MODE_16 to do 16bit transfers.&n; *&n; */
 DECL|function|mca_set_dma_mode
 r_static
 id|__inline__

@@ -1798,14 +1798,6 @@ DECL|macro|PIPE_CONTROL
 mdefine_line|#define PIPE_CONTROL&t;&t;&t;2
 DECL|macro|PIPE_BULK
 mdefine_line|#define PIPE_BULK&t;&t;&t;3
-DECL|macro|USB_ISOCHRONOUS
-mdefine_line|#define USB_ISOCHRONOUS&t;&t;0
-DECL|macro|USB_INTERRUPT
-mdefine_line|#define USB_INTERRUPT&t;&t;1
-DECL|macro|USB_CONTROL
-mdefine_line|#define USB_CONTROL&t;&t;2
-DECL|macro|USB_BULK
-mdefine_line|#define USB_BULK&t;&t;3
 DECL|macro|usb_maxpacket
 mdefine_line|#define usb_maxpacket(dev, pipe, out)&t;(out &bslash;&n;&t;&t;&t;&t;? (dev)-&gt;epmaxpacketout[usb_pipeendpoint(pipe)] &bslash;&n;&t;&t;&t;&t;: (dev)-&gt;epmaxpacketin [usb_pipeendpoint(pipe)] )
 DECL|macro|usb_packetid

@@ -20106,7 +20106,7 @@ op_plus
 id|SERIAL_DEV_OFFSET
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;unregister_serial - deconfigure a 16x50 serial port&n; *&t;@line: line to deconfigure&n; *&n; *&t;The port specified is deconfigured and its resources are freed. Any&n; *&t;user of the port is disconnected as if carrier was dropped. Line is&n; *&t;the port number returned by register_serial.&n; */
+multiline_comment|/**&n; *&t;unregister_serial - deconfigure a 16x50 serial port&n; *&t;@line: line to deconfigure&n; *&n; *&t;The port specified is deconfigured and its resources are freed. Any&n; *&t;user of the port is disconnected as if carrier was dropped. Line is&n; *&t;the port number returned by register_serial().&n; */
 DECL|function|unregister_serial
 r_void
 id|unregister_serial

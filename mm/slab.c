@@ -5306,7 +5306,6 @@ id|kmem_cache_t
 op_star
 id|cachep
 comma
-r_const
 r_void
 op_star
 id|objp
@@ -6066,6 +6065,10 @@ c_func
 (paren
 id|cachep
 comma
+(paren
+r_void
+op_star
+)paren
 id|objp
 )paren
 suffix:semicolon
@@ -6206,6 +6209,10 @@ c_func
 (paren
 id|cachep
 comma
+(paren
+r_void
+op_star
+)paren
 id|objp
 )paren
 suffix:semicolon

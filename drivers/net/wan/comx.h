@@ -823,6 +823,7 @@ macro_line|#endif
 r_extern
 r_struct
 id|proc_dir_entry
+op_star
 id|comx_root_dir
 suffix:semicolon
 r_extern

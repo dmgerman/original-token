@@ -233,7 +233,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * ei_close - shut down network device&n; * @dev: network device to close&n; *&n; * Opposite of ei_open. Only used when &quot;ifconfig &lt;devname&gt; down&quot; is done.&n; */
+multiline_comment|/**&n; * ei_close - shut down network device&n; * @dev: network device to close&n; *&n; * Opposite of ei_open(). Only used when &quot;ifconfig &lt;devname&gt; down&quot; is done.&n; */
 DECL|function|ei_close
 r_int
 id|ei_close
@@ -969,7 +969,7 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/**&n; * ei_interrupt - handle the interrupts from an 8390&n; * @irq: interrupt number&n; * @dev_id: a pointer to the net_device&n; * @regs: unused&n; *&n; * Handle the ether interface interrupts. We pull packets from&n; * the 8390 via the card specific functions and fire them at the networking&n; * stack. We also handle transmit completions and wake the transmit path if&n; * neccessary. We also update the counters and do other housekeeping as&n; * needed&n; */
+multiline_comment|/**&n; * ei_interrupt - handle the interrupts from an 8390&n; * @irq: interrupt number&n; * @dev_id: a pointer to the net_device&n; * @regs: unused&n; *&n; * Handle the ether interface interrupts. We pull packets from&n; * the 8390 via the card specific functions and fire them at the networking&n; * stack. We also handle transmit completions and wake the transmit path if&n; * neccessary. We also update the counters and do other housekeeping as&n; * needed.&n; */
 DECL|function|ei_interrupt
 r_void
 id|ei_interrupt
@@ -1431,7 +1431,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * ei_tx_err - handle transmitter error&n; * @dev: network device which threw the exception&n; *&n; * A transmitter error has happened. Most likely excess collisions (which&n; * is a fairly normal condition). If the error is one where the Tx will&n; * have been aborted, we try and send another one right away, instead of&n; * letting the failed packet sit and collect dust in the Tx buffer. This&n; * is a much better solution as it avoids kernel based Tx timeouts, and&n; * an unnecessary card reset.&n; *&n; * Called with lock held&n; */
+multiline_comment|/**&n; * ei_tx_err - handle transmitter error&n; * @dev: network device which threw the exception&n; *&n; * A transmitter error has happened. Most likely excess collisions (which&n; * is a fairly normal condition). If the error is one where the Tx will&n; * have been aborted, we try and send another one right away, instead of&n; * letting the failed packet sit and collect dust in the Tx buffer. This&n; * is a much better solution as it avoids kernel based Tx timeouts, and&n; * an unnecessary card reset.&n; *&n; * Called with lock held.&n; */
 DECL|function|ei_tx_err
 r_static
 r_void
@@ -1628,7 +1628,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; * ei_tx_intr - transmit interrupt handler&n; * @dev: network device for which tx intr is handled&n; *&n; * We have finished a transmit: check for errors and then trigger the next&n; * packet to be sent. Called with lock held&n; */
+multiline_comment|/**&n; * ei_tx_intr - transmit interrupt handler&n; * @dev: network device for which tx intr is handled&n; *&n; * We have finished a transmit: check for errors and then trigger the next&n; * packet to be sent. Called with lock held.&n; */
 DECL|function|ei_tx_intr
 r_static
 r_void
@@ -1952,7 +1952,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * ei_receive - receive some packets&n; * @dev: network device with which receive will be run&n; *&n; * We have a good packet(s), get it/them out of the buffers. &n; * Called with lock held&n; */
+multiline_comment|/**&n; * ei_receive - receive some packets&n; * @dev: network device with which receive will be run&n; *&n; * We have a good packet(s), get it/them out of the buffers. &n; * Called with lock held.&n; */
 DECL|function|ei_receive
 r_static
 r_void
@@ -2496,7 +2496,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * ei_rx_overrun - handle receiver overrun&n; * @dev: network device which threw exception&n; *&n; * We have a receiver overrun: we have to kick the 8390 to get it started&n; * again. Problem is that you have to kick it exactly as NS prescribes in&n; * the updated datasheets, or &quot;the NIC may act in an unpredictable manner.&quot;&n; * This includes causing &quot;the NIC to defer indefinitely when it is stopped&n; * on a busy network.&quot;  Ugh.&n; * Called with lock held. Don&squot;t call this with the interrupts off or your&n; * computer will hate you - it takes 10mS or so. &n; */
+multiline_comment|/**&n; * ei_rx_overrun - handle receiver overrun&n; * @dev: network device which threw exception&n; *&n; * We have a receiver overrun: we have to kick the 8390 to get it started&n; * again. Problem is that you have to kick it exactly as NS prescribes in&n; * the updated datasheets, or &quot;the NIC may act in an unpredictable manner.&quot;&n; * This includes causing &quot;the NIC to defer indefinitely when it is stopped&n; * on a busy network.&quot;  Ugh.&n; * Called with lock held. Don&squot;t call this with the interrupts off or your&n; * computer will hate you - it takes 10ms or so. &n; */
 DECL|function|ei_rx_overrun
 r_static
 r_void

@@ -139,10 +139,10 @@ suffix:semicolon
 multiline_comment|/* current inflate_blocks state */
 )brace
 suffix:semicolon
-DECL|function|inflateReset
+DECL|function|cramfs_inflateReset
 r_int
 id|ZEXPORT
-id|inflateReset
+id|cramfs_inflateReset
 c_func
 (paren
 id|z
@@ -184,7 +184,7 @@ id|BLOCKS
 suffix:colon
 id|METHOD
 suffix:semicolon
-id|inflate_blocks_reset
+id|cramfs_inflate_blocks_reset
 c_func
 (paren
 id|z-&gt;state-&gt;blocks
@@ -198,10 +198,10 @@ r_return
 id|Z_OK
 suffix:semicolon
 )brace
-DECL|function|inflateEnd
+DECL|function|cramfs_inflateEnd
 r_int
 id|ZEXPORT
-id|inflateEnd
+id|cramfs_inflateEnd
 c_func
 (paren
 id|z
@@ -231,7 +231,7 @@ id|z-&gt;state-&gt;blocks
 op_ne
 id|Z_NULL
 )paren
-id|inflate_blocks_free
+id|cramfs_inflate_blocks_free
 c_func
 (paren
 id|z-&gt;state-&gt;blocks
@@ -247,10 +247,10 @@ r_return
 id|Z_OK
 suffix:semicolon
 )brace
-DECL|function|inflateInit2_
+DECL|function|cramfs_inflateInit2_
 r_int
 id|ZEXPORT
-id|inflateInit2_
+id|cramfs_inflateInit2_
 c_func
 (paren
 id|z
@@ -364,7 +364,7 @@ template_param
 l_int|15
 )paren
 (brace
-id|inflateEnd
+id|cramfs_inflateEnd
 c_func
 (paren
 id|z
@@ -388,7 +388,7 @@ c_cond
 (paren
 id|z-&gt;state-&gt;blocks
 op_assign
-id|inflate_blocks_new
+id|cramfs_inflate_blocks_new
 c_func
 (paren
 id|z
@@ -398,7 +398,7 @@ ques
 c_cond
 id|Z_NULL
 suffix:colon
-id|adler32
+id|cramfs_adler32
 comma
 (paren
 id|uInt
@@ -412,7 +412,7 @@ op_eq
 id|Z_NULL
 )paren
 (brace
-id|inflateEnd
+id|cramfs_inflateEnd
 c_func
 (paren
 id|z
@@ -423,7 +423,7 @@ id|Z_MEM_ERROR
 suffix:semicolon
 )brace
 multiline_comment|/* reset state */
-id|inflateReset
+id|cramfs_inflateReset
 c_func
 (paren
 id|z
@@ -433,10 +433,10 @@ r_return
 id|Z_OK
 suffix:semicolon
 )brace
-DECL|function|inflateInit_
+DECL|function|cramfs_inflateInit_
 r_int
 id|ZEXPORT
-id|inflateInit_
+id|cramfs_inflateInit_
 c_func
 (paren
 id|z
@@ -458,7 +458,7 @@ id|stream_size
 suffix:semicolon
 (brace
 r_return
-id|inflateInit2_
+id|cramfs_inflateInit2_
 c_func
 (paren
 id|z
@@ -475,10 +475,10 @@ DECL|macro|NEEDBYTE
 mdefine_line|#define NEEDBYTE {if(z-&gt;avail_in==0)return r;r=f;}
 DECL|macro|NEXTBYTE
 mdefine_line|#define NEXTBYTE (z-&gt;avail_in--,z-&gt;total_in++,*z-&gt;next_in++)
-DECL|function|inflate
+DECL|function|cramfs_inflate
 r_int
 id|ZEXPORT
-id|inflate
+id|cramfs_inflate
 c_func
 (paren
 id|z
@@ -787,7 +787,7 @@ id|BLOCKS
 suffix:colon
 id|r
 op_assign
-id|inflate_blocks
+id|cramfs_inflate_blocks
 c_func
 (paren
 id|z-&gt;state-&gt;blocks
@@ -842,7 +842,7 @@ id|r
 op_assign
 id|f
 suffix:semicolon
-id|inflate_blocks_reset
+id|cramfs_inflate_blocks_reset
 c_func
 (paren
 id|z-&gt;state-&gt;blocks
@@ -989,10 +989,10 @@ suffix:semicolon
 multiline_comment|/* Some dumb compilers complain without this */
 macro_line|#endif
 )brace
-DECL|function|inflateSync
+DECL|function|cramfs_inflateSync
 r_int
 id|ZEXPORT
-id|inflateSync
+id|cramfs_inflateSync
 c_func
 (paren
 id|z
@@ -1180,7 +1180,7 @@ id|w
 op_assign
 id|z-&gt;total_out
 suffix:semicolon
-id|inflateReset
+id|cramfs_inflateReset
 c_func
 (paren
 id|z
@@ -1203,10 +1203,10 @@ id|Z_OK
 suffix:semicolon
 )brace
 multiline_comment|/* Returns true if inflate is currently at the end of a block generated&n; * by Z_SYNC_FLUSH or Z_FULL_FLUSH. This function is used by one PPP&n; * implementation to provide an additional safety check. PPP uses Z_SYNC_FLUSH&n; * but removes the length bytes of the resulting empty stored block. When&n; * decompressing, PPP checks that at the end of input packet, inflate is&n; * waiting for these length bytes.&n; */
-DECL|function|inflateSyncPoint
+DECL|function|cramfs_inflateSyncPoint
 r_int
 id|ZEXPORT
-id|inflateSyncPoint
+id|cramfs_inflateSyncPoint
 c_func
 (paren
 id|z

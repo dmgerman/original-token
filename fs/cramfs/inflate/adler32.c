@@ -17,10 +17,10 @@ mdefine_line|#define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
 DECL|macro|DO16
 mdefine_line|#define DO16(buf)   DO8(buf,0); DO8(buf,8);
 multiline_comment|/* ========================================================================= */
-DECL|function|adler32
+DECL|function|cramfs_adler32
 id|uLong
 id|ZEXPORT
-id|adler32
+id|cramfs_adler32
 c_func
 (paren
 id|adler

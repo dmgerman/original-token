@@ -4006,6 +4006,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_LVM
+id|lvm_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif 
 r_return
 l_int|0
 suffix:semicolon

@@ -16,6 +16,7 @@ macro_line|#include &quot;msdos.h&quot;
 macro_line|#include &quot;osf.h&quot;
 macro_line|#include &quot;sgi.h&quot;
 macro_line|#include &quot;sun.h&quot;
+macro_line|#include &quot;ibm.h&quot;
 r_extern
 r_void
 id|device_init
@@ -131,9 +132,31 @@ macro_line|#ifdef CONFIG_ULTRIX_PARTITION
 id|ultrix_partition
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_IBM_PARTITION
+id|ibm_partition
+comma
+macro_line|#endif
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#if defined CONFIG_BLK_DEV_LVM || defined CONFIG_BLK_DEV_LVM_MODULE
+macro_line|#include &lt;linux/lvm.h&gt;
+DECL|variable|lvm_hd_name_ptr
+r_void
+(paren
+op_star
+id|lvm_hd_name_ptr
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * disk_name() is used by genhd.c and blkpg.c.&n; * It formats the devicename of the indicated disk into&n; * the supplied buffer (of size at least 32), and returns&n; * a pointer to that same buffer (for convenience).&n; */
 DECL|function|disk_name
 r_char
@@ -239,6 +262,35 @@ c_cond
 id|hd-&gt;major
 )paren
 (brace
+macro_line|#if defined CONFIG_BLK_DEV_LVM || defined CONFIG_BLK_DEV_LVM_MODULE
+r_case
+id|LVM_BLK_MAJOR
+suffix:colon
+op_star
+id|buf
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lvm_hd_name_ptr
+op_ne
+l_int|NULL
+)paren
+(paren
+id|lvm_hd_name_ptr
+)paren
+(paren
+id|buf
+comma
+id|minor
+)paren
+suffix:semicolon
+r_return
+id|buf
+suffix:semicolon
+macro_line|#endif
 r_case
 id|IDE9_MAJOR
 suffix:colon
@@ -2044,13 +2096,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_MD
 id|autodetect_raid
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MD_BOOT
-id|md_setup_drive
 c_func
 (paren
 )paren

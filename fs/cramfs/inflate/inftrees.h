@@ -52,7 +52,7 @@ DECL|macro|MANY
 mdefine_line|#define MANY 1440
 r_extern
 r_int
-id|inflate_trees_bits
+id|cramfs_inflate_trees_bits
 id|OF
 c_func
 (paren
@@ -82,7 +82,7 @@ suffix:semicolon
 multiline_comment|/* for messages */
 r_extern
 r_int
-id|inflate_trees_dynamic
+id|cramfs_inflate_trees_dynamic
 id|OF
 c_func
 (paren
@@ -128,7 +128,7 @@ suffix:semicolon
 multiline_comment|/* for messages */
 r_extern
 r_int
-id|inflate_trees_fixed
+id|cramfs_inflate_trees_fixed
 id|OF
 c_func
 (paren

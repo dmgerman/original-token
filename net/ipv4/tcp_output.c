@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.123 2000/03/25 01:52:05 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.124 2000/04/08 07:21:24 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&t;&t;Andrea Arcangeli:&t;SYNACK carry ts_recent in tsecr.&n; *&t;&t;Cacophonix Gaul :&t;draft-minshall-nagle-01&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -4257,21 +4257,10 @@ op_plus
 id|ato
 suffix:semicolon
 multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier. */
-id|spin_lock_bh
-c_func
-(paren
-op_amp
-id|sk-&gt;timer_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|tp-&gt;delack_timer.prev
-op_logical_or
-op_logical_neg
-id|del_timer
+id|timer_pending
 c_func
 (paren
 op_amp
@@ -4279,19 +4268,12 @@ id|tp-&gt;delack_timer
 )paren
 )paren
 (brace
-id|sock_hold
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-id|tp-&gt;delack_timer.expires
+r_int
+r_int
+id|old_timeout
 op_assign
-id|timeout
+id|tp-&gt;delack_timer.expires
 suffix:semicolon
-)brace
-r_else
-(brace
 multiline_comment|/* If delack timer was blocked or is about to expire,&n;&t;&t; * send ACK now.&n;&t;&t; */
 r_if
 c_cond
@@ -4301,7 +4283,7 @@ op_logical_or
 id|time_before_eq
 c_func
 (paren
-id|tp-&gt;delack_timer.expires
+id|old_timeout
 comma
 id|jiffies
 op_plus
@@ -4313,20 +4295,7 @@ l_int|2
 )paren
 )paren
 (brace
-id|spin_unlock_bh
-c_func
-(paren
-op_amp
-id|sk-&gt;timer_lock
-)paren
-suffix:semicolon
 id|tcp_send_ack
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-id|__sock_put
 c_func
 (paren
 id|sk
@@ -4338,31 +4307,37 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|time_before
 c_func
 (paren
 id|timeout
 comma
-id|tp-&gt;delack_timer.expires
+id|old_timeout
 )paren
 )paren
-id|tp-&gt;delack_timer.expires
-op_assign
 id|timeout
+op_assign
+id|old_timeout
 suffix:semicolon
 )brace
-id|add_timer
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mod_timer
 c_func
 (paren
 op_amp
 id|tp-&gt;delack_timer
+comma
+id|timeout
 )paren
-suffix:semicolon
-id|spin_unlock_bh
+)paren
+id|sock_hold
 c_func
 (paren
-op_amp
-id|sk-&gt;timer_lock
+id|sk
 )paren
 suffix:semicolon
 macro_line|#ifdef TCP_FORMAL_WINDOW

@@ -18085,7 +18085,7 @@ l_string|&quot;Read linux/drivers/block/README.fd&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|have_no_fdc

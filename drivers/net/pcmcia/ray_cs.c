@@ -7262,6 +7262,8 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -7304,10 +7306,14 @@ c_func
 id|link
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -7321,8 +7327,6 @@ l_int|0
 suffix:semicolon
 id|link-&gt;open
 op_increment
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond

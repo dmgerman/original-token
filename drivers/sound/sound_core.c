@@ -1029,7 +1029,7 @@ c_func
 id|register_sound_synth
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;unregister_sound_special - unregister a special sound device&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_special.&n; *&t;The unit passed is the return value from the register function.&n; */
+multiline_comment|/**&n; *&t;unregister_sound_special - unregister a special sound device&n; *&t;@unit: unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with&n; *&t;register_sound_special(). The unit passed is the return value from&n; *&t;the register function.&n; */
 DECL|function|unregister_sound_special
 r_void
 id|unregister_sound_special
@@ -1061,7 +1061,7 @@ c_func
 id|unregister_sound_special
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;unregister_sound_mixer - unregister a mixer&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_mixer.&n; *&t;The unit passed is the return value from the register function.&n; */
+multiline_comment|/**&n; *&t;unregister_sound_mixer - unregister a mixer&n; *&t;@unit: unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_mixer().&n; *&t;The unit passed is the return value from the register function.&n; */
 DECL|function|unregister_sound_mixer
 r_void
 id|unregister_sound_mixer
@@ -1091,7 +1091,7 @@ c_func
 id|unregister_sound_mixer
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;unregister_sound_midi - unregister a midi device&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_midi.&n; *&t;The unit passed is the return value from the register function.&n; */
+multiline_comment|/**&n; *&t;unregister_sound_midi - unregister a midi device&n; *&t;@unit: unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_midi().&n; *&t;The unit passed is the return value from the register function.&n; */
 DECL|function|unregister_sound_midi
 r_void
 id|unregister_sound_midi
@@ -1122,7 +1122,7 @@ c_func
 id|unregister_sound_midi
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;unregister_sound_dsp - unregister a DSP device&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_dsp.&n; *&t;The unit passed is the return value from the register function.&n; *&n; *&t;Both of the allocated units are released together automatically.&n; */
+multiline_comment|/**&n; *&t;unregister_sound_dsp - unregister a DSP device&n; *&t;@unit: unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_dsp().&n; *&t;The unit passed is the return value from the register function.&n; *&n; *&t;Both of the allocated units are released together automatically.&n; */
 DECL|function|unregister_sound_dsp
 r_void
 id|unregister_sound_dsp
@@ -1153,7 +1153,7 @@ c_func
 id|unregister_sound_dsp
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;unregister_sound_synth - unregister a synth device&n; *&t;@unit: Unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_synth.&n; *&t;The unit passed is the return value from the register function.&n; */
+multiline_comment|/**&n; *&t;unregister_sound_synth - unregister a synth device&n; *&t;@unit: unit number to allocate&n; *&n; *&t;Release a sound device that was allocated with register_sound_synth().&n; *&t;The unit passed is the return value from the register function.&n; */
 DECL|function|unregister_sound_synth
 r_void
 id|unregister_sound_synth
