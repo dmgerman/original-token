@@ -262,11 +262,7 @@ op_amp
 id|umsdos_dir_inode_operations
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|emd_dir
-)paren
-suffix:semicolon
+multiline_comment|/*    iput (emd_dir); FIXME /mn/ ! */
 )brace
 )brace
 multiline_comment|/*&n;&t;Add some info into an inode so it can find its owner quickly&n;*/
@@ -294,15 +290,8 @@ id|inode
 op_star
 id|emd_owner
 suffix:semicolon
-multiline_comment|/* FIXME, I don&squot;t have a clue on this one */
-id|Printk
-(paren
-(paren
-id|KERN_WARNING
-l_string|&quot;umsdos_set_dirinfo: /mn/ FIXME: no clue&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* FIXME, I don&squot;t have a clue on this one - /mn/ hmmm ? ok ? */
+multiline_comment|/*    Printk ((KERN_WARNING &quot;umsdos_set_dirinfo: /mn/ FIXME: no clue. inode=%lu dir=%lu&bslash;n&quot;, inode-&gt;i_ino, dir-&gt;i_ino));*/
 id|emd_owner
 op_assign
 id|umsdos_emd_dir_lookup
@@ -311,6 +300,17 @@ c_func
 id|dir
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_set_dirinfo: emd_owner is %lu for dir %lu&bslash;n&quot;
+comma
+id|emd_owner-&gt;i_ino
+comma
+id|dir-&gt;i_ino
+)paren
 )paren
 suffix:semicolon
 id|inode-&gt;u.umsdos_i.i_dir_owner
@@ -929,15 +929,15 @@ multiline_comment|/*&n;&t;&t;UMSDOS_notify_change is convenient to call here&n;&
 multiline_comment|/* FIXME, notify_change now takes a dentry, not an&n;&t;   inode so, the emd update needs to be done here&n;&t;UMSDOS_notify_change (inode, &amp;newattrs);&n;&t;*/
 multiline_comment|/* FIXME inode-&gt;i_dirt = 0; */
 )brace
-DECL|function|UMSDOS_notify_change
+DECL|function|internal_notify_change
 r_int
-id|UMSDOS_notify_change
+id|internal_notify_change
 c_func
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
-id|dentry
+id|inode
 comma
 r_struct
 id|iattr
@@ -949,13 +949,6 @@ r_int
 id|ret
 op_assign
 l_int|0
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
 suffix:semicolon
 id|Printk
 (paren
@@ -1080,12 +1073,32 @@ r_struct
 id|umsdos_dirent
 id|entry
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|emd_dentry
+suffix:semicolon
 id|loff_t
 id|offs
 suffix:semicolon
-id|offs
+id|emd_dentry
 op_assign
-l_int|0
+id|creat_dentry
+(paren
+l_string|&quot;notify_emd&quot;
+comma
+l_int|10
+comma
+id|emd_owner
+)paren
+suffix:semicolon
+id|fill_new_filp
+(paren
+op_amp
+id|filp
+comma
+id|emd_dentry
+)paren
 suffix:semicolon
 id|filp.f_pos
 op_assign
@@ -1095,6 +1108,11 @@ id|filp.f_reada
 op_assign
 l_int|0
 suffix:semicolon
+id|offs
+op_assign
+id|filp.f_pos
+suffix:semicolon
+multiline_comment|/* FIXME: /mn/ is this ok ? */
 id|Printk
 (paren
 (paren
@@ -1212,9 +1230,9 @@ id|inode-&gt;u.umsdos_i.pos
 suffix:semicolon
 id|offs
 op_assign
-l_int|0
+id|filp.f_pos
 suffix:semicolon
-multiline_comment|/* FIXME */
+multiline_comment|/* FIXME: /mn/ is this ok ? */
 id|ret
 op_assign
 id|umsdos_emd_dir_write
@@ -1284,6 +1302,31 @@ id|attr
 suffix:semicolon
 r_return
 id|ret
+suffix:semicolon
+)brace
+DECL|function|UMSDOS_notify_change
+r_int
+id|UMSDOS_notify_change
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_struct
+id|iattr
+op_star
+id|attr
+)paren
+(brace
+r_return
+id|internal_notify_change
+(paren
+id|dentry-&gt;d_inode
+comma
+id|attr
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* #Specification: function name / convention&n;   A simple convention for function name has been used in&n;   the UMSDOS file system. First all function use the prefix&n;   umsdos_ to avoid name clash with other part of the kernel.&n;   &n;   And standard VFS entry point use the prefix UMSDOS (upper case)&n;   so it&squot;s easier to tell them apart.&n;   N.B. (FIXME) PTW, the order and contents of this struct changed&n;*/
@@ -1401,7 +1444,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS dentry-WIP-Beta 0.82-1 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
+l_string|&quot;UMSDOS dentry-WIP-Beta 0.82-2 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION
 comma
@@ -1497,7 +1540,6 @@ comma
 op_star
 id|sbin
 suffix:semicolon
-multiline_comment|/* FIXME */
 id|root
 op_assign
 id|creat_dentry

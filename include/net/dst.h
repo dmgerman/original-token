@@ -483,7 +483,7 @@ c_cond
 (paren
 id|dst-&gt;obsolete
 OG
-l_int|0
+l_int|1
 )paren
 r_return
 suffix:semicolon

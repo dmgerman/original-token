@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Super block/filesystem wide operations&n; *&n; * Copryright (C) 1996 Peter J. Braam &lt;braam@maths.ox.ac.uk&gt; and &n; * Michael Callahan &lt;callahan@maths.ox.ac.uk&gt; &n; * &n; * Rewritten for Linux 2.1.?? Peter Braam &lt;braam@cs.cmu.edu&gt;&n; * Copyright (C) Carnegie Mellon University&n; */
+multiline_comment|/*&n; * Super block/filesystem wide operations&n; *&n; * Copryright (C) 1996 Peter J. Braam &lt;braam@maths.ox.ac.uk&gt; and &n; * Michael Callahan &lt;callahan@maths.ox.ac.uk&gt; &n; * &n; * Rewritten for Linux 2.1.  Peter Braam &lt;braam@cs.cmu.edu&gt;&n; * Copyright (C) Carnegie Mellon University&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -260,12 +260,6 @@ id|sb-&gt;s_dev
 suffix:semicolon
 r_int
 id|error
-suffix:semicolon
-r_char
-id|str
-(braket
-l_int|50
-)braket
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
@@ -675,11 +669,11 @@ id|inode
 r_struct
 id|coda_inode_info
 op_star
-id|cnp
+id|cii
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
-id|cnp
+id|cii
 op_assign
 id|ITOC
 c_func
@@ -687,7 +681,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|cnp-&gt;c_magic
+id|cii-&gt;c_magic
 op_assign
 l_int|0
 suffix:semicolon
@@ -747,7 +741,7 @@ id|inode
 r_struct
 id|coda_inode_info
 op_star
-id|cnp
+id|cii
 suffix:semicolon
 r_struct
 id|inode
@@ -768,7 +762,7 @@ comma
 id|inode-&gt;i_count
 )paren
 suffix:semicolon
-id|cnp
+id|cii
 op_assign
 id|ITOC
 c_func
@@ -783,7 +777,7 @@ id|inode-&gt;i_ino
 op_eq
 id|CTL_INO
 op_logical_or
-id|cnp-&gt;c_magic
+id|cii-&gt;c_magic
 op_ne
 id|CODA_CNODE_MAGIC
 )paren
@@ -804,19 +798,19 @@ id|coda_fid_is_volroot
 c_func
 (paren
 op_amp
-id|cnp-&gt;c_fid
+id|cii-&gt;c_fid
 )paren
 )paren
 id|list_del
 c_func
 (paren
 op_amp
-id|cnp-&gt;c_volrootlist
+id|cii-&gt;c_volrootlist
 )paren
 suffix:semicolon
 id|open_inode
 op_assign
-id|cnp-&gt;c_ovp
+id|cii-&gt;c_ovp
 suffix:semicolon
 r_if
 c_cond
@@ -836,7 +830,7 @@ comma
 id|open_inode-&gt;i_count
 )paren
 suffix:semicolon
-id|cnp-&gt;c_ovp
+id|cii-&gt;c_ovp
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -847,10 +841,10 @@ id|open_inode
 )paren
 suffix:semicolon
 )brace
-id|coda_cache_clear_cnp
+id|coda_cache_clear_inode
 c_func
 (paren
-id|cnp
+id|inode
 )paren
 suffix:semicolon
 id|inode-&gt;u.generic_ip
@@ -893,7 +887,7 @@ suffix:semicolon
 r_struct
 id|coda_inode_info
 op_star
-id|cnp
+id|cii
 suffix:semicolon
 r_struct
 id|coda_vattr
@@ -918,7 +912,7 @@ id|vattr
 )paren
 )paren
 suffix:semicolon
-id|cnp
+id|cii
 op_assign
 id|ITOC
 c_func
@@ -929,7 +923,7 @@ suffix:semicolon
 id|CHECK_CNODE
 c_func
 (paren
-id|cnp
+id|cii
 )paren
 suffix:semicolon
 id|coda_iattr_to_vattr
@@ -964,7 +958,7 @@ c_func
 id|inode-&gt;i_sb
 comma
 op_amp
-id|cnp-&gt;c_fid
+id|cii-&gt;c_fid
 comma
 op_amp
 id|vattr
@@ -986,10 +980,10 @@ op_amp
 id|vattr
 )paren
 suffix:semicolon
-id|coda_cache_clear_cnp
+id|coda_cache_clear_inode
 c_func
 (paren
-id|cnp
+id|inode
 )paren
 suffix:semicolon
 )brace

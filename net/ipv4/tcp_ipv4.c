@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.106 1998/03/13 14:15:54 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.109 1998/03/15 07:24:15 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;NEW_LISTEN for now)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -650,17 +650,27 @@ op_star
 id|tb
 suffix:semicolon
 r_int
-id|remaining
+id|low
+op_assign
+id|sysctl_local_port_range
+(braket
+l_int|0
+)braket
+suffix:semicolon
+r_int
+id|high
 op_assign
 id|sysctl_local_port_range
 (braket
 l_int|1
 )braket
+suffix:semicolon
+r_int
+id|remaining
+op_assign
+id|high
 op_minus
-id|sysctl_local_port_range
-(braket
-l_int|0
-)braket
+id|low
 suffix:semicolon
 r_int
 id|rover
@@ -683,20 +693,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|rover
-template_param
-id|sysctl_local_port_range
-(braket
-l_int|1
-)braket
+OL
+id|low
+)paren
+op_logical_or
+(paren
+id|rover
+OG
+id|high
+)paren
 )paren
 (brace
 id|rover
 op_assign
-id|sysctl_local_port_range
-(braket
-l_int|0
-)braket
+id|low
 suffix:semicolon
 )brace
 id|tb
@@ -4315,6 +4327,22 @@ comma
 id|sk-&gt;user_mss
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;tstamp_ok
+)paren
+(brace
+id|mss
+op_sub_assign
+id|TCPOLEN_TSTAMP_ALIGNED
+suffix:semicolon
+)brace
+r_else
+id|req-&gt;mss
+op_add_assign
+id|TCPOLEN_TSTAMP_ALIGNED
+suffix:semicolon
 multiline_comment|/* tcp_syn_build_options will do an skb_put() to obtain the TCP&n;&t; * options bytes below.&n;&t; */
 id|skb-&gt;h.th
 op_assign
@@ -5023,19 +5051,25 @@ comma
 id|want_cookie
 )paren
 suffix:semicolon
+id|req-&gt;mss
+op_assign
+id|tp.in_mss
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|tp.saw_tstamp
 )paren
+(brace
+id|req-&gt;mss
+op_sub_assign
+id|TCPOLEN_TSTAMP_ALIGNED
+suffix:semicolon
 id|req-&gt;ts_recent
 op_assign
 id|tp.rcv_tsval
 suffix:semicolon
-id|req-&gt;mss
-op_assign
-id|tp.in_mss
-suffix:semicolon
+)brace
 id|req-&gt;tstamp_ok
 op_assign
 id|tp.tstamp_ok
@@ -7389,6 +7423,7 @@ id|sockaddr_in
 )paren
 )brace
 suffix:semicolon
+multiline_comment|/* NOTE: A lot of things set to zero explicitly by call to&n; *       sk_alloc() so need not be done here.&n; */
 DECL|function|tcp_v4_init_sock
 r_static
 r_int
@@ -7424,10 +7459,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|tp-&gt;srtt
-op_assign
-l_int|0
-suffix:semicolon
 id|tp-&gt;rto
 op_assign
 id|TCP_TIMEOUT_INIT
@@ -7437,37 +7468,11 @@ id|tp-&gt;mdev
 op_assign
 id|TCP_TIMEOUT_INIT
 suffix:semicolon
-id|tp-&gt;ato
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* FIXME: tie this to sk-&gt;rcvbuf? (May be unnecessary) */
-multiline_comment|/* tp-&gt;rcv_wnd = 8192; */
-id|tp-&gt;tstamp_ok
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;wscale_ok
-op_assign
-l_int|0
-suffix:semicolon
 id|tp-&gt;in_mss
 op_assign
 l_int|536
 suffix:semicolon
-id|tp-&gt;snd_wscale
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;saw_tstamp
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;syn_backlog
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * See draft-stevens-tcpca-spec-01 for discussion of the&n;&t; * initialization of these values.&n;&t; */
+multiline_comment|/* See draft-stevens-tcpca-spec-01 for discussion of the&n;&t; * initialization of these values.&n;&t; */
 id|tp-&gt;snd_cwnd
 op_assign
 l_int|1

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.24 1998/03/08 20:52:50 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.25 1998/03/15 03:31:47 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2973,8 +2973,8 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-r_goto
-id|out
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 id|rt-&gt;u.dst.obsolete
@@ -3161,7 +3161,7 @@ suffix:semicolon
 id|rt-&gt;u.dst.error
 op_assign
 op_minus
-id|EHOSTUNREACH
+id|ENETUNREACH
 suffix:semicolon
 id|rt-&gt;rt6i_flags
 op_assign
@@ -3308,6 +3308,12 @@ c_cond
 id|dev
 op_eq
 l_int|NULL
+op_logical_or
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_LOOPBACK
+)paren
 )paren
 (brace
 op_star
@@ -6659,9 +6665,16 @@ id|rtmsg-&gt;rtmsg_flags
 op_assign
 id|RTF_UP
 suffix:semicolon
-id|rtmsg-&gt;rtmsg_metric
-op_assign
-id|IP6_RT_PRIO_USER
+r_if
+c_cond
+(paren
+id|r-&gt;rtm_type
+op_eq
+id|RTN_UNREACHABLE
+)paren
+id|rtmsg-&gt;rtmsg_flags
+op_or_assign
+id|RTF_REJECT
 suffix:semicolon
 r_if
 c_cond

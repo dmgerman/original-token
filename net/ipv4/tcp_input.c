@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.81 1998/03/14 06:09:54 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.84 1998/03/15 03:23:20 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -109,6 +109,10 @@ suffix:semicolon
 DECL|variable|sysctl_tcp_stdurg
 r_int
 id|sysctl_tcp_stdurg
+suffix:semicolon
+DECL|variable|sysctl_tcp_rfc1337
+r_int
+id|sysctl_tcp_rfc1337
 suffix:semicolon
 DECL|variable|tcp_sys_cong_ctl_f
 r_static
@@ -1445,7 +1449,7 @@ c_cond
 id|sysctl_tcp_hoe_retransmits
 )paren
 (brace
-multiline_comment|/* Hoe Style. We didn&squot;t ack the whole&n;&t;&t;&t;&t; * window. Take this as a cue that&n;&t;&t;&t;&t; * another packet was lost and retransmit it.&n;&t;&t;&t;&t; * Don&squot;t muck with the congestion window here.&n;&t;&t;&t;&t; * Note that we have to be careful not to&n;&t;&t;&t;&t; * act if this was a window update and it&n;&t;&t;&t;&t; * didn&squot;t ack new data, since this does&n;&t;&t;&t;&t; * not indicate a packet left the system.&n;&t;&t;&t;&t; * We can test this by just checking&n;&t;&t;&t;&t; * if ack changed from snd_una, since&n;&t;&t;&t;&t; * the only way to get here without changing&n;&t;&t;&t;&t; * advancing from snd_una is if this was a&n;&t;&t;&t;&t; * window update.&n;&t;&t;&t;&t; */
+multiline_comment|/* Hoe Style. We didn&squot;t ack the whole&n;&t;&t;&t;&t; * window. Take this as a cue that&n;&t;&t;&t;&t; * another packet was lost and retransmit it.&n;&t;&t;&t;&t; * Don&squot;t muck with the congestion window here.&n;&t;&t;&t;&t; * Note that we have to be careful not to&n;&t;&t;&t;&t; * act if this was a window update and it&n;&t;&t;&t;&t; * didn&squot;t ack new data, since this does&n;&t;&t;&t;&t; * not indicate a packet left the system.&n;&t;&t;&t;&t; * We can test this by just checking&n;&t;&t;&t;&t; * if ack changed from snd_una, since&n;&t;&t;&t;&t; * the only way to get here without advancing&n;&t;&t;&t;&t; * from snd_una is if this was a window update.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1887,38 +1891,6 @@ id|tp-&gt;send_head
 )paren
 )paren
 (brace
-macro_line|#ifdef TCP_DEBUG
-multiline_comment|/* Check for a bug. */
-r_if
-c_cond
-(paren
-id|skb-&gt;next
-op_ne
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-op_amp
-id|sk-&gt;write_queue
-op_logical_and
-id|after
-c_func
-(paren
-id|skb-&gt;end_seq
-comma
-id|skb-&gt;next-&gt;seq
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;INET: tcp_input.c: *** &quot;
-l_string|&quot;bug send_list out of order.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;&t;&t;&t;&t;
 multiline_comment|/* If our packet is before the ack sequence we can&n;&t;&t; * discard it as it&squot;s confirmed to have arrived the &n;&t;&t; * other end.&n;&t;&t; */
 r_if
 c_cond
@@ -1933,24 +1905,19 @@ id|ack
 )paren
 r_break
 suffix:semicolon
-macro_line|#if 0
-id|SOCK_DEBUG
-c_func
+multiline_comment|/* Initial outgoing SYN&squot;s get put onto the write_queue&n;&t;&t; * just like anything else we transmit.  It is not&n;&t;&t; * true data, and if we misinform our callers that&n;&t;&t; * this ACK acks real data, we will erroneously exit&n;&t;&t; * connection startup slow start one packet too&n;&t;&t; * quickly.  This is severely frowned upon behavior.&n;&t;&t; */
+r_if
+c_cond
 (paren
-id|sk
-comma
-l_string|&quot;removing seg %x-%x from retransmit queue&bslash;n&quot;
-comma
-id|skb-&gt;seq
-comma
-id|skb-&gt;end_seq
+op_logical_neg
+id|skb-&gt;h.th-&gt;syn
 )paren
-suffix:semicolon
-macro_line|#endif
+(brace
 id|acked
 op_assign
 id|FLAG_DATA_ACKED
 suffix:semicolon
+)brace
 multiline_comment|/* FIXME: packet counting may break if we have to&n;&t;&t; * do packet &quot;repackaging&quot; for stacks that don&squot;t&n;&t;&t; * like overlapping packets.&n;&t;&t; */
 id|tp-&gt;packets_out
 op_decrement
@@ -3032,6 +2999,14 @@ id|th-&gt;syn
 )paren
 (brace
 multiline_comment|/* This is TIME_WAIT assasination, in two flavors.&n;&t;&t; * Oh well... nobody has a sufficient solution to this&n;&t;&t; * protocol bug yet.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|sysctl_tcp_rfc1337
+op_eq
+l_int|0
+)paren
+(brace
 id|tcp_timewait_kill
 c_func
 (paren
@@ -3042,6 +3017,7 @@ r_int
 id|tw
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5976,21 +5952,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|tp-&gt;in_mss
-)paren
-id|sk-&gt;mss
-op_assign
-id|min
-c_func
-(paren
-id|sk-&gt;mss
-comma
-id|tp-&gt;in_mss
-)paren
-suffix:semicolon
 multiline_comment|/* Check for the case where we tried to advertise&n;&t;&t;&t; * a window including timestamp options, but did not&n;&t;&t;&t; * end up using them for this connection.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -6007,6 +5968,41 @@ id|sysctl_tcp_timestamps
 id|sk-&gt;mss
 op_add_assign
 id|TCPOLEN_TSTAMP_ALIGNED
+suffix:semicolon
+)brace
+multiline_comment|/* Now limit it if the other end negotiated a smaller&n;&t;&t;&t; * value.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|tp-&gt;in_mss
+)paren
+(brace
+r_int
+id|real_mss
+op_assign
+id|tp-&gt;in_mss
+suffix:semicolon
+multiline_comment|/* We store MSS locally with the timestamp bytes&n;&t;&t;&t;&t; * subtracted, TCP&squot;s advertise it with them&n;&t;&t;&t;&t; * included.  Account for this fact.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|tp-&gt;tstamp_ok
+)paren
+(brace
+id|real_mss
+op_sub_assign
+id|TCPOLEN_TSTAMP_ALIGNED
+suffix:semicolon
+)brace
+id|sk-&gt;mss
+op_assign
+id|min
+c_func
+(paren
+id|sk-&gt;mss
+comma
+id|real_mss
+)paren
 suffix:semicolon
 )brace
 id|sk-&gt;dummy_th.dest

@@ -44,28 +44,28 @@ DECL|macro|FPCR_MASK
 mdefine_line|#define FPCR_MASK&t;0xfffe000000000000
 multiline_comment|/*&n; * IEEE trap enables are implemented in software.  These per-thread&n; * bits are stored in the &quot;flags&quot; field of &quot;struct thread_struct&quot;.&n; * Thus, the bits are defined so as not to conflict with the&n; * floating-point enable bit (which is architected).  On top of that,&n; * we want to make these bits compatible with OSF/1 so&n; * ieee_set_fp_control() etc. can be implemented easily and&n; * compatibly.  The corresponding definitions are in&n; * /usr/include/machine/fpu.h under OSF/1.&n; */
 DECL|macro|IEEE_TRAP_ENABLE_INV
-mdefine_line|#define IEEE_TRAP_ENABLE_INV&t;(1&lt;&lt;1)&t;/* invalid op */
+mdefine_line|#define IEEE_TRAP_ENABLE_INV&t;(1UL&lt;&lt;1)&t;/* invalid op */
 DECL|macro|IEEE_TRAP_ENABLE_DZE
-mdefine_line|#define IEEE_TRAP_ENABLE_DZE&t;(1&lt;&lt;2)&t;/* division by zero */
+mdefine_line|#define IEEE_TRAP_ENABLE_DZE&t;(1UL&lt;&lt;2)&t;/* division by zero */
 DECL|macro|IEEE_TRAP_ENABLE_OVF
-mdefine_line|#define IEEE_TRAP_ENABLE_OVF&t;(1&lt;&lt;3)&t;/* overflow */
+mdefine_line|#define IEEE_TRAP_ENABLE_OVF&t;(1UL&lt;&lt;3)&t;/* overflow */
 DECL|macro|IEEE_TRAP_ENABLE_UNF
-mdefine_line|#define IEEE_TRAP_ENABLE_UNF&t;(1&lt;&lt;4)&t;/* underflow */
+mdefine_line|#define IEEE_TRAP_ENABLE_UNF&t;(1UL&lt;&lt;4)&t;/* underflow */
 DECL|macro|IEEE_TRAP_ENABLE_INE
-mdefine_line|#define IEEE_TRAP_ENABLE_INE&t;(1&lt;&lt;5)&t;/* inexact */
+mdefine_line|#define IEEE_TRAP_ENABLE_INE&t;(1UL&lt;&lt;5)&t;/* inexact */
 DECL|macro|IEEE_TRAP_ENABLE_MASK
 mdefine_line|#define IEEE_TRAP_ENABLE_MASK&t;(IEEE_TRAP_ENABLE_INV | IEEE_TRAP_ENABLE_DZE |&bslash;&n;&t;&t;&t;&t; IEEE_TRAP_ENABLE_OVF | IEEE_TRAP_ENABLE_UNF |&bslash;&n;&t;&t;&t;&t; IEEE_TRAP_ENABLE_INE)
 multiline_comment|/* status bits coming from fpcr: */
 DECL|macro|IEEE_STATUS_INV
-mdefine_line|#define IEEE_STATUS_INV&t;&t;(1&lt;&lt;17)
+mdefine_line|#define IEEE_STATUS_INV&t;&t;(1UL&lt;&lt;17)
 DECL|macro|IEEE_STATUS_DZE
-mdefine_line|#define IEEE_STATUS_DZE&t;&t;(1&lt;&lt;18)
+mdefine_line|#define IEEE_STATUS_DZE&t;&t;(1UL&lt;&lt;18)
 DECL|macro|IEEE_STATUS_OVF
-mdefine_line|#define IEEE_STATUS_OVF&t;&t;(1&lt;&lt;19)
+mdefine_line|#define IEEE_STATUS_OVF&t;&t;(1UL&lt;&lt;19)
 DECL|macro|IEEE_STATUS_UNF
-mdefine_line|#define IEEE_STATUS_UNF&t;&t;(1&lt;&lt;20)
+mdefine_line|#define IEEE_STATUS_UNF&t;&t;(1UL&lt;&lt;20)
 DECL|macro|IEEE_STATUS_INE
-mdefine_line|#define IEEE_STATUS_INE&t;&t;(1&lt;&lt;21)
+mdefine_line|#define IEEE_STATUS_INE&t;&t;(1UL&lt;&lt;21)
 DECL|macro|IEEE_STATUS_MASK
 mdefine_line|#define IEEE_STATUS_MASK&t;(IEEE_STATUS_INV | IEEE_STATUS_DZE |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_OVF | IEEE_STATUS_UNF |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_INE)
 DECL|macro|IEEE_SW_MASK
@@ -74,7 +74,7 @@ DECL|macro|IEEE_STATUS_TO_EXCSUM_SHIFT
 mdefine_line|#define IEEE_STATUS_TO_EXCSUM_SHIFT&t;16
 DECL|macro|IEEE_INHERIT
 mdefine_line|#define IEEE_INHERIT    (1UL&lt;&lt;63)&t;/* inherit on thread create? */
-multiline_comment|/*&n; * Convert the spftware IEEE trap enable and status bits into the&n; * hardware fpcr format.&n; */
+multiline_comment|/*&n; * Convert the software IEEE trap enable and status bits into the&n; * hardware fpcr format.&n; */
 r_static
 r_inline
 r_int

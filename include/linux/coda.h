@@ -1574,7 +1574,7 @@ id|path
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Occasionally, don&squot;t cache the fid returned by CFS_LOOKUP. For instance, if&n; * the fid is inconsistent. This case is handled by setting the top bit of the&n; * return result parameter.&n; */
+multiline_comment|/* &n; * Occasionally, we don&squot;t cache the fid returned by CFS_LOOKUP. &n; * For instance, if the fid is inconsistent. &n; * This case is handled by setting the top bit of the type result parameter.&n; */
 DECL|macro|CFS_NOCACHE
 mdefine_line|#define CFS_NOCACHE          0x80000000
 DECL|union|inputArgs

@@ -1460,9 +1460,6 @@ op_star
 id|regs
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|pt_regs
 op_star

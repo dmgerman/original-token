@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.59 1998/03/13 08:02:20 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.60 1998/03/15 02:59:32 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -2071,7 +2071,15 @@ c_func
 (paren
 id|sk
 comma
+(paren
 id|MAX_SYN_SIZE
+op_plus
+r_sizeof
+(paren
+r_struct
+id|sk_buff
+)paren
+)paren
 comma
 l_int|0
 comma
@@ -2085,10 +2093,13 @@ id|buff
 op_eq
 l_int|NULL
 )paren
+(brace
+multiline_comment|/* FIXME: Free route references etc??? */
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|lock_sock
 c_func
 (paren
@@ -2101,6 +2112,23 @@ c_func
 id|sk
 comma
 id|buff
+)paren
+suffix:semicolon
+id|tp-&gt;tcp_header_len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+op_plus
+(paren
+id|sysctl_tcp_timestamps
+ques
+c_cond
+id|TCPOLEN_TSTAMP_ALIGNED
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* build the tcp header */
@@ -2183,6 +2211,7 @@ id|dst-&gt;pmtu
 suffix:semicolon
 id|sk-&gt;mss
 op_assign
+(paren
 id|sk-&gt;mtu
 op_minus
 r_sizeof
@@ -2191,10 +2220,7 @@ r_struct
 id|ipv6hdr
 )paren
 op_minus
-r_sizeof
-(paren
-r_struct
-id|tcphdr
+id|tp-&gt;tcp_header_len
 )paren
 suffix:semicolon
 r_if
@@ -2369,6 +2395,14 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb1
+op_ne
+l_int|NULL
+)paren
+(brace
 id|skb_set_owner_w
 c_func
 (paren
@@ -2383,6 +2417,7 @@ c_func
 id|skb1
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Timer for repeating the SYN until an answer  */
 id|tcp_reset_xmit_timer
 c_func
@@ -2889,15 +2924,20 @@ c_cond
 (paren
 id|sk-&gt;dst_cache-&gt;error
 )paren
+(brace
 id|sk-&gt;err_soft
 op_assign
 id|sk-&gt;dst_cache-&gt;error
 suffix:semicolon
+)brace
 r_else
+(brace
+multiline_comment|/* FIXME: Reset sk-&gt;mss, taking into account TCP option&n;&t;&t;&t; *        bytes for timestamps. -DaveM&n;&t;&t;&t; */
 id|sk-&gt;mtu
 op_assign
 id|sk-&gt;dst_cache-&gt;pmtu
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3397,21 +3437,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|req-&gt;mss
-OL
-l_int|1
+id|sk-&gt;user_mss
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;initial req-&gt;mss below 1&bslash;n&quot;
-)paren
-suffix:semicolon
 id|req-&gt;mss
 op_assign
-l_int|1
+id|min
+c_func
+(paren
+id|req-&gt;mss
+comma
+id|sk-&gt;user_mss
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|req-&gt;tstamp_ok
+op_eq
+l_int|0
+)paren
+(brace
+id|req-&gt;mss
+op_add_assign
+id|TCPOLEN_TSTAMP_ALIGNED
 suffix:semicolon
 )brace
 r_if
@@ -3786,19 +3836,25 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|req-&gt;mss
+op_assign
+id|tp.in_mss
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|tp.saw_tstamp
 )paren
+(brace
+id|req-&gt;mss
+op_sub_assign
+id|TCPOLEN_TSTAMP_ALIGNED
+suffix:semicolon
 id|req-&gt;ts_recent
 op_assign
 id|tp.rcv_tsval
 suffix:semicolon
-id|req-&gt;mss
-op_assign
-id|tp.in_mss
-suffix:semicolon
+)brace
 id|req-&gt;tstamp_ok
 op_assign
 id|tp.tstamp_ok
@@ -4333,12 +4389,15 @@ r_struct
 id|tcphdr
 )paren
 op_plus
-l_int|12
+id|TCPOLEN_TSTAMP_ALIGNED
 suffix:semicolon
-multiline_comment|/* FIXME: define constant! */
 id|newsk-&gt;dummy_th.doff
 op_add_assign
-l_int|3
+(paren
+id|TCPOLEN_TSTAMP_ALIGNED
+op_rshift
+l_int|2
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -5922,6 +5981,7 @@ id|sockaddr_in6
 )paren
 )brace
 suffix:semicolon
+multiline_comment|/* NOTE: A lot of things set to zero explicitly by call to&n; *       sk_alloc() so need not be done here.&n; */
 DECL|function|tcp_v6_init_sock
 r_static
 r_int
@@ -5957,10 +6017,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|tp-&gt;srtt
-op_assign
-l_int|0
-suffix:semicolon
 id|tp-&gt;rto
 op_assign
 id|TCP_TIMEOUT_INIT
@@ -5970,41 +6026,11 @@ id|tp-&gt;mdev
 op_assign
 id|TCP_TIMEOUT_INIT
 suffix:semicolon
-id|tp-&gt;ato
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* FIXME: right thing? */
-id|tp-&gt;rcv_wnd
-op_assign
-l_int|0
-suffix:semicolon
 id|tp-&gt;in_mss
 op_assign
 l_int|536
 suffix:semicolon
-multiline_comment|/* tp-&gt;rcv_wnd = 8192; */
-id|tp-&gt;tstamp_ok
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;wscale_ok
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;snd_wscale
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;saw_tstamp
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;syn_backlog
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* start with only sending one packet at a time. */
+multiline_comment|/* See draft-stevens-tcpca-spec-01 for discussion of the&n;&t; * initialization of these values.&n;&t; */
 id|tp-&gt;snd_cwnd
 op_assign
 l_int|1
@@ -6042,7 +6068,7 @@ id|sk-&gt;dummy_th
 op_div
 l_int|4
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Speed up by setting some standard state for the dummy_th.&n;&t; */
+multiline_comment|/* Speed up by setting some standard state for the dummy_th. */
 id|sk-&gt;dummy_th.ack
 op_assign
 l_int|1

@@ -2497,7 +2497,7 @@ id|i
 op_plus
 l_int|1
 suffix:semicolon
-macro_line|#if defined(__i386)&t;&t;/* This BIOS bug doesn&squot;t exist on Alphas. */
+macro_line|#if defined(__i386__)&t;&t;/* This BIOS bug doesn&squot;t exist on Alphas. */
 id|irq
 op_assign
 id|last_irq
@@ -5035,7 +5035,7 @@ op_plus
 id|CSR0
 )paren
 suffix:semicolon
-macro_line|#elif defined(__i386)
+macro_line|#elif defined(__i386__)
 macro_line|#if defined(MODULE)
 multiline_comment|/* When a module we don&squot;t have &squot;x86&squot; to check. */
 id|outl

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;$Id: ip_fw.c,v 1.32 1998/02/23 02:50:17 davem Exp $&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&t;ICMP type printk, IP_FW_F_APPEND&n; *&t;&t;Bernd Eckenfels 1996-01-31&n; *&t;Split blocking chain into input and output chains, add new &quot;insert&quot; and&n; *&t;&quot;append&quot; commands to replace semi-intelligent &quot;add&quot; command, let &quot;delete&quot;.&n; *&t;only delete the first matching entry, use 0xFFFF (0xFF) as ports (ICMP&n; *&t;types) when counting packets being 2nd and further fragments.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 8/2/1996.&n; *&t;Add support for matching on device names.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 15/2/1996.&n; *&t;Transparent proxying support.&n; *&t;&t;Willy Konynenberg &lt;willy@xos.nl&gt; 10/5/96.&n; *&t;Make separate accounting on incoming and outgoing packets possible.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 18/5/1996.&n; *&t;Added trap out of bad frames.&n; *&t;&t;Alan Cox &lt;alan@cymru.net&gt; 17/11/1996&n; *&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totally&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&t;Thomas Quinot&t;&t;:&t;Fixed port spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up retransmits in spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up length setting.&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; *&n; *&t;Juan Jose Ciarlante&t;:&t;Masquerading code moved to ip_masq.c&n; *&n; *&t;All the real work was done by .....&n; *&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;$Id: ip_fw.c,v 1.33 1998/03/15 03:31:43 davem Exp $&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&t;ICMP type printk, IP_FW_F_APPEND&n; *&t;&t;Bernd Eckenfels 1996-01-31&n; *&t;Split blocking chain into input and output chains, add new &quot;insert&quot; and&n; *&t;&quot;append&quot; commands to replace semi-intelligent &quot;add&quot; command, let &quot;delete&quot;.&n; *&t;only delete the first matching entry, use 0xFFFF (0xFF) as ports (ICMP&n; *&t;types) when counting packets being 2nd and further fragments.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 8/2/1996.&n; *&t;Add support for matching on device names.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 15/2/1996.&n; *&t;Transparent proxying support.&n; *&t;&t;Willy Konynenberg &lt;willy@xos.nl&gt; 10/5/96.&n; *&t;Make separate accounting on incoming and outgoing packets possible.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 18/5/1996.&n; *&t;Added trap out of bad frames.&n; *&t;&t;Alan Cox &lt;alan@cymru.net&gt; 17/11/1996&n; *&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totally&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&t;Thomas Quinot&t;&t;:&t;Fixed port spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up retransmits in spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up length setting.&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; *&n; *&t;Juan Jose Ciarlante&t;:&t;Masquerading code moved to ip_masq.c&n; *&n; *&t;All the real work was done by .....&n; *&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -890,6 +890,72 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* Mismatch */
+)brace
+multiline_comment|/* This looks stupid, because we scan almost static&n;&t;&t;   list, searching for static key. However, this way seems&n;&t;&t;   to be only reasonable way of handling fw_via rules&n;&t;&t;   (btw bsd makes the same thing).&n;&n;&t;&t;   It will not affect performance if you will follow&n;&t;&t;   the following simple rules:&n;&n;&t;&t;   - if inteface is aliased, ALWAYS specify fw_viadev,&n;&t;&t;     so that previous check will guarantee, that we will&n;&t;&t;     not waste time when packet arrive on another interface.&n;&n;&t;&t;   - avoid using fw_via.s_addr if fw_via.s_addr is owned&n;&t;&t;     by an aliased interface.&n;&n;&t;&t;                                                       --ANK&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|f-&gt;fw_via.s_addr
+op_logical_and
+id|rif
+)paren
+(brace
+r_struct
+id|in_ifaddr
+op_star
+id|ifa
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rif-&gt;ip_ptr
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* Mismatch */
+r_for
+c_loop
+(paren
+id|ifa
+op_assign
+(paren
+(paren
+r_struct
+id|in_device
+op_star
+)paren
+(paren
+id|rif-&gt;ip_ptr
+)paren
+)paren
+op_member_access_from_pointer
+id|ifa_list
+suffix:semicolon
+id|ifa
+suffix:semicolon
+id|ifa
+op_assign
+id|ifa-&gt;ifa_next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ifa-&gt;ifa_local
+op_eq
+id|f-&gt;fw_via.s_addr
+)paren
+r_goto
+id|ifa_ok
+suffix:semicolon
+)brace
+r_continue
+suffix:semicolon
+multiline_comment|/* Mismatch */
+id|ifa_ok
+suffix:colon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Ok the chain addresses match.&n;&t;&t; */
 macro_line|#ifdef CONFIG_IP_ACCT

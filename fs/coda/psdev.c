@@ -122,7 +122,7 @@ r_int
 r_int
 id|coda_timeout
 op_assign
-l_int|10
+l_int|30
 suffix:semicolon
 multiline_comment|/* .. secs, then signals will dequeue */
 r_extern
@@ -1784,7 +1784,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Coda Kernel/User communications module 1.0&bslash;n&quot;
+l_string|&quot;Coda Kernel/User communications module 2.0&bslash;n&quot;
 )paren
 suffix:semicolon
 id|status

@@ -1285,6 +1285,10 @@ id|server-&gt;root_dentry
 op_assign
 l_int|NULL
 suffix:semicolon
+id|server-&gt;root_setuped
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef CONFIG_NCPFS_PACKET_SIGNING
 id|server-&gt;sign_wanted
 op_assign

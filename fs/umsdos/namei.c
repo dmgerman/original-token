@@ -500,6 +500,24 @@ multiline_comment|/* file */
 (brace
 r_int
 id|ret
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_create_any /mn/: create %.*s in dir=%lu - nevercreat=/&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dir-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
+id|ret
 op_assign
 id|umsdos_nevercreat
 c_func
@@ -510,6 +528,15 @@ id|dentry
 comma
 op_minus
 id|EEXIST
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;%d/&bslash;n&quot;
+comma
+id|ret
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -658,9 +685,11 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;inode %p[%d] &quot;
+l_string|&quot;inode %p[%lu], count=%d &quot;
 comma
 id|inode
+comma
+id|inode-&gt;i_ino
 comma
 id|inode-&gt;i_count
 )paren
@@ -669,7 +698,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;Creation OK: [%lu] %.*s %d pos %ld&bslash;n&quot;
+l_string|&quot;Creation OK: [dir %lu] %.*s pid=%d pos %ld&bslash;n&quot;
 comma
 id|dir-&gt;i_ino
 comma
@@ -751,14 +780,7 @@ id|dir
 suffix:semicolon
 )brace
 )brace
-id|d_add
-c_func
-(paren
-id|dentry
-comma
-id|dir
-)paren
-suffix:semicolon
+multiline_comment|/* d_add(dentry,dir); /mn/ FIXME: msdos_create already did this for short name ! */
 r_return
 id|ret
 suffix:semicolon
@@ -1483,9 +1505,18 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
-id|filp.f_pos
+id|loff_t
+id|myofs
 op_assign
 l_int|0
+suffix:semicolon
+id|fill_new_filp
+(paren
+op_amp
+id|filp
+comma
+id|dentry
+)paren
 suffix:semicolon
 multiline_comment|/* Make the inode acceptable to MSDOS FIXME */
 id|Printk
@@ -1496,23 +1527,40 @@ l_string|&quot;umsdos_symlink_x: FIXME /mn/ Here goes the crash.. known wrong co
 )paren
 )paren
 suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_WARNING
+l_string|&quot;   symname=%s ; dentry name=%.*s (ino=%lu)&bslash;n&quot;
+comma
+id|symname
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_inode-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
-id|umsdos_file_write_kmem
+id|umsdos_file_write_kmem_real
 (paren
-id|dentry-&gt;d_inode
-comma
 op_amp
 id|filp
 comma
 id|symname
 comma
-id|ret
+id|len
 comma
-l_int|NULL
+op_amp
+id|myofs
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME /mn/: dentry-&gt;d_inode-&gt;i_ino is totaly wrong, just put in to compile the beast...&n; PTW dentry-&gt;d_inode is &quot;less incorrect&quot; &t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/* dput(dentry); ?? where did this come from FIXME */
 r_if
 c_cond
@@ -2165,7 +2213,6 @@ id|dentry
 op_star
 id|dentry
 comma
-multiline_comment|/* Length of the name */
 r_int
 id|mode
 multiline_comment|/* Permission bit + file type ??? */
@@ -2419,11 +2466,7 @@ op_eq
 l_int|0
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|result
-suffix:semicolon
+multiline_comment|/*&t;    struct inode *result;&t;FIXME /mn/ hmmm what is this supposed to be ? */
 r_struct
 id|dentry
 op_star
@@ -2493,11 +2536,7 @@ id|ret
 )paren
 )paren
 suffix:semicolon
-id|dput
-(paren
-id|dentry
-)paren
-suffix:semicolon
+multiline_comment|/*  dput (dentry); FIXME /mn/ */
 r_return
 id|ret
 suffix:semicolon
@@ -2542,12 +2581,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
+multiline_comment|/*  dput(dentry); /mn/ FIXME! */
 r_return
 id|ret
 suffix:semicolon
@@ -2922,6 +2956,15 @@ id|dentry
 (brace
 r_int
 id|ret
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot; *** UMSDOS_unlink entering /mn/ *** &bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|ret
 op_assign
 id|umsdos_nevercreat
 c_func
@@ -2932,6 +2975,15 @@ id|dentry
 comma
 op_minus
 id|EPERM
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS_unlink /mn/: nevercreat=%d&bslash;n&quot;
+comma
+id|ret
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2983,6 +3035,15 @@ op_amp
 id|info
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS_unlink: findentry returned %d&bslash;n&quot;
+comma
+id|ret
+)paren
 )paren
 suffix:semicolon
 r_if

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
@@ -943,4 +944,13 @@ c_func
 id|find_next_zero_bit
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_PCI
+DECL|variable|pci_devices
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_devices
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

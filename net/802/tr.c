@@ -2378,5 +2378,4 @@ id|tr_rif_proc
 suffix:semicolon
 macro_line|#endif
 )brace
-)brace
 eof

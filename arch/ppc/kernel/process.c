@@ -139,7 +139,7 @@ suffix:semicolon
 DECL|variable|init_fd_array
 r_static
 r_struct
-id|files
+id|file
 op_star
 id|init_fd_array
 (braket

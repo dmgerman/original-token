@@ -190,9 +190,14 @@ suffix:semicolon
 DECL|macro|NCP_IOC_NCPREQUEST
 mdefine_line|#define&t;NCP_IOC_NCPREQUEST&t;&t;_IOR(&squot;n&squot;, 1, struct ncp_ioctl_request)
 DECL|macro|NCP_IOC_GETMOUNTUID
-mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOW(&squot;n&squot;, 2, uid_t)
+mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOW(&squot;n&squot;, 2, __kernel_uid_t)
+macro_line|#if 1
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* remove after ncpfs-2.0.13 gets released or at the beginning of kernel-2.1. codefreeze */
 DECL|macro|NCP_IOC_GETMOUNTUID_INT
-mdefine_line|#define NCP_IOC_GETMOUNTUID_INT&t;&t;_IOW(&squot;n&squot;, 2, unsigned int)
+mdefine_line|#define&t;NCP_IOC_GETMOUNTUID_INT&t;&t;_IOW(&squot;n&squot;, 2, unsigned int)
+macro_line|#endif
+macro_line|#endif
 DECL|macro|NCP_IOC_CONN_LOGGED_IN
 mdefine_line|#define NCP_IOC_CONN_LOGGED_IN          _IO(&squot;n&squot;, 3)
 DECL|macro|NCP_GET_FS_INFO_VERSION

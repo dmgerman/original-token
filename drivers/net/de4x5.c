@@ -1,4 +1,4 @@
-multiline_comment|/*  de4x5.c: A DIGITAL DC21x4x DECchip and DE425/DE434/DE435/DE450/DE500&n;             ethernet driver for Linux.&n;&n;    Copyright 1994, 1995 Digital Equipment Corporation.&n;&n;    Testing resources for this driver have been made available&n;    in part by NASA Ames Research Center (mjacob@nas.nasa.gov).&n;&n;    The author may be reached at davies@maniac.ultranet.com.&n;&n;    This program is free software; you can redistribute  it and/or modify it&n;    under  the terms of  the GNU General  Public License as published by the&n;    Free Software Foundation;  either version 2 of the  License, or (at your&n;    option) any later version.&n;&n;    THIS  SOFTWARE  IS PROVIDED   ``AS  IS&squot;&squot; AND   ANY  EXPRESS OR   IMPLIED&n;    WARRANTIES,   INCLUDING, BUT NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF&n;    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN&n;    NO  EVENT  SHALL   THE AUTHOR  BE    LIABLE FOR ANY   DIRECT,  INDIRECT,&n;    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT&n;    NOT LIMITED   TO, PROCUREMENT OF  SUBSTITUTE GOODS  OR SERVICES; LOSS OF&n;    USE, DATA,  OR PROFITS; OR  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON&n;    ANY THEORY OF LIABILITY, WHETHER IN  CONTRACT, STRICT LIABILITY, OR TORT&n;    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF&n;    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&n;&n;    You should have received a copy of the  GNU General Public License along&n;    with this program; if not, write  to the Free Software Foundation, Inc.,&n;    675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Originally,   this  driver  was    written  for the  Digital   Equipment&n;    Corporation series of EtherWORKS ethernet cards:&n;&n;        DE425 TP/COAX EISA&n;&t;DE434 TP PCI&n;&t;DE435 TP/COAX/AUI PCI&n;&t;DE450 TP/COAX/AUI PCI&n;&t;DE500 10/100 PCI Fasternet&n;&n;    but it  will  now attempt  to  support all  cards which   conform to the&n;    Digital Semiconductor   SROM   Specification.    The  driver   currently&n;    recognises the following chips:&n;&n;        DC21040  (no SROM) &n;&t;DC21041[A]  &n;&t;DC21140[A] &n;&t;DC21142 &n;&t;DC21143 &n;&n;    So far the driver is known to work with the following cards:&n;&n;        KINGSTON&n;&t;Linksys&n;&t;ZNYX342&n;&t;SMC8432&n;&t;SMC9332 (w/new SROM)&n;&t;ZNYX31[45]&n;&t;ZNYX346 10/100 4 port (can act as a 10/100 bridge!) &n;&n;    The driver has been tested on a relatively busy network using the DE425,&n;    DE434, DE435 and DE500 cards and benchmarked with &squot;ttcp&squot;: it transferred&n;    16M of data to a DECstation 5000/200 as follows:&n;&n;                TCP           UDP&n;             TX     RX     TX     RX&n;    DE425   1030k  997k   1170k  1128k&n;    DE434   1063k  995k   1170k  1125k&n;    DE435   1063k  995k   1170k  1125k&n;    DE500   1063k  998k   1170k  1125k  in 10Mb/s mode&n;&n;    All  values are typical (in   kBytes/sec) from a  sample  of 4 for  each&n;    measurement. Their error is +/-20k on a quiet (private) network and also&n;    depend on what load the CPU has.&n;&n;    =========================================================================&n;    This driver  has been written substantially  from  scratch, although its&n;    inheritance of style and stack interface from &squot;ewrk3.c&squot; and in turn from&n;    Donald Becker&squot;s &squot;lance.c&squot; should be obvious. With the module autoload of&n;    every  usable DECchip board,  I  pinched Donald&squot;s &squot;next_module&squot; field to&n;    link my modules together.&n;&n;    Upto 15 EISA cards can be supported under this driver, limited primarily&n;    by the available IRQ lines.  I have  checked different configurations of&n;    multiple depca, EtherWORKS 3 cards and de4x5 cards and  have not found a&n;    problem yet (provided you have at least depca.c v0.38) ...&n;&n;    PCI support has been added  to allow the driver  to work with the DE434,&n;    DE435, DE450 and DE500 cards. The I/O accesses are a bit of a kludge due&n;    to the differences in the EISA and PCI CSR address offsets from the base&n;    address.&n;&n;    The ability to load this  driver as a loadable  module has been included&n;    and used extensively  during the driver development  (to save those long&n;    reboot sequences).  Loadable module support  under PCI and EISA has been&n;    achieved by letting the driver autoprobe as if it were compiled into the&n;    kernel. Do make sure  you&squot;re not sharing  interrupts with anything  that&n;    cannot accommodate  interrupt  sharing!&n;&n;    To utilise this ability, you have to do 8 things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy de4x5.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) for fixed  autoprobes (not  recommended),  edit the source code  near&n;    line 5594 to reflect the I/O address  you&squot;re using, or assign these when&n;    loading by:&n;&n;                   insmod de4x5 io=0xghh           where g = bus number&n;&t;&t;                                        hh = device number   &n;&n;       NB: autoprobing for modules is now supported by default. You may just&n;           use:&n;&n;                   insmod de4x5&n;&n;           to load all available boards. For a specific board, still use&n;&t;   the &squot;io=?&squot; above.&n;    3) compile  de4x5.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the de4x5 configuration turned off and reboot.&n;    5) insmod de4x5 [io=0xghh]&n;    6) run the net startup bits for your new eth?? interface(s) manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    To unload a module, turn off the associated interface(s) &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod de4x5&squot;.&n;&n;    Automedia detection is included so that in  principal you can disconnect&n;    from, e.g.  TP, reconnect  to BNC  and  things will still work  (after a&n;    pause whilst the   driver figures out   where its media went).  My tests&n;    using ping showed that it appears to work....&n;&n;    By  default,  the driver will  now   autodetect any  DECchip based card.&n;    Should you have a need to restrict the driver to DIGITAL only cards, you&n;    can compile with a  DEC_ONLY define, or if  loading as a module, use the&n;    &squot;dec_only=1&squot;  parameter. &n;&n;    I&squot;ve changed the timing routines to  use the kernel timer and scheduling&n;    functions  so that the  hangs  and other assorted problems that occurred&n;    while autosensing the  media  should be gone.  A  bonus  for the DC21040&n;    auto  media sense algorithm is  that it can now  use one that is more in&n;    line with the  rest (the DC21040  chip doesn&squot;t  have a hardware  timer).&n;    The downside is the 1 &squot;jiffies&squot; (10ms) resolution.&n;&n;    IEEE 802.3u MII interface code has  been added in anticipation that some&n;    products may use it in the future.&n;&n;    The SMC9332 card  has a non-compliant SROM  which needs fixing -  I have&n;    patched this  driver to detect it  because the SROM format used complies&n;    to a previous DEC-STD format.&n;&n;    I have removed the buffer copies needed for receive on Intels.  I cannot&n;    remove them for   Alphas since  the  Tulip hardware   only does longword&n;    aligned  DMA transfers  and  the  Alphas get   alignment traps with  non&n;    longword aligned data copies (which makes them really slow). No comment.&n;&n;    I  have added SROM decoding  routines to make this  driver work with any&n;    card that  supports the Digital  Semiconductor SROM spec. This will help&n;    all  cards running the dc2114x  series chips in particular.  Cards using&n;    the dc2104x  chips should run correctly with  the basic  driver.  I&squot;m in&n;    debt to &lt;mjacob@feral.com&gt; for the  testing and feedback that helped get&n;    this feature working.  So far we have  tested KINGSTON, SMC8432, SMC9332&n;    (with the latest SROM complying  with the SROM spec  V3: their first was&n;    broken), ZNYX342  and  LinkSys. ZYNX314 (dual  21041  MAC) and  ZNYX 315&n;    (quad 21041 MAC)  cards also  appear  to work despite their  incorrectly&n;    wired IRQs.&n;&n;    I have added a temporary fix for interrupt problems when some SCSI cards&n;    share the same interrupt as the DECchip based  cards. The problem occurs&n;    because  the SCSI card wants to  grab the interrupt  as a fast interrupt&n;    (runs the   service routine with interrupts turned   off) vs.  this card&n;    which really needs to run the service routine with interrupts turned on.&n;    This driver will  now   add the interrupt service   routine  as  a  fast&n;    interrupt if it   is bounced from the   slow interrupt.  THIS IS NOT   A&n;    RECOMMENDED WAY TO RUN THE DRIVER  and has been done  for a limited time&n;    until  people   sort  out their  compatibility    issues and the  kernel&n;    interrupt  service code  is  fixed.   YOU  SHOULD SEPARATE OUT  THE FAST&n;    INTERRUPT CARDS FROM THE SLOW INTERRUPT CARDS to ensure that they do not&n;    run on the same interrupt. PCMCIA/CardBus is another can of worms...&n;&n;    Finally, I think  I have really  fixed  the module  loading problem with&n;    more than one DECchip based  card.  As a  side effect, I don&squot;t mess with&n;    the  device structure any  more which means that  if more than 1 card in&n;    2.0.x is    installed (4  in   2.1.x),  the  user   will have   to  edit&n;    linux/drivers/net/Space.c  to make room for  them. Hence, module loading&n;    is  the preferred way to use   this driver, since  it  doesn&squot;t have this&n;    limitation.&n;&n;    Where SROM media  detection is used and  full duplex is specified in the&n;    SROM,  the feature is  ignored unless  lp-&gt;params.fdx  is set at compile&n;    time  OR during  a   module load  (insmod  de4x5   args=&squot;eth??:fdx&squot; [see&n;    below]).  This is because there  is no way  to automatically detect full&n;    duplex   links  except through   autonegotiation.    When I  include the&n;    autonegotiation feature in  the SROM autoconf  code, this detection will&n;    occur automatically for that case.&n;&n;    Command  line arguments are  now  allowed, similar  to passing arguments&n;    through LILO. This will allow a per adapter board  set up of full duplex&n;    and media. The only lexical constraints  are: the board name (dev-&gt;name)&n;    appears in the list before its  parameters.  The list of parameters ends&n;    either at the end of the parameter list or with another board name.  The&n;    following parameters are allowed:&n;&n;            fdx        for full duplex&n;&t;    autosense  to set the media/speed; with the following &n;&t;               sub-parameters:&n;&t;&t;       TP, TP_NW, BNC, AUI, BNC_AUI, 100Mb, 10Mb, AUTO&n;&n;    Case sensitivity is important  for  the sub-parameters. They *must*   be&n;    upper case. Examples:&n;&n;        insmod de4x5 args=&squot;eth1:fdx autosense=BNC eth0:autosense=100Mb&squot;.&n;&n;    For a compiled in driver, somewhere in this file, place e.g.&n;&t;#define DE4X5_PARM &quot;eth0:fdx autosense=AUI eth2:autosense=TP&quot;&n;&n;    Yes,  I know full duplex  isn&squot;t permissible on BNC  or AUI; they&squot;re just&n;    examples. By default, full duplex is turned  off and AUTO is the default&n;    autosense setting. In  reality, I expect only the  full duplex option to&n;    be used. Note the use of single quotes in the two examples above and the&n;    lack of commas to separate items.&n;&n;    TO DO:&n;    ------&n;&n;    o check what revision numbers the 21142 and 21143 have&n;    o&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1     17-Nov-94   Initial writing. ALPHA code release.&n;      0.2     13-Jan-95   Added PCI support for DE435&squot;s.&n;      0.21    19-Jan-95   Added auto media detection.&n;      0.22    10-Feb-95   Fix interrupt handler call &lt;chris@cosy.sbg.ac.at&gt;.&n;                          Fix recognition bug reported by &lt;bkm@star.rl.ac.uk&gt;.&n;&t;&t;&t;  Add request/release_region code.&n;&t;&t;&t;  Add loadable modules support for PCI.&n;&t;&t;&t;  Clean up loadable modules support.&n;      0.23    28-Feb-95   Added DC21041 and DC21140 support. &n;                          Fix missed frame counter value and initialisation.&n;&t;&t;&t;  Fixed EISA probe.&n;      0.24    11-Apr-95   Change delay routine to use &lt;linux/udelay&gt;.&n;                          Change TX_BUFFS_AVAIL macro.&n;&t;&t;&t;  Change media autodetection to allow manual setting.&n;&t;&t;&t;  Completed DE500 (DC21140) support.&n;      0.241   18-Apr-95   Interim release without DE500 Autosense Algorithm.&n;      0.242   10-May-95   Minor changes.&n;      0.30    12-Jun-95   Timer fix for DC21140.&n;                          Portability changes.&n;&t;&t;&t;  Add ALPHA changes from &lt;jestabro@ant.tay1.dec.com&gt;.&n;&t;&t;&t;  Add DE500 semi automatic autosense.&n;&t;&t;&t;  Add Link Fail interrupt TP failure detection.&n;&t;&t;&t;  Add timer based link change detection.&n;&t;&t;&t;  Plugged a memory leak in de4x5_queue_pkt().&n;      0.31    13-Jun-95   Fixed PCI stuff for 1.3.1.&n;      0.32    26-Jun-95   Added verify_area() calls in de4x5_ioctl() from a&n;                          suggestion by &lt;heiko@colossus.escape.de&gt;.&n;      0.33     8-Aug-95   Add shared interrupt support (not released yet).&n;      0.331   21-Aug-95   Fix de4x5_open() with fast CPUs.&n;                          Fix de4x5_interrupt().&n;                          Fix dc21140_autoconf() mess.&n;&t;&t;&t;  No shared interrupt support.&n;      0.332   11-Sep-95   Added MII management interface routines.&n;      0.40     5-Mar-96   Fix setup frame timeout &lt;maartenb@hpkuipc.cern.ch&gt;.&n;                          Add kernel timer code (h/w is too flaky).&n;&t;&t;&t;  Add MII based PHY autosense.&n;&t;&t;&t;  Add new multicasting code.&n;&t;&t;&t;  Add new autosense algorithms for media/mode &n;&t;&t;&t;  selection using kernel scheduling/timing.&n;&t;&t;&t;  Re-formatted.&n;&t;&t;&t;  Made changes suggested by &lt;jeff@router.patch.net&gt;:&n;&t;&t;&t;    Change driver to detect all DECchip based cards&n;&t;&t;&t;    with DEC_ONLY restriction a special case.&n;&t;&t;&t;    Changed driver to autoprobe as a module. No irq&n;&t;&t;&t;    checking is done now - assume BIOS is good!&n;&t;&t;&t;  Added SMC9332 detection &lt;manabe@Roy.dsl.tutics.ac.jp&gt;&n;      0.41    21-Mar-96   Don&squot;t check for get_hw_addr checksum unless DEC card&n;                          only &lt;niles@axp745gsfc.nasa.gov&gt;&n;&t;&t;&t;  Fix for multiple PCI cards reported by &lt;jos@xos.nl&gt;&n;&t;&t;&t;  Duh, put the SA_SHIRQ flag into request_interrupt().&n;&t;&t;&t;  Fix SMC ethernet address in enet_det[].&n;&t;&t;&t;  Print chip name instead of &quot;UNKNOWN&quot; during boot.&n;      0.42    26-Apr-96   Fix MII write TA bit error.&n;                          Fix bug in dc21040 and dc21041 autosense code.&n;&t;&t;&t;  Remove buffer copies on receive for Intels.&n;&t;&t;&t;  Change sk_buff handling during media disconnects to&n;&t;&t;&t;   eliminate DUP packets.&n;&t;&t;&t;  Add dynamic TX thresholding.&n;&t;&t;&t;  Change all chips to use perfect multicast filtering.&n;&t;&t;&t;  Fix alloc_device() bug &lt;jari@markkus2.fimr.fi&gt;&n;      0.43   21-Jun-96    Fix unconnected media TX retry bug.&n;                          Add Accton to the list of broken cards.&n;&t;&t;&t;  Fix TX under-run bug for non DC21140 chips.&n;&t;&t;&t;  Fix boot command probe bug in alloc_device() as&n;&t;&t;&t;   reported by &lt;koen.gadeyne@barco.com&gt; and &n;&t;&t;&t;   &lt;orava@nether.tky.hut.fi&gt;.&n;&t;&t;&t;  Add cache locks to prevent a race condition as&n;&t;&t;&t;   reported by &lt;csd@microplex.com&gt; and &n;&t;&t;&t;   &lt;baba@beckman.uiuc.edu&gt;.&n;&t;&t;&t;  Upgraded alloc_device() code.&n;      0.431  28-Jun-96    Fix potential bug in queue_pkt() from discussion&n;                          with &lt;csd@microplex.com&gt;&n;      0.44   13-Aug-96    Fix RX overflow bug in 2114[023] chips.&n;                          Fix EISA probe bugs reported by &lt;os2@kpi.kharkov.ua&gt;&n;&t;&t;&t;  and &lt;michael@compurex.com&gt;.&n;      0.441   9-Sep-96    Change dc21041_autoconf() to probe quiet BNC media&n;                           with a loopback packet.&n;      0.442   9-Sep-96    Include AUI in dc21041 media printout. Bug reported&n;                           by &lt;bhat@mundook.cs.mu.OZ.AU&gt;&n;      0.45    8-Dec-96    Include endian functions for PPC use, from work &n;                           by &lt;cort@cs.nmt.edu&gt; and &lt;g.thomas@opengroup.org&gt;.&n;      0.451  28-Dec-96    Added fix to allow autoprobe for modules after&n;                           suggestion from &lt;mjacob@feral.com&gt;.&n;      0.5    30-Jan-97    Added SROM decoding functions.&n;                          Updated debug flags.&n;&t;&t;&t;  Fix sleep/wakeup calls for PCI cards, bug reported&n;&t;&t;&t;   by &lt;cross@gweep.lkg.dec.com&gt;.&n;&t;&t;&t;  Added multi-MAC, one SROM feature from discussion&n;&t;&t;&t;   with &lt;mjacob@feral.com&gt;.&n;&t;&t;&t;  Added full module autoprobe capability.&n;&t;&t;&t;  Added attempt to use an SMC9332 with broken SROM.&n;&t;&t;&t;  Added fix for ZYNX multi-mac cards that didn&squot;t&n;&t;&t;&t;   get their IRQs wired correctly.&n;      0.51   13-Feb-97    Added endian fixes for the SROM accesses from&n;&t;&t;&t;   &lt;paubert@iram.es&gt;&n;&t;&t;&t;  Fix init_connection() to remove extra device reset.&n;&t;&t;&t;  Fix MAC/PHY reset ordering in dc21140m_autoconf().&n;&t;&t;&t;  Fix initialisation problem with lp-&gt;timeout in&n;&t;&t;&t;   typeX_infoblock() from &lt;paubert@iram.es&gt;.&n;&t;&t;&t;  Fix MII PHY reset problem from work done by&n;&t;&t;&t;   &lt;paubert@iram.es&gt;.&n;      0.52   26-Apr-97    Some changes may not credit the right people -&n;                           a disk crash meant I lost some mail.&n;&t;&t;&t;  Change RX interrupt routine to drop rather than &n;&t;&t;&t;   defer packets to avoid hang reported by &n;&t;&t;&t;   &lt;g.thomas@opengroup.org&gt;.&n;&t;&t;&t;  Fix srom_exec() to return for COMPACT and type 1&n;&t;&t;&t;   infoblocks.&n;&t;&t;&t;  Added DC21142 and DC21143 functions.&n;&t;&t;&t;  Added byte counters from &lt;phil@tazenda.demon.co.uk&gt;&n;&t;&t;&t;  Added SA_INTERRUPT temporary fix from &n;&t;&t;&t;   &lt;mjacob@feral.com&gt;.&n;      0.53   12-Nov-97    Fix the *_probe() to include &squot;eth??&squot; name during&n;                           module load: bug reported by&n;&t;&t;&t;   &lt;Piete.Brooks@cl.cam.ac.uk&gt;&n;&t;&t;&t;  Fix multi-MAC, one SROM, to work with 2114x chips:&n;&t;&t;&t;   bug reported by &lt;cmetz@inner.net&gt;.&n;&t;&t;&t;  Make above search independent of BIOS device scan&n;&t;&t;&t;   direction.&n;&t;&t;&t;  Completed DC2114[23] autosense functions.&n;      0.531  21-Dec-97    Fix DE500-XA 100Mb/s bug reported by &n;                           &lt;robin@intercore.com&n;&t;&t;&t;  Fix type1_infoblock() bug introduced in 0.53, from&n;&t;&t;&t;   problem reports by &n;&t;&t;&t;   &lt;parmee@postecss.ncrfran.france.ncr.com&gt; and&n;&t;&t;&t;   &lt;jo@ice.dillingen.baynet.de&gt;.&n;&t;&t;&t;  Added argument list to set up each board from either&n;&t;&t;&t;   a module&squot;s command line or a compiled in #define.&n;&t;&t;&t;  Added generic MII PHY functionality to deal with&n;&t;&t;&t;   newer PHY chips.&n;&t;&t;&t;  Fix the mess in 2.1.67.&n;      0.532   5-Jan-98    Fix bug in mii_get_phy() reported by &n;                           &lt;redhat@cococo.net&gt;.&n;                          Fix bug in pci_probe() for 64 bit systems reported&n;&t;&t;&t;   by &lt;belliott@accessone.com&gt;.&n;      0.533   9-Jan-98    Fix more 64 bit bugs reported by &lt;jal@cs.brown.edu&gt;.&n;      0.534  24-Jan-98    Fix last (?) endian bug from &n;                           &lt;Geert.Uytterhoeven@cs.kuleuven.ac.be&gt;&n;&n;    =========================================================================&n;*/
+multiline_comment|/*  de4x5.c: A DIGITAL DC21x4x DECchip and DE425/DE434/DE435/DE450/DE500&n;             ethernet driver for Linux.&n;&n;    Copyright 1994, 1995 Digital Equipment Corporation.&n;&n;    Testing resources for this driver have been made available&n;    in part by NASA Ames Research Center (mjacob@nas.nasa.gov).&n;&n;    The author may be reached at davies@maniac.ultranet.com.&n;&n;    This program is free software; you can redistribute  it and/or modify it&n;    under  the terms of  the GNU General  Public License as published by the&n;    Free Software Foundation;  either version 2 of the  License, or (at your&n;    option) any later version.&n;&n;    THIS  SOFTWARE  IS PROVIDED   ``AS  IS&squot;&squot; AND   ANY  EXPRESS OR   IMPLIED&n;    WARRANTIES,   INCLUDING, BUT NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF&n;    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN&n;    NO  EVENT  SHALL   THE AUTHOR  BE    LIABLE FOR ANY   DIRECT,  INDIRECT,&n;    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT&n;    NOT LIMITED   TO, PROCUREMENT OF  SUBSTITUTE GOODS  OR SERVICES; LOSS OF&n;    USE, DATA,  OR PROFITS; OR  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON&n;    ANY THEORY OF LIABILITY, WHETHER IN  CONTRACT, STRICT LIABILITY, OR TORT&n;    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF&n;    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&n;&n;    You should have received a copy of the  GNU General Public License along&n;    with this program; if not, write  to the Free Software Foundation, Inc.,&n;    675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Originally,   this  driver  was    written  for the  Digital   Equipment&n;    Corporation series of EtherWORKS ethernet cards:&n;&n;        DE425 TP/COAX EISA&n;&t;DE434 TP PCI&n;&t;DE435 TP/COAX/AUI PCI&n;&t;DE450 TP/COAX/AUI PCI&n;&t;DE500 10/100 PCI Fasternet&n;&n;    but it  will  now attempt  to  support all  cards which   conform to the&n;    Digital Semiconductor   SROM   Specification.    The  driver   currently&n;    recognises the following chips:&n;&n;        DC21040  (no SROM) &n;&t;DC21041[A]  &n;&t;DC21140[A] &n;&t;DC21142 &n;&t;DC21143 &n;&n;    So far the driver is known to work with the following cards:&n;&n;        KINGSTON&n;&t;Linksys&n;&t;ZNYX342&n;&t;SMC8432&n;&t;SMC9332 (w/new SROM)&n;&t;ZNYX31[45]&n;&t;ZNYX346 10/100 4 port (can act as a 10/100 bridge!) &n;&n;    The driver has been tested on a relatively busy network using the DE425,&n;    DE434, DE435 and DE500 cards and benchmarked with &squot;ttcp&squot;: it transferred&n;    16M of data to a DECstation 5000/200 as follows:&n;&n;                TCP           UDP&n;             TX     RX     TX     RX&n;    DE425   1030k  997k   1170k  1128k&n;    DE434   1063k  995k   1170k  1125k&n;    DE435   1063k  995k   1170k  1125k&n;    DE500   1063k  998k   1170k  1125k  in 10Mb/s mode&n;&n;    All  values are typical (in   kBytes/sec) from a  sample  of 4 for  each&n;    measurement. Their error is +/-20k on a quiet (private) network and also&n;    depend on what load the CPU has.&n;&n;    =========================================================================&n;    This driver  has been written substantially  from  scratch, although its&n;    inheritance of style and stack interface from &squot;ewrk3.c&squot; and in turn from&n;    Donald Becker&squot;s &squot;lance.c&squot; should be obvious. With the module autoload of&n;    every  usable DECchip board,  I  pinched Donald&squot;s &squot;next_module&squot; field to&n;    link my modules together.&n;&n;    Upto 15 EISA cards can be supported under this driver, limited primarily&n;    by the available IRQ lines.  I have  checked different configurations of&n;    multiple depca, EtherWORKS 3 cards and de4x5 cards and  have not found a&n;    problem yet (provided you have at least depca.c v0.38) ...&n;&n;    PCI support has been added  to allow the driver  to work with the DE434,&n;    DE435, DE450 and DE500 cards. The I/O accesses are a bit of a kludge due&n;    to the differences in the EISA and PCI CSR address offsets from the base&n;    address.&n;&n;    The ability to load this  driver as a loadable  module has been included&n;    and used extensively  during the driver development  (to save those long&n;    reboot sequences).  Loadable module support  under PCI and EISA has been&n;    achieved by letting the driver autoprobe as if it were compiled into the&n;    kernel. Do make sure  you&squot;re not sharing  interrupts with anything  that&n;    cannot accommodate  interrupt  sharing!&n;&n;    To utilise this ability, you have to do 8 things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy de4x5.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) for fixed  autoprobes (not  recommended),  edit the source code  near&n;    line 5594 to reflect the I/O address  you&squot;re using, or assign these when&n;    loading by:&n;&n;                   insmod de4x5 io=0xghh           where g = bus number&n;&t;&t;                                        hh = device number   &n;&n;       NB: autoprobing for modules is now supported by default. You may just&n;           use:&n;&n;                   insmod de4x5&n;&n;           to load all available boards. For a specific board, still use&n;&t;   the &squot;io=?&squot; above.&n;    3) compile  de4x5.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the de4x5 configuration turned off and reboot.&n;    5) insmod de4x5 [io=0xghh]&n;    6) run the net startup bits for your new eth?? interface(s) manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    To unload a module, turn off the associated interface(s) &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod de4x5&squot;.&n;&n;    Automedia detection is included so that in  principal you can disconnect&n;    from, e.g.  TP, reconnect  to BNC  and  things will still work  (after a&n;    pause whilst the   driver figures out   where its media went).  My tests&n;    using ping showed that it appears to work....&n;&n;    By  default,  the driver will  now   autodetect any  DECchip based card.&n;    Should you have a need to restrict the driver to DIGITAL only cards, you&n;    can compile with a  DEC_ONLY define, or if  loading as a module, use the&n;    &squot;dec_only=1&squot;  parameter. &n;&n;    I&squot;ve changed the timing routines to  use the kernel timer and scheduling&n;    functions  so that the  hangs  and other assorted problems that occurred&n;    while autosensing the  media  should be gone.  A  bonus  for the DC21040&n;    auto  media sense algorithm is  that it can now  use one that is more in&n;    line with the  rest (the DC21040  chip doesn&squot;t  have a hardware  timer).&n;    The downside is the 1 &squot;jiffies&squot; (10ms) resolution.&n;&n;    IEEE 802.3u MII interface code has  been added in anticipation that some&n;    products may use it in the future.&n;&n;    The SMC9332 card  has a non-compliant SROM  which needs fixing -  I have&n;    patched this  driver to detect it  because the SROM format used complies&n;    to a previous DEC-STD format.&n;&n;    I have removed the buffer copies needed for receive on Intels.  I cannot&n;    remove them for   Alphas since  the  Tulip hardware   only does longword&n;    aligned  DMA transfers  and  the  Alphas get   alignment traps with  non&n;    longword aligned data copies (which makes them really slow). No comment.&n;&n;    I  have added SROM decoding  routines to make this  driver work with any&n;    card that  supports the Digital  Semiconductor SROM spec. This will help&n;    all  cards running the dc2114x  series chips in particular.  Cards using&n;    the dc2104x  chips should run correctly with  the basic  driver.  I&squot;m in&n;    debt to &lt;mjacob@feral.com&gt; for the  testing and feedback that helped get&n;    this feature working.  So far we have  tested KINGSTON, SMC8432, SMC9332&n;    (with the latest SROM complying  with the SROM spec  V3: their first was&n;    broken), ZNYX342  and  LinkSys. ZYNX314 (dual  21041  MAC) and  ZNYX 315&n;    (quad 21041 MAC)  cards also  appear  to work despite their  incorrectly&n;    wired IRQs.&n;&n;    I have added a temporary fix for interrupt problems when some SCSI cards&n;    share the same interrupt as the DECchip based  cards. The problem occurs&n;    because  the SCSI card wants to  grab the interrupt  as a fast interrupt&n;    (runs the   service routine with interrupts turned   off) vs.  this card&n;    which really needs to run the service routine with interrupts turned on.&n;    This driver will  now   add the interrupt service   routine  as  a  fast&n;    interrupt if it   is bounced from the   slow interrupt.  THIS IS NOT   A&n;    RECOMMENDED WAY TO RUN THE DRIVER  and has been done  for a limited time&n;    until  people   sort  out their  compatibility    issues and the  kernel&n;    interrupt  service code  is  fixed.   YOU  SHOULD SEPARATE OUT  THE FAST&n;    INTERRUPT CARDS FROM THE SLOW INTERRUPT CARDS to ensure that they do not&n;    run on the same interrupt. PCMCIA/CardBus is another can of worms...&n;&n;    Finally, I think  I have really  fixed  the module  loading problem with&n;    more than one DECchip based  card.  As a  side effect, I don&squot;t mess with&n;    the  device structure any  more which means that  if more than 1 card in&n;    2.0.x is    installed (4  in   2.1.x),  the  user   will have   to  edit&n;    linux/drivers/net/Space.c  to make room for  them. Hence, module loading&n;    is  the preferred way to use   this driver, since  it  doesn&squot;t have this&n;    limitation.&n;&n;    Where SROM media  detection is used and  full duplex is specified in the&n;    SROM,  the feature is  ignored unless  lp-&gt;params.fdx  is set at compile&n;    time  OR during  a   module load  (insmod  de4x5   args=&squot;eth??:fdx&squot; [see&n;    below]).  This is because there  is no way  to automatically detect full&n;    duplex   links  except through   autonegotiation.    When I  include the&n;    autonegotiation feature in  the SROM autoconf  code, this detection will&n;    occur automatically for that case.&n;&n;    Command  line arguments are  now  allowed, similar  to passing arguments&n;    through LILO. This will allow a per adapter board  set up of full duplex&n;    and media. The only lexical constraints  are: the board name (dev-&gt;name)&n;    appears in the list before its  parameters.  The list of parameters ends&n;    either at the end of the parameter list or with another board name.  The&n;    following parameters are allowed:&n;&n;            fdx        for full duplex&n;&t;    autosense  to set the media/speed; with the following &n;&t;               sub-parameters:&n;&t;&t;       TP, TP_NW, BNC, AUI, BNC_AUI, 100Mb, 10Mb, AUTO&n;&n;    Case sensitivity is important  for  the sub-parameters. They *must*   be&n;    upper case. Examples:&n;&n;        insmod de4x5 args=&squot;eth1:fdx autosense=BNC eth0:autosense=100Mb&squot;.&n;&n;    For a compiled in driver, at or above line 526, place e.g.&n;&t;#define DE4X5_PARM &quot;eth0:fdx autosense=AUI eth2:autosense=TP&quot;&n;&n;    Yes,  I know full duplex  isn&squot;t permissible on BNC  or AUI; they&squot;re just&n;    examples. By default, full duplex is turned  off and AUTO is the default&n;    autosense setting. In  reality, I expect only the  full duplex option to&n;    be used. Note the use of single quotes in the two examples above and the&n;    lack of commas to separate items.&n;&n;    TO DO:&n;    ------&n;&n;    o check what revision numbers the 21142 and 21143 have&n;    o&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1     17-Nov-94   Initial writing. ALPHA code release.&n;      0.2     13-Jan-95   Added PCI support for DE435&squot;s.&n;      0.21    19-Jan-95   Added auto media detection.&n;      0.22    10-Feb-95   Fix interrupt handler call &lt;chris@cosy.sbg.ac.at&gt;.&n;                          Fix recognition bug reported by &lt;bkm@star.rl.ac.uk&gt;.&n;&t;&t;&t;  Add request/release_region code.&n;&t;&t;&t;  Add loadable modules support for PCI.&n;&t;&t;&t;  Clean up loadable modules support.&n;      0.23    28-Feb-95   Added DC21041 and DC21140 support. &n;                          Fix missed frame counter value and initialisation.&n;&t;&t;&t;  Fixed EISA probe.&n;      0.24    11-Apr-95   Change delay routine to use &lt;linux/udelay&gt;.&n;                          Change TX_BUFFS_AVAIL macro.&n;&t;&t;&t;  Change media autodetection to allow manual setting.&n;&t;&t;&t;  Completed DE500 (DC21140) support.&n;      0.241   18-Apr-95   Interim release without DE500 Autosense Algorithm.&n;      0.242   10-May-95   Minor changes.&n;      0.30    12-Jun-95   Timer fix for DC21140.&n;                          Portability changes.&n;&t;&t;&t;  Add ALPHA changes from &lt;jestabro@ant.tay1.dec.com&gt;.&n;&t;&t;&t;  Add DE500 semi automatic autosense.&n;&t;&t;&t;  Add Link Fail interrupt TP failure detection.&n;&t;&t;&t;  Add timer based link change detection.&n;&t;&t;&t;  Plugged a memory leak in de4x5_queue_pkt().&n;      0.31    13-Jun-95   Fixed PCI stuff for 1.3.1.&n;      0.32    26-Jun-95   Added verify_area() calls in de4x5_ioctl() from a&n;                          suggestion by &lt;heiko@colossus.escape.de&gt;.&n;      0.33     8-Aug-95   Add shared interrupt support (not released yet).&n;      0.331   21-Aug-95   Fix de4x5_open() with fast CPUs.&n;                          Fix de4x5_interrupt().&n;                          Fix dc21140_autoconf() mess.&n;&t;&t;&t;  No shared interrupt support.&n;      0.332   11-Sep-95   Added MII management interface routines.&n;      0.40     5-Mar-96   Fix setup frame timeout &lt;maartenb@hpkuipc.cern.ch&gt;.&n;                          Add kernel timer code (h/w is too flaky).&n;&t;&t;&t;  Add MII based PHY autosense.&n;&t;&t;&t;  Add new multicasting code.&n;&t;&t;&t;  Add new autosense algorithms for media/mode &n;&t;&t;&t;  selection using kernel scheduling/timing.&n;&t;&t;&t;  Re-formatted.&n;&t;&t;&t;  Made changes suggested by &lt;jeff@router.patch.net&gt;:&n;&t;&t;&t;    Change driver to detect all DECchip based cards&n;&t;&t;&t;    with DEC_ONLY restriction a special case.&n;&t;&t;&t;    Changed driver to autoprobe as a module. No irq&n;&t;&t;&t;    checking is done now - assume BIOS is good!&n;&t;&t;&t;  Added SMC9332 detection &lt;manabe@Roy.dsl.tutics.ac.jp&gt;&n;      0.41    21-Mar-96   Don&squot;t check for get_hw_addr checksum unless DEC card&n;                          only &lt;niles@axp745gsfc.nasa.gov&gt;&n;&t;&t;&t;  Fix for multiple PCI cards reported by &lt;jos@xos.nl&gt;&n;&t;&t;&t;  Duh, put the SA_SHIRQ flag into request_interrupt().&n;&t;&t;&t;  Fix SMC ethernet address in enet_det[].&n;&t;&t;&t;  Print chip name instead of &quot;UNKNOWN&quot; during boot.&n;      0.42    26-Apr-96   Fix MII write TA bit error.&n;                          Fix bug in dc21040 and dc21041 autosense code.&n;&t;&t;&t;  Remove buffer copies on receive for Intels.&n;&t;&t;&t;  Change sk_buff handling during media disconnects to&n;&t;&t;&t;   eliminate DUP packets.&n;&t;&t;&t;  Add dynamic TX thresholding.&n;&t;&t;&t;  Change all chips to use perfect multicast filtering.&n;&t;&t;&t;  Fix alloc_device() bug &lt;jari@markkus2.fimr.fi&gt;&n;      0.43   21-Jun-96    Fix unconnected media TX retry bug.&n;                          Add Accton to the list of broken cards.&n;&t;&t;&t;  Fix TX under-run bug for non DC21140 chips.&n;&t;&t;&t;  Fix boot command probe bug in alloc_device() as&n;&t;&t;&t;   reported by &lt;koen.gadeyne@barco.com&gt; and &n;&t;&t;&t;   &lt;orava@nether.tky.hut.fi&gt;.&n;&t;&t;&t;  Add cache locks to prevent a race condition as&n;&t;&t;&t;   reported by &lt;csd@microplex.com&gt; and &n;&t;&t;&t;   &lt;baba@beckman.uiuc.edu&gt;.&n;&t;&t;&t;  Upgraded alloc_device() code.&n;      0.431  28-Jun-96    Fix potential bug in queue_pkt() from discussion&n;                          with &lt;csd@microplex.com&gt;&n;      0.44   13-Aug-96    Fix RX overflow bug in 2114[023] chips.&n;                          Fix EISA probe bugs reported by &lt;os2@kpi.kharkov.ua&gt;&n;&t;&t;&t;  and &lt;michael@compurex.com&gt;.&n;      0.441   9-Sep-96    Change dc21041_autoconf() to probe quiet BNC media&n;                           with a loopback packet.&n;      0.442   9-Sep-96    Include AUI in dc21041 media printout. Bug reported&n;                           by &lt;bhat@mundook.cs.mu.OZ.AU&gt;&n;      0.45    8-Dec-96    Include endian functions for PPC use, from work &n;                           by &lt;cort@cs.nmt.edu&gt; and &lt;g.thomas@opengroup.org&gt;.&n;      0.451  28-Dec-96    Added fix to allow autoprobe for modules after&n;                           suggestion from &lt;mjacob@feral.com&gt;.&n;      0.5    30-Jan-97    Added SROM decoding functions.&n;                          Updated debug flags.&n;&t;&t;&t;  Fix sleep/wakeup calls for PCI cards, bug reported&n;&t;&t;&t;   by &lt;cross@gweep.lkg.dec.com&gt;.&n;&t;&t;&t;  Added multi-MAC, one SROM feature from discussion&n;&t;&t;&t;   with &lt;mjacob@feral.com&gt;.&n;&t;&t;&t;  Added full module autoprobe capability.&n;&t;&t;&t;  Added attempt to use an SMC9332 with broken SROM.&n;&t;&t;&t;  Added fix for ZYNX multi-mac cards that didn&squot;t&n;&t;&t;&t;   get their IRQs wired correctly.&n;      0.51   13-Feb-97    Added endian fixes for the SROM accesses from&n;&t;&t;&t;   &lt;paubert@iram.es&gt;&n;&t;&t;&t;  Fix init_connection() to remove extra device reset.&n;&t;&t;&t;  Fix MAC/PHY reset ordering in dc21140m_autoconf().&n;&t;&t;&t;  Fix initialisation problem with lp-&gt;timeout in&n;&t;&t;&t;   typeX_infoblock() from &lt;paubert@iram.es&gt;.&n;&t;&t;&t;  Fix MII PHY reset problem from work done by&n;&t;&t;&t;   &lt;paubert@iram.es&gt;.&n;      0.52   26-Apr-97    Some changes may not credit the right people -&n;                           a disk crash meant I lost some mail.&n;&t;&t;&t;  Change RX interrupt routine to drop rather than &n;&t;&t;&t;   defer packets to avoid hang reported by &n;&t;&t;&t;   &lt;g.thomas@opengroup.org&gt;.&n;&t;&t;&t;  Fix srom_exec() to return for COMPACT and type 1&n;&t;&t;&t;   infoblocks.&n;&t;&t;&t;  Added DC21142 and DC21143 functions.&n;&t;&t;&t;  Added byte counters from &lt;phil@tazenda.demon.co.uk&gt;&n;&t;&t;&t;  Added SA_INTERRUPT temporary fix from &n;&t;&t;&t;   &lt;mjacob@feral.com&gt;.&n;      0.53   12-Nov-97    Fix the *_probe() to include &squot;eth??&squot; name during&n;                           module load: bug reported by&n;&t;&t;&t;   &lt;Piete.Brooks@cl.cam.ac.uk&gt;&n;&t;&t;&t;  Fix multi-MAC, one SROM, to work with 2114x chips:&n;&t;&t;&t;   bug reported by &lt;cmetz@inner.net&gt;.&n;&t;&t;&t;  Make above search independent of BIOS device scan&n;&t;&t;&t;   direction.&n;&t;&t;&t;  Completed DC2114[23] autosense functions.&n;      0.531  21-Dec-97    Fix DE500-XA 100Mb/s bug reported by &n;                           &lt;robin@intercore.com&n;&t;&t;&t;  Fix type1_infoblock() bug introduced in 0.53, from&n;&t;&t;&t;   problem reports by &n;&t;&t;&t;   &lt;parmee@postecss.ncrfran.france.ncr.com&gt; and&n;&t;&t;&t;   &lt;jo@ice.dillingen.baynet.de&gt;.&n;&t;&t;&t;  Added argument list to set up each board from either&n;&t;&t;&t;   a module&squot;s command line or a compiled in #define.&n;&t;&t;&t;  Added generic MII PHY functionality to deal with&n;&t;&t;&t;   newer PHY chips.&n;&t;&t;&t;  Fix the mess in 2.1.67.&n;      0.532   5-Jan-98    Fix bug in mii_get_phy() reported by &n;                           &lt;redhat@cococo.net&gt;.&n;                          Fix bug in pci_probe() for 64 bit systems reported&n;&t;&t;&t;   by &lt;belliott@accessone.com&gt;.&n;      0.533   9-Jan-98    Fix more 64 bit bugs reported by &lt;jal@cs.brown.edu&gt;.&n;      0.534  24-Jan-98    Fix last (?) endian bug from &n;                           &lt;Geert.Uytterhoeven@cs.kuleuven.ac.be&gt;&n;      0.535  21-Feb-98    Fix Ethernet Address PROM reset bug for DC21040.&n;      0.536  21-Mar-98    Change pci_probe() to use the pci_dev structure.&n;&t;&t;&t;  **Incompatible with 2.0.x from here.**&n;&n;    =========================================================================&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;de4x5.c:V0.534 1998/1/24 davies@maniac.ultranet.com&bslash;n&quot;
+l_string|&quot;de4x5.c:V0.536 1998/3/5 davies@maniac.ultranet.com&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,11 +20,14 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -35,38 +38,6 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &quot;de4x5.h&quot;
 DECL|macro|c_char
 mdefine_line|#define c_char const char
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if&t;LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,0)
-DECL|macro|__initfunc
-macro_line|#  define __initfunc(__arginit) __arginit
-DECL|macro|test_and_set_bit
-macro_line|#  define test_and_set_bit      set_bit
-DECL|macro|net_device_stats
-macro_line|#  define net_device_stats      enet_statistics
-DECL|macro|copy_to_user
-macro_line|#  define copy_to_user(a,b,c)   memcpy_tofs(a,b,c)
-DECL|macro|copy_from_user
-macro_line|#  define copy_from_user(a,b,c) memcpy_fromfs(a,b,c)
-DECL|macro|le16_to_cpu
-macro_line|#  define le16_to_cpu(a)        cpu_to_le16(a) 
-DECL|macro|le32_to_cpu
-macro_line|#  define le32_to_cpu(a)        cpu_to_le32(a) 
-macro_line|#  ifdef __powerpc__
-DECL|macro|cpu_to_le16
-macro_line|#    define cpu_to_le16(a) ((((a) &amp; 0x00ffU) &lt;&lt; 8) | (((a) &amp; 0xff00U) &gt;&gt; 8))
-DECL|macro|cpu_to_le32
-macro_line|#    define cpu_to_le32(a) ((((a) &amp; 0x000000ffU) &lt;&lt; 24) |&bslash;&n;&t;&t;            (((a) &amp; 0x0000ff00U) &lt;&lt;  8) |&bslash;&n;&t;&t;            (((a) &amp; 0x00ff0000U) &gt;&gt;  8) |&bslash;&n;&t;&t;            (((a) &amp; 0xff000000U) &gt;&gt; 24))
-macro_line|#  else
-DECL|macro|cpu_to_le16
-macro_line|#    define cpu_to_le16(a)      (a)
-DECL|macro|cpu_to_le32
-macro_line|#    define cpu_to_le32(a)      (a)
-macro_line|#  endif  /* __powerpc__ */
-macro_line|#  include &lt;asm/segment.h&gt;
-macro_line|#else
-macro_line|#  include &lt;asm/uaccess.h&gt;
-macro_line|#  include &lt;linux/init.h&gt;
-macro_line|#endif  /* LINUX_VERSION_CODE */
 DECL|macro|TWIDDLE
 mdefine_line|#define TWIDDLE(a) (u_short)le16_to_cpu(get_unaligned((u_short *)(a)))
 multiline_comment|/*&n;** MII Information&n;*/
@@ -470,7 +441,7 @@ id|DEBUG_VERSION
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;** Allow per adapter set up. For modules this is simply a command line&n;** parameter, e.g.: &n;** insmod de4x5 args=&squot;eth1:fdx autosense=BNC eth0:autosense=100Mb&squot;.&n;**&n;** For a compiled in driver, place e.g.&n;** #define DE4X5_PARM &quot;eth0:fdx autosense=AUI eth2:autosense=TP&quot;&n;** somewhere in this file above this point.&n;*/
+multiline_comment|/*&n;** Allow per adapter set up. For modules this is simply a command line&n;** parameter, e.g.: &n;** insmod de4x5 args=&squot;eth1:fdx autosense=BNC eth0:autosense=100Mb&squot;.&n;**&n;** For a compiled in driver, place e.g.&n;**     #define DE4X5_PARM &quot;eth0:fdx autosense=AUI eth2:autosense=TP&quot;&n;** here&n;*/
 macro_line|#ifdef DE4X5_PARM
 DECL|variable|args
 r_static
@@ -549,6 +520,11 @@ DECL|macro|DE4X5_SIGNATURE
 mdefine_line|#define DE4X5_SIGNATURE {&quot;DE425&quot;,&quot;DE434&quot;,&quot;DE435&quot;,&quot;DE450&quot;,&quot;DE500&quot;}
 DECL|macro|DE4X5_NAME_LENGTH
 mdefine_line|#define DE4X5_NAME_LENGTH 8
+multiline_comment|/*&n;** Ethernet PROM defines for DC21040&n;*/
+DECL|macro|PROBE_LENGTH
+mdefine_line|#define PROBE_LENGTH    32
+DECL|macro|ETH_PROM_SIG
+mdefine_line|#define ETH_PROM_SIG    0xAA5500FFUL
 multiline_comment|/*&n;** PCI Bus defines&n;*/
 DECL|macro|PCI_MAX_BUS_NUM
 mdefine_line|#define PCI_MAX_BUS_NUM      8
@@ -2041,6 +2017,15 @@ id|iobase
 )paren
 suffix:semicolon
 r_static
+r_void
+id|enet_addr_rst
+c_func
+(paren
+id|u_long
+id|aprom_addr
+)paren
+suffix:semicolon
+r_static
 r_int
 id|de4x5_bad_srom
 c_func
@@ -2878,7 +2863,6 @@ id|loading_module
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,0)
 id|MODULE_PARM
 c_func
 (paren
@@ -2903,7 +2887,6 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* LINUX_VERSION_CODE */
 macro_line|# else
 DECL|variable|loading_module
 r_static
@@ -5302,12 +5285,10 @@ comma
 id|skb
 )paren
 suffix:semicolon
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= ((2 &lt;&lt; 16) | (1 &lt;&lt; 8))
 id|lp-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-macro_line|#endif
 id|outl
 c_func
 (paren
@@ -5474,13 +5455,11 @@ suffix:semicolon
 id|DISABLE_IRQs
 suffix:semicolon
 multiline_comment|/* Ensure non re-entrancy */
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= ((2 &lt;&lt; 16) | (1 &lt;&lt; 8))
 id|synchronize_irq
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;interrupt
 op_assign
 id|MASK_INTERRUPTS
@@ -6010,12 +5989,10 @@ multiline_comment|/* Update stats */
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= ((2 &lt;&lt; 16) | (1 &lt;&lt; 8))
 id|lp-&gt;stats.rx_bytes
 op_add_assign
 id|pkt_len
 suffix:semicolon
-macro_line|#endif
 id|de4x5_local_stats
 c_func
 (paren
@@ -8029,7 +8006,7 @@ suffix:semicolon
 id|DevicePresent
 c_func
 (paren
-id|DE4X5_APROM
+id|EISA_APROM
 )paren
 suffix:semicolon
 r_if
@@ -8165,12 +8142,8 @@ comma
 id|dev_fn
 comma
 id|timer
-comma
-id|tirq
 suffix:semicolon
 id|u_short
-id|dev_id
-comma
 id|vendor
 comma
 id|index
@@ -8178,8 +8151,6 @@ comma
 id|status
 suffix:semicolon
 id|u_int
-id|tmp
-comma
 id|irq
 op_assign
 l_int|0
@@ -8203,6 +8174,11 @@ id|lp
 op_assign
 op_amp
 id|bus
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
 suffix:semicolon
 r_if
 c_cond
@@ -8328,33 +8304,26 @@ r_if
 c_cond
 (paren
 (paren
-op_logical_neg
 id|pbus
-op_logical_and
-op_logical_neg
+op_logical_or
 id|dnum
+)paren
+op_logical_and
+(paren
+(paren
+id|pbus
+op_ne
+id|pb
 )paren
 op_logical_or
 (paren
-(paren
-id|pbus
-op_eq
-id|pb
-)paren
-op_logical_and
-(paren
 id|dnum
-op_eq
+op_ne
 id|dev_num
 )paren
 )paren
 )paren
-(brace
-macro_line|#ifdef __sparc_v9__
-r_struct
-id|pci_dev
-op_star
-id|pdev
+r_continue
 suffix:semicolon
 r_for
 c_loop
@@ -8388,43 +8357,14 @@ id|dev_fn
 r_break
 suffix:semicolon
 )brace
-macro_line|#endif
-id|device
-op_assign
-l_int|0
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
 id|vendor
-)paren
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|dev_id
-)paren
+op_assign
+id|pdev-&gt;vendor
 suffix:semicolon
 id|device
 op_assign
-id|dev_id
-suffix:semicolon
-id|device
-op_lshift_assign
+id|pdev-&gt;device
+op_lshift
 l_int|8
 suffix:semicolon
 r_if
@@ -8441,10 +8381,8 @@ op_logical_or
 id|is_DC2114x
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 multiline_comment|/* Search for an SROM on this bus */
 r_if
 c_cond
@@ -8507,62 +8445,20 @@ op_assign
 id|device
 suffix:semicolon
 multiline_comment|/* Get the board I/O address (64 bits on sparc64) */
-macro_line|#ifndef __sparc_v9__
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|tmp
-)paren
-suffix:semicolon
-id|iobase
-op_assign
-id|tmp
-suffix:semicolon
-macro_line|#else
 id|iobase
 op_assign
 id|pdev-&gt;base_address
 (braket
 l_int|0
 )braket
-suffix:semicolon
-macro_line|#endif
-id|iobase
-op_and_assign
+op_amp
 id|CBIO_MASK
 suffix:semicolon
 multiline_comment|/* Fetch the IRQ to be used */
-macro_line|#ifndef __sparc_v9__
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|tirq
-)paren
-suffix:semicolon
-id|irq
-op_assign
-id|tirq
-suffix:semicolon
-macro_line|#else
 id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8836,7 +8732,6 @@ id|iobase
 suffix:semicolon
 )brace
 )brace
-)brace
 r_if
 c_cond
 (paren
@@ -8868,12 +8763,8 @@ id|u_char
 id|pb
 comma
 id|dev_fn
-comma
-id|tirq
 suffix:semicolon
 id|u_short
-id|dev_id
-comma
 id|dev_num
 comma
 id|vendor
@@ -8881,8 +8772,6 @@ comma
 id|status
 suffix:semicolon
 id|u_int
-id|tmp
-comma
 id|irq
 op_assign
 l_int|0
@@ -8911,6 +8800,11 @@ id|lp
 op_assign
 op_amp
 id|bus
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
 suffix:semicolon
 r_for
 c_loop
@@ -8955,12 +8849,6 @@ c_func
 id|dev_fn
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-r_struct
-id|pci_dev
-op_star
-id|pdev
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -8993,43 +8881,14 @@ id|dev_fn
 r_break
 suffix:semicolon
 )brace
-macro_line|#endif
-id|device
-op_assign
-l_int|0
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
 id|vendor
-)paren
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|dev_id
-)paren
+op_assign
+id|pdev-&gt;vendor
 suffix:semicolon
 id|device
 op_assign
-id|dev_id
-suffix:semicolon
-id|device
-op_lshift_assign
+id|pdev-&gt;device
+op_lshift
 l_int|8
 suffix:semicolon
 r_if
@@ -9046,10 +8905,8 @@ op_logical_or
 id|is_DC2114x
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 multiline_comment|/* Get the chip configuration revision register */
 id|pcibios_read_config_dword
 c_func
@@ -9092,62 +8949,20 @@ op_assign
 id|device
 suffix:semicolon
 multiline_comment|/* Get the board I/O address (64 bits on sparc64) */
-macro_line|#ifndef __sparc_v9__
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|tmp
-)paren
-suffix:semicolon
-id|iobase
-op_assign
-id|tmp
-suffix:semicolon
-macro_line|#else
 id|iobase
 op_assign
 id|pdev-&gt;base_address
 (braket
 l_int|0
 )braket
-suffix:semicolon
-macro_line|#endif
-id|iobase
-op_and_assign
+op_amp
 id|CBIO_MASK
 suffix:semicolon
 multiline_comment|/* Fetch the IRQ to be used */
-macro_line|#ifndef __sparc_v9__
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|tirq
-)paren
-suffix:semicolon
-id|irq
-op_assign
-id|tirq
-suffix:semicolon
-macro_line|#else
 id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -17825,6 +17640,24 @@ op_eq
 id|DC21040
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|lp-&gt;bus
+op_eq
+id|EISA
+)paren
+(brace
+id|enet_addr_rst
+c_func
+(paren
+id|aprom_addr
+)paren
+suffix:semicolon
+multiline_comment|/* Reset Ethernet Address ROM Pointer */
+)brace
+r_else
+(brace
 id|outl
 c_func
 (paren
@@ -17834,6 +17667,7 @@ id|aprom_addr
 )paren
 suffix:semicolon
 multiline_comment|/* Reset Ethernet Address ROM Pointer */
+)brace
 )brace
 r_else
 (brace
@@ -17994,6 +17828,157 @@ op_amp
 id|lp-&gt;srom
 )paren
 suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;** Since the write on the Enet PROM register doesn&squot;t seem to reset the PROM&n;** pointer correctly (at least on my DE425 EISA card), this routine should do&n;** it...from depca.c.&n;*/
+r_static
+r_void
+DECL|function|enet_addr_rst
+id|enet_addr_rst
+c_func
+(paren
+id|u_long
+id|aprom_addr
+)paren
+(brace
+r_union
+(brace
+r_struct
+(brace
+id|u32
+id|a
+suffix:semicolon
+id|u32
+id|b
+suffix:semicolon
+)brace
+id|llsig
+suffix:semicolon
+r_char
+id|Sig
+(braket
+r_sizeof
+(paren
+id|u32
+)paren
+op_lshift
+l_int|1
+)braket
+suffix:semicolon
+)brace
+id|dev
+suffix:semicolon
+r_int
+id|sigLength
+op_assign
+l_int|0
+suffix:semicolon
+id|s8
+id|data
+suffix:semicolon
+r_int
+id|i
+comma
+id|j
+suffix:semicolon
+id|dev.llsig.a
+op_assign
+id|ETH_PROM_SIG
+suffix:semicolon
+id|dev.llsig.b
+op_assign
+id|ETH_PROM_SIG
+suffix:semicolon
+id|sigLength
+op_assign
+r_sizeof
+(paren
+id|u32
+)paren
+op_lshift
+l_int|1
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+comma
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|sigLength
+op_logical_and
+id|i
+OL
+id|PROBE_LENGTH
+op_plus
+id|sigLength
+op_minus
+l_int|1
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|data
+op_assign
+id|inb
+c_func
+(paren
+id|aprom_addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev.Sig
+(braket
+id|j
+)braket
+op_eq
+id|data
+)paren
+(brace
+multiline_comment|/* track signature */
+id|j
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* lost signature; begin search again */
+r_if
+c_cond
+(paren
+id|data
+op_eq
+id|dev.Sig
+(braket
+l_int|0
+)braket
+)paren
+(brace
+multiline_comment|/* rare case.... */
+id|j
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 )brace
 r_return
 suffix:semicolon
@@ -27067,7 +27052,6 @@ op_assign
 l_int|0x0
 suffix:semicolon
 multiline_comment|/* EDIT THIS LINE FOR YOUR CONFIGURATION IF NEEDED        */
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,0)
 id|MODULE_PARM
 c_func
 (paren
@@ -27076,7 +27060,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* LINUX_VERSION_CODE */
 r_int
 DECL|function|init_module
 id|init_module
@@ -27333,6 +27316,8 @@ r_int
 id|i
 comma
 id|j
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 id|name
@@ -27344,12 +27329,8 @@ id|u_char
 id|pb
 comma
 id|dev_fn
-comma
-id|dev_num
 suffix:semicolon
 id|u_short
-id|dev_id
-comma
 id|vendor
 suffix:semicolon
 id|u_int
@@ -27360,6 +27341,11 @@ suffix:semicolon
 id|u_int
 id|device
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 macro_line|#ifndef __sparc_v9__
 id|u_long
 id|iobase
@@ -27369,10 +27355,6 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|j
-op_assign
-l_int|0
-comma
 id|i
 op_assign
 l_int|1
@@ -27446,50 +27428,46 @@ id|i
 op_increment
 )paren
 (brace
-id|dev_num
-op_assign
-id|PCI_SLOT
-c_func
+r_for
+c_loop
 (paren
+id|pdev
+op_assign
+id|pci_devices
+suffix:semicolon
+id|pdev
+suffix:semicolon
+id|pdev
+op_assign
+id|pdev-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|pdev-&gt;bus-&gt;number
+op_eq
+id|pb
+)paren
+op_logical_and
+(paren
+id|pdev-&gt;devfn
+op_eq
 id|dev_fn
 )paren
+)paren
+r_break
 suffix:semicolon
-id|device
-op_assign
-l_int|0
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
+)brace
 id|vendor
-)paren
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pb
-comma
-id|PCI_DEVICE
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|dev_id
-)paren
+op_assign
+id|pdev-&gt;vendor
 suffix:semicolon
 id|device
 op_assign
-id|dev_id
-suffix:semicolon
-id|device
-op_lshift_assign
+id|pdev-&gt;device
+op_lshift
 l_int|8
 suffix:semicolon
 r_if

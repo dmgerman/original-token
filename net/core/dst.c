@@ -407,7 +407,7 @@ c_func
 suffix:semicolon
 id|dst-&gt;obsolete
 op_assign
-l_int|1
+l_int|2
 suffix:semicolon
 id|dst-&gt;next
 op_assign

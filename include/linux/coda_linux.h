@@ -91,6 +91,15 @@ r_int
 id|mask
 )paren
 suffix:semicolon
+r_int
+id|coda_revalidate_inode
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* global variables */
 r_extern
 r_int
@@ -105,6 +114,19 @@ r_int
 id|coda_access_cache
 suffix:semicolon
 multiline_comment|/* this file:  heloers */
+r_static
+id|__inline__
+r_struct
+id|ViceFid
+op_star
+id|coda_i2f
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
 r_char
 op_star
 id|coda_f2s
@@ -348,5 +370,30 @@ DECL|macro|CODA_ALLOC
 mdefine_line|#define CODA_ALLOC(ptr, cast, size)                                       &bslash;&n;do {                                                                      &bslash;&n;    if (size &lt; 3000) {                                                    &bslash;&n;        ptr = (cast)kmalloc((unsigned long) size, GFP_KERNEL);            &bslash;&n;                CDEBUG(D_MALLOC, &quot;kmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);&bslash;&n;     }  else {                                                             &bslash;&n;        ptr = (cast)vmalloc((unsigned long) size);                        &bslash;&n;&t;CDEBUG(D_MALLOC, &quot;vmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);}&bslash;&n;    if (ptr == 0) {                                                       &bslash;&n;        printk(&quot;kernel malloc returns 0 at %s:%d&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;    }                                                                     &bslash;&n;    memset( ptr, 0, size );                                                   &bslash;&n;} while (0)
 DECL|macro|CODA_FREE
 mdefine_line|#define CODA_FREE(ptr,size) do {if (size &lt; 3000) { kfree_s((ptr), (size)); CDEBUG(D_MALLOC, &quot;kfreed: %x at %x.&bslash;n&quot;, (int) size, (int) ptr); } else { vfree((ptr)); CDEBUG(D_MALLOC, &quot;vfreed: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);} } while (0)
+multiline_comment|/* inode to cnode */
+DECL|function|coda_i2f
+r_static
+id|__inline__
+r_struct
+id|ViceFid
+op_star
+id|coda_i2f
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_return
+op_amp
+(paren
+id|inode-&gt;u.coda_i.c_fid
+)paren
+suffix:semicolon
+)brace
+DECL|macro|ITOC
+mdefine_line|#define ITOC(inode) (&amp;((inode)-&gt;u.coda_i))
 macro_line|#endif
 eof

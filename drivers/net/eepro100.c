@@ -5932,7 +5932,7 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* 16 byte align the data fields */
-macro_line|#if defined(__i386)   &amp;&amp;  notyet
+macro_line|#if defined(__i386__)   &amp;&amp;  notyet
 multiline_comment|/* Packet is in one chunk -- we can copy + cksum. */
 id|eth_io_copy_and_sum
 c_func

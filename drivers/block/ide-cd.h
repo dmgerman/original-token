@@ -64,6 +64,8 @@ DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10          0x55
 DECL|macro|READ_CD
 mdefine_line|#define READ_CD                 0xbe
+DECL|macro|SET_CD_SPEED
+mdefine_line|#define SET_CD_SPEED            0xbb
 DECL|macro|LOAD_UNLOAD
 mdefine_line|#define LOAD_UNLOAD             0xa6
 DECL|macro|MECHANISM_STATUS
@@ -1135,6 +1137,7 @@ multiline_comment|/* From Table 125 of the ATAPI 1.2 spec.,&n;   with additions 
 r_struct
 (brace
 DECL|member|asc_ascq
+r_int
 r_int
 id|asc_ascq
 suffix:semicolon

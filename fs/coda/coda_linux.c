@@ -49,7 +49,7 @@ r_static
 r_char
 id|s
 (braket
-l_int|50
+l_int|60
 )braket
 suffix:semicolon
 r_if
@@ -63,7 +63,7 @@ c_func
 (paren
 id|s
 comma
-l_string|&quot;(%10lx,%10lx,%10lx)&quot;
+l_string|&quot;(%-#lx,%-#lx,%-#lx)&quot;
 comma
 id|f-&gt;Volume
 comma
@@ -77,6 +77,7 @@ r_return
 id|s
 suffix:semicolon
 )brace
+multiline_comment|/* recognize special .CONTROL name */
 DECL|function|coda_iscontrol
 r_int
 id|coda_iscontrol
@@ -121,6 +122,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* recognize /coda inode */
 DECL|function|coda_isroot
 r_int
 id|coda_isroot
@@ -151,6 +153,35 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* is this a volume root FID */
+DECL|function|coda_fid_is_volroot
+r_int
+id|coda_fid_is_volroot
+c_func
+(paren
+r_struct
+id|ViceFid
+op_star
+id|fid
+)paren
+(brace
+r_return
+(paren
+(paren
+id|fid-&gt;Vnode
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+id|fid-&gt;Unique
+op_eq
+l_int|1
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* put the current process credentials in the cred */
 DECL|function|coda_load_creds
 r_void
 id|coda_load_creds
@@ -320,33 +351,6 @@ id|C_O_TRUNC
 suffix:semicolon
 r_return
 id|coda_flags
-suffix:semicolon
-)brace
-DECL|function|coda_fid_is_volroot
-r_int
-id|coda_fid_is_volroot
-c_func
-(paren
-r_struct
-id|ViceFid
-op_star
-id|fid
-)paren
-(brace
-r_return
-(paren
-(paren
-id|fid-&gt;Vnode
-op_eq
-l_int|1
-)paren
-op_logical_and
-(paren
-id|fid-&gt;Unique
-op_eq
-l_int|1
-)paren
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* utility functions below */

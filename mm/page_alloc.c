@@ -1063,11 +1063,11 @@ id|i
 op_assign
 l_int|48
 suffix:semicolon
-id|min_free_pages
+id|freepages.min
 op_assign
 id|i
 suffix:semicolon
-id|free_pages_low
+id|freepages.low
 op_assign
 id|i
 op_plus
@@ -1077,7 +1077,7 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
-id|free_pages_high
+id|freepages.high
 op_assign
 id|i
 op_plus

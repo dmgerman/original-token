@@ -427,6 +427,9 @@ comma
 DECL|enumerator|NET_TCP_STDURG
 id|NET_TCP_STDURG
 comma
+DECL|enumerator|NET_TCP_RFC1337
+id|NET_TCP_RFC1337
+comma
 DECL|enumerator|NET_TCP_SYN_TAILDROP
 id|NET_TCP_SYN_TAILDROP
 comma

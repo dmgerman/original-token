@@ -6,7 +6,6 @@ mdefine_line|#define RTC_IRQ &t;8&t;/* Can&squot;t see this changing soon.&t;*/
 DECL|macro|RTC_IO_EXTENT
 mdefine_line|#define RTC_IO_EXTENT&t;0x10&t;/* Only really two ports, but...&t;*/
 multiline_comment|/*&n; *&t;Note that *all* calls to CMOS_READ and CMOS_WRITE are done with&n; *&t;interrupts disabled. Due to the index-port/data-port (0x70/0x71)&n; *&t;design of the RTC, we don&squot;t want two different things trying to&n; *&t;get to it at once. (e.g. the periodic 11 min sync from time.c vs.&n; *&t;this driver.)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;

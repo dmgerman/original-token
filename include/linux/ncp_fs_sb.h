@@ -108,19 +108,16 @@ r_struct
 id|ncp_inode_info
 id|root
 suffix:semicolon
-macro_line|#if 0
-r_char
-id|root_path
-suffix:semicolon
-multiline_comment|/* &squot;&bslash;0&squot; */
-macro_line|#else
 DECL|member|root_dentry
 r_struct
 id|dentry
 op_star
 id|root_dentry
 suffix:semicolon
-macro_line|#endif
+DECL|member|root_setuped
+r_int
+id|root_setuped
+suffix:semicolon
 multiline_comment|/* info for packet signing */
 DECL|member|sign_wanted
 r_int

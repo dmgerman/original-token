@@ -7,12 +7,101 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
+macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 DECL|macro|Printk
 mdefine_line|#define Printk(x) printk x
+multiline_comment|/*&n; * makes empty filp&n; *&n; */
+DECL|function|fill_new_filp
+r_void
+id|fill_new_filp
+(paren
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+id|Printk
+(paren
+(paren
+l_string|&quot;/mn/ fill_new_filp: filling empty filp at %p&bslash;n&quot;
+comma
+id|filp
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry
+)paren
+id|Printk
+(paren
+(paren
+l_string|&quot;     dentry=%.*s&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
+comma
+id|dentry-&gt;d_name.name
+)paren
+)paren
+suffix:semicolon
+r_else
+id|Printk
+(paren
+(paren
+l_string|&quot;     dentry is NULL ! you must fill it later...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|memset
+(paren
+id|filp
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|file
+)paren
+)paren
+suffix:semicolon
+id|filp-&gt;f_pos
+op_assign
+l_int|0
+suffix:semicolon
+id|filp-&gt;f_reada
+op_assign
+l_int|1
+suffix:semicolon
+id|filp-&gt;f_flags
+op_assign
+id|O_RDWR
+suffix:semicolon
+id|filp-&gt;f_dentry
+op_assign
+id|dentry
+suffix:semicolon
+id|filp-&gt;f_op
+op_assign
+op_amp
+id|umsdos_file_operations
+suffix:semicolon
+multiline_comment|/* /mn/ - we have to fill it with SOMETHING */
+)brace
 multiline_comment|/*&n; * makes dentry. for name name with length len. /mn/&n; * if inode is not NULL, puts it also.&n; *&n; */
 DECL|function|creat_dentry
 r_struct
@@ -58,6 +147,7 @@ id|inode
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;/mn/ creat_dentry: creating dentry with inode=%lu for %.*s&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
@@ -72,6 +162,7 @@ r_else
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;/mn/ creat_dentry: creating empty dentry for %.*s&bslash;n&quot;
 comma
 id|len
@@ -105,10 +196,101 @@ suffix:semicolon
 multiline_comment|/* create new dentry */
 id|ret-&gt;d_inode
 op_assign
-id|inode
+l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+)paren
+id|d_add
+(paren
+id|ret
+comma
+id|inode
+)paren
+suffix:semicolon
+multiline_comment|/*    ret-&gt;d_inode = inode; /mn/ FIXME this was old, replaced by d_add, delete this ! */
 r_return
 id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * removes temporary dentry created by creat_dentry&n; *&n; */
+DECL|function|kill_dentry
+r_void
+id|kill_dentry
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dentry
+)paren
+(brace
+id|Printk
+(paren
+(paren
+l_string|&quot;/mn/ kill_dentry: kill_dentry %.*s :&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
+comma
+id|dentry-&gt;d_name.name
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_inode
+)paren
+id|Printk
+(paren
+(paren
+l_string|&quot;inode=%lu&bslash;n&quot;
+comma
+id|dentry-&gt;d_inode-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
+r_else
+id|Printk
+(paren
+(paren
+l_string|&quot;inode is NULL&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: is this ok ?! /mn/ */
+multiline_comment|/* d_invalidate (dentry); */
+multiline_comment|/*dput (dentry);*/
+)brace
+r_else
+(brace
+id|Printk
+(paren
+(paren
+l_string|&quot;/mn/ kill_dentry: dentry is NULL ?!&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;/mn/ kill_dentry: exiting...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Read a file into kernel space memory&n; *&t;returns how many bytes read (from fat_file_read)&n; */
@@ -536,16 +718,11 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Write to a file from kernel space&n;*/
-DECL|function|umsdos_file_write_kmem
+multiline_comment|/*&n; *&t;Write to file from kernel space. &n; *&t;Does the real job, assumes all structures are initialized !&n; */
+DECL|function|umsdos_file_write_kmem_real
 id|ssize_t
-id|umsdos_file_write_kmem
+id|umsdos_file_write_kmem_real
 (paren
-r_struct
-id|inode
-op_star
-id|emd_dir
-comma
 r_struct
 id|file
 op_star
@@ -564,7 +741,7 @@ op_star
 id|offs
 )paren
 (brace
-r_int
+id|ssize_t
 id|ret
 suffix:semicolon
 id|mm_segment_t
@@ -575,17 +752,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|old_dentry
-suffix:semicolon
-id|Printk
+id|set_fs
 (paren
-(paren
-id|KERN_ERR
-l_string|&quot; STARTED WRITE_KMEM /mn/&bslash;n&quot;
-)paren
+id|KERNEL_DS
 )paren
 suffix:semicolon
 id|Printk
@@ -608,9 +777,19 @@ id|Printk
 (paren
 (paren
 id|KERN_ERR
-l_string|&quot;  using emd=%ld&bslash;n&quot;
+l_string|&quot;  struct dentry=%p&bslash;n&quot;
 comma
-id|emd_dir-&gt;i_ino
+id|filp-&gt;f_dentry
+)paren
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;  struct inode=%p&bslash;n&quot;
+comma
+id|filp-&gt;f_dentry-&gt;d_inode
 )paren
 )paren
 suffix:semicolon
@@ -732,32 +911,6 @@ id|filp-&gt;f_rawin
 )paren
 )paren
 suffix:semicolon
-id|set_fs
-(paren
-id|KERNEL_DS
-)paren
-suffix:semicolon
-id|old_dentry
-op_assign
-id|filp-&gt;f_dentry
-suffix:semicolon
-multiline_comment|/* save it */
-id|filp-&gt;f_dentry
-op_assign
-id|creat_dentry
-(paren
-id|UMSDOS_EMD_FILE
-comma
-id|UMSDOS_EMD_NAMELEN
-comma
-id|emd_dir
-)paren
-suffix:semicolon
-op_star
-id|offs
-op_assign
-id|filp-&gt;f_pos
-suffix:semicolon
 id|ret
 op_assign
 id|fat_file_write
@@ -781,6 +934,104 @@ id|ret
 )paren
 )paren
 suffix:semicolon
+id|set_fs
+(paren
+id|old_fs
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Write to a file from kernel space&n; */
+DECL|function|umsdos_file_write_kmem
+id|ssize_t
+id|umsdos_file_write_kmem
+(paren
+r_struct
+id|inode
+op_star
+id|emd_dir
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+comma
+id|loff_t
+op_star
+id|offs
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|old_dentry
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot; STARTED WRITE_KMEM /mn/&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;  using emd=%ld&bslash;n&quot;
+comma
+id|emd_dir-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
+id|old_dentry
+op_assign
+id|filp-&gt;f_dentry
+suffix:semicolon
+multiline_comment|/* save it */
+id|filp-&gt;f_dentry
+op_assign
+id|creat_dentry
+(paren
+id|UMSDOS_EMD_FILE
+comma
+id|UMSDOS_EMD_NAMELEN
+comma
+id|emd_dir
+)paren
+suffix:semicolon
+op_star
+id|offs
+op_assign
+id|filp-&gt;f_pos
+suffix:semicolon
+multiline_comment|/* FIXME, in read_kmem also: offs is not used so why pass it ?!!! /mn/ */
+id|ret
+op_assign
+id|umsdos_file_write_kmem_real
+(paren
+id|filp
+comma
+id|buf
+comma
+id|count
+comma
+id|offs
+)paren
+suffix:semicolon
 id|filp-&gt;f_pos
 op_assign
 op_star
@@ -789,11 +1040,6 @@ suffix:semicolon
 id|filp-&gt;f_dentry
 op_assign
 id|old_dentry
-suffix:semicolon
-id|set_fs
-(paren
-id|old_fs
-)paren
 suffix:semicolon
 r_return
 id|ret
@@ -925,7 +1171,7 @@ multiline_comment|/* if offs is not NULL, read it */
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_emd_dir_write /mn/: calling write_kmem with %p, %p, %p, %ld, %Ld&bslash;n&quot;
+l_string|&quot;umsdos_emd_dir_write /mn/: calling write_kmem with %p, %p, %p, %d, %Ld&bslash;n&quot;
 comma
 id|emd_dir
 comma
@@ -1031,6 +1277,27 @@ id|d-&gt;mode
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#ifdef 1
+r_if
+c_cond
+(paren
+id|written
+op_ne
+id|count
+)paren
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;umsdos_emd_dir_write: ERROR: written (%d) != count (%d)&bslash;n&quot;
+comma
+id|written
+comma
+id|count
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|written
 op_ne
@@ -1829,6 +2096,14 @@ r_struct
 id|umsdos_dirent
 id|entry0
 suffix:semicolon
+id|fill_new_filp
+(paren
+op_amp
+id|filp
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|Printk
 (paren
 (paren
@@ -1976,7 +2251,9 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;emd_dir_write returned !&bslash;n&quot;
+l_string|&quot;emd_dir_write returned with %d!&bslash;n&quot;
+comma
+id|ret
 )paren
 )paren
 suffix:semicolon
@@ -2007,7 +2284,9 @@ multiline_comment|/* dir-&gt;i_dirt = 1; FIXME iput/dput ??? */
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_writeentry /mn/: returning...&bslash;n&quot;
+l_string|&quot;umsdos_writeentry /mn/: returning %d...&bslash;n&quot;
+comma
+id|ret
 )paren
 )paren
 suffix:semicolon
@@ -2234,10 +2513,32 @@ op_assign
 op_minus
 id|ENOENT
 suffix:semicolon
-multiline_comment|/* FIXME  -- /mn/ fixed ? */
 r_struct
 id|inode
 op_star
+id|emd_dir
+suffix:semicolon
+r_struct
+id|umsdos_dirent
+op_star
+id|entry
+op_assign
+op_amp
+id|info-&gt;entry
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_find: locating %.*s in dir %lu&bslash;n&quot;
+comma
+id|entry-&gt;name_len
+comma
+id|entry-&gt;name
+comma
+id|dir-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
 id|emd_dir
 op_assign
 id|umsdos_emd_dir_lookup
@@ -2255,14 +2556,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_struct
-id|umsdos_dirent
-op_star
-id|entry
-op_assign
-op_amp
-id|info-&gt;entry
-suffix:semicolon
 r_int
 id|recsize
 op_assign
@@ -2323,28 +2616,14 @@ comma
 id|emd_dir
 )paren
 suffix:semicolon
-id|buf.filp.f_pos
-op_assign
-l_int|0
-suffix:semicolon
-id|buf.filp.f_reada
-op_assign
-l_int|1
-suffix:semicolon
-id|buf.filp.f_flags
-op_assign
-id|O_RDONLY
-suffix:semicolon
-id|buf.filp.f_dentry
-op_assign
-id|dentry
-suffix:semicolon
-id|buf.filp.f_op
-op_assign
+id|fill_new_filp
+(paren
 op_amp
-id|umsdos_file_operations
+id|buf.filp
+comma
+id|dentry
+)paren
 suffix:semicolon
-multiline_comment|/* /mn/ - we have to fill it with dummy values so we won&squot;t segfault */
 id|buf.pos
 op_assign
 l_int|0
@@ -2626,6 +2905,15 @@ id|pt_emd_dir
 op_assign
 id|emd_dir
 suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_find: returning %d&bslash;n&quot;
+comma
+id|ret
+)paren
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -2705,7 +2993,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_newentry EDM ret = %d&bslash;n&quot;
+l_string|&quot;umsdos_newentry EMD ret = %d&bslash;n&quot;
 comma
 id|ret
 )paren
@@ -2983,6 +3271,14 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
+id|fill_new_filp
+(paren
+op_amp
+id|filp
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 multiline_comment|/* Find an empty slot */
 id|memset
 (paren
@@ -3197,6 +3493,15 @@ suffix:semicolon
 id|iput
 (paren
 id|emd_dir
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_findentry: returning %d&bslash;n&quot;
+comma
+id|ret
+)paren
 )paren
 suffix:semicolon
 r_return

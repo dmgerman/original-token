@@ -50,6 +50,14 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
+id|fill_new_filp
+(paren
+op_amp
+id|filp
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|dentry-&gt;d_inode-&gt;i_size

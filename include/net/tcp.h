@@ -1841,6 +1841,17 @@ id|sk
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|tcp_send_active_reset
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|tcp_send_synack
 c_func
@@ -2856,7 +2867,18 @@ op_star
 )paren
 id|optr
 suffix:semicolon
-multiline_comment|/*&n;&t; * We always get an MSS option.&n;&t; */
+multiline_comment|/* We always get an MSS option.&n;&t; * The option bytes which will be seen in normal data&n;&t; * packets should timestamps be used, must be in the MSS&n;&t; * advertised.  But we subtract them from sk-&gt;mss so&n;&t; * that calculations in tcp_sendmsg are simpler etc.&n;&t; * So account for this fact here if necessary.  If we&n;&t; * don&squot;t do this correctly, as a receiver we won&squot;t&n;&t; * recognize data packets as being full sized when we&n;&t; * should, and thus we won&squot;t abide by the delayed ACK&n;&t; * rules correctly.&n;&t; */
+r_if
+c_cond
+(paren
+id|ts
+)paren
+(brace
+id|mss
+op_add_assign
+id|TCPOLEN_TSTAMP_ALIGNED
+suffix:semicolon
+)brace
 op_star
 id|ptr
 op_increment

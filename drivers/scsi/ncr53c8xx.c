@@ -28405,7 +28405,7 @@ id|FE_WIDE
 suffix:semicolon
 macro_line|#ifdef&t;SCSI_NCR_PCI_FIX_UP_SUPPORT
 multiline_comment|/*&n;&t; * Try to fix up PCI config according to wished features.&n;&t; */
-macro_line|#if defined(__i386) &amp;&amp; !defined(MODULE)
+macro_line|#if defined(__i386__) &amp;&amp; !defined(MODULE)
 r_if
 c_cond
 (paren

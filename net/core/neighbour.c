@@ -6133,7 +6133,7 @@ l_int|0
 comma
 (brace
 (brace
-l_int|1
+id|NET_PROTO_CONF_DEFAULT
 comma
 l_string|&quot;default&quot;
 comma
@@ -6285,6 +6285,16 @@ id|t
 suffix:semicolon
 id|t-&gt;neigh_vars
 (braket
+l_int|0
+)braket
+dot
+id|data
+op_assign
+op_amp
+id|p-&gt;mcast_probes
+suffix:semicolon
+id|t-&gt;neigh_vars
+(braket
 l_int|1
 )braket
 dot
@@ -6321,7 +6331,7 @@ dot
 id|data
 op_assign
 op_amp
-id|p-&gt;reachable_time
+id|p-&gt;base_reachable_time
 suffix:semicolon
 id|t-&gt;neigh_vars
 (braket
@@ -6416,8 +6426,6 @@ dot
 id|ctl_name
 op_assign
 id|dev-&gt;ifindex
-op_plus
-l_int|1
 suffix:semicolon
 id|memset
 c_func

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -233,4 +234,13 @@ c_func
 id|__up_wakeup
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_PCI
+DECL|variable|pci_devices
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_devices
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

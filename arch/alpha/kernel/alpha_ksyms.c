@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -706,4 +707,13 @@ c_func
 id|memset
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_PCI
+DECL|variable|pci_devices
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_devices
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

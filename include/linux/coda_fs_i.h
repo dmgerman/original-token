@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 DECL|macro|CODA_CNODE_MAGIC
 mdefine_line|#define CODA_CNODE_MAGIC        0x47114711
-multiline_comment|/*&n; * smb fs inode data (in memory only)&n; */
+multiline_comment|/*&n; * coda fs inode data&n; */
 DECL|struct|coda_inode_info
 r_struct
 id|coda_inode_info
@@ -79,8 +79,8 @@ DECL|macro|C_SYMLINK
 mdefine_line|#define C_SYMLINK     0x2         /* Validity of symlink pointer in the cnode */
 DECL|macro|C_DYING
 mdefine_line|#define C_DYING       0x4&t;  /* Set for outstanding cnodes from venus (which died) */
-DECL|macro|C_ZAPFID
-mdefine_line|#define C_ZAPFID      0x8
+DECL|macro|C_PURGE
+mdefine_line|#define C_PURGE      0x8
 DECL|macro|C_ZAPDIR
 mdefine_line|#define C_ZAPDIR      0x10
 DECL|macro|C_INITED
@@ -135,9 +135,6 @@ op_star
 id|sb
 )paren
 suffix:semicolon
-multiline_comment|/* inode to cnode */
-DECL|macro|ITOC
-mdefine_line|#define ITOC(inode) ((struct coda_inode_info *)&amp;((inode)-&gt;u.coda_i))
 macro_line|#endif
 macro_line|#endif
 eof

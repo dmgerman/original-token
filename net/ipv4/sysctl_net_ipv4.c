@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.27 1998/03/12 00:03:31 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
+multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.28 1998/03/15 03:23:21 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -110,6 +110,10 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_tcp_stdurg
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_rfc1337
 suffix:semicolon
 r_extern
 r_int
@@ -722,6 +726,27 @@ l_string|&quot;tcp_stdurg&quot;
 comma
 op_amp
 id|sysctl_tcp_stdurg
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+(brace
+id|NET_TCP_RFC1337
+comma
+l_string|&quot;tcp_rfc1337&quot;
+comma
+op_amp
+id|sysctl_tcp_rfc1337
 comma
 r_sizeof
 (paren

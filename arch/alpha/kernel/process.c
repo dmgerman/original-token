@@ -29,6 +29,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
+macro_line|#include &lt;asm/fpu.h&gt;
 multiline_comment|/*&n; * Initial task structure. Make this a per-architecture thing,&n; * because different architectures tend to have different&n; * alignment requirements and potentially different initial&n; * setup.&n; */
 DECL|variable|init_user_stack
 r_int
@@ -62,7 +63,7 @@ suffix:semicolon
 DECL|variable|init_fd_array
 r_static
 r_struct
-id|files
+id|file
 op_star
 id|init_fd_array
 (braket
@@ -668,6 +669,18 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Arrange for each exec&squot;ed process to start off with a &n;&t;   clean slate wrt the fpu.  */
+id|current-&gt;tss.flags
+op_and_assign
+op_complement
+id|IEEE_SW_MASK
+suffix:semicolon
+id|wrfpcr
+c_func
+(paren
+id|FPCR_DYN_NORMAL
+)paren
+suffix:semicolon
 )brace
 DECL|function|release_thread
 r_void
