@@ -90,27 +90,37 @@ DECL|macro|HFS_SGL_DINF
 mdefine_line|#define HFS_SGL_DINF&t;HFS_ITYPE_1&t;/* %DirInfo for directory */
 multiline_comment|/* IDs for elements of an AppleDouble or AppleSingle header */
 DECL|macro|HFS_HDR_DATA
-mdefine_line|#define HFS_HDR_DATA&t;1
+mdefine_line|#define HFS_HDR_DATA&t;1   /* data fork */
 DECL|macro|HFS_HDR_RSRC
-mdefine_line|#define HFS_HDR_RSRC&t;2
+mdefine_line|#define HFS_HDR_RSRC&t;2   /* resource fork */
 DECL|macro|HFS_HDR_FNAME
-mdefine_line|#define HFS_HDR_FNAME&t;3
+mdefine_line|#define HFS_HDR_FNAME&t;3   /* full (31-character) name */
 DECL|macro|HFS_HDR_COMNT
-mdefine_line|#define HFS_HDR_COMNT&t;4
+mdefine_line|#define HFS_HDR_COMNT&t;4   /* comment */
 DECL|macro|HFS_HDR_BWICN
-mdefine_line|#define HFS_HDR_BWICN&t;5
+mdefine_line|#define HFS_HDR_BWICN&t;5   /* b/w icon */
 DECL|macro|HFS_HDR_CICON
-mdefine_line|#define HFS_HDR_CICON&t;6
+mdefine_line|#define HFS_HDR_CICON&t;6   /* color icon info */
 DECL|macro|HFS_HDR_OLDI
-mdefine_line|#define HFS_HDR_OLDI&t;7
+mdefine_line|#define HFS_HDR_OLDI&t;7   /* old file info */
 DECL|macro|HFS_HDR_DATES
-mdefine_line|#define HFS_HDR_DATES&t;8
+mdefine_line|#define HFS_HDR_DATES&t;8   /* file dates info */
 DECL|macro|HFS_HDR_FINFO
-mdefine_line|#define HFS_HDR_FINFO&t;9
+mdefine_line|#define HFS_HDR_FINFO&t;9   /* Finder info */
 DECL|macro|HFS_HDR_MACI
-mdefine_line|#define HFS_HDR_MACI&t;10
+mdefine_line|#define HFS_HDR_MACI&t;10  /* Macintosh info */
+DECL|macro|HFS_HDR_PRODOSI
+mdefine_line|#define HFS_HDR_PRODOSI 11  /* ProDOS info */
+DECL|macro|HFS_HDR_MSDOSI
+mdefine_line|#define HFS_HDR_MSDOSI  12  /* MSDOS info */
+DECL|macro|HFS_HDR_SNAME
+mdefine_line|#define HFS_HDR_SNAME   13  /* short name */
+DECL|macro|HFS_HDR_AFPI
+mdefine_line|#define HFS_HDR_AFPI    14  /* AFP file info */
+DECL|macro|HFS_HDR_DID
+mdefine_line|#define HFS_HDR_DID     15  /* directory id */
 DECL|macro|HFS_HDR_MAX
-mdefine_line|#define HFS_HDR_MAX&t;10
+mdefine_line|#define HFS_HDR_MAX&t;16
 multiline_comment|/*&n; * There are three time systems.  All three are based on seconds since&n; * a particular time/date.&n; *&t;Unix:&t;unsigned lil-endian since 00:00 GMT, Jan. 1, 1970&n; *&t;mac:&t;unsigned big-endian since 00:00 GMT, Jan. 1, 1904&n; *&t;header:&t;  SIGNED big-endian since 00:00 GMT, Jan. 1, 2000&n; *&n; */
 DECL|macro|hfs_h_to_mtime
 mdefine_line|#define hfs_h_to_mtime(ARG)&t;htonl((hfs_s32)ntohl(ARG)+3029529600U)
@@ -188,89 +198,7 @@ suffix:semicolon
 multiline_comment|/* &squot;descr&squot; ordered by offset */
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Default header layout for Netatalk&n; */
-DECL|struct|hfs_nat_hdr
-r_struct
-id|hfs_nat_hdr
-(brace
-DECL|member|magic
-id|hfs_lword_t
-id|magic
-suffix:semicolon
-DECL|member|version
-id|hfs_lword_t
-id|version
-suffix:semicolon
-DECL|member|homefs
-id|hfs_byte_t
-id|homefs
-(braket
-l_int|16
-)braket
-suffix:semicolon
-DECL|member|entries
-id|hfs_word_t
-id|entries
-suffix:semicolon
-DECL|member|descrs
-id|hfs_byte_t
-id|descrs
-(braket
-l_int|60
-)braket
-suffix:semicolon
-DECL|member|real_name
-id|hfs_byte_t
-id|real_name
-(braket
-l_int|255
-)braket
-suffix:semicolon
-multiline_comment|/* id=3 */
-DECL|member|comment
-id|hfs_byte_t
-id|comment
-(braket
-l_int|200
-)braket
-suffix:semicolon
-multiline_comment|/* id=4 XXX: not yet implemented */
-DECL|member|create_time
-id|hfs_lword_t
-id|create_time
-suffix:semicolon
-multiline_comment|/* &bslash;       */
-DECL|member|modify_time
-id|hfs_lword_t
-id|modify_time
-suffix:semicolon
-multiline_comment|/*  |      */
-DECL|member|backup_time
-id|hfs_lword_t
-id|backup_time
-suffix:semicolon
-multiline_comment|/*  | id=7 */
-DECL|member|filler
-id|hfs_word_t
-id|filler
-suffix:semicolon
-multiline_comment|/*  |      */
-DECL|member|attr
-id|hfs_word_t
-id|attr
-suffix:semicolon
-multiline_comment|/* /       */
-DECL|member|finderinfo
-id|hfs_byte_t
-id|finderinfo
-(braket
-l_int|32
-)braket
-suffix:semicolon
-multiline_comment|/* id=9 */
-)brace
-suffix:semicolon
-multiline_comment|/* &n; * Default header layout for AppleDouble&n; */
+multiline_comment|/* &n; * Default header layout for Netatalk and AppleDouble&n; */
 DECL|struct|hfs_dbl_hdr
 r_struct
 id|hfs_dbl_hdr
@@ -303,26 +231,42 @@ op_star
 id|HFS_HDR_MAX
 )braket
 suffix:semicolon
+DECL|member|real_name
+id|hfs_byte_t
+id|real_name
+(braket
+l_int|255
+)braket
+suffix:semicolon
+multiline_comment|/* id=3 */
+DECL|member|comment
+id|hfs_byte_t
+id|comment
+(braket
+l_int|200
+)braket
+suffix:semicolon
+multiline_comment|/* id=4 XXX: not yet implemented */
 DECL|member|create_time
 id|hfs_u32
 id|create_time
 suffix:semicolon
-multiline_comment|/* &bslash;&t;   */
+multiline_comment|/* &bslash;&t;          */
 DECL|member|modify_time
 id|hfs_u32
 id|modify_time
 suffix:semicolon
-multiline_comment|/*  | id=8 */
+multiline_comment|/*  | id=8 (or 7) */
 DECL|member|backup_time
 id|hfs_u32
 id|backup_time
 suffix:semicolon
-multiline_comment|/*  |&t;   */
+multiline_comment|/*  |&t;          */
 DECL|member|access_time
 id|hfs_u32
 id|access_time
 suffix:semicolon
-multiline_comment|/* /&t;   */
+multiline_comment|/* /  (attributes with id=7) */
 DECL|member|finderinfo
 id|hfs_u8
 id|finderinfo
@@ -336,22 +280,27 @@ id|hfs_u32
 id|fileinfo
 suffix:semicolon
 multiline_comment|/* id=10 */
-DECL|member|real_name
+DECL|member|cnid
+id|hfs_u32
+id|cnid
+suffix:semicolon
+multiline_comment|/* id=15 */
+DECL|member|short_name
 id|hfs_u8
-id|real_name
+id|short_name
 (braket
-l_int|32
+l_int|12
 )braket
 suffix:semicolon
-multiline_comment|/* id=3 */
-DECL|member|comment
+multiline_comment|/* id=13 */
+DECL|member|prodosi
 id|hfs_u8
-id|comment
+id|prodosi
 (braket
-l_int|200
+l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* id=4 XXX: not yet implemented */
+multiline_comment|/* id=11 */
 )brace
 suffix:semicolon
 multiline_comment|/* finder metadata for CAP */
@@ -371,13 +320,33 @@ DECL|member|fi_attr
 id|hfs_word_t
 id|fi_attr
 suffix:semicolon
-multiline_comment|/* AFP attributes */
+multiline_comment|/* AFP attributes (f=file/d=dir) */
+DECL|macro|HFS_AFP_INV
+mdefine_line|#define HFS_AFP_INV             0x001   /* Invisible bit (f/d) */
+DECL|macro|HFS_AFP_EXPFOLDER
+mdefine_line|#define HFS_AFP_EXPFOLDER       0x002   /* exported folder (d) */
+DECL|macro|HFS_AFP_MULTI
+mdefine_line|#define HFS_AFP_MULTI           0x002   /* Multiuser bit (f) */
+DECL|macro|HFS_AFP_SYS
+mdefine_line|#define HFS_AFP_SYS             0x004   /* System bit (f/d) */
+DECL|macro|HFS_AFP_DOPEN
+mdefine_line|#define HFS_AFP_DOPEN           0x008   /* data fork already open (f) */
+DECL|macro|HFS_AFP_MOUNTED
+mdefine_line|#define HFS_AFP_MOUNTED         0x008   /* mounted folder (d) */
+DECL|macro|HFS_AFP_ROPEN
+mdefine_line|#define HFS_AFP_ROPEN           0x010   /* resource fork already open (f) */
+DECL|macro|HFS_AFP_INEXPFOLDER
+mdefine_line|#define HFS_AFP_INEXPFOLDER     0x010   /* folder in shared area (d) */
 DECL|macro|HFS_AFP_WRI
-mdefine_line|#define HFS_AFP_WRI&t;&t;0x020&t;/* Write inhibit bit */
+mdefine_line|#define HFS_AFP_WRI&t;&t;0x020&t;/* Write inhibit bit (readonly) (f) */
+DECL|macro|HFS_AFP_BACKUP
+mdefine_line|#define HFS_AFP_BACKUP          0x040   /* backup needed bit (f/d)  */
 DECL|macro|HFS_AFP_RNI
-mdefine_line|#define HFS_AFP_RNI&t;&t;0x080&t;/* Rename inhibit bit (AFP &gt;= 2.0) */
+mdefine_line|#define HFS_AFP_RNI&t;&t;0x080&t;/* Rename inhibit bit (f/d) */
 DECL|macro|HFS_AFP_DEI
-mdefine_line|#define HFS_AFP_DEI&t;&t;0x100&t;/* Delete inhibit bit (AFP &gt;= 2.0) */
+mdefine_line|#define HFS_AFP_DEI&t;&t;0x100&t;/* Delete inhibit bit (f/d) */
+DECL|macro|HFS_AFP_NOCOPY
+mdefine_line|#define HFS_AFP_NOCOPY          0x400   /* Copy protect bit (f) */
 DECL|macro|HFS_AFP_RDONLY
 mdefine_line|#define HFS_AFP_RDONLY&t;(&t;HFS_AFP_WRI|HFS_AFP_RNI|HFS_AFP_DEI)
 DECL|member|fi_magic1
@@ -859,6 +828,12 @@ r_extern
 r_const
 r_struct
 id|hfs_hdr_layout
+id|hfs_nat2_hdr_layout
+suffix:semicolon
+r_extern
+r_const
+r_struct
+id|hfs_hdr_layout
 id|hfs_sngl_hdr_layout
 suffix:semicolon
 multiline_comment|/* inode.c */
@@ -914,6 +889,9 @@ id|inode
 op_star
 comma
 id|ino_t
+comma
+r_const
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -926,6 +904,9 @@ id|inode
 op_star
 comma
 id|ino_t
+comma
+r_const
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -938,6 +919,9 @@ id|inode
 op_star
 comma
 id|ino_t
+comma
+r_const
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -950,6 +934,9 @@ id|inode
 op_star
 comma
 id|ino_t
+comma
+r_const
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* super.c */

@@ -259,21 +259,15 @@ id|s_drive_stuff
 (brace
 multiline_comment|/* waitqueues */
 DECL|member|busyq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|busyq
 suffix:semicolon
 DECL|member|lockq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|lockq
 suffix:semicolon
 DECL|member|sleepq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|sleepq
 suffix:semicolon
 multiline_comment|/* flags */
@@ -4501,6 +4495,27 @@ op_assign
 id|stuffp-&gt;wreg_hcon
 op_plus
 l_int|1
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|stuffp-&gt;busyq
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|stuffp-&gt;lockq
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|stuffp-&gt;sleepq
+)paren
 suffix:semicolon
 multiline_comment|/* check if i/o addresses are available */
 r_if

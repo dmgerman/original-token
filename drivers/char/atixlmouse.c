@@ -77,9 +77,7 @@ r_int
 id|active
 suffix:semicolon
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
 DECL|member|fasync
@@ -905,9 +903,12 @@ id|mouse.dy
 op_assign
 l_int|0
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|mouse.wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|printk
 c_func

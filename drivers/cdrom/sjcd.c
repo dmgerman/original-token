@@ -182,14 +182,12 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|sjcd_waitq
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|sjcd_waitq
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Data transfer.&n; */
 DECL|variable|sjcd_transfer_is_active

@@ -304,9 +304,12 @@ id|bt-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|bt-&gt;wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|bt-&gt;dirt
 op_assign

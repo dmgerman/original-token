@@ -420,14 +420,12 @@ r_int
 id|sleep_timeout
 suffix:semicolon
 multiline_comment|/* max # of ticks to sleep */
-DECL|variable|waitq
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|waitq
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|variable|delay_timer
 r_static

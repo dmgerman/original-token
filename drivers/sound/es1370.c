@@ -12885,9 +12885,12 @@ op_amp
 id|s-&gt;midi.owait
 )paren
 suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
 id|s-&gt;open_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 id|s-&gt;magic
 op_assign

@@ -1065,11 +1065,11 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do the command and wait for it to finish.&n;&t; */
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|scmd.request.rq_status
 op_assign
@@ -2030,11 +2030,11 @@ l_int|10
 suffix:semicolon
 multiline_comment|/*&n;&t;     * Do the command and wait for it to finish.&n;&t;     */
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|scmd.request.rq_status
 op_assign

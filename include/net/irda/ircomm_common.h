@@ -373,15 +373,11 @@ id|peer_cap
 suffix:semicolon
 multiline_comment|/* capability of peer device */
 DECL|member|discovery_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|discovery_wait
 suffix:semicolon
 DECL|member|ias_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|ias_wait
 suffix:semicolon
 multiline_comment|/* statistics */

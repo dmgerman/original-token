@@ -188,9 +188,7 @@ op_star
 id|sk
 suffix:semicolon
 DECL|member|ias_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|ias_wait
 suffix:semicolon
 multiline_comment|/* Wait for LM-IAS answer */

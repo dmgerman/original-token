@@ -60,9 +60,7 @@ id|irlpt_fsm_event
 )braket
 suffix:semicolon
 r_extern
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|lpt_wait
 suffix:semicolon
 r_extern
@@ -453,22 +451,16 @@ id|pkt_count
 suffix:semicolon
 multiline_comment|/* how many packets are queued up */
 DECL|member|read_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|read_wait
 suffix:semicolon
 multiline_comment|/* wait queues */
 DECL|member|write_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|write_wait
 suffix:semicolon
 DECL|member|ex_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|ex_wait
 suffix:semicolon
 multiline_comment|/* this is used to remove the printer when it&squot;s gone */

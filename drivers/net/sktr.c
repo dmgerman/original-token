@@ -1850,6 +1850,13 @@ id|net_local
 )paren
 )paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|tp-&gt;wait_for_tok_int
+)paren
+suffix:semicolon
 id|dev-&gt;priv
 op_assign
 id|tp

@@ -55,6 +55,9 @@ id|inode
 op_star
 comma
 id|ino_t
+comma
+r_const
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * struct hfs_sb_info&n; *&n; * The HFS-specific part of a Linux (struct super_block)&n; */
@@ -89,6 +92,11 @@ r_int
 id|s_afpd
 suffix:semicolon
 multiline_comment|/* AFPD compatible mode? */
+DECL|member|s_version
+r_int
+id|s_version
+suffix:semicolon
+multiline_comment|/* version info */
 DECL|member|s_namein
 id|hfs_namein_fn
 id|s_namein

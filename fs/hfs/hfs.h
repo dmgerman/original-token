@@ -104,11 +104,38 @@ DECL|macro|HFS_FK_RSRC
 mdefine_line|#define HFS_FK_RSRC&t;0xFF
 multiline_comment|/* bits in hfs_fil_entry.Flags */
 DECL|macro|HFS_FIL_LOCK
-mdefine_line|#define HFS_FIL_LOCK&t;0x01
+mdefine_line|#define HFS_FIL_LOCK&t;0x01  /* locked */
 DECL|macro|HFS_FIL_THD
-mdefine_line|#define HFS_FIL_THD&t;0x02
+mdefine_line|#define HFS_FIL_THD&t;0x02  /* file thread */
+DECL|macro|HFS_FIL_DOPEN
+mdefine_line|#define HFS_FIL_DOPEN   0x04  /* data fork open */
+DECL|macro|HFS_FIL_ROPEN
+mdefine_line|#define HFS_FIL_ROPEN   0x08  /* resource fork open */
+DECL|macro|HFS_FIL_DIR
+mdefine_line|#define HFS_FIL_DIR     0x10  /* directory (always clear) */
+DECL|macro|HFS_FIL_RSRV1
+mdefine_line|#define HFS_FIL_RSRV1   0x20  /* reserved */
+DECL|macro|HFS_FIL_NOCOPY
+mdefine_line|#define HFS_FIL_NOCOPY  0x40  /* copy-protected file */
 DECL|macro|HFS_FIL_USED
-mdefine_line|#define HFS_FIL_USED&t;0x80
+mdefine_line|#define HFS_FIL_USED&t;0x80  /* open */
+multiline_comment|/* bits in hfs_dir_entry.Flags. dirflags is 16 bits. */
+DECL|macro|HFS_DIR_LOCK
+mdefine_line|#define HFS_DIR_LOCK        0x01  /* locked */
+DECL|macro|HFS_DIR_THD
+mdefine_line|#define HFS_DIR_THD         0x02  /* directory thread */
+DECL|macro|HFS_DIR_INEXPFOLDER
+mdefine_line|#define HFS_DIR_INEXPFOLDER 0x04  /* in a shared area */
+DECL|macro|HFS_DIR_MOUNTED
+mdefine_line|#define HFS_DIR_MOUNTED     0x08  /* mounted */
+DECL|macro|HFS_DIR_DIR
+mdefine_line|#define HFS_DIR_DIR         0x10  /* directory (always set) */
+DECL|macro|HFS_DIR_EXPFOLDER
+mdefine_line|#define HFS_DIR_EXPFOLDER   0x20  /* share point */
+DECL|macro|HFS_DIR_RSRV1
+mdefine_line|#define HFS_DIR_RSRV1       0x40  /* reserved */
+DECL|macro|HFS_DIR_RSRV2
+mdefine_line|#define HFS_DIR_RSRV2       0x80  /* reserved */
 multiline_comment|/* Access types used when requesting access to a B-node */
 DECL|macro|HFS_LOCK_NONE
 mdefine_line|#define HFS_LOCK_NONE&t;0x0000&t;/* Illegal */

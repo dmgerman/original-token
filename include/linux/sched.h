@@ -94,7 +94,6 @@ DECL|macro|TASK_STOPPED
 mdefine_line|#define TASK_STOPPED&t;&t;8
 DECL|macro|TASK_SWAPPING
 mdefine_line|#define TASK_SWAPPING&t;&t;16
-multiline_comment|/*&n; * &squot;exclusive&squot; tasks are the ones that expect &squot;wake-one&squot; behavior&n; * on __wake_up(). They are special because __wake_up() removes&n; * them from the waitqueue immediately, this way we have O(1) addition,&n; * scheduling and removal from waitqueues, no matter how long they are.&n; */
 DECL|macro|TASK_EXCLUSIVE
 mdefine_line|#define TASK_EXCLUSIVE&t;&t;32
 multiline_comment|/*&n; * Scheduling policies&n; */

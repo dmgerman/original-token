@@ -157,8 +157,7 @@ id|miscdevice
 id|dev
 suffix:semicolon
 DECL|member|wait_queue
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
 id|wait_queue
 suffix:semicolon

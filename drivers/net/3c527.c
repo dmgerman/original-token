@@ -174,9 +174,7 @@ id|tx_count
 suffix:semicolon
 multiline_comment|/* buffers left */
 DECL|member|event
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|event
 suffix:semicolon
 DECL|member|tx_skb
@@ -1451,6 +1449,13 @@ id|lp-&gt;exec_box-&gt;data
 (braket
 l_int|11
 )braket
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|lp-&gt;event
+)paren
 suffix:semicolon
 id|printk
 c_func

@@ -34,7 +34,7 @@ suffix:semicolon
 DECL|macro|WQ_BUG
 mdefine_line|#define WQ_BUG() do { &bslash;&n;&t;printk(&quot;wq bug, forcing oops.&bslash;n&quot;); &bslash;&n;&t;*(int*)0 = 0; &bslash;&n;} while (0)
 DECL|macro|CHECK_MAGIC
-mdefine_line|#define CHECK_MAGIC(x) if (x != (long)&amp;(x)) &bslash;&n;&t;{ printk(&quot;bad magic %lx (should be %lx), &quot;, x, (long)&amp;(x)); WQ_BUG(); }
+mdefine_line|#define CHECK_MAGIC(x) if (x != (long)&amp;(x)) &bslash;&n;&t;{ printk(&quot;bad magic %lx (should be %lx), &quot;, (long)x, (long)&amp;(x)); WQ_BUG(); }
 DECL|macro|CHECK_MAGIC_WQHEAD
 mdefine_line|#define CHECK_MAGIC_WQHEAD(x) do { &bslash;&n;&t;if (x-&gt;__magic != (long)&amp;(x-&gt;__magic)) { &bslash;&n;&t;&t;printk(&quot;bad magic %lx (should be %lx, creator %lx), &quot;, &bslash;&n;&t;&t;&t;x-&gt;__magic, (long)&amp;(x-&gt;__magic), x-&gt;__creator); &bslash;&n;&t;&t;WQ_BUG(); &bslash;&n;&t;} &bslash;&n;} while (0)
 macro_line|#endif

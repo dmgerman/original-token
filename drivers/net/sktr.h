@@ -1354,9 +1354,7 @@ id|timer_list
 id|timer
 suffix:semicolon
 DECL|member|wait_for_tok_int
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait_for_tok_int
 suffix:semicolon
 DECL|member|intptrs

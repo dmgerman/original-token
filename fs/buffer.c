@@ -437,7 +437,7 @@ op_assign
 (brace
 l_int|40
 comma
-l_int|500
+l_int|2000
 comma
 l_int|64
 comma
@@ -6256,6 +6256,9 @@ c_cond
 (paren
 id|current
 op_eq
+id|bdflush_tsk
+op_logical_or
+op_logical_neg
 id|bdflush_tsk
 )paren
 r_return

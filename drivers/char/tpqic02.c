@@ -89,12 +89,8 @@ suffix:semicolon
 multiline_comment|/* control reg bits for tape interface */
 DECL|variable|qic02_tape_transfer
 r_static
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_t
 id|qic02_tape_transfer
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* sync rw with interrupts */
 DECL|variable|ioctl_status
@@ -9946,6 +9942,13 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|qic02_tape_transfer
+)paren
+suffix:semicolon
 multiline_comment|/* prepare timer */
 id|TIMEROFF
 suffix:semicolon

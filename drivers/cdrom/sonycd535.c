@@ -342,14 +342,12 @@ op_assign
 id|CDU535_INTERRUPT
 suffix:semicolon
 multiline_comment|/* The interrupt handler will wake this queue up when it gets an interrupt. */
-DECL|variable|cdu535_irq_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|cdu535_irq_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * This routine returns 1 if the disk has been changed since the last&n; * check or 0 if it hasn&squot;t.  Setting flag to 0 resets the changed flag.&n; */
 r_static
@@ -498,9 +496,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|wait_queue_active
+c_func
+(paren
+op_amp
 id|cdu535_irq_wait
-op_ne
-l_int|NULL
+)paren
 )paren
 id|wake_up
 c_func

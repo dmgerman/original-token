@@ -468,9 +468,7 @@ id|fdc_setup_error
 suffix:semicolon
 multiline_comment|/* outdated ??? */
 r_extern
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|ftape_wait_intr
 suffix:semicolon
 r_extern

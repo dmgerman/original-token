@@ -77,9 +77,7 @@ r_private
 suffix:semicolon
 multiline_comment|/* for protocol module */
 DECL|member|parq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|parq
 suffix:semicolon
 multiline_comment|/* semaphore for parport sharing */

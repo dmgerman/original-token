@@ -119,10 +119,17 @@ mdefine_line|#define P_BUSFREE  1
 DECL|macro|P_PARITY
 mdefine_line|#define P_PARITY   2
 multiline_comment|/* possible irq range */
+macro_line|#ifdef PCMCIA
+DECL|macro|IRQ_MIN
+mdefine_line|#define IRQ_MIN 0
+DECL|macro|IRQ_MAX
+mdefine_line|#define IRQ_MAX 16
+macro_line|#else
 DECL|macro|IRQ_MIN
 mdefine_line|#define IRQ_MIN 9
 DECL|macro|IRQ_MAX
 mdefine_line|#define IRQ_MAX 12
+macro_line|#endif
 DECL|macro|IRQS
 mdefine_line|#define IRQS    IRQ_MAX-IRQ_MIN+1
 r_enum
@@ -1801,8 +1808,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|setup-&gt;irq
+OL
+id|IRQ_MIN
+)paren
+op_logical_or
+(paren
+id|setup-&gt;irq
+OG
 id|IRQ_MAX
+)paren
 )paren
 (brace
 r_return

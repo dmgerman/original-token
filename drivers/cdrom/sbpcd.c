@@ -859,13 +859,12 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* true semaphores would be safer */
 macro_line|#endif OLD_BUSY
-DECL|variable|ioctl_read_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|ioctl_read_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|variable|timeout
 r_static

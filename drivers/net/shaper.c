@@ -1848,6 +1848,13 @@ r_int
 )paren
 id|sh
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|sh-&gt;wait_queue
+)paren
+suffix:semicolon
 r_return
 id|sh
 suffix:semicolon

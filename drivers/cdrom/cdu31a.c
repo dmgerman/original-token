@@ -385,14 +385,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Is the drive in use?  Only one operation&n;&t;&t;&t;&t;&t;at a time allowed */
-DECL|variable|sony_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|sony_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* Things waiting for the drive */
 DECL|variable|has_cd_task
@@ -493,13 +491,11 @@ l_string|&quot;i&quot;
 suffix:semicolon
 multiline_comment|/* The interrupt handler will wake this queue up when it gets an&n;   interrupts. */
 DECL|variable|cdu31a_irq_wait
-r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|cdu31a_irq_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|variable|curr_control_reg
 r_static
@@ -1319,9 +1315,12 @@ multiline_comment|/* If something was waiting, wake it up now. */
 r_if
 c_cond
 (paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|cdu31a_irq_wait
-op_ne
-l_int|NULL
+)paren
 )paren
 (brace
 id|disable_interrupts
@@ -1342,9 +1341,12 @@ r_else
 r_if
 c_cond
 (paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|cdu31a_irq_wait
-op_ne
-l_int|NULL
+)paren
 )paren
 (brace
 id|disable_interrupts

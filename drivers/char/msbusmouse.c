@@ -796,9 +796,12 @@ id|mouse.dy
 op_assign
 l_int|0
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|mouse.wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 r_if
 c_cond

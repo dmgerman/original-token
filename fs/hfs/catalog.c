@@ -2491,7 +2491,12 @@ c_cond
 (paren
 id|dir-&gt;u.dir.readers
 op_logical_or
+id|wait_queue_active
+c_func
+(paren
+op_amp
 id|dir-&gt;u.dir.read_wait
+)paren
 )paren
 (brace
 id|hfs_sleep_on
@@ -2525,7 +2530,12 @@ c_cond
 (paren
 id|dir-&gt;u.dir.writers
 op_logical_or
+id|wait_queue_active
+c_func
+(paren
+op_amp
 id|dir-&gt;u.dir.write_wait
+)paren
 )paren
 (brace
 id|hfs_sleep_on

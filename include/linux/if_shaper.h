@@ -173,9 +173,7 @@ id|dev
 )paren
 suffix:semicolon
 DECL|member|wait_queue
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait_queue
 suffix:semicolon
 DECL|member|timer

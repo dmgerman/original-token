@@ -49,9 +49,7 @@ suffix:semicolon
 multiline_comment|/* driver/filesystem interface management */
 DECL|variable|queue
 r_static
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|queue
 suffix:semicolon
 DECL|variable|asyncptr
@@ -2175,6 +2173,13 @@ comma
 l_int|4
 comma
 l_string|&quot;pc110pad&quot;
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|queue
 )paren
 suffix:semicolon
 id|printk

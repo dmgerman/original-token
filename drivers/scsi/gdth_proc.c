@@ -5717,11 +5717,11 @@ id|cmnd
 l_int|12
 )braket
 suffix:semicolon
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|TRACE2
 c_func

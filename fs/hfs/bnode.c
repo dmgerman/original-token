@@ -520,7 +520,12 @@ c_loop
 (paren
 id|bn-&gt;lock
 op_logical_or
+id|witqueue_active
+c_func
+(paren
+op_amp
 id|bn-&gt;wqueue
+)paren
 )paren
 (brace
 id|hfs_sleep_on
@@ -805,7 +810,12 @@ l_int|1
 )paren
 op_logical_or
 (paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|bn-&gt;rqueue
+)paren
 )paren
 op_logical_or
 (paren

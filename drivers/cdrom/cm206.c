@@ -245,16 +245,12 @@ id|sector_last
 suffix:semicolon
 multiline_comment|/* range of these sectors */
 DECL|member|uart
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|uart
 suffix:semicolon
 multiline_comment|/* wait queues for interrupt */
 DECL|member|data
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|data
 suffix:semicolon
 DECL|member|timer
@@ -711,7 +707,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|cd-&gt;uart
+)paren
 op_logical_and
 id|cd-&gt;background
 OL
@@ -755,7 +756,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|cd-&gt;data
+)paren
 op_logical_and
 (paren
 id|cd-&gt;wait_back
@@ -1049,9 +1055,7 @@ id|wake_up_interruptible
 c_func
 (paren
 (paren
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 )paren
 id|who
@@ -1064,9 +1068,7 @@ r_int
 id|sleep_or_timeout
 c_func
 (paren
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 id|wait
 comma
@@ -1148,12 +1150,11 @@ r_int
 id|nr_jiffies
 )paren
 (brace
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|sleep_or_timeout
 c_func

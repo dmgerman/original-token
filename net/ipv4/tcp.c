@@ -4049,14 +4049,7 @@ id|open_request
 op_star
 id|req
 suffix:semicolon
-multiline_comment|/*&n;&t; * True wake-one mechanism for incoming connections: only&n;&t; * one process gets woken up, not the &squot;whole herd&squot;.&n;&t; * Since we do not &squot;race &amp; poll&squot; for established sockets&n;&t; * anymore, the common case will execute the loop only once.&n;&t; */
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
+multiline_comment|/*&n;&t; * True wake-one mechanism for incoming connections: only&n;&t; * one process gets woken up, not the &squot;whole herd&squot;.&n;&t; * Since we do not &squot;race &amp; poll&squot; for established sockets&n;&t; * anymore, the common case will execute the loop only once.&n;&t; *&n;&t; * Or rather, it _would_ execute only once if it wasn&squot;t for&n;&t; * some extraneous wakeups that currently happen.&n;&t; *&n;&t; * Subtle issue: &quot;add_wait_queue_exclusive()&quot; will be added&n;&t; * after any current non-exclusive waiters, and we know that&n;&t; * it will always _stay_ after any new non-exclusive waiters&n;&t; * because all non-exclusive waiters are added at the&n;&t; * beginning of the wait-queue. As such, it&squot;s ok to &quot;drop&quot;&n;&t; * our exclusiveness temporarily when we get woken up without&n;&t; * having to remove and re-insert us on the wait queue.&n;&t; */
 id|add_wait_queue_exclusive
 c_func
 (paren
@@ -4066,6 +4059,13 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
 id|current-&gt;state
 op_assign
 id|TASK_EXCLUSIVE
@@ -4125,22 +4125,6 @@ id|current-&gt;state
 op_assign
 id|TASK_RUNNING
 suffix:semicolon
-macro_line|#if WAITQUEUE_DEBUG
-multiline_comment|/*&n;&t; * hm, gotta do something about &squot;mixed mode&squot; waitqueues. Eg.&n;&t; * if we get a signal above then we are not removed from the&n;&t; * waitqueue... Maybe wake_up_process() could leave the&n;&t; * TASK_EXCLUSIVE flag intact if it was a true wake-one?&n;&t; */
-r_if
-c_cond
-(paren
-id|wait.task_list.next
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;&lt;%08x&gt;&quot;
-comma
-id|wait.__waker
-)paren
-suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -4150,8 +4134,6 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 id|req
 suffix:semicolon

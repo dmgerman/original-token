@@ -235,13 +235,12 @@ id|tmp_buf
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|tmp_buf_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|tmp_buf_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 multiline_comment|/*   baud index mappings from linux defns to isi */
 DECL|variable|linuxb_to_isib
@@ -4058,15 +4057,13 @@ l_int|0
 comma
 id|retval
 suffix:semicolon
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 multiline_comment|/* block if port is in the process of being closed */
 r_if
@@ -8890,6 +8887,20 @@ suffix:semicolon
 id|port-&gt;status
 op_assign
 l_int|0
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|port-&gt;open_wait
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|port-&gt;close_wait
+)paren
 suffix:semicolon
 multiline_comment|/*  . . .  */
 )brace

@@ -47,12 +47,12 @@ id|nl_table_lock
 id|MAX_LINKS
 )braket
 suffix:semicolon
-DECL|variable|nl_table_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|nl_table_wait
+)paren
 suffix:semicolon
 macro_line|#ifdef NL_EMULATE_DEV
 DECL|variable|netlink_kernel
