@@ -5122,6 +5122,7 @@ id|mdb-&gt;rename_lock
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* XXX: should be atomic_inc */
 id|spin_unlock
 c_func
 (paren
@@ -5357,7 +5358,21 @@ r_goto
 id|bail3
 suffix:semicolon
 )brace
-multiline_comment|/* build the new record */
+multiline_comment|/* build the new record. make sure to zero out the&n;                   record. */
+id|memset
+c_func
+(paren
+op_amp
+id|new_record
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|new_record
+)paren
+)paren
+suffix:semicolon
 id|new_record.cdrType
 op_assign
 id|entry-&gt;type
@@ -6084,6 +6099,7 @@ id|mdb-&gt;rename_lock
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* XXX: should use atomic_dec */
 id|hfs_wake_up
 c_func
 (paren

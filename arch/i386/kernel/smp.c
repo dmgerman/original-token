@@ -12,8 +12,6 @@ r_extern
 r_int
 r_int
 id|start_kernel
-comma
-id|_etext
 suffix:semicolon
 r_extern
 r_void
@@ -989,6 +987,11 @@ id|NR_CPUS
 suffix:semicolon
 r_else
 (brace
+r_int
+id|ver
+op_assign
+id|m-&gt;mpc_apicver
+suffix:semicolon
 id|cpu_present_map
 op_or_assign
 (paren
@@ -997,12 +1000,34 @@ op_lshift
 id|m-&gt;mpc_apicid
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Validate version&n;&t;&t;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|ver
+op_eq
+l_int|0x0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;BIOS bug, APIC version is 0 for CPU#%d! fixing up to 0x10. (tell your hw vendor)&bslash;n&quot;
+comma
+id|m-&gt;mpc_apicid
+)paren
+suffix:semicolon
+id|ver
+op_assign
+l_int|0x10
+suffix:semicolon
+)brace
 id|apic_version
 (braket
 id|m-&gt;mpc_apicid
 )braket
 op_assign
-id|m-&gt;mpc_apicver
+id|ver
 suffix:semicolon
 )brace
 )brace
@@ -5452,11 +5477,21 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* ack_APIC_irq();   see sw-dev-man vol 3, chapter 7.4.13.5 */
+id|ack_APIC_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* see sw-dev-man vol 3, chapter 7.4.13.5 */
 id|printk
 c_func
 (paren
-l_string|&quot;spurious APIC interrupt, ayiee, should never happen.&bslash;n&quot;
+l_string|&quot;spurious APIC interrupt on CPU#%d, should never happen.&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 )brace

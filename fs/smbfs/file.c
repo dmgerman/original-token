@@ -552,8 +552,7 @@ id|result
 OL
 l_int|0
 )paren
-r_goto
-id|io_error
+r_break
 suffix:semicolon
 multiline_comment|/* N.B. what if result &lt; wsize?? */
 macro_line|#ifdef SMBFS_PARANOIA
@@ -620,14 +619,6 @@ c_loop
 id|count
 )paren
 suffix:semicolon
-id|out
-suffix:colon
-id|smb_unlock_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 r_return
 id|written
 ques
@@ -635,21 +626,6 @@ c_cond
 id|written
 suffix:colon
 id|result
-suffix:semicolon
-id|io_error
-suffix:colon
-multiline_comment|/* Must mark the page invalid after I/O error */
-id|clear_bit
-c_func
-(paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
-r_goto
-id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a page to the server. This will be used for NFS swapping only&n; * (for now), and we currently do this synchronously only.&n; */
@@ -728,6 +704,12 @@ comma
 l_int|0
 comma
 id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|smb_unlock_page
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|free_page

@@ -841,6 +841,13 @@ comma
 id|BT848_I2C
 )paren
 suffix:semicolon
+id|btread
+c_func
+(paren
+id|BT848_I2C
+)paren
+suffix:semicolon
+multiline_comment|/* flush buffers */
 id|udelay
 c_func
 (paren

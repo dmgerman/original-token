@@ -3479,6 +3479,10 @@ r_if
 c_cond
 (paren
 id|c-&gt;x86_mask
+op_logical_or
+id|c-&gt;cpuid_level
+op_ge
+l_int|0
 )paren
 id|p
 op_add_assign

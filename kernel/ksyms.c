@@ -138,7 +138,7 @@ r_extern
 id|spinlock_t
 id|dma_spin_lock
 suffix:semicolon
-macro_line|#ifdef MODVERSIONS
+macro_line|#ifdef CONFIG_MODVERSIONS
 DECL|variable|__export_Using_Versions
 r_const
 r_struct
@@ -1641,6 +1641,20 @@ c_func
 id|kdevname
 )paren
 suffix:semicolon
+DECL|variable|bdevname
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|bdevname
+)paren
+suffix:semicolon
+DECL|variable|cdevname
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cdevname
+)paren
+suffix:semicolon
 DECL|variable|simple_strtoul
 id|EXPORT_SYMBOL
 c_func
@@ -1938,6 +1952,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__down_interruptible
+)paren
+suffix:semicolon
+DECL|variable|__down_trylock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__down_trylock
 )paren
 suffix:semicolon
 DECL|variable|__up

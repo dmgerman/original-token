@@ -3078,6 +3078,9 @@ id|wscale
 comma
 id|__u32
 id|tstamp
+comma
+id|__u32
+id|ts_recent
 )paren
 (brace
 multiline_comment|/* We always get an MSS option.&n;&t; * The option bytes which will be seen in normal data&n;&t; * packets should timestamps be used, must be in the MSS&n;&t; * advertised.  But we subtract them from sk-&gt;mss so&n;&t; * that calculations in tcp_sendmsg are simpler etc.&n;&t; * So account for this fact here if necessary.  If we&n;&t; * don&squot;t do this correctly, as a receiver we won&squot;t&n;&t; * recognize data packets as being full sized when we&n;&t; * should, and thus we won&squot;t abide by the delayed ACK&n;&t; * rules correctly.&n;&t; * SACKs don&squot;t matter, we never delay an ACK when we&n;&t; * have any of those going out.&n;&t; */
@@ -3188,10 +3191,10 @@ op_star
 id|ptr
 op_increment
 op_assign
-id|__constant_htonl
+id|htonl
 c_func
 (paren
-l_int|0
+id|ts_recent
 )paren
 suffix:semicolon
 multiline_comment|/* TSECR */

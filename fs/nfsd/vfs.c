@@ -2725,6 +2725,7 @@ c_cond
 (paren
 id|iap-&gt;ia_valid
 op_and_assign
+op_complement
 (paren
 id|ATTR_UID
 op_or

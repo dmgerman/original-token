@@ -5235,6 +5235,21 @@ op_amp
 id|newsk-&gt;error_queue
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FILTER
+r_if
+c_cond
+(paren
+id|newsk-&gt;filter
+)paren
+id|sk_filter_charge
+c_func
+(paren
+id|newsk
+comma
+id|newsk-&gt;filter
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Now setup tcp_opt */
 id|newtp
 op_assign
@@ -6268,17 +6283,11 @@ r_if
 c_cond
 (paren
 id|sk-&gt;filter
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 id|sk_filter
 c_func
 (paren
 id|skb
-comma
-id|sk-&gt;filter_data
 comma
 id|sk-&gt;filter
 )paren
@@ -6286,7 +6295,6 @@ id|sk-&gt;filter
 r_goto
 id|discard
 suffix:semicolon
-)brace
 macro_line|#endif /* CONFIG_FILTER */
 multiline_comment|/* &n;&t; * This doesn&squot;t check if the socket has enough room for the packet.&n;&t; * Either process the packet _without_ queueing it and then free it,&n;&t; * or do the check later.&n;&t; */
 id|skb_set_owner_r

@@ -29,6 +29,7 @@ macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/cobalt.h&gt;
 macro_line|#include &lt;asm/lithium.h&gt;
 macro_line|#endif
+macro_line|#include &quot;irq.h&quot;
 id|asmlinkage
 r_int
 id|system_call
@@ -316,12 +317,6 @@ comma
 id|module_start
 comma
 id|module_end
-suffix:semicolon
-r_extern
-r_char
-id|_stext
-comma
-id|_etext
 suffix:semicolon
 id|esp
 op_assign
@@ -2635,12 +2630,6 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Initially up all of the IDT to jump to unexpected */
-id|init_unexpected_irq
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2849,7 +2838,7 @@ suffix:semicolon
 id|set_system_gate
 c_func
 (paren
-l_int|0x80
+id|SYSCALL_VECTOR
 comma
 op_amp
 id|system_call

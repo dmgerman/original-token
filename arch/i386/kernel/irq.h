@@ -80,6 +80,11 @@ id|irq
 suffix:semicolon
 )brace
 suffix:semicolon
+r_extern
+r_struct
+id|hw_interrupt_type
+id|no_irq_type
+suffix:semicolon
 multiline_comment|/*&n; * IRQ line status.&n; */
 DECL|macro|IRQ_INPROGRESS
 mdefine_line|#define IRQ_INPROGRESS&t;1&t;/* IRQ handler active - do not enter! */
@@ -125,6 +130,12 @@ DECL|typedef|irq_desc_t
 )brace
 id|irq_desc_t
 suffix:semicolon
+multiline_comment|/*&n; * IDT vectors usable for external interrupt sources start&n; * at 0x20:&n; */
+DECL|macro|FIRST_EXTERNAL_VECTOR
+mdefine_line|#define FIRST_EXTERNAL_VECTOR&t;0x20
+DECL|macro|SYSCALL_VECTOR
+mdefine_line|#define SYSCALL_VECTOR&t;&t;0x80
+multiline_comment|/*&n; * Vectors 0x20-0x2f are used for ISA interrupts.&n; */
 multiline_comment|/*&n; * Special IRQ vectors used by the SMP architecture:&n; *&n; * (some of the following vectors are &squot;rare&squot;, they might be merged&n; *  into a single vector to save vector space. TLB, reschedule and&n; *  local APIC vectors are performance-critical.)&n; */
 DECL|macro|RESCHEDULE_VECTOR
 mdefine_line|#define RESCHEDULE_VECTOR&t;0x30
@@ -136,7 +147,7 @@ DECL|macro|LOCAL_TIMER_VECTOR
 mdefine_line|#define LOCAL_TIMER_VECTOR&t;0x41
 DECL|macro|MTRR_CHANGE_VECTOR
 mdefine_line|#define MTRR_CHANGE_VECTOR&t;0x50
-multiline_comment|/*&n; * First vector available to drivers: (vectors 0x51-0xfe)&n; */
+multiline_comment|/*&n; * First APIC vector available to drivers: (vectors 0x51-0xfe)&n; */
 DECL|macro|IRQ0_TRAP_VECTOR
 mdefine_line|#define IRQ0_TRAP_VECTOR&t;0x51
 multiline_comment|/*&n; * This IRQ should never happen, but we print a message nevertheless.&n; */
@@ -356,8 +367,13 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-r_int
 id|io_apic_irqs
+suffix:semicolon
+r_extern
+r_char
+id|_stext
+comma
+id|_etext
 suffix:semicolon
 DECL|macro|MAX_IRQ_SOURCES
 mdefine_line|#define MAX_IRQ_SOURCES 128
@@ -469,7 +485,7 @@ id|cpu
 suffix:semicolon
 )brace
 DECL|macro|IO_APIC_IRQ
-mdefine_line|#define IO_APIC_IRQ(x) ((1&lt;&lt;x) &amp; io_apic_irqs)
+mdefine_line|#define IO_APIC_IRQ(x) (((x) &gt;= 16) || ((1&lt;&lt;(x)) &amp; io_apic_irqs))
 macro_line|#else
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
@@ -499,6 +515,7 @@ mdefine_line|#define BUILD_SMP_TIMER_INTERRUPT(x) &bslash;&n;asmlinkage void x(s
 macro_line|#endif /* __SMP__ */
 DECL|macro|BUILD_COMMON_IRQ
 mdefine_line|#define BUILD_COMMON_IRQ() &bslash;&n;__asm__( &bslash;&n;&t;&quot;&bslash;n&quot; __ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;&t;&quot;common_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;pushl $ret_from_intr&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp &quot;SYMBOL_NAME_STR(do_IRQ));
+multiline_comment|/*&n; * subtle. orig_eax is used by the signal code to distinct between&n; * system calls and interrupted &squot;random user-space&squot;. Thus we have&n; * to put a negative value into orig_eax here. (the problem is that&n; * both system calls and IRQs want to have small integer numbers in&n; * orig_eax, and the syscall code has won the optimization conflict ;)&n; */
 DECL|macro|BUILD_IRQ
 mdefine_line|#define BUILD_IRQ(nr) &bslash;&n;asmlinkage void IRQ_NAME(nr); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(IRQ) #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#nr&quot;-256&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp common_interrupt&quot;);
 multiline_comment|/*&n; * x86 profiling function, SMP safe. We might want to do this in&n; * assembly totally?&n; */
@@ -521,10 +538,6 @@ op_logical_and
 id|current-&gt;pid
 )paren
 (brace
-r_extern
-r_int
-id|_stext
-suffix:semicolon
 id|eip
 op_sub_assign
 (paren

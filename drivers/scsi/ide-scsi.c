@@ -3781,19 +3781,6 @@ r_goto
 m_abort
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|cmd-&gt;lun
-op_ne
-l_int|0
-)paren
-(brace
-multiline_comment|/* Only respond to LUN 0. Drop others */
-r_goto
-m_abort
-suffix:semicolon
-)brace
 id|scsi
 op_assign
 id|drive-&gt;driver_data

@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/semaphore-helper.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 multiline_comment|/*&n; * kernel variables&n; */
 DECL|variable|securebits
@@ -2419,7 +2420,7 @@ multiline_comment|/*&n; * Perform the &quot;down&quot; function.  Return zero fo
 DECL|macro|DOWN_VAR
 mdefine_line|#define DOWN_VAR&t;&t;&t;&t;&bslash;&n;&t;struct task_struct *tsk = current;&t;&bslash;&n;&t;struct wait_queue wait = { tsk, NULL };
 DECL|macro|DOWN_HEAD
-mdefine_line|#define DOWN_HEAD(task_state)&t;&t;&t;&t;&t;&t; &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;tsk-&gt;state = (task_state);&t;&t;&t;&t;&t; &bslash;&n;&t;add_wait_queue(&amp;sem-&gt;wait, &amp;wait);&t;&t;&t;&t; &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;/*&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t; * Ok, we&squot;re set up.  sem-&gt;count is known to be less than zero&t; &bslash;&n;&t; * so we must wait.&t;&t;&t;&t;&t;&t; &bslash;&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t; * We can let go the lock for purposes of waiting.&t;&t; &bslash;&n;&t; * We re-acquire it after awaking so as to protect&t;&t; &bslash;&n;&t; * all semaphore operations.&t;&t;&t;&t;&t; &bslash;&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t; * If &quot;up()&quot; is called before we call waking_non_zero() then&t; &bslash;&n;&t; * we will catch it right away.  If it is called later then&t; &bslash;&n;&t; * we will have to go through a wakeup cycle to catch it.&t; &bslash;&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t; * Multiple waiters contend for the semaphore lock to see&t; &bslash;&n;&t; * who gets to gate through and who has to wait some more.&t; &bslash;&n;&t; */&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;for (;;) {&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;&t;if (waking_non_zero(sem, tsk))&t;/* are we waking up?  */ &bslash;&n;&t;&t;&t;break;&t;&t;&t;/* yes, exit loop */
+mdefine_line|#define DOWN_HEAD(task_state)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;tsk-&gt;state = (task_state);&t;&t;&t;&t;&t;&bslash;&n;&t;add_wait_queue(&amp;sem-&gt;wait, &amp;wait);&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/*&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; * Ok, we&squot;re set up.  sem-&gt;count is known to be less than zero&t;&bslash;&n;&t; * so we must wait.&t;&t;&t;&t;&t;&t;&bslash;&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; * We can let go the lock for purposes of waiting.&t;&t;&bslash;&n;&t; * We re-acquire it after awaking so as to protect&t;&t;&bslash;&n;&t; * all semaphore operations.&t;&t;&t;&t;&t;&bslash;&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; * If &quot;up()&quot; is called before we call waking_non_zero() then&t;&bslash;&n;&t; * we will catch it right away.  If it is called later then&t;&bslash;&n;&t; * we will have to go through a wakeup cycle to catch it.&t;&bslash;&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; * Multiple waiters contend for the semaphore lock to see&t;&bslash;&n;&t; * who gets to gate through and who has to wait some more.&t;&bslash;&n;&t; */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (;;) {
 DECL|macro|DOWN_TAIL
 mdefine_line|#define DOWN_TAIL(task_state)&t;&t;&t;&bslash;&n;&t;&t;tsk-&gt;state = (task_state);&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;&t;tsk-&gt;state = TASK_RUNNING;&t;&t;&bslash;&n;&t;remove_wait_queue(&amp;sem-&gt;wait, &amp;wait);
 DECL|function|__down
@@ -2439,6 +2440,17 @@ c_func
 (paren
 id|TASK_UNINTERRUPTIBLE
 )paren
+r_if
+c_cond
+(paren
+id|waking_non_zero
+c_func
+(paren
+id|sem
+)paren
+)paren
+r_break
+suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -2472,30 +2484,34 @@ c_func
 (paren
 id|TASK_INTERRUPTIBLE
 )paren
+id|ret
+op_assign
+id|waking_non_zero_interruptible
+c_func
+(paren
+id|sem
+comma
+id|tsk
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|signal_pending
-c_func
-(paren
-id|tsk
-)paren
+id|ret
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ret
+op_eq
+l_int|1
+)paren
+multiline_comment|/* ret != 0 only if we get interrupted -arca */
 id|ret
 op_assign
-op_minus
-id|EINTR
+l_int|0
 suffix:semicolon
-multiline_comment|/* interrupted */
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|sem-&gt;count
-)paren
-suffix:semicolon
-multiline_comment|/* give up on down operation */
 r_break
 suffix:semicolon
 )brace
@@ -2511,6 +2527,25 @@ id|TASK_INTERRUPTIBLE
 )paren
 r_return
 id|ret
+suffix:semicolon
+)brace
+DECL|function|__down_trylock
+r_int
+id|__down_trylock
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_return
+id|waking_non_zero_trylock
+c_func
+(paren
+id|sem
+)paren
 suffix:semicolon
 )brace
 DECL|macro|SLEEP_ON_VAR

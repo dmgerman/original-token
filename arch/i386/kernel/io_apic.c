@@ -1937,6 +1937,19 @@ id|current_vector
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|current_vector
+op_eq
+id|SYSCALL_VECTOR
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;ran out of interrupt sources!&quot;
+)paren
+suffix:semicolon
 id|IO_APIC_VECTOR
 c_func
 (paren
@@ -2522,20 +2535,34 @@ op_ne
 l_int|0x0f
 )paren
 op_logical_and
-multiline_comment|/* ISA-only Neptune boards */
+multiline_comment|/* older (Neptune) boards */
 (paren
 id|reg_01.entries
 op_ne
 l_int|0x17
 )paren
 op_logical_and
-multiline_comment|/* ISA+PCI boards */
+multiline_comment|/* typical ISA+PCI boards */
+(paren
+id|reg_01.entries
+op_ne
+l_int|0x1b
+)paren
+op_logical_and
+multiline_comment|/* Compaq Proliant boards */
+(paren
+id|reg_01.entries
+op_ne
+l_int|0x1f
+)paren
+op_logical_and
+multiline_comment|/* dual Xeon boards */
 (paren
 id|reg_01.entries
 op_ne
 l_int|0x3F
 )paren
-multiline_comment|/* Xeon boards */
+multiline_comment|/* bigger Xeon boards */
 )paren
 id|UNEXPECTED_IO_APIC
 c_func
@@ -4073,11 +4100,13 @@ op_increment
 r_if
 c_cond
 (paren
-id|IO_APIC_IRQ
+id|IO_APIC_VECTOR
 c_func
 (paren
 id|i
 )paren
+OG
+l_int|0
 )paren
 (brace
 r_if
@@ -4125,7 +4154,33 @@ id|i
 )paren
 suffix:semicolon
 )brace
+r_else
+multiline_comment|/*&n;&t;&t;&t; * we have no business changing low ISA&n;&t;&t;&t; * IRQs.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|IO_APIC_IRQ
+c_func
+(paren
+id|i
+)paren
+)paren
+id|irq_desc
+(braket
+id|i
+)braket
+dot
+id|handler
+op_assign
+op_amp
+id|no_irq_type
+suffix:semicolon
 )brace
+id|init_IRQ_SMP
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This code may look a bit paranoid, but it&squot;s supposed to cooperate with&n; * a wide range of boards and BIOS bugs.  Fortunately only the timer IRQ&n; * is so screwy.  Thanks to Brian Perkins for testing/hacking this beast&n; * fanatically on his truly buggy board.&n; */
 DECL|function|check_timer
@@ -4417,18 +4472,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|init_IO_APIC_traps
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the IO-APIC IRQ routing table by parsing the MP-BIOS&n;&t; * mptable:&n;&t; */
 id|setup_IO_APIC_irqs
 c_func
 (paren
 )paren
 suffix:semicolon
-id|init_IRQ_SMP
+id|init_IO_APIC_traps
 c_func
 (paren
 )paren

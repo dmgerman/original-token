@@ -117,19 +117,17 @@ id|sk-&gt;sock_readers
 )paren
 (brace
 multiline_comment|/* Try again later. */
-id|sk-&gt;timer.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|sk-&gt;timer
+comma
 id|jiffies
 op_plus
 id|HZ
 op_div
 l_int|20
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|sk-&gt;timer
 )paren
 suffix:semicolon
 r_return

@@ -4581,10 +4581,6 @@ op_amp
 id|sem
 )paren
 suffix:semicolon
-id|sem.owner
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren

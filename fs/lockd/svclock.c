@@ -1983,6 +1983,12 @@ c_func
 id|call-&gt;a_host
 )paren
 suffix:semicolon
+id|rpc_release_task
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * We received a GRANT_RES callback. Try to find the corresponding&n; * block.&n; */
 r_void

@@ -1804,7 +1804,8 @@ c_func
 id|task
 )paren
 )paren
-r_return
+r_goto
+id|die
 suffix:semicolon
 r_if
 c_cond
@@ -1859,6 +1860,14 @@ id|status
 )paren
 suffix:semicolon
 )brace
+id|die
+suffix:colon
+id|rpc_release_task
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Cancel a blocked lock request.&n; * We always use an async RPC call for this in order not to hang a&n; * process that has been Ctrl-C&squot;ed.&n; */
 r_int
@@ -2138,6 +2147,12 @@ suffix:semicolon
 )brace
 id|die
 suffix:colon
+id|rpc_release_task
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
 id|nlm_release_host
 c_func
 (paren
