@@ -59,7 +59,7 @@ id|net_device
 id|ipgre_fb_tunnel_dev
 op_assign
 (brace
-l_int|NULL
+l_string|&quot;gre%d&quot;
 comma
 l_int|0x0
 comma
@@ -117,7 +117,7 @@ comma
 l_int|0
 comma
 (brace
-l_string|&quot;gre0&quot;
+l_string|&quot;gre%d&quot;
 comma
 )brace
 )brace
@@ -852,9 +852,13 @@ id|nt-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|nt-&gt;parms.name
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign
@@ -5273,10 +5277,6 @@ op_star
 )paren
 op_amp
 id|ipgre_fb_tunnel
-suffix:semicolon
-id|ipgre_fb_tunnel_dev.name
-op_assign
-id|ipgre_fb_tunnel.parms.name
 suffix:semicolon
 macro_line|#ifdef MODULE
 id|register_netdev

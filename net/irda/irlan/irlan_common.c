@@ -294,7 +294,7 @@ id|mgr_event.devname
 comma
 l_string|&quot;%s&quot;
 comma
-id|self-&gt;ifname
+id|self-&gt;dev.name
 )paren
 suffix:semicolon
 id|irmanager_notify
@@ -604,7 +604,7 @@ r_do
 id|sprintf
 c_func
 (paren
-id|self-&gt;ifname
+id|self-&gt;dev.name
 comma
 l_string|&quot;%s%d&quot;
 comma
@@ -621,15 +621,11 @@ c_loop
 id|dev_get
 c_func
 (paren
-id|self-&gt;ifname
+id|self-&gt;dev.name
 )paren
 )paren
 suffix:semicolon
 )brace
-id|self-&gt;dev.name
-op_assign
-id|self-&gt;ifname
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -756,7 +752,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|self-&gt;ifname
+id|self-&gt;dev.name
 comma
 l_string|&quot;%s&quot;
 comma
@@ -4273,7 +4269,7 @@ id|len
 comma
 l_string|&quot;ifname: %s,&bslash;n&quot;
 comma
-id|self-&gt;ifname
+id|self-&gt;dev.name
 )paren
 suffix:semicolon
 id|len

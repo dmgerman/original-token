@@ -1750,9 +1750,13 @@ op_assign
 l_int|0xDEADBEEF
 suffix:semicolon
 multiline_comment|/* prepare network device data space for registration */
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|card-&gt;u.p.if_name
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign

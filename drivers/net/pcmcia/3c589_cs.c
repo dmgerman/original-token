@@ -998,9 +998,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|lp-&gt;node.dev_name
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign

@@ -2751,9 +2751,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* prepare network device data space for registration */
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|chan-&gt;name
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign

@@ -2694,12 +2694,6 @@ id|baycom_state
 op_star
 id|bc
 suffix:semicolon
-r_char
-id|ifname
-(braket
-id|HDLCDRV_IFNAMELEN
-)braket
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2734,7 +2728,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|ifname
+id|dev-&gt;name
 comma
 l_string|&quot;bcsf%d&quot;
 comma
@@ -2788,7 +2782,7 @@ r_struct
 id|baycom_state
 )paren
 comma
-id|ifname
+id|dev-&gt;name
 comma
 id|iobase
 (braket

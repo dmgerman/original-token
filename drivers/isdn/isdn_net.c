@@ -9166,9 +9166,13 @@ comma
 id|name
 )paren
 suffix:semicolon
+id|strcpy
+c_func
+(paren
 id|netdev-&gt;dev.name
-op_assign
+comma
 id|netdev-&gt;local-&gt;name
+)paren
 suffix:semicolon
 id|netdev-&gt;dev.priv
 op_assign

@@ -22,14 +22,6 @@ r_typedef
 r_struct
 id|x25_ctrl
 (brace
-DECL|member|if_name
-r_char
-id|if_name
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;xasy0&bslash;0&quot; .. &quot;xasy99999&bslash;0&quot;&t;*/
 DECL|member|ctrl
 r_struct
 id|x25_asy
@@ -273,16 +265,12 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|slp-&gt;if_name
+id|slp-&gt;dev.name
 comma
 l_string|&quot;x25asy%d&quot;
 comma
 id|i
 )paren
-suffix:semicolon
-id|slp-&gt;dev.name
-op_assign
-id|slp-&gt;if_name
 suffix:semicolon
 id|slp-&gt;dev.base_addr
 op_assign

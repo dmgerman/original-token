@@ -272,13 +272,6 @@ DECL|member|magic
 r_int
 id|magic
 suffix:semicolon
-DECL|member|ifname
-r_char
-id|ifname
-(braket
-l_int|9
-)braket
-suffix:semicolon
 DECL|member|dev
 r_struct
 id|net_device

@@ -762,14 +762,11 @@ op_amp
 id|awc_get_stats
 suffix:semicolon
 singleline_comment|//&t;dev-&gt;set_multicast_list = &t;&amp;awc_set_multicast_list;
-id|ether_setup
+id|strcpy
 c_func
 (paren
-id|dev
-)paren
-suffix:semicolon
 id|dev-&gt;name
-op_assign
+comma
 (paren
 (paren
 r_struct
@@ -780,6 +777,13 @@ id|dev-&gt;priv
 )paren
 op_member_access_from_pointer
 id|node.dev_name
+)paren
+suffix:semicolon
+id|ether_setup
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign

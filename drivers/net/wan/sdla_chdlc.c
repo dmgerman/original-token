@@ -2150,9 +2150,13 @@ op_assign
 id|conf-&gt;mc
 suffix:semicolon
 multiline_comment|/* prepare network device data space for registration */
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|card-&gt;u.c.if_name
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign

@@ -165,7 +165,7 @@ id|mgr_event.devname
 comma
 l_string|&quot;%s&quot;
 comma
-id|self-&gt;ifname
+id|self-&gt;dev.name
 )paren
 suffix:semicolon
 id|irmanager_notify

@@ -561,8 +561,6 @@ op_star
 id|dev
 )paren
 op_plus
-id|IFNAMSIZ
-op_plus
 r_sizeof
 (paren
 r_struct
@@ -603,16 +601,6 @@ op_assign
 id|dev
 op_plus
 l_int|1
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|dev-&gt;priv
-op_plus
-r_sizeof
-(paren
-r_struct
-id|net_device_stats
-)paren
 suffix:semicolon
 id|strcpy
 c_func

@@ -90,17 +90,6 @@ id|atp_timed_checker
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Index to functions, as function prototypes. */
-r_extern
-r_int
-id|atp_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
 r_static
 r_int
 id|atp_probe1
@@ -3411,7 +3400,7 @@ l_int|0
 comma
 l_int|NULL
 comma
-id|atp_probe
+id|atp_init
 )brace
 suffix:semicolon
 id|MODULE_PARM

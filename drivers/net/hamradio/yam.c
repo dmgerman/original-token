@@ -120,13 +120,6 @@ DECL|member|dupmode
 r_int
 id|dupmode
 suffix:semicolon
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|member|dev
 r_struct
 id|net_device
@@ -4066,14 +4059,9 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;Device %s&bslash;n&quot;
+l_string|&quot;Device yam%d&bslash;n&quot;
 comma
-id|yam_ports
-(braket
 id|i
-)braket
-dot
-id|name
 )paren
 suffix:semicolon
 id|len
@@ -5921,7 +5909,7 @@ id|yam_ports
 id|i
 )braket
 dot
-id|name
+id|dev.name
 comma
 l_string|&quot;yam%d&quot;
 comma
@@ -6046,15 +6034,6 @@ id|yam_ports
 (braket
 id|i
 )braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|yam_ports
-(braket
-id|i
-)braket
-dot
-id|name
 suffix:semicolon
 id|dev-&gt;base_addr
 op_assign

@@ -17559,13 +17559,12 @@ id|ENXIO
 suffix:semicolon
 )brace
 singleline_comment|// MOD_INC_USE_COUNT; 
-id|ia_timer.next
-op_assign
-l_int|NULL
-suffix:semicolon
-id|ia_timer.prev
-op_assign
-l_int|NULL
+id|init_timer
+c_func
+(paren
+op_amp
+id|ia_timer
+)paren
 suffix:semicolon
 id|ia_timer.expires
 op_assign

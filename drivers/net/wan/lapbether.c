@@ -1662,9 +1662,13 @@ op_star
 id|lapbeth
 suffix:semicolon
 multiline_comment|/* pointer back */
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|buf
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign

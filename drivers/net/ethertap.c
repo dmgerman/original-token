@@ -1386,19 +1386,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_ethertap
 r_static
 r_struct
@@ -1406,7 +1393,7 @@ id|net_device
 id|dev_ethertap
 op_assign
 (brace
-id|devicename
+l_string|&quot; &quot;
 comma
 l_int|0
 comma
@@ -1448,7 +1435,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|devicename
+id|dev_ethertap.name
 comma
 l_string|&quot;tap%d&quot;
 comma
@@ -1461,7 +1448,7 @@ c_cond
 id|dev_get
 c_func
 (paren
-id|devicename
+id|dev_ethertap.name
 )paren
 )paren
 (brace
@@ -1471,7 +1458,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s already loaded.&bslash;n&quot;
 comma
-id|devicename
+id|dev_ethertap.name
 )paren
 suffix:semicolon
 r_return

@@ -240,8 +240,6 @@ macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|macro|HDLCDRV_MAGIC
 mdefine_line|#define HDLCDRV_MAGIC      0x5ac6e778
-DECL|macro|HDLCDRV_IFNAMELEN
-mdefine_line|#define HDLCDRV_IFNAMELEN    6
 DECL|macro|HDLCDRV_HDLCBUFFER
 mdefine_line|#define HDLCDRV_HDLCBUFFER  32 /* should be a power of 2 for speed reasons */
 DECL|macro|HDLCDRV_BITBUFFER
@@ -523,13 +521,6 @@ id|hdlcdrv_state
 DECL|member|magic
 r_int
 id|magic
-suffix:semicolon
-DECL|member|ifname
-r_char
-id|ifname
-(braket
-id|HDLCDRV_IFNAMELEN
-)braket
 suffix:semicolon
 DECL|member|ops
 r_const

@@ -256,13 +256,6 @@ r_int
 r_char
 id|stat
 suffix:semicolon
-DECL|member|ifname
-r_char
-id|ifname
-(braket
-id|HDLCDRV_IFNAMELEN
-)braket
-suffix:semicolon
 r_struct
 (brace
 DECL|member|intclk
@@ -1664,7 +1657,7 @@ id|len
 (brace
 macro_line|#ifdef KISS_VERBOSE
 DECL|macro|PKP
-mdefine_line|#define PKP(a,b) printk(KERN_INFO &quot;%s: channel params: &quot; a &quot;&bslash;n&quot;, bc-&gt;ifname, b)
+mdefine_line|#define PKP(a,b) printk(KERN_INFO &quot;baycomm_epp: channel params: &quot; a &quot;&bslash;n&quot;, b)
 macro_line|#else /* KISS_VERBOSE */&t;      
 mdefine_line|#define PKP(a,b) 
 macro_line|#endif /* KISS_VERBOSE */&t;      
@@ -2917,7 +2910,7 @@ c_func
 (paren
 l_string|&quot;%s: memory squeeze, dropping packet&bslash;n&quot;
 comma
-id|bc-&gt;ifname
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|bc-&gt;stats.rx_dropped
@@ -6588,7 +6581,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|bc-&gt;ifname
+id|dev-&gt;name
 comma
 l_string|&quot;bce%d&quot;
 comma
@@ -6604,10 +6597,6 @@ op_assign
 l_int|9600
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * initialize part of the device struct&n;&t;&t; */
-id|dev-&gt;name
-op_assign
-id|bc-&gt;ifname
-suffix:semicolon
 id|dev-&gt;if_port
 op_assign
 l_int|0
@@ -6649,7 +6638,7 @@ l_string|&quot;%s: cannot register net device %s&bslash;n&quot;
 comma
 id|bc_drvname
 comma
-id|bc-&gt;ifname
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|kfree

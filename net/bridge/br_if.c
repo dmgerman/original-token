@@ -261,7 +261,7 @@ op_logical_neg
 id|strncmp
 c_func
 (paren
-id|br-&gt;name
+id|br-&gt;dev.name
 comma
 id|name
 comma
@@ -394,7 +394,7 @@ suffix:semicolon
 id|strncpy
 c_func
 (paren
-id|br-&gt;name
+id|dev-&gt;name
 comma
 id|name
 comma
@@ -404,10 +404,6 @@ suffix:semicolon
 id|dev-&gt;priv
 op_assign
 id|br
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|br-&gt;name
 suffix:semicolon
 id|ether_setup
 c_func

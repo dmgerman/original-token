@@ -654,9 +654,12 @@ id|event
 r_if
 c_cond
 (paren
-id|t-&gt;tl.next
-op_logical_or
-id|t-&gt;tl.prev
+id|timer_pending
+c_func
+(paren
+op_amp
+id|t-&gt;tl
+)paren
 )paren
 (brace
 id|printk

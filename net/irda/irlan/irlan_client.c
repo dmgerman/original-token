@@ -368,14 +368,12 @@ id|mgr_event.event
 op_assign
 id|EVENT_IRLAN_START
 suffix:semicolon
-id|sprintf
+id|strcpy
 c_func
 (paren
 id|mgr_event.devname
 comma
-l_string|&quot;%s&quot;
-comma
-id|self-&gt;ifname
+id|self-&gt;dev.name
 )paren
 suffix:semicolon
 id|irmanager_notify

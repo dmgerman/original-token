@@ -6111,18 +6111,6 @@ op_assign
 id|dev-&gt;next
 suffix:semicolon
 multiline_comment|/* point to the new device */
-id|dev-&gt;name
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|dev
-op_plus
-l_int|1
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

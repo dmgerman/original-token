@@ -66,14 +66,6 @@ r_typedef
 r_struct
 id|ax25_ctrl
 (brace
-DECL|member|if_name
-r_char
-id|if_name
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;ax0&bslash;0&quot; .. &quot;ax99999&bslash;0&quot;&t;*/
 DECL|member|ctrl
 r_struct
 id|ax_disp
@@ -1065,7 +1057,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|axp-&gt;if_name
+id|axp-&gt;dev.name
 comma
 l_string|&quot;ax%d&quot;
 comma
@@ -1076,10 +1068,6 @@ suffix:semicolon
 id|axp-&gt;ctrl.tty
 op_assign
 l_int|NULL
-suffix:semicolon
-id|axp-&gt;dev.name
-op_assign
-id|axp-&gt;if_name
 suffix:semicolon
 id|axp-&gt;dev.base_addr
 op_assign

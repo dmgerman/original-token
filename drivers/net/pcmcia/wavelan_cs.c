@@ -11376,13 +11376,13 @@ multiline_comment|/* If watchdog not already active, activate it... */
 r_if
 c_cond
 (paren
-id|lp-&gt;watchdog.prev
-op_eq
+op_logical_neg
+id|timer_pending
+c_func
 (paren
-id|timer_list
-op_star
+op_amp
+id|lp-&gt;watchdog
 )paren
-l_int|NULL
 )paren
 (brace
 multiline_comment|/* set timer to expire in WATCHDOG_JIFFIES */
@@ -14340,15 +14340,13 @@ multiline_comment|/* If watchdog was activated, kill it ! */
 r_if
 c_cond
 (paren
-id|lp-&gt;watchdog.prev
-op_ne
+id|timer_pending
+c_func
 (paren
-id|timer_list
-op_star
+op_amp
+id|lp-&gt;watchdog
 )paren
-l_int|NULL
 )paren
-(brace
 id|del_timer
 c_func
 (paren
@@ -14356,7 +14354,6 @@ op_amp
 id|lp-&gt;watchdog
 )paren
 suffix:semicolon
-)brace
 id|lp-&gt;nresets
 op_increment
 suffix:semicolon
@@ -15698,13 +15695,12 @@ multiline_comment|/* If watchdog was activated, kill it ! */
 r_if
 c_cond
 (paren
-id|lp-&gt;watchdog.prev
-op_ne
+id|timer_pending
+c_func
 (paren
-id|timer_list
-op_star
+op_amp
+id|lp-&gt;watchdog
 )paren
-l_int|NULL
 )paren
 (brace
 id|del_timer
@@ -16606,13 +16602,12 @@ multiline_comment|/* If watchdog was activated, kill it ! */
 r_if
 c_cond
 (paren
-id|lp-&gt;watchdog.prev
-op_ne
+id|timer_pending
+c_func
 (paren
-id|timer_list
-op_star
+op_amp
+id|lp-&gt;watchdog
 )paren
-l_int|NULL
 )paren
 (brace
 id|del_timer
@@ -17079,9 +17074,11 @@ id|wavelan_get_wireless_stats
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Other specific data */
-multiline_comment|/* Provide storage area for device name */
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 (paren
 (paren
 id|net_local
@@ -17091,6 +17088,7 @@ id|dev-&gt;priv
 )paren
 op_member_access_from_pointer
 id|node.dev_name
+)paren
 suffix:semicolon
 id|netif_start_queue
 (paren

@@ -823,7 +823,11 @@ c_func
 suffix:semicolon
 id|count
 op_assign
+(paren
 id|nr_lru_pages
+op_lshift
+l_int|1
+)paren
 op_rshift
 id|priority
 suffix:semicolon

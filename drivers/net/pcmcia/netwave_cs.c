@@ -1481,10 +1481,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|strcpy
+c_func
+(paren
 id|dev-&gt;name
-op_assign
+comma
 id|priv-&gt;node.dev_name
-suffix:semicolon
+)paren
 id|dev-&gt;init
 op_assign
 op_amp
@@ -4504,14 +4507,13 @@ multiline_comment|/* If watchdog not already active, activate it... */
 r_if
 c_cond
 (paren
-id|priv-&gt;watchdog.prev
-op_eq
+op_logical_neg
+id|timer_pending
+c_func
 (paren
-r_struct
-id|timer_list
-op_star
+op_amp
+id|priv-&gt;watchdog
 )paren
-l_int|NULL
 )paren
 (brace
 multiline_comment|/* set timer to expire in WATCHDOG_JIFFIES */

@@ -348,7 +348,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: port %i(%s) entering %s state&bslash;n&quot;
 comma
-id|br-&gt;name
+id|br-&gt;dev.name
 comma
 id|p-&gt;port_no
 comma

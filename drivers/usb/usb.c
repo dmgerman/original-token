@@ -4849,11 +4849,11 @@ id|len
 r_char
 id|buf
 (braket
-l_int|20
+l_int|30
 )braket
 suffix:semicolon
 singleline_comment|// assert (len &gt; (2 * (sizeof (buf) + 1)));
-singleline_comment|// assert (strlen (type) ~== 4);
+singleline_comment|// assert (strlen (type) &lt;= 8);
 singleline_comment|// language ids
 r_if
 c_cond

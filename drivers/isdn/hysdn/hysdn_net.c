@@ -996,20 +996,6 @@ op_assign
 id|net_init
 suffix:semicolon
 multiline_comment|/* the init function of the device */
-id|dev-&gt;name
-op_assign
-(paren
-(paren
-r_struct
-id|net_local
-op_star
-)paren
-id|dev
-)paren
-op_member_access_from_pointer
-id|dev_name
-suffix:semicolon
-multiline_comment|/* device name */
 r_if
 c_cond
 (paren

@@ -1026,7 +1026,7 @@ c_func
 (paren
 l_string|&quot;%s: memory squeeze, dropping packet&bslash;n&quot;
 comma
-id|s-&gt;ifname
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|s-&gt;stats.rx_dropped
@@ -1446,7 +1446,7 @@ id|len
 (brace
 macro_line|#ifdef KISS_VERBOSE
 DECL|macro|PKP
-mdefine_line|#define PKP(a,b) printk(KERN_INFO &quot;%s: channel params: &quot; a &quot;&bslash;n&quot;, s-&gt;ifname, b)
+mdefine_line|#define PKP(a,b) printk(KERN_INFO &quot;hdlcdrv.c: channel params: &quot; a &quot;&bslash;n&quot;, b)
 macro_line|#else /* KISS_VERBOSE */&t;      
 mdefine_line|#define PKP(a,b) 
 macro_line|#endif /* KISS_VERBOSE */&t;      
@@ -3670,13 +3670,13 @@ suffix:semicolon
 id|strncpy
 c_func
 (paren
-id|s-&gt;ifname
+id|dev-&gt;name
 comma
 id|ifname
 comma
 r_sizeof
 (paren
-id|s-&gt;ifname
+id|dev-&gt;name
 )paren
 )paren
 suffix:semicolon
@@ -3685,10 +3685,6 @@ op_assign
 id|ops
 suffix:semicolon
 multiline_comment|/*&n;&t; * initialize part of the device struct&n;&t; */
-id|dev-&gt;name
-op_assign
-id|s-&gt;ifname
-suffix:semicolon
 id|dev-&gt;if_port
 op_assign
 l_int|0
@@ -3726,7 +3722,7 @@ id|KERN_WARNING
 l_string|&quot;hdlcdrv: cannot register net &quot;
 l_string|&quot;device %s&bslash;n&quot;
 comma
-id|s-&gt;ifname
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|kfree

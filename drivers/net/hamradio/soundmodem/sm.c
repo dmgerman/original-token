@@ -946,6 +946,11 @@ r_struct
 id|sm_state
 op_star
 id|sm
+comma
+r_const
+r_char
+op_star
+id|ifname
 )paren
 (brace
 r_enum
@@ -1143,7 +1148,7 @@ c_func
 (paren
 id|pp
 comma
-id|sm-&gt;hdrv.ifname
+id|ifname
 comma
 l_int|NULL
 comma
@@ -1603,6 +1608,8 @@ id|sm_output_open
 c_func
 (paren
 id|sm
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -3253,12 +3260,6 @@ id|sm_state
 op_star
 id|sm
 suffix:semicolon
-r_char
-id|ifname
-(braket
-id|HDLCDRV_IFNAMELEN
-)braket
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3293,7 +3294,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|ifname
+id|dev-&gt;name
 comma
 l_string|&quot;sm%d&quot;
 comma
@@ -3480,7 +3481,7 @@ r_struct
 id|sm_state
 )paren
 comma
-id|ifname
+id|dev-&gt;name
 comma
 id|iobase
 (braket

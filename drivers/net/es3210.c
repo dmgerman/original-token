@@ -1487,21 +1487,6 @@ DECL|macro|MAX_ES_CARDS
 mdefine_line|#define MAX_ES_CARDS&t;4&t;/* Max number of ES3210 cards per module */
 DECL|macro|NAMELEN
 mdefine_line|#define NAMELEN&t;&t;8&t;/* # of chars for storing dev-&gt;name */
-DECL|variable|namelist
-r_static
-r_char
-id|namelist
-(braket
-id|NAMELEN
-op_star
-id|MAX_ES_CARDS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_es3210
 r_static
 r_struct
@@ -1513,9 +1498,9 @@ id|MAX_ES_CARDS
 op_assign
 (brace
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
-multiline_comment|/* assign a chunk of namelist[] below */
+multiline_comment|/* device name is inserted by net_init.c */
 l_int|0
 comma
 l_int|0
@@ -1662,16 +1647,6 @@ id|dev_es3210
 (braket
 id|this_dev
 )braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|namelist
-op_plus
-(paren
-id|NAMELEN
-op_star
-id|this_dev
-)paren
 suffix:semicolon
 id|dev-&gt;irq
 op_assign

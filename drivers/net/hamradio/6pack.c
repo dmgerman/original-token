@@ -34,14 +34,6 @@ r_typedef
 r_struct
 id|sixpack_ctrl
 (brace
-DECL|member|if_name
-r_char
-id|if_name
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;sp0&bslash;0&quot; .. &quot;sp99999&bslash;0&quot;&t;*/
 DECL|member|ctrl
 r_struct
 id|sixpack
@@ -345,16 +337,12 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|spp-&gt;if_name
+id|spp-&gt;dev.name
 comma
 l_string|&quot;sp%d&quot;
 comma
 id|i
 )paren
-suffix:semicolon
-id|spp-&gt;dev.name
-op_assign
-id|spp-&gt;if_name
 suffix:semicolon
 id|spp-&gt;dev.base_addr
 op_assign

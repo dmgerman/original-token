@@ -1123,7 +1123,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: topology change detected, &quot;
 comma
-id|br-&gt;name
+id|br-&gt;dev.name
 )paren
 suffix:semicolon
 r_if
@@ -1376,7 +1376,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: port %i(%s) entering %s state&bslash;n&quot;
 comma
-id|p-&gt;br-&gt;name
+id|p-&gt;br-&gt;dev.name
 comma
 id|p-&gt;port_no
 comma
@@ -1425,7 +1425,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: port %i(%s) entering %s state&bslash;n&quot;
 comma
-id|p-&gt;br-&gt;name
+id|p-&gt;br-&gt;dev.name
 comma
 id|p-&gt;port_no
 comma
@@ -1817,7 +1817,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: received tcn bpdu on port %i(%s)&bslash;n&quot;
 comma
-id|p-&gt;br-&gt;name
+id|p-&gt;br-&gt;dev.name
 comma
 id|p-&gt;port_no
 comma

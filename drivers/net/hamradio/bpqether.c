@@ -1692,11 +1692,6 @@ id|dev
 r_int
 id|k
 suffix:semicolon
-r_int
-r_char
-op_star
-id|buf
-suffix:semicolon
 r_struct
 id|bpqdev
 op_star
@@ -1806,16 +1801,6 @@ op_assign
 op_amp
 id|bpq-&gt;axdev
 suffix:semicolon
-id|buf
-op_assign
-id|kmalloc
-c_func
-(paren
-l_int|14
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1839,7 +1824,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|buf
+id|dev-&gt;name
 comma
 l_string|&quot;bpq%d&quot;
 comma
@@ -1855,7 +1840,7 @@ op_assign
 id|__dev_get_by_name
 c_func
 (paren
-id|buf
+id|dev-&gt;name
 )paren
 )paren
 op_eq
@@ -1898,10 +1883,6 @@ op_star
 id|bpq
 suffix:semicolon
 multiline_comment|/* pointer back */
-id|dev-&gt;name
-op_assign
-id|buf
-suffix:semicolon
 id|dev-&gt;init
 op_assign
 id|bpq_dev_init

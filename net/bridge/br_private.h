@@ -231,13 +231,6 @@ id|net_bridge_port
 op_star
 id|port_list
 suffix:semicolon
-DECL|member|name
-r_char
-id|name
-(braket
-id|IFNAMSIZ
-)braket
-suffix:semicolon
 DECL|member|dev
 r_struct
 id|net_device

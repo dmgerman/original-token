@@ -8160,7 +8160,7 @@ l_int|0xff
 comma
 id|uhci-&gt;io_addr
 comma
-l_string|&quot;UHCI&quot;
+l_string|&quot;UHCI-alt&quot;
 comma
 id|data
 comma
