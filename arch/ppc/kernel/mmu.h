@@ -127,6 +127,8 @@ DECL|macro|PP_RWRX
 mdefine_line|#define PP_RWRX 1&t;/* Supervisor read/write, User read */
 DECL|macro|PP_RWRW
 mdefine_line|#define PP_RWRW 2&t;/* Supervisor read/write, User read/write */
+DECL|macro|PP_RXRX
+mdefine_line|#define PP_RXRX 3&t;/* Supervisor read,       User read */
 multiline_comment|/* Segment Register */
 DECL|struct|_SEGREG
 r_typedef

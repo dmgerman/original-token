@@ -313,6 +313,67 @@ DECL|macro|_syscall5
 mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
+r_extern
+r_int
+id|__kernel_thread
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+(paren
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|function|kernel_thread
+r_static
+r_inline
+r_int
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_return
+id|__kernel_thread
+c_func
+(paren
+id|flags
+op_or
+id|CLONE_VM
+comma
+id|fn
+comma
+id|arg
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;   some of these had problems getting the right arguments (namely sys_clone())&n;   when they were inline.&n;             -- Cort&n; */
 DECL|macro|__NR__exit
 mdefine_line|#define __NR__exit __NR_exit

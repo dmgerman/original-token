@@ -145,6 +145,7 @@ DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;nip)
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) ((regs)-&gt;msr &amp; 0x4000)
+macro_line|#ifdef KERNEL
 r_extern
 r_void
 id|show_regs
@@ -155,5 +156,88 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Offsets used by &squot;ptrace&squot; system call interface */
+multiline_comment|/* Note: these should correspond to gpr[x]        */
+DECL|macro|PT_R0
+mdefine_line|#define PT_R0&t;0
+DECL|macro|PT_R1
+mdefine_line|#define PT_R1&t;1
+DECL|macro|PT_R2
+mdefine_line|#define PT_R2&t;2
+DECL|macro|PT_R3
+mdefine_line|#define PT_R3&t;3
+DECL|macro|PT_R4
+mdefine_line|#define PT_R4&t;4
+DECL|macro|PT_R5
+mdefine_line|#define PT_R5&t;5
+DECL|macro|PT_R6
+mdefine_line|#define PT_R6&t;6
+DECL|macro|PT_R7
+mdefine_line|#define PT_R7&t;7
+DECL|macro|PT_R8
+mdefine_line|#define PT_R8&t;8
+DECL|macro|PT_R9
+mdefine_line|#define PT_R9&t;9
+DECL|macro|PT_R10
+mdefine_line|#define PT_R10&t;10
+DECL|macro|PT_R11
+mdefine_line|#define PT_R11&t;11
+DECL|macro|PT_R12
+mdefine_line|#define PT_R12&t;12
+DECL|macro|PT_R13
+mdefine_line|#define PT_R13&t;13
+DECL|macro|PT_R14
+mdefine_line|#define PT_R14&t;14
+DECL|macro|PT_R15
+mdefine_line|#define PT_R15&t;15
+DECL|macro|PT_R16
+mdefine_line|#define PT_R16&t;16
+DECL|macro|PT_R17
+mdefine_line|#define PT_R17&t;17
+DECL|macro|PT_R18
+mdefine_line|#define PT_R18&t;18
+DECL|macro|PT_R19
+mdefine_line|#define PT_R19&t;19
+DECL|macro|PT_R20
+mdefine_line|#define PT_R20&t;20
+DECL|macro|PT_R21
+mdefine_line|#define PT_R21&t;21
+DECL|macro|PT_R22
+mdefine_line|#define PT_R22&t;22
+DECL|macro|PT_R23
+mdefine_line|#define PT_R23&t;23
+DECL|macro|PT_R24
+mdefine_line|#define PT_R24&t;24
+DECL|macro|PT_R25
+mdefine_line|#define PT_R25&t;25
+DECL|macro|PT_R26
+mdefine_line|#define PT_R26&t;26
+DECL|macro|PT_R27
+mdefine_line|#define PT_R27&t;27
+DECL|macro|PT_R28
+mdefine_line|#define PT_R28&t;28
+DECL|macro|PT_R29
+mdefine_line|#define PT_R29&t;29
+DECL|macro|PT_R30
+mdefine_line|#define PT_R30&t;30
+DECL|macro|PT_R31
+mdefine_line|#define PT_R31&t;31
+DECL|macro|PT_NIP
+mdefine_line|#define PT_NIP&t;32
+DECL|macro|PT_MSR
+mdefine_line|#define PT_MSR&t;33
+DECL|macro|PT_ORIG_R3
+mdefine_line|#define PT_ORIG_R3 34
+DECL|macro|PT_CTR
+mdefine_line|#define PT_CTR&t;35
+DECL|macro|PT_LNK
+mdefine_line|#define PT_LNK&t;36
+DECL|macro|PT_XER
+mdefine_line|#define PT_XER&t;37
+DECL|macro|PT_CCR
+mdefine_line|#define PT_CCR&t;38
+DECL|macro|PT_FPR0
+mdefine_line|#define PT_FPR0&t;48
 macro_line|#endif
 eof

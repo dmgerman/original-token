@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: dma.h,v 1.7 1992/12/14 00:29:34 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; */
+multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; *&n; * There may be some comments or restrictions made here which are&n; * not valid for the PowerPC (PreP) platform.  Take what you read&n; * with a grain of salt.&n; */
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
@@ -16,8 +17,9 @@ multiline_comment|/*&n; * NOTES about DMA transfers:&n; *&n; *  controller 1: ch
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS&t;8
 multiline_comment|/* The maximum address that we can perform a DMA transfer to on this platform */
+multiline_comment|/* Doesn&squot;t really apply... */
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS      0x1000000
+mdefine_line|#define MAX_DMA_ADDRESS      0xFFFFFFFF
 multiline_comment|/* 8237 DMA controllers */
 DECL|macro|IO_DMA1_BASE
 mdefine_line|#define IO_DMA1_BASE&t;0x00&t;/* 8 bit slave DMA, channels 0..3 */
@@ -96,20 +98,34 @@ DECL|macro|DMA_CNT_6
 mdefine_line|#define DMA_CNT_6               0xCA
 DECL|macro|DMA_CNT_7
 mdefine_line|#define DMA_CNT_7               0xCE
-DECL|macro|DMA_PAGE_0
-mdefine_line|#define DMA_PAGE_0              0x87    /* DMA page registers */
-DECL|macro|DMA_PAGE_1
-mdefine_line|#define DMA_PAGE_1              0x83
-DECL|macro|DMA_PAGE_2
-mdefine_line|#define DMA_PAGE_2              0x81
-DECL|macro|DMA_PAGE_3
-mdefine_line|#define DMA_PAGE_3              0x82
-DECL|macro|DMA_PAGE_5
-mdefine_line|#define DMA_PAGE_5              0x8B
-DECL|macro|DMA_PAGE_6
-mdefine_line|#define DMA_PAGE_6              0x89
-DECL|macro|DMA_PAGE_7
-mdefine_line|#define DMA_PAGE_7              0x8A
+DECL|macro|DMA_LO_PAGE_0
+mdefine_line|#define DMA_LO_PAGE_0              0x87    /* DMA page registers */
+DECL|macro|DMA_LO_PAGE_1
+mdefine_line|#define DMA_LO_PAGE_1              0x83
+DECL|macro|DMA_LO_PAGE_2
+mdefine_line|#define DMA_LO_PAGE_2              0x81
+DECL|macro|DMA_LO_PAGE_3
+mdefine_line|#define DMA_LO_PAGE_3              0x82
+DECL|macro|DMA_LO_PAGE_5
+mdefine_line|#define DMA_LO_PAGE_5              0x8B
+DECL|macro|DMA_LO_PAGE_6
+mdefine_line|#define DMA_LO_PAGE_6              0x89
+DECL|macro|DMA_LO_PAGE_7
+mdefine_line|#define DMA_LO_PAGE_7              0x8A
+DECL|macro|DMA_HI_PAGE_0
+mdefine_line|#define DMA_HI_PAGE_0              0x487    /* DMA page registers */
+DECL|macro|DMA_HI_PAGE_1
+mdefine_line|#define DMA_HI_PAGE_1              0x483
+DECL|macro|DMA_HI_PAGE_2
+mdefine_line|#define DMA_HI_PAGE_2              0x481
+DECL|macro|DMA_HI_PAGE_3
+mdefine_line|#define DMA_HI_PAGE_3              0x482
+DECL|macro|DMA_HI_PAGE_5
+mdefine_line|#define DMA_HI_PAGE_5              0x48B
+DECL|macro|DMA_HI_PAGE_6
+mdefine_line|#define DMA_HI_PAGE_6              0x489
+DECL|macro|DMA_HI_PAGE_7
+mdefine_line|#define DMA_HI_PAGE_7              0x48A
 DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ&t;0x44&t;/* I/O to memory, no autoinit, increment, single mode */
 DECL|macro|DMA_MODE_WRITE
@@ -133,9 +149,37 @@ r_if
 c_cond
 (paren
 id|dmanr
+op_ne
+l_int|4
+)paren
+(brace
+id|dma_outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_MASK_REG
+)paren
+suffix:semicolon
+multiline_comment|/* This may not be enabled */
+id|dma_outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_CMD_REG
+)paren
+suffix:semicolon
+multiline_comment|/* Enable group */
+)brace
+r_if
+c_cond
+(paren
+id|dmanr
 op_le
 l_int|3
 )paren
+(brace
 id|dma_outb
 c_func
 (paren
@@ -144,7 +188,18 @@ comma
 id|DMA1_MASK_REG
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA1_CMD_REG
+)paren
+suffix:semicolon
+multiline_comment|/* Enable group */
+)brace
 r_else
+(brace
 id|dma_outb
 c_func
 (paren
@@ -155,6 +210,7 @@ comma
 id|DMA2_MASK_REG
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|disable_dma
 r_static
@@ -300,7 +356,7 @@ r_int
 r_int
 id|dmanr
 comma
-r_char
+r_int
 id|pagenr
 )paren
 (brace
@@ -318,7 +374,7 @@ c_func
 (paren
 id|pagenr
 comma
-id|DMA_PAGE_0
+id|DMA_LO_PAGE_0
 )paren
 suffix:semicolon
 r_break
@@ -331,7 +387,7 @@ c_func
 (paren
 id|pagenr
 comma
-id|DMA_PAGE_1
+id|DMA_LO_PAGE_1
 )paren
 suffix:semicolon
 r_break
@@ -344,7 +400,17 @@ c_func
 (paren
 id|pagenr
 comma
-id|DMA_PAGE_2
+id|DMA_LO_PAGE_2
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+id|pagenr
+op_rshift
+l_int|8
+comma
+id|DMA_HI_PAGE_2
 )paren
 suffix:semicolon
 r_break
@@ -357,7 +423,7 @@ c_func
 (paren
 id|pagenr
 comma
-id|DMA_PAGE_3
+id|DMA_LO_PAGE_3
 )paren
 suffix:semicolon
 r_break
@@ -372,7 +438,7 @@ id|pagenr
 op_amp
 l_int|0xfe
 comma
-id|DMA_PAGE_5
+id|DMA_LO_PAGE_5
 )paren
 suffix:semicolon
 r_break
@@ -387,7 +453,7 @@ id|pagenr
 op_amp
 l_int|0xfe
 comma
-id|DMA_PAGE_6
+id|DMA_LO_PAGE_6
 )paren
 suffix:semicolon
 r_break
@@ -402,7 +468,7 @@ id|pagenr
 op_amp
 l_int|0xfe
 comma
-id|DMA_PAGE_7
+id|DMA_LO_PAGE_7
 )paren
 suffix:semicolon
 r_break
@@ -423,19 +489,9 @@ id|dmanr
 comma
 r_int
 r_int
-id|a
+id|phys
 )paren
 (brace
-id|set_dma_page
-c_func
-(paren
-id|dmanr
-comma
-id|a
-op_rshift
-l_int|16
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -447,7 +503,7 @@ l_int|3
 id|dma_outb
 c_func
 (paren
-id|a
+id|phys
 op_amp
 l_int|0xff
 comma
@@ -468,7 +524,7 @@ id|dma_outb
 c_func
 (paren
 (paren
-id|a
+id|phys
 op_rshift
 l_int|8
 )paren
@@ -495,7 +551,7 @@ id|dma_outb
 c_func
 (paren
 (paren
-id|a
+id|phys
 op_rshift
 l_int|1
 )paren
@@ -519,7 +575,7 @@ id|dma_outb
 c_func
 (paren
 (paren
-id|a
+id|phys
 op_rshift
 l_int|9
 )paren
@@ -540,6 +596,16 @@ id|IO_DMA2_BASE
 )paren
 suffix:semicolon
 )brace
+id|set_dma_page
+c_func
+(paren
+id|dmanr
+comma
+id|phys
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Set transfer size (max 64k for DMA1..3, 128k for DMA5..7) for&n; * a specific DMA channel.&n; * You must ensure the parameters are valid.&n; * NOTE: from a manual: &quot;the number of transfers is one more&n; * than the initial word count&quot;! This is taken into account.&n; * Assumes dma flip-flop is clear.&n; * NOTE 2: &quot;count&quot; represents _bytes_ and must be even for channels 5-7.&n; */
 DECL|function|set_dma_count

@@ -1907,6 +1907,36 @@ c_func
 (paren
 id|INTEL
 comma
+id|INTEL_82439
+comma
+l_string|&quot;82439HX Triton II&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82371SB_0
+comma
+l_string|&quot;82371SB Triton II PIIX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82371SB_1
+comma
+l_string|&quot;82371SB Triton II PIIX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
 id|INTEL_P6
 comma
 l_string|&quot;Orion P6&quot;

@@ -47,6 +47,8 @@ DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x040
 DECL|macro|_PAGE_COW
 mdefine_line|#define _PAGE_COW&t;0x200&t;/* implemented in software (one of the AVL bits) */
+DECL|macro|_PAGE_NO_CACHE
+mdefine_line|#define _PAGE_NO_CACHE&t;0x400
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_PAGE_CHG_MASK
@@ -61,6 +63,8 @@ DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
 DECL|macro|PAGE_KERNEL
 mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED)
+DECL|macro|PAGE_KERNEL_NO_CACHE
+mdefine_line|#define PAGE_KERNEL_NO_CACHE&t;__pgprot(_PAGE_NO_CACHE | _PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED)
 multiline_comment|/*&n; * The i386 can&squot;t do page protection for execute, and considers that the same are read.&n; * Also, write permissions imply read permissions. This is the closest we can get..&n; */
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
@@ -94,6 +98,14 @@ DECL|macro|__S110
 mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
+multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * FIXME: This could be done much better!&n; */
+DECL|macro|invalidate_all
+mdefine_line|#define invalidate_all() printk(&quot;invalidate_all()&bslash;n&quot;);invalidate()
+macro_line|#if 0
+mdefine_line|#define invalidate_mm(mm_struct) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_mm(%x)&bslash;n&quot;, mm_struct);} while (0)
+mdefine_line|#define invalidate_page(mm_struct,addr) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_page(%x,%x)&bslash;n&quot;, mm_struct, addr);} while (0)
+mdefine_line|#define invalidate_range(mm_struct,start,end) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_range(%x,%x,%x)&bslash;n&quot;, mm_struct, start, end);} while (0)
+macro_line|#endif
 multiline_comment|/*&n; * Define this if things work differently on a i386 and a i486:&n; * it will (on a i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
 DECL|macro|CONFIG_TEST_VERIFY_AREA
 macro_line|#undef CONFIG_TEST_VERIFY_AREA
@@ -202,7 +214,7 @@ op_amp
 id|_PAGE_PRESENT
 suffix:semicolon
 )brace
-DECL|function|pte_inuse
+macro_line|#if 0
 r_extern
 r_inline
 r_int
@@ -228,6 +240,7 @@ id|reserved
 suffix:semicolon
 )brace
 multiline_comment|/*extern inline int pte_inuse(pte_t *ptep)&t;{ return mem_map[MAP_NR(ptep)] != 1; }*/
+macro_line|#endif
 DECL|function|pte_clear
 r_extern
 r_inline
@@ -250,7 +263,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|pte_reuse
+macro_line|#if 0
 r_extern
 r_inline
 r_void
@@ -290,6 +303,7 @@ id|count
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;   extern inline void pte_reuse(pte_t * ptep)&n;{&n;&t;if (!(mem_map[MAP_NR(ptep)] &amp; MAP_PAGE_RESERVED))&n;&t;&t;mem_map[MAP_NR(ptep)]++;&n;}&n;*/
 DECL|function|pmd_none
 r_extern
@@ -455,8 +469,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/*extern inline int pgd_inuse(pgd_t * pgdp)&t;{ return mem_map[MAP_NR(pgdp)] != 1; }*/
-DECL|function|pgd_inuse
 r_extern
 r_inline
 r_int
@@ -481,6 +495,7 @@ dot
 id|reserved
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|pgd_clear
 r_extern
 r_inline
@@ -1139,19 +1154,6 @@ op_star
 id|pte
 )paren
 (brace
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|pte
-)paren
-)braket
-dot
-id|reserved
-op_assign
-l_int|1
-suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1254,19 +1256,6 @@ r_int
 r_int
 )paren
 id|page
-suffix:semicolon
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|page
-)paren
-)braket
-dot
-id|reserved
-op_assign
-l_int|1
 suffix:semicolon
 r_return
 id|page

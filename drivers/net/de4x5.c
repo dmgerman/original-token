@@ -11895,6 +11895,17 @@ id|index
 op_assign
 id|p
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ret
+OG
+l_int|1
+)paren
 id|skb_put
 c_func
 (paren

@@ -139,31 +139,29 @@ DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;((((unsigned long)addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 DECL|macro|MAP_PAGE_RESERVED
 mdefine_line|#define MAP_PAGE_RESERVED&t;(1&lt;&lt;15)
+macro_line|#if 0  /* Now defined in &quot;mm.h&quot; */
 multiline_comment|/*&n; * This used to be an unsigned short...&n; * &n; *                         -- Cort&n; */
 multiline_comment|/*typedef unsigned short mem_map_t;*/
 r_typedef
 r_struct
 (brace
-DECL|member|count
 r_int
 id|count
 suffix:colon
 l_int|30
 comma
-DECL|member|dirty
 id|dirty
 suffix:colon
 l_int|1
 comma
-DECL|member|reserved
 id|reserved
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|typedef|mem_map_t
 )brace
 id|mem_map_t
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))

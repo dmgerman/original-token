@@ -613,8 +613,7 @@ id|kdev_t
 id|i_rdev
 suffix:semicolon
 DECL|member|i_size
-r_int
-r_int
+id|off_t
 id|i_size
 suffix:semicolon
 DECL|member|i_atime

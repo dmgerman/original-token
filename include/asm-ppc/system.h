@@ -80,6 +80,12 @@ c_func
 r_struct
 id|task_struct
 op_star
+id|prev
+comma
+r_struct
+id|task_struct
+op_star
+id|next
 )paren
 suffix:semicolon
 DECL|macro|save_flags

@@ -867,6 +867,10 @@ id|fd_node
 comma
 id|num_regs
 suffix:semicolon
+id|use_virtual_dma
+op_assign
+l_int|1
+suffix:semicolon
 id|FLOPPY_IRQ
 op_assign
 l_int|11

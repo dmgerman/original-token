@@ -1,7 +1,4 @@
-multiline_comment|/* * Last edited: Nov 29 18:14 1995 (cort) */
 multiline_comment|/*&n; *  ARCH/ppc/mm/fault.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Ported to PPC by Gary Thomas&n; */
-multiline_comment|/*#define NOISY_DATAFAULT*/
-multiline_comment|/*#define NOISY_INSTRFAULT*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -46,9 +43,14 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#if 0
+DECL|macro|SHOW_FAULTS
 mdefine_line|#define SHOW_FAULTS
-macro_line|#endif
+DECL|macro|SHOW_FAULTS
+macro_line|#undef  SHOW_FAULTS
+DECL|macro|PAUSE_AFTER_FAULT
+mdefine_line|#define PAUSE_AFTER_FAULT
+DECL|macro|PAUSE_AFTER_FAULT
+macro_line|#undef  PAUSE_AFTER_FAULT
 r_void
 DECL|function|DataAccessException
 id|DataAccessException
@@ -116,15 +118,26 @@ op_or_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* Protection violation */
-macro_line|#ifdef NOISY_DATAFAULT
+macro_line|#ifdef SHOW_FAULTS
 id|printk
 c_func
 (paren
-l_string|&quot;Data fault on %x&bslash;n&quot;
+l_string|&quot;Data Access Fault - Loc: %x, DSISR: %x, PC: %x&bslash;n&quot;
 comma
 id|regs-&gt;dar
+comma
+id|regs-&gt;dsisr
+comma
+id|regs-&gt;nip
 )paren
 suffix:semicolon
+macro_line|#ifdef PAUSE_AFTER_FAULT
+id|cnpause
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;
 macro_line|#endif
 r_if
 c_cond
@@ -134,7 +147,7 @@ op_amp
 l_int|0x01
 )paren
 (brace
-macro_line|#if 0
+macro_line|#ifdef SHOW_FAULTS
 id|printk
 c_func
 (paren
@@ -148,14 +161,6 @@ id|regs-&gt;nip
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef NOISY_DATAFAULT
-id|printk
-c_func
-(paren
-l_string|&quot;Write Protect fault&bslash;n &quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|do_page_fault
 c_func
 (paren
@@ -166,18 +171,9 @@ comma
 id|mode
 )paren
 suffix:semicolon
-macro_line|#ifdef NOISY_DATAFAULT    
-id|printk
-c_func
-(paren
-l_string|&quot;Write Protect fault handled&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*   printk(&quot;trying&bslash;n&quot;); */
 r_for
 c_loop
 (paren
@@ -261,11 +257,11 @@ id|pte
 )paren
 )paren
 (brace
-macro_line|#if 0
+macro_line|#ifdef SHOW_FAULTS
 id|printk
 c_func
 (paren
-l_string|&quot;Page mapped - PTE: %x[%x]&bslash;n&quot;
+l_string|&quot;Page mapped - PTE: %x[%x], Context: %x&bslash;n&quot;
 comma
 id|pte
 comma
@@ -275,9 +271,11 @@ r_int
 op_star
 )paren
 id|pte
+comma
+id|current-&gt;mm-&gt;context
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;&t;&t;&t;&t;
 id|MMU_hash_page
 c_func
 (paren
@@ -305,31 +303,6 @@ l_string|&quot;No PGD&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef NOISY_DATAFAULT    
-id|printk
-c_func
-(paren
-l_string|&quot;fall through page fault addr=%x; ip=%x&bslash;n&quot;
-comma
-id|regs-&gt;dar
-comma
-id|regs-&gt;nip
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;beforefault: pgd[0] = %x[%x]&bslash;n&quot;
-comma
-id|current-&gt;mm-&gt;pgd
-comma
-op_star
-(paren
-id|current-&gt;mm-&gt;pgd
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|do_page_fault
 c_func
 (paren
@@ -340,21 +313,6 @@ comma
 id|mode
 )paren
 suffix:semicolon
-macro_line|#ifdef NOISY_DATAFAULT    
-id|printk
-c_func
-(paren
-l_string|&quot;handled: pgd[0] = %x[%x]&bslash;n&quot;
-comma
-id|current-&gt;mm-&gt;pgd
-comma
-op_star
-(paren
-id|current-&gt;mm-&gt;pgd
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_void
@@ -387,16 +345,12 @@ id|mode
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if NOISY_INSTRFAULT
-id|printk
-c_func
-(paren
-l_string|&quot;Instr fault on %x&bslash;n&quot;
-comma
-id|regs-&gt;dar
-)paren
+r_int
+r_int
+id|addr
+op_assign
+id|regs-&gt;nip
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -410,30 +364,27 @@ id|mode
 op_or_assign
 l_int|0x04
 suffix:semicolon
-r_if
-c_cond
+macro_line|#ifdef SHOW_FAULTS
+id|printk
+c_func
 (paren
+l_string|&quot;Instruction Access Fault - Loc: %x, DSISR: %x, PC: %x&bslash;n&quot;
+comma
+id|regs-&gt;dar
+comma
 id|regs-&gt;dsisr
-op_amp
-l_int|0x02000000
+comma
+id|regs-&gt;nip
 )paren
-id|mode
-op_or_assign
-l_int|0x02
 suffix:semicolon
-multiline_comment|/* Load/store */
-r_if
-c_cond
+macro_line|#ifdef PAUSE_AFTER_FAULT
+id|cnpause
+c_func
 (paren
-id|regs-&gt;dsisr
-op_amp
-l_int|0x08000000
 )paren
-id|mode
-op_or_assign
-l_int|0x01
 suffix:semicolon
-multiline_comment|/* Protection violation */
+macro_line|#endif
+macro_line|#endif&t;
 r_if
 c_cond
 (paren
@@ -447,7 +398,7 @@ c_func
 (paren
 id|regs
 comma
-id|regs-&gt;dar
+id|addr
 comma
 id|mode
 )paren
@@ -470,7 +421,6 @@ id|tries
 op_increment
 )paren
 (brace
-multiline_comment|/*     dir = pgd_offset(current-&gt;mm, regs-&gt;nip &amp; PAGE_MASK); */
 id|dir
 op_assign
 id|pgd_offset
@@ -478,14 +428,11 @@ c_func
 (paren
 id|current-&gt;mm
 comma
-id|regs-&gt;dar
+id|addr
 op_amp
 id|PAGE_MASK
 )paren
 suffix:semicolon
-macro_line|#ifdef NOISY_INSTRFAULT
-multiline_comment|/*&t;printk(&quot;regs-&gt;dar=%x current=%x current-&gt;mm=%x current-&gt;mm-&gt;pgd=%x current-&gt;tss.pg_tables=%x&bslash;n&quot;,&n;&t;       regs-&gt;dar,current,current-&gt;mm,current-&gt;mm-&gt;pgd,current-&gt;tss.pg_tables);*/
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -499,7 +446,7 @@ c_func
 (paren
 id|dir
 comma
-id|regs-&gt;dar
+id|addr
 op_amp
 id|PAGE_MASK
 )paren
@@ -524,110 +471,11 @@ c_func
 (paren
 id|pmd
 comma
-id|regs-&gt;dar
+id|addr
 op_amp
 id|PAGE_MASK
 )paren
 suffix:semicolon
-macro_line|#ifdef NOISY_INSTRFAULT
-multiline_comment|/*&t;printk(&quot;dir %x(%x) pmd %x(%x) pte %x&bslash;n&quot;,dir,*dir,pmd,*pmd,pte);*/
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;pgd_offset mm=%x mm-&gt;pgd=%x dirshouldbe=%x&bslash;n&quot;
-comma
-id|current-&gt;mm
-comma
-id|current-&gt;mm-&gt;pgd
-comma
-id|current-&gt;mm-&gt;pgd
-op_plus
-(paren
-(paren
-id|regs-&gt;dar
-op_amp
-id|PAGE_MASK
-)paren
-op_rshift
-id|PGDIR_SHIFT
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;dir is %x&bslash;n&quot;
-comma
-id|dir
-)paren
-suffix:semicolon
-multiline_comment|/* &t;printk(&quot;got pte&bslash;n&quot;); */
-r_if
-c_cond
-(paren
-id|pte
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;pgd=%x; dir=%x-&gt;%x; pmd=%x-&gt;%x; pte=%x; &bslash;n&quot;
-comma
-id|current-&gt;mm-&gt;pgd
-comma
-id|dir
-comma
-op_star
-id|dir
-comma
-id|pmd
-comma
-op_star
-id|pmd
-comma
-id|pte
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte_present
-c_func
-(paren
-op_star
-id|pte
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;pte present&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;pte not present&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;pte false&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -641,14 +489,32 @@ id|pte
 )paren
 )paren
 (brace
-multiline_comment|/* &t;  MMU_hash_page(&amp;current-&gt;tss, regs-&gt;nip &amp; PAGE_MASK, pte); */
+macro_line|#ifdef SHOW_FAULTS
+id|printk
+c_func
+(paren
+l_string|&quot;Page mapped - PTE: %x[%x], Context: %x&bslash;n&quot;
+comma
+id|pte
+comma
+op_star
+(paren
+r_int
+op_star
+)paren
+id|pte
+comma
+id|current-&gt;mm-&gt;context
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;&t;
 id|MMU_hash_page
 c_func
 (paren
 op_amp
 id|current-&gt;tss
 comma
-id|regs-&gt;dar
+id|addr
 op_amp
 id|PAGE_MASK
 comma
@@ -662,30 +528,19 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef NOISY_INSTRFAULT      
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;No PGD Instruction Access Fault - Loc: %x, DSISR: %x, PC: %x current-&gt;mm&bslash;n&quot;
-comma
-id|regs-&gt;dar
-comma
-id|regs-&gt;dsisr
-comma
-id|regs-&gt;nip
-comma
-id|current-&gt;mm
+l_string|&quot;No PGD&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-multiline_comment|/*     do_page_fault(regs, regs-&gt;nip, mode); */
 id|do_page_fault
 c_func
 (paren
 id|regs
 comma
-id|regs-&gt;dar
+id|addr
 comma
 id|mode
 )paren
@@ -721,8 +576,6 @@ r_int
 r_int
 id|page
 suffix:semicolon
-multiline_comment|/*   printk(&quot;In do_page_fault()&bslash;n&quot;); */
-macro_line|#if 1
 r_for
 c_loop
 (paren
@@ -736,37 +589,31 @@ op_assign
 id|vma-&gt;vm_next
 )paren
 (brace
+macro_line|#ifdef SHOW_FAULTS
+id|printk
+c_func
+(paren
+l_string|&quot;VMA(%x) - Start: %x, End: %x, Flags: %x&bslash;n&quot;
+comma
+id|vma
+comma
+id|vma-&gt;vm_start
+comma
+id|vma-&gt;vm_end
+comma
+id|vma-&gt;vm_flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
 op_logical_neg
 id|vma
 )paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;!vma: ip = %x; current=%x[%d]; mm=%x; mmap=%x; address = %x error_code = %x&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|current
-comma
-id|current-&gt;pid
-comma
-id|current-&gt;mm
-comma
-id|current-&gt;mm-&gt;mmap
-comma
-id|address
-comma
-id|error_code
-)paren
-suffix:semicolon
 r_goto
 id|bad_area
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -777,29 +624,6 @@ id|address
 r_break
 suffix:semicolon
 )brace
-macro_line|#else
-id|vma
-op_assign
-id|find_vma
-c_func
-(paren
-id|current
-comma
-id|address
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|vma
-)paren
-(brace
-)brace
-r_goto
-id|bad_area
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -807,11 +631,9 @@ id|vma-&gt;vm_start
 op_le
 id|address
 )paren
-(brace
 r_goto
 id|good_area
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -822,42 +644,9 @@ op_amp
 id|VM_GROWSDOWN
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;stack: gpr[1]=%x ip = %x; current=%x[%d]; mm=%x; mmap=%x; address = %x error_code = %x&bslash;n&quot;
-comma
-id|regs-&gt;gpr
-(braket
-l_int|1
-)braket
-comma
-id|regs-&gt;nip
-comma
-id|current
-comma
-id|current-&gt;pid
-comma
-id|current-&gt;mm
-comma
-id|current-&gt;mm-&gt;mmap
-comma
-id|address
-comma
-id|error_code
-)paren
-suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;stack&bslash;n&quot;
-)paren
-suffix:semicolon
 r_goto
 id|bad_area
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -872,69 +661,9 @@ id|RLIMIT_STACK
 dot
 id|rlim_cur
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;stack2: vma-&gt;vm_end-address %x rlim %x&bslash;n&quot;
-comma
-id|vma-&gt;vm_end
-op_minus
-id|address
-comma
-id|current-&gt;rlim
-(braket
-id|RLIMIT_STACK
-)braket
-dot
-id|rlim_cur
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;stack2: vm_end %x address = %x&bslash;n&quot;
-comma
-id|vma-&gt;vm_end
-comma
-id|address
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;stack2: gpr[1]=%x ip = %x; current=%x[%d]; mm=%x; mmap=%x; address = %x error_code = %x&bslash;n&quot;
-comma
-id|regs-&gt;gpr
-(braket
-l_int|1
-)braket
-comma
-id|regs-&gt;nip
-comma
-id|current
-comma
-id|current-&gt;pid
-comma
-id|current-&gt;mm
-comma
-id|current-&gt;mm-&gt;mmap
-comma
-id|address
-comma
-id|error_code
-)paren
-suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;stack2&bslash;n&quot;
-)paren
-suffix:semicolon
 r_goto
 id|bad_area
 suffix:semicolon
-)brace
 id|vma-&gt;vm_offset
 op_sub_assign
 id|vma-&gt;vm_start
@@ -953,10 +682,10 @@ op_amp
 id|PAGE_MASK
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Ok, we have a good vm_area for this memory access, so&n;   * we can handle it..&n;   */
+multiline_comment|/*&n; * Ok, we have a good vm_area for this memory access, so&n; * we can handle it..&n; */
 id|good_area
 suffix:colon
-multiline_comment|/*&n;   * was it a write?&n;   */
+multiline_comment|/*&n;&t; * was it a write?&n;&t; */
 r_if
 c_cond
 (paren
@@ -975,37 +704,9 @@ op_amp
 id|VM_WRITE
 )paren
 )paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;do_page_fault()  write&bslash;n&quot;
-)paren
-suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;do_page_fault() write! current: %x, address:%x, vm_flags: %x, mm: %x; vma(%x) %x to %x&bslash;n&quot;
-comma
-id|current
-comma
-id|address
-comma
-id|vma-&gt;vm_flags
-comma
-id|current-&gt;mm
-comma
-id|vma
-comma
-id|vma-&gt;vm_start
-comma
-id|vma-&gt;vm_end
-)paren
-suffix:semicolon
 r_goto
 id|bad_area
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -1017,17 +718,9 @@ id|error_code
 op_amp
 l_int|1
 )paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;do_page_fault()  error code thing&bslash;n&quot;
-)paren
-suffix:semicolon
 r_goto
 id|bad_area
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1042,90 +735,10 @@ id|VM_EXEC
 )paren
 )paren
 )paren
-(brace
-macro_line|#if 0
-id|_printk
-c_func
-(paren
-l_string|&quot;vma = %x&bslash;n&quot;
-comma
-id|vma
-)paren
-suffix:semicolon
-id|_printk
-c_func
-(paren
-l_string|&quot;vma-&gt;vm_flags = %x&bslash;n&quot;
-comma
-id|vma-&gt;vm_flags
-)paren
-suffix:semicolon
-id|_printk
-c_func
-(paren
-l_string|&quot;VM_READ = %x VM_EXEC = %x&bslash;n&quot;
-comma
-id|VM_READ
-comma
-id|VM_EXEC
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;vma = %x VM_READ = %x VM_EXEC = %x&bslash;n&quot;
-comma
-id|vma
-comma
-id|VM_READ
-comma
-id|VM_EXEC
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;vma-&gt;vm_start = %x vma-&gt;vm_end = %d&bslash;n&quot;
-comma
-id|vma-&gt;vm_start
-comma
-id|vma-&gt;vm_end
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;error_code = %x&bslash;n&quot;
-comma
-id|error_code
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;regs = %x&bslash;n&quot;
-comma
-id|regs
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;vma-&gt;vm_flags = %x&bslash;n&quot;
-comma
-id|vma-&gt;vm_flags
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*      printk(&quot;do_page_fault()  multi thing&bslash;n&quot;); */
 r_goto
 id|bad_area
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*   printk(&quot;premm: pgd[0] = %x[%x]&bslash;n&quot;,current-&gt;mm-&gt;pgd,*(current-&gt;mm-&gt;pgd)); */
 id|handle_mm_fault
 c_func
 (paren
@@ -1138,13 +751,77 @@ op_amp
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*   printk(&quot;handled fault for %x in %x to %x flags %x&bslash;n&quot;, */
-multiline_comment|/* &t; address,vma-&gt;vm_start,vma-&gt;vm_end,vma-&gt;vm_flags); */
+id|flush_page
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+multiline_comment|/* Flush &amp; Invalidate cache - note: address is OK now */
 r_return
 suffix:semicolon
-multiline_comment|/*&n;   * Something tried to access memory that isn&squot;t in our memory map..&n;   * Fix it, but check if it&squot;s kernel or user first..&n;   */
+multiline_comment|/*&n; * Something tried to access memory that isn&squot;t in our memory map..&n; * Fix it, but check if it&squot;s kernel or user first..&n; */
 id|bad_area
 suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Task: %x, PC: %x/%x, bad area! - Addr: %x&bslash;n&quot;
+comma
+id|current
+comma
+id|regs-&gt;nip
+comma
+id|current-&gt;tss.last_pc
+comma
+id|address
+)paren
+suffix:semicolon
+id|print_user_backtrace
+c_func
+(paren
+id|current-&gt;tss.user_stack
+)paren
+suffix:semicolon
+id|print_kernel_backtrace
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#if 0
+id|cnpause
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+(brace
+id|print_backtrace
+c_func
+(paren
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+id|dump_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1155,33 +832,32 @@ id|regs
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Task: %x, PC: %x, bad area! - Addr: %x&bslash;n&quot;
-comma
-id|current
-comma
-id|regs-&gt;nip
-comma
+macro_line|#if 0
+id|current-&gt;tss.cp0_badvaddr
+op_assign
 id|address
-)paren
 suffix:semicolon
-id|send_sig
+id|current-&gt;tss.error_code
+op_assign
+id|error_code
+suffix:semicolon
+id|current-&gt;tss.trap_no
+op_assign
+l_int|14
+suffix:semicolon
+macro_line|#endif
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if 0
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;KERNEL! Task: %x, PC: %x, bad area! - Addr: %x, PGDIR: %x&bslash;n&quot;
@@ -1195,39 +871,172 @@ comma
 id|current-&gt;tss.pg_tables
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/*  panic(&quot;KERNEL mm! current: %x,  address:%x, vm_flags: %x, mm: %x; &bslash;nvma(%x) %x to %x swapper_pg_dir %x&bslash;n&quot;,&n;&t;current,address,vma-&gt;vm_flags,current-&gt;mm,vma,vma-&gt;vm_start,vma-&gt;vm_end,&n;&t;swapper_pg_dir);*/
-id|printk
+id|dump_regs
 c_func
 (paren
-l_string|&quot;KERNEL mm! current: %x,  address:%x, vm_flags: %x, mm: %x; vma(%x) %x to %x&bslash;n&quot;
-comma
-id|current
-comma
-id|address
-comma
-id|vma-&gt;vm_flags
-comma
-id|current-&gt;mm
-comma
-id|vma
-comma
-id|vma-&gt;vm_start
-comma
-id|vma-&gt;vm_end
+id|regs
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;Kernel access of bad area&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren
 l_int|1
+)paren
+suffix:semicolon
+macro_line|#if 0&t;
+multiline_comment|/*&n;&t; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n;&t; * terminate things with extreme prejudice.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|address
+op_minus
+id|TASK_SIZE
+)paren
+OL
+id|PAGE_SIZE
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;Unable to handle kernel NULL pointer dereference&quot;
+)paren
+suffix:semicolon
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+id|pte_val
+c_func
+(paren
+id|mk_pte
+c_func
+(paren
+l_int|0
+comma
+id|PAGE_SHARED
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;Unable to handle kernel paging request&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; at virtual address %08lx&bslash;n&quot;
+comma
+id|address
+)paren
+suffix:semicolon
+id|page
+op_assign
+id|current-&gt;tss.pg_dir
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;current-&gt;tss.pg_dir = %08lx&bslash;n&quot;
+comma
+id|page
+)paren
+suffix:semicolon
+id|page
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|page
+)paren
+(braket
+id|address
+op_rshift
+id|PGDIR_SHIFT
+)braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;*pde = %08lx&bslash;n&quot;
+comma
+id|page
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|page
+op_amp
+l_int|1
+)paren
+(brace
+id|page
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
+id|address
+op_and_assign
+l_int|0x003ff000
+suffix:semicolon
+id|page
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|page
+)paren
+(braket
+id|address
+op_rshift
+id|PAGE_SHIFT
+)braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;*pte = %08lx&bslash;n&quot;
+comma
+id|page
+)paren
+suffix:semicolon
+)brace
+id|die_if_kernel
+c_func
+(paren
+l_string|&quot;Oops&quot;
+comma
+id|regs
+comma
+id|error_code
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+id|do_exit
+c_func
+(paren
+id|SIGKILL
 )paren
 suffix:semicolon
 )brace
@@ -1358,5 +1167,81 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * See if an address should be valid in the current context.&n; */
+DECL|function|valid_addr
+id|valid_addr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|vma
+op_assign
+id|current-&gt;mm-&gt;mmap
+suffix:semicolon
+suffix:semicolon
+id|vma
+op_assign
+id|vma-&gt;vm_next
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vma
+)paren
+(brace
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_end
+OG
+id|addr
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_start
+op_le
+id|addr
+)paren
+(brace
+r_return
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
 )brace
 eof

@@ -2564,7 +2564,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    *    (Unb)Blank the screen&n;    */
+multiline_comment|/*&n;    *    (Un)Blank the screen&n;    */
 DECL|function|Cyber_blank
 r_void
 id|Cyber_blank
@@ -3045,7 +3045,7 @@ op_assign
 id|blitcmd
 suffix:semicolon
 )brace
-multiline_comment|/**************************************************************&n; * Rectange Fill Solid&n; */
+multiline_comment|/**************************************************************&n; * Rectangle Fill Solid&n; */
 DECL|function|Cyber_RectFill
 r_void
 id|Cyber_RectFill

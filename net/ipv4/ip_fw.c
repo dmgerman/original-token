@@ -375,11 +375,11 @@ suffix:semicolon
 r_char
 id|notcpsyn
 op_assign
-l_int|1
+l_int|0
 comma
 id|notcpack
 op_assign
-l_int|1
+l_int|0
 comma
 id|match
 suffix:semicolon
@@ -574,27 +574,30 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|tcp-&gt;ack
 )paren
 (brace
-multiline_comment|/* We *DO* have ACK, value FALSE */
+multiline_comment|/* We do NOT have ACK, value TRUE */
 id|notcpack
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
+op_logical_neg
 id|tcp-&gt;syn
-op_logical_and
+op_logical_or
+op_logical_neg
 id|notcpack
 )paren
 (brace
-multiline_comment|/* We *DO* have SYN, value FALSE */
+multiline_comment|/* We do NOT have SYN, value TRUE */
 id|notcpsyn
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -917,21 +920,7 @@ id|IP_FW_F_ACCTIN
 r_continue
 suffix:semicolon
 macro_line|#endif
-id|f_prt
-op_assign
-id|f-&gt;fw_flg
-op_amp
-id|IP_FW_F_KIND
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|f_prt
-op_ne
-id|IP_FW_F_ALL
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * This is actually buggy as if you set ACK/SYN flags&n;&t;&t;&t; * on UDP or ICMP firewall it will never work,but &n;&t;&t;&t; * actually it is a concern of software which sets&n;&t;&t;&t; * firewall entries.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * For all non-TCP packets and/or non-first fragments,&n;&t;&t; * notcpsyn and notcpack will always be FALSE,&n;&t;&t; * so the IP_FW_F_TCPSYN and IP_FW_F_TCPACK flags&n;&t;&t; * are actually ignored for these packets.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -962,6 +951,20 @@ id|notcpack
 r_continue
 suffix:semicolon
 )brace
+id|f_prt
+op_assign
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_KIND
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|f_prt
+op_ne
+id|IP_FW_F_ALL
+)paren
+(brace
 multiline_comment|/*&n;&t;&t;&t; *&t;Specific firewall - packet&squot;s protocol&n;&t;&t;&t; *&t;must match firewall&squot;s.&n;&t;&t;&t; */
 r_if
 c_cond

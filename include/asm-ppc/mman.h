@@ -19,6 +19,8 @@ DECL|macro|MAP_FIXED
 mdefine_line|#define MAP_FIXED&t;0x10&t;&t;/* Interpret addr exactly */
 DECL|macro|MAP_ANONYMOUS
 mdefine_line|#define MAP_ANONYMOUS&t;0x20&t;&t;/* don&squot;t use a file */
+DECL|macro|MAP_RENAME
+mdefine_line|#define MAP_RENAME      MAP_ANONYMOUS   /* In SunOS terminology */
 DECL|macro|MAP_GROWSDOWN
 mdefine_line|#define MAP_GROWSDOWN&t;0x0100&t;&t;/* stack-like segment */
 DECL|macro|MAP_DENYWRITE
@@ -31,5 +33,14 @@ DECL|macro|MS_INVALIDATE
 mdefine_line|#define MS_INVALIDATE&t;2&t;&t;/* invalidate the caches */
 DECL|macro|MS_SYNC
 mdefine_line|#define MS_SYNC&t;&t;4&t;&t;/* synchronous memory sync */
-macro_line|#endif /* __I386_MMAN_H__ */
+DECL|macro|MCL_CURRENT
+mdefine_line|#define MCL_CURRENT     0x2000          /* lock all currently mapped pages */
+DECL|macro|MCL_FUTURE
+mdefine_line|#define MCL_FUTURE      0x4000          /* lock all additions to address space */
+multiline_comment|/* compatibility flags */
+DECL|macro|MAP_ANON
+mdefine_line|#define MAP_ANON&t;MAP_ANONYMOUS
+DECL|macro|MAP_FILE
+mdefine_line|#define MAP_FILE&t;0
+macro_line|#endif /* __PPC_MMAN_H__ */
 eof

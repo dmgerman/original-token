@@ -1,9 +1,363 @@
-multiline_comment|/*&n; * PCI support&n; */
+multiline_comment|/*&n; * PCI support&n; * -- rough emulation of &quot;PCI BIOS&quot; functions&n; *&n; * Note: these are very motherboard specific!  Some way needs to&n; * be worked out to handle the differences.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+multiline_comment|/*&n; * PCI interrupt configuration.  This is motherboard specific.&n; */
+multiline_comment|/* Which PCI interrupt line does a given device [slot] use? */
+multiline_comment|/* Note: This really should be two dimensional based in slot/pin used */
+DECL|variable|Motherboard_map
+r_int
+r_char
+op_star
+id|Motherboard_map
+suffix:semicolon
+multiline_comment|/* How is the 82378 PIRQ mapping setup? */
+DECL|variable|Motherboard_routes
+r_int
+r_char
+op_star
+id|Motherboard_routes
+suffix:semicolon
+multiline_comment|/* Tables for known hardware */
+multiline_comment|/* Motorola PowerStack */
+DECL|variable|Blackhawk_pci_IRQ_map
+r_static
+r_char
+id|Blackhawk_pci_IRQ_map
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 14 - Ethernet */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+)brace
+suffix:semicolon
+DECL|variable|Blackhawk_pci_IRQ_routes
+r_static
+r_char
+id|Blackhawk_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|9
+comma
+multiline_comment|/* Line 1 */
+l_int|11
+comma
+multiline_comment|/* Line 2 */
+l_int|14
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+multiline_comment|/* Motorola MVME16xx */
+DECL|variable|Genesis_pci_IRQ_map
+r_static
+r_char
+id|Genesis_pci_IRQ_map
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 14 - Ethernet */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+)brace
+suffix:semicolon
+DECL|variable|Genesis_pci_IRQ_routes
+r_static
+r_char
+id|Genesis_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|10
+comma
+multiline_comment|/* Line 1 */
+l_int|11
+comma
+multiline_comment|/* Line 2 */
+l_int|14
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+multiline_comment|/* Motorola Series-E */
+DECL|variable|Comet_pci_IRQ_map
+r_static
+r_char
+id|Comet_pci_IRQ_map
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 14 - Ethernet */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+)brace
+suffix:semicolon
+DECL|variable|Comet_pci_IRQ_routes
+r_static
+r_char
+id|Comet_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|10
+comma
+multiline_comment|/* Line 1 */
+l_int|11
+comma
+multiline_comment|/* Line 2 */
+l_int|14
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+multiline_comment|/* BeBox */
+DECL|variable|BeBox_pci_IRQ_map
+r_static
+r_char
+id|BeBox_pci_IRQ_map
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|16
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 14 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+)brace
+suffix:semicolon
+DECL|variable|BeBox_pci_IRQ_routes
+r_static
+r_char
+id|BeBox_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|9
+comma
+multiline_comment|/* Line 1 */
+l_int|11
+comma
+multiline_comment|/* Line 2 */
+l_int|14
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
 multiline_comment|/* #define PCI_DEBUG */
+macro_line|#ifdef PCI_STATS
 DECL|variable|PCI_conversions
 r_int
 id|PCI_conversions
@@ -11,6 +365,7 @@ id|PCI_conversions
 l_int|2
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|function|pcibios_init
 r_int
 r_int
@@ -26,12 +381,6 @@ r_int
 id|mem_end
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;PPC init stub -- cort&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon
@@ -79,12 +428,14 @@ op_star
 op_amp
 id|val
 suffix:semicolon
+macro_line|#ifdef PCI_STATS
 id|PCI_conversions
 (braket
 l_int|0
 )braket
 op_increment
 suffix:semicolon
+macro_line|#endif&t;
 r_return
 (paren
 (paren
@@ -149,12 +500,14 @@ op_star
 op_amp
 id|val
 suffix:semicolon
+macro_line|#ifdef PCI_STATS
 id|PCI_conversions
 (braket
 l_int|1
 )braket
 op_increment
 suffix:semicolon
+macro_line|#endif&t;
 r_return
 (paren
 (paren
@@ -185,7 +538,7 @@ r_void
 )paren
 (brace
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;PCI [BIOS] present?&bslash;n&quot;
@@ -234,7 +587,7 @@ op_rshift_assign
 l_int|3
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;PCI Read config dword[%d.%d.%x] = &quot;
@@ -300,7 +653,7 @@ id|offset
 )paren
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;[%x] &quot;
@@ -320,7 +673,7 @@ id|ptr
 suffix:semicolon
 )brace
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;%x&bslash;n&quot;
@@ -374,7 +727,7 @@ op_rshift_assign
 l_int|3
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;PCI Read config word[%d.%d.%x] = &quot;
@@ -412,10 +765,6 @@ l_int|16
 op_star
 id|val
 op_assign
-(paren
-r_int
-r_int
-)paren
 l_int|0xFFFFFFFF
 suffix:semicolon
 r_return
@@ -444,7 +793,7 @@ id|offset
 )paren
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;[%x] &quot;
@@ -464,7 +813,7 @@ id|ptr
 suffix:semicolon
 )brace
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;%x&bslash;n&quot;
@@ -508,6 +857,7 @@ r_int
 r_char
 id|_val
 suffix:semicolon
+r_volatile
 r_int
 r_char
 op_star
@@ -517,8 +867,71 @@ id|dev
 op_rshift_assign
 l_int|3
 suffix:semicolon
+multiline_comment|/* Note: the configuration registers don&squot;t always have this right! */
+r_if
+c_cond
+(paren
+id|offset
+op_eq
+id|PCI_INTERRUPT_LINE
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|Motherboard_map
+(braket
+id|dev
+)braket
+op_le
+l_int|4
+)paren
+(brace
+op_star
+id|val
+op_assign
+id|Motherboard_routes
+(braket
+id|Motherboard_map
+(braket
+id|dev
+)braket
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Pseudo interrupts [for BeBox] */
+op_star
+id|val
+op_assign
+id|Motherboard_map
+(braket
+id|dev
+)braket
+suffix:semicolon
+)brace
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
+c_func
+(paren
+l_string|&quot;PCI Read Interrupt Line[%d.%d] = %d&bslash;n&quot;
+comma
+id|bus
+comma
+id|dev
+comma
+op_star
+id|val
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
+r_return
+id|PCIBIOS_SUCCESSFUL
+suffix:semicolon
+)brace
+macro_line|#ifdef PCI_DEBUG&t;
+id|printk
 c_func
 (paren
 l_string|&quot;PCI Read config byte[%d.%d.%x] = &quot;
@@ -556,10 +969,6 @@ l_int|16
 op_star
 id|val
 op_assign
-(paren
-r_int
-r_char
-)paren
 l_int|0xFFFFFFFF
 suffix:semicolon
 r_return
@@ -590,7 +999,7 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;[%x] &quot;
@@ -606,7 +1015,7 @@ id|ptr
 suffix:semicolon
 )brace
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;%x&bslash;n&quot;
@@ -614,7 +1023,7 @@ comma
 id|_val
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 op_star
 id|val
 op_assign
@@ -667,7 +1076,7 @@ id|val
 )paren
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;PCI Write config dword[%d.%d.%x] = %x&bslash;n&quot;
@@ -782,7 +1191,7 @@ id|val
 )paren
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;PCI Write config word[%d.%d.%x] = %x&bslash;n&quot;
@@ -893,7 +1302,7 @@ op_assign
 id|val
 suffix:semicolon
 macro_line|#ifdef PCI_DEBUG&t;
-id|_printk
+id|printk
 c_func
 (paren
 l_string|&quot;PCI Write config byte[%d.%d.%x] = %x&bslash;n&quot;
@@ -1117,14 +1526,122 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|dev_nr
+comma
+r_class
+comma
+id|indx
+suffix:semicolon
+id|indx
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef PCI_DEBUG&t;
 id|printk
 c_func
 (paren
-l_string|&quot;pcibios_find_class&bslash;n&quot;
+l_string|&quot;pcibios_find_class - class: %x, index: %x&quot;
+comma
+id|class_code
+comma
+id|index
 )paren
 suffix:semicolon
+macro_line|#endif&t;
+r_for
+c_loop
+(paren
+id|dev_nr
+op_assign
+l_int|11
+suffix:semicolon
+id|dev_nr
+OL
+l_int|16
+suffix:semicolon
+id|dev_nr
+op_increment
+)paren
+(brace
+id|pcibios_read_config_dword
+c_func
+(paren
+l_int|0
+comma
+id|dev_nr
+op_lshift
+l_int|3
+comma
+id|PCI_CLASS_REVISION
+comma
+op_amp
+r_class
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_class
+op_rshift
+l_int|8
+)paren
+op_eq
+id|class_code
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|index
+op_eq
+id|indx
+)paren
+(brace
+op_star
+id|bus
+op_assign
+l_int|0
+suffix:semicolon
+op_star
+id|dev
+op_assign
+id|dev_nr
+op_lshift
+l_int|3
+suffix:semicolon
+macro_line|#ifdef PCI_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot; - device: %x&bslash;n&quot;
+comma
+id|dev_nr
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 r_return
-id|PCIBIOS_FUNC_NOT_SUPPORTED
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+id|indx
+op_increment
+suffix:semicolon
+)brace
+)brace
+macro_line|#ifdef PCI_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot; - not found&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+r_return
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
 )brace
 DECL|function|pcibios_strerror
@@ -1138,12 +1655,250 @@ r_int
 id|error
 )paren
 (brace
-id|_panic
-c_func
+r_static
+r_char
+id|buf
+(braket
+l_int|32
+)braket
+suffix:semicolon
+r_switch
+c_cond
 (paren
-l_string|&quot;pcibios_strerror&quot;
+id|error
+)paren
+(brace
+r_case
+id|PCIBIOS_SUCCESSFUL
+suffix:colon
+r_return
+(paren
+l_string|&quot;PCI BIOS: no error&quot;
 )paren
 suffix:semicolon
+r_case
+id|PCIBIOS_FUNC_NOT_SUPPORTED
+suffix:colon
+r_return
+(paren
+l_string|&quot;PCI BIOS: function not supported&quot;
+)paren
+suffix:semicolon
+r_case
+id|PCIBIOS_BAD_VENDOR_ID
+suffix:colon
+r_return
+(paren
+l_string|&quot;PCI BIOS: bad vendor ID&quot;
+)paren
+suffix:semicolon
+r_case
+id|PCIBIOS_DEVICE_NOT_FOUND
+suffix:colon
+r_return
+(paren
+l_string|&quot;PCI BIOS: device not found&quot;
+)paren
+suffix:semicolon
+r_case
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:colon
+r_return
+(paren
+l_string|&quot;PCI BIOS: bad register number&quot;
+)paren
+suffix:semicolon
+r_case
+id|PCIBIOS_SET_FAILED
+suffix:colon
+r_return
+(paren
+l_string|&quot;PCI BIOS: set failed&quot;
+)paren
+suffix:semicolon
+r_case
+id|PCIBIOS_BUFFER_TOO_SMALL
+suffix:colon
+r_return
+(paren
+l_string|&quot;PCI BIOS: buffer too small&quot;
+)paren
+suffix:semicolon
+r_default
+suffix:colon
+id|sprintf
+c_func
+(paren
+id|buf
+comma
+l_string|&quot;PCI BIOS: invalid error #%d&quot;
+comma
+id|error
+)paren
+suffix:semicolon
+r_return
+id|buf
+suffix:semicolon
 )brace
-multiline_comment|/*int get_pci_list(char *buf) { _panic(&quot;get_pci_list&quot;); } */
+)brace
+multiline_comment|/*&n; * Note: This routine has to access the PCI configuration space&n; * for the PCI bridge chip (Intel 82378).&n; */
+DECL|function|route_PCI_interrupts
+r_void
+id|route_PCI_interrupts
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_char
+op_star
+id|ibc_pirq
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+l_int|0x80800860
+suffix:semicolon
+r_int
+r_char
+op_star
+id|ibc_pcicon
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+l_int|0x80800840
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|isBeBox
+(braket
+)braket
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Decide which motherboard this is &amp; how the PCI interrupts are routed */
+r_if
+c_cond
+(paren
+id|isBeBox
+(braket
+l_int|0
+)braket
+)paren
+(brace
+id|Motherboard_map
+op_assign
+id|BeBox_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|BeBox_pci_IRQ_routes
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Motorola hardware */
+r_switch
+c_cond
+(paren
+id|inb
+c_func
+(paren
+l_int|0x800
+)paren
+op_amp
+l_int|0xF0
+)paren
+(brace
+r_case
+l_int|0x10
+suffix:colon
+multiline_comment|/* MVME16xx */
+id|Motherboard_map
+op_assign
+id|Genesis_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|Genesis_pci_IRQ_routes
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x20
+suffix:colon
+multiline_comment|/* Series E */
+id|Motherboard_map
+op_assign
+id|Comet_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|Comet_pci_IRQ_routes
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x40
+suffix:colon
+multiline_comment|/* PowerStack */
+r_default
+suffix:colon
+multiline_comment|/* Can&squot;t hurt, can it? */
+id|Motherboard_map
+op_assign
+id|Blackhawk_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|Blackhawk_pci_IRQ_routes
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Set up mapping from slots */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+op_le
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|ibc_pirq
+(braket
+id|i
+op_minus
+l_int|1
+)braket
+op_assign
+id|Motherboard_routes
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+multiline_comment|/* Enable PCI interrupts */
+op_star
+id|ibc_pcicon
+op_or_assign
+l_int|0x20
+suffix:semicolon
+)brace
 eof

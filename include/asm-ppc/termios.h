@@ -1,9 +1,9 @@
 macro_line|#ifndef _PPC_TERMIOS_H
 DECL|macro|_PPC_TERMIOS_H
 mdefine_line|#define _PPC_TERMIOS_H
-multiline_comment|/*&n; * These were swiped from the alpha termios.h.  These probably aren&squot;t&n; * correct but we can fix them as we come across problems.&n; *                                -- Cort&n; */
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/ioctl.h&gt;
+multiline_comment|/*&n; * Liberally adapted from alpha/termios.h.  In particular, the c_cc[]&n; * fields have been reordered so that termio &amp; termios share the&n; * common subset in the same order (for brain dead programs that don&squot;t&n; * know or care about the differences).&n; */
+macro_line|#include &lt;asm/ioctls.h&gt;
+macro_line|#include &lt;asm/termbits.h&gt;
 DECL|struct|sgttyb
 r_struct
 id|sgttyb
@@ -210,6 +210,10 @@ DECL|macro|TIOCSERGETMULTI
 mdefine_line|#define TIOCSERGETMULTI 0x545A /* Get multiport config  */
 DECL|macro|TIOCSERSETMULTI
 mdefine_line|#define TIOCSERSETMULTI 0x545B /* Set multiport config */
+DECL|macro|TIOCMIWAIT
+mdefine_line|#define TIOCMIWAIT&t;0x545C&t;/* wait for a change on serial input line(s) */
+DECL|macro|TIOCGICOUNT
+mdefine_line|#define TIOCGICOUNT&t;0x545D&t;/* read serial port inline interrupt counts */
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_DATA
 mdefine_line|#define TIOCPKT_DATA&t;&t; 0
@@ -252,7 +256,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|NCC
-mdefine_line|#define NCC 8
+mdefine_line|#define NCC 10
 DECL|struct|termio
 r_struct
 id|termio
@@ -350,41 +354,6 @@ multiline_comment|/* output speed */
 )brace
 suffix:semicolon
 multiline_comment|/* c_cc characters */
-DECL|macro|VEOF
-mdefine_line|#define VEOF 0
-DECL|macro|VEOL
-mdefine_line|#define VEOL 1
-DECL|macro|VEOL2
-mdefine_line|#define VEOL2 2
-DECL|macro|VERASE
-mdefine_line|#define VERASE 3
-DECL|macro|VWERASE
-mdefine_line|#define VWERASE 4
-DECL|macro|VKILL
-mdefine_line|#define VKILL 5
-DECL|macro|VREPRINT
-mdefine_line|#define VREPRINT 6
-DECL|macro|VSWTC
-mdefine_line|#define VSWTC 7
-DECL|macro|VINTR
-mdefine_line|#define VINTR 8
-DECL|macro|VQUIT
-mdefine_line|#define VQUIT 9
-DECL|macro|VSUSP
-mdefine_line|#define VSUSP 10
-DECL|macro|VSTART
-mdefine_line|#define VSTART 12
-DECL|macro|VSTOP
-mdefine_line|#define VSTOP 13
-DECL|macro|VLNEXT
-mdefine_line|#define VLNEXT 14
-DECL|macro|VDISCARD
-mdefine_line|#define VDISCARD 15
-DECL|macro|VMIN
-mdefine_line|#define VMIN 16
-DECL|macro|VTIME
-mdefine_line|#define VTIME 17
-multiline_comment|/*&n; * ..and the same for c_cc in the termio structure.. &n; * Oh, how I love being backwardly compatible.&n; */
 DECL|macro|_VINTR
 mdefine_line|#define _VINTR&t;0
 DECL|macro|_VQUIT
@@ -396,19 +365,54 @@ mdefine_line|#define _VKILL&t;3
 DECL|macro|_VEOF
 mdefine_line|#define _VEOF&t;4
 DECL|macro|_VMIN
-mdefine_line|#define _VMIN&t;4
+mdefine_line|#define _VMIN&t;5
 DECL|macro|_VEOL
-mdefine_line|#define _VEOL&t;5
+mdefine_line|#define _VEOL&t;6
 DECL|macro|_VTIME
-mdefine_line|#define _VTIME&t;5
+mdefine_line|#define _VTIME&t;7
 DECL|macro|_VEOL2
-mdefine_line|#define _VEOL2&t;6
+mdefine_line|#define _VEOL2&t;8
 DECL|macro|_VSWTC
-mdefine_line|#define _VSWTC&t;7
+mdefine_line|#define _VSWTC&t;9
+DECL|macro|VINTR
+mdefine_line|#define VINTR &t;0
+DECL|macro|VQUIT
+mdefine_line|#define VQUIT &t;1
+DECL|macro|VERASE
+mdefine_line|#define VERASE &t;2
+DECL|macro|VKILL
+mdefine_line|#define VKILL&t;3
+DECL|macro|VEOF
+mdefine_line|#define VEOF&t;4
+DECL|macro|VMIN
+mdefine_line|#define VMIN&t;5
+DECL|macro|VEOL
+mdefine_line|#define VEOL&t;6
+DECL|macro|VTIME
+mdefine_line|#define VTIME&t;7
+DECL|macro|VEOL2
+mdefine_line|#define VEOL2&t;8
+DECL|macro|VSWTC
+mdefine_line|#define VSWTC&t;9
+DECL|macro|VWERASE
+mdefine_line|#define VWERASE &t;10
+DECL|macro|VREPRINT
+mdefine_line|#define VREPRINT&t;11
+DECL|macro|VSUSP
+mdefine_line|#define VSUSP &t;&t;12
+DECL|macro|VSTART
+mdefine_line|#define VSTART&t;&t;13
+DECL|macro|VSTOP
+mdefine_line|#define VSTOP&t;&t;14
+DECL|macro|VLNEXT
+mdefine_line|#define VLNEXT&t;&t;15
+DECL|macro|VDISCARD
+mdefine_line|#define VDISCARD&t;16
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&t;eof=^D&t;&t;eol=&bslash;0&t;&t;eol2=&bslash;0&t;&t;erase=del&n;&t;werase=^W&t;kill=^U&t;&t;reprint=^R&t;sxtc=&bslash;0&n;&t;intr=^C&t;&t;quit=^&bslash;&t;&t;susp=^Z&t;&t;&lt;OSF/1 VDSUSP&gt;&n;&t;start=^Q&t;stop=^S&t;&t;lnext=^V&t;discard=^U&n;&t;vmin=&bslash;1&t;&t;vtime=&bslash;0&n;*/
+multiline_comment|/*&t;eof=^D&t;&t;eol=&bslash;0&t;&t;eol2=&bslash;0&t;&t;erase=del&n;&t;werase=^W&t;kill=^U&t;&t;reprint=^R&t;sxtc=&bslash;0&n;&t;intr=^C&t;&t;quit=^&bslash;&t;&t;susp=^Z&t;&t;&lt;OSF/1 VDSUSP&gt;&n;&t;start=^Q&t;stop=^S&t;&t;lnext=^V&t;discard=^U&n;&t;vmin=&bslash;1&t;&t;vtime=&bslash;0&n;#define INIT_C_CC &quot;&bslash;004&bslash;000&bslash;000&bslash;177&bslash;027&bslash;025&bslash;022&bslash;000&bslash;003&bslash;034&bslash;032&bslash;000&bslash;021&bslash;023&bslash;026&bslash;025&bslash;001&bslash;000&quot;&n;*/
+multiline_comment|/*                   ^C  ^&bslash; del  ^U  ^D   1   0   0   0   0  ^W  ^R  ^Z  ^Q  ^S  ^V  ^U  */
 DECL|macro|INIT_C_CC
-mdefine_line|#define INIT_C_CC &quot;&bslash;004&bslash;000&bslash;000&bslash;177&bslash;027&bslash;025&bslash;022&bslash;000&bslash;003&bslash;034&bslash;032&bslash;000&bslash;021&bslash;023&bslash;026&bslash;025&bslash;001&bslash;000&quot;
+mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;004&bslash;001&bslash;000&bslash;000&bslash;000&bslash;000&bslash;027&bslash;022&bslash;032&bslash;021&bslash;023&bslash;026&bslash;025&quot; 
 macro_line|#endif
 multiline_comment|/* c_iflag bits */
 DECL|macro|IGNBRK
@@ -947,12 +951,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|termios-&gt;c_lflag
-op_amp
-id|ICANON
-)paren
+l_int|1
+multiline_comment|/*!(termios-&gt;c_lflag &amp; ICANON)*/
 )paren
 (brace
 id|termio-&gt;c_cc
@@ -978,5 +978,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif&t;/* __KERNEL__ */
-macro_line|#endif&t;/* _ALPHA_TERMIOS_H */
+macro_line|#endif&t;/* _PPC_TERMIOS_H */
 eof

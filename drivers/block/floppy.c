@@ -287,16 +287,6 @@ id|initialising
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef __sparc__
-multiline_comment|/* We hold the FIFO configuration here.  We want to have Polling and&n; * Implied Seek enabled on Sun controllers.&n; */
-DECL|variable|fdc_cfg
-r_int
-r_char
-id|fdc_cfg
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 DECL|function|TYPE
 r_static
 r_inline
@@ -5126,23 +5116,6 @@ c_func
 id|FD_CONFIGURE
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc__ 
-id|output_byte
-c_func
-(paren
-l_int|0x64
-)paren
-suffix:semicolon
-multiline_comment|/* Motor off timeout */
-id|output_byte
-c_func
-(paren
-id|fdc_cfg
-op_or
-l_int|0x0A
-)paren
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -5182,7 +5155,6 @@ l_int|0xf
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|output_byte
 c_func
 (paren
@@ -5262,20 +5234,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*DPRINT(&quot;FIFO enabled&bslash;n&quot;);*/
 )brace
-macro_line|#ifdef __sparc__
-multiline_comment|/* If doing implied seeks, no specify necessary */
-r_if
-c_cond
-(paren
-id|fdc_cfg
-op_amp
-l_int|0x40
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
+macro_line|#ifndef __sparc__
 r_switch
 c_cond
 (paren
@@ -5553,6 +5512,7 @@ id|spec2
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/* fdc_specify */
 multiline_comment|/* Set the FDC&squot;s data transfer rate on behalf of the specified drive.&n; * NOTE: with 82072/82077 FDCs, changing the data rate requires a reissue&n; * of the specify command (i.e. using the fdc_specify function).&n; */
@@ -6739,29 +6699,6 @@ r_return
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef __sparc__
-r_if
-c_cond
-(paren
-id|fdc_cfg
-op_amp
-l_int|0x40
-)paren
-(brace
-multiline_comment|/* Implied seeks being done... */
-id|DRS-&gt;track
-op_assign
-id|raw_cmd-&gt;track
-suffix:semicolon
-id|setup_rw_floppy
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 id|SET_INTR
 c_func
 (paren
@@ -18024,17 +17961,6 @@ comma
 id|MAXTIMEOUT
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc__
-id|fdc_cfg
-op_assign
-(paren
-l_int|0x40
-op_or
-l_int|0x10
-)paren
-suffix:semicolon
-multiline_comment|/* ImplSeek+Polling+FIFO */
-macro_line|#endif
 id|config_types
 c_func
 (paren

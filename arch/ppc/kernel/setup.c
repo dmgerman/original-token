@@ -12,7 +12,17 @@ macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+DECL|macro|SIO_CONFIG_RA
+mdefine_line|#define SIO_CONFIG_RA&t;0x398
+DECL|macro|SIO_CONFIG_RD
+mdefine_line|#define SIO_CONFIG_RD&t;0x399
 macro_line|#include &lt;asm/pgtable.h&gt;
+r_extern
+r_int
+r_int
+op_star
+id|end_of_DRAM
+suffix:semicolon
 r_extern
 id|PTE
 op_star
@@ -33,22 +43,15 @@ id|sda_root
 op_assign
 l_string|&quot;root=/dev/sda1&quot;
 suffix:semicolon
+r_extern
+r_int
+id|root_mountflags
+suffix:semicolon
 DECL|variable|aux_device_present
 r_int
 r_char
 id|aux_device_present
 suffix:semicolon
-DECL|function|get_cpuinfo
-r_int
-id|get_cpuinfo
-c_func
-(paren
-r_char
-op_star
-id|buffer
-)paren
-(brace
-)brace
 multiline_comment|/*&n; * The format of &quot;screen_info&quot; is strange, and due to early&n; * i386-setup code. This is just enough to make the console&n; * code think we&squot;re on a EGA+ colour display.&n; */
 DECL|variable|screen_info
 r_struct
@@ -77,13 +80,21 @@ comma
 multiline_comment|/* orig-video-cols */
 l_int|0
 comma
+multiline_comment|/* unused [short] */
 l_int|0
 comma
+multiline_comment|/* ega_bx */
 l_int|0
 comma
-multiline_comment|/* ega_ax, ega_bx, ega_cx */
+multiline_comment|/* unused [short] */
 l_int|25
+comma
 multiline_comment|/* orig-video-lines */
+l_int|0
+comma
+multiline_comment|/* isVGA */
+l_int|16
+multiline_comment|/* video points */
 )brace
 suffix:semicolon
 DECL|function|bios32_init
@@ -139,7 +150,7 @@ suffix:semicolon
 id|_printk
 c_func
 (paren
-l_string|&quot;Config registers = %x/%x/%x&bslash;n&quot;
+l_string|&quot;Config registers = %x/%x/%x/%x&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -157,6 +168,12 @@ id|inb
 c_func
 (paren
 l_int|0x0802
+)paren
+comma
+id|inb
+c_func
+(paren
+l_int|0x0803
 )paren
 )paren
 suffix:semicolon
@@ -342,20 +359,12 @@ multiline_comment|/* Module not present */
 r_break
 suffix:semicolon
 )brace
-id|_printk
-c_func
-(paren
-l_string|&quot;register total = %08X&bslash;n&quot;
-comma
-id|total
-)paren
-suffix:semicolon
 multiline_comment|/* TEMP */
 id|total
 op_assign
 l_int|0x01000000
 suffix:semicolon
-multiline_comment|/*_cnpause();&t;*/
+multiline_comment|/* _cnpause();&t;*/
 multiline_comment|/* CAUTION!! This can be done more elegantly! */
 r_if
 c_cond
@@ -423,8 +432,9 @@ DECL|variable|size_memory
 r_int
 id|size_memory
 suffix:semicolon
+multiline_comment|/* #define DEFAULT_ROOT_DEVICE 0x0200&t;/* fd0 */
 DECL|macro|DEFAULT_ROOT_DEVICE
-mdefine_line|#define DEFAULT_ROOT_DEVICE 0x0200&t;/* fd0 */
+mdefine_line|#define DEFAULT_ROOT_DEVICE 0x0801&t;/* sda1 */
 DECL|function|setup_arch
 r_void
 id|setup_arch
@@ -456,9 +466,61 @@ id|cmd_line
 (braket
 )braket
 suffix:semicolon
+r_int
+r_char
+id|reg
+suffix:semicolon
+multiline_comment|/* Set up floppy in PS/2 mode */
+id|outb
+c_func
+(paren
+l_int|0x09
+comma
+id|SIO_CONFIG_RA
+)paren
+suffix:semicolon
+id|reg
+op_assign
+id|inb
+c_func
+(paren
+id|SIO_CONFIG_RD
+)paren
+suffix:semicolon
+id|reg
+op_assign
+(paren
+id|reg
+op_amp
+l_int|0x3F
+)paren
+op_or
+l_int|0x40
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|reg
+comma
+id|SIO_CONFIG_RD
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|reg
+comma
+id|SIO_CONFIG_RD
+)paren
+suffix:semicolon
+multiline_comment|/* Have to write twice to change! */
 id|ROOT_DEV
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|DEFAULT_ROOT_DEVICE
+)paren
 suffix:semicolon
 id|aux_device_present
 op_assign
@@ -487,7 +549,7 @@ r_int
 r_int
 op_star
 )paren
-id|Hash
+id|end_of_DRAM
 suffix:semicolon
 id|size_memory
 op_assign
@@ -497,7 +559,6 @@ op_minus
 id|KERNELBASE
 suffix:semicolon
 multiline_comment|/* Relative size of memory */
-multiline_comment|/*&t;_printk(&quot;setup_arch() done!  memory_start = %08X memory_end = %08X&bslash;n&quot;&n;&t;&t;,*memory_start_p,*memory_end_p);*/
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage
@@ -541,9 +602,21 @@ r_void
 r_if
 c_cond
 (paren
+(paren
 id|ROOT_DEV
 op_eq
+id|to_kdev_t
+c_func
+(paren
 id|DEFAULT_ROOT_DEVICE
+)paren
+)paren
+op_logical_and
+(paren
+id|builtin_ramdisk_size
+op_ne
+l_int|0
+)paren
 )paren
 (brace
 id|rd_preloaded_init
@@ -556,5 +629,116 @@ id|builtin_ramdisk_size
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+multiline_comment|/* Not ramdisk - assume root needs to be mounted read only */
+id|root_mountflags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+)brace
+)brace
+DECL|macro|MAJOR
+mdefine_line|#define MAJOR(n) (((n)&amp;0xFF00)&gt;&gt;8)
+DECL|macro|MINOR
+mdefine_line|#define MINOR(n) ((n)&amp;0x00FF)
+r_int
+DECL|function|get_cpuinfo
+id|get_cpuinfo
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_int
+id|pvr
+op_assign
+id|_get_PVR
+c_func
+(paren
+)paren
+suffix:semicolon
+r_char
+op_star
+id|model
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|pvr
+op_rshift
+l_int|16
+)paren
+(brace
+r_case
+l_int|3
+suffix:colon
+id|model
+op_assign
+l_string|&quot;603&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+id|model
+op_assign
+l_string|&quot;604&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|6
+suffix:colon
+id|model
+op_assign
+l_string|&quot;603e&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|model
+op_assign
+l_string|&quot;603ev&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|model
+op_assign
+l_string|&quot;unknown&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_return
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;PowerPC %s rev %d.%d&bslash;n&quot;
+comma
+id|model
+comma
+id|MAJOR
+c_func
+(paren
+id|pvr
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|pvr
+)paren
+)paren
+suffix:semicolon
 )brace
 eof

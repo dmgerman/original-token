@@ -202,6 +202,8 @@ id|int_regs
 )paren
 (brace
 multiline_comment|/* Last stacked signal */
+macro_line|#if 0&t;
+multiline_comment|/* This doesn&squot;t work - it blows away the return address! */
 id|memcpy
 c_func
 (paren
@@ -216,6 +218,30 @@ id|regs
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Don&squot;t mess up &squot;my&squot; stack frame */
+id|memcpy
+c_func
+(paren
+op_amp
+id|regs-&gt;gpr
+comma
+op_amp
+id|int_regs-&gt;gpr
+comma
+r_sizeof
+(paren
+op_star
+id|regs
+)paren
+op_minus
+r_sizeof
+(paren
+id|regs-&gt;_overhead
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
@@ -464,7 +490,7 @@ id|signr
 op_assign
 id|bitno
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 id|current-&gt;signal
 op_and_assign
 op_complement
@@ -762,10 +788,6 @@ id|signr
 op_amp
 l_int|0x7f
 )paren
-suffix:semicolon
-id|current-&gt;flags
-op_or_assign
-id|PF_SIGNALED
 suffix:semicolon
 id|do_exit
 c_func

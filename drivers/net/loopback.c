@@ -268,10 +268,6 @@ id|dev-&gt;hard_start_xmit
 op_assign
 id|loopback_xmit
 suffix:semicolon
-id|dev-&gt;open
-op_assign
-l_int|NULL
-suffix:semicolon
 id|dev-&gt;hard_header
 op_assign
 id|eth_header

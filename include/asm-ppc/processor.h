@@ -164,6 +164,12 @@ r_int
 id|last_pc
 suffix:semicolon
 multiline_comment|/* PC when last entered system */
+DECL|member|user_stack
+r_int
+r_int
+id|user_stack
+suffix:semicolon
+multiline_comment|/* [User] Stack when entered kernel */
 DECL|member|fpr
 r_float
 id|fpr
@@ -172,13 +178,30 @@ l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* Complete floating point set */
+DECL|member|wchan
+r_int
+r_int
+id|wchan
+suffix:semicolon
+multiline_comment|/* Event task is sleeping on */
+DECL|member|regs
+r_int
+r_int
+op_star
+id|regs
+suffix:semicolon
+multiline_comment|/* Pointer to saved register state */
 )brace
 suffix:semicolon
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, {0}, &bslash;&n;&t;0, 0, {0}, &bslash;&n;}
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
-multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame pointer&n; * is the 6th saved long on the kernel stack and that the saved return&n; * address is the first long in the frame.  This all holds provided the&n; * thread blocked through a call to schedule().&n; */
+DECL|macro|alloc_kernel_stack
+mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
+DECL|macro|free_kernel_stack
+mdefine_line|#define free_kernel_stack(page) free_page((page))
+multiline_comment|/*&n; * Return saved PC of a blocked thread. For now, this is the &quot;user&quot; PC&n; */
 DECL|function|thread_saved_pc
 r_static
 r_inline
@@ -193,32 +216,10 @@ op_star
 id|t
 )paren
 (brace
-r_int
-r_int
-id|fp
-suffix:semicolon
-id|fp
-op_assign
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|t-&gt;ksp
-)paren
-(braket
-l_int|6
-)braket
-suffix:semicolon
 r_return
-op_star
 (paren
-r_int
-r_int
-op_star
+id|t-&gt;last_pc
 )paren
-id|fp
 suffix:semicolon
 )brace
 macro_line|#endif

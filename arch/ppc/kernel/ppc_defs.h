@@ -10,11 +10,19 @@ mdefine_line|#define SIGNAL 12
 DECL|macro|KERNEL_STACK_PAGE
 mdefine_line|#define KERNEL_STACK_PAGE 88
 DECL|macro|TSS
-mdefine_line|#define TSS 504
+mdefine_line|#define TSS 528
 DECL|macro|KSP
 mdefine_line|#define KSP 0
 DECL|macro|LAST_PC
 mdefine_line|#define LAST_PC 72
+DECL|macro|USER_STACK
+mdefine_line|#define USER_STACK 76
+DECL|macro|PT_REGS
+mdefine_line|#define PT_REGS 340
+DECL|macro|PF_TRACESYS
+mdefine_line|#define PF_TRACESYS 32
+DECL|macro|TASK_FLAGS
+mdefine_line|#define TASK_FLAGS 20
 DECL|macro|MMU_SEG0
 mdefine_line|#define MMU_SEG0 8
 DECL|macro|MMU_SEG1

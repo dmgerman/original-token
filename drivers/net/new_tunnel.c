@@ -12,7 +12,6 @@ mdefine_line|#define tunnel_hlen&t;sizeof(struct iphdr)
 multiline_comment|/*&n; *&t;Okay, this needs to be high enough that we can fit a &quot;standard&quot;&n; *&t;ethernet header and an IP tunnel header into the outgoing packet.&n; *&t;[36 bytes]&n; */
 DECL|macro|TUNL_HLEN
 mdefine_line|#define TUNL_HLEN&t;(((ETH_HLEN+15)&amp;~15)+tunnel_hlen)
-macro_line|#ifdef MODULE
 DECL|function|tunnel_open
 r_static
 r_int
@@ -49,7 +48,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef TUNNEL_DEBUG
 DECL|function|print_ip
 r_void
@@ -972,7 +970,6 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Add our tunnel functions to the device */
-macro_line|#ifdef MODULE
 id|dev-&gt;open
 op_assign
 id|tunnel_open
@@ -981,7 +978,6 @@ id|dev-&gt;stop
 op_assign
 id|tunnel_close
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;hard_start_xmit
 op_assign
 id|tunnel_xmit

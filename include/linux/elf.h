@@ -81,6 +81,8 @@ DECL|macro|EM_486
 mdefine_line|#define EM_486   6   /* Perhaps disused */
 DECL|macro|EM_860
 mdefine_line|#define EM_860   7
+DECL|macro|EM_PPC
+mdefine_line|#define EM_PPC   20
 multiline_comment|/* This is the info that is needed to parse the dynamic section of the file */
 DECL|macro|DT_NULL
 mdefine_line|#define DT_NULL&t;&t;0

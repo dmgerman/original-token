@@ -3685,7 +3685,7 @@ l_string|&quot;: transfer timeout.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * We don&squot;t report about !stuffp-&gt;introk, sice this is&n;&t;&t;&t; * allready done in the interrupt routine.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * We don&squot;t report about !stuffp-&gt;introk, since this is&n;&t;&t;&t; * already done in the interrupt routine.&n;&t;&t;&t; */
 id|stuffp-&gt;busy
 op_assign
 l_int|0
