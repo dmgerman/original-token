@@ -214,7 +214,7 @@ suffix:semicolon
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack,&bslash;&n;&t;(long *)swapper_pg_dir, {0}, &bslash;&n;&t;0, 0, {0}, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;KERNEL_DS, 0, 0 &bslash;&n;}
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 multiline_comment|/* Free all resources held by a thread. */
 r_extern
 r_void

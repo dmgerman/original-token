@@ -133,7 +133,7 @@ r_void
 r_int
 id|cpu
 op_assign
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren

@@ -1371,6 +1371,21 @@ id|sigaction
 op_star
 id|sa
 suffix:semicolon
+multiline_comment|/*&n;&t; *    We want the common case to go fast, which&n;&t; * is why we may in certain cases get here from&n;&t; * kernel mode. Just return without doing anything&n;&t; * if so.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|regs-&gt;xcs
+op_amp
+l_int|3
+)paren
+op_ne
+l_int|3
+)paren
+r_return
+l_int|1
+suffix:semicolon
 id|mask
 op_assign
 op_complement

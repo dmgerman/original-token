@@ -234,7 +234,7 @@ DECL|macro|TOFF_MFLAGS
 mdefine_line|#define TOFF_MFLAGS&t;&t;(TOFF_PG_DIR+4)
 macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process&bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, sizeof(init_kernel_stack) + (unsigned long)init_kernel_stack - 8, &bslash;&n;&t;(unsigned long) swapper_pg_dir - PT_OFFSET, 0 &bslash;&n;}
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */

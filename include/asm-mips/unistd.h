@@ -2222,7 +2222,7 @@ DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl&t;&t;&t;(__NR_Linux + 158)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;157
+mdefine_line|#define __NR_Linux_syscalls&t;&t;158
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

@@ -851,10 +851,12 @@ id|interp_elf_ex-&gt;e_phnum
 OG
 id|PAGE_SIZE
 )paren
+(brace
 r_return
 op_complement
 l_int|0UL
 suffix:semicolon
+)brace
 id|elf_phdata
 op_assign
 (paren
@@ -882,10 +884,12 @@ c_cond
 op_logical_neg
 id|elf_phdata
 )paren
+(brace
 r_return
 op_complement
 l_int|0UL
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * If the size of this structure has changed, then punt, since&n;&t; * we will be doing the wrong thing.&n;&t; */
 r_if
 c_cond
@@ -1169,6 +1173,14 @@ id|kfree
 c_func
 (paren
 id|elf_phdata
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%d&quot;
+comma
+id|error
 )paren
 suffix:semicolon
 r_return
@@ -1556,10 +1568,12 @@ id|retval
 OL
 l_int|0
 )paren
+(brace
 r_return
 op_complement
 l_int|0UL
 suffix:semicolon
+)brace
 r_return
 id|elf_entry
 suffix:semicolon

@@ -104,8 +104,6 @@ mdefine_line|#define MS_MGC_MSK 0xffff0000&t;/* magic flag number mask */
 multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; */
 DECL|macro|IS_RDONLY
 mdefine_line|#define IS_RDONLY(inode) (((inode)-&gt;i_sb) &amp;&amp; ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY))
-DECL|macro|DO_UPDATE_ATIME
-mdefine_line|#define DO_UPDATE_ATIME(inode) (!((inode)-&gt;i_flags &amp; MS_NOATIME) &amp;&amp; !IS_RDONLY(inode))
 DECL|macro|IS_NOSUID
 mdefine_line|#define IS_NOSUID(inode) ((inode)-&gt;i_flags &amp; MS_NOSUID)
 DECL|macro|IS_NODEV
@@ -122,6 +120,10 @@ DECL|macro|IS_APPEND
 mdefine_line|#define IS_APPEND(inode) ((inode)-&gt;i_flags &amp; S_APPEND)
 DECL|macro|IS_IMMUTABLE
 mdefine_line|#define IS_IMMUTABLE(inode) ((inode)-&gt;i_flags &amp; S_IMMUTABLE)
+DECL|macro|IS_NOATIME
+mdefine_line|#define IS_NOATIME(inode) ((inode)-&gt;i_flags &amp; MS_NOATIME)
+DECL|macro|DO_UPDATE_ATIME
+mdefine_line|#define DO_UPDATE_ATIME(inode) (!IS_NOATIME(inode) &amp;&amp; !IS_RDONLY(inode))
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET   _IO(0x12,93)&t;/* set device read-only (0 = read-write) */
@@ -164,18 +166,11 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_void
 id|file_table_init
 c_func
 (paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -541,6 +536,8 @@ DECL|macro|ATTR_MTIME_SET
 mdefine_line|#define ATTR_MTIME_SET&t;256
 DECL|macro|ATTR_FORCE
 mdefine_line|#define ATTR_FORCE&t;512&t;/* Not a change, but a change it */
+DECL|macro|ATTR_ATTR_FLAG
+mdefine_line|#define ATTR_ATTR_FLAG&t;1024
 multiline_comment|/*&n; * This is the Inode Attributes structure, used for notify_change().  It&n; * uses the above definitions as flags, to know which values have changed.&n; * Also, in this manner, a Filesystem can look at only the values it cares&n; * about.  Basically, these are the attributes that the VFS layer can&n; * request to change from the FS layer.&n; *&n; * Derek Atkins &lt;warlord@MIT.EDU&gt; 94-10-20&n; */
 DECL|struct|iattr
 r_struct
@@ -579,8 +576,22 @@ DECL|member|ia_ctime
 id|time_t
 id|ia_ctime
 suffix:semicolon
+DECL|member|ia_attr_flags
+r_int
+r_int
+id|ia_attr_flags
+suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * This is the inode attributes flag definitions&n; */
+DECL|macro|ATTR_FLAG_SYNCRONOUS
+mdefine_line|#define ATTR_FLAG_SYNCRONOUS&t;1 &t;/* Syncronous write */
+DECL|macro|ATTR_FLAG_NOATIME
+mdefine_line|#define ATTR_FLAG_NOATIME&t;2 &t;/* Don&squot;t update atime */
+DECL|macro|ATTR_FLAG_APPEND
+mdefine_line|#define ATTR_FLAG_APPEND&t;4 &t;/* Append-only file */
+DECL|macro|ATTR_FLAG_IMMUTABLE
+mdefine_line|#define ATTR_FLAG_IMMUTABLE&t;8 &t;/* Immutable file */
 macro_line|#include &lt;linux/quota.h&gt;
 DECL|struct|inode
 r_struct
@@ -773,20 +784,14 @@ r_int
 r_char
 id|i_sock
 suffix:semicolon
-DECL|member|i_seek
-r_int
-r_char
-id|i_seek
-suffix:semicolon
-DECL|member|i_update
-r_int
-r_char
-id|i_update
-suffix:semicolon
 DECL|member|i_writecount
 r_int
-r_int
 id|i_writecount
+suffix:semicolon
+DECL|member|i_attr_flags
+r_int
+r_int
+id|i_attr_flags
 suffix:semicolon
 r_union
 (brace
@@ -870,6 +875,29 @@ DECL|struct|file
 r_struct
 id|file
 (brace
+DECL|member|f_next
+DECL|member|f_pprev
+r_struct
+id|file
+op_star
+id|f_next
+comma
+op_star
+op_star
+id|f_pprev
+suffix:semicolon
+DECL|member|f_inode
+r_struct
+id|inode
+op_star
+id|f_inode
+suffix:semicolon
+DECL|member|f_op
+r_struct
+id|file_operations
+op_star
+id|f_op
+suffix:semicolon
 DECL|member|f_mode
 id|mode_t
 id|f_mode
@@ -878,15 +906,13 @@ DECL|member|f_pos
 id|loff_t
 id|f_pos
 suffix:semicolon
+DECL|member|f_count
 DECL|member|f_flags
 r_int
 r_int
-id|f_flags
-suffix:semicolon
-DECL|member|f_count
-r_int
-r_int
 id|f_count
+comma
+id|f_flags
 suffix:semicolon
 DECL|member|f_reada
 DECL|member|f_ramax
@@ -905,44 +931,22 @@ id|f_ralen
 comma
 id|f_rawin
 suffix:semicolon
-DECL|member|f_next
-DECL|member|f_prev
-r_struct
-id|file
-op_star
-id|f_next
-comma
-op_star
-id|f_prev
-suffix:semicolon
+multiline_comment|/* pid or -pgrp where SIGIO should be sent */
 DECL|member|f_owner
 r_int
 id|f_owner
-suffix:semicolon
-multiline_comment|/* pid or -pgrp where SIGIO should be sent */
-DECL|member|f_inode
-r_struct
-id|inode
-op_star
-id|f_inode
-suffix:semicolon
-DECL|member|f_op
-r_struct
-id|file_operations
-op_star
-id|f_op
 suffix:semicolon
 DECL|member|f_version
 r_int
 r_int
 id|f_version
 suffix:semicolon
+multiline_comment|/* needed for tty driver, and maybe others */
 DECL|member|private_data
 r_void
 op_star
 id|private_data
 suffix:semicolon
-multiline_comment|/* needed for tty driver, and maybe others */
 )brace
 suffix:semicolon
 DECL|macro|FL_POSIX
@@ -2805,7 +2809,7 @@ r_extern
 r_struct
 id|file
 op_star
-id|first_file
+id|inuse_filps
 suffix:semicolon
 r_extern
 r_struct

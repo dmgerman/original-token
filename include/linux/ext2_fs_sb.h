@@ -188,6 +188,18 @@ DECL|member|s_first_ino
 r_int
 id|s_first_ino
 suffix:semicolon
+DECL|member|s_feature_compat
+r_int
+id|s_feature_compat
+suffix:semicolon
+DECL|member|s_feature_incompat
+r_int
+id|s_feature_incompat
+suffix:semicolon
+DECL|member|s_feature_ro_compat
+r_int
+id|s_feature_ro_compat
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_EXT2_FS_SB */

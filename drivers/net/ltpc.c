@@ -5186,6 +5186,7 @@ c_func
 op_amp
 id|ltpc_timer
 )paren
+suffix:semicolon
 r_while
 c_loop
 (paren

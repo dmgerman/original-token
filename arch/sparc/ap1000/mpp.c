@@ -204,6 +204,7 @@ r_return
 op_minus
 l_int|1000
 suffix:semicolon
+multiline_comment|/* XXX task[] fixme */
 r_if
 c_cond
 (paren

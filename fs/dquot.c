@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -5090,8 +5091,11 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-id|filp-&gt;f_count
-op_decrement
+id|put_filp
+c_func
+(paren
+id|filp
+)paren
 suffix:semicolon
 )brace
 r_else

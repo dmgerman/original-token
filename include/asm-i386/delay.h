@@ -71,7 +71,7 @@ l_string|&quot;0&quot;
 (paren
 id|cpu_data
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.38 1997/04/14 17:05:00 jj Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.39 1997/04/23 07:45:26 ecd Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3389,7 +3389,7 @@ c_cond
 (paren
 id|i
 op_ne
-l_int|1
+l_int|5
 )paren
 id|info-&gt;tty-&gt;termios-&gt;c_cflag
 op_and_assign
@@ -3398,8 +3398,8 @@ id|CBAUDEX
 suffix:semicolon
 r_else
 id|i
-op_add_assign
-l_int|15
+op_assign
+l_int|16
 suffix:semicolon
 )brace
 r_if
@@ -7921,7 +7921,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.38 $&quot;
+l_string|&quot;$Revision: 1.39 $&quot;
 suffix:semicolon
 r_char
 op_star

@@ -1142,4 +1142,11 @@ id|sys_munlockall
 comma
 l_int|0
 )paren
+id|SYS
+c_func
+(paren
+id|sys_nfsservctl
+comma
+l_int|3
+)paren
 eof

@@ -2901,8 +2901,11 @@ id|inode
 suffix:semicolon
 id|cleanup_file
 suffix:colon
-id|f-&gt;f_count
-op_decrement
+id|put_filp
+c_func
+(paren
+id|f
+)paren
 suffix:semicolon
 r_return
 id|error

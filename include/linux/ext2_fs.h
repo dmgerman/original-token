@@ -253,6 +253,8 @@ DECL|macro|EXT2_APPEND_FL
 mdefine_line|#define EXT2_APPEND_FL&t;&t;&t;0x00000020 /* writes to file may only append */
 DECL|macro|EXT2_NODUMP_FL
 mdefine_line|#define EXT2_NODUMP_FL&t;&t;&t;0x00000040 /* do not dump file */
+DECL|macro|EXT2_NOATIME_FL
+mdefine_line|#define EXT2_NOATIME_FL&t;&t;&t;0x00000080 /* do not update atime */
 DECL|macro|EXT2_RESERVED_FL
 mdefine_line|#define EXT2_RESERVED_FL&t;&t;0x80000000 /* reserved for ext2 lib */
 multiline_comment|/*&n; * ioctl commands&n; */
@@ -723,11 +725,35 @@ id|__u32
 id|s_feature_ro_compat
 suffix:semicolon
 multiline_comment|/* readonly-compatible feature set */
+DECL|member|s_uuid
+id|__u8
+id|s_uuid
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* 128-bit uuid for volume */
+DECL|member|s_volume_name
+r_char
+id|s_volume_name
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* volume name */
+DECL|member|s_last_mounted
+r_char
+id|s_last_mounted
+(braket
+l_int|64
+)braket
+suffix:semicolon
+multiline_comment|/* directory where last mounted */
 DECL|member|s_reserved
 id|__u32
 id|s_reserved
 (braket
-l_int|230
+l_int|206
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
@@ -755,6 +781,15 @@ DECL|macro|EXT2_MAX_SUPP_REV
 mdefine_line|#define EXT2_MAX_SUPP_REV&t;EXT2_DYNAMIC_REV
 DECL|macro|EXT2_GOOD_OLD_INODE_SIZE
 mdefine_line|#define EXT2_GOOD_OLD_INODE_SIZE 128
+multiline_comment|/*&n; * Feature set definitions&n; */
+DECL|macro|EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
+mdefine_line|#define EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER&t;0x0001
+DECL|macro|EXT2_FEATURE_COMPAT_SUPP
+mdefine_line|#define EXT2_FEATURE_COMPAT_SUPP&t;0
+DECL|macro|EXT2_FEATURE_INCOMPAT_SUPP
+mdefine_line|#define EXT2_FEATURE_INCOMPAT_SUPP&t;0
+DECL|macro|EXT2_FEATURE_RO_COMPAT_SUPP
+mdefine_line|#define EXT2_FEATURE_RO_COMPAT_SUPP&t;EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
 multiline_comment|/*&n; * Default values for user and/or group using reserved blocks&n; */
 DECL|macro|EXT2_DEF_RESUID
 mdefine_line|#define&t;EXT2_DEF_RESUID&t;&t;0
@@ -799,13 +834,6 @@ DECL|macro|EXT2_DIR_ROUND
 mdefine_line|#define EXT2_DIR_ROUND &t;&t;&t;(EXT2_DIR_PAD - 1)
 DECL|macro|EXT2_DIR_REC_LEN
 mdefine_line|#define EXT2_DIR_REC_LEN(name_len)&t;(((name_len) + 8 + EXT2_DIR_ROUND) &amp; &bslash;&n;&t;&t;&t;&t;&t; ~EXT2_DIR_ROUND)
-multiline_comment|/*&n; * Feature set definitions --- none are defined as of now&n; */
-DECL|macro|EXT2_FEATURE_COMPAT_SUPP
-mdefine_line|#define EXT2_FEATURE_COMPAT_SUPP&t;0
-DECL|macro|EXT2_FEATURE_INCOMPAT_SUPP
-mdefine_line|#define EXT2_FEATURE_INCOMPAT_SUPP&t;0
-DECL|macro|EXT2_FEATURE_RO_COMPAT_SUPP
-mdefine_line|#define EXT2_FEATURE_RO_COMPAT_SUPP&t;0
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Function prototypes&n; */
 multiline_comment|/*&n; * Ok, these declarations are also in &lt;linux/kernel.h&gt; but none of the&n; * ext2 source programs needs to include it so they are duplicated here.&n; */

@@ -409,6 +409,13 @@ id|col
 suffix:semicolon
 )brace
 )brace
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 id|for_each_task
 c_func
 (paren
@@ -455,6 +462,13 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -603,7 +603,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
+l_string|&quot;%s: Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
+comma
+id|current-&gt;comm
 comma
 id|regs-&gt;eip
 comma

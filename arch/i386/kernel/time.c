@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -952,7 +953,7 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * In the SMP case we use the local APIC timer interrupt to do the&n; * profiling.&n; */
+multiline_comment|/*&n; * In the SMP case we use the local APIC timer interrupt to do the&n; * profiling, except when we simulate SMP mode on a uniprocessor&n; * system, in that case we have to call the local interrupt handler.&n; */
 macro_line|#ifndef __SMP__
 r_if
 c_cond
@@ -968,6 +969,19 @@ id|x86_do_profile
 c_func
 (paren
 id|regs-&gt;eip
+)paren
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smp_found_config
+)paren
+id|smp_local_timer_interrupt
+c_func
+(paren
+id|regs
 )paren
 suffix:semicolon
 macro_line|#endif

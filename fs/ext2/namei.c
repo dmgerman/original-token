@@ -3073,6 +3073,9 @@ id|inode-&gt;i_size
 r_if
 c_cond
 (paren
+op_logical_neg
+id|bh
+op_logical_or
 (paren
 r_void
 op_star

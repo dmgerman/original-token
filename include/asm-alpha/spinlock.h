@@ -56,13 +56,13 @@ mdefine_line|#define write_lock_irq(lock)&t;cli()
 DECL|macro|write_unlock_irq
 mdefine_line|#define write_unlock_irq(lock)&t;sti()
 DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
+mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
 DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
+mdefine_line|#define read_unlock_irqrestore(lock, flags)&t;setipl(flags)
 DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
+mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
 DECL|macro|write_unlock_irqrestore
-mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
+mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;setipl(flags)
 macro_line|#else
 multiline_comment|/* Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions. They have a cost.&n; */
 r_typedef

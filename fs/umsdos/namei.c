@@ -834,6 +834,10 @@ suffix:semicolon
 )brace
 DECL|macro|chkstk
 mdefine_line|#define chkstk() &bslash;&n;&t;if (STACK_MAGIC != *(unsigned long *)current-&gt;kernel_stack_page){&bslash;&n;&t;&t;printk(KERN_ALERT &quot;UMSDOS: %s magic %x != %lx ligne %d&bslash;n&quot; &bslash;&n;&t;&t;, current-&gt;comm,STACK_MAGIC &bslash;&n;&t;&t;,*(unsigned long *)current-&gt;kernel_stack_page &bslash;&n;&t;&t;,__LINE__); &bslash;&n;&t;}
+DECL|macro|chkstk
+macro_line|#undef chkstk
+DECL|macro|chkstk
+mdefine_line|#define chkstk() do { } while (0)
 multiline_comment|/*&n;&t;Rename a file (move) in the file system.&n;*/
 DECL|function|umsdos_rename_f
 r_static

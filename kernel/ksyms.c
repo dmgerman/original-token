@@ -511,6 +511,13 @@ c_func
 id|close_fp
 )paren
 suffix:semicolon
+DECL|variable|insert_file_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|insert_file_free
+)paren
+suffix:semicolon
 DECL|variable|check_disk_change
 id|EXPORT_SYMBOL
 c_func

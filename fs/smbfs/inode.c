@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -935,8 +936,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 id|filp-&gt;f_count
-op_add_assign
-l_int|1
+op_increment
 suffix:semicolon
 id|lock_super
 c_func
@@ -1253,9 +1253,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|filp-&gt;f_count
-op_sub_assign
-l_int|1
+id|put_filp
+c_func
+(paren
+id|filp
+)paren
 suffix:semicolon
 id|smb_dont_catch_keepalive
 c_func

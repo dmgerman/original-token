@@ -1111,6 +1111,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+multiline_comment|/* I nearly added put_filp() call here, but this filp&n;&t;&t;&t; * is really on callers stack frame. -DaveM&n;&t;&t;&t; */
 id|filp-&gt;f_count
 op_decrement
 suffix:semicolon

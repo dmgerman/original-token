@@ -496,15 +496,6 @@ suffix:semicolon
 r_extern
 r_int
 r_char
-op_star
-id|kernel_stacks
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-r_extern
-r_int
-r_char
 id|boot_cpu_id
 suffix:semicolon
 r_extern
@@ -611,6 +602,24 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Process an NMI */
+r_extern
+r_void
+id|smp_local_timer_interrupt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|setup_APIC_clock
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;General functions that each host system must provide.&n; */
 r_extern
 r_void
@@ -719,11 +728,13 @@ id|reg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This function is needed by all SMP systems. It must _always_ be valid from the initial&n; *&t;startup. This may require magic on some systems (in the i86 case we dig out the boot &n; *&t;cpu id from the config and set up a fake apic_reg pointer so that before we activate&n; *&t;the apic we get the right answer). Hopefully other processors are more sensible 8)&n; */
-DECL|function|smp_processor_id
+DECL|macro|smp_processor_id
+mdefine_line|#define smp_processor_id() (current-&gt;processor)
+DECL|function|hard_smp_processor_id
 r_extern
 id|__inline
 r_int
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 r_void

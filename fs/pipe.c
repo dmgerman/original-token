@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Define this if you want SunOS compatibility wrt braindead&n; * select behaviour on FIFO&squot;s.&n; */
@@ -338,10 +339,25 @@ c_cond
 id|read
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|DO_UPDATE_ATIME
+c_func
+(paren
+id|inode
+)paren
+)paren
+(brace
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_return
 id|read
 suffix:semicolon
@@ -695,6 +711,10 @@ op_assign
 id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
+suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
 suffix:semicolon
 r_return
 id|written
@@ -1919,13 +1939,19 @@ id|inode
 suffix:semicolon
 id|close_f12
 suffix:colon
-id|f2-&gt;f_count
-op_decrement
+id|put_filp
+c_func
+(paren
+id|f2
+)paren
 suffix:semicolon
 id|close_f1
 suffix:colon
-id|f1-&gt;f_count
-op_decrement
+id|put_filp
+c_func
+(paren
+id|f1
+)paren
 suffix:semicolon
 id|no_files
 suffix:colon

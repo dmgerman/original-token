@@ -437,8 +437,49 @@ mdefine_line|#define read_cr4&t;&quot;.byte 0x0f,0x20,0xe0&quot;
 DECL|macro|write_cr4
 mdefine_line|#define write_cr4&t;&quot;.byte 0x0f,0x22,0xe0&quot;
 macro_line|#endif
-DECL|macro|set_in_cr4
-mdefine_line|#define set_in_cr4(x) &bslash;&n;__asm__(read_cr4 &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orl %0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;write_cr4 &bslash;&n;&t;: : &quot;i&quot; (x) &bslash;&n;&t;:&quot;ax&quot;);
+multiline_comment|/*&n; * Save the cr4 feature set we&squot;re using (ie&n; * Pentium 4MB enable and PPro Global page&n; * enable), so that any CPU&squot;s that boot up&n; * after us can get the correct flags.&n; */
+DECL|variable|__initdata
+r_int
+r_int
+id|mmu_cr4_features
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|set_in_cr4
+r_static
+r_inline
+r_void
+id|set_in_cr4
+c_func
+(paren
+r_int
+r_int
+id|mask
+)paren
+(brace
+id|mmu_cr4_features
+op_or_assign
+id|mask
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+id|read_cr4
+l_string|&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;orl %0,%%eax&bslash;n&bslash;t&quot;
+id|write_cr4
+suffix:colon
+suffix:colon
+l_string|&quot;irg&quot;
+(paren
+id|mask
+)paren
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * paging_init() sets up the page tables - note that the first 4MB are&n; * already mapped by head.S.&n; *&n; * This routines also unmaps the page at virtual kernel address 0, so&n; * that we can trap those pesky NULL-reference errors in the kernel.&n; */
 DECL|function|__initfunc
 id|__initfunc

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -15,7 +16,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -388,8 +388,11 @@ c_cond
 id|error
 )paren
 (brace
-id|f-&gt;f_count
-op_decrement
+id|put_filp
+c_func
+(paren
+id|f
+)paren
 suffix:semicolon
 id|put_unused_fd
 c_func
@@ -1420,16 +1423,12 @@ id|mm_struct
 op_star
 id|mm
 op_assign
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-op_star
-id|mm
-)paren
+id|mm_cachep
 comma
-id|GFP_KERNEL
+id|SLAB_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -1472,9 +1471,7 @@ l_int|1
 suffix:semicolon
 id|mm-&gt;mmap
 op_assign
-l_int|NULL
-suffix:semicolon
-id|mm-&gt;mmap_avl
+id|mm-&gt;mmap_cache
 op_assign
 l_int|NULL
 suffix:semicolon

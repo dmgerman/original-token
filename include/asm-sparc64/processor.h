@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.21 1997/04/14 17:05:18 jj Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.23 1997/04/26 22:52:34 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -173,7 +173,7 @@ mdefine_line|#define SPARC_FLAG_NEWSIGNALS   0x4    /* task wants new-style sign
 DECL|macro|SPARC_FLAG_32BIT
 mdefine_line|#define SPARC_FLAG_32BIT        0x8    /* task is older 32-bit binary */
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffff80000000000, 0xfffff80001000000, &bslash;&n;&t;&t;    PAGE_SHARED , VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffff80000000000, 0xfffff80001000000, &bslash;&n;&t;&t;    PAGE_SHARED , VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },&t;&bslash;&n;/* FPU status */ &t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, kpc, wstate, cwp */ &t;&t;&t;&t;&t;&t;&bslash;&n;   0,   0,   0,&t;     0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&t;&bslash;&n;/* w_saved */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* flags */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   SPARC_FLAG_KTHREAD,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* ex,     sstk_info, current_ds, */&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, }, USER_DS,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* new_signal, kregs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  0,           0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* core_exec */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifndef __ASSEMBLY__

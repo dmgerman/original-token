@@ -491,10 +491,6 @@ id|file-&gt;f_flags
 op_assign
 id|O_RDWR
 suffix:semicolon
-id|file-&gt;f_count
-op_assign
-l_int|1
-suffix:semicolon
 id|file-&gt;f_inode
 op_assign
 id|inode

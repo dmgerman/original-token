@@ -363,7 +363,7 @@ c_cond
 (paren
 id|cpu_data
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -973,19 +973,13 @@ l_int|0
 op_assign
 l_int|7
 suffix:semicolon
-multiline_comment|/* Use `swapper_pg_dir&squot; as our page directory.  Don&squot;t bother with&n;&t;   `SET_PAGE_DIR&squot; because interrupts are disabled and we&squot;re rebooting.&n;&t;   This instruction flushes the TLB. */
-id|__asm__
-id|__volatile__
+multiline_comment|/*&n;&t; * Use `swapper_pg_dir&squot; as our page directory.  We bother with&n;&t; * `SET_PAGE_DIR&squot; because although might be rebooting, but if we change&n;&t; * the way we set root page dir in the future, then we wont break a&n;&t; * seldom used feature ;)&n;&t; */
+id|SET_PAGE_DIR
+c_func
 (paren
-l_string|&quot;movl %0,%%cr3&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
-(paren
+id|current
+comma
 id|swapper_pg_dir
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Write 0x1234 to absolute memory location 0x472.  The BIOS reads&n;&t;   this on booting to tell it to &quot;Bypass memory test (also warm&n;&t;   boot)&quot;.  This seems like a fairly standard thing that gets set by&n;&t;   REBOOT.COM programs, and the previous reset routine did this&n;&t;   too. */
@@ -1478,6 +1472,22 @@ id|pt_regs
 op_star
 id|childregs
 suffix:semicolon
+id|p-&gt;tss.tr
+op_assign
+id|_TSS
+c_func
+(paren
+id|nr
+)paren
+suffix:semicolon
+id|p-&gt;tss.ldt
+op_assign
+id|_LDT
+c_func
+(paren
+id|nr
+)paren
+suffix:semicolon
 id|p-&gt;tss.es
 op_assign
 id|KERNEL_DS
@@ -1508,17 +1518,15 @@ id|KERNEL_DS
 suffix:semicolon
 id|p-&gt;tss.esp0
 op_assign
-id|p-&gt;kernel_stack_page
-op_plus
+l_int|2
+op_star
 id|PAGE_SIZE
-suffix:semicolon
-id|p-&gt;tss.tr
-op_assign
-id|_TSS
-c_func
+op_plus
 (paren
-id|nr
+r_int
+r_int
 )paren
+id|p
 suffix:semicolon
 id|childregs
 op_assign
@@ -1529,9 +1537,7 @@ id|pt_regs
 op_star
 )paren
 (paren
-id|p-&gt;kernel_stack_page
-op_plus
-id|PAGE_SIZE
+id|p-&gt;tss.esp0
 )paren
 )paren
 op_minus
@@ -1603,14 +1609,6 @@ suffix:semicolon
 id|p-&gt;tss.back_link
 op_assign
 l_int|0
-suffix:semicolon
-id|p-&gt;tss.ldt
-op_assign
-id|_LDT
-c_func
-(paren
-id|nr
-)paren
 suffix:semicolon
 r_if
 c_cond

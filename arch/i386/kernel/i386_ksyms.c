@@ -144,6 +144,13 @@ c_func
 id|csum_partial_copy
 )paren
 suffix:semicolon
+DECL|variable|synchronize_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|synchronize_irq
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|variable|apic_reg
 id|EXPORT_SYMBOL
@@ -161,14 +168,14 @@ id|cpu_data
 )paren
 suffix:semicolon
 DECL|variable|kernel_flag
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|kernel_flag
 )paren
 suffix:semicolon
 DECL|variable|active_kernel_processor
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|active_kernel_processor

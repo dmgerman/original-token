@@ -603,6 +603,7 @@ id|stack_level
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -628,6 +629,7 @@ id|lineno
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|variable|debug
 r_static

@@ -216,6 +216,11 @@ id|kmem_cache_t
 op_star
 id|vm_area_cachep
 suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|mm_cachep
+suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_SLAB_H */
 eof
