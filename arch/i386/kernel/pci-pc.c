@@ -4580,8 +4580,6 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  In case BIOS forgets to tell us about IRQ, we try to look it up in the routing&n; *  table, but unfortunately we have to know the interrupt router chip.&n; */
-DECL|macro|ALLOWED_IRQ_MASK
-mdefine_line|#define ALLOWED_IRQ_MASK 0x0ff8
 DECL|function|pcibios_lookup_irq
 r_static
 r_char
@@ -4818,15 +4816,13 @@ c_loop
 (paren
 id|newirq
 op_assign
-l_int|16
+l_int|13
 suffix:semicolon
 id|newirq
 op_logical_and
 op_logical_neg
 (paren
 id|mask
-op_amp
-id|ALLOWED_IRQ_MASK
 op_amp
 (paren
 l_int|1
@@ -5313,22 +5309,12 @@ c_cond
 (paren
 id|dev-&gt;irq
 op_ge
-l_int|16
+id|NR_IRQS
 )paren
-(brace
-id|DBG
-c_func
-(paren
-l_string|&quot;%s: invalid IRQ %d&bslash;n&quot;
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
 id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

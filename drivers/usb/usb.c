@@ -7077,14 +7077,6 @@ l_int|0
 r_goto
 id|errout
 suffix:semicolon
-id|info
-c_func
-(paren
-l_string|&quot;actual string desc. length = %d&quot;
-comma
-id|err
-)paren
-suffix:semicolon
 id|size
 op_decrement
 suffix:semicolon
@@ -7557,6 +7549,18 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|info
+c_func
+(paren
+l_string|&quot;new device strings: Mfr=%d, Product=%d, SerialNumber=%d&quot;
+comma
+id|dev-&gt;descriptor.iManufacturer
+comma
+id|dev-&gt;descriptor.iProduct
+comma
+id|dev-&gt;descriptor.iSerialNumber
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
