@@ -5,18 +5,6 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;signal.h&gt;
 macro_line|#include &lt;sys/wait.h&gt;
 macro_line|#include &lt;errno.h&gt;
-r_int
-id|send_sig
-(paren
-r_int
-comma
-r_struct
-id|task_struct
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|function|sys_sgetmask
 r_int
 id|sys_sgetmask

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/kernel/chr_drv/pty.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; *&t;pty.c&n; *&n; * This module implements the pty functions&n; *&t;void mpty_write(struct tty_struct * queue);&n; *&t;void spty_write(struct tty_struct * queue);&n; */
-macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|function|pty_copy
@@ -22,7 +22,7 @@ op_star
 id|to
 )paren
 (brace
-r_char
+r_int
 id|c
 suffix:semicolon
 r_while
@@ -69,12 +69,12 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|c
+op_assign
 id|GETCH
 c_func
 (paren
 id|from-&gt;write_q
-comma
-id|c
 )paren
 suffix:semicolon
 id|PUTCH

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/kernel/traps.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;. Currently mostly a debugging-aid, will be extended&n; * to mainly kill the offending process (probably by giving it a signal,&n; * but possibly by killing it outright if necessary).&n; */
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -159,19 +159,6 @@ id|alignment_check
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_int
-id|send_sig
-c_func
-(paren
-r_int
-comma
-r_struct
-id|task_struct
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 DECL|function|die
@@ -438,13 +425,37 @@ c_func
 l_string|&quot;&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+l_int|0xffff
+op_amp
+id|esp
+(braket
+l_int|1
+)braket
+)paren
+op_eq
+l_int|0xf
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGSEGV
+comma
+id|current
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_else
 id|do_exit
 c_func
 (paren
-l_int|11
+id|SIGSEGV
 )paren
 suffix:semicolon
-multiline_comment|/* play segment exception */
 )brace
 DECL|function|do_double_fault
 r_void

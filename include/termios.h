@@ -61,6 +61,8 @@ DECL|macro|TIOCINQ
 mdefine_line|#define TIOCINQ&t;&t;FIONREAD
 DECL|macro|TIOCLINUX
 mdefine_line|#define TIOCLINUX&t;0x541C
+DECL|macro|TIOCCONS
+mdefine_line|#define TIOCCONS&t;0x541D
 DECL|struct|winsize
 r_struct
 id|winsize

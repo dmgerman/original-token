@@ -9,6 +9,9 @@ DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;0x04000000
 DECL|macro|LIBRARY_SIZE
 mdefine_line|#define LIBRARY_SIZE&t;0x00400000
+multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
+DECL|macro|IO_BITMAP_SIZE
+mdefine_line|#define IO_BITMAP_SIZE&t;32
 macro_line|#if (TASK_SIZE &amp; 0x3fffff)
 macro_line|#error &quot;TASK_SIZE must be multiple of 4M&quot;
 macro_line|#endif
@@ -55,6 +58,8 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
+DECL|macro|MAX_SHARED_LIBS
+mdefine_line|#define MAX_SHARED_LIBS 6
 r_extern
 r_int
 id|copy_page_tables
@@ -121,22 +126,6 @@ op_star
 id|str
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|tty_write
-c_func
-(paren
-r_int
-id|minor
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
 DECL|typedef|fn_ptr
 r_typedef
 r_int
@@ -195,45 +184,55 @@ id|tss_struct
 (brace
 DECL|member|back_link
 r_int
+r_int
 id|back_link
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|esp0
 r_int
+r_int
 id|esp0
 suffix:semicolon
 DECL|member|ss0
+r_int
 r_int
 id|ss0
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|esp1
 r_int
+r_int
 id|esp1
 suffix:semicolon
 DECL|member|ss1
+r_int
 r_int
 id|ss1
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|esp2
 r_int
+r_int
 id|esp2
 suffix:semicolon
 DECL|member|ss2
+r_int
 r_int
 id|ss2
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|cr3
 r_int
+r_int
 id|cr3
 suffix:semicolon
 DECL|member|eip
 r_int
+r_int
 id|eip
 suffix:semicolon
 DECL|member|eflags
+r_int
 r_int
 id|eflags
 suffix:semicolon
@@ -241,6 +240,7 @@ DECL|member|eax
 DECL|member|ecx
 DECL|member|edx
 DECL|member|ebx
+r_int
 r_int
 id|eax
 comma
@@ -252,60 +252,80 @@ id|ebx
 suffix:semicolon
 DECL|member|esp
 r_int
+r_int
 id|esp
 suffix:semicolon
 DECL|member|ebp
+r_int
 r_int
 id|ebp
 suffix:semicolon
 DECL|member|esi
 r_int
+r_int
 id|esi
 suffix:semicolon
 DECL|member|edi
 r_int
+r_int
 id|edi
 suffix:semicolon
 DECL|member|es
+r_int
 r_int
 id|es
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|cs
 r_int
+r_int
 id|cs
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|ss
+r_int
 r_int
 id|ss
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|ds
 r_int
+r_int
 id|ds
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|fs
+r_int
 r_int
 id|fs
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|gs
 r_int
+r_int
 id|gs
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|ldt
+r_int
 r_int
 id|ldt
 suffix:semicolon
 multiline_comment|/* 16 high bits zero */
 DECL|member|trace_bitmap
 r_int
+r_int
 id|trace_bitmap
 suffix:semicolon
 multiline_comment|/* bits: trace 0, bitmap 16-31 */
+DECL|member|io_bitmap
+r_int
+r_int
+id|io_bitmap
+(braket
+id|IO_BITMAP_SIZE
+)braket
+suffix:semicolon
 DECL|member|i387
 r_struct
 id|i387_struct
@@ -543,16 +563,34 @@ id|inode
 op_star
 id|executable
 suffix:semicolon
+r_struct
+(brace
 DECL|member|library
 r_struct
 id|inode
 op_star
 id|library
 suffix:semicolon
-DECL|member|close_on_exec
+DECL|member|start
 r_int
 r_int
-id|close_on_exec
+id|start
+suffix:semicolon
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+DECL|member|libraries
+)brace
+id|libraries
+(braket
+id|MAX_SHARED_LIBS
+)braket
+suffix:semicolon
+DECL|member|numlibraries
+r_int
+id|numlibraries
 suffix:semicolon
 DECL|member|filp
 r_struct
@@ -562,6 +600,11 @@ id|filp
 (braket
 id|NR_OPEN
 )braket
+suffix:semicolon
+DECL|member|close_on_exec
+r_int
+r_int
+id|close_on_exec
 suffix:semicolon
 multiline_comment|/* ldt for this task 0 - zero 1 - cs 2 - ds&amp;ss */
 DECL|member|ldt
@@ -592,7 +635,7 @@ multiline_comment|/* task. */
 multiline_comment|/* not impelmented. */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, 0, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0f200} &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -659,6 +702,23 @@ id|task_struct
 op_star
 op_star
 id|p
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|send_sig
+c_func
+(paren
+r_int
+id|sig
+comma
+r_struct
+id|task_struct
+op_star
+id|p
+comma
+r_int
+id|priv
 )paren
 suffix:semicolon
 r_extern

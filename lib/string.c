@@ -8,5 +8,5 @@ DECL|macro|inline
 mdefine_line|#define inline
 DECL|macro|__LIBRARY__
 mdefine_line|#define __LIBRARY__
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 eof

@@ -1,9 +1,9 @@
 multiline_comment|/*&n; *  linux/mm/swap.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file should contain most things doing the swapping from/to disk.&n; * Started 18.12.91&n; */
-macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -576,7 +576,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Go through the page tables, searching for a user page that&n; * we can swap out.&n; */
+multiline_comment|/*&n; * Go through the page tables, searching for a user page that&n; * we can swap out.&n; *&n; * Here it&squot;s easy to add a check for tasks that may not be swapped out:&n; * loadable device drivers or similar. Just add an entry to the task-struct&n; * and check it at the same time you check for the existence of the task.&n; * The code assumes tasks are page-table aligned, but so do other parts&n; * of the memory manager...&n; */
 DECL|function|swap_out
 r_int
 id|swap_out
@@ -606,6 +606,11 @@ suffix:semicolon
 r_int
 id|pg_table
 suffix:semicolon
+r_struct
+id|task_struct
+op_star
+id|p
+suffix:semicolon
 id|check_dir
 suffix:colon
 r_if
@@ -631,6 +636,33 @@ id|FIRST_VM_PAGE
 op_rshift
 l_int|10
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|p
+op_assign
+id|task
+(braket
+id|dir_entry
+op_rshift
+l_int|4
+)braket
+)paren
+)paren
+(brace
+id|counter
+op_sub_assign
+l_int|1024
+suffix:semicolon
+id|dir_entry
+op_increment
+suffix:semicolon
+r_goto
+id|check_dir
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -743,32 +775,7 @@ id|pg_table
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|task
-(braket
-id|dir_entry
-op_rshift
-l_int|4
-)braket
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;swapping out page from non-existent task&bslash;n&bslash;r&quot;
-)paren
-suffix:semicolon
-r_else
-id|task
-(braket
-id|dir_entry
-op_rshift
-l_int|4
-)braket
-op_member_access_from_pointer
-id|rss
+id|p-&gt;rss
 op_decrement
 suffix:semicolon
 r_return
@@ -933,6 +940,10 @@ id|inode
 op_star
 id|swap_inode
 suffix:semicolon
+r_char
+op_star
+id|tmp
+suffix:semicolon
 r_int
 id|i
 comma
@@ -1038,7 +1049,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|swap_bitmap
+id|tmp
 op_assign
 (paren
 r_char
@@ -1053,7 +1064,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|swap_bitmap
+id|tmp
 )paren
 (brace
 id|iput
@@ -1086,7 +1097,7 @@ c_func
 (paren
 l_int|0
 comma
-id|swap_bitmap
+id|tmp
 )paren
 suffix:semicolon
 r_if
@@ -1097,7 +1108,7 @@ c_func
 (paren
 l_string|&quot;SWAP-SPACE&quot;
 comma
-id|swap_bitmap
+id|tmp
 op_plus
 l_int|4086
 comma
@@ -1117,7 +1128,7 @@ c_func
 (paren
 r_int
 )paren
-id|swap_bitmap
+id|tmp
 )paren
 suffix:semicolon
 id|iput
@@ -1146,7 +1157,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|swap_bitmap
+id|tmp
 op_plus
 l_int|4086
 comma
@@ -1179,7 +1190,7 @@ c_cond
 id|bit
 c_func
 (paren
-id|swap_bitmap
+id|tmp
 comma
 id|i
 )paren
@@ -1206,7 +1217,7 @@ c_func
 (paren
 r_int
 )paren
-id|swap_bitmap
+id|tmp
 )paren
 suffix:semicolon
 id|iput
@@ -1232,6 +1243,10 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|swap_bitmap
+op_assign
+id|tmp
+suffix:semicolon
 id|printk
 c_func
 (paren

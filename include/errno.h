@@ -6,8 +6,6 @@ r_extern
 r_int
 id|errno
 suffix:semicolon
-DECL|macro|ERROR
-mdefine_line|#define ERROR&t;&t;99
 DECL|macro|EPERM
 mdefine_line|#define EPERM&t;&t; 1
 DECL|macro|ENOENT

@@ -1,6 +1,7 @@
 macro_line|#ifndef _ASM_IO_H
 DECL|macro|_ASM_IO_H
 mdefine_line|#define _ASM_IO_H
+multiline_comment|/*&n; * Thanks to James van Artsdalen for a better timing-fix than&n; * the two short jumps: using outb&squot;s to a nonexistent port seems&n; * to guarantee better timings even on fast machines.&n; *&n; *&t;&t;Linus&n; */
 DECL|function|outb
 r_extern
 r_void
@@ -58,12 +59,11 @@ id|port
 id|__asm__
 r_volatile
 (paren
-l_string|&quot;outb %0,%1&bslash;n&quot;
-l_string|&quot;&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&quot;
+l_string|&quot;outb %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&quot;
 op_scope_resolution
 l_string|&quot;a&quot;
 (paren
@@ -145,12 +145,11 @@ suffix:semicolon
 id|__asm__
 r_volatile
 (paren
-l_string|&quot;inb %1,%0&bslash;n&quot;
-l_string|&quot;&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
-l_string|&quot;1:&quot;
+l_string|&quot;inb %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+l_string|&quot;outb %0,$0x80&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren

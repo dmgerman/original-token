@@ -248,6 +248,10 @@ id|buf
 op_add_assign
 id|chars
 suffix:semicolon
+id|bh-&gt;b_uptodate
+op_assign
+l_int|1
+suffix:semicolon
 id|bh-&gt;b_dirt
 op_assign
 l_int|1

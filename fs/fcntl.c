@@ -1,11 +1,11 @@
 multiline_comment|/*&n; *  linux/fs/fcntl.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 r_extern
 r_int
 id|sys_close

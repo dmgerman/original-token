@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/inode.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -128,6 +128,18 @@ op_star
 id|inode
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;i_dirt
+)paren
+r_return
+suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|0
+suffix:semicolon
 id|lock_inode
 c_func
 (paren
@@ -137,30 +149,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|inode-&gt;i_dirt
-op_logical_or
-op_logical_neg
 id|inode-&gt;i_dev
-)paren
-(brace
-id|unlock_inode
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_op
 op_logical_and
-id|inode-&gt;i_op-&gt;write_inode
+id|inode-&gt;i_sb
+op_logical_and
+id|inode-&gt;i_sb-&gt;s_op
+op_logical_and
+id|inode-&gt;i_sb-&gt;s_op-&gt;write_inode
 )paren
-id|inode-&gt;i_op
+id|inode-&gt;i_sb-&gt;s_op
 op_member_access_from_pointer
 id|write_inode
 c_func
@@ -426,12 +423,28 @@ c_cond
 op_logical_neg
 id|inode-&gt;i_count
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;iput: trying to free free inode&quot;
+l_string|&quot;iput: trying to free free inode&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;device %04x, inode %d, mode=%07o&bslash;n&quot;
+comma
+id|inode-&gt;i_rdev
+comma
+id|inode-&gt;i_ino
+comma
+id|inode-&gt;i_mode
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -494,29 +507,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|S_ISBLK
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-(brace
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
-id|wait_on_inode
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
 id|repeat
 suffix:colon
 r_if
@@ -543,11 +533,13 @@ id|inode-&gt;i_nlink
 r_if
 c_cond
 (paren
-id|inode-&gt;i_op
+id|inode-&gt;i_sb
 op_logical_and
-id|inode-&gt;i_op-&gt;put_inode
+id|inode-&gt;i_sb-&gt;s_op
+op_logical_and
+id|inode-&gt;i_sb-&gt;s_op-&gt;put_inode
 )paren
-id|inode-&gt;i_op
+id|inode-&gt;i_sb-&gt;s_op
 op_member_access_from_pointer
 id|put_inode
 c_func

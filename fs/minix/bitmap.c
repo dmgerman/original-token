@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/bitmap.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/* bitmap.c contains the code that handles the inode and block bitmaps */
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -793,8 +793,7 @@ id|CURRENT_TIME
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
-op_amp
-id|minix_inode_operations
+l_int|NULL
 suffix:semicolon
 r_return
 id|inode

@@ -3,7 +3,7 @@ multiline_comment|/*&n; * Some corrections by tytso.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;const.h&gt;
@@ -723,21 +723,6 @@ c_func
 id|base
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode
-)paren
-(brace
-id|inode-&gt;i_atime
-op_assign
-id|CURRENT_TIME
-suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 r_return
 id|inode
 suffix:semicolon
@@ -1151,6 +1136,11 @@ id|inode-&gt;i_op
 op_logical_and
 id|inode-&gt;i_op-&gt;truncate
 )paren
+(brace
+id|inode-&gt;i_size
+op_assign
+l_int|0
+suffix:semicolon
 id|inode-&gt;i_op
 op_member_access_from_pointer
 id|truncate
@@ -1159,6 +1149,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+)brace
 op_star
 id|res_inode
 op_assign

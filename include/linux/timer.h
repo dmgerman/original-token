@@ -2,7 +2,7 @@ macro_line|#ifndef _TIMER_H
 DECL|macro|_TIMER_H
 mdefine_line|#define _TIMER_H
 multiline_comment|/*&n; * DON&squot;T CHANGE THESE!! Most of them are hardcoded into some assembly language&n; * as well as being defined here.&n; */
-multiline_comment|/*&n; * The timers are:&n; *&n; * BLANK_TIMER&t;&t;console screen-saver timer&n; *&n; * BEEP_TIMER&t;&t;console beep timer&n; *&n; * SERx_TIMER&t;&t;serial incoming characters timer&n; *&n; * SERx_TIMEOUT&t;&t;timeout for serial writes&n; *&n; * HD_TIMER&t;&t;harddisk timer&n; *&n; * FLOPPY_TIMER&t;&t;floppy disk timer (not used right now)&n; */
+multiline_comment|/*&n; * The timers are:&n; *&n; * BLANK_TIMER&t;&t;console screen-saver timer&n; *&n; * BEEP_TIMER&t;&t;console beep timer&n; *&n; * SERx_TIMER&t;&t;serial incoming characters timer&n; *&n; * SERx_TIMEOUT&t;&t;timeout for serial writes&n; *&n; * HD_TIMER&t;&t;harddisk timer&n; *&n; * FLOPPY_TIMER&t;&t;floppy disk timer (not used right now)&n; * &n; * SCSI_TIMER&t;&t;scsi.c timeout timer&n; */
 DECL|macro|BLANK_TIMER
 mdefine_line|#define BLANK_TIMER&t;0
 DECL|macro|BEEP_TIMER
@@ -27,6 +27,8 @@ DECL|macro|HD_TIMER
 mdefine_line|#define HD_TIMER&t;16
 DECL|macro|FLOPPY_TIMER
 mdefine_line|#define FLOPPY_TIMER&t;17
+DECL|macro|SCSI_TIMER
+mdefine_line|#define SCSI_TIMER &t;18
 DECL|struct|timer_struct
 r_struct
 id|timer_struct

@@ -134,5 +134,15 @@ id|rlim_max
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|PRIO_MIN
+mdefine_line|#define&t;PRIO_MIN&t;-99
+DECL|macro|PRIO_MAX
+mdefine_line|#define&t;PRIO_MAX&t;14
+DECL|macro|PRIO_PROCESS
+mdefine_line|#define&t;PRIO_PROCESS&t;0
+DECL|macro|PRIO_PGRP
+mdefine_line|#define&t;PRIO_PGRP&t;1
+DECL|macro|PRIO_USER
+mdefine_line|#define&t;PRIO_USER&t;2
 macro_line|#endif /* _SYS_RESOURCE_H */
 eof

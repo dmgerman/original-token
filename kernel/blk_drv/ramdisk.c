@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by Theodore Ts&squot;o, 12/2/91&n; */
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -153,6 +153,38 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
+DECL|variable|rd_fops
+r_static
+r_struct
+id|file_operations
+id|rd_fops
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+id|block_read
+comma
+multiline_comment|/* read - general block-dev read */
+id|block_write
+comma
+multiline_comment|/* write - general block-dev write */
+l_int|NULL
+comma
+multiline_comment|/* readdir - bad */
+l_int|NULL
+comma
+multiline_comment|/* select */
+l_int|NULL
+comma
+multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+multiline_comment|/* no special release code */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Returns amount of memory which needs to be reserved.&n; */
 DECL|function|rd_init
 r_int
@@ -181,6 +213,14 @@ dot
 id|request_fn
 op_assign
 id|DEVICE_REQUEST
+suffix:semicolon
+id|blkdev_fops
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+op_amp
+id|rd_fops
 suffix:semicolon
 id|rd_start
 op_assign

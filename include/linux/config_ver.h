@@ -1,3 +1,3 @@
 DECL|macro|UTS_VERSION
-mdefine_line|#define UTS_VERSION &quot;04/09/92&quot;
+mdefine_line|#define UTS_VERSION &quot;05/22/92&quot;
 eof

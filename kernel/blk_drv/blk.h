@@ -2,7 +2,7 @@ macro_line|#ifndef _BLK_H
 DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
 DECL|macro|NR_BLK_DEV
-mdefine_line|#define NR_BLK_DEV&t;7
+mdefine_line|#define NR_BLK_DEV&t;10
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;32
@@ -51,6 +51,12 @@ r_struct
 id|buffer_head
 op_star
 id|bh
+suffix:semicolon
+DECL|member|bhtail
+r_struct
+id|buffer_head
+op_star
+id|bhtail
 suffix:semicolon
 DECL|member|next
 r_struct
@@ -161,6 +167,34 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == 8)
+multiline_comment|/* scsi disk */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;scsidisk&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_sd  
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_sd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 4)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == 9)
+multiline_comment|/* scsi tape */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;scsitape&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_st  
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_st_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif
 multiline_comment|/* unknown blk device */
 macro_line|#error &quot;unknown blk device&quot;
@@ -241,29 +275,22 @@ id|bh-&gt;b_wait
 )paren
 suffix:semicolon
 )brace
-DECL|function|end_request
+DECL|function|next_buffer
 r_extern
 r_inline
 r_void
-id|end_request
+id|next_buffer
 c_func
 (paren
 r_int
 id|uptodate
 )paren
 (brace
-id|DEVICE_OFF
-c_func
-(paren
-id|CURRENT-&gt;dev
-)paren
+r_struct
+id|buffer_head
+op_star
+id|tmp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|CURRENT-&gt;bh
-)paren
-(brace
 id|CURRENT-&gt;bh-&gt;b_uptodate
 op_assign
 id|uptodate
@@ -274,7 +301,6 @@ c_func
 id|CURRENT-&gt;bh
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -300,12 +326,122 @@ id|CURRENT-&gt;bh-&gt;b_blocknr
 )paren
 suffix:semicolon
 )brace
+id|tmp
+op_assign
+id|CURRENT-&gt;bh
+suffix:semicolon
+id|CURRENT-&gt;bh
+op_assign
+id|CURRENT-&gt;bh-&gt;b_reqnext
+suffix:semicolon
+id|tmp-&gt;b_reqnext
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|CURRENT-&gt;bh
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;next_buffer: request buffer list destroyed&bslash;r&bslash;n&quot;
+)paren
+suffix:semicolon
+id|CURRENT-&gt;buffer
+op_assign
+id|CURRENT-&gt;bh-&gt;b_data
+suffix:semicolon
+id|CURRENT-&gt;errors
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|end_request
+r_extern
+r_inline
+r_void
+id|end_request
+c_func
+(paren
+r_int
+id|uptodate
+)paren
+(brace
+r_struct
+id|request
+op_star
+id|tmp
+suffix:semicolon
+id|tmp
+op_assign
+id|CURRENT
+suffix:semicolon
+id|DEVICE_OFF
+c_func
+(paren
+id|tmp-&gt;dev
+)paren
+suffix:semicolon
+id|CURRENT
+op_assign
+id|tmp-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp-&gt;bh
+)paren
+(brace
+id|tmp-&gt;bh-&gt;b_uptodate
+op_assign
+id|uptodate
+suffix:semicolon
+id|unlock_buffer
+c_func
+(paren
+id|tmp-&gt;bh
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|uptodate
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|DEVICE_NAME
+l_string|&quot; I/O error&bslash;n&bslash;r&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;dev %04x, block %d&bslash;n&bslash;r&quot;
+comma
+id|tmp-&gt;dev
+comma
+id|tmp-&gt;bh-&gt;b_blocknr
+)paren
+suffix:semicolon
+)brace
 id|wake_up
 c_func
 (paren
 op_amp
-id|CURRENT-&gt;waiting
+id|tmp-&gt;waiting
 )paren
+suffix:semicolon
+id|tmp-&gt;dev
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|wake_up
 c_func
@@ -313,15 +449,6 @@ c_func
 op_amp
 id|wait_for_request
 )paren
-suffix:semicolon
-id|CURRENT-&gt;dev
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|CURRENT
-op_assign
-id|CURRENT-&gt;next
 suffix:semicolon
 )brace
 macro_line|#ifdef DEVICE_INTR

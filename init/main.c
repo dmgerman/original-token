@@ -1,8 +1,16 @@
 multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-DECL|macro|__LIBRARY__
-mdefine_line|#define __LIBRARY__
-macro_line|#include &lt;unistd.h&gt;
+macro_line|#include &lt;stddef.h&gt;
+macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;time.h&gt;
+macro_line|#include &lt;sys/types.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/head.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 r_static
 r_inline
@@ -45,18 +53,138 @@ r_int
 comma
 id|sync
 )paren
-macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;stddef.h&gt;
-macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;unistd.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
-macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;string.h&gt;
+r_static
+r_inline
+id|_syscall0
+c_func
+(paren
+id|pid_t
+comma
+id|setsid
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|write
+comma
+r_int
+comma
+id|fd
+comma
+r_const
+r_char
+op_star
+comma
+id|buf
+comma
+id|off_t
+comma
+id|count
+)paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
+id|dup
+comma
+r_int
+comma
+id|fd
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|execve
+comma
+r_const
+r_char
+op_star
+comma
+id|file
+comma
+r_char
+op_star
+op_star
+comma
+id|argv
+comma
+r_char
+op_star
+op_star
+comma
+id|envp
+)paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
+id|close
+comma
+r_int
+comma
+id|fd
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+id|pid_t
+comma
+id|waitpid
+comma
+id|pid_t
+comma
+id|pid
+comma
+r_int
+op_star
+comma
+id|wait_stat
+comma
+r_int
+comma
+id|options
+)paren
+DECL|function|wait
+r_static
+r_inline
+id|pid_t
+id|wait
+c_func
+(paren
+r_int
+op_star
+id|wait_stat
+)paren
+(brace
+r_return
+id|waitpid
+c_func
+(paren
+op_minus
+l_int|1
+comma
+id|wait_stat
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 DECL|variable|printbuf
 r_static
 r_char
@@ -64,14 +192,6 @@ id|printbuf
 (braket
 l_int|1024
 )braket
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|strcpy
-c_func
-(paren
-)paren
 suffix:semicolon
 r_extern
 r_int
@@ -122,6 +242,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|sock_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|mem_init
 c_func
 (paren
@@ -155,6 +283,16 @@ op_star
 id|tm
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
+r_extern
+r_void
+id|scsi_dev_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|sprintf
 r_static
 r_int
@@ -672,7 +810,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|blk_dev_init
+id|sched_init
 c_func
 (paren
 )paren
@@ -682,7 +820,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|tty_init
+id|blk_dev_init
 c_func
 (paren
 )paren
@@ -692,9 +830,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sched_init
+id|printk
 c_func
 (paren
+l_string|&quot;Linux version &quot;
+id|UTS_RELEASE
+l_string|&quot; &quot;
+id|__DATE__
+l_string|&quot; &quot;
+id|__TIME__
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|buffer_init
@@ -713,11 +858,23 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|sock_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
+id|scsi_dev_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|move_to_user_mode
 c_func
 (paren

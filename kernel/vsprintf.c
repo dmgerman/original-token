@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  linux/kernel/vsprintf.c&n; *&n; *  (C) 1991  Linus To
 multiline_comment|/* vsprintf.c -- Lars Wirzenius &amp; Linus Torvalds. */
 multiline_comment|/*&n; * Wirzenius wrote this portably, Torvalds fucked it up :-)&n; */
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/* we use this so that we can do without the ctype library */
 DECL|macro|is_digit
 mdefine_line|#define is_digit(c)&t;((c) &gt;= &squot;0&squot; &amp;&amp; (c) &lt;= &squot;9&squot;)

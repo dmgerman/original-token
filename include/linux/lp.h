@@ -25,12 +25,8 @@ DECL|macro|LP_B
 mdefine_line|#define LP_B(minor)&t;lp_table[(minor)].base
 DECL|macro|LP_F
 mdefine_line|#define LP_F(minor)&t;lp_table[(minor)].flags
-DECL|macro|LP_T
-mdefine_line|#define LP_T(minor)&t;lp_table[(minor)].lp_task
 DECL|macro|LP_S
 mdefine_line|#define LP_S(minor)&t;inb(LP_B((minor)) + 1)
-DECL|macro|LP_R
-mdefine_line|#define LP_R(minor)&t;lp_table[(minor)].remainder
 multiline_comment|/* &n;since we are dealing with a horribly slow device&n;I don&squot;t see the need for a queue&n;*/
 macro_line|#ifndef __LP_C__
 r_extern
@@ -46,16 +42,6 @@ suffix:semicolon
 DECL|member|flags
 r_int
 id|flags
-suffix:semicolon
-multiline_comment|/* number of characters yet to be printed in current block */
-DECL|member|remainder
-r_int
-id|remainder
-suffix:semicolon
-multiline_comment|/* needed for busy determination */
-DECL|member|lp_task
-r_int
-id|lp_task
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -132,43 +118,6 @@ id|lp_init
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|lp_reset
-c_func
-(paren
-r_int
-id|minor
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|lp_char
-c_func
-(paren
-r_char
-id|lpchar
-comma
-r_int
-id|minor
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|lp_write
-c_func
-(paren
-r_int
-id|minor
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
 )paren
 suffix:semicolon
 eof
