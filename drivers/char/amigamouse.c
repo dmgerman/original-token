@@ -421,6 +421,9 @@ op_star
 id|file
 )paren
 (brace
+multiline_comment|/* Lock module first - request_irq might sleep */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/*&n;&t; *  use VBL to poll mouse deltas&n;&t; */
 r_if
 c_cond
@@ -447,13 +450,13 @@ id|KERN_INFO
 l_string|&quot;Installing Amiga mouse failed.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 macro_line|#if AMIGA_OLD_INT
 id|AMI_MSE_INT_ON
 c_func

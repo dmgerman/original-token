@@ -335,7 +335,7 @@ r_return
 id|flag
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;wdt_interrupt:&n; *&t;@irq:&t;&t;Interrupt number&n; *&t;@dev_id:&t;Unused as we don&squot;t allow multiple devices.&n; *&t;@regs:&t;&t;Unused.&n; *&n; *&t;Handle an interrupt from the board. These are raised when the status&n; *&t;map changes in what the board considers an interesting way. That means&n; *&t;a failure condition occuring.&n; *&n; *&t;FIXME:&t;We need to pass a dev_id as the PCI card can share irqs&n; *&t;although its arguably a _very_ dumb idea to share watchdog&n; *&t;irq lines&n; */
+multiline_comment|/**&n; *&t;wdt_interrupt:&n; *&t;@irq:&t;&t;Interrupt number&n; *&t;@dev_id:&t;Unused as we don&squot;t allow multiple devices.&n; *&t;@regs:&t;&t;Unused.&n; *&n; *&t;Handle an interrupt from the board. These are raised when the status&n; *&t;map changes in what the board considers an interesting way. That means&n; *&t;a failure condition occuring.&n; */
 DECL|function|wdt_interrupt
 r_void
 id|wdt_interrupt
@@ -1302,7 +1302,8 @@ id|SA_INTERRUPT
 comma
 l_string|&quot;wdt501p&quot;
 comma
-l_int|NULL
+op_amp
+id|wdt_miscdev
 )paren
 )paren
 (brace

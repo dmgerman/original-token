@@ -110,7 +110,6 @@ id|__u8
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef notyet
 r_static
 r_int
 id|nfsctl_getfs
@@ -125,6 +124,7 @@ id|knfsd_fh
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef notyet
 r_static
 r_int
 id|nfsctl_ugidupdate
@@ -379,7 +379,6 @@ id|EINVAL
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef notyet
 r_static
 r_inline
 r_int
@@ -493,11 +492,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*HACK*/
+id|res-&gt;fh_size
+op_assign
+id|NFS_FHSIZE
+suffix:semicolon
+multiline_comment|/* HACK until lockd handles var-length handles */
 r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#endif
 r_static
 r_inline
 r_int
@@ -836,6 +840,130 @@ macro_line|#ifdef CONFIG_NFSD
 DECL|macro|handle_sys_nfsservctl
 mdefine_line|#define handle_sys_nfsservctl sys_nfsservctl
 macro_line|#endif
+r_static
+r_struct
+(brace
+DECL|member|argsize
+DECL|member|respsize
+r_int
+id|argsize
+comma
+id|respsize
+suffix:semicolon
+DECL|variable|sizes
+)brace
+id|sizes
+(braket
+)braket
+op_assign
+(brace
+multiline_comment|/* NFSCTL_SVC        */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_svc
+)paren
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* NFSCTL_ADDCLIENT  */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_client
+)paren
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* NFSCTL_DELCLIENT  */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_client
+)paren
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* NFSCTL_EXPORT     */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_export
+)paren
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* NFSCTL_UNEXPORT   */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_export
+)paren
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* NFSCTL_UGIDUPDATE */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_uidmap
+)paren
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* NFSCTL_GETFH      */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_fhparm
+)paren
+comma
+id|NFS_FHSIZE
+)brace
+comma
+multiline_comment|/* NFSCTL_GETFD      */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_fdparm
+)paren
+comma
+id|NFS_FHSIZE
+)brace
+comma
+multiline_comment|/* NFSCTL_GETFS      */
+(brace
+r_sizeof
+(paren
+r_struct
+id|nfsctl_fsparm
+)paren
+comma
+r_sizeof
+(paren
+r_struct
+id|knfsd_fh
+)paren
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|macro|CMD_MAX
+mdefine_line|#define CMD_MAX (sizeof(sizes)/sizeof(sizes[0])-1)
 r_int
 DECL|function|handle_sys_nfsservctl
 id|asmlinkage
@@ -885,6 +1013,11 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+r_int
+id|argsize
+comma
+id|respsize
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|lock_kernel
@@ -925,8 +1058,47 @@ suffix:semicolon
 id|err
 op_assign
 op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+id|CMD_MAX
+)paren
+r_goto
+id|done
+suffix:semicolon
+id|err
+op_assign
+op_minus
 id|EFAULT
 suffix:semicolon
+id|argsize
+op_assign
+id|sizes
+(braket
+id|cmd
+)braket
+dot
+id|argsize
+op_plus
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* int for ca_version */
+id|respsize
+op_assign
+id|sizes
+(braket
+id|cmd
+)braket
+dot
+id|respsize
+suffix:semicolon
+multiline_comment|/* maximum */
 r_if
 c_cond
 (paren
@@ -938,11 +1110,7 @@ id|VERIFY_READ
 comma
 id|argp
 comma
-r_sizeof
-(paren
-op_star
-id|argp
-)paren
+id|argsize
 )paren
 op_logical_or
 (paren
@@ -956,11 +1124,7 @@ id|VERIFY_WRITE
 comma
 id|resp
 comma
-r_sizeof
-(paren
-op_star
-id|resp
-)paren
+id|respsize
 )paren
 )paren
 )paren
@@ -1033,11 +1197,7 @@ id|arg
 comma
 id|argp
 comma
-r_sizeof
-(paren
-op_star
-id|argp
-)paren
+id|argsize
 )paren
 suffix:semicolon
 r_if
@@ -1183,7 +1343,6 @@ id|res-&gt;cr_getfh
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef notyet
 r_case
 id|NFSCTL_GETFS
 suffix:colon
@@ -1199,7 +1358,17 @@ op_amp
 id|res-&gt;cr_getfs
 )paren
 suffix:semicolon
-macro_line|#endif
+id|respsize
+op_assign
+id|res-&gt;cr_getfs.fh_size
+op_plus
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|err
@@ -1215,6 +1384,8 @@ op_logical_neg
 id|err
 op_logical_and
 id|resp
+op_logical_and
+id|respsize
 )paren
 id|copy_to_user
 c_func
@@ -1223,11 +1394,7 @@ id|resp
 comma
 id|res
 comma
-r_sizeof
-(paren
-op_star
-id|resp
-)paren
+id|respsize
 )paren
 suffix:semicolon
 id|done

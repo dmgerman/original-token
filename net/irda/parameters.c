@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      parameters.c&n; * Version:       1.0&n; * Description:   A more general way to handle (pi,pl,pv) parameters&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 10:25:11 1999&n; * Modified at:   Tue Dec 14 16:03:57 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      parameters.c&n; * Version:       1.0&n; * Description:   A more general way to handle (pi,pl,pv) parameters&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 10:25:11 1999&n; * Modified at:   Sun Jan 30 14:08:39 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -248,7 +248,7 @@ id|PI_HANDLER
 id|func
 )paren
 (brace
-id|param_t
+id|irda_param_t
 id|p
 suffix:semicolon
 r_int
@@ -334,7 +334,7 @@ id|PI_HANDLER
 id|func
 )paren
 (brace
-id|param_t
+id|irda_param_t
 id|p
 suffix:semicolon
 r_int
@@ -414,7 +414,7 @@ id|PI_HANDLER
 id|func
 )paren
 (brace
-id|param_t
+id|irda_param_t
 id|p
 suffix:semicolon
 r_int
@@ -745,7 +745,7 @@ id|PI_HANDLER
 id|func
 )paren
 (brace
-id|param_t
+id|irda_param_t
 id|p
 suffix:semicolon
 r_int
@@ -1045,7 +1045,7 @@ id|str
 l_int|33
 )braket
 suffix:semicolon
-id|param_t
+id|irda_param_t
 id|p
 suffix:semicolon
 r_int
@@ -1230,7 +1230,7 @@ id|PI_HANDLER
 id|func
 )paren
 (brace
-id|param_t
+id|irda_param_t
 id|p
 suffix:semicolon
 id|p.pi
@@ -1311,6 +1311,9 @@ dot
 dot
 )paren
 (brace
+id|irda_pv_t
+id|arg
+suffix:semicolon
 id|va_list
 id|args
 suffix:semicolon
@@ -1322,9 +1325,6 @@ r_int
 id|n
 op_assign
 l_int|0
-suffix:semicolon
-id|pv_t
-id|arg
 suffix:semicolon
 id|va_start
 c_func
@@ -1537,6 +1537,9 @@ dot
 dot
 )paren
 (brace
+id|irda_pv_t
+id|arg
+suffix:semicolon
 id|va_list
 id|args
 suffix:semicolon
@@ -1548,9 +1551,6 @@ r_int
 id|n
 op_assign
 l_int|0
-suffix:semicolon
-id|pv_t
-id|arg
 suffix:semicolon
 id|va_start
 c_func

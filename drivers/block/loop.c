@@ -595,6 +595,8 @@ op_member_access_from_pointer
 id|prepare_write
 c_func
 (paren
+id|file
+comma
 id|page
 comma
 id|offset

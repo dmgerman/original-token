@@ -33,6 +33,7 @@ c_func
 id|pci_devices
 )paren
 suffix:semicolon
+multiline_comment|/**&n; * pci_find_slot - locate PCI device from a given PCI slot&n; * @bus: number of PCI bus on which desired PCI device resides&n; * @devfn:  number of PCI slot in which desired PCI device resides&n; *&n; * Given a PCI bus and slot number, the desired PCI device is&n; * located in system global list of PCI devices.  If the device&n; * is found, a pointer to its data structure is returned.  If no &n; * device is found, %NULL is returned.&n; */
 r_struct
 id|pci_dev
 op_star
@@ -196,6 +197,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * pci_find_device - begin or continue searching for a PCI device by vendor/device id&n; * @vendor: PCI vendor id to match, or %PCI_ANY_ID to match all vendor ids&n; * @device: PCI device id to match, or %PCI_ANY_ID to match all vendor ids&n; * @from: Previous PCI device found in search, or %NULL for new search.&n; *&n; * Iterates through the list of known PCI devices.  If a PCI device is&n; * found with a matching @vendor and @device, a pointer to its device structure is&n; * returned.  Otherwise, %NULL is returned.&n; *&n; * A new search is initiated by passing %NULL to the @from argument.&n; * Otherwise if @from is not null, searches continue from that point.&n; */
 r_struct
 id|pci_dev
 op_star
@@ -234,6 +236,7 @@ id|from
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * pci_find_class - begin or continue searching for a PCI device by class&n; * @class: search for a PCI device with this class designation&n; * @from: Previous PCI device found in search, or %NULL for new search.&n; *&n; * Iterates through the list of known PCI devices.  If a PCI device is&n; * found with a matching @class, a pointer to its device structure is&n; * returned.  Otherwise, %NULL is returned.&n; *&n; * A new search is initiated by passing %NULL to the @from argument.&n; * Otherwise if @from is not null, searches continue from that point.&n; */
 r_struct
 id|pci_dev
 op_star
@@ -469,7 +472,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  For given resource region of given device, return the resource&n; *  region of parent bus the given region is contained in or where&n; *  it should be allocated from.&n; */
+multiline_comment|/**&n; * pci_find_parent_resource - return resource region of parent bus of given region&n; * @dev: PCI device structure contains resources to be searched&n; * @res: child resource record for which parent is sought&n; *&n; *  For given resource region of given device, return the resource&n; *  region of parent bus the given region is contained in or where&n; *  it should be allocated from.&n; */
 r_struct
 id|resource
 op_star
@@ -621,7 +624,7 @@ r_return
 id|best
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Set power management state of a device.  For transitions from state D3&n; *  it isn&squot;t as straightforward as one could assume since many devices forget&n; *  their configuration space during wakeup.  Returns old power state.&n; */
+multiline_comment|/**&n; * pci_set_power_state - Set power management state of a device.&n; * @dev: PCI device for which PM is set&n; * @new_state: new power management statement (0 == D0, 3 == D3, etc.)&n; *&n; *  Set power management state of a device.  For transitions from state D3&n; *  it isn&squot;t as straightforward as one could assume since many devices forget&n; *  their configuration space during wakeup.  Returns old power state.&n; */
 r_int
 DECL|function|pci_set_power_state
 id|pci_set_power_state
@@ -939,7 +942,7 @@ r_return
 id|old_state
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Initialize device before it&squot;s used by a driver. Ask low-level code&n; *  to enable I/O and memory. Wake up the device if it was suspended.&n; *  Beware, this function can fail.&n; */
+multiline_comment|/**&n; * pci_enable_device - Initialize device before it&squot;s used by a driver.&n; * @dev: PCI device to be initialized&n; *&n; *  Initialize device before it&squot;s used by a driver. Ask low-level code&n; *  to enable I/O and memory. Wake up the device if it was suspended.&n; *  Beware, this function can fail.&n; */
 r_int
 DECL|function|pci_enable_device
 id|pci_enable_device

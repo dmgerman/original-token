@@ -366,6 +366,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 r_static
 r_int
+id|__init
 id|sis_get_info
 c_func
 (paren
@@ -407,13 +408,14 @@ id|pci_dev
 op_star
 id|bmide_dev
 suffix:semicolon
-DECL|variable|cable_type
+DECL|variable|__initdata
 r_static
 r_char
 op_star
 id|cable_type
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;80 pins&quot;
@@ -421,23 +423,25 @@ comma
 l_string|&quot;40 pins&quot;
 )brace
 suffix:semicolon
-DECL|variable|recovery_time
+DECL|variable|__initdata
 r_static
 r_char
 op_star
 id|recovery_time
 (braket
 )braket
+id|__initdata
 op_assign
 initialization_block
 suffix:semicolon
-DECL|variable|cycle_time
+DECL|variable|__initdata
 r_static
 r_char
 op_star
 id|cycle_time
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;Undefined&quot;
@@ -457,13 +461,14 @@ comma
 l_string|&quot;8 CLK&quot;
 )brace
 suffix:semicolon
-DECL|variable|active_time
+DECL|variable|__initdata
 r_static
 r_char
 op_star
 id|active_time
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;8 PCICLK&quot;
@@ -486,6 +491,7 @@ suffix:semicolon
 DECL|function|sis_get_info
 r_static
 r_int
+id|__init
 id|sis_get_info
 (paren
 r_char

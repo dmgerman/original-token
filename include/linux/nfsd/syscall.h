@@ -294,17 +294,10 @@ r_struct
 id|nfsctl_fdparm
 id|u_getfd
 suffix:semicolon
-macro_line|#ifdef notyet
 DECL|member|u_getfs
 r_struct
 id|nfsctl_fsparm
 id|u_getfs
-suffix:semicolon
-macro_line|#endif
-DECL|member|u_debug
-r_int
-r_int
-id|u_debug
 suffix:semicolon
 DECL|member|u
 )brace
@@ -326,8 +319,6 @@ DECL|macro|ca_getfs
 mdefine_line|#define&t;ca_getfs&t;u.u_getfs
 DECL|macro|ca_authd
 mdefine_line|#define ca_authd&t;u.u_authd
-DECL|macro|ca_debug
-mdefine_line|#define ca_debug&t;u.u_debug
 )brace
 suffix:semicolon
 DECL|union|nfsctl_res
@@ -341,17 +332,10 @@ id|cr_getfh
 id|NFS_FHSIZE
 )braket
 suffix:semicolon
-macro_line|#ifdef notyet
 DECL|member|cr_getfs
 r_struct
 id|knfsd_fh
 id|cr_getfs
-suffix:semicolon
-macro_line|#endif
-DECL|member|cr_debug
-r_int
-r_int
-id|cr_debug
 suffix:semicolon
 )brace
 suffix:semicolon

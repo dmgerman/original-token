@@ -53,6 +53,7 @@ id|elf_fpregset_t
 id|ELF_NFPREG
 )braket
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* Altivec registers */
 DECL|typedef|elf_vrreg_t
 r_typedef
@@ -67,6 +68,7 @@ id|elf_vrregset_t
 id|ELF_NVRREG
 )braket
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 DECL|macro|ELF_CORE_COPY_REGS
 mdefine_line|#define ELF_CORE_COPY_REGS(gregs, regs) &bslash;&n;&t;memcpy(gregs, regs, &bslash;&n;&t;       sizeof(struct pt_regs) &lt; sizeof(elf_gregset_t)? &bslash;&n;&t;       sizeof(struct pt_regs): sizeof(elf_gregset_t));
 multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  This could be done in userspace,&n;   but it&squot;s not easy, and we&squot;ve already done it here.  */

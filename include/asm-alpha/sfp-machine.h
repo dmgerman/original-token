@@ -64,9 +64,7 @@ mdefine_line|#define FP_EX_INEXACT&t;&t;IEEE_TRAP_ENABLE_INE
 DECL|macro|FP_EX_DENORM
 mdefine_line|#define FP_EX_DENORM&t;&t;IEEE_TRAP_ENABLE_DNO
 DECL|macro|FP_DENORM_ZERO
-mdefine_line|#define FP_DENORM_ZERO&t;&t;(fpcw &amp; IEEE_MAP_DMZ)
-DECL|macro|FP_HANDLE_EXCEPTIONS
-mdefine_line|#define FP_HANDLE_EXCEPTIONS return _fex
+mdefine_line|#define FP_DENORM_ZERO&t;&t;(swcr &amp; IEEE_MAP_DMZ)
 multiline_comment|/* We write the results always */
 DECL|macro|FP_INHIBIT_RESULTS
 mdefine_line|#define FP_INHIBIT_RESULTS 0

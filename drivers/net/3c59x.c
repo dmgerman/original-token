@@ -1,13 +1,5 @@
 multiline_comment|/* 3c59x.c: A 3Com EtherLink PCI III/XL ethernet driver for linux. */
 multiline_comment|/*&n;&t;Written 1996-1998 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com &quot;Vortex&quot; and &quot;Boomerang&quot; series ethercards.&n;&t;Members of the series include Fast EtherLink 3c590/3c592/3c595/3c597&n;&t;and the EtherLink XL 3c900 and 3c905 cards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n; Version history:&n; &t;0.99H+lk0.9 - David S. Miller - softnet, PCI DMA updates&n; &t;0.99H+lk1.0 - Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Remove compatibility defines for kernel versions &lt; 2.2.x.&n;&t;&t;Update for new 2.3.x module interface&n;&t;&t;&n; */
-DECL|variable|version
-r_static
-r_char
-op_star
-id|version
-op_assign
-l_string|&quot;3c59x.c:v0.99H+lk1.0 Feb 9, 2000 The Linux Kernel Team http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
-suffix:semicolon
 multiline_comment|/* &quot;Knobs&quot; that adjust features and parameters. */
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-frames scheme.&n;   Setting to &gt; 1512 effectively disables this feature. */
 DECL|variable|rx_copybreak
@@ -115,6 +107,15 @@ DECL|macro|PCI_SUPPORT_VER2
 mdefine_line|#define PCI_SUPPORT_VER2
 DECL|macro|DEV_FREE_SKB
 mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb);
+DECL|variable|__initdata
+r_static
+r_char
+op_star
+id|version
+id|__initdata
+op_assign
+l_string|&quot;3c59x.c:v0.99H+lk1.0 Feb 9, 2000 The Linux Kernel Team http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
+suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren

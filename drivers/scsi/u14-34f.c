@@ -3284,7 +3284,7 @@ id|ints
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|u14_34f_detect

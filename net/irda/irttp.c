@@ -234,7 +234,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -5001,7 +5001,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma

@@ -1758,6 +1758,12 @@ id|handle_softirq_back
 suffix:semicolon
 id|handle_tq_scheduler
 suffix:colon
+multiline_comment|/*&n;&t; * do not run the task queue with disabled interrupts,&n;&t; * cli() wouldn&squot;t work on SMP&n;&t; */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|run_task_queue
 c_func
 (paren
@@ -1799,14 +1805,10 @@ c_func
 l_string|&quot;Scheduling in interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
-op_star
+id|BUG
+c_func
 (paren
-r_int
-op_star
 )paren
-l_int|0
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon

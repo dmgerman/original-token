@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &quot;proto.h&quot;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG&t;DBG_MEM
@@ -665,7 +666,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get contents of register REGNO in task TASK.&n; */
 r_static
-r_inline
 r_int
 DECL|function|get_reg
 id|get_reg
@@ -681,6 +681,52 @@ r_int
 id|regno
 )paren
 (brace
+multiline_comment|/* Special hack for fpcr -- combine hardware and software bits.  */
+r_if
+c_cond
+(paren
+id|regno
+op_eq
+l_int|63
+)paren
+(brace
+r_int
+r_int
+id|fpcr
+op_assign
+op_star
+id|get_reg_addr
+c_func
+(paren
+id|task
+comma
+id|regno
+)paren
+suffix:semicolon
+r_int
+r_int
+id|swcr
+op_assign
+id|task-&gt;thread.flags
+op_amp
+id|IEEE_SW_MASK
+suffix:semicolon
+id|swcr
+op_assign
+id|swcr_update_status
+c_func
+(paren
+id|swcr
+comma
+id|fpcr
+)paren
+suffix:semicolon
+r_return
+id|fpcr
+op_or
+id|swcr
+suffix:semicolon
+)brace
 r_return
 op_star
 id|get_reg_addr
@@ -694,7 +740,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write contents of register REGNO in task TASK.&n; */
 r_static
-r_inline
 r_int
 DECL|function|put_reg
 id|put_reg
@@ -713,6 +758,46 @@ r_int
 id|data
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|regno
+op_eq
+l_int|63
+)paren
+(brace
+id|task-&gt;thread.flags
+op_assign
+(paren
+(paren
+id|task-&gt;thread.flags
+op_amp
+op_complement
+id|IEEE_SW_MASK
+)paren
+op_or
+(paren
+id|data
+op_amp
+id|IEEE_SW_MASK
+)paren
+)paren
+suffix:semicolon
+id|data
+op_assign
+(paren
+id|data
+op_amp
+id|FPCR_DYN_MASK
+)paren
+op_or
+id|ieee_swcr_to_fpcr
+c_func
+(paren
+id|data
+)paren
+suffix:semicolon
+)brace
 op_star
 id|get_reg_addr
 c_func

@@ -38,9 +38,9 @@ mdefine_line|#define DEVPRIO PZERO+8
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 DECL|macro|TRUE
-mdefine_line|#define TRUE  ~FALSE 
+mdefine_line|#define TRUE  ~FALSE
 DECL|macro|MAX_BOARD
-mdefine_line|#define MAX_BOARD 8                 /* maximum of pc board possible */
+mdefine_line|#define MAX_BOARD 8&t;&t;/* maximum of pc board possible */
 DECL|macro|MAX_ISA_BOARD
 mdefine_line|#define MAX_ISA_BOARD 4
 DECL|macro|LEN_RAM_IO
@@ -49,7 +49,7 @@ DECL|macro|AC_MINOR
 mdefine_line|#define AC_MINOR 157
 macro_line|#ifndef PCI_VENDOR_ID_APPLICOM
 DECL|macro|PCI_VENDOR_ID_APPLICOM
-mdefine_line|#define PCI_VENDOR_ID_APPLICOM                0x1389 
+mdefine_line|#define PCI_VENDOR_ID_APPLICOM                0x1389
 DECL|macro|PCI_DEVICE_ID_APPLICOM_PCIGENERIC
 mdefine_line|#define PCI_DEVICE_ID_APPLICOM_PCIGENERIC     0x0001
 DECL|macro|PCI_DEVICE_ID_APPLICOM_PCI2000IBS_CAN
@@ -67,7 +67,13 @@ id|applicom_pci_devnames
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+l_string|&quot;PCI board&quot;
+comma
+l_string|&quot;PCI2000IBS / PCI2000CAN&quot;
+comma
+l_string|&quot;PCI2000PFB&quot;
+)brace
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func
@@ -192,6 +198,7 @@ suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
+c_func
 (paren
 id|FlagSleepRec
 )paren
@@ -262,6 +269,7 @@ suffix:semicolon
 r_static
 id|ssize_t
 id|ac_read
+c_func
 (paren
 r_struct
 id|file
@@ -283,6 +291,7 @@ suffix:semicolon
 r_static
 id|ssize_t
 id|ac_write
+c_func
 (paren
 r_struct
 id|file
@@ -365,14 +374,46 @@ r_struct
 id|file_operations
 id|ac_fops
 op_assign
-initialization_block
+(brace
+id|llseek
+suffix:colon
+id|ac_llseek
+comma
+id|read
+suffix:colon
+id|ac_read
+comma
+id|write
+suffix:colon
+id|ac_write
+comma
+id|ioctl
+suffix:colon
+id|ac_ioctl
+comma
+id|open
+suffix:colon
+id|ac_open
+comma
+id|release
+suffix:colon
+id|ac_release
+comma
+)brace
 suffix:semicolon
 DECL|variable|ac_miscdev
 r_struct
 id|miscdevice
 id|ac_miscdev
 op_assign
-initialization_block
+(brace
+id|AC_MINOR
+comma
+l_string|&quot;ac&quot;
+comma
+op_amp
+id|ac_fops
+)brace
 suffix:semicolon
 DECL|function|ac_register_board
 r_int
@@ -454,11 +495,9 @@ op_ne
 l_int|0xFF
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -695,9 +734,9 @@ id|ac_open
 )paren
 suffix:semicolon
 )brace
-singleline_comment|//&t;printk(&quot;Removing Applicom module&bslash;n&quot;);
+singleline_comment|//      printk(&quot;Removing Applicom module&bslash;n&quot;);
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 DECL|function|applicom_init
 r_int
 id|__init
@@ -760,7 +799,7 @@ id|dev
 )paren
 )paren
 (brace
-singleline_comment|//&t;    mem = dev-&gt;base_address[0];
+singleline_comment|//      mem = dev-&gt;base_address[0];
 singleline_comment|// irq = dev-&gt;irq;
 id|RamIO
 op_assign
@@ -1262,6 +1301,7 @@ id|numboards
 )paren
 (brace
 id|misc_register
+c_func
 (paren
 op_amp
 id|ac_miscdev
@@ -1326,7 +1366,6 @@ suffix:semicolon
 id|serial
 op_increment
 )paren
-(brace
 id|boardname
 (braket
 id|serial
@@ -1347,7 +1386,6 @@ op_plus
 id|serial
 )paren
 suffix:semicolon
-)brace
 id|boardname
 (braket
 id|serial
@@ -1358,6 +1396,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Applicom board %d: %s, PROM V%d.%d&quot;
 comma
 id|i
@@ -1470,6 +1509,7 @@ op_ne
 l_int|0
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot; S/N %d&bslash;n&quot;
 comma
@@ -1497,6 +1537,7 @@ suffix:semicolon
 macro_line|#ifndef MODULE
 DECL|variable|applicom_init
 id|__initcall
+c_func
 (paren
 id|applicom_init
 )paren
@@ -1575,6 +1616,7 @@ DECL|function|ac_write
 r_static
 id|ssize_t
 id|ac_write
+c_func
 (paren
 r_struct
 id|file
@@ -1669,6 +1711,7 @@ r_if
 c_cond
 (paren
 id|copy_from_user
+c_func
 (paren
 op_amp
 id|st_loc
@@ -1692,6 +1735,7 @@ r_if
 c_cond
 (paren
 id|copy_from_user
+c_func
 (paren
 op_amp
 id|tmpmailbox
@@ -1957,6 +2001,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1985,8 +2030,8 @@ id|DATA_FROM_PC_READY
 OG
 l_int|2
 )paren
-multiline_comment|/* Test octet ready correct */
 (brace
+multiline_comment|/* Test octet ready correct */
 id|Dummy
 op_assign
 id|readb
@@ -2080,7 +2125,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;FIXME: Race on wakeup. Race on re-entering write&n;&t;&t; *&t;in another thread.&n;&t;&t; */
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|apbs
@@ -2304,6 +2351,7 @@ id|VERS
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -2316,6 +2364,7 @@ DECL|function|ac_read
 r_static
 id|ssize_t
 id|ac_read
+c_func
 (paren
 r_struct
 id|file
@@ -2492,8 +2541,8 @@ id|tmp
 OG
 l_int|2
 )paren
-multiline_comment|/* Test octet ready correct */
 (brace
+multiline_comment|/* Test octet ready correct */
 id|Dummy
 op_assign
 id|readb
@@ -2518,6 +2567,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;APPLICOM driver read error board %d, DataToPcReady = %d&bslash;n&quot;
 comma
 id|i
@@ -2571,6 +2621,7 @@ op_ne
 l_int|2
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;FIXME: race on wakeup. O_NDELAY not implemented&n;&t;&t;&t; *&t;Parallel read threads race.&n;&t;&t;&t; */
 id|restore_flags
 c_func
 (paren
@@ -2578,6 +2629,7 @@ id|flags
 )paren
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|FlagSleepRec
@@ -3047,6 +3099,7 @@ r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 id|buf
 comma
@@ -3060,16 +3113,15 @@ id|st_ram_io
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 op_amp
 id|buf
@@ -3091,12 +3143,10 @@ id|mailbox
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -3193,12 +3243,10 @@ id|RAM_IT_TO_PC
 op_ne
 l_int|0
 )paren
-(brace
 id|FlagInt
 op_assign
 id|TRUE
 suffix:semicolon
-)brace
 id|writeb
 c_func
 (paren
@@ -3236,6 +3284,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;APPLICOM driver interrupt err board %d, DataToPcReady = %d&bslash;n&quot;
 comma
 id|i
@@ -3349,8 +3398,8 @@ id|DATA_TO_PC_READY
 op_eq
 l_int|2
 )paren
-multiline_comment|/* mailbox sent by the card ?   */
 (brace
+multiline_comment|/* mailbox sent by the card ?   */
 id|wake_up_interruptible
 c_func
 (paren
@@ -3377,8 +3426,8 @@ id|DATA_FROM_PC_READY
 op_eq
 l_int|0
 )paren
-multiline_comment|/* ram i/o free for write by pc ? */
 (brace
+multiline_comment|/* ram i/o free for write by pc ? */
 r_if
 c_cond
 (paren
@@ -3394,8 +3443,8 @@ dot
 id|FlagSleepSend
 )paren
 )paren
-multiline_comment|/* process sleep during read ?    */
 (brace
+multiline_comment|/* process sleep during read ?    */
 id|wake_up_interruptible
 c_func
 (paren
@@ -3441,11 +3490,9 @@ op_plus
 id|RAM_IT_TO_PC
 )paren
 )paren
-(brace
 id|i
 op_decrement
 suffix:semicolon
-)brace
 multiline_comment|/* There&squot;s another int waiting on this card */
 )brace
 r_if
@@ -3453,12 +3500,10 @@ c_cond
 (paren
 id|FlagInt
 )paren
-(brace
 id|LoopCount
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_else
 id|LoopCount
 op_increment
@@ -3471,9 +3516,7 @@ id|LoopCount
 OL
 l_int|2
 )paren
-(brace
 suffix:semicolon
-)brace
 )brace
 DECL|function|ac_ioctl
 r_static
@@ -3536,6 +3579,7 @@ r_if
 c_cond
 (paren
 id|copy_from_user
+c_func
 (paren
 op_amp
 id|adgl
@@ -3563,6 +3607,7 @@ id|adgl.num_card
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;FIXME: user can flood the console using bogus ioctls&n;&t; */
 r_if
 c_cond
 (paren
@@ -3624,6 +3669,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;FIXME races between ioctls with multiple clients&n;&t; */
 r_switch
 c_cond
 (paren
@@ -3660,7 +3706,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|TmpRamIo
 (braket
 id|i
@@ -3673,7 +3718,6 @@ id|pmem
 op_increment
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3917,6 +3961,7 @@ r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 (paren
 r_void
@@ -4007,8 +4052,10 @@ op_plus
 id|RAM_IT_FROM_PC
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;FIXME: can trash waitqueue that is active.&n;&t;&t; */
 macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 id|init_waitqueue_head
+c_func
 (paren
 op_amp
 id|FlagSleepRec
@@ -4048,6 +4095,7 @@ id|RamIO
 (brace
 macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 id|init_waitqueue_head
+c_func
 (paren
 op_amp
 id|apbs
@@ -4147,6 +4195,7 @@ r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 (paren
 r_void
@@ -4256,12 +4305,14 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;APPLICOM driver release .... V2.8.0&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Number of installed boards . %d&bslash;n&quot;
 comma
 (paren
@@ -4273,6 +4324,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Segment of board ........... %X&bslash;n&quot;
 comma
 (paren
@@ -4284,6 +4336,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Interrupt IRQ number ....... %d&bslash;n&quot;
 comma
 (paren
@@ -4351,7 +4404,6 @@ suffix:semicolon
 id|serial
 op_increment
 )paren
-(brace
 id|boardname
 (braket
 id|serial
@@ -4372,7 +4424,6 @@ op_plus
 id|serial
 )paren
 suffix:semicolon
-)brace
 id|boardname
 (braket
 id|serial
@@ -4383,6 +4434,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Prom version board %d ....... V%d.%d %s&quot;
 comma
 id|i
@@ -4495,6 +4547,7 @@ op_ne
 l_int|0
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot; S/N %d&bslash;n&quot;
 comma
@@ -4516,16 +4569,15 @@ id|DeviceErrorCount
 op_ne
 l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;DeviceErrorCount ........... %d&bslash;n&quot;
 comma
 id|DeviceErrorCount
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4533,16 +4585,15 @@ id|ReadErrorCount
 op_ne
 l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ReadErrorCount ............. %d&bslash;n&quot;
 comma
 id|ReadErrorCount
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4550,16 +4601,15 @@ id|WriteErrorCount
 op_ne
 l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;WriteErrorCount ............ %d&bslash;n&quot;
 comma
 id|WriteErrorCount
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4570,14 +4620,12 @@ op_amp
 id|FlagSleepRec
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;Process in read pending&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -4769,5 +4817,5 @@ id|applicom_setup
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * QLogic ISP1020 Intelligent SCSI Processor Driver (PCI)&n; * Written by Erik H. Moe, ehm@cris.com&n; * Copyright 1995, Erik H. Moe&n; * Copyright 1996, 1997  Michael A. Griffith &lt;grif@acm.org&gt;&n; * Copyright 2000, Jayson C. Vantuyl &lt;vantuyl@csc.smsu.edu&gt;&n; *             and Bryon W. Roche    &lt;bryon@csc.smsu.edu&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
+multiline_comment|/*&n; * QLogic ISP1020 Intelligent SCSI Processor Driver (PCI)&n; * Written by Erik H. Moe, ehm@cris.com&n; * Copyright 1995, Erik H. Moe&n; * Copyright 1996, 1997  Michael A. Griffith &lt;grif@acm.org&gt;&n; * Copyright 2000, Jayson C. Vantuyl &lt;vantuyl@csc.smsu.edu&gt;&n; *             and Bryon W. Roche    &lt;bryon@csc.smsu.edu&gt;&n; *&n; * 64-bit addressing added by Kanoj Sarcar &lt;kanoj@sgi.com&gt;&n; * &t;&t;&t;   and Leo Dagum    &lt;dagum@sgi.com&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -189,6 +189,10 @@ DECL|macro|MBOX4
 mdefine_line|#define MBOX4&t;&t;0x78&t;/* mailbox 4 */
 DECL|macro|MBOX5
 mdefine_line|#define MBOX5&t;&t;0x7a&t;/* mailbox 5 */
+DECL|macro|MBOX6
+mdefine_line|#define MBOX6           0x7c    /* mailbox 6 */
+DECL|macro|MBOX7
+mdefine_line|#define MBOX7           0x7e    /* mailbox 7 */
 multiline_comment|/* mailbox command complete status codes */
 DECL|macro|MBOX_COMMAND_COMPLETE
 mdefine_line|#define MBOX_COMMAND_COMPLETE&t;&t;0x4000
@@ -215,6 +219,19 @@ DECL|macro|REQUEST_QUEUE_WAKEUP
 mdefine_line|#define REQUEST_QUEUE_WAKEUP&t;&t;0x8005
 DECL|macro|EXECUTION_TIMEOUT_RESET
 mdefine_line|#define EXECUTION_TIMEOUT_RESET&t;&t;0x8006
+macro_line|#ifdef CONFIG_QL_ISP_A64
+DECL|macro|IOCB_SEGS
+mdefine_line|#define IOCB_SEGS                       2
+DECL|macro|CONTINUATION_SEGS
+mdefine_line|#define CONTINUATION_SEGS               5
+DECL|macro|MAX_CONTINUATION_ENTRIES
+mdefine_line|#define MAX_CONTINUATION_ENTRIES        254
+macro_line|#else
+DECL|macro|IOCB_SEGS
+mdefine_line|#define IOCB_SEGS                       4
+DECL|macro|CONTINUATION_SEGS
+mdefine_line|#define CONTINUATION_SEGS               7
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 DECL|struct|Entry_header
 r_struct
 id|Entry_header
@@ -238,10 +255,17 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* entry header type commands */
+macro_line|#ifdef CONFIG_QL_ISP_A64
+DECL|macro|ENTRY_COMMAND
+mdefine_line|#define ENTRY_COMMAND           9
+DECL|macro|ENTRY_CONTINUATION
+mdefine_line|#define ENTRY_CONTINUATION      0xa
+macro_line|#else
 DECL|macro|ENTRY_COMMAND
 mdefine_line|#define ENTRY_COMMAND&t;&t;1
 DECL|macro|ENTRY_CONTINUATION
 mdefine_line|#define ENTRY_CONTINUATION&t;2
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 DECL|macro|ENTRY_STATUS
 mdefine_line|#define ENTRY_STATUS&t;&t;3
 DECL|macro|ENTRY_MARKER
@@ -265,6 +289,12 @@ DECL|member|d_base
 id|u_int
 id|d_base
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+DECL|member|d_base_hi
+id|u_int
+id|d_base_hi
+suffix:semicolon
+macro_line|#endif
 DECL|member|d_count
 id|u_int
 id|d_count
@@ -319,12 +349,22 @@ id|cdb
 l_int|12
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+DECL|member|rsvd1
+id|u_int
+id|rsvd1
+suffix:semicolon
+DECL|member|rsvd2
+id|u_int
+id|rsvd2
+suffix:semicolon
+macro_line|#endif
 DECL|member|dataseg
 r_struct
 id|dataseg
 id|dataseg
 (braket
-l_int|4
+id|IOCB_SEGS
 )braket
 suffix:semicolon
 )brace
@@ -403,16 +443,18 @@ r_struct
 id|Entry_header
 id|hdr
 suffix:semicolon
+macro_line|#ifndef CONFIG_QL_ISP_A64
 DECL|member|reserved
 id|u_int
 id|reserved
 suffix:semicolon
+macro_line|#endif
 DECL|member|dataseg
 r_struct
 id|dataseg
 id|dataseg
 (braket
-l_int|7
+id|CONTINUATION_SEGS
 )braket
 suffix:semicolon
 )brace
@@ -723,6 +765,12 @@ DECL|macro|MBOX_WRITE_FOUR_RAM_WORDS
 mdefine_line|#define MBOX_WRITE_FOUR_RAM_WORDS&t;0x0041
 DECL|macro|MBOX_EXEC_BIOS_IOCB
 mdefine_line|#define MBOX_EXEC_BIOS_IOCB&t;&t;0x0042
+macro_line|#ifdef CONFIG_QL_ISP_A64
+DECL|macro|MBOX_CMD_INIT_REQUEST_QUEUE_64
+mdefine_line|#define MBOX_CMD_INIT_REQUEST_QUEUE_64      0x0052
+DECL|macro|MBOX_CMD_INIT_RESPONSE_QUEUE_64
+mdefine_line|#define MBOX_CMD_INIT_RESPONSE_QUEUE_64     0x0053
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 macro_line|#include &quot;qlogicisp_asm.c&quot;
 DECL|macro|PACKB
 mdefine_line|#define PACKB(a, b)&t;&t;&t;(((a)&lt;&lt;4)|(b))
@@ -1337,6 +1385,161 @@ comma
 l_int|3
 )paren
 multiline_comment|/* MBOX_EXEC_BIOS_IOCB */
+macro_line|#ifdef CONFIG_QL_ISP_A64
+comma
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0043 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0044 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0045 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0046 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0047 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0048 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0049 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x004a */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x004b */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x004c */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x004d */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x004e */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x004f */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0050 */
+id|PACKB
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+comma
+multiline_comment|/* 0x0051 */
+id|PACKB
+c_func
+(paren
+l_int|8
+comma
+l_int|8
+)paren
+comma
+multiline_comment|/* MBOX_CMD_INIT_REQUEST_QUEUE_64 (0x0052) */
+id|PACKB
+c_func
+(paren
+l_int|8
+comma
+l_int|8
+)paren
+multiline_comment|/* MBOX_CMD_INIT_RESPONSE_QUEUE_64 (0x0053) */
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 )brace
 suffix:semicolon
 DECL|macro|MAX_MBOX_COMMAND
@@ -2435,6 +2638,9 @@ id|isp1020_hostdata
 op_star
 id|hostdata
 suffix:semicolon
+id|dma_addr_t
+id|dma_addr
+suffix:semicolon
 id|ENTER
 c_func
 (paren
@@ -2810,11 +3016,11 @@ c_cond
 (paren
 id|n
 OG
-l_int|4
+id|IOCB_SEGS
 )paren
 id|n
 op_assign
-l_int|4
+id|IOCB_SEGS
 suffix:semicolon
 r_for
 c_loop
@@ -2831,6 +3037,14 @@ id|i
 op_increment
 )paren
 (brace
+id|dma_addr
+op_assign
+id|sg_dma_address
+c_func
+(paren
+id|sg
+)paren
+suffix:semicolon
 id|ds
 (braket
 id|i
@@ -2841,13 +3055,34 @@ op_assign
 id|cpu_to_le32
 c_func
 (paren
-id|sg_dma_address
+(paren
+id|u32
+)paren
+id|dma_addr
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|ds
+(braket
+id|i
+)braket
+dot
+id|d_base_hi
+op_assign
+id|cpu_to_le32
 c_func
 (paren
-id|sg
+(paren
+id|u32
+)paren
+(paren
+id|dma_addr
+op_rshift
+l_int|32
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 id|ds
 (braket
 id|i
@@ -2871,7 +3106,7 @@ suffix:semicolon
 )brace
 id|sg_count
 op_sub_assign
-l_int|4
+id|IOCB_SEGS
 suffix:semicolon
 r_while
 c_loop
@@ -2952,10 +3187,12 @@ id|cont-&gt;hdr.flags
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef CONFIG_QL_ISP_A64
 id|cont-&gt;reserved
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|ds
 op_assign
 id|cont-&gt;dataseg
@@ -2969,11 +3206,11 @@ c_cond
 (paren
 id|n
 OG
-l_int|7
+id|CONTINUATION_SEGS
 )paren
 id|n
 op_assign
-l_int|7
+id|CONTINUATION_SEGS
 suffix:semicolon
 r_for
 c_loop
@@ -2990,6 +3227,14 @@ op_increment
 id|i
 )paren
 (brace
+id|dma_addr
+op_assign
+id|sg_dma_address
+c_func
+(paren
+id|sg
+)paren
+suffix:semicolon
 id|ds
 (braket
 id|i
@@ -3000,13 +3245,34 @@ op_assign
 id|cpu_to_le32
 c_func
 (paren
-id|sg_dma_address
+(paren
+id|u32
+)paren
+id|dma_addr
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|ds
+(braket
+id|i
+)braket
+dot
+id|d_base_hi
+op_assign
+id|cpu_to_le32
 c_func
 (paren
-id|sg
+(paren
+id|u32
+)paren
+(paren
+id|dma_addr
+op_rshift
+l_int|32
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 id|ds
 (braket
 id|i
@@ -3041,16 +3307,9 @@ c_cond
 id|Cmnd-&gt;request_bufflen
 )paren
 (brace
-id|Cmnd-&gt;SCp.ptr
+multiline_comment|/*Cmnd-&gt;SCp.ptr = (char *)(unsigned long)*/
+id|dma_addr
 op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-r_int
-r_int
-)paren
 id|pci_map_single
 c_func
 (paren
@@ -3067,6 +3326,18 @@ id|Cmnd-&gt;sc_data_direction
 )paren
 )paren
 suffix:semicolon
+id|Cmnd-&gt;SCp.ptr
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+r_int
+r_int
+)paren
+id|dma_addr
+suffix:semicolon
 id|cmd-&gt;dataseg
 (braket
 l_int|0
@@ -3080,12 +3351,31 @@ c_func
 (paren
 id|u32
 )paren
-(paren
-r_int
-)paren
-id|Cmnd-&gt;SCp.ptr
+id|dma_addr
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|cmd-&gt;dataseg
+(braket
+l_int|0
+)braket
+dot
+id|d_base_hi
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+(paren
+id|u32
+)paren
+(paren
+id|dma_addr
+op_rshift
+l_int|32
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 id|cmd-&gt;dataseg
 (braket
 l_int|0
@@ -3122,6 +3412,17 @@ id|d_base
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|cmd-&gt;dataseg
+(braket
+l_int|0
+)braket
+dot
+id|d_base_hi
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* CONFIG_QL_ISP_A64 */
 id|cmd-&gt;dataseg
 (braket
 l_int|0
@@ -3691,6 +3992,18 @@ c_func
 (paren
 id|hostdata-&gt;pci_dev
 comma
+macro_line|#ifdef CONFIG_QL_ISP_A64
+(paren
+id|dma_addr_t
+)paren
+(paren
+(paren
+r_int
+)paren
+id|Cmnd-&gt;SCp.ptr
+)paren
+comma
+macro_line|#else
 (paren
 id|u32
 )paren
@@ -3701,6 +4014,7 @@ r_int
 id|Cmnd-&gt;SCp.ptr
 )paren
 comma
+macro_line|#endif
 id|Cmnd-&gt;request_bufflen
 comma
 id|scsi_to_pci_dma_dir
@@ -6691,6 +7005,17 @@ id|i
 comma
 id|k
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|u_long
+id|queue_addr
+suffix:semicolon
+id|u_short
+id|param
+(braket
+l_int|8
+)braket
+suffix:semicolon
+macro_line|#else
 id|u_int
 id|queue_addr
 suffix:semicolon
@@ -6700,6 +7025,7 @@ id|param
 l_int|6
 )braket
 suffix:semicolon
+macro_line|#endif
 id|u_short
 id|isp_cfg1
 comma
@@ -7407,6 +7733,15 @@ id|queue_addr
 op_assign
 id|hostdata-&gt;res_dma
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|param
+(braket
+l_int|0
+)braket
+op_assign
+id|MBOX_CMD_INIT_RESPONSE_QUEUE_64
+suffix:semicolon
+macro_line|#else
 id|param
 (braket
 l_int|0
@@ -7414,6 +7749,7 @@ l_int|0
 op_assign
 id|MBOX_INIT_RES_QUEUE
 suffix:semicolon
+macro_line|#endif
 id|param
 (braket
 l_int|1
@@ -7465,6 +7801,36 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|param
+(braket
+l_int|6
+)braket
+op_assign
+(paren
+id|u_short
+)paren
+(paren
+id|queue_addr
+op_rshift
+l_int|48
+)paren
+suffix:semicolon
+id|param
+(braket
+l_int|7
+)braket
+op_assign
+(paren
+id|u_short
+)paren
+(paren
+id|queue_addr
+op_rshift
+l_int|32
+)paren
+suffix:semicolon
+macro_line|#endif
 id|isp1020_mbox_command
 c_func
 (paren
@@ -7504,6 +7870,15 @@ id|queue_addr
 op_assign
 id|hostdata-&gt;req_dma
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|param
+(braket
+l_int|0
+)braket
+op_assign
+id|MBOX_CMD_INIT_REQUEST_QUEUE_64
+suffix:semicolon
+macro_line|#else
 id|param
 (braket
 l_int|0
@@ -7511,6 +7886,7 @@ l_int|0
 op_assign
 id|MBOX_INIT_REQ_QUEUE
 suffix:semicolon
+macro_line|#endif
 id|param
 (braket
 l_int|1
@@ -7555,6 +7931,43 @@ l_int|4
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_QL_ISP_A64
+id|param
+(braket
+l_int|5
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|param
+(braket
+l_int|6
+)braket
+op_assign
+(paren
+id|u_short
+)paren
+(paren
+id|queue_addr
+op_rshift
+l_int|48
+)paren
+suffix:semicolon
+id|param
+(braket
+l_int|7
+)braket
+op_assign
+(paren
+id|u_short
+)paren
+(paren
+id|queue_addr
+op_rshift
+l_int|32
+)paren
+suffix:semicolon
+macro_line|#endif
 id|isp1020_mbox_command
 c_func
 (paren
@@ -7694,6 +8107,38 @@ op_rshift
 l_int|4
 )paren
 (brace
+r_case
+l_int|8
+suffix:colon
+id|isp_outw
+c_func
+(paren
+id|param
+(braket
+l_int|7
+)braket
+comma
+id|host
+comma
+id|MBOX7
+)paren
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|isp_outw
+c_func
+(paren
+id|param
+(braket
+l_int|6
+)braket
+comma
+id|host
+comma
+id|MBOX6
+)paren
+suffix:semicolon
 r_case
 l_int|6
 suffix:colon
@@ -7912,6 +8357,38 @@ op_amp
 l_int|0xf
 )paren
 (brace
+r_case
+l_int|8
+suffix:colon
+id|param
+(braket
+l_int|7
+)braket
+op_assign
+id|isp_inw
+c_func
+(paren
+id|host
+comma
+id|MBOX7
+)paren
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|param
+(braket
+l_int|6
+)braket
+op_assign
+id|isp_inw
+c_func
+(paren
+id|host
+comma
+id|MBOX6
+)paren
+suffix:semicolon
 r_case
 l_int|6
 suffix:colon

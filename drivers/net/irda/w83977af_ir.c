@@ -5109,6 +5109,20 @@ r_case
 id|SIOCSBANDWIDTH
 suffix:colon
 multiline_comment|/* Set bandwidth */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|w83977af_change_speed
 c_func
 (paren
@@ -5123,6 +5137,20 @@ r_case
 id|SIOCSMEDIABUSY
 suffix:colon
 multiline_comment|/* Set media busy */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irda_device_set_media_busy
 c_func
 (paren

@@ -2100,7 +2100,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;3c515 Resource configuraiton register %#4.4x, DCR %4.4x.&bslash;n&quot;
+l_string|&quot;3c515 Resource configuration register %#4.4x, DCR %4.4x.&bslash;n&quot;
 comma
 id|inl
 c_func
@@ -2350,7 +2350,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;3c515 Resource configuraiton register %#4.4x, DCR %4.4x.&bslash;n&quot;
+l_string|&quot;3c515 Resource configuration register %#4.4x, DCR %4.4x.&bslash;n&quot;
 comma
 id|inl
 c_func

@@ -1520,6 +1520,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|pte_pagenr
 c_func
 (paren
@@ -1527,6 +1528,19 @@ id|page
 )paren
 op_ge
 id|max_mapnr
+)paren
+op_logical_or
+id|PageReserved
+c_func
+(paren
+id|pte_pagenr
+c_func
+(paren
+id|page
+)paren
+op_plus
+id|mem_map
+)paren
 )paren
 r_continue
 suffix:semicolon

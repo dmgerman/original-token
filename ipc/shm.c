@@ -4981,11 +4981,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|down
 c_func
 (paren
@@ -5014,11 +5009,6 @@ c_func
 (paren
 op_amp
 id|shm_ids.sem
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -5071,22 +5061,13 @@ op_amp
 id|shm_ids.sem
 )paren
 suffix:semicolon
-multiline_comment|/* The kernel lock prevents new attaches from&n;&t;&t;&t;&t; * being happening.  We can&squot;t hold shm_lock here&n;&t;&t;&t;&t; * else we will deadlock in shm_lookup when we&n;&t;&t;&t;&t; * try to recursively grab it.&n;&t;&t;&t;&t; */
-id|err
-op_assign
+multiline_comment|/*&n;&t;&t;&t;&t; * We can&squot;t hold shm_lock here else we&n;&t;&t;&t;&t; * will deadlock in shm_lookup when we&n;&t;&t;&t;&t; * try to recursively grab it.&n;&t;&t;&t;&t; */
+r_return
 id|shm_remove_name
 c_func
 (paren
 id|id
 )paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|err
 suffix:semicolon
 )brace
 multiline_comment|/* Do not find me any more */
@@ -5116,11 +5097,6 @@ c_func
 (paren
 op_amp
 id|shm_ids.sem
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -5393,6 +5369,12 @@ id|vma
 r_if
 c_cond
 (paren
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_WRITE
+)paren
+op_logical_and
 op_logical_neg
 (paren
 id|vma-&gt;vm_flags
@@ -5404,7 +5386,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* we cannot do private mappings */
+multiline_comment|/* we cannot do private writable mappings */
 id|UPDATE_ATIME
 c_func
 (paren
@@ -5460,7 +5442,16 @@ r_int
 id|err
 suffix:semicolon
 r_int
+r_int
 id|flags
+suffix:semicolon
+r_int
+r_int
+id|prot
+suffix:semicolon
+r_int
+r_int
+id|o_flags
 suffix:semicolon
 r_char
 id|name
@@ -5548,6 +5539,36 @@ id|flags
 op_assign
 id|MAP_SHARED
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|shmflg
+op_amp
+id|SHM_RDONLY
+)paren
+(brace
+id|prot
+op_assign
+id|PROT_READ
+suffix:semicolon
+id|o_flags
+op_assign
+id|O_RDONLY
+suffix:semicolon
+)brace
+r_else
+(brace
+id|prot
+op_assign
+id|PROT_READ
+op_or
+id|PROT_WRITE
+suffix:semicolon
+id|o_flags
+op_assign
+id|O_RDWR
+suffix:semicolon
+)brace
 id|sprintf
 (paren
 id|name
@@ -5569,7 +5590,7 @@ c_func
 (paren
 id|name
 comma
-id|O_RDWR
+id|o_flags
 comma
 l_int|0
 comma
@@ -5602,18 +5623,7 @@ id|addr
 comma
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_size
 comma
-(paren
-id|shmflg
-op_amp
-id|SHM_RDONLY
-ques
-c_cond
-id|PROT_READ
-suffix:colon
-id|PROT_READ
-op_or
-id|PROT_WRITE
-)paren
+id|prot
 comma
 id|flags
 comma
@@ -5706,7 +5716,7 @@ id|shmd-&gt;vm_file-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Remove a name. Must be called with lock_kernel&n; */
+multiline_comment|/*&n; *&t;Remove a name.&n; */
 DECL|function|shm_remove_name
 r_static
 r_int
@@ -5717,6 +5727,9 @@ r_int
 id|id
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_char
 id|name
 (braket
@@ -5734,7 +5747,13 @@ comma
 id|id
 )paren
 suffix:semicolon
-r_return
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|err
+op_assign
 id|do_unlink
 (paren
 id|name
@@ -5745,6 +5764,14 @@ c_func
 id|shm_sb-&gt;s_root
 )paren
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * remove the attach descriptor shmd.&n; * free memory for segment if it is marked destroyed.&n; * The descriptor has already been removed from the current-&gt;mm-&gt;mmap list&n; * and will later be kfree()d.&n; */
@@ -5768,11 +5795,6 @@ r_struct
 id|shmid_kernel
 op_star
 id|shp
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* remove from the list of attaches of the shm segment */
 r_if
@@ -5850,6 +5872,11 @@ op_logical_and
 id|err
 op_ne
 op_minus
+id|EINVAL
+op_logical_and
+id|err
+op_ne
+op_minus
 id|ENOENT
 )paren
 (brace
@@ -5875,11 +5902,6 @@ id|id
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * detach and kill segment if marked destroyed.&n; * The work is done in shm_close.&n; */
 DECL|function|sys_shmdt

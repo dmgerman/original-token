@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Fri Jan 14 21:02:27 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Sat Mar 11 07:43:30 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -3447,6 +3447,20 @@ r_case
 id|SIOCSBANDWIDTH
 suffix:colon
 multiline_comment|/* Set bandwidth */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irda_task_execute
 c_func
 (paren
@@ -3471,6 +3485,20 @@ r_case
 id|SIOCSDONGLE
 suffix:colon
 multiline_comment|/* Set dongle */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 multiline_comment|/* Initialize dongle */
 id|dongle
 op_assign
@@ -3543,6 +3571,20 @@ r_case
 id|SIOCSMEDIABUSY
 suffix:colon
 multiline_comment|/* Set media busy */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irda_device_set_media_busy
 c_func
 (paren
@@ -3570,6 +3612,20 @@ suffix:semicolon
 r_case
 id|SIOCSDTRRTS
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irtty_set_dtr_rts
 c_func
 (paren
@@ -3585,6 +3641,20 @@ suffix:semicolon
 r_case
 id|SIOCSMODE
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irtty_set_mode
 c_func
 (paren

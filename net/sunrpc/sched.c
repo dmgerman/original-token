@@ -3886,7 +3886,6 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 macro_line|#ifdef RPC_DEBUG
-macro_line|#include &lt;linux/nfs_fs.h&gt;
 DECL|function|rpc_show_tasks
 r_void
 id|rpc_show_tasks
@@ -3904,11 +3903,6 @@ id|all_tasks
 comma
 op_star
 id|next
-suffix:semicolon
-r_struct
-id|nfs_wreq
-op_star
-id|wreq
 suffix:semicolon
 id|spin_lock
 c_func
@@ -3995,54 +3989,6 @@ comma
 id|t-&gt;tk_action
 comma
 id|t-&gt;tk_exit
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|t-&gt;tk_flags
-op_amp
-id|RPC_TASK_NFSWRITE
-)paren
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/* NFS write requests */
-id|wreq
-op_assign
-(paren
-r_struct
-id|nfs_wreq
-op_star
-)paren
-id|t-&gt;tk_calldata
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;     NFS: flgs=%08x, pid=%d, pg=%p, off=(%d, %d)&bslash;n&quot;
-comma
-id|wreq-&gt;wb_flags
-comma
-id|wreq-&gt;wb_pid
-comma
-id|wreq-&gt;wb_page
-comma
-id|wreq-&gt;wb_offset
-comma
-id|wreq-&gt;wb_bytes
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;          name=%s/%s&bslash;n&quot;
-comma
-id|wreq-&gt;wb_file-&gt;f_dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|wreq-&gt;wb_file-&gt;f_dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 )brace

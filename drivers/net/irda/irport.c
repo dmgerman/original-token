@@ -3263,6 +3263,20 @@ r_case
 id|SIOCSBANDWIDTH
 suffix:colon
 multiline_comment|/* Set bandwidth */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irda_task_execute
 c_func
 (paren
@@ -3287,6 +3301,20 @@ r_case
 id|SIOCSDONGLE
 suffix:colon
 multiline_comment|/* Set dongle */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 multiline_comment|/* Initialize dongle */
 id|dongle
 op_assign
@@ -3359,6 +3387,20 @@ r_case
 id|SIOCSMEDIABUSY
 suffix:colon
 multiline_comment|/* Set media busy */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irda_device_set_media_busy
 c_func
 (paren
@@ -3386,6 +3428,20 @@ suffix:semicolon
 r_case
 id|SIOCSDTRRTS
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|irport_set_dtr_rts
 c_func
 (paren

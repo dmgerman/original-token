@@ -474,6 +474,11 @@ id|nfs_prepare_write
 c_func
 (paren
 r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
 id|page
 op_star
 id|page
@@ -492,7 +497,13 @@ id|page
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|nfs_flush_incompatible
+c_func
+(paren
+id|file
+comma
+id|page
+)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_commit_write

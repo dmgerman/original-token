@@ -17,12 +17,18 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|variable|acq_is_open
 r_static
 r_int
 id|acq_is_open
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|acq_lock
+r_static
+id|spinlock_t
+id|acq_lock
 suffix:semicolon
 multiline_comment|/*&n; *&t;You must set these - there is no sane way to probe for this board.&n; */
 DECL|macro|WDT_STOP
@@ -289,12 +295,26 @@ id|inode-&gt;i_rdev
 r_case
 id|WATCHDOG_MINOR
 suffix:colon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|acq_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|acq_is_open
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|acq_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -311,6 +331,13 @@ id|inb_p
 c_func
 (paren
 id|WDT_START
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|acq_lock
 )paren
 suffix:semicolon
 r_return
@@ -353,6 +380,13 @@ op_eq
 id|WATCHDOG_MINOR
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|acq_lock
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT&t;
 id|inb_p
 c_func
@@ -364,6 +398,13 @@ macro_line|#endif&t;&t;
 id|acq_is_open
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|acq_lock
+)paren
 suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
@@ -533,6 +574,12 @@ id|printk
 c_func
 (paren
 l_string|&quot;WDT driver for Acquire single board computer initialising.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+id|acq_lock
 )paren
 suffix:semicolon
 id|misc_register

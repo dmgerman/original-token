@@ -125,6 +125,8 @@ DECL|macro|BMCTL_TX2_DIS
 mdefine_line|#define BMCTL_TX2_DIS (1&lt;&lt;10)
 DECL|macro|BMCTL_RX_DIS
 mdefine_line|#define BMCTL_RX_DIS (1&lt;&lt;6)
+DECL|macro|BMCTL_RX_ENABLED
+mdefine_line|#define BMCTL_RX_ENABLED  (1&lt;&lt;5)
 DECL|macro|RXLBDA
 mdefine_line|#define RXLBDA  0x90
 DECL|macro|RXBDA
@@ -372,6 +374,15 @@ id|__u8
 op_star
 id|streamer_mmio
 suffix:semicolon
+DECL|member|streamer_card_name
+r_char
+op_star
+id|streamer_card_name
+suffix:semicolon
+DECL|member|streamer_lock
+id|spinlock_t
+id|streamer_lock
+suffix:semicolon
 DECL|member|srb_queued
 r_volatile
 r_int
@@ -401,18 +412,14 @@ suffix:semicolon
 DECL|member|streamer_rx_ring
 r_struct
 id|streamer_rx_desc
+op_star
 id|streamer_rx_ring
-(braket
-id|STREAMER_RX_RING_SIZE
-)braket
 suffix:semicolon
 DECL|member|streamer_tx_ring
 r_struct
 id|streamer_tx_desc
+op_star
 id|streamer_tx_ring
-(braket
-id|STREAMER_TX_RING_SIZE
-)braket
 suffix:semicolon
 DECL|member|tx_ring_skb
 r_struct
@@ -469,10 +476,6 @@ id|streamer_copy_all_options
 comma
 DECL|member|streamer_message_level
 id|streamer_message_level
-suffix:semicolon
-DECL|member|streamer_multicast_set
-id|__u8
-id|streamer_multicast_set
 suffix:semicolon
 DECL|member|streamer_addr_table_addr
 DECL|member|streamer_parms_addr

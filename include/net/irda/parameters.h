@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      parameters.h&n; * Version:       1.0&n; * Description:   A more general way to handle (pi,pl,pv) parameters&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 08:47:28 1999&n; * Modified at:   Mon Dec 13 11:51:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      parameters.h&n; * Version:       1.0&n; * Description:   A more general way to handle (pi,pl,pv) parameters&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 08:47:28 1999&n; * Modified at:   Sun Jan 30 14:05:14 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_PARAMS_H
 DECL|macro|IRDA_PARAMS_H
 mdefine_line|#define IRDA_PARAMS_H
@@ -83,9 +83,9 @@ id|__u32
 op_star
 id|ip
 suffix:semicolon
-DECL|typedef|pv_t
+DECL|typedef|irda_pv_t
 )brace
-id|pv_t
+id|irda_pv_t
 suffix:semicolon
 r_typedef
 r_struct
@@ -99,12 +99,12 @@ id|__u8
 id|pl
 suffix:semicolon
 DECL|member|pv
-id|pv_t
+id|irda_pv_t
 id|pv
 suffix:semicolon
-DECL|typedef|param_t
+DECL|typedef|irda_param_t
 )brace
-id|param_t
+id|irda_param_t
 suffix:semicolon
 DECL|typedef|PI_HANDLER
 r_typedef
@@ -118,7 +118,7 @@ r_void
 op_star
 id|self
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma

@@ -1,6 +1,7 @@
 macro_line|#ifndef __ALPHA_PCI_H
 DECL|macro|__ALPHA_PCI_H
 mdefine_line|#define __ALPHA_PCI_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
@@ -46,10 +47,32 @@ id|resource
 op_star
 id|mem_space
 suffix:semicolon
-DECL|member|config_space
+multiline_comment|/* The following are for reporting to userland.  The invariant is&n;&t;   that if we report a BWX-capable dense memory, we do not report&n;&t;   a sparse memory at all, even if it exists.  */
+DECL|member|sparse_mem_base
 r_int
 r_int
-id|config_space
+id|sparse_mem_base
+suffix:semicolon
+DECL|member|dense_mem_base
+r_int
+r_int
+id|dense_mem_base
+suffix:semicolon
+DECL|member|sparse_io_base
+r_int
+r_int
+id|sparse_io_base
+suffix:semicolon
+DECL|member|dense_io_base
+r_int
+r_int
+id|dense_io_base
+suffix:semicolon
+multiline_comment|/* This one&squot;s for the kernel only.  It&squot;s in KSEG somewhere.  */
+DECL|member|config_space_base
+r_int
+r_int
+id|config_space_base
 suffix:semicolon
 DECL|member|index
 r_int
@@ -278,5 +301,17 @@ id|dma_addr_t
 id|mask
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
+multiline_comment|/* Values for the `which&squot; argument to sys_pciconfig_iobase.  */
+DECL|macro|IOBASE_HOSE
+mdefine_line|#define IOBASE_HOSE&t;&t;0
+DECL|macro|IOBASE_SPARSE_MEM
+mdefine_line|#define IOBASE_SPARSE_MEM&t;1
+DECL|macro|IOBASE_DENSE_MEM
+mdefine_line|#define IOBASE_DENSE_MEM&t;2
+DECL|macro|IOBASE_SPARSE_IO
+mdefine_line|#define IOBASE_SPARSE_IO&t;3
+DECL|macro|IOBASE_DENSE_IO
+mdefine_line|#define IOBASE_DENSE_IO&t;&t;4
 macro_line|#endif /* __ALPHA_PCI_H */
 eof

@@ -638,12 +638,6 @@ id|src
 suffix:semicolon
 r_int
 r_int
-id|fpcw
-op_assign
-id|current-&gt;thread.flags
-suffix:semicolon
-r_int
-r_int
 id|res
 comma
 id|va
@@ -651,6 +645,8 @@ comma
 id|vb
 comma
 id|vc
+comma
+id|swcr
 comma
 id|fpcr
 suffix:semicolon
@@ -737,6 +733,16 @@ op_assign
 id|rdfpcr
 c_func
 (paren
+)paren
+suffix:semicolon
+id|swcr
+op_assign
+id|swcr_update_status
+c_func
+(paren
+id|current-&gt;thread.flags
+comma
+id|fpcr
 )paren
 suffix:semicolon
 r_if
@@ -1024,7 +1030,7 @@ id|vc
 op_assign
 l_int|0x4000000000000000
 suffix:semicolon
-multiline_comment|/* CMPTEQ, CMPTUN don&squot;t trap on QNaN, while CMPTLT and CMPTLE do */
+multiline_comment|/* CMPTEQ, CMPTUN don&squot;t trap on QNaN,&n;&t;&t;&t;   while CMPTLT and CMPTLE do */
 r_if
 c_cond
 (paren
@@ -1054,12 +1060,14 @@ id|DB
 )paren
 )paren
 )paren
+(brace
 id|FP_SET_EXCEPTION
 c_func
 (paren
 id|FP_EX_INVALID
 )paren
 suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -1314,11 +1322,13 @@ op_amp
 id|_FP_QNANBIT_D
 )paren
 )paren
+(brace
+multiline_comment|/* AAHB Table B-2 says QNaN should not trigger INV */
 id|vc
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* AAHB Table B-2 sais QNaN should not trigger INV */
+)brace
 r_else
 id|FP_TO_INT_ROUND_D
 c_func
@@ -1455,6 +1465,25 @@ comma
 id|SR
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|_fex
+op_amp
+id|FP_EX_UNDERFLOW
+)paren
+op_logical_and
+(paren
+id|swcr
+op_amp
+id|IEEE_MAP_UMZ
+)paren
+)paren
+id|vc
+op_assign
+l_int|0
+suffix:semicolon
 id|alpha_write_fp_reg_s
 c_func
 (paren
@@ -1476,6 +1505,25 @@ id|vc
 comma
 id|DR
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|_fex
+op_amp
+id|FP_EX_UNDERFLOW
+)paren
+op_logical_and
+(paren
+id|swcr
+op_amp
+id|IEEE_MAP_UMZ
+)paren
+)paren
+id|vc
+op_assign
+l_int|0
 suffix:semicolon
 id|done_d
 suffix:colon
@@ -1500,9 +1548,7 @@ id|_fex
 )paren
 (brace
 multiline_comment|/* Record exceptions in software control word.  */
-id|current-&gt;thread.flags
-op_assign
-id|fpcw
+id|swcr
 op_or_assign
 (paren
 id|_fex
@@ -1510,7 +1556,15 @@ op_lshift
 id|IEEE_STATUS_TO_EXCSUM_SHIFT
 )paren
 suffix:semicolon
-multiline_comment|/* Update hardware control register */
+id|current-&gt;thread.flags
+op_or_assign
+(paren
+id|_fex
+op_lshift
+id|IEEE_STATUS_TO_EXCSUM_SHIFT
+)paren
+suffix:semicolon
+multiline_comment|/* Update hardware control register.  */
 id|fpcr
 op_and_assign
 (paren
@@ -1525,7 +1579,7 @@ op_or_assign
 id|ieee_swcr_to_fpcr
 c_func
 (paren
-id|fpcw
+id|swcr
 )paren
 suffix:semicolon
 id|wrfpcr
@@ -1540,7 +1594,7 @@ c_cond
 (paren
 id|_fex
 op_amp
-id|fpcw
+id|swcr
 op_amp
 id|IEEE_TRAP_ENABLE_MASK
 )paren
@@ -1606,6 +1660,10 @@ comma
 id|opcode
 comma
 id|rc
+comma
+id|no_signal
+op_assign
+l_int|0
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -1662,10 +1720,8 @@ dot
 l_int|0x3f
 suffix:colon
 multiline_comment|/* branches */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|egress
 suffix:semicolon
 r_case
 id|OPC_MISC
@@ -1684,10 +1740,8 @@ suffix:colon
 r_case
 id|MISC_EXCB
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|egress
 suffix:semicolon
 r_default
 suffix:colon
@@ -1754,30 +1808,23 @@ op_logical_neg
 id|write_mask
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|alpha_fp_emul
-c_func
-(paren
-id|trigger_pc
-)paren
-)paren
-(brace
-multiline_comment|/* re-execute insns in trap-shadow: */
+multiline_comment|/* Re-execute insns in the trap-shadow.  */
 id|regs-&gt;pc
 op_assign
 id|trigger_pc
 op_plus
 l_int|4
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
+id|no_signal
+op_assign
+id|alpha_fp_emul
+c_func
+(paren
+id|trigger_pc
+)paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_break
+r_goto
+id|egress
 suffix:semicolon
 )brace
 id|trigger_pc
@@ -1785,10 +1832,12 @@ op_sub_assign
 l_int|4
 suffix:semicolon
 )brace
+id|egress
+suffix:colon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-l_int|0
+id|no_signal
 suffix:semicolon
 )brace
 eof

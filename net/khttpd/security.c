@@ -139,6 +139,11 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Rule no. 3 -- Does the file exist ? */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|filp
 op_assign
 id|filp_open
@@ -151,6 +156,11 @@ comma
 id|O_RDONLY
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &quot;pci_impl.h&quot;
 macro_line|#include &quot;machvec_impl.h&quot;
 multiline_comment|/*&n; * Jensen is special: the vector is 0x8X0 for EISA interrupt X, and&n; * 0x9X0 for the local motherboard interrupts..&n; *&n; *&t;0x660 - NMI&n; *&n; *&t;0x800 - IRQ0  interval timer (not used, as we use the RTC timer)&n; *&t;0x810 - IRQ1  line printer (duh..)&n; *&t;0x860 - IRQ6  floppy disk&n; *&t;0x8E0 - IRQ14 SCSI controller&n; *&n; *&t;0x900 - COM1&n; *&t;0x920 - COM2&n; *&t;0x980 - keyboard&n; *&t;0x990 - mouse&n; *&n; * PCI-based systems are more sane: they don&squot;t have the local&n; * interrupts at all, and have only normal PCI interrupts from&n; * devices.  Happily it&squot;s easy enough to do a sane mapping from the&n; * Jensen..  Note that this means that we may have to do a hardware&n; * &quot;ack&quot; to a different interrupt than we report to the rest of the&n; * world.&n; */
 r_static
@@ -316,6 +317,61 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|pci_controler
+op_star
+id|hose
+suffix:semicolon
+multiline_comment|/* Create a hose so that we can report i/o base addresses to&n;&t;   userland.  */
+id|pci_isa_hose
+op_assign
+id|hose
+op_assign
+id|alloc_pci_controler
+c_func
+(paren
+)paren
+suffix:semicolon
+id|hose-&gt;io_space
+op_assign
+op_amp
+id|ioport_resource
+suffix:semicolon
+id|hose-&gt;mem_space
+op_assign
+op_amp
+id|iomem_resource
+suffix:semicolon
+id|hose-&gt;index
+op_assign
+l_int|0
+suffix:semicolon
+id|hose-&gt;sparse_mem_base
+op_assign
+id|EISA_MEM
+op_minus
+id|IDENT_ADDR
+suffix:semicolon
+id|hose-&gt;dense_mem_base
+op_assign
+l_int|0
+suffix:semicolon
+id|hose-&gt;sparse_io_base
+op_assign
+id|EISA_IO
+op_minus
+id|IDENT_ADDR
+suffix:semicolon
+id|hose-&gt;dense_io_base
+op_assign
+l_int|0
+suffix:semicolon
+id|hose-&gt;sg_isa
+op_assign
+id|hose-&gt;sg_pci
+op_assign
+l_int|NULL
+suffix:semicolon
 id|__direct_map_base
 op_assign
 l_int|0

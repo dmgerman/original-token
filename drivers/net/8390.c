@@ -138,9 +138,9 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;SMP and the 8390 setup.&n; *&n; *&t;The 8390 isnt exactly designed to be multithreaded on RX/TX. There is&n; *&t;a page register that controls bank and packet buffer access. We guard&n; *&t;this with ei_local-&gt;page_lock. Nobody should assume or set the page other&n; *&t;than zero when the lock is not held. Lock holders must restore page 0&n; *&t;before unlocking. Even pure readers must take the lock to protect in &n; *&t;page 0.&n; *&n; *&t;To make life difficult the chip can also be very slow. We therefore can&squot;t&n; *&t;just use spinlocks. For the longer lockups we disable the irq the device&n; *&t;sits on and hold the lock. We must hold the lock because there is a dual&n; *&t;processor case other than interrupts (get stats/set multicast list in&n; *&t;parallel with each other and transmit).&n; *&n; *&t;Note: in theory we can just disable the irq on the card _but_ there is&n; *&t;a latency on SMP irq delivery. So we can easily go &quot;disable irq&quot; &quot;sync irqs&quot;&n; *&t;enter lock, take the queued irq. So we waddle instead of flying.&n; *&n; *&t;Finally by special arrangement for the purpose of being generally &n; *&t;annoying the transmit function is called bh atomic. That places&n; *&t;restrictions on the user context callers as disable_irq won&squot;t save&n; *&t;them.&n; */
+multiline_comment|/**&n; *&t;DOC: SMP and the 8390 setup.&n; *&n; *&t;The 8390 isnt exactly designed to be multithreaded on RX/TX. There is&n; *&t;a page register that controls bank and packet buffer access. We guard&n; *&t;this with ei_local-&gt;page_lock. Nobody should assume or set the page other&n; *&t;than zero when the lock is not held. Lock holders must restore page 0&n; *&t;before unlocking. Even pure readers must take the lock to protect in &n; *&t;page 0.&n; *&n; *&t;To make life difficult the chip can also be very slow. We therefore can&squot;t&n; *&t;just use spinlocks. For the longer lockups we disable the irq the device&n; *&t;sits on and hold the lock. We must hold the lock because there is a dual&n; *&t;processor case other than interrupts (get stats/set multicast list in&n; *&t;parallel with each other and transmit).&n; *&n; *&t;Note: in theory we can just disable the irq on the card _but_ there is&n; *&t;a latency on SMP irq delivery. So we can easily go &quot;disable irq&quot; &quot;sync irqs&quot;&n; *&t;enter lock, take the queued irq. So we waddle instead of flying.&n; *&n; *&t;Finally by special arrangement for the purpose of being generally &n; *&t;annoying the transmit function is called bh atomic. That places&n; *&t;restrictions on the user context callers as disable_irq won&squot;t save&n; *&t;them.&n; */
 "&f;"
-multiline_comment|/* Open/initialize the board.  This routine goes all-out, setting everything&n;   up anew at each open, even though many of these registers should only&n;   need to be set once at boot.&n;   */
+multiline_comment|/**&n; * ei_open - Open/initialize the board.&n; * @dev: network device to initialize&n; *&n; * This routine goes all-out, setting everything&n; * up anew at each open, even though many of these registers should only&n; * need to be set once at boot.&n; */
 DECL|function|ei_open
 r_int
 id|ei_open
@@ -233,7 +233,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Opposite of above. Only used when &quot;ifconfig &lt;devname&gt; down&quot; is done. */
+multiline_comment|/**&n; * ei_close - shut down network device&n; * @dev: network device to close&n; *&n; * Opposite of ei_open. Only used when &quot;ifconfig &lt;devname&gt; down&quot; is done.&n; */
 DECL|function|ei_close
 r_int
 id|ei_close
@@ -298,6 +298,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * ei_start_xmit - begin packet transmission&n; * @skb: packet to be sent&n; * @dev: network device to which packet is sent&n; *&n; * Sends a packet to an 8390 network device.&n; */
 DECL|function|ei_start_xmit
 r_static
 r_int
@@ -968,7 +969,7 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/* The typical workload of the driver:&n;   Handle the ether interface interrupts. */
+multiline_comment|/**&n; * ei_interrupt - &n; * @irq:&n; * @dev_id:&n; * @regs:&n; *&n; * The typical workload of the driver:&n; * Handle the ether interface interrupts.&n; */
 DECL|function|ei_interrupt
 r_void
 id|ei_interrupt
@@ -1430,7 +1431,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * A transmitter error has happened. Most likely excess collisions (which&n; * is a fairly normal condition). If the error is one where the Tx will&n; * have been aborted, we try and send another one right away, instead of&n; * letting the failed packet sit and collect dust in the Tx buffer. This&n; * is a much better solution as it avoids kernel based Tx timeouts, and&n; * an unnecessary card reset.&n; *&n; * Called with lock held&n; */
+multiline_comment|/**&n; * ei_tx_err - handle transmitter error&n; * @dev: network device which threw the exception&n; *&n; * A transmitter error has happened. Most likely excess collisions (which&n; * is a fairly normal condition). If the error is one where the Tx will&n; * have been aborted, we try and send another one right away, instead of&n; * letting the failed packet sit and collect dust in the Tx buffer. This&n; * is a much better solution as it avoids kernel based Tx timeouts, and&n; * an unnecessary card reset.&n; *&n; * Called with lock held&n; */
 DECL|function|ei_tx_err
 r_static
 r_void
@@ -1627,7 +1628,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* We have finished a transmit: check for errors and then trigger the next&n;   packet to be sent. Called with lock held */
+multiline_comment|/**&n; * ei_tx_intr - transmit interrupt handler&n; * @dev: network device for which tx intr is handled&n; *&n; * We have finished a transmit: check for errors and then trigger the next&n; * packet to be sent. Called with lock held&n; */
 DECL|function|ei_tx_intr
 r_static
 r_void
@@ -1951,7 +1952,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We have a good packet(s), get it/them out of the buffers. &n;   Called with lock held */
+multiline_comment|/**&n; * ei_receive - receive some packets&n; * @dev: network device with which receive will be run&n; *&n; * We have a good packet(s), get it/them out of the buffers. &n; * Called with lock held&n; */
 DECL|function|ei_receive
 r_static
 r_void
@@ -2495,7 +2496,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * We have a receiver overrun: we have to kick the 8390 to get it started&n; * again. Problem is that you have to kick it exactly as NS prescribes in&n; * the updated datasheets, or &quot;the NIC may act in an unpredictable manner.&quot;&n; * This includes causing &quot;the NIC to defer indefinitely when it is stopped&n; * on a busy network.&quot;  Ugh.&n; * Called with lock held. Don&squot;t call this with the interrupts off or your&n; * computer will hate you - it takes 10mS or so. &n; */
+multiline_comment|/**&n; * ei_rx_overrun - handle receiver overrun&n; * @dev: network device which threw exception&n; *&n; * We have a receiver overrun: we have to kick the 8390 to get it started&n; * again. Problem is that you have to kick it exactly as NS prescribes in&n; * the updated datasheets, or &quot;the NIC may act in an unpredictable manner.&quot;&n; * This includes causing &quot;the NIC to defer indefinitely when it is stopped&n; * on a busy network.&quot;  Ugh.&n; * Called with lock held. Don&squot;t call this with the interrupts off or your&n; * computer will hate you - it takes 10mS or so. &n; */
 DECL|function|ei_rx_overrun
 r_static
 r_void
@@ -3034,7 +3035,7 @@ l_int|7
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Set or clear the multicast filter for this adaptor. May be called&n; *&t;from a BH in 2.1.x. Must be called with lock held. &n; */
+multiline_comment|/**&n; * do_set_multicast_list - set/clear multicast filter&n; * @dev: net device for which multicast filter is adjusted&n; *&n; *&t;Set or clear the multicast filter for this adaptor. May be called&n; *&t;from a BH in 2.1.x. Must be called with lock held. &n; */
 DECL|function|do_set_multicast_list
 r_static
 r_void
@@ -3339,7 +3340,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Initialize the rest of the 8390 device structure.  Do NOT __init&n; * this, as it is used by 8390 based modular drivers too.&n; */
+multiline_comment|/**&n; * ethdev_init - init rest of 8390 device struct&n; * @dev: network device structure to init&n; *&n; * Initialize the rest of the 8390 device structure.  Do NOT __init&n; * this, as it is used by 8390 based modular drivers too.&n; */
 DECL|function|ethdev_init
 r_int
 id|ethdev_init
@@ -3460,7 +3461,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* This page of functions should be 8390 generic */
 multiline_comment|/* Follow National Semi&squot;s recommendations for initializing the &quot;NIC&quot;. */
-multiline_comment|/*&n; *&t;Must be called with lock held.&n; */
+multiline_comment|/**&n; * NS8390_init - initialize 8390 hardware&n; * @dev: network device to initialize&n; * @startp: boolean.  non-zero value to initiate chip processing&n; *&n; *&t;Must be called with lock held.&n; */
 DECL|function|NS8390_init
 r_void
 id|NS8390_init
@@ -3866,8 +3867,6 @@ id|dev
 suffix:semicolon
 multiline_comment|/* (re)load the mcast table */
 )brace
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/* Trigger a transmit start, assuming the length is valid. &n;   Always called with the page lock held */
 DECL|function|NS8390_trigger_send

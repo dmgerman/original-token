@@ -1402,6 +1402,8 @@ suffix:semicolon
 multiline_comment|/* do not touch this */
 macro_line|#endif
 multiline_comment|/*&n;&t; * Create our single hose.&n;&t; */
+id|pci_isa_hose
+op_assign
 id|hose
 op_assign
 id|alloc_pci_controler
@@ -1419,11 +1421,29 @@ op_assign
 op_amp
 id|iomem_resource
 suffix:semicolon
-id|hose-&gt;config_space
-op_assign
-id|T2_CONF
-suffix:semicolon
 id|hose-&gt;index
+op_assign
+l_int|0
+suffix:semicolon
+id|hose-&gt;sparse_mem_base
+op_assign
+id|T2_SPARSE_MEM
+op_minus
+id|IDENT_ADDR
+suffix:semicolon
+id|hose-&gt;dense_mem_base
+op_assign
+id|T2_DENSE_MEM
+op_minus
+id|IDENT_ADDR
+suffix:semicolon
+id|hose-&gt;sparse_io_base
+op_assign
+id|T2_IO
+op_minus
+id|IDENT_ADDR
+suffix:semicolon
+id|hose-&gt;dense_io_base
 op_assign
 l_int|0
 suffix:semicolon

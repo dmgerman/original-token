@@ -2,6 +2,7 @@ multiline_comment|/*&n; * include/linux/serial.h&n; *&n; * Copyright (C) 1992 by
 macro_line|#ifndef _LINUX_SERIAL_H
 DECL|macro|_LINUX_SERIAL_H
 mdefine_line|#define _LINUX_SERIAL_H
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
 DECL|struct|async_icount
 r_struct
@@ -47,7 +48,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
 DECL|macro|SERIAL_XMIT_SIZE
-mdefine_line|#define SERIAL_XMIT_SIZE 4096
+mdefine_line|#define SERIAL_XMIT_SIZE PAGE_SIZE
 DECL|struct|serial_struct
 r_struct
 id|serial_struct
@@ -61,6 +62,7 @@ r_int
 id|line
 suffix:semicolon
 DECL|member|port
+r_int
 r_int
 id|port
 suffix:semicolon

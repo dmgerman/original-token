@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       0.9&n; * Description:   Contains various declarations used by the drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Fri Jan 14 10:46:56 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       0.9&n; * Description:   Contains various declarations used by the drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Mon Mar 20 09:08:57 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
@@ -89,19 +89,19 @@ multiline_comment|/* Waiting for child task to finish */
 DECL|enumerator|IRDA_TASK_CHILD_DONE
 id|IRDA_TASK_CHILD_DONE
 multiline_comment|/* Child task is finished */
-DECL|typedef|TASK_STATE
+DECL|typedef|IRDA_TASK_STATE
 )brace
-id|TASK_STATE
+id|IRDA_TASK_STATE
 suffix:semicolon
 r_struct
 id|irda_task
 suffix:semicolon
-DECL|typedef|TASK_CALLBACK
+DECL|typedef|IRDA_TASK_CALLBACK
 r_typedef
 r_int
 (paren
 op_star
-id|TASK_CALLBACK
+id|IRDA_TASK_CALLBACK
 )paren
 (paren
 r_struct
@@ -123,15 +123,15 @@ id|magic_t
 id|magic
 suffix:semicolon
 DECL|member|state
-id|TASK_STATE
+id|IRDA_TASK_STATE
 id|state
 suffix:semicolon
 DECL|member|function
-id|TASK_CALLBACK
+id|IRDA_TASK_CALLBACK
 id|function
 suffix:semicolon
 DECL|member|finished
-id|TASK_CALLBACK
+id|IRDA_TASK_CALLBACK
 id|finished
 suffix:semicolon
 DECL|member|parent
@@ -697,10 +697,10 @@ r_void
 op_star
 id|instance
 comma
-id|TASK_CALLBACK
+id|IRDA_TASK_CALLBACK
 id|function
 comma
-id|TASK_CALLBACK
+id|IRDA_TASK_CALLBACK
 id|finished
 comma
 r_struct
@@ -722,7 +722,7 @@ id|irda_task
 op_star
 id|task
 comma
-id|TASK_STATE
+id|IRDA_TASK_STATE
 id|state
 )paren
 suffix:semicolon

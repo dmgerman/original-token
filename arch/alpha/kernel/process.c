@@ -766,7 +766,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Arrange for each exec&squot;ed process to start off with a clean slate&n;&t;   with respect to the FPU.  This is all exceptions disabled.  Note&n;           that EV6 defines UNFD valid only with UNDZ, which we don&squot;t want&n;&t;   for IEEE conformance -- so that disabled bit remains in software.  */
+multiline_comment|/* Arrange for each exec&squot;ed process to start off with a clean slate&n;&t;   with respect to the FPU.  This is all exceptions disabled.  */
 id|current-&gt;thread.flags
 op_and_assign
 op_complement
@@ -777,13 +777,11 @@ c_func
 (paren
 id|FPCR_DYN_NORMAL
 op_or
-id|FPCR_INVD
-op_or
-id|FPCR_DZED
-op_or
-id|FPCR_OVFD
-op_or
-id|FPCR_INED
+id|ieee_swcr_to_fpcr
+c_func
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace

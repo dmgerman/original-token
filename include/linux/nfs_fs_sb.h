@@ -63,6 +63,13 @@ op_star
 id|hostname
 suffix:semicolon
 multiline_comment|/* remote hostname */
+DECL|member|rw_requests
+r_struct
+id|nfs_reqlist
+op_star
+id|rw_requests
+suffix:semicolon
+multiline_comment|/* async read/write requests */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * nfs super-block data in memory&n; */

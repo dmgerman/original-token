@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/nfsd/stats.c&n; *&n; * procfs-based user access to knfsd statistics&n; *&n; * /proc/net/rpc/nfsd&n; *&n; * Format:&n; *&t;rc &lt;hits&gt; &lt;misses&gt; &lt;nocache&gt;&n; *&t;&t;&t;Statistsics for the reply cache&n; *&t;plus generic RPC stats (see net/sunrpc/stats.c)&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/fs/nfsd/stats.c&n; *&n; * procfs-based user access to knfsd statistics&n; *&n; * /proc/net/rpc/nfsd&n; *&n; * Format:&n; *&t;rc &lt;hits&gt; &lt;misses&gt; &lt;nocache&gt;&n; *&t;&t;&t;Statistsics for the reply cache&n; *&t;fh &lt;stale&gt; &lt;total-lookups&gt; &lt;anonlookups&gt; &lt;dir-not-in-dcache&gt; &lt;nondir-not-in-dcache&gt;&n; *&t;&t;&t;statistics for filehandle lookup&n; *&t;io &lt;bytes-read&gt; &lt;bytes-writtten&gt;&n; *&t;&t;&t;statistics for IO throughput&n; *&t;th &lt;threads&gt; &lt;fullcnt&gt; &lt;10%-20%&gt; &lt;20%-30%&gt; ... &lt;90%-100%&gt; &lt;100%&gt; &n; *&t;&t;&t;time (milliseconds) when nfsd thread usage above thresholds&n; *&t;&t;&t;and number of times that all threads were in use&n; *&t;ra cache-size  &lt;10%  &lt;20%  &lt;30% ... &lt;100% not-found&n; *&t;&t;&t;number of times that read-ahead entry was found that deep in&n; *&t;&t;&t;the cache.&n; *&t;plus generic RPC stats (see net/sunrpc/stats.c)&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -59,6 +59,9 @@ id|data
 r_int
 id|len
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|len
 op_assign
 id|sprintf
@@ -66,7 +69,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;rc %d %d %d  %d %d %d %d %d&bslash;n&quot;
+l_string|&quot;rc %u %u %u&bslash;nfh %u %u %u %u %u&bslash;nio %u %u&bslash;n&quot;
 comma
 id|nfsdstats.rchits
 comma
@@ -83,6 +86,116 @@ comma
 id|nfsdstats.fh_nocache_dir
 comma
 id|nfsdstats.fh_nocache_nondir
+comma
+id|nfsdstats.io_read
+comma
+id|nfsdstats.io_write
+)paren
+suffix:semicolon
+multiline_comment|/* thread usage: */
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;th %u %u&quot;
+comma
+id|nfsdstats.th_cnt
+comma
+id|nfsdstats.th_fullcnt
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|10
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot; %u&quot;
+comma
+id|nfsdstats.th_usage
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* newline and ra-cache */
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;nra %u&quot;
+comma
+id|nfsdstats.ra_size
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|11
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot; %u&quot;
+comma
+id|nfsdstats.ra_depth
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Assume we haven&squot;t hit EOF yet. Will be set by svc_proc_read. */

@@ -174,7 +174,7 @@ mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;3
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
-multiline_comment|/*&n; * On certain platforms whose physical address space can overlap KSEG,&n; * namely EV6 and above, we must re-twiddle the physaddr to restore the&n; * correct high-order bits.&n; */
+multiline_comment|/*&n; * On certain platforms whose physical address space can overlap KSEG,&n; * namely EV6 and above, we must re-twiddle the physaddr to restore the&n; * correct high-order bits.&n; *&n; * This is extremely confusing until you realize that this is actually&n; * just working around a userspace bug.  The X server was intending to&n; * provide the physical address but instead provided the KSEG address.&n; * Or tried to, except it&squot;s not representable.&n; * &n; * On Tsunami there&squot;s nothing meaningful at 0x40000000000, so this is&n; * a safe thing to do.  Come the first core logic that does put something&n; * in this area -- memory or whathaveyou -- then this hack will have&n; * to go away.  So be prepared!&n; */
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) &amp;&amp; defined(USE_48_BIT_KSEG)
 macro_line|#error &quot;EV6-only feature in a generic kernel&quot;
 macro_line|#endif

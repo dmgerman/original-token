@@ -1409,6 +1409,7 @@ op_star
 id|n
 )paren
 (brace
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
@@ -1427,6 +1428,7 @@ op_assign
 id|n-&gt;ops-&gt;output
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 r_return
 l_int|0
 suffix:semicolon
@@ -1448,6 +1450,7 @@ op_star
 id|p
 )paren
 (brace
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
@@ -1469,6 +1472,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 r_return
 l_int|0
 suffix:semicolon

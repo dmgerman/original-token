@@ -39,12 +39,48 @@ r_int
 r_int
 id|attrtimeo
 suffix:semicolon
-multiline_comment|/*&n;&t; * This is the list of dirty unwritten pages.&n;&t; * NFSv3 will want to add a list for written but uncommitted&n;&t; * pages.&n;&t; */
+multiline_comment|/*&n;&t; * This is the list of dirty unwritten pages.&n;&t; */
+DECL|member|dirty
+r_struct
+id|list_head
+id|dirty
+suffix:semicolon
+DECL|member|commit
+r_struct
+id|list_head
+id|commit
+suffix:semicolon
 DECL|member|writeback
 r_struct
-id|nfs_wreq
-op_star
+id|list_head
 id|writeback
+suffix:semicolon
+DECL|member|ndirty
+r_int
+r_int
+id|ndirty
+comma
+DECL|member|ncommit
+id|ncommit
+comma
+DECL|member|npages
+id|npages
+suffix:semicolon
+multiline_comment|/* Flush daemon info */
+DECL|member|hash_next
+r_struct
+id|inode
+op_star
+id|hash_next
+comma
+DECL|member|hash_prev
+op_star
+id|hash_prev
+suffix:semicolon
+DECL|member|nextscan
+r_int
+r_int
+id|nextscan
 suffix:semicolon
 multiline_comment|/* Readdir caching information. */
 DECL|member|cookies
@@ -60,9 +96,11 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * Legal inode flag values&n; */
 DECL|macro|NFS_INO_REVALIDATING
-mdefine_line|#define NFS_INO_REVALIDATING&t;0x0001&t;&t;/* revalidating attrs */
+mdefine_line|#define NFS_INO_REVALIDATING&t;0x0004&t;&t;/* revalidating attrs */
 DECL|macro|NFS_IS_SNAPSHOT
 mdefine_line|#define NFS_IS_SNAPSHOT&t;&t;0x0010&t;&t;/* a snapshot file */
+DECL|macro|NFS_INO_FLUSH
+mdefine_line|#define NFS_INO_FLUSH&t;&t;0x0020&t;&t;/* inode is due for flushing */
 multiline_comment|/*&n; * NFS lock info&n; */
 DECL|struct|nfs_lock_info
 r_struct

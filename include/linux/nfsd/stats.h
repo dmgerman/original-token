@@ -47,13 +47,61 @@ r_int
 r_int
 id|fh_nocache_dir
 suffix:semicolon
-multiline_comment|/* filehandle not foudn in dcache */
+multiline_comment|/* filehandle not found in dcache */
 DECL|member|fh_nocache_nondir
 r_int
 r_int
 id|fh_nocache_nondir
 suffix:semicolon
-multiline_comment|/* filehandle not foudn in dcache */
+multiline_comment|/* filehandle not found in dcache */
+DECL|member|io_read
+r_int
+r_int
+id|io_read
+suffix:semicolon
+multiline_comment|/* bytes returned to read requests */
+DECL|member|io_write
+r_int
+r_int
+id|io_write
+suffix:semicolon
+multiline_comment|/* bytes passed in write requests */
+DECL|member|th_cnt
+r_int
+r_int
+id|th_cnt
+suffix:semicolon
+multiline_comment|/* number of available threads */
+DECL|member|th_usage
+r_int
+r_int
+id|th_usage
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* number of ticks during which n perdeciles&n;&t;&t;&t;&t;&t; * of available threads were in use */
+DECL|member|th_fullcnt
+r_int
+r_int
+id|th_fullcnt
+suffix:semicolon
+multiline_comment|/* number of times last free thread was used */
+DECL|member|ra_size
+r_int
+r_int
+id|ra_size
+suffix:semicolon
+multiline_comment|/* size of ra cache */
+DECL|member|ra_depth
+r_int
+r_int
+id|ra_depth
+(braket
+l_int|11
+)braket
+suffix:semicolon
+multiline_comment|/* number of times ra entry was found that deep&n;&t;&t;&t;&t;&t; * in the cache (10percentiles). [10] = not found */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

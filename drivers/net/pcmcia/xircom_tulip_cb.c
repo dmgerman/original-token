@@ -461,7 +461,6 @@ id|tulip_tbl
 )braket
 op_assign
 (brace
-macro_line|#if 0 /* these entries conflict with regular tulip driver */
 (brace
 l_string|&quot;Digital DC21040 Tulip&quot;
 comma
@@ -634,7 +633,6 @@ comma
 id|mxic_timer
 )brace
 comma
-macro_line|#endif
 (brace
 l_string|&quot;Xircom Cardbus Adapter (DEC 21143 compatible mode)&quot;
 comma
@@ -660,7 +658,11 @@ DECL|enum|chips
 r_enum
 id|chips
 (brace
-macro_line|#if 0 /* these entries conflict with regular tulip driver */
+DECL|enumerator|DC21040
+DECL|enumerator|DC21041
+DECL|enumerator|DC21140
+DECL|enumerator|DC21142
+DECL|enumerator|DC21143
 id|DC21040
 op_assign
 l_int|0
@@ -681,6 +683,14 @@ id|DC21143
 op_assign
 l_int|3
 comma
+DECL|enumerator|LC82C168
+DECL|enumerator|MX98713
+DECL|enumerator|MX98715
+DECL|enumerator|MX98725
+DECL|enumerator|AX88140
+DECL|enumerator|PNIC2
+DECL|enumerator|COMET
+DECL|enumerator|COMPEX9881
 id|LC82C168
 comma
 id|MX98713
@@ -697,15 +707,9 @@ id|COMET
 comma
 id|COMPEX9881
 comma
-id|X3201_3
-comma
-macro_line|#else
 DECL|enumerator|X3201_3
 id|X3201_3
-op_assign
-l_int|0
 comma
-macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* A full-duplex map for media types. */

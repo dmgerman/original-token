@@ -2,7 +2,6 @@ macro_line|#ifndef _PPC_TYPES_H
 DECL|macro|_PPC_TYPES_H
 mdefine_line|#define _PPC_TYPES_H
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#ifdef __KERNEL__
 DECL|typedef|umode_t
 r_typedef
 r_int
@@ -61,6 +60,32 @@ r_int
 id|__u64
 suffix:semicolon
 macro_line|#endif
+r_typedef
+r_struct
+(brace
+DECL|member|u
+id|__u32
+id|u
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|typedef|vector128
+)brace
+id|__attribute
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|16
+)paren
+)paren
+)paren
+id|vector128
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
 DECL|typedef|s8
 r_typedef
@@ -111,31 +136,6 @@ r_int
 r_int
 r_int
 id|u64
-suffix:semicolon
-r_typedef
-r_struct
-(brace
-DECL|member|u
-id|u32
-id|u
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|typedef|vector128
-)brace
-id|__attribute
-c_func
-(paren
-(paren
-id|aligned
-c_func
-(paren
-l_int|16
-)paren
-)paren
-)paren
-id|vector128
 suffix:semicolon
 DECL|macro|BITS_PER_LONG
 mdefine_line|#define BITS_PER_LONG 32

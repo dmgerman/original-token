@@ -206,6 +206,9 @@ op_star
 id|file
 )paren
 (brace
+multiline_comment|/* Lock module as request_irq may sleep */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -223,18 +226,20 @@ comma
 l_int|NULL
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
 id|ATIXL_MSE_INT_ON
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupts are really enabled here */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -275,10 +280,11 @@ id|b
 comma
 id|c
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We must request the resource and claim it atomically&n;&t; *&t;nowdays. We can throw it away on error. Otherwise we&n;&t; *&t;may race another module load of the same I/O&n;&t; */
 r_if
 c_cond
 (paren
-id|check_region
+id|request_region
 c_func
 (paren
 id|ATIXL_MSE_DATA_PORT
@@ -338,10 +344,20 @@ l_string|&quot;&bslash;nATI Inport &quot;
 )paren
 suffix:semicolon
 r_else
+(brace
+id|free_region
+c_func
+(paren
+id|ATIXL_MSE_DATA_PORT
+comma
+l_int|3
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
 suffix:semicolon
+)brace
 id|outb
 c_func
 (paren
@@ -369,16 +385,6 @@ id|ATIXL_MSE_DATA_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Data Interrupts 8+, 1=30hz, 2=50hz, 3=100hz, 4=200hz rate */
-id|request_region
-c_func
-(paren
-id|ATIXL_MSE_DATA_PORT
-comma
-l_int|3
-comma
-l_string|&quot;atixl&quot;
-)paren
-suffix:semicolon
 id|msedev
 op_assign
 id|register_busmouse
@@ -395,12 +401,23 @@ id|msedev
 OL
 l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;Bus mouse initialisation error.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|free_region
+c_func
+(paren
+id|ATIXL_MSE_DATA_PORT
+comma
+l_int|3
+)paren
+suffix:semicolon
+multiline_comment|/* Was missing */
+)brace
 r_else
 id|printk
 c_func

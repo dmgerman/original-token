@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/stats.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
+macro_line|#include &lt;linux/nfs_flushd.h&gt;
 macro_line|#include &lt;linux/lockd/bind.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -205,6 +206,39 @@ id|inode
 op_assign
 l_int|0
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|inode-&gt;u.nfs_i.dirty
+)paren
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|inode-&gt;u.nfs_i.commit
+)paren
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|inode-&gt;u.nfs_i.writeback
+)paren
+suffix:semicolon
+id|inode-&gt;u.nfs_i.ndirty
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;u.nfs_i.ncommit
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;u.nfs_i.npages
+op_assign
+l_int|0
+suffix:semicolon
 id|NFS_CACHEINV
 c_func
 (paren
@@ -271,9 +305,6 @@ op_star
 id|inode
 )paren
 (brace
-r_int
-id|failed
-suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -308,124 +339,28 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * Flush out any pending write requests ...&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The following can never actually happen...&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|NFS_WRITEBACK
+id|nfs_have_writebacks
 c_func
 (paren
 id|inode
 )paren
-op_ne
-l_int|NULL
 )paren
 (brace
-r_int
-r_int
-id|timeout
-op_assign
-id|jiffies
-op_plus
-l_int|5
-op_star
-id|HZ
-suffix:semicolon
-macro_line|#ifdef NFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;nfs_delete_inode: inode %ld has pending RPC requests&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-macro_line|#endif
-id|nfs_inval
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|NFS_WRITEBACK
-c_func
-(paren
-id|inode
-)paren
-op_ne
-l_int|NULL
-op_logical_and
-id|time_before
-c_func
-(paren
-id|jiffies
-comma
-id|timeout
-)paren
-)paren
-(brace
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|schedule_timeout
-c_func
-(paren
-id|HZ
-op_div
-l_int|10
-)paren
-suffix:semicolon
-)brace
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|NFS_WRITEBACK
-c_func
-(paren
-id|inode
-)paren
-op_ne
-l_int|NULL
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;NFS: Arghhh, stuck RPC requests!&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 )brace
-id|failed
-op_assign
-id|nfs_check_failed_request
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|failed
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;NFS: inode %ld had %d failed requests&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-comma
-id|failed
-)paren
-suffix:semicolon
 id|unlock_kernel
 c_func
 (paren
@@ -462,6 +397,13 @@ id|rpc_clnt
 op_star
 id|rpc
 suffix:semicolon
+multiline_comment|/*&n;&t; * First get rid of the request flushing daemon.&n;&t; * Relies on rpc_shutdown_client() waiting on all&n;&t; * client tasks to finish.&n;&t; */
+id|nfs_reqlist_exit
+c_func
+(paren
+id|server
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -477,6 +419,12 @@ id|rpc_shutdown_client
 c_func
 (paren
 id|rpc
+)paren
+suffix:semicolon
+id|nfs_reqlist_free
+c_func
+(paren
+id|server
 )paren
 suffix:semicolon
 r_if
@@ -1239,6 +1187,30 @@ id|sb-&gt;s_root-&gt;d_fsdata
 op_assign
 id|root_fh
 suffix:semicolon
+multiline_comment|/* Fire up the writeback cache */
+r_if
+c_cond
+(paren
+id|nfs_reqlist_alloc
+c_func
+(paren
+id|server
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;NFS: cannot initialize writeback cache.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|failure_kill_reqlist
+suffix:semicolon
+)brace
 multiline_comment|/* We&squot;re airborne */
 multiline_comment|/* Check whether to start the lockd process */
 r_if
@@ -1260,6 +1232,14 @@ r_return
 id|sb
 suffix:semicolon
 multiline_comment|/* Yargs. It didn&squot;t work out. */
+id|failure_kill_reqlist
+suffix:colon
+id|nfs_reqlist_exit
+c_func
+(paren
+id|server
+)paren
+suffix:semicolon
 id|out_no_root
 suffix:colon
 id|printk
@@ -1352,6 +1332,12 @@ l_string|&quot;NFS: cannot create RPC transport.&bslash;n&quot;
 suffix:semicolon
 id|out_free_host
 suffix:colon
+id|nfs_reqlist_free
+c_func
+(paren
+id|server
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -1708,12 +1694,6 @@ suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|save_mode
-suffix:semicolon
-id|nfs_inval
-c_func
-(paren
-id|inode
-)paren
 suffix:semicolon
 id|nfs_zap_caches
 c_func
@@ -3342,7 +3322,7 @@ multiline_comment|/*&n;&t; * If we have pending write-back entries, we don&squot
 r_if
 c_cond
 (paren
-id|NFS_WRITEBACK
+id|nfs_have_writebacks
 c_func
 (paren
 id|inode
@@ -3548,7 +3528,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|nfs_init_wreqcache
+id|nfs_init_nfspagecache
 c_func
 (paren
 r_void
@@ -3583,7 +3563,7 @@ id|err
 suffix:semicolon
 id|err
 op_assign
-id|nfs_init_wreqcache
+id|nfs_init_nfspagecache
 c_func
 (paren
 )paren

@@ -4212,6 +4212,13 @@ comma
 id|fh.fh_dentry
 )paren
 suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|xdr_one
+suffix:semicolon
+multiline_comment|/* yes, a file handle follows */
 id|p
 op_assign
 id|encode_fh

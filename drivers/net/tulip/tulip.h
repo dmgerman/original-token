@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|struct|tulip_chip_table
 r_struct
 id|tulip_chip_table
@@ -83,16 +84,26 @@ id|HAS_PNICNWAY
 op_assign
 l_int|0x80
 comma
-DECL|enumerator|HAS_NWAY143
-id|HAS_NWAY143
+DECL|enumerator|HAS_NWAY
+id|HAS_NWAY
 op_assign
 l_int|0x40
 comma
 multiline_comment|/* Uses internal NWay xcvr. */
+DECL|enumerator|HAS_INTR_MITIGATION
+id|HAS_INTR_MITIGATION
+op_assign
+l_int|0x100
+comma
+DECL|enumerator|IS_ASIX
+id|IS_ASIX
+op_assign
+l_int|0x200
+comma
 DECL|enumerator|HAS_8023X
 id|HAS_8023X
 op_assign
-l_int|0x100
+l_int|0x400
 comma
 )brace
 suffix:semicolon
@@ -418,6 +429,76 @@ DECL|enumerator|RxWholePkt
 id|RxWholePkt
 op_assign
 l_int|0x0300
+comma
+)brace
+suffix:semicolon
+DECL|enum|t21041_csr13_bits
+r_enum
+id|t21041_csr13_bits
+(brace
+DECL|enumerator|csr13_eng
+id|csr13_eng
+op_assign
+(paren
+l_int|0xEF0
+op_lshift
+l_int|4
+)paren
+comma
+multiline_comment|/* for eng. purposes only, hardcode at EF0h */
+DECL|enumerator|csr13_aui
+id|csr13_aui
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|3
+)paren
+comma
+multiline_comment|/* clear to force 10bT, set to force AUI/BNC */
+DECL|enumerator|csr13_cac
+id|csr13_cac
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|2
+)paren
+comma
+multiline_comment|/* CSR13/14/15 autoconfiguration */
+DECL|enumerator|csr13_srl
+id|csr13_srl
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|0
+)paren
+comma
+multiline_comment|/* When reset, resets all SIA functions, machines */
+DECL|enumerator|csr13_mask_auibnc
+id|csr13_mask_auibnc
+op_assign
+(paren
+id|csr13_eng
+op_or
+id|csr13_aui
+op_or
+id|csr13_cac
+op_or
+id|csr13_srl
+)paren
+comma
+DECL|enumerator|csr13_mask_10bt
+id|csr13_mask_10bt
+op_assign
+(paren
+id|csr13_eng
+op_or
+id|csr13_cac
+op_or
+id|csr13_srl
+)paren
 comma
 )brace
 suffix:semicolon

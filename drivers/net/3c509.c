@@ -1399,7 +1399,7 @@ l_int|0
 dot
 id|start
 comma
-l_int|16
+id|EL3_IO_EXTENT
 )paren
 )paren
 r_continue
@@ -1412,6 +1412,24 @@ l_int|0
 )braket
 dot
 id|start
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|EL3_IO_EXTENT
+comma
+l_string|&quot;3c509 PnP&quot;
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 id|irq
 op_assign

@@ -6,6 +6,7 @@ multiline_comment|/*&n; * This is our internal structure for each serial port&sq
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/circ_buf.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|serial_state
 r_struct
@@ -20,6 +21,7 @@ r_int
 id|baud_base
 suffix:semicolon
 DECL|member|port
+r_int
 r_int
 id|port
 suffix:semicolon
@@ -116,6 +118,7 @@ r_int
 id|magic
 suffix:semicolon
 DECL|member|port
+r_int
 r_int
 id|port
 suffix:semicolon
@@ -227,23 +230,14 @@ r_int
 id|pgrp
 suffix:semicolon
 multiline_comment|/* pgrp of opening process */
-DECL|member|xmit_buf
-r_int
-r_char
-op_star
-id|xmit_buf
+DECL|member|xmit
+r_struct
+id|circ_buf
+id|xmit
 suffix:semicolon
-DECL|member|xmit_head
-r_int
-id|xmit_head
-suffix:semicolon
-DECL|member|xmit_tail
-r_int
-id|xmit_tail
-suffix:semicolon
-DECL|member|xmit_cnt
-r_int
-id|xmit_cnt
+DECL|member|xmit_lock
+id|spinlock_t
+id|xmit_lock
 suffix:semicolon
 DECL|member|iomem_base
 id|u8
@@ -317,9 +311,6 @@ DECL|macro|SERIAL_MAGIC
 mdefine_line|#define SERIAL_MAGIC 0x5301
 DECL|macro|SSTATE_MAGIC
 mdefine_line|#define SSTATE_MAGIC 0x5302
-multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
-DECL|macro|SERIAL_XMIT_SIZE
-mdefine_line|#define SERIAL_XMIT_SIZE 4096
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at rs interrupt time.&n; */
 DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
@@ -526,6 +517,9 @@ mdefine_line|#define SPCI_FL_IRQRESOURCE&t;0x0400
 multiline_comment|/* Use the Base address register size to cap number of ports */
 DECL|macro|SPCI_FL_REGION_SZ_CAP
 mdefine_line|#define SPCI_FL_REGION_SZ_CAP&t;0x0800
+multiline_comment|/* Do not use irq sharing for this device */
+DECL|macro|SPCI_FL_NO_SHIRQ
+mdefine_line|#define SPCI_FL_NO_SHIRQ&t;0x1000
 DECL|macro|SPCI_FL_PNPDEFAULT
 mdefine_line|#define SPCI_FL_PNPDEFAULT&t;(SPCI_FL_IRQRESOURCE)
 macro_line|#endif /* _LINUX_SERIAL_H */

@@ -743,7 +743,7 @@ id|irda_task
 op_star
 id|task
 comma
-id|TASK_STATE
+id|IRDA_TASK_STATE
 id|state
 )paren
 (brace
@@ -1102,10 +1102,10 @@ r_void
 op_star
 id|instance
 comma
-id|TASK_CALLBACK
+id|IRDA_TASK_CALLBACK
 id|function
 comma
-id|TASK_CALLBACK
+id|IRDA_TASK_CALLBACK
 id|finished
 comma
 r_struct

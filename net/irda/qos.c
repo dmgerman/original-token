@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                                &n; * Filename:      qos.c&n; * Version:       1.0&n; * Description:   IrLAP QoS parameter negotiation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Sep  9 00:00:26 1997&n; * Modified at:   Sun Dec 12 13:47:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                                &n; * Filename:      qos.c&n; * Version:       1.0&n; * Description:   IrLAP QoS parameter negotiation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Sep  9 00:00:26 1997&n; * Modified at:   Sun Jan 30 14:29:16 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -20,7 +20,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -37,7 +37,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|parm
 comma
@@ -54,7 +54,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -71,7 +71,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -88,7 +88,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -105,7 +105,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|parm
 comma
@@ -122,7 +122,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -1419,7 +1419,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -1543,7 +1543,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -1654,7 +1654,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -1729,7 +1729,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -1804,7 +1804,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -1879,7 +1879,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma
@@ -1954,7 +1954,7 @@ r_void
 op_star
 id|instance
 comma
-id|param_t
+id|irda_param_t
 op_star
 id|param
 comma

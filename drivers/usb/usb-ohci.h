@@ -529,39 +529,65 @@ l_int|32
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * cmdstatus register */
-DECL|macro|OHCI_CLF
-mdefine_line|#define OHCI_CLF  0x02
-DECL|macro|OHCI_BLF
-mdefine_line|#define OHCI_BLF  0x04
-multiline_comment|/*&n; * Interrupt register masks&n; */
-DECL|macro|OHCI_INTR_SO
-mdefine_line|#define OHCI_INTR_SO&t;(1)
-DECL|macro|OHCI_INTR_WDH
-mdefine_line|#define OHCI_INTR_WDH&t;(1 &lt;&lt; 1)
-DECL|macro|OHCI_INTR_SF
-mdefine_line|#define OHCI_INTR_SF&t;(1 &lt;&lt; 2)
-DECL|macro|OHCI_INTR_RD
-mdefine_line|#define OHCI_INTR_RD&t;(1 &lt;&lt; 3)
-DECL|macro|OHCI_INTR_UE
-mdefine_line|#define OHCI_INTR_UE&t;(1 &lt;&lt; 4)
-DECL|macro|OHCI_INTR_FNO
-mdefine_line|#define OHCI_INTR_FNO&t;(1 &lt;&lt; 5)
-DECL|macro|OHCI_INTR_RHSC
-mdefine_line|#define OHCI_INTR_RHSC&t;(1 &lt;&lt; 6)
-DECL|macro|OHCI_INTR_OC
-mdefine_line|#define OHCI_INTR_OC&t;(1 &lt;&lt; 30)
-DECL|macro|OHCI_INTR_MIE
-mdefine_line|#define OHCI_INTR_MIE&t;(1 &lt;&lt; 31)
-multiline_comment|/*&n; * Control register masks&n; */
+multiline_comment|/* OHCI CONTROL AND STATUS REGISTER MASKS */
+multiline_comment|/*&n; * HcControl (control) register masks&n; */
+DECL|macro|OHCI_CTRL_CBSR
+mdefine_line|#define OHCI_CTRL_CBSR&t;(3 &lt;&lt; 0)&t;/* control/bulk service ratio */
+DECL|macro|OHCI_CTRL_PLE
+mdefine_line|#define OHCI_CTRL_PLE&t;(1 &lt;&lt; 2)&t;/* periodic list enable */
+DECL|macro|OHCI_CTRL_IE
+mdefine_line|#define OHCI_CTRL_IE&t;(1 &lt;&lt; 3)&t;/* isochronous enable */
+DECL|macro|OHCI_CTRL_CLE
+mdefine_line|#define OHCI_CTRL_CLE&t;(1 &lt;&lt; 4)&t;/* control list enable */
+DECL|macro|OHCI_CTRL_BLE
+mdefine_line|#define OHCI_CTRL_BLE&t;(1 &lt;&lt; 5)&t;/* bulk list enable */
+DECL|macro|OHCI_CTRL_HCFS
+mdefine_line|#define OHCI_CTRL_HCFS&t;(3 &lt;&lt; 6)&t;/* host controller functional state */
+DECL|macro|OHCI_CTRL_IR
+mdefine_line|#define OHCI_CTRL_IR&t;(1 &lt;&lt; 8)&t;/* interrupt routing */
+DECL|macro|OHCI_CTRL_RWC
+mdefine_line|#define OHCI_CTRL_RWC&t;(1 &lt;&lt; 9)&t;/* remote wakeup connected */
+DECL|macro|OHCI_CTRL_RWE
+mdefine_line|#define OHCI_CTRL_RWE&t;(1 &lt;&lt; 10)&t;/* remote wakeup enable */
+multiline_comment|/* pre-shifted values for HCFS */
 DECL|macro|OHCI_USB_RESET
-mdefine_line|#define OHCI_USB_RESET&t;&t;0
+macro_line|#&t;define OHCI_USB_RESET&t;(0 &lt;&lt; 6)
 DECL|macro|OHCI_USB_RESUME
-mdefine_line|#define OHCI_USB_RESUME     (1 &lt;&lt; 6)
+macro_line|#&t;define OHCI_USB_RESUME&t;(1 &lt;&lt; 6)
 DECL|macro|OHCI_USB_OPER
-mdefine_line|#define OHCI_USB_OPER&t;&t;(2 &lt;&lt; 6)
+macro_line|#&t;define OHCI_USB_OPER&t;(2 &lt;&lt; 6)
 DECL|macro|OHCI_USB_SUSPEND
-mdefine_line|#define OHCI_USB_SUSPEND&t;(3 &lt;&lt; 6)
+macro_line|#&t;define OHCI_USB_SUSPEND&t;(3 &lt;&lt; 6)
+multiline_comment|/*&n; * HcCommandStatus (cmdstatus) register masks&n; */
+DECL|macro|OHCI_HCR
+mdefine_line|#define OHCI_HCR&t;(1 &lt;&lt; 0)&t;/* host controller reset */
+DECL|macro|OHCI_CLF
+mdefine_line|#define OHCI_CLF  &t;(1 &lt;&lt; 1)&t;/* control list filled */
+DECL|macro|OHCI_BLF
+mdefine_line|#define OHCI_BLF  &t;(1 &lt;&lt; 2)&t;/* bulk list filled */
+DECL|macro|OHCI_OCR
+mdefine_line|#define OHCI_OCR  &t;(1 &lt;&lt; 3)&t;/* ownership change request */
+DECL|macro|OHCI_SOC
+mdefine_line|#define OHCI_SOC  &t;(3 &lt;&lt; 16)&t;/* scheduling overrun count */
+multiline_comment|/*&n; * masks used with interrupt registers:&n; * HcInterruptStatus (intrstatus)&n; * HcInterruptEnable (intrenable)&n; * HcInterruptDisable (intrdisable)&n; */
+DECL|macro|OHCI_INTR_SO
+mdefine_line|#define OHCI_INTR_SO&t;(1 &lt;&lt; 0)&t;/* scheduling overrun */
+DECL|macro|OHCI_INTR_WDH
+mdefine_line|#define OHCI_INTR_WDH&t;(1 &lt;&lt; 1)&t;/* writeback of done_head */
+DECL|macro|OHCI_INTR_SF
+mdefine_line|#define OHCI_INTR_SF&t;(1 &lt;&lt; 2)&t;/* start frame */
+DECL|macro|OHCI_INTR_RD
+mdefine_line|#define OHCI_INTR_RD&t;(1 &lt;&lt; 3)&t;/* resume detect */
+DECL|macro|OHCI_INTR_UE
+mdefine_line|#define OHCI_INTR_UE&t;(1 &lt;&lt; 4)&t;/* unrecoverable error */
+DECL|macro|OHCI_INTR_FNO
+mdefine_line|#define OHCI_INTR_FNO&t;(1 &lt;&lt; 5)&t;/* frame number overflow */
+DECL|macro|OHCI_INTR_RHSC
+mdefine_line|#define OHCI_INTR_RHSC&t;(1 &lt;&lt; 6)&t;/* root hub status change */
+DECL|macro|OHCI_INTR_OC
+mdefine_line|#define OHCI_INTR_OC&t;(1 &lt;&lt; 30)&t;/* ownership change */
+DECL|macro|OHCI_INTR_MIE
+mdefine_line|#define OHCI_INTR_MIE&t;(1 &lt;&lt; 31)&t;/* master interrupt enable */
 multiline_comment|/* Virtual Root HUB */
 DECL|struct|virt_root_hub
 r_struct
@@ -597,6 +623,7 @@ id|rh_int_timer
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* USB HUB CONSTANTS (not OHCI-specific; see hub.h) */
 multiline_comment|/* destination of request */
 DECL|macro|RH_INTERFACE
 mdefine_line|#define RH_INTERFACE               0x01
@@ -616,9 +643,9 @@ mdefine_line|#define RH_CLEAR_FEATURE        0x0100
 DECL|macro|RH_SET_FEATURE
 mdefine_line|#define RH_SET_FEATURE          0x0300
 DECL|macro|RH_SET_ADDRESS
-mdefine_line|#define RH_SET_ADDRESS&t;&t;&t;0x0500
+mdefine_line|#define RH_SET_ADDRESS&t;&t;0x0500
 DECL|macro|RH_GET_DESCRIPTOR
-mdefine_line|#define RH_GET_DESCRIPTOR&t;&t;0x0680
+mdefine_line|#define RH_GET_DESCRIPTOR&t;0x0680
 DECL|macro|RH_SET_DESCRIPTOR
 mdefine_line|#define RH_SET_DESCRIPTOR       0x0700
 DECL|macro|RH_GET_CONFIGURATION
@@ -676,44 +703,65 @@ DECL|macro|RH_REQ_ERR
 mdefine_line|#define RH_REQ_ERR                 -1
 DECL|macro|RH_NACK
 mdefine_line|#define RH_NACK                    0x00
-multiline_comment|/* Root-Hub Register info */
+multiline_comment|/* OHCI ROOT HUB REGISTER MASKS */
+multiline_comment|/* roothub.portstatus [i] bits */
 DECL|macro|RH_PS_CCS
-mdefine_line|#define RH_PS_CCS            0x00000001   
+mdefine_line|#define RH_PS_CCS            0x00000001   &t;/* current connect status */
 DECL|macro|RH_PS_PES
-mdefine_line|#define RH_PS_PES            0x00000002   
+mdefine_line|#define RH_PS_PES            0x00000002   &t;/* port enable status*/
 DECL|macro|RH_PS_PSS
-mdefine_line|#define RH_PS_PSS            0x00000004   
+mdefine_line|#define RH_PS_PSS            0x00000004   &t;/* port suspend status */
 DECL|macro|RH_PS_POCI
-mdefine_line|#define RH_PS_POCI           0x00000008   
+mdefine_line|#define RH_PS_POCI           0x00000008   &t;/* port over current indicator */
 DECL|macro|RH_PS_PRS
-mdefine_line|#define RH_PS_PRS            0x00000010  
+mdefine_line|#define RH_PS_PRS            0x00000010  &t;/* port reset status */
 DECL|macro|RH_PS_PPS
-mdefine_line|#define RH_PS_PPS            0x00000100   
+mdefine_line|#define RH_PS_PPS            0x00000100   &t;/* port power status */
 DECL|macro|RH_PS_LSDA
-mdefine_line|#define RH_PS_LSDA           0x00000200    
+mdefine_line|#define RH_PS_LSDA           0x00000200    &t;/* low speed device attached */
 DECL|macro|RH_PS_CSC
-mdefine_line|#define RH_PS_CSC            0x00010000 
+mdefine_line|#define RH_PS_CSC            0x00010000 &t;/* connect status change */
 DECL|macro|RH_PS_PESC
-mdefine_line|#define RH_PS_PESC           0x00020000   
+mdefine_line|#define RH_PS_PESC           0x00020000   &t;/* port enable status change */
 DECL|macro|RH_PS_PSSC
-mdefine_line|#define RH_PS_PSSC           0x00040000    
+mdefine_line|#define RH_PS_PSSC           0x00040000    &t;/* port suspend status change */
 DECL|macro|RH_PS_OCIC
-mdefine_line|#define RH_PS_OCIC           0x00080000    
+mdefine_line|#define RH_PS_OCIC           0x00080000    &t;/* over current indicator change */
 DECL|macro|RH_PS_PRSC
-mdefine_line|#define RH_PS_PRSC           0x00100000   
-multiline_comment|/* Root hub status bits */
+mdefine_line|#define RH_PS_PRSC           0x00100000   &t;/* port reset status change */
+multiline_comment|/* roothub.status bits */
 DECL|macro|RH_HS_LPS
-mdefine_line|#define RH_HS_LPS&t;     0x00000001
+mdefine_line|#define RH_HS_LPS&t;     0x00000001&t;&t;/* local power status */
 DECL|macro|RH_HS_OCI
-mdefine_line|#define RH_HS_OCI&t;     0x00000002
+mdefine_line|#define RH_HS_OCI&t;     0x00000002&t;&t;/* over current indicator */
 DECL|macro|RH_HS_DRWE
-mdefine_line|#define RH_HS_DRWE&t;     0x00008000
+mdefine_line|#define RH_HS_DRWE&t;     0x00008000&t;&t;/* device remote wakeup enable */
 DECL|macro|RH_HS_LPSC
-mdefine_line|#define RH_HS_LPSC&t;     0x00010000
+mdefine_line|#define RH_HS_LPSC&t;     0x00010000&t;&t;/* local power status change */
 DECL|macro|RH_HS_OCIC
-mdefine_line|#define RH_HS_OCIC&t;     0x00020000
+mdefine_line|#define RH_HS_OCIC&t;     0x00020000&t;&t;/* over current indicator change */
 DECL|macro|RH_HS_CRWE
-mdefine_line|#define RH_HS_CRWE&t;     0x80000000
+mdefine_line|#define RH_HS_CRWE&t;     0x80000000&t;&t;/* clear remote wakeup enable */
+multiline_comment|/* roothub.b masks */
+DECL|macro|RH_B_DR
+mdefine_line|#define RH_B_DR&t;&t;0x0000ffff&t;&t;/* device removable flags */
+DECL|macro|RH_B_PPCM
+mdefine_line|#define RH_B_PPCM&t;0xffff0000&t;&t;/* port power control mask */
+multiline_comment|/* roothub.a masks */
+DECL|macro|RH_A_NDP
+mdefine_line|#define&t;RH_A_NDP&t;(0xff &lt;&lt; 0)&t;&t;/* number of downstream ports */
+DECL|macro|RH_A_PSM
+mdefine_line|#define&t;RH_A_PSM&t;(1 &lt;&lt; 8)&t;&t;/* power switching mode */
+DECL|macro|RH_A_NPS
+mdefine_line|#define&t;RH_A_NPS&t;(1 &lt;&lt; 9)&t;&t;/* no power switching */
+DECL|macro|RH_A_DT
+mdefine_line|#define&t;RH_A_DT&t;&t;(1 &lt;&lt; 10)&t;&t;/* device type (mbz) */
+DECL|macro|RH_A_OCPM
+mdefine_line|#define&t;RH_A_OCPM&t;(1 &lt;&lt; 11)&t;&t;/* over current protection mode */
+DECL|macro|RH_A_NOCP
+mdefine_line|#define&t;RH_A_NOCP&t;(1 &lt;&lt; 12)&t;&t;/* no over current protection */
+DECL|macro|RH_A_POTPGT
+mdefine_line|#define&t;RH_A_POTPGT&t;(0xff &lt;&lt; 24)&t;&t;/* power on to power good time */
 DECL|macro|min
 mdefine_line|#define min(a,b) (((a)&lt;(b))?(a):(b))  
 multiline_comment|/* urb */
@@ -775,6 +823,11 @@ DECL|member|irq
 r_int
 id|irq
 suffix:semicolon
+DECL|member|disabled
+r_int
+id|disabled
+suffix:semicolon
+multiline_comment|/* e.g. got a UE, we&squot;re hung */
 DECL|member|regs
 r_struct
 id|ohci_regs
@@ -813,7 +866,7 @@ id|ohci_int_load
 l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* load of the 32 Interrupt Chains (for load ballancing)*/
+multiline_comment|/* load of the 32 Interrupt Chains (for load balancing)*/
 DECL|member|ed_rm_list
 id|ed_t
 op_star

@@ -1045,6 +1045,7 @@ r_struct
 id|page
 op_star
 id|__alloc_pages
+c_func
 (paren
 id|zonelist_t
 op_star
@@ -1061,6 +1062,17 @@ op_star
 id|zone
 op_assign
 id|zonelist-&gt;zones
+suffix:semicolon
+multiline_comment|/*&n;&t; * If this is a recursive call, we&squot;d better&n;&t; * do our best to just allocate things without&n;&t; * further thought.&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_MEMALLOC
+)paren
+r_goto
+id|allocate_ok
 suffix:semicolon
 multiline_comment|/*&n;&t; * (If anyone calls gfp from interrupts nonatomically then it&n;&t; * will sooner or later tripped up by a schedule().)&n;&t; *&n;&t; * We are falling back to lower-level zones if allocation&n;&t; * in a higher zone fails.&n;&t; */
 r_for
@@ -1099,34 +1111,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If this is a recursive call, we&squot;d better&n;&t;&t; * do our best to just allocate things without&n;&t;&t; * further thought.&n;&t;&t; */
+multiline_comment|/* Are we supposed to free memory? Don&squot;t make it worse.. */
 r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|current-&gt;flags
-op_amp
-id|PF_MEMALLOC
-)paren
-)paren
-(brace
-multiline_comment|/* Are we low on memory? */
-r_if
-c_cond
-(paren
+id|z-&gt;zone_wake_kswapd
+op_logical_and
 id|z-&gt;free_pages
-op_le
+OG
 id|z-&gt;pages_low
-)paren
-r_continue
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * This is an optimization for the &squot;higher order zone&n;&t;&t; * is empty&squot; case - it can happen even in well-behaved&n;&t;&t; * systems, think the page-cache filling up all RAM.&n;&t;&t; * We skip over empty zones. (this is not exact because&n;&t;&t; * we do not take the spinlock and it&squot;s not exact for&n;&t;&t; * the higher order case, but will do it for most things.)&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|z-&gt;free_pages
 )paren
 (brace
 r_struct
@@ -1152,6 +1146,7 @@ id|page
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; * Ok, no obvious zones were available, start&n;&t; * balancing things a bit..&n;&t; */
 r_if
 c_cond
 (paren
@@ -1166,6 +1161,8 @@ id|zone
 op_assign
 id|zonelist-&gt;zones
 suffix:semicolon
+id|allocate_ok
+suffix:colon
 r_for
 c_loop
 (paren

@@ -2386,7 +2386,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|i2c_algo_pcf_init
-r_static
 r_int
 id|__init
 id|i2c_algo_pcf_init

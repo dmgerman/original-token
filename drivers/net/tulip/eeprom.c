@@ -1,7 +1,6 @@
 multiline_comment|/*&n;&t;drivers/net/tulip/eeprom.c&n;&n;&t;Maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;Copyright 2000  The Linux Kernel Team&n;&t;Written/copyright 1994-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Please refer to Documentation/networking/tulip.txt for more&n;&t;information on this driver.&n;&n;*/
 macro_line|#include &quot;tulip.h&quot;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 multiline_comment|/* Serial EEPROM section. */
 multiline_comment|/* The main routine to parse the very complicated SROM structure.&n;   Search www.digital.com for &quot;21X4 SROM&quot; to get details.&n;   This code is very complex, and will require changes to support&n;   additional cards, so I&squot;ll be verbose about what is going on.&n;   */

@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/sgi/sgimc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;

@@ -4,6 +4,7 @@ DECL|macro|_LINUX_NFS_FS_H
 mdefine_line|#define _LINUX_NFS_FS_H
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/sunrpc/sched.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
@@ -17,12 +18,18 @@ multiline_comment|/*&n; * NFS_MAX_DIRCACHE controls the number of simultaneously
 DECL|macro|NFS_MAX_DIRCACHE
 mdefine_line|#define NFS_MAX_DIRCACHE&t;&t;16
 DECL|macro|NFS_MAX_FILE_IO_BUFFER_SIZE
-mdefine_line|#define NFS_MAX_FILE_IO_BUFFER_SIZE&t;16384
+mdefine_line|#define NFS_MAX_FILE_IO_BUFFER_SIZE&t;32768
 DECL|macro|NFS_DEF_FILE_IO_BUFFER_SIZE
 mdefine_line|#define NFS_DEF_FILE_IO_BUFFER_SIZE&t;4096
 multiline_comment|/*&n; * The upper limit on timeouts for the exponential backoff algorithm.&n; */
 DECL|macro|NFS_MAX_RPC_TIMEOUT
 mdefine_line|#define NFS_MAX_RPC_TIMEOUT&t;&t;(6*HZ)
+DECL|macro|NFS_WRITEBACK_DELAY
+mdefine_line|#define NFS_WRITEBACK_DELAY&t;&t;(5*HZ)
+DECL|macro|NFS_WRITEBACK_LOCKDELAY
+mdefine_line|#define NFS_WRITEBACK_LOCKDELAY&t;&t;(60*HZ)
+DECL|macro|NFS_COMMIT_DELAY
+mdefine_line|#define NFS_COMMIT_DELAY&t;&t;(5*HZ)
 multiline_comment|/*&n; * Size of the lookup cache in units of number of entries cached.&n; * It is better not to make this too large although the optimum&n; * depends on a usage and environment.&n; */
 DECL|macro|NFS_LOOKUP_CACHE_SIZE
 mdefine_line|#define NFS_LOOKUP_CACHE_SIZE&t;&t;64
@@ -37,6 +44,8 @@ DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_CLIENT
 mdefine_line|#define NFS_CLIENT(inode)&t;&t;(NFS_SERVER(inode)-&gt;client)
+DECL|macro|NFS_REQUESTLIST
+mdefine_line|#define NFS_REQUESTLIST(inode)&t;&t;(NFS_SERVER(inode)-&gt;rw_requests)
 DECL|macro|NFS_ADDR
 mdefine_line|#define NFS_ADDR(inode)&t;&t;&t;(RPC_PEERADDR(NFS_CLIENT(inode)))
 DECL|macro|NFS_CONGESTED
@@ -45,6 +54,8 @@ DECL|macro|NFS_READTIME
 mdefine_line|#define NFS_READTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_jiffies)
 DECL|macro|NFS_OLDMTIME
 mdefine_line|#define NFS_OLDMTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_mtime)
+DECL|macro|NFS_NEXTSCAN
+mdefine_line|#define NFS_NEXTSCAN(inode)&t;&t;((inode)-&gt;u.nfs_i.nextscan)
 DECL|macro|NFS_CACHEINV
 mdefine_line|#define NFS_CACHEINV(inode) &bslash;&n;do { &bslash;&n;&t;NFS_READTIME(inode) = jiffies - 1000000; &bslash;&n;&t;NFS_OLDMTIME(inode) = 0; &bslash;&n;} while (0)
 DECL|macro|NFS_ATTRTIMEO
@@ -57,8 +68,6 @@ DECL|macro|NFS_FLAGS
 mdefine_line|#define NFS_FLAGS(inode)&t;&t;((inode)-&gt;u.nfs_i.flags)
 DECL|macro|NFS_REVALIDATING
 mdefine_line|#define NFS_REVALIDATING(inode)&t;&t;(NFS_FLAGS(inode) &amp; NFS_INO_REVALIDATING)
-DECL|macro|NFS_WRITEBACK
-mdefine_line|#define NFS_WRITEBACK(inode)&t;&t;((inode)-&gt;u.nfs_i.writeback)
 DECL|macro|NFS_COOKIES
 mdefine_line|#define NFS_COOKIES(inode)&t;&t;((inode)-&gt;u.nfs_i.cookies)
 DECL|macro|NFS_DIREOF
@@ -73,113 +82,62 @@ mdefine_line|#define NFS_RPC_SWAPFLAGS&t;&t;(RPC_TASK_SWAPPER|RPC_TASK_ROOTCREDS
 multiline_comment|/* Flags in the RPC client structure */
 DECL|macro|NFS_CLNTF_BUFSIZE
 mdefine_line|#define NFS_CLNTF_BUFSIZE&t;0x0001&t;/* readdir buffer in longwords */
-macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * This struct describes a file region to be written.&n; * It&squot;s kind of a pity we have to keep all these lists ourselves, rather&n; * than sticking an extra pointer into struct page.&n; */
-DECL|struct|nfs_wreq
-r_struct
-id|nfs_wreq
-(brace
-DECL|member|wb_list
-r_struct
-id|rpc_listitem
-id|wb_list
-suffix:semicolon
-multiline_comment|/* linked list of req&squot;s */
-DECL|member|wb_task
-r_struct
-id|rpc_task
-id|wb_task
-suffix:semicolon
-multiline_comment|/* RPC task */
-DECL|member|wb_file
-r_struct
-id|file
-op_star
-id|wb_file
-suffix:semicolon
-multiline_comment|/* dentry referenced */
-DECL|member|wb_page
+DECL|macro|NFS_RW_SYNC
+mdefine_line|#define NFS_RW_SYNC&t;&t;0x0001&t;/* O_SYNC handling */
+DECL|macro|NFS_RW_SWAP
+mdefine_line|#define NFS_RW_SWAP&t;&t;0x0002&t;/* This is a swap request */
+multiline_comment|/*&n; * When flushing a cluster of dirty pages, there can be different&n; * strategies:&n; */
+DECL|macro|FLUSH_AGING
+mdefine_line|#define FLUSH_AGING&t;&t;0&t;/* only flush old buffers */
+DECL|macro|FLUSH_SYNC
+mdefine_line|#define FLUSH_SYNC&t;&t;1&t;/* file being synced, or contention */
+DECL|macro|FLUSH_WAIT
+mdefine_line|#define FLUSH_WAIT&t;&t;2&t;/* wait for completion */
+DECL|macro|FLUSH_STABLE
+mdefine_line|#define FLUSH_STABLE&t;&t;4&t;/* commit to stable storage */
+r_static
+r_inline
+DECL|function|page_offset
+id|loff_t
+id|page_offset
+c_func
+(paren
 r_struct
 id|page
 op_star
-id|wb_page
+id|page
+)paren
+(brace
+r_return
+(paren
+(paren
+id|loff_t
+)paren
+id|page-&gt;index
+)paren
+op_lshift
+id|PAGE_CACHE_SHIFT
 suffix:semicolon
-multiline_comment|/* page to be written */
-DECL|member|wb_wait
-id|wait_queue_head_t
-id|wb_wait
-suffix:semicolon
-multiline_comment|/* wait for completion */
-DECL|member|wb_offset
-r_int
-r_int
-id|wb_offset
-suffix:semicolon
-multiline_comment|/* offset within page */
-DECL|member|wb_bytes
-r_int
-r_int
-id|wb_bytes
-suffix:semicolon
-multiline_comment|/* dirty range */
-DECL|member|wb_count
-r_int
-r_int
-id|wb_count
-suffix:semicolon
-multiline_comment|/* user count */
-DECL|member|wb_status
-r_int
-id|wb_status
-suffix:semicolon
-DECL|member|wb_pid
-id|pid_t
-id|wb_pid
-suffix:semicolon
-multiline_comment|/* owner process */
-DECL|member|wb_flags
-r_int
-r_int
-id|wb_flags
-suffix:semicolon
-multiline_comment|/* status flags */
-DECL|member|wb_args
-r_struct
-id|nfs_writeargs
-id|wb_args
-suffix:semicolon
-multiline_comment|/* NFS RPC stuff */
-DECL|member|wb_fattr
-r_struct
-id|nfs_fattr
-id|wb_fattr
-suffix:semicolon
-multiline_comment|/* file attributes */
 )brace
+r_static
+r_inline
+DECL|function|page_index
+r_int
+r_int
+id|page_index
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_return
+id|page-&gt;index
 suffix:semicolon
-DECL|macro|WB_NEXT
-mdefine_line|#define WB_NEXT(req)&t;&t;((struct nfs_wreq *) ((req)-&gt;wb_list.next))
-multiline_comment|/*&n; * Various flags for wb_flags&n; */
-DECL|macro|NFS_WRITE_CANCELLED
-mdefine_line|#define NFS_WRITE_CANCELLED&t;0x0004&t;/* has been cancelled */
-DECL|macro|NFS_WRITE_UNCOMMITTED
-mdefine_line|#define NFS_WRITE_UNCOMMITTED&t;0x0008&t;/* written but uncommitted (NFSv3) */
-DECL|macro|NFS_WRITE_INVALIDATE
-mdefine_line|#define NFS_WRITE_INVALIDATE&t;0x0010&t;/* invalidate after write */
-DECL|macro|NFS_WRITE_INPROGRESS
-mdefine_line|#define NFS_WRITE_INPROGRESS&t;0x0100&t;/* RPC call in progress */
-DECL|macro|NFS_WRITE_COMPLETE
-mdefine_line|#define NFS_WRITE_COMPLETE&t;0x0200&t;/* RPC call completed */
-DECL|macro|WB_CANCELLED
-mdefine_line|#define WB_CANCELLED(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_CANCELLED)
-DECL|macro|WB_UNCOMMITTED
-mdefine_line|#define WB_UNCOMMITTED(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_UNCOMMITTED)
-DECL|macro|WB_INVALIDATE
-mdefine_line|#define WB_INVALIDATE(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INVALIDATE)
-DECL|macro|WB_INPROGRESS
-mdefine_line|#define WB_INPROGRESS(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INPROGRESS)
-DECL|macro|WB_COMPLETE
-mdefine_line|#define WB_COMPLETE(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_COMPLETE)
+)brace
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * linux/fs/nfs/proc.c&n; */
 r_extern
 r_int
@@ -791,20 +749,11 @@ id|inode
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Try to write back everything synchronously (but check the&n; * return value!)&n; */
 r_extern
-r_int
-id|nfs_wb_all
-c_func
-(paren
 r_struct
-id|inode
+id|nfs_page
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|nfs_wb_page
+id|nfs_find_request
 c_func
 (paren
 r_struct
@@ -817,28 +766,30 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|nfs_wb_file
+r_void
+id|nfs_release_request
 c_func
 (paren
 r_struct
-id|inode
+id|nfs_page
 op_star
-comma
+id|req
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_flush_incompatible
+c_func
+(paren
 r_struct
 id|file
 op_star
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * Invalidate write-backs, possibly trying to write them&n; * back first..&n; */
-r_extern
-r_void
-id|nfs_inval
-c_func
-(paren
+id|file
+comma
 r_struct
-id|inode
+id|page
 op_star
+id|page
 )paren
 suffix:semicolon
 r_extern
@@ -861,6 +812,269 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Try to write back everything synchronously (but check the&n; * return value!)&n; */
+r_extern
+r_int
+id|nfs_sync_file
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_flush_file
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_flush_timeout
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_NFS_V3
+r_extern
+r_int
+id|nfs_commit_file
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_commit_timeout
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
+r_static
+r_inline
+r_int
+DECL|function|nfs_have_writebacks
+id|nfs_have_writebacks
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_return
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|inode-&gt;u.nfs_i.writeback
+)paren
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_int
+DECL|function|nfs_wb_all
+id|nfs_wb_all
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_int
+id|error
+op_assign
+id|nfs_sync_file
+c_func
+(paren
+id|inode
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|FLUSH_WAIT
+)paren
+suffix:semicolon
+r_return
+(paren
+id|error
+OL
+l_int|0
+)paren
+ques
+c_cond
+id|error
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Write back all requests on one page - we do this before reading it.&n; */
+r_static
+r_inline
+r_int
+DECL|function|nfs_wb_page
+id|nfs_wb_page
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_int
+id|error
+op_assign
+id|nfs_sync_file
+c_func
+(paren
+id|inode
+comma
+l_int|0
+comma
+id|page_offset
+c_func
+(paren
+id|page
+)paren
+comma
+id|PAGE_CACHE_SIZE
+comma
+id|FLUSH_WAIT
+op_or
+id|FLUSH_STABLE
+)paren
+suffix:semicolon
+r_return
+(paren
+id|error
+OL
+l_int|0
+)paren
+ques
+c_cond
+id|error
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Write back all pending writes for one user.. &n; */
+r_static
+r_inline
+r_int
+DECL|function|nfs_wb_file
+id|nfs_wb_file
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_int
+id|error
+op_assign
+id|nfs_sync_file
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|FLUSH_WAIT
+)paren
+suffix:semicolon
+r_return
+(paren
+id|error
+OL
+l_int|0
+)paren
+ques
+c_cond
+id|error
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * linux/fs/nfs/read.c&n; */
 r_extern
 r_int
@@ -966,6 +1180,8 @@ op_star
 id|sb
 )paren
 suffix:semicolon
+DECL|macro|nfs_wait_event
+mdefine_line|#define nfs_wait_event(clnt, wq, condition)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __retval = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (clnt-&gt;cl_intr) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;sigset_t oldmask;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;rpc_clnt_sigmask(clnt, &amp;oldmask);&t;&t;&t;&bslash;&n;&t;&t;__retval = wait_event_interruptible(wq, condition);&t;&bslash;&n;&t;&t;rpc_clnt_sigunmask(clnt, &amp;oldmask);&t;&t;&t;&bslash;&n;&t;} else&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;wait_event(wq, condition);&t;&t;&t;&t;&bslash;&n;&t;__retval;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * NFS debug flags&n; */
 DECL|macro|NFSDBG_VFS

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/awe_voice.h&n; *&n; * Voice information definitions for the low level driver for the &n; * AWE32/SB32/AWE64 wave table synth.&n; *   version 0.4.3; Feb. 1, 1999&n; *&n; * Copyright (C) 1996-1999 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * sound/awe_voice.h&n; *&n; * Voice information definitions for the low level driver for the &n; * AWE32/SB32/AWE64 wave table synth.&n; *   version 0.4.4; Jan. 4, 2000&n; *&n; * Copyright (C) 1996-2000 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef AWE_VOICE_H
 DECL|macro|AWE_VOICE_H
 mdefine_line|#define AWE_VOICE_H
@@ -68,6 +68,8 @@ multiline_comment|/*#define AWE_PROBE_INFO&t;7*/
 multiline_comment|/* awe_voice_map (pat only) */
 DECL|macro|AWE_PROBE_DATA
 mdefine_line|#define AWE_PROBE_DATA&t;&t;8&t;/* optarg=sample */
+DECL|macro|AWE_REMOVE_INFO
+mdefine_line|#define AWE_REMOVE_INFO&t;&t;9&t;/* optarg=(bank&lt;&lt;8)|instr */
 DECL|macro|AWE_LOAD_CHORUS_FX
 mdefine_line|#define AWE_LOAD_CHORUS_FX&t;0x10&t;/* awe_chorus_fx_rec (optarg=mode) */
 DECL|macro|AWE_LOAD_REVERB_FX

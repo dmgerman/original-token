@@ -627,6 +627,10 @@ id|prepare_write
 )paren
 (paren
 r_struct
+id|file
+op_star
+comma
+r_struct
 id|page
 op_star
 comma

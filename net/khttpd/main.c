@@ -563,8 +563,6 @@ c_func
 id|WQ
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -1150,6 +1148,8 @@ r_void
 (brace
 r_int
 id|I
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|I
 op_assign

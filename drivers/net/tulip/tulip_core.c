@@ -8,7 +8,7 @@ id|version
 (braket
 )braket
 op_assign
-l_string|&quot;Linux Tulip driver version 0.9.4.1 (Mar 18, 2000)&bslash;n&quot;
+l_string|&quot;Linux Tulip driver version 0.9.4.2 (Mar 21, 2000)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tulip.h&quot;
@@ -16,7 +16,6 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 multiline_comment|/* A few user-configurable values. */
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
@@ -308,9 +307,11 @@ l_string|&quot;Digital DC21041 Tulip&quot;
 comma
 l_int|128
 comma
-l_int|0x0001ebff
+l_int|0x0001ebef
 comma
 id|HAS_MEDIA_TABLE
+op_or
+id|HAS_NWAY
 comma
 id|tulip_timer
 )brace
@@ -346,7 +347,9 @@ id|ALWAYS_CHECK_MII
 op_or
 id|HAS_ACPI
 op_or
-id|HAS_NWAY143
+id|HAS_NWAY
+op_or
+id|HAS_INTR_MITIGATION
 comma
 id|t21142_timer
 )brace
@@ -419,6 +422,8 @@ op_or
 id|CSR12_IN_SROM
 op_or
 id|MC_HASH_ONLY
+op_or
+id|IS_ASIX
 comma
 id|tulip_timer
 )brace
@@ -432,7 +437,7 @@ l_int|0x0801fbff
 comma
 id|HAS_MII
 op_or
-id|HAS_NWAY143
+id|HAS_NWAY
 op_or
 id|HAS_8023X
 comma
@@ -480,7 +485,9 @@ id|HAS_MEDIA_TABLE
 op_or
 id|ALWAYS_CHECK_MII
 op_or
-id|HAS_NWAY143
+id|HAS_ACPI
+op_or
+id|HAS_NWAY
 comma
 id|t21142_timer
 )brace
@@ -613,22 +620,7 @@ comma
 id|MX98715
 )brace
 comma
-(brace
-l_int|0x10d9
-comma
-l_int|0x0531
-comma
-id|PCI_ANY_ID
-comma
-id|PCI_ANY_ID
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|MX98725
-)brace
-comma
+multiline_comment|/*&t;{ 0x10d9, 0x0531, PCI_ANY_ID, PCI_ANY_ID, 0, 0, MX98725 },*/
 (brace
 l_int|0x125B
 comma
@@ -678,6 +670,38 @@ id|COMET
 )brace
 comma
 (brace
+l_int|0x1317
+comma
+l_int|0x0985
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|COMET
+)brace
+comma
+(brace
+l_int|0x1317
+comma
+l_int|0x1985
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|COMET
+)brace
+comma
+(brace
 l_int|0x11F6
 comma
 l_int|0x9881
@@ -707,6 +731,54 @@ comma
 l_int|0
 comma
 id|I21145
+)brace
+comma
+(brace
+l_int|0x1282
+comma
+l_int|0x9100
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|DC21140
+)brace
+comma
+(brace
+l_int|0x1282
+comma
+l_int|0x9102
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|DC21140
+)brace
+comma
+(brace
+l_int|0x1113
+comma
+l_int|0x1217
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|MX98715
 )brace
 comma
 (brace
@@ -813,16 +885,21 @@ id|t21041_csr13
 )braket
 op_assign
 (brace
-l_int|0xEF01
+id|csr13_mask_10bt
 comma
-l_int|0xEF09
+multiline_comment|/* 10-T */
+id|csr13_mask_auibnc
 comma
-l_int|0xEF09
+multiline_comment|/* 10-2 */
+id|csr13_mask_auibnc
 comma
-l_int|0xEF01
+multiline_comment|/* AUI */
+id|csr13_mask_10bt
 comma
-l_int|0xEF09
+multiline_comment|/* 10-T */
+id|csr13_mask_10bt
 comma
+multiline_comment|/* 10T-FD */
 )brace
 suffix:semicolon
 DECL|variable|t21041_csr14
@@ -1075,6 +1152,12 @@ op_plus
 id|CSR0
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
 multiline_comment|/* Deassert reset.&n;&t;   Wait the specified 50 PCI cycles after a reset by initializing&n;&t;   Tx and Rx queues and the address filter list. */
 id|outl
 c_func
@@ -1084,6 +1167,12 @@ comma
 id|ioaddr
 op_plus
 id|CSR0
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
 )paren
 suffix:semicolon
 r_if
@@ -4275,7 +4364,7 @@ c_cond
 (paren
 id|tp-&gt;flags
 op_amp
-id|HAS_NWAY143
+id|HAS_NWAY
 )paren
 id|data
 (braket
@@ -4323,7 +4412,7 @@ op_logical_and
 (paren
 id|tp-&gt;flags
 op_amp
-id|HAS_NWAY143
+id|HAS_NWAY
 )paren
 )paren
 (brace
@@ -4573,7 +4662,7 @@ op_logical_and
 (paren
 id|tp-&gt;flags
 op_amp
-id|HAS_NWAY143
+id|HAS_NWAY
 )paren
 )paren
 (brace
@@ -6165,7 +6254,11 @@ c_cond
 id|chip_idx
 op_eq
 id|DC21041
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|inl
 c_func
 (paren
@@ -6187,6 +6280,16 @@ id|chip_idx
 op_assign
 id|DC21040
 suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; 21041 mode,&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* The station address ROM is read byte serially.  The register must&n;&t;   be polled, waiting for the value to be read bit serially from the&n;&t;   EEPROM.&n;&t;   */
 id|sum
@@ -7451,7 +7554,7 @@ c_cond
 (paren
 id|tp-&gt;flags
 op_amp
-id|HAS_NWAY143
+id|HAS_NWAY
 )paren
 op_logical_or
 id|tp-&gt;chip_id

@@ -8655,6 +8655,8 @@ op_member_access_from_pointer
 id|prepare_write
 c_func
 (paren
+l_int|NULL
+comma
 id|page
 comma
 l_int|0

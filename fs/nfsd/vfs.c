@@ -1940,6 +1940,11 @@ id|frap
 op_assign
 l_int|NULL
 suffix:semicolon
+r_int
+id|depth
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1975,6 +1980,9 @@ id|dev
 r_goto
 id|found
 suffix:semicolon
+id|depth
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1987,6 +1995,14 @@ op_assign
 id|rap
 suffix:semicolon
 )brace
+id|depth
+op_assign
+id|nfsdstats.ra_size
+op_star
+l_int|11
+op_div
+l_int|10
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2053,6 +2069,16 @@ id|ra
 suffix:semicolon
 )brace
 id|ra-&gt;p_count
+op_increment
+suffix:semicolon
+id|nfsdstats.ra_depth
+(braket
+id|depth
+op_star
+l_int|10
+op_div
+id|nfsdstats.ra_size
+)braket
 op_increment
 suffix:semicolon
 r_return
@@ -2220,6 +2246,11 @@ c_func
 (paren
 id|oldfs
 )paren
+suffix:semicolon
+id|nfsdstats.io_read
+op_add_assign
+op_star
+id|count
 suffix:semicolon
 multiline_comment|/* Write back readahead params */
 r_if
@@ -2595,6 +2626,10 @@ id|file.f_pos
 )paren
 suffix:semicolon
 macro_line|#endif
+id|nfsdstats.io_write
+op_add_assign
+id|cnt
+suffix:semicolon
 id|set_fs
 c_func
 (paren
@@ -6275,6 +6310,10 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|nfsdstats.ra_size
+op_assign
+id|cache_size
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
