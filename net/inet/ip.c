@@ -19,6 +19,7 @@ macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;tcp.h&quot;
+macro_line|#include &quot;udp.h&quot;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
@@ -4061,6 +4062,8 @@ comma
 id|ip_fw_fwd_chain
 comma
 id|ip_fw_fwd_policy
+comma
+l_int|0
 )paren
 )paren
 op_ne
@@ -4633,6 +4636,8 @@ comma
 id|ip_fw_blk_chain
 comma
 id|ip_fw_blk_policy
+comma
+l_int|0
 )paren
 )paren
 op_ne
@@ -5596,6 +5601,32 @@ op_minus
 id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_FIREWALL
+r_if
+c_cond
+(paren
+id|ip_fw_chk
+c_func
+(paren
+id|iph
+comma
+id|dev
+comma
+id|ip_fw_blk_chain
+comma
+id|ip_fw_blk_policy
+comma
+l_int|0
+)paren
+op_ne
+l_int|1
+)paren
+(brace
+multiline_comment|/* just don&squot;t send this packet */
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif&t;
 multiline_comment|/*&n;&t; *&t;No reassigning numbers to fragments...&n;&t; */
 r_if
 c_cond

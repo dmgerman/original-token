@@ -137,6 +137,20 @@ comma
 comma
 multiline_comment|/* Original, eh?  */
 (brace
+l_string|&quot;EtherNext UTP8&quot;
+comma
+l_string|&quot;EtherNext UTP16&quot;
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x79
+)brace
+)brace
+comma
+(brace
 l_int|0
 comma
 )brace

@@ -547,6 +547,18 @@ DECL|macro|ELFCLASS64
 mdefine_line|#define&t;ELFCLASS64&t;2
 DECL|macro|ELFCLASSNUM
 mdefine_line|#define&t;ELFCLASSNUM&t;3
+DECL|macro|ELFDATANONE
+mdefine_line|#define ELFDATANONE&t;0&t;&t;/* e_ident[EI_DATA] */
+DECL|macro|ELFDATA2LSB
+mdefine_line|#define ELFDATA2LSB&t;1
+DECL|macro|ELFDATA2MSB
+mdefine_line|#define ELFDATA2MSB&t;2
+DECL|macro|EV_NONE
+mdefine_line|#define EV_NONE&t;&t;0&t;&t;/* e_version, EI_VERSION */
+DECL|macro|EV_CURRENT
+mdefine_line|#define EV_CURRENT&t;1
+DECL|macro|EV_NUM
+mdefine_line|#define EV_NUM&t;&t;2
 DECL|macro|ELF_START_MMAP
 mdefine_line|#define ELF_START_MMAP 0x80000000
 macro_line|#endif /* _LINUX_ELF_H */

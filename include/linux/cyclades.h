@@ -32,6 +32,32 @@ id|filler
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|cyclades_monitor
+r_struct
+id|cyclades_monitor
+(brace
+DECL|member|int_count
+r_int
+r_int
+id|int_count
+suffix:semicolon
+DECL|member|char_count
+r_int
+r_int
+id|char_count
+suffix:semicolon
+DECL|member|char_max
+r_int
+r_int
+id|char_max
+suffix:semicolon
+DECL|member|char_last
+r_int
+r_int
+id|char_last
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 DECL|struct|cyclades_port
 r_struct
@@ -174,6 +200,14 @@ DECL|member|xmit_cnt
 r_int
 id|xmit_cnt
 suffix:semicolon
+DECL|member|default_threshold
+r_int
+id|default_threshold
+suffix:semicolon
+DECL|member|default_timeout
+r_int
+id|default_timeout
+suffix:semicolon
 DECL|member|tqueue
 r_struct
 id|tq_struct
@@ -201,10 +235,33 @@ id|wait_queue
 op_star
 id|close_wait
 suffix:semicolon
+DECL|member|mon
+r_struct
+id|cyclades_monitor
+id|mon
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|CYCLADES_MAGIC
 mdefine_line|#define CYCLADES_MAGIC  0x4359
+DECL|macro|CYGETMON
+mdefine_line|#define CYGETMON                0x435901
+DECL|macro|CYGETTHRESH
+mdefine_line|#define CYGETTHRESH             0x435902
+DECL|macro|CYSETTHRESH
+mdefine_line|#define CYSETTHRESH             0x435903
+DECL|macro|CYGETDEFTHRESH
+mdefine_line|#define CYGETDEFTHRESH          0x435904
+DECL|macro|CYSETDEFTHRESH
+mdefine_line|#define CYSETDEFTHRESH          0x435905
+DECL|macro|CYGETTIMEOUT
+mdefine_line|#define CYGETTIMEOUT            0x435906
+DECL|macro|CYSETTIMEOUT
+mdefine_line|#define CYSETTIMEOUT            0x435907
+DECL|macro|CYGETDEFTIMEOUT
+mdefine_line|#define CYGETDEFTIMEOUT         0x435908
+DECL|macro|CYSETDEFTIMEOUT
+mdefine_line|#define CYSETDEFTIMEOUT         0x435909
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at cy interrupt time.&n; */
 DECL|macro|Cy_EVENT_READ_PROCESS
 mdefine_line|#define Cy_EVENT_READ_PROCESS&t;0

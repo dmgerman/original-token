@@ -7830,9 +7830,13 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 r_case
+l_char|&squot;G&squot;
+suffix:colon
+multiline_comment|/* prelim official escape code */
+r_case
 l_char|&squot;8&squot;
 suffix:colon
-multiline_comment|/* ISO/ECMA hasn&squot;t yet registered an&n;&t;&t;&t;&t;&t;   official ESC sequence for UTF-8,&n;&t;&t;&t;&t;&t;   so this one (ESC %8) will likely&n;&t;&t;&t;&t;&t;   change in the future. */
+multiline_comment|/* retained for compatibility */
 id|utf
 op_assign
 l_int|1

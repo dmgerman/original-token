@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&n; *&t;All the real work was done by .....&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&n; *&t;All the real work was done by .....&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -192,7 +192,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if defined(CONFIG_IP_ACCT) || defined(CONFIG_IP_FIREWALL)
-multiline_comment|/*&n; *&t;Returns 0 if packet should be dropped, 1 or more if it should be accepted.&n; *&t;Also does accounting so you can feed it the accounting chain.&n; */
+multiline_comment|/*&n; *&t;Returns 0 if packet should be dropped, 1 if it should be accepted,&n; *&t;and -1 if an ICMP host unreachable packet should be sent.&n; *&t;Also does accounting so you can feed it the accounting chain.&n; *&t;If opt is set to 1, it means that we do this for accounting&n; *&t;purposes (searches all entries and handles fragments different).&n; *&t;If opt is set to 2, it doesn&squot;t count a matching packet, which&n; *&t;is used when calling this for checking purposes (IP_FW_CHK_*).&n; */
 DECL|function|ip_fw_chk
 r_int
 id|ip_fw_chk
@@ -215,6 +215,9 @@ id|chain
 comma
 r_int
 id|policy
+comma
+r_int
+id|opt
 )paren
 (brace
 r_struct
@@ -290,6 +293,10 @@ r_char
 id|notcpsyn
 op_assign
 l_int|1
+comma
+id|frag1
+comma
+id|match
 suffix:semicolon
 r_int
 r_int
@@ -305,12 +312,43 @@ op_assign
 id|ip-&gt;daddr
 suffix:semicolon
 multiline_comment|/* &n;&t; *&t;This way we handle fragmented packets.&n;&t; *&t;we ignore all fragments but the first one&n;&t; *&t;so the whole packet can&squot;t be reassembled.&n;&t; *&t;This way we relay on the full info which&n;&t; *&t;stored only in first packet.&n;&t; *&n;&t; *&t;Note that this theoretically allows partial packet&n;&t; *&t;spoofing. Not very dangerous but paranoid people may&n;&t; *&t;wish to play with this. It also allows the so called&n;&t; *&t;&quot;fragment bomb&quot; denial of service attack on some types&n;&t; *&t;of system.&n;&t; */
+id|frag1
+op_assign
+(paren
+(paren
+id|ntohs
+c_func
+(paren
+id|ip-&gt;frag_off
+)paren
+op_amp
+id|IP_OFFSET
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|ip-&gt;frag_off
-op_amp
-id|IP_OFFSET
+op_logical_neg
+id|frag1
+op_logical_and
+(paren
+id|opt
+op_ne
+l_int|1
+)paren
+op_logical_and
+(paren
+id|ip-&gt;protocol
+op_eq
+id|IPPROTO_TCP
+op_logical_or
+id|ip-&gt;protocol
+op_eq
+id|IPPROTO_UDP
+)paren
 )paren
 r_return
 l_int|1
@@ -345,6 +383,13 @@ c_func
 l_string|&quot;TCP &quot;
 )paren
 suffix:semicolon
+multiline_comment|/* ports stay 0 if it is not the first fragment */
+r_if
+c_cond
+(paren
+id|frag1
+)paren
+(brace
 id|src_port
 op_assign
 id|ntohs
@@ -370,12 +415,13 @@ op_logical_neg
 id|tcp-&gt;ack
 )paren
 (brace
+multiline_comment|/* We *DO* have SYN, value FALSE */
 id|notcpsyn
 op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* We *DO* have SYN, value FALSE */
+)brace
 id|prt
 op_assign
 id|IP_FW_F_TCP
@@ -391,6 +437,13 @@ c_func
 l_string|&quot;UDP &quot;
 )paren
 suffix:semicolon
+multiline_comment|/* ports stay 0 if it is not the first fragment */
+r_if
+c_cond
+(paren
+id|frag1
+)paren
+(brace
 id|src_port
 op_assign
 id|ntohs
@@ -407,6 +460,7 @@ c_func
 id|udp-&gt;dest
 )paren
 suffix:semicolon
+)brace
 id|prt
 op_assign
 id|IP_FW_F_UDP
@@ -475,6 +529,7 @@ id|ip-&gt;protocol
 op_eq
 id|IPPROTO_UDP
 )paren
+multiline_comment|/* This will print 0 when it is not the first fragment! */
 id|dprintf2
 c_func
 (paren
@@ -500,6 +555,7 @@ id|ip-&gt;protocol
 op_eq
 id|IPPROTO_UDP
 )paren
+multiline_comment|/* This will print 0 when it is not the first fragment! */
 id|dprintf2
 c_func
 (paren
@@ -529,6 +585,11 @@ id|f-&gt;fw_next
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;This is a bit simpler as we don&squot;t have to walk&n;&t;&t; *&t;an interface chain as you do in BSD - same logic&n;&t;&t; *&t;however.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Match can become 0x01 (a &quot;normal&quot; match was found),&n;&t;&t; *&t;0x02 (a reverse match was found), and 0x03 (the&n;&t;&t; *&t;IP addresses match in both directions).&n;&t;&t; *&t;Now we know in which direction(s) we should look&n;&t;&t; *&t;for a match for the TCP/UDP ports.  Both directions&n;&t;&t; *&t;might match (e.g., when both addresses are on the&n;&t;&t; *&t;same network for which an address/mask is given), but&n;&t;&t; *&t;the ports might only match in one direction.&n;&t;&t; *&t;This was obviously wrong in the original BSD code.&n;&t;&t; */
+id|match
+op_assign
+l_int|0x00
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -547,6 +608,46 @@ id|f-&gt;fw_dmsk.s_addr
 )paren
 op_eq
 id|f-&gt;fw_dst.s_addr
+)paren
+multiline_comment|/* normal direction */
+id|match
+op_or_assign
+l_int|0x01
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_BIDIR
+)paren
+op_logical_and
+(paren
+id|dst
+op_amp
+id|f-&gt;fw_smsk.s_addr
+)paren
+op_eq
+id|f-&gt;fw_src.s_addr
+op_logical_and
+(paren
+id|src
+op_amp
+id|f-&gt;fw_dmsk.s_addr
+)paren
+op_eq
+id|f-&gt;fw_dst.s_addr
+)paren
+multiline_comment|/* reverse direction */
+id|match
+op_or_assign
+l_int|0x02
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|match
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; *&t;Look for a VIA match &n;&t;&t;&t; */
@@ -629,6 +730,12 @@ op_eq
 id|IP_FW_F_ICMP
 op_logical_or
 (paren
+(paren
+id|match
+op_amp
+l_int|0x01
+)paren
+op_logical_and
 id|port_match
 c_func
 (paren
@@ -662,7 +769,51 @@ id|dst_port
 comma
 id|f-&gt;fw_flg
 op_amp
+id|IP_FW_F_DRNG
+)paren
+)paren
+op_logical_or
+(paren
+(paren
+id|match
+op_amp
+l_int|0x02
+)paren
+op_logical_and
+id|port_match
+c_func
+(paren
+op_amp
+id|f-&gt;fw_pts
+(braket
+l_int|0
+)braket
+comma
+id|f-&gt;fw_nsp
+comma
+id|dst_port
+comma
+id|f-&gt;fw_flg
+op_amp
 id|IP_FW_F_SRNG
+)paren
+op_logical_and
+id|port_match
+c_func
+(paren
+op_amp
+id|f-&gt;fw_pts
+(braket
+id|f-&gt;fw_nsp
+)braket
+comma
+id|f-&gt;fw_ndp
+comma
+id|src_port
+comma
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_DRNG
 )paren
 )paren
 )paren
@@ -685,6 +836,14 @@ id|IP_FW_F_PRN
 r_if
 c_cond
 (paren
+id|opt
+op_ne
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|f-&gt;fw_flg
 op_amp
 id|IP_FW_F_ACCEPT
@@ -698,12 +857,29 @@ l_string|&quot;Accept &quot;
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_ICMPRPL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Reject &quot;
+)paren
+suffix:semicolon
+)brace
+r_else
 id|printk
 c_func
 (paren
 l_string|&quot;Deny &quot;
 )paren
 suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -825,9 +1001,9 @@ macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
-id|f-&gt;fw_flg
-op_amp
-id|IP_FW_F_ACCEPT
+id|opt
+op_ne
+l_int|2
 )paren
 (brace
 id|f-&gt;fw_bcnt
@@ -841,15 +1017,31 @@ suffix:semicolon
 id|f-&gt;fw_pcnt
 op_increment
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|opt
+op_ne
+l_int|1
+)paren
 r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Loop */
-multiline_comment|/*&n;&t; * If we get here then none of the firewalls matched or one matched&n;&t; * but was a no. So now we rely on policy defined in the rejecting&n;&t; * entry or if none was found in the policy variable&n;&t; */
+r_if
+c_cond
+(paren
+id|opt
+op_eq
+l_int|1
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * We rely on policy defined in the rejecting entry or, if no match&n;&t; * was found, we rely on the general policy variable for this type&n;&t; * of firewall.&n;&t; */
 r_if
 c_cond
 (paren
@@ -858,7 +1050,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* A deny match */
+multiline_comment|/* A match was found */
 id|f_flag
 op_assign
 id|f-&gt;fw_flg
@@ -1674,6 +1866,26 @@ suffix:semicolon
 id|skip_check
 suffix:colon
 )brace
+multiline_comment|/* finally look at the interface address */
+r_if
+c_cond
+(paren
+(paren
+id|addb4
+op_eq
+l_int|0
+)paren
+op_logical_and
+id|ftmp-&gt;fw_via.s_addr
+op_logical_and
+op_logical_neg
+(paren
+id|chtmp-&gt;fw_via.s_addr
+)paren
+)paren
+id|addb4
+op_increment
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2214,7 +2426,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_ACCT
 DECL|function|ip_acct_cnt
-r_int
+r_void
 id|ip_acct_cnt
 c_func
 (paren
@@ -2234,7 +2446,9 @@ op_star
 id|f
 )paren
 (brace
-r_return
+(paren
+r_void
+)paren
 id|ip_fw_chk
 c_func
 (paren
@@ -2245,7 +2459,11 @@ comma
 id|f
 comma
 l_int|0
+comma
+l_int|1
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 DECL|function|ip_acct_ctl
@@ -2421,6 +2639,9 @@ r_int
 id|len
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2554,6 +2775,15 @@ id|IP_FW_CHK_FWD
 )paren
 (brace
 r_struct
+id|device
+id|viadev
+suffix:semicolon
+r_struct
+id|ip_fwpkt
+op_star
+id|ipfwp
+suffix:semicolon
+r_struct
 id|iphdr
 op_star
 id|ip
@@ -2566,15 +2796,7 @@ OL
 r_sizeof
 (paren
 r_struct
-id|iphdr
-)paren
-op_plus
-l_int|2
-op_star
-r_sizeof
-(paren
-r_int
-r_int
+id|ip_fwpkt
 )paren
 )paren
 (brace
@@ -2582,22 +2804,14 @@ macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
 id|printf
 c_func
 (paren
-l_string|&quot;ip_fw_ctl: len=%d, want at least %d&bslash;n&quot;
+l_string|&quot;ip_fw_ctl: length=%d, expected %d&bslash;n&quot;
 comma
 id|len
 comma
 r_sizeof
 (paren
 r_struct
-id|ip
-)paren
-op_plus
-l_int|2
-op_star
-r_sizeof
-(paren
-r_int
-r_int
+id|ip_fwpkt
 )paren
 )paren
 suffix:semicolon
@@ -2606,14 +2820,21 @@ r_return
 id|EINVAL
 suffix:semicolon
 )brace
-id|ip
+id|ipfwp
 op_assign
 (paren
 r_struct
-id|iphdr
+id|ip_fwpkt
 op_star
 )paren
 id|m
+suffix:semicolon
+id|ip
+op_assign
+op_amp
+(paren
+id|ipfwp-&gt;fwp_iph
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2657,15 +2878,23 @@ r_return
 id|EINVAL
 suffix:semicolon
 )brace
+id|viadev.pa_addr
+op_assign
+id|ipfwp-&gt;fwp_via.s_addr
+suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|ret
+op_assign
 id|ip_fw_chk
 c_func
 (paren
 id|ip
 comma
-l_int|NULL
+op_amp
+id|viadev
 comma
 id|stage
 op_eq
@@ -2684,14 +2913,31 @@ c_cond
 id|ip_fw_blk_policy
 suffix:colon
 id|ip_fw_fwd_policy
+comma
+l_int|2
 )paren
+)paren
+OG
+l_int|0
 )paren
 r_return
 l_int|0
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|ret
+op_eq
+op_minus
+l_int|1
+)paren
 r_return
-id|EACCES
+id|ECONNREFUSED
+suffix:semicolon
+r_else
+r_return
+id|ETIMEDOUT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Here we really working hard-adding new elements&n; *&t;to blocking/forwarding chains or deleting &squot;em&n; */
@@ -2882,6 +3128,8 @@ id|flags
 suffix:semicolon
 r_int
 id|len
+comma
+id|p
 suffix:semicolon
 r_switch
 c_cond
@@ -2904,7 +3152,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;IP firewall block rules, policy = %d&bslash;n&quot;
+l_string|&quot;IP firewall block rules, default %d&bslash;n&quot;
 comma
 id|ip_fw_blk_policy
 )paren
@@ -2925,7 +3173,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;IP firewall forward rules, policy = %d&bslash;n&quot;
+l_string|&quot;IP firewall forward rules, default %d&bslash;n&quot;
 comma
 id|ip_fw_fwd_policy
 )paren
@@ -3040,7 +3288,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%u %u %lu %lu &quot;
+l_string|&quot;%u %u %lu %lu&quot;
 comma
 id|i-&gt;fw_nsp
 comma
@@ -3051,6 +3299,20 @@ comma
 id|i-&gt;fw_bcnt
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|p
+op_assign
+l_int|0
+suffix:semicolon
+id|p
+OL
+id|IP_FW_MAX_PORTS
+suffix:semicolon
+id|p
+op_increment
+)paren
 id|len
 op_add_assign
 id|sprintf
@@ -3060,58 +3322,28 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%u %u %u %u %u %u %u %u %u %u&bslash;n&quot;
+l_string|&quot; %u&quot;
 comma
 id|i-&gt;fw_pts
 (braket
-l_int|0
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|1
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|2
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|3
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|4
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|5
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|6
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|7
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|8
-)braket
-comma
-id|i-&gt;fw_pts
-(braket
-l_int|9
+id|p
 )braket
 )paren
+suffix:semicolon
+id|buffer
+(braket
+id|len
+op_increment
+)braket
+op_assign
+l_char|&squot;&bslash;n&squot;
+suffix:semicolon
+id|buffer
+(braket
+id|len
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|pos
 op_assign

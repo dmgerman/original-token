@@ -99,7 +99,7 @@ mdefine_line|#define IP_FW_F_DRNG&t;0x010&t;/* The first two dst ports are a min
 DECL|macro|IP_FW_F_PRN
 mdefine_line|#define IP_FW_F_PRN&t;0x020&t;/* In verbose mode print this firewall*/
 DECL|macro|IP_FW_F_BIDIR
-mdefine_line|#define IP_FW_F_BIDIR&t;0x040&t;/* For accounting-count two way       */
+mdefine_line|#define IP_FW_F_BIDIR&t;0x040&t;/* For bidirectional firewalls        */
 DECL|macro|IP_FW_F_TCPSYN
 mdefine_line|#define IP_FW_F_TCPSYN&t;0x080&t;/* For tcp packets-check SYN only     */
 DECL|macro|IP_FW_F_ICMPRPL
@@ -141,6 +141,42 @@ DECL|macro|IP_ACCT_FLUSH
 mdefine_line|#define IP_ACCT_FLUSH    (IP_FW_BASE_CTL+18)
 DECL|macro|IP_ACCT_ZERO
 mdefine_line|#define IP_ACCT_ZERO     (IP_FW_BASE_CTL+19)
+DECL|struct|ip_fwpkt
+r_struct
+id|ip_fwpkt
+(brace
+DECL|member|fwp_iph
+r_struct
+id|iphdr
+id|fwp_iph
+suffix:semicolon
+multiline_comment|/* IP header */
+r_union
+(brace
+DECL|member|fwp_tcph
+r_struct
+id|tcphdr
+id|fwp_tcph
+suffix:semicolon
+multiline_comment|/* TCP header or */
+DECL|member|fwp_udph
+r_struct
+id|udphdr
+id|fwp_udph
+suffix:semicolon
+multiline_comment|/* UDP header */
+DECL|member|fwp_protoh
+)brace
+id|fwp_protoh
+suffix:semicolon
+DECL|member|fwp_via
+r_struct
+id|in_addr
+id|fwp_via
+suffix:semicolon
+multiline_comment|/* interface address */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
@@ -187,7 +223,7 @@ op_star
 id|ip_acct_chain
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|ip_acct_cnt
 c_func
 (paren
@@ -235,6 +271,8 @@ comma
 r_struct
 id|ip_fw
 op_star
+comma
+r_int
 comma
 r_int
 )paren

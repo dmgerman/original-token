@@ -123,6 +123,23 @@ mdefine_line|#define ARP_TIMEOUT&t;&t;(600*HZ)
 multiline_comment|/*&n; *&t;How often is the function &squot;arp_check_retries&squot; called.&n; *&t;An entry is invalidated in the time between ARP_TIMEOUT and&n; *&t;(ARP_TIMEOUT+ARP_CHECK_INTERVAL).&n; */
 DECL|macro|ARP_CHECK_INTERVAL
 mdefine_line|#define ARP_CHECK_INTERVAL&t;(60 * HZ)
+DECL|enum|proxy
+r_enum
+id|proxy
+(brace
+DECL|enumerator|PROXY_EXACT
+id|PROXY_EXACT
+op_assign
+l_int|0
+comma
+DECL|enumerator|PROXY_ANY
+id|PROXY_ANY
+comma
+DECL|enumerator|PROXY_NONE
+id|PROXY_NONE
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* Forward declarations. */
 r_static
 r_void
@@ -143,8 +160,9 @@ r_int
 r_int
 id|paddr
 comma
-r_int
-id|exact
+r_enum
+id|proxy
+id|proxy
 )paren
 suffix:semicolon
 DECL|variable|arp_timer
@@ -1415,6 +1433,8 @@ c_func
 id|ip_addr
 )paren
 suffix:semicolon
+id|ugly
+suffix:colon
 id|cli
 c_func
 (paren
@@ -1502,8 +1522,11 @@ c_func
 id|entry
 )paren
 suffix:semicolon
-r_return
+multiline_comment|/* this would have to be cleaned up */
+r_goto
+id|ugly
 suffix:semicolon
+multiline_comment|/* perhaps like this ?&n;&t;&t;&t;cli();&n;&t;&t;&t;entry = *pentry;&n;&t;&t;&t;*/
 )brace
 id|pentry
 op_assign
@@ -2501,7 +2524,7 @@ c_func
 (paren
 id|paddr
 comma
-l_int|1
+id|PROXY_NONE
 )paren
 suffix:semicolon
 r_if
@@ -3162,7 +3185,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *      If exact is true then only exact IP matches will be allowed&n; *      for proxy entries, otherwise the netmask will be used&n; */
+multiline_comment|/*&n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *      If proxy is PROXY_EXACT then only exact IP matches will be allowed&n; *      for proxy entries, otherwise the netmask will be used&n; */
 DECL|function|arp_lookup
 r_static
 r_struct
@@ -3175,8 +3198,9 @@ r_int
 r_int
 id|paddr
 comma
-r_int
-id|exact
+r_enum
+id|proxy
+id|proxy
 )paren
 (brace
 r_struct
@@ -3227,6 +3251,10 @@ c_cond
 (paren
 op_logical_neg
 id|entry
+op_logical_and
+id|proxy
+op_ne
+id|PROXY_NONE
 )paren
 r_for
 c_loop
@@ -3249,7 +3277,11 @@ id|entry-&gt;next
 r_if
 c_cond
 (paren
-id|exact
+(paren
+id|proxy
+op_eq
+id|PROXY_EXACT
+)paren
 ques
 c_cond
 (paren
@@ -3469,7 +3501,7 @@ c_func
 (paren
 id|ip
 comma
-l_int|1
+id|PROXY_EXACT
 )paren
 suffix:semicolon
 r_if
@@ -3769,7 +3801,7 @@ c_func
 (paren
 id|si-&gt;sin_addr.s_addr
 comma
-l_int|0
+id|PROXY_ANY
 )paren
 suffix:semicolon
 r_if
