@@ -1,6 +1,7 @@
 macro_line|#ifndef __LINUX_KEYBOARD_H
 DECL|macro|__LINUX_KEYBOARD_H
 mdefine_line|#define __LINUX_KEYBOARD_H
+macro_line|#include &lt;linux/wait.h&gt;
 DECL|macro|KG_SHIFT
 mdefine_line|#define KG_SHIFT&t;0
 DECL|macro|KG_CTRL
@@ -59,9 +60,7 @@ id|NR_KEYS
 )braket
 suffix:semicolon
 r_extern
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|keypress_wait
 suffix:semicolon
 r_extern

@@ -43,9 +43,7 @@ op_star
 id|rq_prev
 suffix:semicolon
 DECL|member|rq_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|rq_wait
 suffix:semicolon
 DECL|member|rq_rpcreq

@@ -6,9 +6,7 @@ r_struct
 id|pipe_inode_info
 (brace
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
 DECL|member|base

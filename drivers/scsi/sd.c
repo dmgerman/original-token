@@ -4986,11 +4986,11 @@ op_assign
 l_int|0
 suffix:semicolon
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 multiline_comment|/* Mark as really busy again */
 id|SCpnt-&gt;request.rq_status
@@ -5197,11 +5197,11 @@ op_assign
 l_int|0
 suffix:semicolon
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 multiline_comment|/* Mark as really busy again */
 id|SCpnt-&gt;request.rq_status
@@ -5431,11 +5431,11 @@ op_assign
 l_int|0
 suffix:semicolon
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 multiline_comment|/* Mark as really busy again */
 id|SCpnt-&gt;request.rq_status
@@ -6285,11 +6285,11 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* same code as READCAPA !! */
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|SCpnt-&gt;request.rq_status
 op_assign

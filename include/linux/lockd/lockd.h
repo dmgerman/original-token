@@ -91,9 +91,7 @@ suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|h_gracewait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|h_gracewait
 suffix:semicolon
 multiline_comment|/* wait while reclaiming */

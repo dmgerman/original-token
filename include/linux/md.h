@@ -664,9 +664,7 @@ op_star
 id|data
 suffix:semicolon
 DECL|member|wqueue
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wqueue
 suffix:semicolon
 DECL|member|flags

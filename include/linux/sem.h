@@ -250,9 +250,7 @@ id|prev
 suffix:semicolon
 multiline_comment|/* previous entry in the queue, *(q-&gt;prev) == q */
 DECL|member|sleeper
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|sleeper
 suffix:semicolon
 multiline_comment|/* sleeping process */

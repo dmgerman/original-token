@@ -4822,14 +4822,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Sometimes we want to wait until a particular VT has been activated. We&n; * do it in a very simple manner. Everybody waits on a single queue and&n; * get woken up at once. Those that are satisfied go on with their business,&n; * while those not ready go back to sleep. Seems overkill to add a wait&n; * to each vt just for this - usually this does nothing!&n; */
-DECL|variable|vt_activate_queue
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|vt_activate_queue
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Sleeps until a vt is activated, or the task is interrupted. Returns&n; * 0 if activation, -EINTR if interrupted.&n; */
 DECL|function|vt_waitactive
@@ -4844,15 +4842,13 @@ id|vt
 r_int
 id|retval
 suffix:semicolon
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 id|add_wait_queue
 c_func

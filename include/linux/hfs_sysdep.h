@@ -240,9 +240,7 @@ suffix:semicolon
 multiline_comment|/*&n; * hfs_wait_queue &n; */
 DECL|typedef|hfs_wait_queue
 r_typedef
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|hfs_wait_queue
 suffix:semicolon
 DECL|function|hfs_init_waitqueue
@@ -257,7 +255,7 @@ op_star
 id|queue
 )paren
 (brace
-id|init_waitqueue
+id|init_waitqueue_head
 c_func
 (paren
 id|queue

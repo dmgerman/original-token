@@ -1139,9 +1139,12 @@ l_int|5
 op_amp
 l_int|0xe0
 suffix:semicolon
+id|init_MUTEX_LOCKED
+c_func
+(paren
+op_amp
 id|STp-&gt;sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign

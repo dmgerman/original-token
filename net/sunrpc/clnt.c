@@ -13,14 +13,12 @@ macro_line|#ifdef RPC_DEBUG
 DECL|macro|RPCDBG_FACILITY
 macro_line|# define RPCDBG_FACILITY&t;RPCDBG_CALL
 macro_line|#endif
-DECL|variable|destroy_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|destroy_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 r_static
 r_void

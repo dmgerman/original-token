@@ -339,9 +339,7 @@ id|b_flushtime
 suffix:semicolon
 multiline_comment|/* Time when this (dirty) buffer&n;&t;&t;&t;&t;&t; * should be written */
 DECL|member|b_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|b_wait
 suffix:semicolon
 DECL|member|b_pprev
@@ -766,9 +764,7 @@ op_star
 id|i_sb
 suffix:semicolon
 DECL|member|i_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|i_wait
 suffix:semicolon
 DECL|member|i_flock
@@ -1182,9 +1178,7 @@ r_int
 id|fl_pid
 suffix:semicolon
 DECL|member|fl_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|fl_wait
 suffix:semicolon
 DECL|member|fl_file
@@ -1509,9 +1503,7 @@ op_star
 id|s_root
 suffix:semicolon
 DECL|member|s_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|s_wait
 suffix:semicolon
 DECL|member|s_ibasket

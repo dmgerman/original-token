@@ -410,9 +410,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Indicates the eh thread is awake and active if&n;                                          this is true. */
 DECL|member|host_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|host_wait
 suffix:semicolon
 DECL|member|hostt

@@ -625,15 +625,11 @@ id|alt_speed
 suffix:semicolon
 multiline_comment|/* For magic substitution of 38400 bps */
 DECL|member|write_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|write_wait
 suffix:semicolon
 DECL|member|read_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|read_wait
 suffix:semicolon
 DECL|member|tq_hangup

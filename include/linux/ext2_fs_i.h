@@ -46,10 +46,11 @@ DECL|member|i_dtime
 id|__u32
 id|i_dtime
 suffix:semicolon
-DECL|member|i_version
+DECL|member|not_used_1
 id|__u32
-id|i_version
+id|not_used_1
 suffix:semicolon
+multiline_comment|/* FIX: not used/ 2.2 placeholder */
 DECL|member|i_block_group
 id|__u32
 id|i_block_group

@@ -26,9 +26,7 @@ r_int
 id|magic
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 )brace
@@ -1376,11 +1374,9 @@ r_void
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_UNIX98_PTYS
 r_int
 id|i
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Traditional BSD devices */
 id|memset
 c_func
@@ -1394,6 +1390,32 @@ r_sizeof
 (paren
 id|pty_state
 )paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_PTYS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|pty_state
+(braket
+id|i
+)braket
+dot
+id|open_wait
 )paren
 suffix:semicolon
 id|memset

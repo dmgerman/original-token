@@ -766,7 +766,7 @@ id|sock-&gt;inode
 op_assign
 id|inode
 suffix:semicolon
-id|init_waitqueue
+id|init_waitqueue_head
 c_func
 (paren
 op_amp

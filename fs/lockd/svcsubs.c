@@ -26,13 +26,12 @@ id|nlm_files
 id|FILE_NRHASH
 )braket
 suffix:semicolon
-DECL|variable|nlm_file_sema
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|nlm_file_sema
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|file_hash
 r_static
@@ -296,9 +295,12 @@ op_assign
 op_star
 id|fh
 suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
 id|file-&gt;f_sema
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 multiline_comment|/* Open the file. Note that this must not sleep for too long, else&n;&t; * we would lock up lockd:-) So no NFS re-exports, folks.&n;&t; *&n;&t; * We have to make sure we have the right credential to open&n;&t; * the file.&n;&t; */
 r_if

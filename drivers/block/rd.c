@@ -1622,6 +1622,13 @@ id|inode.i_rdev
 op_assign
 id|device
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|inode.i_wait
+)paren
+suffix:semicolon
 id|infile.f_mode
 op_assign
 l_int|1
@@ -1682,6 +1689,13 @@ suffix:semicolon
 id|out_inode.i_rdev
 op_assign
 id|ram_device
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|out_inode.i_wait
+)paren
 suffix:semicolon
 id|outfile.f_mode
 op_assign

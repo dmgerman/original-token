@@ -45,15 +45,13 @@ r_int
 id|timeout
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 macro_line|#ifdef TTY_DEBUG_WAIT_UNTIL_SENT
 r_char

@@ -28,8 +28,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 multiline_comment|/*&n;     *  Frame buffer device initialization and setup routines&n;     */
 r_extern
-r_int
-r_int
+r_void
 id|acornfb_init
 c_func
 (paren
@@ -149,6 +148,28 @@ suffix:semicolon
 r_extern
 r_void
 id|pm2fb_setup
+c_func
+(paren
+r_char
+op_star
+id|options
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cyber2000fb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cyber2000fb_setup
 c_func
 (paren
 r_char
@@ -668,6 +689,16 @@ comma
 id|cyberfb_init
 comma
 id|cyberfb_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB_CYBER2000
+(brace
+l_string|&quot;cyber2000&quot;
+comma
+id|cyber2000fb_init
+comma
+id|cyber2000fb_setup
 )brace
 comma
 macro_line|#endif
@@ -2919,6 +2950,23 @@ id|vma-&gt;vm_page_prot
 op_or_assign
 id|_CACHE_UNCACHED
 suffix:semicolon
+macro_line|#elif defined(__arm__)
+macro_line|#if defined(CONFIG_CPU_32) &amp;&amp; !defined(CONFIG_ARCH_ACORN)
+multiline_comment|/* On Acorn architectures, we want to keep the framebuffer&n;&t; * cached.&n;&t; */
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+op_and_assign
+op_complement
+(paren
+id|PTE_CACHEABLE
+op_or
+id|PTE_BUFFERABLE
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#else
 macro_line|#warning What do we have to do here??
 macro_line|#endif

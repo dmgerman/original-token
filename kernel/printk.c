@@ -31,12 +31,11 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|log_wait
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|log_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* Keep together for sysctl support */
 DECL|variable|console_loglevel

@@ -1175,9 +1175,12 @@ id|mm-&gt;def_flags
 op_assign
 l_int|0
 suffix:semicolon
+id|init_MUTEX_LOCKED
+c_func
+(paren
+op_amp
 id|mm-&gt;mmap_sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Leave mm-&gt;pgd set to the parent&squot;s pgd&n;&t;&t; * so that pgd_offset() is always valid.&n;&t;&t; */
 id|mm-&gt;mmap
@@ -2167,11 +2170,11 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|current-&gt;vfork_sem
 op_assign
@@ -2364,7 +2367,7 @@ id|p-&gt;p_cptr
 op_assign
 l_int|NULL
 suffix:semicolon
-id|init_waitqueue
+id|init_waitqueue_head
 c_func
 (paren
 op_amp

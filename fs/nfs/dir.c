@@ -66,9 +66,7 @@ id|mtime
 suffix:semicolon
 multiline_comment|/* last attr stamp */
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
 DECL|member|entry
@@ -456,16 +454,13 @@ op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|readdir_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 id|waitp
 op_assign
@@ -967,6 +962,13 @@ suffix:semicolon
 id|cache-&gt;ino
 op_assign
 id|inode-&gt;i_ino
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|cache-&gt;wait
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -563,9 +563,7 @@ id|hwif
 suffix:semicolon
 multiline_comment|/* actually (ide_hwif_t *) */
 DECL|member|wqueue
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wqueue
 suffix:semicolon
 multiline_comment|/* used to wait for drive in open() */

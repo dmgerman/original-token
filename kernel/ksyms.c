@@ -1444,13 +1444,6 @@ c_func
 id|tqueue_lock
 )paren
 suffix:semicolon
-DECL|variable|waitqueue_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|waitqueue_lock
-)paren
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/* autoirq from  drivers/net/auto_irq.c */
 DECL|variable|autoirq_setup

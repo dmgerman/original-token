@@ -287,9 +287,7 @@ id|rq_cacherep
 suffix:semicolon
 multiline_comment|/* cache info */
 DECL|member|rq_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|rq_wait
 suffix:semicolon
 multiline_comment|/* synchronozation */

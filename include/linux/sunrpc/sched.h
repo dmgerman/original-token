@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_SUNRPC_SCHED_H_
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/sunrpc/types.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 multiline_comment|/*&n; * Define this if you want to test the fast scheduler for async calls.&n; * This is still experimental and may not work.&n; */
 DECL|macro|CONFIG_RPC_FASTSCHED
 macro_line|#undef  CONFIG_RPC_FASTSCHED
@@ -165,9 +166,7 @@ id|tk_timer
 suffix:semicolon
 multiline_comment|/* kernel timer */
 DECL|member|tk_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|tk_wait
 suffix:semicolon
 multiline_comment|/* sync: sleep on this q */

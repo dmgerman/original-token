@@ -72,23 +72,19 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-DECL|variable|unix_ack_wqueue
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|unix_ack_wqueue
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
-DECL|variable|unix_dgram_wqueue
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|unix_dgram_wqueue
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|macro|unix_sockets_unbound
 mdefine_line|#define unix_sockets_unbound&t;(unix_socket_table[UNIX_HASH_SIZE])
@@ -1339,9 +1335,12 @@ id|sk-&gt;protinfo.af_unix.dentry
 op_assign
 l_int|NULL
 suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
 id|sk-&gt;protinfo.af_unix.readsem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 multiline_comment|/* single task reading lock */
 id|sk-&gt;protinfo.af_unix.list

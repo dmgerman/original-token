@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/prctl.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -3068,11 +3069,11 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This should really be a blocking read-write lock&n; * rather than a semaphore. Anybody want to implement&n; * one?&n; */
 DECL|variable|uts_sem
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|uts_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|sys_newuname
 id|asmlinkage

@@ -393,6 +393,13 @@ id|rqstp
 )paren
 )paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|rqstp-&gt;rq_wait
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

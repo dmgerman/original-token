@@ -6236,11 +6236,11 @@ id|request
 op_star
 id|cur_rq
 suffix:semicolon
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -94,6 +94,9 @@ DECL|macro|TASK_STOPPED
 mdefine_line|#define TASK_STOPPED&t;&t;8
 DECL|macro|TASK_SWAPPING
 mdefine_line|#define TASK_SWAPPING&t;&t;16
+multiline_comment|/*&n; * &squot;exclusive&squot; tasks are the ones that expect &squot;wake-one&squot; behavior&n; * on __wake_up(). They are special because __wake_up() removes&n; * them from the waitqueue immediately, this way we have O(1) addition,&n; * scheduling and removal from waitqueues, no matter how long they are.&n; */
+DECL|macro|TASK_EXCLUSIVE
+mdefine_line|#define TASK_EXCLUSIVE&t;&t;32
 multiline_comment|/*&n; * Scheduling policies&n; */
 DECL|macro|SCHED_OTHER
 mdefine_line|#define SCHED_OTHER&t;&t;0
@@ -380,7 +383,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(1), 1,&t;&t;&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
+mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(1), 1,&t;&t;&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -600,9 +603,7 @@ op_star
 id|tarray_ptr
 suffix:semicolon
 DECL|member|wait_chldexit
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait_chldexit
 suffix:semicolon
 multiline_comment|/* for wait4() */
@@ -901,7 +902,7 @@ DECL|macro|DEF_PRIORITY
 mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 210 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
+mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
 DECL|union|task_union
 r_union
 id|task_union
@@ -1299,11 +1300,9 @@ c_func
 id|__wake_up
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 comma
 r_int
 r_int
@@ -1319,11 +1318,9 @@ c_func
 id|sleep_on
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 )paren
 )paren
 suffix:semicolon
@@ -1335,11 +1332,9 @@ c_func
 id|sleep_on_timeout
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 comma
 r_int
 r_int
@@ -1355,11 +1350,9 @@ c_func
 id|interruptible_sleep_on
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 )paren
 )paren
 suffix:semicolon
@@ -1371,11 +1364,9 @@ c_func
 id|interruptible_sleep_on_timeout
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 comma
 r_int
 r_int
@@ -2267,49 +2258,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The wait-queues are circular lists, and you have to be *very* sure&n; * to keep them correct. Use only these two functions to add/remove&n; * entries in the queues.&n; */
-DECL|function|__add_wait_queue
-r_extern
-r_inline
-r_void
-id|__add_wait_queue
-c_func
-(paren
-r_struct
-id|wait_queue
-op_star
-op_star
-id|p
-comma
-r_struct
-id|wait_queue
-op_star
-id|wait
-)paren
-(brace
-id|wait-&gt;next
-op_assign
-op_star
-id|p
-ques
-c_cond
-suffix:colon
-id|WAIT_QUEUE_HEAD
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
-op_star
-id|p
-op_assign
-id|wait
-suffix:semicolon
-)brace
-r_extern
-id|rwlock_t
-id|waitqueue_lock
-suffix:semicolon
 DECL|function|add_wait_queue
 r_extern
 r_inline
@@ -2317,14 +2265,11 @@ r_void
 id|add_wait_queue
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 comma
-r_struct
-id|wait_queue
+id|wait_queue_t
 op_star
 id|wait
 )paren
@@ -2333,11 +2278,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|write_lock_irqsave
+id|wq_write_lock_irqsave
 c_func
 (paren
 op_amp
-id|waitqueue_lock
+id|q-&gt;lock
 comma
 id|flags
 )paren
@@ -2345,79 +2290,66 @@ suffix:semicolon
 id|__add_wait_queue
 c_func
 (paren
-id|p
+id|q
 comma
 id|wait
 )paren
 suffix:semicolon
-id|write_unlock_irqrestore
+id|wq_write_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|waitqueue_lock
+id|q-&gt;lock
 comma
 id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|__remove_wait_queue
+DECL|function|add_wait_queue_exclusive
 r_extern
 r_inline
 r_void
-id|__remove_wait_queue
+id|add_wait_queue_exclusive
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 comma
-r_struct
-id|wait_queue
+id|wait_queue_t
 op_star
 id|wait
 )paren
 (brace
-r_struct
-id|wait_queue
-op_star
-id|next
-op_assign
-id|wait-&gt;next
+r_int
+r_int
+id|flags
 suffix:semicolon
-r_struct
-id|wait_queue
-op_star
-id|head
-op_assign
-id|next
-suffix:semicolon
-r_struct
-id|wait_queue
-op_star
-id|tmp
-suffix:semicolon
-r_while
-c_loop
+id|wq_write_lock_irqsave
+c_func
 (paren
-(paren
-id|tmp
-op_assign
-id|head-&gt;next
+op_amp
+id|q-&gt;lock
+comma
+id|flags
 )paren
-op_ne
+suffix:semicolon
+id|__add_wait_queue_tail
+c_func
+(paren
+id|q
+comma
 id|wait
 )paren
-(brace
-id|head
-op_assign
-id|tmp
 suffix:semicolon
-)brace
-id|head-&gt;next
-op_assign
-id|next
+id|wq_write_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|q-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 DECL|function|remove_wait_queue
@@ -2427,14 +2359,11 @@ r_void
 id|remove_wait_queue
 c_func
 (paren
-r_struct
-id|wait_queue
+id|wait_queue_head_t
 op_star
-op_star
-id|p
+id|q
 comma
-r_struct
-id|wait_queue
+id|wait_queue_t
 op_star
 id|wait
 )paren
@@ -2443,11 +2372,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|write_lock_irqsave
+id|wq_write_lock_irqsave
 c_func
 (paren
 op_amp
-id|waitqueue_lock
+id|q-&gt;lock
 comma
 id|flags
 )paren
@@ -2455,27 +2384,27 @@ suffix:semicolon
 id|__remove_wait_queue
 c_func
 (paren
-id|p
+id|q
 comma
 id|wait
 )paren
 suffix:semicolon
-id|write_unlock_irqrestore
+id|wq_write_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|waitqueue_lock
+id|q-&gt;lock
 comma
 id|flags
 )paren
 suffix:semicolon
 )brace
 DECL|macro|__wait_event
-mdefine_line|#define __wait_event(wq, condition) &t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct wait_queue __wait;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__wait.task = current;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;add_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&t;&bslash;&n;&t;for (;;) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&t;&bslash;&n;&t;&t;if (condition)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;schedule();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&t;&t;&bslash;&n;&t;remove_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define __wait_event(wq, condition) &t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;wait_queue_t __wait;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;init_waitqueue_entry(&amp;__wait, current);&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;add_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&t;&bslash;&n;&t;for (;;) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&t;&bslash;&n;&t;&t;if (condition)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;schedule();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&t;&t;&bslash;&n;&t;remove_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|wait_event
 mdefine_line|#define wait_event(wq, condition) &t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (condition)&t; &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__wait_event(wq, condition);&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|__wait_event_interruptible
-mdefine_line|#define __wait_event_interruptible(wq, condition, ret)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct wait_queue __wait;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__wait.task = current;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;add_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&t;&bslash;&n;&t;for (;;) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_INTERRUPTIBLE;&t;&t;&t;&bslash;&n;&t;&t;if (condition)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!signal_pending(current)) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;schedule();&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;continue;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ret = -ERESTARTSYS;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&t;&t;&bslash;&n;&t;remove_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define __wait_event_interruptible(wq, condition, ret)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;wait_queue_t __wait;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;init_waitqueue_entry(&amp;__wait, current);&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;add_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&t;&bslash;&n;&t;for (;;) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_INTERRUPTIBLE;&t;&t;&t;&bslash;&n;&t;&t;if (condition)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!signal_pending(current)) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;schedule();&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;continue;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ret = -ERESTARTSYS;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&t;&t;&bslash;&n;&t;remove_wait_queue(&amp;wq, &amp;__wait);&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|wait_event_interruptible
 mdefine_line|#define wait_event_interruptible(wq, condition)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __ret = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!(condition))&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__wait_event_interruptible(wq, condition, __ret);&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|REMOVE_LINKS

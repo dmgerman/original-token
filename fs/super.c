@@ -15,13 +15,12 @@ macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * We use a semaphore to synchronize all mount/umount&n; * activity - imagine the mess if we have a race between&n; * unmounting a filesystem and re-mounting it (or something&n; * else).&n; */
-DECL|variable|mount_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|mount_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -1910,15 +1909,13 @@ op_star
 id|sb
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 id|add_wait_queue
 c_func
@@ -2481,6 +2478,13 @@ op_amp
 id|s-&gt;s_list
 comma
 id|super_blocks.prev
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|s-&gt;s_wait
 )paren
 suffix:semicolon
 )brace

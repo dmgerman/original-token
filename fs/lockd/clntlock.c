@@ -36,9 +36,7 @@ id|b_next
 suffix:semicolon
 multiline_comment|/* linked list */
 DECL|member|b_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|b_wait
 suffix:semicolon
 multiline_comment|/* where to wait on */
@@ -120,9 +118,12 @@ id|block.b_lock
 op_assign
 id|fl
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|block.b_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|block.b_status
 op_assign

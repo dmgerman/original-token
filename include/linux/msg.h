@@ -52,15 +52,11 @@ id|msg_ctime
 suffix:semicolon
 multiline_comment|/* last change time */
 DECL|member|wwait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wwait
 suffix:semicolon
 DECL|member|rwait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|rwait
 suffix:semicolon
 DECL|member|msg_cbytes

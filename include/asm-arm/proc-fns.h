@@ -4,7 +4,7 @@ DECL|macro|__ASM_PROCFNS_H
 mdefine_line|#define __ASM_PROCFNS_H
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* forward-decare task_struct */
+multiline_comment|/* forward-declare task_struct */
 r_struct
 id|task_struct
 suffix:semicolon

@@ -19,12 +19,12 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this. If you add&n; *&t;an ioctl, make sure you don&squot;t conflict with SPARC&squot;s RTC&n; *&t;ioctls.&n; */
-DECL|variable|rtc_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|rtc_wait
+)paren
 suffix:semicolon
 DECL|variable|rtc_irq_timer
 r_static
@@ -365,15 +365,13 @@ op_star
 id|ppos
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -2123,10 +2121,6 @@ suffix:semicolon
 id|rtc_irq_timer.function
 op_assign
 id|rtc_dropped_irq
-suffix:semicolon
-id|rtc_wait
-op_assign
-l_int|NULL
 suffix:semicolon
 id|save_flags
 c_func

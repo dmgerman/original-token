@@ -1084,6 +1084,13 @@ op_lshift
 id|PG_reserved
 )paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|p-&gt;wait
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop

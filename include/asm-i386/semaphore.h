@@ -6,6 +6,7 @@ multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Cop
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -19,17 +20,123 @@ r_int
 id|waking
 suffix:semicolon
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+DECL|member|__magic
+r_int
+id|__magic
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
-DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), 0, NULL })
-DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), 0, NULL })
+macro_line|#if WAITQUEUE_DEBUG
+DECL|macro|__SEM_DEBUG_INIT
+macro_line|# define __SEM_DEBUG_INIT(name) &bslash;&n;&t;&t;, (int)&amp;(name).__magic
+macro_line|#else
+DECL|macro|__SEM_DEBUG_INIT
+macro_line|# define __SEM_DEBUG_INIT(name)
+macro_line|#endif
+DECL|macro|__SEMAPHORE_INITIALIZER
+mdefine_line|#define __SEMAPHORE_INITIALIZER(name,count) &bslash;&n;{ ATOMIC_INIT(count), 0, __WAIT_QUEUE_HEAD_INITIALIZER((name).wait) &bslash;&n;&t;__SEM_DEBUG_INIT(name) }
+DECL|macro|__MUTEX_INITIALIZER
+mdefine_line|#define __MUTEX_INITIALIZER(name) &bslash;&n;&t;__SEMAPHORE_INITIALIZER(name,1)
+DECL|macro|__DECLARE_SEMAPHORE_GENERIC
+mdefine_line|#define __DECLARE_SEMAPHORE_GENERIC(name,count) &bslash;&n;&t;struct semaphore name = __SEMAPHORE_INITIALIZER(name,count)
+DECL|macro|DECLARE_MUTEX
+mdefine_line|#define DECLARE_MUTEX(name) __DECLARE_SEMAPHORE_GENERIC(name,1)
+DECL|macro|DECLARE_MUTEX_LOCKED
+mdefine_line|#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
+DECL|function|sema_init
+r_extern
+r_inline
+r_void
+id|sema_init
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+comma
+r_int
+id|val
+)paren
+(brace
+multiline_comment|/*&n; *&t;*sem = (struct semaphore)__SEMAPHORE_INITIALIZER((*sem),val);&n; *&n; * i&squot;d rather use the more flexible initialization above, but sadly&n; * GCC 2.7.2.3 emits a bogus warning. EGCS doesnt. Oh well.&n; */
+id|atomic_set
+c_func
+(paren
+op_amp
+id|sem-&gt;count
+comma
+id|val
+)paren
+suffix:semicolon
+id|sem-&gt;waking
+op_assign
+l_int|0
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|sem-&gt;wait
+)paren
+suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|sem-&gt;__magic
+op_assign
+(paren
+r_int
+)paren
+op_amp
+id|sem-&gt;__magic
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|init_MUTEX
+r_static
+r_inline
+r_void
+id|init_MUTEX
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+DECL|function|init_MUTEX_LOCKED
+r_static
+r_inline
+r_void
+id|init_MUTEX_LOCKED
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 id|asmlinkage
 r_void
 id|__down_failed
@@ -114,8 +221,6 @@ r_extern
 id|spinlock_t
 id|semaphore_wake_lock
 suffix:semicolon
-DECL|macro|sema_init
-mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), (val))
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
 DECL|function|down
 r_extern
@@ -130,6 +235,14 @@ op_star
 id|sem
 )paren
 (brace
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -173,6 +286,14 @@ id|sem
 r_int
 id|result
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -223,6 +344,14 @@ id|sem
 r_int
 id|result
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -271,6 +400,14 @@ op_star
 id|sem
 )paren
 (brace
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func

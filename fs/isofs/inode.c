@@ -1877,6 +1877,13 @@ id|inode_fake.i_rdev
 op_assign
 id|dev
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|inode_fake.i_wait
+)paren
+suffix:semicolon
 id|ms_info.addr_format
 op_assign
 id|CDROM_LBA

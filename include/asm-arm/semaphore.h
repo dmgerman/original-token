@@ -3,7 +3,6 @@ macro_line|#ifndef __ASM_ARM_SEMAPHORE_H
 DECL|macro|__ASM_ARM_SEMAPHORE_H
 mdefine_line|#define __ASM_ARM_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|struct|semaphore
 r_struct

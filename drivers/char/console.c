@@ -11152,14 +11152,17 @@ op_assign
 l_int|0x08
 suffix:semicolon
 multiline_comment|/* grey */
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|vt_cons
 (braket
 id|currcons
 )braket
 op_member_access_from_pointer
 id|paste_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|reset_terminal
 c_func

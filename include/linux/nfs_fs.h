@@ -98,9 +98,7 @@ id|wb_page
 suffix:semicolon
 multiline_comment|/* page to be written */
 DECL|member|wb_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wb_wait
 suffix:semicolon
 multiline_comment|/* wait for completion */

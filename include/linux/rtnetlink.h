@@ -828,9 +828,7 @@ id|atomic_t
 id|rtnl_rlockct
 suffix:semicolon
 r_extern
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|rtnl_wait
 suffix:semicolon
 DECL|function|rtattr_strcmp

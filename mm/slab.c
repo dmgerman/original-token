@@ -843,9 +843,12 @@ DECL|macro|kmem_slab_offset
 macro_line|#undef&t;kmem_slab_offset
 DECL|macro|kmem_slab_diff
 macro_line|#undef&t;kmem_slab_diff
+id|init_MUTEX
+c_func
+(paren
+op_amp
 id|cache_chain_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 id|size
 op_assign

@@ -9,8 +9,187 @@ multiline_comment|/*&n; * We use two different types of addressing - PC style ad
 DECL|macro|__PORT_PCIO
 mdefine_line|#define __PORT_PCIO(x)&t;(!((x) &amp; 0x80000000))
 multiline_comment|/*&n; * Dynamic IO functions - let the compiler&n; * optimize the expressions&n; */
-DECL|macro|DECLARE_DYN_OUT
-mdefine_line|#define DECLARE_DYN_OUT(fnsuffix,instr)&t;&t;&t;&t;&t;&t;&bslash;&n;extern __inline__ void __out##fnsuffix (unsigned int value, unsigned int port)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long temp;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;tst&t;%2, #0x80000000&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;addeq&t;%0, %0, %3&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str&quot; ##instr## &quot;&t;%1, [%0, %2, lsl #2]&t;@ out&quot;###fnsuffix&t;&bslash;&n;&t;: &quot;=&amp;r&quot; (temp)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (port), &quot;Ir&quot; (PCIO_BASE - IO_BASE), &quot;Ir&quot; (IO_BASE)&t;&bslash;&n;&t;: &quot;cc&quot;);&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+DECL|function|__outb
+r_extern
+id|__inline__
+r_void
+id|__outb
+(paren
+r_int
+r_int
+id|value
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+r_int
+r_int
+id|temp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;tst&t;%2, #0x80000000&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%0, %4&bslash;n&bslash;t&quot;
+l_string|&quot;addeq&t;%0, %0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;strb&t;%1, [%0, %2, lsl #2]&t;@ outb&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|value
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|port
+)paren
+comma
+l_string|&quot;Ir&quot;
+(paren
+id|PCIO_BASE
+op_minus
+id|IO_BASE
+)paren
+comma
+l_string|&quot;Ir&quot;
+(paren
+id|IO_BASE
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|__outw
+r_extern
+id|__inline__
+r_void
+id|__outw
+(paren
+r_int
+r_int
+id|value
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+r_int
+r_int
+id|temp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;tst&t;%2, #0x80000000&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%0, %4&bslash;n&bslash;t&quot;
+l_string|&quot;addeq&t;%0, %0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;str&t;%1, [%0, %2, lsl #2]&t;@ outw&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|value
+op_or
+id|value
+op_lshift
+l_int|16
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|port
+)paren
+comma
+l_string|&quot;Ir&quot;
+(paren
+id|PCIO_BASE
+op_minus
+id|IO_BASE
+)paren
+comma
+l_string|&quot;Ir&quot;
+(paren
+id|IO_BASE
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|__outl
+r_extern
+id|__inline__
+r_void
+id|__outl
+(paren
+r_int
+r_int
+id|value
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+r_int
+r_int
+id|temp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;tst&t;%2, #0x80000000&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%0, %4&bslash;n&bslash;t&quot;
+l_string|&quot;addeq&t;%0, %0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;str&t;%1, [%0, %2, lsl #2]&t;@ outl&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|value
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|port
+)paren
+comma
+l_string|&quot;Ir&quot;
+(paren
+id|PCIO_BASE
+op_minus
+id|IO_BASE
+)paren
+comma
+l_string|&quot;Ir&quot;
+(paren
+id|IO_BASE
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+)brace
 DECL|macro|DECLARE_DYN_IN
 mdefine_line|#define DECLARE_DYN_IN(sz,fnsuffix,instr)&t;&t;&t;&t;&t;&bslash;&n;extern __inline__ unsigned sz __in##fnsuffix (unsigned int port)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long temp, value;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;tst&t;%2, #0x80000000&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;addeq&t;%0, %0, %3&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr&quot; ##instr## &quot;&t;%1, [%0, %2, lsl #2]&t;@ in&quot;###fnsuffix&t;&bslash;&n;&t;: &quot;=&amp;r&quot; (temp), &quot;=r&quot; (value)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (port), &quot;Ir&quot; (PCIO_BASE - IO_BASE), &quot;Ir&quot; (IO_BASE)&t;&t;&bslash;&n;&t;: &quot;cc&quot;);&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (unsigned sz)value;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|function|__ioaddr
@@ -73,7 +252,7 @@ suffix:semicolon
 "&bslash;"
 )brace
 DECL|macro|DECLARE_IO
-mdefine_line|#define DECLARE_IO(sz,fnsuffix,instr)&t;&bslash;&n;&t;DECLARE_DYN_OUT(fnsuffix,instr)&t;&bslash;&n;&t;DECLARE_DYN_IN(sz,fnsuffix,instr)
+mdefine_line|#define DECLARE_IO(sz,fnsuffix,instr)&t;&bslash;&n;&t;DECLARE_DYN_IN(sz,fnsuffix,instr)
 id|DECLARE_IO
 c_func
 (paren
@@ -103,8 +282,6 @@ l_string|&quot;&quot;
 )paren
 DECL|macro|DECLARE_IO
 macro_line|#undef DECLARE_IO
-DECL|macro|DECLARE_DYN_OUT
-macro_line|#undef DECLARE_DYN_OUT
 DECL|macro|DECLARE_DYN_IN
 macro_line|#undef DECLARE_DYN_IN
 multiline_comment|/*&n; * Constant address IO functions&n; *&n; * These have to be macros for the &squot;J&squot; constraint to work -&n; * +/-4096 immediate operand.&n; */

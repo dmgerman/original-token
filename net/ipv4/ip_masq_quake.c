@@ -43,6 +43,7 @@ id|quake_priv_data
 (brace
 multiline_comment|/* Have we seen a client connect message */
 DECL|member|cl_connect
+r_int
 r_char
 id|cl_connect
 suffix:semicolon

@@ -35,10 +35,11 @@ id|atomic_t
 id|rtnl_rlockct
 suffix:semicolon
 DECL|variable|rtnl_wait
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|rtnl_wait
+)paren
 suffix:semicolon
 DECL|function|rtnl_lock
 r_void

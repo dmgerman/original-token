@@ -39,9 +39,7 @@ r_int
 id|vt_newvt
 suffix:semicolon
 DECL|member|paste_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|paste_wait
 suffix:semicolon
 )brace

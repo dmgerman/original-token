@@ -2883,15 +2883,13 @@ op_star
 id|ppos
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 id|ssize_t
 id|i
@@ -3324,9 +3322,12 @@ id|queue-&gt;tail
 op_assign
 l_int|0
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|queue-&gt;proc_list
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#ifdef INITIALIZE_MOUSE
 id|kbd_write

@@ -42,6 +42,10 @@ DECL|member|fb_xino
 id|__u32
 id|fb_xino
 suffix:semicolon
+DECL|member|fb_generation
+id|__u32
+id|fb_generation
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|NFS_FH_PADDING
@@ -76,6 +80,8 @@ DECL|macro|fh_xdev
 mdefine_line|#define fh_xdev&t;&t;&t;fh_base.fb_xdev
 DECL|macro|fh_xino
 mdefine_line|#define fh_xino&t;&t;&t;fh_base.fb_xino
+DECL|macro|fh_generation
+mdefine_line|#define fh_generation&t;&t;fh_base.fb_generation
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Conversion macros for the filehandle fields.&n; */
 DECL|function|kdev_t_to_u32

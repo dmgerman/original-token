@@ -282,9 +282,7 @@ id|parentdp
 suffix:semicolon
 multiline_comment|/* owning device */
 DECL|member|read_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|read_wait
 suffix:semicolon
 multiline_comment|/* queue read until command done */
@@ -372,9 +370,7 @@ op_star
 id|device
 suffix:semicolon
 DECL|member|generic_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|generic_wait
 suffix:semicolon
 multiline_comment|/* queue open if O_EXCL on prev. open */
@@ -4928,9 +4924,12 @@ id|sdp-&gt;device
 op_assign
 id|scsidp
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|sdp-&gt;generic_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|sdp-&gt;headfp
 op_assign

@@ -179,9 +179,7 @@ id|MAX_BLKDEV
 )braket
 suffix:semicolon
 r_extern
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait_for_request
 suffix:semicolon
 r_extern

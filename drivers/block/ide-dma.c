@@ -1533,7 +1533,7 @@ id|PCI_BASE_ADDRESS_IO_MASK
 id|printk
 c_func
 (paren
-l_string|&quot;%s: dma_base is invalid (0x%04lx, BIOS problem), please report to &lt;mj@ucw.cz&gt;&bslash;n&quot;
+l_string|&quot;%s: dma_base is invalid (0x%04lx)&bslash;n&quot;
 comma
 id|name
 comma

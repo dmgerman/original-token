@@ -893,9 +893,7 @@ id|rcvbuf
 suffix:semicolon
 multiline_comment|/* Size of receive buffer in bytes&t;*/
 DECL|member|sleep
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 id|sleep
 suffix:semicolon

@@ -150,14 +150,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* every used id is &lt;= max_shmid */
-DECL|variable|shm_lock
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|shm_lock
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* calling findkey() may need to wait */
 DECL|variable|shm_segs
@@ -250,9 +248,12 @@ id|used_segs
 op_assign
 l_int|0
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|shm_lock
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon

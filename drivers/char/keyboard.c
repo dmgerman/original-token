@@ -46,12 +46,11 @@ r_void
 )paren
 suffix:semicolon
 DECL|variable|keypress_wait
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|keypress_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 r_struct
 id|console

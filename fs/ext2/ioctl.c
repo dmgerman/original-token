@@ -272,7 +272,7 @@ r_return
 id|put_user
 c_func
 (paren
-id|inode-&gt;u.ext2_i.i_version
+id|inode-&gt;i_generation
 comma
 (paren
 r_int
@@ -323,7 +323,7 @@ c_cond
 id|get_user
 c_func
 (paren
-id|inode-&gt;u.ext2_i.i_version
+id|inode-&gt;i_generation
 comma
 (paren
 r_int

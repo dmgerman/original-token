@@ -389,9 +389,9 @@ id|EXT2_N_BLOCKS
 )braket
 suffix:semicolon
 multiline_comment|/* Pointers to blocks */
-DECL|member|i_version
+DECL|member|i_generation
 id|__u32
-id|i_version
+id|i_generation
 suffix:semicolon
 multiline_comment|/* File version (for NFS) */
 DECL|member|i_file_acl

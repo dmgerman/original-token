@@ -4133,11 +4133,11 @@ l_int|8
 suffix:semicolon
 multiline_comment|/* Do the command and wait.. */
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 id|SCpnt-&gt;request.sem
 op_assign

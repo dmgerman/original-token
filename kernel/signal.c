@@ -1363,9 +1363,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|t-&gt;state
-op_eq
+op_amp
 id|TASK_INTERRUPTIBLE
+)paren
 op_logical_and
 id|signal_pending
 c_func

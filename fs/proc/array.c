@@ -2448,7 +2448,7 @@ l_int|16
 )paren
 suffix:semicolon
 )brace
-macro_line|#elif defined (CONFIG_ARM)
+macro_line|#elif defined(__arm__)
 (brace
 r_int
 r_int
@@ -2694,7 +2694,7 @@ DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk) &bslash;&n;    (*(unsigned long *)(PT_REG(pc) + PAGE_SIZE + (unsigned long)(tsk)))
 DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
-macro_line|#elif defined(CONFIG_ARM)
+macro_line|#elif defined(__arm__)
 DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1022])
 DECL|macro|KSTK_ESP

@@ -40,12 +40,11 @@ id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * used to wait on when there are no free requests&n; */
 DECL|variable|wait_for_request
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|wait_for_request
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* This specifies how many sectors to read ahead on the disk.  */
 DECL|variable|read_ahead
@@ -552,15 +551,13 @@ id|request
 op_star
 id|req
 suffix:semicolon
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 r_int

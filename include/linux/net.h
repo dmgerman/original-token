@@ -3,6 +3,7 @@ macro_line|#ifndef _LINUX_NET_H
 DECL|macro|_LINUX_NET_H
 mdefine_line|#define _LINUX_NET_H
 macro_line|#include &lt;linux/socket.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 r_struct
 id|poll_table_struct
 suffix:semicolon
@@ -123,9 +124,7 @@ op_star
 id|sk
 suffix:semicolon
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
 DECL|member|type

@@ -113,9 +113,7 @@ r_struct
 id|autofs_wait_queue
 (brace
 DECL|member|queue
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|queue
 suffix:semicolon
 DECL|member|next
