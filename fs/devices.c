@@ -25,7 +25,7 @@ suffix:semicolon
 DECL|macro|isa_tty_dev
 mdefine_line|#define isa_tty_dev(ma)&t;(ma == TTY_MAJOR || ma == TTYAUX_MAJOR)
 DECL|macro|need_serial
-mdefine_line|#define need_serial(ma,mi) (get_tty_driver(to_kdev_t(MKDEV(ma,mi))) == NULL)
+mdefine_line|#define need_serial(ma,mi) (get_tty_driver(MKDEV(ma,mi)) == NULL)
 macro_line|#endif
 DECL|struct|device_struct
 r_struct

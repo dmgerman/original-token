@@ -1066,11 +1066,9 @@ c_cond
 op_minus
 l_int|1
 suffix:colon
-id|MKDEV
+id|kdev_t_to_nr
 c_func
 (paren
-l_int|4
-comma
 id|current-&gt;tty-&gt;device
 )paren
 suffix:semicolon

@@ -2294,6 +2294,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;IPX: Network number collision %lx&bslash;n&bslash;t%s %s and %s %s&bslash;n&quot;
 comma
 id|htonl
@@ -9805,6 +9806,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;IPX: Unable to register with 802.2&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9828,6 +9830,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;IPX: Unable to register with 802.2TR&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9851,6 +9854,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;IPX: Unable to register with SNAP&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9886,7 +9890,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Swansea University Computer Society IPX 0.34 for NET3.034&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society IPX 0.34 for NET3.035&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

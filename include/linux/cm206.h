@@ -73,7 +73,7 @@ multiline_comment|/* Define the default data control register flags here */
 DECL|macro|dc_normal
 mdefine_line|#define dc_normal (dc_mask_sync_error | dc_no_stop_on_error | &bslash;&n;&t;&t;   dc_mask_transmit_ready)
 multiline_comment|/* now some constants related to the cm206 */
-multiline_comment|/* another drive status byte, echoed by the cm206 on most commmands */
+multiline_comment|/* another drive status byte, echoed by the cm206 on most commands */
 DECL|macro|dsb_error_condition
 mdefine_line|#define dsb_error_condition 0x1
 DECL|macro|dsb_play_in_progress

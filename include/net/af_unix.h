@@ -1,3 +1,6 @@
+macro_line|#ifndef __LINUX_NET_AFUNIX_H
+DECL|macro|__LINUX_NET_AFUNIX_H
+mdefine_line|#define __LINUX_NET_AFUNIX_H
 r_extern
 r_void
 id|unix_proto_init
@@ -42,11 +45,20 @@ r_struct
 id|sock
 id|unix_socket
 suffix:semicolon
-DECL|variable|unix_socket_list
+r_extern
+r_void
+id|unix_gc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 id|unix_socket
 op_star
 id|unix_socket_list
 suffix:semicolon
 DECL|macro|UNIX_MAX_FD
 mdefine_line|#define UNIX_MAX_FD&t;8
+macro_line|#endif
 eof

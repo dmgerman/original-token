@@ -195,6 +195,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;ax25_output: alloc_skb returned NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -972,6 +973,7 @@ id|ax25-&gt;digipeat
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;ax25_transmit_buffer: not enough room for digi-peaters&bslash;n&quot;
 )paren
 suffix:semicolon

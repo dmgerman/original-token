@@ -609,6 +609,7 @@ id|ETH_P_IP
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;eth_header_cache_bind: %04x cache is not implemented&bslash;n&quot;
 comma
 id|htype
@@ -712,6 +713,7 @@ id|ETH_P_IP
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;eth_header_cache_update: %04x cache is not implemented&bslash;n&quot;
 comma
 id|hh-&gt;hh_type

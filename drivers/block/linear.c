@@ -488,11 +488,15 @@ id|tmp_dev-&gt;offset
 )paren
 id|printk
 (paren
-l_string|&quot;Block %ld out of bounds on dev %04x size %d offset %d&bslash;n&quot;
+l_string|&quot;Block %ld out of bounds on dev %s size %d offset %d&bslash;n&quot;
 comma
 id|block
 comma
+id|kdevname
+c_func
+(paren
 id|tmp_dev-&gt;dev
+)paren
 comma
 id|tmp_dev-&gt;size
 comma

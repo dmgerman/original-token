@@ -1896,6 +1896,14 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_void
+id|calibrate_delay
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_int
 id|cpuid
 op_assign

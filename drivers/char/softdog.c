@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *&t;SoftDog&t;0.02:&t;A Software Watchdog Device&n; *&n; *&t;(c) Copyright 1995    Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;&n; *&n; *&t;Email us for quotes on Linux software and driver development. &n; *&n; *&t;&t;&t;-----------------------&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;&t;-----------------------&n; *&n; *&t;Software only watchdog driver. Unlike its big brother the WDT501P&n; *&t;driver this won&squot;t always recover a failed machine.&n; */
+multiline_comment|/*&n; *&t;SoftDog&t;0.04:&t;A Software Watchdog Device&n; *&n; *&t;(c) Copyright 1995    Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;&n; *&n; *&t;Email us for quotes on Linux software and driver development. &n; *&n; *&t;&t;&t;-----------------------&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;&t;-----------------------&n; *&n; *&t;Software only watchdog driver. Unlike its big brother the WDT501P&n; *&t;driver this won&squot;t always recover a failed machine.&n; *&n; *  03/96: Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt; :&n; *&t;Modularised.&n; *&t;Added soft_margin; use upon insmod to change the timer delay.&n; *&t;NB: uses same minor as wdt (WATCHDOG_MINOR); we could use separate&n; *&t;    minors.&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,7 +9,15 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 DECL|macro|WATCHDOG_MINOR
 mdefine_line|#define WATCHDOG_MINOR&t;130
 DECL|macro|TIMER_MARGIN
-mdefine_line|#define TIMER_MARGIN&t;(60*HZ)&t;&t;/* Allow 1 minute */
+mdefine_line|#define TIMER_MARGIN&t;60&t;&t;/* (secs) Default is 1 minute */
+DECL|variable|soft_margin
+r_static
+r_int
+id|soft_margin
+op_assign
+id|TIMER_MARGIN
+suffix:semicolon
+multiline_comment|/* in seconds */
 multiline_comment|/*&n; *&t;Our timer&n; */
 DECL|variable|watchdog_ticktock
 r_struct
@@ -42,6 +51,22 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef ONLY_TESTING
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;SOFTDOG: Would Reboot.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;SOFTDOG: Initiating system reboot.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|hard_reset_now
 c_func
 (paren
@@ -53,6 +78,7 @@ c_func
 l_string|&quot;WATCHDOG: Reboot didn&squot;t ?????&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Allow only one person to hold it open&n; */
 DECL|function|softdog_open
@@ -83,12 +109,18 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Activate timer&n;&t; */
 id|watchdog_ticktock.expires
 op_assign
 id|jiffies
 op_plus
-id|TIMER_MARGIN
+(paren
+id|soft_margin
+op_star
+id|HZ
+)paren
 suffix:semicolon
 id|add_timer
 c_func
@@ -121,7 +153,7 @@ op_star
 id|file
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Shut off the timer.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Shut off the timer.&n;&t; * &t;Lock it in if it&squot;s a module and we defined ...NOWAYOUT&n;&t; */
 macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT&t; 
 id|del_timer
 c_func
@@ -130,11 +162,13 @@ op_amp
 id|watchdog_ticktock
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|timer_alive
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 DECL|function|softdog_write
 r_static
@@ -173,7 +207,11 @@ id|watchdog_ticktock.expires
 op_assign
 id|jiffies
 op_plus
-id|TIMER_MARGIN
+(paren
+id|soft_margin
+op_star
+id|HZ
+)paren
 suffix:semicolon
 id|add_timer
 c_func
@@ -186,15 +224,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;The mouse stuff ought to be renamed misc_register etc before 1.4...&n; */
-DECL|function|watchdog_init
-r_void
-id|watchdog_init
-c_func
-(paren
-r_void
-)paren
-(brace
+DECL|variable|softdog_fops
 r_static
 r_struct
 id|file_operations
@@ -232,18 +262,34 @@ l_int|NULL
 multiline_comment|/* Fasync */
 )brace
 suffix:semicolon
+DECL|variable|softdog_miscdev
 r_static
 r_struct
 id|miscdevice
-id|softdog_mouse
+id|softdog_miscdev
 op_assign
-initialization_block
+(brace
+id|WATCHDOG_MINOR
+comma
+l_string|&quot;softdog&quot;
+comma
+op_amp
+id|softdog_fops
+)brace
 suffix:semicolon
+DECL|function|watchdog_init
+r_void
+id|watchdog_init
+c_func
+(paren
+r_void
+)paren
+(brace
 id|misc_register
 c_func
 (paren
 op_amp
-id|softdog_mouse
+id|softdog_miscdev
 )paren
 suffix:semicolon
 id|init_timer
@@ -260,8 +306,45 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Software Watchdog Timer: 0.03&bslash;n&quot;
+l_string|&quot;Software Watchdog Timer: 0.04, timer margin: %d sec&bslash;n&quot;
+comma
+id|soft_margin
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|watchdog_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|misc_deregister
+c_func
+(paren
+op_amp
+id|softdog_miscdev
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

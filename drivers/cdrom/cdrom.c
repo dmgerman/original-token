@@ -71,7 +71,7 @@ r_int
 id|cdrom_media_changed
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -348,7 +348,7 @@ r_struct
 id|cdrom_device_ops
 op_star
 comma
-r_int
+id|kdev_t
 )paren
 suffix:semicolon
 DECL|function|cdrom_open
@@ -367,7 +367,7 @@ op_star
 id|fp
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|ip-&gt;i_rdev
@@ -483,7 +483,7 @@ id|cdrom_device_ops
 op_star
 id|cdo
 comma
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -685,7 +685,7 @@ op_star
 id|fp
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|ip-&gt;i_rdev
@@ -823,7 +823,7 @@ r_int
 id|media_changed
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -946,7 +946,7 @@ r_int
 id|cdrom_media_changed
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1135,7 +1135,7 @@ r_int
 id|arg
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|ip-&gt;i_rdev

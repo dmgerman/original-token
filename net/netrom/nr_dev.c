@@ -648,6 +648,7 @@ id|dev-&gt;start
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;netrom: xmit call when iface is down&bslash;n&quot;
 )paren
 suffix:semicolon

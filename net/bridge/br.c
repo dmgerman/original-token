@@ -2469,6 +2469,13 @@ multiline_comment|/* (4.8.1)&t; */
 r_int
 id|port_no
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Ethernet Bridge 002 for NET3.035 (Linux 2.0)&bslash;n&quot;
+)paren
+suffix:semicolon
 id|bridge_info.designated_root
 op_assign
 id|bridge_info.bridge_id
@@ -3803,6 +3810,7 @@ id|Disabled
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;send_config_bpdu: port %i not valid&bslash;n&quot;
 comma
 id|port_no
@@ -3857,6 +3865,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;send_config_bpdu: no skb available&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4107,6 +4116,7 @@ id|Disabled
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;send_tcn_bpdu: port %i not valid&bslash;n&quot;
 comma
 id|port_no
@@ -4160,6 +4170,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;send_tcn_bpdu: no skb available&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4649,6 +4660,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+macro_line|#if 0
 r_default
 suffix:colon
 id|printk
@@ -4663,6 +4675,7 @@ r_int
 id|event
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;
 )brace
 r_return
 id|NOTIFY_DONE
@@ -4708,7 +4721,8 @@ id|skb
 id|printk
 c_func
 (paren
-l_string|&quot;no skb!&bslash;n&quot;
+id|KERN_CRIT
+l_string|&quot;br_receive_frame: no skb!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5014,6 +5028,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;br_receive_frame: port [%i] unknown state [%i]&bslash;n&quot;
 comma
 id|port
@@ -5059,6 +5074,7 @@ id|skb
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;br_tx_frame: no skb!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5269,6 +5285,7 @@ id|f
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;br_learn: unable to malloc fdb&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5417,10 +5434,6 @@ r_struct
 id|fdb
 op_star
 id|f
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 multiline_comment|/*&n;   &t; * flood all ports with frames destined for a group&n;&t; * address.  If frame came from above, drop it,&n;&t; * otherwise it will be handled in br_receive_frame()&n;&t; * Multicast frames will also need to be seen&n;&t; * by our upper layers.&n;&t; */
 r_if
@@ -5640,10 +5653,6 @@ r_struct
 id|sk_buff
 op_star
 id|nskb
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_for
 c_loop
@@ -5957,6 +5966,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;br_bpdu: received unknown bpdu, type = %i&bslash;n&quot;
 comma
 id|bpdu-&gt;type
@@ -5991,9 +6001,6 @@ suffix:semicolon
 r_struct
 id|br_cf
 id|bcf
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 r_switch
 c_cond
@@ -6161,6 +6168,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;br: enabling bridging function&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6196,6 +6204,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;br: disabling bridging function&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6284,6 +6293,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;br: enabling port %i&bslash;n&quot;
 comma
 id|bcf.arg1
@@ -6335,6 +6345,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;br: disabling port %i&bslash;n&quot;
 comma
 id|bcf.arg1

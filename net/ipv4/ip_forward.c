@@ -1304,6 +1304,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;ip_forward(): Argh! Destination lost!&bslash;n&quot;
 )paren
 suffix:semicolon

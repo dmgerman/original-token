@@ -66,6 +66,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Networking buffers in use          : %u&bslash;n&quot;
 comma
 id|net_skbcount
@@ -74,6 +75,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Network buffers locked by drivers  : %u&bslash;n&quot;
 comma
 id|net_locked
@@ -82,6 +84,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Total network buffer allocations   : %u&bslash;n&quot;
 comma
 id|net_allocs
@@ -90,6 +93,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Total failed network buffer allocs : %u&bslash;n&quot;
 comma
 id|net_fails
@@ -98,6 +102,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Total free while locked events     : %u&bslash;n&quot;
 comma
 id|net_free_locked
@@ -107,6 +112,7 @@ macro_line|#ifdef CONFIG_INET
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;IP fragment buffer size            : %u&bslash;n&quot;
 comma
 id|ip_frag_mem
@@ -2049,6 +2055,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;kfree_skb: skb = NULL (from %p)&bslash;n&quot;
 comma
 id|__builtin_return_address
@@ -2096,6 +2103,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Warning: kfree_skb passed an skb that nobody set the free flag on! (from %p)&bslash;n&quot;
 comma
 id|__builtin_return_address
@@ -2113,6 +2121,7 @@ id|skb-&gt;list
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Warning: kfree_skb passed an skb still on a list (from %p).&bslash;n&quot;
 comma
 id|__builtin_return_address
@@ -2300,6 +2309,7 @@ l_int|5
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;alloc_skb called nonatomically from interrupt %p&bslash;n&quot;
 comma
 id|__builtin_return_address

@@ -2691,6 +2691,7 @@ id|len
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;ax25_dg_build_path: not enough headroom for digis in skb&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2967,6 +2968,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ax25_dev_get_flag called with invalid device&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -109,6 +109,10 @@ DECL|macro|KERN_NFSRNAME
 mdefine_line|#define KERN_NFSRNAME&t;17&t;/* NFS root name */
 DECL|macro|KERN_NFSRADDRS
 mdefine_line|#define KERN_NFSRADDRS&t;18&t;/* NFS root addresses */
+DECL|macro|KERN_JAVA_INTERPRETER
+mdefine_line|#define KERN_JAVA_INTERPRETER 19 /* path to Java(tm) interpreter */
+DECL|macro|KERN_JAVA_APPLETVIEWER
+mdefine_line|#define KERN_JAVA_APPLETVIEWER 20 /* path to Java(tm) appletviewer */
 multiline_comment|/* CTL_VM names: */
 DECL|macro|VM_SWAPCTL
 mdefine_line|#define VM_SWAPCTL&t;1&t;/* struct: Set vm swapping control */

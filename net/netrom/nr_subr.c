@@ -536,6 +536,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;nr_write_internal: invalid frame type %d&bslash;n&quot;
 comma
 id|frametype

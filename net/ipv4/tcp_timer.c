@@ -70,6 +70,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Error: Negative timer in xmit_timer&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -597,6 +598,7 @@ r_default
 suffix:colon
 id|printk
 (paren
+id|KERN_ERR
 l_string|&quot;rexmit_timer: timer expired - reason unknown&bslash;n&quot;
 )paren
 suffix:semicolon

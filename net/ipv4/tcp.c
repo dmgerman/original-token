@@ -2031,6 +2031,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;TCP: **bug**: &bslash;&quot;copy&bslash;&quot; &lt;= 0&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2174,6 +2175,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;TCP: **bug**: copy=%d, sk-&gt;mss=%d&bslash;n&quot;
 comma
 id|copy

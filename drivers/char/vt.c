@@ -831,6 +831,22 @@ l_int|0xffff
 op_div
 l_int|1000
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|arg
+op_amp
+l_int|0xffff
+)paren
+op_eq
+l_int|0
+)paren
+id|arg
+op_or_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* jp: huh? */
 id|count
 op_assign
 id|ticks
@@ -3364,7 +3380,7 @@ op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 (paren
 r_void

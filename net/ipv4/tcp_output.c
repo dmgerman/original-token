@@ -236,6 +236,7 @@ id|skb-&gt;len
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;tcp_send_skb: bad skb (skb = %p, data = %p, th = %p, len = %lu)&bslash;n&quot;
 comma
 id|skb
@@ -285,6 +286,7 @@ id|th-&gt;fin
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;tcp_send_skb: attempt to queue a bogon.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -363,6 +365,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;tcp_send_partial: next != NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1907,6 +1910,7 @@ multiline_comment|/* This is a disaster if it occurs */
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;tcp_send_fin: Impossible malloc failure&quot;
 )paren
 suffix:semicolon
@@ -2153,6 +2157,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;tcp_send_fin: next != NULL&bslash;n&quot;
 )paren
 suffix:semicolon

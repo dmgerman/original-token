@@ -2143,6 +2143,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;IP fragmenter: BUG free!=1 in fragmenter&bslash;n&quot;
 )paren
 suffix:semicolon

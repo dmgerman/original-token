@@ -441,6 +441,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;igmp_stop_timer() called with timer not running by %p&bslash;n&quot;
 comma
 id|__builtin_return_address
@@ -1557,6 +1558,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Broken multicast host using 0.0.0.0 heard on %s&bslash;n&quot;
 comma
 id|dev-&gt;name

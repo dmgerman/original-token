@@ -723,7 +723,7 @@ id|gendisk
 op_star
 id|hd
 comma
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1967,8 +1967,7 @@ id|gendisk
 op_star
 id|hd
 comma
-r_int
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2138,9 +2137,13 @@ l_int|1024
 id|printk
 c_func
 (paren
-l_string|&quot;Dev %d: unable to read partition table&bslash;n&quot;
+l_string|&quot;Dev %s: unable to read partition table&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2176,9 +2179,13 @@ id|SUN_LABEL_MAGIC_SWAPPED
 id|printk
 c_func
 (paren
-l_string|&quot;Dev %d Sun disklabel: bad magic %04x&bslash;n&quot;
+l_string|&quot;Dev %s Sun disklabel: bad magic %04x&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|label-&gt;magic
 )paren
@@ -2255,9 +2262,13 @@ id|csum
 id|printk
 c_func
 (paren
-l_string|&quot;Dev %d Sun disklabel: Csum bad, label corrupted&bslash;n&quot;
+l_string|&quot;Dev %s Sun disklabel: Csum bad, label corrupted&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 id|brelse

@@ -2155,7 +2155,7 @@ r_int
 id|cm206_open
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2212,7 +2212,7 @@ r_void
 id|cm206_release
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -3983,7 +3983,7 @@ r_int
 id|cm206_audio_ioctl
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -4215,7 +4215,7 @@ r_int
 id|cm206_ioctl
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -4300,7 +4300,7 @@ r_int
 id|cm206_media_changed
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -4347,7 +4347,7 @@ r_int
 id|cm206_open_files
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -4370,7 +4370,7 @@ r_int
 id|cm206_tray_move
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -4418,7 +4418,7 @@ r_int
 id|cm206_drive_status
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -4470,7 +4470,7 @@ r_int
 id|cm206_disc_status
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -4559,7 +4559,7 @@ r_int
 id|cm206_lock_door
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -4608,7 +4608,7 @@ r_int
 id|cm206_get_last_session
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_struct
@@ -4695,7 +4695,7 @@ r_int
 id|cm206_get_upc
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_struct
@@ -4825,7 +4825,7 @@ r_int
 id|cm206_reset
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace

@@ -2,6 +2,7 @@ multiline_comment|/* ucdrom.h. Uniform cdrom data structures for cdrom.c. &t;-*-
 macro_line|#ifndef LINUX_UCDROM_H
 DECL|macro|LINUX_UCDROM_H
 mdefine_line|#define LINUX_UCDROM_H
+macro_line|#ifdef __KERNEL__
 DECL|struct|cdrom_device_ops
 r_struct
 id|cdrom_device_ops
@@ -14,7 +15,7 @@ op_star
 id|open
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 )paren
@@ -26,7 +27,7 @@ op_star
 id|release
 )paren
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 DECL|member|open_files
@@ -36,7 +37,7 @@ op_star
 id|open_files
 )paren
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 multiline_comment|/* number of open files */
@@ -47,7 +48,7 @@ op_star
 id|drive_status
 )paren
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 DECL|member|disc_status
@@ -57,7 +58,7 @@ op_star
 id|disc_status
 )paren
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 DECL|member|media_changed
@@ -67,7 +68,7 @@ op_star
 id|media_changed
 )paren
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 DECL|member|tray_move
@@ -77,7 +78,7 @@ op_star
 id|tray_move
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 )paren
@@ -89,7 +90,7 @@ op_star
 id|lock_door
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 )paren
@@ -101,7 +102,7 @@ op_star
 id|select_speed
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 )paren
@@ -113,7 +114,7 @@ op_star
 id|select_disc
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 )paren
@@ -125,7 +126,7 @@ op_star
 id|get_last_session
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_struct
 id|cdrom_multisession
@@ -139,7 +140,7 @@ op_star
 id|get_mcn
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_struct
 id|cdrom_mcn
@@ -153,7 +154,7 @@ op_star
 id|reset
 )paren
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -165,7 +166,7 @@ op_star
 id|audio_ioctl
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 r_int
@@ -182,7 +183,7 @@ op_star
 id|dev_ioctl
 )paren
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 r_int
@@ -235,6 +236,7 @@ suffix:semicolon
 multiline_comment|/* media change buffer flags (2*16) */
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* capability flags */
 DECL|macro|CDC_CLOSE_TRAY
 mdefine_line|#define CDC_CLOSE_TRAY&t;0x1             /* caddy systems _can&squot;t_ close */
@@ -302,9 +304,10 @@ DECL|macro|CDROM_DRIVE_STATUS
 mdefine_line|#define CDROM_DRIVE_STATUS&t;0x5326  /* tray position, etc. */
 DECL|macro|CDROM_DISC_STATUS
 mdefine_line|#define CDROM_DISC_STATUS&t;0x5327  /* disc type etc. */
-multiline_comment|/* Rename and old ioctl */
+multiline_comment|/* Rename an old ioctl */
 DECL|macro|CDROM_GET_MCN
 mdefine_line|#define CDROM_GET_MCN&t;CDROM_GET_UPC&t;/* medium catalog number */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* the general file operations structure: */
 r_extern
 r_struct
@@ -342,6 +345,7 @@ op_star
 id|name
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif&t;/* LINUX_UCDROM_H */
 multiline_comment|/*&n; * Local variables:&n; * comment-column: 40&n; * End:&n; */
 eof

@@ -4588,6 +4588,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;VFS: Diskquotas version %s initialized&bslash;r&bslash;n&quot;
 comma
 id|__DQUOT_VERSION__

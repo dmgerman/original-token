@@ -889,6 +889,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;RARP: SETRARP: requested PA is 0.0.0.0 !&bslash;n&quot;
 )paren
 suffix:semicolon

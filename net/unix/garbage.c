@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Garbage Collector For AF_UNIX sockets (STUBS)&n; *&n; * Garbage Collector:&n; *&t;Copyright (C) Barak A. Pearlmutter.&n; *&t;Released under the GPL version 2 or later.&n; *&n; * NOTE:&n; *&t;We don&squot;t actually call this yet. I&squot;m finishing some tests before I&n; *&t;enable it. The bold can add it in themselves.&n; *&n; * Chopped about by Alan Cox 22/3/96 to make it fit the AF_UNIX socket problem.&n; * If it doesn&squot;t work blame me, it worked when Barak sent it.&n; *&n; * Assumptions:&n; *&n; *  - object w/ a bit&n; *  - free list&n; *&n; * Current optimizations:&n; *&n; *  - explicit stack instead of recursion&n; *  - tail recurse on first born instead of immediate push/pop&n; *&n; *  Future optimizations:&n; *&n; *  - don&squot;t just push entire root set; process in place&n; *  - use linked list for internal stack&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *  Fixes:&n; *&n; */
+multiline_comment|/*&n; * NET3:&t;Garbage Collector For AF_UNIX sockets&n; *&n; * Garbage Collector:&n; *&t;Copyright (C) Barak A. Pearlmutter.&n; *&t;Released under the GPL version 2 or later.&n; *&n; * Chopped about by Alan Cox 22/3/96 to make it fit the AF_UNIX socket problem.&n; * If it doesn&squot;t work blame me, it worked when Barak sent it.&n; *&n; * Assumptions:&n; *&n; *  - object w/ a bit&n; *  - free list&n; *&n; * Current optimizations:&n; *&n; *  - explicit stack instead of recursion&n; *  - tail recurse on first born instead of immediate push/pop&n; *&n; *  Future optimizations:&n; *&n; *  - don&squot;t just push entire root set; process in place&n; *  - use linked list for internal stack&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *  Fixes:&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -56,48 +56,52 @@ op_star
 id|filp
 )paren
 (brace
-r_struct
-id|socket
+id|unix_socket
 op_star
-id|s
+id|u_sock
+op_assign
+l_int|NULL
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_inode
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Socket ?&n;&t; */
 r_if
 c_cond
 (paren
-id|filp-&gt;f_inode-&gt;i_mode
-op_ne
-id|S_IFSOCK
+id|inode
+op_logical_and
+id|inode-&gt;i_sock
 )paren
 (brace
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
+r_struct
+id|socket
+op_star
 id|s
 op_assign
 op_amp
-(paren
-id|filp-&gt;f_inode-&gt;u.socket_i
-)paren
+id|inode-&gt;u.socket_i
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;AF_UNIX ?&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;AF_UNIX ?&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|s-&gt;ops
-op_ne
+op_eq
 op_amp
 id|unix_proto_ops
 )paren
-(brace
-r_return
-l_int|NULL
+id|u_sock
+op_assign
+id|s-&gt;data
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Got one.&n;&t; */
 r_return
-id|s-&gt;data
+id|u_sock
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Keep the number of times in flight count for the file&n; *&t;descriptor if it is for an AF_UNIX socket.&n; */
@@ -594,13 +598,15 @@ id|MARKED
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;We exist only in the passing tree of sockets&n;&t;&t;&t; *&t;that is no longer connected to active descriptors&n;&t;&t;&t; *&t;Time to die..&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;We exist only in the passing tree of sockets&n;&t;&t;&t; *&t;that is no longer connected to active descriptors&n;&t;&t;&t; *&t;Time to die..&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Subtle item: We will correctly sweep out the&n;&t;&t;&t; *&t;socket that has just been closed by the user.&n;&t;&t;&t; *&t;We must not close this as we are in the middle&n;&t;&t;&t; *&t;of its close at this moment. Skip that file&n;&t;&t;&t; *&t;using f_count==0 to spot it.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 id|s-&gt;socket
 op_logical_and
 id|s-&gt;socket-&gt;file
+op_logical_and
+id|s-&gt;socket-&gt;file-&gt;f_count
 )paren
 (brace
 id|close_fp

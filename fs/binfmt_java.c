@@ -10,7 +10,25 @@ mdefine_line|#define _PATH_JAVA&t;&quot;/usr/bin/java&quot;
 DECL|macro|_PATH_APPLET
 mdefine_line|#define _PATH_APPLET&t;&quot;/usr/bin/appletviewer&quot;
 DECL|macro|_PATH_SH
-mdefine_line|#define _PATH_SH&t;&quot;/bin/sh&quot;
+mdefine_line|#define _PATH_SH&t;&quot;/bin/bash&quot;
+DECL|variable|binfmt_java_interpreter
+r_char
+id|binfmt_java_interpreter
+(braket
+l_int|65
+)braket
+op_assign
+id|_PATH_JAVA
+suffix:semicolon
+DECL|variable|binfmt_java_appletviewer
+r_char
+id|binfmt_java_appletviewer
+(braket
+l_int|65
+)braket
+op_assign
+id|_PATH_APPLET
+suffix:semicolon
 DECL|function|do_load_script
 r_static
 r_int
@@ -182,7 +200,7 @@ id|strcpy
 (paren
 id|bprm-&gt;buf
 comma
-id|_PATH_JAVA
+id|binfmt_java_interpreter
 )paren
 suffix:semicolon
 id|cp
@@ -425,7 +443,7 @@ id|strcpy
 (paren
 id|bprm-&gt;buf
 comma
-id|_PATH_APPLET
+id|binfmt_java_appletviewer
 )paren
 suffix:semicolon
 id|cp
@@ -456,7 +474,7 @@ id|strcpy
 (paren
 id|bprm-&gt;buf
 comma
-id|_PATH_BSHELL
+id|_PATH_SH
 )paren
 suffix:semicolon
 id|interp

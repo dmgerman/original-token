@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; */
+multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -321,6 +321,16 @@ r_void
 op_star
 op_star
 )paren
+suffix:semicolon
+r_extern
+r_char
+id|binfmt_java_interpreter
+(braket
+)braket
+comma
+id|binfmt_java_appletviewer
+(braket
+)braket
 suffix:semicolon
 multiline_comment|/* The default sysctl tables: */
 DECL|variable|root_table
@@ -673,6 +683,48 @@ comma
 id|nfs_root_addrs
 comma
 id|NFS_ROOT_ADDRS_LEN
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dostring
+comma
+op_amp
+id|sysctl_string
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BINFMT_JAVA
+(brace
+id|KERN_JAVA_INTERPRETER
+comma
+l_string|&quot;java-interpreter&quot;
+comma
+id|binfmt_java_interpreter
+comma
+l_int|64
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dostring
+comma
+op_amp
+id|sysctl_string
+)brace
+comma
+(brace
+id|KERN_JAVA_APPLETVIEWER
+comma
+l_string|&quot;java-appletviewer&quot;
+comma
+id|binfmt_java_appletviewer
+comma
+l_int|64
 comma
 l_int|0644
 comma

@@ -859,6 +859,7 @@ id|netlink_fops
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;netlink: unable to get major %d&bslash;n&quot;
 comma
 id|NETLINK_MAJOR
@@ -918,6 +919,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Network Kernel/User communications module 0.03&bslash;n&quot;
 )paren
 suffix:semicolon

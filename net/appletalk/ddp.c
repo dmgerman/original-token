@@ -2875,6 +2875,7 @@ l_int|256
 id|printk
 c_func
 (paren
+id|KERN_WARING
 l_string|&quot;Too many routes/iface.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7602,6 +7603,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Unable to register DDP with SNAP.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7753,7 +7755,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Appletalk 0.17 for Linux NET3.034&bslash;n&quot;
+l_string|&quot;Appletalk 0.17 for Linux NET3.035&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

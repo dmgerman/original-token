@@ -404,6 +404,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ip_alias: can&squot;t remove module&quot;
 )paren
 suffix:semicolon

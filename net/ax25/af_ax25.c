@@ -2282,6 +2282,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -2293,6 +2294,7 @@ multiline_comment|/* we probably want this */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ax25_ctl_ioctl: Warning --- huge paclen %d&bslash;n&quot;
 comma
 (paren
@@ -2301,6 +2303,7 @@ r_int
 id|ax25_ctl.arg
 )paren
 suffix:semicolon
+macro_line|#endif&t;  &t;&t;&t;
 id|ax25-&gt;paclen
 op_assign
 id|ax25_ctl.arg
@@ -10175,7 +10178,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.32 BETA for Linux NET3.034 (Linux 1.3.77)&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.32 BETA for Linux NET3.035 (Linux 2.0)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BPQETHER
@@ -10216,6 +10220,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;G8BPQ Encapsulation of AX.25 frames enabled&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10318,6 +10323,7 @@ id|AX25_BPQ_HEADER_LEN
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;ax25_queue_xmit: not enough space to add BPQ Ether header&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10625,6 +10631,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;wrong protocol type 0x%x2.2&bslash;n&quot;
 comma
 id|type

@@ -291,6 +291,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;dev_remove_pack: %p not found.&bslash;n&quot;
 comma
 id|pt
@@ -782,6 +783,7 @@ id|DEV_NUMBUFFS
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;bad priority in dev_queue_xmit.&bslash;n&quot;
 )paren
 suffix:semicolon

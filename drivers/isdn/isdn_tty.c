@@ -1031,7 +1031,7 @@ id|modem_info
 op_star
 id|info
 comma
-id|dev_t
+id|kdev_t
 id|device
 comma
 r_const

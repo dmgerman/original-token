@@ -877,10 +877,14 @@ id|inode-&gt;i_mode
 multiline_comment|/* XXX - should be ui_db[1] on little endian ufs filesystems */
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|ufsip-&gt;ui_db
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* XXX - implement fast and slow symlinks */

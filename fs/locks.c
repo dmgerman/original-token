@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans (dje@spiff.uucp), August 07, 1992&n; *&n; *  Deadlock detection added.&n; *  FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *  Kelly Carmichael (kelly@[142.24.8.65]), September 17, 1994.&n; *&n; *  Miscellaneous edits, and a total rewrite of posix_lock_file() code.&n; *  Kai Petzke (wpp@marie.physik.tu-berlin.de), 1994&n; *  &n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open.&n; *  Chad Page (pageone@netcom.com), November 27, 1994&n; * &n; *  Removed dependency on file descriptors. dup()&squot;ed file descriptors now&n; *  get the same locks as the original file descriptors, and a close() on&n; *  any file descriptor removes ALL the locks on the file for the current&n; *  process. Since locks still depend on the process id, locks are inherited&n; *  after an exec() but not after a fork(). This agrees with POSIX, and both&n; *  BSD and SVR4 practice.&n; *  Andy Walker (andy@lysaker.kvaerner.no), February 14, 1995&n; *&n; *  Scrapped free list which is redundant now that we allocate locks&n; *  dynamically with kmalloc()/kfree().&n; *  Andy Walker (andy@lysaker.kvaerner.no), February 21, 1995&n; *&n; *  Implemented two lock personalities - F_FLOCK and F_POSIX.&n; *&n; *  F_POSIX locks are created with calls to fcntl() and lockf() through the&n; *  fcntl() system call. They have the semantics described above.&n; *&n; *  F_FLOCK locks are created with calls to flock(), through the flock()&n; *  system call, which is new. Old C libraries implement flock() via fcntl()&n; *  and will continue to use the old, broken implementation.&n; *&n; *  F_FLOCK locks follow the 4.4 BSD flock() semantics. They are associated&n; *  with a file pointer (filp). As a result they can be shared by a parent&n; *  process and its children after a fork(). They are removed when the last&n; *  file descriptor referring to the file pointer is closed (unless explicitly&n; *  unlocked). &n; *&n; *  F_FLOCK locks never deadlock, an existing lock is always removed before&n; *  upgrading from shared to exclusive (or vice versa). When this happens&n; *  any processes blocked by the current lock are woken up and allowed to&n; *  run before the new lock is applied.&n; *  Andy Walker (andy@lysaker.kvaerner.no), June 09, 1995&n; *&n; *  Removed some race conditions in flock_lock_file(), marked other possible&n; *  races. Just grep for FIXME to see them. &n; *  Dmitry Gorodchanin (begemot@bgm.rosprint.net), February 09, 1996.&n; *&n; *  Addressed Dmitry&squot;s concerns. Deadlock checking no longer recursive.&n; *  Lock allocation changed to GFP_ATOMIC as we can&squot;t afford to sleep&n; *  once we&squot;ve checked for blocking and deadlocking.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 03, 1996.&n; *&n; *  Initial implementation of mandatory locks. SunOS turned out to be&n; *  a rotten model, so I implemented the &quot;obvious&quot; semantics.&n; *  See &squot;linux/Documentation/mandatory.txt&squot; for details.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 06, 1996.&n; *&n; *  Don&squot;t allow mandatory locks on mmap()&squot;ed files. Added simple functions to&n; *  check if a file has mandatory locks, used by mmap(), open() and creat() to&n; *  see if system call should be rejected. Ref. HP-UX/SunOS/Solaris Reference&n; *  Manual, Section 2.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 09, 1996.&n; *&n; *  Tidied up block list handling. Added &squot;/proc/locks&squot; interface.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 24, 1996.&n; *&n; *  Fixed deadlock condition for pathological code that mixes calls to&n; *  flock() and fcntl().&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 29, 1996.&n; */
+multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans (dje@spiff.uucp), August 07, 1992&n; *&n; *  Deadlock detection added.&n; *  FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *  Kelly Carmichael (kelly@[142.24.8.65]), September 17, 1994.&n; *&n; *  Miscellaneous edits, and a total rewrite of posix_lock_file() code.&n; *  Kai Petzke (wpp@marie.physik.tu-berlin.de), 1994&n; *  &n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open.&n; *  Chad Page (pageone@netcom.com), November 27, 1994&n; * &n; *  Removed dependency on file descriptors. dup()&squot;ed file descriptors now&n; *  get the same locks as the original file descriptors, and a close() on&n; *  any file descriptor removes ALL the locks on the file for the current&n; *  process. Since locks still depend on the process id, locks are inherited&n; *  after an exec() but not after a fork(). This agrees with POSIX, and both&n; *  BSD and SVR4 practice.&n; *  Andy Walker (andy@lysaker.kvaerner.no), February 14, 1995&n; *&n; *  Scrapped free list which is redundant now that we allocate locks&n; *  dynamically with kmalloc()/kfree().&n; *  Andy Walker (andy@lysaker.kvaerner.no), February 21, 1995&n; *&n; *  Implemented two lock personalities - F_FLOCK and F_POSIX.&n; *&n; *  F_POSIX locks are created with calls to fcntl() and lockf() through the&n; *  fcntl() system call. They have the semantics described above.&n; *&n; *  F_FLOCK locks are created with calls to flock(), through the flock()&n; *  system call, which is new. Old C libraries implement flock() via fcntl()&n; *  and will continue to use the old, broken implementation.&n; *&n; *  F_FLOCK locks follow the 4.4 BSD flock() semantics. They are associated&n; *  with a file pointer (filp). As a result they can be shared by a parent&n; *  process and its children after a fork(). They are removed when the last&n; *  file descriptor referring to the file pointer is closed (unless explicitly&n; *  unlocked). &n; *&n; *  F_FLOCK locks never deadlock, an existing lock is always removed before&n; *  upgrading from shared to exclusive (or vice versa). When this happens&n; *  any processes blocked by the current lock are woken up and allowed to&n; *  run before the new lock is applied.&n; *  Andy Walker (andy@lysaker.kvaerner.no), June 09, 1995&n; *&n; *  Removed some race conditions in flock_lock_file(), marked other possible&n; *  races. Just grep for FIXME to see them. &n; *  Dmitry Gorodchanin (begemot@bgm.rosprint.net), February 09, 1996.&n; *&n; *  Addressed Dmitry&squot;s concerns. Deadlock checking no longer recursive.&n; *  Lock allocation changed to GFP_ATOMIC as we can&squot;t afford to sleep&n; *  once we&squot;ve checked for blocking and deadlocking.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 03, 1996.&n; *&n; *  Initial implementation of mandatory locks. SunOS turned out to be&n; *  a rotten model, so I implemented the &quot;obvious&quot; semantics.&n; *  See &squot;linux/Documentation/mandatory.txt&squot; for details.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 06, 1996.&n; *&n; *  Don&squot;t allow mandatory locks on mmap()&squot;ed files. Added simple functions to&n; *  check if a file has mandatory locks, used by mmap(), open() and creat() to&n; *  see if system call should be rejected. Ref. HP-UX/SunOS/Solaris Reference&n; *  Manual, Section 2.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 09, 1996.&n; *&n; *  Tidied up block list handling. Added &squot;/proc/locks&squot; interface.&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 24, 1996.&n; *&n; *  Fixed deadlock condition for pathological code that mixes calls to&n; *  flock() and fcntl().&n; *  Andy Walker (andy@lysaker.kvaerner.no), April 29, 1996.&n; *&n; *&t;BUG: MUST DISALLOW MANDATORY LOCK ON NFS/SMB/NCP FILE SYSTEM &n; *&t;TO MATCH SYS5.4 SEMANTICS.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1237,6 +1238,7 @@ op_star
 id|inode
 )paren
 (brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY
 r_struct
 id|file_lock
 op_star
@@ -1281,6 +1283,7 @@ id|EAGAIN
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 r_return
 (paren
 l_int|0
@@ -1315,6 +1318,7 @@ id|count
 )paren
 (brace
 multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
 r_if
 c_cond
 (paren
@@ -1347,6 +1351,7 @@ id|count
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;&t;     
 r_return
 (paren
 l_int|0
@@ -1380,6 +1385,7 @@ r_int
 id|count
 )paren
 (brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t;
 r_struct
 id|file_lock
 op_star
@@ -1549,6 +1555,7 @@ id|repeat
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_return
 (paren
 l_int|0
@@ -3529,11 +3536,15 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;%d %04x:%ld %ld %ld &quot;
+l_string|&quot;%d %s:%ld %ld %ld &quot;
 comma
 id|fl-&gt;fl_owner-&gt;pid
 comma
+id|kdevname
+c_func
+(paren
 id|fl-&gt;fl_file-&gt;f_inode-&gt;i_dev
+)paren
 comma
 id|fl-&gt;fl_file-&gt;f_inode-&gt;i_ino
 comma

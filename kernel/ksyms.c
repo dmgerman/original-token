@@ -138,6 +138,14 @@ r_int
 id|dmanr
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|hard_reset_now
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|symbol_table
 r_struct
 id|symbol_table
@@ -1148,6 +1156,12 @@ id|X
 c_func
 (paren
 id|sys_call_table
+)paren
+comma
+id|X
+c_func
+(paren
+id|hard_reset_now
 )paren
 comma
 multiline_comment|/* Signal interfaces */

@@ -3405,7 +3405,8 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Linux IP multicast router 0.05-maybe-works 8)&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;Linux IP multicast router 0.05.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|register_netdevice_notifier

@@ -2634,6 +2634,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Unable to register AARP with SNAP.&bslash;n&quot;
 )paren
 suffix:semicolon

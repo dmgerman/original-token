@@ -377,7 +377,7 @@ r_void
 id|add_dquot_ref
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -462,7 +462,7 @@ r_void
 id|reset_dquot_ptrs
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int

@@ -3437,6 +3437,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 r_int
@@ -3858,6 +3862,8 @@ id|ultrastor_reset
 c_func
 (paren
 l_int|NULL
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return

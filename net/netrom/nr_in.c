@@ -1223,6 +1223,7 @@ id|NR_STATE_3
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;nr_process_rx_frame: frame received - state: %d&bslash;n&quot;
 comma
 id|sk-&gt;nr-&gt;state

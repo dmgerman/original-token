@@ -447,7 +447,7 @@ multiline_comment|/* osk will be destroyed when it gets to close or the timer fi
 )brace
 r_else
 (brace
-multiline_comment|/* passed fds are erased where?? */
+multiline_comment|/* passed fds are erased in the kfree_skb hook */
 id|kfree_skb
 c_func
 (paren
@@ -1190,6 +1190,12 @@ id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* Try to flush out this socket. Throw out buffers at least */
+id|unix_gc
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Garbage collect fds */
 multiline_comment|/*&n;&t; *&t;FIXME: BSD difference: In BSD all sockets connected to use get ECONNRESET and we die on the spot. In&n;&t; *&t;Linux we behave like files and pipes do and wait for the last dereference.&n;&t; */
 r_return
 l_int|0
@@ -4212,12 +4218,7 @@ c_func
 id|cm
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;recvmsg: Bad msg_accrights&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;printk(&quot;recvmsg: Bad msg_accrights&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -5207,7 +5208,8 @@ id|pro
 id|printk
 c_func
 (paren
-l_string|&quot;NET3: Unix domain sockets 0.12 for Linux NET3.033.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;NET3: Unix domain sockets 0.12 for Linux NET3.035.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sock_register

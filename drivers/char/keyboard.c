@@ -637,6 +637,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Keyboard timed out&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1458,6 +1459,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;keyboard: status 0x%x  mask 0x%x  data 0x%x&bslash;n&quot;
 comma
 id|status
@@ -1541,6 +1543,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;keyboard reply expected - got %02x&bslash;n&quot;
 comma
 id|scancode
@@ -1560,6 +1563,7 @@ macro_line|#ifdef KBD_REPORT_ERR
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;keyboard buffer overflow&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1644,6 +1648,7 @@ id|raw_mode
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;keyboard error&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1759,6 +1764,7 @@ id|raw_mode
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;keyboard: unknown e1 escape sequence&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1821,6 +1827,7 @@ id|raw_mode
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;keyboard: unknown scancode e0 %02x&bslash;n&quot;
 comma
 id|scancode
@@ -1872,7 +1879,9 @@ macro_line|#ifdef KBD_REPORT_UNKN
 id|printk
 c_func
 (paren
-l_string|&quot;keyboard: unrecognized scancode (%02x) - ignored&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;keyboard: unrecognized scancode (%02x)&quot;
+l_string|&quot; - ignored&bslash;n&quot;
 comma
 id|scancode
 )paren
@@ -2981,6 +2990,7 @@ id|up_flag
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;keyboard.c: do_lowercase was called - impossible&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3304,6 +3314,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;do_fn called with value=%d&bslash;n&quot;
 comma
 id|value
@@ -5149,7 +5160,9 @@ l_int|0x55
 id|printk
 c_func
 (paren
-l_string|&quot;initialize_kbd: keyboard failed self test.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;initialize_kbd: &quot;
+l_string|&quot;keyboard failed self test.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -5186,7 +5199,9 @@ l_int|0x00
 id|printk
 c_func
 (paren
-l_string|&quot;initialize_kbd: keyboard failed self test 2.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;initialize_kbd: &quot;
+l_string|&quot;keyboard failed self test 2.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -5232,7 +5247,9 @@ id|KBD_ACK
 id|printk
 c_func
 (paren
-l_string|&quot;initialize_kbd: reset kbd failed, no ACK.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;initialize_kbd: &quot;
+l_string|&quot;reset kbd failed, no ACK.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -5260,7 +5277,9 @@ id|KBD_POR
 id|printk
 c_func
 (paren
-l_string|&quot;initialize_kbd: reset kbd failed, not POR.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;initialize_kbd: &quot;
+l_string|&quot;reset kbd failed, not POR.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -5297,7 +5316,9 @@ id|KBD_ACK
 id|printk
 c_func
 (paren
-l_string|&quot;initialize_kbd: disable kbd failed, no ACK.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;initialize_kbd: &quot;
+l_string|&quot;disable kbd failed, no ACK.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -5357,7 +5378,9 @@ id|KBD_ACK
 id|printk
 c_func
 (paren
-l_string|&quot;initialize_kbd: keyboard enable failed.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;initialize_kbd: &quot;
+l_string|&quot;keyboard enable failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags

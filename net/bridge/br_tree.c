@@ -54,16 +54,6 @@ op_star
 id|a2
 )paren
 suffix:semicolon
-r_static
-r_void
-id|printk_avl
-(paren
-r_struct
-id|fdb
-op_star
-id|tree
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * fdb_head is the AVL tree corresponding to fdb&n; * or, more exactly, its root.&n; * A fdb has the following fields:&n; *   fdb_avl_left     left son of a tree node&n; *   fdb_avl_right    right son of a tree node&n; *   fdb_avl_height   1+max(heightof(left),heightof(right))&n; * The empty tree is represented as NULL.&n; */
 macro_line|#ifndef avl_br_empty
 DECL|macro|avl_br_empty
@@ -1022,7 +1012,8 @@ multiline_comment|/* what? node_to_delete not found in tree? */
 id|printk
 c_func
 (paren
-l_string|&quot;avl_remove: node to delete not found in tree&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;br: avl_remove: node to delete not found in tree&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -3,9 +3,6 @@ DECL|macro|SL_CHECK_TRANSMIT
 mdefine_line|#define SL_CHECK_TRANSMIT
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/* Undef this, if you don&squot;t need 6bit encapsulation code in the driver */
-DECL|macro|CONFIG_SLIP_MODE_SLIP6
-mdefine_line|#define CONFIG_SLIP_MODE_SLIP6
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;

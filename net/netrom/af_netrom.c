@@ -1144,6 +1144,7 @@ multiline_comment|/* we probably want this */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;nr_ctl_ioctl: Warning --- huge paclen %d&bslash;n&quot;
 comma
 (paren
@@ -5824,7 +5825,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;G4KLX NET/ROM for Linux. Version 0.4 ALPHA for AX25.032 Linux 1.3.77&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;G4KLX NET/ROM for Linux. Version 0.5 for AX25.032 Linux 2.0&bslash;n&quot;
 )paren
 suffix:semicolon
 id|nr_default.quality

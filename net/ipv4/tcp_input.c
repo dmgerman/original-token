@@ -4741,6 +4741,7 @@ id|sk-&gt;prot
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;IMPOSSIBLE 3&bslash;n&quot;
 )paren
 suffix:semicolon

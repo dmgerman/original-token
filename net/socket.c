@@ -2028,7 +2028,8 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;NET: sys_socket: no more sockets&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;socket: no more sockets&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2760,7 +2761,8 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;NET: sock_accept: no more sockets&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;accept: no more sockets&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5970,7 +5972,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society NET3.034 for Linux 1.3.77&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;Swansea University Computer Society NET3.035 for Linux 2.0&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */

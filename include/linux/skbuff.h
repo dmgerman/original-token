@@ -354,7 +354,6 @@ id|destructor
 r_struct
 id|sk_buff
 op_star
-id|this
 )paren
 suffix:semicolon
 multiline_comment|/* Destruct function&t;&t;*/

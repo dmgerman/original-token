@@ -2988,6 +2988,7 @@ id|ATF_COM
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;arp_send_q: incomplete entry for %s&bslash;n&quot;
 comma
 id|in_ntoa
@@ -5180,6 +5181,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;ARP: no memory to send an arp packet&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5692,6 +5694,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ARP: dev-&gt;type mangled!&bslash;n&quot;
 )paren
 suffix:semicolon

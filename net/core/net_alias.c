@@ -472,6 +472,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;net_alias: tried to set n_attach &lt; 0 for (family==%d) nat object.&bslash;n&quot;
 comma
 id|nat-&gt;type
@@ -697,6 +698,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;net_alias: net_alias_hard_start_xmit() for %s called (ignored)!!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1155,6 +1157,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;net_alias_dev_create(%s:%d): unregistered family==%d&bslash;n&quot;
 comma
 id|main_dev-&gt;name
@@ -1578,6 +1581,7 @@ id|prevdev-&gt;next-&gt;my_alias
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_dev_delete(): incorrect non-alias device after maindev&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1681,6 +1685,7 @@ id|alias
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;net_alias_dev_delete(%s): bad hashing recovered&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -1691,6 +1696,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_dev_delete(%s): unhashed alias!&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -1983,6 +1989,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;net_alias_free(%s): &squot;%s&squot; is not my alias&bslash;n&quot;
 comma
 id|main_dev-&gt;name
@@ -1995,6 +2002,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;net_alias_free(%s): found a non-alias after device!&bslash;n&quot;
 comma
 id|main_dev-&gt;name
@@ -2366,6 +2374,7 @@ id|sa
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_rehash(): NULL sockaddr passed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2390,6 +2399,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_rehash for %s: NULL maindev&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -2415,6 +2425,7 @@ id|main_dev-&gt;alias_info
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_rehash for %s: NULL alias_info&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -2440,6 +2451,7 @@ id|o_nat
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_rehash(%s): unbound alias.&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -2482,6 +2494,7 @@ id|n_nat
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_rehash(%s): unreg family==%d.&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -2581,6 +2594,7 @@ id|alias
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;net_alias_rehash(%s): bad hashing recovered&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -2591,6 +2605,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR: net_alias_rehash(%s): unhashed alias!&bslash;n&quot;
 comma
 id|alias-&gt;name
@@ -4203,6 +4218,7 @@ id|nat
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;register_net_alias_type(): NULL arg&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4295,6 +4311,7 @@ id|nat
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unregister_net_alias_type(): NULL arg&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4313,6 +4330,7 @@ id|nat-&gt;n_attach
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unregister_net_alias_type(): has %d attachments. failed&bslash;n&quot;
 comma
 id|nat-&gt;n_attach
@@ -4401,6 +4419,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unregister_net_alias_type(type=%d): not found!&bslash;n&quot;
 comma
 id|nat-&gt;type
