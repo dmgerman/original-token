@@ -196,6 +196,9 @@ r_struct
 id|inet_protocol
 op_star
 id|protocol
+comma
+r_int
+id|len
 )paren
 suffix:semicolon
 DECL|variable|sit_protocol
@@ -1214,6 +1217,9 @@ r_struct
 id|inet_protocol
 op_star
 id|protocol
+comma
+r_int
+id|len
 )paren
 (brace
 r_if

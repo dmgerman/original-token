@@ -1421,6 +1421,9 @@ c_func
 id|TCP_SLT_SYNACK
 )paren
 suffix:semicolon
+id|sk-&gt;ack_backlog
+op_decrement
+suffix:semicolon
 id|kfree
 c_func
 (paren

@@ -1,9 +1,9 @@
-macro_line|#ifndef _ASMm68k_SIGCONTEXT_H
-DECL|macro|_ASMm68k_SIGCONTEXT_H
-mdefine_line|#define _ASMm68k_SIGCONTEXT_H
-DECL|struct|sigcontext_struct
+macro_line|#ifndef _ASM_M68k_SIGCONTEXT_H
+DECL|macro|_ASM_M68k_SIGCONTEXT_H
+mdefine_line|#define _ASM_M68k_SIGCONTEXT_H
+DECL|struct|sigcontext
 r_struct
-id|sigcontext_struct
+id|sigcontext
 (brace
 DECL|member|sc_mask
 r_int

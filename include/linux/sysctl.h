@@ -218,6 +218,16 @@ mdefine_line|#define&t;NET_ROSE_NO_ACTIVITY_TIMEOUT&t;&t;&t;5
 DECL|macro|NET_ROSE_ROUTING_CONTROL
 mdefine_line|#define&t;NET_ROSE_ROUTING_CONTROL&t;&t;&t;6
 multiline_comment|/* /proc/sys/net/x25 */
+DECL|macro|NET_X25_RESTART_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_X25_RESTART_REQUEST_TIMEOUT&t;&t;&t;1
+DECL|macro|NET_X25_CALL_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_X25_CALL_REQUEST_TIMEOUT&t;&t;&t;2
+DECL|macro|NET_X25_RESET_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_X25_RESET_REQUEST_TIMEOUT&t;&t;&t;3
+DECL|macro|NET_X25_CLEAR_REQUEST_TIMEOUT
+mdefine_line|#define&t;NET_X25_CLEAR_REQUEST_TIMEOUT&t;&t;&t;4
+DECL|macro|NET_X25_ACK_HOLDBACK_TIMEOUT
+mdefine_line|#define&t;NET_X25_ACK_HOLDBACK_TIMEOUT&t;&t;&t;5
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
 multiline_comment|/* CTL_DEBUG names: */

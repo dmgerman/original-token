@@ -89,6 +89,16 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_char
+op_star
+id|skb_push_errstr
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|skb_put_errstr
+suffix:semicolon
 DECL|variable|net_syms
 r_static
 r_struct
@@ -97,6 +107,19 @@ id|net_syms
 op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
+multiline_comment|/* Skbuff symbols. */
+id|X
+c_func
+(paren
+id|skb_push_errstr
+)paren
+comma
+id|X
+c_func
+(paren
+id|skb_put_errstr
+)paren
+comma
 multiline_comment|/* Socket layer registration */
 id|X
 c_func

@@ -30,6 +30,9 @@ macro_line|#include &lt;net/ipxcall.h&gt;
 macro_line|#include &lt;net/p8022call.h&gt;
 macro_line|#include &lt;net/p8022trcall.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_X25
+macro_line|#include &lt;net/x25call.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;net/ax25call.h&gt;
 macro_line|#ifdef CONFIG_NETROM

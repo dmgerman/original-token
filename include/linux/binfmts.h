@@ -34,6 +34,11 @@ DECL|member|sh_bang
 r_int
 id|sh_bang
 suffix:semicolon
+DECL|member|java
+r_int
+id|java
+suffix:semicolon
+multiline_comment|/* Java binary, prevent recursive invocation */
 DECL|member|inode
 r_struct
 id|inode

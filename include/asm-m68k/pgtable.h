@@ -311,7 +311,7 @@ multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM ar
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET&t;(8*1024*1024)
 DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START ((high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
+mdefine_line|#define VMALLOC_START (((unsigned long) high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 macro_line|#endif /* __ASSEMBLY__ */
@@ -351,11 +351,24 @@ mdefine_line|#define _PAGE_TABLE&t;(_PAGE_SHORT)
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_NOCACHE)
 macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/* This is the cache mode to be used for pages containing page descriptors for&n; * processors &gt;= &squot;040. It is in pte_mknocache(), and the variable is defined&n; * and initialized in head.S */
+r_extern
+r_int
+id|m68k_pgtable_cachemode
+suffix:semicolon
+macro_line|#if defined(CONFIG_M68040_OR_M68060_ONLY)
+DECL|macro|mm_cachebits
+mdefine_line|#define mm_cachebits _PAGE_CACHE040
+macro_line|#elif defined(CONFIG_M68020_OR_M68030_ONLY)
+DECL|macro|mm_cachebits
+mdefine_line|#define mm_cachebits 0
+macro_line|#else
 r_extern
 r_int
 r_int
 id|mm_cachebits
 suffix:semicolon
+macro_line|#endif
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_RONLY | _PAGE_ACCESSED | mm_cachebits)
 DECL|macro|PAGE_SHARED
@@ -451,11 +464,6 @@ mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;2
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
-r_extern
-r_int
-r_int
-id|high_memory
-suffix:semicolon
 multiline_comment|/* For virtual address to physical address conversion */
 r_extern
 r_int
@@ -496,46 +504,10 @@ mdefine_line|#define VTOP(addr)  (mm_vtop((unsigned long)(addr)))
 DECL|macro|PTOV
 mdefine_line|#define PTOV(addr)  (mm_ptov((unsigned long)(addr)))
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
-DECL|function|mk_pte
-r_extern
-r_inline
-id|pte_t
-id|mk_pte
-c_func
-(paren
-r_int
-r_int
-id|page
-comma
-id|pgprot_t
-id|pgprot
-)paren
-(brace
-id|pte_t
-id|pte
-suffix:semicolon
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_assign
-id|VTOP
-c_func
-(paren
-id|page
-)paren
-op_or
-id|pgprot_val
-c_func
-(paren
-id|pgprot
-)paren
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
+DECL|macro|mk_pte
+mdefine_line|#define mk_pte(page, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = VTOP(page) + pgprot_val(pgprot); __pte; })
+DECL|macro|mk_pte_phys
+mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = VTOP(physpage) + pgprot_val(pgprot); __pte; })
 DECL|function|pte_modify
 r_extern
 r_inline
@@ -634,6 +606,8 @@ id|i
 op_assign
 id|_PAGE_TABLE
 op_or
+id|_PAGE_ACCESSED
+op_or
 (paren
 r_int
 r_int
@@ -700,6 +674,8 @@ id|i
 op_assign
 id|_PAGE_PRESENT
 op_or
+id|_PAGE_ACCESSED
+op_or
 (paren
 r_int
 r_int
@@ -731,6 +707,8 @@ id|pgdp
 )paren
 op_assign
 id|_PAGE_TABLE
+op_or
+id|_PAGE_ACCESSED
 op_or
 id|VTOP
 c_func
@@ -933,15 +911,6 @@ id|_DESCTYPE_MASK
 )paren
 op_ne
 id|_PAGE_TABLE
-op_logical_or
-id|pmd_page
-c_func
-(paren
-op_star
-id|pmd
-)paren
-OG
-id|high_memory
 suffix:semicolon
 )brace
 DECL|macro|pmd_bad
@@ -1051,14 +1020,6 @@ id|_DESCTYPE_MASK
 )paren
 op_ne
 id|_PAGE_TABLE
-op_logical_or
-id|pgd_page
-c_func
-(paren
-id|pgd
-)paren
-OG
-id|high_memory
 suffix:semicolon
 )brace
 DECL|function|pgd_present
@@ -1486,23 +1447,6 @@ op_star
 id|pgdir
 )paren
 (brace
-id|tsk-&gt;tss.pagedir_v
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgdir
-suffix:semicolon
-id|tsk-&gt;tss.pagedir_p
-op_assign
-id|VTOP
-c_func
-(paren
-id|pgdir
-)paren
-suffix:semicolon
 id|tsk-&gt;tss.crp
 (braket
 l_int|0
@@ -1510,14 +1454,18 @@ l_int|0
 op_assign
 l_int|0x80000000
 op_or
-id|_PAGE_SHORT
+id|_PAGE_TABLE
 suffix:semicolon
 id|tsk-&gt;tss.crp
 (braket
 l_int|1
 )braket
 op_assign
-id|tsk-&gt;tss.pagedir_p
+id|VTOP
+c_func
+(paren
+id|pgdir
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2010,7 +1958,7 @@ op_assign
 id|pte_t
 op_star
 )paren
-id|get_free_page
+id|__get_free_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -2033,6 +1981,20 @@ c_cond
 id|page
 )paren
 (brace
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|page
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
 id|nocache_page
 c_func
 (paren

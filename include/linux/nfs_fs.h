@@ -532,6 +532,9 @@ r_int
 id|gid
 comma
 r_int
+id|ngroup
+comma
+id|gid_t
 op_star
 id|groups
 )paren

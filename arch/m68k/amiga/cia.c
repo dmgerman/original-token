@@ -180,11 +180,9 @@ op_or
 id|base-&gt;int_mask
 suffix:semicolon
 r_return
-(paren
 id|old
 op_amp
 id|base-&gt;icr_mask
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Enable or disable CIA interrupts, return old interrupt mask,&n; *  interrupts will only be enabled if a handler exists&n; */
@@ -285,11 +283,17 @@ id|i
 dot
 id|handler
 )paren
+(brace
 id|base-&gt;icr_mask
 op_and_assign
 op_complement
 id|tmp
 suffix:semicolon
+id|base-&gt;cia-&gt;icr
+op_assign
+id|tmp
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -305,9 +309,7 @@ op_or
 id|base-&gt;int_mask
 suffix:semicolon
 r_return
-(paren
 id|old
-)paren
 suffix:semicolon
 )brace
 DECL|function|cia_request_irq

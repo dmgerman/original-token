@@ -137,6 +137,12 @@ comma
 id|X
 c_func
 (paren
+id|mm_end_of_chunk
+)paren
+comma
+id|X
+c_func
+(paren
 id|m68k_debug_device
 )paren
 comma
@@ -170,6 +176,12 @@ c_func
 id|strnlen
 )paren
 comma
+id|X
+c_func
+(paren
+id|strrchr
+)paren
+comma
 multiline_comment|/* The following are special because they&squot;re not called&n;&t;   explicitly (the C compiler generates them).  Fortunately,&n;&t;   their interface isn&squot;t gonna change any time soon now, so&n;&t;   it&squot;s OK to leave it out of version control.  */
 id|XNOVERS
 c_func
@@ -192,13 +204,13 @@ comma
 id|XNOVERS
 c_func
 (paren
-id|down_failed
+id|__down_failed
 )paren
 comma
 id|XNOVERS
 c_func
 (paren
-id|up_wakeup
+id|__up_wakeup
 )paren
 comma
 macro_line|#include &lt;linux/symtab_end.h&gt;

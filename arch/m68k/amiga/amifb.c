@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -57,7 +57,7 @@ macro_line|#  define CONFIG_AMIFB_AGA_ONLY
 DECL|macro|IS_AGA
 macro_line|#  define IS_AGA (1)
 macro_line|#endif
-multiline_comment|/*******************************************************************************&n;&n;&n;   Generic video timings&n;   ---------------------&n;&n;   Timings used by the frame buffer interface:&n;&n;   +----------+---------------------------------------------+----------+-------+&n;   |          |                ^                            |          |       |&n;   |          |                |upper_margin                |          |       |&n;   |          |                &#xfffd;                            |          |       |&n;   +----------###############################################----------+-------+&n;   |          #                ^                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |   left   #                |                            #  right   | hsync |&n;   |  margin  #                |       xres                 #  margin  |  len  |&n;   |&lt;--------&gt;#&lt;---------------+---------------------------&gt;#&lt;--------&gt;|&lt;-----&gt;|&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |yres                        #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                &#xfffd;                            #          |       |&n;   +----------###############################################----------+-------+&n;   |          |                ^                            |          |       |&n;   |          |                |lower_margin                |          |       |&n;   |          |                &#xfffd;                            |          |       |&n;   +----------+---------------------------------------------+----------+-------+&n;   |          |                ^                            |          |       |&n;   |          |                |vsync_len                   |          |       |&n;   |          |                &#xfffd;                            |          |       |&n;   +----------+---------------------------------------------+----------+-------+&n;&n;&n;   Amiga video timings&n;   -------------------&n;&n;   The Amiga native chipsets uses another timing scheme:&n;&n;      - hsstrt:   Start of horizontal synchronization pulse&n;      - hsstop:   End of horizontal synchronization pulse&n;      - htotal:   Last value on the line (i.e. line length = htotal+1)&n;      - vsstrt:   Start of vertical synchronization pulse&n;      - vsstop:   Start of vertical synchronization pulse&n;      - vtotal:   Last line value (i.e. number of lines = vtotal+1)&n;      - hcenter:  Start of vertical retrace for interlace&n;&n;   You can specify the blanking timings independently. Currently I just set&n;   them equal to the respective synchronization values:&n;&n;      - hbstrt:   Start of horizontal blank&n;      - hbstop:   End of horizontal blank&n;      - vbstrt:   Start of vertical blank&n;      - vbstop:   Start of vertical blank&n;&n;   Horizontal values are in color clock cycles (280 ns), vertical values are in&n;   scanlines.&n;&n;   (0, 0) is somewhere in the upper-left corner :-)&n;&n;&n;   Amiga visible window definitions&n;   --------------------------------&n;&n;   Currently I only have values for AGA, SHRES (28 MHz dotclock). Feel free to&n;   make corrections and/or additions.&n;&n;   Within the above synchronization specifications, the visible window is&n;   defined by the following parameters (actual register resolutions may be&n;   different; all horizontal values are normalized with respect to the pixel&n;   clock):&n;&n;      - diwstrt_h:   Horizontal start of the visible window&n;      - diwstop_h:   Horizontal stop+1(*) of the visible window&n;      - diwstrt_v:   Vertical start of the visible window&n;      - diwstop_v:   Vertical stop of the visible window&n;      - ddfstrt:     Horizontal start of display DMA&n;      - ddfstop:     Horizontal stop of display DMA&n;      - hscroll:     Horizontal display output delay&n;&n;   Sprite positioning:&n;&n;      - sprstrt_h:   Horizontal start-4 of sprite&n;      - sprstrt_v:   Vertical start of sprite&n;&n;   (*) Even Commodore did it wrong in the AGA monitor drivers by not adding 1.&n;&n;   Horizontal values are in dotclock cycles (35 ns), vertical values are in&n;   scanlines.&n;&n;   (0, 0) is somewhere in the upper-left corner :-)&n;&n;&n;   Dependencies (AGA, SHRES (35 ns dotclock))&n;   -------------------------------------------&n;&n;   Since there are much more parameters for the Amiga display than for the&n;   frame buffer interface, there must be some dependencies among the Amiga&n;   display parameters. Here&squot;s what I found out:&n;&n;      - ddfstrt and ddfstop are best aligned to 64 pixels.&n;      - the chipset needs 64+4 horizontal pixels after the DMA start before the&n;        first pixel is output, so diwstrt_h = ddfstrt+64+4 if you want to&n;        display the first pixel on the line too. Increase diwstrt_h for virtual&n;        screen panning.&n;      - the display DMA always fetches 64 pixels at a time (fmode = 3).&n;      - ddfstop is ddfstrt+#pixels-64.&n;      - diwstop_h = diwstrt_h+xres+1. Because of the additional 1 this can be 1&n;        more than htotal.&n;      - hscroll simply adds a delay to the display output. Smooth horizontal&n;        panning needs an extra 64 pixels on the left to prefetch the pixels that&n;        `fall off&squot; on the left.&n;      - if ddfstrt &lt; 192, the sprite DMA cycles are all stolen by the bitplane&n;        DMA, so it&squot;s best to make the DMA start as late as possible.&n;      - you really don&squot;t want to make ddfstrt &lt; 128, since this will steal DMA&n;        cycles from the other DMA channels (audio, floppy and Chip RAM refresh).&n;      - I make diwstop_h and diwstop_v as large as possible.&n;&n;   General dependencies&n;   --------------------&n;&n;      - all values are SHRES pixel (35ns)&n;&n;                  table 1:fetchstart  table 2:prefetch    table 3:fetchsize&n;                  ------------------  ----------------    -----------------&n;   Pixclock     # SHRES|HIRES|LORES # SHRES|HIRES|LORES # SHRES|HIRES|LORES&n;   -------------#------+-----+------#------+-----+------#------+-----+------&n;   Bus width 1x #   16 |  32 |  64  #   16 |  32 |  64  #   64 |  64 |  64&n;   Bus width 2x #   32 |  64 | 128  #   32 |  64 |  64  #   64 |  64 | 128&n;   Bus width 4x #   64 | 128 | 256  #   64 |  64 |  64  #   64 | 128 | 256&n;&n;      - chipset needs 4 pixels before the first pixel is output&n;      - ddfstrt must be aligned to fetchstart (table 1)&n;      - chipset needs also prefetch (table 2) to get first pixel data, so&n;        ddfstrt = ((diwstrt_h-4) &amp; -fetchstart) - prefetch&n;      - for horizontal panning decrease diwstrt_h&n;      - the length of a fetchline must be aligned to fetchsize (table 3)&n;      - if fetchstart is smaller than fetchsize, then ddfstrt can a little bit&n;        moved to optimize use of dma (usefull for OCS/ECS overscan displays)&n;      - ddfstop is ddfstrt+ddfsize-fetchsize&n;      - If C= didn&squot;t change anything for AGA, then at following positions the&n;        dma bus is allready used:&n;        ddfstrt &lt;  48 -&gt; memory refresh&n;                &lt;  96 -&gt; disk dma&n;                &lt; 160 -&gt; audio dma&n;                &lt; 192 -&gt; sprite 0 dma&n;                &lt; 416 -&gt; sprite dma (32 per sprite)&n;      - in accordance with the hardware reference manual a hardware stop is at&n;        192, but AGA (ECS?) can go below this.&n;&n;   DMA priorities&n;   --------------&n;&n;   Since there are limits on the earliest start value for display DMA and the&n;   display of sprites, I use the following policy on horizontal panning and&n;   the hardware cursor:&n;&n;      - if you want to start display DMA too early, you loose the ability to&n;        do smooth horizontal panning (xpanstep 1 -&gt; 64).&n;      - if you want to go even further, you loose the hardware cursor too.&n;&n;   IMHO a hardware cursor is more important for X than horizontal scrolling,&n;   so that&squot;s my motivation.&n;&n;&n;   Implementation&n;   --------------&n;&n;   ami_decode_var() converts the frame buffer values to the Amiga values. It&squot;s&n;   just a `straightforward&squot; implementation of the above rules.&n;&n;&n;   Standard VGA timings&n;   --------------------&n;&n;               xres  yres    left  right  upper  lower    hsync    vsync&n;               ----  ----    ----  -----  -----  -----    -----    -----&n;      80x25     720   400      27     45     35     12      108        2&n;      80x30     720   480      27     45     30      9      108        2&n;&n;   These were taken from a XFree86 configuration file, recalculated for a 28 MHz&n;   dotclock (Amigas don&squot;t have a 25 MHz dotclock) and converted to frame buffer&n;   generic timings.&n;&n;   As a comparison, graphics/monitor.h suggests the following:&n;&n;               xres  yres    left  right  upper  lower    hsync    vsync&n;               ----  ----    ----  -----  -----  -----    -----    -----&n;&n;      VGA       640   480      52    112     24     19    112 -      2 +&n;      VGA70     640   400      52    112     27     21    112 -      2 -&n;&n;&n;   Sync polarities&n;   ---------------&n;&n;      VSYNC    HSYNC    Vertical size    Vertical total&n;      -----    -----    -------------    --------------&n;        +        +           Reserved          Reserved&n;        +        -                400               414&n;        -        +                350               362&n;        -        -                480               496&n;&n;   Source: CL-GD542X Technical Reference Manual, Cirrus Logic, Oct 1992&n;&n;&n;   Broadcast video timings&n;   -----------------------&n;&n;   According to the CCIR and RETMA specifications, we have the following values:&n;&n;   CCIR -&gt; PAL&n;   -----------&n;&n;      - a scanline is 64 &#xfffd;s long, of which 52.48 &#xfffd;s are visible. This is about&n;        736 visible 70 ns pixels per line.&n;      - we have 625 scanlines, of which 575 are visible (interlaced); after&n;        rounding this becomes 576.&n;&n;   RETMA -&gt; NTSC&n;   -------------&n;&n;      - a scanline is 63.5 &#xfffd;s long, of which 53.5 &#xfffd;s are visible.  This is about&n;        736 visible 70 ns pixels per line.&n;      - we have 525 scanlines, of which 485 are visible (interlaced); after&n;        rounding this becomes 484.&n;&n;   Thus if you want a PAL compatible display, you have to do the following:&n;&n;      - set the FB_SYNC_BROADCAST flag to indicate that standard broadcast&n;        timings are to be used.&n;      - make sure upper_margin+yres+lower_margin+vsync_len = 625 for an&n;        interlaced, 312 for a non-interlaced and 156 for a doublescanned&n;        display.&n;      - make sure left_margin+xres+right_margin+hsync_len = 1816 for a SHRES,&n;        908 for a HIRES and 454 for a LORES display.&n;      - the left visible part begins at 360 (SHRES; HIRES:180, LORES:90),&n;        left_margin+2*hsync_len must be greater or equal.&n;      - the upper visible part begins at 48 (interlaced; non-interlaced:24,&n;        doublescanned:12), upper_margin+2*vsync_len must be greater or equal.&n;      - ami_encode_var() calculates margins with a hsync of 5320 ns and a vsync&n;        of 4 scanlines&n;&n;   The settings for a NTSC compatible display are straightforward.&n;&n;   Note that in a strict sense the PAL and NTSC standards only define the&n;   encoding of the color part (chrominance) of the video signal and don&squot;t say&n;   anything about horizontal/vertical synchronization nor refresh rates.&n;&n;&n;                                                            -- Geert --&n;&n;*******************************************************************************/
+multiline_comment|/*******************************************************************************&n;&n;&n;   Generic video timings&n;   ---------------------&n;&n;   Timings used by the frame buffer interface:&n;&n;   +----------+---------------------------------------------+----------+-------+&n;   |          |                ^                            |          |       |&n;   |          |                |upper_margin                |          |       |&n;   |          |                &#xfffd;                            |          |       |&n;   +----------###############################################----------+-------+&n;   |          #                ^                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |   left   #                |                            #  right   | hsync |&n;   |  margin  #                |       xres                 #  margin  |  len  |&n;   |&lt;--------&gt;#&lt;---------------+---------------------------&gt;#&lt;--------&gt;|&lt;-----&gt;|&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |yres                        #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                |                            #          |       |&n;   |          #                &#xfffd;                            #          |       |&n;   +----------###############################################----------+-------+&n;   |          |                ^                            |          |       |&n;   |          |                |lower_margin                |          |       |&n;   |          |                &#xfffd;                            |          |       |&n;   +----------+---------------------------------------------+----------+-------+&n;   |          |                ^                            |          |       |&n;   |          |                |vsync_len                   |          |       |&n;   |          |                &#xfffd;                            |          |       |&n;   +----------+---------------------------------------------+----------+-------+&n;&n;&n;   Amiga video timings&n;   -------------------&n;&n;   The Amiga native chipsets uses another timing scheme:&n;&n;      - hsstrt:   Start of horizontal synchronization pulse&n;      - hsstop:   End of horizontal synchronization pulse&n;      - htotal:   Last value on the line (i.e. line length = htotal+1)&n;      - vsstrt:   Start of vertical synchronization pulse&n;      - vsstop:   End of vertical synchronization pulse&n;      - vtotal:   Last line value (i.e. number of lines = vtotal+1)&n;      - hcenter:  Start of vertical retrace for interlace&n;&n;   You can specify the blanking timings independently. Currently I just set&n;   them equal to the respective synchronization values:&n;&n;      - hbstrt:   Start of horizontal blank&n;      - hbstop:   End of horizontal blank&n;      - vbstrt:   Start of vertical blank&n;      - vbstop:   End of vertical blank&n;&n;   Horizontal values are in color clock cycles (280 ns), vertical values are in&n;   scanlines.&n;&n;   (0, 0) is somewhere in the upper-left corner :-)&n;&n;&n;   Amiga visible window definitions&n;   --------------------------------&n;&n;   Currently I only have values for AGA, SHRES (28 MHz dotclock). Feel free to&n;   make corrections and/or additions.&n;&n;   Within the above synchronization specifications, the visible window is&n;   defined by the following parameters (actual register resolutions may be&n;   different; all horizontal values are normalized with respect to the pixel&n;   clock):&n;&n;      - diwstrt_h:   Horizontal start of the visible window&n;      - diwstop_h:   Horizontal stop+1(*) of the visible window&n;      - diwstrt_v:   Vertical start of the visible window&n;      - diwstop_v:   Vertical stop of the visible window&n;      - ddfstrt:     Horizontal start of display DMA&n;      - ddfstop:     Horizontal stop of display DMA&n;      - hscroll:     Horizontal display output delay&n;&n;   Sprite positioning:&n;&n;      - sprstrt_h:   Horizontal start-4 of sprite&n;      - sprstrt_v:   Vertical start of sprite&n;&n;   (*) Even Commodore did it wrong in the AGA monitor drivers by not adding 1.&n;&n;   Horizontal values are in dotclock cycles (35 ns), vertical values are in&n;   scanlines.&n;&n;   (0, 0) is somewhere in the upper-left corner :-)&n;&n;&n;   Dependencies (AGA, SHRES (35 ns dotclock))&n;   -------------------------------------------&n;&n;   Since there are much more parameters for the Amiga display than for the&n;   frame buffer interface, there must be some dependencies among the Amiga&n;   display parameters. Here&squot;s what I found out:&n;&n;      - ddfstrt and ddfstop are best aligned to 64 pixels.&n;      - the chipset needs 64+4 horizontal pixels after the DMA start before the&n;        first pixel is output, so diwstrt_h = ddfstrt+64+4 if you want to&n;        display the first pixel on the line too. Increase diwstrt_h for virtual&n;        screen panning.&n;      - the display DMA always fetches 64 pixels at a time (fmode = 3).&n;      - ddfstop is ddfstrt+#pixels-64.&n;      - diwstop_h = diwstrt_h+xres+1. Because of the additional 1 this can be 1&n;        more than htotal.&n;      - hscroll simply adds a delay to the display output. Smooth horizontal&n;        panning needs an extra 64 pixels on the left to prefetch the pixels that&n;        `fall off&squot; on the left.&n;      - if ddfstrt &lt; 192, the sprite DMA cycles are all stolen by the bitplane&n;        DMA, so it&squot;s best to make the DMA start as late as possible.&n;      - you really don&squot;t want to make ddfstrt &lt; 128, since this will steal DMA&n;        cycles from the other DMA channels (audio, floppy and Chip RAM refresh).&n;      - I make diwstop_h and diwstop_v as large as possible.&n;&n;   General dependencies&n;   --------------------&n;&n;      - all values are SHRES pixel (35ns)&n;&n;                  table 1:fetchstart  table 2:prefetch    table 3:fetchsize&n;                  ------------------  ----------------    -----------------&n;   Pixclock     # SHRES|HIRES|LORES # SHRES|HIRES|LORES # SHRES|HIRES|LORES&n;   -------------#------+-----+------#------+-----+------#------+-----+------&n;   Bus width 1x #   16 |  32 |  64  #   16 |  32 |  64  #   64 |  64 |  64&n;   Bus width 2x #   32 |  64 | 128  #   32 |  64 |  64  #   64 |  64 | 128&n;   Bus width 4x #   64 | 128 | 256  #   64 |  64 |  64  #   64 | 128 | 256&n;&n;      - chipset needs 4 pixels before the first pixel is output&n;      - ddfstrt must be aligned to fetchstart (table 1)&n;      - chipset needs also prefetch (table 2) to get first pixel data, so&n;        ddfstrt = ((diwstrt_h-4) &amp; -fetchstart) - prefetch&n;      - for horizontal panning decrease diwstrt_h&n;      - the length of a fetchline must be aligned to fetchsize (table 3)&n;      - if fetchstart is smaller than fetchsize, then ddfstrt can a little bit&n;        moved to optimize use of dma (usefull for OCS/ECS overscan displays)&n;      - ddfstop is ddfstrt+ddfsize-fetchsize&n;      - If C= didn&squot;t change anything for AGA, then at following positions the&n;        dma bus is allready used:&n;        ddfstrt &lt;  48 -&gt; memory refresh&n;                &lt;  96 -&gt; disk dma&n;                &lt; 160 -&gt; audio dma&n;                &lt; 192 -&gt; sprite 0 dma&n;                &lt; 416 -&gt; sprite dma (32 per sprite)&n;      - in accordance with the hardware reference manual a hardware stop is at&n;        192, but AGA (ECS?) can go below this.&n;&n;   DMA priorities&n;   --------------&n;&n;   Since there are limits on the earliest start value for display DMA and the&n;   display of sprites, I use the following policy on horizontal panning and&n;   the hardware cursor:&n;&n;      - if you want to start display DMA too early, you loose the ability to&n;        do smooth horizontal panning (xpanstep 1 -&gt; 64).&n;      - if you want to go even further, you loose the hardware cursor too.&n;&n;   IMHO a hardware cursor is more important for X than horizontal scrolling,&n;   so that&squot;s my motivation.&n;&n;&n;   Implementation&n;   --------------&n;&n;   ami_decode_var() converts the frame buffer values to the Amiga values. It&squot;s&n;   just a `straightforward&squot; implementation of the above rules.&n;&n;&n;   Standard VGA timings&n;   --------------------&n;&n;               xres  yres    left  right  upper  lower    hsync    vsync&n;               ----  ----    ----  -----  -----  -----    -----    -----&n;      80x25     720   400      27     45     35     12      108        2&n;      80x30     720   480      27     45     30      9      108        2&n;&n;   These were taken from a XFree86 configuration file, recalculated for a 28 MHz&n;   dotclock (Amigas don&squot;t have a 25 MHz dotclock) and converted to frame buffer&n;   generic timings.&n;&n;   As a comparison, graphics/monitor.h suggests the following:&n;&n;               xres  yres    left  right  upper  lower    hsync    vsync&n;               ----  ----    ----  -----  -----  -----    -----    -----&n;&n;      VGA       640   480      52    112     24     19    112 -      2 +&n;      VGA70     640   400      52    112     27     21    112 -      2 -&n;&n;&n;   Sync polarities&n;   ---------------&n;&n;      VSYNC    HSYNC    Vertical size    Vertical total&n;      -----    -----    -------------    --------------&n;        +        +           Reserved          Reserved&n;        +        -                400               414&n;        -        +                350               362&n;        -        -                480               496&n;&n;   Source: CL-GD542X Technical Reference Manual, Cirrus Logic, Oct 1992&n;&n;&n;   Broadcast video timings&n;   -----------------------&n;&n;   According to the CCIR and RETMA specifications, we have the following values:&n;&n;   CCIR -&gt; PAL&n;   -----------&n;&n;      - a scanline is 64 &#xfffd;s long, of which 52.48 &#xfffd;s are visible. This is about&n;        736 visible 70 ns pixels per line.&n;      - we have 625 scanlines, of which 575 are visible (interlaced); after&n;        rounding this becomes 576.&n;&n;   RETMA -&gt; NTSC&n;   -------------&n;&n;      - a scanline is 63.5 &#xfffd;s long, of which 53.5 &#xfffd;s are visible.  This is about&n;        736 visible 70 ns pixels per line.&n;      - we have 525 scanlines, of which 485 are visible (interlaced); after&n;        rounding this becomes 484.&n;&n;   Thus if you want a PAL compatible display, you have to do the following:&n;&n;      - set the FB_SYNC_BROADCAST flag to indicate that standard broadcast&n;        timings are to be used.&n;      - make sure upper_margin+yres+lower_margin+vsync_len = 625 for an&n;        interlaced, 312 for a non-interlaced and 156 for a doublescanned&n;        display.&n;      - make sure left_margin+xres+right_margin+hsync_len = 1816 for a SHRES,&n;        908 for a HIRES and 454 for a LORES display.&n;      - the left visible part begins at 360 (SHRES; HIRES:180, LORES:90),&n;        left_margin+2*hsync_len must be greater or equal.&n;      - the upper visible part begins at 48 (interlaced; non-interlaced:24,&n;        doublescanned:12), upper_margin+2*vsync_len must be greater or equal.&n;      - ami_encode_var() calculates margins with a hsync of 5320 ns and a vsync&n;        of 4 scanlines&n;&n;   The settings for a NTSC compatible display are straightforward.&n;&n;   Note that in a strict sense the PAL and NTSC standards only define the&n;   encoding of the color part (chrominance) of the video signal and don&squot;t say&n;   anything about horizontal/vertical synchronization nor refresh rates.&n;&n;&n;                                                            -- Geert --&n;&n;*******************************************************************************/
 multiline_comment|/*&n;&t; * Custom Chipset Definitions&n;&t; */
 DECL|macro|CUSTOM_OFS
 mdefine_line|#define CUSTOM_OFS(fld) ((long)&amp;((struct CUSTOM*)0)-&gt;fld)
@@ -6599,7 +6599,7 @@ comma
 id|con
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6678,7 +6678,7 @@ comma
 id|con
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6735,7 +6735,7 @@ op_logical_neg
 id|i
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6825,7 +6825,7 @@ comma
 id|con
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6882,7 +6882,7 @@ op_logical_neg
 id|i
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -6959,7 +6959,7 @@ op_amp
 id|par
 )paren
 suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -7018,7 +7018,7 @@ op_logical_neg
 id|i
 )paren
 (brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -8372,7 +8372,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hred
@@ -8380,7 +8380,7 @@ comma
 id|red
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hgreen
@@ -8388,7 +8388,7 @@ comma
 id|green
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hblue
@@ -8401,7 +8401,7 @@ c_cond
 (paren
 id|transp
 )paren
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|htransp
@@ -8559,41 +8559,46 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|hred
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hred
+comma
 id|red
 )paren
 suffix:semicolon
-id|hgreen
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hgreen
+comma
 id|green
 )paren
 suffix:semicolon
-id|hblue
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hblue
+comma
 id|blue
 )paren
 suffix:semicolon
-id|htransp
-op_assign
-id|transp
-ques
+r_if
 c_cond
-id|get_fs_word
-c_func
 (paren
 id|transp
 )paren
-suffix:colon
+id|get_user
+c_func
+(paren
+id|htransp
+comma
+id|transp
+)paren
+suffix:semicolon
+r_else
+id|htransp
+op_assign
 l_int|0
 suffix:semicolon
 )brace
@@ -8803,7 +8808,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|to
@@ -8818,7 +8823,7 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|to
@@ -9518,7 +9523,7 @@ id|IF_VERTB
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Get a Video Modes&n;&t; */
+multiline_comment|/*&n;&t; * Get a Video Mode&n;&t; */
 DECL|function|get_video_mode
 r_static
 r_void
@@ -14290,7 +14295,7 @@ id|datawords
 )paren
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|color
@@ -14719,6 +14724,27 @@ id|width
 op_decrement
 )paren
 (brace
+r_int
+r_int
+id|tdata
+op_assign
+l_int|0
+suffix:semicolon
+id|get_user
+c_func
+(paren
+id|tdata
+comma
+(paren
+r_char
+op_star
+)paren
+id|data
+)paren
+suffix:semicolon
+id|data
+op_increment
+suffix:semicolon
 id|asm
 r_volatile
 (paren
@@ -14737,17 +14763,7 @@ id|datawords
 comma
 l_string|&quot;d&quot;
 (paren
-(paren
-id|u_long
-)paren
-(paren
-id|get_fs_byte
-c_func
-(paren
-id|data
-op_increment
-)paren
-)paren
+id|tdata
 )paren
 )paren
 suffix:semicolon

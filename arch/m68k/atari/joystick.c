@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/atari_mouse.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR    JOYSTICK_MAJOR
 DECL|macro|ANALOG_JOY
@@ -387,6 +387,7 @@ op_star
 id|buffer
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -415,6 +416,7 @@ r_char
 op_star
 id|buffer
 comma
+r_int
 r_int
 id|count
 )paren

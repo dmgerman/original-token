@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *      eata.c - Low-level driver for EATA/DMA SCSI host adapters.&n; *&n; *      27 Sep 1996 rev. 2.12 for linux 2.1.0&n; *          Portability cleanups (virtual/bus addressing, little/big endian&n; *          support).&n; *&n; *      09 Jul 1996 rev. 2.11 for linux 2.0.4&n; *          Number of internal retries is now limited.&n; *&n; *      16 Apr 1996 rev. 2.10 for linux 1.3.90&n; *          New argument &quot;reset_flags&quot; to the reset routine.&n; *&n; *       6 Jul 1995 rev. 2.01 for linux 1.3.7&n; *          Update required by the new /proc/scsi support.&n; *&n; *      11 Mar 1995 rev. 2.00 for linux 1.2.0&n; *          Fixed a bug which prevented media change detection for removable&n; *          disk drives.&n; *&n; *      23 Feb 1995 rev. 1.18 for linux 1.1.94&n; *          Added a check for scsi_register returning NULL.&n; *&n; *      11 Feb 1995 rev. 1.17 for linux 1.1.91&n; *          Now DEBUG_RESET is disabled by default.&n; *          Register a board even if it does not assert DMA protocol support&n; *          (DPT SK2011B does not report correctly the dmasup bit).&n; *&n; *       9 Feb 1995 rev. 1.16 for linux 1.1.90&n; *          Use host-&gt;wish_block instead of host-&gt;block.&n; *          New list of Data Out SCSI commands.&n; *&n; *       8 Feb 1995 rev. 1.15 for linux 1.1.89&n; *          Cleared target_time_out counter while performing a reset.&n; *          All external symbols renamed to avoid possible name conflicts.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status &n; *          different from zero on a recovered error.&n; *&n; *      24 Jan 1995 rev. 1.13 for linux 1.1.85&n; *          Use optimized board configuration, with a measured performance&n; *          increase in the range 10%-20% on i/o throughput.&n; *&n; *      16 Jan 1995 rev. 1.12 for linux 1.1.81&n; *          Fix mscp structure comments (no functional change).&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      17 Dec 1994 rev. 1.11 for linux 1.1.74&n; *          Use the scsicam_bios_param routine. This allows an easy&n; *          migration path from disk partition tables created using &n; *          different SCSI drivers and non optimal disk geometry.&n; *&n; *      15 Dec 1994 rev. 1.10 for linux 1.1.74&n; *          Added support for ISA EATA boards (DPT PM2011, DPT PM2021).&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *          The detect routine no longer enforces LEVEL triggering&n; *          for EISA boards, it just prints a warning message.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A, using DMA protocol.&n; *&n; *  Copyright (C) 1994, 1995, 1996 Dario Ballabio (dario@milano.europe.dg.com)&n; *&n; */
-multiline_comment|/*&n; *&n; *  Here is a brief description of the DPT SCSI host adapters.&n; *  All these boards provide an EATA/DMA compatible programming interface&n; *  and are fully supported by this driver:&n; *&n; *  PM2011B/9X -  Entry Level ISA&n; *  PM2021A/9X -  High Performance ISA&n; *  PM2012A       Old EISA&n; *  PM2012B       Old EISA&n; *  PM2022A/9X -  Entry Level EISA&n; *  PM2122A/9X -  High Performance EISA&n; *  PM2322A/9X -  Extra High Performance EISA&n; *&n; *  The DPT PM2001 provides only the EATA/PIO interface and hence is not&n; *  supported by this driver.&n; *&n; *  This code has been tested with up to 3 Distributed Processing Technology &n; *  PM2122A/9X (DPT SCSI BIOS v002.D1, firmware v05E.0) eisa controllers,&n; *  no on board cache and no RAID option. &n; *  BIOS must be enabled on the first board and must be disabled for all other &n; *  boards. &n; *  Support is provided for any number of DPT PM2122 eisa boards.&n; *  All boards should be configured at the same IRQ level.&n; *  Multiple IRQ configurations are supported too.&n; *  Boards can be located in any eisa slot (1-15) and are named EATA0, &n; *  EATA1,... in increasing eisa slot number. ISA boards are detected&n; *  after the eisa slot probes.&n; *&n; *  The IRQ for EISA boards should be _level_ triggered (not _edge_ triggered).&n; *  This is a requirement in order to support multiple boards on the same IRQ.&n; *&n; *  Other eisa configuration parameters are:&n; *&n; *  COMMAND QUEUING   : ENABLED&n; *  COMMAND TIMEOUT   : ENABLED&n; *  CACHE             : DISABLED&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;wish_block = TRUE for all ISA boards.&n; */
+multiline_comment|/*&n; *      eata.c - Low-level driver for EATA/DMA SCSI host adapters.&n; *&n; *      16 Nov 1996 rev. 2.20 for linux 2.1.10 and 2.0.25&n; *          Added support for EATA 2.0C, PCI, multichannel and wide SCSI.&n; *&n; *      27 Sep 1996 rev. 2.12 for linux 2.1.0&n; *          Portability cleanups (virtual/bus addressing, little/big endian&n; *          support).&n; *&n; *      09 Jul 1996 rev. 2.11 for linux 2.0.4&n; *          Number of internal retries is now limited.&n; *&n; *      16 Apr 1996 rev. 2.10 for linux 1.3.90&n; *          New argument &quot;reset_flags&quot; to the reset routine.&n; *&n; *       6 Jul 1995 rev. 2.01 for linux 1.3.7&n; *          Update required by the new /proc/scsi support.&n; *&n; *      11 Mar 1995 rev. 2.00 for linux 1.2.0&n; *          Fixed a bug which prevented media change detection for removable&n; *          disk drives.&n; *&n; *      23 Feb 1995 rev. 1.18 for linux 1.1.94&n; *          Added a check for scsi_register returning NULL.&n; *&n; *      11 Feb 1995 rev. 1.17 for linux 1.1.91&n; *          Now DEBUG_RESET is disabled by default.&n; *          Register a board even if it does not assert DMA protocol support&n; *          (DPT SK2011B does not report correctly the dmasup bit).&n; *&n; *       9 Feb 1995 rev. 1.16 for linux 1.1.90&n; *          Use host-&gt;wish_block instead of host-&gt;block.&n; *          New list of Data Out SCSI commands.&n; *&n; *       8 Feb 1995 rev. 1.15 for linux 1.1.89&n; *          Cleared target_time_out counter while performing a reset.&n; *          All external symbols renamed to avoid possible name conflicts.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status &n; *          different from zero on a recovered error.&n; *&n; *      24 Jan 1995 rev. 1.13 for linux 1.1.85&n; *          Use optimized board configuration, with a measured performance&n; *          increase in the range 10%-20% on i/o throughput.&n; *&n; *      16 Jan 1995 rev. 1.12 for linux 1.1.81&n; *          Fix mscp structure comments (no functional change).&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      17 Dec 1994 rev. 1.11 for linux 1.1.74&n; *          Use the scsicam_bios_param routine. This allows an easy&n; *          migration path from disk partition tables created using &n; *          different SCSI drivers and non optimal disk geometry.&n; *&n; *      15 Dec 1994 rev. 1.10 for linux 1.1.74&n; *          Added support for ISA EATA boards (DPT PM2011, DPT PM2021).&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *          The detect routine no longer enforces LEVEL triggering&n; *          for EISA boards, it just prints a warning message.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A, using DMA protocol.&n; *&n; *  Copyright (C) 1994, 1995, 1996 Dario Ballabio (dario@milano.europe.dg.com)&n; *&n; */
+multiline_comment|/*&n; *&n; *  Here is a brief description of the DPT SCSI host adapters.&n; *  All these boards provide an EATA/DMA compatible programming interface&n; *  and are fully supported by this driver in any configuration, including&n; *  multiple SCSI channels:&n; *&n; *  PM2011B/9X -  Entry Level ISA&n; *  PM2021A/9X -  High Performance ISA&n; *  PM2012A       Old EISA&n; *  PM2012B       Old EISA&n; *  PM2022A/9X -  Entry Level EISA&n; *  PM2122A/9X -  High Performance EISA&n; *  PM2322A/9X -  Extra High Performance EISA&n; *  PM3021     -  SmartRAID Adapter for ISA&n; *  PM3222     -  SmartRAID Adapter for EISA (PM3222W is 16-bit wide SCSI)&n; *  PM3224     -  SmartRAID Adapter for PCI  (PM3224W is 16-bit wide SCSI)&n; *&n; *  The DPT PM2001 provides only the EATA/PIO interface and hence is not&n; *  supported by this driver.&n; *&n; *  This code has been tested with up to 3 Distributed Processing Technology &n; *  PM2122A/9X (DPT SCSI BIOS v002.D1, firmware v05E.0) eisa controllers,&n; *  in any combination of private and shared IRQ.&n; *  PCI support has been tested using a DPT PM3224W (firmware v07G.0).&n; *&n; *  Multiple ISA, EISA and PCI boards can be configured in the same system.&n; *  It is suggested to put all the EISA boards on the same IRQ level, all&n; *  the PCI  boards on another IRQ level, while ISA boards cannot share &n; *  interrupts.&n; *&n; *  If you configure multiple boards on the same IRQ, the interrupt must&n; *  be _level_ triggered (not _edge_ triggered).&n; *&n; *  This driver detects EATA boards by probes at fixed port addresses,&n; *  so no BIOS32 or PCI BIOS support is used or required.&n; *  The suggested way to detect a generic EATA PCI board is to force on it&n; *  any unused EISA address, even if there are other controllers on the EISA&n; *  bus, or even if you system has no EISA bus at all.&n; *  Do not force any ISA address on EATA PCI boards.&n; *&n; *  The sequence of detection probes is:&n; *  - ISA 0x1F0; &n; *  - EISA/PCI 0x1C88 through 0xFC88 (corresponding to EISA slots 1 to 15);&n; *  - ISA  0x170, 0x230, 0x330.&n; *&n; *  The boards are named EATA0, EATA1,... according to the detection order.&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;wish_block = TRUE for all ISA boards.&n; */
 macro_line|#if defined(MODULE)
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -57,8 +57,12 @@ DECL|macro|DEBUG_STATISTICS
 macro_line|#undef  DEBUG_STATISTICS
 DECL|macro|DEBUG_RESET
 macro_line|#undef  DEBUG_RESET
+DECL|macro|MAX_CHANNEL
+mdefine_line|#define MAX_CHANNEL 4
+DECL|macro|MAX_LUN
+mdefine_line|#define MAX_LUN 32
 DECL|macro|MAX_TARGET
-mdefine_line|#define MAX_TARGET 8
+mdefine_line|#define MAX_TARGET 32
 DECL|macro|MAX_IRQ
 mdefine_line|#define MAX_IRQ 16
 DECL|macro|MAX_BOARDS
@@ -67,6 +71,8 @@ DECL|macro|MAX_MAILBOXES
 mdefine_line|#define MAX_MAILBOXES 64
 DECL|macro|MAX_SGLIST
 mdefine_line|#define MAX_SGLIST 64
+DECL|macro|MAX_LARGE_SGLIST
+mdefine_line|#define MAX_LARGE_SGLIST 252
 DECL|macro|MAX_INTERNAL_RETRIES
 mdefine_line|#define MAX_INTERNAL_RETRIES 64
 DECL|macro|MAX_CMD_PER_LUN
@@ -114,7 +120,7 @@ mdefine_line|#define REG_MSB         5
 DECL|macro|REGION_SIZE
 mdefine_line|#define REGION_SIZE     9
 DECL|macro|EISA_RANGE
-mdefine_line|#define EISA_RANGE      0xf000
+mdefine_line|#define EISA_RANGE      0x1000
 DECL|macro|BSY_ASSERTED
 mdefine_line|#define BSY_ASSERTED      0x80
 DECL|macro|DRQ_ASSERTED
@@ -155,6 +161,8 @@ DECL|macro|EATA_2_0A_SIZE
 mdefine_line|#define EATA_2_0A_SIZE 28
 DECL|macro|EATA_2_0B_SIZE
 mdefine_line|#define EATA_2_0B_SIZE 30
+DECL|macro|EATA_2_0C_SIZE
+mdefine_line|#define EATA_2_0C_SIZE 34
 multiline_comment|/* Board info structure */
 DECL|struct|eata_info
 r_struct
@@ -231,14 +239,10 @@ DECL|member|host_addr
 id|unchar
 id|host_addr
 (braket
-l_int|3
+l_int|4
 )braket
 suffix:semicolon
-multiline_comment|/* Host Adapter SCSI ID for channels 2, 1, 0 */
-DECL|member|reserved
-id|unchar
-id|reserved
-suffix:semicolon
+multiline_comment|/* Host Adapter SCSI ID for channels 3, 2, 1, 0 */
 DECL|member|cp_len
 id|ulong
 id|cp_len
@@ -316,18 +320,31 @@ id|max_id
 suffix:colon
 l_int|5
 comma
-multiline_comment|/* Max number of SCSI target IDs */
+multiline_comment|/* Max SCSI target ID number */
 DECL|member|max_chan
 id|max_chan
 suffix:colon
 l_int|3
 suffix:semicolon
 multiline_comment|/* Max SCSI channel number on this board */
+multiline_comment|/* Structure extension defined in EATA 2.0C */
+DECL|member|max_lun
+id|unchar
+id|max_lun
+suffix:semicolon
+multiline_comment|/* Max SCSI LUN number */
+DECL|member|notused
+id|unchar
+id|notused
+(braket
+l_int|3
+)braket
+suffix:semicolon
 DECL|member|ipad
 id|ushort
 id|ipad
 (braket
-l_int|249
+l_int|247
 )braket
 suffix:semicolon
 )brace
@@ -507,18 +524,23 @@ suffix:semicolon
 DECL|member|target
 id|unchar
 id|target
+suffix:colon
+l_int|5
+comma
+multiline_comment|/* SCSI target ID */
+DECL|member|channel
+id|channel
+suffix:colon
+l_int|3
 suffix:semicolon
-multiline_comment|/* SCSI Target ID */
+multiline_comment|/* SCSI channel number */
 DECL|member|lun
 id|unchar
 id|lun
 suffix:colon
-l_int|3
+l_int|5
 comma
-multiline_comment|/* LUN */
-suffix:colon
-l_int|2
-comma
+multiline_comment|/* SCSI logical unit number */
 DECL|member|luntar
 id|luntar
 suffix:colon
@@ -676,22 +698,28 @@ r_int
 id|in_reset
 suffix:semicolon
 multiline_comment|/* True if board is doing a reset */
-DECL|member|target_time_out
+DECL|member|target_to
 r_int
-id|target_time_out
+id|target_to
 (braket
 id|MAX_TARGET
+)braket
+(braket
+id|MAX_CHANNEL
 )braket
 suffix:semicolon
 multiline_comment|/* N. of timeout errors on target */
-DECL|member|target_reset
+DECL|member|target_redo
 r_int
-id|target_reset
+id|target_redo
 (braket
 id|MAX_TARGET
 )braket
+(braket
+id|MAX_CHANNEL
+)braket
 suffix:semicolon
-multiline_comment|/* If TRUE redo operation on target */
+multiline_comment|/* If TRUE redo i/o on target */
 DECL|member|retries
 r_int
 r_int
@@ -709,7 +737,7 @@ r_int
 r_char
 id|subversion
 suffix:semicolon
-multiline_comment|/* Bus type, either ISA or ESA */
+multiline_comment|/* Bus type, either ISA or EISA/PCI */
 DECL|member|protocol_rev
 r_int
 r_char
@@ -800,11 +828,12 @@ suffix:semicolon
 DECL|function|wait_on_busy
 r_static
 r_inline
-id|unchar
+r_int
 id|wait_on_busy
 c_func
 (paren
-id|ushort
+r_int
+r_int
 id|iobase
 )paren
 (brace
@@ -845,10 +874,12 @@ suffix:semicolon
 DECL|function|do_dma
 r_static
 r_inline
-id|unchar
+r_int
 id|do_dma
+c_func
 (paren
-id|ushort
+r_int
+r_int
 id|iobase
 comma
 r_int
@@ -967,10 +998,12 @@ suffix:semicolon
 DECL|function|read_pio
 r_static
 r_inline
-id|unchar
+r_int
 id|read_pio
+c_func
 (paren
-id|ushort
+r_int
+r_int
 id|iobase
 comma
 id|ushort
@@ -1059,7 +1092,8 @@ r_int
 id|port_detect
 c_func
 (paren
-id|ushort
+r_int
+r_int
 op_star
 id|port_base
 comma
@@ -1079,6 +1113,8 @@ comma
 id|dma_channel
 comma
 id|subversion
+comma
+id|c
 suffix:semicolon
 r_int
 r_char
@@ -1087,11 +1123,6 @@ suffix:semicolon
 r_struct
 id|eata_info
 id|info
-suffix:semicolon
-r_const
-r_char
-op_star
-id|board_status
 suffix:semicolon
 multiline_comment|/* Allowed DMA channels for ISA (0 indicates reserved) */
 r_int
@@ -1283,25 +1314,6 @@ id|protocol_rev
 op_assign
 l_char|&squot;C&squot;
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|protocol_rev
-op_ne
-l_char|&squot;A&squot;
-op_logical_and
-id|info.max_chan
-OG
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: warning, only scsi channel 0 is supported.&bslash;n&quot;
-comma
-id|name
-)paren
-suffix:semicolon
 id|irq
 op_assign
 id|info.irq
@@ -1311,7 +1323,7 @@ c_cond
 (paren
 op_star
 id|port_base
-op_amp
+op_ge
 id|EISA_RANGE
 )paren
 (brace
@@ -1329,7 +1341,7 @@ id|info.drqvld
 id|printk
 c_func
 (paren
-l_string|&quot;%s: unusable EISA board found (%d%d%d), detaching.&bslash;n&quot;
+l_string|&quot;%s: unusable EISA/PCI board found (%d%d%d), detaching.&bslash;n&quot;
 comma
 id|name
 comma
@@ -1432,20 +1444,6 @@ id|name
 comma
 id|irq
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|info.second
-)paren
-id|board_status
-op_assign
-l_string|&quot;Sec.&quot;
-suffix:semicolon
-r_else
-id|board_status
-op_assign
-l_string|&quot;Prim.&quot;
 suffix:semicolon
 multiline_comment|/* Board detected, allocate its IRQ if not already done */
 r_if
@@ -1698,6 +1696,16 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
+id|unique_id
+op_assign
+op_star
+id|port_base
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
 id|n_io_port
 op_assign
 id|REGION_SIZE
@@ -1916,6 +1924,82 @@ id|dma_channel
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|protocol_rev
+op_ne
+l_char|&squot;A&squot;
+op_logical_and
+id|info.max_chan
+OG
+l_int|0
+op_logical_and
+id|info.max_chan
+OL
+id|MAX_CHANNEL
+)paren
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
+op_assign
+id|info.max_chan
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|protocol_rev
+op_ne
+l_char|&squot;A&squot;
+op_logical_and
+id|info.max_id
+OG
+l_int|7
+op_logical_and
+id|info.max_id
+OL
+id|MAX_TARGET
+)paren
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
+op_assign
+id|info.max_id
+op_plus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|protocol_rev
+op_eq
+l_char|&squot;C&squot;
+op_logical_and
+id|info.max_lun
+OG
+l_int|7
+op_logical_and
+id|info.max_lun
+OL
+id|MAX_LUN
+)paren
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_lun
+op_assign
+id|info.max_lun
+op_plus
+l_int|1
+suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -1931,7 +2015,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 2.0%c, %s, ID %d, PORT 0x%03x, IRQ %u, DMA %u, SG %d, &quot;
+l_string|&quot;%s: rev. 2.0%c, PORT 0x%03x, IRQ %u, DMA %u, SG %d, &quot;
 "&bslash;"
 l_string|&quot;Mbox %d, CmdLun %d.&bslash;n&quot;
 comma
@@ -1948,15 +2032,6 @@ id|j
 )paren
 op_member_access_from_pointer
 id|protocol_rev
-comma
-id|board_status
-comma
-id|sh
-(braket
-id|j
-)braket
-op_member_access_from_pointer
-id|this_id
 comma
 id|sh
 (braket
@@ -2095,6 +2170,93 @@ op_assign
 id|MAX_MAILBOXES
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
+OG
+l_int|8
+op_logical_or
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_lun
+OG
+l_int|8
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: wide SCSI support enabled, max_id %u, max_lun %u.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_lun
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|c
+op_assign
+l_int|0
+suffix:semicolon
+id|c
+op_le
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
+suffix:semicolon
+id|c
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: SCSI channel %u enabled, host target ID %u.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+id|c
+comma
+id|info.host_addr
+(braket
+l_int|3
+op_minus
+id|c
+)braket
+)paren
+suffix:semicolon
 macro_line|#if defined (DEBUG_DETECT)
 r_if
 c_cond
@@ -2108,7 +2270,7 @@ c_func
 (paren
 l_string|&quot;%s: EATA 2.0%c, isaena %u, forcaddr %u, max_id %u,&quot;
 "&bslash;"
-l_string|&quot; max_chan %u.&bslash;n&quot;
+l_string|&quot; max_chan %u, max_lun %u.&bslash;n&quot;
 comma
 id|name
 comma
@@ -2121,18 +2283,22 @@ comma
 id|info.max_id
 comma
 id|info.max_chan
+comma
+id|info.max_lun
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Version 0x%x, SYNC 0x%x, infol %ld, cpl %ld spl %ld.&bslash;n&quot;
+l_string|&quot;%s: Vers. 0x%x, SYNC 0x%x, sec. %u, infol %ld, cpl %ld spl %ld.&bslash;n&quot;
 comma
 id|name
 comma
 id|info.version
 comma
 id|info.sync
+comma
+id|info.second
 comma
 id|DEV2H
 c_func
@@ -2161,6 +2327,7 @@ suffix:semicolon
 DECL|function|eata2x_detect
 r_int
 id|eata2x_detect
+c_func
 (paren
 id|Scsi_Host_Template
 op_star
@@ -2177,12 +2344,15 @@ id|k
 comma
 id|flags
 suffix:semicolon
-id|ushort
+r_int
+r_int
 id|io_port
 (braket
 )braket
 op_assign
 (brace
+l_int|0x1f0
+comma
 l_int|0x1c88
 comma
 l_int|0x2c88
@@ -2213,18 +2383,17 @@ l_int|0xec88
 comma
 l_int|0xfc88
 comma
-l_int|0x1f0
-comma
 l_int|0x170
 comma
-l_int|0x330
-comma
 l_int|0x230
+comma
+l_int|0x330
 comma
 l_int|0x0
 )brace
 suffix:semicolon
-id|ushort
+r_int
+r_int
 op_star
 id|port_base
 op_assign
@@ -2468,6 +2637,7 @@ suffix:semicolon
 DECL|function|eata2x_queuecommand
 r_int
 id|eata2x_queuecommand
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -2915,7 +3085,7 @@ id|do_trace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: qcomm, mbox %d, target %d, pid %ld.&bslash;n&quot;
+l_string|&quot;%s: qcomm, mbox %d, target %d.%d:%d, pid %ld.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -2925,7 +3095,11 @@ id|j
 comma
 id|i
 comma
+id|SCpnt-&gt;channel
+comma
 id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
 comma
 id|SCpnt-&gt;pid
 )paren
@@ -2985,6 +3159,10 @@ suffix:semicolon
 id|cpp-&gt;one
 op_assign
 id|TRUE
+suffix:semicolon
+id|cpp-&gt;channel
+op_assign
+id|SCpnt-&gt;channel
 suffix:semicolon
 id|cpp-&gt;target
 op_assign
@@ -3096,7 +3274,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: qcomm, target %d, pid %ld, adapter busy, DID_ERROR, done.&bslash;n&quot;
+l_string|&quot;%s: qcomm, target %d.%d:%d, pid %ld, adapter busy, DID_ERROR,&quot;
+"&bslash;"
+l_string|&quot; done.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -3104,7 +3284,11 @@ c_func
 id|j
 )paren
 comma
+id|SCpnt-&gt;channel
+comma
 id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
 comma
 id|SCpnt-&gt;pid
 )paren
@@ -3151,6 +3335,7 @@ suffix:semicolon
 DECL|function|eata2x_abort
 r_int
 id|eata2x_abort
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -3200,7 +3385,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;%s: abort, target %d, pid %ld inactive.&bslash;n&quot;
+l_string|&quot;%s: abort, target %d.%d:%d, pid %ld inactive.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -3208,7 +3393,11 @@ c_func
 id|j
 )paren
 comma
+id|SCarg-&gt;channel
+comma
 id|SCarg-&gt;target
+comma
+id|SCarg-&gt;lun
 comma
 id|SCarg-&gt;pid
 )paren
@@ -3236,7 +3425,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: abort, mbox %d, target %d, pid %ld.&bslash;n&quot;
+l_string|&quot;%s: abort, mbox %d, target %d.%d:%d, pid %ld.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -3246,7 +3435,11 @@ id|j
 comma
 id|i
 comma
+id|SCarg-&gt;channel
+comma
 id|SCarg-&gt;target
+comma
+id|SCarg-&gt;lun
 comma
 id|SCarg-&gt;pid
 )paren
@@ -3547,6 +3740,7 @@ suffix:semicolon
 DECL|function|eata2x_reset
 r_int
 id|eata2x_reset
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -3568,6 +3762,8 @@ comma
 id|time
 comma
 id|k
+comma
+id|c
 comma
 id|limit
 op_assign
@@ -3609,7 +3805,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: reset, enter, target %d, pid %ld, reset_flags %u.&bslash;n&quot;
+l_string|&quot;%s: reset, enter, target %d.%d:%d, pid %ld, reset_flags %u.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -3617,7 +3813,11 @@ c_func
 id|j
 )paren
 comma
+id|SCarg-&gt;channel
+comma
 id|SCarg-&gt;target
+comma
+id|SCarg-&gt;lun
 comma
 id|SCarg-&gt;pid
 comma
@@ -3729,30 +3929,22 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|k
+id|c
 op_assign
 l_int|0
 suffix:semicolon
-id|k
-OL
-id|MAX_TARGET
+id|c
+op_le
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
 suffix:semicolon
-id|k
+id|c
 op_increment
 )paren
-id|HD
-c_func
-(paren
-id|j
-)paren
-op_member_access_from_pointer
-id|target_reset
-(braket
-id|k
-)braket
-op_assign
-id|TRUE
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3762,24 +3954,50 @@ l_int|0
 suffix:semicolon
 id|k
 OL
-id|MAX_TARGET
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
 suffix:semicolon
 id|k
 op_increment
 )paren
+(brace
 id|HD
 c_func
 (paren
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_redo
 (braket
 id|k
+)braket
+(braket
+id|c
+)braket
+op_assign
+id|TRUE
+suffix:semicolon
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|target_to
+(braket
+id|k
+)braket
+(braket
+id|c
 )braket
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -4330,6 +4548,8 @@ comma
 id|j
 comma
 id|k
+comma
+id|c
 comma
 id|flags
 comma
@@ -4957,9 +5177,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_reset
+id|target_redo
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 )paren
 id|status
@@ -5018,9 +5241,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_reset
+id|target_redo
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 op_assign
 id|FALSE
@@ -5037,15 +5263,17 @@ id|TYPE_DISK
 id|printk
 c_func
 (paren
-l_string|&quot;%s: ihdlr, target %d:%d, pid %ld, target_status &quot;
+l_string|&quot;%s: ihdlr, target %d.%d:%d, pid %ld, &quot;
 "&bslash;"
-l_string|&quot;0x%x, sense key 0x%x.&bslash;n&quot;
+l_string|&quot;target_status 0x%x, sense key 0x%x.&bslash;n&quot;
 comma
 id|BN
 c_func
 (paren
 id|j
 )paren
+comma
+id|SCpnt-&gt;channel
 comma
 id|SCpnt-&gt;target
 comma
@@ -5067,9 +5295,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_to
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 op_assign
 l_int|0
@@ -5116,9 +5347,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_to
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 OG
 l_int|1
@@ -5143,9 +5377,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_to
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 op_increment
 suffix:semicolon
@@ -5164,13 +5401,37 @@ multiline_comment|/* Initial Controller Power-up */
 r_for
 c_loop
 (paren
+id|c
+op_assign
+l_int|0
+suffix:semicolon
+id|c
+op_le
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
+suffix:semicolon
+id|c
+op_increment
+)paren
+r_for
+c_loop
+(paren
 id|k
 op_assign
 l_int|0
 suffix:semicolon
 id|k
 OL
-id|MAX_TARGET
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
 suffix:semicolon
 id|k
 op_increment
@@ -5181,9 +5442,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_reset
+id|target_redo
 (braket
 id|k
+)braket
+(braket
+id|c
 )braket
 op_assign
 id|TRUE
@@ -5371,7 +5635,7 @@ c_func
 (paren
 l_string|&quot;%s: ihdlr, mbox %2d, err 0x%x:%x,&quot;
 "&bslash;"
-l_string|&quot; target %d:%d, pid %ld, count %d.&bslash;n&quot;
+l_string|&quot; target %d.%d:%d, pid %ld, count %d.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -5384,6 +5648,8 @@ comma
 id|spp-&gt;adapter_status
 comma
 id|spp-&gt;target_status
+comma
+id|SCpnt-&gt;channel
 comma
 id|SCpnt-&gt;target
 comma

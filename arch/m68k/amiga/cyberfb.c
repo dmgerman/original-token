@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
@@ -3902,7 +3902,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hred
@@ -3910,7 +3910,7 @@ comma
 id|red
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hgreen
@@ -3918,7 +3918,7 @@ comma
 id|green
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hblue
@@ -3931,7 +3931,7 @@ c_cond
 (paren
 id|transp
 )paren
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|htransp
@@ -4089,41 +4089,46 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|hred
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hred
+comma
 id|red
 )paren
 suffix:semicolon
-id|hgreen
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hgreen
+comma
 id|green
 )paren
 suffix:semicolon
-id|hblue
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hblue
+comma
 id|blue
 )paren
 suffix:semicolon
-id|htransp
-op_assign
-id|transp
-ques
+r_if
 c_cond
-id|get_fs_word
-c_func
 (paren
 id|transp
 )paren
-suffix:colon
+id|get_user
+c_func
+(paren
+id|htransp
+comma
+id|transp
+)paren
+suffix:semicolon
+r_else
+id|htransp
+op_assign
 l_int|0
 suffix:semicolon
 )brace

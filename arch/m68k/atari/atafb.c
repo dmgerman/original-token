@@ -16,7 +16,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
@@ -129,9 +129,9 @@ r_int
 r_int
 id|screen_base
 suffix:semicolon
-DECL|member|vyres
+DECL|member|yres_virtual
 r_int
-id|vyres
+id|yres_virtual
 suffix:semicolon
 r_union
 (brace
@@ -1132,6 +1132,7 @@ id|atari_fb_predefined
 )braket
 op_assign
 (brace
+multiline_comment|/*&n; &t; * yres_virtual==0 means use hw-scrolling if possible, else yres&n; &t; */
 (brace
 multiline_comment|/* autodetect */
 l_int|0
@@ -1219,7 +1220,7 @@ l_int|200
 comma
 l_int|320
 comma
-l_int|200
+l_int|0
 comma
 l_int|0
 comma
@@ -1229,7 +1230,6 @@ l_int|4
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1262,7 +1262,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1298,7 +1297,7 @@ l_int|200
 comma
 l_int|640
 comma
-l_int|200
+l_int|0
 comma
 l_int|0
 comma
@@ -1308,7 +1307,6 @@ l_int|2
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1341,7 +1339,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1377,7 +1374,7 @@ l_int|400
 comma
 l_int|640
 comma
-l_int|400
+l_int|0
 comma
 l_int|0
 comma
@@ -1387,7 +1384,6 @@ l_int|1
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1420,7 +1416,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1456,7 +1451,7 @@ l_int|480
 comma
 l_int|320
 comma
-l_int|480
+l_int|0
 comma
 l_int|0
 comma
@@ -1466,7 +1461,6 @@ l_int|8
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1499,7 +1493,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1535,7 +1528,7 @@ l_int|480
 comma
 l_int|640
 comma
-l_int|480
+l_int|0
 comma
 l_int|0
 comma
@@ -1545,7 +1538,6 @@ l_int|4
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1578,7 +1570,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1614,7 +1605,7 @@ l_int|960
 comma
 l_int|1280
 comma
-l_int|960
+l_int|0
 comma
 l_int|0
 comma
@@ -1624,7 +1615,6 @@ l_int|1
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1657,7 +1647,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1693,7 +1682,7 @@ l_int|480
 comma
 l_int|640
 comma
-l_int|480
+l_int|0
 comma
 l_int|0
 comma
@@ -1703,7 +1692,6 @@ l_int|1
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1736,7 +1724,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1772,7 +1759,7 @@ l_int|480
 comma
 l_int|640
 comma
-l_int|480
+l_int|0
 comma
 l_int|0
 comma
@@ -1782,7 +1769,6 @@ l_int|2
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1815,7 +1801,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1851,7 +1836,7 @@ l_int|480
 comma
 l_int|640
 comma
-l_int|480
+l_int|0
 comma
 l_int|0
 comma
@@ -1861,7 +1846,6 @@ l_int|4
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1894,7 +1878,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -1930,7 +1913,7 @@ l_int|480
 comma
 l_int|640
 comma
-l_int|480
+l_int|0
 comma
 l_int|0
 comma
@@ -1940,7 +1923,6 @@ l_int|8
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -1973,7 +1955,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -2009,7 +1990,7 @@ l_int|608
 comma
 l_int|896
 comma
-l_int|608
+l_int|0
 comma
 l_int|0
 comma
@@ -2019,7 +2000,6 @@ l_int|1
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -2052,7 +2032,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -2088,7 +2067,7 @@ l_int|608
 comma
 l_int|896
 comma
-l_int|608
+l_int|0
 comma
 l_int|0
 comma
@@ -2098,7 +2077,6 @@ l_int|4
 comma
 l_int|0
 comma
-multiline_comment|/* xres-grayscale */
 (brace
 l_int|0
 comma
@@ -2131,7 +2109,6 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red green blue tran*/
 l_int|0
 comma
 l_int|0
@@ -3482,7 +3459,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 op_assign
 id|yres_virtual
 suffix:semicolon
@@ -3793,14 +3770,14 @@ id|screen_len
 r_if
 c_cond
 (paren
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 )paren
 id|var-&gt;yres_virtual
 op_assign
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 suffix:semicolon
 r_else
-multiline_comment|/* vyres==0 means use maximum */
+multiline_comment|/* yres_virtual==0 means use maximum */
 id|var-&gt;yres_virtual
 op_assign
 id|screen_len
@@ -4458,11 +4435,11 @@ op_assign
 (brace
 l_int|3000000
 comma
-l_int|4700000
+l_int|4875000
 comma
 l_int|4000000
 comma
-l_int|4700000
+l_int|4875000
 )brace
 suffix:semicolon
 DECL|function|hxx_prescale
@@ -4882,13 +4859,13 @@ r_if
 c_cond
 (paren
 id|mon_type
-op_ne
-id|F_MON_VGA
+op_eq
+id|F_MON_SM
 op_logical_or
 id|DontCalcRes
 )paren
 (brace
-multiline_comment|/* Skip all calculations, VGA multisync only yet */
+multiline_comment|/* Skip all calculations. VGA/TV/SC1224 only supported. */
 r_struct
 id|fb_var_screeninfo
 op_star
@@ -4933,7 +4910,7 @@ id|set_screen_base
 suffix:semicolon
 multiline_comment|/* Don&squot;t forget this */
 )brace
-multiline_comment|/* Only some fixed resolutions &lt; 640x480 */
+multiline_comment|/* Only some fixed resolutions &lt; 640x400 */
 r_if
 c_cond
 (paren
@@ -4996,18 +4973,6 @@ id|yres
 op_assign
 l_int|400
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|yres
-op_le
-l_int|480
-)paren
-id|yres
-op_assign
-l_int|480
-suffix:semicolon
 multiline_comment|/* 2 planes must use STE compatibility mode */
 id|par-&gt;hw.falcon.ste_mode
 op_assign
@@ -5021,7 +4986,7 @@ id|bpp
 op_eq
 l_int|1
 suffix:semicolon
-multiline_comment|/* Total and visible scanline length must be a multiple of one longword,&n;&t; * this and the console fontwidth yields the alignment for xres and&n;&t; * xres_virtual.&n;&t; *&n;&t; * Special case in STE mode: blank and graphic positions don&squot;t align,&n;&t; * avoid trash at right margin&n;&t; */
+multiline_comment|/* Total and visible scanline length must be a multiple of one longword,&n;&t; * this and the console fontwidth yields the alignment for xres and&n;&t; * xres_virtual.&n;&t; * TODO: this way &quot;odd&quot; fontheights are not supported&n;&t; *&n;&t; * Special case in STE mode: blank and graphic positions don&squot;t align,&n;&t; * avoid trash at right margin&n;&t; */
 r_if
 c_cond
 (paren
@@ -5201,8 +5166,8 @@ id|xstretch
 op_assign
 (paren
 id|xres
-op_eq
-l_int|320
+OL
+l_int|640
 )paren
 ques
 c_cond
@@ -5210,7 +5175,7 @@ l_int|2
 suffix:colon
 l_int|1
 suffix:semicolon
-macro_line|#if 0 /* currently unused */
+macro_line|#if 0 /* SM124 supports only 640x400, this is rejected above */
 r_if
 c_cond
 (paren
@@ -5271,6 +5236,7 @@ suffix:semicolon
 multiline_comment|/* TODO set all margins */
 )brace
 r_else
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5289,16 +5255,23 @@ l_int|2
 op_star
 id|xstretch
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|var-&gt;pixclock
+OG
+id|f32.t
+op_star
+id|plen
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|pclock
 op_assign
 op_amp
 id|f32
-suffix:semicolon
-id|hsync_len
-op_assign
-l_int|150
-op_div
-id|plen
 suffix:semicolon
 r_if
 c_cond
@@ -5311,10 +5284,137 @@ id|interlace
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* TODO set margins */
+r_if
+c_cond
+(paren
+id|var-&gt;pixclock
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* set some minimal margins which center the screen */
+id|left_margin
+op_assign
+l_int|32
+suffix:semicolon
+id|right_margin
+op_assign
+l_int|18
+suffix:semicolon
+id|hsync_len
+op_assign
+id|pclock-&gt;hsync
+op_div
+id|plen
+suffix:semicolon
+id|upper_margin
+op_assign
+l_int|31
+suffix:semicolon
+id|lower_margin
+op_assign
+l_int|14
+suffix:semicolon
+id|vsync_len
+op_assign
+id|interlace
+ques
+c_cond
+l_int|3
+suffix:colon
+l_int|4
+suffix:semicolon
 )brace
 r_else
-macro_line|#endif
+(brace
+id|left_margin
+op_assign
+id|var-&gt;left_margin
+suffix:semicolon
+id|right_margin
+op_assign
+id|var-&gt;right_margin
+suffix:semicolon
+id|hsync_len
+op_assign
+id|var-&gt;hsync_len
+suffix:semicolon
+id|upper_margin
+op_assign
+id|var-&gt;upper_margin
+suffix:semicolon
+id|lower_margin
+op_assign
+id|var-&gt;lower_margin
+suffix:semicolon
+id|vsync_len
+op_assign
+id|var-&gt;vsync_len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|var-&gt;vmode
+op_amp
+id|FB_VMODE_INTERLACED
+)paren
+(brace
+id|upper_margin
+op_assign
+(paren
+id|upper_margin
+op_plus
+l_int|1
+)paren
+op_div
+l_int|2
+suffix:semicolon
+id|lower_margin
+op_assign
+(paren
+id|lower_margin
+op_plus
+l_int|1
+)paren
+op_div
+l_int|2
+suffix:semicolon
+id|vsync_len
+op_assign
+(paren
+id|vsync_len
+op_plus
+l_int|1
+)paren
+op_div
+l_int|2
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|var-&gt;vmode
+op_amp
+id|FB_VMODE_DOUBLE
+)paren
+(brace
+id|upper_margin
+op_mul_assign
+l_int|2
+suffix:semicolon
+id|lower_margin
+op_mul_assign
+l_int|2
+suffix:semicolon
+id|vsync_len
+op_mul_assign
+l_int|2
+suffix:semicolon
+)brace
+)brace
+)brace
+r_else
 (brace
 multiline_comment|/* F_MON_VGA */
 r_if
@@ -5328,7 +5428,7 @@ id|xstretch
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* hicolor only double pixel width */
+multiline_comment|/* Double pixel width only for hicolor */
 multiline_comment|/* Default values are used for vert./hor. timing if no pixelclock given. */
 r_if
 c_cond
@@ -5629,6 +5729,7 @@ id|vsync_len
 op_assign
 id|var-&gt;vsync_len
 suffix:semicolon
+multiline_comment|/* Internal unit is [single lines per (half-)frame] */
 r_if
 c_cond
 (paren
@@ -5638,6 +5739,7 @@ id|FB_VMODE_INTERLACED
 )paren
 (brace
 multiline_comment|/* # lines in half frame */
+multiline_comment|/* External unit is [lines per full frame] */
 id|upper_margin
 op_assign
 (paren
@@ -5666,6 +5768,29 @@ op_plus
 l_int|1
 )paren
 op_div
+l_int|2
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|var-&gt;vmode
+op_amp
+id|FB_VMODE_DOUBLE
+)paren
+(brace
+multiline_comment|/* External unit is [double lines per frame] */
+id|upper_margin
+op_mul_assign
+l_int|2
+suffix:semicolon
+id|lower_margin
+op_mul_assign
+l_int|2
+suffix:semicolon
+id|vsync_len
+op_mul_assign
 l_int|2
 suffix:semicolon
 )brace
@@ -6404,6 +6529,63 @@ id|vfreq
 OG
 id|vfmax
 op_logical_and
+id|doubleline
+)paren
+(brace
+multiline_comment|/* Doubleline too high -&gt; enlarge margins */
+r_int
+id|lines
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|lines
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|hfreq
+op_star
+l_int|2
+)paren
+op_div
+(paren
+id|par-&gt;VFT
+op_plus
+l_int|1
+op_plus
+l_int|4
+op_star
+id|lines
+)paren
+OG
+id|vfmax
+suffix:semicolon
+id|lines
+op_add_assign
+l_int|2
+)paren
+suffix:semicolon
+id|upper_margin
+op_add_assign
+id|lines
+suffix:semicolon
+id|lower_margin
+op_add_assign
+id|lines
+suffix:semicolon
+r_goto
+id|again
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|vfreq
+OG
+id|vfmax
+op_logical_and
 id|interlace
 )paren
 (brace
@@ -6519,7 +6701,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 op_assign
 id|yres_virtual
 suffix:semicolon
@@ -6894,14 +7076,14 @@ id|screen_len
 r_if
 c_cond
 (paren
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 )paren
 id|var-&gt;yres_virtual
 op_assign
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 suffix:semicolon
 r_else
-multiline_comment|/* vyres==0 means use maximum */
+multiline_comment|/* yres_virtual==0 means use maximum */
 id|var-&gt;yres_virtual
 op_assign
 id|screen_len
@@ -7189,6 +7371,46 @@ l_int|2
 suffix:semicolon
 id|var-&gt;vsync_len
 op_mul_assign
+l_int|2
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|var-&gt;vmode
+op_amp
+id|FB_VMODE_DOUBLE
+)paren
+(brace
+id|var-&gt;upper_margin
+op_assign
+(paren
+id|var-&gt;upper_margin
+op_plus
+l_int|1
+)paren
+op_div
+l_int|2
+suffix:semicolon
+id|var-&gt;lower_margin
+op_assign
+(paren
+id|var-&gt;lower_margin
+op_plus
+l_int|1
+)paren
+op_div
+l_int|2
+suffix:semicolon
+id|var-&gt;vsync_len
+op_assign
+(paren
+id|var-&gt;vsync_len
+op_plus
+l_int|1
+)paren
+op_div
 l_int|2
 suffix:semicolon
 )brace
@@ -8340,21 +8562,23 @@ suffix:colon
 r_case
 id|F_MON_TV
 suffix:colon
+multiline_comment|/* PAL...NTSC */
 id|vfmin
 op_assign
-l_int|50
+l_int|49
 suffix:semicolon
+multiline_comment|/* not 50, since TOS defaults to 49.9x Hz */
 id|vfmax
 op_assign
 l_int|60
 suffix:semicolon
 id|hfmin
 op_assign
-l_int|15624
+l_int|15620
 suffix:semicolon
 id|hfmax
 op_assign
-l_int|15626
+l_int|15755
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -8870,7 +9094,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 op_assign
 id|yres_virtual
 suffix:semicolon
@@ -9116,14 +9340,14 @@ id|screen_len
 r_if
 c_cond
 (paren
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 )paren
 id|var-&gt;yres_virtual
 op_assign
-id|par-&gt;vyres
+id|par-&gt;yres_virtual
 suffix:semicolon
 r_else
-multiline_comment|/* vyres==0 means use maximum */
+multiline_comment|/* yres_virtual==0 means use maximum */
 id|var-&gt;yres_virtual
 op_assign
 id|screen_len
@@ -11854,7 +12078,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hred
@@ -11862,7 +12086,7 @@ comma
 id|red
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hgreen
@@ -11870,7 +12094,7 @@ comma
 id|green
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hblue
@@ -11883,7 +12107,7 @@ c_cond
 (paren
 id|transp
 )paren
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|htransp
@@ -12045,43 +12269,46 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|hred
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hred
+comma
 id|red
 )paren
 suffix:semicolon
-id|hgreen
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hgreen
+comma
 id|green
 )paren
 suffix:semicolon
-id|hblue
-op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|hblue
+comma
 id|blue
 )paren
 suffix:semicolon
-id|htransp
-op_assign
+r_if
+c_cond
 (paren
 id|transp
 )paren
-ques
-c_cond
-id|get_fs_word
+id|get_user
 c_func
 (paren
+id|htransp
+comma
 id|transp
 )paren
-suffix:colon
+suffix:semicolon
+r_else
+id|htransp
+op_assign
 l_int|0
 suffix:semicolon
 )brace
@@ -12297,7 +12524,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|to
@@ -12312,7 +12539,7 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|to
@@ -13563,9 +13790,6 @@ r_int
 id|con
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -13579,32 +13803,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|atari_fb_par
-)paren
-)paren
-)paren
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -13626,6 +13825,10 @@ r_struct
 id|atari_fb_par
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -13638,32 +13841,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|atari_fb_par
-)paren
-)paren
-)paren
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -13685,6 +13863,10 @@ r_struct
 id|atari_fb_par
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|atari_fb_set_par
 c_func

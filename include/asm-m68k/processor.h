@@ -7,19 +7,10 @@ multiline_comment|/*&n; * User space process size: 3.75GB. This is hardcoded int
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xF0000000UL)
 multiline_comment|/*&n; * Bus types&n; */
-DECL|macro|EISA_bus__is_a_macro
-mdefine_line|#define EISA_bus__is_a_macro&t;1
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
-DECL|macro|MCA_bus__is_a_macro
-mdefine_line|#define MCA_bus__is_a_macro&t;1
 DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
-multiline_comment|/*&n; * The m68k has no problems with write protection&n; */
-DECL|macro|wp_works_ok__is_a_macro
-mdefine_line|#define wp_works_ok__is_a_macro&t;1
-DECL|macro|wp_works_ok
-mdefine_line|#define wp_works_ok 1
 multiline_comment|/* MAX floating point unit state size (FSAVE/FRESTORE) */
 DECL|macro|FPSTATESIZE
 mdefine_line|#define FPSTATESIZE   (216/sizeof(unsigned char))
@@ -52,19 +43,6 @@ r_int
 id|fs
 suffix:semicolon
 multiline_comment|/* saved fs (sfc, dfc) */
-DECL|member|pagedir_v
-r_int
-r_int
-op_star
-id|pagedir_v
-suffix:semicolon
-multiline_comment|/* root page table virtual addr */
-DECL|member|pagedir_p
-r_int
-r_int
-id|pagedir_p
-suffix:semicolon
-multiline_comment|/* root page table physaddr */
 DECL|member|crp
 r_int
 r_int
@@ -113,7 +91,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, __pgprot(_PAGE_PRESENT|_PAGE_ACCESSED), VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) init_kernel_stack, 0, &bslash;&n;&t;PS_S, KERNEL_DS, &bslash;&n;&t;NULL, 0, {0, 0}, 0 &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) init_kernel_stack, 0, &bslash;&n;&t;PS_S, KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack

@@ -3,6 +3,7 @@ DECL|macro|__ASMm68k_ELF_H
 mdefine_line|#define __ASMm68k_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/user.h&gt;
 DECL|typedef|elf_greg_t
 r_typedef
 r_int
@@ -10,7 +11,7 @@ r_int
 id|elf_greg_t
 suffix:semicolon
 DECL|macro|ELF_NGREG
-mdefine_line|#define ELF_NGREG 20 /* d1-d7/a0-a6/d0/usp/orig_d0/sr/pc/fmtvec */
+mdefine_line|#define ELF_NGREG (sizeof(struct user_regs_struct) / sizeof(elf_greg_t))
 DECL|typedef|elf_gregset_t
 r_typedef
 id|elf_greg_t
@@ -43,6 +44,6 @@ mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
 DECL|macro|ELF_CORE_COPY_REGS
-mdefine_line|#define ELF_CORE_COPY_REGS(pr_reg, regs)&t;&t;&t;&t;&bslash;&n;&t;/* Bleech. */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[0] = regs-&gt;d1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[1] = regs-&gt;d2;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[2] = regs-&gt;d3;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[3] = regs-&gt;d4;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[4] = regs-&gt;d5;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[7] = regs-&gt;a0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[8] = regs-&gt;a1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[14] = regs-&gt;d0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[15] = rdusp();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[16] = 0; /* orig_d0 */&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[17] = regs-&gt;sr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[18] = regs-&gt;pc;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  struct switch_stack *sw = ((struct switch_stack *)regs) - 1;&t;&bslash;&n;&t;  pr_reg[5] = sw-&gt;d6;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[6] = sw-&gt;d7;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[9] = sw-&gt;a2;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[10] = sw-&gt;a3;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[11] = sw-&gt;a4;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[12] = sw-&gt;a5;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[13] = sw-&gt;a6;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define ELF_CORE_COPY_REGS(pr_reg, regs)&t;&t;&t;&t;&bslash;&n;&t;/* Bleech. */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[0] = regs-&gt;d1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[1] = regs-&gt;d2;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[2] = regs-&gt;d3;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[3] = regs-&gt;d4;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[4] = regs-&gt;d5;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[7] = regs-&gt;a0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[8] = regs-&gt;a1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[14] = regs-&gt;d0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[15] = rdusp();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[16] = regs-&gt;orig_d0;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[17] = regs-&gt;sr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[18] = regs-&gt;pc;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[19] = (regs-&gt;format &lt;&lt; 12) | regs-&gt;vector;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  struct switch_stack *sw = ((struct switch_stack *)regs) - 1;&t;&bslash;&n;&t;  pr_reg[5] = sw-&gt;d6;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[6] = sw-&gt;d7;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[9] = sw-&gt;a2;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[10] = sw-&gt;a3;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[11] = sw-&gt;a4;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[12] = sw-&gt;a5;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  pr_reg[13] = sw-&gt;a6;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#endif
 eof

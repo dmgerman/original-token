@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 DECL|macro|offsetof
@@ -51,11 +51,10 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-DECL|variable|extra_sizes
-r_static
+DECL|variable|frame_extra_sizes
 r_const
 r_int
-id|extra_sizes
+id|frame_extra_sizes
 (braket
 l_int|16
 )braket
@@ -284,7 +283,7 @@ id|__unused
 )paren
 (brace
 r_struct
-id|sigcontext_struct
+id|sigcontext
 id|context
 suffix:semicolon
 r_struct
@@ -361,27 +360,7 @@ multiline_comment|/* get previous context (including pointer to possible extra j
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|usp
-comma
-r_sizeof
-(paren
-id|context
-)paren
-)paren
-)paren
-r_goto
-id|badframe
-suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -398,6 +377,9 @@ r_sizeof
 id|context
 )paren
 )paren
+)paren
+r_goto
+id|badframe
 suffix:semicolon
 id|fp
 op_assign
@@ -696,7 +678,7 @@ id|context.sc_fpstate
 suffix:semicolon
 id|fsize
 op_assign
-id|extra_sizes
+id|frame_extra_sizes
 (braket
 id|regs-&gt;format
 )braket
@@ -743,52 +725,39 @@ c_cond
 id|fsize
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|fp
-comma
-id|fsize
-)paren
-)paren
-r_goto
-id|badframe
-suffix:semicolon
 DECL|macro|frame_offset
 mdefine_line|#define frame_offset (sizeof(struct pt_regs)+sizeof(struct switch_stack))
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;movel %0,%/a0&bslash;n&bslash;t&quot;
-l_string|&quot;subl %1,%/a0&bslash;n&bslash;t&quot;
+l_string|&quot;   movel %0,%/a0&bslash;n&bslash;t&quot;
+l_string|&quot;   subl %1,%/a0&bslash;n&bslash;t&quot;
 multiline_comment|/* make room on stack */
-l_string|&quot;movel %/a0,%/sp&bslash;n&bslash;t&quot;
+l_string|&quot;   movel %/a0,%/sp&bslash;n&bslash;t&quot;
 multiline_comment|/* set stack pointer */
 multiline_comment|/* move switch_stack and pt_regs */
 l_string|&quot;1: movel %0@+,%/a0@+&bslash;n&bslash;t&quot;
 l_string|&quot;   dbra %2,1b&bslash;n&bslash;t&quot;
-l_string|&quot;lea %/sp@(%c3),%/a0&bslash;n&bslash;t&quot;
-multiline_comment|/* add offset of fmt stuff */
-l_string|&quot;lsrl  #2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;subql #1,%1&bslash;n&bslash;t&quot;
+l_string|&quot;   lea %/sp@(%c3),%/a0&bslash;n&bslash;t&quot;
+multiline_comment|/* add offset of fmt */
+l_string|&quot;   lsrl  #2,%1&bslash;n&bslash;t&quot;
+l_string|&quot;   subql #1,%1&bslash;n&bslash;t&quot;
 l_string|&quot;2: movesl %4@+,%2&bslash;n&bslash;t&quot;
-l_string|&quot;   movel %2,%/a0@+&bslash;n&bslash;t&quot;
+l_string|&quot;3: movel %2,%/a0@+&bslash;n&bslash;t&quot;
 l_string|&quot;   dbra %1,2b&bslash;n&bslash;t&quot;
-l_string|&quot;bral &quot;
+l_string|&quot;   bral &quot;
 id|SYMBOL_NAME_STR
 c_func
 (paren
 id|ret_from_signal
 )paren
+l_string|&quot;&bslash;n&quot;
+l_string|&quot;4:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;   .align 4&bslash;n&quot;
+l_string|&quot;   .long 2b,4b&bslash;n&quot;
+l_string|&quot;   .long 3b,4b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 multiline_comment|/* no outputs, it doesn&squot;t ever return */
 suffix:colon
@@ -826,10 +795,10 @@ l_string|&quot;a0&quot;
 suffix:semicolon
 DECL|macro|frame_offset
 macro_line|#undef frame_offset
+multiline_comment|/*&n;&t;&t; * If we ever get here an exception occured while&n;&t;&t; * building the above stack-frame.&n;&t;&t; */
 r_goto
 id|badframe
 suffix:semicolon
-multiline_comment|/* NOTREACHED */
 )brace
 r_return
 id|regs-&gt;d0
@@ -845,7 +814,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set up a signal frame...&n; *&n; * This routine is somewhat complicated by the fact that if the&n; * kernel may be entered by an exception other than a system call;&n; * e.g. a bus error or other &quot;bad&quot; exception.  If this is the case,&n; * then *all* the context on the kernel stack frame must be saved.&n; *&n; * For a large number of exceptions, the stack frame format is the same&n; * as that which will be created when the process traps back to the kernel&n; * when finished executing the signal handler.&t;In this case, nothing&n; * must be done.  This is exception frame format &quot;0&quot;.  For exception frame&n; * formats &quot;2&quot;, &quot;9&quot;, &quot;A&quot; and &quot;B&quot;, the extra information on the frame must&n; * be saved.  This information is saved on the user stack and restored&n; * when the signal handler is returned.&n; *&n; * The format of the user stack when executing the signal handler is:&n; *&n; *     usp -&gt;  RETADDR (points to code below)&n; *&t;       signum  (parm #1)&n; *&t;       sigcode (parm #2 ; vector number)&n; *&t;       scp     (parm #3 ; sigcontext pointer, pointer to #1 below)&n; *&t;       code1   (addaw #20,sp) ; pop parms and code off stack&n; *&t;       code2   (moveq #119,d0; trap #0) ; sigreturn syscall&n; *     #1|     oldmask&n; *&t; |     old usp&n; *&t; |     d0      (first saved reg)&n; *&t; |     d1&n; *&t; |     a0&n; *&t; |     a1&n; *&t; |     sr      (saved status register)&n; *&t; |     pc      (old pc; one to return to)&n; *&t; |     forvec  (format and vector word of old supervisor stack frame)&n; *&t; |     floating point context&n; *&n; * These are optionally followed by some extra stuff, depending on the&n; * stack frame interrupted. This is 1 longword for format &quot;2&quot;, 3&n; * longwords for format &quot;9&quot;, 6 longwords for format &quot;A&quot;, and 21&n; * longwords for format &quot;B&quot;.&n; */
 DECL|macro|UFRAME_SIZE
-mdefine_line|#define UFRAME_SIZE(fs) (sizeof(struct sigcontext_struct)/4 + 6 + fs/4)
+mdefine_line|#define UFRAME_SIZE(fs) (sizeof(struct sigcontext)/4 + 6 + fs/4)
 DECL|function|setup_frame
 r_static
 r_void
@@ -870,7 +839,7 @@ id|oldmask
 )paren
 (brace
 r_struct
-id|sigcontext_struct
+id|sigcontext
 id|context
 suffix:semicolon
 r_int
@@ -884,7 +853,7 @@ suffix:semicolon
 r_int
 id|fsize
 op_assign
-id|extra_sizes
+id|frame_extra_sizes
 (braket
 id|regs-&gt;format
 )braket
@@ -965,35 +934,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|frame
-comma
-id|UFRAME_SIZE
-c_func
-(paren
-id|fsize
-)paren
-op_star
-l_int|4
-)paren
-)paren
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|fsize
 )paren
 (brace
-id|memcpy_tofs
+r_if
+c_cond
+(paren
+id|copy_to_user
 (paren
 id|frame
 op_plus
@@ -1008,6 +955,12 @@ op_plus
 l_int|1
 comma
 id|fsize
+)paren
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 id|regs-&gt;stkadj
@@ -1259,7 +1212,10 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-id|memcpy_tofs
+r_if
+c_cond
+(paren
+id|copy_to_user
 (paren
 id|tframe
 comma
@@ -1270,6 +1226,12 @@ r_sizeof
 (paren
 id|context
 )paren
+)paren
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * no matter what frame format we were using before, we&n;&t; * will do the &quot;RTE&quot; using a normal 4 word frame.&n;&t; */
@@ -1693,7 +1655,7 @@ l_int|11
 (brace
 id|regs-&gt;stkadj
 op_assign
-id|extra_sizes
+id|frame_extra_sizes
 (braket
 id|regs-&gt;format
 )braket

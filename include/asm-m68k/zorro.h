@@ -520,8 +520,8 @@ DECL|macro|PROD_BLIZZARD_1230_IV
 mdefine_line|#define PROD_BLIZZARD_1230_IV  (0x11)&t;/* Blizzard 1230-IV/1260 Turbo Board */
 DECL|macro|PROD_BLIZZARD_2060SCSI
 mdefine_line|#define PROD_BLIZZARD_2060SCSI (0x18)&t;/* Blizzard 2060 SCSI Controller */
-DECL|macro|PROD_CYBERSTORM
-mdefine_line|#define PROD_CYBERSTORM        (0x19)&t;/* CyberStorm */
+DECL|macro|PROD_CYBERSTORM_II
+mdefine_line|#define PROD_CYBERSTORM_II     (0x19)&t;/* CyberStorm Mk II */
 DECL|macro|PROD_CYBERVISION
 mdefine_line|#define PROD_CYBERVISION       (0x22)&t;/* CyberVision64 Graphics Board */
 DECL|macro|MANUF_DPS

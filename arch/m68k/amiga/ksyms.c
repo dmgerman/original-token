@@ -2,6 +2,16 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/zorro.h&gt;
 macro_line|#include &lt;asm/amigatypes.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#include &lt;asm/amigatypes.h&gt;
+r_extern
+r_volatile
+id|u_short
+id|amiga_audio_min_period
+suffix:semicolon
+r_extern
+id|u_short
+id|amiga_audio_period
+suffix:semicolon
 DECL|variable|mach_amiga_symbol_table
 r_static
 r_struct
@@ -33,6 +43,18 @@ id|X
 c_func
 (paren
 id|amiga_chip_avail
+)paren
+comma
+id|X
+c_func
+(paren
+id|amiga_audio_period
+)paren
+comma
+id|X
+c_func
+(paren
+id|amiga_audio_min_period
 )paren
 comma
 id|X

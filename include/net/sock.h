@@ -17,6 +17,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
 macro_line|#include &lt;net/protocol.h&gt;&t;&t;/* struct inet_protocol */
+macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
+macro_line|#include &lt;net/x25.h&gt;
+macro_line|#endif
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
@@ -896,6 +899,13 @@ id|tcp_opt
 id|af_tcp
 suffix:semicolon
 macro_line|#endif&t;&t;
+macro_line|#endif
+macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
+DECL|member|x25
+id|x25_cb
+op_star
+id|x25
+suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 DECL|member|ax25

@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
@@ -461,13 +461,6 @@ id|bsun_vec
 suffix:semicolon
 id|vectors
 (braket
-id|VEC_FPBRUC
-)braket
-op_assign
-id|bsun_vec
-suffix:semicolon
-id|vectors
-(braket
 id|VEC_LINE11
 )braket
 op_assign
@@ -845,6 +838,24 @@ comma
 l_string|&quot;TRAP #14&quot;
 comma
 l_string|&quot;TRAP #15&quot;
+comma
+l_string|&quot;FPCP BSUN&quot;
+comma
+l_string|&quot;FPCP INEXACT&quot;
+comma
+l_string|&quot;FPCP DIV BY 0&quot;
+comma
+l_string|&quot;FPCP UNDERFLOW&quot;
+comma
+l_string|&quot;FPCP OPERAND ERROR&quot;
+comma
+l_string|&quot;FPCP OVERFLOW&quot;
+comma
+l_string|&quot;FPCP SNAN&quot;
+comma
+l_string|&quot;FPCP UNSUPPORTED OPERATION&quot;
+comma
+l_string|&quot;MMU CONFIGUATION ERROR&quot;
 )brace
 suffix:semicolon
 DECL|variable|space_names
@@ -1062,12 +1073,8 @@ suffix:semicolon
 id|do_page_fault
 c_func
 (paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-id|fp
+op_amp
+id|fp-&gt;ptregs
 comma
 id|addr
 comma
@@ -1267,12 +1274,8 @@ c_cond
 (paren
 id|do_page_fault
 (paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-id|fp
+op_amp
+id|fp-&gt;ptregs
 comma
 id|wba
 comma
@@ -1300,7 +1303,7 @@ id|WBSIZ_040
 r_case
 id|BA_SIZE_BYTE
 suffix:colon
-id|put_fs_byte
+id|put_user
 (paren
 id|wbd
 op_amp
@@ -1318,7 +1321,7 @@ suffix:semicolon
 r_case
 id|BA_SIZE_WORD
 suffix:colon
-id|put_fs_word
+id|put_user
 (paren
 id|wbd
 op_amp
@@ -1336,7 +1339,7 @@ suffix:semicolon
 r_case
 id|BA_SIZE_LONG
 suffix:colon
-id|put_fs_long
+id|put_user
 (paren
 id|wbd
 comma
@@ -1498,12 +1501,8 @@ l_int|2
 suffix:semicolon
 id|do_page_fault
 (paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-id|fp
+op_amp
+id|fp-&gt;ptregs
 comma
 id|addr
 comma
@@ -1834,14 +1833,12 @@ suffix:semicolon
 id|force_sig
 c_func
 (paren
-id|SIGSEGV
+id|SIGKILL
 comma
 id|current
 )paren
 suffix:semicolon
-id|user_space_fault
-op_assign
-l_int|0
+r_return
 suffix:semicolon
 )brace
 )brace
@@ -2040,20 +2037,26 @@ op_or
 id|MMU_WP
 )paren
 )paren
+(brace
+multiline_comment|/* Don&squot;t try to do anything further if an exception was&n;&t;&t;   handled. */
+r_if
+c_cond
+(paren
 id|do_page_fault
 (paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-id|fp
+op_amp
+id|fp-&gt;ptregs
 comma
 id|addr
 comma
 id|errorcode
 )paren
+OL
+l_int|0
+)paren
+r_return
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -2614,12 +2617,8 @@ id|MMU_I
 )paren
 id|do_page_fault
 (paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-id|fp
+op_amp
+id|fp-&gt;ptregs
 comma
 id|addr
 comma
@@ -3284,7 +3283,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Stack from %08lx:&bslash;n       &quot;
+l_string|&quot;Stack from %08lx:&quot;
 comma
 (paren
 r_int
@@ -3323,16 +3322,10 @@ r_if
 c_cond
 (paren
 id|i
-op_logical_and
-(paren
-(paren
-id|i
 op_mod
 l_int|8
-)paren
 op_eq
 l_int|0
-)paren
 )paren
 id|printk
 c_func
@@ -3343,7 +3336,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%08lx &quot;
+l_string|&quot; %08lx&quot;
 comma
 op_star
 id|stack
@@ -3353,7 +3346,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;&bslash;nCall Trace: &quot;
+l_string|&quot;&bslash;nCall Trace:&quot;
 )paren
 suffix:semicolon
 id|stack
@@ -3367,7 +3360,7 @@ id|addr
 suffix:semicolon
 id|i
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|module_start
 op_assign
@@ -3442,16 +3435,10 @@ r_if
 c_cond
 (paren
 id|i
-op_logical_and
-(paren
-(paren
-id|i
 op_mod
-l_int|8
-)paren
+l_int|4
 op_eq
 l_int|0
-)paren
 )paren
 id|printk
 c_func
@@ -3462,7 +3449,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[&lt;%08lx&gt;] &quot;
+l_string|&quot; [&lt;%08lx&gt;]&quot;
 comma
 id|addr
 )paren
@@ -3535,13 +3522,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|fp-&gt;ptregs.vector
-)paren
 OL
-l_int|48
-op_star
 l_int|4
+op_star
+r_sizeof
+(paren
+id|vec_names
+)paren
+op_div
+r_sizeof
+(paren
+id|vec_names
+(braket
+l_int|0
+)braket
+)paren
 )paren
 id|printk
 (paren

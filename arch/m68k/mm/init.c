@@ -11,7 +11,7 @@ macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -191,9 +191,7 @@ l_int|10
 suffix:semicolon
 id|i
 op_assign
-id|high_memory
-op_rshift
-id|PAGE_SHIFT
+id|max_mapnr
 suffix:semicolon
 r_while
 c_loop
@@ -318,6 +316,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifndef mm_cachebits
 multiline_comment|/*&n; * Bits to add to page descriptors for &quot;normal&quot; caching mode.&n; * For 68020/030 this is 0.&n; * For 68040, this is _PAGE_CACHE040 (cachable, copyback)&n; */
 DECL|variable|mm_cachebits
 r_int
@@ -326,6 +325,7 @@ id|mm_cachebits
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|function|kernel_page_table
 id|pte_t
 op_star
@@ -747,6 +747,8 @@ op_or
 id|_PAGE_CACHE040
 op_or
 id|_PAGE_GLOBAL040
+op_or
+id|_PAGE_ACCESSED
 suffix:semicolon
 id|physaddr
 op_add_assign
@@ -767,6 +769,8 @@ op_assign
 id|ktable
 op_or
 id|_PAGE_TABLE
+op_or
+id|_PAGE_ACCESSED
 suffix:semicolon
 )brace
 r_else
@@ -821,6 +825,8 @@ id|tbl
 )paren
 op_or
 id|_PAGE_TABLE
+op_or
+id|_PAGE_ACCESSED
 suffix:semicolon
 r_for
 c_loop
@@ -848,6 +854,8 @@ op_assign
 id|physaddr
 op_or
 id|_PAGE_PRESENT
+op_or
+id|_PAGE_ACCESSED
 suffix:semicolon
 multiline_comment|/* unmap the zero page */
 id|tbl
@@ -870,6 +878,8 @@ op_assign
 id|physaddr
 op_or
 id|_PAGE_PRESENT
+op_or
+id|_PAGE_ACCESSED
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
@@ -1007,10 +1017,12 @@ id|CPU_IS_040_OR_060
 r_int
 id|i
 suffix:semicolon
+macro_line|#ifndef mm_cachebits
 id|mm_cachebits
 op_assign
 id|_PAGE_CACHE040
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1179,53 +1191,6 @@ op_star
 id|PTRS_PER_PGD
 )paren
 suffix:semicolon
-id|task
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|tss.pagedir_v
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|swapper_pg_dir
-suffix:semicolon
-id|task
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|tss.pagedir_p
-op_assign
-id|VTOP
-(paren
-id|swapper_pg_dir
-)paren
-suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
-(paren
-l_string|&quot;task 0 pagedir at %p virt, %#lx phys&bslash;n&quot;
-comma
-id|task
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|tss.pagedir_v
-comma
-id|task
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|tss.pagedir_p
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* setup CPU root pointer for swapper task */
 id|task
 (braket
@@ -1239,7 +1204,7 @@ l_int|0
 op_assign
 l_int|0x80000000
 op_or
-id|_PAGE_SHORT
+id|_PAGE_TABLE
 suffix:semicolon
 id|task
 (braket
@@ -1251,13 +1216,30 @@ id|tss.crp
 l_int|1
 )braket
 op_assign
+id|VTOP
+(paren
+id|swapper_pg_dir
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+(paren
+l_string|&quot;task 0 pagedir at %p virt, %#lx phys&bslash;n&quot;
+comma
+id|swapper_pg_dir
+comma
 id|task
 (braket
 l_int|0
 )braket
 op_member_access_from_pointer
-id|tss.pagedir_p
+id|tss.crp
+(braket
+l_int|1
+)braket
+)paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1378,7 +1360,19 @@ id|PAGE_MASK
 suffix:semicolon
 id|high_memory
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|end_mem
+suffix:semicolon
+id|max_mapnr
+op_assign
+id|MAP_NR
+c_func
+(paren
+id|end_mem
+)paren
 suffix:semicolon
 id|start_mem
 op_assign
@@ -1393,7 +1387,7 @@ c_loop
 (paren
 id|start_mem
 OL
-id|high_memory
+id|end_mem
 )paren
 (brace
 id|clear_bit
@@ -1525,20 +1519,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-macro_line|#ifdef DEBUG
-id|printk
-(paren
-l_string|&quot;task[0] root table is %p&bslash;n&quot;
-comma
-id|task
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|tss.pagedir_v
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1663,24 +1643,30 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
-id|tmp
-op_assign
-id|nr_free_pages
-op_lshift
-id|PAGE_SHIFT
-suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;Memory: %luk/%luk available (%dk kernel code, %dk data)&bslash;n&quot;
 comma
-id|tmp
-op_rshift
+(paren
+r_int
+r_int
+)paren
+id|nr_free_pages
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
 l_int|10
+)paren
 comma
-id|high_memory
-op_rshift
+id|max_mapnr
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
 l_int|10
+)paren
 comma
 id|codepages
 op_lshift
@@ -1717,9 +1703,7 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|high_memory
-op_rshift
-id|PAGE_SHIFT
+id|max_mapnr
 suffix:semicolon
 id|val-&gt;totalram
 op_assign

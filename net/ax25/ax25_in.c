@@ -1557,6 +1557,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1574,10 +1578,6 @@ suffix:semicolon
 id|ax25-&gt;sk-&gt;dead
 op_assign
 l_int|1
-suffix:semicolon
-id|ax25-&gt;sk-&gt;shutdown
-op_or_assign
-id|SEND_SHUTDOWN
 suffix:semicolon
 )brace
 r_break
@@ -1609,6 +1609,8 @@ r_if
 c_cond
 (paren
 id|ax25-&gt;sk
+op_ne
+l_int|NULL
 )paren
 (brace
 id|ax25-&gt;sk-&gt;state
@@ -3393,19 +3395,9 @@ id|ax25-&gt;state
 op_ne
 id|AX25_STATE_4
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ax25_process_rx_frame: frame received - state = %d&bslash;n&quot;
-comma
-id|ax25-&gt;state
-)paren
-suffix:semicolon
 r_return
 id|queued
 suffix:semicolon
-)brace
 id|del_timer
 c_func
 (paren

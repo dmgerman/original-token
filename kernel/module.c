@@ -234,7 +234,7 @@ comma
 id|name
 )paren
 )paren
-op_ne
+OL
 l_int|0
 )paren
 r_return
@@ -551,7 +551,7 @@ comma
 id|name
 )paren
 )paren
-op_ne
+OL
 l_int|0
 )paren
 r_return
@@ -1217,7 +1217,7 @@ comma
 id|name
 )paren
 )paren
-op_ne
+OL
 l_int|0
 )paren
 r_return

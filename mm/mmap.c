@@ -273,10 +273,9 @@ r_return
 id|mm-&gt;brk
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, looks good - let it rip.&n;&t; */
-id|mm-&gt;brk
-op_assign
-id|brk
-suffix:semicolon
+r_if
+c_cond
+(paren
 id|do_mmap
 c_func
 (paren
@@ -300,8 +299,17 @@ id|MAP_PRIVATE
 comma
 l_int|0
 )paren
-suffix:semicolon
+op_ne
+id|oldbrk
+)paren
+(brace
 r_return
+id|mm-&gt;brk
+suffix:semicolon
+)brace
+r_return
+id|mm-&gt;brk
+op_assign
 id|brk
 suffix:semicolon
 )brace
@@ -870,6 +878,37 @@ id|len
 )paren
 suffix:semicolon
 multiline_comment|/* Clear old maps */
+multiline_comment|/* Check against address space limit. */
+r_if
+c_cond
+(paren
+(paren
+id|mm-&gt;total_vm
+op_lshift
+id|PAGE_SHIFT
+)paren
+op_plus
+id|len
+OG
+id|current-&gt;rlim
+(braket
+id|RLIMIT_AS
+)braket
+dot
+id|rlim_cur
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|vma
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/* Private writable mapping? Check memory availability.. */
 r_if
 c_cond

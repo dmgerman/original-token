@@ -6,6 +6,15 @@ macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
+r_extern
+r_void
+id|atari_microwire_cmd
+c_func
+(paren
+r_int
+id|cmd
+)paren
+suffix:semicolon
 DECL|variable|mach_atari_symbol_table
 r_static
 r_struct
@@ -102,6 +111,12 @@ id|X
 c_func
 (paren
 id|ikbd_mouse_disable
+)paren
+comma
+id|X
+c_func
+(paren
+id|atari_microwire_cmd
 )paren
 comma
 macro_line|#include &lt;linux/symtab_end.h&gt;

@@ -1941,7 +1941,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;                  &quot;
+l_string|&quot;                    &quot;
 )paren
 suffix:semicolon
 )brace

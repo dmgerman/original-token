@@ -4072,9 +4072,11 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Malloc up new buffer, compatible with net-2e. */
+multiline_comment|/* Omit the four octet CRC from the length. */
 r_int
 id|pkt_len
 op_assign
+(paren
 id|lp-&gt;rx_ring
 (braket
 id|entry
@@ -4083,6 +4085,9 @@ dot
 id|status
 op_rshift
 l_int|16
+)paren
+op_minus
+l_int|4
 suffix:semicolon
 r_struct
 id|sk_buff

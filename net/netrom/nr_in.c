@@ -378,6 +378,10 @@ id|sk-&gt;err
 op_assign
 id|ECONNREFUSED
 suffix:semicolon
+id|sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -459,6 +463,10 @@ suffix:semicolon
 id|sk-&gt;err
 op_assign
 l_int|0
+suffix:semicolon
+id|sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
 suffix:semicolon
 r_if
 c_cond
@@ -596,6 +604,10 @@ id|sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -636,6 +648,10 @@ suffix:semicolon
 id|sk-&gt;err
 op_assign
 id|ECONNRESET
+suffix:semicolon
+id|sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
 suffix:semicolon
 r_if
 c_cond

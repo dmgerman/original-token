@@ -2628,6 +2628,10 @@ id|bprm.sh_bang
 op_assign
 l_int|0
 suffix:semicolon
+id|bprm.java
+op_assign
+l_int|0
+suffix:semicolon
 id|bprm.loader
 op_assign
 l_int|0

@@ -336,6 +336,8 @@ DECL|macro|SOL_ROSE
 mdefine_line|#define SOL_ROSE&t;260
 DECL|macro|SOL_DECNET
 mdefine_line|#define SOL_DECNET&t;261
+DECL|macro|SOL_X25
+mdefine_line|#define&t;SOL_X25&t;&t;262
 DECL|macro|SOL_TCP
 mdefine_line|#define SOL_TCP&t;&t;6
 DECL|macro|SOL_UDP

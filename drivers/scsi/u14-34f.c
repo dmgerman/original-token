@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      27 Sep 1996 rev. 2.12 for linux 2.1.0&n; *          Portability cleanups (virtual/bus addressing, little/big endian&n; *          support).&n; *&n; *      09 Jul 1996 rev. 2.11 for linux 2.0.4&n; *          &quot;Data over/under-run&quot; no longer implies a redo on all targets.&n; *          Number of internal retries is now limited.&n; *&n; *      16 Apr 1996 rev. 2.10 for linux 1.3.90&n; *          New argument &quot;reset_flags&quot; to the reset routine.&n; *&n; *      21 Jul 1995 rev. 2.02 for linux 1.3.11&n; *          Fixed Data Transfer Direction for some SCSI commands.&n; *&n; *      13 Jun 1995 rev. 2.01 for linux 1.2.10&n; *          HAVE_OLD_UX4F_FIRMWARE should be defined for U34F boards when&n; *          the firmware prom is not the latest one (28008-006).&n; *&n; *      11 Mar 1995 rev. 2.00 for linux 1.2.0&n; *          Fixed a bug which prevented media change detection for removable&n; *          disk drives.&n; *&n; *      23 Feb 1995 rev. 1.18 for linux 1.1.94&n; *          Added a check for scsi_register returning NULL.&n; *&n; *      11 Feb 1995 rev. 1.17 for linux 1.1.91&n; *          U14F qualified to run with 32 sglists.&n; *          Now DEBUG_RESET is disabled by default.&n; *&n; *       9 Feb 1995 rev. 1.16 for linux 1.1.90&n; *          Use host-&gt;wish_block instead of host-&gt;block.&n; *&n; *       8 Feb 1995 rev. 1.15 for linux 1.1.89&n; *          Cleared target_time_out counter while performing a reset.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status&n; *          different from zero on a recovered error.&n; *          Auto detects if U14F boards have an old firmware revision.&n; *          Max number of scatter/gather lists set to 16 for all boards&n; *          (most installation run fine using 33 sglists, while other&n; *          has problems when using more then 16).&n; *&n; *      16 Jan 1995 rev. 1.13 for linux 1.1.81&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *  Copyright (C) 1994, 1995, 1996 Dario Ballabio (dario@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14/34F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
+multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      16 Nov 1996 rev. 2.20 for linux 2.1.10 and 2.0.25&n; *          Added multichannel support.&n; *&n; *      27 Sep 1996 rev. 2.12 for linux 2.1.0&n; *          Portability cleanups (virtual/bus addressing, little/big endian&n; *          support).&n; *&n; *      09 Jul 1996 rev. 2.11 for linux 2.0.4&n; *          &quot;Data over/under-run&quot; no longer implies a redo on all targets.&n; *          Number of internal retries is now limited.&n; *&n; *      16 Apr 1996 rev. 2.10 for linux 1.3.90&n; *          New argument &quot;reset_flags&quot; to the reset routine.&n; *&n; *      21 Jul 1995 rev. 2.02 for linux 1.3.11&n; *          Fixed Data Transfer Direction for some SCSI commands.&n; *&n; *      13 Jun 1995 rev. 2.01 for linux 1.2.10&n; *          HAVE_OLD_UX4F_FIRMWARE should be defined for U34F boards when&n; *          the firmware prom is not the latest one (28008-006).&n; *&n; *      11 Mar 1995 rev. 2.00 for linux 1.2.0&n; *          Fixed a bug which prevented media change detection for removable&n; *          disk drives.&n; *&n; *      23 Feb 1995 rev. 1.18 for linux 1.1.94&n; *          Added a check for scsi_register returning NULL.&n; *&n; *      11 Feb 1995 rev. 1.17 for linux 1.1.91&n; *          U14F qualified to run with 32 sglists.&n; *          Now DEBUG_RESET is disabled by default.&n; *&n; *       9 Feb 1995 rev. 1.16 for linux 1.1.90&n; *          Use host-&gt;wish_block instead of host-&gt;block.&n; *&n; *       8 Feb 1995 rev. 1.15 for linux 1.1.89&n; *          Cleared target_time_out counter while performing a reset.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status&n; *          different from zero on a recovered error.&n; *          Auto detects if U14F boards have an old firmware revision.&n; *          Max number of scatter/gather lists set to 16 for all boards&n; *          (most installation run fine using 33 sglists, while other&n; *          has problems when using more then 16).&n; *&n; *      16 Jan 1995 rev. 1.13 for linux 1.1.81&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *  Copyright (C) 1994, 1995, 1996 Dario Ballabio (dario@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14/34F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
 DECL|macro|HAVE_OLD_UX4F_FIRMWARE
 macro_line|#undef HAVE_OLD_UX4F_FIRMWARE
 multiline_comment|/*&n; *  The UltraStor 14F, 24F, and 34F are a family of intelligent, high&n; *  performance SCSI-2 host adapters.&n; *  Here is the scoop on the various models:&n; *&n; *  14F - ISA first-party DMA HA with floppy support and WD1003 emulation.&n; *  24F - EISA Bus Master HA with floppy support and WD1003 emulation.&n; *  34F - VESA Local-Bus Bus Master HA (no WD1003 emulation).&n; *&n; *  This code has been tested with up to two U14F boards, using both &n; *  firmware 28004-005/38004-004 (BIOS rev. 2.00) and the latest firmware&n; *  28004-006/38004-005 (BIOS rev. 2.01). &n; *&n; *  The latest firmware is required in order to get reliable operations when &n; *  clustering is enabled. ENABLE_CLUSTERING provides a performance increase&n; *  up to 50% on sequential access.&n; *&n; *  Since the Scsi_Host_Template structure is shared among all 14F and 34F,&n; *  the last setting of use_clustering is in effect for all of these boards.&n; *&n; *  Here a sample configuration using two U14F boards:&n; *&n; U14F0: PORT 0x330, BIOS 0xc8000, IRQ 11, DMA 5, SG 32, Mbox 16, CmdLun 2, C1.&n; U14F1: PORT 0x340, BIOS 0x00000, IRQ 10, DMA 6, SG 32, Mbox 16, CmdLun 2, C1.&n; *&n; *  The boot controller must have its BIOS enabled, while other boards can&n; *  have their BIOS disabled, or enabled to an higher address.&n; *  Boards are named Ux4F0, Ux4F1..., according to the port address order in&n; *  the io_port[] array.&n; *  &n; *  The following facts are based on real testing results (not on&n; *  documentation) on the above U14F board.&n; *  &n; *  - The U14F board should be jumpered for bus on time less or equal to 7 &n; *    microseconds, while the default is 11 microseconds. This is order to &n; *    get acceptable performance while using floppy drive and hard disk &n; *    together. The jumpering for 7 microseconds is: JP13 pin 15-16, &n; *    JP14 pin 7-8 and pin 9-10.&n; *    The reduction has a little impact on scsi performance.&n; *  &n; *  - If scsi bus length exceeds 3m., the scsi bus speed needs to be reduced&n; *    from 10Mhz to 5Mhz (do this by inserting a jumper on JP13 pin 7-8).&n; *&n; *  - If U14F on board firmware is older than 28004-006/38004-005,&n; *    the U14F board is unable to provide reliable operations if the scsi &n; *    request length exceeds 16Kbyte. When this length is exceeded the&n; *    behavior is: &n; *    - adapter_status equal 0x96 or 0xa3 or 0x93 or 0x94;&n; *    - adapter_status equal 0 and target_status equal 2 on for all targets&n; *      in the next operation following the reset.&n; *    This sequence takes a long time (&gt;3 seconds), so in the meantime&n; *    the SD_TIMEOUT in sd.c could expire giving rise to scsi aborts&n; *    (SD_TIMEOUT has been increased from 3 to 6 seconds in 1.1.31).&n; *    Because of this I had to DISABLE_CLUSTERING and to work around the&n; *    bus reset in the interrupt service routine, returning DID_BUS_BUSY&n; *    so that the operations are retried without complains from the scsi.c&n; *    code.&n; *    Any reset of the scsi bus is going to kill tape operations, since&n; *    no retry is allowed for tapes. Bus resets are more likely when the&n; *    scsi bus is under heavy load.&n; *    Requests using scatter/gather have a maximum length of 16 x 1024 bytes &n; *    when DISABLE_CLUSTERING is in effect, but unscattered requests could be&n; *    larger than 16Kbyte.&n; *&n; *    The new firmware has fixed all the above problems.&n; *&n; *  For U34F boards the latest bios prom is 38008-002 (BIOS rev. 2.01),&n; *  the latest firmware prom is 28008-006. Older firmware 28008-005 has&n; *  problems when using more then 16 scatter/gather lists.&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;wish_block = TRUE for all ISA boards.&n; */
@@ -83,6 +83,10 @@ DECL|macro|DEBUG_STATISTICS
 macro_line|#undef  DEBUG_STATISTICS
 DECL|macro|DEBUG_RESET
 macro_line|#undef  DEBUG_RESET
+DECL|macro|MAX_CHANNEL
+mdefine_line|#define MAX_CHANNEL 1
+DECL|macro|MAX_LUN
+mdefine_line|#define MAX_LUN 8
 DECL|macro|MAX_TARGET
 mdefine_line|#define MAX_TARGET 8
 DECL|macro|MAX_IRQ
@@ -213,15 +217,15 @@ id|target
 suffix:colon
 l_int|3
 suffix:semicolon
-multiline_comment|/* target SCSI id */
-DECL|member|ch_no
+multiline_comment|/* SCSI target id */
+DECL|member|channel
 r_int
 r_char
-id|ch_no
+id|channel
 suffix:colon
 l_int|2
 suffix:semicolon
-multiline_comment|/* SCSI channel (always 0 for 14f) */
+multiline_comment|/* SCSI channel number */
 DECL|member|lun
 r_int
 r_char
@@ -229,7 +233,7 @@ id|lun
 suffix:colon
 l_int|3
 suffix:semicolon
-multiline_comment|/* logical unit number */
+multiline_comment|/* SCSI logical unit number */
 DECL|member|PACKED
 r_int
 r_int
@@ -403,22 +407,28 @@ r_int
 id|in_reset
 suffix:semicolon
 multiline_comment|/* True if board is doing a reset */
-DECL|member|target_time_out
+DECL|member|target_to
 r_int
-id|target_time_out
+id|target_to
 (braket
 id|MAX_TARGET
+)braket
+(braket
+id|MAX_CHANNEL
 )braket
 suffix:semicolon
 multiline_comment|/* N. of timeout errors on target */
-DECL|member|target_reset
+DECL|member|target_redo
 r_int
-id|target_reset
+id|target_redo
 (braket
 id|MAX_TARGET
 )braket
+(braket
+id|MAX_CHANNEL
+)braket
 suffix:semicolon
-multiline_comment|/* If TRUE redo operation on target */
+multiline_comment|/* If TRUE redo i/o on target */
 DECL|member|retries
 r_int
 r_int
@@ -533,11 +543,12 @@ suffix:semicolon
 DECL|function|wait_on_busy
 r_static
 r_inline
-id|unchar
+r_int
 id|wait_on_busy
 c_func
 (paren
-id|ushort
+r_int
+r_int
 id|iobase
 )paren
 (brace
@@ -865,7 +876,8 @@ r_int
 id|port_detect
 c_func
 (paren
-id|ushort
+r_int
+r_int
 op_star
 id|port_base
 comma
@@ -885,6 +897,8 @@ comma
 id|dma_channel
 comma
 id|subversion
+comma
+id|c
 suffix:semicolon
 r_int
 r_char
@@ -1400,6 +1414,16 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
+id|unique_id
+op_assign
+op_star
+id|port_base
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
 id|n_io_port
 op_assign
 id|REGION_SIZE
@@ -1778,6 +1802,35 @@ id|dma_channel
 )paren
 suffix:semicolon
 )brace
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
+op_assign
+id|MAX_CHANNEL
+op_minus
+l_int|1
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
+op_assign
+id|MAX_TARGET
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_lun
+op_assign
+id|MAX_LUN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1975,6 +2028,93 @@ op_member_access_from_pointer
 id|hostt-&gt;use_clustering
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
+OG
+l_int|8
+op_logical_or
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_lun
+OG
+l_int|8
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: wide SCSI support enabled, max_id %u, max_lun %u.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_lun
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|c
+op_assign
+l_int|0
+suffix:semicolon
+id|c
+op_le
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
+suffix:semicolon
+id|c
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: SCSI channel %u enabled, host target ID %u.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+id|c
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|this_id
+)paren
+suffix:semicolon
 r_return
 id|TRUE
 suffix:semicolon
@@ -1982,6 +2122,7 @@ suffix:semicolon
 DECL|function|u14_34f_detect
 r_int
 id|u14_34f_detect
+c_func
 (paren
 id|Scsi_Host_Template
 op_star
@@ -1998,7 +2139,8 @@ id|k
 comma
 id|flags
 suffix:semicolon
-id|ushort
+r_int
+r_int
 id|io_port
 (braket
 )braket
@@ -2021,7 +2163,8 @@ comma
 l_int|0x0
 )brace
 suffix:semicolon
-id|ushort
+r_int
+r_int
 op_star
 id|port_base
 op_assign
@@ -2679,7 +2822,7 @@ id|do_trace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: qcomm, mbox %d, target %d, pid %ld.&bslash;n&quot;
+l_string|&quot;%s: qcomm, mbox %d, target %d.%d:%d, pid %ld.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -2689,7 +2832,11 @@ id|j
 comma
 id|i
 comma
+id|SCpnt-&gt;channel
+comma
 id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
 comma
 id|SCpnt-&gt;pid
 )paren
@@ -2740,6 +2887,10 @@ suffix:semicolon
 id|cpp-&gt;opcode
 op_assign
 id|OP_SCSI
+suffix:semicolon
+id|cpp-&gt;channel
+op_assign
+id|SCpnt-&gt;channel
 suffix:semicolon
 id|cpp-&gt;target
 op_assign
@@ -2846,7 +2997,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: qcomm, target %d, pid %ld, adapter busy, DID_ERROR, done.&bslash;n&quot;
+l_string|&quot;%s: qcomm, target %d.%d:%d, pid %ld, adapter busy, DID_ERROR,&quot;
+"&bslash;"
+l_string|&quot; done.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -2854,7 +3007,11 @@ c_func
 id|j
 )paren
 comma
+id|SCpnt-&gt;channel
+comma
 id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
 comma
 id|SCpnt-&gt;pid
 )paren
@@ -2987,7 +3144,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;%s: abort, target %d, pid %ld inactive.&bslash;n&quot;
+l_string|&quot;%s: abort, target %d.%d:%d, pid %ld inactive.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -2995,7 +3152,11 @@ c_func
 id|j
 )paren
 comma
+id|SCarg-&gt;channel
+comma
 id|SCarg-&gt;target
+comma
+id|SCarg-&gt;lun
 comma
 id|SCarg-&gt;pid
 )paren
@@ -3023,7 +3184,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: abort, mbox %d, target %d, pid %ld.&bslash;n&quot;
+l_string|&quot;%s: abort, mbox %d, target %d.%d:%d, pid %ld.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -3033,7 +3194,11 @@ id|j
 comma
 id|i
 comma
+id|SCarg-&gt;channel
+comma
 id|SCarg-&gt;target
+comma
+id|SCarg-&gt;lun
 comma
 id|SCarg-&gt;pid
 )paren
@@ -3357,6 +3522,8 @@ id|time
 comma
 id|k
 comma
+id|c
+comma
 id|limit
 op_assign
 l_int|0
@@ -3397,7 +3564,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: reset, enter, target %d, pid %ld, reset_flags %u.&bslash;n&quot;
+l_string|&quot;%s: reset, enter, target %d.%d:%d, pid %ld, reset_flags %u.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -3405,7 +3572,11 @@ c_func
 id|j
 )paren
 comma
+id|SCarg-&gt;channel
+comma
 id|SCarg-&gt;target
+comma
+id|SCarg-&gt;lun
 comma
 id|SCarg-&gt;pid
 comma
@@ -3517,30 +3688,22 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|k
+id|c
 op_assign
 l_int|0
 suffix:semicolon
-id|k
-OL
-id|MAX_TARGET
+id|c
+op_le
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
 suffix:semicolon
-id|k
+id|c
 op_increment
 )paren
-id|HD
-c_func
-(paren
-id|j
-)paren
-op_member_access_from_pointer
-id|target_reset
-(braket
-id|k
-)braket
-op_assign
-id|TRUE
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3550,24 +3713,50 @@ l_int|0
 suffix:semicolon
 id|k
 OL
-id|MAX_TARGET
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
 suffix:semicolon
 id|k
 op_increment
 )paren
+(brace
 id|HD
 c_func
 (paren
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_redo
 (braket
 id|k
+)braket
+(braket
+id|c
+)braket
+op_assign
+id|TRUE
+suffix:semicolon
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|target_to
+(braket
+id|k
+)braket
+(braket
+id|c
 )braket
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -4213,6 +4402,8 @@ id|j
 comma
 id|k
 comma
+id|c
+comma
 id|flags
 comma
 id|status
@@ -4808,9 +4999,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_reset
+id|target_redo
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 )paren
 id|status
@@ -4869,9 +5063,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_reset
+id|target_redo
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 op_assign
 id|FALSE
@@ -4888,15 +5085,17 @@ id|TYPE_DISK
 id|printk
 c_func
 (paren
-l_string|&quot;%s: ihdlr, target %d:%d, pid %ld, target_status &quot;
+l_string|&quot;%s: ihdlr, target %d.%d:%d, pid %ld, &quot;
 "&bslash;"
-l_string|&quot;0x%x, sense key 0x%x.&bslash;n&quot;
+l_string|&quot;target_status 0x%x, sense key 0x%x.&bslash;n&quot;
 comma
 id|BN
 c_func
 (paren
 id|j
 )paren
+comma
+id|SCpnt-&gt;channel
 comma
 id|SCpnt-&gt;target
 comma
@@ -4918,9 +5117,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_to
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 op_assign
 l_int|0
@@ -4963,9 +5165,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_to
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 OG
 l_int|1
@@ -4990,9 +5195,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_time_out
+id|target_to
 (braket
 id|SCpnt-&gt;target
+)braket
+(braket
+id|SCpnt-&gt;channel
 )braket
 op_increment
 suffix:semicolon
@@ -5019,13 +5227,37 @@ multiline_comment|/* SCSI bus reset error */
 r_for
 c_loop
 (paren
+id|c
+op_assign
+l_int|0
+suffix:semicolon
+id|c
+op_le
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_channel
+suffix:semicolon
+id|c
+op_increment
+)paren
+r_for
+c_loop
+(paren
 id|k
 op_assign
 l_int|0
 suffix:semicolon
 id|k
 OL
-id|MAX_TARGET
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|max_id
 suffix:semicolon
 id|k
 op_increment
@@ -5036,9 +5268,12 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|target_reset
+id|target_redo
 (braket
 id|k
+)braket
+(braket
+id|c
 )braket
 op_assign
 id|TRUE
@@ -5226,7 +5461,7 @@ c_func
 (paren
 l_string|&quot;%s: ihdlr, mbox %2d, err 0x%x:%x,&quot;
 "&bslash;"
-l_string|&quot; target %d:%d, pid %ld, count %d.&bslash;n&quot;
+l_string|&quot; target %d.%d:%d, pid %ld, count %d.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -5239,6 +5474,8 @@ comma
 id|spp-&gt;adapter_status
 comma
 id|spp-&gt;target_status
+comma
+id|SCpnt-&gt;channel
 comma
 id|SCpnt-&gt;target
 comma

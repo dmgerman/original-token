@@ -168,7 +168,7 @@ r_return
 id|sum
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * copy from fs while checksumming, otherwise like csum_partial&n; */
+multiline_comment|/*&n; * copy from user space while checksumming, otherwise like csum_partial&n; */
 r_int
 r_int
 DECL|function|csum_partial_copy_fromuser
@@ -210,7 +210,8 @@ l_string|&quot;jgt 1f&bslash;n&bslash;t&quot;
 l_string|&quot;addql #2,%1&bslash;n&bslash;t&quot;
 multiline_comment|/* len was == 2, treat only rest */
 l_string|&quot;jra 4f&bslash;n&quot;
-l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;10:&bslash;t&quot;
 l_string|&quot;movesw %2@+,%4&bslash;n&bslash;t&quot;
 multiline_comment|/* add first word to sum */
 l_string|&quot;addw %4,%0&bslash;n&bslash;t&quot;
@@ -227,28 +228,36 @@ multiline_comment|/* len/32 */
 l_string|&quot;jeq 2f&bslash;n&bslash;t&quot;
 multiline_comment|/* not enough... */
 l_string|&quot;subql #1,%1&bslash;n&quot;
-l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;11:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
+l_string|&quot;12:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
+l_string|&quot;13:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
+l_string|&quot;14:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
+l_string|&quot;15:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
+l_string|&quot;16:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
+l_string|&quot;17:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
+l_string|&quot;18:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
@@ -267,8 +276,9 @@ multiline_comment|/* number of rest longs */
 l_string|&quot;jeq 4f&bslash;n&bslash;t&quot;
 l_string|&quot;lsrw #2,%4&bslash;n&bslash;t&quot;
 l_string|&quot;subqw #1,%4&bslash;n&quot;
-l_string|&quot;3:&bslash;t&quot;
+l_string|&quot;3:&bslash;n&quot;
 multiline_comment|/* loop for rest longs */
+l_string|&quot;19:&bslash;t&quot;
 l_string|&quot;movesl %2@+,%5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movel %5,%3@+&bslash;n&bslash;t&quot;
@@ -284,6 +294,7 @@ l_string|&quot;clrl %5&bslash;n&bslash;t&quot;
 multiline_comment|/* clear tmp2 for rest bytes */
 l_string|&quot;subqw #2,%1&bslash;n&bslash;t&quot;
 l_string|&quot;jlt 5f&bslash;n&bslash;t&quot;
+l_string|&quot;20:&bslash;t&quot;
 l_string|&quot;movesw %2@+,%5&bslash;n&bslash;t&quot;
 multiline_comment|/* have rest &gt;= 2: get word */
 l_string|&quot;movew %5,%3@+&bslash;n&bslash;t&quot;
@@ -292,7 +303,8 @@ multiline_comment|/* into bits 16..31 */
 l_string|&quot;tstw %1&bslash;n&bslash;t&quot;
 multiline_comment|/* another byte? */
 l_string|&quot;jeq 6f&bslash;n&quot;
-l_string|&quot;5:&bslash;t&quot;
+l_string|&quot;5:&bslash;n&quot;
+l_string|&quot;21:&bslash;t&quot;
 l_string|&quot;movesb %2@,%5&bslash;n&bslash;t&quot;
 multiline_comment|/* have odd rest: get byte */
 l_string|&quot;moveb %5,%3@+&bslash;n&bslash;t&quot;
@@ -304,7 +316,21 @@ multiline_comment|/* now add rest long to sum */
 l_string|&quot;clrl %5&bslash;n&bslash;t&quot;
 l_string|&quot;addxl %5,%0&bslash;n&quot;
 multiline_comment|/* add X bit */
-l_string|&quot;7:&bslash;t&quot;
+l_string|&quot;7:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.long 10b,7b&bslash;n&quot;
+l_string|&quot;.long 11b,7b&bslash;n&quot;
+l_string|&quot;.long 12b,7b&bslash;n&quot;
+l_string|&quot;.long 13b,7b&bslash;n&quot;
+l_string|&quot;.long 14b,7b&bslash;n&quot;
+l_string|&quot;.long 15b,7b&bslash;n&quot;
+l_string|&quot;.long 16b,7b&bslash;n&quot;
+l_string|&quot;.long 17b,7b&bslash;n&quot;
+l_string|&quot;.long 18b,7b&bslash;n&quot;
+l_string|&quot;.long 19b,7b&bslash;n&quot;
+l_string|&quot;.long 20b,7b&bslash;n&quot;
+l_string|&quot;.long 21b,7b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
@@ -361,7 +387,7 @@ r_return
 id|sum
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * copy from ds while checksumming, otherwise like csum_partial&n; */
+multiline_comment|/*&n; * copy from kernel space while checksumming, otherwise like csum_partial&n; */
 r_int
 r_int
 DECL|function|csum_partial_copy

@@ -26,13 +26,16 @@ op_star
 id|cp
 comma
 op_star
-id|interp
-comma
-op_star
 id|i_name
 comma
 op_star
 id|i_arg
+suffix:semicolon
+r_char
+id|interp
+(braket
+l_int|128
+)braket
 suffix:semicolon
 r_int
 id|retval
@@ -182,10 +185,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|cp
-op_logical_or
-op_star
 id|cp
 op_eq
 l_char|&squot;&bslash;0&squot;
@@ -195,8 +194,13 @@ op_minus
 id|ENOEXEC
 suffix:semicolon
 multiline_comment|/* No interpreter name found */
+id|strcpy
+(paren
 id|interp
-op_assign
+comma
+id|cp
+)paren
+suffix:semicolon
 id|i_name
 op_assign
 id|cp
@@ -362,7 +366,11 @@ r_return
 op_minus
 id|E2BIG
 suffix:semicolon
-multiline_comment|/*&n;&t; * OK, now restart the process with the interpreter&squot;s inode.&n;&t; * Note that we use open_namei() as the name is now in kernel&n;&t; * space, and we don&squot;t need to copy it.&n;&t; */
+multiline_comment|/*&n;&t; * OK, now restart the process with the interpreter&squot;s inode.&n;&t; */
+id|bprm-&gt;filename
+op_assign
+id|interp
+suffix:semicolon
 id|retval
 op_assign
 id|open_namei

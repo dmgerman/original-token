@@ -39,13 +39,11 @@ id|mask
 suffix:semicolon
 multiline_comment|/* mask of capability: disables them */
 DECL|member|speed
-r_const
 r_int
 id|speed
 suffix:semicolon
 multiline_comment|/* maximum speed for reading data */
 DECL|member|capacity
-r_const
 r_int
 id|capacity
 suffix:semicolon

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -608,9 +608,13 @@ multiline_comment|/* this is a hack for non-kernel-mapped video buffers and simi
 r_if
 c_cond
 (paren
+id|MAP_NR
+c_func
+(paren
 id|page
+)paren
 op_ge
-id|high_memory
+id|max_mapnr
 )paren
 r_return
 l_int|0
@@ -896,9 +900,13 @@ multiline_comment|/* this is a hack for non-kernel-mapped video buffers and simi
 r_if
 c_cond
 (paren
+id|MAP_NR
+c_func
+(paren
 id|page
+)paren
 OL
-id|high_memory
+id|max_mapnr
 )paren
 (brace
 op_star
@@ -1934,31 +1942,7 @@ l_int|0
 r_return
 id|res
 suffix:semicolon
-id|res
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|data
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|res
-)paren
+r_return
 id|put_user
 c_func
 (paren
@@ -1972,9 +1956,6 @@ op_star
 id|data
 )paren
 suffix:semicolon
-r_return
-id|res
-suffix:semicolon
 )brace
 multiline_comment|/* read the word at location addr in the USER area. */
 r_case
@@ -1984,9 +1965,6 @@ suffix:colon
 r_int
 r_int
 id|tmp
-suffix:semicolon
-r_int
-id|res
 suffix:semicolon
 r_if
 c_cond
@@ -2012,33 +1990,6 @@ id|user
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-id|res
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|data
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|res
-)paren
-r_return
-id|res
 suffix:semicolon
 id|tmp
 op_assign
@@ -2108,6 +2059,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+r_return
 id|put_user
 c_func
 (paren
@@ -2120,9 +2072,6 @@ op_star
 )paren
 id|data
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* when I and D space are separate, this will have to be fixed. */

@@ -831,6 +831,10 @@ id|sk-&gt;err
 op_assign
 id|ENETUNREACH
 suffix:semicolon
+id|sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren

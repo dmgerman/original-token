@@ -1107,6 +1107,12 @@ id|blocks
 op_decrement
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|blocks
+)paren
+(brace
 macro_line|#if (NDEBUG &amp; NDEBUG_C400_PREAD)
 id|printk
 c_func
@@ -1187,6 +1193,16 @@ suffix:semicolon
 id|blocks
 op_decrement
 suffix:semicolon
+)brace
+macro_line|#if (NDEBUG &amp; NDEBUG_C400_PREAD)
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;53C400r: No EXTRA required&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if (NDEBUG &amp; NDEBUG_C400_PREAD)
 id|printk
 c_func

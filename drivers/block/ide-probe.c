@@ -82,7 +82,7 @@ c_func
 id|id
 )paren
 suffix:semicolon
-macro_line|#if defined (CONFIG_SCSI_EATA_DMA) || defined (CONFIG_SCSI_EATA_PIO)
+macro_line|#if defined (CONFIG_SCSI_EATA_DMA) || defined (CONFIG_SCSI_EATA_PIO) || defined (CONFIG_SCSI_EATA)
 multiline_comment|/*&n;&t; * EATA SCSI controllers do a hardware ATA emulation:&n;&t; * Ignore them if there is a driver for them available.&n;&t; */
 r_if
 c_cond

@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;asm/font.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;../../../drivers/char/vt_kern.h&quot;   /* vt_cons and vc_resize_con() */
 multiline_comment|/* Import console_blanked from console.c */
 r_extern
@@ -427,7 +428,7 @@ r_int
 id|setcol
 comma
 r_int
-id|cls
+id|init
 )paren
 suffix:semicolon
 r_static
@@ -2601,7 +2602,7 @@ id|unit
 comma
 l_int|1
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2647,7 +2648,7 @@ id|con
 comma
 l_int|1
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -2667,7 +2668,7 @@ r_int
 id|setcol
 comma
 r_int
-id|cls
+id|init
 )paren
 (brace
 r_struct
@@ -2687,6 +2688,11 @@ op_star
 id|conp
 op_assign
 id|p-&gt;conp
+suffix:semicolon
+r_int
+id|nr_rows
+comma
+id|nr_cols
 suffix:semicolon
 id|p-&gt;var.xoffset
 op_assign
@@ -2808,18 +2814,34 @@ id|p-&gt;scrollmode
 op_assign
 id|SCROLL_YMOVE
 suffix:semicolon
-id|conp-&gt;vc_cols
+id|nr_cols
 op_assign
 id|p-&gt;var.xres
 op_div
 id|p-&gt;fontwidth
 suffix:semicolon
-id|conp-&gt;vc_rows
+id|nr_rows
 op_assign
 id|p-&gt;var.yres
 op_div
 id|p-&gt;fontheight
 suffix:semicolon
+multiline_comment|/* ++guenther: console.c:vc_allocate() relies on initializing vc_{cols,rows},&n;    * but we must not set those if we are only resizing the console.&n;    */
+r_if
+c_cond
+(paren
+id|init
+)paren
+(brace
+id|conp-&gt;vc_cols
+op_assign
+id|nr_cols
+suffix:semicolon
+id|conp-&gt;vc_rows
+op_assign
+id|nr_rows
+suffix:semicolon
+)brace
 id|p-&gt;vrows
 op_assign
 id|p-&gt;var.yres_virtual
@@ -3220,14 +3242,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cls
+op_logical_neg
+id|init
 )paren
 id|vc_resize_con
 c_func
 (paren
-id|conp-&gt;vc_rows
+id|nr_rows
 comma
-id|conp-&gt;vc_cols
+id|nr_cols
 comma
 id|con
 )paren
@@ -5502,6 +5525,30 @@ id|disp
 id|unit
 )braket
 suffix:semicolon
+multiline_comment|/* Avoid flickering if there&squot;s no real change. */
+r_if
+c_cond
+(paren
+id|p-&gt;cursor_x
+op_eq
+id|conp-&gt;vc_x
+op_logical_and
+id|p-&gt;cursor_y
+op_eq
+id|conp-&gt;vc_y
+op_logical_and
+(paren
+id|mode
+op_eq
+id|CM_ERASE
+)paren
+op_eq
+op_logical_neg
+id|cursor_on
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7143,7 +7190,7 @@ id|MAX_FONT_NAME
 r_return
 id|i
 suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|name

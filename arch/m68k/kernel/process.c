@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
@@ -645,6 +645,11 @@ op_star
 id|dump
 )paren
 (brace
+r_struct
+id|switch_stack
+op_star
+id|sw
+suffix:semicolon
 multiline_comment|/* changed the size calculations - should hopefully work better. lbt */
 id|dump-&gt;magic
 op_assign
@@ -759,12 +764,7 @@ id|dump
 )paren
 )paren
 suffix:semicolon
-id|dump-&gt;regs
-op_assign
-op_star
-id|regs
-suffix:semicolon
-id|dump-&gt;regs2
+id|sw
 op_assign
 (paren
 (paren
@@ -774,10 +774,94 @@ op_star
 )paren
 id|regs
 )paren
-(braket
 op_minus
 l_int|1
-)braket
+suffix:semicolon
+id|dump-&gt;regs.d1
+op_assign
+id|regs-&gt;d1
+suffix:semicolon
+id|dump-&gt;regs.d2
+op_assign
+id|regs-&gt;d2
+suffix:semicolon
+id|dump-&gt;regs.d3
+op_assign
+id|regs-&gt;d3
+suffix:semicolon
+id|dump-&gt;regs.d4
+op_assign
+id|regs-&gt;d4
+suffix:semicolon
+id|dump-&gt;regs.d5
+op_assign
+id|regs-&gt;d5
+suffix:semicolon
+id|dump-&gt;regs.d6
+op_assign
+id|sw-&gt;d6
+suffix:semicolon
+id|dump-&gt;regs.d7
+op_assign
+id|sw-&gt;d7
+suffix:semicolon
+id|dump-&gt;regs.a0
+op_assign
+id|regs-&gt;a0
+suffix:semicolon
+id|dump-&gt;regs.a1
+op_assign
+id|regs-&gt;a1
+suffix:semicolon
+id|dump-&gt;regs.a2
+op_assign
+id|sw-&gt;a2
+suffix:semicolon
+id|dump-&gt;regs.a3
+op_assign
+id|sw-&gt;a3
+suffix:semicolon
+id|dump-&gt;regs.a4
+op_assign
+id|sw-&gt;a4
+suffix:semicolon
+id|dump-&gt;regs.a5
+op_assign
+id|sw-&gt;a5
+suffix:semicolon
+id|dump-&gt;regs.a6
+op_assign
+id|sw-&gt;a6
+suffix:semicolon
+id|dump-&gt;regs.d0
+op_assign
+id|regs-&gt;d0
+suffix:semicolon
+id|dump-&gt;regs.orig_d0
+op_assign
+id|regs-&gt;orig_d0
+suffix:semicolon
+id|dump-&gt;regs.stkadj
+op_assign
+id|regs-&gt;stkadj
+suffix:semicolon
+id|dump-&gt;regs.sr
+op_assign
+id|regs-&gt;sr
+suffix:semicolon
+id|dump-&gt;regs.pc
+op_assign
+id|regs-&gt;pc
+suffix:semicolon
+id|dump-&gt;regs.fmtvec
+op_assign
+(paren
+id|regs-&gt;format
+op_lshift
+l_int|12
+)paren
+op_or
+id|regs-&gt;vector
 suffix:semicolon
 multiline_comment|/* dump floating point stuff */
 id|dump-&gt;u_fpvalid

@@ -1150,11 +1150,6 @@ id|mach_gettod
 op_assign
 id|a3000_gettod
 suffix:semicolon
-id|mach_max_dma_address
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;* default MAX_DMA 0xffffffff&n;&t;&t;&t;&t;&t;* on Z3 machines - we should&n;&t;&t;&t;&t;&t;* consider adding something&n;&t;&t;&t;&t;&t;* like a dma_mask in kmalloc&n;&t;&t;&t;&t;&t;* later on, so people using Z2&n;&t;&t;&t;&t;&t;* boards in Z3 machines won&squot;t&n;&t;&t;&t;&t;&t;* get into trouble - Jes&n;&t;&t;&t;&t;&t;*/
 )brace
 r_else
 (brace
@@ -1163,12 +1158,12 @@ id|mach_gettod
 op_assign
 id|a2000_gettod
 suffix:semicolon
+)brace
 id|mach_max_dma_address
 op_assign
-l_int|0x00ffffff
+l_int|0xffffffff
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;* default MAX_DMA 0x00ffffff&n;&t;&t;&t;&t;&t;* on Z2 machines.&n;&t;&t;&t;&t;&t;*/
-)brace
+multiline_comment|/*&n;&t;&t;&t;&t;      * default MAX_DMA=0xffffffff&n;&t;&t;&t;&t;      * on all machines. If we don&squot;t&n;&t;&t;&t;&t;      * do so, the SCSI code will not&n;&t;&t;&t;&t;      * be able to allocate any mem&n;&t;&t;&t;&t;      * for transfers, unless we are&n;&t;&t;&t;&t;      * dealing with a Z2 mem only&n;&t;&t;&t;&t;      * system.                  /Jes&n;&t;&t;&t;&t;      */
 id|mach_hwclk
 op_assign
 id|amiga_hwclk
@@ -1720,8 +1715,8 @@ id|TOD2000_CNTRL3_24HMODE
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
+(paren
 id|tod-&gt;hour1
 op_amp
 id|TOD2000_HOUR1_PM
@@ -2064,8 +2059,8 @@ id|TOD2000_CNTRL3_24HMODE
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
+(paren
 id|tod-&gt;hour1
 op_amp
 id|TOD2000_HOUR1_PM

@@ -3,7 +3,10 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_void
@@ -20,6 +23,14 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_const
+r_int
+id|frame_extra_sizes
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* in m68k/kernel/signal.c */
 multiline_comment|/*&n; * This routine handles page faults.  It determines the problem, and&n; * then passes it off to one of the appropriate routines.&n; *&n; * error_code:&n; *&t;bit 0 == 0 means no page found, 1 means protection fault&n; *&t;bit 1 == 0 means read, 1 means write&n; *&n; * If this routine detects a bad access, it returns 1, otherwise it&n; * returns 0.&n; */
 DECL|function|do_page_fault
 id|asmlinkage
@@ -41,10 +52,25 @@ r_int
 id|error_code
 )paren
 (brace
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_struct
+id|task_struct
+op_star
+comma
 r_struct
 id|vm_area_struct
 op_star
-id|vma
+comma
+r_int
+r_int
+comma
+r_int
+)paren
 suffix:semicolon
 r_struct
 id|task_struct
@@ -60,6 +86,20 @@ id|mm
 op_assign
 id|tsk-&gt;mm
 suffix:semicolon
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+suffix:semicolon
+r_int
+r_int
+id|fixup
+comma
+id|fault_pc
+suffix:semicolon
+r_int
+id|write
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 (paren
@@ -73,7 +113,7 @@ id|address
 comma
 id|error_code
 comma
-id|tsk-&gt;tss.pagedir_v
+id|tsk-&gt;mm-&gt;pgd
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -170,15 +210,34 @@ suffix:semicolon
 multiline_comment|/*&n; * Ok, we have a good vm_area for this memory access, so&n; * we can handle it..&n; */
 id|good_area
 suffix:colon
-multiline_comment|/*&n;&t; * was it a write?&n;&t; */
-r_if
+id|write
+op_assign
+l_int|0
+suffix:semicolon
+id|handler
+op_assign
+id|do_no_page
+suffix:semicolon
+r_switch
 c_cond
 (paren
 id|error_code
 op_amp
-l_int|2
+l_int|3
 )paren
 (brace
+r_default
+suffix:colon
+multiline_comment|/* 3: write, present */
+id|handler
+op_assign
+id|do_wp_page
+suffix:semicolon
+multiline_comment|/* fall through */
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* write, not present */
 r_if
 c_cond
 (paren
@@ -192,20 +251,22 @@ id|VM_WRITE
 r_goto
 id|bad_area
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* read with protection fault? */
-r_if
-c_cond
-(paren
-id|error_code
-op_amp
+id|write
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|1
-)paren
+suffix:colon
+multiline_comment|/* read, present */
 r_goto
 id|bad_area
 suffix:semicolon
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/* read, not present */
 r_if
 c_cond
 (paren
@@ -224,15 +285,7 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|error_code
-op_amp
-l_int|1
-)paren
-(brace
-id|do_wp_page
+id|handler
 c_func
 (paren
 id|tsk
@@ -241,34 +294,7 @@ id|vma
 comma
 id|address
 comma
-id|error_code
-op_amp
-l_int|2
-)paren
-suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|mm-&gt;mmap_sem
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|do_no_page
-c_func
-(paren
-id|tsk
-comma
-id|vma
-comma
-id|address
-comma
-id|error_code
-op_amp
-l_int|2
+id|write
 )paren
 suffix:semicolon
 id|up
@@ -300,6 +326,110 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+multiline_comment|/* Are we prepared to handle this fault?  */
+r_if
+c_cond
+(paren
+id|CPU_IS_060
+op_logical_and
+id|regs-&gt;format
+op_eq
+l_int|4
+)paren
+id|fault_pc
+op_assign
+(paren
+(paren
+r_struct
+id|frame
+op_star
+)paren
+id|regs
+)paren
+op_member_access_from_pointer
+id|un.fmt4.pc
+suffix:semicolon
+r_else
+id|fault_pc
+op_assign
+id|regs-&gt;pc
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|fixup
+op_assign
+id|search_exception_table
+c_func
+(paren
+id|fault_pc
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_struct
+id|pt_regs
+op_star
+id|tregs
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Exception at %lx (%lx)&bslash;n&quot;
+comma
+id|fault_pc
+comma
+id|fixup
+)paren
+suffix:semicolon
+multiline_comment|/* Create a new four word stack frame, discarding the old&n;&t;&t;   one.  */
+id|regs-&gt;stkadj
+op_assign
+id|frame_extra_sizes
+(braket
+id|regs-&gt;format
+)braket
+suffix:semicolon
+id|tregs
+op_assign
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+(paren
+(paren
+id|ulong
+)paren
+id|regs
+op_plus
+id|regs-&gt;stkadj
+)paren
+suffix:semicolon
+id|tregs-&gt;vector
+op_assign
+id|regs-&gt;vector
+suffix:semicolon
+id|tregs-&gt;format
+op_assign
+l_int|0
+suffix:semicolon
+id|tregs-&gt;pc
+op_assign
+id|fixup
+suffix:semicolon
+id|tregs-&gt;sr
+op_assign
+id|regs-&gt;sr
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -2682,8 +2682,6 @@ id|AX25_VALUES_T1
 )braket
 op_assign
 id|AX25_DEF_T1
-op_star
-id|PR_SLOWHZ
 suffix:semicolon
 id|ax25_dev-&gt;values
 (braket
@@ -2691,8 +2689,6 @@ id|AX25_VALUES_T2
 )braket
 op_assign
 id|AX25_DEF_T2
-op_star
-id|PR_SLOWHZ
 suffix:semicolon
 id|ax25_dev-&gt;values
 (braket
@@ -2700,8 +2696,6 @@ id|AX25_VALUES_T3
 )braket
 op_assign
 id|AX25_DEF_T3
-op_star
-id|PR_SLOWHZ
 suffix:semicolon
 id|ax25_dev-&gt;values
 (braket
@@ -2709,10 +2703,6 @@ id|AX25_VALUES_IDLE
 )braket
 op_assign
 id|AX25_DEF_IDLE
-op_star
-id|PR_SLOWHZ
-op_star
-l_int|60
 suffix:semicolon
 id|ax25_dev-&gt;values
 (braket

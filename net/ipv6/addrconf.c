@@ -1546,7 +1546,7 @@ r_else
 (brace
 id|rtmsg.rtmsg_prefixlen
 op_assign
-l_int|128
+l_int|10
 suffix:semicolon
 id|rtmsg.rtmsg_dst.s6_addr32
 (braket
@@ -1572,7 +1572,7 @@ l_int|1
 suffix:semicolon
 id|rtmsg.rtmsg_flags
 op_assign
-id|RTF_HOST
+id|RTF_NEXTHOP
 op_or
 id|RTF_UP
 suffix:semicolon

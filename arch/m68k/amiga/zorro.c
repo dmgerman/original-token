@@ -1885,9 +1885,9 @@ id|BLIZZARD_2060SCSI
 id|PROD
 c_func
 (paren
-l_string|&quot;CyberStorm&quot;
+l_string|&quot;CyberStorm Mk II&quot;
 comma
-id|CYBERSTORM
+id|CYBERSTORM_II
 )paren
 id|PROD
 c_func

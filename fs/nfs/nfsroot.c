@@ -6049,15 +6049,13 @@ r_int
 id|version
 )paren
 (brace
-r_int
+id|gid_t
 id|groups
 (braket
 )braket
 op_assign
 (brace
 l_int|0
-comma
-id|NOGROUP
 )brace
 suffix:semicolon
 r_if
@@ -6114,6 +6112,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|1
 comma
 id|groups
 )paren
