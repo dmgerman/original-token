@@ -1151,6 +1151,7 @@ multiline_comment|/* release */
 )brace
 suffix:semicolon
 DECL|variable|blkdev_inode_operations
+r_static
 r_struct
 id|inode_operations
 id|blkdev_inode_operations
@@ -1329,6 +1330,7 @@ multiline_comment|/* release */
 )brace
 suffix:semicolon
 DECL|variable|chrdev_inode_operations
+r_static
 r_struct
 id|inode_operations
 id|chrdev_inode_operations

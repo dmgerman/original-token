@@ -1158,7 +1158,7 @@ id|BLIST_ISROM
 )brace
 comma
 (brace
-l_string|&quot;Toshiba&quot;
+l_string|&quot;TOSHIBA&quot;
 comma
 l_string|&quot;DVD-RAM SD-W1101&quot;
 comma
@@ -1168,7 +1168,7 @@ id|BLIST_GHOST
 )brace
 comma
 (brace
-l_string|&quot;Toshiba&quot;
+l_string|&quot;TOSHIBA&quot;
 comma
 l_string|&quot;DVD-RAM SD-W1111&quot;
 comma

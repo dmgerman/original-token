@@ -4796,6 +4796,15 @@ comma
 id|PCI_DEVICE_ID_INTEL_82371AB_0
 )paren
 suffix:colon
+r_case
+id|ID
+c_func
+(paren
+id|PCI_VENDOR_ID_AL
+comma
+id|PCI_DEVICE_ID_AL_M1533
+)paren
+suffix:colon
 multiline_comment|/* Intel PIIX: PIRQ holds configuration register address */
 id|pci_read_config_byte
 c_func

@@ -8,7 +8,7 @@ id|drm_flags
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* drm_parse_option parses a single option.  See description for&n;   drm_parse_drm for details. */
+multiline_comment|/* drm_parse_option parses a single option.  See description for&n;   drm_parse_options for details. */
 DECL|function|drm_parse_option
 r_static
 r_void

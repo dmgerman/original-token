@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *&t; Aironet 4500/4800 driver core&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;&t;Copyright: &t;GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
 multiline_comment|/* CHANGELOG:&n; &t;march 99, stable version 2.0&n; &t;august 99, stable version 2.2&n; &t;november 99, integration with 2.3&n;&t;17.12.99: finally, got SMP near-correct. &n;&t;&t;timing issues remain- on SMP box its 15% slower on tcp&t;&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;

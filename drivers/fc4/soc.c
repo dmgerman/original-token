@@ -985,7 +985,14 @@ l_int|NULL
 suffix:semicolon
 id|flags
 op_assign
+id|xram_get_16
+(paren
+(paren
+id|xram_p
+)paren
+op_amp
 id|hwrsp-&gt;shdr.flags
+)paren
 suffix:semicolon
 id|count
 op_assign

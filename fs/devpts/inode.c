@@ -1105,25 +1105,16 @@ id|sbi-&gt;max_ptys
 r_return
 suffix:semicolon
 multiline_comment|/* Bogus */
-id|inode-&gt;i_mode
-op_assign
-id|S_IFCHR
-suffix:semicolon
-id|inode-&gt;i_rdev
-op_assign
-id|MKDEV
+multiline_comment|/* Gets filled in by devpts_pty_new() */
+id|init_special_inode
 c_func
 (paren
-l_int|0
+id|inode
+comma
+id|S_IFCHR
 comma
 l_int|0
 )paren
-suffix:semicolon
-multiline_comment|/* Gets filled in by devpts_pty_new() */
-id|inode-&gt;i_op
-op_assign
-op_amp
-id|chrdev_inode_operations
 suffix:semicolon
 r_return
 suffix:semicolon

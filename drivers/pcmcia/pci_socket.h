@@ -54,6 +54,11 @@ DECL|member|cap
 id|socket_cap_t
 id|cap
 suffix:semicolon
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
 DECL|typedef|pci_socket_t
 )brace
 id|pci_socket_t

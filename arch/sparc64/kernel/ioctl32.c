@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.71 1999/12/19 23:13:13 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.72 2000/01/04 15:43:45 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13386,9 +13386,6 @@ id|PPPIOCGDEBUG
 suffix:colon
 r_case
 id|PPPIOCSDEBUG
-suffix:colon
-r_case
-id|PPPIOCGIDLE
 suffix:colon
 r_case
 id|PPPIOCNEWUNIT

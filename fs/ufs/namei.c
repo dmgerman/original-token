@@ -3694,7 +3694,7 @@ c_cond
 (paren
 id|l
 OG
-id|dir-&gt;i_sb-&gt;s_blocksize
+id|sb-&gt;s_blocksize
 )paren
 r_goto
 id|out
@@ -3733,11 +3733,12 @@ id|S_IFLNK
 op_or
 id|S_IRWXUGO
 suffix:semicolon
-multiline_comment|/***if (l &gt; sizeof (inode-&gt;u.ufs_i.i_data)) {***/
 r_if
 c_cond
 (paren
-l_int|1
+id|l
+OG
+id|sb-&gt;u.ufs_sb.s_uspi-&gt;s_maxsymlinklen
 )paren
 (brace
 multiline_comment|/* slow symlink */

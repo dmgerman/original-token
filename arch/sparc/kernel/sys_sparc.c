@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.55 1999/12/21 14:09:09 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.56 2000/01/04 11:01:26 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1041,6 +1041,7 @@ r_int
 id|pgoff
 )paren
 (brace
+multiline_comment|/* Make sure the shift for mmap2 is constant (12), no matter what PAGE_SIZE&n;&t;   we have. */
 r_return
 id|do_mmap2
 c_func
@@ -1056,6 +1057,12 @@ comma
 id|fd
 comma
 id|pgoff
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|12
+)paren
 )paren
 suffix:semicolon
 )brace

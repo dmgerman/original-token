@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995-1999 Kai Makisara.&n;&n;   Last modified: Sat Aug  7 13:42:21 1999 by makisara@kai.makisara.local&n;*/
+multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995-2000 Kai Makisara.&n;&n;   Last modified: Sat Jan  1 18:34:38 2000 by makisara@kai.makisara.local&n;*/
 macro_line|#ifndef _ST_OPTIONS_H
 DECL|macro|_ST_OPTIONS_H
 mdefine_line|#define _ST_OPTIONS_H

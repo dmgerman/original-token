@@ -20,11 +20,6 @@ r_char
 id|dma
 suffix:semicolon
 multiline_comment|/* DMA-able buffer */
-DECL|member|this_size
-r_int
-id|this_size
-suffix:semicolon
-multiline_comment|/* allocated size of the structure */
 DECL|member|buffer_size
 r_int
 id|buffer_size

@@ -421,6 +421,11 @@ id|__u32
 id|s_bpfmask
 suffix:semicolon
 multiline_comment|/* bits per fragment mask */
+DECL|member|s_maxsymlinklen
+id|__u32
+id|s_maxsymlinklen
+suffix:semicolon
+multiline_comment|/* upper limit on fast symlinks&squot; size */
 )brace
 suffix:semicolon
 DECL|macro|UFS_MAX_GROUP_LOADED

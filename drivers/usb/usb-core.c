@@ -2,175 +2,169 @@ multiline_comment|/*&n; * driver/usb/usb-core.c&n; *&n; * (C) Copyright David Wa
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &quot;inits.h&quot;
 macro_line|#include &quot;usb.h&quot;
-macro_line|#ifndef CONFIG_USB_MODULE
-macro_line|#&t;ifdef CONFIG_USB_UHCI
+multiline_comment|/*&n; * USB core&n; */
 r_int
-id|uhci_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_OHCI_HCD
-r_int
-id|ohci_hcd_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#endif
-DECL|function|usb_init
-r_int
-id|usb_init
-c_func
-(paren
-r_void
-)paren
-(brace
-id|usb_major_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_USB_PROC
-id|proc_usb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|usb_hub_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_USB_MODULE
-macro_line|#&t;ifdef CONFIG_USB_UHCI
-id|uhci_init
+r_void
+id|usb_hub_cleanup
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_OHCI_HCD
-id|ohci_hcd_init
+r_int
+id|usb_major_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#       ifdef CONFIG_USB_SCANNER
-id|usb_scanner_init
+r_void
+id|usb_major_cleanup
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#       endif
-macro_line|#&t;ifdef CONFIG_USB_AUDIO
-id|usb_audio_init
+r_int
+id|proc_usb_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_ACM
+r_void
+id|proc_usb_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * USB device drivers&n; */
+r_int
 id|usb_acm_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_PRINTER
-id|usb_printer_init
+r_int
+id|usb_audio_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_SERIAL
-id|usb_serial_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_CPIA
+r_int
 id|usb_cpia_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_OV511
+r_int
 id|usb_ov511_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_DC2XX
+r_int
 id|usb_dc2xx_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_SCSI
+r_int
+id|usb_scanner_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|usb_printer_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|usb_scsi_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_DABUSB
+r_int
+id|usb_serial_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|dabusb_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;if defined(CONFIG_USB_HID) || defined(CONFIG_USB_MOUSE) || defined(CONFIG_USB_KBD)
-id|input_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_HID
+r_int
 id|hid_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_MOUSE
+r_int
+id|input_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|usb_mouse_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_KBD
+r_int
 id|usb_kbd_init
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
-macro_line|#&t;endif
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *  Clean up when unloading the module&n; */
-DECL|function|cleanup_drivers
+multiline_comment|/*&n; * HCI drivers&n; */
+r_int
+id|uhci_init
+c_func
+(paren
 r_void
-id|cleanup_drivers
+)paren
+suffix:semicolon
+r_int
+id|ohci_hcd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+multiline_comment|/*&n; * Cleanup&n; */
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
 c_func
 (paren
 r_void
@@ -192,66 +186,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-macro_line|#&t;ifdef CONFIG_USB_MOUSE
-id|usb_mouse_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#       ifdef CONFIG_USB_SCANNER
-id|usb_scanner_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#       endif
-macro_line|#&t;ifdef CONFIG_USB_DABUSB
-id|dabusb_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_KBD
-id|usb_kbd_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_ACM
-id|usb_acm_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_CPIA
-id|usb_cpia_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_OV511
-id|usb_ov511_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_DC2XX
-id|usb_dc2xx_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
+multiline_comment|/*&n; * Init&n; */
 DECL|function|init_module
 r_int
 id|init_module
@@ -259,27 +195,148 @@ c_func
 (paren
 r_void
 )paren
-(brace
-r_return
+macro_line|#else
+r_int
 id|usb_init
 c_func
 (paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
 r_void
 )paren
-(brace
-id|cleanup_drivers
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif
+(brace
+id|usb_major_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_USB_PROC
+id|proc_usb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|usb_hub_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_USB_MODULE
+macro_line|#ifdef CONFIG_USB_SCANNER
+id|usb_scanner_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_AUDIO
+id|usb_audio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_ACM
+id|usb_acm_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_PRINTER
+id|usb_printer_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_SERIAL
+id|usb_serial_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_CPIA
+id|usb_cpia_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OV511
+id|usb_ov511_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_DC2XX
+id|usb_dc2xx_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_SCSI
+id|usb_scsi_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_DABUSB
+id|dabusb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_USB_HID) || defined(CONFIG_USB_MOUSE) || defined(CONFIG_USB_KBD)
+id|input_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_HID
+id|hid_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_MOUSE
+id|usb_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_KBD
+id|usb_kbd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_UHCI
+id|uhci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OHCI_HCD
+id|ohci_hcd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
+)brace
 eof

@@ -1,8 +1,4 @@
 multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; *&n; * $Id: usb.c,v 1.39 1999/12/27 15:17:47 acher Exp $&n; */
-macro_line|#ifndef EXPORT_SYMTAB
-DECL|macro|EXPORT_SYMTAB
-mdefine_line|#define EXPORT_SYMTAB
-macro_line|#endif
 DECL|macro|USB_DEBUG
 mdefine_line|#define USB_DEBUG&t;1
 macro_line|#include &lt;linux/config.h&gt;
@@ -7484,7 +7480,7 @@ multiline_comment|/* release */
 )brace
 suffix:semicolon
 DECL|function|usb_major_init
-r_void
+r_int
 id|usb_major_init
 c_func
 (paren
@@ -7514,7 +7510,14 @@ comma
 id|USB_MAJOR
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|usb_major_cleanup
 r_void

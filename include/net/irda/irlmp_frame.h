@@ -2,6 +2,7 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef IRMLP_FRAME_H
 DECL|macro|IRMLP_FRAME_H
 mdefine_line|#define IRMLP_FRAME_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/irda/discovery.h&gt;
 multiline_comment|/* IrLMP frame opcodes */

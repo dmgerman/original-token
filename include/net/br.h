@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Constants and structure definitions for the bridging code&n; */
 macro_line|#if !defined(One)
 DECL|macro|Zero

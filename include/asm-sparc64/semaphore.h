@@ -4,6 +4,7 @@ mdefine_line|#define _SPARC64_SEMAPHORE_H
 multiline_comment|/* These are actually reasonable on the V9. */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|struct|semaphore
 r_struct

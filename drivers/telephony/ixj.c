@@ -14,6 +14,7 @@ mdefine_line|#define IXJDEBUG 0
 DECL|macro|MAXRINGS
 mdefine_line|#define MAXRINGS 5
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk() */

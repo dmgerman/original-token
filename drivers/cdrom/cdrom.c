@@ -1867,16 +1867,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cdi
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|cdi-&gt;use_count
 OG
 l_int|0
@@ -2649,8 +2639,8 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_static
 DECL|function|cdrom_media_changed
+r_static
 r_int
 id|cdrom_media_changed
 c_func
@@ -2671,16 +2661,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* This talks to the VFS, which doesn&squot;t like errors - just 1 or 0.  &n;&t; * Returning &quot;0&quot; is always safe (media hasn&squot;t been changed). Do that &n;&t; * if the low-level cdrom driver dosn&squot;t support media changed. */
-r_if
-c_cond
-(paren
-id|cdi
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2716,6 +2696,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* badly broken, I know. Is due for a fixup anytime. */
 DECL|function|cdrom_count_tracks
 r_void
 id|cdrom_count_tracks
@@ -3064,7 +3045,7 @@ id|cgc
 comma
 r_void
 op_star
-id|buffer
+id|buf
 comma
 r_int
 id|len
@@ -3087,7 +3068,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|buffer
+id|buf
 comma
 l_int|0
 comma
@@ -3100,7 +3081,7 @@ op_assign
 r_char
 op_star
 )paren
-id|buffer
+id|buf
 suffix:semicolon
 id|cgc-&gt;buflen
 op_assign
@@ -5744,9 +5725,9 @@ id|cgc
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Some of the cdrom ioctls are not implemented here, because these&n; * appear to be either too device-specific, or it is not clear to me&n; * what use they are. These are (number of drivers that support them&n; * in parenthesis): CDROMREADMODE1 (2+ide), CDROMREADMODE2 (2+ide),&n; * CDROMREADAUDIO (2+ide), CDROMREADRAW (2), CDROMREADCOOKED (2),&n; * CDROMSEEK (2), CDROMPLAYBLK (scsi), CDROMREADALL (1). Read-audio,&n; * OK (although i guess the record companies aren&squot;t too happy with&n; * this, most drives therefore refuse to transport audio data).  But&n; * why are there 5 different READs defined? For now, these functions&n; * are left over to the device-specific ioctl routine,&n; * cdo-&gt;dev_ioctl. Note that as a result of this, no&n; * memory-verification is performed for these ioctls.&n; */
-r_static
+multiline_comment|/* Just about every imaginable ioctl is supported in the Uniform layer&n; * these days. ATAPI / SCSI specific code now mainly resides in&n; * mmc_ioct().&n; */
 DECL|function|cdrom_ioctl
+r_static
 r_int
 id|cdrom_ioctl
 c_func
@@ -5790,24 +5771,11 @@ r_struct
 id|cdrom_device_ops
 op_star
 id|cdo
+op_assign
+id|cdi-&gt;ops
 suffix:semicolon
 r_int
 id|ret
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cdi
-op_eq
-l_int|NULL
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-id|cdo
-op_assign
-id|cdi-&gt;ops
 suffix:semicolon
 multiline_comment|/* the first few commands do not deal with audio drive_info, but&n;&t;   only with routines in cdrom device operations. */
 r_switch
@@ -5816,7 +5784,6 @@ c_cond
 id|cmd
 )paren
 (brace
-multiline_comment|/* maybe we should order cases after statistics of use? */
 r_case
 id|CDROMMULTISESSION
 suffix:colon
@@ -8319,16 +8286,14 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|entry.cdte_track
-op_assign
-id|ti.cdti_trk1
-op_plus
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|entry.cdte_track
+op_assign
+id|ti.cdti_trk0
+)paren
 OG
 id|tochdr.cdth_trk1
 )paren
@@ -8380,6 +8345,19 @@ suffix:semicolon
 id|entry.cdte_track
 op_assign
 id|ti.cdti_trk1
+op_plus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry.cdte_track
+OG
+id|tochdr.cdth_trk1
+)paren
+id|entry.cdte_track
+op_assign
+id|CDROM_LEADOUT
 suffix:semicolon
 r_if
 c_cond

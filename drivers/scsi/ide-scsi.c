@@ -3261,14 +3261,6 @@ id|scsi
 op_assign
 id|drive-&gt;driver_data
 suffix:semicolon
-r_int
-id|enable
-op_assign
-(paren
-r_int
-)paren
-id|arg
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3280,7 +3272,7 @@ id|SG_SET_TRANSFORM
 r_if
 c_cond
 (paren
-id|enable
+id|arg
 )paren
 id|set_bit
 c_func

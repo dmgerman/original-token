@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Linux ARCnet driver - device-independent routines&n; *
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;arcnet: v3.91 BETA 99/12/18 - by Avery Pennarun et al.&bslash;n&quot;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;

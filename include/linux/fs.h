@@ -2886,11 +2886,6 @@ r_struct
 id|file_operations
 id|def_blk_fops
 suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|blkdev_inode_operations
-suffix:semicolon
 multiline_comment|/* fs/devices.c */
 r_extern
 r_int
@@ -2940,11 +2935,6 @@ r_extern
 r_struct
 id|file_operations
 id|def_chr_fops
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|chrdev_inode_operations
 suffix:semicolon
 r_extern
 r_char
