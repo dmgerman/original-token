@@ -1,8 +1,10 @@
-multiline_comment|/* $Id: dma.h,v 1.7 1992/12/14 00:29:34 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; */
-multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; * Modified by Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; *&n; * There may be some comments or restrictions made here which are&n; * not valid for the PowerPC (PreP) platform.  Take what you read&n; * with a grain of salt.&n; */
+multiline_comment|/* $Id: dma.h,v 1.3 1997/03/16 06:20:39 cort Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; */
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; * Modified by Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; *&n; * None of this really applies for Power Macintoshes.  There is&n; * basically just enough here to get kernel/dma.c to compile.&n; *&n; * There may be some comments or restrictions made here which are&n; * not valid for the PReP platform.  Take what you read&n; * with a grain of salt.&n; */
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
+macro_line|#ifdef CONFIG_PREP
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* need byte IO */
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 DECL|macro|dma_outb
@@ -846,5 +848,6 @@ id|dmanr
 )paren
 suffix:semicolon
 multiline_comment|/* release it again */
+macro_line|#endif /* CONFIG_PREP */
 macro_line|#endif /* _ASM_DMA_H */
 eof

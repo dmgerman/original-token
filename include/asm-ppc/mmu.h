@@ -186,6 +186,76 @@ DECL|typedef|SEGREG
 id|SEGREG
 suffix:semicolon
 multiline_comment|/* Block Address Translation (BAT) Registers */
+DECL|struct|_P601_BATU
+r_typedef
+r_struct
+id|_P601_BATU
+(brace
+DECL|member|bepi
+r_int
+r_int
+id|bepi
+suffix:colon
+l_int|15
+suffix:semicolon
+multiline_comment|/* Effective page index (virtual address) */
+r_int
+r_int
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* unused */
+DECL|member|w
+r_int
+r_int
+id|w
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|i
+r_int
+r_int
+id|i
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Cache inhibit */
+DECL|member|m
+r_int
+r_int
+id|m
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Memory coherence */
+DECL|member|vs
+r_int
+r_int
+id|vs
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Supervisor valid */
+DECL|member|vp
+r_int
+r_int
+id|vp
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* User valid */
+DECL|member|pp
+r_int
+r_int
+id|pp
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Page access protections */
+DECL|typedef|P601_BATU
+)brace
+id|P601_BATU
+suffix:semicolon
 DECL|struct|_BATU
 r_typedef
 r_struct
@@ -233,6 +303,45 @@ multiline_comment|/* User valid */
 DECL|typedef|BATU
 )brace
 id|BATU
+suffix:semicolon
+DECL|struct|_P601_BATL
+r_typedef
+r_struct
+id|_P601_BATL
+(brace
+DECL|member|brpn
+r_int
+r_int
+id|brpn
+suffix:colon
+l_int|15
+suffix:semicolon
+multiline_comment|/* Real page index (physical address) */
+r_int
+r_int
+suffix:colon
+l_int|10
+suffix:semicolon
+multiline_comment|/* Unused */
+DECL|member|v
+r_int
+r_int
+id|v
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* valid/invalid */
+DECL|member|bl
+r_int
+r_int
+id|bl
+suffix:colon
+l_int|6
+suffix:semicolon
+multiline_comment|/* Block size mask */
+DECL|typedef|P601_BATL
+)brace
+id|P601_BATL
 suffix:semicolon
 DECL|struct|_BATL
 r_typedef
@@ -322,6 +431,25 @@ multiline_comment|/* Lower register */
 DECL|typedef|BAT
 )brace
 id|BAT
+suffix:semicolon
+DECL|struct|_P601_BAT
+r_typedef
+r_struct
+id|_P601_BAT
+(brace
+DECL|member|batu
+id|P601_BATU
+id|batu
+suffix:semicolon
+multiline_comment|/* Upper register */
+DECL|member|batl
+id|P601_BATL
+id|batl
+suffix:semicolon
+multiline_comment|/* Lower register */
+DECL|typedef|P601_BAT
+)brace
+id|P601_BAT
 suffix:semicolon
 multiline_comment|/* Block size masks */
 DECL|macro|BL_128K
@@ -415,38 +543,6 @@ DECL|typedef|MMU_context
 )brace
 id|MMU_context
 suffix:semicolon
-macro_line|#if 0
-id|BAT
-id|ibat
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* Instruction BAT images */
-id|BAT
-id|dbat
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* Data BAT images */
-id|PTE
-op_star
-id|hash_table
-suffix:semicolon
-multiline_comment|/* Hardware hashed page table */
-r_int
-id|hash_table_size
-suffix:semicolon
-r_int
-id|hash_table_mask
-suffix:semicolon
-r_int
-r_int
-id|sdr
-suffix:semicolon
-multiline_comment|/* Hardware image of SDR */
-macro_line|#endif   
 multiline_comment|/* Used to set up SDR register */
 DECL|macro|HASH_TABLE_SIZE_64K
 mdefine_line|#define HASH_TABLE_SIZE_64K&t;0x00010000
@@ -476,25 +572,5 @@ DECL|macro|HASH_TABLE_MASK_2M
 mdefine_line|#define HASH_TABLE_MASK_2M&t;0x01F   
 DECL|macro|HASH_TABLE_MASK_4M
 mdefine_line|#define HASH_TABLE_MASK_4M&t;0x03F   
-r_extern
-r_inline
-r_int
-id|MMU_hash_page
-c_func
-(paren
-r_struct
-id|thread_struct
-op_star
-id|tss
-comma
-r_int
-r_int
-id|va
-comma
-id|pte
-op_star
-id|pg
-)paren
-suffix:semicolon
 macro_line|#endif
 eof

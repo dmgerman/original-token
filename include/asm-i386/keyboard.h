@@ -91,6 +91,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_char
+id|pckbd_sysrq_xlate
+(braket
+l_int|128
+)braket
+suffix:semicolon
 DECL|macro|kbd_setkeycode
 mdefine_line|#define kbd_setkeycode&t;&t;pckbd_setkeycode
 DECL|macro|kbd_getkeycode
@@ -105,6 +113,10 @@ DECL|macro|kbd_leds
 mdefine_line|#define kbd_leds&t;&t;pckbd_leds
 DECL|macro|kbd_init_hw
 mdefine_line|#define kbd_init_hw&t;&t;pckbd_init_hw
+DECL|macro|kbd_sysrq_xlate
+mdefine_line|#define kbd_sysrq_xlate&t;&t;pckbd_sysrq_xlate
+DECL|macro|SYSRQ_KEY
+mdefine_line|#define SYSRQ_KEY 0x54
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASMi386_KEYBOARD_H */
 eof

@@ -122,6 +122,7 @@ DECL|macro|get_video_num_lines
 mdefine_line|#define get_video_num_lines(dummy) video_num_lines
 DECL|macro|get_video_size_row
 mdefine_line|#define get_video_size_row(dummy) video_size_row
+macro_line|#endif
 r_extern
 r_int
 r_int
@@ -137,7 +138,6 @@ r_int
 r_int
 id|video_size_row
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 r_char
@@ -357,7 +357,6 @@ id|p
 )paren
 suffix:semicolon
 multiline_comment|/* how to access screen memory */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_TGA_CONSOLE)
 r_extern
 r_int
@@ -712,6 +711,16 @@ op_star
 id|addr
 )paren
 (brace
+macro_line|#ifdef __powerpc__
+id|st_le16
+c_func
+(paren
+id|addr
+comma
+id|val
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -740,6 +749,7 @@ r_int
 id|addr
 )paren
 suffix:semicolon
+macro_line|#endif /* !__powerpc__ */
 )brace
 DECL|function|scr_readw
 r_static
@@ -755,6 +765,15 @@ op_star
 id|addr
 )paren
 (brace
+macro_line|#ifdef __powerpc__
+r_return
+id|ld_le16
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -780,6 +799,7 @@ r_int
 id|addr
 )paren
 suffix:semicolon
+macro_line|#endif /* !__powerpc__ */&t;
 )brace
 macro_line|#endif /* CONFIG_TGA_CONSOLE */
 macro_line|#ifndef CONFIG_SUN_CONSOLE

@@ -729,20 +729,7 @@ id|s
 )paren
 )paren
 suffix:semicolon
-r_extern
-r_char
-op_star
-id|basename
-id|OF
-c_func
-(paren
-(paren
-r_char
-op_star
-id|fname
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*extern char *basename     OF((char *fname));*/
 r_extern
 r_char
 op_star

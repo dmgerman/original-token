@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * MIPS specific syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sysmips.c,v 1.4 1997/06/30 15:52:37 ralf Exp $&n; */
+multiline_comment|/*&n; * MIPS specific syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sysmips.c,v 1.5 1997/07/20 15:32:27 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -148,6 +148,11 @@ id|cmd
 r_case
 id|SETNAME
 suffix:colon
+id|retval
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -157,16 +162,9 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|retval
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|name
 op_assign
 (paren
@@ -183,6 +181,10 @@ c_func
 id|name
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -190,12 +192,13 @@ id|len
 OL
 l_int|0
 )paren
-id|retval
-op_assign
-id|len
-suffix:semicolon
 r_goto
 id|out
+suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -208,11 +211,6 @@ id|len
 OG
 id|__NEW_UTS_LEN
 )paren
-id|retval
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon

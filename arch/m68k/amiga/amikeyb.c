@@ -2032,6 +2032,8 @@ r_char
 id|scancode
 comma
 id|break_flag
+comma
+id|keycode
 suffix:semicolon
 r_static
 r_int
@@ -2055,6 +2057,8 @@ id|ciaa.cra
 op_or_assign
 l_int|0x40
 suffix:semicolon
+macro_line|#if 0 
+singleline_comment|// No longer used
 multiline_comment|/*&n;     *  On receipt of the second RESET_WARNING, we must not pull KDAT high&n;     *  again to delay the hard reset as long as possible.&n;     *&n;     *  Note that not all keyboards send reset warnings...&n;     */
 r_if
 c_cond
@@ -2087,6 +2091,7 @@ id|reset_warning
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* wait until 85 us have expired */
 id|udelay
 c_func
@@ -2130,8 +2135,10 @@ id|scancode
 op_amp
 id|BREAK_MASK
 suffix:semicolon
+id|keycode
+op_assign
 id|scancode
-op_and_assign
+op_amp
 (paren
 r_int
 r_char
@@ -2142,7 +2149,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|scancode
+id|keycode
 op_eq
 id|AMIKEY_CAPS
 )paren
@@ -2167,7 +2174,7 @@ r_else
 r_if
 c_cond
 (paren
-id|scancode
+id|keycode
 OL
 l_int|0x78
 )paren
@@ -2202,7 +2209,7 @@ id|amikeyb_rep_timer
 suffix:semicolon
 id|rep_scancode
 op_assign
-id|scancode
+id|keycode
 suffix:semicolon
 id|amikeyb_rep_timer.expires
 op_assign
@@ -2227,8 +2234,6 @@ suffix:semicolon
 id|handle_scancode
 c_func
 (paren
-id|break_flag
-op_or
 id|scancode
 )paren
 suffix:semicolon
@@ -2237,7 +2242,7 @@ r_else
 r_switch
 c_cond
 (paren
-id|scancode
+id|keycode
 )paren
 (brace
 r_case
@@ -2345,8 +2350,6 @@ c_func
 id|KERN_WARNING
 l_string|&quot;amikeyb: unknown keyboard communication code 0x%02x&bslash;n&quot;
 comma
-id|break_flag
-op_or
 id|scancode
 )paren
 suffix:semicolon

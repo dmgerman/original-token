@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.6 1997/03/18 17:59:59 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: console.c,v 1.7 1997/07/19 08:28:29 ecd Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -318,6 +318,19 @@ id|PROMDEV_I_UNK
 suffix:semicolon
 )brace
 multiline_comment|/* FIXME: Is there any better way how to find out? */
+id|memset
+c_func
+(paren
+id|propb
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|propb
+)paren
+)paren
+suffix:semicolon
 id|st_p
 op_assign
 id|prom_finddevice
@@ -494,6 +507,19 @@ id|PROMDEV_O_UNK
 suffix:semicolon
 )brace
 multiline_comment|/* FIXME: Is there any better way how to find out? */
+id|memset
+c_func
+(paren
+id|propb
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|propb
+)paren
+)paren
+suffix:semicolon
 id|st_p
 op_assign
 id|prom_finddevice

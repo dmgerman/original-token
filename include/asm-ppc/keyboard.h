@@ -1,9 +1,109 @@
-multiline_comment|/*&n; *  linux/include/asm-ppc/keyboard.h&n; *&n; *  Created 3 Nov 1996 by Geert Uytterhoeven&n; */
-multiline_comment|/*&n; *  This file contains the ppc architecture specific keyboard definitions&n; */
+multiline_comment|/*&n; *  linux/include/asm-ppc/keyboard.h&n; *&n; *  Created 3 Nov 1996 by Geert Uytterhoeven&n; *  Modified for Power Macintosh by Paul Mackerras&n; */
+multiline_comment|/*&n; * This file contains the ppc architecture specific keyboard definitions -&n; * like the intel pc for prep systems, different for power macs.&n; */
 macro_line|#ifndef __ASMPPC_KEYBOARD_H
 DECL|macro|__ASMPPC_KEYBOARD_H
 mdefine_line|#define __ASMPPC_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_MAC_KEYBOARD
+r_extern
+r_int
+id|mackbd_setkeycode
+c_func
+(paren
+r_int
+r_int
+id|scancode
+comma
+r_int
+r_int
+id|keycode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mackbd_getkeycode
+c_func
+(paren
+r_int
+r_int
+id|scancode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mackbd_pretranslate
+c_func
+(paren
+r_int
+r_char
+id|scancode
+comma
+r_char
+id|raw_mode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mackbd_translate
+c_func
+(paren
+r_int
+r_char
+id|scancode
+comma
+r_int
+r_char
+op_star
+id|keycode
+comma
+r_char
+id|raw_mode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mackbd_unexpected_up
+c_func
+(paren
+r_int
+r_char
+id|keycode
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mackbd_leds
+c_func
+(paren
+r_int
+r_char
+id|leds
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mackbd_init_hw
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|kbd_setkeycode
+mdefine_line|#define kbd_setkeycode&t;&t;mackbd_setkeycode
+DECL|macro|kbd_getkeycode
+mdefine_line|#define kbd_getkeycode&t;&t;mackbd_getkeycode
+DECL|macro|kbd_pretranslate
+mdefine_line|#define kbd_pretranslate&t;mackbd_pretranslate
+DECL|macro|kbd_translate
+mdefine_line|#define kbd_translate&t;&t;mackbd_translate
+DECL|macro|kbd_unexpected_up
+mdefine_line|#define kbd_unexpected_up&t;mackbd_unexpected_up
+DECL|macro|kbd_leds
+mdefine_line|#define kbd_leds&t;&t;mackbd_leds
+DECL|macro|kbd_init_hw
+mdefine_line|#define kbd_init_hw&t;&t;mackbd_init_hw
+macro_line|#else /* CONFIG_MAC_KEYBOARD */
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;1
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
@@ -107,6 +207,7 @@ DECL|macro|kbd_init_hw
 mdefine_line|#define kbd_init_hw&t;&t;pckbd_init_hw
 DECL|macro|INIT_KBD
 mdefine_line|#define INIT_KBD
+macro_line|#endif /* CONFIG_MAC_KEYBOARD */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASMPPC_KEYBOARD_H */
 eof

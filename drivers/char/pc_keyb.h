@@ -4,10 +4,16 @@ DECL|macro|KBD_REPORT_ERR
 mdefine_line|#define KBD_REPORT_ERR&t;&t;&t;/* Report keyboard errors */
 DECL|macro|KBD_REPORT_UNKN
 mdefine_line|#define KBD_REPORT_UNKN&t;&t;&t;/* Report unknown scan codes */
+DECL|macro|KBD_REPORT_TIMEOUTS
+mdefine_line|#define KBD_REPORT_TIMEOUTS&t;&t;/* Report keyboard timeouts */
 DECL|macro|KBD_IS_FOCUS_9000
 macro_line|#undef KBD_IS_FOCUS_9000&t;&t;/* We have the brain-damaged FOCUS-9000 keyboard */
+DECL|macro|KBD_INIT_TIMEOUT
+mdefine_line|#define KBD_INIT_TIMEOUT HZ&t;&t;/* Timeout for initializing the keyboard */
+DECL|macro|KBC_TIMEOUT
+mdefine_line|#define KBC_TIMEOUT (HZ/4)&t;&t;/* Timeout for sending to keyboard controller */
 DECL|macro|KBD_TIMEOUT
-mdefine_line|#define KBD_TIMEOUT 0x100000&t;&t;/* Timeout for sending of commands */
+mdefine_line|#define KBD_TIMEOUT (HZ/4)&t;&t;/* Timeout for keyboard command acknowledge */
 multiline_comment|/*&n; *&t;Internal variables of the driver&n; */
 r_extern
 r_int

@@ -35,6 +35,8 @@ DECL|macro|SER_IOEXT
 mdefine_line|#define SER_IOEXT&t;106&t;/* Amiga GVP IO-Extender (16c552) */
 DECL|macro|SER_MFC_III
 mdefine_line|#define SER_MFC_III&t;107&t;/* Amiga BSC Multiface Card III (MC68681) */
+DECL|macro|SER_WHIPPET
+mdefine_line|#define SER_WHIPPET&t;108&t;/* Amiga Hisoft Whippet PCMCIA (16c550B) */
 DECL|struct|serial_struct
 r_struct
 id|serial_struct

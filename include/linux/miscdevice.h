@@ -21,6 +21,8 @@ DECL|macro|RTC_MINOR
 mdefine_line|#define RTC_MINOR 135
 DECL|macro|SUN_OPENPROM_MINOR
 mdefine_line|#define SUN_OPENPROM_MINOR 139
+DECL|macro|NVRAM_MINOR
+mdefine_line|#define NVRAM_MINOR 144
 DECL|macro|MISC_DYNAMIC_MINOR
 mdefine_line|#define MISC_DYNAMIC_MINOR 255
 r_extern

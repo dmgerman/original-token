@@ -88,17 +88,12 @@ DECL|macro|MSDOS_DOTDOT
 mdefine_line|#define MSDOS_DOTDOT &quot;..         &quot; /* &quot;..&quot;, padded to MSDOS_NAME chars */
 DECL|macro|MSDOS_FAT12
 mdefine_line|#define MSDOS_FAT12 4078 /* maximum number of clusters in a 12 bit FAT */
-macro_line|#ifdef CONFIG_ATARI
-DECL|macro|EOF_FAT12
-mdefine_line|#define EOF_FAT12 0xFFF&t;&t;/* Atari GEMDOS fs uses a different EOF */
-DECL|macro|EOF_FAT16
-mdefine_line|#define EOF_FAT16 0xFFFF
-macro_line|#else
 DECL|macro|EOF_FAT12
 mdefine_line|#define EOF_FAT12 0xFF8&t;&t;/* standard EOF */
 DECL|macro|EOF_FAT16
 mdefine_line|#define EOF_FAT16 0xFFF8
-macro_line|#endif
+DECL|macro|EOF_FAT
+mdefine_line|#define EOF_FAT(s) (MSDOS_SB(s)-&gt;fat_bits == 16 ? 0xFFF8 : 0xFF8)
 multiline_comment|/*&n; * Inode flags&n; */
 DECL|macro|FAT_BINARY_FL
 mdefine_line|#define FAT_BINARY_FL&t;&t;0x00000001 /* File contains binary data */

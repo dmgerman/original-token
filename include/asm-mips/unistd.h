@@ -2282,9 +2282,13 @@ DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll&t;&t;&t;(__NR_Linux + 188)
 DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl&t;&t;&t;(__NR_Linux + 189)
+DECL|macro|__NR_setresgid
+mdefine_line|#define __NR_setresgid&t;&t;&t;(__NR_Linux + 190)
+DECL|macro|__NR_getresgid
+mdefine_line|#define __NR_getresgid&t;&t;&t;(__NR_Linux + 191)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;189
+mdefine_line|#define __NR_Linux_syscalls&t;&t;191
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

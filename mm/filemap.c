@@ -121,10 +121,6 @@ id|prev
 op_assign
 id|page-&gt;prev
 suffix:semicolon
-id|page-&gt;dirty
-op_assign
-l_int|0
-suffix:semicolon
 id|page-&gt;next
 op_assign
 l_int|NULL
@@ -258,10 +254,6 @@ op_member_access_from_pointer
 id|prev
 op_assign
 id|page-&gt;prev
-suffix:semicolon
-id|page-&gt;dirty
-op_assign
-l_int|0
 suffix:semicolon
 id|page-&gt;next
 op_assign

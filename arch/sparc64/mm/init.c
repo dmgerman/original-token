@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.39 1997/07/07 02:50:57 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.40 1997/07/24 16:48:27 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -2105,10 +2105,57 @@ l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If not locked, zap it. */
-DECL|function|flush_tlb_all
+DECL|function|__flush_cache_all
 r_void
-id|flush_tlb_all
+id|__flush_cache_all
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|va
+suffix:semicolon
+id|flushw_all
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|va
+op_assign
+l_int|0
+suffix:semicolon
+id|va
+OL
+(paren
+id|PAGE_SIZE
+op_lshift
+l_int|1
+)paren
+suffix:semicolon
+id|va
+op_add_assign
+l_int|32
+)paren
+(brace
+id|spitfire_put_icache_tag
+c_func
+(paren
+id|va
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* If not locked, zap it. */
+DECL|function|__flush_tlb_all
+r_void
+id|__flush_tlb_all
 c_func
 (paren
 r_void

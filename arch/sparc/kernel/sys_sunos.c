@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.80 1997/07/17 02:20:22 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.81 1997/07/20 05:59:31 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3588,21 +3588,32 @@ id|linux_nfs_mount.acdirmax
 op_assign
 id|sunos_mount-&gt;acdirmax
 suffix:semicolon
+id|the_name
+op_assign
+id|getname
+c_func
+(paren
+id|sunos_mount-&gt;hostname
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|getname
+id|IS_ERR
+c_func
 (paren
-id|sunos_mount-&gt;hostname
-comma
-op_amp
 id|the_name
 )paren
 )paren
+(brace
 r_return
-op_minus
-id|EFAULT
+id|PTR_ERR
+c_func
+(paren
+id|the_name
+)paren
 suffix:semicolon
+)brace
 id|strncpy
 (paren
 id|linux_nfs_mount.hostname

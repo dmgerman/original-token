@@ -444,6 +444,15 @@ id|smp_process_available
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|lk_lockmsg
+r_const
+r_char
+id|lk_lockmsg
+(braket
+)braket
+op_assign
+l_string|&quot;lock from interrupt context at %p&bslash;n&quot;
+suffix:semicolon
 multiline_comment|/*#define SMP_DEBUG*/
 macro_line|#ifdef SMP_DEBUG
 DECL|macro|SMP_PRINTK

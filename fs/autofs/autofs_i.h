@@ -136,13 +136,15 @@ mdefine_line|#define register_symtab(x)&t;((void)0)
 macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|DPRINTK
-mdefine_line|#define DPRINTK(D) printk D;
+mdefine_line|#define DPRINTK(D) (printk D)
 macro_line|#else
 DECL|macro|DPRINTK
-mdefine_line|#define DPRINTK(D)
+mdefine_line|#define DPRINTK(D) ((void)0)
 macro_line|#endif
 DECL|macro|AUTOFS_SUPER_MAGIC
 mdefine_line|#define AUTOFS_SUPER_MAGIC 0x0187
+DECL|macro|AUTOFS_NEGATIVE_TIMEOUT
+mdefine_line|#define AUTOFS_NEGATIVE_TIMEOUT (60*HZ)&t;/* Time before asking the daemon again */
 multiline_comment|/* Structures associated with the root directory hash */
 DECL|macro|AUTOFS_HASH_SIZE
 mdefine_line|#define AUTOFS_HASH_SIZE 67

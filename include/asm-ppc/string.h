@@ -1,57 +1,100 @@
 macro_line|#ifndef _PPC_STRING_H_
 DECL|macro|_PPC_STRING_H_
 mdefine_line|#define _PPC_STRING_H_
-multiline_comment|/*&n; * keep things happy, the compile became unhappy since memset is&n; * in include/linux/string.h and lib/string.c with different prototypes&n; *                          -- Cort&n; */
-macro_line|#if 1
+DECL|macro|__HAVE_ARCH_STRCPY
+mdefine_line|#define __HAVE_ARCH_STRCPY
+DECL|macro|__HAVE_ARCH_STRNCPY
+mdefine_line|#define __HAVE_ARCH_STRNCPY
+DECL|macro|__HAVE_ARCH_STRLEN
+mdefine_line|#define __HAVE_ARCH_STRLEN
+DECL|macro|__HAVE_ARCH_STRCMP
+mdefine_line|#define __HAVE_ARCH_STRCMP
+DECL|macro|__HAVE_ARCH_STRCAT
+mdefine_line|#define __HAVE_ARCH_STRCAT
 DECL|macro|__HAVE_ARCH_MEMSET
-mdefine_line|#define  __HAVE_ARCH_MEMSET
-DECL|function|memset
+mdefine_line|#define __HAVE_ARCH_MEMSET
+DECL|macro|__HAVE_ARCH_BCOPY
+mdefine_line|#define __HAVE_ARCH_BCOPY
+DECL|macro|__HAVE_ARCH_MEMCPY
+mdefine_line|#define __HAVE_ARCH_MEMCPY
+DECL|macro|__HAVE_ARCH_MEMMOVE
+mdefine_line|#define __HAVE_ARCH_MEMMOVE
+DECL|macro|__HAVE_ARCH_MEMCMP
+mdefine_line|#define __HAVE_ARCH_MEMCMP
+DECL|macro|__HAVE_ARCH_MEMCHR
+mdefine_line|#define __HAVE_ARCH_MEMCHR
+multiline_comment|/*#define bzero(addr,size) memset((addr),(int)(0),(size))*/
+DECL|function|memchr
 r_extern
-id|__inline__
+r_inline
 r_void
 op_star
-id|memset
+id|memchr
 c_func
 (paren
+r_const
 r_void
 op_star
-id|s
+id|cs
 comma
 r_int
 id|c
 comma
-id|__kernel_size_t
+r_int
 id|count
 )paren
 (brace
-r_char
-op_star
-id|xs
+r_int
+r_int
+id|i
 op_assign
-(paren
-r_char
-op_star
-)paren
-id|s
+l_int|0
 suffix:semicolon
 r_while
 c_loop
 (paren
 id|count
-op_decrement
+op_ne
+id|i
 )paren
-op_star
-id|xs
-op_increment
-op_assign
+(brace
+r_if
+c_cond
+(paren
+(paren
+r_char
+)paren
 id|c
-suffix:semicolon
+op_eq
+op_star
+(paren
+r_char
+op_star
+)paren
+(paren
+id|cs
+op_plus
+id|i
+)paren
+)paren
 r_return
-id|s
+(paren
+r_void
+op_star
+)paren
+(paren
+id|cs
+op_plus
+id|i
+)paren
+suffix:semicolon
+id|i
+op_decrement
 suffix:semicolon
 )brace
-macro_line|#endif
-DECL|macro|bzero
-mdefine_line|#define bzero(addr,size) memset((addr),(int)(0),(size))
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

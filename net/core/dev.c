@@ -2727,7 +2727,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Inter-|   Receive                  |  Transmit&bslash;n&quot;
+l_string|&quot;Inter-|   Receive                           |  Transmit&bslash;n&quot;
 l_string|&quot; face |bytes    packets errs drop fifo frame|bytes    packets errs drop fifo colls carrier&bslash;n&quot;
 )paren
 suffix:semicolon

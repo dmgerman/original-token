@@ -33,6 +33,7 @@ id|cpu_data
 id|NR_CPUS
 )braket
 suffix:semicolon
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* !(__SMP__) */
 macro_line|#endif /* !(_PPC_SMP_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: weitek.c,v 1.14 1997/07/17 02:21:53 davem Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/* $Id: weitek.c,v 1.15 1997/07/22 06:14:11 davem Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -316,11 +316,6 @@ id|io
 )paren
 )paren
 (brace
-r_extern
-r_struct
-id|screen_info
-id|screen_info
-suffix:semicolon
 id|printk
 (paren
 l_string|&quot;weitek%d at 0x%8.8x&bslash;n&quot;

@@ -2,6 +2,7 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 multiline_comment|/*&n; * mm/simp.c  -- simple allocator for cached objects&n; *&n; * (C) 1997 Thomas Schoebel-Theuer&n; */
 macro_line|#include &lt;linux/simp.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;

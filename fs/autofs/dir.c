@@ -153,7 +153,7 @@ op_assign
 (brace
 l_int|NULL
 comma
-multiline_comment|/* lseek */
+multiline_comment|/* llseek */
 l_int|NULL
 comma
 multiline_comment|/* read */
@@ -165,7 +165,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */
@@ -179,7 +179,19 @@ l_int|NULL
 comma
 multiline_comment|/* release */
 l_int|NULL
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|autofs_dir_inode_operations
@@ -224,7 +236,10 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* read_page */
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
@@ -235,7 +250,16 @@ l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+comma
+multiline_comment|/* updatepage */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

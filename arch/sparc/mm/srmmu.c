@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.148 1997/06/24 15:48:02 jj Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.149 1997/07/20 05:59:34 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -12452,9 +12452,16 @@ op_star
 id|vmaring
 suffix:semicolon
 r_struct
+id|dentry
+op_star
+id|dentry
+suffix:semicolon
+r_struct
 id|inode
 op_star
 id|inode
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 r_int
@@ -12489,10 +12496,21 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+id|dentry
+op_assign
+id|vma-&gt;vm_dentry
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry
+)paren
+(brace
 id|inode
 op_assign
-id|vma-&gt;vm_inode
+id|dentry-&gt;d_inode
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

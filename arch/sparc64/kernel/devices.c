@@ -11,7 +11,7 @@ r_struct
 id|prom_cpuinfo
 id|linux_cpus
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 suffix:semicolon
 DECL|variable|linux_num_cpus

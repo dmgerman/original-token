@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.10 1997/07/08 11:07:47 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.11 1997/07/24 12:15:05 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1708,15 +1708,14 @@ op_star
 id|buffer
 )paren
 (brace
-macro_line|#ifndef __SMP__
 r_int
 id|cpuid
 op_assign
-l_int|0
+id|smp_processor_id
+c_func
+(paren
+)paren
 suffix:semicolon
-macro_line|#else
-macro_line|#error SMP not supported on sparc64 yet
-macro_line|#endif
 r_return
 id|sprintf
 c_func

@@ -1311,6 +1311,23 @@ id|fg_console
 )paren
 suffix:semicolon
 macro_line|#endif /* XXX */
+multiline_comment|/* don&squot;t update in graphics mode */
+r_if
+c_cond
+(paren
+id|currcons
+op_eq
+id|fg_console
+op_logical_and
+id|vt_cons
+(braket
+id|fg_console
+)braket
+op_member_access_from_pointer
+id|vc_mode
+op_eq
+id|KD_TEXT
+)paren
 id|update_screen
 c_func
 (paren
@@ -1780,12 +1797,22 @@ op_assign
 id|ws
 suffix:semicolon
 )brace
+multiline_comment|/* don&squot;t update in graphics mode */
 r_if
 c_cond
 (paren
 id|currcons
 op_eq
 id|fg_console
+op_logical_and
+id|vt_cons
+(braket
+id|fg_console
+)braket
+op_member_access_from_pointer
+id|vc_mode
+op_eq
+id|KD_TEXT
 )paren
 id|update_screen
 c_func

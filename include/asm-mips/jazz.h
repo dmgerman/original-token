@@ -318,6 +318,8 @@ DECL|macro|JAZZ_PARALLEL_IRQ
 mdefine_line|#define JAZZ_PARALLEL_IRQ       5
 DECL|macro|JAZZ_FLOPPY_IRQ
 mdefine_line|#define JAZZ_FLOPPY_IRQ         6 /* needs to be consistent with floppy driver! */
+DECL|macro|JAZZ_SCSI_INTERRUPT
+mdefine_line|#define JAZZ_SCSI_INTERRUPT     12
 multiline_comment|/*&n; * JAZZ DMA Channels&n; * Note: Channels 4...7 are not used with respect to the Acer PICA-61&n; * chipset which does not provide these DMA channels.&n; */
 DECL|macro|JAZZ_SCSI_DMA
 mdefine_line|#define JAZZ_SCSI_DMA           0              /* SCSI */

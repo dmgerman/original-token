@@ -1,11 +1,6 @@
-multiline_comment|/* * Last edited: Nov 17 16:28 1995 (cort) */
 macro_line|#ifndef _ASM_PPC_UNISTD_H_
 DECL|macro|_ASM_PPC_UNISTD_H_
 mdefine_line|#define _ASM_PPC_UNISTD_H_
-DECL|macro|_NR
-mdefine_line|#define _NR(n) #n
-DECL|macro|_lisc
-mdefine_line|#define _lisc(n) &quot;li 0,&quot; _NR(n)
 multiline_comment|/*&n; * This file contains the system call numbers.&n; */
 DECL|macro|__NR_setup
 mdefine_line|#define __NR_setup&t;&t;  0&t;/* used only by init, to get system going */
@@ -339,132 +334,31 @@ DECL|macro|__NR_setresuid
 mdefine_line|#define __NR_setresuid&t;&t;164
 DECL|macro|__NR_getresuid
 mdefine_line|#define __NR_getresuid&t;&t;165
+DECL|macro|__NR_query_module
+mdefine_line|#define __NR_query_module&t;166
+DECL|macro|__NR_poll
+mdefine_line|#define __NR_poll&t;&t;167
 DECL|macro|__NR_nfsservctl
-mdefine_line|#define __NR_nfsservctl&t;&t;166
-multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
+mdefine_line|#define __NR_nfsservctl&t;&t;168
+DECL|macro|__NR
+mdefine_line|#define __NR(n)&t;#n
+DECL|macro|__do_syscall
+mdefine_line|#define __do_syscall(n) &bslash;&n;&t;asm volatile (&quot;li 0,%0&bslash;n&bslash;&n;&t;sc&bslash;n&bslash;&n;&t;bns 1f&bslash;n&bslash;&n;&t;mr 0,3&bslash;n&bslash;&n;&t;lis 3,errno@ha&bslash;n&bslash;&n;&t;stw 0,errno@l(3)&bslash;n&bslash;&n;&t;li 3,-1&bslash;n&bslash;&n;1:&quot; : : &quot;i&quot; (n) : &quot;r0&quot;, &quot;r3&quot;)
 DECL|macro|_syscall0
-mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ __do_syscall(__NR_##name); }
 DECL|macro|_syscall1
-mdefine_line|#define _syscall1(type,name,type1,arg1) &bslash;&n;type name(type1 arg1) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall1(type,name,type1,arg1) &bslash;&n;type name(type1 arg1) &bslash;&n;{ __do_syscall(__NR_##name); }
 DECL|macro|_syscall2
-mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2) &bslash;&n;type name(type1 arg1,type2 arg2) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2) &bslash;&n;type name(type1 arg1,type2 arg2) &bslash;&n;{ __do_syscall(__NR_##name); }
 DECL|macro|_syscall3
-mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) &bslash;&n;type name(type1 arg1,type2 arg2,type3 arg3) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) &bslash;&n;type name(type1 arg1,type2 arg2,type3 arg3) &bslash;&n;{ __do_syscall(__NR_##name); }
 DECL|macro|_syscall4
-mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;} 
+mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ __do_syscall(__NR_##name); }
 DECL|macro|_syscall5
-mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}
+mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ __do_syscall(__NR_##name); }
 macro_line|#ifdef __KERNEL_SYSCALLS__
-multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
-macro_line|#if 0
-multiline_comment|/*&n;   This is the mechanism for creating a new kernel thread.&n;   For the time being it only behaves the same as clone().&n;   It should be changed very soon to work properly and cleanly.  This&n;   gets us going for now, though.&n;&n;   some versions of gcc hate this -- complains about constraints being&n;   incorrect.  not sure why so it&squot;s in arch/ppc/kernel/misc.S now.&n;     -- Cort&n; */
-r_static
-id|__inline__
-r_int
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
-(brace
-r_int
-id|retval
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;li 0, 120 &bslash;n&bslash;t&quot;
-multiline_comment|/* __NR_clone */
-l_string|&quot;li 3, %5 &bslash;n&bslash;t&quot;
-multiline_comment|/* load flags as arg to clone */
-multiline_comment|/*&quot;mr 1,7 &bslash;n&bslash;t&quot;*/
-multiline_comment|/* save kernel stack */
-l_string|&quot;sc &bslash;n&bslash;t&quot;
-multiline_comment|/* syscall */
-multiline_comment|/*&quot;cmp 0,1,7 &bslash;n&bslash;t&quot;*/
-multiline_comment|/* if kernel stack changes -- child */
-l_string|&quot;cmpi&t;0,3,0 &bslash;n&bslash;t&quot;
-l_string|&quot;bne 1f &bslash;n&bslash;t&quot;
-multiline_comment|/* return if parent */
-multiline_comment|/* this is in child */
-l_string|&quot;li 3, %3 &bslash;n&bslash;t&quot;
-multiline_comment|/* child -- load args and call fn */
-l_string|&quot;mtlr %4 &bslash;n&bslash;t&quot;
-l_string|&quot;blrl &bslash;n&bslash;t&quot;
-l_string|&quot;li 0, %2 &bslash;n&bslash;t&quot;
-multiline_comment|/* exit after child exits */
-l_string|&quot;li 3, 0 &bslash;n&bslash;t&quot;
-l_string|&quot;sc &bslash;n&bslash;t&quot;
-multiline_comment|/* parent */
-l_string|&quot;1: &bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=3&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;i&quot;
-(paren
-id|__NR_clone
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|__NR_exit
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|arg
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|fn
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|CLONE_VM
-op_or
-id|flags
-)paren
-suffix:colon
-l_string|&quot;cc&quot;
-comma
-l_string|&quot;1&quot;
-comma
-l_string|&quot;0&quot;
-comma
-l_string|&quot;3&quot;
-comma
-l_string|&quot;7&quot;
-comma
-l_string|&quot;31&quot;
-comma
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
-macro_line|#else
+multiline_comment|/*&n; * Forking from kernel space will result in NO COPY ON WRITE (!!!),&n; * until an execve is executed. This is no problem, but for the stack.&n; * This is handled by not letting main() use the stack at all after&n; * fork().  On the PowerPC, this means we can only call leaf functions.&n; */
+multiline_comment|/*&n; * Create a new kernel thread.&n; */
 r_extern
 r_int
 id|__kernel_thread
@@ -526,225 +420,104 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-DECL|macro|__NR__exit
-mdefine_line|#define __NR__exit __NR_exit
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
+multiline_comment|/*&n; * System call prototypes.&n; */
 r_int
-comma
 id|idle
-)paren
-multiline_comment|/* made inline &quot;just in case&quot; -- Cort */
-r_static
-r_inline
-id|_syscall0
 c_func
 (paren
-r_int
-comma
-id|fork
+r_void
 )paren
-multiline_comment|/* needs to be inline */
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
+suffix:semicolon
 r_int
-comma
-id|pause
-)paren
-multiline_comment|/* needs to be inline */
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
 id|setup
-comma
-r_int
-comma
-id|magic
-)paren
-multiline_comment|/* called in init before execve */
-r_static
-r_inline
-id|_syscall0
 c_func
 (paren
 r_int
-comma
+)paren
+suffix:semicolon
+r_int
 id|sync
-)paren
-r_static
-r_inline
-id|_syscall0
 c_func
 (paren
+r_void
+)paren
+suffix:semicolon
 id|pid_t
-comma
 id|setsid
+c_func
+(paren
+r_void
 )paren
-r_static
-multiline_comment|/*inline*/
-id|_syscall3
+suffix:semicolon
+r_int
+id|write
 c_func
 (paren
 r_int
-comma
-id|write
-comma
-r_int
-comma
-id|fd
 comma
 r_const
 r_char
 op_star
-comma
-id|buf
 comma
 id|off_t
-comma
-id|count
 )paren
-r_static
-multiline_comment|/*inline*/
-id|_syscall1
-c_func
-(paren
+suffix:semicolon
 r_int
-comma
 id|dup
-comma
-r_int
-comma
-id|fd
-)paren
-r_static
-multiline_comment|/*inline*/
-id|_syscall3
 c_func
 (paren
 r_int
-comma
+)paren
+suffix:semicolon
+r_int
 id|execve
-comma
+c_func
+(paren
 r_const
 r_char
 op_star
 comma
-id|file
-comma
 r_char
 op_star
 op_star
 comma
-id|argv
-comma
 r_char
 op_star
 op_star
-comma
-id|envp
 )paren
-r_static
-multiline_comment|/*inline*/
-id|_syscall3
-c_func
-(paren
+suffix:semicolon
 r_int
-comma
 id|open
-comma
+c_func
+(paren
 r_const
 r_char
 op_star
 comma
-id|file
-comma
 r_int
 comma
-id|flag
-comma
 r_int
-comma
-id|mode
 )paren
-r_static
-multiline_comment|/*inline*/
-id|_syscall1
-c_func
-(paren
+suffix:semicolon
 r_int
-comma
 id|close
-comma
-r_int
-comma
-id|fd
-)paren
-r_static
-multiline_comment|/*inline*/
-id|_syscall1
 c_func
 (paren
 r_int
-comma
-id|_exit
-comma
-r_int
-comma
-id|exitcode
 )paren
-r_static
-r_inline
-id|_syscall3
-c_func
-(paren
+suffix:semicolon
 id|pid_t
-comma
 id|waitpid
-comma
-id|pid_t
-comma
-id|pid
-comma
-r_int
-op_star
-comma
-id|wait_stat
-comma
-r_int
-comma
-id|options
-)paren
-r_static
-r_inline
-id|_syscall2
 c_func
 (paren
-r_int
-comma
-id|clone
+id|pid_t
 comma
 r_int
-r_int
-comma
-id|flags
-comma
-r_char
 op_star
 comma
-id|esp
+r_int
 )paren
-multiline_comment|/* called from init before execve -- need to be inline? -- Cort */
+suffix:semicolon
 DECL|function|wait
 r_static
 r_inline
@@ -770,6 +543,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* __KERNEL_SYSCALLS__ */
 macro_line|#endif /* _ASM_PPC_UNISTD_H_ */
 eof

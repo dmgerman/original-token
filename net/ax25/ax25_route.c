@@ -1768,15 +1768,6 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* skip KISS command */
 id|len
 op_assign
 id|digi-&gt;ndigi

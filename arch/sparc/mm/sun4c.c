@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.148 1997/05/18 21:11:19 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.149 1997/07/20 05:59:38 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -11711,9 +11711,16 @@ id|pte
 )paren
 (brace
 r_struct
+id|dentry
+op_star
+id|dentry
+suffix:semicolon
+r_struct
 id|inode
 op_star
 id|inode
+op_assign
+l_int|NULL
 suffix:semicolon
 id|pgd_t
 op_star
@@ -11723,10 +11730,21 @@ id|pte_t
 op_star
 id|ptep
 suffix:semicolon
+id|dentry
+op_assign
+id|vma-&gt;vm_dentry
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry
+)paren
+(brace
 id|inode
 op_assign
-id|vma-&gt;vm_inode
+id|dentry-&gt;d_inode
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

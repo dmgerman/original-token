@@ -1119,7 +1119,7 @@ id|filp
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|acsi_release
 c_func
 (paren
@@ -4599,7 +4599,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Releasing a block device means we sync() it, so that it can safely&n; * be forgotten about...&n; */
 DECL|function|acsi_release
 r_static
-r_void
+r_int
 id|acsi_release
 c_func
 (paren
@@ -4662,6 +4662,9 @@ l_int|0
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Prevent or allow a media change for removable devices.&n; */
@@ -7285,6 +7288,10 @@ suffix:semicolon
 id|free_pages
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|acsi_buffer
 comma
 id|ACSI_BUFFER_ORDER

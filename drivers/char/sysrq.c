@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.3 1997/06/18 09:42:12 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.4 1997/07/17 11:54:15 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -162,9 +162,15 @@ id|key
 )paren
 (brace
 r_case
-l_int|19
+l_char|&squot;r&squot;
 suffix:colon
 multiline_comment|/* R -- Reset raw mode */
+r_if
+c_cond
+(paren
+id|kbd
+)paren
+(brace
 id|kbd-&gt;kbdmode
 op_assign
 id|VC_XLATE
@@ -175,10 +181,11 @@ c_func
 l_string|&quot;Keyboard mode set to XLATE&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
-l_int|30
+l_char|&squot;a&squot;
 suffix:colon
 multiline_comment|/* A -- SAK */
 id|printk
@@ -187,6 +194,11 @@ c_func
 l_string|&quot;SAK&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty
+)paren
 id|do_SAK
 c_func
 (paren
@@ -202,7 +214,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|48
+l_char|&squot;b&squot;
 suffix:colon
 multiline_comment|/* B -- boot immediately */
 id|printk
@@ -221,7 +233,7 @@ r_break
 suffix:semicolon
 macro_line|#ifdef __sparc__
 r_case
-l_int|35
+l_char|&squot;h&squot;
 suffix:colon
 multiline_comment|/* H -- halt immediately */
 id|printk
@@ -240,7 +252,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 r_case
-l_int|24
+l_char|&squot;o&squot;
 suffix:colon
 multiline_comment|/* O -- power off */
 id|printk
@@ -259,7 +271,7 @@ r_break
 suffix:semicolon
 macro_line|#endif
 r_case
-l_int|31
+l_char|&squot;s&squot;
 suffix:colon
 multiline_comment|/* S -- emergency sync */
 id|printk
@@ -281,7 +293,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|22
+l_char|&squot;u&squot;
 suffix:colon
 multiline_comment|/* U -- emergency remount R/O */
 id|printk
@@ -303,7 +315,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|25
+l_char|&squot;p&squot;
 suffix:colon
 multiline_comment|/* P -- show PC */
 id|printk
@@ -326,7 +338,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|20
+l_char|&squot;t&squot;
 suffix:colon
 multiline_comment|/* T -- show task info */
 id|printk
@@ -343,7 +355,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|50
+l_char|&squot;m&squot;
 suffix:colon
 multiline_comment|/* M -- show memory info */
 id|printk
@@ -360,43 +372,31 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|2
+l_char|&squot;0&squot;
 dot
 dot
 dot
-l_int|11
+l_char|&squot;9&squot;
 suffix:colon
 multiline_comment|/* 0-9 -- set console logging level */
-id|key
-op_decrement
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|key
-op_eq
-l_int|10
-)paren
-id|key
-op_assign
-l_int|0
-suffix:semicolon
 id|orig_log_level
 op_assign
 id|key
+op_minus
+l_char|&squot;0&squot;
 suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;Log level set to %d&bslash;n&quot;
 comma
-id|key
+id|orig_log_level
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|18
+l_char|&squot;e&squot;
 suffix:colon
 multiline_comment|/* E -- terminate all user processes */
 id|printk
@@ -421,7 +421,7 @@ multiline_comment|/* We probably have killed syslogd */
 r_break
 suffix:semicolon
 r_case
-l_int|37
+l_char|&squot;k&squot;
 suffix:colon
 multiline_comment|/* K -- kill all user processes */
 id|printk
@@ -445,7 +445,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|38
+l_char|&squot;l&squot;
 suffix:colon
 multiline_comment|/* L -- kill all processes including init */
 id|printk
@@ -522,14 +522,14 @@ id|file-&gt;f_next
 r_if
 c_cond
 (paren
-id|file-&gt;f_inode
+id|file-&gt;f_dentry
 op_logical_and
 id|file-&gt;f_count
 op_logical_and
 id|S_ISREG
 c_func
 (paren
-id|file-&gt;f_inode-&gt;i_mode
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 id|file-&gt;f_mode

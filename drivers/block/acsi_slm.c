@@ -124,7 +124,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|slmmselect_cmd
+macro_line|#if 0
 r_static
 r_char
 id|slmmselect_cmd
@@ -146,6 +146,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|macro|MAX_SLM
 mdefine_line|#define&t;MAX_SLM&t;&t;2
 DECL|struct|slm
@@ -686,7 +687,7 @@ id|file
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|slm_release
 c_func
 (paren
@@ -726,6 +727,7 @@ r_int
 id|abs_flag
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_static
 r_int
 id|slm_mode_select
@@ -745,6 +747,7 @@ r_int
 id|default_flag
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|slm_get_pagesize
@@ -3198,7 +3201,7 @@ suffix:semicolon
 )brace
 DECL|function|slm_release
 r_static
-r_void
+r_int
 id|slm_release
 c_func
 (paren
@@ -3257,6 +3260,9 @@ l_int|1
 )paren
 id|sip-&gt;rbusy
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace
@@ -3560,7 +3566,8 @@ r_return
 id|rv
 suffix:semicolon
 )brace
-DECL|function|slm_mode_select
+macro_line|#if 0
+multiline_comment|/* currently unused */
 r_static
 r_int
 id|slm_mode_select
@@ -3740,6 +3747,7 @@ r_return
 id|rv
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|slm_get_pagesize
 r_static
 r_int

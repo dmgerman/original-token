@@ -533,6 +533,14 @@ l_int|14
 op_or_assign
 id|AX25_SSSID_SPARE
 suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|AX25_KISS_HEADER_LEN
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

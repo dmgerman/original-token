@@ -23,6 +23,10 @@ DECL|macro|RTC_MONTH
 mdefine_line|#define RTC_MONTH&t;&t;0x1FFE
 DECL|macro|RTC_YEAR
 mdefine_line|#define RTC_YEAR&t;&t;0x1FFF
+DECL|macro|RTC_CONTROLA
+mdefine_line|#define RTC_CONTROLA            0x1FF8
+DECL|macro|RTC_CONTROLB
+mdefine_line|#define RTC_CONTROLB            0x1FF9
 macro_line|#ifndef BCD_TO_BIN
 DECL|macro|BCD_TO_BIN
 mdefine_line|#define BCD_TO_BIN(val) ((val)=((val)&amp;15) + ((val)&gt;&gt;4)*10)

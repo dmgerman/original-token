@@ -2089,6 +2089,12 @@ l_int|16
 )paren
 suffix:semicolon
 )brace
+macro_line|#elif defined(__powerpc__)
+r_return
+(paren
+id|p-&gt;tss.wchan
+)paren
+suffix:semicolon
 macro_line|#endif
 r_return
 l_int|0
@@ -2112,6 +2118,11 @@ DECL|macro|KSTK_EIP
 mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n; &t;if ((tsk)-&gt;tss.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;tss.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;tss.esp0)-&gt;pc;&t; &bslash;&n;        eip; })
 DECL|macro|KSTK_ESP
 mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
+macro_line|#elif defined(__powerpc__)
+DECL|macro|KSTK_EIP
+mdefine_line|#define KSTK_EIP(tsk)&t;((tsk)-&gt;tss.regs-&gt;nip)
+DECL|macro|KSTK_ESP
+mdefine_line|#define KSTK_ESP(tsk)&t;((tsk)-&gt;tss.regs-&gt;gpr[1])
 macro_line|#elif defined (__sparc_v9__)
 DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;tss.kregs-&gt;tpc)

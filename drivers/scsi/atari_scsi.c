@@ -75,6 +75,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
@@ -1551,10 +1552,6 @@ id|done
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|macro|RTC_READ
-mdefine_line|#define&t;RTC_READ(reg)&t;&t;&t;&t;&bslash;&n;    ({&t;unsigned char&t;__val;&t;&t;&t;&bslash;&n;&t;&t;outb(reg,&amp;tt_rtc.regsel);&t;&bslash;&n;&t;&t;__val = tt_rtc.data;&t;&t;&bslash;&n;&t;&t;__val;&t;&t;&t;&t;&bslash;&n;&t;})
-DECL|macro|RTC_WRITE
-mdefine_line|#define&t;RTC_WRITE(reg,val)&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;outb(reg,&amp;tt_rtc.regsel);&t;&bslash;&n;&t;&t;tt_rtc.data = (val);&t;&t;&bslash;&n;&t;} while(0)
 DECL|function|atari_scsi_detect
 r_int
 id|atari_scsi_detect
@@ -1724,86 +1721,37 @@ c_func
 (paren
 id|TT_CLK
 )paren
+op_logical_and
+id|nvram_check_checksum
+c_func
+(paren
+)paren
 )paren
 (brace
 r_int
 r_char
-id|sum
-op_assign
-l_int|0
-comma
 id|b
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/* Make checksum */
-r_for
-c_loop
-(paren
-id|i
 op_assign
-l_int|14
-suffix:semicolon
-id|i
-OL
-l_int|62
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|sum
-op_add_assign
-id|RTC_READ
+id|nvram_read_byte
 c_func
 (paren
-id|i
+l_int|14
 )paren
 suffix:semicolon
-)brace
+multiline_comment|/* Arbitration enabled? (for TOS) If yes, use configured host ID */
 r_if
 c_cond
 (paren
-multiline_comment|/* NV-Ram checksum valid? */
-id|RTC_READ
-c_func
-(paren
-l_int|62
-)paren
-op_eq
-id|sum
-op_logical_and
-id|RTC_READ
-c_func
-(paren
-l_int|63
-)paren
-op_eq
-op_complement
-id|sum
-op_logical_and
-multiline_comment|/* Arbitration enabled? (for TOS) */
-(paren
 id|b
-op_assign
-id|RTC_READ
-c_func
-(paren
-l_int|30
-)paren
-)paren
 op_amp
 l_int|0x80
 )paren
-(brace
 id|host-&gt;this_id
 op_assign
 id|b
 op_amp
 l_int|7
 suffix:semicolon
-)brace
 )brace
 )brace
 macro_line|#ifdef SUPPORT_TAGS

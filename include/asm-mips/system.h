@@ -122,8 +122,8 @@ DECL|macro|save_and_cli
 mdefine_line|#define save_and_cli(x) __save_and_cli(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
-DECL|macro|sync_mem
-mdefine_line|#define sync_mem()                       &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;            &bslash;&n;&t;&quot;sync&bslash;n&bslash;t&quot;                       &bslash;&n;&t;&quot;.set&bslash;treorder&quot;                  &bslash;&n;        : /* no output */                &bslash;&n;&t;: /* no input */                 &bslash;&n;&t;: &quot;memory&quot;)
+DECL|macro|mb
+mdefine_line|#define mb()&t;&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;# prevent instructions being moved around&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.set&bslash;treorder&quot;&t;&t;&t;&t;&t;&bslash;&n;        : /* no output */&t;&t;&t;&t;&bslash;&n;&t;: /* no input */&t;&t;&t;&t;&bslash;&n;&t;: &quot;memory&quot;)
 macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver proc support for Linux.&n; *&n; * Copyright (c) 1995, 1996 Dean W. Gehnert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * ----------------------------------------------------------------&n; *  o Modified from the EATA-DMA /proc support.&n; *  o Additional support for device block statistics provided by&n; *    Matthew Jacob.&n; *&n; *  Dean W. Gehnert, deang@teleport.com, 05/01/96&n; *&n; *  $Id: aic7xxx_proc.c,v 4.0 1996/10/13 08:23:42 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver proc support for Linux.&n; *&n; * Copyright (c) 1995, 1996 Dean W. Gehnert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * ----------------------------------------------------------------&n; *  o Modified from the EATA-DMA /proc support.&n; *  o Additional support for device block statistics provided by&n; *    Matthew Jacob.&n; *&n; *  Dean W. Gehnert, deang@teleport.com, 05/01/96&n; *&n; *  $Id: aic7xxx_proc.c,v 4.1 1997/06/97 08:23:42 deang Exp $&n; *-M*************************************************************************/
 DECL|macro|BLS
 mdefine_line|#define BLS buffer + len + size
 DECL|macro|HDRB
@@ -163,6 +163,11 @@ r_int
 id|i
 suffix:semicolon
 r_int
+id|found
+op_assign
+id|FALSE
+suffix:semicolon
+r_int
 id|size
 op_assign
 l_int|0
@@ -208,6 +213,8 @@ op_assign
 l_string|&quot;AIC-777x&quot;
 comma
 l_string|&quot;AIC-785x&quot;
+comma
+l_string|&quot;AIC-786x&quot;
 comma
 l_string|&quot;AIC-787x&quot;
 comma
@@ -272,6 +279,9 @@ op_ne
 l_int|NULL
 )paren
 op_logical_and
+op_logical_neg
+id|found
+op_logical_and
 (paren
 (paren
 id|HBAptr
@@ -300,16 +310,29 @@ op_eq
 id|hostno
 )paren
 (brace
-r_break
-suffix:semicolon
-r_break
+id|found
+op_assign
+id|TRUE
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|found
+)paren
+(brace
 id|HBAptr
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
+r_else
+(brace
+r_break
+suffix:semicolon
+)brace
 )brace
 )brace
 r_if
@@ -437,7 +460,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;%s/&quot;
+l_string|&quot;%s&quot;
 comma
 id|rcs_version
 c_func
@@ -446,6 +469,7 @@ id|AIC7XXX_H_VERSION
 )paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|size
 op_add_assign
 id|sprintf
@@ -462,6 +486,7 @@ id|AIC7XXX_SEQ_VER
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|len
 op_add_assign
 id|size
@@ -521,29 +546,6 @@ comma
 l_string|&quot;  AIC7XXX_CMDS_PER_LUN   : %d&bslash;n&quot;
 comma
 id|AIC7XXX_CMDS_PER_LUN
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef AIC7XXX_TWIN_SUPPORT
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;  AIC7XXX_TWIN_SUPPORT   : Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;  AIC7XXX_TWIN_SUPPORT   : Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -661,7 +663,7 @@ l_string|&quot;          SCSI Adapter: %s&bslash;n&quot;
 comma
 id|board_names
 (braket
-id|p-&gt;type
+id|p-&gt;chip_type
 )braket
 )paren
 suffix:semicolon
@@ -676,7 +678,7 @@ l_string|&quot;                        (%s chipset)&bslash;n&quot;
 comma
 id|chip_names
 (braket
-id|p-&gt;chip_type
+id|p-&gt;chip_class
 )braket
 )paren
 suffix:semicolon
@@ -714,6 +716,18 @@ c_func
 (paren
 id|BLS
 comma
+l_string|&quot;        Base IO Memory: 0x%x&bslash;n&quot;
+comma
+id|p-&gt;mbase
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
 l_string|&quot;                   IRQ: %d&bslash;n&quot;
 comma
 id|HBAptr-&gt;irq
@@ -728,11 +742,11 @@ id|BLS
 comma
 l_string|&quot;                  SCBs: Used %d, HW %d, Page %d&bslash;n&quot;
 comma
-id|p-&gt;scb_link-&gt;numscbs
+id|p-&gt;scb_data-&gt;numscbs
 comma
-id|p-&gt;maxhscbs
+id|p-&gt;scb_data-&gt;maxhscbs
 comma
-id|p-&gt;maxscbs
+id|p-&gt;scb_data-&gt;maxscbs
 )paren
 suffix:semicolon
 id|size
@@ -750,7 +764,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;chip_type
+id|p-&gt;chip_class
 op_eq
 id|AIC_777x
 )paren

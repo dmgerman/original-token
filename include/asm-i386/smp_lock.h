@@ -20,6 +20,13 @@ mdefine_line|#define release_kernel_lock(task, cpu, depth) &bslash;&n;do { &bsla
 multiline_comment|/* Re-acquire the kernel lock */
 DECL|macro|reacquire_kernel_lock
 mdefine_line|#define reacquire_kernel_lock(task, cpu, depth) &bslash;&n;do { if (depth) __asm__ __volatile__( &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call __lock_kernel&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %2,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&quot; &bslash;&n;&t;: &quot;=m&quot; (task-&gt;lock_depth) &bslash;&n;&t;: &quot;d&quot; (cpu), &quot;c&quot; (depth)); &bslash;&n;} while (0)
+r_extern
+r_const
+r_char
+id|lk_lockmsg
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/* Locking the kernel */
 DECL|function|lock_kernel
 r_extern
@@ -56,7 +63,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;lock from interrupt context at %p&bslash;n&quot;
+id|lk_lockmsg
 comma
 op_logical_and
 id|l1

@@ -3,6 +3,10 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * PCI interrupt configuration.  This is motherboard specific.&n; */
 multiline_comment|/* Which PCI interrupt line does a given device [slot] use? */
 multiline_comment|/* Note: This really should be two dimensional based in slot/pin used */
@@ -11,6 +15,12 @@ r_int
 r_char
 op_star
 id|Motherboard_map
+suffix:semicolon
+DECL|variable|Motherboard_map_name
+r_int
+r_char
+op_star
+id|Motherboard_map_name
 suffix:semicolon
 multiline_comment|/* How is the 82378 PIRQ mapping setup? */
 DECL|variable|Motherboard_routes
@@ -440,8 +450,136 @@ l_int|13
 multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
-DECL|macro|PCI_DEBUG
-mdefine_line|#define PCI_DEBUG
+multiline_comment|/*&n; * ibm 830 (and 850?).&n; * This is actually based on the Carolina motherboard&n; * -- Cort&n; */
+DECL|variable|ibm8xx_pci_IRQ_map
+r_static
+r_char
+id|ibm8xx_pci_IRQ_map
+(braket
+l_int|23
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - FireCoral */
+l_int|4
+comma
+multiline_comment|/* Slot 12 - Ethernet  PCIINTD# */
+l_int|2
+comma
+multiline_comment|/* Slot 13 - PCI Slot #2 */
+l_int|2
+comma
+multiline_comment|/* Slot 14 - S3 Video PCIINTD# */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - onboard SCSI (INDI) [1] */
+l_int|3
+comma
+multiline_comment|/* Slot 16 - NCR58C810 RS6000 Only PCIINTC# */
+l_int|0
+comma
+multiline_comment|/* Slot 17 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 18 - PCI Slot 2 PCIINTx# (See below) */
+l_int|0
+comma
+multiline_comment|/* Slot 19 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 20 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 21 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 22 - PCI slot 1 PCIINTx# (See below) */
+)brace
+suffix:semicolon
+DECL|variable|ibm8xx_pci_IRQ_routes
+r_static
+r_char
+id|ibm8xx_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - unused */
+l_int|13
+comma
+multiline_comment|/* Line 1 */
+l_int|10
+comma
+multiline_comment|/* Line 2 */
+l_int|15
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+comma
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+multiline_comment|/* This just changes the PCI slots &amp; onboard SCSI + S3 to IRQ10, but&n; * it really needs some logic to set them to unique IRQ&squot;s, or even&n; * add some logic to the drivers to ask an irq.c routine to re-map&n; * the IRQ if it needs one to itself...&n; */
+DECL|variable|Carolina_PIRQ_routes
+r_static
+r_char
+id|Carolina_PIRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0xad
+comma
+multiline_comment|/* INTB# = 10, INTA# = 13 */
+l_int|0xff
+multiline_comment|/* INTD# = 15, INTC# = 15 */
+)brace
+suffix:semicolon
+multiline_comment|/* We have to turn on LEVEL mode for changed IRQ&squot;s */
+multiline_comment|/* All PCI IRQ&squot;s need to be level mode, so this should be something&n; * other than hard-coded as well... IRQ&squot;s are individually mappable&n; * to either edge or level.&n; */
+DECL|macro|CAROLINA_IRQ_EDGE_MASK_LO
+mdefine_line|#define CAROLINA_IRQ_EDGE_MASK_LO   0x00  /* IRQ&squot;s 0-7  */
+DECL|macro|CAROLINA_IRQ_EDGE_MASK_HI
+mdefine_line|#define CAROLINA_IRQ_EDGE_MASK_HI   0xA4  /* IRQ&squot;s 8-15 [10,13,15] */
+DECL|macro|PCI_DEVICE_ID_IBM_CORAL
+mdefine_line|#define PCI_DEVICE_ID_IBM_CORAL&t;&t;0x000a
 DECL|macro|PCI_DEBUG
 macro_line|#undef  PCI_DEBUG
 macro_line|#ifdef PCI_STATS
@@ -453,25 +591,6 @@ l_int|2
 )braket
 suffix:semicolon
 macro_line|#endif
-DECL|function|pcibios_init
-r_int
-r_int
-id|pcibios_init
-c_func
-(paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-(brace
-r_return
-id|mem_start
-suffix:semicolon
-)brace
 DECL|function|pcibios_fixup
 r_int
 r_int
@@ -489,132 +608,6 @@ id|mem_end
 (brace
 r_return
 id|mem_start
-suffix:semicolon
-)brace
-r_int
-r_int
-DECL|function|_LE_to_BE_long
-id|_LE_to_BE_long
-c_func
-(paren
-r_int
-r_int
-id|val
-)paren
-(brace
-r_int
-r_char
-op_star
-id|p
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|val
-suffix:semicolon
-macro_line|#ifdef PCI_STATS
-id|PCI_conversions
-(braket
-l_int|0
-)braket
-op_increment
-suffix:semicolon
-macro_line|#endif&t;
-r_return
-(paren
-(paren
-id|p
-(braket
-l_int|3
-)braket
-op_lshift
-l_int|24
-)paren
-op_or
-(paren
-id|p
-(braket
-l_int|2
-)braket
-op_lshift
-l_int|16
-)paren
-op_or
-(paren
-id|p
-(braket
-l_int|1
-)braket
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-id|p
-(braket
-l_int|0
-)braket
-op_lshift
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-r_int
-r_int
-DECL|function|_LE_to_BE_short
-id|_LE_to_BE_short
-c_func
-(paren
-r_int
-r_int
-id|val
-)paren
-(brace
-r_int
-r_char
-op_star
-id|p
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|val
-suffix:semicolon
-macro_line|#ifdef PCI_STATS
-id|PCI_conversions
-(braket
-l_int|1
-)braket
-op_increment
-suffix:semicolon
-macro_line|#endif&t;
-r_return
-(paren
-(paren
-id|p
-(braket
-l_int|3
-)braket
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-id|p
-(braket
-l_int|2
-)braket
-op_lshift
-l_int|0
-)paren
-)paren
 suffix:semicolon
 )brace
 r_int
@@ -751,7 +744,7 @@ suffix:semicolon
 macro_line|#endif&t;&t;
 id|_val
 op_assign
-id|_LE_to_BE_long
+id|le32_to_cpu
 c_func
 (paren
 op_star
@@ -813,7 +806,7 @@ id|dev
 op_rshift_assign
 l_int|3
 suffix:semicolon
-macro_line|#ifdef PCI_DEBUG&t;
+macro_line|#ifdef PCI_DEBUG
 id|printk
 c_func
 (paren
@@ -852,6 +845,10 @@ l_int|16
 op_star
 id|val
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|0xFFFFFFFF
 suffix:semicolon
 r_return
@@ -879,7 +876,7 @@ op_or
 id|offset
 )paren
 suffix:semicolon
-macro_line|#ifdef PCI_DEBUG&t;
+macro_line|#ifdef PCI_DEBUG
 id|printk
 c_func
 (paren
@@ -891,7 +888,7 @@ suffix:semicolon
 macro_line|#endif&t;&t;
 id|_val
 op_assign
-id|_LE_to_BE_short
+id|le16_to_cpu
 c_func
 (paren
 op_star
@@ -899,7 +896,7 @@ id|ptr
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef PCI_DEBUG&t;
+macro_line|#ifdef PCI_DEBUG
 id|printk
 c_func
 (paren
@@ -985,6 +982,7 @@ id|dev
 )braket
 )braket
 suffix:semicolon
+multiline_comment|/*printk(&quot;dev %d map %d route %d&bslash;n&quot;,&n;&t;&t;&t;  dev,Motherboard_map[dev],&n;&t;&t;&t;  Motherboard_routes[Motherboard_map[dev]]);*/
 )brace
 r_else
 (brace
@@ -1156,7 +1154,7 @@ l_int|3
 suffix:semicolon
 id|_val
 op_assign
-id|_LE_to_BE_long
+id|le32_to_cpu
 c_func
 (paren
 id|val
@@ -1271,7 +1269,7 @@ l_int|3
 suffix:semicolon
 id|_val
 op_assign
-id|_LE_to_BE_short
+id|le16_to_cpu
 c_func
 (paren
 id|val
@@ -1829,9 +1827,29 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Note: This routine has to access the PCI configuration space&n; * for the PCI bridge chip (Intel 82378).&n; */
-DECL|function|route_PCI_interrupts
-r_void
-id|route_PCI_interrupts
+DECL|function|pcibios_init
+r_int
+r_int
+id|pcibios_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+(brace
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+DECL|function|route_pci_interrupts
+r_int
+r_int
+id|route_pci_interrupts
 c_func
 (paren
 r_void
@@ -1871,54 +1889,14 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Decide which motherboard this is &amp; how the PCI interrupts are routed */
 r_if
 c_cond
 (paren
-id|isBeBox
-(braket
-l_int|0
-)braket
-)paren
-(brace
-id|Motherboard_map
-op_assign
-id|BeBox_pci_IRQ_map
-suffix:semicolon
-id|Motherboard_routes
-op_assign
-id|BeBox_pci_IRQ_routes
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|_get_PVR
-c_func
-(paren
-)paren
-op_rshift
-l_int|16
-)paren
+id|_machine
 op_eq
-l_int|1
+id|_MACH_Motorola
 )paren
 (brace
-multiline_comment|/* Nobis */
-id|Motherboard_map
-op_assign
-id|Nobis_pci_IRQ_map
-suffix:semicolon
-id|Motherboard_routes
-op_assign
-id|Nobis_pci_IRQ_routes
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Motorola hardware */
 r_switch
 c_cond
 (paren
@@ -1935,6 +1913,10 @@ r_case
 l_int|0x10
 suffix:colon
 multiline_comment|/* MVME16xx */
+id|Motherboard_map_name
+op_assign
+l_string|&quot;Genesis&quot;
+suffix:semicolon
 id|Motherboard_map
 op_assign
 id|Genesis_pci_IRQ_map
@@ -1949,6 +1931,10 @@ r_case
 l_int|0x20
 suffix:colon
 multiline_comment|/* Series E */
+id|Motherboard_map_name
+op_assign
+l_string|&quot;Series E&quot;
+suffix:semicolon
 id|Motherboard_map
 op_assign
 id|Comet_pci_IRQ_map
@@ -1966,6 +1952,10 @@ multiline_comment|/* PowerStack */
 r_default
 suffix:colon
 multiline_comment|/* Can&squot;t hurt, can it? */
+id|Motherboard_map_name
+op_assign
+l_string|&quot;Blackhawk (Powerstack)&quot;
+suffix:semicolon
 id|Motherboard_map
 op_assign
 id|Blackhawk_pci_IRQ_map
@@ -1976,6 +1966,346 @@ id|Blackhawk_pci_IRQ_routes
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_IBM
+)paren
+(brace
+r_int
+r_char
+id|pl_id
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|index
+suffix:semicolon
+r_int
+r_char
+id|fn
+comma
+id|bus
+suffix:semicolon
+r_int
+r_int
+id|addr
+suffix:semicolon
+r_int
+r_char
+id|dma_mode
+comma
+id|ide_mode
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|Motherboard_map_name
+op_assign
+l_string|&quot;IBM 8xx (Carolina)&quot;
+suffix:semicolon
+id|Motherboard_map
+op_assign
+id|ibm8xx_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|ibm8xx_pci_IRQ_routes
+suffix:semicolon
+id|ll_printk
+c_func
+(paren
+l_string|&quot;before loop&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|index
+op_assign
+l_int|0
+suffix:semicolon
+op_logical_neg
+id|pcibios_find_device
+(paren
+id|PCI_VENDOR_ID_IBM
+comma
+id|PCI_DEVICE_ID_IBM_CORAL
+comma
+id|index
+comma
+op_amp
+id|bus
+comma
+op_amp
+id|fn
+)paren
+suffix:semicolon
+op_increment
+id|index
+)paren
+(brace
+id|pcibios_read_config_dword
+c_func
+(paren
+id|bus
+comma
+id|fn
+comma
+l_int|0x10
+comma
+op_amp
+id|addr
+)paren
+suffix:semicolon
+id|addr
+op_and_assign
+op_complement
+l_int|0x3
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x26
+comma
+id|addr
+)paren
+suffix:semicolon
+id|dma_mode
+op_assign
+id|inb
+c_func
+(paren
+id|addr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x25
+comma
+id|addr
+)paren
+suffix:semicolon
+id|ide_mode
+op_assign
+id|inb
+c_func
+(paren
+id|addr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/*printk(&quot;CORAL I/O at 0x%x, DMA mode: %x, IDE mode: %x&quot;, &n;&t;&t;&t;&t;       addr, dma_mode, ide_mode);*/
+multiline_comment|/* Make CDROM non-DMA */
+id|ide_mode
+op_assign
+(paren
+id|ide_mode
+op_amp
+l_int|0x0F
+)paren
+op_or
+l_int|0x20
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x25
+comma
+id|addr
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|ide_mode
+comma
+id|addr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+id|dma_mode
+op_assign
+id|dma_mode
+op_amp
+op_complement
+l_int|0x80
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x26
+comma
+id|addr
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|dma_mode
+comma
+id|addr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x26
+comma
+id|addr
+)paren
+suffix:semicolon
+id|dma_mode
+op_assign
+id|inb
+c_func
+(paren
+id|addr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x25
+comma
+id|addr
+)paren
+suffix:semicolon
+id|ide_mode
+op_assign
+id|inb
+c_func
+(paren
+id|addr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/*printk(&quot;=&gt; DMA mode: %x, IDE mode: %x&bslash;n&quot;, &n;&t;&t;&t;&t;       dma_mode, ide_mode);*/
+)brace
+multiline_comment|/* Setup the PCI INT mappings for the Carolina */
+multiline_comment|/* These are PCI Interrupt Route Control [1|2] Register */
+id|outb
+c_func
+(paren
+id|Carolina_PIRQ_routes
+(braket
+l_int|0
+)braket
+comma
+l_int|0x0890
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|Carolina_PIRQ_routes
+(braket
+l_int|1
+)braket
+comma
+l_int|0x0891
+)paren
+suffix:semicolon
+id|pl_id
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x0852
+)paren
+suffix:semicolon
+multiline_comment|/*printk(&quot;CPU Planar ID is %#0x&bslash;n&quot;, pl_id);*/
+r_if
+c_cond
+(paren
+id|pl_id
+op_eq
+l_int|0x0C
+)paren
+(brace
+multiline_comment|/* INDI */
+id|Motherboard_map
+(braket
+l_int|12
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|ll_printk
+c_func
+(paren
+l_string|&quot;before edge/level&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#if 0&t;&t;&t;
+multiline_comment|/*printk(&quot;Changing IRQ mode&bslash;n&quot;);*/
+id|pl_id
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x04d0
+)paren
+suffix:semicolon
+multiline_comment|/*printk(&quot;Low mask is %#0x&bslash;n&quot;, pl_id);*/
+id|outb
+c_func
+(paren
+id|pl_id
+op_or
+id|CAROLINA_IRQ_EDGE_MASK_LO
+comma
+l_int|0x04d0
+)paren
+suffix:semicolon
+id|pl_id
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x04d1
+)paren
+suffix:semicolon
+multiline_comment|/*printk(&quot;Hi mask is  %#0x&bslash;n&quot;, pl_id);*/
+id|outb
+c_func
+(paren
+id|pl_id
+op_or
+id|CAROLINA_IRQ_EDGE_MASK_HI
+comma
+l_int|0x04d1
+)paren
+suffix:semicolon
+id|pl_id
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x04d1
+)paren
+suffix:semicolon
+multiline_comment|/*printk(&quot;Hi mask now %#0x&bslash;n&quot;, pl_id);*/
+macro_line|#endif&t;&t;&t;
 )brace
 )brace
 multiline_comment|/* Set up mapping from slots */

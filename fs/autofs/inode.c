@@ -859,9 +859,11 @@ op_logical_neg
 id|s-&gt;s_root
 )paren
 (brace
-id|s-&gt;s_dev
-op_assign
-l_int|0
+id|printk
+c_func
+(paren
+l_string|&quot;autofs: get root inode failed&bslash;n&quot;
+)paren
 suffix:semicolon
 id|kfree
 c_func
@@ -869,11 +871,9 @@ c_func
 id|sbi
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;autofs: get root inode failed&bslash;n&quot;
-)paren
+id|s-&gt;s_dev
+op_assign
+l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -909,15 +909,17 @@ id|maxproto
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;autofs: called with bogus options&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|s-&gt;s_root
 )paren
-suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-l_int|0
 suffix:semicolon
 id|kfree
 c_func
@@ -925,11 +927,9 @@ c_func
 id|sbi
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;autofs: called with bogus options&bslash;n&quot;
-)paren
+id|s-&gt;s_dev
+op_assign
+l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -949,15 +949,17 @@ OL
 id|AUTOFS_PROTO_VERSION
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;autofs: kernel does not match daemon version&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|s-&gt;s_root
 )paren
-suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-l_int|0
 suffix:semicolon
 id|kfree
 c_func
@@ -965,11 +967,9 @@ c_func
 id|sbi
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;autofs: kernel does not match daemon version&bslash;n&quot;
-)paren
+id|s-&gt;s_dev
+op_assign
+l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -1044,15 +1044,15 @@ c_func
 id|s-&gt;s_root
 )paren
 suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|kfree
 c_func
 (paren
 id|sbi
 )paren
+suffix:semicolon
+id|s-&gt;s_dev
+op_assign
+l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon

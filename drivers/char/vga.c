@@ -32,6 +32,13 @@ DECL|macro|dac_reg
 mdefine_line|#define dac_reg (0x3c8)
 DECL|macro|dac_val
 mdefine_line|#define dac_val (0x3c9)
+macro_line|#ifdef __powerpc__
+DECL|macro|VGA_OFFSET
+mdefine_line|#define VGA_OFFSET 0xC0000000;
+macro_line|#else
+DECL|macro|VGA_OFFSET
+mdefine_line|#define VGA_OFFSET 0x0
+macro_line|#endif
 multiline_comment|/*&n; * By replacing the four outb_p with two back to back outw, we can reduce&n; * the window of opportunity to see text mislocated to the RHS of the&n; * console during heavy scrolling activity. However there is the remote&n; * possibility that some pre-dinosaur hardware won&squot;t like the back to back&n; * I/O. Since the Xservers get away with it, we should be able to as well.&n; */
 DECL|function|write_vga
 r_static
@@ -407,6 +414,8 @@ multiline_comment|/* Is this a monochrome display? */
 id|video_mem_base
 op_assign
 l_int|0xb0000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 id|video_port_reg
 op_assign
@@ -435,6 +444,8 @@ suffix:semicolon
 id|video_mem_term
 op_assign
 l_int|0xb8000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 op_star
 id|display_desc
@@ -461,6 +472,8 @@ suffix:semicolon
 id|video_mem_term
 op_assign
 l_int|0xb2000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 op_star
 id|display_desc
@@ -499,6 +512,8 @@ suffix:semicolon
 id|video_mem_base
 op_assign
 l_int|0xb8000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 id|video_port_reg
 op_assign
@@ -526,6 +541,8 @@ suffix:semicolon
 id|video_mem_term
 op_assign
 l_int|0xc0000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 r_if
 c_cond
@@ -580,10 +597,14 @@ multiline_comment|/*&n;&t;&t;&t;&t; * get 64K rather than 32K of video RAM.&n;&t
 id|video_mem_base
 op_assign
 l_int|0xa0000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 id|video_mem_term
 op_assign
 l_int|0xb0000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 id|outb_p
 (paren
@@ -711,6 +732,8 @@ suffix:semicolon
 id|video_mem_term
 op_assign
 l_int|0xba000
+op_plus
+id|VGA_OFFSET
 suffix:semicolon
 op_star
 id|display_desc

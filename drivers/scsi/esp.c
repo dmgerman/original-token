@@ -6895,7 +6895,7 @@ r_return
 id|SCSI_ABORT_BUSY
 suffix:semicolon
 )brace
-multiline_comment|/* It&squot;s disconnected, we have to reconnect to re-establish&n;&t; * the nexus and tell the device to abort.  However, we really&n;&t; * cannot &squot;reconnect&squot; per se, therefore we tell the upper layer&n;&t; * the safest thing we can.  This is, wait a bit, if nothing&n;&t; * happens, we are really hung so reset the bug.&n;&t; */
+multiline_comment|/* It&squot;s disconnected, we have to reconnect to re-establish&n;&t; * the nexus and tell the device to abort.  However, we really&n;&t; * cannot &squot;reconnect&squot; per se, therefore we tell the upper layer&n;&t; * the safest thing we can.  This is, wait a bit, if nothing&n;&t; * happens, we are really hung so reset the bus.&n;&t; */
 r_return
 id|SCSI_ABORT_SNOOZE
 suffix:semicolon
@@ -7022,18 +7022,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_struct
-id|scatterlist
-op_star
-id|scl
-op_assign
-(paren
-r_struct
-id|scatterlist
-op_star
-)paren
-id|done_SC-&gt;buffer
-suffix:semicolon
 macro_line|#ifdef DEBUG_ESP_SG
 id|printk
 c_func
@@ -7052,7 +7040,7 @@ r_struct
 id|mmu_sglist
 op_star
 )paren
-id|scl
+id|done_SC-&gt;buffer
 comma
 id|done_SC-&gt;use_sg
 op_minus
@@ -8324,7 +8312,13 @@ op_assign
 (paren
 id|__u32
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|sp-&gt;SCp.ptr
+)paren
 )paren
 suffix:semicolon
 id|base
@@ -9547,7 +9541,13 @@ op_assign
 (paren
 id|__u32
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|SCptr-&gt;SCp.ptr
+)paren
 )paren
 suffix:semicolon
 id|dregs-&gt;cond_reg
@@ -9578,7 +9578,13 @@ comma
 (paren
 id|__u32
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|SCptr-&gt;SCp.ptr
+)paren
 )paren
 comma
 id|hmuch
@@ -17238,8 +17244,20 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
+multiline_comment|/* XXX Gross hack for sun4u SMP, fix it right later... -DaveM */
 macro_line|#ifdef __sparc_v9__
-macro_line|#error Dave you need to fix some things first...
+r_extern
+r_int
+r_char
+id|ino_to_pil
+(braket
+)braket
+suffix:semicolon
+DECL|macro|INO_TO_PIL
+mdefine_line|#define INO_TO_PIL(esp)&t;&t;(ino_to_pil[(esp)-&gt;irq])
+macro_line|#else
+DECL|macro|INO_TO_PIL
+mdefine_line|#define INO_TO_PIL(esp)&t;&t;((esp)-&gt;irq &amp; 0xf)
 macro_line|#endif
 multiline_comment|/* For SMP we only service one ESP on the list list at our IRQ level! */
 DECL|function|esp_intr
@@ -17276,10 +17294,10 @@ id|esp
 r_if
 c_cond
 (paren
+id|INO_TO_PIL
+c_func
 (paren
-id|esp-&gt;irq
-op_amp
-l_int|0xf
+id|esp
 )paren
 op_eq
 id|irq

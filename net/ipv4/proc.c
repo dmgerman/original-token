@@ -127,7 +127,7 @@ id|pos
 op_assign
 l_int|128
 suffix:semicolon
-multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed&n; *&t;at the wrong moment (eg a syn recv socket getting a reset), or&n; *&t;a memory timer destroy. Instead of playing with timers we just&n; *&t;concede defeat and cli().&n; */
+multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed&n; *&t;at the wrong moment (eg a syn recv socket getting a reset), or&n; *&t;a memory timer destroy. Instead of playing with timers we just&n; *&t;concede defeat and do a start_bh_atomic().&n; */
 id|SOCKHASH_LOCK
 c_func
 (paren

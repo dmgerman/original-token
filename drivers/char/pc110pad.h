@@ -59,6 +59,6 @@ mdefine_line|#define PC110PAD_IOCTL_TYPE&t;&t;0x9a
 DECL|macro|PC110PADIOCGETP
 mdefine_line|#define PC110PADIOCGETP _IOR(PC110PAD_IOCTL_TYPE, 0, struct pc110pad_params)
 DECL|macro|PC110PADIOCSETP
-mdefine_line|#define PC110PADIOCSETP _IOR(PC110PAD_IOCTL_TYPE, 1, struct pc110pad_params)
+mdefine_line|#define PC110PADIOCSETP _IOW(PC110PAD_IOCTL_TYPE, 1, struct pc110pad_params)
 macro_line|#endif /* _PC110PAD_H */
 eof

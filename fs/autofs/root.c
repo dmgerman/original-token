@@ -127,7 +127,7 @@ op_assign
 (brace
 l_int|NULL
 comma
-multiline_comment|/* lseek */
+multiline_comment|/* llseek */
 l_int|NULL
 comma
 multiline_comment|/* read */
@@ -139,7 +139,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* select */
+multiline_comment|/* poll */
 id|autofs_root_ioctl
 comma
 multiline_comment|/* ioctl */
@@ -153,7 +153,19 @@ l_int|NULL
 comma
 multiline_comment|/* release */
 l_int|NULL
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|autofs_root_inode_operations
@@ -212,7 +224,16 @@ l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+comma
+multiline_comment|/* updatepage */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|autofs_root_readdir
@@ -487,23 +508,43 @@ op_minus
 id|ENOENT
 )paren
 (brace
-id|dentry-&gt;d_flags
+id|dentry-&gt;d_time
 op_assign
-l_int|0
+id|jiffies
+op_plus
+id|AUTOFS_NEGATIVE_TIMEOUT
+suffix:semicolon
+id|dentry-&gt;d_flags
+op_and_assign
+op_complement
+id|DCACHE_AUTOFS_PENDING
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
 id|status
 )paren
+(brace
+multiline_comment|/* Return a negative dentry, but leave it &quot;pending&quot; */
 r_return
-id|status
+l_int|1
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* Abuse this field as a pointer to the directory entry, used to&n;&t;   find the expire list pointers */
+id|dentry-&gt;d_time
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ent
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -527,10 +568,12 @@ c_cond
 op_logical_neg
 id|inode
 )paren
+(brace
+multiline_comment|/* Failed, but leave pending for next time */
 r_return
-op_minus
-id|EACCES
+l_int|1
 suffix:semicolon
+)brace
 id|dentry-&gt;d_inode
 op_assign
 id|inode
@@ -559,12 +602,22 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|autofs_update_usage
+c_func
+(paren
+op_amp
+id|sbi-&gt;dirhash
+comma
+id|ent
+)paren
+suffix:semicolon
 id|dentry-&gt;d_flags
-op_assign
-l_int|0
+op_and_assign
+op_complement
+id|DCACHE_AUTOFS_PENDING
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Revalidate is called on every cache lookup.  Some of those&n; * cache lookups may actually happen while the dentry is not&n; * yet completely filled in, and revalidate has to delay such&n; * lookups..&n; */
@@ -592,6 +645,11 @@ id|dir
 op_assign
 id|dentry-&gt;d_parent-&gt;d_inode
 suffix:semicolon
+r_struct
+id|autofs_dir_ent
+op_star
+id|ent
+suffix:semicolon
 id|sbi
 op_assign
 (paren
@@ -601,11 +659,13 @@ op_star
 )paren
 id|dir-&gt;i_sb-&gt;u.generic_sbp
 suffix:semicolon
-multiline_comment|/* Incomplete dentry? */
+multiline_comment|/* Pending dentry */
 r_if
 c_cond
 (paren
 id|dentry-&gt;d_flags
+op_amp
+id|DCACHE_AUTOFS_PENDING
 )paren
 (brace
 r_if
@@ -620,6 +680,7 @@ id|sbi
 r_return
 l_int|1
 suffix:semicolon
+r_return
 id|try_to_fill_dentry
 c_func
 (paren
@@ -630,11 +691,8 @@ comma
 id|sbi
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
 )brace
-multiline_comment|/* Negative dentry.. Should we time these out? */
+multiline_comment|/* Negative dentry.. invalidate if &quot;old&quot; */
 r_if
 c_cond
 (paren
@@ -642,9 +700,33 @@ op_logical_neg
 id|dentry-&gt;d_inode
 )paren
 r_return
-l_int|1
+(paren
+id|dentry-&gt;d_time
+op_minus
+id|jiffies
+op_le
+id|AUTOFS_NEGATIVE_TIMEOUT
+)paren
 suffix:semicolon
-multiline_comment|/* We should update the usage stuff here.. */
+multiline_comment|/* Update the usage list */
+id|ent
+op_assign
+(paren
+r_struct
+id|autofs_dir_ent
+op_star
+)paren
+id|dentry-&gt;d_time
+suffix:semicolon
+id|autofs_update_usage
+c_func
+(paren
+op_amp
+id|sbi-&gt;dirhash
+comma
+id|ent
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -752,8 +834,8 @@ op_assign
 id|autofs_revalidate
 suffix:semicolon
 id|dentry-&gt;d_flags
-op_assign
-l_int|1
+op_or_assign
+id|DCACHE_AUTOFS_PENDING
 suffix:semicolon
 id|d_add
 c_func

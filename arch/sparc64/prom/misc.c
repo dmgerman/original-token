@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.8 1997/07/14 23:45:28 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.9 1997/07/24 12:15:11 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -423,9 +423,9 @@ id|tba
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
-DECL|function|prom_start_cpu
+DECL|function|prom_startcpu
 r_void
-id|prom_start_cpu
+id|prom_startcpu
 c_func
 (paren
 r_int

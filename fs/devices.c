@@ -939,10 +939,19 @@ id|dev
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|invalidate_inodes
 c_func
 (paren
 id|dev
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;VFS: busy inodes on changed media..&bslash;n&quot;
 )paren
 suffix:semicolon
 id|invalidate_buffers

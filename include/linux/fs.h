@@ -3016,7 +3016,7 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|invalidate_inodes
 c_func
 (paren

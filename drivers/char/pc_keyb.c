@@ -13,7 +13,37 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* Some configuration switches are present in the include file... */
 macro_line|#include &quot;pc_keyb.h&quot;
+multiline_comment|/* Simple translation table for the SysRq keys */
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+DECL|variable|pckbd_sysrq_xlate
+r_int
+r_char
+id|pckbd_sysrq_xlate
+(braket
+l_int|128
+)braket
+op_assign
+l_string|&quot;&bslash;000&bslash;0331234567890-=&bslash;177&bslash;t&quot;
+multiline_comment|/* 0x00 - 0x0f */
+l_string|&quot;qwertyuiop[]&bslash;r&bslash;000as&quot;
+multiline_comment|/* 0x10 - 0x1f */
+l_string|&quot;dfghjkl;&squot;`&bslash;000&bslash;&bslash;zxcv&quot;
+multiline_comment|/* 0x20 - 0x2f */
+l_string|&quot;bnm,./&bslash;000*&bslash;000 &bslash;000&bslash;201&bslash;202&bslash;203&bslash;204&bslash;205&quot;
+multiline_comment|/* 0x30 - 0x3f */
+l_string|&quot;&bslash;206&bslash;207&bslash;210&bslash;211&bslash;212&bslash;000&bslash;000789-456+1&quot;
+multiline_comment|/* 0x40 - 0x4f */
+l_string|&quot;230&bslash;177&bslash;000&bslash;000&bslash;213&bslash;214&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
+multiline_comment|/* 0x50 - 0x5f */
+l_string|&quot;&bslash;r&bslash;000/&quot;
+suffix:semicolon
+multiline_comment|/* 0x60 - 0x6f */
+macro_line|#endif
 multiline_comment|/*&n; * In case we run on a non-x86 hardware we need to initialize both the keyboard&n; * controller and the keyboard. On a x86, the BIOS will already have initialized&n; * them.&n; */
+macro_line|#ifndef __i386__
+DECL|macro|INIT_KBD
+mdefine_line|#define INIT_KBD
+macro_line|#endif
 macro_line|#ifdef INIT_KBD
 DECL|function|__initfunc
 id|__initfunc
@@ -36,9 +66,11 @@ id|status
 comma
 id|data
 suffix:semicolon
-id|n
+r_int
+r_int
+id|start
 op_assign
-id|KBD_TIMEOUT
+id|jiffies
 suffix:semicolon
 r_do
 (brace
@@ -98,8 +130,11 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-op_decrement
-id|n
+id|jiffies
+op_minus
+id|start
+OL
+id|KBD_INIT_TIMEOUT
 )paren
 suffix:semicolon
 r_return
@@ -396,23 +431,14 @@ r_void
 )paren
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_char
 op_star
 id|msg
 suffix:semicolon
-id|save_flags
+id|disable_irq
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
+id|KEYBOARD_IRQ
 )paren
 suffix:semicolon
 id|msg
@@ -422,10 +448,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|enable_irq
 c_func
 (paren
-id|flags
+id|KEYBOARD_IRQ
 )paren
 suffix:semicolon
 r_if
@@ -492,22 +518,13 @@ r_void
 )paren
 (brace
 r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
+r_int
+id|start
 op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
-id|i
-OL
-id|KBD_TIMEOUT
-suffix:semicolon
-id|i
-op_increment
-)paren
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -524,6 +541,18 @@ id|KBD_STAT_IBF
 )paren
 r_return
 suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|jiffies
+op_minus
+id|start
+OL
+id|KBC_TIMEOUT
+)paren
+suffix:semicolon
+macro_line|#ifdef KBD_REPORT_TIMEOUTS
 id|printk
 c_func
 (paren
@@ -531,6 +560,7 @@ id|KERN_WARNING
 l_string|&quot;Keyboard timed out&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Translation of escaped scancodes to keycodes.&n; * This is now user-settable.&n; * The keycodes 1-88,96-111,119 are fairly standard, and&n; * should probably not be changed - changing might confuse X.&n; * X also interprets scancode 0x5d (KEY_Begin).&n; *&n; * For 1-88 keycode equals scancode.&n; */
 DECL|macro|E0_KPENTER
@@ -1244,7 +1274,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;keyboard buffer overflow&bslash;n&quot;
+l_string|&quot;Keyboard buffer overflow&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1295,7 +1325,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;keyboard error&bslash;n&quot;
+l_string|&quot;Keyboard error&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1693,11 +1723,7 @@ c_loop
 (paren
 id|status
 op_amp
-(paren
 id|KBD_STAT_OBF
-op_or
-id|KBD_STAT_MOUSE_OBF
-)paren
 )paren
 suffix:semicolon
 id|mark_bh
@@ -1730,7 +1756,8 @@ op_assign
 l_int|3
 suffix:semicolon
 r_int
-id|i
+r_int
+id|start
 suffix:semicolon
 r_do
 (brace
@@ -1759,28 +1786,12 @@ comma
 id|KBD_DATA_REG
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
+id|start
 op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
-id|i
-OL
-l_int|0x200000
-suffix:semicolon
-id|i
-op_increment
-)paren
+r_do
 (brace
-id|inb_p
-c_func
-(paren
-id|KBD_STATUS_REG
-)paren
-suffix:semicolon
-multiline_comment|/* just as a delay */
 r_if
 c_cond
 (paren
@@ -1792,19 +1803,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|resend
+id|jiffies
+op_minus
+id|start
+op_ge
+id|KBD_TIMEOUT
 )paren
-r_break
+(brace
+macro_line|#ifdef KBD_REPORT_TIMEOUTS
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Keyboard timeout&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
+)brace
+r_while
+c_loop
 (paren
 op_logical_neg
 id|resend
 )paren
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_while
@@ -1816,6 +1841,15 @@ OG
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef KBD_REPORT_TIMEOUTS
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;keyboard: Too many NACKs -- noisy kbd cable?&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

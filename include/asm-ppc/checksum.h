@@ -93,6 +93,54 @@ suffix:semicolon
 multiline_comment|/*&n; * the same as csum_partial, but copies from user space (but on the alpha&n; * we have just one address space, so this is identical to the above)&n; */
 DECL|macro|csum_partial_copy_fromuser
 mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
+multiline_comment|/*&n; * this is a new version of the above that records errors it finds in *errp,&n; * but continues and zeros the rest of the buffer.&n; *&n; * right now - it just calls csum_partial_copy()&n; *   -- Cort&n; */
+r_extern
+id|__inline__
+DECL|function|csum_partial_copy_from_user
+r_int
+r_int
+id|csum_partial_copy_from_user
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+id|sum
+comma
+r_int
+op_star
+id|err_ptr
+)paren
+(brace
+r_int
+op_star
+id|dst_err_ptr
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+id|csum_partial_copy
+c_func
+(paren
+id|src
+comma
+id|dst
+comma
+id|len
+comma
+id|sum
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * this routine is used for miscellaneous IP-like checksums, mainly&n; * in icmp.c&n;A */
 r_extern
 r_int

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * ROMFS file system, Linux implementation&n; *&n; * Copyright (C) 1997  Janos Farkas &lt;chexum@shadow.banki.hu&gt;&n; *&n; * Using parts of the minix filesystem&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * and parts of the affs filesystem additionally&n; * Copyright (C) 1993  Ray Burr&n; * Copyright (C) 1996  Hans-Joachim Widmaier&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Changes&n; *&t;&t;&t;&t;&t;Changed for 2.1.19 modules&n; *&t;Jan 1997&t;&t;&t;Initial release&n; *&t;Jun 1997&t;&t;&t;2.1.43+ changes&n; *&t;Jul 1997&t;&t;&t;proper page locking in readpage&n; *&t;&t;&t;&t;&t;Changed to work with 2.1.45+ fs&n; *&t;&t;&t;&t;&t;Fixed follow_link&n; */
-multiline_comment|/* todo:&n; *&t;- see Documentation/filesystems/romfs.txt&n; *&t;- use malloced memory for file names?&n; *&t;- considering write access...&n; *&t;- network (tftp) files?&n; *&t;- in the ancient times something leaked to made umounts&n; *&t;  impossible, but I&squot;ve not seen it in the last months&n; */
+multiline_comment|/*&n; * ROMFS file system, Linux implementation&n; *&n; * Copyright (C) 1997  Janos Farkas &lt;chexum@shadow.banki.hu&gt;&n; *&n; * Using parts of the minix filesystem&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * and parts of the affs filesystem additionally&n; * Copyright (C) 1993  Ray Burr&n; * Copyright (C) 1996  Hans-Joachim Widmaier&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Changes&n; *&t;&t;&t;&t;&t;Changed for 2.1.19 modules&n; *&t;Jan 1997&t;&t;&t;Initial release&n; *&t;Jun 1997&t;&t;&t;2.1.43+ changes&n; *&t;&t;&t;&t;&t;Proper page locking in readpage&n; *&t;&t;&t;&t;&t;Changed to work with 2.1.45+ fs&n; *&t;Jul 1997&t;&t;&t;Fixed follow_link&n; *&t;&t;&t;2.1.47&n; *&t;&t;&t;&t;&t;lookup shouldn&squot;t return -ENOENT&n; *&t;&t;&t;&t;&t;from Horst von Brand:&n; *&t;&t;&t;&t;&t;  fail on wrong checksum&n; *&t;&t;&t;&t;&t;  double unlock_super was possible&n; *&t;&t;&t;&t;&t;  correct namelen for statfs&n; *&t;&t;&t;&t;&t;spotted by Bill Hawes:&n; *&t;&t;&t;&t;&t;  readlink shouldn&squot;t iput()&n; */
+multiline_comment|/* todo:&n; *&t;- see Documentation/filesystems/romfs.txt&n; *&t;- use malloced memory for file names?&n; *&t;- quicklist routines from fs/namei.c, get_page is possibly not&n; *&t;  intended to be used now&n; *&t;- considering write access...&n; *&t;- network (tftp) files?&n; *&t;- in the ancient times something leaked to made umounts&n; *&t;  impossible, but I&squot;ve not seen it in the last months&n; */
 multiline_comment|/*&n; * Sorry about some optimizations and for some goto&squot;s.  I just wanted&n; * to squeeze some more bytes out of this code.. :)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -278,6 +278,9 @@ id|dev
 )paren
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
 id|s-&gt;s_magic
 op_assign
@@ -339,12 +342,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -353,6 +350,12 @@ id|s-&gt;s_root
 )paren
 r_goto
 id|outnobh
+suffix:semicolon
+id|unlock_super
+c_func
+(paren
+id|s
+)paren
 suffix:semicolon
 multiline_comment|/* Ehrhm; sorry.. :)  And thanks to Hans-Joachim Widmaier  :) */
 r_if
@@ -485,7 +488,10 @@ l_int|1
 op_rshift
 id|ROMBSBITS
 suffix:semicolon
-multiline_comment|/* XXX tmp.f_namelen = relevant? */
+id|tmp.f_namelen
+op_assign
+id|ROMFS_MAXFN
+suffix:semicolon
 r_return
 id|copy_to_user
 c_func
@@ -1307,6 +1313,11 @@ multiline_comment|/* got from dentry */
 r_int
 id|len
 suffix:semicolon
+id|res
+op_assign
+op_minus
+id|EBADF
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1320,16 +1331,14 @@ c_func
 id|dir-&gt;i_mode
 )paren
 )paren
-(brace
-id|res
-op_assign
-op_minus
-id|EBADF
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
+id|res
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* instead of ENOENT */
 id|offset
 op_assign
 id|dir-&gt;i_ino
@@ -1354,16 +1363,9 @@ id|ROMFH_SIZE
 op_le
 l_int|0
 )paren
-(brace
-id|res
-op_assign
-op_minus
-id|ENOENT
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|maxoff
 op_assign
 id|dir-&gt;i_sb-&gt;u.romfs_sb.s_maxsize
@@ -1419,16 +1421,9 @@ id|ROMFH_SIZE
 op_le
 l_int|0
 )paren
-(brace
-id|res
-op_assign
-op_minus
-id|ENOENT
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
 multiline_comment|/* try to match the first 16 bytes of name */
 id|fslen
 op_assign
@@ -1605,11 +1600,6 @@ id|ri.spec
 op_amp
 id|ROMFH_MASK
 suffix:semicolon
-id|res
-op_assign
-op_minus
-id|EACCES
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1624,14 +1614,18 @@ comma
 id|offset
 )paren
 )paren
-op_ne
+op_eq
 l_int|NULL
 )paren
 (brace
 id|res
 op_assign
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
+)brace
+r_else
+(brace
 id|d_add
 c_func
 (paren
@@ -1981,12 +1975,6 @@ id|mylen
 suffix:semicolon
 id|out
 suffix:colon
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_return
 id|mylen
 suffix:semicolon
@@ -2534,6 +2522,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* XXX: do romfs_checksum here too (with name) */
 id|nextfh
 op_assign
 id|ntohl

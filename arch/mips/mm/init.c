@@ -341,11 +341,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|sync_mem
-c_func
-(paren
-)paren
-suffix:semicolon
 id|__zeropage
 c_func
 (paren

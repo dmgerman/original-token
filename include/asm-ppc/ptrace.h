@@ -1,20 +1,17 @@
 macro_line|#ifndef _PPC_PTRACE_H
 DECL|macro|_PPC_PTRACE_H
 mdefine_line|#define _PPC_PTRACE_H
-multiline_comment|/*&n; * This struct defines the way the registers are stored on the&n; * kernel stack during a system call or other kernel entry.&n; * Note: the &quot;_overhead&quot; and &quot;_underhead&quot; spaces are stack locations&n; * used by called routines.  Because of the way the PowerPC ABI&n; * specifies the function prologue/epilogue, registers can be&n; * saved in stack locations which are below the current stack&n; * pointer (_underhead).  If an interrupt occurs during this&n; * [albeit] small time interval, registers which were saved on&n; * the stack could be trashed by the interrupt save code.  The&n; * &quot;_underhead&quot; leaves a hole just in case this happens.  It also&n; * wastes 80 bytes of stack if it doesn&squot;t!  Similarly, the called&n; * routine stores some information &quot;above&quot; the stack pointer before&n; * if gets adjusted.  This is covered by the &quot;_overhead&quot; field&n; * and [thankfully] is not totally wasted.&n; *&n; */
+multiline_comment|/*&n; * this should only contain volatile regs&n; * since we can keep non-volatile in the tss&n; * should set this up when only volatiles are saved&n; * by intr code.&n; *&n; * I can&squot;t find any reference to the above comment (from Gary Thomas)&n; * about _underhead/_overhead in the sys V abi for the ppc&n; * dated july 25, 1994.&n; *&n; * the stack must be kept to a size that is a multiple of 16&n; * so this includes the stack frame overhead &n; * -- Cort.&n; */
+multiline_comment|/*&n; * GCC sometimes accesses words at negative offsets from the stack&n; * pointer, although the SysV ABI says it shouldn&squot;t.  To cope with&n; * this, we leave this much untouched space on the stack on exception&n; * entry.&n; */
+DECL|macro|STACK_FRAME_OVERHEAD
+mdefine_line|#define STACK_FRAME_OVERHEAD 16
+DECL|macro|STACK_UNDERHEAD
+mdefine_line|#define STACK_UNDERHEAD&t;64
+macro_line|#ifndef __ASSEMBLY__
 DECL|struct|pt_regs
 r_struct
 id|pt_regs
 (brace
-DECL|member|_overhead
-r_int
-r_int
-id|_overhead
-(braket
-l_int|14
-)braket
-suffix:semicolon
-multiline_comment|/* Callee&squot;s SP,LR,params */
 DECL|member|gpr
 r_int
 r_int
@@ -64,40 +61,34 @@ r_int
 r_int
 id|dsisr
 suffix:semicolon
-DECL|member|srr1
+macro_line|#if 0  
 r_int
 r_int
 id|srr1
 suffix:semicolon
-DECL|member|srr0
 r_int
 r_int
 id|srr0
 suffix:semicolon
-DECL|member|hash1
-DECL|member|hash2
 r_int
 r_int
 id|hash1
 comma
 id|hash2
 suffix:semicolon
-DECL|member|imiss
-DECL|member|dmiss
 r_int
 r_int
 id|imiss
 comma
 id|dmiss
 suffix:semicolon
-DECL|member|icmp
-DECL|member|dcmp
 r_int
 r_int
 id|icmp
 comma
 id|dcmp
 suffix:semicolon
+macro_line|#endif  
 DECL|member|orig_gpr3
 r_int
 r_int
@@ -110,10 +101,6 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* Result of a system call */
-DECL|member|fpcsr
-r_float
-id|fpcsr
-suffix:semicolon
 DECL|member|trap
 r_int
 r_int
@@ -126,14 +113,6 @@ r_int
 id|marker
 suffix:semicolon
 multiline_comment|/* Should have DEADDEAD */
-multiline_comment|/*unsigned long _underhead[20]; */
-multiline_comment|/* Callee&squot;s register save area */
-DECL|member|edx
-r_int
-r_int
-id|edx
-suffix:semicolon
-multiline_comment|/* for binfmt_elf.c which wants edx */
 )brace
 suffix:semicolon
 DECL|macro|instruction_pointer
@@ -152,6 +131,7 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* should include and generate these in ppc_defs.h -- Cort */
 multiline_comment|/* Offsets used by &squot;ptrace&squot; system call interface */
 multiline_comment|/* Note: these should correspond to gpr[x]        */
 DECL|macro|PT_R0
@@ -234,5 +214,6 @@ DECL|macro|PT_CCR
 mdefine_line|#define PT_CCR&t;38
 DECL|macro|PT_FPR0
 mdefine_line|#define PT_FPR0&t;48
-macro_line|#endif
+macro_line|#endif /* __ASSEMBLY__ */
+macro_line|#endif /* _PPC_PTRACE_H */
 eof

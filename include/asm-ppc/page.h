@@ -1,6 +1,7 @@
 macro_line|#ifndef _PPC_PAGE_H
 DECL|macro|_PPC_PAGE_H
 mdefine_line|#define _PPC_PAGE_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT&t;12
@@ -8,6 +9,19 @@ DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
+multiline_comment|/* This handles the memory map.. */
+multiline_comment|/*&n; * these virtual mappings for prep and pmac&n; * on the prep machine the io areas are at different physical locations&n; * than their virtual address.  On the pmac the io areas&n; * are mapped 1-1 virtual/physical.&n; * -- Cort&n; */
+macro_line|#ifdef CONFIG_PREP
+DECL|macro|KERNELBASE
+mdefine_line|#define KERNELBASE&t;0x90000000
+macro_line|#endif
+macro_line|#ifdef CONFIG_PMAC
+DECL|macro|KERNELBASE
+mdefine_line|#define KERNELBASE&t;0xc0000000
+macro_line|#endif
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;KERNELBASE
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifdef __KERNEL__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
@@ -120,14 +134,12 @@ mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif
+multiline_comment|/* align addr on a size boundry - adjust address up if needed -- Cort */
+DECL|macro|_ALIGN
+mdefine_line|#define _ALIGN(addr,size)&t;(((addr)+size-1)&amp;(~(size-1)))
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
-multiline_comment|/* This handles the memory map.. */
-DECL|macro|KERNELBASE
-mdefine_line|#define KERNELBASE&t;0x90000000
-DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;KERNELBASE
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page)        memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page
@@ -141,6 +153,17 @@ DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
 DECL|macro|MAP_PAGE_RESERVED
 mdefine_line|#define MAP_PAGE_RESERVED&t;(1&lt;&lt;15)
+r_extern
+id|__inline__
+r_int
+r_int
+id|get_prezerod_page
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* _PPC_PAGE_H */
 eof

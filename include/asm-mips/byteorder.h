@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Functions depending of the byteorder.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: byteorder.h,v 1.5 1997/06/25 19:10:18 ralf Exp $&n; */
+multiline_comment|/*&n; * Functions depending of the byteorder.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: byteorder.h,v 1.6 1997/07/20 15:15:01 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_BYTEORDER_H
 DECL|macro|__ASM_MIPS_BYTEORDER_H
 mdefine_line|#define __ASM_MIPS_BYTEORDER_H
@@ -9,7 +9,7 @@ mdefine_line|#define __swap16(x) &bslash;&n;&t;((unsigned short int)((((unsigned
 macro_line|#if defined (__MIPSEB__)
 macro_line|#ifndef __BIG_ENDIAN
 DECL|macro|__BIG_ENDIAN
-mdefine_line|#define __BIG_ENDIAN
+mdefine_line|#define __BIG_ENDIAN 4321
 macro_line|#endif
 macro_line|#ifndef __BIG_ENDIAN_BITFIELD
 DECL|macro|__BIG_ENDIAN_BITFIELD
@@ -23,7 +23,26 @@ DECL|macro|__constant_htonl
 mdefine_line|#define __constant_htonl(x) (x)
 DECL|macro|__constant_htons
 mdefine_line|#define __constant_htons(x) (x)
+macro_line|#elif defined (__MIPSEL__)
+macro_line|#ifndef __LITTLE_ENDIAN
+DECL|macro|__LITTLE_ENDIAN
+mdefine_line|#define __LITTLE_ENDIAN 1234
+macro_line|#endif
+macro_line|#ifndef __LITTLE_ENDIAN_BITFIELD
+DECL|macro|__LITTLE_ENDIAN_BITFIELD
+mdefine_line|#define __LITTLE_ENDIAN_BITFIELD
+macro_line|#endif
+DECL|macro|__constant_ntohl
+mdefine_line|#define __constant_ntohl(x) __swap32(x)
+DECL|macro|__constant_ntohs
+mdefine_line|#define __constant_ntohs(x) __swap16(x)
+DECL|macro|__constant_htonl
+mdefine_line|#define __constant_htonl(x) __swap32(x)
+DECL|macro|__constant_htons
+mdefine_line|#define __constant_htons(x) __swap16(x)
+macro_line|#endif /* defined(__MIPSEL_) */
 macro_line|#ifdef __KERNEL__
+macro_line|#if defined (__MIPSEB__)
 multiline_comment|/*&n; * In-kernel byte order macros to handle stuff like&n; * byte-order-dependent filesystems etc.&n; */
 DECL|macro|cpu_to_le32
 mdefine_line|#define cpu_to_le32(x) __swap32((x))
@@ -41,25 +60,7 @@ DECL|macro|cpu_to_be16
 mdefine_line|#define cpu_to_be16(x) (x)
 DECL|macro|be16_to_cpu
 mdefine_line|#define be16_to_cpu(x) (x)
-macro_line|#endif /* __KERNEL__ */
 macro_line|#elif defined (__MIPSEL__)
-macro_line|#ifndef __LITTLE_ENDIAN
-DECL|macro|__LITTLE_ENDIAN
-mdefine_line|#define __LITTLE_ENDIAN
-macro_line|#endif
-macro_line|#ifndef __LITTLE_ENDIAN_BITFIELD
-DECL|macro|__LITTLE_ENDIAN_BITFIELD
-mdefine_line|#define __LITTLE_ENDIAN_BITFIELD
-macro_line|#endif
-DECL|macro|__constant_ntohl
-mdefine_line|#define __constant_ntohl(x) __swap32(x)
-DECL|macro|__constant_ntohs
-mdefine_line|#define __constant_ntohs(x) __swap16(x)
-DECL|macro|__constant_htonl
-mdefine_line|#define __constant_htonl(x) __swap32(x)
-DECL|macro|__constant_htons
-mdefine_line|#define __constant_htons(x) __swap16(x)
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * In-kernel byte order macros to handle stuff like&n; * byte-order-dependent filesystems etc.&n; */
 DECL|macro|cpu_to_le32
 mdefine_line|#define cpu_to_le32(x) (x)
@@ -77,7 +78,6 @@ DECL|macro|cpu_to_be16
 mdefine_line|#define cpu_to_be16(x) __swap16((x))
 DECL|macro|be16_to_cpu
 mdefine_line|#define be16_to_cpu(x) __swap16((x))
-macro_line|#endif /* __KERNEL__ */
 macro_line|#else
 macro_line|#error &quot;MIPS but neither __MIPSEL__ nor __MIPSEB__?&quot;
 macro_line|#endif
@@ -275,7 +275,7 @@ DECL|macro|be16_to_cpus
 mdefine_line|#define be16_to_cpus(x) cpu_to_be16s(x)
 DECL|macro|be32_to_cpus
 mdefine_line|#define be32_to_cpus(x) cpu_to_be32s(x)
-macro_line|#ifdef __KERNEL__
+macro_line|#endif /* __KERNEL__ */
 r_extern
 r_int
 r_int
@@ -420,6 +420,5 @@ id|__x
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASM_MIPS_BYTEORDER_H */
 eof

@@ -258,5 +258,7 @@ DECL|macro|ERESTARTNOHAND
 mdefine_line|#define ERESTARTNOHAND&t;514&t;/* restart if no handler.. */
 DECL|macro|ENOIOCTLCMD
 mdefine_line|#define ENOIOCTLCMD&t;515&t;/* No ioctl command */
+DECL|macro|_LAST_ERRNO
+mdefine_line|#define _LAST_ERRNO&t;515
 macro_line|#endif
 eof

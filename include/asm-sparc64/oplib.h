@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.7 1997/04/03 09:29:25 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.8 1997/07/24 12:15:15 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -419,24 +419,20 @@ suffix:semicolon
 multiline_comment|/* Multiprocessor operations... */
 multiline_comment|/* Start the CPU with the given device tree node, context table, and context&n; * at the passed program counter.&n; */
 r_extern
-r_int
+r_void
 id|prom_startcpu
 c_func
 (paren
 r_int
 id|cpunode
 comma
-r_struct
-id|linux_prom_registers
-op_star
-id|context_table
+r_int
+r_int
+id|pc
 comma
 r_int
-id|context
-comma
-r_char
-op_star
-id|program_counter
+r_int
+id|o0
 )paren
 suffix:semicolon
 multiline_comment|/* Stop the CPU with the passed device tree node. */

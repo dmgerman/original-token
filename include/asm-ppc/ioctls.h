@@ -141,9 +141,9 @@ mdefine_line|#define TCSBRKP&t;&t;0x5425&t;/* Needed for POSIX tcsendbreak() */
 DECL|macro|TIOCTTYGSTRUCT
 mdefine_line|#define TIOCTTYGSTRUCT&t;0x5426  /* For debugging only */
 DECL|macro|TIOCSBRK
-mdefine_line|#define TIOCSBRK&t;0x5427  /* BSD compatibility */
+mdefine_line|#define TIOCSBRK       0x5427  /* BSD compatibility */
 DECL|macro|TIOCCBRK
-mdefine_line|#define TIOCCBRK&t;0x5428  /* BSD compatibility */
+mdefine_line|#define TIOCCBRK       0x5428  /* BSD compatibility */
 DECL|macro|TIOCSERCONFIG
 mdefine_line|#define TIOCSERCONFIG&t;0x5453
 DECL|macro|TIOCSERGWILD

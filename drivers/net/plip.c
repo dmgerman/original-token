@@ -407,7 +407,7 @@ id|rcv_data
 suffix:semicolon
 DECL|member|pardev
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|pardev
 suffix:semicolon
@@ -486,7 +486,7 @@ op_star
 id|nl
 suffix:semicolon
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|pardev
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.13 1997/07/17 02:20:38 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.14 1997/07/17 06:21:12 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,6 +21,7 @@ macro_line|#include &lt;asm/fbio.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#include &lt;asm/vuid_event.h&gt;
 macro_line|#include &lt;asm/rtc.h&gt;
+macro_line|#include &lt;asm/openpromio.h&gt;
 multiline_comment|/* As gcc will warn about casting u32 to some ptr, we have to cast it to&n; * unsigned long first, and that&squot;s what is A() for.&n; * You just do (void *)A(x), instead of having to type (void *)((unsigned long)x)&n; * or instead of just (void *)x, which will produce warnings.&n; */
 DECL|macro|A
 mdefine_line|#define A(x) ((unsigned long)x)
@@ -4454,6 +4455,43 @@ id|RTCGET
 suffix:colon
 r_case
 id|RTCSET
+suffix:colon
+multiline_comment|/* OPENPROMIO, SunOS/Solaris only, the NetBSD one&squot;s have&n;&t; * embedded pointers in the arg which we&squot;d need to clean up...&n;&t; */
+r_case
+id|OPROMGETOPT
+suffix:colon
+r_case
+id|OPROMSETOPT
+suffix:colon
+r_case
+id|OPROMNXTOPT
+suffix:colon
+r_case
+id|OPROMSETOPT2
+suffix:colon
+r_case
+id|OPROMNEXT
+suffix:colon
+r_case
+id|OPROMCHILD
+suffix:colon
+r_case
+id|OPROMGETPROP
+suffix:colon
+r_case
+id|OPROMNXTPROP
+suffix:colon
+r_case
+id|OPROMU2P
+suffix:colon
+r_case
+id|OPROMGETCONS
+suffix:colon
+r_case
+id|OPROMGETFBNAME
+suffix:colon
+r_case
+id|OPROMGETBOOTARGS
 suffix:colon
 multiline_comment|/* Socket level stuff */
 r_case

@@ -78,8 +78,14 @@ DECL|member|numtail
 id|numtail
 suffix:colon
 l_int|1
-suffix:semicolon
+comma
 multiline_comment|/* Does first alias have a numeric &squot;~1&squot; type tail? */
+DECL|member|atari
+id|atari
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Use Atari GEMDOS variation of MS-DOS fs */
 )brace
 suffix:semicolon
 DECL|struct|msdos_sb_info

@@ -150,7 +150,7 @@ mdefine_line|#define VDMA_PGTBL_ENTRIES&t;4096
 DECL|macro|VDMA_PGTBL_SIZE
 mdefine_line|#define VDMA_PGTBL_SIZE&t;&t;(sizeof(VDMA_PGTBL_ENTRY) * VDMA_PGTBL_ENTRIES)
 DECL|macro|VDMA_PAGE_EMPTY
-mdefine_line|#define VDMA_PAGE_EMPTY&t;&t;0
+mdefine_line|#define VDMA_PAGE_EMPTY&t;&t;0xff000000
 multiline_comment|/*&n; * Macros to get page no. and offset of a given address&n; * Note that VDMA_PAGE() works for physical addresses only&n; */
 DECL|macro|VDMA_PAGE
 mdefine_line|#define VDMA_PAGE(a)            ((unsigned int)(a) &gt;&gt; 12)

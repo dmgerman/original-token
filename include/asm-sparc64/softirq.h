@@ -42,6 +42,10 @@ mdefine_line|#define start_bh_atomic() &bslash;&n;&t;do { atomic_inc(&amp;__spar
 DECL|macro|end_bh_atomic
 mdefine_line|#define end_bh_atomic()&t;atomic_dec(&amp;__sparc64_bh_counter)
 macro_line|#include &lt;asm/spinlock.h&gt;
+r_extern
+id|spinlock_t
+id|global_bh_lock
+suffix:semicolon
 DECL|macro|init_bh
 mdefine_line|#define init_bh(nr, routine)&t;&t;&t;&t;&bslash;&n;do {&t;unsigned long flags;&t;&t;&t;&t;&bslash;&n;&t;int ent = nr;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock_irqsave(&amp;global_bh_lock, flags);&t;&bslash;&n;&t;bh_base[ent] = routine;&t;&t;&t;&t;&bslash;&n;&t;bh_mask_count[ent] = 0;&t;&t;&t;&t;&bslash;&n;&t;bh_mask |= 1 &lt;&lt; ent;&t;&t;&t;&t;&bslash;&n;&t;spin_unlock_irqrestore(&amp;global_bh_lock, flags);&t;&bslash;&n;} while(0)
 DECL|macro|remove_bh
@@ -53,9 +57,9 @@ mdefine_line|#define disable_bh(nr)&t;&t;&t;&t;&t;&bslash;&n;do {&t;unsigned lon
 DECL|macro|enable_bh
 mdefine_line|#define enable_bh(nr)&t;&t;&t;&t;&t;&bslash;&n;do {&t;unsigned long flags;&t;&t;&t;&t;&bslash;&n;&t;int ent = nr;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock_irqsave(&amp;global_bh_lock, flags);&t;&bslash;&n;&t;if (!--bh_mask_count[ent])&t;&t;&t;&bslash;&n;&t;&t;bh_mask |= 1 &lt;&lt; ent;&t;&t;&t;&bslash;&n;&t;spin_unlock_irqrestore(&amp;global_bh_lock, flags);&t;&bslash;&n;} while(0)
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int ret = 1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if(atomic_add_return(1, &amp;__sparc_bh_counter) != 1) {&t;&bslash;&n;&t;&t;atomic_dec(&amp;__sparc_bh_counter);&t;&t;&bslash;&n;&t;&t;ret = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define softirq_trylock()&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int ret = 1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if(atomic_add_return(1, &amp;__sparc64_bh_counter) != 1) {&t;&bslash;&n;&t;&t;atomic_dec(&amp;__sparc64_bh_counter);&t;&t;&bslash;&n;&t;&t;ret = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()&t;atomic_dec(&amp;__sparc_bh_counter)
+mdefine_line|#define softirq_endlock()&t;atomic_dec(&amp;__sparc64_bh_counter)
 DECL|macro|clear_active_bhs
 mdefine_line|#define clear_active_bhs(mask)&t;&t;&t;&t;&bslash;&n;do {&t;unsigned long flags;&t;&t;&t;&t;&bslash;&n;&t;spin_lock_irqsave(&amp;global_bh_lock, flags);&t;&bslash;&n;&t;bh_active &amp;= ~(mask);&t;&t;&t;&t;&bslash;&n;&t;spin_unlock_irqrestore(&amp;global_bh_lock, flags);&t;&bslash;&n;} while(0)
 macro_line|#endif /* (__SMP__) */

@@ -2884,6 +2884,13 @@ id|sb-&gt;s_root
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Forget any inodes */
+id|invalidate_inodes
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

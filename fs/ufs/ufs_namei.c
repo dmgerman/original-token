@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_namei.c,v 1.8 1997/07/17 02:24:14 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_namei.c,v 1.9 1997/07/22 06:40:12 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -642,7 +642,8 @@ id|UFS_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;lfragno 0x%lx  direct d 0x%x  d_ino %u  d_reclen %u  d_namlen %u  d_name `%s&squot;&bslash;n&quot;
+l_string|&quot;lfragno 0x%lx  direct d 0x%x  d_ino %u  &quot;
+l_string|&quot;d_reclen %u  d_namlen %u  d_name `%s&squot;&bslash;n&quot;
 comma
 id|lfragno
 comma
@@ -650,7 +651,13 @@ comma
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|d
+)paren
 comma
 id|ufs_swab32
 c_func

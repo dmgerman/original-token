@@ -12,7 +12,7 @@ id|rcsid
 (braket
 )braket
 op_assign
-l_string|&quot;$Id: inflate.c,v 0.10 1993/02/04 13:21:06 jloup Exp $&quot;
+l_string|&quot;$Id: inflate.c,v 1.1.1.1 1997/02/25 05:18:11 cort Exp $&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#include &quot;gzip.h&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Adapted for PowerPC by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu) &n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/signal.c&quot;&n; *    Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -14,6 +14,14 @@ DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 DECL|macro|_BLOCKABLE
 mdefine_line|#define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
+DECL|macro|DEBUG_SIGNALS
+mdefine_line|#define DEBUG_SIGNALS
+DECL|macro|DEBUG_SIGNALS
+macro_line|#undef  DEBUG_SIGNALS
+DECL|macro|PAUSE_AFTER_SIGNAL
+mdefine_line|#define PAUSE_AFTER_SIGNAL
+DECL|macro|PAUSE_AFTER_SIGNAL
+macro_line|#undef  PAUSE_AFTER_SIGNAL
 id|asmlinkage
 r_int
 id|sys_waitpid
@@ -67,15 +75,11 @@ r_int
 r_int
 id|mask
 suffix:semicolon
-r_int
-id|ret
-op_assign
-op_minus
-id|EINTR
-suffix:semicolon
-id|lock_kernel
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 id|mask
@@ -88,6 +92,13 @@ id|set
 op_amp
 id|_BLOCKABLE
 suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 id|regs-&gt;gpr
 (braket
 l_int|3
@@ -96,7 +107,7 @@ op_assign
 op_minus
 id|EINTR
 suffix:semicolon
-macro_line|#if 0
+macro_line|#ifdef DEBUG_SIGNALS
 id|printk
 c_func
 (paren
@@ -138,21 +149,18 @@ comma
 id|regs
 )paren
 )paren
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
+(brace
+multiline_comment|/*&n;&t;&t;&t; * If a signal handler needs to be called,&n;&t;&t;&t; * do_signal() has set R3 to the signal number (the&n;&t;&t;&t; * first argument of the signal handler), so don&squot;t&n;&t;&t;&t; * overwrite that with EINTR !&n;&t;&t;&t; * In the other cases, do_signal() doesn&squot;t touch &n;&t;&t;&t; * R3, so it&squot;s still set to -EINTR (see above).&n;&t;&t;&t; */
 r_return
-id|ret
+id|regs-&gt;gpr
+(braket
+l_int|3
+)braket
 suffix:semicolon
 )brace
+)brace
+)brace
+multiline_comment|/*&n; * This sets regs-&gt;esp even though we don&squot;t actually use sigstacks yet..&n; */
 DECL|function|sys_sigreturn
 id|asmlinkage
 r_int
@@ -179,11 +187,6 @@ r_int
 id|signo
 comma
 id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#if 1 &t;
 r_if
@@ -229,29 +232,64 @@ r_struct
 id|sigcontext_struct
 op_star
 )paren
+(paren
 id|regs-&gt;gpr
 (braket
 l_int|1
 )braket
+op_plus
+id|STACK_FRAME_OVERHEAD
+)paren
+suffix:semicolon
+id|get_user
+c_func
+(paren
+id|current-&gt;blocked
+comma
+op_amp
+id|sc-&gt;oldmask
+)paren
 suffix:semicolon
 id|current-&gt;blocked
-op_assign
-id|sc-&gt;oldmask
-op_amp
+op_and_assign
 id|_BLOCKABLE
 suffix:semicolon
+id|get_user
+c_func
+(paren
 id|int_regs
-op_assign
+comma
+op_amp
 id|sc-&gt;regs
+)paren
 suffix:semicolon
+id|get_user
+c_func
+(paren
 id|signo
-op_assign
+comma
+op_amp
 id|sc-&gt;signal
+)paren
 suffix:semicolon
 id|sc
 op_increment
 suffix:semicolon
 multiline_comment|/* Pop signal &squot;context&squot; */
+macro_line|#ifdef DEBUG_SIGNALS
+id|printk
+c_func
+(paren
+l_string|&quot;Sig return - Regs: %x, sc: %x, sig: %d&bslash;n&quot;
+comma
+id|int_regs
+comma
+id|sc
+comma
+id|signo
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -268,8 +306,6 @@ id|int_regs
 )paren
 (brace
 multiline_comment|/* Last stacked signal */
-macro_line|#if 0&t;
-multiline_comment|/* This doesn&squot;t work - it blows away the return address! */
 id|memcpy
 c_func
 (paren
@@ -284,39 +320,13 @@ id|regs
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* Don&squot;t mess up &squot;my&squot; stack frame */
-id|memcpy
-c_func
-(paren
-op_amp
-id|regs-&gt;gpr
-comma
-op_amp
-id|int_regs-&gt;gpr
-comma
-r_sizeof
-(paren
-op_star
-id|regs
-)paren
-op_minus
-r_sizeof
-(paren
-id|regs-&gt;_overhead
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
-(paren
-r_int
-)paren
-id|regs-&gt;orig_gpr3
-op_ge
-l_int|0
+id|regs-&gt;trap
+op_eq
+l_int|0x0C00
+multiline_comment|/* System Call! */
 op_logical_and
 (paren
 (paren
@@ -364,9 +374,7 @@ suffix:semicolon
 )brace
 id|ret
 op_assign
-(paren
 id|regs-&gt;result
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -382,20 +390,46 @@ r_int
 r_int
 )paren
 id|sc
+op_minus
+id|STACK_FRAME_OVERHEAD
 suffix:semicolon
+id|get_user
+c_func
+(paren
 id|regs-&gt;gpr
 (braket
 l_int|3
 )braket
-op_assign
+comma
+op_amp
 id|sc-&gt;signal
+)paren
+suffix:semicolon
+id|get_user
+c_func
+(paren
+id|int_regs
+comma
+(paren
+r_struct
+id|pt_regs
+op_star
+op_star
+)paren
+op_amp
+id|sc-&gt;regs
+)paren
 suffix:semicolon
 id|regs-&gt;gpr
 (braket
 l_int|4
 )braket
 op_assign
-id|sc-&gt;regs
+(paren
+r_int
+r_int
+)paren
+id|int_regs
 suffix:semicolon
 id|regs-&gt;link
 op_assign
@@ -404,43 +438,52 @@ r_int
 r_int
 )paren
 (paren
-(paren
-id|sc-&gt;regs
-)paren
+id|int_regs
 op_plus
 l_int|1
 )paren
 suffix:semicolon
+id|get_user
+c_func
+(paren
 id|regs-&gt;nip
-op_assign
+comma
+op_amp
 id|sc-&gt;handler
+)paren
 suffix:semicolon
 id|ret
 op_assign
-id|sc-&gt;signal
+id|regs-&gt;gpr
+(braket
+l_int|3
+)braket
 suffix:semicolon
 )brace
-r_goto
-id|out
+r_return
+id|ret
 suffix:semicolon
 id|badframe
 suffix:colon
-multiline_comment|/*printk(&quot;sys_sigreturn(): badstack regs %x cur %s/%d&bslash;n&quot;,&n;&t; regs,current-&gt;comm,current-&gt;pid);*/
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|do_exit
 c_func
 (paren
 id|SIGSEGV
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 id|unlock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
 r_return
-id|ret
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note that &squot;init&squot; is a special process: it doesn&squot;t get signals it doesn&squot;t&n; * want to handle. Thus you cannot kill init even with a SIGKILL even by&n; * mistake.&n; *&n; * Note that we go through the signals twice: once to check the signals that&n; * the kernel can handle, and then we build all the user-level signal handling&n; * stack-frames in one go after that.&n; */
@@ -481,7 +524,9 @@ r_int
 r_int
 op_star
 id|trampoline
-comma
+suffix:semicolon
+r_int
+r_int
 op_star
 id|regs_ptr
 suffix:semicolon
@@ -507,15 +552,6 @@ id|sa
 suffix:semicolon
 r_int
 id|bitno
-comma
-id|s
-comma
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|mask
 op_assign
@@ -534,6 +570,18 @@ id|mask
 )paren
 )paren
 (brace
+macro_line|#if 0
+id|signr
+op_assign
+id|ffz
+c_func
+(paren
+op_complement
+id|signr
+)paren
+suffix:semicolon
+multiline_comment|/* Compute bit # */
+macro_line|#else
 r_for
 c_loop
 (paren
@@ -565,6 +613,7 @@ id|signr
 op_assign
 id|bitno
 suffix:semicolon
+macro_line|#endif
 id|current-&gt;signal
 op_and_assign
 op_complement
@@ -662,6 +711,20 @@ c_func
 id|signr
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -748,9 +811,6 @@ suffix:colon
 r_continue
 suffix:semicolon
 r_case
-id|SIGSTOP
-suffix:colon
-r_case
 id|SIGTSTP
 suffix:colon
 r_case
@@ -758,6 +818,20 @@ id|SIGTTIN
 suffix:colon
 r_case
 id|SIGTTOU
+suffix:colon
+r_if
+c_cond
+(paren
+id|is_orphaned_pgrp
+c_func
+(paren
+id|current-&gt;pgrp
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_case
+id|SIGSTOP
 suffix:colon
 r_if
 c_cond
@@ -824,6 +898,11 @@ suffix:colon
 r_case
 id|SIGSEGV
 suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -850,9 +929,21 @@ op_or_assign
 l_int|0x80
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* fall through */
 r_default
 suffix:colon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 id|current-&gt;signal
 op_or_assign
 id|_S
@@ -863,24 +954,44 @@ op_amp
 l_int|0x7f
 )paren
 suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|current-&gt;flags
+op_or_assign
+id|PF_SIGNALED
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* 8-( */
 id|do_exit
 c_func
 (paren
 id|signr
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 )brace
-multiline_comment|/* handle signal */
+multiline_comment|/*&n;&t;&t; * OK, we&squot;re invoking a handler&n;&t;&t; */
 r_if
 c_cond
 (paren
-(paren
-r_int
-)paren
-id|regs-&gt;orig_gpr3
-op_ge
-l_int|0
+id|regs-&gt;trap
+op_eq
+l_int|0x0C00
+multiline_comment|/* System Call! */
 )paren
 (brace
 r_if
@@ -936,10 +1047,58 @@ op_complement
 id|sa-&gt;sa_mask
 suffix:semicolon
 )brace
-id|ret
+r_if
+c_cond
+(paren
+id|regs-&gt;trap
+op_eq
+l_int|0x0C00
+multiline_comment|/* System Call! */
+op_logical_and
+(paren
+(paren
+r_int
+)paren
+id|regs-&gt;result
+op_eq
+op_minus
+id|ERESTARTNOHAND
+op_logical_or
+(paren
+r_int
+)paren
+id|regs-&gt;result
+op_eq
+op_minus
+id|ERESTARTSYS
+op_logical_or
+(paren
+r_int
+)paren
+id|regs-&gt;result
+op_eq
+op_minus
+id|ERESTARTNOINTR
+)paren
+)paren
+(brace
+id|regs-&gt;gpr
+(braket
+l_int|3
+)braket
+op_assign
+id|regs-&gt;orig_gpr3
+suffix:semicolon
+id|regs-&gt;nip
+op_sub_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* Back up &amp; retry system call */
+id|regs-&gt;result
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -947,8 +1106,8 @@ op_logical_neg
 id|handler_signal
 )paren
 multiline_comment|/* no handler will be called - return 0 */
-r_goto
-id|out
+r_return
+l_int|0
 suffix:semicolon
 id|nip
 op_assign
@@ -975,7 +1134,6 @@ id|trampoline
 op_assign
 id|frame
 suffix:semicolon
-macro_line|#if 1
 multiline_comment|/* verify stack is valid for writing regs struct */
 r_if
 c_cond
@@ -1006,6 +1164,10 @@ id|regs
 )paren
 op_logical_or
 (paren
+(paren
+r_int
+r_int
+)paren
 id|frame
 op_ge
 id|KERNELBASE
@@ -1014,21 +1176,24 @@ id|KERNELBASE
 r_goto
 id|badframe
 suffix:semicolon
-macro_line|#endif
+id|put_user
+c_func
+(paren
+l_int|0x38007777UL
+comma
 id|trampoline
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0x38007777
+)paren
 suffix:semicolon
 multiline_comment|/* li r0,0x7777 */
+id|put_user
+c_func
+(paren
+l_int|0x44000002UL
+comma
 id|trampoline
-(braket
+op_plus
 l_int|1
-)braket
-op_assign
-l_int|0x44000002
+)paren
 suffix:semicolon
 multiline_comment|/* sc           */
 id|frame
@@ -1048,7 +1213,7 @@ id|regs_ptr
 op_assign
 id|frame
 suffix:semicolon
-id|memcpy
+id|copy_to_user
 c_func
 (paren
 id|regs_ptr
@@ -1124,7 +1289,6 @@ r_sizeof
 r_int
 )paren
 suffix:semicolon
-macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -1154,7 +1318,6 @@ r_int
 r_goto
 id|badframe
 suffix:semicolon
-macro_line|#endif    
 id|sc
 op_assign
 (paren
@@ -1172,18 +1335,6 @@ r_int
 )paren
 id|sa-&gt;sa_handler
 suffix:semicolon
-macro_line|#if 0 /* Old compiler */&t;&t;
-id|nip
-op_assign
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|nip
-suffix:semicolon
-macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
@@ -1195,25 +1346,42 @@ id|sa-&gt;sa_handler
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sc-&gt;handler
-op_assign
-id|nip
-suffix:semicolon
-id|sc-&gt;oldmask
-op_assign
-id|current-&gt;blocked
-suffix:semicolon
-id|sc-&gt;regs
-op_assign
+id|put_user
+c_func
 (paren
-r_int
-r_int
+id|nip
+comma
+op_amp
+id|sc-&gt;handler
 )paren
-id|regs_ptr
 suffix:semicolon
-id|sc-&gt;signal
-op_assign
+id|put_user
+c_func
+(paren
+id|oldmask
+comma
+op_amp
+id|sc-&gt;oldmask
+)paren
+suffix:semicolon
+multiline_comment|/* was current-&gt;blocked */
+id|put_user
+c_func
+(paren
+id|regs_ptr
+comma
+op_amp
+id|sc-&gt;regs
+)paren
+suffix:semicolon
+id|put_user
+c_func
+(paren
 id|signr
+comma
+op_amp
+id|sc-&gt;signal
+)paren
 suffix:semicolon
 id|current-&gt;blocked
 op_or_assign
@@ -1260,55 +1428,59 @@ r_int
 r_int
 )paren
 id|sc
+op_minus
+id|STACK_FRAME_OVERHEAD
 suffix:semicolon
-multiline_comment|/* The DATA cache must be flushed here to insure coherency&n;&t; * between the DATA &amp; INSTRUCTION caches.  Since we just&n;&t; * created an instruction stream using the DATA [cache] space&n;&t; * and since the instruction cache will not look in the DATA&n;&t; * cache for new data, we have to force the data to go on to&n;&t; * memory and flush the instruction cache to force it to look&n;&t; * there.  The following function performs this magic&n;&t; */
-id|flush_instruction_cache
+multiline_comment|/* The DATA cache must be flushed here to insure coherency */
+multiline_comment|/* between the DATA &amp; INSTRUCTION caches.  Since we just */
+multiline_comment|/* created an instruction stream using the DATA [cache] space */
+multiline_comment|/* and since the instruction cache will not look in the DATA */
+multiline_comment|/* cache for new data, we have to force the data to go on to */
+multiline_comment|/* memory and flush the instruction cache to force it to look */
+multiline_comment|/* there.  The following function performs this magic */
+id|store_cache_range
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
+id|trampoline
+comma
+(paren
+r_int
+r_int
+)paren
+(paren
+id|trampoline
+op_plus
+l_int|2
+)paren
 )paren
 suffix:semicolon
-id|ret
-op_assign
+r_return
 l_int|1
-suffix:semicolon
-r_goto
-id|out
 suffix:semicolon
 id|badframe
 suffix:colon
-macro_line|#if 0
-id|printk
+id|lock_kernel
 c_func
 (paren
-l_string|&quot;do_signal(): badstack signr %d frame %x regs %x cur %s/%d&bslash;n&quot;
-comma
-id|signr
-comma
-id|frame
-comma
-id|regs
-comma
-id|current-&gt;comm
-comma
-id|current-&gt;pid
 )paren
 suffix:semicolon
-macro_line|#endif
 id|do_exit
 c_func
 (paren
 id|SIGSEGV
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 id|unlock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
 r_return
-id|ret
+l_int|0
 suffix:semicolon
 )brace
 eof

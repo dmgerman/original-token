@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/kbd_diacr.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
+macro_line|#include &lt;linux/sysrq.h&gt;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
 macro_line|#ifndef KBD_DEFMODE
@@ -546,28 +547,6 @@ op_star
 id|kbd_pt_regs
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-DECL|macro|SYSRQ_KEY
-mdefine_line|#define SYSRQ_KEY 0x54
-r_extern
-r_void
-id|handle_sysrq
-c_func
-(paren
-r_int
-comma
-r_struct
-id|pt_regs
-op_star
-comma
-r_struct
-id|kbd_struct
-op_star
-comma
-r_struct
-id|tty_struct
-op_star
-)paren
-suffix:semicolon
 DECL|variable|sysrq_pressed
 r_static
 r_int
@@ -916,7 +895,10 @@ id|up_flag
 id|handle_sysrq
 c_func
 (paren
+id|kbd_sysrq_xlate
+(braket
 id|keycode
+)braket
 comma
 id|kbd_pt_regs
 comma

@@ -1462,6 +1462,7 @@ op_decrement
 id|active
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|outb
 c_func
@@ -2097,7 +2098,6 @@ id|pad_fops
 )brace
 suffix:semicolon
 DECL|function|pc110pad_init
-r_static
 r_int
 id|pc110pad_init
 c_func

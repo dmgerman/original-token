@@ -1287,12 +1287,7 @@ id|inode
 op_star
 comma
 r_struct
-id|qstr
-op_star
-comma
-r_struct
-id|inode
-op_star
+id|dentry
 op_star
 )paren
 comma

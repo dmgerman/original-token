@@ -1926,6 +1926,10 @@ DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 15)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 8) | ((offset) &lt;&lt; 15))
+DECL|macro|module_map
+mdefine_line|#define module_map      vmalloc
+DECL|macro|module_unmap
+mdefine_line|#define module_unmap    vfree
 multiline_comment|/* TLB operations. */
 DECL|function|tlb_probe
 r_extern
