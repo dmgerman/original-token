@@ -21,6 +21,7 @@ macro_line|#include &lt;asm/softirq.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
+macro_line|#include &quot;proto.h&quot;
 DECL|variable|ipi_msg_flush_tb
 r_struct
 id|ipi_msg_flush_tb_struct
@@ -3168,27 +3169,21 @@ id|i
 suffix:semicolon
 )brace
 )brace
-DECL|variable|smp_buf
-r_static
-r_char
-id|smp_buf
-(braket
-l_int|256
-)braket
-suffix:semicolon
 DECL|function|smp_info
-r_char
-op_star
+r_int
 id|smp_info
 c_func
 (paren
-r_void
+r_char
+op_star
+id|buffer
 )paren
 (brace
+r_return
 id|sprintf
 c_func
 (paren
-id|smp_buf
+id|buffer
 comma
 l_string|&quot;CPUs probed %d active %d map 0x%x AKP %d&bslash;n&quot;
 comma
@@ -3200,9 +3195,6 @@ id|cpu_present_map
 comma
 id|klock_info.akp
 )paren
-suffix:semicolon
-r_return
-id|smp_buf
 suffix:semicolon
 )brace
 multiline_comment|/* wrapper for call from panic() */

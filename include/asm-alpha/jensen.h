@@ -1,6 +1,7 @@
 macro_line|#ifndef __ALPHA_JENSEN_H
 DECL|macro|__ALPHA_JENSEN_H
 mdefine_line|#define __ALPHA_JENSEN_H
+macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * Defines for the AlphaPC EISA IO and memory address space.&n; */
 multiline_comment|/*&n; * NOTE! The memory operations do not set any memory barriers, as it&squot;s&n; * not needed for cases like a frame buffer that is essentially memory-like.&n; * You need to do them by hand if the operations depend on ordering.&n; *&n; * Similarly, the port IO operations do a &quot;mb&quot; only after a write operation:&n; * if an mb is needed before (as in the case of doing memory mapped IO&n; * first, and then a port IO operation to the same device), it needs to be&n; * done by hand.&n; *&n; * After the above has bitten me 100 times, I&squot;ll give up and just do the&n; * mb all the time, but right now I&squot;m hoping this will work out.  Avoiding&n; * mb&squot;s may potentially be a noticeable speed improvement, but I can&squot;t&n; * honestly say I&squot;ve tested it.&n; *&n; * Handling interrupts that need to do mb&squot;s to synchronize to non-interrupts&n; * is another fun race area.  Don&squot;t do it (because if you do, I&squot;ll have to&n; * do *everything* with interrupts disabled, ugh).&n; */
 multiline_comment|/*&n; * EISA Interrupt Acknowledge address&n; */
@@ -29,21 +30,63 @@ mdefine_line|#define EISA_MEM&t;&t;(IDENT_ADDR + 0x200000000UL)
 multiline_comment|/*&n; * EISA IO address offset&n; */
 DECL|macro|EISA_IO
 mdefine_line|#define EISA_IO&t;&t;&t;(IDENT_ADDR + 0x300000000UL)
+macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE extern inline
+DECL|macro|__IO_EXTERN_INLINE
+mdefine_line|#define __IO_EXTERN_INLINE
+macro_line|#endif
 multiline_comment|/*&n; * Change virtual addresses to bus addresses and vv.&n; *&n; * NOTE! On the Jensen, the physical address is the same&n; * as the bus address, but this is not necessarily true on&n; * other alpha hardware.&n; */
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus virt_to_phys
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt phys_to_virt
-DECL|macro|HAE_ADDRESS
-mdefine_line|#define HAE_ADDRESS&t;EISA_HAE
-multiline_comment|/*&n; * Handle the &quot;host address register&quot;. This needs to be set&n; * to the high 7 bits of the EISA address.  This is also needed&n; * for EISA IO addresses, which are only 16 bits wide (the&n; * hae needs to be set to 0).&n; *&n; * HAE isn&squot;t needed for the local IO operations, though.&n; */
-DECL|macro|__HAE_MASK
-mdefine_line|#define __HAE_MASK 0x1ffffff
-DECL|function|__set_hae
-r_extern
-r_inline
+DECL|function|jensen_virt_to_bus
+id|__EXTERN_INLINE
+r_int
+r_int
+id|jensen_virt_to_bus
+c_func
+(paren
 r_void
-id|__set_hae
+op_star
+id|address
+)paren
+(brace
+r_return
+id|virt_to_phys
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+)brace
+DECL|function|jensen_bus_to_virt
+id|__EXTERN_INLINE
+r_void
+op_star
+id|jensen_bus_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+id|phys_to_virt
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Handle the &quot;host address register&quot;. This needs to be set&n; * to the high 7 bits of the EISA address.  This is also needed&n; * for EISA IO addresses, which are only 16 bits wide (the&n; * hae needs to be set to 0).&n; *&n; * HAE isn&squot;t needed for the local IO operations, though.&n; */
+DECL|macro|JENSEN_HAE_ADDRESS
+mdefine_line|#define JENSEN_HAE_ADDRESS&t;EISA_HAE
+DECL|macro|JENSEN_HAE_MASK
+mdefine_line|#define JENSEN_HAE_MASK&t;&t;0x1ffffff
+DECL|function|jensen_set_hae
+id|__EXTERN_INLINE
+r_void
+id|jensen_set_hae
 c_func
 (paren
 r_int
@@ -61,7 +104,7 @@ c_cond
 (paren
 id|addr
 op_ne
-id|hae.cache
+id|alpha_mv.hae_cache
 )paren
 id|set_hae
 c_func
@@ -70,14 +113,15 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __KERNEL__
+DECL|macro|vuip
+mdefine_line|#define vuip&t;volatile unsigned int *
 multiline_comment|/*&n; * IO functions&n; *&n; * The &quot;local&quot; functions are those that don&squot;t go out to the EISA bus,&n; * but instead act on the VL82C106 chip directly.. This is mainly the&n; * keyboard, RTC,  printer and first two serial lines..&n; *&n; * The local stuff makes for some complications, but it seems to be&n; * gone in the PCI version. I hope I can get DEC suckered^H^H^H^H^H^H^H^H&n; * convinced that I need one of the newer machines.&n; */
-DECL|function|__local_inb
-r_extern
+DECL|function|jensen_local_inb
+r_static
 r_inline
 r_int
 r_int
-id|__local_inb
+id|jensen_local_inb
 c_func
 (paren
 r_int
@@ -85,14 +129,12 @@ r_int
 id|addr
 )paren
 (brace
-r_int
-id|result
-op_assign
+r_return
+l_int|0xff
+op_amp
 op_star
 (paren
-r_volatile
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -104,17 +146,12 @@ op_plus
 id|EISA_VL82C106
 )paren
 suffix:semicolon
-r_return
-l_int|0xffUL
-op_amp
-id|result
-suffix:semicolon
 )brace
-DECL|function|__local_outb
-r_extern
+DECL|function|jensen_local_outb
+r_static
 r_inline
 r_void
-id|__local_outb
+id|jensen_local_outb
 c_func
 (paren
 r_int
@@ -128,10 +165,7 @@ id|addr
 (brace
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -151,23 +185,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_int
-r_int
-id|_bus_inb
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-suffix:semicolon
-DECL|function|__bus_inb
-r_extern
+DECL|function|jensen_bus_inb
+r_static
 r_inline
 r_int
 r_int
-id|__bus_inb
+id|jensen_bus_inb
 c_func
 (paren
 r_int
@@ -178,7 +201,7 @@ id|addr
 r_int
 id|result
 suffix:semicolon
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 l_int|0
@@ -204,41 +227,23 @@ op_plus
 l_int|0x00
 )paren
 suffix:semicolon
-id|result
-op_rshift_assign
+r_return
+id|__kernel_extbl
+c_func
 (paren
+id|result
+comma
 id|addr
 op_amp
 l_int|3
 )paren
-op_star
-l_int|8
-suffix:semicolon
-r_return
-l_int|0xffUL
-op_amp
-id|result
 suffix:semicolon
 )brace
-r_extern
-r_void
-id|_bus_outb
-c_func
-(paren
-r_int
-r_char
-id|b
-comma
-r_int
-r_int
-id|addr
-)paren
-suffix:semicolon
-DECL|function|__bus_outb
-r_extern
+DECL|function|jensen_bus_outb
+r_static
 r_inline
 r_void
-id|__bus_outb
+id|jensen_bus_outb
 c_func
 (paren
 r_int
@@ -250,7 +255,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 l_int|0
@@ -258,10 +263,7 @@ l_int|0
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -286,14 +288,13 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * It seems gcc is not very good at optimizing away logical&n; * operations that result in operations across inline functions.&n; * Which is why this is a macro.&n; */
-DECL|macro|__is_local
-mdefine_line|#define __is_local(addr) ( &bslash;&n;/* keyboard */&t;(addr == 0x60 || addr == 0x64) || &bslash;&n;/* RTC */&t;(addr == 0x170 || addr == 0x171) || &bslash;&n;/* mb COM2 */&t;(addr &gt;= 0x2f8 &amp;&amp; addr &lt;= 0x2ff) || &bslash;&n;/* mb LPT1 */&t;(addr &gt;= 0x3bc &amp;&amp; addr &lt;= 0x3be) || &bslash;&n;/* mb COM2 */&t;(addr &gt;= 0x3f8 &amp;&amp; addr &lt;= 0x3ff))
-DECL|function|__inb
-r_extern
-r_inline
+DECL|macro|jensen_is_local
+mdefine_line|#define jensen_is_local(addr) ( &bslash;&n;/* keyboard */&t;(addr == 0x60 || addr == 0x64) || &bslash;&n;/* RTC */&t;(addr == 0x170 || addr == 0x171) || &bslash;&n;/* mb COM2 */&t;(addr &gt;= 0x2f8 &amp;&amp; addr &lt;= 0x2ff) || &bslash;&n;/* mb LPT1 */&t;(addr &gt;= 0x3bc &amp;&amp; addr &lt;= 0x3be) || &bslash;&n;/* mb COM2 */&t;(addr &gt;= 0x3f8 &amp;&amp; addr &lt;= 0x3ff))
+DECL|function|jensen_inb
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__inb
+id|jensen_inb
 c_func
 (paren
 r_int
@@ -304,32 +305,32 @@ id|addr
 r_if
 c_cond
 (paren
-id|__is_local
+id|jensen_is_local
 c_func
 (paren
 id|addr
 )paren
 )paren
 r_return
-id|__local_inb
+id|jensen_local_inb
 c_func
 (paren
 id|addr
 )paren
 suffix:semicolon
+r_else
 r_return
-id|_bus_inb
+id|jensen_bus_inb
 c_func
 (paren
 id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|function|__outb
-r_extern
-r_inline
+DECL|function|jensen_outb
+id|__EXTERN_INLINE
 r_void
-id|__outb
+id|jensen_outb
 c_func
 (paren
 r_int
@@ -344,13 +345,13 @@ id|addr
 r_if
 c_cond
 (paren
-id|__is_local
+id|jensen_is_local
 c_func
 (paren
 id|addr
 )paren
 )paren
-id|__local_outb
+id|jensen_local_outb
 c_func
 (paren
 id|b
@@ -359,7 +360,7 @@ id|addr
 )paren
 suffix:semicolon
 r_else
-id|_bus_outb
+id|jensen_bus_outb
 c_func
 (paren
 id|b
@@ -368,12 +369,11 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|function|__inw
-r_extern
-r_inline
+DECL|function|jensen_inw
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__inw
+id|jensen_inw
 c_func
 (paren
 r_int
@@ -384,7 +384,7 @@ id|addr
 r_int
 id|result
 suffix:semicolon
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 l_int|0
@@ -426,12 +426,11 @@ op_amp
 id|result
 suffix:semicolon
 )brace
-DECL|function|__inl
-r_extern
-r_inline
+DECL|function|jensen_inl
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__inl
+id|jensen_inl
 c_func
 (paren
 r_int
@@ -439,7 +438,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 l_int|0
@@ -448,10 +447,7 @@ suffix:semicolon
 r_return
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -466,11 +462,10 @@ l_int|0x60
 )paren
 suffix:semicolon
 )brace
-DECL|function|__outw
-r_extern
-r_inline
+DECL|function|jensen_outw
+id|__EXTERN_INLINE
 r_void
-id|__outw
+id|jensen_outw
 c_func
 (paren
 r_int
@@ -482,7 +477,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 l_int|0
@@ -490,10 +485,7 @@ l_int|0
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -517,11 +509,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__outl
-r_extern
-r_inline
+DECL|function|jensen_outl
+id|__EXTERN_INLINE
 r_void
-id|__outl
+id|jensen_outl
 c_func
 (paren
 r_int
@@ -533,7 +524,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 l_int|0
@@ -541,10 +532,7 @@ l_int|0
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -567,12 +555,11 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Memory functions.&n; */
-DECL|function|__readb
-r_extern
-r_inline
+DECL|function|jensen_readb
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readb
+id|jensen_readb
 c_func
 (paren
 r_int
@@ -583,7 +570,7 @@ id|addr
 r_int
 id|result
 suffix:semicolon
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -591,7 +578,7 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 id|result
 op_assign
@@ -629,12 +616,11 @@ op_amp
 id|result
 suffix:semicolon
 )brace
-DECL|function|__readw
-r_extern
-r_inline
+DECL|function|jensen_readw
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readw
+id|jensen_readw
 c_func
 (paren
 r_int
@@ -645,7 +631,7 @@ id|addr
 r_int
 id|result
 suffix:semicolon
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -653,7 +639,7 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 id|result
 op_assign
@@ -691,12 +677,11 @@ op_amp
 id|result
 suffix:semicolon
 )brace
-DECL|function|__readl
-r_extern
-r_inline
+DECL|function|jensen_readl
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readl
+id|jensen_readl
 c_func
 (paren
 r_int
@@ -704,7 +689,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -712,15 +697,12 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 r_return
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -735,12 +717,11 @@ l_int|0x60
 )paren
 suffix:semicolon
 )brace
-DECL|function|__readq
-r_extern
-r_inline
+DECL|function|jensen_readq
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readq
+id|jensen_readq
 c_func
 (paren
 r_int
@@ -754,7 +735,7 @@ id|r0
 comma
 id|r1
 suffix:semicolon
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -762,7 +743,7 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 id|addr
 op_assign
@@ -780,10 +761,7 @@ id|r0
 op_assign
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
@@ -793,10 +771,7 @@ id|r1
 op_assign
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
@@ -816,15 +791,14 @@ op_or
 id|r0
 suffix:semicolon
 )brace
-DECL|function|__writeb
-r_extern
-r_inline
+DECL|function|jensen_writeb
+id|__EXTERN_INLINE
 r_void
-id|__writeb
+id|jensen_writeb
 c_func
 (paren
 r_int
-r_int
+r_char
 id|b
 comma
 r_int
@@ -832,7 +806,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -840,14 +814,11 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -866,11 +837,10 @@ op_star
 l_int|0x01010101
 suffix:semicolon
 )brace
-DECL|function|__writew
-r_extern
-r_inline
+DECL|function|jensen_writew
+id|__EXTERN_INLINE
 r_void
-id|__writew
+id|jensen_writew
 c_func
 (paren
 r_int
@@ -882,7 +852,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -890,14 +860,11 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -916,11 +883,10 @@ op_star
 l_int|0x00010001
 suffix:semicolon
 )brace
-DECL|function|__writel
-r_extern
-r_inline
+DECL|function|jensen_writel
+id|__EXTERN_INLINE
 r_void
-id|__writel
+id|jensen_writel
 c_func
 (paren
 r_int
@@ -932,7 +898,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -940,14 +906,11 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 (paren
@@ -964,11 +927,10 @@ op_assign
 id|b
 suffix:semicolon
 )brace
-DECL|function|__writeq
-r_extern
-r_inline
+DECL|function|jensen_writeq
+id|__EXTERN_INLINE
 r_void
-id|__writeq
+id|jensen_writeq
 c_func
 (paren
 r_int
@@ -980,7 +942,7 @@ r_int
 id|addr
 )paren
 (brace
-id|__set_hae
+id|jensen_set_hae
 c_func
 (paren
 id|addr
@@ -988,7 +950,7 @@ id|addr
 suffix:semicolon
 id|addr
 op_and_assign
-id|__HAE_MASK
+id|JENSEN_HAE_MASK
 suffix:semicolon
 id|addr
 op_assign
@@ -1004,10 +966,7 @@ l_int|0x60
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
@@ -1017,10 +976,7 @@ id|b
 suffix:semicolon
 op_star
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
@@ -1037,18 +993,72 @@ op_rshift
 l_int|32
 suffix:semicolon
 )brace
+multiline_comment|/* Find the DENSE memory area for a given bus address.&n;   Whee, there is none.  */
+DECL|function|jensen_dense_mem
+id|__EXTERN_INLINE
+r_int
+r_int
+id|jensen_dense_mem
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|macro|vuip
+macro_line|#undef vuip
+macro_line|#ifdef __WANT_IO_DEF
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus&t;jensen_virt_to_bus
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt&t;jensen_bus_to_virt
+DECL|macro|__inb
+mdefine_line|#define __inb&t;&t;jensen_inb
+DECL|macro|__inw
+mdefine_line|#define __inw&t;&t;jensen_inw
+DECL|macro|__inl
+mdefine_line|#define __inl&t;&t;jensen_inl
+DECL|macro|__outb
+mdefine_line|#define __outb&t;&t;jensen_outb
+DECL|macro|__outw
+mdefine_line|#define __outw&t;&t;jensen_outw
+DECL|macro|__outl
+mdefine_line|#define __outl&t;&t;jensen_outl
+DECL|macro|__readb
+mdefine_line|#define __readb&t;&t;jensen_readb
+DECL|macro|__readw
+mdefine_line|#define __readw&t;&t;jensen_readw
+DECL|macro|__writeb
+mdefine_line|#define __writeb&t;jensen_writeb
+DECL|macro|__writew
+mdefine_line|#define __writew&t;jensen_writew
+DECL|macro|__readl
+mdefine_line|#define __readl&t;&t;jensen_readl
+DECL|macro|__readq
+mdefine_line|#define __readq&t;&t;jensen_readq
+DECL|macro|__writel
+mdefine_line|#define __writel&t;jensen_writel
+DECL|macro|__writeq
+mdefine_line|#define __writeq&t;jensen_writeq
+DECL|macro|dense_mem
+mdefine_line|#define dense_mem&t;jensen_dense_mem
 multiline_comment|/*&n; * The above have so much overhead that it probably doesn&squot;t make&n; * sense to have them inlined (better icache behaviour).&n; */
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
 mdefine_line|#define outb(x, port) &bslash;&n;(__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
-macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n; * The Alpha Jensen hardware for some rather strange reason puts&n; * the RTC clock at 0x170 instead of 0x70. Probably due to some&n; * misguided idea about using 0x70 for NMI stuff.&n; *&n; * These defines will override the defaults when doing RTC queries&n; */
-DECL|macro|RTC_PORT
-mdefine_line|#define RTC_PORT(x)&t;(0x170+(x))
-DECL|macro|RTC_ADDR
-mdefine_line|#define RTC_ADDR(x)&t;(x)
-DECL|macro|RTC_ALWAYS_BCD
-mdefine_line|#define RTC_ALWAYS_BCD&t;0
+macro_line|#endif /* __WANT_IO_DEF */
+macro_line|#ifdef __IO_EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+DECL|macro|__IO_EXTERN_INLINE
+macro_line|#undef __IO_EXTERN_INLINE
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* __ALPHA_JENSEN_H */
 eof

@@ -10704,6 +10704,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|clear_inode
+c_func
+(paren
+id|old_inode
+)paren
+suffix:semicolon
 id|rename_done
 suffix:colon
 r_if

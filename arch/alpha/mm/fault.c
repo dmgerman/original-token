@@ -1,20 +1,44 @@
 multiline_comment|/*&n; *  linux/arch/alpha/mm/fault.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE inline
+macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef  __EXTERN_INLINE
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/mmu_context.h&gt;
+r_extern
+r_void
+id|die_if_kernel
+c_func
+(paren
+r_char
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+comma
+r_int
+comma
+r_int
+r_int
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|variable|last_asn
 r_int
@@ -292,17 +316,16 @@ op_assign
 id|ASN_FIRST_VERSION
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
-macro_line|#ifndef BROKEN_ASN
-multiline_comment|/*&n; * Select a new ASN and reload the context. This is&n; * not inlined as this expands to a pretty large&n; * function.&n; */
-DECL|function|get_new_asn_and_reload
+multiline_comment|/*&n; * Select a new ASN for a task.&n; */
 r_void
-id|get_new_asn_and_reload
+DECL|function|get_new_mmu_context
+id|get_new_mmu_context
 c_func
 (paren
 r_struct
 id|task_struct
 op_star
-id|tsk
+id|p
 comma
 r_struct
 id|mm_struct
@@ -310,52 +333,74 @@ op_star
 id|mm
 )paren
 (brace
-id|mm-&gt;context
+r_int
+r_int
+id|asn
 op_assign
-l_int|0
+id|asn_cache
 suffix:semicolon
-id|get_new_mmu_context
+r_if
+c_cond
+(paren
+(paren
+id|asn
+op_amp
+id|HARDWARE_ASN_MASK
+)paren
+OL
+id|MAX_ASN
+)paren
+op_increment
+id|asn
+suffix:semicolon
+r_else
+(brace
+id|tbiap
 c_func
 (paren
-id|tsk
-comma
-id|mm
 )paren
 suffix:semicolon
-id|reload_context
+id|imb
 c_func
 (paren
-id|tsk
 )paren
+suffix:semicolon
+id|asn
+op_assign
+(paren
+id|asn
+op_amp
+op_complement
+id|HARDWARE_ASN_MASK
+)paren
+op_plus
+id|ASN_FIRST_VERSION
 suffix:semicolon
 )brace
-macro_line|#endif
-r_extern
-r_void
-id|die_if_kernel
-c_func
-(paren
-r_char
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-comma
-r_int
-comma
-r_int
-r_int
-op_star
-)paren
+id|asn_cache
+op_assign
+id|asn
 suffix:semicolon
+id|mm-&gt;context
+op_assign
+id|asn
+suffix:semicolon
+multiline_comment|/* full version + asn */
+id|p-&gt;tss.asn
+op_assign
+id|asn
+op_amp
+id|HARDWARE_ASN_MASK
+suffix:semicolon
+multiline_comment|/* just asn */
+)brace
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to handle_mm_fault().&n; *&n; * mmcsr:&n; *&t;0 = translation not valid&n; *&t;1 = access violation&n; *&t;2 = fault-on-read&n; *&t;3 = fault-on-execute&n; *&t;4 = fault-on-write&n; *&n; * cause:&n; *&t;-1 = instruction fetch&n; *&t;0 = load&n; *&t;1 = store&n; *&n; * Registers $9 through $15 are saved in a block just prior to `regs&squot; and&n; * are saved and restored around the call to allow exception code to&n; * modify them.&n; */
 multiline_comment|/* Macro for exception fixup code to access integer registers.  */
 DECL|macro|dpf_reg
-mdefine_line|#define dpf_reg(r) &bslash;&n;&t;(((unsigned long *)regs)[(r) &lt;= 8 ? (r) : (r) &lt;= 15 ? (r)-16 : &bslash;&n;&t;&t;&t;&t; (r) &lt;= 18 ? (r)+8 : (r)-10])
-DECL|function|do_page_fault
+mdefine_line|#define dpf_reg(r)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(((unsigned long *)regs)[(r) &lt;= 8 ? (r) : (r) &lt;= 15 ? (r)-16 :&t;&bslash;&n;&t;&t;&t;&t; (r) &lt;= 18 ? (r)+8 : (r)-10])
 id|asmlinkage
 r_void
+DECL|function|do_page_fault
 id|do_page_fault
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;added cpuinfo &n; *&t;&t;&t;&lt;dth@cistron.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; * &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; *&n; * Yves Arrouye      :  remove removal of trailing spaces in get_array.&n; *&t;&t;&t;&lt;Yves.Arrouye@marin.fdn.fr&gt;&n;&n; * Jerome Forissier  :  added per-CPU time information to /proc/stat&n; *                      and /proc/&lt;pid&gt;/cpu extension&n; *                      &lt;forissier@isia.cma.fr&gt;&n; *&t;&t;&t;- Incorporation and non-SMP safe operation&n; *&t;&t;&t;of forissier patch in 2.1.78 by &n; *&t;&t;&t;Hans Marcus &lt;crowbar@concepts.nl&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;added cpuinfo &n; *&t;&t;&t;&lt;dth@cistron.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; * &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; *&n; * Yves Arrouye      :  remove removal of trailing spaces in get_array.&n; *&t;&t;&t;&lt;Yves.Arrouye@marin.fdn.fr&gt;&n;&n; * Jerome Forissier  :  added per-CPU time information to /proc/stat&n; *                      and /proc/&lt;pid&gt;/cpu extension&n; *                      &lt;forissier@isia.cma.fr&gt;&n; *&t;&t;&t;- Incorporation and non-SMP safe operation&n; *&t;&t;&t;of forissier patch in 2.1.78 by &n; *&t;&t;&t;Hans Marcus &lt;crowbar@concepts.nl&gt;&n; *&n; * aeb@cwi.nl        :  /proc/partitions&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -5300,6 +5300,15 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|get_partition_list
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|get_filesystem_list
 c_func
 (paren
@@ -5569,6 +5578,16 @@ id|PROC_DEVICES
 suffix:colon
 r_return
 id|get_device_list
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_case
+id|PROC_PARTITIONS
+suffix:colon
+r_return
+id|get_partition_list
 c_func
 (paren
 id|page

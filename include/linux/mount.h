@@ -117,5 +117,8 @@ id|kdev_t
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;Umount options&n; */
+DECL|macro|MNT_FORCE
+mdefine_line|#define MNT_FORCE&t;0x00000001&t;/* Attempt to forcibily umount */
 macro_line|#endif /* _LINUX_MOUNT_H */
 eof

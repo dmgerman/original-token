@@ -21873,6 +21873,9 @@ id|HZ
 comma
 id|info-&gt;idle_stats.overruns
 comma
+(paren
+r_int
+)paren
 id|info-&gt;tty-&gt;ldisc.num
 )paren
 suffix:semicolon

@@ -2,51 +2,6 @@ multiline_comment|/*&n; * Alpha IO and memory functions.. Just expand the inline
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/* &n; * Jensen has a separate &quot;local&quot; and &quot;bus&quot; IO space for&n; * byte-wide IO.&n; */
-macro_line|#ifdef __is_local
-DECL|function|_bus_inb
-r_int
-r_int
-id|_bus_inb
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_return
-id|__bus_inb
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-DECL|function|_bus_outb
-r_void
-id|_bus_outb
-c_func
-(paren
-r_int
-r_char
-id|b
-comma
-r_int
-r_int
-id|addr
-)paren
-(brace
-id|__bus_outb
-c_func
-(paren
-id|b
-comma
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|_inb
 r_int
 r_int
@@ -2258,7 +2213,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * &quot;memset&quot; on IO memory space.&n; * This needs to be optimized.&n; */
+multiline_comment|/*&n; * &quot;memset&quot; on IO memory space.&n; */
 DECL|function|_memset_c_io
 r_void
 id|_memset_c_io
@@ -2276,6 +2231,7 @@ r_int
 id|count
 )paren
 (brace
+multiline_comment|/* Handle any initial odd byte */
 r_if
 c_cond
 (paren
@@ -2305,6 +2261,7 @@ id|count
 op_decrement
 suffix:semicolon
 )brace
+multiline_comment|/* Handle any initial odd halfword */
 r_if
 c_cond
 (paren
@@ -2336,6 +2293,7 @@ op_sub_assign
 l_int|2
 suffix:semicolon
 )brace
+multiline_comment|/* Handle any initial odd word */
 r_if
 c_cond
 (paren
@@ -2367,29 +2325,20 @@ op_sub_assign
 l_int|4
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
-id|to
-op_amp
-l_int|7
-)paren
-op_eq
-l_int|0
-)paren
-(brace
+multiline_comment|/* Handle all full-sized quadwords: we&squot;re aligned (or have a small count) */
 id|count
 op_sub_assign
 l_int|8
 suffix:semicolon
-r_while
-c_loop
+r_if
+c_cond
 (paren
 id|count
 op_ge
 l_int|0
 )paren
+(brace
+r_do
 (brace
 id|writeq
 c_func
@@ -2408,23 +2357,26 @@ op_sub_assign
 l_int|8
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|count
+op_ge
+l_int|0
+)paren
+suffix:semicolon
+)brace
 id|count
 op_add_assign
 l_int|8
 suffix:semicolon
-)brace
+multiline_comment|/* The tail is word-aligned if we still have count &gt;= 4 */
 r_if
 c_cond
 (paren
 id|count
 op_ge
 l_int|4
-op_logical_and
-(paren
-id|to
-op_amp
-l_int|4
-)paren
 )paren
 (brace
 id|writel
@@ -2444,18 +2396,13 @@ op_sub_assign
 l_int|4
 suffix:semicolon
 )brace
+multiline_comment|/* The tail is half-word aligned if we have count &gt;= 2 */
 r_if
 c_cond
 (paren
 id|count
 op_ge
 l_int|2
-op_logical_and
-(paren
-id|to
-op_amp
-l_int|2
-)paren
 )paren
 (brace
 id|writew
@@ -2475,12 +2422,11 @@ op_sub_assign
 l_int|2
 suffix:semicolon
 )brace
-r_while
-c_loop
+multiline_comment|/* And finally, one last byte.. */
+r_if
+c_cond
 (paren
 id|count
-OG
-l_int|0
 )paren
 (brace
 id|writeb
@@ -2490,12 +2436,6 @@ id|c
 comma
 id|to
 )paren
-suffix:semicolon
-id|count
-op_decrement
-suffix:semicolon
-id|to
-op_increment
 suffix:semicolon
 )brace
 )brace

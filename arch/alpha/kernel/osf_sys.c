@@ -105,6 +105,8 @@ c_func
 (paren
 r_char
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -2330,6 +2332,8 @@ id|sys_umount
 c_func
 (paren
 id|path
+comma
+id|flag
 )paren
 suffix:semicolon
 id|unlock_kernel

@@ -4623,14 +4623,10 @@ op_assign
 op_logical_neg
 id|cd.eob
 suffix:semicolon
-multiline_comment|/* Hewlett Packard ignores the eof flag on READDIR. Some&n;&t; * fs-specific readdir implementations seem to reset f_pos to 0&n;&t; * at EOF however, causing an endless loop. */
 r_if
 c_cond
 (paren
 id|cd.offset
-op_logical_and
-op_logical_neg
-id|eof
 )paren
 op_star
 id|cd.offset

@@ -64,6 +64,9 @@ comma
 DECL|enumerator|PROC_DEVICES
 id|PROC_DEVICES
 comma
+DECL|enumerator|PROC_PARTITIONS
+id|PROC_PARTITIONS
+comma
 DECL|enumerator|PROC_INTERRUPTS
 id|PROC_INTERRUPTS
 comma

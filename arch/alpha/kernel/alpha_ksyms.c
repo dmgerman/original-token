@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
@@ -109,6 +110,13 @@ r_void
 id|__remqu
 (paren
 r_void
+)paren
+suffix:semicolon
+DECL|variable|alpha_mv
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alpha_mv
 )paren
 suffix:semicolon
 DECL|variable|local_bh_count
@@ -606,11 +614,30 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|alpha_fp_emul
+)paren
+(paren
+r_int
+r_int
+id|pc
+)paren
+suffix:semicolon
 DECL|variable|alpha_fp_emul_imprecise
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|alpha_fp_emul_imprecise
+)paren
+suffix:semicolon
+DECL|variable|alpha_fp_emul
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alpha_fp_emul
 )paren
 suffix:semicolon
 macro_line|#endif

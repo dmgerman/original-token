@@ -652,6 +652,10 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef CONFIG_MCA
+macro_line|#warning &quot;The MCA code in drivers/net/3c509.c does not compile&quot;
+macro_line|#warning &quot;See http:
+singleline_comment|//glycerine.itsmm.uni.edu/mca/ for patches.&quot;
+macro_line|#if 0   
 r_if
 c_cond
 (paren
@@ -775,6 +779,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#endif
 multiline_comment|/* Reset the ISA PnP mechanism on 3c509b. */
 id|outb
 c_func
@@ -862,7 +867,6 @@ op_ge
 l_int|0x200
 )paren
 (brace
-multiline_comment|/* GCC optimizes this test out. */
 multiline_comment|/* Rare -- do we really need a warning? */
 id|printk
 c_func

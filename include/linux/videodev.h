@@ -2,6 +2,7 @@ macro_line|#ifndef __LINUX_VIDEODEV_H
 DECL|macro|__LINUX_VIDEODEV_H
 mdefine_line|#define __LINUX_VIDEODEV_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/poll.h&gt;
 DECL|struct|video_device
 r_struct
 id|video_device
@@ -90,6 +91,26 @@ r_int
 comma
 r_int
 id|noblock
+)paren
+suffix:semicolon
+DECL|member|poll
+r_int
+r_int
+(paren
+op_star
+id|poll
+)paren
+(paren
+r_struct
+id|video_device
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+id|poll_table
+op_star
 )paren
 suffix:semicolon
 DECL|member|ioctl
@@ -413,6 +434,14 @@ DECL|macro|VIDEO_PALETTE_UYVY
 mdefine_line|#define VIDEO_PALETTE_UYVY&t;9&t;/* The great thing about standards is ... */
 DECL|macro|VIDEO_PALETTE_YUV420
 mdefine_line|#define VIDEO_PALETTE_YUV420&t;10
+DECL|macro|VIDEO_PALETTE_YUV411
+mdefine_line|#define VIDEO_PALETTE_YUV411&t;11&t;/* YUV411 capture */
+DECL|macro|VIDEO_PALETTE_RAW
+mdefine_line|#define VIDEO_PALETTE_RAW&t;12&t;/* RAW capture (BT848) */
+DECL|macro|VIDEO_PALETTE_YUV422P
+mdefine_line|#define VIDEO_PALETTE_YUV422P&t;13&t;/* YUV 4:2:2 Planar */
+DECL|macro|VIDEO_PALETTE_YUV411P
+mdefine_line|#define VIDEO_PALETTE_YUV411P&t;14&t;/* YUV 4:1:1 Planar */
 )brace
 suffix:semicolon
 DECL|struct|video_audio
@@ -587,6 +616,7 @@ r_int
 r_int
 id|format
 suffix:semicolon
+multiline_comment|/* should be VIDEO_PALETTE_* */
 )brace
 suffix:semicolon
 DECL|struct|video_key
@@ -670,6 +700,8 @@ DECL|macro|VID_HARDWARE_SAA7146
 mdefine_line|#define VID_HARDWARE_SAA7146    11
 DECL|macro|VID_HARDWARE_VIDEUM
 mdefine_line|#define VID_HARDWARE_VIDEUM&t;12&t;/* Reserved for Winnov videum */
+DECL|macro|VID_HARDWARE_RTRACK2
+mdefine_line|#define VID_HARDWARE_RTRACK2&t;13
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

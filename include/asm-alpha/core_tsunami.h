@@ -3,33 +3,24 @@ DECL|macro|__ALPHA_TSUNAMI__H__
 mdefine_line|#define __ALPHA_TSUNAMI__H__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * TSUNAMI/TYPHOON are the internal names for the core logic chipset which&n; * provides memory controller and PCI access for the 21264 based systems.&n; *&n; * This file is based on:&n; *&n; * Tsunami System Programmers Manual&n; * Preliminary, Chapters 2-5&n; *&n; */
-DECL|macro|BYTE_ENABLE_SHIFT
-mdefine_line|#define BYTE_ENABLE_SHIFT 5
-DECL|macro|TRANSFER_LENGTH_SHIFT
-mdefine_line|#define TRANSFER_LENGTH_SHIFT 3
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-multiline_comment|/* if we are using the SRM PCI setup, we&squot;ll need to use variables instead */
 DECL|macro|TSUNAMI_DMA_WIN_BASE_DEFAULT
 mdefine_line|#define TSUNAMI_DMA_WIN_BASE_DEFAULT    (1024*1024*1024)
 DECL|macro|TSUNAMI_DMA_WIN_SIZE_DEFAULT
 mdefine_line|#define TSUNAMI_DMA_WIN_SIZE_DEFAULT    (1024*1024*1024)
-r_extern
-r_int
-r_int
-id|TSUNAMI_DMA_WIN_BASE
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|TSUNAMI_DMA_WIN_SIZE
-suffix:semicolon
-macro_line|#else /* SRM_SETUP */
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
 DECL|macro|TSUNAMI_DMA_WIN_BASE
-mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;(1024*1024*1024)
+mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base
 DECL|macro|TSUNAMI_DMA_WIN_SIZE
-mdefine_line|#define TSUNAMI_DMA_WIN_SIZE&t;(1024*1024*1024)
-macro_line|#endif /* SRM_SETUP */
+mdefine_line|#define TSUNAMI_DMA_WIN_SIZE&t;&t;alpha_mv.dma_win_size
+macro_line|#else
+DECL|macro|TSUNAMI_DMA_WIN_BASE
+mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;TSUNAMI_DMA_WIN_BASE_DEFAULT
+DECL|macro|TSUNAMI_DMA_WIN_SIZE
+mdefine_line|#define TSUNAMI_DMA_WIN_SIZE&t;&t;TSUNAMI_DMA_WIN_SIZE_DEFAULT
+macro_line|#endif
+multiline_comment|/* XXX: Do we need to conditionalize on this?  */
 macro_line|#ifdef USE_48_BIT_KSEG
 DECL|macro|TS_BIAS
 mdefine_line|#define TS_BIAS 0x80000000000UL
@@ -772,16 +763,26 @@ DECL|macro|TSUNAMI_PCI1_IO
 mdefine_line|#define TSUNAMI_PCI1_IO&t;&t;&t;(IDENT_ADDR + TS_BIAS + 0x3FC000000UL)
 DECL|macro|TSUNAMI_PCI1_CONF
 mdefine_line|#define TSUNAMI_PCI1_CONF&t;&t;(IDENT_ADDR + TS_BIAS + 0x3FE000000UL)
-DECL|macro|HAE_ADDRESS
-mdefine_line|#define HAE_ADDRESS 0
+multiline_comment|/*&n; * Data structure for handling TSUNAMI machine checks:&n; */
+DECL|struct|el_TSUNAMI_sysdata_mcheck
+r_struct
+id|el_TSUNAMI_sysdata_mcheck
+(brace
+)brace
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE extern inline
+DECL|macro|__IO_EXTERN_INLINE
+mdefine_line|#define __IO_EXTERN_INLINE
+macro_line|#endif
 multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|virt_to_bus
-r_extern
-r_inline
+DECL|function|tsunami_virt_to_bus
+id|__EXTERN_INLINE
 r_int
 r_int
-id|virt_to_bus
+id|tsunami_virt_to_bus
 c_func
 (paren
 r_void
@@ -799,12 +800,11 @@ op_plus
 id|TSUNAMI_DMA_WIN_BASE
 suffix:semicolon
 )brace
-DECL|function|bus_to_virt
-r_extern
-r_inline
+DECL|function|tsunami_bus_to_virt
+id|__EXTERN_INLINE
 r_void
 op_star
-id|bus_to_virt
+id|tsunami_bus_to_virt
 c_func
 (paren
 r_int
@@ -825,12 +825,11 @@ suffix:semicolon
 multiline_comment|/*&n; * I/O functions:&n; *&n; * TSUNAMI, the 21??? PCI/memory support chipset for the EV6 (21264)&n; * can only use linear accesses to get at PCI memory and I/O spaces.&n; */
 multiline_comment|/* HACK ALERT! HACK ALERT! */
 multiline_comment|/* HACK ALERT! HACK ALERT! */
-multiline_comment|/* only using PCI bus 0 for now in all routines */
-DECL|macro|DENSE_MEM
-mdefine_line|#define DENSE_MEM(addr)&t;&t;&t;TSUNAMI_PCI0_MEM
+multiline_comment|/* Only using PCI bus 0 for now in all routines.  */
+DECL|macro|TSUNAMI_IACK_SC
+mdefine_line|#define TSUNAMI_IACK_SC  TSUNAMI_PCI0_IACK_SC
 multiline_comment|/* HACK ALERT! HACK ALERT! */
 multiline_comment|/* HACK ALERT! HACK ALERT! */
-multiline_comment|/* Also assume we are optimizing for EV6, and so the compiler knows about&n;   byte/word instructions.  */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char *
 DECL|macro|vusp
@@ -839,12 +838,11 @@ DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
-DECL|function|__inb
-r_extern
-r_inline
+DECL|function|tsunami_inb
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__inb
+id|tsunami_inb
 c_func
 (paren
 r_int
@@ -853,6 +851,9 @@ id|addr
 )paren
 (brace
 r_return
+id|__kernel_ldbu
+c_func
+(paren
 op_star
 (paren
 id|vucp
@@ -862,13 +863,13 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_IO
 )paren
+)paren
 suffix:semicolon
 )brace
-DECL|function|__outb
-r_extern
-r_inline
+DECL|function|tsunami_outb
+id|__EXTERN_INLINE
 r_void
-id|__outb
+id|tsunami_outb
 c_func
 (paren
 r_int
@@ -880,6 +881,11 @@ r_int
 id|addr
 )paren
 (brace
+id|__kernel_stb
+c_func
+(paren
+id|b
+comma
 op_star
 (paren
 id|vucp
@@ -889,8 +895,7 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_IO
 )paren
-op_assign
-id|b
+)paren
 suffix:semicolon
 id|mb
 c_func
@@ -898,12 +903,11 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__inw
-r_extern
-r_inline
+DECL|function|tsunami_inw
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__inw
+id|tsunami_inw
 c_func
 (paren
 r_int
@@ -912,6 +916,9 @@ id|addr
 )paren
 (brace
 r_return
+id|__kernel_ldwu
+c_func
+(paren
 op_star
 (paren
 id|vusp
@@ -921,13 +928,13 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_IO
 )paren
+)paren
 suffix:semicolon
 )brace
-DECL|function|__outw
-r_extern
-r_inline
+DECL|function|tsunami_outw
+id|__EXTERN_INLINE
 r_void
-id|__outw
+id|tsunami_outw
 c_func
 (paren
 r_int
@@ -939,6 +946,11 @@ r_int
 id|addr
 )paren
 (brace
+id|__kernel_stw
+c_func
+(paren
+id|b
+comma
 op_star
 (paren
 id|vusp
@@ -948,8 +960,7 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_IO
 )paren
-op_assign
-id|b
+)paren
 suffix:semicolon
 id|mb
 c_func
@@ -957,12 +968,11 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__inl
-r_extern
-r_inline
+DECL|function|tsunami_inl
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__inl
+id|tsunami_inl
 c_func
 (paren
 r_int
@@ -982,11 +992,10 @@ id|TSUNAMI_PCI0_IO
 )paren
 suffix:semicolon
 )brace
-DECL|function|__outl
-r_extern
-r_inline
+DECL|function|tsunami_outl
+id|__EXTERN_INLINE
 r_void
-id|__outl
+id|tsunami_outl
 c_func
 (paren
 r_int
@@ -1017,12 +1026,11 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Memory functions.  all accesses are done through linear space.&n; */
-DECL|function|__readb
-r_extern
-r_inline
+DECL|function|tsunami_readb
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readb
+id|tsunami_readb
 c_func
 (paren
 r_int
@@ -1031,6 +1039,9 @@ id|addr
 )paren
 (brace
 r_return
+id|__kernel_ldbu
+c_func
+(paren
 op_star
 (paren
 id|vucp
@@ -1040,14 +1051,14 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_MEM
 )paren
+)paren
 suffix:semicolon
 )brace
-DECL|function|__readw
-r_extern
-r_inline
+DECL|function|tsunami_readw
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readw
+id|tsunami_readw
 c_func
 (paren
 r_int
@@ -1056,6 +1067,9 @@ id|addr
 )paren
 (brace
 r_return
+id|__kernel_ldwu
+c_func
+(paren
 op_star
 (paren
 id|vusp
@@ -1065,14 +1079,14 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_MEM
 )paren
+)paren
 suffix:semicolon
 )brace
-DECL|function|__readl
-r_extern
-r_inline
+DECL|function|tsunami_readl
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readl
+id|tsunami_readl
 c_func
 (paren
 r_int
@@ -1092,12 +1106,11 @@ id|TSUNAMI_PCI0_MEM
 )paren
 suffix:semicolon
 )brace
-DECL|function|__readq
-r_extern
-r_inline
+DECL|function|tsunami_readq
+id|__EXTERN_INLINE
 r_int
 r_int
-id|__readq
+id|tsunami_readq
 c_func
 (paren
 r_int
@@ -1117,11 +1130,10 @@ id|TSUNAMI_PCI0_MEM
 )paren
 suffix:semicolon
 )brace
-DECL|function|__writeb
-r_extern
-r_inline
+DECL|function|tsunami_writeb
+id|__EXTERN_INLINE
 r_void
-id|__writeb
+id|tsunami_writeb
 c_func
 (paren
 r_int
@@ -1133,6 +1145,11 @@ r_int
 id|addr
 )paren
 (brace
+id|__kernel_stb
+c_func
+(paren
+id|b
+comma
 op_star
 (paren
 id|vucp
@@ -1142,8 +1159,7 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_MEM
 )paren
-op_assign
-id|b
+)paren
 suffix:semicolon
 id|mb
 c_func
@@ -1151,11 +1167,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__writew
-r_extern
-r_inline
+DECL|function|tsunami_writew
+id|__EXTERN_INLINE
 r_void
-id|__writew
+id|tsunami_writew
 c_func
 (paren
 r_int
@@ -1167,6 +1182,11 @@ r_int
 id|addr
 )paren
 (brace
+id|__kernel_stw
+c_func
+(paren
+id|b
+comma
 op_star
 (paren
 id|vusp
@@ -1176,8 +1196,7 @@ id|addr
 op_plus
 id|TSUNAMI_PCI0_MEM
 )paren
-op_assign
-id|b
+)paren
 suffix:semicolon
 id|mb
 c_func
@@ -1185,11 +1204,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__writel
-r_extern
-r_inline
+DECL|function|tsunami_writel
+id|__EXTERN_INLINE
 r_void
-id|__writel
+id|tsunami_writel
 c_func
 (paren
 r_int
@@ -1219,11 +1237,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__writeq
-r_extern
-r_inline
+DECL|function|tsunami_writeq
+id|__EXTERN_INLINE
 r_void
-id|__writeq
+id|tsunami_writeq
 c_func
 (paren
 r_int
@@ -1253,6 +1270,66 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Find the DENSE memory area for a given bus address.  */
+DECL|function|tsunami_dense_mem
+id|__EXTERN_INLINE
+r_int
+r_int
+id|tsunami_dense_mem
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|TSUNAMI_PCI0_MEM
+suffix:semicolon
+)brace
+DECL|macro|vucp
+macro_line|#undef vucp
+DECL|macro|vusp
+macro_line|#undef vusp
+DECL|macro|vuip
+macro_line|#undef vuip
+DECL|macro|vulp
+macro_line|#undef vulp
+macro_line|#ifdef __WANT_IO_DEF
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus&t;tsunami_virt_to_bus
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt&t;tsunami_bus_to_virt
+DECL|macro|__inb
+mdefine_line|#define __inb&t;&t;tsunami_inb
+DECL|macro|__inw
+mdefine_line|#define __inw&t;&t;tsunami_inw
+DECL|macro|__inl
+mdefine_line|#define __inl&t;&t;tsunami_inl
+DECL|macro|__outb
+mdefine_line|#define __outb&t;&t;tsunami_outb
+DECL|macro|__outw
+mdefine_line|#define __outw&t;&t;tsunami_outw
+DECL|macro|__outl
+mdefine_line|#define __outl&t;&t;tsunami_outl
+DECL|macro|__readb
+mdefine_line|#define __readb&t;&t;tsunami_readb
+DECL|macro|__readw
+mdefine_line|#define __readw&t;&t;tsunami_readw
+DECL|macro|__writeb
+mdefine_line|#define __writeb&t;tsunami_writeb
+DECL|macro|__writew
+mdefine_line|#define __writew&t;tsunami_writew
+DECL|macro|__readl
+mdefine_line|#define __readl&t;&t;tsunami_readl
+DECL|macro|__readq
+mdefine_line|#define __readq&t;&t;tsunami_readq
+DECL|macro|__writel
+mdefine_line|#define __writel&t;tsunami_writel
+DECL|macro|__writeq
+mdefine_line|#define __writeq&t;tsunami_writeq
+DECL|macro|dense_mem
+mdefine_line|#define dense_mem&t;tsunami_dense_mem
 DECL|macro|inb
 mdefine_line|#define inb(port) __inb((port))
 DECL|macro|inw
@@ -1281,39 +1358,13 @@ DECL|macro|writel
 mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
 DECL|macro|writeq
 mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
-DECL|macro|vucp
-macro_line|#undef vucp
-DECL|macro|vusp
-macro_line|#undef vusp
-DECL|macro|vuip
-macro_line|#undef vuip
-DECL|macro|vulp
-macro_line|#undef vulp
-r_extern
-r_int
-r_int
-id|tsunami_init
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
+macro_line|#endif /* __WANT_IO_DEF */
+macro_line|#ifdef __IO_EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+DECL|macro|__IO_EXTERN_INLINE
+macro_line|#undef __IO_EXTERN_INLINE
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n; * Data structure for handling TSUNAMI machine checks:&n; */
-DECL|struct|el_TSUNAMI_sysdata_mcheck
-r_struct
-id|el_TSUNAMI_sysdata_mcheck
-(brace
-)brace
-suffix:semicolon
-DECL|macro|RTC_PORT
-mdefine_line|#define RTC_PORT(x)&t;(0x70 + (x))
-DECL|macro|RTC_ADDR
-mdefine_line|#define RTC_ADDR(x)&t;(0x80 | (x))
-DECL|macro|RTC_ALWAYS_BCD
-mdefine_line|#define RTC_ALWAYS_BCD&t;0
 macro_line|#endif /* __ALPHA_TSUNAMI__H__ */
 eof

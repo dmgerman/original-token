@@ -124,6 +124,7 @@ DECL|typedef|__kernel_fsid_t
 )brace
 id|__kernel_fsid_t
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __GNUC__
 DECL|macro|__FD_SET
 mdefine_line|#define&t;__FD_SET(d, set)&t;((set)-&gt;fds_bits[__FDELT(d)] |= __FDMASK(d))
@@ -558,5 +559,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* __GNUC__ */
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ALPHA_POSIX_TYPES_H */
 eof

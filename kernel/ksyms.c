@@ -41,6 +41,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
 r_extern
 r_int
 r_char
@@ -1926,6 +1927,14 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_console
+)paren
+suffix:semicolon
+multiline_comment|/* time */
+DECL|variable|get_fast_time
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_fast_time
 )paren
 suffix:semicolon
 eof

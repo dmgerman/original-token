@@ -1,30 +1,19 @@
-multiline_comment|/*&n; * Code common to all APECS chips.&n; *&n; * Rewritten for Apecs from the lca.c from:&n; *&n; * Written by David Mosberger (davidm@cs.arizona.edu) with some code&n; * taken from Dave Rusling&squot;s (david.rusling@reo.mts.dec.com) 32-bit&n; * bios code.&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_apecs.c&n; *&n; * Code common to all APECS core logic chips.&n; *&n; * Rewritten for Apecs from the lca.c from:&n; *&n; * Written by David Mosberger (davidm@cs.arizona.edu) with some code&n; * taken from Dave Rusling&squot;s (david.rusling@reo.mts.dec.com) 32-bit&n; * bios code.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE inline
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/core_apecs.h&gt;
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+macro_line|#include &quot;proto.h&quot;
 multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
-r_extern
-r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_void
-id|wrmces
-c_func
-(paren
-r_int
-r_int
-id|mces
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
 macro_line|#ifdef DEBUG
 DECL|macro|DBG
@@ -36,7 +25,6 @@ macro_line|#endif
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int  *
 DECL|variable|apecs_mcheck_expected
-r_static
 r_volatile
 r_int
 r_int
@@ -45,7 +33,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|apecs_mcheck_taken
-r_static
 r_volatile
 r_int
 r_int
@@ -65,39 +52,20 @@ id|apecs_jd1
 comma
 id|apecs_jd2
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-DECL|variable|APECS_DMA_WIN_BASE
-r_int
-r_int
-id|APECS_DMA_WIN_BASE
-op_assign
-id|APECS_DMA_WIN_BASE_DEFAULT
-suffix:semicolon
-DECL|variable|APECS_DMA_WIN_SIZE
-r_int
-r_int
-id|APECS_DMA_WIN_SIZE
-op_assign
-id|APECS_DMA_WIN_SIZE_DEFAULT
-suffix:semicolon
-macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the APECS_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | | | | | | | | | | | | | | |F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., SCSI and Ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
-DECL|function|mk_conf_addr
 r_static
 r_int
+DECL|function|mk_conf_addr
 id|mk_conf_addr
 c_func
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
 r_int
@@ -237,10 +205,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|conf_read
 r_static
 r_int
 r_int
+DECL|function|conf_read
 id|conf_read
 c_func
 (paren
@@ -269,124 +237,6 @@ id|haxr2
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* to keep gcc quiet */
-macro_line|#ifdef CONFIG_ALPHA_SRM
-multiline_comment|/* some SRMs step on these registers during a machine check: */
-r_register
-r_int
-id|s0
-id|asm
-(paren
-l_string|&quot;9&quot;
-)paren
-suffix:semicolon
-r_register
-r_int
-id|s1
-id|asm
-(paren
-l_string|&quot;10&quot;
-)paren
-suffix:semicolon
-r_register
-r_int
-id|s2
-id|asm
-(paren
-l_string|&quot;11&quot;
-)paren
-suffix:semicolon
-r_register
-r_int
-id|s3
-id|asm
-(paren
-l_string|&quot;12&quot;
-)paren
-suffix:semicolon
-r_register
-r_int
-id|s4
-id|asm
-(paren
-l_string|&quot;13&quot;
-)paren
-suffix:semicolon
-r_register
-r_int
-id|s5
-id|asm
-(paren
-l_string|&quot;14&quot;
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-suffix:colon
-l_string|&quot;r=&quot;
-(paren
-id|s0
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-suffix:colon
-l_string|&quot;r=&quot;
-(paren
-id|s1
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-suffix:colon
-l_string|&quot;r=&quot;
-(paren
-id|s2
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-suffix:colon
-l_string|&quot;r=&quot;
-(paren
-id|s3
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-suffix:colon
-l_string|&quot;r=&quot;
-(paren
-id|s4
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-suffix:colon
-l_string|&quot;r=&quot;
-(paren
-id|s5
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -411,7 +261,7 @@ id|type1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset status register to avoid losing errors: */
+multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
 op_star
@@ -443,7 +293,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* if Type1 access, must set HAE #2 */
+multiline_comment|/* If Type1 access, must set HAE #2. */
 r_if
 c_cond
 (paren
@@ -500,26 +350,42 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
+multiline_comment|/* Some SRMs step on these registers during a machine check.  */
+id|asm
+r_volatile
+(paren
+l_string|&quot;ldl %0,%1; mb; mb&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
 id|value
-op_assign
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
 op_star
 (paren
 id|vuip
 )paren
 id|addr
-suffix:semicolon
-id|mb
-c_func
-(paren
+)paren
+suffix:colon
+l_string|&quot;$9&quot;
+comma
+l_string|&quot;$10&quot;
+comma
+l_string|&quot;$11&quot;
+comma
+l_string|&quot;$12&quot;
+comma
+l_string|&quot;$13&quot;
+comma
+l_string|&quot;$14&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* magic */
 r_if
 c_cond
 (paren
@@ -556,7 +422,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* now look for any errors */
+multiline_comment|/* Now look for any errors.  */
 id|stat0
 op_assign
 op_star
@@ -575,6 +441,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Is any error bit set? */
 r_if
 c_cond
 (paren
@@ -583,8 +450,7 @@ op_amp
 l_int|0xffe0U
 )paren
 (brace
-multiline_comment|/* is any error bit set? */
-multiline_comment|/* if not NDEV, print status */
+multiline_comment|/* If not NDEV, print status.  */
 r_if
 c_cond
 (paren
@@ -605,7 +471,7 @@ id|stat0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reset error status: */
+multiline_comment|/* Reset error status.  */
 op_star
 (paren
 id|vuip
@@ -632,7 +498,7 @@ l_int|0xffffffff
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* if Type1 access, must reset HAE #2 so normal IO space ops work */
+multiline_comment|/* If Type1 access, must reset HAE #2 so normal IO space ops work.  */
 r_if
 c_cond
 (paren
@@ -662,82 +528,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_SRM
-multiline_comment|/* some SRMs step on these registers during a machine check: */
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|s0
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|s1
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|s2
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|s3
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|s4
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;# %0&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|s5
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|value
 suffix:semicolon
 )brace
-DECL|function|conf_write
 r_static
 r_void
+DECL|function|conf_write
 id|conf_write
 c_func
 (paren
@@ -768,7 +565,6 @@ id|haxr2
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* to keep gcc quiet */
 id|save_flags
 c_func
 (paren
@@ -781,7 +577,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset status register to avoid losing errors: */
+multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
 op_star
@@ -803,7 +599,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* if Type1 access, must set HAE #2 */
+multiline_comment|/* If Type1 access, must set HAE #2. */
 r_if
 c_cond
 (paren
@@ -848,7 +644,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
 op_star
 (paren
 id|vuip
@@ -884,7 +680,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* now look for any errors */
+multiline_comment|/* Now look for any errors.  */
 id|stat0
 op_assign
 op_star
@@ -893,6 +689,7 @@ id|vuip
 )paren
 id|APECS_IOC_DCSR
 suffix:semicolon
+multiline_comment|/* Is any error bit set? */
 r_if
 c_cond
 (paren
@@ -901,8 +698,7 @@ op_amp
 l_int|0xffe0U
 )paren
 (brace
-multiline_comment|/* is any error bit set? */
-multiline_comment|/* if not NDEV, print status */
+multiline_comment|/* If not NDEV, print status.  */
 r_if
 c_cond
 (paren
@@ -923,7 +719,7 @@ id|stat0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reset error status: */
+multiline_comment|/* Reset error status.  */
 op_star
 (paren
 id|vuip
@@ -946,7 +742,7 @@ suffix:semicolon
 multiline_comment|/* reset machine check */
 )brace
 macro_line|#endif
-multiline_comment|/* if Type1 access, must reset HAE #2 so normal IO space ops work */
+multiline_comment|/* If Type1 access, must reset HAE #2 so normal IO space ops work.  */
 r_if
 c_cond
 (paren
@@ -977,24 +773,20 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_byte
 r_int
-id|pcibios_read_config_byte
+DECL|function|apecs_pcibios_read_config_byte
+id|apecs_pcibios_read_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 op_star
 id|value
 )paren
@@ -1036,14 +828,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1079,24 +867,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_word
 r_int
-id|pcibios_read_config_word
+DECL|function|apecs_pcibios_read_config_word
+id|apecs_pcibios_read_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 op_star
 id|value
 )paren
@@ -1127,11 +911,9 @@ id|where
 op_amp
 l_int|0x1
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1151,11 +933,9 @@ op_amp
 id|type1
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1191,24 +971,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_dword
 r_int
-id|pcibios_read_config_dword
+DECL|function|apecs_pcibios_read_config_dword
+id|apecs_pcibios_read_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u32
 op_star
 id|value
 )paren
@@ -1239,11 +1015,9 @@ id|where
 op_amp
 l_int|0x3
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1263,11 +1037,9 @@ op_amp
 id|type1
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1293,24 +1065,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_byte
 r_int
-id|pcibios_write_config_byte
+DECL|function|apecs_pcibios_write_config_byte
+id|apecs_pcibios_write_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 id|value
 )paren
 (brace
@@ -1346,14 +1114,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1388,24 +1152,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_word
 r_int
-id|pcibios_write_config_word
+DECL|function|apecs_pcibios_write_config_word
+id|apecs_pcibios_write_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 id|value
 )paren
 (brace
@@ -1441,14 +1201,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1483,24 +1239,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_dword
 r_int
-id|pcibios_write_config_dword
+DECL|function|apecs_pcibios_write_config_dword
+id|apecs_pcibios_write_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u32
 id|value
 )paren
 (brace
@@ -1536,14 +1288,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1578,102 +1326,35 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|apecs_init
-r_int
-r_int
-id|apecs_init
+r_void
+id|__init
+DECL|function|apecs_init_arch
+id|apecs_init_arch
 c_func
 (paren
 r_int
 r_int
+op_star
 id|mem_start
 comma
 r_int
 r_int
+op_star
 id|mem_end
 )paren
 (brace
-macro_line|#ifdef CONFIG_ALPHA_XL
-multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For the XL we *must* use both windows, in order to&n;&t; * maximize the amount of physical memory that can be used&n;&t; * to DMA from the ISA bus, and still allow PCI bus devices&n;&t; * access to all of host memory.&n;&t; *&n;&t; * see &lt;asm/apecs.h&gt; for window bases and sizes.&n;&t; *&n;&t; * this restriction due to the true XL motherboards&squot; 82379AB SIO&n;&t; * PCI&lt;-&gt;ISA bridge chip which passes only 27 bits of address...&n;&t; */
-op_star
+r_switch
+c_cond
 (paren
-id|vuip
+id|alpha_use_srm_setup
 )paren
-id|APECS_IOC_PB1R
-op_assign
-l_int|1U
-op_lshift
-l_int|19
-op_or
-(paren
-id|APECS_XL_DMA_WIN1_BASE
-op_amp
-l_int|0xfff00000U
-)paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|APECS_IOC_PM1R
-op_assign
-(paren
-id|APECS_XL_DMA_WIN1_SIZE
-op_minus
-l_int|1
-)paren
-op_amp
-l_int|0xfff00000U
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|APECS_IOC_TB1R
-op_assign
-l_int|0
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|APECS_IOC_PB2R
-op_assign
-l_int|1U
-op_lshift
-l_int|19
-op_or
-(paren
-id|APECS_XL_DMA_WIN2_BASE
-op_amp
-l_int|0xfff00000U
-)paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|APECS_IOC_PM2R
-op_assign
-(paren
-id|APECS_XL_DMA_WIN2_SIZE
-op_minus
-l_int|1
-)paren
-op_amp
-l_int|0xfff00000U
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|APECS_IOC_TB2R
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#else  /* CONFIG_ALPHA_XL */
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-multiline_comment|/* check window 1 for enabled and mapped to 0 */
+(brace
+r_default
+suffix:colon
+(brace
+)brace
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
+multiline_comment|/* Check window 1 for enabled and mapped to 0. */
 r_if
 c_cond
 (paren
@@ -1726,7 +1407,7 @@ id|APECS_DMA_WIN_SIZE
 op_add_assign
 l_int|0x00100000U
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if 1
 id|printk
 c_func
 (paren
@@ -1758,9 +1439,10 @@ id|APECS_IOC_TB1R
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 2 for enabled and mapped to 0 */
+multiline_comment|/* Check window 2 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -1813,7 +1495,7 @@ id|APECS_DMA_WIN_SIZE
 op_add_assign
 l_int|0x00100000U
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if 1
 id|printk
 c_func
 (paren
@@ -1845,12 +1527,23 @@ id|APECS_IOC_TB2R
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* we must use our defaults... */
-macro_line|#endif /* SRM_SETUP */
-(brace
-multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, window 2 is disabled.  In the future, we may&n;&t; * want to use it to do scatter/gather DMA.  Window 1&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
+multiline_comment|/* Otherwise, we must use our defaults.  */
+id|APECS_DMA_WIN_BASE
+op_assign
+id|APECS_DMA_WIN_BASE_DEFAULT
+suffix:semicolon
+id|APECS_DMA_WIN_SIZE
+op_assign
+id|APECS_DMA_WIN_SIZE_DEFAULT
+suffix:semicolon
+macro_line|#endif
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/*&n;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t; * For now, window 2 is disabled.  In the future, we may&n;&t;&t; * want to use it to do scatter/gather DMA.  Window 1&n;&t;&t; * goes at 1 GB and is 1 GB large.&n;&t;&t; */
 op_star
 (paren
 id|vuip
@@ -1871,7 +1564,7 @@ op_lshift
 l_int|19
 op_or
 (paren
-id|APECS_DMA_WIN_BASE
+id|APECS_DMA_WIN_BASE_DEFAULT
 op_amp
 l_int|0xfff00000U
 )paren
@@ -1883,7 +1576,7 @@ id|vuip
 id|APECS_IOC_PM1R
 op_assign
 (paren
-id|APECS_DMA_WIN_SIZE
+id|APECS_DMA_WIN_SIZE_DEFAULT
 op_minus
 l_int|1
 )paren
@@ -1898,119 +1591,10 @@ id|APECS_IOC_TB1R
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_ALPHA_XL */
-macro_line|#ifdef CONFIG_ALPHA_CABRIOLET
-macro_line|#ifdef NO_LONGER_NEEDED_I_HOPE
-multiline_comment|/*&n;&t; * JAE: HACK!!! for now, hardwire if configured...&n;&t; * davidm: Older miniloader versions don&squot;t set the clock frequency&n;&t; * right, so hardcode it for now.&n;&t; */
-r_if
-c_cond
-(paren
-id|hwrpb-&gt;sys_type
-op_eq
-id|ST_DEC_EB64P
-)paren
-(brace
-id|hwrpb-&gt;sys_type
-op_assign
-id|ST_DEC_EBPC64
+r_break
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|hwrpb-&gt;cycle_freq
-op_eq
-l_int|0
-)paren
-(brace
-id|hwrpb-&gt;cycle_freq
-op_assign
-l_int|275000000
-suffix:semicolon
-)brace
-multiline_comment|/* update checksum: */
-(brace
-r_int
-r_int
-op_star
-id|l
-comma
-id|sum
-suffix:semicolon
-id|sum
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|l
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|hwrpb
-suffix:semicolon
-id|l
-OL
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-id|hwrpb-&gt;chksum
-suffix:semicolon
-op_increment
-id|l
-)paren
-id|sum
-op_add_assign
-op_star
-id|l
-suffix:semicolon
-id|hwrpb-&gt;chksum
-op_assign
-id|sum
-suffix:semicolon
-)brace
-macro_line|#endif /* NO_LONGER_NEEDED_I_HOPE */
-macro_line|#endif /* CONFIG_ALPHA_CABRIOLET */
-multiline_comment|/*&n;        * Finally, clear the HAXR2 register, which gets used&n;        *  for PCI Config Space accesses. That is the way&n;        *  we want to use it, and we do not want to depend on&n;        *  what ARC or SRM might have left behind...&n;        */
-(brace
-macro_line|#if 0
-r_int
-r_int
-id|haxr2
-op_assign
-op_star
-(paren
-id|vuip
-)paren
-id|APECS_IOC_HAXR2
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|haxr2
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;apecs_init: HAXR2 was 0x%x&bslash;n&quot;
-comma
-id|haxr2
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n;&t; * Finally, clear the HAXR2 register, which gets used&n;&t; * for PCI Config Space accesses. That is the way&n;&t; * we want to use it, and we do not want to depend on&n;&t; * what ARC or SRM might have left behind...&n;&t; */
 op_star
 (paren
 id|vuip
@@ -2025,12 +1609,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_return
-id|mem_start
-suffix:semicolon
-)brace
+r_int
 DECL|function|apecs_pci_clr_err
-r_int
 id|apecs_pci_clr_err
 c_func
 (paren
@@ -2114,8 +1694,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|apecs_machine_check
 r_void
+DECL|function|apecs_machine_check
 id|apecs_machine_check
 c_func
 (paren
@@ -2139,7 +1719,7 @@ op_star
 id|mchk_header
 suffix:semicolon
 r_struct
-id|el_procdata
+id|el_apecs_procdata
 op_star
 id|mchk_procdata
 suffix:semicolon
@@ -2169,7 +1749,7 @@ id|mchk_procdata
 op_assign
 (paren
 r_struct
-id|el_procdata
+id|el_apecs_procdata
 op_star
 )paren
 (paren
@@ -2289,42 +1869,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* DEBUG */
+macro_line|#endif
 multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */
-macro_line|#ifdef CONFIG_ALPHA_MIKASA
-DECL|macro|MCHK_NO_DEVSEL
-mdefine_line|#define MCHK_NO_DEVSEL 0x205L
-DECL|macro|MCHK_NO_TABT
-mdefine_line|#define MCHK_NO_TABT 0x204L
-r_if
-c_cond
-(paren
-id|apecs_mcheck_expected
-op_logical_and
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|mchk_header-&gt;code
-op_eq
-id|MCHK_NO_DEVSEL
-)paren
-op_logical_or
-(paren
-(paren
-r_int
-r_int
-)paren
-id|mchk_header-&gt;code
-op_eq
-id|MCHK_NO_TABT
-)paren
-)paren
-)paren
-(brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -2332,12 +1878,11 @@ id|apecs_mcheck_expected
 op_logical_and
 (paren
 id|mchk_sysdata-&gt;epic_dcsr
-op_logical_and
+op_amp
 l_int|0x0c00UL
 )paren
 )paren
 (brace
-macro_line|#endif
 id|apecs_mcheck_expected
 op_assign
 l_int|0
@@ -2400,13 +1945,13 @@ op_eq
 l_int|0x630
 )paren
 (brace
+multiline_comment|/* Disable correctable from now on.  */
 id|wrmces
 c_func
 (paren
 l_int|0x1f
 )paren
 suffix:semicolon
-multiline_comment|/* disable correctable from now on */
 id|mb
 c_func
 (paren

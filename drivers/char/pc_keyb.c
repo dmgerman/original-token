@@ -44,7 +44,7 @@ suffix:semicolon
 multiline_comment|/* 0x60 - 0x6f */
 macro_line|#endif
 multiline_comment|/*&n; * In case we run on a non-x86 hardware we need to initialize both the keyboard&n; * controller and the keyboard. On a x86, the BIOS will already have initialized&n; * them.&n; */
-multiline_comment|/*&n; * Some x86 BIOSes do not correctly initializes the keyboard, so the&n; * &quot;kbd-reset&quot; command line options can be given to force a reset.&n; * [Ranger]&n; */
+multiline_comment|/*&n; * Some x86 BIOSes do not correctly initialize the keyboard, so the&n; * &quot;kbd-reset&quot; command line options can be given to force a reset.&n; * [Ranger]&n; */
 macro_line|#ifdef __i386__
 DECL|variable|__initdata
 r_int

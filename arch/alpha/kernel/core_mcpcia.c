@@ -1,22 +1,20 @@
-multiline_comment|/*&n; * Code common to all MCbus-PCI adaptor chipsets&n; *&n; * Based on code written by David A Rusling (david.rusling@reo.mts.dec.com).&n; *&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_mcpcia.c&n; *&n; * Code common to all MCbus-PCI Adaptor core logic chipsets&n; *&n; * Based on code written by David A Rusling (david.rusling@reo.mts.dec.com).&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/hwrpb.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/pci.h&gt;
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE inline
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/core_mcpcia.h&gt;
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+macro_line|#include &quot;proto.h&quot;
 multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
-r_extern
-r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
@@ -29,7 +27,6 @@ id|mces
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-macro_line|#ifdef CONFIG_ALPHA_MCPCIA
 DECL|macro|DEBUG_CFG
 macro_line|#undef DEBUG_CFG
 macro_line|#ifdef DEBUG_CFG
@@ -122,15 +119,6 @@ comma
 op_star
 id|mcpcia_last_hose
 suffix:semicolon
-DECL|variable|bus2hose
-r_struct
-id|linux_hose_info
-op_star
-id|bus2hose
-(braket
-l_int|256
-)braket
-suffix:semicolon
 DECL|function|long_align
 r_static
 r_inline
@@ -173,33 +161,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-DECL|variable|MCPCIA_DMA_WIN_BASE
-r_int
-r_int
-id|MCPCIA_DMA_WIN_BASE
-op_assign
-id|MCPCIA_DMA_WIN_BASE_DEFAULT
-suffix:semicolon
-DECL|variable|MCPCIA_DMA_WIN_SIZE
-r_int
-r_int
-id|MCPCIA_DMA_WIN_SIZE
-op_assign
-id|MCPCIA_DMA_WIN_SIZE_DEFAULT
-suffix:semicolon
-DECL|variable|mcpcia_sm_base_r1
-DECL|variable|mcpcia_sm_base_r2
-DECL|variable|mcpcia_sm_base_r3
-r_int
-r_int
-id|mcpcia_sm_base_r1
-comma
-id|mcpcia_sm_base_r2
-comma
-id|mcpcia_sm_base_r3
-suffix:semicolon
-macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the MCPCIA_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., SCSI and Ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 r_static
 r_int
@@ -269,7 +230,7 @@ id|hoseno
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset status register to avoid losing errors: */
+multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
 op_star
@@ -352,7 +313,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
 id|value
 op_assign
 op_star
@@ -486,7 +447,7 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
-multiline_comment|/* reset status register to avoid losing errors: */
+multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
 op_star
@@ -557,7 +518,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
 op_star
 (paren
 (paren
@@ -619,9 +580,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|mk_conf_addr
 r_static
 r_int
+DECL|function|mk_conf_addr
 id|mk_conf_addr
 c_func
 (paren
@@ -630,16 +591,13 @@ id|linux_hose_info
 op_star
 id|hose
 comma
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
 r_int
@@ -687,7 +645,7 @@ id|type1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* type 1 configuration cycle for *ALL* busses */
+multiline_comment|/* Type 1 configuration cycle for *ALL* busses.  */
 op_star
 id|type1
 op_assign
@@ -750,31 +708,30 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|hose_read_config_byte
+multiline_comment|/* FIXME: At some point we should update these routines to use the new&n;   PCI interface, which can jump through these hoops for us.  */
+r_static
+r_inline
 r_int
+DECL|function|hose_read_config_byte
 id|hose_read_config_byte
 (paren
+id|u8
+id|bus
+comma
+id|u8
+id|device_fn
+comma
+id|u8
+id|where
+comma
+id|u8
+op_star
+id|value
+comma
 r_struct
 id|linux_hose_info
 op_star
 id|hose
-comma
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|device_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_char
-op_star
-id|value
 )paren
 (brace
 r_int
@@ -810,19 +767,14 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 l_int|0x00
 suffix:semicolon
-multiline_comment|/* or in length */
 op_star
 id|value
 op_assign
@@ -850,31 +802,29 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|hose_read_config_word
+r_static
+r_inline
 r_int
+DECL|function|hose_read_config_word
 id|hose_read_config_word
 (paren
+id|u8
+id|bus
+comma
+id|u8
+id|device_fn
+comma
+id|u8
+id|where
+comma
+id|u16
+op_star
+id|value
+comma
 r_struct
 id|linux_hose_info
 op_star
 id|hose
-comma
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|device_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-op_star
-id|value
 )paren
 (brace
 r_int
@@ -897,11 +847,9 @@ id|where
 op_amp
 l_int|0x1
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -923,16 +871,13 @@ op_amp
 id|type1
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 l_int|0x08
 suffix:semicolon
-multiline_comment|/* or in length */
 op_star
 id|value
 op_assign
@@ -960,31 +905,29 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|hose_read_config_dword
+r_static
+r_inline
 r_int
+DECL|function|hose_read_config_dword
 id|hose_read_config_dword
 (paren
+id|u8
+id|bus
+comma
+id|u8
+id|device_fn
+comma
+id|u8
+id|where
+comma
+id|u32
+op_star
+id|value
+comma
 r_struct
 id|linux_hose_info
 op_star
 id|hose
-comma
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|device_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-op_star
-id|value
 )paren
 (brace
 r_int
@@ -1007,11 +950,9 @@ id|where
 op_amp
 l_int|0x3
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1033,16 +974,13 @@ op_amp
 id|type1
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 l_int|0x18
 suffix:semicolon
-multiline_comment|/* or in length */
 op_star
 id|value
 op_assign
@@ -1060,30 +998,28 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|hose_write_config_byte
+r_static
+r_inline
 r_int
+DECL|function|hose_write_config_byte
 id|hose_write_config_byte
 (paren
+id|u8
+id|bus
+comma
+id|u8
+id|device_fn
+comma
+id|u8
+id|where
+comma
+id|u8
+id|value
+comma
 r_struct
 id|linux_hose_info
 op_star
 id|hose
-comma
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|device_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_char
-id|value
 )paren
 (brace
 r_int
@@ -1114,19 +1050,14 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 l_int|0x00
 suffix:semicolon
-multiline_comment|/* or in length */
 id|conf_write
 c_func
 (paren
@@ -1153,30 +1084,28 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|hose_write_config_word
+r_static
+r_inline
 r_int
+DECL|function|hose_write_config_word
 id|hose_write_config_word
 (paren
+id|u8
+id|bus
+comma
+id|u8
+id|device_fn
+comma
+id|u8
+id|where
+comma
+id|u16
+id|value
+comma
 r_struct
 id|linux_hose_info
 op_star
 id|hose
-comma
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|device_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-id|value
 )paren
 (brace
 r_int
@@ -1207,19 +1136,14 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 l_int|0x08
 suffix:semicolon
-multiline_comment|/* or in length */
 id|conf_write
 c_func
 (paren
@@ -1246,30 +1170,28 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|hose_write_config_dword
+r_static
+r_inline
 r_int
+DECL|function|hose_write_config_dword
 id|hose_write_config_dword
 (paren
+id|u8
+id|bus
+comma
+id|u8
+id|device_fn
+comma
+id|u8
+id|where
+comma
+id|u32
+id|value
+comma
 r_struct
 id|linux_hose_info
 op_star
 id|hose
-comma
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|device_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-id|value
 )paren
 (brace
 r_int
@@ -1300,19 +1222,14 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 l_int|0x18
 suffix:semicolon
-multiline_comment|/* or in length */
 id|conf_write
 c_func
 (paren
@@ -1339,24 +1256,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_byte
 r_int
-id|pcibios_read_config_byte
+DECL|function|mcpcia_pcibios_read_config_byte
+id|mcpcia_pcibios_read_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|devfn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 op_star
 id|value
 )paren
@@ -1365,11 +1278,6 @@ r_return
 id|hose_read_config_byte
 c_func
 (paren
-id|bus2hose
-(braket
-id|bus
-)braket
-comma
 id|bus
 comma
 id|devfn
@@ -1377,27 +1285,28 @@ comma
 id|where
 comma
 id|value
+comma
+id|bus2hose
+(braket
+id|bus
+)braket
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_word
 r_int
-id|pcibios_read_config_word
+DECL|function|mcpcia_pcibios_read_config_word
+id|mcpcia_pcibios_read_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|devfn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 op_star
 id|value
 )paren
@@ -1406,11 +1315,6 @@ r_return
 id|hose_read_config_word
 c_func
 (paren
-id|bus2hose
-(braket
-id|bus
-)braket
-comma
 id|bus
 comma
 id|devfn
@@ -1418,27 +1322,28 @@ comma
 id|where
 comma
 id|value
+comma
+id|bus2hose
+(braket
+id|bus
+)braket
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_dword
 r_int
-id|pcibios_read_config_dword
+DECL|function|mcpcia_pcibios_read_config_dword
+id|mcpcia_pcibios_read_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|devfn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u32
 op_star
 id|value
 )paren
@@ -1447,11 +1352,6 @@ r_return
 id|hose_read_config_dword
 c_func
 (paren
-id|bus2hose
-(braket
-id|bus
-)braket
-comma
 id|bus
 comma
 id|devfn
@@ -1459,27 +1359,28 @@ comma
 id|where
 comma
 id|value
+comma
+id|bus2hose
+(braket
+id|bus
+)braket
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_byte
 r_int
-id|pcibios_write_config_byte
+DECL|function|mcpcia_pcibios_write_config_byte
+id|mcpcia_pcibios_write_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|devfn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 id|value
 )paren
 (brace
@@ -1487,11 +1388,6 @@ r_return
 id|hose_write_config_byte
 c_func
 (paren
-id|bus2hose
-(braket
-id|bus
-)braket
-comma
 id|bus
 comma
 id|devfn
@@ -1499,27 +1395,28 @@ comma
 id|where
 comma
 id|value
+comma
+id|bus2hose
+(braket
+id|bus
+)braket
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_word
 r_int
-id|pcibios_write_config_word
+DECL|function|mcpcia_pcibios_write_config_word
+id|mcpcia_pcibios_write_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|devfn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 id|value
 )paren
 (brace
@@ -1527,73 +1424,71 @@ r_return
 id|hose_write_config_word
 c_func
 (paren
+id|bus
+comma
+id|devfn
+comma
+id|where
+comma
+id|value
+comma
 id|bus2hose
 (braket
 id|bus
 )braket
-comma
-id|bus
-comma
-id|devfn
-comma
-id|where
-comma
-id|value
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_dword
 r_int
-id|pcibios_write_config_dword
+DECL|function|mcpcia_pcibios_write_config_dword
+id|mcpcia_pcibios_write_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|devfn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
-id|value
+id|u32
+id|val
 )paren
 (brace
 r_return
 id|hose_write_config_dword
 c_func
 (paren
-id|bus2hose
-(braket
-id|bus
-)braket
-comma
 id|bus
 comma
 id|devfn
 comma
 id|where
 comma
-id|value
+id|val
+comma
+id|bus2hose
+(braket
+id|bus
+)braket
 )paren
 suffix:semicolon
 )brace
-DECL|function|mcpcia_init
-r_int
-r_int
-id|mcpcia_init
+r_void
+id|__init
+DECL|function|mcpcia_init_arch
+id|mcpcia_init_arch
 c_func
 (paren
 r_int
 r_int
+op_star
 id|mem_start
 comma
 r_int
 r_int
+op_star
 id|mem_end
 )paren
 (brace
@@ -1613,11 +1508,13 @@ suffix:semicolon
 r_int
 id|h
 suffix:semicolon
+op_star
 id|mem_start
 op_assign
 id|long_align
 c_func
 (paren
+op_star
 id|mem_start
 )paren
 suffix:semicolon
@@ -1651,7 +1548,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* first, find how many hoses we have */
+multiline_comment|/* First, find how many hoses we have.  */
 r_for
 c_loop
 (paren
@@ -1713,13 +1610,16 @@ r_struct
 id|linux_hose_info
 op_star
 )paren
+op_star
 id|mem_start
 suffix:semicolon
+op_star
 id|mem_start
 op_assign
 id|long_align
 c_func
 (paren
+op_star
 id|mem_start
 op_plus
 r_sizeof
@@ -1817,7 +1717,7 @@ id|mcpcia_num_hoses
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* now do init for each hose */
+multiline_comment|/* Now do init for each hose.  */
 r_for
 c_loop
 (paren
@@ -1837,8 +1737,7 @@ op_assign
 id|hose-&gt;pci_hose_index
 suffix:semicolon
 macro_line|#if 0
-mdefine_line|#define PRINTK printk
-id|PRINTK
+id|printk
 c_func
 (paren
 l_string|&quot;mcpcia_init: -------- hose %d --------&bslash;n&quot;
@@ -1846,10 +1745,10 @@ comma
 id|h
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_REV 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_REV 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1862,10 +1761,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_WHOAMI 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_WHOAMI 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1878,10 +1777,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_HAE_MEM 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_HAE_MEM 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1894,10 +1793,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_HAE_IO 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_HAE_IO 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1910,10 +1809,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_HAE_DENSE 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_HAE_DENSE 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1926,10 +1825,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_INT_CTL 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_INT_CTL 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1942,10 +1841,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_INT_REQ 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_INT_REQ 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1958,10 +1857,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_INT_TARG 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_INT_TARG 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1974,10 +1873,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_INT_ADR 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_INT_ADR 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -1990,10 +1889,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_INT_ADR_EXT 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_INT_ADR_EXT 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -2006,10 +1905,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_INT_MASK0 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_INT_MASK0 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -2022,10 +1921,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_INT_MASK1 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_INT_MASK1 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -2038,10 +1937,10 @@ id|h
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init: MCPCIA_HBASE 0x%x&bslash;n&quot;
+l_string|&quot;MCPCIA_HBASE 0x%x&bslash;n&quot;
 comma
 op_star
 (paren
@@ -2055,7 +1954,7 @@ id|h
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* &n;&t; * Set up error reporting. Make sure CPU_PE is OFF in the mask.&n;&t; */
+multiline_comment|/* &n;&t;&t; * Set up error reporting. Make sure CPU_PE is OFF in the mask.&n;&t;&t; */
 macro_line|#if 0
 id|mcpcia_err
 op_assign
@@ -2146,8 +2045,18 @@ c_func
 id|h
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-multiline_comment|/* check window 0 for enabled and mapped to 0 */
+r_switch
+c_cond
+(paren
+id|alpha_use_srm_setup
+)paren
+(brace
+r_default
+suffix:colon
+(brace
+)brace
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
+multiline_comment|/* Check window 0 for enabled and mapped to 0. */
 r_if
 c_cond
 (paren
@@ -2278,9 +2187,10 @@ id|h
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 1 for enabled and mapped to 0 */
+multiline_comment|/* Check window 1 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -2411,9 +2321,10 @@ id|h
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 2 for enabled and mapped to 0 */
+multiline_comment|/* Check window 2 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -2544,9 +2455,10 @@ id|h
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 3 for enabled and mapped to 0 */
+multiline_comment|/* Check window 3 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -2677,12 +2589,23 @@ id|h
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* we must use our defaults which were pre-initialized... */
-macro_line|#endif /* SRM_SETUP */
-(brace
-multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, windows 1,2 and 3 are disabled.  In the future, we may&n;&t; * want to use them to do scatter/gather DMA.  Window 0&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
+multiline_comment|/* Otherwise, we must use our defaults.  */
+id|MCPCIA_DMA_WIN_BASE
+op_assign
+id|MCPCIA_DMA_WIN_BASE_DEFAULT
+suffix:semicolon
+id|MCPCIA_DMA_WIN_SIZE
+op_assign
+id|MCPCIA_DMA_WIN_SIZE_DEFAULT
+suffix:semicolon
+macro_line|#endif
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t;&t; * For now, windows 1,2 and 3 are disabled.  In the&n;&t;&t;&t; * future, we may want to use them to do scatter/&n;&t;&t;&t; * gather DMA.&n;&t;&t;&t; *&n;&t;&t;&t; * Window 0 goes at 1 GB and is 1 GB large.&n;&t;&t;&t; */
 op_star
 (paren
 id|vuip
@@ -2696,7 +2619,7 @@ op_assign
 l_int|1U
 op_or
 (paren
-id|MCPCIA_DMA_WIN_BASE
+id|MCPCIA_DMA_WIN_BASE_DEFAULT
 op_amp
 l_int|0xfff00000U
 )paren
@@ -2712,7 +2635,7 @@ id|h
 )paren
 op_assign
 (paren
-id|MCPCIA_DMA_WIN_SIZE
+id|MCPCIA_DMA_WIN_SIZE_DEFAULT
 op_minus
 l_int|1
 )paren
@@ -2784,27 +2707,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * check ASN in HWRPB for validity, report if bad&n;&t; */
-r_if
-c_cond
-(paren
-id|hwrpb-&gt;max_asn
-op_ne
-id|MAX_ASN
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;mcpcia_init: max ASN from HWRPB is bad (0x%lx)&bslash;n&quot;
-comma
-id|hwrpb-&gt;max_asn
-)paren
-suffix:semicolon
-id|hwrpb-&gt;max_asn
-op_assign
-id|MAX_ASN
+r_break
 suffix:semicolon
 )brace
 macro_line|#if 0
@@ -2864,6 +2767,12 @@ id|h
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n;&t;&t; * Sigh... For the SRM setup, unless we know apriori what the HAE&n;&t;&t; * contents will be, we need to setup the arbitrary region bases&n;&t;&t; * so we can test against the range of addresses and tailor the&n;&t;&t; * region chosen for the SPARSE memory access.&n;&t;&t; *&n;&t;&t; * See include/asm-alpha/mcpcia.h for the SPARSE mem read/write.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|alpha_use_srm_setup
+)paren
 (brace
 r_int
 r_int
@@ -2879,41 +2788,7 @@ c_func
 id|h
 )paren
 suffix:semicolon
-r_int
-r_int
-id|mcpcia_hae_io
-op_assign
-op_star
-(paren
-id|vuip
-)paren
-id|MCPCIA_HAE_IO
-c_func
-(paren
-id|h
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;mcpcia_init: HAE_MEM was 0x%x&bslash;n&quot;
-comma
-id|mcpcia_hae_mem
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;mcpcia_init: HAE_IO was 0x%x&bslash;n&quot;
-comma
-id|mcpcia_hae_io
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-multiline_comment|/*&n;&t;    sigh... For the SRM setup, unless we know apriori what the HAE&n;&t;    contents will be, we need to setup the arbitrary region bases&n;&t;    so we can test against the range of addresses and tailor the&n;&t;    region chosen for the SPARSE memory access.&n;&n;&t;    see include/asm-alpha/mcpcia.h for the SPARSE mem read/write&n;&t;  */
-id|mcpcia_sm_base_r1
+id|alpha_mv.sm_base_r1
 op_assign
 (paren
 id|mcpcia_hae_mem
@@ -2921,8 +2796,7 @@ id|mcpcia_hae_mem
 op_amp
 l_int|0xe0000000UL
 suffix:semicolon
-multiline_comment|/* reg 1 */
-id|mcpcia_sm_base_r2
+id|alpha_mv.sm_base_r2
 op_assign
 (paren
 id|mcpcia_hae_mem
@@ -2932,8 +2806,7 @@ l_int|16
 op_amp
 l_int|0xf8000000UL
 suffix:semicolon
-multiline_comment|/* reg 2 */
-id|mcpcia_sm_base_r3
+id|alpha_mv.sm_base_r3
 op_assign
 (paren
 id|mcpcia_hae_mem
@@ -2943,13 +2816,30 @@ l_int|24
 op_amp
 l_int|0xfc000000UL
 suffix:semicolon
-multiline_comment|/* reg 3 */
-multiline_comment|/*&n;&t;    Set the HAE cache, so that setup_arch() code&n;&t;    will use the SRM setting always. Our readb/writeb&n;&t;    code in mcpcia.h expects never to have to change&n;&t;    the contents of the HAE.&n;&t;   */
-id|hae.cache
+multiline_comment|/*&n;&t;&t;&t; * Set the HAE cache, so that setup_arch() code&n;&t;&t;&t; * will use the SRM setting always. Our readb/writeb&n;&t;&t;&t; * code in mcpcia.h expects never to have to change&n;&t;&t;&t; * the contents of the HAE.&n;&t;&t;&t; */
+id|alpha_mv.hae_cache
 op_assign
 id|mcpcia_hae_mem
 suffix:semicolon
-macro_line|#else /* SRM_SETUP */
+id|alpha_mv.mv_readb
+op_assign
+id|mcpcia_srm_readb
+suffix:semicolon
+id|alpha_mv.mv_readw
+op_assign
+id|mcpcia_srm_readw
+suffix:semicolon
+id|alpha_mv.mv_writeb
+op_assign
+id|mcpcia_srm_writeb
+suffix:semicolon
+id|alpha_mv.mv_writew
+op_assign
+id|mcpcia_srm_writew
+suffix:semicolon
+)brace
+r_else
+(brace
 op_star
 (paren
 id|vuip
@@ -2967,8 +2857,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|mcpcia_hae_mem
-op_assign
 op_star
 (paren
 id|vuip
@@ -2979,6 +2867,7 @@ c_func
 id|h
 )paren
 suffix:semicolon
+multiline_comment|/* read it back. */
 op_star
 (paren
 id|vuip
@@ -2996,8 +2885,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|mcpcia_hae_io
-op_assign
 op_star
 (paren
 id|vuip
@@ -3008,16 +2895,13 @@ c_func
 id|h
 )paren
 suffix:semicolon
-macro_line|#endif /* SRM_SETUP */
+multiline_comment|/* read it back. */
 )brace
 )brace
-multiline_comment|/* end for-loop on hoses */
-r_return
-id|mem_start
-suffix:semicolon
 )brace
-DECL|function|mcpcia_pci_clr_err
+r_static
 r_int
+DECL|function|mcpcia_pci_clr_err
 id|mcpcia_pci_clr_err
 c_func
 (paren
@@ -3421,8 +3305,8 @@ id|frame-&gt;ld_lock
 )paren
 suffix:semicolon
 )brace
-DECL|function|mcpcia_machine_check
 r_void
+DECL|function|mcpcia_machine_check
 id|mcpcia_machine_check
 c_func
 (paren
@@ -3721,6 +3605,7 @@ DECL|macro|SUBORDINATE
 mdefine_line|#define SUBORDINATE(b) (((b)&gt;&gt;16)&amp;0xff)
 r_static
 r_int
+id|__init
 DECL|function|hose_scan_bridges
 id|hose_scan_bridges
 c_func
@@ -3785,8 +3670,6 @@ l_int|0
 id|hose_read_config_byte
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -3795,6 +3678,8 @@ id|PCI_HEADER_TYPE
 comma
 op_amp
 id|hdr_type
+comma
+id|hose
 )paren
 suffix:semicolon
 )brace
@@ -3818,8 +3703,6 @@ multiline_comment|/* Check if there is anything here. */
 id|hose_read_config_dword
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -3828,6 +3711,8 @@ id|PCI_VENDOR_ID
 comma
 op_amp
 id|l
+comma
+id|hose
 )paren
 suffix:semicolon
 r_if
@@ -3853,8 +3738,6 @@ multiline_comment|/* See if this is a bridge device. */
 id|hose_read_config_dword
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -3863,6 +3746,8 @@ id|PCI_CLASS_REVISION
 comma
 op_amp
 r_class
+comma
+id|hose
 )paren
 suffix:semicolon
 r_if
@@ -3887,8 +3772,6 @@ suffix:semicolon
 id|hose_read_config_dword
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -3897,13 +3780,16 @@ id|PCI_PRIMARY_BUS
 comma
 op_amp
 id|busses
+comma
+id|hose
 )paren
 suffix:semicolon
 id|DBG_PCI
 c_func
 (paren
 (paren
-l_string|&quot;hose_scan_bridges: hose %d bus %d slot %d busses 0x%x&bslash;n&quot;
+l_string|&quot;hose_scan_bridges: hose %d bus %d &quot;
+l_string|&quot;slot %d busses 0x%x&bslash;n&quot;
 comma
 id|hose-&gt;pci_hose_index
 comma
@@ -3919,7 +3805,7 @@ id|busses
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * do something with first_busno and last_busno&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Do something with first_busno and last_busno&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3944,7 +3830,8 @@ id|DBG_PCI
 c_func
 (paren
 (paren
-l_string|&quot;hose_scan_bridges: hose %d bus %d slot %d change first to %d&bslash;n&quot;
+l_string|&quot;hose_scan_bridges: hose %d bus %d &quot;
+l_string|&quot;slot %d change first to %d&bslash;n&quot;
 comma
 id|hose-&gt;pci_hose_index
 comma
@@ -3989,7 +3876,8 @@ id|DBG_PCI
 c_func
 (paren
 (paren
-l_string|&quot;hose_scan_bridges: hose %d bus %d slot %d change last to %d&bslash;n&quot;
+l_string|&quot;hose_scan_bridges: hose %d bus %d &quot;
+l_string|&quot;slot %d change last to %d&bslash;n&quot;
 comma
 id|hose-&gt;pci_hose_index
 comma
@@ -4031,6 +3919,7 @@ suffix:semicolon
 )brace
 r_static
 r_void
+id|__init
 DECL|function|hose_reconfigure_bridges
 id|hose_reconfigure_bridges
 c_func
@@ -4089,8 +3978,6 @@ l_int|0
 id|hose_read_config_byte
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -4099,6 +3986,8 @@ id|PCI_HEADER_TYPE
 comma
 op_amp
 id|hdr_type
+comma
+id|hose
 )paren
 suffix:semicolon
 )brace
@@ -4122,8 +4011,6 @@ multiline_comment|/* Check if there is anything here. */
 id|hose_read_config_dword
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -4132,6 +4019,8 @@ id|PCI_VENDOR_ID
 comma
 op_amp
 id|l
+comma
+id|hose
 )paren
 suffix:semicolon
 r_if
@@ -4157,8 +4046,6 @@ multiline_comment|/* See if this is a bridge device. */
 id|hose_read_config_dword
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -4167,6 +4054,8 @@ id|PCI_CLASS_REVISION
 comma
 op_amp
 r_class
+comma
+id|hose
 )paren
 suffix:semicolon
 r_if
@@ -4188,8 +4077,6 @@ suffix:semicolon
 id|hose_read_config_dword
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -4198,6 +4085,8 @@ id|PCI_PRIMARY_BUS
 comma
 op_amp
 id|busses
+comma
+id|hose
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * First reconfigure everything underneath the bridge.&n;&t;&t;&t; */
@@ -4223,8 +4112,6 @@ suffix:semicolon
 id|hose_write_config_dword
 c_func
 (paren
-id|hose
-comma
 id|bus
 comma
 id|devfn
@@ -4232,14 +4119,17 @@ comma
 id|PCI_PRIMARY_BUS
 comma
 id|busses
+comma
+id|hose
 )paren
 suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|mcpcia_fixup_busno
 r_static
 r_void
+id|__init
+DECL|function|mcpcia_fixup_busno
 id|mcpcia_fixup_busno
 c_func
 (paren
@@ -4339,9 +4229,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|mcpcia_probe
 r_static
 r_void
+id|__init
+DECL|function|mcpcia_probe
 id|mcpcia_probe
 c_func
 (paren
@@ -4374,7 +4265,7 @@ id|busno
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Hoses include child PCI bridges in bus-range property,&n;&t; * but we don&squot;t scan each of those ourselves, Linux generic PCI&n;&t; * probing code will find child bridges and link them into this&n;&t; * hose&squot;s root PCI device hierarchy.&n;&t; */
+multiline_comment|/*&n;&t; * Hoses include child PCI bridges in bus-range property,&n;&t; * but we don&squot;t scan each of those ourselves, Linux generic PCI&n;&t; * probing code will find child bridges and link them into this&n;&t; * hose&squot;s root PCI device hierarchy.&n;&t; */
 id|pbus-&gt;number
 op_assign
 id|pbus-&gt;secondary
@@ -4411,8 +4302,6 @@ macro_line|#if 0
 id|hose_write_config_byte
 c_func
 (paren
-id|hose
-comma
 id|busno
 comma
 l_int|0
@@ -4420,6 +4309,8 @@ comma
 l_int|0x41
 comma
 id|hose-&gt;pci_last_busno
+comma
+id|hose
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4469,9 +4360,10 @@ id|pci_root
 suffix:semicolon
 )brace
 )brace
-DECL|function|mcpcia_fixup
 r_void
-id|mcpcia_fixup
+id|__init
+DECL|function|mcpcia_pci_fixup
+id|mcpcia_pci_fixup
 c_func
 (paren
 r_void
@@ -4482,12 +4374,12 @@ id|linux_hose_info
 op_star
 id|hose
 suffix:semicolon
-multiline_comment|/* turn on Config space access finally! */
+multiline_comment|/* Turn on Config space access finally! */
 id|pci_probe_enabled
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* for each hose, probe and setup the devices on the hose */
+multiline_comment|/* For each hose, probe and setup the devices on the hose.  */
 r_for
 c_loop
 (paren
@@ -4508,5 +4400,4 @@ id|hose
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_ALPHA_MCPCIA */
 eof

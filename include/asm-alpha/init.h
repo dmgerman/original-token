@@ -7,13 +7,6 @@ DECL|macro|__initdata
 mdefine_line|#define __initdata __attribute__ ((__section__ (&quot;.data.init&quot;)))
 DECL|macro|__initfunc
 mdefine_line|#define __initfunc(__arginit) &bslash;&n;&t;__arginit __init; &bslash;&n;&t;__arginit
-macro_line|#if __GNUC__ &gt;= 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8
-DECL|macro|__initlocaldata
-mdefine_line|#define __initlocaldata  __initdata
-macro_line|#else
-DECL|macro|__initlocaldata
-mdefine_line|#define __initlocaldata
-macro_line|#endif
 multiline_comment|/* For assembly routines */
 DECL|macro|__INIT
 mdefine_line|#define __INIT&t;&t;.section&t;.text.init,&quot;ax&quot;

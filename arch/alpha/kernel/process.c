@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#ifdef CONFIG_RTC
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#endif
@@ -30,6 +31,8 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
+macro_line|#include &quot;proto.h&quot;
+macro_line|#include &quot;bios32.h&quot;
 multiline_comment|/*&n; * Initial task structure. Make this a per-architecture thing,&n; * because different architectures tend to have different&n; * alignment requirements and potentially different initial&n; * setup.&n; */
 DECL|variable|init_user_stack
 r_int
@@ -121,9 +124,9 @@ id|INIT_TASK
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * No need to acquire the kernel lock, we&squot;re entirely local..&n; */
-DECL|function|sys_sethae
 id|asmlinkage
 r_int
+DECL|function|sys_sethae
 id|sys_sethae
 c_func
 (paren
@@ -156,7 +159,6 @@ id|pt_regs
 id|regs
 )paren
 (brace
-macro_line|#if !defined(CONFIG_ALPHA_TSUNAMI)
 (paren
 op_amp
 id|regs
@@ -166,7 +168,6 @@ id|hae
 op_assign
 id|hae
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -175,8 +176,8 @@ macro_line|#ifdef __SMP__
 multiline_comment|/* This is being executed in task 0 &squot;user space&squot;. */
 DECL|macro|resched_needed
 mdefine_line|#define resched_needed() 1
-DECL|function|cpu_idle
 r_int
+DECL|function|cpu_idle
 id|cpu_idle
 c_func
 (paren
@@ -234,9 +235,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|sys_idle
 id|asmlinkage
 r_int
+DECL|function|sys_idle
 id|sys_idle
 c_func
 (paren
@@ -267,9 +268,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#else /* __SMP__ */
-DECL|function|sys_idle
 id|asmlinkage
 r_int
+DECL|function|sys_idle
 id|sys_idle
 c_func
 (paren
@@ -337,31 +338,168 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#endif /* __SMP__ */
-macro_line|#if defined(CONFIG_ALPHA_SRM_SETUP)
-r_extern
 r_void
+DECL|function|generic_kill_arch
+id|generic_kill_arch
+(paren
+r_int
+id|mode
+comma
+r_char
+op_star
+id|restart_cmd
+)paren
+(brace
+multiline_comment|/* The following currently only has any effect on SRM.  We should&n;&t;   fix MILO to understand it.  Should be pretty easy.  Also we can&n;&t;   support RESTART2 via the ipc_buffer machinations pictured below,&n;&t;   which SRM ignores.  */
+r_if
+c_cond
+(paren
+id|alpha_using_srm
+)paren
+(brace
+r_struct
+id|percpu_struct
+op_star
+id|cpup
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|cpup
+op_assign
+(paren
+r_struct
+id|percpu_struct
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|hwrpb
+op_plus
+id|hwrpb-&gt;processor_offset
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|cpup-&gt;flags
+suffix:semicolon
+multiline_comment|/* Clear reason to &quot;default&quot;; clear &quot;bootstrap in progress&quot;. */
+id|flags
+op_and_assign
+op_complement
+l_int|0x00ff0001UL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mode
+op_eq
+id|LINUX_REBOOT_CMD_RESTART
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|restart_cmd
+)paren
+(brace
+id|flags
+op_or_assign
+l_int|0x00020000UL
+suffix:semicolon
+multiline_comment|/* &quot;cold bootstrap&quot; */
+id|cpup-&gt;ipc_buffer
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|flags
+op_or_assign
+l_int|0x00030000UL
+suffix:semicolon
+multiline_comment|/* &quot;warm bootstrap&quot; */
+id|strncpy
+c_func
+(paren
+id|cpup-&gt;ipc_buffer
+comma
+id|restart_cmd
+comma
+r_sizeof
+(paren
+id|cpup-&gt;ipc_buffer
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|flags
+op_or_assign
+l_int|0x00040000UL
+suffix:semicolon
+multiline_comment|/* &quot;remain halted&quot; */
+)brace
+id|cpup-&gt;flags
+op_assign
+id|flags
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|alpha_use_srm_setup
+)paren
+(brace
 id|reset_for_srm
 c_func
 (paren
-r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|srm_hae
-suffix:semicolon
-macro_line|#endif
-DECL|function|finish_shutdown
-r_static
-r_void
-id|finish_shutdown
+id|set_hae
 c_func
 (paren
-r_void
+id|srm_hae
 )paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_DUMMY_CONSOLE
+multiline_comment|/* This has the effect of reseting the VGA video origin.  */
+id|take_over_console
+c_func
+(paren
+op_amp
+id|dummy_con
+comma
+l_int|0
+comma
+id|MAX_NR_CONSOLES
+op_minus
+l_int|1
+comma
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#ifdef CONFIG_RTC
+multiline_comment|/* Reset rtc to defaults.  */
 (brace
-macro_line|#ifdef CONFIG_RTC  /* reset rtc to defaults */
 r_int
 r_char
 id|control
@@ -370,14 +508,14 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* i&squot;m not sure if i really need to disable interrupts here */
+multiline_comment|/* I&squot;m not sure if i really need to disable interrupts here. */
 id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* reset periodic interrupt frequency */
+multiline_comment|/* Reset periodic interrupt frequency.  */
 id|CMOS_WRITE
 c_func
 (paren
@@ -386,7 +524,7 @@ comma
 id|RTC_FREQ_SELECT
 )paren
 suffix:semicolon
-multiline_comment|/* turn on periodic interrupts */
+multiline_comment|/* Turn on periodic interrupts.  */
 id|control
 op_assign
 id|CMOS_READ
@@ -419,203 +557,68 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_ALPHA_SRM) &amp;&amp; defined(CONFIG_ALPHA_ALCOR)
-multiline_comment|/* who said DEC engineer&squot;s have no sense of humor? ;-)) */
-op_star
+r_if
+c_cond
 (paren
-r_int
-op_star
+op_logical_neg
+id|alpha_using_srm
+op_logical_and
+id|mode
+op_ne
+id|LINUX_REBOOT_CMD_RESTART
 )paren
-id|GRU_RESET
-op_assign
-l_int|0x0000dead
+(brace
+multiline_comment|/* Unfortunately, since MILO doesn&squot;t currently understand&n;&t;&t;   the hwrpb bits above, we can&squot;t reliably halt the &n;&t;&t;   processor and keep it halted.  So just loop.  */
+r_return
 suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
+)brace
 id|halt
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|function|machine_restart
 r_void
+DECL|function|machine_restart
 id|machine_restart
 c_func
 (paren
 r_char
 op_star
-id|__unused
+id|restart_cmd
 )paren
 (brace
-macro_line|#if defined(CONFIG_ALPHA_SRM)
-r_extern
-r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
-r_struct
-id|percpu_struct
-op_star
-id|cpup
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|cpup
-op_assign
-(paren
-r_struct
-id|percpu_struct
-op_star
-)paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|hwrpb
-op_plus
-id|hwrpb-&gt;processor_offset
-)paren
-suffix:semicolon
-id|flags
-op_assign
-id|cpup-&gt;flags
-suffix:semicolon
-id|flags
-op_and_assign
-op_complement
-l_int|0x0000000000ff0001UL
-suffix:semicolon
-multiline_comment|/* clear reason to &quot;default&quot; */
-id|flags
-op_or_assign
-l_int|0x0000000000020000UL
-suffix:semicolon
-multiline_comment|/* this is &quot;cold bootstrap&quot; */
-multiline_comment|/*&t;flags |=  0x0000000000030000UL; */
-multiline_comment|/* this is &quot;warm bootstrap&quot; */
-id|cpup-&gt;flags
-op_assign
-id|flags
-suffix:semicolon
-id|mb
+id|alpha_mv
+dot
+id|kill_arch
 c_func
 (paren
-)paren
-suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_SRM_SETUP)
-id|reset_for_srm
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_hae
-c_func
-(paren
-id|srm_hae
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif /* SRM */                                        
-id|finish_shutdown
-c_func
-(paren
+id|LINUX_REBOOT_CMD_RESTART
+comma
+id|restart_cmd
 )paren
 suffix:semicolon
 )brace
-DECL|function|machine_halt
 r_void
+DECL|function|machine_halt
 id|machine_halt
 c_func
 (paren
 r_void
 )paren
 (brace
-macro_line|#if defined(CONFIG_ALPHA_SRM)
-r_extern
-r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
-r_struct
-id|percpu_struct
-op_star
-id|cpup
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|cpup
-op_assign
-(paren
-r_struct
-id|percpu_struct
-op_star
-)paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|hwrpb
-op_plus
-id|hwrpb-&gt;processor_offset
-)paren
-suffix:semicolon
-id|flags
-op_assign
-id|cpup-&gt;flags
-suffix:semicolon
-id|flags
-op_and_assign
-op_complement
-l_int|0x0000000000ff0001UL
-suffix:semicolon
-multiline_comment|/* clear reason to &quot;default&quot; */
-id|flags
-op_or_assign
-l_int|0x0000000000040000UL
-suffix:semicolon
-multiline_comment|/* this is &quot;remain halted&quot; */
-id|cpup-&gt;flags
-op_assign
-id|flags
-suffix:semicolon
-id|mb
+id|alpha_mv
+dot
+id|kill_arch
 c_func
 (paren
+id|LINUX_REBOOT_CMD_HALT
+comma
+l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_SRM_SETUP)
-id|reset_for_srm
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_hae
-c_func
-(paren
-id|srm_hae
-)paren
-suffix:semicolon
-macro_line|#endif
-id|finish_shutdown
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif /* SRM */                                        
 )brace
 DECL|function|machine_power_off
 r_void
@@ -625,10 +628,14 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* None of the machines we support, at least, has switchable &n;&t;   power supplies.  */
-id|machine_halt
+id|alpha_mv
+dot
+id|kill_arch
 c_func
 (paren
+id|LINUX_REBOOT_CMD_POWER_OFF
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

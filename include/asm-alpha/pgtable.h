@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;/* For TASK_SIZE */
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 multiline_comment|/* Caches aren&squot;t brain-dead on the Alpha. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
@@ -19,92 +20,97 @@ DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
-multiline_comment|/*&n; * Force a context reload. This is needed when we&n; * change the page table pointer or when we update&n; * the ASN of the current process.&n; */
-DECL|function|reload_context
-r_static
-r_inline
-r_void
-id|reload_context
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|task
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-macro_line|#ifdef CONFIG_ALPHA_DP264
-l_string|&quot;zap %0,0xe0,$16&bslash;n&bslash;t&quot;
-macro_line|#else
-l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
-macro_line|#endif
-l_string|&quot;call_pal %1&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|task-&gt;tss
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|PAL_swpctx
-)paren
-suffix:colon
-l_string|&quot;$0&quot;
-comma
-l_string|&quot;$1&quot;
-comma
-l_string|&quot;$16&quot;
-comma
-l_string|&quot;$22&quot;
-comma
-l_string|&quot;$23&quot;
-comma
-l_string|&quot;$24&quot;
-comma
-l_string|&quot;$25&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early Alphas (ev4 and ev45)&n; */
-macro_line|#ifdef BROKEN_ASN
-DECL|macro|flush_tlb_current
-mdefine_line|#define flush_tlb_current(x) tbiap()
-DECL|macro|flush_tlb_other
-mdefine_line|#define flush_tlb_other(x) do { } while (0)
-macro_line|#else
-r_extern
+macro_line|#ifndef __EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE extern inline
+DECL|macro|__MMU_EXTERN_INLINE
+mdefine_line|#define __MMU_EXTERN_INLINE
+macro_line|#endif
+id|__EXTERN_INLINE
 r_void
-id|get_new_asn_and_reload
+DECL|function|ev4_flush_tlb_current
+id|ev4_flush_tlb_current
 c_func
 (paren
-r_struct
-id|task_struct
-op_star
-comma
 r_struct
 id|mm_struct
 op_star
+id|mm
+)paren
+(brace
+id|tbiap
+c_func
+(paren
 )paren
 suffix:semicolon
-DECL|macro|flush_tlb_current
-mdefine_line|#define flush_tlb_current(mm) get_new_asn_and_reload(current, mm)
-DECL|macro|flush_tlb_other
-mdefine_line|#define flush_tlb_other(mm) do { (mm)-&gt;context = 0; } while (0)
-macro_line|#endif
-multiline_comment|/*&n; * Flush just one page in the current TLB set.&n; * We need to be very careful about the icache here, there&n; * is no way to invalidate a specific icache page..&n; */
-DECL|function|flush_tlb_current_page
-r_static
-r_inline
+)brace
+id|__EXTERN_INLINE
 r_void
-id|flush_tlb_current_page
+DECL|function|ev4_flush_tlb_other
+id|ev4_flush_tlb_other
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+)brace
+id|__EXTERN_INLINE
+r_void
+DECL|function|ev5_flush_tlb_current
+id|ev5_flush_tlb_current
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|mm-&gt;context
+op_assign
+l_int|0
+suffix:semicolon
+id|get_new_mmu_context
+c_func
+(paren
+id|current
+comma
+id|mm
+)paren
+suffix:semicolon
+id|reload_context
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+)brace
+id|__EXTERN_INLINE
+r_void
+DECL|function|ev5_flush_tlb_other
+id|ev5_flush_tlb_other
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|mm-&gt;context
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Flush just one page in the current TLB set.&n; * We need to be very careful about the icache here, there&n; * is no way to invalidate a specific icache page..&n; */
+id|__EXTERN_INLINE
+r_void
+DECL|function|ev4_flush_tlb_current_page
+id|ev4_flush_tlb_current_page
 c_func
 (paren
 r_struct
@@ -122,7 +128,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#ifdef BROKEN_ASN
 id|tbi
 c_func
 (paren
@@ -141,7 +146,28 @@ comma
 id|addr
 )paren
 suffix:semicolon
-macro_line|#else
+)brace
+id|__EXTERN_INLINE
+r_void
+DECL|function|ev5_flush_tlb_current_page
+id|ev5_flush_tlb_current_page
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -149,7 +175,7 @@ id|vma-&gt;vm_flags
 op_amp
 id|VM_EXEC
 )paren
-id|flush_tlb_current
+id|ev5_flush_tlb_current
 c_func
 (paren
 id|mm
@@ -164,8 +190,37 @@ comma
 id|addr
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
+DECL|macro|flush_tlb_current
+macro_line|# define flush_tlb_current&t;&t;alpha_mv.mv_flush_tlb_current
+DECL|macro|flush_tlb_other
+macro_line|# define flush_tlb_other&t;&t;alpha_mv.mv_flush_tlb_other
+DECL|macro|flush_tlb_current_page
+macro_line|# define flush_tlb_current_page&t;&t;alpha_mv.mv_flush_tlb_current_page
+macro_line|#else
+macro_line|# ifdef CONFIG_ALPHA_EV4
+DECL|macro|flush_tlb_current
+macro_line|#  define flush_tlb_current&t;&t;ev4_flush_tlb_current
+DECL|macro|flush_tlb_other
+macro_line|#  define flush_tlb_other&t;&t;ev4_flush_tlb_other
+DECL|macro|flush_tlb_current_page
+macro_line|#  define flush_tlb_current_page&t;ev4_flush_tlb_current_page
+macro_line|# else
+DECL|macro|flush_tlb_current
+macro_line|#  define flush_tlb_current&t;&t;ev5_flush_tlb_current
+DECL|macro|flush_tlb_other
+macro_line|#  define flush_tlb_other&t;&t;ev5_flush_tlb_other
+DECL|macro|flush_tlb_current_page
+macro_line|#  define flush_tlb_current_page&t;ev5_flush_tlb_current_page
+macro_line|# endif
+macro_line|#endif
+macro_line|#ifdef __MMU_EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+DECL|macro|__MMU_EXTERN_INLINE
+macro_line|#undef __MMU_EXTERN_INLINE
+macro_line|#endif
 multiline_comment|/*&n; * Flush current user mapping.&n; */
 DECL|function|flush_tlb
 r_static

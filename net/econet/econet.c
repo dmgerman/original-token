@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/wireless.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
@@ -43,6 +44,11 @@ r_struct
 id|sock
 op_star
 id|econet_sklist
+suffix:semicolon
+DECL|variable|aun_queue_lock
+r_static
+id|spinlock_t
+id|aun_queue_lock
 suffix:semicolon
 macro_line|#ifdef CONFIG_ECONET_AUNUDP
 DECL|variable|udpsock
@@ -1063,7 +1069,7 @@ op_star
 id|saddr
 suffix:semicolon
 id|eb-&gt;sent
-op_minus
+op_assign
 id|ec_tx_done
 suffix:semicolon
 r_if
@@ -3741,11 +3747,6 @@ id|skb
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Called by the timer to manage the AUN transmit queue.  If a packet&n; *&t;was sent to a dead or nonexistent host then we will never get an&n; *&t;acknowledgement back.  After a few seconds we need to spot this and&n; *&t;drop the packet.&n; */
-DECL|variable|aun_queue_lock
-r_static
-id|spinlock_t
-id|aun_queue_lock
-suffix:semicolon
 DECL|function|ab_cleanup
 r_static
 r_void

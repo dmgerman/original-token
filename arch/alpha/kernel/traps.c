@@ -10,9 +10,10 @@ macro_line|#include &lt;asm/gentrap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/sysinfo.h&gt;
-DECL|function|dik_show_regs
+macro_line|#include &quot;proto.h&quot;
 r_static
 r_void
+DECL|function|dik_show_regs
 id|dik_show_regs
 c_func
 (paren
@@ -196,9 +197,9 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-DECL|function|dik_show_code
 r_static
 r_void
+DECL|function|dik_show_code
 id|dik_show_code
 c_func
 (paren
@@ -282,9 +283,9 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|dik_show_trace
 r_static
 r_void
+DECL|function|dik_show_trace
 id|dik_show_trace
 c_func
 (paren
@@ -396,8 +397,8 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|die_if_kernel
 r_void
+DECL|function|die_if_kernel
 id|die_if_kernel
 c_func
 (paren
@@ -522,20 +523,12 @@ id|SIGSEGV
 suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_MATHEMU
-DECL|function|dummy_alpha_fp_emul_imprecise
+DECL|function|dummy_emul
 r_static
 r_int
-id|dummy_alpha_fp_emul_imprecise
+id|dummy_emul
 c_func
 (paren
-r_struct
-id|pt_regs
-op_star
-id|r
-comma
-r_int
-r_int
-id|wm
 )paren
 (brace
 r_return
@@ -559,7 +552,29 @@ r_int
 id|writemask
 )paren
 op_assign
-id|dummy_alpha_fp_emul_imprecise
+(paren
+r_void
+op_star
+)paren
+id|dummy_emul
+suffix:semicolon
+DECL|variable|alpha_fp_emul
+r_int
+(paren
+op_star
+id|alpha_fp_emul
+)paren
+(paren
+r_int
+r_int
+id|pc
+)paren
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|dummy_emul
 suffix:semicolon
 macro_line|#else
 r_int
@@ -576,10 +591,18 @@ r_int
 id|writemask
 )paren
 suffix:semicolon
+r_int
+id|alpha_fp_emul
+(paren
+r_int
+r_int
+id|pc
+)paren
+suffix:semicolon
 macro_line|#endif
-DECL|function|do_entArith
 id|asmlinkage
 r_void
+DECL|function|do_entArith
 id|do_entArith
 c_func
 (paren
@@ -646,6 +669,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -660,6 +684,7 @@ comma
 id|write_mask
 )paren
 suffix:semicolon
+macro_line|#endif
 id|die_if_kernel
 c_func
 (paren
@@ -922,15 +947,6 @@ suffix:colon
 multiline_comment|/* opDEC */
 macro_line|#ifdef CONFIG_ALPHA_NEED_ROUNDING_EMULATION
 (brace
-r_extern
-r_int
-id|alpha_fp_emul
-(paren
-r_int
-r_int
-id|pc
-)paren
-suffix:semicolon
 r_int
 r_int
 id|opcode
@@ -1075,9 +1091,9 @@ suffix:semicolon
 multiline_comment|/* Macro for exception fixup code to access integer registers.  */
 DECL|macro|una_reg
 mdefine_line|#define una_reg(r)  (regs.regs[(r) &gt;= 16 &amp;&amp; (r) &lt;= 18 ? (r)+19 : (r)])
-DECL|function|do_entUna
 id|asmlinkage
 r_void
+DECL|function|do_entUna
 id|do_entUna
 c_func
 (paren
@@ -2067,11 +2083,11 @@ id|SIGSEGV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Convert an s-floating point value in memory format to the&n; * corresponding value in register format.  The exponent&n; * needs to be remapped to preserve non-finite values&n; * (infinities, not-a-numbers, denormals).&n; */
-DECL|function|s_mem_to_reg
 r_static
 r_inline
 r_int
 r_int
+DECL|function|s_mem_to_reg
 id|s_mem_to_reg
 (paren
 r_int
@@ -2210,11 +2226,11 @@ l_int|29
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Convert an s-floating point value in register format to the&n; * corresponding value in memory format.&n; */
-DECL|function|s_reg_to_mem
 r_static
 r_inline
 r_int
 r_int
+DECL|function|s_reg_to_mem
 id|s_reg_to_mem
 (paren
 r_int
@@ -2427,9 +2443,9 @@ l_int|0
 suffix:semicolon
 DECL|macro|R
 macro_line|#undef R
-DECL|function|do_entUnaUser
 id|asmlinkage
 r_void
+DECL|function|do_entUnaUser
 id|do_entUnaUser
 c_func
 (paren
@@ -2451,29 +2467,6 @@ op_star
 id|regs
 )paren
 (brace
-r_extern
-r_void
-id|alpha_write_fp_reg
-(paren
-r_int
-r_int
-id|reg
-comma
-r_int
-r_int
-id|val
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|alpha_read_fp_reg
-(paren
-r_int
-r_int
-id|reg
-)paren
-suffix:semicolon
 r_static
 r_int
 id|cnt
@@ -3445,9 +3438,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unimplemented system calls.&n; */
-DECL|function|alpha_ni_syscall
 id|asmlinkage
 r_int
+DECL|function|alpha_ni_syscall
 id|alpha_ni_syscall
 c_func
 (paren
@@ -3500,51 +3493,15 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
-r_extern
-id|asmlinkage
 r_void
-id|entMM
+DECL|function|trap_init
+id|trap_init
 c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_void
-id|entIF
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_void
-id|entArith
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_void
-id|entUna
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_void
-id|entSys
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+(brace
+multiline_comment|/* Tell PAL-code what global pointer we want in the kernel.  */
 r_register
 r_int
 r_int
@@ -3555,15 +3512,6 @@ c_func
 l_string|&quot;$29&quot;
 )paren
 suffix:semicolon
-DECL|function|trap_init
-r_void
-id|trap_init
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* Tell PAL-code what global pointer we want in the kernel.  */
 id|wrkgp
 c_func
 (paren

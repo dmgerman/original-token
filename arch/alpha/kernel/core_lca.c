@@ -1,17 +1,21 @@
-multiline_comment|/*&n; * Code common to all LCA chips.&n; *&n; * Written by David Mosberger (davidm@cs.arizona.edu) with some code&n; * taken from Dave Rusling&squot;s (david.rusling@reo.mts.dec.com) 32-bit&n; * bios code.&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_lca.c&n; *&n; * Code common to all LCA core logic chips.&n; *&n; * Written by David Mosberger (davidm@cs.arizona.edu) with some code&n; * taken from Dave Rusling&squot;s (david.rusling@reo.mts.dec.com) 32-bit&n; * bios code.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE inline
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/core_lca.h&gt;
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+macro_line|#include &quot;proto.h&quot;
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-DECL|macro|vulp
-mdefine_line|#define vulp&t;volatile unsigned long *
-DECL|macro|vuip
-mdefine_line|#define vuip&t;volatile unsigned int *
 multiline_comment|/*&n; * Machine check reasons.  Defined according to PALcode sources&n; * (osf.h and platform.h).&n; */
 DECL|macro|MCHK_K_TPERR
 mdefine_line|#define MCHK_K_TPERR&t;&t;0x0080
@@ -42,39 +46,20 @@ DECL|macro|MCHK_K_SIO_IOCHK
 mdefine_line|#define MCHK_K_SIO_IOCHK&t;0x206&t;/* all platforms so far */
 DECL|macro|MCHK_K_DCSR
 mdefine_line|#define MCHK_K_DCSR&t;&t;0x208&t;/* all but Noname */
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-DECL|variable|LCA_DMA_WIN_BASE
-r_int
-r_int
-id|LCA_DMA_WIN_BASE
-op_assign
-id|LCA_DMA_WIN_BASE_DEFAULT
-suffix:semicolon
-DECL|variable|LCA_DMA_WIN_SIZE
-r_int
-r_int
-id|LCA_DMA_WIN_SIZE
-op_assign
-id|LCA_DMA_WIN_SIZE_DEFAULT
-suffix:semicolon
-macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the LCA_IOC_CONF register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | | | | | | | | | | | | | | |F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., SCSI and Ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
-DECL|function|mk_conf_addr
 r_static
 r_int
+DECL|function|mk_conf_addr
 id|mk_conf_addr
 c_func
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
 r_int
@@ -109,7 +94,7 @@ id|device_fn
 op_amp
 l_int|0x7
 suffix:semicolon
-multiline_comment|/* type 0 configuration cycle: */
+multiline_comment|/* Type 0 configuration cycle.  */
 r_if
 c_cond
 (paren
@@ -154,7 +139,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* type 1 configuration cycle: */
+multiline_comment|/* Type 1 configuration cycle.  */
 op_star
 (paren
 id|vulp
@@ -189,10 +174,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|conf_read
 r_static
 r_int
 r_int
+DECL|function|conf_read
 id|conf_read
 c_func
 (paren
@@ -224,7 +209,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset status register to avoid loosing errors: */
+multiline_comment|/* Reset status register to avoid loosing errors.  */
 id|stat0
 op_assign
 op_star
@@ -246,7 +231,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
 id|value
 op_assign
 op_star
@@ -305,7 +290,7 @@ id|stat0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reset error status: */
+multiline_comment|/* Reset error status.  */
 op_star
 (paren
 id|vulp
@@ -319,13 +304,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Reset machine check.  */
 id|wrmces
 c_func
 (paren
 l_int|0x7
 )paren
 suffix:semicolon
-multiline_comment|/* reset machine check */
 id|value
 op_assign
 l_int|0xffffffff
@@ -341,9 +326,9 @@ r_return
 id|value
 suffix:semicolon
 )brace
-DECL|function|conf_write
 r_static
 r_void
+DECL|function|conf_write
 id|conf_write
 c_func
 (paren
@@ -376,7 +361,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset status register to avoid loosing errors: */
+multiline_comment|/* Reset status register to avoid loosing errors.  */
 id|stat0
 op_assign
 op_star
@@ -398,7 +383,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
 op_star
 (paren
 id|vuip
@@ -457,7 +442,7 @@ id|stat0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reset error status: */
+multiline_comment|/* Reset error status.  */
 op_star
 (paren
 id|vulp
@@ -471,13 +456,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Reset machine check. */
 id|wrmces
 c_func
 (paren
 l_int|0x7
 )paren
 suffix:semicolon
-multiline_comment|/* reset machine check */
 )brace
 id|restore_flags
 c_func
@@ -486,24 +471,20 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_byte
 r_int
-id|pcibios_read_config_byte
+DECL|function|lca_pcibios_read_config_byte
+id|lca_pcibios_read_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 op_star
 id|value
 )paren
@@ -538,14 +519,10 @@ comma
 op_amp
 id|pci_addr
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -579,24 +556,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_word
 r_int
-id|pcibios_read_config_word
+DECL|function|lca_pcibios_read_config_word
+id|lca_pcibios_read_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 op_star
 id|value
 )paren
@@ -623,11 +596,9 @@ id|where
 op_amp
 l_int|0x1
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -644,11 +615,9 @@ op_amp
 id|pci_addr
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -682,24 +651,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_dword
 r_int
-id|pcibios_read_config_dword
+DECL|function|lca_pcibios_read_config_dword
+id|lca_pcibios_read_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u32
 op_star
 id|value
 )paren
@@ -726,11 +691,9 @@ id|where
 op_amp
 l_int|0x3
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -747,11 +710,9 @@ op_amp
 id|pci_addr
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -775,24 +736,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_byte
 r_int
-id|pcibios_write_config_byte
+DECL|function|lca_pcibios_write_config_byte
+id|lca_pcibios_write_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 id|value
 )paren
 (brace
@@ -821,14 +778,10 @@ comma
 op_amp
 id|pci_addr
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -861,24 +814,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_word
 r_int
-id|pcibios_write_config_word
+DECL|function|lca_pcibios_write_config_word
+id|lca_pcibios_write_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 id|value
 )paren
 (brace
@@ -895,6 +844,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|where
+op_amp
+l_int|0x1
+)paren
+r_return
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mk_conf_addr
 c_func
 (paren
@@ -907,14 +866,10 @@ comma
 op_amp
 id|pci_addr
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -947,24 +902,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_dword
 r_int
-id|pcibios_write_config_dword
+DECL|function|lca_pcibios_write_config_dword
+id|lca_pcibios_write_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u32
 id|value
 )paren
 (brace
@@ -981,6 +932,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|where
+op_amp
+l_int|0x3
+)paren
+r_return
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mk_conf_addr
 c_func
 (paren
@@ -993,14 +954,10 @@ comma
 op_amp
 id|pci_addr
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1033,23 +990,35 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|lca_init
-r_int
-r_int
-id|lca_init
+r_void
+id|__init
+DECL|function|lca_init_arch
+id|lca_init_arch
 c_func
 (paren
 r_int
 r_int
+op_star
 id|mem_start
 comma
 r_int
 r_int
+op_star
 id|mem_end
 )paren
 (brace
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-multiline_comment|/* check window 0 for enabled and mapped to 0 */
+r_switch
+c_cond
+(paren
+id|alpha_use_srm_setup
+)paren
+(brace
+r_default
+suffix:colon
+(brace
+)brace
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
+multiline_comment|/* Check window 0 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -1102,7 +1071,7 @@ id|LCA_DMA_WIN_SIZE
 op_add_assign
 l_int|1
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -1134,9 +1103,10 @@ id|LCA_IOC_T_BASE0
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 2 for enabled and mapped to 0 */
+multiline_comment|/* Check window 2 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -1221,12 +1191,23 @@ id|LCA_IOC_T_BASE1
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* we must use our defaults... */
-macro_line|#endif /* SRM_SETUP */
-(brace
-multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, window 1 is disabled.  In the future, we may&n;&t; * want to use it to do scatter/gather DMA.  Window 0&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
+multiline_comment|/* Otherwise, we must use our defaults.  */
+id|LCA_DMA_WIN_BASE
+op_assign
+id|LCA_DMA_WIN_BASE_DEFAULT
+suffix:semicolon
+id|LCA_DMA_WIN_SIZE
+op_assign
+id|LCA_DMA_WIN_SIZE_DEFAULT
+suffix:semicolon
+macro_line|#endif
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/*&n;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t; * For now, window 1 is disabled.  In the future, we may&n;&t;&t; * want to use it to do scatter/gather DMA. &n;&t;&t; *&n;&t;&t; * Window 0 goes at 1 GB and is 1 GB large.&n;&t;&t; */
 op_star
 (paren
 id|vulp
@@ -1247,7 +1228,7 @@ l_int|1UL
 op_lshift
 l_int|33
 op_or
-id|LCA_DMA_WIN_BASE
+id|LCA_DMA_WIN_BASE_DEFAULT
 suffix:semicolon
 op_star
 (paren
@@ -1255,7 +1236,7 @@ id|vulp
 )paren
 id|LCA_IOC_W_MASK0
 op_assign
-id|LCA_DMA_WIN_SIZE
+id|LCA_DMA_WIN_SIZE_DEFAULT
 op_minus
 l_int|1
 suffix:semicolon
@@ -1266,6 +1247,8 @@ id|vulp
 id|LCA_IOC_T_BASE0
 op_assign
 l_int|0
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Disable PCI parity for now.  The NCR53c810 chip has&n;&t; * troubles meeting the PCI spec which results in&n;&t; * data parity errors.&n;&t; */
@@ -1278,9 +1261,6 @@ op_assign
 l_int|1UL
 op_lshift
 l_int|5
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Constants used during machine-check handling.  I suppose these&n; * could be moved into lca.h but I don&squot;t see much reason why anybody&n; * else would want to use them.&n; */
@@ -1316,8 +1296,9 @@ DECL|macro|IOC_LOST
 mdefine_line|#define IOC_LOST&t;(  1&lt;&lt;5)
 DECL|macro|IOC_P_NBR
 mdefine_line|#define IOC_P_NBR&t;((__u32) ~((1&lt;&lt;13) - 1))
-DECL|function|mem_error
+r_static
 r_void
+DECL|function|mem_error
 id|mem_error
 (paren
 r_int
@@ -1334,7 +1315,6 @@ c_func
 (paren
 l_string|&quot;    %s %s error to %s occurred at address %x&bslash;n&quot;
 comma
-op_star
 (paren
 (paren
 id|esr
@@ -1450,8 +1430,9 @@ l_string|&quot;    Attempted to access non-existent memory.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|ioc_error
+r_static
 r_void
+DECL|function|ioc_error
 id|ioc_error
 (paren
 id|__u32
@@ -1623,8 +1604,8 @@ l_string|&quot;    Other PCI errors occurred simultaneously.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|lca_machine_check
 r_void
+DECL|function|lca_machine_check
 id|lca_machine_check
 (paren
 r_int
@@ -2008,7 +1989,7 @@ id|el.c-&gt;size
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* dump the logout area to give all info: */
+multiline_comment|/* Dump the logout area to give all info.  */
 id|ptr
 op_assign
 (paren
@@ -2081,7 +2062,7 @@ id|pmr_reg
 suffix:semicolon
 id|pmr_reg
 op_assign
-id|READ_PMR
+id|LCA_READ_PMR
 suffix:semicolon
 id|printk
 c_func
@@ -2092,9 +2073,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tPrimary clock divisor&bslash;t0x%x&bslash;n&quot;
+l_string|&quot;&bslash;tPrimary clock divisor&bslash;t0x%lx&bslash;n&quot;
 comma
-id|GET_PRIMARY
+id|LCA_GET_PRIMARY
 c_func
 (paren
 id|pmr_reg
@@ -2104,9 +2085,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tOverride clock divisor&bslash;t0x%x&bslash;n&quot;
+l_string|&quot;&bslash;tOverride clock divisor&bslash;t0x%lx&bslash;n&quot;
 comma
-id|GET_OVERRIDE
+id|LCA_GET_OVERRIDE
 c_func
 (paren
 id|pmr_reg
@@ -2161,10 +2142,10 @@ id|pmr_reg
 suffix:semicolon
 id|pmr_reg
 op_assign
-id|READ_PMR
+id|LCA_READ_PMR
 suffix:semicolon
 r_return
-id|GET_PRIMARY
+id|LCA_GET_PRIMARY
 c_func
 (paren
 id|pmr_reg
@@ -2185,9 +2166,9 @@ id|pmr_reg
 suffix:semicolon
 id|pmr_reg
 op_assign
-id|READ_PMR
+id|LCA_READ_PMR
 suffix:semicolon
-id|SET_PRIMARY_CLOCK
+id|LCA_SET_PRIMARY_CLOCK
 c_func
 (paren
 id|pmr_reg
@@ -2196,7 +2177,7 @@ id|divisor
 )paren
 suffix:semicolon
 multiline_comment|/* lca_norm_clock = divisor; */
-id|WRITE_PMR
+id|LCA_WRITE_PMR
 c_func
 (paren
 id|pmr_reg

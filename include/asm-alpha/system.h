@@ -284,7 +284,7 @@ suffix:semicolon
 DECL|macro|halt
 mdefine_line|#define halt() __asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_halt) : &quot;memory&quot;)
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;current = next; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
+mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;current = next; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - IDENT_ADDR); &bslash;&n;} while (0)
 r_extern
 r_void
 id|alpha_switch_to
@@ -297,6 +297,8 @@ id|pctxp
 suffix:semicolon
 DECL|macro|mb
 mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
+DECL|macro|wmb
+mdefine_line|#define wmb() &bslash;&n;__asm__ __volatile__(&quot;wmb&quot;: : :&quot;memory&quot;)
 DECL|macro|imb
 mdefine_line|#define imb() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_imb) : &quot;memory&quot;)
 DECL|macro|draina

@@ -3235,6 +3235,8 @@ id|qcam_read
 comma
 id|qcam_write
 comma
+l_int|NULL
+comma
 id|qcam_ioctl
 comma
 l_int|NULL

@@ -104,7 +104,7 @@ mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;KERNEL_DS &bslash;&n;}
 macro_line|#include &lt;asm/ptrace.h&gt;
-multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; */
+multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; *&n; * Under heavy swap load I&squot;ve seen this loose in an ugly way.  So do&n; * some extra sanity checking on the ranges we expect these pointers&n; * to be in so that we can fail gracefully.  This is just for ps after&n; * all.  -- r~&n; */
 DECL|function|thread_saved_pc
 r_extern
 r_inline
@@ -122,7 +122,39 @@ id|t
 r_int
 r_int
 id|fp
+comma
+id|sp
+op_assign
+id|t-&gt;ksp
+comma
+id|base
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|t
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sp
+OG
+id|base
+op_logical_and
+id|sp
+op_plus
+l_int|6
+op_star
+l_int|8
+OL
+id|base
+op_plus
+l_int|16
+op_star
+l_int|1024
+)paren
+(brace
 id|fp
 op_assign
 (paren
@@ -131,12 +163,27 @@ r_int
 r_int
 op_star
 )paren
-id|t-&gt;ksp
+id|sp
 )paren
 (braket
 l_int|6
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fp
+OG
+id|sp
+op_logical_and
+id|fp
+OL
+id|base
+op_plus
+l_int|16
+op_star
+l_int|1024
+)paren
 r_return
 op_star
 (paren
@@ -145,6 +192,10 @@ r_int
 op_star
 )paren
 id|fp
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */

@@ -911,7 +911,8 @@ r_return
 id|APM_SUCCESS
 suffix:semicolon
 )brace
-DECL|function|apm_get_battery_status
+macro_line|#if 0
+multiline_comment|/* not used anywhere */
 r_static
 r_int
 id|apm_get_battery_status
@@ -1012,6 +1013,7 @@ r_return
 id|APM_SUCCESS
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|apm_engage_power_management
 r_static
 r_inline

@@ -3,32 +3,14 @@ DECL|macro|__ALPHA_IO_H
 mdefine_line|#define __ALPHA_IO_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 multiline_comment|/* We don&squot;t use IO slowdowns on the Alpha, but.. */
 DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
-multiline_comment|/*&n; * The hae (hardware address extension) register is used to&n; * access high IO addresses. To avoid doing an external cycle&n; * every time we need to set the hae, we have a hae cache in&n; * memory. The kernel entry code makes sure that the hae is&n; * preserved across interrupts, so it is safe to set the hae&n; * once and then depend on it staying the same in kernel code.&n; */
-DECL|struct|hae
-r_extern
-r_struct
-id|hae
-(brace
-DECL|member|cache
-r_int
-r_int
-id|cache
-suffix:semicolon
-DECL|member|reg
-r_int
-r_int
-op_star
-id|reg
-suffix:semicolon
-)brace
-id|hae
-suffix:semicolon
 multiline_comment|/*&n; * Virtual -&gt; physical identity mapping starts at this offset&n; */
+multiline_comment|/* XXX: Do we need to conditionalize on this?  */
 macro_line|#ifdef USE_48_BIT_KSEG
 DECL|macro|IDENT_ADDR
 mdefine_line|#define IDENT_ADDR&t;(0xffff800000000000UL)
@@ -38,11 +20,11 @@ mdefine_line|#define IDENT_ADDR&t;(0xfffffc0000000000UL)
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * We try to avoid hae updates (thus the cache), but when we&n; * do need to update the hae, we need to do it atomically, so&n; * that any interrupts wouldn&squot;t get confused with the hae&n; * register not being up-to-date with respect to the hardware&n; * value.&n; */
-DECL|function|set_hae
-r_extern
+DECL|function|__set_hae
+r_static
 r_inline
 r_void
-id|set_hae
+id|__set_hae
 c_func
 (paren
 r_int
@@ -60,12 +42,12 @@ c_func
 l_int|7
 )paren
 suffix:semicolon
-id|hae.cache
+id|alpha_mv.hae_cache
 op_assign
 id|new_hae
 suffix:semicolon
 op_star
-id|hae.reg
+id|alpha_mv.hae_register
 op_assign
 id|new_hae
 suffix:semicolon
@@ -74,12 +56,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Re-read to make sure it was written.  */
 id|new_hae
 op_assign
 op_star
-id|hae.reg
+id|alpha_mv.hae_register
 suffix:semicolon
-multiline_comment|/* read to make sure it was written */
 id|setipl
 c_func
 (paren
@@ -87,9 +69,35 @@ id|ipl
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_hae
+r_static
+r_inline
+r_void
+id|set_hae
+c_func
+(paren
+r_int
+r_int
+id|new_hae
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|new_hae
+op_ne
+id|alpha_mv.hae_cache
+)paren
+id|__set_hae
+c_func
+(paren
+id|new_hae
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; */
 DECL|function|virt_to_phys
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -113,7 +121,7 @@ id|address
 suffix:semicolon
 )brace
 DECL|function|phys_to_virt
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -160,36 +168,97 @@ id|addr
 suffix:semicolon
 multiline_comment|/* cached version */
 macro_line|#endif /* !__KERNEL__ */
-multiline_comment|/*&n; * EGCS 1.1 does a good job of using insxl.  Expose this bit of&n; * the I/O process to the compiler.&n; */
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
-DECL|macro|__kernel_insbl
-macro_line|# define __kernel_insbl(val, shift)  (((val) &amp; 0xfful) &lt;&lt; ((shift) * 8))
-DECL|macro|__kernel_inswl
-macro_line|# define __kernel_inswl(val, shift)  (((val) &amp; 0xfffful) &lt;&lt; ((shift) * 8))
-macro_line|#else
-DECL|macro|__kernel_insbl
-macro_line|# define __kernel_insbl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;insbl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;ri&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
-DECL|macro|__kernel_inswl
-macro_line|# define __kernel_inswl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;inswl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;ri&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
-macro_line|#endif
 multiline_comment|/*&n; * There are different chipsets to interface the Alpha CPUs to the world.&n; */
-macro_line|#if defined(CONFIG_ALPHA_LCA)
-macro_line|# include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_APECS)
-macro_line|# include &lt;asm/apecs.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_CIA)
-macro_line|# include &lt;asm/cia.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_T2)
-macro_line|# include &lt;asm/t2.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
-macro_line|# include &lt;asm/pyxis.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
-macro_line|# include &lt;asm/tsunami.h&gt;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_MCPCIA)
-macro_line|# include &lt;asm/mcpcia.h&gt;&t;/* get chip-specific definitions */
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
+multiline_comment|/* In a generic kernel, we always go through the machine vector.  */
+DECL|macro|virt_to_bus
+macro_line|# define virt_to_bus(a)&t;alpha_mv.mv_virt_to_bus(a)
+DECL|macro|bus_to_virt
+macro_line|# define bus_to_virt(a)&t;alpha_mv.mv_bus_to_virt(a)
+DECL|macro|__inb
+macro_line|# define __inb&t;&t;alpha_mv.mv_inb
+DECL|macro|__inw
+macro_line|# define __inw&t;&t;alpha_mv.mv_inw
+DECL|macro|__inl
+macro_line|# define __inl&t;&t;alpha_mv.mv_inl
+DECL|macro|__outb
+macro_line|# define __outb&t;&t;alpha_mv.mv_outb
+DECL|macro|__outw
+macro_line|# define __outw&t;&t;alpha_mv.mv_outw
+DECL|macro|__outl
+macro_line|# define __outl&t;&t;alpha_mv.mv_outl
+DECL|macro|__readb
+macro_line|# define __readb(a)&t;alpha_mv.mv_readb((unsigned long)(a))
+DECL|macro|__readw
+macro_line|# define __readw(a)&t;alpha_mv.mv_readw((unsigned long)(a))
+DECL|macro|__readl
+macro_line|# define __readl(a)&t;alpha_mv.mv_readl((unsigned long)(a))
+DECL|macro|__readq
+macro_line|# define __readq(a)&t;alpha_mv.mv_readq((unsigned long)(a))
+DECL|macro|__writeb
+macro_line|# define __writeb(v,a)&t;alpha_mv.mv_writeb((v),(unsigned long)(a))
+DECL|macro|__writew
+macro_line|# define __writew(v,a)&t;alpha_mv.mv_writew((v),(unsigned long)(a))
+DECL|macro|__writel
+macro_line|# define __writel(v,a)&t;alpha_mv.mv_writel((v),(unsigned long)(a))
+DECL|macro|__writeq
+macro_line|# define __writeq(v,a)&t;alpha_mv.mv_writeq((v),(unsigned long)(a))
+DECL|macro|inb
+macro_line|# define inb&t;&t;__inb
+DECL|macro|inw
+macro_line|# define inw&t;&t;__inw
+DECL|macro|inl
+macro_line|# define inl&t;&t;__inl
+DECL|macro|outb
+macro_line|# define outb&t;&t;__outb
+DECL|macro|outw
+macro_line|# define outw&t;&t;__outw
+DECL|macro|outl
+macro_line|# define outl&t;&t;__outl
+DECL|macro|readb
+macro_line|# define readb&t;&t;__readb
+DECL|macro|readw
+macro_line|# define readw&t;&t;__readw
+DECL|macro|readl
+macro_line|# define readl&t;&t;__readl
+DECL|macro|readq
+macro_line|# define readq&t;&t;__readq
+DECL|macro|writeb
+macro_line|# define writeb&t;&t;__writeb
+DECL|macro|writew
+macro_line|# define writew&t;&t;__writew
+DECL|macro|writel
+macro_line|# define writel&t;&t;__writel
+DECL|macro|writeq
+macro_line|# define writeq&t;&t;__writeq
+DECL|macro|dense_mem
+macro_line|# define dense_mem(a)&t;alpha_mv.mv_dense_mem(a)
 macro_line|#else
+multiline_comment|/* Control how and what gets defined within the core logic headers.  */
+DECL|macro|__WANT_IO_DEF
+mdefine_line|#define __WANT_IO_DEF
+macro_line|#if defined(CONFIG_ALPHA_APECS)
+macro_line|# include &lt;asm/core_apecs.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_CIA)
+macro_line|# include &lt;asm/core_cia.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_LCA)
+macro_line|# include &lt;asm/core_lca.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_MCPCIA)
+macro_line|# include &lt;asm/core_mcpcia.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
+macro_line|# include &lt;asm/core_pyxis.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_T2)
+macro_line|# include &lt;asm/core_t2.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
+macro_line|# include &lt;asm/core_tsunami.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_JENSEN)
 macro_line|# include &lt;asm/jensen.h&gt;
+macro_line|#else
+macro_line|#error &quot;What system is this?&quot;
 macro_line|#endif
+DECL|macro|__WANT_IO_DEF
+macro_line|#undef __WANT_IO_DEF
+macro_line|#endif /* GENERIC */
 multiline_comment|/*&n; * The convention used for inb/outb etc. is that names starting with&n; * two underscores are the inline versions, names starting with a&n; * single underscore are proper functions, and names starting with a&n; * letter are macros that map in some way to inline or proper function&n; * versions.  Not all that pretty, but before you change it, be sure&n; * to convince yourself that it won&squot;t break anything (in particular&n; * module support).&n; */
 r_extern
 r_int
@@ -411,7 +480,7 @@ macro_line|# define outl_p&t;&t;outl
 macro_line|#endif
 multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either an integer or a&n; * pointer. We will accept both, thus the casts.&n; *&n; * On the alpha, we have the whole physical address space mapped at all&n; * times, so &quot;ioremap()&quot; and &quot;iounmap()&quot; do not need to do anything.&n; */
 DECL|function|ioremap
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -436,7 +505,7 @@ id|offset
 suffix:semicolon
 )brace
 DECL|function|iounmap
-r_extern
+r_static
 r_inline
 r_void
 id|iounmap
@@ -643,10 +712,10 @@ suffix:semicolon
 multiline_comment|/*&n; * XXX - We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and &n; * just copy it. The net code will then do the checksum later. Presently &n; * only used by some shared memory 8390 Ethernet cards anyway.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused) &bslash;&n;  memcpy_fromio((skb)-&gt;data,(src),(len))
-DECL|function|check_signature
 r_static
 r_inline
 r_int
+DECL|function|check_signature
 id|check_signature
 c_func
 (paren
@@ -712,6 +781,27 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-macro_line|#endif /* __KERNEL__ */
+multiline_comment|/*&n; * The Alpha Jensen hardware for some rather strange reason puts&n; * the RTC clock at 0x170 instead of 0x70. Probably due to some&n; * misguided idea about using 0x70 for NMI stuff.&n; *&n; * These defines will override the defaults when doing RTC queries&n; */
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
+DECL|macro|RTC_PORT
+macro_line|# define RTC_PORT(x)&t;((x) + alpha_mv.rtc_port)
+DECL|macro|RTC_ADDR
+macro_line|# define RTC_ADDR(x)&t;((x) | alpha_mv.rtc_addr)
+macro_line|#else
+macro_line|# ifdef CONFIG_ALPHA_JENSEN
+DECL|macro|RTC_PORT
+macro_line|#  define RTC_PORT(x)&t;(0x170+(x))
+DECL|macro|RTC_ADDR
+macro_line|#  define RTC_ADDR(x)&t;(x)
+macro_line|# else
+DECL|macro|RTC_PORT
+macro_line|#  define RTC_PORT(x)&t;(0x70 + (x))
+DECL|macro|RTC_ADDR
+macro_line|#  define RTC_ADDR(x)&t;(0x80 | (x))
+macro_line|# endif
 macro_line|#endif
+DECL|macro|RTC_ALWAYS_BCD
+mdefine_line|#define RTC_ALWAYS_BCD&t;0
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* __ALPHA_IO_H */
 eof

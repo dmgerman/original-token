@@ -52,8 +52,8 @@ id|pgtable_cache_struct
 id|quicklists
 suffix:semicolon
 macro_line|#endif
-DECL|function|__bad_pmd
 r_void
+DECL|function|__bad_pmd
 id|__bad_pmd
 c_func
 (paren
@@ -84,8 +84,8 @@ id|BAD_PAGETABLE
 )paren
 suffix:semicolon
 )brace
-DECL|function|__bad_pte
 r_void
+DECL|function|__bad_pte
 id|__bad_pte
 c_func
 (paren
@@ -120,9 +120,9 @@ id|BAD_PAGETABLE
 )paren
 suffix:semicolon
 )brace
-DECL|function|get_pmd_slow
 id|pmd_t
 op_star
+DECL|function|get_pmd_slow
 id|get_pmd_slow
 c_func
 (paren
@@ -250,9 +250,9 @@ op_plus
 id|offset
 suffix:semicolon
 )brace
-DECL|function|get_pte_slow
 id|pte_t
 op_star
+DECL|function|get_pte_slow
 id|get_pte_slow
 c_func
 (paren
@@ -485,9 +485,9 @@ id|freed
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving an inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
-DECL|function|__bad_pagetable
 id|pmd_t
 op_star
+DECL|function|__bad_pagetable
 id|__bad_pagetable
 c_func
 (paren
@@ -516,8 +516,8 @@ op_star
 id|EMPTY_PGT
 suffix:semicolon
 )brace
-DECL|function|__bad_page
 id|pte_t
+DECL|function|__bad_page
 id|__bad_page
 c_func
 (paren
@@ -556,8 +556,8 @@ id|PAGE_SHARED
 )paren
 suffix:semicolon
 )brace
-DECL|function|show_mem
 r_void
+DECL|function|show_mem
 id|show_mem
 c_func
 (paren
@@ -699,7 +699,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d pages of RAM&bslash;n&quot;
+l_string|&quot;%ld pages of RAM&bslash;n&quot;
 comma
 id|total
 )paren
@@ -707,7 +707,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d free pages&bslash;n&quot;
+l_string|&quot;%ld free pages&bslash;n&quot;
 comma
 id|free
 )paren
@@ -715,7 +715,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d reserved pages&bslash;n&quot;
+l_string|&quot;%ld reserved pages&bslash;n&quot;
 comma
 id|reserved
 )paren
@@ -723,7 +723,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d pages shared&bslash;n&quot;
+l_string|&quot;%ld pages shared&bslash;n&quot;
 comma
 id|shared
 )paren
@@ -731,7 +731,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d pages swap cached&bslash;n&quot;
+l_string|&quot;%ld pages swap cached&bslash;n&quot;
 comma
 id|cached
 )paren
@@ -739,7 +739,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d pages in page table cache&bslash;n&quot;
+l_string|&quot;%ld pages in page table cache&bslash;n&quot;
 comma
 id|pgtable_cache_size
 )paren
@@ -770,11 +770,11 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|function|load_PCB
 r_static
 r_struct
 id|thread_struct
 op_star
+DECL|function|load_PCB
 id|load_PCB
 c_func
 (paren
@@ -784,61 +784,32 @@ op_star
 id|pcb
 )paren
 (brace
-r_struct
-id|thread_struct
-op_star
-id|old_pcb
-suffix:semicolon
+r_register
+r_int
+r_int
+id|sp
 id|__asm__
-id|__volatile__
 c_func
 (paren
-l_string|&quot;stq $30,0(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;bis %1,%1,$16&bslash;n&bslash;t&quot;
-macro_line|#ifdef CONFIG_ALPHA_DP264
-l_string|&quot;zap $16,0xe0,$16&bslash;n&bslash;t&quot;
-macro_line|#endif /* DP264 */
-l_string|&quot;call_pal %2&bslash;n&bslash;t&quot;
-l_string|&quot;bis $0,$0,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|old_pcb
+l_string|&quot;$30&quot;
 )paren
-suffix:colon
-l_string|&quot;r&quot;
+suffix:semicolon
+id|pcb-&gt;ksp
+op_assign
+id|sp
+suffix:semicolon
+r_return
+id|__reload_tss
+c_func
 (paren
 id|pcb
 )paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|PAL_swpctx
-)paren
-suffix:colon
-l_string|&quot;$0&quot;
-comma
-l_string|&quot;$1&quot;
-comma
-l_string|&quot;$16&quot;
-comma
-l_string|&quot;$22&quot;
-comma
-l_string|&quot;$23&quot;
-comma
-l_string|&quot;$24&quot;
-comma
-l_string|&quot;$25&quot;
-)paren
-suffix:semicolon
-r_return
-id|old_pcb
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables: in the alpha version this actually&n; * unmaps the bootup page table (as we&squot;re now in KSEG, so we don&squot;t need it).&n; */
+r_int
+r_int
 DECL|function|paging_init
-r_int
-r_int
 id|paging_init
 c_func
 (paren
@@ -1088,8 +1059,8 @@ suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * paging_init_secondary(), called ONLY by secondary CPUs,&n; * sets up current-&gt;tss contents appropriately and does a load_PCB.&n; * note that current should be pointing at the idle thread task struct&n; * for this CPU.&n; */
-DECL|function|paging_init_secondary
 r_void
+DECL|function|paging_init_secondary
 id|paging_init_secondary
 c_func
 (paren
@@ -1136,8 +1107,8 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* __SMP__ */
-DECL|function|mem_init
 r_void
+DECL|function|mem_init
 id|mem_init
 c_func
 (paren
@@ -1322,8 +1293,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|free_initmem
 r_void
+DECL|function|free_initmem
 id|free_initmem
 (paren
 r_void
@@ -1429,8 +1400,8 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
-DECL|function|si_meminfo
 r_void
+DECL|function|si_meminfo
 id|si_meminfo
 c_func
 (paren

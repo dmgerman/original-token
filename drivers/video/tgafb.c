@@ -3569,7 +3569,7 @@ c_func
 (paren
 id|tga_fb_base
 op_plus
-id|DENSE_MEM
+id|dense_mem
 c_func
 (paren
 id|tga_fb_base
@@ -3769,7 +3769,7 @@ op_star
 )paren
 id|tga_fb_base
 op_plus
-id|DENSE_MEM
+id|dense_mem
 c_func
 (paren
 id|tga_fb_base

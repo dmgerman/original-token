@@ -70,13 +70,20 @@ DECL|macro|N_DRIVE
 mdefine_line|#define N_DRIVE 8
 DECL|macro|FLOPPY_MOTOR_MASK
 mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
-multiline_comment|/*&n; * Most Alphas have no problems with floppy DMA crossing 64k borders. Sigh...&n; */
-macro_line|#ifdef CONFIG_ALPHA_XL
+multiline_comment|/*&n; * Most Alphas have no problems with floppy DMA crossing 64k borders,&n; * except for XL.  It is also the only one with DMA limits, so we use&n; * that to test in the generic kernel.&n; */
+DECL|macro|__CROSS_64KB
+mdefine_line|#define __CROSS_64KB(a,s)&t;&t;&t;&t;&t;&bslash;&n;({ unsigned long __s64 = (unsigned long)(a);&t;&t;&t;&bslash;&n;   unsigned long __e64 = __s64 + (unsigned long)(s) - 1;&t;&bslash;&n;   (__s64 ^ __e64) &amp; ~0xfffful; })
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|CROSS_64KB
-mdefine_line|#define CROSS_64KB(a,s) &bslash;&n;    ((unsigned long)(a)/0x10000 != ((unsigned long)(a) + (s) - 1) / 0x10000)
-macro_line|#else /* CONFIG_ALPHA_XL */
+macro_line|# define CROSS_64KB(a,s)   (__CROSS_64KB(a,s) &amp;&amp; ~alpha_mv.max_dma_address)
+macro_line|#else
+macro_line|# ifdef CONFIG_ALPHA_XL
 DECL|macro|CROSS_64KB
-mdefine_line|#define CROSS_64KB(a,s) (0)
-macro_line|#endif /* CONFIG_ALPHA_XL */
+macro_line|#  define CROSS_64KB(a,s)  __CROSS_64KB(a,s)
+macro_line|# else
+DECL|macro|CROSS_64KB
+macro_line|#  define CROSS_64KB(a,s)  (0)
+macro_line|# endif
+macro_line|#endif
 macro_line|#endif /* __ASM_ALPHA_FLOPPY_H */
 eof

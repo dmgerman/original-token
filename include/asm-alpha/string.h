@@ -100,6 +100,20 @@ id|count
 suffix:semicolon
 DECL|macro|memsetw
 mdefine_line|#define memsetw(s, c, n)&t;&t;&t;&t;&t;&t; &bslash;&n;(__builtin_constant_p(c)&t;&t;&t;&t;&t;&t; &bslash;&n; ? __constant_c_memset((s),0x0001000100010001UL*(unsigned short)(c),(n)) &bslash;&n; : __memsetw((s),(c),(n)))
+r_extern
+r_int
+id|strcasecmp
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ALPHA_STRING_H__ */
 eof

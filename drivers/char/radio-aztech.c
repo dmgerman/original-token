@@ -321,15 +321,16 @@ id|frequency
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/*  6.25 *  */
 id|frequency
 op_assign
-(paren
 id|frequency
 op_star
-l_int|100
-)paren
+l_int|6
+op_plus
+id|frequency
 op_div
-l_int|16
+l_int|4
 suffix:semicolon
 multiline_comment|/* massage data a bit */
 id|frequency
@@ -1080,6 +1081,9 @@ multiline_comment|/* Can&squot;t read  (no capture ability) */
 l_int|NULL
 comma
 multiline_comment|/* Can&squot;t write */
+l_int|NULL
+comma
+multiline_comment|/* No poll */
 id|az_ioctl
 comma
 l_int|NULL

@@ -4336,6 +4336,9 @@ id|pms_read
 comma
 id|pms_write
 comma
+l_int|NULL
+comma
+multiline_comment|/* FIXME - we can use POLL on this board with the irq */
 id|pms_ioctl
 comma
 l_int|NULL

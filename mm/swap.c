@@ -85,13 +85,13 @@ id|buffer_mem_t
 id|buffer_mem
 op_assign
 (brace
-l_int|3
+l_int|5
 comma
 multiline_comment|/* minimum percent buffer */
-l_int|10
+l_int|25
 comma
 multiline_comment|/* borrow percent buffer */
-l_int|30
+l_int|50
 multiline_comment|/* maximum percent buffer */
 )brace
 suffix:semicolon

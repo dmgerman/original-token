@@ -1041,6 +1041,142 @@ DECL|macro|TLan_GetBit
 mdefine_line|#define TLan_GetBit( bit, port )&t;((int) (inb_p(port) &amp; bit))
 DECL|macro|TLan_SetBit
 mdefine_line|#define TLan_SetBit( bit, port )&t;outb_p(inb_p(port) | bit, port)
+macro_line|#ifdef I_LIKE_A_FAST_HASH_FUNCTION
+multiline_comment|/* given 6 bytes, view them as 8 6-bit numbers and return the XOR of those */
+multiline_comment|/* the code below is about seven times as fast as the original code */
+DECL|function|TLan_HashFunc
+r_inline
+id|u32
+id|TLan_HashFunc
+c_func
+(paren
+id|u8
+op_star
+id|a
+)paren
+(brace
+id|u8
+id|hash
+suffix:semicolon
+id|hash
+op_assign
+(paren
+id|a
+(braket
+l_int|0
+)braket
+op_xor
+id|a
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* &amp; 077 */
+id|hash
+op_xor_assign
+(paren
+(paren
+id|a
+(braket
+l_int|0
+)braket
+op_xor
+id|a
+(braket
+l_int|3
+)braket
+)paren
+op_rshift
+l_int|6
+)paren
+suffix:semicolon
+multiline_comment|/* &amp; 003 */
+id|hash
+op_xor_assign
+(paren
+(paren
+id|a
+(braket
+l_int|1
+)braket
+op_xor
+id|a
+(braket
+l_int|4
+)braket
+)paren
+op_lshift
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* &amp; 074 */
+id|hash
+op_xor_assign
+(paren
+(paren
+id|a
+(braket
+l_int|1
+)braket
+op_xor
+id|a
+(braket
+l_int|4
+)braket
+)paren
+op_rshift
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* &amp; 017 */
+id|hash
+op_xor_assign
+(paren
+(paren
+id|a
+(braket
+l_int|2
+)braket
+op_xor
+id|a
+(braket
+l_int|5
+)braket
+)paren
+op_lshift
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* &amp; 060 */
+id|hash
+op_xor_assign
+(paren
+(paren
+id|a
+(braket
+l_int|2
+)braket
+op_xor
+id|a
+(braket
+l_int|5
+)braket
+)paren
+op_rshift
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* &amp; 077 */
+r_return
+(paren
+id|hash
+op_amp
+l_int|077
+)paren
+suffix:semicolon
+)brace
+macro_line|#else /* original code */
 DECL|function|xor
 r_inline
 id|u32
@@ -1523,5 +1659,6 @@ r_return
 id|hash
 suffix:semicolon
 )brace
+macro_line|#endif /* I_LIKE_A_FAST_HASH_FUNCTION */
 macro_line|#endif
 eof

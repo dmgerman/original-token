@@ -602,15 +602,16 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* adapted from radio-aztech.c */
+multiline_comment|/* We want to compute x * 100 / 16 without overflow &n;&t; * So we compute x*6 + (x/100)*25 to give x*6.25&n;&t; */
 id|freq
 op_assign
-(paren
 id|freq
 op_star
-l_int|100
-)paren
+l_int|6
+op_plus
+id|freq
 op_div
-l_int|16
+l_int|4
 suffix:semicolon
 multiline_comment|/* massage the data a little&t;*/
 id|freq
@@ -1366,6 +1367,9 @@ multiline_comment|/* Can&squot;t read  (no capture ability) */
 l_int|NULL
 comma
 multiline_comment|/* Can&squot;t write */
+l_int|NULL
+comma
+multiline_comment|/* No poll */
 id|rt_ioctl
 comma
 l_int|NULL

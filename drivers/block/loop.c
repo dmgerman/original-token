@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; *&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - &lt;Vincent.Renardias@waw.com&gt; Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; */
+multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1821,8 +1821,30 @@ id|file-&gt;private_data
 suffix:semicolon
 id|error
 op_assign
-l_int|0
+id|get_write_access
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
+multiline_comment|/* cannot fail */
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|fput
+c_func
+(paren
+id|lo-&gt;lo_backing_file
+)paren
+suffix:semicolon
+id|lo-&gt;lo_backing_file
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 )brace
 r_if

@@ -1,6 +1,6 @@
-macro_line|#ifndef _HWRPB_H
-DECL|macro|_HWRPB_H
-mdefine_line|#define _HWRPB_H
+macro_line|#ifndef __ALPHA_HWRPB_H
+DECL|macro|__ALPHA_HWRPB_H
+mdefine_line|#define __ALPHA_HWRPB_H
 DECL|macro|INIT_HWRPB
 mdefine_line|#define INIT_HWRPB ((struct hwrpb_struct *) 0x10000000)
 multiline_comment|/*&n; * DEC processor types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
@@ -45,6 +45,8 @@ DECL|macro|ST_DEC_TLASER
 mdefine_line|#define ST_DEC_TLASER&t;&t; 12&t;/* Turbolaser systype&t;*/
 DECL|macro|ST_DEC_2100_A50
 mdefine_line|#define ST_DEC_2100_A50&t;&t; 13&t;/* Avanti systype&t;*/
+DECL|macro|ST_DEC_MUSTANG
+mdefine_line|#define ST_DEC_MUSTANG&t;&t; 14&t;/* Mustang systype&t;*/
 DECL|macro|ST_DEC_ALCOR
 mdefine_line|#define ST_DEC_ALCOR&t;&t; 15&t;/* Alcor (EV5) systype&t;*/
 DECL|macro|ST_DEC_1000
@@ -255,11 +257,10 @@ r_int
 id|res
 suffix:semicolon
 DECL|member|ipc_buffer
-r_int
-r_int
+r_char
 id|ipc_buffer
 (braket
-l_int|21
+l_int|168
 )braket
 suffix:semicolon
 DECL|member|palcode_avail
@@ -695,5 +696,11 @@ suffix:semicolon
 multiline_comment|/* &quot;Dynamic System Recognition Data Block Table&quot; */
 )brace
 suffix:semicolon
-macro_line|#endif
+r_extern
+r_struct
+id|hwrpb_struct
+op_star
+id|hwrpb
+suffix:semicolon
+macro_line|#endif /* __ALPHA_HWRPB_H */
 eof

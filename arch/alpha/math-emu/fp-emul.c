@@ -108,12 +108,24 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|variable|save_emul
+r_extern
+r_int
+(paren
+op_star
+id|alpha_fp_emul
+)paren
+(paren
+r_int
+r_int
+id|pc
+)paren
+suffix:semicolon
+DECL|variable|save_emul_imprecise
 r_static
 r_int
 (paren
 op_star
-id|save_emul
+id|save_emul_imprecise
 )paren
 (paren
 r_struct
@@ -124,6 +136,19 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|variable|save_emul
+r_static
+r_int
+(paren
+op_star
+id|save_emul
+)paren
+(paren
+r_int
+r_int
+id|pc
+)paren
+suffix:semicolon
 r_int
 id|do_alpha_fp_emul_imprecise
 c_func
@@ -132,6 +157,14 @@ r_struct
 id|pt_regs
 op_star
 comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_int
+id|do_alpha_fp_emul
+c_func
+(paren
 r_int
 r_int
 )paren
@@ -144,13 +177,21 @@ c_func
 r_void
 )paren
 (brace
-id|save_emul
+id|save_emul_imprecise
 op_assign
 id|alpha_fp_emul_imprecise
+suffix:semicolon
+id|save_emul
+op_assign
+id|alpha_fp_emul
 suffix:semicolon
 id|alpha_fp_emul_imprecise
 op_assign
 id|do_alpha_fp_emul_imprecise
+suffix:semicolon
+id|alpha_fp_emul
+op_assign
+id|do_alpha_fp_emul
 suffix:semicolon
 r_return
 l_int|0
@@ -166,13 +207,21 @@ r_void
 (brace
 id|alpha_fp_emul_imprecise
 op_assign
+id|save_emul_imprecise
+suffix:semicolon
+id|alpha_fp_emul
+op_assign
 id|save_emul
 suffix:semicolon
 )brace
 DECL|macro|alpha_fp_emul_imprecise
-macro_line|#undef alpha_fp_emul_imprecise
+macro_line|#undef  alpha_fp_emul_imprecise
 DECL|macro|alpha_fp_emul_imprecise
-mdefine_line|#define alpha_fp_emul_imprecise  do_alpha_fp_emul_imprecise
+mdefine_line|#define alpha_fp_emul_imprecise&t;&t;do_alpha_fp_emul_imprecise
+DECL|macro|alpha_fp_emul
+macro_line|#undef  alpha_fp_emul
+DECL|macro|alpha_fp_emul
+mdefine_line|#define alpha_fp_emul&t;&t;&t;do_alpha_fp_emul
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Emulate the floating point instruction at address PC.  Returns 0 if&n; * emulation fails.  Notice that the kernel does not and cannot use FP&n; * regs.  This is good because it means that instead of&n; * saving/restoring all fp regs, we simply stick the result of the&n; * operation into the appropriate register.&n; */
 r_int
@@ -218,6 +267,8 @@ id|fpcr
 suffix:semicolon
 id|__u32
 id|insn
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|get_user
 c_func
@@ -748,6 +799,8 @@ comma
 id|pc
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -813,9 +866,13 @@ id|fpcw
 op_amp
 id|IEEE_TRAP_ENABLE_MASK
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t; * Whoo-kay... we got this far, and we&squot;re not generating a signal&n;&t; * to the translated program.  All that remains is to write the&n;&t; * result:&n;&t; */
 id|alpha_write_fp_reg
@@ -825,6 +882,8 @@ id|fc
 comma
 id|vc
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|1

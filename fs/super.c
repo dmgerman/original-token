@@ -2855,6 +2855,9 @@ id|dev
 comma
 r_int
 id|unmount_root
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -2912,6 +2915,12 @@ multiline_comment|/*&n;&t; * If we may have to abort operations to get out of th
 r_if
 c_cond
 (paren
+(paren
+id|flags
+op_amp
+id|MNT_FORCE
+)paren
+op_logical_and
 id|sb-&gt;s_op-&gt;umount_begin
 )paren
 (brace
@@ -3093,6 +3102,9 @@ c_func
 (paren
 id|kdev_t
 id|dev
+comma
+r_int
+id|flags
 )paren
 (brace
 r_int
@@ -3166,6 +3178,8 @@ c_func
 id|dev
 comma
 l_int|0
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -3224,7 +3238,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Now umount can handle mount points as well as block devices.&n; * This is important for filesystems which use unnamed block devices.&n; *&n; * There is a little kludge here with the dummy_inode.  The current&n; * vfs release functions only use the r_dev field in the inode so&n; * we give them the info they need without using a real inode.&n; * If any other fields are ever needed by any block device release&n; * functions, they should be faked here.  -- jrs&n; *&n; * For 2.3.x we want a new sys_umount syscall with flags (ie &squot;force&squot;)&n; */
+multiline_comment|/*&n; * Now umount can handle mount points as well as block devices.&n; * This is important for filesystems which use unnamed block devices.&n; *&n; * There is a little kludge here with the dummy_inode.  The current&n; * vfs release functions only use the r_dev field in the inode so&n; * we give them the info they need without using a real inode.&n; * If any other fields are ever needed by any block device release&n; * functions, they should be faked here.  -- jrs&n; *&n; * We now support a flag for forced unmount like the other &squot;big iron&squot;&n; * unixes. Our API is identical to OSF/1 to avoid making a mess of AMD&n; */
 DECL|function|sys_umount
 id|asmlinkage
 r_int
@@ -3234,6 +3248,9 @@ c_func
 r_char
 op_star
 id|name
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -3383,6 +3400,8 @@ id|umount_dev
 c_func
 (paren
 id|dev
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -3393,6 +3412,28 @@ c_func
 suffix:semicolon
 r_return
 id|retval
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;The 2.0 compatible umount. No flags. &n; */
+DECL|function|sys_oldumount
+id|asmlinkage
+r_int
+id|sys_oldumount
+c_func
+(paren
+r_char
+op_star
+id|name
+)paren
+(brace
+r_return
+id|sys_umount
+c_func
+(paren
+id|name
+comma
+l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check whether we can mount the specified device.&n; */
@@ -5499,6 +5540,8 @@ c_func
 id|old_root_dev
 comma
 l_int|1
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -23,6 +23,7 @@ macro_line|#  define REGISTER_MIXER 1
 macro_line|# endif
 macro_line|#endif
 DECL|variable|debug
+r_static
 r_int
 id|debug
 op_assign
@@ -2827,11 +2828,14 @@ id|val1
 op_assign
 id|val2
 op_assign
+l_int|0
+suffix:semicolon
 id|max1
 op_assign
 id|max2
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 id|del_timer
 c_func

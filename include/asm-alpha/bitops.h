@@ -148,10 +148,10 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
-l_string|&quot;&t;and %0,%3,%2&bslash;n&bslash;t&quot;
-l_string|&quot;&t;beq %2,2f&bslash;n&bslash;t&quot;
-l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
+l_string|&quot;&t;beq %2,2f&bslash;n&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
@@ -239,8 +239,8 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
-l_string|&quot;&t;xor %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;xor %0,%2,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
@@ -428,10 +428,10 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
-l_string|&quot;&t;and %0,%3,%2&bslash;n&bslash;t&quot;
-l_string|&quot;&t;beq %2,2f&bslash;n&bslash;t&quot;
-l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
+l_string|&quot;&t;beq %2,2f&bslash;n&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
@@ -529,9 +529,9 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
-l_string|&quot;&t;and %0,%3,%2&bslash;n&bslash;t&quot;
-l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
@@ -700,6 +700,30 @@ r_int
 id|word
 )paren
 (brace
+macro_line|#ifdef __alpha_cix__
+multiline_comment|/* Whee.  EV6 can calculate it directly.  */
+r_int
+r_int
+id|result
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;ctlz %1,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_complement
+id|word
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 r_int
 id|bits
@@ -774,18 +798,96 @@ l_int|8
 op_plus
 id|bofs
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
-DECL|macro|ffs
-mdefine_line|#define ffs(x) generic_ffs(x)
+DECL|function|ffs
+r_extern
+r_inline
+r_int
+id|ffs
+c_func
+(paren
+r_int
+id|word
+)paren
+(brace
+r_int
+id|result
+op_assign
+id|ffz
+c_func
+(paren
+op_complement
+id|word
+)paren
+suffix:semicolon
+r_return
+id|word
+ques
+c_cond
+id|result
+op_plus
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
+macro_line|#ifdef __alpha_cix__
+multiline_comment|/* Whee.  EV6 can calculate it directly.  */
+DECL|function|hweight64
+r_extern
+id|__inline__
+r_int
+r_int
+id|hweight64
+c_func
+(paren
+r_int
+r_int
+id|w
+)paren
+(brace
+r_int
+r_int
+id|result
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;ctpop %1,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|w
+)paren
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
+DECL|macro|hweight32
+mdefine_line|#define hweight32(x) hweight64((x) &amp; 0xfffffffful)
+DECL|macro|hweight16
+mdefine_line|#define hweight16(x) hweight64((x) &amp; 0xfffful)
+DECL|macro|hweight8
+mdefine_line|#define hweight8(x)  hweight64((x) &amp; 0xfful)
+macro_line|#else
 DECL|macro|hweight32
 mdefine_line|#define hweight32(x) generic_hweight32(x)
 DECL|macro|hweight16
 mdefine_line|#define hweight16(x) generic_hweight16(x)
 DECL|macro|hweight8
-mdefine_line|#define hweight8(x) generic_hweight8(x)
+mdefine_line|#define hweight8(x)  generic_hweight8(x)
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Find next zero bit in a bitmap reasonably efficiently..&n; */
 DECL|function|find_next_zero_bit

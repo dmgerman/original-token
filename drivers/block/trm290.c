@@ -651,9 +651,9 @@ op_assign
 op_amp
 id|trm290_selectproc
 suffix:semicolon
-id|hwif-&gt;no_autodma
+id|hwif-&gt;autodma
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/* play it safe for now */
 macro_line|#if 1

@@ -25,6 +25,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/*&n; * Machine setup..&n; */
 DECL|variable|ignore_irq13
@@ -186,16 +187,9 @@ id|_edata
 comma
 id|_end
 suffix:semicolon
-r_extern
-r_char
-id|empty_zero_page
-(braket
-id|PAGE_SIZE
-)braket
-suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|PARAM
-mdefine_line|#define PARAM&t;empty_zero_page
+mdefine_line|#define PARAM&t;((unsigned char *)empty_zero_page)
 DECL|macro|EXT_MEM_K
 mdefine_line|#define EXT_MEM_K (*(unsigned short *) (PARAM+2))
 DECL|macro|ALT_MEM_K
@@ -1039,6 +1033,24 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *      Cyrix CPU configuration register indexes&n; */
+DECL|macro|CX86_CCR2
+mdefine_line|#define CX86_CCR2 0xc2
+DECL|macro|CX86_CCR3
+mdefine_line|#define CX86_CCR3 0xc3
+DECL|macro|CX86_CCR4
+mdefine_line|#define CX86_CCR4 0xe8
+DECL|macro|CX86_CCR5
+mdefine_line|#define CX86_CCR5 0xe9
+DECL|macro|CX86_DIR0
+mdefine_line|#define CX86_DIR0 0xfe
+DECL|macro|CX86_DIR1
+mdefine_line|#define CX86_DIR1 0xff
+multiline_comment|/*&n; *      Cyrix CPU indexed register access macros&n; */
+DECL|macro|getCx86
+mdefine_line|#define getCx86(reg) ({ outb((reg), 0x22); inb(0x23); })
+DECL|macro|setCx86
+mdefine_line|#define setCx86(reg, data) do { &bslash;&n;&t;outb((reg), 0x22); &bslash;&n;&t;outb((data), 0x23); &bslash;&n;} while (0)
 multiline_comment|/*&n; * Use the Cyrix DEVID CPU registers if avail. to get more detailed info.&n; */
 DECL|function|__initfunc
 id|__initfunc

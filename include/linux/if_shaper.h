@@ -24,6 +24,10 @@ DECL|member|bytespertick
 id|__u32
 id|bytespertick
 suffix:semicolon
+DECL|member|bitspersec
+id|__u32
+id|bitspersec
+suffix:semicolon
 DECL|member|shapelatency
 id|__u32
 id|shapelatency
@@ -185,6 +189,10 @@ DECL|macro|SHAPER_SET_DEV
 mdefine_line|#define SHAPER_SET_DEV&t;&t;0x0001
 DECL|macro|SHAPER_SET_SPEED
 mdefine_line|#define SHAPER_SET_SPEED&t;0x0002
+DECL|macro|SHAPER_GET_DEV
+mdefine_line|#define SHAPER_GET_DEV&t;&t;0x0003
+DECL|macro|SHAPER_GET_SPEED
+mdefine_line|#define SHAPER_GET_SPEED&t;0x0004
 DECL|struct|shaperconf
 r_struct
 id|shaperconf

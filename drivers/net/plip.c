@@ -1235,6 +1235,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: transmit timeout(%d,%02x)&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1326,6 +1327,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: receive timeout(%d,%02x)&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1818,6 +1820,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: receive start&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1973,6 +1976,7 @@ l_int|8
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: bogus packet size %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2004,6 +2008,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Memory squeeze.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2138,6 +2143,7 @@ id|net_debug
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: checksum error&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2192,6 +2198,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: receive end&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2618,6 +2625,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: send skb lost&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2797,6 +2805,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: send start&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3024,6 +3033,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: send end&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3226,6 +3236,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: reset interface.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3346,6 +3357,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;plip_interrupt: irq %d for unknown device.&bslash;n&quot;
 comma
 id|irq
@@ -3409,6 +3421,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: spurious interrupt&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3431,6 +3444,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: interrupt.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3529,6 +3543,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: receive interrupt in error state&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3719,6 +3734,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3741,6 +3757,7 @@ id|dev-&gt;hard_header_len
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: packet too big, %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3769,6 +3786,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: send request&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4422,9 +4440,9 @@ r_return
 id|r
 suffix:semicolon
 )brace
+DECL|function|plip_config
 r_static
 r_int
-DECL|function|plip_config
 id|plip_config
 c_func
 (paren
@@ -4472,13 +4490,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_INFO
 l_string|&quot;plip: Warning, changing irq with ifconfig will be obsoleted.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;plip: Next time, please set with /proc/parport/*/irq instead.&bslash;n&quot;
 )paren
 suffix:semicolon

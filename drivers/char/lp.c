@@ -2204,8 +2204,6 @@ c_func
 id|minor
 )paren
 )paren
-op_amp
-id|LP_BUSY
 )paren
 r_return
 op_minus

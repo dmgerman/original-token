@@ -1,21 +1,20 @@
-multiline_comment|/*&n; * Code common to all CIA chips.&n; *&n; * Written by David A Rusling (david.rusling@reo.mts.dec.com).&n; * December 1995.&n; *&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_cia.c&n; *&n; * Code common to all CIA core logic chips.&n; *&n; * Written by David A Rusling (david.rusling@reo.mts.dec.com).&n; * December 1995.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/mmu_context.h&gt;
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE inline
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/core_cia.h&gt;
+DECL|macro|__EXTERN_INLINE
+macro_line|#undef __EXTERN_INLINE
+macro_line|#include &quot;proto.h&quot;
 multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
-r_extern
-r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
@@ -43,17 +42,19 @@ mdefine_line|#define MCHK_K_OS_BUGCHECK&t;0x008A
 DECL|macro|MCHK_K_PAL_BUGCHECK
 mdefine_line|#define MCHK_K_PAL_BUGCHECK&t;0x0090
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-multiline_comment|/* #define DEBUG_MCHECK */
-multiline_comment|/* #define DEBUG_CONFIG */
+DECL|macro|DEBUG_MCHECK
+mdefine_line|#define DEBUG_MCHECK 0
+DECL|macro|DEBUG_CONFIG
+mdefine_line|#define DEBUG_CONFIG 0
 multiline_comment|/* #define DEBUG_DUMP_REGS */
-macro_line|#ifdef DEBUG_MCHECK
+macro_line|#if DEBUG_MCHECK
 DECL|macro|DBGM
 macro_line|# define DBGM(args)&t;printk args
 macro_line|#else
 DECL|macro|DBGM
 macro_line|# define DBGM(args)
 macro_line|#endif
-macro_line|#ifdef DEBUG_CONFIG
+macro_line|#if DEBUG_CONFIG
 DECL|macro|DBGC
 macro_line|# define DBGC(args)&t;printk args
 macro_line|#else
@@ -86,50 +87,20 @@ r_int
 r_int
 id|CIA_jd
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-DECL|variable|CIA_DMA_WIN_BASE
-r_int
-r_int
-id|CIA_DMA_WIN_BASE
-op_assign
-id|CIA_DMA_WIN_BASE_DEFAULT
-suffix:semicolon
-DECL|variable|CIA_DMA_WIN_SIZE
-r_int
-r_int
-id|CIA_DMA_WIN_SIZE
-op_assign
-id|CIA_DMA_WIN_SIZE_DEFAULT
-suffix:semicolon
-DECL|variable|cia_sm_base_r1
-DECL|variable|cia_sm_base_r2
-DECL|variable|cia_sm_base_r3
-r_int
-r_int
-id|cia_sm_base_r1
-comma
-id|cia_sm_base_r2
-comma
-id|cia_sm_base_r3
-suffix:semicolon
-macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the CIA_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., SCSI and Ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
-DECL|function|mk_conf_addr
 r_static
 r_int
+DECL|function|mk_conf_addr
 id|mk_conf_addr
 c_func
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
 r_int
@@ -181,7 +152,7 @@ id|device_fn
 op_rshift
 l_int|3
 suffix:semicolon
-multiline_comment|/* type 0 configuration cycle: */
+multiline_comment|/* Type 0 configuration cycle.  */
 r_if
 c_cond
 (paren
@@ -225,7 +196,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* type 1 configuration cycle: */
+multiline_comment|/* Type 1 configuration cycle.  */
 op_star
 id|type1
 op_assign
@@ -269,10 +240,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|conf_read
 r_static
 r_int
 r_int
+DECL|function|conf_read
 id|conf_read
 c_func
 (paren
@@ -301,7 +272,6 @@ id|cia_cfg
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* to keep gcc quiet */
 id|value
 op_assign
 l_int|0xffffffffU
@@ -335,7 +305,7 @@ id|type1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset status register to avoid losing errors: */
+multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
 op_star
@@ -367,7 +337,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* if Type1 access, must set CIA CFG */
+multiline_comment|/* If Type1 access, must set CIA CFG. */
 r_if
 c_cond
 (paren
@@ -429,7 +399,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
 id|value
 op_assign
 op_star
@@ -479,13 +449,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#if 0
-multiline_comment|/*&n;&t;  this code might be necessary if machine checks aren&squot;t taken,&n;&t;  but I can&squot;t get it to work on CIA-2, so its disabled.&n;&t;  */
+multiline_comment|/* This code might be necessary if machine checks aren&squot;t taken,&n;&t;   but I can&squot;t get it to work on CIA-2, so its disabled. */
 id|draina
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* now look for any errors */
+multiline_comment|/* Now look for any errors.  */
 id|stat0
 op_assign
 op_star
@@ -504,6 +474,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Is any error bit set? */
 r_if
 c_cond
 (paren
@@ -512,8 +483,7 @@ op_amp
 l_int|0x8FEF0FFFU
 )paren
 (brace
-multiline_comment|/* is any error bit set? */
-multiline_comment|/* if not MAS_ABT, print status */
+multiline_comment|/* If not MAS_ABT, print status. */
 r_if
 c_cond
 (paren
@@ -561,7 +531,7 @@ l_int|0xffffffff
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* if Type1 access, must reset IOC CFG so normal IO space ops work */
+multiline_comment|/* If Type1 access, must reset IOC CFG so normal IO space ops work.  */
 r_if
 c_cond
 (paren
@@ -603,9 +573,9 @@ r_return
 id|value
 suffix:semicolon
 )brace
-DECL|function|conf_write
 r_static
 r_void
+DECL|function|conf_write
 id|conf_write
 c_func
 (paren
@@ -636,7 +606,6 @@ id|cia_cfg
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* to keep gcc quiet */
 id|save_flags
 c_func
 (paren
@@ -649,7 +618,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset status register to avoid losing errors: */
+multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
 op_star
@@ -681,7 +650,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* if Type1 access, must set CIA CFG */
+multiline_comment|/* If Type1 access, must set CIA CFG.  */
 r_if
 c_cond
 (paren
@@ -734,7 +703,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* access configuration space: */
+multiline_comment|/* Access configuration space.  */
 op_star
 (paren
 id|vuip
@@ -764,7 +733,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#if 0
-multiline_comment|/*&n;&t; * This code might be necessary if machine checks aren&squot;t taken,&n;&t; * but I can&squot;t get it to work on CIA-2, so its disabled.&n;&t; */
+multiline_comment|/* This code might be necessary if machine checks aren&squot;t taken,&n;&t;   but I can&squot;t get it to work on CIA-2, so its disabled. */
 id|draina
 c_func
 (paren
@@ -789,6 +758,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Is any error bit set? */
 r_if
 c_cond
 (paren
@@ -797,7 +767,6 @@ op_amp
 l_int|0x8FEF0FFFU
 )paren
 (brace
-multiline_comment|/* is any error bit set? */
 multiline_comment|/* If not MAS_ABT, print status */
 r_if
 c_cond
@@ -819,7 +788,7 @@ id|stat0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reset error status: */
+multiline_comment|/* Reset error status.  */
 op_star
 (paren
 id|vuip
@@ -846,7 +815,7 @@ l_int|0xffffffff
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* if Type1 access, must reset IOC CFG so normal IO space ops work */
+multiline_comment|/* If Type1 access, must reset IOC CFG so normal IO space ops work.  */
 r_if
 c_cond
 (paren
@@ -885,24 +854,20 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_byte
 r_int
-id|pcibios_read_config_byte
+DECL|function|cia_pcibios_read_config_byte
+id|cia_pcibios_read_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 op_star
 id|value
 )paren
@@ -944,14 +909,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -987,24 +948,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_word
 r_int
-id|pcibios_read_config_word
+DECL|function|cia_pcibios_read_config_word
+id|cia_pcibios_read_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 op_star
 id|value
 )paren
@@ -1035,11 +992,9 @@ id|where
 op_amp
 l_int|0x1
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1059,11 +1014,9 @@ op_amp
 id|type1
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1099,24 +1052,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_read_config_dword
 r_int
-id|pcibios_read_config_dword
+DECL|function|cia_pcibios_read_config_dword
+id|cia_pcibios_read_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u32
 op_star
 id|value
 )paren
@@ -1147,11 +1096,9 @@ id|where
 op_amp
 l_int|0x3
 )paren
-(brace
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1171,11 +1118,9 @@ op_amp
 id|type1
 )paren
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1201,24 +1146,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_byte
 r_int
-id|pcibios_write_config_byte
+DECL|function|cia_pcibios_write_config_byte
+id|cia_pcibios_write_config_byte
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_char
+id|u8
 id|value
 )paren
 (brace
@@ -1254,14 +1195,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1296,24 +1233,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_word
 r_int
-id|pcibios_write_config_word
+DECL|function|cia_pcibios_write_config_word
+id|cia_pcibios_write_config_word
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u16
 id|value
 )paren
 (brace
@@ -1334,6 +1267,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|where
+op_amp
+l_int|0x1
+)paren
+r_return
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mk_conf_addr
 c_func
 (paren
@@ -1349,14 +1292,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1391,24 +1330,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|pcibios_write_config_dword
 r_int
-id|pcibios_write_config_dword
+DECL|function|cia_pcibios_write_config_dword
+id|cia_pcibios_write_config_dword
 (paren
-r_int
-r_char
+id|u8
 id|bus
 comma
-r_int
-r_char
+id|u8
 id|device_fn
 comma
-r_int
-r_char
+id|u8
 id|where
 comma
-r_int
-r_int
+id|u32
 id|value
 )paren
 (brace
@@ -1429,6 +1364,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|where
+op_amp
+l_int|0x3
+)paren
+r_return
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mk_conf_addr
 c_func
 (paren
@@ -1444,14 +1389,10 @@ comma
 op_amp
 id|type1
 )paren
-OL
-l_int|0
 )paren
-(brace
 r_return
-id|PCIBIOS_SUCCESSFUL
+id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
-)brace
 id|addr
 op_or_assign
 (paren
@@ -1486,18 +1427,20 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|cia_init
-r_int
-r_int
-id|cia_init
+r_void
+id|__init
+DECL|function|cia_init_arch
+id|cia_init_arch
 c_func
 (paren
 r_int
 r_int
+op_star
 id|mem_start
 comma
 r_int
 r_int
+op_star
 id|mem_end
 )paren
 (brace
@@ -1527,7 +1470,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_REV was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_REV was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1548,7 +1491,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_PCI_LAT was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_PCI_LAT was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1569,7 +1512,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_CTRL was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_CTRL was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1590,7 +1533,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_CTRL1 was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_CTRL1 was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1611,7 +1554,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_HAE_MEM was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_HAE_MEM was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1632,7 +1575,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_HAE_IO was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_HAE_IO was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1653,7 +1596,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_CFG was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_CFG was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1674,7 +1617,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_CACK_EN was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_CACK_EN was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1695,7 +1638,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_CFG was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_CFG was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1716,7 +1659,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_DIAG was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_DIAG was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1737,7 +1680,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_DIAG_CHECK was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_DIAG_CHECK was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1758,7 +1701,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_PERF_MONITOR was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_PERF_MONITOR was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1779,7 +1722,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_PERF_CONTROL was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_PERF_CONTROL was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1800,7 +1743,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_ERR was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_ERR was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1821,7 +1764,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_STAT was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_STAT was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1842,7 +1785,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_MCR was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_MCR was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1863,7 +1806,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_CTRL was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_CTRL was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1884,7 +1827,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: CIA_ERR_MASK was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: CIA_ERR_MASK was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1907,7 +1850,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: W0_BASE was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: W0_BASE was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1930,7 +1873,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: W1_BASE was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: W1_BASE was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1953,7 +1896,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: W2_BASE was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: W2_BASE was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -1976,7 +1919,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CIA_init: W3_BASE was 0x%x&bslash;n&quot;
+l_string|&quot;cia_init: W3_BASE was 0x%x&bslash;n&quot;
 comma
 id|temp
 )paren
@@ -2036,8 +1979,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-multiline_comment|/* check window 0 for enabled and mapped to 0 */
+r_switch
+c_cond
+(paren
+id|alpha_use_srm_setup
+)paren
+(brace
+r_default
+suffix:colon
+(brace
+)brace
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
+multiline_comment|/* Check window 0 for enabled and mapped to 0 */
 r_if
 c_cond
 (paren
@@ -2122,9 +2075,10 @@ id|CIA_IOC_PCI_T0_BASE
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 1 for enabled and mapped to 0 */
+multiline_comment|/* Check window 1 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -2209,9 +2163,10 @@ id|CIA_IOC_PCI_T1_BASE
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 2 for enabled and mapped to 0 */
+multiline_comment|/* Check window 2 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -2296,9 +2251,10 @@ id|CIA_IOC_PCI_T2_BASE
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* check window 3 for enabled and mapped to 0 */
+multiline_comment|/* Check window 3 for enabled and mapped to 0.  */
 r_if
 c_cond
 (paren
@@ -2383,12 +2339,23 @@ id|CIA_IOC_PCI_T3_BASE
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 )brace
-r_else
-multiline_comment|/* we must use our defaults which were pre-initialized... */
-macro_line|#endif /* SRM_SETUP */
-(brace
-multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, windows 1,2 and 3 are disabled.  In the future, we may&n;&t; * want to use them to do scatter/gather DMA.  Window 0&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
+multiline_comment|/* Otherwise, we must use our defaults.  */
+id|CIA_DMA_WIN_BASE
+op_assign
+id|CIA_DMA_WIN_BASE_DEFAULT
+suffix:semicolon
+id|CIA_DMA_WIN_SIZE
+op_assign
+id|CIA_DMA_WIN_SIZE_DEFAULT
+suffix:semicolon
+macro_line|#endif
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/*&n;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t; * For now, windows 1,2 and 3 are disabled.  In the future,&n;&t;&t; * we may want to use them to do scatter/gather DMA. &n;&t;&t; *&n;&t;&t; * Window 0 goes at 1 GB and is 1 GB large.&n;&t;&t; */
 op_star
 (paren
 id|vuip
@@ -2398,7 +2365,7 @@ op_assign
 l_int|1U
 op_or
 (paren
-id|CIA_DMA_WIN_BASE
+id|CIA_DMA_WIN_BASE_DEFAULT
 op_amp
 l_int|0xfff00000U
 )paren
@@ -2410,7 +2377,7 @@ id|vuip
 id|CIA_IOC_PCI_W0_MASK
 op_assign
 (paren
-id|CIA_DMA_WIN_SIZE
+id|CIA_DMA_WIN_SIZE_DEFAULT
 op_minus
 l_int|1
 )paren
@@ -2449,62 +2416,10 @@ id|CIA_IOC_PCI_W3_BASE
 op_assign
 l_int|0x0
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * check ASN in HWRPB for validity, report if bad&n;&t; */
-r_if
-c_cond
-(paren
-id|hwrpb-&gt;max_asn
-op_ne
-id|MAX_ASN
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;CIA_init: max ASN from HWRPB is bad (0x%lx)&bslash;n&quot;
-comma
-id|hwrpb-&gt;max_asn
-)paren
-suffix:semicolon
-id|hwrpb-&gt;max_asn
-op_assign
-id|MAX_ASN
+r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;         * Next, clear the CIA_CFG register, which gets used&n;         *  for PCI Config Space accesses. That is the way&n;         *  we want to use it, and we do not want to depend on&n;         *  what ARC or SRM might have left behind...&n;         */
-(brace
-r_int
-r_int
-id|cia_cfg
-op_assign
-op_star
-(paren
-(paren
-id|vuip
-)paren
-id|CIA_IOC_CFG
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cia_cfg
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;CIA_init: CFG was 0x%x&bslash;n&quot;
-comma
-id|cia_cfg
-)paren
-suffix:semicolon
+multiline_comment|/*&n;         * Next, clear the CIA_CFG register, which gets used&n;         * for PCI Config Space accesses. That is the way&n;         * we want to use it, and we do not want to depend on&n;         * what ARC or SRM might have left behind...&n;         */
 op_star
 (paren
 (paren
@@ -2520,8 +2435,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-)brace
+multiline_comment|/*&n;&t; * Sigh... For the SRM setup, unless we know apriori what the HAE&n;&t; * contents will be, we need to setup the arbitrary region bases&n;&t; * so we can test against the range of addresses and tailor the&n;&t; * region chosen for the SPARSE memory access.&n;&t; *&n;&t; * See include/asm-alpha/cia.h for the SPARSE mem read/write.&n;&t; */
+r_if
+c_cond
+(paren
+id|alpha_use_srm_setup
+)paren
 (brace
 r_int
 r_int
@@ -2535,39 +2454,7 @@ id|vuip
 id|CIA_IOC_HAE_MEM
 )paren
 suffix:semicolon
-r_int
-r_int
-id|cia_hae_io
-op_assign
-op_star
-(paren
-(paren
-id|vuip
-)paren
-id|CIA_IOC_HAE_IO
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;CIA_init: HAE_MEM was 0x%x&bslash;n&quot;
-comma
-id|cia_hae_mem
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;CIA_init: HAE_IO was 0x%x&bslash;n&quot;
-comma
-id|cia_hae_io
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
-multiline_comment|/*&n;&t;    sigh... For the SRM setup, unless we know apriori what the HAE&n;&t;    contents will be, we need to setup the arbitrary region bases&n;&t;    so we can test against the range of addresses and tailor the&n;&t;    region chosen for the SPARSE memory access.&n;&n;&t;    see include/asm-alpha/cia.h for the SPARSE mem read/write&n;&t;  */
-id|cia_sm_base_r1
+id|alpha_mv.sm_base_r1
 op_assign
 (paren
 id|cia_hae_mem
@@ -2575,8 +2462,7 @@ id|cia_hae_mem
 op_amp
 l_int|0xe0000000UL
 suffix:semicolon
-multiline_comment|/* region 1 */
-id|cia_sm_base_r2
+id|alpha_mv.sm_base_r2
 op_assign
 (paren
 id|cia_hae_mem
@@ -2586,8 +2472,7 @@ l_int|16
 op_amp
 l_int|0xf8000000UL
 suffix:semicolon
-multiline_comment|/* region 2 */
-id|cia_sm_base_r3
+id|alpha_mv.sm_base_r3
 op_assign
 (paren
 id|cia_hae_mem
@@ -2597,13 +2482,30 @@ l_int|24
 op_amp
 l_int|0xfc000000UL
 suffix:semicolon
-multiline_comment|/* region 3 */
-multiline_comment|/*&n;&t;    Set the HAE cache, so that setup_arch() code&n;&t;    will use the SRM setting always. Our readb/writeb&n;&t;    code in cia.h expects never to have to change&n;&t;    the contents of the HAE.&n;&t;   */
-id|hae.cache
+multiline_comment|/*&n;&t;&t; * Set the HAE cache, so that setup_arch() code&n;&t;&t; * will use the SRM setting always. Our readb/writeb&n;&t;&t; * code in cia.h expects never to have to change&n;&t;&t; * the contents of the HAE.&n;&t;&t; */
+id|alpha_mv.hae_cache
 op_assign
 id|cia_hae_mem
 suffix:semicolon
-macro_line|#else /* SRM_SETUP */
+id|alpha_mv.mv_readb
+op_assign
+id|cia_srm_readb
+suffix:semicolon
+id|alpha_mv.mv_readw
+op_assign
+id|cia_srm_readw
+suffix:semicolon
+id|alpha_mv.mv_writeb
+op_assign
+id|cia_srm_writeb
+suffix:semicolon
+id|alpha_mv.mv_writew
+op_assign
+id|cia_srm_writew
+suffix:semicolon
+)brace
+r_else
+(brace
 op_star
 (paren
 (paren
@@ -2619,8 +2521,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|cia_hae_mem
-op_assign
 op_star
 (paren
 (paren
@@ -2629,6 +2529,7 @@ id|vuip
 id|CIA_IOC_HAE_MEM
 )paren
 suffix:semicolon
+multiline_comment|/* read it back. */
 op_star
 (paren
 (paren
@@ -2644,8 +2545,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|cia_hae_io
-op_assign
 op_star
 (paren
 (paren
@@ -2654,14 +2553,12 @@ id|vuip
 id|CIA_IOC_HAE_IO
 )paren
 suffix:semicolon
-macro_line|#endif /* SRM_SETUP */
+multiline_comment|/* read it back. */
 )brace
-r_return
-id|mem_start
-suffix:semicolon
 )brace
-DECL|function|cia_pci_clr_err
+r_static
 r_int
+DECL|function|cia_pci_clr_err
 id|cia_pci_clr_err
 c_func
 (paren
@@ -2703,8 +2600,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cia_machine_check
 r_void
+DECL|function|cia_machine_check
 id|cia_machine_check
 c_func
 (paren
@@ -2728,7 +2625,7 @@ op_star
 id|mchk_header
 suffix:semicolon
 r_struct
-id|el_procdata
+id|el_CIA_procdata
 op_star
 id|mchk_procdata
 suffix:semicolon
@@ -2769,7 +2666,7 @@ id|mchk_procdata
 op_assign
 (paren
 r_struct
-id|el_procdata
+id|el_CIA_procdata
 op_star
 )paren
 (paren
@@ -2834,7 +2731,7 @@ id|mchk_sysdata-&gt;epic_pear
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_MCHECK
+macro_line|#if DEBUG_MCHECK
 (brace
 r_int
 r_int
@@ -3062,7 +2959,7 @@ l_string|&quot;processor detected hard error&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* system specific (these are for Alcor, at least): */
+multiline_comment|/* System specific (these are for Alcor, at least): */
 r_case
 l_int|0x203
 suffix:colon
@@ -3249,7 +3146,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;  CIA machine check: %s%s&bslash;n&quot;
+l_string|&quot;CIA machine check: %s%s&bslash;n&quot;
 comma
 id|reason
 comma
@@ -3274,7 +3171,7 @@ comma
 id|regs-&gt;pc
 )paren
 suffix:semicolon
-multiline_comment|/* dump the logout area to give all info: */
+multiline_comment|/* Dump the logout area to give all info.  */
 id|ptr
 op_assign
 (paren
@@ -3309,7 +3206,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot; +%8lx %016lx %016lx&bslash;n&quot;
+l_string|&quot;   +%8lx %016lx %016lx&bslash;n&quot;
 comma
 id|i
 op_star

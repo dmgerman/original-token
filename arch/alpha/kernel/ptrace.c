@@ -1492,20 +1492,10 @@ c_cond
 op_logical_neg
 id|vma
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to find vma for addr 0x%lx&bslash;n&quot;
-comma
-id|addr
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -25,6 +25,10 @@ r_int
 r_int
 id|curfreq
 suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifndef CONFIG_RADIO_SF16FMI_PORT
@@ -46,8 +50,9 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* local things */
+multiline_comment|/* freq in 1/16kHz to internal number */
 DECL|macro|RSF16_ENCODE
-mdefine_line|#define RSF16_ENCODE(x)&t;((x*(1000/4)+10700)/50)
+mdefine_line|#define RSF16_ENCODE(x)&t;((x/16+10700)/50)
 DECL|function|outbits
 r_static
 r_void
@@ -183,7 +188,6 @@ id|port
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* FREQ is in 1/16ths of a MHz so this is probably wrong atm */
 DECL|function|fmi_setfreq
 r_static
 r_int
@@ -467,15 +471,39 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|fmi-&gt;flags
+op_amp
+id|VIDEO_TUNER_LOW
+)paren
+(brace
+id|v.rangelow
+op_assign
+l_int|87500
+op_star
+l_int|16
+suffix:semicolon
+id|v.rangehigh
+op_assign
+l_int|108000
+op_star
+l_int|16
+suffix:semicolon
+)brace
+r_else
+(brace
 id|v.rangelow
 op_assign
 (paren
 r_int
 )paren
 (paren
-l_float|87.5
+l_int|175
 op_star
-l_int|16
+l_int|8
+multiline_comment|/* 87.5 *16 */
 )paren
 suffix:semicolon
 id|v.rangehigh
@@ -484,14 +512,15 @@ op_assign
 r_int
 )paren
 (paren
-l_float|108.0
+l_int|108
 op_star
 l_int|16
 )paren
 suffix:semicolon
+)brace
 id|v.flags
 op_assign
-l_int|0
+id|fmi-&gt;flags
 suffix:semicolon
 id|v.mode
 op_assign
@@ -578,6 +607,12 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|fmi-&gt;flags
+op_assign
+id|v.flags
+op_amp
+id|VIDEO_TUNER_LOW
+suffix:semicolon
 multiline_comment|/* Only 1 tuner so no setting needed ! */
 r_return
 l_int|0
@@ -586,6 +621,27 @@ suffix:semicolon
 r_case
 id|VIDIOCGFREQ
 suffix:colon
+(brace
+r_int
+r_int
+id|tmp
+op_assign
+id|fmi-&gt;curfreq
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|fmi-&gt;flags
+op_amp
+id|VIDEO_TUNER_LOW
+)paren
+)paren
+id|tmp
+op_div_assign
+l_int|1000
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -595,11 +651,11 @@ c_func
 id|arg
 comma
 op_amp
-id|fmi-&gt;curfreq
+id|tmp
 comma
 r_sizeof
 (paren
-id|fmi-&gt;curfreq
+id|tmp
 )paren
 )paren
 )paren
@@ -612,9 +668,15 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_case
 id|VIDIOCSFREQ
 suffix:colon
+(brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -622,13 +684,13 @@ id|copy_from_user
 c_func
 (paren
 op_amp
-id|fmi-&gt;curfreq
+id|tmp
 comma
 id|arg
 comma
 r_sizeof
 (paren
-id|fmi-&gt;curfreq
+id|tmp
 )paren
 )paren
 )paren
@@ -638,6 +700,24 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|fmi-&gt;flags
+op_amp
+id|VIDEO_TUNER_LOW
+)paren
+)paren
+id|tmp
+op_mul_assign
+l_int|1000
+suffix:semicolon
+id|fmi-&gt;curfreq
+op_assign
+id|tmp
+suffix:semicolon
 id|fmi_setfreq
 c_func
 (paren
@@ -649,6 +729,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_case
 id|VIDIOCGAUDIO
 suffix:colon
@@ -894,6 +975,9 @@ multiline_comment|/* Can&squot;t read  (no capture ability) */
 l_int|NULL
 comma
 multiline_comment|/* Can&squot;t write */
+l_int|NULL
+comma
+multiline_comment|/* Can&squot;t poll */
 id|fmi_ioctl
 comma
 l_int|NULL
@@ -945,6 +1029,10 @@ suffix:semicolon
 id|fmi_unit.port
 op_assign
 id|io
+suffix:semicolon
+id|fmi_unit.flags
+op_assign
+id|VIDEO_TUNER_LOW
 suffix:semicolon
 id|fmi_radio.priv
 op_assign
