@@ -2040,13 +2040,6 @@ id|file.f_flags
 op_or_assign
 id|O_SYNC
 suffix:semicolon
-id|fh_lock
-c_func
-(paren
-id|fhp
-)paren
-suffix:semicolon
-multiline_comment|/* lock inode */
 id|file.f_pos
 op_assign
 id|offset
@@ -2205,13 +2198,6 @@ op_assign
 id|saved_cap
 suffix:semicolon
 )brace
-id|fh_unlock
-c_func
-(paren
-id|fhp
-)paren
-suffix:semicolon
-multiline_comment|/* unlock inode */
 r_if
 c_cond
 (paren

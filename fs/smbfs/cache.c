@@ -82,7 +82,7 @@ c_func
 r_struct
 id|address_space
 op_star
-id|owner
+id|mapping
 comma
 r_int
 r_int
@@ -114,7 +114,7 @@ op_assign
 id|page_hash
 c_func
 (paren
-id|owner
+id|mapping
 comma
 id|offset
 )paren
@@ -124,7 +124,7 @@ op_assign
 id|__find_lock_page
 c_func
 (paren
-id|owner
+id|mapping
 comma
 id|offset
 comma
@@ -180,7 +180,7 @@ c_func
 (paren
 id|page
 comma
-id|owner
+id|mapping
 comma
 id|offset
 comma
@@ -272,7 +272,7 @@ id|cachep
 )paren
 )paren
 op_member_access_from_pointer
-id|owner
+id|mapping
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get a pointer to the cache_head structure,&n; * mapped as the page at offset 0. The page is&n; * kept locked while we&squot;re using the cache.&n; */
@@ -292,7 +292,7 @@ id|dentry
 r_struct
 id|address_space
 op_star
-id|owner
+id|mapping
 op_assign
 op_amp
 id|dentry-&gt;d_inode-&gt;i_data
@@ -324,7 +324,7 @@ op_star
 id|get_cached_page
 c_func
 (paren
-id|owner
+id|mapping
 comma
 l_int|0
 comma
@@ -425,7 +425,7 @@ op_star
 id|get_cached_page
 c_func
 (paren
-id|owner
+id|mapping
 comma
 id|offset
 comma
@@ -634,7 +634,7 @@ id|fpos
 r_struct
 id|address_space
 op_star
-id|owner
+id|mapping
 op_assign
 id|get_cache_inode
 c_func
@@ -684,7 +684,7 @@ c_func
 (paren
 l_string|&quot;smb_add_to_cache: cache %p, status %d, adding &quot;
 comma
-id|owner
+id|mapping
 comma
 id|cachep-&gt;status
 )paren
@@ -902,7 +902,7 @@ op_star
 id|get_cached_page
 c_func
 (paren
-id|owner
+id|mapping
 comma
 id|page_off
 comma
@@ -927,9 +927,9 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_add_to_cache: owner=%p, pages=%d, block at %ld&bslash;n&quot;
+l_string|&quot;smb_add_to_cache: mapping=%p, pages=%d, block at %ld&bslash;n&quot;
 comma
-id|owner
+id|mapping
 comma
 id|cachep-&gt;pages
 comma

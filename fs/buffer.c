@@ -5238,6 +5238,7 @@ op_star
 id|bh
 )paren
 (brace
+macro_line|#if 0
 id|bh
 op_assign
 id|get_hash_table
@@ -5270,6 +5271,7 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * block_write_full_page() is SMP-safe - currently it&squot;s still&n; * being called with the kernel lock held, but the code is ready.&n; */
 DECL|function|block_write_full_page
@@ -9039,6 +9041,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef __SMP__
 r_struct
 id|buffer_head
 op_star
@@ -9089,6 +9092,7 @@ comma
 l_string|&quot;DIRTY&quot;
 )brace
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren

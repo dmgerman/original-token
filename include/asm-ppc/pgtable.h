@@ -1221,26 +1221,22 @@ id|zero_cache
 suffix:semicolon
 multiline_comment|/* head linked list of pre-zero&squot;d pages */
 r_extern
-r_int
-r_int
+id|atomic_t
 id|zero_sz
 suffix:semicolon
 multiline_comment|/* # currently pre-zero&squot;d pages */
 r_extern
-r_int
-r_int
+id|atomic_t
 id|zeropage_hits
 suffix:semicolon
 multiline_comment|/* # zero&squot;d pages request that we&squot;ve done */
 r_extern
-r_int
-r_int
+id|atomic_t
 id|zeropage_calls
 suffix:semicolon
 multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
 r_extern
-r_int
-r_int
+id|atomic_t
 id|zerototal
 suffix:semicolon
 multiline_comment|/* # pages zero&squot;d over time */
@@ -1282,25 +1278,7 @@ comma
 op_star
 id|init
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|get_zero_page_fast
-c_func
-(paren
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-(brace
+multiline_comment|/*if ( (ret = (pgd_t *)get_zero_page_fast()) == NULL )*/
 r_if
 c_cond
 (paren
@@ -1334,7 +1312,6 @@ id|pgd_t
 )paren
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

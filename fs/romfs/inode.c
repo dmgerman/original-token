@@ -1672,11 +1672,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/* hack? */
-id|page-&gt;owner
-op_assign
-id|current
-suffix:semicolon
 id|offset
 op_assign
 id|page-&gt;offset

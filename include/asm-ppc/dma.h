@@ -45,13 +45,19 @@ id|ppc_cs4232_dma
 comma
 id|ppc_cs4232_dma2
 suffix:semicolon
-macro_line|#ifdef CONFIG_CS4232
+macro_line|#if defined(CONFIG_CS4232)
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC)
 DECL|macro|SND_DMA1
 mdefine_line|#define SND_DMA1 ppc_cs4232_dma
 DECL|macro|SND_DMA2
 mdefine_line|#define SND_DMA2 ppc_cs4232_dma2
-macro_line|#else
-macro_line|#ifdef CONFIG_MSS
+macro_line|#else /* !CONFIG_PREP &amp;&amp; !CONFIG_ALL_PPC */
+DECL|macro|SND_DMA1
+mdefine_line|#define SND_DMA1 -1
+DECL|macro|SND_DMA2
+mdefine_line|#define SND_DMA2 -1
+macro_line|#endif /* !CONFIG_PREP */
+macro_line|#elif defined(CONFIG_MSS)
 DECL|macro|SND_DMA1
 mdefine_line|#define SND_DMA1 CONFIG_MSS_DMA
 DECL|macro|SND_DMA2
@@ -61,7 +67,6 @@ DECL|macro|SND_DMA1
 mdefine_line|#define SND_DMA1 -1
 DECL|macro|SND_DMA2
 mdefine_line|#define SND_DMA2 -1
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* 8237 DMA controllers */
 DECL|macro|IO_DMA1_BASE
@@ -251,6 +256,7 @@ id|ucDmaCmd
 op_assign
 l_int|0x00
 suffix:semicolon
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC)
 r_if
 c_cond
 (paren
@@ -294,6 +300,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif /* CONFIG_PREP || CONFIG_ALL_PPC */
 r_if
 c_cond
 (paren

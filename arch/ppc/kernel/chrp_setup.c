@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -27,6 +26,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -478,7 +478,7 @@ id|model
 comma
 l_string|&quot;IBM,LongTrail&quot;
 comma
-l_int|9
+l_int|13
 )paren
 )paren
 (brace
@@ -842,7 +842,7 @@ c_cond
 id|root
 op_logical_and
 op_logical_neg
-id|strcmp
+id|strncmp
 c_func
 (paren
 id|get_property
@@ -856,6 +856,8 @@ l_int|NULL
 )paren
 comma
 l_string|&quot;IBM,LongTrail&quot;
+comma
+l_int|13
 )paren
 )paren
 (brace

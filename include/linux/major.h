@@ -190,6 +190,8 @@ DECL|macro|IDE9_MAJOR
 mdefine_line|#define IDE9_MAJOR&t;91
 DECL|macro|AURORA_MAJOR
 mdefine_line|#define AURORA_MAJOR 79
+DECL|macro|RTF_MAJOR
+mdefine_line|#define RTF_MAJOR&t;150
 DECL|macro|RAW_MAJOR
 mdefine_line|#define RAW_MAJOR&t;162
 DECL|macro|UNIX98_PTY_MASTER_MAJOR

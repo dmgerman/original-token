@@ -67,30 +67,26 @@ op_star
 id|zero_cache
 suffix:semicolon
 multiline_comment|/* head linked list of pre-zero&squot;d pages */
-DECL|variable|zero_sz
-r_int
-r_int
-id|zero_sz
-suffix:semicolon
-multiline_comment|/* # currently pre-zero&squot;d pages */
-DECL|variable|zeropage_hits
-r_int
-r_int
-id|zeropage_hits
-suffix:semicolon
-multiline_comment|/* # zero&squot;d pages request that we&squot;ve done */
-DECL|variable|zeropage_calls
-r_int
-r_int
-id|zeropage_calls
-suffix:semicolon
-multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
 DECL|variable|zerototal
-r_int
-r_int
+id|atomic_t
 id|zerototal
 suffix:semicolon
 multiline_comment|/* # pages zero&squot;d over time */
+DECL|variable|zeropage_hits
+id|atomic_t
+id|zeropage_hits
+suffix:semicolon
+multiline_comment|/* # zero&squot;d pages request that we&squot;ve done */
+DECL|variable|zero_sz
+id|atomic_t
+id|zero_sz
+suffix:semicolon
+multiline_comment|/* # currently pre-zero&squot;d pages */
+DECL|variable|zeropage_calls
+id|atomic_t
+id|zeropage_calls
+suffix:semicolon
+multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
 DECL|function|idled
 r_int
 id|idled
@@ -131,19 +127,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|current-&gt;need_resched
-op_logical_and
-id|zero_paged_on
-)paren
-id|zero_paged
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*if ( !current-&gt;need_resched &amp;&amp; zero_paged_on ) zero_paged();*/
 r_if
 c_cond
 (paren
@@ -432,8 +416,8 @@ id|current-&gt;need_resched
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * Returns a pre-zero&squot;d page from the list otherwise returns&n; * NULL.&n; */
-DECL|function|get_zero_page_fast
 r_int
 r_int
 id|get_zero_page_fast
@@ -451,10 +435,6 @@ suffix:semicolon
 id|atomic_inc
 c_func
 (paren
-(paren
-id|atomic_t
-op_star
-)paren
 op_amp
 id|zero_cache_calls
 )paren
@@ -552,7 +532,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Experimental stuff to zero out pages in the idle task&n; * to speed up get_free_pages(). Zero&squot;s out pages until&n; * we&squot;ve reached the limit of zero&squot;d pages.  We handle&n; * reschedule()&squot;s in here so when we return we know we&squot;ve&n; * zero&squot;d all we need to for now.&n; */
-DECL|variable|zero_cache_water
 r_int
 id|zero_cache_water
 (braket
@@ -566,7 +545,6 @@ l_int|96
 )brace
 suffix:semicolon
 multiline_comment|/* high and low water marks for zero cache */
-DECL|function|zero_paged
 r_void
 id|zero_paged
 c_func
@@ -594,7 +572,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|zero_cache_sz
+)paren
 op_ge
 id|zero_cache_water
 (braket
@@ -607,7 +590,12 @@ r_while
 c_loop
 (paren
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|zero_cache_sz
+)paren
 OL
 id|zero_cache_water
 (braket
@@ -828,6 +816,7 @@ id|zero_cache_total
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|power_save
 r_void
 id|power_save

@@ -158,6 +158,12 @@ op_star
 id|regs
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;openpic_ipi_action&bslash;n&quot;
+)paren
+suffix:semicolon
 id|smp_message_recv
 c_func
 (paren

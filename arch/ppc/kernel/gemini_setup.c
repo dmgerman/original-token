@@ -1266,7 +1266,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|OPENPIC_VEC_SPURIOUS
 suffix:semicolon
 id|i
 op_increment
@@ -1289,6 +1289,22 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|request_irq
+c_func
+(paren
+id|OPENPIC_VEC_IPI
+comma
+id|openpic_ipi_action
+comma
+l_int|0
+comma
+l_string|&quot;IPI0&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* __SMP__ */
 )brace
 DECL|macro|gemini_rtc_read
 mdefine_line|#define gemini_rtc_read(x)       (readb(GEMINI_RTC+(x)))
