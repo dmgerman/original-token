@@ -1299,6 +1299,14 @@ op_amp
 id|inode_lock
 )paren
 suffix:semicolon
+id|select_dcache
+c_func
+(paren
+id|goal
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|prune_dcache
 c_func
 (paren

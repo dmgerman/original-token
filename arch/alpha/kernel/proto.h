@@ -1329,7 +1329,7 @@ r_void
 id|SMC669_Init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* es1888.c */

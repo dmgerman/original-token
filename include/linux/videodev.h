@@ -854,6 +854,10 @@ DECL|macro|VID_HARDWARE_BROADWAY
 mdefine_line|#define VID_HARDWARE_BROADWAY&t;17&t;/* Broadway project */
 DECL|macro|VID_HARDWARE_GEMTEK
 mdefine_line|#define VID_HARDWARE_GEMTEK&t;18
+DECL|macro|VID_HARDWARE_TYPHOON
+mdefine_line|#define VID_HARDWARE_TYPHOON&t;19
+DECL|macro|VID_HARDWARE_VINO
+mdefine_line|#define VID_HARDWARE_VINO&t;20&t;/* Reserved for SGI Indy Vino */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

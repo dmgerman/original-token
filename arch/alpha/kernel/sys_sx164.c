@@ -625,6 +625,7 @@ suffix:semicolon
 id|SMC669_Init
 c_func
 (paren
+l_int|0
 )paren
 suffix:semicolon
 )brace

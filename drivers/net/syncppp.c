@@ -16,7 +16,7 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;syncppp.h&quot;
 DECL|macro|MAXALIVECNT
-mdefine_line|#define MAXALIVECNT     3               /* max. alive packets */
+mdefine_line|#define MAXALIVECNT     6               /* max. alive packets */
 DECL|macro|PPP_ALLSTATIONS
 mdefine_line|#define PPP_ALLSTATIONS 0xff            /* All-Stations broadcast address */
 DECL|macro|PPP_UI

@@ -426,6 +426,21 @@ id|ICMP_FRAG_NEEDED
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* No rate limit on loopback */
+r_if
+c_cond
+(paren
+id|dst-&gt;dev
+op_logical_and
+(paren
+id|dst-&gt;dev-&gt;flags
+op_amp
+id|IFF_LOOPBACK
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
 r_return
 id|xrlim_allow
 c_func

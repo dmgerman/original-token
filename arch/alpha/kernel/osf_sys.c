@@ -1235,11 +1235,15 @@ suffix:semicolon
 id|error
 op_assign
 op_minus
-id|ENOSYS
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|sb
+op_logical_and
+id|sb-&gt;s_op
+op_logical_and
 id|sb-&gt;s_op-&gt;statfs
 )paren
 (brace

@@ -2073,7 +2073,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
 macro_line|#endif
 op_logical_and
 l_int|1

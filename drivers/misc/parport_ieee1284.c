@@ -177,7 +177,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|1
+l_int|400
 )paren
 suffix:semicolon
 multiline_comment|/* nSelectIn high, nAutoFd low */

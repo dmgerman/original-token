@@ -2609,14 +2609,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Dump packet if too many hops or already seen this net */
-r_if
-c_cond
-(paren
-id|ipx-&gt;ipx_tctrl
-OL
-l_int|8
-)paren
+multiline_comment|/* Dump packet if already seen this net */
 r_for
 c_loop
 (paren
@@ -2673,6 +2666,18 @@ op_assign
 id|ifcs-&gt;if_next
 )paren
 (brace
+multiline_comment|/* Except unconfigured interfaces */
+r_if
+c_cond
+(paren
+id|ifcs-&gt;if_netnum
+op_eq
+l_int|0
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/* That aren&squot;t in the list */
 id|l
 op_assign
@@ -8353,18 +8358,21 @@ id|ipxhdr
 )paren
 )paren
 (brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
+r_goto
+id|drop
 suffix:semicolon
 )brace
+multiline_comment|/* Not ours */
+r_if
+c_cond
+(paren
+id|skb-&gt;pkt_type
+op_eq
+id|PACKET_OTHERHOST
+)paren
+r_goto
+id|drop
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8391,16 +8399,8 @@ op_ne
 id|ipx-&gt;ipx_checksum
 )paren
 (brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
+r_goto
+id|drop
 suffix:semicolon
 )brace
 )brace
@@ -8455,18 +8455,10 @@ id|intrfc
 op_eq
 l_int|NULL
 )paren
-multiline_comment|/* Not one of ours */
 (brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
+multiline_comment|/* Not one of ours */
+r_goto
+id|drop
 suffix:semicolon
 )brace
 )brace
@@ -8479,6 +8471,19 @@ id|intrfc
 comma
 id|skb
 )paren
+)paren
+suffix:semicolon
+id|drop
+suffix:colon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -8587,6 +8592,12 @@ op_assign
 l_int|0L
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPX_INTERN
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.af_ipx.intrfc
+)paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -8599,6 +8610,13 @@ comma
 id|IPX_NODE_LEN
 )paren
 suffix:semicolon
+)brace
+r_else
+r_return
+op_minus
+id|ENETDOWN
+suffix:semicolon
+multiline_comment|/* Someone zonked the iface */
 macro_line|#endif
 id|ret
 op_assign

@@ -422,6 +422,18 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
+multiline_comment|/* We shouldn&squot;t be able to get here, but just in case */
+r_if
+c_cond
+(paren
+id|name-&gt;len
+OG
+id|NAME_MAX
+)paren
+r_return
+op_minus
+id|ENOENT
+suffix:semicolon
 r_for
 c_loop
 (paren

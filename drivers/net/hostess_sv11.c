@@ -1354,7 +1354,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;SV-11 Z85230 Synchronous Driver v 0.01.&bslash;n&quot;
+l_string|&quot;SV-11 Z85230 Synchronous Driver v 0.02.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -1364,20 +1364,6 @@ id|KERN_INFO
 l_string|&quot;(c) Copyright 1998, Building Number Three Ltd.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dma
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;DMA mode probably wont work right now.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
