@@ -89,6 +89,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#ifdef __GNUC__
 r_extern
 r_int
 r_int
@@ -252,6 +253,7 @@ DECL|macro|htonl
 macro_line|#  define htonl(x) &bslash;&n;(__builtin_constant_p((long)(x)) ? &bslash;&n; __constant_htonl((x)) : &bslash;&n; __htonl((x)))
 DECL|macro|htons
 macro_line|#  define htons(x) &bslash;&n;(__builtin_constant_p((short)(x)) ? &bslash;&n; __constant_htons((x)) : &bslash;&n; __htons((x)))
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* __OPTIMIZE__ */
+macro_line|#endif /* __GNUC__ */
+macro_line|#endif /* _ALPHA_BYTEORDER_H */
 eof

@@ -148,7 +148,7 @@ mdefine_line|#define RESERVATION_CONFLICT 0x0c
 DECL|macro|QUEUE_FULL
 mdefine_line|#define QUEUE_FULL           0x1a
 DECL|macro|STATUS_MASK
-mdefine_line|#define STATUS_MASK          0x1e
+mdefine_line|#define STATUS_MASK          0x3e
 multiline_comment|/*&n; *  SENSE KEYS&n; */
 DECL|macro|NO_SENSE
 mdefine_line|#define NO_SENSE            0x00

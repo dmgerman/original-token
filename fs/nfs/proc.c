@@ -2579,7 +2579,13 @@ id|server-&gt;toaddr
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|rpc_transmit
+c_func
+(paren
+id|server-&gt;rsock
+comma
+id|req
+)paren
 suffix:semicolon
 )brace
 r_int
@@ -2591,12 +2597,13 @@ r_struct
 id|rpc_ioreq
 op_star
 id|req
-)paren
-(brace
+comma
 r_struct
 id|nfs_fattr
+op_star
 id|fattr
-suffix:semicolon
+)paren
+(brace
 r_int
 id|status
 suffix:semicolon
@@ -2638,11 +2645,13 @@ id|p0
 )paren
 )paren
 (brace
+multiline_comment|/* Tell the upper layers to retry */
 id|status
 op_assign
 op_minus
-id|errno_NFSERR_IO
+id|EAGAIN
 suffix:semicolon
+multiline_comment|/* status = -errno_NFSERR_IO; */
 )brace
 r_else
 r_if
@@ -2670,7 +2679,6 @@ c_func
 (paren
 id|p
 comma
-op_amp
 id|fattr
 )paren
 suffix:semicolon
@@ -3623,6 +3631,9 @@ r_const
 r_char
 op_star
 id|new_name
+comma
+r_int
+id|must_be_dir
 )paren
 (brace
 r_int
@@ -3639,6 +3650,16 @@ r_int
 id|ruid
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * Disallow &quot;rename()&quot; with trailing slashes over NFS: getting&n;&t; * POSIX.1 behaviour is just too unlikely.&n;&t; */
+r_if
+c_cond
+(paren
+id|must_be_dir
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|PRINTK
 c_func

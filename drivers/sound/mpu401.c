@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/mpu401.c&n; *&n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -1582,7 +1582,9 @@ id|num_midis
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|devc
 op_assign
@@ -1605,10 +1607,12 @@ l_string|&quot;MPU-401: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloading its microcode.&n;   */
+multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloadin it&squot;s microcode.&n;   */
 r_if
 c_cond
 (paren
@@ -1635,7 +1639,9 @@ l_string|&quot;MPU-401: Device not initialized properly&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 id|reset_mpu401
@@ -1966,7 +1972,9 @@ l_string|&quot;MPU-401 commands not possible in the UART mode&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Test for input since pending input seems to block the output.&n;   */
@@ -2011,7 +2019,9 @@ id|cmd-&gt;cmd
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 id|save_flags
@@ -2111,7 +2121,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Device is not currently open. Use simpler method */
+multiline_comment|/* Device is not currently open. Use simplier method */
 r_if
 c_cond
 (paren
@@ -2143,7 +2153,9 @@ suffix:semicolon
 multiline_comment|/*       printk (&quot;MPU: No ACK to command (0x%x)&bslash;n&quot;, (int) cmd-&gt;cmd); */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -2219,7 +2231,9 @@ id|cmd-&gt;cmd
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2314,7 +2328,9 @@ suffix:semicolon
 multiline_comment|/* printk (&quot;MPU: No response(%d) to command (0x%x)&bslash;n&quot;, i, (int) cmd-&gt;cmd);  */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2598,7 +2614,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -2607,7 +2622,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -2642,7 +2656,9 @@ l_string|&quot;MPU-401: Intelligent mode not supported by the HW&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|set_uart_mode
@@ -2689,7 +2705,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -2698,7 +2713,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -2728,7 +2742,6 @@ id|ret
 suffix:semicolon
 id|memcpy_tofs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -2740,7 +2753,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 (paren
 r_char
@@ -2765,7 +2777,9 @@ r_default
 suffix:colon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2835,7 +2849,9 @@ id|num_midis
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|devc
 op_assign
@@ -2856,7 +2872,6 @@ id|SNDCTL_SYNTH_INFO
 suffix:colon
 id|memcpy_tofs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -2868,7 +2883,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 op_amp
 id|mpu_synth_info
@@ -2900,7 +2914,9 @@ r_default
 suffix:colon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2945,7 +2961,9 @@ id|num_midis
 (brace
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 id|devc
@@ -2956,7 +2974,7 @@ id|dev_conf
 id|midi_dev
 )braket
 suffix:semicolon
-multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloading its microcode.&n;   */
+multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloadin it&squot;s microcode.&n;   */
 r_if
 c_cond
 (paren
@@ -2983,7 +3001,9 @@ l_string|&quot;MPU-401: Device not initialized properly&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 id|reset_mpu401
@@ -3005,7 +3025,9 @@ l_string|&quot;MPU-401: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 id|devc-&gt;mode
@@ -3468,13 +3490,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|attach_mpu401
 id|attach_mpu401
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -3507,7 +3526,6 @@ l_string|&quot;MPU-401: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|devc
@@ -3623,7 +3641,6 @@ l_string|&quot;MPU401: Device didn&squot;t respond&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_if
@@ -3657,7 +3674,6 @@ id|devc-&gt;irq
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|save_flags
@@ -3756,29 +3772,27 @@ op_star
 (paren
 id|sound_mem_blocks
 (braket
-id|sound_num_blocks
+id|sound_nblocks
 )braket
 op_assign
-id|kmalloc
+id|vmalloc
 (paren
 r_sizeof
 (paren
 r_struct
 id|synth_operations
 )paren
-comma
-id|GFP_KERNEL
 )paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_num_blocks
+id|sound_nblocks
 OL
 l_int|1024
 )paren
-id|sound_num_blocks
+id|sound_nblocks
 op_increment
 suffix:semicolon
 suffix:semicolon
@@ -3799,7 +3813,6 @@ l_string|&quot;mpu401: Can&squot;t allocate memory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_if
@@ -4041,6 +4054,26 @@ id|MPU_CAP_SYNC
 op_or
 id|MPU_CAP_FSK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hw_config-&gt;name
+)paren
+id|sprintf
+(paren
+id|mpu_synth_info
+(braket
+id|num_midis
+)braket
+dot
+id|name
+comma
+l_string|&quot;%s (MPU401)&quot;
+comma
+id|hw_config-&gt;name
+)paren
+suffix:semicolon
+r_else
 id|sprintf
 (paren
 id|mpu_synth_info
@@ -4157,9 +4190,6 @@ id|mpu401_midi_operations
 (braket
 id|devc-&gt;devno
 )braket
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_static
@@ -4678,7 +4708,7 @@ r_int
 id|clocks
 )paren
 (brace
-multiline_comment|/*&n;     * The MPU-401 supports just a limited set of possible timebase values.&n;     * Since the applications require more choices, the driver has to&n;     * program the HW to do its best and to convert between the HW and&n;     * actual timebases.&n;   */
+multiline_comment|/*&n;     * The MPU-401 supports just a limited set of possible timebase values.&n;     * Since the applications require more choices, the driver has to&n;     * program the HW to do it&squot;s best and to convert between the HW and&n;     * actual timebases.&n;   */
 r_return
 (paren
 (paren
@@ -5244,7 +5274,9 @@ id|timer_open
 )paren
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 id|tmr_reset
 (paren
@@ -6032,7 +6064,9 @@ l_int|0
 multiline_comment|/* Can&squot;t change */
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 r_return
 id|snd_ioctl_return
@@ -6091,7 +6125,9 @@ suffix:semicolon
 )brace
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_static

@@ -493,10 +493,11 @@ r_return
 id|FW_BLOCK
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Too short.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Too short.&n;&t; *&n;&t; *&t;But only too short for a packet with ports...&n;&t; */
 r_else
 r_if
 c_cond
+(paren
 (paren
 id|ntohs
 c_func
@@ -510,6 +511,17 @@ op_plus
 id|ip-&gt;ihl
 op_lshift
 l_int|2
+)paren
+)paren
+op_logical_and
+(paren
+id|ip-&gt;protocol
+op_eq
+id|IPPROTO_TCP
+op_logical_or
+id|ip-&gt;protocol
+op_eq
+id|IPPROTO_UDP
 )paren
 )paren
 (brace

@@ -416,6 +416,7 @@ id|rt-&gt;rt_mtu
 op_assign
 id|new_mtu
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;FIXME::&n;&t;&t; *&t;Not the nicest of fixes: Lose a MTU update if the socket is&n;&t;&t; *&t;locked this instant. Not the right answer but will be best&n;&t;&t; *&t;for the production fix. Make 2.1 work right!&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -448,6 +449,9 @@ r_sizeof
 r_struct
 id|tcphdr
 )paren
+op_logical_and
+op_logical_neg
+id|sk-&gt;users
 )paren
 id|sk-&gt;mtu
 op_assign
@@ -1919,10 +1923,10 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * The following code can result in copy &lt;= if sk-&gt;mss is ever&n;&t;&t; * decreased.  It shouldn&squot;t be.  sk-&gt;mss is min(sk-&gt;mtu, sk-&gt;max_window).&n;&t;&t; * sk-&gt;mtu is constant once SYN processing is finished.  I.e. we&n;&t;&t; * had better not get here until we&squot;ve seen his SYN and at least one&n;&t;&t; * valid ack.  (The SYN sets sk-&gt;mtu and the ack sets sk-&gt;max_window.)&n;&t;&t; * But ESTABLISHED should guarantee that.  sk-&gt;max_window is by definition&n;&t;&t; * non-decreasing.  Note that any ioctl to set user_mss must be done&n;&t;&t; * before the exchange of SYN&squot;s.  If the initial ack from the other&n;&t;&t; * end has a window of 0, max_window and thus mss will both be 0.&n;&t;&t; */
-multiline_comment|/*&n;&t;&t; *&t;Now we need to check if we have a half built packet.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * The following code can result in copy &lt;= if sk-&gt;mss is ever&n;&t;&t;&t; * decreased.  It shouldn&squot;t be.  sk-&gt;mss is min(sk-&gt;mtu, sk-&gt;max_window).&n;&t;&t;&t; * sk-&gt;mtu is constant once SYN processing is finished.  I.e. we&n;&t;&t;&t; * had better not get here until we&squot;ve seen his SYN and at least one&n;&t;&t;&t; * valid ack.  (The SYN sets sk-&gt;mtu and the ack sets sk-&gt;max_window.)&n;&t;&t;&t; * But ESTABLISHED should guarantee that.  sk-&gt;max_window is by definition&n;&t;&t;&t; * non-decreasing.  Note that any ioctl to set user_mss must be done&n;&t;&t;&t; * before the exchange of SYN&squot;s.  If the initial ack from the other&n;&t;&t;&t; * end has a window of 0, max_window and thus mss will both be 0.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Now we need to check if we have a half built packet.&n;&t;&t;&t; */
 macro_line|#ifndef CONFIG_NO_PATH_MTU_DISCOVERY
-multiline_comment|/*&n;&t;&t; *&t;FIXME:  I&squot;m almost sure that this fragment is BUG,&n;&t;&t; *&t;&t;but it works... I do not know why 8) --ANK&n;&t;&t; *&n;&t;&t; *&t;Really, we should rebuild all the queues...&n;&t;&t; *&t;It&squot;s difficult. Temporary hack is to send all&n;&t;&t; *&t;queued segments with allowed fragmentation.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;FIXME:  I&squot;m almost sure that this fragment is BUG,&n;&t;&t;&t; *&t;&t;but it works... I do not know why 8) --ANK&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Really, we should rebuild all the queues...&n;&t;&t;&t; *&t;It&squot;s difficult. Temporary hack is to send all&n;&t;&t;&t; *&t;queued segments with allowed fragmentation.&n;&t;&t;&t; */
 (brace
 r_int
 id|new_mss
@@ -1956,6 +1960,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n;&t;&t;&t; *&t;If there is a partly filled frame we can fill&n;&t;&t;&t; *&t;out.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2014,6 +2019,7 @@ comma
 id|seglen
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Now we may find the frame is as big, or too&n;&t;&t;&t;&t;&t; *&t;big for our MSS. Thats all fine. It means the&n;&t;&t;&t;&t;&t; *&t;MSS shrank (from an ICMP) after we allocated &n;&t;&t;&t;&t;&t; *&t;this frame.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2022,18 +2028,20 @@ op_le
 l_int|0
 )paren
 (brace
-id|printk
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; *&t;Send the now forced complete frame out. &n;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t; *&t;Note for 2.1: The MSS reduce code ought to&n;&t;&t;&t;&t;&t;&t; *&t;flush any frames in partial that are now&n;&t;&t;&t;&t;&t;&t; *&t;full sized. Not serious, potential tiny&n;&t;&t;&t;&t;&t;&t; *&t;performance hit.&n;&t;&t;&t;&t;&t;&t; */
+id|tcp_send_skb
 c_func
 (paren
-id|KERN_CRIT
-l_string|&quot;TCP: **bug**: &bslash;&quot;copy&bslash;&quot; &lt;= 0&bslash;n&quot;
+id|sk
+comma
+id|skb
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EFAULT
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; *&t;Get a new buffer and try again.&n;&t;&t;&t;&t;&t;&t; */
+r_continue
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Otherwise continue to fill the buffer.&n;&t;&t;&t;&t;&t; */
 id|tcp_size
 op_add_assign
 id|copy
@@ -3332,23 +3340,22 @@ id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|skb
 op_assign
-id|skb_peek
-c_func
+id|sk-&gt;receive_queue.next
+suffix:semicolon
+r_while
+c_loop
 (paren
+id|skb
+op_ne
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 op_amp
 id|sk-&gt;receive_queue
 )paren
-suffix:semicolon
-r_do
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|skb
-)paren
-r_break
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3415,20 +3422,6 @@ op_assign
 id|skb-&gt;next
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|skb
-op_ne
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-op_amp
-id|sk-&gt;receive_queue
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1,6 +1,9 @@
 macro_line|#ifndef _LINUX_TIME_H
 DECL|macro|_LINUX_TIME_H
 mdefine_line|#define _LINUX_TIME_H
+macro_line|#ifndef _STRUCT_TIMESPEC
+DECL|macro|_STRUCT_TIMESPEC
+mdefine_line|#define _STRUCT_TIMESPEC
 DECL|struct|timespec
 r_struct
 id|timespec
@@ -17,6 +20,7 @@ suffix:semicolon
 multiline_comment|/* nanoseconds */
 )brace
 suffix:semicolon
+macro_line|#endif /* _STRUCT_TIMESPEC */
 DECL|struct|timeval
 r_struct
 id|timeval

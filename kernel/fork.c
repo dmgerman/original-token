@@ -53,11 +53,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -94,6 +89,10 @@ id|RLIMIT_NPROC
 dot
 id|rlim_cur
 suffix:semicolon
+id|max_tasks
+op_decrement
+suffix:semicolon
+multiline_comment|/* count the new process.. */
 r_if
 c_cond
 (paren
@@ -102,6 +101,11 @@ OL
 id|nr_tasks
 )paren
 (brace
+r_struct
+id|task_struct
+op_star
+id|p
+suffix:semicolon
 id|for_each_task
 (paren
 id|p

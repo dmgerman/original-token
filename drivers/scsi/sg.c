@@ -1045,10 +1045,6 @@ id|device-&gt;header.pack_len
 op_assign
 id|device-&gt;header.reply_len
 suffix:semicolon
-id|device-&gt;header.result
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1128,7 +1124,15 @@ suffix:semicolon
 r_else
 id|count
 op_assign
+id|device-&gt;header.result
+op_eq
 l_int|0
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|EIO
 suffix:semicolon
 multiline_comment|/*&n;     * Clean up, and release the device so that we can send another&n;     * command.&n;     */
 id|sg_free
@@ -1226,21 +1230,6 @@ id|SCpnt-&gt;sense_buffer
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|0
-)braket
-)paren
-(brace
-id|device-&gt;header.result
-op_assign
-id|EIO
-suffix:semicolon
-)brace
-r_else
 id|device-&gt;header.result
 op_assign
 id|SCpnt-&gt;result
@@ -2429,6 +2418,10 @@ id|SDp-&gt;attached
 op_decrement
 suffix:semicolon
 id|sg_template.nr_dev
+op_decrement
+suffix:semicolon
+multiline_comment|/* &n;             * avoid associated device /dev/sg? bying incremented &n;             * each time module is inserted/removed , &lt;dan@lectra.fr&gt;&n;             */
+id|sg_template.dev_noticed
 op_decrement
 suffix:semicolon
 r_return

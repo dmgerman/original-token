@@ -1127,6 +1127,10 @@ id|vma-&gt;vm_end
 op_minus
 id|address
 OG
+(paren
+r_int
+r_int
+)paren
 id|current-&gt;rlim
 (braket
 id|RLIMIT_STACK

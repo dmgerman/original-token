@@ -378,7 +378,7 @@ id|Scsi_Device
 suffix:semicolon
 multiline_comment|/*&n; *  Use these to separate status msg and our bytes&n; */
 DECL|macro|status_byte
-mdefine_line|#define status_byte(result) (((result) &gt;&gt; 1) &amp; 0xf)
+mdefine_line|#define status_byte(result) (((result) &gt;&gt; 1) &amp; 0x1f)
 DECL|macro|msg_byte
 mdefine_line|#define msg_byte(result)    (((result) &gt;&gt; 8) &amp; 0xff)
 DECL|macro|host_byte

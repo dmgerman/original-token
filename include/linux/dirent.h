@@ -1,7 +1,6 @@
 macro_line|#ifndef _LINUX_DIRENT_H
 DECL|macro|_LINUX_DIRENT_H
 mdefine_line|#define _LINUX_DIRENT_H
-macro_line|#include &lt;linux/limits.h&gt;
 DECL|struct|dirent
 r_struct
 id|dirent
@@ -23,11 +22,10 @@ DECL|member|d_name
 r_char
 id|d_name
 (braket
-id|NAME_MAX
-op_plus
-l_int|1
+l_int|256
 )braket
 suffix:semicolon
+multiline_comment|/* We must not include limits.h! */
 )brace
 suffix:semicolon
 macro_line|#endif

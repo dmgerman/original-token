@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        PCBIT-D interface with isdn4linux&n; */
+multiline_comment|/*&n; *&t;Fixes:&n; *&n; *&t;Nuno Grilo&t;&lt;l38486@alfa.ist.utl.pt&gt;&n; *      fixed msn_list NULL pointer dereference.&n; *&t;&t;&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -415,7 +416,7 @@ l_int|1
 suffix:semicolon
 id|dev-&gt;qdelivery.next
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|dev-&gt;qdelivery.sync
 op_assign
@@ -573,11 +574,15 @@ l_int|2
 suffix:semicolon
 id|dev_if-&gt;features
 op_assign
+(paren
 id|ISDN_FEATURE_P_EURO
 op_or
 id|ISDN_FEATURE_L3_TRANS
 op_or
 id|ISDN_FEATURE_L2_HDLC
+op_or
+id|ISDN_FEATURE_L2_TRANS
+)paren
 suffix:semicolon
 id|dev_if-&gt;writebuf_skb
 op_assign
@@ -4043,9 +4048,13 @@ r_struct
 id|msn_entry
 op_star
 id|ptr
-comma
+suffix:semicolon
+r_struct
+id|msn_entry
 op_star
 id|back
+op_assign
+l_int|NULL
 suffix:semicolon
 r_char
 op_star
@@ -4115,6 +4124,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dev-&gt;msn_list
+)paren
 r_for
 c_loop
 (paren

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets inplemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_CS4232)
@@ -77,22 +77,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|attach_cs4232_mpu
 id|attach_cs4232_mpu
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
 id|hw_config
 )paren
 (brace
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 DECL|variable|crystal_key
 r_static
@@ -279,7 +273,7 @@ id|n
 op_increment
 )paren
 (brace
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -309,7 +303,7 @@ suffix:semicolon
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -320,7 +314,7 @@ l_int|10
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -332,7 +326,7 @@ l_int|10
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -341,7 +335,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -356,7 +350,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -367,14 +361,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -509,7 +503,7 @@ multiline_comment|/* Activate logical dev 0 */
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -520,7 +514,7 @@ l_int|10
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -532,7 +526,7 @@ l_int|10
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -541,7 +535,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -556,7 +550,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -567,14 +561,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -649,7 +643,7 @@ suffix:semicolon
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -660,7 +654,7 @@ l_int|5
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -672,7 +666,7 @@ l_int|5
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -681,7 +675,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -696,7 +690,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -707,14 +701,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -741,7 +735,7 @@ suffix:semicolon
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -750,7 +744,7 @@ id|HZ
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -760,7 +754,7 @@ id|HZ
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -769,7 +763,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -784,7 +778,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -795,14 +789,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.mode
+id|cs_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -815,13 +809,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|attach_cs4232
 id|attach_cs4232
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -956,12 +947,8 @@ id|mpu_detected
 op_assign
 l_int|1
 suffix:semicolon
-id|mem_start
-op_assign
 id|attach_mpu401
 (paren
-id|mem_start
-comma
 op_amp
 id|hw_config2
 )paren
@@ -978,9 +965,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 r_void
 DECL|function|unload_cs4232

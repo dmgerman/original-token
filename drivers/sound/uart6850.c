@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/uart6850.c&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
@@ -396,7 +396,9 @@ l_string|&quot;Midi6850: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -609,7 +611,9 @@ id|arg
 (brace
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -684,13 +688,10 @@ comma
 id|uart6850_buffer_status
 )brace
 suffix:semicolon
-r_int
+r_void
 DECL|function|attach_uart6850
 id|attach_uart6850
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -720,7 +721,6 @@ l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|uart6850_base
@@ -742,8 +742,6 @@ op_logical_neg
 id|uart6850_detected
 )paren
 r_return
-op_minus
-id|EIO
 suffix:semicolon
 id|save_flags
 (paren
@@ -810,9 +808,6 @@ op_increment
 op_assign
 op_amp
 id|uart6850_operations
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_static

@@ -1,8 +1,11 @@
 multiline_comment|/*&n; *&t;dev_table.h&n; *&n; *&t;Global definitions for device call tables&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
+multiline_comment|/*&n; * Sound card numbers 27 to 999. (1 to 26 are defined in soundcard.h)&n; * Numbers 1000 to N are reserved for driver&squot;s internal use.&n; */
+DECL|macro|SNDCARD_DESKPROXL
+mdefine_line|#define SNDCARD_DESKPROXL&t;&t;27&t;/* Compaq Deskpro XL */
 multiline_comment|/*&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; *&n; *&t;If you modify this file, please check the dev_table.c also.&n; *&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; */
 r_extern
 r_int
@@ -21,7 +24,7 @@ DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver specific. Usually 0 */
+multiline_comment|/* Driver spesific. Usually 0 */
 DECL|member|card_type
 r_int
 id|card_type
@@ -33,15 +36,12 @@ op_star
 id|name
 suffix:semicolon
 DECL|member|attach
-r_int
+r_void
 (paren
 op_star
 id|attach
 )paren
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -345,42 +345,10 @@ DECL|typedef|coproc_operations
 )brace
 id|coproc_operations
 suffix:semicolon
-DECL|struct|audio_operations
+DECL|struct|audio_driver
 r_struct
-id|audio_operations
+id|audio_driver
 (brace
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|32
-)braket
-suffix:semicolon
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-DECL|macro|NOTHING_SPECIAL
-mdefine_line|#define NOTHING_SPECIAL &t;0
-DECL|macro|NEEDS_RESTART
-mdefine_line|#define NEEDS_RESTART&t;&t;1
-DECL|macro|DMA_AUTOMODE
-mdefine_line|#define DMA_AUTOMODE&t;&t;2
-DECL|macro|DMA_DUPLEX
-mdefine_line|#define DMA_DUPLEX&t;&t;4
-DECL|macro|DMA_PSEUDO_AUTOMODE
-mdefine_line|#define DMA_PSEUDO_AUTOMODE&t;8
-DECL|member|format_mask
-r_int
-id|format_mask
-suffix:semicolon
-multiline_comment|/* Bitmask for supported audio formats */
-DECL|member|devc
-r_void
-op_star
-id|devc
-suffix:semicolon
-multiline_comment|/* Driver specific info */
 DECL|member|open
 r_int
 (paren
@@ -607,6 +575,96 @@ r_int
 id|bits
 )paren
 suffix:semicolon
+DECL|member|set_speed
+r_int
+(paren
+op_star
+id|set_speed
+)paren
+(paren
+r_int
+id|dev
+comma
+r_int
+id|speed
+)paren
+suffix:semicolon
+DECL|member|set_bits
+r_int
+r_int
+(paren
+op_star
+id|set_bits
+)paren
+(paren
+r_int
+id|dev
+comma
+r_int
+r_int
+id|bits
+)paren
+suffix:semicolon
+DECL|member|set_channels
+r_int
+(paren
+op_star
+id|set_channels
+)paren
+(paren
+r_int
+id|dev
+comma
+r_int
+id|channels
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|audio_operations
+r_struct
+id|audio_operations
+(brace
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|macro|NOTHING_SPECIAL
+mdefine_line|#define NOTHING_SPECIAL &t;0x00
+DECL|macro|NEEDS_RESTART
+mdefine_line|#define NEEDS_RESTART&t;&t;0x01
+DECL|macro|DMA_AUTOMODE
+mdefine_line|#define DMA_AUTOMODE&t;&t;0x02
+DECL|macro|DMA_DUPLEX
+mdefine_line|#define DMA_DUPLEX&t;&t;0x04
+DECL|macro|DMA_PSEUDO_AUTOMODE
+mdefine_line|#define DMA_PSEUDO_AUTOMODE&t;0x08
+DECL|macro|DMA_HARDSTOP
+mdefine_line|#define DMA_HARDSTOP&t;&t;0x10
+DECL|member|format_mask
+r_int
+id|format_mask
+suffix:semicolon
+multiline_comment|/* Bitmask for supported audio formats */
+DECL|member|devc
+r_void
+op_star
+id|devc
+suffix:semicolon
+multiline_comment|/* Driver specific info */
+DECL|member|d
+r_struct
+id|audio_driver
+op_star
+id|d
+suffix:semicolon
 DECL|member|buffsize
 r_int
 id|buffsize
@@ -650,12 +708,24 @@ DECL|member|go
 r_int
 id|go
 suffix:semicolon
+DECL|member|min_fragment
+r_int
+id|min_fragment
+suffix:semicolon
+multiline_comment|/* 0 == unlimited */
 )brace
 suffix:semicolon
 DECL|struct|mixer_operations
 r_struct
 id|mixer_operations
 (brace
+DECL|member|id
+r_char
+id|id
+(braket
+l_int|16
+)braket
+suffix:semicolon
 DECL|member|name
 r_char
 id|name
@@ -680,6 +750,11 @@ comma
 id|caddr_t
 id|arg
 )paren
+suffix:semicolon
+DECL|member|devc
+r_void
+op_star
+id|devc
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1262,6 +1337,11 @@ id|coproc_operations
 op_star
 id|coproc
 suffix:semicolon
+DECL|member|devc
+r_void
+op_star
+id|devc
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|sound_lowlev_timer
@@ -1555,7 +1635,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_PSS
 (brace
-l_string|&quot;PSSECHO&quot;
+l_string|&quot;PSS&quot;
 comma
 l_int|0
 comma
@@ -1629,6 +1709,23 @@ comma
 id|SNDCARD_PSEUDO_MSS
 comma
 l_string|&quot;MS Sound System (AXP)&quot;
+comma
+id|attach_ms_sound
+comma
+id|probe_ms_sound
+comma
+id|unload_ms_sound
+)brace
+comma
+multiline_comment|/* Compaq Deskpro XL */
+(brace
+l_string|&quot;DESKPROXL&quot;
+comma
+l_int|2
+comma
+id|SNDCARD_DESKPROXL
+comma
+l_string|&quot;Compaq Deskpro XL&quot;
 comma
 id|attach_ms_sound
 comma
@@ -1813,39 +1910,21 @@ comma
 id|unload_sb
 )brace
 comma
-macro_line|#ifdef CONFIG_AUDIO
-(brace
-l_string|&quot;SBX&quot;
-comma
-l_int|0
-comma
-id|SNDCARD_SB16
-comma
-l_string|&quot;SoundBlaster 16bit&quot;
-comma
-id|sb16_dsp_init
-comma
-id|sb16_dsp_detect
-comma
-id|unload_sb16
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_MIDI
 (brace
-l_string|&quot;SBMPU&quot;
+l_string|&quot;UART401&quot;
 comma
 l_int|0
 comma
-id|SNDCARD_SB16MIDI
+id|SNDCARD_UART401
 comma
-l_string|&quot;SB MPU&quot;
+l_string|&quot;MPU-401 UART&quot;
 comma
-id|attach_sb16midi
+id|attach_uart401
 comma
-id|probe_sb16midi
+id|probe_uart401
 comma
-id|unload_sb16midi
+id|unload_uart401
 )brace
 comma
 macro_line|#endif
@@ -1983,24 +2062,6 @@ comma
 id|probe_trix_mpu
 comma
 id|unload_trix_mpu
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_SPNP
-(brace
-l_string|&quot;AD1848&quot;
-comma
-l_int|0
-comma
-l_int|500
-comma
-l_string|&quot;SoundPort&quot;
-comma
-id|attach_pnp_ad1848
-comma
-id|probe_pnp_ad1848
-comma
-id|unload_pnp_ad1848
 )brace
 comma
 macro_line|#endif
@@ -2205,7 +2266,7 @@ id|SSCAPE_MSS_BASE
 comma
 id|SSCAPE_MSS_IRQ
 comma
-id|SSCAPE_MSS_DMA
+id|SSCAPE_DMA
 comma
 op_minus
 l_int|1
@@ -2298,6 +2359,25 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MSS
+macro_line|#&t;ifdef DESKPROXL
+(brace
+id|SNDCARD_DESKPROXL
+comma
+(brace
+id|MSS_BASE
+comma
+id|MSS_IRQ
+comma
+id|MSS_DMA
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#&t;else
 (brace
 id|SNDCARD_MSS
 comma
@@ -2315,6 +2395,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
+macro_line|#&t;endif
 macro_line|#&t;ifdef MSS2_BASE
 (brace
 id|SNDCARD_MSS
@@ -2379,6 +2460,24 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
+macro_line|# &t;ifdef SB2_BASE
+(brace
+id|SNDCARD_SB
+comma
+(brace
+id|SB2_BASE
+comma
+id|SB2_IRQ
+comma
+id|SB2_DMA
+comma
+id|SB2_DMA2
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#&t;endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_MAUI) 
 (brace
@@ -2783,12 +2882,12 @@ r_extern
 r_int
 id|trace_init
 suffix:semicolon
-r_int
+macro_line|#endif&t;/* _DEV_TABLE_C_ */
+r_void
 id|sndtable_init
 c_func
 (paren
-r_int
-id|mem_start
+r_void
 )paren
 suffix:semicolon
 r_int
@@ -2897,7 +2996,7 @@ id|dmap
 suffix:semicolon
 r_extern
 r_int
-id|sound_map_buffer
+id|soud_map_buffer
 (paren
 r_int
 id|dev
@@ -2936,6 +3035,18 @@ id|hw_config
 suffix:semicolon
 r_int
 id|sndtable_init_card
+(paren
+r_int
+id|unit
+comma
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_int
+id|sndtable_start_card
 (paren
 r_int
 id|unit
@@ -3002,6 +3113,70 @@ r_int
 id|chan
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* _DEV_TABLE_C_ */
+DECL|macro|AUDIO_DRIVER_VERSION
+mdefine_line|#define AUDIO_DRIVER_VERSION&t;1
+DECL|macro|MIXER_DRIVER_VERSION
+mdefine_line|#define MIXER_DRIVER_VERSION&t;1
+r_int
+id|sound_install_audiodrv
+c_func
+(paren
+r_int
+id|vers
+comma
+r_char
+op_star
+id|name
+comma
+r_struct
+id|audio_driver
+op_star
+id|driver
+comma
+r_int
+id|driver_size
+comma
+r_int
+id|flags
+comma
+r_int
+r_int
+id|format_mask
+comma
+r_void
+op_star
+id|devc
+comma
+r_int
+id|dma1
+comma
+r_int
+id|dma2
+)paren
+suffix:semicolon
+r_int
+id|sound_install_mixer
+c_func
+(paren
+r_int
+id|vers
+comma
+r_char
+op_star
+id|name
+comma
+r_struct
+id|mixer_operations
+op_star
+id|driver
+comma
+r_int
+id|driver_size
+comma
+r_void
+op_star
+id|devc
+)paren
+suffix:semicolon
 macro_line|#endif&t;/* _DEV_TABLE_H_ */
 eof

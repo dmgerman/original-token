@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_common.c,v 1.18 1996/06/06 14:51:51 fritz Exp $&n; *&n; * Linux ISDN subsystem, common used functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_common.c,v $&n; * Revision 1.18  1996/06/06 14:51:51  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; *&n; * Revision 1.17  1996/06/05 02:24:10  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.16  1996/06/03 20:09:05  fritz&n; * Bugfix: called wrong function pointer for locking in&n; *         isdn_get_free_channel().&n; *&n; * Revision 1.15  1996/05/31 01:10:54  fritz&n; * Bugfixes:&n; *   Lowlevel modules did not get locked correctly.&n; *   Did show wrong revision when initializing.&n; *   Minor fixes in ioctl code.&n; *   sk_buff did not get freed, if error in writebuf_stub.&n; *&n; * Revision 1.14  1996/05/18 01:36:55  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.13  1996/05/17 15:43:30  fritz&n; * Bugfix: decrement of rcvcount in readbchan() corrected.&n; *&n; * Revision 1.12  1996/05/17 03:55:43  fritz&n; * Changed DLE handling for audio receive.&n; * Some cleanup.&n; * Added display of isdn_audio_revision.&n; *&n; * Revision 1.11  1996/05/11 21:51:32  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.10  1996/05/10 08:49:16  fritz&n; * Checkin before major changes of tty-code.&n; *&n; * Revision 1.9  1996/05/07 09:19:41  fritz&n; * Adapted to changes in isdn_tty.c&n; *&n; * Revision 1.8  1996/05/06 11:34:51  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/05/02 03:55:17  fritz&n; * Bugfixes:&n; *  - B-channel connect message for modem devices&n; *    sometimes did not result in a CONNECT-message.&n; *  - register_isdn did not check for driverId-conflicts.&n; *&n; * Revision 1.6  1996/04/30 20:57:21  fritz&n; * Commit test&n; *&n; * Revision 1.5  1996/04/20 16:19:07  fritz&n; * Changed slow timer handlers to increase accuracy.&n; * Added statistic information for usage by xisdnload.&n; * Fixed behaviour of isdnctrl-device on non-blocked io.&n; * Fixed all io to go through generic writebuf-function without&n; * bypassing. Same for incoming data.&n; * Fixed bug: Last channel had been unusable.&n; * Fixed kfree of tty xmit_buf on ppp initialization failure.&n; *&n; * Revision 1.4  1996/02/11 02:33:26  fritz&n; * Fixed bug in main timer-dispatcher.&n; * Bugfix: Lot of tty-callbacks got called regardless of the events already&n; * been handled by network-devices.&n; * Changed ioctl-names.&n; *&n; * Revision 1.3  1996/01/22 05:16:11  fritz&n; * Changed ioctl-names.&n; * Fixed bugs in isdn_open and isdn_close regarding PPP_MINOR.&n; *&n; * Revision 1.2  1996/01/21 16:52:40  fritz&n; * Support for sk_buffs added, changed header-stuffing.&n; *&n; * Revision 1.1  1996/01/09 04:12:52  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_common.c,v 1.23 1996/06/25 18:35:38 fritz Exp $&n; *&n; * Linux ISDN subsystem, common used functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_common.c,v $&n; * Revision 1.23  1996/06/25 18:35:38  fritz&n; * Fixed bogus memory access in isdn_set_allcfg().&n; *&n; * Revision 1.22  1996/06/24 17:37:37  fritz&n; * Bugfix: isdn_timer_ctrl() did restart timer, even if it&n; *         was already running.&n; *         lowlevel driver locking did use wrong parameters.&n; *&n; * Revision 1.21  1996/06/15 14:58:20  fritz&n; * Added version signatures for data structures used&n; * by userlevel programs.&n; *&n; * Revision 1.20  1996/06/12 16:01:49  fritz&n; * Bugfix: Remote B-channel hangup sometimes did not result&n; *         in a NO CARRIER on tty.&n; *&n; * Revision 1.19  1996/06/11 14:52:04  hipp&n; * minor bugfix in isdn_writebuf_skb_stub()&n; *&n; * Revision 1.18  1996/06/06 14:51:51  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; *&n; * Revision 1.17  1996/06/05 02:24:10  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.16  1996/06/03 20:09:05  fritz&n; * Bugfix: called wrong function pointer for locking in&n; *         isdn_get_free_channel().&n; *&n; * Revision 1.15  1996/05/31 01:10:54  fritz&n; * Bugfixes:&n; *   Lowlevel modules did not get locked correctly.&n; *   Did show wrong revision when initializing.&n; *   Minor fixes in ioctl code.&n; *   sk_buff did not get freed, if error in writebuf_stub.&n; *&n; * Revision 1.14  1996/05/18 01:36:55  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.13  1996/05/17 15:43:30  fritz&n; * Bugfix: decrement of rcvcount in readbchan() corrected.&n; *&n; * Revision 1.12  1996/05/17 03:55:43  fritz&n; * Changed DLE handling for audio receive.&n; * Some cleanup.&n; * Added display of isdn_audio_revision.&n; *&n; * Revision 1.11  1996/05/11 21:51:32  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.10  1996/05/10 08:49:16  fritz&n; * Checkin before major changes of tty-code.&n; *&n; * Revision 1.9  1996/05/07 09:19:41  fritz&n; * Adapted to changes in isdn_tty.c&n; *&n; * Revision 1.8  1996/05/06 11:34:51  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/05/02 03:55:17  fritz&n; * Bugfixes:&n; *  - B-channel connect message for modem devices&n; *    sometimes did not result in a CONNECT-message.&n; *  - register_isdn did not check for driverId-conflicts.&n; *&n; * Revision 1.6  1996/04/30 20:57:21  fritz&n; * Commit test&n; *&n; * Revision 1.5  1996/04/20 16:19:07  fritz&n; * Changed slow timer handlers to increase accuracy.&n; * Added statistic information for usage by xisdnload.&n; * Fixed behaviour of isdnctrl-device on non-blocked io.&n; * Fixed all io to go through generic writebuf-function without&n; * bypassing. Same for incoming data.&n; * Fixed bug: Last channel had been unusable.&n; * Fixed kfree of tty xmit_buf on ppp initialization failure.&n; *&n; * Revision 1.4  1996/02/11 02:33:26  fritz&n; * Fixed bug in main timer-dispatcher.&n; * Bugfix: Lot of tty-callbacks got called regardless of the events already&n; * been handled by network-devices.&n; * Changed ioctl-names.&n; *&n; * Revision 1.3  1996/01/22 05:16:11  fritz&n; * Changed ioctl-names.&n; * Fixed bugs in isdn_open and isdn_close regarding PPP_MINOR.&n; *&n; * Revision 1.2  1996/01/21 16:52:40  fritz&n; * Support for sk_buffs added, changed header-stuffing.&n; *&n; * Revision 1.1  1996/01/09 04:12:52  fritz&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -16,6 +16,8 @@ macro_line|#include &quot;isdn_cards.h&quot;
 multiline_comment|/* Debugflags */
 DECL|macro|ISDN_DEBUG_STATCALLB
 macro_line|#undef  ISDN_DEBUG_STATCALLB
+DECL|macro|NEW_ISDN_TIMER_CTRL
+mdefine_line|#define NEW_ISDN_TIMER_CTRL
 DECL|variable|dev
 id|isdn_dev
 op_star
@@ -40,7 +42,7 @@ r_char
 op_star
 id|isdn_revision
 op_assign
-l_string|&quot;$Revision: 1.18 $&quot;
+l_string|&quot;$Revision: 1.23 $&quot;
 suffix:semicolon
 r_extern
 r_char
@@ -522,10 +524,12 @@ op_amp
 id|dev-&gt;timer
 )paren
 suffix:semicolon
+macro_line|#ifndef NEW_ISDN_TIMER_CTRL
 id|dev-&gt;timer.function
 op_assign
 id|isdn_timer_funct
 suffix:semicolon
+macro_line|#endif
 id|dev-&gt;timer.expires
 op_assign
 id|jiffies
@@ -617,6 +621,40 @@ op_and_assign
 op_complement
 id|tf
 suffix:semicolon
+macro_line|#ifdef NEW_ISDN_TIMER_CTRL
+r_if
+c_cond
+(paren
+id|dev-&gt;tflags
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|del_timer
+c_func
+(paren
+op_amp
+id|dev-&gt;timer
+)paren
+)paren
+multiline_comment|/* del_timer is 1, when active */
+id|dev-&gt;timer.expires
+op_assign
+id|jiffies
+op_plus
+id|ISDN_TIMER_RES
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|dev-&gt;timer
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -648,6 +686,7 @@ id|dev-&gt;timer
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -745,6 +784,10 @@ id|skb
 r_return
 suffix:semicolon
 multiline_comment|/* No network-device found, deliver to tty or raw-channel */
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2392,19 +2435,12 @@ id|ISDN_ASYNC_CALLOUT_ACTIVE
 )paren
 )paren
 (brace
-id|info-&gt;msr
-op_and_assign
-op_complement
-(paren
-id|UART_MSR_DCD
-op_or
-id|UART_MSR_RI
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|info-&gt;online
+id|info-&gt;msr
+op_amp
+id|UART_MSR_DCD
 )paren
 id|isdn_tty_modem_result
 c_func
@@ -2412,6 +2448,15 @@ c_func
 l_int|3
 comma
 id|info
+)paren
+suffix:semicolon
+id|info-&gt;msr
+op_and_assign
+op_complement
+(paren
+id|UART_MSR_DCD
+op_or
+id|UART_MSR_RI
 )paren
 suffix:semicolon
 macro_line|#ifdef ISDN_DEBUG_MODEM_HUP
@@ -3476,6 +3521,8 @@ id|minor
 )paren
 suffix:semicolon
 )brace
+DECL|macro|INF_DV
+mdefine_line|#define INF_DV 0x01 /* Data version for /dev/isdninfo */
 r_static
 r_char
 op_star
@@ -4945,7 +4992,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|memcpy_fromfs
 c_func
 (paren
 (paren
@@ -4961,6 +5008,13 @@ r_sizeof
 (paren
 r_int
 )paren
+)paren
+suffix:semicolon
+id|src
+op_add_assign
+r_sizeof
+(paren
+r_int
 )paren
 suffix:semicolon
 r_while
@@ -5833,6 +5887,24 @@ c_cond
 id|cmd
 )paren
 (brace
+r_case
+id|IIOCGETDVR
+suffix:colon
+r_return
+id|TTY_DV
+op_plus
+(paren
+id|NET_DV
+op_lshift
+l_int|8
+)paren
+op_plus
+(paren
+id|INF_DV
+op_lshift
+l_int|16
+)paren
+suffix:semicolon
 r_case
 id|IIOCGETCPS
 suffix:colon
@@ -9336,7 +9408,7 @@ c_func
 suffix:semicolon
 id|cmd.driver
 op_assign
-id|i
+id|d
 suffix:semicolon
 id|cmd.arg
 op_assign
@@ -9415,7 +9487,7 @@ c_func
 suffix:semicolon
 id|cmd.driver
 op_assign
-id|i
+id|d
 suffix:semicolon
 id|cmd.arg
 op_assign
@@ -10061,6 +10133,12 @@ id|skb
 r_int
 id|ret
 suffix:semicolon
+r_int
+id|len
+op_assign
+id|skb-&gt;len
+suffix:semicolon
+multiline_comment|/* skb pointer no longer valid after free */
 r_if
 c_cond
 (paren
@@ -10120,7 +10198,7 @@ l_int|0
 )paren
 )paren
 op_eq
-id|skb-&gt;len
+id|len
 )paren
 id|dev_kfree_skb
 c_func
@@ -10149,7 +10227,7 @@ id|chan
 )paren
 )braket
 op_add_assign
-id|skb-&gt;len
+id|len
 suffix:semicolon
 r_return
 id|ret
@@ -11165,6 +11243,19 @@ id|isdn_dev
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef NEW_ISDN_TIMER_CTRL
+id|init_timer
+c_func
+(paren
+op_amp
+id|dev-&gt;timer
+)paren
+suffix:semicolon
+id|dev-&gt;timer.function
+op_assign
+id|isdn_timer_funct
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren

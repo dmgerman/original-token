@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/midi_synth.c&n; *&n; * High level midi sequencer manager for dumb MIDI interfaces.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -982,7 +982,6 @@ id|SNDCTL_SYNTH_INFO
 suffix:colon
 id|memcpy_tofs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -994,7 +993,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 id|synth_devs
 (braket
@@ -1027,7 +1025,9 @@ r_default
 suffix:colon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -1659,7 +1659,9 @@ id|num_midis
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|midi2synth
 (braket
@@ -1754,7 +1756,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-id|sysex_sleep_flag.mode
+id|sysex_sleep_flag.flags
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1936,7 +1938,9 @@ id|format
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -1954,7 +1958,9 @@ l_string|&quot;MIDI Error: Patch header too short&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|count
@@ -1979,13 +1985,11 @@ id|offs
 comma
 op_amp
 (paren
-(paren
 id|addr
 )paren
 (braket
 id|offs
 )braket
-)paren
 comma
 id|hdr_size
 op_minus
@@ -2025,7 +2029,7 @@ id|src_offs
 op_assign
 l_int|0
 suffix:semicolon
-id|sysex_sleep_flag.mode
+id|sysex_sleep_flag.flags
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -2119,7 +2123,9 @@ l_string|&quot;Error: Sysex start missing&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2155,7 +2161,7 @@ id|current_got_fatal_signal
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -2164,7 +2170,7 @@ l_int|1
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -2174,7 +2180,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -2183,7 +2189,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|sysex_sleep_flag.mode
+id|sysex_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -2198,7 +2204,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sysex_sleep_flag.mode
+id|sysex_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -2209,14 +2215,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|sysex_sleep_flag.mode
+id|sysex_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|sysex_sleep_flag.mode
+id|sysex_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -2577,7 +2583,9 @@ id|rec
 (brace
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_void
@@ -2921,7 +2929,7 @@ id|i
 )paren
 )paren
 (brace
-multiline_comment|/*&n; * Hardware level buffer is full. Abort the sysex message.&n; */
+multiline_comment|/*&n; * Hardware leve buffer is full. Abort the sysex message.&n; */
 r_int
 id|timeout
 op_assign

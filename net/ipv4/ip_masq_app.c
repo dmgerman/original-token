@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_APP application masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_app.c  0.03      03/96&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;JJC&t;&t;: Implemented also input pkt hook&n; *&n; *&n; * FIXME:&n; *&t;- ip_masq_skb_replace(): use same skb if space available.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_APP application masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_app.c  0.04      96/06/17&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;JJC&t;&t;&t;: Implemented also input pkt hook&n; *&t;Miquel van Smoorenburg&t;: Copy more stuff when resizing skb&n; *&n; *&n; * FIXME:&n; *&t;- ip_masq_skb_replace(): use same skb if space available.&n; *&t;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1686,6 +1686,9 @@ id|sk_buff
 op_star
 id|n_skb
 suffix:semicolon
+r_int
+id|offset
+suffix:semicolon
 id|maxsize
 op_assign
 id|skb-&gt;truesize
@@ -1780,7 +1783,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;                 * &t;Sizes differ, make a copy&n;                 */
+multiline_comment|/*&n;                 * &t;Sizes differ, make a copy.&n;                 *&n;                 *&t;FIXME: move this to core/sbuff.c:skb_grow()&n;                 */
 id|n_skb
 op_assign
 id|alloc_skb
@@ -1841,15 +1844,63 @@ op_plus
 id|diff
 )paren
 suffix:semicolon
-id|n_skb-&gt;h.raw
+multiline_comment|/*&n;                 *&t;Copy as much data from the old skb as possible. Even&n;                 *&t;though we&squot;re only forwarding packets, we need stuff&n;                 *&t;like skb-&gt;protocol (PPP driver wants it).&n;                 */
+id|offset
 op_assign
 id|n_skb-&gt;data
-op_plus
-(paren
-id|skb-&gt;h.raw
 op_minus
 id|skb-&gt;data
+suffix:semicolon
+id|n_skb-&gt;h.raw
+op_assign
+id|skb-&gt;h.raw
+op_plus
+id|offset
+suffix:semicolon
+id|n_skb-&gt;when
+op_assign
+id|skb-&gt;when
+suffix:semicolon
+id|n_skb-&gt;dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+id|n_skb-&gt;mac.raw
+op_assign
+id|skb-&gt;mac.raw
+op_plus
+id|offset
+suffix:semicolon
+id|n_skb-&gt;ip_hdr
+op_assign
+(paren
+r_struct
+id|iphdr
+op_star
 )paren
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|skb-&gt;ip_hdr
+)paren
+op_plus
+id|offset
+)paren
+suffix:semicolon
+id|n_skb-&gt;pkt_type
+op_assign
+id|skb-&gt;pkt_type
+suffix:semicolon
+id|n_skb-&gt;protocol
+op_assign
+id|skb-&gt;protocol
+suffix:semicolon
+id|n_skb-&gt;ip_summed
+op_assign
+id|skb-&gt;ip_summed
 suffix:semicolon
 multiline_comment|/*&n;                 * Copy pkt in new buffer&n;                 */
 id|memcpy

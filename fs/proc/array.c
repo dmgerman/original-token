@@ -3919,10 +3919,17 @@ mdefine_line|#define MAPS_LINE_LENGTH&t;1024
 DECL|macro|MAPS_LINE_SHIFT
 mdefine_line|#define MAPS_LINE_SHIFT&t;&t;10
 multiline_comment|/*&n; * f_pos = (number of the vma in the task-&gt;mm-&gt;mmap list) * MAPS_LINE_LENGTH&n; *         + (index into the line)&n; */
+macro_line|#ifdef __alpha__
+DECL|macro|MAPS_LINE_FORMAT
+mdefine_line|#define MAPS_LINE_FORMAT&t;  &quot;%016lx-%016lx %s %016lx %s %lu&bslash;n&quot;
+DECL|macro|MAPS_LINE_MAX
+mdefine_line|#define MAPS_LINE_MAX&t;73 /* sum of 16  1  16  1 4 1 16 1 5 1 10 1 */
+macro_line|#else
 DECL|macro|MAPS_LINE_FORMAT
 mdefine_line|#define MAPS_LINE_FORMAT&t;  &quot;%08lx-%08lx %s %08lx %s %lu&bslash;n&quot;
 DECL|macro|MAPS_LINE_MAX
 mdefine_line|#define MAPS_LINE_MAX&t;49 /* sum of 8  1  8  1 4 1 8 1 5 1 10 1 */
+macro_line|#endif
 DECL|function|read_maps
 r_static
 r_int

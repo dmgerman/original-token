@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_mixer.h&n; * &n; * Definitions for the SB Pro and SB16 mixers&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added defines for the Sound Galaxy NX Pro mixer.&n; * &n; */
 DECL|macro|SBPRO_RECORDING_DEVICES
 mdefine_line|#define SBPRO_RECORDING_DEVICES&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | SOUND_MASK_CD)
@@ -77,51 +77,6 @@ DECL|macro|LEFT_CHN
 mdefine_line|#define LEFT_CHN&t;0
 DECL|macro|RIGHT_CHN
 mdefine_line|#define RIGHT_CHN&t;1
-DECL|struct|mixer_def
-r_struct
-id|mixer_def
-(brace
-DECL|member|regno
-r_int
-r_int
-id|regno
-suffix:colon
-l_int|8
-suffix:semicolon
-DECL|member|bitoffs
-r_int
-r_int
-id|bitoffs
-suffix:colon
-l_int|4
-suffix:semicolon
-DECL|member|nbits
-r_int
-r_int
-id|nbits
-suffix:colon
-l_int|4
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|typedef|mixer_tab
-r_typedef
-r_struct
-id|mixer_def
-id|mixer_tab
-(braket
-l_int|32
-)braket
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|typedef|mixer_ent
-r_typedef
-r_struct
-id|mixer_def
-id|mixer_ent
-suffix:semicolon
 DECL|macro|MIX_ENT
 mdefine_line|#define MIX_ENT(name, reg_l, bit_l, len_l, reg_r, bit_r, len_r)&t;&bslash;&n;&t;{{reg_l, bit_l, len_l}, {reg_r, bit_r, len_r}}
 macro_line|#ifdef __SB_MIXER_C__
@@ -1179,11 +1134,11 @@ l_int|2
 )brace
 suffix:semicolon
 macro_line|#ifdef SM_GAMES       /* Master volume is lower and PCM &amp; FM volumes&n;&t;&t;&t;     higher than with SB Pro. This improves the&n;&t;&t;&t;     sound quality */
-DECL|variable|levels
+DECL|variable|default_levels
 r_static
 r_int
 r_int
-id|levels
+id|default_levels
 (braket
 id|SOUND_MIXER_NRDEVICES
 )braket
@@ -1242,11 +1197,11 @@ multiline_comment|/* Line3 */
 )brace
 suffix:semicolon
 macro_line|#else  /* If the user selected just plain SB Pro */
-DECL|variable|levels
+DECL|variable|default_levels
 r_static
 r_int
 r_int
-id|levels
+id|default_levels
 (braket
 id|SOUND_MIXER_NRDEVICES
 )braket
@@ -1411,12 +1366,73 @@ l_int|0x00
 multiline_comment|/* SOUND_MIXER_OGAIN&t;*/
 )brace
 suffix:semicolon
+DECL|variable|smw_mix_regs
+r_static
+r_char
+id|smw_mix_regs
+(braket
+)braket
+op_assign
+multiline_comment|/* Left mixer registers */
+(brace
+l_int|0x0b
+comma
+multiline_comment|/* SOUND_MIXER_VOLUME */
+l_int|0x0d
+comma
+multiline_comment|/* SOUND_MIXER_BASS */
+l_int|0x0d
+comma
+multiline_comment|/* SOUND_MIXER_TREBLE */
+l_int|0x05
+comma
+multiline_comment|/* SOUND_MIXER_SYNTH */
+l_int|0x09
+comma
+multiline_comment|/* SOUND_MIXER_PCM */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_SPEAKER */
+l_int|0x03
+comma
+multiline_comment|/* SOUND_MIXER_LINE */
+l_int|0x01
+comma
+multiline_comment|/* SOUND_MIXER_MIC */
+l_int|0x07
+comma
+multiline_comment|/* SOUND_MIXER_CD */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_IMIX */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_ALTPCM */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_RECLEV */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_IGAIN */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_OGAIN */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_LINE1 */
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_LINE2 */
+l_int|0x00
+multiline_comment|/* SOUND_MIXER_LINE3 */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *&t;Recording sources (SB Pro)&n; */
-DECL|macro|SRC_MIC
-mdefine_line|#define SRC_MIC         1&t;/* Select Microphone recording source */
-DECL|macro|SRC_CD
-mdefine_line|#define SRC_CD          3&t;/* Select CD recording source */
-DECL|macro|SRC_LINE
-mdefine_line|#define SRC_LINE        7&t;/* Use Line-in for recording source */
+DECL|macro|SRC__MIC
+mdefine_line|#define SRC__MIC         1&t;/* Select Microphone recording source */
+DECL|macro|SRC__CD
+mdefine_line|#define SRC__CD          3&t;/* Select CD recording source */
+DECL|macro|SRC__LINE
+mdefine_line|#define SRC__LINE        7&t;/* Use Line-in for recording source */
 macro_line|#endif
 eof

@@ -910,7 +910,7 @@ id|MAX_NR_CONSOLES
 )paren
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 r_if
 c_cond

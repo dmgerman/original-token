@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sequencer.c&n; *&n; * The sequencer personality manager.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
@@ -53,7 +53,7 @@ id|max_synthdev
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilities)&n; */
+multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilites)&n; */
 DECL|macro|SEQ_1
 mdefine_line|#define SEQ_1&t;1
 DECL|macro|SEQ_2
@@ -397,13 +397,15 @@ id|flags
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EAGAIN
+)paren
 suffix:semicolon
 )brace
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -412,7 +414,7 @@ id|pre_event_timeout
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -422,7 +424,7 @@ id|pre_event_timeout
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -431,7 +433,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -446,7 +448,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -457,14 +459,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -502,13 +504,11 @@ id|memcpy_tofs
 (paren
 op_amp
 (paren
-(paren
 id|buf
 )paren
 (braket
 id|p
 )braket
-)paren
 comma
 (paren
 r_char
@@ -672,14 +672,14 @@ r_if
 c_cond
 (paren
 (paren
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 (brace
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -1001,7 +1001,9 @@ id|OPEN_READ
 )paren
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1044,13 +1046,11 @@ id|event_rec
 comma
 op_amp
 (paren
-(paren
 id|buf
 )paren
 (braket
 id|p
 )braket
-)paren
 comma
 l_int|4
 )paren
@@ -1100,7 +1100,9 @@ id|max_synthdev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1118,7 +1120,9 @@ id|dev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|err
 op_assign
@@ -1196,7 +1200,9 @@ id|ev_code
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|ev_size
@@ -1241,7 +1247,6 @@ l_int|4
 comma
 op_amp
 (paren
-(paren
 id|buf
 )paren
 (braket
@@ -1249,7 +1254,6 @@ id|p
 op_plus
 l_int|4
 )braket
-)paren
 comma
 l_int|4
 )paren
@@ -1272,7 +1276,9 @@ l_string|&quot;Sequencer: 4 byte event in level 2 mode&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|ev_size
@@ -1332,7 +1338,9 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 id|mode
@@ -1452,7 +1460,9 @@ l_int|0
 )paren
 r_return
 op_minus
+(paren
 id|EAGAIN
+)paren
 suffix:semicolon
 r_else
 r_return
@@ -1528,14 +1538,14 @@ id|SEQ_MAX_QUEUE
 op_logical_and
 op_logical_neg
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 multiline_comment|/*&n;       * Sleep until there is enough space on the queue&n;       */
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -1545,7 +1555,7 @@ op_amp
 id|seq_sleeper
 )paren
 suffix:semicolon
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1629,7 +1639,9 @@ id|max_synthdev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1647,7 +1659,9 @@ id|dev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -1896,7 +1910,9 @@ r_default
 suffix:colon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -3123,14 +3139,14 @@ r_if
 c_cond
 (paren
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 (brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -3228,14 +3244,14 @@ r_if
 c_cond
 (paren
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 (brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -3770,14 +3786,14 @@ r_if
 c_cond
 (paren
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 (brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -3960,7 +3976,7 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Echo back to the process&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Echo back to the process&n;&t;&t;&t;&t; */
 r_break
 suffix:semicolon
 r_case
@@ -4210,14 +4226,14 @@ r_if
 c_cond
 (paren
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 (brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -4516,7 +4532,9 @@ l_string|&quot;Soundcard: Sequencer not initialized&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -4533,7 +4551,9 @@ l_string|&quot;Patch manager interface is currently broken. Sorry&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 id|save_flags
@@ -4563,7 +4583,9 @@ id|flags
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 id|sequencer_busy
@@ -4719,7 +4741,9 @@ l_int|0
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 id|setup_mode2
@@ -4762,7 +4786,9 @@ l_int|0
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -4776,7 +4802,9 @@ id|max_mididev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|synth_open_mask
 op_assign
@@ -5021,11 +5049,11 @@ id|seq_mode
 )paren
 suffix:semicolon
 )brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_NONE
 suffix:semicolon
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -5173,7 +5201,7 @@ id|n
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -5184,7 +5212,7 @@ l_int|10
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -5196,7 +5224,7 @@ l_int|10
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -5205,7 +5233,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -5220,7 +5248,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -5231,14 +5259,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -5577,7 +5605,7 @@ id|qlen
 op_logical_and
 op_logical_neg
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
@@ -5586,7 +5614,7 @@ id|WK_SLEEP
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -5595,7 +5623,7 @@ id|HZ
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -5605,7 +5633,7 @@ id|HZ
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -5614,7 +5642,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -5629,7 +5657,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -5640,14 +5668,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -5724,7 +5752,7 @@ id|data
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -5733,7 +5761,7 @@ l_int|4
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -5743,7 +5771,7 @@ l_int|4
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -5752,7 +5780,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -5767,7 +5795,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -5778,14 +5806,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -6135,7 +6163,7 @@ r_if
 c_cond
 (paren
 (paren
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_amp
 id|WK_SLEEP
 )paren
@@ -6143,7 +6171,7 @@ id|WK_SLEEP
 (brace
 multiline_comment|/*      printk (&quot;Sequencer Warning: Unexpected sleeping process - Waking up&bslash;n&quot;); */
 (brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -6253,7 +6281,9 @@ id|dev
 multiline_comment|/* Patch manager */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6264,7 +6294,9 @@ id|SEQ_2
 )paren
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 r_return
 id|tmr-&gt;ioctl
@@ -6289,7 +6321,9 @@ id|dev
 multiline_comment|/* Patch manager */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6300,7 +6334,9 @@ id|SEQ_2
 )paren
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 id|pending_timer
 op_assign
@@ -6332,7 +6368,9 @@ l_int|1
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -6369,7 +6407,9 @@ id|dev
 multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager&n;&t;&t;&t;&t; */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6402,7 +6442,9 @@ id|qlen
 )paren
 r_return
 op_minus
+(paren
 id|EINTR
+)paren
 suffix:semicolon
 r_else
 r_return
@@ -6421,7 +6463,9 @@ id|dev
 multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager&n;&t;&t;&t;&t; */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 id|seq_reset
 (paren
@@ -6443,7 +6487,9 @@ id|dev
 multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager&n;&t;&t;&t;&t; */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 id|midi_dev
 op_assign
@@ -6465,7 +6511,9 @@ id|max_mididev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6540,7 +6588,9 @@ id|dev
 multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager&n;&t;&t;&t;&t; */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6606,7 +6656,9 @@ id|dev
 multiline_comment|/* Patch manager */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 multiline_comment|/*&n;       * If *arg == 0, just return the current rate&n;       */
 r_if
@@ -6642,7 +6694,9 @@ l_int|0
 )paren
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 r_return
 id|snd_ioctl_return
@@ -6690,7 +6744,9 @@ id|num_synths
 (brace
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -6713,7 +6769,9 @@ id|orig_dev
 (brace
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -6827,7 +6885,9 @@ id|num_synths
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6848,7 +6908,9 @@ id|orig_dev
 )paren
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 r_return
 id|snd_ioctl_return
@@ -6906,7 +6968,9 @@ id|num_synths
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6924,7 +6988,9 @@ id|dev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|synth_devs
 (braket
@@ -6969,7 +7035,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -6978,7 +7043,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -7003,7 +7067,9 @@ id|max_synthdev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7024,7 +7090,9 @@ id|orig_dev
 )paren
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 r_return
 id|synth_devs
@@ -7068,7 +7136,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -7077,7 +7144,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -7133,7 +7199,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -7142,7 +7207,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -7167,10 +7231,11 @@ id|max_mididev
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|memcpy_tofs
-(paren
 (paren
 op_amp
 (paren
@@ -7183,7 +7248,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 (paren
 r_char
@@ -7236,15 +7300,13 @@ r_struct
 id|patmgr_info
 op_star
 )paren
-id|kmalloc
+id|vmalloc
 (paren
 r_sizeof
 (paren
 op_star
 id|inf
 )paren
-comma
-id|GFP_KERNEL
 )paren
 )paren
 op_eq
@@ -7258,7 +7320,9 @@ l_string|&quot;patmgr: Can&squot;t allocate memory for a message&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 id|memcpy_fromfs
@@ -7272,7 +7336,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -7281,7 +7344,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -7306,14 +7368,16 @@ op_ge
 id|num_synths
 )paren
 (brace
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -7328,14 +7392,16 @@ op_member_access_from_pointer
 id|pmgr_interface
 )paren
 (brace
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -7361,7 +7427,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
@@ -7371,7 +7437,6 @@ id|err
 suffix:semicolon
 )brace
 id|memcpy_tofs
-(paren
 (paren
 op_amp
 (paren
@@ -7384,7 +7449,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 (paren
 r_char
@@ -7399,7 +7463,7 @@ id|inf
 )paren
 )paren
 suffix:semicolon
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
@@ -7435,15 +7499,13 @@ r_struct
 id|patmgr_info
 op_star
 )paren
-id|kmalloc
+id|vmalloc
 (paren
 r_sizeof
 (paren
 op_star
 id|inf
 )paren
-comma
-id|GFP_KERNEL
 )paren
 )paren
 op_eq
@@ -7457,7 +7519,9 @@ l_string|&quot;patmgr: Can&squot;t allocate memory for a message&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 id|memcpy_fromfs
@@ -7471,7 +7535,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -7480,7 +7543,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -7505,14 +7567,16 @@ op_ge
 id|num_synths
 )paren
 (brace
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -7525,14 +7589,16 @@ id|dev
 )braket
 )paren
 (brace
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ESRCH
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -7552,7 +7618,7 @@ OL
 l_int|0
 )paren
 (brace
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
@@ -7562,7 +7628,6 @@ id|err
 suffix:semicolon
 )brace
 id|memcpy_tofs
-(paren
 (paren
 op_amp
 (paren
@@ -7575,7 +7640,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 (paren
 r_char
@@ -7590,7 +7654,7 @@ id|inf
 )paren
 )paren
 suffix:semicolon
-id|kfree
+id|vfree
 (paren
 id|inf
 )paren
@@ -7625,7 +7689,9 @@ id|dev
 multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager&n;&t;&t;&t;&t; */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7729,7 +7795,9 @@ id|dev
 multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager&n;&t;&t;&t;&t; */
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7740,7 +7808,9 @@ id|OPEN_READ
 )paren
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7753,7 +7823,9 @@ l_int|0
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7771,7 +7843,9 @@ l_int|0
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 r_return
 id|synth_devs
@@ -7793,7 +7867,9 @@ suffix:semicolon
 )brace
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_int
@@ -7851,7 +7927,7 @@ op_logical_neg
 id|iqlen
 )paren
 (brace
-id|midi_sleep_flag.mode
+id|midi_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -7906,7 +7982,7 @@ OL
 id|output_treshold
 )paren
 (brace
-id|seq_sleep_flag.mode
+id|seq_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -8264,12 +8340,11 @@ l_int|10000
 suffix:semicolon
 multiline_comment|/* Bend up */
 )brace
-r_int
+r_void
 DECL|function|sequencer_init
 id|sequencer_init
 (paren
-r_int
-id|mem_start
+r_void
 )paren
 (brace
 id|queue
@@ -8282,27 +8357,25 @@ op_star
 (paren
 id|sound_mem_blocks
 (braket
-id|sound_num_blocks
+id|sound_nblocks
 )braket
 op_assign
-id|kmalloc
+id|vmalloc
 (paren
 id|SEQ_MAX_QUEUE
 op_star
 id|EV_SZ
-comma
-id|GFP_KERNEL
 )paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_num_blocks
+id|sound_nblocks
 OL
 l_int|1024
 )paren
-id|sound_num_blocks
+id|sound_nblocks
 op_increment
 suffix:semicolon
 suffix:semicolon
@@ -8320,7 +8393,6 @@ l_string|&quot;Sound: Can&squot;t allocate memory for sequencer output queue&bsl
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|iqueue
@@ -8333,27 +8405,25 @@ op_star
 (paren
 id|sound_mem_blocks
 (braket
-id|sound_num_blocks
+id|sound_nblocks
 )braket
 op_assign
-id|kmalloc
+id|vmalloc
 (paren
 id|SEQ_MAX_QUEUE
 op_star
 id|IEV_SZ
-comma
-id|GFP_KERNEL
 )paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_num_blocks
+id|sound_nblocks
 OL
 l_int|1024
 )paren
-id|sound_num_blocks
+id|sound_nblocks
 op_increment
 suffix:semicolon
 suffix:semicolon
@@ -8371,15 +8441,11 @@ l_string|&quot;Sound: Can&squot;t allocate memory for sequencer input queue&bsla
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|sequencer_ok
 op_assign
 l_int|1
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 macro_line|#endif

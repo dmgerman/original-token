@@ -1,5 +1,5 @@
 multiline_comment|/* netdrv_init.c: Initialization for network devices. */
-multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;&t;&t;&n;&t;Modifications by Wolfgang Walter&n;&t;&t;Use dev_close cleanly so we always shut things down tidily.&n;&t;&t;&n;&t;Changed 29/10/95, Alan Cox to pass sockaddr&squot;s around for mac addresses.&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;&t;&t;&n;&t;Modifications by Wolfgang Walter&n;&t;&t;Use dev_close cleanly so we always shut things down tidily.&n;&t;&t;&n;&t;Changed 29/10/95, Alan Cox to pass sockaddr&squot;s around for mac addresses.&n;&t;&n;&t;14/06/96 - Paul Gortmaker:&t;Add generic eth_change_mtu() function. &n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -460,6 +460,48 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|eth_change_mtu
+r_static
+r_int
+id|eth_change_mtu
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|new_mtu
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|new_mtu
+OL
+l_int|68
+)paren
+op_logical_or
+(paren
+id|new_mtu
+OG
+l_int|1500
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|dev-&gt;mtu
+op_assign
+id|new_mtu
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|ether_setup
 r_void
 id|ether_setup
@@ -576,6 +618,10 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 )brace
+id|dev-&gt;change_mtu
+op_assign
+id|eth_change_mtu
+suffix:semicolon
 id|dev-&gt;hard_header
 op_assign
 id|eth_header

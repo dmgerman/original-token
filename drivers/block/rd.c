@@ -644,7 +644,7 @@ id|NUM_RAMDISKS
 )paren
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon

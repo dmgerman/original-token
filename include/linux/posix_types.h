@@ -6,7 +6,7 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 macro_line|# define NULL&t;&t;((void *) 0)
 macro_line|#endif
-multiline_comment|/*&n; * This allows for 256 file descriptors: if NR_OPEN is ever grown&n; * beyond that you&squot;ll have to change this too. But 256 fd&squot;s seem to be&n; * enough even for such &quot;real&quot; unices like SunOS, so hopefully this is&n; * one limit that doesn&squot;t have to be changed.&n; *&n; * Note that POSIX wants the FD_CLEAR(fd,fdsetp) defines to be in&n; * &lt;sys/time.h&gt; (and thus &lt;linux/time.h&gt;) - but this is a more logical&n; * place for them. Solved by having dummy defines in &lt;sys/time.h&gt;.&n; */
+multiline_comment|/*&n; * This allows for 1024 file descriptors: if NR_OPEN is ever grown&n; * beyond that you&squot;ll have to change this too. But 1024 fd&squot;s seem to be&n; * enough even for such &quot;real&quot; unices like OSF/1, so hopefully this is&n; * one limit that doesn&squot;t have to be changed [again].&n; *&n; * Note that POSIX wants the FD_CLEAR(fd,fdsetp) defines to be in&n; * &lt;sys/time.h&gt; (and thus &lt;linux/time.h&gt;) - but this is a more logical&n; * place for them. Solved by having dummy defines in &lt;sys/time.h&gt;.&n; */
 multiline_comment|/*&n; * Those macros may have been defined in &lt;gnu/types.h&gt;. But we always&n; * use the ones here. &n; */
 DECL|macro|__NFDBITS
 macro_line|#undef __NFDBITS
@@ -15,7 +15,7 @@ mdefine_line|#define __NFDBITS&t;(8 * sizeof(unsigned int))
 DECL|macro|__FD_SETSIZE
 macro_line|#undef __FD_SETSIZE
 DECL|macro|__FD_SETSIZE
-mdefine_line|#define __FD_SETSIZE&t;256
+mdefine_line|#define __FD_SETSIZE&t;1024
 DECL|macro|__FDSET_INTS
 macro_line|#undef __FDSET_INTS
 DECL|macro|__FDSET_INTS
@@ -28,10 +28,8 @@ DECL|macro|__FDMASK
 macro_line|#undef __FDMASK
 DECL|macro|__FDMASK
 mdefine_line|#define&t;__FDMASK(d)&t;(1 &lt;&lt; ((d) % __NFDBITS))
-DECL|struct|fd_set
 r_typedef
 r_struct
-id|fd_set
 (brace
 DECL|member|fds_bits
 r_int

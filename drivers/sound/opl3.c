@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
 multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
@@ -52,6 +52,10 @@ r_typedef
 r_struct
 id|opl_devinfo
 (brace
+DECL|member|base
+r_int
+id|base
+suffix:semicolon
 DECL|member|left_io
 DECL|member|right_io
 r_int
@@ -463,7 +467,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -472,7 +475,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -501,7 +503,9 @@ id|ins.channel
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|pmgr_inform
@@ -549,7 +553,6 @@ id|devc-&gt;nr_voice
 suffix:semicolon
 id|memcpy_tofs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -561,7 +564,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 op_amp
 id|devc-&gt;fm_info
@@ -608,7 +610,9 @@ r_default
 suffix:colon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -656,29 +660,27 @@ op_star
 (paren
 id|sound_mem_blocks
 (braket
-id|sound_num_blocks
+id|sound_nblocks
 )braket
 op_assign
-id|kmalloc
+id|vmalloc
 (paren
 r_sizeof
 (paren
 op_star
 id|devc
 )paren
-comma
-id|GFP_KERNEL
 )paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_num_blocks
+id|sound_nblocks
 OL
 l_int|1024
 )paren
-id|sound_num_blocks
+id|sound_nblocks
 op_increment
 suffix:semicolon
 suffix:semicolon
@@ -702,6 +704,10 @@ suffix:semicolon
 id|devc-&gt;osp
 op_assign
 id|osp
+suffix:semicolon
+id|devc-&gt;base
+op_assign
+id|ioaddr
 suffix:semicolon
 multiline_comment|/* Reset timers 1 and 2 */
 id|opl3_command
@@ -878,7 +884,7 @@ id|detected_model
 op_assign
 l_int|3
 suffix:semicolon
-multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works probably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
+multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works propably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
 id|opl3_command
 (paren
 id|ioaddr
@@ -1089,7 +1095,7 @@ DECL|function|opl3_kill_note
 id|opl3_kill_note
 (paren
 r_int
-id|dev
+id|devno
 comma
 r_int
 id|voice
@@ -3386,7 +3392,7 @@ DECL|function|opl3_reset
 id|opl3_reset
 (paren
 r_int
-id|dev
+id|devno
 )paren
 (brace
 r_int
@@ -3567,7 +3573,7 @@ suffix:semicolon
 )brace
 id|opl3_kill_note
 (paren
-id|dev
+id|devno
 comma
 id|i
 comma
@@ -3638,7 +3644,9 @@ id|devc-&gt;busy
 )paren
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 id|devc-&gt;busy
 op_assign
@@ -3823,7 +3831,9 @@ l_string|&quot;FM Error: Patch record too short&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|memcpy_fromfs
@@ -3843,13 +3853,11 @@ id|offs
 comma
 op_amp
 (paren
-(paren
 id|addr
 )paren
 (braket
 id|offs
 )braket
-)paren
 comma
 r_sizeof
 (paren
@@ -3880,7 +3888,9 @@ id|ins.channel
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|ins.key
@@ -4454,7 +4464,9 @@ id|rec
 (brace
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -4866,13 +4878,10 @@ comma
 id|opl3_setup_voice
 )brace
 suffix:semicolon
-r_int
+r_void
 DECL|function|opl3_init
 id|opl3_init
 (paren
-r_int
-id|mem_start
-comma
 r_int
 id|ioaddr
 comma
@@ -4898,7 +4907,6 @@ l_string|&quot;OPL3 Error: Too many synthesizers&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_if
@@ -4915,7 +4923,6 @@ l_string|&quot;OPL3: Device control structure not initialized.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|memset
@@ -4938,6 +4945,10 @@ suffix:semicolon
 id|devc-&gt;osp
 op_assign
 id|osp
+suffix:semicolon
+id|devc-&gt;base
+op_assign
+id|ioaddr
 suffix:semicolon
 id|devc-&gt;nr_voice
 op_assign
@@ -5256,9 +5267,6 @@ id|channel
 op_assign
 op_minus
 l_int|1
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 macro_line|#endif

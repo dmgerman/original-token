@@ -3,17 +3,18 @@ macro_line|#ifndef _LINUX_NFSIOD_H
 DECL|macro|_LINUX_NFSIOD_H
 mdefine_line|#define _LINUX_NFSIOD_H
 macro_line|#include &lt;linux/rpcsock.h&gt;
+macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is the callback handler for nfsiod requests.&n; * Note that the callback procedure must NOT sleep.&n; */
 r_struct
 id|nfsiod_req
 suffix:semicolon
-DECL|typedef|nfsiod_done_fn_t
+DECL|typedef|nfsiod_callback_t
 r_typedef
-r_void
+r_int
 (paren
 op_star
-id|nfsiod_done_fn_t
+id|nfsiod_callback_t
 )paren
 (paren
 r_int
@@ -41,12 +42,6 @@ id|nfsiod_req
 op_star
 id|rq_prev
 suffix:semicolon
-DECL|member|rq_server
-r_struct
-id|nfs_server
-op_star
-id|rq_server
-suffix:semicolon
 DECL|member|rq_wait
 r_struct
 id|wait_queue
@@ -59,13 +54,47 @@ id|rpc_ioreq
 id|rq_rpcreq
 suffix:semicolon
 DECL|member|rq_callback
-id|nfsiod_done_fn_t
+id|nfsiod_callback_t
 id|rq_callback
 suffix:semicolon
-DECL|member|rq_cdata
-r_void
+DECL|member|rq_server
+r_struct
+id|nfs_server
 op_star
-id|rq_cdata
+id|rq_server
+suffix:semicolon
+DECL|member|rq_inode
+r_struct
+id|inode
+op_star
+id|rq_inode
+suffix:semicolon
+DECL|member|rq_page
+r_struct
+id|page
+op_star
+id|rq_page
+suffix:semicolon
+multiline_comment|/* user creds */
+DECL|member|rq_fsuid
+id|uid_t
+id|rq_fsuid
+suffix:semicolon
+DECL|member|rq_fsgid
+id|gid_t
+id|rq_fsgid
+suffix:semicolon
+DECL|member|rq_groups
+r_int
+id|rq_groups
+(braket
+id|NGROUPS
+)braket
+suffix:semicolon
+multiline_comment|/* retry handling */
+DECL|member|rq_retries
+r_int
+id|rq_retries
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -78,8 +107,6 @@ c_func
 r_struct
 id|nfs_server
 op_star
-comma
-id|nfsiod_done_fn_t
 )paren
 suffix:semicolon
 r_void
@@ -91,7 +118,7 @@ id|nfsiod_req
 op_star
 )paren
 suffix:semicolon
-r_int
+r_void
 id|nfsiod_enqueue
 c_func
 (paren

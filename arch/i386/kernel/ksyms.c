@@ -60,6 +60,12 @@ c_func
 id|cpu_data
 )paren
 comma
+id|X
+c_func
+(paren
+id|syscall_count
+)paren
+comma
 macro_line|#endif
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace

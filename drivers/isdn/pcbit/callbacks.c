@@ -82,6 +82,8 @@ id|cbdata-&gt;data.setup.CalledPN
 comma
 op_amp
 id|skb
+comma
+id|chan-&gt;proto
 )paren
 )paren
 OL

@@ -620,6 +620,14 @@ id|inode-&gt;i_size
 op_assign
 id|pos
 suffix:semicolon
+multiline_comment|/* Avoid possible Solaris 2.5 nfsd bug */
+r_if
+c_cond
+(paren
+id|inode-&gt;i_ino
+op_eq
+id|fattr.fileid
+)paren
 id|nfs_refresh_inode
 c_func
 (paren

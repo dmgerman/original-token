@@ -285,6 +285,7 @@ suffix:semicolon
 multiline_comment|/* Used for IOCTL_GET_IDLUN, /proc/scsi et al. */
 DECL|member|last_reset
 r_int
+r_int
 id|last_reset
 suffix:semicolon
 DECL|member|host_wait

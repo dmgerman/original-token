@@ -252,7 +252,7 @@ id|arg
 suffix:semicolon
 r_return
 op_minus
-id|EINVAL
+id|ENOTTY
 suffix:semicolon
 )brace
 DECL|function|sys_ioctl
@@ -519,7 +519,7 @@ id|arg
 suffix:semicolon
 r_return
 op_minus
-id|EINVAL
+id|ENOTTY
 suffix:semicolon
 )brace
 )brace

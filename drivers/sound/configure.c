@@ -2,7 +2,7 @@ multiline_comment|/*&n; *     PnP soundcard support is not included in this vers
 DECL|macro|DISABLED_OPTIONS
 mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_SPNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
@@ -71,12 +71,16 @@ DECL|macro|ANY_DEVS
 mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB))
 DECL|macro|AUDIO_CARDS
 mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_GUS) | &bslash;&n;&t;&t;B (OPT_MSS) | B (OPT_GUS16) | B (OPT_GUSMAX) | B (OPT_TRIX) | &bslash;&n;&t;&t;B (OPT_SSCAPE)| B(OPT_MAD16) | B(OPT_CS4232))
-DECL|macro|MIDI_CARDS
-mdefine_line|#define MIDI_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_MPU401) | &bslash;&n;&t;&t;    B (OPT_GUS) | B (OPT_TRIX) | B (OPT_SSCAPE)|B(OPT_MAD16) | &bslash;&n;&t;&t;    B (OPT_CS4232)|B(OPT_MAUI))
 DECL|macro|MPU_DEVS
-mdefine_line|#define MPU_DEVS (B(OPT_PSS)|B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI))
+mdefine_line|#define MPU_DEVS (B(OPT_PSS)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI))
+DECL|macro|UART401_DEVS
+mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_SSCAPE))
+DECL|macro|MIDI_CARDS
+mdefine_line|#define MIDI_CARDS (MPU_DEVS | UART401_DEVS | &bslash;&n;&t;&t;    B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_MPU401) | &bslash;&n;&t;&t;    B (OPT_GUS) | B (OPT_TRIX) | B (OPT_SSCAPE)|B(OPT_MAD16) | &bslash;&n;&t;&t;    B (OPT_CS4232)|B(OPT_MAUI))
 DECL|macro|AD1848_DEVS
 mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMAX)|&bslash;&n;&t;&t;     B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_CS4232)|&bslash;&n;&t;&t;     B(OPT_SPNP))
+DECL|macro|SBDSP_DEVS
+mdefine_line|#define SBDSP_DEVS (B(OPT_SB)|B(OPT_SPNP)|B(OPT_MAD16))
 DECL|macro|SEQUENCER_DEVS
 mdefine_line|#define SEQUENCER_DEVS (OPT_MIDI|OPT_YM3812|OPT_ADLIB|OPT_GUS|OPT_MAUI|MIDI_CARDS)
 multiline_comment|/*&n; * Options that have been disabled for some reason (incompletely implemented&n; * and/or tested). Don&squot;t remove from this list before looking at file&n; * experimental.txt for further info.&n; */
@@ -581,7 +585,7 @@ l_string|&quot;Microsoft Sound System support&quot;
 comma
 l_string|&quot;Ensoniq Soundscape support&quot;
 comma
-l_string|&quot;MediaTriX AudioTriX Pro support&quot;
+l_string|&quot;MediaTrix AudioTrix Pro support&quot;
 comma
 l_string|&quot;Support for MAD16 and/or Mozart based cards&quot;
 comma
@@ -663,7 +667,7 @@ l_string|&quot;Enable this if you have a sound card based on the Ensoniq&bslash;
 l_string|&quot;Soundscape chipset. Such cards are being manufactured by Ensoniq,&bslash;n&quot;
 l_string|&quot;Spea and Reveal (Reveal makes other cards as well).&bslash;n&quot;
 comma
-l_string|&quot;Enable this option if you have the AudioTriX Pro sound card&bslash;n&quot;
+l_string|&quot;Enable this option if you have the AudioTrix Pro sound card&bslash;n&quot;
 l_string|&quot;manufactured by MediaTrix.&bslash;n&quot;
 comma
 l_string|&quot;Enable this if your card has a Mozart (OAK OTI-601) or MAD16 (OPTi&bslash;n&quot;
@@ -736,6 +740,18 @@ comma
 l_string|&quot;AD1848&quot;
 comma
 id|AD1848_DEVS
+)brace
+comma
+(brace
+l_string|&quot;SBDSP&quot;
+comma
+id|SBDSP_DEVS
+)brace
+comma
+(brace
+l_string|&quot;UART401&quot;
+comma
+id|UART401_DEVS
 )brace
 comma
 (brace
@@ -2591,10 +2607,12 @@ comma
 l_string|&quot;Old configuration copied.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(linux) || defined(Solaris)
 id|build_defines
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|old_config_used
 op_assign
 l_int|1
@@ -2603,6 +2621,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if defined(linux) || defined(Solaris)
 r_void
 DECL|function|build_defines
 id|build_defines
@@ -2762,6 +2781,7 @@ id|optf
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_void
 DECL|function|ask_parameters
 id|ask_parameters
@@ -2864,7 +2884,7 @@ id|FMT_INT
 comma
 l_int|5
 comma
-l_string|&quot;5, 6 or 7&quot;
+l_string|&quot;5, 6 or 7 (use 1 for 8 bit cards)&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3421,7 +3441,7 @@ id|FMT_HEX
 comma
 l_int|0x330
 comma
-l_string|&quot;&quot;
+l_string|&quot;320, 330, 340 or 350&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3496,24 +3516,6 @@ comma
 l_string|&quot;7, 9, 10 or 11&quot;
 )paren
 suffix:semicolon
-id|ask_int_choice
-(paren
-id|B
-(paren
-id|OPT_SSCAPE
-)paren
-comma
-l_string|&quot;SSCAPE_MSS_DMA&quot;
-comma
-l_string|&quot;Soundscape audio DMA&quot;
-comma
-id|FMT_INT
-comma
-l_int|0
-comma
-l_string|&quot;0, 1 or 3&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3560,7 +3562,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_BASE&quot;
 comma
-l_string|&quot;AudioTriX audio I/O base&quot;
+l_string|&quot;AudioTrix audio I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3578,7 +3580,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_IRQ&quot;
 comma
-l_string|&quot;AudioTriX audio IRQ&quot;
+l_string|&quot;AudioTrix audio IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -3596,7 +3598,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_DMA&quot;
 comma
-l_string|&quot;AudioTriX audio DMA&quot;
+l_string|&quot;AudioTrix audio DMA&quot;
 comma
 id|FMT_INT
 comma
@@ -3614,7 +3616,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_DMA2&quot;
 comma
-l_string|&quot;AudioTriX second (duplex) DMA&quot;
+l_string|&quot;AudioTrix second (duplex) DMA&quot;
 comma
 id|FMT_INT
 comma
@@ -3632,7 +3634,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_MPU_BASE&quot;
 comma
-l_string|&quot;AudioTriX MIDI I/O base&quot;
+l_string|&quot;AudioTrix MIDI I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3650,7 +3652,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_MPU_IRQ&quot;
 comma
-l_string|&quot;AudioTriX MIDI IRQ&quot;
+l_string|&quot;AudioTrix MIDI IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -3668,7 +3670,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_SB_BASE&quot;
 comma
-l_string|&quot;AudioTriX SB I/O base&quot;
+l_string|&quot;AudioTrix SB I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3686,7 +3688,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_SB_IRQ&quot;
 comma
-l_string|&quot;AudioTriX SB IRQ&quot;
+l_string|&quot;AudioTrix SB IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -3704,7 +3706,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_SB_DMA&quot;
 comma
-l_string|&quot;AudioTriX SB DMA&quot;
+l_string|&quot;AudioTrix SB DMA&quot;
 comma
 id|FMT_INT
 comma
@@ -4018,11 +4020,6 @@ id|macro
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Some &quot;hardcoded&quot; options&n; */
-id|printf
-(paren
-l_string|&quot;bool &squot;Support for SM Wave&squot; CONFIG_SMWAVE&bslash;n&quot;
-)paren
-suffix:semicolon
 id|dump_only
 op_assign
 l_int|1
@@ -5212,7 +5209,7 @@ id|fprintf
 (paren
 id|sf
 comma
-l_string|&quot;/* automatically generated by configure */&bslash;n&quot;
+l_string|&quot;/* automaticaly generated by configure */&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
@@ -5252,10 +5249,10 @@ l_string|&quot;Do you want to include TRXPRO.HEX in your kernel&quot;
 comma
 l_int|1
 comma
-l_string|&quot;The MediaTriX AudioTrix Pro has an onboard microcontroller which&bslash;n&quot;
+l_string|&quot;The MediaTrix AudioTrix Pro has an onboard microcontroller which&bslash;n&quot;
 l_string|&quot;needs to be initialized by downloading the code from the file TRXPRO.HEX&bslash;n&quot;
 l_string|&quot;in the DOS driver directory. If you don&squot;t have the TRXPRO.HEX file handy&bslash;n&quot;
-l_string|&quot;you may skip this step. However, the SB and MPU-401 modes of AudioTriX&bslash;n&quot;
+l_string|&quot;you may skip this step. However, the SB and MPU-401 modes of AudioTrix&bslash;n&quot;
 l_string|&quot;Pro will not work without this file!&bslash;n&quot;
 )paren
 )paren
@@ -5315,6 +5312,37 @@ suffix:semicolon
 id|printf
 (paren
 l_string|&quot;#define INCLUDE_TRIX_BOOT&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|selected_options
+op_amp
+id|B
+(paren
+id|OPT_MSS
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_string|&quot;Support for builtin sound of Compaq Deskpro XL&quot;
+comma
+l_int|0
+comma
+l_string|&quot;Enable this if you have Compaq Deskpro XL.&bslash;n&quot;
+)paren
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;#define DESKPROXL&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

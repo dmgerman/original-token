@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/audio.c&n; *&n; * Device file manager for /dev/audio&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_AUDIO
@@ -315,6 +315,13 @@ op_ne
 id|bits
 )paren
 (brace
+id|printk
+(paren
+l_string|&quot;audio: Can&squot;t set number of bits on device %d&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
 id|audio_release
 (paren
 id|dev
@@ -324,7 +331,9 @@ id|file
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -448,6 +457,8 @@ c_loop
 id|i
 op_assign
 id|dmap-&gt;qlen
+op_plus
+l_int|1
 suffix:semicolon
 id|i
 OL
@@ -907,7 +918,9 @@ op_logical_and
 id|buf_no
 op_eq
 op_minus
+(paren
 id|EAGAIN
+)paren
 )paren
 r_return
 id|p
@@ -954,7 +967,7 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|copy_from_user
+id|d-&gt;copy_from_user
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t; * No device specific copy routine&n;&t;&t;&t;&t; */
@@ -968,13 +981,11 @@ id|buf_ptr
 comma
 op_amp
 (paren
-(paren
 id|buf
 )paren
 (braket
 id|p
 )braket
-)paren
 comma
 id|l
 )paren
@@ -986,7 +997,7 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|copy_from_user
+id|d-&gt;copy_from_user
 (paren
 id|dev
 comma
@@ -1245,7 +1256,9 @@ op_logical_and
 id|buf_no
 op_eq
 op_minus
+(paren
 id|EAGAIN
+)paren
 )paren
 r_return
 id|p
@@ -1301,13 +1314,11 @@ id|memcpy_tofs
 (paren
 op_amp
 (paren
-(paren
 id|buf
 )paren
 (braket
 id|p
 )braket
-)paren
 comma
 id|dmabuf
 comma
@@ -1423,7 +1434,9 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1436,6 +1449,24 @@ id|cmd
 r_case
 id|SNDCTL_DSP_SYNC
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|open_mode
+op_amp
+id|OPEN_WRITE
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|sync_output
 (paren
 id|dev
@@ -1458,6 +1489,24 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_POST
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|open_mode
+op_amp
+id|OPEN_WRITE
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|sync_output
 (paren
 id|dev
@@ -1549,6 +1598,24 @@ suffix:colon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|open_mode
+op_amp
+id|OPEN_READ
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|audio_mode
 (braket
@@ -1572,7 +1639,9 @@ id|DMA_DUPLEX
 )paren
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 (brace
 id|audio_buf_info
@@ -1608,7 +1677,6 @@ id|err
 suffix:semicolon
 id|memcpy_tofs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -1620,7 +1688,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 (paren
 r_char
@@ -1642,6 +1709,24 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETOSPACE
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|open_mode
+op_amp
+id|OPEN_WRITE
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1668,7 +1753,9 @@ id|DMA_DUPLEX
 )paren
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 (brace
 id|audio_buf_info
@@ -1743,7 +1830,6 @@ id|buf_ptr
 suffix:semicolon
 id|memcpy_tofs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -1755,7 +1841,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 (paren
 r_char
@@ -1837,7 +1922,7 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|local_qlen
+id|d-&gt;local_qlen
 )paren
 multiline_comment|/* Device has hidden buffers */
 id|info
@@ -1852,7 +1937,7 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|trigger
+id|d-&gt;trigger
 )paren
 multiline_comment|/* Supports SETTRIGGER */
 id|info
@@ -1865,7 +1950,6 @@ id|DSP_CAP_MMAP
 suffix:semicolon
 id|memcpy_tofs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -1877,7 +1961,6 @@ id|arg
 (braket
 l_int|0
 )braket
-)paren
 comma
 (paren
 r_char
@@ -1914,18 +1997,14 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-r_int
+r_void
 DECL|function|audio_init
 id|audio_init
 (paren
-r_int
-id|mem_start
+r_void
 )paren
 (brace
 multiline_comment|/*&n;     * NOTE! This routine could be called several times during boot.&n;   */
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 r_int
 DECL|function|audio_select

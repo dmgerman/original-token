@@ -1,5 +1,5 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &quot;local.h&quot;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
@@ -68,9 +68,10 @@ DECL|macro|SND_DEV_DSP16
 mdefine_line|#define SND_DEV_DSP16&t;5&t;/* Like /dev/dsp but 16 bits/sample */
 DECL|macro|SND_DEV_STATUS
 mdefine_line|#define SND_DEV_STATUS&t;6&t;/* /dev/sndstat */
-multiline_comment|/* #7 not in use now. Was in 2.4. Free for use after v3.0. */
+DECL|macro|SND_DEV_AWFM
+mdefine_line|#define SND_DEV_AWFM&t;7&t;/* Reserved */
 DECL|macro|SND_DEV_SEQ2
-mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequencer, level 2 interface */
+mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequecer, level 2 interface */
 DECL|macro|SND_DEV_SNDPROC
 mdefine_line|#define SND_DEV_SNDPROC 9&t;/* /dev/sndproc for programmable devices */
 DECL|macro|SND_DEV_PSS
@@ -156,12 +157,12 @@ r_int
 op_star
 id|osp
 suffix:semicolon
-multiline_comment|/* OS specific info */
+multiline_comment|/* OS spesific info */
 DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver specific. Usually 0 */
+multiline_comment|/* Driver spesific. Usually 0 */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES

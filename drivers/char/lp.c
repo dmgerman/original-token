@@ -1822,7 +1822,7 @@ id|LP_NO
 )paren
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 r_if
 c_cond
@@ -1841,7 +1841,7 @@ l_int|0
 )paren
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 r_if
 c_cond

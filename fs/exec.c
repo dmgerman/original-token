@@ -1737,10 +1737,6 @@ id|current-&gt;dumpable
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;signal
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren

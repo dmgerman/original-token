@@ -4644,18 +4644,18 @@ id|SCpnt
 )paren
 (brace
 r_int
-id|temp
+r_int
+id|flags
+comma
+id|timeout
 suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
 id|host
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 macro_line|#ifdef DEBUG_DELAY
+r_int
 r_int
 id|clock
 suffix:semicolon
@@ -4664,7 +4664,6 @@ id|host
 op_assign
 id|SCpnt-&gt;host
 suffix:semicolon
-multiline_comment|/*&n;     * We will wait MIN_RESET_DELAY clock ticks after the last reset so&n;     * we can avoid the drive not being ready.&n;     */
 id|save_flags
 c_func
 (paren
@@ -4693,25 +4692,40 @@ id|SCpnt-&gt;serial_number
 op_assign
 id|serial_number
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|temp
+multiline_comment|/*&n;     * We will wait MIN_RESET_DELAY clock ticks after the last reset so&n;     * we can avoid the drive not being ready.&n;     */
+id|timeout
 op_assign
 id|host-&gt;last_reset
 op_plus
 id|MIN_RESET_DELAY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|jiffies
+OL
+id|timeout
+)paren
+(brace
+multiline_comment|/*&n;         * NOTE: This may be executed from within an interrupt&n;         * handler!  This is bad, but for now, it&squot;ll do.  The irq&n;         * level of the interrupt handler has been masked out by the&n;         * platform dependent interrupt handling code already, so the&n;         * sti() here will not cause another call to the SCSI host&squot;s&n;         * interrupt handler (assuming there is one irq-level per&n;         * host).&n;         */
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 r_while
 c_loop
 (paren
 id|jiffies
 OL
-id|temp
+id|timeout
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren
@@ -4809,6 +4823,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+id|temp
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -4845,6 +4862,10 @@ c_loop
 id|jiffies
 OL
 id|clock
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 id|printk
@@ -7401,6 +7422,13 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Protect against races here.  If the command is done, or we are&n;&t; * on a different command forget it.&n;&t; */
+r_if
+c_cond
+(paren
+id|reset_flags
+op_amp
+id|SCSI_RESET_ASYNCHRONOUS
+)paren
 r_if
 c_cond
 (paren

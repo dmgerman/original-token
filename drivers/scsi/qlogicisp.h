@@ -4,6 +4,11 @@ multiline_comment|/*&n; * $Date: 1995/09/22 02:32:56 $&n; * $Revision: 0.5 $&n; 
 macro_line|#ifndef _QLOGICISP_H
 DECL|macro|_QLOGICISP_H
 mdefine_line|#define _QLOGICISP_H
+multiline_comment|/*&n; * With the qlogic interface, every queue slot can hold a SCSI&n; * command with up to 4 scatter/gather entries.  If we need more&n; * than 4 entries, continuation entries can be used that hold&n; * another 7 entries each.  Unlike for other drivers, this means&n; * that the maximum number of scatter/gather entries we can&n; * support at any given time is a function of the number of queue&n; * slots available.  That is, host-&gt;can_queue and host-&gt;sg_tablesize&n; * are dynamic and _not_ independent.  This all works fine because&n; * requests are queued serially and the scatter/gather limit is&n; * determined for each queue request anew.&n; */
+DECL|macro|QLOGICISP_REQ_QUEUE_LEN
+mdefine_line|#define QLOGICISP_REQ_QUEUE_LEN&t;63&t;/* must be power of two - 1 */
+DECL|macro|QLOGICISP_MAX_SG
+mdefine_line|#define QLOGICISP_MAX_SG(ql)&t;(4 + ((ql) &gt; 0) ? 7*((ql) - 1) : 0)
 r_int
 id|isp1020_detect
 c_func
@@ -93,6 +98,6 @@ id|proc_dir_entry
 id|proc_scsi_isp1020
 suffix:semicolon
 DECL|macro|QLOGICISP
-mdefine_line|#define QLOGICISP {&t;&t;&t;&t;&t;&bslash;&n;&t;/* next */&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;/* usage_count */&t;NULL,&t;&t;&t;&bslash;&n;        /* proc dir */          NULL,                   &bslash;&n;        /* procfs info */       NULL,                   &bslash;&n;&t;/* name */&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;/* detect */&t;&t;isp1020_detect,&t;&t;&bslash;&n;&t;/* release */&t;&t;isp1020_release,&t;&bslash;&n;&t;/* info */&t;&t;isp1020_info,&t;&t;&bslash;&n;&t;/* command */&t;&t;NULL,&t;&t; &t;&bslash;&n;&t;/* queuecommand */&t;isp1020_queuecommand,&t;&bslash;&n;&t;/* abort */&t;&t;isp1020_abort,&t;&t;&bslash;&n;&t;/* reset */&t;&t;isp1020_reset,&t;&t;&bslash;&n;&t;/* slave_attach */&t;NULL,&t;&t;&t;&bslash;&n;&t;/* bios_param */&t;isp1020_biosparam,&t;&bslash;&n;&t;/* can_queue */&t;&t;8,&t;&t;&t;&bslash;&n;&t;/* this_id */&t;&t;-1,&t;&t;&t;&bslash;&n;&t;/* sg_tablesize */&t;4,&t;&t;&t;&bslash;&n;&t;/* cmd_per_lun */&t;1,&t;&t;&t;&bslash;&n;&t;/* present */&t;&t;0,&t;&t;&t;&bslash;&n;&t;/* unchecked_isa_dma */&t;0,&t;&t;&t;&bslash;&n;&t;/* use_clustering */&t;DISABLE_CLUSTERING&t;&bslash;&n;}
+mdefine_line|#define QLOGICISP {&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;/* next */&t;&t;NULL,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* usage_count */&t;NULL,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* proc dir */&t;&t;NULL,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* procfs info */&t;NULL,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* name */&t;&t;NULL,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* detect */&t;&t;isp1020_detect,&t;&t;&t;&t;   &bslash;&n;&t;/* release */&t;&t;isp1020_release,&t;&t;&t;   &bslash;&n;&t;/* info */&t;&t;isp1020_info,&t;&t;&t;&t;   &bslash;&n;&t;/* command */&t;&t;NULL,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* queuecommand */&t;isp1020_queuecommand,&t;&t;&t;   &bslash;&n;&t;/* abort */&t;&t;isp1020_abort,&t;&t;&t;&t;   &bslash;&n;&t;/* reset */&t;&t;isp1020_reset,&t;&t;&t;&t;   &bslash;&n;&t;/* slave_attach */&t;NULL,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* bios_param */&t;isp1020_biosparam,&t;&t;&t;   &bslash;&n;&t;/* can_queue */&t;&t;QLOGICISP_REQ_QUEUE_LEN,&t;&t;   &bslash;&n;&t;/* this_id */&t;&t;-1,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* sg_tablesize */&t;QLOGICISP_MAX_SG(QLOGICISP_REQ_QUEUE_LEN), &bslash;&n;&t;/* cmd_per_lun */&t;1,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* present */&t;&t;0,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* unchecked_isa_dma */&t;0,&t;&t;&t;&t;&t;   &bslash;&n;&t;/* use_clustering */&t;DISABLE_CLUSTERING&t;&t;&t;   &bslash;&n;}
 macro_line|#endif /* _QLOGICISP_H */
 eof

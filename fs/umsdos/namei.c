@@ -1154,6 +1154,8 @@ comma
 id|new_info.fake.fname
 comma
 id|new_info.fake.len
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|chkstk
@@ -3304,6 +3306,9 @@ id|new_name
 comma
 r_int
 id|new_len
+comma
+r_int
+id|must_be_dir
 )paren
 (brace
 multiline_comment|/* #Specification: weakness / rename&n;&t;&t;There is a case where UMSDOS rename has a different behavior&n;&t;&t;than normal UNIX file system. Renaming an open file across&n;&t;&t;directory boundary does not work. Renaming an open file within&n;&t;&t;a directory does work however.&n;&n;&t;&t;The problem (not sure) is in the linux VFS msdos driver.&n;&t;&t;I believe this is not a bug but a design feature, because&n;&t;&t;an inode number represent some sort of directory address&n;&t;&t;in the MSDOS directory structure. So moving the file into&n;&t;&t;another directory does not preserve the inode number.&n;&t;*/

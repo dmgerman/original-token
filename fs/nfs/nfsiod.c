@@ -42,9 +42,6 @@ r_struct
 id|nfs_server
 op_star
 id|server
-comma
-id|nfsiod_done_fn_t
-id|callback
 )paren
 (brace
 r_struct
@@ -131,10 +128,6 @@ id|req-&gt;rq_server
 op_assign
 id|server
 suffix:semicolon
-id|req-&gt;rq_callback
-op_assign
-id|callback
-suffix:semicolon
 r_return
 id|req
 suffix:semicolon
@@ -190,7 +183,7 @@ id|req
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Transmit a request and put it on nfsiod&squot;s list of pending requests.&n; */
-r_int
+r_void
 DECL|function|nfsiod_enqueue
 id|nfsiod_enqueue
 c_func
@@ -201,9 +194,6 @@ op_star
 id|req
 )paren
 (brace
-r_int
-id|result
-suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -211,44 +201,6 @@ l_string|&quot;BIO: enqueuing request %p&bslash;n&quot;
 comma
 op_amp
 id|req-&gt;rq_rpcreq
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|rpc_transmit
-c_func
-(paren
-id|req-&gt;rq_server-&gt;rsock
-comma
-op_amp
-id|req-&gt;rq_rpcreq
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-OL
-l_int|0
-)paren
-(brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;BIO: rpc_transmit returned %d&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;BIO: waking up nfsiod (%p)&bslash;n&quot;
-comma
-id|req-&gt;rq_wait
 )paren
 suffix:semicolon
 id|wake_up
@@ -262,10 +214,6 @@ id|schedule
 c_func
 (paren
 )paren
-suffix:semicolon
-)brace
-r_return
-id|result
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the main nfsiod loop.&n; */
@@ -388,6 +336,8 @@ comma
 id|active
 )paren
 suffix:semicolon
+r_do
+(brace
 id|result
 op_assign
 id|nfs_rpc_doio
@@ -401,6 +351,11 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
 id|req
 op_member_access_from_pointer
 id|rq_callback
@@ -409,6 +364,7 @@ c_func
 id|result
 comma
 id|req
+)paren
 )paren
 suffix:semicolon
 id|active

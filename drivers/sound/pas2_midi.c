@@ -1,8 +1,6 @@
 multiline_comment|/*&n; * sound/pas2_midi.c&n; *&n; * The low level driver for the PAS Midi Interface.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;pas.h&quot;
 macro_line|#if defined(CONFIG_PAS) &amp;&amp; defined(CONFIG_MIDI)
 DECL|variable|midi_busy
 DECL|variable|input_opened
@@ -130,17 +128,19 @@ l_string|&quot;PAS2: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Reset input and output FIFO pointers&n;   */
 id|pas_write
 (paren
-id|M_C_RESET_INPUT_FIFO
+l_int|0x20
 op_or
-id|M_C_RESET_OUTPUT_FIFO
+l_int|0x40
 comma
-id|MIDI_CONTROL
+l_int|0x178b
 )paren
 suffix:semicolon
 id|save_flags
@@ -160,7 +160,7 @@ id|err
 op_assign
 id|pas_set_intr
 (paren
-id|I_M_MIDI_IRQ_ENABLE
+l_int|0x10
 )paren
 )paren
 OL
@@ -196,9 +196,9 @@ id|OPEN_READWRITE
 (brace
 id|ctrl
 op_or_assign
-id|M_C_ENA_INPUT_IRQ
+l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Enable input&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Enable input&n;&t;&t;&t;&t; */
 id|input_opened
 op_assign
 l_int|1
@@ -218,17 +218,17 @@ id|OPEN_READWRITE
 (brace
 id|ctrl
 op_or_assign
-id|M_C_ENA_OUTPUT_IRQ
+l_int|0x08
 op_or
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Enable output&n;&t;&t;&t;&t;&t; */
-id|M_C_ENA_OUTPUT_HALF_IRQ
+multiline_comment|/*&n;&t;&t;&t;&t;   * Enable output&n;&t;&t;&t;&t; */
+l_int|0x10
 suffix:semicolon
 )brace
 id|pas_write
 (paren
 id|ctrl
 comma
-id|MIDI_CONTROL
+l_int|0x178b
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Acknowledge any pending interrupts&n;   */
@@ -236,7 +236,7 @@ id|pas_write
 (paren
 l_int|0xff
 comma
-id|MIDI_STATUS
+l_int|0x1B88
 )paren
 suffix:semicolon
 id|ofifo_bytes
@@ -276,16 +276,16 @@ id|dev
 multiline_comment|/*&n;   * Reset FIFO pointers, disable intrs&n;   */
 id|pas_write
 (paren
-id|M_C_RESET_INPUT_FIFO
+l_int|0x20
 op_or
-id|M_C_RESET_OUTPUT_FIFO
+l_int|0x40
 comma
-id|MIDI_CONTROL
+l_int|0x178b
 )paren
 suffix:semicolon
 id|pas_remove_intr
 (paren
-id|I_M_MIDI_IRQ_ENABLE
+l_int|0x10
 )paren
 suffix:semicolon
 id|midi_busy
@@ -316,7 +316,7 @@ id|x
 op_assign
 id|pas_read
 (paren
-id|MIDI_FIFO_STATUS
+l_int|0x1B89
 )paren
 )paren
 op_rshift
@@ -352,7 +352,7 @@ id|pas_write
 (paren
 id|midi_byte
 comma
-id|MIDI_DATA
+l_int|0x178A
 )paren
 suffix:semicolon
 r_return
@@ -517,7 +517,9 @@ id|arg
 (brace
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -598,12 +600,11 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-r_int
+r_void
 DECL|function|pas_midi_init
 id|pas_midi_init
 (paren
-r_int
-id|mem_start
+r_void
 )paren
 (brace
 r_if
@@ -620,7 +621,6 @@ l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|std_midi_synth.midi_dev
@@ -637,9 +637,6 @@ op_increment
 op_assign
 op_amp
 id|pas_midi_operations
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_void
@@ -666,7 +663,7 @@ id|stat
 op_assign
 id|pas_read
 (paren
-id|MIDI_STATUS
+l_int|0x1B88
 )paren
 suffix:semicolon
 r_if
@@ -674,20 +671,20 @@ c_cond
 (paren
 id|stat
 op_amp
-id|M_S_INPUT_AVAIL
+l_int|0x04
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Input byte available&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Input byte available&n;&t;&t;&t;&t; */
 (brace
 id|incount
 op_assign
 id|pas_read
 (paren
-id|MIDI_FIFO_STATUS
+l_int|0x1B89
 )paren
 op_amp
 l_int|0x0f
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Input FIFO count&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Input FIFO count&n;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -724,7 +721,7 @@ id|my_dev
 comma
 id|pas_read
 (paren
-id|MIDI_DATA
+l_int|0x178A
 )paren
 )paren
 suffix:semicolon
@@ -732,7 +729,7 @@ suffix:semicolon
 r_else
 id|pas_read
 (paren
-id|MIDI_DATA
+l_int|0x178A
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Flush&n;&t;&t;&t;&t; */
@@ -743,9 +740,9 @@ c_cond
 id|stat
 op_amp
 (paren
-id|M_S_OUTPUT_EMPTY
+l_int|0x08
 op_or
-id|M_S_OUTPUT_HALF_EMPTY
+l_int|0x10
 )paren
 )paren
 (brace
@@ -756,7 +753,7 @@ op_logical_neg
 (paren
 id|stat
 op_amp
-id|M_S_OUTPUT_EMPTY
+l_int|0x08
 )paren
 )paren
 (brace
@@ -813,7 +810,7 @@ c_cond
 (paren
 id|stat
 op_amp
-id|M_S_OUTPUT_OVERRUN
+l_int|0x40
 )paren
 (brace
 id|printk
@@ -822,7 +819,7 @@ l_string|&quot;MIDI output overrun %x,%x,%d &bslash;n&quot;
 comma
 id|pas_read
 (paren
-id|MIDI_FIFO_STATUS
+l_int|0x1B89
 )paren
 comma
 id|stat
@@ -839,10 +836,10 @@ id|pas_write
 (paren
 id|stat
 comma
-id|MIDI_STATUS
+l_int|0x1B88
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Acknowledge interrupts&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Acknowledge interrupts&n;&t;&t;&t;&t; */
 )brace
 macro_line|#endif
 eof

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/gus_card.c&n; *&n; * Detection routine for the Gravis Ultrasound.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_GUS)
@@ -53,13 +53,10 @@ r_int
 op_star
 id|gus_osp
 suffix:semicolon
-r_int
+r_void
 DECL|function|attach_gus_card
 id|attach_gus_card
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -94,12 +91,8 @@ id|hw_config-&gt;io_base
 )paren
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Try first the default&n;&t;&t;&t;&t;&t;&t; */
 (brace
-id|mem_start
-op_assign
 id|gus_wave_init
 (paren
-id|mem_start
-comma
 id|hw_config
 )paren
 suffix:semicolon
@@ -167,16 +160,12 @@ l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel2&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MIDI
-id|mem_start
-op_assign
 id|gus_midi_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 macro_line|#ifndef EXCLUDE_GUS_IODETECT
@@ -226,12 +215,8 @@ comma
 id|hw_config-&gt;io_base
 )paren
 suffix:semicolon
-id|mem_start
-op_assign
 id|gus_wave_init
 (paren
-id|mem_start
-comma
 id|hw_config
 )paren
 suffix:semicolon
@@ -299,23 +284,15 @@ l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel2&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MIDI
-id|mem_start
-op_assign
 id|gus_midi_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 macro_line|#endif
-r_return
-id|mem_start
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Not detected&n;&t;&t;&t;&t; */
 )brace
 r_int
 DECL|function|probe_gus
@@ -780,13 +757,10 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|attach_gus_db16
 id|attach_gus_db16
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -819,9 +793,6 @@ l_int|0
 comma
 id|hw_config-&gt;osp
 )paren
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_void

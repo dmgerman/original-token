@@ -112,6 +112,13 @@ suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Activate timer&n;&t; */
+id|del_timer
+c_func
+(paren
+op_amp
+id|watchdog_ticktock
+)paren
+suffix:semicolon
 id|watchdog_ticktock.expires
 op_assign
 id|jiffies

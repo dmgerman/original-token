@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/arch/alpha/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -116,6 +117,23 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined(CONFIG_ALPHA_SRM) &amp;&amp; defined(CONFIG_ALPHA_ALCOR)
+multiline_comment|/* who said DEC engineer&squot;s have no sense of humor? ;-)) */
+op_star
+(paren
+r_int
+op_star
+)paren
+id|GRU_RESET
+op_assign
+l_int|0x0000dead
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|halt
 c_func
 (paren

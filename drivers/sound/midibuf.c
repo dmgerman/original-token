@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/midibuf.c&n; *&n; * Device file manager for /dev/midi#&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_MIDI)
@@ -221,7 +221,7 @@ id|dev
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -232,7 +232,7 @@ l_int|10
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -244,7 +244,7 @@ l_int|10
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -258,7 +258,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -281,7 +281,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -292,14 +292,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
 id|midi_sleep_flag
 (braket
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -309,7 +309,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -384,7 +384,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_amp
 id|WK_SLEEP
 )paren
@@ -395,7 +395,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -565,7 +565,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_amp
 id|WK_SLEEP
 )paren
@@ -576,7 +576,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
@@ -686,7 +686,9 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *    Interrupts disabled. Be careful&n;   */
@@ -739,15 +741,13 @@ r_struct
 id|midi_buf
 op_star
 )paren
-id|kmalloc
+id|vmalloc
 (paren
 r_sizeof
 (paren
 r_struct
 id|midi_buf
 )paren
-comma
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -778,7 +778,9 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 id|midi_in_buf
@@ -814,15 +816,13 @@ r_struct
 id|midi_buf
 op_star
 )paren
-id|kmalloc
+id|vmalloc
 (paren
 r_sizeof
 (paren
 r_struct
 id|midi_buf
 )paren
-comma
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -851,7 +851,7 @@ id|close
 id|dev
 )paren
 suffix:semicolon
-id|kfree
+id|vfree
 (paren
 id|midi_in_buf
 (braket
@@ -868,7 +868,9 @@ l_int|NULL
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 id|midi_out_buf
@@ -902,7 +904,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -911,7 +913,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1043,7 +1045,7 @@ id|dev
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -1052,7 +1054,7 @@ l_int|0
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -1062,7 +1064,7 @@ l_int|0
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -1076,7 +1078,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -1099,7 +1101,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1110,14 +1112,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
 id|midi_sleep_flag
 (braket
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -1127,7 +1129,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1157,7 +1159,7 @@ id|close
 id|dev
 )paren
 suffix:semicolon
-id|kfree
+id|vfree
 (paren
 id|midi_in_buf
 (braket
@@ -1165,7 +1167,7 @@ id|dev
 )braket
 )paren
 suffix:semicolon
-id|kfree
+id|vfree
 (paren
 id|midi_out_buf
 (braket
@@ -1299,7 +1301,7 @@ multiline_comment|/*&n;&t;&t;&t;&t; * No space just now. We have to sleep&n;&t;&
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -1308,7 +1310,7 @@ l_int|0
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -1318,7 +1320,7 @@ l_int|0
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -1332,7 +1334,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -1355,7 +1357,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1366,14 +1368,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
 id|midi_sleep_flag
 (braket
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -1383,7 +1385,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1405,7 +1407,9 @@ id|flags
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINTR
+)paren
 suffix:semicolon
 )brace
 id|n
@@ -1462,13 +1466,11 @@ id|tmp_data
 comma
 op_amp
 (paren
-(paren
 id|buf
 )paren
 (braket
 id|c
 )braket
-)paren
 comma
 l_int|1
 )paren
@@ -1564,7 +1566,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;&t; * No data yet, wait&n;&t;&t;&t;&t;&t; */
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -1578,7 +1580,7 @@ id|prech_timeout
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -1593,7 +1595,7 @@ id|prech_timeout
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -1607,7 +1609,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -1630,7 +1632,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1641,14 +1643,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
 id|input_sleep_flag
 (braket
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -1658,7 +1660,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1675,7 +1677,9 @@ id|current_got_fatal_signal
 id|c
 op_assign
 op_minus
+(paren
 id|EINTR
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;   * The user is getting restless&n;&t;&t;&t;&t; */
 )brace
@@ -1743,13 +1747,11 @@ id|memcpy_tofs
 (paren
 op_amp
 (paren
-(paren
 id|buf
 )paren
 (braket
 id|c
 )braket
-)paren
 comma
 (paren
 r_char
@@ -1863,7 +1865,9 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2006,7 +2010,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -2050,7 +2054,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|mode
+id|flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -2085,17 +2089,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|MIDIbuf_init
 id|MIDIbuf_init
 (paren
-r_int
-id|mem_start
+r_void
 )paren
 (brace
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 macro_line|#endif
 eof

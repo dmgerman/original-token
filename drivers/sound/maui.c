@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle Beach Maui and Tropez.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -79,6 +79,23 @@ l_int|NULL
 suffix:semicolon
 macro_line|#ifdef HAVE_MAUI_BOOT
 macro_line|#include &quot;maui_boot.h&quot;
+macro_line|#else
+DECL|variable|maui_os
+r_static
+r_int
+r_char
+op_star
+id|maui_os
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|maui_osLen
+r_static
+r_int
+id|maui_osLen
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 DECL|variable|maui_sleeper
 r_static
@@ -177,7 +194,7 @@ suffix:semicolon
 (brace
 r_int
 r_int
-id|tl
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -188,7 +205,7 @@ l_int|10
 )paren
 id|current_set_timeout
 (paren
-id|tl
+id|tlimit
 op_assign
 id|jiffies
 op_plus
@@ -200,7 +217,7 @@ l_int|10
 )paren
 suffix:semicolon
 r_else
-id|tl
+id|tlimit
 op_assign
 (paren
 r_int
@@ -209,7 +226,7 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|maui_sleep_flag.mode
+id|maui_sleep_flag.flags
 op_assign
 id|WK_SLEEP
 suffix:semicolon
@@ -224,7 +241,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|maui_sleep_flag.mode
+id|maui_sleep_flag.flags
 op_amp
 id|WK_WAKEUP
 )paren
@@ -235,14 +252,14 @@ c_cond
 (paren
 id|jiffies
 op_ge
-id|tl
+id|tlimit
 )paren
-id|maui_sleep_flag.mode
+id|maui_sleep_flag.flags
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|maui_sleep_flag.mode
+id|maui_sleep_flag.flags
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -596,7 +613,7 @@ l_int|0x80
 (brace
 id|printk
 (paren
-l_string|&quot;Download not acknowledged&bslash;n&quot;
+l_string|&quot;Doanload not acknowledged&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1042,7 +1059,9 @@ l_string|&quot;Maui error: Patch header too short&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 id|count
@@ -1067,13 +1086,11 @@ id|offs
 comma
 op_amp
 (paren
-(paren
 id|addr
 )paren
 (braket
 id|offs
 )braket
-)paren
 comma
 id|hdr_size
 op_minus
@@ -1165,7 +1182,9 @@ l_int|0x80
 )paren
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1180,7 +1199,9 @@ l_int|1
 )paren
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -1214,7 +1235,9 @@ id|i
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EIO
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -1281,7 +1304,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-id|maui_sleep_flag.mode
+id|maui_sleep_flag.flags
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1619,13 +1642,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|attach_maui
 id|attach_maui
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -1649,12 +1669,12 @@ op_mul_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|mem_start
+id|hw_config-&gt;name
 op_assign
+l_string|&quot;Maui&quot;
+suffix:semicolon
 id|attach_mpu401
 (paren
-id|mem_start
-comma
 id|hw_config
 )paren
 suffix:semicolon
@@ -1672,7 +1692,7 @@ id|synth_operations
 op_star
 id|synth
 suffix:semicolon
-multiline_comment|/*&n;       * Intercept patch loading calls so that they can be handled&n;       * by the Maui driver.&n;       */
+multiline_comment|/*&n;       * Intercept patch loading calls so that they canbe handled&n;       * by the Maui driver.&n;       */
 id|synth
 op_assign
 id|midi_devs
@@ -1707,9 +1727,6 @@ l_string|&quot;Maui: Can&squot;t install patch loader&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 r_void
 DECL|function|unload_maui

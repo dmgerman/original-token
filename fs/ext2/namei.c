@@ -8,8 +8,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-multiline_comment|/*&n; * comment out this line if you want names &gt; EXT2_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
-multiline_comment|/* #define NO_TRUNCATE */
 multiline_comment|/*&n; * define how far ahead to read directories while searching them.&n; */
 DECL|macro|NAMEI_RA_CHUNKS
 mdefine_line|#define NAMEI_RA_CHUNKS  2
@@ -192,7 +190,6 @@ id|sb
 op_assign
 id|dir-&gt;i_sb
 suffix:semicolon
-macro_line|#ifdef NO_TRUNCATE
 r_if
 c_cond
 (paren
@@ -203,19 +200,6 @@ id|EXT2_NAME_LEN
 r_return
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|namelen
-OG
-id|EXT2_NAME_LEN
-)paren
-id|namelen
-op_assign
-id|EXT2_NAME_LEN
-suffix:semicolon
-macro_line|#endif
 id|memset
 (paren
 id|bh_use
@@ -735,6 +719,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|len
+OG
+id|EXT2_NAME_LEN
+)paren
+r_return
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|dcache_lookup
 c_func
 (paren
@@ -996,7 +991,6 @@ id|sb
 op_assign
 id|dir-&gt;i_sb
 suffix:semicolon
-macro_line|#ifdef NO_TRUNCATE
 r_if
 c_cond
 (paren
@@ -1004,22 +998,17 @@ id|namelen
 OG
 id|EXT2_NAME_LEN
 )paren
+(brace
+op_star
+id|err
+op_assign
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|namelen
-OG
-id|EXT2_NAME_LEN
-)paren
-id|namelen
-op_assign
-id|EXT2_NAME_LEN
-suffix:semicolon
-macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -1864,6 +1853,17 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|EXT2_NAME_LEN
+)paren
+r_return
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
 id|bh
 op_assign
 id|ext2_find_entry
@@ -2239,6 +2239,17 @@ id|dir
 r_return
 op_minus
 id|ENOENT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|EXT2_NAME_LEN
+)paren
+r_return
+op_minus
+id|ENAMETOOLONG
 suffix:semicolon
 id|bh
 op_assign
@@ -3019,6 +3030,17 @@ id|inode
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|EXT2_NAME_LEN
+)paren
+r_return
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
 id|bh
 op_assign
 id|ext2_find_entry
@@ -3090,9 +3112,16 @@ id|inode-&gt;i_dev
 op_ne
 id|dir-&gt;i_dev
 )paren
+(brace
+id|retval
+op_assign
+op_minus
+id|EBUSY
+suffix:semicolon
 r_goto
 id|end_rmdir
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3420,6 +3449,17 @@ suffix:semicolon
 id|inode
 op_assign
 l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|EXT2_NAME_LEN
+)paren
+r_return
+op_minus
+id|ENAMETOOLONG
 suffix:semicolon
 id|bh
 op_assign
@@ -4547,6 +4587,9 @@ id|new_name
 comma
 r_int
 id|new_len
+comma
+r_int
+id|must_be_dir
 )paren
 (brace
 r_struct
@@ -4659,6 +4702,21 @@ id|new_de
 op_assign
 l_int|NULL
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|old_len
+OG
+id|EXT2_NAME_LEN
+)paren
+r_goto
+id|end_rename
+suffix:semicolon
 id|old_bh
 op_assign
 id|ext2_find_entry
@@ -4704,6 +4762,21 @@ c_cond
 (paren
 op_logical_neg
 id|old_inode
+)paren
+r_goto
+id|end_rename
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|must_be_dir
+op_logical_and
+op_logical_neg
+id|S_ISDIR
+c_func
+(paren
+id|old_inode-&gt;i_mode
+)paren
 )paren
 r_goto
 id|end_rename
@@ -5417,6 +5490,9 @@ id|new_name
 comma
 r_int
 id|new_len
+comma
+r_int
+id|must_be_dir
 )paren
 (brace
 r_int
@@ -5452,6 +5528,8 @@ comma
 id|new_name
 comma
 id|new_len
+comma
+id|must_be_dir
 )paren
 suffix:semicolon
 id|old_dir-&gt;i_sb-&gt;u.ext2_sb.s_rename_lock

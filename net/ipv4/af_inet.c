@@ -2931,11 +2931,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sk2-&gt;reuse
-op_logical_or
-id|sk2-&gt;state
-op_eq
-id|TCP_LISTEN
+id|sk2-&gt;dead
 )paren
 (brace
 id|sti

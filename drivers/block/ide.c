@@ -7012,7 +7012,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 id|save_flags
 c_func

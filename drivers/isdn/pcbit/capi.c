@@ -35,6 +35,9 @@ id|sk_buff
 op_star
 op_star
 id|skb
+comma
+r_int
+id|proto
 )paren
 (brace
 id|ushort
@@ -50,6 +53,16 @@ c_func
 (paren
 id|calledPN
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|proto
+op_eq
+id|ISDN_PROTO_L2_TRANS
+)paren
+id|len
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -99,6 +112,78 @@ l_int|2
 op_assign
 id|AppInfoMask
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|proto
+op_eq
+id|ISDN_PROTO_L2_TRANS
+)paren
+(brace
+multiline_comment|/* Bearer Capability - Mandatory*/
+op_star
+(paren
+id|skb_put
+c_func
+(paren
+op_star
+id|skb
+comma
+l_int|1
+)paren
+)paren
+op_assign
+l_int|3
+suffix:semicolon
+multiline_comment|/* BC0.Length&t;&t;*/
+op_star
+(paren
+id|skb_put
+c_func
+(paren
+op_star
+id|skb
+comma
+l_int|1
+)paren
+)paren
+op_assign
+l_int|0x80
+suffix:semicolon
+multiline_comment|/* Speech&t;&t;*/
+op_star
+(paren
+id|skb_put
+c_func
+(paren
+op_star
+id|skb
+comma
+l_int|1
+)paren
+)paren
+op_assign
+l_int|0x10
+suffix:semicolon
+multiline_comment|/* Circuit Mode&t;&t;*/
+op_star
+(paren
+id|skb_put
+c_func
+(paren
+op_star
+id|skb
+comma
+l_int|1
+)paren
+)paren
+op_assign
+l_int|0x23
+suffix:semicolon
+multiline_comment|/* A-law&t;&t;*/
+)brace
+r_else
+(brace
 multiline_comment|/* Bearer Capability - Mandatory*/
 op_star
 (paren
@@ -114,7 +199,7 @@ l_int|1
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* BC0.Length                        */
+multiline_comment|/* BC0.Length&t;&t;*/
 op_star
 (paren
 id|skb_put
@@ -129,7 +214,7 @@ l_int|1
 op_assign
 l_int|0x88
 suffix:semicolon
-multiline_comment|/* BC0.Octect3 - Digital Information */
+multiline_comment|/* Digital Information&t;*/
 op_star
 (paren
 id|skb_put
@@ -144,7 +229,8 @@ l_int|1
 op_assign
 l_int|0x90
 suffix:semicolon
-multiline_comment|/* BC0.Octect4 -                     */
+multiline_comment|/* BC0.Octect4&t;&t;*/
+)brace
 multiline_comment|/* Bearer Capability - Optional*/
 op_star
 (paren
@@ -821,16 +907,6 @@ suffix:semicolon
 r_case
 id|ISDN_PROTO_L2_HDLC
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HDLC&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* HDLC */
-macro_line|#endif
 op_star
 (paren
 id|skb_put
@@ -844,6 +920,26 @@ l_int|1
 )paren
 op_assign
 l_int|0x02
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ISDN_PROTO_L2_TRANS
+suffix:colon
+multiline_comment|/* &n;&t;&t; *&t;Voice (a-law)&n;&t;&t; */
+op_star
+(paren
+id|skb_put
+c_func
+(paren
+op_star
+id|skb
+comma
+l_int|1
+)paren
+)paren
+op_assign
+l_int|0x06
 suffix:semicolon
 r_break
 suffix:semicolon

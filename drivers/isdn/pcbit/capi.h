@@ -27,6 +27,9 @@ id|sk_buff
 op_star
 op_star
 id|buf
+comma
+r_int
+id|proto
 )paren
 suffix:semicolon
 r_extern

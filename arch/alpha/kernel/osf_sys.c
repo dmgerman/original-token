@@ -522,6 +522,7 @@ op_minus
 id|buf.count
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Alpha syscall convention has no problem returning negative&n; * values:&n; */
 DECL|function|osf_getpriority
 id|asmlinkage
 r_int
@@ -533,6 +534,22 @@ id|which
 comma
 r_int
 id|who
+comma
+r_int
+id|a2
+comma
+r_int
+id|a3
+comma
+r_int
+id|a4
+comma
+r_int
+id|a5
+comma
+r_struct
+id|pt_regs
+id|regs
 )paren
 (brace
 r_extern
@@ -545,10 +562,11 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Alpha syscall convention has no problem returning negative&n;&t; * values:&n;&t; */
-r_return
-l_int|20
-op_minus
+r_int
+id|prio
+suffix:semicolon
+id|prio
+op_assign
 id|sys_getpriority
 c_func
 (paren
@@ -556,6 +574,26 @@ id|which
 comma
 id|who
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prio
+OL
+l_int|0
+)paren
+r_return
+id|prio
+suffix:semicolon
+id|regs.r0
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* special return: no errors */
+r_return
+l_int|20
+op_minus
+id|prio
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Heh. As documented by DEC..&n; */
@@ -797,6 +835,15 @@ op_minus
 id|EBADF
 suffix:semicolon
 )brace
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
 r_return
 id|do_mmap
 c_func

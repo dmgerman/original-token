@@ -779,16 +779,6 @@ c_func
 id|new_len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|old_len
-op_eq
-id|new_len
-)paren
-r_return
-id|addr
-suffix:semicolon
 multiline_comment|/*&n;&t; * Always allow a shrinking remap: that just unmaps&n;&t; * the unnecessary pages..&n;&t; */
 r_if
 c_cond
@@ -901,6 +891,19 @@ op_eq
 id|vma-&gt;vm_end
 op_minus
 id|addr
+op_logical_and
+(paren
+id|old_len
+op_ne
+id|new_len
+op_logical_or
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|MREMAP_MAYMOVE
+)paren
+)paren
 )paren
 (brace
 r_int

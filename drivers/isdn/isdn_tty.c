@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_tty.c,v 1.18 1996/06/07 11:17:33 tsbogend Exp $&n; *&n; * Linux ISDN subsystem, tty functions and AT-command emulator (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_tty.c,v $&n; * Revision 1.18  1996/06/07 11:17:33  tsbogend&n; * added missing #ifdef CONFIG_ISDN_AUDIO to make compiling without&n; * audio support possible&n; *&n; * Revision 1.17  1996/06/06 14:55:47  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; * Bugfix: Added check for invalid info-&gt;isdn_driver in&n; *         isdn_tty_senddown().&n; * Clear ncarrier flag on last close() of a tty.&n; *&n; * Revision 1.16  1996/06/05 02:24:12  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.15  1996/06/03 20:35:01  fritz&n; * Fixed typos.&n; *&n; * Revision 1.14  1996/06/03 20:12:19  fritz&n; * Fixed typos.&n; * Added call to write_wakeup via isdn_tty_flush_buffer()&n; * in isdn_tty_modem_hup().&n; *&n; * Revision 1.13  1996/05/31 01:33:29  fritz&n; * Changed buffering due to bad performance with mgetty.&n; * Now sk_buff is delayed allocated in isdn_tty_senddown&n; * using xmit_buff like in standard serial driver.&n; * Fixed module locking.&n; * Added DLE-DC4 handling in voice mode.&n; *&n; * Revision 1.12  1996/05/19 01:34:40  fritz&n; * Bugfix: ATS returned error.&n; *         Register 20 made readonly.&n; *&n; * Revision 1.11  1996/05/18 01:37:03  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:51:49  fritz&n; * Changed DLE handling for audio receive.&n; *&n; * Revision 1.9  1996/05/11 21:52:07  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.8  1996/05/10 08:49:43  fritz&n; * Checkin before major changes of tty-code.&n; *&n; * Revision 1.7  1996/05/07 09:15:09  fritz&n; * Reorganized and general cleanup.&n; * Bugfixes:&n; *  - Audio-transmit working now.&n; *  - &quot;NO CARRIER&quot; now reported, when hanging up with DTR low.&n; *  - Corrected CTS handling.&n; *&n; * Revision 1.6  1996/05/02 03:59:25  fritz&n; * Bugfixes:&n; *  - On dialout, layer-2 setup had been incomplete&n; *    when using new auto-layer2 feature.&n; *  - On hangup, &quot;NO CARRIER&quot; message sometimes missing.&n; *&n; * Revision 1.5  1996/04/30 21:05:25  fritz&n; * Test commit&n; *&n; * Revision 1.4  1996/04/20 16:39:54  fritz&n; * Changed all io to go through generic routines in isdn_common.c&n; * Fixed a real ugly bug in modem-emulator: &squot;ATA&squot; had been accepted&n; * even when a call has been cancelled from the remote machine.&n; *&n; * Revision 1.3  1996/02/11 02:12:32  fritz&n; * Bugfixes according to similar fixes in standard serial.c of kernel.&n; *&n; * Revision 1.2  1996/01/22 05:12:25  fritz&n; * replaced my_atoi by simple_strtoul&n; *&n; * Revision 1.1  1996/01/09 04:13:18  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_tty.c,v 1.21 1996/06/24 17:40:28 fritz Exp $&n; *&n; * Linux ISDN subsystem, tty functions and AT-command emulator (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_tty.c,v $&n; * Revision 1.21  1996/06/24 17:40:28  fritz&n; * Bugfix: Did not compile without CONFIG_ISDN_AUDIO&n; *&n; * Revision 1.20  1996/06/15 14:59:39  fritz&n; * Fixed isdn_tty_tint() to handle partially sent&n; * sk_buffs.&n; *&n; * Revision 1.19  1996/06/12 15:53:56  fritz&n; * Bugfix: AT+VTX and AT+VRX could be executed without&n; *         having a connection.&n; *         Missing check for NULL tty in isdn_tty_flush_buffer().&n; *&n; * Revision 1.18  1996/06/07 11:17:33  tsbogend&n; * added missing #ifdef CONFIG_ISDN_AUDIO to make compiling without&n; * audio support possible&n; *&n; * Revision 1.17  1996/06/06 14:55:47  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; * Bugfix: Added check for invalid info-&gt;isdn_driver in&n; *         isdn_tty_senddown().&n; * Clear ncarrier flag on last close() of a tty.&n; *&n; * Revision 1.16  1996/06/05 02:24:12  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.15  1996/06/03 20:35:01  fritz&n; * Fixed typos.&n; *&n; * Revision 1.14  1996/06/03 20:12:19  fritz&n; * Fixed typos.&n; * Added call to write_wakeup via isdn_tty_flush_buffer()&n; * in isdn_tty_modem_hup().&n; *&n; * Revision 1.13  1996/05/31 01:33:29  fritz&n; * Changed buffering due to bad performance with mgetty.&n; * Now sk_buff is delayed allocated in isdn_tty_senddown&n; * using xmit_buff like in standard serial driver.&n; * Fixed module locking.&n; * Added DLE-DC4 handling in voice mode.&n; *&n; * Revision 1.12  1996/05/19 01:34:40  fritz&n; * Bugfix: ATS returned error.&n; *         Register 20 made readonly.&n; *&n; * Revision 1.11  1996/05/18 01:37:03  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:51:49  fritz&n; * Changed DLE handling for audio receive.&n; *&n; * Revision 1.9  1996/05/11 21:52:07  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.8  1996/05/10 08:49:43  fritz&n; * Checkin before major changes of tty-code.&n; *&n; * Revision 1.7  1996/05/07 09:15:09  fritz&n; * Reorganized and general cleanup.&n; * Bugfixes:&n; *  - Audio-transmit working now.&n; *  - &quot;NO CARRIER&quot; now reported, when hanging up with DTR low.&n; *  - Corrected CTS handling.&n; *&n; * Revision 1.6  1996/05/02 03:59:25  fritz&n; * Bugfixes:&n; *  - On dialout, layer-2 setup had been incomplete&n; *    when using new auto-layer2 feature.&n; *  - On hangup, &quot;NO CARRIER&quot; message sometimes missing.&n; *&n; * Revision 1.5  1996/04/30 21:05:25  fritz&n; * Test commit&n; *&n; * Revision 1.4  1996/04/20 16:39:54  fritz&n; * Changed all io to go through generic routines in isdn_common.c&n; * Fixed a real ugly bug in modem-emulator: &squot;ATA&squot; had been accepted&n; * even when a call has been cancelled from the remote machine.&n; *&n; * Revision 1.3  1996/02/11 02:12:32  fritz&n; * Bugfixes according to similar fixes in standard serial.c of kernel.&n; *&n; * Revision 1.2  1996/01/22 05:12:25  fritz&n; * replaced my_atoi by simple_strtoul&n; *&n; * Revision 1.1  1996/01/09 04:13:18  fritz&n; * Initial revision&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -173,7 +173,7 @@ r_char
 op_star
 id|isdn_tty_revision
 op_assign
-l_string|&quot;$Revision: 1.18 $&quot;
+l_string|&quot;$Revision: 1.21 $&quot;
 suffix:semicolon
 DECL|macro|DLE
 mdefine_line|#define DLE 0x10
@@ -781,6 +781,11 @@ op_amp
 id|info-&gt;xmit_queue
 )paren
 suffix:semicolon
+r_int
+id|len
+comma
+id|slen
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -789,9 +794,16 @@ id|skb
 )paren
 r_return
 suffix:semicolon
+id|len
+op_assign
+id|skb-&gt;len
+suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|slen
+op_assign
 id|isdn_writebuf_skb_stub
 c_func
 (paren
@@ -801,8 +813,9 @@ id|info-&gt;isdn_channel
 comma
 id|skb
 )paren
-OG
-l_int|0
+)paren
+op_eq
+id|len
 )paren
 (brace
 r_struct
@@ -855,6 +868,21 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|slen
+OG
+l_int|0
+)paren
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|slen
+)paren
+suffix:semicolon
 id|skb_queue_head
 c_func
 (paren
@@ -1240,7 +1268,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif        /* CONFIG_ISDN_AUDIO */
 DECL|variable|voice_cf
 r_static
 r_int
@@ -1265,6 +1292,7 @@ comma
 l_int|1
 )brace
 suffix:semicolon
+macro_line|#endif        /* CONFIG_ISDN_AUDIO */
 multiline_comment|/* isdn_tty_senddown() is called either directly from within isdn_tty_write()&n; * or via timer-interrupt from within isdn_tty_modem_xmit(). It pulls&n; * outgoing data from the tty&squot;s xmit-buffer, handles voice-decompression or&n; * T.70 if necessary, and finally queues it up for sending via isdn_tty_tint.&n; */
 DECL|function|isdn_tty_senddown
 r_static
@@ -1362,6 +1390,7 @@ id|interface-&gt;hl_hdrlen
 op_plus
 l_int|4
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_AUDIO
 r_if
 c_cond
 (paren
@@ -1370,7 +1399,6 @@ op_amp
 l_int|2
 )paren
 (brace
-macro_line|#ifdef CONFIG_ISDN_AUDIO
 multiline_comment|/* For now, ifmt is fixed to 1 (alaw), since this&n;                 * is used with ISDN everywhere in the world, except&n;                 * US, Canada and Japan.&n;                 * Later, when US-ISDN protocols are implemented,&n;                 * this setting will depend on the D-channel protocol.&n;                 */
 r_int
 id|ifmt
@@ -1608,10 +1636,10 @@ id|info
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif        /* CONFIG_ISDN_AUDIO */
 )brace
 r_else
 (brace
+macro_line|#endif        /* CONFIG_ISDN_AUDIO */
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -1681,7 +1709,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_AUDIO
 )brace
+macro_line|#endif
 id|skb-&gt;free
 op_assign
 l_int|1
@@ -2271,6 +2301,17 @@ id|info
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef ISDN_DEBUG_MODEM_HUP
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Mhup ttyI%d&bslash;n&quot;
+comma
+id|info-&gt;line
+)paren
+suffix:semicolon
+macro_line|#endif
 id|info-&gt;rcvsched
 op_assign
 l_int|0
@@ -3680,16 +3721,45 @@ id|tty
 id|modem_info
 op_star
 id|info
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tty
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|info
 op_assign
 (paren
 id|modem_info
 op_star
 )paren
 id|tty-&gt;driver_data
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -3704,19 +3774,16 @@ comma
 l_string|&quot;isdn_tty_flush_buffer&quot;
 )paren
 )paren
-r_return
-suffix:semicolon
-id|save_flags
+(brace
+id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+r_return
 suffix:semicolon
+)brace
 id|isdn_tty_cleanup_xmit
 c_func
 (paren
@@ -10325,6 +10392,26 @@ l_int|0
 )paren
 id|PARSE_ERROR1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;online
+op_ne
+l_int|1
+)paren
+(brace
+id|isdn_tty_modem_result
+c_func
+(paren
+l_int|8
+comma
+id|info
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|info-&gt;dtmf_state
 op_assign
 id|isdn_audio_dtmf_init
@@ -10808,6 +10895,26 @@ l_int|0
 )paren
 id|PARSE_ERROR1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;online
+op_ne
+l_int|1
+)paren
+(brace
+id|isdn_tty_modem_result
+c_func
+(paren
+l_int|8
+comma
+id|info
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|info-&gt;dtmf_state
 op_assign
 id|isdn_audio_dtmf_init

@@ -896,12 +896,12 @@ id|IPFWD_MULTITUNNEL
 id|skb_reserve
 c_func
 (paren
-id|skb
+id|skb2
 comma
 (paren
 id|encap
 op_plus
-id|dev-&gt;hard_header_len
+id|dev2-&gt;hard_header_len
 op_plus
 l_int|15
 )paren

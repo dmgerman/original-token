@@ -1,12 +1,16 @@
-multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; *&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; */
+multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; *&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#ifdef DES_AVAILABLE
-macro_line|#include &quot;des.h&quot;
+macro_line|#ifdef CONFIG_BLK_DEV_LOOP_DES
+macro_line|#include &lt;linux/des.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_LOOP_IDEA
+macro_line|#include &lt;linux/idea.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/loop.h&gt;&t;&t;/* must follow des.h */
 DECL|macro|MAJOR_NR
@@ -529,6 +533,90 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef IDEA_AVAILABLE
+r_extern
+r_void
+id|idea_encrypt_block
+c_func
+(paren
+id|idea_key
+comma
+r_char
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|function|transfer_idea
+r_static
+r_int
+id|transfer_idea
+c_func
+(paren
+r_struct
+id|loop_device
+op_star
+id|lo
+comma
+r_int
+id|cmd
+comma
+r_char
+op_star
+id|raw_buf
+comma
+r_char
+op_star
+id|loop_buf
+comma
+r_int
+id|size
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|READ
+)paren
+(brace
+id|idea_encrypt_block
+c_func
+(paren
+id|lo-&gt;lo_idea_en_key
+comma
+id|raw_buf
+comma
+id|loop_buf
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|idea_encrypt_block
+c_func
+(paren
+id|lo-&gt;lo_idea_de_key
+comma
+id|loop_buf
+comma
+id|raw_buf
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|variable|xfer_funcs
 r_static
 id|transfer_proc_t
@@ -553,8 +641,11 @@ l_int|NULL
 comma
 multiline_comment|/* LO_CRYPT_DES */
 macro_line|#endif
-l_int|0
-multiline_comment|/* LO_CRYPT_IDEA */
+macro_line|#ifdef IDEA_AVAILABLE           /* LO_CRYPT_IDEA */
+id|transfer_idea
+macro_line|#else
+l_int|NULL
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|MAX_DISK_SIZE
@@ -1116,6 +1207,15 @@ id|CURRENT-&gt;cmd
 op_eq
 id|WRITE
 )paren
+(brace
+id|mark_buffer_uptodate
+c_func
+(paren
+id|bh
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
@@ -1124,6 +1224,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+)brace
 id|brelse
 c_func
 (paren
@@ -1656,6 +1757,62 @@ l_int|8
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef IDEA_AVAILABLE
+r_case
+id|LO_CRYPT_IDEA
+suffix:colon
+(brace
+id|uint16
+id|tmpkey
+(braket
+l_int|8
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info.lo_encrypt_key_size
+op_ne
+id|IDEAKEYSIZE
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* create key in lo-&gt; from info.lo_encrypt_key */
+id|memcpy
+c_func
+(paren
+id|tmpkey
+comma
+id|info.lo_encrypt_key
+comma
+r_sizeof
+(paren
+id|tmpkey
+)paren
+)paren
+suffix:semicolon
+id|en_key_idea
+c_func
+(paren
+id|tmpkey
+comma
+id|lo-&gt;lo_idea_en_key
+)paren
+suffix:semicolon
+id|de_key_idea
+c_func
+(paren
+id|lo-&gt;lo_idea_en_key
+comma
+id|lo-&gt;lo_idea_de_key
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 macro_line|#endif
 r_default
 suffix:colon
@@ -2429,6 +2586,22 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
+macro_line|#ifdef DES_AVAILABLE
+id|printk
+c_func
+(paren
+l_string|&quot;loop: DES encryption available&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef IDEA_AVAILABLE
+id|printk
+c_func
+(paren
+l_string|&quot;loop: IDEA encryption available&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|blk_dev
 (braket

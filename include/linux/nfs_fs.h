@@ -291,6 +291,9 @@ r_const
 r_char
 op_star
 id|new_name
+comma
+r_int
+id|must_be_dir
 )paren
 suffix:semicolon
 r_extern
@@ -492,6 +495,10 @@ c_func
 (paren
 r_struct
 id|rpc_ioreq
+op_star
+comma
+r_struct
+id|nfs_fattr
 op_star
 )paren
 suffix:semicolon

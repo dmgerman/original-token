@@ -1,8 +1,15 @@
 multiline_comment|/*&n; * linux/kernel/chr_drv/sound/soundcard.c&n; *&n; * Soundcard driver for Linux&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/major.h&gt;
+DECL|variable|sound_global_osp
+r_int
+op_star
+id|sound_global_osp
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|variable|chrdev_registered
 r_static
 r_int
@@ -32,9 +39,9 @@ id|sound_mem_blocks
 l_int|1024
 )braket
 suffix:semicolon
-DECL|variable|sound_num_blocks
+DECL|variable|sound_nblocks
 r_int
-id|sound_num_blocks
+id|sound_nblocks
 op_assign
 l_int|0
 suffix:semicolon
@@ -266,7 +273,9 @@ id|orig
 (brace
 r_return
 op_minus
+(paren
 id|EPERM
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -305,7 +314,9 @@ l_string|&quot;Sound: Driver partially removed. Can&squot;t open device&bslash;n
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 id|dev
@@ -340,7 +351,9 @@ l_string|&quot;SoundCard Error: The soundcard system has not been configured&bsl
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 id|tmp_file.mode
@@ -1231,10 +1244,24 @@ l_int|1
 suffix:semicolon
 id|sndtable_init
 (paren
-l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize call tables and&n;&t;&t;&t;&t;   * detect cards */
+multiline_comment|/* Initialize call tables and detect cards */
+macro_line|#ifdef CONFIG_LOWLEVEL_SOUND
+(brace
+r_extern
+r_void
+id|sound_init_lowlevel_drivers
+(paren
+r_void
+)paren
+suffix:semicolon
+id|sound_init_lowlevel_drivers
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1257,12 +1284,10 @@ multiline_comment|/* Audio devices present */
 (brace
 id|DMAbuf_init
 (paren
-l_int|0
 )paren
 suffix:semicolon
 id|audio_init
 (paren
-l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1275,7 +1300,6 @@ id|num_midis
 )paren
 id|MIDIbuf_init
 (paren
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1289,7 +1313,6 @@ id|num_synths
 )paren
 id|sequencer_init
 (paren
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1367,6 +1390,14 @@ op_assign
 id|UTS_RELEASE
 suffix:semicolon
 macro_line|#endif
+DECL|variable|debugmem
+r_static
+r_int
+id|debugmem
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* switched off by default */
 DECL|variable|sound
 r_static
 r_int
@@ -1506,7 +1537,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_num_blocks
+id|sound_nblocks
 op_ge
 l_int|1024
 )paren
@@ -1533,6 +1564,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|MOD_IN_USE
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|chrdev_registered
 )paren
 id|module_unregister_chrdev
@@ -1548,6 +1588,21 @@ id|sound_stop_timer
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_LOWLEVEL_SOUND
+(brace
+r_extern
+r_void
+id|sound_unload_lowlevel_drivers
+(paren
+r_void
+)paren
+suffix:semicolon
+id|sound_unload_lowlevel_drivers
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|sound_unload_drivers
 (paren
 )paren
@@ -1561,12 +1616,12 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|sound_num_blocks
+id|sound_nblocks
 suffix:semicolon
 id|i
 op_increment
 )paren
-id|kfree
+id|vfree
 (paren
 id|sound_mem_blocks
 (braket
@@ -1661,7 +1716,7 @@ comma
 r_void
 (paren
 op_star
-id|hndlr
+id|iproc
 )paren
 (paren
 r_int
@@ -1692,7 +1747,7 @@ id|request_irq
 (paren
 id|interrupt_level
 comma
-id|hndlr
+id|iproc
 comma
 l_int|0
 multiline_comment|/* SA_INTERRUPT */
@@ -1833,6 +1888,29 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|chn
+template_param
+l_int|7
+op_logical_or
+id|chn
+op_eq
+l_int|4
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;sound_open_dma: Invalid DMA channel %d&bslash;n&quot;
+comma
+id|chn
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|save_flags
 (paren
 id|flags
@@ -2078,14 +2156,6 @@ macro_line|#ifdef KMALLOC_DMA_BROKEN
 id|fatal_error__This_version_is_not_compatible_with_this_kernel
 suffix:semicolon
 macro_line|#endif
-DECL|variable|debugmem
-r_static
-r_int
-id|debugmem
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* switched off by default */
 DECL|variable|dma_buffsize
 r_static
 r_int
@@ -2338,7 +2408,9 @@ l_string|&quot;Sound error: Couldn&squot;t allocate DMA buffer&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|ENOMEM
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2422,7 +2494,7 @@ id|MAX_DMA_ADDRESS
 (brace
 id|printk
 (paren
-l_string|&quot;sound: kmalloc returned invalid address 0x%lx for %ld Bytes DMA-buffer&bslash;n&quot;
+l_string|&quot;sound: Got invalid address 0x%lx for %ldb DMA-buffer&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2439,7 +2511,9 @@ id|buffsize
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EFAULT
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2498,6 +2572,19 @@ op_star
 id|dmap
 )paren
 (brace
+r_int
+id|sz
+comma
+id|size
+comma
+id|i
+suffix:semicolon
+r_int
+r_int
+id|start_addr
+comma
+id|end_addr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2517,20 +2604,6 @@ id|DMA_MAP_MAPPED
 r_return
 suffix:semicolon
 multiline_comment|/* Don&squot;t free mmapped buffer. Will use it next time */
-(brace
-r_int
-id|sz
-comma
-id|size
-comma
-id|i
-suffix:semicolon
-r_int
-r_int
-id|start_addr
-comma
-id|end_addr
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2616,15 +2689,14 @@ comma
 id|sz
 )paren
 suffix:semicolon
-)brace
 id|dmap-&gt;raw_buf
 op_assign
 l_int|NULL
 suffix:semicolon
 )brace
 r_int
-DECL|function|sound_map_buffer
-id|sound_map_buffer
+DECL|function|soud_map_buffer
+id|soud_map_buffer
 (paren
 r_int
 id|dev
@@ -2651,7 +2723,9 @@ l_string|&quot;Exited sound_map_buffer()&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
+(paren
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif

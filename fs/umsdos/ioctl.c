@@ -639,6 +639,8 @@ comma
 id|data.umsdos_dirent.name
 comma
 id|data.umsdos_dirent.name_len
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

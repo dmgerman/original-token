@@ -1,27 +1,27 @@
 DECL|macro|DSP_RESET
-mdefine_line|#define DSP_RESET&t;(sbc_base + 0x6)
+mdefine_line|#define DSP_RESET&t;(devc-&gt;base + 0x6)
 DECL|macro|DSP_READ
-mdefine_line|#define DSP_READ&t;(sbc_base + 0xA)
+mdefine_line|#define DSP_READ&t;(devc-&gt;base + 0xA)
 DECL|macro|DSP_WRITE
-mdefine_line|#define DSP_WRITE&t;(sbc_base + 0xC)
+mdefine_line|#define DSP_WRITE&t;(devc-&gt;base + 0xC)
 DECL|macro|DSP_COMMAND
-mdefine_line|#define DSP_COMMAND&t;(sbc_base + 0xC)
+mdefine_line|#define DSP_COMMAND&t;(devc-&gt;base + 0xC)
 DECL|macro|DSP_STATUS
-mdefine_line|#define DSP_STATUS&t;(sbc_base + 0xC)
+mdefine_line|#define DSP_STATUS&t;(devc-&gt;base + 0xC)
 DECL|macro|DSP_DATA_AVAIL
-mdefine_line|#define DSP_DATA_AVAIL&t;(sbc_base + 0xE)
+mdefine_line|#define DSP_DATA_AVAIL&t;(devc-&gt;base + 0xE)
 DECL|macro|DSP_DATA_AVL16
-mdefine_line|#define DSP_DATA_AVL16&t;(sbc_base + 0xF)
+mdefine_line|#define DSP_DATA_AVL16&t;(devc-&gt;base + 0xF)
 DECL|macro|MIXER_ADDR
-mdefine_line|#define MIXER_ADDR&t;(sbc_base + 0x4)
+mdefine_line|#define MIXER_ADDR&t;(devc-&gt;base + 0x4)
 DECL|macro|MIXER_DATA
-mdefine_line|#define MIXER_DATA&t;(sbc_base + 0x5)
+mdefine_line|#define MIXER_DATA&t;(devc-&gt;base + 0x5)
 DECL|macro|OPL3_LEFT
-mdefine_line|#define OPL3_LEFT&t;(sbc_base + 0x0)
+mdefine_line|#define OPL3_LEFT&t;(devc-&gt;base + 0x0)
 DECL|macro|OPL3_RIGHT
-mdefine_line|#define OPL3_RIGHT&t;(sbc_base + 0x2)
+mdefine_line|#define OPL3_RIGHT&t;(devc-&gt;base + 0x2)
 DECL|macro|OPL3_BOTH
-mdefine_line|#define OPL3_BOTH&t;(sbc_base + 0x8)
+mdefine_line|#define OPL3_BOTH&t;(devc-&gt;base + 0x8)
 multiline_comment|/* DSP Commands */
 DECL|macro|DSP_CMD_SPKON
 mdefine_line|#define DSP_CMD_SPKON&t;&t;0xD1
@@ -45,4 +45,415 @@ DECL|macro|NORMAL_MIDI
 mdefine_line|#define NORMAL_MIDI&t;0
 DECL|macro|UART_MIDI
 mdefine_line|#define UART_MIDI&t;1
+multiline_comment|/*&n; * Device models&n; */
+DECL|macro|MDL_NONE
+mdefine_line|#define MDL_NONE&t;0
+DECL|macro|MDL_SB1
+mdefine_line|#define MDL_SB1&t;&t;1&t;/* SB1.0 or 1.5 */
+DECL|macro|MDL_SB2
+mdefine_line|#define MDL_SB2&t;&t;2&t;/* SB2.0 */
+DECL|macro|MDL_SB201
+mdefine_line|#define MDL_SB201&t;3&t;/* SB2.01 */
+DECL|macro|MDL_SBPRO
+mdefine_line|#define MDL_SBPRO&t;4&t;/* SB Pro */
+DECL|macro|MDL_SB16
+mdefine_line|#define MDL_SB16&t;5&t;/* SB16/32/AWE */
+DECL|macro|MDL_JAZZ
+mdefine_line|#define MDL_JAZZ&t;10&t;/* Media Vision Jazz16 */
+DECL|macro|MDL_SMW
+mdefine_line|#define MDL_SMW&t;&t;11&t;/* Logitech Soundman Wave (Jazz16) */
+DECL|macro|MDL_ESS
+mdefine_line|#define MDL_ESS&t;&t;12&t;/* ESS ES688 and ES1688 */
+DECL|macro|MDL_AZTECH
+mdefine_line|#define MDL_AZTECH&t;13&t;/* Aztech Sound Galaxy family */
+multiline_comment|/*&n; * Config flags&n; */
+DECL|macro|SB_NO_MIDI
+mdefine_line|#define SB_NO_MIDI&t;0x00000001
+DECL|macro|SB_NO_MIXER
+mdefine_line|#define SB_NO_MIXER&t;0x00000002
+DECL|macro|SB_NO_AUDIO
+mdefine_line|#define SB_NO_AUDIO&t;0x00000004
+DECL|macro|SB_NO_RECORDING
+mdefine_line|#define SB_NO_RECORDING&t;0x00000008 /* No audio recording */
+DECL|macro|SB_MIDI_ONLY
+mdefine_line|#define SB_MIDI_ONLY&t;(SB_NO_AUDIO|SB_NO_MIXER)
+DECL|struct|mixer_def
+r_struct
+id|mixer_def
+(brace
+DECL|member|regno
+r_int
+r_int
+id|regno
+suffix:colon
+l_int|8
+suffix:semicolon
+DECL|member|bitoffs
+r_int
+r_int
+id|bitoffs
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|nbits
+r_int
+r_int
+id|nbits
+suffix:colon
+l_int|4
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|typedef|mixer_tab
+r_typedef
+r_struct
+id|mixer_def
+id|mixer_tab
+(braket
+l_int|32
+)braket
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|typedef|mixer_ent
+r_typedef
+r_struct
+id|mixer_def
+id|mixer_ent
+suffix:semicolon
+DECL|struct|sb_devc
+r_typedef
+r_struct
+id|sb_devc
+(brace
+DECL|member|dev
+r_int
+id|dev
+suffix:semicolon
+multiline_comment|/* Hardware parameters */
+DECL|member|osp
+r_int
+op_star
+id|osp
+suffix:semicolon
+DECL|member|minor
+DECL|member|major
+r_int
+id|minor
+comma
+id|major
+suffix:semicolon
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
+DECL|member|model
+DECL|member|submodel
+r_int
+id|model
+comma
+id|submodel
+suffix:semicolon
+DECL|member|caps
+r_int
+id|caps
+suffix:semicolon
+DECL|macro|SBCAP_STEREO
+macro_line|#&t;define SBCAP_STEREO&t;0x00000001
+DECL|macro|SBCAP_16BITS
+macro_line|#&t;define SBCAP_16BITS&t;0x00000002
+multiline_comment|/* Hardware resources */
+DECL|member|base
+r_int
+id|base
+suffix:semicolon
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+DECL|member|dma8
+DECL|member|dma16
+r_int
+id|dma8
+comma
+id|dma16
+suffix:semicolon
+multiline_comment|/* State variables */
+DECL|member|opened
+r_int
+id|opened
+suffix:semicolon
+DECL|member|speed
+DECL|member|bits
+DECL|member|channels
+r_int
+id|speed
+comma
+id|bits
+comma
+id|channels
+suffix:semicolon
+DECL|member|irq_ok
+r_volatile
+r_int
+id|irq_ok
+suffix:semicolon
+DECL|member|intr_active
+DECL|member|irq_mode
+r_volatile
+r_int
+id|intr_active
+comma
+id|irq_mode
+suffix:semicolon
+multiline_comment|/* Mixer fields */
+DECL|member|levels
+r_int
+id|levels
+(braket
+id|SOUND_MIXER_NRDEVICES
+)braket
+suffix:semicolon
+DECL|member|iomap
+id|mixer_tab
+op_star
+id|iomap
+suffix:semicolon
+DECL|member|mixer_caps
+DECL|member|recmask
+DECL|member|supported_devices
+r_int
+id|mixer_caps
+comma
+id|recmask
+comma
+id|supported_devices
+suffix:semicolon
+DECL|member|supported_rec_devices
+r_int
+id|supported_rec_devices
+suffix:semicolon
+DECL|member|my_mixerdev
+r_int
+id|my_mixerdev
+suffix:semicolon
+multiline_comment|/* Audio fields */
+DECL|member|trg_buf
+r_int
+r_int
+id|trg_buf
+suffix:semicolon
+DECL|member|trigger_bits
+r_int
+id|trigger_bits
+suffix:semicolon
+DECL|member|trg_bytes
+r_int
+id|trg_bytes
+suffix:semicolon
+DECL|member|trg_intrflag
+r_int
+id|trg_intrflag
+suffix:semicolon
+DECL|member|trg_restart
+r_int
+id|trg_restart
+suffix:semicolon
+DECL|member|tconst
+r_int
+r_char
+id|tconst
+suffix:semicolon
+DECL|member|my_dev
+r_int
+id|my_dev
+suffix:semicolon
+multiline_comment|/* MIDI fields */
+DECL|member|my_mididev
+r_int
+id|my_mididev
+suffix:semicolon
+DECL|member|input_opened
+r_int
+id|input_opened
+suffix:semicolon
+DECL|member|midi_input_intr
+r_void
+(paren
+op_star
+id|midi_input_intr
+)paren
+(paren
+r_int
+id|dev
+comma
+r_int
+r_char
+id|data
+)paren
+suffix:semicolon
+DECL|typedef|sb_devc
+)brace
+id|sb_devc
+suffix:semicolon
+r_int
+id|sb_dsp_command
+(paren
+id|sb_devc
+op_star
+id|devc
+comma
+r_int
+r_char
+id|val
+)paren
+suffix:semicolon
+r_int
+id|sb_dsp_get_byte
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_int
+id|sb_dsp_reset
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_void
+id|sb_setmixer
+(paren
+id|sb_devc
+op_star
+id|devc
+comma
+r_int
+r_int
+id|port
+comma
+r_int
+r_int
+id|value
+)paren
+suffix:semicolon
+r_int
+r_int
+id|sb_getmixer
+(paren
+id|sb_devc
+op_star
+id|devc
+comma
+r_int
+r_int
+id|port
+)paren
+suffix:semicolon
+r_int
+id|sb_dsp_detect
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_void
+id|sb_dsp_init
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_void
+id|sb_dsp_unload
+c_func
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_int
+id|sb_mixer_init
+c_func
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_void
+id|smw_mixer_init
+c_func
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_void
+id|sb_dsp_midi_init
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_void
+id|sb_audio_init
+(paren
+id|sb_devc
+op_star
+id|devc
+comma
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+r_void
+id|sb_midi_interrupt
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_int
+id|ess_write
+(paren
+id|sb_devc
+op_star
+id|devc
+comma
+r_int
+r_char
+id|reg
+comma
+r_int
+r_char
+id|data
+)paren
+suffix:semicolon
+r_int
+id|ess_read
+(paren
+id|sb_devc
+op_star
+id|devc
+comma
+r_int
+r_char
+id|reg
+)paren
+suffix:semicolon
 eof

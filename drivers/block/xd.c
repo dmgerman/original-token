@@ -1009,10 +1009,8 @@ suffix:semicolon
 )brace
 r_else
 r_return
-(paren
 op_minus
-id|ENODEV
-)paren
+id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* do_xd_request: handle an incoming request */

@@ -1116,6 +1116,12 @@ id|F_UNLCK
 suffix:colon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 )brace
 r_return
 (paren
@@ -1659,7 +1665,7 @@ id|fl-&gt;fl_owner
 r_return
 (paren
 op_minus
-id|EDEADLOCK
+id|EDEADLK
 )paren
 suffix:semicolon
 id|interruptible_sleep_on
@@ -2842,7 +2848,7 @@ id|fl-&gt;fl_owner
 r_return
 (paren
 op_minus
-id|EDEADLOCK
+id|EDEADLK
 )paren
 suffix:semicolon
 id|interruptible_sleep_on

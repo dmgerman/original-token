@@ -1531,7 +1531,7 @@ r_case
 id|ERRlock
 suffix:colon
 r_return
-id|EDEADLOCK
+id|EDEADLK
 suffix:semicolon
 r_case
 id|ERRfilexists
@@ -1663,7 +1663,7 @@ r_case
 id|ERRlock
 suffix:colon
 r_return
-id|EDEADLOCK
+id|EDEADLK
 suffix:semicolon
 r_default
 suffix:colon

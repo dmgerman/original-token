@@ -1413,7 +1413,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 )brace
 r_if

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt; /* for blk_size */
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/segment.h&gt; /* for memcpy_to/fromfs */
@@ -2233,6 +2234,34 @@ c_cond
 (paren
 op_logical_neg
 id|p-&gt;swap_device
+op_logical_or
+(paren
+id|blk_size
+(braket
+id|MAJOR
+c_func
+(paren
+id|p-&gt;swap_device
+)paren
+)braket
+op_logical_and
+op_logical_neg
+id|blk_size
+(braket
+id|MAJOR
+c_func
+(paren
+id|p-&gt;swap_device
+)paren
+)braket
+(braket
+id|MINOR
+c_func
+(paren
+id|p-&gt;swap_device
+)paren
+)braket
+)paren
 )paren
 r_goto
 id|bad_swap

@@ -19,14 +19,11 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/timer.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;sys/kd.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -42,9 +39,9 @@ DECL|struct|snd_wait
 r_struct
 id|snd_wait
 (brace
-DECL|member|mode
+DECL|member|flags
 r_int
-id|mode
+id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -103,7 +100,7 @@ l_int|1024
 suffix:semicolon
 r_extern
 r_int
-id|sound_num_blocks
+id|sound_nblocks
 suffix:semicolon
 DECL|macro|PSEUDO_DMA_AUTOINIT
 macro_line|#undef PSEUDO_DMA_AUTOINIT

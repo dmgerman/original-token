@@ -426,11 +426,6 @@ id|__u32
 id|word
 )paren
 (brace
-id|__u32
-id|nbits
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 (paren
 id|word

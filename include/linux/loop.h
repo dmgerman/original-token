@@ -99,6 +99,16 @@ l_int|2
 )braket
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef IDEA_AVAILABLE
+DECL|member|lo_idea_en_key
+id|idea_key
+id|lo_idea_en_key
+suffix:semicolon
+DECL|member|lo_idea_de_key
+id|idea_key
+id|lo_idea_de_key
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|typedef|transfer_proc_t

@@ -1623,6 +1623,13 @@ id|current-&gt;signal
 op_assign
 l_int|0
 suffix:semicolon
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren

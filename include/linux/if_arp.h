@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_IF_ARP_H
 DECL|macro|_LINUX_IF_ARP_H
 mdefine_line|#define _LINUX_IF_ARP_H
+macro_line|#include &lt;linux/netdevice.h&gt;
 multiline_comment|/* ARP protocol HARDWARE identifiers. */
 DECL|macro|ARPHRD_NETROM
 mdefine_line|#define ARPHRD_NETROM&t;0&t;&t;/* from KA9Q: NET/ROM pseudo&t;*/

@@ -2872,7 +2872,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|sock-&gt;file
+id|newsock-&gt;file
 op_assign
 id|current-&gt;files-&gt;fd
 (braket

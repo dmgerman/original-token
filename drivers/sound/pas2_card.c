@@ -1,13 +1,143 @@
 DECL|macro|_PAS2_CARD_C_
 mdefine_line|#define _PAS2_CARD_C_
 multiline_comment|/*&n; * sound/pas2_card.c&n; *&n; * Detection routine for the Pro Audio Spectrum cards.&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_PAS)
-DECL|macro|DEFINE_TRANSLATIONS
-mdefine_line|#define DEFINE_TRANSLATIONS
-macro_line|#include &quot;pas.h&quot;
+DECL|variable|dma_bits
+r_static
+r_int
+r_char
+id|dma_bits
+(braket
+)braket
+op_assign
+(brace
+l_int|4
+comma
+l_int|1
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|0
+comma
+l_int|5
+comma
+l_int|6
+comma
+l_int|7
+)brace
+suffix:semicolon
+DECL|variable|irq_bits
+r_static
+r_int
+r_char
+id|irq_bits
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|4
+comma
+l_int|5
+comma
+l_int|6
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|7
+comma
+l_int|8
+comma
+l_int|9
+comma
+l_int|0
+comma
+l_int|10
+comma
+l_int|11
+)brace
+suffix:semicolon
+DECL|variable|sb_irq_bits
+r_static
+r_int
+r_char
+id|sb_irq_bits
+(braket
+)braket
+op_assign
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x08
+comma
+l_int|0x10
+comma
+l_int|0x00
+comma
+l_int|0x18
+comma
+l_int|0x00
+comma
+l_int|0x20
+comma
+l_int|0x00
+comma
+l_int|0x08
+comma
+l_int|0x28
+comma
+l_int|0x30
+comma
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
+DECL|variable|sb_dma_bits
+r_static
+r_int
+r_char
+id|sb_dma_bits
+(braket
+)braket
+op_assign
+(brace
+l_int|0x00
+comma
+l_int|0x40
+comma
+l_int|0x80
+comma
+l_int|0xC0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * The Address Translation code is used to convert I/O register addresses to&n; * be relative to the given base -register&n; */
 DECL|variable|translat_code
 r_int
@@ -24,6 +154,13 @@ DECL|variable|pas_irq
 r_static
 r_int
 id|pas_irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|pas_sb_base
+r_static
+r_int
+id|pas_sb_base
 op_assign
 l_int|0
 suffix:semicolon
@@ -56,9 +193,7 @@ comma
 l_string|&quot;Pro AudioSpectrum 16D&quot;
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * pas_read() and pas_write() are equivalents of inb and outb &n; */
-multiline_comment|/*&n; * These routines perform the I/O address translation required&n; */
-multiline_comment|/*&n; * to support other than the default base address&n; */
+multiline_comment|/*&n; * pas_read() and pas_write() are equivalents of inb and outb &n; * These routines perform the I/O address translation required&n; * to support other than the default base address&n; */
 r_extern
 r_void
 id|mix_write
@@ -111,23 +246,6 @@ id|translat_code
 )paren
 suffix:semicolon
 )brace
-r_void
-DECL|function|pas2_msg
-id|pas2_msg
-(paren
-r_char
-op_star
-id|foo
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;    PAS2: %s.&bslash;n&quot;
-comma
-id|foo
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/******************* Begin of the Interrupt Handler ********************/
 r_void
 DECL|function|pasintr
@@ -153,23 +271,23 @@ id|status
 op_assign
 id|pas_read
 (paren
-id|INTERRUPT_STATUS
+l_int|0x0B89
 )paren
 suffix:semicolon
 id|pas_write
 (paren
 id|status
 comma
-id|INTERRUPT_STATUS
+l_int|0x0B89
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Clear interrupt&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Clear interrupt */
 r_if
 c_cond
 (paren
 id|status
 op_amp
-id|I_S_PCM_SAMPLE_BUFFER_IRQ
+l_int|0x08
 )paren
 (brace
 macro_line|#ifdef CONFIG_AUDIO
@@ -184,7 +302,7 @@ macro_line|#endif
 id|status
 op_and_assign
 op_complement
-id|I_S_PCM_SAMPLE_BUFFER_IRQ
+l_int|0x08
 suffix:semicolon
 )brace
 r_if
@@ -192,7 +310,7 @@ c_cond
 (paren
 id|status
 op_amp
-id|I_S_MIDI_IRQ
+l_int|0x10
 )paren
 (brace
 macro_line|#ifdef CONFIG_MIDI
@@ -204,7 +322,7 @@ macro_line|#endif
 id|status
 op_and_assign
 op_complement
-id|I_S_MIDI_IRQ
+l_int|0x10
 suffix:semicolon
 )brace
 )brace
@@ -233,7 +351,7 @@ id|pas_write
 (paren
 id|pas_intr_mask
 comma
-id|INTERRUPT_MASK
+l_int|0x0B8B
 )paren
 suffix:semicolon
 r_return
@@ -266,7 +384,7 @@ id|pas_write
 (paren
 id|pas_intr_mask
 comma
-id|INTERRUPT_MASK
+l_int|0x0B8B
 )paren
 suffix:semicolon
 r_return
@@ -302,106 +420,106 @@ id|pas_write
 (paren
 l_int|0x00
 comma
-id|INTERRUPT_MASK
+l_int|0x0B8B
 )paren
 suffix:semicolon
 id|pas_write
 (paren
 l_int|0x36
 comma
-id|SAMPLE_COUNTER_CONTROL
+l_int|0x138B
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Local timer control *&n;&t;&t;&t;&t;&t;&t; * register&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Local timer control *&n;&t;&t;&t;&t;   * register&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0x36
 comma
-id|SAMPLE_RATE_TIMER
+l_int|0x1388
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Sample rate timer (16 bit)&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Sample rate timer (16 bit)&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0
 comma
-id|SAMPLE_RATE_TIMER
+l_int|0x1388
 )paren
 suffix:semicolon
 id|pas_write
 (paren
 l_int|0x74
 comma
-id|SAMPLE_COUNTER_CONTROL
+l_int|0x138B
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Local timer control *&n;&t;&t;&t;&t;&t;&t; * register&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Local timer control *&n;&t;&t;&t;&t;   * register&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0x74
 comma
-id|SAMPLE_BUFFER_COUNTER
+l_int|0x1389
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Sample count register (16&n;&t;&t;&t;&t;&t;&t; * * bit)&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Sample count register (16&n;&t;&t;&t;&t;   * * bit)&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0
 comma
-id|SAMPLE_BUFFER_COUNTER
+l_int|0x1389
 )paren
 suffix:semicolon
 id|pas_write
 (paren
-id|F_F_PCM_BUFFER_COUNTER
+l_int|0x80
 op_or
-id|F_F_PCM_RATE_COUNTER
+l_int|0x40
 op_or
-id|F_F_MIXER_UNMUTE
+l_int|0x20
 op_or
 l_int|1
 comma
-id|FILTER_FREQUENCY
+l_int|0x0B8A
 )paren
 suffix:semicolon
 id|pas_write
 (paren
-id|P_C_PCM_DMA_ENABLE
+l_int|0x80
 op_or
-id|P_C_PCM_MONO
+l_int|0x20
 op_or
-id|P_C_PCM_DAC_MODE
+l_int|0x10
 op_or
-id|P_C_MIXER_CROSS_L_TO_L
+l_int|0x08
 op_or
-id|P_C_MIXER_CROSS_R_TO_R
+l_int|0x01
 comma
-id|PCM_CONTROL
+l_int|0xF8A
 )paren
 suffix:semicolon
 id|pas_write
 (paren
-id|S_M_PCM_RESET
+l_int|0x01
 op_or
-id|S_M_FM_RESET
+l_int|0x02
 op_or
-id|S_M_SB_RESET
+l_int|0x04
 op_or
-id|S_M_MIXER_RESET
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * |&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * S_M_OPL3_DUAL_MONO&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+l_int|0x10
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * |&n;&t;&t;&t;&t;&t;   * 0x80&n;&t;&t;&t;&t;&t; */
 comma
-id|SERIAL_MIXER
+l_int|0xB88
 )paren
 suffix:semicolon
 id|pas_write
 (paren
-id|I_C_1_BOOT_RESET_ENABLE
+l_int|0x80
 macro_line|#ifdef PAS_JOYSTICK_ENABLE
 op_or
-id|I_C_1_JOYSTICK_ENABLE
+l_int|0x40
 macro_line|#endif
 comma
-id|IO_CONFIGURATION_1
+l_int|0xF388
 )paren
 suffix:semicolon
 r_if
@@ -430,12 +548,12 @@ id|int_ptrs
 op_assign
 id|pas_read
 (paren
-id|IO_CONFIGURATION_3
+l_int|0xF38A
 )paren
 suffix:semicolon
 id|int_ptrs
 op_or_assign
-id|I_C_3_PCM_IRQ_translate
+id|irq_bits
 (braket
 id|pas_irq
 )braket
@@ -446,14 +564,14 @@ id|pas_write
 (paren
 id|int_ptrs
 comma
-id|IO_CONFIGURATION_3
+l_int|0xF38A
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|I_C_3_PCM_IRQ_translate
+id|irq_bits
 (braket
 id|pas_irq
 )braket
@@ -519,19 +637,19 @@ r_else
 (brace
 id|pas_write
 (paren
-id|I_C_2_PCM_DMA_translate
+id|dma_bits
 (braket
 id|hw_config-&gt;dma
 )braket
 comma
-id|IO_CONFIGURATION_2
+l_int|0xF389
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|I_C_2_PCM_DMA_translate
+id|dma_bits
 (braket
 id|hw_config-&gt;dma
 )braket
@@ -594,28 +712,28 @@ macro_line|#endif
 macro_line|#ifdef BROKEN_BUS_CLOCK
 id|pas_write
 (paren
-id|S_C_1_PCS_ENABLE
+l_int|0x01
 op_or
-id|S_C_1_PCS_STEREO
+l_int|0x10
 op_or
-id|S_C_1_PCS_REALSOUND
+l_int|0x20
 op_or
-id|S_C_1_FM_EMULATE_CLOCK
+l_int|0x04
 comma
-id|SYSTEM_CONFIGURATION_1
+l_int|0x8388
 )paren
 suffix:semicolon
 macro_line|#else
-multiline_comment|/*&n;   * pas_write(S_C_1_PCS_ENABLE, SYSTEM_CONFIGURATION_1);&n;   */
+multiline_comment|/*&n;   * pas_write(0x01, 0x8388);&n;   */
 id|pas_write
 (paren
-id|S_C_1_PCS_ENABLE
+l_int|0x01
 op_or
-id|S_C_1_PCS_STEREO
+l_int|0x10
 op_or
-id|S_C_1_PCS_REALSOUND
+l_int|0x20
 comma
-id|SYSTEM_CONFIGURATION_1
+l_int|0x8388
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -623,41 +741,41 @@ id|pas_write
 (paren
 l_int|0x18
 comma
-id|SYSTEM_CONFIGURATION_3
+l_int|0x838A
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * ???&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* ??? */
 id|pas_write
 (paren
-id|F_F_MIXER_UNMUTE
+l_int|0x20
 op_or
 l_int|0x01
 comma
-id|FILTER_FREQUENCY
+l_int|0x0B8A
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Sets mute&n;&t;&t;&t;&t;&t;&t;&t;&t; * off and *&n;&t;&t;&t;&t;&t;&t;&t;&t; * selects&n;&t;&t;&t;&t;&t;&t;&t;&t; * filter&n;&t;&t;&t;&t;&t;&t;&t;&t; * rate * of&n;&t;&t;&t;&t;&t;&t;&t;&t; * 17.897 kHz&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Mute off, filter = 17.897 kHz */
 id|pas_write
 (paren
 l_int|8
 comma
-id|PRESCALE_DIVIDER
+l_int|0xBF8A
 )paren
 suffix:semicolon
 id|mix_write
 (paren
-id|P_M_MV508_ADDRESS
+l_int|0x80
 op_or
 l_int|5
 comma
-id|PARALLEL_MIXER
+l_int|0x078B
 )paren
 suffix:semicolon
 id|mix_write
 (paren
 l_int|5
 comma
-id|PARALLEL_MIXER
+l_int|0x078B
 )paren
 suffix:semicolon
 macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
@@ -684,14 +802,12 @@ r_int
 r_char
 id|irq_dma
 suffix:semicolon
-multiline_comment|/*&n;&t; * Turn on Sound Blaster compatibility&n;&t; */
-multiline_comment|/*&n;&t; * bit 1 = SB emulation&n;&t; */
-multiline_comment|/*&n;&t; * bit 0 = MPU401 emulation (CDPC only :-( )&n;&t; */
+multiline_comment|/*&n;&t; * Turn on Sound Blaster compatibility&n;&t; * bit 1 = SB emulation&n;&t; * bit 0 = MPU401 emulation (CDPC only :-( )&n;&t; */
 id|pas_write
 (paren
 l_int|0x02
 comma
-id|COMPATIBILITY_ENABLE
+l_int|0xF788
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * &quot;Emulation address&quot;&n;&t; */
@@ -705,14 +821,18 @@ l_int|4
 op_amp
 l_int|0x0f
 comma
-id|EMULATION_ADDRESS
+l_int|0xF789
 )paren
+suffix:semicolon
+id|pas_sb_base
+op_assign
+id|sb_config-&gt;io_base
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|E_C_SB_DMA_translate
+id|sb_dma_bits
 (braket
 id|sb_config-&gt;dma
 )braket
@@ -728,7 +848,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|E_C_SB_IRQ_translate
+id|sb_irq_bits
 (braket
 id|sb_config-&gt;irq
 )braket
@@ -742,12 +862,12 @@ id|sb_config-&gt;irq
 suffix:semicolon
 id|irq_dma
 op_assign
-id|E_C_SB_DMA_translate
+id|sb_dma_bits
 (braket
 id|sb_config-&gt;dma
 )braket
 op_or
-id|E_C_SB_IRQ_translate
+id|sb_irq_bits
 (braket
 id|sb_config-&gt;irq
 )braket
@@ -756,7 +876,7 @@ id|pas_write
 (paren
 id|irq_dma
 comma
-id|EMULATION_CONFIGURATION
+l_int|0xFB8A
 )paren
 suffix:semicolon
 )brace
@@ -765,7 +885,7 @@ id|pas_write
 (paren
 l_int|0x00
 comma
-id|COMPATIBILITY_ENABLE
+l_int|0xF788
 )paren
 suffix:semicolon
 )brace
@@ -774,7 +894,7 @@ id|pas_write
 (paren
 l_int|0x00
 comma
-id|COMPATIBILITY_ENABLE
+l_int|0xF788
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -784,9 +904,9 @@ c_cond
 op_logical_neg
 id|ok
 )paren
-id|pas2_msg
+id|printk
 (paren
-l_string|&quot;Driver not enabled&quot;
+l_string|&quot;PAS16: Driver not enabled&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -814,23 +934,23 @@ id|outb
 (paren
 l_int|0xBC
 comma
-id|MASTER_DECODE
+l_int|0x9A01
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Talk to first board&n;&t;&t;&t;&t; */
+multiline_comment|/* Activate first board */
 id|outb
 (paren
 id|hw_config-&gt;io_base
 op_rshift
 l_int|2
 comma
-id|MASTER_DECODE
+l_int|0x9A01
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Set base address&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Set base address */
 id|translat_code
 op_assign
-id|PAS_DEFAULT_BASE
+l_int|0x388
 op_xor
 id|hw_config-&gt;io_base
 suffix:semicolon
@@ -838,15 +958,15 @@ id|pas_write
 (paren
 l_int|1
 comma
-id|WAIT_STATE
+l_int|0xBF88
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * One wait-state&n;&t;&t;&t;&t; */
+multiline_comment|/* Select one wait states */
 id|board_id
 op_assign
 id|pas_read
 (paren
-id|INTERRUPT_MASK
+l_int|0x0B8B
 )paren
 suffix:semicolon
 r_if
@@ -870,21 +990,21 @@ id|pas_write
 (paren
 id|foo
 comma
-id|INTERRUPT_MASK
+l_int|0x0B8B
 )paren
 suffix:semicolon
 id|foo
 op_assign
 id|inb
 (paren
-id|INTERRUPT_MASK
+l_int|0x0B8B
 )paren
 suffix:semicolon
 id|pas_write
 (paren
 id|board_id
 comma
-id|INTERRUPT_MASK
+l_int|0x0B8B
 )paren
 suffix:semicolon
 r_if
@@ -902,20 +1022,17 @@ id|pas_model
 op_assign
 id|pas_read
 (paren
-id|CHIP_REV
+l_int|0xFF88
 )paren
 suffix:semicolon
 r_return
 id|pas_model
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|attach_pas_card
 id|attach_pas_card
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -947,7 +1064,7 @@ id|pas_model
 op_assign
 id|pas_read
 (paren
-id|CHIP_REV
+l_int|0xFF88
 )paren
 )paren
 )paren
@@ -974,7 +1091,7 @@ id|pas_model
 comma
 id|pas_read
 (paren
-id|BOARD_REV_ID
+l_int|0x2789
 )paren
 )paren
 suffix:semicolon
@@ -996,12 +1113,8 @@ id|hw_config
 )paren
 (brace
 macro_line|#ifdef CONFIG_AUDIO
-id|mem_start
-op_assign
 id|pas_pcm_init
 (paren
-id|mem_start
-comma
 id|hw_config
 )paren
 suffix:semicolon
@@ -1009,16 +1122,14 @@ macro_line|#endif
 macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
 id|sb_dsp_disable_midi
 (paren
+id|pas_sb_base
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * The SB emulation don&squot;t support *&n;&t;&t;&t;&t;&t; * midi&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* No MIDI capability */
 macro_line|#endif
 macro_line|#ifdef CONFIG_MIDI
-id|mem_start
-op_assign
 id|pas_midi_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1028,9 +1139,6 @@ id|pas_init_mixer
 suffix:semicolon
 )brace
 )brace
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 r_int
 DECL|function|probe_pas

@@ -42,7 +42,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|NET_DEBUG
 mdefine_line|#define NET_DEBUG 1
 multiline_comment|/* Use 0 for production, 1 for verification, &gt;2 for debug */

@@ -2745,6 +2745,24 @@ r_int
 r_int
 id|now
 suffix:semicolon
+r_static
+r_int
+id|delack_guard
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|delack_guard
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|delack_guard
+op_increment
+suffix:semicolon
 multiline_comment|/* Calculate new timeout */
 id|now
 op_assign
@@ -2773,15 +2791,16 @@ op_ge
 id|sk-&gt;max_unacked
 )paren
 (brace
-id|timeout
-op_assign
-id|now
-suffix:semicolon
-id|mark_bh
+id|tcp_send_ack
 c_func
 (paren
-id|TIMER_BH
+id|sk
 )paren
+suffix:semicolon
+id|delack_guard
+op_decrement
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier  */
@@ -2813,6 +2832,9 @@ c_func
 op_amp
 id|sk-&gt;delack_timer
 )paren
+suffix:semicolon
+id|delack_guard
+op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This routine sends an ack and also updates the window. &n; */

@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTriX AudioTriX Pro&n; * (MT-0002-PC Control Chip)&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTrix AudioTrix Pro&n; * (MT-0002-PC Control Chip)&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
+macro_line|#include &quot;sb.h&quot;
 macro_line|#if defined(CONFIG_TRIX)
 macro_line|#ifdef INCLUDE_TRIX_BOOT
 macro_line|#include &quot;trix_boot.h&quot;
@@ -287,7 +288,7 @@ l_int|2
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Config port I/O conflict&bslash;n&quot;
+l_string|&quot;AudioTrix: Config port I/O conflict&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -319,7 +320,7 @@ id|DDB
 (paren
 id|printk
 (paren
-l_string|&quot;No AudioTriX ASIC signature found&bslash;n&quot;
+l_string|&quot;No AudioTrix ASIC signature found&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -415,7 +416,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Probe and attach routines for the Windows Sound System mode of&n; *      AudioTriX Pro&n; */
+multiline_comment|/*&n; *    Probe and attach routines for the Windows Sound System mode of&n; *      AudioTrix Pro&n; */
 r_int
 DECL|function|probe_trix_wss
 id|probe_trix_wss
@@ -429,7 +430,7 @@ id|hw_config
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTriX Pro for example)&n;     * return 0x00.&n;   */
+multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTrix Pro for example)&n;     * return 0x00.&n;   */
 r_if
 c_cond
 (paren
@@ -443,7 +444,7 @@ l_int|8
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: MSS I/O port conflict (%x)&bslash;n&quot;
+l_string|&quot;AudioTrix: MSS I/O port conflict (%x)&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -509,7 +510,7 @@ l_int|11
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Bad WSS IRQ %d&bslash;n&quot;
+l_string|&quot;AudioTrix: Bad WSS IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
@@ -536,7 +537,7 @@ l_int|3
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Bad WSS DMA %d&bslash;n&quot;
+l_string|&quot;AudioTrix: Bad WSS DMA %d&bslash;n&quot;
 comma
 id|hw_config-&gt;dma
 )paren
@@ -571,7 +572,7 @@ l_int|3
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Bad capture DMA %d&bslash;n&quot;
+l_string|&quot;AudioTrix: Bad capture DMA %d&bslash;n&quot;
 comma
 id|hw_config-&gt;dma2
 )paren
@@ -600,7 +601,7 @@ l_int|0x80
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Can&squot;t use DMA0 with a 8 bit card&bslash;n&quot;
+l_string|&quot;AudioTrix: Can&squot;t use DMA0 with a 8 bit card&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -630,7 +631,7 @@ l_int|0x80
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Can&squot;t use IRQ%d with a 8 bit card&bslash;n&quot;
+l_string|&quot;AudioTrix: Can&squot;t use IRQ%d with a 8 bit card&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
@@ -663,20 +664,17 @@ l_int|0x390
 comma
 l_int|2
 comma
-l_string|&quot;AudioTriX&quot;
+l_string|&quot;AudioTrix&quot;
 )paren
 suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
 )brace
-r_int
+r_void
 DECL|function|attach_trix_wss
 id|attach_trix_wss
 (paren
-r_int
-id|mem_start
-comma
 r_struct
 id|address_info
 op_star
@@ -692,31 +690,23 @@ l_int|12
 )braket
 op_assign
 (brace
-op_minus
-l_int|1
+l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
 l_int|0x08
 comma
-op_minus
-l_int|1
+l_int|0
 comma
 l_int|0x10
 comma
@@ -752,12 +742,6 @@ op_assign
 id|hw_config-&gt;io_base
 op_plus
 l_int|0
-comma
-id|version_port
-op_assign
-id|hw_config-&gt;io_base
-op_plus
-l_int|3
 suffix:semicolon
 r_int
 id|dma1
@@ -783,12 +767,11 @@ id|DDB
 (paren
 id|printk
 (paren
-l_string|&quot;AudioTriX: Attach called but not probed yet???&bslash;n&quot;
+l_string|&quot;AudioTrix: Attach called but not probed yet???&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * Set the IRQ and DMA addresses.&n;   */
@@ -804,19 +787,17 @@ c_cond
 (paren
 id|bits
 op_eq
-op_minus
-l_int|1
+l_int|0
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Bad IRQ (%d)&bslash;n&quot;
+l_string|&quot;AudioTrix: Bad IRQ (%d)&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 id|outb
@@ -831,31 +812,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|inb
-(paren
-id|version_port
-)paren
-op_amp
-l_int|0x40
-)paren
-op_eq
-l_int|0
-)paren
-id|printk
-(paren
-l_string|&quot;[IRQ Conflict?]&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|hw_config-&gt;dma2
 op_eq
 op_minus
 l_int|1
+op_logical_or
+id|hw_config-&gt;dma2
+op_eq
+id|hw_config-&gt;dma
 )paren
-multiline_comment|/* Single DMA mode */
 (brace
 id|bits
 op_or_assign
@@ -936,7 +901,7 @@ suffix:semicolon
 multiline_comment|/* Write IRQ+DMA setup */
 id|ad1848_init
 (paren
-l_string|&quot;AudioTriX Pro&quot;
+l_string|&quot;AudioTrix Pro&quot;
 comma
 id|hw_config-&gt;io_base
 op_plus
@@ -961,9 +926,6 @@ l_int|4
 comma
 l_string|&quot;MSS config&quot;
 )paren
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_int
@@ -1031,7 +993,7 @@ id|kilroy_was_here
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* AudioTriX Pro has not been detected earlier */
+multiline_comment|/* AudioTrix Pro has not been detected earlier */
 r_if
 c_cond
 (paren
@@ -1053,7 +1015,7 @@ l_int|16
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: SB I/O port conflict (%x)&bslash;n&quot;
+l_string|&quot;AudioTrix: SB I/O port conflict (%x)&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -1065,9 +1027,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|hw_config-&gt;io_base
 op_amp
 l_int|0xffffff8f
+)paren
 op_ne
 l_int|0x200
 )paren
@@ -1166,73 +1130,68 @@ id|sb_initialized
 op_assign
 l_int|1
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_int
-DECL|function|attach_trix_sb
-id|attach_trix_sb
-(paren
-r_int
-id|mem_start
-comma
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-macro_line|#ifdef CONFIG_SB
-r_extern
-r_int
-id|sb_no_recording
-suffix:semicolon
-id|sb_dsp_disable_midi
-(paren
-)paren
-suffix:semicolon
-id|sb_no_recording
+id|hw_config-&gt;name
 op_assign
-l_int|1
+l_string|&quot;AudioTrix SB&quot;
 suffix:semicolon
-macro_line|#endif
-id|conf_printf
-(paren
-l_string|&quot;AudioTriX (SB)&quot;
-comma
-id|hw_config
-)paren
-suffix:semicolon
+macro_line|#ifdef CONFIG_SBDSP
 r_return
-id|mem_start
-suffix:semicolon
-)brace
-r_int
-DECL|function|attach_trix_mpu
-id|attach_trix_mpu
+id|probe_sb
 (paren
-r_int
-id|mem_start
-comma
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
-r_return
-id|attach_mpu401
-(paren
-id|mem_start
-comma
 id|hw_config
 )paren
 suffix:semicolon
 macro_line|#else
 r_return
-id|mem_start
+l_int|0
+suffix:semicolon
+macro_line|#endif
+)brace
+r_void
+DECL|function|attach_trix_sb
+id|attach_trix_sb
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+macro_line|#ifdef CONFIG_SBDSP
+id|hw_config-&gt;driver_use_1
+op_assign
+id|SB_NO_MIDI
+op_or
+id|SB_NO_MIXER
+op_or
+id|SB_NO_RECORDING
+suffix:semicolon
+id|attach_sb_card
+(paren
+id|hw_config
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_void
+DECL|function|attach_trix_mpu
+id|attach_trix_mpu
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
+id|hw_config-&gt;name
+op_assign
+l_string|&quot;AudioTrix Pro&quot;
+suffix:semicolon
+id|attach_uart401
+(paren
+id|hw_config
+)paren
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -1246,7 +1205,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_int
 r_char
 id|conf
@@ -1302,7 +1261,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* AudioTriX Pro has not been detected earlier */
+multiline_comment|/* AudioTrix Pro has not been detected earlier */
 )brace
 r_if
 c_cond
@@ -1354,7 +1313,7 @@ l_int|4
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: MPU I/O port conflict (%x)&bslash;n&quot;
+l_string|&quot;AudioTrix: MPU I/O port conflict (%x)&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -1373,7 +1332,7 @@ l_int|9
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Bad MPU IRQ %d&bslash;n&quot;
+l_string|&quot;AudioTrix: Bad MPU IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
@@ -1396,7 +1355,7 @@ l_int|1
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: Bad MPU IRQ %d&bslash;n&quot;
+l_string|&quot;AudioTrix: Bad MPU IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
@@ -1484,7 +1443,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_return
-id|probe_mpu401
+id|probe_uart401
 (paren
 id|hw_config
 )paren
@@ -1562,8 +1521,8 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
-id|unload_mpu401
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
+id|unload_uart401
 (paren
 id|hw_config
 )paren
@@ -1580,6 +1539,11 @@ op_star
 id|hw_config
 )paren
 (brace
+id|unload_sb
+(paren
+id|hw_config
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 eof
