@@ -2110,6 +2110,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|tty
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|tty-&gt;pgrp
 OG
 l_int|0
@@ -2133,6 +2139,7 @@ id|tty-&gt;session
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 r_for
 c_loop

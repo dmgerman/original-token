@@ -4,6 +4,35 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+DECL|function|minix_dir_read
+r_static
+r_int
+id|minix_dir_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_return
+op_minus
+id|EISDIR
+suffix:semicolon
+)brace
 r_static
 r_int
 id|minix_readdir
@@ -34,7 +63,7 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
-id|minix_file_read
+id|minix_dir_read
 comma
 multiline_comment|/* read */
 l_int|NULL
@@ -49,6 +78,9 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */

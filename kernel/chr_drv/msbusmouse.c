@@ -577,6 +577,9 @@ multiline_comment|/* mouse_select */
 l_int|NULL
 comma
 multiline_comment|/* mouse_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mouse_mmap */
 id|open_mouse
 comma
 id|release_mouse
@@ -587,9 +590,11 @@ DECL|macro|MS_DELAY
 mdefine_line|#define MS_DELAY 100000
 DECL|function|ms_bus_mouse_init
 r_int
+r_int
 id|ms_bus_mouse_init
 c_func
 (paren
+r_int
 r_int
 id|kmem_start
 )paren
@@ -628,6 +633,10 @@ op_assign
 id|mouse.dy
 op_assign
 l_int|0
+suffix:semicolon
+id|mouse.wait
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -772,12 +781,6 @@ op_eq
 l_int|1
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;No Microsoft bus mouse detected.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|kmem_start
 suffix:semicolon

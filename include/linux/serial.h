@@ -105,12 +105,32 @@ DECL|member|custom_divisor
 r_int
 id|custom_divisor
 suffix:semicolon
+DECL|member|x_char
+r_int
+id|x_char
+suffix:semicolon
+multiline_comment|/* xon/xoff characater */
+DECL|member|event
+r_int
+id|event
+suffix:semicolon
 DECL|member|line
 r_int
 id|line
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at rs interrupt time.&n; */
+DECL|macro|RS_EVENT_READ_PROCESS
+mdefine_line|#define RS_EVENT_READ_PROCESS&t;0
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;1
+DECL|macro|RS_EVENT_HUP_PGRP
+mdefine_line|#define RS_EVENT_HUP_PGRP&t;2
+DECL|macro|RS_EVENT_BREAK_INT
+mdefine_line|#define RS_EVENT_BREAK_INT&t;3
+DECL|macro|RS_EVENT_DO_SAK
+mdefine_line|#define RS_EVENT_DO_SAK&t;&t;4
 multiline_comment|/*&n; * These are the UART port assignments, expressed as offsets from the base&n; * register.  These assignments should hold for any serial port based on&n; * a 8250, 16450, or 16550(A).&n; */
 DECL|macro|UART_RX
 mdefine_line|#define UART_RX&t;&t;0&t;/* In:  Receive buffer (DLAB=0) */
@@ -196,8 +216,8 @@ mdefine_line|#define UART_LSR_OE&t;0x02&t;/* Overrun error indicator */
 DECL|macro|UART_LSR_DR
 mdefine_line|#define UART_LSR_DR&t;0x01&t;/* Receiver data ready */
 multiline_comment|/*&n; * These are the definitions for the Interrupt Indentification Register&n; */
-DECL|macro|UART_IIR_PEND
-mdefine_line|#define UART_IIR_PEND&t;0x01&t;/* Interrupt pending */
+DECL|macro|UART_IIR_NO_INT
+mdefine_line|#define UART_IIR_NO_INT&t;0x01&t;/* No interrupts pending */
 DECL|macro|UART_IIR_ID
 mdefine_line|#define UART_IIR_ID&t;0x06&t;/* Mask for the interrupt ID */
 DECL|macro|UART_IIR_MSI
@@ -245,4 +265,6 @@ DECL|macro|UART_MSR_DDSR
 mdefine_line|#define UART_MSR_DDSR&t;0x02&t;/* Delta DSR */
 DECL|macro|UART_MSR_DCTS
 mdefine_line|#define UART_MSR_DCTS&t;0x01&t;/* Delta CTS */
+DECL|macro|UART_MSR_ANY_DELTA
+mdefine_line|#define UART_MSR_ANY_DELTA 0x0F&t;/* Any of the delta bits! */
 eof

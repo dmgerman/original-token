@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Modified by Dean Troyer (troyer@saifr00.cfsat.Honeywell.COM) 03Oct92&n; *   to perform (some of) the hardware initialization formerly done in&n; *   setup.S by the BIOS&n; *&n; * Modified by Dean Troyer (troyer@saifr00.cfsat.Honeywell.COM) 09Oct92&n; *   to perform the hardware initialization formerly done in setup.S by&n; *   the BIOS.  Mouse characteristic setup is now included.&n; *&n; */
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/* aux controller ports */
 DECL|macro|AUX_INPUT_PORT
 mdefine_line|#define AUX_INPUT_PORT&t;0x60&t;&t;/* Aux device output buffer */
 DECL|macro|AUX_OUTPUT_PORT
@@ -15,6 +16,39 @@ DECL|macro|AUX_COMMAND
 mdefine_line|#define AUX_COMMAND&t;0x64&t;&t;/* Aux device command buffer */
 DECL|macro|AUX_STATUS
 mdefine_line|#define AUX_STATUS&t;0x64&t;&t;/* Aux device status reg */
+multiline_comment|/* aux controller status bits */
+DECL|macro|AUX_OBUF_FULL
+mdefine_line|#define AUX_OBUF_FULL&t;0x01&t;&t;/* output buffer (from device) full */
+DECL|macro|AUX_IBUF_FULL
+mdefine_line|#define AUX_IBUF_FULL&t;0x02&t;&t;/* input buffer (to device) full */
+multiline_comment|/* aux controller commands */
+DECL|macro|AUX_CMD_WRITE
+mdefine_line|#define AUX_CMD_WRITE&t;0x60&t;&t;/* value to write to controller */
+DECL|macro|AUX_MAGIC_WRITE
+mdefine_line|#define AUX_MAGIC_WRITE&t;0xd4&t;&t;/* value to send aux device data */
+DECL|macro|AUX_INTS_ON
+mdefine_line|#define AUX_INTS_ON&t;0x47&t;&t;/* enable controller interrupts */
+DECL|macro|AUX_INTS_OFF
+mdefine_line|#define AUX_INTS_OFF&t;0x65&t;&t;/* disable controller interrupts */
+DECL|macro|AUX_DISABLE
+mdefine_line|#define AUX_DISABLE&t;0xa7&t;&t;/* disable aux */
+DECL|macro|AUX_ENABLE
+mdefine_line|#define AUX_ENABLE&t;0xa8&t;&t;/* enable aux */
+multiline_comment|/* aux device commands */
+DECL|macro|AUX_SET_RES
+mdefine_line|#define AUX_SET_RES&t;0xe8&t;&t;/* set resolution */
+DECL|macro|AUX_SET_SCALE
+mdefine_line|#define AUX_SET_SCALE&t;0xe9&t;&t;/* set scaling factor */
+DECL|macro|AUX_SET_STREAM
+mdefine_line|#define AUX_SET_STREAM&t;0xea&t;&t;/* set stream mode */
+DECL|macro|AUX_SET_SAMPLE
+mdefine_line|#define AUX_SET_SAMPLE&t;0xf3&t;&t;/* set sample rate */
+DECL|macro|AUX_ENABLE_DEV
+mdefine_line|#define AUX_ENABLE_DEV&t;0xf4&t;&t;/* enable aux device */
+DECL|macro|AUX_DISABLE_DEV
+mdefine_line|#define AUX_DISABLE_DEV&t;0xf5&t;&t;/* disable aux device */
+DECL|macro|AUX_RESET
+mdefine_line|#define AUX_RESET&t;0xff&t;&t;/* reset aux device */
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES&t;3
 DECL|macro|AUX_IRQ
@@ -92,6 +126,149 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Write to aux device&n; */
+DECL|function|aux_write_dev
+r_static
+r_void
+id|aux_write_dev
+c_func
+(paren
+r_int
+id|val
+)paren
+(brace
+id|poll_status
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|AUX_MAGIC_WRITE
+comma
+id|AUX_COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* write magic cookie */
+id|poll_status
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|val
+comma
+id|AUX_OUTPUT_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* write data */
+)brace
+multiline_comment|/*&n; * Write to device &amp; handle returned ack&n; */
+DECL|function|aux_write_ack
+r_static
+r_int
+id|aux_write_ack
+c_func
+(paren
+r_int
+id|val
+)paren
+(brace
+id|aux_write_dev
+c_func
+(paren
+id|val
+)paren
+suffix:semicolon
+multiline_comment|/* write the value to the device */
+r_while
+c_loop
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|AUX_STATUS
+)paren
+op_amp
+id|AUX_OBUF_FULL
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* wait for ack */
+r_if
+c_cond
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|AUX_STATUS
+)paren
+op_amp
+l_int|0x20
+)paren
+op_eq
+l_int|0x20
+)paren
+(brace
+r_return
+(paren
+id|inb
+c_func
+(paren
+id|AUX_INPUT_PORT
+)paren
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Write aux device command&n; */
+DECL|function|aux_write_cmd
+r_static
+r_void
+id|aux_write_cmd
+c_func
+(paren
+r_int
+id|val
+)paren
+(brace
+id|poll_status
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|AUX_CMD_WRITE
+comma
+id|AUX_COMMAND
+)paren
+suffix:semicolon
+id|poll_status
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|val
+comma
+id|AUX_OUTPUT_PORT
+)paren
+suffix:semicolon
+)brace
 DECL|function|get_from_queue
 r_static
 r_int
@@ -272,38 +449,26 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-l_int|0xa7
+id|AUX_DISABLE
 comma
 id|AUX_COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* Disable Aux device */
-id|poll_status
+id|aux_write_dev
 c_func
 (paren
+id|AUX_DISABLE_DEV
 )paren
 suffix:semicolon
-id|outb_p
+multiline_comment|/* disable aux device */
+id|aux_write_cmd
 c_func
 (paren
-l_int|0x60
-comma
-id|AUX_COMMAND
+id|AUX_INTS_OFF
 )paren
 suffix:semicolon
-id|poll_status
-c_func
-(paren
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-l_int|0x65
-comma
-id|AUX_OUTPUT_PORT
-)paren
-suffix:semicolon
+multiline_comment|/* disable controller ints */
 id|free_irq
 c_func
 (paren
@@ -336,21 +501,21 @@ id|file
 r_if
 c_cond
 (paren
-id|aux_busy
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 id|aux_present
 )paren
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|aux_busy
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 r_if
 c_cond
@@ -391,15 +556,20 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|outb_p
+id|aux_write_dev
 c_func
 (paren
-l_int|0x60
-comma
-id|AUX_COMMAND
+id|AUX_ENABLE_DEV
 )paren
 suffix:semicolon
-multiline_comment|/* Write command */
+multiline_comment|/* enable aux device */
+id|aux_write_cmd
+c_func
+(paren
+id|AUX_INTS_ON
+)paren
+suffix:semicolon
+multiline_comment|/* enable controller ints */
 id|poll_status
 c_func
 (paren
@@ -408,26 +578,12 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-l_int|0x47
-comma
-id|AUX_OUTPUT_PORT
-)paren
-suffix:semicolon
-multiline_comment|/* Enable AUX and keyb interrupts */
-id|poll_status
-c_func
-(paren
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-l_int|0xa8
+id|AUX_ENABLE
 comma
 id|AUX_COMMAND
 )paren
 suffix:semicolon
-multiline_comment|/* Enable AUX */
+multiline_comment|/* Enable Aux */
 r_return
 l_int|0
 suffix:semicolon
@@ -485,7 +641,7 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-l_int|0xd4
+id|AUX_MAGIC_WRITE
 comma
 id|AUX_COMMAND
 )paren
@@ -749,6 +905,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 id|open_aux
 comma
 id|release_aux
@@ -757,9 +916,11 @@ comma
 suffix:semicolon
 DECL|function|psaux_init
 r_int
+r_int
 id|psaux_init
 c_func
 (paren
+r_int
 r_int
 id|kmem_start
 )paren
@@ -772,16 +933,56 @@ op_ne
 l_int|0xaa
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;No PS/2 type pointing device detected.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|kmem_start
 suffix:semicolon
 )brace
+id|aux_write_ack
+c_func
+(paren
+id|AUX_SET_RES
+)paren
+suffix:semicolon
+id|aux_write_ack
+c_func
+(paren
+l_int|0x03
+)paren
+suffix:semicolon
+multiline_comment|/* set resultion to 8 counts/mm */
+id|aux_write_ack
+c_func
+(paren
+id|AUX_SET_SCALE
+)paren
+suffix:semicolon
+id|aux_write_ack
+c_func
+(paren
+l_int|0x02
+)paren
+suffix:semicolon
+multiline_comment|/* set scaling to 2:1 */
+id|aux_write_ack
+c_func
+(paren
+id|AUX_SET_SAMPLE
+)paren
+suffix:semicolon
+id|aux_write_ack
+c_func
+(paren
+l_int|0x64
+)paren
+suffix:semicolon
+multiline_comment|/* set sampling rate to 100/sec */
+id|aux_write_ack
+c_func
+(paren
+id|AUX_SET_STREAM
+)paren
+suffix:semicolon
+multiline_comment|/* set stream mode */
 id|printk
 c_func
 (paren
@@ -813,7 +1014,7 @@ l_int|0
 suffix:semicolon
 id|queue-&gt;proc_list
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|aux_present
 op_assign

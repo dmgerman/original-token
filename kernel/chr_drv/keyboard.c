@@ -11491,7 +11491,7 @@ id|ch
 suffix:semicolon
 )brace
 )brace
-macro_line|#if defined KBD_FR || defined KBD_US || defined KBD_UK
+macro_line|#if defined KBD_FR || defined KBD_US || defined KBD_UK || defined KBD_FR_LATIN1
 DECL|variable|num_table
 r_static
 r_int
@@ -12290,11 +12290,34 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+op_star
+id|pg_dir
+suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* rebooting needs to touch the page at absolute addr 0 */
+id|pg_dir
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|current-&gt;tss.cr3
+suffix:semicolon
+id|pg_dir
+(braket
+l_int|768
+)braket
+op_assign
+l_int|7
+suffix:semicolon
+multiline_comment|/* 0xC0000000 */
 r_for
 c_loop
 (paren

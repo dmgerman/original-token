@@ -195,6 +195,8 @@ DECL|macro|ASYNC_NOSCRATCH
 mdefine_line|#define ASYNC_NOSCRATCH&t;0x0001&t;/* 16XXX UART with no scratch register */
 DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
+DECL|macro|ASYNC_SAK
+mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) */
 DECL|macro|ASYNC_SPD_MASK
 mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
 DECL|macro|ASYNC_SPD_HI
@@ -308,6 +310,8 @@ DECL|macro|I_NOCR
 mdefine_line|#define I_NOCR(tty)&t;_I_FLAG((tty),IGNCR)
 DECL|macro|I_IXON
 mdefine_line|#define I_IXON(tty)&t;_I_FLAG((tty),IXON)
+DECL|macro|I_IXANY
+mdefine_line|#define I_IXANY(tty)&t;_I_FLAG((tty),IXANY)
 DECL|macro|I_STRP
 mdefine_line|#define I_STRP(tty)&t;_I_FLAG((tty),ISTRIP)
 DECL|macro|O_POST
@@ -507,14 +511,14 @@ DECL|macro|TTY_THROTTLE_RQ_AVAIL
 mdefine_line|#define TTY_THROTTLE_RQ_AVAIL&t;4
 multiline_comment|/*&n; * This defines the low- and high-watermarks for the various conditions.&n; * Again, the low-level driver is free to ignore any of these, and has&n; * to implement RQ_THREHOLD_LW for itself if it wants it.&n; */
 DECL|macro|SQ_THRESHOLD_LW
-mdefine_line|#define SQ_THRESHOLD_LW&t;0
+mdefine_line|#define SQ_THRESHOLD_LW&t;16
 DECL|macro|SQ_THRESHOLD_HW
 mdefine_line|#define SQ_THRESHOLD_HW 768
 DECL|macro|RQ_THRESHOLD_LW
-mdefine_line|#define RQ_THRESHOLD_LW 64
+mdefine_line|#define RQ_THRESHOLD_LW 16
 DECL|macro|RQ_THRESHOLD_HW
 mdefine_line|#define RQ_THRESHOLD_HW 768
-multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write. These are the flag&n; * bit-numbers. Use the set_bit() and clear_bit()&n; * macros to make it all atomic.&n; * &n; * These bits are used in the flags field of the tty structure.&n; */
+multiline_comment|/*&n; * These bits are used in the flags field of the tty structure.&n; * &n; * So that interrupts won&squot;t be able to mess up the queues,&n; * copy_to_cooked must be atomic with repect to itself, as must&n; * tty-&gt;write.  Thus, you must use the inline functions set_bit() and&n; * clear_bit() to make things atomic.&n; */
 DECL|macro|TTY_WRITE_BUSY
 mdefine_line|#define TTY_WRITE_BUSY 0
 DECL|macro|TTY_READ_BUSY
@@ -525,101 +529,6 @@ DECL|macro|TTY_SQ_THROTTLED
 mdefine_line|#define TTY_SQ_THROTTLED 3
 DECL|macro|TTY_RQ_THROTTLED
 mdefine_line|#define TTY_RQ_THROTTLED 4
-multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. Both set_bit and clear_bit return 0&n; * if the bit-setting went ok, != 0 if the bit already was set/cleared.&n; */
-DECL|function|set_bit
-r_extern
-r_inline
-r_int
-id|set_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_int
-op_star
-id|addr
-)paren
-(brace
-r_char
-id|ok
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;btsl %1,%2&bslash;n&bslash;tsetb %0&quot;
-suffix:colon
-l_string|&quot;=q&quot;
-(paren
-id|ok
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|nr
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-id|addr
-)paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|ok
-suffix:semicolon
-)brace
-DECL|function|clear_bit
-r_extern
-r_inline
-r_int
-id|clear_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_int
-op_star
-id|addr
-)paren
-(brace
-r_char
-id|ok
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;btrl %1,%2&bslash;n&bslash;tsetnb %0&quot;
-suffix:colon
-l_string|&quot;=q&quot;
-(paren
-id|ok
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|nr
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-id|addr
-)paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|ok
-suffix:semicolon
-)brace
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 DECL|macro|TTY_READ_FLUSH
@@ -828,6 +737,17 @@ r_int
 id|priv
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|do_SAK
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
 multiline_comment|/* tty write functions */
 r_extern
 r_void
@@ -843,28 +763,6 @@ suffix:semicolon
 r_extern
 r_void
 id|con_write
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|mpty_write
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|spty_write
 c_func
 (paren
 r_struct

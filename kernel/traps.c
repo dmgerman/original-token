@@ -148,7 +148,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|function|die_if_kernel
-r_static
+multiline_comment|/*static*/
 r_void
 id|die_if_kernel
 c_func

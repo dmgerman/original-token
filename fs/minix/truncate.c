@@ -871,28 +871,4 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Called when a inode is released. Note that this is different&n; * from minix_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
-DECL|function|minix_release
-r_void
-id|minix_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;minix_release not implemented&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 eof

@@ -6,6 +6,10 @@ DECL|macro|cli
 mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;::)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;::)
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=r&quot; (x))
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;::&quot;r&quot; (x))
 DECL|macro|iret
 mdefine_line|#define iret() __asm__ __volatile__ (&quot;iret&quot;::)
 DECL|macro|_set_gate

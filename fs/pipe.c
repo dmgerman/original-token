@@ -1034,6 +1034,9 @@ id|pipe_ioctl
 comma
 l_int|NULL
 comma
+multiline_comment|/* no mmap on pipes.. surprise */
+l_int|NULL
+comma
 multiline_comment|/* no special open code */
 id|pipe_read_release
 )brace
@@ -1058,6 +1061,9 @@ id|pipe_ioctl
 comma
 l_int|NULL
 comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
 multiline_comment|/* no special open code */
 id|pipe_write_release
 )brace
@@ -1080,6 +1086,9 @@ id|pipe_select
 comma
 id|pipe_ioctl
 comma
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sr.h&quot;
+macro_line|#include &quot;scsi_ioctl.h&quot;   /* For the door lock/unlock commands */
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR 11
 macro_line|#include &quot;../blk.h&quot;
@@ -81,11 +82,6 @@ id|bb
 id|MAX_SR
 )braket
 suffix:semicolon
-DECL|variable|sr_result
-r_static
-r_int
-id|sr_result
-suffix:semicolon
 r_static
 r_int
 id|sr_open
@@ -143,6 +139,36 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|device-&gt;access_count
+)paren
+(brace
+id|sr_ioctl
+c_func
+(paren
+id|inode
+comma
+l_int|NULL
+comma
+id|SCSI_IOCTL_DOORUNLOCK
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|variable|sr_fops
 r_static
@@ -169,6 +195,9 @@ multiline_comment|/* select */
 id|sr_ioctl
 comma
 multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 id|sr_open
 comma
 multiline_comment|/* no special open code */
@@ -176,6 +205,129 @@ id|sr_release
 multiline_comment|/* release */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * This function checks to see if the media has been changed in the&n; * CDROM drive.  It is possible that we have already sensed a change,&n; * or the drive may have sensed one and not yet reported it.  We must&n; * be ready for either case. This function always reports the current&n; * value of the changed bit.  If flag is 0, then the changed bit is reset.&n; * This function could be done as an ioctl, but we would need to have&n; * an inode for that to work, and we do not always have one.&n; */
+DECL|function|check_cdrom_media_change
+r_int
+(def_block
+id|check_cdrom_media_change
+c_func
+(paren
+r_int
+id|full_dev
+comma
+r_int
+id|flag
+)paren
+(brace
+r_int
+id|retval
+comma
+id|target
+suffix:semicolon
+r_struct
+id|inode
+id|inode
+suffix:semicolon
+id|target
+op_assign
+id|MINOR
+c_func
+(paren
+id|full_dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|target
+op_ge
+id|NR_SR
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CD-ROM request error: invalid device.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+suffix:semicolon
+id|inode.i_rdev
+op_assign
+id|full_dev
+suffix:semicolon
+multiline_comment|/* This is all we really need here */
+id|retval
+op_assign
+id|sr_ioctl
+c_func
+(paren
+op_amp
+id|inode
+comma
+l_int|NULL
+comma
+id|SCSI_IOCTL_TEST_UNIT_READY
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+(brace
+multiline_comment|/* Unable to test, unit probably not ready.  This usually&n;&t;&t;     means there is no disc in the drive.  Mark as changed,&n;&t;&t;     and we will figure it out later once the drive is&n;&t;&t;     available again.  */
+id|scsi_CDs
+(braket
+id|target
+)braket
+dot
+id|device-&gt;changed
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* This will force a flush, if called from&n;&t;&t;       check_disk_change */
+)brace
+suffix:semicolon
+id|retval
+op_assign
+id|scsi_CDs
+(braket
+id|target
+)braket
+dot
+id|device-&gt;changed
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|flag
+)paren
+(brace
+id|scsi_CDs
+(braket
+id|target
+)braket
+dot
+id|device-&gt;changed
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_return
+id|retval
+suffix:semicolon
+)brace
+)def_block
 multiline_comment|/*&n; * The sense_buffer is where we put data for all mode sense commands performed.&n; */
 DECL|variable|sense_buffer
 r_static
@@ -426,7 +578,7 @@ id|CURRENT-&gt;dev
 )paren
 )braket
 dot
-id|changed
+id|device-&gt;changed
 op_assign
 l_int|1
 suffix:semicolon
@@ -434,6 +586,11 @@ id|end_request
 c_func
 (paren
 l_int|0
+)paren
+suffix:semicolon
+id|do_sr_request
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -499,6 +656,17 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;CD-ROM error: Drive reports %d.&bslash;n&quot;
+comma
+id|sense_buffer
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
 id|end_request
 c_func
 (paren
@@ -680,6 +848,36 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|device-&gt;access_count
+op_increment
+)paren
+(brace
+id|sr_ioctl
+c_func
+(paren
+id|inode
+comma
+l_int|NULL
+comma
+id|SCSI_IOCTL_DOORLOCK
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -807,7 +1005,7 @@ id|scsi_CDs
 id|dev
 )braket
 dot
-id|changed
+id|device-&gt;changed
 )paren
 (brace
 multiline_comment|/* &n; * quietly refuse to do anything to a changed disc until the changed bit has been reset&n; */
@@ -1444,15 +1642,6 @@ dot
 id|remap
 op_assign
 l_int|1
-suffix:semicolon
-id|scsi_CDs
-(braket
-id|i
-)braket
-dot
-id|changed
-op_assign
-l_int|0
 suffix:semicolon
 id|sr_sizes
 (braket

@@ -440,7 +440,13 @@ op_assign
 op_star
 id|regs
 suffix:semicolon
-multiline_comment|/* Flag indicating the math stuff is valid. */
+multiline_comment|/* Flag indicating the math stuff is valid. We don&squot;t support this for the&n;   soft-float routines yet */
+r_if
+c_cond
+(paren
+id|hard_math
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -475,7 +481,7 @@ op_amp
 id|dump.i387
 comma
 op_amp
-id|current-&gt;tss.i387
+id|current-&gt;tss.i387.hard
 comma
 r_sizeof
 (paren
@@ -484,7 +490,15 @@ id|dump.i387
 )paren
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+multiline_comment|/* we should dump the emulator state here, but we need to&n;&t;&t;   convert it into standard 387 format first.. */
+id|dump.u_fpvalid
+op_assign
+l_int|0
 suffix:semicolon
+)brace
 id|__asm__
 c_func
 (paren

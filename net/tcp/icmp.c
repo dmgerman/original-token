@@ -281,7 +281,7 @@ comma
 op_amp
 id|dev
 comma
-id|IP_ICMP
+id|IPPROTO_ICMP
 comma
 l_int|NULL
 comma
@@ -862,7 +862,7 @@ comma
 op_amp
 id|dev
 comma
-id|IP_ICMP
+id|IPPROTO_ICMP
 comma
 id|opt
 comma

@@ -2,8 +2,8 @@ macro_line|#ifndef _LINUX_CONFIG_DIST_H
 DECL|macro|_LINUX_CONFIG_DIST_H
 mdefine_line|#define _LINUX_CONFIG_DIST_H
 macro_line|#ifdef CONFIG_DISTRIBUTION
-DECL|macro|CONFG_SCSI
-macro_line|#undef CONFG_SCSI
+DECL|macro|CONFIG_SCSI
+macro_line|#undef CONFIG_SCSI
 DECL|macro|CONFIG_SCSI
 mdefine_line|#define CONFIG_SCSI
 DECL|macro|CONFIG_SCSI_AHA1542

@@ -520,6 +520,9 @@ multiline_comment|/* mouse_select */
 l_int|NULL
 comma
 multiline_comment|/* mouse_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mouse_mmap */
 id|open_mouse
 comma
 id|release_mouse
@@ -528,9 +531,11 @@ comma
 suffix:semicolon
 DECL|function|atixl_busmouse_init
 r_int
+r_int
 id|atixl_busmouse_init
 c_func
 (paren
+r_int
 r_int
 id|kmem_start
 )paren
@@ -591,12 +596,6 @@ l_string|&quot;&bslash;nATI Inport &quot;
 suffix:semicolon
 r_else
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;No ATI bus mouse detected&bslash;n&quot;
-)paren
-suffix:semicolon
 id|mouse.present
 op_assign
 l_int|0
@@ -655,6 +654,10 @@ op_assign
 id|mouse.dy
 op_assign
 l_int|0
+suffix:semicolon
+id|mouse.wait
+op_assign
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func

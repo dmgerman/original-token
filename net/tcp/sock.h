@@ -259,6 +259,10 @@ DECL|member|rtt
 r_int
 id|rtt
 suffix:semicolon
+DECL|member|err
+r_int
+id|err
+suffix:semicolon
 DECL|member|protocol
 r_int
 r_char
@@ -273,11 +277,6 @@ DECL|member|ack_backlog
 r_int
 r_char
 id|ack_backlog
-suffix:semicolon
-DECL|member|err
-r_int
-r_char
-id|err
 suffix:semicolon
 DECL|member|max_ack_backlog
 r_int

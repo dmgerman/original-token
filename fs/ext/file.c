@@ -117,6 +117,9 @@ comma
 multiline_comment|/* ioctl - default */
 l_int|NULL
 comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
 multiline_comment|/* no special open is needed */
 l_int|NULL
 multiline_comment|/* release */

@@ -1081,18 +1081,9 @@ id|target
 OG
 l_int|6
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|reselect
-op_eq
-id|RECONNECT_NOW
-)paren
 r_return
 id|DID_BAD_TARGET
 suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;We work it differently depending on if this is is &quot;the first time,&quot;&n; *&t;or a reconnect.  If this is a reselct phase, then SEL will &n; *&t;be asserted, and we must skip selection / arbitration phases.&n; */
 r_if
 c_cond

@@ -710,6 +710,9 @@ comma
 multiline_comment|/* mem_ioctl */
 l_int|NULL
 comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
 multiline_comment|/* no special open code */
 l_int|NULL
 multiline_comment|/* no special release code */

@@ -51,6 +51,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_static
 r_int
 id|minix_file_read
 c_func
@@ -116,6 +117,9 @@ comma
 multiline_comment|/* ioctl - default */
 l_int|NULL
 comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
 multiline_comment|/* no special open is needed */
 l_int|NULL
 multiline_comment|/* release */
@@ -171,8 +175,8 @@ id|minix_truncate
 multiline_comment|/* truncate */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * minix_file_read() is also needed by the directory read-routine,&n; * so it&squot;s not static. NOTE! reading directories directly is a bad idea,&n; * but has to be supported for now for compatability reasons with older&n; * versions.&n; */
 DECL|function|minix_file_read
+r_static
 r_int
 id|minix_file_read
 c_func

@@ -5,9 +5,10 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+DECL|function|msdos_dir_read
 r_static
 r_int
-id|msdos_dummy_read
+id|msdos_dir_read
 c_func
 (paren
 r_struct
@@ -27,7 +28,12 @@ comma
 r_int
 id|count
 )paren
+(brace
+r_return
+op_minus
+id|EISDIR
 suffix:semicolon
+)brace
 r_static
 r_int
 id|msdos_readdir
@@ -62,7 +68,7 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
-id|msdos_dummy_read
+id|msdos_dir_read
 comma
 multiline_comment|/* read */
 l_int|NULL
@@ -77,6 +83,9 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
@@ -134,62 +143,6 @@ l_int|NULL
 multiline_comment|/* truncate */
 )brace
 suffix:semicolon
-multiline_comment|/* So  grep *  doesn&squot;t complain in the presence of directories. */
-DECL|function|msdos_dummy_read
-r_static
-r_int
-id|msdos_dummy_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-(brace
-r_static
-r_int
-id|last_warning
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|CURRENT_TIME
-op_minus
-id|last_warning
-op_ge
-l_int|10
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;COMPATIBILITY WARNING: reading a directory&bslash;n&quot;
-)paren
-suffix:semicolon
-id|last_warning
-op_assign
-id|CURRENT_TIME
-suffix:semicolon
-)brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|msdos_readdir
 r_static
 r_int

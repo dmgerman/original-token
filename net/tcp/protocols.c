@@ -196,7 +196,7 @@ id|tcp_err
 comma
 l_int|NULL
 comma
-id|IP_TCP
+id|IPPROTO_TCP
 comma
 l_int|0
 comma
@@ -218,7 +218,7 @@ comma
 op_amp
 id|tcp_protocol
 comma
-id|IP_UDP
+id|IPPROTO_UDP
 comma
 l_int|0
 comma
@@ -240,7 +240,7 @@ comma
 op_amp
 id|udp_protocol
 comma
-id|IP_ICMP
+id|IPPROTO_ICMP
 comma
 l_int|0
 comma

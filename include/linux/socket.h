@@ -51,6 +51,17 @@ DECL|macro|MSG_OOB
 mdefine_line|#define MSG_OOB&t;&t;1
 DECL|macro|MSG_PEEK
 mdefine_line|#define MSG_PEEK&t;2
+multiline_comment|/* ioctl&squot;s */
+DECL|macro|FIOSETOWN
+mdefine_line|#define FIOSETOWN &t;0x8901&t; /* the 89 is for uniqueness.&n;&t;&t;&t;&t;    This should be somewhere else. */
+DECL|macro|SIOCSPGRP
+mdefine_line|#define SIOCSPGRP&t;0x8902
+DECL|macro|FIOGETOWN
+mdefine_line|#define FIOGETOWN&t;0x8903   /* this too. */
+DECL|macro|SIOCGPGRP
+mdefine_line|#define SIOCGPGRP&t;0x8904
+DECL|macro|SIOCATMARK
+mdefine_line|#define SIOCATMARK&t;0x8905
 multiline_comment|/* for setsockoptions */
 DECL|macro|SO_DEBUG
 mdefine_line|#define SO_DEBUG&t;1

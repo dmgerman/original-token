@@ -174,7 +174,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|HEADER_SIZE
-mdefine_line|#define HEADER_SIZE 64
+mdefine_line|#define HEADER_SIZE 100
 multiline_comment|/* this next routines deal with comparing 32 bit unsigned ints and&n;    worry about wrap around. The general strategy is to do a normal&n;    compare so long as neither of the numbers is within 4k of wrapping.&n;    Otherwise we must check for the wrap. */
 r_static
 r_inline

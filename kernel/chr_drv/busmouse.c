@@ -588,6 +588,9 @@ multiline_comment|/* mouse_select */
 l_int|NULL
 comma
 multiline_comment|/* mouse_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mouse_mmap */
 id|open_mouse
 comma
 id|release_mouse
@@ -596,9 +599,11 @@ comma
 suffix:semicolon
 DECL|function|bus_mouse_init
 r_int
+r_int
 id|bus_mouse_init
 c_func
 (paren
+r_int
 r_int
 id|kmem_start
 )paren
@@ -650,12 +655,6 @@ op_ne
 id|MSE_SIGNATURE_BYTE
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;No Logitech bus mouse detected.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|mouse.present
 op_assign
 l_int|0
@@ -702,6 +701,10 @@ suffix:semicolon
 id|mouse.dy
 op_assign
 l_int|0
+suffix:semicolon
+id|mouse.wait
+op_assign
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func

@@ -233,6 +233,11 @@ id|id
 comma
 id|lun
 suffix:semicolon
+DECL|member|access_count
+r_int
+id|access_count
+suffix:semicolon
+multiline_comment|/* Count of open channels/mounts */
 DECL|member|writeable
 r_int
 id|writeable
@@ -251,6 +256,20 @@ id|random
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|changed
+r_int
+id|changed
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Data invalid due to media change */
+DECL|member|busy
+r_int
+id|busy
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Used to prevent races */
 DECL|typedef|Scsi_Device
 )brace
 id|Scsi_Device

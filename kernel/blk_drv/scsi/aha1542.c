@@ -865,9 +865,11 @@ op_eq
 l_int|2
 )paren
 (brace
+macro_line|#ifdef DEBUG
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 id|DEB
 c_func
 (paren
@@ -1889,11 +1891,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if MAX_MEGABYTES &gt; 16
+macro_line|#ifndef MAX_16M
 id|printk
 c_func
 (paren
-l_string|&quot;Adaptec 1542 disabled for kernels for which MAX_MEGABYTES &gt; 16.&bslash;n&quot;
+l_string|&quot;Adaptec 1542 disabled for kernels without memory limiting to 16MB.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -3,11 +3,6 @@ macro_line|#ifndef&t;_LINUX_CDROM_H
 DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H
 multiline_comment|/*&n; *&n; * For IOCTL calls, we will commandeer byte 0x53, or &squot;S&squot;.&n; *&n; */
-multiline_comment|/*&n; * These are flags for the SCMD_DOORLOCK command.  They really should be defined&n; * somewhere more standard.&n; */
-DECL|macro|SR_REMOVAL_PREVENT
-mdefine_line|#define&t;SR_REMOVAL_PREVENT&t;1
-DECL|macro|SR_REMOVAL_ALLOW
-mdefine_line|#define&t;SR_REMOVAL_ALLOW&t;0
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */
 multiline_comment|/*&n; * Group 2 (10-byte).  All of these are called &squot;optional&squot; by SCSI-II.&n; */
 DECL|macro|SCMD_READ_TOC
@@ -781,10 +776,5 @@ multiline_comment|/* read type-2 data (not suppt)&t;*/
 DECL|macro|CDROMREADMODE1
 mdefine_line|#define&t;CDROMREADMODE1&t;&t;0x530d&t;&t;/* (struct cdrom_read)&t;&t;*/
 multiline_comment|/* read type-1 data &t;&t;*/
-multiline_comment|/*&n; * Linux-specific CD-ROM ioctls for convenience and ISO-9660 support&n; */
-DECL|macro|CDROMDOORLOCK
-mdefine_line|#define CDROMDOORLOCK&t;&t;0x5380&t;&t;/* lock the eject mechanism&t;*/
-DECL|macro|CDROMDOORUNLOCK
-mdefine_line|#define CDROMDOORUNLOCK&t;&t;0x5381&t;&t;/* unlock the mechanism&t;&t;*/
 macro_line|#endif  _LINUX_CDROM_H
 eof

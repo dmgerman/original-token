@@ -610,16 +610,15 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 op_star
@@ -737,16 +736,10 @@ l_int|0xA1
 )paren
 suffix:semicolon
 )brace
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -863,16 +856,15 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -952,16 +944,10 @@ id|sa-&gt;sa_restorer
 op_assign
 l_int|NULL
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 )brace

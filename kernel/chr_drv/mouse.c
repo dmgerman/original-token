@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the mouse drivers, as they are now completely independent. Linus.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
+multiline_comment|/*&n; * note that you can remove any or all of the drivers by undefining&n; * the minor values in &lt;linux/mouse.h&gt;&n; */
 r_extern
 r_struct
 id|file_operations
@@ -24,33 +25,41 @@ id|atixl_busmouse_fops
 suffix:semicolon
 r_extern
 r_int
+r_int
 id|bus_mouse_init
 c_func
 (paren
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
+r_int
 r_int
 id|psaux_init
 c_func
 (paren
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
+r_int
 r_int
 id|ms_bus_mouse_init
 c_func
 (paren
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
 r_int
+r_int
 id|atixl_busmouse_init
 c_func
 (paren
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -178,6 +187,9 @@ multiline_comment|/* select */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 id|mouse_open
 comma
 l_int|NULL
@@ -186,13 +198,16 @@ multiline_comment|/* release */
 suffix:semicolon
 DECL|function|mouse_init
 r_int
+r_int
 id|mouse_init
 c_func
 (paren
 r_int
+r_int
 id|kmem_start
 )paren
 (brace
+macro_line|#ifdef BUSMOUSE_MINOR
 id|kmem_start
 op_assign
 id|bus_mouse_init
@@ -201,6 +216,8 @@ c_func
 id|kmem_start
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef PSMOUSE_MINOR
 id|kmem_start
 op_assign
 id|psaux_init
@@ -209,6 +226,8 @@ c_func
 id|kmem_start
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MS_BUSMOUSE_MINOR
 id|kmem_start
 op_assign
 id|ms_bus_mouse_init
@@ -217,6 +236,8 @@ c_func
 id|kmem_start
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef ATIXL_BUSMOUSE_MINOR
 id|kmem_start
 op_assign
 id|atixl_busmouse_init
@@ -225,6 +246,7 @@ c_func
 id|kmem_start
 )paren
 suffix:semicolon
+macro_line|#endif
 id|chrdev_fops
 (braket
 l_int|10

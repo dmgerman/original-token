@@ -60,13 +60,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* is this device still supportable&t;*/
-DECL|member|changed
-r_int
-id|changed
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* disk changed flag&t;&t;&t;*/
 DECL|typedef|Scsi_CD
 )brace
 id|Scsi_CD

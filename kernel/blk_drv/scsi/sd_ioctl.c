@@ -21,6 +21,16 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|revalidate_scsidisk
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|function|sd_ioctl
 r_int
 id|sd_ioctl
@@ -56,6 +66,19 @@ c_cond
 id|cmd
 )paren
 (brace
+r_case
+id|BLKRRPART
+suffix:colon
+multiline_comment|/* Re-read partition tables */
+r_return
+id|revalidate_scsidisk
+c_func
+(paren
+id|dev
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 r_return

@@ -758,12 +758,13 @@ id|memory_end
 op_and_assign
 l_int|0xfffff000
 suffix:semicolon
+macro_line|#ifdef MAX_16M
 r_if
 c_cond
 (paren
 id|memory_end
 OG
-id|MAX_MEGABYTES
+l_int|16
 op_star
 l_int|1024
 op_star
@@ -771,12 +772,13 @@ l_int|1024
 )paren
 id|memory_end
 op_assign
-id|MAX_MEGABYTES
+l_int|16
 op_star
 l_int|1024
 op_star
 l_int|1024
 suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 l_int|1024
@@ -799,6 +801,16 @@ suffix:semicolon
 id|low_memory_start
 op_and_assign
 l_int|0xfffff000
+suffix:semicolon
+id|memory_start
+op_assign
+id|paging_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
 suffix:semicolon
 id|trap_init
 c_func

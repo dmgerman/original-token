@@ -424,6 +424,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|fifo_open
 comma
 multiline_comment|/* will set read or write pipe_fops */

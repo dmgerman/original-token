@@ -98,6 +98,9 @@ multiline_comment|/* select */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 id|blkdev_open
 comma
 multiline_comment|/* open */

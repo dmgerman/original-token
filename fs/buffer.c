@@ -8,7 +8,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#if defined(CONFIG_BLK_DEV_SR) &amp;&amp; defined(CONFIG_SCSI)
+macro_line|#ifdef CONFIG_SCSI
+macro_line|#ifdef CONFIG_BLK_DEV_SR
 r_extern
 r_int
 id|check_cdrom_media_change
@@ -19,6 +20,29 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SD
+r_extern
+r_int
+id|check_scsidisk_media_change
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|revalidate_scsidisk
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|variable|hash_table
 r_static
@@ -321,7 +345,6 @@ suffix:semicolon
 )brace
 DECL|function|invalidate_buffers
 r_void
-r_inline
 id|invalidate_buffers
 c_func
 (paren
@@ -458,6 +481,35 @@ id|bh
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if defined(CONFIG_BLK_DEV_SD) &amp;&amp; defined(CONFIG_SCSI)
+r_case
+l_int|8
+suffix:colon
+multiline_comment|/* Removable scsi disk */
+id|i
+op_assign
+id|check_scsidisk_media_change
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Flushing buffers and inodes for SCSI disk&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_BLK_DEV_SR) &amp;&amp; defined(CONFIG_SCSI)
 r_case
 l_int|11
@@ -550,6 +602,28 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_BLK_DEV_SD) &amp;&amp; defined(CONFIG_SCSI)
+multiline_comment|/* This is trickier for a removable hardisk, because we have to invalidate&n;   all of the partitions that lie on the disk. */
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+op_eq
+l_int|8
+)paren
+id|revalidate_scsidisk
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|macro|_hashfn
 mdefine_line|#define _hashfn(dev,block) (((unsigned)(dev^block))%NR_HASH)

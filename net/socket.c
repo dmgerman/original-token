@@ -305,9 +305,11 @@ id|sock_readdir
 comma
 id|sock_select
 comma
-multiline_comment|/* not in vfs yet */
 id|sock_ioctl
 comma
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code... */

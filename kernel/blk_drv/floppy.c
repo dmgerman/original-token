@@ -5328,6 +5328,13 @@ id|drive
 op_assign
 id|inode-&gt;i_rdev
 suffix:semicolon
+id|buffer_drive
+op_assign
+id|buffer_track
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5438,6 +5445,9 @@ multiline_comment|/* select */
 id|fd_ioctl
 comma
 multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 id|floppy_open
 comma
 multiline_comment|/* open */

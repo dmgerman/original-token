@@ -5,7 +5,8 @@ DECL|macro|_TCP_IP_H
 mdefine_line|#define _TCP_IP_H
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &lt;linux/sock_ioctl.h&gt;
-macro_line|#include &lt;netinet/protocols.h&gt;
+multiline_comment|/* #include &lt;netinet/protocols.h&gt;*/
+macro_line|#include &lt;netinet/in.h&gt;
 DECL|struct|rtable
 r_struct
 id|rtable

@@ -7,6 +7,151 @@ DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT 12
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+multiline_comment|/*&n; * Linux kernel virtual memory manager primitives.&n; * The idea being to have a &quot;virtual&quot; mm in the same way&n; * we have a virtual fs - giving a cleaner interface to the&n; * mm details, and allowing different kinds of memory mappings&n; * (from shared memory to executable loading to arbitrary&n; * mmap() functions).&n; */
+multiline_comment|/*&n; * This struct defines a memory VMM memory area. There is one of these&n; * per VM-area/task.  A VM area is any part of the process virtual memory&n; * space that has a special rule for the page-fault handlers (ie a shared&n; * library, the executable area etc).&n; */
+DECL|struct|vm_area_struct
+r_struct
+id|vm_area_struct
+(brace
+DECL|member|vm_task
+r_struct
+id|task_struct
+op_star
+id|vm_task
+suffix:semicolon
+multiline_comment|/* VM area parameters */
+DECL|member|vm_start
+r_int
+r_int
+id|vm_start
+suffix:semicolon
+DECL|member|vm_end
+r_int
+r_int
+id|vm_end
+suffix:semicolon
+DECL|member|vm_next
+r_struct
+id|vm_area_struct
+op_star
+id|vm_next
+suffix:semicolon
+multiline_comment|/* linked list */
+DECL|member|vm_share
+r_struct
+id|vm_area_struct
+op_star
+id|vm_share
+suffix:semicolon
+multiline_comment|/* linked list */
+DECL|member|vm_inode
+r_struct
+id|inode
+op_star
+id|vm_inode
+suffix:semicolon
+DECL|member|vm_offset
+r_int
+r_int
+id|vm_offset
+suffix:semicolon
+DECL|member|vm_ops
+r_struct
+id|vm_operations_struct
+op_star
+id|vm_ops
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * These are the virtual MM functions - opening of an area, closing it (needed to&n; * keep files on disk up-to-date etc), pointer to the functions called when a&n; * no-page or a wp-page exception occurs, and the function which decides on sharing&n; * of pages between different processes.&n; */
+DECL|struct|vm_operations_struct
+r_struct
+id|vm_operations_struct
+(brace
+DECL|member|open
+r_void
+(paren
+op_star
+id|open
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|area
+)paren
+suffix:semicolon
+DECL|member|close
+r_void
+(paren
+op_star
+id|close
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|area
+)paren
+suffix:semicolon
+DECL|member|nopage
+r_void
+(paren
+op_star
+id|nopage
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|area
+comma
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+DECL|member|wppage
+r_void
+(paren
+op_star
+id|wppage
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|area
+comma
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+DECL|member|share
+r_int
+(paren
+op_star
+id|share
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|old
+comma
+r_struct
+id|vm_area_struct
+op_star
+r_new
+comma
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving a inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; */
 DECL|function|__bad_page
 r_extern
@@ -171,6 +316,7 @@ DECL|macro|read_swap_page
 mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
 DECL|macro|write_swap_page
 mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
+multiline_comment|/* mmap.c */
 multiline_comment|/* memory.c */
 r_extern
 r_int
@@ -337,6 +483,21 @@ id|user_esp
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|paging_init
+c_func
+(paren
+r_int
+r_int
+id|start_mem
+comma
+r_int
+r_int
+id|end_mem
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|mem_init
 c_func
@@ -388,14 +549,6 @@ op_star
 id|task
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|malloc_grab_pages
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* swap.c */
 r_extern
 r_void
@@ -439,8 +592,6 @@ DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr) ((addr) &gt;&gt; PAGE_SHIFT)
 DECL|macro|MAP_PAGE_RESERVED
 mdefine_line|#define MAP_PAGE_RESERVED (1&lt;&lt;15)
-DECL|macro|USED
-mdefine_line|#define USED 100
 r_extern
 r_int
 r_int

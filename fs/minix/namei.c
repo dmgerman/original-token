@@ -3256,6 +3256,11 @@ id|old_inode
 r_goto
 id|end_rename
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3351,6 +3356,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|new_inode
+op_logical_and
 id|S_ISDIR
 c_func
 (paren

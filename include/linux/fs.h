@@ -73,6 +73,8 @@ DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET 4701 /* set device read-only (0 = read-write) */
 DECL|macro|BLKROGET
 mdefine_line|#define BLKROGET 4702 /* get read-only status (0 = read_write) */
+DECL|macro|BLKRRPART
+mdefine_line|#define BLKRRPART 4703 /* re-read partition table */
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP
@@ -272,6 +274,12 @@ r_struct
 id|file_lock
 op_star
 id|i_flock
+suffix:semicolon
+DECL|member|i_mmap
+r_struct
+id|vm_area_struct
+op_star
+id|i_mmap
 suffix:semicolon
 DECL|member|i_count
 r_int
@@ -655,6 +663,16 @@ r_int
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+DECL|member|mmap
+r_int
+(paren
+op_star
+id|mmap
+)paren
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|member|open
@@ -1184,6 +1202,15 @@ suffix:semicolon
 r_extern
 r_void
 id|invalidate_inodes
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|invalidate_buffers
 c_func
 (paren
 r_int

@@ -628,6 +628,9 @@ multiline_comment|/* lp_select */
 l_int|NULL
 comma
 multiline_comment|/* lp_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* lp_mmap */
 id|lp_open
 comma
 id|lp_release

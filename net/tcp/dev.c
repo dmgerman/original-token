@@ -541,6 +541,14 @@ op_plus
 id|len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_ne
+l_int|NULL
+)paren
+(brace
 id|skb-&gt;mem_len
 op_assign
 r_sizeof
@@ -555,6 +563,7 @@ id|skb-&gt;mem_addr
 op_assign
 id|skb
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* firs we copy the packet into a buffer, and save it for later. */
 r_if

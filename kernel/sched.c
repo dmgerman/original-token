@@ -20,6 +20,13 @@ id|need_resched
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|hard_math
+r_int
+id|hard_math
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* set by boot/head.S */
 DECL|variable|prof_buffer
 r_int
 r_int
@@ -899,16 +906,15 @@ id|q
 )paren
 r_return
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_do
@@ -984,16 +990,10 @@ op_star
 id|q
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1053,16 +1053,15 @@ c_func
 l_string|&quot;__sleep_on: wait-&gt;next exists&bslash;n&quot;
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 id|current-&gt;state
@@ -1097,15 +1096,10 @@ op_amp
 id|current-&gt;wait
 )paren
 suffix:semicolon
-id|__asm__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 )brace

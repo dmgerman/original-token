@@ -72,6 +72,12 @@ DECL|macro|FIONBIO
 mdefine_line|#define FIONBIO&t;&t;0x5421
 DECL|macro|TIOCNOTTY
 mdefine_line|#define TIOCNOTTY&t;0x5422
+DECL|macro|FIONCLEX
+mdefine_line|#define FIONCLEX&t;0x5450  /* these numbers need to be adjusted. */
+DECL|macro|FIOCLEX
+mdefine_line|#define FIOCLEX&t;&t;0x5451
+DECL|macro|FIOASYNC
+mdefine_line|#define FIOASYNC&t;0x5452
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_FLUSHREAD
 mdefine_line|#define TIOCPKT_FLUSHREAD&t; 1
@@ -389,8 +395,10 @@ DECL|macro|CLOCAL
 mdefine_line|#define CLOCAL&t;0004000
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;03600000&t;&t;/* input baud rate (not used) */
+DECL|macro|CNORTSCTS
+mdefine_line|#define CNORTSCTS 010000000000&t;&t;/* no flow control */
 DECL|macro|CRTSCTS
-mdefine_line|#define CRTSCTS&t;020000000000&t;&t;/* flow control */
+mdefine_line|#define CRTSCTS&t;  020000000000&t;&t;/* flow control */
 multiline_comment|/* c_lflag bits */
 DECL|macro|ISIG
 mdefine_line|#define ISIG&t;0000001
