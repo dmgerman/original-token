@@ -75,7 +75,7 @@ suffix:semicolon
 multiline_comment|/* bytes in output buffer */
 multiline_comment|/* gzip flag byte */
 DECL|macro|ASCII_FLAG
-mdefine_line|#define ASCII_FLAG   0x01 /* bit 0 set: file probably ascii text */
+mdefine_line|#define ASCII_FLAG   0x01 /* bit 0 set: file probably ASCII text */
 DECL|macro|CONTINUATION
 mdefine_line|#define CONTINUATION 0x02 /* bit 1 set: continuation of multi-part gzip file */
 DECL|macro|EXTRA_FIELD

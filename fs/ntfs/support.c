@@ -314,7 +314,7 @@ id|n
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Warn that an error occured */
+multiline_comment|/* Warn that an error occurred. */
 DECL|function|ntfs_error
 r_void
 id|ntfs_error

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
 r_static
 r_int
@@ -262,22 +263,13 @@ r_int
 id|txtcon_scrolldelta
 c_func
 (paren
-r_int
-id|lines
-)paren
-suffix:semicolon
-r_static
-r_int
-id|txtcon_set_mode
-c_func
-(paren
 r_struct
 id|vc_data
 op_star
 id|conp
 comma
 r_int
-id|mode
+id|lines
 )paren
 suffix:semicolon
 DECL|function|txtcon_startup
@@ -600,28 +592,13 @@ r_int
 id|txtcon_scrolldelta
 c_func
 (paren
-r_int
-id|lines
-)paren
-(brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-)brace
-DECL|function|txtcon_set_mode
-r_static
-r_int
-id|txtcon_set_mode
-c_func
-(paren
 r_struct
 id|vc_data
 op_star
 id|conp
 comma
 r_int
-id|mode
+id|lines
 )paren
 (brace
 r_return
@@ -666,8 +643,6 @@ comma
 id|txtcon_set_palette
 comma
 id|txtcon_scrolldelta
-comma
-id|txtcon_set_mode
 )brace
 suffix:semicolon
 eof

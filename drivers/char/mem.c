@@ -65,7 +65,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_FB)
+macro_line|#ifdef CONFIG_FB
 r_extern
 r_void
 id|fbmem_init
@@ -174,8 +174,6 @@ id|buf
 comma
 id|count
 )paren
-OL
-l_int|0
 )paren
 r_return
 op_minus
@@ -356,8 +354,6 @@ id|p
 comma
 id|count
 )paren
-OL
-l_int|0
 )paren
 r_return
 op_minus
@@ -2193,7 +2189,7 @@ suffix:semicolon
 macro_line|#endif&t;
 macro_line|#endif
 macro_line|#ifdef CONFIG_JOYSTICK
-multiline_comment|/*&n;&t; *&t;Some joysticks only appear when the soundcard they are&n;&t; *&t;connected to is configured. Keep the sound/joystick ordering.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Some joysticks only appear when the sound card they are&n;&t; *&t;connected to is configured. Keep the sound/joystick ordering.&n;&t; */
 id|js_init
 c_func
 (paren

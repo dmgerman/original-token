@@ -993,7 +993,7 @@ id|mask
 suffix:semicolon
 )brace
 macro_line|#ifdef FIFO_SUNOS_BRAINDAMAGE
-multiline_comment|/*&n; * Arggh. Why does SunOS have to have different select() behaviour&n; * for pipes and fifos? Hate-Hate-Hate. SunOS lacks POLLHUP..&n; */
+multiline_comment|/*&n; * Argh!  Why does SunOS have to have different select() behaviour&n; * for pipes and FIFOs?  Hate, hate, hate!  SunOS lacks POLLHUP.&n; */
 DECL|function|fifo_poll
 r_static
 r_int
@@ -1541,7 +1541,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The file_operations structs are not static because they&n; * are also used in linux/fs/fifo.c to do operations on fifo&squot;s.&n; */
+multiline_comment|/*&n; * The file_operations structs are not static because they&n; * are also used in linux/fs/fifo.c to do operations on FIFOs.&n; */
 DECL|variable|connecting_fifo_fops
 r_struct
 id|file_operations

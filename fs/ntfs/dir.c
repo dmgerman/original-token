@@ -2503,7 +2503,7 @@ id|ITERATE_SPLIT_DONE
 )paren
 )paren
 (brace
-multiline_comment|/* split has occured. adjust entry, insert new_entry */
+multiline_comment|/* split has occurred. adjust entry, insert new_entry */
 id|NTFS_PUTU32
 c_func
 (paren

@@ -3137,7 +3137,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;H8: Read ethernet addr - command done - address: %x - %x - %x - %x - %x - %x &bslash;n&quot;
+l_string|&quot;H8: read Ethernet address: command done - address: %x - %x - %x - %x - %x - %x &bslash;n&quot;
 comma
 id|qp-&gt;rcvbuf
 (braket
@@ -3691,7 +3691,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Retrieve the current cpu temperature and case temperature.  Provides&n; * the feedback for the thermal control algorithm.  Synchcronized via &n; * sleep() for priority so that no other actions in the process will take&n; * place before the data becomes available.&n; */
+multiline_comment|/*&n; * Retrieve the current CPU temperature and case temperature.  Provides&n; * the feedback for the thermal control algorithm.  Synchcronized via &n; * sleep() for priority so that no other actions in the process will take&n; * place before the data becomes available.&n; */
 r_int
 DECL|function|h8_get_curr_temp
 id|h8_get_curr_temp
@@ -3868,7 +3868,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Assigns an upper limit to the value of the H8 thermal interrupt.&n; * As an example setting a value of 115 F here will cause the &n; * interrupt to trigger when the cpu temperature reaches 115 F.&n; */
+multiline_comment|/*&n; * Assigns an upper limit to the value of the H8 thermal interrupt.&n; * As an example setting a value of 115 F here will cause the &n; * interrupt to trigger when the CPU temperature reaches 115 F.&n; */
 r_static
 r_void
 DECL|function|h8_set_upper_therm_thold
@@ -4273,7 +4273,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * If an external DC supply is removed or added make &n;&t;&t; * appropriate cpu speed adjustments.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If an external DC supply is removed or added make &n;&t;&t; * appropriate CPU speed adjustments.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4357,7 +4357,7 @@ c_func
 id|H8_MANAGE_LTHERM
 )paren
 suffix:semicolon
-multiline_comment|/* Check again in 30 seconds for cpu temperature */
+multiline_comment|/* Check again in 30 seconds for CPU temperature */
 id|h8_start_monitor_timer
 c_func
 (paren
@@ -4403,7 +4403,7 @@ id|h8_uthermal_window
 )paren
 )paren
 (brace
-multiline_comment|/* System cooling has progressed to a point&n;&t;&t;&t;   that the cpu may be speeded up. */
+multiline_comment|/* System cooling has progressed to a point&n;&t;&t;&t;   that the CPU may be sped up. */
 id|h8_set_upper_therm_thold
 c_func
 (paren
@@ -4468,7 +4468,7 @@ id|speed_divisor
 )paren
 (brace
 macro_line|#ifdef NOT_YET
-multiline_comment|/*&n; * global_rpb_counter is consumed by alpha_delay() in determining just&n; * how much time to delay.  It is necessary that the number of microseconds&n; * in DELAY(n) be kept consistent over a variety of cpu clock speeds.&n; * To that end global_rpb_counter is here adjusted.&n; */
+multiline_comment|/*&n; * global_rpb_counter is consumed by alpha_delay() in determining just&n; * how much time to delay.  It is necessary that the number of microseconds&n; * in DELAY(n) be kept consistent over a variety of CPU clock speeds.&n; * To that end global_rpb_counter is here adjusted.&n; */
 r_switch
 c_cond
 (paren
@@ -4571,7 +4571,7 @@ id|speed_divisor
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Gets value stored in rpb representing cpu clock speed and adjusts this&n; * value based on the current clock speed divisor.&n; */
+multiline_comment|/*&n; * Gets value stored in rpb representing CPU clock speed and adjusts this&n; * value based on the current clock speed divisor.&n; */
 id|u_long
 DECL|function|h8_get_cpu_speed
 id|h8_get_cpu_speed

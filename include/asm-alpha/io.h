@@ -3,7 +3,7 @@ DECL|macro|__ALPHA_IO_H
 mdefine_line|#define __ALPHA_IO_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/* We don&squot;t use IO slowdowns on the alpha, but.. */
+multiline_comment|/* We don&squot;t use IO slowdowns on the Alpha, but.. */
 DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|SLOW_DOWN_IO
@@ -605,7 +605,7 @@ r_int
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * XXX - We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and &n; * just copy it. The net code will then do the checksum later. Presently &n; * only used by some shared memory 8390 ethernet cards anyway.&n; */
+multiline_comment|/*&n; * XXX - We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and &n; * just copy it. The net code will then do the checksum later. Presently &n; * only used by some shared memory 8390 Ethernet cards anyway.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused)&t;memcpy_fromio((skb)-&gt;data,(src),(len))
 DECL|function|check_signature

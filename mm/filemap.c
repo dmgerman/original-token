@@ -2966,7 +2966,7 @@ id|page
 r_goto
 id|success
 suffix:semicolon
-multiline_comment|/*&n;&t; * Uhhuh.. Things didn&squot;t work out. Return zero to tell the&n;&t; * mm layer so, possibly freeing the page cache page first.&n;&t; */
+multiline_comment|/*&n;&t; * Things didn&squot;t work out. Return zero to tell the&n;&t; * mm layer so, possibly freeing the page cache page first.&n;&t; */
 id|failure
 suffix:colon
 id|release_page
@@ -5236,7 +5236,7 @@ id|page-&gt;flags
 suffix:semicolon
 id|do_update_page
 suffix:colon
-multiline_comment|/* Alright, the page is there.  Now update it. */
+multiline_comment|/* All right, the page is there.  Now update it. */
 id|status
 op_assign
 id|inode-&gt;i_op

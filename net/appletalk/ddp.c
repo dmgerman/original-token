@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;&t;With more than a little assistance from&n; *&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&t;&t;Alan Cox/Mike Freeman&t;:&t;Possible fix to NBP problems&n; *&t;&t;Bradford Johnson&t;:&t;IP-over-DDP (experimental)&n; *&t;&t;Jay Schulist&t;&t;:&t;Moved IP-over-DDP to its own&n; *&t;&t;&t;&t;&t;&t;driver file. (ipddp.c &amp; ipddp.h)&n; *&t;&t;Jay Schulist&t;&t;:&t;Made work as module with &n; *&t;&t;&t;&t;&t;&t;Appletalk drivers, cleaned it.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the AppleTalk DDP protocol for&n; *&t;&t;Ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;&t;With more than a little assistance from&n; *&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;LocalTalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;LocalTalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&t;&t;Alan Cox/Mike Freeman&t;:&t;Possible fix to NBP problems&n; *&t;&t;Bradford Johnson&t;:&t;IP-over-DDP (experimental)&n; *&t;&t;Jay Schulist&t;&t;:&t;Moved IP-over-DDP to its own&n; *&t;&t;&t;&t;&t;&t;driver file. (ipddp.c &amp; ipddp.h)&n; *&t;&t;Jay Schulist&t;&t;:&t;Made work as module with &n; *&t;&t;&t;&t;&t;&t;AppleTalk drivers, cleaned it.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -391,7 +391,7 @@ id|begin
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Output the appletalk data for the /proc virtual fs.&n;&t; */
+multiline_comment|/*&n;&t; * Output the AppleTalk data for the /proc filesystem.&n;&t; */
 id|len
 op_add_assign
 id|sprintf
@@ -606,7 +606,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**************************************************************************&bslash;&n;*                                                                          *&n;* Routing tables for the Appletalk socket layer.                           *&n;*                                                                          *&n;&bslash;**************************************************************************/
+multiline_comment|/**************************************************************************&bslash;&n;*                                                                          *&n;* Routing tables for the AppleTalk socket layer.                           *&n;*                                                                          *&n;&bslash;**************************************************************************/
 DECL|variable|atalk_router_list
 r_static
 r_struct
@@ -632,7 +632,7 @@ id|atalk_route
 id|atrtr_default
 suffix:semicolon
 multiline_comment|/* For probing devices or in a routerless network */
-multiline_comment|/*&n; * Appletalk interface control&n; */
+multiline_comment|/*&n; * AppleTalk interface control&n; */
 multiline_comment|/*&n; * Drop a device. Doesn&squot;t drop any of its routes - that is the caller&squot;s&n; * problem. Called when we down the interface or delete the address.&n; */
 DECL|function|atif_drop_device
 r_static
@@ -1556,7 +1556,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Find a route for an appletalk packet. This ought to get cached in&n; * the socket (later on...). We know about host routes and the fact&n; * that a route must be direct to broadcast.&n; */
+multiline_comment|/*&n; * Find a route for an AppleTalk packet. This ought to get cached in&n; * the socket (later on...). We know about host routes and the fact&n; * that a route must be direct to broadcast.&n; */
 DECL|function|atrtr_find
 r_static
 r_struct
@@ -1656,7 +1656,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Given an appletalk network find the device to use. This can be&n; * a simple lookup.&n; */
+multiline_comment|/*&n; * Given an AppleTalk network, find the device to use. This can be&n; * a simple lookup.&n; */
 DECL|function|atrtr_get_dev
 r_struct
 id|device
@@ -2575,7 +2575,7 @@ id|sa-&gt;sat_zero
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Phase 1 is fine on Localtalk but we don&squot;t do&n;&t;&t;&t; * Ethertalk phase 1. Anyone wanting to add it go ahead.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Phase 1 is fine on LocalTalk but we don&squot;t do&n;&t;&t;&t; * EtherTalk phase 1. Anyone wanting to add it go ahead.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3618,7 +3618,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**************************************************************************&bslash;&n;*                                                                          *&n;* Handling for system calls applied via the various interfaces to an       *&n;* Appletalk socket object.                                                 *&n;*                                                                          *&n;&bslash;**************************************************************************/
+multiline_comment|/**************************************************************************&bslash;&n;*                                                                          *&n;* Handling for system calls applied via the various interfaces to an       *&n;* AppleTalk socket object.                                                 *&n;*                                                                          *&n;&bslash;**************************************************************************/
 multiline_comment|/*&n; * Checksum: This is &squot;optional&squot;. It&squot;s quite likely also a good&n; * candidate for assembler hackery 8)&n; */
 DECL|function|atalk_checksum
 r_int
@@ -4556,7 +4556,7 @@ id|EOPNOTSUPP
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Find the name of an appletalk socket. Just copy the right&n; * fields into the sockaddr.&n; */
+multiline_comment|/*&n; * Find the name of an AppleTalk socket. Just copy the right&n; * fields into the sockaddr.&n; */
 DECL|function|atalk_getname
 r_static
 r_int
@@ -4862,7 +4862,7 @@ op_ne
 id|ddp-&gt;deh_sum
 )paren
 (brace
-multiline_comment|/* Not a valid appletalk frame - dustbin time */
+multiline_comment|/* Not a valid AppleTalk frame - dustbin time */
 id|kfree_skb
 c_func
 (paren
@@ -4940,7 +4940,7 @@ comma
 id|ddp-&gt;deh_dnode
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * Not ours, so we route the packet via the correct Appletalk interface.&n;&t; */
+multiline_comment|/* &n;&t; * Not ours, so we route the packet via the correct AppleTalk interface.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5122,7 +5122,7 @@ id|ddp
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Send the buffer onwards&n;&t;&t; *&n;&t;&t; * Now we must always be careful. If it&squot;s come from &n;&t;&t; * localtalk to ethertalk it might not fit&n;&t;&t; *&n;&t;&t; * Order matters here: If a packet has to be copied&n;&t;&t; * to make a new headroom (rare hopefully) then it&n;&t;&t; * won&squot;t need unsharing.&n;&t;&t; *&n;&t;&t; * Note. ddp-&gt; becomes invalid at the realloc.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Send the buffer onwards&n;&t;&t; *&n;&t;&t; * Now we must always be careful. If it&squot;s come from &n;&t;&t; * LocalTalk to EtherTalk it might not fit&n;&t;&t; *&n;&t;&t; * Order matters here: If a packet has to be copied&n;&t;&t; * to make a new headroom (rare hopefully) then it&n;&t;&t; * won&squot;t need unsharing.&n;&t;&t; *&n;&t;&t; * Note. ddp-&gt; becomes invalid at the realloc.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5383,7 +5383,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Receive a localtalk frame. We make some demands on the caller here.&n; * Caller must provide enough headroom on the packet to pull the short&n; * header and append a long one.&n; */
+multiline_comment|/*&n; * Receive a LocalTalk frame. We make some demands on the caller here.&n; * Caller must provide enough headroom on the packet to pull the short&n; * header and append a long one.&n; */
 DECL|function|ltalk_rcv
 r_static
 r_int
@@ -6755,7 +6755,7 @@ id|EOPNOTSUPP
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Appletalk ioctl calls.&n; */
+multiline_comment|/*&n; * AppleTalk ioctl calls.&n; */
 DECL|function|atalk_ioctl
 r_static
 r_int
@@ -7221,7 +7221,7 @@ comma
 l_int|0x9B
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Export symbols for use by drivers when Appletalk is a module.&n; */
+multiline_comment|/*&n; * Export symbols for use by drivers when AppleTalk is a module.&n; */
 DECL|variable|aarp_send_ddp
 id|EXPORT_SYMBOL
 c_func
@@ -7466,7 +7466,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Appletalk 0.18 for Linux NET3.037&bslash;n&quot;
+l_string|&quot;AppleTalk 0.18 for Linux NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -7491,7 +7491,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * Appletalk interfaces are not incremented untill atalkd is run&n; * and are only decremented when they are downed.&n; *&n; * Ergo, before the appletalk module can be removed, all Appletalk&n; * sockets be closed from user space.&n; */
+multiline_comment|/*&n; * Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * AppleTalk interfaces are not incremented untill atalkd is run&n; * and are only decremented when they are downed.&n; *&n; * Ergo, before the AppleTalk module can be removed, all AppleTalk&n; * sockets be closed from user space.&n; */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

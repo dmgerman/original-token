@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/vgacon.c -- Low level VGA based console driver&n; *&n; *&t;Created 28 Sep 1997 by Geert Uytterhoeven&n; *&n; *  This file is based on the old console.c, vga.c and vesa_blank.c drivers.&n; *&n; *&t;Copyright (C) 1991, 1992  Linus Torvalds&n; *&t;&t;&t;    1995  Jay Estabrook&n; *&n; *&t;User definable mapping table and font loading by Eugene G. Crosser,&n; *&t;&lt;crosser@pccross.msk.su&gt;&n; *&n; *&t;Improved loadable font/UTF-8 support by H. Peter Anvin&n; *&t;Feb-Sep 1995 &lt;peter.anvin@linux.org&gt;&n; *&n; *&t;Colour palette handling, by Simon Tatham&n; *&t;17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; *&t;if 512 char mode is already enabled don&squot;t re-enable it,&n; *&t;because it causes screen to flicker, by Mitja Horvat&n; *&t;5-May-96 &lt;mitja.horvat@guest.arnes.si&gt;&n; *&n; *&t;Use 2 outw instead of 4 outb_p to reduce erroneous text&n; *&t;flashing on RHS of screen during heavy console scrolling .&n; *&t;Oct 1996, Paul Gortmaker.&n; *&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
-multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- monochrome attribute encoding (convert abscon &lt;-&gt; VGA style)&n; *&n; *&t;- speed up scrolling by changing the screen origin&n; *&n; *&t;- add support for palette, loadable fonts and VESA blanking&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
+multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- monochrome attribute encoding (convert abscon &lt;-&gt; VGA style)&n; *&n; *&t;- speed up scrolling by changing the screen origin&n; *&n; *&t;- add support for loadable fonts and VESA blanking&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -293,22 +293,13 @@ r_int
 id|vgacon_scrolldelta
 c_func
 (paren
-r_int
-id|lines
-)paren
-suffix:semicolon
-r_static
-r_int
-id|vgacon_set_mode
-c_func
-(paren
 r_struct
 id|vc_data
 op_star
 id|conp
 comma
 r_int
-id|mode
+id|lines
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  Internal routines&n; */
@@ -337,15 +328,13 @@ suffix:semicolon
 multiline_comment|/* End of video memory */
 DECL|variable|vga_video_port_reg
 r_static
-r_int
-r_int
+id|u16
 id|vga_video_port_reg
 suffix:semicolon
 multiline_comment|/* Video register select port */
 DECL|variable|vga_video_port_val
 r_static
-r_int
-r_int
+id|u16
 id|vga_video_port_val
 suffix:semicolon
 multiline_comment|/* Video register value port */
@@ -424,12 +413,10 @@ r_void
 id|vga_writew
 c_func
 (paren
-r_int
-r_int
+id|u16
 id|val
 comma
-r_int
-r_int
+id|u16
 op_star
 id|addr
 )paren
@@ -461,13 +448,11 @@ macro_line|#endif /* !__powerpc__ */
 DECL|function|vga_readw
 r_static
 r_inline
-r_int
-r_int
+id|u16
 id|vga_readw
 c_func
 (paren
-r_int
-r_int
+id|u16
 op_star
 id|addr
 )paren
@@ -505,8 +490,7 @@ r_void
 op_star
 id|s
 comma
-r_int
-r_int
+id|u16
 id|c
 comma
 r_int
@@ -514,14 +498,12 @@ r_int
 id|count
 )paren
 (brace
-r_int
-r_int
+id|u16
 op_star
 id|addr
 op_assign
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|s
@@ -553,13 +535,11 @@ r_void
 id|vga_memmovew
 c_func
 (paren
-r_int
-r_int
+id|u16
 op_star
 id|to
 comma
-r_int
-r_int
+id|u16
 op_star
 id|from
 comma
@@ -766,12 +746,10 @@ id|display_desc
 )paren
 )paren
 (brace
-r_int
-r_int
+id|u16
 id|saved
 suffix:semicolon
-r_int
-r_int
+id|u16
 op_star
 id|p
 suffix:semicolon
@@ -1149,8 +1127,7 @@ multiline_comment|/*&n;&t; *&t;Find out if there is a graphics card present.&n;&
 id|p
 op_assign
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|vga_video_mem_base
@@ -1592,9 +1569,18 @@ c_func
 (paren
 id|sattr
 op_or
+(paren
+(paren
+r_int
+)paren
+(paren
 op_star
 id|s
 op_increment
+)paren
+op_amp
+l_int|0xff
+)paren
 comma
 id|p
 op_increment
@@ -1995,15 +1981,13 @@ id|vga_memmovew
 c_func
 (paren
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|dst
 comma
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|src
@@ -2073,15 +2057,13 @@ id|vga_memmovew
 c_func
 (paren
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|dst
 comma
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|src
@@ -2153,15 +2135,13 @@ id|vga_memmovew
 c_func
 (paren
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|dst
 comma
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|src
@@ -2437,31 +2417,16 @@ r_int
 id|vgacon_scrolldelta
 c_func
 (paren
-r_int
-id|lines
-)paren
-(brace
-multiline_comment|/* TODO */
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-)brace
-DECL|function|vgacon_set_mode
-r_static
-r_int
-id|vgacon_set_mode
-c_func
-(paren
 r_struct
 id|vc_data
 op_star
 id|conp
 comma
 r_int
-id|mode
+id|lines
 )paren
 (brace
+multiline_comment|/* TODO */
 r_return
 op_minus
 id|ENOSYS
@@ -2559,8 +2524,6 @@ comma
 id|vgacon_set_palette
 comma
 id|vgacon_scrolldelta
-comma
-id|vgacon_set_mode
 )brace
 suffix:semicolon
 eof

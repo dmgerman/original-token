@@ -2652,7 +2652,7 @@ id|no_initrd
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
+macro_line|#ifdef CONFIG_FB
 (brace
 l_string|&quot;video=&quot;
 comma

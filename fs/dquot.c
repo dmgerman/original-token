@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD systemcall interface as&n; * the means of communication with the user level. Currently only the&n; * ext2-filesystem has support for diskquotas. Other filesystems may&n; * be added in future time. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derived systems. The internal implementation is &n; * based on one of the several variants of the LINUX inode-subsystem&n; * with added complexity of the diskquota system.&n; * &n; * Version: $Id: dquot.c,v 6.3 1996/11/17 18:35:34 mvw Exp mvw $&n; * &n; * Author:&t;Marco van Wieringen &lt;mvw@planets.elm.net&gt;&n; *&n; * Fixes:   Dmitry Gorodchanin &lt;pgmdsg@ibi.com&gt;, 11 Feb 96&n; *&n; * (C) Copyright 1994 - 1997 Marco van Wieringen &n; */
+multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD system call interface as&n; * the means of communication with the user level. Currently only the&n; * ext2 filesystem has support for disk quotas. Other filesystems may&n; * be added in the future. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derived systems. The internal implementation is &n; * based on one of the several variants of the LINUX inode-subsystem&n; * with added complexity of the diskquota system.&n; * &n; * Version: $Id: dquot.c,v 6.3 1996/11/17 18:35:34 mvw Exp mvw $&n; * &n; * Author:&t;Marco van Wieringen &lt;mvw@planets.elm.net&gt;&n; *&n; * Fixes:   Dmitry Gorodchanin &lt;pgmdsg@ibi.com&gt;, 11 Feb 96&n; *&n; * (C) Copyright 1994 - 1997 Marco van Wieringen &n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3321,7 +3321,7 @@ r_return
 id|QUOTA_OK
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Initialize a dquot-struct with new quota info. This is used by the&n; * systemcall interface functions.&n; */
+multiline_comment|/*&n; * Initialize a dquot-struct with new quota info. This is used by the&n; * system call interface functions.&n; */
 DECL|function|set_dqblk
 r_static
 r_int
@@ -4731,7 +4731,7 @@ id|cnt
 comma
 id|disc
 suffix:semicolon
-multiline_comment|/*&n;&t; * Find out if this filesystems uses i_blocks.&n;&t; */
+multiline_comment|/*&n;&t; * Find out if this filesystem uses i_blocks.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5968,7 +5968,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Ok this is the systemcall interface, this communicates with&n; * the userlevel programs. Currently this only supports diskquota&n; * calls. Maybe we need to add the process quotas etc in the future.&n; * But we probably better use rlimits for that.&n; */
+multiline_comment|/*&n; * This is the system call interface. This communicates with&n; * the user-level programs. Currently this only supports diskquota&n; * calls. Maybe we need to add the process quotas etc. in the future,&n; * but we probably should use rlimits for that.&n; */
 DECL|function|sys_quotactl
 id|asmlinkage
 r_int

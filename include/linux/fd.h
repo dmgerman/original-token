@@ -185,7 +185,7 @@ r_int
 r_char
 id|cmos
 suffix:semicolon
-multiline_comment|/* cmos type */
+multiline_comment|/* CMOS type */
 multiline_comment|/* Spec2 is (HLD&lt;&lt;1 | ND), where HLD is head load time (1=2ms, 2=4 ms &n;&t; * etc) and ND is set means no DMA. Hardcoded to 6 (HLD=6ms, use DMA).&n;&t; */
 DECL|member|max_dtr
 r_int

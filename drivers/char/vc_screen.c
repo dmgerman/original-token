@@ -9,8 +9,10 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|macro|attr
 macro_line|#undef attr
 DECL|macro|org
@@ -80,9 +82,8 @@ id|inode
 r_int
 id|size
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_CONSOLE
 r_int
-id|cons
+id|currcons
 op_assign
 id|MINOR
 c_func
@@ -95,16 +96,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cons
+id|currcons
 op_eq
 l_int|0
 )paren
-id|cons
+id|currcons
 op_assign
 id|fg_console
 suffix:semicolon
 r_else
-id|cons
+id|currcons
 op_decrement
 suffix:semicolon
 r_if
@@ -114,27 +115,18 @@ op_logical_neg
 id|vc_cons_allocated
 c_func
 (paren
-id|cons
+id|currcons
 )paren
 )paren
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#endif
 id|size
 op_assign
-id|get_video_num_lines
-c_func
-(paren
-id|cons
-)paren
+id|video_num_lines
 op_star
-id|get_video_num_columns
-c_func
-(paren
-id|cons
-)paren
+id|video_num_columns
 suffix:semicolon
 r_if
 c_cond
@@ -484,11 +476,7 @@ op_assign
 (paren
 r_char
 )paren
-id|get_video_num_lines
-c_func
-(paren
-id|currcons
-)paren
+id|video_num_lines
 suffix:semicolon
 id|header
 (braket
@@ -498,11 +486,7 @@ op_assign
 (paren
 r_char
 )paren
-id|get_video_num_columns
-c_func
-(paren
-id|currcons
-)paren
+id|video_num_columns
 suffix:semicolon
 id|getconsxy
 c_func
@@ -579,6 +563,29 @@ id|count
 OG
 l_int|0
 )paren
+macro_line|#ifdef __BIG_ENDIAN
+(brace
+id|count
+op_decrement
+suffix:semicolon
+id|put_user
+c_func
+(paren
+id|func_scr_readw
+c_func
+(paren
+id|org
+op_increment
+)paren
+op_amp
+l_int|0xff
+comma
+id|buf
+op_increment
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 (brace
 id|count
 op_decrement
@@ -600,6 +607,7 @@ op_increment
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_while
 c_loop
@@ -643,6 +651,23 @@ id|count
 OG
 l_int|0
 )paren
+macro_line|#ifdef __BIG_ENDIAN
+id|put_user
+c_func
+(paren
+id|func_scr_readw
+c_func
+(paren
+id|org
+)paren
+op_rshift
+l_int|8
+comma
+id|buf
+op_increment
+)paren
+suffix:semicolon
+macro_line|#else
 id|put_user
 c_func
 (paren
@@ -658,6 +683,7 @@ id|buf
 op_increment
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|read
 op_assign
@@ -1047,6 +1073,26 @@ id|buf
 op_increment
 )paren
 suffix:semicolon
+macro_line|#ifdef __BIG_ENDIAN
+id|func_scr_writew
+c_func
+(paren
+id|c
+op_or
+(paren
+id|func_scr_readw
+c_func
+(paren
+id|org
+)paren
+op_amp
+l_int|0xff00
+)paren
+comma
+id|org
+)paren
+suffix:semicolon
+macro_line|#else
 id|func_scr_writew
 c_func
 (paren
@@ -1069,6 +1115,7 @@ comma
 id|org
 )paren
 suffix:semicolon
+macro_line|#endif
 id|org
 op_increment
 suffix:semicolon
@@ -1145,6 +1192,30 @@ id|buf
 op_increment
 )paren
 suffix:semicolon
+macro_line|#ifdef __BIG_ENDIAN
+id|func_scr_writew
+c_func
+(paren
+(paren
+id|func_scr_readw
+c_func
+(paren
+id|org
+)paren
+op_amp
+l_int|0xff
+)paren
+op_or
+(paren
+id|c
+op_lshift
+l_int|8
+)paren
+comma
+id|org
+)paren
+suffix:semicolon
+macro_line|#else
 id|func_scr_writew
 c_func
 (paren
@@ -1163,9 +1234,9 @@ comma
 id|org
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
-macro_line|#ifdef CONFIG_FB_CONSOLE
 r_if
 c_cond
 (paren
@@ -1180,7 +1251,6 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-macro_line|#endif
 id|written
 op_assign
 id|buf

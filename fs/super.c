@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/super.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  super.c contains code to handle: - mount structures&n; *                                   - super-block tables.&n; *                                   - mount systemcall&n; *                                   - umount systemcall&n; *&n; *  Added options to /proc/mounts&n; *  Torbj&#xfffd;rn Lindh (torbjorn.lindh@gopta.se), April 14, 1996.&n; *&n; * GK 2/5/95  -  Changed to support mounting the root fs via NFS&n; *&n; *  Added kerneld support: Jacques Gelinas and Bjorn Ekwall&n; *  Added change_root: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; */
+multiline_comment|/*&n; *  linux/fs/super.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  super.c contains code to handle: - mount structures&n; *                                   - super-block tables.&n; *                                   - mount system call&n; *                                   - umount system call&n; *&n; *  Added options to /proc/mounts&n; *  Torbj&#xfffd;rn Lindh (torbjorn.lindh@gopta.se), April 14, 1996.&n; *&n; * GK 2/5/95  -  Changed to support mounting the root fs via NFS&n; *&n; *  Added kerneld support: Jacques Gelinas and Bjorn Ekwall&n; *  Added change_root: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2890,7 +2890,7 @@ id|sb-&gt;s_root
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/*&n;&t; * Before checking whether the filesystem is still busy,&n;&t; * make sure the kernel doesn&squot;t hold any quotafiles open&n;&t; * on the device. If the umount fails, too bad -- there&n;&t; * are no quotas running anymore. Just turn them on again.&n;&t; */
+multiline_comment|/*&n;&t; * Before checking whether the filesystem is still busy,&n;&t; * make sure the kernel doesn&squot;t hold any quota files open&n;&t; * on the device. If the umount fails, too bad -- there&n;&t; * are no quotas running any more. Just turn them on again.&n;&t; */
 id|DQUOT_OFF
 c_func
 (paren
@@ -3424,7 +3424,7 @@ op_logical_neg
 id|busy
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * do_mount() does the actual mounting after sys_mount has done the ugly&n; * parameter parsing. When enough time has gone by, and everything uses the&n; * new mount() parameters, sys_mount() can then be cleaned up.&n; *&n; * We cannot mount a filesystem if it has active, used, or dirty inodes.&n; * We also have to flush all inode-data for this device, as the new mount&n; * might need new info.&n; *&n; * [21-Mar-97] T.Schoebel-Theuer: Now this can be overridden when&n; * supplying a leading &quot;!&quot; before the dir_name, allowing &quot;stacks&quot; of&n; * mounted filesystems. The stacking will only influence any pathname lookups&n; * _after_ the mount, but open filedescriptors or working directories that&n; * are now covered remain valid. For example, when you overmount /home, any&n; * process with old cwd /home/joe will continue to use the old versions,&n; * as long as relative paths are used, but absolute paths like /home/joe/xxx&n; * will go to the new &quot;top of stack&quot; version. In general, crossing a&n; * mountpoint will always go to the top of stack element.&n; * Anyone using this new feature must know what he/she is doing.&n; */
+multiline_comment|/*&n; * do_mount() does the actual mounting after sys_mount has done the ugly&n; * parameter parsing. When enough time has gone by, and everything uses the&n; * new mount() parameters, sys_mount() can then be cleaned up.&n; *&n; * We cannot mount a filesystem if it has active, used, or dirty inodes.&n; * We also have to flush all inode-data for this device, as the new mount&n; * might need new info.&n; *&n; * [21-Mar-97] T.Schoebel-Theuer: Now this can be overridden when&n; * supplying a leading &quot;!&quot; before the dir_name, allowing &quot;stacks&quot; of&n; * mounted filesystems. The stacking will only influence any pathname lookups&n; * _after_ the mount, but open file descriptors or working directories that&n; * are now covered remain valid. For example, when you overmount /home, any&n; * process with old cwd /home/joe will continue to use the old versions,&n; * as long as relative paths are used, but absolute paths like /home/joe/xxx&n; * will go to the new &quot;top of stack&quot; version. In general, crossing a&n; * mount point will always go to the top of stack element.&n; * Anyone using this new feature must know what he/she is doing.&n; */
 DECL|function|do_mount
 r_int
 id|do_mount

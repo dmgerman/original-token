@@ -2237,7 +2237,7 @@ id|clustersize
 op_assign
 id|ino-&gt;vol-&gt;clustersize
 suffix:semicolon
-multiline_comment|/* starting cluster of potential chunk&n;&t;   there are three situations:&n;&t;   a) in a large uncompressable or sparse chunk, &n;&t;   s_vcn is in the middle of a run&n;&t;   b) s_vcn is right on a run border&n;&t;   c) when several runs make a chunk, s_vcn is before the chunks&n;&t;*/
+multiline_comment|/* starting cluster of potential chunk&n;&t;   there are three situations:&n;&t;   a) in a large uncompressible or sparse chunk, &n;&t;   s_vcn is in the middle of a run&n;&t;   b) s_vcn is right on a run border&n;&t;   c) when several runs make a chunk, s_vcn is before the chunks&n;&t;*/
 id|s_vcn
 op_assign
 id|offset

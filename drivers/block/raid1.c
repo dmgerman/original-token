@@ -1763,7 +1763,7 @@ suffix:semicolon
 r_int
 id|n
 suffix:semicolon
-multiline_comment|/*&n;&t; * The device has it&squot;s superblock already read and it was found&n;&t; * to be consistent for generic RAID usage, now we check wether&n;&t; * it&squot;s usable for RAID-1 hot addition.&n;&t; */
+multiline_comment|/*&n;&t; * The device has its superblock already read and it was found&n;&t; * to be consistent for generic RAID usage.  Now we check whether&n;&t; * it&squot;s usable for RAID-1 hot addition.&n;&t; */
 id|n
 op_assign
 id|mddev-&gt;nb_dev

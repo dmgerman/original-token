@@ -275,7 +275,7 @@ suffix:semicolon
 DECL|macro|CS4215_HPF
 mdefine_line|#define CS4215_HPF&t;(1&lt;&lt;7)&t;/* High Pass Filter, 1: Enabled */
 DECL|macro|CS4215_12_MASK
-mdefine_line|#define CS4215_12_MASK&t;0xfcbf&t;/* Mask off reseved bits in slot 1 &amp; 2 */
+mdefine_line|#define CS4215_12_MASK&t;0xfcbf&t;/* Mask off reserved bits in slot 1 &amp; 2 */
 multiline_comment|/* Time Slot 3, Serial Port Control register */
 DECL|macro|CS4215_XEN
 mdefine_line|#define CS4215_XEN&t;(1&lt;&lt;0)&t;/* 0: Enable serial output */
@@ -331,7 +331,7 @@ mdefine_line|#define CS4215_LG(v)&t;v&t;/* Left Gain Setting 0xf: 22.5 dB */
 DECL|macro|CS4215_IS
 mdefine_line|#define CS4215_IS&t;(1&lt;&lt;4)&t;/* Input Select: 1=Microphone, 0=Line */
 DECL|macro|CS4215_OVR
-mdefine_line|#define CS4215_OVR&t;(1&lt;&lt;5)&t;/* 1: Overrange condition occured */
+mdefine_line|#define CS4215_OVR&t;(1&lt;&lt;5)&t;/* 1: Overrange condition occurred */
 DECL|macro|CS4215_PIO0
 mdefine_line|#define CS4215_PIO0&t;(1&lt;&lt;6)&t;/* Parallel I/O 0 */
 DECL|macro|CS4215_PIO1

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/file.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  isofs regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/file.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO 9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  isofs regular file handling primitives&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
-multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the isofs filesystem.&n; */
+multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the isofs filesystem.&n; */
 DECL|variable|isofs_file_operations
 r_static
 r_struct

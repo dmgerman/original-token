@@ -483,7 +483,7 @@ id|seg
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n;Primary Command Block. The most important data structure. All communication&n;between the host and the adapter is done with these. (Except for the actual&n;ethernet data, which has different packaging.)&n;*/
+multiline_comment|/*&n;Primary Command Block. The most important data structure. All communication&n;between the host and the adapter is done with these. (Except for the actual&n;Ethernet data, which has different packaging.)&n;*/
 r_typedef
 r_struct
 (brace

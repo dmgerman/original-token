@@ -4258,7 +4258,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Try to layout ino into store. Return 0 on success,&n;   E2BIG if it does not fit, &n;   ENOMEM if memory allocation problem,&n;   EOPNOTSUP if beyound our capabilities &n;*/
+multiline_comment|/* Try to layout ino into store. Return 0 on success,&n;   E2BIG if it does not fit, &n;   ENOMEM if memory allocation problem,&n;   EOPNOTSUP if beyond our capabilities &n;*/
 r_int
 DECL|function|layout_inode
 id|layout_inode

@@ -746,7 +746,7 @@ OL
 l_int|0
 )paren
 r_return
-id|err
+id|mem_start
 suffix:semicolon
 id|fbgen_set_disp
 c_func
@@ -894,8 +894,6 @@ comma
 id|fbgen_set_cmap
 comma
 id|fbgen_pan_display
-comma
-l_int|NULL
 comma
 id|fbgen_ioctl
 )brace

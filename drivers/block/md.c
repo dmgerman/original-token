@@ -2470,7 +2470,7 @@ c_cond
 id|hot_add
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Check the superblock for consistency.&n;&t;&t; * the personality itself has to check wether it&squot;s getting&n;&t;&t; * added with the proper flags ... also, personality has to&n;&t;&t; * be checked too ;)&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Check the superblock for consistency.&n;&t;&t; * The personality itself has to check whether it&squot;s getting&n;&t;&t; * added with the proper flags.  The personality has to be&n;                 * checked too. ;)&n;&t;&t; */
 r_if
 c_cond
 (paren

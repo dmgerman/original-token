@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the adfs filesystem.&n; */
+multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the adfs filesystem.&n; */
 DECL|variable|adfs_file_operations
 r_static
 r_struct

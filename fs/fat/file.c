@@ -162,7 +162,7 @@ id|file_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-multiline_comment|/* #Specification: msdos / special devices / swap file&n;&t;Swap file can&squot;t work on special devices with a large sector&n;&t;size (1024 bytes hard sector). Those devices have a weird&n;&t;MsDOS filesystem layout. Generally a single hardware sector&n;&t;may contain 2 unrelated logical sector. This mean that there is&n;&t;no easy way to do a mapping between disk sector of a file and virtual&n;&t;memory. So swap file is difficult (not available right now)&n;&t;on those devices. Off course, Ext2 does not have this problem.&n;*/
+multiline_comment|/* #Specification: msdos / special devices / swap file&n;&t;Swap file can&squot;t work on special devices with a large sector&n;&t;size (1024 bytes hard sector). Those devices have a weird&n;&t;MS-DOS filesystem layout. Generally a single hardware sector&n;&t;may contain 2 unrelated logical sector. This mean that there is&n;&t;no easy way to do a mapping between disk sector of a file and virtual&n;&t;memory. So swap file is difficult (not available right now)&n;&t;on those devices. Off course, Ext2 does not have this problem.&n;*/
 DECL|variable|fat_file_inode_operations_1024
 r_struct
 id|inode_operations
@@ -763,8 +763,8 @@ op_member_access_from_pointer
 id|i_binary
 )paren
 (brace
-multiline_comment|/* Doing a read ahead on ascii file make sure we always */
-multiline_comment|/* pre read enough, since we don&squot;t know how many blocks */
+multiline_comment|/* Doing a read ahead on ASCII file make sure we always */
+multiline_comment|/* read enough, since we don&squot;t know how many blocks */
 multiline_comment|/* we really need */
 r_int
 id|ahead

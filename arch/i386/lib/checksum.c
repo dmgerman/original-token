@@ -22,7 +22,7 @@ r_int
 id|sum
 )paren
 (brace
-multiline_comment|/*&n;&t;   * Experiments with ethernet and slip connections show that buff&n;&t;   * is aligned on either a 2-byte or 4-byte boundary.  We get at&n;&t;   * least a 2x speedup on 486 and Pentium if it is 4-byte aligned.&n;&t;   * Fortunately, it is easy to convert 2-byte alignment to 4-byte&n;&t;   * alignment for the unrolled loop.&n;&t;   */
+multiline_comment|/*&n;&t;   * Experiments with Ethernet and SLIP connections show that buff&n;&t;   * is aligned on either a 2-byte or 4-byte boundary.  We get at&n;&t;   * least a twofold speedup on 486 and Pentium if it is 4-byte aligned.&n;&t;   * Fortunately, it is easy to convert 2-byte alignment to 4-byte&n;&t;   * alignment for the unrolled loop.&n;&t;   */
 id|__asm__
 c_func
 (paren
@@ -1217,7 +1217,7 @@ id|sum
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Copy from ds while checksumming, otherwise like csum_partial&n; *&n; * The macros SRC and DST specify the type of access for the instruction.&n; * thus we can call a custom exception handler for all access types.&n; *&n; * FIXME: could someone double check wether i havent mixed up some SRC and&n; *&t;  DST definitions? It&squot;s damn hard to trigger all cases, i hope i got&n; *&t;  them all but theres no guarantee ...&n; */
+multiline_comment|/*&n; * Copy from ds while checksumming, otherwise like csum_partial&n; *&n; * The macros SRC and DST specify the type of access for the instruction.&n; * thus we can call a custom exception handler for all access types.&n; *&n; * FIXME: could someone double-check whether I haven&squot;t mixed up some SRC and&n; *&t;  DST definitions? It&squot;s damn hard to trigger all cases.  I hope I got&n; *&t;  them all but there&squot;s no guarantee.&n; */
 DECL|macro|SRC
 mdefine_line|#define SRC(y...)&t;&t;&t;&bslash;&n;&quot;&t;9999: &quot;#y&quot;;&t;&t;&t;&bslash;n &bslash;&n;&t;.section __ex_table, &bslash;&quot;a&bslash;&quot;;&t;&bslash;n &bslash;&n;&t;.long 9999b, 6001f&t;&t;&bslash;n &bslash;&n;&t;.previous&bslash;n&quot;
 DECL|macro|DST

@@ -227,7 +227,7 @@ op_eq
 id|PROC_SUPER_MAGIC
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check whether directory is a mount point, but it is alright if&n; * this is precisely the local mount point being exported.&n; */
+multiline_comment|/*&n; * Check whether directory is a mount point, but it is all right if&n; * this is precisely the local mount point being exported.&n; */
 r_static
 r_inline
 r_int
@@ -457,7 +457,7 @@ r_goto
 id|out_dput
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Note: we compose the filehandle now, but as the&n;&t; * dentry may be negative, it may need to be updated.&n;&t; */
+multiline_comment|/*&n;&t; * Note: we compose the file handle now, but as the&n;&t; * dentry may be negative, it may need to be updated.&n;&t; */
 id|fh_compose
 c_func
 (paren
@@ -2268,7 +2268,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Check whether the response filehandle has been verified yet.&n;&t; * If it has, the parent directory should already be locked.&n;&t; */
+multiline_comment|/*&n;&t; * Check whether the response file handle has been verified yet.&n;&t; * If it has, the parent directory should already be locked.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2518,7 +2518,7 @@ c_func
 id|dirp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Update the filehandle to get the new inode info.&n;&t; */
+multiline_comment|/*&n;&t; * Update the file handle to get the new inode info.&n;&t; */
 id|fh_update
 c_func
 (paren

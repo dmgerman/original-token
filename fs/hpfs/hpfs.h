@@ -1024,8 +1024,8 @@ id|u
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* fnode: root of allocation b+ tree, and EA&squot;s */
-multiline_comment|/* Every file and every directory has one fnode, pointed to by the directory&n;   entry and pointing to the file&squot;s sectors or directory&squot;s root dnode.  EA&squot;s&n;   are also stored here, and there are said to be ACL&squot;s somewhere here too. */
+multiline_comment|/* fnode: root of allocation b+ tree, and EAs */
+multiline_comment|/* Every file and every directory has one fnode, pointed to by the directory&n;   entry and pointing to the file&squot;s sectors or directory&squot;s root dnode.  EAs&n;   are also stored here, and there are said to be ACLs somewhere here too. */
 DECL|macro|FNODE_MAGIC
 mdefine_line|#define FNODE_MAGIC 0xf7e40aae
 DECL|struct|fnode
@@ -1219,7 +1219,7 @@ DECL|member|n_needea
 r_int
 id|n_needea
 suffix:semicolon
-multiline_comment|/* number of EA&squot;s with NEEDEA set */
+multiline_comment|/* number of EAs with NEEDEA set */
 DECL|member|zero4
 r_int
 id|zero4
@@ -1247,7 +1247,7 @@ id|ea
 l_int|316
 )braket
 suffix:semicolon
-multiline_comment|/* zero or more EA&squot;s, packed together&n;&t;&t;&t;&t;&t;   with no alignment padding.&n;&t;&t;&t;&t;&t;   (Do not use this name, get here&n;&t;&t;&t;&t;&t;   via fnode + ea_offs. I think.) */
+multiline_comment|/* zero or more EAs, packed together&n;&t;&t;&t;&t;&t;   with no alignment padding.&n;&t;&t;&t;&t;&t;   (Do not use this name, get here&n;&t;&t;&t;&t;&t;   via fnode + ea_offs. I think.) */
 )brace
 suffix:semicolon
 multiline_comment|/* anode: 99.44% pure allocation tree */
@@ -1378,7 +1378,7 @@ r_int
 id|valuelen
 suffix:semicolon
 multiline_comment|/* length of value, bytes */
-multiline_comment|/*&n;    unsigned char name[namelen];&t;ascii attrib name&n;    unsigned char nul;&t;&t;&t;terminating &squot;&bslash;0&squot;, not counted&n;    unsigned char value[valuelen];&t;value, arbitrary&n;      if this.indirect, valuelen is 8 and the value is&n;        unsigned length;&t;&t;real length of value, bytes&n;        secno secno;&t;&t;&t;sector address where it starts&n;      if this.anode, the above sector number is the root of an anode tree&n;        which points to the value.&n;  */
+multiline_comment|/*&n;    unsigned char name[namelen];&t;ASCII attrib name&n;    unsigned char nul;&t;&t;&t;terminating &squot;&bslash;0&squot;, not counted&n;    unsigned char value[valuelen];&t;value, arbitrary&n;      if this.indirect, valuelen is 8 and the value is&n;        unsigned length;&t;&t;real length of value, bytes&n;        secno secno;&t;&t;&t;sector address where it starts&n;      if this.anode, the above sector number is the root of an anode tree&n;        which points to the value.&n;  */
 )brace
 suffix:semicolon
 DECL|function|ea_name

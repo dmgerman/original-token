@@ -52,7 +52,7 @@ r_int
 r_int
 id|scaled_ticks_per_cycle
 suffix:semicolon
-multiline_comment|/* last time the cmos clock got updated */
+multiline_comment|/* last time the CMOS clock got updated */
 DECL|member|last_rtc_update
 id|time_t
 id|last_rtc_update

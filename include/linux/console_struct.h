@@ -1,4 +1,7 @@
 multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure and defines shared between console.c, vga.c and tga.c&n; */
+multiline_comment|/*&n; * You can set here how should the cursor look by default.&n; * In case you set CONFIG_SOFTCURSOR, this might be really interesting.&n; */
+DECL|macro|CUR_DEFAULT
+mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
@@ -6,6 +9,33 @@ DECL|struct|vc_data
 r_struct
 id|vc_data
 (brace
+DECL|member|vc_num
+r_int
+r_int
+id|vc_num
+suffix:semicolon
+multiline_comment|/* Console number */
+DECL|member|vc_cols
+r_int
+r_int
+id|vc_cols
+suffix:semicolon
+DECL|member|vc_rows
+r_int
+r_int
+id|vc_rows
+suffix:semicolon
+DECL|member|vc_size_row
+r_int
+r_int
+id|vc_size_row
+suffix:semicolon
+DECL|member|vc_sw
+r_struct
+id|consw
+op_star
+id|vc_sw
+suffix:semicolon
 DECL|member|vc_screenbuf_size
 r_int
 r_int
@@ -97,21 +127,6 @@ id|vc_par
 id|NPAR
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_CONSOLE
-DECL|member|vc_video_mem_start
-r_int
-r_int
-op_star
-id|vc_video_mem_start
-suffix:semicolon
-multiline_comment|/* Start of video RAM&t;&t;*/
-DECL|member|vc_pos
-r_int
-r_int
-op_star
-id|vc_pos
-suffix:semicolon
-macro_line|#else
 DECL|member|vc_pos
 r_int
 r_int
@@ -123,7 +138,6 @@ r_int
 id|vc_video_mem_start
 suffix:semicolon
 multiline_comment|/* Start of video RAM&t;&t;*/
-macro_line|#endif
 DECL|member|vc_video_mem_end
 r_int
 r_int
@@ -400,6 +414,11 @@ r_int
 id|vc_bell_duration
 suffix:semicolon
 multiline_comment|/* Console bell duration */
+DECL|member|vc_cursor_type
+r_int
+r_int
+id|vc_cursor_type
+suffix:semicolon
 multiline_comment|/* additional information is in vt_kern.h */
 )brace
 suffix:semicolon
@@ -424,126 +443,22 @@ id|vc_cons
 id|MAX_NR_CONSOLES
 )braket
 suffix:semicolon
-DECL|macro|screenbuf_size
-mdefine_line|#define screenbuf_size&t;(vc_cons[currcons].d-&gt;vc_screenbuf_size)
-DECL|macro|origin
-mdefine_line|#define origin&t;&t;(vc_cons[currcons].d-&gt;vc_origin)
-DECL|macro|scr_end
-mdefine_line|#define scr_end&t;(vc_cons[currcons].d-&gt;vc_scr_end)
-DECL|macro|pos
-mdefine_line|#define pos&t;&t;(vc_cons[currcons].d-&gt;vc_pos)
-DECL|macro|top
-mdefine_line|#define top&t;&t;(vc_cons[currcons].d-&gt;vc_top)
-DECL|macro|bottom
-mdefine_line|#define bottom&t;&t;(vc_cons[currcons].d-&gt;vc_bottom)
-DECL|macro|x
-mdefine_line|#define x&t;&t;(vc_cons[currcons].d-&gt;vc_x)
-DECL|macro|y
-mdefine_line|#define y&t;&t;(vc_cons[currcons].d-&gt;vc_y)
-DECL|macro|vc_state
-mdefine_line|#define vc_state&t;(vc_cons[currcons].d-&gt;vc_state)
-DECL|macro|npar
-mdefine_line|#define npar&t;&t;(vc_cons[currcons].d-&gt;vc_npar)
-DECL|macro|par
-mdefine_line|#define par&t;&t;(vc_cons[currcons].d-&gt;vc_par)
-DECL|macro|ques
-mdefine_line|#define ques&t;&t;(vc_cons[currcons].d-&gt;vc_ques)
-DECL|macro|attr
-mdefine_line|#define attr&t;&t;(vc_cons[currcons].d-&gt;vc_attr)
-DECL|macro|saved_x
-mdefine_line|#define saved_x&t;(vc_cons[currcons].d-&gt;vc_saved_x)
-DECL|macro|saved_y
-mdefine_line|#define saved_y&t;(vc_cons[currcons].d-&gt;vc_saved_y)
-DECL|macro|translate
-mdefine_line|#define translate&t;(vc_cons[currcons].d-&gt;vc_translate)
-DECL|macro|G0_charset
-mdefine_line|#define G0_charset&t;(vc_cons[currcons].d-&gt;vc_G0_charset)
-DECL|macro|G1_charset
-mdefine_line|#define G1_charset&t;(vc_cons[currcons].d-&gt;vc_G1_charset)
-DECL|macro|saved_G0
-mdefine_line|#define saved_G0&t;(vc_cons[currcons].d-&gt;vc_saved_G0)
-DECL|macro|saved_G1
-mdefine_line|#define saved_G1&t;(vc_cons[currcons].d-&gt;vc_saved_G1)
-DECL|macro|utf
-mdefine_line|#define utf&t;&t;(vc_cons[currcons].d-&gt;vc_utf)
-DECL|macro|utf_count
-mdefine_line|#define utf_count&t;(vc_cons[currcons].d-&gt;vc_utf_count)
-DECL|macro|utf_char
-mdefine_line|#define utf_char&t;(vc_cons[currcons].d-&gt;vc_utf_char)
-DECL|macro|video_mem_start
-mdefine_line|#define video_mem_start (vc_cons[currcons].d-&gt;vc_video_mem_start)
-DECL|macro|video_mem_end
-mdefine_line|#define video_mem_end&t;(vc_cons[currcons].d-&gt;vc_video_mem_end)
-DECL|macro|video_erase_char
-mdefine_line|#define video_erase_char (vc_cons[currcons].d-&gt;vc_video_erase_char)
-DECL|macro|disp_ctrl
-mdefine_line|#define disp_ctrl&t;(vc_cons[currcons].d-&gt;vc_disp_ctrl)
-DECL|macro|toggle_meta
-mdefine_line|#define toggle_meta&t;(vc_cons[currcons].d-&gt;vc_toggle_meta)
-DECL|macro|decscnm
-mdefine_line|#define decscnm&t;(vc_cons[currcons].d-&gt;vc_decscnm)
-DECL|macro|decom
-mdefine_line|#define decom&t;&t;(vc_cons[currcons].d-&gt;vc_decom)
-DECL|macro|decawm
-mdefine_line|#define decawm&t;&t;(vc_cons[currcons].d-&gt;vc_decawm)
-DECL|macro|deccm
-mdefine_line|#define deccm&t;&t;(vc_cons[currcons].d-&gt;vc_deccm)
-DECL|macro|decim
-mdefine_line|#define decim&t;&t;(vc_cons[currcons].d-&gt;vc_decim)
-DECL|macro|deccolm
-mdefine_line|#define deccolm&t;(vc_cons[currcons].d-&gt;vc_deccolm)
-DECL|macro|need_wrap
-mdefine_line|#define need_wrap&t;(vc_cons[currcons].d-&gt;vc_need_wrap)
-DECL|macro|has_scrolled
-mdefine_line|#define has_scrolled&t;(vc_cons[currcons].d-&gt;vc_has_scrolled)
-DECL|macro|kmalloced
-mdefine_line|#define kmalloced&t;(vc_cons[currcons].d-&gt;vc_kmalloced)
-DECL|macro|report_mouse
-mdefine_line|#define report_mouse&t;(vc_cons[currcons].d-&gt;vc_report_mouse)
-DECL|macro|color
-mdefine_line|#define color&t;&t;(vc_cons[currcons].d-&gt;vc_color)
-DECL|macro|s_color
-mdefine_line|#define s_color&t;(vc_cons[currcons].d-&gt;vc_s_color)
-DECL|macro|def_color
-mdefine_line|#define def_color&t;(vc_cons[currcons].d-&gt;vc_def_color)
-DECL|macro|foreground
-mdefine_line|#define &t;foreground&t;(color &amp; 0x0f)
-DECL|macro|background
-mdefine_line|#define &t;background&t;(color &amp; 0xf0)
-DECL|macro|charset
-mdefine_line|#define charset&t;(vc_cons[currcons].d-&gt;vc_charset)
-DECL|macro|s_charset
-mdefine_line|#define s_charset&t;(vc_cons[currcons].d-&gt;vc_s_charset)
-DECL|macro|intensity
-mdefine_line|#define&t;intensity&t;(vc_cons[currcons].d-&gt;vc_intensity)
-DECL|macro|underline
-mdefine_line|#define&t;underline&t;(vc_cons[currcons].d-&gt;vc_underline)
-DECL|macro|blink
-mdefine_line|#define&t;blink&t;&t;(vc_cons[currcons].d-&gt;vc_blink)
-DECL|macro|reverse
-mdefine_line|#define&t;reverse&t;&t;(vc_cons[currcons].d-&gt;vc_reverse)
-DECL|macro|s_intensity
-mdefine_line|#define&t;s_intensity&t;(vc_cons[currcons].d-&gt;vc_s_intensity)
-DECL|macro|s_underline
-mdefine_line|#define&t;s_underline&t;(vc_cons[currcons].d-&gt;vc_s_underline)
-DECL|macro|s_blink
-mdefine_line|#define&t;s_blink&t;&t;(vc_cons[currcons].d-&gt;vc_s_blink)
-DECL|macro|s_reverse
-mdefine_line|#define&t;s_reverse&t;(vc_cons[currcons].d-&gt;vc_s_reverse)
-DECL|macro|ulcolor
-mdefine_line|#define&t;ulcolor&t;&t;(vc_cons[currcons].d-&gt;vc_ulcolor)
-DECL|macro|halfcolor
-mdefine_line|#define&t;halfcolor&t;(vc_cons[currcons].d-&gt;vc_halfcolor)
-DECL|macro|tab_stop
-mdefine_line|#define tab_stop&t;(vc_cons[currcons].d-&gt;vc_tab_stop)
-DECL|macro|palette
-mdefine_line|#define palette&t;&t;(vc_cons[currcons].d-&gt;vc_palette)
-DECL|macro|bell_pitch
-mdefine_line|#define bell_pitch&t;(vc_cons[currcons].d-&gt;vc_bell_pitch)
-DECL|macro|bell_duration
-mdefine_line|#define bell_duration&t;(vc_cons[currcons].d-&gt;vc_bell_duration)
-DECL|macro|vcmode
-mdefine_line|#define vcmode&t;&t;(vt_cons[currcons]-&gt;vc_mode)
-DECL|macro|structsize
-mdefine_line|#define structsize&t;(sizeof(struct vc_data) + sizeof(struct vt_struct))
+DECL|macro|CUR_DEF
+mdefine_line|#define CUR_DEF&t;&t;0
+DECL|macro|CUR_NONE
+mdefine_line|#define CUR_NONE&t;1
+DECL|macro|CUR_UNDERLINE
+mdefine_line|#define CUR_UNDERLINE&t;2
+DECL|macro|CUR_LOWER_THIRD
+mdefine_line|#define CUR_LOWER_THIRD&t;3
+DECL|macro|CUR_LOWER_HALF
+mdefine_line|#define CUR_LOWER_HALF&t;4
+DECL|macro|CUR_TWO_THIRDS
+mdefine_line|#define CUR_TWO_THIRDS&t;5
+DECL|macro|CUR_BLOCK
+mdefine_line|#define CUR_BLOCK&t;6
+DECL|macro|CUR_HWMASK
+mdefine_line|#define CUR_HWMASK&t;0x0f
+DECL|macro|CUR_SWMASK
+mdefine_line|#define CUR_SWMASK&t;0xfff0
 eof

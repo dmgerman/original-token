@@ -40,6 +40,10 @@ DECL|macro|FB_TYPE_PLANES
 mdefine_line|#define FB_TYPE_PLANES&t;&t;&t;1&t;/* Non interleaved planes */
 DECL|macro|FB_TYPE_INTERLEAVED_PLANES
 mdefine_line|#define FB_TYPE_INTERLEAVED_PLANES&t;2&t;/* Interleaved planes&t;*/
+DECL|macro|FB_TYPE_VGA_TEXT
+mdefine_line|#define FB_TYPE_VGA_TEXT&t;&t;3&t;/* VGA text/attributes&t;*/
+DECL|macro|FB_TYPE_S3_MMIO_TEXT
+mdefine_line|#define FB_TYPE_S3_MMIO_TEXT&t;&t;4&t;/* S3 MMIO text&t;&t;*/
 DECL|macro|FB_VISUAL_MONO01
 mdefine_line|#define FB_VISUAL_MONO01&t;&t;0&t;/* Monochr. 1=Black 0=White */
 DECL|macro|FB_VISUAL_MONO10
@@ -52,8 +56,28 @@ DECL|macro|FB_VISUAL_DIRECTCOLOR
 mdefine_line|#define FB_VISUAL_DIRECTCOLOR&t;&t;4&t;/* Direct color */
 DECL|macro|FB_VISUAL_STATIC_PSEUDOCOLOR
 mdefine_line|#define FB_VISUAL_STATIC_PSEUDOCOLOR&t;5&t;/* Pseudo color readonly */
-DECL|macro|FB_VISUAL_STATIC_DIRECTCOLOR
-mdefine_line|#define FB_VISUAL_STATIC_DIRECTCOLOR&t;6&t;/* Direct color readonly */
+DECL|macro|FB_ACCEL_NONE
+mdefine_line|#define FB_ACCEL_NONE&t;&t;0&t;/* no hardware accelerator&t;*/
+DECL|macro|FB_ACCEL_ATARIBLITT
+mdefine_line|#define FB_ACCEL_ATARIBLITT&t;1&t;/* Atari Blitter&t;&t;*/
+DECL|macro|FB_ACCEL_AMIGABLITT
+mdefine_line|#define FB_ACCEL_AMIGABLITT&t;2&t;/* Amiga Blitter                */
+DECL|macro|FB_ACCEL_S3_TRIO64
+mdefine_line|#define FB_ACCEL_S3_TRIO64&t;3&t;/* Cybervision64 (S3 Trio64)    */
+DECL|macro|FB_ACCEL_NCR_77C32BLT
+mdefine_line|#define FB_ACCEL_NCR_77C32BLT&t;4&t;/* RetinaZ3 (NCR 77C32BLT)      */
+DECL|macro|FB_ACCEL_S3_VIRGE
+mdefine_line|#define FB_ACCEL_S3_VIRGE&t;5&t;/* Cybervision64/3D (S3 ViRGE)&t;*/
+DECL|macro|FB_ACCEL_ATI_MACH64GX
+mdefine_line|#define FB_ACCEL_ATI_MACH64GX&t;6&t;/* ATI Mach 64GX family&t;&t;*/
+DECL|macro|FB_ACCEL_DEC_TGA
+mdefine_line|#define FB_ACCEL_DEC_TGA&t;7&t;/* DEC 21030 TGA&t;&t;*/
+DECL|macro|FB_ACCEL_ATI_MACH64CT
+mdefine_line|#define FB_ACCEL_ATI_MACH64CT&t;8&t;/* ATI Mach 64CT family&t;&t;*/
+DECL|macro|FB_ACCEL_ATI_MACH64VT
+mdefine_line|#define FB_ACCEL_ATI_MACH64VT&t;9&t;/* ATI Mach 64CT family VT class */
+DECL|macro|FB_ACCEL_ATI_MACH64GT
+mdefine_line|#define FB_ACCEL_ATI_MACH64GT&t;10&t;/* ATI Mach 64CT family GT class */
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo
@@ -72,6 +96,7 @@ op_star
 id|smem_start
 suffix:semicolon
 multiline_comment|/* Start of frame buffer mem */
+multiline_comment|/* (physical address) */
 DECL|member|smem_len
 id|__u32
 id|smem_len
@@ -113,12 +138,12 @@ id|line_length
 suffix:semicolon
 multiline_comment|/* length of a line in bytes    */
 DECL|member|mmio_start
-r_int
 r_char
 op_star
 id|mmio_start
 suffix:semicolon
 multiline_comment|/* Start of Memory Mapped I/O   */
+multiline_comment|/* (physical address) */
 DECL|member|mmio_len
 id|__u32
 id|mmio_len
@@ -139,6 +164,7 @@ suffix:semicolon
 multiline_comment|/* Reserved for future compatibility */
 )brace
 suffix:semicolon
+multiline_comment|/* Interpretation of offset for color fields: All offsets are from the right,&n; * inside a &quot;pixel&quot; value, which is exactly &squot;bits_per_pixel&squot; wide (means: you&n; * can use the offset as right argument to &lt;&lt;). A pixel afterwards is a bit&n; * stream and is written to video memory as that unmodified. This implies&n; * big-endian byte order if bits_per_pixel is greater than 8.&n; */
 DECL|struct|fb_bitfield
 r_struct
 id|fb_bitfield
@@ -176,24 +202,8 @@ DECL|macro|FB_ACTIVATE_VBL
 mdefine_line|#define FB_ACTIVATE_VBL&t;       16&t;/* activate values on next vbl  */
 DECL|macro|FB_CHANGE_CMAP_VBL
 mdefine_line|#define FB_CHANGE_CMAP_VBL     32&t;/* change colormap on vbl&t;*/
-DECL|macro|FB_ACCEL_NONE
-mdefine_line|#define FB_ACCEL_NONE&t;&t;0&t;/* no hardware accelerator&t;*/
-DECL|macro|FB_ACCEL_ATARIBLITT
-mdefine_line|#define FB_ACCEL_ATARIBLITT&t;1&t;/* Atari Blitter&t;&t;*/
-DECL|macro|FB_ACCEL_AMIGABLITT
-mdefine_line|#define FB_ACCEL_AMIGABLITT&t;2&t;/* Amiga Blitter                */
-DECL|macro|FB_ACCEL_S3TRIO64
-mdefine_line|#define FB_ACCEL_S3TRIO64&t;3&t;/* Cybervision64 (S3 Trio64)    */
-DECL|macro|FB_ACCEL_NCR77C32BLT
-mdefine_line|#define FB_ACCEL_NCR77C32BLT&t;4&t;/* RetinaZ3 (NCR77C32BLT)       */
-DECL|macro|FB_ACCEL_S3VIRGE
-mdefine_line|#define FB_ACCEL_S3VIRGE&t;5&t;/* Cybervision64/3D (S3 ViRGE)&t;*/
-DECL|macro|FB_ACCEL_MACH64
-mdefine_line|#define FB_ACCEL_MACH64&t;&t;6&t;/* ATI Mach 64&t;&t;&t;*/
-DECL|macro|FB_ACCEL_TGA
-mdefine_line|#define FB_ACCEL_TGA&t;&t;7&t;/* DEC 21030 TGA&t;&t;*/
-DECL|macro|FB_ACCEL_ATY
-mdefine_line|#define FB_ACCEL_ATY&t;&t;8&t;/* atyfb (ATI Mach64)&t;&t;*/
+DECL|macro|FB_ACCELF_TEXT
+mdefine_line|#define FB_ACCELF_TEXT&t;&t;1&t;/* text mode acceleration */
 DECL|macro|FB_SYNC_HOR_HIGH_ACT
 mdefine_line|#define FB_SYNC_HOR_HIGH_ACT&t;1&t;/* horizontal sync high active&t;*/
 DECL|macro|FB_SYNC_VERT_HIGH_ACT
@@ -307,11 +317,11 @@ id|__u32
 id|width
 suffix:semicolon
 multiline_comment|/* width of picture in mm     */
-DECL|member|accel
+DECL|member|accel_flags
 id|__u32
-id|accel
+id|accel_flags
 suffix:semicolon
-multiline_comment|/* see FB_ACCEL_*&t;&t;*/
+multiline_comment|/* acceleration flags (hints)&t;*/
 multiline_comment|/* Timing: All values in pixclocks, except pixclock (of course) */
 DECL|member|pixclock
 id|__u32
@@ -424,31 +434,23 @@ r_struct
 id|fb_monspecs
 (brace
 DECL|member|hfmin
-r_int
+id|__u32
 id|hfmin
-suffix:colon
-l_int|20
 suffix:semicolon
 multiline_comment|/* hfreq lower limit (Hz) */
 DECL|member|hfmax
-r_int
+id|__u32
 id|hfmax
-suffix:colon
-l_int|20
 suffix:semicolon
 multiline_comment|/* hfreq upper limit (Hz) */
 DECL|member|vfmin
-r_int
+id|__u16
 id|vfmin
-suffix:colon
-l_int|10
 suffix:semicolon
 multiline_comment|/* vfreq lower limit (Hz) */
 DECL|member|vfmax
-r_int
+id|__u16
 id|vfmax
-suffix:colon
-l_int|10
 suffix:semicolon
 multiline_comment|/* vfreq upper limit (Hz) */
 DECL|member|dpms
@@ -638,23 +640,6 @@ op_star
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/* switch between text and graphics mode */
-DECL|member|fb_set_mode
-r_int
-(paren
-op_star
-id|fb_set_mode
-)paren
-(paren
-r_int
-id|mode
-comma
-r_struct
-id|fb_info
-op_star
-id|info
-)paren
-suffix:semicolon
 multiline_comment|/* perform fb specific ioctl */
 DECL|member|fb_ioctl
 r_int
@@ -717,6 +702,7 @@ op_star
 id|screen_base
 suffix:semicolon
 multiline_comment|/* pointer to top of virtual screen */
+multiline_comment|/* (virtual address) */
 DECL|member|visual
 r_int
 id|visual
@@ -955,6 +941,8 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* tell fb to (un)blank the screen */
+multiline_comment|/* arg = 0: unblank */
+multiline_comment|/* arg &gt; 0: VESA level (arg-1) */
 multiline_comment|/* From here on everything is device dependent */
 )brace
 suffix:semicolon
@@ -1494,6 +1482,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* VESA Blanking Levels */
+DECL|macro|VESA_NO_BLANKING
+mdefine_line|#define VESA_NO_BLANKING&t;0
+DECL|macro|VESA_VSYNC_SUSPEND
+mdefine_line|#define VESA_VSYNC_SUSPEND&t;1
+DECL|macro|VESA_HSYNC_SUSPEND
+mdefine_line|#define VESA_HSYNC_SUSPEND&t;2
+DECL|macro|VESA_POWERDOWN
+mdefine_line|#define VESA_POWERDOWN&t;&t;3
 macro_line|#endif /* __KERNEL__ */
 macro_line|#if 1
 DECL|macro|FBCMD_GET_CURRENTPAR

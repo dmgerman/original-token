@@ -538,7 +538,7 @@ id|scheduler_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/* should be aquired first */
+multiline_comment|/* should be acquired first */
 DECL|variable|runqueue_lock
 id|spinlock_t
 id|runqueue_lock
@@ -4318,7 +4318,7 @@ id|newprio
 op_assign
 l_int|40
 suffix:semicolon
-multiline_comment|/*&n;&t; * do a &quot;normalization&quot; of the priority (traditionally&n;&t; * unix nice values are -20..20, linux doesn&squot;t really&n;&t; * use that kind of thing, but uses the length of the&n;&t; * timeslice instead (default 150 msec). The rounding is&n;&t; * why we want to avoid negative values.&n;&t; */
+multiline_comment|/*&n;&t; * do a &quot;normalization&quot; of the priority (traditionally&n;&t; * Unix nice values are -20 to 20; Linux doesn&squot;t really&n;&t; * use that kind of thing, but uses the length of the&n;&t; * timeslice instead (default 150 ms). The rounding is&n;&t; * why we want to avoid negative values.&n;&t; */
 id|newprio
 op_assign
 (paren

@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
-multiline_comment|/*&n; * Convert Unicode 16 to UTF8 or ascii.&n; */
+multiline_comment|/*&n; * Convert Unicode 16 to UTF8 or ASCII.&n; */
 r_static
 r_int
 DECL|function|uni16_to_x8

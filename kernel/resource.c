@@ -642,7 +642,7 @@ op_eq
 id|IOTABLE_SIZE
 )paren
 (brace
-multiline_comment|/* Driver prints a warning typicaly. */
+multiline_comment|/* Driver prints a warning typically. */
 r_return
 l_int|0
 suffix:semicolon

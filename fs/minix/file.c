@@ -37,7 +37,7 @@ id|loff_t
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the minix filesystem.&n; */
+multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the minix filesystem.&n; */
 DECL|variable|minix_file_operations
 r_static
 r_struct

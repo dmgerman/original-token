@@ -1643,7 +1643,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* Only broken Intel needs this, thus it should not even be referenced&n; * globally...&n; */
+multiline_comment|/* Only broken Intel needs this, thus it should not even be referenced globally.&n;*/
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2836,7 +2836,7 @@ id|this_cpu
 id|printk
 c_func
 (paren
-l_string|&quot;unknown_ipi() on cpu %d:  &quot;
+l_string|&quot;unknown_ipi() on CPU %d:  &quot;
 comma
 id|this_cpu
 )paren
@@ -3267,7 +3267,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Yeeee, trying to send SMP msg(%d) on cpu %d&bslash;n&quot;
+l_string|&quot;Yeeee, trying to send SMP msg(%d) on CPU %d&bslash;n&quot;
 comma
 id|msg
 comma

@@ -4,9 +4,9 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
+macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;imstt.h&quot;
+macro_line|#include &lt;linux/console_compat.h&gt;
 r_enum
 (brace
 DECL|enumerator|IBMRAMDAC

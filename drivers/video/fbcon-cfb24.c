@@ -671,7 +671,50 @@ op_or
 id|d4
 suffix:semicolon
 macro_line|#elif defined(__LITTLE_ENDIAN)
-macro_line|#error Please add support for little endian byteorder
+op_star
+id|dest
+op_increment
+op_assign
+(paren
+id|d1
+op_lshift
+l_int|8
+)paren
+op_or
+(paren
+id|d2
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
+op_star
+id|dest
+op_increment
+op_assign
+(paren
+id|d2
+op_lshift
+l_int|16
+)paren
+op_or
+(paren
+id|d3
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+op_star
+id|dest
+op_increment
+op_assign
+(paren
+id|d3
+op_lshift
+l_int|24
+)paren
+op_or
+id|d4
+suffix:semicolon
 macro_line|#else
 macro_line|#error FIXME: No endianness??
 macro_line|#endif
@@ -1477,6 +1520,8 @@ comma
 id|fbcon_cfb24_putcs
 comma
 id|fbcon_cfb24_revc
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Visible symbols for modules&n;     */

@@ -605,7 +605,7 @@ r_int
 id|id
 )paren
 suffix:semicolon
-multiline_comment|/* Store per cpu info (like the initial udelay numbers */
+multiline_comment|/* Store per CPU info (like the initial udelay numbers */
 r_extern
 r_void
 id|smp_message_pass

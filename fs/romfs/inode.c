@@ -1365,7 +1365,7 @@ id|ri.spec
 op_amp
 id|ROMFH_MASK
 suffix:semicolon
-multiline_comment|/* ok, now find the file, whose name is in &quot;dentry&quot;, in the&n;&t; * directory specified by &quot;dir&quot;.  */
+multiline_comment|/* OK, now find the file whose name is in &quot;dentry&quot; in the&n;&t; * directory specified by &quot;dir&quot;.  */
 id|name
 op_assign
 id|dentry-&gt;d_name.name

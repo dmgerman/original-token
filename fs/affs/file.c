@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/file.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  affs regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/affs/file.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO 9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  affs regular file handling primitives&n; */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -370,7 +370,7 @@ multiline_comment|/* revalidate */
 suffix:semicolon
 DECL|macro|AFFS_ISINDEX
 mdefine_line|#define AFFS_ISINDEX(x)&t;((x &lt; 129) ||&t;&t;&t;&t;&bslash;&n;&t;&t;&t; (x &lt; 512 &amp;&amp; (x &amp; 1) == 0) ||&t;&t;&bslash;&n;&t;&t;&t; (x &lt; 1024 &amp;&amp; (x &amp; 3) == 0) ||&t;&t;&bslash;&n;&t;&t;&t; (x &lt; 2048 &amp;&amp; (x &amp; 15) == 0) ||&t;&t;&bslash;&n;&t;&t;&t; (x &lt; 4096 &amp;&amp; (x &amp; 63) == 0) ||&t;&t;&bslash;&n;&t;&t;&t; (x &lt; 20480 &amp;&amp; (x &amp; 255) == 0) ||&t;&bslash;&n;&t;&t;&t; (x &lt; 36864 &amp;&amp; (x &amp; 511) == 0))
-multiline_comment|/* The keys of the extension blocks are stored in a 512-entry&n; * deep cache. In order to save memory, not every key of later&n; * extension blocks is stored - the larger the file gets, the&n; * bigger the holes inbetween.&n; */
+multiline_comment|/* The keys of the extension blocks are stored in a 512-entry&n; * deep cache. In order to save memory, not every key of later&n; * extension blocks is stored - the larger the file gets, the&n; * bigger the holes in between.&n; */
 r_static
 r_int
 DECL|function|seqnum_to_index
@@ -1497,7 +1497,7 @@ r_return
 id|key
 suffix:semicolon
 )brace
-multiline_comment|/* With the affs, getting a random block from a file is not&n; * a simple business. Since this fs does not allow holes,&n; * it may be neccessary to allocate all the missing blocks&n; * inbetween, as well as some new extension blocks. The OFS&n; * is even worse: All data blocks contain pointers to the&n; * next ones, so you have to fix [n-1] after allocating [n].&n; * What a mess.&n; */
+multiline_comment|/* With the affs, getting a random block from a file is not&n; * a simple business. Since this fs does not allow holes,&n; * it may be necessary to allocate all the missing blocks&n; * in between, as well as some new extension blocks. The OFS&n; * is even worse: All data blocks contain pointers to the&n; * next ones, so you have to fix [n-1] after allocating [n].&n; * What a mess.&n; */
 r_static
 r_struct
 id|buffer_head

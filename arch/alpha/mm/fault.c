@@ -391,7 +391,7 @@ suffix:semicolon
 r_int
 id|fixup
 suffix:semicolon
-multiline_comment|/* As of EV6, a load into $31/$f31 is a prefetch, and never faults&n;&t;   (or is suppressed by the PALcode).  Support that for older cpu&squot;s&n;&t;   by ignoring such an instruction.  */
+multiline_comment|/* As of EV6, a load into $31/$f31 is a prefetch, and never faults&n;&t;   (or is suppressed by the PALcode).  Support that for older CPUs&n;&t;   by ignoring such an instruction.  */
 r_if
 c_cond
 (paren

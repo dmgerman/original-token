@@ -962,7 +962,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ISO9660 Extensions: &quot;
+l_string|&quot;ISO 9660 Extensions: &quot;
 )paren
 suffix:semicolon
 (brace

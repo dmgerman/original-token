@@ -3,8 +3,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
+macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;control.h&quot;
+macro_line|#include &lt;linux/console_compat.h&gt;
 multiline_comment|/*&n; * Structure of the registers for the RADACAL colormap device.&n; */
 DECL|struct|cmap_regs
 r_struct

@@ -7,9 +7,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -36,6 +36,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_IMSTT_VIDEO
 macro_line|#include &quot;imstt.h&quot;
 macro_line|#endif
+macro_line|#include &lt;linux/console_compat.h&gt;
 DECL|variable|video_mode
 r_int
 id|video_mode
@@ -1456,7 +1457,7 @@ op_assign
 (paren
 id|pos
 op_minus
-id|video_mem_base
+id|video_mem_start
 )paren
 op_rshift
 l_int|1
@@ -1911,6 +1912,7 @@ DECL|function|set_get_font
 id|set_get_font
 c_func
 (paren
+r_int
 r_char
 op_star
 id|p

@@ -606,7 +606,7 @@ r_void
 op_star
 id|atalk_ptr
 suffix:semicolon
-multiline_comment|/* Appletalk link &t;*/
+multiline_comment|/* AppleTalk link &t;*/
 DECL|member|ip_ptr
 r_void
 op_star

@@ -932,7 +932,7 @@ id|SIGTTIN
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Inflict this corner case with recalculaions, not mainline */
+multiline_comment|/* Inflict this corner case with recalculations, not mainline */
 id|recalc_sigpending
 c_func
 (paren
@@ -963,7 +963,7 @@ comma
 id|SIGCONT
 )paren
 suffix:semicolon
-multiline_comment|/* Inflict this corner case with recalculaions, not mainline */
+multiline_comment|/* Inflict this corner case with recalculations, not mainline */
 id|recalc_sigpending
 c_func
 (paren

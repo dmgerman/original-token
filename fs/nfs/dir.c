@@ -4398,7 +4398,7 @@ id|NFS_MAXNAMLEN
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/*&n;&t; * Drop the dentry in advance to force a new lookup.&n;&t; * Since nfs_proc_link doesn&squot;t return a filehandle,&n;&t; * we can&squot;t use the existing dentry.&n;&t; */
+multiline_comment|/*&n;&t; * Drop the dentry in advance to force a new lookup.&n;&t; * Since nfs_proc_link doesn&squot;t return a file handle,&n;&t; * we can&squot;t use the existing dentry.&n;&t; */
 id|d_drop
 c_func
 (paren

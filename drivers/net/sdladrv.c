@@ -1845,7 +1845,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*============================================================================&n; * Map shared memory window into SDLA adress space.&n; */
+multiline_comment|/*============================================================================&n; * Map shared memory window into SDLA address space.&n; */
 DECL|variable|sdla_mapmem
 id|EXPORT_SYMBOL
 c_func

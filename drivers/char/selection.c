@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/consolemap.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#ifndef MIN
 DECL|macro|MIN
@@ -372,11 +373,9 @@ id|pe
 suffix:semicolon
 r_int
 r_int
-id|num_lines
-comma
-id|num_columns
-comma
-id|size_row
+id|currcons
+op_assign
+id|fg_console
 suffix:semicolon
 id|do_unblank_screen
 c_func
@@ -386,30 +385,6 @@ suffix:semicolon
 id|poke_blanked_console
 c_func
 (paren
-)paren
-suffix:semicolon
-id|num_lines
-op_assign
-id|get_video_num_lines
-c_func
-(paren
-id|fg_console
-)paren
-suffix:semicolon
-id|num_columns
-op_assign
-id|get_video_num_columns
-c_func
-(paren
-id|fg_console
-)paren
-suffix:semicolon
-id|size_row
-op_assign
-id|get_video_size_row
-c_func
-(paren
-id|fg_console
 )paren
 suffix:semicolon
 (brace
@@ -578,7 +553,7 @@ c_func
 (paren
 id|xs
 comma
-id|num_columns
+id|video_num_columns
 op_minus
 l_int|1
 )paren
@@ -590,7 +565,7 @@ c_func
 (paren
 id|ys
 comma
-id|num_lines
+id|video_num_lines
 op_minus
 l_int|1
 )paren
@@ -602,7 +577,7 @@ c_func
 (paren
 id|xe
 comma
-id|num_columns
+id|video_num_columns
 op_minus
 l_int|1
 )paren
@@ -614,7 +589,7 @@ c_func
 (paren
 id|ye
 comma
-id|num_lines
+id|video_num_lines
 op_minus
 l_int|1
 )paren
@@ -623,7 +598,7 @@ id|ps
 op_assign
 id|ys
 op_star
-id|size_row
+id|video_size_row
 op_plus
 (paren
 id|xs
@@ -635,7 +610,7 @@ id|pe
 op_assign
 id|ye
 op_star
-id|size_row
+id|video_size_row
 op_plus
 (paren
 id|xe
@@ -832,7 +807,7 @@ op_logical_neg
 (paren
 id|ps
 op_mod
-id|size_row
+id|video_size_row
 )paren
 )paren
 r_break
@@ -914,7 +889,7 @@ op_plus
 l_int|2
 )paren
 op_mod
-id|size_row
+id|video_size_row
 )paren
 )paren
 r_break
@@ -932,17 +907,17 @@ id|ps
 op_minus
 id|ps
 op_mod
-id|size_row
+id|video_size_row
 suffix:semicolon
 id|new_sel_end
 op_assign
 id|pe
 op_plus
-id|size_row
+id|video_size_row
 op_minus
 id|pe
 op_mod
-id|size_row
+id|video_size_row
 op_minus
 l_int|2
 suffix:semicolon
@@ -989,7 +964,7 @@ c_func
 (paren
 id|new_sel_end
 comma
-id|size_row
+id|video_size_row
 )paren
 op_logical_and
 id|isspace
@@ -1036,7 +1011,7 @@ c_func
 (paren
 id|pe
 comma
-id|size_row
+id|video_size_row
 )paren
 )paren
 r_break
@@ -1303,7 +1278,7 @@ op_plus
 l_int|2
 )paren
 op_mod
-id|size_row
+id|video_size_row
 )paren
 )paren
 (brace

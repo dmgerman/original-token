@@ -3845,7 +3845,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* switch_net_numbers */
-multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct enet_statistics.&n; */
+multiline_comment|/*============================================================================&n; * Get Ethernet-style interface statistics.&n; * Return a pointer to struct enet_statistics.&n; */
 DECL|function|if_stats
 r_static
 r_struct
@@ -10166,7 +10166,7 @@ id|err
 comma
 id|i
 suffix:semicolon
-multiline_comment|/* The critical flag is unset because during intialization (if_open) &n;&t; * we want the interrupts to be enabled so that when the wpp_isr is&n;&t; * called it does not exit due to critical flag set.&n;&t; */
+multiline_comment|/* The critical flag is unset because during initialization (if_open) &n;&t; * we want the interrupts to be enabled so that when the wpp_isr is&n;&t; * called it does not exit due to critical flag set.&n;&t; */
 id|card-&gt;wandev.critical
 op_assign
 l_int|0

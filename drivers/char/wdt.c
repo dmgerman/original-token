@@ -604,7 +604,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Read reports the temperature in farenheit&n; */
+multiline_comment|/*&n; *&t;Read reports the temperature in degrees Fahrenheit.&n; */
 DECL|function|wdt_read
 r_static
 id|ssize_t

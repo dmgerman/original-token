@@ -1076,7 +1076,7 @@ id|SEEK_SET
 op_ne
 l_int|497
 )paren
-multiline_comment|/* Write sizes to the bootsector */
+multiline_comment|/* Write sizes to the boot sector */
 id|die
 c_func
 (paren

@@ -1091,7 +1091,7 @@ id|own_key
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Mark directory as changed.  We do this before anything else,&n;&t; * as it must be done anyway and doesn&squot;t hurt even if an&n;&t; * error occures later.&n;&t; */
+multiline_comment|/* Mark directory as changed.  We do this before anything else,&n;&t; * as it must be done anyway and doesn&squot;t hurt even if an&n;&t; * error occurs later.&n;&t; */
 id|dir
 op_assign
 id|iget

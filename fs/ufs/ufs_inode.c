@@ -1228,6 +1228,19 @@ id|inode
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|S_ISSOCK
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
+(brace
+multiline_comment|/* nothing */
+)brace
+r_else
 (brace
 id|printk
 c_func

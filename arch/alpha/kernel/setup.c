@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_ALPHA_LCA etc */
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#ifdef CONFIG_RTC
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#endif
@@ -764,10 +765,25 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_VGA_CONSOLE
+id|conswitchp
+op_assign
+op_amp
+id|vga_con
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB
+multiline_comment|/* Frame buffer device based console */
+id|conswitchp
+op_assign
+op_amp
+id|fb_con
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|macro|N
 mdefine_line|#define N(a) (sizeof(a)/sizeof(a[0]))
-multiline_comment|/* A change was made to the HWRPB via an ECO and the following code tracks&n; * a part of the ECO.  The HWRPB version must be 5 or higher or the ECO&n; * was not implemented in the console firmware.  If its at rev 5 or greater&n; * we can get the platform ascii string name from the HWRPB.  Thats what this&n; * function does.  It checks the rev level and if the string is in the HWRPB&n; * it returns the addtess of the string ... a pointer to the platform name.&n; *&n; * Returns:&n; *      - Pointer to a ascii string if its in the HWRPB&n; *      - Pointer to a blank string if the data is not in the HWRPB.&n; */
+multiline_comment|/* A change was made to the HWRPB via an ECO and the following code tracks&n; * a part of the ECO.  In HWRPB versions less than 5, the ECO was not&n; * implemented in the console firmware.  If it&squot;s revision 5 or greater we can&n; * get the name of the platform as an ASCII string from the HWRPB.  That&squot;s what&n; * this function does.  It checks the revision level and if the string is in&n; * the HWRPB it returns the address of the string--a pointer to the name of the&n; * platform.&n; *&n; * Returns:&n; *      - Pointer to a ASCII string if it&squot;s in the HWRPB&n; *      - Pointer to a blank string if the data is not in the HWRPB.&n; */
 r_static
 r_char
 op_star
@@ -1610,11 +1626,11 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;cpu&bslash;t&bslash;t&bslash;t: Alpha&bslash;n&quot;
-l_string|&quot;cpu model&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;cpu variation&bslash;t&bslash;t: %ld&bslash;n&quot;
-l_string|&quot;cpu revision&bslash;t&bslash;t: %ld&bslash;n&quot;
-l_string|&quot;cpu serial number&bslash;t: %s&bslash;n&quot;
+l_string|&quot;CPU&bslash;t&bslash;t&bslash;t: Alpha&bslash;n&quot;
+l_string|&quot;CPU model&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;CPU variation&bslash;t&bslash;t: %ld&bslash;n&quot;
+l_string|&quot;CPU revision&bslash;t&bslash;t: %ld&bslash;n&quot;
+l_string|&quot;CPU serial number&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system type&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system variation&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system revision&bslash;t&bslash;t: %ld&bslash;n&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Appletalk networking structures&n; *&n; *&t;The following are directly referenced from the University Of Michigan&n; *&t;netatalk for compatibility reasons.&n; */
+multiline_comment|/*&n; *&t;AppleTalk networking structures&n; *&n; *&t;The following are directly referenced from the University Of Michigan&n; *&t;netatalk for compatibility reasons.&n; */
 macro_line|#ifndef __LINUX_ATALK_H__
 DECL|macro|__LINUX_ATALK_H__
 mdefine_line|#define __LINUX_ATALK_H__
@@ -295,7 +295,7 @@ suffix:semicolon
 multiline_comment|/* And netatalk apps expect to stick the type in themselves */
 )brace
 suffix:semicolon
-multiline_comment|/* Appletalk AARP headers */
+multiline_comment|/* AppleTalk AARP headers */
 DECL|struct|elapaarp
 r_struct
 id|elapaarp

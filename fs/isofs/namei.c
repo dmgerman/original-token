@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/namei.c&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/namei.c&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO 9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

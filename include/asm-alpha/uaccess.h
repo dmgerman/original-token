@@ -116,7 +116,7 @@ mdefine_line|#define __get_user_64(addr)&t;&t;&t;&t;&bslash;&n;&t;__asm__(&quot;
 DECL|macro|__get_user_32
 mdefine_line|#define __get_user_32(addr)&t;&t;&t;&t;&bslash;&n;&t;__asm__(&quot;1: ldl %0,%2&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda %0, 2b-1b(%1)&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__gu_val), &quot;=r&quot;(__gu_err)&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;1&quot;(__gu_err))
 macro_line|#ifdef __HAVE_CPU_BWX
-multiline_comment|/* Those lucky bastards with ev56 and later cpus can do byte/word moves.  */
+multiline_comment|/* Those lucky bastards with ev56 and later CPUs can do byte/word moves.  */
 DECL|macro|__get_user_16
 mdefine_line|#define __get_user_16(addr)&t;&t;&t;&t;&bslash;&n;&t;__asm__(&quot;1: ldwu %0,%2&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda %0, 2b-1b(%1)&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__gu_val), &quot;=r&quot;(__gu_err)&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;1&quot;(__gu_err))
 DECL|macro|__get_user_8
@@ -146,7 +146,7 @@ mdefine_line|#define __put_user_64(x,addr)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __vo
 DECL|macro|__put_user_32
 mdefine_line|#define __put_user_32(x,addr)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&quot;1: stl %r2,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda $31,2b-1b(%0)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__pu_err)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;rJ&quot;(x), &quot;0&quot;(__pu_err))
 macro_line|#ifdef __HAVE_CPU_BWX
-multiline_comment|/* Those lucky bastards with ev56 and later cpus can do byte/word moves.  */
+multiline_comment|/* Those lucky bastards with ev56 and later CPUs can do byte/word moves.  */
 DECL|macro|__put_user_16
 mdefine_line|#define __put_user_16(x,addr)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&quot;1: stw %r2,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda $31,2b-1b(%0)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__pu_err)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;rJ&quot;(x), &quot;0&quot;(__pu_err))
 DECL|macro|__put_user_8

@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/smp_lock.h&gt;
-macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n;&t;modprobe_path is set via /proc/sys.&n;*/
 DECL|variable|modprobe_path
@@ -34,14 +33,6 @@ l_string|&quot;PATH=/usr/bin:/bin&quot;
 comma
 l_int|NULL
 )brace
-suffix:semicolon
-DECL|variable|kmod_sem
-r_static
-r_struct
-id|semaphore
-id|kmod_sem
-op_assign
-id|MUTEX
 suffix:semicolon
 multiline_comment|/*&n;&t;exec_modprobe is spawned from a kernel-mode user process,&n;&t;then changes its state to behave _as_if_ it was spawned&n;&t;from the kernel&squot;s init process&n;&t;(ppid and {e,}gid are not adjusted, but that shouldn&squot;t&n;&t;be a problem since we trust modprobe)&n;*/
 DECL|macro|task_init
@@ -291,13 +282,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-id|down
-c_func
-(paren
-op_amp
-id|kmod_sem
-)paren
-suffix:semicolon
 id|pid
 op_assign
 id|kernel_thread
@@ -332,8 +316,8 @@ op_minus
 id|pid
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
+id|pid
 suffix:semicolon
 )brace
 id|waitpid_result
@@ -367,21 +351,8 @@ id|waitpid_result
 )paren
 suffix:semicolon
 )brace
-id|pid
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|up
-c_func
-(paren
-op_amp
-id|kmod_sem
-)paren
-suffix:semicolon
 r_return
-id|pid
+l_int|0
 suffix:semicolon
 )brace
 eof

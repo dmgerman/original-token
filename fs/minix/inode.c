@@ -411,7 +411,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check the root directory of the filesystem to make sure&n; * it really _is_ a minix filesystem, and to check the size&n; * of the directory entry.&n; */
+multiline_comment|/*&n; * Check the root directory of the filesystem to make sure&n; * it really _is_ a Minix filesystem, and to check the size&n; * of the directory entry.&n; */
 DECL|function|minix_checkroot
 r_static
 r_const
@@ -1352,7 +1352,7 @@ id|silent
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Can&squot;t find a minix or minix V2 filesystem on dev &quot;
+l_string|&quot;VFS: Can&squot;t find a Minix or Minix V2 filesystem on device &quot;
 l_string|&quot;%s.&bslash;n&quot;
 comma
 id|kdevname

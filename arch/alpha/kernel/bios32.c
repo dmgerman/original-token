@@ -3341,7 +3341,7 @@ l_int|0x398
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Fixup configuration for EB66/EB64+ boards.&n; *&n; * Both these boards use the same interrupt summary scheme.  There are&n; * two 8 bit external summary registers as follows:&n; *&n; * Summary @ 0x26:&n; * Bit      Meaning&n; * 0        Interrupt Line A from slot 0&n; * 1        Interrupt Line A from slot 1&n; * 2        Interrupt Line B from slot 0&n; * 3        Interrupt Line B from slot 1&n; * 4        Interrupt Line C from slot 0&n; * 5        Interrupt line from the two ISA PICs&n; * 6        Tulip (slot &n; * 7        NCR SCSI&n; *&n; * Summary @ 0x27&n; * Bit      Meaning&n; * 0        Interrupt Line C from slot 1&n; * 1        Interrupt Line D from slot 0&n; * 2        Interrupt Line D from slot 1&n; * 3        RAZ&n; * 4        RAZ&n; * 5        RAZ&n; * 6        RAZ&n; * 7        RAZ&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  5       NCR SCSI controller&n; *  6       PCI on board slot 0&n; *  7       PCI on board slot 1&n; *  8       Intel SIO PCI-ISA bridge chip&n; *  9       Tulip - DECchip 21040 ethernet controller&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
+multiline_comment|/*&n; * Fixup configuration for EB66/EB64+ boards.&n; *&n; * Both these boards use the same interrupt summary scheme.  There are&n; * two 8 bit external summary registers as follows:&n; *&n; * Summary @ 0x26:&n; * Bit      Meaning&n; * 0        Interrupt Line A from slot 0&n; * 1        Interrupt Line A from slot 1&n; * 2        Interrupt Line B from slot 0&n; * 3        Interrupt Line B from slot 1&n; * 4        Interrupt Line C from slot 0&n; * 5        Interrupt line from the two ISA PICs&n; * 6        Tulip (slot &n; * 7        NCR SCSI&n; *&n; * Summary @ 0x27&n; * Bit      Meaning&n; * 0        Interrupt Line C from slot 1&n; * 1        Interrupt Line D from slot 0&n; * 2        Interrupt Line D from slot 1&n; * 3        RAZ&n; * 4        RAZ&n; * 5        RAZ&n; * 6        RAZ&n; * 7        RAZ&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  5       NCR SCSI controller&n; *  6       PCI on board slot 0&n; *  7       PCI on board slot 1&n; *  8       Intel SIO PCI-ISA bridge chip&n; *  9       Tulip - DECchip 21040 Ethernet controller&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
 DECL|function|eb66_and_eb64p_fixup
 r_static
 r_inline
@@ -6794,16 +6794,6 @@ l_int|0x26e
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef CONFIG_TGA_CONSOLE
-r_extern
-r_void
-id|tga_console_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_TGA_CONSOLE */
 r_void
 id|__init
 DECL|function|pcibios_fixup
@@ -6975,15 +6965,6 @@ macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
 multiline_comment|/* no fixup needed */
 macro_line|#else
 macro_line|# error &quot;You must tell me what kind of platform you want.&quot;
-macro_line|#endif
-macro_line|#ifndef CONFIG_ABSTRACT_CONSOLE
-macro_line|#ifdef CONFIG_TGA_CONSOLE
-id|tga_console_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 )brace
 DECL|function|sys_pciconfig_read

@@ -3403,6 +3403,8 @@ comma
 id|fbcon_afb_putcs
 comma
 id|fbcon_afb_revc
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Visible symbols for modules&n;     */

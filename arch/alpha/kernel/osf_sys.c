@@ -1496,7 +1496,7 @@ DECL|member|exroot
 id|uid_t
 id|exroot
 suffix:semicolon
-multiline_comment|/*&n; * this has lots more here, which linux handles with the option block&n; * but I&squot;m too lazy to do the translation into ascii..&n; */
+multiline_comment|/*&n; * This has lots more here, which Linux handles with the option block&n; * but I&squot;m too lazy to do the translation into ASCII.&n; */
 )brace
 suffix:semicolon
 DECL|struct|procfs_args
@@ -1813,7 +1813,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We can&squot;t actually handle ufs yet, so we translate UFS mounts to&n; * ext2fs mounts... I wouldn&squot;t mind a UFS filesystem, but the UFS&n; * layout is so braindead it&squot;s a major headache doing it..&n; */
+multiline_comment|/*&n; * We can&squot;t actually handle ufs yet, so we translate UFS mounts to&n; * ext2fs mounts. I wouldn&squot;t mind a UFS filesystem, but the UFS&n; * layout is so braindead it&squot;s a major headache doing it.&n; */
 DECL|function|osf_ufs_mount
 r_static
 r_int
@@ -3653,7 +3653,7 @@ op_star
 )paren
 )paren
 (brace
-multiline_comment|/* Digital unix has a few unpublished interfaces here */
+multiline_comment|/* Digital UNIX has a few unpublished interfaces here */
 id|printk
 c_func
 (paren

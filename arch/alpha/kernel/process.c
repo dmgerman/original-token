@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/alpha/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
-multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
+multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -827,7 +827,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Arrange for each exec&squot;ed process to start off with a &n;&t;   clean slate wrt the fpu.  */
+multiline_comment|/* Arrange for each exec&squot;ed process to start off with a &n;&t;   clean slate with respect to the FPU.  */
 id|current-&gt;tss.flags
 op_and_assign
 op_complement

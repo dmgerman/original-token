@@ -1074,7 +1074,7 @@ id|xd_interrupt_handler
 comma
 l_int|0
 comma
-l_string|&quot;XT harddisk&quot;
+l_string|&quot;XT hard disk&quot;
 comma
 l_int|NULL
 )paren

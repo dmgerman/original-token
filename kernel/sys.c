@@ -872,7 +872,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Unprivileged users may change the real gid to the effective gid&n; * or vice versa.  (BSD-style)&n; *&n; * If you set the real gid at all, or set the effective gid to a value not&n; * equal to the real gid, then the saved gid is set to the new effective gid.&n; *&n; * This makes it possible for a setgid program to completely drop its&n; * privileges, which is often a useful assertion to make when you are doing&n; * a security audit over a program.&n; *&n; * The general idea is that a program which uses just setregid() will be&n; * 100% compatible with BSD.  A program which uses just setgid() will be&n; * 100% compatible with POSIX w/ Saved ID&squot;s. &n; *&n; * SMP: There are not races, the gid&squot;s are checked only by filesystem&n; *      operations (as far as semantic preservation is concerned).&n; */
+multiline_comment|/*&n; * Unprivileged users may change the real gid to the effective gid&n; * or vice versa.  (BSD-style)&n; *&n; * If you set the real gid at all, or set the effective gid to a value not&n; * equal to the real gid, then the saved gid is set to the new effective gid.&n; *&n; * This makes it possible for a setgid program to completely drop its&n; * privileges, which is often a useful assertion to make when you are doing&n; * a security audit over a program.&n; *&n; * The general idea is that a program which uses just setregid() will be&n; * 100% compatible with BSD.  A program which uses just setgid() will be&n; * 100% compatible with POSIX with saved IDs. &n; *&n; * SMP: There are not races, the GIDs are checked only by filesystem&n; *      operations (as far as semantic preservation is concerned).&n; */
 DECL|function|sys_setregid
 id|asmlinkage
 r_int
@@ -1221,7 +1221,7 @@ id|current-&gt;cap_permitted
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Unprivileged users may change the real uid to the effective uid&n; * or vice versa.  (BSD-style)&n; *&n; * If you set the real uid at all, or set the effective uid to a value not&n; * equal to the real uid, then the saved uid is set to the new effective uid.&n; *&n; * This makes it possible for a setuid program to completely drop its&n; * privileges, which is often a useful assertion to make when you are doing&n; * a security audit over a program.&n; *&n; * The general idea is that a program which uses just setreuid() will be&n; * 100% compatible with BSD.  A program which uses just setuid() will be&n; * 100% compatible with POSIX w/ Saved ID&squot;s. &n; */
+multiline_comment|/*&n; * Unprivileged users may change the real uid to the effective uid&n; * or vice versa.  (BSD-style)&n; *&n; * If you set the real uid at all, or set the effective uid to a value not&n; * equal to the real uid, then the saved uid is set to the new effective uid.&n; *&n; * This makes it possible for a setuid program to completely drop its&n; * privileges, which is often a useful assertion to make when you are doing&n; * a security audit over a program.&n; *&n; * The general idea is that a program which uses just setreuid() will be&n; * 100% compatible with BSD.  A program which uses just setuid() will be&n; * 100% compatible with POSIX with saved IDs. &n; */
 DECL|function|sys_setreuid
 id|asmlinkage
 r_int
@@ -1460,7 +1460,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * setuid() is implemented like SysV w/ SAVED_IDS &n; * &n; * Note that SAVED_ID&squot;s is deficient in that a setuid root program&n; * like sendmail, for example, cannot set its uid to be a normal &n; * user and then switch back, because if you&squot;re root, setuid() sets&n; * the saved uid too.  If you don&squot;t like this, blame the bright people&n; * in the POSIX committee and/or USG.  Note that the BSD-style setreuid()&n; * will allow a root program to temporarily drop privileges and be able to&n; * regain them by swapping the real and effective uid.  &n; */
+multiline_comment|/*&n; * setuid() is implemented like SysV with SAVED_IDS &n; * &n; * Note that SAVED_ID&squot;s is deficient in that a setuid root program&n; * like sendmail, for example, cannot set its uid to be a normal &n; * user and then switch back, because if you&squot;re root, setuid() sets&n; * the saved uid too.  If you don&squot;t like this, blame the bright people&n; * in the POSIX committee and/or USG.  Note that the BSD-style setreuid()&n; * will allow a root program to temporarily drop privileges and be able to&n; * regain them by swapping the real and effective uid.  &n; */
 DECL|function|sys_setuid
 id|asmlinkage
 r_int
@@ -1614,7 +1614,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function implementes a generic ability to update ruid, euid,&n; * and suid.  This allows you to implement the 4.4 compatible seteuid().&n; */
+multiline_comment|/*&n; * This function implements a generic ability to update ruid, euid,&n; * and suid.  This allows you to implement the 4.4 compatible seteuid().&n; */
 DECL|function|sys_setresuid
 id|asmlinkage
 r_int
@@ -2879,7 +2879,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Supplementary group ID&squot;s&n; */
+multiline_comment|/*&n; * Supplementary group IDs&n; */
 DECL|function|sys_getgroups
 id|asmlinkage
 r_int

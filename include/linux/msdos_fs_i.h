@@ -9,7 +9,7 @@ DECL|struct|msdos_inode_info
 r_struct
 id|msdos_inode_info
 (brace
-multiline_comment|/*&n;&t;&t;UMSDOS manage special file and fifo as normal empty&n;&t;&t;msdos file. fifo inode processing conflict with msdos&n;&t;&t;processing. So I insert the pipe_inode_info so the&n;&t;&t;information does not overlap. This increases the size of&n;&t;&t;the msdos_inode_info, but the clear winner here is&n;&t;&t;the ext2_inode_info. So it does not change anything to&n;&t;&t;the total size of a struct inode.&n;&n;&t;&t;I have not put it conditional. With the advent of loadable&n;&t;&t;file system drivers, it would be very easy to compile&n;&t;&t;a MsDOS FS driver unaware of UMSDOS and then later to&n;&t;&t;load a (then incompatible) UMSDOS FS driver.&n;&t;*/
+multiline_comment|/*&n;&t;&t;UMSDOS manage special file and fifo as normal empty&n;&t;&t;msdos file. fifo inode processing conflict with msdos&n;&t;&t;processing. So I insert the pipe_inode_info so the&n;&t;&t;information does not overlap. This increases the size of&n;&t;&t;the msdos_inode_info, but the clear winner here is&n;&t;&t;the ext2_inode_info. So it does not change anything to&n;&t;&t;the total size of a struct inode.&n;&n;&t;&t;I have not put it conditional. With the advent of loadable&n;&t;&t;file system drivers, it would be very easy to compile&n;&t;&t;a MS-DOS FS driver unaware of UMSDOS and then later to&n;&t;&t;load a (then incompatible) UMSDOS FS driver.&n;&t;*/
 DECL|member|reserved
 r_struct
 id|pipe_inode_info

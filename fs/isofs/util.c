@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/util.c&n; *&n; *  The special functions in the file are numbered according to the section&n; *  of the iso 9660 standard in which they are described.  isonum_733 will&n; *  convert numbers according to section 7.3.3, etc.&n; *&n; *  isofs special functions.  This file was lifted in its entirety from&n; *  the 386bsd iso9660 filesystem, by Pace Willisson &lt;pace@blitz.com&gt;.&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/util.c&n; *&n; *  The special functions in the file are numbered according to the section&n; *  of the iso 9660 standard in which they are described.  isonum_733 will&n; *  convert numbers according to section 7.3.3, etc.&n; *&n; *  isofs special functions.  This file was lifted in its entirety from&n; *  the 386BSD iso9660 filesystem, by Pace Willisson &lt;pace@blitz.com&gt;.&n; */
 macro_line|#include &lt;linux/time.h&gt;
 r_int
 DECL|function|isonum_711
@@ -369,7 +369,7 @@ id|p
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * We have to convert from a MM/DD/YY format to the unix ctime format.&n; * We have to take into account leap years and all of that good stuff.&n; * Unfortunately, the kernel does not have the information on hand to&n; * take into account daylight savings time, but it shouldn&squot;t matter.&n; * The time stored should be localtime (with or without DST in effect),&n; * and the timezone offset should hold the offset required to get back&n; * to GMT.  Thus  we should always be correct.&n; */
+multiline_comment|/* &n; * We have to convert from a MM/DD/YY format to the Unix ctime format.&n; * We have to take into account leap years and all of that good stuff.&n; * Unfortunately, the kernel does not have the information on hand to&n; * take into account daylight savings time, but it shouldn&squot;t matter.&n; * The time stored should be localtime (with or without DST in effect),&n; * and the timezone offset should hold the offset required to get back&n; * to GMT.  Thus  we should always be correct.&n; */
 DECL|function|iso_date
 r_int
 id|iso_date

@@ -1,12 +1,12 @@
 macro_line|#ifndef _ALPHA_PGTABLE_H
 DECL|macro|_ALPHA_PGTABLE_H
 mdefine_line|#define _ALPHA_PGTABLE_H
-multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the alpha page table tree.&n; *&n; * This hopefully works with any standard alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
+multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the Alpha page table tree.&n; *&n; * This hopefully works with any standard Alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;/* For TASK_SIZE */
 macro_line|#include &lt;asm/mmu_context.h&gt;
-multiline_comment|/* Caches aren&squot;t brain-dead on the alpha. */
+multiline_comment|/* Caches aren&squot;t brain-dead on the Alpha. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
 DECL|macro|flush_cache_mm
@@ -72,7 +72,7 @@ l_string|&quot;$25&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early alpha&squot;s (ev4 and ev45)&n; */
+multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early Alphas (ev4 and ev45)&n; */
 macro_line|#ifdef BROKEN_ASN
 DECL|macro|flush_tlb_current
 mdefine_line|#define flush_tlb_current(x) tbiap()
@@ -286,7 +286,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Flush a specified range of user mapping: on the&n; * alpha we flush the whole user tlb&n; */
+multiline_comment|/*&n; * Flush a specified range of user mapping:  on the&n; * Alpha we flush the whole user tlb.&n; */
 DECL|function|flush_tlb_range
 r_static
 r_inline
@@ -407,7 +407,7 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
-multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+multiline_comment|/* Certain architectures need to do special things when PTEs&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
@@ -424,7 +424,7 @@ DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;(1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
 mdefine_line|#define PGDIR_MASK&t;(~(PGDIR_SIZE-1))
-multiline_comment|/*&n; * entries per page directory level: the alpha is three-level, with&n; * all levels having a one-page page table.&n; *&n; * The PGD is special: the last entry is reserved for self-mapping.&n; */
+multiline_comment|/*&n; * Entries per page directory level:  the Alpha is three-level, with&n; * all levels having a one-page page table.&n; *&n; * The PGD is special:  the last entry is reserved for self-mapping.&n; */
 DECL|macro|PTRS_PER_PTE
 mdefine_line|#define PTRS_PER_PTE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|PTRS_PER_PMD
@@ -433,7 +433,7 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;((1UL &lt;&lt; (PAGE_SHIFT-3))-1)
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE / PGDIR_SIZE)
-multiline_comment|/* the no. of pointers that fit on a page: this will go away */
+multiline_comment|/* Number of pointers that fit on a page:  this will go away. */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|VMALLOC_START
@@ -464,7 +464,7 @@ DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x20000
 DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED&t;0x40000
-multiline_comment|/*&n; * NOTE! The &quot;accessed&quot; bit isn&squot;t necessarily exact: it can be kept exactly&n; * by software (use the KRE/URE/KWE/UWE bits appropriately), but I&squot;ll fake it.&n; * Under Linux/AXP, the &quot;accessed&quot; bit just means &quot;read&quot;, and I&squot;ll just use&n; * the KRE/URE bits to watch for it. That way we don&squot;t need to overload the&n; * KWE/UWE bits with both handling dirty and accessed.&n; *&n; * Note that the kernel uses the accessed bit just to check whether to page&n; * out a page or not, so it doesn&squot;t have to be exact anyway.&n; */
+multiline_comment|/*&n; * NOTE! The &quot;accessed&quot; bit isn&squot;t necessarily exact:  it can be kept exactly&n; * by software (use the KRE/URE/KWE/UWE bits appropriately), but I&squot;ll fake it.&n; * Under Linux/AXP, the &quot;accessed&quot; bit just means &quot;read&quot;, and I&squot;ll just use&n; * the KRE/URE bits to watch for it. That way we don&squot;t need to overload the&n; * KWE/UWE bits with both handling dirty and accessed.&n; *&n; * Note that the kernel uses the accessed bit just to check whether to page&n; * out a page or not, so it doesn&squot;t have to be exact anyway.&n; */
 DECL|macro|__DIRTY_BITS
 mdefine_line|#define __DIRTY_BITS&t;(_PAGE_DIRTY | _PAGE_KWE | _PAGE_UWE)
 DECL|macro|__ACCESS_BITS
@@ -492,7 +492,7 @@ DECL|macro|_PAGE_P
 mdefine_line|#define _PAGE_P(x) _PAGE_NORMAL((x) | (((x) &amp; _PAGE_FOW)?0:_PAGE_FOW))
 DECL|macro|_PAGE_S
 mdefine_line|#define _PAGE_S(x) _PAGE_NORMAL(x)
-multiline_comment|/*&n; * The hardware can handle write-only mappings, but as the alpha&n; * architecture does byte-wide writes with a read-modify-write&n; * sequence, it&squot;s not practical to have write-without-read privs.&n; * Thus the &quot;-w- -&gt; rw-&quot; and &quot;-wx -&gt; rwx&quot; mapping here (and in&n; * arch/alpha/mm/fault.c)&n; */
+multiline_comment|/*&n; * The hardware can handle write-only mappings, but as the Alpha&n; * architecture does byte-wide writes with a read-modify-write&n; * sequence, it&squot;s not practical to have write-without-read privs.&n; * Thus the &quot;-w- -&gt; rw-&quot; and &quot;-wx -&gt; rwx&quot; mapping here (and in&n; * arch/alpha/mm/fault.c)&n; */
 multiline_comment|/* xwr */
 DECL|macro|__P000
 mdefine_line|#define __P000&t;_PAGE_P(_PAGE_FOE | _PAGE_FOW | _PAGE_FOR)
@@ -526,7 +526,7 @@ DECL|macro|__S110
 mdefine_line|#define __S110&t;_PAGE_S(0)
 DECL|macro|__S111
 mdefine_line|#define __S111&t;_PAGE_S(0)
-multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
+multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero:  used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
 id|__bad_page
@@ -571,7 +571,7 @@ mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;3
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
-multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
+multiline_comment|/*&n; * Conversion functions:  convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|function|mk_pte
 r_extern
 r_inline
@@ -2631,7 +2631,7 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * The alpha doesn&squot;t have any external MMU info: the kernel page&n; * tables contain all the necessary information.&n; */
+multiline_comment|/*&n; * The Alpha doesn&squot;t have any external MMU info:  the kernel page&n; * tables contain all the necessary information.&n; */
 DECL|function|update_mmu_cache
 r_extern
 r_inline
@@ -2653,7 +2653,7 @@ id|pte
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * Non-present pages: high 24 bits are offset, next 8 bits type,&n; * low 32 bits zero..&n; */
+multiline_comment|/*&n; * Non-present pages:  high 24 bits are offset, next 8 bits type,&n; * low 32 bits zero.&n; */
 DECL|function|mk_swap_pte
 r_extern
 r_inline

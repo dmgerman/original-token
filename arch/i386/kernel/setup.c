@@ -21,6 +21,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
@@ -782,7 +783,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/* request io space for devices used on all i[345]86 PC&squot;S */
+multiline_comment|/* request I/O space for devices used on all i[345]86 PCs */
 id|request_region
 c_func
 (paren
@@ -833,6 +834,21 @@ comma
 l_string|&quot;fpu&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
+macro_line|#ifdef CONFIG_FB
+id|conswitchp
+op_assign
+op_amp
+id|fb_con
+suffix:semicolon
+macro_line|#else
+id|conswitchp
+op_assign
+op_amp
+id|vga_con
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Detection of CPU model.&n; */
 DECL|function|cpuid
@@ -1866,25 +1882,25 @@ comma
 l_int|5
 comma
 (brace
-l_string|&quot;K5/SSA5 (PR-75, PR-90, PR-100)&quot;
+l_string|&quot;K5/SSA5 (PR75, PR90, PR100)&quot;
 comma
-l_string|&quot;K5 (PR-120, PR-133)&quot;
+l_string|&quot;K5 (PR120, PR133)&quot;
 comma
-l_string|&quot;K5 (PR-166)&quot;
+l_string|&quot;K5 (PR166)&quot;
 comma
-l_string|&quot;K5 (PR-200)&quot;
-comma
-l_int|NULL
+l_string|&quot;K5 (PR200)&quot;
 comma
 l_int|NULL
 comma
-l_string|&quot;K6 (166 - 266)&quot;
+l_int|NULL
 comma
-l_string|&quot;K6 (166 - 300)&quot;
+l_string|&quot;K6 (PR166 - PR266)&quot;
 comma
-l_string|&quot;K6-2 (200 - 450)&quot;
+l_string|&quot;K6 (PR166 - PR300)&quot;
 comma
-l_string|&quot;K6-3D-Plus (200 - 450)&quot;
+l_string|&quot;K6-2 (PR233 - PR333)&quot;
+comma
+l_string|&quot;K6-3 (PR300 - PR450)&quot;
 comma
 l_int|NULL
 comma
@@ -2483,7 +2499,7 @@ c_func
 id|p
 comma
 l_string|&quot;processor&bslash;t: %d&bslash;n&quot;
-l_string|&quot;cpu family&bslash;t: %c&bslash;n&quot;
+l_string|&quot;CPU family&bslash;t: %c&bslash;n&quot;
 l_string|&quot;model&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;vendor_id&bslash;t: %s&bslash;n&quot;
 comma
@@ -2716,9 +2732,9 @@ l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;hlt_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;sep_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;f00f_bug&bslash;t: %s&bslash;n&quot;
-l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
-l_string|&quot;cpuid level&bslash;t: %d&bslash;n&quot;
+l_string|&quot;FPU&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;FPU_exception&bslash;t: %s&bslash;n&quot;
+l_string|&quot;CPUID level&bslash;t: %d&bslash;n&quot;
 l_string|&quot;wp&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;flags&bslash;t&bslash;t:&quot;
 comma

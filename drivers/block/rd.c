@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ramdisk.c - Multiple ramdisk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This ramdisk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * ramdisk data.  This makes it possible to dynamically allocate the ramdisk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the ramdisk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new ramdisk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed ramdisk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The ramdisk&n; * loader now also loads into a dynamic (buffer cache based) ramdisk,&n; * not the old static ramdisk.  Support for the old static ramdisk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc...&n; * &t;When the ramdisk is rmmod&squot;ed, free the protected buffers&n; * &t;Default ramdisk size changed to 2.88MB&n; *&n; *  Added initrd: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *&n; * 4/25/96 : Made ramdisk size a parameter (default is now 4MB) &n; *&t;&t;- Chad Page&n; *&n; * Add support for fs images split across &gt;1 disk, Paul Gortmaker, Mar &squot;98&n; *&n; */
+multiline_comment|/*&n; * ramdisk.c - Multiple RAM disk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This RAM disk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * RAM disk data.  This makes it possible to dynamically allocate the RAM disk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the RAM disk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new RAM disk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed RAM disk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The RAM disk&n; * loader now also loads into a dynamic (buffer cache based) RAM disk,&n; * not the old static RAM disk.  Support for the old static RAM disk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc.&n; * &t;When the RAM disk module is removed, free the protected buffers&n; * &t;Default RAM disk size changed to 2.88 MB&n; *&n; *  Added initrd: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *&n;* 4/25/96 : Made RAM disk size a parameter (default is now 4 MB) &n; *&t;&t;- Chad Page&n; *&n; * Add support for fs images split across &gt;1 disk, Paul Gortmaker, Mar &squot;98&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -29,11 +29,11 @@ multiline_comment|/*&n; * 35 has been officially registered as the RAMDISK major
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR RAMDISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
-multiline_comment|/* The ramdisk size is now a parameter */
+multiline_comment|/* The RAM disk size is now a parameter */
 DECL|macro|NUM_RAMDISKS
 mdefine_line|#define NUM_RAMDISKS 16&t;&t;/* This cannot be overridden (yet) */ 
 macro_line|#ifndef MODULE
-multiline_comment|/* We don&squot;t have to load ramdisks or gunzip them in a module... */
+multiline_comment|/* We don&squot;t have to load RAM disks or gunzip them in a module. */
 DECL|macro|RD_LOADER
 mdefine_line|#define RD_LOADER
 DECL|macro|BUILD_CRAMDISK
@@ -71,7 +71,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/* Various static variables go here... mostly used within the ramdisk code only. */
+multiline_comment|/* Various static variables go here.  Most are used only in the RAM disk code.&n; */
 DECL|variable|rd_length
 r_static
 r_int
@@ -88,14 +88,14 @@ id|rd_blocksizes
 id|NUM_RAMDISKS
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Parameters for the boot-loading of the ramdisk.  These are set by&n; * init/main.c (from arguments to the kernel command line) or from the&n; * architecture-specific setup routine (from the stored bootsector&n; * information). &n; */
+multiline_comment|/*&n; * Parameters for the boot-loading of the RAM disk.  These are set by&n; * init/main.c (from arguments to the kernel command line) or from the&n; * architecture-specific setup routine (from the stored boot sector&n; * information). &n; */
 DECL|variable|rd_size
 r_int
 id|rd_size
 op_assign
 l_int|4096
 suffix:semicolon
-multiline_comment|/* Size of the ramdisks */
+multiline_comment|/* Size of the RAM disks */
 macro_line|#ifndef MODULE
 DECL|variable|rd_doload
 r_int
@@ -103,14 +103,14 @@ id|rd_doload
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* 1 = load ramdisk, 0 = don&squot;t load */
+multiline_comment|/* 1 = load RAM disk, 0 = don&squot;t load */
 DECL|variable|rd_prompt
 r_int
 id|rd_prompt
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* 1 = prompt for ramdisk, 0 = don&squot;t prompt */
+multiline_comment|/* 1 = prompt for RAM disk, 0 = don&squot;t prompt */
 DECL|variable|rd_image_start
 r_int
 id|rd_image_start
@@ -737,7 +737,7 @@ id|block_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-multiline_comment|/* This is the registration and initialization section of the ramdisk driver */
+multiline_comment|/* This is the registration and initialization section of the RAM disk driver */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -835,7 +835,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Ramdisk driver initialized : %d ramdisks of %dK size&bslash;n&quot;
+l_string|&quot;RAM disk driver initialized:  %d RAM disks of %dK size&bslash;n&quot;
 comma
 id|NUM_RAMDISKS
 comma
@@ -938,9 +938,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif  /* MODULE */
-multiline_comment|/* End of non-loading portions of the ramdisk driver */
+multiline_comment|/* End of non-loading portions of the RAM disk driver */
 macro_line|#ifdef RD_LOADER 
-multiline_comment|/*&n; * This routine tries to find a ramdisk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; *&t;romfs&n; * &t;gzip&n; */
+multiline_comment|/*&n; * This routine tries to find a RAM disk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; *&t;romfs&n; * &t;gzip&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1159,7 +1159,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;RAMDISK: Romfs filesystem found at block %d&bslash;n&quot;
+l_string|&quot;RAMDISK: romfs filesystem found at block %d&bslash;n&quot;
 comma
 id|start_block
 )paren
@@ -1282,7 +1282,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;RAMDISK: Ext2 filesystem found at block %d&bslash;n&quot;
+l_string|&quot;RAMDISK: ext2 filesystem found at block %d&bslash;n&quot;
 comma
 id|start_block
 )paren
@@ -1303,7 +1303,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;RAMDISK: Couldn&squot;t find valid ramdisk image starting at %d.&bslash;n&quot;
+l_string|&quot;RAMDISK: Couldn&squot;t find valid RAM disk image starting at %d.&bslash;n&quot;
 comma
 id|start_block
 )paren
@@ -1345,7 +1345,7 @@ r_return
 id|nblocks
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine loads in the ramdisk image.&n; */
+multiline_comment|/*&n; * This routine loads in the RAM disk image.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1659,7 +1659,7 @@ c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;RAMDISK: Kernel does not support compressed &quot;
-l_string|&quot;ramdisk images&bslash;n&quot;
+l_string|&quot;RAM disk images&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2129,7 +2129,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;VFS: Insert root floppy disk to be loaded into ramdisk and press ENTER&bslash;n&quot;
+l_string|&quot;VFS: Insert root floppy disk to be loaded into RAM disk and press ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
 id|wait_for_keypress

@@ -323,7 +323,7 @@ op_assign
 id|O_NONBLOCK
 suffix:semicolon
 macro_line|#ifdef __sparc__
-multiline_comment|/* SunOS compatability item. */
+multiline_comment|/* SunOS compatibility item. */
 r_if
 c_cond
 (paren

@@ -1371,7 +1371,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Now use mmap to map the library into memory. */
-multiline_comment|/*&n;&t; * Now fill out the bss section.  First pad the last page up&n;&t; * to the page boundary, and then perform a mmap to make sure&n;&t; * that there are zeromapped pages up to and including the last&n;&t; * bss page.&n;&t; */
+multiline_comment|/*&n;&t; * Now fill out the bss section.  First pad the last page up&n;&t; * to the page boundary, and then perform a mmap to make sure&n;&t; * that there are zero-mapped pages up to and including the &n;&t; * last bss page.&n;&t; */
 id|padzero
 c_func
 (paren
@@ -5458,7 +5458,7 @@ id|data
 op_assign
 id|current
 suffix:semicolon
-multiline_comment|/* Try to dump the fpu. */
+multiline_comment|/* Try to dump the FPU. */
 id|prstatus.pr_fpvalid
 op_assign
 id|dump_fpu

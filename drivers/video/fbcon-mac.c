@@ -2536,6 +2536,8 @@ comma
 id|fbcon_mac_putcs
 comma
 id|fbcon_mac_revc
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Visible symbols for modules&n;     */

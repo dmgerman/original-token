@@ -1,11 +1,13 @@
 multiline_comment|/*&n; * chips.c: Console support for PowerBook 3400/2400 chips65550 display adaptor.&n; *&n; * Copyright (C) 1997 Fabio Riccardi.&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
+macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -16,6 +18,7 @@ macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;chips.h&quot;
+macro_line|#include &lt;linux/console_compat.h&gt;
 DECL|variable|frame_buffer
 r_static
 r_int

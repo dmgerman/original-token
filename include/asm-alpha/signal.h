@@ -314,7 +314,7 @@ DECL|typedef|stack_t
 )brace
 id|stack_t
 suffix:semicolon
-multiline_comment|/* sigstack(2) is deprecated, and will be withdrawn in a future version&n;   of the X/Open CAE Specification.  Use sigaltstack instead.  It is only&n;   implemented here for OSF/1 compatability.  */
+multiline_comment|/* sigstack(2) is deprecated, and will be withdrawn in a future version&n;   of the X/Open CAE Specification.  Use sigaltstack instead.  It is only&n;   implemented here for OSF/1 compatibility.  */
 DECL|struct|sigstack
 r_struct
 id|sigstack

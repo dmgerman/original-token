@@ -4590,7 +4590,7 @@ id|dev
 dot
 id|start_sect
 suffix:semicolon
-multiline_comment|/*&n;&t; * This is a kludge to allow the partition check to be&n;&t; * skipped for specific drives (e.g. IDE cd-rom drives)&n;&t; */
+multiline_comment|/*&n;&t; * This is a kludge to allow the partition check to be&n;&t; * skipped for specific drives (e.g. IDE CD-ROM drives)&n;&t; */
 r_if
 c_cond
 (paren

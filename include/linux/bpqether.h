@@ -31,7 +31,7 @@ id|ETH_ALEN
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * For SIOCSBPQETHOPT - this is compatible with PI2/PacketTwin card drivers,&n; * currently not implemented, though. If someone wants to hook a radio&n; * to his ethernet card he may find this useful... ;-)&n; */
+multiline_comment|/* &n; * For SIOCSBPQETHOPT - this is compatible with PI2/PacketTwin card drivers,&n; * currently not implemented, though. If someone wants to hook a radio&n; * to his Ethernet card he may find this useful. ;-)&n; */
 DECL|macro|SIOCGBPQETHPARAM
 mdefine_line|#define SIOCGBPQETHPARAM&t;0x5000  /* get Level 1 parameters */
 DECL|macro|SIOCSBPQETHPARAM

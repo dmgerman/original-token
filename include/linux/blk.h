@@ -399,9 +399,9 @@ mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device) floppy_off(DEVICE_NR(device))
 macro_line|#elif (MAJOR_NR == HD_MAJOR)
-multiline_comment|/* harddisk: timeout is 6 seconds.. */
+multiline_comment|/* Hard disk:  timeout is 6 seconds. */
 DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;harddisk&quot;
+mdefine_line|#define DEVICE_NAME &quot;hard disk&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_hd
 DECL|macro|DEVICE_TIMEOUT
@@ -618,7 +618,7 @@ DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == CM206_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;Philips/LMS cd-rom cm206&quot;
+mdefine_line|#define DEVICE_NAME &quot;Philips/LMS CD-ROM cm206&quot;
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_cm206_request
 DECL|macro|DEVICE_NR

@@ -324,7 +324,7 @@ id|ignore_irq13
 id|printk
 c_func
 (paren
-l_string|&quot;Ok, fpu using old IRQ13 error reporting&bslash;n&quot;
+l_string|&quot;OK, FPU using old IRQ 13 error reporting&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -374,14 +374,14 @@ id|boot_cpu_data.fdiv_bug
 id|printk
 c_func
 (paren
-l_string|&quot;Ok, fpu using exception 16 error reporting.&bslash;n&quot;
+l_string|&quot;OK, FPU using exception 16 error reporting.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Hmm, fpu using exception 16 error reporting with FDIV bug.&bslash;n&quot;
+l_string|&quot;Hmm, FPU using exception 16 error reporting with FDIV bug.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -431,7 +431,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Ok.&bslash;n&quot;
+l_string|&quot;OK.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -539,7 +539,7 @@ comma
 l_string|&quot;edi&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* If this fails, it means that any user program may lock CPU hard. Too bad. */
+multiline_comment|/* If this fails, it means that any user program may lock the CPU hard. Too bad. */
 r_if
 c_cond
 (paren
@@ -557,7 +557,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Ok.&bslash;n&quot;
+l_string|&quot;OK.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

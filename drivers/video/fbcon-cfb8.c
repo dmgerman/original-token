@@ -97,6 +97,11 @@ id|p
 (brace
 id|p-&gt;next_line
 op_assign
+id|p-&gt;line_length
+ques
+c_cond
+id|p-&gt;line_length
+suffix:colon
 id|p-&gt;var.xres_virtual
 suffix:semicolon
 id|p-&gt;next_plane
@@ -1099,6 +1104,8 @@ comma
 id|fbcon_cfb8_putcs
 comma
 id|fbcon_cfb8_revc
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Visible symbols for modules&n;     */

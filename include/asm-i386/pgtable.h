@@ -353,7 +353,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 macro_line|#endif /* !__ASSEMBLY__ */
-multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+multiline_comment|/* Certain architectures need to do special things when PTEs&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */

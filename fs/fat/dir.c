@@ -81,7 +81,7 @@ id|file_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Convert Unicode 16 to UTF8, translated unicode, or ascii.&n; * If uni_xlate is enabled and we&n; * can&squot;t get a 1:1 conversion, use a colon as an escape character since&n; * it is normally invalid on the vfat filesystem.  The following three&n; * characters are a sort of uuencoded 16 bit Unicode value.  This lets&n; * us do a full dump and restore of Unicode filenames.  We could get&n; * into some trouble with long Unicode names, but ignore that right now.&n; */
+multiline_comment|/*&n; * Convert Unicode 16 to UTF8, translated Unicode, or ASCII.&n; * If uni_xlate is enabled and we&n; * can&squot;t get a 1:1 conversion, use a colon as an escape character since&n; * it is normally invalid on the vfat filesystem.  The following three&n; * characters are a sort of uuencoded 16 bit Unicode value.  This lets&n; * us do a full dump and restore of Unicode filenames.  We could get&n; * into some trouble with long Unicode names, but ignore that right now.&n; */
 r_static
 r_int
 DECL|function|uni16_to_x8

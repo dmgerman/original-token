@@ -17549,7 +17549,7 @@ l_int|2
 id|DPRINT
 c_func
 (paren
-l_string|&quot;wrong number of parameter for cmos&bslash;n&quot;
+l_string|&quot;wrong number of parameters for CMOS&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -17631,7 +17631,7 @@ l_int|16
 id|DPRINT
 c_func
 (paren
-l_string|&quot;bad cmos code %d&bslash;n&quot;
+l_string|&quot;bad CMOS code %d&bslash;n&quot;
 comma
 id|ints
 (braket
@@ -17652,7 +17652,7 @@ suffix:semicolon
 id|DPRINT
 c_func
 (paren
-l_string|&quot;setting cmos code to %d&bslash;n&quot;
+l_string|&quot;setting CMOS code to %d&bslash;n&quot;
 comma
 id|ints
 (braket

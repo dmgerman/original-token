@@ -296,7 +296,7 @@ DECL|macro|H8_SYSTEM_DELAY_TEST
 mdefine_line|#define H8_SYSTEM_DELAY_TEST            0x100000
 DECL|macro|H8_POWER_SWITCH_TEST
 mdefine_line|#define H8_POWER_SWITCH_TEST            0x200000
-multiline_comment|/* cpu speeds and clock divisor values */
+multiline_comment|/* CPU speeds and clock divisor values */
 DECL|macro|MHZ_14
 mdefine_line|#define MHZ_14                           5
 DECL|macro|MHZ_28

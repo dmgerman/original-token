@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *      1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *      1994  Eberhard Moenkeberg - multi session handling.&n; *      1995  Mark Dobie - allow mounting of some weird VideoCDs and PhotoCDs.&n; *&t;1997  Gordon Chaffee - Joliet CDs&n; *&t;1998  Eric Lammerts - ISO9660 Level 3&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *      1992, 1993, 1994  Eric Youngdale Modified for ISO 9660 filesystem.&n; *      1994  Eberhard Moenkeberg - multi session handling.&n; *      1995  Mark Dobie - allow mounting of some weird VideoCDs and PhotoCDs.&n; *&t;1997  Gordon Chaffee - Joliet CDs&n; *&t;1998  Eric Lammerts - ISO 9660 Level 3&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -1679,7 +1679,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ISO9660 Extensions: Microsoft Joliet Level %d&bslash;n&quot;
+l_string|&quot;ISO 9660 Extensions: Microsoft Joliet Level %d&bslash;n&quot;
 comma
 id|joliet_level
 )paren
@@ -4127,7 +4127,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* There are times when we need to know the inode number of a parent of&n;   a particular directory.  When control passes through a routine that&n;   has access to the parent information, it fills it into the inode structure,&n;   but sometimes the inode gets flushed out of the queue, and someone&n;   remembers the number.  When they try to open up again, we have lost&n;   the information.  The &squot;..&squot; entry on the disc points to the data area&n;   for a particular inode, so we can follow these links back up, but since&n;   we do not know the inode number, we do not actually know how large the&n;   directory is.  The disc is almost always correct, and there is&n;   enough error checking on the drive itself, but an open ended search&n;   makes me a little nervous.&n;&n;   The bsd iso filesystem uses the extent number for an inode, and this&n;   would work really nicely for us except that the read_inode function&n;   would not have any clean way of finding the actual directory record&n;   that goes with the file.  If we had such info, then it would pay&n;   to change the inode numbers and eliminate this function.&n;*/
+multiline_comment|/* There are times when we need to know the inode number of a parent of&n;   a particular directory.  When control passes through a routine that&n;   has access to the parent information, it fills it into the inode structure,&n;   but sometimes the inode gets flushed out of the queue, and someone&n;   remembers the number.  When they try to open up again, we have lost&n;   the information.  The &squot;..&squot; entry on the disc points to the data area&n;   for a particular inode, so we can follow these links back up, but since&n;   we do not know the inode number, we do not actually know how large the&n;   directory is.  The disc is almost always correct, and there is&n;   enough error checking on the drive itself, but an open ended search&n;   makes me a little nervous.&n;&n;   The BSD iso filesystem uses the extent number for an inode, and this&n;   would work really nicely for us except that the read_inode function&n;   would not have any clean way of finding the actual directory record&n;   that goes with the file.  If we had such info, then it would pay&n;   to change the inode numbers and eliminate this function.&n;*/
 DECL|function|isofs_lookup_grandparent
 r_int
 id|isofs_lookup_grandparent

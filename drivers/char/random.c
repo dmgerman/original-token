@@ -10110,7 +10110,7 @@ l_int|1
 op_plus
 id|count
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;As close as possible to RFC 793, which&n;&t; *&t;suggests using a 250kHz clock.&n;&t; *&t;Further reading shows this assumes 2Mb/s networks.&n;&t; *&t;For 10Mb/s ethernet, a 1MHz clock is appropriate.&n;&t; *&t;That&squot;s funny, Linux has one built in!  Use it!&n;&t; *&t;(Networks are faster now - should this be increased?)&n;&t; */
+multiline_comment|/*&n;&t; *&t;As close as possible to RFC 793, which&n;&t; *&t;suggests using a 250 kHz clock.&n;&t; *&t;Further reading shows this assumes 2 Mb/s networks.&n;&t; *&t;For 10 Mb/s Ethernet, a 1 MHz clock is appropriate.&n;&t; *&t;That&squot;s funny, Linux has one built in!  Use it!&n;&t; *&t;(Networks are faster now - should this be increased?)&n;&t; */
 id|seq
 op_add_assign
 id|tv.tv_usec

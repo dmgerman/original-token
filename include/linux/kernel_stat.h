@@ -5,7 +5,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
-multiline_comment|/*&n; * &squot;kernel_stat.h&squot; contains the definitions needed for doing&n; * some kernel statistics (cpu usage, context switches ...),&n; * used by rstatd/perfmeter&n; */
+multiline_comment|/*&n; * &squot;kernel_stat.h&squot; contains the definitions needed for doing&n; * some kernel statistics (CPU usage, context switches ...),&n; * used by rstatd/perfmeter&n; */
 DECL|macro|DK_NDRIVE
 mdefine_line|#define DK_NDRIVE 4
 DECL|struct|kernel_stat

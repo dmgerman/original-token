@@ -3,8 +3,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
+macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;platinum.h&quot;
+macro_line|#include &lt;linux/console_compat.h&gt;
 multiline_comment|/*&n; * Structure of the registers for the DACula colormap device.&n; */
 DECL|struct|cmap_regs
 r_struct
@@ -67,7 +68,7 @@ l_int|15
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Structure of the registers for the &quot;platinum&quot; display adaptor&quot;.&n; */
+multiline_comment|/*&n; * Structure of the registers for the &quot;platinum&quot; display adaptor.&n; */
 DECL|macro|PAD
 mdefine_line|#define PAD(x)&t;char x[12]
 DECL|struct|preg
@@ -3023,7 +3024,7 @@ op_assign
 (paren
 r_int
 )paren
-id|frame_buffer
+id|frame_buffer_phys
 suffix:semicolon
 id|plat_regs-&gt;reg
 (braket
@@ -3611,7 +3612,9 @@ op_assign
 (paren
 r_int
 )paren
-id|frame_buffer
+id|frame_buffer_phys
+op_plus
+id|init-&gt;fb_offset
 suffix:semicolon
 id|plat_regs-&gt;reg
 (braket

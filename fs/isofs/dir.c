@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/dir.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  Steve Beynon&t;&t;       : Missing last directory entries fixed&n; *  (stephen@askone.demon.co.uk)      : 21st June 1996&n; * &n; *  isofs directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/dir.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO 9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  Steve Beynon&t;&t;       : Missing last directory entries fixed&n; *  (stephen@askone.demon.co.uk)      : 21st June 1996&n; * &n; *  isofs directory handling functions&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
@@ -190,7 +190,7 @@ op_or_assign
 l_int|0x20
 suffix:semicolon
 multiline_comment|/* lower case */
-multiline_comment|/* Drop trailing &squot;.;1&squot; (ISO9660:1988 7.5.1 requires period) */
+multiline_comment|/* Drop trailing &squot;.;1&squot; (ISO 9660:1988 7.5.1 requires period) */
 r_if
 c_cond
 (paren

@@ -1525,6 +1525,8 @@ comma
 id|fbcon_cfb32_putcs
 comma
 id|fbcon_cfb32_revc
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Visible symbols for modules&n;     */

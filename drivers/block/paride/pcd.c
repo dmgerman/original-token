@@ -1,7 +1,7 @@
 multiline_comment|/* &n;&t;pcd.c&t;(c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;&t;&t;            Under the terms of the GNU public license.&n;&n;&t;This is high-level driver for parallel port ATAPI CDrom&n;        drives based on chips supported by the paride module.&n;&n;        By default, the driver will autoprobe for a single parallel&n;        port ATAPI CDrom drive, but if their individual parameters are&n;        specified, the driver can handle up to 4 drives.&n;&n;        The behaviour of the pcd driver can be altered by setting&n;        some parameters from the insmod command line.  The following&n;        parameters are adjustable:&n;&n;            drive0      These four arguments can be arrays of       &n;            drive1      1-6 integers as follows:&n;            drive2&n;            drive3      &lt;prt&gt;,&lt;pro&gt;,&lt;uni&gt;,&lt;mod&gt;,&lt;slv&gt;,&lt;dly&gt;&n;&n;                        Where,&n;&n;                &lt;prt&gt;   is the base of the parallel port address for&n;                        the corresponding drive.  (required)&n;&n;                &lt;pro&gt;   is the protocol number for the adapter that&n;                        supports this drive.  These numbers are&n;                        logged by &squot;paride&squot; when the protocol modules&n;                        are initialised.  (0 if not given)&n;&n;                &lt;uni&gt;   for those adapters that support chained&n;                        devices, this is the unit selector for the&n;                        chain of devices on the given port.  It should&n;                        be zero for devices that don&squot;t support chaining.&n;                        (0 if not given)&n;&n;                &lt;mod&gt;   this can be -1 to choose the best mode, or one&n;                        of the mode numbers supported by the adapter.&n;                        (-1 if not given)&n;&n;&t;&t;&lt;slv&gt;   ATAPI CDroms can be jumpered to master or slave.&n;&t;&t;&t;Set this to 0 to choose the master drive, 1 to&n;                        choose the slave, -1 (the default) to choose the&n;&t;&t;&t;first drive found.&n;&n;                &lt;dly&gt;   some parallel ports require the driver to &n;                        go more slowly.  -1 sets a default value that&n;                        should work with the chosen protocol.  Otherwise,&n;                        set this to a small integer, the larger it is&n;                        the slower the port i/o.  In some cases, setting&n;                        this to zero will speed up the device. (default -1)&n;                        &n;            major       You may use this parameter to overide the&n;                        default major number (46) that this driver&n;                        will use.  Be sure to change the device&n;                        name as well.&n;&n;            name        This parameter is a character string that&n;                        contains the name the kernel will use for this&n;                        device (in /proc output, for instance).&n;                        (default &quot;pcd&quot;)&n;&n;            verbose     This parameter controls the amount of logging&n;                        that is done while the driver probes for&n;                        devices.  Set it to 0 for a quiet load, or 1 to&n;                        see all the progress messages.  (default 0)&n;&n;            nice        This parameter controls the driver&squot;s use of&n;                        idle CPU time, at the expense of some speed.&n; &n;&t;If this driver is built into the kernel, you can use kernel&n;        the following command line parameters, with the same values&n;        as the corresponding module parameters listed above:&n;&n;&t;    pcd.drive0&n;&t;    pcd.drive1&n;&t;    pcd.drive2&n;&t;    pcd.drive3&n;&t;    pcd.nice&n;&n;        In addition, you can use the parameter pcd.disable to disable&n;        the driver entirely.&n;&n;*/
-multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1997.01.24&t;Added test unit ready support&n;&t;1.02    GRG 1998.05.06  Changes to pcd_completion, ready_wait,&n;&t;&t;&t;&t;and loosen interpretation of ATAPI&n;&t;&t;&t;        standard for clearing error status.&n;&t;&t;&t;&t;Use spinlocks. Eliminate sti().&n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1997.01.24&t;Added test unit ready support&n;&t;1.02    GRG 1998.05.06  Changes to pcd_completion, ready_wait,&n;&t;&t;&t;&t;and loosen interpretation of ATAPI&n;&t;&t;&t;        standard for clearing error status.&n;&t;&t;&t;&t;Use spinlocks. Eliminate sti().&n;&t;1.03    GRG 1998.06.16  Eliminated an Ugh&n;&n;*/
 DECL|macro|PCD_VERSION
-mdefine_line|#define&t;PCD_VERSION&t;&quot;1.02&quot;
+mdefine_line|#define&t;PCD_VERSION&t;&quot;1.03&quot;
 DECL|macro|PCD_MAJOR
 mdefine_line|#define PCD_MAJOR&t;46
 DECL|macro|PCD_NAME
@@ -1357,31 +1357,11 @@ r_void
 r_int
 id|err
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|err
 op_assign
 id|pcd_init
 c_func
 (paren
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1397,21 +1377,7 @@ r_void
 )paren
 (brace
 r_int
-id|flags
-suffix:semicolon
-r_int
 id|unit
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|unregister_blkdev
 c_func
@@ -1444,12 +1410,6 @@ id|pi_release
 c_func
 (paren
 id|PI
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace

@@ -164,7 +164,7 @@ id|global_bh_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* These are for the irq&squot;s testing the lock */
+multiline_comment|/* These are for the IRQs testing the lock */
 DECL|function|softirq_trylock
 r_static
 r_inline

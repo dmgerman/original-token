@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
-macro_line|#include &lt;linux/vc_ioctl.h&gt;
+macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
@@ -87,15 +87,6 @@ op_star
 id|cmap_data
 suffix:semicolon
 )brace
-suffix:semicolon
-DECL|variable|fb_info
-r_static
-r_struct
-id|fb_info_offb
-id|fb_info
-(braket
-id|FB_MAX
-)braket
 suffix:semicolon
 macro_line|#ifdef __powerpc__
 DECL|macro|mach_eieio
@@ -329,6 +320,25 @@ r_int
 )paren
 suffix:semicolon
 r_int
+id|console_setcmap
+c_func
+(paren
+r_int
+comma
+r_int
+r_char
+op_star
+comma
+r_int
+r_char
+op_star
+comma
+r_int
+r_char
+op_star
+)paren
+suffix:semicolon
+r_int
 id|console_powermode
 c_func
 (paren
@@ -523,8 +533,6 @@ comma
 id|offb_set_cmap
 comma
 id|offb_pan_display
-comma
-l_int|NULL
 comma
 id|offb_ioctl
 )brace
@@ -1249,9 +1257,28 @@ comma
 l_string|&quot;ATY,XCLAIMVRPro&quot;
 comma
 l_string|&quot;ATY,mach64_3DU&quot;
+comma
+l_string|&quot;ATY,XCLAIM3DPro&quot;
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_ATY */
+macro_line|#ifdef CONFIG_FB_S3TRIO
+r_extern
+r_void
+id|s3triofb_init_of
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_struct
+id|device_node
+op_star
+id|dp
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_FB_S3TRIO */
 multiline_comment|/*&n;     *  Initialisation&n;     */
 DECL|function|__initfunc
 id|__initfunc
@@ -1345,29 +1372,6 @@ id|dpy
 )paren
 r_continue
 suffix:semicolon
-id|info
-op_assign
-op_amp
-id|fb_info
-(braket
-id|dpy
-)braket
-suffix:semicolon
-id|fix
-op_assign
-op_amp
-id|info-&gt;fix
-suffix:semicolon
-id|var
-op_assign
-op_amp
-id|info-&gt;var
-suffix:semicolon
-id|disp
-op_assign
-op_amp
-id|info-&gt;disp
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1447,7 +1451,49 @@ r_continue
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_ATY */
+macro_line|#ifdef CONFIG_FB_S3TRIO
+r_if
+c_cond
+(paren
+id|s3triofb_init_of
+c_func
+(paren
+id|dp
+)paren
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif /* CONFIG_FB_S3TRIO */
 )brace
+id|info
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|fb_info_offb
+)paren
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+id|fix
+op_assign
+op_amp
+id|info-&gt;fix
+suffix:semicolon
+id|var
+op_assign
+op_amp
+id|info-&gt;var
+suffix:semicolon
+id|disp
+op_assign
+op_amp
+id|info-&gt;disp
+suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -1527,6 +1573,12 @@ id|dp-&gt;full_name
 comma
 op_star
 id|pp
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|info
 )paren
 suffix:semicolon
 r_continue
@@ -1740,6 +1792,12 @@ comma
 id|dp-&gt;full_name
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -1758,13 +1816,11 @@ suffix:semicolon
 )brace
 id|fix-&gt;smem_start
 op_assign
-id|ioremap
-c_func
 (paren
-id|address
-comma
-id|fix-&gt;smem_len
+r_char
+op_star
 )paren
+id|address
 suffix:semicolon
 id|fix-&gt;type
 op_assign
@@ -1882,10 +1938,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|var-&gt;accel
-op_assign
-id|FB_ACCEL_NONE
-suffix:semicolon
 id|var-&gt;pixclock
 op_assign
 l_int|10000
@@ -1931,17 +1983,29 @@ l_int|0
 suffix:semicolon
 id|disp-&gt;cmap.red
 op_assign
+l_int|NULL
+suffix:semicolon
 id|disp-&gt;cmap.green
 op_assign
+l_int|NULL
+suffix:semicolon
 id|disp-&gt;cmap.blue
 op_assign
+l_int|NULL
+suffix:semicolon
 id|disp-&gt;cmap.transp
 op_assign
 l_int|NULL
 suffix:semicolon
 id|disp-&gt;screen_base
 op_assign
-id|fix-&gt;smem_start
+id|ioremap
+c_func
+(paren
+id|address
+comma
+id|fix-&gt;smem_len
+)paren
 suffix:semicolon
 id|disp-&gt;visual
 op_assign
@@ -2069,8 +2133,17 @@ id|err
 OL
 l_int|0
 )paren
-r_continue
+(brace
+id|kfree
+c_func
+(paren
+id|info
+)paren
 suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -2200,15 +2273,7 @@ id|display_info.name
 suffix:semicolon
 id|display_info.fb_address
 op_assign
-id|iopa
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|fix-&gt;smem_start
-)paren
+id|address
 suffix:semicolon
 id|display_info.cmap_adr_address
 op_assign
@@ -2241,33 +2306,21 @@ l_int|0
 (brace
 id|display_info.disp_reg_address
 op_assign
-id|iopa
-c_func
-(paren
 id|address
 op_plus
 l_int|0x7ffc00
-)paren
 suffix:semicolon
 id|display_info.cmap_adr_address
 op_assign
-id|iopa
-c_func
-(paren
 id|address
 op_plus
 l_int|0x7ffcc0
-)paren
 suffix:semicolon
 id|display_info.cmap_data_address
 op_assign
-id|iopa
-c_func
-(paren
 id|address
 op_plus
 l_int|0x7ffcc1
-)paren
 suffix:semicolon
 )brace
 id|console_fb_info
@@ -2837,7 +2890,7 @@ id|info
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
-multiline_comment|/*&n;     *  Backward compatibility mode for Xpmac&n;     *&n;     *  To do:&n;     *&n;     *    - console_setmode() should fill in a struct fb_var_screeninfo (using&n;     *&t;    the MacOS video mode database) and simply call a decode_var()&n;     *&t;    function, so console_setmode_ptr is no longer needed.&n;     *&n;     *    - instead of using the console_* stuff (filled in by the frame&n;     *      buffer), we should use the correct struct fb_info for the&n;     *&t;    foreground virtual console.&n;     */
+multiline_comment|/*&n;     *  Backward compatibility mode for Xpmac&n;     *&n;     *  To do:&n;     *&n;     *    - console_setmode() should fill in a struct fb_var_screeninfo (using&n;     *&t;    the MacOS video mode database) and simply call a decode_var()&n;     *&t;    function, so console_setmode_ptr is no longer needed.&n;     *&t;    console_getmode() should convert in the other direction.&n;     *&n;     *    - instead of using the console_* stuff (filled in by the frame&n;     *      buffer), we should use the correct struct fb_info for the&n;     *&t;    foreground virtual console.&n;     */
 DECL|function|console_getmode
 r_int
 id|console_getmode

@@ -333,10 +333,10 @@ DECL|macro|DP_FOG_CLR
 mdefine_line|#define DP_FOG_CLR&t;&t;0x02C4&t;/* Dword offset 0_B1 */
 DECL|macro|DP_FRGD_CLR
 mdefine_line|#define DP_FRGD_CLR&t;&t;0x02C4&t;/* Dword offset 0_B1 */
-DECL|macro|DP_WRITE_MSK
-mdefine_line|#define DP_WRITE_MSK&t;&t;0x02C8&t;/* Dword offset 0_B2 */
-DECL|macro|DP_CHAIN_MSK
-mdefine_line|#define DP_CHAIN_MSK&t;&t;0x02CC&t;/* Dword offset 0_B3 */
+DECL|macro|DP_WRITE_MASK
+mdefine_line|#define DP_WRITE_MASK&t;&t;0x02C8&t;/* Dword offset 0_B2 */
+DECL|macro|DP_CHAIN_MASK
+mdefine_line|#define DP_CHAIN_MASK&t;&t;0x02CC&t;/* Dword offset 0_B3 */
 DECL|macro|DP_PIX_WIDTH
 mdefine_line|#define DP_PIX_WIDTH&t;&t;0x02D0&t;/* Dword offset 0_B4 */
 DECL|macro|DP_MIX
@@ -359,8 +359,8 @@ DECL|macro|DP_SET_GUI_ENGINE
 mdefine_line|#define DP_SET_GUI_ENGINE&t;0x02FC&t;/* Dword offset 0_BF */
 DECL|macro|CLR_CMP_CLR
 mdefine_line|#define CLR_CMP_CLR&t;&t;0x0300&t;/* Dword offset 0_C0 */
-DECL|macro|CLR_CMP_MSK
-mdefine_line|#define CLR_CMP_MSK&t;&t;0x0304&t;/* Dword offset 0_C1 */
+DECL|macro|CLR_CMP_MASK
+mdefine_line|#define CLR_CMP_MASK&t;&t;0x0304&t;/* Dword offset 0_C1 */
 DECL|macro|CLR_CMP_CNTL
 mdefine_line|#define CLR_CMP_CNTL&t;&t;0x0308&t;/* Dword offset 0_C2 */
 DECL|macro|FIFO_STAT
@@ -892,8 +892,10 @@ mdefine_line|#define CLOCK_STROBE&t;&t;0x40
 DECL|macro|PLL_WR_EN
 mdefine_line|#define PLL_WR_EN&t;&t;0x02
 multiline_comment|/* PLL registers */
-DECL|macro|PLL_MACRO_CNTL
-mdefine_line|#define PLL_MACRO_CNTL&t;&t;0x01
+DECL|macro|MPLL_CNTL
+mdefine_line|#define MPLL_CNTL&t;&t;0x00
+DECL|macro|VPLL_CNTL
+mdefine_line|#define VPLL_CNTL&t;&t;0x01
 DECL|macro|PLL_REF_DIV
 mdefine_line|#define PLL_REF_DIV&t;&t;0x02
 DECL|macro|PLL_GEN_CNTL
@@ -912,8 +914,12 @@ DECL|macro|VCLK2_FB_DIV
 mdefine_line|#define VCLK2_FB_DIV&t;&t;0x09
 DECL|macro|VCLK3_FB_DIV
 mdefine_line|#define VCLK3_FB_DIV&t;&t;0x0A
-DECL|macro|PLL_XCLK_CNTL
-mdefine_line|#define PLL_XCLK_CNTL&t;&t;0x0B
+DECL|macro|PLL_EXT_CNTL
+mdefine_line|#define PLL_EXT_CNTL&t;&t;0x0B
+DECL|macro|DLL_CNTL
+mdefine_line|#define DLL_CNTL&t;&t;0x0C
+DECL|macro|VFC_CNTL
+mdefine_line|#define VFC_CNTL&t;&t;0x0D
 DECL|macro|PLL_TEST_CTRL
 mdefine_line|#define PLL_TEST_CTRL&t;&t;0x0E
 DECL|macro|PLL_TEST_COUNT
@@ -1100,18 +1106,42 @@ mdefine_line|#define MEM_BNDRY_EN&t;&t;0x00040000
 multiline_comment|/* ATI PCI constants */
 DECL|macro|PCI_ATI_VENDOR_ID
 mdefine_line|#define PCI_ATI_VENDOR_ID&t;0x1002
+multiline_comment|/* mach64GX family */
 DECL|macro|PCI_MACH64_GX
-mdefine_line|#define PCI_MACH64_GX&t;&t;0x4758
+mdefine_line|#define PCI_MACH64_GX&t;&t;0x4758&t;/* mach64GX (ATI888GX00) */
 DECL|macro|PCI_MACH64_CX
-mdefine_line|#define PCI_MACH64_CX&t;&t;0x4358
+mdefine_line|#define PCI_MACH64_CX&t;&t;0x4358&t;/* mach64CX (ATI888CX00) */
+multiline_comment|/* mach64CT family */
 DECL|macro|PCI_MACH64_CT
-mdefine_line|#define PCI_MACH64_CT&t;&t;0x4354
+mdefine_line|#define PCI_MACH64_CT&t;&t;0x4354&t;/* mach64CT (ATI264CT) */
 DECL|macro|PCI_MACH64_ET
-mdefine_line|#define PCI_MACH64_ET&t;&t;0x4554
+mdefine_line|#define PCI_MACH64_ET&t;&t;0x4554&t;/* mach64ET (ATI264ET) */
+multiline_comment|/* mach64CT family / mach64VT class */
 DECL|macro|PCI_MACH64_VT
-mdefine_line|#define PCI_MACH64_VT&t;&t;0x5654
+mdefine_line|#define PCI_MACH64_VT&t;&t;0x5654&t;/* mach64VT (ATI264VT) */
+DECL|macro|PCI_MACH64_VTB
+mdefine_line|#define PCI_MACH64_VTB&t;&t;0x5655&t;/* mach64VTB (ATI264VTB) */
+DECL|macro|PCI_MACH64_VT4
+mdefine_line|#define PCI_MACH64_VT4&t;&t;0x5656&t;/* mach64VT4 (ATI264VT4) */
+multiline_comment|/* mach64CT family / mach64GT (3D RAGE) class */
+DECL|macro|PCI_MACH64_GB
+mdefine_line|#define PCI_MACH64_GB&t;&t;0x4742&t;/* RAGE PRO, BGA, AGP 1x and 2x */
+DECL|macro|PCI_MACH64_GD
+mdefine_line|#define PCI_MACH64_GD&t;&t;0x4744&t;/* RAGE PRO, BGA, AGP 1x only */
+DECL|macro|PCI_MACH64_GI
+mdefine_line|#define PCI_MACH64_GI&t;&t;0x4749&t;/* RAGE PRO, BGA, PCI33 only */
+DECL|macro|PCI_MACH64_GP
+mdefine_line|#define PCI_MACH64_GP&t;&t;0x4750&t;/* RAGE PRO, PQFP, PCI33, full 3D */
+DECL|macro|PCI_MACH64_GQ
+mdefine_line|#define PCI_MACH64_GQ&t;&t;0x4751&t;/* RAGE PRO, PQFP, PCI33, limited 3D */
 DECL|macro|PCI_MACH64_GT
-mdefine_line|#define PCI_MACH64_GT&t;&t;0x4754
+mdefine_line|#define PCI_MACH64_GT&t;&t;0x4754&t;/* 3D RAGE II/II+ */
+DECL|macro|PCI_MACH64_GTB
+mdefine_line|#define PCI_MACH64_GTB&t;&t;0x4755&t;/* 3D II+ */
+DECL|macro|PCI_MACH64_GTC
+mdefine_line|#define PCI_MACH64_GTC&t;&t;0x4756&t;/* 3D RAGE IIC */
+DECL|macro|PCI_MACH64_LT
+mdefine_line|#define PCI_MACH64_LT&t;&t;0x4c47&t;/* 3D RAGE LT */
 multiline_comment|/* CONFIG_CHIP_ID register constants */
 DECL|macro|CFG_CHIP_TYPE
 mdefine_line|#define CFG_CHIP_TYPE&t;&t;0x0000FFFF
@@ -1119,25 +1149,85 @@ DECL|macro|CFG_CHIP_CLASS
 mdefine_line|#define CFG_CHIP_CLASS&t;&t;0x00FF0000
 DECL|macro|CFG_CHIP_REV
 mdefine_line|#define CFG_CHIP_REV&t;&t;0xFF000000
-DECL|macro|CFG_CHIP_VERSION
-mdefine_line|#define CFG_CHIP_VERSION&t;0x07000000
-DECL|macro|CFG_CHIP_FOUNDRY
-mdefine_line|#define CFG_CHIP_FOUNDRY&t;0x38000000
-DECL|macro|CFG_CHIP_REVISION
-mdefine_line|#define CFG_CHIP_REVISION&t;0xC0000000
+DECL|macro|CFG_CHIP_MAJOR
+mdefine_line|#define CFG_CHIP_MAJOR&t;&t;0x07000000
+DECL|macro|CFG_CHIP_FND_ID
+mdefine_line|#define CFG_CHIP_FND_ID&t;&t;0x38000000
+DECL|macro|CFG_CHIP_MINOR
+mdefine_line|#define CFG_CHIP_MINOR&t;&t;0xC0000000
 multiline_comment|/* Chip IDs read from CONFIG_CHIP_ID */
+multiline_comment|/* mach64GX family */
 DECL|macro|MACH64_GX_ID
-mdefine_line|#define MACH64_GX_ID&t;&t;0xD7
+mdefine_line|#define MACH64_GX_ID&t;&t;0xD7&t;/* mach64GX (ATI888GX00) */
 DECL|macro|MACH64_CX_ID
-mdefine_line|#define MACH64_CX_ID&t;&t;0x57
+mdefine_line|#define MACH64_CX_ID&t;&t;0x57&t;/* mach64CX (ATI888CX00) */
+multiline_comment|/* mach64CT family */
 DECL|macro|MACH64_CT_ID
-mdefine_line|#define MACH64_CT_ID&t;&t;0x4354
+mdefine_line|#define MACH64_CT_ID&t;&t;PCI_MACH64_CT
 DECL|macro|MACH64_ET_ID
-mdefine_line|#define MACH64_ET_ID&t;&t;0x4554
+mdefine_line|#define MACH64_ET_ID&t;&t;PCI_MACH64_ET
+multiline_comment|/* mach64CT family / mach64VT class */
 DECL|macro|MACH64_VT_ID
-mdefine_line|#define MACH64_VT_ID&t;&t;0x5654
+mdefine_line|#define MACH64_VT_ID&t;&t;PCI_MACH64_VT
+DECL|macro|MACH64_VTB_ID
+mdefine_line|#define MACH64_VTB_ID&t;&t;PCI_MACH64_VTB
+DECL|macro|MACH64_VT4_ID
+mdefine_line|#define MACH64_VT4_ID&t;&t;PCI_MACH64_VT4
+multiline_comment|/* mach64CT family / mach64GT (3D RAGE) class */
+DECL|macro|MACH64_GB_ID
+mdefine_line|#define MACH64_GB_ID&t;&t;PCI_MACH64_GB
+DECL|macro|MACH64_GD_ID
+mdefine_line|#define MACH64_GD_ID&t;&t;PCI_MACH64_GD
+DECL|macro|MACH64_GI_ID
+mdefine_line|#define MACH64_GI_ID&t;&t;PCI_MACH64_GI
+DECL|macro|MACH64_GP_ID
+mdefine_line|#define MACH64_GP_ID&t;&t;PCI_MACH64_GP
+DECL|macro|MACH64_GQ_ID
+mdefine_line|#define MACH64_GQ_ID&t;&t;PCI_MACH64_GQ
 DECL|macro|MACH64_GT_ID
-mdefine_line|#define MACH64_GT_ID&t;&t;0x4754
+mdefine_line|#define MACH64_GT_ID&t;&t;PCI_MACH64_GT
+DECL|macro|MACH64_GTB_ID
+mdefine_line|#define MACH64_GTB_ID&t;&t;PCI_MACH64_GTB
+DECL|macro|MACH64_GTC_ID
+mdefine_line|#define MACH64_GTC_ID&t;&t;PCI_MACH64_GTC
+DECL|macro|MACH64_LT_ID
+mdefine_line|#define MACH64_LT_ID&t;&t;PCI_MACH64_LT
+multiline_comment|/* Mach64 major ASIC revisions */
+DECL|macro|MACH64_ASIC_NEC_VT_A3
+mdefine_line|#define MACH64_ASIC_NEC_VT_A3&t;&t;0x08
+DECL|macro|MACH64_ASIC_NEC_VT_A4
+mdefine_line|#define MACH64_ASIC_NEC_VT_A4&t;&t;0x48
+DECL|macro|MACH64_ASIC_SGS_VT_A4
+mdefine_line|#define MACH64_ASIC_SGS_VT_A4&t;&t;0x40
+DECL|macro|MACH64_ASIC_SGS_VT_B1S1
+mdefine_line|#define MACH64_ASIC_SGS_VT_B1S1&t;&t;0x01
+DECL|macro|MACH64_ASIC_SGS_GT_B1S1
+mdefine_line|#define MACH64_ASIC_SGS_GT_B1S1&t;&t;0x01
+DECL|macro|MACH64_ASIC_SGS_GT_B1S2
+mdefine_line|#define MACH64_ASIC_SGS_GT_B1S2&t;&t;0x41
+DECL|macro|MACH64_ASIC_UMC_GT_B2U1
+mdefine_line|#define MACH64_ASIC_UMC_GT_B2U1&t;&t;0x1a
+DECL|macro|MACH64_ASIC_UMC_GT_B2U2
+mdefine_line|#define MACH64_ASIC_UMC_GT_B2U2&t;&t;0x5a
+DECL|macro|MACH64_ASIC_UMC_VT_B2U3
+mdefine_line|#define MACH64_ASIC_UMC_VT_B2U3&t;&t;0x9a
+DECL|macro|MACH64_ASIC_UMC_GT_B2U3
+mdefine_line|#define MACH64_ASIC_UMC_GT_B2U3&t;&t;0x9a
+DECL|macro|MACH64_ASIC_UMC_R3B_D_P_A1
+mdefine_line|#define MACH64_ASIC_UMC_R3B_D_P_A1&t;0x1b
+DECL|macro|MACH64_ASIC_UMC_R3B_D_P_A2
+mdefine_line|#define MACH64_ASIC_UMC_R3B_D_P_A2&t;0x5b
+DECL|macro|MACH64_ASIC_UMC_R3B_D_P_A3
+mdefine_line|#define MACH64_ASIC_UMC_R3B_D_P_A3&t;0x1c
+DECL|macro|MACH64_ASIC_UMC_R3B_D_P_A4
+mdefine_line|#define MACH64_ASIC_UMC_R3B_D_P_A4&t;0x5c
+multiline_comment|/* Mach64 foundries */
+DECL|macro|MACH64_FND_SGS
+mdefine_line|#define MACH64_FND_SGS&t;&t;0
+DECL|macro|MACH64_FND_NEC
+mdefine_line|#define MACH64_FND_NEC&t;&t;1
+DECL|macro|MACH64_FND_UMC
+mdefine_line|#define MACH64_FND_UMC&t;&t;3
 multiline_comment|/* Mach64 chip types */
 DECL|macro|MACH64_UNKNOWN
 mdefine_line|#define MACH64_UNKNOWN&t;&t;0
@@ -1456,15 +1546,5 @@ DECL|macro|MACH64_NUM_CLOCKS
 mdefine_line|#define MACH64_NUM_CLOCKS&t;16
 DECL|macro|MACH64_NUM_FREQS
 mdefine_line|#define MACH64_NUM_FREQS&t;50
-multiline_comment|/* Wait until &quot;v&quot; queue entries are free */
-DECL|macro|aty_WaitQueue
-mdefine_line|#define aty_WaitQueue(v)    { while ((aty_ld_le32(FIFO_STAT) &amp; 0xffff) &gt; &bslash;&n;&t;&t;&t; ((unsigned short)(0x8000 &gt;&gt; (v)))); }
-multiline_comment|/* Wait until GP is idle and queue is empty */
-DECL|macro|aty_WaitIdleEmpty
-mdefine_line|#define aty_WaitIdleEmpty() { aty_WaitQueue(16); &bslash;&n;&t;&t;&t;  while ((aty_ld_le32(GUI_STAT) &amp; 1) != 0); }
-DECL|macro|SKIP_2
-mdefine_line|#define SKIP_2(_v) ((((_v)&lt;&lt;1)&amp;0xfff8)|((_v)&amp;0x3)|(((_v)&amp;0x80)&gt;&gt;5))
-DECL|macro|MACH64_BIT_BLT
-mdefine_line|#define MACH64_BIT_BLT(_srcx, _srcy, _dstx, _dsty, _w, _h, _dir) &bslash;&n;{ &bslash;&n;    aty_WaitQueue(5); &bslash;&n;    aty_st_le32(SRC_Y_X, (((_srcx) &lt;&lt; 16) | ((_srcy) &amp; 0x0000ffff))); &bslash;&n;    aty_st_le32(SRC_WIDTH1, (_w)); &bslash;&n;    aty_st_le32(DST_CNTL, (_dir)); &bslash;&n;    aty_st_le32(DST_Y_X, (((_dstx) &lt;&lt; 16) | ((_dsty) &amp; 0x0000ffff))); &bslash;&n;    aty_st_le32(DST_HEIGHT_WIDTH, (((_w) &lt;&lt; 16) | ((_h) &amp; 0x0000ffff))); &bslash;&n;}
 macro_line|#endif /* REGMACH64_H */
 eof

@@ -683,7 +683,7 @@ suffix:semicolon
 multiline_comment|/* X.25 asynchronous event handlers */
 r_static
 r_int
-id|incomming_call
+id|incoming_call
 (paren
 id|sdla_t
 op_star
@@ -3206,7 +3206,7 @@ r_return
 id|dev-&gt;tbusy
 suffix:semicolon
 )brace
-multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct net_device_stats&n; */
+multiline_comment|/*============================================================================&n; * Get Ethernet-style interface statistics.&n; * Return a pointer to struct net_device_stats&n; */
 DECL|function|if_stats
 r_static
 r_struct
@@ -4293,7 +4293,7 @@ id|skb
 op_assign
 id|chan-&gt;tx_skb
 suffix:semicolon
-multiline_comment|/* If there is a packet queued for transmission then kick&n;&t;&t; * the channel&squot;s send routine. When transmission is complete&n;&t;&t; * or if error has occured, release socket buffer and reset&n;&t;&t; * &squot;tbusy&squot; flag.&n;&t;&t; */
+multiline_comment|/* If there is a packet queued for transmission then kick&n;&t;&t; * the channel&squot;s send routine. When transmission is complete&n;&t;&t; * or if error has occurred, release socket buffer and reset&n;&t;&t; * &squot;tbusy&squot; flag.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4384,7 +4384,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/****** SDLA Firmware-Specific Functions *************************************&n; * Almost all X.25 commands can unexpetedly fail due to so called &squot;X.25&n; * asynchronous events&squot; such as restart, interrupt, incomming call request,&n; * call clear request, etc.  They can&squot;t be ignored and have to be delt with&n; * immediately.  To tackle with this problem we execute each interface command&n; * in a loop until good return code is received or maximum number of retries&n; * is reached.  Each interface command returns non-zero return code, an&n; * asynchronous event/error handler x25_error() is called.&n; */
+multiline_comment|/****** SDLA Firmware-Specific Functions *************************************&n; * Almost all X.25 commands can unexpetedly fail due to so called &squot;X.25&n; * asynchronous events&squot; such as restart, interrupt, incoming call request,&n; * call clear request, etc.  They can&squot;t be ignored and have to be dealt with&n; * immediately.  To tackle with this problem we execute each interface command&n; * in a loop until good return code is received or maximum number of retries&n; * is reached.  Each interface command returns non-zero return code, an&n; * asynchronous event/error handler x25_error() is called.&n; */
 multiline_comment|/*============================================================================&n; * Read X.25 firmware version.&n; *&t;Put code version as ASCII string in str. &n; */
 DECL|function|x25_get_version
 r_static
@@ -6283,10 +6283,10 @@ l_int|0x7F
 r_case
 l_int|0x30
 suffix:colon
-multiline_comment|/* incomming call */
+multiline_comment|/* incoming call */
 id|retry
 op_assign
-id|incomming_call
+id|incoming_call
 c_func
 (paren
 id|card
@@ -6576,11 +6576,11 @@ id|retry
 suffix:semicolon
 )brace
 multiline_comment|/****** X.25 Asynchronous Event Handlers *************************************&n; * These functions are called by the x25_error() and should return 0, if&n; * the command resulting in the asynchronous event must be aborted.&n; */
-multiline_comment|/*============================================================================&n; * Handle X.25 incomming call request.&n; *&t;RFC 1356 establishes the following rules:&n; *&t;1. The first octet in the Call User Data (CUD) field of the call&n; *&t;   request packet contains NLPID identifying protocol encapsulation.&n; *&t;2. Calls MUST NOT be accepted unless router supports requested&n; *&t;   protocol encapsulation.&n; *&t;3. A diagnostic code 249 defined by ISO/IEC 8208 may be used when&n; *&t;   clearing a call because protocol encapsulation is not supported.&n; *&t;4. If an incomming call is received while a call request is pending&n; *&t;   (i.e. call collision has occured), the incomming call shall be&n; *&t;   rejected and call request shall be retried.&n; */
-DECL|function|incomming_call
+multiline_comment|/*============================================================================&n; * Handle X.25 incoming call request.&n; *&t;RFC 1356 establishes the following rules:&n; *&t;1. The first octet in the Call User Data (CUD) field of the call&n; *&t;   request packet contains NLPID identifying protocol encapsulation.&n; *&t;2. Calls MUST NOT be accepted unless router supports requested&n; *&t;   protocol encapsulation.&n; *&t;3. A diagnostic code 249 defined by ISO/IEC 8208 may be used when&n; *&t;   clearing a call because protocol encapsulation is not supported.&n; *&t;4. If an incoming call is received while a call request is pending&n; *&t;   (i.e. call collision has occurred), the incoming call shall be&n; *&t;   rejected and call request shall be retried.&n; */
+DECL|function|incoming_call
 r_static
 r_int
-id|incomming_call
+id|incoming_call
 (paren
 id|sdla_t
 op_star
@@ -6651,7 +6651,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: X.25 incomming call collision on LCN %d!&bslash;n&quot;
+l_string|&quot;%s: X.25 incoming call collision on LCN %d!&bslash;n&quot;
 comma
 id|card-&gt;devname
 comma
@@ -6687,7 +6687,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: X.25 incomming call on LCN %d with D-bit set!&bslash;n&quot;
+l_string|&quot;%s: X.25 incoming call on LCN %d with D-bit set!&bslash;n&quot;
 comma
 id|card-&gt;devname
 comma
@@ -6736,7 +6736,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: not enough memory to parse X.25 incomming call &quot;
+l_string|&quot;%s: not enough memory to parse X.25 incoming call &quot;
 l_string|&quot;on LCN %d!&bslash;n&quot;
 comma
 id|card-&gt;devname
@@ -6772,7 +6772,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: X.25 incomming call on LCN %d! Call data: %s&bslash;n&quot;
+l_string|&quot;%s: X.25 incoming call on LCN %d! Call data: %s&bslash;n&quot;
 comma
 id|card-&gt;devname
 comma
@@ -6829,7 +6829,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* If just an &squot;@&squot; is specified, accept all incomming calls */
+multiline_comment|/* If just an &squot;@&squot; is specified, accept all incoming calls */
 r_if
 c_cond
 (paren
@@ -6890,7 +6890,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: no user data in incomming call on LCN %d!&bslash;n&quot;
+l_string|&quot;%s: no user data in incoming call on LCN %d!&bslash;n&quot;
 comma
 id|card-&gt;devname
 comma
@@ -6968,7 +6968,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: unsupported NLPID 0x%02X in incomming call &quot;
+l_string|&quot;%s: unsupported NLPID 0x%02X in incoming call &quot;
 l_string|&quot;on LCN %d!&bslash;n&quot;
 comma
 id|card-&gt;devname

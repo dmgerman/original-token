@@ -47,7 +47,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|con_deinit
-r_int
+r_void
 (paren
 op_star
 id|con_deinit
@@ -59,7 +59,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|con_clear
-r_int
+r_void
 (paren
 op_star
 id|con_clear
@@ -79,7 +79,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|con_putc
-r_int
+r_void
 (paren
 op_star
 id|con_putc
@@ -97,7 +97,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|con_putcs
-r_int
+r_void
 (paren
 op_star
 id|con_putcs
@@ -119,7 +119,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|con_cursor
-r_int
+r_void
 (paren
 op_star
 id|con_cursor
@@ -133,7 +133,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|con_scroll
-r_int
+r_void
 (paren
 op_star
 id|con_scroll
@@ -153,7 +153,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|con_bmove
-r_int
+r_void
 (paren
 op_star
 id|con_bmove
@@ -254,6 +254,20 @@ r_char
 op_star
 )paren
 suffix:semicolon
+DECL|member|con_scrolldelta
+r_int
+(paren
+op_star
+id|con_scrolldelta
+)paren
+(paren
+r_struct
+id|vc_data
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -262,6 +276,24 @@ id|consw
 op_star
 id|conswitchp
 suffix:semicolon
+r_extern
+r_struct
+id|consw
+id|fb_con
+suffix:semicolon
+multiline_comment|/* frame buffer based console */
+r_extern
+r_struct
+id|consw
+id|vga_con
+suffix:semicolon
+multiline_comment|/* VGA text console */
+r_extern
+r_struct
+id|consw
+id|compat_con
+suffix:semicolon
+multiline_comment|/* console wrapper */
 multiline_comment|/* flag bits */
 DECL|macro|CON_INITED
 mdefine_line|#define CON_INITED  (1)
@@ -483,5 +515,14 @@ id|console
 op_star
 id|console_drivers
 suffix:semicolon
+multiline_comment|/* VEA Blanking Levels */
+DECL|macro|VESA_NO_BLANKING
+mdefine_line|#define VESA_NO_BLANKING        0
+DECL|macro|VESA_VSYNC_SUSPEND
+mdefine_line|#define VESA_VSYNC_SUSPEND      1
+DECL|macro|VESA_HSYNC_SUSPEND
+mdefine_line|#define VESA_HSYNC_SUSPEND      2
+DECL|macro|VESA_POWERDOWN
+mdefine_line|#define VESA_POWERDOWN          3
 macro_line|#endif /* linux/console.h */
 eof

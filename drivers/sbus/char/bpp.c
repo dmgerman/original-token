@@ -43,7 +43,7 @@ id|dev_name
 op_assign
 l_string|&quot;bpp&quot;
 suffix:semicolon
-multiline_comment|/* When switching from compatability to a mode where I can read, try&n;   the following mode first. */
+multiline_comment|/* When switching from compatibility to a mode where I can read, try&n;   the following mode first. */
 multiline_comment|/* const unsigned char DEFAULT_ECP = 0x10; */
 DECL|variable|DEFAULT_ECP
 r_static

@@ -2272,7 +2272,7 @@ suffix:semicolon
 multiline_comment|/* CSR9: CRD Filter Control. */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Sable other cpu error frame - sable pfms section 3.43&n; */
+multiline_comment|/*&n; * Sable other CPU error frame - sable pfms section 3.43&n; */
 DECL|struct|el_t2_data_other_cpu
 r_struct
 id|el_t2_data_other_cpu
@@ -2387,7 +2387,7 @@ suffix:semicolon
 multiline_comment|/* CSR 15 */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Sable other cpu error frame - sable pfms section 3.44&n; */
+multiline_comment|/*&n; * Sable other CPU error frame - sable pfms section 3.44&n; */
 DECL|struct|el_t2_data_t2
 r_struct
 id|el_t2_data_t2

@@ -18,9 +18,7 @@ macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#ifdef CONFIG_ABSTRACT_CONSOLE
 macro_line|#include &lt;linux/console.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
@@ -909,7 +907,6 @@ comma
 l_string|&quot;dma2&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ABSTRACT_CONSOLE
 macro_line|#ifdef CONFIG_VGA_CONSOLE
 id|conswitchp
 op_assign
@@ -917,6 +914,13 @@ op_amp
 id|vga_con
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ABSCON_COMPAT
+multiline_comment|/* Console wrapper */
+id|conswitchp
+op_assign
+op_amp
+id|compat_con
+suffix:semicolon
 macro_line|#endif
 )brace
 eof

@@ -2026,6 +2026,7 @@ c_func
 id|cfdarg.charheight
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *  ++Geert: vc_resize_con() will take note of the&n;&t;&t;&t; *&t;     changed screen size, if necessary&n;&t;&t;&t; */
 r_return
 (paren
 id|i
@@ -2036,13 +2037,7 @@ ques
 c_cond
 id|i
 suffix:colon
-id|kd_size_changed
-c_func
-(paren
-id|i
-comma
 l_int|0
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -4495,21 +4490,7 @@ c_func
 id|default_font_height
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OG
-l_int|0
-)paren
-id|kd_size_changed
-c_func
-(paren
-id|i
-comma
-l_int|0
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *  ++Geert: vc_resize_con() will take note of the&n;&t;&t;&t; *&t;     changed screen size, if necessary&n;&t;&t;&t; */
 id|con_set_default_unimap
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel IO-APIC support for multi-pentium hosts.&n; *&n; *&t;Copyright (C) 1997, 1998 Ingo Molnar, Hajnalka Szabo&n; *&n; *&t;Many thanks to Stig Venaas for trying out countless experimental&n; *&t;patches and reporting/debugging problems patiently!&n; */
+multiline_comment|/*&n; *&t;Intel IO-APIC support for multi-Pentium hosts.&n; *&n; *&t;Copyright (C) 1997, 1998 Ingo Molnar, Hajnalka Szabo&n; *&n; *&t;Many thanks to Stig Venaas for trying out countless experimental&n; *&t;patches and reporting/debugging problems patiently!&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -356,7 +356,7 @@ op_assign
 id|value
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Syncronize the IO-APIC and the CPU by doing&n; * a dummy read from the IO-APIC&n; */
+multiline_comment|/*&n; * Synchronize the IO-APIC and the CPU by doing&n; * a dummy read from the IO-APIC&n; */
 DECL|function|io_apic_sync
 r_static
 r_inline
@@ -810,7 +810,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * support for broken MP BIOSes, enables hand-redirection of PIRQ0-7 to&n; * specific CPU-side IRQs.&n; */
+multiline_comment|/*&n; * support for broken MP BIOSs, enables hand-redirection of PIRQ0-7 to&n; * specific CPU-side IRQs.&n; */
 DECL|macro|MAX_PIRQS
 mdefine_line|#define MAX_PIRQS 8
 DECL|variable|pirq_entries
@@ -970,7 +970,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Find the irq entry nr of a certain pin.&n; */
+multiline_comment|/*&n; * Find the IRQ entry number of a certain pin.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1975,7 +1975,7 @@ id|idx
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * nonexistant IRQs are edge default&n;&t; */
+multiline_comment|/*&n;&t; * nonexistent IRQs are edge default&n;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -2513,7 +2513,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;nr of MP irq sources: %d.&bslash;n&quot;
+l_string|&quot;number of MP IRQ sources: %d.&bslash;n&quot;
 comma
 id|mp_irq_entries
 )paren
@@ -2521,7 +2521,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;nr of IO-APIC registers: %d.&bslash;n&quot;
+l_string|&quot;number of IO-APIC registers: %d.&bslash;n&quot;
 comma
 id|nr_ioapic_registers
 )paren
@@ -2568,7 +2568,7 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We are a bit conservative about what we expect, we have to&n;&t; * know about every HW change ASAP ...&n;&t; */
+multiline_comment|/*&n;&t; * We are a bit conservative about what we expect.  We have to&n;&t; * know about every hardware change ASAP.&n;&t; */
 id|printk
 c_func
 (paren
@@ -2980,7 +2980,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;enabling Symmetric IO mode ... &quot;
+l_string|&quot;enabling symmetric IO mode... &quot;
 )paren
 suffix:semicolon
 id|outb
@@ -3005,7 +3005,7 @@ c_func
 l_string|&quot;...done.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * The number of IO-APIC irq-registers (== #pins):&n;&t; */
+multiline_comment|/*&n;&t; * The number of IO-APIC IRQ registers (== #pins):&n;&t; */
 (brace
 r_struct
 id|IO_APIC_reg_01
@@ -3064,7 +3064,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;disabling Symmetric IO mode ... &quot;
+l_string|&quot;disabling symmetric IO mode... &quot;
 )paren
 suffix:semicolon
 id|outb_p
@@ -3240,7 +3240,7 @@ r_void
 )paren
 )paren
 (brace
-multiline_comment|/*&n; * Right now, whitelist everything to see whether the new parsing&n; * routines really do work for everybody..&n; */
+multiline_comment|/*&n; * Right now, whitelist everything to see whether the new parsing&n; * routines really do work for everybody.&n; */
 macro_line|#if 1
 r_return
 l_int|1
@@ -3328,7 +3328,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;... changing IO-APIC physical APIC ID to 2 ...&bslash;n&quot;
+l_string|&quot;...changing IO-APIC physical APIC ID to 2...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|reg_00.ID
@@ -3673,7 +3673,7 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Level triggered interrupts can just be masked&n; */
+multiline_comment|/*&n; * Level triggered interrupts can just be masked.&n; */
 DECL|function|enable_level_ioapic_irq
 r_static
 r_void
@@ -3809,7 +3809,7 @@ op_amp
 id|irq_controller_lock
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Edge triggered IRQs can be acked immediately&n;&t; * and do not need to be masked.&n;&t; */
+multiline_comment|/*&n;&t; * Edge triggered IRQs can be acknowledged immediately&n;&t; * and do not need to be masked.&n;&t; */
 id|ack_APIC_irq
 c_func
 (paren
@@ -3823,7 +3823,7 @@ id|desc-&gt;events
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the irq is disabled for whatever reason, we cannot&n;&t; * use the action we have..&n;&t; */
+multiline_comment|/*&n;&t; * If the IRQ is disabled for whatever reason, we cannot&n;&t; * use the action we have.&n;&t; */
 id|action
 op_assign
 l_int|NULL
@@ -3878,7 +3878,7 @@ c_func
 id|cpu
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Edge triggered interrupts need to remember&n;&t; * pending events..&n;&t; */
+multiline_comment|/*&n;&t; * Edge triggered interrupts need to remember&n;&t; * pending events.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3995,7 +3995,7 @@ id|desc-&gt;ipi
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the irq is disabled for whatever reason, we must&n;&t; * not enter the irq action.&n;&t; */
+multiline_comment|/*&n;&t; * If the IRQ is disabled for whatever reason, we must&n;&t; * not enter the IRQ action.&n;&t; */
 id|action
 op_assign
 l_int|NULL
@@ -4097,7 +4097,7 @@ id|cpu
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Level and edge triggered IO-APIC interrupts need different handling,&n; * so we use two separate irq descriptors. edge triggered IRQs can be&n; * handled with the level-triggered descriptor, but that one has slightly&n; * more overhead. Level-triggered interrupts cannot be handled with the&n; * edge-triggered handler, without risking IRQ storms and other ugly&n; * races.&n; */
+multiline_comment|/*&n; * Level and edge triggered IO-APIC interrupts need different handling,&n; * so we use two separate IRQ descriptors. Edge triggered IRQs can be&n; * handled with the level-triggered descriptor, but that one has slightly&n; * more overhead. Level-triggered interrupts cannot be handled with the&n; * edge-triggered handler, without risking IRQ storms and other ugly&n; * races.&n; */
 DECL|variable|ioapic_edge_irq_type
 r_static
 r_struct
@@ -4141,7 +4141,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * NOTE! The local APIC isn&squot;t very good at handling&n;&t; * multiple interrupts at the same interrupt level.&n;&t; * As the interrupt level is determined by taking the&n;&t; * vector number and shifting that right by 4, we&n;&t; * want to spread these out a bit so that they don&squot;t&n;&t; * all fall in the same interrupt level&n;&t; *&n;&t; * also, we&squot;ve got to be careful not to trash gate&n;&t; * 0x80, because int 0x80 is hm, kindof importantish ;)&n;&t; */
+multiline_comment|/*&n;&t; * NOTE! The local APIC isn&squot;t very good at handling&n;&t; * multiple interrupts at the same interrupt level.&n;&t; * As the interrupt level is determined by taking the&n;&t; * vector number and shifting that right by 4, we&n;&t; * want to spread these out a bit so that they don&squot;t&n;&t; * all fall in the same interrupt level.&n;&t; *&n;&t; * Also, we&squot;ve got to be careful not to trash gate&n;&t; * 0x80, because int 0x80 is hm, kind of importantish. ;)&n;&t; */
 r_for
 c_loop
 (paren
@@ -4234,7 +4234,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * This code may look a bit paranoid, but it&squot;s supposed to cooperate with&n; * a wide range of boards and BIOS bugs ... fortunately only the timer IRQ&n; * is so screwy. Thanks to Brian Perkins for testing/hacking this beast&n; * fanatically on his truly bugged board.&n; */
+multiline_comment|/*&n; * This code may look a bit paranoid, but it&squot;s supposed to cooperate with&n; * a wide range of boards and BIOS bugs.  Fortunately only the timer IRQ&n; * is so screwy.  Thanks to Brian Perkins for testing/hacking this beast&n; * fanatically on his truly buggy board.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -4292,7 +4292,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;..trying to set up timer as ExtINT ... &quot;
+l_string|&quot;...trying to set up timer as ExtINT... &quot;
 )paren
 suffix:semicolon
 r_if
@@ -4342,7 +4342,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;..trying to set up timer as BP irq ...&quot;
+l_string|&quot;...trying to set up timer as BP IRQ...&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Just in case ...&n;&t;&t;&t; */
@@ -4396,7 +4396,7 @@ suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;IO-APIC + timer doesnt work!&quot;
+l_string|&quot;IO-APIC + timer doesn&squot;t work!&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4501,7 +4501,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If there are no explicit mp irq entries: it&squot;s either one of the&n;&t; * default configuration types or we are broken. In both cases it&squot;s&n;&t; * fine to set up most of the low 16 IO-APIC pins to ISA defaults.&n;&t; */
+multiline_comment|/*&n;&t; * If there are no explicit MP IRQ entries, it&squot;s either one of the&n;&t; * default configuration types or we are broken. In both cases it&squot;s&n;&t; * fine to set up most of the low 16 IO-APIC pins to ISA defaults.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4526,7 +4526,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set up the IO-APIC irq routing table by parsing the MP-BIOS&n;&t; * mptable:&n;&t; */
+multiline_comment|/*&n;&t; * Set up the IO-APIC IRQ routing table by parsing the MP-BIOS&n;&t; * mptable:&n;&t; */
 id|setup_IO_APIC_irqs
 (paren
 )paren

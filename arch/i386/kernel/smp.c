@@ -58,7 +58,7 @@ r_int
 id|cpu
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Some notes on processor bugs:&n; *&n; *&t;Pentium and Pentium Pro (and all CPU&squot;s) have bugs. The Linux issues&n; *&t;for SMP are handled as follows.&n; *&n; *&t;Pentium Pro&n; *&t;&t;Occasional delivery of &squot;spurious interrupt&squot; as trap #16. This&n; *&t;is very very rare. The kernel logs the event and recovers&n; *&n; *&t;Pentium&n; *&t;&t;There is a marginal case where REP MOVS on 100MHz SMP&n; *&t;machines with B stepping processors can fail. XXX should provide&n; *&t;an L1cache=Writethrough or L1cache=off option.&n; *&n; *&t;&t;B stepping CPU&squot;s may hang. There are hardware work arounds&n; *&t;for this. We warn about it in case your board doesnt have the work&n; *&t;arounds. Basically thats so I can tell anyone with a B stepping&n; *&t;CPU and SMP problems &quot;tough&quot;.&n; *&n; *&t;Specific items [From Pentium Processor Specification Update]&n; *&n; *&t;1AP.&t;Linux doesn&squot;t use remote read&n; *&t;2AP.&t;Linux doesn&squot;t trust APIC errors&n; *&t;3AP.&t;We work around this&n; *&t;4AP.&t;Linux never generated 3 interrupts of the same priority&n; *&t;&t;to cause a lost local interrupt.&n; *&t;5AP.&t;Remote read is never used&n; *&t;9AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;10AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;11AP.&t;Linux reads the APIC between writes to avoid this, as per&n; *&t;&t;the documentation. Make sure you preserve this as it affects&n; *&t;&t;the C stepping chips too.&n; *&n; *&t;If this sounds worrying believe me these bugs are ___RARE___ and&n; *&t;there&squot;s about nothing of note with C stepping upwards.&n; */
+multiline_comment|/*&n; *&t;Some notes on processor bugs:&n; *&n; *&t;Pentium and Pentium Pro (and all CPUs) have bugs. The Linux issues&n; *&t;for SMP are handled as follows.&n; *&n; *&t;Pentium Pro&n; *&t;&t;Occasional delivery of &squot;spurious interrupt&squot; as trap #16. This&n; *&t;is very rare. The kernel logs the event and recovers&n; *&n; *&t;Pentium&n; *&t;&t;There is a marginal case where REP MOVS on 100MHz SMP&n; *&t;machines with B stepping processors can fail. XXX should provide&n; *&t;an L1cache=Writethrough or L1cache=off option.&n; *&n; *&t;&t;B stepping CPUs may hang. There are hardware work arounds&n; *&t;for this. We warn about it in case your board doesnt have the work&n; *&t;arounds. Basically thats so I can tell anyone with a B stepping&n; *&t;CPU and SMP problems &quot;tough&quot;.&n; *&n; *&t;Specific items [From Pentium Processor Specification Update]&n; *&n; *&t;1AP.&t;Linux doesn&squot;t use remote read&n; *&t;2AP.&t;Linux doesn&squot;t trust APIC errors&n; *&t;3AP.&t;We work around this&n; *&t;4AP.&t;Linux never generated 3 interrupts of the same priority&n; *&t;&t;to cause a lost local interrupt.&n; *&t;5AP.&t;Remote read is never used&n; *&t;9AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;10AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;11AP.&t;Linux reads the APIC between writes to avoid this, as per&n; *&t;&t;the documentation. Make sure you preserve this as it affects&n; *&t;&t;the C stepping chips too.&n; *&n; *&t;If this sounds worrying believe me these bugs are ___RARE___ and&n; *&t;there&squot;s about nothing of note with C stepping upwards.&n; */
 multiline_comment|/*&n; *&t;Why isn&squot;t this somewhere standard ??&n; */
 DECL|function|max
 r_extern
@@ -121,14 +121,14 @@ id|cpu_present_map
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Bitmask of existing CPU&squot;s &t;&t;&t;&t;*/
+multiline_comment|/* Bitmask of existing CPUs &t;&t;&t;&t;*/
 DECL|variable|smp_num_cpus
 r_int
 id|smp_num_cpus
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Total count of live CPU&squot;s &t;&t;&t;&t;*/
+multiline_comment|/* Total count of live CPUs &t;&t;&t;&t;*/
 DECL|variable|smp_threads_ready
 r_int
 id|smp_threads_ready
@@ -182,7 +182,7 @@ r_int
 r_int
 id|kstack_ptr
 suffix:semicolon
-multiline_comment|/* Stack vector for booting CPU&squot;s&t;&t;&t;*/
+multiline_comment|/* Stack vector for booting CPUs&t;&t;&t;*/
 DECL|variable|cpu_data
 r_struct
 id|cpuinfo_x86
@@ -191,7 +191,7 @@ id|cpu_data
 id|NR_CPUS
 )braket
 suffix:semicolon
-multiline_comment|/* Per cpu bogomips and other parameters &t;&t;*/
+multiline_comment|/* Per CPU bogomips and other parameters &t;&t;*/
 DECL|variable|num_processors
 r_static
 r_int
@@ -302,7 +302,7 @@ r_int
 r_int
 id|ipi_count
 suffix:semicolon
-multiline_comment|/* Number of IPI&squot;s delivered&t;&t;&t;&t;*/
+multiline_comment|/* Number of IPIs delivered&t;&t;&t;&t;*/
 DECL|variable|smp_proc_in_lock
 r_volatile
 r_int
@@ -1409,7 +1409,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: Multiple APIC&squot;s not supported.&bslash;n&quot;
+l_string|&quot;Warning: Multiple APICs not supported.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1598,7 +1598,7 @@ op_assign
 l_int|0xFEE00000
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;We need to know what the local&n;&t;&t;&t;&t;&t; *&t;APIC id of the boot CPU is!&n;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n; *&n; *&t;HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK&n; *&n; *&t;It&squot;s not just a crazy hack...  ;-)&n; */
+multiline_comment|/*&n; *&n; *&t;HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK&n; *&n; *&t;It&squot;s not just a crazy hack.  ;-)&n; */
 multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Standard page mapping&n;&t;&t;&t;&t;&t; *&t;functions don&squot;t work yet.&n;&t;&t;&t;&t;&t; *&t;We know that page 0 is not&n;&t;&t;&t;&t;&t; *&t;used.  Steal it for now!&n;&t;&t;&t;&t;&t; */
 id|cfg
 op_assign
@@ -2037,7 +2037,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Remember we have B step Pentia with bugs */
 )brace
-multiline_comment|/*&n; *&t;Architecture specific routine called by the kernel just before init is&n; *&t;fired off. This allows the BP to have everything in order [we hope].&n; *&t;At the end of this all the AP&squot;s will hit the system scheduling and off&n; *&t;we go. Each AP will load the system gdt&squot;s and jump through the kernel&n; *&t;init into idle(). At this point the scheduler will one day take over&n; * &t;and give them jobs to do. smp_callin is a standard routine&n; *&t;we use to track CPU&squot;s as they power up.&n; */
+multiline_comment|/*&n; *&t;Architecture specific routine called by the kernel just before init is&n; *&t;fired off. This allows the BP to have everything in order [we hope].&n; *&t;At the end of this all the APs will hit the system scheduling and off&n; *&t;we go. Each AP will load the system gdt&squot;s and jump through the kernel&n; *&t;init into idle(). At this point the scheduler will one day take over&n; * &t;and give them jobs to do. smp_callin is a standard routine&n; *&t;we use to track CPUs as they power up.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2050,7 +2050,7 @@ r_void
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Lets the callin&squot;s below out of their loop.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Lets the callins below out of their loop.&n;&t; */
 id|SMP_PRINTK
 c_func
 (paren
@@ -2335,7 +2335,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Everything has been set up for the secondary&n; * CPU&squot;s - they just need to reload everything&n; * from the task structure&n; */
+multiline_comment|/*&n; * Everything has been set up for the secondary&n; * CPUs - they just need to reload everything&n; * from the task structure&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -3326,7 +3326,7 @@ id|prof_counter
 id|NR_CPUS
 )braket
 suffix:semicolon
-multiline_comment|/*&n; *&t;Cycle through the processors sending APIC IPI&squot;s to boot each.&n; */
+multiline_comment|/*&n; *&t;Cycle through the processors sending APIC IPIs to boot each.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -3353,7 +3353,7 @@ id|mtrr_init_boot_cpu
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; *&t;Initialize the logical to physical cpu number mapping&n;&t; *&t;and the per-CPU profiling counter/multiplier&n;&t; */
+multiline_comment|/*&n;&t; *&t;Initialize the logical to physical CPU number mapping&n;&t; *&t;and the per-CPU profiling counter/multiplier&n;&t; */
 r_for
 c_loop
 (paren
@@ -3582,7 +3582,7 @@ id|setup_APIC_clock
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Now scan the cpu present map and fire up the other CPUs.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Now scan the CPU present map and fire up the other CPUs.&n;&t; */
 id|SMP_PRINTK
 c_func
 (paren
@@ -4015,7 +4015,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * A non wait message cannot pass data or cpu source info. This current setup&n; * is only safe because the kernel lock owner is the only person who can send&n; * a message.&n; *&n; * Wrapping this whole block in a spinlock is not the safe answer either. A&n; * processor may get stuck with irq&squot;s off waiting to send a message and thus&n; * not replying to the person spinning for a reply....&n; *&n; * In the end flush tlb ought to be the NMI and a very very short function&n; * (to avoid the old IDE disk problems), and other messages sent with IRQ&squot;s&n; * enabled in a civilised fashion. That will also boost performance.&n; */
+multiline_comment|/*&n; * A non wait message cannot pass data or CPU source info. This current setup&n; * is only safe because the kernel lock owner is the only person who can send&n; * a message.&n; *&n; * Wrapping this whole block in a spinlock is not the safe answer either. A&n; * processor may get stuck with IRQs off waiting to send a message and thus&n; * not replying to the person spinning for a reply.&n; *&n; * In the end flush tlb ought to be the NMI and a very short function&n; * (to avoid the old IDE disk problems), and other messages sent with IRQs&n; * enabled in a civilised fashion. That will also boost performance.&n; */
 DECL|function|smp_message_pass
 r_void
 id|smp_message_pass
@@ -4146,8 +4146,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Sanity check we don&squot;t re-enter this across CPU&squot;s. Only the kernel&n;&t; * lock holder may send messages. For a STOP_CPU we are bringing the&n;&t; * entire box to the fastest halt we can.. A reschedule carries&n;&t; * no data and can occur during a flush.. guess what panic&n;&t; * I got to notice this bug...&n;&t; */
-multiline_comment|/*&n;&t; *&t;We are busy&n;&t; */
+multiline_comment|/*&n;&t; * Sanity check we don&squot;t re-enter this across CPUs.  Only the kernel&n;&t; * lock holder may send messages.  For a STOP_CPU we are bringing the&n;&t; * entire box to the fastest halt we can.  A reschedule carries&n;&t; * no data and can occur during a flush.  Guess what panic&n;&t; * I got to notice this bug.&n;&t; */
+multiline_comment|/*&n;&t; *&t;We are busy.&n;&t; */
 id|smp_cpu_in_msg
 (braket
 id|p
@@ -4155,7 +4155,7 @@ id|p
 op_increment
 suffix:semicolon
 multiline_comment|/*&t;printk(&quot;SMP message pass #%d to %d of %d&bslash;n&quot;,&n;&t;&t;p, msg, target);*/
-multiline_comment|/*&n;&t; * Wait for the APIC to become ready - this should never occur. Its&n;&t; * a debugging check really.&n;&t; */
+multiline_comment|/*&n;&t; * Wait for the APIC to become ready - this should never occur. It&squot;s&n;&t; * a debugging check really.&n;&t; */
 r_while
 c_loop
 (paren
@@ -4407,7 +4407,7 @@ id|p
 op_decrement
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This is fraught with deadlocks. Linus does a flush tlb at a whim&n; *&t;even with IRQ&squot;s off. We have to avoid a pair of crossing flushes&n; *&t;or we are doomed.  See the notes about smp_message_pass.&n; */
+multiline_comment|/*&n; *&t;This is fraught with deadlocks. Linus does a flush tlb at a whim&n; *&t;even with IRQs off. We have to avoid a pair of crossing flushes&n; *&t;or we are doomed.  See the notes about smp_message_pass.&n; */
 DECL|function|smp_flush_tlb
 r_void
 id|smp_flush_tlb
@@ -4699,7 +4699,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We take the &squot;long&squot; return path, and there every subsystem&n;&t; * grabs the apropriate locks (kernel lock/ irq lock).&n;&t; *&n;&t; * we might want to decouple profiling from the &squot;long path&squot;,&n;&t; * and do the profiling totally in assembly.&n;&t; *&n;&t; * Currently this isnt too much of an issue (performance wise),&n;&t; * we can take more than 100K local irqs per second on a 100 MHz P5.&n;&t; */
+multiline_comment|/*&n;&t; * We take the &squot;long&squot; return path, and there every subsystem&n;&t; * grabs the apropriate locks (kernel lock/ irq lock).&n;&t; *&n;&t; * we might want to decouple profiling from the &squot;long path&squot;,&n;&t; * and do the profiling totally in assembly.&n;&t; *&n;&t; * Currently this isn&squot;t too much of an issue (performance wise),&n;&t; * we can take more than 100K local irqs per second on a 100 MHz P5.&n;&t; */
 )brace
 multiline_comment|/*&n; * Local APIC timer interrupt. This is the most natural way for doing&n; * local interrupts, but local timer interrupts can be emulated by&n; * broadcast interrupts too. [in case the hw doesnt support APIC timers]&n; *&n; * [ if a single-CPU system runs an SMP kernel then we call the local&n; *   interrupt as well. Thus we cannot inline the local irq ... ]&n; */
 DECL|function|smp_apic_timer_interrupt
@@ -5106,7 +5106,7 @@ id|curr_count
 op_minus
 id|prev_count
 suffix:semicolon
-multiline_comment|/*&n;&t; * This limit for delta seems arbitrary, but it isnt, it&squot;s&n;&t; * slightly above the level of error a buggy Mercury/Neptune&n;&t; * chipset timer can cause.&n;&t; */
+multiline_comment|/*&n;&t; * This limit for delta seems arbitrary, but it isn&squot;t, it&squot;s&n;&t; * slightly above the level of error a buggy Mercury/Neptune&n;&t; * chipset timer can cause.&n;&t; */
 )brace
 r_while
 c_loop
@@ -5182,7 +5182,7 @@ id|APIC_TMCCT
 suffix:semicolon
 DECL|macro|LOOPS
 mdefine_line|#define LOOPS (HZ/10)
-multiline_comment|/*&n;&t; * let&squot;s wait LOOPS wraprounds:&n;&t; */
+multiline_comment|/*&n;&t; * Let&squot;s wait LOOPS wraprounds:&n;&t; */
 r_for
 c_loop
 (paren

@@ -160,6 +160,28 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+DECL|member|cursor
+r_void
+(paren
+op_star
+id|cursor
+)paren
+(paren
+r_struct
+id|display
+op_star
+id|p
+comma
+r_int
+id|mode
+comma
+r_int
+id|xx
+comma
+r_int
+id|yy
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Attribute Decoding&n;     */
@@ -172,11 +194,13 @@ DECL|macro|attr_bgcol_ec
 mdefine_line|#define&t;attr_bgcol_ec(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_video_erase_char &gt;&gt; ((p)-&gt;inverse ? 8 : 12)) &amp; 0x0f)
 multiline_comment|/* Monochrome */
 DECL|macro|attr_bold
-mdefine_line|#define attr_bold(p,conp)     &bslash;&n;&t;(((conp)-&gt;vc_attr &amp; 3) == 2)
+mdefine_line|#define attr_bold(p,conp) &bslash;&n;&t;((conp)-&gt;vc_attr &amp; 2)
 DECL|macro|attr_reverse
-mdefine_line|#define attr_reverse(p,conp)  &bslash;&n;&t;(((conp)-&gt;vc_attr &amp; 8) ^ ((p)-&gt;inverse ? 8 : 0))
+mdefine_line|#define attr_reverse(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_attr &amp; 8) ^ ((p)-&gt;inverse ? 8 : 0))
 DECL|macro|attr_underline
-mdefine_line|#define attr_underline(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_attr) &amp; 4)
+mdefine_line|#define attr_underline(p,conp) &bslash;&n;&t;((conp)-&gt;vc_attr &amp; 4)
+DECL|macro|attr_blink
+mdefine_line|#define attr_blink(p,conp) &bslash;&n;&t;((conp)-&gt;vc_attr &amp; 0x80)
 multiline_comment|/* ================================================================= */
 multiline_comment|/*                      Utility Assembler Functions                  */
 multiline_comment|/* ================================================================= */
@@ -1018,6 +1042,184 @@ id|count
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __i386__
+DECL|function|fast_memmove
+r_static
+id|__inline__
+r_void
+id|fast_memmove
+c_func
+(paren
+r_void
+op_star
+id|d
+comma
+r_const
+r_void
+op_star
+id|s
+comma
+r_int
+id|count
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|d
+OL
+id|s
+)paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;cld&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $1,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;jnc 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movsb&bslash;n&quot;
+l_string|&quot;1:&bslash;tshrl $1,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;jnc 2f&bslash;n&bslash;t&quot;
+l_string|&quot;movsw&bslash;n&quot;
+l_string|&quot;2:&bslash;trep&bslash;n&bslash;t&quot;
+l_string|&quot;movsl&quot;
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
+l_string|&quot;c&quot;
+(paren
+id|count
+)paren
+comma
+l_string|&quot;D&quot;
+(paren
+(paren
+r_int
+)paren
+id|d
+)paren
+comma
+l_string|&quot;S&quot;
+(paren
+(paren
+r_int
+)paren
+id|s
+)paren
+suffix:colon
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;di&quot;
+comma
+l_string|&quot;si&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;std&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $1,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;jnc 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movb 3(%%esi),%%al&bslash;n&bslash;t&quot;
+l_string|&quot;movb %%al,3(%%edi)&bslash;n&bslash;t&quot;
+l_string|&quot;decl %%esi&bslash;n&bslash;t&quot;
+l_string|&quot;decl %%edi&bslash;n&quot;
+l_string|&quot;1:&bslash;tshrl $1,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;jnc 2f&bslash;n&bslash;t&quot;
+l_string|&quot;movw 2(%%esi),%%ax&bslash;n&bslash;t&quot;
+l_string|&quot;movw %%ax,2(%%edi)&bslash;n&bslash;t&quot;
+l_string|&quot;decl %%esi&bslash;n&bslash;t&quot;
+l_string|&quot;decl %%edi&bslash;n&bslash;t&quot;
+l_string|&quot;decl %%esi&bslash;n&bslash;t&quot;
+l_string|&quot;decl %%edi&bslash;n&quot;
+l_string|&quot;2:&bslash;trep&bslash;n&bslash;t&quot;
+l_string|&quot;movsl&quot;
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
+l_string|&quot;c&quot;
+(paren
+id|count
+)paren
+comma
+l_string|&quot;D&quot;
+(paren
+id|count
+op_minus
+l_int|4
+op_plus
+(paren
+r_int
+)paren
+id|d
+)paren
+comma
+l_string|&quot;S&quot;
+(paren
+id|count
+op_minus
+l_int|4
+op_plus
+(paren
+r_int
+)paren
+id|s
+)paren
+suffix:colon
+l_string|&quot;ax&quot;
+comma
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;di&quot;
+comma
+l_string|&quot;si&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|mymemmove
+r_static
+id|__inline__
+r_void
+op_star
+id|mymemmove
+c_func
+(paren
+r_char
+op_star
+id|dst
+comma
+r_const
+r_char
+op_star
+id|src
+comma
+r_int
+id|size
+)paren
+(brace
+id|fast_memmove
+c_func
+(paren
+id|dst
+comma
+id|src
+comma
+id|size
+)paren
+suffix:semicolon
+r_return
+id|dst
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|function|mymemmove
 r_static
 id|__inline__
@@ -1082,6 +1284,7 @@ id|size
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;/* !i386 */
 macro_line|#endif /* !m68k */
 macro_line|#endif /* __VIDEO_FBCON_H */
 eof

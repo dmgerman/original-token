@@ -316,7 +316,7 @@ mdefine_line|#define AF_AX25&t;&t;3&t;/* Amateur Radio AX.25 &t;&t;*/
 DECL|macro|AF_IPX
 mdefine_line|#define AF_IPX&t;&t;4&t;/* Novell IPX &t;&t;&t;*/
 DECL|macro|AF_APPLETALK
-mdefine_line|#define AF_APPLETALK&t;5&t;/* Appletalk DDP &t;&t;*/
+mdefine_line|#define AF_APPLETALK&t;5&t;/* AppleTalk DDP &t;&t;*/
 DECL|macro|AF_NETROM
 mdefine_line|#define AF_NETROM&t;6&t;/* Amateur Radio NET/ROM &t;*/
 DECL|macro|AF_BRIDGE

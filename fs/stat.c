@@ -267,7 +267,7 @@ op_assign
 id|inode-&gt;i_ctime
 suffix:semicolon
 multiline_comment|/*&n; * st_blocks and st_blksize are approximated with a simple algorithm if&n; * they aren&squot;t supported directly by the filesystem. The minix and msdos&n; * filesystems don&squot;t keep track of blocks, so they would either have to&n; * be counted explicitly (by delving into the file itself), or by using&n; * this simple algorithm to get a reasonable (although not 100% accurate)&n; * value.&n; */
-multiline_comment|/*&n; * Use minix fs values for the number of direct and indirect blocks.  The&n; * count is now exact for the minix fs except that it counts zero blocks.&n; * Everything is in BLOCK_SIZE&squot;d units until the assignment to&n; * tmp.st_blksize.&n; */
+multiline_comment|/*&n; * Use minix fs values for the number of direct and indirect blocks.  The&n; * count is now exact for the minix fs except that it counts zero blocks.&n; * Everything is in units of BLOCK_SIZE until the assignment to&n; * tmp.st_blksize.&n; */
 DECL|macro|D_B
 mdefine_line|#define D_B   7
 DECL|macro|I_B

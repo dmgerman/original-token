@@ -18,9 +18,7 @@ macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#ifdef CONFIG_ABSTRACT_CONSOLE
 macro_line|#include &lt;linux/console.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1037,6 +1035,14 @@ id|conswitchp
 op_assign
 op_amp
 id|fb_con
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ABSCON_COMPAT
+multiline_comment|/* Console wrapper */
+id|conswitchp
+op_assign
+op_amp
+id|compat_con
 suffix:semicolon
 macro_line|#endif
 )brace

@@ -56,6 +56,11 @@ id|p
 (brace
 id|p-&gt;next_line
 op_assign
+id|p-&gt;line_length
+ques
+c_cond
+id|p-&gt;line_length
+suffix:colon
 id|p-&gt;var.xres_virtual
 op_lshift
 l_int|1
@@ -1225,6 +1230,8 @@ comma
 id|fbcon_cfb16_putcs
 comma
 id|fbcon_cfb16_revc
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Visible symbols for modules&n;     */

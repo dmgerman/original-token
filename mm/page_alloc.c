@@ -197,7 +197,7 @@ id|page_alloc_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/*&n; * This routine is used by the kernel swap deamon to determine&n; * whether we have &quot;enough&quot; free pages. It is fairly arbitrary,&n; * but this had better return false if any reasonable &quot;get_free_page()&quot;&n; * allocation could currently fail..&n; *&n; * This will return zero if no list was found, non-zero&n; * if there was memory (the bigger, the better).&n; */
+multiline_comment|/*&n; * This routine is used by the kernel swap daemon to determine&n; * whether we have &quot;enough&quot; free pages. It is fairly arbitrary,&n; * but this had better return false if any reasonable &quot;get_free_page()&quot;&n; * allocation could currently fail..&n; *&n; * This will return zero if no list was found, non-zero&n; * if there was memory (the bigger, the better).&n; */
 DECL|function|free_memory_available
 r_int
 id|free_memory_available

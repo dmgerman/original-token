@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * programming the msp34* sound processor family&n; *&n; * (c) 1997,1998 Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt;&n; *&n; * what works and what doesn&squot;t:&n; *&n; *  AM-Mono&n; *      probably doesn&squot;t (untested)&n; *&n; *  FM-Mono&n; *      should work. The stereo modes are backward compatible to FM-mono,&n; *      therefore FM-Mono should be allways available.&n; *&n; *  FM-Stereo (B/G, used in germany)&n; *      should work, with autodetect&n; *&n; *  FM-Stereo (satellite)&n; *      should work, no autodetect (i.e. default is mono, but you can&n; *      switch to stereo -- untested)&n; *&n; *  NICAM (B/G, used in UK, Scandinavia and Spain)&n; *      should work, with autodetect. Support for NICAM was added by&n; *      Pekka Pietikainen &lt;pp@netppl.fi&gt;&n; *&n; *&n; * TODO:&n; *   - better SAT support&n; *&n; */
+multiline_comment|/*&n; * programming the msp34* sound processor family&n; *&n; * (c) 1997,1998 Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt;&n; *&n; * what works and what doesn&squot;t:&n; *&n; *  AM mono&n; *      probably doesn&squot;t (untested)&n; *&n; *  FM-mono&n; *      should work. FM stereo modes are backward-compatible to mono.&n; *      Therefore FM mono should always be available.&n; *&n; *  FM stereo (B/G, used in Germany)&n; *      should work, with autodetect&n; *&n; *  FM stereo (satellite)&n; *      should work, no autodetect (i.e. default is mono, but you can&n; *      switch to stereo -- untested)&n; *&n; *  NICAM (B/G, used in UK, Scandinavia and Spain)&n; *      should work, with autodetect. Support for NICAM was added by&n; *      Pekka Pietikainen &lt;pp@netppl.fi&gt;&n; *&n; *&n; * TODO:&n; *   - better SAT support&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3188,7 +3188,7 @@ id|name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* programm the msp3400 according to the results */
+multiline_comment|/* program the msp3400 according to the results */
 r_switch
 c_cond
 (paren

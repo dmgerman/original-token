@@ -2,7 +2,7 @@ multiline_comment|/*&n; * linux/drivers/video/fonts.c -- `Soft&squot; font defin
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#ifdef __mc68000__
+macro_line|#if defined(__mc68000__) || defined(CONFIG_APUS)
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#endif
 macro_line|#include &quot;font.h&quot;

@@ -1722,7 +1722,7 @@ comma
 id|fattr-&gt;fileid
 )paren
 suffix:semicolon
-multiline_comment|/* Install the filehandle in the dentry */
+multiline_comment|/* Install the file handle in the dentry */
 op_star
 (paren
 (paren

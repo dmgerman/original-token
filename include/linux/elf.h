@@ -232,9 +232,9 @@ mdefine_line|#define AT_GID    13&t;/* real gid */
 DECL|macro|AT_EGID
 mdefine_line|#define AT_EGID   14&t;/* effective gid */
 DECL|macro|AT_PLATFORM
-mdefine_line|#define AT_PLATFORM 15  /* string identifying cpu for optimizations */
+mdefine_line|#define AT_PLATFORM 15  /* string identifying CPU for optimizations */
 DECL|macro|AT_HWCAP
-mdefine_line|#define AT_HWCAP  16    /* arch dependent hints at cpu capabilities */
+mdefine_line|#define AT_HWCAP  16    /* arch dependent hints at CPU capabilities */
 DECL|struct|dynamic
 r_typedef
 r_struct
@@ -396,7 +396,7 @@ DECL|macro|R_SPARC_6
 mdefine_line|#define R_SPARC_6&t;&t;45
 multiline_comment|/* Bits present in AT_HWCAP, primarily for Sparc32.  */
 DECL|macro|HWCAP_SPARC_FLUSH
-mdefine_line|#define HWCAP_SPARC_FLUSH       1       /* The cpu supports flush insn.  */
+mdefine_line|#define HWCAP_SPARC_FLUSH       1    /* CPU supports flush instruction. */
 DECL|macro|HWCAP_SPARC_STBAR
 mdefine_line|#define HWCAP_SPARC_STBAR       2
 DECL|macro|HWCAP_SPARC_SWAP

@@ -2103,7 +2103,7 @@ r_return
 id|inode
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Uhhuh.. We need to expand. Note that &quot;grow_inodes()&quot; will&n;&t; * release the spinlock, but will return with the lock held&n;&t; * again if the allocation succeeded.&n;&t; */
+multiline_comment|/*&n;&t; * We need to expand. Note that &quot;grow_inodes()&quot; will&n;&t; * release the spinlock, but will return with the lock &n;&t; * held again if the allocation succeeded.&n;&t; */
 id|inode
 op_assign
 id|grow_inodes

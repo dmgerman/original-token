@@ -1311,7 +1311,7 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
-multiline_comment|/* for ethernet addresses */
+multiline_comment|/* for Ethernet addresses */
 op_star
 (paren
 r_int

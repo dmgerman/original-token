@@ -2253,7 +2253,7 @@ comma
 multiline_comment|/* not seekable&t;&t;&t;&t;*/
 l_int|0
 comma
-multiline_comment|/* is an ethernet device&t;&t;*/
+multiline_comment|/* is an Ethernet device&t;&t;*/
 l_int|0
 comma
 multiline_comment|/* is a filesystem driver&t;&t;*/

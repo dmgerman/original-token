@@ -384,8 +384,14 @@ mdefine_line|#define downx(x,v)&t;((v) &amp; -(x))
 DECL|macro|modx
 mdefine_line|#define modx(x,v)&t;((v) &amp; ((x)-1))
 multiline_comment|/* if x1 is not a constant, this macro won&squot;t make real sense :-) */
+macro_line|#ifdef __mc68000__
 DECL|macro|DIVUL
 mdefine_line|#define DIVUL(x1, x2) ({int res; asm(&quot;divul %1,%2,%3&quot;: &quot;=d&quot; (res): &bslash;&n;&t;&quot;d&quot; (x2), &quot;d&quot; ((long)((x1)/0x100000000ULL)), &quot;0&quot; ((long)(x1))); res;})
+macro_line|#else
+multiline_comment|/* We know a bit about the numbers, so we can do it this way */
+DECL|macro|DIVUL
+mdefine_line|#define DIVUL(x1, x2) ((((long)((unsigned long long)x1 &gt;&gt; 8) / x2) &lt;&lt; 8) + &bslash;&n;&t;((((long)((unsigned long long)x1 &gt;&gt; 8) % x2) &lt;&lt; 8) / x2))
+macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a, b)&t;((a) &lt; (b) ? (a) : (b))
 DECL|macro|max
@@ -3829,8 +3835,6 @@ id|amifb_set_cmap
 comma
 id|amifb_pan_display
 comma
-l_int|NULL
-comma
 id|amifb_ioctl
 )brace
 suffix:semicolon
@@ -6758,18 +6762,30 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Calculate the Pixel Clock Values for this Machine&n;&t; */
+(brace
+id|u_long
+id|tmp
+op_assign
+id|DIVUL
+c_func
+(paren
+l_float|200E9
+comma
+id|amiga_eclock
+)paren
+suffix:semicolon
 id|pixclock
 (braket
 id|TAG_SHRES
 )braket
 op_assign
-id|DIVUL
-c_func
 (paren
-l_float|25E9
-comma
-id|amiga_eclock
+id|tmp
+op_plus
+l_int|4
 )paren
+op_div
+l_int|8
 suffix:semicolon
 multiline_comment|/* SHRES:  35 ns / 28 MHz */
 id|pixclock
@@ -6777,13 +6793,13 @@ id|pixclock
 id|TAG_HIRES
 )braket
 op_assign
-id|DIVUL
-c_func
 (paren
-l_float|50E9
-comma
-id|amiga_eclock
+id|tmp
+op_plus
+l_int|2
 )paren
+op_div
+l_int|4
 suffix:semicolon
 multiline_comment|/* HIRES:  70 ns / 14 MHz */
 id|pixclock
@@ -6791,15 +6807,16 @@ id|pixclock
 id|TAG_LORES
 )braket
 op_assign
-id|DIVUL
-c_func
 (paren
-l_float|100E9
-comma
-id|amiga_eclock
+id|tmp
+op_plus
+l_int|1
 )paren
+op_div
+l_int|2
 suffix:semicolon
 multiline_comment|/* LORES: 140 ns /  7 MHz */
+)brace
 multiline_comment|/*&n;&t; * Replace the Tag Values with the Real Pixel Clock Values&n;&t; */
 r_if
 c_cond
@@ -10186,8 +10203,19 @@ id|clk_shift
 comma
 id|line_shift
 suffix:semicolon
-r_int
-id|i
+id|memset
+c_func
+(paren
+id|var
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|fb_var_screeninfo
+)paren
+)paren
 suffix:semicolon
 id|clk_shift
 op_assign
@@ -10597,31 +10625,6 @@ id|FB_VMODE_YWRAP
 id|var-&gt;vmode
 op_or_assign
 id|FB_VMODE_YWRAP
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|arraysize
-c_func
-(paren
-id|var-&gt;reserved
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|var-&gt;reserved
-(braket
-id|i
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -12097,12 +12100,13 @@ r_switch
 c_cond
 (paren
 id|do_blank
+op_minus
+l_int|1
 )paren
 (brace
 r_case
-l_int|2
+id|VESA_VSYNC_SUSPEND
 suffix:colon
-multiline_comment|/* suspend vsync */
 id|custom.hsstrt
 op_assign
 id|hsstrt2hw
@@ -12142,9 +12146,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|3
+id|VESA_HSYNC_SUSPEND
 suffix:colon
-multiline_comment|/* suspend hsync */
 id|custom.hsstrt
 op_assign
 id|hsstrt2hw
@@ -12184,9 +12187,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|4
+id|VESA_POWERDOWN
 suffix:colon
-multiline_comment|/* powerdown */
 id|custom.hsstrt
 op_assign
 id|hsstrt2hw

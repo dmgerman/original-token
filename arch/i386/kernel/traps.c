@@ -1445,7 +1445,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Note that we play around with the &squot;TS&squot; bit to hopefully get&n; * the correct behaviour even in the presence of the asynchronous&n; * IRQ13 behaviour&n; */
+multiline_comment|/*&n; * Note that we play around with the &squot;TS&squot; bit in an attempt to get&n; * the correct behaviour even in the presence of the asynchronous&n; * IRQ13 behaviour&n; */
 DECL|function|math_error
 r_void
 id|math_error

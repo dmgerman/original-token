@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the Appletalk aarp protocol for&n; *&t;&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. Potentially we can use&n; *&t;the generic neighbour discovery code to clean this up.&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;separate fast timer for when it is needed.&n; *&t;&t;Use neighbour discovery code.&n; *&t;&t;Token Ring Support.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside Appletalk (2nd Ed).&n; */
+multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the AppleTalk AARP protocol for&n; *&t;&t;&t;Ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. Potentially we can use&n; *&t;the generic neighbour discovery code to clean this up.&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;separate fast timer for when it is needed.&n; *&t;&t;Use neighbour discovery code.&n; *&t;&t;Token Ring Support.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside AppleTalk (2nd Ed).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1458,7 +1458,7 @@ id|skb-&gt;nh.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Check for localtalk first&n;&t; */
+multiline_comment|/*&n;&t; *&t;Check for LocalTalk first&n;&t; */
 r_if
 c_cond
 (paren
@@ -2124,7 +2124,7 @@ id|next
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;This is called by the SNAP driver whenever we see an AARP SNAP&n; *&t;frame. We currently only support ethernet.&n; */
+multiline_comment|/*&n; *&t;This is called by the SNAP driver whenever we see an AARP SNAP&n; *&t;frame. We currently only support Ethernet.&n; */
 DECL|function|aarp_rcv
 r_static
 r_int
@@ -2183,7 +2183,7 @@ id|atalk_iface
 op_star
 id|ifa
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We only do ethernet SNAP AARP&n;&t; */
+multiline_comment|/*&n;&t; *&t;We only do Ethernet SNAP AARP&n;&t; */
 r_if
 c_cond
 (paren

@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_BYTEORDER_SWAB_H
 DECL|macro|_LINUX_BYTEORDER_SWAB_H
 mdefine_line|#define _LINUX_BYTEORDER_SWAB_H
-multiline_comment|/*&n; * linux/byteorder/swab.h&n; * Byteswapping, independently from cpu endianness&n; *&t;swabXX[ps]?(foo)&n; *&n; * Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19971205&n; *    separated swab functions from cpu_to_XX,&n; *    to clean up support for bizarre-endian architectures.&n; *&n; * See asm-i386/byteorder.h and suches for examples of how to provide&n; * architecture-dependent optimized versions&n; *&n; */
+multiline_comment|/*&n; * linux/byteorder/swab.h&n; * Byte-swapping, independently from CPU endianness&n; *&t;swabXX[ps]?(foo)&n; *&n; * Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19971205&n; *    separated swab functions from cpu_to_XX,&n; *    to clean up support for bizarre-endian architectures.&n; *&n; * See asm-i386/byteorder.h and suches for examples of how to provide&n; * architecture-dependent optimized versions&n; *&n; */
 DECL|macro|___swab16
 mdefine_line|#define ___swab16(x) &bslash;&n;&t;((__u16)( &bslash;&n;&t;&t;(((__u16)(x) &amp; 0x00ffU) &lt;&lt; 8) | &bslash;&n;&t;&t;(((__u16)(x) &amp; 0xff00U) &gt;&gt; 8) ))
 DECL|macro|___swab32

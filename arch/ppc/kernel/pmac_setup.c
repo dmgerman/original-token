@@ -17,9 +17,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#ifdef CONFIG_ABSTRACT_CONSOLE
+macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -343,6 +342,18 @@ op_amp
 id|fb_con
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ABSCON_COMPAT
+multiline_comment|/* Console wrapper */
+id|conswitchp
+op_assign
+op_amp
+id|compat_con
+suffix:semicolon
+macro_line|#endif
+id|kd_mksound
+op_assign
+id|pmac_mksound
+suffix:semicolon
 )brace
 DECL|variable|feature_addr
 r_static

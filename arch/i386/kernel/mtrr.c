@@ -1322,7 +1322,7 @@ id|def_type
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Grab all of the mtrr state for this cpu into *state. */
+multiline_comment|/* Grab all of the MTRR state for this CPU into *state. */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2216,7 +2216,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function copy_mtrr_state_handler  */
-multiline_comment|/* Copies the entire MTRR state of this cpu to all the others. */
+multiline_comment|/* Copies the entire MTRR state of this CPU to all the others. */
 DECL|function|copy_mtrr_state
 r_static
 r_void

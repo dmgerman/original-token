@@ -1,12 +1,17 @@
 multiline_comment|/* &n;        pg.c    (c) 1998  Grant R. Guenther &lt;grant@torque.net&gt;&n;                          Under the terms of the GNU public license.&n;&n;&t;The pg driver provides a simple character device interface for&n;        sending ATAPI commands to a device.  With the exception of the&n;&t;ATAPI reset operation, all operations are performed by a pair&n;        of read and write operations to the appropriate /dev/pgN device.&n;&t;A write operation delivers a command and any outbound data in&n;        a single buffer.  Normally, the write will succeed unless the&n;        device is offline or malfunctioning, or there is already another&n;&t;command pending.  If the write succeeds, it should be followed&n;        immediately by a read operation, to obtain any returned data and&n;        status information.  A read will fail if there is no operation&n;        in progress.&n;&n;&t;As a special case, the device can be reset with a write operation,&n;        and in this case, no following read is expected, or permitted.&n;&n;&t;There are no ioctl() operations.  Any single operation&n;&t;may transfer at most PG_MAX_DATA bytes.  Note that the driver must&n;        copy the data through an internal buffer.  In keeping with all&n;&t;current ATAPI devices, command packets are assumed to be exactly&n;&t;12 bytes in length.&n;&n;&t;To permit future changes to this interface, the headers in the&n;&t;read and write buffers contain a single character &quot;magic&quot; flag.&n;        Currently this flag must be the character &quot;P&quot;.&n;&n;        By default, the driver will autoprobe for a single parallel&n;        port ATAPI device, but if their individual parameters are&n;        specified, the driver can handle up to 4 devices.&n;&n;&t;To use this device, you must have the following device &n;&t;special files defined:&n;&n;&t;&t;/dev/pg0 b 97 0&n;&t;&t;/dev/pg1 b 97 1&n;&t;&t;/dev/pg2 b 97 2&n;&t;&t;/dev/pg3 b 97 3&n;&n;&t;(You&squot;ll need to change the 97 to something else if you use&n;&t;the &squot;major&squot; parameter to install the driver on a different&n;        major number.)&n;&n;        The behaviour of the pg driver can be altered by setting&n;        some parameters from the insmod command line.  The following&n;        parameters are adjustable:&n;&n;            drive0      These four arguments can be arrays of       &n;            drive1      1-6 integers as follows:&n;            drive2&n;            drive3      &lt;prt&gt;,&lt;pro&gt;,&lt;uni&gt;,&lt;mod&gt;,&lt;slv&gt;,&lt;dly&gt;&n;&n;                        Where,&n;&n;                &lt;prt&gt;   is the base of the parallel port address for&n;                        the corresponding drive.  (required)&n;&n;                &lt;pro&gt;   is the protocol number for the adapter that&n;                        supports this drive.  These numbers are&n;                        logged by &squot;paride&squot; when the protocol modules&n;                        are initialised.  (0 if not given)&n;&n;                &lt;uni&gt;   for those adapters that support chained&n;                        devices, this is the unit selector for the&n;                        chain of devices on the given port.  It should&n;                        be zero for devices that don&squot;t support chaining.&n;                        (0 if not given)&n;&n;                &lt;mod&gt;   this can be -1 to choose the best mode, or one&n;                        of the mode numbers supported by the adapter.&n;                        (-1 if not given)&n;&n;                &lt;slv&gt;   ATAPI devices can be jumpered to master or slave.&n;                        Set this to 0 to choose the master drive, 1 to&n;                        choose the slave, -1 (the default) to choose the&n;                        first drive found.&n;&n;                &lt;dly&gt;   some parallel ports require the driver to &n;                        go more slowly.  -1 sets a default value that&n;                        should work with the chosen protocol.  Otherwise,&n;                        set this to a small integer, the larger it is&n;                        the slower the port i/o.  In some cases, setting&n;                        this to zero will speed up the device. (default -1)&n;&n;&t;    major&t;You may use this parameter to overide the&n;&t;&t;&t;default major number (97) that this driver&n;&t;&t;&t;will use.  Be sure to change the device&n;&t;&t;&t;name as well.&n;&n;&t;    name&t;This parameter is a character string that&n;&t;&t;&t;contains the name the kernel will use for this&n;&t;&t;&t;device (in /proc output, for instance).&n;&t;&t;&t;(default &quot;pg&quot;).&n;&n;            verbose     This parameter controls the amount of logging&n;                        that is done by the driver.  Set it to 0 for &n;&t;&t;&t;quiet operation, to 1 to enable progress&n;&t;&t;&t;messages while the driver probes for devices,&n;&t;&t;&t;or to 2 for full debug logging.  (default 0)&n;&n;        If this driver is built into the kernel, you can use &n;        the following command line parameters, with the same values&n;        as the corresponding module parameters listed above:&n;&n;            pg.drive0&n;            pg.drive1&n;            pg.drive2&n;            pg.drive3&n;&n;        In addition, you can use the parameter pg.disable to disable&n;        the driver entirely.&n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.06.16&t;Bug fixes&n;*/
 DECL|macro|PG_VERSION
-mdefine_line|#define PG_VERSION      &quot;1.0&quot;
+mdefine_line|#define PG_VERSION      &quot;1.01&quot;
 DECL|macro|PG_MAJOR
 mdefine_line|#define PG_MAJOR&t;97
 DECL|macro|PG_NAME
 mdefine_line|#define PG_NAME&t;&t;&quot;pg&quot;
 DECL|macro|PG_UNITS
 mdefine_line|#define PG_UNITS&t;4
+macro_line|#ifndef PI_PG
+DECL|macro|PI_PG
+mdefine_line|#define PI_PG&t;4
+macro_line|#endif
 multiline_comment|/* Here are things one can override from the insmod command.&n;   Most are autoprobed by paride unless set here.  Verbose is 0&n;   by default.&n;&n;*/
 DECL|variable|verbose
 r_static
@@ -336,6 +341,8 @@ DECL|macro|PG_SPIN
 mdefine_line|#define PG_SPIN         200
 DECL|macro|PG_TMO
 mdefine_line|#define PG_TMO&t;&t;HZ
+DECL|macro|PG_RESET_TMO
+mdefine_line|#define PG_RESET_TMO&t;10*HZ
 DECL|macro|STAT_ERR
 mdefine_line|#define STAT_ERR        0x01
 DECL|macro|STAT_INDEX
@@ -842,31 +849,11 @@ r_void
 r_int
 id|err
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|err
 op_assign
 id|pg_init
 c_func
 (paren
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -882,21 +869,7 @@ r_void
 )paren
 (brace
 r_int
-id|flags
-suffix:semicolon
-r_int
 id|unit
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|unregister_chrdev
 c_func
@@ -929,12 +902,6 @@ id|pi_release
 c_func
 (paren
 id|PI
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1443,8 +1410,6 @@ id|tmo
 r_int
 id|r
 comma
-id|s
-comma
 id|d
 comma
 id|n
@@ -1475,8 +1440,8 @@ id|PG.dlen
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
+r_while
+c_loop
 (paren
 id|RR
 c_func
@@ -1594,7 +1559,7 @@ id|n
 )paren
 suffix:semicolon
 id|PG.dlen
-op_assign
+op_add_assign
 (paren
 l_int|1
 op_minus
@@ -1603,8 +1568,11 @@ id|p
 op_star
 id|d
 suffix:semicolon
-)brace
-id|s
+id|buf
+op_add_assign
+id|d
+suffix:semicolon
+id|r
 op_assign
 id|pg_wait
 c_func
@@ -1613,15 +1581,18 @@ id|unit
 comma
 id|STAT_BUSY
 comma
+id|STAT_DRQ
+op_or
 id|STAT_READY
 op_or
 id|STAT_ERR
 comma
 id|tmo
 comma
-l_string|&quot;data done&quot;
+l_string|&quot;completion&quot;
 )paren
 suffix:semicolon
+)brace
 id|pi_disconnect
 c_func
 (paren
@@ -1629,14 +1600,7 @@ id|PI
 )paren
 suffix:semicolon
 r_return
-(paren
 id|r
-ques
-c_cond
-id|r
-suffix:colon
-id|s
-)paren
 suffix:semicolon
 )brace
 DECL|function|pg_reset
@@ -1717,7 +1681,7 @@ c_loop
 id|k
 op_increment
 OL
-id|PG_TMO
+id|PG_RESET_TMO
 )paren
 op_logical_and
 (paren

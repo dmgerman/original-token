@@ -67,7 +67,7 @@ DECL|macro|VM86_GET_IRQ_BITS
 mdefine_line|#define VM86_GET_IRQ_BITS&t;5
 DECL|macro|VM86_GET_AND_RESET_IRQ
 mdefine_line|#define VM86_GET_AND_RESET_IRQ&t;6
-multiline_comment|/*&n; * This is the stack-layout seen by the user space programm when we have&n; * done a translation of &quot;SAVE_ALL&quot; from vm86 mode. The real kernel layout&n; * is &squot;kernel_vm86_regs&squot; (see below).&n; */
+multiline_comment|/*&n; * This is the stack-layout seen by the user space program when we have&n; * done a translation of &quot;SAVE_ALL&quot; from vm86 mode. The real kernel layout&n; * is &squot;kernel_vm86_regs&squot; (see below).&n; */
 DECL|struct|vm86_regs
 r_struct
 id|vm86_regs

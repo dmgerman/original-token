@@ -3552,7 +3552,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is the harddisk IRQ description. The SA_INTERRUPT in sa_flags&n; * means we run the IRQ-handler with interrupts disabled: this is bad for&n; * interrupt latency, but anything else has led to problems on some&n; * machines...&n; *&n; * We enable interrupts in some of the routines after making sure it&squot;s&n; * safe.&n; */
+multiline_comment|/*&n; * This is the hard disk IRQ description. The SA_INTERRUPT in sa_flags&n; * means we run the IRQ-handler with interrupts disabled:  this is bad for&n; * interrupt latency, but anything else has led to problems on some&n; * machines.&n; *&n; * We enable interrupts in some of the routines after making sure it&squot;s&n; * safe.&n; */
 DECL|function|hd_geninit
 r_static
 r_void
@@ -3879,7 +3879,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;hd: unable to get IRQ%d for the harddisk driver&bslash;n&quot;
+l_string|&quot;hd: unable to get IRQ%d for the hard disk driver&bslash;n&quot;
 comma
 id|HD_IRQ
 )paren
@@ -4020,7 +4020,7 @@ id|hd_fops
 id|printk
 c_func
 (paren
-l_string|&quot;hd: unable to get major %d for harddisk&bslash;n&quot;
+l_string|&quot;hd: unable to get major %d for hard disk&bslash;n&quot;
 comma
 id|MAJOR_NR
 )paren

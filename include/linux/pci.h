@@ -1242,6 +1242,14 @@ DECL|macro|PCI_DEVICE_ID_ALLIANCE_AT24
 mdefine_line|#define PCI_DEVICE_ID_ALLIANCE_AT24&t;0x6424
 DECL|macro|PCI_DEVICE_ID_ALLIANCE_AT3D
 mdefine_line|#define PCI_DEVICE_ID_ALLIANCE_AT3D&t;0x643d
+DECL|macro|PCI_VENDOR_ID_SK
+mdefine_line|#define PCI_VENDOR_ID_SK&t;&t;0x1148
+DECL|macro|PCI_DEVICE_ID_SK_FP
+mdefine_line|#define PCI_DEVICE_ID_SK_FP&t;&t;0x4000
+DECL|macro|PCI_DEVICE_ID_SK_TR
+mdefine_line|#define PCI_DEVICE_ID_SK_TR&t;&t;0x4200
+DECL|macro|PCI_DEVICE_ID_SK_GE
+mdefine_line|#define PCI_DEVICE_ID_SK_GE&t;&t;0x4300
 DECL|macro|PCI_VENDOR_ID_VMIC
 mdefine_line|#define PCI_VENDOR_ID_VMIC&t;&t;0x114a
 DECL|macro|PCI_DEVICE_ID_VMIC_VME

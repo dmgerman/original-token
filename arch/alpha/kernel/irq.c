@@ -3375,7 +3375,7 @@ macro_line|#ifdef VERBOSE_IRQLOCK_DEBUGGING
 id|printk
 c_func
 (paren
-l_string|&quot;Performing backtrace on all cpus,&quot;
+l_string|&quot;Performing backtrace on all CPUs,&quot;
 l_string|&quot; write this down!&bslash;n&quot;
 )paren
 suffix:semicolon

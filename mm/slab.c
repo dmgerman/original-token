@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * linux/mm/slab.c&n; * Written by Mark Hemment, 1996/97.&n; * (markhe@nextd.demon.co.uk)&n; *&n; * 11 April &squot;97.  Started multi-threading - markhe&n; *&t;The global cache-chain is protected by the semaphore &squot;cache_chain_sem&squot;.&n; *&t;The sem is only needed when accessing/extending the cache-chain, which&n; *&t;can never happen inside an interrupt (kmem_cache_create(),&n; *&t;kmem_cache_shrink() and kmem_cache_reap()).&n; *&t;This is a medium-term exclusion lock.&n; *&n; *&t;Each cache has its own lock; &squot;c_spinlock&squot;.  This lock is needed only&n; *&t;when accessing non-constant members of a cache-struct.&n; *&t;Note: &squot;constant members&squot; are assigned a value in kmem_cache_create() before&n; *&t;the cache is linked into the cache-chain.  The values never change, so not&n; *&t;even a multi-reader lock is needed for these members.&n; *&t;The c_spinlock is only ever held for a few cycles.&n; *&n; *&t;To prevent kmem_cache_shrink() trying to shrink a &squot;growing&squot; cache (which&n; *&t;maybe be sleeping and therefore not holding the semaphore/lock), the&n; *&t;c_growing field is used.  This also prevents reaping from a cache.&n; *&n; *&t;Note, caches can _never_ be destroyed.  When a sub-system (eg module) has&n; *&t;finished with a cache, it can only be shrunk.  This leaves the cache empty,&n; *&t;but already enabled for re-use, eg. during a module re-load.&n; *&n; *&t;Notes:&n; *&t;&t;o Constructors/deconstructors are called while the cache-lock&n; *&t;&t;  is _not_ held.  Therefore they _must_ be threaded.&n; *&t;&t;o Constructors must not attempt to allocate memory from the&n; *&t;&t;  same cache that they are a constructor for - infinite loop!&n; *&t;&t;  (There is no easy way to trap this.)&n; *&t;&t;o The per-cache locks must be obtained with local-interrupts disabled.&n; *&t;&t;o When compiled with debug support, and an object-verify (upon release)&n; *&t;&t;  is request for a cache, the verify-function is called with the cache&n; *&t;&t;  lock held.  This helps debugging.&n; *&t;&t;o The functions called from try_to_free_page() must not attempt&n; *&t;&t;  to allocate memory from a cache which is being grown.&n; *&t;&t;  The buffer sub-system might try to allocate memory, via buffer_cachep.&n; *&t;&t;  As this pri is passed to the SLAB, and then (if necessary) onto the&n; *&t;&t;  gfp() funcs (which avoid calling try_to_free_page()), no deadlock&n; *&t;&t;  should happen.&n; *&n; *&t;The positioning of the per-cache lock is tricky.  If the lock is&n; *&t;placed on the same h/w cache line as commonly accessed members&n; *&t;the number of L1 cache-line faults is reduced.  However, this can&n; *&t;lead to the cache-line ping-ponging between processors when the&n; *&t;lock is in contention (and the common members are being accessed).&n; *&t;Decided to keep it away from common members.&n; *&n; *&t;More fine-graining is possible, with per-slab locks...but this might be&n; *&t;taking fine graining too far, but would have the advantage;&n; *&t;&t;During most allocs/frees no writes occur to the cache-struct.&n; *&t;&t;Therefore a multi-reader/one writer lock could be used (the writer&n; *&t;&t;needed when the slab chain is being link/unlinked).&n; *&t;&t;As we would not have an exclusion lock for the cache-structure, one&n; *&t;&t;would be needed per-slab (for updating s_free ptr, and/or the contents&n; *&t;&t;of s_index).&n; *&t;The above locking would allow parallel operations to different slabs within&n; *&t;the same cache with reduced spinning.&n; *&n; *&t;Per-engine slab caches, backed by a global cache (as in Mach&squot;s Zone allocator),&n; *&t;would allow most allocations from the same cache to execute in parallel.&n; *&n; *&t;At present, each engine can be growing a cache.  This should be blocked.&n; *&n; *&t;It is not currently 100% safe to examine the page_struct outside of a kernel&n; *&t;or global cli lock.  The risk is v. small, and non-fatal.&n; *&n; *&t;Calls to printk() are not 100% safe (the function is not threaded).  However,&n; *&t;printk() is only used under an error condition, and the risk is v. small (not&n; *&t;sure if the console write functions &squot;enjoy&squot; executing multiple contextes in&n; *&t;parallel.  I guess they don&squot;t...).&n; *&t;Note, for most calls to printk() any held cache-lock is dropped.  This is not&n; *&t;always done for text size reasons - having *_unlock() everywhere is bloat.&n; */
+multiline_comment|/*&n; * linux/mm/slab.c&n; * Written by Mark Hemment, 1996/97.&n; * (markhe@nextd.demon.co.uk)&n; *&n; * 11 April &squot;97.  Started multi-threading - markhe&n; *&t;The global cache-chain is protected by the semaphore &squot;cache_chain_sem&squot;.&n; *&t;The sem is only needed when accessing/extending the cache-chain, which&n; *&t;can never happen inside an interrupt (kmem_cache_create(),&n; *&t;kmem_cache_shrink() and kmem_cache_reap()).&n; *&t;This is a medium-term exclusion lock.&n; *&n; *&t;Each cache has its own lock; &squot;c_spinlock&squot;.  This lock is needed only&n; *&t;when accessing non-constant members of a cache-struct.&n; *&t;Note: &squot;constant members&squot; are assigned a value in kmem_cache_create() before&n; *&t;the cache is linked into the cache-chain.  The values never change, so not&n; *&t;even a multi-reader lock is needed for these members.&n; *&t;The c_spinlock is only ever held for a few cycles.&n; *&n; *&t;To prevent kmem_cache_shrink() trying to shrink a &squot;growing&squot; cache (which&n; *&t;maybe be sleeping and therefore not holding the semaphore/lock), the&n; *&t;c_growing field is used.  This also prevents reaping from a cache.&n; *&n; *&t;Note, caches can _never_ be destroyed.  When a sub-system (eg module) has&n; *&t;finished with a cache, it can only be shrunk.  This leaves the cache empty,&n; *&t;but already enabled for re-use, eg. during a module re-load.&n; *&n; *&t;Notes:&n; *&t;&t;o Constructors/deconstructors are called while the cache-lock&n; *&t;&t;  is _not_ held.  Therefore they _must_ be threaded.&n; *&t;&t;o Constructors must not attempt to allocate memory from the&n; *&t;&t;  same cache that they are a constructor for - infinite loop!&n; *&t;&t;  (There is no easy way to trap this.)&n; *&t;&t;o The per-cache locks must be obtained with local-interrupts disabled.&n; *&t;&t;o When compiled with debug support, and an object-verify (upon release)&n; *&t;&t;  is request for a cache, the verify-function is called with the cache&n; *&t;&t;  lock held.  This helps debugging.&n; *&t;&t;o The functions called from try_to_free_page() must not attempt&n; *&t;&t;  to allocate memory from a cache which is being grown.&n; *&t;&t;  The buffer sub-system might try to allocate memory, via buffer_cachep.&n; *&t;&t;  As this pri is passed to the SLAB, and then (if necessary) onto the&n; *&t;&t;  gfp() funcs (which avoid calling try_to_free_page()), no deadlock&n; *&t;&t;  should happen.&n; *&n; *&t;The positioning of the per-cache lock is tricky.  If the lock is&n; *&t;placed on the same h/w cache line as commonly accessed members&n; *&t;the number of L1 cache-line faults is reduced.  However, this can&n; *&t;lead to the cache-line ping-ponging between processors when the&n; *&t;lock is in contention (and the common members are being accessed).&n; *&t;Decided to keep it away from common members.&n; *&n; *&t;More fine-graining is possible, with per-slab locks...but this might be&n; *&t;taking fine graining too far, but would have the advantage;&n; *&t;&t;During most allocs/frees no writes occur to the cache-struct.&n; *&t;&t;Therefore a multi-reader/one writer lock could be used (the writer&n; *&t;&t;needed when the slab chain is being link/unlinked).&n; *&t;&t;As we would not have an exclusion lock for the cache-structure, one&n; *&t;&t;would be needed per-slab (for updating s_free ptr, and/or the contents&n; *&t;&t;of s_index).&n; *&t;The above locking would allow parallel operations to different slabs within&n; *&t;the same cache with reduced spinning.&n; *&n; *&t;Per-engine slab caches, backed by a global cache (as in Mach&squot;s Zone allocator),&n; *&t;would allow most allocations from the same cache to execute in parallel.&n; *&n; *&t;At present, each engine can be growing a cache.  This should be blocked.&n; *&n; *&t;It is not currently 100% safe to examine the page_struct outside of a kernel&n; *&t;or global cli lock.  The risk is v. small, and non-fatal.&n; *&n; *&t;Calls to printk() are not 100% safe (the function is not threaded).  However,&n; *&t;printk() is only used under an error condition, and the risk is v. small (not&n; *&t;sure if the console write functions &squot;enjoy&squot; executing multiple contexts in&n; *&t;parallel.  I guess they don&squot;t...).&n; *&t;Note, for most calls to printk() any held cache-lock is dropped.  This is not&n; *&t;always done for text size reasons - having *_unlock() everywhere is bloat.&n; */
 multiline_comment|/*&n; * An implementation of the Slab Allocator as described in outline in;&n; *&t;UNIX Internals: The New Frontiers by Uresh Vahalia&n; *&t;Pub: Prentice Hall&t;ISBN 0-13-101908-2&n; * or with a little more detail in;&n; *&t;The Slab Allocator: An Object-Caching Kernel Memory Allocator&n; *&t;Jeff Bonwick (Sun Microsystems).&n; *&t;Presented at: USENIX Summer 1994 Technical Conference&n; */
-multiline_comment|/*&n; * This implementation deviates from Bonwick&squot;s paper as it&n; * does not use a hash-table for large objects, but rather a per slab&n; * index to hold the bufctls.  This allows the bufctl structure to&n; * be small (one word), but limits the number of objects a slab (not&n; * a cache) can contain when off-slab bufctls are used.  The limit is the&n; * size of the largest general-cache that does not use off-slab bufctls,&n; * divided by the size of a bufctl.  For 32bit archs, is this 256/4 = 64.&n; * This is not serious, as it is only for large objects, when it is unwise&n; * to have too many per slab.&n; * Note: This limit can be raised by introducing a general-cache whose size&n; * is less than 512 (PAGE_SIZE&lt;&lt;3), but greater than 256.&n; */
+multiline_comment|/*&n; * This implementation deviates from Bonwick&squot;s paper as it&n; * does not use a hash-table for large objects, but rather a per slab&n; * index to hold the bufctls.  This allows the bufctl structure to&n; * be small (one word), but limits the number of objects a slab (not&n; * a cache) can contain when off-slab bufctls are used.  The limit is the&n; * size of the largest general cache that does not use off-slab bufctls,&n; * divided by the size of a bufctl.  For 32bit archs, is this 256/4 = 64.&n; * This is not serious, as it is only for large objects, when it is unwise&n; * to have too many per slab.&n; * Note: This limit can be raised by introducing a general cache whose size&n; * is less than 512 (PAGE_SIZE&lt;&lt;3), but greater than 256.&n; */
 macro_line|#include&t;&lt;linux/mm.h&gt;
 macro_line|#include&t;&lt;linux/slab.h&gt;
 macro_line|#include&t;&lt;linux/interrupt.h&gt;
@@ -15,7 +15,7 @@ multiline_comment|/* If there is a different PAGE_SIZE around, and it works with
 macro_line|#if&t;(PAGE_SIZE != 8192 &amp;&amp; PAGE_SIZE != 4096)
 macro_line|#error&t;Your page size is probably not correctly supported - please check
 macro_line|#endif
-multiline_comment|/* SLAB_MGMT_CHECKS&t;- 1 to enable extra checks in kmem_cache_create().&n; *&t;&t;&t;  0 if you wish to reduce memory usage.&n; *&n; * SLAB_DEBUG_SUPPORT&t;- 1 for kmem_cache_create() to honour; SLAB_DEBUG_FREE,&n; *&t;&t;&t;  SLAB_DEBUG_INITIAL, SLAB_RED_ZONE &amp; SLAB_POISON.&n; *&t;&t;&t;  0 for faster, smaller, code (espically in the critical paths).&n; *&n; * SLAB_STATS&t;&t;- 1 to collect stats for /proc/slabinfo.&n; *&t;&t;&t;  0 for faster, smaller, code (espically in the critical paths).&n; *&n; * SLAB_SELFTEST&t;- 1 to perform a few tests, mainly for developement.&n; */
+multiline_comment|/* SLAB_MGMT_CHECKS&t;- 1 to enable extra checks in kmem_cache_create().&n; *&t;&t;&t;  0 if you wish to reduce memory usage.&n; *&n; * SLAB_DEBUG_SUPPORT&t;- 1 for kmem_cache_create() to honour; SLAB_DEBUG_FREE,&n; *&t;&t;&t;  SLAB_DEBUG_INITIAL, SLAB_RED_ZONE &amp; SLAB_POISON.&n; *&t;&t;&t;  0 for faster, smaller, code (especially in the critical paths).&n; *&n; * SLAB_STATS&t;&t;- 1 to collect stats for /proc/slabinfo.&n; *&t;&t;&t;  0 for faster, smaller, code (especially in the critical paths).&n; *&n; * SLAB_SELFTEST&t;- 1 to perform a few tests, mainly for development.&n; */
 DECL|macro|SLAB_MGMT_CHECKS
 mdefine_line|#define&t;&t;SLAB_MGMT_CHECKS&t;1
 DECL|macro|SLAB_DEBUG_SUPPORT
@@ -107,7 +107,7 @@ DECL|typedef|kmem_slab_t
 )brace
 id|kmem_slab_t
 suffix:semicolon
-multiline_comment|/* When the slab mgmt is on-slab, this gives the size to use. */
+multiline_comment|/* When the slab management is on-slab, this gives the size to use. */
 DECL|macro|slab_align_size
 mdefine_line|#define&t;slab_align_size&t;&t;(L1_CACHE_ALIGN(sizeof(kmem_slab_t)))
 multiline_comment|/* Test for end of slab chain. */
@@ -117,7 +117,7 @@ multiline_comment|/* s_magic */
 DECL|macro|SLAB_MAGIC_ALLOC
 mdefine_line|#define&t;SLAB_MAGIC_ALLOC&t;0xA5C32F2BUL&t;/* slab is alive */
 DECL|macro|SLAB_MAGIC_DESTROYED
-mdefine_line|#define&t;SLAB_MAGIC_DESTROYED&t;0xB2F23C5AUL&t;/* slab has been destoryed */
+mdefine_line|#define&t;SLAB_MAGIC_DESTROYED&t;0xB2F23C5AUL&t;/* slab has been destroyed */
 multiline_comment|/* Bufctl&squot;s are used for linking objs within a slab, identifying what slab an obj&n; * is in, and the address of the associated obj (for sanity checking with off-slab&n; * bufctls).  What a bufctl contains depends upon the state of the obj and&n; * the organisation of the cache.&n; */
 DECL|struct|kmem_bufctl_s
 r_typedef
@@ -355,11 +355,11 @@ macro_line|#endif&t;/* SLAB_STATS */
 suffix:semicolon
 multiline_comment|/* internal c_flags */
 DECL|macro|SLAB_CFLGS_OFF_SLAB
-mdefine_line|#define&t;SLAB_CFLGS_OFF_SLAB&t;0x010000UL&t;/* slab mgmt in own cache */
+mdefine_line|#define&t;SLAB_CFLGS_OFF_SLAB&t;0x010000UL&t;/* slab management in own cache */
 DECL|macro|SLAB_CFLGS_BUFCTL
 mdefine_line|#define&t;SLAB_CFLGS_BUFCTL&t;0x020000UL&t;/* bufctls in own cache */
 DECL|macro|SLAB_CFLGS_GENERAL
-mdefine_line|#define&t;SLAB_CFLGS_GENERAL&t;0x080000UL&t;/* a general-cache */
+mdefine_line|#define&t;SLAB_CFLGS_GENERAL&t;0x080000UL&t;/* a general cache */
 multiline_comment|/* c_dflags (dynamic flags).  Need to hold the spinlock to access this member */
 DECL|macro|SLAB_CFLGS_GROWN
 mdefine_line|#define&t;SLAB_CFLGS_GROWN&t;0x000002UL&t;/* don&squot;t reap a recently grown */
@@ -422,7 +422,7 @@ mdefine_line|#define&t;SLAB_OBJ_MAX_ORDER&t;5&t;/* 32 pages */
 multiline_comment|/* maximum num of pages for a slab (prevents large requests to the VM layer) */
 DECL|macro|SLAB_MAX_GFP_ORDER
 mdefine_line|#define&t;SLAB_MAX_GFP_ORDER&t;5&t;/* 32 pages */
-multiline_comment|/* the &squot;prefered&squot; minimum num of objs per slab - maybe less for large objs */
+multiline_comment|/* the &squot;preferred&squot; minimum num of objs per slab - maybe less for large objs */
 DECL|macro|SLAB_MIN_OBJS_PER_SLAB
 mdefine_line|#define&t;SLAB_MIN_OBJS_PER_SLAB&t;4
 multiline_comment|/* If the num of objs per slab is &lt;= SLAB_MIN_OBJS_PER_SLAB,&n; * then the page order must be less than this before trying the next order.&n; */
@@ -437,7 +437,7 @@ DECL|macro|SLAB_SET_PAGE_SLAB
 mdefine_line|#define&t;SLAB_SET_PAGE_SLAB(pg, x)&t;((pg)-&gt;prev = (struct page *)(x))
 DECL|macro|SLAB_GET_PAGE_SLAB
 mdefine_line|#define&t;SLAB_GET_PAGE_SLAB(pg)&t;&t;((kmem_slab_t *)(pg)-&gt;prev)
-multiline_comment|/* Size description struct for general-caches. */
+multiline_comment|/* Size description struct for general caches. */
 DECL|struct|cache_sizes
 r_typedef
 r_struct
@@ -551,7 +551,7 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* Names for the general-caches.  Not placed into the sizes struct for&n; * a good reason; the string ptr is not needed while searching in kmalloc(),&n; * and would &squot;get-in-the-way&squot; in the h/w cache.&n; */
+multiline_comment|/* Names for the general caches.  Not placed into the sizes struct for&n; * a good reason; the string ptr is not needed while searching in kmalloc(),&n; * and would &squot;get-in-the-way&squot; in the h/w cache.&n; */
 DECL|variable|cache_sizes_name
 r_static
 r_char
@@ -693,7 +693,7 @@ op_assign
 op_amp
 id|cache_cache
 suffix:semicolon
-multiline_comment|/* Internal slab mgmt cache, for when slab mgmt is off-slab. */
+multiline_comment|/* Internal slab management cache, for when slab management is off-slab. */
 DECL|variable|cache_slabp
 r_static
 id|kmem_cache_t
@@ -983,7 +983,7 @@ id|cache_sizes
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* For performance, all the general-caches are L1 aligned.&n;&t;&t;&t; * This should be particularly beneficial on SMP boxes, as it&n;&t;&t;&t; * elimantes &quot;false sharing&quot;.&n;&t;&t;&t; * Note for systems short on memory removing the alignment will&n;&t;&t;&t; * allow tighter packing of the smaller caches. */
+multiline_comment|/* For performance, all the general caches are L1 aligned.&n;&t;&t;&t; * This should be particularly beneficial on SMP boxes, as it&n;&t;&t;&t; * eliminates &quot;false sharing&quot;.&n;&t;&t;&t; * Note for systems short on memory removing the alignment will&n;&t;&t;&t; * allow tighter packing of the smaller caches. */
 r_if
 c_cond
 (paren
@@ -1368,7 +1368,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* SLAB_DEBUG_SUPPORT */
-multiline_comment|/* Three slab chain funcs - all called with ints disabled and the appropiate&n; * cache-lock held.&n; */
+multiline_comment|/* Three slab chain funcs - all called with ints disabled and the appropriate&n; * cache-lock held.&n; */
 r_static
 r_inline
 r_void
@@ -1649,7 +1649,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;kmem_slab_destory: &quot;
+l_string|&quot;kmem_slab_destroy: &quot;
 l_string|&quot;Bad poison - %s&bslash;n&quot;
 comma
 id|cachep-&gt;c_name
@@ -2060,7 +2060,7 @@ id|size
 id|printk
 c_func
 (paren
-l_string|&quot;%sOffset weired %d - %s&bslash;n&quot;
+l_string|&quot;%sOffset weird %d - %s&bslash;n&quot;
 comma
 id|func_nm
 comma
@@ -2354,7 +2354,7 @@ id|align
 op_assign
 id|L1_CACHE_BYTES
 suffix:semicolon
-multiline_comment|/* Determine if the slab mgmt and/or bufclts are &squot;on&squot; or &squot;off&squot; slab. */
+multiline_comment|/* Determine if the slab management and/or bufclts are &squot;on&squot; or &squot;off&squot; slab. */
 id|extra
 op_assign
 r_sizeof
@@ -2374,7 +2374,7 @@ l_int|3
 )paren
 )paren
 (brace
-multiline_comment|/* Size is small(ish).  Use packing where bufctl size per&n;&t;&t; * obj is low, and slab mngmnt is on-slab.&n;&t;&t; */
+multiline_comment|/* Size is small(ish).  Use packing where bufctl size per&n;&t;&t; * obj is low, and slab management is on-slab.&n;&t;&t; */
 macro_line|#if&t;0
 r_if
 c_cond
@@ -2428,7 +2428,7 @@ macro_line|#endif
 )brace
 r_else
 (brace
-multiline_comment|/* Size is large, assume best to place the slab mngmnt obj&n;&t;&t; * off-slab (should allow better packing of objs).&n;&t;&t; */
+multiline_comment|/* Size is large, assume best to place the slab management obj&n;&t;&t; * off-slab (should allow better packing of objs).&n;&t;&t; */
 id|flags
 op_or_assign
 id|SLAB_CFLGS_OFF_SLAB
@@ -2479,7 +2479,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* else slab mngmnt is off-slab, but freelist ptrs are on. */
+multiline_comment|/* else slab management is off-slab, but freelist pointers are on. */
 )brace
 id|size
 op_add_assign
@@ -3298,7 +3298,7 @@ l_int|2
 suffix:semicolon
 id|found
 suffix:colon
-multiline_comment|/* Relase the sempahore before getting the cache-lock.  This could&n;&t; * mean multiple engines are shrinking the cache, but so what...&n;&t; */
+multiline_comment|/* Release the semaphore before getting the cache-lock.  This could&n;&t; * mean multiple engines are shrinking the cache, but so what.&n;&t; */
 id|up
 c_func
 (paren
@@ -3399,7 +3399,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Get the mem for a slab mgmt obj. */
+multiline_comment|/* Get the memory for a slab management obj. */
 r_static
 r_inline
 id|kmem_slab_t
@@ -3434,7 +3434,7 @@ id|cachep-&gt;c_flags
 )paren
 )paren
 (brace
-multiline_comment|/* Slab mgmt obj is off-slab. */
+multiline_comment|/* Slab management obj is off-slab. */
 id|slabp
 op_assign
 id|kmem_cache_alloc
@@ -3448,7 +3448,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Slab mgmnt at end of slab mem, placed so that&n;&t;&t; * the position is &squot;coloured&squot;.&n;&t;&t; */
+multiline_comment|/* Slab management at end of slab memory, placed so that&n;&t;&t; * the position is &squot;coloured&squot;.&n;&t;&t; */
 r_void
 op_star
 id|end
@@ -4039,7 +4039,7 @@ id|dma
 r_goto
 id|failed
 suffix:semicolon
-multiline_comment|/* Get slab mgmt. */
+multiline_comment|/* Get slab management. */
 r_if
 c_cond
 (paren
@@ -4291,7 +4291,7 @@ op_logical_and
 id|cachep-&gt;c_gfporder
 )paren
 (brace
-multiline_comment|/* For large order (&gt;0) slabs, we try again.&n;&t;&t; * Needed because the gfp() functions are not good at giving&n;&t;&t; * out contigious pages unless pushed (but do not push too hard).&n;&t;&t; */
+multiline_comment|/* For large order (&gt;0) slabs, we try again.&n;&t;&t; * Needed because the gfp() functions are not good at giving&n;&t;&t; * out contiguous pages unless pushed (but do not push too hard).&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5826,7 +5826,7 @@ id|max_mapnr
 r_goto
 id|bad_ptr
 suffix:semicolon
-multiline_comment|/* Assume we own the page structure - hence no locking.&n;&t; * If someone is misbehaving (eg. someone calling us with a bad&n;&t; * address), then access to the page structure can race with the&n;&t; * kmem_slab_destory() code.  Need to add a spin_lock to each page&n;&t; * structure, which would be useful in threading the gfp() functions....&n;&t; */
+multiline_comment|/* Assume we own the page structure - hence no locking.&n;&t; * If someone is misbehaving (for example, calling us with a bad&n;&t; * address), then access to the page structure can race with the&n;&t; * kmem_slab_destroy() code.  Need to add a spin_lock to each page&n;&t; * structure, which would be useful in threading the gfp() functions....&n;&t; */
 id|page
 op_assign
 op_amp
@@ -5849,7 +5849,7 @@ id|kmem_cache_t
 op_star
 id|cachep
 suffix:semicolon
-multiline_comment|/* Here, we (again) assume the obj address is good.&n;&t;&t; * If it isn&squot;t, and happens to map onto another&n;&t;&t; * general-cache page which has no active objs, then&n;&t;&t; * we race....&n;&t;&t; */
+multiline_comment|/* Here, we again assume the obj address is good.&n;&t;&t; * If it isn&squot;t, and happens to map onto another&n;&t;&t; * general cache page which has no active objs, then&n;&t;&t; * we race.&n;&t;&t; */
 id|cachep
 op_assign
 id|SLAB_GET_PAGE_CACHE
@@ -6053,7 +6053,7 @@ id|csizep
 op_assign
 id|cache_sizes
 suffix:semicolon
-multiline_comment|/* This function could be moved to the header-file, and&n;&t; * made inline so consumers can quickly determine what&n;&t; * cache-ptr they require.&n;&t; */
+multiline_comment|/* This function could be moved to the header file, and&n;&t; * made inline so consumers can quickly determine what&n;&t; * cache pointer they require.&n;&t; */
 r_for
 c_loop
 (paren
@@ -6128,7 +6128,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* We really need a test semphore op so we can avoid sleeping when&n;&t; * !wait is true.&n;&t; */
+multiline_comment|/* We really need a test semaphore op so we can avoid sleeping when&n;&t; * !wait is true.&n;&t; */
 id|down
 c_func
 (paren
@@ -6244,7 +6244,7 @@ id|full_free
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Count num of fully free slabs.  Hopefully there are not many,&n;&t;&t; * we are holding the cache lock....&n;&t;&t; */
+multiline_comment|/* Count the fully free slabs.  There should not be not many,&n;&t;&t; * since we are holding the cache lock.&n;&t;&t; */
 id|slabp
 op_assign
 id|searchp-&gt;c_lastp
@@ -6390,7 +6390,7 @@ op_logical_neg
 id|best_cachep
 )paren
 (brace
-multiline_comment|/* couldn&squot;t find anthying to reap */
+multiline_comment|/* couldn&squot;t find anything to reap */
 r_return
 suffix:semicolon
 )brace

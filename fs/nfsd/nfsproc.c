@@ -746,7 +746,7 @@ comma
 id|argp-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* First verify the parent filehandle */
+multiline_comment|/* First verify the parent file handle */
 id|nfserr
 op_assign
 id|fh_verify
@@ -806,7 +806,7 @@ id|nfserr
 r_goto
 id|done
 suffix:semicolon
-multiline_comment|/*&n;&t; * Do a lookup to verify the new filehandle.&n;&t; */
+multiline_comment|/*&n;&t; * Do a lookup to verify the new file handle.&n;&t; */
 id|nfserr
 op_assign
 id|nfsd_lookup
@@ -839,7 +839,7 @@ id|nfserr_noent
 r_goto
 id|done
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If the new filehandle wasn&squot;t verified, we can&squot;t tell&n;&t;&t; * whether the file exists or not. Time to bail ...&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If the new file handle wasn&squot;t verified, we can&squot;t tell&n;&t;&t; * whether the file exists or not. Time to bail ...&n;&t;&t; */
 id|nfserr
 op_assign
 id|nfserr_acces
@@ -855,7 +855,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;nfsd_proc_create: filehandle not verified&bslash;n&quot;
+l_string|&quot;nfsd_proc_create: file handle not verified&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto

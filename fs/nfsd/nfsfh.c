@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/nfsd/nfsfh.c&n; *&n; * NFS server filehandle treatment.&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/fs/nfsd/nfsfh.c&n; *&n; * NFS server file handle treatment.&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -696,7 +696,7 @@ macro_line|#ifdef NFSD_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;add_to_path_cache: cacheing %s/%s&bslash;n&quot;
+l_string|&quot;add_to_path_cache: caching %s/%s&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -858,7 +858,7 @@ macro_line|#endif
 r_return
 id|result
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the dentry&squot;s path length changed, just try again ...&n;&t; */
+multiline_comment|/*&n;&t; * If the dentry&squot;s path length changed, just try again.&n;&t; */
 id|retry
 suffix:colon
 id|kfree
@@ -1462,7 +1462,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look up a dentry given inode and parent inode numbers.&n; *&n; * This relies on the ability of a unix-like filesystem to return&n; * the parent inode of a directory as the &quot;..&quot; (second) entry.&n; *&n; * This could be further optimized if we had an efficient way of&n; * searching for a dentry given the inode: as we walk up the tree,&n; * it&squot;s likely that a dentry exists before we reach the root.&n; */
+multiline_comment|/*&n; * Look up a dentry given inode and parent inode numbers.&n; *&n; * This relies on the ability of a Unix-like filesystem to return&n; * the parent inode of a directory as the &quot;..&quot; (second) entry.&n; *&n; * This could be further optimized if we had an efficient way of&n; * searching for a dentry given the inode: as we walk up the tree,&n; * it&squot;s likely that a dentry exists before we reach the root.&n; */
 DECL|function|lookup_inode
 r_struct
 id|dentry
@@ -2420,7 +2420,7 @@ id|pe
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Add a dentry to the file or dir cache.&n; *&n; * Note: As NFS filehandles must have an inode, we don&squot;t accept&n; * negative dentries.&n; */
+multiline_comment|/*&n; * Add a dentry to the file or dir cache.&n; *&n; * Note: As NFS file handles must have an inode, we don&squot;t accept&n; * negative dentries.&n; */
 DECL|function|add_to_fhcache
 r_static
 r_int
@@ -3263,7 +3263,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The is the basic lookup mechanism for turning an NFS filehandle &n; * into a dentry. There are several levels to the search:&n; * (1) Look for the dentry pointer the short-term fhcache,&n; *     and verify that it has the correct inode number.&n; *&n; * (2) Try to validate the dentry pointer in the filehandle,&n; *     and verify that it has the correct inode number. If this&n; *     fails, check for a cached lookup in the fix-up list and&n; *     repeat step (2) using the new dentry pointer.&n; *&n; * (3) Look up the dentry by using the inode and parent inode numbers&n; *     to build the name string. This should succeed for any unix-like&n; *     filesystem.&n; *&n; * (4) Search for the parent dentry in the dir cache, and then&n; *     look for the name matching the inode number.&n; *&n; * (5) The most general case ... search the whole volume for the inode.&n; *&n; * If successful, we return a dentry with the use count incremented.&n; *&n; * Note: steps (4) and (5) above are probably unnecessary now that (3)&n; * is working. Remove the code once this is verified ...&n; */
+multiline_comment|/*&n; * The is the basic lookup mechanism for turning an NFS file handle &n; * into a dentry. There are several levels to the search:&n; * (1) Look for the dentry pointer the short-term fhcache,&n; *     and verify that it has the correct inode number.&n; *&n; * (2) Try to validate the dentry pointer in the file handle,&n; *     and verify that it has the correct inode number. If this&n; *     fails, check for a cached lookup in the fix-up list and&n; *     repeat step (2) using the new dentry pointer.&n; *&n; * (3) Look up the dentry by using the inode and parent inode numbers&n; *     to build the name string. This should succeed for any Unix-like&n; *     filesystem.&n; *&n; * (4) Search for the parent dentry in the dir cache, and then&n; *     look for the name matching the inode number.&n; *&n; * (5) The most general case ... search the whole volume for the inode.&n; *&n; * If successful, we return a dentry with the use count incremented.&n; *&n; * Note: steps (4) and (5) above are probably unnecessary now that (3)&n; * is working. Remove the code once this is verified ...&n; */
 r_static
 r_struct
 id|dentry
@@ -3317,7 +3317,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Stage 2: Attempt to validate the dentry in the filehandle.&n;&t; */
+multiline_comment|/*&n;&t; * Stage 2: Attempt to validate the dentry in the file handle.&n;&t; */
 id|dentry
 op_assign
 id|fh-&gt;fh_dcookie
@@ -3360,7 +3360,7 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * NFS filehandles must always have an inode,&n;&t;&t;&t; * so we won&squot;t accept a negative dentry.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * NFS file handles must always have an inode,&n;&t;&t;&t; * so we won&squot;t accept a negative dentry.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3448,7 +3448,7 @@ r_goto
 id|recheck
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Stage 3: Look up the dentry based on the inode and parent inode&n;&t; * numbers. This should work for all unix-like filesystems ...&n;&t; */
+multiline_comment|/*&n;&t; * Stage 3: Look up the dentry based on the inode and parent inode&n;&t; * numbers. This should work for all Unix-like filesystems.&n;&t; */
 id|looked_up
 op_assign
 l_int|1
@@ -3661,7 +3661,7 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Perform sanity checks on the dentry in a client&squot;s file handle.&n; *&n; * Note that the filehandle dentry may need to be freed even after&n; * an error return.&n; */
+multiline_comment|/*&n; * Perform sanity checks on the dentry in a client&squot;s file handle.&n; *&n; * Note that the file handle dentry may need to be freed even after&n; * an error return.&n; */
 id|u32
 DECL|function|fh_verify
 id|fh_verify
@@ -3811,7 +3811,7 @@ comma
 id|exp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Look up the dentry using the NFS fh.&n;&t; */
+multiline_comment|/*&n;&t; * Look up the dentry using the NFS file handle.&n;&t; */
 id|error
 op_assign
 id|nfserr_stale
@@ -3833,7 +3833,7 @@ id|dentry
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/*&n;&t; * Note: it&squot;s possible that the returned dentry won&squot;t be the&n;&t; * one in the filehandle.  We can correct the FH for our use,&n;&t; * but unfortunately the client will keep sending the broken&n;&t; * one.  Hopefully the lookup will keep patching things up..&n;&t; */
+multiline_comment|/*&n;&t; * Note:  it&squot;s possible the returned dentry won&squot;t be the one in the&n;         * file handle.  We can correct the file handle for our use, but&n;         * unfortunately the client will keep sending the broken one.  Let&squot;s&n;         * hope the lookup will keep patching things up.&n;&t; */
 id|fhp-&gt;fh_dentry
 op_assign
 id|dentry
@@ -3968,7 +3968,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Compose a filehandle for an NFS reply.&n; *&n; * Note that when first composed, the dentry may not yet have&n; * an inode.  In this case a call to fh_update should be made&n; * before the fh goes out on the wire ...&n; */
+multiline_comment|/*&n; * Compose a file handle for an NFS reply.&n; *&n; * Note that when first composed, the dentry may not yet have&n; * an inode.  In this case a call to fh_update should be made&n; * before the fh goes out on the wire ...&n; */
 r_void
 DECL|function|fh_compose
 id|fh_compose
@@ -4076,7 +4076,7 @@ id|nfsd_nr_verified
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Update filehandle information after changing a dentry.&n; */
+multiline_comment|/*&n; * Update file handle information after changing a dentry.&n; */
 r_void
 DECL|function|fh_update
 id|fh_update
@@ -4155,7 +4155,7 @@ suffix:colon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Release a filehandle.  If the filehandle carries a dentry count,&n; * we add the dentry to the short-term cache rather than release it.&n; */
+multiline_comment|/*&n; * Release a file handle.  If the file handle carries a dentry count,&n; * we add the dentry to the short-term cache rather than release it.&n; */
 r_void
 DECL|function|fh_put
 id|fh_put

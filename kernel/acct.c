@@ -807,7 +807,7 @@ r_int
 r_int
 id|vsize
 suffix:semicolon
-multiline_comment|/*&n;&t; * First check to see if there is enough free_space to continue the process&n;&t; * accounting system. Check_free_space toggle&squot;s the acct_active flag so we&n;&t; * need to check that after check_free_space.&n;&t; */
+multiline_comment|/*&n;&t; * First check to see if there is enough free_space to continue the process&n;&t; * accounting system. Check_free_space toggles the acct_active flag so we&n;&t; * need to check that after check_free_space.&n;&t; */
 id|check_free_space
 c_func
 (paren

@@ -161,7 +161,7 @@ comma
 op_minus
 l_int|1
 comma
-id|FB_ACCEL_NONE
+l_int|0
 comma
 l_int|20000
 comma
@@ -561,8 +561,6 @@ comma
 id|vfb_set_cmap
 comma
 id|vfb_pan_display
-comma
-l_int|NULL
 comma
 id|vfb_ioctl
 )brace
@@ -1030,10 +1028,10 @@ suffix:semicolon
 id|display-&gt;screen_base
 op_assign
 (paren
-id|u_char
+r_char
 op_star
 )paren
-id|fix.smem_start
+id|videomemory
 suffix:semicolon
 id|display-&gt;visual
 op_assign
@@ -2101,7 +2099,8 @@ suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
 (paren
-id|caddr_t
+r_char
+op_star
 )paren
 id|videomemory
 suffix:semicolon

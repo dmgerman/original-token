@@ -1,8 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/video/S3Triofb.c -- Open Firmware based frame buffer device&n; *&n; *&t;Copyright (C) 1997 Peter De Schrijver&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the Open Firmware based frame buffer device:&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/*&n;&t;Bugs : + OF dependencies should be removed.&n;               + This driver should be merged with the CyberVision driver. The&n;                 CyberVision is a Zorro III implementation of the S3Trio64 chip.&n;&n;*/
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -13,10 +12,17 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
+macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
+macro_line|#include &lt;asm/vc_ioctl.h&gt;
+macro_line|#endif
+macro_line|#include &quot;fbcon.h&quot;
 macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &quot;s3blit.h&quot;
 DECL|macro|mem_in8
 mdefine_line|#define mem_in8(addr)           in_8((void *)(addr))
 DECL|macro|mem_in16
@@ -85,6 +91,12 @@ l_int|16
 op_assign
 l_string|&quot;S3Trio &quot;
 suffix:semicolon
+DECL|variable|s3trio_base
+r_static
+r_char
+op_star
+id|s3trio_base
+suffix:semicolon
 DECL|variable|fb_fix
 r_static
 r_struct
@@ -103,19 +115,6 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
-r_void
-id|of_video_setup
-c_func
-(paren
-r_char
-op_star
-id|options
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
 r_static
 r_int
 id|s3trio_open
@@ -402,6 +401,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_static
 r_int
 id|s3triofbcon_setcmap
@@ -416,6 +416,7 @@ r_int
 id|con
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;     *  Text console acceleration&n;     */
 macro_line|#ifdef CONFIG_FBCON_CFB8
 DECL|variable|fbcon_trio8
@@ -570,6 +571,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 DECL|variable|s3trio_ops
@@ -594,8 +600,6 @@ comma
 id|s3trio_set_cmap
 comma
 id|s3trio_pan_display
-comma
-l_int|NULL
 comma
 id|s3trio_ioctl
 )brace
@@ -748,27 +752,79 @@ id|var-&gt;yres
 OG
 id|fb_var.yres
 op_logical_or
-id|var-&gt;xres_virtual
-OG
-id|fb_var.xres_virtual
-op_logical_or
-id|var-&gt;yres_virtual
-OG
-id|fb_var.yres_virtual
-op_logical_or
 id|var-&gt;bits_per_pixel
 OG
 id|fb_var.bits_per_pixel
-op_logical_or
-id|var-&gt;nonstd
-op_logical_or
-id|var-&gt;vmode
-op_ne
-id|FB_VMODE_NONINTERLACED
 )paren
+multiline_comment|/* || var-&gt;nonstd || var-&gt;vmode != FB_VMODE_NONINTERLACED) */
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|var-&gt;xres_virtual
+OG
+id|fb_var.xres_virtual
+)paren
+(brace
+id|outw
+c_func
+(paren
+id|IO_OUT16VAL
+c_func
+(paren
+(paren
+id|var-&gt;xres_virtual
+op_div
+l_int|8
+)paren
+op_amp
+l_int|0xff
+comma
+l_int|0x13
+)paren
+comma
+l_int|0x3d4
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|IO_OUT16VAL
+c_func
+(paren
+(paren
+(paren
+id|var-&gt;xres_virtual
+op_div
+l_int|8
+)paren
+op_amp
+l_int|0x300
+)paren
+op_rshift
+l_int|3
+comma
+l_int|0x51
+)paren
+comma
+l_int|0x3d4
+)paren
+suffix:semicolon
+id|fb_var.xres_virtual
+op_assign
+id|var-&gt;xres_virtual
+suffix:semicolon
+id|fb_fix.line_length
+op_assign
+id|var-&gt;xres_virtual
+suffix:semicolon
+)brace
+id|fb_var.yres_virtual
+op_assign
+id|var-&gt;yres_virtual
 suffix:semicolon
 id|memcpy
 c_func
@@ -809,18 +865,112 @@ op_star
 id|info
 )paren
 (brace
+r_int
+r_int
+id|base
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|var-&gt;xoffset
-op_logical_or
-id|var-&gt;yoffset
+OG
+(paren
+id|var-&gt;xres_virtual
+op_minus
+id|var-&gt;xres
+)paren
 )paren
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_else
+r_if
+c_cond
+(paren
+id|var-&gt;yoffset
+OG
+(paren
+id|var-&gt;yres_virtual
+op_minus
+id|var-&gt;yres
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|fb_var.xoffset
+op_assign
+id|var-&gt;xoffset
+suffix:semicolon
+id|fb_var.yoffset
+op_assign
+id|var-&gt;yoffset
+suffix:semicolon
+id|base
+op_assign
+id|var-&gt;yoffset
+op_star
+id|fb_fix.line_length
+op_plus
+id|var-&gt;xoffset
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|IO_OUT16VAL
+c_func
+(paren
+(paren
+id|base
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+comma
+l_int|0x0c
+)paren
+comma
+l_int|0x03D4
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|IO_OUT16VAL
+c_func
+(paren
+id|base
+op_amp
+l_int|0xff
+comma
+l_int|0x0d
+)paren
+comma
+l_int|0x03D4
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|IO_OUT16VAL
+c_func
+(paren
+(paren
+id|base
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xf
+comma
+l_int|0x69
+)paren
+comma
+l_int|0x03D4
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -918,6 +1068,8 @@ c_func
 id|fb_default_cmap
 c_func
 (paren
+l_int|1
+op_lshift
 id|fb_display
 (braket
 id|con
@@ -1110,6 +1262,31 @@ id|__initfunc
 c_func
 (paren
 r_int
+r_int
+id|s3triofb_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+)paren
+)paren
+(brace
+macro_line|#ifdef __powerpc__
+multiline_comment|/* We don&squot;t want to be called like this. */
+multiline_comment|/* We rely on Open Firmware (offb) instead. */
+macro_line|#else /* !__powerpc__ */
+multiline_comment|/* To be merged with cybervision */
+macro_line|#endif /* !__powerpc__ */
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
 id|s3trio_resetaccel
 c_func
 (paren
@@ -1316,7 +1493,10 @@ r_int
 id|s3trio_init
 c_func
 (paren
-r_void
+r_struct
+id|device_node
+op_star
+id|dp
 )paren
 )paren
 (brace
@@ -1333,19 +1513,16 @@ r_int
 r_int
 id|cmd
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|bus
-op_assign
-l_int|0
-suffix:semicolon
-id|dev
-op_assign
+id|pci_device_loc
+c_func
 (paren
-l_int|3
-op_lshift
-l_int|3
+id|dp
+comma
+op_amp
+id|bus
+comma
+op_amp
+id|dev
 )paren
 suffix:semicolon
 id|pcibios_read_config_dword
@@ -1531,6 +1708,7 @@ c_func
 id|IO_OUT16VAL
 c_func
 (paren
+(paren
 id|inb
 c_func
 (paren
@@ -1545,6 +1723,9 @@ l_int|0x10
 op_or
 l_int|0x40
 )paren
+)paren
+op_or
+l_int|0x20
 comma
 l_int|0x33
 )paren
@@ -1628,6 +1809,9 @@ id|PCI_COMMAND_MEMORY
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
 )brace
 r_return
 l_int|0
@@ -1638,22 +1822,17 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
-id|s3trio_fb_init
+r_void
+id|s3triofb_init_of
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-)paren
-)paren
-(brace
 r_struct
 id|device_node
 op_star
 id|dp
-suffix:semicolon
+)paren
+)paren
+(brace
 r_int
 id|i
 comma
@@ -1665,46 +1844,12 @@ comma
 id|len
 suffix:semicolon
 r_int
-op_star
-id|up
-comma
+r_int
 id|address
 suffix:semicolon
 id|u_long
 op_star
 id|CursorBase
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|prom_display_paths
-(braket
-l_int|0
-)braket
-)paren
-r_return
-id|mem_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dp
-op_assign
-id|find_path_device
-c_func
-(paren
-id|prom_display_paths
-(braket
-l_int|0
-)braket
-)paren
-)paren
-)paren
-r_return
-id|mem_start
 suffix:semicolon
 id|strncat
 c_func
@@ -1778,7 +1923,6 @@ id|dp-&gt;full_name
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_if
@@ -1820,7 +1964,6 @@ id|dp-&gt;full_name
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_if
@@ -1872,7 +2015,6 @@ id|pp
 )paren
 suffix:semicolon
 r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_if
@@ -2001,13 +2143,14 @@ suffix:semicolon
 id|s3trio_init
 c_func
 (paren
+id|dp
 )paren
 suffix:semicolon
 id|address
 op_assign
 l_int|0xc6000000
 suffix:semicolon
-id|fb_fix.smem_start
+id|s3trio_base
 op_assign
 id|ioremap
 c_func
@@ -2021,6 +2164,14 @@ op_star
 l_int|1024
 )paren
 suffix:semicolon
+id|fb_fix.smem_start
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|address
+suffix:semicolon
 id|fb_fix.type
 op_assign
 id|FB_TYPE_PACKED_PIXELS
@@ -2028,6 +2179,32 @@ suffix:semicolon
 id|fb_fix.type_aux
 op_assign
 l_int|0
+suffix:semicolon
+id|fb_fix.accel
+op_assign
+id|FB_ACCEL_S3_TRIO64
+suffix:semicolon
+id|fb_fix.mmio_start
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|address
+op_plus
+l_int|0x1000000
+suffix:semicolon
+id|fb_fix.mmio_len
+op_assign
+l_int|0x1000000
+suffix:semicolon
+id|fb_fix.xpanstep
+op_assign
+l_int|1
+suffix:semicolon
+id|fb_fix.ypanstep
+op_assign
+l_int|1
 suffix:semicolon
 id|s3trio_resetaccel
 c_func
@@ -2039,7 +2216,7 @@ c_func
 (paren
 l_int|0x30
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2051,7 +2228,7 @@ c_func
 (paren
 l_int|0x2d
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2063,7 +2240,7 @@ c_func
 (paren
 l_int|0x2e
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2075,7 +2252,7 @@ c_func
 (paren
 l_int|0x50
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2088,7 +2265,7 @@ c_func
 (paren
 l_int|0x39
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2100,7 +2277,7 @@ c_func
 (paren
 l_int|0xa0
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2112,7 +2289,7 @@ c_func
 (paren
 l_int|0x45
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2124,7 +2301,7 @@ c_func
 (paren
 l_int|0
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2136,7 +2313,7 @@ c_func
 (paren
 l_int|0x4e
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2148,7 +2325,7 @@ c_func
 (paren
 l_int|0
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2160,7 +2337,7 @@ c_func
 (paren
 l_int|0x4f
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2172,7 +2349,7 @@ c_func
 (paren
 l_int|0
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2187,7 +2364,7 @@ id|u_long
 op_star
 )paren
 (paren
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|2
 op_star
@@ -2351,7 +2528,7 @@ c_func
 (paren
 l_int|0x4c
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2375,7 +2552,7 @@ l_int|0xf00
 op_rshift
 l_int|8
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2387,7 +2564,7 @@ c_func
 (paren
 l_int|0x4d
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2407,7 +2584,7 @@ l_int|1
 op_amp
 l_int|0xff
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2419,7 +2596,7 @@ c_func
 (paren
 l_int|0x45
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2429,7 +2606,7 @@ suffix:semicolon
 id|mem_in8
 c_func
 (paren
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2441,7 +2618,7 @@ c_func
 (paren
 l_int|0x4a
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2453,7 +2630,7 @@ c_func
 (paren
 l_int|0x80
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2465,7 +2642,7 @@ c_func
 (paren
 l_int|0x80
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2477,7 +2654,7 @@ c_func
 (paren
 l_int|0x80
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2489,7 +2666,7 @@ c_func
 (paren
 l_int|0x4b
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2501,7 +2678,7 @@ c_func
 (paren
 l_int|0x00
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2513,7 +2690,7 @@ c_func
 (paren
 l_int|0x00
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2525,7 +2702,7 @@ c_func
 (paren
 l_int|0x00
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2537,7 +2714,7 @@ c_func
 (paren
 l_int|0x45
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -2549,13 +2726,74 @@ c_func
 (paren
 l_int|0
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
 l_int|0x03D5
 )paren
 suffix:semicolon
+multiline_comment|/* setup default color table */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_int
+id|j
+op_assign
+id|color_table
+(braket
+id|i
+)braket
+suffix:semicolon
+id|palette
+(braket
+id|i
+)braket
+dot
+id|red
+op_assign
+id|default_red
+(braket
+id|j
+)braket
+suffix:semicolon
+id|palette
+(braket
+id|i
+)braket
+dot
+id|green
+op_assign
+id|default_grn
+(braket
+id|j
+)braket
+suffix:semicolon
+id|palette
+(braket
+id|i
+)braket
+dot
+id|blue
+op_assign
+id|default_blu
+(braket
+id|j
+)braket
+suffix:semicolon
+)brace
 id|s3trio_setcolreg
 c_func
 (paren
@@ -2597,7 +2835,7 @@ c_func
 r_char
 op_star
 )paren
-id|fb_fix.smem_start
+id|s3trio_base
 comma
 l_int|0
 comma
@@ -2689,10 +2927,11 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|fb_var.accel
+id|fb_var.accel_flags
 op_assign
-l_int|5
+id|FB_ACCELF_TEXT
 suffix:semicolon
+macro_line|#warning FIXME: always obey fb_var.accel_flags
 id|fb_var.pixclock
 op_assign
 l_int|1
@@ -2747,7 +2986,7 @@ l_int|NULL
 suffix:semicolon
 id|disp.screen_base
 op_assign
-id|fb_fix.smem_start
+id|s3trio_base
 suffix:semicolon
 id|disp.visual
 op_assign
@@ -2782,10 +3021,23 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_FBCON_CFB8
+r_if
+c_cond
+(paren
+id|fb_var.accel_flags
+op_amp
+id|FB_ACCELF_TEXT
+)paren
 id|disp.dispsw
 op_assign
 op_amp
 id|fbcon_trio8
+suffix:semicolon
+r_else
+id|disp.dispsw
+op_assign
+op_amp
+id|fbcon_cfb8
 suffix:semicolon
 macro_line|#else
 id|disp.dispsw
@@ -2976,7 +3228,6 @@ OL
 l_int|0
 )paren
 r_return
-id|mem_start
 suffix:semicolon
 id|printk
 c_func
@@ -2991,9 +3242,6 @@ id|fb_info.node
 comma
 id|dp-&gt;full_name
 )paren
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 DECL|function|s3triofbcon_switch
@@ -3057,6 +3305,8 @@ id|do_install_cmap
 c_func
 (paren
 id|con
+comma
+id|info
 )paren
 suffix:semicolon
 r_return
@@ -3100,10 +3350,62 @@ op_star
 id|info
 )paren
 (brace
-multiline_comment|/* Nothing */
+r_int
+r_char
+id|x
+suffix:semicolon
+id|mem_out8
+c_func
+(paren
+l_int|0x1
+comma
+id|s3trio_base
+op_plus
+l_int|0x1008000
+op_plus
+l_int|0x03c4
+)paren
+suffix:semicolon
+id|x
+op_assign
+id|mem_in8
+c_func
+(paren
+id|s3trio_base
+op_plus
+l_int|0x1008000
+op_plus
+l_int|0x03c5
+)paren
+suffix:semicolon
+id|mem_out8
+c_func
+(paren
+(paren
+id|x
+op_amp
+(paren
+op_complement
+l_int|0x20
+)paren
+)paren
+op_or
+(paren
+id|blank
+op_lshift
+l_int|5
+)paren
+comma
+id|s3trio_base
+op_plus
+l_int|0x1008000
+op_plus
+l_int|0x03c5
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Set the colormap&n;     */
-DECL|function|s3triofbcon_setcmap
+macro_line|#if 0
 r_static
 r_int
 id|s3triofbcon_setcmap
@@ -3133,6 +3435,7 @@ id|fb_info
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;     *  Read a single color register and split it into&n;     *  colors/transparent. Return != 0 for invalid regno.&n;     */
 DECL|function|s3trio_getcolreg
 r_static
@@ -3279,7 +3582,7 @@ c_func
 (paren
 id|regno
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -3297,7 +3600,7 @@ l_int|0xff
 op_rshift
 l_int|2
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -3315,7 +3618,7 @@ l_int|0xff
 op_rshift
 l_int|2
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -3333,7 +3636,7 @@ l_int|0xff
 op_rshift
 l_int|2
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -3352,6 +3655,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -3449,6 +3757,12 @@ r_int
 id|doit
 )paren
 (brace
+macro_line|#if 1
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#else
 r_int
 id|err
 suffix:semicolon
@@ -3575,11 +3889,12 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
-DECL|function|s3trio_video_setup
+DECL|function|s3triofb_setup
 r_void
-id|s3trio_video_setup
+id|s3triofb_setup
 c_func
 (paren
 r_char
@@ -3614,7 +3929,7 @@ op_assign
 id|mem_in16
 c_func
 (paren
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1000000
 op_plus
@@ -3653,7 +3968,7 @@ op_assign
 id|mem_in16
 c_func
 (paren
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1000000
 op_plus
@@ -3991,7 +4306,7 @@ c_func
 (paren
 l_int|0x39
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4003,7 +4318,7 @@ c_func
 (paren
 l_int|0xa0
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4015,7 +4330,7 @@ c_func
 (paren
 l_int|0x46
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4033,7 +4348,7 @@ l_int|0x0700
 op_rshift
 l_int|8
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4045,7 +4360,7 @@ c_func
 (paren
 l_int|0x47
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4059,7 +4374,7 @@ id|x
 op_amp
 l_int|0x00ff
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4071,7 +4386,7 @@ c_func
 (paren
 l_int|0x48
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4089,7 +4404,7 @@ l_int|0x0700
 op_rshift
 l_int|8
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4101,7 +4416,7 @@ c_func
 (paren
 l_int|0x49
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4115,7 +4430,7 @@ id|y
 op_amp
 l_int|0x00ff
 comma
-id|fb_fix.smem_start
+id|s3trio_base
 op_plus
 l_int|0x1008000
 op_plus
@@ -4464,6 +4779,8 @@ comma
 id|fbcon_trio8_putcs
 comma
 id|fbcon_trio8_revc
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#endif

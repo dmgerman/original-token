@@ -5131,7 +5131,7 @@ id|async
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Uhhuh. We&squot;re _really_ low on memory. Now we just&n;&t; * wait for old buffer heads to become free due to&n;&t; * finishing IO.  Since this is an async request and&n;&t; * the reserve list is empty, we&squot;re sure there are &n;&t; * async buffer heads in use.&n;&t; */
+multiline_comment|/* We&squot;re _really_ low on memory. Now we just&n;&t; * wait for old buffer heads to become free due to&n;&t; * finishing IO.  Since this is an async request and&n;&t; * the reserve list is empty, we&squot;re sure there are &n;&t; * async buffer heads in use.&n;&t; */
 id|run_task_queue
 c_func
 (paren
