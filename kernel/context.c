@@ -27,7 +27,7 @@ r_int
 id|keventd_running
 suffix:semicolon
 DECL|function|schedule_task
-r_void
+r_int
 id|schedule_task
 c_func
 (paren
@@ -37,6 +37,9 @@ op_star
 id|task
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -51,6 +54,8 @@ id|KERN_ERR
 l_string|&quot;schedule_task(): keventd has not started&bslash;n&quot;
 )paren
 suffix:semicolon
+id|ret
+op_assign
 id|queue_task
 c_func
 (paren
@@ -67,14 +72,10 @@ op_amp
 id|context_task_wq
 )paren
 suffix:semicolon
-)brace
-DECL|variable|schedule_task
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|schedule_task
-)paren
+r_return
+id|ret
 suffix:semicolon
+)brace
 DECL|function|context_thread
 r_static
 r_int
@@ -193,6 +194,7 @@ op_star
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/*&n; &t; * If one of the functions on a task queue re-adds itself&n; &t; * to the task queue we call schedule() in state TASK_RUNNING&n; &t; */
 r_for
 c_loop
 (paren
@@ -200,7 +202,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|__set_task_state
+id|set_task_state
 c_func
 (paren
 id|curtask
@@ -218,13 +220,19 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Careful: we depend on the wait-queue modifications&n;&t;&t; * to also act as memory barriers.&n;&t;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|tq_context
 )paren
+id|set_task_state
+c_func
+(paren
+id|curtask
+comma
+id|TASK_RUNNING
+)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -238,14 +246,6 @@ id|context_task_wq
 comma
 op_amp
 id|wait
-)paren
-suffix:semicolon
-id|__set_task_state
-c_func
-(paren
-id|curtask
-comma
-id|TASK_RUNNING
 )paren
 suffix:semicolon
 id|run_task_queue
@@ -304,6 +304,23 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; * Run the tq_context queue right now.  Must be called from process context&n; */
+DECL|function|run_schedule_tasks
+r_void
+id|run_schedule_tasks
+c_func
+(paren
+r_void
+)paren
+(brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_context
+)paren
+suffix:semicolon
+)brace
 DECL|function|start_context_thread
 r_int
 id|start_context_thread
@@ -330,4 +347,18 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|schedule_task
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|schedule_task
+)paren
+suffix:semicolon
+DECL|variable|run_schedule_tasks
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|run_schedule_tasks
+)paren
+suffix:semicolon
 eof

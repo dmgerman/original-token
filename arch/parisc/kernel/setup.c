@@ -32,10 +32,8 @@ macro_line|#include &lt;asm/real.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;&t;/* for pa7300lc_init() proto */
 macro_line|#include &lt;asm/irq.h&gt;&t;&t;/* for struct irq_region */
-macro_line|#include &lt;asm/pdc.h&gt;&t;&t;/* for mem_pdc_call() proto */
 macro_line|#include &lt;asm/pdcpat.h&gt;&t;&t;/* for PA_VIEW PDC_PAT_CPU_GET_NUMBER etc */
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;asm/cache.h&gt;          /* for get_cache_info() proto */
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE 1024
 DECL|variable|saved_command_line

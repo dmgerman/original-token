@@ -1955,13 +1955,6 @@ c_func
 id|tq_immediate
 )paren
 suffix:semicolon
-DECL|variable|tq_scheduler
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tq_scheduler
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Various random spinlocks we want to export */
 DECL|variable|tqueue_lock

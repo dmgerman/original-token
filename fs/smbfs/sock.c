@@ -643,14 +643,11 @@ id|job-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|queue_task
+id|schedule_task
 c_func
 (paren
 op_amp
 id|job-&gt;cb
-comma
-op_amp
-id|tq_scheduler
 )paren
 suffix:semicolon
 )brace

@@ -10306,6 +10306,12 @@ id|io_size
 )paren
 r_break
 suffix:semicolon
+id|pci_set_master
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 id|setup_uhci
 c_func

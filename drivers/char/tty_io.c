@@ -1598,7 +1598,7 @@ id|tty_release
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This can be called through the &quot;tq_scheduler&quot; &n; * task-list. That is process synchronous, but&n; * doesn&squot;t hold any locks, so we need to make&n; * sure we have the appropriate locks for what&n; * we&squot;re doing..&n; */
+multiline_comment|/*&n; * This can be called by the &quot;eventd&quot; kernel thread.  That is process synchronous,&n; * but doesn&squot;t hold any locks, so we need to make sure we have the appropriate&n; * locks for what we&squot;re doing..&n; */
 DECL|function|do_tty_hangup
 r_void
 id|do_tty_hangup
@@ -2126,14 +2126,11 @@ id|buf
 )paren
 suffix:semicolon
 macro_line|#endif
-id|queue_task
+id|schedule_task
 c_func
 (paren
 op_amp
 id|tty-&gt;tq_hangup
-comma
-op_amp
-id|tq_scheduler
 )paren
 suffix:semicolon
 )brace
@@ -5061,11 +5058,9 @@ op_amp
 id|tq_timer
 )paren
 suffix:semicolon
-id|run_task_queue
+id|run_schedule_tasks
 c_func
 (paren
-op_amp
-id|tq_scheduler
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * The release_mem function takes care of the details of clearing&n;&t; * the slots and preserving the termios structure.&n;&t; */

@@ -222,22 +222,11 @@ id|page
 )paren
 (brace
 r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
-r_struct
 id|rpc_cred
 op_star
 id|cred
 op_assign
-id|nfs_file_cred
-c_func
-(paren
-id|file
-)paren
+l_int|NULL
 suffix:semicolon
 r_struct
 id|nfs_fattr
@@ -300,6 +289,19 @@ comma
 id|page
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|file
+)paren
+id|cred
+op_assign
+id|nfs_file_cred
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * This works now because the socket layer never tries to DMA&n;&t; * into this buffer directly.&n;&t; */
 id|buffer
 op_assign
@@ -325,7 +327,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS: nfs_proc_read(%s, (%s/%s), %Ld, %d, %p)&bslash;n&quot;
+l_string|&quot;NFS: nfs_proc_read(%s, (%x/%Ld), %Ld, %d, %p)&bslash;n&quot;
 comma
 id|NFS_SERVER
 c_func
@@ -335,9 +337,17 @@ id|inode
 op_member_access_from_pointer
 id|hostname
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
+id|inode-&gt;i_dev
 comma
-id|dentry-&gt;d_name.name
+(paren
+r_int
+r_int
+)paren
+id|NFS_FILEID
+c_func
+(paren
+id|inode
+)paren
 comma
 (paren
 r_int

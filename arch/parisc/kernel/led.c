@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *    Chassis LCD/LED driver for HP-PARISC workstations&n; *&n; *      (c) Copyright 2000 Red Hat Software&n; *      (c) Copyright 2000 Helge Deller &lt;hdeller@redhat.com&gt;&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

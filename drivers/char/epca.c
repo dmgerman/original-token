@@ -2126,15 +2126,21 @@ l_int|1
 op_lshift
 id|event
 suffix:semicolon
-id|queue_task
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|schedule_task
 c_func
 (paren
 op_amp
 id|ch-&gt;tqueue
-comma
-op_amp
-id|tq_scheduler
 )paren
+op_eq
+l_int|0
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 multiline_comment|/* End pc_sched_event */
@@ -11117,6 +11123,7 @@ c_func
 id|tty
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: module removal race here - AKPM */
 id|wake_up_interruptible
 c_func
 (paren
@@ -11138,6 +11145,8 @@ multiline_comment|/* End if clear_bit */
 )brace
 )brace
 multiline_comment|/* End EPCA_MAGIC */
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 multiline_comment|/* End do_softint */
 multiline_comment|/* ------------------------------------------------------------&n;&t;pc_stop and pc_start provide software flow control to the &n;&t;routine and the pc_ioctl routine.&n;---------------------------------------------------------------- */

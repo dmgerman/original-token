@@ -53,10 +53,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;megaraid.h&quot;
 multiline_comment|/*================================================================&n; *&n; *                          #Defines&n; *&n; *================================================================&n; */
-DECL|macro|queue_task_irq
-mdefine_line|#define queue_task_irq(a,b)     queue_task(a,b)
-DECL|macro|queue_task_irq_off
-mdefine_line|#define queue_task_irq_off(a,b) queue_task(a,b)
 DECL|macro|MAX_SERBUF
 mdefine_line|#define MAX_SERBUF 160
 DECL|macro|COM_BASE

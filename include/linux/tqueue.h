@@ -5,7 +5,7 @@ mdefine_line|#define _LINUX_TQUEUE_H
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/*&n; * New proposed &quot;bottom half&quot; handlers:&n; * (C) 1994 Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; * Advantages:&n; * - Bottom halfs are implemented as a linked list.  You can have as many&n; *   of them, as you want.&n; * - No more scanning of a bit field is required upon call of a bottom half.&n; * - Support for chained bottom half lists.  The run_task_queue() function can be&n; *   used as a bottom half handler.  This is for example useful for bottom&n; *   halfs, which want to be delayed until the next clock tick.&n; *&n; * Problems:&n; * - The queue_task_irq() inline function is only atomic with respect to itself.&n; *   Problems can occur, when queue_task_irq() is called from a normal system&n; *   call, and an interrupt comes in.  No problems occur, when queue_task_irq()&n; *   is called from an interrupt or bottom half, and interrupted, as run_task_queue()&n; *   will not be executed/continued before the last interrupt returns.  If in&n; *   doubt, use queue_task(), not queue_task_irq().&n; * - Bottom halfs are called in the reverse order that they were linked into&n; *   the list.&n; */
+multiline_comment|/*&n; * New proposed &quot;bottom half&quot; handlers:&n; * (C) 1994 Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; * Advantages:&n; * - Bottom halfs are implemented as a linked list.  You can have as many&n; *   of them, as you want.&n; * - No more scanning of a bit field is required upon call of a bottom half.&n; * - Support for chained bottom half lists.  The run_task_queue() function can be&n; *   used as a bottom half handler.  This is for example useful for bottom&n; *   halfs, which want to be delayed until the next clock tick.&n; *&n; * Notes:&n; * - Bottom halfs are called in the reverse order that they were linked into&n; *   the list.&n; */
 DECL|struct|tq_struct
 r_struct
 id|tq_struct
@@ -58,8 +58,6 @@ id|tq_timer
 comma
 id|tq_immediate
 comma
-id|tq_scheduler
-comma
 id|tq_disk
 suffix:semicolon
 multiline_comment|/*&n; * To implement your own list of active bottom halfs, use the following&n; * two definitions:&n; *&n; * struct tq_struct *my_bh = NULL;&n; * struct tq_struct run_my_bh = {&n; *&t;0, 0, (void (*)(void *)) run_task_queue, &amp;my_bh&n; * };&n; *&n; * To activate a bottom half on your list, use:&n; *&n; *     queue_task(tq_pointer, &amp;my_bh);&n; *&n; * To run the bottom halfs on your list put them on the immediate list by:&n; *&n; *     queue_task(&amp;run_my_bh, &amp;tq_immediate);&n; *&n; * This allows you to do deferred procession.  For example, you could&n; * have a bottom half list tq_timer, which is marked active by the timer&n; * interrupt.&n; */
@@ -67,11 +65,11 @@ r_extern
 id|spinlock_t
 id|tqueue_lock
 suffix:semicolon
-multiline_comment|/*&n; * queue_task&n; */
+multiline_comment|/*&n; * Queue a task on a tq.  Return non-zero if it was successfully&n; * added.&n; */
 DECL|function|queue_task
 r_static
 r_inline
-r_void
+r_int
 id|queue_task
 c_func
 (paren
@@ -85,6 +83,11 @@ op_star
 id|bh_list
 )paren
 (brace
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -131,7 +134,14 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|ret
+op_assign
+l_int|1
+suffix:semicolon
 )brace
+r_return
+id|ret
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Call all &quot;bottom halfs&quot; on a given list.&n; */
 DECL|function|run_task_queue

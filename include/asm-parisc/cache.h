@@ -2,7 +2,6 @@ multiline_comment|/*&n; * include/asm-parisc/cache.h&n; */
 macro_line|#ifndef __ARCH_PARISC_CACHE_H
 DECL|macro|__ARCH_PARISC_CACHE_H
 mdefine_line|#define __ARCH_PARISC_CACHE_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;** XXX FIXME : L1_CACHE_BYTES (cacheline size) should be a boot time thing.&n;** &n;** 32-bit on PA2.0 is not covered well by the #ifdef __LP64__ below.&n;** PA2.0 processors have 64-byte cachelines.&n;**&n;** The issue is mostly cacheline ping-ponging on SMP boxes.&n;** To avoid this, code should define stuff to be per CPU on cacheline&n;** aligned boundaries. This can make a 2x or more difference in perf&n;** depending on how badly the thrashing is.&n;**&n;** We don&squot;t need to worry about I/O since all PA2.0 boxes (except T600)&n;** are I/O coherent. That means flushing less than you needed to generally&n;** doesn&squot;t matter - the I/O MMU will read/modify/write the cacheline.&n;**&n;** (Digression: it is possible to program I/O MMU&squot;s to not first read&n;** a cacheline for inbound data - ie just grab ownership and start writing.&n;** While it improves I/O throughput, you gotta know the device driver&n;** is well behaved and can deal with the issues.)&n;*/
 macro_line|#if defined(__LP64__)
 DECL|macro|L1_CACHE_BYTES

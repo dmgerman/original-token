@@ -3,7 +3,6 @@ DECL|macro|ASM_PARISC_GSC_H
 mdefine_line|#define ASM_PARISC_GSC_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;&t;/* for struct hp_device */
 multiline_comment|/*&n; * The convention used for inb/outb etc. is that names starting with&n; * two underscores are the inline versions, names starting with a&n; * single underscore are proper functions, and names starting with a&n; * letter are macros that map in some way to inline or proper function&n; * versions.  Not all that pretty, but before you change it, be sure&n; * to convince yourself that it won&squot;t break anything (in particular&n; * module support).&n; */
 r_extern

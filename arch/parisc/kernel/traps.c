@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/parisc/traps.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1999, 2000  Philipp Rumpf &lt;prumpf@tux.org&gt;&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;.&n; */
-macro_line|#include &lt;linux/autoconf.h&gt;&t;/* for CONFIG_KWDB */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

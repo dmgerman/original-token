@@ -1,6 +1,5 @@
 multiline_comment|/* Copyright (c) 1999 The Puffin Group */
 multiline_comment|/* Written by David Kennedy and Alex deVries */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;

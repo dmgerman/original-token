@@ -8,7 +8,6 @@ mdefine_line|#define DPRINTK(x)
 macro_line|#endif
 multiline_comment|/*&n; *  linux/drivers/video/sticon.c  - console driver using HP&squot;s STI firmware&n; *&n; *&t;Copyright (C) 2000 Philipp Rumpf &lt;prumpf@tux.org&gt;&n; *&n; *  Based on linux/drivers/video/vgacon.c and linux/drivers/video/fbcon.c,&n; *  which were&n; *&n; *&t;Created 28 Sep 1997 by Geert Uytterhoeven&n; *&t;Rewritten by Martin Mares &lt;mj@ucw.cz&gt;, July 1998&n; *&t;Copyright (C) 1991, 1992  Linus Torvalds&n; *&t;&t;&t;    1995  Jay Estabrook&n; *&t;Copyright (C) 1995 Geert Uytterhoeven&n; *&t;Copyright (C) 1993 Bjoern Brauel&n; *&t;&t;&t;   Roman Hodek&n; *&t;Copyright (C) 1993 Hamish Macdonald&n; *&t;&t;&t;   Greg Harp&n; *&t;Copyright (C) 1994 David Carter [carter@compsci.bristol.ac.uk]&n; *&n; *&t;      with work by William Rucklidge (wjr@cs.cornell.edu)&n; *&t;&t;&t;   Geert Uytterhoeven&n; *&t;&t;&t;   Jes Sorensen (jds@kom.auc.dk)&n; *&t;&t;&t;   Martin Apel&n; *&t;      with work by Guenther Kelleter&n; *&t;&t;&t;   Martin Schaller&n; *&t;&t;&t;   Andreas Schwab&n; *&t;&t;&t;   Emmanuel Marty (core@ggi-project.org)&n; *&t;&t;&t;   Jakub Jelinek (jj@ultra.linux.cz)&n; *&t;&t;&t;   Martin Mares &lt;mj@ucw.cz&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/*&n; *  TODO:&n; *   - call STI in virtual mode rather than in real mode&n; *   - support for PCI-only STI ROMs (which don&squot;t have a traditional region&n; *     list)&n; *   - safe detection (i.e. verify there is a graphics device at a given&n; *     address first, not just read a random device&squot;s io space)&n; *   - support for multiple STI devices in one machine&n; *   - support for byte-mode STI ROMs&n; *   - support for just using STI to switch to a colour fb (stifb ?)&n; *   - try to make it work on m68k hp workstations ;)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -25,22 +24,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/real.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/console.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/kd.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
-macro_line|#include &lt;linux/vt_kern.h&gt;
-macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;

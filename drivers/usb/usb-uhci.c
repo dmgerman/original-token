@@ -13175,6 +13175,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|pci_set_master
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 id|alloc_uhci
 c_func

@@ -2443,7 +2443,7 @@ comma
 id|QCMD_RD_STAT
 )paren
 suffix:semicolon
-macro_line|#if defined(i386) || defined(i486)
+macro_line|#ifdef __i386__
 id|byte_swap_w
 c_func
 (paren

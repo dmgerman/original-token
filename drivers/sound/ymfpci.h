@@ -588,26 +588,15 @@ DECL|struct|ymf_unit
 r_struct
 id|ymf_unit
 (brace
-DECL|member|device_id
-r_int
-r_int
-id|device_id
-suffix:semicolon
-multiline_comment|/* PCI device ID */
 DECL|member|rev
 r_int
 r_int
 id|rev
 suffix:semicolon
 multiline_comment|/* PCI revision */
-DECL|member|reg_area_phys
-r_int
-r_int
-id|reg_area_phys
-suffix:semicolon
 DECL|member|reg_area_virt
-r_int
-r_int
+r_void
+op_star
 id|reg_area_virt
 suffix:semicolon
 DECL|member|work_ptr
@@ -732,10 +721,6 @@ id|pci_dev
 op_star
 id|pci
 suffix:semicolon
-DECL|member|irq
-r_int
-id|irq
-suffix:semicolon
 DECL|member|inst
 r_int
 id|inst
@@ -754,12 +739,11 @@ DECL|member|dev_audio
 r_int
 id|dev_audio
 suffix:semicolon
-DECL|member|next
-id|ymfpci_t
-op_star
-id|next
+DECL|member|ymf_devs
+r_struct
+id|list_head
+id|ymf_devs
 suffix:semicolon
-singleline_comment|// *
 DECL|member|states
 r_struct
 id|ymf_state

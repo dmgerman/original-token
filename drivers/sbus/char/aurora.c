@@ -3523,16 +3523,24 @@ id|ASYNC_CALLOUT_NOHUP
 )paren
 )paren
 )paren
-id|queue_task
+(brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|schedule_task
 c_func
 (paren
 op_amp
 id|port-&gt;tqueue_hangup
-comma
-op_amp
-id|tq_scheduler
 )paren
+op_eq
+l_int|0
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* We don&squot;t have such things yet. My aurora board has DTR and RTS swapped, but that doesn&squot;t count in this driver. Let&squot;s hope&n; * Aurora didn&squot;t made any boards with CTS or DSR broken...&n; */
 multiline_comment|/* #ifdef AURORA_BRAIN_DAMAGED_CTS&n;&t;if (mcr &amp; MCR_CTSCHG)  {&n;&t;&t;if (aurora_in(bp, CD180_MSVR) &amp; MSVR_CTS)  {&n;&t;&t;&t;tty-&gt;hw_stopped = 0;&n;&t;&t;&t;port-&gt;SRER |= SRER_TXRDY;&n;&t;&t;&t;if (port-&gt;xmit_cnt &lt;= port-&gt;wakeup_chars)&n;&t;&t;&t;&t;aurora_mark_event(port, RS_EVENT_WRITE_WAKEUP);&n;&t;&t;} else  {&n;&t;&t;&t;tty-&gt;hw_stopped = 1;&n;&t;&t;&t;port-&gt;SRER &amp;= ~SRER_TXRDY;&n;&t;&t;}&n;&t;&t;sbus_writeb(port-&gt;SRER, &amp;bp-&gt;r[chip]-&gt;r[CD180_SRER]);&n;&t;}&n;&t;if (mcr &amp; MCR_DSRCHG)  {&n;&t;&t;if (aurora_in(bp, CD180_MSVR) &amp; MSVR_DSR)  {&n;&t;&t;&t;tty-&gt;hw_stopped = 0;&n;&t;&t;&t;port-&gt;SRER |= SRER_TXRDY;&n;&t;&t;&t;if (port-&gt;xmit_cnt &lt;= port-&gt;wakeup_chars)&n;&t;&t;&t;&t;aurora_mark_event(port, RS_EVENT_WRITE_WAKEUP);&n;&t;&t;} else  {&n;&t;&t;&t;tty-&gt;hw_stopped = 1;&n;&t;&t;&t;port-&gt;SRER &amp;= ~SRER_TXRDY;&n;&t;&t;}&n;&t;&t;sbus_writeb(port-&gt;SRER, &amp;bp-&gt;r[chip]-&gt;r[CD180_SRER]);&n;&t;}&n;#endif AURORA_BRAIN_DAMAGED_CTS */
@@ -11386,17 +11394,17 @@ r_if
 c_cond
 (paren
 id|tty
-op_eq
+op_ne
 l_int|NULL
 )paren
-r_return
-suffix:semicolon
+(brace
 id|tty_hangup
 c_func
 (paren
 id|tty
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: module removal race - AKPM */
 macro_line|#ifdef AURORA_DEBUG
 id|printk
 c_func
@@ -11405,6 +11413,9 @@ l_string|&quot;do_aurora_hangup: end&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 DECL|function|aurora_hangup
 r_static

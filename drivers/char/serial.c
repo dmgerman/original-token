@@ -1780,7 +1780,7 @@ id|tty
 )paren
 suffix:semicolon
 macro_line|#else
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp

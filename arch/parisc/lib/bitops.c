@@ -1,4 +1,5 @@
 multiline_comment|/* atomic.c: atomic operations which got too long to be inlined all over&n; * the place.&n; * &n; * Copyright 1999 Philipp Rumpf (prumpf@tux.org */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

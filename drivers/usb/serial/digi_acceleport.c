@@ -1148,6 +1148,8 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 DECL|function|digi_wakeup_write
 r_static
@@ -4651,15 +4653,21 @@ id|port
 suffix:semicolon
 multiline_comment|/* also queue up a wakeup at scheduler time, in case we */
 multiline_comment|/* lost the race in write_chan(). */
-id|queue_task
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|schedule_task
 c_func
 (paren
 op_amp
 id|priv-&gt;dp_wakeup_task
-comma
-op_amp
-id|tq_scheduler
 )paren
+op_eq
+l_int|0
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|spin_unlock
 c_func

@@ -2,7 +2,6 @@ macro_line|#ifndef __PARISC_UACCESS_H
 DECL|macro|__PARISC_UACCESS_H
 mdefine_line|#define __PARISC_UACCESS_H
 multiline_comment|/*&n; * User space memory access functions&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

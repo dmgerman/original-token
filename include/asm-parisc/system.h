@@ -1,6 +1,7 @@
 macro_line|#ifndef __PARISC_SYSTEM_H
 DECL|macro|__PARISC_SYSTEM_H
 mdefine_line|#define __PARISC_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/psw.h&gt;
 multiline_comment|/* The program status word as bitfields.  */
 DECL|struct|pa_psw

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  include/asm-parisc/bugs.h&n; *&n; *  Copyright (C) 1999&t;Mike Shaver&n; */
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|function|check_bugs
 r_static

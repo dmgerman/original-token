@@ -307,6 +307,7 @@ op_star
 id|ha
 )paren
 suffix:semicolon
+r_static
 r_void
 id|qla1280_do_dpc
 c_func
@@ -3494,14 +3495,11 @@ op_amp
 id|ha-&gt;done_q_last
 )paren
 suffix:semicolon
-id|queue_task
+id|schedule_task
 c_func
 (paren
 op_amp
 id|ha-&gt;run_qla_bh
-comma
-op_amp
-id|tq_scheduler
 )paren
 suffix:semicolon
 id|ha-&gt;flags.dpc_sched
@@ -5709,14 +5707,11 @@ c_func
 (paren
 l_char|&squot;P&squot;
 )paren
-id|queue_task_irq
+id|schedule_task
 c_func
 (paren
 op_amp
 id|ha-&gt;run_qla_bh
-comma
-op_amp
-id|tq_scheduler
 )paren
 suffix:semicolon
 id|ha-&gt;flags.dpc_sched
@@ -5764,6 +5759,7 @@ suffix:semicolon
 )brace
 multiline_comment|/**************************************************************************&n; *   qla1280_do_dpc&n; *&n; * Description:&n; * This routine is a task that is schedule by the interrupt handler &n; * to perform the background processing for interrupts.  We put it &n; * on a task queue that is consumed whenever the scheduler runs; that&squot;s&n; * so you can do anything (i.e. put the process to sleep etc).  In fact, the &n; * mid-level tries to sleep when it reaches the driver threshold &n; * &quot;host-&gt;can_queue&quot;. This can cause a panic if we were in our interrupt&n; * code .&n; **************************************************************************/
 DECL|function|qla1280_do_dpc
+r_static
 r_void
 id|qla1280_do_dpc
 c_func

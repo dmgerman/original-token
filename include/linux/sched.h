@@ -246,7 +246,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|schedule_task
 c_func
 (paren
@@ -254,6 +254,14 @@ r_struct
 id|tq_struct
 op_star
 id|task
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|run_schedule_tasks
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern

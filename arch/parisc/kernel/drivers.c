@@ -1,6 +1,5 @@
 multiline_comment|/*&n;&n;drivers.c&n;&n;Copyright (c) 1999 The Puffin Group &n;&n;This is a collection of routines intended to register all the devices&n;in a system, and register device drivers.&n;&n;*/
 macro_line|#include &lt;linux/slab.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;

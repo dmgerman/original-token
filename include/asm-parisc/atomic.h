@@ -1,6 +1,7 @@
 macro_line|#ifndef _ASM_PARISC_ATOMIC_H_
 DECL|macro|_ASM_PARISC_ATOMIC_H_
 mdefine_line|#define _ASM_PARISC_ATOMIC_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* Copyright (C) 2000 Philipp Rumpf &lt;prumpf@tux.org&gt;.  */
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * And probably incredibly slow on parisc.  OTOH, we don&squot;t&n; * have to write any serious assembly.   prumpf&n; */

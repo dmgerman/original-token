@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/parisc/kernel/signal.c: Architecture-specific signal&n; *  handling support.&n; *&n; *  Copyright (C) 2000 David Huggins-Daines &lt;dhd@debian.org&gt;&n; *  Copyright (C) 2000 Linuxcare, Inc.&n; *&n; *  Based on the ia64, i386, and alpha versions.&n; *&n; *  Like the IA-64, we are a recent enough port (we are *starting*&n; *  with glibc2.2) that we do not need to support the old non-realtime&n; *  Linux signals.  Therefore we don&squot;t.  HP/UX signals will go in&n; *  arch/parisc/hpux/signal.c when we figure out how to do them.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

@@ -228,6 +228,8 @@ id|tty-&gt;write_wait
 )paren
 suffix:semicolon
 multiline_comment|/* For 2.2.16 backport -- wake_up_interruptible( &amp;tty-&gt;poll_wait ); */
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 DECL|function|keyspan_pda_request_unthrottle
 r_static
@@ -284,6 +286,8 @@ l_int|2
 op_star
 id|HZ
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|keyspan_pda_rx_interrupt
@@ -507,15 +511,21 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* queue up a wakeup at scheduler time */
-id|queue_task
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|schedule_task
 c_func
 (paren
 op_amp
 id|priv-&gt;wakeup_task
-comma
-op_amp
-id|tq_scheduler
 )paren
+op_eq
+l_int|0
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2080,15 +2090,21 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* block writers */
-id|queue_task
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|schedule_task
 c_func
 (paren
 op_amp
 id|priv-&gt;unthrottle_task
-comma
-op_amp
-id|tq_scheduler
 )paren
+op_eq
+l_int|0
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 id|spin_unlock_irqrestore
@@ -2184,15 +2200,21 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* queue up a wakeup at scheduler time */
-id|queue_task
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|schedule_task
 c_func
 (paren
 op_amp
 id|priv-&gt;wakeup_task
-comma
-op_amp
-id|tq_scheduler
 )paren
+op_eq
+l_int|0
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|keyspan_pda_write_room

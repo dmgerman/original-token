@@ -67,13 +67,6 @@ c_func
 id|tq_immediate
 )paren
 suffix:semicolon
-DECL|variable|tq_scheduler
-id|DECLARE_TASK_QUEUE
-c_func
-(paren
-id|tq_scheduler
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * phase-lock loop variables&n; */
 multiline_comment|/* TIME_ERROR prevents overwriting the CMOS clock */
 DECL|variable|time_state
