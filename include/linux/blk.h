@@ -20,6 +20,16 @@ mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;
 macro_line|#endif /* IDE_DRIVER */
 DECL|macro|SUBSECTOR
 mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
+macro_line|#ifdef CONFIG_CDROM
+r_extern
+r_int
+id|cdrom_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CDROM 
 macro_line|#ifdef CONFIG_CDU31A
 r_extern
 r_int

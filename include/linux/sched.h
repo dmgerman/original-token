@@ -360,9 +360,9 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* per process flags, defined below */
-DECL|member|errno
+DECL|member|sigpending
 r_int
-id|errno
+id|sigpending
 suffix:semicolon
 DECL|member|debugreg
 r_int
@@ -782,8 +782,6 @@ DECL|macro|PF_STARTING
 mdefine_line|#define PF_STARTING&t;0x00000002&t;/* being created */
 DECL|macro|PF_EXITING
 mdefine_line|#define PF_EXITING&t;0x00000004&t;/* getting shut down */
-DECL|macro|PF_SIGPENDING
-mdefine_line|#define PF_SIGPENDING&t;0x00000008&t;/* at least on unblocked sig ready */
 DECL|macro|PF_PTRACED
 mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called */
 DECL|macro|PF_TRACESYS
@@ -1615,12 +1613,10 @@ id|p
 (brace
 r_return
 (paren
-id|p-&gt;flags
-op_amp
-id|PF_SIGPENDING
-)paren
+id|p-&gt;sigpending
 op_ne
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Reevaluate whether the task has signals pending delivery.&n;   This is required every time the blocked sigset_t changes.&n;   All callers should have t-&gt;sigmask_lock.  */
@@ -1640,8 +1636,6 @@ id|t
 r_int
 r_int
 id|ready
-comma
-id|nflags
 suffix:semicolon
 r_int
 id|i
@@ -1793,28 +1787,13 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/* Poor gcc has trouble with conditional moves... */
-id|nflags
+id|t-&gt;sigpending
 op_assign
-id|t-&gt;flags
-op_amp
-op_complement
-id|PF_SIGPENDING
-suffix:semicolon
-r_if
-c_cond
 (paren
 id|ready
+op_ne
+l_int|0
 )paren
-id|nflags
-op_assign
-id|t-&gt;flags
-op_or
-id|PF_SIGPENDING
-suffix:semicolon
-id|t-&gt;flags
-op_assign
-id|nflags
 suffix:semicolon
 )brace
 r_extern

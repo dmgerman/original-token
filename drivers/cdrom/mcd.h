@@ -9,13 +9,21 @@ multiline_comment|/* *** make the following line uncommented, if you&squot;re su
 multiline_comment|/* #define I_WAS_HERE */
 multiline_comment|/* Increase this if you get lots of timeouts */
 DECL|macro|MCD_STATUS_DELAY
-mdefine_line|#define MCD_STATUS_DELAY&t;200
+mdefine_line|#define MCD_STATUS_DELAY&t;1000
 multiline_comment|/* number of times to retry a command before giving up */
 DECL|macro|MCD_RETRY_ATTEMPTS
-mdefine_line|#define MCD_RETRY_ATTEMPTS      5
+mdefine_line|#define MCD_RETRY_ATTEMPTS      10
 multiline_comment|/* port access macro */
 DECL|macro|MCDPORT
 mdefine_line|#define MCDPORT(x)&t;&t;(mcd_port + (x))
+multiline_comment|/* How many sectors to read at 1x when an error at 2x speed occurs. */
+multiline_comment|/* You can change this to anything from 2 to 32767, but 30 seems to */
+multiline_comment|/* work best for me.  I have found that when the drive has problems */
+multiline_comment|/* reading one sector, it will have troubles reading the next few.  */
+DECL|macro|SINGLE_HOLD_SECTORS
+mdefine_line|#define SINGLE_HOLD_SECTORS 30&t;
+DECL|macro|MCMD_2X_READ
+mdefine_line|#define MCMD_2X_READ 0xC1&t;/* Double Speed Read DON&squot;T TOUCH! */
 multiline_comment|/* status bits */
 DECL|macro|MST_CMD_CHECK
 mdefine_line|#define MST_CMD_CHECK&t;&t;0x01&t;&t;/* command error */

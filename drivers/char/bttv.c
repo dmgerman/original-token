@@ -51,6 +51,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Default tuner */
+id|MODULE_PARM
+c_func
+(paren
+id|tuner
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 r_static
 r_int
 id|find_vga
@@ -2860,10 +2868,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
 )paren
 (brace
 r_if

@@ -3076,10 +3076,9 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Usually rpciod will exit very quickly, so we&n;&t; * wait briefly before checking the process id.&n;&t; */
-id|current-&gt;flags
-op_and_assign
-op_complement
-id|PF_SIGPENDING
+id|current-&gt;sigpending
+op_assign
+l_int|0
 suffix:semicolon
 id|current-&gt;state
 op_assign

@@ -199,7 +199,7 @@ macro_line|#  undef  CONFIG_FT_FDC_DMA
 DECL|macro|CONFIG_FT_FDC_DMA
 macro_line|#  define CONFIG_FT_FDC_DMA 3
 macro_line|# endif
-macro_line|#elif CONIFG_FT_MACH2 == 1    /* CONFIG_FT_PROBE_FC10 == 1 */
+macro_line|#elif CONFIG_FT_MACH2 == 1    /* CONFIG_FT_PROBE_FC10 == 1 */
 macro_line|# if CONFIG_FT_FDC_BASE == 0
 DECL|macro|CONFIG_FT_FDC_BASE
 macro_line|#  undef  CONFIG_FT_FDC_BASE

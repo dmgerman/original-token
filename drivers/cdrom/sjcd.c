@@ -23,7 +23,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SANYO_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;linux/sjcd.h&gt;
+macro_line|#include &quot;sjcd.h&quot;
 DECL|variable|sjcd_present
 r_static
 r_int

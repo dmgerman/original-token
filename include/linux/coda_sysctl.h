@@ -1,0 +1,15 @@
+r_void
+id|coda_sysctl_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|coda_sysctl_clean
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+eof

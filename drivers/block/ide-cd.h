@@ -162,6 +162,20 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive is a changer. */
+DECL|member|cd_r
+id|__u8
+id|cd_r
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can write to CD-R media . */
+DECL|member|cd_rw
+id|__u8
+id|cd_rw
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can write to CD-R/W media . */
 DECL|member|supp_disc_present
 id|__u8
 id|supp_disc_present
@@ -169,6 +183,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Changer can report exact contents&n;&t;&t;&t;&t;      of slots. */
+DECL|member|max_speed
+id|__u8
+id|max_speed
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Max speed of the drive */
 DECL|member|seeking
 id|__u8
 id|seeking
@@ -219,6 +240,13 @@ suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* Sanyo 3 CD changer support */
+DECL|member|curent_speed
+id|__u8
+id|curent_speed
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Current speed of the drive */
 DECL|member|reserved
 id|__u8
 id|reserved
@@ -613,10 +641,10 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
-multiline_comment|/* Drive supports read from CD-E discs (orange book, part III) */
-DECL|member|cd_e_read
+multiline_comment|/* Drive supports read from CD-R/W (CD-E) discs (orange book, part III) */
+DECL|member|cd_rw_read
 r_int
-id|cd_e_read
+id|cd_rw_read
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -643,10 +671,10 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
-multiline_comment|/* Drive supports write to CD-E discs (orange book, part III) */
-DECL|member|cd_e_write
+multiline_comment|/* Drive supports write to CD-R/W (CD-E) discs (orange book, part III) */
+DECL|member|cd_rw_write
 r_int
-id|cd_e_write
+id|cd_rw_write
 suffix:colon
 l_int|1
 suffix:semicolon

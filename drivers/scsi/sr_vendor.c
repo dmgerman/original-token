@@ -7,7 +7,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
-macro_line|#include &lt;linux/ucdrom.h&gt;
 macro_line|#include &quot;sr.h&quot;
 macro_line|#if 0
 macro_line|# define DEBUG
@@ -1059,7 +1058,7 @@ id|sector
 )paren
 id|sector
 op_sub_assign
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 r_break
 suffix:semicolon

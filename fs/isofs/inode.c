@@ -19,6 +19,8 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * We have no support for &quot;multi volume&quot; CDs, but more and more disks carry&n; * wrong information within the volume descriptors.&n; */
 DECL|macro|IGNORE_WRONG_MULTI_VOLUME_SPECS
 mdefine_line|#define IGNORE_WRONG_MULTI_VOLUME_SPECS
+DECL|macro|BEQUIET
+mdefine_line|#define BEQUIET
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static
@@ -2135,6 +2137,7 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+macro_line|#ifndef BEQUIET
 id|printk
 c_func
 (paren
@@ -2193,6 +2196,7 @@ l_string|&quot;Disc in High Sierra format.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|unlock_super
 c_func
 (paren
@@ -2248,6 +2252,7 @@ comma
 id|opt.blocksize
 )paren
 suffix:semicolon
+macro_line|#ifndef BEQUIET
 id|printk
 c_func
 (paren
@@ -2257,6 +2262,7 @@ comma
 id|opt.blocksize
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifdef CONFIG_JOLIET
 id|s-&gt;u.isofs_sb.s_nls_iocharset

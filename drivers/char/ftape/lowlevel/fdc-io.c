@@ -1541,10 +1541,11 @@ suffix:semicolon
 )brace
 id|TRACE_EXIT
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
 )paren
 ques
 c_cond

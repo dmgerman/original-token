@@ -3043,14 +3043,20 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_CDI_INIT
-id|cdi_init
+macro_line|#ifdef CONFIG_CDROM&t;&t;/* this must precede all CD-ROM drivers */
+id|cdrom_init
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* this MUST precede ide_init */
-macro_line|#endif CONFIG_CDI_INIT
+macro_line|#endif CONFIG_CDROM
+macro_line|#ifdef CONFIG_ISP16_CDI
+id|isp16_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_ISP16_CDI
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_init
 c_func

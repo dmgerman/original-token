@@ -122,6 +122,9 @@ comma
 DECL|enumerator|RISCOM8_BH
 id|RISCOM8_BH
 comma
+DECL|enumerator|SPECIALIX_BH
+id|SPECIALIX_BH
+comma
 DECL|enumerator|ESP_BH
 id|ESP_BH
 comma

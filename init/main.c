@@ -1319,6 +1319,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SPECIALIX
+r_extern
+r_void
+id|specialix_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BAYCOM_PAR
 r_extern
 r_void
@@ -2469,6 +2485,14 @@ macro_line|#ifdef CONFIG_RISCOM8
 l_string|&quot;riscom8=&quot;
 comma
 id|riscom8_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SPECIALIX
+(brace
+l_string|&quot;specialix=&quot;
+comma
+id|specialix_setup
 )brace
 comma
 macro_line|#endif

@@ -23,7 +23,7 @@ mdefine_line|#define MAJOR_NR CDU535_CDROM_MAJOR
 macro_line|# include &lt;linux/blk.h&gt;
 DECL|macro|sony535_cd_base_io
 mdefine_line|#define sony535_cd_base_io sonycd535 /* for compatible parameter passing with &quot;insmod&quot; */
-macro_line|#include &lt;linux/sonycd535.h&gt;
+macro_line|#include &quot;sonycd535.h&quot;
 multiline_comment|/*&n; * this is the base address of the interface card for the Sony CDU-535&n; * CDROM drive.  If your jumpers are set for an address other than&n; * this one (the default), change the following line to the&n; * proper address.&n; */
 macro_line|#ifndef CDU535_ADDRESS
 DECL|macro|CDU535_ADDRESS

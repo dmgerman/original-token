@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_probe.c,v 1.1.2.9 1997/03/29 21:08:16 phil Exp $ &n; * Parallel port device probing code&n; * &n; * Authors:    Carsten Gross, carsten@sol.wohnheim.uni-ulm.de&n; *             Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* $Id: parport_probe.c,v 1.3 1997/10/19 18:18:46 phil Exp $ &n; * Parallel port device probing code&n; * &n; * Authors:    Carsten Gross, carsten@sol.wohnheim.uni-ulm.de&n; *             Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -63,9 +63,11 @@ op_or_assign
 l_int|8
 suffix:semicolon
 r_return
+(paren
 id|i
 op_amp
 l_int|0x0f
+)paren
 suffix:semicolon
 )brace
 DECL|function|read_terminate
@@ -160,8 +162,6 @@ l_int|2
 op_or
 l_int|8
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|read_polled
@@ -462,8 +462,6 @@ c_func
 op_amp
 id|wait_q
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|parport_probe
@@ -1282,11 +1280,11 @@ r_class
 id|printk
 c_func
 (paren
-l_string|&quot;, %s (%s)&quot;
-comma
-id|port-&gt;probe_info.model
+l_string|&quot;, %s %s&quot;
 comma
 id|port-&gt;probe_info.mfr
+comma
+id|port-&gt;probe_info.model
 )paren
 suffix:semicolon
 )brace
@@ -1476,6 +1474,8 @@ id|parport
 op_star
 id|p
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1498,6 +1498,13 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|parport_probe_hook
+op_assign
+op_amp
+id|parport_probe_one
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1510,6 +1517,10 @@ c_func
 r_void
 )paren
 (brace
+id|parport_probe_hook
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

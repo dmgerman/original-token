@@ -33,7 +33,7 @@ mdefine_line|#define MAJOR_NR GOLDSTAR_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|gscd_port
 mdefine_line|#define gscd_port gscd /* for compatible parameter passing with &quot;insmod&quot; */
-macro_line|#include &lt;linux/gscd.h&gt;
+macro_line|#include &quot;gscd.h&quot;
 DECL|variable|gscdPresent
 r_static
 r_int
@@ -3351,7 +3351,7 @@ id|msf
 (brace
 id|hsg
 op_add_assign
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 id|msf
 op_member_access_from_pointer
@@ -3501,7 +3501,7 @@ id|CD_FRAMES
 op_star
 id|CD_SECS
 op_minus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 )brace
 DECL|function|gscd_bcd2bin

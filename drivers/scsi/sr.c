@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
-macro_line|#include &lt;linux/ucdrom.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -308,9 +307,6 @@ multiline_comment|/* release */
 id|sr_drive_status
 comma
 multiline_comment|/* drive status */
-id|sr_disk_status
-comma
-multiline_comment|/* disc status */
 id|sr_media_change
 comma
 multiline_comment|/* media changed */
@@ -356,6 +352,12 @@ op_or
 id|CDC_MEDIA_CHANGED
 op_or
 id|CDC_PLAY_AUDIO
+op_or
+id|CDC_RESET
+op_or
+id|CDC_IOCTLS
+op_or
+id|CDC_DRIVE_STATUS
 comma
 l_int|0
 )brace
@@ -5076,6 +5078,12 @@ c_func
 r_int
 id|i
 suffix:semicolon
+r_char
+id|name
+(braket
+l_int|6
+)braket
+suffix:semicolon
 id|blk_dev
 (braket
 id|MAJOR_NR
@@ -5296,6 +5304,29 @@ c_func
 id|i
 )paren
 suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;sr%d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|cdi.name
+comma
+id|name
+)paren
+suffix:semicolon
 id|register_cdrom
 c_func
 (paren
@@ -5306,8 +5337,6 @@ id|i
 )braket
 dot
 id|cdi
-comma
-l_string|&quot;sr&quot;
 )paren
 suffix:semicolon
 )brace

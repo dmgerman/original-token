@@ -1193,13 +1193,6 @@ id|xrlim_allow
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PACKET_MODULE
-DECL|variable|memcpy_toiovec
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memcpy_toiovec
-)paren
-suffix:semicolon
 DECL|variable|dev_set_allmulti
 id|EXPORT_SYMBOL
 c_func

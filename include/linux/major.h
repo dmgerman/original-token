@@ -129,6 +129,10 @@ DECL|macro|MKISS_MAJOR
 mdefine_line|#define MKISS_MAJOR&t;55
 DECL|macro|DSP56K_MAJOR
 mdefine_line|#define DSP56K_MAJOR    55   /* DSP56001 processor device */
+DECL|macro|SPECIALIX_NORMAL_MAJOR
+mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
+DECL|macro|SPECIALIX_CALLOUT_MAJOR
+mdefine_line|#define SPECIALIX_CALLOUT_MAJOR 76
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_BLK_MAJOR
 mdefine_line|#define SCSI_BLK_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR)

@@ -12,7 +12,7 @@ DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR OPTICS_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
-macro_line|#include &lt;linux/optcd.h&gt;
+macro_line|#include &quot;optcd.h&quot;
 macro_line|#include &lt;asm/uaccess.h&gt;
 "&f;"
 multiline_comment|/* Debug support */
@@ -7248,7 +7248,7 @@ r_break
 suffix:semicolon
 macro_line|#endif
 r_case
-id|CDROM_GET_UPC
+id|CDROM_GET_MCN
 suffix:colon
 id|retval
 op_assign

@@ -10,7 +10,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
-macro_line|#include &lt;linux/ucdrom.h&gt;
 macro_line|#include &quot;sr.h&quot;
 macro_line|#if 0
 macro_line|# define DEBUG
@@ -4075,7 +4074,7 @@ op_plus
 id|msf.cdmsf_frame0
 )paren
 op_minus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 r_if
 c_cond
@@ -4252,7 +4251,7 @@ op_plus
 id|ra.addr.msf.frame
 )paren
 op_minus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 r_if
 c_cond

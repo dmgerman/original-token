@@ -188,13 +188,6 @@ DECL|macro|CM206CTL_GET_STAT
 mdefine_line|#define CM206CTL_GET_STAT _IO( 0x20, 0 )
 DECL|macro|CM206CTL_GET_LAST_STAT
 mdefine_line|#define CM206CTL_GET_LAST_STAT _IO( 0x20, 1 )
-multiline_comment|/* for kernel 1.2.n */
-macro_line|#if !defined(CDROM_GET_UPC)
-DECL|macro|CDROM_GET_UPC
-mdefine_line|#define CDROM_GET_UPC _IO( &squot;S&squot;, 0x11 )
-DECL|macro|CDROMRESET
-mdefine_line|#define CDROMRESET _IO( &squot;S&squot;, 0x12 )
-macro_line|#endif
 macro_line|#ifdef STATISTICS
 multiline_comment|/* This is an ugly way to guarantee that the names of the statistics&n; * are the same in the code and in the diagnostics program.  */
 macro_line|#ifdef __KERNEL__

@@ -725,6 +725,25 @@ multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
 multiline_comment|/* CTL_DEBUG names: */
 multiline_comment|/* CTL_DEV names: */
+r_enum
+(brace
+DECL|enumerator|DEV_CDROM
+id|DEV_CDROM
+op_assign
+l_int|1
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/cdrom */
+r_enum
+(brace
+DECL|enumerator|DEV_CDROM_INFO
+id|DEV_CDROM_INFO
+op_assign
+l_int|1
+comma
+)brace
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 r_extern
 id|asmlinkage

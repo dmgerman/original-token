@@ -1952,9 +1952,11 @@ op_or
 id|PF_TRACESYS
 op_or
 id|PF_SUPERPRIV
-op_or
-id|PF_SIGPENDING
 )paren
+suffix:semicolon
+id|p-&gt;sigpending
+op_assign
+l_int|0
 suffix:semicolon
 id|p-&gt;flags
 op_or_assign
@@ -1997,7 +1999,7 @@ id|sigemptyset
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|p-&gt;signal
 )paren
 suffix:semicolon
 id|p-&gt;sigqueue

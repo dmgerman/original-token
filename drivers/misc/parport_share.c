@@ -1105,7 +1105,12 @@ c_func
 (paren
 id|dev-&gt;port-&gt;irq
 comma
-id|dev-&gt;port
+id|pd1
+ques
+c_cond
+id|pd1
+op_member_access_from_pointer
+l_int|NULL
 )paren
 suffix:semicolon
 id|request_irq
@@ -1213,7 +1218,9 @@ c_func
 (paren
 id|dev-&gt;port-&gt;irq
 comma
-id|dev-&gt;port
+id|dev
+op_member_access_from_pointer
+r_private
 )paren
 suffix:semicolon
 id|request_irq

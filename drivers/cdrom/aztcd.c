@@ -4,7 +4,7 @@ multiline_comment|/*      $Id: aztcd.c,v 2.60 1997/11/29 09:51:19 root Exp root 
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR AZTECH_CDROM_MAJOR 
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;linux/aztcd.h&gt;
+macro_line|#include &quot;aztcd.h&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10201,7 +10201,7 @@ id|min
 op_star
 l_int|4500
 op_minus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 )brace
 DECL|function|azt_bin2bcd

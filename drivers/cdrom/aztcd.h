@@ -1,10 +1,7 @@
-multiline_comment|/* $Id: aztcd.h,v 2.60 1997/11/29 09:51:22 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994-98  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: Werner.Zimmermann@fht-esslingen.de&n; */
-multiline_comment|/* *** change this to set the I/O port address of your CD-ROM drive,&n;       set to &squot;-1&squot;, if you want autoprobing */
+multiline_comment|/* $Id: aztcd.h,v 2.50 1996/05/17 16:15:43 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
+multiline_comment|/* *** change this to set the I/O port address of your CD-ROM drive*/
 DECL|macro|AZT_BASE_ADDR
-mdefine_line|#define AZT_BASE_ADDR&t;&t;-1
-multiline_comment|/* list of autoprobing addresses (not more than 15), last value must be 0x000&n;   Note: Autoprobing is only enabled, if AZT_BASE_ADDR is set to &squot;-1&squot; ! */
-DECL|macro|AZT_BASE_AUTO
-mdefine_line|#define AZT_BASE_AUTO &t;&t;{ 0x320, 0x300, 0x310, 0x330, 0x000 }
+mdefine_line|#define AZT_BASE_ADDR&t;&t;0x320
 multiline_comment|/* Uncomment this, if your CDROM is connected to a Soundwave32-soundcard&n;   and configure AZT_BASE_ADDR and AZT_SW32_BASE_ADDR */
 multiline_comment|/*#define AZT_SW32 1&n;*/
 macro_line|#ifdef AZT_SW32 
@@ -23,8 +20,6 @@ mdefine_line|#define AZT_PRIVATE_IOCTLS      1
 multiline_comment|/*Set this to 1, if you want multisession support by the ISO fs. Even if you set &n;  this value to &squot;0&squot; you can use multisession CDs. In that case the drive&squot;s firm-&n;  ware will do the appropriate redirection automatically. The CD will then look&n;  like a single session CD (but nevertheless all data may be read). Please read &n;  chapter &squot;5.1 Multisession support&squot; in README.aztcd for details. Normally it&squot;s &n;  uncritical to leave this setting untouched */
 DECL|macro|AZT_MULTISESSION
 mdefine_line|#define AZT_MULTISESSION        1
-multiline_comment|/*Uncomment this, if you are using a linux kernel version prior to 2.1.0 */
-multiline_comment|/*#define AZT_KERNEL_PRIOR_2_1 */
 multiline_comment|/*---------------------------------------------------------------------------*/
 multiline_comment|/*-----nothing to be configured for normal applications below this line------*/
 multiline_comment|/* Increase this if you get lots of timeouts; if you get kernel panic, replace&n;   STEN_LOW_WAIT by STEN_LOW in the source code */

@@ -201,6 +201,68 @@ DECL|macro|TYPE_MEDIUM_CHANGER
 mdefine_line|#define TYPE_MEDIUM_CHANGER 0x08
 DECL|macro|TYPE_NO_LUN
 mdefine_line|#define TYPE_NO_LUN         0x7f
+multiline_comment|/*&n; * standard mode-select header prepended to all mode-select commands&n; *&n; * moved here from cdrom.h -- kraxel&n; */
+DECL|struct|ccs_modesel_head
+r_struct
+id|ccs_modesel_head
+(brace
+DECL|member|_r1
+id|u_char
+id|_r1
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|medium
+id|u_char
+id|medium
+suffix:semicolon
+multiline_comment|/* device-specific medium type */
+DECL|member|_r2
+id|u_char
+id|_r2
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|block_desc_length
+id|u_char
+id|block_desc_length
+suffix:semicolon
+multiline_comment|/* block descriptor length */
+DECL|member|density
+id|u_char
+id|density
+suffix:semicolon
+multiline_comment|/* device-specific density code */
+DECL|member|number_blocks_hi
+id|u_char
+id|number_blocks_hi
+suffix:semicolon
+multiline_comment|/* number of blocks in this block desc */
+DECL|member|number_blocks_med
+id|u_char
+id|number_blocks_med
+suffix:semicolon
+DECL|member|number_blocks_lo
+id|u_char
+id|number_blocks_lo
+suffix:semicolon
+DECL|member|_r3
+id|u_char
+id|_r3
+suffix:semicolon
+DECL|member|block_length_hi
+id|u_char
+id|block_length_hi
+suffix:semicolon
+multiline_comment|/* block length for blocks in this desc */
+DECL|member|block_length_med
+id|u_char
+id|block_length_med
+suffix:semicolon
+DECL|member|block_length_lo
+id|u_char
+id|block_length_lo
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *  MESSAGE CODES&n; */
 DECL|macro|COMMAND_COMPLETE
 mdefine_line|#define COMMAND_COMPLETE    0x00
