@@ -104,7 +104,7 @@ comma
 (brace
 l_string|&quot;WDC AC1170&quot;
 comma
-l_int|3
+l_int|1
 )brace
 comma
 (brace

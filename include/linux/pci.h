@@ -588,6 +588,12 @@ DECL|macro|PCI_VENDOR_ID_ASP
 mdefine_line|#define PCI_VENDOR_ID_ASP&t;&t;0x10cd
 DECL|macro|PCI_DEVICE_ID_ASP_ABP940
 mdefine_line|#define PCI_DEVICE_ID_ASP_ABP940&t;0x1200
+DECL|macro|PCI_VENDOR_ID_CERN
+mdefine_line|#define PCI_VENDOR_ID_CERN&t;&t;0x10dc
+DECL|macro|PCI_DEVICE_ID_CERN_SPSB_PMC
+mdefine_line|#define PCI_DEVICE_ID_CERN_SPSB_PMC&t;0x0001
+DECL|macro|PCI_DEVICE_ID_CERN_SPSB_PCI
+mdefine_line|#define PCI_DEVICE_ID_CERN_SPSB_PCI&t;0x0002
 DECL|macro|PCI_VENDOR_ID_IMS
 mdefine_line|#define PCI_VENDOR_ID_IMS&t;&t;0x10e0
 DECL|macro|PCI_DEVICE_ID_IMS_8849

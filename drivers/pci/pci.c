@@ -1181,6 +1181,26 @@ comma
 id|DEVICE
 c_func
 (paren
+id|CERN
+comma
+id|CERN_SPSB_PMC
+comma
+l_string|&quot;STAR/RD24 SCI-PCI (PMC)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CERN
+comma
+id|CERN_SPSB_PCI
+comma
+l_string|&quot;STAR/RD24 SCI-PCI (PMC)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|IMS
 comma
 id|IMS_8849
@@ -3029,6 +3049,12 @@ id|PCI_VENDOR_ID_ASP
 suffix:colon
 r_return
 l_string|&quot;Advanced System Products&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_CERN
+suffix:colon
+r_return
+l_string|&quot;CERN&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_IMS

@@ -879,7 +879,7 @@ id|NFS_ROOT_NAME_LEN
 )braket
 op_assign
 (brace
-id|NFS_ROOT
+l_string|&quot;default&quot;
 )brace
 suffix:semicolon
 DECL|variable|nfs_root_addrs

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ht6580.c       Version 0.03  Feb 09, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
-multiline_comment|/*&n; *&n; *  Version 0.01        Initial version hacked out of ide.c&n; *&n; *  Version 0.02        Added support for PIO modes, auto-tune&n; *&n; *  Version 0.03        Some cleanups&n; *&n; * I reviewed some assembler sourcer listings of htide drivers and found&n; * out how they setup those cycle time interfacing values, as they at Holtek&n; * call them. IDESETUP.COM that is supplied with the drivers figures out&n; * optimal values and fetches those values to drivers. I found out that&n; * they use IDE_SELECT_REG to fetch timings to the ide board right after&n; * interface switching. After that it was quite easy to add code to&n; * ht6560b.c.&n; *&n; * IDESETUP.COM gave me values 0x24, 0x45, 0xaa, 0xff that worked fine&n; * for hda and hdc. But hdb needed higher values to work, so I guess&n; * that sometimes it is necessary to give higher value than IDESETUP&n; * gives.   [see cmd640.c for an extreme example of this. -ml]&n; *&n; * Perhaps I should explain something about these timing values:&n; * The higher nibble of value is the Recovery Time  (rt) and the lower nibble&n; * of the value is the Active Time  (at). Minimum value 2 is the fastest and&n; * the maximum value 15 is the slowest. Default values should be 15 for both.&n; * So 0x24 means 2 for rt and 4 for at. Each of the drives should have&n; * both values, and IDESETUP gives automatically rt=15 st=15 for cdroms or&n; * similar. If value is too small there will be all sorts of failures.&n; *&n; * Port 0x3e6 bit 0x20 sets these timings on/off. If 0x20 bit is set&n; * these timings are disabled.&n; *&n; * Mikko Ala-Fossi&n; *&n; * More notes:&n; *&n; * There&squot;s something still missing from the initialization code, though.&n; * If I have booted to dos sometime after power on, I can get smaller&n; * timing values working. Perhaps I could soft-ice the initialization.&n; *&n; * OS/2 driver seems to use some kind of DMA. But that code is really&n; * messy to me to found out how.&n; *&n; * -=- malafoss@snakemail.hut.fi -=- searching the marvels of universe -=-&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ht6580.c       Version 0.04  Mar 19, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *&n; *  Version 0.01        Initial version hacked out of ide.c&n; *&n; *  Version 0.02        Added support for PIO modes, auto-tune&n; *&n; *  Version 0.03        Some cleanups&n; *&n; * I reviewed some assembler sourcer listings of htide drivers and found&n; * out how they setup those cycle time interfacing values, as they at Holtek&n; * call them. IDESETUP.COM that is supplied with the drivers figures out&n; * optimal values and fetches those values to drivers. I found out that&n; * they use IDE_SELECT_REG to fetch timings to the ide board right after&n; * interface switching. After that it was quite easy to add code to&n; * ht6560b.c.&n; *&n; * IDESETUP.COM gave me values 0x24, 0x45, 0xaa, 0xff that worked fine&n; * for hda and hdc. But hdb needed higher values to work, so I guess&n; * that sometimes it is necessary to give higher value than IDESETUP&n; * gives.   [see cmd640.c for an extreme example of this. -ml]&n; *&n; * Perhaps I should explain something about these timing values:&n; * The higher nibble of value is the Recovery Time  (rt) and the lower nibble&n; * of the value is the Active Time  (at). Minimum value 2 is the fastest and&n; * the maximum value 15 is the slowest. Default values should be 15 for both.&n; * So 0x24 means 2 for rt and 4 for at. Each of the drives should have&n; * both values, and IDESETUP gives automatically rt=15 st=15 for cdroms or&n; * similar. If value is too small there will be all sorts of failures.&n; *&n; * Port 0x3e6 bit 0x20 sets these timings on/off. If 0x20 bit is set&n; * these timings are disabled.&n; *&n; * Mikko Ala-Fossi&n; *&n; * More notes:&n; *&n; * There&squot;s something still missing from the initialization code, though.&n; * If I have booted to dos sometime after power on, I can get smaller&n; * timing values working. Perhaps I could soft-ice the initialization.&n; *&n; * -=- malafoss@snakemail.hut.fi -=- searching the marvels of universe -=-&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO           /* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
-multiline_comment|/*&n; * This routine handles interface switching for the peculiar hardware design&n; * on the F.G.I./Holtek HT-6560B VLB IDE interface.&n; * The HT-6560B can only enable one IDE port at a time, and requires a&n; * silly sequence (below) whenever we switch between primary and secondary.&n; *&n; * This stuff is courtesy of malafoss@snakemail.hut.fi&n; *&n; * At least one user has reported that this code can confuse the floppy&n; * controller and/or driver -- perhaps this should be changed to use&n; * a read-modify-write sequence, so as not to disturb other bits in the reg?&n; */
+multiline_comment|/*&n; * This routine handles interface switching for the peculiar hardware design&n; * on the F.G.I./Holtek HT-6560B VLB IDE interface.&n; * The HT-6560B can only enable one IDE port at a time, and requires a&n; * silly sequence (below) whenever we switch between primary and secondary.&n; *&n; * This stuff is courtesy of malafoss@snakemail.hut.fi&n; *                          (or maf@nemesis.tky.hut.fi)&n; *&n; * At least one user has reported that this code can confuse the floppy&n; * controller and/or driver -- perhaps this should be changed to use&n; * a read-modify-write sequence, so as not to disturb other bits in the reg?&n; */
 multiline_comment|/*&n; * The special i/o-port that HT-6560B uses to select interfaces:&n; */
 DECL|macro|HT_SELECT_PORT
 mdefine_line|#define HT_SELECT_PORT     0x3e6
@@ -262,6 +262,26 @@ id|inb
 id|IDE_STATUS_REG
 )paren
 suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;ht6560b: %s: select=%#x timing=%#x&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|t
+comma
+id|timing
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 id|OUT_BYTE
 c_func
 (paren
@@ -270,12 +290,6 @@ comma
 id|IDE_SELECT_REG
 )paren
 suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Autodetection and initialization of ht6560b&n; */
 DECL|function|try_to_init_ht6560b
@@ -675,7 +689,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;ht6560b: not found&bslash;n&quot;
+l_string|&quot;&bslash;nht6560b: not found&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -83,6 +83,11 @@ id|bh
 r_void
 )paren
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bh
 op_assign
 id|bh_base

@@ -633,6 +633,8 @@ id|vma
 )paren
 suffix:semicolon
 multiline_comment|/* NFS root */
+DECL|macro|NFS_ROOT
+mdefine_line|#define NFS_ROOT&t;&t;&quot;/tftpboot/%s&quot;
 DECL|macro|NFS_ROOT_NAME_LEN
 mdefine_line|#define NFS_ROOT_NAME_LEN&t;256
 DECL|macro|NFS_ROOT_ADDRS_LEN

@@ -262,6 +262,18 @@ c_func
 id|arp_send
 )paren
 comma
+id|X
+c_func
+(paren
+id|ip_id_count
+)paren
+comma
+id|X
+c_func
+(paren
+id|ip_send_check
+)paren
+comma
 macro_line|#ifdef CONFIG_IP_FORWARD
 id|X
 c_func
@@ -525,6 +537,18 @@ id|X
 c_func
 (paren
 id|call_in_firewall
+)paren
+comma
+id|X
+c_func
+(paren
+id|call_out_firewall
+)paren
+comma
+id|X
+c_func
+(paren
+id|call_fw_firewall
 )paren
 comma
 macro_line|#endif

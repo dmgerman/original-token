@@ -1043,7 +1043,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is a generic file read routine, and uses the&n; * inode-&gt;i_op-&gt;readpage() function for the actual low-level&n; * stuff.&n; *&n; * This is really ugly. But the goto&squot;s actually try to clarify some&n; * of the logic when it comes to error handling etc.&n; */
 DECL|macro|MAX_READAHEAD
-mdefine_line|#define MAX_READAHEAD (PAGE_SIZE*4)
+mdefine_line|#define MAX_READAHEAD (PAGE_SIZE*8)
 DECL|function|generic_file_read
 r_int
 id|generic_file_read

@@ -3484,6 +3484,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+)brace
 id|update_one_process
 c_func
 (paren
@@ -3498,7 +3499,6 @@ comma
 id|system
 )paren
 suffix:semicolon
-)brace
 macro_line|#else
 r_int
 id|cpu

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.08  Mar 15, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with read ahead mode. Separate function for setting&n; *&t;&t;&t;readahead is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *  &n; *  Version 0.04&t;Now configs/compiles separate from ide.c  -ml &n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Readahead is enabled only for&n; *&t;&t;&t;detected hard drives, not included in readahed&n; *&t;&t;&t;black list.&n; * &n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to &n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.  -ml&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.  -ml&n; *&t;&t;&t;&n; */
+multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.09  Mar 19, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with read ahead mode. Separate function for setting&n; *&t;&t;&t;readahead is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *  &n; *  Version 0.04&t;Now configs/compiles separate from ide.c  -ml &n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Readahead is enabled only for&n; *&t;&t;&t;detected hard drives, not included in readahed&n; *&t;&t;&t;black list.&n; * &n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to &n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.  -ml&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.  -ml&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.  -ml&n; *&t;&t;&t;&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -819,8 +819,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * Low level reset for controller, actually it has nothing specific for&n; * CMD640, but I don&squot;t know how to use standard reset routine before&n; * we recognized any drives.&n; */
-DECL|function|cmd640_reset_controller
 r_static
 r_void
 id|cmd640_reset_controller
@@ -917,20 +917,8 @@ comma
 id|iface_no
 )paren
 suffix:semicolon
-macro_line|#if 0&t;
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;cmd640: controller %d reset [%d]&bslash;n&quot;
-comma
-id|iface_no
-comma
-id|retry_count
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
+macro_line|#endif /* 0 */
 multiline_comment|/*&n; *  Returns 1 if an IDE interface/drive exists at 0x170,&n; *  Returns 0 otherwise.&n; */
 DECL|function|secondary_port_responding
 r_int
@@ -1465,7 +1453,7 @@ id|autotune
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* We reset timings, and disable read-ahead */
+multiline_comment|/* disable read-ahead for drives 2 &amp; 3 */
 id|put_cmd640_reg
 c_func
 (paren
@@ -1478,6 +1466,13 @@ id|DIS_RA3
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|second_port_toggled
+)paren
+(brace
+multiline_comment|/* reset PIO timings for drives 2 &amp; 3 */
 id|put_cmd640_reg
 c_func
 (paren
@@ -1486,17 +1481,21 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
+macro_line|#if 0
+multiline_comment|/* reset the secondary interface */
 id|cmd640_reset_controller
 c_func
 (paren
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|printk
 c_func
 (paren
-l_string|&quot;ide: buggy CMD640%c interface at &quot;
+l_string|&quot;ide: buggy CMD640%c interface on &quot;
 comma
 l_char|&squot;A&squot;
 op_minus
@@ -1517,7 +1516,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;local bus, port 0x%x&quot;
+l_string|&quot;vlb (0x%x)&quot;
 comma
 id|cmd640_key
 )paren
@@ -1530,7 +1529,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;pci, (0x%x)&quot;
+l_string|&quot;pci (0x%x)&quot;
 comma
 id|cmd640_key
 )paren
@@ -1543,7 +1542,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;pci,(access method 2) (0x%x)&quot;
+l_string|&quot;pci (access method 2) (0x%x)&quot;
 comma
 id|cmd640_key
 )paren
@@ -1551,7 +1550,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Reset interface timings&n;&t; */
+macro_line|#if 0
+multiline_comment|/* reset PIO timings for drives 1 &amp; 2 */
 id|put_cmd640_reg
 c_func
 (paren
@@ -1560,11 +1560,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif /* 0 */
 multiline_comment|/*&n;&t; * Tell everyone what we did to their system&n;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n ... serialized, secondary port %s&bslash;n&quot;
+l_string|&quot;; serialized, secondary port %s&bslash;n&quot;
 comma
 id|second_port_toggled
 ques
@@ -1578,7 +1579,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|cmd640_off
+macro_line|#if 0  /* not used anywhere */
 r_int
 id|cmd640_off
 c_func
@@ -1638,6 +1639,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif /* 0 */
 multiline_comment|/*&n; * Sets readahead mode for specific drive&n; *  in the future it could be called from ioctl&n; */
 DECL|function|set_readahead_mode
 r_static
