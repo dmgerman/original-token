@@ -580,22 +580,6 @@ DECL|macro|__NR_capset
 mdefine_line|#define __NR_capset&t;&t;&t;369
 DECL|macro|__NR_sendfile
 mdefine_line|#define __NR_sendfile&t;&t;&t;370
-DECL|macro|__NR_timer_create
-mdefine_line|#define __NR_timer_create&t;&t;371
-DECL|macro|__NR_timer_settime
-mdefine_line|#define __NR_timer_settime&t;&t;372
-DECL|macro|__NR_timer_gettime
-mdefine_line|#define __NR_timer_gettime&t;&t;373
-DECL|macro|__NR_timer_getoverrun
-mdefine_line|#define __NR_timer_getoverrun&t;&t;374
-DECL|macro|__NR_timer_delete
-mdefine_line|#define __NR_timer_delete&t;&t;375
-DECL|macro|__NR_clock_gettime
-mdefine_line|#define __NR_clock_gettime&t;&t;376
-DECL|macro|__NR_clock_settime
-mdefine_line|#define __NR_clock_settime&t;&t;377
-DECL|macro|__NR_clock_getres
-mdefine_line|#define __NR_clock_getres&t;&t;378
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 DECL|macro|_syscall_return
 mdefine_line|#define _syscall_return(type)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (_sc_err ? errno = _sc_ret, _sc_ret = -1L : 0), (type) _sc_ret

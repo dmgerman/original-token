@@ -23,8 +23,6 @@ DECL|macro|PATH_MAX
 mdefine_line|#define PATH_MAX        4095&t;/* # chars in a path name */
 DECL|macro|PIPE_BUF
 mdefine_line|#define PIPE_BUF        4096&t;/* # bytes in atomic write to a pipe */
-DECL|macro|MAX_ITIMERS
-mdefine_line|#define MAX_ITIMERS       32    /* # POSIX.1b itimers per process */
 DECL|macro|RTSIG_MAX
 mdefine_line|#define RTSIG_MAX&t;  32
 macro_line|#endif

@@ -819,28 +819,6 @@ comma
 id|regs-&gt;eip
 )paren
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movl %%cr3,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|page
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ALERT
-l_string|&quot;current-&gt;active_mm.pgd = %p, %%cr3 = %08lx&bslash;n&quot;
-comma
-id|tsk-&gt;active_mm-&gt;pgd
-comma
-id|page
-)paren
-suffix:semicolon
 id|page
 op_assign
 (paren

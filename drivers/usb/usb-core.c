@@ -120,6 +120,12 @@ c_func
 suffix:semicolon
 macro_line|#&t;endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_USB_PROC
+id|proc_usb_init
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -133,6 +139,12 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_USB_PROC
+id|proc_usb_cleanup
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef MODULE
 macro_line|#&t;ifdef CONFIG_USB_HUB
 id|usb_hub_cleanup

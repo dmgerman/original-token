@@ -40,8 +40,6 @@ DECL|macro|CLONE_PTRACE
 mdefine_line|#define CLONE_PTRACE&t;0x00002000&t;/* set if we want to let tracing continue on the child too */
 DECL|macro|CLONE_VFORK
 mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mm_release */
-DECL|macro|CLONE_ITIMERS
-mdefine_line|#define CLONE_ITIMERS   0x00008000      /* set if POSIX.1b itimers are shared */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -465,85 +463,6 @@ multiline_comment|/*&n; * Some day this will be a full-fledged user tracking sys
 r_struct
 id|user_struct
 suffix:semicolon
-multiline_comment|/* POSIX.1b interval timer structure. */
-DECL|struct|k_itimer
-r_struct
-id|k_itimer
-(brace
-DECL|member|it_lock
-id|spinlock_t
-id|it_lock
-suffix:semicolon
-DECL|member|it_clock
-id|clockid_t
-id|it_clock
-suffix:semicolon
-multiline_comment|/* which timer type */
-DECL|member|it_id
-id|timer_t
-id|it_id
-suffix:semicolon
-multiline_comment|/* timer id */
-DECL|member|it_overrun
-r_int
-id|it_overrun
-suffix:semicolon
-multiline_comment|/* number of signals overrun */
-DECL|member|it_signal
-r_struct
-id|sigevent
-id|it_signal
-suffix:semicolon
-multiline_comment|/* signal to be delivered */
-DECL|member|it_interval
-r_struct
-id|timespec
-id|it_interval
-suffix:semicolon
-multiline_comment|/* interval (rounded to jiffies) */
-DECL|member|it_incr
-r_int
-id|it_incr
-suffix:semicolon
-multiline_comment|/* interval specified in jiffies */
-DECL|member|it_process
-r_struct
-id|task_struct
-op_star
-id|it_process
-suffix:semicolon
-multiline_comment|/* process to send signal to */
-DECL|member|it_timer
-r_struct
-id|timer_list
-id|it_timer
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* Structure to maintain the dynamically created POSIX.1b interval timers. */
-DECL|struct|itimer_struct
-r_struct
-id|itimer_struct
-(brace
-DECL|member|count
-id|atomic_t
-id|count
-suffix:semicolon
-DECL|member|its_lock
-id|spinlock_t
-id|its_lock
-suffix:semicolon
-DECL|member|itimer
-r_struct
-id|k_itimer
-op_star
-id|itimer
-(braket
-id|MAX_ITIMERS
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|task_struct
 r_struct
 id|task_struct
@@ -768,13 +687,6 @@ r_struct
 id|timer_list
 id|real_timer
 suffix:semicolon
-DECL|member|posix_timers
-r_struct
-id|itimer_struct
-op_star
-id|posix_timers
-suffix:semicolon
-multiline_comment|/* POSIX.1b Interval Timers */
 DECL|member|times
 r_struct
 id|tms
@@ -975,14 +887,6 @@ id|signal
 comma
 id|blocked
 suffix:semicolon
-DECL|member|nrt_info
-id|siginfo_t
-id|nrt_info
-(braket
-id|SIGRTMIN
-)braket
-suffix:semicolon
-multiline_comment|/* siginfo for non RT signals */
 DECL|member|sigqueue
 DECL|member|sigqueue_tail
 r_struct
@@ -1040,7 +944,7 @@ DECL|macro|DEF_PRIORITY
 mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 200 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, LIST_HEAD_INIT(init_task.run_list), &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* POSIX.1b timer */ NULL, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* thread */&t;INIT_THREAD, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;NULL, &amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, {{0,},}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
+mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, LIST_HEAD_INIT(init_task.run_list), &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* thread */&t;INIT_THREAD, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;NULL, &amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
 macro_line|#ifndef INIT_TASK_SIZE
 DECL|macro|INIT_TASK_SIZE
 macro_line|# define INIT_TASK_SIZE&t;2048*sizeof(long)
@@ -2459,16 +2363,6 @@ suffix:semicolon
 r_extern
 r_void
 id|exit_sighand
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|exit_itimers
 c_func
 (paren
 r_struct

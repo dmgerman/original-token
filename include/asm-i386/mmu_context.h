@@ -2,6 +2,7 @@ macro_line|#ifndef __I386_MMU_CONTEXT_H
 DECL|macro|__I386_MMU_CONTEXT_H
 mdefine_line|#define __I386_MMU_CONTEXT_H
 macro_line|#include &lt;asm/desc.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; * possibly do the LDT unload here?&n; */
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
@@ -28,11 +29,15 @@ r_int
 id|cpu
 )paren
 (brace
-r_int
-r_int
-id|vm_mask
-suffix:semicolon
-multiline_comment|/*&n;&t; * Re-load LDT if necessary&n;&t; */
+r_if
+c_cond
+(paren
+id|prev
+op_ne
+id|next
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Re-load LDT if necessary&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -63,20 +68,24 @@ id|next-&gt;pgd
 )paren
 )paren
 suffix:semicolon
-id|vm_mask
-op_assign
-l_int|1UL
-op_lshift
+id|clear_bit
+c_func
+(paren
 id|cpu
-suffix:semicolon
-id|next-&gt;cpu_vm_mask
-op_or_assign
-id|vm_mask
-suffix:semicolon
+comma
+op_amp
 id|prev-&gt;cpu_vm_mask
-op_and_assign
-op_complement
-id|vm_mask
+)paren
+suffix:semicolon
+)brace
+id|set_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|next-&gt;cpu_vm_mask
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif

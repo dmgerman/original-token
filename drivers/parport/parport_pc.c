@@ -7768,6 +7768,13 @@ id|priv
 op_assign
 id|p-&gt;private_data
 suffix:semicolon
+r_struct
+id|parport_operations
+op_star
+id|ops
+op_assign
+id|p-&gt;ops
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7865,18 +7872,18 @@ id|kfree
 id|p-&gt;private_data
 )paren
 suffix:semicolon
-id|kfree
-(paren
-id|p-&gt;ops
-)paren
-suffix:semicolon
-multiline_comment|/* hope no-one cached it */
 id|parport_unregister_port
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
+id|kfree
+(paren
+id|ops
+)paren
+suffix:semicolon
+multiline_comment|/* hope no-one cached it */
 )brace
 id|p
 op_assign

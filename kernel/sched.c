@@ -2415,13 +2415,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|mm
-op_ne
-id|oldmm
-)paren
 id|switch_mm
 c_func
 (paren

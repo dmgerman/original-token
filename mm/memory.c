@@ -3559,6 +3559,13 @@ l_int|1
 suffix:semicolon
 id|bad_wp_page
 suffix:colon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|tsk-&gt;mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

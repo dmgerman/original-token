@@ -179,10 +179,6 @@ DECL|macro|si_pid
 mdefine_line|#define si_pid&t;&t;_sifields._kill._pid
 DECL|macro|si_uid
 mdefine_line|#define si_uid&t;&t;_sifields._kill._uid
-DECL|macro|si_timer1
-mdefine_line|#define si_timer1&t;_sifields._timer._timer1
-DECL|macro|si_timer2
-mdefine_line|#define si_timer2&t;_sifields._timer._timer2
 DECL|macro|si_status
 mdefine_line|#define si_status&t;_sifields._sigchld._status
 DECL|macro|si_utime

@@ -1563,6 +1563,12 @@ l_int|1
 op_lshift
 id|BH_Lock
 )paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|BH_Mapped
+)paren
 suffix:semicolon
 multiline_comment|/* This may well happen - the kernel calls bread()&n;                           without checking the size of the device, e.g.,&n;                           when mounting a device. */
 id|printk

@@ -380,22 +380,6 @@ DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;189&t;/* some people actually want streams */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;190
-DECL|macro|__NR_timer_create
-mdefine_line|#define __NR_timer_create&t;191
-DECL|macro|__NR_timer_settime
-mdefine_line|#define __NR_timer_settime&t;192
-DECL|macro|__NR_timer_gettime
-mdefine_line|#define __NR_timer_gettime&t;193
-DECL|macro|__NR_timer_getoverrun
-mdefine_line|#define __NR_timer_getoverrun&t;194
-DECL|macro|__NR_timer_delete
-mdefine_line|#define __NR_timer_delete&t;195
-DECL|macro|__NR_clock_gettime
-mdefine_line|#define __NR_clock_gettime&t;196
-DECL|macro|__NR_clock_settime
-mdefine_line|#define __NR_clock_settime&t;197
-DECL|macro|__NR_clock_getres
-mdefine_line|#define __NR_clock_getres&t;198
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

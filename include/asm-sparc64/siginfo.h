@@ -351,10 +351,6 @@ DECL|macro|si_pid
 mdefine_line|#define si_pid&t;&t;_sifields._kill._pid
 DECL|macro|si_uid
 mdefine_line|#define si_uid&t;&t;_sifields._kill._uid
-DECL|macro|si_timer1
-mdefine_line|#define si_timer1&t;_sifields._timer._timer1
-DECL|macro|si_timer2
-mdefine_line|#define si_timer2&t;_sifields._timer._timer2
 DECL|macro|si_status
 mdefine_line|#define si_status&t;_sifields._sigchld._status
 DECL|macro|si_utime
@@ -435,8 +431,8 @@ mdefine_line|#define NSIGFPE&t;&t;8
 multiline_comment|/*&n; * SIGSEGV si_codes&n; */
 DECL|macro|SEGV_MAPERR
 mdefine_line|#define SEGV_MAPERR&t;1&t;/* address not mapped to object */
-DECL|macro|SEGV_ACCERR
-mdefine_line|#define SEGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
+DECL|macro|SRGV_ACCERR
+mdefine_line|#define SRGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
 DECL|macro|NSIGSEGV
 mdefine_line|#define NSIGSEGV&t;2
 multiline_comment|/*&n; * SIGBUS si_codes&n; */

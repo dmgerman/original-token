@@ -81,11 +81,6 @@ r_int
 r_int
 id|_timer2
 suffix:semicolon
-DECL|member|_sigval2
-id|sigval_t
-id|_sigval2
-suffix:semicolon
-multiline_comment|/* FIXME: must map to _sigval below because it is the same */
 DECL|member|_timer
 )brace
 id|_timer
@@ -107,7 +102,6 @@ DECL|member|_sigval
 id|sigval_t
 id|_sigval
 suffix:semicolon
-multiline_comment|/* FIXME: move out of union together with _sigval2 */
 DECL|member|_rt
 )brace
 id|_rt
@@ -184,10 +178,6 @@ DECL|macro|si_pid
 mdefine_line|#define si_pid&t;&t;_sifields._kill._pid
 DECL|macro|si_uid
 mdefine_line|#define si_uid&t;&t;_sifields._kill._uid
-DECL|macro|si_timer1
-mdefine_line|#define si_timer1&t;_sifields._timer._timer1
-DECL|macro|si_timer2
-mdefine_line|#define si_timer2&t;_sifields._timer._timer2
 DECL|macro|si_status
 mdefine_line|#define si_status&t;_sifields._sigchld._status
 DECL|macro|si_utime

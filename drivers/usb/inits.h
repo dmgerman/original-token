@@ -47,4 +47,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|proc_usb_init
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|proc_usb_cleanup
+(paren
+r_void
+)paren
+suffix:semicolon
 eof

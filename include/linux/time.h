@@ -26,19 +26,6 @@ macro_line|#endif /* _STRUCT_TIMESPEC */
 multiline_comment|/*&n; * Change timeval to jiffies, trying to avoid the&n; * most obvious overflows..&n; *&n; * And some not so obvious.&n; *&n; * Note that we don&squot;t want to return MAX_LONG, because&n; * for various timeout reasons we often end up having&n; * to wait &quot;jiffies+1&quot; in order to guarantee that we wait&n; * at _least_ &quot;jiffies&quot; - so &quot;jiffies+1&quot; had better still&n; * be positive.&n; */
 DECL|macro|MAX_JIFFY_OFFSET
 mdefine_line|#define MAX_JIFFY_OFFSET ((~0UL &gt;&gt; 1)-1)
-multiline_comment|/* Parameters used to convert the timespec values */
-macro_line|#ifndef USEC_PER_SEC
-DECL|macro|USEC_PER_SEC
-mdefine_line|#define USEC_PER_SEC (1000000L)
-macro_line|#endif
-macro_line|#ifndef NSEC_PER_SEC
-DECL|macro|NSEC_PER_SEC
-mdefine_line|#define NSEC_PER_SEC (1000000000L)
-macro_line|#endif
-macro_line|#ifndef NSEC_PER_USEC
-DECL|macro|NSEC_PER_USEC
-mdefine_line|#define NSEC_PER_USEC (1000L)
-macro_line|#endif
 r_static
 id|__inline__
 r_int
@@ -80,7 +67,7 @@ id|MAX_JIFFY_OFFSET
 suffix:semicolon
 id|nsec
 op_add_assign
-id|NSEC_PER_SEC
+l_int|1000000000L
 op_div
 id|HZ
 op_minus
@@ -88,7 +75,7 @@ l_int|1
 suffix:semicolon
 id|nsec
 op_div_assign
-id|NSEC_PER_SEC
+l_int|1000000000L
 op_div
 id|HZ
 suffix:semicolon
@@ -126,7 +113,7 @@ id|HZ
 )paren
 op_star
 (paren
-id|NSEC_PER_SEC
+l_int|1000000000L
 op_div
 id|HZ
 )paren
@@ -272,22 +259,5 @@ suffix:semicolon
 multiline_comment|/* current value */
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Data types for POSIX.1b interval timers.&n; */
-DECL|typedef|clockid_t
-r_typedef
-r_int
-id|clockid_t
-suffix:semicolon
-DECL|typedef|timer_t
-r_typedef
-r_int
-id|timer_t
-suffix:semicolon
-multiline_comment|/*&n; * The IDs of the various system clocks (for POSIX.1b interval timers).&n; */
-DECL|macro|CLOCK_REALTIME
-mdefine_line|#define CLOCK_REALTIME 0
-multiline_comment|/*&n; * The various flags for setting POSIX.1b interval timers.&n; */
-DECL|macro|TIMER_ABSTIME
-mdefine_line|#define TIMER_ABSTIME 0x01
 macro_line|#endif
 eof

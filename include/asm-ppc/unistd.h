@@ -380,22 +380,6 @@ DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;188&t;/* some people actually want streams */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;189
-DECL|macro|__NR_timer_create
-mdefine_line|#define __NR_timer_create&t;190
-DECL|macro|__NR_timer_settime
-mdefine_line|#define __NR_timer_settime&t;191
-DECL|macro|__NR_timer_gettime
-mdefine_line|#define __NR_timer_gettime&t;192
-DECL|macro|__NR_timer_getoverrun
-mdefine_line|#define __NR_timer_getoverrun&t;193
-DECL|macro|__NR_timer_delete
-mdefine_line|#define __NR_timer_delete&t;194
-DECL|macro|__NR_clock_gettime
-mdefine_line|#define __NR_clock_gettime&t;195
-DECL|macro|__NR_clock_settime
-mdefine_line|#define __NR_clock_settime&t;196
-DECL|macro|__NR_clock_getres
-mdefine_line|#define __NR_clock_getres&t;197
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__syscall_return
