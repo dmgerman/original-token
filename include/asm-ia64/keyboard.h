@@ -4,6 +4,7 @@ mdefine_line|#define _ASM_IA64_KEYBOARD_H
 multiline_comment|/*&n; * This file contains the ia-64 architecture specific keyboard&n; * definitions.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|# ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;isa_irq_to_vector(1)
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
@@ -119,10 +120,6 @@ DECL|macro|INIT_KBD
 mdefine_line|#define INIT_KBD
 DECL|macro|SYSRQ_KEY
 mdefine_line|#define SYSRQ_KEY&t;&t;0x54
-macro_line|#if defined(CONFIG_KDB)
-DECL|macro|E1_PAUSE
-mdefine_line|#define E1_PAUSE  119                   /* PAUSE key */
-macro_line|#endif
 multiline_comment|/* resource allocation */
 DECL|macro|kbd_request_region
 mdefine_line|#define kbd_request_region()

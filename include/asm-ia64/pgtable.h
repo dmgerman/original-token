@@ -1,13 +1,22 @@
 macro_line|#ifndef _ASM_IA64_PGTABLE_H
 DECL|macro|_ASM_IA64_PGTABLE_H
 mdefine_line|#define _ASM_IA64_PGTABLE_H
-multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the ia-64 page table tree.&n; *&n; * This hopefully works with any (fixed) ia-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the ia-64 page table tree.&n; *&n; * This hopefully works with any (fixed) ia-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
-multiline_comment|/* Size of physical address space: */
+multiline_comment|/* Size of virtuaql and physical address spaces: */
+macro_line|#ifdef CONFIG_ITANIUM
+DECL|macro|IA64_IMPL_VA_MSB
+macro_line|# define IA64_IMPL_VA_MSB&t;50
 DECL|macro|IA64_PHYS_BITS
-mdefine_line|#define IA64_PHYS_BITS&t;&t;50&t;&t;/* EAS2.5 defines 50 bits of ppn */
+macro_line|# define IA64_PHYS_BITS&t;&t;44&t;&t;/* Itanium PRM defines 44 bits of ppn */
+macro_line|#else
+DECL|macro|IA64_IMPL_VA_MSB
+macro_line|# define IA64_IMPL_VA_MSB&t;60&t;&t;/* maximum value (bits 61-63 are region bits) */
+DECL|macro|IA64_PHYS_BITS
+macro_line|# define IA64_PHYS_BITS&t;&t;50&t;&t;/* EAS2.6 allows up to 50 bits of ppn */
+macro_line|#endif
 DECL|macro|IA64_PHYS_SIZE
 mdefine_line|#define IA64_PHYS_SIZE&t;&t;(__IA64_UL(1) &lt;&lt; IA64_PHYS_BITS)
 multiline_comment|/* Is ADDR a valid kernel address? */
@@ -434,24 +443,6 @@ mdefine_line|#define pmd_offset(dir,addr) &bslash;&n;&t;((pmd_t *) pgd_page(*(di
 multiline_comment|/* Find an entry in the third-level page table.. */
 DECL|macro|pte_offset
 mdefine_line|#define pte_offset(dir,addr) &bslash;&n;&t;((pte_t *) pmd_page(*(dir)) + (((addr) &gt;&gt; PAGE_SHIFT) &amp; (PTRS_PER_PTE - 1)))
-r_extern
-r_void
-id|__handle_bad_pgd
-(paren
-id|pgd_t
-op_star
-id|pgd
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|__handle_bad_pmd
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-suffix:semicolon
 r_extern
 id|pgd_t
 id|swapper_pg_dir

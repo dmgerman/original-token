@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*- ------------------------------------------------------- *&n; *   &n; * linux/fs/autofs/autofs_i.h&n; *&n; *   Copyright 1997-1998 Transmeta Corporation - All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ----------------------------------------------------------------------- */
+multiline_comment|/* -*- c -*- ------------------------------------------------------------- *&n; *   &n; * linux/fs/autofs/autofs_i.h&n; *&n; *   Copyright 1997-1998 Transmeta Corporation - All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ----------------------------------------------------------------------- */
 multiline_comment|/* Internal header file for autofs */
 macro_line|#include &lt;linux/auto_fs4.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -53,19 +53,10 @@ id|autofs_sb_info
 op_star
 id|sbi
 suffix:semicolon
-DECL|member|ino_hash
-r_struct
-id|list_head
-id|ino_hash
-suffix:semicolon
 DECL|member|last_used
 r_int
 r_int
 id|last_used
-suffix:semicolon
-DECL|member|ino
-id|ino_t
-id|ino
 suffix:semicolon
 DECL|member|mode
 id|mode_t
@@ -103,17 +94,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|AUTOFS_INF_EXPIRING
 mdefine_line|#define AUTOFS_INF_EXPIRING&t;(1&lt;&lt;0) /* dentry is in the process of expiring */
-DECL|struct|autofs_inohash
-r_struct
-id|autofs_inohash
-(brace
-DECL|member|head
-r_struct
-id|list_head
-id|head
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|autofs_wait_queue
 r_struct
 id|autofs_wait_queue
@@ -157,10 +137,6 @@ id|wait_ctr
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|AUTOFS_ROOT_INO
-mdefine_line|#define AUTOFS_ROOT_INO&t;&t;1
-DECL|macro|AUTOFS_FIRST_INO
-mdefine_line|#define AUTOFS_FIRST_INO&t;2
 DECL|macro|AUTOFS_SBI_MAGIC
 mdefine_line|#define AUTOFS_SBI_MAGIC 0x6d4a556d
 DECL|struct|autofs_sb_info
@@ -194,10 +170,6 @@ r_int
 r_int
 id|exp_timeout
 suffix:semicolon
-DECL|member|next_ino
-id|ino_t
-id|next_ino
-suffix:semicolon
 DECL|member|sb
 r_struct
 id|super_block
@@ -211,11 +183,6 @@ op_star
 id|queues
 suffix:semicolon
 multiline_comment|/* Wait queue pointer */
-DECL|member|ihash
-r_struct
-id|autofs_inohash
-id|ihash
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|autofs4_sbi
@@ -335,64 +302,19 @@ id|AUTOFS_INF_EXPIRING
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Inode hash operations */
-r_void
-id|autofs4_init_ihash
+r_struct
+id|inode
+op_star
+id|autofs4_get_inode
 c_func
 (paren
 r_struct
-id|autofs_inohash
+id|super_block
 op_star
-)paren
-suffix:semicolon
-r_void
-id|autofs4_ihash_insert
-c_func
-(paren
-r_struct
-id|autofs_inohash
-op_star
-id|ih
 comma
 r_struct
 id|autofs_info
 op_star
-id|ino
-)paren
-suffix:semicolon
-r_void
-id|autofs4_ihash_delete
-c_func
-(paren
-r_struct
-id|autofs_info
-op_star
-id|ino
-)paren
-suffix:semicolon
-r_void
-id|autofs4_ihash_nuke
-c_func
-(paren
-r_struct
-id|autofs_inohash
-op_star
-id|ih
-)paren
-suffix:semicolon
-r_struct
-id|autofs_info
-op_star
-id|autofs4_ihash_find
-c_func
-(paren
-r_struct
-id|autofs_inohash
-op_star
-id|ih
-comma
-id|ino_t
-id|ino
 )paren
 suffix:semicolon
 r_struct

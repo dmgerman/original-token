@@ -2070,6 +2070,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifndef __alpha__
+multiline_comment|/* Called without the kernel lock - fine */
 DECL|function|rtc_poll
 r_static
 r_int

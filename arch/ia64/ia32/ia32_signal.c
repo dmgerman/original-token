@@ -444,6 +444,7 @@ id|sc-&gt;fpstate
 )paren
 suffix:semicolon
 multiline_comment|/* non-iBCS2 extensions.. */
+macro_line|#endif
 id|err
 op_or_assign
 id|__put_user
@@ -455,6 +456,7 @@ op_amp
 id|sc-&gt;oldmask
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|err
 op_or_assign
 id|__put_user
@@ -829,7 +831,7 @@ l_int|8ul
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|setup_frame_ia32
 id|setup_frame_ia32
 c_func
@@ -1130,15 +1132,17 @@ op_complement
 id|TF_MASK
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;SIG deliver (%s:%d): sp=%p pc=%lx ra=%x&bslash;n&quot;
+l_string|&quot;SIG deliver (%s:%d): sig=%d sp=%p pc=%lx ra=%x&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
 id|current-&gt;pid
+comma
+id|sig
 comma
 id|frame
 comma
@@ -1149,6 +1153,7 @@ id|frame-&gt;pretcode
 suffix:semicolon
 macro_line|#endif
 r_return
+l_int|1
 suffix:semicolon
 id|give_sigsegv
 suffix:colon
@@ -1171,9 +1176,12 @@ comma
 id|current
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|setup_rt_frame_ia32
 id|setup_rt_frame_ia32
 c_func
@@ -1540,7 +1548,7 @@ op_complement
 id|TF_MASK
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -1559,6 +1567,7 @@ id|frame-&gt;pretcode
 suffix:semicolon
 macro_line|#endif
 r_return
+l_int|1
 suffix:semicolon
 id|give_sigsegv
 suffix:colon
@@ -1580,6 +1589,9 @@ id|SIGSEGV
 comma
 id|current
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_int
@@ -1616,6 +1628,7 @@ id|ka-&gt;sa.sa_flags
 op_amp
 id|SA_SIGINFO
 )paren
+r_return
 id|setup_rt_frame_ia32
 c_func
 (paren
@@ -1631,6 +1644,7 @@ id|regs
 )paren
 suffix:semicolon
 r_else
+r_return
 id|setup_frame_ia32
 c_func
 (paren

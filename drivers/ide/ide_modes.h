@@ -460,13 +460,30 @@ l_int|3
 )brace
 comma
 (brace
-l_string|&quot;QUANTUM FIREBALL&quot;
+l_string|&quot;QUANTUM FIREBALL_540&quot;
 comma
 l_int|3
 )brace
 comma
-multiline_comment|/* For models 540/640/1080/1280 */
-multiline_comment|/* 1080A works fine in mode4 with triton */
+multiline_comment|/* Older Quantum Fireballs don&squot;t work */
+(brace
+l_string|&quot;QUANTUM FIREBALL_640&quot;
+comma
+l_int|3
+)brace
+comma
+(brace
+l_string|&quot;QUANTUM FIREBALL_1080&quot;
+comma
+l_int|3
+)brace
+comma
+(brace
+l_string|&quot;QUANTUM FIREBALL_1280&quot;
+comma
+l_int|3
+)brace
+comma
 (brace
 l_int|NULL
 comma

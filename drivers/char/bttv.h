@@ -729,6 +729,8 @@ DECL|macro|BTTV_PXELVWPLTVPRO
 mdefine_line|#define BTTV_PXELVWPLTVPRO 0x25
 DECL|macro|BTTV_MAGICTVIEW063
 mdefine_line|#define BTTV_MAGICTVIEW063 0x26
+DECL|macro|BTTV_PINNACLERAVE
+mdefine_line|#define BTTV_PINNACLERAVE  0x27
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

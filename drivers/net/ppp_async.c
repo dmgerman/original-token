@@ -999,6 +999,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - fine */
 r_static
 r_int
 r_int

@@ -2763,7 +2763,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* end of n_hdlc_tty_select() */
 macro_line|#else&t;/* 2.1.23 or later */
-multiline_comment|/* n_hdlc_tty_poll()&n; * &n; * &t;TTY callback for poll system call. Determine which &n; * &t;operations (read/write) will not block and return&n; * &t;info to caller.&n; * &t;&n; * Arguments:&n; * &n; * &t;tty&t;&t;pointer to tty instance data&n; * &t;filp&t;&t;pointer to open file object for device&n; * &t;poll_table&t;wait queue for operations&n; * &n; * Return Value:&n; * &n; * &t;bit mask containing info on which ops will not block&n; */
+multiline_comment|/* n_hdlc_tty_poll()&n; * &n; * &t;TTY callback for poll system call. Determine which &n; * &t;operations (read/write) will not block and return&n; * &t;info to caller.&n; * &t;&n; * Arguments:&n; * &n; * &t;tty&t;&t;pointer to tty instance data&n; * &t;filp&t;&t;pointer to open file object for device&n; * &t;poll_table&t;wait queue for operations&n; * &n; * Return Value:&n; * &n; * &t;bit mask containing info on which ops will not block&n; *&n; * Note: Called without the kernel lock held. Which is fine.&n; */
 DECL|function|n_hdlc_tty_poll
 r_static
 r_int

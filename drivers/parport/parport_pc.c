@@ -2420,13 +2420,13 @@ l_int|0xffffUL
 )paren
 id|maxlen
 op_assign
-(paren
 l_int|0x10000
 op_minus
+(paren
 id|start
-)paren
 op_amp
 l_int|0xffff
+)paren
 suffix:semicolon
 id|dma_addr
 op_assign

@@ -124,6 +124,12 @@ id|dentry
 op_star
 id|swap_file
 suffix:semicolon
+DECL|member|swap_vfsmnt
+r_struct
+id|vfsmount
+op_star
+id|swap_vfsmnt
+suffix:semicolon
 DECL|member|swap_map
 r_int
 r_int

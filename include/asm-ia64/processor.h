@@ -62,6 +62,10 @@ mdefine_line|#define IA64_PSR_TB_BIT&t;&t;26
 DECL|macro|IA64_PSR_RT_BIT
 mdefine_line|#define IA64_PSR_RT_BIT&t;&t;27
 multiline_comment|/* The following are not affected by save_flags()/restore_flags(): */
+DECL|macro|IA64_PSR_CPL0_BIT
+mdefine_line|#define IA64_PSR_CPL0_BIT&t;32
+DECL|macro|IA64_PSR_CPL1_BIT
+mdefine_line|#define IA64_PSR_CPL1_BIT&t;33
 DECL|macro|IA64_PSR_IS_BIT
 mdefine_line|#define IA64_PSR_IS_BIT&t;&t;34
 DECL|macro|IA64_PSR_MC_BIT
@@ -222,6 +226,8 @@ DECL|macro|IA64_THREAD_UAC_NOPRINT
 mdefine_line|#define IA64_THREAD_UAC_NOPRINT&t;(__IA64_UL(1) &lt;&lt; 2)&t;/* don&squot;t log unaligned accesses */
 DECL|macro|IA64_THREAD_UAC_SIGBUS
 mdefine_line|#define IA64_THREAD_UAC_SIGBUS&t;(__IA64_UL(1) &lt;&lt; 3)&t;/* generate SIGBUS on unaligned acc. */
+DECL|macro|IA64_THREAD_KRBS_SYNCED
+mdefine_line|#define IA64_THREAD_KRBS_SYNCED&t;(__IA64_UL(1) &lt;&lt; 4)&t;/* krbs synced with process vm? */
 DECL|macro|IA64_KERNEL_DEATH
 mdefine_line|#define IA64_KERNEL_DEATH&t;(__IA64_UL(1) &lt;&lt; 63)&t;/* see die_if_kernel()... */
 DECL|macro|IA64_THREAD_UAC_SHIFT
@@ -607,6 +613,9 @@ DECL|macro|SET_UNALIGN_CTL
 mdefine_line|#define SET_UNALIGN_CTL(task,value)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(task)-&gt;thread.flags |= ((value) &lt;&lt; IA64_THREAD_UAC_SHIFT) &amp; IA64_THREAD_UAC_MASK;&t;&bslash;&n;&t;0;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|GET_UNALIGN_CTL
 mdefine_line|#define GET_UNALIGN_CTL(task,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;put_user(((task)-&gt;thread.flags &amp; IA64_THREAD_UAC_MASK) &gt;&gt; IA64_THREAD_UAC_SHIFT,&t;&bslash;&n;&t;&t; (int *) (addr));&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+r_struct
+id|siginfo
+suffix:semicolon
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -651,6 +660,11 @@ id|map_base
 suffix:semicolon
 multiline_comment|/* base address for mmap() */
 macro_line|#ifdef CONFIG_IA32_SUPPORT
+DECL|member|eflag
+id|__u64
+id|eflag
+suffix:semicolon
+multiline_comment|/* IA32 EFLAGS reg */
 DECL|member|fsr
 id|__u64
 id|fsr
@@ -671,18 +685,36 @@ id|__u64
 id|fdr
 suffix:semicolon
 multiline_comment|/* IA32 fp except. data reg */
+r_union
+(brace
+DECL|member|sigmask
+id|__u64
+id|sigmask
+suffix:semicolon
+multiline_comment|/* aligned mask for sigsuspend scall */
+DECL|member|un
+)brace
+id|un
+suffix:semicolon
 DECL|macro|INIT_THREAD_IA32
-macro_line|# define INIT_THREAD_IA32&t;, 0, 0, 0, 0
+macro_line|# define INIT_THREAD_IA32&t;, 0, 0, 0, 0, 0, {0}
 macro_line|#else
 DECL|macro|INIT_THREAD_IA32
 macro_line|# define INIT_THREAD_IA32
 macro_line|#endif /* CONFIG_IA32_SUPPORT */
+DECL|member|siginfo
+r_struct
+id|siginfo
+op_star
+id|siginfo
+suffix:semicolon
+multiline_comment|/* current siginfo struct for ptrace() */
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&amp;init_mm, PAGE_OFFSET, PAGE_OFFSET + 0x10000000, NULL, PAGE_SHARED,&t;&bslash;&n;        VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32,&t;&t;&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;/* siginfo */&t;&bslash;&n;}
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declarations, a strange C thing... */

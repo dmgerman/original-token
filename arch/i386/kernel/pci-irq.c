@@ -30,8 +30,7 @@ r_int
 r_int
 id|pcibios_irq_mask
 op_assign
-op_complement
-l_int|0
+l_int|0xfff8
 suffix:semicolon
 DECL|variable|pirq_penalty
 r_static
@@ -1763,22 +1762,9 @@ comma
 id|pirq_table-&gt;exclusive_irqs
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_irq_mask
-op_ne
-op_complement
-l_int|0
-)paren
 id|mask
 op_and_assign
 id|pcibios_irq_mask
-suffix:semicolon
-r_else
-id|mask
-op_and_assign
-id|pirq_table-&gt;exclusive_irqs
 suffix:semicolon
 multiline_comment|/* Find the best IRQ to assign */
 id|newirq

@@ -1579,6 +1579,11 @@ r_struct
 id|qstr
 id|last
 suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|FASYNC_MAGIC
@@ -2154,6 +2159,7 @@ id|kdev_t
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * NOTE:&n; * read, write, poll, fsync, readv, writev can be called&n; *   without the big kernel lock held in all filesystems.&n; * fasync can be called at interrupt time.&n; */
 DECL|struct|file_operations
 r_struct
 id|file_operations
@@ -4267,6 +4273,8 @@ DECL|macro|LOOKUP_POSITIVE
 mdefine_line|#define LOOKUP_POSITIVE&t;&t;(16)
 DECL|macro|LOOKUP_PARENT
 mdefine_line|#define LOOKUP_PARENT&t;&t;(32)
+DECL|macro|LOOKUP_NOALT
+mdefine_line|#define LOOKUP_NOALT&t;&t;(64)
 multiline_comment|/*&n; * &quot;descriptor&quot; for what we&squot;re up to with a read for sendfile().&n; * This allows us to use the same read code yet&n; * have multiple different users of the data that&n; * we read from a file.&n; *&n; * The simplest case just copies the data to user&n; * mode.&n; */
 r_typedef
 r_struct
@@ -4371,8 +4379,6 @@ c_func
 r_const
 r_char
 op_star
-comma
-r_int
 comma
 r_struct
 id|nameidata

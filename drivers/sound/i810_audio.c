@@ -4384,6 +4384,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - we have our own spinlock */
 DECL|function|i810_poll
 r_static
 r_int

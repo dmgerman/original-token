@@ -5,8 +5,7 @@ multiline_comment|/*&n; * Copyright (C) 2000 Hewlett-Packard Co&n; * Copyright (
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-DECL|macro|NR_ISA_IRQS
-mdefine_line|#define NR_ISA_IRQS&t; 16
+macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/*&n; * 0 special&n; *&n; * 1,3-14 are reserved from firmware&n; *&n; * 16-255 (vectored external interrupts) are available&n; *&n; * 15 spurious interrupt (see IVR)&n; *&n; * 16 lowest priority, 255 highest priority&n; *&n; * 15 classes of 16 interrupts each.&n; */
 DECL|macro|IA64_MIN_VECTORED_IRQ
 mdefine_line|#define IA64_MIN_VECTORED_IRQ&t; 16
@@ -27,6 +26,8 @@ mdefine_line|#define IPI_IRQ&t;&t;&t;0xfe&t;/* inter-processor interrupt vector 
 DECL|macro|CMC_IRQ
 mdefine_line|#define CMC_IRQ&t;&t;&t;0xff&t;/* correctable machine-check interrupt vector */
 multiline_comment|/* IA64 inter-cpu interrupt related definitions */
+DECL|macro|IPI_DEFAULT_BASE_ADDR
+mdefine_line|#define IPI_DEFAULT_BASE_ADDR&t;0xfee00000
 multiline_comment|/* Delivery modes for inter-cpu interrupts */
 r_enum
 (brace
@@ -76,9 +77,14 @@ suffix:semicolon
 DECL|macro|isa_irq_to_vector
 mdefine_line|#define isa_irq_to_vector(x)&t;isa_irq_to_vector_map[(x)]
 r_extern
+r_int
+r_int
+id|ipi_base_addr
+suffix:semicolon
+r_extern
 r_struct
 id|hw_interrupt_type
-id|irq_type_ia64_internal
+id|irq_type_ia64_sapic
 suffix:semicolon
 multiline_comment|/* CPU-internal interrupt controller */
 r_extern
@@ -93,25 +99,9 @@ id|vector
 comma
 r_int
 id|delivery_mode
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
-r_extern
-r_void
-id|handle_IPI
-c_func
-(paren
+comma
 r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
+id|redirect
 )paren
 suffix:semicolon
 r_static
@@ -127,19 +117,58 @@ id|h
 comma
 r_int
 r_int
-id|i
+id|vector
 )paren
 (brace
-id|send_IPI_self
+r_int
+id|my_cpu_id
+suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|my_cpu_id
+op_assign
+id|smp_processor_id
 c_func
 (paren
-id|i
+)paren
+suffix:semicolon
+macro_line|#else
+id|__u64
+id|lid
+suffix:semicolon
+id|__asm__
+(paren
+l_string|&quot;mov %0=cr.lid&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|lid
+)paren
+)paren
+suffix:semicolon
+id|my_cpu_id
+op_assign
+(paren
+id|lid
+op_rshift
+l_int|24
+)paren
+op_amp
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* extract id (ignore eid) */
+macro_line|#endif
+id|ipi_send
+c_func
+(paren
+id|my_cpu_id
+comma
+id|vector
+comma
+id|IA64_IPI_DM_INT
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|macro|hw_resend_irq
-macro_line|# define hw_resend_irq(h,i)
-macro_line|#endif
 macro_line|#endif /* _ASM_IA64_HW_IRQ_H */
 eof

@@ -808,11 +808,7 @@ c_func
 (paren
 id|argp-&gt;name
 comma
-id|dget
-c_func
-(paren
 id|dirfhp-&gt;fh_dentry
-)paren
 )paren
 suffix:semicolon
 r_if

@@ -470,6 +470,24 @@ mdefine_line|#define pmd_free(pmd)&t;&t;free_pmd_fast(pmd)
 DECL|macro|pgd_free
 mdefine_line|#define pgd_free(pgd)&t;&t;free_pgd_fast(pgd)
 r_extern
+r_void
+id|__handle_bad_pgd
+(paren
+id|pgd_t
+op_star
+id|pgd
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__handle_bad_pmd
+(paren
+id|pmd_t
+op_star
+id|pmd
+)paren
+suffix:semicolon
+r_extern
 id|__inline__
 id|pte_t
 op_star
@@ -844,7 +862,7 @@ r_int
 id|end
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Page-granular tlb flush.&n; *&n; * do a tbisd (type = 2) normally, and a tbis (type = 3)&n; * if it is an executable mapping.  We want to avoid the&n; * itlb flush, because that potentially also does a&n; * icache flush.&n; */
+multiline_comment|/*&n; * Page-granular tlb flush.&n; */
 r_static
 id|__inline__
 r_void

@@ -645,7 +645,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_acq
 c_func
 (paren
 op_amp
@@ -812,7 +812,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_rel
 c_func
 (paren
 op_amp

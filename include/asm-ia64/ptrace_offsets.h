@@ -2,7 +2,7 @@ macro_line|#ifndef _ASM_IA64_PTRACE_OFFSETS_H
 DECL|macro|_ASM_IA64_PTRACE_OFFSETS_H
 mdefine_line|#define _ASM_IA64_PTRACE_OFFSETS_H
 multiline_comment|/*&n; * Copyright (C) 1999 Hewlett-Packard Co&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
-multiline_comment|/*&n; * The &quot;uarea&quot; that can be accessed via PEEKUSER and POKEUSER is a&n; * virtual structure that would have the following definition:&n; *&n; *&t;struct uarea {&n; *&t;&t;struct ia64_fpreg fph[96];&t;&t;// f32-f127&n; *&t;&t;struct switch_stack sw;&n; *&t;&t;struct pt_regs pt;&n; *&t;&t;unsigned long rsvd1[358];&n; *&t;&t;unsigned long dbr[8];&n; *&t;&t;unsigned long rsvd2[252];&n; *&t;&t;unsigned long ibr[8];&n; *&t;}&n; */
+multiline_comment|/*&n; * The &quot;uarea&quot; that can be accessed via PEEKUSER and POKEUSER is a&n; * virtual structure that would have the following definition:&n; *&n; *&t;struct uarea {&n; *&t;&t;struct ia64_fpreg fph[96];&t;&t;// f32-f127&n; *&t;&t;struct switch_stack sw;&n; *&t;&t;struct pt_regs pt;&n; *&t;&t;unsigned long rsvd1[712];&n; *&t;&t;unsigned long dbr[8];&n; *&t;&t;unsigned long rsvd2[504];&n; *&t;&t;unsigned long ibr[8];&n; *&t;}&n; */
 multiline_comment|/* fph: */
 DECL|macro|PT_F32
 mdefine_line|#define PT_F32&t;&t;&t;0x0000
@@ -290,8 +290,10 @@ DECL|macro|PT_CR_IPSR
 mdefine_line|#define PT_CR_IPSR&t;&t;0x0830
 DECL|macro|PT_CR_IIP
 mdefine_line|#define PT_CR_IIP&t;&t;0x0838
+DECL|macro|PT_CFM
+mdefine_line|#define PT_CFM&t;&t;&t;0x0840
 DECL|macro|PT_CR_IFS
-mdefine_line|#define PT_CR_IFS&t;&t;0x0840
+mdefine_line|#define PT_CR_IFS&t;&t;PT_CFM&t;&t;/* Use of PT_CR_IFS is deprecated */
 DECL|macro|PT_AR_UNAT
 mdefine_line|#define PT_AR_UNAT&t;&t;0x0848
 DECL|macro|PT_AR_PFS

@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PAL_H
 DECL|macro|_ASM_IA64_PAL_H
 mdefine_line|#define _ASM_IA64_PAL_H
-multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on version 2.4 of the manual &quot;Enhanced Mode Processor&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; * 00/03/07&t;davidm&t;Updated pal_cache_flush() to be in sync with PAL v2.6.&n; */
+multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on version 2.4 of the manual &quot;Enhanced Mode Processor&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; * 00/03/07&t;davidm&t;Updated pal_cache_flush() to be in sync with PAL v2.6.&n; * 00/03/23     cfleck  Modified processor min-state save area to match updated PAL &amp; SAL info&n; */
 multiline_comment|/*&n; * Note that some of these calls use a static-register only calling&n; * convention which has nothing to do with the regular calling&n; * convention.&n; */
 DECL|macro|PAL_CACHE_FLUSH
 mdefine_line|#define PAL_CACHE_FLUSH&t;&t;1&t;/* flush i/d cache */
@@ -1297,42 +1297,25 @@ DECL|macro|pmci_bus_external_error
 mdefine_line|#define pmci_bus_external_error&t;&t;&t;pme_bus.eb
 DECL|macro|pmci_bus_mc
 mdefine_line|#define pmci_bus_mc&t;&t;&t;&t;pme_bus.mc
+multiline_comment|/* &n; * NOTE: this min_state_save area struct only includes the 1KB &n; * architectural state save area.  The other 3 KB is scratch space&n; * for PAL.&n; */
 DECL|struct|pal_min_state_area_s
 r_typedef
 r_struct
 id|pal_min_state_area_s
 (brace
-DECL|member|pmsa_reserved
+DECL|member|pmsa_nat_bits
 id|u64
-id|pmsa_reserved
+id|pmsa_nat_bits
+suffix:semicolon
+multiline_comment|/* nat bits for saved GRs  */
+DECL|member|pmsa_gr
+id|u64
+id|pmsa_gr
 (braket
-l_int|26
+l_int|15
 )braket
 suffix:semicolon
-DECL|member|pmsa_xfs
-id|u64
-id|pmsa_xfs
-suffix:semicolon
-DECL|member|pmsa_xpsr
-id|u64
-id|pmsa_xpsr
-suffix:semicolon
-DECL|member|pmsa_xip
-id|u64
-id|pmsa_xip
-suffix:semicolon
-DECL|member|pmsa_rsc
-id|u64
-id|pmsa_rsc
-suffix:semicolon
-DECL|member|pmsa_br0
-id|u64
-id|pmsa_br0
-suffix:semicolon
-DECL|member|pmsa_pr
-id|u64
-id|pmsa_pr
-suffix:semicolon
+multiline_comment|/* GR1&t;- GR15&t;&t;   */
 DECL|member|pmsa_bank0_gr
 id|u64
 id|pmsa_bank0_gr
@@ -1340,17 +1323,68 @@ id|pmsa_bank0_gr
 l_int|16
 )braket
 suffix:semicolon
-DECL|member|pmsa_gr
+multiline_comment|/* GR16 - GR31&t;&t;   */
+DECL|member|pmsa_bank1_gr
 id|u64
-id|pmsa_gr
+id|pmsa_bank1_gr
 (braket
 l_int|16
 )braket
 suffix:semicolon
-DECL|member|pmsa_nat_bits
+multiline_comment|/* GR16 - GR31&t;&t;   */
+DECL|member|pmsa_pr
 id|u64
-id|pmsa_nat_bits
+id|pmsa_pr
 suffix:semicolon
+multiline_comment|/* predicate registers&t;   */
+DECL|member|pmsa_br0
+id|u64
+id|pmsa_br0
+suffix:semicolon
+multiline_comment|/* branch register 0&t;   */
+DECL|member|pmsa_rsc
+id|u64
+id|pmsa_rsc
+suffix:semicolon
+multiline_comment|/* ar.rsc&t;&t;   */
+DECL|member|pmsa_iip
+id|u64
+id|pmsa_iip
+suffix:semicolon
+multiline_comment|/* cr.iip&t;&t;   */
+DECL|member|pmsa_ipsr
+id|u64
+id|pmsa_ipsr
+suffix:semicolon
+multiline_comment|/* cr.ipsr&t;&t;   */
+DECL|member|pmsa_ifs
+id|u64
+id|pmsa_ifs
+suffix:semicolon
+multiline_comment|/* cr.ifs&t;&t;   */
+DECL|member|pmsa_xip
+id|u64
+id|pmsa_xip
+suffix:semicolon
+multiline_comment|/* previous iip&t;&t;   */
+DECL|member|pmsa_xpsr
+id|u64
+id|pmsa_xpsr
+suffix:semicolon
+multiline_comment|/* previous psr&t;&t;   */
+DECL|member|pmsa_xfs
+id|u64
+id|pmsa_xfs
+suffix:semicolon
+multiline_comment|/* previous ifs&t;&t;   */
+DECL|member|pmsa_reserved
+id|u64
+id|pmsa_reserved
+(braket
+l_int|71
+)braket
+suffix:semicolon
+multiline_comment|/* pal_min_state_area should total to 1KB */
 DECL|typedef|pal_min_state_area_t
 )brace
 id|pal_min_state_area_t

@@ -52,7 +52,7 @@ l_int|1
 )braket
 op_assign
 (brace
-l_int|0
+id|IRQ_DISABLED
 comma
 op_amp
 id|no_irq_type
@@ -503,7 +503,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SMP
+macro_line|#if defined(CONFIG_SMP) &amp;&amp; defined(__i386__)
 id|p
 op_add_assign
 id|sprintf
@@ -580,14 +580,14 @@ multiline_comment|/*&n; * Global interrupt locks for SMP. Allow interrupts to co
 macro_line|#ifdef CONFIG_SMP
 DECL|variable|global_irq_holder
 r_int
-r_char
+r_int
 id|global_irq_holder
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
 DECL|variable|global_irq_lock
-r_int
 r_volatile
+r_int
 r_int
 id|global_irq_lock
 suffix:semicolon
@@ -725,6 +725,15 @@ c_func
 l_string|&quot; ]&bslash;nStack dumps:&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef __ia64__
+id|printk
+c_func
+(paren
+l_string|&quot; ]&bslash;nStack dumps: &lt;unimplemented on IA-64---please fix me&gt;&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* for now we don&squot;t have stack dumping support... */
+macro_line|#elif __i386__
 r_for
 c_loop
 (paren
@@ -818,6 +827,13 @@ id|esp
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+id|You
+id|lose
+dot
+dot
+dot
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -826,12 +842,14 @@ comma
 id|cpu
 )paren
 suffix:semicolon
+macro_line|#ifdef __i386__
 id|show_stack
 c_func
 (paren
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -849,8 +867,13 @@ DECL|macro|SYNC_OTHER_CORES
 macro_line|# define SYNC_OTHER_CORES(x) udelay(x+1)
 macro_line|#else
 multiline_comment|/*&n; * We have to allow irqs to arrive between __sti and __cli&n; */
+macro_line|# ifdef __ia64__
 DECL|macro|SYNC_OTHER_CORES
-macro_line|# define SYNC_OTHER_CORES(x) __asm__ __volatile__ (&quot;nop&quot;)
+macro_line|#  define SYNC_OTHER_CORES(x) __asm__ __volatile__ (&quot;nop 0&quot;)
+macro_line|# else
+DECL|macro|SYNC_OTHER_CORES
+macro_line|#  define SYNC_OTHER_CORES(x) __asm__ __volatile__ (&quot;nop&quot;)
+macro_line|# endif
 macro_line|#endif
 DECL|function|wait_on_irq
 r_static
@@ -1070,10 +1093,6 @@ multiline_comment|/* do we already hold the lock? */
 r_if
 c_cond
 (paren
-(paren
-r_int
-r_char
-)paren
 id|cpu
 op_eq
 id|global_irq_holder
@@ -1142,6 +1161,52 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#ifdef __ia64__
+id|__save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|IA64_PSR_I
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|local_irq_count
+c_func
+(paren
+id|cpu
+)paren
+)paren
+id|get_irqlock
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 id|__save_flags
 c_func
 (paren
@@ -1190,6 +1255,7 @@ id|cpu
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|__global_sti
 r_void
@@ -1263,6 +1329,18 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef __ia64__
+id|local_enabled
+op_assign
+(paren
+id|flags
+op_amp
+id|IA64_PSR_I
+)paren
+op_ne
+l_int|0
+suffix:semicolon
+macro_line|#else
 id|local_enabled
 op_assign
 (paren
@@ -1273,6 +1351,7 @@ id|EFLAGS_IF_SHIFT
 op_amp
 l_int|1
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* default to local */
 id|retval
 op_assign
@@ -1595,6 +1674,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1631,6 +1711,7 @@ id|IRQ_INPROGRESS
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|enable_irq
 r_void
@@ -1884,25 +1965,16 @@ id|desc-&gt;status
 op_assign
 id|status
 suffix:semicolon
-multiline_comment|/*&n;&t; * If there is no IRQ handler or it was disabled, exit early.&n;&t;   Since we set PENDING, if another processor is handling&n;&t;   a different instance of this same irq, the other processor&n;&t;   will take care of it.&n;&t; */
+multiline_comment|/*&n;&t; * If there is no IRQ handler or it was disabled, exit early.&n;&t; * Since we set PENDING, if another processor is handling&n;&t; * a different instance of this same irq, the other processor&n;&t; * will take care of it.&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|action
 )paren
-(brace
-id|desc-&gt;status
-op_assign
-id|status
-op_amp
-op_complement
-id|IRQ_INPROGRESS
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Edge triggered interrupts need to remember&n;&t; * pending events.&n;&t; * This applies to any hw interrupts that allow a second&n;&t; * instance of the same irq to arrive while we are in do_IRQ&n;&t; * or in the handler. But the code here only handles the _second_&n;&t; * instance of the irq, not the third or fourth. So it is mostly&n;&t; * useful for irq hardware that does not mask cleanly in an&n;&t; * SMP environment.&n;&t; */
 r_for
 c_loop
@@ -1976,31 +2048,6 @@ op_amp
 id|desc-&gt;lock
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n;&t; * let kernel exit path take care of this; we want to do the&n;&t; * CPU EOI before doing softirq() so a new interrupt can come&n;&t; * through&n;&t; */
-r_if
-c_cond
-(paren
-id|softirq_state
-(braket
-id|cpu
-)braket
-dot
-id|active
-op_amp
-id|softirq_state
-(braket
-id|cpu
-)braket
-dot
-id|mask
-)paren
-id|do_softirq
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

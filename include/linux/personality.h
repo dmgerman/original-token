@@ -140,6 +140,8 @@ id|it
 suffix:semicolon
 DECL|macro|put_exec_domain
 mdefine_line|#define put_exec_domain(it) &bslash;&n;&t;if (it &amp;&amp; it-&gt;module) __MOD_DEC_USE_COUNT(it-&gt;module);
+DECL|macro|get_exec_domain
+mdefine_line|#define get_exec_domain(it) &bslash;&n;&t;if (it &amp;&amp; it-&gt;module) __MOD_INC_USE_COUNT(it-&gt;module);
 r_extern
 r_void
 id|__set_personality

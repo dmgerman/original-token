@@ -325,11 +325,11 @@ comma
 id|__ssh
 suffix:semicolon
 DECL|member|fpstate
-r_struct
-id|_fpstate_ia32
-op_star
+r_int
+r_int
 id|fpstate
 suffix:semicolon
+multiline_comment|/* really (struct _fpstate_ia32 *) */
 DECL|member|oldmask
 r_int
 r_int
@@ -732,9 +732,17 @@ DECL|macro|IA32_CR4
 mdefine_line|#define IA32_CR4       0&t;       /* No architectural extensions */
 multiline_comment|/*&n; *  IA32 floating point control registers starting values&n; */
 DECL|macro|IA32_FSR_DEFAULT
-mdefine_line|#define IA32_FSR_DEFAULT&t;0x555500000&t;/* set all tag bits */
+mdefine_line|#define IA32_FSR_DEFAULT&t;0x55550000&t;/* set all tag bits */
 DECL|macro|IA32_FCR_DEFAULT
 mdefine_line|#define IA32_FCR_DEFAULT&t;0x33f&t;&t;/* single precision, all masks */
+DECL|macro|IA32_PTRACE_GETREGS
+mdefine_line|#define IA32_PTRACE_GETREGS&t;12
+DECL|macro|IA32_PTRACE_SETREGS
+mdefine_line|#define IA32_PTRACE_SETREGS&t;13
+DECL|macro|IA32_PTRACE_GETFPREGS
+mdefine_line|#define IA32_PTRACE_GETFPREGS&t;14
+DECL|macro|IA32_PTRACE_SETFPREGS
+mdefine_line|#define IA32_PTRACE_SETFPREGS&t;15
 DECL|macro|ia32_start_thread
 mdefine_line|#define ia32_start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;is = 1;&t;&t;/* IA-32 instruction set */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;r12 = new_sp;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 r_extern
@@ -788,6 +796,20 @@ r_struct
 id|linux_binprm
 op_star
 id|bprm
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ia32_exception
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+r_int
+id|isr
 )paren
 suffix:semicolon
 macro_line|#endif /* !CONFIG_IA32_SUPPORT */

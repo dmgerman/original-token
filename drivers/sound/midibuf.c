@@ -1689,6 +1689,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* No kernel lock - fine */
 DECL|function|MIDIbuf_poll
 r_int
 r_int

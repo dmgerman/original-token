@@ -944,11 +944,10 @@ c_func
 (paren
 r_int
 r_int
-id|code
+id|keycode
 comma
 r_int
-r_char
-id|upflag
+id|down
 )paren
 (brace
 r_if

@@ -700,8 +700,12 @@ id|pt
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif /* !__ASSEMBLY__ */
-multiline_comment|/*&n; * The number chosen here is somewhat arbitrary but absolutely MUST&n; * not overlap with any of the number assigned in &lt;linux/ptrace.h&gt;.&n; */
+multiline_comment|/*&n; * The numbers chosen here are somewhat arbitrary but absolutely MUST&n; * not overlap with any of the number assigned in &lt;linux/ptrace.h&gt;.&n; */
 DECL|macro|PTRACE_SINGLEBLOCK
 mdefine_line|#define PTRACE_SINGLEBLOCK&t;12&t;/* resume execution until next branch */
+DECL|macro|PTRACE_GETSIGINFO
+mdefine_line|#define PTRACE_GETSIGINFO&t;13&t;/* get child&squot;s siginfo structure */
+DECL|macro|PTRACE_SETSIGINFO
+mdefine_line|#define PTRACE_SETSIGINFO&t;14&t;/* set child&squot;s siginfo structure */
 macro_line|#endif /* _ASM_IA64_PTRACE_H */
 eof

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * copyright (C) 1999/2000 by Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; *&t;The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 180 32&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.1&n; * MOD_INC and MOD_DEC are changed in usb_probe to prevent load/unload&n; * problems when compiled as Module.&n; * (04/04/2000)&n; *&n; * The mdc800 driver gets assigned the USB Minor 32-47. The Registration&n; * was updated to use these values.&n; * (26/03/2000)&n; *&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; *&t;first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
+multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; *&t;The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 180 32&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.3&n; * bugfix : The mdc800-&gt;state field gets set to READY after the&n; * the diconnect function sets it to NOT_CONNECTED. This makes the&n; * driver running like the camera is connected and causes some&n; * hang ups.&n; *&n; * version 0.7.1&n; * MOD_INC and MOD_DEC are changed in usb_probe to prevent load/unload&n; * problems when compiled as Module.&n; * (04/04/2000)&n; *&n; * The mdc800 driver gets assigned the USB Minor 32-47. The Registration&n; * was updated to use these values.&n; * (26/03/2000)&n; *&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; *&t;first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -12,9 +12,9 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &t;&t;&quot;0.7.1&quot;
+mdefine_line|#define VERSION &t;&t;&quot;0.7.3&quot;
 DECL|macro|RELEASE_DATE
-mdefine_line|#define RELEASE_DATE &quot;(26/03/2000)&quot;
+mdefine_line|#define RELEASE_DATE &quot;(15/04/2000)&quot;
 multiline_comment|/* Vendor and Product Information */
 DECL|macro|MDC800_VENDOR_ID
 mdefine_line|#define MDC800_VENDOR_ID &t;0x055f
@@ -24,11 +24,11 @@ multiline_comment|/* Timeouts (msec) */
 DECL|macro|TO_READ_FROM_IRQ
 mdefine_line|#define TO_READ_FROM_IRQ &t;&t;4000
 DECL|macro|TO_GET_READY
-mdefine_line|#define TO_GET_READY&t;&t;&t;&t;2000
+mdefine_line|#define TO_GET_READY&t;&t;&t;2000
 DECL|macro|TO_DOWNLOAD_GET_READY
-mdefine_line|#define TO_DOWNLOAD_GET_READY&t;1500
+mdefine_line|#define TO_DOWNLOAD_GET_READY&t;&t;1500
 DECL|macro|TO_DOWNLOAD_GET_BUSY
-mdefine_line|#define TO_DOWNLOAD_GET_BUSY&t;1500
+mdefine_line|#define TO_DOWNLOAD_GET_BUSY&t;&t;1500
 DECL|macro|TO_WRITE_GET_READY
 mdefine_line|#define TO_WRITE_GET_READY&t;&t;3000
 DECL|macro|TO_DEFAULT_COMMAND
@@ -711,11 +711,34 @@ l_string|&quot;timeout waiting for camera.&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|mdc800-&gt;state
+op_eq
+id|NOT_CONNECTED
+)paren
+(brace
+id|warn
+(paren
+l_string|&quot;Camera gets disconnected during waiting for irq.&quot;
+)paren
+suffix:semicolon
+id|mdc800-&gt;camera_request_ready
+op_assign
 l_int|0
+suffix:semicolon
+r_return
+op_minus
+l_int|2
 suffix:semicolon
 )brace
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The write_urb callback function&n; */
@@ -753,10 +776,13 @@ id|urb-&gt;status
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
 id|mdc800-&gt;state
 op_assign
 id|READY
 suffix:semicolon
+)brace
 id|wake_up_interruptible
 (paren
 op_amp
@@ -835,10 +861,6 @@ l_string|&quot;request bytes fails (status:%i)&quot;
 comma
 id|urb-&gt;status
 )paren
-suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
 suffix:semicolon
 )brace
 id|wake_up_interruptible
@@ -1161,6 +1183,14 @@ id|mdc800-&gt;state
 op_assign
 id|READY
 suffix:semicolon
+id|mdc800-&gt;open
+op_assign
+l_int|0
+suffix:semicolon
+id|mdc800-&gt;rw_lock
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Setup URB Structs */
 id|FILL_INT_URB
 (paren
@@ -1288,14 +1318,6 @@ suffix:semicolon
 id|mdc800-&gt;state
 op_assign
 id|NOT_CONNECTED
-suffix:semicolon
-id|mdc800-&gt;open
-op_assign
-l_int|0
-suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
 suffix:semicolon
 id|usb_unlink_urb
 (paren
@@ -1664,6 +1686,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|mdc800-&gt;state
+op_eq
+id|WORKING
+)paren
+(brace
+id|warn
+(paren
+l_string|&quot;Illegal State &bslash;&quot;working&bslash;&quot; reached during read ?!&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|mdc800-&gt;open
 op_logical_or
@@ -1760,10 +1800,6 @@ comma
 id|mdc800-&gt;download_urb-&gt;status
 )paren
 suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
-suffix:semicolon
 id|mdc800-&gt;rw_lock
 op_assign
 l_int|0
@@ -1796,14 +1832,10 @@ l_int|0
 (brace
 id|err
 (paren
-l_string|&quot;requesting bytes fails (status=%i)&quot;
+l_string|&quot;request download-bytes fails (status=%i)&quot;
 comma
 id|mdc800-&gt;download_urb-&gt;status
 )paren
-suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
 suffix:semicolon
 id|mdc800-&gt;rw_lock
 op_assign
@@ -2034,13 +2066,31 @@ l_int|8
 r_int
 id|answersize
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|mdc800_usb_waitForIRQ
 (paren
 l_int|0
 comma
 id|TO_GET_READY
 )paren
+)paren
+(brace
+id|err
+(paren
+l_string|&quot;Camera didn&squot;t get ready.&bslash;n&quot;
+)paren
 suffix:semicolon
+id|mdc800-&gt;rw_lock
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|answersize
 op_assign
 id|mdc800_getAnswerSize
@@ -2084,10 +2134,6 @@ id|mdc800-&gt;rw_lock
 op_assign
 l_int|0
 suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
-suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -2117,10 +2163,6 @@ id|usb_unlink_urb
 (paren
 id|mdc800-&gt;write_urb
 )paren
-suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
 suffix:semicolon
 id|mdc800-&gt;rw_lock
 op_assign
@@ -2219,7 +2261,6 @@ id|answersize
 r_if
 c_cond
 (paren
-op_logical_neg
 id|mdc800_usb_waitForIRQ
 (paren
 l_int|1
@@ -2232,10 +2273,6 @@ id|err
 (paren
 l_string|&quot;requesting answer from irq fails&quot;
 )paren
-suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
 suffix:semicolon
 id|mdc800-&gt;rw_lock
 op_assign
@@ -2344,7 +2381,6 @@ r_else
 r_if
 c_cond
 (paren
-op_logical_neg
 id|mdc800_usb_waitForIRQ
 (paren
 l_int|0
@@ -2361,10 +2397,6 @@ suffix:semicolon
 id|mdc800-&gt;rw_lock
 op_assign
 l_int|0
-suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
 suffix:semicolon
 r_return
 op_minus
@@ -2401,43 +2433,22 @@ id|file_operations
 id|mdc800_device_ops
 op_assign
 (brace
-l_int|0
-comma
-multiline_comment|/* llseek */
+id|read
+suffix:colon
 id|mdc800_device_read
 comma
+id|write
+suffix:colon
 id|mdc800_device_write
 comma
-l_int|0
-comma
-multiline_comment|/* readdir */
-l_int|0
-comma
-multiline_comment|/* poll */
-l_int|0
-comma
-multiline_comment|/* ioctl, this can be used to detect USB ! */
-l_int|0
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|mdc800_device_open
 comma
-l_int|0
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|mdc800_device_release
 comma
-l_int|0
-comma
-multiline_comment|/* async */
-l_int|0
-comma
-multiline_comment|/* fasync */
-l_int|0
-comma
-multiline_comment|/* check_media_change */
-singleline_comment|//&t;0,&t;&t;&t;&t;&t;/* revalidate */
-singleline_comment|//&t;0&t;&t;&t;&t;&t;/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * USB Driver Struct for this device&n; */

@@ -5372,9 +5372,9 @@ op_assign
 id|buf
 op_plus
 (paren
-id|begin
-op_minus
 id|offset
+op_minus
+id|begin
 )paren
 suffix:semicolon
 r_return

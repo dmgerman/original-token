@@ -6308,6 +6308,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - we have our own spinlock */
 DECL|function|es1370_poll
 r_static
 r_int
@@ -9714,6 +9715,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - we have our own spinlock */
 DECL|function|es1370_poll_dac
 r_static
 r_int
@@ -12428,6 +12430,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - we have our own spinlock */
 DECL|function|es1370_midi_poll
 r_static
 r_int

@@ -57,9 +57,7 @@ id|num_rows
 comma
 id|font_height
 suffix:semicolon
-multiline_comment|/*&n;&t; * This assumes that the EFI partition is physical disk 1&n;&t; * partition 1 and the Linux root disk is physical disk 1&n;&t; * partition 2.&n;&t; */
-macro_line|#ifdef CONFIG_IA64_LION_HACKS
-multiline_comment|/* default to /dev/sda2 on Lion... */
+multiline_comment|/*&n;&t; * Default to /dev/sda2.  This assumes that the EFI partition&n;&t; * is physical disk 1 partition 1 and the Linux root disk is&n;&t; * physical disk 1 partition 2.&n;&t; */
 id|ROOT_DEV
 op_assign
 id|to_kdev_t
@@ -69,18 +67,6 @@ l_int|0x0802
 )paren
 suffix:semicolon
 multiline_comment|/* default to second partition on first drive */
-macro_line|#else
-multiline_comment|/* default to /dev/dha2 on BigSur... */
-id|ROOT_DEV
-op_assign
-id|to_kdev_t
-c_func
-(paren
-l_int|0x0302
-)paren
-suffix:semicolon
-multiline_comment|/* default to second partition on first drive */
-macro_line|#endif
 macro_line|#ifdef CONFIG_SMP
 id|init_smp_config
 c_func

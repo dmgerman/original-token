@@ -5,6 +5,7 @@ DECL|macro|__ASM_IA64_IDE_H
 mdefine_line|#define __ASM_IA64_IDE_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#ifndef MAX_HWIFS
 macro_line|# ifdef CONFIG_BLK_DEV_IDEPCI
 DECL|macro|MAX_HWIFS
@@ -36,37 +37,61 @@ r_case
 l_int|0x1f0
 suffix:colon
 r_return
+id|isa_irq_to_vector
+c_func
+(paren
 l_int|14
+)paren
 suffix:semicolon
 r_case
 l_int|0x170
 suffix:colon
 r_return
+id|isa_irq_to_vector
+c_func
+(paren
 l_int|15
+)paren
 suffix:semicolon
 r_case
 l_int|0x1e8
 suffix:colon
 r_return
+id|isa_irq_to_vector
+c_func
+(paren
 l_int|11
+)paren
 suffix:semicolon
 r_case
 l_int|0x168
 suffix:colon
 r_return
+id|isa_irq_to_vector
+c_func
+(paren
 l_int|10
+)paren
 suffix:semicolon
 r_case
 l_int|0x1e0
 suffix:colon
 r_return
+id|isa_irq_to_vector
+c_func
+(paren
 l_int|8
+)paren
 suffix:semicolon
 r_case
 l_int|0x160
 suffix:colon
 r_return
+id|isa_irq_to_vector
+c_func
+(paren
 l_int|12
+)paren
 suffix:semicolon
 r_default
 suffix:colon

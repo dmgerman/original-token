@@ -1975,6 +1975,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock held - perfect */
 DECL|function|sock_poll
 r_static
 r_int
@@ -1997,14 +1998,7 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
-r_int
-id|err
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to poll, so it&squot;s either yes or no. &n;&t; */
 id|sock
 op_assign
 id|socki_lookup
@@ -2013,9 +2007,7 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We can&squot;t return errors to poll, so it&squot;s either yes or no. &n;&t; */
-id|err
-op_assign
+r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
 id|poll
@@ -2027,14 +2019,6 @@ id|sock
 comma
 id|wait
 )paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|err
 suffix:semicolon
 )brace
 DECL|function|sock_mmap

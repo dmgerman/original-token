@@ -75,6 +75,8 @@ c_loop
 id|ia64_cmpxchg
 c_func
 (paren
+l_string|&quot;acq&quot;
+comma
 id|v
 comma
 id|old
@@ -145,6 +147,8 @@ c_loop
 id|ia64_cmpxchg
 c_func
 (paren
+l_string|&quot;acq&quot;
+comma
 id|v
 comma
 id|old

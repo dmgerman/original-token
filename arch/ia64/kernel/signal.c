@@ -319,6 +319,8 @@ comma
 id|nat
 comma
 id|um
+comma
+id|cfm
 suffix:semicolon
 r_int
 id|err
@@ -363,21 +365,10 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;ar_fpsr
+id|cfm
 comma
 op_amp
-id|sc-&gt;sc_ar_fpsr
-)paren
-suffix:semicolon
-id|err
-op_or_assign
-id|__get_user
-c_func
-(paren
-id|pt-&gt;ar_pfs
-comma
-op_amp
-id|sc-&gt;sc_ar_pfs
+id|sc-&gt;sc_cfm
 )paren
 suffix:semicolon
 id|err
@@ -430,6 +421,28 @@ op_or_assign
 id|__get_user
 c_func
 (paren
+id|pt-&gt;ar_fpsr
+comma
+op_amp
+id|sc-&gt;sc_ar_fpsr
+)paren
+suffix:semicolon
+id|err
+op_or_assign
+id|__get_user
+c_func
+(paren
+id|pt-&gt;ar_pfs
+comma
+op_amp
+id|sc-&gt;sc_ar_pfs
+)paren
+suffix:semicolon
+id|err
+op_or_assign
+id|__get_user
+c_func
+(paren
 id|pt-&gt;pr
 comma
 op_amp
@@ -466,6 +479,22 @@ l_int|6
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* b6 */
+id|err
+op_or_assign
+id|__get_user
+c_func
+(paren
+id|pt-&gt;b7
+comma
+op_amp
+id|sc-&gt;sc_br
+(braket
+l_int|7
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* b7 */
 id|err
 op_or_assign
 id|__copy_from_user
@@ -546,6 +575,16 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* r16-r31 */
+id|pt-&gt;cr_ifs
+op_assign
+id|cfm
+op_or
+(paren
+l_int|1UL
+op_lshift
+l_int|63
+)paren
+suffix:semicolon
 multiline_comment|/* establish new instruction pointer: */
 id|pt-&gt;cr_iip
 op_assign
@@ -2029,6 +2068,11 @@ id|current-&gt;exit_code
 op_assign
 id|signr
 suffix:semicolon
+id|current-&gt;thread.siginfo
+op_assign
+op_amp
+id|info
+suffix:semicolon
 id|set_current_state
 c_func
 (paren
@@ -2051,6 +2095,10 @@ suffix:semicolon
 id|signr
 op_assign
 id|current-&gt;exit_code
+suffix:semicolon
+id|current-&gt;thread.siginfo
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* We&squot;re back.  Did the debugger cancel the sig?  */
 r_if

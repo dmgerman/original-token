@@ -929,14 +929,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* NFS root */
 r_extern
-r_int
-id|nfs_root_mount
+r_void
+op_star
+id|nfs_root_data
 c_func
 (paren
-r_struct
-id|super_block
-op_star
-id|sb
+r_void
 )paren
 suffix:semicolon
 DECL|macro|nfs_wait_event

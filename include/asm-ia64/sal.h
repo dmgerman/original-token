@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_SAL_H
 DECL|macro|_ASM_IA64_SAL_H
 mdefine_line|#define _ASM_IA64_SAL_H
-multiline_comment|/*&n; * System Abstraction Layer definitions.&n; *&n; * This is based on version 2.5 of the manual &quot;IA-64 System&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/09/29 davidm&t;Updated for SAL 2.6.&n; */
+multiline_comment|/*&n; * System Abstraction Layer definitions.&n; *&n; * This is based on version 2.5 of the manual &quot;IA-64 System&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/09/29 davidm&t;Updated for SAL 2.6.&n; * 00/03/29 cfleck      Updated SAL Error Logging info for processor (SAL 2.6) &n; *                      (plus examples of platform error info structures from smariset @ Intel)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -777,17 +777,6 @@ DECL|member|slpi_min_state_area
 id|pal_min_state_area_t
 id|slpi_min_state_area
 suffix:semicolon
-DECL|member|slpi_bank1_gr
-id|u64
-id|slpi_bank1_gr
-(braket
-l_int|16
-)braket
-suffix:semicolon
-DECL|member|slpi_bank1_nat_bits
-id|u64
-id|slpi_bank1_nat_bits
-suffix:semicolon
 DECL|member|slpi_br
 id|u64
 id|slpi_br
@@ -826,6 +815,329 @@ suffix:semicolon
 DECL|typedef|sal_log_processor_info_t
 )brace
 id|sal_log_processor_info_t
+suffix:semicolon
+multiline_comment|/* platform error log structures */
+DECL|struct|platerr_logheader
+r_typedef
+r_struct
+id|platerr_logheader
+(brace
+DECL|member|nextlog
+id|u64
+id|nextlog
+suffix:semicolon
+multiline_comment|/* next log offset if present */
+DECL|member|loglength
+id|u64
+id|loglength
+suffix:semicolon
+multiline_comment|/* log length */
+DECL|member|logsubtype
+id|u64
+id|logsubtype
+suffix:semicolon
+multiline_comment|/* log subtype memory/bus/component */
+DECL|member|eseverity
+id|u64
+id|eseverity
+suffix:semicolon
+multiline_comment|/* error severity */
+DECL|typedef|ehdr_t
+)brace
+id|ehdr_t
+suffix:semicolon
+DECL|struct|sysmem_errlog
+r_typedef
+r_struct
+id|sysmem_errlog
+(brace
+DECL|member|lhdr
+id|ehdr_t
+id|lhdr
+suffix:semicolon
+multiline_comment|/* header */
+DECL|member|vflag
+id|u64
+id|vflag
+suffix:semicolon
+multiline_comment|/* valid bits for each field in the log */
+DECL|member|addr
+id|u64
+id|addr
+suffix:semicolon
+multiline_comment|/* memory address */
+DECL|member|data
+id|u64
+id|data
+suffix:semicolon
+multiline_comment|/* memory data */
+DECL|member|cmd
+id|u64
+id|cmd
+suffix:semicolon
+multiline_comment|/* command bus value if any */
+DECL|member|ctrl
+id|u64
+id|ctrl
+suffix:semicolon
+multiline_comment|/* control bus value if any */
+DECL|member|addrsyndrome
+id|u64
+id|addrsyndrome
+suffix:semicolon
+multiline_comment|/* memory address ecc/parity syndrome bits */
+DECL|member|datasyndrome
+id|u64
+id|datasyndrome
+suffix:semicolon
+multiline_comment|/* data ecc/parity syndrome */
+DECL|member|cacheinfo
+id|u64
+id|cacheinfo
+suffix:semicolon
+multiline_comment|/* platform cache info as defined in pal spec. table 7-34 */
+DECL|typedef|merrlog_t
+)brace
+id|merrlog_t
+suffix:semicolon
+DECL|struct|sysbus_errlog
+r_typedef
+r_struct
+id|sysbus_errlog
+(brace
+DECL|member|lhdr
+id|ehdr_t
+id|lhdr
+suffix:semicolon
+multiline_comment|/* linkded list header */
+DECL|member|vflag
+id|u64
+id|vflag
+suffix:semicolon
+multiline_comment|/* valid bits for each field in the log */
+DECL|member|busnum
+id|u64
+id|busnum
+suffix:semicolon
+multiline_comment|/* bus number in error */
+DECL|member|reqaddr
+id|u64
+id|reqaddr
+suffix:semicolon
+multiline_comment|/* requestor address */
+DECL|member|resaddr
+id|u64
+id|resaddr
+suffix:semicolon
+multiline_comment|/* responder address */
+DECL|member|taraddr
+id|u64
+id|taraddr
+suffix:semicolon
+multiline_comment|/* target address */
+DECL|member|data
+id|u64
+id|data
+suffix:semicolon
+multiline_comment|/* requester r/w data */
+DECL|member|cmd
+id|u64
+id|cmd
+suffix:semicolon
+multiline_comment|/* bus commands */
+DECL|member|ctrl
+id|u64
+id|ctrl
+suffix:semicolon
+multiline_comment|/* bus controls (be# &amp;-0) */
+DECL|member|addrsyndrome
+id|u64
+id|addrsyndrome
+suffix:semicolon
+multiline_comment|/* addr bus ecc/parity bits */
+DECL|member|datasyndrome
+id|u64
+id|datasyndrome
+suffix:semicolon
+multiline_comment|/* data bus ecc/parity bits */
+DECL|member|cmdsyndrome
+id|u64
+id|cmdsyndrome
+suffix:semicolon
+multiline_comment|/* command bus ecc/parity bits */
+DECL|member|ctrlsyndrome
+id|u64
+id|ctrlsyndrome
+suffix:semicolon
+multiline_comment|/* control bus ecc/parity bits */
+DECL|typedef|berrlog_t
+)brace
+id|berrlog_t
+suffix:semicolon
+multiline_comment|/* platform error log structures */
+DECL|struct|syserr_chdr
+r_typedef
+r_struct
+id|syserr_chdr
+(brace
+multiline_comment|/* one header per component */
+DECL|member|busnum
+id|u64
+id|busnum
+suffix:semicolon
+multiline_comment|/* bus number on which the component resides */
+DECL|member|devnum
+id|u64
+id|devnum
+suffix:semicolon
+multiline_comment|/* same as device select */
+DECL|member|funcid
+id|u64
+id|funcid
+suffix:semicolon
+multiline_comment|/* function id of the device */
+DECL|member|devid
+id|u64
+id|devid
+suffix:semicolon
+multiline_comment|/* pci device id */
+DECL|member|classcode
+id|u64
+id|classcode
+suffix:semicolon
+multiline_comment|/* pci class code for the device */
+DECL|member|cmdreg
+id|u64
+id|cmdreg
+suffix:semicolon
+multiline_comment|/* pci command reg value */
+DECL|member|statreg
+id|u64
+id|statreg
+suffix:semicolon
+multiline_comment|/* pci status reg value */
+DECL|typedef|chdr_t
+)brace
+id|chdr_t
+suffix:semicolon
+DECL|struct|cfginfo
+r_typedef
+r_struct
+id|cfginfo
+(brace
+DECL|member|cfgaddr
+id|u64
+id|cfgaddr
+suffix:semicolon
+DECL|member|cfgval
+id|u64
+id|cfgval
+suffix:semicolon
+DECL|typedef|cfginfo_t
+)brace
+id|cfginfo_t
+suffix:semicolon
+DECL|struct|sys_comperr
+r_typedef
+r_struct
+id|sys_comperr
+(brace
+multiline_comment|/* per component */
+DECL|member|lhdr
+id|ehdr_t
+id|lhdr
+suffix:semicolon
+multiline_comment|/* linked list header */
+DECL|member|vflag
+id|u64
+id|vflag
+suffix:semicolon
+multiline_comment|/* valid bits for each field in the log */
+DECL|member|scomphdr
+id|chdr_t
+id|scomphdr
+suffix:semicolon
+DECL|member|numregpair
+id|u64
+id|numregpair
+suffix:semicolon
+multiline_comment|/* number of reg addr/value pairs */
+DECL|member|cfginfo
+id|cfginfo_t
+id|cfginfo
+suffix:semicolon
+DECL|typedef|cerrlog_t
+)brace
+id|cerrlog_t
+suffix:semicolon
+DECL|struct|sel_records
+r_typedef
+r_struct
+id|sel_records
+(brace
+DECL|member|lhdr
+id|ehdr_t
+id|lhdr
+suffix:semicolon
+DECL|member|seldata
+id|u64
+id|seldata
+suffix:semicolon
+DECL|typedef|isel_t
+)brace
+id|isel_t
+suffix:semicolon
+DECL|struct|plat_errlog
+r_typedef
+r_struct
+id|plat_errlog
+(brace
+DECL|member|mbcsvalid
+id|u64
+id|mbcsvalid
+suffix:semicolon
+multiline_comment|/* valid bits for each type of log */
+DECL|member|smemerrlog
+id|merrlog_t
+id|smemerrlog
+suffix:semicolon
+multiline_comment|/* platform memory error logs */
+DECL|member|sbuserrlog
+id|berrlog_t
+id|sbuserrlog
+suffix:semicolon
+multiline_comment|/* platform bus error logs */
+DECL|member|scomperrlog
+id|cerrlog_t
+id|scomperrlog
+suffix:semicolon
+multiline_comment|/* platform chipset error logs */
+DECL|member|selrecord
+id|isel_t
+id|selrecord
+suffix:semicolon
+multiline_comment|/* ipmi sel record */
+DECL|typedef|platforminfo_t
+)brace
+id|platforminfo_t
+suffix:semicolon
+multiline_comment|/* over all log structure (processor+platform) */
+DECL|union|udev_specific_log
+r_typedef
+r_union
+id|udev_specific_log
+(brace
+DECL|member|proclog
+id|sal_log_processor_info_t
+id|proclog
+suffix:semicolon
+DECL|member|platlog
+id|platforminfo_t
+id|platlog
+suffix:semicolon
+DECL|typedef|devicelog_t
+)brace
+id|devicelog_t
 suffix:semicolon
 DECL|macro|sal_log_processor_info_psi_valid
 mdefine_line|#define sal_log_processor_info_psi_valid&t;&t;slpi_valid.spli_psi
@@ -879,14 +1191,27 @@ id|sal_log_timestamp_t
 id|slh_log_timestamp
 suffix:semicolon
 multiline_comment|/* Timestamp */
-DECL|member|slh_log_dev_spec_info
-id|u64
-id|slh_log_dev_spec_info
-suffix:semicolon
-multiline_comment|/* For processor log this field will&n;&t;&t;&t;&t;&t;&t;&t; * contain an area architected for all&n;&t;&t;&t;&t;&t;&t;&t; * IA-64 processors. For platform log&n;&t;&t;&t;&t;&t;&t;&t; * this field will contain information&n;&t;&t;&t;&t;&t;&t;&t; * specific to the hardware &n;&t;&t;&t;&t;&t;&t;&t; * implementation.&n;&t;&t;&t;&t;&t;&t;&t; */
 DECL|typedef|sal_log_header_t
 )brace
 id|sal_log_header_t
+suffix:semicolon
+multiline_comment|/* SAL PSI log structure */
+DECL|struct|psilog
+r_typedef
+r_struct
+id|psilog
+(brace
+DECL|member|sal_elog_header
+id|sal_log_header_t
+id|sal_elog_header
+suffix:semicolon
+DECL|member|devlog
+id|devicelog_t
+id|devlog
+suffix:semicolon
+DECL|typedef|ia64_psilog_t
+)brace
+id|ia64_psilog_t
 suffix:semicolon
 multiline_comment|/*&n; * Now define a couple of inline functions for improved type checking&n; * and convenience.&n; */
 r_extern

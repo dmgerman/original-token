@@ -1242,6 +1242,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* No kernel lock held - fine */
 r_static
 r_int
 r_int

@@ -4110,11 +4110,7 @@ c_func
 (paren
 id|name
 comma
-id|dget
-c_func
-(paren
 id|dparent
-)paren
 )paren
 suffix:semicolon
 r_if

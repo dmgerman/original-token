@@ -299,8 +299,10 @@ DECL|macro|TRAP_TRACE
 mdefine_line|#define TRAP_TRACE&t;2&t;/* process trace trap */
 DECL|macro|TRAP_BRANCH
 mdefine_line|#define TRAP_BRANCH&t;3&t;/* process taken branch trap */
+DECL|macro|TRAP_HWBKPT
+mdefine_line|#define TRAP_HWBKPT&t;4&t;/* hardware breakpoint or watchpoint */
 DECL|macro|NSIGTRAP
-mdefine_line|#define NSIGTRAP&t;3
+mdefine_line|#define NSIGTRAP&t;4
 multiline_comment|/*&n; * SIGCHLD si_codes&n; */
 DECL|macro|CLD_EXITED
 mdefine_line|#define CLD_EXITED&t;1&t;/* child has exited */

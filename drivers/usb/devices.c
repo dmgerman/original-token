@@ -1962,6 +1962,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* Kernel lock for &quot;lastev&quot; protection */
 DECL|function|usb_device_poll
 r_static
 r_int
@@ -1997,6 +1998,11 @@ r_int
 id|mask
 op_assign
 l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2074,6 +2080,11 @@ suffix:semicolon
 id|st-&gt;lastev
 op_assign
 id|conndiscevcnt
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|mask

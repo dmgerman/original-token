@@ -686,11 +686,6 @@ c_func
 id|TASK_INTERRUPTIBLE
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -936,11 +931,6 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|wait
 op_assign
 l_int|NULL
@@ -2203,11 +2193,6 @@ r_goto
 id|out_fds1
 suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fdcount
 op_assign
 id|do_poll
@@ -2224,11 +2209,6 @@ comma
 id|wait
 comma
 id|timeout
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* OK, now copy the revents fields back to user space. */

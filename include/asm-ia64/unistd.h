@@ -374,6 +374,10 @@ DECL|macro|__NR_recvmsg
 mdefine_line|#define __NR_recvmsg&t;&t;&t;1206
 DECL|macro|__NR_sys_pivot_root
 mdefine_line|#define __NR_sys_pivot_root&t;&t;1207
+DECL|macro|__NR_mincore
+mdefine_line|#define __NR_mincore&t;&t;&t;1208
+DECL|macro|__NR_madvise
+mdefine_line|#define __NR_madvise&t;&t;&t;1209
 macro_line|#if !defined(__ASSEMBLY__) &amp;&amp; !defined(ASSEMBLER)
 r_extern
 r_int

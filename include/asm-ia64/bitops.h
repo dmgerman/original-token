@@ -80,7 +80,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_acq
 c_func
 (paren
 id|m
@@ -173,7 +173,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_acq
 c_func
 (paren
 id|m
@@ -265,7 +265,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_acq
 c_func
 (paren
 id|m
@@ -355,7 +355,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_acq
 c_func
 (paren
 id|m
@@ -457,7 +457,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_acq
 c_func
 (paren
 id|m
@@ -559,7 +559,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmpxchg
+id|cmpxchg_acq
 c_func
 (paren
 id|m

@@ -1431,6 +1431,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - fine */
 DECL|function|joydev_poll
 r_static
 r_int

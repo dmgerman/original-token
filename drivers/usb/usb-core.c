@@ -34,6 +34,13 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * USB device drivers&n; */
 r_int
+id|usb_cpia_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|usb_audio_init
 c_func
 (paren
@@ -142,6 +149,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_USB_MODULE
+macro_line|#ifdef CONFIG_VIDEO_CPIA_USB
+id|usb_cpia_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_USB_AUDIO
 id|usb_audio_init
 c_func

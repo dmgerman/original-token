@@ -1608,6 +1608,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - fine */
 DECL|function|ppp_poll
 r_static
 r_int
@@ -7754,6 +7755,7 @@ id|count
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - fine */
 r_int
 r_int
 DECL|function|ppp_channel_poll

@@ -1195,6 +1195,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock held - fine */
 DECL|function|busmouse_poll
 r_static
 r_int

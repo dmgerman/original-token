@@ -2094,8 +2094,15 @@ op_assign
 op_amp
 id|page_symlink_inode_operations
 suffix:semicolon
+id|i-&gt;i_data.a_ops
+op_assign
+op_amp
+id|romfs_aops
+suffix:semicolon
 id|i-&gt;i_mode
 op_assign
+id|ino
+op_or
 id|S_IRWXUGO
 suffix:semicolon
 r_break

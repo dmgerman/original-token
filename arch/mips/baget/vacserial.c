@@ -8621,9 +8621,9 @@ op_assign
 id|page
 op_plus
 (paren
-id|begin
-op_minus
 id|off
+op_minus
+id|begin
 )paren
 suffix:semicolon
 r_return

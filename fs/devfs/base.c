@@ -713,13 +713,14 @@ id|DEBUG_NONE
 suffix:semicolon
 macro_line|#  endif
 macro_line|#endif
+multiline_comment|/* by default, we do not mount devfs on bootup */
 DECL|variable|boot_options
 r_static
 r_int
 r_int
 id|boot_options
 op_assign
-id|OPTION_NONE
+id|OPTION_NOMOUNT
 suffix:semicolon
 multiline_comment|/*  Forward function declarations  */
 r_static
@@ -5937,6 +5938,32 @@ suffix:semicolon
 id|str
 op_add_assign
 l_int|4
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|strncmp
+(paren
+id|str
+comma
+l_string|&quot;mount&quot;
+comma
+l_int|5
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|boot_options
+op_and_assign
+op_complement
+id|OPTION_NOMOUNT
+suffix:semicolon
+id|str
+op_add_assign
+l_int|5
 suffix:semicolon
 )brace
 r_else

@@ -5301,6 +5301,7 @@ l_string|&quot;set_termios&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Called without the kernel lock held - fine */
 DECL|function|r3964_poll
 r_static
 r_int

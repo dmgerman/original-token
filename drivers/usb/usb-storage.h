@@ -1,7 +1,9 @@
 multiline_comment|/* Driver for USB mass storage - include file&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USB_STORAGE
-mdefine_line|#define USB_STORAGE &quot;usb-storage: &quot;
+mdefine_line|#define USB_STORAGE &quot;usb-storage.c: &quot;
+DECL|macro|USB_STOR_STRING_LEN
+mdefine_line|#define USB_STOR_STRING_LEN 32
 macro_line|#ifdef CONFIG_USB_STORAGE_DEBUG
 r_void
 id|us_show_command
@@ -327,13 +329,53 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * Unusual device list definitions &n; */
+DECL|struct|us_unusual_dev
+r_struct
+id|us_unusual_dev
+(brace
+multiline_comment|/* we search the list based on these parameters */
+DECL|member|idVendor
+id|__u16
+id|idVendor
+suffix:semicolon
+DECL|member|idProduct
+id|__u16
+id|idProduct
+suffix:semicolon
+DECL|member|bcdDevice
+id|__u16
+id|bcdDevice
+suffix:semicolon
+multiline_comment|/* the list specifies these parameters */
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|useProtocol
+id|__u8
+id|useProtocol
+suffix:semicolon
+DECL|member|useTransport
+id|__u8
+id|useTransport
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Flag definitions */
-DECL|macro|US_FL_IP_STATUS
-mdefine_line|#define US_FL_IP_STATUS&t;      0x00000001 /* status uses interrupt           */
-DECL|macro|US_FL_FIXED_COMMAND
-mdefine_line|#define US_FL_FIXED_COMMAND   0x00000002 /* expand commands to fixed size   */
+DECL|macro|US_FL_SINGLE_LUN
+mdefine_line|#define US_FL_SINGLE_LUN      0x00000001 /* allow access to only LUN 0 */
 DECL|macro|US_FL_MODE_XLATE
-mdefine_line|#define US_FL_MODE_XLATE      0x00000004 /* translate _6 to _10 comands for&n;&t;&t;&t;&t;&t;            Win/MacOS compatibility */
-DECL|macro|US_FL_CBI_AS_CB
-mdefine_line|#define US_FL_CBI_AS_CB       0x00000008 /* treat a CBI dev as a CB dev     */
+mdefine_line|#define US_FL_MODE_XLATE      0x00000002 /* translate _6 to _10 comands for&n;&t;&t;&t;&t;&t;            Win/MacOS compatibility */
+DECL|macro|US_FL_START_STOP
+mdefine_line|#define US_FL_START_STOP      0x00000004 /* ignore START_STOP commands */
+DECL|macro|US_FL_ALT_LENGTH
+mdefine_line|#define US_FL_ALT_LENGTH      0x00000008 /* use the alternate algorithm for&n;                                                    us_transfer_length() */
 eof

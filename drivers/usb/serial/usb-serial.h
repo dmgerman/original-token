@@ -510,6 +510,11 @@ r_struct
 id|usb_serial_device_type
 id|keyspan_pda_device
 suffix:semicolon
+r_extern
+r_struct
+id|usb_serial_device_type
+id|zyxel_omninet_device
+suffix:semicolon
 multiline_comment|/* determine if we should include the EzUSB loader functions */
 macro_line|#if defined(CONFIG_USB_SERIAL_KEYSPAN_PDA) || defined(CONFIG_USB_SERIAL_WHITEHEAT)
 DECL|macro|USES_EZUSB_FUNCTIONS

@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/expire.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *  Copyright 1999 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
+multiline_comment|/* -*- c -*- --------------------------------------------------------------- *&n; *&n; * linux/fs/autofs/expire.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *  Copyright 1999 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &quot;autofs_i.h&quot;
 multiline_comment|/*&n; * Determine if a dentry tree is in use.  This is much the&n; * same as the standard is_root_busy() function, except&n; * that :-&n; *  - the extra dentry reference in autofs dentries is not&n; *    considered to be busy&n; *  - mountpoints within the tree are not busy&n; *  - it traverses across mountpoints&n; * XXX doesn&squot;t consider children of covered dentries at mountpoints&n; */
 DECL|function|is_tree_busy
@@ -79,7 +79,7 @@ id|count
 op_decrement
 suffix:semicolon
 )brace
-multiline_comment|/* Mountpoints don&squot;t count */
+multiline_comment|/* Mountpoints don&squot;t count (either mountee or mounter) */
 r_if
 c_cond
 (paren
@@ -88,6 +88,10 @@ c_func
 (paren
 id|root
 )paren
+op_logical_or
+id|root
+op_ne
+id|root-&gt;d_covers
 )paren
 (brace
 id|DPRINTK
@@ -184,7 +188,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Mountpoints don&squot;t count */
+multiline_comment|/* Mountpoints don&squot;t count (either mountee or mounter) */
 r_if
 c_cond
 (paren
@@ -193,13 +197,23 @@ c_func
 (paren
 id|dentry
 )paren
+op_logical_or
+id|dentry
+op_ne
+id|dentry-&gt;d_covers
 )paren
 (brace
 id|DPRINTK
 c_func
 (paren
 (paren
-l_string|&quot;is_tree_busy: mountpoint&bslash;n&quot;
+l_string|&quot;is_tree_busy: mountpoint dentry=%p covers=%p mounts=%p&bslash;n&quot;
+comma
+id|dentry
+comma
+id|dentry-&gt;d_covers
+comma
+id|dentry-&gt;d_mounts
 )paren
 )paren
 suffix:semicolon

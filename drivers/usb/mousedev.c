@@ -1758,6 +1758,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - fine */
 DECL|function|mousedev_poll
 r_static
 r_int

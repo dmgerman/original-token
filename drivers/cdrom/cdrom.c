@@ -3282,7 +3282,7 @@ id|cgc-&gt;buflen
 suffix:semicolon
 id|cgc-&gt;data_direction
 op_assign
-id|CGC_DATA_WRITE
+id|CGC_DATA_READ
 suffix:semicolon
 )brace
 DECL|function|setup_send_key
@@ -3372,7 +3372,7 @@ id|cgc-&gt;buflen
 suffix:semicolon
 id|cgc-&gt;data_direction
 op_assign
-id|CGC_DATA_READ
+id|CGC_DATA_WRITE
 suffix:semicolon
 )brace
 DECL|function|dvd_do_auth
@@ -12161,6 +12161,7 @@ macro_line|#endif /* CONFIG_SYSCTL */
 DECL|function|cdrom_init
 r_static
 r_int
+id|__init
 id|cdrom_init
 c_func
 (paren
@@ -12195,6 +12196,7 @@ suffix:semicolon
 DECL|function|cdrom_exit
 r_static
 r_void
+id|__exit
 id|cdrom_exit
 c_func
 (paren

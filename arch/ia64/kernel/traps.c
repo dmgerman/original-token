@@ -164,9 +164,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#ifdef CONFIG_KDB
-macro_line|# include &lt;linux/kdb.h&gt;
-macro_line|#endif
+macro_line|#include &lt;asm/ia32.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/fpswa.h&gt;
@@ -376,31 +374,6 @@ comma
 id|err
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KDB
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-id|kdb
-c_func
-(paren
-id|KDB_REASON_PANIC
-comma
-l_int|0
-comma
-id|regs
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Cant go anywhere from Panic!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|show_regs
 c_func
 (paren
@@ -2089,7 +2062,35 @@ l_int|29
 suffix:colon
 id|siginfo.si_code
 op_assign
-id|TRAP_BRKPT
+id|TRAP_HWBKPT
+suffix:semicolon
+macro_line|#ifdef CONFIG_ITANIUM
+multiline_comment|/*&n;&t;&t;&t; * Erratum 10 (IFA may contain incorrect address) now has&n;&t;&t;&t; * &quot;NoFix&quot; status.  There are no plans for fixing this.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|ia64_psr
+c_func
+(paren
+id|regs
+)paren
+op_member_access_from_pointer
+id|is
+op_eq
+l_int|0
+)paren
+id|ifa
+op_assign
+id|regs-&gt;cr_iip
+suffix:semicolon
+macro_line|#endif
+id|siginfo.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|ifa
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2296,10 +2297,39 @@ suffix:semicolon
 r_case
 l_int|45
 suffix:colon
+macro_line|#ifdef CONFIG_IA32_SUPPORT
+r_if
+c_cond
+(paren
+id|ia32_exception
+c_func
+(paren
+id|regs
+comma
+id|isr
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;Unexpected IA-32 exception&bslash;n&quot;
+l_string|&quot;Unexpected IA-32 exception (Trap 45)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  iip - 0x%lx, ifa - 0x%lx, isr - 0x%lx&bslash;n&quot;
+comma
+id|regs-&gt;cr_iip
+comma
+id|ifa
+comma
+id|isr
 )paren
 suffix:semicolon
 id|force_sig
@@ -2310,7 +2340,7 @@ comma
 id|current
 )paren
 suffix:semicolon
-r_return
+r_break
 suffix:semicolon
 r_case
 l_int|46
@@ -2318,7 +2348,19 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Unexpected IA-32 intercept trap&bslash;n&quot;
+l_string|&quot;Unexpected IA-32 intercept trap (Trap 46)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  iip - 0x%lx, ifa - 0x%lx, isr - 0x%lx&bslash;n&quot;
+comma
+id|regs-&gt;cr_iip
+comma
+id|ifa
+comma
+id|isr
 )paren
 suffix:semicolon
 id|force_sig

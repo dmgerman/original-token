@@ -12038,6 +12038,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* Called without the kernel lock - fine */
 DECL|function|usb_audio_poll
 r_static
 r_int

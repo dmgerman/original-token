@@ -1,7 +1,11 @@
 multiline_comment|/*&n; * File: &t;mca.h&n; * Purpose: &t;Machine check handling specific defines&n; *&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; * Copyright (C) Vijay Chander (vijay@engr.sgi.com)&n; * Copyright (C) Srinivasa Thirumalachar (sprasad@engr.sgi.com)&n; */
+multiline_comment|/* XXX use this temporary define for MP systems trying to INIT */
+DECL|macro|SAL_MPINIT_WORKAROUND
+mdefine_line|#define SAL_MPINIT_WORKAROUND
 macro_line|#ifndef _ASM_IA64_MCA_H
 DECL|macro|_ASM_IA64_MCA_H
 mdefine_line|#define _ASM_IA64_MCA_H
+macro_line|#if !defined(__ASSEMBLY__)
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/param.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
@@ -310,7 +314,7 @@ dot
 suffix:semicolon
 r_extern
 r_void
-id|mca_init
+id|ia64_mca_init
 c_func
 (paren
 r_void
@@ -417,12 +421,15 @@ DECL|macro|PLATFORM_CALL
 mdefine_line|#define PLATFORM_CALL(fn, args)&t;printk(&quot;Platform call TBD&bslash;n&quot;)
 DECL|macro|MCA_TEST
 macro_line|#undef &t;MCA_TEST
-macro_line|#if defined(MCA_TEST)
-DECL|macro|MCA_DEBUG
-macro_line|# define MCA_DEBUG&t;printk
+DECL|macro|IA64_MCA_DEBUG_INFO
+mdefine_line|#define IA64_MCA_DEBUG_INFO 1
+macro_line|#if defined(IA64_MCA_DEBUG_INFO)
+DECL|macro|IA64_MCA_DEBUG
+macro_line|# define IA64_MCA_DEBUG&t;printk
 macro_line|#else
-DECL|macro|MCA_DEBUG
-macro_line|# define MCA_DEBUG
+DECL|macro|IA64_MCA_DEBUG
+macro_line|# define IA64_MCA_DEBUG
 macro_line|#endif
+macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* _ASM_IA64_MCA_H */
 eof

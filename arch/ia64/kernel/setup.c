@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Architecture-specific setup.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 2000, Rohit Seth &lt;rohit.seth@intel.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; *&n; * 02/04/00 D.Mosberger some more get_cpuinfo fixes...&n; * 02/01/00 R.Seth fixed get_cpuinfo for SMP&n; * 01/07/99 S.Eranian added the support for command line argument&n; * 06/24/99 W.Drummond added boot_cpu_data.&n; */
+multiline_comment|/*&n; * Architecture-specific setup.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 2000, Rohit Seth &lt;rohit.seth@intel.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; *&n; * 04/04/00 D.Mosberger renamed cpu_initialized to cpu_online_map&n; * 03/31/00 R.Seth&t;cpu_initialized and current-&gt;processor fixes&n; * 02/04/00 D.Mosberger&t;some more get_cpuinfo fixes...&n; * 02/01/00 R.Seth&t;fixed get_cpuinfo for SMP&n; * 01/07/99 S.Eranian&t;added the support for command line argument&n; * 06/24/99 W.Drummond&t;added boot_cpu_data.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
+macro_line|#include &lt;asm/mca.h&gt;
 r_extern
 r_char
 id|_end
@@ -44,13 +45,6 @@ r_struct
 id|screen_info
 id|screen_info
 suffix:semicolon
-DECL|variable|cpu_initialized
-r_int
-r_int
-id|cpu_initialized
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* This tells _start which CPU is booting.  */
 DECL|variable|cpu_now_booting
 r_int
@@ -58,6 +52,14 @@ id|cpu_now_booting
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+DECL|variable|cpu_online_map
+r_volatile
+r_int
+r_int
+id|cpu_online_map
+suffix:semicolon
+macro_line|#endif
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE&t;512
 DECL|variable|saved_command_line
@@ -281,9 +283,6 @@ id|bootmap_start
 comma
 id|bootmap_size
 suffix:semicolon
-id|u64
-id|progress
-suffix:semicolon
 multiline_comment|/*&n;&t; * The secondary bootstrap loader passes us the boot&n;&t; * parameters at the beginning of the ZERO_PAGE, so let&squot;s&n;&t; * stash away those values before ZERO_PAGE gets cleared out.&n;&t; */
 id|memcpy
 c_func
@@ -491,7 +490,19 @@ op_star
 id|cmdline_p
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_SMP
+macro_line|#ifdef CONFIG_SMP
+id|bootstrap_processor
+op_assign
+id|hard_smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;processor
+op_assign
+id|bootstrap_processor
+suffix:semicolon
+macro_line|#else
 id|cpu_init
 c_func
 (paren
@@ -547,6 +558,14 @@ op_amp
 id|dummy_con
 suffix:semicolon
 macro_line|# endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_IA64_MCA
+multiline_comment|/* enable IA-64 Machine Check Abort Handling */
+id|ia64_mca_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 id|paging_init
 c_func
@@ -620,12 +639,13 @@ op_increment
 id|c
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|cpu_initialized
+id|cpu_online_map
 op_amp
 (paren
 l_int|1UL
@@ -640,6 +660,7 @@ id|cpu_data
 )paren
 r_continue
 suffix:semicolon
+macro_line|#endif
 id|mask
 op_assign
 id|c-&gt;features
@@ -773,7 +794,7 @@ op_add_assign
 id|sprintf
 c_func
 (paren
-id|buffer
+id|p
 comma
 l_string|&quot;CPU# %lu&bslash;n&quot;
 l_string|&quot;&bslash;tvendor     : %s&bslash;n&quot;
@@ -1112,14 +1133,6 @@ id|cpu_init
 r_void
 )paren
 (brace
-r_int
-id|nr
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Clear the stack memory reserved for pt_regs: */
 id|memset
 c_func
@@ -1159,33 +1172,6 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* initialize ar.k5 */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-id|nr
-comma
-op_amp
-id|cpu_initialized
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;CPU#%d already initialized!&bslash;n&quot;
-comma
-id|nr
-)paren
-suffix:semicolon
-id|machine_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 id|atomic_inc
 c_func
 (paren

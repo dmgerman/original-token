@@ -180,27 +180,38 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* from filter initially */
-multiline_comment|/* information about the device -- only good if device is attached */
-DECL|member|ifnum
-id|__u8
-id|ifnum
+multiline_comment|/* information about the device -- always good */
+DECL|member|vendor
+r_char
+id|vendor
+(braket
+l_int|32
+)braket
 suffix:semicolon
-multiline_comment|/* interface number */
-DECL|member|ep_in
-id|__u8
-id|ep_in
+DECL|member|product
+r_char
+id|product
+(braket
+l_int|32
+)braket
 suffix:semicolon
-multiline_comment|/* in endpoint */
-DECL|member|ep_out
-id|__u8
-id|ep_out
+DECL|member|serial
+r_char
+id|serial
+(braket
+l_int|32
+)braket
 suffix:semicolon
-multiline_comment|/* out ....... */
-DECL|member|ep_int
-id|__u8
-id|ep_int
+DECL|member|transport_name
+r_char
+op_star
+id|transport_name
 suffix:semicolon
-multiline_comment|/* interrupt . */
+DECL|member|protocol_name
+r_char
+op_star
+id|protocol_name
+suffix:semicolon
 DECL|member|subclass
 id|__u8
 id|subclass
@@ -209,12 +220,38 @@ DECL|member|protocol
 id|__u8
 id|protocol
 suffix:semicolon
+multiline_comment|/* information about the device -- only good if device is attached */
+DECL|member|ifnum
+id|__u8
+id|ifnum
+suffix:semicolon
+multiline_comment|/* interface number   */
+DECL|member|ep_in
+id|__u8
+id|ep_in
+suffix:semicolon
+multiline_comment|/* bulk in endpoint   */
+DECL|member|ep_out
+id|__u8
+id|ep_out
+suffix:semicolon
+multiline_comment|/* bulk out endpoint  */
+DECL|member|ep_int
+id|__u8
+id|ep_int
+suffix:semicolon
+multiline_comment|/* interrupt endpoint */
+DECL|member|ep_interval
+id|__u8
+id|ep_interval
+suffix:semicolon
+multiline_comment|/* interrupt interval */
 multiline_comment|/* function pointers for this device */
 DECL|member|transport
 id|trans_cmnd
 id|transport
 suffix:semicolon
-multiline_comment|/* transport function */
+multiline_comment|/* transport function     */
 DECL|member|transport_reset
 id|trans_reset
 id|transport_reset
@@ -224,7 +261,7 @@ DECL|member|proto_handler
 id|proto_cmnd
 id|proto_handler
 suffix:semicolon
-multiline_comment|/* protocol handler */
+multiline_comment|/* protocol handler       */
 multiline_comment|/* SCSI interfaces */
 id|GUID
 c_func
@@ -232,7 +269,7 @@ c_func
 id|guid
 )paren
 suffix:semicolon
-multiline_comment|/* unique dev id */
+multiline_comment|/* unique dev id       */
 DECL|member|host
 r_struct
 id|Scsi_Host
@@ -244,23 +281,23 @@ DECL|member|htmplt
 id|Scsi_Host_Template
 id|htmplt
 suffix:semicolon
-multiline_comment|/* own host template */
+multiline_comment|/* own host template   */
 DECL|member|host_number
 r_int
 id|host_number
 suffix:semicolon
-multiline_comment|/* to find us */
+multiline_comment|/* to find us          */
 DECL|member|host_no
 r_int
 id|host_no
 suffix:semicolon
-multiline_comment|/* allocated by scsi */
+multiline_comment|/* allocated by scsi   */
 DECL|member|srb
 id|Scsi_Cmnd
 op_star
 id|srb
 suffix:semicolon
-multiline_comment|/* current srb */
+multiline_comment|/* current srb         */
 multiline_comment|/* thread information */
 DECL|member|queue_srb
 id|Scsi_Cmnd
@@ -272,29 +309,29 @@ DECL|member|action
 r_int
 id|action
 suffix:semicolon
-multiline_comment|/* what to do */
+multiline_comment|/* what to do            */
 DECL|member|pid
 r_int
 id|pid
 suffix:semicolon
-multiline_comment|/* control thread */
-multiline_comment|/* interrupt info for CBI devices */
+multiline_comment|/* control thread        */
+multiline_comment|/* interrupt info for CBI devices -- only good if attached */
 DECL|member|ip_waitq
 r_struct
 id|semaphore
 id|ip_waitq
 suffix:semicolon
-multiline_comment|/* for CBI interrupts */
+multiline_comment|/* for CBI interrupts   */
 DECL|member|ip_data
 id|__u16
 id|ip_data
 suffix:semicolon
-multiline_comment|/* interrupt data */
+multiline_comment|/* interrupt data       */
 DECL|member|ip_wanted
 r_int
 id|ip_wanted
 suffix:semicolon
-multiline_comment|/* needed */
+multiline_comment|/* is an IRQ expected?  */
 DECL|member|irq_handle
 r_void
 op_star
@@ -313,13 +350,13 @@ r_struct
 id|semaphore
 id|notify
 suffix:semicolon
-multiline_comment|/* thread begin/end */
+multiline_comment|/* thread begin/end        */
 DECL|member|sleeper
 r_struct
 id|semaphore
 id|sleeper
 suffix:semicolon
-multiline_comment|/* to sleep on */
+multiline_comment|/* to sleep the thread on  */
 DECL|member|queue_exclusion
 r_struct
 id|semaphore
@@ -331,16 +368,14 @@ suffix:semicolon
 multiline_comment|/*&n; * kernel thread actions&n; */
 DECL|macro|US_ACT_COMMAND
 mdefine_line|#define US_ACT_COMMAND&t;&t;1
-DECL|macro|US_ACT_ABORT
-mdefine_line|#define US_ACT_ABORT&t;&t;2
 DECL|macro|US_ACT_DEVICE_RESET
-mdefine_line|#define US_ACT_DEVICE_RESET&t;3
+mdefine_line|#define US_ACT_DEVICE_RESET&t;2
 DECL|macro|US_ACT_BUS_RESET
-mdefine_line|#define US_ACT_BUS_RESET&t;4
+mdefine_line|#define US_ACT_BUS_RESET&t;3
 DECL|macro|US_ACT_HOST_RESET
-mdefine_line|#define US_ACT_HOST_RESET&t;5
+mdefine_line|#define US_ACT_HOST_RESET&t;4
 DECL|macro|US_ACT_EXIT
-mdefine_line|#define US_ACT_EXIT&t;&t;6
+mdefine_line|#define US_ACT_EXIT&t;&t;5
 multiline_comment|/* The list of structures and the protective lock for them */
 DECL|variable|us_list
 r_static
@@ -392,26 +427,26 @@ id|usb_driver
 id|storage_driver
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;usb-storage&quot;
 comma
+id|probe
+suffix:colon
 id|storage_probe
 comma
+id|disconnect
+suffix:colon
 id|storage_disconnect
 comma
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
 )brace
 suffix:semicolon
 multiline_comment|/***********************************************************************&n; * Data transfer routines&n; ***********************************************************************/
-multiline_comment|/* FIXME: the names of these functions are poorly choosen. */
 multiline_comment|/*&n; * Transfer one SCSI scatter-gather buffer via bulk transfer&n; *&n; * Note that this function is necessary because we want the ability to&n; * use scatter-gather memory.  Good performance is achived by a combination&n; * of scatter-gather and clustering (which makes each chunk bigger).&n; *&n; * Note that the lower layer will always retry when a NAK occurs, up to the&n; * timeout limit.  Thus we don&squot;t have to worry about it for individual&n; * packets.&n; */
-DECL|function|us_bulk_transfer
+DECL|function|us_transfer_partial
 r_static
 r_int
-id|us_bulk_transfer
+id|us_transfer_partial
 c_func
 (paren
 r_struct
@@ -468,8 +503,6 @@ op_amp
 id|partial
 comma
 id|HZ
-op_star
-l_int|5
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -544,7 +577,7 @@ id|ETIMEDOUT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_bulk_transfer: device NAKed&bslash;n&quot;
+l_string|&quot;us_transfer_partial(): device NAKed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -557,7 +590,7 @@ r_return
 id|US_BULK_TRANSFER_SHORT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Transfer an entire SCSI command&squot;s worth of data payload over the bulk&n; * pipe.&n; *&n; * Note that this uses us_bulk_transfer to achive it&squot;s goals -- this&n; * function simply determines if we&squot;re going to use scatter-gather or not,&n; * and acts appropriately.  For now, it also re-interprets the error codes.&n; */
+multiline_comment|/*&n; * Transfer an entire SCSI command&squot;s worth of data payload over the bulk&n; * pipe.&n; *&n; * Note that this uses us_transfer_partial to achieve it&squot;s goals -- this&n; * function simply determines if we&squot;re going to use scatter-gather or not,&n; * and acts appropriately.  For now, it also re-interprets the error codes.&n; */
 DECL|function|us_transfer
 r_static
 r_void
@@ -665,7 +698,7 @@ op_increment
 (brace
 id|result
 op_assign
-id|us_bulk_transfer
+id|us_transfer_partial
 c_func
 (paren
 id|us
@@ -700,7 +733,7 @@ r_else
 multiline_comment|/* no scatter-gather, just make the request */
 id|result
 op_assign
-id|us_bulk_transfer
+id|us_transfer_partial
 c_func
 (paren
 id|us
@@ -729,6 +762,11 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|srb
+comma
+r_struct
+id|us_data
+op_star
+id|us
 )paren
 (brace
 r_int
@@ -745,6 +783,75 @@ id|scatterlist
 op_star
 id|sg
 suffix:semicolon
+multiline_comment|/* support those devices which need the length calculated&n;&t; * differently&n;&t; */
+r_if
+c_cond
+(paren
+id|us-&gt;flags
+op_amp
+id|US_FL_ALT_LENGTH
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|INQUIRY
+)paren
+(brace
+id|srb-&gt;cmnd
+(braket
+l_int|4
+)braket
+op_assign
+l_int|36
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|INQUIRY
+)paren
+op_logical_or
+(paren
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|MODE_SENSE
+)paren
+)paren
+r_return
+id|srb-&gt;cmnd
+(braket
+l_int|4
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|TEST_UNIT_READY
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Are we going to scatter gather? */
 r_if
 c_cond
@@ -884,10 +991,18 @@ id|INQUIRY
 )paren
 )paren
 )paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;** no auto-sense for a special command&bslash;n&quot;
+)paren
+suffix:semicolon
 id|need_auto_sense
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t; * If we have an error, we&squot;re going to do a REQUEST_SENSE &n;&t; * automatically.  Note that we differentiate between a command&n;&t; * &quot;failure&quot; and an &quot;error&quot; in the transport mechanism.&n;&t; */
 r_if
@@ -1024,10 +1139,31 @@ suffix:semicolon
 r_int
 id|old_sg
 suffix:semicolon
+r_int
+id|old_request_bufflen
+suffix:semicolon
+r_int
+r_char
+id|old_cmnd
+(braket
+id|MAX_COMMAND_SIZE
+)braket
+suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Command FAILED: Issuing auto-REQUEST_SENSE&bslash;n&quot;
+l_string|&quot;Issuing auto-REQUEST_SENSE&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* save the old command */
+id|memcpy
+c_func
+(paren
+id|old_cmnd
+comma
+id|srb-&gt;cmnd
+comma
+id|MAX_COMMAND_SIZE
 )paren
 suffix:semicolon
 id|srb-&gt;cmnd
@@ -1077,9 +1213,17 @@ id|old_request_buffer
 op_assign
 id|srb-&gt;request_buffer
 suffix:semicolon
+id|old_request_bufflen
+op_assign
+id|srb-&gt;request_bufflen
+suffix:semicolon
 id|old_sg
 op_assign
 id|srb-&gt;use_sg
+suffix:semicolon
+id|srb-&gt;use_sg
+op_assign
+l_int|0
 suffix:semicolon
 id|srb-&gt;request_bufflen
 op_assign
@@ -1087,9 +1231,9 @@ l_int|18
 suffix:semicolon
 id|srb-&gt;request_buffer
 op_assign
-id|us-&gt;srb-&gt;sense_buffer
+id|srb-&gt;sense_buffer
 suffix:semicolon
-multiline_comment|/* FIXME: what if this command fails? */
+multiline_comment|/* issue the auto-sense command */
 id|temp_result
 op_assign
 id|us
@@ -1102,6 +1246,30 @@ comma
 id|us
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|temp_result
+op_eq
+id|USB_STOR_TRANSPORT_ERROR
+)paren
+(brace
+multiline_comment|/* FIXME: we need to invoke a transport reset here */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- auto-sense failure&bslash;n&quot;
+)paren
+suffix:semicolon
+id|srb-&gt;result
+op_assign
+id|DID_ERROR
+op_lshift
+l_int|16
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|US_DEBUGP
 c_func
 (paren
@@ -1113,7 +1281,12 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;-- sense key: 0x%x, ASC: 0x%x, ASCQ: 0x%x&bslash;n&quot;
+l_string|&quot;-- code: 0x%x, key: 0x%x, ASC: 0x%x, ASCQ: 0x%x&bslash;n&quot;
+comma
+id|srb-&gt;sense_buffer
+(braket
+l_int|0
+)braket
 comma
 id|srb-&gt;sense_buffer
 (braket
@@ -1138,44 +1311,102 @@ id|srb-&gt;result
 op_assign
 id|CHECK_CONDITION
 suffix:semicolon
-multiline_comment|/* we&squot;re done here */
+multiline_comment|/* we&squot;re done here, let&squot;s clean up */
 id|srb-&gt;request_buffer
 op_assign
 id|old_request_buffer
+suffix:semicolon
+id|srb-&gt;request_bufflen
+op_assign
+id|old_request_bufflen
 suffix:semicolon
 id|srb-&gt;use_sg
 op_assign
 id|old_sg
 suffix:semicolon
-)brace
-multiline_comment|/* Set return code, if necessary */
+id|memcpy
+c_func
+(paren
+id|srb-&gt;cmnd
+comma
+id|old_cmnd
+comma
+id|MAX_COMMAND_SIZE
+)paren
+suffix:semicolon
+multiline_comment|/* If things are really okay, then let&squot;s show that */
 r_if
 c_cond
 (paren
-id|need_auto_sense
-op_logical_and
 (paren
 id|srb-&gt;sense_buffer
 (braket
-l_int|0
+l_int|2
 )braket
+op_amp
+l_int|0xf
+)paren
 op_eq
 l_int|0x0
-)paren
 )paren
 id|srb-&gt;result
 op_assign
 id|GOOD
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|need_auto_sense
-)paren
+)brace
+r_else
+multiline_comment|/* if (need_auto_sense) */
 id|srb-&gt;result
 op_assign
 id|GOOD
+suffix:semicolon
+multiline_comment|/* Regardless of auto-sense, if we _know_ we have an error&n;&t; * condition, show that in the result code&n;&t; */
+r_if
+c_cond
+(paren
+id|result
+op_eq
+id|USB_STOR_TRANSPORT_FAILED
+)paren
+id|srb-&gt;result
+op_assign
+id|CHECK_CONDITION
+suffix:semicolon
+multiline_comment|/* If we think we&squot;re good, then make sure the sense data shows it.&n;&t; * This is necessary because the auto-sense for some devices always&n;&t; * sets byte 0 == 0x70, even if there is no error&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|us-&gt;protocol
+op_eq
+id|US_PR_CB
+)paren
+op_logical_and
+(paren
+id|result
+op_eq
+id|USB_STOR_TRANSPORT_GOOD
+)paren
+op_logical_and
+(paren
+(paren
+id|srb-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0xf
+)paren
+op_eq
+l_int|0x0
+)paren
+)paren
+id|srb-&gt;sense_buffer
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Control/Bulk/Interrupt transport&n; */
@@ -1443,6 +1674,8 @@ id|us_transfer_length
 c_func
 (paren
 id|srb
+comma
+id|us
 )paren
 )paren
 (brace
@@ -1481,7 +1714,7 @@ id|us-&gt;ip_waitq
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* if we were woken up by a reset instead of the actual interrupt */
+multiline_comment|/* if we were woken up by an abort instead of the actual interrupt */
 r_if
 c_cond
 (paren
@@ -1723,6 +1956,8 @@ id|us_transfer_length
 c_func
 (paren
 id|srb
+comma
+id|us
 )paren
 )paren
 (brace
@@ -1801,6 +2036,8 @@ id|us_transfer_length
 c_func
 (paren
 id|srb
+comma
+id|us
 )paren
 suffix:semicolon
 id|bcb.Flags
@@ -1991,6 +2228,12 @@ id|us-&gt;ep_in
 )paren
 suffix:semicolon
 multiline_comment|/* get CSW for device status */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Attempting to get CSW...&bslash;n&quot;
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|usb_bulk_msg
@@ -2009,8 +2252,6 @@ op_amp
 id|partial
 comma
 id|HZ
-op_star
-l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* did the attempt to read the CSW fail? */
@@ -2040,6 +2281,12 @@ id|pipe
 )paren
 suffix:semicolon
 multiline_comment|/* get the status again */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Attempting to get CSW (2nd try)...&bslash;n&quot;
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|usb_bulk_msg
@@ -2058,8 +2305,6 @@ op_amp
 id|partial
 comma
 id|HZ
-op_star
-l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* if it fails again, we need a reset and return an error*/
@@ -2072,18 +2317,28 @@ op_minus
 id|EPIPE
 )paren
 (brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;clearing halt for pipe 0x%x&bslash;n&quot;
+comma
+id|pipe
+)paren
+suffix:semicolon
+id|usb_clear_halt
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|pipe
+)paren
+suffix:semicolon
 r_return
 id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon
 )brace
 )brace
 multiline_comment|/* if we still have a failure at this point, we&squot;re in trouble */
-r_if
-c_cond
-(paren
-id|result
-)paren
-(brace
 id|US_DEBUGP
 c_func
 (paren
@@ -2092,6 +2347,12 @@ comma
 id|result
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+(brace
 r_return
 id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon
@@ -4052,7 +4313,7 @@ l_string|&quot;Bus reset requested&bslash;n&quot;
 suffix:semicolon
 singleline_comment|//  us-&gt;transport_reset(us);
 r_return
-id|SUCCESS
+id|FAILED
 suffix:semicolon
 )brace
 multiline_comment|/* FIXME: This doesn&squot;t actually reset anything */
@@ -4075,7 +4336,7 @@ l_string|&quot;usb-storage: host_reset() requested but not implemented&bslash;n&
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|FAILED
 suffix:semicolon
 )brace
 multiline_comment|/***********************************************************************&n; * /proc/scsi/ functions&n; ***********************************************************************/
@@ -4083,7 +4344,7 @@ multiline_comment|/* we use this macro to help us write into the buffer */
 DECL|macro|SPRINTF
 macro_line|#undef SPRINTF
 DECL|macro|SPRINTF
-mdefine_line|#define SPRINTF(args...) do { if (pos &lt; (buffer + length)) pos += sprintf (pos, ## args); } while (0)
+mdefine_line|#define SPRINTF(args...) &bslash;&n;&t;do { if (pos &lt; buffer+length) pos += sprintf(pos, ## args); } while (0)
 DECL|function|usb_stor_proc_info
 r_int
 id|usb_stor_proc_info
@@ -4120,10 +4381,6 @@ op_star
 id|pos
 op_assign
 id|buffer
-suffix:semicolon
-r_char
-op_star
-id|tmp_ptr
 suffix:semicolon
 multiline_comment|/* if someone is sending us data, just throw it away */
 r_if
@@ -4189,281 +4446,60 @@ suffix:semicolon
 )brace
 multiline_comment|/* print the controler name */
 id|SPRINTF
+c_func
 (paren
-l_string|&quot;Host scsi%d: usb-storage&bslash;n&quot;
+l_string|&quot;   Host scsi%d: usb-storage&bslash;n&quot;
 comma
 id|hostno
 )paren
 suffix:semicolon
-multiline_comment|/* print product and vendor strings */
-id|tmp_ptr
-op_assign
-id|kmalloc
+multiline_comment|/* print product, vendor, and serial number strings */
+id|SPRINTF
 c_func
 (paren
-l_int|256
+l_string|&quot;       Vendor: %s&bslash;n&quot;
 comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|us-&gt;pusb_dev
-op_logical_or
-op_logical_neg
-id|tmp_ptr
-)paren
-(brace
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;    Vendor: Unknown Vendor&bslash;n&quot;
+id|us-&gt;vendor
 )paren
 suffix:semicolon
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;   Product: Unknown Product&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;    Vendor: &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|usb_string
-c_func
-(paren
-id|us-&gt;pusb_dev
+l_string|&quot;      Product: %s&bslash;n&quot;
 comma
-id|us-&gt;pusb_dev-&gt;descriptor.iManufacturer
+id|us-&gt;product
+)paren
+suffix:semicolon
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Serial Number: %s&bslash;n&quot;
 comma
-id|tmp_ptr
+id|us-&gt;serial
+)paren
+suffix:semicolon
+multiline_comment|/* show the protocol and transport */
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;     Protocol: %s&bslash;n&quot;
 comma
-l_int|256
+id|us-&gt;protocol_name
 )paren
-OG
-l_int|0
-)paren
+suffix:semicolon
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;%s&bslash;n&quot;
+l_string|&quot;    Transport: %s&bslash;n&quot;
 comma
-id|tmp_ptr
+id|us-&gt;transport_name
 )paren
 suffix:semicolon
-r_else
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Unknown Vendor&bslash;n&quot;
-)paren
-suffix:semicolon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;   Product: &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|usb_string
-c_func
-(paren
-id|us-&gt;pusb_dev
-comma
-id|us-&gt;pusb_dev-&gt;descriptor.iProduct
-comma
-id|tmp_ptr
-comma
-l_int|256
-)paren
-OG
-l_int|0
-)paren
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;%s&bslash;n&quot;
-comma
-id|tmp_ptr
-)paren
-suffix:semicolon
-r_else
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Unknown Product&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|tmp_ptr
-)paren
-suffix:semicolon
-)brace
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;  Protocol: &quot;
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|us-&gt;protocol
-)paren
-(brace
-r_case
-id|US_PR_CB
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Control/Bulk&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_PR_CBI
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Control/Bulk/Interrupt&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_PR_BULK
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Bulk only&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Unknown Protocol&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|SPRINTF
-c_func
-(paren
-l_string|&quot; Transport: &quot;
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|us-&gt;subclass
-)paren
-(brace
-r_case
-id|US_SC_RBC
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Reduced Block Commands&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_SC_8020
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;8020i&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_SC_QIC
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;QIC-157&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_SC_8070
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;8070i&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_SC_SCSI
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Transparent SCSI&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_SC_UFI
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Uniform Floppy Interface&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|SPRINTF
-c_func
-(paren
-l_string|&quot;Unknown Transport&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* show the GUID of the device */
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;      GUID: &quot;
+l_string|&quot;         GUID: &quot;
 id|GUID_FORMAT
 l_string|&quot;&bslash;n&quot;
 comma
@@ -4623,7 +4659,6 @@ comma
 id|emulated
 suffix:colon
 id|TRUE
-comma
 )brace
 suffix:semicolon
 DECL|variable|sense_notready
@@ -4710,6 +4745,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* set our name for identification purposes */
 id|sprintf
 c_func
 (paren
@@ -4804,27 +4840,31 @@ id|action
 r_case
 id|US_ACT_COMMAND
 suffix:colon
-multiline_comment|/* bad device */
+multiline_comment|/* reject if target != 0 or if single-lun device&n;&t;&t;&t; * and LUN != 0&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 id|us-&gt;srb-&gt;target
+op_logical_or
+(paren
+(paren
+id|us-&gt;flags
+op_amp
+id|US_FL_SINGLE_LUN
+)paren
+op_logical_and
+id|us-&gt;srb-&gt;lun
+)paren
 )paren
 (brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Bad device number (%d/%d) or dev 0x%x&bslash;n&quot;
+l_string|&quot;Bad device number (%d/%d)&bslash;n&quot;
 comma
 id|us-&gt;srb-&gt;target
 comma
 id|us-&gt;srb-&gt;lun
-comma
-(paren
-r_int
-r_int
-)paren
-id|us-&gt;pusb_dev
 )paren
 suffix:semicolon
 id|us-&gt;srb-&gt;result
@@ -4832,6 +4872,45 @@ op_assign
 id|DID_BAD_TARGET
 op_lshift
 l_int|16
+suffix:semicolon
+id|us-&gt;srb
+op_member_access_from_pointer
+id|scsi_done
+c_func
+(paren
+id|us-&gt;srb
+)paren
+suffix:semicolon
+id|us-&gt;srb
+op_assign
+l_int|NULL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* handle those devices which can&squot;t do a START_STOP */
+r_if
+c_cond
+(paren
+(paren
+id|us-&gt;srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|START_STOP
+)paren
+op_logical_and
+(paren
+id|us-&gt;flags
+op_amp
+id|US_FL_START_STOP
+)paren
+)paren
+(brace
+id|us-&gt;srb-&gt;result
+op_assign
+id|GOOD
 suffix:semicolon
 id|us-&gt;srb
 op_member_access_from_pointer
@@ -4859,8 +4938,6 @@ id|us-&gt;dev_semaphore
 )paren
 suffix:semicolon
 multiline_comment|/* our device has gone - pretend not ready */
-multiline_comment|/* FIXME: we also need to handle INQUIRY here, &n;&t;&t;&t; * probably */
-multiline_comment|/* FIXME: fix return codes and sense buffer handling */
 r_if
 c_cond
 (paren
@@ -4874,6 +4951,7 @@ c_func
 l_string|&quot;Request is for removed device&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* For REQUEST_SENSE, it&squot;s the data.  But&n;&t;&t;&t;&t; * for anything else, it should look like&n;&t;&t;&t;&t; * we auto-sensed for it.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4900,50 +4978,33 @@ id|sense_notready
 suffix:semicolon
 id|us-&gt;srb-&gt;result
 op_assign
-id|DID_OK
-op_lshift
-l_int|16
+id|GOOD
 suffix:semicolon
 )brace
 r_else
 (brace
+id|memcpy
+c_func
+(paren
+id|us-&gt;srb-&gt;sense_buffer
+comma
+id|sense_notready
+comma
+r_sizeof
+(paren
+id|sense_notready
+)paren
+)paren
+suffix:semicolon
 id|us-&gt;srb-&gt;result
 op_assign
-(paren
-id|DID_OK
-op_lshift
-l_int|16
-)paren
-op_or
-l_int|2
+id|CHECK_CONDITION
 suffix:semicolon
 )brace
-multiline_comment|/* unlock the device pointers */
-id|up
-c_func
-(paren
-op_amp
-(paren
-id|us-&gt;dev_semaphore
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* indicate that the command is done */
-id|us-&gt;srb
-op_member_access_from_pointer
-id|scsi_done
-c_func
-(paren
-id|us-&gt;srb
-)paren
-suffix:semicolon
-id|us-&gt;srb
-op_assign
-l_int|NULL
-suffix:semicolon
-r_break
-suffix:semicolon
 )brace
+r_else
+(brace
+multiline_comment|/* !us-&gt;pusb_dev */
 multiline_comment|/* we&squot;ve got a command, let&squot;s do it! */
 id|US_DEBUG
 c_func
@@ -4955,33 +5016,6 @@ id|us-&gt;srb
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: this is to support Shuttle E-USB bridges, it &n;&t;&t;&t; * appears */
-r_if
-c_cond
-(paren
-id|us-&gt;srb-&gt;cmnd
-(braket
-l_int|0
-)braket
-op_eq
-id|START_STOP
-op_logical_and
-id|us-&gt;pusb_dev-&gt;descriptor.idProduct
-op_eq
-l_int|0x0001
-op_logical_and
-id|us-&gt;pusb_dev-&gt;descriptor.idVendor
-op_eq
-l_int|0x04e6
-)paren
-id|us-&gt;srb-&gt;result
-op_assign
-id|DID_OK
-op_lshift
-l_int|16
-suffix:semicolon
-r_else
-(brace
 id|us
 op_member_access_from_pointer
 id|proto_handler
@@ -4993,14 +5027,6 @@ id|us
 )paren
 suffix:semicolon
 )brace
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;scsi cmd done, result=0x%x&bslash;n&quot;
-comma
-id|us-&gt;srb-&gt;result
-)paren
-suffix:semicolon
 multiline_comment|/* unlock the device pointers */
 id|up
 c_func
@@ -5012,6 +5038,14 @@ id|us-&gt;dev_semaphore
 )paren
 suffix:semicolon
 multiline_comment|/* indicate that the command is done */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;scsi cmd done, result=0x%x&bslash;n&quot;
+comma
+id|us-&gt;srb-&gt;result
+)paren
+suffix:semicolon
 id|us-&gt;srb
 op_member_access_from_pointer
 id|scsi_done
@@ -5024,11 +5058,6 @@ id|us-&gt;srb
 op_assign
 l_int|NULL
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|US_ACT_ABORT
-suffix:colon
 r_break
 suffix:semicolon
 r_case
@@ -5082,6 +5111,219 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|us_unusual_dev_list
+r_static
+r_struct
+id|us_unusual_dev
+id|us_unusual_dev_list
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x057b
+comma
+l_int|0x0000
+comma
+l_int|0x0114
+comma
+l_string|&quot;Y-E Data Flashbuster-U&quot;
+comma
+id|US_SC_UFI
+comma
+id|US_PR_CB
+comma
+id|US_FL_SINGLE_LUN
+)brace
+comma
+(brace
+l_int|0x0781
+comma
+l_int|0x0001
+comma
+l_int|0x0200
+comma
+l_string|&quot;Sandisk ImageMate&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_CB
+comma
+id|US_FL_SINGLE_LUN
+op_or
+id|US_FL_START_STOP
+)brace
+comma
+(brace
+l_int|0x0781
+comma
+l_int|0x0002
+comma
+l_int|0x0009
+comma
+l_string|&quot;** SECRET DEVICE **&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_BULK
+comma
+id|US_FL_SINGLE_LUN
+)brace
+comma
+(brace
+l_int|0x04e6
+comma
+l_int|0x0002
+comma
+l_int|0x0100
+comma
+l_string|&quot;Microtech USB-SCSI-HD50&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_BULK
+comma
+id|US_FL_ALT_LENGTH
+)brace
+comma
+(brace
+l_int|0x07af
+comma
+l_int|0x0005
+comma
+l_int|0x0100
+comma
+l_string|&quot;Shuttle eUSCSI Bridge&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_BULK
+comma
+id|US_FL_ALT_LENGTH
+)brace
+comma
+(brace
+l_int|0x0000
+comma
+l_int|0x0000
+comma
+l_int|0x0
+comma
+l_string|&quot;&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+multiline_comment|/* Search our ususual device list, based on vendor/product combinations&n; * to see if we can support this device.  Returns a pointer to a structure&n; * defining how we should support this device, or NULL if it&squot;s not in the&n; * list&n; */
+DECL|function|us_find_dev
+r_static
+r_struct
+id|us_unusual_dev
+op_star
+id|us_find_dev
+c_func
+(paren
+id|__u16
+id|idVendor
+comma
+id|__u16
+id|idProduct
+comma
+id|__u16
+id|bcdDevice
+)paren
+(brace
+r_struct
+id|us_unusual_dev
+op_star
+id|ptr
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Searching unusual device list for (0x%x, 0x%x, 0x%x)...&bslash;n&quot;
+comma
+id|idVendor
+comma
+id|idProduct
+comma
+id|bcdDevice
+)paren
+suffix:semicolon
+id|ptr
+op_assign
+id|us_unusual_dev_list
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|ptr-&gt;idVendor
+op_ne
+l_int|0x0000
+)paren
+op_logical_and
+op_logical_neg
+(paren
+(paren
+id|ptr-&gt;idVendor
+op_eq
+id|idVendor
+)paren
+op_logical_and
+(paren
+id|ptr-&gt;idProduct
+op_eq
+id|idProduct
+)paren
+op_logical_and
+(paren
+id|ptr-&gt;bcdDevice
+op_eq
+id|bcdDevice
+)paren
+)paren
+)paren
+id|ptr
+op_increment
+suffix:semicolon
+multiline_comment|/* if the search ended because we hit the end record, we failed */
+r_if
+c_cond
+(paren
+id|ptr-&gt;idVendor
+op_eq
+l_int|0x0000
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- did not find a matching device&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* otherwise, we found one! */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- found matching device: %s&bslash;n&quot;
+comma
+id|ptr-&gt;name
+)paren
+suffix:semicolon
+r_return
+id|ptr
+suffix:semicolon
+)brace
 multiline_comment|/* Probe to see if a new device is actually a SCSI device */
 DECL|function|storage_probe
 r_static
@@ -5106,31 +5348,24 @@ suffix:semicolon
 r_char
 id|mf
 (braket
-l_int|32
+id|USB_STOR_STRING_LEN
 )braket
 suffix:semicolon
 multiline_comment|/* manufacturer */
 r_char
 id|prod
 (braket
-l_int|32
+id|USB_STOR_STRING_LEN
 )braket
 suffix:semicolon
 multiline_comment|/* product */
 r_char
 id|serial
 (braket
-l_int|32
+id|USB_STOR_STRING_LEN
 )braket
 suffix:semicolon
 multiline_comment|/* serial number */
-r_struct
-id|us_data
-op_star
-id|ss
-op_assign
-l_int|NULL
-suffix:semicolon
 id|GUID
 c_func
 (paren
@@ -5138,6 +5373,22 @@ id|guid
 )paren
 suffix:semicolon
 multiline_comment|/* Global Unique Identifier */
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_struct
+id|us_unusual_dev
+op_star
+id|unusual_dev
+suffix:semicolon
+r_struct
+id|us_data
+op_star
+id|ss
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
 id|result
 suffix:semicolon
@@ -5154,6 +5405,11 @@ l_int|0
 suffix:semicolon
 id|__u8
 id|ep_int
+op_assign
+l_int|0
+suffix:semicolon
+id|__u8
+id|ep_interval
 op_assign
 l_int|0
 suffix:semicolon
@@ -5186,21 +5442,65 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: this isn&squot;t quite right... */
-multiline_comment|/* We make an exception for the shuttle E-USB */
+multiline_comment|/* clear the temporary strings */
+id|memset
+c_func
+(paren
+id|mf
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|mf
+)paren
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|prod
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|prod
+)paren
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|serial
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|serial
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* search for this device in our unusual device list */
+id|unusual_dev
+op_assign
+id|us_find_dev
+c_func
+(paren
+id|dev-&gt;descriptor.idVendor
+comma
+id|dev-&gt;descriptor.idProduct
+comma
+id|dev-&gt;descriptor.bcdDevice
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Can we support this device, either because we know about it&n;&t; * from our unusual device list, or because it advertises that it&squot;s&n;&t; * compliant to the specification?&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|dev-&gt;descriptor.idVendor
-op_eq
-l_int|0x04e6
-op_logical_and
-id|dev-&gt;descriptor.idProduct
-op_eq
-l_int|0x0001
-)paren
+id|unusual_dev
 op_logical_and
 op_logical_neg
 (paren
@@ -5235,28 +5535,24 @@ l_string|&quot;USB Mass Storage device detected&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Determine subclass and protocol, or copy from the interface */
-multiline_comment|/* FIXME: this isn&squot;t quite right */
 r_if
 c_cond
 (paren
-id|dev-&gt;descriptor.idVendor
-op_eq
-l_int|0x04e6
-op_logical_and
-id|dev-&gt;descriptor.idProduct
-op_eq
-l_int|0x0001
+id|unusual_dev
 )paren
 (brace
-id|protocol
-op_assign
-id|US_PR_CB
-suffix:semicolon
 id|subclass
 op_assign
-id|US_SC_8070
+id|unusual_dev-&gt;useProtocol
 suffix:semicolon
-multiline_comment|/* an assumption */
+id|protocol
+op_assign
+id|unusual_dev-&gt;useTransport
+suffix:semicolon
+id|flags
+op_assign
+id|unusual_dev-&gt;flags
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -5268,126 +5564,9 @@ id|protocol
 op_assign
 id|altsetting-&gt;bInterfaceProtocol
 suffix:semicolon
-)brace
-multiline_comment|/* shuttle E-USB */
-multiline_comment|/* FIXME: all we should need to do here is determine the protocol */
-r_if
-c_cond
-(paren
-id|dev-&gt;descriptor.idVendor
-op_eq
-l_int|0x04e6
-op_logical_and
-id|dev-&gt;descriptor.idProduct
-op_eq
-l_int|0x0001
-)paren
-(brace
-id|__u8
-id|qstat
-(braket
-l_int|2
-)braket
-suffix:semicolon
-id|result
+id|flags
 op_assign
-id|usb_control_msg
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|dev
-comma
 l_int|0
-)paren
-comma
-l_int|1
-comma
-l_int|0xC0
-comma
-l_int|0
-comma
-id|ss-&gt;ifnum
-comma
-id|qstat
-comma
-l_int|2
-comma
-id|HZ
-op_star
-l_int|5
-)paren
-suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;C0 status 0x%x 0x%x&bslash;n&quot;
-comma
-id|qstat
-(braket
-l_int|0
-)braket
-comma
-id|qstat
-(braket
-l_int|1
-)braket
-)paren
-suffix:semicolon
-id|init_MUTEX_LOCKED
-c_func
-(paren
-op_amp
-(paren
-id|ss-&gt;ip_waitq
-)paren
-)paren
-suffix:semicolon
-id|ss-&gt;irqpipe
-op_assign
-id|usb_rcvintpipe
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;ep_int
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|usb_request_irq
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;irqpipe
-comma
-id|CBI_irq
-comma
-l_int|255
-comma
-(paren
-r_void
-op_star
-)paren
-id|ss
-comma
-op_amp
-id|ss-&gt;irq_handle
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-OL
-l_int|0
-)paren
-r_return
-l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Find the endpoints we need&n;&t; * We are expecting a minimum of 2 endpoints - in and out (bulk).&n;&t; * An optional interrupt is OK (necessary for CBI protocol).&n;&t; * We will ignore any others.&n;&t; */
@@ -5490,18 +5669,29 @@ id|bEndpointAddress
 op_amp
 id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
+id|ep_interval
+op_assign
+id|altsetting-&gt;endpoint
+(braket
+id|i
+)braket
+dot
+id|bInterval
+suffix:semicolon
 )brace
 )brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Endpoints In %d Out %d Int %d&bslash;n&quot;
+l_string|&quot;Endpoints: In %d Out %d Int %d (Period %d)&bslash;n&quot;
 comma
 id|ep_in
 comma
 id|ep_out
 comma
 id|ep_int
+comma
+id|ep_interval
 )paren
 suffix:semicolon
 multiline_comment|/* set the interface -- STALL is an acceptable response here */
@@ -5568,7 +5758,7 @@ multiline_comment|/* it&squot;s not a stall, but another error -- time to bail *
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;-- unknown error.  rejecting device&bslash;n&quot;
+l_string|&quot;-- Unknown error.  Rejecting device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5598,7 +5788,7 @@ id|ep_int
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Problems with device&bslash;n&quot;
+l_string|&quot;Sanity check failed.  Rejecting device.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5611,45 +5801,6 @@ id|GUID_CLEAR
 c_func
 (paren
 id|guid
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|mf
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|mf
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|prod
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|prod
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|serial
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|serial
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -5847,7 +5998,6 @@ id|ss-&gt;ip_waitq
 )paren
 suffix:semicolon
 multiline_comment|/* set up the IRQ pipe and handler */
-multiline_comment|/* FIXME: This needs to get period from the device */
 id|US_DEBUGP
 c_func
 (paren
@@ -5875,7 +6025,7 @@ id|ss-&gt;irqpipe
 comma
 id|CBI_irq
 comma
-l_int|255
+id|ss-&gt;ep_interval
 comma
 (paren
 r_void
@@ -5892,7 +6042,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;usb_request_irq returned %d&bslash;n&quot;
+l_string|&quot;-- usb_request_irq returned %d&bslash;n&quot;
 comma
 id|result
 )paren
@@ -6022,6 +6172,10 @@ id|ss-&gt;protocol
 op_assign
 id|protocol
 suffix:semicolon
+id|ss-&gt;flags
+op_assign
+id|flags
+suffix:semicolon
 multiline_comment|/* copy over the endpoint data */
 id|ss-&gt;ep_in
 op_assign
@@ -6035,6 +6189,10 @@ id|ss-&gt;ep_int
 op_assign
 id|ep_int
 suffix:semicolon
+id|ss-&gt;ep_interval
+op_assign
+id|ep_interval
+suffix:semicolon
 multiline_comment|/* establish the connection to the new device */
 id|ss-&gt;ifnum
 op_assign
@@ -6043,6 +6201,100 @@ suffix:semicolon
 id|ss-&gt;pusb_dev
 op_assign
 id|dev
+suffix:semicolon
+multiline_comment|/* copy over the identifiying strings */
+id|strncpy
+c_func
+(paren
+id|ss-&gt;vendor
+comma
+id|mf
+comma
+id|USB_STOR_STRING_LEN
+)paren
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|ss-&gt;product
+comma
+id|prod
+comma
+id|USB_STOR_STRING_LEN
+)paren
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|ss-&gt;serial
+comma
+id|serial
+comma
+id|USB_STOR_STRING_LEN
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strlen
+c_func
+(paren
+id|ss-&gt;vendor
+)paren
+op_eq
+l_int|0
+)paren
+id|strncpy
+c_func
+(paren
+id|ss-&gt;vendor
+comma
+l_string|&quot;Unknown&quot;
+comma
+id|USB_STOR_STRING_LEN
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strlen
+c_func
+(paren
+id|ss-&gt;product
+)paren
+op_eq
+l_int|0
+)paren
+id|strncpy
+c_func
+(paren
+id|ss-&gt;product
+comma
+l_string|&quot;Unknown&quot;
+comma
+id|USB_STOR_STRING_LEN
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strlen
+c_func
+(paren
+id|ss-&gt;serial
+)paren
+op_eq
+l_int|0
+)paren
+id|strncpy
+c_func
+(paren
+id|ss-&gt;serial
+comma
+l_string|&quot;None&quot;
+comma
+id|USB_STOR_STRING_LEN
+)paren
 suffix:semicolon
 multiline_comment|/* copy the GUID we created before */
 id|memcpy
@@ -6059,12 +6311,6 @@ id|guid
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;&t; * Set the handler pointers based on the protocol&n;&t;&t; * Again, this data is persistant across reattachments&n;&t;&t; */
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Transport: &quot;
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -6074,11 +6320,9 @@ id|ss-&gt;protocol
 r_case
 id|US_PR_CB
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;Control/Bulk&bslash;n&quot;
-)paren
+id|ss-&gt;transport_name
+op_assign
+l_string|&quot;Control/Bulk&quot;
 suffix:semicolon
 id|ss-&gt;transport
 op_assign
@@ -6093,11 +6337,9 @@ suffix:semicolon
 r_case
 id|US_PR_CBI
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;Control/Bulk/Interrupt&bslash;n&quot;
-)paren
+id|ss-&gt;transport_name
+op_assign
+l_string|&quot;Control/Bulk/Interrupt&quot;
 suffix:semicolon
 id|ss-&gt;transport
 op_assign
@@ -6112,11 +6354,9 @@ suffix:semicolon
 r_case
 id|US_PR_BULK
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;Bulk&bslash;n&quot;
-)paren
+id|ss-&gt;transport_name
+op_assign
+l_string|&quot;Bulk&quot;
 suffix:semicolon
 id|ss-&gt;transport
 op_assign
@@ -6130,10 +6370,15 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|US_DEBUGPX
+id|ss-&gt;transport_name
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
+id|up
 c_func
 (paren
-l_string|&quot;Unknown&bslash;n&quot;
+op_amp
+id|us_list_semaphore
 )paren
 suffix:semicolon
 id|kfree
@@ -6151,7 +6396,9 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Protocol: &quot;
+l_string|&quot;Transport: %s&bslash;n&quot;
+comma
+id|ss-&gt;transport_name
 )paren
 suffix:semicolon
 r_switch
@@ -6163,11 +6410,9 @@ id|ss-&gt;subclass
 r_case
 id|US_SC_RBC
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;Reduced Block Commands (RBC)&bslash;n&quot;
-)paren
+id|ss-&gt;protocol_name
+op_assign
+l_string|&quot;Reduced Block Commands (RBC)&quot;
 suffix:semicolon
 id|ss-&gt;proto_handler
 op_assign
@@ -6178,11 +6423,9 @@ suffix:semicolon
 r_case
 id|US_SC_8020
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;8020i&bslash;n&quot;
-)paren
+id|ss-&gt;protocol_name
+op_assign
+l_string|&quot;8020i&quot;
 suffix:semicolon
 id|ss-&gt;proto_handler
 op_assign
@@ -6193,22 +6436,52 @@ suffix:semicolon
 r_case
 id|US_SC_QIC
 suffix:colon
-id|US_DEBUGPX
+id|ss-&gt;protocol_name
+op_assign
+l_string|&quot;QIC-157&quot;
+suffix:semicolon
+id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;QIC-157&bslash;n&quot;
+l_string|&quot;Sorry, device not supported.  Please&bslash;n&quot;
 )paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;contact mdharm-usb@one-eyed-alien.net&bslash;n&quot;
+)paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;if you see this message.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|us_list_semaphore
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ss
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|US_SC_8070
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;8070i&bslash;n&quot;
-)paren
+id|ss-&gt;protocol_name
+op_assign
+l_string|&quot;8070i&quot;
 suffix:semicolon
 id|ss-&gt;proto_handler
 op_assign
@@ -6219,11 +6492,9 @@ suffix:semicolon
 r_case
 id|US_SC_SCSI
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;Transparent SCSI&bslash;n&quot;
-)paren
+id|ss-&gt;protocol_name
+op_assign
+l_string|&quot;Transparent SCSI&quot;
 suffix:semicolon
 id|ss-&gt;proto_handler
 op_assign
@@ -6234,11 +6505,9 @@ suffix:semicolon
 r_case
 id|US_SC_UFI
 suffix:colon
-id|US_DEBUGPX
-c_func
-(paren
-l_string|&quot;UFI&bslash;n&quot;
-)paren
+id|ss-&gt;protocol_name
+op_assign
+l_string|&quot;Uniform Floppy Interface (UFI)&quot;
 suffix:semicolon
 id|ss-&gt;proto_handler
 op_assign
@@ -6248,15 +6517,37 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|US_DEBUGPX
+id|ss-&gt;protocol_name
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
+id|up
 c_func
 (paren
-l_string|&quot;Unknown&bslash;n&quot;
+op_amp
+id|us_list_semaphore
 )paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ss
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Protocol: %s&bslash;n&quot;
+comma
+id|ss-&gt;protocol_name
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6276,7 +6567,6 @@ id|ss-&gt;ip_waitq
 )paren
 suffix:semicolon
 multiline_comment|/* set up the IRQ pipe and handler */
-multiline_comment|/* FIXME: This needs to get period from the device */
 id|US_DEBUGP
 c_func
 (paren
@@ -6304,7 +6594,7 @@ id|ss-&gt;irqpipe
 comma
 id|CBI_irq
 comma
-l_int|255
+id|ss-&gt;ep_interval
 comma
 (paren
 r_void
@@ -6321,7 +6611,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;usb_request_irq returned %d&bslash;n&quot;
+l_string|&quot;-- usb_request_irq returned %d&bslash;n&quot;
 comma
 id|result
 )paren

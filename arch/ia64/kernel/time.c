@@ -1,10 +1,10 @@
 multiline_comment|/*&n; * linux/arch/ia64/kernel/time.c&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999-2000 David Mosberger &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; * Copyright (C) 1999-2000 VA Linux Systems&n; * Copyright (C) 1999-2000 Walt Drummond &lt;drummond@valinux.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/hw_irq.h&gt;
@@ -394,6 +394,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+id|printed
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Here we are in the timer irq handler. We have irqs locally&n;&t; * disabled, but we don&squot;t know if the timer_bh is running on&n;&t; * another CPU. We need to avoid to SMP race by acquiring the&n;&t; * xtime_lock.&n;&t; */
 id|write_lock
 c_func
@@ -408,7 +413,7 @@ c_loop
 l_int|1
 )paren
 (brace
-multiline_comment|/* do kernel PC profiling here.  */
+multiline_comment|/*&n;&t;&t; * Do kernel PC profiling here.  We multiply the&n;&t;&t; * instruction number by four so that we can use a&n;&t;&t; * prof_shift of 2 to get instruction-level instead of&n;&t;&t; * just bundle-level accuracy.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -423,6 +428,16 @@ id|do_profile
 c_func
 (paren
 id|regs-&gt;cr_iip
+op_plus
+l_int|4
+op_star
+id|ia64_psr
+c_func
+(paren
+id|regs
+)paren
+op_member_access_from_pointer
+id|ri
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
@@ -499,7 +514,7 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#if !(defined(CONFIG_IA64_SOFTSDV_HACKS) &amp;&amp; defined(CONFIG_SMP))
-multiline_comment|/*&n;&t;&t; * SoftSDV in SMP mode is _slow_, so we do &quot;loose&quot; ticks, &n;&t;&t; * but it&squot;s really OK...&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * SoftSDV in SMP mode is _slow_, so we do &quot;lose&quot; ticks, &n;&t;&t; * but it&squot;s really OK...&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -532,6 +547,13 @@ id|last_time
 op_assign
 id|jiffies
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|printed
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -550,6 +572,11 @@ id|cpu
 )braket
 )paren
 suffix:semicolon
+id|printed
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 macro_line|# ifdef CONFIG_IA64_DEBUG_IRQ
 id|printk
 c_func
@@ -1027,25 +1054,6 @@ r_void
 )paren
 (brace
 multiline_comment|/* we can&squot;t do request_irq() here because the kmalloc() would fail... */
-id|irq_desc
-(braket
-id|TIMER_IRQ
-)braket
-dot
-id|status
-op_assign
-id|IRQ_DISABLED
-suffix:semicolon
-id|irq_desc
-(braket
-id|TIMER_IRQ
-)braket
-dot
-id|handler
-op_assign
-op_amp
-id|irq_type_ia64_internal
-suffix:semicolon
 id|setup_irq
 c_func
 (paren

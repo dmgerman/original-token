@@ -9,12 +9,31 @@ macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-DECL|macro|IPI_DEFAULT_BASE_ADDR
-mdefine_line|#define IPI_DEFAULT_BASE_ADDR&t;0xfee00000
 DECL|macro|XTP_OFFSET
 mdefine_line|#define XTP_OFFSET&t;&t;0x1e0008
+DECL|macro|SMP_IRQ_REDIRECTION
+mdefine_line|#define SMP_IRQ_REDIRECTION     (1 &lt;&lt; 0)
+DECL|macro|SMP_IPI_REDIRECTION
+mdefine_line|#define SMP_IPI_REDIRECTION     (1 &lt;&lt; 1)
 DECL|macro|smp_processor_id
-mdefine_line|#define smp_processor_id() (current-&gt;processor)
+mdefine_line|#define smp_processor_id()&t;(current-&gt;processor)
+DECL|struct|smp_boot_data
+r_struct
+id|smp_boot_data
+(brace
+DECL|member|cpu_count
+r_int
+id|cpu_count
+suffix:semicolon
+DECL|member|cpu_map
+r_int
+id|cpu_map
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 r_extern
 r_int
 r_int
@@ -50,29 +69,25 @@ id|__cpu_logical_map
 id|NR_CPUS
 )braket
 suffix:semicolon
+r_extern
+r_int
+r_char
+id|smp_int_redirect
+suffix:semicolon
+r_extern
+r_char
+id|no_int_routing
+suffix:semicolon
 DECL|macro|cpu_number_map
 mdefine_line|#define cpu_number_map(i)&t;__cpu_number_map[i]
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(i)&t;__cpu_logical_map[i]
-macro_line|#if defined(CONFIG_KDB)
-r_extern
-r_volatile
-r_int
-r_int
-id|smp_kdb_wait
-suffix:semicolon
-macro_line|#endif  /* CONFIG_KDB */
 r_extern
 r_int
 r_int
 id|ap_wakeup_vector
 suffix:semicolon
-multiline_comment|/*&n; * XTP control functions:&n; *    min_xtp   :  route all interrupts to this CPU&n; *    normal_xtp:  nominal XTP value&n; *    raise_xtp :  Route all interrupts away from this CPU&n; *    max_xtp   :  never deliver interrupts to this CPU.&n; */
-multiline_comment|/* &n; * This turns off XTP based interrupt routing.  There is a bug in the handling of &n; * IRQ_INPROGRESS when the same vector appears on more than one CPU. &n; */
-r_extern
-r_int
-id|use_xtp
-suffix:semicolon
+multiline_comment|/*&n; * XTP control functions:&n; *    min_xtp   :  route all interrupts to this CPU&n; *    normal_xtp:  nominal XTP value&n; *    max_xtp   :  never deliver interrupts to this CPU.&n; */
 r_extern
 id|__inline
 r_void
@@ -86,12 +101,14 @@ r_void
 r_if
 c_cond
 (paren
-id|use_xtp
+id|smp_int_redirect
+op_amp
+id|SMP_IRQ_REDIRECTION
 )paren
 id|writeb
 c_func
 (paren
-l_int|0x80
+l_int|0x00
 comma
 id|ipi_base_addr
 op_or
@@ -113,12 +130,14 @@ r_void
 r_if
 c_cond
 (paren
-id|use_xtp
+id|smp_int_redirect
+op_amp
+id|SMP_IRQ_REDIRECTION
 )paren
 id|writeb
 c_func
 (paren
-l_int|0x8e
+l_int|0x08
 comma
 id|ipi_base_addr
 op_or
@@ -140,22 +159,24 @@ r_void
 r_if
 c_cond
 (paren
-id|use_xtp
+id|smp_int_redirect
+op_amp
+id|SMP_IRQ_REDIRECTION
 )paren
 id|writeb
 c_func
 (paren
-l_int|0x8f
+l_int|0x0f
 comma
 id|ipi_base_addr
 op_or
 id|XTP_OFFSET
 )paren
 suffix:semicolon
-multiline_comment|/* Set XTP to max... */
+multiline_comment|/* Set XTP to max */
 )brace
 r_extern
-id|__inline
+id|__inline__
 r_int
 r_int
 DECL|function|hard_smp_processor_id
@@ -195,7 +216,6 @@ suffix:semicolon
 id|lid
 suffix:semicolon
 id|__asm__
-id|__volatile__
 (paren
 l_string|&quot;mov %0=cr.lid&quot;
 suffix:colon
@@ -205,19 +225,53 @@ id|lid
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Damn.  IA64 CPU ID&squot;s are 16 bits long, Linux expect the hard id to be &n;&t; * in the range 0..31.  So, return the low-order bits of the bus-local ID &n;&t; * only and hope it&squot;s less than 32. This needs to be fixed...&n;&t; */
+macro_line|#ifdef LARGE_CPU_ID_OK
 r_return
+id|lid.eid
+op_lshift
+l_int|8
+op_or
+id|lid.id
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+(paren
 (paren
 id|lid.id
-op_amp
-l_int|0x0f
+op_lshift
+l_int|8
+)paren
+op_or
+id|lid.eid
+)paren
+OG
+id|NR_CPUS
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;WARNING: SMP ID %d &gt; NR_CPUS&bslash;n&quot;
+comma
+(paren
+id|lid.id
+op_lshift
+l_int|8
+)paren
+op_or
+id|lid.eid
 )paren
 suffix:semicolon
+r_return
+id|lid.id
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|macro|NO_PROC_ID
-mdefine_line|#define NO_PROC_ID 0xffffffff
+mdefine_line|#define NO_PROC_ID&t;&t;(-1)
 DECL|macro|PROC_CHANGE_PENALTY
-mdefine_line|#define PROC_CHANGE_PENALTY 20
+mdefine_line|#define PROC_CHANGE_PENALTY&t;20
 r_extern
 r_void
 id|__init

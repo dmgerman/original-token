@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Utility to generate asm-ia64/offsets.h.&n; *&n; * Copyright (C) 1999-2000 Hewlett-Packard Co&n; * Copyright (C) 1999-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * Note that this file has dual use: when building the kernel&n; * natively, the file is translated into a binary and executed.  When&n; * building the kernel in a cross-development environment, this file&n; * gets translated into an assembly file which, in turn, is processed&n; * by awk to generate offsets.h.  So if you make any changes to this&n; * file, be sure to verify that the awk procedure still works (see&n; * prin_offsets.awk).&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm-ia64/processor.h&gt;
 macro_line|#include &lt;asm-ia64/ptrace.h&gt;
@@ -165,6 +166,20 @@ id|thread.ksp
 )paren
 )brace
 comma
+macro_line|#ifdef CONFIG_IA32_SUPPORT
+(brace
+l_string|&quot;IA64_TASK_THREAD_SIGMASK_OFFSET&quot;
+comma
+m_offsetof
+(paren
+r_struct
+id|task_struct
+comma
+id|thread.un.sigmask
+)paren
+)brace
+comma
+macro_line|#endif
 (brace
 l_string|&quot;IA64_TASK_PID_OFFSET&quot;
 comma
@@ -322,6 +337,18 @@ id|sc_fr
 l_int|6
 )braket
 )paren
+)brace
+comma
+(brace
+l_string|&quot;IA64_CLONE_VFORK&quot;
+comma
+id|CLONE_VFORK
+)brace
+comma
+(brace
+l_string|&quot;IA64_CLONE_VM&quot;
+comma
+id|CLONE_VM
 )brace
 comma
 )brace

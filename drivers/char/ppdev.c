@@ -2189,6 +2189,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock held - fine */
 DECL|function|pp_poll
 r_static
 r_int

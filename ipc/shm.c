@@ -5693,14 +5693,10 @@ c_func
 (paren
 id|name
 comma
-id|dget
-c_func
-(paren
 id|lock_parent
 c_func
 (paren
 id|shm_sb-&gt;s_root
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -5964,11 +5960,7 @@ c_func
 (paren
 id|name
 comma
-id|dget
-c_func
-(paren
 id|dir
-)paren
 )paren
 suffix:semicolon
 id|error

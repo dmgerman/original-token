@@ -737,8 +737,9 @@ r_sizeof
 id|buf
 )paren
 suffix:semicolon
-id|nr
-op_sub_assign
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -748,15 +749,10 @@ id|inbuf
 comma
 id|nr
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|nr
 )paren
 r_return
-l_int|0
+op_minus
+id|EFAULT
 suffix:semicolon
 r_for
 c_loop
@@ -5773,6 +5769,7 @@ suffix:colon
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/* Called without the kernel lock held - fine */
 DECL|function|normal_poll
 r_static
 r_int

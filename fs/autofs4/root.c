@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/root.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *  Copyright 1999 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
+multiline_comment|/* -*- c -*- --------------------------------------------------------------- *&n; *&n; * linux/fs/autofs/root.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *  Copyright 1999 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
@@ -812,19 +812,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|status
-op_assign
-id|autofs4_wait
-c_func
-(paren
-id|sbi
-comma
-op_amp
-id|dentry-&gt;d_name
-comma
-id|NFY_MOUNT
-)paren
-suffix:semicolon
+multiline_comment|/* status = autofs4_wait(sbi, &amp;dentry-&gt;d_name, NFY_MOUNT); */
 )brace
 multiline_comment|/* If this is an unused directory that isn&squot;t a mount point,&n;&t;   bitch at the daemon and fix it in user space */
 r_if
@@ -1051,11 +1039,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|autofs4_oz_mode
-c_func
-(paren
-id|sbi
-)paren
+id|oz_mode
 )paren
 r_return
 l_int|1
@@ -1376,24 +1360,17 @@ id|oz_mode
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Mark the dentry incomplete, but add it. This is needed so&n;&t; * that the VFS layer knows about the dentry, and we can count&n;&t; * on catching any lookups through the revalidate.&n;&t; *&n;&t; * Let all the hard work be done by the revalidate function that&n;&t; * needs to be able to do this anyway..&n;&t; *&n;&t; * We need to do this before we release the directory semaphore.&n;&t; */
-r_if
-c_cond
-(paren
-id|dir-&gt;i_ino
-op_eq
-id|AUTOFS_ROOT_INO
-)paren
 id|dentry-&gt;d_op
 op_assign
 op_amp
 id|autofs4_root_dentry_operations
 suffix:semicolon
-r_else
-id|dentry-&gt;d_op
-op_assign
-op_amp
-id|autofs4_dentry_operations
-suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|oz_mode
+)paren
 id|dentry-&gt;d_flags
 op_or_assign
 id|DCACHE_AUTOFS_PENDING
@@ -1684,23 +1661,14 @@ comma
 id|symname
 )paren
 suffix:semicolon
-id|autofs4_ihash_insert
-c_func
-(paren
-op_amp
-id|sbi-&gt;ihash
-comma
-id|ino
-)paren
-suffix:semicolon
 id|inode
 op_assign
-id|iget
+id|autofs4_get_inode
 c_func
 (paren
 id|dir-&gt;i_sb
 comma
-id|ino-&gt;ino
+id|ino
 )paren
 suffix:semicolon
 id|d_instantiate
@@ -1714,9 +1682,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir-&gt;i_ino
+id|dir
 op_eq
-id|AUTOFS_ROOT_INO
+id|dir-&gt;i_sb-&gt;s_root-&gt;d_inode
 )paren
 id|dentry-&gt;d_op
 op_assign
@@ -2161,23 +2129,14 @@ r_return
 op_minus
 id|ENOSPC
 suffix:semicolon
-id|autofs4_ihash_insert
-c_func
-(paren
-op_amp
-id|sbi-&gt;ihash
-comma
-id|ino
-)paren
-suffix:semicolon
 id|inode
 op_assign
-id|iget
+id|autofs4_get_inode
 c_func
 (paren
 id|dir-&gt;i_sb
 comma
-id|ino-&gt;ino
+id|ino
 )paren
 suffix:semicolon
 id|d_instantiate
@@ -2191,9 +2150,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir-&gt;i_ino
+id|dir
 op_eq
-id|AUTOFS_ROOT_INO
+id|dir-&gt;i_sb-&gt;s_root-&gt;d_inode
 )paren
 id|dentry-&gt;d_op
 op_assign

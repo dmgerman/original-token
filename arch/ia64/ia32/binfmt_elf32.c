@@ -661,6 +661,42 @@ id|regs-&gt;loadrs
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; *  According to the ABI %edx points to an `atexit&squot; handler.&n;&t; *  Since we don&squot;t have one we&squot;ll set it to 0 and initialize&n;&t; *  all the other registers just to make things more deterministic,&n;&t; *  ala the i386 implementation.&n;&t; */
+id|regs-&gt;r8
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* %eax */
+id|regs-&gt;r11
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* %ebx */
+id|regs-&gt;r9
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* %ecx */
+id|regs-&gt;r10
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* %edx */
+id|regs-&gt;r13
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* %ebp */
+id|regs-&gt;r14
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* %esi */
+id|regs-&gt;r15
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* %edi */
 )brace
 DECL|macro|STACK_TOP
 macro_line|#undef STACK_TOP

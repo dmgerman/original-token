@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SMP Support&n; *&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * &n; * Lots of stuff stolen from arch/alpha/kernel/smp.c&n; *&n; *  99/10/05 davidm&t;Update to bring it in sync with new command-line processing scheme.&n; */
+multiline_comment|/*&n; * SMP Support&n; *&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * &n; * Lots of stuff stolen from arch/alpha/kernel/smp.c&n; *&n; *  00/03/31 Rohit Seth &lt;rohit.seth@intel.com&gt;&t;Fixes for Bootstrap Processor &amp; cpu_online_map&n; *&t;&t;&t;now gets done here (instead of setup.c)&n; *  99/10/05 davidm&t;Update to bring it in sync with new command-line processing scheme.&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
@@ -13,35 +13,6 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/current.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
-macro_line|#ifdef CONFIG_KDB
-macro_line|#include &lt;linux/kdb.h&gt;
-r_void
-id|smp_kdb_interrupt
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_void
-id|kdb_global
-c_func
-(paren
-r_int
-id|cpuid
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|smp_kdb_wait
-suffix:semicolon
-r_extern
-r_int
-id|kdb_new_cpu
-suffix:semicolon
-macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -76,9 +47,10 @@ id|cpu_now_booting
 suffix:semicolon
 multiline_comment|/* Used by head.S to find idle task */
 r_extern
+r_volatile
 r_int
 r_int
-id|cpu_initialized
+id|cpu_online_map
 suffix:semicolon
 multiline_comment|/* Bitmap of available cpu&squot;s */
 r_extern
@@ -96,15 +68,25 @@ id|kernel_flag
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#ifdef CONFIG_KDB
-DECL|variable|cpu_online_map
-r_int
-r_int
-id|cpu_online_map
-op_assign
-l_int|1
+DECL|variable|smp
+r_struct
+id|smp_boot_data
+id|__initdata
+id|smp
 suffix:semicolon
-macro_line|#endif
+DECL|variable|no_int_routing
+r_char
+id|__initdata
+id|no_int_routing
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|smp_int_redirect
+r_int
+r_char
+id|smp_int_redirect
+suffix:semicolon
+multiline_comment|/* are INT and IPI redirectable by the chipset? */
 DECL|variable|__cpu_number_map
 r_volatile
 r_int
@@ -156,14 +138,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Set when the idlers are all forked */
-DECL|variable|ipi_base_addr
-r_int
-r_int
-id|ipi_base_addr
-op_assign
-id|IPI_DEFAULT_BASE_ADDR
-suffix:semicolon
-multiline_comment|/* Base addr of IPI table */
 DECL|variable|cacheflush_time
 id|cycles_t
 id|cacheflush_time
@@ -239,37 +213,18 @@ id|smp_call_struct
 op_star
 id|smp_call_function_data
 suffix:semicolon
-macro_line|#ifdef CONFIG_KDB
-DECL|variable|smp_kdb_wait
-r_int
-r_int
-id|smp_kdb_wait
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Bitmask of waiters */
-macro_line|#endif
 macro_line|#ifdef&t;CONFIG_ITANIUM_ASTEP_SPECIFIC
 r_extern
 id|spinlock_t
 id|ivr_read_lock
 suffix:semicolon
 macro_line|#endif
-DECL|variable|use_xtp
-r_int
-id|use_xtp
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* XXX */
 DECL|macro|IPI_RESCHEDULE
 mdefine_line|#define IPI_RESCHEDULE&t;        0
 DECL|macro|IPI_CALL_FUNC
 mdefine_line|#define IPI_CALL_FUNC&t;        1
 DECL|macro|IPI_CPU_STOP
 mdefine_line|#define IPI_CPU_STOP&t;        2
-DECL|macro|IPI_KDB_INTERRUPT
-mdefine_line|#define IPI_KDB_INTERRUPT&t;4
 multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
 DECL|function|nosmp
 r_static
@@ -333,6 +288,34 @@ comma
 id|maxcpus
 )paren
 suffix:semicolon
+r_static
+r_int
+id|__init
+DECL|function|nointroute
+id|nointroute
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+id|no_int_routing
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;nointroute&quot;
+comma
+id|nointroute
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Yoink this CPU from the runnable list... &n; */
 r_void
 DECL|function|halt_processor
@@ -351,7 +334,7 @@ c_func
 )paren
 comma
 op_amp
-id|cpu_initialized
+id|cpu_online_map
 )paren
 suffix:semicolon
 id|max_xtp
@@ -581,19 +564,6 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_KDB
-r_case
-id|IPI_KDB_INTERRUPT
-suffix:colon
-id|smp_kdb_interrupt
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -625,98 +595,6 @@ c_func
 suffix:semicolon
 multiline_comment|/* Order data access and bit testing. */
 )brace
-)brace
-r_static
-r_inline
-r_void
-DECL|function|send_IPI
-id|send_IPI
-c_func
-(paren
-r_int
-id|dest_cpu
-comma
-r_int
-r_char
-id|vector
-)paren
-(brace
-r_int
-r_int
-id|ipi_addr
-suffix:semicolon
-r_int
-r_int
-id|ipi_data
-suffix:semicolon
-macro_line|#ifdef&t;CONFIG_ITANIUM_ASTEP_SPECIFIC
-r_int
-r_int
-id|flags
-suffix:semicolon
-macro_line|#endif
-id|ipi_data
-op_assign
-id|vector
-suffix:semicolon
-id|ipi_addr
-op_assign
-id|ipi_base_addr
-op_or
-(paren
-(paren
-id|dest_cpu
-op_lshift
-l_int|8
-)paren
-op_lshift
-l_int|4
-)paren
-suffix:semicolon
-multiline_comment|/* 16-bit SAPIC ID&squot;s; assume CPU bus 0 */
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef&t;CONFIG_ITANIUM_ASTEP_SPECIFIC
-multiline_comment|/*&n;&t; * Disable IVR reads&n;&t; */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|writeq
-c_func
-(paren
-id|ipi_data
-comma
-id|ipi_addr
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|writeq
-c_func
-(paren
-id|ipi_data
-comma
-id|ipi_addr
-)paren
-suffix:semicolon
-macro_line|#endif&t;/* CONFIG_ITANIUM_ASTEP_SPECIFIC */
 )brace
 r_static
 r_inline
@@ -753,12 +631,16 @@ op_lshift
 id|op
 )paren
 suffix:semicolon
-id|send_IPI
+id|ipi_send
 c_func
 (paren
 id|dest_cpu
 comma
 id|IPI_IRQ
+comma
+id|IA64_IPI_DM_INT
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1557,6 +1439,11 @@ l_int|2
 )paren
 )paren
 suffix:semicolon
+id|ia64_srlz_d
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ia64_itr
 c_func
 (paren
@@ -1587,6 +1474,11 @@ id|_PAGE_AR_RWX
 )paren
 comma
 id|_PAGE_SIZE_256M
+)paren
+suffix:semicolon
+id|ia64_srlz_i
+c_func
+(paren
 )paren
 suffix:semicolon
 id|flags
@@ -1718,6 +1610,39 @@ c_func
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|test_and_set_bit
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+op_amp
+id|cpu_online_map
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CPU#%d already initialized!&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+id|machine_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -1763,6 +1688,17 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupts have been off till now. */
+id|printk
+c_func
+(paren
+l_string|&quot;SMP: CPU %d starting idle loop&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
 id|cpu_idle
 c_func
 (paren
@@ -1891,12 +1827,16 @@ op_assign
 id|cpunum
 suffix:semicolon
 multiline_comment|/* Kick the AP in the butt */
-id|send_IPI
+id|ipi_send
 c_func
 (paren
 id|cpuid
 comma
 id|ap_wakeup_vector
+comma
+id|IA64_IPI_DM_INT
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|ia64_srlz_i
@@ -1934,7 +1874,7 @@ c_func
 id|cpuid
 comma
 op_amp
-id|cpu_initialized
+id|cpu_online_map
 )paren
 )paren
 r_goto
@@ -1943,7 +1883,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|100
 )paren
 suffix:semicolon
 id|barrier
@@ -1962,8 +1902,7 @@ id|cpuid
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 id|alive
 suffix:colon
@@ -1975,23 +1914,6 @@ id|cpuid
 op_assign
 id|cpunum
 suffix:semicolon
-macro_line|#ifdef CONFIG_KDB
-id|cpu_online_map
-op_or_assign
-(paren
-l_int|1
-op_lshift
-id|cpunum
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;DEBUGGER: cpu_online_map = 0x%08x&bslash;n&quot;
-comma
-id|cpu_online_map
-)paren
-suffix:semicolon
-macro_line|#endif
 id|__cpu_logical_map
 (braket
 id|cpunum
@@ -2000,7 +1922,7 @@ op_assign
 id|cpuid
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called by smp_init bring all the secondaries online and hold them.  &n; * XXX: this is ACPI specific; it uses &quot;magic&quot; variables exported from acpi.c &n; *      to &squot;discover&squot; the AP&squot;s.  Blech.&n; */
@@ -2023,20 +1945,6 @@ suffix:semicolon
 r_int
 r_int
 id|bogosum
-suffix:semicolon
-r_int
-id|sapic_id
-suffix:semicolon
-r_extern
-r_int
-id|acpi_cpus
-suffix:semicolon
-r_extern
-r_int
-id|acpi_apic_map
-(braket
-l_int|32
-)braket
 suffix:semicolon
 multiline_comment|/* Take care of some initial bookkeeping.  */
 id|memset
@@ -2134,6 +2042,36 @@ c_func
 id|bootstrap_processor
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|test_and_set_bit
+c_func
+(paren
+id|bootstrap_processor
+comma
+op_amp
+id|cpu_online_map
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CPU#%d already initialized!&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+id|machine_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|init_idle
 c_func
 (paren
@@ -2161,7 +2099,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|acpi_cpus
+id|max_cpus
+op_ne
+op_minus
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Limiting CPUs to %d&bslash;n&quot;
+comma
+id|max_cpus
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smp.cpu_count
 OG
 l_int|1
 )paren
@@ -2191,7 +2145,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|acpi_apic_map
+id|smp.cpu_map
 (braket
 id|i
 )braket
@@ -2199,27 +2153,14 @@ op_eq
 op_minus
 l_int|1
 op_logical_or
-id|acpi_apic_map
+id|smp.cpu_map
 (braket
 id|i
 )braket
 op_eq
 id|bootstrap_processor
-op_lshift
-l_int|8
 )paren
-multiline_comment|/* XXX Fix me Walt */
 r_continue
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * IA64 SAPIC ID&squot;s are 16-bits.  See asm/smp.h for more info &n;&t;&t;&t; */
-id|sapic_id
-op_assign
-id|acpi_apic_map
-(braket
-id|i
-)braket
-op_rshift
-l_int|8
 suffix:semicolon
 r_if
 c_cond
@@ -2227,10 +2168,15 @@ c_cond
 id|smp_boot_one_cpu
 c_func
 (paren
-id|sapic_id
+id|smp.cpu_map
+(braket
+id|i
+)braket
 comma
 id|cpu_count
 )paren
+op_eq
+l_int|0
 )paren
 r_continue
 suffix:semicolon
@@ -2238,6 +2184,16 @@ id|cpu_count
 op_increment
 suffix:semicolon
 multiline_comment|/* Count good CPUs only... */
+multiline_comment|/* &n;&t;&t;&t; * Bail if we&squot;ve started as many CPUS as we&squot;ve been told to.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|cpu_count
+op_eq
+id|max_cpus
+)paren
+r_break
+suffix:semicolon
 )brace
 )brace
 r_if
@@ -2254,8 +2210,6 @@ c_func
 id|KERN_ERR
 l_string|&quot;SMP: Bootstrap processor only.&bslash;n&quot;
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|bogosum
@@ -2280,7 +2234,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|cpu_initialized
+id|cpu_online_map
 op_amp
 (paren
 l_int|1L
@@ -2476,163 +2430,14 @@ c_func
 l_string|&quot;     Forcing UP mode&bslash;n&quot;
 )paren
 suffix:semicolon
+id|max_cpus
+op_assign
+l_int|0
+suffix:semicolon
 id|smp_num_cpus
 op_assign
 l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_KDB
-DECL|function|smp_kdb_stop
-r_void
-id|smp_kdb_stop
-(paren
-r_int
-id|all
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|all
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;Sending IPI to all on CPU %i&bslash;n&quot;
-comma
-id|smp_processor_id
-(paren
-)paren
-)paren
-suffix:semicolon
-id|smp_kdb_wait
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-id|clear_bit
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-op_amp
-id|smp_kdb_wait
-)paren
-suffix:semicolon
-id|send_IPI_allbutself
-(paren
-id|IPI_KDB_INTERRUPT
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-(paren
-l_string|&quot;Sending IPI to self on CPU %i&bslash;n&quot;
-comma
-id|smp_processor_id
-(paren
-)paren
-)paren
-suffix:semicolon
-id|set_bit
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-op_amp
-id|smp_kdb_wait
-)paren
-suffix:semicolon
-id|clear_bit
-(paren
-id|__cpu_logical_map
-(braket
-id|kdb_new_cpu
-)braket
-comma
-op_amp
-id|smp_kdb_wait
-)paren
-suffix:semicolon
-id|smp_kdb_interrupt
-(paren
-id|regs
-)paren
-suffix:semicolon
-)brace
-)brace
-DECL|function|smp_kdb_interrupt
-r_void
-id|smp_kdb_interrupt
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;kdb: IPI on CPU %i with mask 0x%08x&bslash;n&quot;
-comma
-id|smp_processor_id
-(paren
-)paren
-comma
-id|smp_kdb_wait
-)paren
-suffix:semicolon
-multiline_comment|/* All CPUs spin here forever */
-r_while
-c_loop
-(paren
-id|test_bit
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-op_amp
-id|smp_kdb_wait
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Enter KDB on CPU selected by KDB on the last CPU */
-r_if
-c_cond
-(paren
-id|__cpu_logical_map
-(braket
-id|kdb_new_cpu
-)braket
-op_eq
-id|smp_processor_id
-(paren
-)paren
-)paren
-(brace
-id|kdb
-(paren
-id|KDB_REASON_SWITCH
-comma
-l_int|0
-comma
-id|regs
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 eof

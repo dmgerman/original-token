@@ -1,12 +1,12 @@
 multiline_comment|/*&n; * Advanced Configuration and Power Interface &n; *&n; * Based on &squot;ACPI Specification 1.0b&squot; February 2, 1999 and &n; * &squot;IA-64 Extensions to ACPI Specification&squot; Revision 0.6&n; * &n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999,2000 Walt Drummond &lt;drummond@valinux.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/acpi-ext.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
@@ -16,31 +16,23 @@ DECL|macro|ACPI_DEBUG
 macro_line|#undef ACPI_DEBUG&t;&t;/* Guess what this does? */
 macro_line|#ifdef CONFIG_SMP
 r_extern
-r_int
-r_int
-id|ipi_base_addr
+r_struct
+id|smp_boot_data
+id|smp
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* These are ugly but will be reclaimed by the kernel */
-DECL|variable|acpi_cpus
+DECL|variable|available_cpus
 r_int
 id|__initdata
-id|acpi_cpus
+id|available_cpus
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|acpi_apic_map
+DECL|variable|total_cpus
 r_int
 id|__initdata
-id|acpi_apic_map
-(braket
-l_int|32
-)braket
-suffix:semicolon
-DECL|variable|cpu_cnt
-r_int
-id|__initdata
-id|cpu_cnt
+id|total_cpus
 op_assign
 l_int|0
 suffix:semicolon
@@ -100,7 +92,7 @@ c_func
 (paren
 l_string|&quot;      CPU %d (%.04x:%.04x): &quot;
 comma
-id|cpu_cnt
+id|total_cpus
 comma
 id|lsapic-&gt;eid
 comma
@@ -162,12 +154,14 @@ c_func
 l_string|&quot;Available.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|acpi_cpus
+id|available_cpus
 op_increment
 suffix:semicolon
-id|acpi_apic_map
+macro_line|#ifdef CONFIG_SMP
+macro_line|# if LARGE_CPU_ID_OK
+id|smp.cpu_map
 (braket
-id|cpu_cnt
+id|total_cpus
 )braket
 op_assign
 (paren
@@ -178,8 +172,18 @@ l_int|8
 op_or
 id|lsapic-&gt;eid
 suffix:semicolon
+macro_line|# else
+id|smp.cpu_map
+(braket
+id|total_cpus
+)braket
+op_assign
+id|lsapic-&gt;id
+suffix:semicolon
+macro_line|# endif
+macro_line|#endif
 )brace
-id|cpu_cnt
+id|total_cpus
 op_increment
 suffix:semicolon
 )brace
@@ -601,7 +605,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef ACPI_DEBUG
+macro_line|#if 1/*def ACPI_DEBUG*/
 id|printk
 c_func
 (paren
@@ -713,31 +717,35 @@ comma
 op_star
 id|end
 suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|acpi_apic_map
-comma
-op_minus
-l_int|1
-comma
-r_sizeof
-(paren
-id|acpi_apic_map
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Base address of IPI Message Block */
 id|ipi_base_addr
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|ioremap
 c_func
 (paren
 id|msapic-&gt;interrupt_block
 comma
 l_int|0
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|memset
+c_func
+(paren
+op_amp
+id|smp
+comma
+op_minus
+l_int|1
+comma
+r_sizeof
+(paren
+id|smp
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -831,14 +839,32 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Move to next table entry. */
-id|p
-op_add_assign
-op_star
+DECL|macro|BAD_ACPI_TABLE
+mdefine_line|#define BAD_ACPI_TABLE
+macro_line|#ifdef BAD_ACPI_TABLE
+multiline_comment|/*&n;&t;&t; * Some prototype Lion&squot;s have a bad ACPI table&n;&t;&t; * requiring this fix.  Without this fix, those&n;&t;&t; * machines crash during bootup.&n;&t;&t; */
+r_if
+c_cond
 (paren
 id|p
-op_plus
+(braket
 l_int|1
+)braket
+op_eq
+l_int|0
 )paren
+id|p
+op_assign
+id|end
+suffix:semicolon
+r_else
+macro_line|#endif
+id|p
+op_add_assign
+id|p
+(braket
+l_int|1
+)braket
 suffix:semicolon
 )brace
 multiline_comment|/* Make bootup pretty */
@@ -847,9 +873,9 @@ c_func
 (paren
 l_string|&quot;      %d CPUs available, %d CPUs total&bslash;n&quot;
 comma
-id|acpi_cpus
+id|available_cpus
 comma
-id|cpu_cnt
+id|total_cpus
 )paren
 suffix:semicolon
 )brace
@@ -1044,11 +1070,11 @@ id|hdrp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* while() */
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
-id|acpi_cpus
+id|available_cpus
 op_eq
 l_int|0
 )paren
@@ -1059,12 +1085,17 @@ c_func
 l_string|&quot;ACPI: Found 0 CPUS; assuming 1&bslash;n&quot;
 )paren
 suffix:semicolon
-id|acpi_cpus
+id|available_cpus
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* We&squot;ve got at least one of these, no? */
 )brace
+id|smp.cpu_count
+op_assign
+id|available_cpus
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

@@ -3716,11 +3716,7 @@ c_func
 (paren
 id|silly
 comma
-id|dget
-c_func
-(paren
 id|dentry-&gt;d_parent
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * N.B. Better to return EBUSY here ... it could be&n;&t;&t; * dangerous to delete the file while it&squot;s in use.&n;&t;&t; */

@@ -45,6 +45,31 @@ id|tm_isdst
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * This data structure is inspired by the EFI (v0.92) wakeup&n; * alarm API.&n; */
+DECL|struct|rtc_wkalrm
+r_struct
+id|rtc_wkalrm
+(brace
+DECL|member|enabled
+r_int
+r_char
+id|enabled
+suffix:semicolon
+multiline_comment|/* 0 = alarm disable, 1 = alarm disabled */
+DECL|member|pending
+r_int
+r_char
+id|pending
+suffix:semicolon
+multiline_comment|/* 0 = alarm pending, 1 = alarm not pending */
+DECL|member|time
+r_struct
+id|rtc_time
+id|time
+suffix:semicolon
+multiline_comment|/* time the alarm is set to */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * ioctl calls that are permitted to the /dev/rtc interface, if &n; * CONFIG_RTC/CONFIG_EFI_RTC was enabled.&n; */
 DECL|macro|RTC_AIE_ON
 mdefine_line|#define RTC_AIE_ON&t;_IO(&squot;p&squot;, 0x01)&t;/* Alarm int. enable on&t;&t;*/
@@ -74,5 +99,9 @@ DECL|macro|RTC_EPOCH_READ
 mdefine_line|#define RTC_EPOCH_READ&t;_IOR(&squot;p&squot;, 0x0d, unsigned long)&t; /* Read epoch      */
 DECL|macro|RTC_EPOCH_SET
 mdefine_line|#define RTC_EPOCH_SET&t;_IOW(&squot;p&squot;, 0x0e, unsigned long)&t; /* Set epoch       */
+DECL|macro|RTC_WKALM_SET
+mdefine_line|#define RTC_WKALM_SET&t;_IOW(&squot;p&squot;, 0x0f, struct rtc_wkalrm)/* Set wakeup alarm*/
+DECL|macro|RTC_WKALM_RD
+mdefine_line|#define RTC_WKALM_RD&t;_IOR(&squot;p&squot;, 0x10, struct rtc_wkalrm)/* Get wakeup alarm*/
 macro_line|#endif /* _LINUX_RTC_H_ */
 eof

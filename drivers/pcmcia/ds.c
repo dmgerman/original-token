@@ -2863,6 +2863,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* ds_write */
 multiline_comment|/*====================================================================*/
+multiline_comment|/* No kernel lock - fine */
 DECL|function|ds_poll
 r_static
 id|u_int

@@ -9302,6 +9302,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - fine */
 DECL|function|vwsnd_audio_poll
 r_static
 r_int

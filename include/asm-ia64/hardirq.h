@@ -73,12 +73,12 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int
-r_char
+r_int
 id|global_irq_holder
 suffix:semicolon
 r_extern
-r_int
 r_volatile
+r_int
 r_int
 id|global_irq_lock
 suffix:semicolon

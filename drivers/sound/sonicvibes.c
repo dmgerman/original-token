@@ -7591,6 +7591,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - we have our own spinlock */
 DECL|function|sv_poll
 r_static
 r_int
@@ -11213,6 +11214,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - we have our own spinlock */
 DECL|function|sv_midi_poll
 r_static
 r_int

@@ -3273,6 +3273,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock held - fine */
 DECL|function|aux_poll
 r_static
 r_int

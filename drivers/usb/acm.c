@@ -792,7 +792,13 @@ op_amp
 id|acm-&gt;tqueue
 comma
 op_amp
-id|tq_scheduler
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
 )paren
 suffix:semicolon
 )brace

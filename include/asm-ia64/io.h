@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_IO_H
 DECL|macro|_ASM_IA64_IO_H
 mdefine_line|#define _ASM_IA64_IO_H
-multiline_comment|/*&n; * This file contains the definitions for the emulated IO instructions&n; * inb/inw/inl/outb/outw/outl and the &quot;string versions&quot; of the same&n; * (insb/insw/insl/outsb/outsw/outsl). You can also use &quot;pausing&quot;&n; * versions of the single-IO instructions (inb_p/inw_p/..).&n; *&n; * This file is not meant to be obfuscating: it&squot;s just complicated to&n; * (a) handle it all in a way that makes gcc able to optimize it as&n; * well as possible and (b) trying to avoid writing the same thing&n; * over and over again with slight variations and possibly making a&n; * mistake somewhere.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Asit Mallick &lt;asit.k.mallick@intel.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; */
+multiline_comment|/*&n; * This file contains the definitions for the emulated IO instructions&n; * inb/inw/inl/outb/outw/outl and the &quot;string versions&quot; of the same&n; * (insb/insw/insl/outsb/outsw/outsl). You can also use &quot;pausing&quot;&n; * versions of the single-IO instructions (inb_p/inw_p/..).&n; *&n; * This file is not meant to be obfuscating: it&squot;s just complicated to&n; * (a) handle it all in a way that makes gcc able to optimize it as&n; * well as possible and (b) trying to avoid writing the same thing&n; * over and over again with slight variations and possibly making a&n; * mistake somewhere.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Asit Mallick &lt;asit.k.mallick@intel.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; */
 multiline_comment|/* We don&squot;t use IO slowdowns on the ia64, but.. */
 DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
@@ -812,12 +812,12 @@ multiline_comment|/*&n; * The address passed to these functions are ioremap()ped
 r_extern
 r_inline
 r_int
-r_int
+r_char
 DECL|function|__readb
 id|__readb
 (paren
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -839,8 +839,8 @@ r_int
 DECL|function|__readw
 id|__readw
 (paren
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -862,8 +862,8 @@ r_int
 DECL|function|__readl
 id|__readl
 (paren
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -885,8 +885,8 @@ r_int
 DECL|function|__readq
 id|__readq
 (paren
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -911,8 +911,8 @@ r_int
 r_char
 id|val
 comma
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -938,8 +938,8 @@ r_int
 r_int
 id|val
 comma
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -965,8 +965,8 @@ r_int
 r_int
 id|val
 comma
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -992,8 +992,8 @@ r_int
 r_int
 id|val
 comma
-r_int
-r_int
+r_void
+op_star
 id|addr
 )paren
 (brace
@@ -1010,13 +1010,13 @@ id|val
 suffix:semicolon
 )brace
 DECL|macro|readb
-mdefine_line|#define readb&t;&t;__readb
+mdefine_line|#define readb(a)&t;__readb((void *)(a))
 DECL|macro|readw
-mdefine_line|#define readw&t;&t;__readw
+mdefine_line|#define readw(a)&t;__readw((void *)(a))
 DECL|macro|readl
-mdefine_line|#define readl&t;&t;__readl
+mdefine_line|#define readl(a)&t;__readl((void *)(a))
 DECL|macro|readq
-mdefine_line|#define readq&t;&t;__readqq
+mdefine_line|#define readq(a)&t;__readqq((void *)(a))
 DECL|macro|__raw_readb
 mdefine_line|#define __raw_readb&t;readb
 DECL|macro|__raw_readw
@@ -1026,13 +1026,13 @@ mdefine_line|#define __raw_readl&t;readl
 DECL|macro|__raw_readq
 mdefine_line|#define __raw_readq&t;readq
 DECL|macro|writeb
-mdefine_line|#define writeb&t;&t;__writeb
+mdefine_line|#define writeb(v,a)&t;__writeb((v), (void *) (a))
 DECL|macro|writew
-mdefine_line|#define writew&t;&t;__writew
+mdefine_line|#define writew(v,a)&t;__writew((v), (void *) (a))
 DECL|macro|writel
-mdefine_line|#define writel&t;&t;__writel
+mdefine_line|#define writel(v,a)&t;__writel((v), (void *) (a))
 DECL|macro|writeq
-mdefine_line|#define writeq&t;&t;__writeq
+mdefine_line|#define writeq(v,a)&t;__writeq((v), (void *) (a))
 DECL|macro|__raw_writeb
 mdefine_line|#define __raw_writeb&t;writeb
 DECL|macro|__raw_writew

@@ -7457,6 +7457,7 @@ id|arg
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock - we&squot;re using the global irq lock here */
 DECL|function|sequencer_poll
 r_int
 r_int

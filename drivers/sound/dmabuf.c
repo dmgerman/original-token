@@ -6198,6 +6198,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* No kernel lock - DMAbuf_activate_recording protected by global cli/sti */
 DECL|function|poll_input
 r_static
 r_int

@@ -1287,6 +1287,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock held - none needed ;) */
 DECL|function|hung_up_tty_poll
 r_static
 r_int
@@ -5658,6 +5659,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* No kernel lock held - fine */
 DECL|function|tty_poll
 r_static
 r_int

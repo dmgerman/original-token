@@ -7,7 +7,7 @@ macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|EFI_DEBUG
-mdefine_line|#define EFI_DEBUG
+mdefine_line|#define EFI_DEBUG&t;0
 r_extern
 id|efi_status_t
 id|efi_call_phys
@@ -919,17 +919,10 @@ id|efi_map_start
 comma
 op_star
 id|efi_map_end
-comma
-op_star
-id|p
 suffix:semicolon
 id|efi_config_table_t
 op_star
 id|config_tables
-suffix:semicolon
-id|efi_memory_desc_t
-op_star
-id|md
 suffix:semicolon
 id|efi_char16_t
 op_star
@@ -1367,8 +1360,19 @@ id|efi_desc_size
 op_assign
 id|ia64_boot_param.efi_memdesc_size
 suffix:semicolon
-macro_line|#ifdef EFI_DEBUG
+macro_line|#if EFI_DEBUG
 multiline_comment|/* print EFI memory map: */
+(brace
+id|efi_memory_desc_t
+op_star
+id|md
+op_assign
+id|p
+suffix:semicolon
+r_void
+op_star
+id|p
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1424,6 +1428,7 @@ op_rshift
 l_int|8
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 )brace

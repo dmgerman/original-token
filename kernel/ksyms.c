@@ -808,6 +808,13 @@ c_func
 id|bdget
 )paren
 suffix:semicolon
+DECL|variable|bdput
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|bdput
+)paren
+suffix:semicolon
 DECL|variable|bread
 id|EXPORT_SYMBOL
 c_func

@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/securebits.h&gt;
+macro_line|#include &lt;linux/fs_struct.h&gt;
 multiline_comment|/*&n; * cloning flags:&n; */
 DECL|macro|CSIGNAL
 mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */
@@ -303,42 +304,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|INIT_FILES
 mdefine_line|#define INIT_FILES { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;RW_LOCK_UNLOCKED, &bslash;&n;&t;NR_OPEN_DEFAULT, &bslash;&n;&t;__FD_SETSIZE, &bslash;&n;&t;0, &bslash;&n;&t;&amp;init_files.fd_array[0], &bslash;&n;&t;&amp;init_files.close_on_exec_init, &bslash;&n;&t;&amp;init_files.open_fds_init, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ NULL, } &bslash;&n;}
-DECL|struct|fs_struct
-r_struct
-id|fs_struct
-(brace
-DECL|member|count
-id|atomic_t
-id|count
-suffix:semicolon
-DECL|member|umask
-r_int
-id|umask
-suffix:semicolon
-DECL|member|root
-DECL|member|pwd
-r_struct
-id|dentry
-op_star
-id|root
-comma
-op_star
-id|pwd
-suffix:semicolon
-DECL|member|rootmnt
-DECL|member|pwdmnt
-r_struct
-id|vfsmount
-op_star
-id|rootmnt
-comma
-op_star
-id|pwdmnt
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|INIT_FS
-mdefine_line|#define INIT_FS { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;0022, &bslash;&n;&t;NULL, NULL, NULL, NULL &bslash;&n;}
 multiline_comment|/* Maximum number of active map areas.. This is a random (large) number */
 DECL|macro|MAX_MAP_COUNT
 mdefine_line|#define MAX_MAP_COUNT&t;(65536)
@@ -2440,16 +2405,6 @@ suffix:semicolon
 r_extern
 r_void
 id|exit_mm
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|exit_fs
 c_func
 (paren
 r_struct
