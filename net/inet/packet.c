@@ -847,7 +847,7 @@ comma
 id|ip_queue_xmit
 comma
 multiline_comment|/* These two are not actually used */
-id|ip_retransmit
+l_int|NULL
 comma
 l_int|NULL
 comma

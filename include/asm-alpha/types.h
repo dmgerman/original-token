@@ -1,6 +1,34 @@
 macro_line|#ifndef _ALPHA_TYPES_H
 DECL|macro|_ALPHA_TYPES_H
 mdefine_line|#define _ALPHA_TYPES_H
+macro_line|#ifndef _SIZE_T
+DECL|macro|_SIZE_T
+mdefine_line|#define _SIZE_T
+DECL|typedef|size_t
+r_typedef
+r_int
+r_int
+r_int
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef _SSIZE_T
+DECL|macro|_SSIZE_T
+mdefine_line|#define _SSIZE_T
+DECL|typedef|ssize_t
+r_typedef
+r_int
+id|ssize_t
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef _PTRDIFF_T
+DECL|macro|_PTRDIFF_T
+mdefine_line|#define _PTRDIFF_T
+DECL|typedef|ptrdiff_t
+r_typedef
+r_int
+r_int
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * __xx is ok: it doesn&squot;t pollute the POSIX namespace. Use these in the&n; * header files exported to user space&n; */
 DECL|typedef|__s8
 r_typedef

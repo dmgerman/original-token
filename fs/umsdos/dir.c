@@ -50,7 +50,11 @@ op_minus
 id|EISDIR
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Read count directory entries from directory filp&n;&t;Return a negative value from linux/errno.h.&n;&t;Return &gt; 0 if success (the length of the file name).&n;&n;&t;This function is used by the normal readdir VFS entry point and by&n;&t;some function who try to find out info on a file from a pure MSDOS&n;&t;inode. See umsdos_locate_ancestor() below.&n;*/
+DECL|macro|NAME_OFFSET
+mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
+DECL|macro|ROUND_UP
+mdefine_line|#define ROUND_UP(x) (((x)+3) &amp; ~3)
+multiline_comment|/*&n;&t;Read count directory entries from directory filp&n;&t;Return a negative value from linux/errno.h.&n;&t;Return &gt; 0 if success (The amount of byte written in&n;&t;dirent round_up to a word size (32 bits).&n;&n;&t;This function is used by the normal readdir VFS entry point and by&n;&t;some function who try to find out info on a file from a pure MSDOS&n;&t;inode. See umsdos_locate_ancestor() below.&n;*/
 DECL|function|umsdos_readdir_x
 r_static
 r_int
@@ -173,7 +177,19 @@ l_int|0
 suffix:semicolon
 id|ret
 op_assign
+id|ROUND_UP
+c_func
+(paren
+id|NAME_OFFSET
+c_func
+(paren
+id|dirent
+)paren
+op_plus
 l_int|3
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 id|filp-&gt;f_pos
 op_increment
@@ -564,7 +580,19 @@ suffix:semicolon
 )brace
 id|ret
 op_assign
+id|ROUND_UP
+c_func
+(paren
+id|NAME_OFFSET
+c_func
+(paren
+id|dirent
+)paren
+op_plus
 id|entry.name_len
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 id|iput
 (paren
@@ -642,7 +670,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Read count directory entries from directory filp&n;&t;Return a negative value from linux/errno.h.&n;&t;Return &gt; 0 if success (the length of the file name).&n;*/
+multiline_comment|/*&n;&t;Read count directory entries from directory filp&n;&t;Return a negative value from linux/errno.h.&n;&t;Return &gt; 0 if success (the amount of byte written to dirent)&n;*/
 DECL|function|UMSDOS_readdir
 r_static
 r_int

@@ -14545,7 +14545,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;unknown floppy paramter %s&bslash;n&quot;
+l_string|&quot;unknown floppy parameter %s&bslash;n&quot;
 comma
 id|str
 )paren

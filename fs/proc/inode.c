@@ -9,6 +9,11 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+r_extern
+r_int
+r_int
+id|prof_len
+suffix:semicolon
 DECL|function|proc_put_inode
 r_void
 id|proc_put_inode
@@ -548,6 +553,40 @@ id|PAGE_SIZE
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROFILE
+r_case
+id|PROC_PROFILE
+suffix:colon
+id|inode-&gt;i_mode
+op_assign
+id|S_IFREG
+op_or
+id|S_IRUGO
+op_or
+id|S_IWUSR
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|proc_profile_inode_operations
+suffix:semicolon
+id|inode-&gt;i_size
+op_assign
+(paren
+l_int|1
+op_plus
+id|prof_len
+)paren
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|inode-&gt;i_mode

@@ -981,22 +981,6 @@ r_int
 id|new_console
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|blank_screen
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|unblank_screen
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* vt.c */
 r_extern
 r_int

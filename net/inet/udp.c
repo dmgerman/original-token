@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
+macro_line|#include &quot;route.h&quot;
 multiline_comment|/*&n; *&t;SNMP MIB for the UDP layer&n; */
 DECL|variable|udp_statistics
 r_struct
@@ -1611,6 +1612,15 @@ r_int
 id|addr_len
 )paren
 (brace
+r_struct
+id|rtable
+op_star
+id|rt
+suffix:semicolon
+r_int
+r_int
+id|sa
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1674,6 +1684,37 @@ id|EACCES
 suffix:semicolon
 )brace
 multiline_comment|/* Must turn broadcast on first */
+id|rt
+op_assign
+id|ip_rt_route
+c_func
+(paren
+id|usin-&gt;sin_addr.s_addr
+comma
+l_int|NULL
+comma
+op_amp
+id|sa
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rt
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|ENETUNREACH
+suffix:semicolon
+)brace
+id|sk-&gt;saddr
+op_assign
+id|sa
+suffix:semicolon
+multiline_comment|/* Update source address */
 id|sk-&gt;daddr
 op_assign
 id|usin-&gt;sin_addr.s_addr
@@ -2327,7 +2368,7 @@ l_int|NULL
 comma
 id|ip_queue_xmit
 comma
-id|ip_retransmit
+l_int|NULL
 comma
 l_int|NULL
 comma

@@ -637,5 +637,9 @@ op_assign
 id|b
 suffix:semicolon
 )brace
+DECL|macro|inb_p
+mdefine_line|#define inb_p inb
+DECL|macro|outb_p
+mdefine_line|#define outb_p outb
 macro_line|#endif
 eof

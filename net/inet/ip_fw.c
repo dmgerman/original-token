@@ -1428,6 +1428,7 @@ c_func
 r_struct
 id|ip_fw
 op_star
+r_volatile
 op_star
 id|chainptr
 )paren
@@ -1491,6 +1492,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Volatiles to keep some of the compiler versions amused */
 DECL|function|add_to_chain
 r_static
 r_int
@@ -1500,6 +1502,7 @@ c_func
 r_struct
 id|ip_fw
 op_star
+r_volatile
 op_star
 id|chainptr
 comma
@@ -1524,6 +1527,7 @@ suffix:semicolon
 r_struct
 id|ip_fw
 op_star
+r_volatile
 id|chtmp_prev
 op_assign
 l_int|NULL
@@ -2238,6 +2242,7 @@ c_func
 r_struct
 id|ip_fw
 op_star
+r_volatile
 op_star
 id|chainptr
 comma

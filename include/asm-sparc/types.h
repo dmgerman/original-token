@@ -1,35 +1,8 @@
-macro_line|#ifndef _I386_TYPES_H
-DECL|macro|_I386_TYPES_H
-mdefine_line|#define _I386_TYPES_H
-macro_line|#ifndef _SIZE_T
-DECL|macro|_SIZE_T
-mdefine_line|#define _SIZE_T
-DECL|typedef|size_t
-r_typedef
-r_int
-r_int
-r_int
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef _SSIZE_T
-DECL|macro|_SSIZE_T
-mdefine_line|#define _SSIZE_T
-DECL|typedef|ssize_t
-r_typedef
-r_int
-id|ssize_t
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef _PTRDIFF_T
-DECL|macro|_PTRDIFF_T
-mdefine_line|#define _PTRDIFF_T
-DECL|typedef|ptrdiff_t
-r_typedef
-r_int
-r_int
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n; * __xx is ok: it doesn&squot;t pollute the POSIX namespace. Use these in the&n; * header files exported to user space&n; */
+macro_line|#ifndef _SPARC_TYPES_H
+DECL|macro|_SPARC_TYPES_H
+mdefine_line|#define _SPARC_TYPES_H
+multiline_comment|/*&n; * _xx is ok: it doesn&squot;t pollute the POSIX namespace. Use these in the&n; * header files exported to user space   &lt;-- Linus sez this&n; */
+multiline_comment|/* NOTE: I will have to change these when the V9 sparcs come into play,&n; *       however this won&squot;t be for a while.&n; */
 DECL|typedef|__s8
 r_typedef
 r_int
@@ -66,7 +39,7 @@ r_int
 r_int
 id|__u32
 suffix:semicolon
-macro_line|#ifndef __STRICT_ANSI__
+multiline_comment|/* Only 32-bit sparcs for now so.... */
 DECL|typedef|__s64
 r_typedef
 r_int
@@ -74,15 +47,13 @@ r_int
 r_int
 id|__s64
 suffix:semicolon
-DECL|typedef|__u64
+DECL|typedef|__s64
 r_typedef
 r_int
 r_int
 r_int
-id|__u64
+id|__s64
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
 macro_line|#ifdef __KERNEL__
 DECL|typedef|s8
 r_typedef
@@ -120,6 +91,7 @@ r_int
 r_int
 id|u32
 suffix:semicolon
+multiline_comment|/* Again, only have to worry about 32-bits */
 DECL|typedef|s64
 r_typedef
 r_int
@@ -135,5 +107,5 @@ r_int
 id|u64
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif
+macro_line|#endif /* defined(_SPARC_TYPES_H) */
 eof

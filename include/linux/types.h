@@ -2,25 +2,6 @@ macro_line|#ifndef _LINUX_TYPES_H
 DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#ifndef _SIZE_T
-DECL|macro|_SIZE_T
-mdefine_line|#define _SIZE_T
-DECL|typedef|size_t
-r_typedef
-r_int
-r_int
-r_int
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef _SSIZE_T
-DECL|macro|_SSIZE_T
-mdefine_line|#define _SSIZE_T
-DECL|typedef|ssize_t
-r_typedef
-r_int
-id|ssize_t
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifndef _TIME_T
 DECL|macro|_TIME_T
 mdefine_line|#define _TIME_T
@@ -37,15 +18,6 @@ DECL|typedef|clock_t
 r_typedef
 r_int
 id|clock_t
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef _PTRDIFF_T
-DECL|macro|_PTRDIFF_T
-mdefine_line|#define _PTRDIFF_T
-DECL|typedef|ptrdiff_t
-r_typedef
-r_int
-r_int
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef NULL

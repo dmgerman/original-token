@@ -3308,6 +3308,15 @@ id|PAGE_PRESENT
 r_if
 c_cond
 (paren
+id|page
+op_ge
+id|high_memory
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|page

@@ -1157,7 +1157,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: recieve unit start timed out with status %4.4x, cmd %4.4x.&bslash;n&quot;
+l_string|&quot;%s: receive unit start timed out with status %4.4x, cmd %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4459,7 +4459,7 @@ op_assign
 (brace
 l_string|&quot;        &quot;
 comma
-multiline_comment|/* device name inservted by /linux/drivers/net/net_init.c */
+multiline_comment|/* device name inserted by /linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0

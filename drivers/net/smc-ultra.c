@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v1.11 11/21/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1056,6 +1056,17 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Enable shared memory. */
+id|outb
+c_func
+(paren
+id|ULTRA_MEMENB
+comma
+id|dev-&gt;base_addr
+op_minus
+id|ULTRA_NIC_OFFSET
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1112,6 +1123,17 @@ comma
 id|count
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|dev-&gt;base_addr
+op_minus
+id|ULTRA_NIC_OFFSET
+)paren
+suffix:semicolon
+multiline_comment|/* Disable memory. */
 r_return
 id|dev-&gt;rmem_start
 op_plus
@@ -1128,6 +1150,17 @@ comma
 id|count
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|dev-&gt;base_addr
+op_minus
+id|ULTRA_NIC_OFFSET
+)paren
+suffix:semicolon
+multiline_comment|/* Disable memory. */
 r_return
 id|ring_offset
 op_plus
@@ -1180,6 +1213,17 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
+multiline_comment|/* Enable shared memory. */
+id|outb
+c_func
+(paren
+id|ULTRA_MEMENB
+comma
+id|dev-&gt;base_addr
+op_minus
+id|ULTRA_NIC_OFFSET
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1190,6 +1234,17 @@ comma
 id|count
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|dev-&gt;base_addr
+op_minus
+id|ULTRA_NIC_OFFSET
+)paren
+suffix:semicolon
+multiline_comment|/* Disable memory. */
 )brace
 r_static
 r_int

@@ -2091,6 +2091,7 @@ op_amp
 l_int|2
 )paren
 )paren
+(brace
 id|error
 op_assign
 id|get_write_access
@@ -2099,6 +2100,18 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

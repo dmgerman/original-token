@@ -2544,6 +2544,8 @@ op_or
 id|MAP_PRIVATE
 op_or
 id|MAP_DENYWRITE
+op_or
+id|MAP_EXECUTABLE
 comma
 id|elf_ppnt-&gt;p_offset
 op_amp

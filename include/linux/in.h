@@ -186,6 +186,8 @@ DECL|macro|IN_CLASSD
 mdefine_line|#define&t;IN_CLASSD(a)&t;&t;((((long int) (a)) &amp; 0xf0000000) == 0xe0000000)
 DECL|macro|IN_MULTICAST
 mdefine_line|#define&t;IN_MULTICAST(a)&t;&t;IN_CLASSD(a)
+DECL|macro|IN_MULTICAST_NET
+mdefine_line|#define IN_MULTICAST_NET&t;0xF0000000
 DECL|macro|IN_EXPERIMENTAL
 mdefine_line|#define&t;IN_EXPERIMENTAL(a)&t;((((long int) (a)) &amp; 0xe0000000) == 0xe0000000)
 DECL|macro|IN_BADCLASS
@@ -204,13 +206,14 @@ DECL|macro|IN_LOOPBACKNET
 mdefine_line|#define&t;IN_LOOPBACKNET&t;&t;127
 multiline_comment|/* Address to loopback in software to local host.  */
 DECL|macro|INADDR_LOOPBACK
-mdefine_line|#define&t;INADDR_LOOPBACK&t;&t;0x7f000001&t;/* 127.0.0.1&t;&t;*/
-multiline_comment|/*&n; * Options for use with `getsockopt&squot; and `setsockopt&squot; at&n; * the IP level.  LINUX does not yet have the IP_OPTIONS&n; * option (grin), so we undefine it for now.- HJ &amp;&amp; FvK&n; */
-macro_line|#if 0
-macro_line|# define IP_OPTIONS&t;1&t;&t;/* IP per-packet options&t;*/
-macro_line|#endif
-DECL|macro|IP_HDRINCL
-mdefine_line|#define IP_HDRINCL&t;2&t;&t;/* raw packet header option&t;*/
+mdefine_line|#define&t;INADDR_LOOPBACK&t;&t;0x7f000001&t;/* 127.0.0.1   */
+multiline_comment|/* Defines for Multicast INADDR */
+DECL|macro|INADDR_UNSPEC_GROUP
+mdefine_line|#define INADDR_UNSPEC_GROUP   &t;0xe0000000      /* 224.0.0.0   */
+DECL|macro|INADDR_ALLHOSTS_GROUP
+mdefine_line|#define INADDR_ALLHOSTS_GROUP &t;0xe0000001      /* 224.0.0.1   */
+DECL|macro|INADDR_MAX_LOCAL_GROUP
+mdefine_line|#define INADDR_MAX_LOCAL_GROUP  0xe00000ff      /* 224.0.0.255 */
 multiline_comment|/* Linux Internet number representation function declarations. */
 DECL|macro|ntohl
 macro_line|#undef ntohl

@@ -6,13 +6,14 @@ DECL|macro|HZ
 mdefine_line|#define HZ 100
 multiline_comment|/*&n; * System setup and hardware bug flags..&n; */
 r_extern
-r_int
+r_char
 id|hard_math
 suffix:semicolon
 r_extern
-r_int
+r_char
 id|x86
 suffix:semicolon
+multiline_comment|/* lower 4 bits */
 r_extern
 r_char
 id|x86_vendor_id
@@ -21,19 +22,35 @@ l_int|13
 )braket
 suffix:semicolon
 r_extern
+r_char
+id|x86_model
+suffix:semicolon
+multiline_comment|/* lower 4 bits */
+r_extern
+r_char
+id|x86_mask
+suffix:semicolon
+multiline_comment|/* lower 4 bits */
+r_extern
+r_int
+id|x86_capability
+suffix:semicolon
+multiline_comment|/* field of flags */
+r_extern
+r_int
 id|fdiv_bug
 suffix:semicolon
 r_extern
-r_int
+r_char
 id|ignore_irq13
 suffix:semicolon
 r_extern
-r_int
+r_char
 id|wp_works_ok
 suffix:semicolon
 multiline_comment|/* doesn&squot;t work on a 386 */
 r_extern
-r_int
+r_char
 id|hlt_works_ok
 suffix:semicolon
 multiline_comment|/* problems on some 486Dx4&squot;s and old 386&squot;s */

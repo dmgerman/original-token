@@ -310,6 +310,14 @@ comma
 l_string|&quot;ioports&quot;
 )brace
 comma
+(brace
+id|PROC_PROFILE
+comma
+l_int|7
+comma
+l_string|&quot;profile&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

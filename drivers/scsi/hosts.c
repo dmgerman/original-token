@@ -1,11 +1,11 @@
-multiline_comment|/*&n; *&t;hosts.c Copyright (C) 1992 Drew Eckhardt &n; *&t;mid to lowlevel SCSI driver interface by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
-multiline_comment|/*&n; *&t;This file contains the medium level SCSI&n; *&t;host interface initialization, as well as the scsi_hosts array of SCSI&n; *&t;hosts currently present in the system. &n; */
+multiline_comment|/*&n; *&t;hosts.c Copyright (C) 1992 Drew Eckhardt&n; *&t;mid to lowlevel SCSI driver interface by&n; *&t;&t;Drew Eckhardt&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
+multiline_comment|/*&n; *&t;This file contains the medium level SCSI&n; *&t;host interface initialization, as well as the scsi_hosts array of SCSI&n; *&t;hosts currently present in the system.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;scsi.h&quot;
-macro_line|#ifndef NULL 
+macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0L
 macro_line|#endif
@@ -67,11 +67,11 @@ macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.c,v 1.3 1993/09/24 12:21:00 drew Exp drew $&quot;;&n;*/
-multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the &n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized) &n; *&t;with more than one simultaneous host number, can handle being&n; *&t;reentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
+multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the&n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized)&n; *&t;with more than one simultaneous host number, can handle being&n; *&t;reentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
 multiline_comment|/* This is a placeholder for controllers that are not configured into&n;   the system - we do this to ensure that the controller numbering is&n;   always consistent, no matter how the kernel is configured. */
 DECL|macro|NO_CONTROLLER
 mdefine_line|#define NO_CONTROLLER {NULL, NULL, NULL, NULL, NULL, NULL, NULL, &bslash;&n;&t;        NULL, NULL, 0, 0, 0, 0, 0, 0}
-multiline_comment|/*&n; *&t;When figure is run, we don&squot;t want to link to any object code.  Since &n; *&t;the macro for each host will contain function pointers, we cannot &n; *&t;use it and instead must use a &quot;blank&quot; that does no such &n; *&t;idiocy.&n; */
+multiline_comment|/*&n; *&t;When figure is run, we don&squot;t want to link to any object code.  Since&n; *&t;the macro for each host will contain function pointers, we cannot&n; *&t;use it and instead must use a &quot;blank&quot; that does no such&n; *&t;idiocy.&n; */
 DECL|variable|scsi_hosts
 id|Scsi_Host_Template
 op_star
@@ -164,7 +164,7 @@ macro_line|#endif
 suffix:semicolon
 DECL|macro|MAX_SCSI_HOSTS
 mdefine_line|#define MAX_SCSI_HOSTS (sizeof(builtin_scsi_hosts) / sizeof(Scsi_Host_Template))
-multiline_comment|/*&n; *&t;Our semaphores and timeout counters, where size depends on MAX_SCSI_HOSTS here. &n; */
+multiline_comment|/*&n; *&t;Our semaphores and timeout counters, where size depends on MAX_SCSI_HOSTS here.&n; */
 DECL|variable|scsi_hostlist
 r_struct
 id|Scsi_Host
@@ -570,7 +570,7 @@ id|tpnt
 op_increment
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Initialize our semaphores.  -1 is interpreted to mean &n;&t;&t; * &quot;inactive&quot; - where as 0 will indicate a time out condition.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Initialize our semaphores.  -1 is interpreted to mean&n;&t;&t; * &quot;inactive&quot; - where as 0 will indicate a time out condition.&n;&t;&t; */
 id|pcount
 op_assign
 id|next_host
@@ -753,6 +753,7 @@ id|Host
 op_assign
 id|Host-&gt;next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -764,6 +765,7 @@ id|Host-&gt;forbidden_size
 OG
 l_int|0
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -783,6 +785,7 @@ l_int|1
 op_lshift
 l_int|24
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -816,7 +819,8 @@ id|ForbiddenAddress
 op_ge
 id|memory_end
 )paren
-r_break
+r_goto
+id|next_host
 suffix:semicolon
 id|mem_map
 (braket
@@ -828,6 +832,13 @@ id|ForbiddenAddress
 )braket
 op_assign
 id|MAP_PAGE_RESERVED
+suffix:semicolon
+)brace
+)brace
+)brace
+id|next_host
+suffix:colon
+r_continue
 suffix:semicolon
 )brace
 )brace

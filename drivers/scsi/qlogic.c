@@ -1,11 +1,14 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.&n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.37&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.&n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.38a&n;&n;   This also works with loadable SCSI as a module.  Check configuration&n;   options QL_INT_ACTIVE_HIGH and QL_TURBO_PDMA for PCMCIA usage (which&n;   also requires an enabler).&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
+multiline_comment|/* Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
+DECL|macro|QL_INT_ACTIVE_HIGH
+mdefine_line|#define QL_INT_ACTIVE_HIGH 2
 multiline_comment|/* Set the following to 1 to enable the use of interrupts.  Note that 0 tends&n;   to be more stable, but slower (or ties up the system more) */
 DECL|macro|QL_USE_IRQ
 mdefine_line|#define QL_USE_IRQ 1
-multiline_comment|/* Set the following to max out the speed of the PIO PseudoDMA transfers,&n;   again, 0 tends to be slower, but more stable */
+multiline_comment|/* Set the following to max out the speed of the PIO PseudoDMA transfers,&n;   again, 0 tends to be slower, but more stable.  THIS SHOULD BE ZERO FOR&n;   PCMCIA */
 DECL|macro|QL_TURBO_PDMA
 mdefine_line|#define QL_TURBO_PDMA 1
 multiline_comment|/* This will reset all devices when the driver is initialized (during bootup).&n;   The other linux drivers don&squot;t do this, but the DOS drivers do, and after&n;   using DOS or some kind of crash or lockup this will bring things back */
@@ -32,6 +35,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;&t;/* to get disk capacity */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -84,8 +89,8 @@ multiline_comment|/*------------------------------------------------------------
 DECL|macro|REG0
 mdefine_line|#define REG0 ( outb( inb( qbase + 0xd ) &amp; 0x7f , qbase + 0xd ), outb( 4 , qbase + 0xd ))
 DECL|macro|REG1
-mdefine_line|#define REG1 ( outb( inb( qbase + 0xd ) | 0x80 , qbase + 0xd ), outb( 0xb6 , qbase + 0xd ))
-multiline_comment|/* following is watchdog timeout - 0 is longest possible */
+mdefine_line|#define REG1 ( outb( inb( qbase + 0xd ) | 0x80 , qbase + 0xd ), outb( 0xb4 | QL_INT_ACTIVE_HIGH , qbase + 0xd ))
+multiline_comment|/* following is watchdog timeout */
 DECL|macro|WATCHDOG
 mdefine_line|#define WATCHDOG 5000000
 multiline_comment|/*----------------------------------------------------------------*/
@@ -702,13 +707,16 @@ id|k
 suffix:semicolon
 id|i
 op_assign
+id|jiffies
+op_plus
 id|WATCHDOG
 suffix:semicolon
 r_while
 c_loop
 (paren
-op_decrement
 id|i
+OG
+id|jiffies
 op_logical_and
 op_logical_neg
 id|qabort
@@ -734,8 +742,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|i
+op_le
+id|jiffies
 )paren
 r_return
 (paren
@@ -1243,28 +1252,17 @@ suffix:semicolon
 multiline_comment|/* j = inb( qbase + 7 ) &gt;&gt; 5; */
 multiline_comment|/* correct status is supposed to be step 4 */
 multiline_comment|/* it sometimes returns step 3 but with 0 bytes left to send */
+multiline_comment|/* We can try stuffing the FIFO with the max each time, but we will get a&n;   sequence of 3 if any bytes are left (but we do flush the FIFO anyway */
 r_if
 c_cond
 (paren
 id|j
 op_ne
-l_int|4
+l_int|3
 op_logical_and
-(paren
 id|j
 op_ne
-l_int|3
-op_logical_or
-id|inb
-c_func
-(paren
-id|qbase
-op_plus
-l_int|7
-)paren
-op_amp
-l_int|0x1f
-)paren
+l_int|4
 )paren
 (brace
 id|printk
@@ -1533,6 +1531,8 @@ multiline_comment|/* should be 0x10, bus service */
 multiline_comment|/*** Enter Status (and Message In) Phase ***/
 id|k
 op_assign
+id|jiffies
+op_plus
 id|WATCHDOG
 suffix:semicolon
 id|rtrc
@@ -1543,8 +1543,9 @@ l_int|4
 r_while
 c_loop
 (paren
-op_decrement
 id|k
+OG
+id|jiffies
 op_logical_and
 op_logical_neg
 id|qabort
@@ -1567,8 +1568,9 @@ multiline_comment|/* wait for status phase */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|k
+op_le
+id|jiffies
 )paren
 (brace
 id|ql_zap
@@ -2196,6 +2198,21 @@ op_add_assign
 l_int|0x100
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|qbase
+comma
+l_int|0x10
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|REG1
 suffix:semicolon
 r_if
@@ -2415,7 +2432,9 @@ op_decrement
 id|outb
 c_func
 (paren
-l_int|0xb2
+l_int|0xb0
+op_or
+id|QL_INT_ACTIVE_HIGH
 comma
 id|qbase
 op_plus
@@ -2448,7 +2467,9 @@ multiline_comment|/* find IRQ off */
 id|outb
 c_func
 (paren
-l_int|0xb6
+l_int|0xb4
+op_or
+id|QL_INT_ACTIVE_HIGH
 comma
 id|qbase
 op_plus
@@ -2520,7 +2541,7 @@ id|qlirq
 comma
 id|ql_ihandl
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 l_string|&quot;qlogic&quot;
 )paren
@@ -2535,6 +2556,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|snarf_region
+c_func
+(paren
+id|qbase
+comma
+l_int|0x10
+)paren
+suffix:semicolon
 id|hreg
 op_assign
 id|scsi_register
@@ -2550,16 +2579,30 @@ id|hreg-&gt;io_port
 op_assign
 id|qbase
 suffix:semicolon
+id|hreg-&gt;n_io_port
+op_assign
+l_int|16
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qlirq
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
 id|hreg-&gt;irq
 op_assign
 id|qlirq
 suffix:semicolon
+)brace
 id|sprintf
 c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogic Driver version 0.36, chip %02X at %03X, IRQ %d&quot;
+l_string|&quot;Qlogic Driver version 0.38a, chip %02X at %03X, IRQ %d&quot;
 comma
 id|qltyp
 comma
@@ -2765,4 +2808,14 @@ r_return
 id|qinfo
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|QLOGIC
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

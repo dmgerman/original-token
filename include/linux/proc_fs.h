@@ -67,6 +67,10 @@ id|PROC_DMA
 comma
 DECL|enumerator|PROC_IOPORTS
 id|PROC_IOPORTS
+comma
+DECL|enumerator|PROC_PROFILE
+id|PROC_PROFILE
+multiline_comment|/* wether enabled or not */
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos
@@ -344,6 +348,11 @@ r_extern
 r_struct
 id|inode_operations
 id|proc_kcore_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_profile_inode_operations
 suffix:semicolon
 r_extern
 r_struct

@@ -12213,11 +12213,6 @@ id|LMODE_PCM
 suffix:colon
 (brace
 r_int
-id|orig_qlen
-op_assign
-id|pcm_qlen
-suffix:semicolon
-r_int
 id|flag
 suffix:semicolon
 multiline_comment|/* 0 or 2 */

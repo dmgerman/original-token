@@ -920,7 +920,7 @@ id|sock
 op_member_access_from_pointer
 id|i_uid
 op_assign
-id|current-&gt;euid
+id|current-&gt;uid
 suffix:semicolon
 id|SOCK_INODE
 c_func
@@ -930,7 +930,7 @@ id|sock
 op_member_access_from_pointer
 id|i_gid
 op_assign
-id|current-&gt;egid
+id|current-&gt;gid
 suffix:semicolon
 id|SOCK_INODE
 c_func

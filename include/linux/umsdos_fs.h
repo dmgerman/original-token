@@ -185,7 +185,6 @@ DECL|macro|UMSDOS_INIT_EMD
 mdefine_line|#define UMSDOS_INIT_EMD&t;&t;1242&t;/* Create the EMD file if not there */
 DECL|macro|UMSDOS_DOS_SETUP
 mdefine_line|#define UMSDOS_DOS_SETUP&t;1243&t;/* Set the defaults of the MsDOS driver */
-macro_line|#include &lt;linux/stat.h&gt;
 DECL|struct|umsdos_ioctl
 r_struct
 id|umsdos_ioctl
@@ -200,9 +199,106 @@ r_struct
 id|umsdos_dirent
 id|umsdos_dirent
 suffix:semicolon
-DECL|member|stat
+multiline_comment|/* The following structure is used to exchange some data */
+multiline_comment|/* with utilities (umsdos_progs/util/umsdosio.c). The first */
+multiline_comment|/* releases were using struct stat from &quot;sys/stat.h&quot;. This was */
+multiline_comment|/* causing some problem for cross compilation of the kernel */
+multiline_comment|/* Since I am not really using the structure stat, but only some field */
+multiline_comment|/* of it, I have decided to replicate the structure here */
+multiline_comment|/* for compatibility with the binaries out there */
 r_struct
-id|new_stat
+(brace
+DECL|member|st_dev
+id|dev_t
+id|st_dev
+suffix:semicolon
+DECL|member|__pad1
+r_int
+r_int
+id|__pad1
+suffix:semicolon
+DECL|member|st_ino
+id|ino_t
+id|st_ino
+suffix:semicolon
+DECL|member|st_mode
+id|umode_t
+id|st_mode
+suffix:semicolon
+DECL|member|st_nlink
+id|nlink_t
+id|st_nlink
+suffix:semicolon
+DECL|member|st_uid
+id|uid_t
+id|st_uid
+suffix:semicolon
+DECL|member|st_gid
+id|gid_t
+id|st_gid
+suffix:semicolon
+DECL|member|st_rdev
+id|dev_t
+id|st_rdev
+suffix:semicolon
+DECL|member|__pad2
+r_int
+r_int
+id|__pad2
+suffix:semicolon
+DECL|member|st_size
+id|off_t
+id|st_size
+suffix:semicolon
+DECL|member|st_blksize
+r_int
+r_int
+id|st_blksize
+suffix:semicolon
+DECL|member|st_blocks
+r_int
+r_int
+id|st_blocks
+suffix:semicolon
+DECL|member|st_atime
+id|time_t
+id|st_atime
+suffix:semicolon
+DECL|member|__unused1
+r_int
+r_int
+id|__unused1
+suffix:semicolon
+DECL|member|st_mtime
+id|time_t
+id|st_mtime
+suffix:semicolon
+DECL|member|__unused2
+r_int
+r_int
+id|__unused2
+suffix:semicolon
+DECL|member|st_ctime
+id|time_t
+id|st_ctime
+suffix:semicolon
+DECL|member|__unused3
+r_int
+r_int
+id|__unused3
+suffix:semicolon
+DECL|member|__unused4
+r_int
+r_int
+id|__unused4
+suffix:semicolon
+DECL|member|__unused5
+r_int
+r_int
+id|__unused5
+suffix:semicolon
+DECL|member|stat
+)brace
 id|stat
 suffix:semicolon
 DECL|member|version

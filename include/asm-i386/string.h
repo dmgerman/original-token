@@ -1444,7 +1444,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* we might want to write optimized versions of these later */
 DECL|macro|__constant_c_memset
-mdefine_line|#define __constant_c_memset(s,c,count) __memset_generic((s),(c),(count))
+mdefine_line|#define __constant_c_memset(s,c,count) __memset_generic((s),(unsigned char)(c),(count))
 DECL|macro|__constant_count_memset
 mdefine_line|#define __constant_count_memset(s,c,count) __memset_generic((s),(c),(count))
 multiline_comment|/*&n; * This looks horribly ugly, but the compiler can optimize it totally,&n; * as we by now know that both pattern and count is constant..&n; */

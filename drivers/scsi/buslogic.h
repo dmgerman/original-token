@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;buslogic.h&t;(C) 1993 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; */
+multiline_comment|/*&n; *&t;buslogic.h&t;Copyright (C) 1993, 1994 David B. Gentzel&n; *&t;See buslogic.c for more information.&n; */
 macro_line|#ifndef _BUSLOGIC_H
 r_int
 id|buslogic_detect

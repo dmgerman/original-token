@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot; &n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;long con_init(long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void blank_screen(void)&squot;&n; *     &squot;void unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *     &squot;int do_screendump(int arg, int mode)&squot;&n; *&n; *     &squot;int con_get_font(char *)&squot; &n; *     &squot;int con_set_font(char *)&squot; &n; *     &squot;int con_get_trans(char *)&squot;&n; *     &squot;int con_set_trans(char *)&squot;&n; *&n; *     &squot;int set_selection(const int arg)&squot;&n; *     &squot;int paste_selection(struct tty_struct *tty)&squot;&n; *     &squot;int sel_loadlut(const int arg)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot; &n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;long con_init(long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *     &squot;int do_screendump(int arg, int mode)&squot;&n; *&n; *     &squot;int con_get_font(char *)&squot; &n; *     &squot;int con_set_font(char *)&squot; &n; *     &squot;int con_get_trans(char *)&squot;&n; *     &squot;int con_set_trans(char *)&squot;&n; *&n; *     &squot;int set_selection(const int arg)&squot;&n; *     &squot;int paste_selection(struct tty_struct *tty)&squot;&n; *     &squot;int sel_loadlut(const int arg)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; */
 DECL|macro|BLANK
 mdefine_line|#define BLANK 0x0020
 DECL|macro|CAN_LOAD_EGA_FONTS
@@ -117,8 +117,7 @@ id|where
 )paren
 suffix:semicolon
 multiline_comment|/* Variables for selection control. */
-DECL|macro|SEL_BUFFER_SIZE
-mdefine_line|#define SEL_BUFFER_SIZE 4096
+multiline_comment|/* Use a dynamic buffer, instead of static (Dec 1994) */
 DECL|variable|sel_cons
 r_static
 r_int
@@ -142,14 +141,10 @@ suffix:semicolon
 DECL|variable|sel_buffer
 r_static
 r_char
+op_star
 id|sel_buffer
-(braket
-id|SEL_BUFFER_SIZE
-)braket
 op_assign
-(brace
-l_char|&squot;&bslash;0&squot;
-)brace
+l_int|NULL
 suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
 DECL|macro|NPAR
@@ -217,6 +212,22 @@ c_func
 (paren
 r_int
 id|currcons
+)paren
+suffix:semicolon
+r_static
+r_void
+id|blank_screen
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|unblank_screen
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_static
@@ -430,7 +441,6 @@ l_int|60
 op_star
 id|HZ
 suffix:semicolon
-macro_line|#ifndef CONFIG_VESA_PSPM
 DECL|variable|blank_origin
 DECL|variable|blank__origin
 DECL|variable|unblank_origin
@@ -442,7 +452,6 @@ id|blank__origin
 comma
 id|unblank_origin
 suffix:semicolon
-macro_line|#endif
 DECL|struct|vc_data
 r_struct
 id|vc_data
@@ -939,7 +948,7 @@ mdefine_line|#define vcmode&t;&t;(vt_cons[currcons]-&gt;vc_mode)
 DECL|macro|structsize
 mdefine_line|#define structsize&t;(sizeof(struct vc_data) + sizeof(struct vt_struct))
 macro_line|#ifdef CONFIG_VESA_PSPM
-multiline_comment|/*&n; * This section(s) handles the VESA Power Saving Protocol that let a&t;*&n; * monitor be powered down whenever not needed for a longer time.&t;*&n; * VESA protocol defines:&t;&t;&t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; *  Mode/Status&t;&t;HSync&t;VSync&t;Video&t;&t;&t;&t;*&n; *  ----------------------------------------------&t;&t;&t;*&n; *  &quot;On&quot;&t;&t;on&t;on&t;active&t;&t;&t;&t;*&n; *  &quot;Suspend&quot; {either}&t;on&t;off&t;blank&t;&t;&t;&t;*&n; *            {  or  }&t;off&t;on&t;blank&t;&t;&t;&t;*&n; *  &quot;Off&quot;               off&t;off&t;blank&t;&lt;&lt;  PSPM_FORCE_OFF&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; * Original code taken from the Power Management Utility (PMU) of&t;*&n; * Huang shi chao, delivered together with many new monitor models&t;*&n; * capable of the VESA Power Saving Protocol.&t;&t;&t;&t;*&n; * Adapted to Linux by Christoph Rimek (chrimek@toppoint.de)  15-may-94&t;*&n; * Re-Adapted by Nicholas Leon (nicholas@neko.binary9.com) 10/94 *&n; *                 (with minor reorganization/changes)                          *&n; */
+multiline_comment|/*&n; * This section(s) handles the VESA Power Saving Protocol that let a&t;*&n; * monitor be powered down whenever not needed for a longer time.&t;*&n; * VESA protocol defines:&t;&t;&t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; *  Mode/Status&t;&t;HSync&t;VSync&t;Video&t;&t;&t;&t;*&n; *  ----------------------------------------------&t;&t;&t;*&n; *  &quot;On&quot;&t;&t;on&t;on&t;active&t;&t;&t;&t;*&n; *  &quot;Suspend&quot; {either}&t;on&t;off&t;blank&t;&t;&t;&t;*&n; *            {  or  }&t;off&t;on&t;blank&t;&t;&t;&t;*&n; *  &quot;Off&quot;               off&t;off&t;blank&t;&lt;&lt;  PSPM_FORCE_OFF&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; * Original code taken from the Power Management Utility (PMU) of&t;*&n; * Huang shi chao, delivered together with many new monitor models&t;*&n; * capable of the VESA Power Saving Protocol.&t;&t;&t;&t;*&n; * Adapted to Linux by Christoph Rimek (chrimek@toppoint.de)  15-may-94&t;*&n; * Re-Adapted by Nicholas Leon (nicholas@neko.binary9.com) 10/94        *&n; *                 (with minor reorganization/changes)                  *&n; */
 r_static
 r_void
 id|vesa_blank
@@ -957,9 +966,9 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|seq_port_reg
-mdefine_line|#define seq_port_reg&t;(0x3c4)&t;&t;/* Sequencer register select port&t;*/
+mdefine_line|#define seq_port_reg&t;(0x3c4)&t;&t;/* Sequencer register select port */
 DECL|macro|seq_port_val
-mdefine_line|#define seq_port_val&t;(0x3c5)&t;&t;/* Sequencer register value port&t;*/
+mdefine_line|#define seq_port_val&t;(0x3c5)&t;&t;/* Sequencer register value port  */
 DECL|macro|video_misc_rd
 mdefine_line|#define video_misc_rd&t;(0x3cc)&t;&t;/* Video misc. read port&t;*/
 DECL|macro|video_misc_wr
@@ -1045,6 +1054,13 @@ multiline_comment|/* Seq-Controller:01h */
 DECL|variable|vga
 )brace
 id|vga
+suffix:semicolon
+DECL|variable|vesa_blanked
+r_static
+r_int
+id|vesa_blanked
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* routine to blank a vesa screen */
 DECL|function|vesa_blank
@@ -1413,6 +1429,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|vesa_blanked
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/* routine to unblank a vesa screen */
 DECL|function|vesa_unblank
@@ -1424,6 +1444,14 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vesa_blanked
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/* restore original values of VGA controller registers */
 id|cli
 c_func
@@ -1614,6 +1642,10 @@ id|sti
 c_func
 (paren
 )paren
+suffix:semicolon
+id|vesa_blanked
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_VESA_PSPM */
@@ -6013,7 +6045,7 @@ l_int|0
 suffix:semicolon
 id|disp_ctrl
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|toggle_meta
 op_assign
@@ -8527,15 +8559,27 @@ r_int
 r_char
 id|c
 suffix:semicolon
+r_static
+r_int
+id|printing
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|printable
+op_logical_or
+id|printing
 )paren
 r_return
 suffix:semicolon
 multiline_comment|/* console not yet initialized */
+id|printing
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8671,76 +8715,15 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|poke_blanked_console
+c_func
 (paren
-id|vt_cons
-(braket
-id|fg_console
-)braket
-op_member_access_from_pointer
-id|vc_mode
-op_eq
-id|KD_GRAPHICS
-)paren
-r_return
-suffix:semicolon
-id|timer_active
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|BLANK_TIMER
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|console_blanked
-)paren
-(brace
-id|timer_table
-(braket
-id|BLANK_TIMER
-)braket
-dot
-id|expires
+id|printing
 op_assign
 l_int|0
 suffix:semicolon
-id|timer_active
-op_or_assign
-l_int|1
-op_lshift
-id|BLANK_TIMER
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|blankinterval
-)paren
-(brace
-id|timer_table
-(braket
-id|BLANK_TIMER
-)braket
-dot
-id|expires
-op_assign
-id|jiffies
-op_plus
-id|blankinterval
-suffix:semicolon
-id|timer_active
-op_or_assign
-l_int|1
-op_lshift
-id|BLANK_TIMER
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * con_throttle and con_unthrottle are only used for&n; * paste_selection(), which has to stuff in a large number of&n; * characters...&n; */
 DECL|function|con_throttle
@@ -9724,19 +9707,18 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-DECL|function|blank_screen
+DECL|function|do_blank_screen
 r_void
-id|blank_screen
+id|do_blank_screen
 c_func
 (paren
-r_void
+r_int
+id|nopowersave
 )paren
 (brace
-macro_line|#ifndef CONFIG_VESA_PSPM
 r_int
 id|currcons
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9744,31 +9726,15 @@ id|console_blanked
 )paren
 r_return
 suffix:semicolon
-r_if
-c_cond
+id|timer_active
+op_and_assign
+op_complement
 (paren
-op_logical_neg
-id|vc_cons_allocated
-c_func
-(paren
-id|fg_console
-)paren
-)paren
-(brace
-multiline_comment|/* impossible */
-id|printk
-c_func
-(paren
-l_string|&quot;blank_screen: tty %d not allocated ??&bslash;n&quot;
-comma
-id|fg_console
-op_plus
 l_int|1
+op_lshift
+id|BLANK_TIMER
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|timer_table
 (braket
 id|BLANK_TIMER
@@ -9778,13 +9744,6 @@ id|fn
 op_assign
 id|unblank_screen
 suffix:semicolon
-macro_line|#ifdef CONFIG_VESA_PSPM
-id|vesa_blank
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
 multiline_comment|/* try not to lose information by blanking, and not to waste memory */
 id|currcons
 op_assign
@@ -9839,17 +9798,31 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 id|console_blanked
 op_assign
 id|fg_console
 op_plus
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_VESA_PSPM
+r_if
+c_cond
+(paren
+op_logical_neg
+id|nopowersave
+)paren
+(brace
+id|vesa_blank
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-DECL|function|unblank_screen
+macro_line|#endif&t;
+)brace
+DECL|function|do_unblank_screen
 r_void
-id|unblank_screen
+id|do_unblank_screen
 c_func
 (paren
 r_void
@@ -9858,14 +9831,12 @@ r_void
 r_int
 id|currcons
 suffix:semicolon
-macro_line|#ifndef CONFIG_VESA_PSPM
 r_int
 id|resetorg
 suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9936,17 +9907,6 @@ id|currcons
 op_assign
 id|fg_console
 suffix:semicolon
-macro_line|#ifdef CONFIG_VESA_PSPM
-id|vesa_unblank
-c_func
-(paren
-)paren
-suffix:semicolon
-id|console_blanked
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#else
 id|offset
 op_assign
 l_int|0
@@ -10027,7 +9987,45 @@ c_func
 id|blank__origin
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VESA_PSPM
+id|vesa_unblank
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
+)brace
+multiline_comment|/*&n; * If a blank_screen is due to a timer, then a power save is allowed.&n; * If it is related to console_switching, then avoid vesa_blank().&n; */
+DECL|function|blank_screen
+r_static
+r_void
+id|blank_screen
+c_func
+(paren
+r_void
+)paren
+(brace
+id|do_blank_screen
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|function|unblank_screen
+r_static
+r_void
+id|unblank_screen
+c_func
+(paren
+r_void
+)paren
+(brace
+id|do_unblank_screen
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|update_screen
 r_void
@@ -10338,6 +10336,13 @@ op_increment
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SELECTION
+id|clear_selection
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -10388,13 +10393,6 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-macro_line|#ifdef CONFIG_SELECTION
-id|clear_selection
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|put_fs_byte
 c_func
 (paren
@@ -10622,27 +10620,6 @@ id|e
 op_plus
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|p1
-OG
-id|p2
-)paren
-(brace
-id|p
-op_assign
-id|p1
-suffix:semicolon
-id|p1
-op_assign
-id|p2
-suffix:semicolon
-id|p2
-op_assign
-id|p
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -10786,7 +10763,7 @@ id|p
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This function uses a 128-bit look up table&n; */
+multiline_comment|/*&n; * This function uses a 128-bit look up table&n; * WARNING: This depends on both endianness and the ascii code&n; */
 DECL|variable|inwordLut
 r_static
 r_int
@@ -10902,7 +10879,7 @@ id|video_size_row
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* constrain v such that l &lt;= v &lt;= u */
+multiline_comment|/* constrain v such that v &lt;= u */
 DECL|function|limit
 r_static
 r_inline
@@ -10912,27 +10889,16 @@ c_func
 (paren
 r_const
 r_int
+r_int
 id|v
 comma
 r_const
 r_int
-id|l
-comma
-r_const
 r_int
 id|u
 )paren
 (brace
 r_return
-(paren
-id|v
-OL
-id|l
-)paren
-ques
-c_cond
-id|l
-suffix:colon
 (paren
 (paren
 id|v
@@ -11114,8 +11080,6 @@ c_func
 (paren
 id|xs
 comma
-l_int|0
-comma
 id|video_num_columns
 op_minus
 l_int|1
@@ -11127,8 +11091,6 @@ id|limit
 c_func
 (paren
 id|ys
-comma
-l_int|0
 comma
 id|video_num_lines
 op_minus
@@ -11142,8 +11104,6 @@ c_func
 (paren
 id|xe
 comma
-l_int|0
-comma
 id|video_num_columns
 op_minus
 l_int|1
@@ -11155,8 +11115,6 @@ id|limit
 c_func
 (paren
 id|ye
-comma
-l_int|0
 comma
 id|video_num_lines
 op_minus
@@ -11760,6 +11718,61 @@ id|sel_end
 op_assign
 id|new_sel_end
 suffix:semicolon
+multiline_comment|/* realloc the buffer (it seems to be efficient, anyway) */
+r_if
+c_cond
+(paren
+id|sel_buffer
+)paren
+id|kfree
+c_func
+(paren
+id|sel_buffer
+)paren
+suffix:semicolon
+id|sel_buffer
+op_assign
+id|kmalloc
+c_func
+(paren
+(paren
+id|sel_end
+op_minus
+id|sel_start
+)paren
+op_div
+l_int|2
+op_plus
+l_int|2
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sel_buffer
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;selection: kmalloc() failed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|clear_selection
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* is it right? */
+)brace
 id|obp
 op_assign
 id|bp
@@ -11854,20 +11867,6 @@ op_assign
 id|bp
 suffix:semicolon
 )brace
-multiline_comment|/* check for space, leaving room for next character, possible&n;&t;&t;   newline, and null at end. */
-r_if
-c_cond
-(paren
-id|bp
-op_minus
-id|sel_buffer
-OG
-id|SEL_BUFFER_SIZE
-op_minus
-l_int|3
-)paren
-r_break
-suffix:semicolon
 )brace
 op_star
 id|bp
@@ -11927,7 +11926,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sel_buffer
+id|bp
+op_logical_or
+op_logical_neg
+id|bp
 (braket
 l_int|0
 )braket

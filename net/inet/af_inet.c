@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2273,7 +2273,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MULTICAST
 id|sk-&gt;ip_mc_loop
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|sk-&gt;ip_mc_ttl
 op_assign
@@ -2514,11 +2514,7 @@ r_while
 c_loop
 (paren
 id|sk-&gt;state
-op_ne
-id|TCP_CLOSE
-op_logical_and
-id|current-&gt;timeout
-OG
+template_param
 l_int|0
 )paren
 (brace
@@ -2752,6 +2748,10 @@ op_logical_and
 id|chk_addr_ret
 op_ne
 id|IS_MYADDR
+op_logical_and
+id|chk_addr_ret
+op_ne
+id|IS_MULTICAST
 )paren
 r_return
 op_minus

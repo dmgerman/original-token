@@ -18,6 +18,8 @@ DECL|macro|IPOPT_SID
 mdefine_line|#define IPOPT_SID&t;136
 DECL|macro|IPOPT_TIMESTAMP
 mdefine_line|#define IPOPT_TIMESTAMP&t;68
+DECL|macro|MAXTTL
+mdefine_line|#define MAXTTL&t;&t;255
 DECL|struct|timestamp
 r_struct
 id|timestamp

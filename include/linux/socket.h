@@ -144,10 +144,12 @@ DECL|macro|IPTOS_RELIABILITY
 mdefine_line|#define&t;IPTOS_RELIABILITY&t;0x04
 DECL|macro|IP_TTL
 mdefine_line|#define IP_TTL&t;&t;2
+macro_line|#ifdef 1_3_WILL_DO_THIS_FUNKY_STUFF
 DECL|macro|IP_HRDINCL
 mdefine_line|#define IP_HRDINCL&t;3
 DECL|macro|IP_OPTIONS
 mdefine_line|#define IP_OPTIONS&t;4
+macro_line|#endif
 DECL|macro|IP_MULTICAST_IF
 mdefine_line|#define IP_MULTICAST_IF&t;&t;&t;32
 DECL|macro|IP_MULTICAST_TTL

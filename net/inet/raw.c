@@ -994,7 +994,7 @@ l_int|NULL
 comma
 id|ip_queue_xmit
 comma
-id|ip_retransmit
+l_int|NULL
 comma
 l_int|NULL
 comma
