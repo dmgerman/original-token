@@ -13118,19 +13118,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Skip IP-Header */
-id|len
-op_sub_assign
-id|skb-&gt;h.iph-&gt;ihl
-op_lshift
-l_int|2
-suffix:semicolon
-id|skb-&gt;h.raw
-op_add_assign
-id|skb-&gt;h.iph-&gt;ihl
-op_lshift
-l_int|2
-suffix:semicolon
 id|th
 op_assign
 id|skb-&gt;h.th

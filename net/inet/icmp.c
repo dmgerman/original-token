@@ -1664,6 +1664,11 @@ id|icmphdr
 op_star
 id|icmph
 suffix:semicolon
+r_int
+r_char
+op_star
+id|buff
+suffix:semicolon
 multiline_comment|/* Drop broadcast packets. */
 r_if
 c_cond
@@ -1709,18 +1714,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Skip IP-Header */
-id|len
-op_sub_assign
-id|skb1-&gt;h.iph-&gt;ihl
-op_lshift
-l_int|2
-suffix:semicolon
+id|buff
+op_assign
 id|skb1-&gt;h.raw
-op_add_assign
-id|skb1-&gt;h.iph-&gt;ihl
-op_lshift
-l_int|2
 suffix:semicolon
 id|icmph
 op_assign
@@ -1729,7 +1725,7 @@ r_struct
 id|icmphdr
 op_star
 )paren
-id|skb1-&gt;h.raw
+id|buff
 suffix:semicolon
 multiline_comment|/* Validate the packet first */
 r_if

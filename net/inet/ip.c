@@ -5335,6 +5335,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Point into the IP datagram, just past the header. */
+id|skb-&gt;h.raw
+op_add_assign
+id|iph-&gt;ihl
+op_star
+l_int|4
+suffix:semicolon
 id|hash
 op_assign
 id|iph-&gt;protocol
@@ -5509,10 +5515,18 @@ l_int|0
 comma
 id|iph-&gt;daddr
 comma
+(paren
 id|ntohs
 c_func
 (paren
 id|iph-&gt;tot_len
+)paren
+op_minus
+(paren
+id|iph-&gt;ihl
+op_star
+l_int|4
+)paren
 )paren
 comma
 id|iph-&gt;saddr
