@@ -2938,7 +2938,7 @@ id|alm_tm-&gt;tm_hour
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Used to disable/enable interrupts for any one of UIE, AIE, PIE.&n; * Rumour has it that if you frob the interrupt enable/disable&n; * bits in RTC_CONTROL, you should read RTC_INTR_FLAGS, to&n; * ensure you actually start getting interrupts. Probably for&n; * compatibility with older/broken chipset RTC implementations.&n; * We also clear out any old irq data after an ioctl() that&n; * meddles the interrupt enable/disable bits.&n; */
+multiline_comment|/*&n; * Used to disable/enable interrupts for any one of UIE, AIE, PIE.&n; * Rumour has it that if you frob the interrupt enable/disable&n; * bits in RTC_CONTROL, you should read RTC_INTR_FLAGS, to&n; * ensure you actually start getting interrupts. Probably for&n; * compatibility with older/broken chipset RTC implementations.&n; * We also clear out any old irq data after an ioctl() that&n; * meddles with the interrupt enable/disable bits.&n; */
 DECL|function|mask_rtc_irq_bit
 r_void
 id|mask_rtc_irq_bit

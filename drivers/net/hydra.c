@@ -5,8 +5,8 @@ multiline_comment|/* The code is mostly based on the linux/68k Ariadne driver   
 multiline_comment|/* copyrighted by Geert Uytterhoeven (Geert.Uytterhoeven@cs.kuleuven.ac.be) */
 multiline_comment|/* and Peter De Schrijver (Peter.DeSchrijver@linux.cc.kuleuven.ac.be)       */
 multiline_comment|/* This file is subject to the terms and conditions of the GNU General      */
-multiline_comment|/* Public License.  See the file README.legal in the main directory of the  */
-multiline_comment|/* Linux/68k distribution for more details.                                 */
+multiline_comment|/* Public License.  See the file COPYING in the main directory of the       */
+multiline_comment|/* Linux distribution for more details.                                     */
 multiline_comment|/* The Amiganet is a Zorro-II board made by Hydra Systems. It contains a    */
 multiline_comment|/* NS8390 NIC (network interface controller) clone, 16 or 64K on-board RAM  */
 multiline_comment|/* and 10BASE-2 (thin coax) and AUI connectors.                             */
@@ -230,9 +230,9 @@ id|addrs
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* this is now coherent to the C version below, */
-multiline_comment|/* compile the source with -D__USE_ASM__ if you */
-multiline_comment|/* want it - it&squot;ll only be some 10% faster thou */
+multiline_comment|/* this is now coherent with the C version below, */
+multiline_comment|/* compile the source with -D__USE_ASM__ if you   */
+multiline_comment|/* want it - it&squot;ll only be some 10% faster though */
 macro_line|#if defined (__GNUC__) &amp;&amp; defined (__mc68000__) &amp;&amp; defined (USE_ASM)
 DECL|function|memcpyw
 r_static

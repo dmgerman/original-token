@@ -512,7 +512,7 @@ id|end_seq
 id|u32
 id|end_window
 op_assign
-id|sk-&gt;acked_seq
+id|sk-&gt;lastwin_seq
 op_plus
 id|sk-&gt;window
 suffix:semicolon

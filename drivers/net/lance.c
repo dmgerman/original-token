@@ -90,7 +90,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibili
 multiline_comment|/* Memory accessed from LANCE card must be aligned on 8-byte boundaries.&n;   But we can&squot;t believe that kmalloc()&squot;ed memory satisfies it. -- SAW */
 DECL|macro|LANCE_KMALLOC
 mdefine_line|#define LANCE_KMALLOC(x) &bslash;&n;&t;((void *) (((unsigned long)kmalloc((x)+7, GFP_DMA | GFP_KERNEL)+7) &amp; ~7))
-multiline_comment|/*&n; * Changes:&n; *&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n; *&t;- added support for Linux/Alpha, but removed most of it, because&n; *        it worked only for the PCI chip. &n; *      - added hook for the 32bit lance driver&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n; *&t;- added support for Linux/Alpha, but removed most of it, because&n; *        it worked only for the PCI chip. &n; *      - added hook for the 32bit lance driver&n; *&n; *&t;Paul Gortmaker (gpg109@rsphy1.anu.edu.au):&n; *&t;- hopefully fix above so Linux/Alpha can use ISA cards too.&n; */
 multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 16 Tx buffers, and 16 Rx buffers.&n;   That translates to 4 and 4 (16 == 2^^4). */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
@@ -580,12 +580,10 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef __alpha__    
 r_int
 op_star
 id|port
 suffix:semicolon
-macro_line|#endif    
 r_if
 c_cond
 (paren
@@ -774,8 +772,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif  /* defined(CONFIG_PCI) */
-multiline_comment|/* On the Alpha don&squot;t look for PCnet chips on the ISA bus */
-macro_line|#ifndef __alpha__
 r_for
 c_loop
 (paren
@@ -865,7 +861,6 @@ id|ioaddr
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -926,18 +921,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Already printed version info. */
-macro_line|#ifndef __alpha__
 multiline_comment|/* First we look for special cases.&n;&t;   Check for HP&squot;s on-board ethernet by looking for &squot;HP&squot; in the BIOS.&n;&t;   There are two HP versions, check the BIOS for the configuration port.&n;&t;   This method provided by L. Julliard, Laurent_Julliard@grenoble.hp.com.&n;&t;   */
 r_if
 c_cond
 (paren
-op_star
+id|readw
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
 l_int|0x000f0102
 )paren
 op_eq
@@ -965,13 +955,9 @@ r_int
 id|hp_port
 op_assign
 (paren
-op_star
+id|readl
+c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
 l_int|0x000f00f1
 )paren
 op_amp
@@ -1050,7 +1036,6 @@ op_eq
 l_int|0x09
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Reset the LANCE.&t; */
 id|reset_val
 op_assign

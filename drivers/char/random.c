@@ -5280,7 +5280,7 @@ comma
 id|r-&gt;pool
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * In case the hash function has some recognizeable&n;&t;&t; * output pattern, we fold it half.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * In case the hash function has some recognizable&n;&t;&t; * output pattern, we fold it in half.&n;&t;&t; */
 id|cp
 op_assign
 (paren

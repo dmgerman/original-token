@@ -1964,7 +1964,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Check if there are too old entries and remove them. If the ATF_PERM&n; *&t;flag is set, they are always left in the arp cache (permanent entry).&n; *      If an entry was not be confirmed  for ARP_CONFIRM_INTERVAL,&n; *&t;send point-to-point ARP request.&n; *&t;If it will not be confirmed for ARP_CONFIRM_TIMEOUT,&n; *&t;give it to shred by arp_expire_entry.&n; */
+multiline_comment|/*&n; *&t;Check if there are entries that are too old and remove them. If the&n; *&t;ATF_PERM flag is set, they are always left in the arp cache (permanent&n; *      entries). If an entry was not confirmed for ARP_CONFIRM_INTERVAL,&n; *&t;send point-to-point ARP request.&n; *&t;If it will not be confirmed for ARP_CONFIRM_TIMEOUT,&n; *&t;give it to shred by arp_expire_entry.&n; */
 DECL|function|arp_check_expire
 r_static
 r_void
@@ -4113,7 +4113,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;A request was already send, but no reply yet. Thus&n;&t;&t; *&t;queue the packet with the previous attempt&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;A request was already sent, but no reply yet. Thus&n;&t;&t; *&t;queue the packet with the previous attempt&n;&t;&t; */
 r_if
 c_cond
 (paren

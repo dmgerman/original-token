@@ -1,4 +1,7 @@
 multiline_comment|/* cm206.h Header file for cm206.c.&n;   Copyright (c) 1995 David van Leeuwen &n;*/
+macro_line|#ifndef LINUX_CM206_H
+DECL|macro|LINUX_CM206_H
+mdefine_line|#define LINUX_CM206_H
 multiline_comment|/* First, the cm260 stuff */
 multiline_comment|/* The ports and irq used. Although CM206_BASE and CM206_IRQ are defined&n;   below, the values are not used unless autoprobing is turned off and &n;   no LILO boot options or module command line options are given. Change&n;   these values to your own as last resort if autoprobing and options&n;   don&squot;t work. */
 DECL|macro|CM206_BASE
@@ -66,10 +69,11 @@ DECL|macro|dc_mask_transmit_ready
 mdefine_line|#define dc_mask_transmit_ready 0x100
 DECL|macro|dc_flag_enable
 mdefine_line|#define dc_flag_enable 0x80
+multiline_comment|/* Define the default data control register flags here */
 DECL|macro|dc_normal
 mdefine_line|#define dc_normal (dc_mask_sync_error | dc_no_stop_on_error | &bslash;&n;&t;&t;   dc_mask_transmit_ready)
 multiline_comment|/* now some constants related to the cm206 */
-multiline_comment|/* another drive status byte, echoed by the cm206 on most commands */
+multiline_comment|/* another drive status byte, echoed by the cm206 on most commmands */
 DECL|macro|dsb_error_condition
 mdefine_line|#define dsb_error_condition 0x1
 DECL|macro|dsb_play_in_progress
@@ -183,4 +187,174 @@ DECL|macro|CM206CTL_GET_STAT
 mdefine_line|#define CM206CTL_GET_STAT 0x2000
 DECL|macro|CM206CTL_GET_LAST_STAT
 mdefine_line|#define CM206CTL_GET_LAST_STAT 0x2001
+multiline_comment|/* for kernel 1.2.n */
+macro_line|#if !defined(CDROM_GET_UPC)
+DECL|macro|CDROM_GET_UPC
+mdefine_line|#define CDROM_GET_UPC 0x5311
+DECL|macro|CDROMRESET
+mdefine_line|#define CDROMRESET 0x5312
+macro_line|#endif
+macro_line|#ifdef STATISTICS
+multiline_comment|/* This is an ugly way to guarantee that the names of the statistics&n; * are the same in the code and in the diagnostics program.  */
+macro_line|#ifdef __KERNEL__
+DECL|macro|x
+mdefine_line|#define x(a) st_ ## a
+DECL|macro|y
+mdefine_line|#define y enum
+macro_line|#else
+DECL|macro|x
+mdefine_line|#define x(a) #a
+DECL|macro|y
+mdefine_line|#define y char * stats_name[] = 
+macro_line|#endif
+id|y
+(brace
+id|x
+c_func
+(paren
+id|interrupt
+)paren
+comma
+id|x
+c_func
+(paren
+id|data_ready
+)paren
+comma
+id|x
+c_func
+(paren
+id|fifo_overflow
+)paren
+comma
+id|x
+c_func
+(paren
+id|data_error
+)paren
+comma
+id|x
+c_func
+(paren
+id|crc_error
+)paren
+comma
+id|x
+c_func
+(paren
+id|sync_error
+)paren
+comma
+id|x
+c_func
+(paren
+id|lost_intr
+)paren
+comma
+id|x
+c_func
+(paren
+id|echo
+)paren
+comma
+id|x
+c_func
+(paren
+id|write_timeout
+)paren
+comma
+id|x
+c_func
+(paren
+id|receive_timeout
+)paren
+comma
+id|x
+c_func
+(paren
+id|read_timeout
+)paren
+comma
+id|x
+c_func
+(paren
+id|dsb_timeout
+)paren
+comma
+id|x
+c_func
+(paren
+id|stop_0xff
+)paren
+comma
+id|x
+c_func
+(paren
+id|back_read_timeout
+)paren
+comma
+id|x
+c_func
+(paren
+id|sector_transferred
+)paren
+comma
+id|x
+c_func
+(paren
+id|read_restarted
+)paren
+comma
+id|x
+c_func
+(paren
+id|read_background
+)paren
+comma
+id|x
+c_func
+(paren
+id|bh
+)paren
+comma
+id|x
+c_func
+(paren
+id|open
+)paren
+comma
+id|x
+c_func
+(paren
+id|ioctl_multisession
+)paren
+comma
+id|x
+c_func
+(paren
+id|attention
+)paren
+macro_line|#ifdef __KERNEL__
+comma
+id|x
+c_func
+(paren
+id|last_entry
+)paren
+macro_line|#endif
+)brace
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|NR_STATS
+mdefine_line|#define NR_STATS st_last_entry
+macro_line|#else
+DECL|macro|NR_STATS
+mdefine_line|#define NR_STATS (sizeof(stats_name)/sizeof(char*))
+macro_line|#endif
+DECL|macro|y
+macro_line|#undef y
+DECL|macro|x
+macro_line|#undef x
+macro_line|#endif STATISTICS
+macro_line|#endif LINUX_CM206_H
 eof

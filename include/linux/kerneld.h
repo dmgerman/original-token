@@ -17,7 +17,7 @@ DECL|macro|KERNELD_BLANKER
 mdefine_line|#define KERNELD_BLANKER 7 /* from drivers/char/console.c */
 DECL|macro|KERNELD_ARP
 mdefine_line|#define KERNELD_ARP 256 /* from net/ipv4/arp.c */
-multiline_comment|/*&n; * Uncomment the following line for the new kerneld protocol&n; * This includes the pid of the kernel level requestor into the kerneld header&n; */
+multiline_comment|/*&n; * Uncomment the following line for the new kerneld protocol&n; * This includes the pid of the kernel level requester into the kerneld header&n; */
 multiline_comment|/*&n;#define NEW_KERNELD_PROTOCOL&n; */
 macro_line|#ifdef NEW_KERNELD_PROTOCOL
 DECL|macro|OLDIPC_KERNELD

@@ -1558,7 +1558,7 @@ id|s-&gt;u.affs_sb.s_reserved
 op_assign
 id|reserved
 suffix:semicolon
-multiline_comment|/* Try to find root block. It&squot;s location may depend on the block size. */
+multiline_comment|/* Try to find root block. Its location may depend on the block size. */
 id|s-&gt;u.affs_sb.s_hashsize
 op_assign
 l_int|0

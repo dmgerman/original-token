@@ -750,17 +750,22 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+r_int
+id|oldwin
+op_assign
+id|tcp_old_window
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/* Don&squot;t allow a shrinking window */
 r_if
 c_cond
 (paren
 id|window
 OG
-id|tcp_old_window
-c_func
-(paren
-id|sk
-)paren
+id|oldwin
 )paren
 (brace
 id|sk-&gt;window
@@ -771,9 +776,13 @@ id|sk-&gt;lastwin_seq
 op_assign
 id|sk-&gt;acked_seq
 suffix:semicolon
+id|oldwin
+op_assign
+id|window
+suffix:semicolon
 )brace
 r_return
-id|sk-&gt;window
+id|oldwin
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * List all states of a TCP socket that can be viewed as a &quot;connected&quot;&n; * state.  This now includes TCP_SYN_RECV, although I am not yet fully&n; * convinced that this is the solution for the &squot;getpeername(2)&squot;&n; * problem. Thanks to Stephen A. Wood &lt;saw@cebaf.gov&gt;  -FvK&n; */

@@ -182,7 +182,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * If the send queue is full, try to free any old messages.&n; * These are most probably unwanted, since noone has picked them up...&n; */
+multiline_comment|/*&n; * If the send queue is full, try to free any old messages.&n; * These are most probably unwanted, since no one has picked them up...&n; */
 DECL|macro|MSG_FLUSH_TIME
 mdefine_line|#define MSG_FLUSH_TIME 10 /* seconds */
 DECL|function|flush_msg
