@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/inode.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; * &n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/affs/inode.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -5279,6 +5279,8 @@ id|affs_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -5287,31 +5289,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
+r_return
 id|init_affs_fs
 c_func
 (paren
 )paren
-)paren
-op_eq
-l_int|0
-)paren
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|status
 suffix:semicolon
 )brace
 r_void

@@ -334,6 +334,8 @@ DECL|macro|__NR_setresuid
 mdefine_line|#define __NR_setresuid&t;&t;164
 DECL|macro|__NR_getresuid
 mdefine_line|#define __NR_getresuid&t;&t;165
+DECL|macro|__NR_query_module
+mdefine_line|#define __NR_query_module&t;166
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

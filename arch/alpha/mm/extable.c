@@ -1,4 +1,6 @@
 multiline_comment|/*&n; * linux/arch/alpha/mm/extable.c&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_const
@@ -40,6 +42,21 @@ r_int
 id|value
 )paren
 (brace
+multiline_comment|/* Abort early if the search value is out of range.  */
+r_if
+c_cond
+(paren
+id|value
+op_ne
+(paren
+r_int
+r_int
+)paren
+id|value
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -124,12 +141,8 @@ id|addr
 r_int
 id|ret
 suffix:semicolon
-r_int
-r_int
-id|reladdr
-suffix:semicolon
-multiline_comment|/* Search the kernel&squot;s table first.  */
-(brace
+macro_line|#ifndef CONFIG_MODULE
+multiline_comment|/* There is only the kernel to search.  */
 r_register
 r_int
 r_int
@@ -140,13 +153,6 @@ c_func
 l_string|&quot;$29&quot;
 )paren
 suffix:semicolon
-id|reladdr
-op_assign
-id|addr
-op_minus
-id|gp
-suffix:semicolon
-)brace
 id|ret
 op_assign
 id|search_one_table
@@ -158,7 +164,9 @@ id|__stop___ex_table
 op_minus
 l_int|1
 comma
-id|reladdr
+id|addr
+op_minus
+id|gp
 )paren
 suffix:semicolon
 r_if
@@ -169,7 +177,61 @@ id|ret
 r_return
 id|ret
 suffix:semicolon
-multiline_comment|/* FIXME -- search the module&squot;s tables here */
+macro_line|#else
+multiline_comment|/* The kernel is the last &quot;module&quot; -- no need to treat it special. */
+r_struct
+id|module
+op_star
+id|mp
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|mp
+op_assign
+id|module_list
+suffix:semicolon
+id|mp
+suffix:semicolon
+id|mp
+op_assign
+id|mp-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mp-&gt;ex_table_start
+)paren
+r_continue
+suffix:semicolon
+id|ret
+op_assign
+id|search_one_table
+c_func
+(paren
+id|mp-&gt;ex_table_start
+comma
+id|mp-&gt;ex_table_end
+op_minus
+l_int|1
+comma
+id|addr
+op_minus
+id|mp-&gt;gp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+id|ret
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

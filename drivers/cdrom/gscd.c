@@ -65,6 +65,14 @@ id|gscd_port
 op_assign
 id|GSCD_BASE_ADDR
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|gscd
+comma
+l_string|&quot;h&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Kommt spaeter vielleicht noch mal dran ...&n; *    static struct wait_queue *gscd_waitq = NULL;&n; */
 r_static
 r_void

@@ -97,6 +97,7 @@ l_int|16
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n; * Physical address of the service directory.  I don&squot;t know if we&squot;re&n; * allowed to have more than one of these or not, so just in case&n; * we&squot;ll make pcibios_present() take a memory start parameter and store&n; * the array there.&n; */
 DECL|variable|bios32_entry
 r_static
@@ -129,7 +130,6 @@ comma
 id|KERNEL_CS
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n; * function table for accessing PCI configuration space&n; */
 DECL|struct|pci_access
 r_struct
@@ -2535,7 +2535,6 @@ comma
 id|pci_conf2_write_config_dword
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|function|check_direct_pci
 r_struct
 id|pci_access
@@ -3176,6 +3175,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|pcibios_init
 r_int
 r_int
@@ -3191,6 +3191,7 @@ r_int
 id|memory_end
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
 r_union
 id|bios32
 op_star
@@ -3380,7 +3381,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.68 1996/12/19 05:25:43 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; * The sunos_poll routine is based on iBCS2&squot;s poll routine, this&n; * is the copyright message for that file:&n; *&n; * This file contains the procedures for the handling of poll.&n; *&n; * Copyright (C) 1994 Eric Youngdale&n; *&n; * Created for Linux based loosely upon linux select code, which&n; * in turn is loosely based upon Mathius Lattner&squot;s minix&n; * patches by Peter MacDonald. Heavily edited by Linus.&n; *&n; * Poll is used by SVr4 instead of select, and it has considerably&n; * more functionality.  Parts of it are related to STREAMS, and since&n; * we do not have streams, we fake it.  In fact, select() still exists&n; * under SVr4, but libc turns it into a poll() call instead.  We attempt&n; * to do the inverse mapping.&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.69 1996/12/21 04:50:38 tridge Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; * The sunos_poll routine is based on iBCS2&squot;s poll routine, this&n; * is the copyright message for that file:&n; *&n; * This file contains the procedures for the handling of poll.&n; *&n; * Copyright (C) 1994 Eric Youngdale&n; *&n; * Created for Linux based loosely upon linux select code, which&n; * in turn is loosely based upon Mathius Lattner&squot;s minix&n; * patches by Peter MacDonald. Heavily edited by Linus.&n; *&n; * Poll is used by SVr4 instead of select, and it has considerably&n; * more functionality.  Parts of it are related to STREAMS, and since&n; * we do not have streams, we fake it.  In fact, select() still exists&n; * under SVr4, but libc turns it into a poll() call instead.  We attempt&n; * to do the inverse mapping.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -384,7 +384,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* SunOS is completely broken... it returns 0 on success, otherwise&n; * ENOMEM.  For sys_sbrk() it wants the new brk value as a return&n; * on success and ENOMEM as before on failure.&n; */
+multiline_comment|/* SunOS is completely broken... it returns 0 on success, otherwise&n; * ENOMEM.  For sys_sbrk() it wants the old brk value as a return&n; * on success and ENOMEM as before on failure.&n; */
 DECL|function|sunos_brk
 id|asmlinkage
 r_int
@@ -430,7 +430,8 @@ l_int|0xe0000000
 )paren
 (brace
 r_return
-id|current-&gt;mm-&gt;brk
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 )brace
@@ -656,6 +657,12 @@ id|increment
 r_int
 id|error
 suffix:semicolon
+r_int
+r_int
+id|oldbrk
+op_assign
+id|current-&gt;mm-&gt;brk
+suffix:semicolon
 multiline_comment|/* This should do it hopefully... */
 id|error
 op_assign
@@ -684,7 +691,7 @@ suffix:semicolon
 )brace
 r_else
 r_return
-id|current-&gt;mm-&gt;brk
+id|oldbrk
 suffix:semicolon
 )brace
 multiline_comment|/* XXX Completely undocumented, and completely magic...&n; * XXX I believe it is to increase the size of the stack by&n; * XXX argument &squot;increment&squot; and return the new end of stack&n; * XXX area.  Wheee...&n; */

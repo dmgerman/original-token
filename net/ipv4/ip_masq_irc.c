@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_IRC irc masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_irc.c 0.01   03/20/96&n; *&n; * Author:&t;Juan Jose Ciarlante&n; *&t;&t;&n; *&n; * Fixes:&n; *&t;- set NO_DADDR flag in ip_masq_new().&n; *&n; * FIXME:&n; *&t;- detect also previous &quot;PRIVMSG&quot; string ?.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_IRC irc masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_irc.c 0.01   03/20/96&n; *&n; * Author:&t;Juan Jose Ciarlante&n; *&n; *&n; * Fixes:&n; *&t;- set NO_DADDR flag in ip_masq_new().&n; *&n; * FIXME:&n; *&t;- detect also previous &quot;PRIVMSG&quot; string ?.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -187,7 +187,7 @@ id|th
 l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/*&n;         *&t;Hunt irc DCC string, the _shortest_:&n;         *&n;         *&t;strlen(&quot;DCC CHAT chat AAAAAAAA P&bslash;x01&bslash;n&quot;)=26&n;         *&t;strlen(&quot;DCC SEND F AAAAAAAA P S&bslash;x01&bslash;n&quot;)=25&n;         *&t;&t;AAAAAAAAA: bound addr (1.0.0.0==16777216, min 8 digits)&n;         *&t;&t;P:         bound port (min 1 d )&n;         *&t;&t;F:         filename   (min 1 d )&n;         *&t;&t;S:         size       (min 1 d ) &n;         *&t;&t;0x01, &bslash;n:  terminators&n;         */
+multiline_comment|/*&n;         *&t;Hunt irc DCC string, the _shortest_:&n;         *&n;         *&t;strlen(&quot;DCC CHAT chat AAAAAAAA P&bslash;x01&bslash;n&quot;)=26&n;         *&t;strlen(&quot;DCC SEND F AAAAAAAA P S&bslash;x01&bslash;n&quot;)=25&n;         *&t;&t;AAAAAAAAA: bound addr (1.0.0.0==16777216, min 8 digits)&n;         *&t;&t;P:         bound port (min 1 d )&n;         *&t;&t;F:         filename   (min 1 d )&n;         *&t;&t;S:         size       (min 1 d )&n;         *&t;&t;0x01, &bslash;n:  terminators&n;         */
 id|data_limit
 op_assign
 id|skb-&gt;h.raw
@@ -534,7 +534,7 @@ comma
 id|diff
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; *&t;No shift.&n;&t;&t; */
 r_if
 c_cond
@@ -588,7 +588,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Main irc object&n; *     &t;You need 1 object per port in case you need&n; *&t;to offer also other used irc ports (6665,6666,etc),&n; *&t;they will share methods but they need own space for&n; *&t;data. &n; */
+multiline_comment|/*&n; *&t;Main irc object&n; *     &t;You need 1 object per port in case you need&n; *&t;to offer also other used irc ports (6665,6666,etc),&n; *&t;they will share methods but they need own space for&n; *&t;data.&n; */
 DECL|variable|ip_masq_irc
 r_struct
 id|ip_masq_app
@@ -661,6 +661,8 @@ id|ip_masq_irc
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -682,12 +684,6 @@ l_int|0
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-l_int|NULL
-)paren
 suffix:semicolon
 r_return
 l_int|0

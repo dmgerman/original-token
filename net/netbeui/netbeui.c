@@ -332,7 +332,7 @@ id|sk-&gt;timer
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Called from proc fs &n; */
+multiline_comment|/*&n; *&t;Called from proc fs&n; */
 DECL|function|netbeui_get_info
 r_int
 id|netbeui_get_info
@@ -656,7 +656,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Set &squot;magic&squot; options for netbeui. If we don&squot;t have any this is fine &n; *&t;as it is.&n; */
+multiline_comment|/*&n; *&t;Set &squot;magic&squot; options for netbeui. If we don&squot;t have any this is fine&n; *&t;as it is.&n; */
 DECL|function|netbeui_setsockopt
 r_static
 r_int
@@ -2025,7 +2025,7 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -3561,7 +3561,7 @@ op_amp
 id|proc_netbeui
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -3571,6 +3571,8 @@ l_string|&quot;NetBEUI 0.02 for Linux NET3.037&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -3583,12 +3585,6 @@ id|netbeui_proto_init
 c_func
 (paren
 l_int|NULL
-)paren
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -3614,7 +3610,7 @@ c_func
 id|PROC_NET_NETBEUI
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|unregister_netdevice_notifier
 c_func
 (paren

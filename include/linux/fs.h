@@ -2702,15 +2702,6 @@ id|flag
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|refill_freelist
-c_func
-(paren
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|try_to_free_buffer
 c_func
@@ -2740,19 +2731,15 @@ r_int
 id|nr_buffer_heads
 suffix:semicolon
 DECL|macro|BUF_CLEAN
-mdefine_line|#define BUF_CLEAN 0
-DECL|macro|BUF_UNSHARED
-mdefine_line|#define BUF_UNSHARED 1 /* Buffers that were shared but are not any more */
+mdefine_line|#define BUF_CLEAN&t;0
 DECL|macro|BUF_LOCKED
-mdefine_line|#define BUF_LOCKED 2   /* Buffers scheduled for write */
+mdefine_line|#define BUF_LOCKED&t;1&t;/* Buffers scheduled for write */
 DECL|macro|BUF_LOCKED1
-mdefine_line|#define BUF_LOCKED1 3  /* Supers, inodes */
+mdefine_line|#define BUF_LOCKED1&t;2&t;/* Supers, inodes */
 DECL|macro|BUF_DIRTY
-mdefine_line|#define BUF_DIRTY 4    /* Dirty buffers, not yet scheduled for write */
-DECL|macro|BUF_SHARED
-mdefine_line|#define BUF_SHARED 5   /* Buffers shared */
+mdefine_line|#define BUF_DIRTY&t;3&t;/* Dirty buffers, not yet scheduled for write */
 DECL|macro|NR_LIST
-mdefine_line|#define NR_LIST 6
+mdefine_line|#define NR_LIST&t;&t;4
 r_void
 id|mark_buffer_uptodate
 c_func

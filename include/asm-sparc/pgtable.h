@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.54 1996/12/03 02:38:31 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.56 1996/12/23 05:28:50 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -422,6 +422,27 @@ multiline_comment|/* Page table for 0-4MB for everybody, on the Sparc this&n; * 
 r_extern
 id|pte_t
 id|pg0
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+r_extern
+id|pte_t
+id|pg1
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+r_extern
+id|pte_t
+id|pg2
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+r_extern
+id|pte_t
+id|pg3
 (braket
 l_int|1024
 )braket

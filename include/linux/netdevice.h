@@ -104,14 +104,21 @@ r_char
 id|hh_uptodate
 suffix:semicolon
 multiline_comment|/* hh_data is valid */
+multiline_comment|/* cached hardware header; allow for machine alignment needs.  */
 DECL|member|hh_data
-r_char
+r_int
+r_int
 id|hh_data
 (braket
 l_int|16
+op_div
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 )braket
 suffix:semicolon
-multiline_comment|/* cached hardware header */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct device such that network protocol info&n; *&t;moves out.&n; */

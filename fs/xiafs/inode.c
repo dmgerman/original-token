@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/xiafs/inode.c&n; *&n; *  Copyright (C) Q. Frank Xia, 1993.&n; *  &n; *  Based on Linus&squot; minix/inode.c&n; *  Copyright (C) Linus Torvalds, 1991, 1992.&n; *&n; *  This software may be redistributed per Linux Copyright.&n; */
+multiline_comment|/*&n; *  linux/fs/xiafs/inode.c&n; *&n; *  Copyright (C) Q. Frank Xia, 1993.&n; *&n; *  Based on Linus&squot; minix/inode.c&n; *  Copyright (C) Linus Torvalds, 1991, 1992.&n; *&n; *  This software may be redistributed per Linux Copyright.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/xia_fs.h&gt;
@@ -2881,6 +2881,8 @@ id|xiafs_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -2889,31 +2891,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
+r_return
 id|init_xiafs_fs
 c_func
 (paren
 )paren
-)paren
-op_eq
-l_int|0
-)paren
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|status
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

@@ -171,6 +171,14 @@ id|sjcd_base
 op_assign
 id|SJCD_BASE_ADDR
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sjcd_base
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|sjcd_waitq
 r_static
 r_struct

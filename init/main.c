@@ -3398,14 +3398,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|arch_syms_export
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#ifndef __SMP__
 multiline_comment|/*&n; *&t;Uniprocessor idle thread&n; */
 DECL|function|cpu_idle
@@ -3957,11 +3949,6 @@ c_func
 suffix:semicolon
 macro_line|#endif
 id|dquot_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|arch_syms_export
 c_func
 (paren
 )paren

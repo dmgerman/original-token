@@ -1470,6 +1470,10 @@ op_logical_and
 id|major
 op_ne
 id|LOOP_MAJOR
+op_logical_and
+id|major
+op_ne
+id|DDV_MAJOR
 )paren
 id|plug_device
 c_func
@@ -3033,6 +3037,20 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_BLK_DEV_MD
+macro_line|#ifdef CONFIG_APBLOCK
+id|ap_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DDV
+id|ddv_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

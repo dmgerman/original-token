@@ -13155,28 +13155,19 @@ r_int
 id|line
 )paren
 suffix:semicolon
-DECL|variable|serial_syms
-r_static
-r_struct
-id|symbol_table
-id|serial_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|register_serial
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_serial
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|unregister_serial
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_serial
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|rs_init
@@ -13631,13 +13622,6 @@ id|name
 )paren
 suffix:semicolon
 )brace
-id|register_symtab
-c_func
-(paren
-op_amp
-id|serial_syms
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

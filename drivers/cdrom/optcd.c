@@ -105,6 +105,14 @@ op_assign
 id|OPTCD_PORTBASE
 suffix:semicolon
 multiline_comment|/* I/O base of drive. */
+id|MODULE_PARM
+c_func
+(paren
+id|optcd_port
+comma
+l_string|&quot;h&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Drive registers, read */
 DECL|macro|DATA_PORT
 mdefine_line|#define DATA_PORT&t;optcd_port&t;/* Read data/status */

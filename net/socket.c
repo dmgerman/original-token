@@ -30,16 +30,6 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
-macro_line|#if defined(CONFIG_MODULES) &amp;&amp; defined(CONFIG_NET)
-r_extern
-r_void
-id|export_net_symbols
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 r_int
@@ -5815,14 +5805,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Export networking symbols to the world.&n;&t; */
-macro_line|#if defined(CONFIG_MODULES) &amp;&amp; defined(CONFIG_NET)
-id|export_net_symbols
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|socket_get_info
 r_int

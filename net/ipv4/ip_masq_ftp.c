@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_FTP ftp masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_ftp.c 0.01   02/05/96&n; *&n; * Author:&t;Wouter Gadeyne&n; *&t;&t;&n; *&n; * Fixes:&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; * &t;Juan Jose Ciarlante&t;:&t;Code moved and adapted from ip_fw.c&n; *&t;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_FTP ftp masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_ftp.c 0.01   02/05/96&n; *&n; * Author:&t;Wouter Gadeyne&n; *&n; *&n; * Fixes:&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; * &t;Juan Jose Ciarlante&t;:&t;Code moved and adapted from ip_fw.c&n; *&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -438,7 +438,7 @@ comma
 id|port
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Now update or create an masquerade entry for it&n;&t;&t; */
 macro_line|#if DEBUG_CONFIG_IP_MASQ_FTP
 id|printk
@@ -465,7 +465,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|n_ms
 op_assign
 id|ip_masq_out_get_2
@@ -634,7 +634,7 @@ comma
 id|port
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Calculate required delta-offset to keep TCP happy&n;&t;&t; */
 id|diff
 op_assign
@@ -771,6 +771,8 @@ id|ip_masq_ftp
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -792,12 +794,6 @@ l_int|0
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
 suffix:semicolon
 r_return
 l_int|0

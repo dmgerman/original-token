@@ -636,46 +636,39 @@ l_string|&quot;misc&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|variable|misc_syms
-r_static
-r_struct
-id|symbol_table
-id|misc_syms
-op_assign
-(brace
 multiline_comment|/* Should this be surrounded with &quot;#ifdef CONFIG_MODULES&quot; ? */
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|misc_register
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|misc_register
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|misc_deregister
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|misc_deregister
 )paren
-comma
+suffix:semicolon
 macro_line|#ifndef MODULE
-id|X
+DECL|variable|set_selection
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|set_selection
 )paren
-comma
+suffix:semicolon
 multiline_comment|/* used by the kmouse module, can only */
-id|X
+DECL|variable|paste_selection
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|paste_selection
 )paren
-comma
+suffix:semicolon
 multiline_comment|/* be exported if misc.c is in linked in */
 macro_line|#endif
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
 macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; !defined(MODULE)
 DECL|variable|proc_misc
 r_static
@@ -839,32 +832,6 @@ c_func
 l_string|&quot;unable to get major %d for misc devices&bslash;n&quot;
 comma
 id|MISC_MAJOR
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|register_symtab
-c_func
-(paren
-op_amp
-id|misc_syms
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|unregister_chrdev
-c_func
-(paren
-id|MISC_MAJOR
-comma
-l_string|&quot;misc&quot;
 )paren
 suffix:semicolon
 r_return

@@ -326,6 +326,8 @@ DECL|macro|__NR_pciconfig_read
 mdefine_line|#define __NR_pciconfig_read&t;&t;345
 DECL|macro|__NR_pciconfig_write
 mdefine_line|#define __NR_pciconfig_write&t;&t;346
+DECL|macro|__NR_query_module
+mdefine_line|#define __NR_query_module&t;&t;347
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
@@ -339,7 +341,7 @@ mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3)&t;&t;
 DECL|macro|_syscall4
 mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4)&t;&t; &bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;extern long syscall (int, ...);&t;&t;&t;&t;&t; &bslash;&n;&t;return syscall(__NR_##name, arg1, arg2, arg3, arg4);&t;&t; &bslash;&n;} 
 DECL|macro|_syscall5
-mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5)&t;&t;&t;&t;&t;&t;&t; &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5)&t; &bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;extern long syscall (int, ...);&t;&t;&t;&t;&t; &bslash;&n;&t;return syscall(__NR_##name, arg1, arg2, arg3, arg4);&t;&t; &bslash;&n;}
+mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5)&t;&t;&t;&t;&t;&t;&t; &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5)&t; &bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;extern long syscall (int, ...);&t;&t;&t;&t;&t; &bslash;&n;&t;return syscall(__NR_##name, arg1, arg2, arg3, arg4, arg5);&t; &bslash;&n;}
 macro_line|#endif /* __LIBRARY__ &amp;&amp; __GNUC__ */
 macro_line|#ifdef __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/string.h&gt;

@@ -3467,7 +3467,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * Mounting a RDONLY partition read-write, so reread and&n;&t;&t; * store the current valid flag.  (It may have been changed &n;&t;&t; * by e2fsck since we originally mounted the partition.)&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Mounting a RDONLY partition read-write, so reread and&n;&t;&t; * store the current valid flag.  (It may have been changed&n;&t;&t; * by e2fsck since we originally mounted the partition.)&n;&t;&t; */
 id|sb-&gt;u.ext2_sb.s_mount_state
 op_assign
 id|le16_to_cpu
@@ -3527,6 +3527,8 @@ id|ext2_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -3535,31 +3537,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
+r_return
 id|init_ext2_fs
 c_func
 (paren
 )paren
-)paren
-op_eq
-l_int|0
-)paren
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|status
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

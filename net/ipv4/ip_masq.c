@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&t;Nigel Metheringham&t;:&t;Better handling of timeouts of TCP conns&n; *&n; *&t;&n; */
+multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&t;Nigel Metheringham&t;:&t;Better handling of timeouts of TCP conns&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -65,7 +65,7 @@ id|masq_port
 op_assign
 id|PORT_MASQ_BEGIN
 suffix:semicolon
-multiline_comment|/*&n; *&t;free ports counters (UDP &amp; TCP)&n; *&n; *&t;Their value is _less_ or _equal_ to actual free ports:&n; *&t;same masq port, diff masq addr (firewall iface address) allocated&n; *&t;entries are accounted but their actually don&squot;t eat a more than 1 port.&n; *&n; *&t;Greater values could lower MASQ_EXPIRATION setting as a way to&n; *&t;manage &squot;masq_entries resource&squot;.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;free ports counters (UDP &amp; TCP)&n; *&n; *&t;Their value is _less_ or _equal_ to actual free ports:&n; *&t;same masq port, diff masq addr (firewall iface address) allocated&n; *&t;entries are accounted but their actually don&squot;t eat a more than 1 port.&n; *&n; *&t;Greater values could lower MASQ_EXPIRATION setting as a way to&n; *&t;manage &squot;masq_entries resource&squot;.&n; *&n; */
 DECL|variable|ip_masq_free_ports
 r_int
 id|ip_masq_free_ports
@@ -85,46 +85,40 @@ id|PORT_MASQ_BEGIN
 multiline_comment|/* TCP */
 )brace
 suffix:semicolon
-DECL|variable|ip_masq_syms
-r_static
-r_struct
-id|symbol_table
-id|ip_masq_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|ip_masq_new
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ip_masq_new
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|ip_masq_set_expire
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ip_masq_set_expire
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|ip_masq_free_ports
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ip_masq_free_ports
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|ip_masq_expire
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ip_masq_expire
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|ip_masq_out_get_2
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ip_masq_out_get_2
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;2 ip_masq hash tables: for input and output pkts lookups.&n; */
 DECL|variable|ip_masq_m_tab
@@ -1993,6 +1987,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|th-&gt;check
+op_assign
+l_int|0
+suffix:semicolon
+id|th-&gt;check
+op_assign
 id|tcp_v4_check
 c_func
 (paren
@@ -2004,7 +2004,23 @@ id|iph-&gt;saddr
 comma
 id|iph-&gt;daddr
 comma
+id|csum_partial
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|th
+comma
+r_sizeof
+(paren
+op_star
+id|th
+)paren
+comma
 id|skb-&gt;csum
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2159,7 +2175,7 @@ id|iph-&gt;daddr
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* &n;&t; * Work through seeing if this is for us.&n;&t; * These checks are supposed to be in an order that&n;&t; * means easy things are checked first to speed up&n;&t; * processing.... however this means that some&n;&t; * packets will manage to get a long way down this&n;&t; * stack and then be rejected, but thats life&n;&t; */
+multiline_comment|/*&n;&t; * Work through seeing if this is for us.&n;&t; * These checks are supposed to be in an order that&n;&t; * means easy things are checked first to speed up&n;&t; * processing.... however this means that some&n;&t; * packets will manage to get a long way down this&n;&t; * stack and then be rejected, but thats life&n;&t; */
 r_if
 c_cond
 (paren
@@ -2217,7 +2233,7 @@ id|IPPROTO_TCP
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; * Find the ports involved - this packet was &n;&t; * incoming so the ports are right way round&n;&t; * (but reversed relative to outer IP header!)&n;&t; */
+multiline_comment|/*&n;&t; * Find the ports involved - this packet was&n;&t; * incoming so the ports are right way round&n;&t; * (but reversed relative to outer IP header!)&n;&t; */
 id|pptr
 op_assign
 (paren
@@ -2626,7 +2642,7 @@ id|IPPROTO_TCP
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; * Find the ports involved - remember this packet was &n;&t; * *outgoing* so the ports are reversed (and addresses)&n;&t; */
+multiline_comment|/*&n;&t; * Find the ports involved - remember this packet was&n;&t; * *outgoing* so the ports are reversed (and addresses)&n;&t; */
 id|pptr
 op_assign
 (paren
@@ -3400,6 +3416,8 @@ id|th-&gt;check
 op_assign
 l_int|0
 suffix:semicolon
+id|th-&gt;check
+op_assign
 id|tcp_v4_check
 c_func
 (paren
@@ -3411,7 +3429,23 @@ id|iph-&gt;saddr
 comma
 id|iph-&gt;daddr
 comma
+id|csum_partial
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|th
+comma
+r_sizeof
+(paren
+op_star
+id|th
+)paren
+comma
 id|skb-&gt;csum
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Check if TCP FIN or RST */
@@ -3838,7 +3872,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS        
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_net_ipmsqhst
 r_static
 r_struct
@@ -3870,7 +3904,7 @@ comma
 id|ip_msqhst_procinfo
 )brace
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/*&n; *&t;Initialize ip masquerading&n; */
 DECL|function|ip_masq_init
 r_int
@@ -3880,13 +3914,7 @@ c_func
 r_void
 )paren
 (brace
-id|register_symtab
-(paren
-op_amp
-id|ip_masq_syms
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS        
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -3894,7 +3922,7 @@ op_amp
 id|proc_net_ipmsqhst
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|ip_masq_app_init
 c_func
 (paren

@@ -43,33 +43,6 @@ r_int
 id|value
 )paren
 (brace
-multiline_comment|/* Some versions of the linker are buggy and do not align the&n;&t;   __start pointer along with the section, thus we may be low.  */
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-id|first
-op_amp
-l_int|3
-)paren
-(paren
-r_int
-)paren
-id|first
-op_assign
-(paren
-(paren
-r_int
-)paren
-id|first
-op_or
-l_int|3
-)paren
-op_plus
-l_int|1
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -156,14 +129,8 @@ r_int
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef CONFIG_MODULES
-r_struct
-id|module
-op_star
-id|mp
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Search the kernel&squot;s table first.  */
+macro_line|#ifndef CONFIG_MODULES
+multiline_comment|/* There is only the kernel to search.  */
 id|ret
 op_assign
 id|search_one_table
@@ -186,7 +153,13 @@ id|ret
 r_return
 id|ret
 suffix:semicolon
-macro_line|#ifdef CONFIG_MODULES
+macro_line|#else
+multiline_comment|/* The kernel is the last &quot;module&quot; -- no need to treat it special.  */
+r_struct
+id|module
+op_star
+id|mp
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -206,19 +179,20 @@ id|mp-&gt;next
 r_if
 c_cond
 (paren
-id|mp-&gt;exceptinfo.start
-op_ne
+id|mp-&gt;ex_table_start
+op_eq
 l_int|NULL
 )paren
-(brace
+r_continue
+suffix:semicolon
 id|ret
 op_assign
 id|search_one_table
 c_func
 (paren
-id|mp-&gt;exceptinfo.start
+id|mp-&gt;ex_table_start
 comma
-id|mp-&gt;exceptinfo.stop
+id|mp-&gt;ex_table_end
 op_minus
 l_int|1
 comma
@@ -233,7 +207,6 @@ id|ret
 r_return
 id|ret
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 r_return

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;Generic loadable firewalls. At the moment only IP will actually&n; *&t;use these, but people can add the others as they are needed.&n; *&n; *&t;Authors:&t;Dave Bonn (for IP)&n; *&t;much hacked by:&t;Alan Cox&n; */
-macro_line|#include &lt;linux/module.h&gt; 
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 DECL|variable|firewall_lock
@@ -525,46 +525,40 @@ id|pf
 )braket
 suffix:semicolon
 )brace
-DECL|variable|firewall_syms
-r_static
-r_struct
-id|symbol_table
-id|firewall_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|register_firewall
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_firewall
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|unregister_firewall
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_firewall
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|call_in_firewall
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|call_in_firewall
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|call_out_firewall
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|call_out_firewall
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|call_fw_firewall
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|call_fw_firewall
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 DECL|function|fwchain_init
 r_void
@@ -600,12 +594,5 @@ op_assign
 id|FW_ACCEPT
 suffix:semicolon
 )brace
-id|register_symtab
-c_func
-(paren
-op_amp
-id|firewall_syms
-)paren
-suffix:semicolon
 )brace
 eof

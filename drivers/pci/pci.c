@@ -1587,7 +1587,7 @@ id|DIGI
 comma
 id|DIGI_RIGHTSWITCH
 comma
-l_string|&quot;Digi RightSwitch SE-6&quot;
+l_string|&quot;RightSwitch SE-6&quot;
 )paren
 comma
 id|DEVICE
@@ -3435,6 +3435,12 @@ id|PCI_VENDOR_ID_VMIC
 suffix:colon
 r_return
 l_string|&quot;VMIC&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_DIGI
+suffix:colon
+r_return
+l_string|&quot;Digi Intl.&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_MUTECH

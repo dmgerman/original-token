@@ -1,5 +1,5 @@
 multiline_comment|/* lance.c: Linux/Sparc/Lance driver */
-multiline_comment|/*&n;&t; Written 1995, 1996 by Miguel de Icaza&n;  Sources:&n;&t; The Linux  depca driver&n;&t; The Linux  lance driver.&n;&t; The Linux  skeleton driver.&n;         The NetBSD Sparc/Lance driver.&n;&t; Theo de Raadt (deraadt@openbsd.org)&n;&t; NCR92C990 Lan Controller manual&n;&n;1.4:&n;&t; Added support to run with a ledma on the Sun4m&n;1.5:&n;         Added multiple card detection.&n;&n;&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;&n;&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;&n;         5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n;&t;&t;  (davem@caip.rutgers.edu)&n;&n;&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n;&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;1.7:&n;&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n;1.8:&n;         Stole multicast code from depca.c, fixed lance_tx.&n;1.9:&n;         Fixed the multicast code (Pedro Roque)&n;&n;&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n;&t;&t;  so we can detect the carrier loss condition in time.&n;&t;&t;  Eddie C. Dost (ecd@skynet.be)&n;&n;&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n;&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n;&n;&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n;&n;*/
+multiline_comment|/*&n;&t; Written 1995, 1996 by Miguel de Icaza&n;  Sources:&n;&t; The Linux  depca driver&n;&t; The Linux  lance driver.&n;&t; The Linux  skeleton driver.&n;         The NetBSD Sparc/Lance driver.&n;&t; Theo de Raadt (deraadt@openbsd.org)&n;&t; NCR92C990 Lan Controller manual&n;&n;1.4:&n;&t; Added support to run with a ledma on the Sun4m&n;1.5:&n;         Added multiple card detection.&n;&n;&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;&n;&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;&n;         5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n;&t;&t;  (davem@caip.rutgers.edu)&n;&n;&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n;&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n;&t;          (ecd@skynet.be)&n;1.7:&n;&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n;1.8:&n;         Stole multicast code from depca.c, fixed lance_tx.&n;1.9:&n;         Fixed the multicast code (Pedro Roque)&n;&n;&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n;&t;&t;  so we can detect the carrier loss condition in time.&n;&t;&t;  Eddie C. Dost (ecd@skynet.be)&n;&n;&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n;&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n;&n;&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n;&n;&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n;&t;&t;  This was the sun4c killer. Shit, stupid bug.&n;&t;&t;  (ecd@skynet.be)&n;*/
 DECL|macro|DEBUG_DRIVER
 macro_line|#undef DEBUG_DRIVER
 DECL|variable|version
@@ -1415,8 +1415,6 @@ suffix:semicolon
 id|lp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
-r_continue
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -2791,6 +2789,10 @@ r_int
 id|flush
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|entry
 comma
 id|skblen
@@ -2838,7 +2840,7 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;%s: transmit timed out, status %04x, resetting&bslash;n&quot;
+l_string|&quot;%s: transmit timed out, status %04x, reset&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2887,7 +2889,7 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;skb len is %d&bslash;n&quot;
+l_string|&quot;skb len is %ld&bslash;n&quot;
 comma
 id|skb-&gt;len
 )paren
@@ -2897,12 +2899,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Block a timer-based transmit from overlapping. */
-macro_line|#ifdef OLD_METHOD
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -2931,10 +2927,15 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
 id|skblen
 op_assign
 id|skb-&gt;len
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2942,60 +2943,18 @@ c_cond
 op_logical_neg
 id|TX_BUFFS_AVAIL
 )paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#ifdef DEBUG_DRIVER
-multiline_comment|/* dump the packet */
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|64
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|i
-op_mod
-l_int|16
-)paren
-op_eq
-l_int|0
-)paren
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;%2.2x &quot;
-comma
-id|skb-&gt;data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
 )brace
-)brace
-macro_line|#endif
 id|len
 op_assign
 (paren
@@ -3151,6 +3110,12 @@ id|lp-&gt;ledma
 id|flush
 op_assign
 id|ll-&gt;rdp
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_return
 id|status
@@ -3688,7 +3653,7 @@ r_int
 )paren
 id|sdev
 suffix:semicolon
-multiline_comment|/* Copy the IDPROM ethernet address to the device structure, later we&n;&t; * will copy the address in the device structure to the lance initialization&n;&t; * block&n;&t; */
+multiline_comment|/* Copy the IDPROM ethernet address to the device structure, later we&n;&t; * will copy the address in the device structure to the lance&n;&t; * initialization block.&n;&t; */
 r_for
 c_loop
 (paren
@@ -4127,7 +4092,8 @@ l_string|&quot;true&quot;
 id|printk
 c_func
 (paren
-l_string|&quot;%s: warning: overriding option &squot;tpe-link-test?&squot;&bslash;n&quot;
+l_string|&quot;%s: warning: overriding option &quot;
+l_string|&quot;&squot;tpe-link-test?&squot;&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -4135,7 +4101,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: warning: mail any problems to ecd@skynet.be&bslash;n&quot;
+l_string|&quot;%s: warning: mail any problems &quot;
+l_string|&quot;to ecd@skynet.be&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -4227,7 +4194,9 @@ l_int|0x07
 id|printk
 c_func
 (paren
-l_string|&quot; **ERROR** LANCE Rx and Tx rings not on even boundary.&bslash;n&quot;
+l_string|&quot;%s: ERROR: Rx and Tx rings not on even boundary.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return

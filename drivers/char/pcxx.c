@@ -4858,6 +4858,22 @@ c_func
 l_string|&quot;Unable to allocate digi_channel struct&quot;
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|digi_channels
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|channel
+)paren
+op_star
+id|nbdevs
+)paren
+suffix:semicolon
 id|pcxe_table
 op_assign
 id|kmalloc

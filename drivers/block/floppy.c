@@ -18176,9 +18176,11 @@ r_void
 )paren
 (brace
 macro_line|#ifdef FLOPPY_SANITY_CHECK
+macro_line|#ifndef __sparc__
 r_int
 id|drive
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_int
 id|tmpsize
@@ -18303,6 +18305,7 @@ id|tmpsize
 suffix:semicolon
 )brace
 macro_line|#ifdef FLOPPY_SANITY_CHECK
+macro_line|#ifndef __sparc__
 r_for
 c_loop
 (paren
@@ -18337,6 +18340,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -18743,9 +18747,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;inserting floppy driver for %s&bslash;n&quot;
-comma
-id|kernel_version
+l_string|&quot;inserting floppy driver for &quot;
+id|UTS_RELEASE
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

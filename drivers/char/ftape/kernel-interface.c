@@ -301,6 +301,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called by modules package when installing the driver&n; * or by kernel during the initialization phase&n; */
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|macro|ftape_init
 mdefine_line|#define ftape_init init_module
 macro_line|#endif
@@ -587,15 +589,6 @@ c_func
 suffix:semicolon
 id|TRACE_EXIT
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* remove global ftape symbols */
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

@@ -4382,6 +4382,8 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -4390,12 +4392,6 @@ c_func
 r_void
 )paren
 (brace
-id|register_symtab
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
 r_return
 id|mkiss_init_ctrl_dev
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_APP application masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_app.c  0.04      96/06/17&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;JJC&t;&t;&t;: Implemented also input pkt hook&n; *&t;Miquel van Smoorenburg&t;: Copy more stuff when resizing skb&n; *&n; *&n; * FIXME:&n; *&t;- ip_masq_skb_replace(): use same skb if space available.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_APP application masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_app.c  0.04      96/06/17&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;JJC&t;&t;&t;: Implemented also input pkt hook&n; *&t;Miquel van Smoorenburg&t;: Copy more stuff when resizing skb&n; *&n; *&n; * FIXME:&n; *&t;- ip_masq_skb_replace(): use same skb if space available.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -61,34 +61,26 @@ DECL|macro|IP_MASQ_APP_PORT
 mdefine_line|#define IP_MASQ_APP_PORT(type)        ( type &amp; 0xffff )
 DECL|macro|IP_MASQ_APP_PROTO
 mdefine_line|#define IP_MASQ_APP_PROTO(type)       ( (type&gt;&gt;16) &amp; 0x00ff )
-DECL|variable|ip_masq_app_syms
-r_static
-r_struct
-id|symbol_table
-id|ip_masq_app_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|register_ip_masq_app
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_ip_masq_app
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|unregister_ip_masq_app
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_ip_masq_app
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|ip_masq_skb_replace
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ip_masq_skb_replace
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * &t;will hold masq app. hashed list heads&n; */
 DECL|variable|ip_masq_app_base
@@ -1131,7 +1123,7 @@ id|th
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;         *&t;Call private output hook function &n;         */
+multiline_comment|/*&n;         *&t;Call private output hook function&n;         */
 r_if
 c_cond
 (paren
@@ -1331,7 +1323,7 @@ id|th
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;         *&t;Call private input hook function &n;         */
+multiline_comment|/*&n;         *&t;Call private input hook function&n;         */
 r_if
 c_cond
 (paren
@@ -1490,7 +1482,7 @@ op_assign
 id|mapp-&gt;next
 )paren
 (brace
-multiline_comment|/* &n;&t;&t;&t; * If you change the length of this sprintf, then all&n;&t;&t;&t; * the length calculations need fixing too!&n;&t;&t;&t; * Line length = 40 (3 + 2 + 7 + 1 + 7 + 1 + 2 + 17)&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * If you change the length of this sprintf, then all&n;&t;&t;&t; * the length calculations need fixing too!&n;&t;&t;&t; * Line length = 40 (3 + 2 + 7 + 1 + 7 + 1 + 2 + 17)&n;&t;&t;&t; */
 id|pos
 op_add_assign
 l_int|40
@@ -1587,7 +1579,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS        
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_net_ip_masq_app
 r_static
 r_struct
@@ -1619,7 +1611,7 @@ comma
 id|ip_masq_app_getinfo
 )brace
 suffix:semicolon
-macro_line|#endif        
+macro_line|#endif
 multiline_comment|/*&n; *&t;Initialization routine&n; */
 DECL|function|ip_masq_app_init
 r_int
@@ -1629,13 +1621,7 @@ c_func
 r_void
 )paren
 (brace
-id|register_symtab
-(paren
-op_amp
-id|ip_masq_app_syms
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS        
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -1643,7 +1629,7 @@ op_amp
 id|proc_net_ip_masq_app
 )paren
 suffix:semicolon
-macro_line|#endif        
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

@@ -234,6 +234,8 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|macro|teles_init
 mdefine_line|#define teles_init init_module
 macro_line|#else
@@ -595,13 +597,6 @@ suffix:semicolon
 id|ll_init
 c_func
 (paren
-)paren
-suffix:semicolon
-multiline_comment|/* No symbols to export, hide all symbols */
-id|register_symtab
-c_func
-(paren
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE

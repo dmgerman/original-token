@@ -555,7 +555,7 @@ macro_line|#else
 l_int|NULL
 comma
 op_amp
-id|mod_use_count_
+id|__this_module.usecount
 comma
 id|load_java
 comma
@@ -624,7 +624,7 @@ macro_line|#else
 l_int|NULL
 comma
 op_amp
-id|mod_use_count_
+id|__this_module.usecount
 comma
 id|load_applet
 comma

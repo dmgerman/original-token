@@ -6803,7 +6803,7 @@ r_void
 id|sd_template.usage_count
 op_assign
 op_amp
-id|mod_use_count_
+id|__this_module.usecount
 suffix:semicolon
 r_return
 id|scsi_register_module

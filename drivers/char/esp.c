@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  esp.c - driver for Hayes ESP serial cards&n; *&n; *  --- Notices from serial.c, upon which this driver is based ---&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; * --- End of notices from serial.c ---&n; *&n; * Support for the ESP serial card by Andrew J. Robinson&n; *     &lt;arobinso@nyx.net&gt; (Card detection routine taken from a patch&n; *     by Dennis J. Boylan).  Patches to allow use with 2.1.x contributed&n; *     by Chris Faylor.&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int esp_init(void);&n; */
+multiline_comment|/*&n; *  esp.c - driver for Hayes ESP serial cards&n; *&n; *  --- Notices from serial.c, upon which this driver is based ---&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; * --- End of notices from serial.c ---&n; *&n; * Support for the ESP serial card by Andrew J. Robinson&n; *     &lt;arobinso@nyx.net&gt; (Card detection routine taken from a patch&n; *     by Dennis J. Boylan).  Patches to allow use with 2.1.x contributed&n; *     by Chris Faylor.&n; *&n; * Most recent changes: (Andrew J. Robinson)&n; *     Remove tx_flowed_[on|off], since the ESP handles flow itself.&n; *     Enabled reinterrupt pacing to ensure all requests are serviced.&n; *     Decreased RX timeout to reduce latency.&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int esp_init(void);&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -89,7 +89,7 @@ r_int
 r_int
 id|dma
 op_assign
-id|CONFIG_ESP_DMA_CHANNEL
+id|CONFIG_ESPSERIAL_DMA_CHANNEL
 suffix:semicolon
 multiline_comment|/* DMA channel */
 DECL|variable|trigger
@@ -98,7 +98,7 @@ r_int
 r_int
 id|trigger
 op_assign
-id|CONFIG_ESP_TRIGGER_LEVEL
+id|CONFIG_ESPSERIAL_TRIGGER_LEVEL
 suffix:semicolon
 multiline_comment|/* FIFO trigger level */
 multiline_comment|/* END */
@@ -118,7 +118,7 @@ r_char
 op_star
 id|serial_name
 op_assign
-l_string|&quot;ESP driver&quot;
+l_string|&quot;ESP serial driver&quot;
 suffix:semicolon
 DECL|variable|serial_version
 r_static
@@ -126,7 +126,7 @@ r_char
 op_star
 id|serial_version
 op_assign
-l_string|&quot;1.1&quot;
+l_string|&quot;1.2&quot;
 suffix:semicolon
 DECL|variable|tq_esp
 id|DECLARE_TASK_QUEUE
@@ -2188,118 +2188,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|tx_flowed_on
-r_static
-id|_INLINE_
-r_void
-id|tx_flowed_on
-c_func
-(paren
-r_struct
-id|esp_struct
-op_star
-id|info
-)paren
-(brace
-macro_line|#if (defined(SERIAL_DEBUG_INTR) || defined(SERIAL_DEBUG_FLOW))
-id|printk
-c_func
-(paren
-l_string|&quot;CTS tx start...&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|info-&gt;tty-&gt;hw_stopped
-op_assign
-l_int|0
-suffix:semicolon
-id|info-&gt;IER
-op_or_assign
-id|UART_IER_THRI
-suffix:semicolon
-id|serial_out
-c_func
-(paren
-id|info
-comma
-id|UART_ESI_CMD1
-comma
-id|ESI_SET_SRV_MASK
-)paren
-suffix:semicolon
-multiline_comment|/* set mask */
-id|serial_out
-c_func
-(paren
-id|info
-comma
-id|UART_ESI_CMD2
-comma
-id|info-&gt;IER
-)paren
-suffix:semicolon
-id|rs_sched_event
-c_func
-(paren
-id|info
-comma
-id|ESP_EVENT_WRITE_WAKEUP
-)paren
-suffix:semicolon
-)brace
-DECL|function|tx_flowed_off
-r_static
-id|_INLINE_
-r_void
-id|tx_flowed_off
-c_func
-(paren
-r_struct
-id|esp_struct
-op_star
-id|info
-)paren
-(brace
-macro_line|#if (defined(SERIAL_DEBUG_INTR) || defined(SERIAL_DEBUG_FLOW))
-id|printk
-c_func
-(paren
-l_string|&quot;CTS tx stop...&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|info-&gt;tty-&gt;hw_stopped
-op_assign
-l_int|1
-suffix:semicolon
-id|info-&gt;IER
-op_and_assign
-op_complement
-id|UART_IER_THRI
-suffix:semicolon
-id|serial_out
-c_func
-(paren
-id|info
-comma
-id|UART_ESI_CMD1
-comma
-id|ESI_SET_SRV_MASK
-)paren
-suffix:semicolon
-multiline_comment|/* set mask */
-id|serial_out
-c_func
-(paren
-id|info
-comma
-id|UART_ESI_CMD2
-comma
-id|info-&gt;IER
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * This is the serial driver&squot;s interrupt routine for a single port&n; */
+multiline_comment|/*&n; * This is the serial driver&squot;s interrupt routine&n; */
 DECL|function|rs_interrupt_single
 r_static
 r_void
@@ -2499,34 +2388,6 @@ c_func
 (paren
 op_amp
 id|info-&gt;break_wait
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err_status
-op_amp
-l_int|0x0002
-)paren
-multiline_comment|/* tx off */
-id|tx_flowed_off
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err_status
-op_amp
-l_int|0x0004
-)paren
-multiline_comment|/* tx on */
-id|tx_flowed_on
-c_func
-(paren
-id|info
 )paren
 suffix:semicolon
 )brace
@@ -3016,7 +2877,7 @@ id|info
 comma
 id|UART_ESI_CMD2
 comma
-l_int|0x06
+l_int|0x00
 )paren
 suffix:semicolon
 multiline_comment|/* set DMA timeout */
@@ -3118,6 +2979,27 @@ comma
 id|UART_ESI_CMD2
 comma
 id|ESPC_SCALE
+)paren
+suffix:semicolon
+multiline_comment|/* set reinterrupt pacing */
+id|serial_out
+c_func
+(paren
+id|info
+comma
+id|UART_ESI_CMD1
+comma
+id|ESI_SET_REINTR
+)paren
+suffix:semicolon
+id|serial_out
+c_func
+(paren
+id|info
+comma
+id|UART_ESI_CMD2
+comma
+l_int|0xff
 )paren
 suffix:semicolon
 )brace
@@ -3454,7 +3336,7 @@ id|info
 comma
 id|UART_ESI_CMD2
 comma
-l_int|0xff
+l_int|0x80
 )paren
 suffix:semicolon
 id|info-&gt;stat_flags
@@ -6067,7 +5949,7 @@ id|info
 comma
 id|UART_ESI_CMD2
 comma
-l_int|0xff
+l_int|0x80
 )paren
 suffix:semicolon
 id|sti
@@ -10449,7 +10331,7 @@ l_int|3
 )paren
 id|dma
 op_assign
-id|CONFIG_ESP_DMA_CHANNEL
+l_int|1
 suffix:semicolon
 r_if
 c_cond

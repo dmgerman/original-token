@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsun4c.h,v 1.32 1996/12/08 08:39:04 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsun4c.h,v 1.33 1996/12/20 07:55:04 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
@@ -229,7 +229,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;tstba %1, [%0] %2&bslash;n&bslash;t&quot;
+l_string|&quot;&bslash;n&bslash;tstba %1, [%0] %2; nop; nop; nop;&bslash;n&bslash;t&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -315,7 +315,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;tsta %1, [%0] %2&bslash;n&bslash;t&quot;
+l_string|&quot;&bslash;n&bslash;tsta %1, [%0] %2; nop; nop; nop;&bslash;n&bslash;t&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -399,7 +399,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;tstba %0, [%1] %2&bslash;n&bslash;t&quot;
+l_string|&quot;&bslash;n&bslash;tstba %0, [%1] %2; nop; nop; nop;&bslash;n&bslash;t&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;

@@ -5013,6 +5013,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
+comma
+r_int
+r_int
+id|ignored
 )paren
 (brace
 r_return

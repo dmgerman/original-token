@@ -250,28 +250,19 @@ id|dest_node
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Set up the SNAP layer&n; */
-DECL|variable|snap_proto_syms
-r_static
-r_struct
-id|symbol_table
-id|snap_proto_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|register_snap_client
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_snap_client
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|unregister_snap_client
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_snap_client
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 DECL|function|snap_proto_init
 r_void
@@ -309,13 +300,6 @@ l_string|&quot;SNAP - unable to register with 802.2&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|register_symtab
-c_func
-(paren
-op_amp
-id|snap_proto_syms
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Register SNAP clients. We don&squot;t yet use this for IP or IPX.&n; */
 DECL|function|register_snap_client

@@ -131,6 +131,12 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* zero if initrd should not be mounted */
+DECL|variable|initrd_below_start_ok
+r_int
+id|initrd_below_start_ok
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; *  Basically, my strategy here is to set up a buffer-head which can&squot;t be&n; *  deleted, and make that my Ramdisk.  If the request is outside of the&n; *  allocated size, we must get rid of it...&n; *&n; */

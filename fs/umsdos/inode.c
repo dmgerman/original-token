@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/umsdos/inode.c&n; *&n; *&t;Written 1993 by Jacques Gelinas &n; *&t;Inspired from linux/fs/msdos/... by Werner Almesberger&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/umsdos/inode.c&n; *&n; *&t;Written 1993 by Jacques Gelinas&n; *&t;Inspired from linux/fs/msdos/... by Werner Almesberger&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
@@ -1246,7 +1246,7 @@ op_eq
 id|super_blocks
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / mount&n;&t;&t;&t;&t;When a umsdos fs is mounted, a special handling is done&n;&t;&t;&t;&t;if it is the root partition. We check for the presence&n;&t;&t;&t;&t;of the file /linux/etc/init or /linux/etc/rc or&n;&t;&t;&t;&t;/linux/sbin/init. If one is there, we do a chroot(&quot;/linux&quot;).&n;&n;&t;&t;&t;&t;We check both because (see init/main.c) the kernel&n;&t;&t;&t;&t;try to exec init at different place and if it fails&n;&t;&t;&t;&t;it tries /bin/sh /etc/rc. To be consistent with&n;&t;&t;&t;&t;init/main.c, many more test would have to be done&n;&t;&t;&t;&t;to locate init. Any complain ?&n;&n;&t;&t;&t;&t;The chroot is done manually in init/main.c but the&n;&t;&t;&t;&t;info (the inode) is located at mount time and store&n;&t;&t;&t;&t;in a global variable (pseudo_root) which is used at&n;&t;&t;&t;&t;different place in the umsdos driver. There is no&n;&t;&t;&t;&t;need to store this variable elsewhere because it&n;&t;&t;&t;&t;will always be one, not one per mount.&n;&n;&t;&t;&t;&t;This feature allows the installation&n;&t;&t;&t;&t;of a linux system within a DOS system in a subdirectory.&n;&t;&n;&t;&t;&t;&t;A user may install its linux stuff in c:&bslash;linux&n;&t;&t;&t;&t;avoiding any clash with existing DOS file and subdirectory.&n;&t;&t;&t;&t;When linux boots, it hides this fact, showing a normal&n;&t;&t;&t;&t;root directory with /etc /bin /tmp ...&n;&n;&t;&t;&t;&t;The word &quot;linux&quot; is hardcoded in /usr/include/linux/umsdos_fs.h&n;&t;&t;&t;&t;in the macro UMSDOS_PSDROOT_NAME.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: pseudo root / mount&n;&t;&t;&t;&t;When a umsdos fs is mounted, a special handling is done&n;&t;&t;&t;&t;if it is the root partition. We check for the presence&n;&t;&t;&t;&t;of the file /linux/etc/init or /linux/etc/rc or&n;&t;&t;&t;&t;/linux/sbin/init. If one is there, we do a chroot(&quot;/linux&quot;).&n;&n;&t;&t;&t;&t;We check both because (see init/main.c) the kernel&n;&t;&t;&t;&t;try to exec init at different place and if it fails&n;&t;&t;&t;&t;it tries /bin/sh /etc/rc. To be consistent with&n;&t;&t;&t;&t;init/main.c, many more test would have to be done&n;&t;&t;&t;&t;to locate init. Any complain ?&n;&n;&t;&t;&t;&t;The chroot is done manually in init/main.c but the&n;&t;&t;&t;&t;info (the inode) is located at mount time and store&n;&t;&t;&t;&t;in a global variable (pseudo_root) which is used at&n;&t;&t;&t;&t;different place in the umsdos driver. There is no&n;&t;&t;&t;&t;need to store this variable elsewhere because it&n;&t;&t;&t;&t;will always be one, not one per mount.&n;&n;&t;&t;&t;&t;This feature allows the installation&n;&t;&t;&t;&t;of a linux system within a DOS system in a subdirectory.&n;&n;&t;&t;&t;&t;A user may install its linux stuff in c:&bslash;linux&n;&t;&t;&t;&t;avoiding any clash with existing DOS file and subdirectory.&n;&t;&t;&t;&t;When linux boots, it hides this fact, showing a normal&n;&t;&t;&t;&t;root directory with /etc /bin /tmp ...&n;&n;&t;&t;&t;&t;The word &quot;linux&quot; is hardcoded in /usr/include/linux/umsdos_fs.h&n;&t;&t;&t;&t;in the macro UMSDOS_PSDROOT_NAME.&n;&t;&t;&t;*/
 r_struct
 id|inode
 op_star
@@ -1593,6 +1593,8 @@ id|umsdos_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -1601,31 +1603,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
+r_return
 id|init_umsdos_fs
 c_func
 (paren
 )paren
-)paren
-op_eq
-l_int|0
-)paren
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|status
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

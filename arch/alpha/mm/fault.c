@@ -69,6 +69,10 @@ id|pt_regs
 op_star
 comma
 r_int
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to handle_mm_fault().&n; *&n; * mmcsr:&n; *&t;0 = translation not valid&n; *&t;1 = access violation&n; *&t;2 = fault-on-read&n; *&t;3 = fault-on-execute&n; *&t;4 = fault-on-write&n; *&n; * cause:&n; *&t;-1 = instruction fetch&n; *&t;0 = load&n; *&t;1 = store&n; *&n; * Registers $9 through $15 are saved in a block just prior to `regs&squot; and&n; * are saved and restored around the call to allow exception code to&n; * modify them.&n; */
@@ -365,6 +369,15 @@ comma
 id|regs
 comma
 id|cause
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs
+op_minus
+l_int|16
 )paren
 suffix:semicolon
 id|force_sig
@@ -397,6 +410,15 @@ comma
 id|regs
 comma
 id|cause
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs
+op_minus
+l_int|16
 )paren
 suffix:semicolon
 id|do_exit

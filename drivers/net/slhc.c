@@ -91,14 +91,6 @@ op_star
 id|cpp
 )paren
 suffix:semicolon
-r_static
-r_void
-id|export_slhc_syms
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* Initialize compression data structure&n; *&t;slots must be in range 0 to 255 (zero meaning no compression)&n; */
 r_struct
 id|slcompress
@@ -2851,72 +2843,50 @@ id|comp-&gt;sls_o_misses
 suffix:semicolon
 )brace
 )brace
-DECL|variable|slhc_syms
-r_static
-r_struct
-id|symbol_table
-id|slhc_syms
-op_assign
-(brace
 multiline_comment|/* Should this be surrounded with &quot;#ifdef CONFIG_MODULES&quot; ? */
-macro_line|#include &lt;linux/symtab_begin.h&gt;
 multiline_comment|/* VJ header compression */
-id|X
+DECL|variable|slhc_init
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|slhc_init
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|slhc_free
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|slhc_free
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|slhc_remember
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|slhc_remember
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|slhc_compress
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|slhc_compress
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|slhc_uncompress
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|slhc_uncompress
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|slhc_toss
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|slhc_toss
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
-DECL|function|export_slhc_syms
-r_static
-r_void
-id|export_slhc_syms
-c_func
-(paren
-r_void
-)paren
-(brace
-id|register_symtab
-c_func
-(paren
-op_amp
-id|slhc_syms
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -2931,11 +2901,6 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;CSLIP: code copyright 1989 Regents of the University of California&bslash;n&quot;
-)paren
-suffix:semicolon
-id|export_slhc_syms
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -2962,12 +2927,7 @@ c_func
 r_void
 )paren
 (brace
-id|export_slhc_syms
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 macro_line|#endif /* CONFIG_INET */
 eof

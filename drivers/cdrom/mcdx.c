@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 1996 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.14(hs)&n; *&n; * ... anyway, I&squot;m back again, thanks to Marcin, he adopted &n; * large portions of my code (at least the parts containing&n; * my main thoughts ...)&n; *&n; ****************** H E L P *********************************&n; * If you ever plan to update your CD ROM drive and perhaps&n; * want to sell or simply give away your Mitsumi FX-001[DS] &n; * -- Please --&n; * mail me (heiko@lotte.sax.de).  When my last drive goes &n; * ballistic no more driver support will be available from me!&n; *************************************************************&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang-ups)&n; *  Heiko Eissfeldt (VERIFY_READ/WRITE)&n; *  Marcin Dalecki (improved performance, shortened code)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 1996 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.14(hs)&n; *&n; * ... anyway, I&squot;m back again, thanks to Marcin, he adopted&n; * large portions of my code (at least the parts containing&n; * my main thoughts ...)&n; *&n; ****************** H E L P *********************************&n; * If you ever plan to update your CD ROM drive and perhaps&n; * want to sell or simply give away your Mitsumi FX-001[DS]&n; * -- Please --&n; * mail me (heiko@lotte.sax.de).  When my last drive goes&n; * ballistic no more driver support will be available from me!&n; *************************************************************&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang-ups)&n; *  Heiko Eissfeldt (VERIFY_READ/WRITE)&n; *  Marcin Dalecki (improved performance, shortened code)&n; *  ... somebody forgotten?&n; *&n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -28,9 +28,9 @@ mdefine_line|#define MAJOR_NR MITSUMI_X_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 multiline_comment|/* for compatible parameter passing with &quot;insmod&quot; */
 DECL|macro|mcdx_drive_map
-mdefine_line|#define&t;mcdx_drive_map mcdx    
+mdefine_line|#define&t;mcdx_drive_map mcdx
 macro_line|#include &lt;linux/mcdx.h&gt;
-macro_line|#ifndef HZ 
+macro_line|#ifndef HZ
 macro_line|#error HZ not defined
 macro_line|#endif
 DECL|macro|xwarn
@@ -527,7 +527,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&t;Indirect exported functions. These functions are exported by their&n;&t;addresses, such as mcdx_open and mcdx_close in the &n;&t;structure fops. */
+multiline_comment|/*&t;Indirect exported functions. These functions are exported by their&n;&t;addresses, such as mcdx_open and mcdx_close in the&n;&t;structure fops. */
 multiline_comment|/* ???  exported by the mcdx_sigaction struct */
 r_static
 r_void
@@ -1086,6 +1086,14 @@ l_int|0
 comma
 l_int|0
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mcdx
+comma
+l_string|&quot;1-4i&quot;
+)paren
 suffix:semicolon
 DECL|variable|mcdx_fops
 r_static
@@ -2907,7 +2915,7 @@ id|file
 op_star
 id|fp
 )paren
-multiline_comment|/*  actions done on open:&n; *  1)  get the drives status &n; *  2)  set the stuffp.readcmd if a CD is in.&n; *  (return no error if no CD is found, since ioctl() &n; *  needs an opened device */
+multiline_comment|/*  actions done on open:&n; *  1)  get the drives status&n; *  2)  set the stuffp.readcmd if a CD is in.&n; *  (return no error if no CD is found, since ioctl()&n; *  needs an opened device */
 (brace
 r_struct
 id|s_drive_stuff
@@ -2985,7 +2993,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/* close the door,&n;&t; * This should be explained ...&n;&t; * - If the door is open and its last close is too recent the &n;&t; *   autoclose wouldn&squot;t probably be what we want.&n;&t; * - If we didn&squot;t try to close the door yet, close it and go on.&n;&t; * - If we autoclosed the door and couldn&squot;t succeed in find a valid&n;&t; *   CD we shouldn&squot;t try autoclose any longer (until a valid CD is&n;&t; *   in.) */
+multiline_comment|/* close the door,&n;&t; * This should be explained ...&n;&t; * - If the door is open and its last close is too recent the&n;&t; *   autoclose wouldn&squot;t probably be what we want.&n;&t; * - If we didn&squot;t try to close the door yet, close it and go on.&n;&t; * - If we autoclosed the door and couldn&squot;t succeed in find a valid&n;&t; *   CD we shouldn&squot;t try autoclose any longer (until a valid CD is&n;&t; *   in.) */
 r_if
 c_cond
 (paren
@@ -3057,7 +3065,7 @@ comma
 l_string|&quot;open() media changed&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* but wait - the time of media change will be set at the &n;         * very last of this block - it seems, some of the following&n;         * talk() will detect a media change ... (I think, config()&n;         * is the reason. */
+multiline_comment|/* but wait - the time of media change will be set at the&n;         * very last of this block - it seems, some of the following&n;         * talk() will detect a media change ... (I think, config()&n;         * is the reason. */
 id|stuffp-&gt;audiostatus
 op_assign
 id|CDROM_AUDIO_INVALID
@@ -3887,7 +3895,7 @@ comma
 r_int
 id|jifs
 )paren
-multiline_comment|/* This routine is used for sleeping.&n; * A jifs value &lt;0 means NO sleeping,&n; *              =0 means minimal sleeping (let the kernel&n; *                 run for other processes)&n; *              &gt;0 means at least sleep for that amount.&n; *&t;May be we could use a simple count loop w/ jumps to itself, but &n; *&t;I wanna make this independent of cpu speed. [1 jiffy is 1/HZ] sec */
+multiline_comment|/* This routine is used for sleeping.&n; * A jifs value &lt;0 means NO sleeping,&n; *              =0 means minimal sleeping (let the kernel&n; *                 run for other processes)&n; *              &gt;0 means at least sleep for that amount.&n; *&t;May be we could use a simple count loop w/ jumps to itself, but&n; *&t;I wanna make this independent of cpu speed. [1 jiffy is 1/HZ] sec */
 (brace
 r_int
 r_int
@@ -4071,7 +4079,7 @@ id|b
 op_amp
 id|MCDX_RBIT_DTEN
 suffix:semicolon
-multiline_comment|/* NOTE: We only should get interrupts if the data we &n;&t; * requested are ready to transfer.&n;&t; * But the drive seems to generate ``asynchronous&squot;&squot; interrupts&n;&t; * on several error conditions too.  (Despite the err int enable&n;&t; * setting during initialisation) */
+multiline_comment|/* NOTE: We only should get interrupts if the data we&n;&t; * requested are ready to transfer.&n;&t; * But the drive seems to generate ``asynchronous&squot;&squot; interrupts&n;&t; * on several error conditions too.  (Despite the err int enable&n;&t; * setting during initialisation) */
 multiline_comment|/* if not ok, read the next byte as the drives status */
 r_if
 c_cond
@@ -4693,6 +4701,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* MODULE STUFF ***********************************************************/
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -4767,12 +4777,6 @@ id|drives
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -4945,9 +4949,9 @@ macro_line|#ifdef MODULE
 id|xwarn
 c_func
 (paren
-l_string|&quot;Version 2.14(hs) for %s&bslash;n&quot;
-comma
-id|kernel_version
+l_string|&quot;Version 2.14(hs) for &quot;
+id|UTS_RELEASE
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -5720,7 +5724,7 @@ comma
 r_int
 id|nr_sectors
 )paren
-multiline_comment|/*&t;This seems to do the actually transfer.  But it does more.  It&n;&t;keeps track of errors occurred and will (if possible) fall back&n;&t;to single speed on error. &n;&t;Return:&t;-1 on timeout or other error&n;&t;&t;&t;else status byte (as in stuff-&gt;st) */
+multiline_comment|/*&t;This seems to do the actually transfer.  But it does more.  It&n;&t;keeps track of errors occurred and will (if possible) fall back&n;&t;to single speed on error.&n;&t;Return:&t;-1 on timeout or other error&n;&t;&t;&t;else status byte (as in stuff-&gt;st) */
 (brace
 r_int
 id|ans
@@ -6192,7 +6196,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* The requested sector(s) is/are out of the &n;&t;&t; * already requested range, so we have to bother the drive&n;&t;&t; * with a new request. */
+multiline_comment|/* The requested sector(s) is/are out of the&n;&t;&t; * already requested range, so we have to bother the drive&n;&t;&t; * with a new request. */
 r_static
 r_int
 r_char

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   pi2.c: Driver for the Ottawa Amateur Radio Club PI and PI2 interface.&n;   Copyright (c) 1994 David Perry&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License version 2, as&n;   published by the Free Software Foundation.&n;&n;   This program is distributed in the hope that it will be useful, but&n;   WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n;   General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software Foundation,&n;   Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n;&n;   The file skeleton.c by Donald Becker was used as a starting point&n;   for this driver.&n;&n;   Revision History&n;&n;   April 6, 1994  (dp) Created&n;&t;&t;       version 0.0 ALPHA&n;   April 10, 1994 (dp) Included cleanup, suggestions from J. P. Morrison.&n;                       version 0.1 ALPHA&n;   April 13, 1994 (dp) Included address probing from JPM, autoirq&n;&t;&t;       version 0.2 ALPHA&n;   April 14, 1994 (ac) Sketched in the NET3 changes.&n;   April 17, 1994 (dp) Finished the NET3 changes. Used init_etherdev()&n;&t;&t;       instead of kmalloc() to ensure that DMA buffers will&n;&t;&t;       reside under the 16 meg line.&n;&t;&t;       version 0.4 ALPHA&n;   April 18, 1994 (dp) Now using the kernel provided sk_buff handling functions.&n;&t;&t;       Fixed a nasty problem with DMA.&n;&t;&t;       version 0.5 ALPHA&n;   June 6, 1994 (ac)   Fixed to match the buffer locking changes. Added a hack to&n;   &t;&t;       fix a funny I see (search for HACK) and fixed the calls in&n;   &t;&t;       init() so it doesn&squot;t migrate module based ethernet cards up&n;   &t;&t;       to eth2 Took out the old module ideas as they are no longer&n;   &t;&t;       relevant to the PI driver.&n;   July 16, 1994 (dp)  Fixed the B channel rx overrun problem ac referred to &n;   &t;&t;       above. Also added a bit of a hack to improve the maximum&n;   &t;               baud rate on the B channel (Search for STUFF2). Included&n;   &t;&t;       ioctl stuff from John Paul Morrison. version 0.6 ALPHA&n;   Feb 9, 1995 (dp)    Updated for 1.1.90 kernel&n;                       version 0.7 ALPHA&n;   Apr 6, 1995 (ac)    Tweaks for NET3 pre snapshot 002 AX.25&n;   April 23, 1995 (dp) Fixed ioctl so it works properly with piconfig program&n;                       when changing the baud rate or clock mode.&n;                       version 0.8 ALPHA&n;   July 17, 1995 (ac)  Finally polishing of AX25.030+ support&n;   Oct  29, 1995 (ac)  A couple of minor fixes before this, and this release changes&n;   &t;&t;       to the proper set_mac_address semantics which will break &n;   &t;&t;       a few programs I suspect.&n;   Aug  18, 1996 (jsn) Converted to be used as a module.&n;   Dec  13, 1996 (jsn) Fixed to match Linux networking changes.&n;*/
+multiline_comment|/*&n;   pi2.c: Driver for the Ottawa Amateur Radio Club PI and PI2 interface.&n;   Copyright (c) 1994 David Perry&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License version 2, as&n;   published by the Free Software Foundation.&n;&n;   This program is distributed in the hope that it will be useful, but&n;   WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n;   General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software Foundation,&n;   Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n;&n;   The file skeleton.c by Donald Becker was used as a starting point&n;   for this driver.&n;&n;   Revision History&n;&n;   April 6, 1994  (dp) Created&n;&t;&t;       version 0.0 ALPHA&n;   April 10, 1994 (dp) Included cleanup, suggestions from J. P. Morrison.&n;                       version 0.1 ALPHA&n;   April 13, 1994 (dp) Included address probing from JPM, autoirq&n;&t;&t;       version 0.2 ALPHA&n;   April 14, 1994 (ac) Sketched in the NET3 changes.&n;   April 17, 1994 (dp) Finished the NET3 changes. Used init_etherdev()&n;&t;&t;       instead of kmalloc() to ensure that DMA buffers will&n;&t;&t;       reside under the 16 meg line.&n;&t;&t;       version 0.4 ALPHA&n;   April 18, 1994 (dp) Now using the kernel provided sk_buff handling functions.&n;&t;&t;       Fixed a nasty problem with DMA.&n;&t;&t;       version 0.5 ALPHA&n;   June 6, 1994 (ac)   Fixed to match the buffer locking changes. Added a hack to&n;   &t;&t;       fix a funny I see (search for HACK) and fixed the calls in&n;   &t;&t;       init() so it doesn&squot;t migrate module based ethernet cards up&n;   &t;&t;       to eth2 Took out the old module ideas as they are no longer&n;   &t;&t;       relevant to the PI driver.&n;   July 16, 1994 (dp)  Fixed the B channel rx overrun problem ac referred to&n;   &t;&t;       above. Also added a bit of a hack to improve the maximum&n;   &t;               baud rate on the B channel (Search for STUFF2). Included&n;   &t;&t;       ioctl stuff from John Paul Morrison. version 0.6 ALPHA&n;   Feb 9, 1995 (dp)    Updated for 1.1.90 kernel&n;                       version 0.7 ALPHA&n;   Apr 6, 1995 (ac)    Tweaks for NET3 pre snapshot 002 AX.25&n;   April 23, 1995 (dp) Fixed ioctl so it works properly with piconfig program&n;                       when changing the baud rate or clock mode.&n;                       version 0.8 ALPHA&n;   July 17, 1995 (ac)  Finally polishing of AX25.030+ support&n;   Oct  29, 1995 (ac)  A couple of minor fixes before this, and this release changes&n;   &t;&t;       to the proper set_mac_address semantics which will break&n;   &t;&t;       a few programs I suspect.&n;   Aug  18, 1996 (jsn) Converted to be used as a module.&n;   Dec  13, 1996 (jsn) Fixed to match Linux networking changes.&n;*/
 multiline_comment|/* The following #define invokes a hack that will improve performance (baud)&n;   for the B port. The up side is it makes 9600 baud work ok on the B port.&n;   It may do 38400, depending on the host. The down side is it burns up&n;   CPU cycles with ints locked for up to 1 character time, at the beginning&n;   of each transmitted packet. If this causes you to lose sleep, #undefine it.&n;*/
 multiline_comment|/*#define STUFF2 1*/
 multiline_comment|/* The default configuration */
@@ -6873,7 +6873,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif    
+macro_line|#endif
 multiline_comment|/* Read interrupt status register (only valid from channel A)&n;     * Process all pending interrupts in while loop&n;     */
 id|lp
 op_assign
@@ -7606,6 +7606,8 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -7614,12 +7616,6 @@ c_func
 r_void
 )paren
 (brace
-id|register_symtab
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
 r_return
 id|pi_init
 c_func

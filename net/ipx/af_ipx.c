@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&t;&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided&n; *&t;as is and at no charge.&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header&n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network&n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide&n; *&t;warranty for any of this software. This material is provided&n; *&t;&quot;AS-IS&quot; and at no charge.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1425,7 +1425,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n;&t; *&t;if there is nothing to do, return. The kfree will&n;&t; *&t;cancel any charging.&n;&t; */
+multiline_comment|/*&n;&t; *&t;if there is nothing to do, return. The kfree will&n;&t; *&t;cancel any charging.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1456,7 +1456,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; */
+multiline_comment|/*&n;&t; * This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and&n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be&n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1501,7 +1501,7 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Do we need 2 SKBs? &n;&t; */
+multiline_comment|/*&n;&t; *&t;Do we need 2 SKBs?&n;&t; */
 r_if
 c_cond
 (paren
@@ -1896,7 +1896,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;If the originating net is not equal to our net; this is routed &n;&t; *&t;We are still charging the sender. Which is right - the driver&n;&t; *&t;free will handle this fairly.&n;&t; */
+multiline_comment|/*&n;&t; *&t;If the originating net is not equal to our net; this is routed&n;&t; *&t;We are still charging the sender. Which is right - the driver&n;&t; *&t;free will handle this fairly.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1927,7 +1927,7 @@ op_logical_neg
 id|send_to_wire
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;We do a FREE_WRITE here because this indicates how&n;&t;&t; *&t;to treat the socket with which the packet is &n;&t; &t; *&t;associated.  If this packet is associated with a&n;&t;&t; *&t;socket at all, it must be the originator of the &n;&t;&t; *&t;packet.   Routed packets will have no socket associated&n;&t;&t; *&t;with them.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;We do a FREE_WRITE here because this indicates how&n;&t;&t; *&t;to treat the socket with which the packet is&n;&t; &t; *&t;associated.  If this packet is associated with a&n;&t;&t; *&t;socket at all, it must be the originator of the&n;&t;&t; *&t;packet.   Routed packets will have no socket associated&n;&t;&t; *&t;with them.&n;&t;&t; */
 id|kfree_skb
 c_func
 (paren
@@ -1940,7 +1940,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Determine the appropriate hardware address &n;&t; */
+multiline_comment|/*&n;&t; *&t;Determine the appropriate hardware address&n;&t; */
 id|addr_len
 op_assign
 id|dev-&gt;addr_len
@@ -1989,7 +1989,7 @@ comma
 id|addr_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Make any compensation for differing physical/data link size &n;&t; */
+multiline_comment|/*&n;&t; *&t;Make any compensation for differing physical/data link size&n;&t; */
 id|skb
 op_assign
 id|ipxitf_adjust_skbuff
@@ -2171,7 +2171,7 @@ id|ipx_interface
 op_star
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL&t;
+macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t; *&t;We firewall first, ask questions later.&n;&t; */
 r_if
 c_cond
@@ -2203,7 +2203,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/* See if we should update our network number */
 r_if
 c_cond
@@ -2685,7 +2685,7 @@ op_ne
 id|ipx-&gt;ipx_dest.net
 )paren
 (brace
-macro_line|#ifdef CONFIG_FIREWALL&t;
+macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t;&t; *&t;See if we are allowed to firewall forward&n;&t;&t; */
 r_if
 c_cond
@@ -2717,7 +2717,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;
+macro_line|#endif
 multiline_comment|/* We only route point-to-point packets. */
 r_if
 c_cond
@@ -4768,7 +4768,7 @@ op_star
 op_amp
 id|packet-&gt;ipx_pktsize
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Number of complete words &n;&t; */
+multiline_comment|/*&n;&t; *&t;Number of complete words&n;&t; */
 id|__u32
 id|i
 op_assign
@@ -4776,7 +4776,7 @@ id|length
 op_rshift
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Loop through all complete words except the checksum field &n;&t; */
+multiline_comment|/*&n;&t; *&t;Loop through all complete words except the checksum field&n;&t; */
 r_while
 c_loop
 (paren
@@ -4791,7 +4791,7 @@ id|p
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Add on the last part word if it exists &n;&t; */
+multiline_comment|/*&n;&t; *&t;Add on the last part word if it exists&n;&t; */
 r_if
 c_cond
 (paren
@@ -4816,7 +4816,7 @@ op_star
 id|p
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Do final fixup &n;&t; */
+multiline_comment|/*&n;&t; *&t;Do final fixup&n;&t; */
 id|sum
 op_assign
 (paren
@@ -4831,7 +4831,7 @@ op_rshift
 l_int|16
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;It&squot;s a pity there&squot;s no concept of carry in C &n;&t; */
+multiline_comment|/*&n;&t; *&t;It&squot;s a pity there&squot;s no concept of carry in C&n;&t; */
 r_if
 c_cond
 (paren
@@ -5974,7 +5974,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Theory.. Keep printing in the same place until we pass offset */
-macro_line|#ifdef CONFIG_IPX_INTERN&t;
+macro_line|#ifdef CONFIG_IPX_INTERN
 id|len
 op_add_assign
 id|sprintf
@@ -9964,7 +9964,7 @@ op_amp
 id|ipx_rt_procinfo
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -9981,7 +9981,7 @@ l_string|&quot;IPX Portions Copyright (c) 1995 Caldera, Inc.&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/* Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; * &n; * Routes are always associated with an interface, and&n; * allocs/frees will remain properly accounted for by&n; * their associated interfaces.&n; * &n; * Ergo, before the ipx module can be removed, all IPX&n; * sockets be closed from user space. &n; */
+multiline_comment|/* Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * Routes are always associated with an interface, and&n; * allocs/frees will remain properly accounted for by&n; * their associated interfaces.&n; *&n; * Ergo, before the ipx module can be removed, all IPX&n; * sockets be closed from user space.&n; */
 r_static
 r_void
 DECL|function|ipx_proto_finito
@@ -10039,7 +10039,7 @@ c_func
 id|PROC_NET_IPX
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|unregister_netdevice_notifier
 c_func
 (paren
@@ -10123,6 +10123,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -10135,12 +10137,6 @@ id|ipx_proto_init
 c_func
 (paren
 l_int|NULL
-)paren
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-l_int|0
 )paren
 suffix:semicolon
 r_return

@@ -241,6 +241,14 @@ id|azt_port
 op_assign
 id|AZT_BASE_ADDR
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|azt_port
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|azt_cont
 r_static
 r_char

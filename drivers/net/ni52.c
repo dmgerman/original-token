@@ -5187,7 +5187,7 @@ id|XMIT_BUFF_SIZE
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Sorry, max. framelength is %d bytes. The length of your frame is %ld bytes.&bslash;n&quot;
+l_string|&quot;%s: Sorry, max. framelength is %d bytes. The length of your frame is %d bytes.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

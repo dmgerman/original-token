@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *      1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *      1994  Eberhard Moenkeberg - multi session handling.&n; *      1995  Mark Dobie - allow mounting of some weird VideoCDs and PhotoCDs.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *      1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *      1994  Eberhard Moenkeberg - multi session handling.&n; *      1995  Mark Dobie - allow mounting of some weird VideoCDs and PhotoCDs.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -803,7 +803,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * look if the driver can tell the multi session redirection value&n; *&n; * don&squot;t change this if you don&squot;t know what you do, please!&n; * Multisession is legal only with XA disks.&n; * A non-XA disk with more than one volume descriptor may do it right, but&n; * usually is written in a nowhere standardized &quot;multi-partition&quot; manner.&n; * Multisession uses absolute addressing (solely the first frame of the whole&n; * track is #0), multi-partition uses relative addressing (each first frame of&n; * each track is #0), and a track is not a session.&n; *&n; * A broken CDwriter software or drive firmware does not set new standards,&n; * at least not if conflicting with the existing ones.&n; * &n; * emoenke@gwdg.de&n; */
+multiline_comment|/*&n; * look if the driver can tell the multi session redirection value&n; *&n; * don&squot;t change this if you don&squot;t know what you do, please!&n; * Multisession is legal only with XA disks.&n; * A non-XA disk with more than one volume descriptor may do it right, but&n; * usually is written in a nowhere standardized &quot;multi-partition&quot; manner.&n; * Multisession uses absolute addressing (solely the first frame of the whole&n; * track is #0), multi-partition uses relative addressing (each first frame of&n; * each track is #0), and a track is not a session.&n; *&n; * A broken CDwriter software or drive firmware does not set new standards,&n; * at least not if conflicting with the existing ones.&n; *&n; * emoenke@gwdg.de&n; */
 DECL|macro|WE_OBEY_THE_WRITTEN_STANDARDS
 mdefine_line|#define WE_OBEY_THE_WRITTEN_STANDARDS 1
 DECL|function|isofs_get_last_session
@@ -915,7 +915,7 @@ c_func
 id|USER_DS
 )paren
 suffix:semicolon
-macro_line|#if 0 
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -2870,7 +2870,7 @@ id|isonum_723
 id|raw_inode-&gt;volume_sequence_number
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * Disable checking if we see any volume number other than 0 or 1.&n;&t; * We could use the cruft option, but that has multiple purposes, one&n;&t; * of which is limiting the file size to 16Mb.  Thus we silently allow&n;&t; * volume numbers of 0 to go through without complaining.&n;&t; */
+multiline_comment|/*&n;&t; * Disable checking if we see any volume number other than 0 or 1.&n;&t; * We could use the cruft option, but that has multiple purposes, one&n;&t; * of which is limiting the file size to 16Mb.  Thus we silently allow&n;&t; * volume numbers of 0 to go through without complaining.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3982,6 +3982,8 @@ id|iso9660_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -3990,31 +3992,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
+r_return
 id|init_iso9660_fs
 c_func
 (paren
 )paren
-)paren
-op_eq
-l_int|0
-)paren
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|status
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

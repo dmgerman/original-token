@@ -1838,34 +1838,26 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|variable|ppp_syms
-r_static
-r_struct
-id|symbol_table
-id|ppp_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|ppp_register_compressor
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ppp_register_compressor
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|ppp_unregister_compressor
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ppp_unregister_compressor
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|ppp_crc16_table
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|ppp_crc16_table
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 multiline_comment|/* called at boot/load time for each ppp device defined in the kernel */
 macro_line|#ifndef MODULE
@@ -1905,22 +1897,6 @@ op_assign
 id|ppp_first_time
 c_func
 (paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|answer
-op_eq
-l_int|0
-)paren
-(paren
-r_void
-)paren
-id|register_symtab
-(paren
-op_amp
-id|ppp_syms
 )paren
 suffix:semicolon
 )brace
@@ -12233,16 +12209,6 @@ id|KERN_INFO
 l_string|&quot;PPP: ppp_init() failure %d&bslash;n&quot;
 comma
 id|status
-)paren
-suffix:semicolon
-r_else
-(paren
-r_void
-)paren
-id|register_symtab
-(paren
-op_amp
-id|ppp_syms
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the IEEE 802.2 LLC protocol for the&n; *&t;&t;LINUX operating system.  LLC is implemented as a set of &n; *&t;&t;state machines and callbacks for higher networking layers.&n; *&n; *&t;&t;Code for initialization, termination, registration and &n; *&t;&t;MAC layer glue.&n; *&n; *&t;&t;Written by Tim Alpaerts, Tim_Alpaerts@toyota-motor-europe.com&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes&n; *&t;&t;Alan Cox&t;:&t;Chainsawed to Linux format&n; *&t;&t;&t;&t;&t;Added llc_ to names&n; *&t;&t;&t;&t;&t;Started restructuring handlers &n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the IEEE 802.2 LLC protocol for the&n; *&t;&t;LINUX operating system.  LLC is implemented as a set of&n; *&t;&t;state machines and callbacks for higher networking layers.&n; *&n; *&t;&t;Code for initialization, termination, registration and&n; *&t;&t;MAC layer glue.&n; *&n; *&t;&t;Written by Tim Alpaerts, Tim_Alpaerts@toyota-motor-europe.com&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes&n; *&t;&t;Alan Cox&t;:&t;Chainsawed to Linux format&n; *&t;&t;&t;&t;&t;Added llc_ to names&n; *&t;&t;&t;&t;&t;Started restructuring handlers&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,7 +9,7 @@ macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/llc_frame.h&gt;
 macro_line|#include &lt;net/llc.h&gt;
-multiline_comment|/*&n; *&t;All incoming frames pass thru mac_data_indicate().&n; *&t;Here an llc structure is associated with an skb depending on the source&n; *&t;MAC address in the pdu. &n; *&t;The received sk_buffs with pdus other than I_CMD and I_RSP&n; *&t;are freed by mac_data_indicate() after processing,&n; *&t;the I pdu buffers are freed by the cl2llc client when it no longer needs&n; *&t;the skb. &n;*/
+multiline_comment|/*&n; *&t;All incoming frames pass thru mac_data_indicate().&n; *&t;Here an llc structure is associated with an skb depending on the source&n; *&t;MAC address in the pdu.&n; *&t;The received sk_buffs with pdus other than I_CMD and I_RSP&n; *&t;are freed by mac_data_indicate() after processing,&n; *&t;the I pdu buffers are freed by the cl2llc client when it no longer needs&n; *&t;the skb.&n;*/
 DECL|function|llc_mac_data_indicate
 r_int
 id|llc_mac_data_indicate
@@ -54,7 +54,7 @@ id|free
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Truncate buffer to true 802.3 length  &n;&t; *&t;[FIXME: move to 802.2 demux]&n;&t; */
+multiline_comment|/*&n;&t; *&t;Truncate buffer to true 802.3 length&n;&t; *&t;[FIXME: move to 802.2 demux]&n;&t; */
 id|ll
 op_assign
 op_star
@@ -104,7 +104,7 @@ op_le
 id|FRMR_RSP
 )paren
 (brace
-multiline_comment|/* &n;&t;&t; *&t;PDU is of the type 2 set &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;PDU is of the type 2 set&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -133,7 +133,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; *&t;PDU belongs to type 1 set &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;PDU belongs to type 1 set&n;&t;&t; */
 id|p_flag
 op_assign
 id|fr-&gt;u_hdr.u_pflag
@@ -196,7 +196,7 @@ suffix:semicolon
 r_case
 id|XID_CMD
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Basic format XID is handled by LLC itself &n;&t;&t;&t;&t; *&t;Doc 5.4.1.1.2 p 48/49 &n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Basic format XID is handled by LLC itself&n;&t;&t;&t;&t; *&t;Doc 5.4.1.1.2 p 48/49&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -327,7 +327,7 @@ r_default
 suffix:colon
 (brace
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;All other type 1 pdus ignored for now &n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;All other type 1 pdus ignored for now&n;&t;&t;&t;&t; */
 )brace
 )brace
 r_if
@@ -347,7 +347,7 @@ id|fr
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;No auto free for I pdus &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;No auto free for I pdus&n;&t;&t; */
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -578,52 +578,47 @@ id|lp
 )paren
 suffix:semicolon
 )brace
-DECL|variable|cl2llc_proto_syms
-r_static
-r_struct
-id|symbol_table
-id|cl2llc_proto_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|register_cl2llc_client
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_cl2llc_client
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|unregister_cl2llc_client
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_cl2llc_client
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|llc_data_request
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|llc_data_request
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|llc_unit_data_request
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|llc_unit_data_request
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|llc_test_request
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|llc_test_request
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|llc_xid_request
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|llc_xid_request
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 DECL|macro|ALL_TYPES_8022
 mdefine_line|#define ALL_TYPES_8022 0
@@ -638,13 +633,6 @@ op_star
 id|proto
 )paren
 (brace
-id|register_symtab
-c_func
-(paren
-op_amp
-id|cl2llc_proto_syms
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren

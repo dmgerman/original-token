@@ -169,12 +169,11 @@ op_div
 l_int|4
 suffix:semicolon
 r_return
-(paren
 id|last
-op_plus
+(braket
 l_int|1
-)paren
-op_member_access_from_pointer
+)braket
+dot
 id|fixup
 suffix:semicolon
 )brace
@@ -185,23 +184,23 @@ id|first
 OG
 id|start
 op_logical_and
-(paren
 id|first
+(braket
 op_minus
 l_int|1
-)paren
-op_member_access_from_pointer
+)braket
+dot
 id|insn
 OL
 id|value
 op_logical_and
 op_logical_neg
-(paren
 id|first
+(braket
 op_minus
 l_int|1
-)paren
-op_member_access_from_pointer
+)braket
+dot
 id|fixup
 op_logical_and
 id|first-&gt;insn
@@ -215,12 +214,12 @@ op_assign
 (paren
 id|value
 op_minus
-(paren
-id|first
+id|firstp
+(braket
 op_minus
 l_int|1
-)paren
-op_member_access_from_pointer
+)braket
+dot
 id|insn
 )paren
 op_div
@@ -254,14 +253,8 @@ r_int
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef CONFIG_MODULES
-r_struct
-id|module
-op_star
-id|mp
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Search the kernel&squot;s table first.  */
+macro_line|#ifndef CONFIG_MODULES
+multiline_comment|/* There is only the kernel to search.  */
 id|ret
 op_assign
 id|search_one_table
@@ -286,7 +279,13 @@ id|ret
 r_return
 id|ret
 suffix:semicolon
-macro_line|#ifdef CONFIG_MODULES
+macro_line|#else
+multiline_comment|/* The kernel is the last &quot;module&quot; -- no need to treat it special.  */
+r_struct
+id|module
+op_star
+id|mp
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -306,19 +305,20 @@ id|mp-&gt;next
 r_if
 c_cond
 (paren
-id|mp-&gt;exceptinfo.start
-op_ne
+id|mp-&gt;ex_table_start
+op_eq
 l_int|NULL
 )paren
-(brace
+r_continue
+suffix:semicolon
 id|ret
 op_assign
 id|search_one_table
 c_func
 (paren
-id|mp-&gt;exceptinfo.start
+id|mp-&gt;ex_table_start
 comma
-id|mp-&gt;exceptinfo.stop
+id|mp-&gt;ex_table_stop
 op_minus
 l_int|1
 comma
@@ -335,7 +335,6 @@ id|ret
 r_return
 id|ret
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 r_return

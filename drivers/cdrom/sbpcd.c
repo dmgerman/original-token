@@ -249,6 +249,14 @@ id|SBPRO
 suffix:semicolon
 multiline_comment|/* probe with user&squot;s setup only */
 macro_line|#endif
+id|MODULE_PARM
+c_func
+(paren
+id|sbpcd
+comma
+l_string|&quot;2i&quot;
+)paren
+suffix:semicolon
 DECL|macro|NUM_PROBE
 mdefine_line|#define NUM_PROBE  (sizeof(sbpcd) / sizeof(int))
 multiline_comment|/*==========================================================================*/

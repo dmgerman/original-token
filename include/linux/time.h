@@ -56,6 +56,7 @@ suffix:semicolon
 DECL|macro|NFDBITS
 mdefine_line|#define NFDBITS&t;&t;&t;__NFDBITS
 macro_line|#ifdef __KERNEL__
+r_extern
 r_void
 id|do_gettimeofday
 c_func
@@ -66,6 +67,7 @@ op_star
 id|tv
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|do_settimeofday
 c_func
@@ -76,6 +78,7 @@ op_star
 id|tv
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|get_fast_time
 c_func
@@ -86,7 +89,7 @@ op_star
 id|tv
 )paren
 suffix:semicolon
-DECL|variable|do_get_fast_time
+r_extern
 r_void
 (paren
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from&n; *&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -530,7 +530,7 @@ id|sk-&gt;timer
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Called from proc fs &n; */
+multiline_comment|/*&n; *&t;Called from proc fs&n; */
 DECL|function|atalk_get_info
 r_int
 id|atalk_get_info
@@ -799,7 +799,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Appletalk interface control&n; */
-multiline_comment|/*&n; *&t;Drop a device. Doesn&squot;t drop any of its routes - that is the &n; *&t;the callers problem. Called when we down the interface or &n; *&t;delete the address.&n; */
+multiline_comment|/*&n; *&t;Drop a device. Doesn&squot;t drop any of its routes - that is the&n; *&t;the callers problem. Called when we down the interface or&n; *&t;delete the address.&n; */
 DECL|function|atif_drop_device
 r_static
 r_void
@@ -1037,7 +1037,7 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/*&n; *&t;THIS IS A HACK: Farallon cards want to do their own picking of&n; *&t;addresses. This needs tidying up post 1.4, but we need it in &n; *&t;now for the 1.4 release as is.&n; *&n; */
+multiline_comment|/*&n; *&t;THIS IS A HACK: Farallon cards want to do their own picking of&n; *&t;addresses. This needs tidying up post 1.4, but we need it in&n; *&t;now for the 1.4 release as is.&n; *&n; */
 r_if
 c_cond
 (paren
@@ -2710,7 +2710,7 @@ op_assign
 op_star
 id|nr
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Check if the chosen address is used. If so we &n;&t;&t;&t; *&t;error and atalkd will try another. &n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Check if the chosen address is used. If so we&n;&t;&t;&t; *&t;error and atalkd will try another.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3715,7 +3715,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Set &squot;magic&squot; options for appletalk. If we don&squot;t have any this is fine &n; *&t;as it is.&n; */
+multiline_comment|/*&n; *&t;Set &squot;magic&squot; options for appletalk. If we don&squot;t have any this is fine&n; *&t;as it is.&n; */
 DECL|function|atalk_setsockopt
 r_static
 r_int
@@ -4784,7 +4784,7 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5055,7 +5055,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Receive a packet (in skb) from device dev. This has come from the SNAP decoder, and on entry&n; *&t;skb-&gt;h.raw is the DDP header, skb-&gt;len is the DDP length. The physical headers have been &n; *&t;extracted. PPP should probably pass frames marked as for this layer&n; *&t;[ie ARPHRD_ETHERTALK]&n; */
+multiline_comment|/*&n; *&t;Receive a packet (in skb) from device dev. This has come from the SNAP decoder, and on entry&n; *&t;skb-&gt;h.raw is the DDP header, skb-&gt;len is the DDP length. The physical headers have been&n; *&t;extracted. PPP should probably pass frames marked as for this layer&n; *&t;[ie ARPHRD_ETHERTALK]&n; */
 DECL|function|atalk_rcv
 r_static
 r_int
@@ -5198,7 +5198,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Any checksums. Note we don&squot;t do htons() on this == is assumed to be&n;&t; *&t;valid for net byte orders all over the networking code... &n;&t; */
+multiline_comment|/*&n;&t; *&t;Any checksums. Note we don&squot;t do htons() on this == is assumed to be&n;&t; *&t;valid for net byte orders all over the networking code...&n;&t; */
 r_if
 c_cond
 (paren
@@ -5259,7 +5259,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/* Check the packet is aimed at us */
 r_if
 c_cond
@@ -5335,7 +5335,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FIREWALL&t;&t;
+macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t;&t; *&t;Check firewall allows this routing&n;&t;&t; */
 r_if
 c_cond
@@ -5759,7 +5759,7 @@ id|ddp-&gt;deh_hops
 op_assign
 l_int|15
 suffix:semicolon
-multiline_comment|/* Non routable, so force a drop &n;&t;&t;&t;&t;&t;&t;   if we slip up later */
+multiline_comment|/* Non routable, so force a drop&n;&t;&t;&t;&t;&t;&t;   if we slip up later */
 op_star
 (paren
 (paren
@@ -7616,7 +7616,7 @@ op_amp
 id|proc_atalk_iface
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -7626,6 +7626,8 @@ l_string|&quot;Appletalk 0.18 for Linux NET3.037&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -7638,12 +7640,6 @@ id|atalk_proto_init
 c_func
 (paren
 l_int|NULL
-)paren
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -7800,7 +7796,7 @@ c_func
 id|PROC_NET_ATIF
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|unregister_netdevice_notifier
 c_func
 (paren

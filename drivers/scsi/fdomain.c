@@ -2813,6 +2813,8 @@ id|fdomain_16x0_reset
 c_func
 (paren
 l_int|NULL
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -6211,6 +6213,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
+comma
+r_int
+r_int
+id|ignored
 )paren
 (brace
 macro_line|#if DEBUG_RESET

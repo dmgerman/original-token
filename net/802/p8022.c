@@ -261,28 +261,19 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|variable|p8022_proto_syms
-r_static
-r_struct
-id|symbol_table
-id|p8022_proto_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|register_8022_client
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_8022_client
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|unregister_8022_client
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_8022_client
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 DECL|function|p8022_proto_init
 r_void
@@ -308,13 +299,6 @@ c_func
 (paren
 op_amp
 id|p8022_packet_type
-)paren
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-op_amp
-id|p8022_proto_syms
 )paren
 suffix:semicolon
 )brace

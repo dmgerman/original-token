@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.39 1996/12/10 06:06:35 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.40 1996/12/23 05:28:49 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -2261,6 +2261,15 @@ DECL|macro|ext2_find_first_zero_bit
 mdefine_line|#define ext2_find_first_zero_bit     find_first_zero_le_bit
 DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_le_bit
+multiline_comment|/* Bitmap functions for the minix filesystem.  */
+DECL|macro|minix_set_bit
+mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+DECL|macro|minix_clear_bit
+mdefine_line|#define minix_clear_bit(nr,addr) clear_bit(nr,addr)
+DECL|macro|minix_test_bit
+mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
+DECL|macro|minix_find_first_zero_bit
+mdefine_line|#define minix_find_first_zero_bit(addr,size) find_first_zero_bit(addr,size)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* defined(_SPARC_BITOPS_H) */
 eof

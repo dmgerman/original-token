@@ -153,6 +153,14 @@ id|sony535_cd_base_io
 op_assign
 id|CDU535_ADDRESS
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sony535_cd_base_io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The following are I/O addresses of the various registers for the drive.  The&n; * comment for the base address also applies here.&n; */
 DECL|variable|select_unit_reg
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_RAUDIO  - Real Audio masquerading module&n; *&n; *&n; * Version:&t;@(#)$Id: ip_masq_raudio.c,v 1.3 1996/05/20 13:24:26 nigel Exp $&n; *&n; * Author:&t;Nigel Metheringham&n; *&t;&t;[strongly based on ftp module by Juan Jose Ciarlante &amp; Wouter Gadeyne]&n; *&t;&t;[Real Audio information taken from Progressive Networks firewall docs]&n; *&n; *&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; * Limitations&n; *&t;The IP Masquerading proxies at present do not have access to a processed&n; *&t;data stream.  Hence for a protocol like the Real Audio control protocol,&n; *&t;which depends on knowing where you are in the data stream, you either&n; *&t;to keep a *lot* of state in your proxy, or you cheat and simplify the&n; *&t;problem [needless to say I did the latter].&n; *&n; *&t;This proxy only handles data in the first packet.  Everything else is&n; *&t;passed transparently.  This means it should work under all normal&n; *&t;circumstances, but it could be fooled by new data formats or a&n; *&t;malicious application!&n; *&n; *&t;At present the &quot;first packet&quot; is defined as a packet starting with&n; *&t;the protocol ID string - &quot;PNA&quot;.&n; *&t;When the link is up there appears to be enough control data &n; *&t;crossing the control link to keep it open even if a long audio&n; *&t;piece is playing.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_RAUDIO  - Real Audio masquerading module&n; *&n; *&n; * Version:&t;@(#)$Id: ip_masq_raudio.c,v 1.3 1996/05/20 13:24:26 nigel Exp $&n; *&n; * Author:&t;Nigel Metheringham&n; *&t;&t;[strongly based on ftp module by Juan Jose Ciarlante &amp; Wouter Gadeyne]&n; *&t;&t;[Real Audio information taken from Progressive Networks firewall docs]&n; *&n; *&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; * Limitations&n; *&t;The IP Masquerading proxies at present do not have access to a processed&n; *&t;data stream.  Hence for a protocol like the Real Audio control protocol,&n; *&t;which depends on knowing where you are in the data stream, you either&n; *&t;to keep a *lot* of state in your proxy, or you cheat and simplify the&n; *&t;problem [needless to say I did the latter].&n; *&n; *&t;This proxy only handles data in the first packet.  Everything else is&n; *&t;passed transparently.  This means it should work under all normal&n; *&t;circumstances, but it could be fooled by new data formats or a&n; *&t;malicious application!&n; *&n; *&t;At present the &quot;first packet&quot; is defined as a packet starting with&n; *&t;the protocol ID string - &quot;PNA&quot;.&n; *&t;When the link is up there appears to be enough control data&n; *&t;crossing the control link to keep it open even if a long audio&n; *&t;piece is playing.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -576,7 +576,7 @@ id|priv-&gt;data_conn
 op_assign
 id|n_ms
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t; * There is nothing else useful we can do&n;&t;&t;&t; * Maybe a development could do more, but for now&n;&t;&t;&t; * we exit gracefully!&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * There is nothing else useful we can do&n;&t;&t;&t; * Maybe a development could do more, but for now&n;&t;&t;&t; * we exit gracefully!&n;&t;&t;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -673,6 +673,8 @@ id|ip_masq_raudio
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -694,12 +696,6 @@ l_int|0
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
 suffix:semicolon
 r_return
 l_int|0

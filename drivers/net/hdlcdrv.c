@@ -3887,46 +3887,40 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|variable|hdlcdrv_syms
-r_static
-r_struct
-id|symbol_table
-id|hdlcdrv_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|hdlcdrv_receiver
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|hdlcdrv_receiver
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|hdlcdrv_transmitter
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|hdlcdrv_transmitter
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|hdlcdrv_arbitrate
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|hdlcdrv_arbitrate
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|hdlcdrv_register_hdlcdrv
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|hdlcdrv_register_hdlcdrv
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|hdlcdrv_unregister_hdlcdrv
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|hdlcdrv_unregister_hdlcdrv
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
@@ -3954,13 +3948,6 @@ comma
 id|__TIME__
 comma
 id|__DATE__
-)paren
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-op_amp
-id|hdlcdrv_syms
 )paren
 suffix:semicolon
 r_return

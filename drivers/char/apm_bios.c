@@ -15,28 +15,19 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/apm_bios.h&gt;
-DECL|variable|apm_syms
-r_static
-r_struct
-id|symbol_table
-id|apm_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|variable|apm_register_callback
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|apm_register_callback
 )paren
-comma
-id|X
+suffix:semicolon
+DECL|variable|apm_unregister_callback
+id|EXPORT_SYMBOL
 c_func
 (paren
 id|apm_unregister_callback
 )paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
 suffix:semicolon
 r_extern
 r_int
@@ -50,7 +41,7 @@ suffix:semicolon
 multiline_comment|/*&n; * The apm_bios device is one of the misc char devices.&n; * This is its minor number.&n; */
 DECL|macro|APM_MINOR_DEV
 mdefine_line|#define&t;APM_MINOR_DEV&t;134
-multiline_comment|/* Configurable options:&n; *  &n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.  Some&n; * problems have been reported when using this option with gpm (if you&squot;d&n; * like to debug this, please do so).&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
+multiline_comment|/* Configurable options:&n; *&n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.  Some&n; * problems have been reported when using this option with gpm (if you&squot;d&n; * like to debug this, please do so).&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
 multiline_comment|/* KNOWN PROBLEM MACHINES:&n; *&n; * U: TI 4000M TravelMate: BIOS is *NOT* APM compliant&n; *                         [Confirmed by TI representative]&n; * U: ACER 486DX4/75: uses dseg 0040, in violation of APM specification&n; *                    [Confirmed by BIOS disassembly]&n; * P: Toshiba 1950S: battery life information only gets updated after resume&n; *&n; * Legend: U = unusable with APM patches&n; *         P = partially usable with APM patches&n; */
 multiline_comment|/*&n; * Define to have debug messages.&n; */
 DECL|macro|APM_DEBUG
@@ -4081,13 +4072,6 @@ c_func
 (paren
 op_amp
 id|apm_timer
-)paren
-suffix:semicolon
-id|register_symtab
-c_func
-(paren
-op_amp
-id|apm_syms
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS

@@ -14,7 +14,7 @@ id|iov_base
 suffix:semicolon
 multiline_comment|/* BSD uses caddr_t (1003.1g requires void *) */
 DECL|member|iov_len
-r_int
+id|__kernel_size_t
 id|iov_len
 suffix:semicolon
 multiline_comment|/* Must be size_t (1003.1g) */

@@ -2,7 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_IF_H
 DECL|macro|_LINUX_IF_H
 mdefine_line|#define _LINUX_IF_H
-macro_line|#include &lt;linux/types.h&gt;&t;&t;/* for &quot;caddr_t&quot; et al&t;&t;*/
+macro_line|#include &lt;linux/types.h&gt;&t;&t;/* for &quot;__kernel_caddr_t&quot; et al&t;*/
 macro_line|#include &lt;linux/socket.h&gt;&t;&t;/* for &quot;struct sockaddr&quot; et al&t;*/
 multiline_comment|/* Standard interface flags. */
 DECL|macro|IFF_UP
@@ -192,7 +192,7 @@ id|IFNAMSIZ
 suffix:semicolon
 multiline_comment|/* Just fits the size */
 DECL|member|ifru_data
-id|caddr_t
+id|__kernel_caddr_t
 id|ifru_data
 suffix:semicolon
 DECL|member|ifr_ifru
@@ -240,7 +240,7 @@ multiline_comment|/* size of buffer&t;*/
 r_union
 (brace
 DECL|member|ifcu_buf
-id|caddr_t
+id|__kernel_caddr_t
 id|ifcu_buf
 suffix:semicolon
 DECL|member|ifcu_req

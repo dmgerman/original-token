@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;hpfs.h&quot;
 macro_line|#include &quot;hpfs_caps.h&quot;
-multiline_comment|/* &n; * HPFS is a mixture of 512-byte blocks and 2048-byte blocks.  The 2k blocks&n; * are used for directories and bitmaps.  For bmap to work, we must run the&n; * file system with 512-byte blocks.  The 2k blocks are assembled in buffers&n; * obtained from kmalloc.&n; *&n; * For a file&squot;s i-number we use the sector number of its fnode, coded.&n; * (Directory ino&squot;s are even, file ino&squot;s are odd, and ino &gt;&gt; 1 is the&n; * sector address of the fnode.  This is a hack to allow lookup() to&n; * tell read_inode() whether it is necessary to read the fnode.)&n; *&n; * The map_xxx routines all read something into a buffer and return a&n; * pointer somewhere in the buffer.  The caller must do the brelse.&n; * The other routines are balanced.&n; *&n; * For details on the data structures see hpfs.h and the Duncan paper.&n; *&n; * Overview&n; *&n; * [ The names of these data structures, except fnode, are not Microsoft&squot;s&n; * or IBM&squot;s.  I don&squot;t know what names they use.  The semantics described&n; * here are those of this implementation, and any coincidence between it&n; * and real HPFS is to be hoped for but not guaranteed by me, and&n; * certainly not guaranteed by MS or IBM.  Who know nothing about this. ]&n; *&n; * [ Also, the following will make little sense if you haven&squot;t read the&n; * Duncan paper, which is excellent. ]&n; *&n; * HPFS is a tree.  There are 3 kinds of nodes.  A directory is a tree&n; * of dnodes, and a file&squot;s allocation info is a tree of sector runs&n; * stored in fnodes and anodes.&n; *&n; * The top pointer is in the super block, it points to the fnode of the&n; * root directory.&n; *&n; * The root directory -- all directories -- gives file names, dates &amp;c,&n; * and fnode addresses.  If the directory fits in one dnode, that&squot;s it,&n; * otherwise the top dnode points to other dnodes, forming a tree.  A&n; * dnode tree (one directory) might look like&n; *&n; *     ((a b c) d (e f g) h (i j) k l (m n o p))&n; *&n; * The subtrees appear between the files.  Each dir entry contains, along&n; * with the name and fnode, a dnode pointer to the subtree that precedes it&n; * (if there is one; a flag tells that).  The first entry in every directory&n; * is ^A^A, the &quot;.&quot; entry for the directory itself.  The last entry in every&n; * dnode is &bslash;377, a fake entry whose only valid fields are the bit marking&n; * it last and the down pointer to the subtree preceding it, if any.&n; *&n; * The &quot;value&quot; field of directory entries is an fnode address.  The fnode&n; * tells where the sectors of the file are.  The fnode for a subdirectory&n; * contains one pointer, to the root dnode of the subdirectory.  The fnode&n; * for a data file contains, in effect, a tiny anode.  (Most of the space&n; * in fnodes is for extended attributes.)&n; *&n; * anodes and the anode part of fnodes are trees of extents.  An extent&n; * is a (length, disk address) pair, labeled with the file address being&n; * mapped.  E.g.,&n; *&n; *     (0: 3@1000  3: 1@2000  4: 2@10)&n; *&n; * means the file:disk sector map (0:1000 1:1001 2:1002 3:2000 4:10 5:11).&n; *&n; * There is space for 8 file:len@disk triples in an fnode, or for 40 in an&n; * anode.  If this is insufficient, subtrees are used, as in&n; *&n; *  (6: (0: 3@1000  3: 1@2000  4: 2@10)  12: (6: 3@8000  9: 1@9000  10: 2@20))&n; *&n; * The label on a subtree is the first address *after* that tree.  The&n; * subtrees are always anodes.  The label:subtree pairs require only&n; * two words each, so non-leaf subtrees have a different format; there&n; * is room for 12 label:subtree pairs in an fnode, or 60 in an anode.&n; *&n; * Within a directory, each dnode contains a pointer up to its parent&n; * dnode.  The root dnode points up to the directory&squot;s fnode.&n; *&n; * Each fnode contains a pointer to the directory that contains it&n; * (to the fnode of the directory).  So this pointer in a directory&n; * fnode is &quot;..&quot;.&n; *&n; * On the disk, dnodes are all together in the center of the partition,&n; * and HPFS even manages to put all the dnodes for a single directory&n; * together, generally.  fnodes are out with the data.  anodes are seldom&n; * seen -- in fact noncontiguous files are seldom seen.  I think this is&n; * partly the open() call that lets programs specify the length of an&n; * output file when they know it, and partly because HPFS.IFS really is&n; * very good at resisting fragmentation. &n; */
+multiline_comment|/*&n; * HPFS is a mixture of 512-byte blocks and 2048-byte blocks.  The 2k blocks&n; * are used for directories and bitmaps.  For bmap to work, we must run the&n; * file system with 512-byte blocks.  The 2k blocks are assembled in buffers&n; * obtained from kmalloc.&n; *&n; * For a file&squot;s i-number we use the sector number of its fnode, coded.&n; * (Directory ino&squot;s are even, file ino&squot;s are odd, and ino &gt;&gt; 1 is the&n; * sector address of the fnode.  This is a hack to allow lookup() to&n; * tell read_inode() whether it is necessary to read the fnode.)&n; *&n; * The map_xxx routines all read something into a buffer and return a&n; * pointer somewhere in the buffer.  The caller must do the brelse.&n; * The other routines are balanced.&n; *&n; * For details on the data structures see hpfs.h and the Duncan paper.&n; *&n; * Overview&n; *&n; * [ The names of these data structures, except fnode, are not Microsoft&squot;s&n; * or IBM&squot;s.  I don&squot;t know what names they use.  The semantics described&n; * here are those of this implementation, and any coincidence between it&n; * and real HPFS is to be hoped for but not guaranteed by me, and&n; * certainly not guaranteed by MS or IBM.  Who know nothing about this. ]&n; *&n; * [ Also, the following will make little sense if you haven&squot;t read the&n; * Duncan paper, which is excellent. ]&n; *&n; * HPFS is a tree.  There are 3 kinds of nodes.  A directory is a tree&n; * of dnodes, and a file&squot;s allocation info is a tree of sector runs&n; * stored in fnodes and anodes.&n; *&n; * The top pointer is in the super block, it points to the fnode of the&n; * root directory.&n; *&n; * The root directory -- all directories -- gives file names, dates &amp;c,&n; * and fnode addresses.  If the directory fits in one dnode, that&squot;s it,&n; * otherwise the top dnode points to other dnodes, forming a tree.  A&n; * dnode tree (one directory) might look like&n; *&n; *     ((a b c) d (e f g) h (i j) k l (m n o p))&n; *&n; * The subtrees appear between the files.  Each dir entry contains, along&n; * with the name and fnode, a dnode pointer to the subtree that precedes it&n; * (if there is one; a flag tells that).  The first entry in every directory&n; * is ^A^A, the &quot;.&quot; entry for the directory itself.  The last entry in every&n; * dnode is &bslash;377, a fake entry whose only valid fields are the bit marking&n; * it last and the down pointer to the subtree preceding it, if any.&n; *&n; * The &quot;value&quot; field of directory entries is an fnode address.  The fnode&n; * tells where the sectors of the file are.  The fnode for a subdirectory&n; * contains one pointer, to the root dnode of the subdirectory.  The fnode&n; * for a data file contains, in effect, a tiny anode.  (Most of the space&n; * in fnodes is for extended attributes.)&n; *&n; * anodes and the anode part of fnodes are trees of extents.  An extent&n; * is a (length, disk address) pair, labeled with the file address being&n; * mapped.  E.g.,&n; *&n; *     (0: 3@1000  3: 1@2000  4: 2@10)&n; *&n; * means the file:disk sector map (0:1000 1:1001 2:1002 3:2000 4:10 5:11).&n; *&n; * There is space for 8 file:len@disk triples in an fnode, or for 40 in an&n; * anode.  If this is insufficient, subtrees are used, as in&n; *&n; *  (6: (0: 3@1000  3: 1@2000  4: 2@10)  12: (6: 3@8000  9: 1@9000  10: 2@20))&n; *&n; * The label on a subtree is the first address *after* that tree.  The&n; * subtrees are always anodes.  The label:subtree pairs require only&n; * two words each, so non-leaf subtrees have a different format; there&n; * is room for 12 label:subtree pairs in an fnode, or 60 in an anode.&n; *&n; * Within a directory, each dnode contains a pointer up to its parent&n; * dnode.  The root dnode points up to the directory&squot;s fnode.&n; *&n; * Each fnode contains a pointer to the directory that contains it&n; * (to the fnode of the directory).  So this pointer in a directory&n; * fnode is &quot;..&quot;.&n; *&n; * On the disk, dnodes are all together in the center of the partition,&n; * and HPFS even manages to put all the dnodes for a single directory&n; * together, generally.  fnodes are out with the data.  anodes are seldom&n; * seen -- in fact noncontiguous files are seldom seen.  I think this is&n; * partly the open() call that lets programs specify the length of an&n; * output file when they know it, and partly because HPFS.IFS really is&n; * very good at resisting fragmentation.&n; */
 "&f;"
 multiline_comment|/* notation */
 DECL|macro|little_ushort
@@ -897,7 +897,7 @@ op_rshift
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * test for directory&squot;s inode number &n; */
+multiline_comment|/*&n; * test for directory&squot;s inode number&n; */
 DECL|function|ino_is_dir
 r_static
 r_inline
@@ -3625,7 +3625,7 @@ id|disk_secno
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Search allocation tree *b for the given file sector number and return&n; * the disk sector number.  Buffer *bhp has the tree in it, and can be&n; * reused for subtrees when access to *b is no longer needed.&n; * *bhp is busy on entry and exit. &n; */
+multiline_comment|/*&n; * Search allocation tree *b for the given file sector number and return&n; * the disk sector number.  Buffer *bhp has the tree in it, and can be&n; * reused for subtrees when access to *b is no longer needed.&n; * *bhp is busy on entry and exit.&n; */
 DECL|function|bplus_lookup
 r_static
 id|secno
@@ -4518,7 +4518,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * readdir.  Return exactly 1 dirent.  (I tried and tried, but currently&n; * the interface with libc just does not permit more than 1.  If it gets&n; * fixed, throw this out and just walk the tree and write records into&n; * the user buffer.)&n; *&n; * [ we now can handle multiple dirents, although the current libc doesn&squot;t&n; *   use that. The way hpfs does this is pretty strange, as we need to do&n; *   the name translation etc before calling &quot;filldir()&quot;. This is untested,&n; *   as I don&squot;t have any hpfs partitions to test against.   Linus ]&n; *&n; * We keep track of our position in the dnode tree with a sort of&n; * dewey-decimal record of subtree locations.  Like so:&n; *&n; *   (1 (1.1 1.2 1.3) 2 3 (3.1 (3.1.1 3.1.2) 3.2 3.3 (3.3.1)) 4)&n; *&n; * Subtrees appear after their file, out of lexical order,&n; * which would be before their file.  It&squot;s easier.&n; *&n; * A directory can&squot;t hold more than 56 files, so 6 bits are used for&n; * position numbers.  If the tree is so deep that the position encoding&n; * doesn&squot;t fit, I&squot;m sure something absolutely fascinating happens.&n; *&n; * The actual sequence of f_pos values is&n; *     0 =&gt; .   -1 =&gt; ..   1 1.1 ... 8.9 9 =&gt; files  -2 =&gt; eof&n; *&n; * The directory inode caches one position-to-dnode correspondence so&n; * we won&squot;t have to repeatedly scan the top levels of the tree. &n; */
+multiline_comment|/*&n; * readdir.  Return exactly 1 dirent.  (I tried and tried, but currently&n; * the interface with libc just does not permit more than 1.  If it gets&n; * fixed, throw this out and just walk the tree and write records into&n; * the user buffer.)&n; *&n; * [ we now can handle multiple dirents, although the current libc doesn&squot;t&n; *   use that. The way hpfs does this is pretty strange, as we need to do&n; *   the name translation etc before calling &quot;filldir()&quot;. This is untested,&n; *   as I don&squot;t have any hpfs partitions to test against.   Linus ]&n; *&n; * We keep track of our position in the dnode tree with a sort of&n; * dewey-decimal record of subtree locations.  Like so:&n; *&n; *   (1 (1.1 1.2 1.3) 2 3 (3.1 (3.1.1 3.1.2) 3.2 3.3 (3.3.1)) 4)&n; *&n; * Subtrees appear after their file, out of lexical order,&n; * which would be before their file.  It&squot;s easier.&n; *&n; * A directory can&squot;t hold more than 56 files, so 6 bits are used for&n; * position numbers.  If the tree is so deep that the position encoding&n; * doesn&squot;t fit, I&squot;m sure something absolutely fascinating happens.&n; *&n; * The actual sequence of f_pos values is&n; *     0 =&gt; .   -1 =&gt; ..   1 1.1 ... 8.9 9 =&gt; files  -2 =&gt; eof&n; *&n; * The directory inode caches one position-to-dnode correspondence so&n; * we won&squot;t have to repeatedly scan the top levels of the tree.&n; */
 multiline_comment|/*&n; * Translate the given name: Blam it to lowercase if the mount option said to.&n; */
 DECL|function|translate_hpfs_name
 r_static
@@ -4896,7 +4896,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Map the dir entry at subtree coordinates given by *posp, and&n; * increment *posp to point to the following dir entry. &n; */
+multiline_comment|/*&n; * Map the dir entry at subtree coordinates given by *posp, and&n; * increment *posp to point to the following dir entry.&n; */
 DECL|function|map_pos_dirent
 r_static
 r_struct
@@ -6176,6 +6176,8 @@ id|hpfs_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -6184,31 +6186,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
+r_return
 id|init_hpfs_fs
 c_func
 (paren
 )paren
-)paren
-op_eq
-l_int|0
-)paren
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|status
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

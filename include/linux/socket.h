@@ -71,7 +71,7 @@ id|msg_iov
 suffix:semicolon
 multiline_comment|/* Data blocks&t;&t;&t;*/
 DECL|member|msg_iovlen
-r_int
+id|__kernel_size_t
 id|msg_iovlen
 suffix:semicolon
 multiline_comment|/* Number of blocks&t;&t;*/
@@ -82,7 +82,7 @@ id|msg_control
 suffix:semicolon
 multiline_comment|/* Per protocol magic (eg BSD file descriptor passing) */
 DECL|member|msg_controllen
-r_int
+id|__kernel_size_t
 id|msg_controllen
 suffix:semicolon
 multiline_comment|/* Length of cmsg list */
@@ -98,7 +98,7 @@ r_struct
 id|cmsghdr
 (brace
 DECL|member|cmsg_len
-r_int
+id|__kernel_size_t
 id|cmsg_len
 suffix:semicolon
 multiline_comment|/* data byte count, including hdr */
@@ -232,7 +232,6 @@ DECL|struct|ucred
 r_struct
 id|ucred
 (brace
-multiline_comment|/* Should we be using __kernel_*_t here ?? */
 DECL|member|pid
 id|__kernel_pid_t
 id|pid
