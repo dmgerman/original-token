@@ -145,6 +145,23 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Don&squot;t allow too many pending pages in flight.. */
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|nr_async_pages
+)paren
+OG
+id|SWAP_CLUSTER_MAX
+)paren
+id|wait
+op_assign
+l_int|1
+suffix:semicolon
 id|p
 op_assign
 op_amp

@@ -162,7 +162,7 @@ r_static
 r_int
 id|serial_refcount
 suffix:semicolon
-multiline_comment|/* serial supmac_irq_hw *) 0xf3000010,&n;btype definitions */
+multiline_comment|/* serial subtype definitions */
 DECL|macro|SERIAL_TYPE_NORMAL
 mdefine_line|#define SERIAL_TYPE_NORMAL&t;1
 DECL|macro|SERIAL_TYPE_CALLOUT

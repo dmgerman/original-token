@@ -17,9 +17,9 @@ id|wait_queue
 op_star
 id|log_wait
 suffix:semicolon
-id|asmlinkage
+r_extern
 r_int
-id|sys_syslog
+id|do_syslog
 c_func
 (paren
 r_int
@@ -51,7 +51,7 @@ id|file
 )paren
 (brace
 r_return
-id|sys_syslog
+id|do_syslog
 c_func
 (paren
 l_int|1
@@ -82,7 +82,7 @@ id|file
 (paren
 r_void
 )paren
-id|sys_syslog
+id|do_syslog
 c_func
 (paren
 l_int|0
@@ -120,7 +120,7 @@ id|ppos
 )paren
 (brace
 r_return
-id|sys_syslog
+id|do_syslog
 c_func
 (paren
 l_int|2
